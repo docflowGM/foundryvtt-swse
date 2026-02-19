@@ -983,6 +983,22 @@ export const ActorEngine = {
 
             appliedMutations.push(mutation);
 
+          } else if (mutation.type === 'unsetFlag') {
+            swseLogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: unsetFlag ${mutation.actor.name}`, {
+              scope: mutation.scope,
+              key: mutation.key
+            });
+
+            await mutation.actor.unsetFlag(mutation.scope, mutation.key);
+
+            results.push({
+              actor: mutation.actor.id,
+              type: 'unsetFlag',
+              success: true
+            });
+
+            appliedMutations.push(mutation);
+
           } else if (mutation.type === 'createEmbedded') {
             swseLogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: createEmbedded ${mutation.actor.name}`, {
               embeddedName: mutation.embeddedName,

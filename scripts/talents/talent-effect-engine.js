@@ -340,4 +340,57 @@ export class TalentEffectEngine {
       mutations
     };
   }
+
+  /**
+   * Build End Channel Anger plan
+   *
+   * @param {Actor} sourceActor - Actor ending rage
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildEndChannelAngerPlan({
+    sourceActor
+  }) {
+    // --- Validation ---
+    const rageInfo = sourceActor.getFlag('foundryvtt-swse', 'isChannelAngerRaging');
+    if (!rageInfo) {
+      return {
+        success: false,
+        reason: "Not currently raging"
+      };
+    }
+
+    // --- Compute condition change ---
+    const currentCondition = sourceActor.system.conditionTrack?.value ?? 0;
+    const newCondition = Math.max(0, currentCondition - 1);
+
+    // --- Build mutations ---
+    const mutations = [];
+
+    // Unset flag (via direct call in applyTalentEffect, not update)
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "unsetFlag",
+      scope: "foundryvtt-swse",
+      key: "isChannelAngerRaging"
+    });
+
+    // Update condition track
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "update",
+      data: {
+        "system.conditionTrack.value": newCondition
+      }
+    });
+
+    return {
+      success: true,
+      effect: "endChannelAnger",
+      sourceActor: sourceActor,
+      newCondition: newCondition,
+      mutations
+    };
+  }
 }

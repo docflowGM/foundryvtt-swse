@@ -116,69 +116,51 @@ export class DarkSideDevoteeMechanics {
    * Activate Channel Anger rage
    * +2 to melee attacks/damage for 5 + CON mod rounds
    * At end, move -1 on Condition Track
+   *
+   * NEW: Uses TalentEffectEngine (compute) + ActorEngine (execute)
    */
   static async triggerChannelAnger(actor, spendFP = true) {
     if (!this.hasChannelAnger(actor)) {
       return { success: false, message: 'Actor does not have Channel Anger' };
     }
 
-    // Check if already raging
-    const isRaging = actor.getFlag('foundryvtt-swse', 'isChannelAngerRaging');
-    if (isRaging) {
+    // ========================================================================
+    // PHASE 1: BUILD EFFECT PLAN (Pure Computation)
+    // ========================================================================
+    const plan = await TalentEffectEngine.buildChannelAngerPlan({
+      sourceActor: actor,
+      spendFP
+    });
+
+    // If plan failed, return immediately
+    if (!plan.success) {
       return {
         success: false,
-        message: `${actor.name} is already Channeling Anger. Rage ends at the beginning of round ${isRaging.endRound}.`
+        message: plan.reason
       };
     }
 
-    if (spendFP) {
-      // Check Force Points
-      const currentFP = actor.system.forcePoints?.value || 0;
-      if (currentFP < 1) {
-        return {
-          success: false,
-          message: 'Not enough Force Points. Channel Anger requires 1 Force Point.'
-        };
-      }
+    // ========================================================================
+    // PHASE 2: APPLY MUTATIONS THROUGH ACTORENGINE
+    // ========================================================================
+    const result = await ActorEngine.applyTalentEffect(plan);
 
-      // Spend Force Point
-      await actor.update({
-        'system.forcePoints.value': currentFP - 1
-      });
+    if (!result.success) {
+      return {
+        success: false,
+        message: `Channel Anger failed: ${result.reason}`
+      };
     }
 
-    // Calculate duration: 5 + CON modifier rounds
-    const conModifier = actor.system.attributes.con?.mod || 0;
-    const durationRounds = 5 + conModifier;
-    const currentRound = game.combat?.round || 0;
-    const endRound = currentRound + durationRounds;
-
-    // Get active combatant to track end
-    let combatantId = null;
-    if (game.combat?.active) {
-      const combatant = game.combat.combatants.find(c => c.actor.id === actor.id);
-      combatantId = combatant?.id;
-    }
-
-    // Store rage info
-    const rageInfo = {
-      startRound: currentRound,
-      endRound: endRound,
-      durationRounds: durationRounds,
-      conModifier: conModifier,
-      combatantId: combatantId
-    };
-
-    await actor.setFlag('foundryvtt-swse', 'isChannelAngerRaging', rageInfo);
-
-    // Add rage bonus effects to character
-    // This is represented by a temporary effect or chat announcement
+    // ========================================================================
+    // PHASE 3: SIDE-EFFECTS (Chat Message)
+    // ========================================================================
     const chatContent = `
       <div class="swse-channel-anger">
         <h3><img src="icons/svg/skull.svg" style="width: 20px; height: 20px;"> Channel Anger</h3>
         <p><strong>${actor.name}</strong> channels their anger into a <strong>RAGE</strong>!</p>
         <p><strong>Bonuses:</strong> +2 to melee attacks and damage rolls</p>
-        <p><strong>Duration:</strong> ${durationRounds} rounds (until end of round ${endRound})</p>
+        <p><strong>Duration:</strong> ${plan.durationRounds} rounds (until end of round ${plan.endRound})</p>
         <p><em style="color: #ff6b6b;">⚠️ Cannot use Skills requiring patience (Mechanics, Stealth, Use the Force)</em></p>
         <p><em style="color: #ff6b6b;">⚠️ Will move -1 on Condition Track when rage ends</em></p>
       </div>
@@ -190,36 +172,53 @@ export class DarkSideDevoteeMechanics {
       flavor: 'Channel Anger - Rage Activated'
     });
 
-    SWSELogger.log(`SWSE Talents | ${actor.name} used Channel Anger for ${durationRounds} rounds`);
+    SWSELogger.log(`SWSE Talents | ${actor.name} used Channel Anger for ${plan.durationRounds} rounds`);
 
     return {
       success: true,
-      durationRounds: durationRounds,
-      endRound: endRound,
-      rageBonus: 2
+      durationRounds: plan.durationRounds,
+      endRound: plan.endRound,
+      rageBonus: 2,
+      mutationCount: result.mutationCount
     };
   }
 
   /**
    * End Channel Anger rage and apply condition track penalty
+   *
+   * NEW: Uses TalentEffectEngine (compute) + ActorEngine (execute)
    */
   static async endChannelAnger(actor) {
-    const rageInfo = actor.getFlag('foundryvtt-swse', 'isChannelAngerRaging');
-    if (!rageInfo) {
-      return { success: false, message: 'Actor is not currently raging' };
-    }
-
-    // Remove rage flag
-    await actor.unsetFlag('foundryvtt-swse', 'isChannelAngerRaging');
-
-    // Move -1 on Condition Track
-    const currentCondition = actor.system.conditionTrack?.value || 0;
-    const newCondition = Math.max(0, currentCondition - 1); // -1 means moving down
-
-    await actor.update({
-      'system.conditionTrack.value': newCondition
+    // ========================================================================
+    // PHASE 1: BUILD EFFECT PLAN (Pure Computation)
+    // ========================================================================
+    const plan = await TalentEffectEngine.buildEndChannelAngerPlan({
+      sourceActor: actor
     });
 
+    // If plan failed, return immediately
+    if (!plan.success) {
+      return {
+        success: false,
+        message: plan.reason
+      };
+    }
+
+    // ========================================================================
+    // PHASE 2: APPLY MUTATIONS THROUGH ACTORENGINE
+    // ========================================================================
+    const result = await ActorEngine.applyTalentEffect(plan);
+
+    if (!result.success) {
+      return {
+        success: false,
+        message: `End Channel Anger failed: ${result.reason}`
+      };
+    }
+
+    // ========================================================================
+    // PHASE 3: SIDE-EFFECTS (Chat Message)
+    // ========================================================================
     const chatContent = `
       <div class="swse-channel-anger-end">
         <h3><img src="icons/svg/skull.svg" style="width: 20px; height: 20px;"> Rage Ends</h3>
@@ -234,9 +233,9 @@ export class DarkSideDevoteeMechanics {
       flavor: 'Channel Anger - Rage Ended'
     });
 
-    SWSELogger.log(`SWSE Talents | ${actor.name}'s rage ended, moved to condition ${newCondition}`);
+    SWSELogger.log(`SWSE Talents | ${actor.name}'s rage ended, moved to condition ${plan.newCondition}`);
 
-    return { success: true, newConditionRank: newCondition };
+    return { success: true, newConditionRank: plan.newCondition, mutationCount: result.mutationCount };
   }
 
   /**
@@ -264,52 +263,51 @@ export class DarkSideDevoteeMechanics {
   /**
    * Apply Crippling Strike effect after critical hit
    * Reduce target's speed by half until fully healed
+   *
+   * NEW: Uses TalentEffectEngine (compute) + ActorEngine (execute)
    */
   static async triggerCripplingStrike(actor, targetToken, spendFP = true) {
     if (!this.hasCripplingStrike(actor)) {
       return { success: false, message: 'Actor does not have Crippling Strike' };
     }
 
-    if (spendFP) {
-      // Check Force Points
-      const currentFP = actor.system.forcePoints?.value || 0;
-      if (currentFP < 1) {
-        return {
-          success: false,
-          message: 'Not enough Force Points. Crippling Strike requires 1 Force Point.'
-        };
-      }
+    // ========================================================================
+    // PHASE 1: BUILD EFFECT PLAN (Pure Computation)
+    // ========================================================================
+    const plan = await TalentEffectEngine.buildCripplingStrikePlan({
+      sourceActor: actor,
+      targetActor: targetToken.actor,
+      spendFP
+    });
 
-      // Spend Force Point
-      await actor.update({
-        'system.forcePoints.value': currentFP - 1
-      });
+    // If plan failed, return immediately
+    if (!plan.success) {
+      return {
+        success: false,
+        message: plan.reason
+      };
     }
 
-    // Store crippling info on target
-    const targetActor = targetToken.actor;
-    const originalSpeed = targetActor.system.speed?.base || 6;
-    const crippledSpeed = Math.ceil(originalSpeed / 2);
+    // ========================================================================
+    // PHASE 2: APPLY MUTATIONS THROUGH ACTORENGINE
+    // ========================================================================
+    const result = await ActorEngine.applyTalentEffect(plan);
 
-    // Mark as crippled
-    await targetActor.setFlag('foundryvtt-swse', 'isCrippled', {
-      sourceActor: actor.id,
-      sourceName: actor.name,
-      originalSpeed: originalSpeed,
-      crippledSpeed: crippledSpeed,
-      maxHpWhenCrippled: targetActor.system.hp.max
-    });
+    if (!result.success) {
+      return {
+        success: false,
+        message: `Crippling Strike failed: ${result.reason}`
+      };
+    }
 
-    // Apply speed reduction
-    await targetActor.update({
-      'system.speed.current': crippledSpeed
-    });
-
+    // ========================================================================
+    // PHASE 3: SIDE-EFFECTS (Chat Message)
+    // ========================================================================
     const chatContent = `
       <div class="swse-crippling-strike">
         <h3><img src="icons/svg/boot.svg" style="width: 20px; height: 20px;"> Crippling Strike</h3>
-        <p><strong>${actor.name}</strong>'s critical hit leaves <strong>${targetActor.name}</strong> crippled!</p>
-        <p><strong>Speed Reduced:</strong> ${originalSpeed} squares → ${crippledSpeed} squares</p>
+        <p><strong>${actor.name}</strong>'s critical hit leaves <strong>${targetToken.actor.name}</strong> crippled!</p>
+        <p><strong>Speed Reduced:</strong> ${plan.originalSpeed} squares → ${plan.crippledSpeed} squares</p>
         <p><em>Effect lasts until target is fully healed (restored to maximum HP)</em></p>
       </div>
     `;
@@ -320,12 +318,13 @@ export class DarkSideDevoteeMechanics {
       flavor: 'Crippling Strike - Speed Reduced'
     });
 
-    SWSELogger.log(`SWSE Talents | ${actor.name} crippled ${targetActor.name} (speed ${originalSpeed} → ${crippledSpeed})`);
+    SWSELogger.log(`SWSE Talents | ${actor.name} crippled ${targetToken.actor.name} (speed ${plan.originalSpeed} → ${plan.crippledSpeed})`);
 
     return {
       success: true,
-      originalSpeed: originalSpeed,
-      crippledSpeed: crippledSpeed
+      originalSpeed: plan.originalSpeed,
+      crippledSpeed: plan.crippledSpeed,
+      mutationCount: result.mutationCount
     };
   }
 
