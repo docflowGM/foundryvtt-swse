@@ -173,3 +173,98 @@ export function validateTalentTree(normalizedTree) {
 
     return true;
 }
+
+/**
+ * Normalize a talent document for the progression engine.
+ * This wraps document-level normalization in defensive error handling.
+ * NON-FATAL: Never throws, never blocks sheet rendering.
+ *
+ * @param {Object} talentDoc - Talent document to normalize
+ * @returns {Object} - The modified talent document
+ */
+export function normalizeDocumentTalent(talentDoc) {
+    if (!talentDoc || !talentDoc.system) {
+        return talentDoc;
+    }
+
+    try {
+        const sys = talentDoc.system;
+
+        // Normalize tree name field (whitespace normalization)
+        if (sys.talent_tree) {
+            sys.talent_tree = String(sys.talent_tree)
+                .trim()
+                .replace(/\s+/g, ' ');
+        }
+
+        // Normalize prerequisites string
+        if (sys.prerequisites) {
+            sys.prerequisites = String(sys.prerequisites)
+                .trim()
+                .replace(/\s+/g, ' ');
+        }
+
+        // Normalize benefit description
+        if (sys.benefit) {
+            sys.benefit = String(sys.benefit)
+                .trim()
+                .replace(/\s+/g, ' ');
+        }
+
+        // Ensure description exists
+        sys.description = sys.description ?? '';
+
+        // Validate tree name format (non-fatal)
+        if (sys.talent_tree) {
+            const isValidFormat = /^[A-Za-z0-9\s\-'()]+$/.test(sys.talent_tree);
+            if (!isValidFormat) {
+                console.warn(`[SSOT] Talent "${talentDoc.name}" has unusual tree name format: "${sys.talent_tree}"`);
+            }
+        }
+
+    } catch (err) {
+        console.error(`[SSOT] Talent document normalization failed for "${talentDoc.name}":`, err);
+        // Never throw: continue execution
+    }
+
+    return talentDoc;
+}
+
+/**
+ * Validate tree assignment for a talent (non-fatal diagnostic).
+ * Does not invalidate talents. Returns diagnostic info only.
+ * NON-FATAL: Always returns true to allow progression.
+ *
+ * @param {Object} talentDoc - Talent document to check
+ * @returns {boolean} - Always returns true (never blocks)
+ */
+export function validateTalentTreeAssignment(talentDoc) {
+    try {
+        if (!talentDoc?.system?.talent_tree) {
+            console.warn(`[SSOT] Talent "${talentDoc?.name}" has no tree assignment`);
+            return true; // Non-fatal
+        }
+
+        const treeName = talentDoc.system.talent_tree;
+        if (typeof treeName !== 'string') {
+            console.warn(`[SSOT] Talent "${talentDoc.name}" tree assignment is not a string`);
+            return true; // Non-fatal
+        }
+
+        // Optional: Check if tree exists in TalentTreeDB (if available)
+        try {
+            // This is optional - we don't want to create a circular dependency
+            // Just log warnings if the tree can't be resolved
+            const treeId = normalizeTalentTreeId(treeName);
+            // Note: Actual tree lookup would happen via TalentTreeDB in the progression layer
+        } catch (innerErr) {
+            console.warn(`[SSOT] Could not validate tree "${treeName}" for talent "${talentDoc.name}"`);
+        }
+
+    } catch (err) {
+        console.error(`[SSOT] Tree validation failed for talent "${talentDoc.name}":`, err);
+        return true; // Non-fatal: never block
+    }
+
+    return true; // Always allow progression
+}
