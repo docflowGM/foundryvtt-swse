@@ -15,6 +15,9 @@ import { HooksLayer } from './layers/hooks-layer.js';
 import { PromisesLayer } from './layers/promises-layer.js';
 import { PerformanceLayer } from './layers/performance-layer.js';
 
+// PHASE 3: Import mutation authority layer
+import { MutationIntegrityLayer } from './mutation-integrity-layer.js';
+
 /**
  * Initialize and register all sentinel layers
  * Called during system bootstrap
@@ -29,6 +32,9 @@ export function initializeSentinelLayers() {
   SentinelEngine.registerLayer('hooks', HooksLayer);
   SentinelEngine.registerLayer('promises', PromisesLayer);
   SentinelEngine.registerLayer('performance', PerformanceLayer);
+
+  // PHASE 3: Register mutation authority enforcement
+  SentinelEngine.registerLayer('mutation', MutationIntegrityLayer);
 }
 
 /**

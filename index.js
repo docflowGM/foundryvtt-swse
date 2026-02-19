@@ -98,6 +98,7 @@ import { checkRequiredPacks } from './scripts/core/pack-existence-check.js';
 import { SWSEV2BaseActor } from './scripts/actors/v2/base-actor.js';
 import { SWSEItemBase } from './scripts/items/base/swse-item-base.js';
 import { ActorEngine } from './scripts/actors/engine/actor-engine.js';
+import { MutationInterceptor } from './scripts/core/mutation/MutationInterceptor.js';
 
 // ---- sheets ----
 import { SWSEV2CharacterSheet } from './scripts/sheets/v2/character-sheet.js';
@@ -212,6 +213,9 @@ Hooks.once('init', async () => {
 
   /* ---------- PHASE 3: Structural Enforcement Layer ---------- */
   await initializeV2RenderGuard();
+
+  /* ---------- PHASE 3: MUTATION AUTHORITY (BATCH 1) ---------- */
+  MutationInterceptor.initialize();
 
   swseLogger.log('SWSE | Init complete');
 });
