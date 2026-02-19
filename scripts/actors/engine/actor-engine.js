@@ -556,6 +556,49 @@ export const ActorEngine = {
       });
       throw err;
     }
+  },
+
+  /**
+   * updateActionEconomy() — Update action economy state
+   *
+   * Used by combatants to mark actions as used/available.
+   * Single mutation for action state changes.
+   *
+   * @param {Actor} actor - target actor
+   * @param {Object} actionEconomy - { swift, move, standard, fullRound, reaction }
+   */
+  async updateActionEconomy(actor, actionEconomy) {
+    try {
+      if (!actor) {throw new Error('updateActionEconomy() called with no actor');}
+      if (!actionEconomy || typeof actionEconomy !== 'object') {
+        throw new Error('updateActionEconomy() requires actionEconomy object');
+      }
+
+      swseLogger.debug(`ActorEngine.updateActionEconomy → ${actor.name}`, {
+        swift: actionEconomy.swift,
+        move: actionEconomy.move,
+        standard: actionEconomy.standard,
+        fullRound: actionEconomy.fullRound,
+        reaction: actionEconomy.reaction
+      });
+
+      await this.updateActor(actor, {
+        'system.actionEconomy': actionEconomy
+      });
+
+      swseLogger.log(`Action economy updated for ${actor.name}`, {
+        actionEconomy
+      });
+
+      return { updated: true, actionEconomy };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.updateActionEconomy failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        actionEconomy
+      });
+      throw err;
+    }
   }
 
 };

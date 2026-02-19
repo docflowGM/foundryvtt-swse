@@ -4,9 +4,11 @@
  * - Numeric condition track (0–5)
  * - Correct helpless/unconscious behavior
  * - New action economy structure
- * - No ActorEngine dependency
+ * - PHASE 3: Routes mutations through ActorEngine
  * - GM-safe action marking
  */
+
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 export class SWSECombatant extends Combatant {
 
@@ -99,7 +101,8 @@ export class SWSECombatant extends Combatant {
         break;
     }
 
-    await actor.update({ 'system.actionEconomy': econ }, { diff: true });
+    // PHASE 3: Route through ActorEngine
+    await ActorEngine.updateActionEconomy(actor, econ);
   }
 
   /* -------------------------------------------- */
@@ -110,18 +113,14 @@ export class SWSECombatant extends Combatant {
     const actor = this.actor;
     if (!actor) {return;}
 
-    await actor.update(
-      {
-        'system.actionEconomy': {
-          swift: true,
-          move: true,
-          standard: true,
-          fullRound: true,
-          reaction: true
-        }
-      },
-      { diff: true }
-    );
+    // PHASE 3: Route through ActorEngine
+    await ActorEngine.updateActionEconomy(actor, {
+      swift: true,
+      move: true,
+      standard: true,
+      fullRound: true,
+      reaction: true
+    });
   }
 
   /* -------------------------------------------- */
