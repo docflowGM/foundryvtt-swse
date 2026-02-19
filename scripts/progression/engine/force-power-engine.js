@@ -21,6 +21,7 @@
 import { FORCE_POWER_DATA } from '../data/progression-data.js';
 import { ForcePowerPicker } from '../ui/force-power-picker.js';
 import { swseLogger } from '../../utils/logger.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 export class ForcePowerEngine {
   /**
@@ -217,7 +218,8 @@ static async applySelected(actor, selectedItems = []) {
     }
 
     if (toCreate.length) {
-      await actor.createEmbeddedDocuments('Item', toCreate);
+      // PHASE 3: Route through ActorEngine
+      await ActorEngine.createEmbeddedDocuments(actor, 'Item', toCreate);
     }
   } catch (e) {
     swseLogger.error('ForcePowerEngine.applySelected error', e);

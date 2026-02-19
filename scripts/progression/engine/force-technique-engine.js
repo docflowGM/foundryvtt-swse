@@ -6,6 +6,7 @@
 
 import { ForceTechniquePicker } from '../ui/force-technique-picker.js';
 import { swseLogger } from '../../utils/logger.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 export class ForceTechniqueEngine {
   /**
@@ -98,7 +99,8 @@ export class ForceTechniqueEngine {
       }
 
       if (toCreate.length) {
-        await actor.createEmbeddedDocuments('Item', toCreate);
+        // PHASE 3: Route through ActorEngine
+        await ActorEngine.createEmbeddedDocuments(actor, 'Item', toCreate);
       }
     } catch (e) {
       swseLogger.error('ForceTechniqueEngine.applySelected error', e);

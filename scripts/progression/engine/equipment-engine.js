@@ -13,6 +13,7 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 export class EquipmentEngine {
 
@@ -142,7 +143,8 @@ export class EquipmentEngine {
         }
 
         if (itemsToCreate.length > 0) {
-            await actor.createEmbeddedDocuments('Item', itemsToCreate);
+            // PHASE 3: Route through ActorEngine
+            await ActorEngine.createEmbeddedDocuments(actor, 'Item', itemsToCreate);
             SWSELogger.log(`Granted ${itemsToCreate.length} equipment items`);
         }
 
@@ -176,7 +178,8 @@ export class EquipmentEngine {
         }
 
         if (itemsToCreate.length > 0) {
-            await actor.createEmbeddedDocuments('Item', itemsToCreate);
+            // PHASE 3: Route through ActorEngine
+            await ActorEngine.createEmbeddedDocuments(actor, 'Item', itemsToCreate);
             SWSELogger.log(`Granted ${itemsToCreate.length} weapons`);
         }
 
@@ -209,7 +212,8 @@ export class EquipmentEngine {
         }
 
         if (itemsToCreate.length > 0) {
-            await actor.createEmbeddedDocuments('Item', itemsToCreate);
+            // PHASE 3: Route through ActorEngine
+            await ActorEngine.createEmbeddedDocuments(actor, 'Item', itemsToCreate);
             SWSELogger.log(`Granted ${itemsToCreate.length} armor pieces`);
         }
 
