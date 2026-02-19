@@ -573,4 +573,279 @@ export class TalentEffectEngine {
       mutations
     };
   }
+
+  /**
+   * Build Direct plan - Return ally's Force Power to suite
+   */
+  static async buildDirectPlan({
+    sourceActor,
+    allyActor,
+    power,
+    directUsageFlag
+  }) {
+    if (!allyActor || !power) {
+      return { success: false, reason: "Invalid ally or power" };
+    }
+
+    const mutations = [];
+    mutations.push({
+      actor: allyActor,
+      actorId: allyActor.id,
+      type: "updateOwnedItems",
+      items: [{ _id: power.id, "system.spent": false }]
+    });
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: directUsageFlag,
+      value: true
+    });
+
+    return {
+      success: true,
+      effect: "direct",
+      sourceActor: sourceActor,
+      allyActor: allyActor,
+      powerName: power.name,
+      mutations
+    };
+  }
+
+  /**
+   * Build Consular's Wisdom plan
+   */
+  static async buildConsularsWisdomPlan({
+    sourceActor,
+    allyActor,
+    wisdomBonus,
+    wisdomUsageFlag
+  }) {
+    if (!allyActor) {
+      return { success: false, reason: "Invalid ally" };
+    }
+
+    const mutations = [];
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: wisdomUsageFlag,
+      value: true
+    });
+
+    return {
+      success: true,
+      effect: "consularsWisdom",
+      sourceActor: sourceActor,
+      allyActor: allyActor,
+      wisdomBonus: wisdomBonus,
+      mutations
+    };
+  }
+
+  /**
+   * Build Exposing Strike plan - Spend FP to make target flat-footed
+   */
+  static async buildExposingStrikePlan({
+    sourceActor,
+    targetActor
+  }) {
+    const forcePoints = sourceActor.system.forcePoints?.value || 0;
+    if (forcePoints < 1) {
+      return { success: false, reason: "Insufficient Force Points" };
+    }
+
+    const mutations = [];
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "update",
+      data: { "system.forcePoints.value": forcePoints - 1 }
+    });
+
+    return {
+      success: true,
+      effect: "exposingStrike",
+      sourceActor: sourceActor,
+      targetActor: targetActor,
+      mutations
+    };
+  }
+
+  /**
+   * Build Dark Retaliation plan
+   */
+  static async buildDarkRetaliationPlan({
+    sourceActor,
+    retaliationUsageFlag
+  }) {
+    const forcePoints = sourceActor.system.forcePoints?.value || 0;
+    if (forcePoints < 1) {
+      return { success: false, reason: "Insufficient Force Points" };
+    }
+
+    const mutations = [];
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "update",
+      data: { "system.forcePoints.value": forcePoints - 1 }
+    });
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: retaliationUsageFlag,
+      value: true
+    });
+
+    return {
+      success: true,
+      effect: "darkRetaliation",
+      sourceActor: sourceActor,
+      mutations
+    };
+  }
+
+  /**
+   * Build Skilled Advisor plan - Spend FP to grant ally skill bonus
+   */
+  static async buildSkilledAdvisorPlan({
+    sourceActor,
+    useForcePoint = false
+  }) {
+    if (useForcePoint) {
+      const forcePoints = sourceActor.system.forcePoints?.value || 0;
+      if (forcePoints < 1) {
+        return { success: false, reason: "Insufficient Force Points" };
+      }
+    }
+
+    const mutations = [];
+    if (useForcePoint) {
+      const forcePoints = sourceActor.system.forcePoints?.value || 0;
+      mutations.push({
+        actor: sourceActor,
+        actorId: sourceActor.id,
+        type: "update",
+        data: { "system.forcePoints.value": forcePoints - 1 }
+      });
+    }
+
+    return {
+      success: true,
+      effect: "skilledAdvisor",
+      sourceActor: sourceActor,
+      useForcePoint: useForcePoint,
+      mutations
+    };
+  }
+
+  /**
+   * Build Apprentice Boon plan - Spend FP for Force Point die bonus
+   */
+  static async buildApprenticeBoonPlan({
+    sourceActor
+  }) {
+    const forcePoints = sourceActor.system.forcePoints?.value || 0;
+    if (forcePoints < 1) {
+      return { success: false, reason: "Insufficient Force Points" };
+    }
+
+    const mutations = [];
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "update",
+      data: { "system.forcePoints.value": forcePoints - 1 }
+    });
+
+    return {
+      success: true,
+      effect: "apprenticeBoon",
+      sourceActor: sourceActor,
+      mutations
+    };
+  }
+
+  /**
+   * Build Renew Vision plan - Regain Farseeing uses
+   */
+  static async buildRenewVisionPlan({
+    sourceActor,
+    farseeing,
+    renewUsageFlag
+  }) {
+    if (!farseeing || !farseeing.system?.uses) {
+      return { success: false, reason: "Farseeing not found or has no uses" };
+    }
+
+    const mutations = [];
+
+    // Restore Farseeing uses
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "updateOwnedItems",
+      items: [{
+        _id: farseeing.id,
+        "system.uses.current": farseeing.system.uses.max
+      }]
+    });
+
+    // Mark as used this encounter
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: renewUsageFlag,
+      value: true
+    });
+
+    return {
+      success: true,
+      effect: "renewVision",
+      sourceActor: sourceActor,
+      farseeingName: farseeing.name,
+      mutations
+    };
+  }
+
+  /**
+   * Build Adept Negotiator plan - Persuasion check to move on Condition Track
+   */
+  static async buildAdeptNegotiatorPlan({
+    sourceActor,
+    targetActor,
+    newConditionStep,
+    conditionTrackKey
+  }) {
+    if (!targetActor) {
+      return { success: false, reason: "Invalid target" };
+    }
+
+    const mutations = [];
+    mutations.push({
+      actor: targetActor,
+      actorId: targetActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: conditionTrackKey,
+      value: newConditionStep
+    });
+
+    return {
+      success: true,
+      effect: "adeptNegotiator",
+      sourceActor: sourceActor,
+      targetActor: targetActor,
+      newConditionStep: newConditionStep,
+      mutations
+    };
+  }
 }
