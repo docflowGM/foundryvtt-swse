@@ -1,12 +1,13 @@
 /**
  * TALENT TREE NORMALIZER
  * Normalizes talent documents to ensure consistent structure for talent selection.
+ * NON-BLOCKING: Tree resolution failures do not invalidate talents or break sheet rendering.
  *
  * Standardizes:
  * - Talent tree names
  * - Prerequisites
  * - Benefits/descriptions
- * - Talent tree validation
+ * - Talent tree validation (non-fatal)
  */
 
 import { SWSELogger } from '../../utils/logger.js';
@@ -16,20 +17,60 @@ import { normalizeTalentTreeId } from '../../data/talent-tree-normalizer.js';
 export const TalentTreeNormalizer = {
 
     /**
-     * Normalize a talent document
+     * PHASE 1: Resolve talent tree from multiple sources (non-fatal)
+     * @private
+     */
+    _resolveTalentTree(talent) {
+        let tree = null;
+
+        // 1️⃣ Preferred: stable key
+        if (talent.system?.treeKey) {
+            tree = TalentTreeDB.byKey(talent.system.treeKey);
+        }
+
+        // 2️⃣ Fallback: legacy _id
+        if (!tree && talent.system?.treeId) {
+            tree = TalentTreeDB.byId(talent.system.treeId);
+        }
+
+        // 3️⃣ Fallback: derive from stored treeName
+        if (!tree && talent.system?.talent_tree) {
+            const derivedKey = talent.system.talent_tree
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, "-");
+            tree = TalentTreeDB.byKey(derivedKey);
+        }
+
+        return tree;
+    },
+
+    /**
+     * Normalize a talent document (NON-FATAL)
      */
     normalize(talentDoc) {
         if (!talentDoc || !talentDoc.system) {
             return talentDoc;
         }
 
-        const sys = talentDoc.system;
+        try {
+            const sys = talentDoc.system;
 
-        // Normalize properties - check multiple tree fields
-        sys.talent_tree = this._normalizeTalentTree(sys.talent_tree, sys);
-        sys.prerequisites = this._normalizePrerequisites(sys.prerequisites);
-        sys.benefit = this._normalizeBenefit(sys.benefit);
-        sys.description = sys.description ?? '';
+            // Normalize properties - check multiple tree fields
+            sys.talent_tree = this._normalizeTalentTree(sys.talent_tree, sys);
+            sys.prerequisites = this._normalizePrerequisites(sys.prerequisites);
+            sys.benefit = this._normalizeBenefit(sys.benefit);
+            sys.description = sys.description ?? '';
+
+            // PHASE 3: Check tree but don't block
+            const tree = this._resolveTalentTree(talentDoc);
+            if (!tree) {
+                console.warn(`[SSOT] Tree unresolved for talent "${talentDoc.name}" — validation skipped.`);
+                // Non-fatal: continue normalization
+            }
+        } catch (err) {
+            console.error(`[SSOT] Talent normalization failed for ${talentDoc.name}`, err);
+            // Never throw: sheet rendering must continue
+        }
 
         return talentDoc;
     },
@@ -91,74 +132,51 @@ export const TalentTreeNormalizer = {
     },
 
     /**
-     * Check if a talent document has a valid tree that exists in TalentTreeDB
-     * Supports fallback resolution from legacy _id to new key-based system
+     * PHASE 2: Check talent against tree (NON-FATAL)
+     * Does not mark talent invalid. Never throws. Returns diagnostic info only.
      */
     checkTalentAgainstTree(talentDoc) {
-        const sys = talentDoc.system;
-
-        // Attempt 1: Direct tree name field (primary)
-        let tree = sys?.talent_tree || sys?.tree;
-
-        if (!tree) {
-            SWSELogger.warn(`Talent "${talentDoc.name}" has no talent tree assigned`);
-            return false;
-        }
-
-        if (!this.validateTreeName(tree)) {
-            SWSELogger.warn(`Talent "${talentDoc.name}" has malformed tree name: "${tree}"`);
-            return false;
-        }
-
-        // Validate against TalentTreeDB if built
-        if (TalentTreeDB.isBuilt) {
-            const normalizedId = normalizeTalentTreeId(tree);
-
-            // Try by normalized key first
-            if (TalentTreeDB.has(normalizedId)) {
-                return true;
+        try {
+            if (!talentDoc?.system) {
+                return true; // Non-fatal: continue
             }
 
-            // Try by name lookup
-            if (TalentTreeDB.byName(tree)) {
-                return true;
+            const tree = this._resolveTalentTree(talentDoc);
+            if (!tree) {
+                console.warn(`[SSOT] Tree unresolved for talent "${talentDoc.name}" — validation skipped.`);
+                return true; // Non-fatal: do NOT mark invalid
             }
 
-            // Fallback: Try legacy _id resolution via TalentTreeDB.get()
-            if (sys?.treeId) {
-                const legacyTree = TalentTreeDB.get(sys.treeId);
-                if (legacyTree) {
-                    SWSELogger.debug(`Talent "${talentDoc.name}" resolved via legacy treeId`);
-                    return true;
-                }
-            }
-
-            // Warn but don't fail - allow talent to load even if tree resolution uncertain
-            console.warn(`[SSOT] Legacy treeId unresolved for talent "${talentDoc.name}"`);
+            return true; // Tree found
+        } catch (err) {
+            console.error(`[SSOT] Tree check failed for talent "${talentDoc.name}"`, err);
+            return true; // Non-fatal: never break sheet rendering
         }
-
-        return true;
     },
 
     /**
-     * Validate a normalized talent document
+     * PHASE 2: Validate a normalized talent document (NON-FATAL)
+     * Missing tree is a warning, not an error. Never marks talent invalid.
      */
     validate(talentDoc) {
         const errors = [];
+        const warnings = [];
 
         if (!talentDoc.name) {
             errors.push('Talent must have a name');
         }
 
+        // PHASE 2: Tree missing = warning only, not fatal
         if (!talentDoc.system?.talent_tree) {
-            errors.push('Talent must be assigned to a talent tree');
+            warnings.push('Talent not assigned to a talent tree');
         } else if (!this.validateTreeName(talentDoc.system.talent_tree)) {
-            errors.push('Invalid talent tree name: ' + talentDoc.system.talent_tree);
+            warnings.push('Invalid talent tree name: ' + talentDoc.system.talent_tree);
         }
 
         return {
-            valid: errors.length === 0,
-            errors
+            valid: errors.length === 0, // Only real errors block validity
+            errors,
+            warnings
         };
     },
 
