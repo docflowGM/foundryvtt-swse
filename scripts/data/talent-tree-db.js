@@ -33,6 +33,7 @@ export const TalentTreeDB = {
     trees: new Map(),
     sourceIndex: new Map(),
     _byKey: new Map(),  // NEW: stableKey -> tree (Phase 6)
+    _legacyIdMap: new Map(),  // NEW: legacy treeId -> tree (legacy alias resolution)
 
     // SSOT inverse index: talentId -> treeId (built from tree.system.talentIds)
     talentToTree: new Map(),
@@ -92,6 +93,9 @@ export const TalentTreeDB = {
             // Build the talentToTree inverse index (SSOT for tree ownership)
             this.buildTalentIndex();
 
+            // Build legacy ID alias layer for backwards compatibility
+            this._buildLegacyIdMap();
+
             this.isBuilt = true;
             SWSELogger.log(`[TalentTreeDB] Built: ${count} trees loaded${warnings > 0 ? ` (${warnings} warnings)` : ''}`);
             return true;
@@ -105,8 +109,9 @@ export const TalentTreeDB = {
     /**
      * Get a talent tree by ID (normalized).
      * This is the PRIMARY way to access talent tree data.
+     * Supports legacy _id resolution for backwards compatibility.
      *
-     * @param {string} treeId - Normalized tree ID
+     * @param {string} treeId - Normalized tree ID or legacy _id
      * @returns {Object|null} - Normalized tree or null
      */
     get(treeId) {
@@ -114,7 +119,27 @@ export const TalentTreeDB = {
 
         // Ensure ID is normalized
         const normalizedId = normalizeTalentTreeId(treeId);
-        return this.trees.get(normalizedId) ?? null;
+
+        // Try normalized trees first
+        if (this.trees.has(normalizedId)) {
+            return this.trees.get(normalizedId);
+        }
+
+        // Check legacy alias map
+        if (this._legacyIdMap.has(treeId)) {
+            return this._legacyIdMap.get(treeId);
+        }
+
+        // Try sourceId lookup (legacy _id resolution)
+        for (const tree of this.trees.values()) {
+            if (tree.sourceId === treeId) {
+                // Cache for future lookups
+                this._legacyIdMap.set(treeId, tree);
+                return tree;
+            }
+        }
+
+        return null;
     },
 
     /**
@@ -275,6 +300,17 @@ byName(name) {
         }
 
         SWSELogger.log(`[TalentTreeDB] Built talent index: ${this.talentToTree.size} talents indexed`);
+    },
+
+    /**
+     * Build legacy ID alias layer for backwards compatibility.
+     * Maps old treeId references to normalized trees.
+     * Called after trees and talent index are built.
+     */
+    _buildLegacyIdMap() {
+        this._legacyIdMap.clear();
+        // Legacy map is populated as-needed during get() calls
+        // by checking sourceId and stable key fallbacks
     },
 
     /**
