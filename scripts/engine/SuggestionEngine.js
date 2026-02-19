@@ -30,36 +30,33 @@ import { BuildIntent } from './BuildIntent.js';
 import { getSynergyForItem, findActiveSynergies } from './CommunityMetaSynergies.js';
 import { PrerequisiteChecker } from '../data/prerequisite-checker.js';
 import { WishlistEngine } from './WishlistEngine.js';
+import { UNIFIED_TIERS } from './suggestion-unified-tiers.js';
 
 // ──────────────────────────────────────────────────────────────
-// TIER DEFINITIONS (ORDER MATTERS - HIGHER = BETTER)
+// TIER DEFINITIONS (PHASE 5D: UNIFIED_TIERS Refactor)
 // ──────────────────────────────────────────────────────────────
+// Now uses UNIFIED_TIERS system for consistent cross-engine tiers.
+// Legacy constants preserved for backwards compatibility.
 
 export const SUGGESTION_TIERS = {
-    PRESTIGE_PREREQ: 6,
-    WISHLIST_PATH: 5.5,     // Prerequisite for a wishlisted item (player goal)
-    MARTIAL_ARTS: 5,        // Martial arts feat with prerequisites met
-    META_SYNERGY: 5,        // Community-proven synergy combo
-    SPECIES_EARLY: 4.5,     // Species feat at early levels (decays with level)
-    CHAIN_CONTINUATION: 4,
-    MENTOR_BIAS_MATCH: 3.5, // Matches L1 mentor survey answers
-    SKILL_PREREQ_MATCH: 3,
-    ABILITY_PREREQ_MATCH: 2,
-    CLASS_SYNERGY: 1,
-    FALLBACK: 0
+    PRESTIGE_PREREQ: UNIFIED_TIERS.PRESTIGE_PREREQUISITE,        // 6
+    WISHLIST_PATH: UNIFIED_TIERS.PRESTIGE_QUALIFIED_NOW,         // 5 (mapped from 5.5)
+    MARTIAL_ARTS: UNIFIED_TIERS.PRESTIGE_QUALIFIED_NOW,          // 5
+    META_SYNERGY: UNIFIED_TIERS.PRESTIGE_QUALIFIED_NOW,          // 5
+    SPECIES_EARLY: UNIFIED_TIERS.PATH_CONTINUATION,              // 4 (mapped from 4.5)
+    CHAIN_CONTINUATION: UNIFIED_TIERS.PATH_CONTINUATION,         // 4
+    MENTOR_BIAS_MATCH: UNIFIED_TIERS.CATEGORY_SYNERGY,           // 3 (mapped from 3.5)
+    SKILL_PREREQ_MATCH: UNIFIED_TIERS.CATEGORY_SYNERGY,          // 3
+    ABILITY_PREREQ_MATCH: UNIFIED_TIERS.ABILITY_SYNERGY,         // 2
+    CLASS_SYNERGY: UNIFIED_TIERS.THEMATIC_FIT,                   // 1
+    FALLBACK: UNIFIED_TIERS.AVAILABLE                            // 0
 };
-
-// MOVED TO UI LAYER: TIER_REASONS, TIER_ICONS, TIER_ICON_CLASSES, TIER_CSS_CLASSES
-// The engine now returns semantic reason codes only (no presentation data)
 
 // Machine-readable reason codes for UI icon-tagging and programmatic use
 export const TIER_REASON_CODES = {
     6: 'PRESTIGE_PREREQ',
-    5.5: 'WISHLIST_PATH',
     5: 'META_SYNERGY',
-    4.5: 'SPECIES_EARLY',
     4: 'CHAIN_CONTINUATION',
-    3.5: 'MENTOR_BIAS_MATCH',
     3: 'SKILL_PREREQ_MATCH',
     2: 'ABILITY_PREREQ_MATCH',
     1: 'CLASS_SYNERGY',
@@ -69,14 +66,11 @@ export const TIER_REASON_CODES = {
 // Confidence levels based on tier (for mentor tone modulation)
 export const TIER_CONFIDENCE = {
     6: 0.95,    // Very high - prestige path
-    5.5: 0.90,  // High - player's stated goal
-    5: 0.85,    // High - proven synergy
-    4.5: 0.80,  // Good - species fit
+    5: 0.85,    // High - proven synergy or prestige ready
     4: 0.75,    // Good - chain continuation
-    3.5: 0.70,  // Moderate - mentor survey match
-    3: 0.60,    // Moderate - skill fit
+    3: 0.60,    // Moderate - skill fit or category synergy
     2: 0.50,    // Low-moderate - ability fit
-    1: 0.40,    // Low - class synergy only
+    1: 0.40,    // Low - thematic fit
     0: 0.20     // Minimal - just legal
 };
 
@@ -487,16 +481,16 @@ export class SuggestionEngine {
                 const halfLife = 3;
                 const decayFactor = Math.pow(0.5, level / halfLife);
 
-                // Base tier is 4.5 (between chain continuation and meta synergy)
+                // Species feat tier: TIER 4 (PATH_CONTINUATION), decays with level
                 // Apply decay: at level 1-2, full strength; level 3, 50%; level 6, 25%; etc.
-                const adjustedTier = SUGGESTION_TIERS.FALLBACK +
-                    (SUGGESTION_TIERS.SPECIES_EARLY - SUGGESTION_TIERS.FALLBACK) * decayFactor;
+                const baseSpeciesTier = UNIFIED_TIERS.PATH_CONTINUATION;  // 4
+                const adjustedTier = baseSpeciesTier * decayFactor;
 
                 // Check if also uses trained skill for extra boost
                 const usesTrainedSkill = this._usesTrainedSkill(feat, actorState);
-                const skillBoost = usesTrainedSkill ? 0.5 : 0;
+                const skillBoost = usesTrainedSkill ? 1 : 0;
 
-                const finalTier = Math.min(adjustedTier + skillBoost, SUGGESTION_TIERS.META_SYNERGY);
+                const finalTier = Math.min(Math.round(adjustedTier + skillBoost), UNIFIED_TIERS.PRESTIGE_QUALIFIED_NOW);
 
                 return { tier: finalTier, sourceId: `species:${actorState.species}` };
             }
@@ -1178,20 +1172,14 @@ export class SuggestionEngine {
         if (pathway.levelsToQualify === 0) {return null;}  // Already qualified
 
         // NEW TIER LEVELS FOR FUTURE AVAILABILITY
-        let tier;
-        if (pathway.levelsToQualify <= 1) {
-            tier = 0.6;  // "Very Soon"
-        } else if (pathway.levelsToQualify <= 2) {
-            tier = 0.4;  // "Soon"
-        } else if (pathway.levelsToQualify <= 5) {
-            tier = 0.2;  // "Medium Term"
-        } else {
-            tier = 0.05;  // "Long Term"
-        }
+        // For future-available items, use TIER 0 (AVAILABLE) since not actionable now
+        // Items not yet qualified are not suggested (tier 0 = available but no synergy)
+        let tier = UNIFIED_TIERS.AVAILABLE;
 
-        // If item matches class, boost slightly
+        // If item matches class, keep at AVAILABLE tier but mark as "soon available"
+        // The UI can show different messaging for "future available" vs "available now"
         if (this._matchesClass(item, actorState)) {
-            tier *= 1.2;
+            // Still TIER 0, but could be displayed with "coming soon" indicator
         }
 
         return { tier };
