@@ -101,6 +101,9 @@ import { ActorEngine } from './scripts/actors/engine/actor-engine.js';
 import { MutationInterceptor } from './scripts/core/mutation/MutationInterceptor.js';
 import { Batch1Validation } from './scripts/core/mutation/batch-1-validation.js';
 
+// ---- combat tests (PHASE 3) ----
+import { DamageEngineTest } from './scripts/engine/combat/damage-engine-test.js';
+
 // ---- sheets ----
 import { SWSEV2CharacterSheet } from './scripts/sheets/v2/character-sheet.js';
 import { SWSEV2NpcSheet } from './scripts/sheets/v2/npc-sheet.js';
@@ -307,6 +310,10 @@ Hooks.once('ready', async () => {
     batch1: {
       validate: () => Batch1Validation.runFullSuite(),
       healthCheck: () => Batch1Validation.healthCheck()
+    },
+    // PHASE 3: Batch 2 Combat Tests
+    batch2: {
+      testDamage: () => DamageEngineTest.runFullSuite()
     },
     // Sentinel Runtime Kernel API
     sentinel: {
