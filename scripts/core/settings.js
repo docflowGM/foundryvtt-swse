@@ -62,6 +62,15 @@ export function registerSystemSettings() {
     default: false
   });
 
+  game.settings.register('foundryvtt-swse', 'safeMode', {
+    name: 'SWSE.Settings.SafeMode.Name',
+    hint: 'SWSE.Settings.SafeMode.Hint',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   game.settings.register('foundryvtt-swse', 'dailyForcePoints', {
     name: 'SWSE.Settings.DailyForcePoints.Name',
     hint: 'SWSE.Settings.DailyForcePoints.Hint',

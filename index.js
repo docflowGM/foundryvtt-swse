@@ -72,6 +72,7 @@ import { SWSE } from './scripts/core/config.js';
 import { registerSystemSettings } from './scripts/core/settings.js';
 import { initializeUtils } from './scripts/core/utils-init.js';
 import { initializeRolls } from './scripts/core/rolls-init.js';
+import { SWSESentinel } from './scripts/core/swse-sentinel.js';
 
 // ---- v13 hardening ----
 import { initializeHardeningSystem, validateSystemReady, registerHardeningHooks } from './scripts/core/hardening-init.js';
