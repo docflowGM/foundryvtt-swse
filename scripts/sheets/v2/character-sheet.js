@@ -105,19 +105,21 @@ export class SWSEV2CharacterSheet extends
     };
 
     // Extract defenses explicitly
+    // PHASE 2: Read from system.derived.* (authoritative source)
     const defenses = {
-      fort: { value: actor.system?.defenses?.fort?.value ?? 10, total: actor.system?.defenses?.fort?.total ?? 10 },
-      ref: { value: actor.system?.defenses?.reflex?.value ?? 10, total: actor.system?.defenses?.reflex?.total ?? 10 },
-      will: { value: actor.system?.defenses?.will?.value ?? 10, total: actor.system?.defenses?.will?.total ?? 10 },
-      flatFoot: { value: actor.system?.defenses?.flatFoot?.value ?? 10, total: actor.system?.defenses?.flatFoot?.total ?? 10 }
+      fort: { value: actor.system?.derived?.defenses?.fort?.value ?? 10, total: actor.system?.derived?.defenses?.fort?.total ?? 10 },
+      ref: { value: actor.system?.derived?.defenses?.reflex?.value ?? 10, total: actor.system?.derived?.defenses?.reflex?.total ?? 10 },
+      will: { value: actor.system?.derived?.defenses?.will?.value ?? 10, total: actor.system?.derived?.defenses?.will?.total ?? 10 },
+      flatFoot: { value: actor.system?.derived?.defenses?.flatFoot?.value ?? 10, total: actor.system?.derived?.defenses?.flatFoot?.total ?? 10 }
     };
 
     // Header defenses (for quick access)
+    // PHASE 2: Read from system.derived.* (authoritative source)
     const headerDefenses = {
       fort: defenses.fort.total,
       ref: defenses.ref.total,
       will: defenses.will.total,
-      dt: actor.system?.derived?.damageThreshold ?? 0
+      dt: actor.system?.derived?.damage?.threshold ?? 0
     };
 
     // Extract skills explicitly (filter from items)
