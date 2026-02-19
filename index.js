@@ -297,17 +297,31 @@ Hooks.once('ready', async () => {
     errors: errorCommands,
     phase5: {
       summary: getPhaseSummary
+    },
+    // Sentinel Runtime Kernel API
+    sentinel: {
+      status: () => SentinelEngine.getStatus(),
+      health: () => SentinelEngine.getHealthState(),
+      reports: (layer, severity) => SentinelEngine.getReports(layer, severity),
+      performance: () => SentinelEngine.getPerformanceMetrics(),
+      snapshot: () => SentinelEngine.dumpSnapshot(),
+      flushAggregates: () => SentinelEngine.flushAggregates()
     }
   };
 
   window.SWSE = {
     api: publicAPI,
-    debug: debugAPI
+    debug: debugAPI,
+    // PHASE 10: Public API exposure
+    SENTINEL_STATUS: SentinelEngine.getStatus()
   };
 
   if (!(game.modules.get('_dev-mode')?.active ?? false)) {
     Object.freeze(window.SWSE);
   }
+
+  // Flush aggregates before completion
+  SentinelEngine.flushAggregates();
 
   onDiscoveryReady();
 
@@ -326,4 +340,12 @@ Hooks.on('canvasReady', () => {
     board.style.visibility = 'visible';
     board.style.opacity = '1';
   }
+});
+
+/* ==========================================================================
+   SENTINEL SHUTDOWN
+   ========================================================================== */
+
+Hooks.once('canvasDestroyed', () => {
+  SentinelEngine.shutdown();
 });

@@ -37,6 +37,8 @@ export const Sentry = {
   _hookCallCounts: new Map(),
   _lastRenderCycleTime: 0,
   _renderCycleWindow: 16, // ~60fps
+  // PHASE 4: Performance tracking
+  _renderStartTime: null,
 
   /**
    * Initialize runtime surface monitoring
@@ -68,15 +70,21 @@ export const Sentry = {
   /**
    * JURISDICTION: Runtime DOM monitoring
    * Detect zero-dimension renders, collapse, missing elements
+   * PHASE 4: Performance tracking integrated
    */
   _attachRenderHooks() {
     Hooks.on('renderApplicationV2', (app) => {
+      // PHASE 4: Start render timer
+      const timerId = `render:app:${app.id || Date.now()}`;
+      SentinelEngine.startTimer(timerId);
+
       requestAnimationFrame(() => {
         const el = app.element;
         if (!el) {
           SentinelEngine.report('sentry', SentinelEngine.SEVERITY.ERROR, 'ApplicationV2 rendered without element', {
             appName: app.constructor.name
           });
+          SentinelEngine.endTimer(timerId);
           return;
         }
 
@@ -106,10 +114,17 @@ export const Sentry = {
             }
           );
         }
+
+        // PHASE 4: End render timer
+        SentinelEngine.endTimer(timerId);
       });
     });
 
     Hooks.on('renderDocumentSheetV2', (sheet) => {
+      // PHASE 4: Start render timer
+      const timerId = `render:sheet:${sheet.id || Date.now()}`;
+      SentinelEngine.startTimer(timerId);
+
       requestAnimationFrame(() => {
         const el = sheet.element;
         if (!el) {
@@ -117,6 +132,7 @@ export const Sentry = {
             sheetName: sheet.constructor.name,
             document: sheet.document?.name || 'unknown'
           });
+          SentinelEngine.endTimer(timerId);
           return;
         }
 
@@ -136,6 +152,9 @@ export const Sentry = {
             }
           );
         }
+
+        // PHASE 4: End render timer
+        SentinelEngine.endTimer(timerId);
       });
     });
 
@@ -219,44 +238,25 @@ export const Sentry = {
   },
 
   /**
-   * Track hook call frequency
+   * Track hook call frequency (delegates to SentinelEngine)
+   * PHASE 3: Hook Monitor integration
    * @private
    */
   _trackHookCall(hookName) {
-    const now = performance.now();
-
-    if (now - this._lastRenderCycleTime > this._renderCycleWindow) {
-      this._hookCallCounts.clear();
-      this._lastRenderCycleTime = now;
-    }
-
-    const count = (this._hookCallCounts.get(hookName) || 0) + 1;
-    this._hookCallCounts.set(hookName, count);
-
-    if (hookName === 'updateActor' && count > 50) {
-      SentinelEngine.report('sentry', SentinelEngine.SEVERITY.ERROR, 'Hook storm detected: updateActor', {
-        hook: hookName,
-        callsInWindow: count,
-        windowMs: this._renderCycleWindow
-      });
-    }
-
-    if (count > 500) {
-      SentinelEngine.report('sentry', SentinelEngine.SEVERITY.ERROR, 'Excessive hook calls detected', {
-        hook: hookName,
-        callsInWindow: count,
-        windowMs: this._renderCycleWindow
-      });
-    }
+    SentinelEngine.trackHookCall(hookName, this._renderCycleWindow);
   },
 
   /**
    * JURISDICTION: CSS contamination
    * Detect global selectors and dangerous CSS properties
+   * PHASE 1: Using aggregation for repeated violations
    */
   _scanInitialCSS() {
     const dangerousSelectors = ['.app', '.window-app', '.window-content', 'body', 'html', '*'];
     const dangerousProperties = ['contain', 'mask-image', '-webkit-mask-image', 'overflow: hidden'];
+
+    let selectorViolations = 0;
+    let propertyViolations = 0;
 
     for (const sheet of document.styleSheets) {
       if (!sheet.href || !sheet.href.includes('systems/foundryvtt-swse')) continue;
@@ -269,20 +269,44 @@ export const Sentry = {
           const cssText = rule.cssText;
 
           if (dangerousSelectors.some(sel => selector.includes(sel))) {
-            SentinelEngine.report('sentry', SentinelEngine.SEVERITY.CRITICAL, 'Dangerous CSS selector detected', {
-              file: sheet.href,
-              selector,
-              rule: cssText.substring(0, 150)
-            });
+            selectorViolations++;
+            // PHASE 1: Aggregate repeated violations
+            SentinelEngine.report(
+              'sentry',
+              SentinelEngine.SEVERITY.CRITICAL,
+              'Dangerous CSS selector detected',
+              {
+                file: sheet.href,
+                selector,
+                rule: cssText.substring(0, 150)
+              },
+              {
+                aggregateKey: 'css:dangerous-selector',
+                sample: selectorViolations <= 5,
+                threshold: 3
+              }
+            );
           }
 
           if (dangerousProperties.some(prop => cssText.includes(prop))) {
-            SentinelEngine.report('sentry', SentinelEngine.SEVERITY.ERROR, 'Dangerous CSS property detected', {
-              file: sheet.href,
-              selector,
-              property: dangerousProperties.find(p => cssText.includes(p)),
-              rule: cssText.substring(0, 150)
-            });
+            propertyViolations++;
+            // PHASE 1: Aggregate repeated violations
+            SentinelEngine.report(
+              'sentry',
+              SentinelEngine.SEVERITY.ERROR,
+              'Dangerous CSS property detected',
+              {
+                file: sheet.href,
+                selector,
+                property: dangerousProperties.find(p => cssText.includes(p)),
+                rule: cssText.substring(0, 150)
+              },
+              {
+                aggregateKey: 'css:dangerous-property',
+                sample: propertyViolations <= 5,
+                threshold: 5
+              }
+            );
           }
         }
       } catch (err) {

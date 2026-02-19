@@ -87,8 +87,13 @@ export const Investigator = {
   /**
    * JURISDICTION: Registry integrity
    * Audit all SWSE data registries
+   * PHASE 1: Using aggregation for integrity issues
+   * PHASE 4: Using performance tracking
    */
   _auditRegistries() {
+    // PHASE 4: Start audit timer
+    SentinelEngine.startTimer('audit:registries');
+
     const registries = {
       TalentTreeDB: window.SWSEData?.TalentTreeDB,
       TalentDB: window.SWSEData?.TalentDB,
@@ -142,19 +147,41 @@ export const Investigator = {
       }
 
       if (nullCount > 0 || undefinedCount > 0) {
-        SentinelEngine.report('investigator', SentinelEngine.SEVERITY.WARN, `Registry has invalid entries: ${name}`, {
-          registry: name,
-          nullCount,
-          undefinedCount,
-          totalEntries: size
-        });
+        // PHASE 1: Aggregate invalid entries
+        SentinelEngine.report(
+          'investigator',
+          SentinelEngine.SEVERITY.WARN,
+          `Registry has invalid entries: ${name}`,
+          {
+            registry: name,
+            nullCount,
+            undefinedCount,
+            totalEntries: size
+          },
+          {
+            aggregateKey: `registry:invalid-entries:${name}`,
+            sample: true,
+            threshold: 3
+          }
+        );
       }
 
       if (duplicateKeys.size > 0) {
-        SentinelEngine.report('investigator', SentinelEngine.SEVERITY.WARN, `Possible key mismatches in ${name}`, {
-          registry: name,
-          mismatchCount: duplicateKeys.size
-        });
+        // PHASE 1: Aggregate key mismatches
+        SentinelEngine.report(
+          'investigator',
+          SentinelEngine.SEVERITY.WARN,
+          `Possible key mismatches in ${name}`,
+          {
+            registry: name,
+            mismatchCount: duplicateKeys.size
+          },
+          {
+            aggregateKey: `registry:key-mismatches:${name}`,
+            sample: true,
+            threshold: 2
+          }
+        );
       }
 
       if (nullCount === 0 && undefinedCount === 0 && duplicateKeys.size === 0) {
@@ -164,6 +191,9 @@ export const Investigator = {
         });
       }
     }
+
+    // PHASE 4: End audit timer
+    SentinelEngine.endTimer('audit:registries');
   },
 
   /**
