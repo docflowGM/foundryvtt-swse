@@ -10,6 +10,7 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { SkillRegistry } from './skill-registry.js';
 import { SkillState } from './skill-state.js';
 import { SkillValidator } from './skill-validator.js';
@@ -47,7 +48,8 @@ export const SkillEngine = {
             // Update actor's skill training flag
             const skillKey = this._normalizeKey(skillDoc.name);
             SWSELogger.log(`[SKILL-ENGINE] train: Normalized skill key: "${skillName}" → "${skillKey}"`);
-            await actor.update({
+            // PHASE 3: Route through ActorEngine
+            await ActorEngine.updateActor(actor, {
                 [`system.skills.${skillKey}.trained`]: true
             });
             SWSELogger.log(`[SKILL-ENGINE] train: Updated actor data for skill "${skillKey}"`);

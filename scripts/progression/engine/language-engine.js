@@ -12,6 +12,7 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { LanguageRegistry } from '../../registries/language-registry.js';
 
 export class LanguageEngine {
@@ -27,7 +28,8 @@ export class LanguageEngine {
             const id = await this._toLanguageId(n);
             if (id) {ids.push(id);}
         }
-        await actor.update({ 'system.languageIds': ids }).catch(() => {});
+        // PHASE 3: Route through ActorEngine
+        await ActorEngine.updateActor(actor, { 'system.languageIds': ids }).catch(() => {});
         return ids;
     }
 
@@ -52,7 +54,8 @@ export class LanguageEngine {
 
         const updated = [...known, language];
 
-        await actor.update({
+        // PHASE 3: Route through ActorEngine
+        await ActorEngine.updateActor(actor, {
             'system.languages': updated
         });
         await this._syncLanguageIds(actor, updated);
@@ -259,7 +262,8 @@ export class LanguageEngine {
         const known = this.getKnownLanguages(actor);
         const updated = known.filter(l => l !== language);
 
-        await actor.update({
+        // PHASE 3: Route through ActorEngine
+        await ActorEngine.updateActor(actor, {
             'system.languages': updated
         });
 

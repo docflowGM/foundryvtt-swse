@@ -13,6 +13,7 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { ApplyHandlers } from '../utils/apply-handlers.js';
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 
@@ -160,7 +161,8 @@ export class ForceProgressionEngine {
     static async increaseForcePointPool(actor, amount = 1) {
         const current = actor.system.force?.pointPool || 0;
 
-        await actor.update({
+        // PHASE 3: Route through ActorEngine
+        await ActorEngine.updateActor(actor, {
             'system.force.pointPool': current + amount
         });
 
@@ -277,7 +279,8 @@ export class ForceProgressionEngine {
      * Handle Force Regimen selection (for Force-using prestige classes)
      */
     static async selectForceRegimen(actor, regimenName) {
-        await actor.update({
+        // PHASE 3: Route through ActorEngine
+        await ActorEngine.updateActor(actor, {
             'system.force.regimen': regimenName
         });
 
@@ -320,7 +323,8 @@ export class ForceProgressionEngine {
 
         // Recalculate force points
         const forcePoints = this.calculateForcePoints(actor);
-        await actor.update({
+        // PHASE 3: Route through ActorEngine
+        await ActorEngine.updateActor(actor, {
             'system.force.pointsMax': forcePoints
         });
 

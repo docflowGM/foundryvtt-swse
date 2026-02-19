@@ -10,6 +10,7 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 export const ProgressionEngineHelpers = {
 
@@ -18,7 +19,8 @@ export const ProgressionEngineHelpers = {
      */
     async safeActorUpdate(actor, updates) {
         try {
-            return await actor.update(updates);
+            // PHASE 3: Route through ActorEngine
+            return await ActorEngine.updateActor(actor, updates);
         } catch (err) {
             SWSELogger.error('SafeActorUpdate failed:', err);
             ui.notifications?.error('Actor update failed. Check console.');
@@ -34,7 +36,8 @@ export const ProgressionEngineHelpers = {
         if (exists) {return exists;}
 
         try {
-            const created = await actor.createEmbeddedDocuments('Item', [itemData]);
+            // PHASE 3: Route through ActorEngine
+            const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
             return created[0];
         } catch (err) {
             SWSELogger.error('addItemIfMissing failed:', err);
