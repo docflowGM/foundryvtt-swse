@@ -88,7 +88,7 @@ import { errorHandler, errorCommands, logError } from './scripts/core/error-hand
 // ---- data / preload ----
 import { dataPreloader } from './scripts/core/data-preloader.js';
 import { runJsonBackedIdsMigration } from './scripts/migrations/json-backed-ids-migration.js';
-import { CompendiumVerification } from './scripts/core/compendium-verification.js';
+import { checkRequiredPacks } from './scripts/core/pack-existence-check.js';
 
 // ---- actors / items ----
 import { SWSEV2BaseActor } from './scripts/actors/v2/base-actor.js';
@@ -238,8 +238,8 @@ Hooks.once('ready', async () => {
   registerCriticalFlowTests();
 
   /* ---------- data & progression ---------- */
-  // Verify compendium integrity first (fail-fast if missing)
-  await CompendiumVerification.verifyCompendiums();
+  // Check required packs exist
+  checkRequiredPacks();
 
   await Promise.all([
     dataPreloader.preload({
