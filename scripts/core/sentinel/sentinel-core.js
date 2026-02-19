@@ -56,6 +56,9 @@ export class SentinelEngine {
   // ========== PHASE 7: Crash Snapshot Reporter ==========
   static #lastSnapshot = null;
 
+  // ========== Boot Success Banner ==========
+  static #bootComplete = false;
+
   /**
    * Bootstrap the Runtime Kernel
    * Reads settings and activates configured layers
@@ -672,5 +675,49 @@ export class SentinelEngine {
       correlationId: this.#bootId,
       metrics: this.getPerformanceMetrics()
     };
+  }
+
+  // ========== Boot Success Banner ==========
+
+  /**
+   * Mark boot complete and emit success banner
+   * Only emits once, only if system is healthy (not CRITICAL)
+   */
+  static markBootComplete() {
+    if (this.#bootComplete) return; // Already emitted
+    if (this.#healthState === 'CRITICAL') {
+      this.report('engine', this.SEVERITY.INFO, 'Boot completed with critical issues — check Sentinel snapshot', {
+        health: this.#healthState
+      });
+      return;
+    }
+
+    this.#bootComplete = true;
+
+    // Print ASCII SWSE banner
+    const banner = `
+ __      __   ____   ____   ______
+ \\ \\    / /  / ___| / ___| |  ____
+  \\ \\  / /   \\___ \\ \\___ \\ | |__
+   \\ \\/ /     ___) | ___) ||  __|
+    \\__/     |____/ |____/ |_|
+`;
+
+    console.log(
+      '%c' + banner,
+      'color:cyan;font-family:monospace;font-weight:bold;font-size:12px;'
+    );
+
+    console.log(
+      '%c✦ The Galaxy has loaded, may the Force be with you! ✦',
+      'color:cyan;font-weight:bold;font-size:14px;text-align:center;'
+    );
+
+    // Log through Sentinel
+    this.report('engine', this.SEVERITY.INFO, 'The Galaxy has loaded, may the Force be with you!', {
+      health: this.#healthState,
+      totalReports: this.#reportLog.length,
+      bootDuration: Date.now() - (this.#bootId ? parseInt(this.#bootId.split('-')[1]) : Date.now())
+    });
   }
 }

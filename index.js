@@ -323,6 +323,9 @@ Hooks.once('ready', async () => {
   // Flush aggregates before completion
   SentinelEngine.flushAggregates();
 
+  // Emit boot success banner (only if healthy)
+  SentinelEngine.markBootComplete();
+
   onDiscoveryReady();
 
   console.timeEnd('SWSE Ready');
