@@ -173,8 +173,9 @@
   outline-offset: 2px;
 }
 
-/* Add button */
-button.add-button {
+/* Add button — scoped to SWSE custom-item dialogs */
+.dialog.custom-item-dialog button.add-button,
+.dialog.force-power-dialog button.add-button {
   padding: 6px 12px;
   background-color: rgba(40, 167, 69, 0.2);
   border: 1px solid #28a745;
@@ -189,18 +190,21 @@ button.add-button {
   gap: 6px;
 }
 
-button.add-button:hover {
+.dialog.custom-item-dialog button.add-button:hover,
+.dialog.force-power-dialog button.add-button:hover {
   background-color: rgba(40, 167, 69, 0.4);
   border-color: #5dff7a;
   box-shadow: 0 0 8px rgba(40, 167, 69, 0.4);
 }
 
-button.add-button:focus-visible {
+.dialog.custom-item-dialog button.add-button:focus-visible,
+.dialog.force-power-dialog button.add-button:focus-visible {
   outline: 2px solid #5dff7a;
   outline-offset: 2px;
 }
 
-button.add-button i {
+.dialog.custom-item-dialog button.add-button i,
+.dialog.force-power-dialog button.add-button i {
   font-size: 0.9em;
 }
 

@@ -1,12 +1,10 @@
-/* Enforce canvas safety */
+/* ============================================================================
+   SWSE Canvas Safety
+   NEVER override .window-app position or z-index — Foundry owns those.
+   ============================================================================ */
 
-.swse-app .app,
-.swse-app .window-app {
-  position: relative !important;
-  z-index: 20 !important;
-}
-
+/* UI layer ordering — scoped to SWSE UI shell only */
 .swse-app-ui #controls,
 .swse-app-ui #ui-top {
-  z-index: 100 !important;
+  z-index: 100;
 }

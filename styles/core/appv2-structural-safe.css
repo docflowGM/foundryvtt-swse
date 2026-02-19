@@ -1,186 +1,68 @@
 /* ============================================================================
-   SWSE CSS — MUST BE SCOPED TO .app.swse-window
+   SWSE CSS — ApplicationV2 Structural Safety Layer
    ============================================================================
-   ApplicationV2 Structural Safety Layer
-   Corrects layout contract violations for V13 compatibility
+   All rules MUST be scoped to SWSE namespaces:
+     .application.swse  — AppV2 sheet root
+     .swse-app          — generic SWSE app container
+     .swse              — SWSE component namespace
 
-   This layer enforces:
-   - Flexbox measurement stability (min-height: 0 on scrollable flex children)
-   - Window containment contract (no structural overrides on .window-*)
-   - Stacking context discipline (z-index scale)
-   - Overflow predictability (proper scroll container sizing)
-
-   Load AFTER all app CSS but BEFORE theme overrides.
-   Generated: 2026-02-11 (Run 2 - CSS Audit Pass A)
-   REFACTORED: 2026-02-17 (PHASE 5 - Namespace enforcement)
+   NEVER target .window-*, .dialog, .app, .flexrow, .flexcol globally.
+   REFACTORED: 2026-02-19 (PHASE 3 — Global override elimination)
    ============================================================================ */
 
 /* ===========================
-   PHASE A: Flexbox Normalization
+   FLEXBOX NORMALIZATION
+   Scoped to SWSE containers only
    =========================== */
 
-/* Rule: Any flex container with overflow-y should have min-height: 0 */
-.chargen-body,
-.step-content,
-.content,
-.dashboard-content,
-.chargen-content,
-.app-content,
-.dialog-body,
-.panel-content,
-.list-container,
-.tab-content,
-[class*="scrollable"],
-[class*="scroll-area"],
-[class*="content-area"]
+.application.swse .chargen-body,
+.application.swse .step-content,
+.application.swse .dashboard-content,
+.application.swse .chargen-content,
+.application.swse .app-content,
+.application.swse .dialog-body,
+.application.swse .panel-content,
+.application.swse .list-container,
+.application.swse .tab-content,
+.swse-app .chargen-body,
+.swse-app .step-content,
+.swse-app .dashboard-content,
+.swse-app .chargen-content,
+.swse-app .app-content,
+.swse-app .dialog-body,
+.swse-app .panel-content,
+.swse-app .list-container,
+.swse-app .tab-content
 {
-  min-height: 0 !important;
+  min-height: 0;
 }
 
-/* Rule: Flex containers that are children of flex parents need min-height constraint */
-.form-content {
-  min-height: 0 !important;
-}
-
-.ability-grid {
-  min-height: 0 !important;
-}
-
-.talent-grid {
-  min-height: 0 !important;
-}
-
-.item-list {
-  min-height: 0 !important;
+.application.swse .form-content,
+.application.swse .ability-grid,
+.application.swse .talent-grid,
+.application.swse .item-list,
+.swse-app .form-content,
+.swse-app .ability-grid,
+.swse-app .talent-grid,
+.swse-app .item-list
+{
+  min-height: 0;
 }
 
 /* ===========================
-   PHASE B: Height Chain Elimination
+   APP ROOT — SWSE FLEX LAYOUT
    =========================== */
 
-/* Rule: App root containers must not assume parent height */
-.chargen-app,
-.gm-store-dashboard-container,
-.swse-app-store,
-.swse-levelup-dialog,
-.droid-builder-container,
-.mentor-survey-dialog,
-.upgrade-app,
-[class*="-app"],
-[class*="-dialog"],
-[class*="-container"]
-{
-  /* Remove height: 100% dependency */
-  /* Instead use flexbox with explicit sizing on parent */
-}
-
-/* For app roots specifically: ensure flex layout */
+/* AppV2 root: let parent window-app control height */
 .application.swse {
   display: flex;
   flex-direction: column;
-  /* Let parent window-app control height */
-}
-
-/* ===========================
-   PHASE C: Window Contract Lockdown
-   =========================== */
-
-/* CRITICAL: Do NOT override .window-* structural properties */
-
-/* Rule: window-content must remain unmolested structurally */
-.window-content {
-  /* Do NOT add height, width, display, overflow, position structurally */
-  /* Theme only (color, padding, etc.) */
-}
-
-/* Rule: window-header positioning is owned by Foundry */
-.window-header {
-  position: relative;
-  /* ^ Foundry requires this. Do not change. */
-  overflow: visible !important;
-  /* ^ Never hide header content; it contains controls */
-}
-
-/* Rule: window-app is Foundry's flex container */
-.window-app {
-  /* Do NOT override display, flex properties, or sizing */
-}
-
-/* Rule: Dialogs inherit window structure */
-.dialog.window-app {
-  /* Follows same rules as .window-app */
-}
-
-/* ===========================
-   PHASE 4: Stacking Context & Z-Index Discipline
-   =========================== */
-
-/* Rule: Use Foundry's z-index scale, not arbitrary values */
-
-/* Reduce z-index violations to Foundry-safe scale */
-/* Before: z-index: 9999 (too high) */
-/* After: z-index: var(--z-index-tooltip) or explicit 1000 max */
-
-.skill-action-tooltip,
-[class*="tooltip"],
-[class*="popover"],
-[class*="dropdown"]
-{
-  z-index: 1000 !important; /* Safe upper bound for app-level UI */
-}
-
-/* Notifications stay below modals */
-.notification {
-  z-index: 100 !important;
-}
-
-/* Modals are modal (layer above content) */
-.dialog.modal,
-.application.modal
-{
-  z-index: 50 !important;
-}
-
-/* ===========================
-   PHASE 5: Overflow Predictability
-   =========================== */
-
-/* Rule: Overflow hidden on flex parents requires explicit height or flex constraint */
-
-/* If overflow: hidden is used, ensure parent has height context */
-[style*="overflow: hidden"],
-[class*="overflow-hidden"]
-{
-  /* These need parent height or flex: 1 + min-height: 0 */
-  /* Audit: check parent of any overflow: hidden */
-}
-
-/* ===========================
-   EMERGENCY FIXES (High Risk Clusters)
-   =========================== */
-
-/* Fix: Remove position: relative !important from dialog headers */
-.holo .window-header {
-  position: relative !important;
-  /* ^ This is necessary for dragging, but... */
-  overflow: visible !important;
-  /* ^ Never clip header content */
-}
-
-/* Fix: Dialog headers must not clip inner controls */
-.dialog .window-header::after,
-.dialog .window-header [class*="control"]
-{
-  overflow: visible !important;
-  clip: auto !important;
 }
 
 /* ===========================
    MEASUREMENT STABILITY
    =========================== */
 
-/* Ensure scrollbar width doesn't cause overflow */
-/* PHASE 1: Replace wildcard with explicit selector list */
 .swse,
 .swse > *,
 .swse button,
@@ -188,18 +70,15 @@
 .swse select,
 .swse textarea,
 .swse .form-group,
-.swse .content,
 .swse .panel,
 .swse .list-container {
   box-sizing: border-box;
-  /* ^ Critical: includes padding/border in width calculations */
 }
 
 /* ===========================
    FORM CONTAINER HARDENING
    =========================== */
 
-/* Form containers in flex context need scroll stability */
 form.swse-app,
 form.swse-dialog,
 form[class*="swse"]
@@ -218,23 +97,12 @@ form.swse-dialog .form-group
 }
 
 /* ===========================
-   NOTES FOR NEXT SESSION
+   SWSE TOOLTIP Z-INDEX
+   Scoped to SWSE apps only
    =========================== */
 
-/*
-  This layer is a defensive overlay.
-  It does NOT fix the underlying CSS.
-  It prevents the most dangerous patterns from breaking AppV2.
-
-  Next steps:
-  1. Use this layer to stabilize the system
-  2. Run boot + full test checklist
-  3. If issues remain, audit individual files:
-     - styles/apps/chargen/*.css
-     - styles/sheets/*.css
-     - styles/components/*.css
-  4. Replace defensive fixes with permanent repairs to source files
-
-  DO NOT rely on this layer long-term.
-  It's a safety net during migration, not production code.
-*/
+.application.swse .skill-action-tooltip,
+.swse-app .skill-action-tooltip
+{
+  z-index: var(--swse-z-tooltip, 200);
+}
