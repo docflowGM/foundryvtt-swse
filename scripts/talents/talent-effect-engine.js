@@ -1960,4 +1960,826 @@ export class TalentEffectEngine {
       mutations
     };
   }
+
+  // ============================================================================
+  // DARK SIDE POWERS - Additional Methods for DarkSidePowers.js
+  // ============================================================================
+
+  /**
+   * Build Dark Healing plan
+   * Attack roll vs target Fortitude, damage on hit
+   *
+   * @param {Actor} sourceActor - Actor using Dark Healing
+   * @param {Actor} targetActor - Target to drain
+   * @param {number} damageAmount - Computed damage amount
+   * @param {boolean} spendFP - Whether to spend Force Points
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildDarkHealingPlan({
+    sourceActor,
+    targetActor,
+    damageAmount,
+    spendFP = true
+  }) {
+    // --- Validation ---
+    const currentFP = sourceActor.system.forcePoints?.value ?? 0;
+    if (spendFP && currentFP < 1) {
+      return {
+        success: false,
+        reason: "Insufficient Force Points"
+      };
+    }
+
+    if (!targetActor) {
+      return {
+        success: false,
+        reason: "Invalid target actor"
+      };
+    }
+
+    if (damageAmount <= 0) {
+      return {
+        success: false,
+        reason: "Invalid damage amount"
+      };
+    }
+
+    // --- Compute mutations ---
+    const targetHp = targetActor.system.hp?.value ?? 0;
+    const newTargetHp = Math.max(0, targetHp - damageAmount);
+
+    const sourceHp = sourceActor.system.hp?.value ?? 0;
+    const newSourceHp = Math.min(sourceActor.system.hp?.max ?? 0, sourceHp + damageAmount);
+
+    // --- Build mutations ---
+    const mutations = [];
+
+    if (spendFP) {
+      mutations.push({
+        actor: sourceActor,
+        actorId: sourceActor.id,
+        type: "update",
+        data: {
+          "system.forcePoints.value": currentFP - 1
+        }
+      });
+    }
+
+    mutations.push({
+      actor: targetActor,
+      actorId: targetActor.id,
+      type: "update",
+      data: {
+        "system.hp.value": newTargetHp
+      }
+    });
+
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "update",
+      data: {
+        "system.hp.value": newSourceHp
+      }
+    });
+
+    return {
+      success: true,
+      effect: "darkHealing",
+      sourceActor: sourceActor,
+      targetActor: targetActor,
+      damageAmount: damageAmount,
+      sourceHealAmount: damageAmount,
+      newTargetHp: newTargetHp,
+      newSourceHp: newSourceHp,
+      mutations
+    };
+  }
+
+  /**
+   * Build Improved Dark Healing plan
+   * Always deals at least half damage, heals the amount dealt
+   *
+   * @param {Actor} sourceActor - Actor using Improved Dark Healing
+   * @param {Actor} targetActor - Target to drain
+   * @param {number} damageDealt - Computed damage amount
+   * @param {number} healAmount - Computed heal amount
+   * @param {boolean} spendFP - Whether to spend Force Points
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildImprovedDarkHealingPlan({
+    sourceActor,
+    targetActor,
+    damageDealt,
+    healAmount,
+    spendFP = true
+  }) {
+    // --- Validation ---
+    const currentFP = sourceActor.system.forcePoints?.value ?? 0;
+    if (spendFP && currentFP < 1) {
+      return {
+        success: false,
+        reason: "Insufficient Force Points"
+      };
+    }
+
+    if (!targetActor) {
+      return {
+        success: false,
+        reason: "Invalid target actor"
+      };
+    }
+
+    // --- Compute mutations ---
+    const targetHp = targetActor.system.hp?.value ?? 0;
+    const newTargetHp = Math.max(0, targetHp - damageDealt);
+
+    const sourceHp = sourceActor.system.hp?.value ?? 0;
+    const newSourceHp = Math.min(sourceActor.system.hp?.max ?? 0, sourceHp + healAmount);
+
+    // --- Build mutations ---
+    const mutations = [];
+
+    if (spendFP) {
+      mutations.push({
+        actor: sourceActor,
+        actorId: sourceActor.id,
+        type: "update",
+        data: {
+          "system.forcePoints.value": currentFP - 1
+        }
+      });
+    }
+
+    mutations.push({
+      actor: targetActor,
+      actorId: targetActor.id,
+      type: "update",
+      data: {
+        "system.hp.value": newTargetHp
+      }
+    });
+
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "update",
+      data: {
+        "system.hp.value": newSourceHp
+      }
+    });
+
+    return {
+      success: true,
+      effect: "improvedDarkHealing",
+      sourceActor: sourceActor,
+      targetActor: targetActor,
+      damageDealt: damageDealt,
+      healAmount: healAmount,
+      newTargetHp: newTargetHp,
+      newSourceHp: newSourceHp,
+      mutations
+    };
+  }
+
+  /**
+   * Build Dark Healing Field plan
+   * Multi-target healing by draining
+   *
+   * @param {Actor} sourceActor - Actor using Dark Healing Field
+   * @param {Array<Object>} targetDamages - Array of {targetActor, damageDealt}
+   * @param {number} totalHealAmount - Total healing for source
+   * @param {boolean} spendFP - Whether to spend Force Points
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildDarkHealingFieldPlan({
+    sourceActor,
+    targetDamages,
+    totalHealAmount,
+    spendFP = true
+  }) {
+    // --- Validation ---
+    const currentFP = sourceActor.system.forcePoints?.value ?? 0;
+    if (spendFP && currentFP < 1) {
+      return {
+        success: false,
+        reason: "Insufficient Force Points"
+      };
+    }
+
+    if (!targetDamages || targetDamages.length === 0) {
+      return {
+        success: false,
+        reason: "No valid targets"
+      };
+    }
+
+    // --- Compute source healing ---
+    const sourceHp = sourceActor.system.hp?.value ?? 0;
+    const newSourceHp = Math.min(sourceActor.system.hp?.max ?? 0, sourceHp + totalHealAmount);
+
+    // --- Build mutations ---
+    const mutations = [];
+
+    if (spendFP) {
+      mutations.push({
+        actor: sourceActor,
+        actorId: sourceActor.id,
+        type: "update",
+        data: {
+          "system.forcePoints.value": currentFP - 1
+        }
+      });
+    }
+
+    // Add damage mutations for each target
+    for (const target of targetDamages) {
+      const targetHp = target.targetActor.system.hp?.value ?? 0;
+      const newTargetHp = Math.max(0, targetHp - target.damageDealt);
+
+      mutations.push({
+        actor: target.targetActor,
+        actorId: target.targetActor.id,
+        type: "update",
+        data: {
+          "system.hp.value": newTargetHp
+        }
+      });
+    }
+
+    // Source healing
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "update",
+      data: {
+        "system.hp.value": newSourceHp
+      }
+    });
+
+    return {
+      success: true,
+      effect: "darkHealingField",
+      sourceActor: sourceActor,
+      targetCount: targetDamages.length,
+      totalHealAmount: totalHealAmount,
+      newSourceHp: newSourceHp,
+      mutations
+    };
+  }
+
+  /**
+   * Build Wicked Strike plan
+   * Critical strike with special mechanics
+   *
+   * @param {Actor} sourceActor - Actor using Wicked Strike
+   * @param {Actor} targetActor - Target of strike
+   * @param {number} damageAmount - Computed damage amount
+   * @param {boolean} spendFP - Whether to spend Force Points
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildWickedStrikePlan({
+    sourceActor,
+    targetActor,
+    damageAmount,
+    spendFP = true
+  }) {
+    // --- Validation ---
+    const currentFP = sourceActor.system.forcePoints?.value ?? 0;
+    if (spendFP && currentFP < 1) {
+      return {
+        success: false,
+        reason: "Insufficient Force Points"
+      };
+    }
+
+    if (!targetActor || damageAmount <= 0) {
+      return {
+        success: false,
+        reason: "Invalid target or damage"
+      };
+    }
+
+    // --- Compute mutations ---
+    const targetHp = targetActor.system.hp?.value ?? 0;
+    const newTargetHp = Math.max(0, targetHp - damageAmount);
+
+    // --- Build mutations ---
+    const mutations = [];
+
+    if (spendFP) {
+      mutations.push({
+        actor: sourceActor,
+        actorId: sourceActor.id,
+        type: "update",
+        data: {
+          "system.forcePoints.value": currentFP - 1
+        }
+      });
+    }
+
+    mutations.push({
+      actor: targetActor,
+      actorId: targetActor.id,
+      type: "update",
+      data: {
+        "system.hp.value": newTargetHp
+      }
+    });
+
+    return {
+      success: true,
+      effect: "wickedStrike",
+      sourceActor: sourceActor,
+      targetActor: targetActor,
+      damageAmount: damageAmount,
+      newTargetHp: newTargetHp,
+      mutations
+    };
+  }
+
+  /**
+   * Build Drain Force plan
+   * Force Power draining with attack roll
+   *
+   * @param {Actor} sourceActor - Actor using Drain Force
+   * @param {Actor} targetActor - Target to drain
+   * @param {number} forceDrained - Force Points to drain
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildDrainForcePlan({
+    sourceActor,
+    targetActor,
+    forceDrained
+  }) {
+    // --- Validation ---
+    if (!targetActor || forceDrained <= 0) {
+      return {
+        success: false,
+        reason: "Invalid target or drain amount"
+      };
+    }
+
+    const targetFP = targetActor.system.forcePoints?.value ?? 0;
+    const newTargetFP = Math.max(0, targetFP - forceDrained);
+
+    const sourceFP = sourceActor.system.forcePoints?.value ?? 0;
+    const newSourceFP = sourceFP + forceDrained;
+
+    // --- Build mutations ---
+    const mutations = [];
+
+    mutations.push({
+      actor: targetActor,
+      actorId: targetActor.id,
+      type: "update",
+      data: {
+        "system.forcePoints.value": newTargetFP
+      }
+    });
+
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "update",
+      data: {
+        "system.forcePoints.value": newSourceFP
+      }
+    });
+
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: `drainForceUsed_${game.combat?.id || 'noUse'}`,
+      value: true
+    });
+
+    return {
+      success: true,
+      effect: "drainForce",
+      sourceActor: sourceActor,
+      targetActor: targetActor,
+      forceDrained: forceDrained,
+      newTargetFP: newTargetFP,
+      newSourceFP: newSourceFP,
+      mutations
+    };
+  }
+
+  /**
+   * Build Remove Crippling Strike plan
+   * Remove crippling effect from target
+   *
+   * @param {Actor} targetActor - Actor to remove crippling from
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildRemoveCripplingStrikePlan({
+    targetActor
+  }) {
+    // --- Validation ---
+    const crippledInfo = targetActor.getFlag('foundryvtt-swse', 'isCrippled');
+    if (!crippledInfo) {
+      return {
+        success: false,
+        reason: "Target is not crippled"
+      };
+    }
+
+    // --- Build mutations ---
+    const mutations = [];
+
+    mutations.push({
+      actor: targetActor,
+      actorId: targetActor.id,
+      type: "update",
+      data: {
+        "system.speed.current": crippledInfo.originalSpeed
+      }
+    });
+
+    mutations.push({
+      actor: targetActor,
+      actorId: targetActor.id,
+      type: "unsetFlag",
+      scope: "foundryvtt-swse",
+      key: "isCrippled"
+    });
+
+    return {
+      success: true,
+      effect: "removeCripplingStrike",
+      targetActor: targetActor,
+      restoredSpeed: crippledInfo.originalSpeed,
+      mutations
+    };
+  }
+
+  /**
+   * Build Destroy Dark Side Talisman plan
+   * Remove active Dark Side Talisman and set cooldown
+   *
+   * @param {Actor} sourceActor - Actor destroying talisman
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildDestroyDarkSideTalismanPlan({
+    sourceActor
+  }) {
+    // --- Validation ---
+    const talismantInfo = sourceActor.getFlag('foundryvtt-swse', 'activeDarkSideTalisman');
+    if (!talismantInfo) {
+      return {
+        success: false,
+        reason: "No active Dark Side Talisman"
+      };
+    }
+
+    // --- Compute cooldown ---
+    const cooldownUntil = new Date();
+    cooldownUntil.setHours(cooldownUntil.getHours() + 24);
+
+    // --- Build mutations ---
+    const mutations = [];
+
+    // Delete the item if it exists
+    if (talismantInfo.itemId) {
+      mutations.push({
+        actor: sourceActor,
+        actorId: sourceActor.id,
+        type: "deleteItems",
+        itemIds: [talismantInfo.itemId]
+      });
+    }
+
+    // Unset flag
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "unsetFlag",
+      scope: "foundryvtt-swse",
+      key: "activeDarkSideTalisman"
+    });
+
+    // Set cooldown
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: "darkSideTalismanCooldown",
+      value: cooldownUntil.toISOString()
+    });
+
+    return {
+      success: true,
+      effect: "destroyDarkSideTalisman",
+      sourceActor: sourceActor,
+      talismantInfo: talismantInfo,
+      cooldownHours: 24,
+      mutations
+    };
+  }
+
+  /**
+   * Build Create Sith Talisman plan
+   * Create and set active Sith Talisman
+   *
+   * @param {Actor} sourceActor - Actor creating talisman
+   * @param {boolean} spendFP - Whether to spend Force Points
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildSithTalismanPlan({
+    sourceActor,
+    spendFP = true
+  }) {
+    // --- Validation ---
+    const activeTalisman = sourceActor.getFlag('foundryvtt-swse', 'activeSithTalisman');
+    if (activeTalisman) {
+      return {
+        success: false,
+        reason: "Already has active Sith Talisman"
+      };
+    }
+
+    const currentFP = sourceActor.system.forcePoints?.value ?? 0;
+    if (spendFP && currentFP < 1) {
+      return {
+        success: false,
+        reason: "Insufficient Force Points"
+      };
+    }
+
+    // --- Build talisman info ---
+    const talismantInfo = {
+      createdAt: new Date().toISOString(),
+      createdRound: game.combat?.round ?? 0
+    };
+
+    // --- Build mutations ---
+    const mutations = [];
+
+    if (spendFP) {
+      mutations.push({
+        actor: sourceActor,
+        actorId: sourceActor.id,
+        type: "update",
+        data: {
+          "system.forcePoints.value": currentFP - 1
+        }
+      });
+    }
+
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: "activeSithTalisman",
+      value: talismantInfo
+    });
+
+    return {
+      success: true,
+      effect: "sithTalisman",
+      sourceActor: sourceActor,
+      talismantInfo: talismantInfo,
+      mutations
+    };
+  }
+
+  /**
+   * Build Destroy Sith Talisman plan
+   * Remove active Sith Talisman
+   *
+   * @param {Actor} sourceActor - Actor destroying talisman
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildDestroySithTalismanPlan({
+    sourceActor
+  }) {
+    // --- Validation ---
+    const talismantInfo = sourceActor.getFlag('foundryvtt-swse', 'activeSithTalisman');
+    if (!talismantInfo) {
+      return {
+        success: false,
+        reason: "No active Sith Talisman"
+      };
+    }
+
+    // --- Build mutations ---
+    const mutations = [];
+
+    // Delete the item if it exists
+    if (talismantInfo.itemId) {
+      mutations.push({
+        actor: sourceActor,
+        actorId: sourceActor.id,
+        type: "deleteItems",
+        itemIds: [talismantInfo.itemId]
+      });
+    }
+
+    // Unset flag
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "unsetFlag",
+      scope: "foundryvtt-swse",
+      key: "activeSithTalisman"
+    });
+
+    return {
+      success: true,
+      effect: "destroySithTalisman",
+      sourceActor: sourceActor,
+      talismantInfo: talismantInfo,
+      mutations
+    };
+  }
+
+  /**
+   * Build Clear Sith Alchemical Bonus plan
+   * Remove active Sith Alchemical Bonus from weapon
+   *
+   * @param {Actor} sourceActor - Actor clearing bonus
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildClearSithAlchemicalBonusPlan({
+    sourceActor
+  }) {
+    // --- Validation ---
+    const bonusInfo = sourceActor.getFlag('foundryvtt-swse', 'sithAlchemicalBonus');
+    if (!bonusInfo) {
+      return {
+        success: false,
+        reason: "No active Sith Alchemical Bonus"
+      };
+    }
+
+    // --- Build mutations ---
+    const mutations = [];
+
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "unsetFlag",
+      scope: "foundryvtt-swse",
+      key: "sithAlchemicalBonus"
+    });
+
+    return {
+      success: true,
+      effect: "clearSithAlchemicalBonus",
+      sourceActor: sourceActor,
+      bonusInfo: bonusInfo,
+      mutations
+    };
+  }
+
+  /**
+   * Build Set Stolen Form Talent plan
+   * Record stolen Force Secret talent
+   *
+   * @param {Actor} sourceActor - Actor stealing talent
+   * @param {string} talentName - Name of talent being stolen
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildSetStolenFormTalentPlan({
+    sourceActor,
+    talentName
+  }) {
+    // --- Validation ---
+    if (!talentName) {
+      return {
+        success: false,
+        reason: "Invalid talent name"
+      };
+    }
+
+    // --- Build mutations ---
+    const mutations = [];
+
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: "stolenFormTalent",
+      value: talentName
+    });
+
+    return {
+      success: true,
+      effect: "stolenFormTalent",
+      sourceActor: sourceActor,
+      talentName: talentName,
+      mutations
+    };
+  }
+
+  /**
+   * Build Create Sith Alchemical Weapon plan
+   * Create and enhance weapon with Sith alchemy
+   *
+   * @param {Actor} sourceActor - Actor creating weapon
+   * @param {Object} weaponItem - Base weapon item
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildCreateSithAlchemicalWeaponPlan({
+    sourceActor,
+    weaponItem
+  }) {
+    // --- Validation ---
+    if (!weaponItem) {
+      return {
+        success: false,
+        reason: "Invalid weapon item"
+      };
+    }
+
+    // --- Build mutations ---
+    const mutations = [];
+
+    // Update weapon with alchemical properties
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "updateOwnedItems",
+      items: [{
+        _id: weaponItem.id,
+        "system.alchemicalEnhancement": true,
+        "system.description": `${weaponItem.system?.description || ''}\n\n**Sith Alchemy Enhancement**: This weapon has been enhanced with Sith alchemy.`
+      }]
+    });
+
+    return {
+      success: true,
+      effect: "sithAlchemicalWeapon",
+      sourceActor: sourceActor,
+      weaponName: weaponItem.name,
+      mutations
+    };
+  }
+
+  /**
+   * Build Activate Sith Alchemical Bonus plan
+   * Activate bonus for Sith Alchemical Weapon
+   *
+   * @param {Actor} sourceActor - Actor activating bonus
+   * @param {Object} weaponItem - The weapon being activated
+   * @param {number} bonusAmount - Amount of bonus
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildActivateSithAlchemicalBonusPlan({
+    sourceActor,
+    weaponItem,
+    bonusAmount = 5
+  }) {
+    // --- Validation ---
+    if (!weaponItem) {
+      return {
+        success: false,
+        reason: "Invalid weapon item"
+      };
+    }
+
+    const currentBonus = sourceActor.getFlag('foundryvtt-swse', 'sithAlchemicalBonus');
+    if (currentBonus) {
+      return {
+        success: false,
+        reason: "Bonus already active"
+      };
+    }
+
+    // --- Build bonus info ---
+    const bonusInfo = {
+      weaponId: weaponItem.id,
+      weaponName: weaponItem.name,
+      bonusAmount: bonusAmount,
+      activatedAt: new Date().toISOString(),
+      activatedRound: game.combat?.round ?? 0
+    };
+
+    // --- Build mutations ---
+    const mutations = [];
+
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: "sithAlchemicalBonus",
+      value: bonusInfo
+    });
+
+    return {
+      success: true,
+      effect: "activateSithAlchemicalBonus",
+      sourceActor: sourceActor,
+      weaponName: weaponItem.name,
+      bonusAmount: bonusAmount,
+      mutations
+    };
+  }
 }

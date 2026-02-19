@@ -17,6 +17,8 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { TalentEffectEngine } from './talent-effect-engine.js';
 import { createEffectOnActor } from '../core/document-api-v13.js';
 
 export class SoldierTalentMechanics {
@@ -214,13 +216,32 @@ export class SoldierTalentMechanics {
    * Complete Stunning Strike - Apply stun effect
    */
   static async completeStunningStrike(actor, targetActor, success, combatId, usageFlag) {
-    await actor.setFlag('foundryvtt-swse', usageFlag, true);
+    // PHASE 1: BUILD EFFECT PLAN
+    const plan = await TalentEffectEngine.buildStunningStrikePlan({
+      sourceActor: actor,
+      combatId: combatId,
+      usageFlag: usageFlag
+    });
+
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return { success: false, message: plan.reason };
+    }
+
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Stunning Strike failed: ${result.reason}`);
+      return { success: false, message: `Stunning Strike failed: ${result.reason}` };
+    }
 
     if (!success) {
+      // PHASE 3: SIDE-EFFECTS (Logging only)
       SWSELogger.log(`SWSE Talents | ${actor.name} attempted Stunning Strike on ${targetActor.name} but failed`);
       return { success: true, hit: false };
     }
 
+    // PHASE 3: SIDE-EFFECTS (Effect creation and notifications)
     // Apply stun effect until start of next turn
     await createEffectOnActor(targetActor, {
       name: 'Stunning Strike - Stunned',
@@ -309,8 +330,26 @@ export class SoldierTalentMechanics {
    * Complete Draw Fire - Apply effect
    */
   static async completeDrawFire(actor, targetActor, combatId, usageFlag) {
-    await actor.setFlag('foundryvtt-swse', usageFlag, true);
+    // PHASE 1: BUILD EFFECT PLAN
+    const plan = await TalentEffectEngine.buildDrawFirePlan({
+      sourceActor: actor,
+      combatId: combatId,
+      usageFlag: usageFlag
+    });
 
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return { success: false, message: plan.reason };
+    }
+
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Draw Fire failed: ${result.reason}`);
+      return { success: false, message: `Draw Fire failed: ${result.reason}` };
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Logging and notifications)
     SWSELogger.log(`SWSE Talents | ${actor.name} used Draw Fire on ${targetActor.name}`);
     ui.notifications.info(`${targetActor.name} must attack ${actor.name} or another opponent of ${actor.name}'s choosing on their next turn!`);
 
@@ -380,8 +419,26 @@ export class SoldierTalentMechanics {
       return false;
     }
 
-    await actor.setFlag('foundryvtt-swse', usageFlag, true);
+    // PHASE 1: BUILD EFFECT PLAN
+    const plan = await TalentEffectEngine.buildCoverFirePlan({
+      sourceActor: actor,
+      combatId: combatId,
+      usageFlag: usageFlag
+    });
 
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return false;
+    }
+
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Cover Fire failed: ${result.reason}`);
+      return false;
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Effect creation and notifications)
     // Apply defense bonus
     await createEffectOnActor(ally, {
       name: 'Cover Fire - Defense Bonus',
@@ -471,13 +528,32 @@ export class SoldierTalentMechanics {
    * Complete Devastating Attack - Mark as used
    */
   static async completeDevastatingAttack(actor, targetActor, success, combatId, usageFlag) {
-    await actor.setFlag('foundryvtt-swse', usageFlag, true);
+    // PHASE 1: BUILD EFFECT PLAN
+    const plan = await TalentEffectEngine.buildDevastatingAttackPlan({
+      sourceActor: actor,
+      combatId: combatId,
+      usageFlag: usageFlag
+    });
+
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return { success: false, message: plan.reason };
+    }
+
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Devastating Attack failed: ${result.reason}`);
+      return { success: false, message: `Devastating Attack failed: ${result.reason}` };
+    }
 
     if (!success) {
+      // PHASE 3: SIDE-EFFECTS (Logging only)
       SWSELogger.log(`SWSE Talents | ${actor.name} attempted Devastating Attack on ${targetActor.name} but missed`);
       return { success: true, hit: false };
     }
 
+    // PHASE 3: SIDE-EFFECTS (Logging and notifications)
     SWSELogger.log(`SWSE Talents | ${actor.name} used Devastating Attack on ${targetActor.name}`);
     ui.notifications.info(`${actor.name} unleashes a Devastating Attack! Double the damage!`);
 
@@ -543,13 +619,32 @@ export class SoldierTalentMechanics {
    * Complete Penetrating Attack
    */
   static async completePenetratingAttack(actor, targetActor, success, combatId, usageFlag) {
-    await actor.setFlag('foundryvtt-swse', usageFlag, true);
+    // PHASE 1: BUILD EFFECT PLAN
+    const plan = await TalentEffectEngine.buildPenetratingAttackPlan({
+      sourceActor: actor,
+      combatId: combatId,
+      usageFlag: usageFlag
+    });
+
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return { success: false, message: plan.reason };
+    }
+
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Penetrating Attack failed: ${result.reason}`);
+      return { success: false, message: `Penetrating Attack failed: ${result.reason}` };
+    }
 
     if (!success) {
+      // PHASE 3: SIDE-EFFECTS (Logging only)
       SWSELogger.log(`SWSE Talents | ${actor.name} attempted Penetrating Attack on ${targetActor.name} but missed`);
       return { success: true, hit: false };
     }
 
+    // PHASE 3: SIDE-EFFECTS (Logging and notifications)
     SWSELogger.log(`SWSE Talents | ${actor.name} used Penetrating Attack on ${targetActor.name}`);
     ui.notifications.info(`${actor.name} makes a Penetrating Attack! Ignore the target's Damage Reduction!`);
 
@@ -682,8 +777,26 @@ export class SoldierTalentMechanics {
    * Complete Battle Analysis
    */
   static async completeBattleAnalysis(actor, targetActor, combatId, usageFlag) {
-    await actor.setFlag('foundryvtt-swse', usageFlag, true);
+    // PHASE 1: BUILD EFFECT PLAN
+    const plan = await TalentEffectEngine.buildBattleAnalysisPlan({
+      sourceActor: actor,
+      combatId: combatId,
+      usageFlag: usageFlag
+    });
 
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return { success: false, message: plan.reason };
+    }
+
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Battle Analysis failed: ${result.reason}`);
+      return { success: false, message: `Battle Analysis failed: ${result.reason}` };
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Logging and notifications)
     SWSELogger.log(`SWSE Talents | ${actor.name} analyzed ${targetActor.name}'s weaknesses`);
     ui.notifications.info(`${actor.name} analyzes ${targetActor.name} and discovers a weakness! Gain +2 to attack rolls against this target!`);
 
