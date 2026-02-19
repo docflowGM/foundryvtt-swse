@@ -6,6 +6,7 @@ import { ProgressionSession } from './ProgressionSession.js';
 import { SuggestionService } from './SuggestionService.js';
 import { createChatMessage } from '../core/document-api-v13.js';
 import { SWSELevelUp } from '../apps/swse-levelup.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 /**
  * Unified SWSE Progression Engine
@@ -916,7 +917,7 @@ async applyScalingFeature(feature) {
         finalActorUpdates['system.hp.value'] = (this.actor.system.hp?.value || 0) + this._pendingHPDelta;
         this._pendingHPDelta = 0;
       }
-      await this.actor.update(finalActorUpdates);
+      await ActorEngine.updateActor(this.actor, finalActorUpdates);
 
       swseLogger.log(`Progression finalized for ${this.actor.name}`);
 
@@ -1094,7 +1095,7 @@ async applyScalingFeature(feature) {
 
     // Create items if any
     if (itemsToCreate.length > 0) {
-      await this.actor.createEmbeddedDocuments('Item', itemsToCreate);
+      await ActorEngine.createEmbeddedDocuments(this.actor, 'Item', itemsToCreate);
       swseLogger.log(`Created ${itemsToCreate.length} items from progression`);
     }
   }
@@ -1360,7 +1361,7 @@ async applyScalingFeature(feature) {
 
     // Store the character's starting class for mentor system (data only)
     if (levelInClass === 1) {
-      await this.actor.update({
+      await ActorEngine.updateActor(this.actor, {
         'system.swse.progression.level1Class': classData.name
       });
     }
@@ -1950,7 +1951,7 @@ async applyScalingFeature(feature) {
       try {
         // Get the feat document and create it on the actor
         const doc = await featPack.getDocument(entry._id);
-        await this.actor.createEmbeddedDocuments('Item', [doc.toObject()]);
+        await ActorEngine.createEmbeddedDocuments(this.actor, 'Item', [doc.toObject()]);
         swseLogger.log(`Auto-granted feat: ${name}`);
       } catch (err) {
         swseLogger.error(`Failed to auto-grant feat ${name}:`, err);

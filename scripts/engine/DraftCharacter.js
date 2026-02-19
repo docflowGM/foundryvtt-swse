@@ -1,5 +1,6 @@
 // scripts/engine/DraftCharacter.js
 import { swseLogger } from '../utils/logger.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 /**
  * DraftCharacter - Separate state model for character-in-progress
@@ -619,7 +620,7 @@ export class DraftCharacter {
 
     // Apply updates atomically
     swseLogger.log(`[DRAFT] Applying ${Object.keys(updates).length} updates to actor...`);
-    await this.actor.update(updates);
+    await ActorEngine.updateActor(this.actor, updates);
 
     // Create items from choices
     await this._createItems();
@@ -688,7 +689,7 @@ export class DraftCharacter {
 
     if (itemsToCreate.length > 0) {
       swseLogger.log(`[DRAFT] Creating ${itemsToCreate.length} items...`);
-      await this.actor.createEmbeddedDocuments('Item', itemsToCreate);
+      await ActorEngine.createEmbeddedDocuments(this.actor, 'Item', itemsToCreate);
     }
   }
 

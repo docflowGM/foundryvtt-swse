@@ -7,6 +7,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -140,7 +141,7 @@ export class GMDroidApprovalDashboard extends HandlebarsApplicationMixin(Applica
     };
 
     try {
-      await actor.update(updates);
+      await ActorEngine.updateActor(actor, updates);
 
       // Add history entry
       const buildHistory = droidData.buildHistory || [];
@@ -149,7 +150,7 @@ export class GMDroidApprovalDashboard extends HandlebarsApplicationMixin(Applica
         action: 'approved_by_gm',
         detail: `GM approved droid. Cost: ${cost} credits deducted.`
       });
-      await actor.update({
+      await ActorEngine.updateActor(actor, {
         'system.droidSystems.buildHistory': buildHistory
       });
 
@@ -222,7 +223,7 @@ export class GMDroidApprovalDashboard extends HandlebarsApplicationMixin(Applica
         'system.droidSystems.stateMode': 'DRAFT'
       };
 
-      await actor.update(updates);
+      await ActorEngine.updateActor(actor, updates);
 
       // Add history entry
       const buildHistory = droidData.buildHistory || [];
@@ -231,7 +232,7 @@ export class GMDroidApprovalDashboard extends HandlebarsApplicationMixin(Applica
         action: 'rejected_by_gm',
         detail: `GM rejected droid: ${rejectionReason}`
       });
-      await actor.update({
+      await ActorEngine.updateActor(actor, {
         'system.droidSystems.buildHistory': buildHistory
       });
 
