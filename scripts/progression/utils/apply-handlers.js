@@ -2,7 +2,11 @@
  * Normalized Application Handlers for Progression Engine
  * Every game action funnels through these centralized handlers.
  * Ensures consistent, normalized application of class, feat, talent, and power selections.
+ *
+ * PHASE 3: All mutations route through ActorEngine
  */
+
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 export const ApplyHandlers = {
 
@@ -14,9 +18,14 @@ export const ApplyHandlers = {
         const item = actor.items.find(i => i.type === 'class' && i.name === classDoc.name);
 
         if (item) {
-            await actor.updateOwnedItem(item, { 'system.level': level });
+            // PHASE 3: Route through ActorEngine
+            await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{
+                _id: item.id,
+                'system.level': level
+            }]);
         } else {
-            await actor.createEmbeddedDocuments('Item', [{
+            // PHASE 3: Route through ActorEngine
+            await ActorEngine.createEmbeddedDocuments(actor, 'Item', [{
                 name: classDoc.name,
                 type: 'class',
                 img: classDoc.img,
@@ -40,7 +49,8 @@ export const ApplyHandlers = {
     async applyFeat(actor, featObj) {
         const exists = actor.items.some(i => i.type === 'feat' && i.name === featObj.name);
         if (!exists || featObj.repeatable) {
-            await actor.createEmbeddedDocuments('Item', [featObj]);
+            // PHASE 3: Route through ActorEngine
+            await ActorEngine.createEmbeddedDocuments(actor, 'Item', [featObj]);
         }
     },
 
@@ -51,7 +61,8 @@ export const ApplyHandlers = {
         const exists = actor.items.some(i => i.type === 'talent' && i.name === talent.name);
         if (exists) {return;}
 
-        await actor.createEmbeddedDocuments('Item', [{
+        // PHASE 3: Route through ActorEngine
+        await ActorEngine.createEmbeddedDocuments(actor, 'Item', [{
             name: talent.name,
             type: 'talent',
             img: talent.img,
@@ -66,7 +77,8 @@ export const ApplyHandlers = {
         const exists = actor.items.some(i => i.type === 'forcepower' && i.name === power.name);
         if (exists) {return;}
 
-        await actor.createEmbeddedDocuments('Item', [{
+        // PHASE 3: Route through ActorEngine
+        await ActorEngine.createEmbeddedDocuments(actor, 'Item', [{
             name: power.name,
             type: 'forcepower',
             img: power.img,
@@ -81,7 +93,8 @@ export const ApplyHandlers = {
     async applyScalingFeature(actor, feature, className) {
         const key = `${className}-${feature.name}`.replace(/\s+/g, '-').toLowerCase();
 
-        await actor.update({
+        // PHASE 3: Route through ActorEngine
+        await ActorEngine.updateActor(actor, {
             [`system.scaling.${key}.value`]: feature.value,
             [`system.scaling.${key}.source`]: className
         });
@@ -98,7 +111,8 @@ export const ApplyHandlers = {
         );
 
         if (!exists) {
-            await actor.createEmbeddedDocuments('Item', [{
+            // PHASE 3: Route through ActorEngine
+            await ActorEngine.createEmbeddedDocuments(actor, 'Item', [{
                 name: feature.name,
                 type: 'classfeature',
                 img: 'icons/svg/upgrade.svg',
@@ -113,7 +127,8 @@ export const ApplyHandlers = {
     // APPLY SKILL TRAINING
     // ────────────────────────────────────────────
     async applySkillTraining(actor, skillKey) {
-        await actor.update({
+        // PHASE 3: Route through ActorEngine
+        await ActorEngine.updateActor(actor, {
             [`system.skills.${skillKey}.trained`]: true
         });
     },
@@ -131,7 +146,8 @@ export const ApplyHandlers = {
         }
 
         if (Object.keys(updates).length > 0) {
-            await actor.update(updates);
+            // PHASE 3: Route through ActorEngine
+            await ActorEngine.updateActor(actor, updates);
         }
     },
 
@@ -140,7 +156,8 @@ export const ApplyHandlers = {
     // ────────────────────────────────────────────
     async applyHPGain(actor, hpGain) {
         if (hpGain > 0) {
-            await actor.update({
+            // PHASE 3: Route through ActorEngine
+            await ActorEngine.updateActor(actor, {
                 'system.hp.max': (actor.system.hp?.max || 0) + hpGain,
                 'system.hp.value': (actor.system.hp?.value || 0) + hpGain
             });
