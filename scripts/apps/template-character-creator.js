@@ -1,6 +1,7 @@
 import SWSEFormApplicationV2 from './base/swse-form-application-v2.js';
 import { ProgressionEngine } from '../progression/engine/progression-engine.js';
 import { createActor } from '../core/document-api-v13.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 // ============================================
 // Template Character Creator
 // Class-first selection with playing card UI
@@ -793,7 +794,7 @@ async _prepareContext(options) {
           if (classItem) {
             const classData = classItem.toObject();
             classData.system.level = template.level || 1;
-            await actor.createEmbeddedDocuments('Item', [classData]);
+            await ActorEngine.createEmbeddedDocuments(actor, 'Item', [classData]);
             SWSELogger.log(`SWSE | Added class: ${className}`);
             return;
           }
@@ -812,7 +813,7 @@ async _prepareContext(options) {
       const classData = classItem.toObject();
       classData.system.level = template.level || 1;
 
-      await actor.createEmbeddedDocuments('Item', [classData]);
+      await ActorEngine.createEmbeddedDocuments(actor, 'Item', [classData]);
       SWSELogger.log(`SWSE | Added class: ${template.className}`);
 
       // Auto-check Force Sensitive if this is a Force-using class
@@ -938,10 +939,10 @@ async _prepareContext(options) {
               const itemData = item.toObject();
               if (itemData.system && typeof itemData.system.quantity === 'number') {
                 itemData.system.quantity = equipmentQty;
-                await actor.createEmbeddedDocuments('Item', [itemData]);
+                await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
               } else {
                 for (let i = 0; i < equipmentQty; i++) {
-                  await actor.createEmbeddedDocuments('Item', [itemData]);
+                  await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
                 }
               }
               results.added.push(itemData.name);

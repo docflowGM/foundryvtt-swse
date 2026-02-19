@@ -10,6 +10,9 @@
  *   - Taking 10 on initiative
  *   - Applying results to the Combat Tracker
  */
+
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
+
 export class SWSEInitiative {
 
   /* ------------------------------------------------------------------ */
@@ -114,7 +117,7 @@ export class SWSEInitiative {
         total += forceBonus;
 
         // Decrement Force Points immediately
-        await actor.update({
+        await ActorEngine.updateActor(actor, {
           'system.forcePoints.value': fp - 1
         });
 

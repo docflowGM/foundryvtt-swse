@@ -10,6 +10,7 @@
 import { measureDistance, getVehicleCTPenalty, createVehicleCTEffect } from './vehicle-shared.js';
 import { createChatMessage, createEffectOnActor } from '../../../core/document-api-v13.js';
 import { DamageSystem } from '../../damage-system.js';
+import { ActorEngine } from '../../../actors/engine/actor-engine.js';
 
 export class SWSEVehicleCollisions {
 
@@ -85,7 +86,7 @@ export class SWSEVehicleCollisions {
    */
   static async _removeOldVCT(actor) {
     const effects = actor.effects.filter(e => e.flags?.swse?.vehicleCT !== undefined);
-    if (effects.length) {await actor.deleteEmbeddedDocuments('ActiveEffect', effects.map(e => e.id));}
+    if (effects.length) {await ActorEngine.deleteEmbeddedDocuments(actor, 'ActiveEffect', effects.map(e => e.id));}
   }
 
   /**
