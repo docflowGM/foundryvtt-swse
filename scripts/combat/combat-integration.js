@@ -136,8 +136,12 @@ export class ConditionTrackComponent {
         if (!game.user.isGM) {
           return ui.notifications.warn('Only the GM may directly set the Condition Track.');
         }
+        // PHASE 3: Route through ActorEngine
         const step = Number(ev.currentTarget.dataset.step);
-        await actor.update({ 'system.conditionTrack.current': Math.clamp(step, 0, 5) });
+        const { ActorEngine } = await import('../../actors/engine/actor-engine.js');
+        await ActorEngine.updateActor(actor, {
+          'system.conditionTrack.current': Math.clamp(step, 0, 5)
+        });
       });
     });
 
@@ -201,7 +205,11 @@ export class ConditionTrackComponent {
           ev.target.checked = actor.system.conditionTrack.persistent;
           return;
         }
-        await actor.update({ 'system.conditionTrack.persistent': ev.target.checked });
+        // PHASE 3: Route through ActorEngine
+        const { ActorEngine } = await import('../../actors/engine/actor-engine.js');
+        await ActorEngine.updateActor(actor, {
+          'system.conditionTrack.persistent': ev.target.checked
+        });
       });
     }
   }

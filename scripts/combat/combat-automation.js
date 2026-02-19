@@ -49,7 +49,9 @@ export class SWSECombatAutomation {
         if (!actor) {continue;}
 
         if (actor.type === 'character') {
-          await actor.update({ 'system.secondWind.used': false }, { diff: true });
+          // PHASE 3: Route through ActorEngine
+          const { ActorEngine } = await import('../../actors/engine/actor-engine.js');
+          await ActorEngine.resetSecondWind(actor);
         }
       }
     });

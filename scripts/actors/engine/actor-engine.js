@@ -681,6 +681,28 @@ export const ActorEngine = {
       });
       throw err;
     }
+  },
+
+  /**
+   * resetSecondWind() — Reset second wind used flag
+   *
+   * @param {Actor} actor - target actor
+   */
+  async resetSecondWind(actor) {
+    try {
+      if (!actor) {throw new Error('resetSecondWind() called with no actor');}
+
+      await this.updateActor(actor, {
+        'system.secondWind.used': false
+      });
+
+      swseLogger.log(`Second wind reset for ${actor.name}`);
+      return { reset: true };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.resetSecondWind failed for ${actor?.name ?? 'unknown actor'}`, { error: err });
+      throw err;
+    }
   }
 
 };

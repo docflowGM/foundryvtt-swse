@@ -37,11 +37,15 @@ export class MassiveDamageEngine {
     const ct = actor.system.conditionTrack || {};
     if (!success) {
       // Move CT forward 1 (or apply house rule variant)
+      // PHASE 3: Route through ActorEngine
       const houseRulePersistent = actor.system.houserules?.massiveDamagePersistent;
       const moves = houseRulePersistent ? 2 : 1; // Double move if persistent rule
 
-      const newCT = Math.min(5, (ct.current || 0) + moves);
-      await actor.update({ 'system.conditionTrack.current': newCT });
+      const { ActorEngine } = await import('../../actors/engine/actor-engine.js');
+      for (let i = 0; i < moves; i++) {
+        await ActorEngine.applyConditionShift(actor, 1, 'massive-damage');
+      }
+      const newCT = actor.system.conditionTrack?.current || 0;
 
       return {
         triggered: true,
