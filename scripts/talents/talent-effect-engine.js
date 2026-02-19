@@ -848,4 +848,470 @@ export class TalentEffectEngine {
       mutations
     };
   }
+
+  /**
+   * Build Inspire Confidence plan - Grant ally +2 morale bonus
+   */
+  static async buildInspireConfidencePlan({
+    sourceActor,
+    usageFlag
+  }) {
+    const mutations = [];
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: usageFlag,
+      value: true
+    });
+
+    return {
+      success: true,
+      effect: "inspireConfidence",
+      sourceActor: sourceActor,
+      mutations
+    };
+  }
+
+  /**
+   * Build Bolster Ally plan - Grant ally temporary HP
+   */
+  static async buildBolsterAllyPlan({
+    sourceActor,
+    allyActor,
+    tempHP,
+    usageFlag
+  }) {
+    if (!allyActor) {
+      return { success: false, reason: "Invalid ally" };
+    }
+
+    const mutations = [];
+
+    // Mark as used
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: usageFlag,
+      value: true
+    });
+
+    // Apply temporary HP
+    const currentTempHP = allyActor.system.attributes?.temporaryHP || 0;
+    mutations.push({
+      actor: allyActor,
+      actorId: allyActor.id,
+      type: "update",
+      data: {
+        "system.attributes.temporaryHP": currentTempHP + tempHP
+      }
+    });
+
+    return {
+      success: true,
+      effect: "bolsterAlly",
+      sourceActor: sourceActor,
+      allyActor: allyActor,
+      tempHP: tempHP,
+      mutations
+    };
+  }
+
+  /**
+   * Build Ignite Fervor plan - Grant allies +1 attack and damage
+   */
+  static async buildIgniteFervorPlan({
+    sourceActor,
+    usageFlag
+  }) {
+    const mutations = [];
+
+    // Mark as used
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: usageFlag,
+      value: true
+    });
+
+    return {
+      success: true,
+      effect: "igniteFervor",
+      sourceActor: sourceActor,
+      mutations
+    };
+  }
+
+  /**
+   * Build Protective Stance plan - Block damage for adjacent ally
+   */
+  static async buildProtectiveStancePlan({
+    sourceActor,
+    usageFlag
+  }) {
+    const mutations = [];
+
+    // Mark as used
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: usageFlag,
+      value: true
+    });
+
+    return {
+      success: true,
+      effect: "protectiveStance",
+      sourceActor: sourceActor,
+      mutations
+    };
+  }
+
+  // ============================================================================
+  // SCOUNDREL TALENTS
+  // ============================================================================
+
+  /**
+   * Build Knack plan - Mark reroll ability check as used
+   *
+   * @param {Actor} sourceActor - Actor using Knack
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildKnackPlan({
+    sourceActor
+  }) {
+    const mutations = [];
+
+    // Mark Knack as used today
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: "knack_dayUsed",
+      value: true
+    });
+
+    return {
+      success: true,
+      effect: "knack",
+      sourceActor: sourceActor,
+      mutations
+    };
+  }
+
+  /**
+   * Build Dastardly Strike plan - Disarm or trip on attack
+   *
+   * @param {Actor} sourceActor - Actor using Dastardly Strike
+   * @param {string} usageFlag - Combat-specific usage flag
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildDastardlyStrikePlan({
+    sourceActor,
+    usageFlag
+  }) {
+    const mutations = [];
+
+    // Mark Dastardly Strike as used this encounter
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: usageFlag,
+      value: true
+    });
+
+    return {
+      success: true,
+      effect: "dastardlyStrike",
+      sourceActor: sourceActor,
+      mutations
+    };
+  }
+
+  /**
+   * Build Cunning Strategist plan - Grant ally attack bonus
+   *
+   * @param {Actor} sourceActor - Actor using Cunning Strategist
+   * @param {string} usageFlag - Combat-specific usage flag
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildCunningStrategistPlan({
+    sourceActor,
+    usageFlag
+  }) {
+    const mutations = [];
+
+    // Mark Cunning Strategist as used this encounter
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: usageFlag,
+      value: true
+    });
+
+    return {
+      success: true,
+      effect: "cunningStrategist",
+      sourceActor: sourceActor,
+      mutations
+    };
+  }
+
+  /**
+   * Build Stunning Strike usage flag plan
+   *
+   * @param {Actor} sourceActor - Actor using Stunning Strike
+   * @param {string} combatId - Current combat ID
+   * @param {string} usageFlag - Flag key for tracking usage
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildStunningStrikePlan({
+    sourceActor,
+    combatId,
+    usageFlag
+  }) {
+    // --- Validation ---
+    if (!combatId || !usageFlag) {
+      return {
+        success: false,
+        reason: "Invalid combat ID or usage flag"
+      };
+    }
+
+    // --- Build mutations ---
+    const mutations = [];
+
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: usageFlag,
+      value: true
+    });
+
+    return {
+      success: true,
+      effect: "stunningStrike",
+      sourceActor: sourceActor,
+      mutations
+    };
+  }
+
+  /**
+   * Build Draw Fire usage flag plan
+   *
+   * @param {Actor} sourceActor - Actor using Draw Fire
+   * @param {string} combatId - Current combat ID
+   * @param {string} usageFlag - Flag key for tracking usage
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildDrawFirePlan({
+    sourceActor,
+    combatId,
+    usageFlag
+  }) {
+    // --- Validation ---
+    if (!combatId || !usageFlag) {
+      return {
+        success: false,
+        reason: "Invalid combat ID or usage flag"
+      };
+    }
+
+    // --- Build mutations ---
+    const mutations = [];
+
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: usageFlag,
+      value: true
+    });
+
+    return {
+      success: true,
+      effect: "drawFire",
+      sourceActor: sourceActor,
+      mutations
+    };
+  }
+
+  /**
+   * Build Cover Fire usage flag plan
+   *
+   * @param {Actor} sourceActor - Actor using Cover Fire
+   * @param {string} combatId - Current combat ID
+   * @param {string} usageFlag - Flag key for tracking usage
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildCoverFirePlan({
+    sourceActor,
+    combatId,
+    usageFlag
+  }) {
+    // --- Validation ---
+    if (!combatId || !usageFlag) {
+      return {
+        success: false,
+        reason: "Invalid combat ID or usage flag"
+      };
+    }
+
+    // --- Build mutations ---
+    const mutations = [];
+
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: usageFlag,
+      value: true
+    });
+
+    return {
+      success: true,
+      effect: "coverFire",
+      sourceActor: sourceActor,
+      mutations
+    };
+  }
+
+  /**
+   * Build Devastating Attack usage flag plan
+   *
+   * @param {Actor} sourceActor - Actor using Devastating Attack
+   * @param {string} combatId - Current combat ID
+   * @param {string} usageFlag - Flag key for tracking usage
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildDevastatingAttackPlan({
+    sourceActor,
+    combatId,
+    usageFlag
+  }) {
+    // --- Validation ---
+    if (!combatId || !usageFlag) {
+      return {
+        success: false,
+        reason: "Invalid combat ID or usage flag"
+      };
+    }
+
+    // --- Build mutations ---
+    const mutations = [];
+
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: usageFlag,
+      value: true
+    });
+
+    return {
+      success: true,
+      effect: "devastatingAttack",
+      sourceActor: sourceActor,
+      mutations
+    };
+  }
+
+  /**
+   * Build Penetrating Attack usage flag plan
+   *
+   * @param {Actor} sourceActor - Actor using Penetrating Attack
+   * @param {string} combatId - Current combat ID
+   * @param {string} usageFlag - Flag key for tracking usage
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildPenetratingAttackPlan({
+    sourceActor,
+    combatId,
+    usageFlag
+  }) {
+    // --- Validation ---
+    if (!combatId || !usageFlag) {
+      return {
+        success: false,
+        reason: "Invalid combat ID or usage flag"
+      };
+    }
+
+    // --- Build mutations ---
+    const mutations = [];
+
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: usageFlag,
+      value: true
+    });
+
+    return {
+      success: true,
+      effect: "penetratingAttack",
+      sourceActor: sourceActor,
+      mutations
+    };
+  }
+
+  /**
+   * Build Battle Analysis usage flag plan
+   *
+   * @param {Actor} sourceActor - Actor using Battle Analysis
+   * @param {string} combatId - Current combat ID
+   * @param {string} usageFlag - Flag key for tracking usage
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildBattleAnalysisPlan({
+    sourceActor,
+    combatId,
+    usageFlag
+  }) {
+    // --- Validation ---
+    if (!combatId || !usageFlag) {
+      return {
+        success: false,
+        reason: "Invalid combat ID or usage flag"
+      };
+    }
+
+    // --- Build mutations ---
+    const mutations = [];
+
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: usageFlag,
+      value: true
+    });
+
+    return {
+      success: true,
+      effect: "battleAnalysis",
+      sourceActor: sourceActor,
+      mutations
+    };
+  }
 }
