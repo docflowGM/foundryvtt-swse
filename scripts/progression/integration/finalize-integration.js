@@ -11,6 +11,7 @@
  */
 
 import { swseLogger as SWSELogger } from '../../utils/logger.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { SnapshotManager } from '../utils/snapshot-manager.js';
 import { dispatchFeature } from '../engine/feature-dispatcher.js';
 import { ForceProgressionEngine } from '../engine/force-progression.js';
@@ -27,33 +28,48 @@ export class FinalizeIntegration {
     /**
      * Run integrated finalization with all subsystems
      * Called from progression engine's finalize() method
+     *
+     * PHASE 3: Consolidated into single applyProgression() call
+     * All mutations are atomic and audited by Sentinel
      */
     static async integratedFinalize(actor, mode = 'chargen', beforeSnapshot = null, engine = null) {
         try {
             SWSELogger.log(`Starting integrated finalization for ${actor.name} (${mode})`);
 
-            // Step 1: Create safety snapshot (if not already provided)
+            // Step 0: Create safety snapshot (if not already provided)
             if (!beforeSnapshot) {
                 beforeSnapshot = actor.toObject(false);
                 await SnapshotManager.createSnapshot(actor, `Before ${mode === 'chargen' ? 'Character Creation' : 'Level Up'}`);
                 SWSELogger.log('Safety snapshot created');
             }
 
-            // Step 2: Apply selections from progression data
-            await this._applyProgressionSelections(actor, mode);
+            // ========================================================================
+            // PHASE 3: Build atomic progression packet
+            // All mutations consolidated into single applyProgression() call
+            // ========================================================================
+            const progressionPacket = await this._buildProgressionPacket(actor, mode, engine);
+
+            // Apply all mutations atomically via ActorEngine
+            const result = await ActorEngine.applyProgression(actor, progressionPacket);
+            SWSELogger.log('Progression mutations applied atomically', {
+                mutations: result.mutationCount,
+                itemsCreated: result.itemsCreated,
+                itemsDeleted: result.itemsDeleted
+            });
+
+            // ========================================================================
+            // PHASE 3: Post-mutation operations (read-only observers)
+            // These run AFTER all mutations complete
+            // They see settled state only
+            // ========================================================================
 
             // Step 3: Process class features through Feature Dispatcher
+            // (Currently placeholder - no mutations)
             await this._dispatchClassFeatures(actor, mode);
 
-            // Step 4: Finalize specialized progressions (including choice pickers)
+            // Step 4: Finalize specialized progressions (Force, Language, Equipment)
+            // These may emit hooks but should NOT mutate during progression transaction
             await this._finalizeSpecializedProgressions(actor, mode, engine);
-
-            // Step 5: Recalculate derived statistics
-            const derivedUpdates = await DerivedCalculator.computeAll(actor);
-            if (derivedUpdates) {
-                await actor.update(derivedUpdates);
-            }
-            SWSELogger.log('Derived statistics recalculated');
 
             // Step 6: Generate and display level-up summary
             const afterSnapshot = actor.toObject(false);
@@ -73,46 +89,54 @@ export class FinalizeIntegration {
     }
 
     /**
-     * Apply selections from progression data to actor
+     * Build atomic progression packet from all progression data
+     * Does NOT mutate - just collects data
      * @private
      */
-    static async _applyProgressionSelections(actor, mode) {
+    static async _buildProgressionPacket(actor, mode, engine = null) {
         const progression = actor.system.progression || {};
+        const packet = {
+            xpDelta: 0,           // Handled elsewhere
+            featsAdded: [],
+            featsRemoved: [],
+            talentsAdded: [],
+            talentsRemoved: [],
+            trainedSkills: {},
+            itemsToCreate: [],
+            stateUpdates: {}
+        };
 
-        SWSELogger.log('Applying progression selections to actor');
-
-        // Apply feats
+        // Collect feats
         if (progression.feats && progression.feats.length > 0) {
-            const updates = {};
-            const uniqueFeats = [...new Set(progression.feats)]; // Deduplicate
-            updates['system.progression.feats'] = uniqueFeats;
-            await actor.update(updates);
-            SWSELogger.log(`Applied ${uniqueFeats.length} selected feats`);
+            const uniqueFeats = [...new Set(progression.feats)];
+            packet.featsAdded = uniqueFeats;
+            packet.stateUpdates['system.progression.feats'] = uniqueFeats;
         }
 
-        // Apply talents
+        // Collect talents
         if (progression.talents && progression.talents.length > 0) {
-            const updates = {};
-            const uniqueTalents = [...new Set(progression.talents)]; // Deduplicate
-            updates['system.progression.talents'] = uniqueTalents;
-            await actor.update(updates);
-            SWSELogger.log(`Applied ${uniqueTalents.length} selected talents`);
+            const uniqueTalents = [...new Set(progression.talents)];
+            packet.talentsAdded = uniqueTalents;
+            packet.stateUpdates['system.progression.talents'] = uniqueTalents;
         }
 
-        // Apply trained skills
+        // Collect trained skills
         if (progression.trainedSkills && Object.keys(progression.trainedSkills).length > 0) {
-            const updates = {};
             for (const [skillKey, isTrainable] of Object.entries(progression.trainedSkills)) {
                 if (isTrainable) {
-                    updates[`system.skills.${skillKey}.trained`] = true;
+                    packet.trainedSkills[skillKey] = true;
+                    packet.stateUpdates[`system.skills.${skillKey}.trained`] = true;
                 }
             }
-            if (Object.keys(updates).length > 0) {
-                await actor.update(updates);
-                SWSELogger.log(`Applied skill training`);
-            }
         }
+
+        // Collect items to create (from specialized engines)
+        // This would come from Force, Equipment, etc. selections
+        // For now, empty - specialized engines will populate this
+
+        return packet;
     }
+
 
     /**
      * Dispatch all class features through Feature Dispatcher
@@ -195,6 +219,8 @@ export class FinalizeIntegration {
     /**
      * Alternative simple integration for existing finalize() method
      * Can be called as a quick addition to existing code
+     *
+     * PHASE 3: Also uses atomic applyProgression()
      */
     static async quickIntegrate(actor, mode = 'chargen', engine = null) {
         try {
@@ -202,12 +228,18 @@ export class FinalizeIntegration {
             const beforeSnapshot = actor.toObject(false);
             await SnapshotManager.createSnapshot(actor, `Before ${mode === 'chargen' ? 'Character Creation' : 'Level Up'}`);
 
-            // Process choice selections
+            // ========================================================================
+            // PHASE 3: Build and apply progression packet atomically
+            // ========================================================================
+            const progressionPacket = await this._buildProgressionPacket(actor, mode, engine);
+            await ActorEngine.applyProgression(actor, progressionPacket);
+
+            // Process choice selections (read-only)
             if (engine && engine.data) {
                 await this._processChoiceSelections(actor, engine);
             }
 
-            // Finalize specialized progressions
+            // Finalize specialized progressions (read-only, may emit hooks)
             const progression = actor.system.progression || {};
             const className = progression.classLevels?.[0]?.class || '';
             const backgroundName = progression.background || '';
@@ -220,12 +252,6 @@ export class FinalizeIntegration {
 
             if (mode === 'chargen' && className && backgroundName) {
                 await EquipmentEngine.finalizeEquipment(actor, className, backgroundName);
-            }
-
-            // Recalculate stats
-            const derivedUpdates = await DerivedCalculator.computeAll(actor);
-            if (derivedUpdates) {
-                await actor.update(derivedUpdates);
             }
 
             // Generate and display diff
