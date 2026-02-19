@@ -26,6 +26,7 @@ import { ClassesDB } from '../../data/classes-db.js';
 
 // V2 API base class
 import SWSEApplicationV2 from '../base/swse-application-v2.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 // v13 Hardening
 import { createActor } from '../../core/document-api-v13.js';
@@ -3239,7 +3240,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       items.push(classItem);
 
       if (items.length > 0) {
-        await this.actor.createEmbeddedDocuments('Item', items);
+        await ActorEngine.createEmbeddedDocuments(this.actor, 'Item', items);
       }
 
       // Update mentor with new class target

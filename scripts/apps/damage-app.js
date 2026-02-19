@@ -2,6 +2,7 @@
  * DamageApp — Phase C Combat UI
  */
 import { DamageEngine } from '../engine/combat/damage-engine.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 export class DamageApp extends Application {
   constructor(actor, options = {}) {
@@ -70,7 +71,7 @@ export class DamageApp extends Application {
   async _heal() {
     const hp = this.actor.system.hp || {};
     const newHP = Math.min(hp.max || 1, (hp.value || 0) + this.damageInput);
-    await this.actor.update({ 'system.hp.value': newHP });
+    await ActorEngine.updateActor(this.actor, { 'system.hp.value': newHP });
     ui.notifications.info(`Healed to ${newHP} HP`);
     this.render();
   }
@@ -78,7 +79,7 @@ export class DamageApp extends Application {
   async _restoreTemp() {
     const hp = this.actor.system.hp || {};
     const restored = Math.max(0, this.damageInput);
-    await this.actor.update({ 'system.hp.temp': restored });
+    await ActorEngine.updateActor(this.actor, { 'system.hp.temp': restored });
     ui.notifications.info(`Restored ${restored} temp HP`);
     this.render();
   }

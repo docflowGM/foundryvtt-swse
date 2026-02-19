@@ -11,6 +11,7 @@ import { SuggestionService } from '../../engine/SuggestionService.js';
 import { BuildIntent } from '../../engine/BuildIntent.js';
 import { MentorSurvey } from '../mentor/mentor-survey.js';
 import { _findTalentItem } from './chargen-shared.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 /**
  * Calculate feat/talent suggestions during chargen
@@ -229,7 +230,7 @@ export async function _onSelectFeat(event) {
   // If opened from character sheet "Add Feat" button, add to actor and close
   if (this._parentSheet && this.actor) {
     // Add feat directly to actor
-    const [created] = await this.actor.createEmbeddedDocuments('Item', [{
+    const [created] = await ActorEngine.createEmbeddedDocuments(this.actor, 'Item', [{
       name: feat.name,
       type: 'feat',
       data: feat.system || feat.data
