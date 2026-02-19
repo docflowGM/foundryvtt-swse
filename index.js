@@ -103,6 +103,7 @@ import { Batch1Validation } from './scripts/core/mutation/batch-1-validation.js'
 
 // ---- combat tests (PHASE 3) ----
 import { DamageEngineTest } from './scripts/engine/combat/damage-engine-test.js';
+import { Batch2ComprehensiveTest } from './scripts/combat/batch-2-comprehensive-test.js';
 
 // ---- sheets ----
 import { SWSEV2CharacterSheet } from './scripts/sheets/v2/character-sheet.js';
@@ -313,7 +314,8 @@ Hooks.once('ready', async () => {
     },
     // PHASE 3: Batch 2 Combat Tests
     batch2: {
-      testDamage: () => DamageEngineTest.runFullSuite()
+      testDamage: () => DamageEngineTest.runFullSuite(),
+      testCombatComplete: () => Batch2ComprehensiveTest.runFullSuite()
     },
     // Sentinel Runtime Kernel API
     sentinel: {
