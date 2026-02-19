@@ -1,5 +1,6 @@
 import { swseLogger } from '../../utils/logger.js';
 import { TalentAbilitiesEngine } from '../../engine/TalentAbilitiesEngine.js';
+import { RollEngine } from '../../engine/roll-engine.js';
 
 import { getEffectiveHalfLevel } from '../../actors/derived/level-split.js';
 /**
@@ -225,11 +226,13 @@ export async function rollDamage(actor, weapon, context = {}) {
     const flatFormula = npc?.flatDamageFormula;
 
     if (mode !== 'progression' && npc?.useFlat === true && typeof flatFormula === 'string' && flatFormula.trim()) {
-      const roll = await new Roll(flatFormula).evaluate({ async: true });
-      await roll.toMessage({
-        speaker: ChatMessage.getSpeaker({ actor }),
-        flavor: `${actor.name} — ${weapon.name} Damage`
-      }, { create: true });
+      const roll = await RollEngine.safeRoll(flatFormula);
+      if (roll) {
+        await roll.toMessage({
+          speaker: ChatMessage.getSpeaker({ actor }),
+          flavor: `${actor.name} — ${weapon.name} Damage`
+        }, { create: true });
+      }
       return roll;
     }
   }

@@ -8,6 +8,7 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { normalizeCredits } from '../../utils/credit-normalization.js';
+import { RollEngine } from '../../engine/roll-engine.js';
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 import { getTalentTreeName, getClassProperty, getTalentTrees, getHitDie } from './chargen-property-accessor.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
@@ -2827,7 +2828,11 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     // Roll the dice
     const rollFormula = `${numDice}d${dieSize}`;
-    const roll = await new Roll(rollFormula).evaluate();
+    const roll = await RollEngine.safeRoll(rollFormula);
+    if (!roll) {
+      SWSELogger.error('Starting credits roll failed');
+      return 1000; // Fallback value
+    }
 
     // Calculate credits
     const credits = roll.total * multiplier;

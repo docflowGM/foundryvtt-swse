@@ -9,6 +9,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { RollEngine } from '../engine/roll-engine.js';
 import { ActorEngine } from '../actors/engine/actor-engine.js';
 import { createChatMessage, createEffectOnActor, createItemInActor } from '../core/document-api-v13.js';
 
@@ -305,8 +306,8 @@ export class DarkSidePowers {
       });
     }
 
-    const roll = new Roll(`${damageDice}d6`);
-    await roll.evaluate({ async: true });
+    const roll = await RollEngine.safeRoll(`${damageDice}d6`);
+    if (!roll) { SWSELogger.error('Damage roll failed'); return; }
     const damageAmount = roll.total;
 
     const newHp = Math.max(0, targetToken.actor.system.hp.value - damageAmount);
@@ -797,8 +798,8 @@ export class DarkSidePowers {
     const sithLevel = this.getSithClassLevel(actor);
 
     // Roll ranged attack vs target Fortitude Defense
-    const attackRoll = new Roll('1d20');
-    await attackRoll.evaluate({ async: true });
+    const attackRoll = await RollEngine.safeRoll('1d20');
+    if (!attackRoll) { SWSELogger.error('Attack roll failed'); return; }
     const attackTotal = attackRoll.total + (actor.system.attributes?.dex?.mod || 0);
     const targetFortitude = targetToken.actor.system.defenses?.fortitude?.value || 10;
 
@@ -807,8 +808,8 @@ export class DarkSidePowers {
 
     if (attackTotal >= targetFortitude) {
       // Success: deal damage and heal
-      const damageRoll = new Roll(`${sithLevel}d6`);
-      await damageRoll.evaluate({ async: true });
+      const damageRoll = await RollEngine.safeRoll(`${sithLevel}d6`);
+      if (!damageRoll) { SWSELogger.error('Damage roll failed'); return; }
       damageAmount = damageRoll.total;
       success = true;
 
@@ -901,13 +902,13 @@ export class DarkSidePowers {
     const sithLevel = this.getSithClassLevel(actor);
 
     // Roll ranged attack vs target Fortitude Defense
-    const attackRoll = new Roll('1d20');
-    await attackRoll.evaluate({ async: true });
+    const attackRoll = await RollEngine.safeRoll('1d20');
+    if (!attackRoll) { SWSELogger.error('Attack roll failed'); return; }
     const attackTotal = attackRoll.total + (actor.system.attributes?.dex?.mod || 0);
     const targetFortitude = targetToken.actor.system.defenses?.fortitude?.value || 10;
 
-    const damageRoll = new Roll(`${sithLevel}d6`);
-    await damageRoll.evaluate({ async: true });
+    const damageRoll = await RollEngine.safeRoll(`${sithLevel}d6`);
+    if (!damageRoll) { SWSELogger.error('Damage roll failed'); return; }
     const fullDamage = damageRoll.total;
 
     let damageDealt = fullDamage;
@@ -1022,14 +1023,14 @@ export class DarkSidePowers {
       const targetActor = targetToken.actor;
 
       // Roll Use the Force check vs target's Fortitude Defense
-      const useForceRoll = new Roll('1d20');
-      await useForceRoll.evaluate({ async: true });
+      const useForceRoll = await RollEngine.safeRoll('1d20');
+      if (!useForceRoll) { SWSELogger.error('Use the Force roll failed'); return; }
       const useForceTotal = useForceRoll.total + (actor.system.skills?.useTheForce?.mod || 0);
       const targetFortitude = targetActor.system.defenses?.fortitude?.value || 10;
 
       // Roll damage for this target
-      const damageRoll = new Roll(`${sithLevel}d6`);
-      await damageRoll.evaluate({ async: true });
+      const damageRoll = await RollEngine.safeRoll(`${sithLevel}d6`);
+      if (!damageRoll) { SWSELogger.error('Damage roll failed'); return; }
       const fullDamage = damageRoll.total;
 
       let damageDealt = fullDamage;
@@ -1194,8 +1195,8 @@ export class DarkSidePowers {
     if (afflictions.length === 0) {return;}
 
     for (const affliction of afflictions) {
-      const damageRoll = new Roll('2d6');
-      await damageRoll.evaluate({ async: true });
+      const damageRoll = await RollEngine.safeRoll('2d6');
+      if (!damageRoll) { SWSELogger.error('Damage roll failed'); continue; }
       const damageAmount = damageRoll.total;
 
       const newHp = Math.max(0, targetActor.system.hp.value - damageAmount);

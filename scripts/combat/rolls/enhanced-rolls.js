@@ -1,4 +1,5 @@
 import { swseLogger } from '../../utils/logger.js';
+import { RollEngine } from '../../engine/roll-engine.js';
 import { rollDamage } from './damage.js';
 import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance } from '../utils/combat-utils.js';
 import { getEffectiveHalfLevel } from '../../actors/derived/level-split.js';
@@ -84,8 +85,10 @@ export class SWSERoll {
    */
   static async _safeRoll(formula, data = {}) {
     try {
-      const roll = new Roll(formula, data);
-      await roll.evaluate({ async: true });
+      const roll = await RollEngine.safeRoll(formula, data);
+      if (!roll) {
+        ui.notifications.error('Roll failed. Check console for details.');
+      }
       return roll;
     } catch (err) {
       swseLogger.error('Roll failed:', formula, err);

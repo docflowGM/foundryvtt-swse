@@ -3,6 +3,8 @@
 // Force Power rolling and effects
 // ============================================
 
+import { RollEngine } from '../engine/roll-engine.js';
+
 /**
  * Roll a force power use
  * @param {Actor} actor - The actor using the force power
@@ -106,8 +108,8 @@ export async function narrateForcePowerResult(actor, powerItem, roll) {
     const diceExpr = _extractFirstDiceExpression(effectText);
     if (diceExpr) {
       try {
-        const r = await new Roll(diceExpr, actor.getRollData?.() ?? {}).evaluate({ async: true });
-        extra = `It does ${effectText} (rolled ${diceExpr} = ${r.total}).`;
+        const r = await RollEngine.safeRoll(diceExpr, actor.getRollData?.() ?? {});
+        if (r) extra = `It does ${effectText} (rolled ${diceExpr} = ${r.total}).`;
       } catch {
         // ignore
       }
