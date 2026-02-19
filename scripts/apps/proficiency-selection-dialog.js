@@ -3,6 +3,8 @@
  * Handles category selection for Weapon/Armor Proficiency, Weapon Focus, and Weapon Specialization feats
  */
 
+import { ActorEngine } from '../actors/engine/actor-engine.js';
+
 export class ProficiencySelectionDialog {
 
   /**
@@ -276,7 +278,7 @@ export class ProficiencySelectionDialog {
     }
 
     // Create the feat
-    const created = await actor.createEmbeddedDocuments('Item', [featData]);
+    const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [featData]);
     ui.notifications.info(`${actor.name} gained feat: ${featData.name}`);
 
     return created[0];

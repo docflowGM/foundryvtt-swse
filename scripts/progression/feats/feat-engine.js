@@ -10,6 +10,7 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { FeatRegistry } from './feat-registry.js';
 import { FeatState } from './feat-state.js';
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
@@ -205,7 +206,8 @@ export const FeatEngine = {
      * @private
      */
     async _grantFeatItem(actor, featDoc) {
-        await actor.createEmbeddedDocuments('Item', [{
+        // PHASE 3: Route through ActorEngine
+        await ActorEngine.createEmbeddedDocuments(actor, 'Item', [{
             name: featDoc.name,
             type: 'feat',
             img: featDoc.img || 'icons/svg/upgrade.svg',

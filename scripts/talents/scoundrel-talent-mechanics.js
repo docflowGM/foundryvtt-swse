@@ -16,6 +16,8 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { TalentEffectEngine } from './talent-effect-engine.js';
 import { createEffectOnActor } from '../core/document-api-v13.js';
 
 export class ScoundrelTalentMechanics {
@@ -159,11 +161,27 @@ export class ScoundrelTalentMechanics {
   }
 
   /**
-   * Mark Knack as used
+   * Complete Knack - Mark as used
    */
   static async completeKnack(actor) {
-    await actor.setFlag('foundryvtt-swse', 'knack_dayUsed', true);
+    // PHASE 1: BUILD EFFECT PLAN
+    const plan = await TalentEffectEngine.buildKnackPlan({
+      sourceActor: actor
+    });
 
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return { success: false };
+    }
+
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Knack failed: ${result.reason}`);
+      return { success: false };
+    }
+
+    // PHASE 3: SIDE-EFFECTS
     SWSELogger.log(`SWSE Talents | ${actor.name} used Knack to reroll an ability check`);
     ui.notifications.info(`${actor.name} uses Knack to reroll the check!`);
 
@@ -286,13 +304,30 @@ export class ScoundrelTalentMechanics {
    * Complete Dastardly Strike - Apply effect if successful
    */
   static async completeDastardlyStrike(actor, targetActor, strikeType, success, combatId, usageFlag) {
-    await actor.setFlag('foundryvtt-swse', usageFlag, true);
+    // PHASE 1: BUILD EFFECT PLAN
+    const plan = await TalentEffectEngine.buildDastardlyStrikePlan({
+      sourceActor: actor,
+      usageFlag: usageFlag
+    });
+
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return { success: false };
+    }
+
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Dastardly Strike failed: ${result.reason}`);
+      return { success: false };
+    }
 
     if (!success) {
       SWSELogger.log(`SWSE Talents | ${actor.name} attempted Dastardly Strike on ${targetActor.name} but failed`);
       return { success: true, hit: false };
     }
 
+    // PHASE 3: SIDE-EFFECTS - Create effect on target
     const effectName = strikeType === 'trip'
       ? 'Dastardly Strike - Knocked Prone'
       : 'Dastardly Strike - Disarmed';
@@ -414,9 +449,25 @@ export class ScoundrelTalentMechanics {
       return false;
     }
 
-    await actor.setFlag('foundryvtt-swse', usageFlag, true);
+    // PHASE 1: BUILD EFFECT PLAN
+    const plan = await TalentEffectEngine.buildCunningStrategistPlan({
+      sourceActor: actor,
+      usageFlag: usageFlag
+    });
 
-    // Apply bonus to next attack
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return false;
+    }
+
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Cunning Strategist failed: ${result.reason}`);
+      return false;
+    }
+
+    // PHASE 3: SIDE-EFFECTS - Create effect on ally
     await createEffectOnActor(ally, {
       name: 'Cunning Strategist - Attack Bonus',
       icon: 'icons/svg/aura.svg',

@@ -174,16 +174,18 @@ export class IonDamage {
       }, 0);
 
       // Apply condition track penalty
+      // PHASE 3: Route through ActorEngine
       if (totalCTPenalty !== 0) {
+        const { ActorEngine } = await import('../../actors/engine/actor-engine.js');
+        const direction = totalCTPenalty > 0 ? 1 : -1;
+        const times = Math.abs(totalCTPenalty);
+
+        for (let i = 0; i < times; i++) {
+          await ActorEngine.applyConditionShift(actor, direction, 'ion-damage');
+        }
+
         const currentCT = actor.system?.conditionTrack?.current || 0;
-        const newCT = currentCT + totalCTPenalty;
-
-        // Update actor's condition track
-        await actor.update({
-          'system.conditionTrack.current': newCT
-        });
-
-        SWSELogger.info(`${actor.name} condition track moved ${totalCTPenalty} steps (to ${newCT})`);
+        SWSELogger.info(`${actor.name} condition track moved ${totalCTPenalty} steps (to ${currentCT})`);
       }
     } catch (err) {
       SWSELogger.error('Failed to apply condition track penalty', err);

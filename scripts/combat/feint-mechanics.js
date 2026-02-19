@@ -15,6 +15,8 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { RollEngine } from '../engine/roll-engine.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 export class FeintMechanics {
 
@@ -186,8 +188,12 @@ export class FeintMechanics {
    */
   static async _rollDeceptionCheck(actor, deceptionBonus, targetCount) {
     try {
-      const roll = await new Roll('1d20').evaluate({ async: true });
-      const total = roll.total + deceptionBonus;
+      const roll = await RollEngine.safeRoll(`1d20 + ${deceptionBonus}`);
+      if (!roll) {
+        SWSELogger.warn(`FeintMechanics | Deception check roll failed`);
+        return null;
+      }
+      const total = roll.total;
 
       // Post to chat
       await roll.toMessage({
@@ -214,8 +220,12 @@ export class FeintMechanics {
       const initiativeBonus = target.system.skills?.initiative?.total || 0;
 
       // Roll 1d20 + Initiative bonus
-      const roll = await new Roll('1d20').evaluate({ async: true });
-      const total = roll.total + initiativeBonus;
+      const roll = await RollEngine.safeRoll(`1d20 + ${initiativeBonus}`);
+      if (!roll) {
+        SWSELogger.warn(`FeintMechanics | Initiative roll failed for ${target.name}`);
+        return 0;
+      }
+      const total = roll.total;
 
       // Post to chat
       await roll.toMessage({
@@ -267,7 +277,7 @@ export class FeintMechanics {
         }
       };
 
-      const created = await target.createEmbeddedDocuments('ActiveEffect', [effect]);
+      const created = await ActorEngine.createEmbeddedDocuments(target, 'ActiveEffect', [effect]);
 
       SWSELogger.log(
         `FeintMechanics | ${target.name} is flat-footed due to feint from ${source.name}`

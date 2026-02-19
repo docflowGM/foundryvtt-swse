@@ -1,4 +1,5 @@
 import { swseLogger } from '../../utils/logger.js';
+import { RollEngine } from '../../engine/roll-engine.js';
 import { rollDamage } from './damage.js';
 import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance } from '../utils/combat-utils.js';
 import { getEffectiveHalfLevel } from '../../actors/derived/level-split.js';
@@ -84,8 +85,10 @@ export class SWSERoll {
    */
   static async _safeRoll(formula, data = {}) {
     try {
-      const roll = new Roll(formula, data);
-      await roll.evaluate({ async: true });
+      const roll = await RollEngine.safeRoll(formula, data);
+      if (!roll) {
+        ui.notifications.error('Roll failed. Check console for details.');
+      }
       return roll;
     } catch (err) {
       swseLogger.error('Roll failed:', formula, err);
@@ -168,11 +171,10 @@ export class SWSERoll {
     const maxFP = actor.system.forcePoints?.max ?? 0;
     const newFP = Math.max(0, currentFP - 1);
 
-    // Spend FP with error handling
+    // Spend FP with error handling (PHASE 3: Route through ActorEngine)
     try {
-      await actor.update({
-        'system.forcePoints.value': newFP
-      });
+      const { ActorEngine } = await import('../../actors/engine/actor-engine.js');
+      await ActorEngine.spendForcePoints(actor, 1);
 
       // Chat message (use calculated value instead of stale reference)
       await createChatMessage({
@@ -719,12 +721,15 @@ export class SWSERoll {
       }
 
       // Consume ammunition
+      // PHASE 3: Route through ActorEngine for owned items
       const newAmmo = currentAmmo - ammoRequired;
-      const ammoUpdate = { 'system.ammunition.current': newAmmo };
-      if (weapon?.actor && typeof weapon.actor.updateOwnedItem === 'function') {
-        await weapon.actor.updateOwnedItem(weapon, ammoUpdate);
+      const ammoUpdate = { _id: weapon.id, 'system.ammunition.current': newAmmo };
+      if (weapon?.actor) {
+        const { ActorEngine } = await import('../../actors/engine/actor-engine.js');
+        await ActorEngine.updateOwnedItems(weapon.actor, [ammoUpdate]);
       } else {
-        await weapon.update(ammoUpdate);
+        // Non-owned weapon, update directly
+        await weapon.update({ 'system.ammunition.current': newAmmo });
       }
 
       // Build HTML result
@@ -1573,15 +1578,18 @@ export class SWSERoll {
 
         if (useDP === null) {continue;}
 
+        // PHASE 3: Route resource spending through ActorEngine
+        const { ActorEngine } = await import('../../actors/engine/actor-engine.js');
+
         if (useDP) {
           const dp = actor.system.destinyPoints?.value || 0;
           if (dp > 0) {
-            await actor.update({ 'system.destinyPoints.value': dp - 1 });
+            await ActorEngine.spendDestinyPoints(actor, 1);
           }
         } else {
           const fp = actor.system.forcePoints?.value || 0;
           if (fp > 0) {
-            await actor.update({ 'system.forcePoints.value': fp - 1 });
+            await ActorEngine.spendForcePoints(actor, 1);
           }
         }
 

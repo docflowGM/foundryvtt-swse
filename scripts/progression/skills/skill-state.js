@@ -6,6 +6,7 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 export const SkillState = {
 
@@ -45,7 +46,8 @@ export const SkillState = {
 
         trained[skillName] = true;
 
-        await actor.update({
+        // PHASE 3: Route through ActorEngine
+        await ActorEngine.updateActor(actor, {
             'system.progression.trainedSkills': trained
         });
 
@@ -66,7 +68,8 @@ export const SkillState = {
 
         delete trained[skillName];
 
-        await actor.update({
+        // PHASE 3: Route through ActorEngine
+        await ActorEngine.updateActor(actor, {
             'system.progression.trainedSkills': trained
         });
 
@@ -100,7 +103,8 @@ export const SkillState = {
      * Clear all trained skills
      */
     async clear(actor) {
-        await actor.update({
+        // PHASE 3: Route through ActorEngine
+        await ActorEngine.updateActor(actor, {
             'system.progression.trainedSkills': {}
         });
 

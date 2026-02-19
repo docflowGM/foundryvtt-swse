@@ -98,6 +98,12 @@ import { checkRequiredPacks } from './scripts/core/pack-existence-check.js';
 import { SWSEV2BaseActor } from './scripts/actors/v2/base-actor.js';
 import { SWSEItemBase } from './scripts/items/base/swse-item-base.js';
 import { ActorEngine } from './scripts/actors/engine/actor-engine.js';
+import { MutationInterceptor } from './scripts/core/mutation/MutationInterceptor.js';
+import { Batch1Validation } from './scripts/core/mutation/batch-1-validation.js';
+
+// ---- combat tests (PHASE 3) ----
+import { DamageEngineTest } from './scripts/engine/combat/damage-engine-test.js';
+import { Batch2ComprehensiveTest } from './scripts/combat/batch-2-comprehensive-test.js';
 
 // ---- sheets ----
 import { SWSEV2CharacterSheet } from './scripts/sheets/v2/character-sheet.js';
@@ -213,6 +219,9 @@ Hooks.once('init', async () => {
   /* ---------- PHASE 3: Structural Enforcement Layer ---------- */
   await initializeV2RenderGuard();
 
+  /* ---------- PHASE 3: MUTATION AUTHORITY (BATCH 1) ---------- */
+  MutationInterceptor.initialize();
+
   swseLogger.log('SWSE | Init complete');
 });
 
@@ -297,6 +306,16 @@ Hooks.once('ready', async () => {
     errors: errorCommands,
     phase5: {
       summary: getPhaseSummary
+    },
+    // PHASE 3: Batch 1 Validation Suite
+    batch1: {
+      validate: () => Batch1Validation.runFullSuite(),
+      healthCheck: () => Batch1Validation.healthCheck()
+    },
+    // PHASE 3: Batch 2 Combat Tests
+    batch2: {
+      testDamage: () => DamageEngineTest.runFullSuite(),
+      testCombatComplete: () => Batch2ComprehensiveTest.runFullSuite()
     },
     // Sentinel Runtime Kernel API
     sentinel: {

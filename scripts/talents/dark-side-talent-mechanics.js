@@ -8,6 +8,7 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { TalentEffectEngine } from './talent-effect-engine.js';
 import { createChatMessage } from '../core/document-api-v13.js';
 
 export class DarkSideTalentMechanics {
@@ -48,18 +49,25 @@ export class DarkSideTalentMechanics {
       return false;
     }
 
-    // Check if already used today
-    const lastUsed = actor.getFlag('foundryvtt-swse', 'swiftPowerUsedToday');
-    const today = new Date().toDateString();
+    // PHASE 1: BUILD EFFECT PLAN (Pure Computation)
+    const plan = await TalentEffectEngine.buildSwiftPowerPlan({
+      sourceActor: actor,
+      forcePower
+    });
 
-    if (lastUsed === today) {
-      ui.notifications.warn('Swift Power has already been used today. It refreshes at the next dawn.');
+    if (!plan.success) {
+      ui.notifications.warn(plan.reason);
       return false;
     }
 
-    // Record usage
-    await actor.setFlag('foundryvtt-swse', 'swiftPowerUsedToday', today);
+    // PHASE 2: APPLY MUTATIONS THROUGH ACTORENGINE
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.warn(`Swift Power failed: ${result.reason}`);
+      return false;
+    }
 
+    // PHASE 3: SIDE-EFFECTS (Log + Notification)
     SWSELogger.log(`SWSE Talents | ${actor.name} used Swift Power on ${forcePower.name}`);
     ui.notifications.info(`${forcePower.name} is being used as a Swift Action!`);
 
@@ -121,16 +129,30 @@ export class DarkSideTalentMechanics {
       };
     }
 
-    // Single power - return it
+    // Single power - use the plan-based approach
     const power = darkSidePowers[0];
-    await ActorEngine.updateOwnedItems(actor, [{
-      _id: power.id,
-      'system.spent': false
-    }]);
 
-    // Mark as used
-    await actor.setFlag('foundryvtt-swse', savantUsageFlag, true);
+    // PHASE 1: BUILD EFFECT PLAN (Pure Computation)
+    const plan = await TalentEffectEngine.buildDarkSideSavantPlan({
+      sourceActor: actor,
+      power: power,
+      combatId: combatId,
+      savantUsageFlag: savantUsageFlag
+    });
 
+    if (!plan.success) {
+      ui.notifications.warn(plan.reason);
+      return { success: false, message: plan.reason };
+    }
+
+    // PHASE 2: APPLY MUTATIONS THROUGH ACTORENGINE
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.warn(`Dark Side Savant failed: ${result.reason}`);
+      return { success: false, message: `Dark Side Savant failed: ${result.reason}` };
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Log + Notification)
     SWSELogger.log(`SWSE Talents | ${actor.name} used Dark Side Savant to return ${power.name}`);
     ui.notifications.info(`${power.name} has been returned to your Force Power Suite without spending a Force Point!`);
 
@@ -147,13 +169,27 @@ export class DarkSideTalentMechanics {
       return false;
     }
 
-    await ActorEngine.updateOwnedItems(actor, [{
-      _id: power.id,
-      'system.spent': false
-    }]);
+    // PHASE 1: BUILD EFFECT PLAN (Pure Computation)
+    const plan = await TalentEffectEngine.buildDarkSideSavantPlan({
+      sourceActor: actor,
+      power: power,
+      combatId: combatId,
+      savantUsageFlag: savantUsageFlag
+    });
 
-    await actor.setFlag('foundryvtt-swse', savantUsageFlag, true);
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return false;
+    }
 
+    // PHASE 2: APPLY MUTATIONS THROUGH ACTORENGINE
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Dark Side Savant failed: ${result.reason}`);
+      return false;
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Log + Notification)
     SWSELogger.log(`SWSE Talents | ${actor.name} used Dark Side Savant to return ${power.name}`);
     ui.notifications.info(`${power.name} has been returned to your Force Power Suite!`);
 
@@ -200,32 +236,34 @@ export class DarkSideTalentMechanics {
       };
     }
 
-    // Don't regain powers - this is handled by clearing the regain flag
-    // Instead, apply half damage at start of next turn
-
-    const halfDamage = Math.floor(damageDealt / 2);
-    const wrathFlagId = `wrath_${Date.now()}_${targetToken.id}`;
-
-    // Store the delayed damage on the target
     const targetActor = targetToken.actor;
-    const wrathFlags = targetActor.getFlag('foundryvtt-swse', 'wrathDamage') || [];
-    wrathFlags.push({
-      id: wrathFlagId,
-      damage: halfDamage,
-      sourceName: actor.name,
-      sourceId: actor.id,
-      triggerRound: game.combat?.round,
-      triggeredAt: new Date().toISOString()
+
+    // PHASE 1: BUILD EFFECT PLAN (Pure Computation)
+    const plan = await TalentEffectEngine.buildWrathOfDarkSidePlan({
+      sourceActor: actor,
+      targetActor: targetActor,
+      damageDealt: damageDealt
     });
 
-    await targetActor.setFlag('foundryvtt-swse', 'wrathDamage', wrathFlags);
+    if (!plan.success) {
+      ui.notifications.warn(plan.reason);
+      return { success: false, message: plan.reason };
+    }
 
-    SWSELogger.log(`SWSE Talents | ${actor.name} triggered Wrath of the Dark Side on ${targetActor.name}. Will deal ${halfDamage} damage at start of next turn.`);
-    ui.notifications.info(`${targetActor.name} will take ${halfDamage} additional damage at the start of their next turn from Wrath of the Dark Side!`);
+    // PHASE 2: APPLY MUTATIONS THROUGH ACTORENGINE
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.warn(`Wrath of the Dark Side failed: ${result.reason}`);
+      return { success: false, message: `Wrath of the Dark Side failed: ${result.reason}` };
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Log + Notification)
+    SWSELogger.log(`SWSE Talents | ${actor.name} triggered Wrath of the Dark Side on ${targetActor.name}. Will deal ${plan.halfDamage} damage at start of next turn.`);
+    ui.notifications.info(`${targetActor.name} will take ${plan.halfDamage} additional damage at the start of their next turn from Wrath of the Dark Side!`);
 
     return {
       success: true,
-      halfDamage: halfDamage,
+      halfDamage: plan.halfDamage,
       targetId: targetActor.id
     };
   }

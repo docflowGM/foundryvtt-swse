@@ -6,6 +6,7 @@
 
 import { StarshipManeuverPicker } from '../ui/starship-maneuver-picker.js';
 import { swseLogger } from '../../utils/logger.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 export class StarshipManeuverEngine {
   /**
@@ -70,7 +71,8 @@ export class StarshipManeuverEngine {
         // Add new maneuvers to suite
         maneuverIds.forEach(id => existing.add(id));
 
-        await actor.update({
+        // PHASE 3: Route through ActorEngine
+        await ActorEngine.updateActor(actor, {
           'system.starshipManeuverSuite.maneuvers': Array.from(existing)
         });
       }

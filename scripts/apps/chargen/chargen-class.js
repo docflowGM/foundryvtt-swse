@@ -3,6 +3,7 @@
 // ============================================
 
 import { SWSELogger } from '../../utils/logger.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { applyProgressionPatch } from '../../progression/engine/apply-progression-patch.js';
 import { buildClassAtomicPatch } from './steps/class-step.js';
 import {
@@ -539,14 +540,14 @@ export async function _applyStartingClassFeatures(actor, classDoc) {
   // Create all feature items at once
   if (featureItems.length > 0) {
     SWSELogger.log(`CharGen | Creating ${featureItems.length} class feature items`);
-    await actor.createEmbeddedDocuments('Item', featureItems);
+    await ActorEngine.createEmbeddedDocuments(actor, 'Item', featureItems);
     ui.notifications.info(`Granted ${featureItems.length} class features from ${classDoc.name}`);
   }
 
   // Create weapon items
   if (weaponItems.length > 0) {
     SWSELogger.log(`CharGen | Creating ${weaponItems.length} starting weapon items`);
-    await actor.createEmbeddedDocuments('Item', weaponItems);
+    await ActorEngine.createEmbeddedDocuments(actor, 'Item', weaponItems);
     ui.notifications.info(`Granted starting equipment: ${weaponItems.map(w => w.name).join(', ')}`);
   }
 }

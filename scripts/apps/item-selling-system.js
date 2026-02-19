@@ -23,6 +23,7 @@
 import { normalizeCredits, calculateRawSellPrice, calculatePercentageFloor } from '../utils/credit-normalization.js';
 import { SWSELogger } from '../utils/logger.js';
 import { prompt as uiPrompt } from '../utils/ui-utils.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 /**
  * Initiate item selling process
@@ -268,7 +269,7 @@ async function acceptSale(item, actor, salePrice, isAutomatic) {
     await item.delete();
 
     // STEP 2: Add credits (if this fails, item is already gone — we failed atomically)
-    await actor.update({ 'system.credits': creditsAfter });
+    await ActorEngine.updateActor(actor, { 'system.credits': creditsAfter });
 
     // STEP 3: Log transaction (informational only, doesn't block)
     logSaleTransaction(actor, item, salePrice, isAutomatic);

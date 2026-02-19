@@ -1,5 +1,6 @@
 // scripts/engine/RuleElement.js
 import { swseLogger } from '../utils/logger.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 /**
  * RuleElement - Data-driven rule application system
@@ -149,7 +150,7 @@ export class StatBonusRule extends RuleElement {
       value
     });
 
-    await actor.update({ 'system.bonuses': bonuses });
+    await ActorEngine.updateActor(actor, { 'system.bonuses': bonuses });
   }
 
   async remove(actor) {
@@ -161,7 +162,7 @@ export class StatBonusRule extends RuleElement {
     // Remove bonus with this key
     bonuses[stat] = bonuses[stat].filter(b => b.key !== this.key);
 
-    await actor.update({ 'system.bonuses': bonuses });
+    await ActorEngine.updateActor(actor, { 'system.bonuses': bonuses });
   }
 }
 
@@ -195,7 +196,7 @@ export class GrantAbilityRule extends RuleElement {
       key: this.key
     });
 
-    await actor.update({ 'system.abilities': abilities });
+    await ActorEngine.updateActor(actor, { 'system.abilities': abilities });
   }
 
   async remove(actor) {
@@ -204,7 +205,7 @@ export class GrantAbilityRule extends RuleElement {
     // Remove ability with this key
     const filtered = abilities.filter(a => a.key !== this.key);
 
-    await actor.update({ 'system.abilities': filtered });
+    await ActorEngine.updateActor(actor, { 'system.abilities': filtered });
   }
 }
 
@@ -292,7 +293,7 @@ export class ConditionalBonusRule extends RuleElement {
       condition
     });
 
-    await actor.update({ 'system.conditionalBonuses': conditionalBonuses });
+    await ActorEngine.updateActor(actor, { 'system.conditionalBonuses': conditionalBonuses });
   }
 
   async remove(actor) {
@@ -300,7 +301,7 @@ export class ConditionalBonusRule extends RuleElement {
 
     const filtered = conditionalBonuses.filter(b => b.key !== this.key);
 
-    await actor.update({ 'system.conditionalBonuses': filtered });
+    await ActorEngine.updateActor(actor, { 'system.conditionalBonuses': filtered });
   }
 }
 
@@ -323,7 +324,7 @@ export class SkillTrainingRule extends RuleElement {
     if (!trainedSkills.includes(skill)) {
       trainedSkills.push(skill);
 
-      await actor.update({
+      await ActorEngine.updateActor(actor, {
         'system.progression.trainedSkills': trainedSkills
       });
     }
@@ -335,7 +336,7 @@ export class SkillTrainingRule extends RuleElement {
 
     const filtered = trainedSkills.filter(s => s !== skill);
 
-    await actor.update({
+    await ActorEngine.updateActor(actor, {
       'system.progression.trainedSkills': filtered
     });
   }
@@ -361,7 +362,7 @@ export class AttributeModifierRule extends RuleElement {
     const currentValue = actor.system.attributes?.[attribute]?.[field] || 0;
     const newValue = currentValue + value;
 
-    await actor.update({
+    await ActorEngine.updateActor(actor, {
       [`system.attributes.${attribute}.${field}`]: newValue
     });
   }
@@ -376,7 +377,7 @@ export class AttributeModifierRule extends RuleElement {
     const currentValue = actor.system.attributes?.[attribute]?.[field] || 0;
     const newValue = currentValue - value;
 
-    await actor.update({
+    await ActorEngine.updateActor(actor, {
       [`system.attributes.${attribute}.${field}`]: newValue
     });
   }
@@ -437,7 +438,7 @@ export class RuleEngine {
     swseLogger.log(`[RULE-ENGINE] Recalculating all rules for ${this.actor.name}`);
 
     // Clear all bonuses
-    await this.actor.update({
+    await ActorEngine.updateActor(this.actor, {
       'system.bonuses': {},
       'system.conditionalBonuses': [],
       'system.abilities': []

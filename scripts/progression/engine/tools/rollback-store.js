@@ -4,6 +4,7 @@
  */
 
 import { swseLogger } from '../../../utils/logger.js';
+import { ActorEngine } from '../../../actors/engine/actor-engine.js';
 
 /**
  * Rollback Store - Maintains history of actor states for undo functionality
@@ -56,17 +57,20 @@ export class RollbackStore {
 
     try {
       // Update actor system data
-      await actor.update({ system: state.system });
+      // PHASE 3: Route through ActorEngine
+      await ActorEngine.updateActor(actor, { system: state.system });
 
       // Delete all current items
       const currentItemIds = actor.items.map(i => i.id);
       if (currentItemIds.length > 0) {
-        await actor.deleteEmbeddedDocuments('Item', currentItemIds);
+        // PHASE 3: Route through ActorEngine
+        await ActorEngine.deleteEmbeddedDocuments(actor, 'Item', currentItemIds);
       }
 
       // Recreate items from snapshot
       if (state.items && state.items.length > 0) {
-        await actor.createEmbeddedDocuments('Item', state.items);
+        // PHASE 3: Route through ActorEngine
+        await ActorEngine.createEmbeddedDocuments(actor, 'Item', state.items);
       }
 
       swseLogger.log(`RollbackStore: Restored state (${this.stack.length} remaining)`);

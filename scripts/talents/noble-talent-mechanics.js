@@ -18,6 +18,8 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { createEffectOnActor } from '../core/document-api-v13.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { TalentEffectEngine } from './talent-effect-engine.js';
 
 import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
 export class NobleTalentMechanics {
@@ -202,10 +204,25 @@ export class NobleTalentMechanics {
       return false;
     }
 
-    // Mark as used
-    await actor.setFlag('foundryvtt-swse', usageFlag, true);
+    // PHASE 1: BUILD EFFECT PLAN
+    const plan = await TalentEffectEngine.buildInspireConfidencePlan({
+      sourceActor: actor,
+      usageFlag: usageFlag
+    });
 
-    // Create effect for +2 morale bonus
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return false;
+    }
+
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Inspire Confidence failed: ${result.reason}`);
+      return false;
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Effect creation and notifications)
     await createEffectOnActor(ally, {
       name: 'Inspire Confidence - Morale Bonus',
       icon: 'icons/svg/aura.svg',
@@ -301,13 +318,27 @@ export class NobleTalentMechanics {
       return false;
     }
 
-    // Mark as used
-    await actor.setFlag('foundryvtt-swse', usageFlag, true);
+    // PHASE 1: BUILD EFFECT PLAN
+    const plan = await TalentEffectEngine.buildBolsterAllyPlan({
+      sourceActor: actor,
+      allyActor: ally,
+      tempHP: tempHP,
+      usageFlag: usageFlag
+    });
 
-    // Apply temporary HP
-    const currentTempHP = ally.system.attributes?.temporaryHP || 0;
-    await ally.update({ 'system.attributes.temporaryHP': currentTempHP + tempHP });
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return false;
+    }
 
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Bolster Ally failed: ${result.reason}`);
+      return false;
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Logging and notifications)
     SWSELogger.log(`SWSE Talents | ${actor.name} used Bolster Ally on ${ally.name}, granted ${tempHP} temporary HP`);
     ui.notifications.info(`${ally.name} gains ${tempHP} temporary HP!`);
 
@@ -372,10 +403,25 @@ export class NobleTalentMechanics {
   static async completeIgniteFervor(actor, combatId, usageFlag) {
     const allies = this.getAllAllies(actor);
 
-    // Mark as used
-    await actor.setFlag('foundryvtt-swse', usageFlag, true);
+    // PHASE 1: BUILD EFFECT PLAN
+    const plan = await TalentEffectEngine.buildIgniteFervorPlan({
+      sourceActor: actor,
+      usageFlag: usageFlag
+    });
 
-    // Apply bonuses to all allies
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return false;
+    }
+
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Ignite Fervor failed: ${result.reason}`);
+      return false;
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Effect creation and notifications)
     for (const allyToken of allies) {
       const ally = allyToken.actor;
       if (!ally) {continue;}
@@ -477,9 +523,25 @@ export class NobleTalentMechanics {
    * Complete Protective Stance - Block damage
    */
   static async completeProtectiveStance(actor, allyActor, damage, combatId, usageFlag) {
-    // Mark as used
-    await actor.setFlag('foundryvtt-swse', usageFlag, true);
+    // PHASE 1: BUILD EFFECT PLAN
+    const plan = await TalentEffectEngine.buildProtectiveStancePlan({
+      sourceActor: actor,
+      usageFlag: usageFlag
+    });
 
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return false;
+    }
+
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Protective Stance failed: ${result.reason}`);
+      return false;
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Logging and notifications)
     SWSELogger.log(`SWSE Talents | ${actor.name} used Protective Stance to block ${damage} damage for ${allyActor.name}`);
     ui.notifications.info(`${actor.name} steps in front of ${allyActor.name}, blocking the damage!`);
 

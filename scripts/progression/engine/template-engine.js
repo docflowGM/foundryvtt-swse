@@ -1,6 +1,7 @@
 import { PROGRESSION_RULES } from '../data/progression-data.js';
 import { SWSEProgressionEngine } from '../../engine/progression.js';
 import { swseLogger } from '../../utils/logger.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 /**
  * TemplateEngine.applyTemplate(actor, templateId, options)
@@ -187,7 +188,8 @@ export class TemplateEngine {
     }
 
     if (itemsToCreate.length > 0) {
-      await actor.createEmbeddedDocuments('Item', itemsToCreate);
+      // PHASE 3: Route through ActorEngine
+      await ActorEngine.createEmbeddedDocuments(actor, 'Item', itemsToCreate);
       swseLogger.log(`TemplateEngine: Created ${itemsToCreate.length} explicit item(s)`);
     }
   }

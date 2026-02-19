@@ -1,7 +1,11 @@
 /**
  * DamageEngine — Phase C Combat Resolution
  * Apply damage, check DT, adjust CT, handle massive damage
+ *
+ * PHASE 3: Routed through ActorEngine for deterministic mutation control
  */
+
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 export class DamageEngine {
   static async applyDamage(actor, damage, options = {}) {
@@ -41,51 +45,46 @@ export class DamageEngine {
       finalDamage -= dt;
     }
 
-    // Apply to HP
+    // ========================================
+    // PHASE 3: Route through ActorEngine
+    // ========================================
     const oldHP = hp.value || 0;
     const newHP = Math.max(0, oldHP - finalDamage);
-    hp.value = newHP;
 
-    // Check massive damage
+    // Check if condition shift needed (before mutation)
     const isMassiveDamage = forceMassiveDamageCheck || finalDamage >= (derived.hp?.max || 1) / 2;
-    if (isMassiveDamage && newHP > 0) {
-      await this._handleMassiveDamage(actor, finalDamage);
+    const conditionShiftNeeded = (newHP <= 0) || isMassiveDamage;
+
+    // Apply damage & condition logic through ActorEngine (single mutation)
+    try {
+      const result = await ActorEngine.applyDamage(actor, {
+        amount: finalDamage,
+        type: damageType,
+        source: 'combat-damage',
+        conditionShift: conditionShiftNeeded
+      });
+
+      return {
+        success: true,
+        damageApplied: finalDamage,
+        oldHP,
+        newHP: result.newHP,
+        isMassiveDamage,
+        conditionShifted: result.conditionShifted,
+        reason: 'Damage applied'
+      };
+    } catch (err) {
+      console.error('[DamageEngine] Error applying damage:', err);
+      return {
+        success: false,
+        reason: `Failed to apply damage: ${err.message}`,
+        error: err
+      };
     }
-
-    // Auto-adjust CT if HP ≤ 0
-    if (newHP <= 0) {
-      await this._autoAdjustConditionTrack(actor);
-    }
-
-    await actor.update({
-      'system.hp': hp
-    });
-
-    return {
-      success: true,
-      damageApplied: finalDamage,
-      oldHP,
-      newHP,
-      isMassiveDamage,
-      reason: 'Damage applied'
-    };
   }
 
-  static async _handleMassiveDamage(actor, damage) {
-    const ct = actor.system.conditionTrack || {};
-    const current = Number(ct.current ?? 0);
-
-    // Massive damage: move CT forward 1 step
-    const next = Math.min(5, current + 1);
-    await actor.update({ 'system.conditionTrack.current': next });
-
-    return { ctMoved: true, from: current, to: next };
-  }
-
-  static async _autoAdjustConditionTrack(actor) {
-    const ct = actor.system.conditionTrack || {};
-    await actor.update({ 'system.conditionTrack.current': 5 }); // Helpless
-  }
+  // PHASE 3: Condition track mutations now handled by ActorEngine.applyDamage()
+  // These methods are deprecated but kept as stubs for compatibility
 
   static getDamageThreshold(actor) {
     return actor.system.derived?.damageThreshold || 0;

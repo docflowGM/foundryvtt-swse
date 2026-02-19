@@ -20,6 +20,8 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { createEffectOnActor, createItemInActor } from '../core/document-api-v13.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { TalentEffectEngine } from './talent-effect-engine.js';
 
 export class ScoutTalentMechanics {
 
@@ -218,37 +220,32 @@ export class ScoutTalentMechanics {
    * Complete Blinding Strike - Apply effect if attack hits
    */
   static async completeBlindingStrike(actor, targetActor, attackHit, combatId, usageFlag) {
-    // Mark ability as used
-    await actor.setFlag('foundryvtt-swse', usageFlag, true);
+    // PHASE 1: BUILD EFFECT PLAN (Pure Computation)
+    const plan = await TalentEffectEngine.buildBlindingStrikePlan({
+      sourceActor: actor,
+      targetActor: targetActor,
+      attackHit: attackHit,
+      combatId: combatId,
+      usageFlag: usageFlag
+    });
 
+    if (!plan.success) {
+      SWSELogger.warn(`Blinding Strike plan failed: ${plan.reason}`);
+      return { success: false, reason: plan.reason };
+    }
+
+    // PHASE 2: APPLY MUTATIONS THROUGH ACTORENGINE
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      SWSELogger.warn(`Blinding Strike failed: ${result.reason}`);
+      return { success: false, reason: result.reason };
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Log + Notification)
     if (!attackHit) {
       SWSELogger.log(`SWSE Talents | ${actor.name} used Blinding Strike on ${targetActor.name} but missed`);
       return { success: true, hit: false };
     }
-
-    // If attack hits, apply Total Concealment effect until start of next turn
-    await createEffectOnActor(targetActor, {
-      name: 'Blinding Strike - Total Concealment',
-      icon: 'icons/svg/blind.svg',
-      changes: [{
-        key: 'system.concealment.total',
-        mode: 5, // OVERRIDE
-        value: 'true',
-        priority: 50
-      }],
-      duration: {
-        rounds: 1,
-        startRound: game.combat?.round,
-        startTurn: game.combat?.turn
-      },
-      flags: {
-        swse: {
-          source: 'talent',
-          sourceId: 'blinding-strike',
-          sourceActorId: actor.id
-        }
-      }
-    });
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Blinding Strike on ${targetActor.name}, gained Total Concealment`);
     ui.notifications.info(`${actor.name} has Total Concealment against ${targetActor.name} until the start of their next turn!`);
@@ -324,37 +321,32 @@ export class ScoutTalentMechanics {
    * Complete Confusing Strike - Apply effect if attack hits
    */
   static async completeConfusingStrike(actor, targetActor, attackHit, combatId, usageFlag) {
-    // Mark ability as used
-    await actor.setFlag('foundryvtt-swse', usageFlag, true);
+    // PHASE 1: BUILD EFFECT PLAN (Pure Computation)
+    const plan = await TalentEffectEngine.buildConfusingStrikePlan({
+      sourceActor: actor,
+      targetActor: targetActor,
+      attackHit: attackHit,
+      combatId: combatId,
+      usageFlag: usageFlag
+    });
 
+    if (!plan.success) {
+      SWSELogger.warn(`Confusing Strike plan failed: ${plan.reason}`);
+      return { success: false, reason: plan.reason };
+    }
+
+    // PHASE 2: APPLY MUTATIONS THROUGH ACTORENGINE
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      SWSELogger.warn(`Confusing Strike failed: ${result.reason}`);
+      return { success: false, reason: result.reason };
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Log + Notification)
     if (!attackHit) {
       SWSELogger.log(`SWSE Talents | ${actor.name} used Confusing Strike on ${targetActor.name} but missed`);
       return { success: true, hit: false };
     }
-
-    // If attack hits, apply effect limiting target to Swift Action on next turn
-    await createEffectOnActor(targetActor, {
-      name: 'Confusing Strike - Swift Action Only',
-      icon: 'icons/svg/daze.svg',
-      changes: [{
-        key: 'system.action.limitedToSwiftAction',
-        mode: 5, // OVERRIDE
-        value: 'true',
-        priority: 50
-      }],
-      duration: {
-        rounds: 1,
-        startRound: game.combat?.round,
-        startTurn: game.combat?.turn
-      },
-      flags: {
-        swse: {
-          source: 'talent',
-          sourceId: 'confusing-strike',
-          sourceActorId: actor.id
-        }
-      }
-    });
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Confusing Strike on ${targetActor.name}, target limited to Swift Action`);
     ui.notifications.info(`${targetActor.name} can only take a Swift Action on their next turn!`);
@@ -434,9 +426,28 @@ export class ScoutTalentMechanics {
    * Complete Unexpected Attack - Mark as used and apply bonus to attack
    */
   static async completeUnexpectedAttack(actor, targetActor, attackBonus, combatId, usageFlag) {
-    // Mark ability as used
-    await actor.setFlag('foundryvtt-swse', usageFlag, true);
+    // PHASE 1: BUILD EFFECT PLAN (Pure Computation)
+    const plan = await TalentEffectEngine.buildUnexpectedAttackPlan({
+      sourceActor: actor,
+      targetActor: targetActor,
+      attackBonus: attackBonus,
+      combatId: combatId,
+      usageFlag: usageFlag
+    });
 
+    if (!plan.success) {
+      SWSELogger.warn(`Unexpected Attack plan failed: ${plan.reason}`);
+      return { success: false, reason: plan.reason };
+    }
+
+    // PHASE 2: APPLY MUTATIONS THROUGH ACTORENGINE
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      SWSELogger.warn(`Unexpected Attack failed: ${result.reason}`);
+      return { success: false, reason: result.reason };
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Log + Notification)
     const bonusText = attackBonus === 5 ? '+5 (Total Concealment)' : '+2 (Concealment)';
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Unexpected Attack on ${targetActor.name} with ${bonusText}`);
@@ -493,31 +504,27 @@ export class ScoutTalentMechanics {
    * Complete Blurring Burst - Apply Reflex Defense bonus
    */
   static async completeBlurringBurst(actor, combatId, usageFlag) {
-    await actor.setFlag('foundryvtt-swse', usageFlag, true);
-
-    const movementSpeed = actor.system.movement?.groundSpeed || 30;
-
-    // Apply +2 Reflex Defense bonus until end of encounter
-    await createEffectOnActor(actor, {
-      name: 'Blurring Burst - Reflex Bonus',
-      icon: 'icons/svg/aura.svg',
-      changes: [{
-        key: 'system.defenses.reflex.bonus',
-        mode: 2, // ADD
-        value: 2,
-        priority: 20
-      }],
-      duration: {
-        combat: combatId
-      },
-      flags: {
-        swse: {
-          source: 'talent',
-          sourceId: 'blurring-burst',
-          sourceActorId: actor.id
-        }
-      }
+    // PHASE 1: BUILD EFFECT PLAN (Pure Computation)
+    const plan = await TalentEffectEngine.buildBlurringBurstPlan({
+      sourceActor: actor,
+      combatId: combatId,
+      usageFlag: usageFlag
     });
+
+    if (!plan.success) {
+      SWSELogger.warn(`Blurring Burst plan failed: ${plan.reason}`);
+      return { success: false, reason: plan.reason };
+    }
+
+    // PHASE 2: APPLY MUTATIONS THROUGH ACTORENGINE
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      SWSELogger.warn(`Blurring Burst failed: ${result.reason}`);
+      return { success: false, reason: result.reason };
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Log + Notification)
+    const movementSpeed = plan.movementSpeed;
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Blurring Burst, moved ${movementSpeed} feet and gained +2 Reflex Defense`);
     ui.notifications.info(`${actor.name} blurs into action! Move ${movementSpeed} feet and gain +2 to Reflex Defense until the end of the encounter!`);
@@ -581,8 +588,27 @@ export class ScoutTalentMechanics {
    * Complete Sudden Assault - Mark as used
    */
   static async completeSuddenAssault(actor, targetActor, combatId, usageFlag) {
-    await actor.setFlag('foundryvtt-swse', usageFlag, true);
+    // PHASE 1: BUILD EFFECT PLAN (Pure Computation)
+    const plan = await TalentEffectEngine.buildSuddenAssaultPlan({
+      sourceActor: actor,
+      targetActor: targetActor,
+      combatId: combatId,
+      usageFlag: usageFlag
+    });
 
+    if (!plan.success) {
+      SWSELogger.warn(`Sudden Assault plan failed: ${plan.reason}`);
+      return { success: false, reason: plan.reason };
+    }
+
+    // PHASE 2: APPLY MUTATIONS THROUGH ACTORENGINE
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      SWSELogger.warn(`Sudden Assault failed: ${result.reason}`);
+      return { success: false, reason: result.reason };
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Log + Notification)
     SWSELogger.log(`SWSE Talents | ${actor.name} used Sudden Assault on ${targetActor.name}`);
     ui.notifications.info(`${actor.name} makes a Sudden Assault against ${targetActor.name} with no Reflex Defense penalty!`);
 
@@ -633,37 +659,31 @@ export class ScoutTalentMechanics {
    * Complete Weaving Stride activation
    */
   static async completeWeavingStride(actor, aooCount, combatId, usageFlag) {
-    await actor.setFlag('foundryvtt-swse', usageFlag, true);
+    // PHASE 1: BUILD EFFECT PLAN (Pure Computation)
+    const plan = await TalentEffectEngine.buildWeavingStridePlan({
+      sourceActor: actor,
+      aooCount: aooCount,
+      combatId: combatId,
+      usageFlag: usageFlag
+    });
 
-    const movementSpeed = actor.system.movement?.groundSpeed || 30;
-    const dodgeBonus = aooCount * 2;
+    if (!plan.success) {
+      SWSELogger.warn(`Weaving Stride plan failed: ${plan.reason}`);
+      return { success: false, reason: plan.reason };
+    }
 
-    // If there were any AoOs made, apply bonus
+    // PHASE 2: APPLY MUTATIONS THROUGH ACTORENGINE
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      SWSELogger.warn(`Weaving Stride failed: ${result.reason}`);
+      return { success: false, reason: result.reason };
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Log + Notification)
+    const movementSpeed = plan.movementSpeed;
+    const dodgeBonus = plan.dodgeBonus;
+
     if (aooCount > 0) {
-      await createEffectOnActor(actor, {
-        name: `Weaving Stride - Dodge Bonus (${dodgeBonus})`,
-        icon: 'icons/svg/daze.svg',
-        changes: [{
-          key: 'system.defenses.reflex.bonus',
-          mode: 2, // ADD
-          value: dodgeBonus,
-          priority: 20
-        }],
-        duration: {
-          rounds: 1,
-          startRound: game.combat?.round,
-          startTurn: game.combat?.turn
-        },
-        flags: {
-          swse: {
-            source: 'talent',
-            sourceId: 'weaving-stride',
-            sourceActorId: actor.id,
-            aooCount: aooCount
-          }
-        }
-      });
-
       SWSELogger.log(`SWSE Talents | ${actor.name} used Weaving Stride, moved ${movementSpeed} feet and gained +${dodgeBonus} dodge bonus from ${aooCount} AoO(s)`);
       ui.notifications.info(`${actor.name} weaves through combat! Move ${movementSpeed} feet and gain +${dodgeBonus} dodge bonus to Reflex Defense from ${aooCount} Attack(s) of Opportunity!`);
     } else {
@@ -722,9 +742,27 @@ export class ScoutTalentMechanics {
    * Complete Quick on Your Feet activation
    */
   static async completeQuickOnYourFeet(actor, combatId, usageFlag) {
-    await actor.setFlag('foundryvtt-swse', usageFlag, true);
+    // PHASE 1: BUILD EFFECT PLAN (Pure Computation)
+    const plan = await TalentEffectEngine.buildQuickOnYourFeetPlan({
+      sourceActor: actor,
+      combatId: combatId,
+      usageFlag: usageFlag
+    });
 
-    const movementSpeed = actor.system.movement?.groundSpeed || 30;
+    if (!plan.success) {
+      SWSELogger.warn(`Quick on Your Feet plan failed: ${plan.reason}`);
+      return { success: false, reason: plan.reason };
+    }
+
+    // PHASE 2: APPLY MUTATIONS THROUGH ACTORENGINE
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      SWSELogger.warn(`Quick on Your Feet failed: ${result.reason}`);
+      return { success: false, reason: result.reason };
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Log + Notification)
+    const movementSpeed = plan.movementSpeed;
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Quick on Your Feet to move ${movementSpeed} feet`);
     ui.notifications.info(`${actor.name} moves ${movementSpeed} feet as a free action!`);
@@ -776,9 +814,27 @@ export class ScoutTalentMechanics {
    * Complete Surge activation
    */
   static async completeSurge(actor, combatId, usageFlag) {
-    await actor.setFlag('foundryvtt-swse', usageFlag, true);
+    // PHASE 1: BUILD EFFECT PLAN (Pure Computation)
+    const plan = await TalentEffectEngine.buildSurgePlan({
+      sourceActor: actor,
+      combatId: combatId,
+      usageFlag: usageFlag
+    });
 
-    const movementSpeed = actor.system.movement?.groundSpeed || 30;
+    if (!plan.success) {
+      SWSELogger.warn(`Surge plan failed: ${plan.reason}`);
+      return { success: false, reason: plan.reason };
+    }
+
+    // PHASE 2: APPLY MUTATIONS THROUGH ACTORENGINE
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      SWSELogger.warn(`Surge failed: ${result.reason}`);
+      return { success: false, reason: result.reason };
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Log + Notification)
+    const movementSpeed = plan.movementSpeed;
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Surge to move up to ${movementSpeed} feet`);
     ui.notifications.info(`${actor.name} surges forward up to ${movementSpeed} feet as a free action!`);
@@ -902,35 +958,27 @@ export class ScoutTalentMechanics {
    * Complete Weak Point activation
    */
   static async completeWeakPoint(actor, targetActor, combatId, usageFlag) {
-    // Apply effect that ignores DR until end of turn
-    const currentRound = game.combat?.round;
-    const currentTurn = game.combat?.turn;
-
-    await createEffectOnActor(targetActor, {
-      name: 'Weak Point - DR Ignored',
-      icon: 'icons/svg/target.svg',
-      changes: [{
-        key: 'system.damageReduction.ignoreUntilEndOfTurn',
-        mode: 5, // OVERRIDE
-        value: 'true',
-        priority: 50
-      }],
-      duration: {
-        rounds: 1,
-        startRound: currentRound,
-        startTurn: currentTurn
-      },
-      flags: {
-        swse: {
-          source: 'talent',
-          sourceId: 'weak-point',
-          sourceActorId: actor.id
-        }
-      }
+    // PHASE 1: BUILD EFFECT PLAN (Pure Computation)
+    const plan = await TalentEffectEngine.buildWeakPointPlan({
+      sourceActor: actor,
+      targetActor: targetActor,
+      combatId: combatId,
+      usageFlag: usageFlag
     });
 
-    await actor.setFlag('foundryvtt-swse', usageFlag, true);
+    if (!plan.success) {
+      SWSELogger.warn(`Weak Point plan failed: ${plan.reason}`);
+      return { success: false, reason: plan.reason };
+    }
 
+    // PHASE 2: APPLY MUTATIONS THROUGH ACTORENGINE
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      SWSELogger.warn(`Weak Point failed: ${result.reason}`);
+      return { success: false, reason: result.reason };
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Log + Notification)
     SWSELogger.log(`SWSE Talents | ${actor.name} used Weak Point on ${targetActor.name}, ignoring DR for rest of turn`);
     ui.notifications.info(`${targetActor.name}'s Damage Reduction is ignored for the rest of your turn!`);
 
@@ -996,28 +1044,27 @@ export class ScoutTalentMechanics {
       return false;
     }
 
-    // Create effect for ignoring difficult terrain
-    await createEffectOnActor(ally, {
-      name: 'Guidance - Ignore Difficult Terrain',
-      icon: 'icons/svg/light.svg',
-      changes: [{
-        key: 'system.movement.ignoreDifficultTerrain',
-        mode: 5, // OVERRIDE
-        value: 'true',
-        priority: 20
-      }],
-      duration: {
-        rounds: 1
-      },
-      flags: {
-        swse: {
-          source: 'talent',
-          sourceId: 'guidance',
-          sourceActorId: actor.id
-        }
-      }
+    // PHASE 1: BUILD EFFECT PLAN (Pure Computation)
+    const plan = await TalentEffectEngine.buildGuidancePlan({
+      sourceActor: actor,
+      allyActor: ally
     });
 
+    if (!plan.success) {
+      SWSELogger.warn(`Guidance plan failed: ${plan.reason}`);
+      ui.notifications.error(`Guidance failed: ${plan.reason}`);
+      return false;
+    }
+
+    // PHASE 2: APPLY MUTATIONS THROUGH ACTORENGINE
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      SWSELogger.warn(`Guidance failed: ${result.reason}`);
+      ui.notifications.error(`Guidance failed: ${result.reason}`);
+      return false;
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Log + Notification)
     SWSELogger.log(`SWSE Talents | ${actor.name} used Guidance on ${ally.name}`);
     ui.notifications.info(`${ally.name} ignores difficult terrain until the start of their next turn!`);
 
@@ -1094,12 +1141,27 @@ export class ScoutTalentMechanics {
       return false;
     }
 
-    // Apply +2 speed bonus
-    const currentSpeed = follower.system.movement?.groundSpeed || 30;
-    const newSpeed = currentSpeed + 2;
+    // PHASE 1: BUILD EFFECT PLAN (Pure Computation)
+    const plan = await TalentEffectEngine.buildGetIntoPositionPlan({
+      sourceActor: actor,
+      followerActor: follower
+    });
 
-    await follower.update({ 'system.movement.groundSpeed': newSpeed });
+    if (!plan.success) {
+      SWSELogger.warn(`Get Into Position plan failed: ${plan.reason}`);
+      ui.notifications.error(`Get Into Position failed: ${plan.reason}`);
+      return false;
+    }
 
+    // PHASE 2: APPLY MUTATIONS THROUGH ACTORENGINE
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      SWSELogger.warn(`Get Into Position failed: ${result.reason}`);
+      ui.notifications.error(`Get Into Position failed: ${result.reason}`);
+      return false;
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Log + Notification)
     SWSELogger.log(`SWSE Talents | ${actor.name} used Get Into Position on ${follower.name}, +2 speed`);
     ui.notifications.info(`${follower.name} gains +2 to their speed!`);
 
@@ -1162,10 +1224,25 @@ export class ScoutTalentMechanics {
    * Record addition of Reconnaissance Team member
    */
   static async recordReconnaissanceTeamMember(actor) {
-    const currentCount = actor.getFlag('foundryvtt-swse', 'reconnaissanceTeamCount') || 0;
-    await actor.setFlag('foundryvtt-swse', 'reconnaissanceTeamCount', currentCount + 1);
+    // PHASE 1: BUILD EFFECT PLAN (Pure Computation)
+    const plan = await TalentEffectEngine.buildRecordReconnaissanceTeamMemberPlan({
+      sourceActor: actor
+    });
 
-    SWSELogger.log(`SWSE Talents | ${actor.name} added Reconnaissance Team member (${currentCount + 1}/3)`);
+    if (!plan.success) {
+      SWSELogger.warn(`Record Reconnaissance Team Member plan failed: ${plan.reason}`);
+      return;
+    }
+
+    // PHASE 2: APPLY MUTATIONS THROUGH ACTORENGINE
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      SWSELogger.warn(`Record Reconnaissance Team Member failed: ${result.reason}`);
+      return;
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Log)
+    SWSELogger.log(`SWSE Talents | ${actor.name} added Reconnaissance Team member (${plan.newCount}/3)`);
   }
 
   // ============================================================================

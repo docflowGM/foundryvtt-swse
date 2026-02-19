@@ -3,6 +3,8 @@ import { SWSELogger } from '../utils/logger.js';
 import { FeatRegistry } from '../progression/feats/feat-registry.js';
 import { FeatEngine } from '../progression/feats/feat-engine.js';
 import { ensureNpcStatblockSnapshot, rollbackNpcToStatblockSnapshot } from '../utils/hardening.js';
+import { RollEngine } from './roll-engine.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 const FLAG_MODE = 'npcLevelUp.mode';
 const FLAG_TRACK = 'npcLevelUp.track';
@@ -72,8 +74,8 @@ export async function levelUpNpcNonheroic(actor) {
   const newTotal = oldTotal + 1;
 
   const oldNH = Number(nonheroicClass.system?.level) || 0;
-  await nonheroicClass.update({ 'system.level': oldNH + 1 });
-  await actor.update({ 'system.level': newTotal });
+  await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: nonheroicClass.id, 'system.level': oldNH + 1 }]);
+  await ActorEngine.updateActor(actor, { 'system.level': newTotal });
 
   // HP gain
   const conMod = Number(actor.system?.attributes?.con?.mod) || 0;
@@ -114,7 +116,7 @@ async function ensureNonheroicClass(actor) {
         delete data._id;
         data.system.level = Math.max(1, Number(actor.system?.level) || 1);
         data.system.isNonheroic = true;
-        const [created] = await actor.createEmbeddedDocuments('Item', [data]);
+        const [created] = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [data]);
         return created;
       }
     }
@@ -146,7 +148,7 @@ async function ensureNonheroicClass(actor) {
     }
   };
 
-  const [created] = await actor.createEmbeddedDocuments('Item', [data]);
+  const [created] = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [data]);
   return created;
 }
 
@@ -168,15 +170,15 @@ async function promptHpMode() {
 
 async function computeNonheroicHpGain(mode, conMod) {
   if (mode === 'avg') {return 2 + conMod;}
-  const roll = await new Roll('1d4 + @con', { con: conMod }).evaluate({ async: true });
-  return Number(roll.total) || 0;
+  const roll = await RollEngine.safeRoll('1d4 + @con', { con: conMod });
+  return roll ? Number(roll.total) || 0 : 2 + conMod; // Fallback to average on roll failure
 }
 
 async function applyHpGain(actor, hpGain) {
   const max = Number(actor.system?.hp?.max) || 0;
   const value = Number(actor.system?.hp?.value) || 0;
 
-  await actor.update({
+  await ActorEngine.updateActor(actor, {
     'system.hp.max': max + hpGain,
     'system.hp.value': value + hpGain
   });
@@ -269,7 +271,7 @@ async function promptAndApplyAbilityIncrease(actor, count) {
     if (!chosen) {return;}
 
     const base = Number(actor.system?.attributes?.[chosen]?.base) || 0;
-    await actor.update({ [`system.attributes.${chosen}.base`]: base + 1 });
+    await ActorEngine.updateActor(actor, { [`system.attributes.${chosen}.base`]: base + 1 });
   }
 }
 

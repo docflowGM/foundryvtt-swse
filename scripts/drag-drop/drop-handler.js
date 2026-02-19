@@ -67,25 +67,28 @@ export class DropHandler {
       'name': template.name
     };
 
-    // Update abilities
+    // Update abilities (base only)
     if (template.abilities) {
       for (const [key, value] of Object.entries(template.abilities)) {
         updates[`system.attributes.${key}.base`] = value.base;
-        updates[`system.attributes.${key}.total`] = value.total;
+        // PHASE 2: Derived totals go to system.derived.*, not system.*
+        updates[`system.derived.attributes.${key}.total`] = value.total;
       }
     }
 
     // Update defenses
     if (template.defenses) {
       for (const [key, value] of Object.entries(template.defenses)) {
-        updates[`system.defenses.${key}.total`] = value.total;
+        // PHASE 2: Defense totals are derived, write to system.derived.*
+        updates[`system.derived.defenses.${key}.total`] = value.total;
       }
     }
 
     // Update HP
     if (template.hp) {
-      updates['system.hp.max'] = template.hp.max;
-      updates['system.hp.value'] = template.hp.value;
+      // PHASE 2: HP max and value are derived, write to system.derived.*
+      updates['system.derived.hp.max'] = template.hp.max;
+      updates['system.derived.hp.value'] = template.hp.value;
     }
 
     // Update other stats - ensure all numeric values are proper integers
@@ -93,9 +96,12 @@ export class DropHandler {
     if (template.challengeLevel) {updates['system.challengeLevel'] = parseInt(template.challengeLevel, 10) || 1;}
     if (template.size) {updates['system.size'] = template.size;}
     if (template.speed !== undefined) {updates['system.speed'] = parseInt(template.speed, 10) || 6;}
-    if (template.bab !== undefined) {updates['system.bab'] = parseInt(template.bab, 10) || 0;}
-    if (template.initiative !== undefined) {updates['system.initiative'] = parseInt(template.initiative, 10) || 0;}
-    if (template.damageThreshold) {updates['system.damageThreshold'] = parseInt(template.damageThreshold, 10) || 10;}
+    // PHASE 2: BAB is derived, write to system.derived.*
+    if (template.bab !== undefined) {updates['system.derived.bab'] = parseInt(template.bab, 10) || 0;}
+    // PHASE 2: Initiative is derived, write to system.derived.*
+    if (template.initiative !== undefined) {updates['system.derived.initiative'] = parseInt(template.initiative, 10) || 0;}
+    // PHASE 2: Damage Threshold is derived, write to system.derived.*
+    if (template.damageThreshold) {updates['system.derived.damageThreshold'] = parseInt(template.damageThreshold, 10) || 10;}
     if (template.perception !== undefined) {updates['system.perception'] = parseInt(template.perception, 10) || 0;}
     if (template.senses) {updates['system.senses'] = template.senses;}
 

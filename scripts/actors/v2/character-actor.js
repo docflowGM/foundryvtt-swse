@@ -27,19 +27,30 @@ export function computeCharacterDerived(actor, system) {
   system.derived.actions ??= {};
   system.derived.encumbrance ??= {};
 
-  const defenses = system.defenses ?? {};
-  const fort = defenses.fortitude ?? defenses.fort ?? {};
-  const ref = defenses.reflex ?? defenses.ref ?? {};
-  const will = defenses.will ?? {};
-  const ff = defenses.flatFooted ?? defenses.flatfooted ?? defenses.ff ?? {};
+  // ========================================================================
+  // PHASE 2: Derived values now owned by DerivedCalculator
+  // These values are computed asynchronously and populated into system.derived.*
+  // This function initializes defaults for immediate use, but authority is DerivedCalculator
+  // ========================================================================
 
-  system.derived.defenses.fort = safeNumber(fort.total, 10);
-  system.derived.defenses.ref = safeNumber(ref.total, 10);
-  system.derived.defenses.will = safeNumber(will.total, 10);
-  system.derived.defenses.flatFooted = safeNumber(ff.total, system.derived.defenses.ref);
+  // Initialize defaults (will be overwritten by DerivedCalculator async)
+  if (!system.derived.defenses.fort) {
+    system.derived.defenses.fort = 10;
+  }
+  if (!system.derived.defenses.ref) {
+    system.derived.defenses.ref = 10;
+  }
+  if (!system.derived.defenses.will) {
+    system.derived.defenses.will = 10;
+  }
+  if (!system.derived.defenses.flatFooted) {
+    system.derived.defenses.flatFooted = 10;
+  }
 
-  // DT is stored as a number in system.damageThreshold for this system.
-  system.derived.damage.threshold = safeNumber(system.damageThreshold, system.derived.defenses.fort);
+  // DT initialized but will be overwritten by DerivedCalculator
+  if (!system.derived.damage?.threshold) {
+    system.derived.damage.threshold = system.derived.defenses.fort || 10;
+  }
 
   mirrorIdentity(actor, system);
   mirrorHp(system);

@@ -15,6 +15,12 @@ import { HooksLayer } from './layers/hooks-layer.js';
 import { PromisesLayer } from './layers/promises-layer.js';
 import { PerformanceLayer } from './layers/performance-layer.js';
 
+// PHASE 3: Import mutation authority layer
+import { MutationIntegrityLayer } from './mutation-integrity-layer.js';
+
+// PHASE 3: Import Batch 1 validation suite
+import { Batch1Validation } from '../mutation/batch-1-validation.js';
+
 /**
  * Initialize and register all sentinel layers
  * Called during system bootstrap
@@ -29,6 +35,9 @@ export function initializeSentinelLayers() {
   SentinelEngine.registerLayer('hooks', HooksLayer);
   SentinelEngine.registerLayer('promises', PromisesLayer);
   SentinelEngine.registerLayer('performance', PerformanceLayer);
+
+  // PHASE 3: Register mutation authority enforcement
+  SentinelEngine.registerLayer('mutation', MutationIntegrityLayer);
 }
 
 /**
@@ -36,4 +45,12 @@ export function initializeSentinelLayers() {
  */
 export function bootstrapSentinel() {
   SentinelEngine.bootstrap();
+
+  // PHASE 3: Register Batch 1 Validation Suite with Sentinel
+  // Makes validation available via sentinel API
+  if (typeof window !== 'undefined') {
+    window.Batch1Validation = Batch1Validation;
+  }
+
+  console.log('[Sentinel] Batch1Validation suite registered');
 }

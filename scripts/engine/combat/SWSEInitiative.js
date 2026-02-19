@@ -10,6 +10,9 @@
  *   - Taking 10 on initiative
  *   - Applying results to the Combat Tracker
  */
+
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
+
 export class SWSEInitiative {
 
   /* ------------------------------------------------------------------ */
@@ -72,7 +75,7 @@ export class SWSEInitiative {
   static async _rerollBetween(combatants, combat) {
     for (const c of combatants) {
       const mod = this._getInitMod(c);
-      const roll = await new Roll(`1d20 + ${mod}`).evaluate();
+      const roll = await RollEngine.safeRoll(`1d20 + ${mod}`);
       await combat.setInitiative(c.id, roll.total);
     }
   }
@@ -99,7 +102,7 @@ export class SWSEInitiative {
    */
   static async rollInitiative(actor, options = {}) {
     const baseMod = actor.system.skills?.initiative?.total ?? 0;
-    const roll = await new Roll(`1d20 + ${baseMod}`).evaluate();
+    const roll = await RollEngine.safeRoll(`1d20 + ${baseMod}`);
 
     let total = roll.total;
     let forceBonus = 0;
@@ -109,12 +112,12 @@ export class SWSEInitiative {
       const fp = actor.system.forcePoints?.value ?? 0;
       if (fp > 0) {
         const fpDie = actor.system.forcePoints?.die || '1d6';
-        const fpRoll = await new Roll(fpDie).evaluate();
+        const fpRoll = await RollEngine.safeRoll(fpDie);
         forceBonus = fpRoll.total;
         total += forceBonus;
 
         // Decrement Force Points immediately
-        await actor.update({
+        await ActorEngine.updateActor(actor, {
           'system.forcePoints.value': fp - 1
         });
 

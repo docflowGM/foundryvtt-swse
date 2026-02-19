@@ -9,6 +9,7 @@
  */
 
 import { swseLogger } from '../../utils/logger.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { SWSELanguageModule } from '../modules/language-module.js';
 
 export class AttributeIncreaseHandler {
@@ -103,7 +104,8 @@ export class AttributeIncreaseHandler {
         langs.push(SWSELanguageModule.CHOICE_TOKEN);
       }
       const deduped = SWSELanguageModule._dedupe(langs);
-      await actor.update({ 'system.languages': deduped }).catch(e => {
+      // PHASE 3: Route through ActorEngine
+      await ActorEngine.updateActor(actor, { 'system.languages': deduped }).catch(e => {
         swseLogger.warn('SWSE | Failed to add language choice tokens:', e);
       });
     }
@@ -193,7 +195,8 @@ export class AttributeIncreaseHandler {
     const currentMaxHP = actor.system?.attributes?.hp?.max || 0;
     const newMaxHP = currentMaxHP + hpGain;
 
-    await actor.update({
+    // PHASE 3: Route through ActorEngine
+    await ActorEngine.updateActor(actor, {
       'system.attributes.hp.max': newMaxHP
     });
 

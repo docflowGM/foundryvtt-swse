@@ -10,6 +10,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 export class BonusHitPointsEngine {
 
@@ -44,7 +45,7 @@ export class BonusHitPointsEngine {
     }
 
     // Apply the new bonus HP
-    await actor.update({ 'system.hp.bonus': newBonus }, { diff: true });
+    await ActorEngine.updateActor(actor, { 'system.hp.bonus': newBonus });
 
     const action = currentBonus > 0 ? 'updated' : 'gained';
     const sourceText = options.source ? ` from ${options.source}` : '';
@@ -71,7 +72,7 @@ export class BonusHitPointsEngine {
     const currentBonus = actor.system.hp.bonus || 0;
     if (currentBonus === 0) {return false;}
 
-    await actor.update({ 'system.hp.bonus': 0 }, { diff: true });
+    await ActorEngine.updateActor(actor, { 'system.hp.bonus': 0 });
 
     SWSELogger.log(`BonusHitPointsEngine | ${actor.name} bonus HP reset (encounter ended)`);
     ui.notifications.info(`${actor.name}'s bonus HP expired at the end of the encounter.`);
@@ -139,7 +140,7 @@ export class BonusHitPointsEngine {
     };
 
     try {
-      const created = await actor.createEmbeddedDocuments('ActiveEffect', [effectData]);
+      const created = await ActorEngine.createEmbeddedDocuments(actor, 'ActiveEffect', [effectData]);
       return created[0] || null;
     } catch (err) {
       SWSELogger.error(`BonusHitPointsEngine | Failed to create bonus HP effect on ${actor.name}:`, err);

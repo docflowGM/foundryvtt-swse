@@ -12,6 +12,7 @@ import { computeAttackBonus } from '../utils/combat-utils.js';
 import { SWSERoll } from '../rolls/enhanced-rolls.js';
 import { createChatMessage } from '../../core/document-api-v13.js';
 import { DamageSystem } from '../damage-system.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 export class SWSEGrappling {
 
@@ -201,12 +202,12 @@ export class SWSEGrappling {
         break;
     }
 
-    await actor.createEmbeddedDocuments('ActiveEffect', [effectData]);
+    await ActorEngine.createEmbeddedDocuments(actor, 'ActiveEffect', [effectData]);
   }
 
   static async _clearState(actor) {
     const effects = actor.effects.filter(e => e.flags?.swse?.grapple);
-    await actor.deleteEmbeddedDocuments('ActiveEffect', effects.map(e => e.id));
+    await ActorEngine.deleteEmbeddedDocuments(actor, 'ActiveEffect', effects.map(e => e.id));
   }
 
   static _hasFeat(actor, name) {

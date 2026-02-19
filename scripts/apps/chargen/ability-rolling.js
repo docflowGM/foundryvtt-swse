@@ -11,6 +11,8 @@
  * Defensive: uses Roll API (Foundry) if available.
  */
 import { confirm as uiConfirm } from '../../utils/ui-utils.js';
+import { RollEngine } from '../../engine/roll-engine.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 export class AbilityRollingController {
   constructor(actor, root, opts = {}) {
     this.actor = actor;
@@ -77,21 +79,14 @@ export class AbilityRollingController {
 
     async _rollFormula(formula) {
     try {
-      if (typeof Roll === 'function') {
-        const roll = new Roll(formula);
-        // Foundry V10+ prefers evaluate/evaluateSync over roll({async:false})
-        if (typeof roll.evaluateSync === 'function') {
-          roll.evaluateSync();
-        } else if (typeof roll.evaluate === 'function') {
-          await roll.evaluate({ async: true });
-        } else if (typeof roll.roll === 'function') {
-          await roll.roll();
-        }
+      const roll = await RollEngine.safeRoll(formula);
+      if (roll) {
         return roll;
       }
     } catch (e) {
-      console.warn('Roll API not available or failed:', e);
+      console.warn('RollEngine failed:', e);
     }
+    // Fallback to Math.random() if RollEngine fails
     const results = [];
     const match = formula.match(/(\d+)d(\d+)/);
     if (match) {
@@ -395,7 +390,7 @@ export class AbilityRollingController {
       mapping[`system.attributes.${k.toLowerCase()}.value`] = val;
     }
     try {
-      await this.actor.update(mapping);
+      await ActorEngine.updateActor(this.actor, mapping);
       this.confirmed = true;
       this.root.querySelectorAll('.die-card').forEach(c => c.draggable=false);
       ui.notifications?.info('Abilities confirmed and saved.');

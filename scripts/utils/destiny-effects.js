@@ -6,6 +6,7 @@
 import { SWSELogger } from './logger.js';
 import { SWSEActiveEffectsManager } from '../combat/active-effects-manager.js';
 import { createChatMessage } from '../core/document-api-v13.js';
+import { RollEngine } from '../engine/roll-engine.js';
 
 export class DestinyEffects {
 
@@ -65,8 +66,11 @@ export class DestinyEffects {
     }
 
     // Roll 1d6 for Force Points
-    const roll = new Roll('1d6');
-    await roll.evaluate({ async: true });
+    const roll = await RollEngine.safeRoll('1d6');
+    if (!roll) {
+      ui.notifications.error('Force Points roll failed');
+      return;
+    }
     const gained = roll.total;
 
     // Add to current Force Points (capped at max)

@@ -15,6 +15,7 @@
 import { ModifierEngine } from '../engine/modifiers/ModifierEngine.js';
 import { ModifierTypes } from '../engine/modifiers/ModifierTypes.js';
 import { swseLogger } from '../utils/logger.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 export class SkillModifierBreakdownApp extends Application {
   constructor(actor, skillKey, options = {}) {
@@ -190,7 +191,7 @@ export class SkillModifierBreakdownApp extends Application {
     customModifiers.push(customMod);
 
     // Update actor (triggers prepareDerivedData → ModifierEngine runs)
-    await this.actor.update({ 'system.customModifiers': customModifiers });
+    await ActorEngine.updateActor(this.actor, { 'system.customModifiers': customModifiers });
 
     // Reset form
     this.isAddingCustom = false;
@@ -215,7 +216,7 @@ export class SkillModifierBreakdownApp extends Application {
       ? this.actor.system.customModifiers.filter(m => m.id !== modToRemove.id)
       : [];
 
-    await this.actor.update({ 'system.customModifiers': customModifiers });
+    await ActorEngine.updateActor(this.actor, { 'system.customModifiers': customModifiers });
 
     ui.notifications.info(`Removed custom modifier: ${modToRemove.sourceName}`);
     this.render();
@@ -240,7 +241,7 @@ export class SkillModifierBreakdownApp extends Application {
         })
       : [];
 
-    await this.actor.update({ 'system.customModifiers': customModifiers });
+    await ActorEngine.updateActor(this.actor, { 'system.customModifiers': customModifiers });
     this.render();
   }
 }

@@ -6,6 +6,7 @@
 
 import { createChatMessage } from '../core/document-api-v13.js';
 import { SWSELogger } from '../utils/logger.js';
+import { RollEngine } from '../engine/roll-engine.js';
 
 /* ============================================================================
    ROLL HOOKS SYSTEM
@@ -633,8 +634,12 @@ export async function rollCriticalConfirmation({ actor, weapon, attackBonus, tar
 
   let roll;
   try {
-    roll = new Roll(formula);
-    await roll.evaluate({ async: true });
+    roll = await RollEngine.safeRoll(formula);
+    if (!roll) {
+      SWSELogger.error('Critical confirmation roll failed: RollEngine returned null');
+      ui.notifications.error('Critical confirmation roll failed');
+      return { roll: null, confirmed: false, error: 'RollEngine failure' };
+    }
   } catch (err) {
     SWSELogger.error('Critical confirmation roll failed:', err);
     ui.notifications.error('Critical confirmation roll failed');
@@ -709,8 +714,10 @@ export async function rollConcealmentCheck(missChance, actor = null) {
     return { roll: null, hit: true, missChance: 0 };
   }
 
-  const roll = new Roll('1d100');
-  await roll.evaluate({ async: true });
+  const roll = await RollEngine.safeRoll('1d100');
+  if (!roll) {
+    return { roll: null, hit: true, missChance: missChance };
+  }
 
   const hit = roll.total > missChance;
 

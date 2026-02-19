@@ -1,13 +1,25 @@
 /**
  * DerivedCalculator — Derived Layer Orchestrator
  *
- * The ONLY place in the system where HP, BAB, and defenses are computed.
+ * PHASE 2 COMPLETION: The ONLY place in the system where ANY derived values are computed.
+ * This is the SOLE authority for all derived calculations.
+ *
+ * Computes:
+ * - Ability modifiers (from base attributes)
+ * - HP max, base, and totals
+ * - BAB (base attack bonus)
+ * - Defense totals (fortitude, reflex, will)
+ * - Initiative derived
+ * - Force/Destiny points derived
+ * - Modifier breakdown for UI
+ *
  * Called from actor.prepareDerivedData() after all mutations complete.
  *
  * Contract:
- * - Reads from: actor.system.progression.* (progression-owned inputs)
- * - Writes to: actor.system.derived.* (derived outputs)
+ * - Reads from: actor.system.* (base actor fields) + actor.system.progression.*
+ * - Writes ONLY to: actor.system.derived.* (derived outputs, V2 authority)
  * - No mutations, no side effects beyond setting derived values
+ * - Pure input → output transformer
  */
 
 import { HPCalculator } from './hp-calculator.js';
@@ -15,6 +27,7 @@ import { BABCalculator } from './bab-calculator.js';
 import { DefenseCalculator } from './defense-calculator.js';
 import { ModifierEngine } from '../../engine/modifiers/ModifierEngine.js';
 import { swseLogger } from '../../utils/logger.js';
+import { MutationIntegrityLayer } from '../../core/sentinel/mutation-integrity-layer.js';
 
 export class DerivedCalculator {
   /**
@@ -26,6 +39,9 @@ export class DerivedCalculator {
    */
   static async computeAll(actor) {
     try {
+      // PHASE 3 AUDITING: Record derived recalculation
+      MutationIntegrityLayer.recordDerivedRecalc();
+
       const prog = actor.system.progression || {};
       const classLevels = prog.classLevels || [];
 
@@ -58,6 +74,56 @@ export class DerivedCalculator {
 
       // Build update object (all writes go to system.derived.*)
       const updates = {};
+
+      // ========================================
+      // Ability Modifiers (Phase 2: moved from DataModel)
+      // ========================================
+      updates['system.derived.attributes'] = {};
+      const attributes = actor.system.attributes || {};
+      for (const [key, ability] of Object.entries(attributes)) {
+        const total = (ability.base || 10) + (ability.racial || 0) + (ability.enhancement || 0) + (ability.temp || 0);
+        const mod = Math.floor((total - 10) / 2);
+        updates['system.derived.attributes'][key] = {
+          base: ability.base || 10,
+          racial: ability.racial || 0,
+          enhancement: ability.enhancement || 0,
+          temp: ability.temp || 0,
+          total: total,
+          mod: mod
+        };
+      }
+
+      // ========================================
+      // Initiative Derived (Phase 2: moved from DataModel)
+      // ========================================
+      const dexMod = (updates['system.derived.attributes']?.dex?.mod) || 0;
+      const initiativeAdjustment = modifierMap['initiative.total'] || 0;
+      updates['system.derived.initiative'] = {
+        dexModifier: dexMod,
+        adjustment: initiativeAdjustment,
+        total: dexMod + initiativeAdjustment
+      };
+
+      // ========================================
+      // Force/Destiny Points Derived (Phase 2: moved from DataModel)
+      // ========================================
+      // Force points: WIS modifier + class levels + bonuses
+      const wisMod = (updates['system.derived.attributes']?.wis?.mod) || 0;
+      const forceClassBonus = actor.system.forcePoints?.classBonus || 0;
+      updates['system.derived.forcePoints'] = {
+        wisdom: wisMod,
+        classBonus: forceClassBonus,
+        total: wisMod + forceClassBonus + (actor.system.forcePoints?.bonus || 0)
+      };
+
+      // Destiny points: CHA modifier + class levels + bonuses
+      const chaMod = (updates['system.derived.attributes']?.cha?.mod) || 0;
+      const destinyClassBonus = actor.system.destinyPoints?.classBonus || 0;
+      updates['system.derived.destinyPoints'] = {
+        charisma: chaMod,
+        classBonus: destinyClassBonus,
+        total: chaMod + destinyClassBonus + (actor.system.destinyPoints?.bonus || 0)
+      };
 
       // HP
       if (hp.max > 0) {

@@ -8,6 +8,7 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { normalizeCredits } from '../../utils/credit-normalization.js';
+import { RollEngine } from '../../engine/roll-engine.js';
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 import { getTalentTreeName, getClassProperty, getTalentTrees, getHitDie } from './chargen-property-accessor.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
@@ -17,6 +18,7 @@ import { MentorSurvey } from '../mentor/mentor-survey.js';
 import { MentorSuggestionDialog } from '../mentor/mentor-suggestion-dialog.js';
 import { MENTORS } from '../mentor/mentor-dialogues.js';
 import { getMentorMemory, setMentorMemory, setTargetClass } from '../../mentor/mentor-memory.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { BackgroundRegistry } from '../../registries/background-registry.js';
 import { LanguageRegistry } from '../../registries/language-registry.js';
 
@@ -25,6 +27,7 @@ import { ClassesDB } from '../../data/classes-db.js';
 
 // V2 API base class
 import SWSEApplicationV2 from '../base/swse-application-v2.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 // v13 Hardening
 import { createActor } from '../../core/document-api-v13.js';
@@ -2827,7 +2830,11 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     // Roll the dice
     const rollFormula = `${numDice}d${dieSize}`;
-    const roll = await new Roll(rollFormula).evaluate();
+    const roll = await RollEngine.safeRoll(rollFormula);
+    if (!roll) {
+      SWSELogger.error('Starting credits roll failed');
+      return 1000; // Fallback value
+    }
 
     // Calculate credits
     const credits = roll.total * multiplier;
@@ -3234,7 +3241,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       items.push(classItem);
 
       if (items.length > 0) {
-        await this.actor.createEmbeddedDocuments('Item', items);
+        await ActorEngine.createEmbeddedDocuments(this.actor, 'Item', items);
       }
 
       // Update mentor with new class target
@@ -3259,14 +3266,16 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     const updates = { 'system.level': newLevel };
 
     // Recalculate HP for new level
-    const conMod = this.actor.system.attributes.con.mod || 0;
+    // PHASE 2: Read from system.derived.* (authoritative source)
+    const conMod = this.actor.system.derived?.attributes?.con?.mod || 0;
     const classDoc = this._packs.classes.find(c =>
       c.name === selectedClassName
     );
     const hitDie = classDoc?.system?.hitDie || 6;
     const hpGain = Math.floor(hitDie / 2) + 1 + conMod;
-    updates['system.hp.max'] = this.actor.system.hp.max + hpGain;
-    updates['system.hp.value'] = this.actor.system.hp.value + hpGain;
+    // PHASE 2: Write to system.derived.hp.max (authoritative location)
+    updates['system.derived.hp.max'] = (this.actor.system.derived?.hp?.max || 0) + hpGain;
+    updates['system.derived.hp.value'] = (this.actor.system.derived?.hp?.value || this.actor.system.hp?.value || 0) + hpGain;
 
     await globalThis.SWSE.ActorEngine.updateActor(this.actor, updates);
 
@@ -3277,7 +3286,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     for (const p of (this.characterData.powers || [])) {items.push(p);}
 
     if (items.length > 0) {
-      await this.actor.createEmbeddedDocuments('Item', items);
+      await ActorEngine.createEmbeddedDocuments(this.actor, 'Item', items);
     }
 
     ui.notifications.info(`${this.actor.name} leveled up to level ${newLevel}!`);

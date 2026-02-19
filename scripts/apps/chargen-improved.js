@@ -8,6 +8,7 @@ import { SWSELogger } from '../utils/logger.js';
 import CharacterGenerator from './chargen/chargen-main.js';
 import { getClassProperty, getHitDie, getTrainedSkills, getTalentTrees } from './chargen/chargen-property-accessor.js';
 import { createActor } from '../core/document-api-v13.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 export default class CharacterGeneratorImproved extends CharacterGenerator {
 
@@ -400,7 +401,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
         : Object.values(droid.system.equipment || {});
 
       if (items.length > 0) {
-        await actor.createEmbeddedDocuments('Item', items);
+        await ActorEngine.createEmbeddedDocuments(actor, 'Item', items);
         SWSELogger.log(`SWSE CharGen | Added ${items.length} equipment items from imported droid`);
         ui.notifications.info(`Added ${items.length} equipment items from droid template`);
       }
@@ -431,7 +432,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
         const weaponFinesse = feats.find(f => f.name === 'Weapon Finesse');
 
         if (weaponFinesse) {
-          await actor.createEmbeddedDocuments('Item', [weaponFinesse.toObject()]);
+          await ActorEngine.createEmbeddedDocuments(actor, 'Item', [weaponFinesse.toObject()]);
           ui.notifications.info('Weapon Finesse feat automatically granted!');
         }
       }

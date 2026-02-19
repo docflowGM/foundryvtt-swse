@@ -4,6 +4,7 @@
  */
 
 import { swseLogger } from '../../../utils/logger.js';
+import { ActorEngine } from '../../../actors/engine/actor-engine.js';
 
 /**
  * Recalculate all derived stats for an actor
@@ -37,7 +38,8 @@ export async function recalcDerivedStats(actor) {
   };
 
   try {
-    await actor.update(updates);
+    // PHASE 3: Route through ActorEngine
+  await ActorEngine.updateActor(actor, updates);
     swseLogger.log(`Derived stats recalculated for ${actor.name}`);
   } catch (err) {
     swseLogger.error('Failed to recalculate derived stats:', err);

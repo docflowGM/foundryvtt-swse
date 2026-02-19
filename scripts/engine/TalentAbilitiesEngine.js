@@ -16,10 +16,11 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { SWSEActiveEffectsManager } from '../combat/active-effects-manager.js';
+import { RollEngine } from './roll-engine.js';
 // eslint-disable-next-line
 import talentAbilitiesData from '../../data/talent-granted-abilities.json' with { type: 'json' };
 import { createChatMessage } from '../core/document-api-v13.js';
-
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
 /**
  * Active Effect definitions for toggleable talent abilities
@@ -676,8 +677,11 @@ export class TalentAbilitiesEngine {
             formula = `${formula} + ${rollData.conditionalBonus.bonus}`;
         }
 
-        const roll = new Roll(formula, actor.getRollData());
-        await roll.evaluate({ async: true });
+        const roll = await RollEngine.safeRoll(formula, actor.getRollData());
+        if (!roll) {
+          SWSELogger.error('Ability roll failed', { ability: ability?.name, formula });
+          return;
+        }
 
         // Build chat message content
         const content = await this._buildAbilityRollMessage(ability, roll, rollData, options);
@@ -1096,7 +1100,7 @@ export class TalentAbilitiesEngine {
         const current = target.system.conditionTrack.current || 0;
         const newValue = Math.max(0, Math.min(5, current - steps)); // 0=normal, 5=helpless
 
-        await target.update({ 'system.conditionTrack.current': newValue });
+        await ActorEngine.updateActor(target, { 'system.conditionTrack.current': newValue });
         SWSELogger.log(`TalentAbilitiesEngine | Moved ${target.name} to CT step ${newValue}`);
     }
 
@@ -1112,7 +1116,7 @@ export class TalentAbilitiesEngine {
         );
 
         if (!hasProne) {
-            await target.createEmbeddedDocuments('ActiveEffect', [{
+            await ActorEngine.createEmbeddedDocuments(target, 'ActiveEffect', [{
                 name: 'Prone',
                 icon: 'icons/svg/falling.svg',
                 flags: { swse: { statusId: 'prone' } }
@@ -1276,8 +1280,11 @@ export class TalentAbilitiesEngine {
         // Roll Use the Force
         const utf = defender.system?.skills?.useTheForce;
         const modifier = utf?.total || 0;
-        const roll = new Roll(`1d20 + ${modifier}`);
-        await roll.evaluate({ async: true });
+        const roll = await RollEngine.safeRoll(`1d20 + ${modifier}`);
+        if (!roll) {
+          SWSELogger.error('Reaction roll failed');
+          return;
+        }
 
         const success = roll.total >= attackRoll;
 

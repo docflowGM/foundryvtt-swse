@@ -133,23 +133,24 @@ export class SWSECombatDocument extends Combat {
 
   async startCombat() {
     if (game.user.isGM) {
+      // PHASE 3: Route through ActorEngine
+      const { ActorEngine } = await import('../../actors/engine/actor-engine.js');
+
       for (const combatant of this.combatants) {
         const actor = combatant.actor;
         if (!actor) {continue;}
 
         // Reset Second Wind (RAW: once per day, but many tables want per encounter)
-        await actor.update({ 'system.secondWind.used': false }, { diff: true });
+        await ActorEngine.resetSecondWind(actor);
 
         // Reset action economy
-        await actor.update({
-          'system.actionEconomy': {
-            swift: true,
-            move: true,
-            standard: true,
-            fullRound: true,
-            reaction: true
-          }
-        }, { diff: true });
+        await ActorEngine.updateActionEconomy(actor, {
+          swift: true,
+          move: true,
+          standard: true,
+          fullRound: true,
+          reaction: true
+        });
       }
     }
 
@@ -164,20 +165,20 @@ export class SWSECombatDocument extends Combat {
     const result = await super.nextTurn();
 
     // Reset action economy when turn starts
+    // PHASE 3: Route through ActorEngine
     if (game.user.isGM) {
       const c = this.combatant;
       const actor = c?.actor;
 
       if (actor) {
-        await actor.update({
-          'system.actionEconomy': {
-            swift: true,
-            move: true,
-            standard: true,
-            fullRound: true,
-            reaction: true
-          }
-        }, { diff: true });
+        const { ActorEngine } = await import('../../actors/engine/actor-engine.js');
+        await ActorEngine.updateActionEconomy(actor, {
+          swift: true,
+          move: true,
+          standard: true,
+          fullRound: true,
+          reaction: true
+        });
       }
     }
 

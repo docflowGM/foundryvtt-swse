@@ -82,7 +82,8 @@ export class SWSEVehicleWeapons {
     }
 
     const attackRoll = await SWSERoll.rollAttack(attacker, weapons[0], target);
-    const hits = attackRoll.roll.total >= target.system.defenses.reflex.total;
+    // PHASE 2: Read defense from authoritative source (system.derived.*)
+    const hits = attackRoll.roll.total >= (target.system?.derived?.defenses?.reflex?.total ?? 10);
 
     const html = `
       <div class="swse-vehicle-battery">

@@ -1,4 +1,5 @@
 import { ProgressionEngine } from '../../progression/engine/progression-engine.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 // ============================================
 // Character Generation Templates Module
 // Loads and applies pre-configured character templates
@@ -488,7 +489,7 @@ export class CharacterTemplates {
           const featData = feat.toObject();
           // Strip effects during chargen to avoid Foundry v13+ validation issues
           delete featData.effects;
-          await actor.createEmbeddedDocuments('Item', [featData]);
+          await ActorEngine.createEmbeddedDocuments(actor, 'Item', [featData]);
           SWSELogger.log(`SWSE | Added template feat: ${featName}`);
 
           // Handle Skill Focus feat - auto-check the skill's focused checkbox
@@ -543,7 +544,7 @@ export class CharacterTemplates {
       const featData = feat.toObject();
       // Strip effects during chargen to avoid Foundry v13+ validation issues
       delete featData.effects;
-      await actor.createEmbeddedDocuments('Item', [featData]);
+      await ActorEngine.createEmbeddedDocuments(actor, 'Item', [featData]);
       SWSELogger.log(`SWSE | Added template feat: ${featName}`);
 
       // Handle Skill Focus feat - auto-check the skill's focused checkbox
@@ -645,7 +646,7 @@ export class CharacterTemplates {
           const talentData = talent.toObject();
           // Strip effects during chargen to avoid Foundry v13+ validation issues
           delete talentData.effects;
-          await actor.createEmbeddedDocuments('Item', [talentData]);
+          await ActorEngine.createEmbeddedDocuments(actor, 'Item', [talentData]);
           SWSELogger.log(`SWSE | Added template talent: ${talentName}`);
           return;
         }
@@ -683,7 +684,7 @@ export class CharacterTemplates {
       const talentData = talent.toObject();
       // Strip effects during chargen to avoid Foundry v13+ validation issues
       delete talentData.effects;
-      await actor.createEmbeddedDocuments('Item', [talentData]);
+      await ActorEngine.createEmbeddedDocuments(actor, 'Item', [talentData]);
       SWSELogger.log(`SWSE | Successfully added template talent: ${talentName}`);
       ui.notifications.info(`Added talent: ${talentName}`);
     } catch (error) {
@@ -730,7 +731,7 @@ export class CharacterTemplates {
       }
 
       if (powersToAdd.length > 0) {
-        await actor.createEmbeddedDocuments('Item', powersToAdd);
+        await ActorEngine.createEmbeddedDocuments(actor, 'Item', powersToAdd);
         SWSELogger.log(`SWSE | Added ${powersToAdd.length} template Force powers`);
       }
     } catch (error) {

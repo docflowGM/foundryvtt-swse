@@ -19,7 +19,9 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { TalentEffectEngine } from './talent-effect-engine.js';
 import { createEffectOnActor } from '../core/document-api-v13.js';
+import { RollEngine } from '../engine/roll-engine.js';
 
 export class LightSideTalentMechanics {
 
@@ -223,13 +225,27 @@ export class LightSideTalentMechanics {
       return false;
     }
 
-    await ActorEngine.updateOwnedItems(ally, [{
-      _id: power.id,
-      'system.spent': false
-    }]);
+    // PHASE 1: BUILD EFFECT PLAN
+    const plan = await TalentEffectEngine.buildDirectPlan({
+      sourceActor: actor,
+      allyActor: ally,
+      power: power,
+      directUsageFlag: directUsageFlag
+    });
 
-    await actor.setFlag('foundryvtt-swse', directUsageFlag, true);
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return false;
+    }
 
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Direct failed: ${result.reason}`);
+      return false;
+    }
+
+    // PHASE 3: SIDE-EFFECTS
     SWSELogger.log(`SWSE Talents | ${actor.name} used Direct to return ${power.name} to ${ally.name}`);
     ui.notifications.info(`${power.name} has been returned to ${ally.name}'s Force Power Suite!`);
 
@@ -298,7 +314,27 @@ export class LightSideTalentMechanics {
     // Get actor's Wisdom bonus
     const wisdomBonus = actor.system.attributes?.wis?.mod || 0;
 
-    // Create effect on ally
+    // PHASE 1: BUILD EFFECT PLAN
+    const plan = await TalentEffectEngine.buildConsularsWisdomPlan({
+      sourceActor: actor,
+      allyActor: ally,
+      wisdomBonus: wisdomBonus,
+      wisdomUsageFlag: wisdomUsageFlag
+    });
+
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return false;
+    }
+
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Consular's Wisdom failed: ${result.reason}`);
+      return false;
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Effect creation and notifications)
     await createEffectOnActor(ally, {
       name: "Consular's Wisdom",
       icon: 'icons/svg/angel.svg',
@@ -319,8 +355,6 @@ export class LightSideTalentMechanics {
         }
       }
     });
-
-    await actor.setFlag('foundryvtt-swse', wisdomUsageFlag, true);
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Consular's Wisdom on ${ally.name}, granting +${wisdomBonus} to Will Defense`);
     ui.notifications.info(`${ally.name} gains +${wisdomBonus} to Will Defense until the end of the encounter!`);
@@ -345,20 +379,27 @@ export class LightSideTalentMechanics {
       };
     }
 
-    // Check if actor has Force Points to spend
-    const forcePoints = actor.system.forcePoints?.value || 0;
-    if (forcePoints <= 0) {
-      return {
-        success: false,
-        message: 'No Force Points available to spend on Exposing Strike'
-      };
+    const targetActor = targetToken.actor;
+
+    // PHASE 1: BUILD EFFECT PLAN
+    const plan = await TalentEffectEngine.buildExposingStrikePlan({
+      sourceActor: actor,
+      targetActor: targetActor
+    });
+
+    if (!plan.success) {
+      ui.notifications.warn(plan.reason);
+      return { success: false, message: plan.reason };
     }
 
-    // Spend Force Point
-    await actor.update({ 'system.forcePoints.value': forcePoints - 1 });
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.warn(`Exposing Strike failed: ${result.reason}`);
+      return { success: false, message: `Exposing Strike failed: ${result.reason}` };
+    }
 
-    // Apply flat-footed condition to target
-    const targetActor = targetToken.actor;
+    // PHASE 3: SIDE-EFFECTS (Effect creation and notifications)
     const duration = {
       rounds: 1,
       startRound: game.combat?.round,
@@ -461,13 +502,25 @@ export class LightSideTalentMechanics {
       return false;
     }
 
-    // Spend the Force Point
-    const forcePoints = actor.system.forcePoints?.value || 0;
-    await actor.update({ 'system.forcePoints.value': forcePoints - 1 });
+    // PHASE 1: BUILD EFFECT PLAN
+    const plan = await TalentEffectEngine.buildDarkRetaliationPlan({
+      sourceActor: actor,
+      retaliationUsageFlag: retaliationUsageFlag
+    });
 
-    // Mark as used this encounter
-    await actor.setFlag('foundryvtt-swse', retaliationUsageFlag, true);
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return false;
+    }
 
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Dark Retaliation failed: ${result.reason}`);
+      return false;
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Log and notifications)
     SWSELogger.log(`SWSE Talents | ${actor.name} used Dark Retaliation with ${power.name}, spent Force Point`);
     ui.notifications.info(`${actor.name} spends a Force Point and activates ${power.name} as a reaction to the Dark Side power!`);
 
@@ -524,7 +577,10 @@ export class LightSideTalentMechanics {
     }
 
     // Roll a second d20 and take the better result
-    const secondRoll = await new Roll('1d20').evaluate({ async: true });
+    const secondRoll = await RollEngine.safeRoll('1d20');
+    if (!secondRoll) {
+      return roll; // Fallback to original if reroll fails
+    }
     const betterRoll = secondRoll.total > roll.terms[0].results[0].result ? secondRoll : roll;
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Rebuke the Dark. Original: ${roll.total}, Second: ${secondRoll.total}, Using: ${betterRoll.total}`);
@@ -573,17 +629,25 @@ export class LightSideTalentMechanics {
       return false;
     }
 
-    // If using Force Point, deduct it
-    if (useForcePoint) {
-      const forcePoints = actor.system.forcePoints?.value || 0;
-      if (forcePoints <= 0) {
-        ui.notifications.error('No Force Points available');
-        return false;
-      }
-      await actor.update({ 'system.forcePoints.value': forcePoints - 1 });
+    // PHASE 1: BUILD EFFECT PLAN
+    const plan = await TalentEffectEngine.buildSkilledAdvisorPlan({
+      sourceActor: actor,
+      useForcePoint: useForcePoint
+    });
+
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return false;
     }
 
-    // Create temporary effect on ally
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Skilled Advisor failed: ${result.reason}`);
+      return false;
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Effect creation and notifications)
     await createEffectOnActor(ally, {
       name: `Skilled Advisor - ${skillName}`,
       icon: 'icons/svg/book.svg',
@@ -666,12 +730,29 @@ export class LightSideTalentMechanics {
       return false;
     }
 
-    // Spend Force Point
-    const forcePoints = actor.system.forcePoints?.value || 0;
-    await actor.update({ 'system.forcePoints.value': forcePoints - 1 });
+    // PHASE 1: BUILD EFFECT PLAN
+    const plan = await TalentEffectEngine.buildApprenticeBoonPlan({
+      sourceActor: actor
+    });
 
-    // Roll Force Point die (1d6 by default in SWSE)
-    const fpRoll = await new Roll('1d6').evaluate({ async: true });
+    if (!plan.success) {
+      ui.notifications.error(plan.reason);
+      return false;
+    }
+
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.error(`Apprentice Boon failed: ${result.reason}`);
+      return false;
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Roll and notifications)
+    const fpRoll = await RollEngine.safeRoll('1d6');
+    if (!fpRoll) {
+      ui.notifications.error('Force Point roll failed');
+      return { success: false, message: 'Roll failed' };
+    }
     await fpRoll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `Apprentice Boon - Force Point for ${ally.name}`
@@ -725,16 +806,33 @@ export class LightSideTalentMechanics {
       };
     }
 
-    // Restore uses if it has a uses system
-    if (farseeing.system?.uses) {
-      await ActorEngine.updateOwnedItems(actor, [{
-        _id: farseeing.id,
-        'system.uses.current': farseeing.system.uses.max
-      }]);
+    if (!farseeing.system?.uses) {
+      return {
+        success: false,
+        message: 'Farseeing does not have uses to restore'
+      };
     }
 
-    await actor.setFlag('foundryvtt-swse', renewUsageFlag, true);
+    // PHASE 1: BUILD EFFECT PLAN
+    const plan = await TalentEffectEngine.buildRenewVisionPlan({
+      sourceActor: actor,
+      farseeing: farseeing,
+      renewUsageFlag: renewUsageFlag
+    });
 
+    if (!plan.success) {
+      ui.notifications.warn(plan.reason);
+      return { success: false, message: plan.reason };
+    }
+
+    // PHASE 2: APPLY MUTATIONS
+    const result = await ActorEngine.applyTalentEffect(plan);
+    if (!result.success) {
+      ui.notifications.warn(`Renew Vision failed: ${result.reason}`);
+      return { success: false, message: `Renew Vision failed: ${result.reason}` };
+    }
+
+    // PHASE 3: SIDE-EFFECTS (Log and notifications)
     SWSELogger.log(`SWSE Talents | ${actor.name} used Renew Vision to restore Farseeing uses`);
     ui.notifications.info(`All Farseeing uses have been restored!`);
 
@@ -1051,8 +1149,27 @@ export class LightSideTalentMechanics {
       const currentCondition = conditionStates[Math.min(currentStep, 4)];
       const nextCondition = conditionStates[Math.min(currentStep + 1, 4)];
 
-      // Update the flag
-      await targetActor.setFlag('foundryvtt-swse', conditionTrackKey, currentStep);
+      // PHASE 1: BUILD EFFECT PLAN
+      const plan = await TalentEffectEngine.buildAdeptNegotiatorPlan({
+        sourceActor: actor,
+        targetActor: targetActor,
+        newConditionStep: currentStep,
+        conditionTrackKey: conditionTrackKey
+      });
+
+      if (!plan.success) {
+        ui.notifications.warn(plan.reason);
+        return false;
+      }
+
+      // PHASE 2: APPLY MUTATIONS
+      const result = await ActorEngine.applyTalentEffect(plan);
+      if (!result.success) {
+        ui.notifications.warn(`Adept Negotiator failed: ${result.reason}`);
+        return false;
+      }
+
+      // PHASE 3: SIDE-EFFECTS (Effect creation and messages)
 
       // Apply effects based on condition state
       if (currentStep >= 4) {
@@ -1144,7 +1261,11 @@ export class LightSideTalentMechanics {
    */
   static async rollPersuasionCheck(actor, modifierOverride = null) {
     const modifier = modifierOverride !== null ? modifierOverride : this.getPersuasionModifier(actor);
-    const roll = await new Roll(`1d20+${modifier}`).evaluate({ async: true });
+    const roll = await RollEngine.safeRoll(`1d20+${modifier}`);
+    if (!roll) {
+      SWSELogger.warn('Persuasion check roll failed');
+      return null;
+    }
     return roll;
   }
 

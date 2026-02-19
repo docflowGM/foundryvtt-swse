@@ -3,6 +3,8 @@
  * Provides detailed dialogs for creating custom items, talents, feats, and force powers
  */
 
+import { ActorEngine } from '../actors/engine/actor-engine.js';
+
 export class CustomItemDialog {
 
   /**
@@ -147,7 +149,7 @@ export class CustomItemDialog {
                 }
               };
 
-              const created = await actor.createEmbeddedDocuments('Item', [itemData]);
+              const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
               resolve(created[0]);
             }
           },
@@ -299,7 +301,7 @@ export class CustomItemDialog {
                 }
               };
 
-              const created = await actor.createEmbeddedDocuments('Item', [itemData]);
+              const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
               resolve(created[0]);
             }
           },
@@ -386,7 +388,7 @@ export class CustomItemDialog {
                 }
               };
 
-              const created = await actor.createEmbeddedDocuments('Item', [itemData]);
+              const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
               resolve(created[0]);
             }
           },
@@ -510,7 +512,7 @@ export class CustomItemDialog {
                 }
               };
 
-              const created = await actor.createEmbeddedDocuments('Item', [itemData]);
+              const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
               resolve(created[0]);
             }
           },
@@ -616,7 +618,7 @@ export class CustomItemDialog {
                 }
               };
 
-              const created = await actor.createEmbeddedDocuments('Item', [itemData]);
+              const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
               resolve(created[0]);
             }
           },
@@ -891,7 +893,7 @@ export class CustomItemDialog {
                 }
               };
 
-              const created = await actor.createEmbeddedDocuments('Item', [itemData]);
+              const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
               resolve(created[0]);
             }
           },

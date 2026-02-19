@@ -18,6 +18,7 @@ import { SWSERoll } from '../../rolls/enhanced-rolls.js';
 import { computeDogfightingModifier } from './vehicle-calculations.js';
 import { createChatMessage } from '../../../core/document-api-v13.js';
 import { measureSquares, facingTowards } from './vehicle-shared.js';
+import { ActorEngine } from '../../../actors/engine/actor-engine.js';
 
 export class SWSEDogfighting {
 
@@ -136,14 +137,14 @@ export class SWSEDogfighting {
       flags: { swse: { vehicleDogfight: 'tailed', source: tailer.id } }
     };
 
-    await tailer.createEmbeddedDocuments('ActiveEffect', [aeTailer]);
-    await tailed.createEmbeddedDocuments('ActiveEffect', [aeTailed]);
+    await ActorEngine.createEmbeddedDocuments(tailer, 'ActiveEffect', [aeTailer]);
+    await ActorEngine.createEmbeddedDocuments(tailed, 'ActiveEffect', [aeTailed]);
   }
 
   static async _clearTailingEffect(actor) {
     const effects = actor.effects.filter(e => e.flags?.swse?.vehicleDogfight);
     if (effects.length) {
-      await actor.deleteEmbeddedDocuments('ActiveEffect', effects.map(e => e.id));
+      await ActorEngine.deleteEmbeddedDocuments(actor, 'ActiveEffect', effects.map(e => e.id));
     }
   }
 

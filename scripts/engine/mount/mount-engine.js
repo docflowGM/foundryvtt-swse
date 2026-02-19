@@ -18,6 +18,8 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 export class MountEngine {
 
@@ -59,7 +61,7 @@ export class MountEngine {
     }
 
     // Update rider
-    await rider.update({
+    await ActorEngine.updateActor(rider, {
       'system.mounted.isMounted': true,
       'system.mounted.mountId': mount.id
     });
@@ -70,7 +72,7 @@ export class MountEngine {
       riders.push(rider.id);
     }
 
-    await mount.update({
+    await ActorEngine.updateActor(mount, {
       'system.mount.riderIds': riders
     });
 
@@ -111,7 +113,7 @@ export class MountEngine {
     }
 
     // Update rider
-    await rider.update({
+    await ActorEngine.updateActor(rider, {
       'system.mounted.isMounted': false,
       'system.mounted.mountId': null
     });
@@ -121,7 +123,7 @@ export class MountEngine {
       const riders = (mount.system.mount?.riderIds ?? [])
         .filter(id => id !== rider.id);
 
-      await mount.update({
+      await ActorEngine.updateActor(mount, {
         'system.mount.riderIds': riders
       });
     }
@@ -279,7 +281,7 @@ export class MountEngine {
       const mount = mountId ? game.actors?.get(mountId) : null;
 
       if (!mount) {
-        await actor.update({
+        await ActorEngine.updateActor(actor, {
           'system.mounted.isMounted': false,
           'system.mounted.mountId': null
         });
@@ -292,7 +294,7 @@ export class MountEngine {
       const validIds = actor.system.mount.riderIds.filter(id => game.actors?.has(id));
 
       if (validIds.length !== actor.system.mount.riderIds.length) {
-        await actor.update({
+        await ActorEngine.updateActor(actor, {
           'system.mount.riderIds': validIds
         });
         SWSELogger.info(`MountEngine: Cleaned stale rider references for ${actor.name}`);

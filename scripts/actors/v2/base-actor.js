@@ -26,12 +26,42 @@ import { SWSEInitiative } from '../../engine/combat/SWSEInitiative.js';
  */
 export class SWSEV2BaseActor extends SWSEActorBase {
   prepareDerivedData() {
+    // ============================================================================
+    // PHASE 3: MUTATION CONTEXT SUPPRESSION
+    // Skip derived calculation if in progression or other transaction context
+    // ============================================================================
+    if (this.__skipPreparedDerivedData === true) {
+      console.log(`[DERIVED] Skipping prepareDerivedData (mutation context active) on ${this.name}`);
+      return;
+    }
+
     super.prepareDerivedData();
 
     const system = this.system ?? {};
     system.derived ??= {};
     system.derived.meta ??= {};
 
+    // ============================================================================
+    // PHASE 3 FOUNDATION: RECALC GUARD
+    // Prevent double-execution within same update cycle
+    // ============================================================================
+    if (this._derivedRecalcInProgress) {
+      console.warn(`[SWSE] Nested prepareDerivedData() call prevented on ${this.name}. Use ActorEngine.updateActor() instead.`);
+      return;
+    }
+    this._derivedRecalcInProgress = true;
+    try {
+      this._performDerivedCalculation(system);
+    } finally {
+      this._derivedRecalcInProgress = false;
+    }
+  }
+
+  /**
+   * Isolated derived calculation phase (prevents re-entry)
+   * @private
+   */
+  _performDerivedCalculation(system) {
     // v2: Compute HP, BAB, and defenses from progression data
     // Statblock NPCs must NOT be re-derived during AppV2 renders.
     // This is async but we fire-and-forget since Foundry doesn't await prepareDerivedData

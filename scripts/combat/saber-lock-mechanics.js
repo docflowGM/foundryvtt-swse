@@ -14,6 +14,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { RollEngine } from '../engine/roll-engine.js';
 
 export class SaberLockMechanics {
 
@@ -121,8 +122,12 @@ export class SaberLockMechanics {
   static async _rollInitiativeForSaberLock(actor) {
     try {
       const initiativeBonus = actor.system.skills?.initiative?.total || 0;
-      const roll = await new Roll('1d20').evaluate({ async: true });
-      const total = roll.total + initiativeBonus;
+      const roll = await RollEngine.safeRoll(`1d20 + ${initiativeBonus}`);
+      if (!roll) {
+        SWSELogger.warn(`SaberLockMechanics | Initiative roll failed for ${actor.name}`);
+        return 0;
+      }
+      const total = roll.total;
 
       // Post to chat
       await roll.toMessage({
