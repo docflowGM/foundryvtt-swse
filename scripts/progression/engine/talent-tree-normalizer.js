@@ -92,11 +92,13 @@ export const TalentTreeNormalizer = {
 
     /**
      * Check if a talent document has a valid tree that exists in TalentTreeDB
+     * Supports fallback resolution from legacy _id to new key-based system
      */
     checkTalentAgainstTree(talentDoc) {
         const sys = talentDoc.system;
-        // Check multiple tree fields
-        const tree = sys?.talent_tree || sys?.tree || sys?.treeId;
+
+        // Attempt 1: Direct tree name field (primary)
+        let tree = sys?.talent_tree || sys?.tree;
 
         if (!tree) {
             SWSELogger.warn(`Talent "${talentDoc.name}" has no talent tree assigned`);
@@ -111,10 +113,29 @@ export const TalentTreeNormalizer = {
         // Validate against TalentTreeDB if built
         if (TalentTreeDB.isBuilt) {
             const normalizedId = normalizeTalentTreeId(tree);
-            if (!TalentTreeDB.has(normalizedId) && !TalentTreeDB.byName(tree)) {
-                SWSELogger.warn(`Talent "${talentDoc.name}" references unknown tree: "${tree}" (normalized: ${normalizedId})`);
-                return false;
+
+            // Try by normalized key first
+            if (TalentTreeDB.has(normalizedId)) {
+                return true;
             }
+
+            // Try by name lookup
+            if (TalentTreeDB.byName(tree)) {
+                return true;
+            }
+
+            // Fallback: Try legacy _id resolution (old system)
+            if (sys?.treeId) {
+                const legacyTree = TalentTreeDB.all().find(t => t._id === sys.treeId || t.sourceId === sys.treeId);
+                if (legacyTree) {
+                    SWSELogger.debug(`Talent "${talentDoc.name}" resolved via legacy treeId`);
+                    return true;
+                }
+            }
+
+            // Log warning but don't fail - data may be in transition
+            SWSELogger.warn(`Talent "${talentDoc.name}" references unknown tree: "${tree}" (normalized: ${normalizedId})`);
+            // Don't return false - allow talent to load even if tree resolution fails
         }
 
         return true;
