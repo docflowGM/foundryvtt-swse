@@ -60,7 +60,7 @@ export class ActionPaletteApp extends HandlebarsApplicationMixin(ApplicationV2) 
   /**
    * Get template path
    */
-  static TEMPLATE = 'systems/swse/templates/ui/action-palette.hbs';
+  static TEMPLATE = 'systems/foundryvtt-swse/templates/ui/action-palette.hbs';
 
   /**
    * Prepare context for template
@@ -377,7 +377,7 @@ export class ActionPaletteApp extends HandlebarsApplicationMixin(ApplicationV2) 
    * @private
    */
   _loadGMZones() {
-    const saved = game.user.getFlag('swse', 'actionPaletteGMZones') || {};
+    const saved = game.user.getFlag('foundryvtt-swse', 'actionPaletteGMZones') || {};
     this.gmZones = {
       spawners: saved.spawners || [{}, {}, {}],
       commands: saved.commands || [{}, {}, {}],
@@ -390,7 +390,7 @@ export class ActionPaletteApp extends HandlebarsApplicationMixin(ApplicationV2) 
    * @private
    */
   async _saveGMZones() {
-    await game.user.setFlag('swse', 'actionPaletteGMZones', this.gmZones);
+    await game.user.setFlag('foundryvtt-swse', 'actionPaletteGMZones', this.gmZones);
   }
 
   /**
@@ -509,7 +509,7 @@ export class ActionPaletteApp extends HandlebarsApplicationMixin(ApplicationV2) 
    * Load user preferences (position, size, mode)
    */
   _loadPreferences() {
-    const prefs = game.user.getFlag('swse', 'actionPaletteState') || {};
+    const prefs = game.user.getFlag('foundryvtt-swse', 'actionPaletteState') || {};
     if (prefs.position) {
       this.position = prefs.position;
     }
@@ -522,7 +522,7 @@ export class ActionPaletteApp extends HandlebarsApplicationMixin(ApplicationV2) 
    * Save user preferences
    */
   async _savePreferences() {
-    await game.user.setFlag('swse', 'actionPaletteState', {
+    await game.user.setFlag('foundryvtt-swse', 'actionPaletteState', {
       position: this.position,
       mode: this.mode
     });

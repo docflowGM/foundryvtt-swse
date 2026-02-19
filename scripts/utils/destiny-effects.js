@@ -18,7 +18,7 @@ export class DestinyEffects {
    * Implemented as a flag that gets checked in roll handlers
    */
   static async autoCrit(actor) {
-    await actor.setFlag('swse', 'destinyAutoCrit', true);
+    await actor.setFlag('foundryvtt-swse', 'destinyAutoCrit', true);
 
     createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
@@ -32,7 +32,7 @@ export class DestinyEffects {
    * Implemented as a temporary AC/Defense bonus or flag for GM tracking
    */
   static async autoMiss(actor) {
-    await actor.setFlag('swse', 'destinyAutoMiss', true);
+    await actor.setFlag('foundryvtt-swse', 'destinyAutoMiss', true);
 
     createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
@@ -45,7 +45,7 @@ export class DestinyEffects {
    * Act out of turn: Take an action outside normal initiative order
    */
   static async actOutOfTurn(actor) {
-    await actor.setFlag('swse', 'destinyActOutOfTurn', true);
+    await actor.setFlag('foundryvtt-swse', 'destinyActOutOfTurn', true);
 
     createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
@@ -89,7 +89,7 @@ export class DestinyEffects {
    * Marked as a flag for GM to apply manually when needed
    */
   static async takeDamageForAlly(actor) {
-    await actor.setFlag('swse', 'destinyTakeDamageForAlly', true);
+    await actor.setFlag('foundryvtt-swse', 'destinyTakeDamageForAlly', true);
 
     createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
@@ -113,17 +113,17 @@ export class DestinyEffects {
    * Clear instant effect flags (when used or reset)
    */
   static async clearInstantEffects(actor) {
-    await actor.unsetFlag('swse', 'destinyAutoCrit');
-    await actor.unsetFlag('swse', 'destinyAutoMiss');
-    await actor.unsetFlag('swse', 'destinyActOutOfTurn');
-    await actor.unsetFlag('swse', 'destinyTakeDamageForAlly');
+    await actor.unsetFlag('foundryvtt-swse', 'destinyAutoCrit');
+    await actor.unsetFlag('foundryvtt-swse', 'destinyAutoMiss');
+    await actor.unsetFlag('foundryvtt-swse', 'destinyActOutOfTurn');
+    await actor.unsetFlag('foundryvtt-swse', 'destinyTakeDamageForAlly');
   }
 
   /**
    * Check if character has an active instant effect
    */
   static hasInstantEffect(actor, effectType) {
-    return actor.getFlag('swse', `destiny${effectType}`) === true;
+    return actor.getFlag('foundryvtt-swse', `destiny${effectType}`) === true;
   }
 
   /* -------------------------------------------------------------------------- */

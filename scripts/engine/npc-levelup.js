@@ -19,20 +19,20 @@ const FLAG_SNAPSHOT = 'npcLevelUp.snapshot';
 export async function ensureNpcProgressionMode(actor, opts = {}) {
   if (!actor) {return;}
 
-  const mode = actor.getFlag('swse', FLAG_MODE) ?? 'statblock';
-  const snapshot = actor.getFlag('swse', FLAG_SNAPSHOT);
+  const mode = actor.getFlag('foundryvtt-swse', FLAG_MODE) ?? 'statblock';
+  const snapshot = actor.getFlag('foundryvtt-swse', FLAG_SNAPSHOT);
 
   if (!snapshot) {
     await ensureNpcStatblockSnapshot(actor);
   }
 
   if (mode !== 'progression') {
-    await actor.setFlag('swse', FLAG_MODE, 'progression');
-    await actor.setFlag('swse', FLAG_STARTED_AT, game.time?.worldTime ?? Date.now());
+    await actor.setFlag('foundryvtt-swse', FLAG_MODE, 'progression');
+    await actor.setFlag('foundryvtt-swse', FLAG_STARTED_AT, game.time?.worldTime ?? Date.now());
   }
 
   if (opts.track) {
-    await actor.setFlag('swse', FLAG_TRACK, opts.track);
+    await actor.setFlag('foundryvtt-swse', FLAG_TRACK, opts.track);
   }
 }
 

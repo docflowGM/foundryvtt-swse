@@ -18,7 +18,7 @@ export function registerNpcRenderProbeHooks() {
     const actor = app?.actor ?? app?.document;
     if (!actor || actor.type !== 'npc') {return;}
 
-    const mode = actor.getFlag('swse', 'npcLevelUp.mode') ?? 'statblock';
+    const mode = actor.getFlag('foundryvtt-swse', 'npcLevelUp.mode') ?? 'statblock';
     const { heroicLevel, nonheroicLevel, totalLevel } = getLevelSplit(actor);
     const effectiveHalfLevel = getEffectiveHalfLevel(actor);
 

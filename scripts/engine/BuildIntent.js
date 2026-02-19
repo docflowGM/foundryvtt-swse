@@ -337,7 +337,7 @@ export class BuildIntent {
         };
 
         // Check for applied template to inform build intent
-        const appliedTemplate = actor.getFlag('swse', 'appliedTemplate');
+        const appliedTemplate = actor.getFlag('foundryvtt-swse', 'appliedTemplate');
         if (appliedTemplate) {
             intent.appliedTemplate = appliedTemplate;
             SWSELogger.log(`[BUILD-INTENT] analyze() - Character uses template: ${appliedTemplate.name} (${appliedTemplate.archetype})`);

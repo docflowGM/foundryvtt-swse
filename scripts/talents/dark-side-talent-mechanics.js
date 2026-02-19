@@ -49,7 +49,7 @@ export class DarkSideTalentMechanics {
     }
 
     // Check if already used today
-    const lastUsed = actor.getFlag('swse', 'swiftPowerUsedToday');
+    const lastUsed = actor.getFlag('foundryvtt-swse', 'swiftPowerUsedToday');
     const today = new Date().toDateString();
 
     if (lastUsed === today) {
@@ -58,7 +58,7 @@ export class DarkSideTalentMechanics {
     }
 
     // Record usage
-    await actor.setFlag('swse', 'swiftPowerUsedToday', today);
+    await actor.setFlag('foundryvtt-swse', 'swiftPowerUsedToday', today);
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Swift Power on ${forcePower.name}`);
     ui.notifications.info(`${forcePower.name} is being used as a Swift Action!`);
@@ -87,7 +87,7 @@ export class DarkSideTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const savantUsageFlag = `darkSideSavant_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', savantUsageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', savantUsageFlag);
 
     if (alreadyUsed) {
       return {
@@ -129,7 +129,7 @@ export class DarkSideTalentMechanics {
     }]);
 
     // Mark as used
-    await actor.setFlag('swse', savantUsageFlag, true);
+    await actor.setFlag('foundryvtt-swse', savantUsageFlag, true);
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Dark Side Savant to return ${power.name}`);
     ui.notifications.info(`${power.name} has been returned to your Force Power Suite without spending a Force Point!`);
@@ -152,7 +152,7 @@ export class DarkSideTalentMechanics {
       'system.spent': false
     }]);
 
-    await actor.setFlag('swse', savantUsageFlag, true);
+    await actor.setFlag('foundryvtt-swse', savantUsageFlag, true);
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Dark Side Savant to return ${power.name}`);
     ui.notifications.info(`${power.name} has been returned to your Force Power Suite!`);
@@ -208,7 +208,7 @@ export class DarkSideTalentMechanics {
 
     // Store the delayed damage on the target
     const targetActor = targetToken.actor;
-    const wrathFlags = targetActor.getFlag('swse', 'wrathDamage') || [];
+    const wrathFlags = targetActor.getFlag('foundryvtt-swse', 'wrathDamage') || [];
     wrathFlags.push({
       id: wrathFlagId,
       damage: halfDamage,
@@ -218,7 +218,7 @@ export class DarkSideTalentMechanics {
       triggeredAt: new Date().toISOString()
     });
 
-    await targetActor.setFlag('swse', 'wrathDamage', wrathFlags);
+    await targetActor.setFlag('foundryvtt-swse', 'wrathDamage', wrathFlags);
 
     SWSELogger.log(`SWSE Talents | ${actor.name} triggered Wrath of the Dark Side on ${targetActor.name}. Will deal ${halfDamage} damage at start of next turn.`);
     ui.notifications.info(`${targetActor.name} will take ${halfDamage} additional damage at the start of their next turn from Wrath of the Dark Side!`);
@@ -236,7 +236,7 @@ export class DarkSideTalentMechanics {
    */
   static async applyWrathDamageAtTurnStart(token) {
     const actor = token.actor;
-    const wrathFlags = actor.getFlag('swse', 'wrathDamage') || [];
+    const wrathFlags = actor.getFlag('foundryvtt-swse', 'wrathDamage') || [];
 
     if (wrathFlags.length === 0) {
       return;
@@ -278,9 +278,9 @@ export class DarkSideTalentMechanics {
     );
 
     if (remainingDamages.length === 0) {
-      await actor.unsetFlag('swse', 'wrathDamage');
+      await actor.unsetFlag('foundryvtt-swse', 'wrathDamage');
     } else {
-      await actor.setFlag('swse', 'wrathDamage', remainingDamages);
+      await actor.setFlag('foundryvtt-swse', 'wrathDamage', remainingDamages);
     }
   }
 
@@ -290,8 +290,8 @@ export class DarkSideTalentMechanics {
   static async clearWrathFlagsOnCombatEnd() {
     for (const combatant of game.combat?.combatants || []) {
       const actor = combatant.actor;
-      if (actor?.getFlag('swse', 'wrathDamage')) {
-        await actor.unsetFlag('swse', 'wrathDamage');
+      if (actor?.getFlag('foundryvtt-swse', 'wrathDamage')) {
+        await actor.unsetFlag('foundryvtt-swse', 'wrathDamage');
       }
     }
   }

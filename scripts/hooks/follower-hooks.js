@@ -17,11 +17,11 @@ function _randomId() {
 }
 
 function _getSlots(actor) {
-  return actor.getFlag('swse', 'followerSlots') || [];
+  return actor.getFlag('foundryvtt-swse', 'followerSlots') || [];
 }
 
 async function _setSlots(actor, slots) {
-  await actor.setFlag('swse', 'followerSlots', slots);
+  await actor.setFlag('foundryvtt-swse', 'followerSlots', slots);
 }
 
 function _slotsForTalent(slots, talentName) {
@@ -70,7 +70,7 @@ async function _setPendingDetachment(ownerActor, talentItem, filledFollowerIds) 
     talentItemId: talentItem.id,
     candidateActorIds: filledFollowerIds
   };
-  await ownerActor.setFlag('swse', 'pendingFollowerDetachment', payload);
+  await ownerActor.setFlag('foundryvtt-swse', 'pendingFollowerDetachment', payload);
   ui.notifications?.warn?.(
     `Follower slots reduced for ${talentItem.name}. Open your character sheet > Other tab to choose which follower to detach.`
   );

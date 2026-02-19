@@ -79,7 +79,7 @@ export function getMentorMemory(actor, mentorId) {
     return new MentorMemory();
   }
 
-  const mentorMemories = actor.getFlag('swse', 'mentorMemories') || {};
+  const mentorMemories = actor.getFlag('foundryvtt-swse', 'mentorMemories') || {};
   const memoryData = mentorMemories[mentorId] || {};
 
   return MentorMemory.fromJSON(memoryData);
@@ -99,10 +99,10 @@ export async function setMentorMemory(actor, mentorId, memory) {
     return;
   }
 
-  const mentorMemories = actor.getFlag('swse', 'mentorMemories') || {};
+  const mentorMemories = actor.getFlag('foundryvtt-swse', 'mentorMemories') || {};
   mentorMemories[mentorId] = memory.toJSON();
 
-  await actor.setFlag('swse', 'mentorMemories', mentorMemories);
+  await actor.setFlag('foundryvtt-swse', 'mentorMemories', mentorMemories);
 }
 
 /**
@@ -275,7 +275,7 @@ export async function decayAllMentorCommitments(actor, decayRate = 0.15) {
     return;
   }
 
-  const mentorMemories = actor.getFlag('swse', 'mentorMemories') || {};
+  const mentorMemories = actor.getFlag('foundryvtt-swse', 'mentorMemories') || {};
   let updated = false;
 
   for (const [mentorId, memoryData] of Object.entries(mentorMemories)) {
@@ -290,7 +290,7 @@ export async function decayAllMentorCommitments(actor, decayRate = 0.15) {
   }
 
   if (updated) {
-    await actor.setFlag('swse', 'mentorMemories', mentorMemories);
+    await actor.setFlag('foundryvtt-swse', 'mentorMemories', mentorMemories);
   }
 }
 
@@ -306,7 +306,7 @@ export async function updateAllMentorMemories(actor) {
     return;
   }
 
-  const mentorMemories = actor.getFlag('swse', 'mentorMemories') || {};
+  const mentorMemories = actor.getFlag('foundryvtt-swse', 'mentorMemories') || {};
   let updated = false;
 
   for (const [mentorId, memoryData] of Object.entries(mentorMemories)) {
@@ -323,7 +323,7 @@ export async function updateAllMentorMemories(actor) {
   }
 
   if (updated) {
-    await actor.setFlag('swse', 'mentorMemories', mentorMemories);
+    await actor.setFlag('foundryvtt-swse', 'mentorMemories', mentorMemories);
   }
 }
 
@@ -338,7 +338,7 @@ export function getAllMentorMemories(actor) {
     return {};
   }
 
-  const mentorMemories = actor.getFlag('swse', 'mentorMemories') || {};
+  const mentorMemories = actor.getFlag('foundryvtt-swse', 'mentorMemories') || {};
   const result = {};
 
   for (const [mentorId, memoryData] of Object.entries(mentorMemories)) {

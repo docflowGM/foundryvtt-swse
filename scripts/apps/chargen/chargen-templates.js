@@ -764,7 +764,7 @@ export class CharacterTemplates {
     }
 
     // Store complete template info in actor flags for later reference
-    await actor.setFlag('swse', 'appliedTemplate', {
+    await actor.setFlag('foundryvtt-swse', 'appliedTemplate', {
       id: templateData.id || templateData._templateId,
       name: templateData.name || templateData._templateName,
       class: templateData.class || templateData.className,

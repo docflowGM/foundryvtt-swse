@@ -1099,7 +1099,7 @@ export class MentorSurvey {
       // Seed mentor memory from survey answers
       // This connects L1 survey to mentor dialogue personalization
       try {
-        const mentorId = actor.getFlag('swse', 'level1Class');
+        const mentorId = actor.getFlag('foundryvtt-swse', 'level1Class');
         if (mentorId) {
           const seededMemory = seedMentorMemoryFromSurvey(biases);
           await setMentorMemory(actor, mentorId.toLowerCase(), seededMemory);

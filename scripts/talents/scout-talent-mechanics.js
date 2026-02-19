@@ -183,7 +183,7 @@ export class ScoutTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const usageFlag = `blindingStrike_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', usageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', usageFlag);
 
     if (alreadyUsed) {
       return {
@@ -219,7 +219,7 @@ export class ScoutTalentMechanics {
    */
   static async completeBlindingStrike(actor, targetActor, attackHit, combatId, usageFlag) {
     // Mark ability as used
-    await actor.setFlag('swse', usageFlag, true);
+    await actor.setFlag('foundryvtt-swse', usageFlag, true);
 
     if (!attackHit) {
       SWSELogger.log(`SWSE Talents | ${actor.name} used Blinding Strike on ${targetActor.name} but missed`);
@@ -277,7 +277,7 @@ export class ScoutTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const usageFlag = `confusingStrike_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', usageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', usageFlag);
 
     if (alreadyUsed) {
       return {
@@ -325,7 +325,7 @@ export class ScoutTalentMechanics {
    */
   static async completeConfusingStrike(actor, targetActor, attackHit, combatId, usageFlag) {
     // Mark ability as used
-    await actor.setFlag('swse', usageFlag, true);
+    await actor.setFlag('foundryvtt-swse', usageFlag, true);
 
     if (!attackHit) {
       SWSELogger.log(`SWSE Talents | ${actor.name} used Confusing Strike on ${targetActor.name} but missed`);
@@ -384,7 +384,7 @@ export class ScoutTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const usageFlag = `unexpectedAttack_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', usageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', usageFlag);
 
     if (alreadyUsed) {
       return {
@@ -435,7 +435,7 @@ export class ScoutTalentMechanics {
    */
   static async completeUnexpectedAttack(actor, targetActor, attackBonus, combatId, usageFlag) {
     // Mark ability as used
-    await actor.setFlag('swse', usageFlag, true);
+    await actor.setFlag('foundryvtt-swse', usageFlag, true);
 
     const bonusText = attackBonus === 5 ? '+5 (Total Concealment)' : '+2 (Concealment)';
 
@@ -470,7 +470,7 @@ export class ScoutTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const usageFlag = `blurringBurst_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', usageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', usageFlag);
 
     if (alreadyUsed) {
       return {
@@ -493,7 +493,7 @@ export class ScoutTalentMechanics {
    * Complete Blurring Burst - Apply Reflex Defense bonus
    */
   static async completeBlurringBurst(actor, combatId, usageFlag) {
-    await actor.setFlag('swse', usageFlag, true);
+    await actor.setFlag('foundryvtt-swse', usageFlag, true);
 
     const movementSpeed = actor.system.movement?.groundSpeed || 30;
 
@@ -546,7 +546,7 @@ export class ScoutTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const usageFlag = `suddenAssault_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', usageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', usageFlag);
 
     if (alreadyUsed) {
       return {
@@ -581,7 +581,7 @@ export class ScoutTalentMechanics {
    * Complete Sudden Assault - Mark as used
    */
   static async completeSuddenAssault(actor, targetActor, combatId, usageFlag) {
-    await actor.setFlag('swse', usageFlag, true);
+    await actor.setFlag('foundryvtt-swse', usageFlag, true);
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Sudden Assault on ${targetActor.name}`);
     ui.notifications.info(`${actor.name} makes a Sudden Assault against ${targetActor.name} with no Reflex Defense penalty!`);
@@ -610,7 +610,7 @@ export class ScoutTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const usageFlag = `weavingStride_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', usageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', usageFlag);
 
     if (alreadyUsed) {
       return {
@@ -633,7 +633,7 @@ export class ScoutTalentMechanics {
    * Complete Weaving Stride activation
    */
   static async completeWeavingStride(actor, aooCount, combatId, usageFlag) {
-    await actor.setFlag('swse', usageFlag, true);
+    await actor.setFlag('foundryvtt-swse', usageFlag, true);
 
     const movementSpeed = actor.system.movement?.groundSpeed || 30;
     const dodgeBonus = aooCount * 2;
@@ -699,7 +699,7 @@ export class ScoutTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const usageFlag = `quickOnYourFeet_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', usageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', usageFlag);
 
     if (alreadyUsed) {
       return {
@@ -722,7 +722,7 @@ export class ScoutTalentMechanics {
    * Complete Quick on Your Feet activation
    */
   static async completeQuickOnYourFeet(actor, combatId, usageFlag) {
-    await actor.setFlag('swse', usageFlag, true);
+    await actor.setFlag('foundryvtt-swse', usageFlag, true);
 
     const movementSpeed = actor.system.movement?.groundSpeed || 30;
 
@@ -753,7 +753,7 @@ export class ScoutTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const usageFlag = `surge_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', usageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', usageFlag);
 
     if (alreadyUsed) {
       return {
@@ -776,7 +776,7 @@ export class ScoutTalentMechanics {
    * Complete Surge activation
    */
   static async completeSurge(actor, combatId, usageFlag) {
-    await actor.setFlag('swse', usageFlag, true);
+    await actor.setFlag('foundryvtt-swse', usageFlag, true);
 
     const movementSpeed = actor.system.movement?.groundSpeed || 30;
 
@@ -867,7 +867,7 @@ export class ScoutTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const usageFlag = `weakPoint_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', usageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', usageFlag);
 
     if (alreadyUsed) {
       return {
@@ -929,7 +929,7 @@ export class ScoutTalentMechanics {
       }
     });
 
-    await actor.setFlag('swse', usageFlag, true);
+    await actor.setFlag('foundryvtt-swse', usageFlag, true);
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Weak Point on ${targetActor.name}, ignoring DR for rest of turn`);
     ui.notifications.info(`${targetActor.name}'s Damage Reduction is ignored for the rest of your turn!`);
@@ -1141,7 +1141,7 @@ export class ScoutTalentMechanics {
     }
 
     // Count existing reconnaissance team members
-    const reconCount = actor.getFlag('swse', 'reconnaissanceTeamCount') || 0;
+    const reconCount = actor.getFlag('foundryvtt-swse', 'reconnaissanceTeamCount') || 0;
 
     if (reconCount >= 3) {
       return {
@@ -1162,8 +1162,8 @@ export class ScoutTalentMechanics {
    * Record addition of Reconnaissance Team member
    */
   static async recordReconnaissanceTeamMember(actor) {
-    const currentCount = actor.getFlag('swse', 'reconnaissanceTeamCount') || 0;
-    await actor.setFlag('swse', 'reconnaissanceTeamCount', currentCount + 1);
+    const currentCount = actor.getFlag('foundryvtt-swse', 'reconnaissanceTeamCount') || 0;
+    await actor.setFlag('foundryvtt-swse', 'reconnaissanceTeamCount', currentCount + 1);
 
     SWSELogger.log(`SWSE Talents | ${actor.name} added Reconnaissance Team member (${currentCount + 1}/3)`);
   }
@@ -1209,7 +1209,7 @@ export class ScoutTalentMechanics {
     return canvas.tokens.placeables.filter(token => {
       if (!token.actor || token.actor.id === actor.id) {return false;}
       // Check if this is a follower of the actor
-      const followerFlag = token.actor.getFlag('swse', 'followerOfActor');
+      const followerFlag = token.actor.getFlag('foundryvtt-swse', 'followerOfActor');
       return followerFlag === actor.id;
     });
   }
@@ -1464,15 +1464,15 @@ Hooks.on('deleteCombat', async (combat) => {
 
     // Clear all scout talent encounter flags
     const combatId = combat.id;
-    await actor.unsetFlag('swse', `quickOnYourFeet_${combatId}`);
-    await actor.unsetFlag('swse', `surge_${combatId}`);
-    await actor.unsetFlag('swse', `weakPoint_${combatId}`);
-    await actor.unsetFlag('swse', `blindingStrike_${combatId}`);
-    await actor.unsetFlag('swse', `confusingStrike_${combatId}`);
-    await actor.unsetFlag('swse', `unexpectedAttack_${combatId}`);
-    await actor.unsetFlag('swse', `blurringBurst_${combatId}`);
-    await actor.unsetFlag('swse', `suddenAssault_${combatId}`);
-    await actor.unsetFlag('swse', `weavingStride_${combatId}`);
+    await actor.unsetFlag('foundryvtt-swse', `quickOnYourFeet_${combatId}`);
+    await actor.unsetFlag('foundryvtt-swse', `surge_${combatId}`);
+    await actor.unsetFlag('foundryvtt-swse', `weakPoint_${combatId}`);
+    await actor.unsetFlag('foundryvtt-swse', `blindingStrike_${combatId}`);
+    await actor.unsetFlag('foundryvtt-swse', `confusingStrike_${combatId}`);
+    await actor.unsetFlag('foundryvtt-swse', `unexpectedAttack_${combatId}`);
+    await actor.unsetFlag('foundryvtt-swse', `blurringBurst_${combatId}`);
+    await actor.unsetFlag('foundryvtt-swse', `suddenAssault_${combatId}`);
+    await actor.unsetFlag('foundryvtt-swse', `weavingStride_${combatId}`);
   }
 });
 

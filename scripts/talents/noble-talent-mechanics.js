@@ -164,7 +164,7 @@ export class NobleTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const usageFlag = `inspireConfidence_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', usageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', usageFlag);
 
     if (alreadyUsed) {
       return {
@@ -203,7 +203,7 @@ export class NobleTalentMechanics {
     }
 
     // Mark as used
-    await actor.setFlag('swse', usageFlag, true);
+    await actor.setFlag('foundryvtt-swse', usageFlag, true);
 
     // Create effect for +2 morale bonus
     await createEffectOnActor(ally, {
@@ -260,7 +260,7 @@ export class NobleTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const usageFlag = `bolsterAlly_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', usageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', usageFlag);
 
     if (alreadyUsed) {
       return {
@@ -302,7 +302,7 @@ export class NobleTalentMechanics {
     }
 
     // Mark as used
-    await actor.setFlag('swse', usageFlag, true);
+    await actor.setFlag('foundryvtt-swse', usageFlag, true);
 
     // Apply temporary HP
     const currentTempHP = ally.system.attributes?.temporaryHP || 0;
@@ -339,7 +339,7 @@ export class NobleTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const usageFlag = `igniteFervor_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', usageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', usageFlag);
 
     if (alreadyUsed) {
       return {
@@ -373,7 +373,7 @@ export class NobleTalentMechanics {
     const allies = this.getAllAllies(actor);
 
     // Mark as used
-    await actor.setFlag('swse', usageFlag, true);
+    await actor.setFlag('foundryvtt-swse', usageFlag, true);
 
     // Apply bonuses to all allies
     for (const allyToken of allies) {
@@ -443,7 +443,7 @@ export class NobleTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const usageFlag = `protectiveStance_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', usageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', usageFlag);
 
     if (alreadyUsed) {
       return {
@@ -478,7 +478,7 @@ export class NobleTalentMechanics {
    */
   static async completeProtectiveStance(actor, allyActor, damage, combatId, usageFlag) {
     // Mark as used
-    await actor.setFlag('swse', usageFlag, true);
+    await actor.setFlag('foundryvtt-swse', usageFlag, true);
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Protective Stance to block ${damage} damage for ${allyActor.name}`);
     ui.notifications.info(`${actor.name} steps in front of ${allyActor.name}, blocking the damage!`);

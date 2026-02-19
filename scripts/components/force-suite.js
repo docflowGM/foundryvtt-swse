@@ -235,7 +235,7 @@ export class ForceSuiteComponent {
     // Nat 20 → regain all at end of turn
     if (result?.diceTotal === 20) {
       ui.notifications.info('Natural 20! You will regain ALL powers at end of turn.');
-      await actor.setFlag('swse', 'pendingFullRegain', true);
+      await actor.setFlag('foundryvtt-swse', 'pendingFullRegain', true);
     }
 
     return this._moveToSpent(actor, id);

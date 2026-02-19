@@ -39,7 +39,7 @@ export class WishlistEngine {
         progress: 0  // 0-1, how many prerequisites are met
       });
 
-      await actor.setFlag('swse', 'wishlist', wishlist);
+      await actor.setFlag('foundryvtt-swse', 'wishlist', wishlist);
       SWSELogger.log(`[WISHLIST] Added "${item.name}" to wishlist`);
       return true;
     } catch (err) {
@@ -64,7 +64,7 @@ export class WishlistEngine {
       if (index === -1) {return false;}
 
       const removed = wishlist[key].splice(index, 1)[0];
-      await actor.setFlag('swse', 'wishlist', wishlist);
+      await actor.setFlag('foundryvtt-swse', 'wishlist', wishlist);
       SWSELogger.log(`[WISHLIST] Removed "${removed.name}" from wishlist`);
       return true;
     } catch (err) {
@@ -321,7 +321,7 @@ export class WishlistEngine {
   // ─────────────────────────────────────────────────────────────
 
   static _getWishlist(actor) {
-    const wishlist = actor?.getFlag('swse', 'wishlist');
+    const wishlist = actor?.getFlag('foundryvtt-swse', 'wishlist');
     return wishlist || { feats: [], talents: [] };
   }
 

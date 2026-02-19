@@ -4,6 +4,7 @@
  */
 
 import { ActionPaletteApp } from './action-palette.js';
+import { safeRender } from '../utils/render-guard.js';
 
 let actionPaletteApp = null;
 
@@ -17,7 +18,7 @@ export function initializeActionPalette() {
   // Load CSS
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = 'systems/swse/scripts/ui/action-palette/action-palette.css';
+  link.href = 'systems/foundryvtt-swse/scripts/ui/action-palette/action-palette.css';
   document.head.appendChild(link);
 
   // Create the application
@@ -52,7 +53,7 @@ function _createSidebarButton() {
     if (actionPaletteApp.rendered) {
       actionPaletteApp.close();
     } else {
-      actionPaletteApp.render(true);
+      safeRender(actionPaletteApp, true);
     }
   });
 
@@ -64,7 +65,7 @@ function _createSidebarButton() {
  * @private
  */
 function _loadUserPreferences() {
-  const prefs = game.user.getFlag('swse', 'actionPaletteState') || {};
+  const prefs = game.user.getFlag('foundryvtt-swse', 'actionPaletteState') || {};
 
   if (prefs.position) {
     actionPaletteApp.position = prefs.position;
@@ -75,9 +76,9 @@ function _loadUserPreferences() {
   }
 
   // Auto-open if user had it open before (optional)
-  const autoOpen = game.user.getFlag('swse', 'actionPaletteAutoOpen') ?? false;
+  const autoOpen = game.user.getFlag('foundryvtt-swse', 'actionPaletteAutoOpen') ?? false;
   if (autoOpen) {
-    actionPaletteApp.render(true);
+    safeRender(actionPaletteApp, true);
   }
 }
 

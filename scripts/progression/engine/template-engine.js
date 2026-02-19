@@ -134,13 +134,13 @@ export class TemplateEngine {
       }
 
       // Record template application for audit
-      const pkgs = actor.getFlag('swse', 'appliedTemplatePackages') || [];
+      const pkgs = actor.getFlag('foundryvtt-swse', 'appliedTemplatePackages') || [];
       pkgs.push({
         templateId,
         templateName: tpl.name || templateId,
         appliedAt: new Date().toISOString()
       });
-      await actor.setFlag('swse', 'appliedTemplatePackages', pkgs);
+      await actor.setFlag('foundryvtt-swse', 'appliedTemplatePackages', pkgs);
 
       // Apply any explicit item grants that aren't handled by progression
       if (Array.isArray(tpl.items) && tpl.items.length > 0) {

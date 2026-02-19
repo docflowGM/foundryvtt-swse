@@ -180,7 +180,7 @@ export class SoldierTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const usageFlag = `stunningStrike_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', usageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', usageFlag);
 
     if (alreadyUsed) {
       return {
@@ -214,7 +214,7 @@ export class SoldierTalentMechanics {
    * Complete Stunning Strike - Apply stun effect
    */
   static async completeStunningStrike(actor, targetActor, success, combatId, usageFlag) {
-    await actor.setFlag('swse', usageFlag, true);
+    await actor.setFlag('foundryvtt-swse', usageFlag, true);
 
     if (!success) {
       SWSELogger.log(`SWSE Talents | ${actor.name} attempted Stunning Strike on ${targetActor.name} but failed`);
@@ -276,7 +276,7 @@ export class SoldierTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const usageFlag = `drawFire_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', usageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', usageFlag);
 
     if (alreadyUsed) {
       return {
@@ -309,7 +309,7 @@ export class SoldierTalentMechanics {
    * Complete Draw Fire - Apply effect
    */
   static async completeDrawFire(actor, targetActor, combatId, usageFlag) {
-    await actor.setFlag('swse', usageFlag, true);
+    await actor.setFlag('foundryvtt-swse', usageFlag, true);
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Draw Fire on ${targetActor.name}`);
     ui.notifications.info(`${targetActor.name} must attack ${actor.name} or another opponent of ${actor.name}'s choosing on their next turn!`);
@@ -342,7 +342,7 @@ export class SoldierTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const usageFlag = `coverFire_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', usageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', usageFlag);
 
     if (alreadyUsed) {
       return {
@@ -380,7 +380,7 @@ export class SoldierTalentMechanics {
       return false;
     }
 
-    await actor.setFlag('swse', usageFlag, true);
+    await actor.setFlag('foundryvtt-swse', usageFlag, true);
 
     // Apply defense bonus
     await createEffectOnActor(ally, {
@@ -437,7 +437,7 @@ export class SoldierTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const usageFlag = `devastatingAttack_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', usageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', usageFlag);
 
     if (alreadyUsed) {
       return {
@@ -471,7 +471,7 @@ export class SoldierTalentMechanics {
    * Complete Devastating Attack - Mark as used
    */
   static async completeDevastatingAttack(actor, targetActor, success, combatId, usageFlag) {
-    await actor.setFlag('swse', usageFlag, true);
+    await actor.setFlag('foundryvtt-swse', usageFlag, true);
 
     if (!success) {
       SWSELogger.log(`SWSE Talents | ${actor.name} attempted Devastating Attack on ${targetActor.name} but missed`);
@@ -509,7 +509,7 @@ export class SoldierTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const usageFlag = `penetratingAttack_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', usageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', usageFlag);
 
     if (alreadyUsed) {
       return {
@@ -543,7 +543,7 @@ export class SoldierTalentMechanics {
    * Complete Penetrating Attack
    */
   static async completePenetratingAttack(actor, targetActor, success, combatId, usageFlag) {
-    await actor.setFlag('swse', usageFlag, true);
+    await actor.setFlag('foundryvtt-swse', usageFlag, true);
 
     if (!success) {
       SWSELogger.log(`SWSE Talents | ${actor.name} attempted Penetrating Attack on ${targetActor.name} but missed`);
@@ -649,7 +649,7 @@ export class SoldierTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const usageFlag = `battleAnalysis_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', usageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', usageFlag);
 
     if (alreadyUsed) {
       return {
@@ -682,7 +682,7 @@ export class SoldierTalentMechanics {
    * Complete Battle Analysis
    */
   static async completeBattleAnalysis(actor, targetActor, combatId, usageFlag) {
-    await actor.setFlag('swse', usageFlag, true);
+    await actor.setFlag('foundryvtt-swse', usageFlag, true);
 
     SWSELogger.log(`SWSE Talents | ${actor.name} analyzed ${targetActor.name}'s weaknesses`);
     ui.notifications.info(`${actor.name} analyzes ${targetActor.name} and discovers a weakness! Gain +2 to attack rolls against this target!`);

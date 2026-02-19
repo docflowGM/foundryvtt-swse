@@ -791,7 +791,7 @@ export class MentorSurvey {
       swseLogger.log(`[MENTOR-SURVEY] storeSurveyData: Survey data stored successfully`);
 
       try {
-        const mentorId = actor.getFlag('swse', 'level1Class');
+        const mentorId = actor.getFlag('foundryvtt-swse', 'level1Class');
         if (mentorId) {
           const seededMemory = seedMentorMemoryFromSurvey(biases);
           await setMentorMemory(actor, mentorId.toLowerCase(), seededMemory);
