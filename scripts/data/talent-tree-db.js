@@ -25,6 +25,7 @@ import {
     validateTalentTree
 } from './talent-tree-normalizer.js';
 import { SWSELogger } from '../utils/logger.js';
+import { toStableKey } from '../utils/stable-key.js';
 
 export const TalentTreeDB = {
 
@@ -75,9 +76,10 @@ export const TalentTreeDB = {
                     this.trees.set(normalizedTree.id, normalizedTree);
                     if (normalizedTree.sourceId) {this.sourceIndex.set(normalizedTree.sourceId, normalizedTree);}
 
-                    // Store by key (Phase 6)
-                    if (entry.system?.key) {
-                        this._byKey.set(entry.system.key, normalizedTree);
+                    // Store by stable key (generate if not in compendium)
+                    const key = entry.system?.key ?? toStableKey(entry.name);
+                    if (key) {
+                        this._byKey.set(key, normalizedTree);
                     }
                     count++;
 

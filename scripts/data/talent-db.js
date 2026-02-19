@@ -25,6 +25,7 @@ import {
     filterTalentsByRole
 } from './talent-normalizer.js';
 import { SWSELogger } from '../utils/logger.js';
+import { toStableKey } from '../utils/stable-key.js';
 
 export const TalentDB = {
 
@@ -84,9 +85,10 @@ export const TalentDB = {
                     // Store by ID
                     this.talentsById.set(normalizedTalent.id, normalizedTalent);
 
-                    // Store by key (Phase 5)
-                    if (rawTalent.system?.key) {
-                        this._byKey.set(rawTalent.system.key, normalizedTalent);
+                    // Store by stable key (generate if not in compendium)
+                    const key = rawTalent.system?.key ?? toStableKey(rawTalent.name);
+                    if (key) {
+                        this._byKey.set(key, normalizedTalent);
                     }
 
                     // Group by tree
@@ -97,12 +99,13 @@ export const TalentDB = {
                         this.talentsByTree.get(normalizedTalent.treeId).push(normalizedTalent);
                     }
 
-                    // Group by tree key (Phase 5)
-                    if (rawTalent.system?.treeKey) {
-                        if (!this.talentsByTreeKey.has(rawTalent.system.treeKey)) {
-                            this.talentsByTreeKey.set(rawTalent.system.treeKey, []);
+                    // Group by tree key (generate if not in compendium)
+                    const treeKey = rawTalent.system?.treeKey ?? (normalizedTalent.treeId ? toStableKey(normalizedTalent.treeName) : null);
+                    if (treeKey) {
+                        if (!this.talentsByTreeKey.has(treeKey)) {
+                            this.talentsByTreeKey.set(treeKey, []);
                         }
-                        this.talentsByTreeKey.get(rawTalent.system.treeKey).push(normalizedTalent);
+                        this.talentsByTreeKey.get(treeKey).push(normalizedTalent);
                     }
 
                     if (!normalizedTalent.treeId) {
