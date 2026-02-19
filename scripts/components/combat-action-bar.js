@@ -262,10 +262,15 @@ export class CombatActionBar {
     const level = actor.system.level ?? 1;
     const heal = 5 + Math.floor(level / 4) * 5;
 
-    const newHP = Math.min(actor.system.hp.value + heal, actor.system.hp.max);
+    // PHASE 2: Read from authoritative source (system.derived.*)
+    const newHP = Math.min(
+      (actor.system?.derived?.hp?.value || actor.system?.hp?.value || 0) + heal,
+      actor.system?.derived?.hp?.max || actor.system?.hp?.max || 0
+    );
 
+    // PHASE 2: Write to authoritative location (system.derived.*)
     await actor.update({
-      'system.hp.value': newHP,
+      'system.derived.hp.value': newHP,
       'system.secondWind.uses': uses - 1
     });
 

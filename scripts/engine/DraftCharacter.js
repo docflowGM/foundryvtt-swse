@@ -604,8 +604,9 @@ export class DraftCharacter {
     }
 
     // Copy HP
+    // PHASE 2: Write HP to authoritative location (system.derived.*)
     if (preview.system.hp?.max !== undefined) {
-      updates['system.hp.max'] = preview.system.hp.max;
+      updates['system.derived.hp.max'] = preview.system.hp.max;
     }
 
     // Copy size/speed

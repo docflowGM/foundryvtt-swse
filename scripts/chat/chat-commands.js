@@ -243,8 +243,9 @@ async function cmdRest() {
   for (const t of tokens) {
     const a = t.actor;
 
+    // PHASE 2: Read from authoritative source, write to correct location
     await globalThis.SWSE.ActorEngine.updateActor(a, {
-      'system.hp.value': a.system.hp.max,
+      'system.derived.hp.value': a.system?.derived?.hp?.max || a.system?.hp?.max || 0,
       'system.force.value': a.system.force.max ?? 0,
       'system.conditions': {}
     });
