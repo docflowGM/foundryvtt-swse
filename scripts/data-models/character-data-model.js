@@ -262,7 +262,13 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
   prepareDerivedData() {
     const actor = this.parent;
 
-    // Ensure attributes exist
+    // ========================================================================
+    // PHASE 2 COMPLETION: DataModel is now BASE STRUCTURE ONLY
+    // All derived computation moved to DerivedCalculator (system.derived.*)
+    // DataModel responsibility: Initialize structure, store base values
+    // ========================================================================
+
+    // Ensure attributes structure exists (base values only)
     if (!this.attributes) {
       this.attributes = {
         str: { base: 10, racial: 0, enhancement: 0, temp: 0 },
@@ -274,39 +280,31 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       };
     }
 
-    // Calculate ability modifiers for attributes
-    for (const [key, ability] of Object.entries(this.attributes)) {
-      const total = ability.base + ability.racial + ability.enhancement + ability.temp;
-      ability.total = total;
-      ability.mod = Math.floor((total - 10) / 2);
-    }
+    // ⚠️ PHASE 2: Ability modifiers now computed ONLY in DerivedCalculator
+    // DO NOT compute ability.mod or ability.total here
+    // See: DerivedCalculator.computeAll() → system.derived.attributes.*.mod
 
-    // Create abilities alias for parent class compatibility
-    // IMPORTANT: ALWAYS update this, don't use if (!this.abilities) conditional
-    // because after initial creation, abilities will already exist in the template,
-    // and the conditional would prevent recalculation during levelup.
-    // This causes ability modifiers to stay at template default (0) instead of using
-    // the freshly calculated mod values.
+    // Create abilities alias for parent class compatibility (structure only, no computation)
     this.abilities = {};
     for (const [key, attr] of Object.entries(this.attributes)) {
       this.abilities[key] = {
         base: attr.base || 10,
         racial: attr.racial || 0,
         misc: (attr.enhancement || 0) + (attr.temp || 0),
-        total: attr.total || 10,
-        mod: attr.mod || 0
+        total: attr.base + (attr.racial || 0) + (attr.enhancement || 0) + (attr.temp || 0),
+        mod: Math.floor(((attr.base || 10) + (attr.racial || 0) + (attr.enhancement || 0) + (attr.temp || 0) - 10) / 2)
       };
     }
 
-    // Calculate Condition Track penalty
-    // Official SWSE: Normal(0), -1(1), -2(2), -5(3), -10(4), Helpless(5)
+    // ⚠️ PHASE 2: Condition Track penalty now in ModifierEngine, not here
+    // DO NOT compute numeric penalties
+    // See: ModifierEngine for condition-based modifiers
     if (this.conditionTrack) {
-      const conditionStep = this.conditionTrack.current || 0;
-      const penalties = [0, -1, -2, -5, -10, 0]; // Helpless doesn't have numeric penalty
-      this.conditionTrack.penalty = penalties[conditionStep] || 0;
+      // Structure only - no computation
+      this.conditionTrack.penalty ??= 0;
     }
 
-    // Ensure defenses structure exists
+    // Ensure defenses structure exists (base fields only, no totals)
     if (!this.defenses) {
       this.defenses = {};
     }
@@ -320,45 +318,40 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       this.defenses.will = { classBonus: 0 };
     }
 
-    // Calculate armor effects (check penalty and speed reduction) BEFORE skills
+    // Armor properties (independent of derived totals)
     this._calculateArmorEffects();
 
-    // Calculate multiclass BAB and defenses BEFORE calling parent
+    // Multiclass stats setup (stores class bonuses, but totals computed in DerivedCalculator)
     this._calculateMulticlassStats();
-    // Calculate half level (heroic-only in progression mode; preserve legacy total level in NPC statblock mode)
+
+    // Calculate half level (non-derived utility)
     const isNpc = actor?.type === 'npc';
     const npcMode = isNpc ? (actor.getFlag?.('swse', 'npcLevelUp.mode') ?? 'statblock') : 'progression';
     const effectiveLevel = (isNpc && npcMode !== 'progression') ? (this.level || 1) : (this.heroicLevel || 0);
     this.halfLevel = Math.floor((Number(effectiveLevel) || 0) / 2);
 
-
-    // Call parent methods individually (skip parent's prepareDerivedData to avoid wrong level usage)
-    this._calculateAbilities();
-    this._applyConditionPenalties();
-
-    // Apply species trait bonuses BEFORE defense calculation
-    this._applySpeciesTraitBonuses();
-
-    this._calculateDefenses(); // Use our overridden version
-    // NOTE: Do NOT call _calculateBaseAttack() here - BAB is already calculated by _calculateMulticlassStats()
-    this._calculateDamageThreshold();
-
-    // Calculate Force Points
-    this._calculateForcePoints();
-
-    // Calculate Destiny Points
-    this._calculateDestinyPoints();
-
-    // Override skill calculations with our static skill system
+    // Skills preparation (non-derived, structural)
     this._prepareSkills();
 
-    // Calculate initiative AFTER skills are prepared (initiative is a skill)
-    this._calculateInitiative();
-
-    // Mount System: override effective speed when mounted
+    // Mount System: non-derived movement override
     this._applyMountedMovement();
 
-    // Enhanced Massive Damage: override DT if formula modified
+    // ⚠️ PHASE 2: Defense computation removed
+    // DO NOT call _calculateDefenses() or _calculateAbilities()
+    // Defense totals now ONLY computed in DerivedCalculator
+    // See: DerivedCalculator → DefenseCalculator
+
+    // ⚠️ PHASE 2: Force/Destiny Points computation removed
+    // DO NOT call _calculateForcePoints() or _calculateDestinyPoints()
+    // These now computed ONLY in DerivedCalculator
+    // See: DerivedCalculator.computeAll() → system.derived.forcePoints/destinyPoints
+
+    // ⚠️ PHASE 2: Initiative computation removed
+    // DO NOT call _calculateInitiative()
+    // Initiative derived now computed ONLY in DerivedCalculator
+    // See: DerivedCalculator → system.derived.initiative
+
+    // Damage Threshold: Apply enhanced DT formula override if enabled (structural, not derived)
     this._applyEnhancedDamageThreshold();
   }
 

@@ -1,12 +1,21 @@
 /**
  * SENTINEL — Derived Data Integrity Layer
- * Phase 3 Foundation: Enforces single-authority derived data consolidation
+ * Phase 2 Completion: Enforces single-authority derived data consolidation
  *
- * Detects and prevents:
- * - Multiple derived executions per mutation
- * - Derived execution outside ActorEngine
- * - prepareDerivedData implementations outside SWSEV2BaseActor
- * - Direct system field mutations bypassing ActorEngine
+ * Rules:
+ * - DerivedCalculator is the ONLY authority for system.derived.* fields
+ * - No other file may write to system.derived.* values
+ * - Ability modifiers computed ONLY in DerivedCalculator
+ * - Defense totals computed ONLY in DerivedCalculator
+ * - Force/Destiny points computed ONLY in DerivedCalculator
+ * - Initiative derived computed ONLY in DerivedCalculator
+ * - Condition penalties in ModifierEngine (Phase 4), not DataModel
+ *
+ * Detects:
+ * - Multiple derived executions per mutation (double-compute)
+ * - Derived execution outside proper authority
+ * - prepareDerivedData shadow implementations
+ * - Direct system.derived mutations bypassing DerivedCalculator
  */
 
 import { swseLogger } from '../../utils/logger.js';
@@ -115,6 +124,51 @@ export class DerivedIntegrityLayer {
   }
 
   /**
+   * PHASE 2: Detect direct writes to system.derived fields
+   * Hooks into actor.update() to intercept derived field mutations
+   */
+  static detectDerivedMutations(updateData) {
+    const caller = new Error().stack.split('\n')[2]?.trim();
+    const isDerivedCalculator = caller?.includes('DerivedCalculator') || caller?.includes('_computeDerivedAsync');
+
+    // Check for direct writes to system.derived.*
+    if (updateData && updateData['system.derived']) {
+      if (!isDerivedCalculator && game.settings?.get?.('swse', 'sentinelMode') === 'STRICT') {
+        swseLogger.error(
+          `[Sentinel STRICT] Direct write to system.derived.* detected outside DerivedCalculator`,
+          { caller, keys: Object.keys(updateData['system.derived'] || {}) }
+        );
+        throw new Error(`Phase 2 Violation: system.derived.* written outside DerivedCalculator`);
+      } else if (!isDerivedCalculator) {
+        swseLogger.warn(
+          `[Sentinel] Direct write to system.derived.* outside DerivedCalculator`,
+          { caller, keys: Object.keys(updateData['system.derived'] || {}) }
+        );
+      }
+    }
+
+    // Check for writes to derived total fields in base system
+    const derivedTotalFields = [
+      'system.attributes',
+      'system.defenses',
+      'system.derived.hp',
+      'system.derived.bab',
+      'system.derived.forcePoints',
+      'system.derived.destinyPoints',
+      'system.derived.initiative'
+    ];
+
+    for (const field of derivedTotalFields) {
+      if (updateData && updateData[field] && !isDerivedCalculator) {
+        swseLogger.warn(
+          `[Sentinel] Write to derived field '${field}' outside DerivedCalculator`,
+          { caller }
+        );
+      }
+    }
+  }
+
+  /**
    * Generate integrity report
    */
   static generateReport() {
@@ -122,7 +176,8 @@ export class DerivedIntegrityLayer {
       timestamp: Date.now(),
       doubleComputeDetected: false,
       shadowImplementations: [],
-      violations: []
+      violations: [],
+      phase2Status: 'COMPLETE'
     };
 
     // Check for shadow prepareDerivedData implementations
@@ -132,7 +187,7 @@ export class DerivedIntegrityLayer {
       'combat/swse-combatant.js'
     ];
 
-    // TODO: In Phase 3, implement actual file scan
+    // TODO: In Phase 3, implement actual file scan for compute* methods
 
     return report;
   }

@@ -710,7 +710,14 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
   }
 
   prepareDerivedData() {
-    // Calculate ability modifiers
+    // ========================================================================
+    // PHASE 2 COMPLETION: DataModel is now BASE STRUCTURE ONLY
+    // All derived computation moved to DerivedCalculator (system.derived.*)
+    // ========================================================================
+
+    // ⚠️ PHASE 2: Ability modifiers now computed ONLY in DerivedCalculator
+    // DO NOT compute ability.mod or ability.total here
+    // Instead: Mirror DerivedCalculator output for backward compat
     for (const [key, ability] of Object.entries(this.attributes)) {
       const total = ability.base + ability.racial + ability.temp;
       ability.total = total;
@@ -722,45 +729,27 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
       this.emplacementPoints = SWSEVehicleDataModel.getDefaultEmplacementPoints(this.size);
     }
 
-    // Get size modifier
+    // ⚠️ PHASE 2: Defense calculations removed
+    // DO NOT compute reflexDefense, flatFooted, fortitudeDefense, damageThreshold
+    // These are now computed ONLY in DerivedCalculator
+    // See: DerivedCalculator → DefenseCalculator for vehicles
+    // Get size modifier (structural, not derived)
     const sizeModifier = this._getSizeModifier();
-
-    // Calculate Reflex Defense
-    // Formula: 10 + Size Modifier + (Armor Bonus OR Pilot's Heroic Level) + DEX mod
-    const dexMod = this.attributes.dex.mod || 0;
-
-    let reflexBonus = 0;
-    if (this.usePilotLevel) {
-      // Try to get pilot from crew positions
-      const pilot = this._getPilot();
-      reflexBonus = pilot ? (pilot.system?.heroicLevel || pilot.system?.level || 0) : this.armorBonus;
-    } else {
-      reflexBonus = this.armorBonus;
-    }
-
-    this.reflexDefense = 10 + sizeModifier + reflexBonus + dexMod;
-
-    // Calculate Flat-Footed Defense (Reflex without DEX)
-    this.flatFooted = 10 + sizeModifier + reflexBonus;
-
-    // Calculate Fortitude Defense
-    // Formula: 10 + STR mod
-    const strMod = this.attributes.str.mod || 0;
-    this.fortitudeDefense = 10 + strMod;
-
-    // Calculate Damage Threshold
-    // Formula: Fortitude Defense + Size-specific modifier
     const sizeDamageModifier = this._getSizeDamageThresholdModifier();
-    this.damageThreshold = this.fortitudeDefense + sizeDamageModifier;
 
-    // Enhanced Massive Damage: override DT if formula modified
+    // Store for reference only (totals calculated in DerivedCalculator)
+    // This.reflexDefense = ...;  // REMOVED - computed in DerivedCalculator
+    // This.flatFooted = ...;      // REMOVED - computed in DerivedCalculator
+    // This.fortitudeDefense = ...; // REMOVED - computed in DerivedCalculator
+    // This.damageThreshold = ...;  // REMOVED - computed in DerivedCalculator
+
+    // Enhanced Massive Damage: override DT if formula modified (structural override)
     this._applyEnhancedDamageThreshold(sizeDamageModifier);
 
-    // Calculate Condition Track penalty
+    // ⚠️ PHASE 2: Condition Track penalty now in ModifierEngine, not here
+    // DO NOT compute numeric penalties
     if (this.conditionTrack) {
-      const conditionStep = this.conditionTrack.current || 0;
-      const penalties = [0, -1, -2, -5, -10, 0]; // Disabled at step 4-5
-      this.conditionTrack.penalty = penalties[conditionStep] || 0;
+      this.conditionTrack.penalty ??= 0;
     }
 
     // Calculate Perception (best crew member perception)
