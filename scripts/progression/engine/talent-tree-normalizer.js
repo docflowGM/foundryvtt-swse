@@ -124,18 +124,17 @@ export const TalentTreeNormalizer = {
                 return true;
             }
 
-            // Fallback: Try legacy _id resolution (old system)
+            // Fallback: Try legacy _id resolution via TalentTreeDB.get()
             if (sys?.treeId) {
-                const legacyTree = TalentTreeDB.all().find(t => t._id === sys.treeId || t.sourceId === sys.treeId);
+                const legacyTree = TalentTreeDB.get(sys.treeId);
                 if (legacyTree) {
                     SWSELogger.debug(`Talent "${talentDoc.name}" resolved via legacy treeId`);
                     return true;
                 }
             }
 
-            // Log warning but don't fail - data may be in transition
-            SWSELogger.warn(`Talent "${talentDoc.name}" references unknown tree: "${tree}" (normalized: ${normalizedId})`);
-            // Don't return false - allow talent to load even if tree resolution fails
+            // Warn but don't fail - allow talent to load even if tree resolution uncertain
+            console.warn(`[SSOT] Legacy treeId unresolved for talent "${talentDoc.name}"`);
         }
 
         return true;
