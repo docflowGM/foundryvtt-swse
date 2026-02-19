@@ -16,6 +16,7 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { RollEngine } from '../engine/roll-engine.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 export class FeintMechanics {
 
@@ -276,7 +277,7 @@ export class FeintMechanics {
         }
       };
 
-      const created = await target.createEmbeddedDocuments('ActiveEffect', [effect]);
+      const created = await ActorEngine.createEmbeddedDocuments(target, 'ActiveEffect', [effect]);
 
       SWSELogger.log(
         `FeintMechanics | ${target.name} is flat-footed due to feint from ${source.name}`
