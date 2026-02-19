@@ -350,6 +350,212 @@ export const ActorEngine = {
       });
       throw err;
     }
+  },
+
+  // ============================================================================
+  // PHASE 3 BATCH 2: COMBAT AUTHORITY APIS
+  // ============================================================================
+
+  /**
+   * applyDamage() — PHASE 3 Combat Authority
+   *
+   * ONLY legal way to reduce actor HP in combat.
+   *
+   * Contract:
+   * - Combat produces DamagePacket (declarative)
+   * - ActorEngine applies modifiers & computes final damage
+   * - ConditionTrack shifts handled atomically
+   * - Single mutation, single recalc
+   *
+   * @param {Actor} actor - target actor
+   * @param {Object} damagePacket - {
+   *   amount: number,           // Raw damage amount
+   *   type: string,             // 'kinetic', 'energy', 'burn', etc.
+   *   source: string,           // 'laser-attack', 'force-power', etc.
+   *   modifiersApplied: boolean,// Have ModifierEngine modifiers been applied?
+   *   conditionShift: boolean,  // Should condition track shift?
+   *   targetActor: Actor        // (optional, for logging)
+   * }
+   */
+  async applyDamage(actor, damagePacket) {
+    try {
+      if (!actor) {throw new Error('applyDamage() called with no actor');}
+      if (!damagePacket) {throw new Error('applyDamage() called with no damagePacket');}
+      if (typeof damagePacket.amount !== 'number' || damagePacket.amount < 0) {
+        throw new Error(`Invalid damage amount: ${damagePacket.amount}`);
+      }
+
+      swseLogger.debug(`ActorEngine.applyDamage → ${actor.name}`, {
+        amount: damagePacket.amount,
+        type: damagePacket.type,
+        source: damagePacket.source
+      });
+
+      // ========================================
+      // Compute final damage (apply armor, abilities, etc.)
+      // ========================================
+      let finalDamage = damagePacket.amount;
+
+      // TODO: Apply ModifierEngine for damage reduction
+      // const modifiers = await ModifierEngine.getDamageModifiers(actor, damagePacket.type);
+      // finalDamage = ModifierEngine.applyModifiers(finalDamage, modifiers);
+
+      // ========================================
+      // Apply damage & condition logic atomically
+      // ========================================
+      const currentHP = actor.system.attributes?.hp?.value || 0;
+      const maxHP = actor.system.attributes?.hp?.max || 100;
+      const newHP = Math.max(0, currentHP - finalDamage);
+
+      // Check if condition shift needed (at threshold)
+      const conditionThreshold = Math.floor(maxHP / 4); // Quarter health
+      const wasAboveThreshold = currentHP > conditionThreshold;
+      const isNowBelowThreshold = newHP <= conditionThreshold;
+      const shouldShiftCondition = damagePacket.conditionShift &&
+                                   wasAboveThreshold &&
+                                   isNowBelowThreshold;
+
+      // Build single atomic update
+      const updates = {
+        'system.attributes.hp.value': newHP
+      };
+
+      if (shouldShiftCondition) {
+        // Shift condition track within same mutation
+        const currentCondition = actor.system.progression?.conditionTrack || 0;
+        updates['system.progression.conditionTrack'] = Math.max(0, currentCondition + 1);
+      }
+
+      // Apply all updates in one mutation
+      await this.updateActor(actor, updates);
+
+      swseLogger.log(`Damage applied to ${actor.name}: ${finalDamage}HP (final: ${newHP}/${maxHP})`, {
+        source: damagePacket.source,
+        conditionShifted: shouldShiftCondition
+      });
+
+      return {
+        applied: finalDamage,
+        newHP,
+        conditionShifted: shouldShiftCondition
+      };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.applyDamage failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        damagePacket
+      });
+      throw err;
+    }
+  },
+
+  /**
+   * applyHealing() — Restore actor HP
+   *
+   * Use outside of combat for healing.
+   * In combat, use applyDamage with negative amounts.
+   *
+   * @param {Actor} actor - target actor
+   * @param {number} amount - HP to restore
+   * @param {string} source - healing source
+   */
+  async applyHealing(actor, amount, source = 'healing') {
+    try {
+      if (!actor) {throw new Error('applyHealing() called with no actor');}
+      if (typeof amount !== 'number' || amount < 0) {
+        throw new Error(`Invalid healing amount: ${amount}`);
+      }
+
+      swseLogger.debug(`ActorEngine.applyHealing → ${actor.name}`, {
+        amount,
+        source
+      });
+
+      const currentHP = actor.system.attributes?.hp?.value || 0;
+      const maxHP = actor.system.attributes?.hp?.max || 100;
+      const newHP = Math.min(maxHP, currentHP + amount);
+      const actualHealing = newHP - currentHP;
+
+      if (actualHealing === 0) {
+        swseLogger.debug(`${actor.name} healing had no effect (already at max HP)`);
+        return { applied: 0, newHP };
+      }
+
+      await this.updateActor(actor, {
+        'system.attributes.hp.value': newHP
+      });
+
+      swseLogger.log(`Healing applied to ${actor.name}: +${actualHealing}HP (now: ${newHP}/${maxHP})`, {
+        source
+      });
+
+      return {
+        applied: actualHealing,
+        newHP
+      };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.applyHealing failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        amount,
+        source
+      });
+      throw err;
+    }
+  },
+
+  /**
+   * applyConditionShift() — Shift condition track
+   *
+   * Shifts actor's condition track by +1 or -1.
+   * Triggers derived recalculation for condition penalties.
+   *
+   * @param {Actor} actor - target actor
+   * @param {number} direction - +1 (worse) or -1 (better)
+   * @param {string} source - reason for shift
+   */
+  async applyConditionShift(actor, direction, source = 'manual') {
+    try {
+      if (!actor) {throw new Error('applyConditionShift() called with no actor');}
+      if (direction !== 1 && direction !== -1) {
+        throw new Error(`Invalid shift direction: ${direction} (must be +1 or -1)`);
+      }
+
+      swseLogger.debug(`ActorEngine.applyConditionShift → ${actor.name}`, {
+        direction,
+        source
+      });
+
+      const currentCondition = actor.system.progression?.conditionTrack || 0;
+      const newCondition = Math.max(0, currentCondition + direction);
+
+      if (newCondition === currentCondition) {
+        swseLogger.debug(`${actor.name} condition shift had no effect (at boundary)`);
+        return { applied: 0, newCondition };
+      }
+
+      await this.updateActor(actor, {
+        'system.progression.conditionTrack': newCondition
+      });
+
+      const directionLabel = direction > 0 ? 'worsened' : 'improved';
+      swseLogger.log(`Condition ${directionLabel} for ${actor.name} (now: ${newCondition})`, {
+        source
+      });
+
+      return {
+        applied: direction,
+        newCondition
+      };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.applyConditionShift failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        direction,
+        source
+      });
+      throw err;
+    }
   }
 
 };
