@@ -8,7 +8,20 @@
 
 /* ─────────────────────────────────────────────────────────────────────────
    BASE SHEET CONTAINER
+   Phase 6: .swse-sheet is the canonical sheet root.
+   - display: flex; flex-direction: column — internal layout only
+   - flex: 1 1 auto — grows within AppV2 window-content flex context
+   - NO height: 100% — AppV2 does not guarantee parent has explicit height
+   - NO overflow: hidden — window resize behavior must be preserved
    ───────────────────────────────────────────────────────────────────────── */
+
+.swse-sheet {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  box-sizing: border-box;
+}
 
 .swse-character-sheet,
 .swse-app .swse-sheet-root {
@@ -23,6 +36,7 @@
   min-height: 400px;
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────

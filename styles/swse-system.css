@@ -31,15 +31,10 @@
 
 /* ================================
    SECTION 2 — THEMES
-   (Abbreviated for compactness)
+   Theme variables are defined in styles/themes/swse-theme-*.css
+   (loaded via system.json after this file).
+   Do NOT define partial theme overrides here — they create conflicts.
    ================================ */
-
-[data-theme="holo"] {
-  --swse-primary: #9ed0ff;
-  --swse-secondary: #00aaff;
-}
-
-/* (Jedi, Sith, Starship, Sand People, High Republic, Mandalorian kept as-is) */
 
 /* ================================
    SECTION 3 — APPLICATION WINDOWS

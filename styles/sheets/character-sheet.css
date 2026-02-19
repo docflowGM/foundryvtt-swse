@@ -88,6 +88,9 @@
 /* =========================
    GLOBAL SHEET LAYOUT
    ========================= */
+/* Phase 6: Sheet root — flex column, grows within AppV2 window-content.
+   Do NOT use height: 100% — AppV2 window-content may not have explicit height.
+   Use flex: 1 to grow within the parent flex context instead. */
 .swse,
 .swse-theme-holo,
 .swse-app.swse-app.swse-character-sheet,
@@ -104,15 +107,15 @@ form.swse-datapad-sheet {
   min-height: 400px;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1 1 auto;
 }
 
-/* AppV2: sheet-inner is the flex container for all content */
+/* AppV2: sheet-inner fills remaining space in flex column */
 .swse-sheet .sheet-inner {
   display: flex;
   flex-direction: column;
-  height: 100%;
   flex: 1 1 auto;
+  min-height: 0;
 }
 
 /* Headers and navigation: do not grow */

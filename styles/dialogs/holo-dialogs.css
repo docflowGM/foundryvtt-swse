@@ -529,16 +529,17 @@
 
 /* ═══════════════════════════════════════════════════════════════════════════
    FOUNDRY UI FIX - Restore toolbar icon visibility (Font Awesome ::before)
+   Scoped to body.system-foundryvtt-swse to prevent leakage to other systems.
    ═════════════════════════════════════════════════════════════════════════ */
 
-[data-theme=holo] button.ui-control.icon::before,
-[data-theme=holo] button.ui-control.plain.icon::before {
-  color: var(--swse-primary, #9fdcff) !important;
-  opacity: 1 !important;
+body.system-foundryvtt-swse[data-theme=holo] button.ui-control.icon::before,
+body.system-foundryvtt-swse[data-theme=holo] button.ui-control.plain.icon::before {
+  color: var(--swse-primary, #9fdcff);
+  opacity: 1;
   text-shadow:
     0 0 6px rgba(120, 200, 255, 0.6),
     0 0 12px rgba(120, 200, 255, 0.3);
-  font-family: "Font Awesome 6 Free" !important;
+  font-family: "Font Awesome 6 Free";
   font-weight: 900;
 }
 
