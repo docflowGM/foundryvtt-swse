@@ -3,6 +3,8 @@
  * Temporary modifiers with duration tracking and auto-expiration
  */
 
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
+
 export class ActiveEffectsEngine {
   /**
    * Add active effect to actor
@@ -31,7 +33,7 @@ export class ActiveEffectsEngine {
     };
 
     effects.push(newEffect);
-    await actor.update({ 'system.activeEffects': effects });
+    await ActorEngine.updateActor(actor, { 'system.activeEffects': effects });
     return newEffect;
   }
 
@@ -43,7 +45,7 @@ export class ActiveEffectsEngine {
       ? actor.system.activeEffects.filter(e => e.id !== effectId)
       : [];
 
-    await actor.update({ 'system.activeEffects': effects });
+    await ActorEngine.updateActor(actor, { 'system.activeEffects': effects });
   }
 
   /**
@@ -60,7 +62,7 @@ export class ActiveEffectsEngine {
     })).filter(e => e.roundsRemaining > 0);
 
     if (updated.length !== effects.length) {
-      await actor.update({ 'system.activeEffects': updated });
+      await ActorEngine.updateActor(actor, { 'system.activeEffects': updated });
       return { expired: effects.length - updated.length, remaining: updated.length };
     }
 
@@ -98,6 +100,6 @@ export class ActiveEffectsEngine {
         })
       : [];
 
-    await actor.update({ 'system.activeEffects': effects });
+    await ActorEngine.updateActor(actor, { 'system.activeEffects': effects });
   }
 }

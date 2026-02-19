@@ -3,6 +3,8 @@
  * Natural 20 tracking, Force Points, Dark Side tracking, DC calculation
  */
 
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
+
 export class ForceEngine {
   /**
    * Get DC for force power check
@@ -23,7 +25,7 @@ export class ForceEngine {
     const fp = actor.system.forcePoints || {};
     fp.current = Math.min(fp.max || 0, (fp.current || 0) + 1);
 
-    await actor.update({
+    await ActorEngine.updateActor(actor, {
       'system.force': force,
       'system.forcePoints': fp
     });
@@ -45,7 +47,7 @@ export class ForceEngine {
     }
 
     fp.current = (fp.current || 0) - 1;
-    await actor.update({ 'system.forcePoints': fp });
+    await ActorEngine.updateActor(actor, { 'system.forcePoints': fp });
 
     return { success: true, fpRemaining: fp.current };
   }
@@ -64,7 +66,7 @@ export class ForceEngine {
       timestamp: Date.now()
     });
 
-    await actor.update({
+    await ActorEngine.updateActor(actor, {
       'system.darkSidePoints': ds,
       'system.dspLog': log
     });

@@ -11,6 +11,7 @@
  */
 
 import { swseLogger } from '../../../utils/logger.js';
+import { ActorEngine } from '../../../actors/engine/actor-engine.js';
 
 export class NaturalWeaponHandler {
   /**
@@ -35,7 +36,7 @@ export class NaturalWeaponHandler {
       for (const spec of weaponSpecs) {
         try {
           const itemData = this._buildWeaponItemData(spec, speciesId);
-          const item = await actor.createEmbeddedDocuments('Item', [itemData]);
+          const item = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
 
           if (item && item.length > 0) {
             createdIds.push(item[0].id);
@@ -88,7 +89,7 @@ export class NaturalWeaponHandler {
     // Remove items
     if (toRemove.length > 0) {
       try {
-        await actor.deleteEmbeddedDocuments('Item', toRemove);
+        await ActorEngine.deleteEmbeddedDocuments(actor, 'Item', toRemove);
         swseLogger.debug(
           `[NaturalWeaponHandler] Removed ${toRemove.length} natural weapons for species ${speciesId}`
         );
