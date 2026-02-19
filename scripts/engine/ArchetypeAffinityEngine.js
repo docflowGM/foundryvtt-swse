@@ -19,6 +19,7 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { validateClassArchetypes } from './validateClassArchetypes.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 // Lazy-loaded archetype data (to avoid JSON import issues in Foundry)
 let CLASS_ARCHETYPES = null;
@@ -596,7 +597,7 @@ export async function initializeActorAffinity(actor) {
         timestamp: Date.now()
       };
 
-      await actor.update({
+      await ActorEngine.updateActor(actor, {
         'system.flags.swse.archetypeAffinity': actor.system.flags.swse.archetypeAffinity
       });
 
@@ -636,7 +637,7 @@ export async function recalculateActorAffinity(actor) {
     const buildGuidance = exportFoundryContract(affinity, prestigeHints);
 
     // Update actor flags
-    await actor.update({
+    await ActorEngine.updateActor(actor, {
       'system.flags.swse.archetypeAffinity': snapshot,
       'system.flags.swse.buildGuidance': buildGuidance
     });

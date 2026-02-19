@@ -3,6 +3,8 @@
  * Gunner skill linking, pilot integration, crew modifiers
  */
 
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
+
 export class CrewInteractionEngine {
   /**
    * Link gunner to vehicle weapon
@@ -16,7 +18,7 @@ export class CrewInteractionEngine {
       linkedAt: Date.now()
     };
 
-    await vehicle.update({ 'system.crew': crew });
+    await ActorEngine.updateActor(vehicle, { 'system.crew': crew });
     return { success: true, gunner: gunner.name, weapon: weaponSlot };
   }
 
@@ -58,7 +60,7 @@ export class CrewInteractionEngine {
       enabled: true
     });
 
-    await actor.update({
+    await ActorEngine.updateActor(actor, {
       'system.crew': crew,
       'system.customModifiers': customMods
     });
