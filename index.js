@@ -72,6 +72,10 @@ import { SWSE } from './scripts/core/config.js';
 import { registerSystemSettings } from './scripts/core/settings.js';
 import { initializeUtils } from './scripts/core/utils-init.js';
 import { initializeRolls } from './scripts/core/rolls-init.js';
+import { SWSESentinel } from './scripts/core/swse-sentinel.js';
+import { SentinelEngine } from './scripts/core/sentinel/sentinel-core.js';
+import { Sentry } from './scripts/core/sentinel/sentry.js';
+import { Investigator } from './scripts/core/sentinel/investigator.js';
 
 // ---- v13 hardening ----
 import { initializeHardeningSystem, validateSystemReady, registerHardeningHooks } from './scripts/core/hardening-init.js';
@@ -230,6 +234,11 @@ Hooks.once('ready', async () => {
   errorHandler.initialize();
   initializeRolls();
 
+  /* ---------- Sentinel Engine + Sentry + Investigator ---------- */
+  SentinelEngine.bootstrap();
+  Sentry.init();
+  Investigator.init();
+
   /* ---------- phase 3: diagnostic mode ---------- */
   await DiagnosticMode.initialize();
 
@@ -288,17 +297,34 @@ Hooks.once('ready', async () => {
     errors: errorCommands,
     phase5: {
       summary: getPhaseSummary
+    },
+    // Sentinel Runtime Kernel API
+    sentinel: {
+      status: () => SentinelEngine.getStatus(),
+      health: () => SentinelEngine.getHealthState(),
+      reports: (layer, severity) => SentinelEngine.getReports(layer, severity),
+      performance: () => SentinelEngine.getPerformanceMetrics(),
+      snapshot: () => SentinelEngine.dumpSnapshot(),
+      flushAggregates: () => SentinelEngine.flushAggregates()
     }
   };
 
   window.SWSE = {
     api: publicAPI,
-    debug: debugAPI
+    debug: debugAPI,
+    // PHASE 10: Public API exposure
+    SENTINEL_STATUS: SentinelEngine.getStatus()
   };
 
   if (!(game.modules.get('_dev-mode')?.active ?? false)) {
     Object.freeze(window.SWSE);
   }
+
+  // Flush aggregates before completion
+  SentinelEngine.flushAggregates();
+
+  // Emit boot success banner (only if healthy)
+  SentinelEngine.markBootComplete();
 
   onDiscoveryReady();
 
@@ -317,4 +343,12 @@ Hooks.on('canvasReady', () => {
     board.style.visibility = 'visible';
     board.style.opacity = '1';
   }
+});
+
+/* ==========================================================================
+   SENTINEL SHUTDOWN
+   ========================================================================== */
+
+Hooks.once('canvasDestroyed', () => {
+  SentinelEngine.shutdown();
 });
