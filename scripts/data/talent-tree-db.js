@@ -31,6 +31,7 @@ export const TalentTreeDB = {
     // In-memory map for O(1) lookups: treeId -> normalized tree
     trees: new Map(),
     sourceIndex: new Map(),
+    _byKey: new Map(),  // NEW: stableKey -> tree (Phase 6)
 
     // SSOT inverse index: talentId -> treeId (built from tree.system.talentIds)
     talentToTree: new Map(),
@@ -73,6 +74,11 @@ export const TalentTreeDB = {
                     // Store by ID
                     this.trees.set(normalizedTree.id, normalizedTree);
                     if (normalizedTree.sourceId) {this.sourceIndex.set(normalizedTree.sourceId, normalizedTree);}
+
+                    // Store by key (Phase 6)
+                    if (entry.system?.key) {
+                        this._byKey.set(entry.system.key, normalizedTree);
+                    }
                     count++;
 
                 } catch (err) {
@@ -107,6 +113,18 @@ export const TalentTreeDB = {
         // Ensure ID is normalized
         const normalizedId = normalizeTalentTreeId(treeId);
         return this.trees.get(normalizedId) ?? null;
+    },
+
+    /**
+     * Get a talent tree by stable key (Phase 6).
+     * New primary lookup method for stable identity.
+     *
+     * @param {string} key - Stable key
+     * @returns {Object|null} - Normalized tree or null
+     */
+    byKey(key) {
+        if (!key) {return null;}
+        return this._byKey.get(key) ?? null;
     },
 
     /**

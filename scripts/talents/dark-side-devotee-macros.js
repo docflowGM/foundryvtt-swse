@@ -254,7 +254,7 @@ export class DarkSideDevoteeMacros {
     const isRaging = DarkSideDevoteeMechanics.isCurrentlyRaging(selectedActor);
 
     if (isRaging) {
-      const rageInfo = selectedActor.getFlag('swse', 'isChannelAngerRaging');
+      const rageInfo = selectedActor.getFlag('foundryvtt-swse', 'isChannelAngerRaging');
       ui.notifications.info(
         `${selectedActor.name} is Raging! ` +
         `Rage ends at the beginning of round ${rageInfo.endRound}. ` +
@@ -277,7 +277,7 @@ export class DarkSideDevoteeMacros {
       return;
     }
 
-    const crippledInfo = selectedTarget.actor.getFlag('swse', 'isCrippled');
+    const crippledInfo = selectedTarget.actor.getFlag('foundryvtt-swse', 'isCrippled');
 
     if (crippledInfo) {
       const hpRemaining = crippledInfo.maxHpWhenCrippled - selectedTarget.actor.system.hp.value;

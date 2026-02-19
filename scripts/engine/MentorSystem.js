@@ -488,7 +488,7 @@ export class MentorSystem {
    */
   async _determineMentorIdentity() {
     // Try to get from actor flags first
-    const storedMentor = this.actor.getFlag('swse', 'mentor');
+    const storedMentor = this.actor.getFlag('foundryvtt-swse', 'mentor');
     if (storedMentor) {
       this.mentorId = storedMentor;
       swseLogger.log(`[MENTOR] Using stored mentor: ${this.mentorId}`);
@@ -518,7 +518,7 @@ export class MentorSystem {
     this.mentorId = mentorMap[firstClass.toLowerCase()] || 'generic';
 
     // Store for future use
-    await this.actor.setFlag('swse', 'mentor', this.mentorId);
+    await this.actor.setFlag('foundryvtt-swse', 'mentor', this.mentorId);
 
     swseLogger.log(`[MENTOR] Determined mentor: ${this.mentorId}`);
   }

@@ -143,7 +143,7 @@ export class ScoundrelTalentMechanics {
 
     // Check if already used this day
     const usageFlag = `knack_dayUsed`;
-    const alreadyUsed = actor.getFlag('swse', usageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', usageFlag);
 
     if (alreadyUsed) {
       return {
@@ -162,7 +162,7 @@ export class ScoundrelTalentMechanics {
    * Mark Knack as used
    */
   static async completeKnack(actor) {
-    await actor.setFlag('swse', 'knack_dayUsed', true);
+    await actor.setFlag('foundryvtt-swse', 'knack_dayUsed', true);
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Knack to reroll an ability check`);
     ui.notifications.info(`${actor.name} uses Knack to reroll the check!`);
@@ -251,7 +251,7 @@ export class ScoundrelTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const usageFlag = `dastardlyStrike_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', usageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', usageFlag);
 
     if (alreadyUsed) {
       return {
@@ -286,7 +286,7 @@ export class ScoundrelTalentMechanics {
    * Complete Dastardly Strike - Apply effect if successful
    */
   static async completeDastardlyStrike(actor, targetActor, strikeType, success, combatId, usageFlag) {
-    await actor.setFlag('swse', usageFlag, true);
+    await actor.setFlag('foundryvtt-swse', usageFlag, true);
 
     if (!success) {
       SWSELogger.log(`SWSE Talents | ${actor.name} attempted Dastardly Strike on ${targetActor.name} but failed`);
@@ -376,7 +376,7 @@ export class ScoundrelTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const usageFlag = `cunningStrategist_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', usageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', usageFlag);
 
     if (alreadyUsed) {
       return {
@@ -414,7 +414,7 @@ export class ScoundrelTalentMechanics {
       return false;
     }
 
-    await actor.setFlag('swse', usageFlag, true);
+    await actor.setFlag('foundryvtt-swse', usageFlag, true);
 
     // Apply bonus to next attack
     await createEffectOnActor(ally, {

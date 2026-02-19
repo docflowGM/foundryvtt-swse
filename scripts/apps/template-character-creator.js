@@ -398,7 +398,7 @@ async _prepareContext(options) {
       const equipmentResults = await this._applyEquipment(actor, template.equipmentRefs || template.startingEquipment);
 
       // Store template info
-      await actor.setFlag('swse', 'appliedTemplate', {
+      await actor.setFlag('foundryvtt-swse', 'appliedTemplate', {
         id: template.id,
         name: template.name,
         class: template.class,
@@ -436,7 +436,7 @@ async _prepareContext(options) {
 
     if (remainingPoints <= 0) {
       // No additional skills to train, just show success
-      const equipmentResults = await actor.getFlag('swse', 'equipmentResults');
+      const equipmentResults = await actor.getFlag('foundryvtt-swse', 'equipmentResults');
       await this._showSuccessDialog(actor, template, equipmentResults);
       actor.sheet.render(true);
       this.close();  // Close the template builder
@@ -469,7 +469,7 @@ async _prepareContext(options) {
             dialog.close();
 
             // Show success dialog
-            const equipmentResults = await actor.getFlag('swse', 'equipmentResults');
+            const equipmentResults = await actor.getFlag('foundryvtt-swse', 'equipmentResults');
             await this._showSuccessDialog(actor, template, equipmentResults);
 
             // Open character sheet
@@ -992,7 +992,7 @@ async _prepareContext(options) {
       }
 
       // Store results in actor flag for later retrieval
-      await actor.setFlag('swse', 'equipmentResults', results);
+      await actor.setFlag('foundryvtt-swse', 'equipmentResults', results);
 
       // Log summary
       SWSELogger.log(`SWSE | Equipment application complete: ${results.added.length} added, ${results.notFound.length} not found`);

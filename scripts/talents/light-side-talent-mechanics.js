@@ -179,7 +179,7 @@ export class LightSideTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const directUsageFlag = `direct_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', directUsageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', directUsageFlag);
 
     if (alreadyUsed) {
       return {
@@ -228,7 +228,7 @@ export class LightSideTalentMechanics {
       'system.spent': false
     }]);
 
-    await actor.setFlag('swse', directUsageFlag, true);
+    await actor.setFlag('foundryvtt-swse', directUsageFlag, true);
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Direct to return ${power.name} to ${ally.name}`);
     ui.notifications.info(`${power.name} has been returned to ${ally.name}'s Force Power Suite!`);
@@ -257,7 +257,7 @@ export class LightSideTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const wisdomUsageFlag = `consularsWisdom_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', wisdomUsageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', wisdomUsageFlag);
 
     if (alreadyUsed) {
       return {
@@ -320,7 +320,7 @@ export class LightSideTalentMechanics {
       }
     });
 
-    await actor.setFlag('swse', wisdomUsageFlag, true);
+    await actor.setFlag('foundryvtt-swse', wisdomUsageFlag, true);
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Consular's Wisdom on ${ally.name}, granting +${wisdomBonus} to Will Defense`);
     ui.notifications.info(`${ally.name} gains +${wisdomBonus} to Will Defense until the end of the encounter!`);
@@ -421,7 +421,7 @@ export class LightSideTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const retaliationUsageFlag = `darkRetaliation_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', retaliationUsageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', retaliationUsageFlag);
 
     if (alreadyUsed) {
       return {
@@ -466,7 +466,7 @@ export class LightSideTalentMechanics {
     await actor.update({ 'system.forcePoints.value': forcePoints - 1 });
 
     // Mark as used this encounter
-    await actor.setFlag('swse', retaliationUsageFlag, true);
+    await actor.setFlag('foundryvtt-swse', retaliationUsageFlag, true);
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Dark Retaliation with ${power.name}, spent Force Point`);
     ui.notifications.info(`${actor.name} spends a Force Point and activates ${power.name} as a reaction to the Dark Side power!`);
@@ -704,7 +704,7 @@ export class LightSideTalentMechanics {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const renewUsageFlag = `renewVision_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', renewUsageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', renewUsageFlag);
 
     if (alreadyUsed) {
       return {
@@ -733,7 +733,7 @@ export class LightSideTalentMechanics {
       }]);
     }
 
-    await actor.setFlag('swse', renewUsageFlag, true);
+    await actor.setFlag('foundryvtt-swse', renewUsageFlag, true);
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Renew Vision to restore Farseeing uses`);
     ui.notifications.info(`All Farseeing uses have been restored!`);
@@ -1023,7 +1023,7 @@ export class LightSideTalentMechanics {
 
     // Initialize or get current Condition Track step for this target
     const conditionTrackKey = `negotiationCondition_${targetActor.id}`;
-    let currentStep = targetActor.getFlag('swse', conditionTrackKey) || 0;
+    let currentStep = targetActor.getFlag('foundryvtt-swse', conditionTrackKey) || 0;
 
     let stepsMovedBack = 0;
     let conditionMessage = '';
@@ -1052,7 +1052,7 @@ export class LightSideTalentMechanics {
       const nextCondition = conditionStates[Math.min(currentStep + 1, 4)];
 
       // Update the flag
-      await targetActor.setFlag('swse', conditionTrackKey, currentStep);
+      await targetActor.setFlag('foundryvtt-swse', conditionTrackKey, currentStep);
 
       // Apply effects based on condition state
       if (currentStep >= 4) {
@@ -1448,17 +1448,17 @@ Hooks.on('deleteCombat', async (combat) => {
 
     // Clear all light side talent encounter flags
     const combatId = combat.id;
-    await actor.unsetFlag('swse', `direct_${combatId}`);
-    await actor.unsetFlag('swse', `consularsWisdom_${combatId}`);
-    await actor.unsetFlag('swse', `darkRetaliation_${combatId}`);
-    await actor.unsetFlag('swse', `renewVision_${combatId}`);
+    await actor.unsetFlag('foundryvtt-swse', `direct_${combatId}`);
+    await actor.unsetFlag('foundryvtt-swse', `consularsWisdom_${combatId}`);
+    await actor.unsetFlag('foundryvtt-swse', `darkRetaliation_${combatId}`);
+    await actor.unsetFlag('foundryvtt-swse', `renewVision_${combatId}`);
 
     // Clear negotiation condition track flags (across all targets)
     // These are target-specific, so we clean up all actors' negotiation conditions
     const flags = actor.getFlags('swse');
     for (const [key] of Object.entries(flags || {})) {
       if (key.startsWith('negotiationCondition_')) {
-        await actor.unsetFlag('swse', key);
+        await actor.unsetFlag('foundryvtt-swse', key);
       }
     }
   }

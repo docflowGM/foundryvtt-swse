@@ -39,8 +39,8 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
     const nonheroicBlocked = nonheroicNext > 20 && !epicOverrideEnabled;
     const nonheroicAdvisory = nonheroicNext > 20 && epicOverrideEnabled;
 
-    const mode = actor?.getFlag('swse', 'npcLevelUp.mode') ?? 'statblock';
-    const hasSnapshot = !!actor?.getFlag('swse', 'npcLevelUp.snapshot');
+    const mode = actor?.getFlag('foundryvtt-swse', 'npcLevelUp.mode') ?? 'statblock';
+    const hasSnapshot = !!actor?.getFlag('foundryvtt-swse', 'npcLevelUp.snapshot');
 
     return {
       actorName: actor?.name ?? 'NPC',

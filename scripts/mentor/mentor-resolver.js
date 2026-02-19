@@ -52,7 +52,7 @@ export const MentorResolver = {
     SWSELogger.log(`[MENTOR-RESOLVER] resolveFor: Resolving mentor for "${actor.name}" (phase: ${phase})`);
 
     // Priority 1: Manual override (always respected)
-    const override = actor.getFlag('swse', 'mentorOverride');
+    const override = actor.getFlag('foundryvtt-swse', 'mentorOverride');
     if (override && MENTORS[override]) {
       SWSELogger.log(`[MENTOR-RESOLVER] resolveFor: Using mentor override: "${MENTORS[override].name}"`);
       return MENTORS[override];

@@ -94,7 +94,7 @@ export function getLevel1Class(actor) {
 
     // For higher levels, try to find their first/starting class
     // This could be stored in a flag or we use the first class item
-    const storedStartClass = actor.getFlag('swse', 'startingClass');
+    const storedStartClass = actor.getFlag('foundryvtt-swse', 'startingClass');
     if (storedStartClass) {
         SWSELogger.log(`[MENTOR-DIALOGUES] getLevel1Class: Using stored starting class flag: "${storedStartClass}"`);
         return storedStartClass;
@@ -119,7 +119,7 @@ export function getLevel1Class(actor) {
 export async function setLevel1Class(actor, className) {
     SWSELogger.log(`[MENTOR-DIALOGUES] setLevel1Class: Setting starting class for actor "${actor.name}" to "${className}"`);
     try {
-        await actor.setFlag('swse', 'startingClass', className);
+        await actor.setFlag('foundryvtt-swse', 'startingClass', className);
         SWSELogger.log(`[MENTOR-DIALOGUES] setLevel1Class: Successfully set starting class flag`);
     } catch (err) {
         SWSELogger.error(`[MENTOR-DIALOGUES] setLevel1Class: ERROR setting starting class:`, err);
@@ -143,7 +143,7 @@ export async function setMentorOverride(actor, mentorKey) {
     SWSELogger.log(`[MENTOR-DIALOGUES] setMentorOverride: Mentor key validated - "${MENTORS[mentorKey].name}"`);
 
     try {
-        await actor.setFlag('swse', 'mentorOverride', mentorKey);
+        await actor.setFlag('foundryvtt-swse', 'mentorOverride', mentorKey);
         SWSELogger.log(`[MENTOR-DIALOGUES] setMentorOverride: Successfully set mentor override flag`);
 
         // Emit hook for other systems to react to mentor change
@@ -170,7 +170,7 @@ export function getActiveMentor(actor) {
     SWSELogger.log(`[MENTOR-DIALOGUES] getActiveMentor: Determining active mentor for actor "${actor.name}"`);
 
     // Check for manual override first
-    const override = actor.getFlag('swse', 'mentorOverride');
+    const override = actor.getFlag('foundryvtt-swse', 'mentorOverride');
     if (override && MENTORS[override]) {
         SWSELogger.log(`[MENTOR-DIALOGUES] getActiveMentor: Using mentor override: "${MENTORS[override].name}"`);
         return MENTORS[override];
@@ -195,7 +195,7 @@ export async function clearMentorOverride(actor) {
     SWSELogger.log(`[MENTOR-DIALOGUES] clearMentorOverride: Clearing mentor override for actor "${actor.name}"`);
 
     try {
-        await actor.unsetFlag('swse', 'mentorOverride');
+        await actor.unsetFlag('foundryvtt-swse', 'mentorOverride');
         SWSELogger.log(`[MENTOR-DIALOGUES] clearMentorOverride: Successfully cleared mentor override flag`);
 
         Hooks.callAll('swse:mentor:changed', {

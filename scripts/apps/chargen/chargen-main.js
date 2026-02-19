@@ -3173,7 +3173,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
       // Save character generation data to flags for reference
       try {
-        await created.setFlag('swse', 'chargenData', this.characterData);
+        await created.setFlag('foundryvtt-swse', 'chargenData', this.characterData);
       } catch (flagError) {
         SWSELogger.warn('Failed to save chargen data to flags:', flagError);
         // Non-critical error, continue
@@ -3239,7 +3239,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
       // Update mentor with new class target
       try {
-        const mentorId = this.actor.getFlag('swse', 'level1Class');
+        const mentorId = this.actor.getFlag('foundryvtt-swse', 'level1Class');
         if (mentorId) {
           let memory = await getMentorMemory(this.actor, mentorId.toLowerCase());
           memory = setTargetClass(memory, selectedClassName);

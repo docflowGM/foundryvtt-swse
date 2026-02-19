@@ -275,7 +275,7 @@ Hooks.once('ready', () => {
 
     const isRaging = DarkSidePowers.isCurrentlyRaging(actor);
     if (isRaging) {
-      const rageInfo = actor.getFlag('swse', 'isChannelAngerRaging');
+      const rageInfo = actor.getFlag('foundryvtt-swse', 'isChannelAngerRaging');
       ui.notifications.info(
         `${actor.name} is Raging! Rage ends at the beginning of round ${rageInfo.endRound}. Current bonuses: +2 melee attacks/damage`
       );
@@ -760,7 +760,7 @@ Hooks.once('ready', () => {
     const buttons = {};
 
     // ---- Amulet (start/complete)
-    const amuletCraft = actor.getFlag('swse', 'sithAmuletCraft');
+    const amuletCraft = actor.getFlag('foundryvtt-swse', 'sithAmuletCraft');
     if (!amuletCraft || amuletCraft.completedAt) {
       buttons.startAmulet = {
         label: 'Start Sith Amulet (25,000 cr, 1 week)',

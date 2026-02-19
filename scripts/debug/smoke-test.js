@@ -33,7 +33,7 @@ function li(ok, label, details = '') {
 }
 
 function summarize(actor) {
-  const mode = actor.getFlag('swse', 'npcLevelUp.mode') ?? 'statblock';
+  const mode = actor.getFlag('foundryvtt-swse', 'npcLevelUp.mode') ?? 'statblock';
   const split = getLevelSplit(actor);
   const ehl = getEffectiveHalfLevel(actor);
   const epic = isEpicOverrideEnabled();
@@ -77,20 +77,20 @@ export async function runNpcSmokeTest(actor = null) {
   const initialItems = actor.items?.size ?? actor.items?.length ?? 0;
 
   results.push(li(true, 'Loaded actor', `${actor.id}`));
-  results.push(li(isStatblockNpc(actor), 'Statblock mode recognized', `mode=${actor.getFlag('swse', 'npcLevelUp.mode') ?? 'statblock'}`));
+  results.push(li(isStatblockNpc(actor), 'Statblock mode recognized', `mode=${actor.getFlag('foundryvtt-swse', 'npcLevelUp.mode') ?? 'statblock'}`));
   results.push(li(shouldSkipDerivedData(actor) === isStatblockNpc(actor), 'Derived-data skip is consistent', `skip=${shouldSkipDerivedData(actor)}`));
 
   try {
     await ensureNpcProgressionMode(actor, { track: 'heroic' });
-    const snap = actor.getFlag('swse', 'npcLevelUp.snapshot');
+    const snap = actor.getFlag('foundryvtt-swse', 'npcLevelUp.snapshot');
     const okSnap = !!snap?.system && Array.isArray(snap?.items) && Array.isArray(snap?.effects);
     results.push(li(okSnap, 'Snapshot captured (system/items/effects)', okSnap ? 'ok' : 'missing fields'));
 
-    const modeNow = actor.getFlag('swse', 'npcLevelUp.mode');
+    const modeNow = actor.getFlag('foundryvtt-swse', 'npcLevelUp.mode');
     results.push(li(modeNow === 'progression', 'Switched to progression mode', `mode=${modeNow}`));
 
     await revertNpcToStatblock(actor);
-    const modeAfter = actor.getFlag('swse', 'npcLevelUp.mode') ?? 'statblock';
+    const modeAfter = actor.getFlag('foundryvtt-swse', 'npcLevelUp.mode') ?? 'statblock';
     results.push(li(modeAfter !== 'progression', 'Reverted to statblock mode', `mode=${modeAfter}`));
 
     const itemsAfter = actor.items?.size ?? actor.items?.length ?? 0;

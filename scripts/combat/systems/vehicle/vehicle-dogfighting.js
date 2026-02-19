@@ -317,11 +317,11 @@ export async function disengageFromDogfight(vehicle, opponent) {
 export async function setDogfightState(vehicle1, vehicle2, engaged) {
   // Store dogfight state in flags
   if (engaged) {
-    await vehicle1.setFlag('swse', 'dogfight', { opponent: vehicle2.id });
-    await vehicle2.setFlag('swse', 'dogfight', { opponent: vehicle1.id });
+    await vehicle1.setFlag('foundryvtt-swse', 'dogfight', { opponent: vehicle2.id });
+    await vehicle2.setFlag('foundryvtt-swse', 'dogfight', { opponent: vehicle1.id });
   } else {
-    await vehicle1.unsetFlag('swse', 'dogfight');
-    await vehicle2.unsetFlag('swse', 'dogfight');
+    await vehicle1.unsetFlag('foundryvtt-swse', 'dogfight');
+    await vehicle2.unsetFlag('foundryvtt-swse', 'dogfight');
   }
 }
 

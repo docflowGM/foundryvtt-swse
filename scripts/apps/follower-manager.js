@@ -141,9 +141,9 @@ export class FollowerManager {
      */
     static async addSpeedBonusToFollowers(owner, followers, bonus) {
         // Store the bonus in the owner's flags for use during combat
-        const currentBonuses = owner.getFlag('swse', 'followerSpeedBonuses') || {};
+        const currentBonuses = owner.getFlag('foundryvtt-swse', 'followerSpeedBonuses') || {};
         currentBonuses['Get Into Position'] = bonus;
-        await owner.setFlag('swse', 'followerSpeedBonuses', currentBonuses);
+        await owner.setFlag('foundryvtt-swse', 'followerSpeedBonuses', currentBonuses);
 
         ui.notifications.info(`You can now use a Move Action to move a follower +${bonus} squares!`);
     }
@@ -154,11 +154,11 @@ export class FollowerManager {
      */
     static async addTacticalAbility(owner, talent, enhancement) {
         // Store tactical abilities in owner's flags
-        const tacticalAbilities = owner.getFlag('swse', 'followerTacticalAbilities') || [];
+        const tacticalAbilities = owner.getFlag('foundryvtt-swse', 'followerTacticalAbilities') || [];
 
         if (!tacticalAbilities.includes(talent.name)) {
             tacticalAbilities.push(talent.name);
-            await owner.setFlag('swse', 'followerTacticalAbilities', tacticalAbilities);
+            await owner.setFlag('foundryvtt-swse', 'followerTacticalAbilities', tacticalAbilities);
         }
 
         ui.notifications.info(`Gained tactical ability: ${talent.name}!`);
@@ -187,9 +187,9 @@ export class FollowerManager {
                 break;
 
             case 'speed-bonus': {
-                const currentBonuses = owner.getFlag('swse', 'followerSpeedBonuses') || {};
+                const currentBonuses = owner.getFlag('foundryvtt-swse', 'followerSpeedBonuses') || {};
                 delete currentBonuses['Get Into Position'];
-                await owner.setFlag('swse', 'followerSpeedBonuses', currentBonuses);
+                await owner.setFlag('foundryvtt-swse', 'followerSpeedBonuses', currentBonuses);
                 break;
             }
 
@@ -200,11 +200,11 @@ export class FollowerManager {
             case 'bodyguard-defense':
             case 'bodyguard-counterattack':
             case 'shelter': {
-                const tacticalAbilities = owner.getFlag('swse', 'followerTacticalAbilities') || [];
+                const tacticalAbilities = owner.getFlag('foundryvtt-swse', 'followerTacticalAbilities') || [];
                 const index = tacticalAbilities.indexOf(talent.name);
                 if (index > -1) {
                     tacticalAbilities.splice(index, 1);
-                    await owner.setFlag('swse', 'followerTacticalAbilities', tacticalAbilities);
+                    await owner.setFlag('foundryvtt-swse', 'followerTacticalAbilities', tacticalAbilities);
                 }
                 break;
             }
@@ -270,7 +270,7 @@ export class FollowerManager {
      * @returns {number} Number of followers from this talent
      */
     static getFollowerCountForTalent(owner, talentName) {
-        const followers = owner.getFlag('swse', 'followers') || [];
+        const followers = owner.getFlag('foundryvtt-swse', 'followers') || [];
         return followers.filter(f => f.talent === talentName).length;
     }
 

@@ -620,7 +620,7 @@ async applyScalingFeature(feature) {
    */
   loadStateFromActor() {
     swseLogger.log(`[PROGRESSION-STATE] Loading state from actor flags...`);
-    const data = this.actor.getFlag('swse', 'progression') || {};
+    const data = this.actor.getFlag('foundryvtt-swse', 'progression') || {};
 
     swseLogger.log(`[PROGRESSION-STATE] Flag data exists: ${!!data}`);
     swseLogger.log(`[PROGRESSION-STATE] Completed steps: ${data.completedSteps?.length || 0}`, data.completedSteps);
@@ -652,7 +652,7 @@ async applyScalingFeature(feature) {
    * Save state to actor flags
    */
   async saveStateToActor() {
-    await this.actor.setFlag('swse', 'progression', {
+    await this.actor.setFlag('foundryvtt-swse', 'progression', {
       completedSteps: this.completedSteps,
       currentStep: this.current,
       mode: this.mode,
@@ -664,7 +664,7 @@ async applyScalingFeature(feature) {
    * Clear saved state
    */
   async clearState() {
-    await this.actor.unsetFlag('swse', 'progression');
+    await this.actor.unsetFlag('foundryvtt-swse', 'progression');
     this.completedSteps = [];
     this.current = null;
     this.data = {};
@@ -685,7 +685,7 @@ async applyScalingFeature(feature) {
       throw new Error('Finalization is already in progress');
     }
 
-    if (this.actor.getFlag('swse', 'finalized')) {
+    if (this.actor.getFlag('foundryvtt-swse', 'finalized')) {
       throw new Error('This character\'s progression has already been finalized');
     }
 
@@ -845,11 +845,11 @@ async applyScalingFeature(feature) {
           // 1. This is a prestige class with a mentor transition
           // 2. No manual override is already set
           if (newMentorKey) {
-            const currentOverride = this.actor.getFlag('swse', 'mentorOverride');
+            const currentOverride = this.actor.getFlag('foundryvtt-swse', 'mentorOverride');
 
             // Only auto-switch if no manual override has been set
             if (!currentOverride) {
-              await this.actor.setFlag('swse', 'mentorOverride', newMentorKey);
+              await this.actor.setFlag('foundryvtt-swse', 'mentorOverride', newMentorKey);
               swseLogger.log(`[PROGRESSION] Mentor switched to ${newMentorKey} for prestige class ${lastClass}`);
             }
           }
@@ -867,7 +867,7 @@ async applyScalingFeature(feature) {
         const startingClass = this.actor.system.swse?.progression?.level1Class;
 
         // Store only data (IDs, codes) - no presentation strings
-        const log = this.actor.getFlag('swse', 'mentorLog') || [];
+        const log = this.actor.getFlag('foundryvtt-swse', 'mentorLog') || [];
 
         // Add new entry to logbook (data only - no message text)
         log.push({
@@ -879,7 +879,7 @@ async applyScalingFeature(feature) {
         });
 
         // Store updated logbook
-        await this.actor.setFlag('swse', 'mentorLog', log);
+        await this.actor.setFlag('foundryvtt-swse', 'mentorLog', log);
 
         // Emit hook for other systems (UI panels will render messages from codes)
         Hooks.callAll('swse:mentor:logUpdated', {
@@ -901,7 +901,7 @@ async applyScalingFeature(feature) {
       }
 
       // Mark actor as finalized (prevents re-finalization)
-      await this.actor.setFlag('swse', 'finalized', true);
+      await this.actor.setFlag('foundryvtt-swse', 'finalized', true);
 
       // Update street legal status + any staged HP delta (e.g., retroactive CON HP)
       const validation = await this._validateProgression();

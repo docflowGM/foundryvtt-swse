@@ -819,7 +819,7 @@ export async function checkout(store, animateNumberCallback) {
 async function logPurchaseToHistory(actor, cart, total) {
     try {
         // Get existing purchase history
-        const history = actor.getFlag('swse', 'purchaseHistory') || [];
+        const history = actor.getFlag('foundryvtt-swse', 'purchaseHistory') || [];
 
         // Create purchase record
         const purchase = {
@@ -845,7 +845,7 @@ async function logPurchaseToHistory(actor, cart, total) {
 
         // Add to history and save
         history.push(purchase);
-        await actor.setFlag('swse', 'purchaseHistory', history);
+        await actor.setFlag('foundryvtt-swse', 'purchaseHistory', history);
 
         SWSELogger.log('SWSE Store | Purchase logged to history:', purchase);
     } catch (err) {
@@ -886,9 +886,9 @@ export async function submitDraftDroidForApproval(chargenSnapshot, ownerActor, c
         }
 
         // 2. Mark as draft (pending approval)
-        await draftDroid.setFlag('swse', 'pendingApproval', true);
-        await draftDroid.setFlag('swse', 'draftOnly', true);
-        await draftDroid.setFlag('swse', 'ownerPlayerId', game.user.id);
+        await draftDroid.setFlag('foundryvtt-swse', 'pendingApproval', true);
+        await draftDroid.setFlag('foundryvtt-swse', 'draftOnly', true);
+        await draftDroid.setFlag('foundryvtt-swse', 'ownerPlayerId', game.user.id);
 
         // 3. Build pending purchase record
         const pendingRecord = {
@@ -964,9 +964,9 @@ export async function submitDraftVehicleForApproval(modificationData, vehicleTem
         }
 
         // 2. Mark as draft (pending approval)
-        await draftVehicle.setFlag('swse', 'pendingApproval', true);
-        await draftVehicle.setFlag('swse', 'draftOnly', true);
-        await draftVehicle.setFlag('swse', 'ownerPlayerId', game.user.id);
+        await draftVehicle.setFlag('foundryvtt-swse', 'pendingApproval', true);
+        await draftVehicle.setFlag('foundryvtt-swse', 'draftOnly', true);
+        await draftVehicle.setFlag('foundryvtt-swse', 'ownerPlayerId', game.user.id);
 
         // 3. Build pending purchase record
         const pendingRecord = {

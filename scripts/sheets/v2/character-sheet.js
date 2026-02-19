@@ -278,7 +278,7 @@ export class SWSEV2CharacterSheet extends
 
 
 // Follower slots (granted by follower talents)
-const rawFollowerSlots = actor.getFlag('swse', 'followerSlots') || [];
+const rawFollowerSlots = actor.getFlag('foundryvtt-swse', 'followerSlots') || [];
 
 // Per-talent badge counts
 const followerTalentCountMap = {};
@@ -497,7 +497,7 @@ _closeInlineModal() {
 }
 
 _getFollowerActorIdsForModal() {
-  const slots = this.actor.getFlag('swse', 'followerSlots') || [];
+  const slots = this.actor.getFlag('foundryvtt-swse', 'followerSlots') || [];
   const ids = slots.map(s => s.createdActorId).filter(Boolean);
   return Array.from(new Set(ids));
 }
@@ -1872,7 +1872,7 @@ async _onCreateFollowerFromSlot(event) {
   const slotId = event.currentTarget?.dataset?.slotId;
   if (!slotId) return;
 
-  const slots = this.actor.getFlag('swse', 'followerSlots') || [];
+  const slots = this.actor.getFlag('foundryvtt-swse', 'followerSlots') || [];
   const slot = slots.find((s) => s.id === slotId);
   if (!slot) return;
 
@@ -1936,20 +1936,20 @@ async _onCreateFollowerFromSlot(event) {
 
           // mark actor role for display/search
           try {
-            await created.setFlag('swse', 'followerRole', followerData.templateType);
+            await created.setFlag('foundryvtt-swse', 'followerRole', followerData.templateType);
           } catch {}
 
           // Attach created follower to slot
-          const nextSlots = (this.actor.getFlag('swse', 'followerSlots') || []).map((s) => {
+          const nextSlots = (this.actor.getFlag('foundryvtt-swse', 'followerSlots') || []).map((s) => {
             if (s.id !== slotId) return s;
             return { ...s, createdActorId: created.id, templateType: followerData.templateType };
           });
-          await this.actor.setFlag('swse', 'followerSlots', nextSlots);
+          await this.actor.setFlag('foundryvtt-swse', 'followerSlots', nextSlots);
 
-          const followers = this.actor.getFlag('swse', 'followers') || [];
+          const followers = this.actor.getFlag('foundryvtt-swse', 'followers') || [];
           if (!followers.some((f) => f.id === created.id)) {
             followers.push({ id: created.id, talent: slot.talentName, slotId });
-            await this.actor.setFlag('swse', 'followers', followers);
+            await this.actor.setFlag('foundryvtt-swse', 'followers', followers);
           }
 
           this._closeInlineModal();

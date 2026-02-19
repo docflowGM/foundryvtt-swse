@@ -151,7 +151,7 @@ export class TalentNormalizerEngine {
 
       if (options.nameFilter && !options.nameFilter.test(item.name)) return;
 
-      const oldMeta = item.getFlag("swse", "talentMeta") ?? null;
+      const oldMeta = item.getFlag("foundryvtt-swse", "talentMeta") ?? null;
       if (!oldMeta) report.missingMeta++;
 
       const { meta } = this.normalizeTalentMeta(item);
@@ -169,7 +169,7 @@ export class TalentNormalizerEngine {
       }
 
       if (options.apply && changed) {
-        await item.setFlag("swse", "talentMeta", meta);
+        await item.setFlag("foundryvtt-swse", "talentMeta", meta);
       }
     };
 

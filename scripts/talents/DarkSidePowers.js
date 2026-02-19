@@ -34,7 +34,7 @@ export class DarkSidePowers {
     }
 
     // Check if already used today
-    const lastUsed = actor.getFlag('swse', 'swiftPowerUsedToday');
+    const lastUsed = actor.getFlag('foundryvtt-swse', 'swiftPowerUsedToday');
     const today = new Date().toDateString();
 
     if (lastUsed === today) {
@@ -43,7 +43,7 @@ export class DarkSidePowers {
     }
 
     // Record usage
-    await actor.setFlag('swse', 'swiftPowerUsedToday', today);
+    await actor.setFlag('foundryvtt-swse', 'swiftPowerUsedToday', today);
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Swift Power on ${forcePower.name}`);
     ui.notifications.info(`${forcePower.name} is being used as a Swift Action!`);
@@ -78,7 +78,7 @@ export class DarkSidePowers {
     // Check if already used this encounter
     const combatId = combatEncounterActive.id;
     const savantUsageFlag = `darkSideSavant_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', savantUsageFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', savantUsageFlag);
 
     if (alreadyUsed) {
       return {
@@ -109,7 +109,7 @@ export class DarkSidePowers {
         'system.spent': false
       }]);
 
-      await actor.setFlag('swse', savantUsageFlag, true);
+      await actor.setFlag('foundryvtt-swse', savantUsageFlag, true);
 
       SWSELogger.log(`SWSE Talents | ${actor.name} used Dark Side Savant to return ${power.name}`);
       ui.notifications.info(`${power.name} has been returned to your Force Power Suite without spending a Force Point!`);
@@ -139,7 +139,7 @@ export class DarkSidePowers {
       'system.spent': false
     }]);
 
-    await actor.setFlag('swse', savantUsageFlag, true);
+    await actor.setFlag('foundryvtt-swse', savantUsageFlag, true);
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Dark Side Savant to return ${power.name}`);
     ui.notifications.info(`${power.name} has been returned to your Force Power Suite!`);
@@ -196,7 +196,7 @@ export class DarkSidePowers {
 
     // Store the delayed damage on the target
     const targetActor = targetToken.actor;
-    const wrathFlags = targetActor.getFlag('swse', 'wrathDamage') || [];
+    const wrathFlags = targetActor.getFlag('foundryvtt-swse', 'wrathDamage') || [];
     wrathFlags.push({
       id: wrathFlagId,
       damage: halfDamage,
@@ -206,7 +206,7 @@ export class DarkSidePowers {
       triggeredAt: new Date().toISOString()
     });
 
-    await targetActor.setFlag('swse', 'wrathDamage', wrathFlags);
+    await targetActor.setFlag('foundryvtt-swse', 'wrathDamage', wrathFlags);
 
     SWSELogger.log(`SWSE Talents | ${actor.name} triggered Wrath of the Dark Side on ${targetActor.name}. Will deal ${halfDamage} damage at start of next turn.`);
     ui.notifications.info(`${targetActor.name} will take ${halfDamage} additional damage at the start of their next turn from Wrath of the Dark Side!`);
@@ -220,7 +220,7 @@ export class DarkSidePowers {
 
   static async applyWrathDamageAtTurnStart(token) {
     const actor = token.actor;
-    const wrathFlags = actor.getFlag('swse', 'wrathDamage') || [];
+    const wrathFlags = actor.getFlag('foundryvtt-swse', 'wrathDamage') || [];
 
     if (wrathFlags.length === 0) {
       return;
@@ -259,17 +259,17 @@ export class DarkSidePowers {
     );
 
     if (remainingDamages.length === 0) {
-      await actor.unsetFlag('swse', 'wrathDamage');
+      await actor.unsetFlag('foundryvtt-swse', 'wrathDamage');
     } else {
-      await actor.setFlag('swse', 'wrathDamage', remainingDamages);
+      await actor.setFlag('foundryvtt-swse', 'wrathDamage', remainingDamages);
     }
   }
 
   static async clearWrathFlagsOnCombatEnd() {
     for (const combatant of game.combat?.combatants || []) {
       const actor = combatant.actor;
-      if (actor?.getFlag('swse', 'wrathDamage')) {
-        await actor.unsetFlag('swse', 'wrathDamage');
+      if (actor?.getFlag('foundryvtt-swse', 'wrathDamage')) {
+        await actor.unsetFlag('foundryvtt-swse', 'wrathDamage');
       }
     }
   }
@@ -349,7 +349,7 @@ export class DarkSidePowers {
       return { success: false, message: 'Actor does not have Channel Anger' };
     }
 
-    const isRaging = actor.getFlag('swse', 'isChannelAngerRaging');
+    const isRaging = actor.getFlag('foundryvtt-swse', 'isChannelAngerRaging');
     if (isRaging) {
       return {
         success: false,
@@ -383,7 +383,7 @@ export class DarkSidePowers {
       conModifier: conModifier
     };
 
-    await actor.setFlag('swse', 'isChannelAngerRaging', rageInfo);
+    await actor.setFlag('foundryvtt-swse', 'isChannelAngerRaging', rageInfo);
 
     const chatContent = `
       <div class="swse-channel-anger">
@@ -413,12 +413,12 @@ export class DarkSidePowers {
   }
 
   static async endChannelAnger(actor) {
-    const rageInfo = actor.getFlag('swse', 'isChannelAngerRaging');
+    const rageInfo = actor.getFlag('foundryvtt-swse', 'isChannelAngerRaging');
     if (!rageInfo) {
       return { success: false, message: 'Actor is not currently raging' };
     }
 
-    await actor.unsetFlag('swse', 'isChannelAngerRaging');
+    await actor.unsetFlag('foundryvtt-swse', 'isChannelAngerRaging');
 
     const currentCondition = actor.system.conditionTrack?.value || 0;
     const newCondition = Math.max(0, currentCondition - 1);
@@ -447,7 +447,7 @@ export class DarkSidePowers {
   }
 
   static isCurrentlyRaging(actor) {
-    const rageInfo = actor.getFlag('swse', 'isChannelAngerRaging');
+    const rageInfo = actor.getFlag('foundryvtt-swse', 'isChannelAngerRaging');
     if (!rageInfo) {return false;}
 
     const currentRound = game.combat?.round || 0;
@@ -483,7 +483,7 @@ export class DarkSidePowers {
     const originalSpeed = targetActor.system.speed?.base || 6;
     const crippledSpeed = Math.ceil(originalSpeed / 2);
 
-    await targetActor.setFlag('swse', 'isCrippled', {
+    await targetActor.setFlag('foundryvtt-swse', 'isCrippled', {
       sourceActor: actor.id,
       sourceName: actor.name,
       originalSpeed: originalSpeed,
@@ -520,7 +520,7 @@ export class DarkSidePowers {
   }
 
   static checkCripplingStrikeExpiry(targetActor) {
-    const crippledInfo = targetActor.getFlag('swse', 'isCrippled');
+    const crippledInfo = targetActor.getFlag('foundryvtt-swse', 'isCrippled');
     if (!crippledInfo) {return false;}
 
     if (targetActor.system.hp.value >= crippledInfo.maxHpWhenCrippled) {
@@ -531,14 +531,14 @@ export class DarkSidePowers {
   }
 
   static async removeCripplingStrike(targetActor) {
-    const crippledInfo = targetActor.getFlag('swse', 'isCrippled');
+    const crippledInfo = targetActor.getFlag('foundryvtt-swse', 'isCrippled');
     if (!crippledInfo) {return;}
 
     await targetActor.update({
       'system.speed.current': crippledInfo.originalSpeed
     });
 
-    await targetActor.unsetFlag('swse', 'isCrippled');
+    await targetActor.unsetFlag('foundryvtt-swse', 'isCrippled');
 
     const chatContent = `
       <div class="swse-crippling-strike-end">
@@ -604,7 +604,7 @@ export class DarkSidePowers {
       };
     }
 
-    const activeTalisman = actor.getFlag('swse', 'activeDarkSideTalisman');
+    const activeTalisman = actor.getFlag('foundryvtt-swse', 'activeDarkSideTalisman');
     if (activeTalisman) {
       return {
         success: false,
@@ -659,7 +659,7 @@ export class DarkSidePowers {
       createdRound: game.combat?.round || 0
     };
 
-    await actor.setFlag('swse', 'activeDarkSideTalisman', talismantInfo);
+    await actor.setFlag('foundryvtt-swse', 'activeDarkSideTalisman', talismantInfo);
 
     const chatContent = `
       <div class="swse-dark-side-talisman">
@@ -688,7 +688,7 @@ export class DarkSidePowers {
   }
 
   static async destroyDarkSideTalisman(actor) {
-    const talisman = actor.getFlag('swse', 'activeDarkSideTalisman');
+    const talisman = actor.getFlag('foundryvtt-swse', 'activeDarkSideTalisman');
     if (!talisman) {
       return { success: false, message: 'Actor does not have an active Dark Side Talisman' };
     }
@@ -701,12 +701,12 @@ export class DarkSidePowers {
       }
     }
 
-    await actor.unsetFlag('swse', 'activeDarkSideTalisman');
+    await actor.unsetFlag('foundryvtt-swse', 'activeDarkSideTalisman');
 
     const cooldownUntil = new Date();
     cooldownUntil.setHours(cooldownUntil.getHours() + 24);
 
-    await actor.setFlag('swse', 'darkSideTalismanCooldown', cooldownUntil.toISOString());
+    await actor.setFlag('foundryvtt-swse', 'darkSideTalismanCooldown', cooldownUntil.toISOString());
 
     const chatContent = `
       <div class="swse-dark-side-talisman-destroyed">
@@ -728,7 +728,7 @@ export class DarkSidePowers {
   }
 
   static canCreateNewTalisman(actor) {
-    const cooldown = actor.getFlag('swse', 'darkSideTalismanCooldown');
+    const cooldown = actor.getFlag('foundryvtt-swse', 'darkSideTalismanCooldown');
     if (!cooldown) {return true;}
 
     const cooldownTime = new Date(cooldown);
@@ -738,7 +738,7 @@ export class DarkSidePowers {
   }
 
   static getActiveTalisman(actor) {
-    return actor.getFlag('swse', 'activeDarkSideTalisman');
+    return actor.getFlag('foundryvtt-swse', 'activeDarkSideTalisman');
   }
 
   // ========================================================================
@@ -1174,7 +1174,7 @@ export class DarkSidePowers {
 
   static async applyAffliction(targetToken, sourceName) {
     const targetActor = targetToken.actor;
-    const afflictionFlags = targetActor.getFlag('swse', 'afflictions') || [];
+    const afflictionFlags = targetActor.getFlag('foundryvtt-swse', 'afflictions') || [];
 
     afflictionFlags.push({
       sourceName: sourceName,
@@ -1182,14 +1182,14 @@ export class DarkSidePowers {
       triggeredAt: false
     });
 
-    await targetActor.setFlag('swse', 'afflictions', afflictionFlags);
+    await targetActor.setFlag('foundryvtt-swse', 'afflictions', afflictionFlags);
 
     SWSELogger.log(`SWSE Talents | Applied Affliction from ${sourceName} to ${targetActor.name}`);
   }
 
   static async applyAfflictionDamage(targetToken) {
     const targetActor = targetToken.actor;
-    const afflictions = targetActor.getFlag('swse', 'afflictions') || [];
+    const afflictions = targetActor.getFlag('foundryvtt-swse', 'afflictions') || [];
 
     if (afflictions.length === 0) {return;}
 
@@ -1221,7 +1221,7 @@ export class DarkSidePowers {
     }
 
     // Clear afflictions after applying
-    await targetActor.unsetFlag('swse', 'afflictions');
+    await targetActor.unsetFlag('foundryvtt-swse', 'afflictions');
   }
 
   /**
@@ -1250,7 +1250,7 @@ export class DarkSidePowers {
     }
 
     const drainForceFlag = `drainForce_${combatId}`;
-    const alreadyUsed = actor.getFlag('swse', drainForceFlag);
+    const alreadyUsed = actor.getFlag('foundryvtt-swse', drainForceFlag);
 
     if (alreadyUsed) {
       return {
@@ -1290,7 +1290,7 @@ export class DarkSidePowers {
     });
 
     // Mark as used
-    await actor.setFlag('swse', drainForceFlag, true);
+    await actor.setFlag('foundryvtt-swse', drainForceFlag, true);
 
     const chatContent = `
       <div class="swse-drain-force">
@@ -1344,7 +1344,7 @@ export class DarkSidePowers {
     }
 
 
-    const activeTalisman = actor.getFlag('swse', 'activeSithTalisman');
+    const activeTalisman = actor.getFlag('foundryvtt-swse', 'activeSithTalisman');
     if (activeTalisman) {
       return {
         success: false,
@@ -1399,7 +1399,7 @@ export class DarkSidePowers {
       dspIncreaseApplied: true
     };
 
-    await actor.setFlag('swse', 'activeSithTalisman', talismantInfo);
+    await actor.setFlag('foundryvtt-swse', 'activeSithTalisman', talismantInfo);
 
     const chatContent = `
       <div class="swse-sith-talisman">
@@ -1429,7 +1429,7 @@ export class DarkSidePowers {
   }
 
   static async destroySithTalisman(actor) {
-    const talisman = actor.getFlag('swse', 'activeSithTalisman');
+    const talisman = actor.getFlag('foundryvtt-swse', 'activeSithTalisman');
     if (!talisman) {
       return { success: false, message: 'Actor does not have an active Sith Talisman' };
     }
@@ -1442,12 +1442,12 @@ export class DarkSidePowers {
       }
     }
 
-    await actor.unsetFlag('swse', 'activeSithTalisman');
+    await actor.unsetFlag('foundryvtt-swse', 'activeSithTalisman');
 
     const cooldownUntil = new Date();
     cooldownUntil.setHours(cooldownUntil.getHours() + 24);
 
-    await actor.setFlag('swse', 'sithTalismanCooldown', cooldownUntil.toISOString());
+    await actor.setFlag('foundryvtt-swse', 'sithTalismanCooldown', cooldownUntil.toISOString());
 
     const chatContent = `
       <div class="swse-sith-talisman-destroyed">
@@ -1469,7 +1469,7 @@ export class DarkSidePowers {
   }
 
   static canCreateNewSithTalisman(actor) {
-    const cooldown = actor.getFlag('swse', 'sithTalismanCooldown');
+    const cooldown = actor.getFlag('foundryvtt-swse', 'sithTalismanCooldown');
     if (!cooldown) {return true;}
 
     const cooldownTime = new Date(cooldown);
@@ -1479,7 +1479,7 @@ export class DarkSidePowers {
   }
 
   static getActiveSithTalisman(actor) {
-    return actor.getFlag('swse', 'activeSithTalisman');
+    return actor.getFlag('foundryvtt-swse', 'activeSithTalisman');
   }
 
   // ========================================================================
@@ -1644,9 +1644,9 @@ export class DarkSidePowers {
       activatedTurn: game.combat?.turn || 0
     };
 
-    const activeBonus = actor.getFlag('swse', 'sithAlchemicalBonus');
+    const activeBonus = actor.getFlag('foundryvtt-swse', 'sithAlchemicalBonus');
     const bonuses = activeBonus ? [activeBonus, bonusFlag] : [bonusFlag];
-    await actor.setFlag('swse', 'sithAlchemicalBonus', bonuses[0]); // Keep only the latest (one per encounter typically)
+    await actor.setFlag('foundryvtt-swse', 'sithAlchemicalBonus', bonuses[0]); // Keep only the latest (one per encounter typically)
 
     const chatContent = `
       <div class="swse-sith-alchemical-bonus">
@@ -1678,7 +1678,7 @@ export class DarkSidePowers {
    * Clear Sith Alchemical bonus after attack is made
    */
   static async clearSithAlchemicalBonus(actor) {
-    await actor.unsetFlag('swse', 'sithAlchemicalBonus');
+    await actor.unsetFlag('foundryvtt-swse', 'sithAlchemicalBonus');
   }
 
   /**
@@ -1752,11 +1752,11 @@ export class DarkSidePowers {
   }
 
   static getStolenFormTalent(actor) {
-    return actor.getFlag('swse', 'stolenFormTalent');
+    return actor.getFlag('foundryvtt-swse', 'stolenFormTalent');
   }
 
   static async setStolenFormTalent(actor, talentName) {
-    await actor.setFlag('swse', 'stolenFormTalent', talentName);
+    await actor.setFlag('foundryvtt-swse', 'stolenFormTalent', talentName);
 
     const chatContent = `
       <div class="swse-stolen-form">
@@ -1785,7 +1785,7 @@ export class DarkSidePowers {
 Hooks.on('combatRoundChange', async (combat) => {
   for (const combatant of combat.combatants) {
     const actor = combatant.actor;
-    const rageInfo = actor.getFlag('swse', 'isChannelAngerRaging');
+    const rageInfo = actor.getFlag('foundryvtt-swse', 'isChannelAngerRaging');
 
     if (rageInfo && combat.round >= rageInfo.endRound) {
       await DarkSidePowers.endChannelAnger(actor);
@@ -1795,7 +1795,7 @@ Hooks.on('combatRoundChange', async (combat) => {
 
 Hooks.on('preUpdateActor', async (actor, update, options, userId) => {
   if (update.system?.hp?.value !== undefined) {
-    const crippledInfo = actor.getFlag('swse', 'isCrippled');
+    const crippledInfo = actor.getFlag('foundryvtt-swse', 'isCrippled');
     if (crippledInfo && update.system.hp.value >= crippledInfo.maxHpWhenCrippled) {
       await DarkSidePowers.removeCripplingStrike(actor);
     }
@@ -1933,7 +1933,7 @@ export async function startSithAmuletCraft(actor) {
     return { success: false, message: 'Actor does not have Sith Alchemy' };
   }
 
-  const existing = actor.getFlag('swse', 'sithAmuletCraft');
+  const existing = actor.getFlag('foundryvtt-swse', 'sithAmuletCraft');
   if (existing && !existing.completedAt) {
     return { success: false, message: 'A Sith Amulet craft is already in progress.' };
   }
@@ -1946,7 +1946,7 @@ export async function startSithAmuletCraft(actor) {
   const completesAt = _addDays(startedAt, 7).toISOString();
 
   const craft = { startedAt, completesAt, cost, completedAt: null };
-  await actor.setFlag('swse', 'sithAmuletCraft', craft);
+  await actor.setFlag('foundryvtt-swse', 'sithAmuletCraft', craft);
 
   await createChatMessage({
     speaker: { actor },
@@ -1965,7 +1965,7 @@ export async function startSithAmuletCraft(actor) {
 }
 
 export async function completeSithAmuletCraft(actor) {
-  const craft = actor.getFlag('swse', 'sithAmuletCraft');
+  const craft = actor.getFlag('foundryvtt-swse', 'sithAmuletCraft');
   if (!craft || craft.completedAt) {
     return { success: false, message: 'No Sith Amulet craft is currently in progress.' };
   }
@@ -1996,7 +1996,7 @@ export async function completeSithAmuletCraft(actor) {
   }
 
   const completedAt = _nowISO();
-  await actor.setFlag('swse', 'sithAmuletCraft', { ...craft, completedAt });
+  await actor.setFlag('foundryvtt-swse', 'sithAmuletCraft', { ...craft, completedAt });
 
   await createChatMessage({
     speaker: { actor },
@@ -2039,7 +2039,7 @@ export async function startSithArmorTransform(actor, armorItem) {
     return { success: false, message: 'Sith Armor can only be created from Battle Armor (Light, Standard, Heavy).' };
   }
 
-  const pending = armorItem.getFlag('swse', 'sithArmorTransform');
+  const pending = armorItem.getFlag('foundryvtt-swse', 'sithArmorTransform');
   if (pending && !pending.completedAt) {
     return { success: false, message: 'This armor already has a Sith Armor transformation in progress.' };
   }
@@ -2047,7 +2047,7 @@ export async function startSithArmorTransform(actor, armorItem) {
   const startedAt = _nowISO();
   const completesAt = _addDays(startedAt, info.days).toISOString();
 
-  await armorItem.setFlag('swse', 'sithArmorTransform', {
+  await armorItem.setFlag('foundryvtt-swse', 'sithArmorTransform', {
     startedAt,
     completesAt,
     tier: info.tier,
@@ -2074,7 +2074,7 @@ export async function completeSithArmorTransform(actor, armorItem) {
   if (!armorItem || armorItem.type !== 'armor') {
     return { success: false, message: 'You must select an Armor item.' };
   }
-  const pending = armorItem.getFlag('swse', 'sithArmorTransform');
+  const pending = armorItem.getFlag('foundryvtt-swse', 'sithArmorTransform');
   if (!pending || pending.completedAt) {
     return { success: false, message: 'No Sith Armor transformation is currently in progress for this armor.' };
   }
@@ -2097,7 +2097,7 @@ export async function completeSithArmorTransform(actor, armorItem) {
     'system.description': enhancedDescription
   }]);
 
-  await armorItem.setFlag('swse', 'sithArmorTransform', { ...pending, completedAt: _nowISO() });
+  await armorItem.setFlag('foundryvtt-swse', 'sithArmorTransform', { ...pending, completedAt: _nowISO() });
 
   await createChatMessage({
     speaker: { actor },
@@ -2133,7 +2133,7 @@ export async function startSithWeaponCraft(actor, weaponItem) {
     return { success: false, message: 'Sith Weapons can only be created from Simple Melee or Advanced Melee weapons.' };
   }
 
-  const pending = weaponItem.getFlag('swse', 'sithWeaponCraft');
+  const pending = weaponItem.getFlag('foundryvtt-swse', 'sithWeaponCraft');
   if (pending && !pending.completedAt) {
     return { success: false, message: 'This weapon already has a Sith Weapon creation in progress.' };
   }
@@ -2141,7 +2141,7 @@ export async function startSithWeaponCraft(actor, weaponItem) {
   const startedAt = _nowISO();
   const completesAt = _addHours(startedAt, 1).toISOString();
 
-  await weaponItem.setFlag('swse', 'sithWeaponCraft', {
+  await weaponItem.setFlag('foundryvtt-swse', 'sithWeaponCraft', {
     startedAt,
     completesAt,
     completedAt: null
@@ -2166,7 +2166,7 @@ export async function completeSithWeaponCraft(actor, weaponItem) {
   if (!weaponItem || weaponItem.type !== 'weapon') {
     return { success: false, message: 'You must select a Weapon item.' };
   }
-  const pending = weaponItem.getFlag('swse', 'sithWeaponCraft');
+  const pending = weaponItem.getFlag('foundryvtt-swse', 'sithWeaponCraft');
   if (!pending || pending.completedAt) {
     return { success: false, message: 'No Sith Weapon creation is currently in progress for this weapon.' };
   }
@@ -2189,7 +2189,7 @@ export async function completeSithWeaponCraft(actor, weaponItem) {
     'system.description': enhancedDescription
   }]);
 
-  await weaponItem.setFlag('swse', 'sithWeaponCraft', { ...pending, completedAt: _nowISO() });
+  await weaponItem.setFlag('foundryvtt-swse', 'sithWeaponCraft', { ...pending, completedAt: _nowISO() });
 
   await createChatMessage({
     speaker: { actor },
@@ -2214,7 +2214,7 @@ export async function completeSithWeaponCraft(actor, weaponItem) {
  * This stores a one-shot damage bonus on the actor and is consumed by the damage roller.
  */
 export async function activateSithWeaponBonus(actor, weaponItem) {
-  if (!weaponItem || weaponItem.type !== 'weapon' || weaponItem.getFlag('swse', 'sithWeapon') !== true) {
+  if (!weaponItem || weaponItem.type !== 'weapon' || weaponItem.getFlag('foundryvtt-swse', 'sithWeapon') !== true) {
     return { success: false, message: 'You must select a Sith Weapon.' };
   }
 
@@ -2232,7 +2232,7 @@ export async function activateSithWeaponBonus(actor, weaponItem) {
     expiresAt: game.combat ? null : _addHours(_nowISO(), 1).toISOString()
   };
 
-  await actor.setFlag('swse', 'sithWeaponDamageBonus', payload);
+  await actor.setFlag('foundryvtt-swse', 'sithWeaponDamageBonus', payload);
 
   await createChatMessage({
     speaker: { actor },

@@ -109,7 +109,7 @@ export class DarkSideDevoteeMechanics {
     }
 
     // Check if already raging
-    const isRaging = actor.getFlag('swse', 'isChannelAngerRaging');
+    const isRaging = actor.getFlag('foundryvtt-swse', 'isChannelAngerRaging');
     if (isRaging) {
       return {
         success: false,
@@ -155,7 +155,7 @@ export class DarkSideDevoteeMechanics {
       combatantId: combatantId
     };
 
-    await actor.setFlag('swse', 'isChannelAngerRaging', rageInfo);
+    await actor.setFlag('foundryvtt-swse', 'isChannelAngerRaging', rageInfo);
 
     // Add rage bonus effects to character
     // This is represented by a temporary effect or chat announcement
@@ -190,13 +190,13 @@ export class DarkSideDevoteeMechanics {
    * End Channel Anger rage and apply condition track penalty
    */
   static async endChannelAnger(actor) {
-    const rageInfo = actor.getFlag('swse', 'isChannelAngerRaging');
+    const rageInfo = actor.getFlag('foundryvtt-swse', 'isChannelAngerRaging');
     if (!rageInfo) {
       return { success: false, message: 'Actor is not currently raging' };
     }
 
     // Remove rage flag
-    await actor.unsetFlag('swse', 'isChannelAngerRaging');
+    await actor.unsetFlag('foundryvtt-swse', 'isChannelAngerRaging');
 
     // Move -1 on Condition Track
     const currentCondition = actor.system.conditionTrack?.value || 0;
@@ -229,7 +229,7 @@ export class DarkSideDevoteeMechanics {
    * Check if actor is currently raging and should get +2 bonus
    */
   static isCurrentlyRaging(actor) {
-    const rageInfo = actor.getFlag('swse', 'isChannelAngerRaging');
+    const rageInfo = actor.getFlag('foundryvtt-swse', 'isChannelAngerRaging');
     if (!rageInfo) {return false;}
 
     // Check if rage duration has expired
@@ -278,7 +278,7 @@ export class DarkSideDevoteeMechanics {
     const crippledSpeed = Math.ceil(originalSpeed / 2);
 
     // Mark as crippled
-    await targetActor.setFlag('swse', 'isCrippled', {
+    await targetActor.setFlag('foundryvtt-swse', 'isCrippled', {
       sourceActor: actor.id,
       sourceName: actor.name,
       originalSpeed: originalSpeed,
@@ -319,7 +319,7 @@ export class DarkSideDevoteeMechanics {
    * Check if target is crippled and maintain effect while damaged
    */
   static checkCripplingStrikeExpiry(targetActor) {
-    const crippledInfo = targetActor.getFlag('swse', 'isCrippled');
+    const crippledInfo = targetActor.getFlag('foundryvtt-swse', 'isCrippled');
     if (!crippledInfo) {return false;}
 
     // Check if fully healed
@@ -335,7 +335,7 @@ export class DarkSideDevoteeMechanics {
    * Remove Crippling Strike effect when target heals
    */
   static async removeCripplingStrike(targetActor) {
-    const crippledInfo = targetActor.getFlag('swse', 'isCrippled');
+    const crippledInfo = targetActor.getFlag('foundryvtt-swse', 'isCrippled');
     if (!crippledInfo) {return;}
 
     // Restore original speed
@@ -344,7 +344,7 @@ export class DarkSideDevoteeMechanics {
     });
 
     // Remove flag
-    await targetActor.unsetFlag('swse', 'isCrippled');
+    await targetActor.unsetFlag('foundryvtt-swse', 'isCrippled');
 
     const chatContent = `
       <div class="swse-crippling-strike-end">
@@ -431,7 +431,7 @@ export class DarkSideDevoteeMechanics {
     }
 
     // Check if already has active talisman
-    const activeTalisman = actor.getFlag('swse', 'activeDarkSideTalisman');
+    const activeTalisman = actor.getFlag('foundryvtt-swse', 'activeDarkSideTalisman');
     if (activeTalisman) {
       return {
         success: false,
@@ -467,7 +467,7 @@ export class DarkSideDevoteeMechanics {
       createdRound: game.combat?.round || 0
     };
 
-    await actor.setFlag('swse', 'activeDarkSideTalisman', talismantInfo);
+    await actor.setFlag('foundryvtt-swse', 'activeDarkSideTalisman', talismantInfo);
 
     const chatContent = `
       <div class="swse-dark-side-talisman">
@@ -498,19 +498,19 @@ export class DarkSideDevoteeMechanics {
    * Destroy a Dark Side Talisman and set 24-hour cooldown
    */
   static async destroyDarkSideTalisman(actor) {
-    const talisman = actor.getFlag('swse', 'activeDarkSideTalisman');
+    const talisman = actor.getFlag('foundryvtt-swse', 'activeDarkSideTalisman');
     if (!talisman) {
       return { success: false, message: 'Actor does not have an active Dark Side Talisman' };
     }
 
     // Remove active talisman
-    await actor.unsetFlag('swse', 'activeDarkSideTalisman');
+    await actor.unsetFlag('foundryvtt-swse', 'activeDarkSideTalisman');
 
     // Set 24-hour cooldown
     const cooldownUntil = new Date();
     cooldownUntil.setHours(cooldownUntil.getHours() + 24);
 
-    await actor.setFlag('swse', 'darkSideTalismanCooldown', cooldownUntil.toISOString());
+    await actor.setFlag('foundryvtt-swse', 'darkSideTalismanCooldown', cooldownUntil.toISOString());
 
     const chatContent = `
       <div class="swse-dark-side-talisman-destroyed">
@@ -535,7 +535,7 @@ export class DarkSideDevoteeMechanics {
    * Check if can create a new talisman (cooldown expired)
    */
   static canCreateNewTalisman(actor) {
-    const cooldown = actor.getFlag('swse', 'darkSideTalismanCooldown');
+    const cooldown = actor.getFlag('foundryvtt-swse', 'darkSideTalismanCooldown');
     if (!cooldown) {return true;}
 
     const cooldownTime = new Date(cooldown);
@@ -548,7 +548,7 @@ export class DarkSideDevoteeMechanics {
    * Check if has active talisman and which defense it protects
    */
   static getActiveTalisman(actor) {
-    return actor.getFlag('swse', 'activeDarkSideTalisman');
+    return actor.getFlag('foundryvtt-swse', 'activeDarkSideTalisman');
   }
 }
 
@@ -562,7 +562,7 @@ export class DarkSideDevoteeMechanics {
 Hooks.on('combatRoundChange', async (combat) => {
   for (const combatant of combat.combatants) {
     const actor = combatant.actor;
-    const rageInfo = actor.getFlag('swse', 'isChannelAngerRaging');
+    const rageInfo = actor.getFlag('foundryvtt-swse', 'isChannelAngerRaging');
 
     if (rageInfo && combat.round >= rageInfo.endRound) {
       await DarkSideDevoteeMechanics.endChannelAnger(actor);
@@ -575,7 +575,7 @@ Hooks.on('combatRoundChange', async (combat) => {
  */
 Hooks.on('preUpdateActor', async (actor, update, options, userId) => {
   if (update.system?.hp?.value !== undefined) {
-    const crippledInfo = actor.getFlag('swse', 'isCrippled');
+    const crippledInfo = actor.getFlag('foundryvtt-swse', 'isCrippled');
     if (crippledInfo && update.system.hp.value >= crippledInfo.maxHpWhenCrippled) {
       await DarkSideDevoteeMechanics.removeCripplingStrike(actor);
     }

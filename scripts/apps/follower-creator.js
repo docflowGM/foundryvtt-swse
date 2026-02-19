@@ -428,7 +428,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
     static async _applyDroidTraits(follower) {
         // Droids have special traits that should be handled by the species item
         // But we can add any additional droid-specific flags here
-        await follower.setFlag('swse', 'isDroid', true);
+        await follower.setFlag('foundryvtt-swse', 'isDroid', true);
     }
 
     /**
@@ -582,14 +582,14 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      */
     static async _linkFollowerToOwner(owner, follower, grantingTalent) {
         // Add follower to owner's flags
-        const currentFollowers = owner.getFlag('swse', 'followers') || [];
+        const currentFollowers = owner.getFlag('foundryvtt-swse', 'followers') || [];
         currentFollowers.push({
             id: follower.id,
             name: follower.name,
             talent: grantingTalent?.name || null
         });
 
-        await owner.setFlag('swse', 'followers', currentFollowers);
+        await owner.setFlag('foundryvtt-swse', 'followers', currentFollowers);
 
         // Set ownership permissions to match owner
         const ownerUser = game.users.find(u => u.character?.id === owner.id);
@@ -608,7 +608,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * @returns {Array<Actor>} Array of follower actors
      */
     static getFollowers(actor) {
-        const followerData = actor.getFlag('swse', 'followers') || [];
+        const followerData = actor.getFlag('foundryvtt-swse', 'followers') || [];
         return followerData.map(f => game.actors.get(f.id)).filter(f => f);
     }
 
@@ -618,10 +618,10 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * @param {Actor} follower - The follower to remove
      */
     static async removeFollower(owner, follower) {
-        const currentFollowers = owner.getFlag('swse', 'followers') || [];
+        const currentFollowers = owner.getFlag('foundryvtt-swse', 'followers') || [];
         const updatedFollowers = currentFollowers.filter(f => f.id !== follower.id);
 
-        await owner.setFlag('swse', 'followers', updatedFollowers);
+        await owner.setFlag('foundryvtt-swse', 'followers', updatedFollowers);
 
         // Optionally delete the follower actor
         const shouldDelete = await SWSEDialogV2.confirm({

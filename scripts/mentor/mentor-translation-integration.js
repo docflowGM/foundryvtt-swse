@@ -179,7 +179,7 @@ export class MentorTranslationIntegration {
    * Toggle translation on/off for current user
    */
   static async toggleTranslation(enabled) {
-    await game.user.setFlag('swse', 'mentorTranslationEnabled', enabled);
+    await game.user.setFlag('foundryvtt-swse', 'mentorTranslationEnabled', enabled);
   }
 
   /**

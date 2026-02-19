@@ -90,11 +90,11 @@ export class AttributeIncreaseHandler {
     );
 
     // Store pending selections in flags
-    const currentPending = actor.getFlag('swse', 'pendingAttributeGains') || {};
+    const currentPending = actor.getFlag('foundryvtt-swse', 'pendingAttributeGains') || {};
     currentPending.trainedSkills = (currentPending.trainedSkills || 0) + skillsToGain;
     currentPending.languages = (currentPending.languages || 0) + languagesToGain;
 
-    await actor.setFlag('swse', 'pendingAttributeGains', currentPending);
+    await actor.setFlag('foundryvtt-swse', 'pendingAttributeGains', currentPending);
 
     // Add language choice tokens via language module
     if (SWSELanguageModule && languagesToGain > 0) {
@@ -151,10 +151,10 @@ export class AttributeIncreaseHandler {
     );
 
     // Store pending selections in flags
-    const currentPending = actor.getFlag('swse', 'pendingAttributeGains') || {};
+    const currentPending = actor.getFlag('foundryvtt-swse', 'pendingAttributeGains') || {};
     currentPending.forcePowers = (currentPending.forcePowers || 0) + forcePowersToGain;
 
-    await actor.setFlag('swse', 'pendingAttributeGains', currentPending);
+    await actor.setFlag('foundryvtt-swse', 'pendingAttributeGains', currentPending);
 
     // Emit hook for UI to handle selections
     Hooks.call('swse:wisdomIncreased', {
@@ -227,7 +227,7 @@ export class AttributeIncreaseHandler {
    * Check for pending attribute gains that need player selection
    */
   static async checkPendingGains(actor) {
-    const pending = actor.getFlag('swse', 'pendingAttributeGains') || {};
+    const pending = actor.getFlag('foundryvtt-swse', 'pendingAttributeGains') || {};
 
     if (pending.trainedSkills > 0 || pending.languages > 0 || pending.forcePowers > 0) {
       swseLogger.log('SWSE | Pending attribute gains detected:', pending);
@@ -242,13 +242,13 @@ export class AttributeIncreaseHandler {
    * Clear pending gains after player makes selections
    */
   static async clearPendingGains(actor, type = null) {
-    const pending = actor.getFlag('swse', 'pendingAttributeGains') || {};
+    const pending = actor.getFlag('foundryvtt-swse', 'pendingAttributeGains') || {};
 
     if (type) {
       delete pending[type];
-      await actor.setFlag('swse', 'pendingAttributeGains', pending);
+      await actor.setFlag('foundryvtt-swse', 'pendingAttributeGains', pending);
     } else {
-      await actor.unsetFlag('swse', 'pendingAttributeGains');
+      await actor.unsetFlag('foundryvtt-swse', 'pendingAttributeGains');
     }
   }
 }

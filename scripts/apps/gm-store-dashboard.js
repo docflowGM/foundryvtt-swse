@@ -126,7 +126,7 @@ export class GMStoreDashboard extends HandlebarsApplicationMixin(ApplicationV2) 
 
     // Aggregate purchase history from all actors
     for (const actor of game.actors) {
-      const history = actor.getFlag('swse', 'purchaseHistory') || [];
+      const history = actor.getFlag('foundryvtt-swse', 'purchaseHistory') || [];
       for (const purchase of history) {
         for (const item of purchase.items) {
           this.transactions.push({
@@ -449,13 +449,13 @@ export class GMStoreDashboard extends HandlebarsApplicationMixin(ApplicationV2) 
         await draftActor.update({ ownership });
 
         // Remove draft flags
-        await draftActor.unsetFlag('swse', 'pendingApproval');
-        await draftActor.unsetFlag('swse', 'draftOnly');
-        await draftActor.unsetFlag('swse', 'ownerPlayerId');
+        await draftActor.unsetFlag('foundryvtt-swse', 'pendingApproval');
+        await draftActor.unsetFlag('foundryvtt-swse', 'draftOnly');
+        await draftActor.unsetFlag('foundryvtt-swse', 'ownerPlayerId');
       }
 
       // 4. Log transaction
-      const history = ownerActor.getFlag('swse', 'purchaseHistory') || [];
+      const history = ownerActor.getFlag('foundryvtt-swse', 'purchaseHistory') || [];
       const purchase = {
         timestamp: Date.now(),
         items: [],
@@ -473,7 +473,7 @@ export class GMStoreDashboard extends HandlebarsApplicationMixin(ApplicationV2) 
         source: 'Store - Custom ' + (approval.type === 'droid' ? 'Droid' : 'Vehicle') + ' Approval'
       };
       history.push(purchase);
-      await ownerActor.setFlag('swse', 'purchaseHistory', history);
+      await ownerActor.setFlag('foundryvtt-swse', 'purchaseHistory', history);
 
       // 5. Remove from pending queue
       const pendingPurchases = game.settings.get('foundryvtt-swse', 'pendingCustomPurchases') || [];

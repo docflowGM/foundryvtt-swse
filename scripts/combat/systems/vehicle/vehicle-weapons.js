@@ -283,7 +283,7 @@ export async function storeMissileState(vehicle, weapon, target, attackBonus) {
     turn: game.combat?.turn || 0
   };
 
-  await vehicle.setFlag('swse', 'missile', missileState);
+  await vehicle.setFlag('foundryvtt-swse', 'missile', missileState);
 }
 
 /**
@@ -293,7 +293,7 @@ export async function storeMissileState(vehicle, weapon, target, attackBonus) {
  * @private
  */
 export async function clearMissileState(vehicle, weapon) {
-  await vehicle.unsetFlag('swse', 'missile');
+  await vehicle.unsetFlag('foundryvtt-swse', 'missile');
 }
 
 /**

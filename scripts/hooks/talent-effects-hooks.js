@@ -80,11 +80,11 @@ async function _removeTalentEffects(talentItem) {
 
 async function _ensureTalentMeta(talentItem) {
   try {
-    const oldMeta = talentItem.getFlag('swse', 'talentMeta') ?? null;
+    const oldMeta = talentItem.getFlag('foundryvtt-swse', 'talentMeta') ?? null;
     const { meta } = TalentNormalizerEngine.normalizeTalentMeta(talentItem);
     const changed = Object.keys(TalentNormalizerEngine.diffMeta(oldMeta, meta)).length > 0;
     if (changed) {
-      await talentItem.setFlag('swse', 'talentMeta', meta);
+      await talentItem.setFlag('foundryvtt-swse', 'talentMeta', meta);
     }
   } catch (e) {
     // Never break creation for metadata
