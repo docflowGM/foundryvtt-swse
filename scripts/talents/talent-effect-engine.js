@@ -393,4 +393,184 @@ export class TalentEffectEngine {
       mutations
     };
   }
+
+  /**
+   * Build Swift Power activation plan
+   *
+   * @param {Actor} sourceActor - Actor using Swift Power
+   * @param {Object} forcePower - Force Power item being used
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildSwiftPowerPlan({
+    sourceActor,
+    forcePower
+  }) {
+    // --- Validation ---
+    const lastUsed = sourceActor.getFlag('foundryvtt-swse', 'swiftPowerUsedToday');
+    const today = new Date().toDateString();
+
+    if (lastUsed === today) {
+      return {
+        success: false,
+        reason: "Swift Power has already been used today. It refreshes at the next dawn."
+      };
+    }
+
+    if (!forcePower) {
+      return {
+        success: false,
+        reason: "Invalid Force Power"
+      };
+    }
+
+    // --- Build mutations ---
+    const mutations = [];
+
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: "swiftPowerUsedToday",
+      value: today
+    });
+
+    return {
+      success: true,
+      effect: "swiftPower",
+      sourceActor: sourceActor,
+      forcePowerName: forcePower.name,
+      mutations
+    };
+  }
+
+  /**
+   * Build Dark Side Savant activation plan
+   *
+   * @param {Actor} sourceActor - Actor using Dark Side Savant
+   * @param {Object} power - The Force Power being returned
+   * @param {string} combatId - Current combat ID
+   * @param {string} savantUsageFlag - Flag key for tracking usage
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildDarkSideSavantPlan({
+    sourceActor,
+    power,
+    combatId,
+    savantUsageFlag
+  }) {
+    // --- Validation ---
+    if (!power) {
+      return {
+        success: false,
+        reason: "Invalid Force Power"
+      };
+    }
+
+    if (power.system?.spent !== true) {
+      return {
+        success: false,
+        reason: "Power is not spent"
+      };
+    }
+
+    // --- Build mutations ---
+    const mutations = [];
+
+    // Return power to suite (mark as not spent)
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "updateOwnedItems",
+      items: [{
+        _id: power.id,
+        "system.spent": false
+      }]
+    });
+
+    // Mark as used this encounter
+    mutations.push({
+      actor: sourceActor,
+      actorId: sourceActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: savantUsageFlag,
+      value: true
+    });
+
+    return {
+      success: true,
+      effect: "darkSideSavant",
+      sourceActor: sourceActor,
+      powerName: power.name,
+      mutations
+    };
+  }
+
+  /**
+   * Build Wrath of the Dark Side plan
+   *
+   * @param {Actor} sourceActor - Actor triggering Wrath
+   * @param {Actor} targetActor - Actor receiving delayed damage
+   * @param {number} damageDealt - Original damage dealt
+   * @returns {Promise<Object>} Plan object
+   */
+  static async buildWrathOfDarkSidePlan({
+    sourceActor,
+    targetActor,
+    damageDealt
+  }) {
+    // --- Validation ---
+    if (!targetActor) {
+      return {
+        success: false,
+        reason: "Invalid target actor"
+      };
+    }
+
+    if (!damageDealt || damageDealt <= 0) {
+      return {
+        success: false,
+        reason: "No damage to apply"
+      };
+    }
+
+    // --- Compute half damage ---
+    const halfDamage = Math.floor(damageDealt / 2);
+    const wrathFlagId = `wrath_${Date.now()}_${targetActor.id}`;
+
+    // --- Prepare existing wrath flags ---
+    const wrathFlags = targetActor.getFlag('foundryvtt-swse', 'wrathDamage') || [];
+    const newWrathEntry = {
+      id: wrathFlagId,
+      damage: halfDamage,
+      sourceName: sourceActor.name,
+      sourceId: sourceActor.id,
+      triggerRound: game.combat?.round,
+      triggeredAt: new Date().toISOString()
+    };
+
+    const updatedFlags = [...wrathFlags, newWrathEntry];
+
+    // --- Build mutations ---
+    const mutations = [];
+
+    mutations.push({
+      actor: targetActor,
+      actorId: targetActor.id,
+      type: "setFlag",
+      scope: "foundryvtt-swse",
+      key: "wrathDamage",
+      value: updatedFlags
+    });
+
+    return {
+      success: true,
+      effect: "wrathOfDarkSide",
+      sourceActor: sourceActor,
+      targetActor: targetActor,
+      halfDamage: halfDamage,
+      mutations
+    };
+  }
 }

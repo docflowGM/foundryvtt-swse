@@ -1041,6 +1041,22 @@ export const ActorEngine = {
 
             appliedMutations.push(mutation);
 
+          } else if (mutation.type === 'updateOwnedItems') {
+            swseLogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: updateOwnedItems ${mutation.actor.name}`, {
+              itemCount: mutation.items.length
+            });
+
+            await this.updateOwnedItems(mutation.actor, mutation.items);
+
+            results.push({
+              actor: mutation.actor.id,
+              type: 'updateOwnedItems',
+              success: true,
+              count: mutation.items.length
+            });
+
+            appliedMutations.push(mutation);
+
           } else {
             throw new Error(`Unknown mutation type: ${mutation.type}`);
           }
