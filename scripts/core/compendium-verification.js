@@ -82,37 +82,56 @@ export class CompendiumVerification {
       throw new Error(`Pack ${config.packName} not found in registry`);
     }
 
-    // Get pack index
-    const index = await pack.getIndex();
+    // Get pack index (v13: returns Map)
+    try {
+      const indexMap = await pack.getIndex();
 
-    if (!index || index.length === 0) {
-      results.corrupted.push({
-        pack: config.packName,
-        reason: 'Pack index is empty'
-      });
-      throw new Error(`Pack ${config.packName} is empty or inaccessible`);
-    }
+      // Convert Map to array safely
+      const index = Array.from(indexMap ?? []);
 
-    // Check minimum document count
-    if (index.length < config.minDocuments) {
-      results.warnings.push({
-        pack: config.packName,
-        warning: `Pack has fewer documents than expected (found ${index.length}, expected at least ${config.minDocuments})`
-      });
-    }
+      if (!index || index.length === 0) {
+        results.corrupted.push({
+          pack: config.packName,
+          reason: 'Pack index is empty'
+        });
+        throw new Error(`Pack ${config.packName} is empty or inaccessible`);
+      }
 
-    // Spot-check first document for expected keys
-    const first = index[0];
-    const missingKeys = config.expectedKeys.filter(key => !(key in first));
+      // Check minimum document count
+      if (index.length < config.minDocuments) {
+        results.warnings.push({
+          pack: config.packName,
+          warning: `Pack has fewer documents than expected (found ${index.length}, expected at least ${config.minDocuments})`
+        });
+      }
 
-    if (missingKeys.length > 0) {
-      results.corrupted.push({
-        pack: config.packName,
-        reason: `Missing expected keys: ${missingKeys.join(', ')}`
-      });
-      throw new Error(
-        `Pack ${config.packName} missing expected keys: ${missingKeys.join(', ')}`
-      );
+      // Spot-check first document for expected keys
+      const first = index[0];
+
+      // Safely filter for missing keys (handle undefined entries)
+      if (!first || typeof first !== 'object') {
+        results.corrupted.push({
+          pack: config.packName,
+          reason: 'Pack index contains invalid entries'
+        });
+        throw new Error(`Pack ${config.packName} has corrupted index entries`);
+      }
+
+      const missingKeys = config.expectedKeys.filter(key => !(key in first));
+
+      if (missingKeys.length > 0) {
+        results.corrupted.push({
+          pack: config.packName,
+          reason: `Missing expected keys: ${missingKeys.join(', ')}`
+        });
+        throw new Error(
+          `Pack ${config.packName} missing expected keys: ${missingKeys.join(', ')}`
+        );
+      }
+    } catch (err) {
+      // Re-throw with clear context
+      if (err.message.includes('Pack')) throw err;
+      throw new Error(`Failed to verify pack ${config.packName}: ${err.message}`);
     }
 
     // Verify no orphaned references (if applicable)
