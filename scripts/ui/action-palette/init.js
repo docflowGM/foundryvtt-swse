@@ -4,7 +4,7 @@
  */
 
 import { ActionPaletteApp } from './action-palette.js';
-import { safeRender } from '../utils/render-guard.js';
+import { safeRender } from '../../utils/render-guard.js';
 
 let actionPaletteApp = null;
 
