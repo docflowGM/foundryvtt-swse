@@ -5,7 +5,7 @@
  * Loads all layers and registers with kernel
  */
 
-import { Sentinel } from './sentinel-core.js';
+import { SentinelEngine } from './sentinel-core.js';
 
 // Import all layers
 import { CSSLayer } from './layers/css-layer.js';
@@ -23,17 +23,17 @@ export function initializeSentinelLayers() {
   // Register layers in priority order
   // Do not change order without understanding dependencies
 
-  Sentinel.registerLayer('css', CSSLayer);
-  Sentinel.registerLayer('render', RenderLayer);
-  Sentinel.registerLayer('data', DataLayer);
-  Sentinel.registerLayer('hooks', HooksLayer);
-  Sentinel.registerLayer('promises', PromisesLayer);
-  Sentinel.registerLayer('performance', PerformanceLayer);
+  SentinelEngine.registerLayer('css', CSSLayer);
+  SentinelEngine.registerLayer('render', RenderLayer);
+  SentinelEngine.registerLayer('data', DataLayer);
+  SentinelEngine.registerLayer('hooks', HooksLayer);
+  SentinelEngine.registerLayer('promises', PromisesLayer);
+  SentinelEngine.registerLayer('performance', PerformanceLayer);
 }
 
 /**
  * Bootstrap Sentinel kernel after layer registration
  */
 export function bootstrapSentinel() {
-  Sentinel.bootstrap();
+  SentinelEngine.bootstrap();
 }

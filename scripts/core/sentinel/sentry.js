@@ -30,7 +30,7 @@
  * - Does NOT call Investigator functions
  */
 
-import { SentinelEngine } from './sentinel-engine.js';
+import { SentinelEngine } from './sentinel-core.js';
 
 export const Sentry = {
   _initialized: false,

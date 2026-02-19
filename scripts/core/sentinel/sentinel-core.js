@@ -8,7 +8,7 @@
  * - Non-invasive, non-mutating observation
  */
 
-export class Sentinel {
+export class SentinelEngine {
   static MODES = {
     OFF: 0,
     DEV: 1,
@@ -23,12 +23,12 @@ export class Sentinel {
     CRITICAL: 3
   };
 
-  static #mode = Sentinel.MODES.OFF;
+  static #mode = SentinelEngine.MODES.OFF;
   static #layers = new Map();
   static #bootId = null;
   static #initialized = false;
   static #reportLog = [];
-  static #severityThreshold = Sentinel.SEVERITY.INFO;
+  static #severityThreshold = SentinelEngine.SEVERITY.INFO;
 
   /**
    * Bootstrap the Runtime Kernel

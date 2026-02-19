@@ -73,6 +73,9 @@ import { registerSystemSettings } from './scripts/core/settings.js';
 import { initializeUtils } from './scripts/core/utils-init.js';
 import { initializeRolls } from './scripts/core/rolls-init.js';
 import { SWSESentinel } from './scripts/core/swse-sentinel.js';
+import { SentinelEngine } from './scripts/core/sentinel/sentinel-core.js';
+import { Sentry } from './scripts/core/sentinel/sentry.js';
+import { Investigator } from './scripts/core/sentinel/investigator.js';
 
 // ---- v13 hardening ----
 import { initializeHardeningSystem, validateSystemReady, registerHardeningHooks } from './scripts/core/hardening-init.js';
@@ -230,6 +233,11 @@ Hooks.once('ready', async () => {
 
   errorHandler.initialize();
   initializeRolls();
+
+  /* ---------- Sentinel Engine + Sentry + Investigator ---------- */
+  SentinelEngine.bootstrap();
+  Sentry.init();
+  Investigator.init();
 
   /* ---------- phase 3: diagnostic mode ---------- */
   await DiagnosticMode.initialize();
