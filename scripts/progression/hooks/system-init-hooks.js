@@ -9,7 +9,6 @@
 import { SWSELogger } from '../../utils/logger.js';
 import { FeatureIndex } from '../engine/feature-index.js';
 import { ClassNormalizer } from '../engine/class-normalizer.js';
-import { TalentTreeNormalizer } from '../engine/talent-tree-normalizer.js';
 import { ForceNormalizer } from '../engine/force-normalizer.js';
 import { StartingFeatureRegistrar } from '../engine/starting-feature-registrar.js';
 import { ProgressionStateNormalizer } from '../engine/progression-state-normalizer.js';
@@ -18,11 +17,12 @@ import { SkillNormalizer } from '../skills/skill-normalizer.js';
 import { FeatRegistry } from '../feats/feat-registry.js';
 import { FeatNormalizer } from '../feats/feat-normalizer.js';
 
-// NEW: SSOT Data Layer
+// SSOT Data Layer (now includes talent tree normalization)
 import { TalentTreeDB } from '../../data/talent-tree-db.js';
 import { ClassesDB } from '../../data/classes-db.js';
 import { TalentDB } from '../../data/talent-db.js';
 import { StableKeyMigration } from '../../data/stable-key-migration.js';
+import { normalizeDocumentTalent, validateTalentTreeAssignment } from '../../data/talent-tree-normalizer.js';
 
 export const SystemInitHooks = {
 
@@ -197,6 +197,7 @@ export const SystemInitHooks = {
 
     /**
      * Normalize all talent documents
+     * Uses data-layer normalizer (canonical SSOT)
      * @private
      */
     async _normalizeTalents() {
@@ -211,12 +212,11 @@ export const SystemInitHooks = {
             let count = 0;
 
             for (const talentDoc of talents) {
-                TalentTreeNormalizer.normalize(talentDoc);
+                // Normalize document fields (SSOT data-layer normalizer)
+                normalizeDocumentTalent(talentDoc);
 
-                // Validate tree name
-                if (!TalentTreeNormalizer.checkTalentAgainstTree(talentDoc)) {
-                    SWSELogger.warn(`Talent "${talentDoc.name}" has invalid tree assignment`);
-                }
+                // Validate tree assignment (non-fatal diagnostic)
+                validateTalentTreeAssignment(talentDoc);
 
                 count++;
             }
