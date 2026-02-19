@@ -3,6 +3,7 @@ import { SWSELogger } from '../utils/logger.js';
 import { FeatRegistry } from '../progression/feats/feat-registry.js';
 import { FeatEngine } from '../progression/feats/feat-engine.js';
 import { ensureNpcStatblockSnapshot, rollbackNpcToStatblockSnapshot } from '../utils/hardening.js';
+import { RollEngine } from './roll-engine.js';
 
 const FLAG_MODE = 'npcLevelUp.mode';
 const FLAG_TRACK = 'npcLevelUp.track';
@@ -168,8 +169,8 @@ async function promptHpMode() {
 
 async function computeNonheroicHpGain(mode, conMod) {
   if (mode === 'avg') {return 2 + conMod;}
-  const roll = await new Roll('1d4 + @con', { con: conMod }).evaluate({ async: true });
-  return Number(roll.total) || 0;
+  const roll = await RollEngine.safeRoll('1d4 + @con', { con: conMod });
+  return roll ? Number(roll.total) || 0 : 2 + conMod; // Fallback to average on roll failure
 }
 
 async function applyHpGain(actor, hpGain) {

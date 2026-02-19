@@ -7,6 +7,7 @@ import { SpeciesTraitEngine } from '../engine/systems/species/species-trait-engi
 import { SPECIES_TRAIT_TYPES } from '../engine/systems/species/species-trait-types.js';
 import { createChatMessage } from '../core/document-api-v13.js';
 import { SWSELogger } from '../utils/logger.js';
+import { RollEngine } from '../engine/roll-engine.js';
 
 /**
  * Handler for species reroll abilities
@@ -130,8 +131,11 @@ export class SpeciesRerollHandler {
       const formula = originalRoll.formula || '1d20';
 
       // Create and evaluate a new roll
-      const newRoll = new Roll(formula);
-      await newRoll.evaluate();
+      const newRoll = await RollEngine.safeRoll(formula);
+      if (!newRoll) {
+        SWSELogger.warn('SpeciesRerollHandler | Failed to perform reroll');
+        return null;
+      }
 
       return newRoll;
     } catch (err) {
@@ -310,8 +314,11 @@ export function registerRerollListeners() {
       const fullFormula = `1d20 + ${mod}`;
 
       const originalRoll = { total: originalTotal, formula: fullFormula };
-      const newRoll = new Roll(fullFormula);
-      await newRoll.evaluate();
+      const newRoll = await RollEngine.safeRoll(fullFormula);
+      if (!newRoll) {
+        ui.notifications.error('Reroll failed');
+        return;
+      }
 
       // Determine result
       const acceptWorse = trait.acceptWorse !== false;

@@ -4,6 +4,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { RollEngine } from '../engine/roll-engine.js';
 
 const NS = 'foundryvtt-swse';
 
@@ -56,8 +57,10 @@ export class GrappleMechanics {
     // Roll grapple check (typically STR + BAB)
     const grappleBonus = (grappler.system?.attributes?.bab?.value || 0) +
                          (grappler.system?.attributes?.str?.mod || 0);
-    const roll = new Roll('1d20', { bonus: grappleBonus });
-    await roll.evaluate({ async: true });
+    const roll = await RollEngine.safeRoll(`1d20 + ${grappleBonus}`);
+    if (!roll) {
+      return { success: false, message: 'Grapple check roll failed' };
+    }
 
     const total = roll.total;
     const success = total >= grappleDC;
