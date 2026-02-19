@@ -14,7 +14,7 @@ export const DDEngine = {
       if (!doc) {return;}
       const itemData = doc.toObject();
       // Create item on actor
-      const created = await actor.createEmbeddedDocuments('Item', [itemData]);
+      const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
       // If item is droid/vehicle, map stats
       if (itemData.type === 'droid' || itemData.type === 'vehicle') {
         const mapping = {

@@ -23,6 +23,7 @@ import { normalizeCredits } from '../utils/credit-normalization.js';
 import { SWSELogger } from '../utils/logger.js';
 import { calculateCartTotal } from './store/store-checkout.js';
 import { prompt as uiPrompt } from '../utils/ui-utils.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 const { ApplicationV2 } = foundry.applications.api;
 const { HandlebarsApplicationMixin } = foundry.applications.api;
@@ -334,7 +335,7 @@ export class GMStoreDashboard extends HandlebarsApplicationMixin(ApplicationV2) 
       const currentCredits = normalizeCredits(actor.system?.credits ?? 0);
       const reversalCredits = normalizeCredits(currentCredits - tx.amount); // Reverse the amount
 
-      await actor.update({ 'system.credits': reversalCredits });
+      await ActorEngine.updateActor(actor, { 'system.credits': reversalCredits });
 
       SWSELogger.info(`[GM Store] Transaction reversed: ${tx.actor} - ${tx.item} (${tx.amount} credits)`);
       ui.notifications.info(`Transaction reversed. ${actor.name} now has ${reversalCredits.toLocaleString()} credits.`);

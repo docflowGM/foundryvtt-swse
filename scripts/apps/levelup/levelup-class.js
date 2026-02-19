@@ -12,6 +12,7 @@ import { isBaseClass, getCharacterClasses, getClassDefenseBonuses, calculateHPGa
 import { meetsClassPrerequisites } from './levelup-validation.js';
 import { getClassProperty } from '../chargen/chargen-property-accessor.js';
 import { ClassSuggestionEngine } from '../../engine/ClassSuggestionEngine.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 /**
  * Get class metadata (icon and description)
@@ -475,7 +476,7 @@ export async function applyClassFeatures(classDoc, classLevel, actor) {
         );
 
         if (!existingFeature) {
-          await actor.createEmbeddedDocuments('Item', [featureItem]);
+          await ActorEngine.createEmbeddedDocuments(actor, 'Item', [featureItem]);
           ui.notifications.info(`Gained class feature: ${feature.name}`);
         }
       }
@@ -535,7 +536,7 @@ export async function createOrUpdateClassItem(classDoc, actor) {
 
     SWSELogger.log(`SWSE LevelUp | Creating ${classItem.name} with defense bonuses: Fort +${classItem.system.defenses.fortitude}, Ref +${classItem.system.defenses.reflex}, Will +${classItem.system.defenses.will}`);
 
-    await actor.createEmbeddedDocuments('Item', [classItem]);
+    await ActorEngine.createEmbeddedDocuments(actor, 'Item', [classItem]);
   }
 
   return classLevel;

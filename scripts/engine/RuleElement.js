@@ -205,7 +205,7 @@ export class GrantAbilityRule extends RuleElement {
     // Remove ability with this key
     const filtered = abilities.filter(a => a.key !== this.key);
 
-    await actor.update({ 'system.abilities': filtered });
+    await ActorEngine.updateActor(actor, { 'system.abilities': filtered });
   }
 }
 
@@ -301,7 +301,7 @@ export class ConditionalBonusRule extends RuleElement {
 
     const filtered = conditionalBonuses.filter(b => b.key !== this.key);
 
-    await actor.update({ 'system.conditionalBonuses': filtered });
+    await ActorEngine.updateActor(actor, { 'system.conditionalBonuses': filtered });
   }
 }
 
@@ -336,7 +336,7 @@ export class SkillTrainingRule extends RuleElement {
 
     const filtered = trainedSkills.filter(s => s !== skill);
 
-    await actor.update({
+    await ActorEngine.updateActor(actor, {
       'system.progression.trainedSkills': filtered
     });
   }
@@ -438,7 +438,7 @@ export class RuleEngine {
     swseLogger.log(`[RULE-ENGINE] Recalculating all rules for ${this.actor.name}`);
 
     // Clear all bonuses
-    await this.actor.update({
+    await ActorEngine.updateActor(this.actor, {
       'system.bonuses': {},
       'system.conditionalBonuses': [],
       'system.abilities': []

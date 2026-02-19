@@ -978,7 +978,7 @@ async _prepareContext(options) {
             const item = await pack.getDocument(entry._id);
             const itemData = item.toObject();
 
-            await actor.createEmbeddedDocuments('Item', [itemData]);
+            await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
             results.added.push(entry.name);
             found = true;
             SWSELogger.log(`SWSE | Added equipment: ${entry.name}`);

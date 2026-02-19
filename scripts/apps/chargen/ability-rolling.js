@@ -12,6 +12,7 @@
  */
 import { confirm as uiConfirm } from '../../utils/ui-utils.js';
 import { RollEngine } from '../../engine/roll-engine.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 export class AbilityRollingController {
   constructor(actor, root, opts = {}) {
     this.actor = actor;
@@ -389,7 +390,7 @@ export class AbilityRollingController {
       mapping[`system.attributes.${k.toLowerCase()}.value`] = val;
     }
     try {
-      await this.actor.update(mapping);
+      await ActorEngine.updateActor(this.actor, mapping);
       this.confirmed = true;
       this.root.querySelectorAll('.die-card').forEach(c => c.draggable=false);
       ui.notifications?.info('Abilities confirmed and saved.');

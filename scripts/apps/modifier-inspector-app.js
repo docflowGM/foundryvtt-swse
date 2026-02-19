@@ -3,6 +3,7 @@
  * System-wide modifier transparency and debugging
  */
 import { ModifierEngine } from '../engine/modifiers/ModifierEngine.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 export class ModifierInspectorApp extends Application {
   constructor(actor, options = {}) {
@@ -106,7 +107,7 @@ export class ModifierInspectorApp extends Application {
       return m;
     });
 
-    await this.actor.update({ 'system.customModifiers': updated });
+    await ActorEngine.updateActor(this.actor, { 'system.customModifiers': updated });
     this.render();
   }
 }

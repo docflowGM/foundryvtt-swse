@@ -650,7 +650,7 @@ export async function _onSelectTalent(event) {
         data: tal.system || tal.data
       }));
 
-      const created = await this.actor.createEmbeddedDocuments('Item', itemsToCreate);
+      const created = await ActorEngine.createEmbeddedDocuments(this.actor, 'Item', itemsToCreate);
       if (created.length > 0) {
         ui.notifications.info(`Added ${created.map(c => c.name).join(', ')} to character sheet`);
         this.close();

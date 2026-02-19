@@ -11,6 +11,7 @@ import { MENTORS } from './mentor-dialogues.js';
 import { MentorTranslationIntegration } from '../../mentor/mentor-translation-integration.js';
 import { swseLogger } from '../../utils/logger.js';
 import { seedMentorMemoryFromSurvey, getMentorMemory, setMentorMemory } from '../../mentor/mentor-memory.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 /**
  * Survey questions with mentor voice variants
@@ -787,7 +788,7 @@ export class MentorSurvey {
     };
 
     try {
-      await actor.update(updates);
+      await ActorEngine.updateActor(actor, updates);
       swseLogger.log(`[MENTOR-SURVEY] storeSurveyData: Survey data stored successfully`);
 
       try {

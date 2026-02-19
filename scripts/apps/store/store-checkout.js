@@ -19,6 +19,7 @@ import { DroidBuilderApp } from '../droid-builder-app.js';
 import { getRandomDialogue } from './store-shared.js';
 import { SWSEVehicleHandler } from '../../actors/vehicle/swse-vehicle-handler.js';
 import { createActor } from '../../core/document-api-v13.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 /**
  * Add item to shopping cart
@@ -1112,7 +1113,7 @@ async function deductDroidCredits(actor, cost) {
     const currentCredits = Number(actor.system.credits) || 0;
     const newCredits = Math.max(0, currentCredits - cost);
 
-    await actor.update({
+    await ActorEngine.updateActor(actor, {
         'system.credits': newCredits
     });
 

@@ -19,6 +19,7 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 export class MountEngine {
 
@@ -280,7 +281,7 @@ export class MountEngine {
       const mount = mountId ? game.actors?.get(mountId) : null;
 
       if (!mount) {
-        await actor.update({
+        await ActorEngine.updateActor(actor, {
           'system.mounted.isMounted': false,
           'system.mounted.mountId': null
         });
@@ -293,7 +294,7 @@ export class MountEngine {
       const validIds = actor.system.mount.riderIds.filter(id => game.actors?.has(id));
 
       if (validIds.length !== actor.system.mount.riderIds.length) {
-        await actor.update({
+        await ActorEngine.updateActor(actor, {
           'system.mount.riderIds': validIds
         });
         SWSELogger.info(`MountEngine: Cleaned stale rider references for ${actor.name}`);

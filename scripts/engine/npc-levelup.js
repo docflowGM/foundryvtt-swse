@@ -271,7 +271,7 @@ async function promptAndApplyAbilityIncrease(actor, count) {
     if (!chosen) {return;}
 
     const base = Number(actor.system?.attributes?.[chosen]?.base) || 0;
-    await actor.update({ [`system.attributes.${chosen}.base`]: base + 1 });
+    await ActorEngine.updateActor(actor, { [`system.attributes.${chosen}.base`]: base + 1 });
   }
 }
 

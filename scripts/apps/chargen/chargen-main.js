@@ -18,6 +18,7 @@ import { MentorSurvey } from '../mentor/mentor-survey.js';
 import { MentorSuggestionDialog } from '../mentor/mentor-suggestion-dialog.js';
 import { MENTORS } from '../mentor/mentor-dialogues.js';
 import { getMentorMemory, setMentorMemory, setTargetClass } from '../../mentor/mentor-memory.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { BackgroundRegistry } from '../../registries/background-registry.js';
 import { LanguageRegistry } from '../../registries/language-registry.js';
 
@@ -3285,7 +3286,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     for (const p of (this.characterData.powers || [])) {items.push(p);}
 
     if (items.length > 0) {
-      await this.actor.createEmbeddedDocuments('Item', items);
+      await ActorEngine.createEmbeddedDocuments(this.actor, 'Item', items);
     }
 
     ui.notifications.info(`${this.actor.name} leveled up to level ${newLevel}!`);

@@ -4,6 +4,7 @@
 // ============================================
 
 import { SWSELogger } from '../../utils/logger.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { SuggestionService } from '../../engine/SuggestionService.js';
 import { MentorTranslationIntegration } from '../../mentor/mentor-translation-integration.js';
 import { BackgroundRegistry } from '../../registries/background-registry.js';
@@ -502,7 +503,7 @@ export async function _applyBackgroundToActor(actor) {
 
   // Apply all background updates in a single atomic call
   if (Object.keys(updateData).length > 0) {
-    await actor.update(updateData);
+    await ActorEngine.updateActor(actor, updateData);
   }
 
   // Add special ability as a feat if specified
@@ -517,7 +518,7 @@ export async function _applyBackgroundToActor(actor) {
         prerequisite: `Background: ${bg.name}`
       }
     };
-    await actor.createEmbeddedDocuments('Item', [abilityItem]);
+    await ActorEngine.createEmbeddedDocuments(actor, 'Item', [abilityItem]);
   }
 
   console.log(`SWSE | Applied background ${bg.name} to actor ${actor.name}`);

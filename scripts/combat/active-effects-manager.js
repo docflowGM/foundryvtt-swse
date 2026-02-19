@@ -302,7 +302,7 @@ export class SWSEActiveEffectsManager {
       duration: data.duration
     });
 
-    const result = await actor.createEmbeddedDocuments('ActiveEffect', [effect]);
+    const result = await ActorEngine.createEmbeddedDocuments(actor, 'ActiveEffect', [effect]);
     return result[0];
   }
 
@@ -323,7 +323,7 @@ export class SWSEActiveEffectsManager {
 
   static async createCustomEffect(actor, config) {
     const effect = this._buildEffect(actor, config);
-    const result = await actor.createEmbeddedDocuments('ActiveEffect', [effect]);
+    const result = await ActorEngine.createEmbeddedDocuments(actor, 'ActiveEffect', [effect]);
     return result[0];
   }
 
