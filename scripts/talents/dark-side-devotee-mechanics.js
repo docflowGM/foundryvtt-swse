@@ -11,6 +11,7 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { createChatMessage } from '../core/document-api-v13.js';
+import { RollEngine } from '../engine/roll-engine.js';
 
 export class DarkSideDevoteeMechanics {
 
@@ -53,8 +54,10 @@ export class DarkSideDevoteeMechanics {
     }
 
     // Roll bonus damage
-    const roll = new Roll(`${damageDice}d6`);
-    await roll.evaluate({ async: true });
+    const roll = await RollEngine.safeRoll(`${damageDice}d6`);
+    if (!roll) {
+      return { success: false, message: 'Channel Aggression damage roll failed' };
+    }
     const damageAmount = roll.total;
 
     // Apply damage to target

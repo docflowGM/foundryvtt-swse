@@ -20,6 +20,7 @@
 import { SWSELogger } from '../utils/logger.js';
 import { ActorEngine } from '../actors/engine/actor-engine.js';
 import { createEffectOnActor } from '../core/document-api-v13.js';
+import { RollEngine } from '../engine/roll-engine.js';
 
 export class LightSideTalentMechanics {
 
@@ -524,7 +525,10 @@ export class LightSideTalentMechanics {
     }
 
     // Roll a second d20 and take the better result
-    const secondRoll = await new Roll('1d20').evaluate({ async: true });
+    const secondRoll = await RollEngine.safeRoll('1d20');
+    if (!secondRoll) {
+      return roll; // Fallback to original if reroll fails
+    }
     const betterRoll = secondRoll.total > roll.terms[0].results[0].result ? secondRoll : roll;
 
     SWSELogger.log(`SWSE Talents | ${actor.name} used Rebuke the Dark. Original: ${roll.total}, Second: ${secondRoll.total}, Using: ${betterRoll.total}`);
@@ -671,7 +675,11 @@ export class LightSideTalentMechanics {
     await actor.update({ 'system.forcePoints.value': forcePoints - 1 });
 
     // Roll Force Point die (1d6 by default in SWSE)
-    const fpRoll = await new Roll('1d6').evaluate({ async: true });
+    const fpRoll = await RollEngine.safeRoll('1d6');
+    if (!fpRoll) {
+      ui.notifications.error('Force Point roll failed');
+      return { success: false, message: 'Roll failed' };
+    }
     await fpRoll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: actor }),
       flavor: `Apprentice Boon - Force Point for ${ally.name}`
@@ -1144,7 +1152,11 @@ export class LightSideTalentMechanics {
    */
   static async rollPersuasionCheck(actor, modifierOverride = null) {
     const modifier = modifierOverride !== null ? modifierOverride : this.getPersuasionModifier(actor);
-    const roll = await new Roll(`1d20+${modifier}`).evaluate({ async: true });
+    const roll = await RollEngine.safeRoll(`1d20+${modifier}`);
+    if (!roll) {
+      SWSELogger.warn('Persuasion check roll failed');
+      return null;
+    }
     return roll;
   }
 
