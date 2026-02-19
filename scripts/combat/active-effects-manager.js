@@ -8,6 +8,7 @@
  */
 
 import { swseLogger } from '../utils/logger.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 export class SWSEActiveEffectsManager {
 
@@ -239,14 +240,14 @@ export class SWSEActiveEffectsManager {
       flags: data.flags
     });
 
-    await actor.createEmbeddedDocuments('ActiveEffect', [effect]);
+    await ActorEngine.createEmbeddedDocuments(actor, 'ActiveEffect', [effect]);
     await this._applyTokenStatus(actor, data.icon);
   }
 
   static async removeConditionEffects(actor) {
     const toRemove = actor.effects.filter(e => e.flags?.swse?.conditionTrack);
     if (toRemove.length) {
-      await actor.deleteEmbeddedDocuments('ActiveEffect', toRemove.map(e => e.id));
+      await ActorEngine.deleteEmbeddedDocuments(actor, 'ActiveEffect', toRemove.map(e => e.id));
     }
     await this._removeTokenStatus(actor);
   }
@@ -273,7 +274,7 @@ export class SWSEActiveEffectsManager {
       duration: data.duration
     });
 
-    await actor.createEmbeddedDocuments('ActiveEffect', [effect]);
+    await ActorEngine.createEmbeddedDocuments(actor, 'ActiveEffect', [effect]);
   }
 
   /* -------------------------------------------------------------------------- */
@@ -312,7 +313,7 @@ export class SWSEActiveEffectsManager {
   static async removeDestinyEffects(actor) {
     const toRemove = actor.effects.filter(e => e.flags?.swse?.destinyEffect);
     if (toRemove.length) {
-      await actor.deleteEmbeddedDocuments('ActiveEffect', toRemove.map(e => e.id));
+      await ActorEngine.deleteEmbeddedDocuments(actor, 'ActiveEffect', toRemove.map(e => e.id));
     }
   }
 
