@@ -50,7 +50,7 @@ export class SWSECombatAutomation {
 
         if (actor.type === 'character') {
           // PHASE 3: Route through ActorEngine
-          const { ActorEngine } = await import('../../actors/engine/actor-engine.js');
+          const { ActorEngine } = await import('../../../actors/engine/actor-engine.js');
           await ActorEngine.resetSecondWind(actor);
         }
       }

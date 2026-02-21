@@ -134,7 +134,7 @@ export class SWSECombatDocument extends Combat {
   async startCombat() {
     if (game.user.isGM) {
       // PHASE 3: Route through ActorEngine
-      const { ActorEngine } = await import('../../actors/engine/actor-engine.js');
+      const { ActorEngine } = await import('../../../actors/engine/actor-engine.js');
 
       for (const combatant of this.combatants) {
         const actor = combatant.actor;
@@ -171,7 +171,7 @@ export class SWSECombatDocument extends Combat {
       const actor = c?.actor;
 
       if (actor) {
-        const { ActorEngine } = await import('../../actors/engine/actor-engine.js');
+        const { ActorEngine } = await import('../../../actors/engine/actor-engine.js');
         await ActorEngine.updateActionEconomy(actor, {
           swift: true,
           move: true,

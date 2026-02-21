@@ -695,13 +695,34 @@ export class SentinelEngine {
     this.#bootComplete = true;
 
     // Print ASCII SWSE banner
-    const banner = `
-  ___   _    _  ______  ______
- / ___| | |  | ||  ____||  ____|
-| |     | |__| || |__   | |__
-| |     |  __  ||  __|  |  __|
- \\ \\___| | || || |     | |
-  \\____| |_||_||_|     |_|
+   const banner = `
+     _______.___________.    ___      .______                  
+    /       |           |   /   \\     |   _  \\                 
+   |   (----\`---|  |----\`  /  ^  \\    |  |_)  |                
+    \\   \\       |  |      /  /_\\  \\   |      /                 
+.----)   |       |  |     /  _____  \\  |  |\\  \\----.            
+|_______/        |__|    /__/     \\__\\ | _| \`._____|            
+
+____    __    ____  ___      .______          _______.         
+\\   \\  /  \\  /   / /   \\     |   _  \\        /       |         
+ \\   \\/    \\/   / /  ^  \\    |  |_)  |      |   (----\`         
+  \\            / /  /_\\  \\   |      /        \\   \\             
+   \\    /\\    / /  _____  \\  |  |\\  \\----.----)   |            
+    \\__/  \\__/ /__/     \\__\\ | _| \`._____|_______/             
+
+     _______.     ___       _______      ___                   
+    /       |    /   \\     /  _____|    /   \\                  
+   |   (----\`   /  ^  \\   |  |  __     /  ^  \\                 
+    \\   \\      /  /_\\  \\  |  | |_ |   /  /_\\  \\                
+.----)   |    /  _____  \\ |  |__| |  /  _____  \\               
+|_______/    /__/     \\__\\ \\______| /__/     \\__\\              
+
+ _______  _______   __  .___________. __    ______   .__   __. 
+|   ____||       \\ |  | |           ||  |  /  __  \\  |  \\ |  | 
+|  |__   |  .--.  ||  | \`---|  |----\`|  | |  |  |  | |   \\|  | 
+|   __|  |  |  |  ||  |     |  |     |  | |  |  |  | |  . \`  | 
+|  |____ |  '--'  ||  |     |  |     |  | |  \`--'  | |  |\\   | 
+|_______||_______/ |__|     |__|     |__|  \\______/  |__| \\__| 
 `;
 
     console.log(
@@ -722,3 +743,18 @@ export class SentinelEngine {
     });
   }
 }
+// Expose read-only diagnostics bridge for console debugging
+if (typeof window !== "undefined") {
+  Object.defineProperty(window, "__SWSE_SENTINEL__", {
+    get() {
+      return {
+        getStatus: () => SentinelEngine.getStatus(),
+        getReports: (...args) => SentinelEngine.getReports(...args),
+        getPerformanceMetrics: () => SentinelEngine.getPerformanceMetrics(),
+        dumpSnapshot: () => SentinelEngine.dumpSnapshot()
+      };
+    },
+    configurable: true
+  });
+}
+export const Sentinel = SentinelEngine;

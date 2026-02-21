@@ -21,7 +21,7 @@ import { renderJudgmentAtom } from './mentor-judgment-renderer.js';
 import { getReasonTexts } from './mentor-reason-renderer.js';
 
 // V2 API base class
-import SWSEFormApplicationV2 from './base/swse-form-application-v2.js';
+import SWSEFormApplicationV2 from '../apps/base/swse-form-application-v2.js';
 
 const CHAT_TOPICS = [
   {

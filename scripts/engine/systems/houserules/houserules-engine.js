@@ -1,5 +1,5 @@
 // scripts/houserules/houserules-engine.js
-import { swseLogger } from '../utils/logger.js';
+import { swseLogger } from '../../../utils/logger.js';
 
 /**
  * DEPRECATED: House Rules Manager

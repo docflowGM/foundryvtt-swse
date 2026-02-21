@@ -1,6 +1,6 @@
 // scripts/framework/dd-engine.js
-import { swseLogger } from '../utils/logger.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { swseLogger } from '../../utils/logger.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 export const DDEngine = {
   async handleCompendiumDrop(actor, packKey, docId) {

@@ -30,7 +30,7 @@ export function enforcePrerequisiteConsolidation() {
         if (modulePath.includes(illegal)) {
           throw new Error(
             `REGRESSION: Illegal prerequisite validator imported: ${modulePath}\n` +
-            `All prerequisite validation must use PrerequisiteChecker from 'scripts/data/prerequisite-checker.js'\n` +
+            `All prerequisite validation must use PrerequisiteChecker from 'prerequisite-checker.js'\n` +
             `This module was deleted during Phase D consolidation and must not be re-introduced.`
           );
         }

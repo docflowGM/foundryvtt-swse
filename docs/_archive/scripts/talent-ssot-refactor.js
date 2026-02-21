@@ -1,4 +1,4 @@
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../../scripts/utils/logger.js';
 
 /**
  * Talent SSOT Refactor Migration (v1.0)

@@ -31,7 +31,7 @@ import {
  *
  * Example usage in main.js:
  * ```javascript
- * import { setupArchetypeEngineHooks } from './scripts/engine/ArchetypeEngineHooks.js';
+ * import { setupArchetypeEngineHooks } from 'ArchetypeEngineHooks.js';
  * setupArchetypeEngineHooks();
  * ```
  */

@@ -3,8 +3,8 @@
  * This script scans all feats and adds Active Effects for permanent bonuses
  */
 
-import { FeatEffectsEngine } from '../engine/FeatEffectsEngine.js';
-import { SWSELogger } from '../utils/logger.js';
+import { FeatEffectsEngine } from '../../../scripts/engine/FeatEffectsEngine.js';
+import { SWSELogger } from '../../../scripts/utils/logger.js';
 
 export class FeatEffectsMigration {
 

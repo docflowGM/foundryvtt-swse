@@ -5,7 +5,6 @@ const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api
 import { ActorEngine } from "../../actors/engine/actor-engine.js";
 import { RenderAssertions } from "../../core/render-assertions.js";
 import { initiateItemSale } from "../../apps/item-selling-system.js";
-import { RollEngine } from "../../engine/roll-engine.js";
 import { SWSELevelUp } from "../../apps/swse-levelup.js";
 import { rollSkill } from "../../rolls/skills.js";
 import { rollAttack } from "../../combat/rolls/attacks.js";
@@ -42,25 +41,18 @@ export class SWSEV2CharacterSheet extends
   /* ------------------------------------------------------------------------ */
 
   static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["swse", "swse-app", "swse-sheet", "swse-character-sheet", "v2"],
+    return {
+      ...super.defaultOptions,
+      classes: [...(super.defaultOptions.classes || []), "swse", "swse-sheet", "swse-character-sheet"],
       width: 820,
       height: 920,
       resizable: true,
       minimizable: true,
-      window: {
-        resizable: true,
-        minimizable: true
-      },
       dragDrop: [
         { dropSelector: ".sheet-body" },
         { dropSelector: "[data-drop-zone]" }
-      ],
-      form: {
-        closeOnSubmit: false,
-        submitOnChange: false
-      }
-    });
+      ]
+    };
   }
 
   /* ------------------------------------------------------------------------ */

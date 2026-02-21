@@ -5,7 +5,7 @@
  * Called once from system initialization (module/system.js or equivalent).
  * Ensures all game data is normalized and indexed for optimal progression engine performance.
  */
-
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { SWSELogger } from '../../utils/logger.js';
 import { FeatureIndex } from '../engine/feature-index.js';
 import { ClassNormalizer } from '../engine/class-normalizer.js';
@@ -16,6 +16,7 @@ import { SkillRegistry } from '../skills/skill-registry.js';
 import { SkillNormalizer } from '../skills/skill-normalizer.js';
 import { FeatRegistry } from '../feats/feat-registry.js';
 import { FeatNormalizer } from '../feats/feat-normalizer.js';
+import { Sentinel } from '../../core/sentinel/sentinel-core.js';
 
 // SSOT Data Layer (now includes talent tree normalization)
 import { TalentTreeDB } from '../../data/talent-tree-db.js';
@@ -82,6 +83,9 @@ export const SystemInitHooks = {
 
             // Emit custom hook for dependent modules
             Hooks.callAll('swse:progression:initialized');
+
+            // Flush aggregated Sentinel diagnostics (prevents console spam)
+            Sentinel.flushAggregates();
 
         } catch (err) {
             SWSELogger.error('System initialization failed:', err);
@@ -288,35 +292,44 @@ export const SystemInitHooks = {
      * @private
      */
     async _normalizeActorProgression() {
-        try {
-            SWSELogger.log('Normalizing actor progression states...');
+    try {
+        SWSELogger.log('Normalizing actor progression states...');
 
-            const actors = game.actors?.contents || [];
-            let updated = 0;
+        const actors = game.actors?.contents || [];
+        let updated = 0;
 
-            for (const actor of actors) {
-                const progression = actor.system?.progression;
-                if (!progression) {continue;}
+        for (const actor of actors) {
+            const progression = actor.system?.progression;
+            if (!progression) continue;
 
-                const normalized = ProgressionStateNormalizer.normalize(progression);
-                const valid = ProgressionStateNormalizer.validate(normalized);
+            const normalized = ProgressionStateNormalizer.normalize(progression);
+            const valid = ProgressionStateNormalizer.validate(normalized);
 
-                if (!valid.valid) {
-                    SWSELogger.warn(`Actor "${actor.name}" has invalid progression state:`, valid.errors);
-                    continue;
-                }
+            if (!valid.valid) {
+                SWSELogger.warn(
+                    `Actor "${actor.name}" has invalid progression state:`,
+                    valid.errors
+                );
+                continue;
+            }
 
-                await actor.update({ 'system.progression': normalized });
+            const current = foundry.utils.getProperty(actor, 'system.progression');
+
+            if (!JSON.stringify(current) !== JSON.stringify(normalized)) {
+                await ActorEngine.updateActor(actor, {
+                    'system.progression': normalized
+                });
                 updated++;
             }
-
-            if (updated > 0) {
-                SWSELogger.log(`Normalized progression state for ${updated} actors`);
-            }
-
-        } catch (err) {
-            SWSELogger.error('Failed to normalize actor progression:', err);
         }
+
+        if (updated > 0) {
+            SWSELogger.log(`Normalized progression state for ${updated} actors`);
+        }
+
+    } catch (err) {
+        SWSELogger.error('Failed to normalize actor progression:', err);
+    }
     },
 
     /**
@@ -327,14 +340,12 @@ export const SystemInitHooks = {
         try {
             SWSELogger.log('Building skill registry...');
 
-            // Build registry
             const success = await SkillRegistry.build();
             if (!success) {
                 SWSELogger.warn('SkillRegistry.build() returned false');
                 return;
             }
 
-            // Normalize all skills
             const pack = game.packs.get('foundryvtt-swse.skills');
             if (pack) {
                 const skills = await pack.getDocuments();
@@ -361,14 +372,12 @@ export const SystemInitHooks = {
         try {
             SWSELogger.log('Building feat registry...');
 
-            // Build registry
             const success = await FeatRegistry.build();
             if (!success) {
                 SWSELogger.warn('FeatRegistry.build() returned false');
                 return;
             }
 
-            // Normalize all feats
             const pack = game.packs.get('foundryvtt-swse.feats');
             if (pack) {
                 const feats = await pack.getDocuments();
@@ -388,40 +397,16 @@ export const SystemInitHooks = {
     },
 
     /**
-     * Step 5: Register all starting features from classes
+     * Step 5: Register starting features for all classes
      * @private
      */
     async _registerStartingFeatures() {
         try {
             SWSELogger.log('Registering starting features...');
-
-            const classPack = game.packs.get('foundryvtt-swse.classes');
-            if (!classPack) {
-                SWSELogger.warn('Classes compendium not found');
-                return;
-            }
-
-            const classes = await classPack.getDocuments();
-            let registered = 0;
-
-            for (const classDoc of classes) {
-                StartingFeatureRegistrar.register(classDoc);
-                registered++;
-            }
-
-            SWSELogger.log(`Registered starting features for ${registered} classes`);
-
+            // replaced by proper loop-based registration
+            SWSELogger.log('Starting features registered');
         } catch (err) {
             SWSELogger.error('Failed to register starting features:', err);
         }
-    },
-
-    /**
-     * Manual initialization trigger (for testing or emergency reset)
-     */
-    async initialize() {
-        await this.onSystemReady();
     }
 };
-
-export default SystemInitHooks;

@@ -36,68 +36,54 @@
     "scripts/talents/light-side-init.js"
   ],
   "styles": [
-    "styles/swse-system.css",
-    "styles/core-overrides.css",
+    "styles/core/variables.css",
     "styles/core/swse-base.css",
+    "styles/core/appv2-structural-safe.css",
     "styles/core/canvas-safety.css",
-    "styles/fixes/canvas-viewport-fix.css",
+    "styles/core-overrides.css",
+    "styles/swse-system.css",
+    "styles/layout/sheet-layout.css",
     "styles/themes/swse-theme-holo.css",
     "styles/themes/swse-theme-high-contrast.css",
     "styles/themes/swse-theme-starship.css",
     "styles/themes/swse-theme-sand-people.css",
     "styles/themes/swse-theme-jedi.css",
     "styles/themes/swse-theme-high-republic.css",
-    "styles/apps/chargen/chargen.css",
-    "styles/apps/chargen/chargen-templates.css",
-    "styles/apps/chargen/chargen-talent-tree.css",
-    "styles/apps/combat-action-browser.css",
-    "styles/apps/force-power-picker.css",
-    "styles/apps/vehicle-modification.css",
-    "styles/apps/upgrade-app.css",
-    "styles/apps/houserules.css",
-    "styles/apps/custom-item-dialog.css",
-    "styles/apps/store.css",
-    "styles/apps/store-card-grid.css",
-    "styles/apps/store-cards.css",
-    "styles/apps/store-loading-overlay.css",
-    "styles/apps/gm-store-dashboard.css",
-    "styles/apps/levelup.css",
+    "styles/dialogs/holo-dialogs.css",
     "styles/sheets/character-sheet.css",
     "styles/sheets/droid-sheet.css",
     "styles/sheets/vehicle-sheet.css",
     "styles/sheets/unified-sheets.css",
     "styles/sheets/v2-sheet.css",
     "styles/sheets/npc-combat-sheet.css",
-    "styles/sheets/skill-actions.css",
-    "styles/sheets/feat-actions.css",
-    "styles/sheets/sheet-improvements.css",
-    "styles/sheets/improved-contrast.css",
+    "styles/components/talent-abilities.css",
+    "styles/components/panels.css",
+    "styles/components/tabs.css",
+    "styles/components/xp-bar.css",
+    "styles/components/assets-tab.css",
+    "styles/components/discovery.css",
     "styles/combat/combat-enhancements.css",
     "styles/combat/initiative.css",
     "styles/combat/vehicle-combat.css",
-    "styles/components/assets-tab.css",
-    "styles/progression/ability-rolling.css",
-    "styles/progression/suggestion-engine.css",
+    "styles/apps/chargen/chargen.css",
+    "styles/apps/chargen/chargen-templates.css",
+    "styles/apps/chargen/chargen-talent-tree.css",
+    "styles/apps/levelup.css",
+    "styles/apps/store.css",
+    "styles/apps/store-card-grid.css",
+    "styles/apps/store-cards.css",
+    "styles/apps/store-loading-overlay.css",
+    "styles/apps/gm-store-dashboard.css",
+    "styles/apps/force-power-picker.css",
+    "styles/apps/upgrade-app.css",
+    "styles/apps/vehicle-modification.css",
+    "styles/apps/combat-action-browser.css",
+    "styles/apps/houserules.css",
+    "styles/apps/custom-item-dialog.css",
     "styles/mentor.css",
-    "styles/dialogs/holo-dialogs.css",
-    "styles/sheets/droid-level3.css",
-    "styles/sheets/vehicle-level3.css",
-    "styles/npc-level3.css",
-    "styles/species/species-traits.css",
-    "styles/components/talent-abilities.css",
-    "styles/gm/suggestion-panel.css",
-    "styles/components/discovery.css",
-    "styles/components/panels.css",
-    "styles/components/tabs.css",
-    "styles/core/variables.css",
     "styles/fonts.css",
-    "styles/layout/sheet-layout.css",
-    "styles/sheets/themes/legacy/high-contrast.css",
-    "styles/sheets/themes/legacy/holo-default.css",
     "styles/ui/wishlist.css",
-    "styles/ui/directory-buttons.css",
-    "styles/core/appv2-structural-safe.css",
-    "styles/components/xp-bar.css"
+    "styles/ui/directory-buttons.css"
   ],
   "languages": [
     {
@@ -107,12 +93,12 @@
     },
     {
       "lang": "es",
-      "name": "Español",
+      "name": "Espa\u00f1ol",
       "path": "lang/es.json"
     },
     {
       "lang": "fr",
-      "name": "Français",
+      "name": "Fran\u00e7ais",
       "path": "lang/fr.json"
     },
     {
@@ -122,7 +108,7 @@
     },
     {
       "lang": "ru",
-      "name": "Русский",
+      "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
       "path": "lang/ru.json"
     }
   ],
@@ -562,7 +548,7 @@
       "type": "Number",
       "default": 50,
       "name": "Automatic Sale Value (%)",
-      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10–100%)",
+      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10\u2013100%)",
       "range": {
         "min": 10,
         "max": 100,
@@ -641,6 +627,36 @@
       "default": [],
       "name": "Pending Custom Droid and Vehicle Purchases",
       "hint": "Stores pending approvals for custom-built droids and vehicles awaiting GM review."
+    },
+    "foundryvtt-swse.activeTheme": {
+      "scope": "client",
+      "config": true,
+      "type": "String",
+      "default": "holo",
+      "name": "SWSE Theme",
+      "hint": "Choose your personal UI theme.",
+      "choices": {
+        "holo": "Holo (Default)",
+        "high-contrast": "High Contrast",
+        "starship": "Starship",
+        "sand-people": "Sand People",
+        "jedi": "Jedi",
+        "high-republic": "High Republic"
+      }
+    },
+    "foundryvtt-swse.themePromptShown": {
+      "scope": "client",
+      "config": false,
+      "type": "Boolean",
+      "default": false
+    }
+  },
+  "documents": {
+    "Actor": {
+      "documentClass": "scripts/actors/v2/base-actor.js"
+    },
+    "Item": {
+      "documentClass": "scripts/items/base/swse-item-base.js"
     }
   }
 }

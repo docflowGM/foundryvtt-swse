@@ -31,7 +31,7 @@ import {
   getDspBand,
   getToneModifier,
   formatDspInfo
-} from './dsp-saturation.js';
+} from '../engine/dsp-saturation.js';
 
 /**
  * Test DSP saturation calculations

@@ -1,4 +1,4 @@
-// scripts/actors/engine/actor-engine.js
+// scripts/actor-engine.js
 import { swseLogger } from '../../utils/logger.js';
 import { applyActorUpdateAtomic } from '../../utils/actor-utils.js';
 import { MutationInterceptor } from '../../core/mutation/MutationInterceptor.js';

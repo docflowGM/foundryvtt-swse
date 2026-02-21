@@ -20,7 +20,7 @@ import {
   getDspBand,
   getToneModifier,
   getWarningSeverity
-} from '../engine/dsp-saturation.js';
+} from '../../../scripts/engine/dsp-saturation.js';
 
 import {
   getMentorMemory,
@@ -30,17 +30,17 @@ import {
   setTargetClass,
   updateInferredRole,
   detectPathDivergence
-} from '../engine/mentor-memory.js';
+} from '../../../scripts/mentor/mentor-memory.js';
 
 import {
   getArchetypePaths,
   getArchetype,
   analyzeSynergies,
   suggestAttributesForArchetype
-} from '../engine/mentor-archetype-paths.js';
+} from '../../../scripts/mentor/mentor-archetype-paths.js';
 
-import { MENTOR_PERSONALITIES } from './mentor-suggestion-dialogues.js';
-import { MENTORS } from './mentor-dialogues.js';
+import { MENTOR_PERSONALITIES } from '../../../scripts/mentor/mentor-suggestion-dialogues.js';
+import { MENTORS } from '../../../scripts/apps/mentor/mentor-dialogues.js';
 
 /**
  * Generate a reflective dialogue response for a mentor-actor pair

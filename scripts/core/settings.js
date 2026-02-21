@@ -6,6 +6,21 @@ import { registerEpicOverrideSetting } from '../settings/epic-override.js';
  * System settings for SWSE
  */
 export function registerSystemSettings() {
+
+  game.settings.register("foundryvtt-swse", "darkSideMaxMultiplier", {
+    name: "Dark Side Max Multiplier",
+    hint: "Multiplier applied to Wisdom score to determine maximum Dark Side Score.",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 1,
+    range: {
+      min: 1,
+      max: 5,
+      step: 0.5
+    }
+  });
+
   SWSELogger.log('SWSE | Registering settings...');
 
   game.settings.register('foundryvtt-swse', 'enableAutomation', {

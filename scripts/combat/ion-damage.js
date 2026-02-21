@@ -176,7 +176,7 @@ export class IonDamage {
       // Apply condition track penalty
       // PHASE 3: Route through ActorEngine
       if (totalCTPenalty !== 0) {
-        const { ActorEngine } = await import('../../actors/engine/actor-engine.js');
+        const { ActorEngine } = await import('../../../actors/engine/actor-engine.js');
         const direction = totalCTPenalty > 0 ? 1 : -1;
         const times = Math.abs(totalCTPenalty);
 

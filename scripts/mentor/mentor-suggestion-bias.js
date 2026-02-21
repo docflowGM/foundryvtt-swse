@@ -8,7 +8,7 @@
 
 import { getMentorMemory } from './mentor-memory.js';
 import { getArchetype, getArchetypeRoleBias } from './mentor-archetype-paths.js';
-import { calculateDspSaturation, getDarkSideBiasMultiplier } from './dsp-saturation.js';
+import { calculateDspSaturation, getDarkSideBiasMultiplier } from '../engine/dsp-saturation.js';
 
 /**
  * Calculate mentor bias for a suggestion

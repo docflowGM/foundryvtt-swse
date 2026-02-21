@@ -1,4 +1,4 @@
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../../scripts/utils/logger.js';
 /**
  * Force Compendiums Population Migration
  *

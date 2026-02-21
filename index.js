@@ -1,3 +1,4 @@
+import "./scripts/ui/ui-manager.js";
 /* ==========================================================================
    SWSE SYSTEM INDEX.JS (OPTIMIZED CANONICAL)
    Foundry V13 / AppV2 compliant
@@ -97,7 +98,7 @@ import { checkRequiredPacks } from './scripts/core/pack-existence-check.js';
 // ---- actors / items ----
 import { SWSEV2BaseActor } from './scripts/actors/v2/base-actor.js';
 import { SWSEItemBase } from './scripts/items/base/swse-item-base.js';
-import { ActorEngine } from './scripts/actors/engine/actor-engine.js';
+import { ActorEngine } from "./scripts/actors/engine/actor-engine.js";
 import { MutationInterceptor } from './scripts/core/mutation/MutationInterceptor.js';
 import { Batch1Validation } from './scripts/core/mutation/batch-1-validation.js';
 
@@ -133,7 +134,6 @@ import { initializeFollowerHooks } from './scripts/hooks/follower-hooks.js';
 import { registerKeybindings } from './scripts/core/keybindings.js';
 
 // ---- UI systems (registered in init, initialized in ready) ----
-import { ThemeLoader } from './scripts/theme-loader.js';
 import { initializeSceneControls } from './scripts/scene-controls/init.js';
 import { initializeActionPalette } from './scripts/ui/action-palette/init.js';
 import { initializeGMSuggestions } from './scripts/gm-suggestions/init.js';
@@ -178,6 +178,46 @@ async function bootstrapSuggestionSystem() {
    INIT
    ========================================================================== */
 
+
+
+/* =========================
+   V13 SHEET REGISTRATION (SETUP PHASE)
+   ========================= */
+
+Hooks.once("setup", () => {
+
+  console.log("[SWSE] Registering V2 sheets in setup phase");
+
+  Actors.registerSheet("foundryvtt-swse", SWSEV2CharacterSheet, {
+    types: ["character"],
+    makeDefault: true
+  });
+
+  Actors.registerSheet("foundryvtt-swse", SWSEV2NpcSheet, {
+    types: ["npc"],
+    makeDefault: true
+  });
+
+  Actors.registerSheet("foundryvtt-swse", SWSEV2DroidSheet, {
+    types: ["droid"],
+    makeDefault: true
+  });
+
+  Actors.registerSheet("foundryvtt-swse", SWSEV2VehicleSheet, {
+    types: ["vehicle"],
+    makeDefault: true
+  });
+
+  Items.registerSheet("foundryvtt-swse", SWSEItemSheet, {
+    makeDefault: true
+  });
+
+  console.log("[SWSE] SheetClasses after setup:",
+    CONFIG.Actor.sheetClasses
+  );
+
+});
+
 Hooks.once('init', async () => {
   if (globalThis.__SWSE_INIT__) return;
   globalThis.__SWSE_INIT__ = true;
@@ -202,20 +242,24 @@ Hooks.once('init', async () => {
   registerKeybindings();
 
   /* ---------- PHASE 2: UI infrastructure ---------- */
-  ThemeLoader.init();
+  
   await bootstrapTemplates();
 
   /* ---------- PHASE 3: documents & sheets ---------- */
-  CONFIG.SWSE = SWSE;
-  CONFIG.Actor.documentClass = SWSEV2BaseActor;
-  CONFIG.Item.documentClass = SWSEItemBase;
+  CONFIG.SWSE = SWSE;// SAFE v13 sheet registration
+  /* ---------- CLEAN SHEET REGISTRATION (v13 SAFE) ---------- */
 
-  foundry.documents.collections.Actors.registerSheet('swse', SWSEV2CharacterSheet, { types: ['character'], makeDefault: true });
-  foundry.documents.collections.Actors.registerSheet('swse', SWSEV2NpcSheet, { types: ['npc'], makeDefault: true });
-  foundry.documents.collections.Actors.registerSheet('swse', SWSEV2DroidSheet, { types: ['droid'], makeDefault: true });
-  foundry.documents.collections.Actors.registerSheet('swse', SWSEV2VehicleSheet, { types: ['vehicle'], makeDefault: true });
-  foundry.documents.collections.Items.registerSheet('swse', SWSEItemSheet, { makeDefault: true });
+  // Reset all sheet registrations
+  
 
+  // Unregister core BaseSheet
+  
+
+  // Register SWSE sheets
+  console.log("[SWSE] V2 Sheets Registered Cleanly");
+
+
+  
   /* ---------- PHASE 3: Structural Enforcement Layer ---------- */
   await initializeV2RenderGuard();
 
@@ -371,3 +415,6 @@ Hooks.on('canvasReady', () => {
 Hooks.once('canvasDestroyed', () => {
   SentinelEngine.shutdown();
 });
+
+import { UIManager } from './scripts/ui/ui-manager.js';
+UIManager.init();

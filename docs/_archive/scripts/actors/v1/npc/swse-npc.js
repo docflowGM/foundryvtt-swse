@@ -6,7 +6,7 @@
  * Backward-compatibility stub only.
  */
 
-import { SWSEV2NpcSheet } from '../../sheets/v2/npc-sheet.js';
+import { SWSEV2NpcSheet } from '../../../../../../scripts/sheets/v2/npc-sheet.js';
 
 /**
  * @deprecated Use {@link SWSEV2NpcSheet}.

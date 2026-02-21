@@ -8,7 +8,7 @@
  * - GM-safe action marking
  */
 
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 export class SWSECombatant extends Combatant {
 

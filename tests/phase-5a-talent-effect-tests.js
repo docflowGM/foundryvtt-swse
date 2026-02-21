@@ -11,7 +11,7 @@
 
 import { DarkSideDevoteeMechanics } from '../scripts/talents/dark-side-devotee-mechanics.js';
 import { TalentEffectEngine } from '../scripts/talents/talent-effect-engine.js';
-import { ActorEngine } from '../scripts/actors/engine/actor-engine.js';
+import { ActorEngine } from '../scripts/../scripts/actors/engine/actor-engine.js';
 
 export const Phase5ATests = {
 
@@ -277,7 +277,7 @@ export const Phase5ATests = {
   testSentinelLogging() {
     console.log('\n=== TEST 4: Sentinel Transaction Logging ===');
 
-    const sentinelMode = game.settings.get('swse', 'sentinelMode');
+    const sentinelMode = game.settings.get('foundryvtt-swse', 'sentinelMode');
 
     if (sentinelMode !== 'DEV') {
       console.log(`⚠️  Sentinel not in DEV mode (current: ${sentinelMode})`);

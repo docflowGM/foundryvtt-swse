@@ -1,7 +1,7 @@
-import { SWSERoll } from '../../combat/rolls/enhanced-rolls.js';
-import { ForcePointsUtil } from '../../utils/force-points.js';
-import { SWSEChat } from '../../chat/swse-chat.js';
-import { ActorEngine } from '../engine/actor-engine.js';
+import { SWSERoll } from '../../../../../../scripts/combat/rolls/enhanced-rolls.js';
+import { ForcePointsUtil } from '../../../../../../scripts/utils/force-points.js';
+import { SWSEChat } from '../../../../../../scripts/chat/swse-chat.js';
+import { ActorEngine } from '../../../../../../scripts/actors/engine/actor-engine.js';
 
 /**
  * SWSE Actor Base – v13+

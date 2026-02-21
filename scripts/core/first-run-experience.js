@@ -1,12 +1,6 @@
 /**
  * First-Run Experience - GM Onboarding
- * Phase 6: Product-grade finish
- *
- * Triggers on first GM login with system-specific guidance,
- * feature explanations, and dismissible tooltips.
- *
- * Usage:
- *   Called automatically from hardening-init.js in ready hook
+ * ApplicationV2-safe implementation
  */
 
 import { SWSELogger } from '../utils/logger.js';
@@ -15,9 +9,10 @@ import { initializeTooltipDiscovery } from './tooltip-discovery.js';
 const SYSTEM_ID = 'foundryvtt-swse';
 const SETTING_KEY = 'welcomeShown';
 
-/**
- * Check if welcome dialog should show
- */
+/* -------------------------------------------- */
+/* Settings Helpers */
+/* -------------------------------------------- */
+
 async function shouldShowWelcome() {
   if (!game?.user?.isGM) return false;
 
@@ -25,13 +20,10 @@ async function shouldShowWelcome() {
     const shown = await game.settings.get(SYSTEM_ID, SETTING_KEY);
     return !shown;
   } catch {
-    return true; // Default to showing if setting doesn't exist
+    return true;
   }
 }
 
-/**
- * Mark welcome as shown
- */
 async function markWelcomeShown() {
   try {
     await game.settings.set(SYSTEM_ID, SETTING_KEY, true);
@@ -40,11 +32,9 @@ async function markWelcomeShown() {
   }
 }
 
-/**
- * Reset welcome (for testing or re-onboarding)
- */
 export async function resetWelcome() {
   if (!game?.user?.isGM) return false;
+
   try {
     await game.settings.set(SYSTEM_ID, SETTING_KEY, false);
     SWSELogger.log('Welcome dialog will show on next page load');
@@ -55,16 +45,27 @@ export async function resetWelcome() {
   }
 }
 
-/**
- * Welcome Dialog - ApplicationV2 Template-Driven Implementation with Sentinel Diagnostics
- */
-class WelcomeDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
+/* -------------------------------------------- */
+/* Welcome Dialog */
+/* -------------------------------------------- */
+
+class WelcomeDialog extends foundry.applications.api.HandlebarsApplicationMixin(
+  foundry.applications.api.ApplicationV2
+) {
+
   static DEFAULT_OPTIONS = {
     ...foundry.applications.api.ApplicationV2.DEFAULT_OPTIONS,
     id: 'swse-welcome-dialog',
     classes: ['swse-app'],
-    window: { icon: 'fa-solid fa-star', title: '⭐ Welcome to SWSE for Foundry VTT', resizable: true },
-    position: { width: 600, height: 500 }
+    window: {
+      icon: 'fa-solid fa-star',
+      title: '⭐ Welcome to SWSE for Foundry VTT',
+      resizable: true
+    },
+    position: {
+      width: 600,
+      height: 500
+    }
   };
 
   static PARTS = {
@@ -72,14 +73,6 @@ class WelcomeDialog extends foundry.applications.api.HandlebarsApplicationMixin(
       template: 'systems/foundryvtt-swse/templates/dialogs/welcome-dialog.hbs'
     }
   };
-
-  // Sentinel Mode: Track render lifecycle
-  static _sentinelRenderCount = 0;
-
-  constructor(options = {}) {
-    super(options);
-    this.resolveDialog = null;
-  }
 
   async _prepareContext() {
     return {};
@@ -91,65 +84,62 @@ class WelcomeDialog extends foundry.applications.api.HandlebarsApplicationMixin(
     const root = this.element;
     if (!root) return;
 
-    // --- EVENT LISTENER ATTACHMENT ---
     const button = root.querySelector('[data-action="got-it"]');
     if (button) {
       button.addEventListener('click', async () => {
         const checkbox = root.querySelector('#swse-no-welcome-again');
-        const noAgain = checkbox?.checked || false;
+        const noAgain = checkbox?.checked ?? false;
 
         if (noAgain) {
           await markWelcomeShown();
         }
 
-        // Start tooltip discovery after welcome closes
         await initializeTooltipDiscovery();
-
-        if (this.resolveDialog) {
-          this.resolveDialog(true);
-        }
-
         this.close();
       });
     }
   }
 }
 
-/**
- * Show welcome dialog
- */
+/* -------------------------------------------- */
+/* Safe Show Logic */
+/* -------------------------------------------- */
+
 async function showWelcomeDialog() {
-  return new Promise((resolve) => {
-    const dialog = new WelcomeDialog();
-    dialog.resolveDialog = resolve;
-    dialog.render(true);
+  const dialog = new WelcomeDialog();
+  dialog.render(true);
+}
+
+/* -------------------------------------------- */
+/* Initialization */
+/* -------------------------------------------- */
+
+export function initializeFirstRunExperience() {
+  if (!game?.user?.isGM) return;
+
+  // Delay until UI is fully mounted
+  Hooks.once('canvasReady', async () => {
+    try {
+      const show = await shouldShowWelcome();
+      if (!show) return;
+
+      SWSELogger.log('Showing first-run welcome dialog');
+
+      // Allow layout cycle to complete
+      await new Promise(resolve => requestAnimationFrame(resolve));
+
+      await showWelcomeDialog();
+
+    } catch (err) {
+      SWSELogger.error('First-run experience error:', err);
+    }
   });
 }
 
-/**
- * Initialize first-run experience
- * Called from hardening-init.js ready hook
- */
-export async function initializeFirstRunExperience() {
-  if (!game?.ready || !game?.user?.isGM) {
-    return;
-  }
+/* -------------------------------------------- */
+/* Register Setting */
+/* -------------------------------------------- */
 
-  try {
-    const show = await shouldShowWelcome();
-    if (show) {
-      SWSELogger.log('Showing first-run welcome dialog');
-      await new Promise(resolve => setTimeout(resolve, 0));
-      await showWelcomeDialog();
-    }
-  } catch (err) {
-    SWSELogger.error('First-run experience error:', err.message);
-  }
-}
-
-/**
- * Register settings
- */
 export function registerFirstRunSettings() {
   game.settings.register(SYSTEM_ID, SETTING_KEY, {
     name: 'Welcome Dialog Shown',
@@ -161,9 +151,10 @@ export function registerFirstRunSettings() {
   });
 }
 
-/**
- * Make available to console for re-onboarding
- */
+/* -------------------------------------------- */
+/* Console Helpers */
+/* -------------------------------------------- */
+
 export function registerFirstRunConsoleHelpers() {
   if (typeof window !== 'undefined') {
     window.SWSEFirstRun = {

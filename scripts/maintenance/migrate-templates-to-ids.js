@@ -6,7 +6,7 @@
  *
  * USAGE IN FOUNDRY CONSOLE:
  * ```
- * import { migrateTemplatesToIds } from './scripts/maintenance/migrate-templates-to-ids.js';
+ * import { migrateTemplatesToIds } from 'migrate-templates-to-ids.js';
  * const result = await migrateTemplatesToIds();
  * console.log(JSON.stringify(result, null, 2));
  * // Copy the output and paste it into data/character-templates.json

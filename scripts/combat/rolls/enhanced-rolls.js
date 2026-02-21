@@ -173,7 +173,7 @@ export class SWSERoll {
 
     // Spend FP with error handling (PHASE 3: Route through ActorEngine)
     try {
-      const { ActorEngine } = await import('../../actors/engine/actor-engine.js');
+      const { ActorEngine } = await import('../../../../actors/engine/actor-engine.js');
       await ActorEngine.spendForcePoints(actor, 1);
 
       // Chat message (use calculated value instead of stale reference)
@@ -725,7 +725,7 @@ export class SWSERoll {
       const newAmmo = currentAmmo - ammoRequired;
       const ammoUpdate = { _id: weapon.id, 'system.ammunition.current': newAmmo };
       if (weapon?.actor) {
-        const { ActorEngine } = await import('../../actors/engine/actor-engine.js');
+        const { ActorEngine } = await import('../../../../actors/engine/actor-engine.js');
         await ActorEngine.updateOwnedItems(weapon.actor, [ammoUpdate]);
       } else {
         // Non-owned weapon, update directly
@@ -1579,7 +1579,7 @@ export class SWSERoll {
         if (useDP === null) {continue;}
 
         // PHASE 3: Route resource spending through ActorEngine
-        const { ActorEngine } = await import('../../actors/engine/actor-engine.js');
+        const { ActorEngine } = await import('../../../../actors/engine/actor-engine.js');
 
         if (useDP) {
           const dp = actor.system.destinyPoints?.value || 0;
