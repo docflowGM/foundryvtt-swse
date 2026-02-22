@@ -2,14 +2,14 @@
 import { SWSEActorBase } from '../base/swse-actor-base.js';
 import { ActorEngine } from '../engine/actor-engine.js';
 import { DerivedCalculator } from '../derived/derived-calculator.js';
-import { ModifierEngine } from '../../engine/modifiers/ModifierEngine.js';
+import { ModifierEngine } from '../../engines/effects/modifiers/ModifierEngine.js';
 import { computeCharacterDerived } from './character-actor.js';
 import { computeNpcDerived } from './npc-actor.js';
 import { computeDroidDerived } from './droid-actor.js';
 import { computeVehicleDerived } from './vehicle-actor.js';
 import { shouldSkipDerivedData } from '../../utils/hardening.js';
-import { computeXpDerived } from '../../engine/progression/xp-engine.js';
-import { SWSEInitiative } from '../../engine/combat/SWSEInitiative.js';
+import { computeXpDerived } from '../../engines/progression/xp-engine.js';
+import { SWSEInitiative } from '../../engines/combat/SWSEInitiative.js';
 
 /**
  * SWSE V2 Base Actor
@@ -260,7 +260,7 @@ export class SWSEV2BaseActor extends SWSEActorBase {
    * @param {boolean} [options.useForce=false] Spend a Force Point for bonus die.
    */
   async swseRollInitiative(options = {}) {
-    const { CombatEngine } = await import('../../engine/combat/CombatEngine.js');
+    const { CombatEngine } = await import('../../engines/combat/CombatEngine.js');
     return CombatEngine.rollInitiative(this, options);
   }
 

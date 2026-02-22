@@ -23,7 +23,7 @@ import { normalizeCredits } from '../utils/credit-normalization.js';
 import { SWSELogger } from '../utils/logger.js';
 import { calculateCartTotal } from './store/store-checkout.js';
 import { prompt as uiPrompt } from '../utils/ui-utils.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 
 const { ApplicationV2 } = foundry.applications.api;
 const { HandlebarsApplicationMixin } = foundry.applications.api;

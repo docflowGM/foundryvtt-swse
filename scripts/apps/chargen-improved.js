@@ -8,7 +8,7 @@ import { SWSELogger } from '../utils/logger.js';
 import CharacterGenerator from './chargen/chargen-main.js';
 import { getClassProperty, getHitDie, getTrainedSkills, getTalentTrees } from './chargen/chargen-property-accessor.js';
 import { createActor } from '../core/document-api-v13.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 
 export default class CharacterGeneratorImproved extends CharacterGenerator {
 

@@ -10,7 +10,7 @@
  * ============================================================================
  */
 
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 
 /* -------------------------------------------------------------------------- */
 /* ITEM TYPE VALIDATION MATRIX                                                */

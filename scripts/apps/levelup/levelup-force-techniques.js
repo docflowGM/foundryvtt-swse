@@ -3,7 +3,7 @@
  * Handle Force Technique selection during level-up
  */
 
-import { ForceTechniqueEngine } from '../../progression/engine/force-technique-engine.js';
+import { ForceTechniqueEngine } from '../../engines/progression/engine/force-technique-engine.js';
 
 export async function getsForceaTechniques(selectedClass, actor) {
   // Check if character qualifies for Force Technique choices

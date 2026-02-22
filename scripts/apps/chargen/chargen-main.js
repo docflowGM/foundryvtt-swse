@@ -12,13 +12,13 @@ import { RollEngine } from '../../engine/roll-engine.js';
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 import { getTalentTreeName, getClassProperty, getTalentTrees, getHitDie } from './chargen-property-accessor.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
-import { BuildIntent } from '../../engine/BuildIntent.js';
-import { SuggestionService } from '../../engine/SuggestionService.js';
-import { MentorSurvey } from '../mentor/mentor-survey.js';
-import { MentorSuggestionDialog } from '../mentor/mentor-suggestion-dialog.js';
-import { MENTORS } from '../mentor/mentor-dialogues.js';
-import { getMentorMemory, setMentorMemory, setTargetClass } from '../../mentor/mentor-memory.js';
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { BuildIntent } from '../../engines/suggestion/BuildIntent.js';
+import { SuggestionService } from '../../engines/suggestion/SuggestionService.js';
+import { MentorSurvey } from '../engines/mentor/mentor-survey.js';
+import { MentorSuggestionDialog } from '../engines/mentor/mentor-suggestion-dialog.js';
+import { MENTORS } from '../engines/mentor/mentor-dialogues.js';
+import { getMentorMemory, setMentorMemory, setTargetClass } from '../../engines/mentor/mentor-memory.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 import { BackgroundRegistry } from '../../registries/background-registry.js';
 import { LanguageRegistry } from '../../registries/language-registry.js';
 
@@ -50,7 +50,7 @@ import * as ForcePowersModule from './chargen-force-powers.js';
 import * as StarshipManeuversModule from './chargen-starship-maneuvers.js';
 import { renderTalentTreeGraph, getTalentsInTree } from './chargen-talent-tree-graph.js';
 
-import { applyProgressionPatch } from '../../progression/engine/apply-progression-patch.js';
+import { applyProgressionPatch } from '../../engines/progression/engine/apply-progression-patch.js';
 import { buildNamePatch } from './steps/name-step.js';
 import { confirm } from '../../utils/ui-utils.js';
 
@@ -1939,7 +1939,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       }
 
       const { getAvailableForcePowers } = await import('./chargen-force-powers.js');
-      const { ForceOptionSuggestionEngine } = await import('../../engine/ForceOptionSuggestionEngine.js');
+      const { ForceOptionSuggestionEngine } = await import('../../../engines/suggestion/ForceOptionSuggestionEngine.js');
       const { MentorSuggestionDialog } = await import('../mentor-suggestion-dialog.js');
 
       const availablePowers = await getAvailableForcePowers(this.actor, this.characterData);

@@ -182,7 +182,7 @@ export class ActionPaletteApp extends HandlebarsApplicationMixin(ApplicationV2) 
    * Open GM suggestion panel
    */
   async openGMPanel(event) {
-    const { openGMPanel } = await import('../../gm-suggestions/init.js');
+    const { openGMPanel } = await import('../../engines/suggestion/gm/init.js');
     openGMPanel();
   }
 

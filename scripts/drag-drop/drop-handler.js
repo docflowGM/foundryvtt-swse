@@ -1,4 +1,4 @@
-import { ProgressionEngine } from '../progression/engine/progression-engine.js';
+import { ProgressionEngine } from '../engines/progression/engine/progression-engine.js';
 /**
  * Centralized Drag-Drop Handler for SWSE
  * Handles dropping Items onto Actors with automatic stat application
@@ -6,7 +6,7 @@ import { ProgressionEngine } from '../progression/engine/progression-engine.js';
  */
 
 import { ProficiencySelectionDialog } from '../apps/proficiency-selection-dialog.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 
 export class DropHandler {
 

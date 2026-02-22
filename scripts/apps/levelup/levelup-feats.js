@@ -8,7 +8,7 @@ import { warnGM } from '../../utils/warn-gm.js';
 import { getClassLevel } from './levelup-shared.js';
 import { filterQualifiedFeats } from './levelup-validation.js';
 import { getClassProperty } from '../chargen/chargen-property-accessor.js';
-import { SuggestionService } from '../../engine/SuggestionService.js';
+import { SuggestionService } from '../../engines/suggestion/SuggestionService.js';
 
 // Cache for feat metadata
 let _featMetadataCache = null;

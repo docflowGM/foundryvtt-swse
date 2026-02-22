@@ -1,5 +1,5 @@
 import { guardAgainstMutation } from '../../../dev/mutation-guard.js';
-import { concatPatches, makePatch, patchSpecies, setField } from '../../../progression/engine/progression-patch.js';
+import { concatPatches, makePatch, patchSpecies, setField } from '../../../engines/progression/engine/progression-patch.js';
 
 /**
  * Compute how many feats must be chosen at level 1 based on species and actor type.

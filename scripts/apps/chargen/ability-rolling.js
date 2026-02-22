@@ -12,7 +12,7 @@
  */
 import { confirm as uiConfirm } from '../../utils/ui-utils.js';
 import { RollEngine } from '../../engine/roll-engine.js';
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 export class AbilityRollingController {
   constructor(actor, root, opts = {}) {
     this.actor = actor;

@@ -1,4 +1,4 @@
-import { ActorEngine } from "../../actors/engine/actor-engine.js";
+import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
 import { InventoryEngine } from "../../engine/inventory/InventoryEngine.js";
 
 const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api;

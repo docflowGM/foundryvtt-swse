@@ -7,7 +7,7 @@
  * PHASE 7: All mutations routed through ActorEngine for atomic governance
  */
 
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 
 export class StarshipManeuverManager {
   /**

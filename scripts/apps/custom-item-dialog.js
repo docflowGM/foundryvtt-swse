@@ -3,7 +3,7 @@
  * Provides detailed dialogs for creating custom items, talents, feats, and force powers
  */
 
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 
 export class CustomItemDialog {
 

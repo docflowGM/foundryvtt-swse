@@ -7,10 +7,10 @@
  * GM-only feature for verifying and debugging the suggestion system.
  */
 
-import { BuildIntent, BUILD_THEMES, PRESTIGE_SIGNALS, FEAT_THEME_SIGNALS } from '../../engine/BuildIntent.js';
-import { ClassSuggestionEngine, CLASS_SYNERGY_DATA } from '../../engine/ClassSuggestionEngine.js';
+import { BuildIntent, BUILD_THEMES, PRESTIGE_SIGNALS, FEAT_THEME_SIGNALS } from '../../engines/suggestion/BuildIntent.js';
+import { ClassSuggestionEngine, CLASS_SYNERGY_DATA } from '../../engines/suggestion/ClassSuggestionEngine.js';
 import { SWSELogger } from '../../utils/logger.js';
-import { CORE_CLASSES } from '../../progression/data/progression-data.js'; // PHASE C: Consolidate class lists
+import { CORE_CLASSES } from '../../engines/progression/data/progression-data.js'; // PHASE C: Consolidate class lists
 
 // V2 API base class
 import SWSEApplicationV2 from '../base/swse-application-v2.js';

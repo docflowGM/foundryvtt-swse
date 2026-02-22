@@ -2,8 +2,8 @@
 
 const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
 
-import { calculateEncounterXP, applyXP, isXPEnabled } from '../engine/progression/xp-engine.js';
-import { getXPFromCL } from '../engine/progression/xp-constants.js';
+import { calculateEncounterXP, applyXP, isXPEnabled } from '../engines/progression/xp-engine.js';
+import { getXPFromCL } from '../engines/progression/xp-constants.js';
 
 /**
  * GM Encounter XP Calculator

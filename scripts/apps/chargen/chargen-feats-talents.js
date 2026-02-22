@@ -7,11 +7,11 @@ import { getTalentTrees, getTalentTreeName } from './chargen-property-accessor.j
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 import { ClassesDB } from '../../data/classes-db.js';
-import { SuggestionService } from '../../engine/SuggestionService.js';
-import { BuildIntent } from '../../engine/BuildIntent.js';
-import { MentorSurvey } from '../mentor/mentor-survey.js';
+import { SuggestionService } from '../../engines/suggestion/SuggestionService.js';
+import { BuildIntent } from '../../engines/suggestion/BuildIntent.js';
+import { MentorSurvey } from '../engines/mentor/mentor-survey.js';
 import { _findTalentItem } from './chargen-shared.js';
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 
 /**
  * Calculate feat/talent suggestions during chargen
