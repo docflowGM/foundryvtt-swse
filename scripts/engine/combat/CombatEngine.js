@@ -79,17 +79,49 @@ export class CombatEngine {
       return { success: false, reason: "Invalid attacker/target/weapon/roll" };
     }
 
+    /* PHASE 2b: SUBSYSTEM PENALTY INTEGRATION (Vehicle only) */
+    let subsystemPenalty = 0;
+    if (attacker.type === "vehicle") {
+      const penalties = SubsystemEngine.getAggregatePenalties(attacker);
+
+      /* Block attack if weapons offline */
+      if (penalties.weaponsOffline) {
+        const blockedResult = {
+          hit: false,
+          blocked: true,
+          reason: "Weapons subsystem is offline. No attacks possible.",
+          attackRoll,
+          context: {
+            attacker,
+            target,
+            weapon,
+            defenseType: 'reflex',
+            defenseValue: target.system.defenses?.reflex?.total ?? 10
+          },
+          attacker,
+          target,
+          weapon
+        };
+        await CombatUIAdapter.handleAttackResult(blockedResult);
+        return blockedResult;
+      }
+
+      /* Apply attack penalty from damaged subsystems */
+      subsystemPenalty = penalties.attackPenalty ?? 0;
+    }
+
     /* HIT RESOLUTION CONTEXT */
     const context = {
       attacker,
       target,
       weapon,
       roll: attackRoll,
-      totalAttack: attackRoll.total,
+      totalAttack: attackRoll.total + subsystemPenalty,
       defenseType: 'reflex',
       defenseValue: target.system.defenses?.reflex?.total ?? 10,
       modifiers: options.modifiers || {},
-      hit: options.precomputedHit ?? null
+      hit: options.precomputedHit ?? null,
+      subsystemPenalty
     };
 
     /* APPLY COVER BONUS */

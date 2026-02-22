@@ -77,13 +77,33 @@ export class CombatUIAdapter {
    * Displays: attack roll, hit/miss, defense, critical threat, damage button.
    */
   static async _createAttackCard(result) {
-    const { attacker, weapon, target, roll, total, hit, hitContext, d20, critThreat } = result;
+    const { attacker, weapon, target, roll, total, hit, hitContext, d20, critThreat, blocked, reason } = result;
 
     let html = `
       <div class="swse-attack-card">
         <h3>${attacker.name} attacks with ${weapon.name}</h3>
-        <div class="roll-line">Attack Roll: ${total} (d20=${d20})</div>
     `;
+
+    /* Show attack block reason if applicable */
+    if (blocked && reason) {
+      html += `<div class="attack-blocked"><strong>⛔ ${reason}</strong></div>`;
+      html += `</div>`;
+      await createChatMessage({
+        speaker: ChatMessage.getSpeaker({ actor: attacker }),
+        content: html,
+        style: CONST.CHAT_MESSAGE_STYLES.OTHER,
+        rolls: [roll]
+      });
+      return;
+    }
+
+    html += `<div class="roll-line">Attack Roll: ${total} (d20=${d20})</div>`;
+
+    /* Show subsystem penalty if applicable */
+    if (hitContext?.subsystemPenalty) {
+      const penaltyDisplay = hitContext.subsystemPenalty > 0 ? `+${hitContext.subsystemPenalty}` : `${hitContext.subsystemPenalty}`;
+      html += `<div class="subsystem-penalty-line"><em>Subsystem Penalty: ${penaltyDisplay}</em></div>`;
+    }
 
     if (target) {
       html += `
