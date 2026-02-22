@@ -202,7 +202,7 @@
             "patterns": [
               {
                 "group": ["**/combat/"],
-                "message": "@swse/no-legacy-imports-in-engine: Engine domain cannot import from legacy combat domain (except Phase 4 vehicle utils)",
+                "message": "@swse/no-legacy-imports-in-engine: Engine domain cannot import from legacy combat domain",
                 "allowRelativePaths": false
               }
             ]
