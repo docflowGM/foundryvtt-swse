@@ -9,7 +9,7 @@ import { computeDroidDerived } from './droid-actor.js';
 import { computeVehicleDerived } from './vehicle-actor.js';
 import { shouldSkipDerivedData } from '../../utils/hardening.js';
 import { computeXpDerived } from '../../engines/progression/xp-engine.js';
-import { SWSEInitiative } from '../../engine/combat/SWSEInitiative.js';
+import { SWSEInitiative } from '../../engines/combat/SWSEInitiative.js';
 
 /**
  * SWSE V2 Base Actor

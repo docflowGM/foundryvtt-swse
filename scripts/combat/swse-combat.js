@@ -1,5 +1,5 @@
 import { swseLogger } from '../utils/logger.js';
-import { CombatEngine } from '../engine/combat/CombatEngine.js';
+import { CombatEngine } from '../engines/combat/CombatEngine.js';
 
 /**
  * SWSE Combat Document (v13+) — PHASE 1 CONSOLIDATED

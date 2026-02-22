@@ -2,7 +2,7 @@ import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMi
 import { SWSERoll } from '../rolls/enhanced-rolls.js';
 import { createChatMessage } from '../../core/document-api-v13.js';
 import { DamageSystem } from '../damage-system.js';
-import { CombatEngine } from '../../engine/combat/CombatEngine.js';
+import { CombatEngine } from '../../engines/combat/CombatEngine.js';
 
 /**
  * SWSE Enhanced Combat System (UI Adapter)

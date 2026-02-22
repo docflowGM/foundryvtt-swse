@@ -8,12 +8,12 @@ import { initiateItemSale } from '../../apps/item-selling-system.js';
 import { SWSELevelUp } from '../../apps/swse-levelup.js';
 import { rollAttack } from '../../combat/rolls/attacks.js';
 import { DropService } from '../../services/drop-service.js';
-import { SubsystemEngine } from '../../engine/combat/starship/subsystem-engine.js';
-import { EnhancedShields } from '../../engine/combat/starship/enhanced-shields.js';
-import { EnhancedEngineer } from '../../engine/combat/starship/enhanced-engineer.js';
-import { EnhancedPilot } from '../../engine/combat/starship/enhanced-pilot.js';
-import { EnhancedCommander } from '../../engine/combat/starship/enhanced-commander.js';
-import { VehicleTurnController } from '../../engine/combat/starship/vehicle-turn-controller.js';
+import { SubsystemEngine } from '../../engines/combat/starship/subsystem-engine.js';
+import { EnhancedShields } from '../../engines/combat/starship/enhanced-shields.js';
+import { EnhancedEngineer } from '../../engines/combat/starship/enhanced-engineer.js';
+import { EnhancedPilot } from '../../engines/combat/starship/enhanced-pilot.js';
+import { EnhancedCommander } from '../../engines/combat/starship/enhanced-commander.js';
+import { VehicleTurnController } from '../../engines/combat/starship/vehicle-turn-controller.js';
 import { StarshipManeuversEngine } from '../../engine/StarshipManeuversEngine.js';
 
 function markActiveConditionStep(root, actor) {
