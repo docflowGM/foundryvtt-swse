@@ -8,6 +8,7 @@ import { SubsystemEngine } from './starship/subsystem-engine.js';
 import { EnhancedShields } from './starship/enhanced-shields.js';
 import { VehicleTurnController } from './starship/vehicle-turn-controller.js';
 import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { CombatUIAdapter } from './ui/CombatUIAdapter.js';
 
 export class CombatEngine {
 
@@ -124,11 +125,19 @@ export class CombatEngine {
     }
 
     if (!context.hit) {
-      return {
+      const missResult = {
         hit: false,
         attackRoll,
-        context
+        context,
+        attacker,
+        target,
+        weapon
       };
+
+      /* DELEGATE UI HANDLING TO ADAPTER (Phase 1.5 consolidation) */
+      await CombatUIAdapter.handleAttackResult(missResult);
+
+      return missResult;
     }
 
     /* DAMAGE */
@@ -165,15 +174,23 @@ export class CombatEngine {
       await SubsystemEngine.escalate(target, damage);
     }
 
-    return {
+    const result = {
       hit: true,
       attackRoll,
       damageRoll,
       damage,
       damageApplied: damageResult,
       threshold: thresholdResult,
-      context
+      context,
+      attacker,
+      target,
+      weapon
     };
+
+    /* DELEGATE UI HANDLING TO ADAPTER (Phase 1.5 consolidation) */
+    await CombatUIAdapter.handleAttackResult(result);
+
+    return result;
   }
 
   /* -------------------------------------------- */
