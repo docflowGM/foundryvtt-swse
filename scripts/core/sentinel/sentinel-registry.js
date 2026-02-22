@@ -16,8 +16,17 @@ import { PromisesLayer } from './layers/promises-layer.js';
 import { PerformanceLayer } from './layers/performance-layer.js';
 import { CombatLayer } from './layers/combat-layer.js';
 
+// PHASE 7: Import utility layer governance enforcement
+import { UtilityLayer } from './layers/utility-layer.js';
+
 // PHASE 3: Import mutation authority layer
 import { MutationIntegrityLayer } from './mutation-integrity-layer.js';
+
+// PHASE 10: Import hook mutation detection layer
+import { HooksMutationLayer } from './layers/hooks-mutation-layer.js';
+
+// PHASE 11: Import migration mutation detection layer
+import { MigrationMutationLayer } from './layers/migration-mutation-layer.js';
 
 // PHASE 3: Import Batch 1 validation suite
 import { Batch1Validation } from '../mutation/batch-1-validation.js';
@@ -42,6 +51,15 @@ export function initializeSentinelLayers() {
 
   // PHASE 4: Register combat domain sovereignty layer
   SentinelEngine.registerLayer('combat', CombatLayer);
+
+  // PHASE 7: Register utility layer governance enforcement
+  SentinelEngine.registerLayer('utility', UtilityLayer);
+
+  // PHASE 10: Register hook mutation detection layer
+  SentinelEngine.registerLayer('hooks-mutation', HooksMutationLayer);
+
+  // PHASE 11: Register migration mutation detection layer
+  SentinelEngine.registerLayer('migration-mutation', MigrationMutationLayer);
 }
 
 /**

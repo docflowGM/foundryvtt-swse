@@ -2,6 +2,7 @@ import { SWSEActiveEffectsManager } from '../combat/active-effects-manager.js';
 import { SWSECombat } from '../combat/systems/enhanced-combat-system.js';
 import { escapeHTML } from '../utils/security-utils.js';
 import { createChatMessage } from '../core/document-api-v13.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 /**
  * Modernized Combat Action Bar
@@ -259,27 +260,19 @@ export class CombatActionBar {
     const uses = actor.system.secondWind?.uses ?? 0;
     if (uses < 1) {return ui.notifications.warn('No Second Wind available.');}
 
-    const level = actor.system.level ?? 1;
-    const heal = 5 + Math.floor(level / 4) * 5;
+    // PHASE 7: Apply second wind atomically through ActorEngine
+    const result = await ActorEngine.applySecondWind(actor);
 
-    // PHASE 2: Read from authoritative source (system.derived.*)
-    const newHP = Math.min(
-      (actor.system?.derived?.hp?.value || actor.system?.hp?.value || 0) + heal,
-      actor.system?.derived?.hp?.max || actor.system?.hp?.max || 0
-    );
+    if (result.success) {
+      createChatMessage({
+        speaker: ChatMessage.getSpeaker({ actor }),
+        content: `<b>${escapeHTML(actor.name)}</b> regains <strong>${result.healed}</strong> HP!`
+      });
 
-    // PHASE 2: Write to authoritative location (system.derived.*)
-    await actor.update({
-      'system.derived.hp.value': newHP,
-      'system.secondWind.uses': uses - 1
-    });
-
-    createChatMessage({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: `<b>${escapeHTML(actor.name)}</b> regains <strong>${heal}</strong> HP!`
-    });
-
-    this._useAction(actor, 'swift');
+      this._useAction(actor, 'swift');
+    } else {
+      ui.notifications.warn(result.reason || 'Could not use Second Wind');
+    }
   }
 
   /** ------------------------------

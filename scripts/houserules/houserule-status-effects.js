@@ -1,9 +1,12 @@
 /**
  * Status Effects House Rule Mechanics
  * Handles condition and status effect application and removal
+ *
+ * PHASE 7: All mutations routed through ActorEngine for atomic governance
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 const NS = 'foundryvtt-swse';
 
@@ -148,7 +151,8 @@ export class StatusEffectsMechanics {
         }
       };
 
-      await actor.createEmbeddedDocuments('ActiveEffect', [activeEffect]);
+      // PHASE 7: Create through ActorEngine
+      await ActorEngine.createEmbeddedDocuments(actor, 'ActiveEffect', [activeEffect]);
       return true;
     } catch (err) {
       SWSELogger.error(`Failed to apply effect ${effectId}`, err);
@@ -171,7 +175,8 @@ export class StatusEffectsMechanics {
       );
 
       if (effects.length > 0) {
-        await actor.deleteEmbeddedDocuments('ActiveEffect',
+        // PHASE 7: Delete through ActorEngine
+        await ActorEngine.deleteEmbeddedDocuments(actor, 'ActiveEffect',
           effects.map(e => e.id)
         );
         return true;

@@ -7,7 +7,11 @@
  * - AppV2 lifecycle guards (skip derived calc for statblock NPCs)
  *
  * Snapshot is stored in flags.swse.npcLevelUp.snapshot (back-compat with existing UI).
+ *
+ * PHASE 7: All mutations routed through ActorEngine for atomic governance.
  */
+
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 const SYSTEM_SCOPE_COMPAT = 'swse';
 const FLAG_SNAPSHOT = 'npcLevelUp.snapshot';
@@ -105,55 +109,19 @@ export async function rollbackNpcToStatblockSnapshot(actor) {
     return;
   }
 
-  const system = foundry.utils.deepClone(snap.system ?? {});
-  const name = snap.name ?? actor.name;
-  const img = snap.img ?? actor.img;
-  const prototypeToken = foundry.utils.deepClone(snap.prototypeToken ?? {});
-
-  await actor.update(
-    { name, img, system, prototypeToken },
-    { diff: false, [SYSTEM_SCOPE_COMPAT]: { skipProgression: true } }
-  );
-
-  const currentItemIds = actor.items?.map?.((i) => i.id) ?? [];
-  if (currentItemIds.length) {
-    await actor.deleteEmbeddedDocuments('Item', currentItemIds, {
-      [SYSTEM_SCOPE_COMPAT]: { skipProgression: true }
-    });
-  }
-
-  const items = (snap.items ?? []).map((i) => {
-    const copy = foundry.utils.deepClone(i);
-    delete copy._id;
-    return copy;
+  // PHASE 7: All mutations routed through ActorEngine for atomic governance
+  // Restores complete actor state (root + items + effects) in single transaction
+  const result = await ActorEngine.restoreFromSnapshot(actor, snap, {
+    diff: false,
+    [SYSTEM_SCOPE_COMPAT]: { skipProgression: true }
   });
-  if (items.length) {
-    await actor.createEmbeddedDocuments('Item', items, {
-      [SYSTEM_SCOPE_COMPAT]: { skipProgression: true }
-    });
+
+  if (result.success) {
+    // Update flags after successful restoration
+    await actor.setFlag(SYSTEM_SCOPE_COMPAT, FLAG_MODE, 'statblock');
+    await actor.unsetFlag(SYSTEM_SCOPE_COMPAT, FLAG_TRACK);
+    await actor.unsetFlag(SYSTEM_SCOPE_COMPAT, FLAG_STARTED_AT);
+
+    ui.notifications.info('NPC reverted to statblock snapshot.');
   }
-
-  const currentEffectIds = actor.effects?.map?.((e) => e.id) ?? [];
-  if (currentEffectIds.length) {
-    await actor.deleteEmbeddedDocuments('ActiveEffect', currentEffectIds, {
-      [SYSTEM_SCOPE_COMPAT]: { skipProgression: true }
-    });
-  }
-
-  const effects = (snap.effects ?? []).map((e) => {
-    const copy = foundry.utils.deepClone(e);
-    delete copy._id;
-    return copy;
-  });
-  if (effects.length) {
-    await actor.createEmbeddedDocuments('ActiveEffect', effects, {
-      [SYSTEM_SCOPE_COMPAT]: { skipProgression: true }
-    });
-  }
-
-  await actor.setFlag(SYSTEM_SCOPE_COMPAT, FLAG_MODE, 'statblock');
-  await actor.unsetFlag(SYSTEM_SCOPE_COMPAT, FLAG_TRACK);
-  await actor.unsetFlag(SYSTEM_SCOPE_COMPAT, FLAG_STARTED_AT);
-
-  ui.notifications.info('NPC reverted to statblock snapshot.');
 }

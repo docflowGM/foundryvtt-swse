@@ -1,12 +1,15 @@
 /**
  * Destiny Effects Utility
  * Handles instant and procedural effects triggered by Destiny Point spending
+ *
+ * PHASE 7: All mutations routed through ActorEngine for atomic governance
  */
 
 import { SWSELogger } from './logger.js';
 import { SWSEActiveEffectsManager } from '../combat/active-effects-manager.js';
 import { createChatMessage } from '../core/document-api-v13.js';
 import { RollEngine } from '../engine/roll-engine.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 export class DestinyEffects {
 
@@ -57,8 +60,9 @@ export class DestinyEffects {
 
   /**
    * Gain Force Points: Restore 1d6 Force Points
+   * PHASE 7: Routed through ActorEngine for governance
    */
-  static async gainForcePoints(actor) {
+  static async gainForcePointsFromDestiny(actor) {
     const fp = actor.system.forcePoints;
     if (!fp) {
       ui.notifications.warn(`${actor.name} cannot gain Force Points.`);
@@ -73,17 +77,15 @@ export class DestinyEffects {
     }
     const gained = roll.total;
 
-    // Add to current Force Points (capped at max)
-    const newValue = Math.min(fp.value + gained, fp.max);
-    const actualGain = newValue - fp.value;
-
-    await actor.update({ 'system.forcePoints.value': newValue });
+    // PHASE 7: Gain through ActorEngine (atomic)
+    const result = await ActorEngine.gainForcePoints(actor, gained);
+    const actualGain = result.gained;
 
     createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
       content: `<p><strong>${actor.name}</strong> uses Destiny to gain <strong>${actualGain}</strong> Force Points!</p>
                 <p><strong>Roll:</strong> ${roll.formula} = ${roll.total}</p>
-                <p><strong>Force Points:</strong> ${newValue}/${fp.max}</p>`,
+                <p><strong>Force Points:</strong> ${result.current}/${result.max}</p>`,
       style: CONST.CHAT_MESSAGE_STYLES.OOC
     });
   }

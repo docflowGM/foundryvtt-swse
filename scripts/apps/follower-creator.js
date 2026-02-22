@@ -11,8 +11,11 @@
  */
 
 import { swseLogger } from '../utils/logger.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 import { resolveSkillKey } from '../utils/skill-resolver.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 import { createActor } from '../core/document-api-v13.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 export class FollowerCreator {
 
@@ -365,7 +368,8 @@ static async createFollower(owner, templateType, grantingTalent = null) {
     static async _applySpecies(follower, speciesDoc, followerData) {
         // Add species as an item to the follower
         const speciesData = speciesDoc.toObject();
-        await follower.createEmbeddedDocuments('Item', [speciesData]);
+        // PHASE 8: Use ActorEngine
+        await ActorEngine.createEmbeddedDocuments(follower, 'Item', [speciesData]);
 
         // Handle Human special case
         if (speciesDoc.name === 'Human' && followerData.humanBonus) {
@@ -483,7 +487,8 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             if (featEntry) {
                 const featDoc = await featsPack.getDocument(featEntry._id);
                 const featData = featDoc.toObject();
-                await follower.createEmbeddedDocuments('Item', [featData]);
+                // PHASE 8: Use ActorEngine
+                await ActorEngine.createEmbeddedDocuments(follower, 'Item', [featData]);
                 return true;
             } else {
                 swseLogger.warn(`FollowerCreator: Feat not found: ${featName}`);

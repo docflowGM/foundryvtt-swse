@@ -54,6 +54,10 @@ function coerceSpeedIntegers(actor, changes) {
  * Applies an atomic update to an actor with validation and error handling.
  * Merges changes into a single update call to avoid race conditions.
  *
+ * ⚠️ PHASE 7: INTERNAL USE ONLY
+ * This is used internally by ActorEngine. Do NOT call from utilities or sheets.
+ * Use ActorEngine.updateActor() instead.
+ *
  * @param {Actor} actor - The actor to update
  * @param {Object} changes - The changes to apply (supports dot-notation or nested objects)
  * @param {Object} options - Options to pass to actor.update()
@@ -140,6 +144,9 @@ export function prepareUpdatePayload(actor, changes) {
  * Batch multiple actor updates into a single transaction.
  * Useful for applying multiple changes at once to avoid multiple renders.
  *
+ * ⚠️ PHASE 7: DEPRECATED — Use ActorEngine.updateActor() instead
+ * Utilities must not call actor.update() directly.
+ *
  * @param {Actor} actor - The actor to update
  * @param {Object[]} changesList - Array of change objects to merge and apply
  * @param {Object} options - Options to pass to actor.update()
@@ -172,6 +179,9 @@ export async function batchActorUpdates(actor, changesList, options = {}) {
 /**
  * Safely updates an actor with rollback on failure.
  * Creates a backup of the current state and restores it if the update fails.
+ *
+ * ⚠️ PHASE 7: DEPRECATED — Use ActorEngine methods instead
+ * Utilities must not call actor.update() directly.
  *
  * @param {Actor} actor - The actor to update
  * @param {Object} changes - The changes to apply

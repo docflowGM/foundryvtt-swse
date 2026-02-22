@@ -19,7 +19,6 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { ActorEngine } from '../../actors/engine/actor-engine.js';
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 export class MountEngine {
 
@@ -336,7 +335,7 @@ export class MountEngine {
         for (const riderId of actor.system.mount.riderIds) {
           const rider = game.actors?.get(riderId);
           if (rider?.system?.mounted?.isMounted) {
-            await rider.update({
+            await ActorEngine.updateActor(rider, {
               'system.mounted.isMounted': false,
               'system.mounted.mountId': null
             });
@@ -350,7 +349,7 @@ export class MountEngine {
         const mount = mountId ? game.actors?.get(mountId) : null;
         if (mount?.system?.mount?.riderIds?.length) {
           const riders = mount.system.mount.riderIds.filter(id => id !== actor.id);
-          await mount.update({ 'system.mount.riderIds': riders });
+          await ActorEngine.updateActor(mount, { 'system.mount.riderIds': riders });
         }
       }
     });

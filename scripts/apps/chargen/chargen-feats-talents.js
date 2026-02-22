@@ -1043,7 +1043,8 @@ class SkillFocusDialog extends foundry.applications.api.ApplicationV2 {
 
       // If opened from character sheet "Add Feat" button, add to actor and close
       if (this.parentChargen._parentSheet && this.parentChargen.actor) {
-        await this.parentChargen.actor.createEmbeddedDocuments('Item', [{
+        // PHASE 8: Use ActorEngine for atomic item creation
+        await ActorEngine.createEmbeddedDocuments(this.parentChargen.actor, 'Item', [{
           name: updatedFeat.name,
           type: 'feat',
           data: updatedFeat.system || updatedFeat.data

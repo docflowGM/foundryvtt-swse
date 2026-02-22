@@ -2,9 +2,12 @@
  * Healing Skill Integration House Rule
  * Implements Treat Injury skill-based HP recovery (First Aid, Long-Term Care, Surgery, etc.)
  * Based on SWSE official rules
+ *
+ * PHASE 7: All mutations routed through ActorEngine for atomic governance
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 const NS = 'foundryvtt-swse';
 
@@ -352,7 +355,8 @@ export class HealingMechanics {
           label: 'Unconscious',
           statuses: ['unconscious']
         };
-        await corpse.createEmbeddedDocuments('ActiveEffect', [effect]);
+        // PHASE 7: Create through ActorEngine for governance
+        await ActorEngine.createEmbeddedDocuments(corpse, 'ActiveEffect', [effect]);
       }
 
       return {

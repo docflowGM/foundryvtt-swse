@@ -238,7 +238,14 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
       }
     ];
 
-    if (actor.updateOwnedItem && this.item.isEmbedded) {await actor.updateOwnedItem(this.item, { 'system.installedUpgrades': nextInstalled });} else {await this.item.update({ 'system.installedUpgrades': nextInstalled });}
+    // PHASE 9: Governance boundary
+    // - Embedded item → route through ActorEngine (via actor.updateOwnedItem)
+    // - World/compendium item → allow direct update
+    if (actor?.updateOwnedItem && this.item.isEmbedded) {
+      await actor.updateOwnedItem(this.item, { 'system.installedUpgrades': nextInstalled });
+    } else {
+      await this.item.update({ 'system.installedUpgrades': nextInstalled });
+    }
 
     ui.notifications.info('Upgrade installed successfully.');
     this.render({ force: true });
@@ -266,7 +273,14 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
       return copy;
     })();
 
-    if (actor?.updateOwnedItem && this.item.isEmbedded) {await actor.updateOwnedItem(this.item, { 'system.installedUpgrades': nextInstalled });} else {await this.item.update({ 'system.installedUpgrades': nextInstalled });}
+    // PHASE 9: Governance boundary
+    // - Embedded item → route through ActorEngine (via actor.updateOwnedItem)
+    // - World/compendium item → allow direct update
+    if (actor?.updateOwnedItem && this.item.isEmbedded) {
+      await actor.updateOwnedItem(this.item, { 'system.installedUpgrades': nextInstalled });
+    } else {
+      await this.item.update({ 'system.installedUpgrades': nextInstalled });
+    }
 
     ui.notifications.info('Upgrade removed.');
     this.render({ force: true });

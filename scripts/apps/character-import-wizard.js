@@ -6,6 +6,7 @@
 
 import { createActor, createEffectOnActor, createItemInActor } from '../core/document-api-v13.js';
 import { confirm as uiConfirm } from '../utils/ui-utils.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 export class CharacterImportWizard extends foundry.applications.api.ApplicationV2 {
   static DEFAULT_OPTIONS = {
@@ -292,8 +293,13 @@ export class CharacterImportWizard extends foundry.applications.api.ApplicationV
         });
 
         // Clear existing items and effects
-        await targetActor.deleteEmbeddedDocuments('Item', targetActor.items.map(i => i.id));
-        await targetActor.deleteEmbeddedDocuments('ActiveEffect', targetActor.effects.map(e => e.id));
+        // PHASE 8: Use ActorEngine for atomic bulk deletion
+        if (targetActor.items.length > 0) {
+          await ActorEngine.deleteEmbeddedDocuments(targetActor, 'Item', targetActor.items.map(i => i.id));
+        }
+        if (targetActor.effects.length > 0) {
+          await ActorEngine.deleteEmbeddedDocuments(targetActor, 'ActiveEffect', targetActor.effects.map(e => e.id));
+        }
 
         // Add new items and effects (using already cleaned data)
         if (cleanedItems.length > 0) {

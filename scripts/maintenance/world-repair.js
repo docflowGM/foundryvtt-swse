@@ -1,5 +1,6 @@
 /**
  * SWSE World Repair Script
+ * PHASE 11: All mutations route through ActorEngine for governance
  *
  * Run this ONCE from the console to fix structural data issues.
  * After running, delete this file.
@@ -103,7 +104,16 @@ export async function repairWorld() {
       }
 
       if (needsUpdate) {
-        await actor.update(fixes);
+        // PHASE 11: Route through ActorEngine for governance
+        if (globalThis.SWSE?.ActorEngine?.updateActor) {
+          await globalThis.SWSE.ActorEngine.updateActor(actor, fixes, {
+            meta: { origin: 'world-repair' }
+          });
+        } else {
+          // Fallback if ActorEngine unavailable
+          console.warn(`⚠️  ActorEngine unavailable, using direct update for ${actor.name}`);
+          await actor.update(fixes);
+        }
         report.repairedActors.push(actor.name);
         console.log(`✅ Repaired ${actor.name}`);
       }

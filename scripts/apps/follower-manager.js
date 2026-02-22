@@ -1,4 +1,5 @@
 import { FollowerCreator } from './follower-creator.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 /**
  * Follower Manager - Handles follower enhancements and bonuses
@@ -130,7 +131,8 @@ export class FollowerManager {
             // Check if follower already has this feat
             const hasFeat = follower.items.find(i => i.name === featName && i.type === 'feat');
             if (!hasFeat) {
-                await follower.createEmbeddedDocuments('Item', [featData]);
+                // PHASE 8: Use ActorEngine
+                await ActorEngine.createEmbeddedDocuments(follower, 'Item', [featData]);
             }
         }
     }
@@ -219,7 +221,8 @@ export class FollowerManager {
         for (const follower of followers) {
             const feat = follower.items.find(i => i.name === featName && i.type === 'feat');
             if (feat) {
-                await follower.deleteEmbeddedDocuments('Item', [feat.id]);
+                // PHASE 8: Use ActorEngine
+                await ActorEngine.deleteEmbeddedDocuments(follower, 'Item', [feat.id]);
             }
         }
     }

@@ -2,6 +2,7 @@
  * SnapshotManager
  * Saves and restores complete actor states for rollback/undo functionality.
  * Essential safety mechanism for level-up and character creation.
+ * PHASE 10: All mutations route through ActorEngine for governance.
  */
 
 import { SWSELogger } from '../../utils/logger.js';
@@ -86,6 +87,7 @@ export class SnapshotManager {
 
     /**
      * Restore actor to a previous snapshot
+     * PHASE 10: Routes through ActorEngine.restoreFromSnapshot() for atomic governance
      * @param {Actor} actor - The actor
      * @param {number|string} identifier - Timestamp or array index
      * @returns {Promise<boolean>} True if restored, false otherwise
@@ -107,7 +109,15 @@ export class SnapshotManager {
             // Preserve the snapshots flag so we don't lose history
             const preservedSnapshots = actor.getFlag('foundryvtt-swse', 'snapshots');
 
-            await actor.update(actorDataToRestore);
+            // PHASE 10: Route through ActorEngine with snapshot metadata
+            // ActorEngine.restoreFromSnapshot() handles atomic restoration
+            if (globalThis.SWSE?.ActorEngine?.restoreFromSnapshot) {
+                await globalThis.SWSE.ActorEngine.restoreFromSnapshot(actor, actorDataToRestore, {
+                    meta: { guardKey: 'snapshot-restore' }
+                });
+            } else {
+                throw new Error('ActorEngine.restoreFromSnapshot is required for snapshot restoration. Ensure ActorEngine is initialized before snapshot restore.');
+            }
 
             // Restore snapshots flag
             if (preservedSnapshots) {

@@ -717,7 +717,8 @@ export async function checkout(store, animateNumberCallback) {
                             return item.toObject ? item.toObject() : item;
                         });
                         if (itemsToCreate.length > 0) {
-                            await purchasingActor.createEmbeddedDocuments('Item', itemsToCreate);
+                            // PHASE 8: Use ActorEngine
+                            await ActorEngine.createEmbeddedDocuments(purchasingActor, 'Item', itemsToCreate);
                         }
 
                         // Create droid actors

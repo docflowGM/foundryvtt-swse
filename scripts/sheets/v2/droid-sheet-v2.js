@@ -1,10 +1,17 @@
 /**
  * DroidSheetV2 — Complete Droid Sheet UI
  * Displays and edits droid configuration: systems, modifications, appendages, costs
+ *
+ * PHASE 6B-2: All mutations route through ActorEngine + DroidEngine
+ * - No direct actor.update() calls
+ * - All UI actions → descriptor → plan → single atomic update
+ * - Derived recalculation handled by engine
  */
 
 import { DroidValidationEngine } from '../../engine/droid-validation-engine.js';
 import { DroidModValidator } from '../../engine/droid-mod-validator.js';
+import { DroidEngine } from '../../engine/droid-engine.js';
+import { ActorEngine } from '../engine/actor-engine.js';
 
 export class DroidSheetV2 extends ActorSheet {
   static get defaultOptions() {
@@ -112,131 +119,173 @@ export class DroidSheetV2 extends ActorSheet {
     super.activateListeners(html);
 
     // Degree/Size changes
-    html.find('select[name="degree"]').on('change', (e) => {
-      this.actor.update({ 'system.droidSystems.degree': e.currentTarget.value });
+    html.find('select[name="degree"]').on('change', async (e) => {
+      const descriptor = {
+        type: 'update-field',
+        field: 'system.droidSystems.degree',
+        value: e.currentTarget.value
+      };
+      const plan = DroidEngine.buildConfigurationPlan(this.actor, descriptor);
+      await ActorEngine.updateActor(plan.actor, plan.updateData);
     });
 
-    html.find('select[name="size"]').on('change', (e) => {
-      this.actor.update({ 'system.droidSystems.size': e.currentTarget.value });
+    html.find('select[name="size"]').on('change', async (e) => {
+      const descriptor = {
+        type: 'update-field',
+        field: 'system.droidSystems.size',
+        value: e.currentTarget.value
+      };
+      const plan = DroidEngine.buildConfigurationPlan(this.actor, descriptor);
+      await ActorEngine.updateActor(plan.actor, plan.updateData);
     });
 
     // Locomotion/Processor/Armor selection
-    html.find('select[name="locomotion"]').on('change', (e) => {
-      const id = e.currentTarget.value;
-      this.actor.update({ 'system.droidSystems.locomotion.id': id });
+    html.find('select[name="locomotion"]').on('change', async (e) => {
+      const descriptor = {
+        type: 'update-field',
+        field: 'system.droidSystems.locomotion.id',
+        value: e.currentTarget.value
+      };
+      const plan = DroidEngine.buildConfigurationPlan(this.actor, descriptor);
+      await ActorEngine.updateActor(plan.actor, plan.updateData);
     });
 
-    html.find('select[name="processor"]').on('change', (e) => {
-      const id = e.currentTarget.value;
-      this.actor.update({ 'system.droidSystems.processor.id': id });
+    html.find('select[name="processor"]').on('change', async (e) => {
+      const descriptor = {
+        type: 'update-field',
+        field: 'system.droidSystems.processor.id',
+        value: e.currentTarget.value
+      };
+      const plan = DroidEngine.buildConfigurationPlan(this.actor, descriptor);
+      await ActorEngine.updateActor(plan.actor, plan.updateData);
     });
 
-    html.find('select[name="armor"]').on('change', (e) => {
-      const id = e.currentTarget.value;
-      this.actor.update({ 'system.droidSystems.armor.id': id });
+    html.find('select[name="armor"]').on('change', async (e) => {
+      const descriptor = {
+        type: 'update-field',
+        field: 'system.droidSystems.armor.id',
+        value: e.currentTarget.value
+      };
+      const plan = DroidEngine.buildConfigurationPlan(this.actor, descriptor);
+      await ActorEngine.updateActor(plan.actor, plan.updateData);
     });
 
     // Credit inputs
-    html.find('input[name="credits-total"]').on('change', (e) => {
+    html.find('input[name="credits-total"]').on('change', async (e) => {
       const total = Math.max(0, Number(e.currentTarget.value) || 0);
-      this.actor.update({ 'system.droidSystems.credits.total': total });
+      const descriptor = {
+        type: 'update-field',
+        field: 'system.droidSystems.credits.total',
+        value: total
+      };
+      const plan = DroidEngine.buildConfigurationPlan(this.actor, descriptor);
+      await ActorEngine.updateActor(plan.actor, plan.updateData);
     });
 
-    html.find('input[name="credits-spent"]').on('change', (e) => {
+    html.find('input[name="credits-spent"]').on('change', async (e) => {
       const spent = Math.max(0, Number(e.currentTarget.value) || 0);
-      this.actor.update({ 'system.droidSystems.credits.spent': spent });
+      const descriptor = {
+        type: 'update-field',
+        field: 'system.droidSystems.credits.spent',
+        value: spent
+      };
+      const plan = DroidEngine.buildConfigurationPlan(this.actor, descriptor);
+      await ActorEngine.updateActor(plan.actor, plan.updateData);
     });
 
     // Modification toggle
-    html.find('[data-action="toggle-mod"]').on('click', (e) => {
+    html.find('[data-action="toggle-mod"]').on('click', async (e) => {
       const idx = Number(e.currentTarget.dataset.index);
-      const mods = this.actor.system.droidSystems?.mods || [];
-      if (mods[idx]) {
-        mods[idx].enabled = mods[idx].enabled !== false ? false : true;
-        this.actor.update({ 'system.droidSystems.mods': mods });
-      }
+      const descriptor = {
+        type: 'toggle-mod',
+        modIndex: idx,
+        enabled: !(this.actor.system.droidSystems?.mods?.[idx]?.enabled !== false)
+      };
+      const plan = DroidEngine.buildConfigurationPlan(this.actor, descriptor);
+      await ActorEngine.updateActor(plan.actor, plan.updateData);
     });
 
     // Remove modification
-    html.find('[data-action="remove-mod"]').on('click', (e) => {
+    html.find('[data-action="remove-mod"]').on('click', async (e) => {
       const idx = Number(e.currentTarget.dataset.index);
-      const mods = this.actor.system.droidSystems?.mods || [];
-      mods.splice(idx, 1);
-      this.actor.update({ 'system.droidSystems.mods': mods });
+      const descriptor = {
+        type: 'remove-mod',
+        modIndex: idx
+      };
+      const plan = DroidEngine.buildConfigurationPlan(this.actor, descriptor);
+      await ActorEngine.updateActor(plan.actor, plan.updateData);
     });
 
     // Remove appendage/sensor/weapon/accessory
-    html.find('[data-action="remove-appendage"]').on('click', (e) => {
+    html.find('[data-action="remove-appendage"]').on('click', async (e) => {
       const idx = Number(e.currentTarget.dataset.index);
-      const appendages = this.actor.system.droidSystems?.appendages || [];
-      appendages.splice(idx, 1);
-      this.actor.update({ 'system.droidSystems.appendages': appendages });
+      const descriptor = {
+        type: 'remove-appendage',
+        appendageIndex: idx
+      };
+      const plan = DroidEngine.buildConfigurationPlan(this.actor, descriptor);
+      await ActorEngine.updateActor(plan.actor, plan.updateData);
     });
 
-    html.find('[data-action="remove-sensor"]').on('click', (e) => {
+    html.find('[data-action="remove-sensor"]').on('click', async (e) => {
       const idx = Number(e.currentTarget.dataset.index);
-      const sensors = this.actor.system.droidSystems?.sensors || [];
-      sensors.splice(idx, 1);
-      this.actor.update({ 'system.droidSystems.sensors': sensors });
+      const descriptor = {
+        type: 'remove-sensor',
+        sensorIndex: idx
+      };
+      const plan = DroidEngine.buildConfigurationPlan(this.actor, descriptor);
+      await ActorEngine.updateActor(plan.actor, plan.updateData);
     });
 
-    html.find('[data-action="remove-weapon"]').on('click', (e) => {
+    html.find('[data-action="remove-weapon"]').on('click', async (e) => {
       const idx = Number(e.currentTarget.dataset.index);
-      const weapons = this.actor.system.droidSystems?.weapons || [];
-      weapons.splice(idx, 1);
-      this.actor.update({ 'system.droidSystems.weapons': weapons });
+      const descriptor = {
+        type: 'remove-weapon',
+        weaponIndex: idx
+      };
+      const plan = DroidEngine.buildConfigurationPlan(this.actor, descriptor);
+      await ActorEngine.updateActor(plan.actor, plan.updateData);
     });
 
-    html.find('[data-action="remove-accessory"]').on('click', (e) => {
+    html.find('[data-action="remove-accessory"]').on('click', async (e) => {
       const idx = Number(e.currentTarget.dataset.index);
-      const accessories = this.actor.system.droidSystems?.accessories || [];
-      accessories.splice(idx, 1);
-      this.actor.update({ 'system.droidSystems.accessories': accessories });
+      const descriptor = {
+        type: 'remove-accessory',
+        accessoryIndex: idx
+      };
+      const plan = DroidEngine.buildConfigurationPlan(this.actor, descriptor);
+      await ActorEngine.updateActor(plan.actor, plan.updateData);
     });
 
     // Add buttons
-    html.find('[data-action="add-mod"]').on('click', () => this._addModDialog());
-    html.find('[data-action="add-appendage"]').on('click', () => this._addAppendageDialog());
-    html.find('[data-action="add-sensor"]').on('click', () => this._addSensorDialog());
-    html.find('[data-action="add-weapon"]').on('click', () => this._addWeaponDialog());
-    html.find('[data-action="add-accessory"]').on('click', () => this._addAccessoryDialog());
-  }
+    html.find('[data-action="add-mod"]').on('click', async () => {
+      const descriptor = { type: 'add-mod' };
+      const plan = DroidEngine.buildConfigurationPlan(this.actor, descriptor);
+      await ActorEngine.updateActor(plan.actor, plan.updateData);
+    });
 
-  async _addModDialog() {
-    const mods = this.actor.system.droidSystems?.mods || [];
-    const newMod = {
-      id: `mod_${Date.now()}`,
-      name: 'New Modification',
-      modifiers: [],
-      hardpointsRequired: 1,
-      costInCredits: 0,
-      enabled: true
-    };
-    mods.push(newMod);
-    await this.actor.update({ 'system.droidSystems.mods': mods });
-  }
+    html.find('[data-action="add-appendage"]').on('click', async () => {
+      const descriptor = { type: 'add-appendage' };
+      const plan = DroidEngine.buildConfigurationPlan(this.actor, descriptor);
+      await ActorEngine.updateActor(plan.actor, plan.updateData);
+    });
 
-  async _addAppendageDialog() {
-    const appendages = this.actor.system.droidSystems?.appendages || [];
-    appendages.push({ id: `app_${Date.now()}`, name: 'New Appendage' });
-    await this.actor.update({ 'system.droidSystems.appendages': appendages });
-  }
+    html.find('[data-action="add-sensor"]').on('click', async () => {
+      const descriptor = { type: 'add-sensor' };
+      const plan = DroidEngine.buildConfigurationPlan(this.actor, descriptor);
+      await ActorEngine.updateActor(plan.actor, plan.updateData);
+    });
 
-  async _addSensorDialog() {
-    const sensors = this.actor.system.droidSystems?.sensors || [];
-    sensors.push({ id: `sensor_${Date.now()}`, name: 'New Sensor' });
-    await this.actor.update({ 'system.droidSystems.sensors': sensors });
-  }
+    html.find('[data-action="add-weapon"]').on('click', async () => {
+      const descriptor = { type: 'add-weapon' };
+      const plan = DroidEngine.buildConfigurationPlan(this.actor, descriptor);
+      await ActorEngine.updateActor(plan.actor, plan.updateData);
+    });
 
-  async _addWeaponDialog() {
-    const weapons = this.actor.system.droidSystems?.weapons || [];
-    weapons.push({ id: `weapon_${Date.now()}`, name: 'New Weapon', quantity: 1 });
-    await this.actor.update({ 'system.droidSystems.weapons': weapons });
-  }
-
-  async _addAccessoryDialog() {
-    const accessories = this.actor.system.droidSystems?.accessories || [];
-    accessories.push({ id: `acc_${Date.now()}`, name: 'New Accessory' });
-    await this.actor.update({ 'system.droidSystems.accessories': accessories });
+    html.find('[data-action="add-accessory"]').on('click', async () => {
+      const descriptor = { type: 'add-accessory' };
+      const plan = DroidEngine.buildConfigurationPlan(this.actor, descriptor);
+      await ActorEngine.updateActor(plan.actor, plan.updateData);
+    });
   }
 }

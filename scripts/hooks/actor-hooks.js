@@ -126,13 +126,15 @@ async function handleItemCreate(item, options, userId) {
     if (item.type === 'shieldGenerator' && actor.type === 'droid') {
         const sr = item.system?.sr ?? 0;
         if (sr > 0) {
-            // Set shield rating on the actor
-            await actor.update({
+            // PHASE 10: Route through ActorEngine with guard key
+            await globalThis.SWSE.ActorEngine.updateActor(actor, {
                 'system.shields': {
                     value: sr,      // Current shield rating
                     max: sr,        // Maximum shield rating
                     rating: sr      // Display rating
                 }
+            }, {
+                meta: { guardKey: 'shield-install' }
             });
             SWSELogger.log(`Shield Generator installed on ${actor.name}: SR ${sr}`);
         }
@@ -281,13 +283,16 @@ async function handleItemDelete(item, options, userId) {
     // SHIELD GENERATOR REMOVAL (For Droids)
     // =========================================================================
     if (item.type === 'shieldGenerator' && actor.type === 'droid') {
+        // PHASE 10: Route through ActorEngine with guard key
         // Clear shield rating when shield is removed
-        await actor.update({
+        await globalThis.SWSE.ActorEngine.updateActor(actor, {
             'system.shields': {
                 value: 0,
                 max: 0,
                 rating: 0
             }
+        }, {
+            meta: { guardKey: 'shield-removal' }
         });
         SWSELogger.log(`Shield Generator removed from ${actor.name}`);
         return;
@@ -333,8 +338,11 @@ async function handleItemDelete(item, options, userId) {
 
         const skillKey = skillNames[focusedSkillName];
         if (skillKey && actor.system.skills[skillKey]) {
-            globalThis.SWSE.ActorEngine.updateActor(actor, {
+            // PHASE 10: Route through ActorEngine with guard key and await
+            await globalThis.SWSE.ActorEngine.updateActor(actor, {
                 [`system.skills.${skillKey}.focused`]: false
+            }, {
+                meta: { guardKey: 'skill-focus-removal' }
             });
 
             ui.notifications.info(`Removed Skill Focus from ${focusedSkillName}`);
@@ -452,7 +460,9 @@ async function handleIntelligenceIncrease({ actor, skillsToGain, languagesToGain
                         trainedNames.push(skillNames[skillKey] || skillKey);
                     }
 
-                    await actor.update(updates);
+                    await globalThis.SWSE.ActorEngine.updateActor(actor, updates, {
+                        meta: { guardKey: 'hook-skill-selection' }
+                    });
 
                     // Clear pending gains
                     const { AttributeIncreaseHandler } = await import('../progression/engine/attribute-increase-handler.js');

@@ -1,9 +1,12 @@
 /**
  * Recovery & Healing House Rule Mechanics
  * Handles HP and Vitality recovery during rest
+ *
+ * PHASE 7: All mutations routed through ActorEngine for atomic governance
  */
 
 import { SWSELogger } from '../utils/logger.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 const NS = 'foundryvtt-swse';
 
@@ -72,15 +75,15 @@ export class RecoveryMechanics {
     const vitalityRecovery = this.calculateVitalityRecovery(actor);
 
     try {
+      // PHASE 7: Batch recovery updates into single transaction
+      const updateData = {};
+
       // Recover HP
       if (hpRecovery > 0) {
         const currentHP = actor.system?.hp?.value || 0;
         const maxHP = actor.system?.hp?.max || 0;
         const newHP = Math.min(currentHP + hpRecovery, maxHP);
-
-        await actor.update({
-          'system.hp.value': newHP
-        });
+        updateData['system.hp.value'] = newHP;
       }
 
       // Recover Vitality Points
@@ -88,10 +91,12 @@ export class RecoveryMechanics {
         const currentVitality = actor.system?.vp?.value || 0;
         const maxVitality = actor.system?.vp?.max || 0;
         const newVitality = Math.min(currentVitality + vitalityRecovery, maxVitality);
+        updateData['system.vp.value'] = newVitality;
+      }
 
-        await actor.update({
-          'system.vp.value': newVitality
-        });
+      // Single atomic update
+      if (Object.keys(updateData).length > 0) {
+        await ActorEngine.updateActor(actor, updateData);
       }
 
       return {

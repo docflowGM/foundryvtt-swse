@@ -64,8 +64,10 @@ export class EquipmentEngine {
      * Set actor credits
      */
     static async setCredits(actor, amount) {
-        await actor.update({
+        await globalThis.SWSE.ActorEngine.updateActor(actor, {
             'system.credits': amount
+        }, {
+            meta: { guardKey: 'equipment-credits-update' }
         });
 
         SWSELogger.log(`Credits set to: ${amount}`);

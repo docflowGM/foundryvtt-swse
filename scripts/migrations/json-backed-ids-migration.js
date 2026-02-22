@@ -82,7 +82,13 @@ export async function runJsonBackedIdsMigration() {
 
     if (Object.keys(update).length > 0) {
       try {
-        await actor.update(update, { diff: true });
+        await actor.update(update, {
+          diff: true,
+          meta: {
+            origin: 'migration',
+            version: MIGRATION_VERSION
+          }
+        });
         updatedCount += 1;
       } catch (e) {
         SWSELogger.warn(`[MIGRATION] Failed updating actor ${actor.id} (${actor.name})`, e);

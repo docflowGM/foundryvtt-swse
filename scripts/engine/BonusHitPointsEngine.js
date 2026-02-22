@@ -193,16 +193,18 @@ Hooks.on('deleteCombat', async (combat) => {
 });
 
 /**
- * Hook: Consolidate bonus HP from multiple sources
- * This runs during derived data preparation to ensure only the maximum bonus HP is applied
+ * REMOVED: prepareDerivedData hook that performed direct mutations
+ *
+ * Why: This hook was violating governance by directly mutating actor.system.hp.bonus
+ * outside the ActorEngine lifecycle.
+ *
+ * Bonus HP is now only consolidated when explicitly applied via:
+ * - applyBonusHP(actor, amount, options)
+ * - createBonusHPEffect(actor, config)
+ * - resetBonusHP(actor)
+ *
+ * All mutations flow through ActorEngine and are subject to Sentinel validation.
  */
-Hooks.on('prepareDerivedData', (actor) => {
-  if (!actor.system?.hp) {return;}
-
-  // Consolidate bonus HP from effects (take maximum, not sum)
-  const maxBonus = BonusHitPointsEngine.consolidateBonusHP(actor);
-  actor.system.hp.bonus = maxBonus;
-});
 
 /**
  * USAGE EXAMPLES FOR TALENTS AND SPECIES TRAITS

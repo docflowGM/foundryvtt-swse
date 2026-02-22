@@ -3,7 +3,11 @@
  *
  * Manages Starship Maneuver selection, granting, and suite management
  * Works similarly to ForcePowerManager for Force Powers
+ *
+ * PHASE 7: All mutations routed through ActorEngine for atomic governance
  */
+
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 export class StarshipManeuverManager {
   /**
@@ -109,7 +113,8 @@ export class StarshipManeuverManager {
       }
     }));
 
-    const created = await actor.createEmbeddedDocuments('Item', itemsToCreate);
+    // PHASE 7: Route through ActorEngine for governance
+    const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', itemsToCreate);
     return created.map(item => item.id);
   }
 
@@ -135,9 +140,10 @@ export class StarshipManeuverManager {
       await this.grantManeuvers(actor, selectedManeuvers);
     }
 
+    // PHASE 7: Batch initialization update through ActorEngine
     // Initialize maneuver suite if not already set
     if (!actor.system.starshipManeuverSuite) {
-      await actor.update({
+      await ActorEngine.updateActor(actor, {
         'system.starshipManeuverSuite': {
           max: maneuverCount,
           maneuvers: []
@@ -147,7 +153,7 @@ export class StarshipManeuverManager {
       // Update max if it's larger
       const newMax = this.calculateManeuverSuiteSize(actor);
       if (newMax > actor.system.starshipManeuverSuite.max) {
-        await actor.update({
+        await ActorEngine.updateActor(actor, {
           'system.starshipManeuverSuite.max': newMax
         });
       }
@@ -189,9 +195,9 @@ export class StarshipManeuverManager {
           await this.grantManeuvers(actor, selectedManeuvers);
         }
 
-        // Update suite maximum
+        // PHASE 7: Update suite maximum through ActorEngine
         const newMax = this.calculateManeuverSuiteSize(actor);
-        await actor.update({
+        await ActorEngine.updateActor(actor, {
           'system.starshipManeuverSuite.max': newMax
         });
       }
