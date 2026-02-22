@@ -7,6 +7,8 @@ import { ScaleEngine } from './scale-engine.js';
 import { SubsystemEngine } from './starship/subsystem-engine.js';
 import { EnhancedShields } from './starship/enhanced-shields.js';
 import { VehicleTurnController } from './starship/vehicle-turn-controller.js';
+import { VehicleDogfighting } from './subsystems/vehicle/vehicle-dogfighting.js';
+import { VehicleCollisions } from './subsystems/vehicle/vehicle-collisions.js';
 import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { CombatUIAdapter } from './ui/CombatUIAdapter.js';
 
@@ -235,5 +237,45 @@ export class CombatEngine {
 
   static async advanceVehiclePhase(vehicle) {
     return VehicleTurnController.advancePhase(vehicle);
+  }
+
+  /* -------------------------------------------- */
+  /* VEHICLE COMBAT SUBSYSTEMS (Phase 2c)        */
+  /* -------------------------------------------- */
+
+  /**
+   * Initiate a dogfight between two vehicles.
+   * Delegates to VehicleDogfighting subsystem.
+   *
+   * @param {Actor} attacker - Initiating vehicle
+   * @param {Actor} target - Target vehicle
+   * @returns {Promise<Object>} Dogfight result
+   */
+  static async initiateDogfight(attacker, target) {
+    return VehicleDogfighting.initiateDogfight(attacker, target);
+  }
+
+  /**
+   * Attempt to break free from a dogfight.
+   * Delegates to VehicleDogfighting subsystem.
+   *
+   * @param {Actor} attacker - Vehicle attempting to break free
+   * @param {Actor} defender - Opponent vehicle
+   * @returns {Promise<Object>} Break free result
+   */
+  static async breakFreeDogfight(attacker, defender) {
+    return VehicleDogfighting.breakFree(attacker, defender);
+  }
+
+  /**
+   * Perform a ramming attack.
+   * Delegates to VehicleCollisions subsystem.
+   *
+   * @param {Actor} attacker - Ramming vehicle
+   * @param {Actor} target - Target vehicle
+   * @returns {Promise<Object>} Damage result
+   */
+  static async performRam(attacker, target) {
+    return VehicleCollisions.ram(attacker, target);
   }
 }
