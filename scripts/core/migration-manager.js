@@ -1,14 +1,62 @@
 /**
  * SWSE Migration Manager
  * Coordinates all system migrations for data model updates and actor schema versioning
+ * PHASE 11: All migrations route through MigrationEngine and ActorEngine
  * HARDENED: Per-actor schema versioning with rollback support
  */
 
 import { swseLogger } from '../utils/logger.js';
+import { MigrationEngine } from '../engine/migration/MigrationEngine.js';
 
 const SYSTEM_SCHEMA_VERSION = 1;
 
+// Define migration functions (non-mutating plan builders)
+const migrations = {
+  1: (actor) => {
+    const updates = {};
+
+    // Ensure meta field exists (required for street legal tracking)
+    if (!actor.system.meta) {
+      updates['system.meta'] = {
+        schemaVersion: SYSTEM_SCHEMA_VERSION,
+        streetLegal: true,
+        lastValidation: {
+          passed: true,
+          errors: [],
+          timestamp: Date.now()
+        }
+      };
+    }
+
+    // Ensure progression structure exists
+    if (!actor.system.progression) {
+      updates['system.progression'] = {
+        classLevels: [],
+        feats: [],
+        talents: [],
+        skills: [],
+        abilities: {}
+      };
+    }
+
+    return { updates };
+  }
+};
+
 export class MigrationManager {
+  /**
+   * Initialize migration system
+   * Called from Hooks.once("init") as per Foundry conventions
+   */
+  static init() {
+    // Register all migrations with MigrationEngine
+    for (const [version, migrationFn] of Object.entries(migrations)) {
+      MigrationEngine.register(String(version), migrationFn);
+    }
+
+    swseLogger.log(`[MIGRATION] Migration system initialized with ${Object.keys(migrations).length} migrations`);
+  }
+
   /**
    * Run all system migrations
    * Called from Hooks.once("init") as per Foundry conventions
@@ -29,13 +77,19 @@ export class MigrationManager {
 
       swseLogger.log(`[MIGRATION] Migrating from version ${lastMigratedVersion} to ${SYSTEM_SCHEMA_VERSION}`);
 
-      // Run per-actor migrations
-      await this.migrateAllActors();
+      // PHASE 11: Use MigrationEngine for all actor migrations
+      // Atomic, governed, auditable
+      const results = await MigrationEngine.migrateAllActors(String(SYSTEM_SCHEMA_VERSION));
 
       // Update migration flag
       await game.settings.set('foundryvtt-swse', 'lastMigratedSchemaVersion', SYSTEM_SCHEMA_VERSION);
 
-      swseLogger.log(`[MIGRATION] World migration complete`);
+      swseLogger.log(`[MIGRATION] ✅ World migration complete:`, {
+        migrated: results.migrated,
+        skipped: results.skipped,
+        failed: results.failed
+      });
+
     } catch (err) {
       swseLogger.error(`[MIGRATION] World migration failed:`, err);
       ui.notifications?.error(`SWSE: Migration failed - ${err.message}`);
@@ -44,75 +98,23 @@ export class MigrationManager {
 
   /**
    * Migrate all actors in the world
+   * @deprecated Use MigrationEngine.migrateAllActors instead
    * @private
    */
   static async migrateAllActors() {
-    const actors = game.actors.contents || [];
-    let migrated = 0;
-
-    swseLogger.log(`[MIGRATION] Migrating ${actors.length} actors...`);
-
-    for (const actor of actors) {
-      try {
-        const updated = await this.migrateActorData(actor);
-        if (updated) migrated++;
-      } catch (err) {
-        swseLogger.error(`[MIGRATION] Failed to migrate actor ${actor.name}:`, err);
-      }
-    }
-
-    swseLogger.log(`[MIGRATION] Migrated ${migrated}/${actors.length} actors`);
+    // This method is now delegated to MigrationEngine
+    return MigrationEngine.migrateAllActors(String(SYSTEM_SCHEMA_VERSION));
   }
 
   /**
    * Migrate a single actor's data
+   * @deprecated Use MigrationEngine.migrateActor instead
    * @param {Actor} actor - Actor to migrate
    * @returns {Promise<boolean>} - True if actor was modified
    */
   static async migrateActorData(actor) {
-    if (!actor?.system) return false;
-
-    let updated = false;
-    const updates = {};
-
-    // Ensure meta field exists (required for street legal tracking)
-    if (!actor.system.meta) {
-      updates['system.meta'] = {
-        schemaVersion: SYSTEM_SCHEMA_VERSION,
-        streetLegal: true,
-        lastValidation: {
-          passed: true,
-          errors: [],
-          timestamp: Date.now()
-        }
-      };
-      updated = true;
-    } else {
-      // Update schema version if needed
-      if (!actor.system.meta.schemaVersion) {
-        updates['system.meta.schemaVersion'] = SYSTEM_SCHEMA_VERSION;
-        updated = true;
-      }
-    }
-
-    // Ensure progression structure exists
-    if (!actor.system.progression) {
-      updates['system.progression'] = {
-        classLevels: [],
-        feats: [],
-        talents: [],
-        skills: [],
-        abilities: {}
-      };
-      updated = true;
-    }
-
-    // Apply updates if any
-    if (updated && Object.keys(updates).length > 0) {
-      await actor.update(updates);
-    }
-
-    return updated;
+    const result = await MigrationEngine.migrateActor(actor, String(SYSTEM_SCHEMA_VERSION));
+    return result.success && !result.skipped;
   }
 
   /**
