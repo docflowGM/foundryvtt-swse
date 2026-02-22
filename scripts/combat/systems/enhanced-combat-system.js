@@ -2,78 +2,104 @@ import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMi
 import { SWSERoll } from '../rolls/enhanced-rolls.js';
 import { createChatMessage } from '../../core/document-api-v13.js';
 import { DamageSystem } from '../damage-system.js';
+import { CombatEngine } from '../../engine/combat/CombatEngine.js';
 
+/**
+ * SWSE Enhanced Combat System (UI Adapter)
+ *
+ * PHASE 1 REFACTOR: Thin wrapper around CombatEngine
+ * - All attack orchestration moved to CombatEngine.resolveAttack()
+ * - This class now handles: UI input gathering, roll execution, card display
+ * - No mutation logic — all routes through ActorEngine → DamageEngine
+ */
 export class SWSECombat {
 
   static getSelectedActor() { return canvas.tokens.controlled[0]?.actor ?? null; }
 
+  /**
+   * UI ADAPTER: Gather inputs → SWSERoll → CombatEngine → Display cards
+   *
+   * All attack resolution orchestration delegated to CombatEngine.resolveAttack()
+   * This method only handles:
+   * 1. Input gathering (target selection, modifiers)
+   * 2. Attack roll execution (via SWSERoll)
+   * 3. Engine coordination
+   * 4. UI display (chat cards)
+   */
   static async rollAttack(attacker, weapon, target = null, opts = {}) {
     if (!attacker || !weapon) {return;}
 
+    /* GATHER TARGET */
     if (!target) {
       const t = [...game.user.targets];
       if (t.length === 1) {target = t[0].actor;}
     }
 
+    if (!target) {return;}
+
+    /* GET TOKENS FOR FLANKING CHECK */
     const attackerToken = attacker.getActiveTokens()[0];
     const targetToken = target?.getActiveTokens()[0];
 
+    /* GATHER MODIFIERS (UI layer only — not sent to engine) */
     const atkBonus = computeAttackBonus(attacker, weapon);
-    const { roll } = await SWSERoll.rollAttack(attacker, weapon, { fpBefore: true });
+    const dmgBonus = computeDamageBonus(attacker, weapon);
 
-    const d20 = roll.dice[0].results[0].result;
-    const total = roll.total;
+    /* ROLL ATTACK (via SWSERoll for FP support, advantage, etc.) */
+    const { roll: attackRoll } = await SWSERoll.rollAttack(attacker, weapon, { fpBefore: true });
 
+    /* GATHER TACTICAL MODIFIERS */
+    const coverType = opts.coverType || 'none';
+    const coverBonus = getCoverBonus(coverType);
+
+    const concealment = opts.concealment || 'none';
+    const concealChance = getConcealmentMissChance(concealment);
+
+    let flankingBonus = 0;
+    if (attackerToken && targetToken && this._checkFlanking(attackerToken, targetToken)) {
+      flankingBonus = getFlankingBonus(true);
+    }
+
+    /* DELEGATE ATTACK ORCHESTRATION TO COMBATENGINE */
+    const engineResult = await CombatEngine.resolveAttack({
+      attacker,
+      target,
+      weapon,
+      attackRoll,
+      options: {
+        coverBonus,
+        concealmentMissChance: concealChance,
+        flankingBonus,
+        damageBonus: dmgBonus,
+        modifiers: {
+          flanking: flankingBonus,
+          cover: coverBonus,
+          concealment: concealChance
+        }
+      }
+    });
+
+    /* FORMAT RESULT FOR UI DISPLAY */
+    const d20 = attackRoll.dice?.[0]?.results?.[0]?.result ?? 0;
     const result = {
       attacker,
       weapon,
       target,
-      roll,
+      roll: attackRoll,
       d20,
-      total,
+      total: attackRoll.total,
       critThreat: d20 >= (weapon.system?.critRange || 20),
       natural20: d20 === 20,
       natural1: d20 === 1,
-      hit: false,
-      hitContext: null
+      hit: engineResult.hit,
+      hitContext: engineResult.context,
+      damageRoll: engineResult.damageRoll,
+      damage: engineResult.damage,
+      damageApplied: engineResult.damageApplied,
+      threshold: engineResult.threshold
     };
 
-    if (target) {
-      const context = {
-        attacker,
-        weapon,
-        target,
-        roll,
-        totalAttack: total,
-        defenseType: 'reflex',
-        defenseValue: target.system.defenses?.reflex?.total ?? 10,
-        modifiers: {},
-        hit: null
-      };
-
-      const coverType = 'none';
-      const coverBonus = getCoverBonus(coverType);
-      context.modifiers.coverBonus = coverBonus;
-      context.defenseValue += coverBonus;
-
-      const concealment = 'none';
-      const concealChance = getConcealmentMissChance(concealment);
-      context.modifiers.concealChance = concealChance;
-
-      if (attackerToken && targetToken && this._checkFlanking(attackerToken, targetToken)) {atkBonus + getFlankingBonus(true);}
-
-      Hooks.callAll('swse.preHitResolution', context);
-
-      if (context.hit === null) {
-        if (result.natural1) {context.hit = false;} else if (result.natural20) {context.hit = true;} else {context.hit = total >= context.defenseValue;}
-      }
-
-      if (context.hit && concealChance > 0 && !checkConcealmentHit(concealChance)) {context.hit = false;}
-
-      result.hit = context.hit;
-      result.hitContext = context;
-    }
-
+    /* CREATE CHAT CARD (UI responsibility) */
     await this._createAttackCard(result);
     return result;
   }

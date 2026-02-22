@@ -1,10 +1,11 @@
 import { swseLogger } from '../utils/logger.js';
+import { CombatEngine } from '../engine/combat/CombatEngine.js';
 
 /**
- * SWSE Combat Document (v13+)
+ * SWSE Combat Document (v13+) — PHASE 1 CONSOLIDATED
+ * - Routes all initiative through CombatEngine (unified orchestration)
  * - Uses correct SWSE initiative (Skill-based)
  * - Uses updated Second Wind + Action Economy systems
- * - Removes deprecated ActorEngine calls
  * - Fully v13-compatible combat lifecycle overrides
  */
 export class SWSECombatDocument extends Combat {
@@ -59,41 +60,32 @@ export class SWSECombatDocument extends Combat {
   }
 
   /* -------------------------------------------- */
-  /* ROLL INITIATIVE                              */
+  /* ROLL INITIATIVE (Consolidated via CombatEngine) */
   /* -------------------------------------------- */
 
+  /**
+   * Roll initiative for combatants.
+   * PHASE 1 CONSOLIDATION: All initiative rolls route through CombatEngine.
+   *
+   * For each combatant, delegates to CombatEngine.rollInitiative() which:
+   *   - Routes through SWSEInitiative
+   *   - Applies to Combat Tracker automatically
+   *   - Resolves ties
+   *   - Posts to chat
+   *   - Handles Force Points
+   */
   async rollInitiative(ids, { formula = null, updateTurn = true, messageOptions = {} } = {}) {
     ids = typeof ids === 'string' ? [ids] : ids;
-
-    const updates = [];
-    const messages = [];
 
     for (const id of ids) {
       const combatant = this.combatants.get(id);
       if (!combatant?.isOwner) {continue;}
 
       const actor = combatant.actor;
-      const rollFormula = formula || this._getInitiativeFormula(combatant);
+      if (!actor) {continue;}
 
-      // safeRoll is async and already evaluates the roll, so just await it directly
-      const roll = await globalThis.SWSE.RollEngine.safeRoll(rollFormula);
-
-      updates.push({ _id: id, initiative: roll.total });
-
-      const chatData = await roll.toMessage({
-        speaker: ChatMessage.getSpeaker({ actor, token: combatant.token, alias: combatant.name }),
-        flavor: game.i18n.format('COMBAT.RollsInitiative', { name: combatant.name }),
-        flags: { 'core.initiativeRoll': true },
-        ...messageOptions
-      }, { create: true });
-
-      if (roll.dice.length) {chatData.sound = CONFIG.sounds.dice;}
-      messages.push(chatData);
-    }
-
-    if (updates.length) {
-      await this.updateEmbeddedDocuments('Combatant', updates);
-      await ChatMessage.implementation.create(messages);
+      /* DELEGATE ALL INITIATIVE ORCHESTRATION TO COMBATENGINE */
+      await CombatEngine.rollInitiative(actor, { useForce: false });
     }
 
     if (updateTurn && this.round === 0) {

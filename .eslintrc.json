@@ -148,6 +148,79 @@
         "selector": "CallExpression[callee.object.name='ChatMessage'][callee.property.name='create']",
         "message": "Consider using createChatMessage() wrapper from core/document-api-v13.js for consistency with v13 patterns."
       }
+    ],
+
+    /* =================================================================
+       PHASE 3B: COMBAT ARCHITECTURE RULES (Locked via linting)
+       ================================================================= */
+
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "./damage-system",
+            "message": "@swse/ui-engine-separation: Legacy UI dialog system should not be imported in engine layer. Use DamageEngine directly."
+          },
+          {
+            "name": "../damage-system",
+            "message": "@swse/ui-engine-separation: Legacy UI dialog system should not be imported in engine layer. Use DamageEngine directly."
+          }
+        ],
+        "patterns": [
+          {
+            "group": ["**/combat/aid-another", "**/combat/autofire*", "**/combat/burst-fire", "**/combat/feign*", "**/combat/feint*", "**/combat/ion-damage", "**/combat/maiming", "**/combat/saber-lock*", "**/combat/tactics", "**/combat/treat-poison", "**/combat/weapon-mode"],
+            "importNames": ["*"],
+            "message": "@swse/combat-engine-authority: Legacy mechanics deleted in Phase 3A. Use CombatEngine.resolveAttack() instead."
+          },
+          {
+            "group": ["**/engine/combat/**", "!**/engine/combat/ui/**"],
+            "importNames": ["*"],
+            "importNamePattern": "^.*UI.*|^.*Dialog.*|^.*Template.*",
+            "message": "@swse/ui-engine-separation: UI components forbidden in engine layer (except CombatUIAdapter). Use createChatMessage() only."
+          }
+        ]
+      }
+    ],
+
+    "no-restricted-globals": [
+      "error",
+      {
+        "name": "actor",
+        "message": "@swse/mutations-through-actor-engine: Direct actor object mutation forbidden. Use ActorEngine.applyDamage() or ActorEngine.updateActor()."
+      }
     ]
-  }
+  },
+
+  "overrides": [
+    {
+      "files": ["scripts/engine/combat/**/*.js"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["**/combat/"],
+                "message": "@swse/no-legacy-imports-in-engine: Engine domain cannot import from legacy combat domain",
+                "allowRelativePaths": false
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["scripts/combat/**/*.js"],
+      "rules": {
+        "no-restricted-patterns": [
+          "warn",
+          {
+            "pattern": "export\\s+(async\\s+)?(function|class)\\s+\\w*[Aa]ttack",
+            "message": "@swse/combat-engine-authority: New attack resolution methods must extend CombatEngine, not create siblings"
+          }
+        ]
+      }
+    }
+  ]
 }

@@ -14,6 +14,7 @@ import { DataLayer } from './layers/data-layer.js';
 import { HooksLayer } from './layers/hooks-layer.js';
 import { PromisesLayer } from './layers/promises-layer.js';
 import { PerformanceLayer } from './layers/performance-layer.js';
+import { CombatLayer } from './layers/combat-layer.js';
 
 // PHASE 3: Import mutation authority layer
 import { MutationIntegrityLayer } from './mutation-integrity-layer.js';
@@ -38,6 +39,9 @@ export function initializeSentinelLayers() {
 
   // PHASE 3: Register mutation authority enforcement
   SentinelEngine.registerLayer('mutation', MutationIntegrityLayer);
+
+  // PHASE 4: Register combat domain sovereignty layer
+  SentinelEngine.registerLayer('combat', CombatLayer);
 }
 
 /**

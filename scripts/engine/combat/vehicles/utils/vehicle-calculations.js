@@ -11,7 +11,7 @@
  * Integrated with:
  *  - combat-utils.js
  *  - vehicle-shared.js
- *  - SWSERoll / DamageSystem via SWSEVehicleCombat
+ *  - Shared utilities for engine vehicle subsystems (Phase 2c+)
  */
 
 import { getVehicleCTPenalty, measureDistance, measureSquares } from './vehicle-shared.js';

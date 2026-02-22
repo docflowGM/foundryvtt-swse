@@ -7,7 +7,10 @@ import { ScaleEngine } from './scale-engine.js';
 import { SubsystemEngine } from './starship/subsystem-engine.js';
 import { EnhancedShields } from './starship/enhanced-shields.js';
 import { VehicleTurnController } from './starship/vehicle-turn-controller.js';
+import { VehicleDogfighting } from './subsystems/vehicle/vehicle-dogfighting.js';
+import { VehicleCollisions } from './subsystems/vehicle/vehicle-collisions.js';
 import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { CombatUIAdapter } from './ui/CombatUIAdapter.js';
 
 export class CombatEngine {
 
@@ -25,37 +28,157 @@ export class CombatEngine {
   }
 
   /* -------------------------------------------- */
-  /* INITIATIVE (Skill-based)                     */
+  /* INITIATIVE (Skill-based) — PHASE 1 Consolidated */
   /* -------------------------------------------- */
 
+  /**
+   * SINGLE ORCHESTRATION AUTHORITY for initiative rolls.
+   *
+   * All initiative rolls MUST route through this method.
+   * This ensures:
+   *   - Consistent Force Point handling
+   *   - Unified tie resolution
+   *   - Single chat message flow
+   *   - Combat Tracker consistency
+   *
+   * @param {Actor} actor
+   * @param {Object} options
+   * @param {boolean} options.useForce - Spend Force Point on roll
+   * @returns {Object} { roll, total, usedForce, forceBonus, baseMod }
+   */
   static async rollInitiative(actor, options = {}) {
     return SWSEInitiative.rollInitiative(actor, options);
   }
 
   /* -------------------------------------------- */
-  /* ATTACK RESOLUTION PIPELINE                   */
+  /* ATTACK RESOLUTION PIPELINE (Full Orchestration) */
   /* -------------------------------------------- */
 
-  static async resolveAttack({ attacker, target, weapon, options = {} }) {
+  /**
+   * Full attack resolution orchestration.
+   *
+   * @param {Object} params
+   * @param {Actor} params.attacker - Attacking actor
+   * @param {Actor} params.target - Target actor
+   * @param {Item} params.weapon - Weapon item
+   * @param {Object} params.attackRoll - Pre-rolled attack (from SWSERoll)
+   * @param {Object} params.options - Additional options
+   * @param {number} params.options.coverBonus - Defense bonus from cover
+   * @param {number} params.options.concealmentMissChance - Miss chance from concealment
+   * @param {number} params.options.flankingBonus - Attack bonus from flanking
+   * @param {Function} params.options.onPreHitResolution - Hook for plugin modification
+   * @returns {Object} Attack resolution result
+   */
+  static async resolveAttack({
+    attacker,
+    target,
+    weapon,
+    attackRoll,
+    options = {}
+  }) {
 
-    if (!attacker or !target or !weapon) {
-      return { success: false, reason: "Invalid attacker/target/weapon" };
+    if (!attacker || !target || !weapon || !attackRoll) {
+      return { success: false, reason: "Invalid attacker/target/weapon/roll" };
     }
 
-    const attackBonus = weapon.system.attackBonus ?? 0;
-    const attackRoll = await RollEngine.safeRoll(`1d20 + ${attackBonus}`);
+    /* PHASE 2b: SUBSYSTEM PENALTY INTEGRATION (Vehicle only) */
+    let subsystemPenalty = 0;
+    if (attacker.type === "vehicle") {
+      const penalties = SubsystemEngine.getAggregatePenalties(attacker);
 
-    const defense = target.system.defenses?.reflex?.total ?? 10;
+      /* Block attack if weapons offline */
+      if (penalties.weaponsOffline) {
+        const blockedResult = {
+          hit: false,
+          blocked: true,
+          reason: "Weapons subsystem is offline. No attacks possible.",
+          attackRoll,
+          context: {
+            attacker,
+            target,
+            weapon,
+            defenseType: 'reflex',
+            defenseValue: target.system.defenses?.reflex?.total ?? 10
+          },
+          attacker,
+          target,
+          weapon
+        };
+        await CombatUIAdapter.handleAttackResult(blockedResult);
+        return blockedResult;
+      }
 
-    const hit = attackRoll.total >= defense;
+      /* Apply attack penalty from damaged subsystems */
+      subsystemPenalty = penalties.attackPenalty ?? 0;
+    }
 
-    if (!hit) {
-      return { hit: false, attackRoll };
+    /* HIT RESOLUTION CONTEXT */
+    const context = {
+      attacker,
+      target,
+      weapon,
+      roll: attackRoll,
+      totalAttack: attackRoll.total + subsystemPenalty,
+      defenseType: 'reflex',
+      defenseValue: target.system.defenses?.reflex?.total ?? 10,
+      modifiers: options.modifiers || {},
+      hit: options.precomputedHit ?? null,
+      subsystemPenalty
+    };
+
+    /* APPLY COVER BONUS */
+    if (options.coverBonus !== undefined) {
+      context.modifiers.coverBonus = options.coverBonus;
+      context.defenseValue += options.coverBonus;
+    }
+
+    /* PRE-HIT HOOK (Allow plugins to modify context) */
+    if (options.onPreHitResolution) {
+      await options.onPreHitResolution(context);
+    }
+    Hooks.callAll('swse.preHitResolution', context);
+
+    /* RESOLVE HIT */
+    if (context.hit === null) {
+      const d20 = attackRoll.dice?.[0]?.results?.[0]?.result ?? 0;
+      if (d20 === 1) {
+        context.hit = false;
+      } else if (d20 === 20) {
+        context.hit = true;
+      } else {
+        context.hit = context.totalAttack >= context.defenseValue;
+      }
+    }
+
+    /* CONCEALMENT MISS CHANCE */
+    if (context.hit && options.concealmentMissChance && options.concealmentMissChance > 0) {
+      const roll = Math.random() * 100;
+      if (roll < options.concealmentMissChance) {
+        context.hit = false;
+      }
+    }
+
+    if (!context.hit) {
+      const missResult = {
+        hit: false,
+        attackRoll,
+        context,
+        attacker,
+        target,
+        weapon
+      };
+
+      /* DELEGATE UI HANDLING TO ADAPTER (Phase 1.5 consolidation) */
+      await CombatUIAdapter.handleAttackResult(missResult);
+
+      return missResult;
     }
 
     /* DAMAGE */
-    const damageFormula = weapon.system.damage ?? "0";
-    const damageRoll = await RollEngine.safeRoll(damageFormula);
+    const damageFormula = weapon.system.damage ?? "1d6";
+    const damageBonus = options.damageBonus ?? 0;
+    const fullDamageFormula = damageBonus > 0 ? `${damageFormula} + ${damageBonus}` : damageFormula;
+    const damageRoll = await RollEngine.safeRoll(fullDamageFormula);
     let damage = damageRoll.total;
 
     /* SCALE */
@@ -64,7 +187,7 @@ export class CombatEngine {
 
     /* SHIELDS (Vehicle only) */
     if (target.type === "vehicle") {
-      const zone = "fore";
+      const zone = options.shieldZone || "fore";
       const shieldResult = await EnhancedShields.applyDamageToZone(target, zone, damage);
       damage = shieldResult.overflow;
     }
@@ -85,13 +208,23 @@ export class CombatEngine {
       await SubsystemEngine.escalate(target, damage);
     }
 
-    return {
-      hit: True,
+    const result = {
+      hit: true,
       attackRoll,
       damageRoll,
+      damage,
       damageApplied: damageResult,
-      threshold: thresholdResult
+      threshold: thresholdResult,
+      context,
+      attacker,
+      target,
+      weapon
     };
+
+    /* DELEGATE UI HANDLING TO ADAPTER (Phase 1.5 consolidation) */
+    await CombatUIAdapter.handleAttackResult(result);
+
+    return result;
   }
 
   /* -------------------------------------------- */
@@ -104,5 +237,45 @@ export class CombatEngine {
 
   static async advanceVehiclePhase(vehicle) {
     return VehicleTurnController.advancePhase(vehicle);
+  }
+
+  /* -------------------------------------------- */
+  /* VEHICLE COMBAT SUBSYSTEMS (Phase 2c)        */
+  /* -------------------------------------------- */
+
+  /**
+   * Initiate a dogfight between two vehicles.
+   * Delegates to VehicleDogfighting subsystem.
+   *
+   * @param {Actor} attacker - Initiating vehicle
+   * @param {Actor} target - Target vehicle
+   * @returns {Promise<Object>} Dogfight result
+   */
+  static async initiateDogfight(attacker, target) {
+    return VehicleDogfighting.initiateDogfight(attacker, target);
+  }
+
+  /**
+   * Attempt to break free from a dogfight.
+   * Delegates to VehicleDogfighting subsystem.
+   *
+   * @param {Actor} attacker - Vehicle attempting to break free
+   * @param {Actor} defender - Opponent vehicle
+   * @returns {Promise<Object>} Break free result
+   */
+  static async breakFreeDogfight(attacker, defender) {
+    return VehicleDogfighting.breakFree(attacker, defender);
+  }
+
+  /**
+   * Perform a ramming attack.
+   * Delegates to VehicleCollisions subsystem.
+   *
+   * @param {Actor} attacker - Ramming vehicle
+   * @param {Actor} target - Target vehicle
+   * @returns {Promise<Object>} Damage result
+   */
+  static async performRam(attacker, target) {
+    return VehicleCollisions.ram(attacker, target);
   }
 }
