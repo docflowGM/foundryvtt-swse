@@ -44,6 +44,33 @@ export const ActorEngine = {
     }
   },
 
+  // PHASE 11: Track active migrations to prevent recursion
+  #activeMigrations: new Set(),
+
+  /**
+   * Track migration context
+   * @private
+   */
+  #markMigrationActive(actorId) {
+    this.#activeMigrations.add(actorId);
+  },
+
+  /**
+   * Clear migration context
+   * @private
+   */
+  #clearMigrationActive(actorId) {
+    this.#activeMigrations.delete(actorId);
+  },
+
+  /**
+   * Check if actor is currently migrating
+   * @private
+   */
+  #isMigrationActive(actorId) {
+    return this.#activeMigrations.has(actorId);
+  },
+
   /**
    * Apply a template or module of predefined data to the actor,
    * then rebuild its derived values.
@@ -100,6 +127,24 @@ export const ActorEngine = {
       }
 
       // ========================================
+      // PHASE 11: Migration context guard
+      // ========================================
+      const isMigration = meta.origin === 'migration';
+      const isMigrationActive = this.#isMigrationActive(actor.id);
+
+      if (isMigration && !isMigrationActive) {
+        // Mark migration as active
+        this.#markMigrationActive(actor.id);
+        swseLogger.debug(`[MIGRATION] Starting migration for ${actor.name}`);
+      }
+
+      if (isMigration && isMigrationActive) {
+        // Prevent recursive mutations during migration
+        swseLogger.warn(`[MIGRATION] Suppressing recursive mutation during migration for ${actor.name}`);
+        return { prevented: true, actor };
+      }
+
+      // ========================================
       // PHASE 3: Authorize mutation via context
       // ========================================
       MutationInterceptor.setContext('ActorEngine.updateActor');
@@ -125,6 +170,12 @@ export const ActorEngine = {
       } finally {
         // Always clear context, even on error
         MutationInterceptor.clearContext();
+
+        // PHASE 11: Clear migration context if this was a migration
+        if (isMigration && !isMigrationActive) {
+          this.#clearMigrationActive(actor.id);
+          swseLogger.debug(`[MIGRATION] Completed migration for ${actor.name}`);
+        }
       }
 
     } catch (err) {
