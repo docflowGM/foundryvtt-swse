@@ -2,7 +2,7 @@
 import { SWSEActorBase } from '../base/swse-actor-base.js';
 import { ActorEngine } from '../engine/actor-engine.js';
 import { DerivedCalculator } from '../derived/derived-calculator.js';
-import { ModifierEngine } from '../../engine/modifiers/ModifierEngine.js';
+import { ModifierEngine } from '../../engines/effects/modifiers/ModifierEngine.js';
 import { computeCharacterDerived } from './character-actor.js';
 import { computeNpcDerived } from './npc-actor.js';
 import { computeDroidDerived } from './droid-actor.js';

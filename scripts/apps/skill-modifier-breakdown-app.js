@@ -12,8 +12,8 @@
  * - AppV2 compliant
  */
 
-import { ModifierEngine } from '../engine/modifiers/ModifierEngine.js';
-import { ModifierTypes } from '../engine/modifiers/ModifierTypes.js';
+import { ModifierEngine } from '../engines/effects/modifiers/ModifierEngine.js';
+import { ModifierTypes } from '../engines/effects/modifiers/ModifierTypes.js';
 import { swseLogger } from '../utils/logger.js';
 import { ActorEngine } from '../actors/engine/actor-engine.js';
 

@@ -4,7 +4,7 @@ import { applyActorUpdateAtomic } from '../../utils/actor-utils.js';
 import { MutationInterceptor } from '../../core/mutation/MutationInterceptor.js';
 import { determineLevelFromXP } from '../../engine/progression/xp-engine.js';
 import { DerivedCalculator } from '../derived/derived-calculator.js';
-import { ModifierEngine } from '../../engine/modifiers/ModifierEngine.js';
+import { ModifierEngine } from '../../engines/effects/modifiers/ModifierEngine.js';
 
 /**
  * ActorEngine
