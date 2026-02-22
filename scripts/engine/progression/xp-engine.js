@@ -1,6 +1,6 @@
 // scripts/engine/progression/xp-engine.js
 
-import { XP_LEVEL_THRESHOLDS, XP_MAX_LEVEL, getXPFromCL } from './xp-constants.js';
+import { XP_LEVEL_THRESHOLDS, XP_MAX_LEVEL, getXPFromCL } from '../shared/xp-system.js';
 import { getTotalLevel } from '../../actors/derived/level-split.js';
 import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
@@ -24,26 +24,11 @@ export function isXPEnabled() {
 }
 
 /* -------------------------------------------------------------------------- */
-/*                       LEVEL DETERMINATION                                  */
+/*                       LEVEL DETERMINATION (SHARED)                         */
 /* -------------------------------------------------------------------------- */
 
-/**
- * Determine character level from total XP using threshold table.
- * Returns the highest level whose threshold the XP meets or exceeds.
- * @param {number} totalXP
- * @returns {number} Level (1–20)
- */
-export function determineLevelFromXP(totalXP) {
-  const xp = Number(totalXP) || 0;
-  let level = 1;
-  for (let i = XP_MAX_LEVEL; i >= 1; i--) {
-    if (xp >= XP_LEVEL_THRESHOLDS[i]) {
-      level = i;
-      break;
-    }
-  }
-  return level;
-}
+// Re-export determineLevelFromXP from shared layer for backward compatibility
+export { determineLevelFromXP } from '../shared/xp-system.js';
 
 /* -------------------------------------------------------------------------- */
 /*                    ENCOUNTER XP CALCULATION                                */
