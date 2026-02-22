@@ -6,10 +6,10 @@
  * - Wrath of the Dark Side: Half damage repeat on Natural 20
  */
 
-import { SWSELogger } from '../utils/logger.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { SWSELogger } from '../../utils/logger.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { TalentEffectEngine } from './talent-effect-engine.js';
-import { createChatMessage } from '../core/document-api-v13.js';
+import { createChatMessage } from '../../core/document-api-v13.js';
 
 export class DarkSideTalentMechanics {
 

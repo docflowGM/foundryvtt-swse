@@ -18,9 +18,9 @@
  * - Reconnaissance Team Leader: Gain follower trained in Perception and Stealth
  */
 
-import { SWSELogger } from '../utils/logger.js';
-import { createEffectOnActor, createItemInActor } from '../core/document-api-v13.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { SWSELogger } from '../../utils/logger.js';
+import { createEffectOnActor, createItemInActor } from '../../core/document-api-v13.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { TalentEffectEngine } from './talent-effect-engine.js';
 
 export class ScoutTalentMechanics {

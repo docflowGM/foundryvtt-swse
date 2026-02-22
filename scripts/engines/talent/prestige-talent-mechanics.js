@@ -42,7 +42,7 @@
  * - Saboteur: Technical sabotage and hacking
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 
 export class PrestigeTalentMechanics {
 

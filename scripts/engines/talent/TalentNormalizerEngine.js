@@ -63,9 +63,7 @@ function _detectTags(text) {
 
 function _inferMultiOption(text) {
   // crude heuristic: bullets + "use each of the following actions" OR "any of the following"
-  const hasBullets = /•|
--|
-\*/.test(text);
+  const hasBullets = /•|-|\*/.test(text);
   const hasCue = /use each of the following|any of the following|can use each of the following/i.test(text);
   return hasBullets && hasCue;
 }

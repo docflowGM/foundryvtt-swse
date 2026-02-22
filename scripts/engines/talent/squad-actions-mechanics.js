@@ -9,7 +9,7 @@
  * - The user applies the resulting modifiers manually.
  */
 
-import { FollowerCreator } from '../apps/follower-creator.js';
+import { FollowerCreator } from '../../apps/follower-creator.js';
 
 export default class SquadActionsMechanics {
 

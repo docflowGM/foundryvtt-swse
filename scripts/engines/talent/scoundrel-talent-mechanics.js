@@ -15,10 +15,10 @@
  * - Trace: Track targets
  */
 
-import { SWSELogger } from '../utils/logger.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { SWSELogger } from '../../utils/logger.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { TalentEffectEngine } from './talent-effect-engine.js';
-import { createEffectOnActor } from '../core/document-api-v13.js';
+import { createEffectOnActor } from '../../core/document-api-v13.js';
 
 export class ScoundrelTalentMechanics {
 
