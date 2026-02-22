@@ -14,7 +14,7 @@ import {
   FORCE_POWER_CATEGORIES,
   generateForcePowerArchetypeWeights,
   validateForcePowerCategories
-} from './force-power-categories.js';
+} from '../force/force-power-categories.js';
 import { UNIFIED_TIERS, getTierMetadata } from './suggestion-unified-tiers.js';
 
 // DEPRECATED: Legacy tier definitions (kept for backwards compatibility)
