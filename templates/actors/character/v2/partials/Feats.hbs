@@ -9,18 +9,15 @@
     </button>
   </header>
 
-  {{#if derived.feats.length}}
+  {{#if derived.feats.list.length}}
     <div class="feat-grid">
-      {{#each derived.feats as |feat|}}
+      {{#each derived.feats.list as |feat|}}
         <div class="feat-card"
              data-item-id="{{feat.id}}"
              data-action="open-ability">
 
           <div class="card-header">
             <span class="card-title">{{feat.name}}</span>
-            {{#if feat.system.custom}}
-              <span class="card-tag custom">CUSTOM</span>
-            {{/if}}
           </div>
 
           {{#if feat.summary}}

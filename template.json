@@ -110,6 +110,7 @@
           "max": 1
         },
         "darkSideScore": 0,
+        "languages": [],
         "starshipManeuverSuite": {
           "max": 0,
           "maneuvers": []

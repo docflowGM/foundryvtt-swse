@@ -36,10 +36,8 @@ export class SWSEV2CharacterSheet extends
     const actor = this.document;
     const context = await super._prepareContext(options);
 
-    // Authoritative derived state from engine layer
-    const derived = ActorEngine.buildDerivedState
-      ? ActorEngine.buildDerivedState(actor)
-      : actor.system?.derived ?? {};
+    // Authoritative derived state (populated by character-actor.js computeCharacterDerived)
+    const derived = actor.system?.derived ?? {};
 
     const inventory = this._buildInventoryModel(actor);
 
@@ -79,6 +77,22 @@ export class SWSEV2CharacterSheet extends
       });
     }
 
+    // Initiative total (from derived calculation)
+    const initiativeTotal = derived?.initiative?.total ?? 0;
+
+    // Combat attacks context
+    const combat = {
+      attacks: derived?.attacks?.list ?? []
+    };
+
+    // Force suite context (hand/discard zones + tag filtering)
+    const forcePowers = (actor?.items ?? []).filter(i => i.type === 'force-power');
+    const forceTags = [...new Set(forcePowers.flatMap(p => p.system?.tags ?? []))].sort();
+    const forceSuite = {
+      hand: forcePowers.filter(p => !p.system?.discarded),
+      discard: forcePowers.filter(p => p.system?.discarded)
+    };
+
     return {
       ...context,
       biography,
@@ -86,7 +100,12 @@ export class SWSEV2CharacterSheet extends
       inventory,
       hp,
       bonusHp,
-      conditionSteps
+      conditionSteps,
+      initiativeTotal,
+      combat,
+      forceTags,
+      forceSuite,
+      lowHand: forceSuite.hand.length > 5
     };
   }
 
