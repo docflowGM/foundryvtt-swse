@@ -1,5 +1,6 @@
 import { ForceEnhancementDialog } from '../utils/force-enhancement-dialog.js';
 import { escapeHTML } from '../utils/security-utils.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 /**
  * Force Suite Component (RAW SWSE Accurate)
@@ -7,6 +8,8 @@ import { escapeHTML } from '../utils/security-utils.js';
  * - Using a power spends it
  * - Powers can be regained in several RAW-compliant ways
  * - Two zones only: READY and SPENT
+ *
+ * PHASE 7: All mutations routed through ActorEngine for atomic governance
  */
 export class ForceSuiteComponent {
 
@@ -212,14 +215,23 @@ export class ForceSuiteComponent {
 
   /** --------------------------
    * RULES-ACCURATE LOGIC
+   * PHASE 7: All mutations routed through ActorEngine
    * -------------------------- */
 
   static async _moveToSpent(actor, id) {
-    return await actor.items.get(id)?.update({ 'system.spent': true });
+    const power = actor.items.get(id);
+    if (!power) {return;}
+    return await ActorEngine.updateOwnedItems(actor, [
+      { _id: id, 'system.spent': true }
+    ]);
   }
 
   static async _moveToReady(actor, id) {
-    return await actor.items.get(id)?.update({ 'system.spent': false });
+    const power = actor.items.get(id);
+    if (!power) {return;}
+    return await ActorEngine.updateOwnedItems(actor, [
+      { _id: id, 'system.spent': false }
+    ]);
   }
 
   static async _usePower(actor, id) {
@@ -246,25 +258,32 @@ export class ForceSuiteComponent {
   }
 
   static async _restoreAll(actor) {
-    const all = actor.items.filter(i => i.type === 'forcepower');
-    for (const p of all) {
-      await p.update({ 'system.spent': false });
-    }
+    const all = actor.items.filter(i => i.type === 'forcepower' && i.system.spent);
+    if (all.length === 0) {return;}
+
+    // Batch update all spent powers to ready
+    const updates = all.map(p => ({
+      _id: p.id,
+      'system.spent': false
+    }));
+
+    return await ActorEngine.updateOwnedItems(actor, updates);
   }
 
   static async _fpRegain(actor) {
     if (actor.system.forcePoints?.value < 1) {return ui.notifications.warn('No Force Points left!');}
 
-    // Spend FP
-    await actor.update({
-      'system.forcePoints.value': actor.system.forcePoints.value - 1
-    });
+    // Spend force point atomically
+    await ActorEngine.spendForcePoints(actor, 1);
 
     // Find one spent power
     const spent = actor.items.find(i => i.type === 'forcepower' && i.system.spent);
     if (!spent) {return ui.notifications.info('No spent powers to regain.');}
 
-    await spent.update({ 'system.spent': false });
+    // Regain it
+    await ActorEngine.updateOwnedItems(actor, [
+      { _id: spent.id, 'system.spent': false }
+    ]);
 
     ui.notifications.info(`Force Point spent → ${escapeHTML(spent.name)} regained.`);
   }

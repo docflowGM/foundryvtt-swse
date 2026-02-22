@@ -4,8 +4,11 @@
  * - Persistent condition restrictions
  * - Consistent with Actor.moveConditionTrack()
  * - UI safely triggers CT updates without breaking Active Effects
+ *
+ * PHASE 7: All mutations routed through ActorEngine for atomic governance
  */
 import { escapeHTML } from '../utils/security-utils.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 export class ConditionTrackComponent {
 
@@ -138,7 +141,7 @@ export class ConditionTrackComponent {
 
     // Persistent flag
     root.querySelectorAll('[data-ct="persistent"]').forEach(el => el.addEventListener('change', async ev => {
-      await actor.update({ 'system.conditionTrack.persistent': ev.target.checked });
+      await ActorEngine.setConditionPersistent(actor, ev.target.checked);
     }));
   }
 
@@ -147,6 +150,6 @@ export class ConditionTrackComponent {
   /* ---------------------------------------- */
 
   static async _setCondition(actor, step) {
-    return actor.update({ 'system.conditionTrack.current': Math.clamp(step, 0, 5) });
+    return ActorEngine.setConditionStep(actor, Math.clamp(step, 0, 5));
   }
 }

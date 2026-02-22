@@ -508,6 +508,94 @@ export const ActorEngine = {
   },
 
   /**
+   * setConditionStep() — Set condition track to exact step
+   *
+   * Sets actor's condition track to specific step (0-5).
+   * Used by UI components for direct condition selection.
+   *
+   * @param {Actor} actor - target actor
+   * @param {number} step - condition step (0-5, clamped)
+   * @param {string} source - reason for change
+   */
+  async setConditionStep(actor, step, source = 'manual') {
+    try {
+      if (!actor) {throw new Error('setConditionStep() requires actor');}
+      if (typeof step !== 'number' || !Number.isFinite(step)) {
+        throw new Error(`Invalid condition step: ${step}`);
+      }
+
+      const clampedStep = Math.clamp(step, 0, 5);
+      const current = actor.system.conditionTrack?.current || 0;
+
+      if (clampedStep === current) {
+        swseLogger.debug(`${actor.name} condition already at step ${clampedStep}`);
+        return { applied: 0, newStep: clampedStep };
+      }
+
+      await this.updateActor(actor, {
+        'system.conditionTrack.current': clampedStep
+      });
+
+      swseLogger.log(`Condition step updated for ${actor.name}`, {
+        from: current,
+        to: clampedStep,
+        source
+      });
+
+      return { applied: 1, newStep: clampedStep };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.setConditionStep failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        step,
+        source
+      });
+      throw err;
+    }
+  },
+
+  /**
+   * setConditionPersistent() — Toggle persistent condition flag
+   *
+   * Marks condition as persistent (cannot be recovered naturally).
+   *
+   * @param {Actor} actor - target actor
+   * @param {boolean} persistent - true for persistent, false to clear
+   * @param {string} source - reason for change
+   */
+  async setConditionPersistent(actor, persistent, source = 'manual') {
+    try {
+      if (!actor) {throw new Error('setConditionPersistent() requires actor');}
+
+      const current = actor.system.conditionTrack?.persistent ?? false;
+
+      if (persistent === current) {
+        swseLogger.debug(`${actor.name} persistent condition already ${persistent ? 'set' : 'clear'}`);
+        return { applied: 0, persistent };
+      }
+
+      await this.updateActor(actor, {
+        'system.conditionTrack.persistent': persistent
+      });
+
+      swseLogger.log(`Condition persistent flag updated for ${actor.name}`, {
+        persistent,
+        source
+      });
+
+      return { applied: 1, persistent };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.setConditionPersistent failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        persistent,
+        source
+      });
+      throw err;
+    }
+  },
+
+  /**
    * applyConditionShift() — Shift condition track
    *
    * Shifts actor's condition track by +1 or -1.
@@ -605,6 +693,48 @@ export const ActorEngine = {
   },
 
   /**
+   * gainForcePoints() — Restore actor's force points
+   *
+   * @param {Actor} actor - target actor
+   * @param {number} amount - number of points to gain
+   */
+  async gainForcePoints(actor, amount = 1) {
+    try {
+      if (!actor) {throw new Error('gainForcePoints() requires actor');}
+      if (typeof amount !== 'number' || amount < 0) {
+        throw new Error(`Invalid force point amount: ${amount}`);
+      }
+
+      const currentFP = actor.system.forcePoints?.value || 0;
+      const maxFP = actor.system.forcePoints?.max || 10;
+      const newFP = Math.min(maxFP, currentFP + amount);
+      const actualGain = newFP - currentFP;
+
+      if (actualGain === 0) {
+        swseLogger.debug(`${actor.name} force points already at max`);
+        return { gained: 0, current: newFP, max: maxFP };
+      }
+
+      await this.updateActor(actor, {
+        'system.forcePoints.value': newFP
+      });
+
+      swseLogger.log(`Force points gained: ${actor.name} gained ${actualGain}FP (now: ${newFP}/${maxFP})`, {
+        amount: actualGain
+      });
+
+      return { gained: actualGain, current: newFP, max: maxFP };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.gainForcePoints failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        amount
+      });
+      throw err;
+    }
+  },
+
+  /**
    * spendForcePoints() — Reduce actor's force points
    *
    * @param {Actor} actor - target actor
@@ -681,6 +811,62 @@ export const ActorEngine = {
       swseLogger.error(`ActorEngine.spendDestinyPoints failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err,
         amount
+      });
+      throw err;
+    }
+  },
+
+  /**
+   * applySecondWind() — Use second wind and restore HP
+   *
+   * Heals actor based on level, reduces second wind uses.
+   * Combat-critical atomic operation.
+   *
+   * @param {Actor} actor - target actor
+   * @param {Object} [options={}] - optional healing parameters
+   * @returns {Promise<{success, healed, newHP}>}
+   */
+  async applySecondWind(actor, options = {}) {
+    try {
+      if (!actor) {throw new Error('applySecondWind() requires actor');}
+
+      const uses = actor.system.secondWind?.uses ?? 0;
+      if (uses < 1) {
+        return { success: false, reason: 'No Second Wind uses remaining' };
+      }
+
+      const level = actor.system.level ?? 1;
+      const heal = 5 + Math.floor(level / 4) * 5;
+
+      // Get authoritative HP source
+      const currentHP = (actor.system?.derived?.hp?.value || actor.system?.hp?.value || 0);
+      const maxHP = (actor.system?.derived?.hp?.max || actor.system?.hp?.max || 0);
+      const newHP = Math.min(currentHP + heal, maxHP);
+      const actualHealing = newHP - currentHP;
+
+      // Batch update: HP restoration + use consumption
+      await this.updateActor(actor, {
+        'system.derived.hp.value': newHP,
+        'system.secondWind.uses': Math.max(0, uses - 1)
+      });
+
+      swseLogger.log(`Second wind used by ${actor.name}`, {
+        healed: actualHealing,
+        newHP,
+        maxHP,
+        usesRemaining: Math.max(0, uses - 1)
+      });
+
+      return {
+        success: true,
+        healed: actualHealing,
+        newHP,
+        usesRemaining: Math.max(0, uses - 1)
+      };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.applySecondWind failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err
       });
       throw err;
     }
@@ -1120,6 +1306,105 @@ export const ActorEngine = {
         reason: err.message,
         timestamp: new Date().toISOString()
       };
+    }
+  }
+
+  /**
+   * restoreFromSnapshot() — Atomic snapshot restoration
+   *
+   * Restores complete actor state from snapshot:
+   * 1. Update root actor data (system, name, img, prototypeToken)
+   * 2. Delete all current items, then create snapshot items
+   * 3. Delete all current effects, then create snapshot effects
+   * 4. All in single mutation transaction
+   *
+   * @param {Actor} actor - target actor
+   * @param {Object} snapshot - snapshot object with { system, name, img, prototypeToken, items, effects }
+   * @param {Object} [options={}] - mutation options
+   */
+  async restoreFromSnapshot(actor, snapshot, options = {}) {
+    try {
+      if (!actor) {throw new Error('restoreFromSnapshot() requires actor');}
+      if (!snapshot) {throw new Error('restoreFromSnapshot() requires snapshot');}
+
+      swseLogger.log(`[SNAPSHOT] Restoring ${actor.name} from snapshot`, {
+        systemFieldCount: Object.keys(snapshot.system || {}).length,
+        itemCount: (snapshot.items || []).length,
+        effectCount: (snapshot.effects || []).length
+      });
+
+      // ====================================================================
+      // PHASE 1: ROOT UPDATE (system, name, img, prototypeToken)
+      // ====================================================================
+      const system = foundry.utils.deepClone(snapshot.system ?? {});
+      const name = snapshot.name ?? actor.name;
+      const img = snapshot.img ?? actor.img;
+      const prototypeToken = foundry.utils.deepClone(snapshot.prototypeToken ?? {});
+
+      await this.updateActor(actor, {
+        name,
+        img,
+        system,
+        prototypeToken
+      }, options);
+
+      // ====================================================================
+      // PHASE 2: ITEM RESTORATION (delete all, recreate from snapshot)
+      // ====================================================================
+      const currentItemIds = actor.items?.map?.(i => i.id) ?? [];
+      if (currentItemIds.length > 0) {
+        await this.deleteEmbeddedDocuments(actor, 'Item', currentItemIds, options);
+      }
+
+      const itemsToCreate = (snapshot.items ?? []).map(i => {
+        const copy = foundry.utils.deepClone(i);
+        delete copy._id;
+        return copy;
+      });
+      if (itemsToCreate.length > 0) {
+        await this.createEmbeddedDocuments(actor, 'Item', itemsToCreate, options);
+      }
+
+      // ====================================================================
+      // PHASE 3: EFFECT RESTORATION (delete all, recreate from snapshot)
+      // ====================================================================
+      const currentEffectIds = actor.effects?.map?.(e => e.id) ?? [];
+      if (currentEffectIds.length > 0) {
+        await this.deleteEmbeddedDocuments(actor, 'ActiveEffect', currentEffectIds, options);
+      }
+
+      const effectsToCreate = (snapshot.effects ?? []).map(e => {
+        const copy = foundry.utils.deepClone(e);
+        delete copy._id;
+        return copy;
+      });
+      if (effectsToCreate.length > 0) {
+        await this.createEmbeddedDocuments(actor, 'ActiveEffect', effectsToCreate, options);
+      }
+
+      swseLogger.log(`[SNAPSHOT] ✅ Restoration complete for ${actor.name}`, {
+        itemsDeleted: currentItemIds.length,
+        itemsCreated: itemsToCreate.length,
+        effectsDeleted: currentEffectIds.length,
+        effectsCreated: effectsToCreate.length
+      });
+
+      return {
+        success: true,
+        actor,
+        itemsDeleted: currentItemIds.length,
+        itemsCreated: itemsToCreate.length,
+        effectsDeleted: currentEffectIds.length,
+        effectsCreated: effectsToCreate.length,
+        timestamp: new Date().toISOString()
+      };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.restoreFromSnapshot failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        snapshotItemCount: (snapshot?.items || []).length
+      });
+      throw err;
     }
   }
 

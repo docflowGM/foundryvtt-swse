@@ -1,9 +1,12 @@
 /**
  * Droid Appendage Utilities
  * Handles generation of unarmed attacks and other appendage-related functionality
+ *
+ * PHASE 7: All mutations routed through ActorEngine for atomic governance
  */
 
 import { DROID_SYSTEMS } from '../data/droid-systems.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 export class DroidAppendageUtils {
   /**
@@ -90,6 +93,7 @@ export class DroidAppendageUtils {
   /**
    * Create actual item objects for droid appendage attacks
    * Used when finalizing droid creation or updating appendages
+   * PHASE 7: Batched through ActorEngine for atomic governance
    * @param {Object} actor - The droid actor
    * @param {Array} appendages - Array of appendage references
    * @param {string} droidSize - The droid size
@@ -99,6 +103,8 @@ export class DroidAppendageUtils {
 
     const attacks = this.getAllUnarmedAttacks(appendages, droidSize);
 
+    // Filter out duplicates and batch create
+    const toCreate = [];
     for (const attackData of attacks) {
       // Don't create duplicate attacks
       const existing = actor.items.find(item =>
@@ -107,8 +113,13 @@ export class DroidAppendageUtils {
       );
 
       if (!existing) {
-        await actor.createEmbeddedDocuments('Item', [attackData]);
+        toCreate.push(attackData);
       }
+    }
+
+    // Batch create all new attacks in single transaction
+    if (toCreate.length > 0) {
+      await ActorEngine.createEmbeddedDocuments(actor, 'Item', toCreate);
     }
   }
 
