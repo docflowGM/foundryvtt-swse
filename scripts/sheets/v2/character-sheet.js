@@ -1,5 +1,6 @@
 import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
 import { InventoryEngine } from "../../engine/inventory/InventoryEngine.js";
+import { CombatRollConfigDialog } from "../../apps/combat/combat-roll-config-dialog.js";
 
 const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api;
 
@@ -207,7 +208,10 @@ export class SWSEV2CharacterSheet extends
     html.on("click", ".swse-combat-action-card, .action-row", async (event) => {
       if (event.target.classList.contains("hide-action")) return;
       const key = event.currentTarget.dataset.actionKey;
-      await game.swse.engines.combat.CombatEngine.executeAction(this.actor, key);
+      const actionData = this.actor.getFlag("swse", "combatActions")?.[key];
+      if (actionData) {
+        new CombatRollConfigDialog(this.actor, actionData).render(true);
+      }
     });
 
     // Hide individual action

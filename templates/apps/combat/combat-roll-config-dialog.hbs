@@ -1,0 +1,56 @@
+<div class="swse-roll-console">
+
+  <div class="console-section">
+    <label>Range</label>
+    <select name="range">
+      <option value="pointblank">Point Blank</option>
+      <option value="normal" selected>Normal</option>
+      <option value="long">Long</option>
+      <option value="extreme">Extreme</option>
+    </select>
+  </div>
+
+  <div class="console-section">
+    <label>Cover</label>
+    <select name="cover">
+      <option value="none">None</option>
+      <option value="partial">Partial</option>
+      <option value="improved">Improved</option>
+      <option value="total">Total</option>
+    </select>
+  </div>
+
+  <div class="console-section">
+    <label>Concealment</label>
+    <select name="concealment">
+      <option value="none">None</option>
+      <option value="partial">Partial</option>
+      <option value="total">Total</option>
+    </select>
+  </div>
+
+  <div class="console-section toggles">
+    <label><input type="checkbox" name="aim"> Aim</label>
+    <label><input type="checkbox" name="force"> Spend Force Point</label>
+  </div>
+
+  <div class="console-section">
+    <label>Misc Modifier</label>
+    <input type="number" name="misc" value="0">
+  </div>
+
+  <div class="console-preview">
+    <h4>Projected Outcome</h4>
+    <div class="preview-total">{{preview.total}}</div>
+    <ul>
+      {{#each preview.breakdown}}
+        <li>{{this.label}}: {{this.value}}</li>
+      {{/each}}
+    </ul>
+  </div>
+
+  <div class="console-actions">
+    <button type="button" class="roll-attack">Execute</button>
+  </div>
+
+</div>

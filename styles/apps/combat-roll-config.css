@@ -1,0 +1,38 @@
+.holo-console {
+  background: radial-gradient(circle at top, #002b36, #001820);
+  border: 1px solid rgba(0,255,255,0.2);
+  box-shadow: 0 0 12px rgba(0,255,255,0.2);
+}
+
+.swse-roll-console {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.console-section label {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.console-preview {
+  border-top: 1px solid rgba(0,255,255,0.2);
+  padding-top: 8px;
+}
+
+.preview-total {
+  font-size: 1.4rem;
+  color: #3de0d0;
+  margin-bottom: 6px;
+}
+
+.console-actions {
+  text-align: right;
+}
+
+.console-actions button {
+  background: rgba(0,255,255,0.15);
+  border: 1px solid rgba(0,255,255,0.3);
+  padding: 6px 12px;
+  cursor: pointer;
+}

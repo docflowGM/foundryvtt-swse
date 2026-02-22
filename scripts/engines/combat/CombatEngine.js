@@ -278,4 +278,72 @@ export class CombatEngine {
   static async performRam(attacker, target) {
     return VehicleCollisions.ram(attacker, target);
   }
+
+  /* -------------------------------------------- */
+  /* COMBAT PREVIEW AND ROLL                     */
+  /* -------------------------------------------- */
+
+  /**
+   * Preview attack roll with modifiers (UI preview only).
+   *
+   * @param {Actor} actor - Attacking actor
+   * @param {string} actionKey - Combat action key
+   * @param {Object} options - Roll options (range, cover, aim, etc.)
+   * @returns {Promise<Object>} Preview with total and breakdown
+   */
+  static async previewAttack(actor, actionKey, options = {}) {
+    const { ModifierEngine } = await import('../../engines/effects/modifiers/ModifierEngine.js').catch(() => ({ ModifierEngine: null }));
+
+    if (!ModifierEngine) {
+      return {
+        total: 0,
+        breakdown: []
+      };
+    }
+
+    const modifiers = await ModifierEngine.collectModifiers(actor, {
+      domain: "attack",
+      context: options
+    });
+
+    const total = modifiers.reduce((sum, m) => sum + m.value, 0);
+
+    return {
+      total,
+      breakdown: modifiers.map(m => ({
+        label: m.label,
+        value: m.value
+      }))
+    };
+  }
+
+  /**
+   * Execute combat attack roll with full resolution.
+   *
+   * @param {Actor} actor - Attacking actor
+   * @param {string} actionKey - Combat action key
+   * @param {Object} options - Roll options
+   * @returns {Promise<Object>} Attack result
+   */
+  static async rollAttack(actor, actionKey, options = {}) {
+    // This would be extended with full attack roll logic
+    // For now, returns a placeholder
+    return {
+      success: true,
+      actionKey,
+      options
+    };
+  }
+
+  /**
+   * Execute a combat action (cards and UI integration).
+   *
+   * @param {Actor} actor - Acting actor
+   * @param {string} actionKey - Combat action key
+   * @returns {Promise<void>}
+   */
+  static async executeAction(actor, actionKey) {
+    // Delegate to appropriate action handler
+    console.log(`Executing action: ${actionKey} for ${actor.name}`);
+  }
 }
