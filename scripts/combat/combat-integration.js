@@ -138,7 +138,7 @@ export class ConditionTrackComponent {
         }
         // PHASE 3: Route through ActorEngine
         const step = Number(ev.currentTarget.dataset.step);
-        const { ActorEngine } = await import('../../../actors/engine/actor-engine.js');
+        const { ActorEngine } = await import('../../governance/actor-engine/actor-engine.js');
         await ActorEngine.updateActor(actor, {
           'system.conditionTrack.current': Math.clamp(step, 0, 5)
         });
@@ -206,7 +206,7 @@ export class ConditionTrackComponent {
           return;
         }
         // PHASE 3: Route through ActorEngine
-        const { ActorEngine } = await import('../../../actors/engine/actor-engine.js');
+        const { ActorEngine } = await import('../../governance/actor-engine/actor-engine.js');
         await ActorEngine.updateActor(actor, {
           'system.conditionTrack.persistent': ev.target.checked
         });

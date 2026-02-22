@@ -311,3 +311,187 @@
   box-shadow: 0 0 16px rgba(0, 255, 136, 0.2);
 }
 
+
+
+/* ========================================================= */
+/* SWSE V2 Combat Flip Cards                                */
+/* ========================================================= */
+
+.swse-combat-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.swse-attacks-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ================= CARD CORE ================= */
+
+.swse-attack-card {
+  perspective: 1000px;
+  position: relative;
+}
+
+.swse-attack-card .card-inner {
+  position: relative;
+  width: 100%;
+  min-height: 160px;
+  transition: transform 0.5s ease;
+  transform-style: preserve-3d;
+}
+
+.swse-attack-card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.swse-attack-card .card-front,
+.swse-attack-card .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  padding: 0.85rem;
+  border-radius: 14px;
+  backface-visibility: hidden;
+  background: linear-gradient(
+    145deg,
+    rgba(0, 30, 40, 0.95),
+    rgba(0, 15, 25, 0.95)
+  );
+  border: 1px solid rgba(0, 200, 255, 0.35);
+  box-shadow:
+    0 0 10px rgba(0, 200, 255, 0.25),
+    inset 0 0 8px rgba(0, 200, 255, 0.08);
+}
+
+.swse-attack-card .card-back {
+  transform: rotateY(180deg);
+}
+
+/* ================= FRONT ================= */
+
+.attack-name {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.4rem;
+  color: #7deaff;
+}
+
+.attack-primary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+
+.attack-bonus {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #00f0ff;
+}
+
+.attack-damage {
+  font-size: 1.1rem;
+  opacity: 0.85;
+}
+
+.attack-crit {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin-bottom: 0.4rem;
+}
+
+.attack-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-bottom: 0.5rem;
+}
+
+.tag {
+  font-size: 0.65rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 6px;
+  background: rgba(0, 200, 255, 0.15);
+  border: 1px solid rgba(0, 200, 255, 0.4);
+  color: #7deaff;
+}
+
+/* ================= ROLL BUTTON ================= */
+
+.attack-roll-btn {
+  width: 100%;
+  padding: 0.45rem 0;
+  border-radius: 8px;
+  background: rgba(0, 200, 255, 0.2);
+  border: 1px solid rgba(0, 200, 255, 0.6);
+  color: #00f0ff;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.attack-roll-btn:hover {
+  background: rgba(0, 200, 255, 0.35);
+  box-shadow: 0 0 12px rgba(0, 200, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.attack-roll-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 0 6px rgba(0, 200, 255, 0.3);
+}
+
+/* ================= BACK ================= */
+
+.breakdown-section {
+  margin-bottom: 0.6rem;
+}
+
+.section-title {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+  margin-bottom: 0.3rem;
+}
+
+.pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.pill {
+  font-size: 0.65rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  background: rgba(0, 200, 255, 0.12);
+  border: 1px solid rgba(0, 200, 255, 0.4);
+  color: #7deaff;
+}
+
+.pill.conditional {
+  border-color: rgba(255, 200, 0, 0.6);
+  background: rgba(255, 200, 0, 0.15);
+  color: #ffd86b;
+}
+
+/* ================= BONUS COLOR STATES ================= */
+
+.attack-bonus.positive {
+  color: #00ff88;
+}
+
+.attack-bonus.neutral {
+  color: #ffd86b;
+}
+
+.attack-bonus.negative {
+  color: #ff5f5f;
+}
+

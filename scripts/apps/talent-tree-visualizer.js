@@ -5,7 +5,7 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { PrerequisiteChecker } from '../data/prerequisite-checker.js';
-import { SuggestionService } from '../engine/SuggestionService.js';
+import { SuggestionService } from '../engines/suggestion/SuggestionService.js';
 import { getTalentTreeName } from './chargen/chargen-property-accessor.js';
 
 export class TalentTreeVisualizer {

@@ -2,12 +2,12 @@
  * ENHANCED LEVEL UP UI — ENGINE-DRIVEN
  */
 
-import { ProgressionEngine } from '../../progression/engine/progression-engine-instance.js';
+import { ProgressionEngine } from '../../engines/progression/engine/progression-engine-instance.js';
 import { SWSELogger } from '../../utils/logger.js';
-import { SkillRegistry } from '../../progression/skills/skill-registry-ui.js';
-import { FeatRegistry } from '../../progression/feats/feat-registry-ui.js';
-import { TalentRegistry } from '../../progression/talents/talent-registry-ui.js';
-import { ForceRegistry } from '../../progression/force/force-registry-ui.js';
+import { SkillRegistry } from '../../engines/progression/skills/skill-registry-ui.js';
+import { FeatRegistry } from '../../engines/progression/feats/feat-registry-ui.js';
+import { TalentRegistry } from '../../engines/progression/talents/talent-registry-ui.js';
+import { ForceRegistry } from '../../engines/progression/force/force-registry-ui.js';
 import { isEpicOverrideEnabled } from '../../settings/epic-override.js';
 import { getLevelSplit } from '../../actors/derived/level-split.js';
 import { qs, qsa } from '../../utils/dom-utils.js';

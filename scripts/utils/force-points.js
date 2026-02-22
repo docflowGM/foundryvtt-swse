@@ -1,4 +1,4 @@
-import { ProgressionEngine } from '../progression/engine/progression-engine.js';
+import { ProgressionEngine } from '../engines/progression/engine/progression-engine.js';
 import { createChatMessage } from '../core/document-api-v13.js';
 /**
  * Force Points utility functions for rolling and spending Force Points

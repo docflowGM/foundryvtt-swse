@@ -12,7 +12,7 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
-import TalentActionLinker from '../../engine/talent-action-linker.js';
+import TalentActionLinker from '../../engines/talent/talent-action-linker.js';
 
 export class CombatActionsMapper {
 

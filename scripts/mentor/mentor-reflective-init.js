@@ -1,5 +1,5 @@
 // scripts/apps/mentor-reflective-init.js
-import { HooksRegistry } from '../hooks/hooks-registry.js';
+import { HooksRegistry } from '../infrastructure/hooks/hooks-registry.js';
 import MentorReflectiveDialog from './mentor-reflective-dialog.js';
 
 /**

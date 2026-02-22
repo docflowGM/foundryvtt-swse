@@ -2,8 +2,8 @@
  * ModifierInspectorApp — Phase I
  * System-wide modifier transparency and debugging
  */
-import { ModifierEngine } from '../engine/modifiers/ModifierEngine.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ModifierEngine } from '../engines/effects/modifiers/ModifierEngine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 
 export class ModifierInspectorApp extends Application {
   constructor(actor, options = {}) {

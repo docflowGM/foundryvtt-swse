@@ -1,5 +1,5 @@
 import { swseLogger } from '../../utils/logger.js';
-import { TalentAbilitiesEngine } from '../../engine/TalentAbilitiesEngine.js';
+import { TalentEffectEngine } from '../../engines/talent/talent-effect-engine.js';
 import { RollEngine } from '../../engine/roll-engine.js';
 
 import { getEffectiveHalfLevel } from '../../actors/derived/level-split.js';
@@ -195,7 +195,7 @@ function computeDamageBonus(actor, weapon, options = {}) {
  */
 function computeTalentDamageBonus(actor, context = {}) {
   try {
-    return TalentAbilitiesEngine.calculateDamageBonus(actor, context);
+    return TalentEffectEngine.calculateDamageBonus(actor, context);
   } catch (err) {
     swseLogger.warn('Failed to calculate talent damage bonus:', err);
     return { formula: '', bonusDice: [], flatBonus: 0, breakdown: [], notifications: [] };
@@ -320,7 +320,7 @@ export async function rollDamageWithEffects(actor, weapon, target, context = {})
     };
 
     try {
-      await TalentAbilitiesEngine.applyPostDamageEffects(actor, target, effectContext);
+      await TalentEffectEngine.applyPostDamageEffects(actor, target, effectContext);
     } catch (err) {
       swseLogger.warn('Failed to apply post-damage effects:', err);
     }
@@ -329,7 +329,7 @@ export async function rollDamageWithEffects(actor, weapon, target, context = {})
     await actor.setFlag('foundryvtt-swse', 'lastAttackTarget', target.id);
 
     // Mark sneak attack as used this round
-    const abilities = TalentAbilitiesEngine.getAbilitiesForActor(actor);
+    const abilities = TalentEffectEngine.getAbilitiesForActor(actor);
     if (abilities.all.some(a => a.id === 'sneak-attack')) {
       await actor.setFlag('foundryvtt-swse', 'sneakAttackUsedThisRound', true);
     }

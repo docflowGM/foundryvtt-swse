@@ -8,7 +8,7 @@
 // All diagnostics routed through Sentinel (aggregated).
 // ============================================
 
-import { SentinelEngine } from '../core/sentinel/sentinel-core.js';
+import { SentinelEngine } from '../governance/sentinel/sentinel-core.js';
 
 /**
  * Normalize a talent tree ID from a name string.

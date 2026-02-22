@@ -12,7 +12,7 @@
  * - Z-index safety scanning
  */
 
-import { HooksRegistry } from '../hooks/hooks-registry.js';
+import { HooksRegistry } from '../infrastructure/hooks/hooks-registry.js';
 import { SWSELogger } from '../utils/logger.js';
 
 /**

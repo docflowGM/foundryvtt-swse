@@ -8,7 +8,7 @@
  * - Business logic (ALL delegated to StoreEngine)
  */
 
-import { ProgressionEngine } from '../../progression/engine/progression-engine.js';
+import { ProgressionEngine } from '../../engines/progression/engine/progression-engine.js';
 import { StoreEngine } from '../../engines/store/store-engine.js';
 import { SWSELogger } from '../../utils/logger.js';
 import { normalizeCredits } from '../../utils/credit-normalization.js';
@@ -19,7 +19,7 @@ import { DroidBuilderApp } from '../droid-builder-app.js';
 import { getRandomDialogue } from './store-shared.js';
 import { SWSEVehicleHandler } from '../../actors/vehicle/swse-vehicle-handler.js';
 import { createActor } from '../../core/document-api-v13.js';
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 
 /**
  * Add item to shopping cart

@@ -55,7 +55,7 @@ import { PRESTIGE_PREREQUISITES } from './prestige-prerequisites.js';
 import { TalentTreeDB } from './talent-tree-db.js';
 import { normalizeTalentTreeId } from './talent-tree-normalizer.js';
 import { SWSELogger } from '../utils/logger.js';
-import { normalizeClassPrerequisites } from '../progression/prerequisites/class-prereq-normalizer.js';
+import { normalizeClassPrerequisites } from '../engines/progression/prerequisites/class-prereq-normalizer.js';
 import { ClassesDB } from './classes-db.js';
 
 /**

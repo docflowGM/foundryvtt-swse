@@ -1,7 +1,7 @@
 import SWSEFormApplicationV2 from './base/swse-form-application-v2.js';
-import { ProgressionEngine } from '../progression/engine/progression-engine.js';
+import { ProgressionEngine } from '../engines/progression/engine/progression-engine.js';
 import { createActor } from '../core/document-api-v13.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 // ============================================
 // Template Character Creator
 // Class-first selection with playing card UI

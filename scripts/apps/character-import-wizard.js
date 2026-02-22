@@ -6,7 +6,7 @@
 
 import { createActor, createEffectOnActor, createItemInActor } from '../core/document-api-v13.js';
 import { confirm as uiConfirm } from '../utils/ui-utils.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 
 export class CharacterImportWizard extends foundry.applications.api.ApplicationV2 {
   static DEFAULT_OPTIONS = {

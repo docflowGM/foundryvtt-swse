@@ -3,8 +3,8 @@
 // ============================================
 
 import { SWSELogger } from '../../utils/logger.js';
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
-import { applyProgressionPatch } from '../../progression/engine/apply-progression-patch.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
+import { applyProgressionPatch } from '../../engines/progression/engine/apply-progression-patch.js';
 import { buildClassAtomicPatch } from './steps/class-step.js';
 import {
   getClassProperty,
@@ -13,7 +13,7 @@ import {
   getTalentTrees,
   validateClassDocument
 } from './chargen-property-accessor.js';
-import { MentorSurvey } from '../mentor/mentor-survey.js';
+import { MentorSurvey } from '../engines/mentor/mentor-survey.js';
 import { isBaseClass } from '../levelup/levelup-shared.js';
 import { _findItemByIdOrName } from './chargen-shared.js';
 import { confirm } from '../../utils/ui-utils.js';

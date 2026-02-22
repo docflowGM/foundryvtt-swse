@@ -14,7 +14,7 @@
  * - isDroid flag controls CON mod inclusion (see line 31)
  */
 
-import { PROGRESSION_RULES } from '../../progression/data/progression-data.js';
+import { PROGRESSION_RULES } from '../../engines/progression/data/progression-data.js';
 import { swseLogger } from '../../utils/logger.js';
 
 export class HPCalculator {

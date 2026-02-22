@@ -135,7 +135,7 @@ export class SWSEActorBase extends Actor {
     // Apply updates
     if (Object.keys(updates).length > 0) {
       try {
-        const ActorEngine = await import('../engine/actor-engine.js').then(m => m.ActorEngine);
+        const ActorEngine = await import('../../governance/actor-engine/actor-engine.js').then(m => m.ActorEngine);
         await ActorEngine.updateActor(this, updates, { diff: true });
       } catch (err) {
         // Fallback if ActorEngine not available
@@ -182,7 +182,7 @@ export class SWSEActorBase extends Actor {
 
     if (healed > 0) {
       try {
-        const ActorEngine = await import('../engine/actor-engine.js').then(m => m.ActorEngine);
+        const ActorEngine = await import('../../governance/actor-engine/actor-engine.js').then(m => m.ActorEngine);
         await ActorEngine.updateActor(this, { 'system.hp.value': newHP }, { diff: true });
       } catch (err) {
         // Fallback if ActorEngine not available
@@ -220,7 +220,7 @@ export class SWSEActorBase extends Actor {
     }
 
     try {
-      const ActorEngine = await import('../engine/actor-engine.js').then(m => m.ActorEngine);
+      const ActorEngine = await import('../../governance/actor-engine/actor-engine.js').then(m => m.ActorEngine);
       const update = { _id: item.id, ...changes };
       const [updated] = await ActorEngine.updateOwnedItems(this, [update], options);
       return updated ?? null;
@@ -356,7 +356,7 @@ export class SWSEActorBase extends Actor {
     const newValue = fp.value - amount;
 
     try {
-      const ActorEngine = await import('../engine/actor-engine.js').then(m => m.ActorEngine);
+      const ActorEngine = await import('../../governance/actor-engine/actor-engine.js').then(m => m.ActorEngine);
       await ActorEngine.updateActor(this, { 'system.forcePoints.value': newValue });
     } catch (err) {
       // Fallback
@@ -394,7 +394,7 @@ export class SWSEActorBase extends Actor {
 
     if (regained > 0) {
       try {
-        const ActorEngine = await import('../engine/actor-engine.js').then(m => m.ActorEngine);
+        const ActorEngine = await import('../../governance/actor-engine/actor-engine.js').then(m => m.ActorEngine);
         await ActorEngine.updateActor(this, { 'system.forcePoints.value': newValue });
       } catch (err) {
         // Fallback
@@ -455,7 +455,7 @@ export class SWSEActorBase extends Actor {
     const newValue = dp.value - 1;
 
     try {
-      const ActorEngine = await import('../engine/actor-engine.js').then(m => m.ActorEngine);
+      const ActorEngine = await import('../../governance/actor-engine/actor-engine.js').then(m => m.ActorEngine);
       await ActorEngine.updateActor(this, { 'system.destinyPoints.value': newValue });
     } catch (err) {
       // Fallback

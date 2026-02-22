@@ -2,7 +2,7 @@
 
 const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api;
 
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 import { RenderAssertions } from '../../core/render-assertions.js';
 import { SWSELevelUp } from '../../apps/swse-levelup.js';
 import { rollSkill } from '../../rolls/skills.js';

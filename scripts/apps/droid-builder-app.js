@@ -8,7 +8,7 @@ import { DroidValidationEngine } from '../engine/droid-validation-engine.js';
 import { StepController } from './step-controller.js';
 import SWSEApplication from './base/swse-application.js';
 import { Seraphim } from './seraphim-narrator.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 
 export class DroidBuilderApp extends SWSEApplication {
 

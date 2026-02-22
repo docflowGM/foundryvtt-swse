@@ -11,7 +11,7 @@
 
 import { MENTORS, getMentorForClass } from './mentor-dialogues.js';
 import { MentorSuggestionVoice } from './mentor-suggestion-voice.js';
-import { BuildIntent } from '../engine/BuildIntent.js';
+import { BuildIntent } from '../engines/suggestion/BuildIntent.js';
 import { SWSELogger } from '../utils/logger.js';
 import { MentorVoiceFilterV2 } from './mentor-voice-filter-v2.js';
 import { MentorDialogueV2Integration } from './mentor-dialogue-v2-integration.js';

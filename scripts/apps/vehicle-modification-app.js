@@ -1,4 +1,4 @@
-import { ProgressionEngine } from '../progression/engine/progression-engine.js';
+import { ProgressionEngine } from '../engines/progression/engine/progression-engine.js';
 /**
  * Vehicle Modification Application
  * Interactive starship builder with Marl Skindar, Republic Spy narrator

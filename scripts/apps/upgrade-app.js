@@ -7,7 +7,7 @@
  * - Actor credits updates route through ActorEngine
  */
 
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 import { GearTemplatesEngine } from './gear-templates-engine.js';
 import { UpgradeRulesEngine } from './upgrade-rules-engine.js';
 

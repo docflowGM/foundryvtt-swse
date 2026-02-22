@@ -2,7 +2,7 @@
 
 const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api;
 
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 import { RenderAssertions } from '../../core/render-assertions.js';
 import { initiateItemSale } from '../../apps/item-selling-system.js';
 import { DroidBuilderApp } from '../../apps/droid-builder-app.js';
@@ -10,7 +10,7 @@ import { SWSELevelUp } from '../../apps/swse-levelup.js';
 import { rollSkill } from '../../rolls/skills.js';
 import { rollAttack } from '../../combat/rolls/attacks.js';
 import { DropService } from '../../services/drop-service.js';
-import { isXPEnabled } from '../../engine/progression/xp-engine.js';
+import { isXPEnabled } from '../../engines/progression/xp-engine.js';
 import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
 
 function markActiveConditionStep(root, actor) {
@@ -507,7 +507,7 @@ export class SWSEV2DroidSheet extends
           const ability = this.document.items?.get(abilityId);
           if (ability) {
             // Mark as used
-            const { AbilityUsage } = await import('../../engine/abilities/ability-usage.js');
+            const { AbilityUsage } = await import('../../../engines/abilities/ability-usage.js');
             await AbilityUsage.markUsed(this.document, abilityId);
             this.render();
           }

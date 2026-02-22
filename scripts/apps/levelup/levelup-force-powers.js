@@ -4,7 +4,7 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
-import { ForcePowerEngine } from '../../progression/engine/force-power-engine.js';
+import { ForcePowerEngine } from '../../engines/progression/engine/force-power-engine.js';
 
 /**
  * Determine if character gains force powers on this level up

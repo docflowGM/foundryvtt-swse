@@ -15,7 +15,7 @@ import { checkTalentPrerequisites } from './levelup-validation.js';
 import { getClassProperty, getTalentTrees } from '../chargen/chargen-property-accessor.js';
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
-import { SuggestionService } from '../../engine/SuggestionService.js';
+import { SuggestionService } from '../../engines/suggestion/SuggestionService.js';
 import {
   getTalentCountAtHeroicLevel,
   getTalentCountAtClassLevel,

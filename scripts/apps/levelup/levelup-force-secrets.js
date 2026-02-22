@@ -3,7 +3,7 @@
  * Handle Force Secret selection during level-up
  */
 
-import { ForceSecretEngine } from '../../progression/engine/force-secret-engine.js';
+import { ForceSecretEngine } from '../../engines/progression/engine/force-secret-engine.js';
 
 export async function getsForceSecrets(selectedClass, actor) {
   // Check if character qualifies for Force Secret choices

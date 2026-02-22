@@ -10,7 +10,7 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { RollEngine } from '../engine/roll-engine.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 import { createChatMessage, createEffectOnActor, createItemInActor } from '../core/document-api-v13.js';
 
 export class DarkSidePowers {

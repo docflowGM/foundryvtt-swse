@@ -1,0 +1,1941 @@
+// scripts/actor-engine.js
+import { swseLogger } from '../../utils/logger.js';
+import { applyActorUpdateAtomic } from '../../utils/actor-utils.js';
+import { MutationInterceptor } from '../mutation/MutationInterceptor.js';
+import { determineLevelFromXP } from '../../engines/shared/xp-system.js';
+import { DerivedCalculator } from '../derived/derived-calculator.js';
+import { ModifierEngine } from '../../engines/effects/modifiers/ModifierEngine.js';
+
+/**
+ * ActorEngine
+ * Centralized actor mutation and recalculation pipeline.
+ * Modernized for Foundry VTT v13+, avoids deprecated actor.data access.
+ */
+export const ActorEngine = {
+  /**
+   * Perform any derived-stat recalculation.
+   * Runs after every validated update. Non-blocking.
+   */
+  async recalcAll(actor) {
+    try {
+      if (!actor) {throw new Error('recalcAll() called with no actor');}
+
+      const systemData = actor.system;
+      if (!systemData) {
+        swseLogger.warn(`ActorEngine.recalcAll: Actor ${actor.name} has no system data.`);
+        return;
+      }
+
+      // Future recalculations go here.
+      swseLogger.debug(`Recalculating derived data for: ${actor.name}`);
+
+      // If system implements a prepareDerivedData hook, call it safely.
+      if (typeof actor.prepareDerivedData === 'function') {
+        actor.prepareDerivedData();
+      }
+
+      // Optionally refresh effects, bonuses, etc.
+      if (typeof actor.prepareSynthetics === 'function') {
+        actor.prepareSynthetics();
+      }
+
+    } catch (err) {
+      swseLogger.error('ActorEngine.recalcAll failed:', err);
+    }
+  },
+
+  // PHASE 11: Track active migrations to prevent recursion
+  #activeMigrations: new Set(),
+
+  /**
+   * Track migration context
+   * @private
+   */
+  #markMigrationActive(actorId) {
+    this.#activeMigrations.add(actorId);
+  },
+
+  /**
+   * Clear migration context
+   * @private
+   */
+  #clearMigrationActive(actorId) {
+    this.#activeMigrations.delete(actorId);
+  },
+
+  /**
+   * Check if actor is currently migrating
+   * @private
+   */
+  #isMigrationActive(actorId) {
+    return this.#activeMigrations.has(actorId);
+  },
+
+  /**
+   * Apply a template or module of predefined data to the actor,
+   * then rebuild its derived values.
+   */
+  async applyTemplate(actor, templateData) {
+    try {
+      if (!actor) {throw new Error('applyTemplate() called with no actor');}
+
+      await this.updateActor(actor, templateData);
+      await this.recalcAll(actor);
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.applyTemplate failed on ${actor?.name ?? 'unknown actor'}`, err);
+    }
+  },
+
+  /**
+   * updateActor()
+   * PHASE 3: Single mutation authority for all actor field updates.
+   * PHASE 10: Enhanced with transaction metadata for recursive guard support.
+   *
+   * Enforced contract:
+   * 1. Set mutation context (authorizes actor.update() call)
+   * 2. Apply atomic update to actor
+   * 3. Trigger single recalculation
+   * 4. Clear mutation context
+   *
+   * Transaction metadata support:
+   * - options.meta.guardKey: String to prevent re-entrant hook mutations
+   * - Example: { guardKey: 'language-sync' } prevents same hook from re-firing
+   *
+   * This is the ONLY legal path to actor mutations.
+   */
+  async updateActor(actor, updateData, options = {}) {
+    try {
+      if (!actor) {throw new Error('updateActor() called with no actor');}
+
+      if (!updateData || typeof updateData !== 'object') {
+        throw new Error(`Invalid updateData passed to updateActor for ${actor.name}`);
+      }
+
+      swseLogger.debug(`ActorEngine.updateActor → ${actor.name}`, {
+        updateData,
+        meta: options.meta,
+        guardKey: options.meta?.guardKey
+      });
+
+      // ========================================
+      // PHASE 10: Extract and propagate metadata
+      // ========================================
+      const meta = options.meta || {};
+      if (meta.guardKey) {
+        swseLogger.debug(`[GUARD] updateActor with guardKey: ${meta.guardKey}`);
+      }
+
+      // ========================================
+      // PHASE 11: Migration context guard
+      // ========================================
+      const isMigration = meta.origin === 'migration';
+      const isMigrationActive = this.#isMigrationActive(actor.id);
+
+      if (isMigration && !isMigrationActive) {
+        // Mark migration as active
+        this.#markMigrationActive(actor.id);
+        swseLogger.debug(`[MIGRATION] Starting migration for ${actor.name}`);
+      }
+
+      if (isMigration && isMigrationActive) {
+        // Prevent recursive mutations during migration
+        swseLogger.warn(`[MIGRATION] Suppressing recursive mutation during migration for ${actor.name}`);
+        return { prevented: true, actor };
+      }
+
+      // ========================================
+      // PHASE 3: Authorize mutation via context
+      // ========================================
+      MutationInterceptor.setContext('ActorEngine.updateActor');
+      try {
+        // Perform safe atomic update (now authorized)
+        // Pass metadata through options to Foundry hooks
+        const optsWithMeta = {
+          ...options,
+          meta: meta
+        };
+        const result = await applyActorUpdateAtomic(actor, updateData, optsWithMeta);
+
+        // Kick off a recalculation pass (async, not awaited)
+        setTimeout(() => {
+          try {
+            this.recalcAll(actor);
+          } catch (e) {
+            swseLogger.warn(`ActorEngine.recalcAll threw during async pass for ${actor.name}`, e);
+          }
+        }, 0);
+
+        return result;
+      } finally {
+        // Always clear context, even on error
+        MutationInterceptor.clearContext();
+
+        // PHASE 11: Clear migration context if this was a migration
+        if (isMigration && !isMigrationActive) {
+          this.#clearMigrationActive(actor.id);
+          swseLogger.debug(`[MIGRATION] Completed migration for ${actor.name}`);
+        }
+      }
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.updateActor failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        updateData,
+        meta: options.meta?.guardKey
+      });
+      throw err;
+    }
+  },
+
+  /**
+   * Update embedded documents (e.g. owned Items) while preserving the ActorEngine lifecycle.
+   *
+   * PHASE 3: Single mutation authority for all embedded document updates.
+   * v2 contract: any actor-affecting state change (including embedded Items) must route through ActorEngine.
+   *
+   * @param {Actor} actor
+   * @param {string} embeddedName - Embedded collection name, e.g. "Item"
+   * @param {object[]} updates - update objects (must include _id)
+   * @param {object} [options={}] - forwarded to updateEmbeddedDocuments
+   */
+  async updateEmbeddedDocuments(actor, embeddedName, updates, options = {}) {
+    try {
+      if (!actor) {throw new Error('updateEmbeddedDocuments() called with no actor');}
+      if (!embeddedName) {throw new Error('updateEmbeddedDocuments() called without embeddedName');}
+      if (!Array.isArray(updates)) {throw new Error('updateEmbeddedDocuments() requires updates array');}
+
+      swseLogger.debug(`ActorEngine.updateEmbeddedDocuments → ${actor.name}`, {
+        embeddedName,
+        updates,
+        options
+      });
+
+      // ========================================
+      // PHASE 3: Authorize mutation via context
+      // ========================================
+      MutationInterceptor.setContext(`ActorEngine.updateEmbeddedDocuments[${embeddedName}]`);
+      try {
+        const result = await actor.updateEmbeddedDocuments(embeddedName, updates, options);
+
+        setTimeout(() => {
+          try {
+            this.recalcAll(actor);
+          } catch (e) {
+            swseLogger.warn(`ActorEngine.recalcAll threw during async pass for ${actor.name}`, e);
+          }
+        }, 0);
+
+        return result;
+      } finally {
+        MutationInterceptor.clearContext();
+      }
+    } catch (err) {
+      swseLogger.error(`ActorEngine.updateEmbeddedDocuments failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        embeddedName,
+        updates
+      });
+      throw err;
+    }
+  },
+
+  /**
+   * Convenience wrapper for updating owned Items through ActorEngine.
+   * @param {Actor} actor
+   * @param {object[]} updates
+   * @param {object} [options={}]
+   */
+  async updateOwnedItems(actor, updates, options = {}) {
+    return this.updateEmbeddedDocuments(actor, 'Item', updates, options);
+  },
+
+  /**
+   * Create embedded documents while preserving the ActorEngine lifecycle.
+   * PHASE 3: Only legal way to create embedded documents.
+   */
+  async createEmbeddedDocuments(actor, embeddedName, data, options = {}) {
+    try {
+      if (!actor) {throw new Error('createEmbeddedDocuments() called with no actor');}
+      if (!embeddedName) {throw new Error('createEmbeddedDocuments() called without embeddedName');}
+      if (!Array.isArray(data)) {throw new Error('createEmbeddedDocuments() requires data array');}
+
+      swseLogger.debug(`ActorEngine.createEmbeddedDocuments → ${actor.name}`, {
+        embeddedName,
+        count: data.length
+      });
+
+      MutationInterceptor.setContext(`ActorEngine.createEmbeddedDocuments[${embeddedName}]`);
+      try {
+        const result = await actor.createEmbeddedDocuments(embeddedName, data, options);
+        setTimeout(() => this.recalcAll(actor), 0);
+        return result;
+      } finally {
+        MutationInterceptor.clearContext();
+      }
+    } catch (err) {
+      swseLogger.error(`ActorEngine.createEmbeddedDocuments failed for ${actor?.name ?? 'unknown actor'}`, err);
+      throw err;
+    }
+  },
+
+  /**
+   * Delete embedded documents while preserving the ActorEngine lifecycle.
+   * PHASE 3: Only legal way to delete embedded documents.
+   */
+  async deleteEmbeddedDocuments(actor, embeddedName, ids, options = {}) {
+    try {
+      if (!actor) {throw new Error('deleteEmbeddedDocuments() called with no actor');}
+      if (!embeddedName) {throw new Error('deleteEmbeddedDocuments() called without embeddedName');}
+      if (!Array.isArray(ids)) {throw new Error('deleteEmbeddedDocuments() requires ids array');}
+
+      swseLogger.debug(`ActorEngine.deleteEmbeddedDocuments → ${actor.name}`, {
+        embeddedName,
+        count: ids.length
+      });
+
+      MutationInterceptor.setContext(`ActorEngine.deleteEmbeddedDocuments[${embeddedName}]`);
+      try {
+        const result = await actor.deleteEmbeddedDocuments(embeddedName, ids, options);
+        setTimeout(() => this.recalcAll(actor), 0);
+        return result;
+      } finally {
+        MutationInterceptor.clearContext();
+      }
+    } catch (err) {
+      swseLogger.error(`ActorEngine.deleteEmbeddedDocuments failed for ${actor?.name ?? 'unknown actor'}`, err);
+      throw err;
+    }
+  },
+
+  /**
+   * Move embedded documents between actors atomically.
+   * PHASE 9: Atomic cross-actor item transfer.
+   *
+   * This is NOT delete + create in sequence.
+   * It is a single transaction-level operation.
+   *
+   * Ensures:
+   * - Source item is deleted
+   * - Target receives item
+   * - One mutation context
+   * - One recalculation pass per actor
+   * - No partial failure state
+   *
+   * @param {Actor} sourceActor - Actor to remove item from
+   * @param {Actor} targetActor - Actor to add item to
+   * @param {string} embeddedName - Collection name (e.g. "Item")
+   * @param {string|string[]} ids - Item ID(s) to move
+   * @param {object} [options={}] - Forwarded options
+   * @returns {Promise<Array>} Created items on target actor
+   */
+  async moveEmbeddedDocuments(sourceActor, targetActor, embeddedName, ids, options = {}) {
+    try {
+      if (!sourceActor) {throw new Error('moveEmbeddedDocuments() called without sourceActor');}
+      if (!targetActor) {throw new Error('moveEmbeddedDocuments() called without targetActor');}
+      if (!embeddedName) {throw new Error('moveEmbeddedDocuments() called without embeddedName');}
+      if (!Array.isArray(ids)) {throw new Error('moveEmbeddedDocuments() requires ids array');}
+
+      swseLogger.debug(`ActorEngine.moveEmbeddedDocuments → ${sourceActor.name} → ${targetActor.name}`, {
+        embeddedName,
+        count: ids.length
+      });
+
+      // Get the items to move before deletion
+      const collection = sourceActor.getEmbeddedCollection(embeddedName);
+      const itemsToMove = ids.map(id => {
+        const doc = collection.get(id);
+        if (!doc) throw new Error(`Document ${id} not found in ${embeddedName} collection`);
+        return doc.toObject();
+      }).filter(obj => obj); // Remove nulls
+
+      if (itemsToMove.length === 0) {
+        swseLogger.warn(`No items to move from ${sourceActor.name}`);
+        return [];
+      }
+
+      // Clear _id so they can be recreated on target
+      itemsToMove.forEach(item => { delete item._id; });
+
+      // Single mutation context for the entire operation
+      MutationInterceptor.setContext(`ActorEngine.moveEmbeddedDocuments[${embeddedName}]`);
+      try {
+        // Delete from source
+        await sourceActor.deleteEmbeddedDocuments(embeddedName, ids, options);
+
+        // Create on target
+        const created = await targetActor.createEmbeddedDocuments(embeddedName, itemsToMove, options);
+
+        // Recalculate both actors
+        setTimeout(() => {
+          try {
+            this.recalcAll(sourceActor);
+            this.recalcAll(targetActor);
+          } catch (e) {
+            swseLogger.warn(`ActorEngine.recalcAll threw during moveEmbeddedDocuments for ${sourceActor.name} or ${targetActor.name}`, e);
+          }
+        }, 0);
+
+        return created;
+      } finally {
+        MutationInterceptor.clearContext();
+      }
+    } catch (err) {
+      swseLogger.error(`ActorEngine.moveEmbeddedDocuments failed`, {
+        error: err,
+        sourceActor: sourceActor?.name,
+        targetActor: targetActor?.name,
+        embeddedName,
+        ids
+      });
+      throw err;
+    }
+  },
+
+  /**
+   * applyDelta(actor, delta)
+   *
+   * v2 Progression Contract: The ONLY legal way to apply ProgressionCompiler output.
+   *
+   * Enforces strict guarantees:
+   * - No derived writes (illegal boundary violation)
+   * - No async computation (math belongs in prepareDerivedData)
+   * - No conditional branching (resolver is deterministic)
+   *
+   * @param {Actor} actor
+   * @param {ProgressionDelta} delta - { set, add, delete }
+   * @throws if delta violates v2 constraints
+   */
+  async applyDelta(actor, delta) {
+    try {
+      if (!actor) {throw new Error('applyDelta() called with no actor');}
+      if (!delta) {return;} // noop
+
+      // ---- GUARDRAIL 1: Reject derived writes ----
+      if (delta.derived) {
+        throw new Error(
+          'ARCHITECTURE VIOLATION: Progression attempted to write to derived fields. ' +
+          'Math computation belongs in prepareDerivedData(), not progression.'
+        );
+      }
+
+      // ---- GUARDRAIL 2: Validate delta structure ----
+      if (delta.set && typeof delta.set !== 'object') {
+        throw new Error('Invalid delta.set: must be object { path: value }');
+      }
+      if (delta.add && typeof delta.add !== 'object') {
+        throw new Error('Invalid delta.add: must be object with feature arrays');
+      }
+      if (delta.delete && typeof delta.delete !== 'object') {
+        throw new Error('Invalid delta.delete: must be object with feature arrays');
+      }
+
+      swseLogger.debug(`ActorEngine.applyDelta → ${actor.name}`, { delta });
+
+      // ---- Phase 4: Apply SET operations (field updates) ----
+      const updates = {};
+      if (delta.set) {
+        for (const [path, value] of Object.entries(delta.set)) {
+          if (path.startsWith('system.derived')) {
+            throw new Error(`ILLEGAL: applyDelta cannot write ${path} (derived field)`);
+          }
+          updates[path] = value;
+        }
+      }
+
+      // Apply field updates atomically
+      if (Object.keys(updates).length > 0) {
+        await this.updateActor(actor, updates);
+      }
+
+      // ---- Phase 4: Apply ADD operations (create items) ----
+      if (delta.add?.talents && delta.add.talents.length > 0) {
+        const talentItems = delta.add.talents.map(talentId => ({
+          type: 'talent',
+          name: talentId, // Will be enriched by sheet
+          system: {
+            ssotId: talentId // Pointer to SSOT, not rules
+          }
+        }));
+        await this.createEmbeddedDocuments(actor, 'Item', talentItems);
+      }
+
+      if (delta.add?.feats && delta.add.feats.length > 0) {
+        const featItems = delta.add.feats.map(featId => ({
+          type: 'feat',
+          name: featId,
+          system: {
+            ssotId: featId
+          }
+        }));
+        await this.createEmbeddedDocuments(actor, 'Item', featItems);
+      }
+
+      if (delta.add?.skills && delta.add.skills.length > 0) {
+        const skillUpdates = {};
+        for (const skillId of delta.add.skills) {
+          // Skills are ranks in system.skills, not items
+          skillUpdates[`system.progression.skills.${skillId}`] = 1;
+        }
+        await this.updateActor(actor, skillUpdates);
+      }
+
+      // ---- Phase 4: Apply DELETE operations (remove items) ----
+      if (delta.delete?.talents && delta.delete.talents.length > 0) {
+        const talentsToDelete = actor.items
+          .filter(item => item.type === 'talent' && delta.delete.talents.includes(item.system.ssotId))
+          .map(item => item.id);
+        if (talentsToDelete.length > 0) {
+          await this.deleteEmbeddedDocuments(actor, 'Item', talentsToDelete);
+        }
+      }
+
+      if (delta.delete?.feats && delta.delete.feats.length > 0) {
+        const featsToDelete = actor.items
+          .filter(item => item.type === 'feat' && delta.delete.feats.includes(item.system.ssotId))
+          .map(item => item.id);
+        if (featsToDelete.length > 0) {
+          await this.deleteEmbeddedDocuments(actor, 'Item', featsToDelete);
+        }
+      }
+
+      swseLogger.log(`ActorEngine.applyDelta completed for ${actor.name}`);
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.applyDelta failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        delta
+      });
+      throw err;
+    }
+  },
+
+  // ============================================================================
+  // PHASE 3 BATCH 2: COMBAT AUTHORITY APIS
+  // ============================================================================
+
+  /**
+   * applyDamage() — PHASE 3 Combat Authority
+   *
+   * ONLY legal way to reduce actor HP in combat.
+   *
+   * Contract:
+   * - Combat produces DamagePacket (declarative)
+   * - ActorEngine applies modifiers & computes final damage
+   * - ConditionTrack shifts handled atomically
+   * - Single mutation, single recalc
+   *
+   * @param {Actor} actor - target actor
+   * @param {Object} damagePacket - {
+   *   amount: number,           // Raw damage amount
+   *   type: string,             // 'kinetic', 'energy', 'burn', etc.
+   *   source: string,           // 'laser-attack', 'force-power', etc.
+   *   modifiersApplied: boolean,// Have ModifierEngine modifiers been applied?
+   *   conditionShift: boolean,  // Should condition track shift?
+   *   targetActor: Actor        // (optional, for logging)
+   * }
+   */
+  async applyDamage(actor, damagePacket) {
+    try {
+      if (!actor) {throw new Error('applyDamage() called with no actor');}
+      if (!damagePacket) {throw new Error('applyDamage() called with no damagePacket');}
+      if (typeof damagePacket.amount !== 'number' || damagePacket.amount < 0) {
+        throw new Error(`Invalid damage amount: ${damagePacket.amount}`);
+      }
+
+      swseLogger.debug(`ActorEngine.applyDamage → ${actor.name}`, {
+        amount: damagePacket.amount,
+        type: damagePacket.type,
+        source: damagePacket.source
+      });
+
+      // ========================================
+      // Compute final damage (apply armor, abilities, etc.)
+      // ========================================
+      let finalDamage = damagePacket.amount;
+
+      // TODO: Apply ModifierEngine for damage reduction
+      // const modifiers = await ModifierEngine.getDamageModifiers(actor, damagePacket.type);
+      // finalDamage = ModifierEngine.applyModifiers(finalDamage, modifiers);
+
+      // ========================================
+      // Apply damage & condition logic atomically
+      // ========================================
+      const currentHP = actor.system.attributes?.hp?.value || 0;
+      const maxHP = actor.system.attributes?.hp?.max || 100;
+      const newHP = Math.max(0, currentHP - finalDamage);
+
+      // Check if condition shift needed (at threshold)
+      const conditionThreshold = Math.floor(maxHP / 4); // Quarter health
+      const wasAboveThreshold = currentHP > conditionThreshold;
+      const isNowBelowThreshold = newHP <= conditionThreshold;
+      const shouldShiftCondition = damagePacket.conditionShift &&
+                                   wasAboveThreshold &&
+                                   isNowBelowThreshold;
+
+      // Build single atomic update
+      const updates = {
+        'system.attributes.hp.value': newHP
+      };
+
+      if (shouldShiftCondition) {
+        // Shift condition track within same mutation
+        const currentCondition = actor.system.progression?.conditionTrack || 0;
+        updates['system.progression.conditionTrack'] = Math.max(0, currentCondition + 1);
+      }
+
+      // Apply all updates in one mutation
+      await this.updateActor(actor, updates);
+
+      swseLogger.log(`Damage applied to ${actor.name}: ${finalDamage}HP (final: ${newHP}/${maxHP})`, {
+        source: damagePacket.source,
+        conditionShifted: shouldShiftCondition
+      });
+
+      return {
+        applied: finalDamage,
+        newHP,
+        conditionShifted: shouldShiftCondition
+      };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.applyDamage failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        damagePacket
+      });
+      throw err;
+    }
+  },
+
+  /**
+   * applyHealing() — Restore actor HP
+   *
+   * Use outside of combat for healing.
+   * In combat, use applyDamage with negative amounts.
+   *
+   * @param {Actor} actor - target actor
+   * @param {number} amount - HP to restore
+   * @param {string} source - healing source
+   */
+  async applyHealing(actor, amount, source = 'healing') {
+    try {
+      if (!actor) {throw new Error('applyHealing() called with no actor');}
+      if (typeof amount !== 'number' || amount < 0) {
+        throw new Error(`Invalid healing amount: ${amount}`);
+      }
+
+      swseLogger.debug(`ActorEngine.applyHealing → ${actor.name}`, {
+        amount,
+        source
+      });
+
+      const currentHP = actor.system.attributes?.hp?.value || 0;
+      const maxHP = actor.system.attributes?.hp?.max || 100;
+      const newHP = Math.min(maxHP, currentHP + amount);
+      const actualHealing = newHP - currentHP;
+
+      if (actualHealing === 0) {
+        swseLogger.debug(`${actor.name} healing had no effect (already at max HP)`);
+        return { applied: 0, newHP };
+      }
+
+      await this.updateActor(actor, {
+        'system.attributes.hp.value': newHP
+      });
+
+      swseLogger.log(`Healing applied to ${actor.name}: +${actualHealing}HP (now: ${newHP}/${maxHP})`, {
+        source
+      });
+
+      return {
+        applied: actualHealing,
+        newHP
+      };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.applyHealing failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        amount,
+        source
+      });
+      throw err;
+    }
+  },
+
+  /**
+   * setConditionStep() — Set condition track to exact step
+   *
+   * Sets actor's condition track to specific step (0-5).
+   * Used by UI components for direct condition selection.
+   *
+   * @param {Actor} actor - target actor
+   * @param {number} step - condition step (0-5, clamped)
+   * @param {string} source - reason for change
+   */
+  async setConditionStep(actor, step, source = 'manual') {
+    try {
+      if (!actor) {throw new Error('setConditionStep() requires actor');}
+      if (typeof step !== 'number' || !Number.isFinite(step)) {
+        throw new Error(`Invalid condition step: ${step}`);
+      }
+
+      const clampedStep = Math.clamp(step, 0, 5);
+      const current = actor.system.conditionTrack?.current || 0;
+
+      if (clampedStep === current) {
+        swseLogger.debug(`${actor.name} condition already at step ${clampedStep}`);
+        return { applied: 0, newStep: clampedStep };
+      }
+
+      await this.updateActor(actor, {
+        'system.conditionTrack.current': clampedStep
+      });
+
+      swseLogger.log(`Condition step updated for ${actor.name}`, {
+        from: current,
+        to: clampedStep,
+        source
+      });
+
+      return { applied: 1, newStep: clampedStep };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.setConditionStep failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        step,
+        source
+      });
+      throw err;
+    }
+  },
+
+  /**
+   * setConditionPersistent() — Toggle persistent condition flag
+   *
+   * Marks condition as persistent (cannot be recovered naturally).
+   *
+   * @param {Actor} actor - target actor
+   * @param {boolean} persistent - true for persistent, false to clear
+   * @param {string} source - reason for change
+   */
+  async setConditionPersistent(actor, persistent, source = 'manual') {
+    try {
+      if (!actor) {throw new Error('setConditionPersistent() requires actor');}
+
+      const current = actor.system.conditionTrack?.persistent ?? false;
+
+      if (persistent === current) {
+        swseLogger.debug(`${actor.name} persistent condition already ${persistent ? 'set' : 'clear'}`);
+        return { applied: 0, persistent };
+      }
+
+      await this.updateActor(actor, {
+        'system.conditionTrack.persistent': persistent
+      });
+
+      swseLogger.log(`Condition persistent flag updated for ${actor.name}`, {
+        persistent,
+        source
+      });
+
+      return { applied: 1, persistent };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.setConditionPersistent failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        persistent,
+        source
+      });
+      throw err;
+    }
+  },
+
+  /**
+   * applyConditionShift() — Shift condition track
+   *
+   * Shifts actor's condition track by +1 or -1.
+   * Triggers derived recalculation for condition penalties.
+   *
+   * @param {Actor} actor - target actor
+   * @param {number} direction - +1 (worse) or -1 (better)
+   * @param {string} source - reason for shift
+   */
+  async applyConditionShift(actor, direction, source = 'manual') {
+    try {
+      if (!actor) {throw new Error('applyConditionShift() called with no actor');}
+      if (direction !== 1 && direction !== -1) {
+        throw new Error(`Invalid shift direction: ${direction} (must be +1 or -1)`);
+      }
+
+      swseLogger.debug(`ActorEngine.applyConditionShift → ${actor.name}`, {
+        direction,
+        source
+      });
+
+      const currentCondition = actor.system.progression?.conditionTrack || 0;
+      const newCondition = Math.max(0, currentCondition + direction);
+
+      if (newCondition === currentCondition) {
+        swseLogger.debug(`${actor.name} condition shift had no effect (at boundary)`);
+        return { applied: 0, newCondition };
+      }
+
+      await this.updateActor(actor, {
+        'system.progression.conditionTrack': newCondition
+      });
+
+      const directionLabel = direction > 0 ? 'worsened' : 'improved';
+      swseLogger.log(`Condition ${directionLabel} for ${actor.name} (now: ${newCondition})`, {
+        source
+      });
+
+      return {
+        applied: direction,
+        newCondition
+      };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.applyConditionShift failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        direction,
+        source
+      });
+      throw err;
+    }
+  },
+
+  /**
+   * updateActionEconomy() — Update action economy state
+   *
+   * Used by combatants to mark actions as used/available.
+   * Single mutation for action state changes.
+   *
+   * @param {Actor} actor - target actor
+   * @param {Object} actionEconomy - { swift, move, standard, fullRound, reaction }
+   */
+  async updateActionEconomy(actor, actionEconomy) {
+    try {
+      if (!actor) {throw new Error('updateActionEconomy() called with no actor');}
+      if (!actionEconomy || typeof actionEconomy !== 'object') {
+        throw new Error('updateActionEconomy() requires actionEconomy object');
+      }
+
+      swseLogger.debug(`ActorEngine.updateActionEconomy → ${actor.name}`, {
+        swift: actionEconomy.swift,
+        move: actionEconomy.move,
+        standard: actionEconomy.standard,
+        fullRound: actionEconomy.fullRound,
+        reaction: actionEconomy.reaction
+      });
+
+      await this.updateActor(actor, {
+        'system.actionEconomy': actionEconomy
+      });
+
+      swseLogger.log(`Action economy updated for ${actor.name}`, {
+        actionEconomy
+      });
+
+      return { updated: true, actionEconomy };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.updateActionEconomy failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        actionEconomy
+      });
+      throw err;
+    }
+  },
+
+  /**
+   * gainForcePoints() — Restore actor's force points
+   *
+   * @param {Actor} actor - target actor
+   * @param {number} amount - number of points to gain
+   */
+  async gainForcePoints(actor, amount = 1) {
+    try {
+      if (!actor) {throw new Error('gainForcePoints() requires actor');}
+      if (typeof amount !== 'number' || amount < 0) {
+        throw new Error(`Invalid force point amount: ${amount}`);
+      }
+
+      const currentFP = actor.system.forcePoints?.value || 0;
+      const maxFP = actor.system.forcePoints?.max || 10;
+      const newFP = Math.min(maxFP, currentFP + amount);
+      const actualGain = newFP - currentFP;
+
+      if (actualGain === 0) {
+        swseLogger.debug(`${actor.name} force points already at max`);
+        return { gained: 0, current: newFP, max: maxFP };
+      }
+
+      await this.updateActor(actor, {
+        'system.forcePoints.value': newFP
+      });
+
+      swseLogger.log(`Force points gained: ${actor.name} gained ${actualGain}FP (now: ${newFP}/${maxFP})`, {
+        amount: actualGain
+      });
+
+      return { gained: actualGain, current: newFP, max: maxFP };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.gainForcePoints failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        amount
+      });
+      throw err;
+    }
+  },
+
+  /**
+   * spendForcePoints() — Reduce actor's force points
+   *
+   * @param {Actor} actor - target actor
+   * @param {number} amount - number of points to spend
+   */
+  async spendForcePoints(actor, amount = 1) {
+    try {
+      if (!actor) {throw new Error('spendForcePoints() called with no actor');}
+      if (typeof amount !== 'number' || amount < 0) {
+        throw new Error(`Invalid force point amount: ${amount}`);
+      }
+
+      const currentFP = actor.system.forcePoints?.value || 0;
+      const newFP = Math.max(0, currentFP - amount);
+      const actualSpent = currentFP - newFP;
+
+      if (actualSpent === 0) {
+        swseLogger.debug(`${actor.name} has no force points to spend`);
+        return { spent: 0, remaining: newFP };
+      }
+
+      await this.updateActor(actor, {
+        'system.forcePoints.value': newFP
+      });
+
+      swseLogger.log(`Force points spent: ${actor.name} used ${actualSpent}FP (now: ${newFP})`, {
+        amount: actualSpent
+      });
+
+      return { spent: actualSpent, remaining: newFP };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.spendForcePoints failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        amount
+      });
+      throw err;
+    }
+  },
+
+  /**
+   * spendDestinyPoints() — Reduce actor's destiny points
+   *
+   * @param {Actor} actor - target actor
+   * @param {number} amount - number of points to spend
+   */
+  async spendDestinyPoints(actor, amount = 1) {
+    try {
+      if (!actor) {throw new Error('spendDestinyPoints() called with no actor');}
+      if (typeof amount !== 'number' || amount < 0) {
+        throw new Error(`Invalid destiny point amount: ${amount}`);
+      }
+
+      const currentDP = actor.system.destinyPoints?.value || 0;
+      const newDP = Math.max(0, currentDP - amount);
+      const actualSpent = currentDP - newDP;
+
+      if (actualSpent === 0) {
+        swseLogger.debug(`${actor.name} has no destiny points to spend`);
+        return { spent: 0, remaining: newDP };
+      }
+
+      await this.updateActor(actor, {
+        'system.destinyPoints.value': newDP
+      });
+
+      swseLogger.log(`Destiny points spent: ${actor.name} used ${actualSpent}DP (now: ${newDP})`, {
+        amount: actualSpent
+      });
+
+      return { spent: actualSpent, remaining: newDP };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.spendDestinyPoints failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        amount
+      });
+      throw err;
+    }
+  },
+
+  /**
+   * applySecondWind() — Use second wind and restore HP
+   *
+   * Heals actor based on level, reduces second wind uses.
+   * Combat-critical atomic operation.
+   *
+   * @param {Actor} actor - target actor
+   * @param {Object} [options={}] - optional healing parameters
+   * @returns {Promise<{success, healed, newHP}>}
+   */
+  async applySecondWind(actor, options = {}) {
+    try {
+      if (!actor) {throw new Error('applySecondWind() requires actor');}
+
+      const uses = actor.system.secondWind?.uses ?? 0;
+      if (uses < 1) {
+        return { success: false, reason: 'No Second Wind uses remaining' };
+      }
+
+      const level = actor.system.level ?? 1;
+      const heal = 5 + Math.floor(level / 4) * 5;
+
+      // Get authoritative HP source
+      const currentHP = (actor.system?.derived?.hp?.value || actor.system?.hp?.value || 0);
+      const maxHP = (actor.system?.derived?.hp?.max || actor.system?.hp?.max || 0);
+      const newHP = Math.min(currentHP + heal, maxHP);
+      const actualHealing = newHP - currentHP;
+
+      // Batch update: HP restoration + use consumption
+      await this.updateActor(actor, {
+        'system.derived.hp.value': newHP,
+        'system.secondWind.uses': Math.max(0, uses - 1)
+      });
+
+      swseLogger.log(`Second wind used by ${actor.name}`, {
+        healed: actualHealing,
+        newHP,
+        maxHP,
+        usesRemaining: Math.max(0, uses - 1)
+      });
+
+      return {
+        success: true,
+        healed: actualHealing,
+        newHP,
+        usesRemaining: Math.max(0, uses - 1)
+      };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.applySecondWind failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err
+      });
+      throw err;
+    }
+  },
+
+  /**
+   * resetSecondWind() — Reset second wind used flag
+   *
+   * @param {Actor} actor - target actor
+   */
+  async resetSecondWind(actor) {
+    try {
+      if (!actor) {throw new Error('resetSecondWind() called with no actor');}
+
+      await this.updateActor(actor, {
+        'system.secondWind.used': false
+      });
+
+      swseLogger.log(`Second wind reset for ${actor.name}`);
+      return { reset: true };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.resetSecondWind failed for ${actor?.name ?? 'unknown actor'}`, { error: err });
+      throw err;
+    }
+  },
+
+  /**
+   * applyProgression() — ATOMIC PROGRESSION TRANSACTION
+   *
+   * Single transaction for all progression mutations:
+   * 1. Compute new level internally
+   * 2. Build full mutation plan (memory)
+   * 3. Apply root state update (1 mutation)
+   * 4. Apply embedded batch changes (2 mutations max: delete, create)
+   * 5. Emit hooks (read-only observers)
+   * 6. Explicit single recomputation
+   *
+   * @param {Actor} actor - target actor
+   * @param {Object} progressionPacket - Atomic progression packet containing:
+   *   - xpDelta: number (XP to add)
+   *   - featsAdded: string[] (feat IDs to add)
+   *   - featsRemoved: string[] (feat IDs to remove for respec)
+   *   - talentsAdded: string[] (talent IDs to add)
+   *   - talentsRemoved: string[] (talent IDs to remove)
+   *   - trainedSkills: {skillKey: boolean} (skills to mark trained)
+   *   - itemsToCreate: Object[] (raw item data to create)
+   *   - stateUpdates: {path: value} (progression state updates)
+   * @returns {Promise<{success, newLevel, leveledUp, mutationCount, itemsCreated, itemsDeleted}>}
+   */
+  async applyProgression(actor, progressionPacket) {
+    try {
+      if (!actor) {throw new Error('applyProgression() called with no actor');}
+      if (!progressionPacket || typeof progressionPacket !== 'object') {
+        throw new Error('applyProgression() requires progressionPacket object');
+      }
+
+      // ====================================================================
+      // PHASE 1: COMPUTE NEW LEVEL (INTERNALLY)
+      // ====================================================================
+      const currentXP = actor.system.xp?.total || 0;
+      const newXPTotal = currentXP + (progressionPacket.xpDelta || 0);
+      const oldLevel = determineLevelFromXP(currentXP);
+      const newLevel = determineLevelFromXP(newXPTotal);
+      const leveledUp = newLevel > oldLevel;
+
+      swseLogger.log(`[PROGRESSION] Applying progression to ${actor.name}:`, {
+        xpDelta: progressionPacket.xpDelta,
+        leveledUp: leveledUp ? `${oldLevel} → ${newLevel}` : 'no level change',
+        featsAdded: progressionPacket.featsAdded?.length || 0,
+        talentsAdded: progressionPacket.talentsAdded?.length || 0,
+        itemsToCreate: progressionPacket.itemsToCreate?.length || 0
+      });
+
+      // ====================================================================
+      // PHASE 2: BUILD FULL MUTATION PLAN (MEMORY)
+      // ====================================================================
+      const rootUpdates = {
+        'system.xp.total': newXPTotal,
+        ...(progressionPacket.stateUpdates || {})
+      };
+
+      const itemsToDelete = actor.items
+        .filter(item =>
+          progressionPacket.featsRemoved?.includes(item.id) ||
+          progressionPacket.talentsRemoved?.includes(item.id)
+        )
+        .map(i => i.id);
+
+      const itemsToCreate = progressionPacket.itemsToCreate || [];
+
+      // ====================================================================
+      // PHASE 3: SET STRICT MUTATION CONTEXT
+      // ====================================================================
+      // blockNestedMutations prevents hooks from triggering additional mutations
+      MutationInterceptor.setContext({
+        operation: 'applyProgression',
+        source: 'ActorEngine.applyProgression',
+        suppressRecalc: true,           // Blocks prepareDerivedData()
+        blockNestedMutations: true      // Blocks additional ActorEngine calls
+      });
+
+      try {
+        // ====================================================================
+        // PHASE 4A: APPLY ROOT UPDATE (Mutation #1)
+        // ====================================================================
+        if (Object.keys(rootUpdates).length > 0) {
+          swseLogger.debug(`[PROGRESSION] Applying ${Object.keys(rootUpdates).length} root updates`);
+          await actor.update(rootUpdates, { diff: false });
+        }
+
+        // ====================================================================
+        // PHASE 4B: DELETE ITEMS (Mutation #2, only if needed)
+        // ====================================================================
+        if (itemsToDelete.length > 0) {
+          swseLogger.debug(`[PROGRESSION] Deleting ${itemsToDelete.length} items`);
+          await actor.deleteEmbeddedDocuments('Item', itemsToDelete);
+        }
+
+        // ====================================================================
+        // PHASE 4C: CREATE ITEMS (Mutation #3, only if needed)
+        // ====================================================================
+        const createdItems = [];
+        if (itemsToCreate.length > 0) {
+          swseLogger.debug(`[PROGRESSION] Creating ${itemsToCreate.length} items`);
+          const created = await actor.createEmbeddedDocuments('Item', itemsToCreate);
+          createdItems.push(...created.map(i => i.id));
+        }
+
+        // ====================================================================
+        // PHASE 5: EMIT PROGRESSION HOOKS (NO MUTATIONS)
+        // ====================================================================
+        // Hooks called AFTER mutations, BEFORE recalc
+        // blockNestedMutations prevents listeners from triggering new mutations
+        if (leveledUp) {
+          Hooks.call('swseProgressionLevelUp', {
+            actor,
+            fromLevel: oldLevel,
+            toLevel: newLevel,
+            xpGained: progressionPacket.xpDelta
+          });
+        }
+
+        Hooks.call('swseProgressionApplied', {
+          actor,
+          packet: progressionPacket,
+          itemsCreated: createdItems.length,
+          itemsDeleted: itemsToDelete.length,
+          newLevel
+        });
+
+        // ====================================================================
+        // PHASE 6: EXPLICIT DETERMINISTIC RECOMPUTATION (ONCE)
+        // ====================================================================
+        // CRITICAL: No sheet rendering, no lifecycle hooks
+        // Direct state computation
+        swseLogger.debug(`[PROGRESSION] Triggering derived recalculation`);
+
+        // Step 1: Compute all derived values
+        await DerivedCalculator.computeAll(actor);
+
+        // Step 2: Apply all modifiers
+        await ModifierEngine.applyAll(actor);
+
+        swseLogger.log(`[PROGRESSION] ✅ Progression applied to ${actor.name}:`, {
+          mutationCount: (itemsToDelete.length > 0 ? 1 : 0) + (itemsToCreate.length > 0 ? 1 : 0) + 1,
+          itemsCreated: createdItems.length,
+          itemsDeleted: itemsToDelete.length,
+          newXPTotal,
+          newLevel
+        });
+
+        // ====================================================================
+        // RETURN RESULTS
+        // ====================================================================
+        return {
+          success: true,
+          newLevel,
+          leveledUp,
+          fromLevel: oldLevel,
+          mutationCount: (itemsToDelete.length > 0 ? 1 : 0) +
+                          (itemsToCreate.length > 0 ? 1 : 0) +
+                          (Object.keys(rootUpdates).length > 0 ? 1 : 0),
+          itemsCreated: createdItems.length,
+          itemsDeleted: itemsToDelete.length,
+          xpTotal: actor.system.xp?.total,
+          createdItemIds: createdItems,
+          timestamp: new Date().toISOString()
+        };
+
+      } finally {
+        // ====================================================================
+        // PHASE 7: CLEAR MUTATION CONTEXT
+        // ====================================================================
+        MutationInterceptor.clearContext();
+      }
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.applyProgression failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        packet: progressionPacket
+      });
+      throw err;
+    }
+  },
+
+  // ============================================================================
+  // PHASE 5: TALENT EFFECT ORCHESTRATION
+  // ============================================================================
+
+  /**
+   * applyTalentEffect() — COORDINATED TALENT EFFECT MUTATIONS
+   *
+   * Executes a pre-computed talent effect plan.
+   *
+   * Contract:
+   * - Plan is pre-computed (from TalentEffectEngine)
+   * - Each actor mutation is individually governed
+   * - Derived recalculation happens per-actor
+   * - No cross-actor atomicity (domain-level coordination only)
+   * - If any mutation fails, error is thrown (no automatic rollback)
+   *
+   * @param {Object} plan - Effect plan from TalentEffectEngine.build*Plan()
+   * @param {Object} [options={}] - Optional execution options
+   * @returns {Promise<{success, effect, damageAmount, roll, results}>}
+   */
+  async applyTalentEffect(plan, options = {}) {
+    try {
+      if (!plan) {
+        throw new Error('applyTalentEffect() called with no plan');
+      }
+
+      if (!plan.success) {
+        // Plan computation failed; return failure as-is
+        return {
+          success: false,
+          reason: plan.reason,
+          effect: plan.effect
+        };
+      }
+
+      if (!Array.isArray(plan.mutations) || plan.mutations.length === 0) {
+        throw new Error('applyTalentEffect() plan has no mutations');
+      }
+
+      swseLogger.log(`[TALENT EFFECT] Applying ${plan.effect} with ${plan.mutations.length} mutations`, {
+        damageAmount: plan.damageAmount,
+        roll: plan.roll?.result
+      });
+
+      const results = [];
+      const appliedMutations = [];
+
+      // ====================================================================
+      // PHASE 1: Apply each mutation through ActorEngine
+      // ====================================================================
+      for (let i = 0; i < plan.mutations.length; i++) {
+        const mutation = plan.mutations[i];
+
+        try {
+          // Set context for this mutation
+          // Each mutation is individually governed (not wrapped together)
+          MutationInterceptor.setContext({
+            operation: 'applyTalentEffect',
+            effect: plan.effect,
+            mutationIndex: i,
+            totalMutations: plan.mutations.length
+          });
+
+          // Execute mutation based on type
+          if (mutation.type === 'update') {
+            swseLogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: update ${mutation.actor.name}`, {
+              data: mutation.data
+            });
+
+            await this.updateActor(mutation.actor, mutation.data);
+
+            results.push({
+              actor: mutation.actor.id,
+              type: 'update',
+              success: true
+            });
+
+            appliedMutations.push(mutation);
+
+          } else if (mutation.type === 'setFlag') {
+            swseLogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: setFlag ${mutation.actor.name}`, {
+              scope: mutation.scope,
+              key: mutation.key,
+              value: mutation.value
+            });
+
+            await mutation.actor.setFlag(mutation.scope, mutation.key, mutation.value);
+
+            results.push({
+              actor: mutation.actor.id,
+              type: 'setFlag',
+              success: true
+            });
+
+            appliedMutations.push(mutation);
+
+          } else if (mutation.type === 'unsetFlag') {
+            swseLogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: unsetFlag ${mutation.actor.name}`, {
+              scope: mutation.scope,
+              key: mutation.key
+            });
+
+            await mutation.actor.unsetFlag(mutation.scope, mutation.key);
+
+            results.push({
+              actor: mutation.actor.id,
+              type: 'unsetFlag',
+              success: true
+            });
+
+            appliedMutations.push(mutation);
+
+          } else if (mutation.type === 'createEmbedded') {
+            swseLogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: createEmbedded ${mutation.actor.name}`, {
+              embeddedName: mutation.embeddedName,
+              count: mutation.data.length
+            });
+
+            await this.createEmbeddedDocuments(
+              mutation.actor,
+              mutation.embeddedName,
+              mutation.data
+            );
+
+            results.push({
+              actor: mutation.actor.id,
+              type: 'createEmbedded',
+              success: true,
+              count: mutation.data.length
+            });
+
+            appliedMutations.push(mutation);
+
+          } else if (mutation.type === 'deleteEmbedded') {
+            swseLogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: deleteEmbedded ${mutation.actor.name}`, {
+              embeddedName: mutation.embeddedName,
+              count: mutation.ids.length
+            });
+
+            await this.deleteEmbeddedDocuments(
+              mutation.actor,
+              mutation.embeddedName,
+              mutation.ids
+            );
+
+            results.push({
+              actor: mutation.actor.id,
+              type: 'deleteEmbedded',
+              success: true,
+              count: mutation.ids.length
+            });
+
+            appliedMutations.push(mutation);
+
+          } else if (mutation.type === 'updateOwnedItems') {
+            swseLogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: updateOwnedItems ${mutation.actor.name}`, {
+              itemCount: mutation.items.length
+            });
+
+            await this.updateOwnedItems(mutation.actor, mutation.items);
+
+            results.push({
+              actor: mutation.actor.id,
+              type: 'updateOwnedItems',
+              success: true,
+              count: mutation.items.length
+            });
+
+            appliedMutations.push(mutation);
+
+          } else {
+            throw new Error(`Unknown mutation type: ${mutation.type}`);
+          }
+
+        } catch (mutationErr) {
+          swseLogger.error(`[TALENT EFFECT] Mutation ${i + 1} failed: ${mutation.type} on ${mutation.actor.name}`, {
+            error: mutationErr,
+            appliedSoFar: appliedMutations.length,
+            totalMutations: plan.mutations.length
+          });
+
+          // Report which mutations succeeded, which failed
+          results.push({
+            actor: mutation.actor.id,
+            type: mutation.type,
+            success: false,
+            error: mutationErr.message
+          });
+
+          // Throw to prevent partial execution
+          throw new Error(
+            `Talent effect ${plan.effect} failed at mutation ${i + 1}: ${mutationErr.message}`
+          );
+
+        } finally {
+          // Always clear context
+          MutationInterceptor.clearContext();
+        }
+      }
+
+      // ====================================================================
+      // PHASE 2: All mutations succeeded
+      // ====================================================================
+      swseLogger.log(`[TALENT EFFECT] ✅ ${plan.effect} applied successfully`, {
+        mutationCount: plan.mutations.length,
+        damageAmount: plan.damageAmount,
+        resultSummary: results.map(r => `${r.type}:${r.success ? 'OK' : 'FAIL'}`)
+      });
+
+      return {
+        success: true,
+        effect: plan.effect,
+        damageAmount: plan.damageAmount,
+        roll: plan.roll,
+        results: results,
+        mutationCount: plan.mutations.length,
+        timestamp: new Date().toISOString()
+      };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.applyTalentEffect failed`, {
+        error: err,
+        effect: plan?.effect,
+        plan: plan
+      });
+
+      // Return error result (do not throw; let caller decide)
+      return {
+        success: false,
+        effect: plan?.effect,
+        reason: err.message,
+        timestamp: new Date().toISOString()
+      };
+    }
+  }
+
+  /**
+   * restoreFromSnapshot() — Atomic snapshot restoration
+   *
+   * Restores complete actor state from snapshot:
+   * 1. Update root actor data (system, name, img, prototypeToken)
+   * 2. Delete all current items, then create snapshot items
+   * 3. Delete all current effects, then create snapshot effects
+   * 4. All in single mutation transaction
+   *
+   * @param {Actor} actor - target actor
+   * @param {Object} snapshot - snapshot object with { system, name, img, prototypeToken, items, effects }
+   * @param {Object} [options={}] - mutation options
+   */
+  async restoreFromSnapshot(actor, snapshot, options = {}) {
+    try {
+      if (!actor) {throw new Error('restoreFromSnapshot() requires actor');}
+      if (!snapshot) {throw new Error('restoreFromSnapshot() requires snapshot');}
+
+      swseLogger.log(`[SNAPSHOT] Restoring ${actor.name} from snapshot`, {
+        systemFieldCount: Object.keys(snapshot.system || {}).length,
+        itemCount: (snapshot.items || []).length,
+        effectCount: (snapshot.effects || []).length
+      });
+
+      // ====================================================================
+      // PHASE 1: ROOT UPDATE (system, name, img, prototypeToken)
+      // ====================================================================
+      const system = foundry.utils.deepClone(snapshot.system ?? {});
+      const name = snapshot.name ?? actor.name;
+      const img = snapshot.img ?? actor.img;
+      const prototypeToken = foundry.utils.deepClone(snapshot.prototypeToken ?? {});
+
+      await this.updateActor(actor, {
+        name,
+        img,
+        system,
+        prototypeToken
+      }, options);
+
+      // ====================================================================
+      // PHASE 2: ITEM RESTORATION (delete all, recreate from snapshot)
+      // ====================================================================
+      const currentItemIds = actor.items?.map?.(i => i.id) ?? [];
+      if (currentItemIds.length > 0) {
+        await this.deleteEmbeddedDocuments(actor, 'Item', currentItemIds, options);
+      }
+
+      const itemsToCreate = (snapshot.items ?? []).map(i => {
+        const copy = foundry.utils.deepClone(i);
+        delete copy._id;
+        return copy;
+      });
+      if (itemsToCreate.length > 0) {
+        await this.createEmbeddedDocuments(actor, 'Item', itemsToCreate, options);
+      }
+
+      // ====================================================================
+      // PHASE 3: EFFECT RESTORATION (delete all, recreate from snapshot)
+      // ====================================================================
+      const currentEffectIds = actor.effects?.map?.(e => e.id) ?? [];
+      if (currentEffectIds.length > 0) {
+        await this.deleteEmbeddedDocuments(actor, 'ActiveEffect', currentEffectIds, options);
+      }
+
+      const effectsToCreate = (snapshot.effects ?? []).map(e => {
+        const copy = foundry.utils.deepClone(e);
+        delete copy._id;
+        return copy;
+      });
+      if (effectsToCreate.length > 0) {
+        await this.createEmbeddedDocuments(actor, 'ActiveEffect', effectsToCreate, options);
+      }
+
+      swseLogger.log(`[SNAPSHOT] ✅ Restoration complete for ${actor.name}`, {
+        itemsDeleted: currentItemIds.length,
+        itemsCreated: itemsToCreate.length,
+        effectsDeleted: currentEffectIds.length,
+        effectsCreated: effectsToCreate.length
+      });
+
+      return {
+        success: true,
+        actor,
+        itemsDeleted: currentItemIds.length,
+        itemsCreated: itemsToCreate.length,
+        effectsDeleted: currentEffectIds.length,
+        effectsCreated: effectsToCreate.length,
+        timestamp: new Date().toISOString()
+      };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.restoreFromSnapshot failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        snapshotItemCount: (snapshot?.items || []).length
+      });
+      throw err;
+    }
+  }
+
+  // ========================================================================
+  // PHASE 8: EMBEDDED DOCUMENT PLAN BUILDERS
+  // ========================================================================
+  // Non-mutating plan builders for embedded document operations
+  // Plans are executed atomically through ActorEngine
+
+  /**
+   * Build a plan to create embedded documents (Item, ActiveEffect, etc.)
+   * PHASE 8: Non-mutating builder — returns plan object for later execution
+   *
+   * @param {Actor} actor - Target actor
+   * @param {string} embeddedName - Document type ('Item', 'ActiveEffect', etc.)
+   * @param {Array} documents - Array of document data to create
+   * @returns {Object} Plan object with { success, embeddedName, actor, documents, mutations }
+   */
+  buildEmbeddedCreatePlan(actor, embeddedName, documents) {
+    try {
+      if (!actor) {
+        return {
+          success: false,
+          reason: 'buildEmbeddedCreatePlan called with no actor'
+        };
+      }
+
+      if (!embeddedName) {
+        return {
+          success: false,
+          reason: 'buildEmbeddedCreatePlan called without embeddedName'
+        };
+      }
+
+      if (!Array.isArray(documents)) {
+        return {
+          success: false,
+          reason: 'buildEmbeddedCreatePlan requires documents array'
+        };
+      }
+
+      if (documents.length === 0) {
+        return {
+          success: true,
+          embeddedName,
+          actor,
+          documents: [],
+          mutations: []
+        };
+      }
+
+      // Build mutation for this operation
+      const mutation = {
+        type: 'createEmbedded',
+        embeddedName,
+        documents: documents.map(d => foundry.utils.deepClone(d))
+      };
+
+      return {
+        success: true,
+        embeddedName,
+        actor,
+        documents,
+        mutations: [mutation],
+        description: `Create ${documents.length} ${embeddedName}(s)`
+      };
+    } catch (err) {
+      swseLogger.error('buildEmbeddedCreatePlan failed:', err);
+      return {
+        success: false,
+        reason: err.message
+      };
+    }
+  }
+
+  /**
+   * Build a plan to delete embedded documents
+   * PHASE 8: Non-mutating builder — returns plan object for later execution
+   *
+   * @param {Actor} actor - Target actor
+   * @param {string} embeddedName - Document type ('Item', 'ActiveEffect', etc.)
+   * @param {Array} ids - Array of document IDs to delete
+   * @returns {Object} Plan object with { success, embeddedName, actor, ids, mutations }
+   */
+  buildEmbeddedDeletePlan(actor, embeddedName, ids) {
+    try {
+      if (!actor) {
+        return {
+          success: false,
+          reason: 'buildEmbeddedDeletePlan called with no actor'
+        };
+      }
+
+      if (!embeddedName) {
+        return {
+          success: false,
+          reason: 'buildEmbeddedDeletePlan called without embeddedName'
+        };
+      }
+
+      if (!Array.isArray(ids)) {
+        return {
+          success: false,
+          reason: 'buildEmbeddedDeletePlan requires ids array'
+        };
+      }
+
+      if (ids.length === 0) {
+        return {
+          success: true,
+          embeddedName,
+          actor,
+          ids: [],
+          mutations: []
+        };
+      }
+
+      // Build mutation for this operation
+      const mutation = {
+        type: 'deleteEmbedded',
+        embeddedName,
+        ids: [...ids]
+      };
+
+      return {
+        success: true,
+        embeddedName,
+        actor,
+        ids,
+        mutations: [mutation],
+        description: `Delete ${ids.length} ${embeddedName}(s)`
+      };
+    } catch (err) {
+      swseLogger.error('buildEmbeddedDeletePlan failed:', err);
+      return {
+        success: false,
+        reason: err.message
+      };
+    }
+  }
+
+  /**
+   * Build a plan to replace embedded documents (delete old, create new)
+   * PHASE 8: Non-mutating builder — atomic replacement
+   *
+   * @param {Actor} actor - Target actor
+   * @param {string} embeddedName - Document type ('Item', 'ActiveEffect', etc.)
+   * @param {Array} idsToDelete - IDs to delete
+   * @param {Array} docsToCreate - Documents to create
+   * @returns {Object} Plan object with both delete and create mutations
+   */
+  buildEmbeddedReplacePlan(actor, embeddedName, idsToDelete, docsToCreate) {
+    try {
+      if (!actor) {
+        return {
+          success: false,
+          reason: 'buildEmbeddedReplacePlan called with no actor'
+        };
+      }
+
+      if (!embeddedName) {
+        return {
+          success: false,
+          reason: 'buildEmbeddedReplacePlan called without embeddedName'
+        };
+      }
+
+      const mutations = [];
+
+      // Add delete mutation if IDs exist
+      if (Array.isArray(idsToDelete) && idsToDelete.length > 0) {
+        mutations.push({
+          type: 'deleteEmbedded',
+          embeddedName,
+          ids: [...idsToDelete]
+        });
+      }
+
+      // Add create mutation if documents exist
+      if (Array.isArray(docsToCreate) && docsToCreate.length > 0) {
+        mutations.push({
+          type: 'createEmbedded',
+          embeddedName,
+          documents: docsToCreate.map(d => foundry.utils.deepClone(d))
+        });
+      }
+
+      if (mutations.length === 0) {
+        return {
+          success: true,
+          embeddedName,
+          actor,
+          idsToDelete: [],
+          docsToCreate: [],
+          mutations: []
+        };
+      }
+
+      return {
+        success: true,
+        embeddedName,
+        actor,
+        idsToDelete,
+        docsToCreate,
+        mutations,
+        description: `Replace ${idsToDelete?.length || 0} with ${docsToCreate?.length || 0} ${embeddedName}(s)`
+      };
+    } catch (err) {
+      swseLogger.error('buildEmbeddedReplacePlan failed:', err);
+      return {
+        success: false,
+        reason: err.message
+      };
+    }
+  }
+
+  /**
+   * Build a plan to clone an actor and apply modifications
+   * PHASE 8: Non-mutating builder — clone + modifications in one transaction
+   *
+   * Prevents the dangerous pattern of: const clone = actor.clone(); await clone.update(...)
+   * Instead builds a plan for atomic creation+modification
+   *
+   * @param {Actor} actor - Actor to clone
+   * @param {Object} modifications - Changes to apply to the clone
+   * @param {Object} options - Clone options
+   * @returns {Object} Plan object
+   */
+  buildCloneActorPlan(actor, modifications = {}, options = {}) {
+    try {
+      if (!actor) {
+        return {
+          success: false,
+          reason: 'buildCloneActorPlan called with no actor'
+        };
+      }
+
+      // Clone actor data
+      const cloneData = actor.toObject();
+      delete cloneData._id;
+
+      // Apply modifications to clone
+      const modifiedCloneData = foundry.utils.mergeObject(cloneData, modifications);
+
+      const mutation = {
+        type: 'cloneActor',
+        originalActorId: actor.id,
+        cloneData: modifiedCloneData,
+        modifications
+      };
+
+      return {
+        success: true,
+        actor,
+        modifications,
+        cloneData: modifiedCloneData,
+        mutations: [mutation],
+        description: `Clone ${actor.name} with modifications`
+      };
+    } catch (err) {
+      swseLogger.error('buildCloneActorPlan failed:', err);
+      return {
+        success: false,
+        reason: err.message
+      };
+    }
+  }
+
+  /**
+   * Execute an embedded operation plan
+   * PHASE 8: Atomic execution of pre-built plans
+   *
+   * @param {Object} plan - Plan object from builder methods
+   * @param {Object} options - Execution options
+   * @returns {Promise<Object>} Execution result
+   */
+  async executeEmbeddedPlan(plan, options = {}) {
+    try {
+      if (!plan) {
+        throw new Error('executeEmbeddedPlan called with no plan');
+      }
+
+      if (!plan.success) {
+        return {
+          success: false,
+          reason: plan.reason
+        };
+      }
+
+      if (!Array.isArray(plan.mutations) || plan.mutations.length === 0) {
+        return {
+          success: true,
+          actor: plan.actor,
+          mutations: []
+        };
+      }
+
+      const results = [];
+      const { actor } = plan;
+
+      // Execute mutations in order (delete before create)
+      for (const mutation of plan.mutations) {
+        try {
+          if (mutation.type === 'deleteEmbedded') {
+            const result = await this.deleteEmbeddedDocuments(
+              actor,
+              mutation.embeddedName,
+              mutation.ids,
+              options
+            );
+            results.push({
+              type: 'deleteEmbedded',
+              success: true,
+              deleted: mutation.ids.length
+            });
+          } else if (mutation.type === 'createEmbedded') {
+            const result = await this.createEmbeddedDocuments(
+              actor,
+              mutation.embeddedName,
+              mutation.documents,
+              options
+            );
+            results.push({
+              type: 'createEmbedded',
+              success: true,
+              created: (result || []).length
+            });
+          }
+        } catch (mutationErr) {
+          swseLogger.error(`executeEmbeddedPlan mutation failed (${mutation.type}):`, mutationErr);
+          throw mutationErr;
+        }
+      }
+
+      return {
+        success: true,
+        actor,
+        mutations: results
+      };
+    } catch (err) {
+      swseLogger.error('executeEmbeddedPlan failed:', err);
+      throw err;
+    }
+  }
+
+
+
+
+  /* ============================================================
+     BUILD DERIVED STATE (AUTHORITATIVE)
+  ============================================================ */
+
+  static buildDerivedState(actor) {
+
+    const abilityKeys = ["str","dex","con","int","wis","cha"];
+
+    const abilities = abilityKeys.map(key => {
+      const total = actor.system?.abilities?.[key]?.total ?? 10;
+      return {
+        key,
+        label: key.toUpperCase(),
+        total,
+        mod: Math.floor((total - 10) / 2)
+      };
+    });
+
+    const currentStep = actor.system?.conditionTrack?.current ?? 0;
+
+    const conditionSteps = Array.from({ length: 5 }).map((_, i) => ({
+      index: i,
+      active: i <= currentStep
+    }));
+
+    return {
+      abilities,
+      conditionSteps
+    };
+  }
+

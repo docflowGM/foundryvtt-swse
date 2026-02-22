@@ -74,9 +74,10 @@ import { registerSystemSettings } from './scripts/core/settings.js';
 import { initializeUtils } from './scripts/core/utils-init.js';
 import { initializeRolls } from './scripts/core/rolls-init.js';
 import { SWSESentinel } from './scripts/core/swse-sentinel.js';
-import { SentinelEngine } from './scripts/core/sentinel/sentinel-core.js';
-import { Sentry } from './scripts/core/sentinel/sentry.js';
-import { Investigator } from './scripts/core/sentinel/investigator.js';
+import { SentinelEngine } from './scripts/governance/sentinel/sentinel-core.js';
+import { Sentry } from './scripts/governance/sentinel/sentry.js';
+import { Investigator } from './scripts/governance/sentinel/investigator.js';
+import { initializeSentinelAuditors, auditCSSHealth, generateMigrationReport } from './scripts/governance/sentinel/sentinel-auditors.js';
 
 // ---- v13 hardening ----
 import { initializeHardeningSystem, validateSystemReady, registerHardeningHooks } from './scripts/core/hardening-init.js';
@@ -98,12 +99,12 @@ import { checkRequiredPacks } from './scripts/core/pack-existence-check.js';
 // ---- actors / items ----
 import { SWSEV2BaseActor } from './scripts/actors/v2/base-actor.js';
 import { SWSEItemBase } from './scripts/items/base/swse-item-base.js';
-import { ActorEngine } from "./scripts/actors/engine/actor-engine.js";
-import { MutationInterceptor } from './scripts/core/mutation/MutationInterceptor.js';
-import { Batch1Validation } from './scripts/core/mutation/batch-1-validation.js';
+import { ActorEngine } from "./scripts/governance/actor-engine/actor-engine.js";
+import { MutationInterceptor } from './scripts/governance/mutation/MutationInterceptor.js';
+import { Batch1Validation } from './scripts/governance/mutation/batch-1-validation.js';
 
 // ---- combat tests (PHASE 3) ----
-import { DamageEngineTest } from './scripts/engine/combat/damage-engine-test.js';
+import { DamageEngineTest } from './scripts/engines/combat/damage-engine-test.js';
 import { Batch2ComprehensiveTest } from './tests/archived/batch-2-comprehensive-test.js';
 
 // ---- sheets ----
@@ -120,35 +121,33 @@ import { preloadHandlebarsTemplates, assertPartialsResolved } from './scripts/co
 
 // ---- engines ----
 import { RulesEngine } from './scripts/rules/rules-engine.js';
-import { SWSEProgressionEngine, initializeProgressionHooks } from './scripts/engine/progression.js';
-import { FeatSystem } from './scripts/engine/FeatSystem.js';
-import { SkillSystem } from './scripts/engine/SkillSystem.js';
-import { TalentAbilitiesEngine } from './scripts/engine/TalentAbilitiesEngine.js';
-import TalentActionLinker from './scripts/engine/talent-action-linker.js';
-import { SWSELanguageModule } from './scripts/progression/modules/language-module.js';
+import { SWSEProgressionEngine, initializeProgressionHooks } from './scripts/engines/progression.js';
+import { TalentEffectEngine } from './scripts/engines/talent/talent-effect-engine.js';
+import TalentActionLinker from './scripts/engines/talent/talent-action-linker.js';
+import { SWSELanguageModule } from './scripts/engines/progression/modules/language-module.js';
 
 // ---- hooks ----
-import { registerInitHooks, registerDestinyHooks } from './scripts/hooks/index.js';
-import { initializeForcePowerHooks } from './scripts/hooks/force-power-hooks.js';
-import { initializeFollowerHooks } from './scripts/hooks/follower-hooks.js';
+import { registerInitHooks, registerDestinyHooks } from './scripts/infrastructure/hooks/index.js';
+import { initializeForcePowerHooks } from './scripts/infrastructure/hooks/force-power-hooks.js';
+import { initializeFollowerHooks } from './scripts/infrastructure/hooks/follower-hooks.js';
 import { registerKeybindings } from './scripts/core/keybindings.js';
 
 // ---- UI systems (registered in init, initialized in ready) ----
 import { initializeSceneControls } from './scripts/scene-controls/init.js';
 import { initializeActionPalette } from './scripts/ui/action-palette/init.js';
-import { initializeGMSuggestions } from './scripts/gm-suggestions/init.js';
+import { initializeGMSuggestions } from './scripts/engines/suggestion/gm/init.js';
 import { MentorTranslationSettings } from './scripts/mentor/mentor-translation-settings.js';
 
 // ---- suggestions / discovery ----
-import { SuggestionService } from './scripts/engine/SuggestionService.js';
-import { registerSuggestionHooks } from './scripts/hooks/suggestion-hooks.js';
-import { registerCombatSuggestionHooks, requestCombatEvaluation } from './scripts/suggestion-engine/combat-hooks.js';
-import { CombatSuggestionEngine } from './scripts/suggestion-engine/combat-engine.js';
-import { testHarness } from './scripts/suggestion-engine/test-harness.js';
+import { SuggestionService } from './scripts/engines/suggestion/SuggestionService.js';
+import { registerSuggestionHooks } from './scripts/infrastructure/hooks/suggestion-hooks.js';
+import { registerCombatSuggestionHooks, requestCombatEvaluation } from './scripts/engines/suggestion/equipment/combat-hooks.js';
+import { CombatSuggestionEngine } from './scripts/engines/suggestion/equipment/combat-engine.js';
+import { testHarness } from './scripts/engines/suggestion/equipment/test-harness.js';
 import { initializeDiscoverySystem, onDiscoveryReady } from './scripts/ui/discovery/index.js';
 
 // ---- misc ----
-import { SystemInitHooks } from './scripts/progression/hooks/system-init-hooks.js';
+import { SystemInitHooks } from './scripts/engines/progression/hooks/system-init-hooks.js';
 import { Upkeep } from './scripts/automation/upkeep.js';
 
 // ---- Phase 5: Observability, Testing, Forward Compatibility ----
@@ -292,6 +291,9 @@ Hooks.once('ready', async () => {
   Sentry.init();
   Investigator.init();
 
+  /* ---------- Sentinel Auditors (CSS + Migration validation) ---------- */
+  initializeSentinelAuditors();
+
   /* ---------- phase 3: diagnostic mode ---------- */
   await DiagnosticMode.initialize();
 
@@ -334,9 +336,7 @@ Hooks.once('ready', async () => {
   /* ---------- global API ---------- */
   const publicAPI = {
     ActorEngine,
-    FeatSystem,
-    SkillSystem,
-    TalentAbilitiesEngine,
+    TalentEffectEngine,
     TalentActionLinker,
     CombatSuggestionEngine,
     requestCombatEvaluation
@@ -369,6 +369,11 @@ Hooks.once('ready', async () => {
       performance: () => SentinelEngine.getPerformanceMetrics(),
       snapshot: () => SentinelEngine.dumpSnapshot(),
       flushAggregates: () => SentinelEngine.flushAggregates()
+    },
+    // Auditors (CSS + Migration validation)
+    auditors: {
+      cssHealth: () => auditCSSHealth(),
+      migrationReport: () => generateMigrationReport()
     }
   };
 

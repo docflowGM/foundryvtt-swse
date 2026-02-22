@@ -1,5 +1,5 @@
 import { SWSELogger } from './logger.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 /**
  * Feat Actions Mapper
  * Maps feat-granted combat actions to character abilities

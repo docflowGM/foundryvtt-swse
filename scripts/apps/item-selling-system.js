@@ -23,7 +23,7 @@
 import { normalizeCredits, calculateRawSellPrice, calculatePercentageFloor } from '../utils/credit-normalization.js';
 import { SWSELogger } from '../utils/logger.js';
 import { prompt as uiPrompt } from '../utils/ui-utils.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 
 /**
  * Initiate item selling process

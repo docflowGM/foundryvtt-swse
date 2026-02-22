@@ -13,10 +13,10 @@
  */
 
 import { StoreEngine } from '../../engines/store/store-engine.js';
-import { ArmorSuggestions } from '../../suggestion-engine/armor-suggestions.js';
-import { WeaponSuggestions } from '../../suggestion-engine/weapon-suggestions.js';
-import { GearSuggestions } from '../../suggestion-engine/gear-suggestions.js';
-import { MentorProseGenerator } from '../../suggestion-engine/mentor-prose-generator.js';
+import { ArmorSuggestions } from '../../engines/suggestion/equipment/armor-suggestions.js';
+import { WeaponSuggestions } from '../../engines/suggestion/equipment/weapon-suggestions.js';
+import { GearSuggestions } from '../../engines/suggestion/equipment/gear-suggestions.js';
+import { MentorProseGenerator } from '../../engines/suggestion/equipment/mentor-prose-generator.js';
 import { ReviewThreadAssembler } from './review-thread-assembler.js';
 import { StoreLoadingOverlay } from './store-loading-overlay.js';
 import { StoreCardInteractions } from './store-card-interactions.js';

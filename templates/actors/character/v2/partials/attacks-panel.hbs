@@ -1,48 +1,84 @@
-<div class="holo-panel">
-  <div class="section-bar">
-    <h3 class="section-header">Attacks</h3>
-    <div class="muted">Equipped weapons (data-only preview)</div>
-  </div>
+{{!-- ========================================= --}}
+{{!-- SWSE V2 ATTACK CARDS (Flip Architecture) --}}
+{{!-- ========================================= --}}
 
-  <div class="swse-v2-attacks">
-    <div class="swse-v2-attack-header">
-      <span class="name">Weapon</span>
-      <span class="meta">Type</span>
-      <span class="meta">Range</span>
-      <span class="meta">Damage</span>
-      <span class="meta">Resources</span>
-      <span class="meta"></span>
-    </div>
-    {{#each attacks.list}}
-      <div class="swse-v2-attack-row rollable-attack" data-item-id="{{this.id}}" title="Click to roll attack • Shift+click for damage">
-        <a class="name swse-v2-open-item" data-item-id="{{this.id}}">{{this.name}}</a>
-        <span class="meta">{{this.type}}</span>
-        <span class="meta">{{this.range}}</span>
-        <span class="meta">{{this.damage}}</span>
-        <span class="meta">
-          {{#if this.resources.length}}
-            <div class="swse-v2-resources">
-              {{#each this.resources as |r|}}
-                <div class="swse-v2-resource" data-kind="{{r.kind}}">
-                  <span class="ticks {{r.sizeClass}}">
-                    {{#each r.ticks as |t|}}
-                      <span class="tick {{#if t.filled}}filled{{/if}}"></span>
-                    {{/each}}
-                  </span>
-                  <span class="count">{{r.labelText}}</span>
-                </div>
-              {{/each}}
-            </div>
-          {{/if}}
-        </span>
-        <span class="meta" style="text-align:right;">
-          <button type="button" class="swse-v2-btn" data-action="roll-weapon" data-item-id="{{this.id}}">Attack</button>
-        </span>
+<div class="swse-attacks-panel">
+
+  {{#each combat.attacks as |attack|}}
+  <div class="swse-attack-card" data-attack-id="{{attack.id}}">
+    <div class="card-inner">
+
+      {{!-- ================= FRONT ================= --}}
+      <div class="card-front">
+        <div class="attack-name">{{attack.name}}</div>
+
+        <div class="attack-primary">
+          <div class="attack-bonus">
+            {{attack.attackTotal}}
+          </div>
+
+          <div class="attack-damage">
+            {{attack.damageFormula}}
+          </div>
+        </div>
+
+        <div class="attack-crit">
+          Crit {{attack.critRange}}×{{attack.critMult}}
+        </div>
+
+        <div class="attack-tags">
+          {{#each attack.tags}}
+            <span class="tag">{{this}}</span>
+          {{/each}}
+        </div>
+
+        <button class="attack-roll-btn" data-action="roll-attack">
+          ROLL
+        </button>
       </div>
-    {{/each}}
 
-    {{#unless attacks.list.length}}
-      <div class="muted" style="padding:6px 0;">No equipped weapons.</div>
-    {{/unless}}
+      {{!-- ================= BACK ================= --}}
+      <div class="card-back">
+
+        <div class="breakdown-section">
+          <div class="section-title">Attack Breakdown</div>
+          <div class="pill-row">
+            {{#each attack.breakdown.attack}}
+              <span class="pill">
+                {{label}} {{value}}
+              </span>
+            {{/each}}
+          </div>
+        </div>
+
+        <div class="breakdown-section">
+          <div class="section-title">Damage Breakdown</div>
+          <div class="pill-row">
+            {{#each attack.breakdown.damage}}
+              <span class="pill">
+                {{label}} {{value}}
+              </span>
+            {{/each}}
+          </div>
+        </div>
+
+        {{#if attack.breakdown.conditional.length}}
+        <div class="breakdown-section">
+          <div class="section-title">Conditional</div>
+          <div class="pill-row">
+            {{#each attack.breakdown.conditional}}
+              <span class="pill conditional">
+                {{label}} {{value}}
+              </span>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+
+      </div>
+
+    </div>
   </div>
+  {{/each}}
+
 </div>

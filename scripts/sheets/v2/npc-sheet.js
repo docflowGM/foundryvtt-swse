@@ -1,6 +1,6 @@
 // scripts/sheets/v2/npc-sheet.js
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
-import { TalentAbilitiesEngine } from '../../engine/TalentAbilitiesEngine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
+import { TalentEffectEngine } from '../../engines/talent/talent-effect-engine.js';
 import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
 import { RenderAssertions } from '../../core/render-assertions.js';
 import { RollEngine } from '../../engine/roll-engine.js';
@@ -88,7 +88,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
         role: game.user.role
       },
       config: CONFIG.SWSE,
-      talentAbilities: TalentAbilitiesEngine.toSerializable(TalentAbilitiesEngine.getAbilitiesForActor(actor)),
+      talentAbilities: TalentEffectEngine.toSerializable(TalentEffectEngine.getAbilitiesForActor(actor)),
       // Abilities panel data (Phase 3)
       feats: [],
       talents: [],
@@ -360,7 +360,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
           const ability = this.actor.items?.get(abilityId);
           if (ability) {
             // Mark as used
-            const { AbilityUsage } = await import('../../engine/abilities/ability-usage.js');
+            const { AbilityUsage } = await import('../../engines/abilities/ability-usage.js');
             await AbilityUsage.markUsed(this.actor, abilityId);
             this.render();
           }
