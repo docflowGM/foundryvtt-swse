@@ -255,11 +255,13 @@ export class SWSEV2BaseActor extends SWSEActorBase {
 
   /**
    * Roll initiative (1d20 + modifier) and apply to Combat Tracker.
+   * PHASE 1 CONSOLIDATION: Routes through CombatEngine for unified orchestration.
    * @param {object} [options]
    * @param {boolean} [options.useForce=false] Spend a Force Point for bonus die.
    */
   async swseRollInitiative(options = {}) {
-    return SWSEInitiative.rollInitiative(this, options);
+    const { CombatEngine } = await import('../../engine/combat/CombatEngine.js');
+    return CombatEngine.rollInitiative(this, options);
   }
 
   /**

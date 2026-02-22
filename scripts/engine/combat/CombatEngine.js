@@ -25,9 +25,24 @@ export class CombatEngine {
   }
 
   /* -------------------------------------------- */
-  /* INITIATIVE (Skill-based)                     */
+  /* INITIATIVE (Skill-based) — PHASE 1 Consolidated */
   /* -------------------------------------------- */
 
+  /**
+   * SINGLE ORCHESTRATION AUTHORITY for initiative rolls.
+   *
+   * All initiative rolls MUST route through this method.
+   * This ensures:
+   *   - Consistent Force Point handling
+   *   - Unified tie resolution
+   *   - Single chat message flow
+   *   - Combat Tracker consistency
+   *
+   * @param {Actor} actor
+   * @param {Object} options
+   * @param {boolean} options.useForce - Spend Force Point on roll
+   * @returns {Object} { roll, total, usedForce, forceBonus, baseMod }
+   */
   static async rollInitiative(actor, options = {}) {
     return SWSEInitiative.rollInitiative(actor, options);
   }

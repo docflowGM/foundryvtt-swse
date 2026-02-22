@@ -96,9 +96,13 @@ export class SWSEInitiative {
   /**
    * Roll initiative for an actor and apply to Combat Tracker.
    * Optionally spend a Force Point for a bonus die.
+   *
+   * PHASE 1 CONSOLIDATION: Now returns structured result.
+   *
    * @param {Actor} actor
    * @param {object} [options]
    * @param {boolean} [options.useForce=false]  Spend a Force Point on the roll.
+   * @returns {Object} Structured initiative result { roll, total, usedForce }
    */
   static async rollInitiative(actor, options = {}) {
     const baseMod = actor.system.skills?.initiative?.total ?? 0;
@@ -106,6 +110,7 @@ export class SWSEInitiative {
 
     let total = roll.total;
     let forceBonus = 0;
+    let usedForce = false;
 
     // Force Point enhancement
     if (options.useForce) {
@@ -115,6 +120,7 @@ export class SWSEInitiative {
         const fpRoll = await RollEngine.safeRoll(fpDie);
         forceBonus = fpRoll.total;
         total += forceBonus;
+        usedForce = true;
 
         // Decrement Force Points immediately
         await ActorEngine.updateActor(actor, {
@@ -139,6 +145,15 @@ export class SWSEInitiative {
     });
 
     await this._applyInitiativeToCombat(actor, total);
+
+    /* RETURN STRUCTURED DATA (Phase 1 consolidation) */
+    return {
+      roll,
+      total,
+      usedForce,
+      forceBonus,
+      baseMod
+    };
   }
 
   /**
