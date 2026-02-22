@@ -22,6 +22,9 @@ import { UtilityLayer } from './layers/utility-layer.js';
 // PHASE 3: Import mutation authority layer
 import { MutationIntegrityLayer } from './mutation-integrity-layer.js';
 
+// PHASE 10: Import hook mutation detection layer
+import { HooksMutationLayer } from './layers/hooks-mutation-layer.js';
+
 // PHASE 3: Import Batch 1 validation suite
 import { Batch1Validation } from '../mutation/batch-1-validation.js';
 
@@ -48,6 +51,9 @@ export function initializeSentinelLayers() {
 
   // PHASE 7: Register utility layer governance enforcement
   SentinelEngine.registerLayer('utility', UtilityLayer);
+
+  // PHASE 10: Register hook mutation detection layer
+  SentinelEngine.registerLayer('hooks-mutation', HooksMutationLayer);
 }
 
 /**
