@@ -507,7 +507,7 @@ export class SWSEV2DroidSheet extends
           const ability = this.document.items?.get(abilityId);
           if (ability) {
             // Mark as used
-            const { AbilityUsage } = await import('../../engine/abilities/ability-usage.js');
+            const { AbilityUsage } = await import('../../../engines/abilities/ability-usage.js');
             await AbilityUsage.markUsed(this.document, abilityId);
             this.render();
           }

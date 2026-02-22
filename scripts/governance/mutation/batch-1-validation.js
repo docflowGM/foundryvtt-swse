@@ -118,7 +118,7 @@ export class Batch1Validation {
 
       // Now test CORRECT path: ActorEngine.updateEmbeddedDocuments()
       console.log('Testing ActorEngine.updateEmbeddedDocuments() (CORRECT path)...');
-      const { ActorEngine } = await import('../../../actors/engine/actor-engine.js');
+      const { ActorEngine } = await import('../actor-engine/actor-engine.js');
 
       await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [
         { _id: item.id, 'system.quantity': (item.system.quantity || 1) + 2 }
@@ -185,7 +185,7 @@ export class Batch1Validation {
 
     try {
       const { DerivedCalculator } = await import('../../../actors/derived/derived-calculator.js');
-      const { ActorEngine } = await import('../../../actors/engine/actor-engine.js');
+      const { ActorEngine } = await import('../actor-engine/actor-engine.js');
 
       // Instrument DerivedCalculator.computeAll()
       const originalComputeAll = DerivedCalculator.computeAll;
@@ -245,7 +245,7 @@ export class Batch1Validation {
 
     try {
       const { MutationInterceptor } = await import('./MutationInterceptor.js');
-      const { ActorEngine } = await import('../../../actors/engine/actor-engine.js');
+      const { ActorEngine } = await import('../actor-engine/actor-engine.js');
 
       console.log('Testing context cleanup under error conditions...');
 

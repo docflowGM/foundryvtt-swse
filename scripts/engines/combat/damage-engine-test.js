@@ -223,7 +223,7 @@ export class DamageEngineTest {
     try {
       // Check if applyConditionShift calls updateActor internally
       this.mutationLog = [];
-      const { ActorEngine } = await import('../../actors/engine/actor-engine.js');
+      const { ActorEngine } = await import('../../governance/actor-engine/actor-engine.js');
 
       console.log('Applying condition shift directly...');
       await ActorEngine.applyConditionShift(actor, 1, 'test');

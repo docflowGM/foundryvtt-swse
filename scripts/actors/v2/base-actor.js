@@ -260,7 +260,7 @@ export class SWSEV2BaseActor extends SWSEActorBase {
    * @param {boolean} [options.useForce=false] Spend a Force Point for bonus die.
    */
   async swseRollInitiative(options = {}) {
-    const { CombatEngine } = await import('../../engine/combat/CombatEngine.js');
+    const { CombatEngine } = await import('../../engines/combat/CombatEngine.js');
     return CombatEngine.rollInitiative(this, options);
   }
 

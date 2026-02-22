@@ -360,7 +360,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
           const ability = this.actor.items?.get(abilityId);
           if (ability) {
             // Mark as used
-            const { AbilityUsage } = await import('../../engine/abilities/ability-usage.js');
+            const { AbilityUsage } = await import('../../engines/abilities/ability-usage.js');
             await AbilityUsage.markUsed(this.actor, abilityId);
             this.render();
           }

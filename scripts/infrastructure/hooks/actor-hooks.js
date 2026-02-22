@@ -409,7 +409,7 @@ async function handleIntelligenceIncrease({ actor, skillsToGain, languagesToGain
     if (Object.keys(untrainedSkills).length === 0) {
         ui.notifications.info('All skills are already trained! No additional skills to select.');
         // Clear pending gains
-        const { AttributeIncreaseHandler } = await import('../progression/engine/attribute-increase-handler.js');
+        const { AttributeIncreaseHandler } = await import('../../engines/progression/engine/attribute-increase-handler.js');
         await AttributeIncreaseHandler.clearPendingGains(actor, 'trainedSkills');
         return;
     }
@@ -465,7 +465,7 @@ async function handleIntelligenceIncrease({ actor, skillsToGain, languagesToGain
                     });
 
                     // Clear pending gains
-                    const { AttributeIncreaseHandler } = await import('../progression/engine/attribute-increase-handler.js');
+                    const { AttributeIncreaseHandler } = await import('../../engines/progression/engine/attribute-increase-handler.js');
                     await AttributeIncreaseHandler.clearPendingGains(actor, 'trainedSkills');
 
                     ui.notifications.info(`Trained in: ${trainedNames.join(', ')}`);

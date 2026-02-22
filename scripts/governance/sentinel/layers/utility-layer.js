@@ -11,7 +11,7 @@
  * - Multi-transaction loops in utilities
  *
  * Permitted contexts:
- * - ActorEngine (scripts/actors/engine/actor-engine.js)
+ * - ActorEngine (governance/actor-engine/actor-engine.js)
  * - DamageEngine
  * - ThresholdEngine
  * - Migration files
@@ -129,11 +129,11 @@ export const UtilityLayer = {
    */
   _isPermittedFile(filePath) {
     const permitted = [
-      'scripts/actors/engine/actor-engine.js',
-      'scripts/engine/combat/damage-engine.js',
-      'scripts/engine/combat/threshold-engine.js',
+      'governance/actor-engine/actor-engine.js',
+      'engines/combat/damage-engine.js',
+      'engines/combat/threshold-engine.js',
       'scripts/migrations/',
-      'scripts/core/sentinel/'
+      'governance/sentinel/'
     ];
 
     for (const p of permitted) {

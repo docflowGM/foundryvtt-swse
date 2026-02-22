@@ -41,7 +41,7 @@ export class MassiveDamageEngine {
       const houseRulePersistent = actor.system.houserules?.massiveDamagePersistent;
       const moves = houseRulePersistent ? 2 : 1; // Double move if persistent rule
 
-      const { ActorEngine } = await import('../../../../actors/engine/actor-engine.js');
+      const { ActorEngine } = await import('../../governance/actor-engine/actor-engine.js');
       for (let i = 0; i < moves; i++) {
         await ActorEngine.applyConditionShift(actor, 1, 'massive-damage');
       }

@@ -1939,7 +1939,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       }
 
       const { getAvailableForcePowers } = await import('./chargen-force-powers.js');
-      const { ForceOptionSuggestionEngine } = await import('../../engine/ForceOptionSuggestionEngine.js');
+      const { ForceOptionSuggestionEngine } = await import('../../../engines/suggestion/ForceOptionSuggestionEngine.js');
       const { MentorSuggestionDialog } = await import('../mentor-suggestion-dialog.js');
 
       const availablePowers = await getAvailableForcePowers(this.actor, this.characterData);
