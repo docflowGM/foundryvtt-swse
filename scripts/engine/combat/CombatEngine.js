@@ -33,29 +33,94 @@ export class CombatEngine {
   }
 
   /* -------------------------------------------- */
-  /* ATTACK RESOLUTION PIPELINE                   */
+  /* ATTACK RESOLUTION PIPELINE (Full Orchestration) */
   /* -------------------------------------------- */
 
-  static async resolveAttack({ attacker, target, weapon, options = {} }) {
+  /**
+   * Full attack resolution orchestration.
+   *
+   * @param {Object} params
+   * @param {Actor} params.attacker - Attacking actor
+   * @param {Actor} params.target - Target actor
+   * @param {Item} params.weapon - Weapon item
+   * @param {Object} params.attackRoll - Pre-rolled attack (from SWSERoll)
+   * @param {Object} params.options - Additional options
+   * @param {number} params.options.coverBonus - Defense bonus from cover
+   * @param {number} params.options.concealmentMissChance - Miss chance from concealment
+   * @param {number} params.options.flankingBonus - Attack bonus from flanking
+   * @param {Function} params.options.onPreHitResolution - Hook for plugin modification
+   * @returns {Object} Attack resolution result
+   */
+  static async resolveAttack({
+    attacker,
+    target,
+    weapon,
+    attackRoll,
+    options = {}
+  }) {
 
-    if (!attacker or !target or !weapon) {
-      return { success: false, reason: "Invalid attacker/target/weapon" };
+    if (!attacker || !target || !weapon || !attackRoll) {
+      return { success: false, reason: "Invalid attacker/target/weapon/roll" };
     }
 
-    const attackBonus = weapon.system.attackBonus ?? 0;
-    const attackRoll = await RollEngine.safeRoll(`1d20 + ${attackBonus}`);
+    /* HIT RESOLUTION CONTEXT */
+    const context = {
+      attacker,
+      target,
+      weapon,
+      roll: attackRoll,
+      totalAttack: attackRoll.total,
+      defenseType: 'reflex',
+      defenseValue: target.system.defenses?.reflex?.total ?? 10,
+      modifiers: options.modifiers || {},
+      hit: options.precomputedHit ?? null
+    };
 
-    const defense = target.system.defenses?.reflex?.total ?? 10;
+    /* APPLY COVER BONUS */
+    if (options.coverBonus !== undefined) {
+      context.modifiers.coverBonus = options.coverBonus;
+      context.defenseValue += options.coverBonus;
+    }
 
-    const hit = attackRoll.total >= defense;
+    /* PRE-HIT HOOK (Allow plugins to modify context) */
+    if (options.onPreHitResolution) {
+      await options.onPreHitResolution(context);
+    }
+    Hooks.callAll('swse.preHitResolution', context);
 
-    if (!hit) {
-      return { hit: false, attackRoll };
+    /* RESOLVE HIT */
+    if (context.hit === null) {
+      const d20 = attackRoll.dice?.[0]?.results?.[0]?.result ?? 0;
+      if (d20 === 1) {
+        context.hit = false;
+      } else if (d20 === 20) {
+        context.hit = true;
+      } else {
+        context.hit = context.totalAttack >= context.defenseValue;
+      }
+    }
+
+    /* CONCEALMENT MISS CHANCE */
+    if (context.hit && options.concealmentMissChance && options.concealmentMissChance > 0) {
+      const roll = Math.random() * 100;
+      if (roll < options.concealmentMissChance) {
+        context.hit = false;
+      }
+    }
+
+    if (!context.hit) {
+      return {
+        hit: false,
+        attackRoll,
+        context
+      };
     }
 
     /* DAMAGE */
-    const damageFormula = weapon.system.damage ?? "0";
-    const damageRoll = await RollEngine.safeRoll(damageFormula);
+    const damageFormula = weapon.system.damage ?? "1d6";
+    const damageBonus = options.damageBonus ?? 0;
+    const fullDamageFormula = damageBonus > 0 ? `${damageFormula} + ${damageBonus}` : damageFormula;
+    const damageRoll = await RollEngine.safeRoll(fullDamageFormula);
     let damage = damageRoll.total;
 
     /* SCALE */
@@ -64,7 +129,7 @@ export class CombatEngine {
 
     /* SHIELDS (Vehicle only) */
     if (target.type === "vehicle") {
-      const zone = "fore";
+      const zone = options.shieldZone || "fore";
       const shieldResult = await EnhancedShields.applyDamageToZone(target, zone, damage);
       damage = shieldResult.overflow;
     }
@@ -86,11 +151,13 @@ export class CombatEngine {
     }
 
     return {
-      hit: True,
+      hit: true,
       attackRoll,
       damageRoll,
+      damage,
       damageApplied: damageResult,
-      threshold: thresholdResult
+      threshold: thresholdResult,
+      context
     };
   }
 

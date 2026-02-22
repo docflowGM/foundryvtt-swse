@@ -4,8 +4,9 @@ import { swseLogger } from '../utils/logger.js';
  * SWSE Combat Document (v13+)
  * - Uses correct SWSE initiative (Skill-based)
  * - Uses updated Second Wind + Action Economy systems
- * - Removes deprecated ActorEngine calls
  * - Fully v13-compatible combat lifecycle overrides
+ *
+ * NOTE: Initiative unification is Phase 2 work (requires SWSEInitiative refactor)
  */
 export class SWSECombatDocument extends Combat {
 
