@@ -51,9 +51,7 @@ export class SWSELanguageModule {
         console.warn('SWSE | Language module: failed to write languages at chargen', e);
       });
     } else {
-      await actor.update({ 'system.languages': merged }).catch(e => {
-        console.warn('SWSE | Language module: failed to write languages at chargen', e);
-      });
+      throw new Error('ActorEngine.updateActor is required for language synchronization at chargen');
     }
   }
   static async handleLevelUp(payload) {
@@ -77,9 +75,7 @@ export class SWSELanguageModule {
           console.warn('SWSE | Language module: failed to sync languages on level-up.', e);
         });
       } else {
-        await actor.update({ 'system.languages': deduped }).catch(e => {
-          console.warn('SWSE | Language module: failed to sync languages on level-up.', e);
-        });
+        throw new Error('ActorEngine.updateActor is required for language synchronization on level-up');
       }
     }
   }
@@ -115,9 +111,7 @@ export class SWSELanguageModule {
         console.warn('SWSE | Language module: failed to update actor languages on actor update', e);
       });
     } else {
-      await actor.update({ 'system.languages': current }).catch(e => {
-        console.warn('SWSE | Language module: failed to update actor languages on actor update', e);
-      });
+      throw new Error('ActorEngine.updateActor is required for language synchronization on actor update');
     }
   }
   static CHOICE_TOKEN = 'CHOOSE_LANGUAGE';

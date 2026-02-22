@@ -215,9 +215,11 @@ export async function updateActorForcePoints(actor) {
 
     const maxFP = calculateMaxForcePoints(actor);
 
-    // Update actor's max FP
-    await actor.update({
+    // Update actor's max FP through ActorEngine
+    await globalThis.SWSE.ActorEngine.updateActor(actor, {
         'system.forcePoints.max': maxFP
+    }, {
+        meta: { guardKey: 'force-points-update' }
     });
 
     SWSELogger.log(`[ForcePoints] Updated ${actor.name}: maxFP = ${maxFP}`);
@@ -235,10 +237,12 @@ export async function initializeActorForcePoints(actor) {
 
     const maxFP = calculateMaxForcePoints(actor);
 
-    // Set both max and current
-    await actor.update({
+    // Set both max and current through ActorEngine
+    await globalThis.SWSE.ActorEngine.updateActor(actor, {
         'system.forcePoints.max': maxFP,
         'system.forcePoints.value': maxFP
+    }, {
+        meta: { guardKey: 'force-points-initialize' }
     });
 
     SWSELogger.log(`[ForcePoints] Initialized ${actor.name}: FP = ${maxFP}/${maxFP}`);

@@ -116,9 +116,7 @@ export class SnapshotManager {
                     meta: { guardKey: 'snapshot-restore' }
                 });
             } else {
-                // Fallback for compatibility if ActorEngine unavailable
-                SWSELogger.warn('ActorEngine.restoreFromSnapshot not available, using direct update');
-                await actor.update(actorDataToRestore);
+                throw new Error('ActorEngine.restoreFromSnapshot is required for snapshot restoration. Ensure ActorEngine is initialized before snapshot restore.');
             }
 
             // Restore snapshots flag

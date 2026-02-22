@@ -1093,7 +1093,9 @@ export class MentorSurvey {
     };
 
     try {
-      await actor.update(updates);
+      await globalThis.SWSE.ActorEngine.updateActor(actor, updates, {
+        meta: { guardKey: 'mentor-survey-completion' }
+      });
       swseLogger.log(`[MENTOR-SURVEY] storeSurveyData: Survey data stored successfully`);
 
       // Seed mentor memory from survey answers

@@ -460,7 +460,9 @@ async function handleIntelligenceIncrease({ actor, skillsToGain, languagesToGain
                         trainedNames.push(skillNames[skillKey] || skillKey);
                     }
 
-                    await actor.update(updates);
+                    await globalThis.SWSE.ActorEngine.updateActor(actor, updates, {
+                        meta: { guardKey: 'hook-skill-selection' }
+                    });
 
                     // Clear pending gains
                     const { AttributeIncreaseHandler } = await import('../progression/engine/attribute-increase-handler.js');
