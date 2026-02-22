@@ -1,5 +1,5 @@
 // scripts/debug/npc-render-probe.js
-import { HooksRegistry } from '../hooks/hooks-registry.js';
+import { HooksRegistry } from '../../infrastructure/hooks/hooks-registry.js';
 import { DEBUG_SETTINGS } from './debug-settings.js';
 import { getLevelSplit } from '../actors/derived/level-split.js';
 import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
