@@ -27,6 +27,19 @@ export class EmbeddedMutationLayer {
   static ENABLED = false;
 
   /**
+   * PHASE 9: Embedded Ownership Guard Rules
+   * These rules enforce the governance boundary:
+   * - If document.parent instanceof Actor → must route via ActorEngine
+   * - If document is unowned → allow direct update
+   */
+  static OWNERSHIP_RULES = {
+    itemOwnershipBoundary: true,  // Flag: check if item ownership matches routing
+    warnOnOwnedDirectUpdate: true, // Warn if owned item uses direct .update()
+    allowUnownedDirect: true,      // Allow world-level items to bypass ActorEngine
+    trackOwnershipViolations: true // Track items that violated boundary
+  };
+
+  /**
    * Initialize embedded mutation enforcement
    * Must be called after ActorEngine is loaded
    */
@@ -66,6 +79,7 @@ export class EmbeddedMutationLayer {
   /**
    * Check if mutation is authorized through ActorEngine
    * Verifies MutationInterceptor context is set
+   * Also checks ownership boundary per PHASE 9 rules
    */
   static _checkMutationAuthorized(operation, embeddedName, actor) {
     // Check if MutationInterceptor has an active context
@@ -77,19 +91,27 @@ export class EmbeddedMutationLayer {
 
     // Unauthorized mutation detected
     const stack = this._getCaller();
+    const ownershipStatus = this._checkOwnershipBoundary(actor, embeddedName);
+
     const violation = {
       operation,
       embeddedName,
       actor: actor?.name ?? 'unknown',
       caller: stack,
       timestamp: new Date().toISOString(),
-      source: this._getSourceFile(stack)
+      source: this._getSourceFile(stack),
+      ownershipBoundaryViolation: ownershipStatus.violated,
+      documentCount: ownershipStatus.ownedCount
     };
 
     this.VIOLATIONS.push(violation);
 
+    const ownershipNote = ownershipStatus.violated ?
+      ` [OWNERSHIP BOUNDARY VIOLATION: ${ownershipStatus.ownedCount} owned documents mutated outside ActorEngine]` :
+      '';
+
     const message = `[SENTINEL] Unauthorized embedded ${operation} on ${embeddedName} ` +
-                    `in ${actor?.name} from ${violation.source}`;
+                    `in ${actor?.name} from ${violation.source}${ownershipNote}`;
 
     if (this.MODE === 'WARNING') {
       swseLogger.warn(message);
@@ -98,6 +120,39 @@ export class EmbeddedMutationLayer {
       swseLogger.error(message);
       throw new Error(`Embedded mutation governance violation: ${message}`);
     }
+  }
+
+  /**
+   * PHASE 9: Check ownership boundary
+   * Returns whether this mutation violates the ownership rule
+   *
+   * Rule: Actor-owned documents MUST route through ActorEngine
+   * This detects when owned documents are mutated outside that path
+   */
+  static _checkOwnershipBoundary(actor, embeddedName) {
+    if (!this.OWNERSHIP_RULES.itemOwnershipBoundary || !actor) {
+      return { violated: false, ownedCount: 0 };
+    }
+
+    // Check collection for owned documents
+    let ownedCount = 0;
+    try {
+      const collection = actor.getEmbeddedCollection(embeddedName);
+      if (collection && typeof collection.size !== 'undefined') {
+        ownedCount = collection.size;
+      }
+    } catch (e) {
+      // Collection access may fail, skip count
+    }
+
+    // VIOLATION: Owned documents being mutated outside ActorEngine context
+    const violated = this.OWNERSHIP_RULES.warnOnOwnedDirectUpdate && ownedCount > 0;
+
+    return {
+      violated,
+      ownedCount,
+      rule: 'Actor-owned documents must route through ActorEngine'
+    };
   }
 
   /**
@@ -174,6 +229,7 @@ export class EmbeddedMutationLayer {
    */
   static _buildSummary() {
     const summary = {};
+    const ownershipViolations = [];
 
     for (const violation of this.VIOLATIONS) {
       const source = violation.source;
@@ -181,12 +237,29 @@ export class EmbeddedMutationLayer {
         summary[source] = {
           count: 0,
           operations: [],
-          embeddedNames: []
+          embeddedNames: [],
+          ownershipBoundaryViolations: 0
         };
       }
       summary[source].count++;
       summary[source].operations.push(violation.operation);
       summary[source].embeddedNames.push(violation.embeddedName);
+
+      // Track ownership violations
+      if (violation.ownershipBoundaryViolation) {
+        summary[source].ownershipBoundaryViolations++;
+        ownershipViolations.push({
+          source,
+          actor: violation.actor,
+          embeddedName: violation.embeddedName,
+          ownedCount: violation.documentCount
+        });
+      }
+    }
+
+    // Add ownership summary
+    if (ownershipViolations.length > 0) {
+      summary._ownershipViolations = ownershipViolations;
     }
 
     return summary;
@@ -219,6 +292,15 @@ export class EmbeddedMutationLayer {
       console.log('');
       console.log('Summary by source:');
       console.table(report.summary);
+
+      // Report ownership boundary violations separately
+      const ownershipViolations = report.summary._ownershipViolations;
+      if (ownershipViolations && ownershipViolations.length > 0) {
+        console.log('');
+        console.log('%c⚠️ PHASE 9 OWNERSHIP BOUNDARY VIOLATIONS', 'color: red; font-weight: bold;');
+        console.log('These violations represent owned documents mutated outside ActorEngine:');
+        console.table(ownershipViolations);
+      }
     }
   }
 }
