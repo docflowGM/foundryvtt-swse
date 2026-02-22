@@ -16,7 +16,7 @@
  */
 
 import { MENTORS, getMentorForClass } from './mentor-dialogues.js';
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 
 /**
  * Mentor inheritance taxonomy

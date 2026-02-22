@@ -12,7 +12,7 @@
 
 import { MENTORS, getLevel1Class, getMentorForClass, getActiveMentor } from './mentor-dialogues.js';
 import { MentorInheritance } from './mentor-inheritance.js';
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 
 /**
  * Phase-specific mentor defaults

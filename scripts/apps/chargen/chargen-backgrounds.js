@@ -6,7 +6,7 @@
 import { SWSELogger } from '../../utils/logger.js';
 import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { SuggestionService } from '../../engines/suggestion/SuggestionService.js';
-import { MentorTranslationIntegration } from '../../mentor/mentor-translation-integration.js';
+import { MentorTranslationIntegration } from '../../engines/mentor/mentor-translation-integration.js';
 import { BackgroundRegistry } from '../../registries/background-registry.js';
 
 /**

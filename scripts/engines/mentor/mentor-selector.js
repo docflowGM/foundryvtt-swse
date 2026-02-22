@@ -4,7 +4,7 @@
  */
 
 import { MENTORS, setMentorOverride, getActiveMentor } from './mentor-dialogues.js';
-import { swseLogger } from '../utils/logger.js';
+import { swseLogger } from '../../utils/logger.js';
 
 export class MentorSelectorWindow {
     /**

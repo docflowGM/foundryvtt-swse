@@ -13,7 +13,7 @@ import {
   getTalentTrees,
   validateClassDocument
 } from './chargen-property-accessor.js';
-import { MentorSurvey } from '../mentor/mentor-survey.js';
+import { MentorSurvey } from '../engines/mentor/mentor-survey.js';
 import { isBaseClass } from '../levelup/levelup-shared.js';
 import { _findItemByIdOrName } from './chargen-shared.js';
 import { confirm } from '../../utils/ui-utils.js';

@@ -9,7 +9,7 @@
  * Pure read-only logic with no state mutations.
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 
 export class MentorStoryResolver {
   /**

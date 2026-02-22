@@ -15,8 +15,8 @@ import {
   trackAsyncPhase,
   logContextKey
 } from '../debug/appv2-probe.js';
-import { MENTORS } from '../mentor/mentor-dialogues.js';
-import { MentorResolver } from '../mentor/mentor-resolver.js';
+import { MENTORS } from '../engines/mentor/mentor-dialogues.js';
+import { MentorResolver } from '../engines/mentor/mentor-resolver.js';
 import { TalentTreeVisualizer } from './talent-tree-visualizer.js';
 import { getTalentTreeName } from './chargen/chargen-property-accessor.js';
 import { normalizeTalentData } from '../progression/utils/item-normalizer.js';

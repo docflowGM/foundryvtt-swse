@@ -19,7 +19,7 @@
  * Do not add rules without logging evidence that they fire frequently.
  */
 
-import { JUDGMENT_ATOMS } from '../engine/systems/mentor/mentor-judgment-engine.js';
+import { JUDGMENT_ATOMS } from '../../engine/systems/mentor/mentor-judgment-engine.js';
 import { INTENSITY_ATOMS } from './mentor-intensity-atoms.js';
 import { isValidReasonKey } from './mentor-reason-renderer.js';
 
