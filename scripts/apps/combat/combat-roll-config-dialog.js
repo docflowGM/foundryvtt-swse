@@ -28,11 +28,21 @@ export class CombatRollConfigDialog extends SwseFormApplicationV2 {
   }
 
   async getData() {
-    const preview = await CombatEngine.previewAttack(
-      this.actor,
-      this.actionData.key,
-      this.optionsData
-    );
+    let preview;
+
+    // Support both attack and initiative modes
+    if (this.actionData?.domain === "initiative") {
+      preview = await CombatEngine.previewInitiative(
+        this.actor,
+        this.optionsData
+      );
+    } else {
+      preview = await CombatEngine.previewAttack(
+        this.actor,
+        this.actionData.key,
+        this.optionsData
+      );
+    }
 
     return {
       action: this.actionData,
@@ -55,11 +65,15 @@ export class CombatRollConfigDialog extends SwseFormApplicationV2 {
     });
 
     html.on("click", ".roll-attack", async () => {
-      await CombatEngine.rollAttack(
-        this.actor,
-        this.actionData.key,
-        this.optionsData
-      );
+      if (this.actionData?.domain === "initiative") {
+        await CombatEngine.rollInitiative(this.actor, this.optionsData);
+      } else {
+        await CombatEngine.rollAttack(
+          this.actor,
+          this.actionData.key,
+          this.optionsData
+        );
+      }
       this.close();
     });
   }

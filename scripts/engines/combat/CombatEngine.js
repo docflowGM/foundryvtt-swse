@@ -346,4 +346,95 @@ export class CombatEngine {
     // Delegate to appropriate action handler
     console.log(`Executing action: ${actionKey} for ${actor.name}`);
   }
+
+  /* -------------------------------------------- */
+  /* INITIATIVE PREVIEW AND ROLL                 */
+  /* -------------------------------------------- */
+
+  /**
+   * Preview initiative roll with modifiers.
+   *
+   * @param {Actor} actor - Actor rolling initiative
+   * @param {Object} options - Roll options
+   * @returns {Promise<Object>} Initiative preview with breakdown
+   */
+  static async previewInitiative(actor, options = {}) {
+    const { ModifierEngine } = await import('../../engines/effects/modifiers/ModifierEngine.js').catch(() => ({ ModifierEngine: null }));
+
+    const baseRoll = options.baseRoll ?? null;
+
+    let modifiers = [];
+    if (ModifierEngine) {
+      modifiers = await ModifierEngine.collectModifiers(actor, {
+        domain: "initiative",
+        context: options
+      });
+    }
+
+    const modifierTotal = modifiers.reduce((sum, m) => sum + m.value, 0);
+
+    return {
+      baseRoll,
+      modifierTotal,
+      total: baseRoll !== null ? baseRoll + modifierTotal : modifierTotal,
+      breakdown: modifiers.map(m => ({
+        label: m.label,
+        value: m.value
+      }))
+    };
+  }
+
+  /**
+   * Roll initiative and update combat tracker.
+   *
+   * @param {Actor} actor - Actor rolling initiative
+   * @param {Object} options - Roll options
+   * @returns {Promise<void>}
+   */
+  static async rollInitiative(actor, options = {}) {
+    const combat = game.combat;
+
+    if (!combat) {
+      ui.notifications.warn("No active combat.");
+      return;
+    }
+
+    let combatant = combat.combatants.find(c => c.actorId === actor.id);
+
+    // If actor not yet in combat, create combatant
+    if (!combatant) {
+      combatant = await combat.createEmbeddedDocuments("Combatant", [{
+        actorId: actor.id,
+        tokenId: actor.token?.id ?? null,
+        sceneId: canvas.scene?.id
+      }]).then(res => res[0]);
+    }
+
+    // Determine base roll
+    const baseRoll = options.baseRoll ??
+      (await new Roll("1d20").roll({ async: true })).total;
+
+    // Get modifier preview
+    const preview = await this.previewInitiative(actor, {
+      ...options,
+      baseRoll
+    });
+
+    // Update initiative value in tracker
+    await combat.setInitiative(combatant.id, preview.total);
+
+    // Optional: Chat Message
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      content: `
+        <div class="swse-init-result">
+          <strong>Initiative:</strong> ${preview.total}
+          <br>
+          Base: ${baseRoll}
+          <br>
+          Modifiers: ${preview.modifierTotal}
+        </div>
+      `
+    });
+  }
 }
