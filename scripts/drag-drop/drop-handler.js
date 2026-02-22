@@ -2,9 +2,11 @@ import { ProgressionEngine } from '../progression/engine/progression-engine.js';
 /**
  * Centralized Drag-Drop Handler for SWSE
  * Handles dropping Items onto Actors with automatic stat application
+ * PHASE 8: All embedded mutations routed through ActorEngine
  */
 
 import { ProficiencySelectionDialog } from '../apps/proficiency-selection-dialog.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 export class DropHandler {
 
@@ -194,7 +196,8 @@ export class DropHandler {
 
     // Create all items at once
     if (itemsToCreate.length > 0) {
-      await actor.createEmbeddedDocuments('Item', itemsToCreate);
+      // PHASE 8: Use ActorEngine for atomic creation
+      await ActorEngine.createEmbeddedDocuments(actor, 'Item', itemsToCreate);
     }
 
     // Add notes to biography if available
@@ -237,7 +240,8 @@ export class DropHandler {
       await existingSpecies.delete();
     }
 
-    await actor.createEmbeddedDocuments('Item', [species.toObject()]);
+    // PHASE 8: Use ActorEngine for atomic creation
+    await ActorEngine.createEmbeddedDocuments(actor, 'Item', [species.toObject()]);
 
     // Parse racial ability bonuses from string format (e.g., "+2 Dex, -2 Con")
     const abilityMods = this._parseAbilityString(species.system.attributes || 'None');
@@ -326,7 +330,8 @@ export class DropHandler {
       return false;
     }
 
-    await actor.createEmbeddedDocuments('Item', [classItem.toObject()]);
+    // PHASE 8: Use ActorEngine for atomic creation
+    await ActorEngine.createEmbeddedDocuments(actor, 'Item', [classItem.toObject()]);
 
     ui.notifications.info(`Added ${classItem.name} class to ${actor.name}`);
     return true;
@@ -420,7 +425,8 @@ export class DropHandler {
       return false;
     }
 
-    await actor.createEmbeddedDocuments('Item', [power.toObject()]);
+    // PHASE 8: Use ActorEngine for atomic creation
+    await ActorEngine.createEmbeddedDocuments(actor, 'Item', [power.toObject()]);
     ui.notifications.info(`${actor.name} learned ${power.name}`);
     return true;
   }
@@ -455,7 +461,8 @@ export class DropHandler {
       return false;
     }
 
-    await actor.createEmbeddedDocuments('Item', [feat.toObject()]);
+    // PHASE 8: Use ActorEngine for atomic creation
+    await ActorEngine.createEmbeddedDocuments(actor, 'Item', [feat.toObject()]);
     ui.notifications.info(`${actor.name} gained feat: ${feat.name}`);
     return true;
   }
@@ -476,14 +483,16 @@ export class DropHandler {
       return false;
     }
 
-    await actor.createEmbeddedDocuments('Item', [talent.toObject()]);
+    // PHASE 8: Use ActorEngine for atomic creation
+    await ActorEngine.createEmbeddedDocuments(actor, 'Item', [talent.toObject()]);
     ui.notifications.info(`${actor.name} gained talent: ${talent.name}`);
     return true;
   }
 
   static async handleDefaultDrop(actor, item) {
     // Standard item addition
-    const created = await actor.createEmbeddedDocuments('Item', [item.toObject()]);
+    // PHASE 8: Use ActorEngine for atomic creation
+    const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [item.toObject()]);
 
     if (created && created.length > 0) {
       ui.notifications.info(`Added ${item.name} to ${actor.name}`);
