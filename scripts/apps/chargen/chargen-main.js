@@ -18,7 +18,7 @@ import { MentorSurvey } from '../engines/mentor/mentor-survey.js';
 import { MentorSuggestionDialog } from '../engines/mentor/mentor-suggestion-dialog.js';
 import { MENTORS } from '../engines/mentor/mentor-dialogues.js';
 import { getMentorMemory, setMentorMemory, setTargetClass } from '../../engines/mentor/mentor-memory.js';
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 import { BackgroundRegistry } from '../../registries/background-registry.js';
 import { LanguageRegistry } from '../../registries/language-registry.js';
 

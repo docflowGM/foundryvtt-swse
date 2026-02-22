@@ -19,7 +19,7 @@ import { DroidBuilderApp } from '../droid-builder-app.js';
 import { getRandomDialogue } from './store-shared.js';
 import { SWSEVehicleHandler } from '../../actors/vehicle/swse-vehicle-handler.js';
 import { createActor } from '../../core/document-api-v13.js';
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 
 /**
  * Add item to shopping cart

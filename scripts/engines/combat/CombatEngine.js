@@ -9,7 +9,7 @@ import { EnhancedShields } from './starship/enhanced-shields.js';
 import { VehicleTurnController } from './starship/vehicle-turn-controller.js';
 import { VehicleDogfighting } from './subsystems/vehicle/vehicle-dogfighting.js';
 import { VehicleCollisions } from './subsystems/vehicle/vehicle-collisions.js';
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 import { CombatUIAdapter } from './ui/CombatUIAdapter.js';
 
 export class CombatEngine {

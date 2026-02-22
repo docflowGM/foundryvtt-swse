@@ -4,7 +4,7 @@ import { FeatRegistry } from '../engines/progression/feats/feat-registry.js';
 import { FeatEngine } from '../engines/progression/feats/feat-engine.js';
 import { ensureNpcStatblockSnapshot, rollbackNpcToStatblockSnapshot } from '../utils/hardening.js';
 import { RollEngine } from './roll-engine.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 
 const FLAG_MODE = 'npcLevelUp.mode';
 const FLAG_TRACK = 'npcLevelUp.track';

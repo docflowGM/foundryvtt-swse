@@ -4,7 +4,7 @@
  */
 
 import { swseLogger } from '../../../utils/logger.js';
-import { ActorEngine } from '../../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
 
 /**
  * Recalculate all derived stats for an actor

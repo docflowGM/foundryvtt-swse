@@ -11,7 +11,7 @@
  */
 
 import { swseLogger as SWSELogger } from '../../utils/logger.js';
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 import { SnapshotManager } from '../../utils/snapshot-manager.js';
 import { dispatchFeature } from '../../engine/feature-dispatcher.js';
 import { ForceProgressionEngine } from '../../engine/force-progression.js';

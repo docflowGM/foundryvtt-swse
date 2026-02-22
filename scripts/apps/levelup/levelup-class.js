@@ -12,7 +12,7 @@ import { isBaseClass, getCharacterClasses, getClassDefenseBonuses, calculateHPGa
 import { meetsClassPrerequisites } from './levelup-validation.js';
 import { getClassProperty } from '../chargen/chargen-property-accessor.js';
 import { ClassSuggestionEngine } from '../../engines/suggestion/ClassSuggestionEngine.js';
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 
 /**
  * Get class metadata (icon and description)

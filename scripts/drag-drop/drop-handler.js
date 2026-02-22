@@ -6,7 +6,7 @@ import { ProgressionEngine } from '../engines/progression/engine/progression-eng
  */
 
 import { ProficiencySelectionDialog } from '../apps/proficiency-selection-dialog.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 
 export class DropHandler {
 

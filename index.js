@@ -74,9 +74,9 @@ import { registerSystemSettings } from './scripts/core/settings.js';
 import { initializeUtils } from './scripts/core/utils-init.js';
 import { initializeRolls } from './scripts/core/rolls-init.js';
 import { SWSESentinel } from './scripts/core/swse-sentinel.js';
-import { SentinelEngine } from './scripts/core/sentinel/sentinel-core.js';
-import { Sentry } from './scripts/core/sentinel/sentry.js';
-import { Investigator } from './scripts/core/sentinel/investigator.js';
+import { SentinelEngine } from './scripts/governance/sentinel/sentinel-core.js';
+import { Sentry } from './scripts/governance/sentinel/sentry.js';
+import { Investigator } from './scripts/governance/sentinel/investigator.js';
 
 // ---- v13 hardening ----
 import { initializeHardeningSystem, validateSystemReady, registerHardeningHooks } from './scripts/core/hardening-init.js';
@@ -98,9 +98,9 @@ import { checkRequiredPacks } from './scripts/core/pack-existence-check.js';
 // ---- actors / items ----
 import { SWSEV2BaseActor } from './scripts/actors/v2/base-actor.js';
 import { SWSEItemBase } from './scripts/items/base/swse-item-base.js';
-import { ActorEngine } from "./scripts/actors/engine/actor-engine.js";
-import { MutationInterceptor } from './scripts/core/mutation/MutationInterceptor.js';
-import { Batch1Validation } from './scripts/core/mutation/batch-1-validation.js';
+import { ActorEngine } from "./scripts/governance/actor-engine/actor-engine.js";
+import { MutationInterceptor } from './scripts/governance/mutation/MutationInterceptor.js';
+import { Batch1Validation } from './scripts/governance/mutation/batch-1-validation.js';
 
 // ---- combat tests (PHASE 3) ----
 import { DamageEngineTest } from './scripts/engines/combat/damage-engine-test.js';

@@ -11,7 +11,7 @@
  *   - Applying results to the Combat Tracker
  */
 
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 
 export class SWSEInitiative {
 

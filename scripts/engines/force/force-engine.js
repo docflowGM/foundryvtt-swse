@@ -3,7 +3,7 @@
  * Natural 20 tracking, Force Points, Dark Side tracking, DC calculation
  */
 
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 
 export class ForceEngine {
   /**

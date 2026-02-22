@@ -6,7 +6,7 @@
  */
 
 import { DROID_SYSTEMS } from '../data/droid-systems.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 
 export class DroidAppendageUtils {
   /**

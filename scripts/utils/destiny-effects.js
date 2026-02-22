@@ -9,7 +9,7 @@ import { SWSELogger } from './logger.js';
 import { SWSEActiveEffectsManager } from '../combat/active-effects-manager.js';
 import { createChatMessage } from '../core/document-api-v13.js';
 import { RollEngine } from '../engine/roll-engine.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 
 export class DestinyEffects {
 

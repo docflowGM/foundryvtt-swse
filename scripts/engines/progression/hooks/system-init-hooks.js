@@ -5,7 +5,7 @@
  * Called once from system initialization (module/system.js or equivalent).
  * Ensures all game data is normalized and indexed for optimal progression engine performance.
  */
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 import { SWSELogger } from '../../utils/logger.js';
 import { FeatureIndex } from '../../engine/feature-index.js';
 import { ClassNormalizer } from '../../engine/class-normalizer.js';
@@ -16,7 +16,7 @@ import { SkillRegistry } from '../skills/skill-registry.js';
 import { SkillNormalizer } from '../skills/skill-normalizer.js';
 import { FeatRegistry } from '../feats/feat-registry.js';
 import { FeatNormalizer } from '../feats/feat-normalizer.js';
-import { Sentinel } from '../../core/sentinel/sentinel-core.js';
+import { Sentinel } from '../../governance/sentinel/sentinel-core.js';
 
 // SSOT Data Layer (now includes talent tree normalization)
 import { TalentTreeDB } from '../../data/talent-tree-db.js';

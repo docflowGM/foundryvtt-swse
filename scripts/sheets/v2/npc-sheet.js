@@ -1,5 +1,5 @@
 // scripts/sheets/v2/npc-sheet.js
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 import { TalentAbilitiesEngine } from '../../engine/TalentAbilitiesEngine.js';
 import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
 import { RenderAssertions } from '../../core/render-assertions.js';

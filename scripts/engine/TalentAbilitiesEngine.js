@@ -20,7 +20,7 @@ import { RollEngine } from './roll-engine.js';
 // eslint-disable-next-line
 import talentAbilitiesData from '../../data/talent-granted-abilities.json' with { type: 'json' };
 import { createChatMessage } from '../core/document-api-v13.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
 /**
  * Active Effect definitions for toggleable talent abilities

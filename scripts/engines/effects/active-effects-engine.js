@@ -3,7 +3,7 @@
  * Temporary modifiers with duration tracking and auto-expiration
  */
 
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 
 export class ActiveEffectsEngine {
   /**

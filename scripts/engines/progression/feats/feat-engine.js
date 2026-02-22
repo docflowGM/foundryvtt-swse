@@ -10,7 +10,7 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 import { FeatRegistry } from './feat-registry.js';
 import { FeatState } from './feat-state.js';
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';

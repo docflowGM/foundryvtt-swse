@@ -7,7 +7,7 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 import { TalentEffectEngine } from './talent-effect-engine.js';
 import { createChatMessage } from '../../core/document-api-v13.js';
 

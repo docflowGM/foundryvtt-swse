@@ -3,7 +3,7 @@
  * Gunner skill linking, pilot integration, crew modifiers
  */
 
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 
 export class CrewInteractionEngine {
   /**

@@ -14,7 +14,7 @@
 
 import { SWSELogger } from '../utils/logger.js';
 import { createEffectOnActor } from '../core/document-api-v13.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 
 export class FeatEffectsEngine {
 

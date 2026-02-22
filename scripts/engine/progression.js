@@ -6,7 +6,7 @@ import { ProgressionSession } from './ProgressionSession.js';
 import { SuggestionService } from './SuggestionService.js';
 import { createChatMessage } from '../core/document-api-v13.js';
 import { SWSELevelUp } from '../apps/swse-levelup.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 
 /**
  * Unified SWSE Progression Engine

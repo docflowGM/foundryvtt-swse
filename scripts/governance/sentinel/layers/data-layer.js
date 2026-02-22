@@ -10,7 +10,7 @@
  * Non-mutating observation only
  */
 
-import { Sentinel } from '../sentinel-core.js';
+import { Sentinel } from './sentinel-core.js';
 
 export const DataLayer = {
   /**

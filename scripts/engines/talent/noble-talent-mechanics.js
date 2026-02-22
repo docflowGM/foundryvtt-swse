@@ -18,7 +18,7 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { createEffectOnActor } from '../../core/document-api-v13.js';
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 import { TalentEffectEngine } from './talent-effect-engine.js';
 
 import { getEffectiveHalfLevel } from '../../actors/derived/level-split.js';

@@ -1,6 +1,6 @@
 // scripts/engine/DraftCharacter.js
 import { swseLogger } from '../utils/logger.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 
 /**
  * DraftCharacter - Separate state model for character-in-progress

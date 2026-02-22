@@ -1,5 +1,5 @@
 import { FollowerCreator } from './follower-creator.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 
 /**
  * Follower Manager - Handles follower enhancements and bonuses

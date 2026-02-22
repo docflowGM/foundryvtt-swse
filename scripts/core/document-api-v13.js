@@ -13,7 +13,7 @@
 
 import { log } from './foundry-env.js';
 import { assertEmbeddedDocOwnership, validateItemForCreation } from './mutation-safety.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 
 const SYSTEM_ID = 'foundryvtt-swse';
 

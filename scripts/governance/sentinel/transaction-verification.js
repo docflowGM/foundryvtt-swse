@@ -8,7 +8,7 @@
  *   TransactionVerification.reportTransaction()
  */
 
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 import { MutationIntegrityLayer } from './mutation-integrity-layer.js';
 
 export const TransactionVerification = {

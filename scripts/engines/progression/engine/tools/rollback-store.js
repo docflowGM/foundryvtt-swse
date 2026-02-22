@@ -4,7 +4,7 @@
  */
 
 import { swseLogger } from '../../../utils/logger.js';
-import { ActorEngine } from '../../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
 
 /**
  * Rollback Store - Maintains history of actor states for undo functionality

@@ -1,6 +1,6 @@
 // scripts/engine/RuleElement.js
 import { swseLogger } from '../utils/logger.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 
 /**
  * RuleElement - Data-driven rule application system

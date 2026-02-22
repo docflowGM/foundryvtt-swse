@@ -1,7 +1,7 @@
 // scripts/sheets/v2/npc-full-sheet.js
 
 import { SWSEV2CharacterSheet } from "./character-sheet.js";
-import { ActorEngine } from "../../actors/engine/actor-engine.js";
+import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
 
 export class SWSEV2FullNpcSheet extends SWSEV2CharacterSheet {
 

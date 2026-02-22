@@ -17,7 +17,7 @@
  * - Migration files
  */
 
-import { Sentinel } from '../sentinel-core.js';
+import { Sentinel } from './sentinel-core.js';
 
 export const UtilityLayer = {
   /**

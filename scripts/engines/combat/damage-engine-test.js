@@ -14,7 +14,7 @@
 
 import { DamageEngine } from './damage-engine.js';
 import { DerivedCalculator } from '../../actors/derived/derived-calculator.js';
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 
 export class DamageEngineTest {
   static results = {

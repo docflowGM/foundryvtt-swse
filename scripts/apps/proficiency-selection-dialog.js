@@ -3,7 +3,7 @@
  * Handles category selection for Weapon/Armor Proficiency, Weapon Focus, and Weapon Specialization feats
  */
 
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 
 export class ProficiencySelectionDialog {
 

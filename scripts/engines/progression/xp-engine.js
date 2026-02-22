@@ -2,7 +2,7 @@
 
 import { XP_LEVEL_THRESHOLDS, XP_MAX_LEVEL, getXPFromCL } from './xp-constants.js';
 import { getTotalLevel } from '../../actors/derived/level-split.js';
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 
 const NS = 'foundryvtt-swse';
 

@@ -1,5 +1,5 @@
 import { ProgressionEngine } from '../../engines/progression/engine/progression-engine.js';
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 // ============================================
 // Character Generation Templates Module
 // Loads and applies pre-configured character templates

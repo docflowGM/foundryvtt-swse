@@ -7,7 +7,7 @@
  * PHASE 7: All mutations routed through ActorEngine for atomic governance
  */
 import { SWSELogger } from '../utils/logger.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 
 /**
  * Mapping of house rule settings to feats/talents they grant
