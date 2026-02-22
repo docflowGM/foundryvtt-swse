@@ -16,6 +16,9 @@ import { PromisesLayer } from './layers/promises-layer.js';
 import { PerformanceLayer } from './layers/performance-layer.js';
 import { CombatLayer } from './layers/combat-layer.js';
 
+// PHASE 7: Import utility layer governance enforcement
+import { UtilityLayer } from './layers/utility-layer.js';
+
 // PHASE 3: Import mutation authority layer
 import { MutationIntegrityLayer } from './mutation-integrity-layer.js';
 
@@ -42,6 +45,9 @@ export function initializeSentinelLayers() {
 
   // PHASE 4: Register combat domain sovereignty layer
   SentinelEngine.registerLayer('combat', CombatLayer);
+
+  // PHASE 7: Register utility layer governance enforcement
+  SentinelEngine.registerLayer('utility', UtilityLayer);
 }
 
 /**
