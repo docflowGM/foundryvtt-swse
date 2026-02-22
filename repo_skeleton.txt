@@ -19,15 +19,6 @@ foundryvtt-swse/
   talent-corrections-final.json
   template.json
   verify-compendium-fixes.js
-  .claude/
-    settings.local.json
-  .github/
-    .github\workflows/
-      ci.yml
-      lint.yml
-      partials-check.yml
-  .husky/
-    pre-commit
   assets/
     assets\backgrounds/
     assets\class/
@@ -581,28 +572,6 @@ foundryvtt-swse/
         PREREQUISITE_ENGINE_ANALYSIS.md
         PROGRESSION_ENGINE_ANALYSIS.md
         PROGRESSION_ISSUES_ANALYSIS.md
-      docs\_archive\scripts/
-        add-feat-effects.js
-        array-to-items.js
-        fix-talent-effect-validation.js
-        mentor-reflective-dialogue.js
-        migrate-starship-maneuvers.js
-        npc-level3.js
-        organize-compendiums.js
-        populate-force-compendiums.js
-        talent-ssot-refactor.js
-        update-species-traits-migration.js
-        docs\_archive\scripts\actors/
-          docs\_archive\scripts\actors\v1/
-            docs\_archive\scripts\actors\v1\base/
-              swse-actor-base.js
-            docs\_archive\scripts\actors\v1\character/
-              swse-character-sheet.js
-            docs\_archive\scripts\actors\v1\droid/
-              swse-droid-handler.js
-              swse-droid.js
-            docs\_archive\scripts\actors\v1\npc/
-              swse-npc.js
       docs\_archive\session-logs/
         HANDOFF_2026-01-27.md
         SESSION_LOG.md
@@ -687,409 +656,6 @@ foundryvtt-swse/
     weapons-rifles.db
     weapons-simple.db
     weapons.db
-    packs\armor/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\armor-heavy/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\armor-light/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\armor-medium/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\armor-shields/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\attributes/
-      000009.ldb
-      000053.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000052
-    packs\backgrounds/
-      000009.ldb
-      000053.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000052
-    packs\beasts/
-      000009.ldb
-      000053.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000052
-    packs\classes/
-      000009.ldb
-      000053.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000052
-    packs\combat-actions/
-      000051.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000050
-    packs\conditions/
-      000009.ldb
-      000053.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000052
-    packs\droids/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\equipment/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\equipment-comlinks/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\equipment-medical/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\equipment-other/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\equipment-security/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\equipment-survival/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\equipment-tech/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\equipment-tools/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\extraskilluses/
-      000009.ldb
-      000053.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000052
-    packs\feats/
-      000009.ldb
-      000053.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000052
-    packs\forcepowers/
-      000009.ldb
-      000053.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000052
-    packs\forcesecrets/
-      000009.ldb
-      000053.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000052
-    packs\forcetechniques/
-      000009.ldb
-      000053.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000052
-    packs\heroic/
-      000009.ldb
-      000055.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000054
-    packs\languages/
-      000009.ldb
-      000053.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000052
-    packs\lightsaberformpowers/
-      000051.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000050
-    packs\nonheroic/
-      000009.ldb
-      000055.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000054
-    packs\npc/
-      000051.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000050
-    packs\ship-combat-actions/
-      000051.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000050
-    packs\skills/
-      000009.ldb
-      000053.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000052
-    packs\special-combat-condition/
-      000009.ldb
-      000053.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000052
-    packs\species/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\talent-enhancements/
-      000051.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000050
-    packs\talents/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\talent_trees/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\vehicle-weapon-ranges/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\vehicle-weapons/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\vehicles/
-      000009.ldb
-      000053.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000052
-    packs\vehicles-speeders/
-      000009.ldb
-      000053.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000052
-    packs\vehicles-starships/
-      000009.ldb
-      000053.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000052
-    packs\vehicles-stations/
-      000009.ldb
-      000053.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000052
-    packs\vehicles-walkers/
-      000009.ldb
-      000053.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000052
-    packs\weapons/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\weapons-exotic/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\weapons-grenades/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\weapons-heavy/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\weapons-pistols/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\weapons-rifles/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
-    packs\weapons-simple/
-      000062.ldb
-      000064.log
-      CURRENT
-      LOCK
-      LOG
-      LOG.old
-      MANIFEST-000063
   quarantine/
     quarantine\backups/
       classes.db.backup
@@ -1110,8 +676,6 @@ foundryvtt-swse/
         derived-calculator.js
         hp-calculator.js
         level-split.js
-      scripts\actors\engine/
-        actor-engine.js
       scripts\actors\v2/
         base-actor.js
         character-actor.js
@@ -1212,7 +776,6 @@ foundryvtt-swse/
         maintenance-app.js
       scripts\apps\mentor/
         mentor-dialogues.data.js
-        mentor-dialogues.js
         mentor-suggestion-dialog.js
         mentor-survey.js
       scripts\apps\mentor-notes/
@@ -1227,7 +790,6 @@ foundryvtt-swse/
         STORE_VISUAL_CONTRACT.md
         VISUAL_CONSISTENCY_AUDIT.md
         review-thread-assembler.js
-        review-thread-assembler.test.js
         store-card-interactions.js
         store-checkout.js
         store-constants.js
@@ -1249,25 +811,12 @@ foundryvtt-swse/
       swse-chat.js
     scripts\combat/
       active-effects-manager.js
-      aid-another.js
-      autofire-bracing.js
-      autofire.js
-      batch-2-comprehensive-test.js
-      burst-fire.js
       combat-automation.js
       combat-integration.js
       damage-system.js
-      feign-haywire.js
-      feint-mechanics.js
-      ion-damage.js
-      maiming.js
       multi-attack.js
-      saber-lock-mechanics.js
       swse-combat.js
       swse-combatant.js
-      tactics.js
-      treat-poison.js
-      weapon-mode.js
       scripts\combat\rolls/
         attacks.js
         damage.js
@@ -1275,13 +824,7 @@ foundryvtt-swse/
       scripts\combat\systems/
         enhanced-combat-system.js
         grappling-system.js
-        vehicle-combat-system.js
         scripts\combat\systems\vehicle/
-          vehicle-calculations.js
-          vehicle-collisions.js
-          vehicle-combat-main.js
-          vehicle-dogfighting.js
-          vehicle-shared.js
           vehicle-weapons.js
       scripts\combat\utils/
         combat-actions-mapper.js
@@ -1340,26 +883,6 @@ foundryvtt-swse/
       v2-render-guard.js
       version-adapter.js
       world-data-loader.js
-      scripts\core\mutation/
-        MutationInterceptor.js
-        batch-1-validation.js
-      scripts\core\sentinel/
-        derived-integrity-layer.js
-        hook-investigator.js
-        integration-tests.js
-        investigator.js
-        mutation-integrity-layer.js
-        sentinel-core.js
-        sentinel-registry.js
-        sentry.js
-        transaction-verification.js
-        scripts\core\sentinel\layers/
-          css-layer.js
-          data-layer.js
-          hooks-layer.js
-          performance-layer.js
-          promises-layer.js
-          render-layer.js
     scripts\data/
       class-normalizer.js
       classes-db.js
@@ -1387,14 +910,8 @@ foundryvtt-swse/
       item-data-models.js
       vehicle-data-model.js
     scripts\debug/
-      appv2-contract-validator.js
       appv2-probe.js
-      debug-character-sheet.js
-      debug-settings.js
       debug-tools.js
-      npc-render-probe.js
-      smoke-test.js
-      v2-slippage-lint.js
     scripts\dev/
       ability-model-validator.js
       mutation-guard.js
@@ -1402,168 +919,169 @@ foundryvtt-swse/
     scripts\drag-drop/
       drop-handler.js
     scripts\engine/
-      ARCHETYPE_INTEGRATION_GUIDE.md
-      ArchetypeAffinityEngine.js
-      ArchetypeDefinitions.js
-      ArchetypeEngineHooks.js
-      ArchetypeEnhancedForceOptionSuggestionEngine.js
-      ArchetypeLoader.js
-      ArchetypeShiftTracker.js
-      ArchetypeSuggestionIntegration.js
-      AttributeIncreaseSuggestionEngine.js
-      BackgroundSuggestionEngine.js
-      BonusHitPointsEngine.js
-      BuildCoherenceAnalyzer.js
-      BuildIdentityAnchor.js
-      BuildIntent.js
-      ClassSuggestionEngine.js
-      CommunityMetaSynergies.js
-      CompendiumResolver.js
-      ConfidenceScoring.js
-      DefenseSystem.js
-      DraftCharacter.js
-      FeatEffectsEngine.js
-      FeatSystem.js
-      ForceOptionSuggestionEngine.js
-      Level1SkillSuggestionEngine.js
-      MentorClarificationSystem.js
-      MentorProfile.js
-      MentorSystem.js
-      MentorWishlistIntegration.js
-      MetaTuning.js
-      OpportunityCostAnalyzer.js
-      PHASE_2_5_SimulationEngine.js
-      PathPreview.js
-      PivotDetector.js
-      PlayerHistoryTracker.js
-      ProgressionAdvisor.js
-      ProgressionSession.js
-      ReasonFactory.js
-      RuleElement.js
-      SkillSystem.js
-      SnapshotBuilder.INTEGRATION.md
-      SnapshotBuilder.js
-      SnapshotBuilder.test.js
-      StarshipManeuversEngine.js
-      SuggestionConfidence.js
-      SuggestionEngine.js
-      SuggestionEngineCoordinator.js
-      SuggestionEngineHooks.js
-      SuggestionExplainer.js
-      SuggestionScorer.js
-      SuggestionService.js
-      SynergyEvaluator.js
-      TalentAbilitiesEngine.js
-      WishlistEngine.js
-      droid-mod-validator.js
-      droid-validation-engine.js
-      dsp-saturation.js
-      force-power-categories.js
-      npc-levelup.js
-      progression.js
-      roll-engine.js
-      suggestion-settings.js
-      suggestion-unified-tiers.js
-      talent-action-linker.js
-      unified-card-renderer.js
-      validateClassArchetypes.js
-      scripts\engine\abilities/
-        AbilityEngine.js
-        ability-registry.js
-        ability-tags.js
-        ability-usage.js
-        action-ability-module.js
-        feat-ability-module.js
-        force-modifier-module.js
-        forcePower-ability-module.js
-        species-ability-module.js
-        talent-ability-module.js
-      scripts\engine\audit/
-        determinism-audit.js
-      scripts\engine\combat/
+      scripts\engine\shared/
+        xp-system.js
+    scripts\engines/
+      scripts\engines\combat/
+        ARCHITECTURE.md
+        CombatEngine.js
         SWSEInitiative.js
         damage-engine-test.js
         damage-engine.js
         massive-damage-engine.js
         scale-engine.js
         threshold-engine.js
-        scripts\engine\combat\starship/
+        scripts\engines\combat\starship/
           enhanced-commander.js
           enhanced-engineer.js
           enhanced-pilot.js
           enhanced-shields.js
           subsystem-engine.js
           vehicle-turn-controller.js
-      scripts\engine\crew/
+        scripts\engines\combat\subsystems/
+          scripts\engines\combat\subsystems\vehicle/
+            index.js
+            vehicle-collisions.js
+            vehicle-dogfighting.js
+        scripts\engines\combat\ui/
+          CombatUIAdapter.js
+        scripts\engines\combat\vehicles/
+          scripts\engines\combat\vehicles\utils/
+            vehicle-calculations.js
+            vehicle-shared.js
+      scripts\engines\crew/
         crew-interaction-engine.js
-      scripts\engine\data/
-        archetype-index.json
-        archetype-paths.json
-        class-archetypes.json
-        class-archetypes.schema.json
-        default-archetype-weights.json
-        generic-archetypes.json
-        prestige-map.json
-      scripts\engine\effects/
-        active-effects-engine.js
-      scripts\engine\encumbrance/
-        EncumbranceEngine.js
-        encumbrance-finalization.js
-      scripts\engine\followers/
         follower-talent-config.js
-      scripts\engine\force/
+      scripts\engines\effects/
+        active-effects-engine.js
+        scripts\engines\effects\modifiers/
+          ModifierEngine.js
+          ModifierTypes.js
+          ModifierUtils.js
+          StructuredRuleEvaluator.js
+      scripts\engines\force/
         force-engine.js
-      scripts\engine\inventory/
-        InventoryEngine.js
-      scripts\engine\mentor/
+        force-power-categories.js
+      scripts\engines\mentor/
+        aurebesh-translator.js
         index.js
         mentor-decision-logger.js
+        mentor-dialogues.data.js
+        mentor-dialogues.js
+        mentor-inheritance.js
         mentor-intensity-atoms.js
+        mentor-json-loader.js
+        mentor-memory.js
+        mentor-reason-atoms.js
+        mentor-reason-judgment-map.js
         mentor-reason-renderer.js
-      scripts\engine\modifiers/
-        ModifierEngine.js
-        ModifierTypes.js
-        ModifierUtils.js
-        StructuredRuleEvaluator.js
-      scripts\engine\mount/
-        mount-engine.js
-      scripts\engine\phase3/
-        BuildIdentityAnchor.js
-        PivotDetector.js
-        SuggestionExplainer.js
-      scripts\engine\prerequisites/
-        PrerequisiteEngine.js
-      scripts\engine\progression/
+        mentor-resolver.js
+        mentor-selector.js
+        mentor-story-resolver.js
+        mentor-synthesis-config.js
+        validate-mentor-dialogue.js
+      scripts\engines\progression/
+        ProgressionCompiler.js
+        RuleEngine.js
         xp-constants.js
         xp-engine.js
-      scripts\engine\python/
-        .gitignore
-        README.md
-        archetype_affinity_persistence.py
-        archetype_engine_tools.py
-        archetype_explanation_engine.py
-        archetype_prestige_and_foundry_bridge.py
-        test_archetype_pipeline.py
-      scripts\engine\skills/
-        SkillEnforcementEngine.js
-      scripts\engine\systems/
-        dd-engine.js
-        gear-templates-engine.js
-        upgrade-rules-engine.js
-        scripts\engine\systems\houserules/
-          houserules-engine.js
-        scripts\engine\systems\mentor/
-          mentor-judgment-engine.js
-        scripts\engine\systems\species/
-          NaturalWeaponHandler.js
-          species-trait-engine.js
-          species-trait-types.js
-      scripts\engine\talents/
-        TalentNormalizerEngine.js
-      scripts\engine\tools/
-        generate-archetype-index.mjs
-        validate-class-archetypes.mjs
-    scripts\engines/
+        scripts\engines\progression\data/
+          progression-data.js
+        scripts\engines\progression\engine/
+          apply-progression-patch.js
+          attribute-increase-handler.js
+          class-normalizer.js
+          engine-helpers.js
+          equipment-engine.js
+          feature-dispatcher.js
+          feature-index.js
+          feature-normalizer.js
+          force-normalizer.js
+          force-power-engine.js
+          force-progression.js
+          force-secret-engine.js
+          force-secret-suggestion-engine.js
+          force-technique-engine.js
+          force-technique-suggestion-engine.js
+          language-engine.js
+          progression-actor-updater.js
+          progression-engine-instance.js
+          progression-engine.js
+          progression-patch.js
+          progression-state-normalizer.js
+          starship-maneuver-engine.js
+          starship-maneuver-suggestion-engine.js
+          starting-feature-registrar.js
+          suggestion-constants.js
+          template-engine.js
+          scripts\engines\progression\engine\autocalc/
+            derived-stats.js
+          scripts\engines\progression\engine\autogrants/
+            class-autogrants.js
+            force-training.js
+          scripts\engines\progression\engine\tools/
+            prestige-readiness.js
+            rollback-store.js
+          scripts\engines\progression\engine\validators/
+            feat-duplication.js
+        scripts\engines\progression\feats/
+          feat-dispatcher.js
+          feat-engine.js
+          feat-normalizer.js
+          feat-registry-ui.js
+          feat-registry.js
+          feat-state.js
+          prerequisite_engine.js
+        scripts\engines\progression\force/
+          force-registry-ui.js
+        scripts\engines\progression\hooks/
+          system-init-hooks.js
+        scripts\engines\progression\integration/
+          finalize-integration.js
+        scripts\engines\progression\modules/
+          language-module.js
+        scripts\engines\progression\prerequisites/
+          class-prereq-normalizer.js
+          class-prerequisites-cache.js
+          class-prerequisites-init.js
+        scripts\engines\progression\skills/
+          skill-engine.js
+          skill-normalizer.js
+          skill-registry-ui.js
+          skill-registry.js
+          skill-state.js
+          skill-validator.js
+        scripts\engines\progression\talents/
+          TalentNode.js
+          TalentTreeGraph.js
+          TalentTreeRegistry.js
+          talent-registry-ui.js
+        scripts\engines\progression\ui/
+          force-power-picker.js
+          force-secret-picker.js
+          force-technique-picker.js
+          levelup-module-init.js
+          progression-ui.js
+          starship-maneuver-picker.js
+          scripts\engines\progression\ui\templates/
+            force-power-picker.hbs
+            force-secret-picker.hbs
+            force-technique-picker.hbs
+            starship-maneuver-picker.hbs
+        scripts\engines\progression\utils/
+          PrerequisiteEnricher.js
+          apply-handlers.js
+          background-normalizer.js
+          class-data-loader.js
+          class-feature-normalizer.js
+          class-normalizer.js
+          item-normalizer.js
+          level-diff-inspector.js
+          prerequisite-normalizer.js
+          snapshot-manager.js
+          species-normalizer.js
+      scripts\engines\shared/
+        xp-system.js
       scripts\engines\store/
         SERVICES_ARCHITECTURE.md
         categorizer.js
@@ -1575,41 +1093,143 @@ foundryvtt-swse/
         store-constants.js
         store-engine.js
         store-transaction-engine.js
+      scripts\engines\suggestion/
+        ArchetypeAffinityEngine.js
+        ArchetypeDefinitions.js
+        ArchetypeEngineHooks.js
+        ArchetypeEnhancedForceOptionSuggestionEngine.js
+        ArchetypeLoader.js
+        ArchetypeShiftTracker.js
+        ArchetypeSuggestionIntegration.js
+        AttributeIncreaseSuggestionEngine.js
+        BackgroundSuggestionEngine.js
+        BuildCoherenceAnalyzer.js
+        BuildIdentityAnchor.js
+        BuildIntent.js
+        ClassSuggestionEngine.js
+        CommunityMetaSynergies.js
+        CompendiumResolver.js
+        ConfidenceScoring.js
+        ForceOptionSuggestionEngine.js
+        Level1SkillSuggestionEngine.js
+        MentorClarificationSystem.js
+        MentorProfile.js
+        MentorSystem.js
+        MentorWishlistIntegration.js
+        OpportunityCostAnalyzer.js
+        PathPreview.js
+        PivotDetector.js
+        PlayerHistoryTracker.js
+        ProgressionAdvisor.js
+        ProgressionSession.js
+        ReasonFactory.js
+        SnapshotBuilder.INTEGRATION.md
+        SnapshotBuilder.js
+        SuggestionConfidence.js
+        SuggestionEngine.js
+        SuggestionEngineCoordinator.js
+        SuggestionEngineHooks.js
+        SuggestionExplainer.js
+        SuggestionScorer.js
+        SuggestionService.js
+        SynergyEvaluator.js
+        WishlistEngine.js
+        suggestion-settings.js
+        suggestion-unified-tiers.js
+        validateClassArchetypes.js
+        scripts\engines\suggestion\equipment/
+          armor-gear-scoring-engine.js
+          armor-scoring-engine.js
+          armor-suggestions.js
+          combat-engine.js
+          combat-hooks.js
+          gear-suggestions.js
+          mentor-prose-generator.js
+          report-schema.js
+          shared-scoring-utils.js
+          suggestion-tiers-canonical.js
+          tactical-evaluator.js
+          test-harness.js
+          weapon-scoring-engine.js
+          weapon-suggestions.js
+          scripts\engines\suggestion\equipment\scoring/
+            armor-axis-a-engine.js
+            armor-axis-b-engine.js
+            armor-explainability-generator.js
+            armor-role-alignment-engine.js
+            axis-a-engine.js
+            axis-b-engine.js
+            category-normalization-engine.js
+            explainability-generator.js
+            tradeoff-resolver.js
+            weight-config.js
+            weighted-score-engine.js
+          scripts\engines\suggestion\equipment\tests/
+            integration-tests.js
+        scripts\engines\suggestion\gm/
+          gm-suggestion-panel.js
+          init.js
+          insight-bus.js
+          insight-types.js
+          pacing-monitor.js
+          pressure-monitor.js
+          spotlight-monitor.js
+          tuning-advisor.js
+      scripts\engines\talent/
+        TalentNormalizerEngine.js
+        dark-side-devotee-mechanics.js
+        dark-side-talent-mechanics.js
+        light-side-talent-mechanics.js
+        noble-talent-mechanics.js
+        prestige-talent-mechanics.js
+        scoundrel-talent-mechanics.js
+        scout-talent-mechanics.js
+        soldier-talent-mechanics.js
+        squad-actions-mechanics.js
+        talent-action-linker.js
+        talent-effect-engine.js
+        talents.js
     scripts\export/
       discover-pdf-fields.js
       pdf-exporter.js
       pdf-field-map.js
       pdf-fields-discovered.json
       swse-export-model.js
-    scripts\gm-suggestions/
-      gm-suggestion-panel.js
-      init.js
-      insight-bus.js
-      insight-types.js
-      pacing-monitor.js
-      pressure-monitor.js
-      spotlight-monitor.js
-      tuning-advisor.js
     scripts\gm-tools/
       homebrew-manager.js
+    scripts\governance/
+      scripts\governance\actor-engine/
+        actor-engine.js
+      scripts\governance\mutation/
+        MutationInterceptor.js
+        batch-1-validation.js
+        embedded-mutation-layer.js
+      scripts\governance\sentinel/
+        css-auditor.js
+        derived-integrity-layer.js
+        hook-investigator.js
+        integration-tests.js
+        investigator.js
+        migration-auditor.js
+        mutation-integrity-layer.js
+        sentinel-auditors.js
+        sentinel-core.js
+        sentinel-registry.js
+        sentry.js
+        transaction-verification.js
+        scripts\governance\sentinel\layers/
+          combat-layer.js
+          css-layer.js
+          data-layer.js
+          hooks-layer.js
+          hooks-mutation-layer.js
+          migration-mutation-layer.js
+          performance-layer.js
+          promises-layer.js
+          render-layer.js
+          utility-layer.js
     scripts\helpers/
       swse-dialog-helper.js
-    scripts\hooks/
-      actor-hooks.js
-      assets-hooks.js
-      combat-hooks.js
-      destiny-hooks.js
-      directory-hooks.js
-      follower-hooks.js
-      force-power-hooks.js
-      hooks-registry.js
-      index.js
-      init-hooks.js
-      levelup-sheet-hooks.js
-      starship-maneuver-hooks.js
-      suggestion-hooks.js
-      talent-effects-hooks.js
-      ui-hooks.js
     scripts\houserules/
       houserule-actor-enhancements.js
       houserule-block-mechanic.js
@@ -1629,6 +1249,23 @@ foundryvtt-swse/
       houserule-talent-combination.js
       houserules-config.js
       houserules-data.js
+    scripts\infrastructure/
+      scripts\infrastructure\hooks/
+        actor-hooks.js
+        assets-hooks.js
+        combat-hooks.js
+        destiny-hooks.js
+        directory-hooks.js
+        follower-hooks.js
+        force-power-hooks.js
+        hooks-registry.js
+        index.js
+        init-hooks.js
+        levelup-sheet-hooks.js
+        starship-maneuver-hooks.js
+        suggestion-hooks.js
+        talent-effects-hooks.js
+        ui-hooks.js
     scripts\items/
       swse-item-sheet.js
       weapon-ranges.js
@@ -1647,7 +1284,6 @@ foundryvtt-swse/
         migrate-orphaned-talents.js
         migrate-talent-tree-descriptions.js
     scripts\mentor/
-      aurebesh-translator.js
       mentor-archetype-paths.js
       mentor-chat-dialog.js
       mentor-conditional-variants.js
@@ -1656,30 +1292,18 @@ foundryvtt-swse/
       mentor-dialogue-responses.js
       mentor-dialogue-v2-integration.js
       mentor-dialogue-variants.js
-      mentor-dialogues.data.js
-      mentor-dialogues.js
       mentor-guidance.js
       mentor-help-strings.js
-      mentor-inheritance.js
-      mentor-intensity-atoms.js
-      mentor-json-loader.js
       mentor-judgment-renderer.js
-      mentor-memory.js
       mentor-memory.test.js
-      mentor-reason-atoms.js
-      mentor-reason-judgment-map.js
       mentor-reason-renderer.js
       mentor-reflective-dialog.js
       mentor-reflective-init.js
-      mentor-resolver.js
-      mentor-selector.js
-      mentor-story-resolver.js
       mentor-suggestion-bias.js
       mentor-suggestion-dialog.js
       mentor-suggestion-dialogues.js
       mentor-suggestion-voice.js
       mentor-survey.js
-      mentor-synthesis-config.js
       mentor-topic-atoms.js
       mentor-transitions.js
       mentor-translation-integration.js
@@ -1688,109 +1312,10 @@ foundryvtt-swse/
       mentor-voice-filter.js
       mentor-voice-synthesizer.js
       translation-presets.js
-      validate-mentor-dialogue.js
     scripts\migration/
       migrate-species-to-structured-rules.js
     scripts\migrations/
       json-backed-ids-migration.js
-    scripts\progression/
-      ProgressionCompiler.js
-      RuleEngine.js
-      scripts\progression\data/
-        progression-data.js
-      scripts\progression\engine/
-        apply-progression-patch.js
-        attribute-increase-handler.js
-        class-normalizer.js
-        engine-helpers.js
-        equipment-engine.js
-        feature-dispatcher.js
-        feature-index.js
-        feature-normalizer.js
-        force-normalizer.js
-        force-power-engine.js
-        force-progression.js
-        force-secret-engine.js
-        force-secret-suggestion-engine.js
-        force-technique-engine.js
-        force-technique-suggestion-engine.js
-        language-engine.js
-        progression-actor-updater.js
-        progression-engine-instance.js
-        progression-engine.js
-        progression-patch.js
-        progression-state-normalizer.js
-        starship-maneuver-engine.js
-        starship-maneuver-suggestion-engine.js
-        starting-feature-registrar.js
-        suggestion-constants.js
-        template-engine.js
-        scripts\progression\engine\autocalc/
-          derived-stats.js
-        scripts\progression\engine\autogrants/
-          class-autogrants.js
-          force-training.js
-        scripts\progression\engine\tools/
-          prestige-readiness.js
-          rollback-store.js
-        scripts\progression\engine\validators/
-          feat-duplication.js
-      scripts\progression\feats/
-        feat-dispatcher.js
-        feat-engine.js
-        feat-normalizer.js
-        feat-registry-ui.js
-        feat-registry.js
-        feat-state.js
-        prerequisite_engine.js
-      scripts\progression\force/
-        force-registry-ui.js
-      scripts\progression\hooks/
-        system-init-hooks.js
-      scripts\progression\integration/
-        finalize-integration.js
-      scripts\progression\modules/
-        language-module.js
-      scripts\progression\prerequisites/
-        class-prereq-normalizer.js
-        class-prerequisites-cache.js
-        class-prerequisites-init.js
-      scripts\progression\skills/
-        skill-engine.js
-        skill-normalizer.js
-        skill-registry-ui.js
-        skill-registry.js
-        skill-state.js
-        skill-validator.js
-      scripts\progression\talents/
-        TalentNode.js
-        TalentTreeGraph.js
-        TalentTreeRegistry.js
-        talent-registry-ui.js
-      scripts\progression\ui/
-        force-power-picker.js
-        force-secret-picker.js
-        force-technique-picker.js
-        levelup-module-init.js
-        progression-ui.js
-        starship-maneuver-picker.js
-        scripts\progression\ui\templates/
-          force-power-picker.hbs
-          force-secret-picker.hbs
-          force-technique-picker.hbs
-          starship-maneuver-picker.hbs
-      scripts\progression\utils/
-        PrerequisiteEnricher.js
-        apply-handlers.js
-        background-normalizer.js
-        class-data-loader.js
-        class-feature-normalizer.js
-        class-normalizer.js
-        item-normalizer.js
-        level-diff-inspector.js
-        prerequisite-normalizer.js
-        snapshot-manager.js
-        species-normalizer.js
     scripts\registries/
       background-registry.js
       language-registry.js
@@ -1830,35 +1355,6 @@ foundryvtt-swse/
       species-trait-types.js
     scripts\state/
       phase.js
-    scripts\suggestion-engine/
-      armor-gear-scoring-engine.js
-      armor-scoring-engine.js
-      armor-suggestions.js
-      combat-engine.js
-      combat-hooks.js
-      gear-suggestions.js
-      mentor-prose-generator.js
-      report-schema.js
-      shared-scoring-utils.js
-      suggestion-tiers-canonical.js
-      tactical-evaluator.js
-      test-harness.js
-      weapon-scoring-engine.js
-      weapon-suggestions.js
-      scripts\suggestion-engine\scoring/
-        armor-axis-a-engine.js
-        armor-axis-b-engine.js
-        armor-explainability-generator.js
-        armor-role-alignment-engine.js
-        axis-a-engine.js
-        axis-b-engine.js
-        category-normalization-engine.js
-        explainability-generator.js
-        tradeoff-resolver.js
-        weight-config.js
-        weighted-score-engine.js
-      scripts\suggestion-engine\tests/
-        integration-tests.js
     scripts\suggestions/
       reason-relevance.js
       suggestion-focus-map.js
@@ -1866,28 +1362,17 @@ foundryvtt-swse/
       DarkSidePowers.js
       dark-side-devotee-init.js
       dark-side-devotee-macros.js
-      dark-side-devotee-mechanics.js
       dark-side-init.js
       dark-side-powers-init.js
       dark-side-talent-macros.js
-      dark-side-talent-mechanics.js
       light-side-init.js
       light-side-talent-macros.js
-      light-side-talent-mechanics.js
       noble-talent-macros.js
-      noble-talent-mechanics.js
       prestige-talent-macros.js
-      prestige-talent-mechanics.js
       scoundrel-talent-macros.js
-      scoundrel-talent-mechanics.js
       scout-talent-macros.js
-      scout-talent-mechanics.js
       soldier-talent-macros.js
-      soldier-talent-mechanics.js
       squad-actions-init.js
-      squad-actions-mechanics.js
-      talent-effect-engine.js
-      talents.js
     scripts\tests/
       critical-flow-tests.js
     scripts\tools/
@@ -2054,15 +1539,22 @@ foundryvtt-swse/
           typography.css
           variables.css
         styles\sheets\v3\partials/
+          abilities.css
           biography.css
           combat.css
           defenses.css
           destiny.css
           feats.css
+          force.css
           header.css
           hp-condition.css
           identity.css
+          languages.css
+          racial.css
+          second-wind.css
           skills.css
+          talents.css
+          xp.css
     styles\species/
       species-traits.css
     styles\src/
@@ -2119,6 +1611,10 @@ foundryvtt-swse/
         templates\actors\character\v2/
           character-sheet.hbs
           templates\actors\character\v2\partials/
+            Feats.hbs
+            Force.hbs
+            Racial-ability.hbs
+            Talents.hbs
             abilities-panel.hbs
             actions-panel.hbs
             attacks-panel.hbs
@@ -2130,8 +1626,6 @@ foundryvtt-swse/
             languages-panel.hbs
             second-wind-panel.hbs
             skills-panel.hbs
-            talents-feats-panel.hbs
-            talents-panel.hbs
             xp-panel.hbs
       templates\actors\droid/
         droid-callouts-blueprint.hbs
@@ -2298,6 +1792,11 @@ foundryvtt-swse/
     structured-rules-engine.test.js
     test-feat-effects.js
     test-utils.js
+    tests\archived/
+      batch-2-comprehensive-test.js
+    tests\phase-3/
+      phase-3-architecture.test.js
+      test-utils.js
     tests\utils/
       calc-abilities.js
       calc-defenses.js
