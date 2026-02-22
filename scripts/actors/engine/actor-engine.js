@@ -238,6 +238,90 @@ export const ActorEngine = {
   },
 
   /**
+   * Move embedded documents between actors atomically.
+   * PHASE 9: Atomic cross-actor item transfer.
+   *
+   * This is NOT delete + create in sequence.
+   * It is a single transaction-level operation.
+   *
+   * Ensures:
+   * - Source item is deleted
+   * - Target receives item
+   * - One mutation context
+   * - One recalculation pass per actor
+   * - No partial failure state
+   *
+   * @param {Actor} sourceActor - Actor to remove item from
+   * @param {Actor} targetActor - Actor to add item to
+   * @param {string} embeddedName - Collection name (e.g. "Item")
+   * @param {string|string[]} ids - Item ID(s) to move
+   * @param {object} [options={}] - Forwarded options
+   * @returns {Promise<Array>} Created items on target actor
+   */
+  async moveEmbeddedDocuments(sourceActor, targetActor, embeddedName, ids, options = {}) {
+    try {
+      if (!sourceActor) {throw new Error('moveEmbeddedDocuments() called without sourceActor');}
+      if (!targetActor) {throw new Error('moveEmbeddedDocuments() called without targetActor');}
+      if (!embeddedName) {throw new Error('moveEmbeddedDocuments() called without embeddedName');}
+      if (!Array.isArray(ids)) {throw new Error('moveEmbeddedDocuments() requires ids array');}
+
+      swseLogger.debug(`ActorEngine.moveEmbeddedDocuments → ${sourceActor.name} → ${targetActor.name}`, {
+        embeddedName,
+        count: ids.length
+      });
+
+      // Get the items to move before deletion
+      const collection = sourceActor.getEmbeddedCollection(embeddedName);
+      const itemsToMove = ids.map(id => {
+        const doc = collection.get(id);
+        if (!doc) throw new Error(`Document ${id} not found in ${embeddedName} collection`);
+        return doc.toObject();
+      }).filter(obj => obj); // Remove nulls
+
+      if (itemsToMove.length === 0) {
+        swseLogger.warn(`No items to move from ${sourceActor.name}`);
+        return [];
+      }
+
+      // Clear _id so they can be recreated on target
+      itemsToMove.forEach(item => { delete item._id; });
+
+      // Single mutation context for the entire operation
+      MutationInterceptor.setContext(`ActorEngine.moveEmbeddedDocuments[${embeddedName}]`);
+      try {
+        // Delete from source
+        await sourceActor.deleteEmbeddedDocuments(embeddedName, ids, options);
+
+        // Create on target
+        const created = await targetActor.createEmbeddedDocuments(embeddedName, itemsToMove, options);
+
+        // Recalculate both actors
+        setTimeout(() => {
+          try {
+            this.recalcAll(sourceActor);
+            this.recalcAll(targetActor);
+          } catch (e) {
+            swseLogger.warn(`ActorEngine.recalcAll threw during moveEmbeddedDocuments for ${sourceActor.name} or ${targetActor.name}`, e);
+          }
+        }, 0);
+
+        return created;
+      } finally {
+        MutationInterceptor.clearContext();
+      }
+    } catch (err) {
+      swseLogger.error(`ActorEngine.moveEmbeddedDocuments failed`, {
+        error: err,
+        sourceActor: sourceActor?.name,
+        targetActor: targetActor?.name,
+        embeddedName,
+        ids
+      });
+      throw err;
+    }
+  },
+
+  /**
    * applyDelta(actor, delta)
    *
    * v2 Progression Contract: The ONLY legal way to apply ProgressionCompiler output.

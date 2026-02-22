@@ -10,6 +10,8 @@
  * ============================================================================
  */
 
+import { ActorEngine } from '../actors/engine/actor-engine.js';
+
 /* -------------------------------------------------------------------------- */
 /* ITEM TYPE VALIDATION MATRIX                                                */
 /* -------------------------------------------------------------------------- */
@@ -136,18 +138,17 @@ export class DropService {
       return false;
     }
 
-    // Build item data for creation
-    const itemData = item.toObject();
-    delete itemData._id;
-
     // Transfer from another actor (not compendium)
     const sourceActor = item.parent;
     if (sourceActor?.documentName === "Actor") {
-      await sourceActor.deleteEmbeddedDocuments("Item", [item.id]);
+      // PHASE 9: Atomic cross-actor transfer via ActorEngine
+      await ActorEngine.moveEmbeddedDocuments(sourceActor, targetActor, "Item", [item.id]);
+    } else {
+      // Compendium item — create embedded copy
+      const itemData = item.toObject();
+      delete itemData._id;
+      await ActorEngine.createEmbeddedDocuments(targetActor, "Item", [itemData]);
     }
-
-    // Create on target
-    await targetActor.createEmbeddedDocuments("Item", [itemData]);
 
     const verb = sourceActor?.documentName === "Actor" ? "Transferred" : "Added";
     ui.notifications.info(`${verb} ${item.name} to ${targetActor.name}.`);

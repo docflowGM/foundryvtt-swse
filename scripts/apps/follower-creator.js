@@ -369,7 +369,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
         // Add species as an item to the follower
         const speciesData = speciesDoc.toObject();
         // PHASE 8: Use ActorEngine
-        await ActorEngine.createEmbeddedDocuments(follower('Item', [speciesData]);
+        await ActorEngine.createEmbeddedDocuments(follower, 'Item', [speciesData]);
 
         // Handle Human special case
         if (speciesDoc.name === 'Human' && followerData.humanBonus) {
@@ -488,7 +488,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 const featDoc = await featsPack.getDocument(featEntry._id);
                 const featData = featDoc.toObject();
                 // PHASE 8: Use ActorEngine
-        await ActorEngine.createEmbeddedDocuments(follower('Item', [featData]);
+                await ActorEngine.createEmbeddedDocuments(follower, 'Item', [featData]);
                 return true;
             } else {
                 swseLogger.warn(`FollowerCreator: Feat not found: ${featName}`);
