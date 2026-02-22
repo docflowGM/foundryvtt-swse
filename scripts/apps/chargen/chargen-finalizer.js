@@ -13,6 +13,7 @@
 import { SWSELogger } from '../../utils/logger.js';
 import { EffectSanitizer } from '../../core/effect-sanitizer.js';
 import { createActor, createItemInActor } from '../../core/document-api-v13.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { emitChargenComplete } from '../../core/hooks-emitter.js';
 import { withTraceContext, generateTraceId, TraceMetrics } from '../../core/correlation-id.js';
 import { validateActorSchema, validateImportData } from '../../core/schema-validator.js';
@@ -82,7 +83,8 @@ export class ChargenFinalizer {
             return sanitized;
           });
 
-          await finalActor.createEmbeddedDocuments('Item', sanitizedItems);
+          // PHASE 8: Use ActorEngine for atomic item creation
+          await ActorEngine.createEmbeddedDocuments(finalActor, 'Item', sanitizedItems);
         }
 
         // Step 3: Validate final actor

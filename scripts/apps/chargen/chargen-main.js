@@ -3151,7 +3151,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       // Create embedded documents with error handling
       if (items.length > 0) {
         try {
-          const createdItems = await created.createEmbeddedDocuments('Item', items);
+          // PHASE 8: Use ActorEngine for atomic item creation
+          const createdItems = await ActorEngine.createEmbeddedDocuments(created, 'Item', items);
           if (!createdItems || createdItems.length !== items.length) {
             throw new Error(`Item creation mismatch: expected ${items.length}, got ${createdItems?.length || 0}`);
           }
