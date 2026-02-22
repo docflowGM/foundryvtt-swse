@@ -103,7 +103,7 @@ import { MutationInterceptor } from './scripts/core/mutation/MutationInterceptor
 import { Batch1Validation } from './scripts/core/mutation/batch-1-validation.js';
 
 // ---- combat tests (PHASE 3) ----
-import { DamageEngineTest } from './scripts/engine/combat/damage-engine-test.js';
+import { DamageEngineTest } from './scripts/engines/combat/damage-engine-test.js';
 import { Batch2ComprehensiveTest } from './tests/archived/batch-2-comprehensive-test.js';
 
 // ---- sheets ----
@@ -120,7 +120,7 @@ import { preloadHandlebarsTemplates, assertPartialsResolved } from './scripts/co
 
 // ---- engines ----
 import { RulesEngine } from './scripts/rules/rules-engine.js';
-import { SWSEProgressionEngine, initializeProgressionHooks } from './scripts/engine/progression.js';
+import { SWSEProgressionEngine, initializeProgressionHooks } from './scripts/engines/progression.js';
 import { FeatSystem } from './scripts/engine/FeatSystem.js';
 import { SkillSystem } from './scripts/engine/SkillSystem.js';
 import { TalentAbilitiesEngine } from './scripts/engine/TalentAbilitiesEngine.js';
@@ -128,9 +128,9 @@ import TalentActionLinker from './scripts/engine/talent-action-linker.js';
 import { SWSELanguageModule } from './scripts/progression/modules/language-module.js';
 
 // ---- hooks ----
-import { registerInitHooks, registerDestinyHooks } from './scripts/hooks/index.js';
-import { initializeForcePowerHooks } from './scripts/hooks/force-power-hooks.js';
-import { initializeFollowerHooks } from './scripts/hooks/follower-hooks.js';
+import { registerInitHooks, registerDestinyHooks } from './scripts/infrastructure/hooks/index.js';
+import { initializeForcePowerHooks } from './scripts/infrastructure/hooks/force-power-hooks.js';
+import { initializeFollowerHooks } from './scripts/infrastructure/hooks/follower-hooks.js';
 import { registerKeybindings } from './scripts/core/keybindings.js';
 
 // ---- UI systems (registered in init, initialized in ready) ----
@@ -141,7 +141,7 @@ import { MentorTranslationSettings } from './scripts/mentor/mentor-translation-s
 
 // ---- suggestions / discovery ----
 import { SuggestionService } from './scripts/engines/suggestion/SuggestionService.js';
-import { registerSuggestionHooks } from './scripts/hooks/suggestion-hooks.js';
+import { registerSuggestionHooks } from './scripts/infrastructure/hooks/suggestion-hooks.js';
 import { registerCombatSuggestionHooks, requestCombatEvaluation } from './scripts/engines/suggestion/equipment/combat-hooks.js';
 import { CombatSuggestionEngine } from './scripts/engines/suggestion/equipment/combat-engine.js';
 import { testHarness } from './scripts/engines/suggestion/equipment/test-harness.js';
