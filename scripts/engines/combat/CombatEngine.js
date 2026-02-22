@@ -473,29 +473,123 @@ export class CombatEngine {
 
     const plan = {};
 
-    // Apply HP change
+    // Apply HP change (correct V2 path)
     plan["system.hp.value"] = resolution.hpAfter;
 
-    // Apply condition track shift
+    // Apply condition track shift (numeric 0-5)
     if (resolution.conditionDelta !== 0) {
-      const currentStep = actor.system.condition?.current ?? 0;
-      const newStep = Math.max(0, Math.min(5, currentStep + resolution.conditionDelta));
-      plan["system.condition.current"] = newStep;
+      plan["system.conditionTrack.current"] = resolution.conditionAfter;
     }
 
-    // Set death flag
+    // Delegate mutation to ActorEngine (no status flags)
+    await ActorEngine.updateActor(actor, plan);
+
+    /* ===================================================================
+       Apply death/destroyed via Active Effects (not raw system flags)
+       ================================================================= */
+
     if (resolution.dead) {
-      plan["system.status.dead"] = true;
+      await this._applyDeadEffect(actor);
     }
 
-    // Set destroyed flag
     if (resolution.destroyed) {
-      plan["system.status.destroyed"] = true;
+      await this._applyDestroyedEffect(actor);
     }
 
-    // Delegate mutation to ActorEngine
-    await ActorEngine.updateActor(actor.id, plan);
+    if (resolution.unconscious && !resolution.dead && !resolution.destroyed) {
+      await this._applyUnconsciousEffect(actor);
+    }
 
     return resolution;
+  }
+
+  /**
+   * Apply "Dead" active effect (character death state)
+   * @private
+   */
+  static async _applyDeadEffect(actor) {
+    if (!actor) return;
+
+    // Check if already dead
+    const existingDead = actor.effects.contents.find(e =>
+      e.getFlag('foundryvtt-swse', 'effectType') === 'dead'
+    );
+
+    if (!existingDead) {
+      const effectData = {
+        name: 'Dead',
+        icon: 'icons/svg/skull.svg',
+        type: 'effect',
+        disabled: false,
+        flags: {
+          'foundryvtt-swse': {
+            effectType: 'dead',
+            persistent: true
+          }
+        }
+      };
+
+      await actor.createEmbeddedDocuments('ActiveEffect', [effectData]);
+    }
+  }
+
+  /**
+   * Apply "Destroyed" active effect (vehicle/droid destruction state)
+   * @private
+   */
+  static async _applyDestroyedEffect(actor) {
+    if (!actor) return;
+
+    // Check if already destroyed
+    const existingDestroyed = actor.effects.contents.find(e =>
+      e.getFlag('foundryvtt-swse', 'effectType') === 'destroyed'
+    );
+
+    if (!existingDestroyed) {
+      const effectData = {
+        name: 'Destroyed',
+        icon: 'icons/svg/explosion.svg',
+        type: 'effect',
+        disabled: false,
+        flags: {
+          'foundryvtt-swse': {
+            effectType: 'destroyed',
+            persistent: true
+          }
+        }
+      };
+
+      await actor.createEmbeddedDocuments('ActiveEffect', [effectData]);
+    }
+  }
+
+  /**
+   * Apply "Unconscious" active effect (temporary state)
+   * @private
+   */
+  static async _applyUnconsciousEffect(actor) {
+    if (!actor) return;
+
+    // Check if already unconscious
+    const existingUnconscious = actor.effects.contents.find(e =>
+      e.getFlag('foundryvtt-swse', 'effectType') === 'unconscious'
+    );
+
+    if (!existingUnconscious) {
+      const effectData = {
+        name: 'Unconscious',
+        icon: 'icons/svg/sleep.svg',
+        type: 'effect',
+        disabled: false,
+        flags: {
+          'foundryvtt-swse': {
+            effectType: 'unconscious',
+            persistent: false
+          }
+        }
+      };
+
+      await actor.createEmbeddedDocuments('ActiveEffect', [effectData]);
+    }
   }
 }

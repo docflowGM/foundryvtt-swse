@@ -46,12 +46,31 @@ export class ThresholdEngine {
    * @param {Actor} actor
    * @returns {number} Base threshold value
    */
+  /**
+   * Size threshold bonus mapping (RAW)
+   * @private
+   */
+  static #sizeThresholdMap = {
+    fine: -10,
+    diminutive: -5,
+    tiny: 0,
+    small: 0,
+    medium: 0,
+    large: 5,
+    huge: 10,
+    gargantuan: 20,
+    colossal: 50
+  };
+
   static computeBaseThreshold(actor) {
     if (!actor) return 0;
 
     const system = actor.system;
     const fort = system.defenses?.fortitude?.total ?? 10;
-    const sizeMod = system.size?.thresholdBonus ?? 0;
+
+    // Map size string to threshold bonus (RAW)
+    const sizeString = (system.size ?? 'medium').toLowerCase();
+    const sizeMod = this.#sizeThresholdMap[sizeString] ?? 0;
 
     return fort + sizeMod;
   }
