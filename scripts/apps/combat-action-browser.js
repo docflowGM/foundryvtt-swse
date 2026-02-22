@@ -13,7 +13,6 @@
 import { CombatActionsMapper } from '../combat/utils/combat-actions-mapper.js';
 import { SWSERoll } from '../combat/rolls/enhanced-rolls.js';
 import { SWSECombat } from '../combat/systems/enhanced-combat-system.js';
-import { SWSEVehicleCombat } from '../combat/systems/vehicle-combat-system.js';
 import SWSEApplication from './base/swse-application.js';
 
 export class SWSECombatActionBrowser extends SWSEApplication {
@@ -266,7 +265,7 @@ export class SWSECombatActionBrowser extends SWSEApplication {
       const target = [...game.user.targets][0]?.actor ?? null;
       if (!target) {return ui.notifications.warn('No target selected.');}
       const weapon = vehicle.items.find(i => i.type === 'vehicle-weapon' && i.system.key === key);
-      await SWSEVehicleCombat.vehicleAttack(vehicle, weapon, target);
+      await SWSECombat.rollAttack(vehicle, weapon, target);
     }
 
     // Grapple, Feint, Bull Rush, custom:
