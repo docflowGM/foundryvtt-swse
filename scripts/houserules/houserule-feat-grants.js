@@ -3,8 +3,11 @@
  *
  * Automatically grants feats and talents to characters when house rule settings
  * enable them. Handles duplicates by offering replacement feat selection.
+ *
+ * PHASE 7: All mutations routed through ActorEngine for atomic governance
  */
 import { SWSELogger } from '../utils/logger.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 /**
  * Mapping of house rule settings to feats/talents they grant
@@ -163,7 +166,8 @@ export class HouseRuleFeatGrants {
       SWSELogger.warn(`Could not load ${type} from compendium, using basic data`);
     }
 
-    await actor.createEmbeddedDocuments('Item', [itemData]);
+    // PHASE 7: Create through ActorEngine
+    await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
   }
 
   /**
@@ -358,7 +362,8 @@ export class HouseRuleFeatGrants {
       }
 
       const itemData = item.toObject();
-      await actor.createEmbeddedDocuments('Item', [itemData]);
+      // PHASE 7: Create through ActorEngine
+    await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData]);
 
       ui.notifications.info(
         `Granted ${type} "${item.name}" to ${actor.name}`
