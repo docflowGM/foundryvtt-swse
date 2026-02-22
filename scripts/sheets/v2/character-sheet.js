@@ -55,12 +55,72 @@ export class SWSEV2CharacterSheet extends
             gmNotes: ""
           };
 
+    // Compute display objects from system data
+    const system = actor.system;
+    const hp = {
+      value: system.hp?.value ?? 0,
+      max: system.hp?.max ?? 1,
+      temp: system.hp?.temp ?? 0
+    };
+    hp.percent = Math.round((hp.value / hp.max) * 100);
+
+    // Bonus HP (derived-only from ModifierEngine)
+    const bonusHp = await this._computeBonusHP(actor);
+
+    // Condition track steps (0-5 numeric → visual array)
+    const conditionCurrent = system.conditionTrack?.current ?? 0;
+    const conditionLabels = ["Normal", "−1", "−2", "−5", "−10", "Helpless"];
+    const conditionSteps = [];
+    for (let i = 0; i < 6; i++) {
+      conditionSteps.push({
+        step: i,
+        label: conditionLabels[i],
+        active: i === conditionCurrent
+      });
+    }
+
     return {
       ...context,
       biography,
       derived,
-      inventory
+      inventory,
+      hp,
+      bonusHp,
+      conditionSteps
     };
+  }
+
+  /* ============================================================
+     BONUS HP COMPUTATION (DERIVED-ONLY)
+  ============================================================ */
+
+  async _computeBonusHP(actor) {
+    try {
+      const { ModifierEngine } = await import("../../engines/effects/modifiers/ModifierEngine.js").catch(
+        () => ({ ModifierEngine: null })
+      );
+
+      if (!ModifierEngine) {
+        return { value: 0, label: "" };
+      }
+
+      const bonusMods = await ModifierEngine.collectModifiers(actor, {
+        domain: "bonusHitPoints",
+        context: {}
+      });
+
+      // RAW: Only highest source applies
+      const highestBonus = bonusMods.length
+        ? Math.max(...bonusMods.map(m => m.value))
+        : 0;
+
+      return {
+        value: highestBonus,
+        label: highestBonus > 0 ? `+${highestBonus}` : ""
+      };
+    } catch {
+      return { value: 0, label: "" };
+    }
   }
 
   /* ============================================================
