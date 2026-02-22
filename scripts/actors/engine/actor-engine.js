@@ -1408,7 +1408,349 @@ export const ActorEngine = {
     }
   }
 
-};
+  // ========================================================================
+  // PHASE 8: EMBEDDED DOCUMENT PLAN BUILDERS
+  // ========================================================================
+  // Non-mutating plan builders for embedded document operations
+  // Plans are executed atomically through ActorEngine
+
+  /**
+   * Build a plan to create embedded documents (Item, ActiveEffect, etc.)
+   * PHASE 8: Non-mutating builder — returns plan object for later execution
+   *
+   * @param {Actor} actor - Target actor
+   * @param {string} embeddedName - Document type ('Item', 'ActiveEffect', etc.)
+   * @param {Array} documents - Array of document data to create
+   * @returns {Object} Plan object with { success, embeddedName, actor, documents, mutations }
+   */
+  buildEmbeddedCreatePlan(actor, embeddedName, documents) {
+    try {
+      if (!actor) {
+        return {
+          success: false,
+          reason: 'buildEmbeddedCreatePlan called with no actor'
+        };
+      }
+
+      if (!embeddedName) {
+        return {
+          success: false,
+          reason: 'buildEmbeddedCreatePlan called without embeddedName'
+        };
+      }
+
+      if (!Array.isArray(documents)) {
+        return {
+          success: false,
+          reason: 'buildEmbeddedCreatePlan requires documents array'
+        };
+      }
+
+      if (documents.length === 0) {
+        return {
+          success: true,
+          embeddedName,
+          actor,
+          documents: [],
+          mutations: []
+        };
+      }
+
+      // Build mutation for this operation
+      const mutation = {
+        type: 'createEmbedded',
+        embeddedName,
+        documents: documents.map(d => foundry.utils.deepClone(d))
+      };
+
+      return {
+        success: true,
+        embeddedName,
+        actor,
+        documents,
+        mutations: [mutation],
+        description: `Create ${documents.length} ${embeddedName}(s)`
+      };
+    } catch (err) {
+      swseLogger.error('buildEmbeddedCreatePlan failed:', err);
+      return {
+        success: false,
+        reason: err.message
+      };
+    }
+  }
+
+  /**
+   * Build a plan to delete embedded documents
+   * PHASE 8: Non-mutating builder — returns plan object for later execution
+   *
+   * @param {Actor} actor - Target actor
+   * @param {string} embeddedName - Document type ('Item', 'ActiveEffect', etc.)
+   * @param {Array} ids - Array of document IDs to delete
+   * @returns {Object} Plan object with { success, embeddedName, actor, ids, mutations }
+   */
+  buildEmbeddedDeletePlan(actor, embeddedName, ids) {
+    try {
+      if (!actor) {
+        return {
+          success: false,
+          reason: 'buildEmbeddedDeletePlan called with no actor'
+        };
+      }
+
+      if (!embeddedName) {
+        return {
+          success: false,
+          reason: 'buildEmbeddedDeletePlan called without embeddedName'
+        };
+      }
+
+      if (!Array.isArray(ids)) {
+        return {
+          success: false,
+          reason: 'buildEmbeddedDeletePlan requires ids array'
+        };
+      }
+
+      if (ids.length === 0) {
+        return {
+          success: true,
+          embeddedName,
+          actor,
+          ids: [],
+          mutations: []
+        };
+      }
+
+      // Build mutation for this operation
+      const mutation = {
+        type: 'deleteEmbedded',
+        embeddedName,
+        ids: [...ids]
+      };
+
+      return {
+        success: true,
+        embeddedName,
+        actor,
+        ids,
+        mutations: [mutation],
+        description: `Delete ${ids.length} ${embeddedName}(s)`
+      };
+    } catch (err) {
+      swseLogger.error('buildEmbeddedDeletePlan failed:', err);
+      return {
+        success: false,
+        reason: err.message
+      };
+    }
+  }
+
+  /**
+   * Build a plan to replace embedded documents (delete old, create new)
+   * PHASE 8: Non-mutating builder — atomic replacement
+   *
+   * @param {Actor} actor - Target actor
+   * @param {string} embeddedName - Document type ('Item', 'ActiveEffect', etc.)
+   * @param {Array} idsToDelete - IDs to delete
+   * @param {Array} docsToCreate - Documents to create
+   * @returns {Object} Plan object with both delete and create mutations
+   */
+  buildEmbeddedReplacePlan(actor, embeddedName, idsToDelete, docsToCreate) {
+    try {
+      if (!actor) {
+        return {
+          success: false,
+          reason: 'buildEmbeddedReplacePlan called with no actor'
+        };
+      }
+
+      if (!embeddedName) {
+        return {
+          success: false,
+          reason: 'buildEmbeddedReplacePlan called without embeddedName'
+        };
+      }
+
+      const mutations = [];
+
+      // Add delete mutation if IDs exist
+      if (Array.isArray(idsToDelete) && idsToDelete.length > 0) {
+        mutations.push({
+          type: 'deleteEmbedded',
+          embeddedName,
+          ids: [...idsToDelete]
+        });
+      }
+
+      // Add create mutation if documents exist
+      if (Array.isArray(docsToCreate) && docsToCreate.length > 0) {
+        mutations.push({
+          type: 'createEmbedded',
+          embeddedName,
+          documents: docsToCreate.map(d => foundry.utils.deepClone(d))
+        });
+      }
+
+      if (mutations.length === 0) {
+        return {
+          success: true,
+          embeddedName,
+          actor,
+          idsToDelete: [],
+          docsToCreate: [],
+          mutations: []
+        };
+      }
+
+      return {
+        success: true,
+        embeddedName,
+        actor,
+        idsToDelete,
+        docsToCreate,
+        mutations,
+        description: `Replace ${idsToDelete?.length || 0} with ${docsToCreate?.length || 0} ${embeddedName}(s)`
+      };
+    } catch (err) {
+      swseLogger.error('buildEmbeddedReplacePlan failed:', err);
+      return {
+        success: false,
+        reason: err.message
+      };
+    }
+  }
+
+  /**
+   * Build a plan to clone an actor and apply modifications
+   * PHASE 8: Non-mutating builder — clone + modifications in one transaction
+   *
+   * Prevents the dangerous pattern of: const clone = actor.clone(); await clone.update(...)
+   * Instead builds a plan for atomic creation+modification
+   *
+   * @param {Actor} actor - Actor to clone
+   * @param {Object} modifications - Changes to apply to the clone
+   * @param {Object} options - Clone options
+   * @returns {Object} Plan object
+   */
+  buildCloneActorPlan(actor, modifications = {}, options = {}) {
+    try {
+      if (!actor) {
+        return {
+          success: false,
+          reason: 'buildCloneActorPlan called with no actor'
+        };
+      }
+
+      // Clone actor data
+      const cloneData = actor.toObject();
+      delete cloneData._id;
+
+      // Apply modifications to clone
+      const modifiedCloneData = foundry.utils.mergeObject(cloneData, modifications);
+
+      const mutation = {
+        type: 'cloneActor',
+        originalActorId: actor.id,
+        cloneData: modifiedCloneData,
+        modifications
+      };
+
+      return {
+        success: true,
+        actor,
+        modifications,
+        cloneData: modifiedCloneData,
+        mutations: [mutation],
+        description: `Clone ${actor.name} with modifications`
+      };
+    } catch (err) {
+      swseLogger.error('buildCloneActorPlan failed:', err);
+      return {
+        success: false,
+        reason: err.message
+      };
+    }
+  }
+
+  /**
+   * Execute an embedded operation plan
+   * PHASE 8: Atomic execution of pre-built plans
+   *
+   * @param {Object} plan - Plan object from builder methods
+   * @param {Object} options - Execution options
+   * @returns {Promise<Object>} Execution result
+   */
+  async executeEmbeddedPlan(plan, options = {}) {
+    try {
+      if (!plan) {
+        throw new Error('executeEmbeddedPlan called with no plan');
+      }
+
+      if (!plan.success) {
+        return {
+          success: false,
+          reason: plan.reason
+        };
+      }
+
+      if (!Array.isArray(plan.mutations) || plan.mutations.length === 0) {
+        return {
+          success: true,
+          actor: plan.actor,
+          mutations: []
+        };
+      }
+
+      const results = [];
+      const { actor } = plan;
+
+      // Execute mutations in order (delete before create)
+      for (const mutation of plan.mutations) {
+        try {
+          if (mutation.type === 'deleteEmbedded') {
+            const result = await this.deleteEmbeddedDocuments(
+              actor,
+              mutation.embeddedName,
+              mutation.ids,
+              options
+            );
+            results.push({
+              type: 'deleteEmbedded',
+              success: true,
+              deleted: mutation.ids.length
+            });
+          } else if (mutation.type === 'createEmbedded') {
+            const result = await this.createEmbeddedDocuments(
+              actor,
+              mutation.embeddedName,
+              mutation.documents,
+              options
+            );
+            results.push({
+              type: 'createEmbedded',
+              success: true,
+              created: (result || []).length
+            });
+          }
+        } catch (mutationErr) {
+          swseLogger.error(`executeEmbeddedPlan mutation failed (${mutation.type}):`, mutationErr);
+          throw mutationErr;
+        }
+      }
+
+      return {
+        success: true,
+        actor,
+        mutations: results
+      };
+    } catch (err) {
+      swseLogger.error('executeEmbeddedPlan failed:', err);
+      throw err;
+    }
+  }
+
+
 
 
   /* ============================================================
