@@ -340,7 +340,8 @@ export class SWSEV2VehicleSheet extends
           "system.credits": currentCredits + price
         });
 
-        await this.document.deleteEmbeddedDocuments("Item", [itemId]);
+        // PHASE 8: Use ActorEngine
+        await ActorEngine.deleteEmbeddedDocuments(this.document, "Item", [itemId]);
         ui.notifications.info(`Sold ${item.name} for ${price} credits`);
       });
     }
@@ -350,7 +351,8 @@ export class SWSEV2VehicleSheet extends
         ev.preventDefault();
         const itemId = ev.currentTarget?.dataset?.itemId;
         if (!itemId) return;
-        await this.document.deleteEmbeddedDocuments("Item", [itemId]);
+        // PHASE 8: Use ActorEngine
+        await ActorEngine.deleteEmbeddedDocuments(this.document, "Item", [itemId]);
       });
     }
 

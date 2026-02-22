@@ -259,7 +259,8 @@ export class SWSEActiveEffectsManager {
   static async toggleCombatActionEffect(actor, action) {
     const existing = actor.effects.find(e => e.flags?.swse?.combatAction === action);
     if (existing) {
-      await actor.deleteEmbeddedDocuments('ActiveEffect', [existing.id]);
+      // PHASE 8: Use ActorEngine for atomic deletion
+      await ActorEngine.deleteEmbeddedDocuments(actor, 'ActiveEffect', [existing.id]);
       return;
     }
 
@@ -352,7 +353,10 @@ export class SWSEActiveEffectsManager {
         e.duration?.rounds === 1 && !e.flags?.swse?.persistent
       );
 
-      if (expired.length) {actor.deleteEmbeddedDocuments('ActiveEffect', expired.map(e => e.id));}
+      // PHASE 8: Use ActorEngine and await (fix fire-and-forget)
+      if (expired.length) {
+        await ActorEngine.deleteEmbeddedDocuments(actor, 'ActiveEffect', expired.map(e => e.id));
+      }
     });
 
     swseLogger.log('SWSE | Active Effects Manager Ready');
