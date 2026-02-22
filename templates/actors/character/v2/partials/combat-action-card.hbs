@@ -1,0 +1,33 @@
+<div
+  class="swse-combat-action-card cost-{{costType}} {{#if rollable}}is-rollable{{/if}}"
+  data-action-key="{{key}}"
+>
+
+  <div class="card-header">
+    <div class="action-title">
+      {{name}}
+    </div>
+
+    <div class="card-controls">
+      <span class="action-cost-badge">{{costLabel}}</span>
+      <span class="hide-action" title="Hide">✖</span>
+    </div>
+  </div>
+
+  <div class="card-body">
+    {{#if description}}
+      <div class="action-description">
+        {{description}}
+      </div>
+    {{/if}}
+
+    <div class="action-footer">
+      {{#if rollable}}
+        ⦿ Roll
+      {{else}}
+        ▶ Execute
+      {{/if}}
+    </div>
+  </div>
+
+</div>

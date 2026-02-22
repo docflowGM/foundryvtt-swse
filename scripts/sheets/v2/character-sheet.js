@@ -125,6 +125,9 @@ export class SWSEV2CharacterSheet extends
       ev.currentTarget.closest(".force-card")
         .classList.remove("flipped");
     });
+
+    // SWSE Combat UI Wiring
+    this._activateCombatUI(html);
   }
 
   /* ============================================================
@@ -192,6 +195,33 @@ export class SWSEV2CharacterSheet extends
         card.classList.add("recovered");
         setTimeout(() => card.classList.remove("recovered"), 400);
       }, 500);
+    });
+  }
+
+  /* ============================================================
+     COMBAT UI WIRING
+  ============================================================ */
+
+  _activateCombatUI(html) {
+    // Action click (cards and table rows)
+    html.on("click", ".swse-combat-action-card, .action-row", async (event) => {
+      if (event.target.classList.contains("hide-action")) return;
+      const key = event.currentTarget.dataset.actionKey;
+      await game.swse.engines.combat.CombatEngine.executeAction(this.actor, key);
+    });
+
+    // Hide individual action
+    html.on("click", ".hide-action", (event) => {
+      event.stopPropagation();
+      const el = event.currentTarget.closest(".swse-combat-action-card, .action-row");
+      el.classList.add("collapsed");
+    });
+
+    // Collapse group (table mode)
+    html.on("click", ".collapse-group", (event) => {
+      const groupKey = event.currentTarget.dataset.group;
+      const table = html.find(`table[data-group='${groupKey}']`);
+      table.toggleClass("collapsed");
     });
   }
 }
