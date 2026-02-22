@@ -13,7 +13,7 @@
  *   - /data/default-archetype-weights.json
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 // eslint-disable-next-line
 import CLASS_ARCHETYPES from '../../data/class-archetypes.json' with { type: 'json' };
 // eslint-disable-next-line

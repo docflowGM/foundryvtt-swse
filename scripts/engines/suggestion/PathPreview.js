@@ -11,8 +11,8 @@
  * - Provides actionable advice for reaching prestige goals
  */
 
-import { SWSELogger } from '../utils/logger.js';
-import { isEpicActor, getPlannedHeroicLevel } from '../actors/derived/level-split.js';
+import { SWSELogger } from '../../utils/logger.js';
+import { isEpicActor, getPlannedHeroicLevel } from '../../actors/derived/level-split.js';
 import { ClassSuggestionEngine } from './ClassSuggestionEngine.js';
 import { BuildIntent, PRESTIGE_SIGNALS } from './BuildIntent.js';
 

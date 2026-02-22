@@ -12,7 +12,7 @@
  * - Never hides options or overrides RAW legality
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 import { CLASS_SYNERGY_DATA } from './ClassSuggestionEngine.js';
 
 // ──────────────────────────────────────────────────────────────

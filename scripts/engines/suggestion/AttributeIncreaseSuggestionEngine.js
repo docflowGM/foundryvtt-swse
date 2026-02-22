@@ -16,7 +16,7 @@
  * Breakpoints occur at even scores: 10, 12, 14, 16, 18, 20
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 import { UNIFIED_TIERS, getTierMetadata } from './suggestion-unified-tiers.js';
 
 export const ATTRIBUTE_INCREASE_LEVELS = new Set([4, 8, 12, 16, 20]);

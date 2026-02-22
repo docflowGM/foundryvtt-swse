@@ -18,7 +18,7 @@
  * 7. Rank and return
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 import { ArmorAxisAEngine } from './scoring/armor-axis-a-engine.js';
 import { ArmorAxisBEngine } from './scoring/armor-axis-b-engine.js';
 import { ArmorRoleAlignmentEngine } from './scoring/armor-role-alignment-engine.js';

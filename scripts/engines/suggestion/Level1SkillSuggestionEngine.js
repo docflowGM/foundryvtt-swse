@@ -27,7 +27,7 @@
  * Skills are suggested ONLY at level 1.
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 import { UNIFIED_TIERS, getTierMetadata } from './suggestion-unified-tiers.js';
 
 // DEPRECATED: Legacy tier definitions (kept for backwards compatibility)

@@ -20,7 +20,7 @@
  * - State management across level-ups
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 import { SuggestionService } from './SuggestionService.js';
 import { SuggestionEngine } from './SuggestionEngine.js';
 import { ClassSuggestionEngine } from './ClassSuggestionEngine.js';

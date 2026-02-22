@@ -3,10 +3,10 @@
  * Enhances mentor suggestions to consider player goals and prerequisites
  */
 
-import { SWSELogger } from '../utils/logger.js';
-import { WishlistEngine } from '../engine/WishlistEngine.js';
-import { PrerequisiteChecker } from '../data/prerequisite-checker.js';
-import { PrerequisiteRequirements } from '../progression/feats/prerequisite_engine.js';
+import { SWSELogger } from '../../utils/logger.js';
+import { WishlistEngine } from './WishlistEngine.js';
+import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
+import { PrerequisiteRequirements } from '../../progression/feats/prerequisite_engine.js';
 
 export class MentorWishlistIntegration {
   /**

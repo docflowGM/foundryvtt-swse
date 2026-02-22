@@ -9,7 +9,7 @@
  * Does NOT optimize or simulate — only measures fit to existing pattern.
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 
 // Weights for the 4 consistency signals
 const COHERENCE_WEIGHTS = {

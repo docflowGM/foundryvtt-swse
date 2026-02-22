@@ -5,7 +5,7 @@
  */
 
 import { CombatSuggestionEngine } from './combat-engine.js';
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 
 export function registerCombatSuggestionHooks() {
   /**

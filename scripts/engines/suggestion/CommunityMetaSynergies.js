@@ -15,7 +15,7 @@
  */
 
 import { MetaTuning } from './MetaTuning.js';
-import { isEpicActor, getPlannedHeroicLevel } from '../actors/derived/level-split.js';
+import { isEpicActor, getPlannedHeroicLevel } from '../../actors/derived/level-split.js';
 
 // ──────────────────────────────────────────────────────────────
 // SYNERGY DEFINITIONS

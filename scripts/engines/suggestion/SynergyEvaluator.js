@@ -8,7 +8,7 @@
  * Phase 1C: Full implementation with 5 weighted signals.
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 import { CLASS_SYNERGY_DATA } from './ClassSuggestionEngine.js';
 
 // Weights for the 5 signals

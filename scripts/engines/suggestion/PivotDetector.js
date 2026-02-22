@@ -14,7 +14,7 @@
  * - Player can return to stable anytime
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 import { BuildIdentityAnchor, ANCHOR_STATE } from './BuildIdentityAnchor.js';
 import { THEME_TO_ARCHETYPE } from './BuildIdentityAnchor.js';
 

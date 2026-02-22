@@ -1,8 +1,8 @@
 // scripts/engine/ProgressionSession.js
-import { swseLogger } from '../utils/logger.js';
-import { applyActorUpdateAtomic } from '../utils/actor-utils.js';
-import { createChatMessage } from '../core/document-api-v13.js';
-import { ActorEngine } from '../actors/engine/actor-engine.js';
+import { swseLogger } from '../../utils/logger.js';
+import { applyActorUpdateAtomic } from '../../utils/actor-utils.js';
+import { createChatMessage } from '../../core/document-api-v13.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 /**
  * ProgressionSession - Session-level transaction wrapper for character progression

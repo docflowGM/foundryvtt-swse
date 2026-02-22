@@ -17,10 +17,10 @@
  * - Tier level (higher tiers naturally have higher confidence)
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 import { BuildIdentityAnchor, ANCHOR_STATE } from './BuildIdentityAnchor.js';
 
-import { getLevelSplit } from '../actors/derived/level-split.js';
+import { getLevelSplit } from '../../actors/derived/level-split.js';
 export class ConfidenceScoring {
   /**
    * Compute confidence for a suggestion

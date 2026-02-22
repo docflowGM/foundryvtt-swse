@@ -12,7 +12,7 @@
  */
 
 import { createSuggestionReport, generateReportId } from './report-schema.js';
-import { emitSuggestionReport } from '../gm-suggestions/init.js';
+import { emitSuggestionReport } from '../gm/init.js';
 
 export const testHarness = {
   /**
@@ -239,7 +239,7 @@ export const testHarness = {
    * Clear all insights
    */
   async clearInsights() {
-    const { InsightBus } = await import('./scripts/gm-suggestions/insight-bus.js');
+    const { InsightBus } = await import('../gm/insight-bus.js');
     InsightBus.clear();
     console.log('[Test] All insights cleared');
   }

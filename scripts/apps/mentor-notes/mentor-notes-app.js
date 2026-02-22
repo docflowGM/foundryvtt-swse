@@ -1,6 +1,6 @@
 // scripts/apps/mentor-notes/mentor-notes-app.js
 import SWSEApplicationV2 from '../base/swse-application-v2.js';
-import { SuggestionService } from '../../engine/SuggestionService.js';
+import { SuggestionService } from '../../engines/suggestion/SuggestionService.js';
 import { qs } from '../../utils/dom-utils.js';
 
 export class MentorNotesApp extends SWSEApplicationV2 {

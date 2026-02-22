@@ -5,13 +5,13 @@ import { ProgressionEngine } from '../../progression/engine/progression-engine.j
  */
 
 import { SWSELogger } from '../../utils/logger.js';
-import { SuggestionService } from '../../engine/SuggestionService.js';
+import { SuggestionService } from '../../engines/suggestion/SuggestionService.js';
 import { warnGM } from '../../utils/warn-gm.js';
 import { getMentorForClass, getMentorGreeting, getLevel1Class, setLevel1Class } from '../mentor/mentor-dialogues.js';
 import { isBaseClass, getCharacterClasses, getClassDefenseBonuses, calculateHPGain } from './levelup-shared.js';
 import { meetsClassPrerequisites } from './levelup-validation.js';
 import { getClassProperty } from '../chargen/chargen-property-accessor.js';
-import { ClassSuggestionEngine } from '../../engine/ClassSuggestionEngine.js';
+import { ClassSuggestionEngine } from '../../engines/suggestion/ClassSuggestionEngine.js';
 import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 /**

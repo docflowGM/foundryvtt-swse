@@ -136,15 +136,15 @@ import { registerKeybindings } from './scripts/core/keybindings.js';
 // ---- UI systems (registered in init, initialized in ready) ----
 import { initializeSceneControls } from './scripts/scene-controls/init.js';
 import { initializeActionPalette } from './scripts/ui/action-palette/init.js';
-import { initializeGMSuggestions } from './scripts/gm-suggestions/init.js';
+import { initializeGMSuggestions } from './scripts/engines/suggestion/gm/init.js';
 import { MentorTranslationSettings } from './scripts/mentor/mentor-translation-settings.js';
 
 // ---- suggestions / discovery ----
-import { SuggestionService } from './scripts/engine/SuggestionService.js';
+import { SuggestionService } from './scripts/engines/suggestion/SuggestionService.js';
 import { registerSuggestionHooks } from './scripts/hooks/suggestion-hooks.js';
-import { registerCombatSuggestionHooks, requestCombatEvaluation } from './scripts/suggestion-engine/combat-hooks.js';
-import { CombatSuggestionEngine } from './scripts/suggestion-engine/combat-engine.js';
-import { testHarness } from './scripts/suggestion-engine/test-harness.js';
+import { registerCombatSuggestionHooks, requestCombatEvaluation } from './scripts/engines/suggestion/equipment/combat-hooks.js';
+import { CombatSuggestionEngine } from './scripts/engines/suggestion/equipment/combat-engine.js';
+import { testHarness } from './scripts/engines/suggestion/equipment/test-harness.js';
 import { initializeDiscoverySystem, onDiscoveryReady } from './scripts/ui/discovery/index.js';
 
 // ---- misc ----

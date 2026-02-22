@@ -5,7 +5,7 @@
  * Applies temporary scoring bonus to new archetype to prevent oscillation.
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 
 /**
  * Detect if archetype has shifted from previously stored value

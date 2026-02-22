@@ -8,7 +8,7 @@
  * Coordinates the lifecycle of anchors, pivots, and history tracking.
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 import { PlayerHistoryTracker } from './PlayerHistoryTracker.js';
 import { BuildIdentityAnchor } from './BuildIdentityAnchor.js';
 import { PivotDetector } from './PivotDetector.js';

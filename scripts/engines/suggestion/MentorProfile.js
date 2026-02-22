@@ -8,7 +8,7 @@
  * Phase 1B: Stubs only. Phase 1C: Implement storage + retrieval.
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 
 export class MentorProfile {
 

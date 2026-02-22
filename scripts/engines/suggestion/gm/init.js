@@ -10,7 +10,7 @@
 
 import { InsightBus } from './insight-bus.js';
 import { GMSuggestionPanel } from './gm-suggestion-panel.js';
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 
 export function initializeGMSuggestions() {
   // Register UI panel

@@ -1,8 +1,8 @@
 // scripts/hooks/suggestion-hooks.js
 
 import { HooksRegistry } from './hooks-registry.js';
-import { SuggestionService } from '../engine/SuggestionService.js';
-import { SuggestionEngineCoordinator } from '../engine/SuggestionEngineCoordinator.js';
+import { SuggestionService } from '../engines/suggestion/SuggestionService.js';
+import { SuggestionEngineCoordinator } from '../engines/suggestion/SuggestionEngineCoordinator.js';
 import { SWSELogger } from '../utils/logger.js';
 import MentorNotesApp from '../apps/mentor-notes/mentor-notes-app.js';
 

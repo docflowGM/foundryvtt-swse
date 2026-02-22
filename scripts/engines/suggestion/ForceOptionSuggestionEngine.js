@@ -9,7 +9,7 @@
  * Now uses UNIFIED_TIERS system for consistent tier definitions.
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 import {
   FORCE_POWER_CATEGORIES,
   generateForcePowerArchetypeWeights,

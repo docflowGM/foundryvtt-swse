@@ -21,7 +21,7 @@
  * - Attribute-aware weighting for feats, talents, classes, force options
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 import { Level1SkillSuggestionEngine } from './Level1SkillSuggestionEngine.js';
 
 export class ProgressionAdvisor {

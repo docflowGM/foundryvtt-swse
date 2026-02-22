@@ -19,7 +19,7 @@
  * Phase 1C: Complete implementation with locked formula.
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 
 export class SuggestionConfidence {
 

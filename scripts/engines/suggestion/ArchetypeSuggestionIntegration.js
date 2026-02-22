@@ -10,7 +10,7 @@
  * - Manage affinity lifecycle (caching, drift detection, updates)
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 import {
   calculateArchetypeAffinity,
   weightSuggestions,

@@ -6,8 +6,8 @@
  * checkmarks for completed prerequisites, and clear indicators of what's next.
  */
 
-import { ClassSuggestionEngine } from '../../engine/ClassSuggestionEngine.js';
-import { BuildIntent, PRESTIGE_SIGNALS } from '../../engine/BuildIntent.js';
+import { ClassSuggestionEngine } from '../../engines/suggestion/ClassSuggestionEngine.js';
+import { BuildIntent, PRESTIGE_SIGNALS } from '../../engines/suggestion/BuildIntent.js';
 import { PathPreview } from '../../engine/PathPreview.js';
 import { SWSELogger } from '../../utils/logger.js';
 

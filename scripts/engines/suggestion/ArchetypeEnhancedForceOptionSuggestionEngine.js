@@ -15,7 +15,7 @@
  * Just replace ForceOptionSuggestionEngine with your engine.
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 import { ForceOptionSuggestionEngine, FORCE_OPTION_TIERS } from './ForceOptionSuggestionEngine.js';
 import { getTierMetadata } from './suggestion-unified-tiers.js';
 import {

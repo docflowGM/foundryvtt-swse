@@ -11,7 +11,7 @@
  * Replaces tier-based filtering with comprehensive scoring.
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 
 /**
  * Score a candidate feat or talent based on multiple factors

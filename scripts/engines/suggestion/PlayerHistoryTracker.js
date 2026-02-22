@@ -8,7 +8,7 @@
  * Phase 1C: Complete implementation with storage + calculations.
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 
 const MAX_RECENT_SIZE = 15;
 

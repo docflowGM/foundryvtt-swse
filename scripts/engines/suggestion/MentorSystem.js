@@ -1,6 +1,6 @@
 // scripts/engine/MentorSystem.js
-import { swseLogger } from '../utils/logger.js';
-import { createChatMessage } from '../core/document-api-v13.js';
+import { swseLogger } from '../../utils/logger.js';
+import { createChatMessage } from '../../core/document-api-v13.js';
 
 /**
  * MentorSystem - Async, fault-tolerant narrative guidance system

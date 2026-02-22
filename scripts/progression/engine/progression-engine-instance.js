@@ -14,7 +14,7 @@ import { ForceProgressionEngine } from './force-progression.js';
 import { ApplyHandlers } from '../utils/apply-handlers.js';
 import { FinalizeIntegration } from '../integration/finalize-integration.js';
 import { dispatchFeature } from './feature-dispatcher.js';
-import { SuggestionService } from '../../engine/SuggestionService.js';
+import { SuggestionService } from '../../engines/suggestion/SuggestionService.js';
 
 export class ProgressionEngine {
   /**

@@ -11,7 +11,7 @@
  * - Handle level-up recalculation
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 import {
   initializeArchetypeData,
   initializeActorAffinity,

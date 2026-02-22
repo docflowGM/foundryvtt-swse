@@ -11,20 +11,20 @@
  * - Cache results and invalidate on actor changes
  * - Optionally persist minimal SuggestionState in actor flags
  */
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 import { SuggestionEngineCoordinator } from './SuggestionEngineCoordinator.js';
 import { CompendiumResolver } from './CompendiumResolver.js';
-import { createActor } from '../core/document-api-v13.js';
+import { createActor } from '../../core/document-api-v13.js';
 import { SuggestionExplainer } from './SuggestionExplainer.js';
 import { getAllowedReasonDomains } from '../suggestions/suggestion-focus-map.js';
 import { getReasonRelevance } from '../suggestions/reason-relevance.js';
 import { ReasonFactory } from './ReasonFactory.js';
 import { ConfidenceScoring } from './ConfidenceScoring.js';
 import { SnapshotBuilder } from './SnapshotBuilder.js';
-import { getPlannedHeroicLevel, isEpicActor } from '../actors/derived/level-split.js';
+import { getPlannedHeroicLevel, isEpicActor } from '../../actors/derived/level-split.js';
 
-import { FeatEngine } from '../progression/feats/feat-engine.js';
-import { ForcePowerEngine } from '../progression/engine/force-power-engine.js';
+import { FeatEngine } from '../../progression/feats/feat-engine.js';
+import { ForcePowerEngine } from '../../progression/engine/force-power-engine.js';
 
 function _hashString(s) {
   let h = 0;

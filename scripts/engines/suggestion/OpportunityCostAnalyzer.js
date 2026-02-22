@@ -8,7 +8,7 @@
  * Does NOT infer intent. Only warns when cost is credible and anchor is present.
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 import { PRESTIGE_SIGNALS } from './BuildIntent.js';
 import { BuildIdentityAnchor } from './BuildIdentityAnchor.js';
 

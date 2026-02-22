@@ -14,7 +14,7 @@
  * - Soft warnings only when necessary
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 import { BuildIdentityAnchor, ANCHOR_STATE } from './BuildIdentityAnchor.js';
 import { PivotDetector, PIVOT_STATE } from './PivotDetector.js';
 import { ReasonFactory } from './ReasonFactory.js';
