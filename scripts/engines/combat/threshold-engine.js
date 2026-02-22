@@ -31,8 +31,64 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { ModifierEngine } from "../effects/modifiers/ModifierEngine.js";
 
 export class ThresholdEngine {
+
+  /* -------------------------------------------------------------------------- */
+  /*  BASE THRESHOLD CALCULATION (PURE)                                         */
+  /* -------------------------------------------------------------------------- */
+
+  /**
+   * Compute base damage threshold without modifiers.
+   * RAW: DT = Fortitude Defense + Size Modifier
+   *
+   * @param {Actor} actor
+   * @returns {number} Base threshold value
+   */
+  static computeBaseThreshold(actor) {
+    if (!actor) return 0;
+
+    const system = actor.system;
+    const fort = system.defenses?.fortitude?.total ?? 10;
+    const sizeMod = system.size?.thresholdBonus ?? 0;
+
+    return fort + sizeMod;
+  }
+
+  /**
+   * Get full damage threshold with ModifierEngine support.
+   * Collects modifiers from "damageThreshold" domain.
+   *
+   * @param {Actor} actor
+   * @param {Object} context - Roll context for modifiers
+   * @returns {Promise<Object>} { base, modifierTotal, total, breakdown }
+   */
+  static async getDamageThreshold(actor, context = {}) {
+    const base = this.computeBaseThreshold(actor);
+
+    let modifiers = [];
+    try {
+      modifiers = await ModifierEngine.collectModifiers(actor, {
+        domain: "damageThreshold",
+        context
+      });
+    } catch {
+      // ModifierEngine not available or error; use base only
+    }
+
+    const modifierTotal = modifiers.reduce((sum, m) => sum + m.value, 0);
+
+    return {
+      base,
+      modifierTotal,
+      total: base + modifierTotal,
+      breakdown: modifiers.map(m => ({
+        label: m.label,
+        value: m.value
+      }))
+    };
+  }
 
   /* -------------------------------------------------------------------------- */
   /*  SETTINGS HELPERS                                                          */

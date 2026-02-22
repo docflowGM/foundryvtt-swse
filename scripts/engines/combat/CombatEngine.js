@@ -3,6 +3,7 @@ import { RollEngine } from '../roll-engine.js';
 import { SWSEInitiative } from './SWSEInitiative.js';
 import { DamageEngine } from './damage-engine.js';
 import { ThresholdEngine } from './threshold-engine.js';
+import { DamageResolutionEngine } from './damage-resolution-engine.js';
 import { ScaleEngine } from './scale-engine.js';
 import { SubsystemEngine } from './starship/subsystem-engine.js';
 import { EnhancedShields } from './starship/enhanced-shields.js';
@@ -436,5 +437,65 @@ export class CombatEngine {
         </div>
       `
     });
+  }
+
+  /* -------------------------------------------- */
+  /* UNIFIED DAMAGE RESOLUTION                    */
+  /* -------------------------------------------- */
+
+  /**
+   * Unified damage resolution via DamageResolutionEngine.
+   * Handles:
+   * - Bonus HP application (highest source)
+   * - HP reduction
+   * - Damage Threshold evaluation
+   * - Condition track shifts
+   * - Death/Destroy determination
+   * - Force Point rescue eligibility
+   *
+   * All mutations via ActorEngine only.
+   *
+   * @param {Actor} actor - Target actor
+   * @param {number} damage - Total damage to apply
+   * @param {Object} context - Additional context
+   * @param {string} context.damageType - Damage type
+   * @param {Actor} context.source - Attacking actor
+   * @param {Object} context.options - Additional options
+   * @returns {Promise<Object>} Resolution result
+   */
+  static async applyDamage(actor, damage, context = {}) {
+
+    const resolution = await DamageResolutionEngine.resolveDamage({
+      actor,
+      damage,
+      ...context
+    });
+
+    const plan = {};
+
+    // Apply HP change
+    plan["system.hp.value"] = resolution.hpAfter;
+
+    // Apply condition track shift
+    if (resolution.conditionDelta !== 0) {
+      const currentStep = actor.system.condition?.current ?? 0;
+      const newStep = Math.max(0, Math.min(5, currentStep + resolution.conditionDelta));
+      plan["system.condition.current"] = newStep;
+    }
+
+    // Set death flag
+    if (resolution.dead) {
+      plan["system.status.dead"] = true;
+    }
+
+    // Set destroyed flag
+    if (resolution.destroyed) {
+      plan["system.status.destroyed"] = true;
+    }
+
+    // Delegate mutation to ActorEngine
+    await ActorEngine.updateActor(actor.id, plan);
+
+    return resolution;
   }
 }
