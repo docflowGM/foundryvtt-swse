@@ -1,6 +1,7 @@
 /**
  * SWSE Hybrid Sentinel Engine
  * CSS + Layout + AppV2 Guard (Phases 1-6)
+ * Embedded Mutation Guard (Phase 8C)
  *
  * Detects:
  * - Dangerous CSS selectors
@@ -9,9 +10,12 @@
  * - Sheet collapse after render
  * - Containment/mask usage
  * - Global style pollution
+ * - Direct embedded document mutations (Phase 8C)
  *
  * DEV MODE ONLY — Never blocks runtime
  */
+
+import { EmbeddedMutationLayer } from './mutation/embedded-mutation-layer.js';
 
 export class SWSESentinel {
   static initialized = false;
@@ -221,6 +225,9 @@ export class SWSESentinel {
     this.enforceNamespace();
     this.attachRenderGuards();
     this.attachLayoutObserver();
+
+    // PHASE 8C: Initialize embedded mutation enforcement
+    EmbeddedMutationLayer.initialize();
 
     if (this.checkSafeMode()) {
       console.log(
