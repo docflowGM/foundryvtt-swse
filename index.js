@@ -77,6 +77,7 @@ import { SWSESentinel } from './scripts/core/swse-sentinel.js';
 import { SentinelEngine } from './scripts/governance/sentinel/sentinel-core.js';
 import { Sentry } from './scripts/governance/sentinel/sentry.js';
 import { Investigator } from './scripts/governance/sentinel/investigator.js';
+import { initializeSentinelAuditors, auditCSSHealth, generateMigrationReport } from './scripts/governance/sentinel/sentinel-auditors.js';
 
 // ---- v13 hardening ----
 import { initializeHardeningSystem, validateSystemReady, registerHardeningHooks } from './scripts/core/hardening-init.js';
@@ -121,11 +122,9 @@ import { preloadHandlebarsTemplates, assertPartialsResolved } from './scripts/co
 // ---- engines ----
 import { RulesEngine } from './scripts/rules/rules-engine.js';
 import { SWSEProgressionEngine, initializeProgressionHooks } from './scripts/engines/progression.js';
-import { FeatSystem } from './scripts/engine/FeatSystem.js';
-import { SkillSystem } from './scripts/engine/SkillSystem.js';
-import { TalentAbilitiesEngine } from './scripts/engine/TalentAbilitiesEngine.js';
-import TalentActionLinker from './scripts/engine/talent-action-linker.js';
-import { SWSELanguageModule } from './scripts/progression/modules/language-module.js';
+import { TalentEffectEngine } from './scripts/engines/talent/talent-effect-engine.js';
+import TalentActionLinker from './scripts/engines/talent/talent-action-linker.js';
+import { SWSELanguageModule } from './scripts/engines/progression/modules/language-module.js';
 
 // ---- hooks ----
 import { registerInitHooks, registerDestinyHooks } from './scripts/infrastructure/hooks/index.js';
@@ -148,7 +147,7 @@ import { testHarness } from './scripts/engines/suggestion/equipment/test-harness
 import { initializeDiscoverySystem, onDiscoveryReady } from './scripts/ui/discovery/index.js';
 
 // ---- misc ----
-import { SystemInitHooks } from './scripts/progression/hooks/system-init-hooks.js';
+import { SystemInitHooks } from './scripts/engines/progression/hooks/system-init-hooks.js';
 import { Upkeep } from './scripts/automation/upkeep.js';
 
 // ---- Phase 5: Observability, Testing, Forward Compatibility ----
@@ -292,6 +291,9 @@ Hooks.once('ready', async () => {
   Sentry.init();
   Investigator.init();
 
+  /* ---------- Sentinel Auditors (CSS + Migration validation) ---------- */
+  initializeSentinelAuditors();
+
   /* ---------- phase 3: diagnostic mode ---------- */
   await DiagnosticMode.initialize();
 
@@ -334,9 +336,7 @@ Hooks.once('ready', async () => {
   /* ---------- global API ---------- */
   const publicAPI = {
     ActorEngine,
-    FeatSystem,
-    SkillSystem,
-    TalentAbilitiesEngine,
+    TalentEffectEngine,
     TalentActionLinker,
     CombatSuggestionEngine,
     requestCombatEvaluation
@@ -369,6 +369,11 @@ Hooks.once('ready', async () => {
       performance: () => SentinelEngine.getPerformanceMetrics(),
       snapshot: () => SentinelEngine.dumpSnapshot(),
       flushAggregates: () => SentinelEngine.flushAggregates()
+    },
+    // Auditors (CSS + Migration validation)
+    auditors: {
+      cssHealth: () => auditCSSHealth(),
+      migrationReport: () => generateMigrationReport()
     }
   };
 
