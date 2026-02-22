@@ -4,47 +4,19 @@
 /* ========================================================================== */
 
 const PARTIALS = [
-
-  // Character V2
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/identity-strip.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/abilities-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs",
-  "systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs",
-  "systems/foundryvtt-swse/templates/actors/character/v2/partials/feats-panel.hbs",
-  "systems/foundryvtt-swse/templates/actors/character/v2/partials/talents-panel.hbs",
-  "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs",
-  "systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/xp-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/second-wind-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/dark-side-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/languages-panel.hbs",
-
-  // Droid V2
-  "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-panel.hbs",
-  "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-history.hbs",
-
-  // Vehicle V2
-  "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/attacks-panel.hbs",
-  "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/actions-panel.hbs",
-  "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/identity-panel.hbs",
-  "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/resource-cartridges.hbs",
-  "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/hp-condition-panel.hbs",
-  "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/defenses-panel.hbs",
-  "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/damage-threshold-panel.hbs",
-  "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/cargo-panel.hbs",
-  "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/crew-panel.hbs",
-
-  // Shared
-  "systems/foundryvtt-swse/templates/partials/actor/persistent-header.hbs",
-  "systems/foundryvtt-swse/templates/partials/ui/condition-track.hbs",
-  "systems/foundryvtt-swse/templates/partials/skill-row-static.hbs",
-  "systems/foundryvtt-swse/templates/partials/feat-actions-panel.hbs",
-  "systems/foundryvtt-swse/templates/partials/talent-abilities-panel.hbs",
-  "systems/foundryvtt-swse/templates/partials/assets-panel.hbs",
-  "systems/foundryvtt-swse/templates/partials/suggestion-card.hbs",
-  "systems/foundryvtt-swse/templates/partials/starship-maneuvers-panel.hbs"
-
+  "systems/foundryvtt-swse/templates/actors/character/v2/partials/Talents.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2/partials/Feats.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2/partials/Racial-ability.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2/partials/Force.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs"
 ];
 
 export async function registerSWSEPartials() {

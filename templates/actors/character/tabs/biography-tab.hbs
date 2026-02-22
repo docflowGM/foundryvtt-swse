@@ -1,206 +1,153 @@
-<div class="tab biography-tab" data-group="primary" data-tab="biography">
- <h3 class="section-header">Character Details</h3>
+<div class="tab biography-tab swse-bio-tab" data-group="primary" data-tab="biography">
 
- <div class="details-grid">
- <div class="detail-field">
- <label>Species</label>
- <input type="text" name="system.race" value="{{system.race}}" placeholder="Human"/>
- </div>
+  <!-- ===================================================== -->
+  <!-- PROFILE HEADER STRIP                                  -->
+  <!-- ===================================================== -->
 
- <div class="detail-field">
- <label>Class</label>
- <input type="text" name="system.class" value="{{system.class}}" placeholder="Jedi"/>
- </div>
+  <section class="swse-bio-header">
 
- <div class="detail-field">
- <label>Event (Background)</label>
- <input type="text" name="system.event" value="{{system.event}}" placeholder="Scarred, Exiled, etc."/>
- </div>
+    <div class="bio-identity">
+      <div class="bio-nameplate">
+        <span class="bio-name">{{actor.name}}</span>
+        <span class="bio-level">Level {{system.level}}</span>
+      </div>
+    </div>
 
- <div class="detail-field">
- <label>Profession (Background)</label>
- <input type="text" name="system.profession" value="{{system.profession}}" placeholder="Soldier, Pilot, etc."/>
- </div>
+    <div class="bio-summary-grid">
 
- <div class="detail-field">
- <label>Planet of Origin</label>
- <input type="text" name="system.planetOfOrigin" value="{{system.planetOfOrigin}}" placeholder="Tatooine, Corellia, etc."/>
- </div>
+      <div class="bio-field">
+        <label>Species</label>
+        <input type="text" name="system.race" value="{{system.race}}" />
+      </div>
 
- <div class="detail-field background-picker-row">
- <label>Choose Background</label>
- <button type="button" class="choose-background-btn" title="Open background selection dialog">
- <i class="{{getIconClass 'book'}}"></i> Select Background
- </button>
- </div>
+      <div class="bio-field">
+        <label>Class</label>
+        <input type="text" name="system.class" value="{{system.class}}" />
+      </div>
 
- <div class="detail-field">
- <label>Size</label>
- <select name="system.size">
- <option value="Fine" {{#if (eq system.size "Fine")}}selected{{/if}}>Fine</option>
- <option value="Diminutive" {{#if (eq system.size "Diminutive")}}selected{{/if}}>Diminutive</option>
- <option value="Tiny" {{#if (eq system.size "Tiny")}}selected{{/if}}>Tiny</option>
- <option value="Small" {{#if (eq system.size "Small")}}selected{{/if}}>Small</option>
- <option value="Medium" {{#if (eq system.size "Medium")}}selected{{/if}}>Medium</option>
- <option value="Large" {{#if (eq system.size "Large")}}selected{{/if}}>Large</option>
- <option value="Huge" {{#if (eq system.size "Huge")}}selected{{/if}}>Huge</option>
- <option value="Gargantuan" {{#if (eq system.size "Gargantuan")}}selected{{/if}}>Gargantuan</option>
- <option value="Colossal" {{#if (eq system.size "Colossal")}}selected{{/if}}>Colossal</option>
- </select>
- </div>
- </div>
+      <div class="bio-field">
+        <label>Size</label>
+        <select name="system.size">
+          <option value="Small" {{#if (eq system.size "Small")}}selected{{/if}}>Small</option>
+          <option value="Medium" {{#if (eq system.size "Medium")}}selected{{/if}}>Medium</option>
+          <option value="Large" {{#if (eq system.size "Large")}}selected{{/if}}>Large</option>
+        </select>
+      </div>
 
- <h3 class="section-header">Dark Side Corruption</h3>
+      <div class="bio-field">
+        <label>Homeworld</label>
+        <input type="text" name="system.planetOfOrigin" value="{{system.planetOfOrigin}}" />
+      </div>
 
- <div class="dark-side-tracker-container">
- <div class="dark-side-tracker">
- <label class="tracker-label">
- Dark Side Score: <span class="dark-side-value">{{system.darkSideScore}}</span> / <span class="dark-side-max">{{darkSideMax}}</span>
- </label>
- <div class="dark-side-segments" data-max-segments="{{darkSideMax}}">
- {{#each darkSideSegments}}
- <div class="dark-side-segment {{#if this.active}}active{{/if}}{{#if this.isCurrent}} current{{/if}}"
- data-segment="{{this.index}}"
- data-color-level="{{this.colorLevel}}"
- style="background-color: {{this.color}};"
- title="Click to set Dark Side Score to {{this.index}}">
- </div>
- {{/each}}
- </div>
- <div class="dark-side-description">
- {{#if (gte system.darkSideScore darkSideMax)}}
- <span class="corrupted"><i class="{{getIconClass 'skull'}}"></i> Fully Corrupted by the Dark Side</span>
- {{else if (gte system.darkSideScore (mult darkSideMax 0.75))}}
- <span class="heavily-corrupted"><i class="{{getIconClass 'exclamation'}}"></i> Heavily Corrupted</span>
- {{else if (gte system.darkSideScore (mult darkSideMax 0.5))}}
- <span class="moderately-corrupted"><i class="{{getIconClass 'moon'}}"></i> Moderately Corrupted</span>
- {{else if (gt system.darkSideScore 0)}}
- <span class="lightly-corrupted"><i class="{{getIconClass 'adjust'}}"></i> Touched by the Dark Side</span>
- {{else}}
- <span class="light-side"><i class="{{getIconClass 'sun'}}"></i> Pure in the Force</span>
- {{/if}}
- </div>
- <div class="dark-side-actions">
- <button class="dsp-action-btn reduce-dsp" title="Reduce your Dark Side Points">
- <i class="{{getIconClass 'dove'}}"></i> Reduce DSP
- </button>
- <button class="dsp-action-btn increase-dsp" title="Increase your Dark Side Points by 1">
- <i class="{{getIconClass 'fire'}}"></i> Increase DSP
- </button>
- {{#if (and hasForceSensitivity darkInspirationEnabled)}}
- <button class="dsp-action-btn dark-inspiration" title="Use the Force with dark side power">
- <i class="{{getIconClass 'bolt'}}"></i> Dark Inspiration
- </button>
- {{/if}}
- </div>
- </div>
- </div>
+      <div class="bio-field">
+        <label>Background Event</label>
+        <input type="text" name="system.event" value="{{system.event}}" />
+      </div>
 
- {{!-- Destiny Section (moved from summary tab) --}}
- <section class="destiny-section">
- <h3 class="section-header"><i class="{{getIconClass 'star'}}"></i> Destiny</h3>
- <div class="destiny-content">
- {{#if system.destiny.hasDestiny}}
- <div class="destiny-grid">
- {{!-- Status --}}
- <div class="destiny-status">
- <label>Status:</label>
- <div class="status-display">
- {{#if system.destiny.fulfilled}}
- <span class="status-fulfilled">
- <i class="{{getIconClass 'crown'}}"></i> Fulfilled
- </span>
- {{else}}
- <span class="status-active">
- <i class="{{getIconClass 'star'}}"></i> Active
- </span>
- {{/if}}
- </div>
- </div>
+      <div class="bio-field">
+        <label>Profession</label>
+        <input type="text" name="system.profession" value="{{system.profession}}" />
+      </div>
 
- {{!-- Type --}}
- {{#if system.destiny.type}}
- <div class="destiny-type">
- <label>Type:</label>
- <input type="text"
- name="system.destiny.type"
- value="{{system.destiny.type}}"
- placeholder="Destiny type (e.g., Hero, Villain)"
- class="destiny-type-input"/>
- </div>
- {{else}}
- <div class="destiny-type">
- <label>Type:</label>
- <input type="text"
- name="system.destiny.type"
- value=""
- placeholder="Destiny type (e.g., Hero, Villain)"
- class="destiny-type-input"/>
- </div>
- {{/if}}
+    </div>
+  </section>
 
- {{!-- Secret Flag --}}
- <div class="destiny-secret">
- <label class="checkbox-label">
- <input type="checkbox"
- name="system.destiny.secret"
- {{checked system.destiny.secret}}
- title="Mark this Destiny as secret (hidden from players)"/>
- <i class="{{getIconClass 'lock'}}"></i>
- <span>Secret Destiny</span>
- </label>
- </div>
 
- {{!-- Control Buttons --}}
- <div class="destiny-controls">
- {{!-- Spend Button (available to all) --}}
- {{#if (not system.destiny.fulfilled)}}
- {{#if (gt system.destinyPoints.value 0)}}
- <button class="spend-destiny-btn" type="button" title="Spend a Destiny Point">
- <i class="{{getIconClass 'star'}}"></i> Spend Destiny Point
- </button>
- {{/if}}
- {{/if}}
+  <!-- ===================================================== -->
+  <!-- DARK SIDE STATUS PANEL                                -->
+  <!-- ===================================================== -->
 
- {{!-- GM Controls --}}
- {{#if isGM}}
- {{#if (not system.destiny.fulfilled)}}
- <button class="fulfill-destiny-btn" type="button" title="Mark this Destiny as fulfilled">
- <i class="{{getIconClass 'crown'}}"></i> Fulfill Destiny
- </button>
- {{else}}
- <button class="reset-destiny-btn" type="button" title="Reset this Destiny to active">
- <i class="{{getIconClass 'redo'}}"></i> Reset Destiny
- </button>
- {{/if}}
- {{/if}}
- </div>
- </div>
- {{else}}
- <div class="no-destiny">
- <p class="hint-text">
- <i class="{{getIconClass 'info'}}"></i>
- This character does not have a Destiny.
- </p>
- {{#if isGM}}
- <button class="enable-destiny-btn" type="button" title="Enable Destiny for this character">
- <i class="{{getIconClass 'plus'}}"></i> Enable Destiny
- </button>
- {{/if}}
- </div>
- {{/if}}
- </div>
- </section>
+  <section class="swse-bio-darkside">
 
- <h3 class="section-header">Biography</h3>
+    <div class="darkside-header">
+      <span>Dark Side Corruption</span>
+      <span class="darkside-score">
+        {{system.darkSideScore}} / {{darkSideMax}}
+      </span>
+    </div>
 
- <div class="editor-content">
- {{editor enrichedBiography target="system.biography" button=true owner=owner editable=editable}}
- </div>
+    <div class="darkside-bar">
+      {{#each darkSideSegments}}
+        <div
+          class="darkside-segment {{#if this.filled}}filled{{/if}}"
+          data-segment="{{this.index}}"
+          style="background-color: {{this.color}};"
+        ></div>
+      {{/each}}
+    </div>
 
- <h3 class="section-header">Notes</h3>
+    <div class="darkside-state">
+      {{#if (gte system.darkSideScore darkSideMax)}}
+        Fully Corrupted
+      {{else if (gte system.darkSideScore (mult darkSideMax 0.75))}}
+        Heavily Corrupted
+      {{else if (gte system.darkSideScore (mult darkSideMax 0.5))}}
+        Moderately Corrupted
+      {{else if (gt system.darkSideScore 0)}}
+        Touched by the Dark Side
+      {{else}}
+        Pure in the Force
+      {{/if}}
+    </div>
 
- <div class="editor-content">
- {{editor enrichedNotes target="system.notes" button=true owner=owner editable=editable}}
- </div>
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- DESTINY PANEL                                         -->
+  <!-- ===================================================== -->
+
+  <section class="swse-bio-destiny">
+
+    <div class="destiny-header">
+      <span>Destiny</span>
+      {{#if system.destiny.fulfilled}}
+        <span class="destiny-status fulfilled">Fulfilled</span>
+      {{else}}
+        <span class="destiny-status active">Active</span>
+      {{/if}}
+    </div>
+
+    <div class="destiny-grid">
+
+      <div class="destiny-field">
+        <label>Type</label>
+        <input type="text" name="system.destiny.type" value="{{system.destiny.type}}" />
+      </div>
+
+      <div class="destiny-field checkbox">
+        <label>
+          <input type="checkbox" name="system.destiny.secret" {{checked system.destiny.secret}} />
+          Secret Destiny
+        </label>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- BIOGRAPHY LOG                                         -->
+  <!-- ===================================================== -->
+
+  <section class="swse-bio-log">
+    <h3 class="section-header">Biography Log</h3>
+    <div class="editor-content">
+      {{editor enrichedBiography target="system.biography" button=true owner=owner editable=editable}}
+    </div>
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- GM NOTES                                              -->
+  <!-- ===================================================== -->
+
+  <section class="swse-bio-notes">
+    <h3 class="section-header">Operational Notes</h3>
+    <div class="editor-content">
+      {{editor enrichedNotes target="system.notes" button=true owner=owner editable=editable}}
+    </div>
+  </section>
+
 </div>

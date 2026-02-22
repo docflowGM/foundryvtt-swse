@@ -1,0 +1,16 @@
+
+.swse button {
+  background: linear-gradient(180deg, #00d9ff, #0088cc);
+  border: none;
+  padding: 8px 14px;
+  border-radius: var(--swse-radius);
+  color: black;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.swse button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 12px rgba(0, 217, 255, 0.6);
+}

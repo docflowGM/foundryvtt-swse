@@ -1,24 +1,66 @@
-<div class="holo-panel">
+<div class="holo-panel swse-hp-condition-panel">
+
   <div class="section-bar">
     <h3 class="section-header">Hit Points & Condition</h3>
+
     <label class="inline-flag">
-      <input type="checkbox" class="swse-v2-condition-persistent" {{#if derived.damage.conditionPersistent}}checked{{/if}} />
+      <input
+        type="checkbox"
+        class="swse-v2-condition-persistent"
+        {{#if derived.damage.conditionPersistent}}checked{{/if}}
+      />
       Persistent
     </label>
   </div>
 
   <div class="swse-v2-hp-row">
+
+    <!-- ===================== HP BLOCK ===================== -->
     <div class="swse-v2-hp-block" data-swse-tooltip="HitPoints">
-      <div class="label">HP</div>
-      <div style="display:flex; gap:8px; align-items:center;">
-        <input type="number" name="system.hp.value" value="{{system.hp.value}}" style="width:60px;" {{#unless editable}}disabled{{/unless}} />
-        <span class="value">/ {{system.hp.max}}</span>
+
+      <div class="hp-header">
+        <div class="label">HP</div>
+
+        <div class="hp-display">
+          <input
+            type="number"
+            name="system.hp.value"
+            value="{{system.hp.value}}"
+            class="hp-input"
+            {{#unless editable}}disabled{{/unless}}
+          />
+
+          <span class="hp-separator">/</span>
+
+          <span class="hp-max">
+            {{system.hp.max}}
+          </span>
+        </div>
       </div>
+
+      <!-- HP STATUS BAR -->
+      <div class="hp-bar-container">
+        <div
+          class="hp-bar-fill
+            {{#if (lte derived.hp.percent 25)}}hp-critical{{/if}}
+            {{#if (and (gt derived.hp.percent 25) (lte derived.hp.percent 50))}}hp-warning{{/if}}
+            {{#if (gt derived.hp.percent 50)}}hp-healthy{{/if}}
+          "
+          style="width: {{derived.hp.percent}}%;"
+        ></div>
+      </div>
+
     </div>
 
+    <!-- ===================== CONDITION BLOCK ===================== -->
     <div class="swse-v2-condition-block" data-swse-tooltip="ConditionTrack">
-      <div class="condition-row">
-        <button type="button" class="swse-v2-condition-improve">Improve</button>
+
+      <div class="condition-controls">
+
+        <button type="button" class="swse-v2-condition-improve">
+          Improve
+        </button>
+
         <div class="condition-steps">
           <button type="button" class="swse-v2-condition-step" data-step="0">Normal</button>
           <button type="button" class="swse-v2-condition-step" data-step="1">-1</button>
@@ -27,16 +69,37 @@
           <button type="button" class="swse-v2-condition-step" data-step="4">-10</button>
           <button type="button" class="swse-v2-condition-step" data-step="5">Helpless</button>
         </div>
-        <button type="button" class="swse-v2-condition-worsen">Worsen</button>
 
-        <div class="condition-readout">
-          <span class="label">Penalty:</span>
-          <span class="value">{{derived.damage.conditionPenalty}}</span>
-          {{#if derived.damage.conditionHelpless}}
-            <span class="badge">Helpless</span>
-          {{/if}}
-        </div>
+        <button type="button" class="swse-v2-condition-worsen">
+          Worsen
+        </button>
+
       </div>
+
+      <!-- CONDITION READOUT -->
+      <div class="condition-readout">
+
+        <span class="label">Penalty:</span>
+
+        <span class="
+          condition-penalty
+          {{#if (lt derived.damage.conditionPenalty 0)}}penalty-negative{{/if}}
+          {{#if (eq derived.damage.conditionPenalty 0)}}penalty-zero{{/if}}
+          {{#if (gt derived.damage.conditionPenalty 0)}}penalty-positive{{/if}}
+        ">
+          {{derived.damage.conditionPenalty}}
+        </span>
+
+        {{#if derived.damage.conditionHelpless}}
+          <span class="condition-badge-helpless">
+            HELPLESS
+          </span>
+        {{/if}}
+
+      </div>
+
     </div>
+
   </div>
+
 </div>

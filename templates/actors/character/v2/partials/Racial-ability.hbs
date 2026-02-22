@@ -1,0 +1,34 @@
+<section class="abilities-section racial-section v3-panel holo-panel">
+
+  <header class="section-bar">
+    <h3 class="section-header">Racial Abilities</h3>
+    <div class="muted">Passive</div>
+  </header>
+
+  {{#if derived.racialAbilities.length}}
+    <div class="racial-list">
+      {{#each derived.racialAbilities as |ability|}}
+        <div class="racial-card"
+             data-item-id="{{ability.id}}"
+             data-action="open-ability">
+
+          <div class="card-header">
+            <span class="card-title">{{ability.name}}</span>
+          </div>
+
+          {{#if ability.summary}}
+            <div class="card-summary">
+              {{ability.summary}}
+            </div>
+          {{/if}}
+
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="muted empty-state">
+      No racial abilities.
+    </div>
+  {{/if}}
+
+</section>

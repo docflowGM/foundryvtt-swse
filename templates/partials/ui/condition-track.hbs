@@ -1,128 +1,45 @@
-<div class="condition-track" data-swse-tooltip="ConditionTrack">
-  <label class="track-label">Condition</label>
+<div class="holo-panel hp-condition-panel">
 
-  <div class="track-visual flexrow">
+  <div class="section-bar">
+    <h3 class="section-header">Condition Track</h3>
 
-    {{!-- Normal (no checkmark) --}}
-    <div class="track-condition normal {{#if (eq system.conditionTrack.current 0)}}active{{/if}}"
-         data-step="0"
-         role="button"
-         tabindex="0"
-         title="Normal">
-      <div class="condition-name">Normal</div>
-    </div>
-
-    {{!-- Step 1: -1 penalty --}}
-    <div class="track-condition level-1 {{#if (gte system.conditionTrack.current 1)}}active{{/if}}"
-         data-step="1"
-         role="button"
-         tabindex="0"
-         title="-1 to all d20 rolls">
-      {{#if (gte system.conditionTrack.current 1)}}
-      <div class="checkmark">✓</div>
-      {{else}}
-      <div class="checkbox-empty"></div>
-      {{/if}}
-      <div class="condition-penalty">-1</div>
-    </div>
-
-    {{!-- Step 2: -2 penalty --}}
-    <div class="track-condition level-2 {{#if (gte system.conditionTrack.current 2)}}active{{/if}}"
-         data-step="2"
-         role="button"
-         tabindex="0"
-         title="-2 to all d20 rolls">
-      {{#if (gte system.conditionTrack.current 2)}}
-      <div class="checkmark">✓</div>
-      {{else}}
-      <div class="checkbox-empty"></div>
-      {{/if}}
-      <div class="condition-penalty">-2</div>
-    </div>
-
-    {{!-- Step 3: -5 penalty --}}
-    <div class="track-condition level-3 {{#if (gte system.conditionTrack.current 3)}}active{{/if}}"
-         data-step="3"
-         role="button"
-         tabindex="0"
-         title="-5 to all d20 rolls">
-      {{#if (gte system.conditionTrack.current 3)}}
-      <div class="checkmark">✓</div>
-      {{else}}
-      <div class="checkbox-empty"></div>
-      {{/if}}
-      <div class="condition-penalty">-5</div>
-    </div>
-
-    {{!-- Step 4: -10 penalty --}}
-    <div class="track-condition level-4 {{#if (gte system.conditionTrack.current 4)}}active{{/if}}"
-         data-step="4"
-         role="button"
-         tabindex="0"
-         title="-10 to all d20 rolls, half speed">
-      {{#if (gte system.conditionTrack.current 4)}}
-      <div class="checkmark">✓</div>
-      {{else}}
-      <div class="checkbox-empty"></div>
-      {{/if}}
-      <div class="condition-penalty">-10</div>
-    </div>
-
-    {{!-- Step 5: Helpless --}}
-    <div class="track-condition level-5 helpless {{#if (gte system.conditionTrack.current 5)}}active{{/if}}"
-         data-step="5"
-         role="button"
-         tabindex="0"
-         title="Helpless (unconscious or disabled)">
-      {{#if (gte system.conditionTrack.current 5)}}
-      <div class="checkmark">✓</div>
-      {{else}}
-      <div class="checkbox-empty"></div>
-      {{/if}}
-      <div class="condition-penalty">Helpless</div>
-    </div>
-
-  </div>
-
-  <div class="track-controls flexrow">
-
-    {{!-- Improve Condition Button --}}
-    <button class="track-button improve"
-            type="button"
-            role="button"
-            tabindex="0"
-            aria-label="Recover one step"
-            title="Recover one step">
-      <i class="{{getIconClass 'arrowUp'}}" aria-hidden="true"></i>
-      Recover
-    </button>
-
-    {{!-- Persistent Checkbox --}}
-    <label class="persistent-checkbox"
-           title="Prevents recovery"
-           aria-label="Persistent condition">
+    <label class="inline-flag">
       <input type="checkbox"
-             name="system.conditionTrack.persistent"
-             {{checked system.conditionTrack.persistent}}/>
-      <span>Persistent</span>
+             class="swse-v2-condition-persistent"
+             {{#if system.conditionTrack.persistent}}checked{{/if}} />
+      Persistent
     </label>
-
-    {{!-- Worsen Condition Button --}}
-    <button class="track-button worsen"
-            type="button"
-            role="button"
-            tabindex="0"
-            aria-label="Worsen one step"
-            title="Worsen one step">
-      <i class="{{getIconClass 'arrowDown'}}" aria-hidden="true"></i>
-      Damage
-    </button>
   </div>
 
-  {{#if (gt system.conditionTrack.penalty 0)}}
-  <div class="penalty-warning">
-    <i class="{{getIconClass 'exclamation'}}" aria-hidden="true"></i>
-    <span>{{system.conditionTrack.penalty}} penalty to all d20 rolls</span>
+  <!-- CHEVRON TRACK -->
+  <div class="condition-steps">
+
+    {{#each conditionSteps as |step|}}
+      <button type="button"
+              class="swse-v2-condition-step {{#if step.isActive}}active{{/if}}"
+              data-step="{{step.value}}">
+        {{step.label}}
+      </button>
+    {{/each}}
+
   </div>
-  {{/if}}
+
+  <!-- TOTAL PENALTY DISPLAY -->
+  <div class="condition-readout">
+
+    <span class="label">Total Penalty:</span>
+
+    <span class="value
+      {{#if (eq derived.damage.conditionPenalty 0)}}zero{{/if}}
+      {{#if (lt derived.damage.conditionPenalty 0)}}negative{{/if}}
+      {{#if (gt derived.damage.conditionPenalty 0)}}positive{{/if}}">
+      {{derived.damage.conditionPenalty}}
+    </span>
+
+    {{#if derived.damage.conditionHelpless}}
+      <span class="badge">Helpless</span>
+    {{/if}}
+
+  </div>
+
 </div>

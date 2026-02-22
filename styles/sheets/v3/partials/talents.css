@@ -1,0 +1,20 @@
+/* TALENTS V3 */
+.swse .talents-section .talent-tree-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 0.5rem;
+}
+
+.swse .talent-card {
+  padding: 0.75rem;
+  border-left: 3px solid #00e5ff;
+  background: rgba(0, 229, 255, 0.06);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.swse .talent-card:hover {
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.6);
+}

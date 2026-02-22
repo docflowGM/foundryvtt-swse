@@ -1,50 +1,61 @@
 {{#if xpEnabled}}
-<div class="holo-panel xp-panel {{#if xpLevelReady}}xp-level-up-flash{{/if}}">
-  <div class="section-bar">
+<section class="swse-xp-panel v3-panel holo-panel {{#if xpLevelReady}}xp-level-up{{/if}}">
+
+  <header class="section-bar">
     <h3 class="section-header">Experience Points</h3>
-  </div>
-  <div style="padding: 12px 16px;">
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px;">
-      <div>
-        <div style="font-size: 0.8em; color: rgba(0,255,255,0.7); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">Level</div>
-        <div style="font-size: 1.4em; font-weight: bold; color: rgba(0,255,255,0.95);">{{xpData.level}}</div>
+  </header>
+
+  <div class="xp-content">
+
+    <div class="xp-grid-top">
+      <div class="xp-stat">
+        <div class="xp-label">Level</div>
+        <div class="xp-level-value">{{xpData.level}}</div>
       </div>
-      <div>
-        <div style="font-size: 0.8em; color: rgba(0,255,255,0.7); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">Total XP</div>
+
+      <div class="xp-stat">
+        <div class="xp-label">Total XP</div>
+
         {{#if isGM}}
           <input type="number"
                  name="system.xp.total"
                  value="{{xpData.total}}"
                  min="0"
-                 class="xp-total-input"
-                 style="width: 90px; font-size: 1.1em; font-weight: bold; background: rgba(0,0,0,0.3); border: 1px solid rgba(0,255,255,0.3); color: rgba(0,255,255,0.95); border-radius: 3px; padding: 2px 6px;">
+                 class="xp-total-input">
         {{else}}
-          <div style="font-size: 1.1em; font-weight: bold; color: rgba(0,255,255,0.95);">{{xpData.total}}</div>
+          <div class="xp-total-value">{{xpData.total}}</div>
         {{/if}}
+
       </div>
     </div>
 
     {{#if xpData.nextLevelAt}}
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 10px;">
-      <div>
-        <div style="font-size: 0.75em; color: rgba(0,255,255,0.6); text-transform: uppercase; letter-spacing: 0.05em;">Next Level</div>
-        <div style="font-size: 0.95em; color: rgba(0,255,255,0.8);">{{xpData.nextLevelAt}}</div>
+    <div class="xp-grid-bottom">
+      <div class="xp-substat">
+        <div class="xp-sub-label">Next Level</div>
+        <div class="xp-sub-value">{{xpData.nextLevelAt}}</div>
       </div>
-      <div>
-        <div style="font-size: 0.75em; color: rgba(0,255,255,0.6); text-transform: uppercase; letter-spacing: 0.05em;">XP to Next</div>
-        <div style="font-size: 0.95em; color: rgba(0,255,255,0.8);">{{xpData.xpToNext}}</div>
+
+      <div class="xp-substat">
+        <div class="xp-sub-label">XP to Next</div>
+        <div class="xp-sub-value">{{xpData.xpToNext}}</div>
       </div>
     </div>
     {{/if}}
 
     <div class="xp-progress-wrapper">
       {{#if xpData.nextLevelAt}}
-        <div class="xp-progress-text">{{xpData.total}} / {{xpData.nextLevelAt}}</div>
+        <div class="xp-progress-text">
+          {{xpData.total}} / {{xpData.nextLevelAt}}
+        </div>
       {{/if}}
+
       <div class="xp-progress-bar">
-        <div class="xp-progress-fill" style="width: {{xpPercent}}%;"></div>
+        <div class="xp-progress-fill"
+             style="width: {{xpPercent}}%;"></div>
       </div>
     </div>
+
   </div>
-</div>
+</section>
 {{/if}}

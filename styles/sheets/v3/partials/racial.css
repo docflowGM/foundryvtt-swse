@@ -1,0 +1,9 @@
+/* RACIAL ABILITIES V3 */
+.swse .racial-card {
+  padding: 0.75rem;
+  border-left: 3px solid #66ff99;
+  background: rgba(102, 255, 153, 0.06);
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+}

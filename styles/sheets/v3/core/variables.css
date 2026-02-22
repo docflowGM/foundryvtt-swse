@@ -1,0 +1,17 @@
+
+:root {
+  --swse-bg-primary: #07111a;
+  --swse-bg-secondary: #0c1d2a;
+  --swse-bg-panel: #0f2433;
+
+  --swse-accent-blue: #00d9ff;
+  --swse-accent-cyan: #00ffff;
+  --swse-accent-green: #00ff88;
+  --swse-accent-gold: #ffd166;
+  --swse-accent-red: #ff4d4d;
+
+  --swse-text-primary: #ffffff;
+  --swse-text-secondary: #9fb6c9;
+
+  --swse-radius: 8px;
+}

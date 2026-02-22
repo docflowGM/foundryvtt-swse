@@ -171,3 +171,223 @@
 }
 
 /* Sidebar icon mask baseline moved to styles/core-overrides.css */
+
+
+
+/* ==========================================================
+   GLOBAL HOLO SELECT THEME
+========================================================== */
+
+.swse select,
+.swse .window-content select {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 30, 50, 0.95),
+    rgba(0, 15, 30, 0.95)
+  ) !important;
+
+  color: #00ff88 !important;
+  border: 1px solid rgba(0,255,170,0.6) !important;
+  border-radius: 8px !important;
+  padding: 4px 8px !important;
+  font-weight: 600;
+  cursor: pointer;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+/* Dropdown options */
+.swse select option {
+  background: rgba(0, 20, 35, 0.98);
+  color: #00ff88;
+}
+
+/* Hover */
+.swse select:hover {
+  box-shadow: 0 0 10px rgba(0,255,170,0.7);
+}
+
+/* Focus */
+.swse select:focus {
+  outline: none;
+  box-shadow: 0 0 15px rgba(0,255,170,1);
+}
+
+/* Disabled */
+.swse select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+
+/* ==========================================================
+   SWSE HEADER REFACTOR
+========================================================== */
+
+@font-face {
+  font-family: "SWSEAurebesh";
+  src: url("/systems/foundryvtt-swse/assets/fonts/Aurabesh/Aurebesh Bold Italic.otf") format("opentype");
+  font-weight: bold;
+  font-style: italic;
+}
+
+.swse-datapad-title {
+  font-family: "SWSEAurebesh";
+  text-align: center;
+  font-size: 0.85rem;
+  letter-spacing: 0.35em;
+  padding: 6px 0 4px;
+  opacity: 0.8;
+  border-bottom: 1px solid rgba(0,255,255,0.2);
+}
+
+.swse-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 14px;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.identity-row {
+  gap: 14px;
+}
+
+.header-portrait {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.identity-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.header-name {
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.identity-subline {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.level-line {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.half-level {
+  opacity: 0.6;
+  font-size: 0.75rem;
+  margin-left: 6px;
+}
+
+.status-row {
+  justify-content: space-between;
+}
+
+.status-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 120px;
+}
+
+.status-label {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+.status-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.1);
+  overflow: hidden;
+}
+
+.status-bar .fill {
+  height: 100%;
+  background: #00ff88;
+}
+
+.fp-dots,
+.ct-mini {
+  display: flex;
+  gap: 4px;
+}
+
+.fp-dot,
+.ct-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+}
+
+.fp-dot.used {
+  background: rgba(255,255,255,0.1);
+}
+
+.ct-dot.active {
+  background: #ff4444;
+}
+
+.command-row {
+  gap: 10px;
+}
+
+.header-btn {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.1);
+  border: none;
+  cursor: pointer;
+}
+
+.header-btn.ready {
+  box-shadow: 0 0 12px rgba(0,255,170,0.8);
+}
+
+
+
+/* ==========================================================
+   V13 APPV2 SCROLL RESTORE
+========================================================== */
+
+.swse-character-sheet .window-content {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto !important;
+  overflow-x: hidden;
+}
+
+.swse-character-sheet .sheet-inner {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.swse-character-sheet .sheet-body {
+  flex: 1;
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  min-height: 0;
+}
+
+.swse-character-sheet .tab {
+  height: auto !important;
+  overflow-y: auto !important;
+}

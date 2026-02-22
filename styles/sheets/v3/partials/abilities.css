@@ -1,0 +1,66 @@
+
+.ability-row {
+  padding: 6px 10px;
+  border-radius: 12px;
+  margin-bottom: 4px;
+}
+
+/* Collapsed */
+.ability-collapsed {
+  display: grid;
+  grid-template-columns: 1fr 60px 60px;
+  align-items: center;
+}
+
+/* Expanded (compact) */
+.ability-expanded {
+  display: none;
+  grid-template-columns: auto auto auto auto auto auto;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.abilities-panel.expanded .ability-collapsed {
+  display: none;
+}
+
+.abilities-panel.expanded .ability-expanded {
+  display: grid;
+}
+
+/* Compact pill */
+.math-pill.compact {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.math-pill.compact input {
+  width: 40px;
+  text-align: center;
+  font-size: 0.9rem;
+  background: transparent;
+  border: none;
+  color: #00ff88;
+  font-weight: bold;
+  outline: none;
+}
+
+.math-operator {
+  opacity: 0.6;
+  font-weight: bold;
+}
+
+.math-result {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.math-mod {
+  font-size: 1rem;
+  font-weight: bold;
+}

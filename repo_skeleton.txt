@@ -14,6 +14,7 @@ foundryvtt-swse/
   package.json
   prestige-prerequisites-reference.json
   reconcile_talents.py
+  repo_skeleton.txt
   system.json
   talent-corrections-final.json
   template.json
@@ -687,410 +688,408 @@ foundryvtt-swse/
     weapons-simple.db
     weapons.db
     packs\armor/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\armor-heavy/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\armor-light/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\armor-medium/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\armor-shields/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\attributes/
-      000005.ldb
-      000006.log
+      000009.ldb
+      000053.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000052
     packs\backgrounds/
-      000005.ldb
-      000006.log
+      000009.ldb
+      000053.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000052
     packs\beasts/
-      000005.ldb
-      000006.log
+      000009.ldb
+      000053.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000052
     packs\classes/
-      000005.ldb
-      000006.log
+      000009.ldb
+      000053.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000052
     packs\combat-actions/
-      000005.log
+      000051.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000050
     packs\conditions/
-      000005.ldb
-      000006.log
+      000009.ldb
+      000053.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000052
     packs\droids/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\equipment/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\equipment-comlinks/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\equipment-medical/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\equipment-other/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\equipment-security/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\equipment-survival/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\equipment-tech/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\equipment-tools/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\extraskilluses/
-      000005.ldb
-      000006.log
+      000009.ldb
+      000053.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000052
     packs\feats/
-      000005.ldb
-      000006.log
+      000009.ldb
+      000053.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000052
     packs\forcepowers/
-      000005.ldb
-      000006.log
+      000009.ldb
+      000053.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000052
     packs\forcesecrets/
-      000005.ldb
-      000006.log
+      000009.ldb
+      000053.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000052
     packs\forcetechniques/
-      000005.ldb
-      000006.log
+      000009.ldb
+      000053.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000052
     packs\heroic/
-      000005.ldb
-      000007.ldb
-      000008.log
+      000009.ldb
+      000055.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000006
+      MANIFEST-000054
     packs\languages/
-      000005.ldb
-      000006.log
+      000009.ldb
+      000053.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000052
     packs\lightsaberformpowers/
-      000005.log
+      000051.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000050
     packs\nonheroic/
-      000005.ldb
-      000007.ldb
-      000008.log
+      000009.ldb
+      000055.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000006
+      MANIFEST-000054
     packs\npc/
-      000005.log
+      000051.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000050
     packs\ship-combat-actions/
-      000005.log
+      000051.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000050
     packs\skills/
-      000005.ldb
-      000006.log
+      000009.ldb
+      000053.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000052
     packs\special-combat-condition/
-      000005.ldb
-      000006.log
+      000009.ldb
+      000053.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000052
     packs\species/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\talent-enhancements/
-      000005.log
+      000051.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000050
     packs\talents/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\talent_trees/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\vehicle-weapon-ranges/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\vehicle-weapons/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\vehicles/
-      000005.ldb
-      000006.log
+      000009.ldb
+      000053.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000052
     packs\vehicles-speeders/
-      000005.ldb
-      000006.log
+      000009.ldb
+      000053.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000052
     packs\vehicles-starships/
-      000005.ldb
-      000006.log
+      000009.ldb
+      000053.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000052
     packs\vehicles-stations/
-      000005.ldb
-      000006.log
+      000009.ldb
+      000053.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000052
     packs\vehicles-walkers/
-      000005.ldb
-      000006.log
+      000009.ldb
+      000053.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000052
     packs\weapons/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\weapons-exotic/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\weapons-grenades/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\weapons-heavy/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\weapons-pistols/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\weapons-rifles/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
     packs\weapons-simple/
-      000005.ldb
-      000006.log
+      000062.ldb
+      000064.log
       CURRENT
       LOCK
       LOG
       LOG.old
-      MANIFEST-000004
+      MANIFEST-000063
   quarantine/
     quarantine\backups/
       classes.db.backup
@@ -1334,6 +1333,7 @@ foundryvtt-swse/
       swse-api.js
       swse-data.js
       swse-sentinel.js
+      theme-loader.js
       tooltip-discovery.js
       utils-init.js
       v1-api-scanner.js
@@ -1345,6 +1345,7 @@ foundryvtt-swse/
         batch-1-validation.js
       scripts\core\sentinel/
         derived-integrity-layer.js
+        hook-investigator.js
         integration-tests.js
         investigator.js
         mutation-integrity-layer.js
@@ -1895,6 +1896,7 @@ foundryvtt-swse/
       force-suggestion-utils.js
     scripts\ui/
       ArchetypeUIComponents.js
+      ui-manager.js
       wishlist-ui.js
       scripts\ui\action-palette/
         action-palette.css
@@ -2041,10 +2043,26 @@ foundryvtt-swse/
       v2-sheet.css
       vehicle-level3.css
       vehicle-sheet.css
-      styles\sheets\themes/
-        styles\sheets\themes\legacy/
-          high-contrast.css
-          holo-default.css
+      styles\sheets\v3/
+        styles\sheets\v3\components/
+          buttons.css
+          cards.css
+          hover.css
+        styles\sheets\v3\core/
+          layout.css
+          numbers.css
+          typography.css
+          variables.css
+        styles\sheets\v3\partials/
+          biography.css
+          combat.css
+          defenses.css
+          destiny.css
+          feats.css
+          header.css
+          hp-condition.css
+          identity.css
+          skills.css
     styles\species/
       species-traits.css
     styles\src/

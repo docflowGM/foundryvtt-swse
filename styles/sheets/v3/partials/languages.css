@@ -1,0 +1,104 @@
+/* =========================================
+   V3 Languages Panel
+   Scoped to .swse
+========================================= */
+
+.swse .swse-languages-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* GRID */
+
+.swse .language-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.75rem;
+}
+
+/* CARD */
+
+.swse .language-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 10px;
+  background: rgba(0, 180, 255, 0.05);
+  border: 1px solid rgba(0, 180, 255, 0.2);
+  transition: all 0.2s ease;
+}
+
+.swse .language-card:hover {
+  border-color: rgba(0, 180, 255, 0.5);
+  box-shadow: 0 0 10px rgba(0, 180, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+/* INPUT */
+
+.swse .language-input-wrapper {
+  flex: 1;
+}
+
+.swse .language-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--swse-text-primary);
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.swse .language-input::placeholder {
+  opacity: 0.5;
+}
+
+/* REMOVE BUTTON */
+
+.swse .language-remove {
+  background: rgba(255, 60, 60, 0.1);
+  border: 1px solid rgba(255, 60, 60, 0.3);
+  color: #ff7070;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.swse .language-remove:hover {
+  background: rgba(255, 60, 60, 0.25);
+  box-shadow: 0 0 8px rgba(255, 60, 60, 0.6);
+  transform: scale(1.1);
+}
+
+/* ADD BUTTON */
+
+.swse .language-add {
+  font-size: 0.85rem;
+  padding: 0.4rem 0.8rem;
+}
+
+/* EMPTY STATE */
+
+.swse .languages-empty {
+  text-align: center;
+  padding: 2rem 1rem;
+  opacity: 0.6;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.swse .languages-empty .empty-icon {
+  font-size: 1.8rem;
+  opacity: 0.4;
+}
+
+.swse .empty-subtext {
+  font-size: 0.8rem;
+  opacity: 0.5;
+}

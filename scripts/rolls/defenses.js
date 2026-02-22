@@ -12,7 +12,7 @@ import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
  */
 export function calculateDefense(actor, type) {
   const utils = game.swse.utils;
-  const def = actor.system.defenses?.[type];
+  const def = actor.system?.derived?.defenses?.[type];
 
   if (!def) {return 10;}
 
@@ -57,14 +57,14 @@ export async function rollDefense(actor, defenseType) {
   const typeMap = { 'fort': 'fortitude', 'ref': 'reflex' };
   const normalizedType = typeMap[defenseType] || defenseType;
 
-  const defense = actor.system?.defenses?.[normalizedType];
+const defense = actor.system?.derived?.defenses?.[normalizedType];
 
-  if (!defense) {
-    ui.notifications.warn(`Defense ${defenseType} not found`);
-    return null;
-  }
+if (!defense) {
+  ui.notifications.warn(`Defense ${defenseType} not found`);
+  return null;
+}
 
-  const defenseValue = defense.total ?? 10;
+const defenseValue = defense.total ?? defense.value ?? 10;
   const label = normalizedType.charAt(0).toUpperCase() + normalizedType.slice(1);
 
   const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${defenseValue}`).evaluate({ async: true });

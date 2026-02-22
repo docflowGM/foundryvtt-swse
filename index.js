@@ -418,3 +418,18 @@ Hooks.once('canvasDestroyed', () => {
 
 import { UIManager } from './scripts/ui/ui-manager.js';
 UIManager.init();
+
+
+
+// ==========================================================
+// HANDLEBARS RANGE HELPER (IMMEDIATE REGISTRATION)
+// ==========================================================
+if (!Handlebars.helpers.range) {
+  Handlebars.registerHelper("range", function(start, end) {
+    let arr = [];
+    for (let i = start; i < end; i++) {
+      arr.push(i);
+    }
+    return arr;
+  });
+}

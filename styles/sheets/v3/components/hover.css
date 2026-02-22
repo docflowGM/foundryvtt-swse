@@ -1,0 +1,5 @@
+
+.swse .rollable:hover {
+  color: var(--swse-accent-cyan);
+  text-shadow: 0 0 8px var(--swse-accent-cyan);
+}

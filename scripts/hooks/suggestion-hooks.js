@@ -1,11 +1,5 @@
 // scripts/hooks/suggestion-hooks.js
-/**
- * Suggestion system hooks (AppV2-safe)
- *
- * - Cache invalidation on actor/item changes
- * - Mentor Notes access via ActorSheetV2 header control (no DOM injection)
- * - Proactive suggestion triggers for decision steps
- */
+
 import { HooksRegistry } from './hooks-registry.js';
 import { SuggestionService } from '../engine/SuggestionService.js';
 import { SuggestionEngineCoordinator } from '../engine/SuggestionEngineCoordinator.js';
@@ -25,32 +19,32 @@ function isMentorNotesEnabled() {
 }
 
 export function registerSuggestionHooks() {
-  HooksRegistry.register('updateActor', 'swse-sugs-invalidate', (actor) => {
+
+  HooksRegistry.register('updateActor', (actor) => {
     SuggestionService.invalidate(actor.id);
-  });
+  }, { id: 'swse-sugs-invalidate' });
 
-  HooksRegistry.register('createItem', 'swse-sugs-invalidate', (item) => {
+  HooksRegistry.register('createItem', (item) => {
     const actorId = safeGetActorId(item);
-    if (actorId) {SuggestionService.invalidate(actorId);}
-  });
+    if (actorId) SuggestionService.invalidate(actorId);
+  }, { id: 'swse-sugs-invalidate-create' });
 
-  HooksRegistry.register('updateItem', 'swse-sugs-invalidate', (item) => {
+  HooksRegistry.register('updateItem', (item) => {
     const actorId = safeGetActorId(item);
-    if (actorId) {SuggestionService.invalidate(actorId);}
-  });
+    if (actorId) SuggestionService.invalidate(actorId);
+  }, { id: 'swse-sugs-invalidate-update' });
 
-  HooksRegistry.register('deleteItem', 'swse-sugs-invalidate', (item) => {
+  HooksRegistry.register('deleteItem', (item) => {
     const actorId = safeGetActorId(item);
-    if (actorId) {SuggestionService.invalidate(actorId);}
-  });
+    if (actorId) SuggestionService.invalidate(actorId);
+  }, { id: 'swse-sugs-invalidate-delete' });
 
-  // Mentor Notes header control (AppV2)
   HooksRegistry.register('getHeaderControlsApplicationV2', (app, controls) => {
-    if (!isMentorNotesEnabled()) {return;}
+    if (!isMentorNotesEnabled()) return;
     const actor = app?.actor ?? app?.document;
-    if (!actor || actor.documentName !== 'Actor') {return;}
+    if (!actor || actor.documentName !== 'Actor') return;
 
-    if (Array.isArray(controls) && controls.some(c => c?.action === 'swse-mentor-notes')) {return;}
+    if (Array.isArray(controls) && controls.some(c => c?.action === 'swse-mentor-notes')) return;
 
     controls.push({
       action: 'swse-mentor-notes',
@@ -62,9 +56,9 @@ export function registerSuggestionHooks() {
     });
   }, { id: 'swse-mentor-notes' });
 
-  HooksRegistry.register('swse:decision-step-entered', 'swse-sugs-step', async ({ actor, step, pendingData, callback }) => {
+  HooksRegistry.register('swse:decision-step-entered', async ({ actor, step, pendingData, callback }) => {
     try {
-      if (!actor) {return;}
+      if (!actor) return;
 
       const stepToDomain = {
         feats: 'feats',
@@ -76,7 +70,7 @@ export function registerSuggestionHooks() {
       };
 
       const domain = stepToDomain[step];
-      if (!domain) {return;}
+      if (!domain) return;
 
       const suggestions = await SuggestionService.getSuggestions(actor, 'decision-step', {
         domain,
@@ -84,25 +78,26 @@ export function registerSuggestionHooks() {
       });
 
       const strong = (suggestions || []).filter(s => (s?.suggestion?.tier ?? s?.tier ?? 0) >= 4);
-      if (!strong.length) {return;}
+      if (!strong.length) return;
 
-      if (typeof callback === 'function') {callback(strong);}
+      if (typeof callback === 'function') callback(strong);
 
       Hooks.callAll('swse:strong-suggestions-available', {
         actor,
         step,
         suggestions: strong
       });
+
     } catch (err) {
       SWSELogger.error('[SuggestionHooks] Decision step handler failed:', err);
     }
-  });
+  }, { id: 'swse-sugs-step' });
 
-  HooksRegistry.register('swse:pending-selection-changed', 'swse-sugs-pending', ({ actorId }) => {
-    if (!actorId) {return;}
+  HooksRegistry.register('swse:pending-selection-changed', ({ actorId }) => {
+    if (!actorId) return;
     SuggestionService.invalidate(actorId);
     SuggestionEngineCoordinator.clearBuildIntentCache(actorId);
-  });
+  }, { id: 'swse-sugs-pending' });
 
   SWSELogger.log('[SuggestionHooks] Registered (V2-safe)');
 }

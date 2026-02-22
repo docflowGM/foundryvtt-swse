@@ -1,0 +1,54 @@
+
+.swse.sheet.actor.character {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.swse.sheet.actor.character .window-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.swse.sheet.actor.character .sheet-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px;
+  background: var(--swse-bg-primary);
+}
+
+
+
+/* ==========================================================
+   APPV2 SCROLL & RESIZE FIX
+========================================================== */
+
+.swse .window-content {
+  overflow-y: auto !important;
+  overflow-x: hidden;
+}
+
+.swse .sheet-body {
+  overflow-y: auto !important;
+  height: auto !important;
+}
+
+.swse .tab {
+  height: auto !important;
+  overflow-y: auto !important;
+}
+
+/* Prevent accidental overflow locks */
+.swse .v3-panel {
+  overflow: visible !important;
+}
+
+/* Ensure resize works */
+.swse-character-sheet {
+  resize: both;
+  overflow: hidden;
+}
+

@@ -27,7 +27,7 @@ import { ClassesDB } from '../../data/classes-db.js';
 
 // V2 API base class
 import SWSEApplicationV2 from '../base/swse-application-v2.js';
-import { ActorEngine } from '../../actors/engine/actor-engine.js';
+
 
 // v13 Hardening
 import { createActor } from '../../core/document-api-v13.js';

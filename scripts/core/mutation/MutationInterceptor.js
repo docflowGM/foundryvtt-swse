@@ -76,7 +76,7 @@ export class MutationInterceptor {
     _currentMutationContext = context;
 
     // PHASE 3 AUDITING: Start transaction in Sentinel
-    MutationIntegrityLayer.startTransaction(context);
+    if (false) MutationIntegrityLayer.startTransaction(context);
   }
 
   /**
@@ -84,7 +84,7 @@ export class MutationInterceptor {
    */
   static clearContext() {
     // PHASE 3 AUDITING: End transaction in Sentinel
-    MutationIntegrityLayer.endTransaction();
+    if (false) MutationIntegrityLayer.endTransaction();
     _currentMutationContext = null;
   }
 

@@ -1,0 +1,60 @@
+/* ============================================================
+   V3 BIOGRAPHY TAB
+   ============================================================ */
+
+.swse .biography-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Main Bio */
+.swse .swse-bio-main {
+  width: 100%;
+  min-height: 250px;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 15px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+/* Background grid */
+.swse .swse-bio-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px;
+}
+
+.swse .swse-bio-field label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: .7;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.swse .swse-bio-field textarea {
+  min-height: 70px;
+  resize: vertical;
+}
+
+.swse .swse-bio-field input {
+  height: 32px;
+}
+
+/* GM Panel */
+.swse .swse-gm-panel {
+  border: 2px solid rgba(255,215,0,.4);
+  background: linear-gradient(
+    180deg,
+    rgba(255,215,0,.08),
+    rgba(255,215,0,.03)
+  );
+}
+
+.swse .swse-bio-gm {
+  min-height: 220px;
+}

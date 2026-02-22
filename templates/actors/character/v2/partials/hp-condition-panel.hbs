@@ -1,45 +1,27 @@
-<div class="holo-panel">
-  <div class="section-bar">
-    <h3 class="section-header">Hit Points & Condition</h3>
-    <label class="inline-flag">
-      <input type="checkbox" class="swse-v2-condition-persistent" {{#if derived.damage.conditionPersistent}}checked{{/if}} />
-      Persistent
-    </label>
-  </div>
 
-  <div class="swse-v2-hp-row">
-    <div class="swse-v2-hp-block" data-swse-tooltip="HitPoints">
-      <div class="label">HP</div>
-      <div style="display:flex; gap:8px; align-items:center;">
-        <input type="number" name="system.hp.value" value="{{system.hp.value}}" style="width:60px;" {{#unless editable}}disabled{{/unless}} />
-        <span class="value">/ {{derived.hp.max}}</span>
-      </div>
-      {{#if derived.hp.temp}}
-        <div class="muted">Temp: {{derived.hp.temp}}</div>
-      {{/if}}
+<section class="hp-condition-panel v3-panel holo-panel">
+
+  <header class="section-bar">
+    <h3 class="section-header">Health</h3>
+  </header>
+
+  <!-- HP BAR -->
+  <div class="hp-bar-wrapper">
+    <div class="hp-bar">
+      <div class="fill" style="width: {{hp.percent}}%;"></div>
     </div>
-
-    <div class="swse-v2-condition-block" data-swse-tooltip="ConditionTrack">
-      <div class="condition-row">
-        <button type="button" class="swse-v2-condition-improve">Improve</button>
-        <div class="condition-steps">
-          <button type="button" class="swse-v2-condition-step" data-step="0">Normal</button>
-          <button type="button" class="swse-v2-condition-step" data-step="1">-1</button>
-          <button type="button" class="swse-v2-condition-step" data-step="2">-2</button>
-          <button type="button" class="swse-v2-condition-step" data-step="3">-5</button>
-          <button type="button" class="swse-v2-condition-step" data-step="4">-10</button>
-          <button type="button" class="swse-v2-condition-step" data-step="5">Helpless</button>
-        </div>
-        <button type="button" class="swse-v2-condition-worsen">Worsen</button>
-
-        <div class="condition-readout">
-          <span class="label">Penalty:</span>
-          <span class="value">{{derived.damage.conditionPenalty}}</span>
-          {{#if derived.damage.conditionHelpless}}
-            <span class="badge">Helpless</span>
-          {{/if}}
-        </div>
-      </div>
+    <div class="hp-text">
+      {{hp.value}} / {{hp.max}}
     </div>
   </div>
-</div>
+
+  <!-- CONDITION TRACK -->
+  <div class="condition-track">
+
+    {{#each conditionSteps as |step|}}
+      <div class="condition-chevron {{#if step.active}}active{{/if}}"></div>
+    {{/each}}
+
+  </div>
+
+</section>

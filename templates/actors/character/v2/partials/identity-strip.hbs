@@ -1,43 +1,21 @@
-<div class="holo-panel">
-  <div class="section-bar">
-    <h3 class="section-header">Identity</h3>
-  </div>
 
-  <div class="swse-v2-identity-grid">
-    <div class="field"><span class="label">Class</span><button type="button" data-action="select-class" class="swse-link">{{derived.identity.className}}</button></div>
-    <div class="field"><span class="label">Level</span><div style="display:flex; gap:8px; align-items:center;"><span class="value">{{derived.identity.level}}</span><button type="button" data-action="level-up" class="swse-btn">Level Up</button></div></div>
-    <div class="field"><span class="label">Species</span><button type="button" data-action="select-species" class="swse-link">{{derived.identity.species}}</button></div>
-    <div class="field"><span class="label">Gender</span><input type="text" name="system.gender" value="{{system.gender}}" {{#unless editable}}disabled{{/unless}} /></div>
-    <div class="field"><span class="label">Background</span><button type="button" data-action="select-background" class="swse-link">{{derived.identity.background}}</button></div>
-    <div class="field"><span class="label">Destiny</span><span class="value">{{derived.identity.destinyType}}</span></div>
-    <div class="field"><span class="label">Size</span><span class="value">{{derived.identity.size}}</span></div>
-    <div class="field"><span class="label">Speed</span><span class="value">{{derived.identity.speed}}</span></div>
-    <div class="field"><span class="label">Credits</span><input type="number" name="system.credits" value="{{system.credits}}" min="0" {{#unless editable}}disabled{{/unless}} style="width: 100px;" /></div>
-  </div>
+<div class="identity-strip {{#if forceSensitive}}force-sensitive{{/if}}"
+     style="--identity-glow: {{identityGlowColor}};">
 
-  <div class="swse-v2-resources" style="margin-top:8px;">
-    <div class="swse-v2-resource" data-kind="destiny" title="Destiny Points">
-      <span class="label">DP</span>
-      <div style="display:flex; gap:8px; align-items:center;">
-        <span class="ticks">
-          {{#each derived.identity.destinyPointsDisplay.ticks as |tick|}}
-            <span class="tick {{#if tick.filled}}filled{{/if}}"></span>
-          {{/each}}
-        </span>
-        <span class="count">{{system.destinyPoints.value}}/{{system.destinyPoints.max}}</span>
-      </div>
-    </div>
+  <div class="identity-main">
+    <h2 class="identity-name">{{actor.name}}</h2>
 
-    <div class="swse-v2-resource" data-kind="force" title="Force Points">
-      <span class="label">FP</span>
-      <div style="display:flex; gap:8px; align-items:center;">
-        <span class="ticks">
-          {{#each derived.identity.forcePointsDisplay.ticks as |tick|}}
-            <span class="tick {{#if tick.filled}}filled{{/if}}"></span>
-          {{/each}}
-        </span>
-        <span class="count">{{system.forcePoints.value}}/{{system.forcePoints.max}}</span>
-      </div>
+    <div class="identity-meta">
+      <span>Species: {{system.race}}</span>
+      <span>Homeworld: {{system.planetOfOrigin}}</span>
+      <span>Background: {{system.profession}}</span>
     </div>
   </div>
+
+  {{#if forceSensitive}}
+    <div class="identity-force-indicator">
+      <i class="fa-solid fa-bolt"></i>
+    </div>
+  {{/if}}
+
 </div>

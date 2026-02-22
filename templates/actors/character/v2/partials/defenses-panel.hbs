@@ -1,67 +1,92 @@
-<div class="holo-panel">
-  <div class="section-bar">
+
+<section class="defenses-panel v3-panel holo-panel">
+
+  <header class="section-bar">
     <h3 class="section-header">Defenses</h3>
+    <button type="button"
+            data-action="toggle-defenses"
+            class="swse-btn defenses-toggle">
+      More
+    </button>
+  </header>
+
+  <div class="defenses-container">
+
+    {{#each headerDefenses as |def|}}
+
+      <div class="defense-row defense-{{def.key}}">
+
+        <!-- COLLAPSED -->
+        <div class="defense-collapsed">
+
+          <div class="defense-label">
+            {{def.label}}
+          </div>
+
+          <div class="defense-total">
+            {{def.total}}
+          </div>
+
+        </div>
+
+        <!-- EXPANDED -->
+        <div class="defense-expanded">
+
+          <!-- Level (Derived) -->
+          <div class="math-pill derived">
+            <label>½ Lvl</label>
+            <div class="pill-value">
+              {{@root.derived.identity.halfLevel}}
+            </div>
+          </div>
+
+          <!-- Armor (Derived) -->
+          <div class="math-pill derived">
+            <label>Armor</label>
+            <div class="pill-value">
+              {{def.armorBonus}}
+            </div>
+          </div>
+
+          <!-- Ability (Derived) -->
+          <div class="math-pill derived">
+            <label>Ability</label>
+            <div class="pill-value">
+              {{def.abilityMod}}
+            </div>
+          </div>
+
+          <!-- Class (Derived if used) -->
+          <div class="math-pill derived">
+            <label>Class</label>
+            <div class="pill-value">
+              {{def.classBonus}}
+            </div>
+          </div>
+
+          <!-- Misc (Editable) -->
+          <div class="math-pill editable">
+            <label>Misc</label>
+            <input type="number"
+                   data-field="misc"
+                   name="system.defenses.{{def.key}}.miscMod"
+                   value="{{def.miscMod}}">
+          </div>
+
+          <div class="math-equals">
+            =
+          </div>
+
+          <div class="math-result">
+            {{def.total}}
+          </div>
+
+        </div>
+
+      </div>
+
+    {{/each}}
+
   </div>
 
-  <div class="swse-v2-defenses-breakdown">
-    <!-- REFLEX -->
-    <div class="defense-row">
-      <div class="defense-label" data-action="roll-defense" data-defense="reflex">Reflex</div>
-      <div class="defense-inputs flexrow">
-        <select class="defense-ability-select" name="system.defenses.reflex.ability" title="Select ability modifier for Reflex">
-          <option value="str" {{#if (eq system.defenses.reflex.ability "str")}}selected{{/if}}>STR</option>
-          <option value="dex" {{#if (eq system.defenses.reflex.ability "dex")}}selected{{/if}}>DEX</option>
-          <option value="con" {{#if (eq system.defenses.reflex.ability "con")}}selected{{/if}}>CON</option>
-          <option value="int" {{#if (eq system.defenses.reflex.ability "int")}}selected{{/if}}>INT</option>
-          <option value="wis" {{#if (eq system.defenses.reflex.ability "wis")}}selected{{/if}}>WIS</option>
-          <option value="cha" {{#if (eq system.defenses.reflex.ability "cha")}}selected{{/if}}>CHA</option>
-        </select>
-        <input type="number" class="defense-misc-input" name="system.defenses.reflex.misc.user.extra" value="{{system.defenses.reflex.misc.user.extra}}" placeholder="Misc" title="Miscellaneous modifier"/>
-        <span class="defense-total" data-action="roll-defense" data-defense="reflex">{{system.defenses.reflex.total}}</span>
-      </div>
-    </div>
-
-    <!-- FORTITUDE -->
-    <div class="defense-row">
-      <div class="defense-label" data-action="roll-defense" data-defense="fortitude">Fortitude</div>
-      <div class="defense-inputs flexrow">
-        <select class="defense-ability-select" name="system.defenses.fort.ability" title="Select ability modifier for Fortitude">
-          <option value="str" {{#if (eq system.defenses.fort.ability "str")}}selected{{/if}}>STR</option>
-          <option value="dex" {{#if (eq system.defenses.fort.ability "dex")}}selected{{/if}}>DEX</option>
-          <option value="con" {{#if (eq system.defenses.fort.ability "con")}}selected{{/if}}>CON</option>
-          <option value="int" {{#if (eq system.defenses.fort.ability "int")}}selected{{/if}}>INT</option>
-          <option value="wis" {{#if (eq system.defenses.fort.ability "wis")}}selected{{/if}}>WIS</option>
-          <option value="cha" {{#if (eq system.defenses.fort.ability "cha")}}selected{{/if}}>CHA</option>
-        </select>
-        <input type="number" class="defense-misc-input" name="system.defenses.fort.misc.user.extra" value="{{system.defenses.fort.misc.user.extra}}" placeholder="Misc" title="Miscellaneous modifier"/>
-        <span class="defense-total" data-action="roll-defense" data-defense="fortitude">{{system.defenses.fort.total}}</span>
-      </div>
-    </div>
-
-    <!-- WILL -->
-    <div class="defense-row">
-      <div class="defense-label" data-action="roll-defense" data-defense="will">Will</div>
-      <div class="defense-inputs flexrow">
-        <select class="defense-ability-select" name="system.defenses.will.ability" title="Select ability modifier for Will">
-          <option value="str" {{#if (eq system.defenses.will.ability "str")}}selected{{/if}}>STR</option>
-          <option value="dex" {{#if (eq system.defenses.will.ability "dex")}}selected{{/if}}>DEX</option>
-          <option value="con" {{#if (eq system.defenses.will.ability "con")}}selected{{/if}}>CON</option>
-          <option value="int" {{#if (eq system.defenses.will.ability "int")}}selected{{/if}}>INT</option>
-          <option value="wis" {{#if (eq system.defenses.will.ability "wis")}}selected{{/if}}>WIS</option>
-          <option value="cha" {{#if (eq system.defenses.will.ability "cha")}}selected{{/if}}>CHA</option>
-        </select>
-        <input type="number" class="defense-misc-input" name="system.defenses.will.misc.user.extra" value="{{system.defenses.will.misc.user.extra}}" placeholder="Misc" title="Miscellaneous modifier"/>
-        <span class="defense-total" data-action="roll-defense" data-defense="will">{{system.defenses.will.total}}</span>
-      </div>
-    </div>
-
-    <!-- FLAT-FOOTED -->
-    <div class="defense-row">
-      <div class="defense-label">Flat-Footed</div>
-      <div class="defense-inputs flexrow">
-        <span class="defense-note">(Reflex without ability mod)</span>
-        <span class="defense-total">{{system.defenses.flatFooted.total}}</span>
-      </div>
-    </div>
-  </div>
-</div>
+</section>

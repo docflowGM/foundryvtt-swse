@@ -1,0 +1,94 @@
+
+<section class="force-panel v3-panel holo-panel">
+
+  <header class="section-bar force-controls">
+    <h3 class="section-header">Force Suite</h3>
+
+    <div class="force-filter-bar">
+      <select data-action="force-sort">
+        <option value="name">Sort: Name</option>
+        <option value="tag">Sort: Tag</option>
+      </select>
+
+      <div class="force-tag-filters">
+        {{#each forceTags as |tag|}}
+          <button type="button"
+                  class="force-tag-filter"
+                  data-tag="{{tag}}">
+            {{tag}}
+          </button>
+        {{/each}}
+      </div>
+    </div>
+  </header>
+
+  <div class="force-zone hand-zone {{#if lowHand}}low-hand{{/if}}">
+    <div class="zone-label">
+      Hand ({{forceSuite.hand.length}})
+    </div>
+
+    <div class="force-card-grid">
+      {{#each forceSuite.hand as |power|}}
+        <div class="force-card"
+             data-item-id="{{power.id}}"
+             data-tags="{{power.tagString}}">
+
+          <div class="force-card-inner">
+
+            <div class="force-card-face front">
+              <div class="force-card-header">
+                <span class="force-name">{{power.name}}</span>
+              </div>
+
+              <div class="force-tags">
+                {{#each power.tags}}
+                  <span class="tag">{{this}}</span>
+                {{/each}}
+              </div>
+
+              <div class="flip-indicator">
+                Flip for more ⟳
+              </div>
+            </div>
+
+            <div class="force-card-face back">
+
+              <div class="force-back-content">
+                {{{power.system.description}}}
+              </div>
+
+              <div class="force-back-actions">
+                <button data-action="activate-force"
+                        data-item-id="{{power.id}}">
+                  Activate
+                </button>
+                <button class="flip-back">
+                  ↺ Back
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+
+  <div class="force-zone discard-zone">
+    <div class="zone-label">
+      Discard ({{forceSuite.discard.length}})
+    </div>
+
+    <div class="force-card-grid discard">
+      {{#each forceSuite.discard as |power|}}
+        <div class="force-card discarded">
+          <div class="force-card-face front">
+            <span>{{power.name}}</span>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+
+</section>

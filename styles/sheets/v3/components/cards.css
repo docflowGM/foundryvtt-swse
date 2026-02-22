@@ -1,0 +1,13 @@
+
+.swse .holo-panel {
+  background: var(--swse-bg-panel);
+  border-radius: var(--swse-radius);
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
+  transition: all 0.2s ease;
+}
+
+.swse .holo-panel:hover {
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.4);
+}

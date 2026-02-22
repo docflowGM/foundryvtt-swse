@@ -1,0 +1,15 @@
+
+.swse {
+  font-family: "Orbitron", "Segoe UI", sans-serif;
+  font-size: 16px;
+  color: var(--swse-text-primary);
+}
+
+.swse h1 { font-size: 28px; }
+.swse h2 { font-size: 22px; }
+.swse h3 { font-size: 18px; }
+
+.swse label {
+  font-size: 13px;
+  color: var(--swse-text-secondary);
+}

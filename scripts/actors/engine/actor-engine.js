@@ -1124,3 +1124,36 @@ export const ActorEngine = {
   }
 
 };
+
+
+  /* ============================================================
+     BUILD DERIVED STATE (AUTHORITATIVE)
+  ============================================================ */
+
+  static buildDerivedState(actor) {
+
+    const abilityKeys = ["str","dex","con","int","wis","cha"];
+
+    const abilities = abilityKeys.map(key => {
+      const total = actor.system?.abilities?.[key]?.total ?? 10;
+      return {
+        key,
+        label: key.toUpperCase(),
+        total,
+        mod: Math.floor((total - 10) / 2)
+      };
+    });
+
+    const currentStep = actor.system?.conditionTrack?.current ?? 0;
+
+    const conditionSteps = Array.from({ length: 5 }).map((_, i) => ({
+      index: i,
+      active: i <= currentStep
+    }));
+
+    return {
+      abilities,
+      conditionSteps
+    };
+  }
+

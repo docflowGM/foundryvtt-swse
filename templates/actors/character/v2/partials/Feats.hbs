@@ -1,0 +1,41 @@
+<section class="abilities-section feats-section v3-panel holo-panel">
+
+  <header class="section-bar">
+    <h3 class="section-header">Feats</h3>
+    <button type="button"
+            class="add-feat swse-btn"
+            data-action="add-feat">
+      + Add Feat
+    </button>
+  </header>
+
+  {{#if derived.feats.length}}
+    <div class="feat-grid">
+      {{#each derived.feats as |feat|}}
+        <div class="feat-card"
+             data-item-id="{{feat.id}}"
+             data-action="open-ability">
+
+          <div class="card-header">
+            <span class="card-title">{{feat.name}}</span>
+            {{#if feat.system.custom}}
+              <span class="card-tag custom">CUSTOM</span>
+            {{/if}}
+          </div>
+
+          {{#if feat.summary}}
+            <div class="card-summary">
+              {{feat.summary}}
+            </div>
+          {{/if}}
+
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="muted empty-state">
+      No feats.
+    </div>
+  {{/if}}
+
+</section>

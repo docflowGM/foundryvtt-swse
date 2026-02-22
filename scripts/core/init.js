@@ -1,3 +1,4 @@
+import { HookInvestigator } from "./sentinel/hook-investigator.js";
 /**
  * SWSE Init — placeholder to satisfy Foundry system validation
  */
@@ -26,3 +27,28 @@ Hooks.once('ready', () => {
     }
   }
 });
+
+
+// Hook Investigator (runtime hook validation)
+Hooks.once("init", () => {
+  HookInvestigator.initialize();
+});
+
+
+
+);
+
+
+
+// ==========================================================
+// HANDLEBARS RANGE HELPER (IMMEDIATE REGISTRATION)
+// ==========================================================
+if (!Handlebars.helpers.range) {
+  Handlebars.registerHelper("range", function(start, end) {
+    let arr = [];
+    for (let i = start; i < end; i++) {
+      arr.push(i);
+    }
+    return arr;
+  });
+}

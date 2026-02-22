@@ -1,0 +1,52 @@
+<section class="abilities-section talents-section v3-panel holo-panel">
+
+  <header class="section-bar">
+    <h3 class="section-header">Talents</h3>
+    <button type="button"
+            class="add-talent swse-btn"
+            data-action="add-talent">
+      + Add Talent
+    </button>
+  </header>
+
+  {{#if derived.talents.groups.length}}
+    {{#each derived.talents.groups as |group|}}
+      <div class="talent-tree-group">
+
+        <div class="talent-tree-label">
+          {{group.label}}
+          <span class="talent-tree-count">{{group.count}}</span>
+        </div>
+
+        <div class="talent-card-list">
+          {{#each group.items as |talent|}}
+            <div class="talent-card"
+                 data-item-id="{{talent.id}}"
+                 data-action="open-ability">
+
+              <div class="card-header">
+                <span class="card-title">{{talent.name}}</span>
+                {{#if talent.sourceClass}}
+                  <span class="card-tag">{{talent.sourceClass}}</span>
+                {{/if}}
+              </div>
+
+              {{#if talent.summary}}
+                <div class="card-summary">
+                  {{talent.summary}}
+                </div>
+              {{/if}}
+
+            </div>
+          {{/each}}
+        </div>
+
+      </div>
+    {{/each}}
+  {{else}}
+    <div class="muted empty-state">
+      No talents.
+    </div>
+  {{/if}}
+
+</section>

@@ -1,34 +1,52 @@
-<div class="holo-panel">
-  <div class="section-bar">
-    <h3 class="section-header">Second Wind</h3>
-  </div>
+<section class="swse-second-wind-panel v3-panel holo-panel">
 
-  <div class="swse-v2-second-wind">
-    <div class="swse-v2-sw-info">
-      <div class="sw-stat">
-        <span class="label">Healing</span>
-        <span class="value">{{system.secondWind.healing}} HP</span>
-      </div>
-      <div class="sw-stat">
-        <span class="label">Uses Remaining</span>
-        <span class="value">{{system.secondWind.uses}} / {{system.secondWind.max}}</span>
-      </div>
+  <header class="section-bar">
+    <h3 class="section-header">Second Wind</h3>
+  </header>
+
+  <div class="sw-content">
+
+    <!-- Healing Amount -->
+    <div class="sw-healing-display">
+      <span class="sw-healing-label">Healing</span>
+      <span class="sw-healing-value">
+        {{system.secondWind.healing}} HP
+      </span>
     </div>
 
-    <div class="swse-v2-sw-actions">
+    <!-- Uses Tracker -->
+    <div class="sw-uses-tracker">
+      {{#each (range 0 system.secondWind.max) as |i|}}
+        <div class="sw-charge
+          {{#if (lt i ../system.secondWind.uses)}}active{{/if}}">
+        </div>
+      {{/each}}
+    </div>
+
+    <!-- Primary Action -->
+    <div class="sw-actions">
+
       {{#if (gt system.secondWind.uses 0)}}
-        <button type="button" class="swse-v2-sw-recover" data-action="use-second-wind">
-          Recover {{system.secondWind.healing}} HP
+        <button type="button"
+                class="sw-recover-btn"
+                data-action="use-second-wind">
+          Regain {{system.secondWind.healing}} HP
         </button>
       {{else}}
-        <button type="button" class="swse-v2-sw-recover" disabled>
+        <button type="button"
+                class="sw-recover-btn disabled"
+                disabled>
           No Uses Remaining
         </button>
       {{/if}}
 
-      <button type="button" class="swse-v2-sw-rest" data-action="rest-second-wind">
-        Rest (Reset Uses)
+      <button type="button"
+              class="sw-rest-btn"
+              data-action="rest-second-wind">
+        Reset Uses
       </button>
+
     </div>
+
   </div>
-</div>
+</section>
