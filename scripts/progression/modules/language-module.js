@@ -1,8 +1,7 @@
 /**
  * SWSE Language Progression Module
  * Option A: Classic SWSE rules integrated with the Progression Engine.
- *
- * (module contents omitted here for brevity - the assistant will write full content)
+ * PHASE 10: All mutations route through ActorEngine with recursive guards.
  */
 export class SWSELanguageModule {
   static NAME = 'swse-language-module';
@@ -28,8 +27,9 @@ export class SWSELanguageModule {
     });
 
     // Listen for actor updates to handle feat/skill changes
-    Hooks.on('updateActor', async (actor, diff) => {
-      try { await SWSELanguageModule.onActorUpdate(actor, diff); } catch (e) { /* swallow */ }
+    // PHASE 10: Pass options parameter to access metadata for guard keys
+    Hooks.on('updateActor', async (actor, diff, options) => {
+      try { await SWSELanguageModule.onActorUpdate(actor, diff, options); } catch (e) { /* swallow */ }
     });
 
     console.log('SWSE | Language Module initialized');
@@ -43,9 +43,18 @@ export class SWSELanguageModule {
     const bonusSlots = Array.from({ length: bonusCount }).map(() => SWSELanguageModule.CHOICE_TOKEN);
     const starting = SWSELanguageModule._normalizeLanguages(speciesLangs);
     const merged = SWSELanguageModule._dedupe([...starting, ...bonusSlots]);
-    await actor.update({ 'system.languages': merged }).catch(e => {
-      console.warn('SWSE | Language module: failed to write languages at chargen', e);
-    });
+    // PHASE 10: Route through ActorEngine with guard key to prevent infinite loops
+    if (globalThis.SWSE?.ActorEngine?.updateActor) {
+      await globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.languages': merged }, {
+        meta: { guardKey: 'language-chargen' }
+      }).catch(e => {
+        console.warn('SWSE | Language module: failed to write languages at chargen', e);
+      });
+    } else {
+      await actor.update({ 'system.languages': merged }).catch(e => {
+        console.warn('SWSE | Language module: failed to write languages at chargen', e);
+      });
+    }
   }
   static async handleLevelUp(payload) {
     // Note: Languages on level-up are granted through AttributeIncreaseHandler
@@ -60,13 +69,24 @@ export class SWSELanguageModule {
 
     // Only update if there are differences
     if (JSON.stringify(langs) !== JSON.stringify(deduped)) {
-      await actor.update({ 'system.languages': deduped }).catch(e => {
-        console.warn('SWSE | Language module: failed to sync languages on level-up.', e);
-      });
+      // PHASE 10: Route through ActorEngine with guard key to prevent infinite loops
+      if (globalThis.SWSE?.ActorEngine?.updateActor) {
+        await globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.languages': deduped }, {
+          meta: { guardKey: 'language-levelup' }
+        }).catch(e => {
+          console.warn('SWSE | Language module: failed to sync languages on level-up.', e);
+        });
+      } else {
+        await actor.update({ 'system.languages': deduped }).catch(e => {
+          console.warn('SWSE | Language module: failed to sync languages on level-up.', e);
+        });
+      }
     }
   }
-  static async onActorUpdate(actor, diff) {
+  static async onActorUpdate(actor, diff, options) {
     if (!actor || !actor.isOwner) {return;}
+    // PHASE 10: Guard against re-entrant language sync
+    if (options?.meta?.guardKey === 'language-sync') {return;}
     if (!diff || (!diff.items && !diff.system && !diff.system?.abilities)) {return;}
     let current = SWSELanguageModule._normalizeLanguages(actor.system.languages || []);
     const hasLinguist = actor.items?.some(i => (i.type || i.system?.type) && (i.name === 'Linguist' || i.slug === 'linguist'));
@@ -87,9 +107,18 @@ export class SWSELanguageModule {
     const speciesBase = SWSELanguageModule._normalizeLanguages(SWSELanguageModule._getSpeciesLanguages(actor));
     current = [...speciesBase, ...current.filter(x => !speciesBase.includes(x))];
     current = SWSELanguageModule._dedupe(current);
-    await actor.update({ 'system.languages': current }).catch(e => {
-      console.warn('SWSE | Language module: failed to update actor languages on actor update', e);
-    });
+    // PHASE 10: Route through ActorEngine with guard key to prevent infinite loops
+    if (globalThis.SWSE?.ActorEngine?.updateActor) {
+      await globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.languages': current }, {
+        meta: { guardKey: 'language-sync' }
+      }).catch(e => {
+        console.warn('SWSE | Language module: failed to update actor languages on actor update', e);
+      });
+    } else {
+      await actor.update({ 'system.languages': current }).catch(e => {
+        console.warn('SWSE | Language module: failed to update actor languages on actor update', e);
+      });
+    }
   }
   static CHOICE_TOKEN = 'CHOOSE_LANGUAGE';
   static LINGUIST_TOKEN = 'FEAT_LINGUIST';

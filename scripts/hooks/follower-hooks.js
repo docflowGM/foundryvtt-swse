@@ -3,6 +3,7 @@ import { swseLogger } from '../utils/logger.js';
 
 /**
  * Follower Hooks (AppV2-safe)
+ * PHASE 10: Recursive guards prevent cascading follower deletion loops
  *
  * Responsibilities:
  * - Maintain flags.swse.followerSlots based on follower-granting talents.
@@ -55,9 +56,16 @@ async function _removeGrantedItemsFromFollower(ownerActor, followerActorId, tale
     await follower.deleteEmbeddedDocuments('Item', toDelete);
   }
 
+  // PHASE 10: Route through ActorEngine with guard key for owner update
   // Best-effort detach from owner's ownedActors list.
   const owned = (ownerActor.system.ownedActors || []).filter(o => o.id !== followerActorId);
-  await ownerActor.update({ 'system.ownedActors': owned });
+  if (globalThis.SWSE?.ActorEngine?.updateActor) {
+    await globalThis.SWSE.ActorEngine.updateActor(ownerActor, { 'system.ownedActors': owned }, {
+      meta: { guardKey: 'follower-cleanup' }
+    });
+  } else {
+    await ownerActor.update({ 'system.ownedActors': owned });
+  }
 }
 
 /**
@@ -104,6 +112,9 @@ export function initializeFollowerHooks() {
   Hooks.on('deleteItem', async (item, options, userId) => {
     if (game.user.id !== userId) return;
     if (item.type !== 'talent') return;
+
+    // PHASE 10: Guard against cascading follower deletion loops
+    if (options?.meta?.guardKey === 'follower-cleanup') return;
 
     const actor = item.actor;
     if (!actor || actor.type !== 'character') return;

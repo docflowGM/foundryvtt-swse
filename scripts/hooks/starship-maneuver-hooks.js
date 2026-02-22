@@ -2,6 +2,7 @@ import { SWSELogger } from '../utils/logger.js';
 /**
  * Starship Maneuver Hooks
  * Handles automatic maneuver grants when feats are added or abilities change
+ * PHASE 10: Recursive guards prevent infinite item creation loops
  */
 
 import { StarshipManeuverManager } from '../utils/starship-maneuver-manager.js';
@@ -14,6 +15,9 @@ export function initializeStarshipManeuverHooks() {
   Hooks.on('createItem', async (item, options, userId) => {
     // Only process on the creating user's client
     if (game.user.id !== userId) {return;}
+
+    // PHASE 10: Guard against re-entrant item creation from maneuver grants
+    if (options?.meta?.guardKey === 'starship-maneuver-grant') {return;}
 
     // Only process feats
     if (item.type !== 'feat') {return;}
@@ -50,6 +54,9 @@ export function initializeStarshipManeuverHooks() {
   Hooks.on('updateActor', async (actor, changes, options, userId) => {
     // Only process on the updating user's client
     if (game.user.id !== userId) {return;}
+
+    // PHASE 10: Guard against re-entrant ability checks from maneuver grants
+    if (options?.meta?.guardKey === 'starship-maneuver-grant') {return;}
 
     // Check if abilities were updated and we have old values
     if (!changes.system?.abilities || !options.oldAbilities) {return;}

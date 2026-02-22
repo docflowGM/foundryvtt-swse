@@ -63,12 +63,17 @@ export const ActorEngine = {
   /**
    * updateActor()
    * PHASE 3: Single mutation authority for all actor field updates.
+   * PHASE 10: Enhanced with transaction metadata for recursive guard support.
    *
    * Enforced contract:
    * 1. Set mutation context (authorizes actor.update() call)
    * 2. Apply atomic update to actor
    * 3. Trigger single recalculation
    * 4. Clear mutation context
+   *
+   * Transaction metadata support:
+   * - options.meta.guardKey: String to prevent re-entrant hook mutations
+   * - Example: { guardKey: 'language-sync' } prevents same hook from re-firing
    *
    * This is the ONLY legal path to actor mutations.
    */
@@ -82,8 +87,17 @@ export const ActorEngine = {
 
       swseLogger.debug(`ActorEngine.updateActor → ${actor.name}`, {
         updateData,
-        options
+        meta: options.meta,
+        guardKey: options.meta?.guardKey
       });
+
+      // ========================================
+      // PHASE 10: Extract and propagate metadata
+      // ========================================
+      const meta = options.meta || {};
+      if (meta.guardKey) {
+        swseLogger.debug(`[GUARD] updateActor with guardKey: ${meta.guardKey}`);
+      }
 
       // ========================================
       // PHASE 3: Authorize mutation via context
@@ -91,7 +105,12 @@ export const ActorEngine = {
       MutationInterceptor.setContext('ActorEngine.updateActor');
       try {
         // Perform safe atomic update (now authorized)
-        const result = await applyActorUpdateAtomic(actor, updateData, options);
+        // Pass metadata through options to Foundry hooks
+        const optsWithMeta = {
+          ...options,
+          meta: meta
+        };
+        const result = await applyActorUpdateAtomic(actor, updateData, optsWithMeta);
 
         // Kick off a recalculation pass (async, not awaited)
         setTimeout(() => {
@@ -111,7 +130,8 @@ export const ActorEngine = {
     } catch (err) {
       swseLogger.error(`ActorEngine.updateActor failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err,
-        updateData
+        updateData,
+        meta: options.meta?.guardKey
       });
       throw err;
     }
