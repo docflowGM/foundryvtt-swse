@@ -13,6 +13,7 @@
 
 import { log } from './foundry-env.js';
 import { assertEmbeddedDocOwnership, validateItemForCreation } from './mutation-safety.js';
+import { ActorEngine } from '../actors/engine/actor-engine.js';
 
 const SYSTEM_ID = 'foundryvtt-swse';
 
@@ -45,6 +46,7 @@ export async function createActor(actorData, options = {}) {
 
 /**
  * Create item in actor - v13 safe
+ * PHASE 8: Routes through ActorEngine for governance
  * @param {Actor} actor
  * @param {Object|Array} itemData
  * @param {Object} options
@@ -71,13 +73,14 @@ export async function createItemInActor(actor, itemData, options = {}) {
   }
 
   try {
-    const created = await actor.createEmbeddedDocuments('Item', dataArray, options);
-    if (!created || created.length === 0) {
+    // PHASE 8: Use ActorEngine for atomic creation
+    const result = await ActorEngine.createEmbeddedDocuments(actor, 'Item', dataArray, options);
+    if (!result || result.length === 0) {
       log.warn(`createItemInActor: No items created in ${actor.name}`);
       return null;
     }
 
-    return Array.isArray(itemData) ? created : created[0];
+    return Array.isArray(itemData) ? result : result[0];
   } catch (err) {
     log.error(`createItemInActor failed for ${actor.name}:`, err.message);
     return null;
@@ -139,6 +142,7 @@ export async function deleteActor(actors, options = {}) {
 
 /**
  * Delete item in actor - v13 safe
+ * PHASE 8: Routes through ActorEngine for governance
  * @param {Actor} actor
  * @param {Item|Array} items
  * @param {Object} options
@@ -163,7 +167,8 @@ export async function deleteItemInActor(actor, items, options = {}) {
   }
 
   try {
-    return await actor.deleteEmbeddedDocuments('Item', ids, options);
+    // PHASE 8: Use ActorEngine for atomic deletion
+    return await ActorEngine.deleteEmbeddedDocuments(actor, 'Item', ids, options);
   } catch (err) {
     log.error(`deleteItemInActor failed for ${actor.name}:`, err.message);
     return null;
@@ -191,6 +196,7 @@ export async function createChatMessage(messageData, options = {}) {
 
 /**
  * Create active effect on actor - v13 safe
+ * PHASE 8: Routes through ActorEngine for governance
  * @param {Actor} actor
  * @param {Object|Array} effectData
  * @param {Object} options
@@ -208,7 +214,8 @@ export async function createEffectOnActor(actor, effectData, options = {}) {
   const dataArray = Array.isArray(effectData) ? effectData : [effectData];
 
   try {
-    const created = await actor.createEmbeddedDocuments('ActiveEffect', dataArray, options);
+    // PHASE 8: Use ActorEngine for atomic creation
+    const created = await ActorEngine.createEmbeddedDocuments(actor, 'ActiveEffect', dataArray, options);
     return Array.isArray(effectData) ? created : created?.[0] ?? null;
   } catch (err) {
     log.error(`createEffectOnActor failed for ${actor.name}:`, err.message);
@@ -218,6 +225,7 @@ export async function createEffectOnActor(actor, effectData, options = {}) {
 
 /**
  * Delete active effect from actor - v13 safe
+ * PHASE 8: Routes through ActorEngine for governance
  * @param {Actor} actor
  * @param {ActiveEffect|Array} effects
  * @param {Object} options
@@ -242,7 +250,8 @@ export async function deleteEffectFromActor(actor, effects, options = {}) {
   }
 
   try {
-    return await actor.deleteEmbeddedDocuments('ActiveEffect', ids, options);
+    // PHASE 8: Use ActorEngine for atomic deletion
+    return await ActorEngine.deleteEmbeddedDocuments(actor, 'ActiveEffect', ids, options);
   } catch (err) {
     log.error(`deleteEffectFromActor failed for ${actor.name}:`, err.message);
     return null;
