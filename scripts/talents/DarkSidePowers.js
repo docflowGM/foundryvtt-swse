@@ -235,7 +235,7 @@ export class DarkSidePowers {
 
     for (const dmg of applicableDamages) {
       const newHp = Math.max(0, actor.system.hp?.value - dmg.damage);
-      await actor.update({ 'system.hp.value': newHp });
+      await ActorEngine.updateActor(actor, { 'system.hp.value': newHp });
 
       const messageContent = `
         <div class="swse-wrath-damage">
@@ -301,7 +301,7 @@ export class DarkSidePowers {
         };
       }
 
-      await actor.update({
+      await ActorEngine.updateActor(actor, {
         'system.forcePoints.value': currentFP - 1
       });
     }
@@ -311,7 +311,7 @@ export class DarkSidePowers {
     const damageAmount = roll.total;
 
     const newHp = Math.max(0, targetToken.actor.system.hp.value - damageAmount);
-    await targetToken.actor.update({ 'system.hp.value': newHp });
+    await ActorEngine.updateActor(targetToken.actor, { 'system.hp.value': newHp });
 
     const chatContent = `
       <div class="swse-channel-aggression">
@@ -367,7 +367,7 @@ export class DarkSidePowers {
         };
       }
 
-      await actor.update({
+      await ActorEngine.updateActor(actor, {
         'system.forcePoints.value': currentFP - 1
       });
     }
@@ -424,7 +424,7 @@ export class DarkSidePowers {
     const currentCondition = actor.system.conditionTrack?.value || 0;
     const newCondition = Math.max(0, currentCondition - 1);
 
-    await actor.update({
+    await ActorEngine.updateActor(actor, {
       'system.conditionTrack.value': newCondition
     });
 
@@ -475,7 +475,7 @@ export class DarkSidePowers {
         };
       }
 
-      await actor.update({
+      await ActorEngine.updateActor(actor, {
         'system.forcePoints.value': currentFP - 1
       });
     }
@@ -492,7 +492,7 @@ export class DarkSidePowers {
       maxHpWhenCrippled: targetActor.system.hp.max
     });
 
-    await targetActor.update({
+    await ActorEngine.updateActor(targetActor, {
       'system.speed.current': crippledSpeed
     });
 
@@ -535,7 +535,7 @@ export class DarkSidePowers {
     const crippledInfo = targetActor.getFlag('foundryvtt-swse', 'isCrippled');
     if (!crippledInfo) {return;}
 
-    await targetActor.update({
+    await ActorEngine.updateActor(targetActor, {
       'system.speed.current': crippledInfo.originalSpeed
     });
 
@@ -622,7 +622,7 @@ export class DarkSidePowers {
         };
       }
 
-      await actor.update({
+      await ActorEngine.updateActor(actor, {
         'system.forcePoints.value': currentFP - 1
       });
     }
@@ -1235,7 +1235,7 @@ export class DarkSidePowers {
       const damageAmount = damageRoll.total;
 
       const newHp = Math.max(0, targetActor.system.hp.value - damageAmount);
-      await targetActor.update({ 'system.hp.value': newHp });
+      await ActorEngine.updateActor(targetActor, { 'system.hp.value': newHp });
 
       const chatContent = `
         <div class="swse-affliction-damage">
@@ -1607,7 +1607,7 @@ export class DarkSidePowers {
     }
 
     // Spend the credits
-    await actor.update({
+    await ActorEngine.updateActor(actor, {
       'system.credits': actorCredits - enhancementCost
     });
 
@@ -1675,7 +1675,7 @@ export class DarkSidePowers {
     }
 
     // Spend Force Point
-    await actor.update({
+    await ActorEngine.updateActor(actor, {
       'system.forcePoints.value': currentFP - 1
     });
 
@@ -1684,7 +1684,7 @@ export class DarkSidePowers {
 
     // Increase DSP by 1
     const newDSP = dspBonus + 1;
-    await actor.update({
+    await ActorEngine.updateActor(actor, {
       'system.darkSideScore': newDSP
     });
 
@@ -1973,7 +1973,7 @@ export async function _spendCredits(actor, amount) {
   if (credits < amount) {
     return { ok: false, message: `Insufficient credits. Requires ${amount} credits (you have ${credits}).` };
   }
-  await actor.update({ 'system.credits': credits - amount });
+  await ActorEngine.updateActor(actor, { 'system.credits': credits - amount });
   return { ok: true, before: credits, after: credits - amount };
 }
 
@@ -1986,7 +1986,7 @@ export async function _spendFP(actor, amount = 1) {
   if (fp < amount) {
     return { ok: false, message: `Not enough Force Points. Requires ${amount} Force Point(s).` };
   }
-  await actor.update({ 'system.forcePoints.value': fp - amount });
+  await ActorEngine.updateActor(actor, { 'system.forcePoints.value': fp - amount });
   return { ok: true, before: fp, after: fp - amount };
 }
 
@@ -1997,7 +1997,7 @@ export function _getDSP(actor) {
 export async function _increaseDSP(actor, amount = 1) {
   const dsp = _getDSP(actor);
   const next = dsp + amount;
-  await actor.update({ 'system.darkSideScore': next });
+  await ActorEngine.updateActor(actor, { 'system.darkSideScore': next });
   return { before: dsp, after: next };
 }
 

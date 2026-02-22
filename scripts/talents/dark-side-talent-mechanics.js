@@ -289,7 +289,7 @@ export class DarkSideTalentMechanics {
     for (const dmg of applicableDamages) {
       // Apply damage
       const newHp = Math.max(0, actor.system.hp?.value - dmg.damage);
-      await actor.update({ 'system.hp.value': newHp });
+      await ActorEngine.updateActor(actor, { 'system.hp.value': newHp });
 
       // Create chat message
       const messageContent = `

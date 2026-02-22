@@ -352,7 +352,7 @@ export class DarkSideDevoteeMechanics {
     if (!crippledInfo) {return;}
 
     // Restore original speed
-    await targetActor.update({
+    await ActorEngine.updateActor(targetActor, {
       'system.speed.current': crippledInfo.originalSpeed
     });
 
@@ -463,7 +463,7 @@ export class DarkSideDevoteeMechanics {
       }
 
       // Spend Force Point
-      await actor.update({
+      await ActorEngine.updateActor(actor, {
         'system.forcePoints.value': currentFP - 1
       });
     }
