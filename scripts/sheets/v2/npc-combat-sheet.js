@@ -218,7 +218,7 @@ export class SWSEV2CombatNpcSheet extends
     if (switchFullBtn) {
       switchFullBtn.addEventListener("click", async (ev) => {
         ev.preventDefault();
-        await this.actor.update({ "system.sheetMode": "full" });
+        await ActorEngine.updateActor(this.actor, { "system.sheetMode": "full" });
       });
     }
 

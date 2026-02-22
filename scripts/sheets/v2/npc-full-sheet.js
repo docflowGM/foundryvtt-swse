@@ -1,6 +1,7 @@
 // scripts/sheets/v2/npc-full-sheet.js
 
 import { SWSEV2CharacterSheet } from "./character-sheet.js";
+import { ActorEngine } from "../../actors/engine/actor-engine.js";
 
 export class SWSEV2FullNpcSheet extends SWSEV2CharacterSheet {
 
@@ -43,21 +44,17 @@ export class SWSEV2FullNpcSheet extends SWSEV2CharacterSheet {
         switchBtn.setAttribute('title', 'Switch to Combat Mode');
         switchBtn.textContent = '⚔ Combat Mode';
         commandBar.appendChild(switchBtn);
-
-        switchBtn.addEventListener('click', async (ev) => {
-          ev.preventDefault();
-          await this.actor.update({ "system.sheetMode": "combat" });
-        });
       }
     }
 
-    // Also listen for any existing switch button (for compatibility)
+    // Single unified listener for switch-to-combat button
+    // Handles both dynamically created and pre-existing buttons
     const switchCombatBtn = root.querySelector('[data-action="switch-combat-mode"]');
     if (switchCombatBtn && !switchCombatBtn.hasListener) {
       switchCombatBtn.hasListener = true;
       switchCombatBtn.addEventListener("click", async (ev) => {
         ev.preventDefault();
-        await this.actor.update({ "system.sheetMode": "combat" });
+        await ActorEngine.updateActor(this.actor, { "system.sheetMode": "combat" });
       });
     }
   }
