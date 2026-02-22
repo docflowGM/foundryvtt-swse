@@ -581,28 +581,26 @@ export function exportFoundryContract(archetypeAffinity, prestigeHints) {
  */
 export async function initializeActorAffinity(actor) {
   try {
-    if (!actor.system.flags) {
-      actor.system.flags = {};
-    }
-    if (!actor.system.flags.swse) {
-      actor.system.flags.swse = {};
+    // Check if already initialized (read-only check)
+    const existing = actor.system.flags?.swse?.archetypeAffinity;
+    if (existing) {
+      return; // Already initialized
     }
 
-    // Initialize if not already present
-    if (!actor.system.flags.swse.archetypeAffinity) {
-      actor.system.flags.swse.archetypeAffinity = {
-        version: '1.0',
-        affinity: {},
-        stateHash: null,
-        timestamp: Date.now()
-      };
+    // Build the object structure (no direct mutation yet)
+    const affinityData = {
+      version: '1.0',
+      affinity: {},
+      stateHash: null,
+      timestamp: Date.now()
+    };
 
-      await ActorEngine.updateActor(actor, {
-        'system.flags.swse.archetypeAffinity': actor.system.flags.swse.archetypeAffinity
-      });
+    // Route through ActorEngine (single mutation)
+    await ActorEngine.updateActor(actor, {
+      'system.flags.swse.archetypeAffinity': affinityData
+    });
 
-      SWSELogger.log('[ArchetypeAffinityEngine] Initialized affinity for', actor.name);
-    }
+    SWSELogger.log('[ArchetypeAffinityEngine] Initialized affinity for', actor.name);
   } catch (err) {
     SWSELogger.error('[ArchetypeAffinityEngine] Error initializing actor affinity:', err);
   }
