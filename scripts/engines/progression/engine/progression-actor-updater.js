@@ -8,7 +8,7 @@
  * Deprecated imports removed.
  */
 
-import { PROGRESSION_RULES } from '../data/progression-data.js';
+import { PROGRESSION_RULES } from '../../data/progression-data.js';
 import { swseLogger } from '../../utils/logger.js';
 
 export class ActorProgressionUpdater {

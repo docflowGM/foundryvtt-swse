@@ -16,7 +16,7 @@ async function loadJSON(url) {
 // ======================================================================
 
 import { TalentTreeGraph } from './TalentTreeGraph.js';
-import { PrerequisiteEnricher } from '../utils/PrerequisiteEnricher.js';
+import { PrerequisiteEnricher } from '../../utils/PrerequisiteEnricher.js';
 import { SWSELogger } from '../../utils/logger.js';
 import { TalentTreeDB } from '../../data/talent-tree-db.js';
 import { normalizeTalentTreeId } from '../../data/talent-tree-normalizer.js';

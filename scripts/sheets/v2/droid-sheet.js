@@ -10,7 +10,7 @@ import { SWSELevelUp } from '../../apps/swse-levelup.js';
 import { rollSkill } from '../../rolls/skills.js';
 import { rollAttack } from '../../combat/rolls/attacks.js';
 import { DropService } from '../../services/drop-service.js';
-import { isXPEnabled } from '../../engine/progression/xp-engine.js';
+import { isXPEnabled } from '../../engines/progression/xp-engine.js';
 import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
 
 function markActiveConditionStep(root, actor) {

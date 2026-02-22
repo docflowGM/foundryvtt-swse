@@ -6,7 +6,7 @@
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 import { SWSELogger } from '../../utils/logger.js';
 import { isBaseClass } from './levelup-shared.js';
-import { evaluateClassEligibility } from '../../progression/prerequisites/class-prerequisites-cache.js';
+import { evaluateClassEligibility } from '../../engines/progression/prerequisites/class-prerequisites-cache.js';
 
 // Cache for prestige class prerequisites loaded from JSON
 let _prestigePrereqCache = null;

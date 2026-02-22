@@ -6,7 +6,7 @@
  *
  * Rule: only ONE file should "think" about class normalization.
  */
-import { normalizeClassData } from '../utils/class-normalizer.js';
+import { normalizeClassData } from '../../utils/class-normalizer.js';
 
 export const ClassNormalizer = {
   /**

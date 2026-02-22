@@ -1,4 +1,4 @@
-import { ProgressionEngine } from '../../progression/engine/progression-engine.js';
+import { ProgressionEngine } from '../../engines/progression/engine/progression-engine.js';
 /**
  * Class selection and species handling for SWSE Level Up system
  * Includes level 0 character creation (species, attributes)

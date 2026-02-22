@@ -18,7 +18,7 @@
  * The engine will prefer compendium data but fallback to progression-data.js
  */
 
-import { FORCE_POWER_DATA } from '../data/progression-data.js';
+import { FORCE_POWER_DATA } from '../../data/progression-data.js';
 import { ForcePowerPicker } from '../ui/force-power-picker.js';
 import { swseLogger } from '../../utils/logger.js';
 import { ActorEngine } from '../../actors/engine/actor-engine.js';

@@ -1,7 +1,7 @@
 // scripts/engine/npc-levelup.js
 import { SWSELogger } from '../utils/logger.js';
-import { FeatRegistry } from '../progression/feats/feat-registry.js';
-import { FeatEngine } from '../progression/feats/feat-engine.js';
+import { FeatRegistry } from '../engines/progression/feats/feat-registry.js';
+import { FeatEngine } from '../engines/progression/feats/feat-engine.js';
 import { ensureNpcStatblockSnapshot, rollbackNpcToStatblockSnapshot } from '../utils/hardening.js';
 import { RollEngine } from './roll-engine.js';
 import { ActorEngine } from '../actors/engine/actor-engine.js';

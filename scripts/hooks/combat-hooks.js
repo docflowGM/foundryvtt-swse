@@ -1,4 +1,4 @@
-import { ProgressionEngine } from '../progression/engine/progression-engine.js';
+import { ProgressionEngine } from '../engines/progression/engine/progression-engine.js';
 /**
  * Combat Lifecycle Hooks
  * All combat-related hook handlers consolidated here

@@ -50,7 +50,7 @@ import * as ForcePowersModule from './chargen-force-powers.js';
 import * as StarshipManeuversModule from './chargen-starship-maneuvers.js';
 import { renderTalentTreeGraph, getTalentsInTree } from './chargen-talent-tree-graph.js';
 
-import { applyProgressionPatch } from '../../progression/engine/apply-progression-patch.js';
+import { applyProgressionPatch } from '../../engines/progression/engine/apply-progression-patch.js';
 import { buildNamePatch } from './steps/name-step.js';
 import { confirm } from '../../utils/ui-utils.js';
 

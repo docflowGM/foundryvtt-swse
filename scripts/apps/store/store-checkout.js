@@ -8,7 +8,7 @@
  * - Business logic (ALL delegated to StoreEngine)
  */
 
-import { ProgressionEngine } from '../../progression/engine/progression-engine.js';
+import { ProgressionEngine } from '../../engines/progression/engine/progression-engine.js';
 import { StoreEngine } from '../../engines/store/store-engine.js';
 import { SWSELogger } from '../../utils/logger.js';
 import { normalizeCredits } from '../../utils/credit-normalization.js';

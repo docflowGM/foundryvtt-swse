@@ -4,7 +4,7 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { ActorEngine } from '../../actors/engine/actor-engine.js';
-import { applyProgressionPatch } from '../../progression/engine/apply-progression-patch.js';
+import { applyProgressionPatch } from '../../engines/progression/engine/apply-progression-patch.js';
 import { buildClassAtomicPatch } from './steps/class-step.js';
 import {
   getClassProperty,

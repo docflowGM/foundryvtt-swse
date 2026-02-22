@@ -1,4 +1,4 @@
-import { ProgressionEngine } from '../../progression/engine/progression-engine.js';
+import { ProgressionEngine } from '../../engines/progression/engine/progression-engine.js';
 import { ActorEngine } from '../../actors/engine/actor-engine.js';
 // ============================================
 // Character Generation Templates Module

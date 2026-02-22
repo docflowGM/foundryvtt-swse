@@ -7,11 +7,11 @@
  */
 import { ActorEngine } from '../../actors/engine/actor-engine.js';
 import { SWSELogger } from '../../utils/logger.js';
-import { FeatureIndex } from '../engine/feature-index.js';
-import { ClassNormalizer } from '../engine/class-normalizer.js';
-import { ForceNormalizer } from '../engine/force-normalizer.js';
-import { StartingFeatureRegistrar } from '../engine/starting-feature-registrar.js';
-import { ProgressionStateNormalizer } from '../engine/progression-state-normalizer.js';
+import { FeatureIndex } from '../../engine/feature-index.js';
+import { ClassNormalizer } from '../../engine/class-normalizer.js';
+import { ForceNormalizer } from '../../engine/force-normalizer.js';
+import { StartingFeatureRegistrar } from '../../engine/starting-feature-registrar.js';
+import { ProgressionStateNormalizer } from '../../engine/progression-state-normalizer.js';
 import { SkillRegistry } from '../skills/skill-registry.js';
 import { SkillNormalizer } from '../skills/skill-normalizer.js';
 import { FeatRegistry } from '../feats/feat-registry.js';

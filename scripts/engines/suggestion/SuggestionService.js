@@ -23,8 +23,8 @@ import { ConfidenceScoring } from './ConfidenceScoring.js';
 import { SnapshotBuilder } from './SnapshotBuilder.js';
 import { getPlannedHeroicLevel, isEpicActor } from '../../actors/derived/level-split.js';
 
-import { FeatEngine } from '../../progression/feats/feat-engine.js';
-import { ForcePowerEngine } from '../../progression/engine/force-power-engine.js';
+import { FeatEngine } from '../../engines/progression/feats/feat-engine.js';
+import { ForcePowerEngine } from '../../engines/progression/engine/force-power-engine.js';
 
 function _hashString(s) {
   let h = 0;

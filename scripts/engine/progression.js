@@ -1,7 +1,7 @@
 // scripts/engine/progression.js
 import { swseLogger } from '../utils/logger.js';
 import { applyActorUpdateAtomic } from '../utils/actor-utils.js';
-import { FinalizeIntegration } from '../progression/integration/finalize-integration.js';
+import { FinalizeIntegration } from '../engines/progression/integration/finalize-integration.js';
 import { ProgressionSession } from './ProgressionSession.js';
 import { SuggestionService } from './SuggestionService.js';
 import { createChatMessage } from '../core/document-api-v13.js';

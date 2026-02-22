@@ -15,8 +15,8 @@
  * Phase 5: Derive (prepareDerivedData)
  */
 
-import { PrerequisiteChecker } from '../data/prerequisite-checker.js';
-import { swseLogger } from '../utils/logger.js';
+import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
+import { swseLogger } from '../../utils/logger.js';
 
 export class ProgressionCompiler {
   /**

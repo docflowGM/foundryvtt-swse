@@ -4,8 +4,8 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { getTalentTrees } from './chargen-property-accessor.js';
-import { normalizeTalentData } from '../../progression/utils/item-normalizer.js';
-import { normalizeClassData } from '../../progression/utils/class-normalizer.js';
+import { normalizeTalentData } from '../../engines/progression/utils/item-normalizer.js';
+import { normalizeClassData } from '../../engines/progression/utils/class-normalizer.js';
 
 /**
  * Assert that a required pack is loaded and non-empty

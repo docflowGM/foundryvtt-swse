@@ -14,7 +14,7 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { ActorEngine } from '../../actors/engine/actor-engine.js';
-import { ApplyHandlers } from '../utils/apply-handlers.js';
+import { ApplyHandlers } from '../../utils/apply-handlers.js';
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 
 export class ForceProgressionEngine {

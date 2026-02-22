@@ -2,8 +2,8 @@
  * Minimal Progression UI helpers. Replace Dialog skeletons with Applications/HBS for full UX.
  */
 
-import { ProgressionEngine } from '../engine/progression-engine.js';
-import { PROGRESSION_RULES } from '../data/progression-data.js';
+import { ProgressionEngine } from '../../engine/progression-engine.js';
+import { PROGRESSION_RULES } from '../../data/progression-data.js';
 
 export class ProgressionUI {
   static async openStartSelector(actor) {

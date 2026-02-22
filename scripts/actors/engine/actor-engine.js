@@ -2,7 +2,7 @@
 import { swseLogger } from '../../utils/logger.js';
 import { applyActorUpdateAtomic } from '../../utils/actor-utils.js';
 import { MutationInterceptor } from '../../core/mutation/MutationInterceptor.js';
-import { determineLevelFromXP } from '../../engine/progression/xp-engine.js';
+import { determineLevelFromXP } from '../../engines/progression/xp-engine.js';
 import { DerivedCalculator } from '../derived/derived-calculator.js';
 import { ModifierEngine } from '../../engines/effects/modifiers/ModifierEngine.js';
 
