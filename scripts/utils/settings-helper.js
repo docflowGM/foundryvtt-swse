@@ -88,6 +88,7 @@ export class SettingsHelper {
     // Character Creation
     abilityScoreMethod: '4d6drop',
     pointBuyPool: 32,
+    allowAbilityReroll: true,
     allowPlayersNonheroic: false,
     maxStartingCredits: false,
     characterCreation: {},
@@ -114,8 +115,10 @@ export class SettingsHelper {
     conditionTrackCap: 0,
     criticalHitVariant: 'standard',
     diagonalMovement: 'swse',
+    weaponRangeReduction: 'none',
     weaponRangeMultiplier: 1.0,
     armoredDefenseForAll: false,
+    trackBlasterCharges: false,
 
     // Second Wind
     secondWindImproved: false,
@@ -126,6 +129,8 @@ export class SettingsHelper {
     feintSkill: 'deception',
     skillFocusVariant: 'normal',
     skillFocusActivationLevel: 7,
+    knowledgeSkillMode: 'standard',
+    athleticsConsolidation: false,
 
     // Force Rules
     forceTrainingAttribute: 'wisdom',
@@ -134,6 +139,8 @@ export class SettingsHelper {
     forceSensitiveJediOnly: false,
     darkSideMaxMultiplier: 1,
     darkSidePowerIncreaseScore: true,
+    darkInspirationEnabled: false,
+    forcePointRecovery: 'level',
     darkSideTemptation: 'strict',
 
     // Combat Feats
@@ -150,6 +157,7 @@ export class SettingsHelper {
     talentEveryLevelExtraL1: true,
     talentDoubleLevels: false,
     crossClassSkillTraining: true,
+    retrainingEnabled: false,
 
     // Multiclass
     multiclassBonusChoice: 'single_feat',
@@ -247,6 +255,8 @@ export class SettingsHelper {
     enableGlancingHit: false,
     enableLastGrasp: false,
     enableEmergencyPatch: false,
+    limitMoveObjectDamage: false,
+    enableSubsystemRepairCost: false,
 
     // Starship Engine Modules
     enableScaleEngine: false,
