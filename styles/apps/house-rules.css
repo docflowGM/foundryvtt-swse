@@ -1,0 +1,313 @@
+/* ============================================
+   SWSE HOUSE RULES DATAPAD
+   Cyber-Holo Theme: Neon Cyan Matrix
+   ============================================ */
+
+.swse-house-rules-datapad {
+  height: 100%;
+  width: 100%;
+  background: radial-gradient(ellipse at top, #001a24 0%, #000a0f 50%, #000509 100%);
+  color: #d0f9ff;
+  padding: 1.5rem;
+  font-family: var(--font-primary, "Courier New", monospace);
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Scanline effect overlay */
+.swse-house-rules-datapad::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 255, 255, 0.025) 0px,
+    rgba(0, 255, 255, 0.025) 1px,
+    transparent 2px,
+    transparent 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+.datapad-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.datapad-title {
+  font-size: 2rem;
+  letter-spacing: 6px;
+  color: #3de0d0;
+  text-shadow: 0 0 20px rgba(61, 224, 208, 0.8),
+               0 0 40px rgba(61, 224, 208, 0.4);
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.datapad-subtitle {
+  font-size: 0.75rem;
+  letter-spacing: 3px;
+  color: rgba(61, 224, 208, 0.6);
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    text-shadow: 0 0 20px rgba(61, 224, 208, 0.8),
+                 0 0 40px rgba(61, 224, 208, 0.4);
+  }
+  50% {
+    text-shadow: 0 0 30px rgba(61, 224, 208, 1),
+                 0 0 60px rgba(61, 224, 208, 0.6);
+  }
+}
+
+/* ============================================
+   BODY & CATEGORIES
+   ============================================ */
+
+.datapad-body {
+  position: relative;
+  z-index: 2;
+}
+
+.rule-category {
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(61, 224, 208, 0.3);
+  border-radius: 6px;
+  padding: 1rem;
+  background: linear-gradient(135deg,
+              rgba(0, 40, 50, 0.3) 0%,
+              rgba(0, 20, 30, 0.5) 100%);
+  box-shadow: 0 0 20px rgba(61, 224, 208, 0.15),
+              inset 0 0 10px rgba(61, 224, 208, 0.05);
+  backdrop-filter: blur(2px);
+  transition: all 0.3s ease;
+}
+
+.rule-category:hover {
+  border-color: rgba(61, 224, 208, 0.5);
+  box-shadow: 0 0 30px rgba(61, 224, 208, 0.25),
+              inset 0 0 15px rgba(61, 224, 208, 0.1);
+}
+
+.rule-category-header {
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  color: #3de0d0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.category-icon {
+  font-size: 1.2rem;
+  filter: drop-shadow(0 0 4px rgba(61, 224, 208, 0.6));
+}
+
+/* ============================================
+   RULE LIST & ENTRIES
+   ============================================ */
+
+.rule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.rule-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  border-left: 3px solid transparent;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  background: rgba(0, 30, 40, 0.2);
+}
+
+.rule-entry:hover {
+  border-left-color: rgba(61, 224, 208, 0.6);
+  background: rgba(0, 60, 80, 0.3);
+}
+
+.rule-info {
+  flex: 1;
+  max-width: 75%;
+}
+
+.rule-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  color: #d0f9ff;
+}
+
+.rule-description {
+  font-size: 0.75rem;
+  opacity: 0.65;
+  line-height: 1.3;
+  color: rgba(208, 249, 255, 0.8);
+}
+
+.rule-toggle {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+}
+
+/* ============================================
+   CYBER SWITCH (TOGGLE)
+   ============================================ */
+
+.cyber-switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.cyber-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: rgba(61, 224, 208, 0.2);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 24px;
+  border: 1px solid rgba(61, 224, 208, 0.4);
+  box-shadow: inset 0 0 8px rgba(61, 224, 208, 0.2),
+              0 0 12px rgba(61, 224, 208, 0.1);
+}
+
+.slider::before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  top: 3px;
+  background-color: #3de0d0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(61, 224, 208, 0.8),
+              0 0 24px rgba(61, 224, 208, 0.4);
+}
+
+.cyber-switch input:checked + .slider {
+  background-color: rgba(61, 224, 208, 0.4);
+  box-shadow: inset 0 0 12px rgba(61, 224, 208, 0.4),
+              0 0 20px rgba(61, 224, 208, 0.3);
+}
+
+.cyber-switch input:checked + .slider::before {
+  transform: translateX(24px);
+  box-shadow: 0 0 16px rgba(61, 224, 208, 1),
+              0 0 32px rgba(61, 224, 208, 0.6);
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+
+.datapad-footer {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(61, 224, 208, 0.2);
+  position: relative;
+  z-index: 2;
+}
+
+.status-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+}
+
+.status-label {
+  color: rgba(61, 224, 208, 0.6);
+}
+
+.status-value {
+  color: #3de0d0;
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(61, 224, 208, 0.6);
+}
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
+
+.swse-house-rules-datapad::-webkit-scrollbar {
+  width: 10px;
+}
+
+.swse-house-rules-datapad::-webkit-scrollbar-track {
+  background: rgba(0, 30, 40, 0.5);
+}
+
+.swse-house-rules-datapad::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg,
+              rgba(61, 224, 208, 0.6) 0%,
+              rgba(61, 224, 208, 0.3) 100%);
+  border-radius: 5px;
+  box-shadow: 0 0 8px rgba(61, 224, 208, 0.4);
+}
+
+.swse-house-rules-datapad::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg,
+              rgba(61, 224, 208, 0.8) 0%,
+              rgba(61, 224, 208, 0.5) 100%);
+  box-shadow: 0 0 12px rgba(61, 224, 208, 0.6);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .swse-house-rules-datapad {
+    padding: 1rem;
+  }
+
+  .datapad-title {
+    font-size: 1.4rem;
+  }
+
+  .rule-entry {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .rule-toggle {
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+
+  .rule-info {
+    max-width: 100%;
+  }
+}

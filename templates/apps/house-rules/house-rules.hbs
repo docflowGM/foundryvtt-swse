@@ -1,0 +1,212 @@
+<div class="swse-house-rules-datapad">
+
+  <div class="datapad-header">
+    <div class="datapad-title aurebesh">
+      HOUSE RULES
+    </div>
+    <div class="datapad-subtitle">System Configuration Matrix</div>
+  </div>
+
+  <div class="datapad-body">
+
+    <!-- CHARACTER CREATION -->
+    {{#if rules.characterCreation}}
+    <div class="rule-category">
+      <div class="rule-category-header">
+        <span class="category-icon">⚙</span>
+        Character Creation
+      </div>
+
+      <div class="rule-list">
+        {{#each rules.characterCreation}}
+          <div class="rule-entry">
+            <div class="rule-info">
+              <div class="rule-name">{{this.name}}</div>
+              <div class="rule-description">{{this.description}}</div>
+            </div>
+
+            <div class="rule-toggle">
+              <label class="cyber-switch">
+                <input type="checkbox"
+                       data-rule-key="{{this.key}}"
+                       data-rule-type="{{this.type}}"
+                       {{#if this.enabled}}checked{{/if}}>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+    <!-- COMBAT -->
+    {{#if rules.combat}}
+    <div class="rule-category">
+      <div class="rule-category-header">
+        <span class="category-icon">⚔</span>
+        Combat
+      </div>
+
+      <div class="rule-list">
+        {{#each rules.combat}}
+          <div class="rule-entry">
+            <div class="rule-info">
+              <div class="rule-name">{{this.name}}</div>
+              <div class="rule-description">{{this.description}}</div>
+            </div>
+
+            <div class="rule-toggle">
+              <label class="cyber-switch">
+                <input type="checkbox"
+                       data-rule-key="{{this.key}}"
+                       data-rule-type="{{this.type}}"
+                       {{#if this.enabled}}checked{{/if}}>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+    <!-- FORCE -->
+    {{#if rules.force}}
+    <div class="rule-category">
+      <div class="rule-category-header">
+        <span class="category-icon">✦</span>
+        Force
+      </div>
+
+      <div class="rule-list">
+        {{#each rules.force}}
+          <div class="rule-entry">
+            <div class="rule-info">
+              <div class="rule-name">{{this.name}}</div>
+              <div class="rule-description">{{this.description}}</div>
+            </div>
+
+            <div class="rule-toggle">
+              <label class="cyber-switch">
+                <input type="checkbox"
+                       data-rule-key="{{this.key}}"
+                       data-rule-type="{{this.type}}"
+                       {{#if this.enabled}}checked{{/if}}>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+    <!-- RECOVERY & CONDITIONS -->
+    {{#if rules.recovery}}
+    <div class="rule-category">
+      <div class="rule-category-header">
+        <span class="category-icon">❤</span>
+        Recovery & Conditions
+      </div>
+
+      <div class="rule-list">
+        {{#each rules.recovery}}
+          <div class="rule-entry">
+            <div class="rule-info">
+              <div class="rule-name">{{this.name}}</div>
+              <div class="rule-description">{{this.description}}</div>
+            </div>
+
+            <div class="rule-toggle">
+              <label class="cyber-switch">
+                <input type="checkbox"
+                       data-rule-key="{{this.key}}"
+                       data-rule-type="{{this.type}}"
+                       {{#if this.enabled}}checked{{/if}}>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+    <!-- SKILLS & TALENTS -->
+    {{#if rules.skills}}
+    <div class="rule-category">
+      <div class="rule-category-header">
+        <span class="category-icon">📚</span>
+        Skills & Talents
+      </div>
+
+      <div class="rule-list">
+        {{#each rules.skills}}
+          <div class="rule-entry">
+            <div class="rule-info">
+              <div class="rule-name">{{this.name}}</div>
+              <div class="rule-description">{{this.description}}</div>
+            </div>
+
+            <div class="rule-toggle">
+              <label class="cyber-switch">
+                <input type="checkbox"
+                       data-rule-key="{{this.key}}"
+                       data-rule-type="{{this.type}}"
+                       {{#if this.enabled}}checked{{/if}}>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+    <!-- VEHICLES & SPACE -->
+    {{#if rules.vehicles}}
+    <div class="rule-category">
+      <div class="rule-category-header">
+        <span class="category-icon">🚀</span>
+        Vehicles & Space Combat
+      </div>
+
+      <div class="rule-list">
+        {{#each rules.vehicles}}
+          <div class="rule-entry">
+            <div class="rule-info">
+              <div class="rule-name">{{this.name}}</div>
+              <div class="rule-description">{{this.description}}</div>
+            </div>
+
+            <div class="rule-toggle">
+              <label class="cyber-switch">
+                <input type="checkbox"
+                       data-rule-key="{{this.key}}"
+                       data-rule-type="{{this.type}}"
+                       {{#if this.enabled}}checked{{/if}}>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+  </div>
+
+  <!-- FOOTER STATUS -->
+  <div class="datapad-footer">
+    <div class="status-line">
+      <span class="status-label">SYSTEM INTEGRITY:</span>
+      <span class="status-value">100%</span>
+    </div>
+    <div class="status-line">
+      <span class="status-label">ACTIVE OVERRIDES:</span>
+      <span class="status-value">{{activeRuleCount}}</span>
+    </div>
+  </div>
+
+</div>
