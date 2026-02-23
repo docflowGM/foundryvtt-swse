@@ -144,7 +144,14 @@
         "customSkills": [],
         "classes": [],
         "credits": 0,
-        "experience": 0
+        "experience": 0,
+        "weaponTalentFlags": {
+          "dexterousDamage": false,
+          "weaponFinesse": false,
+          "preciseStrike": false,
+          "meleeFiness": false,
+          "powerAttack": false
+        }
       }
     },
     "character": {
@@ -305,7 +312,19 @@
       "weight": 0,
       "gearTemplate": "",
       "gearTemplateSecondary": "",
-      "templateCost": 0
+      "templateCost": 0,
+      "proficient": true,
+      "damageDice": 1,
+      "damageDiceType": "d6",
+      "weaponProperties": {
+        "isLight": false,
+        "isTwoHanded": false,
+        "keen": false,
+        "flaming": false,
+        "frost": false,
+        "shock": false,
+        "vorpal": false
+      }
     },
     "armor": {
       "templates": [
