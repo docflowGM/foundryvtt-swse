@@ -147,6 +147,13 @@ export class CombatActionBar {
             ${actor.system.secondWind?.uses < 1 || !econ.swift ? 'disabled' : ''}>
             <i class="fa-solid fa-heart-pulse"></i> Second Wind (${actor.system.secondWind?.uses}/1)
           </button>
+
+          <!-- PHASE C: Edge of Exhaustion button (appears only when uses = 0) -->
+          <button class="swse-btn edge-of-exhaustion" data-action="edge-of-exhaustion"
+            ${actor.system.secondWind?.uses > 0 || actor.system.conditionTrack?.current >= 5 ? 'disabled' : ''}
+            title="Trade -1 condition for 1 Second Wind use">
+            <i class="fa-solid fa-bolt"></i> Edge of Exhaustion
+          </button>
         </div>
 
       </section>`;
@@ -190,6 +197,7 @@ export class CombatActionBar {
       'charge': () => this._doCharge(actor),
       'aid-another': () => this._aidAnother(actor),
       'second-wind': () => this._secondWind(actor),
+      'edge-of-exhaustion': () => this._edgeOfExhaustion(actor),
       'end-turn': () => game.combat?.nextTurn()
     };
 
@@ -271,6 +279,42 @@ export class CombatActionBar {
       this._useAction(actor, 'swift');
     } else {
       ui.notifications.warn(result.reason || 'Could not use Second Wind');
+    }
+  }
+
+  /**
+   * PHASE C: Edge of Exhaustion handler
+   *
+   * Trade -1 condition track for +1 Second Wind use when out of uses
+   */
+  static async _edgeOfExhaustion(actor) {
+    const uses = actor.system.secondWind?.uses ?? 0;
+    if (uses > 0) {
+      return ui.notifications.warn('Second Wind uses still available.');
+    }
+
+    // Prompt confirmation
+    const confirmed = await Dialog.confirm({
+      title: 'Edge of Exhaustion',
+      content: '<p>Accept <strong>-1 condition track</strong> to regain <strong>1 Second Wind use</strong>?</p>',
+      yes: () => true,
+      no: () => false
+    });
+
+    if (!confirmed) {return;}
+
+    // Apply through ActorEngine
+    const result = await ActorEngine.applySecondWindEdgeOfExhaustion(actor);
+
+    if (result.success) {
+      createChatMessage({
+        speaker: ChatMessage.getSpeaker({ actor }),
+        content: `<b>${escapeHTML(actor.name)}</b> accepts condition penalty to regain <strong>1 Second Wind use</strong>!`
+      });
+
+      this._useAction(actor, 'swift');
+    } else {
+      ui.notifications.warn(result.reason || 'Could not use Edge of Exhaustion');
     }
   }
 

@@ -1128,6 +1128,96 @@ export const ActorEngine = {
   },
 
   /**
+   * applySecondWindEdgeOfExhaustion() — Trade condition for extra use
+   *
+   * PHASE C: Edge of Exhaustion variant rule
+   *
+   * When out of Second Wind uses, actor may voluntarily accept -1 persistent
+   * condition step (worsen condition track) to gain 1 additional use.
+   *
+   * Requirements:
+   * - Uses at 0 (no uses remaining)
+   * - Condition track not already at helpless (step 5)
+   * - In active combat
+   *
+   * @param {Actor} actor - target actor
+   * @returns {Promise<{success, reason, condition, newCondition}>}
+   */
+  async applySecondWindEdgeOfExhaustion(actor) {
+    try {
+      if (!actor) {throw new Error('applySecondWindEdgeOfExhaustion() requires actor');}
+
+      // Check: Must have 0 uses (no regular uses remaining)
+      const uses = actor.system.secondWind?.uses ?? 0;
+      if (uses > 0) {
+        return {
+          success: false,
+          reason: 'Second Wind uses still available (not at edge of exhaustion)'
+        };
+      }
+
+      // Check: Heroic only (same as regular Second Wind)
+      const isHeroic = actor.type === 'character' ||
+                       (actor.type === 'npc' && actor.system.class);
+
+      if (!isHeroic) {
+        return {
+          success: false,
+          reason: `${actor.name} is not heroic and cannot use Edge of Exhaustion`
+        };
+      }
+
+      // Check: Must be in active combat (combat restriction)
+      const inCombat = game.combat?.combatants.some(c => c.actor?.id === actor.id);
+      if (!inCombat) {
+        return {
+          success: false,
+          reason: 'Edge of Exhaustion can only be used in active combat'
+        };
+      }
+
+      // Check: Condition track not at helpless (step 5 is the max)
+      const ct = actor.system.conditionTrack ?? {};
+      const currentCT = Number(ct.current ?? 0);
+
+      if (currentCT >= 5) {
+        return {
+          success: false,
+          reason: 'Cannot accept condition penalty when already at helpless'
+        };
+      }
+
+      // Trade: Worsen condition by 1, gain 1 Second Wind use
+      const newCT = Math.min(5, currentCT + 1);
+
+      await this.updateActor(actor, {
+        'system.secondWind.uses': 1,
+        'system.conditionTrack.current': newCT
+      });
+
+      swseLogger.log(`${actor.name} accepts Edge of Exhaustion`, {
+        trade: 'condition for Second Wind',
+        conditionBefore: currentCT,
+        conditionAfter: newCT,
+        secondWindRestored: 1
+      });
+
+      return {
+        success: true,
+        reason: 'Edge of Exhaustion accepted',
+        condition: currentCT,
+        newCondition: newCT
+      };
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.applySecondWindEdgeOfExhaustion failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err
+      });
+      throw err;
+    }
+  },
+
+  /**
    * applyProgression() — ATOMIC PROGRESSION TRANSACTION
    *
    * Single transaction for all progression mutations:
