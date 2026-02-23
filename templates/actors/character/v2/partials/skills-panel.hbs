@@ -117,12 +117,19 @@
         {{#if skill.extraUses.length}}
         <div class="skill-extra-uses">
           {{#each skill.extraUses}}
-            <div class="extra-use">
-              {{this.label}}
+            <div class="extra-use"
+                 data-skill="{{../skill.key}}"
+                 data-use-key="{{this.key}}"
+                 title="Special skill use: {{this.description}}">
+              <span class="extra-use-label">{{this.label}}</span>
+              {{#if this.description}}
+                <span class="extra-use-description">{{this.description}}</span>
+              {{/if}}
               <button type="button"
                       data-action="use-extra-skill"
                       data-skill="{{../skill.key}}"
-                      data-use="{{this.key}}">
+                      data-use="{{this.key}}"
+                      title="Click to use {{this.label}}">
                 Use
               </button>
             </div>
