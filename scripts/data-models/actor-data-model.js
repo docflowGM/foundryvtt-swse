@@ -167,12 +167,8 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
   /* -------------------------------------------------------------------------- */
   /* CONDITION TRACK                                                            */
+  /* Condition track is managed by ActorEngine and ModifierEngine               */
   /* -------------------------------------------------------------------------- */
-
-  _applyConditionPenalties() {
-    const penalties = [0, -1, -2, -5, -10, 0];
-    this.conditionTrack.penalty = penalties[this.conditionTrack.current] || 0;
-  }
 
   /* -------------------------------------------------------------------------- */
   /* DROID DERIVED DATA                                                         */
@@ -239,8 +235,7 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
         half + this.abilities[ability].mod +
         (skill.trained ? 5 : 0) +
         (skill.focused ? 5 : 0) +
-        (skill.miscMod || 0) +
-        this.conditionTrack.penalty;
+        (skill.miscMod || 0);
     }
   }
 
