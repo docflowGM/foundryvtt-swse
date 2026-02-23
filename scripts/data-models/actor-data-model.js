@@ -190,53 +190,6 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
       }
     }
 
-    // ===== PHASE 0: LEGACY ARMOR CALCULATION =====
-    // TO BE REMOVED AFTER PHASE 1 (ModifierEngine registration complete)
-    // This section applies armor bonuses directly to defenses and skills.
-    // It will be deprecated once armor modifiers are registered.
-    // @deprecated Use ModifierEngine._getItemModifiers() instead
-
-    // --- Built-in Droid Armor vs Worn Armor
-    let armorBonus = 0;
-    let maxDex = null;
-    let acp = 0;
-
-    const builtIn = system.droidArmor?.installed ? system.droidArmor : null;
-    const worn = this.parent.items.find(
-      i => i.type === 'armor' && i.system?.equipped
-    )?.system;
-
-    const source =
-      builtIn && worn
-        ? (builtIn.armorBonus >= worn.armorBonus ? builtIn : worn)
-        : builtIn || worn;
-
-    if (source) {
-      armorBonus = source.armorBonus ?? 0;
-      maxDex = source.maxDex ?? null;
-      acp = source.armorCheckPenalty ?? 0;
-    }
-
-    // PHASE 1: Will consume ModifierEngine domain "defense.reflex"
-    system.defenses.reflex.armor = armorBonus;
-
-    // Clamp Dex (PHASE 1: will become ModifierEngine domain "defense.dexLimit")
-    if (maxDex !== null) {
-      system.attributes.dex.mod = Math.min(system.attributes.dex.mod, maxDex);
-    }
-
-    // Apply ACP to skills + attacks (PHASE 1: will become ModifierEngine domains "skill.*")
-    const acpSkills = [
-      'acrobatics', 'climb', 'endurance', 'initiative',
-      'jump', 'stealth', 'swim'
-    ];
-
-    for (const skill of acpSkills) {
-      if (system.skills[skill]) {
-        system.skills[skill].armor = acp;
-      }
-    }
-    // ===== END PHASE 0 LEGACY ARMOR BLOCK =====
   }
 
   /* -------------------------------------------------------------------------- */
