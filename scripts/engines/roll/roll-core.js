@@ -244,7 +244,7 @@ export class RollCore {
     }
 
     // Get heroic scaling from ForcePointsService
-    const { diceCount, dieSize } = ForcePointsService.getScalingDice(actor);
+    const { diceCount, dieSize } = await ForcePointsService.getScalingDice(actor);
     const forceDice = `${diceCount}${dieSize}`;
 
     try {

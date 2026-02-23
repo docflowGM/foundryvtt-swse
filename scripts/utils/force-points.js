@@ -27,7 +27,7 @@ export class ForcePointsUtil {
     const { reason = 'boost', useDarkSide = false } = options;
 
     // Get heroic scaling from ForcePointsService (canonical source)
-    const { diceCount, dieSize } = ForcePointsService.getScalingDice(actor);
+    const { diceCount, dieSize } = await ForcePointsService.getScalingDice(actor);
     const forceDice = `${diceCount}${dieSize}`;
 
     // Roll the dice with heroic scaling
@@ -45,7 +45,7 @@ export class ForcePointsUtil {
     let darkSideBonus = 0;
     let darkSideUsed = false;
     if (useDarkSide) {
-      const darkSideRoll = await globalThis.SWSE.RollEngine.safeRoll(`1${diceType}`).evaluate();
+      const darkSideRoll = await globalThis.SWSE.RollEngine.safeRoll(`1${dieSize}`).evaluate();
       darkSideBonus = darkSideRoll.total;
       darkSideUsed = true;
     }
@@ -59,7 +59,7 @@ export class ForcePointsUtil {
       bonus,
       darkSideRoll: darkSideUsed ? darkSideBonus : null,
       totalBonus,
-      numDice
+      diceCount
     });
 
     await createChatMessage({
@@ -104,8 +104,8 @@ export class ForcePointsUtil {
    */
   static async showForcePointDialog(actor, reason = 'boost') {
     const canDarkSide = this.canUseDarkSide(actor);
-    const diceDesc = ForcePointsService.getFormulaDisplay(actor);
-    const { dieSize } = ForcePointsService.getScalingDice(actor);
+    const diceDesc = await ForcePointsService.getFormulaDisplay(actor);
+    const { diceCount, dieSize } = await ForcePointsService.getScalingDice(actor);
 
     return new Promise((resolve) => {
       const dialog = new SWSEDialogV2({
@@ -114,13 +114,13 @@ export class ForcePointsUtil {
           <form>
             <div class="form-group">
               <label>Spend a Force Point for ${reason}?</label>
-              <p>You will roll ${diceDesc} and add the ${numDice > 1 ? 'highest result' : 'result'} to your roll.</p>
+              <p>You will roll ${diceDesc} and add the ${diceCount > 1 ? 'highest result' : 'result'} to your roll.</p>
             </div>
             ${canDarkSide ? `
               <div class="form-group">
                 <label>
                   <input type="checkbox" name="useDarkSide"/>
-                  Call upon the Dark Side (+1${diceType}, increases Dark Side Score by 1)
+                  Call upon the Dark Side (+1${dieSize}, increases Dark Side Score by 1)
                 </label>
               </div>
             ` : ''}
@@ -158,7 +158,7 @@ export class ForcePointsUtil {
    * @private
    */
   static async _createForcePointMessage(actor, data) {
-    const { reason, roll, bonus, darkSideRoll, totalBonus, numDice } = data;
+    const { reason, roll, bonus, darkSideRoll, totalBonus, diceCount } = data;
 
     const html = `
       <div class="swse force-point-roll">
@@ -167,10 +167,10 @@ export class ForcePointsUtil {
           <div class="dice-formula">${roll.formula}</div>
           <div class="dice-tooltip">
             ${roll.dice[0].results.map((r, i) =>
-              `<span class="die d6 ${i === roll.dice[0].results.findIndex(x => x.result === bonus) && numDice > 1 ? 'max' : ''}">${r.result}</span>`
+              `<span class="die d6 ${i === roll.dice[0].results.findIndex(x => x.result === bonus) && diceCount > 1 ? 'max' : ''}">${r.result}</span>`
             ).join(' ')}
           </div>
-          ${numDice > 1 ? `<div class="dice-total">Highest: <strong>${bonus}</strong></div>` : `<div class="dice-total">Result: <strong>${bonus}</strong></div>`}
+          ${diceCount > 1 ? `<div class="dice-total">Highest: <strong>${bonus}</strong></div>` : `<div class="dice-total">Result: <strong>${bonus}</strong></div>`}
         </div>
         ${darkSideRoll !== null ? `
           <div class="dark-side-bonus">
