@@ -32,6 +32,7 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { ModifierEngine } from "../effects/modifiers/ModifierEngine.js";
+import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
 
 export class ThresholdEngine {
 
@@ -311,7 +312,7 @@ export class ThresholdEngine {
 
     // Stun knockout: move to bottom of CT
     if (result.stunKnockout) {
-      await target.update({
+      await ActorEngine.updateActor(target, {
         'system.conditionTrack.current': 5
       });
       await this._postChatMessage(target, result, 5);
@@ -322,7 +323,7 @@ export class ThresholdEngine {
       'system.conditionTrack.current': newCT
     };
 
-    await target.update(updates);
+    await ActorEngine.updateActor(target, updates);
     await this._postChatMessage(target, result, newCT);
   }
 
