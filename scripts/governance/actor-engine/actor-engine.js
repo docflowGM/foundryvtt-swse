@@ -1000,8 +1000,9 @@ export const ActorEngine = {
       const actualHealing = newHP - currentHP;
 
       // Batch update: HP restoration + use consumption
+      // Use canonical HP field (system.hp.value); derived.hp is computed from this
       await this.updateActor(actor, {
-        'system.derived.hp.value': newHP,
+        'system.hp.value': newHP,
         'system.secondWind.uses': Math.max(0, uses - 1)
       });
 

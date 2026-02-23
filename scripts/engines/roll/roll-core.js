@@ -21,6 +21,7 @@
  */
 
 import { ModifierEngine } from '../effects/modifiers/ModifierEngine.js';
+import { ForcePointsService } from '../force/force-points-service.js';
 import { swseLogger } from '../../utils/logger.js';
 
 export class RollCore {
@@ -210,43 +211,62 @@ export class RollCore {
   }
 
   /**
-   * Apply Force Point logic - Roll d6 and add to modifier total
+   * Apply Force Point logic - Roll scaled Force dice with heroic level support
+   *
+   * Uses ForcePointsService for canonical scaling rules:
+   * - Level 1-7: 1d6
+   * - Level 8-14: 2d6 (take highest)
+   * - Level 15+: 3d6 (take highest)
+   * - Die size: d6 default, d8 if upgraded
    *
    * NOTE: This is the CORE force point roll logic.
    * Domain-specific Force Point handling (deduction, etc.) happens in domain engines.
+   * RollCore does NOT mutate; returns bonus for caller to apply.
    *
    * @param {Actor} actor
    * @param {number} pointsToSpend - Force Points to spend (typically 1)
-   * @returns {Object} { success: boolean, bonus: number, spent: number, diceUsed: string }
+   * @returns {Object} { success: boolean, bonus: number, spent: number, diceUsed: string, roll: Roll }
    */
   static async applyForcePointLogic(actor, pointsToSpend = 1) {
     if (!actor) {
       return { success: false, bonus: 0, spent: 0, reason: 'No actor' };
     }
 
-    // Check Force Points available
-    const forcePoints = actor.system?.forcePoints?.value ?? 0;
-    if (forcePoints < pointsToSpend) {
+    // Check Force Points available via ForcePointsService
+    if (!ForcePointsService.canSpend(actor, pointsToSpend)) {
+      const remaining = ForcePointsService.getRemaining(actor);
       return {
         success: false,
         bonus: 0,
         spent: 0,
-        reason: `Insufficient Force Points (have ${forcePoints}, need ${pointsToSpend})`
+        reason: `Insufficient Force Points (have ${remaining}, need ${pointsToSpend})`
       };
     }
 
-    // PHASE 4 IMPLEMENTATION: Roll Force die (default d6, configurable via actor)
-    const forceDie = actor.system?.forcePoints?.die || '1d6';
+    // Get heroic scaling from ForcePointsService
+    const { diceCount, dieSize } = ForcePointsService.getScalingDice(actor);
+    const forceDice = `${diceCount}${dieSize}`;
 
     try {
-      const fpRoll = new Roll(forceDie);
+      const fpRoll = new Roll(forceDice);
       await fpRoll.evaluate({ async: true });
+
+      // For multiple dice, take the highest; for single die, use total
+      let bonus = 0;
+      if (diceCount > 1) {
+        // Multiple dice: extract highest result
+        const results = fpRoll.dice[0].results.map(r => r.result);
+        bonus = Math.max(...results);
+      } else {
+        // Single die: use total
+        bonus = fpRoll.total;
+      }
 
       return {
         success: true,
-        bonus: fpRoll.total,
+        bonus,
         spent: pointsToSpend,
-        diceUsed: forceDie,
+        diceUsed: forceDice,
         roll: fpRoll
       };
     } catch (err) {

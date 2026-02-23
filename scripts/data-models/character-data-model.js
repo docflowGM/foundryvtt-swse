@@ -795,15 +795,9 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       this.forcePoints.max = 5 + Math.floor(heroicLevel / 2);
     }
 
-    // Calculate Force Point die based on heroic level
-    // 1-7: 1d6, 8-14: 2d6 (take highest), 15+: 3d6 (take highest)
-    if (heroicLevel >= 15) {
-      this.forcePoints.die = '3d6';
-    } else if (heroicLevel >= 8) {
-      this.forcePoints.die = '2d6';
-    } else {
-      this.forcePoints.die = '1d6';
-    }
+    // Store die SIZE only (d6 or d8)
+    // Heroic level scaling (1/2/3 dice count) is handled by ForcePointsService
+    this.forcePoints.die = 'd6'; // Default; d8 set by prestige classes/features
   }
 
   _calculateDestinyPoints() {
