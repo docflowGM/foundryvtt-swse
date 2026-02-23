@@ -499,7 +499,8 @@ export class ModifierEngine {
     try {
       const encState = EncumbranceEngine.calculateEncumbrance(actor);
 
-      if (!encState || encState.state === 'normal') {
+      // Only apply modifiers for heavy load or overloaded states
+      if (!encState || (encState.state !== 'heavy' && encState.state !== 'overloaded')) {
         return modifiers;
       }
 
