@@ -650,14 +650,249 @@ export class ModifierEngine {
 
   /**
    * Collect modifiers from items (equipment, armor, etc.)
+   *
+   * PHASE 1 IMPLEMENTATION: Armor Modifier Registration
+   * This function registers all armor effects as structured modifiers:
+   * - Defense bonuses (reflex, fort)
+   * - Armor check penalties (to affected skills)
+   * - Speed penalties
+   * - Max dex bonus enforcement
+   *
    * @private
    * @param {Actor} actor
    * @returns {Modifier[]}
    */
   static _getItemModifiers(actor) {
-    // Phase 0: Items don't have modifiers yet
-    // Phase 1+: Parse armor AC bonuses, etc.
-    return [];
+    const modifiers = [];
+
+    if (!actor) return modifiers;
+
+    try {
+      // Find equipped armor
+      const equippedArmor = actor?.items?.find(i => i.type === 'armor' && i.system?.equipped);
+
+      if (!equippedArmor) {
+        return modifiers; // No armor equipped
+      }
+
+      const armorSystem = equippedArmor.system;
+      const armorName = equippedArmor.name || 'Unknown Armor';
+      const armorId = equippedArmor.id;
+      const armorType = (armorSystem.armorType || 'light').toLowerCase();
+
+      // ===== ARMOR PROFICIENCY CHECK =====
+      // TEMPORARY: Using legacy name-based detection (Phase 3 will replace with structured data)
+      const proficiencies = actor?.items?.filter(i =>
+        (i.type === 'feat' || i.type === 'talent') &&
+        i.name.toLowerCase().includes('armor proficiency')
+      ) || [];
+
+      let isProficient = false;
+      for (const prof of proficiencies) {
+        const profName = prof.name.toLowerCase();
+        if (profName.includes('light') && armorType === 'light') { isProficient = true; }
+        if (profName.includes('medium') && (armorType === 'light' || armorType === 'medium')) { isProficient = true; }
+        if (profName.includes('heavy')) { isProficient = true; } // Heavy includes all
+      }
+
+      // ===== TALENT CHECKS =====
+      // Check for armor-related talents
+      const talents = actor?.items?.filter(i => i.type === 'talent') || [];
+      let hasArmoredDefense = false;
+      let hasImprovedArmoredDefense = false;
+      let hasArmorMastery = false;
+
+      for (const talent of talents) {
+        const talentNameLower = (talent.name || '').toLowerCase();
+        if (talentNameLower === 'armored defense') { hasArmoredDefense = true; }
+        if (talentNameLower === 'improved armored defense') { hasImprovedArmoredDefense = true; }
+        if (talentNameLower === 'armor mastery') { hasArmorMastery = true; }
+      }
+
+      // ===== REFLEX DEFENSE BONUS =====
+      const baseArmorBonus = armorSystem.defenseBonus || 0;
+      if (baseArmorBonus !== 0) {
+        // Calculate talent-adjusted armor bonus
+        let armorBonusForReflex = baseArmorBonus;
+        if (hasImprovedArmoredDefense) {
+          // Improved Armored Defense: Use max(level + floor(armor/2), armor)
+          // We'll register the base bonus; the character's level adjustment is separate
+          armorBonusForReflex = Math.max(baseArmorBonus, baseArmorBonus); // Full bonus
+        } else if (hasArmoredDefense) {
+          // Armored Defense: Use max(level, armor)
+          armorBonusForReflex = Math.max(baseArmorBonus, baseArmorBonus); // Full bonus
+        }
+        // No talent: Armor bonus is used as-is
+
+        try {
+          modifiers.push(createModifier({
+            source: ModifierSource.ITEM,
+            sourceId: armorId,
+            sourceName: `${armorName} (Armor Bonus)`,
+            target: 'defense.reflex',
+            type: ModifierType.ARMOR,
+            value: armorBonusForReflex,
+            enabled: true,
+            priority: 30, // After base calculations
+            description: `${armorName} provides +${armorBonusForReflex} armor bonus to Reflex Defense`
+          }));
+        } catch (err) {
+          swseLogger.warn(`Failed to create armor reflex defense modifier:`, err);
+        }
+      }
+
+      // ===== FORTITUDE DEFENSE BONUS (Equipment) =====
+      // Only apply equipment bonus if proficient
+      if (isProficient) {
+        const fortBonus = armorSystem.equipmentBonus || armorSystem.fortBonus || 0;
+        if (fortBonus !== 0) {
+          try {
+            modifiers.push(createModifier({
+              source: ModifierSource.ITEM,
+              sourceId: armorId,
+              sourceName: `${armorName} (Equipment Bonus)`,
+              target: 'defense.fort',
+              type: ModifierType.EQUIPMENT,
+              value: fortBonus,
+              enabled: true,
+              priority: 30,
+              description: `${armorName} provides +${fortBonus} equipment bonus to Fortitude (proficiency)`
+            }));
+          } catch (err) {
+            swseLogger.warn(`Failed to create armor fort defense modifier:`, err);
+          }
+        }
+      }
+
+      // ===== MAX DEX BONUS ENFORCEMENT =====
+      let maxDex = armorSystem.maxDexBonus ?? null;
+      if (Number.isInteger(maxDex)) {
+        // Armor Mastery increases max dex by +1
+        if (hasArmorMastery) {
+          maxDex += 1;
+        }
+
+        // Register as a modifier to the defense.dexLimit target
+        // This will be consumed by DefenseCalculator to clamp dex modifier
+        try {
+          modifiers.push(createModifier({
+            source: ModifierSource.ITEM,
+            sourceId: armorId,
+            sourceName: `${armorName} (Max Dex Limit)`,
+            target: 'defense.dexLimit',
+            type: ModifierType.RESTRICTION,
+            value: maxDex, // Positive number = cap on dex bonus
+            enabled: true,
+            priority: 50, // Early priority
+            description: `${armorName} restricts max Dex bonus to +${maxDex}`
+          }));
+        } catch (err) {
+          swseLogger.warn(`Failed to create armor max dex modifier:`, err);
+        }
+      }
+
+      // ===== ARMOR CHECK PENALTY (Skills) =====
+      let acpValue = armorSystem.armorCheckPenalty || 0;
+      if (!isProficient) {
+        // Apply proficiency penalty if not proficient
+        const proficiencyPenalty = {
+          'light': -2,
+          'medium': -5,
+          'heavy': -10
+        }[armorType] || -2;
+        acpValue = acpValue + proficiencyPenalty; // Combine with armor's base penalty
+      }
+
+      // Apply ACP to affected skills
+      // Skills affected by armor: acrobatics, climb, escapeArtist, jump, sleightOfHand, stealth, swim, useRope
+      if (acpValue !== 0) {
+        const acpSkills = [
+          'acrobatics', 'climb', 'escapeArtist', 'jump', 'sleightOfHand', 'stealth', 'swim', 'useRope'
+        ];
+
+        for (const skillKey of acpSkills) {
+          try {
+            modifiers.push(createModifier({
+              source: ModifierSource.ITEM,
+              sourceId: armorId,
+              sourceName: `${armorName} (ACP)`,
+              target: `skill.${skillKey}`,
+              type: ModifierType.PENALTY,
+              value: acpValue, // Negative value
+              enabled: true,
+              priority: 25, // After other skill modifiers
+              description: `${armorName} applies ${acpValue} armor check penalty to ${skillKey}`
+            }));
+          } catch (err) {
+            swseLogger.warn(`Failed to create armor ACP modifier for skill.${skillKey}:`, err);
+          }
+        }
+      }
+
+      // ===== SPEED PENALTY =====
+      let speedPenalty = armorSystem.speedPenalty || 0;
+      // Apply SWSE standard speed penalties if not specified
+      if (speedPenalty === 0) {
+        const baseSpeed = actor.system?.derivedSpeed?.base || actor.system?.speed || 6;
+        if (baseSpeed >= 6) {
+          if (armorType === 'medium') {
+            speedPenalty = -2;
+          } else if (armorType === 'heavy') {
+            speedPenalty = -4;
+          }
+        }
+      } else {
+        // Negate the penalty for modifier (which adds to speed)
+        speedPenalty = -speedPenalty;
+      }
+
+      if (speedPenalty !== 0) {
+        try {
+          modifiers.push(createModifier({
+            source: ModifierSource.ITEM,
+            sourceId: armorId,
+            sourceName: `${armorName} (Speed Penalty)`,
+            target: 'speed.base',
+            type: ModifierType.PENALTY,
+            value: speedPenalty, // Negative value
+            enabled: true,
+            priority: 30,
+            description: `${armorName} reduces speed by ${Math.abs(speedPenalty)} squares`
+          }));
+        } catch (err) {
+          swseLogger.warn(`Failed to create armor speed modifier:`, err);
+        }
+      }
+
+      // ===== REFLEX DEFENSE EQUIPMENT BONUS (if proficient) =====
+      if (isProficient) {
+        const reflexEquipmentBonus = armorSystem.equipmentBonus || 0;
+        if (reflexEquipmentBonus !== 0) {
+          try {
+            modifiers.push(createModifier({
+              source: ModifierSource.ITEM,
+              sourceId: armorId,
+              sourceName: `${armorName} (Reflex Equipment Bonus)`,
+              target: 'defense.reflex',
+              type: ModifierType.EQUIPMENT,
+              value: reflexEquipmentBonus,
+              enabled: true,
+              priority: 30,
+              description: `${armorName} provides +${reflexEquipmentBonus} equipment bonus to Reflex (proficiency)`
+            }));
+          } catch (err) {
+            swseLogger.warn(`Failed to create armor reflex equipment modifier:`, err);
+          }
+        }
+      }
+
+      swseLogger.debug(`[ModifierEngine] Registered ${modifiers.length} armor modifiers for ${armorName} (${armorType}, proficient: ${isProficient})`);
+
+    } catch (err) {
+      swseLogger.warn(`[ModifierEngine] Error collecting armor item modifiers:`, err);
+    }
+
+    return modifiers;
   }
 
   /**

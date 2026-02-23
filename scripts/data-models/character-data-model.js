@@ -417,6 +417,13 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
    * - When not proficient, you do NOT gain armor's equipment bonuses
    */
   _calculateArmorEffects() {
+    // ===== PHASE 0: LEGACY ARMOR CALCULATION =====
+    // TO BE REMOVED AFTER PHASE 1 (ModifierEngine registration complete)
+    // This function is temporarily preserved to prevent defense calculation drift
+    // during Phase 1. It will be deprecated once armor modifiers are registered
+    // and DefenseCalculator consumes ModifierEngine domains.
+    // @deprecated Use ModifierEngine._getItemModifiers() instead
+
     const actor = this.parent;
     const equippedArmor = actor?.items?.find(i => i.type === 'armor' && i.system.equipped);
 
@@ -431,7 +438,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     const armorType = equippedArmor.system.armorType?.toLowerCase() || 'light';
 
-    // Check for armor proficiency
+    // Check for armor proficiency (LEGACY NAME-PARSING — will be replaced by structured data)
     const armorProficiencies = actor?.items?.filter(i =>
       (i.type === 'feat' || i.type === 'talent') &&
       i.name.toLowerCase().includes('armor proficiency')
@@ -449,7 +456,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     // Store proficiency status for use in defense calculations
     this.armorProficient = isProficient;
 
-    // Calculate armor check penalty
+    // Calculate armor check penalty (LEGACY DIRECT MATH — will be registered as modifier)
     if (isProficient) {
       // Proficient: Use armor's base check penalty
       this.armorCheckPenalty = equippedArmor.system.armorCheckPenalty || 0;
@@ -464,7 +471,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       this.armorCheckPenalty = basePenalty + proficiencyPenalty;
     }
 
-    // Calculate speed reduction
+    // Calculate speed reduction (LEGACY DIRECT MATH — will be registered as modifier)
     const baseSpeed = this.speed || 6;
     let speedPenalty = equippedArmor.system.speedPenalty || 0;
 
@@ -478,6 +485,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     }
 
     this.effectiveSpeed = Math.max(1, baseSpeed - speedPenalty);
+    // ===== END PHASE 0 LEGACY BLOCK =====
   }
 
   /**
@@ -533,10 +541,17 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     if (equippedArmor) {
       // Get armor bonus (use defenseBonus or armorBonus field)
+      // ===== PHASE 0: LEGACY ARMOR DEFENSE MATH =====
+      // TO BE REMOVED AFTER PHASE 1 (ModifierEngine registration complete)
+      // Armor defenseBonus is currently applied directly.
+      // This will be replaced by ModifierEngine.collectModifiers("defense.reflex")
+      // @deprecated Use ModifierEngine modifier registration instead
+
       armorBonus = equippedArmor.system.defenseBonus || equippedArmor.system.armorBonus || 0;
 
       // Apply max ability bonus restriction (from armor max dex bonus or other limit)
       // This restriction applies to the configured ability modifier, not just DEX
+      // PHASE 1: Will become ModifierEngine domain "defense.dexLimit"
       let maxAbilityBonus = equippedArmor.system.maxDexBonus;
       if (Number.isInteger(maxAbilityBonus)) {
         // Armor Mastery talent increases max ability bonus by +1
@@ -548,6 +563,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
       // Calculate reflex defense based on armor and talents
       // SWSE Rules: Armor bonus REPLACES heroic level unless you have talents
+      // PHASE 1: Will be consolidated into single ModifierEngine calculation
       if (hasImprovedArmoredDefense) {
         // Reflex Defense = max(level + floor(armor/2), armor)
         reflexBase += Math.max(level + Math.floor(armorBonus / 2), armorBonus);
@@ -569,10 +585,12 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     // Add equipment bonus from armor (only if proficient)
     // SWSE Rule: When not proficient with armor, you do NOT gain equipment bonuses
+    // PHASE 1: Will become ModifierEngine domain "defense.reflex" (proficiency-conditional)
     let equipmentBonus = 0;
     if (equippedArmor && this.armorProficient) {
       equipmentBonus = equippedArmor.system.equipmentBonus || 0;
     }
+    // ===== END PHASE 0 LEGACY ARMOR BLOCK ====
 
     // Get species trait bonus for reflex
     const reflexSpeciesBonus = this.defenses.reflex.speciesBonus || 0;
@@ -607,6 +625,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     // Add equipment bonus from armor (only if proficient)
     // SWSE Rule: When not proficient with armor, you do NOT gain equipment bonuses
+    // PHASE 1: Will become ModifierEngine domain "defense.fort" (proficiency-conditional)
     let armorFortBonus = 0;
     if (equippedArmor && this.armorProficient) {
       armorFortBonus = equippedArmor.system.equipmentBonus || equippedArmor.system.fortBonus || 0;
@@ -618,6 +637,8 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     // Calculate misc bonuses (auto + user)
     const fortMiscTotal = this._computeDefenseMisc(this.defenses.fort);
 
+    // PHASE 0: Legacy armor bonus directly written to total
+    // PHASE 1: Will consume ModifierEngine domain "defense.fort"
     this.defenses.fort.total = 10 + level + fortAbilityMod + armorFortBonus +
                                      (this.defenses.fort.classBonus || 0) +
                                      fortMiscTotal +
