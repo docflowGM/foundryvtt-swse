@@ -1163,7 +1163,7 @@ export class DarkSidePowers {
       actorId: targetActor.id,
       type: "update",
       data: {
-        "system.conditionTrack.value": newCondition
+        "system.conditionTrack.current": newCondition
       }
     });
 

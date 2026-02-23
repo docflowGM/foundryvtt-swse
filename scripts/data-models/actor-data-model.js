@@ -196,27 +196,27 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
   _calculateDefenses() {
     const lvl = this.level;
-    const cond = this.conditionTrack.penalty;
 
     // PHASE 2 COMPLETION: Base-only calculation
     // Armor modifiers are applied by ModifierEngine, NOT here
+    // Condition penalties applied by ModifierEngine, NOT here
     // This is the CRITICAL FIX: Remove direct armor calculation
     // Reflex.armor property removed from calculation (handled by ModifierEngine)
 
     this.defenses.reflex.total =
       10 + this.abilities.dex.mod +
       this.defenses.reflex.classBonus +
-      this.defenses.reflex.misc + cond;
+      this.defenses.reflex.misc;
 
     this.defenses.fort.total =
       10 + lvl + this.abilities.str.mod +
       this.defenses.fort.classBonus +
-      this.defenses.fort.misc + cond;
+      this.defenses.fort.misc;
 
     this.defenses.will.total =
       10 + lvl + this.abilities.wis.mod +
       this.defenses.will.classBonus +
-      this.defenses.will.misc + cond;
+      this.defenses.will.misc;
   }
 
   /* -------------------------------------------------------------------------- */

@@ -265,7 +265,7 @@ export class DamageEngineTest {
       const maxHP = actor.system.attributes?.hp?.max || 100;
       await ActorEngine.updateActor(actor, {
         'system.attributes.hp.value': maxHP,
-        'system.progression.conditionTrack': 0
+        'system.conditionTrack.current': 0
       });
 
       this.mutationLog = [];
