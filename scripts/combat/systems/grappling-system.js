@@ -185,9 +185,7 @@ export class SWSEGrappling {
           label: 'Pinned',
           icon: 'icons/svg/trap.svg',
           origin: sourceActor.uuid,
-          changes: [
-            { key: 'system.conditionTrack.current', mode: 'OVERRIDE', value: 5 }
-          ],
+          changes: [],
           flags: { swse: { grapple: 'pinned', source: sourceActor.id } }
         };
         break;
