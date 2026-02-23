@@ -4,46 +4,23 @@
      Reads: system.hp.value/max, system.derived.shield.current/max
 --}}
 
-<div class="hp-shield-wrapper"
-     data-sr-full="{{eq actor.system.derived.shield.current actor.system.derived.shield.max}}"
+<div class="hp-shield-wrapper {{#if (eq actor.system.derived.shield.current 0)}}sr-empty{{/if}}"
      style="--sr-percent: {{percentage actor.system.derived.shield.current actor.system.derived.shield.max}}%;">
 
   {{!-- SR Ring Overlay --}}
-  {{#if actor.system.derived.shield.current}}
+  {{#if actor.system.derived.shield.max}}
     <div class="sr-ring"></div>
   {{/if}}
 
   {{!-- HP Container --}}
   <div class="hp-container">
-    <header class="hp-header">
-      <span class="hp-label">Health Points</span>
-      {{#if actor.system.derived.shield.active}}
-        <span class="sr-indicator">+Shield</span>
-      {{/if}}
-    </header>
-
     <div class="hp-bar">
       <div class="hp-fill"
            style="width: {{percentage actor.system.hp.value actor.system.hp.max}}%;"></div>
     </div>
 
     <div class="hp-values">
-      <span class="hp-current">{{actor.system.hp.value}}</span>
-      <span class="hp-separator">/</span>
-      <span class="hp-max">{{actor.system.hp.max}}</span>
+      {{actor.system.hp.value}} / {{actor.system.hp.max}}
     </div>
-
-    {{!-- Shield Info (below HP bar) --}}
-    {{#if actor.system.derived.shield.max}}
-      <div class="sr-info">
-        <span class="sr-label">SR</span>
-        <span class="sr-current">{{actor.system.derived.shield.current}}</span>
-        <span class="sr-separator">/</span>
-        <span class="sr-max">{{actor.system.derived.shield.max}}</span>
-        {{#if actor.system.derived.shield.source}}
-          <span class="sr-source">{{actor.system.derived.shield.source}}</span>
-        {{/if}}
-      </div>
-    {{/if}}
   </div>
 </div>
