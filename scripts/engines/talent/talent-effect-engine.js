@@ -360,7 +360,7 @@ export class TalentEffectEngine {
     }
 
     // --- Compute condition change ---
-    const currentCondition = sourceActor.system.conditionTrack?.value ?? 0;
+    const currentCondition = sourceActor.system.conditionTrack?.current ?? 0;
     const newCondition = Math.max(0, currentCondition - 1);
 
     // --- Build mutations ---
@@ -381,7 +381,7 @@ export class TalentEffectEngine {
       actorId: sourceActor.id,
       type: "update",
       data: {
-        "system.conditionTrack.value": newCondition
+        "system.conditionTrack.current": newCondition
       }
     });
 

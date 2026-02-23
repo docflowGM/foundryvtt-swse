@@ -530,29 +530,6 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
             const num = Number(value);
             return Number.isNaN(num) ? 0 : Math.floor(num);
           }
-        }),
-        persistentSteps: new fields.NumberField({
-          required: true,
-          nullable: true,
-          initial: 0,
-          min: 0,
-          integer: true,
-          clean: value => {
-            if (value === null || value === undefined || value === '') {return 0;}
-            const num = Number(value);
-            return Number.isNaN(num) ? 0 : Math.floor(num);
-          }
-        }),
-        penalty: new fields.NumberField({
-          required: true,
-          nullable: true,
-          initial: 0,
-          integer: true,
-          clean: value => {
-            if (value === null || value === undefined || value === '') {return 0;}
-            const num = Number(value);
-            return Number.isNaN(num) ? 0 : Math.floor(num);
-          }
         })
       }),
 

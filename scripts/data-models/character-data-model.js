@@ -117,9 +117,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       // Condition Track
       conditionTrack: new fields.SchemaField({
         current: new fields.NumberField({ required: true, initial: 0, min: 0, max: 5, integer: true }),
-        persistent: new fields.BooleanField({ required: true, initial: false }),
-        persistentSteps: new fields.NumberField({ required: true, initial: 0, min: 0, integer: true }),
-        penalty: new fields.NumberField({ required: true, initial: 0, integer: true })
+        persistent: new fields.BooleanField({ required: true, initial: false })
       }),
 
       // Mount System — rider state

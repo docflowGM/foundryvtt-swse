@@ -299,21 +299,12 @@ export class ThresholdEngine {
 
     const target = result.target;
     const currentCT = target.system.conditionTrack?.current ?? 0;
-    const currentPersistent = target.system.conditionTrack?.persistentSteps ?? 0;
 
     let totalShift = 0;
-    let persistentShift = 0;
 
     for (const shift of result.ctShifts) {
       totalShift += Math.abs(shift.steps);
-      if (shift.persistent) {
-        persistentShift += Math.abs(shift.steps);
-      }
     }
-
-    // Cap persistent at configured max (default: 3)
-    const persistentCap = this._setting('persistentDTPenaltyCap') ?? 3;
-    const newPersistent = Math.min(currentPersistent + persistentShift, persistentCap);
 
     // Apply CT movement
     const newCT = Math.min(currentCT + totalShift, 5);
@@ -321,8 +312,7 @@ export class ThresholdEngine {
     // Stun knockout: move to bottom of CT
     if (result.stunKnockout) {
       await target.update({
-        'system.conditionTrack.current': 5,
-        'system.conditionTrack.persistentSteps': newPersistent
+        'system.conditionTrack.current': 5
       });
       await this._postChatMessage(target, result, 5);
       return;
@@ -331,11 +321,6 @@ export class ThresholdEngine {
     const updates = {
       'system.conditionTrack.current': newCT
     };
-
-    // Only update persistentSteps if enhanced massive damage is enabled
-    if (this.enabled && this._setting('persistentDTPenalty')) {
-      updates['system.conditionTrack.persistentSteps'] = newPersistent;
-    }
 
     await target.update(updates);
     await this._postChatMessage(target, result, newCT);

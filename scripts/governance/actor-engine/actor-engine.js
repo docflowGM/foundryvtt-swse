@@ -580,8 +580,8 @@ export const ActorEngine = {
 
       if (shouldShiftCondition) {
         // Shift condition track within same mutation
-        const currentCondition = actor.system.progression?.conditionTrack || 0;
-        updates['system.progression.conditionTrack'] = Math.max(0, currentCondition + 1);
+        const currentCondition = actor.system.conditionTrack?.current || 0;
+        updates['system.conditionTrack.current'] = Math.max(0, currentCondition + 1);
       }
 
       // Apply all updates in one mutation
@@ -781,7 +781,7 @@ export const ActorEngine = {
       }
 
       await this.updateActor(actor, {
-        'system.progression.conditionTrack': newCondition
+        'system.conditionTrack.current': newCondition
       });
 
       const directionLabel = direction > 0 ? 'worsened' : 'improved';
