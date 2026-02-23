@@ -66,7 +66,7 @@ export class ThresholdEngine {
     if (!actor) return 0;
 
     const system = actor.system;
-    const fort = system.defenses?.fortitude?.total ?? 10;
+    const fort = system.derived?.defenses?.fortitude?.total ?? 10;
 
     // Map size string to threshold bonus (RAW)
     const sizeString = (system.size ?? 'medium').toLowerCase();
@@ -163,7 +163,7 @@ export class ThresholdEngine {
     }
 
     // Character / Droid / NPC
-    const fortTotal = system.defenses?.fort?.total ?? 10;
+    const fortTotal = system.derived?.defenses?.fortitude?.total ?? 10;
     const heroicLevel = system.heroicLevel ?? system.level ?? 1;
     const sizeMod = this._getCharacterSizeModifier(system.size);
 

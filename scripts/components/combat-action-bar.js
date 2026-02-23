@@ -244,8 +244,7 @@ export class CombatActionBar {
       name: 'Charging',
       duration: { turns: 1 },
       changes: [
-        { key: 'system.attackBonus', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 2 },
-        { key: 'system.defenses.reflex.bonus', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -2 }
+        { key: 'system.attackBonus', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 2 }
       ]
     });
     this._useAction(actor, 'fullRound');

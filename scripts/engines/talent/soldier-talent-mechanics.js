@@ -443,12 +443,7 @@ export class SoldierTalentMechanics {
     await createEffectOnActor(ally, {
       name: 'Cover Fire - Defense Bonus',
       icon: 'icons/svg/shield.svg',
-      changes: [{
-        key: 'system.defenses.reflex.bonus',
-        mode: 2, // ADD
-        value: 4,
-        priority: 20
-      }],
+      changes: [],
       duration: {
         rounds: 1,
         startRound: game.combat?.round,

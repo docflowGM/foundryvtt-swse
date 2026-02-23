@@ -139,16 +139,20 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
   prepareDerivedData() {
     this._calculateAbilities();
-    this._applyConditionPenalties();
+    // PHASE 2 CONSOLIDATION: Condition penalties moved to ModifierEngine
+    // this._applyConditionPenalties();
 
     if (this.parent?.type === 'droid') {
       this._calculateDroidDerivedData();
     }
 
-    this._calculateDefenses();
+    // PHASE 2 CONSOLIDATION: Defense calculation moved to DerivedCalculator
+    // DerivedCalculator is the sole authority for system.derived.defenses.*
+    // this._calculateDefenses();
     this._calculateSkills();
     // BAB is progression-owned, never computed here (see PROGRESSION_COMPILER.md)
-    this._calculateDamageThreshold();
+    // PHASE 2 CONSOLIDATION: Damage threshold calculated from derived defenses
+    // this._calculateDamageThreshold();
     this._calculateInitiative();
   }
 

@@ -19,42 +19,17 @@ export const TALENT_EFFECTS = {
   // ============================================================================
 
   'Defensive Mobility': {
-    effects: [{
-      key: 'system.defenses.reflex.misc',
-      mode: 2,
-      value: '2',
-      priority: 20
-    }],
+    effects: [],
     description: '+2 Reflex Defense when moving'
   },
 
   'Improved Defenses': {
-    effects: [{
-      key: 'system.defenses.fortitude.misc',
-      mode: 2,
-      value: '1',
-      priority: 20
-    }, {
-      key: 'system.defenses.reflex.misc',
-      mode: 2,
-      value: '1',
-      priority: 20
-    }, {
-      key: 'system.defenses.will.misc',
-      mode: 2,
-      value: '1',
-      priority: 20
-    }],
+    effects: [],
     description: '+1 to all defenses'
   },
 
 'Force of Will': {
-  effects: [{
-    key: 'system.defenses.will.misc',
-    mode: 2,
-    value: '2',
-    priority: 20
-  }],
+  effects: [],
   description: '+2 insight bonus to Will Defense (always on). The encounter aura portion remains rules text.'
 },
 
@@ -89,42 +64,22 @@ export const TALENT_EFFECTS = {
   },
 
   'Hardiness': {
-    effects: [{
-      key: 'system.defenses.fortitude.misc',
-      mode: 2,
-      value: '2',
-      priority: 20
-    }],
+    effects: [],
     description: '+2 Fortitude Defense'
   },
 
   'Resilience': {
-    effects: [{
-      key: 'system.defenses.fortitude.misc',
-      mode: 2,
-      value: '1',
-      priority: 20
-    }],
+    effects: [],
     description: '+1 Fortitude Defense'
   },
 
   'Iron Will': {
-    effects: [{
-      key: 'system.defenses.will.misc',
-      mode: 2,
-      value: '2',
-      priority: 20
-    }],
+    effects: [],
     description: '+2 Will Defense'
   },
 
   'Strong in the Force': {
-    effects: [{
-      key: 'system.defenses.will.misc',
-      mode: 2,
-      value: '5',
-      priority: 20
-    }],
+    effects: [],
     description: '+5 Will Defense'
   },
 
@@ -1326,12 +1281,7 @@ export const TALENT_EFFECTS = {
   },
 
   'Battle Hardened': {
-    effects: [{
-      key: 'system.defenses.will.misc',
-      mode: 2,
-      value: '2',
-      priority: 20
-    }],
+    effects: [],
     description: '+2 Will Defense vs fear'
   },
 

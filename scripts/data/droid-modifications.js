@@ -112,7 +112,7 @@ export const DROID_MODIFICATION_EXAMPLES = {
     hardpointsRequired: 2,
     costInCredits: 1000,
     modifiers: [
-      { target: 'defense.fort', type: 'enhancement', value: 2 },
+      { target: 'defense.fortitude', type: 'enhancement', value: 2 },
       { target: 'defense.reflex', type: 'enhancement', value: 1 },
       { target: 'hp.max', type: 'enhancement', value: 5 }
     ],

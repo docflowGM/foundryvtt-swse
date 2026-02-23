@@ -338,12 +338,7 @@ export class LightSideTalentMechanics {
     await createEffectOnActor(ally, {
       name: "Consular's Wisdom",
       icon: 'icons/svg/angel.svg',
-      changes: [{
-        key: 'system.defenses.will.bonus',
-        mode: 2, // ADD
-        value: wisdomBonus,
-        priority: 20
-      }],
+      changes: [],
       duration: {
         combat: game.combat?.id
       },
@@ -1006,12 +1001,6 @@ export class LightSideTalentMechanics {
           key: 'system.attackPenalty',
           mode: 2, // ADD
           value: -penaltyAmount,
-          priority: 20
-        },
-        {
-          key: 'system.defenses.will.bonus',
-          mode: 2, // ADD
-          value: willBonus,
           priority: 20
         }
       ],

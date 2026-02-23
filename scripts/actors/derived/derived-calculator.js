@@ -57,7 +57,7 @@ export class DerivedCalculator {
       // Extract specific adjustments for calculators
       const hpAdjustment = modifierMap['hp.max'] || 0;
       const defenseAdjustments = {
-        fort: modifierMap['defense.fort'] || 0,
+        fort: modifierMap['defense.fortitude'] || 0,
         ref: modifierMap['defense.reflex'] || 0,
         will: modifierMap['defense.will'] || 0
       };
@@ -175,7 +175,7 @@ export class DerivedCalculator {
         .map(key => `skill.${key}`);
       const allTargets = [
         ...skillTargets,
-        'defense.fort', 'defense.reflex', 'defense.will',
+        'defense.fortitude', 'defense.reflex', 'defense.will',
         'hp.max', 'bab.total', 'initiative.total'
       ];
       const modifierBreakdown = await ModifierEngine.buildModifierBreakdown(actor, allTargets);
