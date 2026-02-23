@@ -1,0 +1,248 @@
+{{!-- Armor Item Card for Inventory Display --}}
+<div class="inventory-armor-card {{#if equipped}}is-equipped{{/if}}" data-item-id="{{id}}">
+
+  {{!-- CARD HEADER: Name + Quick Status --}}
+  <div class="card-header armor-header">
+    <div class="armor-title-section">
+      <div class="armor-name">{{name}}</div>
+      <div class="armor-type-badge">{{system.armorType}}</div>
+    </div>
+    <div class="armor-status">
+      {{#if equipped}}
+        <span class="equipped-badge" title="Equipped">⚙</span>
+      {{/if}}
+    </div>
+  </div>
+
+  {{!-- CARD BODY: Stats + Modifiers --}}
+  <div class="card-body armor-body">
+
+    {{!-- Defense Bonuses Row --}}
+    <div class="stat-row defense-stats">
+      <div class="stat-item">
+        <span class="stat-label">Reflex</span>
+        <span class="stat-value {{#if system.reflexBonus}}positive{{/if}}">
+          {{#if system.reflexBonus}}+{{system.reflexBonus}}{{else}}—{{/if}}
+        </span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Fort</span>
+        <span class="stat-value {{#if system.fortBonus}}positive{{/if}}">
+          {{#if system.fortBonus}}+{{system.fortBonus}}{{else}}—{{/if}}
+        </span>
+      </div>
+    </div>
+
+    {{!-- Penalties Row --}}
+    <div class="stat-row penalty-stats">
+      {{#if system.armorCheckPenalty}}
+        <div class="stat-item penalty">
+          <span class="stat-label">ACP</span>
+          <span class="stat-value negative">{{system.armorCheckPenalty}}</span>
+        </div>
+      {{/if}}
+      {{#if system.maxDexBonus}}
+        <div class="stat-item penalty">
+          <span class="stat-label">Max Dex</span>
+          <span class="stat-value">+{{system.maxDexBonus}}</span>
+        </div>
+      {{/if}}
+      {{#if system.speedPenalty}}
+        <div class="stat-item penalty">
+          <span class="stat-label">Speed</span>
+          <span class="stat-value negative">{{system.speedPenalty}}</span>
+        </div>
+      {{/if}}
+    </div>
+
+    {{!-- Weight & Properties --}}
+    <div class="armor-meta">
+      {{#if system.weight}}
+        <span class="meta-item">⚖ {{system.weight}} lbs</span>
+      {{/if}}
+      {{#if system.isPowered}}
+        <span class="meta-item powered">⚡ Powered</span>
+      {{/if}}
+      {{#if system.upgradeSlots}}
+        <span class="meta-item">🔧 {{system.upgradeSlots}} slots</span>
+      {{/if}}
+    </div>
+
+  </div>
+
+  {{!-- CARD FOOTER: Actions --}}
+  <div class="card-footer armor-footer">
+    <button class="btn btn-equip" title="Equip/Unequip">
+      {{#if equipped}}Unequip{{else}}Equip{{/if}}
+    </button>
+    <button class="btn btn-edit" title="Edit Item">Edit</button>
+    <button class="btn btn-delete" title="Remove Item">Delete</button>
+  </div>
+
+</div>
+
+<style>
+.inventory-armor-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.inventory-armor-card.is-equipped {
+  border-color: #4a9eff;
+  box-shadow: 0 0 8px rgba(74, 158, 255, 0.3);
+}
+
+.armor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(255, 165, 0, 0.1);
+  border-bottom: 1px solid #333;
+}
+
+.armor-title-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.armor-name {
+  font-weight: bold;
+  color: #fff;
+  font-size: 14px;
+}
+
+.armor-type-badge {
+  font-size: 11px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.equipped-badge {
+  color: #4a9eff;
+  font-size: 16px;
+}
+
+.armor-body {
+  padding: 10px 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat-row {
+  display: flex;
+  gap: 8px;
+}
+
+.stat-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  border: 1px solid #222;
+}
+
+.stat-label {
+  font-size: 10px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 2px;
+}
+
+.stat-value {
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.stat-value.positive {
+  color: #4a9eff;
+}
+
+.stat-value.negative {
+  color: #ff6b6b;
+}
+
+.penalty {
+  background: rgba(255, 107, 107, 0.1);
+  border-color: #663333;
+}
+
+.armor-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 6px 0;
+  border-top: 1px solid #333;
+  font-size: 11px;
+  color: #aaa;
+}
+
+.meta-item {
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+}
+
+.meta-item.powered {
+  color: #ffcc00;
+  background: rgba(255, 204, 0, 0.1);
+}
+
+.armor-footer {
+  display: flex;
+  gap: 4px;
+  padding: 6px 8px;
+  border-top: 1px solid #333;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.btn {
+  flex: 1;
+  padding: 4px 8px;
+  font-size: 11px;
+  border: 1px solid #555;
+  border-radius: 3px;
+  background: #222;
+  color: #ccc;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn:hover {
+  background: #333;
+  border-color: #777;
+  color: #fff;
+}
+
+.btn-equip {
+  border-color: #4a9eff;
+  color: #4a9eff;
+}
+
+.btn-equip:hover {
+  background: rgba(74, 158, 255, 0.1);
+}
+
+.btn-delete {
+  color: #ff6b6b;
+  border-color: #663333;
+}
+
+.btn-delete:hover {
+  background: rgba(255, 107, 107, 0.1);
+}
+</style>

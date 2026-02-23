@@ -1,0 +1,292 @@
+{{!-- Weapon Item Card for Inventory Display --}}
+<div class="inventory-weapon-card {{#if equipped}}is-equipped{{/if}}" data-item-id="{{id}}">
+
+  {{!-- CARD HEADER: Name + Damage Type --}}
+  <div class="card-header weapon-header">
+    <div class="weapon-title-section">
+      <div class="weapon-name">{{name}}</div>
+      <div class="weapon-type-badge">{{system.meleeOrRanged}}</div>
+    </div>
+    {{#if equipped}}
+      <span class="equipped-badge" title="Equipped">⚔</span>
+    {{/if}}
+  </div>
+
+  {{!-- CARD BODY: Damage + Stats --}}
+  <div class="card-body weapon-body">
+
+    {{!-- Damage Row --}}
+    <div class="damage-stat">
+      <span class="stat-label">Damage</span>
+      <span class="damage-value">{{system.damageDice}}{{system.damageDiceType}}</span>
+      {{#if system.damageBonus}}
+        <span class="damage-bonus {{#if system.damageBonus}}positive{{/if}}">
+          {{#if system.damageBonus}}+{{system.damageBonus}}{{/if}}
+        </span>
+      {{/if}}
+      <span class="damage-type-label">({{system.damageType}})</span>
+    </div>
+
+    {{!-- Range/Ammo Row --}}
+    {{#if system.ammunition}}
+      <div class="ammo-stat">
+        <span class="stat-label">Ammo</span>
+        <div class="ammo-display">
+          <span class="ammo-value">{{system.ammunition.current}}/{{system.ammunition.max}}</span>
+          {{#if system.ammunition.type}}
+            <span class="ammo-type">({{system.ammunition.type}})</span>
+          {{/if}}
+        </div>
+        {{#if system.ammunition.max}}
+          <div class="ammo-bar">
+            <div class="ammo-fill" style="width: {{ammoPercentage}}%"></div>
+          </div>
+        {{/if}}
+      </div>
+    {{/if}}
+
+    {{#if system.range}}
+      <div class="stat-row meta-stats">
+        <div class="meta-stat">
+          <span class="stat-label">Range</span>
+          <span class="stat-value">{{system.range}}</span>
+        </div>
+        {{#if system.criticalMultiplier}}
+          <div class="meta-stat">
+            <span class="stat-label">Crit</span>
+            <span class="stat-value">{{system.criticalMultiplier}}</span>
+          </div>
+        {{/if}}
+      </div>
+    {{/if}}
+
+    {{!-- Properties --}}
+    {{#if system.properties}}
+      <div class="weapon-properties">
+        {{#each system.properties}}
+          <span class="property-tag">{{this}}</span>
+        {{/each}}
+      </div>
+    {{/if}}
+
+  </div>
+
+  {{!-- CARD FOOTER: Actions --}}
+  <div class="card-footer weapon-footer">
+    <button class="btn btn-equip" title="Equip/Unequip">
+      {{#if equipped}}Unequip{{else}}Equip{{/if}}
+    </button>
+    <button class="btn btn-edit" title="Edit Item">Edit</button>
+    <button class="btn btn-delete" title="Remove Item">Delete</button>
+  </div>
+
+</div>
+
+<style>
+.inventory-weapon-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.inventory-weapon-card.is-equipped {
+  border-color: #ff6b6b;
+  box-shadow: 0 0 8px rgba(255, 107, 107, 0.3);
+}
+
+.weapon-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(255, 107, 107, 0.1);
+  border-bottom: 1px solid #333;
+}
+
+.weapon-title-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.weapon-name {
+  font-weight: bold;
+  color: #fff;
+  font-size: 14px;
+}
+
+.weapon-type-badge {
+  font-size: 11px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.weapon-body {
+  padding: 10px 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.damage-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  border: 1px solid #222;
+}
+
+.stat-label {
+  font-size: 10px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  min-width: 40px;
+}
+
+.damage-value {
+  font-size: 14px;
+  font-weight: bold;
+  color: #ff9999;
+  min-width: 40px;
+}
+
+.damage-bonus {
+  color: #4a9eff;
+  font-size: 12px;
+}
+
+.damage-type-label {
+  color: #888;
+  font-size: 11px;
+  margin-left: auto;
+}
+
+.ammo-stat {
+  padding: 8px 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  border: 1px solid #222;
+}
+
+.ammo-display {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.ammo-value {
+  font-weight: bold;
+  color: #fff;
+  font-size: 13px;
+}
+
+.ammo-type {
+  color: #888;
+  font-size: 11px;
+}
+
+.ammo-bar {
+  height: 6px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 2px;
+  overflow: hidden;
+  border: 1px solid #222;
+}
+
+.ammo-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4a9eff, #00ff00);
+  transition: width 0.3s ease;
+}
+
+.stat-row {
+  display: flex;
+  gap: 8px;
+}
+
+.meta-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  border: 1px solid #222;
+}
+
+.stat-value {
+  font-size: 12px;
+  color: #fff;
+}
+
+.weapon-properties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px 0;
+}
+
+.property-tag {
+  display: inline-block;
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid #444;
+  border-radius: 2px;
+  font-size: 10px;
+  color: #aaa;
+}
+
+.weapon-footer {
+  display: flex;
+  gap: 4px;
+  padding: 6px 8px;
+  border-top: 1px solid #333;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.btn {
+  flex: 1;
+  padding: 4px 8px;
+  font-size: 11px;
+  border: 1px solid #555;
+  border-radius: 3px;
+  background: #222;
+  color: #ccc;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn:hover {
+  background: #333;
+  border-color: #777;
+  color: #fff;
+}
+
+.btn-equip {
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+}
+
+.btn-equip:hover {
+  background: rgba(255, 107, 107, 0.1);
+}
+
+.btn-delete {
+  color: #ff6b6b;
+  border-color: #663333;
+}
+
+.btn-delete:hover {
+  background: rgba(255, 107, 107, 0.1);
+}
+</style>

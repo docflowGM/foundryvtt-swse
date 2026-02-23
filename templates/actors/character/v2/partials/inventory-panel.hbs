@@ -1,4 +1,4 @@
-<div class="swse-inventory">
+<div class="swse-inventory inventory-card-layout">
 
   {{#each derived.inventory as |items group|}}
 
@@ -9,10 +9,16 @@
           {{group}}
         </div>
 
-        <div class="inventory-group-body">
+        <div class="inventory-group-body inventory-cards">
 
           {{#each items}}
-            {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-item-row.hbs" this}}
+            {{#if (eq type "armor")}}
+              {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-armor-card.hbs" this}}
+            {{else if (eq type "weapon")}}
+              {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-weapon-card.hbs" this}}
+            {{else}}
+              {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-item-card.hbs" this}}
+            {{/if}}
           {{/each}}
 
         </div>
@@ -23,3 +29,39 @@
   {{/each}}
 
 </div>
+
+<style>
+.swse-inventory.inventory-card-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.inventory-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inventory-group-header {
+  font-weight: bold;
+  font-size: 13px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 8px 0;
+  border-bottom: 2px solid #444;
+}
+
+.inventory-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .inventory-cards {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
