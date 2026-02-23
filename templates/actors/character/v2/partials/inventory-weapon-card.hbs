@@ -73,11 +73,12 @@
 
   {{!-- CARD FOOTER: Actions --}}
   <div class="card-footer weapon-footer">
-    <button class="btn btn-equip" title="Equip/Unequip">
+    <button class="btn btn-equip" title="Equip/Unequip" data-action="equip">
       {{#if equipped}}Unequip{{else}}Equip{{/if}}
     </button>
-    <button class="btn btn-edit" title="Edit Item">Edit</button>
-    <button class="btn btn-delete" title="Remove Item">Delete</button>
+    <button class="btn btn-config" title="Configure Weapon Properties" data-action="configure">⚙</button>
+    <button class="btn btn-edit" title="Edit Item" data-action="edit">Edit</button>
+    <button class="btn btn-delete" title="Remove Item" data-action="delete">Delete</button>
   </div>
 
 </div>
@@ -279,6 +280,18 @@
 
 .btn-equip:hover {
   background: rgba(255, 107, 107, 0.1);
+}
+
+.btn-config {
+  border-color: #4a9eff;
+  color: #4a9eff;
+  padding: 4px 6px;
+  flex: 0 1 auto;
+  min-width: 32px;
+}
+
+.btn-config:hover {
+  background: rgba(74, 158, 255, 0.1);
 }
 
 .btn-delete {

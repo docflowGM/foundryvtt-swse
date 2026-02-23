@@ -1,0 +1,376 @@
+{{!-- Weapon Configuration Dialog --}}
+<form class="weapon-config-form">
+
+  {{!-- HEADER --}}
+  <div class="config-header">
+    <h3>{{weaponName}} Configuration</h3>
+    <p class="subtitle">Configure weapon properties and modifiers (V2 Compliant)</p>
+  </div>
+
+  {{!-- BASIC STATUS --}}
+  <div class="config-section basic-status">
+    <h4 class="section-title">Status</h4>
+    <div class="form-group">
+      <label class="form-checkbox">
+        <input type="checkbox" name="proficient" {{#if properties.proficient}}checked{{/if}} />
+        <span>Proficient</span>
+      </label>
+      <p class="help-text">Is character proficient with this weapon? (-5 to attack if not)</p>
+    </div>
+
+    <div class="form-group">
+      <label class="form-checkbox">
+        <input type="checkbox" name="equipped" {{#if properties.equipped}}checked{{/if}} />
+        <span>Equipped</span>
+      </label>
+      <p class="help-text">Is this weapon currently equipped?</p>
+    </div>
+
+    <div class="form-group">
+      <label class="form-checkbox">
+        <input type="checkbox" name="dualWielded" {{#if properties.dualWielded}}checked{{/if}} />
+        <span>Dual-Wielded</span>
+      </label>
+      <p class="help-text">Are you using two weapons simultaneously?</p>
+    </div>
+
+    <div class="form-group">
+      <label class="form-checkbox">
+        <input type="checkbox" name="wieldedTwoHanded" {{#if properties.wieldedTwoHanded}}checked{{/if}} />
+        <span>Two-Handed Grip</span>
+      </label>
+      <p class="help-text">Are you wielding this weapon with both hands?</p>
+    </div>
+  </div>
+
+  {{!-- WEAPON PROPERTIES --}}
+  <div class="config-section weapon-properties">
+    <h4 class="section-title">Weapon Properties</h4>
+
+    <div class="properties-grid">
+      <div class="form-group">
+        <label class="form-checkbox">
+          <input type="checkbox" name="isLight" {{#if properties.isLight}}checked{{/if}} />
+          <span>Light</span>
+        </label>
+        <p class="help-text">Light weapon (dagger, shiv, etc.)</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-checkbox">
+          <input type="checkbox" name="isTwoHanded" {{#if properties.isTwoHanded}}checked{{/if}} />
+          <span>Two-Handed</span>
+        </label>
+        <p class="help-text">Requires both hands to wield</p>
+      </div>
+    </div>
+
+    <div class="property-divider"></div>
+    <p class="property-note">Special Properties:</p>
+
+    <div class="properties-grid">
+      <div class="form-group">
+        <label class="form-checkbox">
+          <input type="checkbox" name="keen" {{#if properties.keen}}checked{{/if}} />
+          <span>Keen</span>
+        </label>
+        <p class="help-text">Expands critical range by 1</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-checkbox">
+          <input type="checkbox" name="flaming" {{#if properties.flaming}}checked{{/if}} />
+          <span>Flaming</span>
+        </label>
+        <p class="help-text">+1d6 fire damage</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-checkbox">
+          <input type="checkbox" name="frost" {{#if properties.frost}}checked{{/if}} />
+          <span>Frost</span>
+        </label>
+        <p class="help-text">+1d6 cold damage</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-checkbox">
+          <input type="checkbox" name="shock" {{#if properties.shock}}checked{{/if}} />
+          <span>Shock</span>
+        </label>
+        <p class="help-text">+1d6 sonic damage</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-checkbox">
+          <input type="checkbox" name="vorpal" {{#if properties.vorpal}}checked{{/if}} />
+          <span>Vorpal</span>
+        </label>
+        <p class="help-text">On 20: instant kill (rare)</p>
+      </div>
+    </div>
+  </div>
+
+  {{!-- DAMAGE CONFIGURATION --}}
+  <div class="config-section damage-config">
+    <h4 class="section-title">Damage</h4>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="damageDice">Damage Dice</label>
+        <input type="number" id="damageDice" name="damageDice" value="{{properties.damageDice}}" min="1" max="20" />
+      </div>
+
+      <div class="form-group">
+        <label for="damageDiceType">Dice Type</label>
+        <select id="damageDiceType" name="damageDiceType">
+          {{#each options.damageDiceTypes}}
+            <option value="{{this}}" {{#if (eq this ../properties.damageDiceType)}}selected{{/if}}>
+              {{this}}
+            </option>
+          {{/each}}
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="damageType">Damage Type</label>
+      <select id="damageType" name="damageType">
+        {{#each options.damageTypes}}
+          <option value="{{this}}" {{#if (eq this ../properties.damageType)}}selected{{/if}}>
+            {{capitalize this}}
+          </option>
+        {{/each}}
+      </select>
+    </div>
+  </div>
+
+  {{!-- ATTACK CONFIGURATION --}}
+  <div class="config-section attack-config">
+    <h4 class="section-title">Attack</h4>
+
+    <div class="form-group">
+      <label for="attackAttribute">Ability Modifier</label>
+      <select id="attackAttribute" name="attackAttribute">
+        {{#each options.attackAttributes}}
+          <option value="{{this}}" {{#if (eq this ../properties.attackAttribute)}}selected{{/if}}>
+            {{uppercase this}}
+          </option>
+        {{/each}}
+      </select>
+      <p class="help-text">Which ability mod applies to this weapon?</p>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="attackBonus">Enhancement Bonus</label>
+        <input type="number" id="attackBonus" name="attackBonus" value="{{properties.attackBonus}}" min="-10" max="10" />
+        <p class="help-text">Applied to both attack and damage rolls</p>
+      </div>
+
+      <div class="form-group">
+        <label for="criticalRange">Critical Range</label>
+        <input type="text" id="criticalRange" name="criticalRange" value="{{properties.criticalRange}}" placeholder="20" />
+        <p class="help-text">Roll this number or higher to threaten critical</p>
+      </div>
+
+      <div class="form-group">
+        <label for="criticalMultiplier">Critical Multiplier</label>
+        <input type="text" id="criticalMultiplier" name="criticalMultiplier" value="{{properties.criticalMultiplier}}" placeholder="x2" />
+        <p class="help-text">Damage multiplier on critical hit</p>
+      </div>
+    </div>
+  </div>
+
+  {{!-- BUTTONS --}}
+  <div class="dialog-buttons">
+    <button type="button" class="save-config button">Save Configuration</button>
+    <button type="button" class="reset-defaults button secondary">Reset to Defaults</button>
+    <button type="button" class="cancel-config button secondary">Cancel</button>
+  </div>
+
+</form>
+
+<style>
+.weapon-config-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 16px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+  color: #ccc;
+  font-size: 12px;
+}
+
+.config-header {
+  border-bottom: 2px solid #4a9eff;
+  padding-bottom: 12px;
+}
+
+.config-header h3 {
+  margin: 0 0 4px 0;
+  color: #4a9eff;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.config-header .subtitle {
+  margin: 0;
+  color: #888;
+  font-size: 11px;
+}
+
+.config-section {
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 3px solid #555;
+  border-radius: 3px;
+  padding: 12px;
+}
+
+.section-title {
+  margin: 0 0 12px 0;
+  color: #aaa;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: bold;
+}
+
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-group label {
+  display: block;
+  color: #ddd;
+  font-weight: 600;
+  margin-bottom: 4px;
+  font-size: 11px;
+}
+
+.form-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.form-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #4a9eff;
+}
+
+.form-checkbox span {
+  color: #ddd;
+  font-weight: 600;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group select {
+  width: 100%;
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #444;
+  border-radius: 3px;
+  color: #fff;
+  font-size: 12px;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="number"]:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #4a9eff;
+  box-shadow: 0 0 8px rgba(74, 158, 255, 0.3);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+.properties-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.property-divider {
+  height: 1px;
+  background: #444;
+  margin: 12px 0;
+}
+
+.property-note {
+  color: #888;
+  font-size: 10px;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.help-text {
+  margin: 2px 0 0 0;
+  color: #888;
+  font-size: 10px;
+  font-style: italic;
+}
+
+.dialog-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #444;
+}
+
+.dialog-buttons button {
+  padding: 8px 16px;
+  border: 1px solid #4a9eff;
+  background: linear-gradient(135deg, #0d3d7d 0%, #051f47 100%);
+  color: #4a9eff;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dialog-buttons button:hover {
+  background: linear-gradient(135deg, #1a5aa0 0%, #0d2d5a 100%);
+  box-shadow: 0 0 12px rgba(74, 158, 255, 0.4);
+}
+
+.dialog-buttons button.secondary {
+  border-color: #666;
+  background: rgba(0, 0, 0, 0.3);
+  color: #aaa;
+}
+
+.dialog-buttons button.secondary:hover {
+  border-color: #888;
+  background: rgba(0, 0, 0, 0.5);
+  color: #ddd;
+}
+
+@media (max-width: 600px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .properties-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .weapon-config-form {
+    padding: 12px;
+    gap: 16px;
+  }
+}
+</style>
