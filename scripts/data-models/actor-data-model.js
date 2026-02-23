@@ -190,45 +190,6 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
       }
     }
 
-    // --- Built-in Droid Armor vs Worn Armor
-    let armorBonus = 0;
-    let maxDex = null;
-    let acp = 0;
-
-    const builtIn = system.droidArmor?.installed ? system.droidArmor : null;
-    const worn = this.parent.items.find(
-      i => i.type === 'armor' && i.system?.equipped
-    )?.system;
-
-    const source =
-      builtIn && worn
-        ? (builtIn.armorBonus >= worn.armorBonus ? builtIn : worn)
-        : builtIn || worn;
-
-    if (source) {
-      armorBonus = source.armorBonus ?? 0;
-      maxDex = source.maxDex ?? null;
-      acp = source.armorCheckPenalty ?? 0;
-    }
-
-    system.defenses.reflex.armor = armorBonus;
-
-    // Clamp Dex
-    if (maxDex !== null) {
-      system.attributes.dex.mod = Math.min(system.attributes.dex.mod, maxDex);
-    }
-
-    // Apply ACP to skills + attacks
-    const acpSkills = [
-      'acrobatics', 'climb', 'endurance', 'initiative',
-      'jump', 'stealth', 'swim'
-    ];
-
-    for (const skill of acpSkills) {
-      if (system.skills[skill]) {
-        system.skills[skill].armor = acp;
-      }
-    }
   }
 
   /* -------------------------------------------------------------------------- */
@@ -239,9 +200,13 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
     const lvl = this.level;
     const cond = this.conditionTrack.penalty;
 
+    // PHASE 2 COMPLETION: Base-only calculation
+    // Armor modifiers are applied by ModifierEngine, NOT here
+    // This is the CRITICAL FIX: Remove direct armor calculation
+    // Reflex.armor property removed from calculation (handled by ModifierEngine)
+
     this.defenses.reflex.total =
-      10 + this.defenses.reflex.armor +
-      this.abilities.dex.mod +
+      10 + this.abilities.dex.mod +
       this.defenses.reflex.classBonus +
       this.defenses.reflex.misc + cond;
 

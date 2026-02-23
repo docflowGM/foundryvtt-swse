@@ -41,6 +41,7 @@ export class UpgradeRulesEngine {
 
   /**
    * Check if armor is of powered type
+   * PHASE 4: Uses structured flag (isPowered) only (legacy fallback removed)
    * @param {Object} item - The item to check
    * @returns {boolean} True if armor is powered
    */
@@ -49,15 +50,8 @@ export class UpgradeRulesEngine {
       return false;
     }
 
-    // Check for explicit powered flag
-    if (item.system.isPowered === true) {
-      return true;
-    }
-
-    // Check by name pattern (common convention)
-    const name = (item.name || '').toLowerCase();
-    const powerKeywords = ['power', 'powered', 'motorized', 'reinforced'];
-    return powerKeywords.some((kw) => name.includes(kw));
+    // PHASE 4: Structured isPowered flag is authoritative (legacy fallback removed)
+    return item.system.isPowered === true;
   }
 
   /**

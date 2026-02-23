@@ -4,9 +4,11 @@
 // Droid configuration stays in system.droidSystems (not derived).
 
 import combatActions from "../../../data/combat-actions.json" with { type: "json" };
+import speciesTraits from "../../../data/species-traits.json" with { type: "json" };
 import { FeatActionsMapper } from "../../utils/feat-actions-mapper.js";
 import { EncumbranceEngine } from "../../engine/encumbrance/EncumbranceEngine.js";
 import { PrerequisiteEngine } from "../../engine/prerequisites/PrerequisiteEngine.js";
+import { InventoryEngine } from "../../engines/inventory/InventoryEngine.js";
 
 /**
  * Compute the minimal v2-derived fields for Characters.
@@ -26,6 +28,14 @@ export function computeCharacterDerived(actor, system) {
   system.derived.talents ??= {};
   system.derived.actions ??= {};
   system.derived.encumbrance ??= {};
+  system.derived.racialAbilities ??= [];
+  system.derived.inventory ??= {
+    weapons: [],
+    armor: [],
+    equipment: [],
+    consumables: [],
+    misc: []
+  };
 
   // ========================================================================
   // PHASE 2: Derived values now owned by DerivedCalculator
@@ -58,8 +68,10 @@ export function computeCharacterDerived(actor, system) {
   mirrorAttacks(actor, system);
   mirrorFeats(actor, system);
   mirrorTalents(actor, system);
+  mirrorRacialAbilities(system);
   mirrorActions(actor, system);
   mirrorEncumbrance(actor, system);
+  mirrorInventory(actor, system);
 }
 
 const RESOURCE_TICK_CAP = 100;
@@ -554,6 +566,95 @@ function mirrorEncumbrance(actor, system) {
   system.derived.encumbrance.runMultiplier = encState.runMultiplier;
   system.derived.encumbrance.removeDexToReflex = encState.removeDexToReflex;
   system.derived.encumbrance.affectedSkills = encState.affectedSkills;
+}
+
+/**
+ * Pre-index species traits for O(1) lookup
+ * Built once at module load
+ */
+const speciesMap = new Map(
+  speciesTraits.map(s => [s.name.toLowerCase(), s])
+);
+
+function mirrorRacialAbilities(system) {
+  const raceKey = system.race ?? '';
+
+  if (!raceKey) {
+    system.derived.racialAbilities = [];
+    return;
+  }
+
+  // O(1) lookup by species name (case-insensitive)
+  const speciesData = speciesMap.get(raceKey.toLowerCase());
+
+  if (!speciesData) {
+    system.derived.racialAbilities = [];
+    return;
+  }
+
+  const abilities = [];
+
+  const addAbilities = (list = []) => {
+    for (const ability of list) {
+      abilities.push({
+        id: ability.id ?? `${raceKey}-${ability.name}`,
+        name: ability.name,
+        summary: ability.description ?? "",
+        source: "racial",
+        race: raceKey
+      });
+    }
+  };
+
+  addAbilities(speciesData.structuralTraits ?? []);
+  addAbilities(speciesData.activatedAbilities ?? []);
+  addAbilities(speciesData.conditionalTraits ?? []);
+
+  system.derived.racialAbilities = abilities;
+}
+
+function mirrorInventory(actor, system) {
+  const groups = {
+    weapons: [],
+    armor: [],
+    equipment: [],
+    consumables: [],
+    misc: []
+  };
+
+  for (const item of actor.items) {
+    const entry = {
+      id: item.id,
+      name: item.name,
+      quantity: item.system.quantity ?? 1,
+      equipped: item.system.equipped ?? false,
+      weight: item.system.weight ?? 0,
+      summary: item.system.description ?? ""
+    };
+
+    switch (item.type) {
+      case "weapon":
+        groups.weapons.push(entry);
+        break;
+
+      case "armor":
+        groups.armor.push(entry);
+        break;
+
+      case "equipment":
+        groups.equipment.push(entry);
+        break;
+
+      case "consumable":
+        groups.consumables.push(entry);
+        break;
+
+      default:
+        groups.misc.push(entry);
+    }
+  }
+
+  system.derived.inventory = groups;
 }
 
 function splitCamel(str) {

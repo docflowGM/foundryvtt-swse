@@ -1,39 +1,63 @@
 // ============================================
 // FILE: rolls/saves.js
-// Saving throw rolls using SWSE utils
+// Saving throw rolls via RollCore (V2 Unified)
 // ============================================
 
+import RollCore from "../engines/roll/roll-core.js";
+import { swseLogger } from "../utils/logger.js";
+
 /**
- * Roll a saving throw (uses defense as save in SWSE)
+ * Roll a saving throw via RollCore
+ * In SWSE, "saves" are defense checks
  * @param {Actor} actor - The actor making the save
  * @param {string} type - Save type (fortitude, reflex, will)
- * @returns {Promise<Roll>} The save roll
+ * @param {Object} options - Additional options
+ * @param {boolean} options.useForce - Spend a Force Point
+ * @returns {Promise<Roll|null>} The save roll or null if failed
  */
-export async function rollSave(actor, type) {
+export async function rollSave(actor, type, options = {}) {
   const utils = game.swse.utils;
 
+  if (!actor) {
+    ui.notifications.warn('No actor specified for save roll');
+    return null;
+  }
+
   // In SWSE, "saves" are just defense checks
-  const def = actor.system.defenses?.[type];
+  const def = actor.system?.derived?.defenses?.[type];
   if (!def) {
     ui.notifications.warn(game.i18n.format('SWSE.Notifications.Rolls.DefenseNotFound', { type }));
     return null;
   }
 
-  const defenseBonus = def.class || 0;
-  const abilityScore = actor.system.attributes[def.ability]?.base || 10;
-  const abilityMod = utils.math.calculateAbilityModifier(abilityScore);
-  const halfLvl = utils.math.halfLevel(actor.system.level);
+  // === UNIFIED ROLL EXECUTION via RollCore ===
+  const domain = `save.${type}`;
+  const rollResult = await RollCore.execute({
+    actor,
+    domain,
+    rollOptions: {
+      baseDice: '1d20',
+      useForce: options.useForce || false
+    },
+    context: { saveType: type }
+  });
 
-  const totalBonus = defenseBonus + abilityMod + halfLvl;
+  if (!rollResult.success) {
+    ui.notifications.error(`Save roll failed: ${rollResult.error}`);
+    return null;
+  }
 
-  const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${totalBonus}`).evaluate({ async: true });
+  // === RENDER TO CHAT ===
+  if (rollResult.roll) {
+    const typeLabel = utils.string.capitalize(type);
+    await rollResult.roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      flavor: `<strong>${typeLabel} Save</strong><br/>Modifier: ${rollResult.modifierTotal}
+               ${rollResult.forcePointBonus > 0 ? `<br/>+ ${rollResult.forcePointBonus} (Force)` : ''}`
+    }, { create: true });
+  }
 
-  await roll.toMessage({
-    speaker: ChatMessage.getSpeaker({ actor }),
-    flavor: `${actor.name} rolls a ${utils.string.capitalize(type)} save (${utils.string.formatModifier(totalBonus)})`
-  } , { create: true });
-
-  return roll;
+  return rollResult.roll;
 }
 
 /**

@@ -1,0 +1,29 @@
+.swse-init-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(0,255,255,0.15);
+  background: rgba(0,20,30,0.7);
+  font-size: 0.8rem;
+}
+
+.swse-init-control.active-turn {
+  box-shadow: 0 0 10px rgba(0,255,255,0.4);
+}
+
+.init-value {
+  font-weight: 600;
+  color: #3de0d0;
+}
+
+.init-actions button {
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  margin-left: 4px;
+  border-radius: 4px;
+  border: 1px solid rgba(0,255,255,0.2);
+  background: rgba(0,255,255,0.08);
+  cursor: pointer;
+}

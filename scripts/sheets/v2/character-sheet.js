@@ -1,5 +1,6 @@
 import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
 import { InventoryEngine } from "../../engine/inventory/InventoryEngine.js";
+import { CombatRollConfigDialog } from "../../apps/combat/combat-roll-config-dialog.js";
 
 const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api;
 
@@ -35,10 +36,8 @@ export class SWSEV2CharacterSheet extends
     const actor = this.document;
     const context = await super._prepareContext(options);
 
-    // Authoritative derived state from engine layer
-    const derived = ActorEngine.buildDerivedState
-      ? ActorEngine.buildDerivedState(actor)
-      : actor.system?.derived ?? {};
+    // Authoritative derived state (populated by character-actor.js computeCharacterDerived)
+    const derived = actor.system?.derived ?? {};
 
     const inventory = this._buildInventoryModel(actor);
 
@@ -54,12 +53,93 @@ export class SWSEV2CharacterSheet extends
             gmNotes: ""
           };
 
+    // Compute display objects from system data
+    const system = actor.system;
+    const hp = {
+      value: system.hp?.value ?? 0,
+      max: system.hp?.max ?? 1,
+      temp: system.hp?.temp ?? 0
+    };
+    hp.percent = Math.round((hp.value / hp.max) * 100);
+
+    // Bonus HP (derived-only from ModifierEngine)
+    const bonusHp = await this._computeBonusHP(actor);
+
+    // Condition track steps (0-5 numeric → visual array)
+    const conditionCurrent = system.conditionTrack?.current ?? 0;
+    const conditionLabels = ["Normal", "−1", "−2", "−5", "−10", "Helpless"];
+    const conditionSteps = [];
+    for (let i = 0; i < 6; i++) {
+      conditionSteps.push({
+        step: i,
+        label: conditionLabels[i],
+        active: i === conditionCurrent
+      });
+    }
+
+    // Initiative total (from derived calculation)
+    const initiativeTotal = derived?.initiative?.total ?? 0;
+
+    // Combat attacks context
+    const combat = {
+      attacks: derived?.attacks?.list ?? []
+    };
+
+    // Force suite context (hand/discard zones + tag filtering)
+    const forcePowers = (actor?.items ?? []).filter(i => i.type === 'force-power');
+    const forceTags = [...new Set(forcePowers.flatMap(p => p.system?.tags ?? []))].sort();
+    const forceSuite = {
+      hand: forcePowers.filter(p => !p.system?.discarded),
+      discard: forcePowers.filter(p => p.system?.discarded)
+    };
+
     return {
       ...context,
       biography,
       derived,
-      inventory
+      inventory,
+      hp,
+      bonusHp,
+      conditionSteps,
+      initiativeTotal,
+      combat,
+      forceTags,
+      forceSuite,
+      lowHand: forceSuite.hand.length > 5
     };
+  }
+
+  /* ============================================================
+     BONUS HP COMPUTATION (DERIVED-ONLY)
+  ============================================================ */
+
+  async _computeBonusHP(actor) {
+    try {
+      const { ModifierEngine } = await import("../../engines/effects/modifiers/ModifierEngine.js").catch(
+        () => ({ ModifierEngine: null })
+      );
+
+      if (!ModifierEngine) {
+        return { value: 0, label: "" };
+      }
+
+      const bonusMods = await ModifierEngine.collectModifiers(actor, {
+        domain: "bonusHitPoints",
+        context: {}
+      });
+
+      // RAW: Only highest source applies
+      const highestBonus = bonusMods.length
+        ? Math.max(...bonusMods.map(m => m.value))
+        : 0;
+
+      return {
+        value: highestBonus,
+        label: highestBonus > 0 ? `+${highestBonus}` : ""
+      };
+    } catch {
+      return { value: 0, label: "" };
+    }
   }
 
   /* ============================================================
@@ -125,6 +205,12 @@ export class SWSEV2CharacterSheet extends
       ev.currentTarget.closest(".force-card")
         .classList.remove("flipped");
     });
+
+    // Inventory Panel Handlers
+    this._activateInventoryUI(html);
+
+    // SWSE Combat UI Wiring
+    this._activateCombatUI(html);
   }
 
   /* ============================================================
@@ -192,6 +278,71 @@ export class SWSEV2CharacterSheet extends
         card.classList.add("recovered");
         setTimeout(() => card.classList.remove("recovered"), 400);
       }, 500);
+    });
+  }
+
+  /* ============================================================
+     INVENTORY UI WIRING
+  ============================================================ */
+
+  _activateInventoryUI(html) {
+    // Equip / Unequip toggle
+    html.on("click", ".item-equip", async (event) => {
+      const row = event.currentTarget.closest(".inventory-row");
+      const itemId = row.dataset.itemId;
+      await InventoryEngine.toggleEquip(this.actor, itemId);
+    });
+
+    // Edit item
+    html.on("click", ".item-edit", (event) => {
+      const row = event.currentTarget.closest(".inventory-row");
+      const itemId = row.dataset.itemId;
+      this.actor.items.get(itemId)?.sheet.render(true);
+    });
+
+    // Add/increment quantity
+    html.on("click", ".item-add", async (event) => {
+      const row = event.currentTarget.closest(".inventory-row");
+      const itemId = row.dataset.itemId;
+      await InventoryEngine.incrementQuantity(this.actor, itemId);
+    });
+
+    // Sell item
+    html.on("click", ".item-sell", async (event) => {
+      const row = event.currentTarget.closest(".inventory-row");
+      const itemId = row.dataset.itemId;
+      // TODO: Integrate with StoreEngine when implemented
+      await InventoryEngine.decrementQuantity(this.actor, itemId);
+    });
+  }
+
+  /* ============================================================
+     COMBAT UI WIRING
+  ============================================================ */
+
+  _activateCombatUI(html) {
+    // Action click (cards and table rows)
+    html.on("click", ".swse-combat-action-card, .action-row", async (event) => {
+      if (event.target.classList.contains("hide-action")) return;
+      const key = event.currentTarget.dataset.actionKey;
+      const actionData = this.actor.getFlag("swse", "combatActions")?.[key];
+      if (actionData) {
+        new CombatRollConfigDialog(this.actor, actionData).render(true);
+      }
+    });
+
+    // Hide individual action
+    html.on("click", ".hide-action", (event) => {
+      event.stopPropagation();
+      const el = event.currentTarget.closest(".swse-combat-action-card, .action-row");
+      el.classList.add("collapsed");
+    });
+
+    // Collapse group (table mode)
+    html.on("click", ".collapse-group", (event) => {
+      const groupKey = event.currentTarget.dataset.group;
+      const table = html.find(`table[data-group='${groupKey}']`);
+      table.toggleClass("collapsed");
     });
   }
 }

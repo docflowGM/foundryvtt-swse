@@ -1,1 +1,97 @@
-/* combat.css — Ready for styling */
+/* ===============================
+   SWSE Combat UI - Advanced
+   =============================== */
+
+.swse-combat-view-toggle {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.view-btn {
+  font-size: 0.7rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(0,255,255,0.2);
+  background: rgba(0,20,30,0.7);
+  cursor: pointer;
+}
+
+.view-btn.active {
+  background: rgba(0,255,255,0.2);
+}
+
+/* ===============================
+   CARDS
+   =============================== */
+
+.swse-combat-action-card {
+  border-radius: 10px;
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid rgba(0,255,255,0.15);
+  background: rgba(0,20,30,0.7);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.swse-combat-action-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 8px rgba(0,255,255,0.3);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hide-action {
+  cursor: pointer;
+  opacity: 0.4;
+  transition: opacity 0.1s;
+}
+
+.hide-action:hover {
+  opacity: 1;
+  color: #ff4d4d;
+}
+
+/* Cost Strip */
+.cost-standard { border-left: 4px solid #ff4d4d; }
+.cost-move     { border-left: 4px solid #ffb347; }
+.cost-swift    { border-left: 4px solid #3de0d0; }
+.cost-free     { border-left: 4px solid #888; }
+.cost-full     { border-left: 4px solid #a874ff; }
+
+/* ===============================
+   TABLE MODE
+   =============================== */
+
+.table-group-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background: rgba(0,255,255,0.08);
+  cursor: pointer;
+}
+
+.action-row {
+  cursor: pointer;
+}
+
+.action-row:hover {
+  background: rgba(0,255,255,0.07);
+}
+
+.collapsed {
+  display: none;
+}

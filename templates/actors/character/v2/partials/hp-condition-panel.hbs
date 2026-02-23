@@ -12,6 +12,9 @@
     </div>
     <div class="hp-text">
       {{hp.value}} / {{hp.max}}
+      {{#if bonusHp.value}}
+        <span class="bonus-hp-label">({{bonusHp.label}} bonus)</span>
+      {{/if}}
     </div>
   </div>
 

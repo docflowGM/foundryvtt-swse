@@ -1,17 +1,20 @@
 // ============================================
 // FILE: rolls/force-powers.js
-// Force Power rolling and effects
+// Force Power rolling via RollCore (V2 Unified)
 // ============================================
 
-import { RollEngine } from '../engine/roll-engine.js';
+import RollCore from "../engines/roll/roll-core.js";
+import { swseLogger } from "../utils/logger.js";
 
 /**
- * Roll a force power use
+ * Roll a force power use via RollCore
  * @param {Actor} actor - The actor using the force power
  * @param {string} itemId - The force power item ID
- * @returns {Promise<Roll>} The force power roll
+ * @param {Object} options - Additional options
+ * @param {boolean} options.useForce - Spend Force Points (automatic for Force Powers)
+ * @returns {Promise<Roll|null>} The force power roll or null if failed
  */
-export async function rollForcePower(actor, itemId) {
+export async function rollForcePower(actor, itemId, options = {}) {
   if (!actor) {
     ui.notifications.warn('No actor specified for force power roll');
     return null;
@@ -33,60 +36,54 @@ export async function rollForcePower(actor, itemId) {
   const forcePoints = actor.system?.forcePoints?.value ?? 0;
   const powerCost = item.system?.cost ?? 1;
 
-  // Check force points (optional warning, still allows roll)
+  // Check force points (warning only for now)
   if (forcePoints < powerCost) {
     ui.notifications.warn(
       `${actor.name} has only ${forcePoints} Force Points (need ${powerCost} for ${item.name})`
     );
   }
 
-  // Determine roll modifier
-  // Use Force skill modifier if available
-  const forceSkill = actor.system?.skills?.force;
-  const forceMod = forceSkill?.total ?? 0;
-
   // Power DC if specified in item
   const powerDC = item.system?.dc ?? 15;
 
-  const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${forceMod}`).evaluate({ async: true });
+  // === UNIFIED ROLL EXECUTION via RollCore ===
+  const domain = 'force-power';
+  const rollResult = await RollCore.execute({
+    actor,
+    domain,
+    rollOptions: {
+      baseDice: '1d20',
+      useForce: options.useForce || false
+    },
+    context: { itemId, itemName: item.name, powerDC }
+  });
 
-  const success = roll.total >= powerDC;
-  const flavor = `<strong>${item.name}</strong> (Force Power)<br/>DC: ${powerDC} | Force Cost: ${powerCost} <br/><em>${success ? '✓ Success' : '✗ Failed'}</em>`;
-
-  await roll.toMessage({
-    speaker: ChatMessage.getSpeaker({ actor }),
-    flavor: flavor
-  }, { create: true });
-
-  return roll;
-}
-
-/* ============= Phase 4: Narration ============= */
-
-function _pickEffectFromChart(dcChart, rollTotal) {
-  if (!Array.isArray(dcChart) || typeof rollTotal !== "number") return null;
-
-  // Expect entries: { dc: number, description/effect: string }
-  const sorted = dcChart
-    .map((e) => ({ dc: Number(e.dc), text: e.description ?? e.effect ?? "" }))
-    .filter((e) => Number.isFinite(e.dc) && e.text)
-    .sort((a, b) => a.dc - b.dc);
-
-  let best = null;
-  for (const e of sorted) {
-    if (rollTotal >= e.dc) best = e;
+  if (!rollResult.success) {
+    ui.notifications.error(`Force power roll failed: ${rollResult.error}`);
+    return null;
   }
-  return best?.text ?? null;
+
+  // === RENDER TO CHAT ===
+  if (rollResult.roll) {
+    const success = rollResult.roll.total >= powerDC;
+    const flavor = `<strong>${item.name}</strong> (Force Power)<br/>
+                    DC: ${powerDC} | Force Cost: ${powerCost}<br/>
+                    <em>${success ? '✓ Success' : '✗ Failed'}</em>`;
+
+    await rollResult.roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      flavor: flavor
+    }, { create: true });
+  }
+
+  return rollResult.roll;
 }
 
-function _extractFirstDiceExpression(text) {
-  // Minimal dice expression finder: 2d6+3, 4d6, 1d20+@mod won't be rolled here.
-  const m = String(text).match(/\b\d+d\d+(?:\s*[+\-]\s*\d+)?\b/i);
-  return m ? m[0].replace(/\s+/g, "") : null;
-}
+/* ============= Narration (Phase 5) ============= */
 
 /**
  * Narrate a force power result based on roll total and effect tier from dcChart
+ * SAFETY: Does NOT extract or execute formulas from item descriptions
  */
 export async function narrateForcePowerResult(actor, powerItem, roll) {
   if (!actor || !powerItem || !roll) return;
@@ -103,20 +100,40 @@ export async function narrateForcePowerResult(actor, powerItem, roll) {
       return;
     }
 
-    // Optional: if effect includes dice, roll it and include total.
+    // SAFETY: No formula extraction from item descriptions
+    // Use explicit itemFormula field if damage needs to be rolled
     let extra = `It does ${effectText}`;
-    const diceExpr = _extractFirstDiceExpression(effectText);
-    if (diceExpr) {
+    if (powerItem.system?.itemFormula) {
       try {
-        const r = await RollEngine.safeRoll(diceExpr, actor.getRollData?.() ?? {});
-        if (r) extra = `It does ${effectText} (rolled ${diceExpr} = ${r.total}).`;
-      } catch {
-        // ignore
+        const r = new Roll(powerItem.system.itemFormula, actor.getRollData?.() ?? {});
+        await r.evaluate({ async: true });
+        extra = `It does ${effectText} (rolled ${powerItem.system.itemFormula} = ${r.total}).`;
+      } catch (err) {
+        swseLogger.warn('[ForcePowers] Item formula evaluation failed:', err);
       }
     }
 
     await ActionChatEngine.narrationForcePower(actor, powerItem.name, total, { extra });
-  } catch {
-    // Narration engine not available; continue anyway
+  } catch (err) {
+    swseLogger.warn('[ForcePowers] Narration failed:', err);
   }
+}
+
+/**
+ * Pick effect text from DC chart based on roll
+ * @private
+ */
+function _pickEffectFromChart(dcChart, rollTotal) {
+  if (!Array.isArray(dcChart) || typeof rollTotal !== "number") return null;
+
+  const sorted = dcChart
+    .map((e) => ({ dc: Number(e.dc), text: e.description ?? e.effect ?? "" }))
+    .filter((e) => Number.isFinite(e.dc) && e.text)
+    .sort((a, b) => a.dc - b.dc);
+
+  let best = null;
+  for (const e of sorted) {
+    if (rollTotal >= e.dc) best = e;
+  }
+  return best?.text ?? null;
 }

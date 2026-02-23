@@ -1,0 +1,303 @@
+{{!-- Weapon Damage Breakdown Tooltip showing all modifiers affecting damage --}}
+<div class="weapon-breakdown-tooltip damage-breakdown" data-breakdown="damage">
+
+  <div class="tooltip-header">
+    <h4>{{weaponName}} Damage Breakdown</h4>
+    <span class="total-value">Total: {{total}}</span>
+  </div>
+
+  {{!-- BASE CALCULATION --}}
+  <div class="breakdown-section base-calculation">
+    <h5 class="section-title">Base Components</h5>
+    {{#if baseDamage}}
+      <div class="calc-item">
+        <span class="item-source">Damage Dice</span>
+        <span class="item-value">{{baseDamage.expression}} ({{baseDamage.type}})</span>
+      </div>
+    {{/if}}
+
+    {{#each components as |value source|}}
+      {{#if value}}
+        <div class="calc-item">
+          <span class="item-source">{{source}}</span>
+          <span class="item-value {{#if value}}positive{{else}}negative{{/if}}">
+            {{#if value}}+{{/if}}{{value}}
+          </span>
+        </div>
+      {{/if}}
+    {{/each}}
+
+    <div class="calc-divider"></div>
+    <div class="calc-item total">
+      <span class="item-source">Subtotal</span>
+      <span class="item-value">{{subtotal}}</span>
+    </div>
+  </div>
+
+  {{!-- MODIFIERS FROM EQUIPMENT & CONDITIONS --}}
+  {{#if modifiers}}
+    <div class="breakdown-section modifier-breakdown">
+      <h5 class="section-title">Modifiers ({{modifiers.length}})</h5>
+
+      {{#each modifiers as |mod|}}
+        <div class="modifier-item {{mod.source}} {{mod.type}}">
+          <span class="modifier-source" title="{{mod.sourceName}}">
+            {{mod.sourceName}}
+          </span>
+          <span class="modifier-value {{#if mod.value}}positive{{else}}neutral{{/if}}">
+            {{#if mod.value}}+{{/if}}{{mod.value}}
+          </span>
+          {{#if mod.description}}
+            <span class="modifier-description">{{mod.description}}</span>
+          {{/if}}
+        </div>
+      {{/each}}
+    </div>
+  {{/if}}
+
+  {{!-- WEAPON PROPERTIES --}}
+  {{#if properties}}
+    <div class="breakdown-section weapon-properties">
+      <h5 class="section-title">Weapon Properties</h5>
+      {{#each properties as |prop|}}
+        <div class="property-item">
+          <span class="property-name">{{prop.name}}</span>
+          <span class="property-effect">{{prop.effect}}</span>
+        </div>
+      {{/each}}
+    </div>
+  {{/if}}
+
+  {{!-- FINAL TOTAL --}}
+  <div class="breakdown-section final-total">
+    <div class="total-calculation">
+      <span class="label">Final Damage Bonus:</span>
+      <span class="value">{{total}}</span>
+    </div>
+  </div>
+
+</div>
+
+<style>
+.weapon-breakdown-tooltip {
+  position: absolute;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+  border: 2px solid #ff6b6b;
+  border-radius: 6px;
+  padding: 12px;
+  min-width: 350px;
+  max-width: 450px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 107, 107, 0.3);
+  z-index: 1000;
+  color: #ccc;
+  font-size: 12px;
+  line-height: 1.6;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.weapon-breakdown-tooltip.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.tooltip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #ff6b6b;
+}
+
+.tooltip-header h4 {
+  margin: 0;
+  color: #ff6b6b;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.total-value {
+  color: #ff6b6b;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.breakdown-section {
+  margin-bottom: 10px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 3px solid #555;
+  border-radius: 3px;
+}
+
+.section-title {
+  margin: 0 0 6px 0;
+  color: #aaa;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: bold;
+}
+
+.calc-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  padding: 2px 4px;
+}
+
+.item-source {
+  color: #888;
+}
+
+.item-value {
+  color: #fff;
+  font-weight: bold;
+}
+
+.item-value.positive {
+  color: #4a9eff;
+}
+
+.item-value.negative {
+  color: #ff6b6b;
+}
+
+.calc-divider {
+  height: 1px;
+  background: #444;
+  margin: 6px 0 4px;
+}
+
+.calc-item.total {
+  padding: 4px;
+  background: rgba(255, 107, 107, 0.1);
+  border-left: 2px solid #ff6b6b;
+  font-weight: bold;
+}
+
+.calc-item.total .item-value {
+  color: #ff6b6b;
+  font-size: 14px;
+}
+
+.modifier-breakdown {
+  border-left: 3px solid #ff9900;
+}
+
+.modifier-item {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 6px;
+  padding: 4px;
+  background: rgba(255, 153, 0, 0.05);
+  border-radius: 2px;
+}
+
+.modifier-source {
+  color: #ffb366;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+.modifier-value {
+  color: #aaa;
+  margin-left: auto;
+}
+
+.modifier-value.positive {
+  color: #4a9eff;
+}
+
+.modifier-value.negative {
+  color: #ff6b6b;
+}
+
+.modifier-description {
+  color: #888;
+  font-size: 10px;
+  margin-top: 2px;
+}
+
+.modifier-item.penalty .modifier-value {
+  color: #ff6b6b;
+}
+
+.weapon-properties {
+  border-left: 3px solid #66bb6a;
+}
+
+.property-item {
+  margin-bottom: 4px;
+  padding: 4px;
+  background: rgba(102, 187, 106, 0.05);
+  border-radius: 2px;
+}
+
+.property-name {
+  color: #66bb6a;
+  font-weight: bold;
+  font-size: 11px;
+  display: block;
+}
+
+.property-effect {
+  color: #888;
+  font-size: 10px;
+  display: block;
+  margin-top: 2px;
+}
+
+.final-total {
+  border-left: 3px solid #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+  margin-top: 8px;
+  padding: 8px !important;
+}
+
+.total-calculation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+}
+
+.total-calculation .label {
+  color: #ff6b6b;
+}
+
+.total-calculation .value {
+  font-size: 18px;
+  color: #ff6b6b;
+  padding: 4px 8px;
+  background: rgba(255, 107, 107, 0.2);
+  border-radius: 3px;
+  border: 1px solid #ff6b6b;
+}
+
+@media (max-width: 600px) {
+  .weapon-breakdown-tooltip {
+    min-width: 300px;
+    max-width: calc(100vw - 20px);
+    font-size: 11px;
+  }
+
+  .tooltip-header h4 {
+    font-size: 13px;
+  }
+}
+
+.weapon-breakdown-tooltip::before {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #ff6b6b;
+  transform: rotate(45deg);
+  top: -4px;
+  left: 20px;
+  z-index: -1;
+}
+</style>

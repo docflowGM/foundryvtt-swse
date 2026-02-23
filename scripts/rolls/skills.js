@@ -1,17 +1,21 @@
 // ============================================
 // FILE: rolls/skills.js
-// Skill check rolling using SWSE utils
+// Skill check rolling via RollCore (V2 Unified)
 // ============================================
 
 import { SkillEnforcementEngine } from "../engine/skills/SkillEnforcementEngine.js";
+import RollCore from "../engines/roll/roll-core.js";
+import { swseLogger } from "../utils/logger.js";
 
 /**
  * Roll a skill check
  * @param {Actor} actor - The actor making the check
  * @param {string} skillKey - The skill key
- * @returns {Promise<Roll>} The skill check roll
+ * @param {Object} options - Additional options
+ * @param {boolean} options.useForce - Spend a Force Point
+ * @returns {Promise<Roll|null>} The skill check roll or null if failed
  */
-export async function rollSkill(actor, skillKey) {
+export async function rollSkill(actor, skillKey, options = {}) {
   const utils = game.swse.utils;
   const skill = actor.system.skills?.[skillKey];
 
@@ -30,51 +34,38 @@ export async function rollSkill(actor, skillKey) {
     return null;
   }
 
-  // Get skill modifier (use actor's method if available)
-  const mod = actor.getSkillMod ? actor.getSkillMod(skill) : calculateSkillMod(actor, skill);
+  // === UNIFIED ROLL EXECUTION via RollCore ===
+  const domain = `skill.${skillKey}`;
+  const rollResult = await RollCore.execute({
+    actor,
+    domain,
+    rollOptions: {
+      baseDice: '1d20',
+      useForce: options.useForce || false
+    },
+    context: { skillKey }
+  });
 
-  const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${mod}`).evaluate({ async: true });
-
-  await roll.toMessage({
-    speaker: ChatMessage.getSpeaker({ actor }),
-    flavor: `${skill.label || skillKey} Check (${utils.string.formatModifier(mod)})`
-  } , { create: true });
-
-  return roll;
-}
-
-/**
- * Calculate skill modifier
- * @param {Actor} actor - The actor
- * @param {object} skill - The skill object
- * @param {string} actionId - Optional action ID for talent bonus lookup
- * @returns {number} Total skill modifier
- */
-export function calculateSkillMod(actor, skill, actionId = null) {
-  const utils = game.swse.utils;
-
-  const abilityScore = actor.system.attributes[skill.selectedAbility]?.base || 10;
-  const abilMod = utils.math.calculateAbilityModifier(abilityScore);
-  const trained = skill.trained ? 5 : 0;
-  const focus = skill.focused ? 5 : 0;
-  const halfLvl = utils.math.halfLevel(actor.system.level);
-  const misc = skill.miscMod || 0;
-  const conditionPenalty = actor.system.conditionTrack?.penalty || 0;
-
-  let talentBonus = 0;
-
-  // Apply talent bonuses if action ID is provided and TalentActionLinker is available
-  const TalentActionLinker = window.SWSE?.TalentActionLinker;
-  if (actionId && TalentActionLinker?.MAPPING) {
-    const bonusInfo = TalentActionLinker.calculateBonusForAction(actor, actionId);
-    talentBonus = bonusInfo.value;
+  if (!rollResult.success) {
+    ui.notifications.error(`Skill roll failed: ${rollResult.error}`);
+    return null;
   }
 
-  return abilMod + trained + focus + halfLvl + misc + conditionPenalty + talentBonus;
+  // === RENDER TO CHAT ===
+  if (rollResult.roll) {
+    await rollResult.roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      flavor: `<strong>${skill.label || skillKey}</strong> Check<br/>
+               Modifier: ${utils.string.formatModifier(rollResult.modifierTotal)}
+               ${rollResult.forcePointBonus > 0 ? `<br/>+ ${rollResult.forcePointBonus} (Force)` : ''}`
+    }, { create: true });
+  }
+
+  return rollResult.roll;
 }
 
 /**
- * Roll skill check with DC comparison
+ * Roll skill check with DC comparison (convenience wrapper)
  * @param {Actor} actor - The actor
  * @param {string} skillKey - The skill key
  * @param {number} dc - Difficulty class
@@ -97,7 +88,7 @@ export async function rollSkillCheck(actor, skillKey, dc) {
 }
 
 /**
- * Roll opposed skill check
+ * Roll opposed skill check (convenience wrapper)
  * @param {Actor} actor1 - First actor
  * @param {string} skill1 - First actor's skill
  * @param {Actor} actor2 - Second actor

@@ -1,0 +1,41 @@
+<div class="swse-combat-table">
+
+  {{#each derived.actions.groups as |group|}}
+
+    <div class="table-group">
+
+      <div class="table-group-header">
+        <span>{{group.label}}</span>
+        <span class="collapse-group" data-group="{{group.key}}">▾</span>
+      </div>
+
+      <table class="action-table" data-group="{{group.key}}">
+
+        <thead>
+          <tr>
+            <th>Action</th>
+            <th>Cost</th>
+            <th></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {{#each group.actions as |action|}}
+            <tr
+              class="action-row cost-{{action.costType}}"
+              data-action-key="{{action.key}}"
+            >
+              <td>{{action.name}}</td>
+              <td>{{action.costLabel}}</td>
+              <td class="hide-action">✖</td>
+            </tr>
+          {{/each}}
+        </tbody>
+
+      </table>
+
+    </div>
+
+  {{/each}}
+
+</div>

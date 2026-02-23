@@ -8,7 +8,7 @@ import * as Attacks from '../combat/rolls/attacks.js';
 import * as Damage from '../combat/rolls/damage.js';
 import * as Defenses from '../rolls/defenses.js';
 import * as Dice from '../rolls/dice.js';
-import * as Initiative from '../rolls/initiative.js';
+// NOTE: Legacy Initiative removed (V2 consolidation) - use CombatEngine.rollInitiative()
 import * as Saves from '../rolls/saves.js';
 import * as Skills from '../rolls/skills.js';
 import * as ForcePowers from '../rolls/force-powers.js';

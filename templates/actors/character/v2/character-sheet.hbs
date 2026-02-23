@@ -271,6 +271,9 @@
                      style="width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid #ccc; background: #fff;" />
             </div>
 
+            <!-- V2 INVENTORY PANEL (NEW) -->
+            {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-panel.hbs"}}
+
             {{#if equipment}}
               <div class="equipment-list" style="border-top: 1px solid #ddd;">
                 {{#each equipment as |item|}}

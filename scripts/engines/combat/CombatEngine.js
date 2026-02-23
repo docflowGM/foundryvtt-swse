@@ -3,6 +3,7 @@ import { RollEngine } from '../roll-engine.js';
 import { SWSEInitiative } from './SWSEInitiative.js';
 import { DamageEngine } from './damage-engine.js';
 import { ThresholdEngine } from './threshold-engine.js';
+import { DamageResolutionEngine } from './damage-resolution-engine.js';
 import { ScaleEngine } from './scale-engine.js';
 import { SubsystemEngine } from './starship/subsystem-engine.js';
 import { EnhancedShields } from './starship/enhanced-shields.js';
@@ -277,5 +278,318 @@ export class CombatEngine {
    */
   static async performRam(attacker, target) {
     return VehicleCollisions.ram(attacker, target);
+  }
+
+  /* -------------------------------------------- */
+  /* COMBAT PREVIEW AND ROLL                     */
+  /* -------------------------------------------- */
+
+  /**
+   * Preview attack roll with modifiers (UI preview only).
+   *
+   * @param {Actor} actor - Attacking actor
+   * @param {string} actionKey - Combat action key
+   * @param {Object} options - Roll options (range, cover, aim, etc.)
+   * @returns {Promise<Object>} Preview with total and breakdown
+   */
+  static async previewAttack(actor, actionKey, options = {}) {
+    const { ModifierEngine } = await import('../../engines/effects/modifiers/ModifierEngine.js').catch(() => ({ ModifierEngine: null }));
+
+    if (!ModifierEngine) {
+      return {
+        total: 0,
+        breakdown: []
+      };
+    }
+
+    const modifiers = await ModifierEngine.collectModifiers(actor, {
+      domain: "attack",
+      context: options
+    });
+
+    const total = modifiers.reduce((sum, m) => sum + m.value, 0);
+
+    return {
+      total,
+      breakdown: modifiers.map(m => ({
+        label: m.label,
+        value: m.value
+      }))
+    };
+  }
+
+  /**
+   * Execute combat attack roll with full resolution.
+   *
+   * @param {Actor} actor - Attacking actor
+   * @param {string} actionKey - Combat action key
+   * @param {Object} options - Roll options
+   * @returns {Promise<Object>} Attack result
+   */
+  static async rollAttack(actor, actionKey, options = {}) {
+    // This would be extended with full attack roll logic
+    // For now, returns a placeholder
+    return {
+      success: true,
+      actionKey,
+      options
+    };
+  }
+
+  /**
+   * Execute a combat action (cards and UI integration).
+   *
+   * @param {Actor} actor - Acting actor
+   * @param {string} actionKey - Combat action key
+   * @returns {Promise<void>}
+   */
+  static async executeAction(actor, actionKey) {
+    // Delegate to appropriate action handler
+    console.log(`Executing action: ${actionKey} for ${actor.name}`);
+  }
+
+  /* -------------------------------------------- */
+  /* INITIATIVE PREVIEW AND ROLL                 */
+  /* -------------------------------------------- */
+
+  /**
+   * Preview initiative roll with modifiers.
+   *
+   * @param {Actor} actor - Actor rolling initiative
+   * @param {Object} options - Roll options
+   * @returns {Promise<Object>} Initiative preview with breakdown
+   */
+  static async previewInitiative(actor, options = {}) {
+    const { ModifierEngine } = await import('../../engines/effects/modifiers/ModifierEngine.js').catch(() => ({ ModifierEngine: null }));
+
+    const baseRoll = options.baseRoll ?? null;
+
+    let modifiers = [];
+    if (ModifierEngine) {
+      modifiers = await ModifierEngine.collectModifiers(actor, {
+        domain: "initiative",
+        context: options
+      });
+    }
+
+    const modifierTotal = modifiers.reduce((sum, m) => sum + m.value, 0);
+
+    return {
+      baseRoll,
+      modifierTotal,
+      total: baseRoll !== null ? baseRoll + modifierTotal : modifierTotal,
+      breakdown: modifiers.map(m => ({
+        label: m.label,
+        value: m.value
+      }))
+    };
+  }
+
+  /**
+   * Roll initiative and update combat tracker.
+   *
+   * @param {Actor} actor - Actor rolling initiative
+   * @param {Object} options - Roll options
+   * @returns {Promise<void>}
+   */
+  static async rollInitiative(actor, options = {}) {
+    const combat = game.combat;
+
+    if (!combat) {
+      ui.notifications.warn("No active combat.");
+      return;
+    }
+
+    let combatant = combat.combatants.find(c => c.actorId === actor.id);
+
+    // If actor not yet in combat, create combatant
+    if (!combatant) {
+      combatant = await combat.createEmbeddedDocuments("Combatant", [{
+        actorId: actor.id,
+        tokenId: actor.token?.id ?? null,
+        sceneId: canvas.scene?.id
+      }]).then(res => res[0]);
+    }
+
+    // Determine base roll
+    const baseRoll = options.baseRoll ??
+      (await new Roll("1d20").roll({ async: true })).total;
+
+    // Get modifier preview
+    const preview = await this.previewInitiative(actor, {
+      ...options,
+      baseRoll
+    });
+
+    // Update initiative value in tracker
+    await combat.setInitiative(combatant.id, preview.total);
+
+    // Optional: Chat Message
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      content: `
+        <div class="swse-init-result">
+          <strong>Initiative:</strong> ${preview.total}
+          <br>
+          Base: ${baseRoll}
+          <br>
+          Modifiers: ${preview.modifierTotal}
+        </div>
+      `
+    });
+  }
+
+  /* -------------------------------------------- */
+  /* UNIFIED DAMAGE RESOLUTION                    */
+  /* -------------------------------------------- */
+
+  /**
+   * Unified damage resolution via DamageResolutionEngine.
+   * Handles:
+   * - Bonus HP application (highest source)
+   * - HP reduction
+   * - Damage Threshold evaluation
+   * - Condition track shifts
+   * - Death/Destroy determination
+   * - Force Point rescue eligibility
+   *
+   * All mutations via ActorEngine only.
+   *
+   * @param {Actor} actor - Target actor
+   * @param {number} damage - Total damage to apply
+   * @param {Object} context - Additional context
+   * @param {string} context.damageType - Damage type
+   * @param {Actor} context.source - Attacking actor
+   * @param {Object} context.options - Additional options
+   * @returns {Promise<Object>} Resolution result
+   */
+  static async applyDamage(actor, damage, context = {}) {
+
+    const resolution = await DamageResolutionEngine.resolveDamage({
+      actor,
+      damage,
+      ...context
+    });
+
+    const plan = {};
+
+    // Apply HP change (correct V2 path)
+    plan["system.hp.value"] = resolution.hpAfter;
+
+    // Apply condition track shift (numeric 0-5)
+    if (resolution.conditionDelta !== 0) {
+      plan["system.conditionTrack.current"] = resolution.conditionAfter;
+    }
+
+    // Delegate mutation to ActorEngine (no status flags)
+    await ActorEngine.updateActor(actor, plan);
+
+    /* ===================================================================
+       Apply death/destroyed via Active Effects (not raw system flags)
+       ================================================================= */
+
+    if (resolution.dead) {
+      await this._applyDeadEffect(actor);
+    }
+
+    if (resolution.destroyed) {
+      await this._applyDestroyedEffect(actor);
+    }
+
+    if (resolution.unconscious && !resolution.dead && !resolution.destroyed) {
+      await this._applyUnconsciousEffect(actor);
+    }
+
+    return resolution;
+  }
+
+  /**
+   * Apply "Dead" active effect (character death state)
+   * @private
+   */
+  static async _applyDeadEffect(actor) {
+    if (!actor) return;
+
+    // Check if already dead
+    const existingDead = actor.effects.contents.find(e =>
+      e.getFlag('foundryvtt-swse', 'effectType') === 'dead'
+    );
+
+    if (!existingDead) {
+      const effectData = {
+        name: 'Dead',
+        icon: 'icons/svg/skull.svg',
+        type: 'effect',
+        disabled: false,
+        flags: {
+          'foundryvtt-swse': {
+            effectType: 'dead',
+            persistent: true
+          }
+        }
+      };
+
+      await actor.createEmbeddedDocuments('ActiveEffect', [effectData]);
+    }
+  }
+
+  /**
+   * Apply "Destroyed" active effect (vehicle/droid destruction state)
+   * @private
+   */
+  static async _applyDestroyedEffect(actor) {
+    if (!actor) return;
+
+    // Check if already destroyed
+    const existingDestroyed = actor.effects.contents.find(e =>
+      e.getFlag('foundryvtt-swse', 'effectType') === 'destroyed'
+    );
+
+    if (!existingDestroyed) {
+      const effectData = {
+        name: 'Destroyed',
+        icon: 'icons/svg/explosion.svg',
+        type: 'effect',
+        disabled: false,
+        flags: {
+          'foundryvtt-swse': {
+            effectType: 'destroyed',
+            persistent: true
+          }
+        }
+      };
+
+      await actor.createEmbeddedDocuments('ActiveEffect', [effectData]);
+    }
+  }
+
+  /**
+   * Apply "Unconscious" active effect (temporary state)
+   * @private
+   */
+  static async _applyUnconsciousEffect(actor) {
+    if (!actor) return;
+
+    // Check if already unconscious
+    const existingUnconscious = actor.effects.contents.find(e =>
+      e.getFlag('foundryvtt-swse', 'effectType') === 'unconscious'
+    );
+
+    if (!existingUnconscious) {
+      const effectData = {
+        name: 'Unconscious',
+        icon: 'icons/svg/sleep.svg',
+        type: 'effect',
+        disabled: false,
+        flags: {
+          'foundryvtt-swse': {
+            effectType: 'unconscious',
+            persistent: false
+          }
+        }
+      };
+
+      await actor.createEmbeddedDocuments('ActiveEffect', [effectData]);
+    }
   }
 }

@@ -31,8 +31,83 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { ModifierEngine } from "../effects/modifiers/ModifierEngine.js";
 
 export class ThresholdEngine {
+
+  /* -------------------------------------------------------------------------- */
+  /*  BASE THRESHOLD CALCULATION (PURE)                                         */
+  /* -------------------------------------------------------------------------- */
+
+  /**
+   * Compute base damage threshold without modifiers.
+   * RAW: DT = Fortitude Defense + Size Modifier
+   *
+   * @param {Actor} actor
+   * @returns {number} Base threshold value
+   */
+  /**
+   * Size threshold bonus mapping (RAW)
+   * @private
+   */
+  static #sizeThresholdMap = {
+    fine: -10,
+    diminutive: -5,
+    tiny: 0,
+    small: 0,
+    medium: 0,
+    large: 5,
+    huge: 10,
+    gargantuan: 20,
+    colossal: 50
+  };
+
+  static computeBaseThreshold(actor) {
+    if (!actor) return 0;
+
+    const system = actor.system;
+    const fort = system.defenses?.fortitude?.total ?? 10;
+
+    // Map size string to threshold bonus (RAW)
+    const sizeString = (system.size ?? 'medium').toLowerCase();
+    const sizeMod = this.#sizeThresholdMap[sizeString] ?? 0;
+
+    return fort + sizeMod;
+  }
+
+  /**
+   * Get full damage threshold with ModifierEngine support.
+   * Collects modifiers from "damageThreshold" domain.
+   *
+   * @param {Actor} actor
+   * @param {Object} context - Roll context for modifiers
+   * @returns {Promise<Object>} { base, modifierTotal, total, breakdown }
+   */
+  static async getDamageThreshold(actor, context = {}) {
+    const base = this.computeBaseThreshold(actor);
+
+    let modifiers = [];
+    try {
+      modifiers = await ModifierEngine.collectModifiers(actor, {
+        domain: "damageThreshold",
+        context
+      });
+    } catch {
+      // ModifierEngine not available or error; use base only
+    }
+
+    const modifierTotal = modifiers.reduce((sum, m) => sum + m.value, 0);
+
+    return {
+      base,
+      modifierTotal,
+      total: base + modifierTotal,
+      breakdown: modifiers.map(m => ({
+        label: m.label,
+        value: m.value
+      }))
+    };
+  }
 
   /* -------------------------------------------------------------------------- */
   /*  SETTINGS HELPERS                                                          */

@@ -55,19 +55,23 @@
 
           <div class="col-total rollable"
                data-action="roll-skill"
-               data-skill="{{skill.key}}">
+               data-skill="{{skill.key}}"
+               data-skill-total="{{skill.total}}"
+               title="d20 + {{numberFormat skill.total decimals=0 sign=true}} • Click to roll">
             {{numberFormat skill.total decimals=0 sign=true}}
           </div>
 
           <div class="col-name rollable"
                data-action="roll-skill"
-               data-skill="{{skill.key}}">
+               data-skill="{{skill.key}}"
+               title="Click to roll {{skill.label}}">
             {{skill.label}}
           </div>
 
           <div class="col-ability">
             <select name="system.skills.{{skill.key}}.selectedAbility"
-                    class="ability-dropdown">
+                    class="ability-dropdown"
+                    title="Select ability modifier for this skill">
               {{#each @root.derived.identity.abilities as |ab|}}
                 <option value="{{ab.key}}"
                   {{#if (eq ab.key skill.selectedAbility)}}selected{{/if}}>
@@ -75,31 +79,37 @@
                 </option>
               {{/each}}
             </select>
-            <span class="ability-mod">
+            <span class="ability-mod"
+                  title="Current {{skill.selectedAbility}} modifier">
               {{numberFormat skill.abilityMod decimals=0 sign=true}}
             </span>
           </div>
 
-          <div class="col-half">
+          <div class="col-half"
+               title="Half character level bonus">
             {{@root.derived.identity.halfLevel}}
           </div>
 
-          <div class="col-trained">
+          <div class="col-trained"
+               title="Mark if you have skill ranks in this skill">
             <input type="checkbox"
                    name="system.skills.{{skill.key}}.trained"
                    {{checked skill.trained}}>
           </div>
 
-          <div class="col-focus">
+          <div class="col-focus"
+               title="Mark if this is a focused skill (additional +3 bonus)">
             <input type="checkbox"
                    name="system.skills.{{skill.key}}.focused"
                    {{checked skill.focused}}>
           </div>
 
-          <div class="col-misc">
+          <div class="col-misc"
+               title="Miscellaneous modifier (from feats, conditions, etc.)">
             <input type="number"
                    name="system.skills.{{skill.key}}.miscMod"
-                   value="{{skill.miscMod}}">
+                   value="{{skill.miscMod}}"
+                   placeholder="0">
           </div>
 
         </div>
@@ -107,12 +117,19 @@
         {{#if skill.extraUses.length}}
         <div class="skill-extra-uses">
           {{#each skill.extraUses}}
-            <div class="extra-use">
-              {{this.label}}
+            <div class="extra-use"
+                 data-skill="{{../skill.key}}"
+                 data-use-key="{{this.key}}"
+                 title="Special skill use: {{this.description}}">
+              <span class="extra-use-label">{{this.label}}</span>
+              {{#if this.description}}
+                <span class="extra-use-description">{{this.description}}</span>
+              {{/if}}
               <button type="button"
                       data-action="use-extra-skill"
                       data-skill="{{../skill.key}}"
-                      data-use="{{this.key}}">
+                      data-use="{{this.key}}"
+                      title="Click to use {{this.label}}">
                 Use
               </button>
             </div>
