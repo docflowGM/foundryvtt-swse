@@ -229,14 +229,17 @@ export class ForcePointsService {
    * @param {number} damageContext.damage - Total damage taken
    * @param {number} damageContext.hp - Current HP after damage
    * @param {number} damageContext.threshold - Damage threshold for death
-   * @param {boolean} damageContext.alreadyRescued - Whether already rescued this resolution
+   * @param {boolean} damageContext.alreadyRescued - Whether already rescued this resolution (deprecated, use flag)
    * @returns {boolean} Whether rescue is available
    */
   static canRescue(actor, damageContext = {}) {
-    const { damage = 0, hp = actor.system?.hp?.value, threshold = 15, alreadyRescued = false } = damageContext;
+    if (!actor) return false;
 
-    // Already rescued once this resolution
-    if (alreadyRescued) {
+    const { damage = 0, hp = actor.system?.hp?.value, threshold = 15 } = damageContext;
+
+    // Check if already rescued this resolution (via flag)
+    const alreadyRescuedFlag = actor.getFlag?.('foundryvtt-swse', 'alreadyRescuedThisResolution') || false;
+    if (alreadyRescuedFlag) {
       return false;
     }
 

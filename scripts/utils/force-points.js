@@ -253,6 +253,10 @@ export class ForcePointsUtil {
     // Spend the Force Point via ActorEngine (mutation authority)
     await globalThis.SWSE?.ActorEngine?.spendForcePoints(actor, 1);
 
+    // Mark as rescued this resolution (prevents multiple rescues)
+    // This flag should be cleared at the start of the next damage resolution
+    await actor.setFlag('foundryvtt-swse', 'alreadyRescuedThisResolution', true);
+
     // Set HP to 0 and condition track to helpless (step 4)
     // Uses system.hp.value as canonical HP field
     const maxConditionTrack = 5; // Standard max

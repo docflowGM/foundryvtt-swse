@@ -97,6 +97,10 @@ export class DamageResolutionEngine {
       throw new Error('DamageResolutionEngine.resolveDamage: actor required');
     }
 
+    // Clear rescue flag at start of each damage resolution
+    // This allows each resolution to have its own rescue attempt
+    await actor.unsetFlag?.('foundryvtt-swse', 'alreadyRescuedThisResolution');
+
     if (typeof damage !== 'number' || damage < 0) {
       throw new Error(`DamageResolutionEngine.resolveDamage: invalid damage amount: ${damage}`);
     }
