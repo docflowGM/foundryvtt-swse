@@ -2628,10 +2628,11 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     this._recalcAbilities();
     this._recalcDefenses();
 
-    // Second Wind
-    const conMod = this.characterData.abilities.con.mod || 0;
-    const hpMax = this.characterData.hp.max;
-    this.characterData.secondWind.healing = Math.max(Math.floor(hpMax / 4), conMod) +
+    // Second Wind — PHASE A FIX 1: Canonical level-based formula
+    // Must match ActorEngine.applySecondWind() formula for consistency
+    const level = this.characterData.level ?? 1;
+    const baseHealing = 5 + Math.floor(level / 4) * 5;
+    this.characterData.secondWind.healing = baseHealing +
       (this.characterData.secondWind.misc || 0);
 
     // Damage Threshold = Fortitude Defense

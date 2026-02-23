@@ -985,13 +985,53 @@ export const ActorEngine = {
     try {
       if (!actor) {throw new Error('applySecondWind() requires actor');}
 
+      // ========================================
+      // PHASE A FIX 4: Heroic-only enforcement
+      // ========================================
+      const isHeroic = actor.type === 'character' ||
+                       (actor.type === 'npc' && actor.system.class);
+
+      if (!isHeroic) {
+        swseLogger.warn(`Second Wind attempt on non-heroic actor: ${actor.name}`);
+        return {
+          success: false,
+          reason: `${actor.name} is not a heroic character and cannot use Second Wind`
+        };
+      }
+
+      // ========================================
+      // PHASE B FIX 5: Swift action validation (MOVED FROM UI)
+      // ========================================
+      if (options.validateCombat !== false) {
+        const inCombat = game.combat?.combatants.some(c => c.actor?.id === actor.id);
+        if (inCombat) {
+          const combatant = game.combat.combatants.find(c => c.actor?.id === actor.id);
+          if (!combatant?.resources?.swift) {
+            return {
+              success: false,
+              reason: 'Cannot use Second Wind: no swift action available'
+            };
+          }
+        }
+      }
+
       const uses = actor.system.secondWind?.uses ?? 0;
       if (uses < 1) {
         return { success: false, reason: 'No Second Wind uses remaining' };
       }
 
       const level = actor.system.level ?? 1;
-      const heal = 5 + Math.floor(level / 4) * 5;
+      let heal = 5 + Math.floor(level / 4) * 5;
+
+      // HOUSERULE: Web Enhancement variant formula
+      const webEnhancement = game.settings.get('foundryvtt-swse', 'secondWindWebEnhancement');
+      if (webEnhancement) {
+        const chaMod = (actor.system.abilities?.cha?.mod ?? 0);
+        const d4Roll = Math.floor(Math.random() * 4) + 1; // 1d4
+        heal = 5 + chaMod + d4Roll;
+
+        swseLogger.debug(`Web Enhancement Second Wind: 5 + CHA(${chaMod}) + 1d4(${d4Roll}) = ${heal} HP`);
+      }
 
       // Get authoritative HP source
       const currentHP = (actor.system?.derived?.hp?.value || actor.system?.hp?.value || 0);
@@ -999,25 +1039,47 @@ export const ActorEngine = {
       const newHP = Math.min(currentHP + heal, maxHP);
       const actualHealing = newHP - currentHP;
 
-      // Batch update: HP restoration + use consumption
-      // Use canonical HP field (system.hp.value); derived.hp is computed from this
-      await this.updateActor(actor, {
+      // ========================================
+      // PHASE B FIX 6: Improved Second Wind houserule
+      // ========================================
+      const improvements = {
         'system.hp.value': newHP,
         'system.secondWind.uses': Math.max(0, uses - 1)
-      });
+      };
 
-      swseLogger.log(`Second wind used by ${actor.name}`, {
+      const improvedSecondWind = game.settings.get('foundryvtt-swse', 'secondWindImproved');
+      if (improvedSecondWind) {
+        // Also move up condition track (+1 improvement = -1 on numeric scale)
+        const currentCT = actor.system.conditionTrack?.current ?? 0;
+        improvements['system.conditionTrack.current'] = Math.max(0, currentCT - 1);
+
+        swseLogger.debug(`Improved Second Wind enabled: moving condition track from ${currentCT} to ${Math.max(0, currentCT - 1)}`);
+      }
+
+      // Batch update: HP restoration + use consumption + optional condition improvement
+      await this.updateActor(actor, improvements);
+
+      const resultLog = {
         healed: actualHealing,
         newHP,
         maxHP,
         usesRemaining: Math.max(0, uses - 1)
-      });
+      };
+
+      if (improvedSecondWind) {
+        resultLog.conditionImproved = true;
+        resultLog.newCondition = Math.max(0, (actor.system.conditionTrack?.current ?? 0) - 1);
+      }
+
+      swseLogger.log(`Second wind used by ${actor.name}`, resultLog);
 
       return {
         success: true,
         healed: actualHealing,
         newHP,
-        usesRemaining: Math.max(0, uses - 1)
+        usesRemaining: Math.max(0, uses - 1),
+        conditionImproved: improvedSecondWind ? true : false,
+        newCondition: improvedSecondWind ? Math.max(0, (actor.system.conditionTrack?.current ?? 0) - 1) : undefined
       };
 
     } catch (err) {
@@ -1029,20 +1091,35 @@ export const ActorEngine = {
   },
 
   /**
-   * resetSecondWind() — Reset second wind used flag
+   * resetSecondWind() — Reset second wind uses to maximum
+   *
+   * Called at combat start (or rest) to restore uses.
+   * RAW: Once per day, but houserule allows per encounter.
    *
    * @param {Actor} actor - target actor
+   * @returns {Promise<{reset, restoredUses, max}>}
    */
   async resetSecondWind(actor) {
     try {
       if (!actor) {throw new Error('resetSecondWind() called with no actor');}
 
+      // PHASE A FIX 3: Write correct field (system.secondWind.uses, not .used phantom)
+      const maxUses = actor.system.secondWind?.max ?? 1;
+
       await this.updateActor(actor, {
-        'system.secondWind.used': false
+        'system.secondWind.uses': maxUses
       });
 
-      swseLogger.log(`Second wind reset for ${actor.name}`);
-      return { reset: true };
+      swseLogger.log(`Second wind reset for ${actor.name}`, {
+        restoredUses: maxUses,
+        max: maxUses
+      });
+
+      return {
+        reset: true,
+        restoredUses: maxUses,
+        max: maxUses
+      };
 
     } catch (err) {
       swseLogger.error(`ActorEngine.resetSecondWind failed for ${actor?.name ?? 'unknown actor'}`, { error: err });

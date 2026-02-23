@@ -125,15 +125,16 @@ export class SWSECombatDocument extends Combat {
 
   async startCombat() {
     if (game.user.isGM) {
-      // PHASE 3: Route through ActorEngine
+      // PHASE B FIX 7: Use SecondWindEngine for houserule-aware recovery
+      const { SecondWindEngine } = await import('../../engines/combat/SecondWindEngine.js');
       const { ActorEngine } = await import('../../governance/actor-engine/actor-engine.js');
+
+      // Reset Second Wind based on houserule setting (defaults to per-encounter)
+      await SecondWindEngine.resetAllSecondWind('encounter');
 
       for (const combatant of this.combatants) {
         const actor = combatant.actor;
         if (!actor) {continue;}
-
-        // Reset Second Wind (RAW: once per day, but many tables want per encounter)
-        await ActorEngine.resetSecondWind(actor);
 
         // Reset action economy
         await ActorEngine.updateActionEconomy(actor, {
