@@ -21,7 +21,8 @@ Authoritative reference for where rules live, how execution works, and what is f
 
 ## References
 
-- Execution pipeline: `docs/EXECUTION_PIPELINE.md`
+- **Engine governance (START HERE):** `docs/ENGINE-ARCHITECTURE.md`
 - Mutation rules: `docs/ARCHITECTURE_MUTATION_RULES.md`
+- Execution pipeline: `docs/EXECUTION_PIPELINE.md`
 - Adding actions: `docs/ACTIONS.md`
 - Foundry compatibility: `docs/FOUNDRY_COMPAT.md`
