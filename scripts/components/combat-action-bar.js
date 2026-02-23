@@ -271,9 +271,17 @@ export class CombatActionBar {
     const result = await ActorEngine.applySecondWind(actor);
 
     if (result.success) {
+      // PHASE C: Enhanced chat message with full context
+      let chatContent = `<b>${escapeHTML(actor.name)}</b> uses <strong>Second Wind</strong>, regaining <strong>${result.healed}</strong> HP (${result.newHP}/${actor.system?.hp?.max || 0})!`;
+
+      // Add condition improvement note if applicable
+      if (result.conditionImproved) {
+        chatContent += `<br><em style="color: #ff9500;">✦ Condition improved: Step ${result.newCondition}</em>`;
+      }
+
       createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
-        content: `<b>${escapeHTML(actor.name)}</b> regains <strong>${result.healed}</strong> HP!`
+        content: chatContent
       });
 
       this._useAction(actor, 'swift');
@@ -307,9 +315,14 @@ export class CombatActionBar {
     const result = await ActorEngine.applySecondWindEdgeOfExhaustion(actor);
 
     if (result.success) {
+      // PHASE C: Enhanced chat message with condition trade details
+      const chatContent = `<b>${escapeHTML(actor.name)}</b> reaches the <strong>Edge of Exhaustion</strong>!<br>
+        <em style="color: #ff0000;">⚠ Trades <strong>-1 condition step</strong> (Step ${result.condition} → ${result.newCondition})</em><br>
+        <em style="color: #0099ff;">✦ Regains <strong>1 Second Wind use</strong></em>`;
+
       createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
-        content: `<b>${escapeHTML(actor.name)}</b> accepts condition penalty to regain <strong>1 Second Wind use</strong>!`
+        content: chatContent
       });
 
       this._useAction(actor, 'swift');
