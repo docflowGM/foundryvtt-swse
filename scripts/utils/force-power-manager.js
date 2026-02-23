@@ -1,4 +1,5 @@
 import { SWSELogger } from './logger.js';
+import { ForceTrainingEngine } from '../engines/Force/ForceTrainingEngine.js';
 
 /**
  * Force Power Management System
@@ -13,13 +14,7 @@ export class ForcePowerManager {
    * @returns {number} The modifier (WIS or CHA based on houserule)
    */
   static getForceAbilityModifier(actor) {
-    const attribute = game.settings.get('foundryvtt-swse', 'forceTrainingAttribute') || 'wisdom';
-
-    if (attribute === 'charisma') {
-      return actor.system.attributes.cha?.mod || 0;
-    } else {
-      return actor.system.attributes.wis?.mod || 0;
-    }
+    return ForceTrainingEngine.getForceAbilityModifier(actor);
   }
 
   /**
@@ -323,7 +318,7 @@ export class ForcePowerManager {
    * @returns {Promise<void>}
    */
   static async handleAbilityIncrease(actor, oldAbilities, newAbilities) {
-    const attribute = game.settings.get('foundryvtt-swse', 'forceTrainingAttribute') || 'wisdom';
+    const attribute = ForceTrainingEngine.getTrainingAttribute();
     const abilityKey = attribute === 'charisma' ? 'cha' : 'wis';
 
     const oldMod = Math.floor((oldAbilities[abilityKey]?.total || 10) - 10) / 2;
