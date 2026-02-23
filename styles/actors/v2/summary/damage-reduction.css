@@ -1,0 +1,121 @@
+/* Damage Reduction Display
+   No logic — pure display and styling */
+
+.dr-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ====================================================================
+   CONTENT
+   ==================================================================== */
+
+.dr-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ====================================================================
+   DR MAIN (Highest Value Display)
+   ==================================================================== */
+
+.dr-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dr-highest {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #00d9ff;
+  letter-spacing: 0.5px;
+}
+
+/* ====================================================================
+   DR LIST (Entries with Bypass Rules)
+   ==================================================================== */
+
+.dr-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9rem;
+}
+
+.dr-entry {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 4px 6px;
+  background: rgba(0, 150, 255, 0.08);
+  border-left: 2px solid rgba(0, 150, 255, 0.3);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.dr-entry:hover {
+  background: rgba(0, 150, 255, 0.12);
+  border-left-color: rgba(0, 150, 255, 0.6);
+}
+
+.dr-value {
+  font-weight: 700;
+  color: #00d9ff;
+  min-width: 30px;
+}
+
+.dr-bypass {
+  font-size: 0.85rem;
+  color: #ff9900;
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.dr-source {
+  font-size: 0.8rem;
+  opacity: 0.65;
+  flex: 1;
+  text-align: right;
+}
+
+/* ====================================================================
+   EMPTY STATE
+   ==================================================================== */
+
+.dr-none {
+  padding: 6px;
+  font-size: 0.9rem;
+  opacity: 0.5;
+  font-style: italic;
+  text-align: center;
+}
+
+/* ====================================================================
+   ACCESSIBILITY
+   ==================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .dr-entry {
+    transition: none;
+  }
+}
+
+/* ====================================================================
+   DARK/LIGHT MODE
+   ==================================================================== */
+
+:root[data-theme="light"] {
+  --dr-highlight: #0099ff;
+  --dr-bypass: #ff9900;
+}
+
+:root[data-theme="dark"] {
+  --dr-highlight: #00d9ff;
+  --dr-bypass: #ffaa00;
+}

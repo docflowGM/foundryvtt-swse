@@ -1,0 +1,237 @@
+/* HP + Shield Rating Visual Wrapper
+   SR creates a glowing ring around HP
+   No logic — pure display and animation */
+
+.hp-shield-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  --sr-percent: 0%;
+}
+
+/* ====================================================================
+   SR RING (Outer Glow)
+   ==================================================================== */
+
+.sr-ring {
+  position: absolute;
+  inset: -8px;
+  border-radius: 12px;
+  padding: 5px;
+  pointer-events: none;
+
+  /* Conic gradient creates the ring fill based on SR percentage */
+  background: conic-gradient(
+    from 0deg,
+    #00e5ff calc(var(--sr-percent) * 1%),
+    rgba(0, 0, 0, 0.15) 0
+  );
+
+  /* Mask out the center to create a ring (not a full circle) */
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: destination-out;
+
+  /* Smooth transition when SR depletes */
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Glow effect when SR is full */
+.hp-shield-wrapper[data-sr-full="true"] .sr-ring {
+  box-shadow: 0 0 10px rgba(0, 170, 255, 0.9),
+              inset 0 0 6px rgba(0, 170, 255, 0.3);
+}
+
+/* Subtle glow when SR is partial */
+.sr-ring {
+  box-shadow: 0 0 6px rgba(0, 170, 255, 0.6);
+}
+
+/* ====================================================================
+   HP CONTAINER (Inner)
+   ==================================================================== */
+
+.hp-container {
+  position: relative;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 10px;
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #ccc;
+}
+
+.hp-label {
+  flex: 1;
+}
+
+.sr-indicator {
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  background: rgba(0, 170, 255, 0.2);
+  border: 1px solid rgba(0, 170, 255, 0.4);
+  border-radius: 4px;
+  color: #00d9ff;
+  font-weight: 700;
+}
+
+/* ====================================================================
+   HP BAR
+   ==================================================================== */
+
+.hp-bar {
+  height: 14px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 0, 0, 0.2);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.hp-fill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    #ff4444 0%,
+    #dd0000 50%,
+    #aa0000 100%
+  );
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2);
+  transition: width 0.25s ease;
+}
+
+/* ====================================================================
+   HP VALUES
+   ==================================================================== */
+
+.hp-values {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ccc;
+}
+
+.hp-current {
+  color: #fff;
+  font-weight: 700;
+}
+
+.hp-separator {
+  opacity: 0.6;
+}
+
+.hp-max {
+  opacity: 0.8;
+}
+
+/* ====================================================================
+   SR INFO (Below HP Bar)
+   ==================================================================== */
+
+.sr-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  padding-top: 2px;
+  border-top: 1px solid rgba(0, 170, 255, 0.1);
+  color: #00d9ff;
+}
+
+.sr-label {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sr-current {
+  font-weight: 700;
+  color: #00e5ff;
+}
+
+.sr-separator {
+  opacity: 0.6;
+}
+
+.sr-max {
+  opacity: 0.8;
+}
+
+.sr-source {
+  flex: 1;
+  text-align: right;
+  font-size: 0.75rem;
+  opacity: 0.6;
+  font-style: italic;
+}
+
+/* ====================================================================
+   RESPONSIVE / STATE VARIATIONS
+   ==================================================================== */
+
+/* When SR is depleted */
+.sr-ring:not(:has(+ .hp-container)) {
+  background: conic-gradient(
+    from 0deg,
+    #333 0%,
+    #222 100%
+  );
+  box-shadow: none;
+}
+
+/* Minimal state (HP critical, SR depleted) */
+.hp-shield-wrapper.critical .hp-fill {
+  animation: critical-pulse 0.8s infinite;
+}
+
+@keyframes critical-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* ====================================================================
+   ACCESSIBILITY
+   ==================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .sr-ring,
+  .hp-fill {
+    transition: none !important;
+  }
+
+  .hp-shield-wrapper.critical .hp-fill {
+    animation: none;
+  }
+}
+
+/* ====================================================================
+   DARK/LIGHT MODE
+   ==================================================================== */
+
+:root[data-theme="light"] {
+  --sr-glow-color: #0099ff;
+  --sr-glow-shadow: 0 0 8px rgba(0, 150, 255, 0.8);
+}
+
+:root[data-theme="dark"] {
+  --sr-glow-color: #00e5ff;
+  --sr-glow-shadow: 0 0 10px rgba(0, 200, 255, 0.9);
+}

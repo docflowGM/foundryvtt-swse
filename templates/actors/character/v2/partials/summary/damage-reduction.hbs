@@ -1,0 +1,47 @@
+{{!-- Damage Reduction Display Partial
+     Pure display — no logic, no mutations
+     Reads: system.derived.damageReduction (engine-computed)
+     Displays damage reduction entries and bypass rules
+--}}
+
+<section class="summary-block dr-block">
+  <header class="summary-header">
+    <span class="header-label">Damage Reduction</span>
+  </header>
+
+  {{#if actor.system.derived.damageReduction.entries.length}}
+    <div class="dr-content">
+      <div class="dr-main">
+        <span class="dr-highest">
+          DR {{actor.system.derived.damageReduction.highestValue}}
+        </span>
+      </div>
+
+      <ul class="dr-list">
+        {{#each actor.system.derived.damageReduction.entries}}
+          <li class="dr-entry">
+            <span class="dr-value">
+              {{this.value}}
+            </span>
+
+            {{#if this.bypass.length}}
+              <span class="dr-bypass">
+                / {{join this.bypass ", "}}
+              </span>
+            {{/if}}
+
+            {{#if this.source}}
+              <span class="dr-source">
+                ({{this.source}})
+              </span>
+            {{/if}}
+          </li>
+        {{/each}}
+      </ul>
+    </div>
+  {{else}}
+    <div class="dr-none">
+      <em>None</em>
+    </div>
+  {{/if}}
+</section>
