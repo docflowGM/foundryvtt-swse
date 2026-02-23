@@ -1,53 +1,34 @@
 import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
 // ============================================
 // FILE: rolls/defenses.js
-// Defense calculations using SWSE utils
+// Defense rolling via RollCore (V2 Unified)
 // ============================================
 
+import RollCore from "../engines/roll/roll-core.js";
+import { swseLogger } from "../utils/logger.js";
+
 /**
- * Calculate a defense value
+ * DEPRECATED: calculateDefense() - Use RollCore + ModifierEngine instead
+ * Kept for backward compatibility but should not be called for rolls
  * @param {Actor} actor - The actor
  * @param {string} type - Defense type (fortitude, reflex, will)
- * @returns {number} Total defense value
+ * @returns {number} Total defense value from derived data
  */
 export function calculateDefense(actor, type) {
-  const utils = game.swse.utils;
   const def = actor.system?.derived?.defenses?.[type];
-
   if (!def) {return 10;}
-
-  const base = 10;
-
-  // Use abilityKey if available, otherwise fall back to default abilities by type
-  let abilityKey = def.abilityKey;
-  if (!abilityKey) {
-    const defaultAbilities = { fortitude: 'str', reflex: 'dex', will: 'wis' };
-    abilityKey = defaultAbilities[type] || 'str';
-  }
-
-  const abilityScore = actor.system.attributes[abilityKey]?.base ?? 10;
-  const ability = utils.math.calculateAbilityModifier(abilityScore);
-  const armor = def.armor || 0;
-  const misc = def.misc || def.modifier || 0;
-  const cls = def.classBonus || def.class || 0;
-
-  return utils.math.calculateDefense(
-    base,
-    ability,
-    armor,
-    [lvl, cls, misc]
-  );
+  return def.total ?? def.value ?? 10;
 }
 
 /**
- * Roll a defense check
+ * Roll a defense check via RollCore
  * @param {Actor} actor - The actor rolling the defense
  * @param {string} defenseType - Defense type (fortitude, reflex, will)
- * @returns {Promise<Roll>} The defense check roll
+ * @param {Object} options - Additional options
+ * @param {boolean} options.useForce - Spend a Force Point
+ * @returns {Promise<Roll|null>} The defense check roll or null if failed
  */
-export async function rollDefense(actor, defenseType) {
-  const utils = game.swse.utils;
-
+export async function rollDefense(actor, defenseType, options = {}) {
   if (!actor) {
     ui.notifications.warn('No actor specified for defense roll');
     return null;
@@ -57,28 +38,46 @@ export async function rollDefense(actor, defenseType) {
   const typeMap = { 'fort': 'fortitude', 'ref': 'reflex' };
   const normalizedType = typeMap[defenseType] || defenseType;
 
-const defense = actor.system?.derived?.defenses?.[normalizedType];
+  const defense = actor.system?.derived?.defenses?.[normalizedType];
 
-if (!defense) {
-  ui.notifications.warn(`Defense ${defenseType} not found`);
-  return null;
-}
+  if (!defense) {
+    ui.notifications.warn(`Defense ${defenseType} not found`);
+    return null;
+  }
 
-const defenseValue = defense.total ?? defense.value ?? 10;
   const label = normalizedType.charAt(0).toUpperCase() + normalizedType.slice(1);
 
-  const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${defenseValue}`).evaluate({ async: true });
+  // === UNIFIED ROLL EXECUTION via RollCore ===
+  const domain = `defense.${normalizedType}`;
+  const rollResult = await RollCore.execute({
+    actor,
+    domain,
+    rollOptions: {
+      baseDice: '1d20',
+      useForce: options.useForce || false
+    },
+    context: { defenseType: normalizedType }
+  });
 
-  await roll.toMessage({
-    speaker: ChatMessage.getSpeaker({ actor }),
-    flavor: `${label} Defense Check (vs DC ${defenseValue})`
-  }, { create: true });
+  if (!rollResult.success) {
+    ui.notifications.error(`Defense roll failed: ${rollResult.error}`);
+    return null;
+  }
 
-  return roll;
+  // === RENDER TO CHAT ===
+  if (rollResult.roll) {
+    await rollResult.roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      flavor: `<strong>${label} Defense</strong><br/>Modifier: ${rollResult.modifierTotal}
+               ${rollResult.forcePointBonus > 0 ? `<br/>+ ${rollResult.forcePointBonus} (Force)` : ''}`
+    }, { create: true });
+  }
+
+  return rollResult.roll;
 }
 
 /**
- * Calculate all defenses for an actor
+ * Get all defense values from derived data
  * @param {Actor} actor - The actor
  * @returns {object} All defense values
  */
@@ -106,27 +105,19 @@ export function getDefenseWithCover(actor, type, coverType = 'none') {
 }
 
 /**
- * Calculate flat-footed defense (reflex without DEX bonus)
+ * Get flat-footed defense (reflex without DEX bonus)
  * @param {Actor} actor - The actor
  * @returns {number} Flat-footed defense value
  */
 export function calculateFlatFooted(actor) {
-  const base = 10;
-    const cls = actor.system.defenses.reflex?.classBonus || 0;
-  const misc = actor.system.defenses.reflex?.misc || 0;
-
-  return base + getEffectiveHalfLevel(actor) + cls + misc;
+  return actor.system?.derived?.defenses?.flatFooted ?? 10;
 }
 
 /**
- * Calculate damage threshold
+ * Get damage threshold
  * @param {Actor} actor - The actor
  * @returns {number} Damage threshold value
  */
 export function calculateDamageThreshold(actor) {
-  const utils = game.swse.utils;
-  const fortitude = calculateDefense(actor, 'fortitude');
-  const size = actor.system.size || 'medium';
-
-  return utils.math.calculateDamageThreshold(fortitude, size);
+  return actor.system?.derived?.damageThreshold ?? 0;
 }

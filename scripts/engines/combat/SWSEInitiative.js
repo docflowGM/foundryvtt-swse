@@ -1,5 +1,5 @@
 /**
- * SWSE Initiative Tie Resolution Engine
+ * SWSE Initiative Tie Resolution Engine (V2 Consolidated)
  *
  * Implements SWSE rules for initiative ties:
  *   1. Higher initiative modifier wins.
@@ -12,6 +12,8 @@
  */
 
 import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
+import RollCore from '../roll/roll-core.js';
+import { swseLogger } from '../../utils/logger.js';
 
 export class SWSEInitiative {
 
@@ -75,7 +77,9 @@ export class SWSEInitiative {
   static async _rerollBetween(combatants, combat) {
     for (const c of combatants) {
       const mod = this._getInitMod(c);
-      const roll = await RollEngine.safeRoll(`1d20 + ${mod}`);
+      const formula = `1d20 + ${mod}`;
+      const roll = new Roll(formula);
+      await roll.evaluate({ async: true });
       await combat.setInitiative(c.id, roll.total);
     }
   }
@@ -94,61 +98,71 @@ export class SWSEInitiative {
   /* ------------------------------------------------------------------ */
 
   /**
-   * Roll initiative for an actor and apply to Combat Tracker.
+   * Roll initiative for an actor via RollCore and apply to Combat Tracker.
    * Optionally spend a Force Point for a bonus die.
-   *
-   * PHASE 1 CONSOLIDATION: Now returns structured result.
    *
    * @param {Actor} actor
    * @param {object} [options]
    * @param {boolean} [options.useForce=false]  Spend a Force Point on the roll.
-   * @returns {Object} Structured initiative result { roll, total, usedForce }
+   * @returns {Object} Structured initiative result { roll, total, usedForce, forceBonus, baseMod }
    */
   static async rollInitiative(actor, options = {}) {
-    const baseMod = actor.system.skills?.initiative?.total ?? 0;
-    const roll = await RollEngine.safeRoll(`1d20 + ${baseMod}`);
+    if (!actor) return { success: false, error: 'No actor provided' };
 
-    let total = roll.total;
-    let forceBonus = 0;
-    let usedForce = false;
+    // === UNIFIED ROLL EXECUTION via RollCore ===
+    const rollResult = await RollCore.execute({
+      actor,
+      domain: 'initiative',
+      rollOptions: {
+        baseDice: '1d20',
+        useForce: options.useForce || false
+      }
+    });
 
-    // Force Point enhancement
-    if (options.useForce) {
+    if (!rollResult.success) {
+      swseLogger.error('[SWSEInitiative] Roll execution failed:', rollResult.error);
+      return rollResult;
+    }
+
+    let total = rollResult.finalTotal;
+    const forceBonus = rollResult.forcePointBonus || 0;
+    const usedForce = forceBonus > 0;
+    const baseMod = rollResult.modifierTotal;
+
+    // === FORCE POINT SPENDING (if used) ===
+    if (usedForce) {
       const fp = actor.system.forcePoints?.value ?? 0;
       if (fp > 0) {
-        const fpDie = actor.system.forcePoints?.die || '1d6';
-        const fpRoll = await RollEngine.safeRoll(fpDie);
-        forceBonus = fpRoll.total;
-        total += forceBonus;
-        usedForce = true;
-
-        // Decrement Force Points immediately
+        // Decrement Force Points through ActorEngine
         await ActorEngine.updateActor(actor, {
-          'system.forcePoints.value': fp - 1
+          'system.forcePoints.value': Math.max(0, fp - 1)
         });
 
         // Announce FP spend in chat
-        await fpRoll.toMessage({
+        await ChatMessage.create({
           speaker: ChatMessage.getSpeaker({ actor }),
-          flavor: `${actor.name} spends a Force Point on Initiative (+${forceBonus})`
+          content: `<em>${actor.name} spends a Force Point on Initiative (+${forceBonus})</em>`,
+          flags: { swse: { initiativeForcePowerSpent: true } }
         });
       }
     }
 
-    // Post the initiative roll to chat
-    await roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      flavor: forceBonus
-        ? `Initiative Roll (+${forceBonus} Force Point)`
-        : 'Initiative Roll',
-      flags: { 'core.initiativeRoll': true }
-    });
+    // === POST THE ROLL TO CHAT ===
+    if (rollResult.roll) {
+      await rollResult.roll.toMessage({
+        speaker: ChatMessage.getSpeaker({ actor }),
+        flavor: forceBonus > 0
+          ? `<strong>Initiative Roll</strong><br/>+${forceBonus} (Force Point)`
+          : '<strong>Initiative Roll</strong>',
+        flags: { 'core.initiativeRoll': true }
+      });
+    }
 
+    // === APPLY TO COMBAT TRACKER ===
     await this._applyInitiativeToCombat(actor, total);
 
-    /* RETURN STRUCTURED DATA (Phase 1 consolidation) */
     return {
-      roll,
+      roll: rollResult.roll,
       total,
       usedForce,
       forceBonus,
@@ -157,17 +171,34 @@ export class SWSEInitiative {
   }
 
   /**
-   * Take 10 on initiative: result = 10 + modifier.
+   * Take 10 on initiative: result = 10 + modifier via RollCore
    * @param {Actor} actor
    */
   static async take10Initiative(actor) {
-    const baseMod = actor.system.skills?.initiative?.total ?? 0;
-    const result = 10 + baseMod;
+    if (!actor) return;
 
-    // Announce in chat
+    // === USE RollCore WITH Take X OPTION ===
+    const rollResult = await RollCore.execute({
+      actor,
+      domain: 'initiative',
+      rollOptions: {
+        baseDice: '1d20',
+        isTakeX: true,
+        takeXValue: 10
+      }
+    });
+
+    if (!rollResult.success) {
+      swseLogger.error('[SWSEInitiative] Take 10 failed:', rollResult.error);
+      return;
+    }
+
+    const result = rollResult.finalTotal;
+
+    // === ANNOUNCE IN CHAT ===
     const content = `<div class="swse-initiative-take10">
       <strong>${actor.name}</strong> takes 10 on Initiative: <strong>${result}</strong>
-      <span style="opacity:0.7;">(10 + ${baseMod})</span>
+      <span style="opacity:0.7;">(10 + ${rollResult.modifierTotal})</span>
     </div>`;
 
     await ChatMessage.create({
@@ -176,6 +207,7 @@ export class SWSEInitiative {
       flavor: 'Initiative — Take 10'
     });
 
+    // === APPLY TO COMBAT TRACKER ===
     await this._applyInitiativeToCombat(actor, result);
   }
 
