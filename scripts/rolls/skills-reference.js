@@ -432,26 +432,6 @@ const ARMOR_PENALTY_SKILLS = [
 ];
 
 /**
- * Calculate armor penalty for a skill
- */
-function calculateArmorPenalty(actor, skillKey) {
-  if (!ARMOR_PENALTY_SKILLS.includes(skillKey)) {
-    return 0;
-  }
-
-  const armor = actor.system.armor;
-  let penalty = 0;
-
-  // Max Dex Bonus affects these skills
-  if (armor.maxDexBonus !== null && armor.maxDexBonus !== undefined) {
-    const dexMod = actor.system.attributes.dex.mod;
-    penalty = Math.max(0, dexMod - armor.maxDexBonus);
-  }
-
-  return -penalty;  // Negative value
-}
-
-/**
  * ==============================================
  * EXPORTED UTILITIES
  * ==============================================
@@ -463,6 +443,5 @@ export {
   calculateSkills,
   calculateAbilityModifier,
   getSkillModifier,
-  isClassSkill,
-  calculateArmorPenalty
+  isClassSkill
 };
