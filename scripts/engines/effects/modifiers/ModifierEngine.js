@@ -681,7 +681,7 @@ export class ModifierEngine {
       const armorType = (armorSystem.armorType || 'light').toLowerCase();
 
       // ===== ARMOR PROFICIENCY CHECK =====
-      // PHASE 3: Structured proficiency lookup (replaces legacy name-based detection)
+      // PHASE 4: Structured proficiency lookup (legacy fallback removed)
       // Proficiency is tracked via actor system flags for each armor type
       const actorProfs = actor?.system?.proficiencies?.armor || {};
       let isProficient = false;
@@ -694,39 +694,13 @@ export class ModifierEngine {
         isProficient = actorProfs.heavy === true;
       }
 
-      // FALLBACK: Maintain backward compatibility with legacy talent names (temporary bridge)
-      if (!isProficient) {
-        const legacyProfs = actor?.items?.filter(i =>
-          (i.type === 'feat' || i.type === 'talent') &&
-          i.name.toLowerCase().includes('armor proficiency')
-        ) || [];
-
-        for (const prof of legacyProfs) {
-          const profName = prof.name.toLowerCase();
-          if (profName.includes('light') && armorType === 'light') { isProficient = true; }
-          if (profName.includes('medium') && (armorType === 'light' || armorType === 'medium')) { isProficient = true; }
-          if (profName.includes('heavy')) { isProficient = true; }
-        }
-      }
-
       // ===== TALENT CHECKS =====
-      // PHASE 3: Structured talent identifier lookup (replaces legacy name-based detection)
-      // Talents are identified by structured ID flags on actor system
+      // PHASE 4: Structured talent identifier lookup (legacy fallback removed)
+      // Talents are identified by structured flags on actor system
       const talentFlags = actor?.system?.talentFlags || {};
       let hasArmoredDefense = talentFlags.armoredDefense === true;
       let hasImprovedArmoredDefense = talentFlags.improvedArmoredDefense === true;
       let hasArmorMastery = talentFlags.armorMastery === true;
-
-      // FALLBACK: Maintain backward compatibility with legacy talent names (temporary bridge)
-      if (!hasArmoredDefense || !hasImprovedArmoredDefense || !hasArmorMastery) {
-        const talents = actor?.items?.filter(i => i.type === 'talent') || [];
-        for (const talent of talents) {
-          const talentNameLower = (talent.name || '').toLowerCase();
-          if (!hasArmoredDefense && talentNameLower === 'armored defense') { hasArmoredDefense = true; }
-          if (!hasImprovedArmoredDefense && talentNameLower === 'improved armored defense') { hasImprovedArmoredDefense = true; }
-          if (!hasArmorMastery && talentNameLower === 'armor mastery') { hasArmorMastery = true; }
-        }
-      }
 
       // ===== REFLEX DEFENSE BONUS =====
       const baseArmorBonus = armorSystem.defenseBonus || 0;
