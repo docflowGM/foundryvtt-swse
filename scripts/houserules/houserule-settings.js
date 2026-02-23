@@ -56,15 +56,6 @@ export function registerHouseruleSettings() {
     default: 32
   });
 
-  register('allowAbilityReroll', {
-    name: 'Allow Ability Score Reroll',
-    hint: 'Allows players to reroll low stat sets during creation.',
-    scope: 'world',
-    config: true,
-    type: Boolean,
-    default: true
-  });
-
   register('allowPlayersNonheroic', {
     name: 'Allow Non-Heroic Player Characters',
     hint: 'If enabled, players can use the NPC generator.',
@@ -256,21 +247,6 @@ export function registerHouseruleSettings() {
     default: 'swse'
   });
 
-  register('weaponRangeReduction', {
-    name: 'Weapon Range Reduction',
-    hint: 'Apply global range reduction modifiers.',
-    scope: 'world',
-    config: true,
-    type: String,
-    choices: {
-      none: 'No Reduction',
-      quarter: '25% Range',
-      half: '50% Range',
-      threequarter: '75% Range'
-    },
-    default: 'none'
-  });
-
   register('weaponRangeMultiplier', {
     name: 'Weapon Range Multiplier',
     hint: 'Provides granular weapon range adjustment.',
@@ -283,15 +259,6 @@ export function registerHouseruleSettings() {
   register('armoredDefenseForAll', {
     name: 'Armored Defense for All',
     hint: 'All characters can apply armor bonus to Reflex Defense.',
-    scope: 'world',
-    config: true,
-    type: Boolean,
-    default: false
-  });
-
-  register('trackBlasterCharges', {
-    name: 'Track Blaster Charges',
-    hint: 'Enable tracking of blaster power cell usage and charges in combat.',
     scope: 'world',
     config: true,
     type: Boolean,
@@ -374,29 +341,6 @@ export function registerHouseruleSettings() {
     default: 7
   });
 
-  register('knowledgeSkillMode', {
-    name: 'Knowledge Skills Consolidation',
-    hint: 'How knowledge skills are consolidated or presented.',
-    scope: 'world',
-    config: true,
-    type: String,
-    choices: {
-      standard: 'Standard (Separate Knowledge Skills)',
-      consolidated: 'Consolidated (Single Knowledge Skill)',
-      simplified: 'Simplified (Limited Knowledge Options)'
-    },
-    default: 'standard'
-  });
-
-  register('athleticsConsolidation', {
-    name: 'Athletics & Acrobatics Consolidation',
-    hint: 'Whether to consolidate Athletics and Acrobatics into a single skill.',
-    scope: 'world',
-    config: true,
-    type: Boolean,
-    default: false
-  });
-
   /* -------------------------------------------------------------------------- */
   /*                               FORCE RULES                                   */
   /* -------------------------------------------------------------------------- */
@@ -461,29 +405,6 @@ export function registerHouseruleSettings() {
     config: true,
     type: Boolean,
     default: true
-  });
-
-  register('darkInspirationEnabled', {
-    name: 'Enable Dark Inspiration',
-    hint: 'Allow Force-sensitive characters to use Dark Inspiration to cast dark side powers at the cost of DSP.',
-    scope: 'world',
-    config: true,
-    type: Boolean,
-    default: false
-  });
-
-  register('forcePointRecovery', {
-    name: 'Force Point Recovery',
-    hint: 'When Force Points refresh.',
-    scope: 'world',
-    config: true,
-    type: String,
-    choices: {
-      level: 'On Level Up',
-      extended: 'After Extended Rest',
-      session: 'Each Session'
-    },
-    default: 'level'
   });
 
   register('darkSideTemptation', {
@@ -610,15 +531,6 @@ export function registerHouseruleSettings() {
     config: true,
     type: Boolean,
     default: true
-  });
-
-  register('retrainingEnabled', {
-    name: 'Retraining System',
-    hint: 'Allow retraining feats, skills, and talents.',
-    scope: 'world',
-    config: true,
-    type: Boolean,
-    default: false
   });
 
   register('skillFocusRestriction', {
@@ -1270,15 +1182,6 @@ export function registerHouseruleSettings() {
   /*                        CHARACTER CREATION - RESTRICTIONS                    */
   /* -------------------------------------------------------------------------- */
 
-  register('enableBackgrounds', {
-    name: 'Enable Backgrounds in Character Generation',
-    hint: 'If disabled, the Background step is removed from character creation (though templates still apply backgrounds).',
-    scope: 'world',
-    config: true,
-    type: Boolean,
-    default: true
-  });
-
   register('bannedSpecies', {
     name: 'Banned Species/Races',
     hint: 'List of species that players cannot select. GMs can always select any species. Use commas to separate multiple species.',
@@ -1368,15 +1271,6 @@ export function registerHouseruleSettings() {
     default: 'fullLevel'
   });
 
-  register('limitMoveObjectDamage', {
-    name: 'Limit Move Object Damage',
-    hint: 'Override Move Object force power damage rules.',
-    scope: 'world',
-    config: true,
-    type: Boolean,
-    default: false
-  });
-
   /* -------------------------------------------------------------------------- */
   /*                     ADDITIONAL HOUSE RULES                                 */
   /* -------------------------------------------------------------------------- */
@@ -1402,15 +1296,6 @@ export function registerHouseruleSettings() {
   register('enableEmergencyPatch', {
     name: 'Enable Emergency Patch',
     hint: 'During engineer phase, spend a Force Point and make a Mechanics DC 20 check to downgrade one subsystem damage tier. Once per encounter per vehicle.',
-    scope: 'world',
-    config: true,
-    type: Boolean,
-    default: false
-  });
-
-  register('enableSubsystemRepairCost', {
-    name: 'Enable Subsystem Repair Cost',
-    hint: 'Repairing subsystems outside combat costs 15% of vehicle base cost per tier repaired. Does not apply to in-combat Emergency Patch.',
     scope: 'world',
     config: true,
     type: Boolean,
