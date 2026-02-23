@@ -3,6 +3,7 @@ import { RollEngine } from '../../engine/roll-engine.js';
 import { rollDamage } from './damage.js';
 import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance } from '../utils/combat-utils.js';
 import { getEffectiveHalfLevel } from '../../actors/derived/level-split.js';
+import { AmmoSystem } from '../../engines/inventory/ammo-system.js';
 import {
   ROLL_HOOKS,
   callPreRollHook,
@@ -720,17 +721,9 @@ export class SWSERoll {
         }
       }
 
-      // Consume ammunition
-      // PHASE 3: Route through ActorEngine for owned items
-      const newAmmo = currentAmmo - ammoRequired;
-      const ammoUpdate = { _id: weapon.id, 'system.ammunition.current': newAmmo };
-      if (weapon?.actor) {
-        const { ActorEngine } = await import('../../governance/actor-engine/actor-engine.js');
-        await ActorEngine.updateOwnedItems(weapon.actor, [ammoUpdate]);
-      } else {
-        // Non-owned weapon, update directly
-        await weapon.update({ 'system.ammunition.current': newAmmo });
-      }
+      // Consume ammunition via AmmoSystem
+      const ammoResult = await AmmoSystem.consumeAmmunition(actor, weapon, ammoRequired);
+      const newAmmo = ammoResult.newAmmo ?? currentAmmo;
 
       // Build HTML result
       const attackTypeLabel = options.burstFire ? 'Burst Fire' : 'Autofire';
