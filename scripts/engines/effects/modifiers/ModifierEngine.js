@@ -14,6 +14,7 @@
 import { ModifierType, ModifierSource, createModifier, isValidModifier } from './ModifierTypes.js';
 import ModifierUtils from './ModifierUtils.js';
 import { EncumbranceEngine } from '../../engine/encumbrance/EncumbranceEngine.js';
+import { WeaponsEngine } from '../combat/weapons-engine.js';
 import { StructuredRuleEvaluator } from './StructuredRuleEvaluator.js';
 import { swseLogger } from '../../utils/logger.js';
 
@@ -56,6 +57,9 @@ export class ModifierEngine {
 
       // Source 6: Items (equipment/armor)
       modifiers.push(...this._getItemModifiers(actor));
+
+      // Source 6b: Weapons (centralized through WeaponsEngine)
+      modifiers.push(...this._getWeaponModifiers(actor));
 
       // Source 7: Droid Modifications (Phase A - droids only)
       if (actor.type === 'droid') {
@@ -997,6 +1001,40 @@ export class ModifierEngine {
 
     } catch (err) {
       swseLogger.warn(`[ModifierEngine] Error collecting armor item modifiers:`, err);
+    }
+
+    return modifiers;
+  }
+
+  /**
+   * Collect weapon modifiers from equipped weapons
+   * Replaces direct weapon calculations in combat-utils.js
+   * Integrates WeaponsEngine to register weapon effects as modifiers:
+   * - Enhancement bonuses
+   * - Proficiency penalties
+   * - Two-handed bonuses
+   * - Talent-based damage bonuses
+   * - Weapon properties (keen, flaming, etc.)
+   *
+   * @private
+   * @param {Actor} actor - Actor with equipped weapons
+   * @returns {Modifier[]}
+   */
+  static _getWeaponModifiers(actor) {
+    const modifiers = [];
+
+    try {
+      if (!actor) {
+        return modifiers;
+      }
+
+      // Get all weapon modifiers through WeaponsEngine
+      const weaponMods = WeaponsEngine.getWeaponModifiers(actor);
+      modifiers.push(...weaponMods);
+
+      swseLogger.debug(`[ModifierEngine] Collected ${weaponMods.length} weapon modifiers for ${actor.name}`);
+    } catch (err) {
+      swseLogger.warn(`[ModifierEngine] Error collecting weapon modifiers for ${actor?.name}:`, err);
     }
 
     return modifiers;
