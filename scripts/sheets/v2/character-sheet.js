@@ -206,6 +206,9 @@ export class SWSEV2CharacterSheet extends
         .classList.remove("flipped");
     });
 
+    // Inventory Panel Handlers
+    this._activateInventoryUI(html);
+
     // SWSE Combat UI Wiring
     this._activateCombatUI(html);
   }
@@ -275,6 +278,41 @@ export class SWSEV2CharacterSheet extends
         card.classList.add("recovered");
         setTimeout(() => card.classList.remove("recovered"), 400);
       }, 500);
+    });
+  }
+
+  /* ============================================================
+     INVENTORY UI WIRING
+  ============================================================ */
+
+  _activateInventoryUI(html) {
+    // Equip / Unequip toggle
+    html.on("click", ".item-equip", async (event) => {
+      const row = event.currentTarget.closest(".inventory-row");
+      const itemId = row.dataset.itemId;
+      await InventoryEngine.toggleEquip(this.actor, itemId);
+    });
+
+    // Edit item
+    html.on("click", ".item-edit", (event) => {
+      const row = event.currentTarget.closest(".inventory-row");
+      const itemId = row.dataset.itemId;
+      this.actor.items.get(itemId)?.sheet.render(true);
+    });
+
+    // Add/increment quantity
+    html.on("click", ".item-add", async (event) => {
+      const row = event.currentTarget.closest(".inventory-row");
+      const itemId = row.dataset.itemId;
+      await InventoryEngine.incrementQuantity(this.actor, itemId);
+    });
+
+    // Sell item
+    html.on("click", ".item-sell", async (event) => {
+      const row = event.currentTarget.closest(".inventory-row");
+      const itemId = row.dataset.itemId;
+      // TODO: Integrate with StoreEngine when implemented
+      await InventoryEngine.decrementQuantity(this.actor, itemId);
     });
   }
 

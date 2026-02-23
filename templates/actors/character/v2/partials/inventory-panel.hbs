@@ -1,0 +1,25 @@
+<div class="swse-inventory">
+
+  {{#each derived.inventory as |items group|}}
+
+    {{#if items.length}}
+      <div class="inventory-group">
+
+        <div class="inventory-group-header">
+          {{group}}
+        </div>
+
+        <div class="inventory-group-body">
+
+          {{#each items}}
+            {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-item-row.hbs" this}}
+          {{/each}}
+
+        </div>
+
+      </div>
+    {{/if}}
+
+  {{/each}}
+
+</div>
