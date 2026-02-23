@@ -681,32 +681,51 @@ export class ModifierEngine {
       const armorType = (armorSystem.armorType || 'light').toLowerCase();
 
       // ===== ARMOR PROFICIENCY CHECK =====
-      // TEMPORARY: Using legacy name-based detection (Phase 3 will replace with structured data)
-      const proficiencies = actor?.items?.filter(i =>
-        (i.type === 'feat' || i.type === 'talent') &&
-        i.name.toLowerCase().includes('armor proficiency')
-      ) || [];
-
+      // PHASE 3: Structured proficiency lookup (replaces legacy name-based detection)
+      // Proficiency is tracked via actor system flags for each armor type
+      const actorProfs = actor?.system?.proficiencies?.armor || {};
       let isProficient = false;
-      for (const prof of proficiencies) {
-        const profName = prof.name.toLowerCase();
-        if (profName.includes('light') && armorType === 'light') { isProficient = true; }
-        if (profName.includes('medium') && (armorType === 'light' || armorType === 'medium')) { isProficient = true; }
-        if (profName.includes('heavy')) { isProficient = true; } // Heavy includes all
+
+      if (armorType === 'light') {
+        isProficient = actorProfs.light === true;
+      } else if (armorType === 'medium') {
+        isProficient = actorProfs.medium === true;
+      } else if (armorType === 'heavy') {
+        isProficient = actorProfs.heavy === true;
+      }
+
+      // FALLBACK: Maintain backward compatibility with legacy talent names (temporary bridge)
+      if (!isProficient) {
+        const legacyProfs = actor?.items?.filter(i =>
+          (i.type === 'feat' || i.type === 'talent') &&
+          i.name.toLowerCase().includes('armor proficiency')
+        ) || [];
+
+        for (const prof of legacyProfs) {
+          const profName = prof.name.toLowerCase();
+          if (profName.includes('light') && armorType === 'light') { isProficient = true; }
+          if (profName.includes('medium') && (armorType === 'light' || armorType === 'medium')) { isProficient = true; }
+          if (profName.includes('heavy')) { isProficient = true; }
+        }
       }
 
       // ===== TALENT CHECKS =====
-      // Check for armor-related talents
-      const talents = actor?.items?.filter(i => i.type === 'talent') || [];
-      let hasArmoredDefense = false;
-      let hasImprovedArmoredDefense = false;
-      let hasArmorMastery = false;
+      // PHASE 3: Structured talent identifier lookup (replaces legacy name-based detection)
+      // Talents are identified by structured ID flags on actor system
+      const talentFlags = actor?.system?.talentFlags || {};
+      let hasArmoredDefense = talentFlags.armoredDefense === true;
+      let hasImprovedArmoredDefense = talentFlags.improvedArmoredDefense === true;
+      let hasArmorMastery = talentFlags.armorMastery === true;
 
-      for (const talent of talents) {
-        const talentNameLower = (talent.name || '').toLowerCase();
-        if (talentNameLower === 'armored defense') { hasArmoredDefense = true; }
-        if (talentNameLower === 'improved armored defense') { hasImprovedArmoredDefense = true; }
-        if (talentNameLower === 'armor mastery') { hasArmorMastery = true; }
+      // FALLBACK: Maintain backward compatibility with legacy talent names (temporary bridge)
+      if (!hasArmoredDefense || !hasImprovedArmoredDefense || !hasArmorMastery) {
+        const talents = actor?.items?.filter(i => i.type === 'talent') || [];
+        for (const talent of talents) {
+          const talentNameLower = (talent.name || '').toLowerCase();
+          if (!hasArmoredDefense && talentNameLower === 'armored defense') { hasArmoredDefense = true; }
+          if (!hasImprovedArmoredDefense && talentNameLower === 'improved armored defense') { hasImprovedArmoredDefense = true; }
+          if (!hasArmorMastery && talentNameLower === 'armor mastery') { hasArmorMastery = true; }
+        }
       }
 
       // ===== REFLEX DEFENSE BONUS =====
