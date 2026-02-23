@@ -98,7 +98,7 @@ try {
           senses: template.senses || '',
 
           // Condition track
-          conditionTrack: template.conditionTrack || { current: 0, persistent: false, penalty: 0 },
+          conditionTrack: template.conditionTrack || { current: 0, persistent: false },
 
           // Force sensitivity
           forceSensitive: template.forceSensitive || false,

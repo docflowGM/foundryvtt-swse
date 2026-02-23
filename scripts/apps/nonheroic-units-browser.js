@@ -253,7 +253,7 @@ async _prepareContext(options) {
           damageThreshold: unit.damageThreshold || 10,
           perception: unit.perception,
           senses: unit.senses || '',
-          conditionTrack: unit.conditionTrack || { current: 0, persistent: false, penalty: 0 },
+          conditionTrack: unit.conditionTrack || { current: 0, persistent: false },
           forceSensitive: unit.forceSensitive || false
         }, {})
       };
