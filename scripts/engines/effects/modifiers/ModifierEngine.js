@@ -879,6 +879,119 @@ export class ModifierEngine {
         }
       }
 
+      // ===== PHASE 5: ARMOR UPGRADE MODIFIERS =====
+      // Register modifiers from installed upgrades on the armor
+      const installedUpgrades = armorSystem.installedUpgrades || [];
+      if (Array.isArray(installedUpgrades) && installedUpgrades.length > 0) {
+        for (const upgrade of installedUpgrades) {
+          if (!upgrade || typeof upgrade !== 'object') continue;
+
+          const upgradeName = upgrade.name || `Upgrade ${upgrade.id}`;
+          const upgradeId = upgrade.id;
+
+          // Armor upgrades can modify:
+          // - defense.reflex (additional armor bonus)
+          // - defense.fort (additional equipment bonus)
+          // - skill.* (modify armor check penalty)
+          // - speed.base (modify speed penalty)
+
+          // Example upgrade data structure:
+          // {
+          //   name: "Reinforced Plating",
+          //   modifiers: {
+          //     reflexBonus: 1,       // +1 reflex defense
+          //     fortBonus: 0,         // +0 fort defense
+          //     acpModifier: 0,       // no ACP change
+          //     speedModifier: 0      // no speed change
+          //   }
+          // }
+
+          const upgradeModifiers = upgrade.modifiers || {};
+
+          // Reflex bonus from upgrade
+          if (typeof upgradeModifiers.reflexBonus === 'number' && upgradeModifiers.reflexBonus !== 0) {
+            try {
+              modifiers.push(createModifier({
+                source: ModifierSource.ITEM,
+                sourceId: upgradeId,
+                sourceName: `${upgradeName} (Reflex Bonus)`,
+                target: 'defense.reflex',
+                type: ModifierType.ENHANCEMENT,
+                value: upgradeModifiers.reflexBonus,
+                enabled: true,
+                priority: 35, // After base armor bonus
+                description: `${upgradeName} provides +${upgradeModifiers.reflexBonus} reflex defense`
+              }));
+            } catch (err) {
+              swseLogger.warn(`Failed to create upgrade reflex modifier for ${upgradeName}:`, err);
+            }
+          }
+
+          // Fortitude bonus from upgrade
+          if (typeof upgradeModifiers.fortBonus === 'number' && upgradeModifiers.fortBonus !== 0) {
+            try {
+              modifiers.push(createModifier({
+                source: ModifierSource.ITEM,
+                sourceId: upgradeId,
+                sourceName: `${upgradeName} (Fort Bonus)`,
+                target: 'defense.fort',
+                type: ModifierType.ENHANCEMENT,
+                value: upgradeModifiers.fortBonus,
+                enabled: true,
+                priority: 35,
+                description: `${upgradeName} provides +${upgradeModifiers.fortBonus} fortitude defense`
+              }));
+            } catch (err) {
+              swseLogger.warn(`Failed to create upgrade fort modifier for ${upgradeName}:`, err);
+            }
+          }
+
+          // ACP modifier from upgrade (affects all ACP-affected skills)
+          if (typeof upgradeModifiers.acpModifier === 'number' && upgradeModifiers.acpModifier !== 0) {
+            const acpSkills = [
+              'acrobatics', 'climb', 'escapeArtist', 'jump', 'sleightOfHand', 'stealth', 'swim', 'useRope'
+            ];
+
+            for (const skillKey of acpSkills) {
+              try {
+                modifiers.push(createModifier({
+                  source: ModifierSource.ITEM,
+                  sourceId: upgradeId,
+                  sourceName: `${upgradeName} (ACP Mod)`,
+                  target: `skill.${skillKey}`,
+                  type: ModifierType.ENHANCEMENT,
+                  value: upgradeModifiers.acpModifier,
+                  enabled: true,
+                  priority: 35,
+                  description: `${upgradeName} modifies armor check penalty by ${upgradeModifiers.acpModifier > 0 ? '+' : ''}${upgradeModifiers.acpModifier}`
+                }));
+              } catch (err) {
+                swseLogger.warn(`Failed to create upgrade ACP modifier for skill.${skillKey}:`, err);
+              }
+            }
+          }
+
+          // Speed modifier from upgrade
+          if (typeof upgradeModifiers.speedModifier === 'number' && upgradeModifiers.speedModifier !== 0) {
+            try {
+              modifiers.push(createModifier({
+                source: ModifierSource.ITEM,
+                sourceId: upgradeId,
+                sourceName: `${upgradeName} (Speed Mod)`,
+                target: 'speed.base',
+                type: ModifierType.ENHANCEMENT,
+                value: upgradeModifiers.speedModifier,
+                enabled: true,
+                priority: 35,
+                description: `${upgradeName} modifies speed by ${upgradeModifiers.speedModifier > 0 ? '+' : ''}${upgradeModifiers.speedModifier}`
+              }));
+            } catch (err) {
+              swseLogger.warn(`Failed to create upgrade speed modifier for ${upgradeName}:`, err);
+            }
+          }
+        }
+      }
+
       swseLogger.debug(`[ModifierEngine] Registered ${modifiers.length} armor modifiers for ${armorName} (${armorType}, proficient: ${isProficient})`);
 
     } catch (err) {
