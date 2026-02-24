@@ -1,4 +1,4 @@
-import { ProgressionEngine } from '../engines/progression/engine/progression-engine.js';
+import { ProgressionEngine } from '../../engines/progression/engine/progression-engine.js';
 /**
  * Combat Lifecycle Hooks
  * All combat-related hook handlers consolidated here
@@ -13,8 +13,8 @@ import { ProgressionEngine } from '../engines/progression/engine/progression-eng
  */
 
 import { HooksRegistry } from './hooks-registry.js';
-import { SWSELogger } from '../utils/logger.js';
-import { SpeciesRerollHandler } from '../species/species-reroll-handler.js';
+import { SWSELogger } from '../../utils/logger.js';
+import { SpeciesRerollHandler } from '../../species/species-reroll-handler.js';
 
 /**
  * Register all combat-related hooks

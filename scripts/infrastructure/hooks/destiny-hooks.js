@@ -3,8 +3,8 @@
  * Registers handlers for Destiny Point spending and instant effects
  */
 
-import { SWSELogger } from '../utils/logger.js';
-import { DestinyEffects } from '../utils/destiny-effects.js';
+import { SWSELogger } from '../../utils/logger.js';
+import { DestinyEffects } from '../../utils/destiny-effects.js';
 
 export function registerDestinyHooks() {
   SWSELogger.log('SWSE | Registering Destiny Hooks');

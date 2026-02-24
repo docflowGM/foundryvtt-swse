@@ -11,8 +11,8 @@
  */
 
 import { HooksRegistry } from './hooks-registry.js';
-import { SWSELogger } from '../utils/logger.js';
-import { createItemMacro } from '../macros/item-macro.js';
+import { SWSELogger } from '../../utils/logger.js';
+import { createItemMacro } from '../../macros/item-macro.js';
 import registerLevelUpSheetHooks from './levelup-sheet-hooks.js';
 
 /**
