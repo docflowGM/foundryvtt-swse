@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-02-24T00:00:00Z",
+  "summary": {
+    "totalVehicles": 357,
+    "successfullyMapped": 209,
+    "requiresReview": 148
+  },
+  "categoryBreakdown": {
+    "starfighter": 64,
+    "transport": 59,
+    "capitalShip": 37,
+    "speeder": 34,
+    "spaceStation": 5,
+    "walker": 4,
+    "tracked": 2,
+    "REVIEW_REQUIRED": 148
+  },
+  "notes": [
+    "Vehicles marked REVIEW_REQUIRED are mostly generic 'Vehicle' type entries without descriptions",
+    "6 gunships flagged (ambiguous between airspeeder/transport)",
+    "Named ships without lore context (e.g., The Ebon Hawk, Millennium Falcon) require manual classification",
+    "Mapped vehicles use canonical categories: mount, speeder, tracked, walker, wheeled, emplacement, airspeeder, starfighter, transport, capitalShip, spaceStation",
+    "All starfighter-class and transport-class entries properly identified",
+    "All known Star Destroyers and cruisers correctly mapped to capitalShip"
+  ],
+  "nextSteps": [
+    "Review 148 REVIEW_REQUIRED vehicles manually",
+    "Update compendium entries with proper type/description data",
+    "Lock canonical mapping into VEHICLE_CATEGORY_REGISTRY",
+    "Implement preCreate hook for category auto-fill",
+    "Add category-based sheet filtering"
+  ]
+}

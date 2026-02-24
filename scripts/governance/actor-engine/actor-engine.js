@@ -2314,6 +2314,7 @@ export const ActorEngine = {
       swseLogger.debug('ActorEngine.applyMutationPlan', {
         actor: actor.id,
         source,
+        hasCreates: !!mutationPlan.create && !!mutationPlan.create.actors && mutationPlan.create.actors.length > 0,
         hasSets: !!mutationPlan.set && Object.keys(mutationPlan.set).length > 0,
         hasAdds: !!mutationPlan.add && Object.keys(mutationPlan.add).length > 0,
         hasDeletes: !!mutationPlan.delete && Object.keys(mutationPlan.delete).length > 0
@@ -2321,6 +2322,7 @@ export const ActorEngine = {
 
       // Normalize buckets
       const plan = {
+        create: mutationPlan.create || {},
         set: mutationPlan.set || {},
         add: mutationPlan.add || {},
         delete: mutationPlan.delete || {}
@@ -2332,7 +2334,18 @@ export const ActorEngine = {
       }
 
       // Phase 2: Apply operations in strict order
-      // DELETE first (remove stale references)
+      // CREATE first (create world actors, build tempId→realId map)
+      const tempIdMap = {};
+      if (plan.create && plan.create.actors && plan.create.actors.length > 0) {
+        await this._applyCreateOps(plan.create.actors, tempIdMap, source);
+      }
+
+      // Rewrite temporary IDs in add bucket with real IDs
+      if (Object.keys(tempIdMap).length > 0 && plan.add && Object.keys(plan.add).length > 0) {
+        this._rewriteTemporaryIds(plan.add, tempIdMap);
+      }
+
+      // DELETE next (remove stale references)
       await this._applyDeleteOps(actor, plan.delete, source);
 
       // SET next (modify scalars)
@@ -2368,6 +2381,33 @@ export const ActorEngine = {
   static _validateMutationPlan(plan) {
     const { MutationApplicationError } = require('../../governance/mutation/mutation-errors.js');
 
+    // Validate create bucket (PHASE 2)
+    if (plan.create && typeof plan.create !== 'object') {
+      throw new MutationApplicationError('create bucket must be an object', { operation: 'create' });
+    }
+    if (plan.create && plan.create.actors) {
+      if (!Array.isArray(plan.create.actors)) {
+        throw new MutationApplicationError(
+          'create.actors must be an array',
+          { operation: 'create' }
+        );
+      }
+      for (const spec of plan.create.actors) {
+        if (!spec.temporaryId || typeof spec.temporaryId !== 'string') {
+          throw new MutationApplicationError(
+            'create actor spec must have temporaryId (string)',
+            { operation: 'create' }
+          );
+        }
+        if (!spec.data || typeof spec.data !== 'object') {
+          throw new MutationApplicationError(
+            'create actor spec must have data (object)',
+            { operation: 'create', temporaryId: spec.temporaryId }
+          );
+        }
+      }
+    }
+
     // Validate set bucket
     if (plan.set && typeof plan.set !== 'object') {
       throw new MutationApplicationError('set bucket must be an object', { operation: 'set' });
@@ -2401,6 +2441,94 @@ export const ActorEngine = {
           );
         }
       }
+    }
+  }
+
+  /**
+   * PHASE 2: Apply CREATE operations
+   * Creates world actors from specs and builds tempId→realId map.
+   * @private
+   */
+  static async _applyCreateOps(actorSpecs, tempIdMap, source) {
+    if (!Array.isArray(actorSpecs) || actorSpecs.length === 0) {
+      return;
+    }
+
+    try {
+      for (const spec of actorSpecs) {
+        if (!spec || !spec.temporaryId || !spec.data) {
+          continue;
+        }
+
+        swseLogger.debug('ActorEngine._applyCreateOps', {
+          temporaryId: spec.temporaryId,
+          type: spec.type || 'unknown'
+        });
+
+        // Create actor from spec data
+        try {
+          const created = await Actor.create(spec.data);
+          if (created) {
+            // Map temporary ID to real ID
+            tempIdMap[spec.temporaryId] = created.id;
+            swseLogger.info('ActorEngine: Created actor', {
+              temporaryId: spec.temporaryId,
+              realId: created.id,
+              type: spec.type
+            });
+          }
+        } catch (createErr) {
+          const { MutationApplicationError } = await import('../../governance/mutation/mutation-errors.js');
+          throw new MutationApplicationError(
+            `Failed to create actor ${spec.temporaryId}: ${createErr.message}`,
+            { temporaryId: spec.temporaryId, type: spec.type }
+          );
+        }
+      }
+    } catch (error) {
+      const { MutationApplicationError } = await import('../../governance/mutation/mutation-errors.js');
+      throw new MutationApplicationError(
+        `Failed to apply CREATE operations: ${error.message}`,
+        { specCount: actorSpecs.length }
+      );
+    }
+  }
+
+  /**
+   * PHASE 2: Rewrite temporary IDs to real IDs in add bucket
+   * After CREATE phase creates actors, map temp IDs to real IDs.
+   * @private
+   */
+  static _rewriteTemporaryIds(addBucket, tempIdMap) {
+    if (!addBucket || typeof addBucket !== 'object') {
+      return;
+    }
+
+    try {
+      for (const [collection, ids] of Object.entries(addBucket)) {
+        if (!Array.isArray(ids)) {
+          continue;
+        }
+
+        // Rewrite each ID if it's a temporary ID
+        addBucket[collection] = ids.map(id => {
+          if (typeof id === 'string' && tempIdMap[id]) {
+            const realId = tempIdMap[id];
+            swseLogger.debug('ActorEngine: Rewrote temp ID', {
+              temporaryId: id,
+              realId
+            });
+            return realId;
+          }
+          return id;
+        });
+      }
+    } catch (error) {
+      const { MutationApplicationError } = require('../../governance/mutation/mutation-errors.js');
+      throw new MutationApplicationError(
+        `Failed to rewrite temporary IDs: ${error.message}`,
+        {}
+      );
     }
   }
 

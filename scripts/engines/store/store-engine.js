@@ -12,6 +12,8 @@
 
 import { buildStoreIndex } from './index.js';
 import { STORE_RULES } from './store-constants.js';
+import { LedgerService } from './ledger-service.js';
+import { TransactionEngine } from './transaction-engine.js';
 import { SWSELogger } from '../../utils/logger.js';
 import { normalizeCredits } from '../../utils/credit-normalization.js';
 
@@ -98,18 +100,20 @@ export class StoreEngine {
       };
     }
 
-    const currentCredits = Number(actor.system?.credits) ?? 0;
+    // PHASE 3: Delegate to LedgerService
+    const validation = LedgerService.validateFunds(actor, totalCost);
 
-    if (currentCredits < totalCost) {
-      logger().warn('StoreEngine: Insufficient credits', {
+    if (!validation.ok) {
+      logger().warn('StoreEngine: Funds validation failed', {
         actor: actor.id,
-        have: currentCredits,
-        need: totalCost
+        reason: validation.reason,
+        have: validation.current,
+        need: validation.required
       });
       return {
         success: true,
         canPurchase: false,
-        reason: `Insufficient credits (have ${currentCredits}, need ${totalCost})`
+        reason: `Insufficient credits (have ${validation.current}, need ${validation.required})`
       };
     }
 
@@ -228,29 +232,30 @@ export class StoreEngine {
         };
       }
 
-      // Re-validate affordability at execution time (race condition fix)
-      if (currentCredits < totalCost) {
+      // PHASE 3: Validate via LedgerService (pure, no mutations)
+      const ledgerValidation = LedgerService.validateFunds(freshActor, totalCost);
+      if (!ledgerValidation.ok) {
         logger().warn('StoreEngine: Insufficient credits at execution time', {
           transactionId,
           actor: actor.id,
-          have: currentCredits,
-          need: totalCost
+          reason: ledgerValidation.reason,
+          have: ledgerValidation.current,
+          need: ledgerValidation.required
         });
         return {
           success: false,
-          error: `Insufficient credits at time of transaction (have ${currentCredits}, need ${totalCost}).`,
+          error: `Insufficient credits at time of transaction (have ${ledgerValidation.current}, need ${ledgerValidation.required}).`,
           transactionId
         };
       }
 
-      const newCredits = normalizeCredits(currentCredits - totalCost);
+      // PHASE 3: Build credit delta via LedgerService (pure, no mutations)
+      const creditPlan = LedgerService.buildCreditDelta(freshActor, totalCost);
+      const creditMetadata = LedgerService.buildMetadata(freshActor, totalCost);
 
       logger().info('StoreEngine: Purchase starting', {
         transactionId,
-        actor: actor.id,
-        itemCount: items.length,
-        cost: totalCost,
-        creditsAfter: newCredits
+        ...creditMetadata
       });
 
       // HARDENING 5: Initialize store schema meta if needed
@@ -272,21 +277,53 @@ export class StoreEngine {
         existingFlags.sessionPurchaseIds = existingFlags.sessionPurchaseIds.slice(-100);
       }
 
-      // HARDENING 3: Single batched update (no race window between reads and writes)
+      // PHASE 3: Apply credit delta via ActorEngine
+      // (Note: In Phase 4, this will be merged with other plans and applied atomically)
+      const creditUpdatePlan = {
+        set: creditPlan.set,
+        meta: {
+          flags: {
+            'foundryvtt-swse': existingFlags
+          }
+        }
+      };
+
+      // TEMPORARY: Apply flags separately since they're not in the standard mutation plan
+      // TODO: Phase 4 - Integrate flags into proper MutationPlan handling
       await freshActor.update({
-        'system.credits': newCredits,
+        'system.credits': creditPlan.set['system.credits'],
         'flags.foundryvtt-swse': existingFlags
       });
 
       // Step 2: Grant items (if callback provided)
+      // PHASE 1: Callback now returns MutationPlans instead of mutating directly
       if (itemGrantCallback && typeof itemGrantCallback === 'function') {
         try {
-          await itemGrantCallback(freshActor, items);
+          const grantPlans = await itemGrantCallback(freshActor, items) || [];
+          if (!Array.isArray(grantPlans)) {
+            throw new Error('itemGrantCallback must return an array of MutationPlans');
+          }
+
+          // TEMPORARY ADAPTER (Phase 1 only):
+          // Apply plans sequentially via ActorEngine
+          // (Phase 4 will merge these and apply atomically)
+          for (const plan of grantPlans) {
+            try {
+              await ActorEngine.applyMutationPlan(freshActor, plan);
+            } catch (applyErr) {
+              logger().error('StoreEngine: Failed to apply grant plan', {
+                transactionId,
+                error: applyErr.message
+              });
+              throw applyErr;
+            }
+          }
         } catch (grantErr) {
-          logger().warn('StoreEngine: Item grant failed (credits deducted)', {
+          logger().error('StoreEngine: Item grant failed (credits deducted)', {
             transactionId,
             error: grantErr.message
           });
+          throw grantErr;
         }
       }
 
