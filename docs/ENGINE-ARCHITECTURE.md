@@ -282,7 +282,166 @@ If this rule breaks, stop development and refactor immediately.
 
 ---
 
-## 10. References
+## 10. Suggestion Engine Contract (CRITICAL GOVERNANCE LAYER)
+
+**SuggestionEngines are pure evaluators only. They are NOT:**
+- State managers
+- Persistence layers
+- Analytics engines
+- Enforcement mechanisms
+- Calculation duplicators
+
+**SuggestionEngines MUST:**
+
+```javascript
+// ✅ ALLOWED: Pure evaluation
+const suggestion = SuggestionEngine.suggestFeat(feat, actor, buildIntent);
+// Returns: { tier: 4, reason: 'CHAIN_CONTINUATION', confidence: 0.75 }
+
+// ✅ ALLOWED: Read immutable actor snapshot
+const level = actor.system.level;
+const abilities = actor.system.abilities;
+const feats = actor.items.filter(i => i.type === 'feat');
+
+// ✅ ALLOWED: Read house rules through HouseRuleService
+const multiclassRules = HouseRuleService.get('multiclassRules');
+
+// ✅ ALLOWED: Return structured recommendation objects
+return {
+  tier: tier,
+  reason: reasonCode,
+  confidence: confidenceValue,
+  explanation: humanReadableText
+};
+```
+
+**SuggestionEngines MUST NOT:**
+
+```javascript
+// ❌ FORBIDDEN: Direct mutations
+actor.system.suggestionEngine.state = value;  // VIOLATION
+await actor.setFlag('swse', 'suggestion', data);  // VIOLATION
+actor.system.lastSuggested = Date.now();  // VIOLATION
+
+// ❌ FORBIDDEN: Indirect mutations through ActorEngine
+await ActorEngine.updateActor(actor, data);  // VIOLATION
+await ActorEngine.createEmbeddedDocuments(...);  // VIOLATION
+
+// ❌ FORBIDDEN: Direct settings access
+const rule = game.settings.get('foundryvtt-swse', 'rule');  // VIOLATION
+
+// ❌ FORBIDDEN: Rolling or probability calculations
+const roll = new Roll('2d20');  // VIOLATION
+const damage = Math.random() * 10;  // VIOLATION
+
+// ❌ FORBIDDEN: Replicating progression math
+const bab = calculateTotalBAB(actor);  // VIOLATION (BAB belongs in ProgressionEngine)
+const hp = d8 + conMod;  // VIOLATION (HP belongs in HPGeneratorEngine)
+const modifier = Math.floor((score - 10) / 2);  // VIOLATION (Modifier math belongs in ModifierEngine)
+
+// ❌ FORBIDDEN: Analytics tracking
+recordSelection(featId, tierReason);  // VIOLATION
+trackPlayerDecision(choice);  // VIOLATION
+
+// ❌ FORBIDDEN: Lateral engine coupling
+const forceMods = ForceOptionSuggestionEngine.suggestPowers(...);  // VIOLATION
+const classMods = ClassSuggestionEngine.suggestClass(...);  // VIOLATION
+
+// ❌ FORBIDDEN: Lateral domain imports
+import { FeatEngine } from '../engines/FeatEngine.js';  // VIOLATION
+import { ClassSuggestionEngine } from './ClassSuggestionEngine.js';  // VIOLATION
+
+// ❌ FORBIDDEN: Sheet or UI imports
+import { CharacterSheet } from '../sheets/';  // VIOLATION
+import { FormApplication } from '@league-of-foundry-developers/foundry-vtt-types';  // VIOLATION
+```
+
+### Boundary Architecture
+
+**What SuggestionEngines do:**
+```
+Input: actor snapshot + house rules + static data
+    ↓
+Pure evaluation logic
+    ↓
+Output: structured recommendation object { tier, reason, confidence }
+    ↓
+UI consumes and displays
+```
+
+**What SuggestionEngines do NOT do:**
+```
+❌ Input → Mutate → Output (NO)
+❌ Input → Calculate → Persist → Output (NO)
+❌ Input → Track → Enforce → Output (NO)
+```
+
+### Responsibility Matrix
+
+| Responsibility | Owner | SuggestionEngine Role |
+|---|---|---|
+| Evaluate feat tier | SuggestionEngine | Core responsibility ✓ |
+| Suggest feat name | SuggestionEngine | Core responsibility ✓ |
+| Track player history | PlayerAnalytics (NEW) | None (forbidden) ✗ |
+| Persist suggestions | SuggestionStateService (NEW) | None (forbidden) ✗ |
+| Calculate BAB | ProgressionEngine | Use pre-computed value only |
+| Calculate HP | HPGeneratorEngine | Use pre-computed value only |
+| Calculate modifiers | ModifierEngine | Use pre-computed value only |
+| Modify actor | ActorEngine | Never call ✗ |
+| Read settings | HouseRuleService | Read-only only |
+
+### Violation Detection Patterns
+
+**Pattern: God Object Drift (Combining Evaluation + Persistence)**
+```javascript
+// ❌ VIOLATION PATTERN
+static suggestFeat(feat, actor, ...) {
+  const tier = this._evaluateTier(feat, actor);
+
+  // ❌ DRIFT: Persistence embedded in evaluator
+  await actor.setFlag('swse', 'lastSuggested', { feat, tier, timestamp: Date.now() });
+
+  return { tier, reason: ... };
+}
+```
+
+**Fix: Separate Concerns**
+```javascript
+// ✅ CORRECT: Evaluator only
+static suggestFeat(feat, actor, ...) {
+  const tier = this._evaluateTier(feat, actor);
+  return { tier, reason: ... };
+}
+
+// ✅ CORRECT: Persistence in separate service
+SuggestionStateService.persistSuggestion(actor, { feat, tier, timestamp: Date.now() });
+```
+
+### New Services (Required for Compliance)
+
+These must be created to prevent violations:
+
+1. **SuggestionStateService**
+   - Persists suggestion state to flags
+   - One responsibility: storage only
+   - Called by UI layer, not by SuggestionEngines
+
+2. **PlayerAnalytics**
+   - Tracks suggestion history
+   - Tracks acceptance/rejection patterns
+   - Never reads by SuggestionEngines
+   - One responsibility: analytics only
+
+3. **SharedUtilities** (extract from duplication)
+   - `AbilityScoreExtractor.getAbilities(actor)`
+   - `SkillNormalizer.normalize(skillName)`
+   - `BABResolver.computeBAB(actor)`
+   - `ModifierCalculator.getModifier(abilityScore)`
+   - `ClassSynergyLookup.getSynergies(classId)`
+
+---
+
+## 11. References
 
 - Mutation paths: `docs/ARCHITECTURE_MUTATION_RULES.md`
 - Execution pipeline: `docs/EXECUTION_PIPELINE.md`
