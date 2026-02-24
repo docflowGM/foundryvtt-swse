@@ -13,7 +13,6 @@ import { ProgressionEngine } from '../../engines/progression/engine/progression-
 
 import { HooksRegistry } from './hooks-registry.js';
 import { SWSELogger } from '../../utils/logger.js';
-import { FeatEffectsEngine } from '../../engine/FeatEffectsEngine.js';
 import { initializeStarshipManeuverHooks } from './starship-maneuver-hooks.js';
 import { initializeForcePowerHooks } from './force-power-hooks.js';
 import { qs, qsa, setVisible, isVisible, text } from '../../utils/dom-utils.js';
@@ -145,9 +144,6 @@ async function handleItemCreate(item, options, userId) {
     // =========================================================================
     // Only process feats on character actors
     if (item.type !== 'feat' || actor.type !== 'character') {return;}
-
-    // Apply automatic feat effects for permanent bonuses
-    await FeatEffectsEngine.applyEffectsToFeat(item);
 
     // Check if this is a Skill Focus feat (or Greater Skill Focus)
     const featName = item.name.toLowerCase();
