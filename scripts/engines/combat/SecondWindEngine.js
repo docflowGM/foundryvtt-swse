@@ -5,7 +5,10 @@
  * Authority over when and how Second Wind uses are restored.
  *
  * PHASE B FIX 7: Centralizes Second Wind recovery logic to respect houserule settings.
+ * PHASE D FIX 1: Use HouseRuleService instead of direct game.settings.get()
  */
+
+import { HouseRuleService } from '../system/HouseRuleService.js';
 
 export const SecondWindEngine = {
   /**
@@ -15,7 +18,7 @@ export const SecondWindEngine = {
    * @returns {boolean} true if reset should occur
    */
   shouldResetSecondWind(triggerEvent = 'encounter') {
-    const recoveryMode = game.settings.get('foundryvtt-swse', 'secondWindRecovery');
+    const recoveryMode = HouseRuleService.get('secondWindRecovery') ?? 'encounter';
 
     const rules = {
       encounter: (trigger) => trigger === 'encounter' || trigger === 'combat-end',
@@ -33,7 +36,7 @@ export const SecondWindEngine = {
    * @returns {string} Display label for current recovery mode
    */
   getRecoveryLabel() {
-    const mode = game.settings.get('foundryvtt-swse', 'secondWindRecovery');
+    const mode = HouseRuleService.get('secondWindRecovery') ?? 'encounter';
     const labels = {
       encounter: 'After Each Encounter',
       short: 'After Short or Extended Rest',

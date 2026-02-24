@@ -181,7 +181,7 @@ export class LanguageEngine {
         const unique = [...new Set(known)];
 
         if (unique.length !== known.length) {
-            await actor.update({
+            await ActorEngine.updateActor(actor, {
                 'system.languages': unique
             });
 

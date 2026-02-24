@@ -10,6 +10,7 @@
 
 import { PROGRESSION_RULES } from '../../data/progression-data.js';
 import { swseLogger } from '../../utils/logger.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 
 export class ActorProgressionUpdater {
   /**
@@ -78,16 +79,9 @@ export class ActorProgressionUpdater {
       updates['flags.swse.appliedTalents'] = prog.talents || [];
       updates['flags.swse.trainedSkills'] = prog.trainedSkills || [];
 
-      // Apply updates
+      // Apply updates through ActorEngine
       if (Object.keys(updates).length > 0) {
-        if (globalThis.SWSE?.ActorEngine?.updateActor) {
-          await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
-        } else if (window.SWSE?.ActorEngine?.updateActor) {
-          await window.SWSE.ActorEngine.updateActor(actor, updates);
-        } else {
-          swseLogger.warn('ActorProgressionUpdater: ActorEngine not available, using direct update');
-          await actor.update(updates);
-        }
+        await ActorEngine.updateActor(actor, updates);
         swseLogger.log(`ActorProgressionUpdater.finalize (v1 compat): Applied ${Object.keys(updates).length} progression updates to ${actor.name}`);
       }
 

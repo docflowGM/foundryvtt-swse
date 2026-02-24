@@ -3,8 +3,7 @@
 import { XP_LEVEL_THRESHOLDS, XP_MAX_LEVEL, getXPFromCL } from '../shared/xp-system.js';
 import { getTotalLevel } from '../../actors/derived/level-split.js';
 import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
-
-const NS = 'foundryvtt-swse';
+import { HouseRuleService } from '../system/HouseRuleService.js';
 
 /* -------------------------------------------------------------------------- */
 /*                            HOMEBREW GUARD                                  */
@@ -16,7 +15,7 @@ const NS = 'foundryvtt-swse';
  */
 export function isXPEnabled() {
   try {
-    return game.settings.get(NS, 'enableExperienceSystem') !== false;
+    return HouseRuleService.get('enableExperienceSystem') !== false;
   } catch {
     // Setting not yet registered (early boot) — default enabled
     return true;

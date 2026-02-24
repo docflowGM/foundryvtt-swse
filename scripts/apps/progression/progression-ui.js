@@ -4,6 +4,7 @@
 
 import { ProgressionEngine } from '../../engine/progression-engine.js';
 import { PROGRESSION_RULES } from '../../data/progression-data.js';
+import { HouseRuleService } from '../../system/HouseRuleService.js';
 
 export class ProgressionUI {
   static async openStartSelector(actor) {
@@ -49,7 +50,7 @@ export class ProgressionUI {
     const tplList = Object.entries(templates).map(([id, t]) => `<option value="${id}">${t.name}</option>`).join('');
 
     // Check if backgrounds are enabled via houserule
-    const enableBackgrounds = game.settings.get('foundryvtt-swse', 'enableBackgrounds');
+    const enableBackgrounds = HouseRuleService.get('enableBackgrounds');
 
     // Build background dropdown if enabled
     let backgroundField = '';
