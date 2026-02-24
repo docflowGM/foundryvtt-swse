@@ -662,32 +662,29 @@ function createItemPlans(cartItems) {
 }
 
 /**
- * PHASE 1: Compile droids into MutationPlans
+ * PHASE 7: Compile droids into MutationPlans using DroidFactory
  * Returns plans instead of mutating directly.
  * @param {Array} cartDroids - Droids from cart
  * @returns {Array<Object>} MutationPlans
  */
 function createDroidPlans(cartDroids) {
+  // Import DroidFactory at function level to avoid circular deps
+  const { DroidFactory } = require('../../engines/droids/droid-factory.js');
+
   const plans = [];
 
   for (const droid of cartDroids) {
-    const droidData = droid.actor.toObject ? droid.actor.toObject() : droid.actor;
-    droidData.name = `${droid.name}`;
-    droidData.type = 'droid';
-
-    // PHASE 1: Don't set ownership here
-    // PHASE 6: PlacementRouter will handle ownership
-
-    // Return MutationPlan, don't apply it
-    plans.push({
-      create: {
-        actors: [{
-          type: 'droid',
-          temporaryId: `temp_droid_${droid.id || Math.random()}`,
-          data: droidData
-        }]
-      }
-    });
+    // PHASE 7: Use DroidFactory to build MutationPlan
+    try {
+      const plan = DroidFactory.buildMutationPlan({
+        droidActor: droid.actor,
+        name: droid.name
+      });
+      plans.push(plan);
+    } catch (err) {
+      SWSELogger.error('SWSE Store | DroidFactory failed:', err);
+      throw err;
+    }
   }
 
   return plans;

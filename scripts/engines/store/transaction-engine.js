@@ -26,6 +26,7 @@ import { mergeMutationPlans } from '../mutation/merge-mutations.js';
 import { ActorEngine } from '../actor-engine/actor-engine.js';
 import { LedgerService } from './ledger-service.js';
 import { VehicleFactory } from '../vehicles/vehicle-factory.js';
+import { DroidFactory } from '../droids/droid-factory.js';
 import { PlacementRouter } from './placement-router.js';
 import { swseLogger } from '../../utils/logger.js';
 
@@ -251,9 +252,8 @@ export class TransactionEngine {
           return VehicleFactory.buildMutationPlan(payload);
 
         case 'droid':
-          // TODO Phase 7: Implement DroidFactory
-          // return DroidFactory.buildMutationPlan(payload);
-          return null;
+          // PHASE 7: Use DroidFactory for droid creation
+          return DroidFactory.buildMutationPlan(payload);
 
         case 'item':
           // Regular items use ADD bucket (embedded docs)
