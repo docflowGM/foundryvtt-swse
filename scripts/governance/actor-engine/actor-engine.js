@@ -510,6 +510,93 @@ export const ActorEngine = {
     }
   },
 
+  /**
+   * apply(actor, mutationPlan)
+   *
+   * PHASE 3: Universal mutation acceptor for all domain engines.
+   *
+   * This is the ONLY method domain engines (DropResolutionEngine, etc.) use
+   * to mutate actors. No embedded document creation bypasses this.
+   *
+   * Contract:
+   * - mutationPlan is pure data (no functions, no side effects)
+   * - Execution order is strictly: create → update → delete → update actor
+   * - All operations are atomic
+   * - Derived recalculation triggered after mutations
+   * - No partial failures (all or nothing)
+   *
+   * @param {Actor} actor - target actor
+   * @param {Object} mutationPlan - {
+   *   createEmbedded?: Array<{ type, data }>,
+   *   updateEmbedded?: Array<{ _id, update }>,
+   *   deleteEmbedded?: Array<{ type, _id }>,
+   *   update?: { ... }  (system updates via dot-path)
+   * }
+   */
+  async apply(actor, mutationPlan) {
+    try {
+      if (!actor) {throw new Error('apply() called with no actor');}
+      if (!mutationPlan) {return;} // noop
+
+      swseLogger.debug(`ActorEngine.apply → ${actor.name}`, { mutationPlan });
+
+      // ---- PHASE 1: Create Embedded Documents ----
+      if (mutationPlan.createEmbedded?.length > 0) {
+        const itemsToCreate = mutationPlan.createEmbedded.map(item => {
+          if (!item.type || !item.data) {
+            throw new Error('Invalid createEmbedded item: missing type or data');
+          }
+          return item.data;
+        });
+        await this.createEmbeddedDocuments(actor, 'Item', itemsToCreate);
+      }
+
+      // ---- PHASE 2: Update Embedded Documents ----
+      if (mutationPlan.updateEmbedded?.length > 0) {
+        for (const update of mutationPlan.updateEmbedded) {
+          if (!update._id || !update.update) {
+            throw new Error('Invalid updateEmbedded: missing _id or update');
+          }
+        }
+        await this.updateEmbeddedDocuments(actor, 'Item', mutationPlan.updateEmbedded);
+      }
+
+      // ---- PHASE 3: Delete Embedded Documents ----
+      if (mutationPlan.deleteEmbedded?.length > 0) {
+        const idsToDelete = mutationPlan.deleteEmbedded.map(item => {
+          if (!item._id) {
+            throw new Error('Invalid deleteEmbedded: missing _id');
+          }
+          return item._id;
+        });
+        await this.deleteEmbeddedDocuments(actor, 'Item', idsToDelete);
+      }
+
+      // ---- PHASE 4: Update Actor System ----
+      if (mutationPlan.update && Object.keys(mutationPlan.update).length > 0) {
+        // Guard against derived writes
+        for (const path of Object.keys(mutationPlan.update)) {
+          if (path.startsWith('system.derived')) {
+            throw new Error(
+              `ARCHITECTURE VIOLATION: mutationPlan attempted to write to ${path}. ` +
+              'Derived fields are computed, not mutated.'
+            );
+          }
+        }
+        await this.updateActor(actor, mutationPlan.update);
+      }
+
+      swseLogger.log(`ActorEngine.apply completed for ${actor.name}`);
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.apply failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        mutationPlan
+      });
+      throw err;
+    }
+  },
+
   // ============================================================================
   // PHASE 3 BATCH 2: COMBAT AUTHORITY APIS
   // ============================================================================
