@@ -50,8 +50,8 @@ export class ProgressionCompiler {
     // Compiler internally builds intent — UI never sees this
     const intent = this._buildIntentFromSelections(stepId, selections, options);
 
-    // Then compile using standard pipeline
-    return this.compile(snapshot, intent, options);
+    // Then compile using internal pipeline
+    return this._compileIntent(snapshot, intent, options);
   }
 
   /**
@@ -159,18 +159,21 @@ export class ProgressionCompiler {
   }
 
   /**
-   * Low-level entry point: compile from intent.
-   * Internal to compiler. UI layers should use compileStep() instead.
+   * INTERNAL: Compile from intent object.
    *
+   * This is an internal method. UI layers must always use compileStep().
+   * The intent object should never be directly constructed outside this class.
+   *
+   * @private
    * @param {Object} snapshot - frozen actor state
    * @param {Object} intent - { type, ...intent-specific fields }
    * @param {Object} options - compilation options
    * @returns {Object} delta - { set, add, delete }
    * @throws if intent is illegal
    */
-  static compile(snapshot, intent, options = {}) {
-    if (!snapshot) {throw new Error('ProgressionCompiler.compile: no snapshot provided');}
-    if (!intent) {throw new Error('ProgressionCompiler.compile: no intent provided');}
+  static _compileIntent(snapshot, intent, options = {}) {
+    if (!snapshot) {throw new Error('ProgressionCompiler._compileIntent: no snapshot provided');}
+    if (!intent) {throw new Error('ProgressionCompiler._compileIntent: no intent provided');}
 
     swseLogger.debug('ProgressionCompiler.compile', { intent });
 
