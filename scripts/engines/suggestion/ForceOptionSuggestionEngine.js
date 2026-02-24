@@ -10,6 +10,7 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { HouseRuleService } from '../system/HouseRuleService.js';
 import {
   FORCE_POWER_CATEGORIES,
   generateForcePowerArchetypeWeights,
@@ -194,7 +195,7 @@ export class ForceOptionSuggestionEngine {
   static async suggestForceOptions(options, actor, pendingData = {}, contextOptions = {}) {
     try {
       const buildIntent = contextOptions.buildIntent || {};
-      const ruleset = game.settings?.get('foundryvtt-swse', 'houseRules') || {};
+      const ruleset = HouseRuleService.get('houseRules') || {};
 
       // Get prestige class target from L1 survey if available
       const prestigeClassTarget = actor.system?.swse?.mentorBuildIntentBiases?.prestigeClassTarget || null;
