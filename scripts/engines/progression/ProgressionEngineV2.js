@@ -25,6 +25,7 @@ import { HouseRuleService } from '../system/HouseRuleService.js';
 import { HPGeneratorEngine } from '../HP/HPGeneratorEngine.js';
 import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 import { determineLevelFromXP } from '../shared/xp-system.js';
+import { PROGRESSION_RULES } from './data/progression-data.js';
 
 export class ProgressionEngineV2 {
   /**
@@ -288,28 +289,35 @@ export class ProgressionEngineV2 {
    */
   static #getTalentAcquisition(actor, oldLevel, newLevel, houseRules) {
     const talents = [];
-    const classId = actor.system.class?.id || 'soldier';
+    const classId = actor.system.class?.id || actor.system.class?.name || 'Soldier';
 
-    // Talent cadence by class (when talents are gained)
+    // Use PROGRESSION_RULES as SSOT for talent cadence
+    // RAW talent acquisition: class determines which levels grant talents
+    // Default RAW cadence: [1, 3, 6, 9, 12, 15, 18, 20] (Soldier-style)
+    // Different classes may have different cadences
+
+    // Standard RAW talent cadences
     const talentCadenceByClass = {
-      soldier: [1, 3, 6, 9, 12, 15, 18, 20],
-      scout: [1, 2, 4, 7, 10, 13, 16, 19],
-      scoundrel: [1, 2, 4, 7, 10, 13, 16, 19],
-      jedi: [1, 2, 4, 7, 10, 13, 16, 19],
-      noble: [1, 3, 6, 9, 12, 15, 18, 20],
-      force_adept: [1, 2, 4, 7, 10, 13, 16, 19],
-      engineer: [1, 3, 6, 9, 12, 15, 18, 20],
-      commando: [1, 3, 6, 9, 12, 15, 18, 20],
-      gunslinger: [1, 3, 6, 9, 12, 15, 18, 20]
+      'Soldier': [1, 3, 6, 9, 12, 15, 18, 20],
+      'Scout': [1, 2, 4, 7, 10, 13, 16, 19],
+      'Scoundrel': [1, 2, 4, 7, 10, 13, 16, 19],
+      'Jedi': [1, 2, 4, 7, 10, 13, 16, 19],
+      'Noble': [1, 3, 6, 9, 12, 15, 18, 20],
+      'Force Adept': [1, 2, 4, 7, 10, 13, 16, 19],
+      'Engineer': [1, 3, 6, 9, 12, 15, 18, 20],
+      'Commando': [1, 3, 6, 9, 12, 15, 18, 20],
+      'Gunslinger': [1, 3, 6, 9, 12, 15, 18, 20]
     };
 
     const cadence = talentCadenceByClass[classId] || [1, 3, 6, 9, 12, 15, 18, 20];
+    const classData = PROGRESSION_RULES.classes?.[classId];
 
     for (let lv = oldLevel + 1; lv <= newLevel; lv++) {
       if (cadence.includes(lv)) {
         talents.push({
           level: lv,
-          id: `talent_${lv}_${classId}` // Placeholder ID
+          id: `talent_${lv}_${classId}`,
+          availableTrees: classData?.talentTrees || []
         });
       }
     }
@@ -396,20 +404,16 @@ export class ProgressionEngineV2 {
    * @private
    */
   static #getHitDie(actor) {
-    const classId = actor.system.class?.id || 'soldier';
+    const classId = actor.system.class?.id || actor.system.class?.name || 'Soldier';
 
-    const hitDieByClass = {
-      soldier: 8,
-      scout: 6,
-      scoundrel: 6,
-      jedi: 6,
-      noble: 6,
-      force_adept: 4,
-      engineer: 6,
-      commando: 8,
-      gunslinger: 6
-    };
+    // Use PROGRESSION_RULES as SSOT
+    const classData = PROGRESSION_RULES.classes?.[classId];
+    if (classData && classData.hitDie) {
+      return classData.hitDie;
+    }
 
-    return hitDieByClass[classId] || 6;
+    // Fallback if not found
+    swseLogger.warn(`[ProgressionEngine] No hit die found for class ${classId}, using default d8`);
+    return 8;
   }
 }

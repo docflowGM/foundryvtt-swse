@@ -23,6 +23,7 @@ import { swseLogger } from '../../utils/logger.js';
 import { HouseRuleService } from '../system/HouseRuleService.js';
 import { HPGeneratorEngine } from '../HP/HPGeneratorEngine.js';
 import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
+import { PROGRESSION_RULES } from '../progression/data/progression-data.js';
 
 export class CharacterGenerationEngine {
   /**
@@ -333,21 +334,17 @@ export class CharacterGenerationEngine {
    * @private
    */
   static #getHitDie(actor) {
-    const classId = actor.system.class?.id || actor.system.className || 'soldier';
+    const classId = actor.system.class?.id || actor.system.className || 'Soldier';
 
-    const hitDieByClass = {
-      soldier: 8,
-      scout: 6,
-      scoundrel: 6,
-      jedi: 6,
-      noble: 6,
-      force_adept: 4,
-      engineer: 6,
-      commando: 8,
-      gunslinger: 6
-    };
+    // Use PROGRESSION_RULES as SSOT
+    const classData = PROGRESSION_RULES.classes?.[classId];
+    if (classData && classData.hitDie) {
+      return classData.hitDie;
+    }
 
-    return hitDieByClass[classId] || 6;
+    // Fallback if not found
+    swseLogger.warn(`[ChargenEngine] No hit die found for class ${classId}, using default d8`);
+    return 8;
   }
 
   /**
@@ -358,19 +355,15 @@ export class CharacterGenerationEngine {
    */
   static #getInitialFeats(classId, houseRules) {
     // Gated by class authority (ChargenEngine owns feat selection logic)
-    const initialFeatsByClass = {
-      soldier: ['bonus_feat', 'armor_proficiency'],
-      scout: ['bonus_feat', 'weapon_focus'],
-      scoundrel: ['bonus_feat', 'rapid_shot'],
-      jedi: [],
-      noble: ['bonus_feat', 'persuasive'],
-      force_adept: [],
-      engineer: ['bonus_feat', 'tech_specialist'],
-      commando: ['bonus_feat', 'weapon_focus'],
-      gunslinger: ['bonus_feat', 'quick_draw']
-    };
+    // Use PROGRESSION_RULES as SSOT for starting feats
 
-    const feats = initialFeatsByClass[classId] || [];
+    const classData = PROGRESSION_RULES.classes?.[classId];
+    if (!classData || !classData.startingFeats) {
+      swseLogger.warn(`[ChargenEngine] No starting feats found for class ${classId}`);
+      return [];
+    }
+
+    const feats = [...classData.startingFeats];
 
     // Apply house rule overrides if any
     if (houseRules.characterCreationBonusFeats) {
@@ -388,18 +381,19 @@ export class CharacterGenerationEngine {
    */
   static #getInitialTalents(classId, houseRules) {
     // Gated by class authority
-    const initialTalentsByClass = {
-      soldier: ['tactical_training'],
-      scout: ['evasion'],
-      scoundrel: ['lucky_break'],
-      jedi: [],
-      noble: ['bonus_talent'],
-      force_adept: [],
-      engineer: ['droid_expertise'],
-      commando: ['tactical_training'],
-      gunslinger: ['quick_draw_talent']
-    };
+    // Characters typically start with no talents - talents are chosen at level 1, 2, 4, etc.
+    // This returns talents that must be granted at level 1 (currently none by RAW)
 
-    return initialTalentsByClass[classId] || [];
+    const classData = PROGRESSION_RULES.classes?.[classId];
+    if (!classData) {
+      swseLogger.warn(`[ChargenEngine] No class data found for ${classId}`);
+      return [];
+    }
+
+    // RAW: Level 1 characters don't have talents yet
+    // Talents are chosen as character advances
+    // This can be extended for house rules that grant starting talents
+
+    return [];
   }
 }
