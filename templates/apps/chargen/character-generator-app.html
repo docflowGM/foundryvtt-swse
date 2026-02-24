@@ -1,0 +1,383 @@
+<div class="character-generator-app">
+  {{#if fullMode}}
+  <!-- Full Mode: Step Progress -->
+  <div class="step-progress">
+    <div class="progress-bar">
+      {{#each stepProgress}}
+      <div class="progress-step {{#if isComplete}}complete{{/if}} {{#if isCurrent}}active{{/if}}">
+        <span class="step-number">{{add @index 1}}</span>
+        <span class="step-label">{{capitalize step}}</span>
+        {{#if isComplete}}<i class="fas fa-check"></i>{{/if}}
+      </div>
+      {{#unless @last}}<div class="progress-connector"></div>{{/unless}}
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
+  {{#if lastError}}
+  <div class="error-display">
+    <div class="error-box {{lastError.category}}">
+      <h3>{{#if (eq lastError.category 'conflict')}}Conflict Detected{{else if (eq lastError.category 'validation')}}Validation Error{{else}}Error{{/if}}</h3>
+      <p>{{lastError.message}}</p>
+      {{#if lastError.details.path}}<p class="detail"><strong>Path:</strong> {{lastError.details.path}}</p>{{/if}}
+      {{#if lastError.details.collection}}<p class="detail"><strong>Collection:</strong> {{lastError.details.collection}}</p>{{/if}}
+      <button class="clear-error">Dismiss</button>
+    </div>
+  </div>
+  {{/if}}
+
+  <div class="generator-content">
+    {{#if fullMode}}
+    <h2>Step {{add currentStepIndex 1}} of {{totalSteps}}: {{capitalize currentStep}}</h2>
+    {{else}}
+    <h2>{{capitalize currentStep}}</h2>
+    {{/if}}
+
+    <div class="step-content">
+      {{#if (eq currentStep 'background')}}
+      <label for="step-select">
+        <span>Select Background:</span>
+        <select name="step-select" id="step-select" {{#if isProcessing}}disabled{{/if}}>
+          <option value="">-- Choose --</option>
+          {{#each stepOptions}}
+          <option value="{{this.id}}" {{#if (eq this.id ../currentSelection)}}selected{{/if}}>
+            {{this.label}}
+          </option>
+          {{/each}}
+        </select>
+      </label>
+      <p class="hint">Choose a background to add starting bonuses and skills.</p>
+      {{/if}}
+
+      {{#if (eq currentStep 'class')}}
+      <label for="step-select">
+        <span>Select Class:</span>
+        <select name="step-select" id="step-select" {{#if isProcessing}}disabled{{/if}}>
+          <option value="">-- Choose --</option>
+          {{#each stepOptions}}
+          <option value="{{this.id}}" {{#if (eq this.id ../currentSelection)}}selected{{/if}}>
+            {{this.label}}
+          </option>
+          {{/each}}
+        </select>
+      </label>
+      <p class="hint">Choose a class for your character's primary role and abilities.</p>
+      {{/if}}
+
+      {{#if (eq currentStep 'abilities')}}
+      <div class="hint">Ability score assignment and modification.</div>
+      <p class="hint">Support for this step is coming in a future update.</p>
+      {{/if}}
+    </div>
+  </div>
+
+  <div class="button-group">
+    {{#if fullMode}}
+    <button
+      type="button"
+      class="previous-step"
+      {{#unless canPrevious}}disabled{{/unless}}
+    >
+      ← Previous
+    </button>
+    {{/if}}
+
+    {{#if canApply}}
+    <button
+      type="button"
+      class="apply-all"
+      {{#if isProcessing}}disabled{{/if}}
+    >
+      {{#if isProcessing}}<i class="fas fa-spinner fa-spin"></i> Applying...{{else}}Apply All{{/if}}
+    </button>
+    {{else if canNext}}
+    <button
+      type="button"
+      class="next-step"
+      {{#if (or (not canConfirm) isProcessing)}}disabled{{/if}}
+    >
+      {{#if isProcessing}}<i class="fas fa-spinner fa-spin"></i> Compiling...{{else}}Next →{{/if}}
+    </button>
+    {{else}}
+    <button
+      type="button"
+      class="confirm-step"
+      {{#if (or (not canConfirm) isProcessing)}}disabled{{/if}}
+    >
+      {{#if isProcessing}}<i class="fas fa-spinner fa-spin"></i> Processing...{{else}}Confirm{{/if}}
+    </button>
+    {{/if}}
+
+    <button type="button" class="cancel-step" {{#if isProcessing}}disabled{{/if}}>
+      Cancel
+    </button>
+  </div>
+</div>
+
+<style>
+.character-generator-app {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Step Progress (Full Mode) */
+.step-progress {
+  margin-bottom: 1rem;
+}
+
+.progress-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 1rem;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  background-color: #fff;
+  border: 2px solid #ddd;
+  font-size: 0.85em;
+  min-width: 80px;
+  position: relative;
+}
+
+.progress-step.active {
+  border-color: #4CAF50;
+  background-color: #e8f5e9;
+  font-weight: bold;
+}
+
+.progress-step.complete {
+  background-color: #e8f5e9;
+  border-color: #4CAF50;
+}
+
+.progress-step .step-number {
+  display: block;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.progress-step .step-label {
+  display: block;
+  text-transform: capitalize;
+  font-size: 0.9em;
+}
+
+.progress-step .fa-check {
+  color: #4CAF50;
+  font-size: 1em;
+}
+
+.progress-connector {
+  height: 2px;
+  background-color: #ddd;
+  flex: 1;
+  max-width: 40px;
+}
+
+.progress-step.complete + .progress-connector {
+  background-color: #4CAF50;
+}
+
+/* Error Display */
+.error-display {
+  margin-bottom: 1rem;
+}
+
+.error-box {
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.error-box.validation {
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  color: #856404;
+}
+
+.error-box.conflict {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+}
+
+.error-box.application {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+}
+
+.error-box h3 {
+  margin: 0 0 0.5rem 0;
+  font-weight: bold;
+}
+
+.error-box p {
+  margin: 0.5rem 0;
+}
+
+.error-box .detail {
+  font-size: 0.9em;
+  font-family: monospace;
+  margin: 0.25rem 0;
+}
+
+.error-box button {
+  margin-top: 0.5rem;
+}
+
+/* Generator Content */
+.generator-content {
+  flex: 1;
+}
+
+.generator-content h2 {
+  margin: 0 0 1rem 0;
+  text-transform: capitalize;
+}
+
+.step-content {
+  margin-bottom: 1.5rem;
+}
+
+.step-content label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.step-content label span {
+  font-weight: bold;
+}
+
+.step-content select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+.step-content select:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.hint {
+  font-size: 0.9em;
+  color: #666;
+  margin: 0.5rem 0 0 0;
+  font-style: italic;
+}
+
+/* Button Group */
+.button-group {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.button-group button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+  white-space: nowrap;
+}
+
+.button-group button:hover:not(:disabled) {
+  background-color: #e8e8e8;
+}
+
+.button-group button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.confirm-step,
+.next-step,
+.apply-all {
+  background-color: #4CAF50;
+  color: white;
+  border-color: #45a049;
+}
+
+.confirm-step:hover:not(:disabled),
+.next-step:hover:not(:disabled),
+.apply-all:hover:not(:disabled) {
+  background-color: #45a049;
+}
+
+.previous-step {
+  background-color: #2196F3;
+  color: white;
+  border-color: #0b7dda;
+}
+
+.previous-step:hover:not(:disabled) {
+  background-color: #0b7dda;
+}
+
+.cancel-step {
+  background-color: #f44336;
+  color: white;
+  border-color: #da190b;
+}
+
+.cancel-step:hover:not(:disabled) {
+  background-color: #da190b;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .character-generator-app {
+    padding: 1rem;
+  }
+
+  .progress-bar {
+    flex-wrap: wrap;
+  }
+
+  .progress-step {
+    min-width: 70px;
+    font-size: 0.8em;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .button-group button {
+    width: 100%;
+  }
+}
+</style>
+
+<!-- Handlebars Helpers -->
+<script>
+Handlebars.registerHelper('capitalize', function(str) {
+  if (typeof str !== 'string') return '';
+  return str.charAt(0).toUpperCase() + str.slice(1);
+});
+
+Handlebars.registerHelper('add', function(a, b) {
+  return a + b;
+});
+
+Handlebars.registerHelper('eq', function(a, b) {
+  return a === b;
+});
+</script>

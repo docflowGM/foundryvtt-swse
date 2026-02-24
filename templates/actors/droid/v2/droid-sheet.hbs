@@ -23,7 +23,8 @@
     <a class="item" data-tab="abilities">Abilities</a>
     <a class="item" data-tab="talents">Talents</a>
     <a class="item" data-tab="gear">Gear</a>
-    <a class="item" data-tab="other">Other</a>
+    <a class="item" data-tab="relationships">Relationships</a>
+    <a class="item" data-tab="notes">Notes</a>
   </nav>
 
   <section class="sheet-body">
@@ -105,10 +106,10 @@
     <section class="tab" data-group="primary" data-tab="talents">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/Talents.hbs"}}
         </div>
-
         <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/feats-panel.hbs"}}
+          {{> "systems/foundryvtt-swse/templates/partials/talent-abilities-panel.hbs"}}
         </div>
       </div>
     </section>
@@ -257,7 +258,7 @@
       </div>
     </section>
 
-    <section class="tab" data-group="primary" data-tab="other">
+    <section class="tab" data-group="primary" data-tab="relationships">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           <div class="holo-panel">
@@ -297,6 +298,14 @@
               {{/if}}
             </div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab" data-group="primary" data-tab="notes">
+      <div class="swse-v2-sheet-grid">
+        <div class="swse-v2-full">
+          {{> "systems/foundryvtt-swse/templates/partials/suggestion-card.hbs"}}
         </div>
       </div>
     </section>

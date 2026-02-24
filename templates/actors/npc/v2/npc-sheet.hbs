@@ -25,6 +25,8 @@
     {{#if actor.items}}<a class="item" data-tab="gear">Gear</a>{{/if}}
     {{#if actor.system.isDroid}}<a class="item" data-tab="systems">Systems</a>{{/if}}
     {{#if (eq actor.system.creatureType "beast")}}<a class="item" data-tab="beast">Beast</a>{{/if}}
+    <a class="item" data-tab="relationships">Relationships</a>
+    <a class="item" data-tab="notes">Notes</a>
   </nav>
 
   <section class="sheet-body">
@@ -266,8 +268,27 @@
     {{#if (eq actor.system.creatureType "beast")}}
     <section class="tab" data-group="primary" data-tab="beast">
       <div class="swse-v2-sheet-grid">
+        <div class="swse-v2-full">
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/abilities-panel.hbs"}}
+        </div>
       </div>
     </section>
     {{/if}}
+
+    <section class="tab" data-group="primary" data-tab="relationships">
+      <div class="swse-v2-sheet-grid">
+        <div class="swse-v2-full">
+          {{> "systems/foundryvtt-swse/templates/partials/crew-action-cards.hbs"}}
+        </div>
+      </div>
+    </section>
+
+    <section class="tab" data-group="primary" data-tab="notes">
+      <div class="swse-v2-sheet-grid">
+        <div class="swse-v2-full">
+          {{> "systems/foundryvtt-swse/templates/partials/suggestion-card.hbs"}}
+        </div>
+      </div>
+    </section>
   </section>
 </div>
