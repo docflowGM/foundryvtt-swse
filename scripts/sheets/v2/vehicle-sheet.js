@@ -7,7 +7,7 @@ import { RenderAssertions } from '../../core/render-assertions.js';
 import { initiateItemSale } from '../../apps/item-selling-system.js';
 import { SWSELevelUp } from '../../apps/swse-levelup.js';
 import { rollAttack } from '../../combat/rolls/attacks.js';
-import { DropResolutionEngine } from '../../engines/interactions/drop-resolution-engine.js';
+import { VehicleDropEngine } from '../../engines/interactions/vehicle-drop-engine.js';
 import { SubsystemEngine } from '../../engines/combat/starship/subsystem-engine.js';
 import { EnhancedShields } from '../../engines/combat/starship/enhanced-shields.js';
 import { EnhancedEngineer } from '../../engines/combat/starship/enhanced-engineer.js';
@@ -555,8 +555,9 @@ export class SWSEV2VehicleSheet extends
     const data = TextEditor.getDragEventData(event);
     if (!data) return;
 
-    // Resolve drop to mutationPlan (pure classification)
-    const mutationPlan = await DropResolutionEngine.resolve({
+    // Resolve drop to mutationPlan via VEHICLE-SPECIFIC routing
+    // (not generic DropResolutionEngine - vehicle drops are a different domain)
+    const mutationPlan = await VehicleDropEngine.resolve({
       actor: this.actor,
       dropData: data
     });
