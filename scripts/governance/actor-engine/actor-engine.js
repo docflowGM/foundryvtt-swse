@@ -1,5 +1,5 @@
 // scripts/actor-engine.js
-import { swseLogger } from '../../utils/logger.js';
+import { SWSELogger } from '../../core/logger.js';
 import { applyActorUpdateAtomic } from '../../utils/actor-utils.js';
 import { MutationInterceptor } from '../mutation/MutationInterceptor.js';
 import { determineLevelFromXP } from '../../engines/shared/xp-system.js';
@@ -22,12 +22,12 @@ export const ActorEngine = {
 
       const systemData = actor.system;
       if (!systemData) {
-        swseLogger.warn(`ActorEngine.recalcAll: Actor ${actor.name} has no system data.`);
+        SWSELogger.warn(`ActorEngine.recalcAll: Actor ${actor.name} has no system data.`);
         return;
       }
 
       // Future recalculations go here.
-      swseLogger.debug(`Recalculating derived data for: ${actor.name}`);
+      SWSELogger.debug(`Recalculating derived data for: ${actor.name}`);
 
       // If system implements a prepareDerivedData hook, call it safely.
       if (typeof actor.prepareDerivedData === 'function') {
@@ -40,35 +40,35 @@ export const ActorEngine = {
       }
 
     } catch (err) {
-      swseLogger.error('ActorEngine.recalcAll failed:', err);
+      SWSELogger.error('ActorEngine.recalcAll failed:', err);
     }
   },
 
   // PHASE 11: Track active migrations to prevent recursion
-  #activeMigrations: new Set(),
+  _activeMigrations: new Set(),
 
   /**
    * Track migration context
    * @private
    */
-  #markMigrationActive(actorId) {
-    this.#activeMigrations.add(actorId);
+  _markMigrationActive(actorId) {
+    this._activeMigrations.add(actorId);
   },
 
   /**
    * Clear migration context
    * @private
    */
-  #clearMigrationActive(actorId) {
-    this.#activeMigrations.delete(actorId);
+  _clearMigrationActive(actorId) {
+    this._activeMigrations.delete(actorId);
   },
 
   /**
    * Check if actor is currently migrating
    * @private
    */
-  #isMigrationActive(actorId) {
-    return this.#activeMigrations.has(actorId);
+  _isMigrationActive(actorId) {
+    return this._activeMigrations.has(actorId);
   },
 
   /**
@@ -130,11 +130,11 @@ export const ActorEngine = {
       // PHASE 11: Migration context guard
       // ========================================
       const isMigration = meta.origin === 'migration';
-      const isMigrationActive = this.#isMigrationActive(actor.id);
+      const isMigrationActive = this._isMigrationActive(actor.id);
 
       if (isMigration && !isMigrationActive) {
         // Mark migration as active
-        this.#markMigrationActive(actor.id);
+        this._markMigrationActive(actor.id);
         swseLogger.debug(`[MIGRATION] Starting migration for ${actor.name}`);
       }
 
@@ -173,7 +173,7 @@ export const ActorEngine = {
 
         // PHASE 11: Clear migration context if this was a migration
         if (isMigration && !isMigrationActive) {
-          this.#clearMigrationActive(actor.id);
+          this._clearMigrationActive(actor.id);
           swseLogger.debug(`[MIGRATION] Completed migration for ${actor.name}`);
         }
       }
