@@ -4,7 +4,6 @@
  * Phase 2: Full system selection (locomotion, manipulators, sensors, processor, armor, weapons, accessories)
  */
 
-import { DroidValidationEngine } from '../engine/droid-validation-engine.js';
 import { StepController } from './step-controller.js';
 import SWSEApplication from './base/swse-application.js';
 import { Seraphim } from './seraphim-narrator.js';
