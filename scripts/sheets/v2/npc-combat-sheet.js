@@ -257,17 +257,21 @@ export class SWSEV2CombatNpcSheet extends
     }
 
     // ITEM DROP: Use standard resolution
-    const mutationPlan = await DropResolutionEngine.resolve({
+    const result = await DropResolutionEngine.resolve({
       actor: this.actor,
       dropData: data
     });
 
     // If no plan (duplicate or invalid), silently skip
-    if (!mutationPlan) return;
+    if (!result || !result.mutationPlan) return;
 
     // Apply mutations via sovereign ActorEngine
     try {
-      await ActorEngine.apply(this.actor, mutationPlan);
+      await ActorEngine.apply(this.actor, result.mutationPlan);
+      // UI feedback: pulse the target tab
+      if (result.uiTargetTab) {
+        this._pulseTab(result.uiTargetTab);
+      }
     } catch (err) {
       console.error('Drop application failed:', err);
       ui?.notifications?.error?.(`Failed to add dropped item: ${err.message}`);
@@ -323,6 +327,25 @@ export class SWSEV2CombatNpcSheet extends
       console.error('Adoption failed:', err);
       ui?.notifications?.error?.(`Adoption failed: ${err.message}`);
     }
+  }
+
+  /**
+   * Pulse tab for UI feedback on drop success
+   *
+   * @private
+   * @param {string} tabName - tab identifier to pulse
+   */
+  _pulseTab(tabName) {
+    if (!tabName) return;
+
+    const tabButton = this.element?.querySelector(`[data-tab="${tabName}"]`);
+    if (!tabButton) return;
+
+    tabButton.classList.add('tab-pulse');
+
+    setTimeout(() => {
+      tabButton.classList.remove('tab-pulse');
+    }, 800);
   }
 
   async _updateObject(event, formData) {
