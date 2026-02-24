@@ -1056,47 +1056,94 @@ export class ModifierEngine {
     }
 
     try {
+      // PHASE 4 STEP 7: Support both legacy (droidSystems.mods) and new (installedSystems) structures
       const droidSystems = actor?.system?.droidSystems;
-      if (!droidSystems) {
-        return modifiers;
+      const installedSystems = actor?.system?.installedSystems;
+
+      // Legacy path: droidSystems.mods (builder system)
+      if (droidSystems) {
+        const mods = Array.isArray(droidSystems.mods) ? droidSystems.mods : [];
+
+        for (const mod of mods) {
+          // Skip disabled modifications
+          if (mod.enabled === false) {
+            continue;
+          }
+
+          const modName = mod.name || `Droid Mod ${mod.id}`;
+          const modId = mod.id;
+          const modArray = Array.isArray(mod.modifiers) ? mod.modifiers : [];
+
+          // Convert each modifier in the modification
+          for (const modifierData of modArray) {
+            if (!modifierData || typeof modifierData !== 'object') continue;
+
+            const target = String(modifierData.target || '').trim();
+            const type = String(modifierData.type || 'untyped').trim().toLowerCase();
+            const value = Number(modifierData.value) || 0;
+
+            if (!target) continue;
+
+            try {
+              modifiers.push(createModifier({
+                source: ModifierSource.DROID_MOD,
+                sourceId: modId,
+                sourceName: modName,
+                target: target,
+                type: type,
+                value: value,
+                enabled: true,
+                description: `${modName}: ${target} ${value > 0 ? '+' : ''}${value}`
+              }));
+            } catch (err) {
+              swseLogger.warn(`Failed to create modifier for droid mod ${modName}:`, err);
+            }
+          }
+        }
       }
 
-      const mods = Array.isArray(droidSystems.mods) ? droidSystems.mods : [];
+      // PHASE 4 STEP 7: New path - installedSystems from DROID_SYSTEM_DEFINITIONS
+      if (installedSystems && typeof installedSystems === 'object') {
+        try {
+          const { DROID_SYSTEM_DEFINITIONS, getDroidSystemDefinition } = await import('../../domain/droids/droid-system-definitions.js');
 
-      for (const mod of mods) {
-        // Skip disabled modifications
-        if (mod.enabled === false) {
-          continue;
-        }
+          for (const [systemId, installed] of Object.entries(installedSystems)) {
+            const def = getDroidSystemDefinition(systemId);
+            if (!def) {
+              continue; // System definition not found
+            }
 
-        const modName = mod.name || `Droid Mod ${mod.id}`;
-        const modId = mod.id;
-        const modArray = Array.isArray(mod.modifiers) ? mod.modifiers : [];
+            const systemName = def.name || systemId;
+            const effects = Array.isArray(def.effects) ? def.effects : [];
 
-        // Convert each modifier in the modification
-        for (const modifierData of modArray) {
-          if (!modifierData || typeof modifierData !== 'object') continue;
+            // Convert system effects into modifiers
+            for (const effect of effects) {
+              if (!effect || typeof effect !== 'object') continue;
 
-          const target = String(modifierData.target || '').trim();
-          const type = String(modifierData.type || 'untyped').trim().toLowerCase();
-          const value = Number(modifierData.value) || 0;
+              const target = String(effect.target || '').trim();
+              const type = String(effect.type || 'untyped').trim().toLowerCase();
+              const value = Number(effect.value) || 0;
 
-          if (!target) continue;
+              if (!target) continue;
 
-          try {
-            modifiers.push(createModifier({
-              source: ModifierSource.DROID_MOD,
-              sourceId: modId,
-              sourceName: modName,
-              target: target,
-              type: type,
-              value: value,
-              enabled: true,
-              description: `${modName}: ${target} ${value > 0 ? '+' : ''}${value}`
-            }));
-          } catch (err) {
-            swseLogger.warn(`Failed to create modifier for droid mod ${modName}:`, err);
+              try {
+                modifiers.push(createModifier({
+                  source: ModifierSource.DROID_MOD,
+                  sourceId: systemId,
+                  sourceName: systemName,
+                  target: target,
+                  type: type,
+                  value: value,
+                  enabled: true,
+                  description: `${systemName}: ${target} ${value > 0 ? '+' : ''}${value}`
+                }));
+              } catch (err) {
+                swseLogger.warn(`Failed to create modifier for system ${systemName}:`, err);
+              }
+            }
           }
+        } catch (err) {
+          swseLogger.warn(`[ModifierEngine] Error processing installed droid systems:`, err);
         }
       }
 
