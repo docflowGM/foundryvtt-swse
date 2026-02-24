@@ -1,4 +1,4 @@
-import { ProgressionEngine } from '../engines/progression/engine/progression-engine.js';
+import { ProgressionEngine } from '../../engines/progression/engine/progression-engine.js';
 /**
  * Actor Lifecycle Hooks
  * All actor-related hook handlers consolidated here
@@ -12,11 +12,11 @@ import { ProgressionEngine } from '../engines/progression/engine/progression-eng
  */
 
 import { HooksRegistry } from './hooks-registry.js';
-import { SWSELogger } from '../utils/logger.js';
-import { FeatEffectsEngine } from '../engine/FeatEffectsEngine.js';
+import { SWSELogger } from '../../utils/logger.js';
+import { FeatEffectsEngine } from '../../engine/FeatEffectsEngine.js';
 import { initializeStarshipManeuverHooks } from './starship-maneuver-hooks.js';
 import { initializeForcePowerHooks } from './force-power-hooks.js';
-import { qs, qsa, setVisible, isVisible, text } from '../utils/dom-utils.js';
+import { qs, qsa, setVisible, isVisible, text } from '../../utils/dom-utils.js';
 
 /**
  * Register all actor-related hooks
