@@ -151,7 +151,8 @@
           "preciseStrike": false,
           "meleeFiness": false,
           "powerAttack": false
-        }
+        },
+        "relationships": []
       }
     },
     "character": {
