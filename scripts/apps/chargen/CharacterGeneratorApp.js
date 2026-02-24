@@ -1,30 +1,35 @@
 /**
  * CharacterGeneratorApp
  *
- * Minimal character progression interface.
+ * Character progression interface supporting both partial and full mode.
  *
- * Vertical Slice (Partial Mode Only):
- * - Background selection only (no full-mode aggregation yet)
- * - Single-step workflow: Select → Compile → Apply → Complete
+ * Partial Mode (Vertical Slice):
+ * - Single step: background only
+ * - Useful for testing integration
+ *
+ * Full Mode (Multi-Step):
+ * - Multiple steps: background, class, abilities, etc.
+ * - Aggregate all steps
+ * - Merge and apply atomically
  *
  * Architecture:
- * 1. Sheet → Generator (partial mode)
- * 2. ManualStepProcessor.processManualStep() → Compiler
- * 3. ProgressionCompiler.compileStep() → MutationPlan
- * 4. ActorEngine.applyMutationPlan() → Actor updated
+ * 1. Sheet → Generator (partial or full mode)
+ * 2. For each step: ManualStepProcessor.processManualStep() → MutationPlan
+ * 3. Merge all plans: mergeMutationPlans([plan1, plan2, ...])
+ * 4. ActorEngine.applyMutationPlan(merged) → Actor updated
  * 5. Sheet listens and re-renders
  *
  * Error Handling:
  * - ProgressionValidationError: Display validation message
  * - DeltaConflictError: Display conflict message
  * - MutationApplicationError: Display application error
- * - Generic errors: Log and show generic error message
  */
 
 import SWSEApplicationV2 from '../base/swse-application-v2.js';
 import { swseLogger } from '../../utils/logger.js';
 import { ManualStepProcessor } from '../../engines/progression/engine/manual-step-processor.js';
 import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
+import { mergeMutationPlans } from '../../governance/mutation/merge-mutations.js';
 import {
   ProgressionValidationError,
   DeltaConflictError,
@@ -37,32 +42,46 @@ export class CharacterGeneratorApp extends SWSEApplicationV2 {
   /**
    * Open generator for an actor
    * @param {Actor} actor
+   * @param {Object} options
+   * @param {boolean} options.fullMode - Allow multiple steps (default: false)
    * @returns {CharacterGeneratorApp}
    */
-  static async open(actor) {
+  static async open(actor, options = {}) {
     if (!actor) {
       ui.notifications.error('No actor selected');
       return null;
     }
 
-    const app = new CharacterGeneratorApp(actor);
+    const app = new CharacterGeneratorApp(actor, options);
     app.render({ force: true });
     return app;
   }
 
   constructor(actor, options = {}) {
+    const { fullMode = false } = options;
+
     super({
       title: `Character Progression: ${actor?.name || 'Unknown'}`,
       template: 'systems/foundryvtt-swse/templates/apps/chargen/character-generator-app.html',
       width: 600,
-      height: 400,
+      height: 500,
       resizable: true,
       ...options
     });
 
     this.actor = actor;
-    this.currentStep = 'background'; // Hardcoded for vertical slice
-    this.selectedBackground = null;
+    this.fullMode = fullMode;
+
+    // Step state tracking
+    this.currentStepIndex = 0;
+    this.steps = fullMode
+      ? ['background', 'class', 'abilities']
+      : ['background'];
+
+    // Track selections and compilation results
+    this.stepSelections = {}; // { stepId: userInput }
+    this.compiledPlans = {}; // { stepId: MutationPlan }
+
     this.isProcessing = false;
     this.lastError = null;
   }
@@ -71,24 +90,59 @@ export class CharacterGeneratorApp extends SWSEApplicationV2 {
    * Get the data to pass to the template
    */
   async getData() {
+    const currentStep = this.steps[this.currentStepIndex];
+    const currentSelection = this.stepSelections[currentStep];
+
+    // Progress tracking
+    const completedSteps = Object.keys(this.compiledPlans).length;
+    const isLastStep = this.currentStepIndex === this.steps.length - 1;
+
     return {
       actor: this.actor,
-      currentStep: this.currentStep,
-      selectedBackground: this.selectedBackground,
+      fullMode: this.fullMode,
+      currentStep,
+      currentStepIndex: this.currentStepIndex,
+      totalSteps: this.steps.length,
+      completedSteps,
+      currentSelection,
       isProcessing: this.isProcessing,
       lastError: this.lastError,
-      backgrounds: await this._getBackgroundOptions(),
-      canConfirm: this.selectedBackground !== null
+      stepOptions: await this._getStepOptions(currentStep),
+      canConfirm: this._canConfirmStep(currentStep),
+      canNext: !isLastStep && this._canConfirmStep(currentStep),
+      canApply: isLastStep && completedSteps === this.steps.length,
+      canPrevious: this.currentStepIndex > 0,
+      stepProgress: this.steps.map((step, idx) => ({
+        step,
+        index: idx,
+        isComplete: this.compiledPlans[step] !== undefined,
+        isCurrent: idx === this.currentStepIndex
+      }))
     };
   }
 
   /**
-   * Fetch available backgrounds
+   * Get options for the current step
    * @private
    */
-  async _getBackgroundOptions() {
-    // This is a minimal vertical slice — use a hardcoded small list for testing
-    // In full mode, this would use BackgroundRegistry
+  async _getStepOptions(stepId) {
+    switch (stepId) {
+      case 'background':
+        return this._getBackgroundOptions();
+      case 'class':
+        return this._getClassOptions();
+      case 'abilities':
+        return this._getAbilitiesOptions();
+      default:
+        return [];
+    }
+  }
+
+  /**
+   * Fetch available backgrounds (vertical slice — hardcoded for testing)
+   * @private
+   */
+  _getBackgroundOptions() {
     return [
       { id: 'soldier', label: 'Soldier' },
       { id: 'scout', label: 'Scout' },
@@ -98,24 +152,72 @@ export class CharacterGeneratorApp extends SWSEApplicationV2 {
   }
 
   /**
+   * Fetch available classes (full mode only)
+   * @private
+   */
+  _getClassOptions() {
+    if (!this.fullMode) {
+      return [];
+    }
+    // TODO: Fetch from ClassesDB
+    return [
+      { id: 'jedi', label: 'Jedi' },
+      { id: 'soldier', label: 'Soldier' },
+      { id: 'scout', label: 'Scout' }
+    ];
+  }
+
+  /**
+   * Get ability score options (full mode only)
+   * @private
+   */
+  _getAbilitiesOptions() {
+    if (!this.fullMode) {
+      return [];
+    }
+    // Abilities are rolled/assigned, return empty
+    // In full mode, would show ability assignment UI
+    return [];
+  }
+
+  /**
+   * Check if current step can be confirmed
+   * @private
+   */
+  _canConfirmStep(stepId) {
+    const selection = this.stepSelections[stepId];
+    return selection !== undefined && selection !== null;
+  }
+
+  /**
    * Activate listeners on render
    */
   activateListeners(html) {
     super.activateListeners(html);
 
-    // Background selection
-    html.find('select[name="background"]').change(async (event) => {
-      this.selectedBackground = event.target.value;
+    // Step selection (background, class, etc.)
+    html.find('select[name="step-select"]').change((event) => {
+      const currentStep = this.steps[this.currentStepIndex];
+      this.stepSelections[currentStep] = event.target.value;
       this.render();
     });
 
-    // Confirm button
+    // Confirm/Compile step
     html.find('button.confirm-step').click(() => this._confirmStep());
 
-    // Cancel button
+    // Next step (full mode only)
+    html.find('button.next-step').click(() => this._nextStep());
+
+    // Previous step (full mode only)
+    html.find('button.previous-step').click(() => this._previousStep());
+
+    // Apply all steps
+    html.find('button.apply-all').click(() => this._applyAllSteps());
+
+    // Cancel
     html.find('button.cancel-step').click(() => this.close());
 
-    // Clear error button
+    // Clear error
     html.find('button.clear-error').click(() => {
       this.lastError = null;
       this.render();
@@ -123,12 +225,15 @@ export class CharacterGeneratorApp extends SWSEApplicationV2 {
   }
 
   /**
-   * Process the selected background step
+   * Confirm current step: compile it
    * @private
    */
   async _confirmStep() {
-    if (!this.selectedBackground) {
-      ui.notifications.warn('Please select a background');
+    const currentStep = this.steps[this.currentStepIndex];
+    const selection = this.stepSelections[currentStep];
+
+    if (!selection) {
+      ui.notifications.warn('Please select an option');
       return;
     }
 
@@ -140,30 +245,115 @@ export class CharacterGeneratorApp extends SWSEApplicationV2 {
     this.lastError = null;
 
     try {
-      // Phase 1: Normalize and compile via ManualStepProcessor
-      const mutationPlan = await ManualStepProcessor.processManualStep(
+      swseLogger.debug('CharacterGeneratorApp._confirmStep', {
+        step: currentStep,
+        selection
+      });
+
+      // Compile this single step
+      const plan = await ManualStepProcessor.processManualStep(
         this.actor,
-        this.currentStep,
-        { id: this.selectedBackground },
+        currentStep,
+        { id: selection },
         { freebuild: false }
       );
 
-      swseLogger.debug('CharacterGeneratorApp: Mutation plan compiled', { mutationPlan });
+      // Store the compiled plan
+      this.compiledPlans[currentStep] = plan;
 
-      // Phase 2: Apply mutation via ActorEngine
-      await ActorEngine.applyMutationPlan(this.actor, mutationPlan, {
-        source: 'CharacterGeneratorApp.partial',
+      swseLogger.info('CharacterGeneratorApp: Step compiled', {
+        step: currentStep,
+        hasSets: !!plan.set && Object.keys(plan.set).length > 0
+      });
+
+    } catch (error) {
+      this._handleError(error);
+    } finally {
+      this.isProcessing = false;
+      this.render();
+    }
+  }
+
+  /**
+   * Move to next step
+   * @private
+   */
+  async _nextStep() {
+    // Confirm current step first
+    const currentStep = this.steps[this.currentStepIndex];
+    if (!this.compiledPlans[currentStep]) {
+      await this._confirmStep();
+      if (this.lastError) {
+        return; // Error already displayed
+      }
+    }
+
+    if (this.currentStepIndex < this.steps.length - 1) {
+      this.currentStepIndex++;
+      this.render();
+    }
+  }
+
+  /**
+   * Move to previous step
+   * @private
+   */
+  _previousStep() {
+    if (this.currentStepIndex > 0) {
+      this.currentStepIndex--;
+      this.render();
+    }
+  }
+
+  /**
+   * Apply all compiled steps atomically
+   * @private
+   */
+  async _applyAllSteps() {
+    if (this.isProcessing) {
+      return;
+    }
+
+    // Ensure all steps are compiled
+    const uncompiled = this.steps.filter(step => !this.compiledPlans[step]);
+    if (uncompiled.length > 0) {
+      ui.notifications.warn(`Please complete: ${uncompiled.join(', ')}`);
+      return;
+    }
+
+    this.isProcessing = true;
+    this.lastError = null;
+
+    try {
+      swseLogger.debug('CharacterGeneratorApp._applyAllSteps', {
+        stepsCount: this.steps.length
+      });
+
+      // Collect all plans in order
+      const plans = this.steps.map(step => this.compiledPlans[step]);
+
+      // Merge all plans
+      const mergedPlan = mergeMutationPlans(plans, { detectConflicts: true });
+
+      swseLogger.debug('CharacterGeneratorApp: Plans merged', {
+        stepsCount: this.steps.length,
+        hasSets: !!mergedPlan.set,
+        hasAdds: !!mergedPlan.add,
+        hasDeletes: !!mergedPlan.delete
+      });
+
+      // Apply merged plan atomically
+      await ActorEngine.applyMutationPlan(this.actor, mergedPlan, {
+        source: `CharacterGeneratorApp.${this.fullMode ? 'full' : 'partial'}`,
         validate: true,
         rederive: true
       });
 
-      swseLogger.info('CharacterGeneratorApp: Mutation applied successfully', {
-        step: this.currentStep,
-        background: this.selectedBackground
+      swseLogger.info('CharacterGeneratorApp: All steps applied successfully', {
+        stepsCount: this.steps.length
       });
 
-      // Phase 3: Close dialog on success
-      ui.notifications.info(`Background "${this.selectedBackground}" applied successfully`);
+      ui.notifications.info('Character progression applied successfully');
       this.close();
 
     } catch (error) {
