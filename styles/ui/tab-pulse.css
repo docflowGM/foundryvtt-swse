@@ -1,0 +1,32 @@
+/**
+ * Tab Pulse Animation
+ *
+ * Provides visual feedback when items are dropped into specific tabs.
+ * Creates a glowing pulse effect that draws attention to the target tab.
+ */
+
+.tab-pulse {
+  animation: swseTabPulse 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes swseTabPulse {
+  0% {
+    box-shadow: 0 0 0px rgba(58, 113, 184, 0);
+    background-color: rgba(58, 113, 184, 0);
+  }
+
+  40% {
+    box-shadow: 0 0 20px rgba(58, 113, 184, 0.8);
+    background-color: rgba(58, 113, 184, 0.15);
+  }
+
+  100% {
+    box-shadow: 0 0 0px rgba(58, 113, 184, 0);
+    background-color: rgba(58, 113, 184, 0);
+  }
+}
+
+/* Tab button styling during pulse */
+.tab-pulse:hover {
+  background-color: rgba(58, 113, 184, 0.2);
+}

@@ -510,6 +510,172 @@ export const ActorEngine = {
     }
   },
 
+  /**
+   * apply(actor, mutationPlan)
+   *
+   * PHASE 3: Universal mutation acceptor for all domain engines.
+   *
+   * This is the ONLY method domain engines (DropResolutionEngine, AdoptionEngine, etc.) use
+   * to mutate actors. No embedded document creation bypasses this.
+   *
+   * Contract:
+   * - mutationPlan is pure data (no functions, no side effects)
+   * - Execution order is strictly controlled and atomic
+   * - All operations succeed or all fail (no partial mutations)
+   * - Derived recalculation triggered after mutations
+   *
+   * Execution Order:
+   * 0. Adoption (if replaceSystem/replaceEmbedded):
+   *    - Delete all existing embedded docs
+   *    - Create replacement embedded docs
+   *    - Replace system entirely
+   * 1. Standard operations (create/update/delete):
+   *    - Create embedded documents
+   *    - Update embedded documents
+   *    - Delete embedded documents
+   * 2. System updates (dot-path only)
+   * 3. Derived recalculation
+   *
+   * @param {Actor} actor - target actor
+   * @param {Object} mutationPlan - {
+   *   replaceSystem?: Object,                   (adoption only)
+   *   replaceEmbedded?: Array<{ type, data }>, (adoption only)
+   *   _adoptionSource?: string,                (metadata only, for logging)
+   *   createEmbedded?: Array<{ type, data }>,
+   *   updateEmbedded?: Array<{ _id, update }>,
+   *   deleteEmbedded?: Array<{ type, _id }>,
+   *   update?: { ... }  (system updates via dot-path)
+   * }
+   */
+  async apply(actor, mutationPlan) {
+    try {
+      if (!actor) {throw new Error('apply() called with no actor');}
+      if (!mutationPlan) {return;} // noop
+
+      const isAdoption = mutationPlan.replaceSystem !== undefined;
+
+      swseLogger.debug(`ActorEngine.apply → ${actor.name}`, {
+        isAdoption,
+        mutationPlan: isAdoption ? { adoption: true } : mutationPlan
+      });
+
+      // ========================================
+      // PHASE 0: ADOPTION (Identity Mutation)
+      // ========================================
+
+      if (isAdoption) {
+        swseLogger.info(`[Adoption] ${actor.name} (ID: ${actor.id}) adopting from ${mutationPlan._adoptionSource}`);
+
+        // ---- ADOPTION PHASE 1: Delete all existing embedded documents ----
+        if (actor.items?.length > 0) {
+          const itemIds = actor.items.map(i => i.id);
+          await this.deleteEmbeddedDocuments(actor, 'Item', itemIds);
+        }
+
+        if (actor.effects?.length > 0) {
+          const effectIds = actor.effects.map(e => e.id);
+          await this.deleteEmbeddedDocuments(actor, 'ActiveEffect', effectIds);
+        }
+
+        // ---- ADOPTION PHASE 2: Create replacement embedded documents ----
+        if (mutationPlan.createEmbedded?.length > 0) {
+          // Separate items and effects by embedded type
+          const itemsToCreate = [];
+          const effectsToCreate = [];
+
+          for (const embedded of mutationPlan.createEmbedded) {
+            if (!embedded.type || !embedded.data) {
+              throw new Error('Invalid createEmbedded in adoption: missing type or data');
+            }
+
+            if (embedded.type === 'Item') {
+              itemsToCreate.push(embedded.data);
+            } else if (embedded.type === 'ActiveEffect') {
+              effectsToCreate.push(embedded.data);
+            }
+          }
+
+          if (itemsToCreate.length > 0) {
+            await this.createEmbeddedDocuments(actor, 'Item', itemsToCreate);
+          }
+
+          if (effectsToCreate.length > 0) {
+            await this.createEmbeddedDocuments(actor, 'ActiveEffect', effectsToCreate);
+          }
+        }
+
+        // ---- ADOPTION PHASE 3: Replace system ----
+        if (mutationPlan.replaceSystem && Object.keys(mutationPlan.replaceSystem).length > 0) {
+          await this.updateActor(actor, { system: mutationPlan.replaceSystem });
+        }
+      }
+
+      // ========================================
+      // PHASE 1-4: Standard Mutations
+      // ========================================
+
+      // ---- PHASE 1: Create Embedded Documents (non-adoption) ----
+      if (!isAdoption && mutationPlan.createEmbedded?.length > 0) {
+        const itemsToCreate = mutationPlan.createEmbedded.map(item => {
+          if (!item.type || !item.data) {
+            throw new Error('Invalid createEmbedded item: missing type or data');
+          }
+          return item.data;
+        });
+        await this.createEmbeddedDocuments(actor, 'Item', itemsToCreate);
+      }
+
+      // ---- PHASE 2: Update Embedded Documents ----
+      if (mutationPlan.updateEmbedded?.length > 0) {
+        for (const update of mutationPlan.updateEmbedded) {
+          if (!update._id || !update.update) {
+            throw new Error('Invalid updateEmbedded: missing _id or update');
+          }
+        }
+        await this.updateEmbeddedDocuments(actor, 'Item', mutationPlan.updateEmbedded);
+      }
+
+      // ---- PHASE 3: Delete Embedded Documents (non-adoption) ----
+      if (!isAdoption && mutationPlan.deleteEmbedded?.length > 0) {
+        const idsToDelete = mutationPlan.deleteEmbedded.map(item => {
+          if (!item._id) {
+            throw new Error('Invalid deleteEmbedded: missing _id');
+          }
+          return item._id;
+        });
+        await this.deleteEmbeddedDocuments(actor, 'Item', idsToDelete);
+      }
+
+      // ---- PHASE 4: Update Actor System (non-adoption) ----
+      if (!isAdoption && mutationPlan.update && Object.keys(mutationPlan.update).length > 0) {
+        // Guard against derived writes
+        for (const path of Object.keys(mutationPlan.update)) {
+          if (path.startsWith('system.derived')) {
+            throw new Error(
+              `ARCHITECTURE VIOLATION: mutationPlan attempted to write to ${path}. ` +
+              'Derived fields are computed, not mutated.'
+            );
+          }
+        }
+        await this.updateActor(actor, mutationPlan.update);
+      }
+
+      if (isAdoption) {
+        swseLogger.log(`[Adoption] Complete: ${actor.name} (ID: ${actor.id})`);
+      } else {
+        swseLogger.log(`ActorEngine.apply completed for ${actor.name}`);
+      }
+
+    } catch (err) {
+      swseLogger.error(`ActorEngine.apply failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        isAdoption: mutationPlan?.replaceSystem !== undefined,
+        mutationPlan: mutationPlan?.replaceSystem ? { adoption: true } : mutationPlan
+      });
+      throw err;
+    }
+  },
+
   // ============================================================================
   // PHASE 3 BATCH 2: COMBAT AUTHORITY APIS
   // ============================================================================

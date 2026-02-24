@@ -1,6 +1,12 @@
-// scripts/engine/ProgressionSession.js
+/**
+ * Progression Session - Transactional progression wrapper
+ *
+ * PHASE 2 COMPLIANCE:
+ * - Moved from suggestion engine to progression engine
+ * - All mutations route through ActorEngine
+ * - Provides staging, validation, and atomic commit pattern
+ */
 import { swseLogger } from '../../utils/logger.js';
-import { applyActorUpdateAtomic } from '../../utils/actor-utils.js';
 import { createChatMessage } from '../../core/document-api-v13.js';
 import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 
@@ -99,8 +105,8 @@ export class ProgressionSession {
     swseLogger.log(`[SESSION] Staging class level: ${classId}`);
 
     // Load class data for validation
-    const { PROGRESSION_RULES } = await import('../progression/data/progression-data.js');
-    const { getClassData } = await import('../progression/utils/class-data-loader.js');
+    const { PROGRESSION_RULES } = await import('./data/progression-data.js');
+    const { getClassData } = await import('./utils/class-data-loader.js');
 
     let classData = PROGRESSION_RULES.classes[classId];
     if (!classData || !classData.levelProgression) {
@@ -316,6 +322,8 @@ export class ProgressionSession {
   /**
    * Commit all staged changes to the actor (ATOMIC)
    * Either all changes apply or none do
+   *
+   * PHASE 2 COMPLIANCE: All mutations route through ActorEngine
    */
   async commit() {
     swseLogger.log(`[SESSION] Committing session ${this.sessionId}`);
@@ -340,7 +348,7 @@ export class ProgressionSession {
         throw new Error(`Cannot commit: ${preview.errors.join(', ')}`);
       }
 
-      swseLogger.log(`[SESSION] Validation passed, applying changes...`);
+      swseLogger.log(`[SESSION] Validation passed, applying changes via ActorEngine...`);
 
       // Build atomic update object
       const updates = {};
@@ -350,7 +358,7 @@ export class ProgressionSession {
         updates['system.progression.species'] = this.stagedChanges.species.speciesId;
 
         // Apply species ability mods (would need to load species data)
-        const { PROGRESSION_RULES } = await import('../progression/data/progression-data.js');
+        const { PROGRESSION_RULES } = await import('./data/progression-data.js');
         const speciesData = PROGRESSION_RULES.species[this.stagedChanges.species.speciesId];
         if (speciesData?.abilityMods) {
           for (const [ability, mod] of Object.entries(speciesData.abilityMods)) {
@@ -427,16 +435,16 @@ export class ProgressionSession {
         Object.assign(updates, this.stagedChanges.pendingActorUpdates);
       }
 
-      // Apply all updates atomically
-      swseLogger.log(`[SESSION] Applying ${Object.keys(updates).length} updates to actor...`);
-      await applyActorUpdateAtomic(this.actor, updates);
+      // Apply all updates atomically through ActorEngine (PHASE 2 COMPLIANCE)
+      swseLogger.log(`[SESSION] Applying ${Object.keys(updates).length} updates through ActorEngine...`);
+      await ActorEngine.updateActor(this.actor, updates);
 
       // Create items from SSOT
       await this._createProgressionItems();
 
       // Recalculate derived stats
       try {
-        const { recalcDerivedStats } = await import('../progression/engine/autocalc/derived-stats.js');
+        const { recalcDerivedStats } = await import('./engine/autocalc/derived-stats.js');
         await recalcDerivedStats(this.actor);
       } catch (err) {
         swseLogger.warn('Derived stats recalculation failed:', err);
@@ -663,7 +671,7 @@ export class ProgressionSession {
 
     // Create feat items
     if (this.stagedChanges.feats.length > 0) {
-      const { FeatRegistry } = await import('../progression/feats/feat-registry.js');
+      const { FeatRegistry } = await import('./feats/feat-registry.js');
       if (!FeatRegistry.isBuilt) {await FeatRegistry.build();}
 
       for (const featName of this.stagedChanges.feats) {

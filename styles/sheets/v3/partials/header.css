@@ -1,1 +1,37 @@
 /* header.css — Ready for styling */
+
+.header-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #1e2b44, #243b63);
+  color: #d6ecff;
+  border: 1px solid rgba(0, 150, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.header-btn:hover {
+  background: linear-gradient(90deg, #243b63, #2e4f8c);
+  box-shadow: 0 0 6px rgba(0, 170, 255, 0.7);
+}
+
+.header-btn.mentor-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #1e2b44, #243b63);
+  color: #d6ecff;
+  border: 1px solid rgba(0, 150, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.header-btn.mentor-button:hover {
+  background: linear-gradient(90deg, #243b63, #2e4f8c);
+  box-shadow: 0 0 6px rgba(0, 170, 255, 0.7);
+}

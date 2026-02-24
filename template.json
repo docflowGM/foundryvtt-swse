@@ -151,7 +151,8 @@
           "preciseStrike": false,
           "meleeFiness": false,
           "powerAttack": false
-        }
+        },
+        "relationships": []
       }
     },
     "character": {
@@ -201,6 +202,7 @@
         "shields": 2,
         "engines": 2
       },
+      "crew": [],
       "pilotManeuver": "none",
       "commanderOrder": "none",
       "turnState": {

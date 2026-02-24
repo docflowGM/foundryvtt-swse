@@ -7,7 +7,9 @@ import { RenderAssertions } from '../../core/render-assertions.js';
 import { SWSELevelUp } from '../../apps/swse-levelup.js';
 import { rollSkill } from '../../rolls/skills.js';
 import { rollAttack } from '../../combat/rolls/attacks.js';
-import { DropService } from '../../services/drop-service.js';
+import { DropResolutionEngine } from '../../engines/interactions/drop-resolution-engine.js';
+import { AdoptionEngine } from '../../engines/interactions/adoption-engine.js';
+import { AdoptOrAddDialog } from '../../apps/adopt-or-add-dialog.js';
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -233,7 +235,117 @@ export class SWSEV2CombatNpcSheet extends
   }
 
   async _onDrop(event) {
-    return DropService.onDrop(event, this);
+    event.preventDefault();
+
+    // Extract drag data
+    const data = TextEditor.getDragEventData(event);
+    if (!data) return;
+
+    // Check if this is an actor drop
+    let droppedDocument = null;
+    if (data.uuid) {
+      try {
+        droppedDocument = await fromUuid(data.uuid);
+      } catch (err) {
+        // Not a valid UUID, treat as item drop
+      }
+    }
+
+    // ACTOR DROP: Check if GM can adopt
+    if (droppedDocument && droppedDocument.documentName === 'Actor') {
+      return this._handleActorDrop(droppedDocument);
+    }
+
+    // ITEM DROP: Use standard resolution
+    const result = await DropResolutionEngine.resolve({
+      actor: this.actor,
+      dropData: data
+    });
+
+    // If no plan (duplicate or invalid), silently skip
+    if (!result || !result.mutationPlan) return;
+
+    // Apply mutations via sovereign ActorEngine
+    try {
+      await ActorEngine.apply(this.actor, result.mutationPlan);
+      // UI feedback: pulse the target tab
+      if (result.uiTargetTab) {
+        this._pulseTab(result.uiTargetTab);
+      }
+    } catch (err) {
+      console.error('Drop application failed:', err);
+      ui?.notifications?.error?.(`Failed to add dropped item: ${err.message}`);
+    }
+  }
+
+  async _handleActorDrop(droppedActor) {
+    if (droppedActor.type !== this.actor.type || !game.user.isGM) {
+      return this._addActorRelationship(droppedActor);
+    }
+    new AdoptOrAddDialog(droppedActor, async (choice) => {
+      if (choice === "add") {
+        await this._addActorRelationship(droppedActor);
+      } else if (choice === "adopt") {
+        await this._adoptActor(droppedActor);
+      }
+    }).render(true);
+  }
+
+  async _addActorRelationship(actor) {
+    const relationships = this.actor.system?.relationships ?? [];
+    const alreadyLinked = relationships.some(r => r.uuid === actor.uuid);
+    if (alreadyLinked) {
+      console.debug(`Already linked: ${actor.name}`);
+      return;
+    }
+    const mutationPlan = {
+      update: {
+        'system.relationships': [...relationships, { uuid: actor.uuid, name: actor.name, type: actor.type }]
+      }
+    };
+    try {
+      await ActorEngine.apply(this.actor, mutationPlan);
+    } catch (err) {
+      console.error('Failed to add actor relationship:', err);
+      ui?.notifications?.error?.(`Failed to add relationship: ${err.message}`);
+    }
+  }
+
+  async _adoptActor(sourceActor) {
+    const mutationPlan = AdoptionEngine.buildAdoptionPlan({
+      targetActor: this.actor,
+      sourceActor: sourceActor
+    });
+    if (!mutationPlan) {
+      ui?.notifications?.warn?.(`Cannot adopt from ${sourceActor.name}`);
+      return;
+    }
+    try {
+      await ActorEngine.apply(this.actor, mutationPlan);
+      ui?.notifications?.info?.(`${this.actor.name} adopted stat block from ${sourceActor.name}`);
+    } catch (err) {
+      console.error('Adoption failed:', err);
+      ui?.notifications?.error?.(`Adoption failed: ${err.message}`);
+    }
+  }
+
+  /**
+   * Pulse tab for UI feedback on drop success
+   *
+   * @private
+   * @param {string} tabName - tab identifier to pulse
+   */
+  _pulseTab(tabName) {
+    if (!tabName) return;
+
+    const tabButton = this.element?.querySelector(`[data-tab="${tabName}"]`);
+    if (!tabButton) return;
+
+    tabButton.classList.add('tab-pulse');
+
+    setTimeout(() => {
+      tabButton.classList.remove('tab-pulse');
+    }, 800);
   }
 
   async _updateObject(event, formData) {

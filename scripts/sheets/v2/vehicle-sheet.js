@@ -7,7 +7,9 @@ import { RenderAssertions } from '../../core/render-assertions.js';
 import { initiateItemSale } from '../../apps/item-selling-system.js';
 import { SWSELevelUp } from '../../apps/swse-levelup.js';
 import { rollAttack } from '../../combat/rolls/attacks.js';
-import { DropService } from '../../services/drop-service.js';
+import { VehicleDropEngine } from '../../engines/interactions/vehicle-drop-engine.js';
+import { AdoptionEngine } from '../../engines/interactions/adoption-engine.js';
+import { AdoptOrAddDialog } from '../../apps/adopt-or-add-dialog.js';
 import { SubsystemEngine } from '../../engines/combat/starship/subsystem-engine.js';
 import { EnhancedShields } from '../../engines/combat/starship/enhanced-shields.js';
 import { EnhancedEngineer } from '../../engines/combat/starship/enhanced-engineer.js';
@@ -549,7 +551,115 @@ export class SWSEV2VehicleSheet extends
   /* -------- -------- -------- -------- -------- -------- -------- -------- */
 
   async _onDrop(event) {
-    return DropService.onDrop(event, this);
+    event.preventDefault();
+
+    // Extract drag data
+    const data = TextEditor.getDragEventData(event);
+    if (!data) return;
+
+    // Check if this is an actor drop
+    let droppedDocument = null;
+    if (data.uuid) {
+      try {
+        droppedDocument = await fromUuid(data.uuid);
+      } catch (err) {
+        // Not a valid UUID, treat as item drop
+      }
+    }
+
+    // SPECIAL VEHICLE HANDLING:
+    // Vehicle-to-vehicle: show modal for hangar vs adopt
+    if (droppedDocument && droppedDocument.documentName === 'Actor' && droppedDocument.type === 'vehicle') {
+      return this._handleVehicleAdoption(droppedDocument);
+    }
+
+    // Regular drops (items, non-vehicle actors)
+    const result = await VehicleDropEngine.resolve({
+      actor: this.actor,
+      dropData: data
+    });
+
+    // If no plan (duplicate or invalid), silently skip
+    if (!result || !result.mutationPlan) return;
+
+    // Apply mutations via sovereign ActorEngine
+    try {
+      await ActorEngine.apply(this.actor, result.mutationPlan);
+      // UI feedback: pulse the target tab
+      if (result.uiTargetTab) {
+        this._pulseTab(result.uiTargetTab);
+      }
+    } catch (err) {
+      console.error('Drop application failed:', err);
+      ui?.notifications?.error?.(`Failed to add dropped item: ${err.message}`);
+    }
+  }
+
+  /**
+   * Handle vehicle-to-vehicle drop: show modal for hangar vs adopt
+   *
+   * @private
+   * @param {Actor} droppedVehicle
+   */
+  async _handleVehicleAdoption(droppedVehicle) {
+    if (!game.user.isGM) {
+      ui?.notifications?.warn?.('Only GMs can manage vehicle hangar');
+      return;
+    }
+
+    new AdoptOrAddDialog(droppedVehicle, async (choice) => {
+      if (choice === "add") {
+        // TODO: Implement add to hangar (store as reference in system.hangar array)
+        ui?.notifications?.info?.('Add to hangar (not yet implemented)');
+      } else if (choice === "adopt") {
+        await this._adoptVehicle(droppedVehicle);
+      }
+    }).render(true);
+  }
+
+  /**
+   * Adopt vehicle stat block
+   *
+   * @private
+   * @param {Actor} sourceVehicle
+   */
+  async _adoptVehicle(sourceVehicle) {
+    const mutationPlan = AdoptionEngine.buildAdoptionPlan({
+      targetActor: this.actor,
+      sourceActor: sourceVehicle
+    });
+
+    if (!mutationPlan) {
+      ui?.notifications?.warn?.(`Cannot adopt from ${sourceVehicle.name}`);
+      return;
+    }
+
+    try {
+      await ActorEngine.apply(this.actor, mutationPlan);
+      ui?.notifications?.info?.(`${this.actor.name} adopted stat block from ${sourceVehicle.name}`);
+    } catch (err) {
+      console.error('Vehicle adoption failed:', err);
+      ui?.notifications?.error?.(`Adoption failed: ${err.message}`);
+    }
+  }
+
+  /**
+   * Pulse tab for UI feedback on drop success
+   *
+   * @private
+   * @param {string} tabName - tab identifier to pulse
+   */
+  _pulseTab(tabName) {
+    if (!tabName) return;
+
+    const tabButton = this.element?.querySelector(`[data-tab="${tabName}"]`);
+    if (!tabButton) return;
+
+    tabButton.classList.add('tab-pulse');
+
+    setTimeout(() => {
+      tabButton.classList.remove('tab-pulse');
+    }, 800);
   }
 
   /* ------------------------------------------------------------------------ */

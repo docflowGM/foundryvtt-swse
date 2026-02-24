@@ -84,7 +84,8 @@
     "styles/mentor.css",
     "styles/fonts.css",
     "styles/ui/wishlist.css",
-    "styles/ui/directory-buttons.css"
+    "styles/ui/directory-buttons.css",
+    "styles/ui/tab-pulse.css"
   ],
   "languages": [
     {
