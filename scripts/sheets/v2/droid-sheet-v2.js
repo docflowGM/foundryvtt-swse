@@ -287,5 +287,11 @@ export class DroidSheetV2 extends ActorSheet {
       const plan = DroidEngine.buildConfigurationPlan(this.actor, descriptor);
       await ActorEngine.updateActor(plan.actor, plan.updateData);
     });
+
+    // PHASE 4 STEP 3: Entry point for live droid modifications
+    html.find('[data-action="open-modifications"]').on('click', async () => {
+      const { DroidModificationApp } = await import('../../apps/droid-modification-app.js');
+      new DroidModificationApp(this.actor).render(true);
+    });
   }
 }
