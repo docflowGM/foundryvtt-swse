@@ -694,13 +694,16 @@ function createDroidPlans(cartDroids) {
 }
 
 /**
- * PHASE 1: Compile vehicles into MutationPlans
+ * PHASE 5: Compile vehicles into MutationPlans using VehicleFactory
  * Returns plans instead of mutating directly.
  * @param {Array} cartVehicles - Vehicles from cart
  * @param {Map} itemsById - Store inventory map
  * @returns {Array<Object>} MutationPlans
  */
 function createVehiclePlans(cartVehicles, itemsById) {
+  // Import VehicleFactory at function level to avoid circular deps
+  const { VehicleFactory } = require('../../engines/vehicles/vehicle-factory.js');
+
   const plans = [];
 
   for (const vehicle of cartVehicles) {
@@ -709,31 +712,17 @@ function createVehiclePlans(cartVehicles, itemsById) {
       throw new Error(`Vehicle template not found for id=${vehicle.id}`);
     }
 
-    // Create shell vehicle actor
-    const vehicleData = {
-      type: 'vehicle',
-      name: `${vehicle.condition === 'used' ? '(Used) ' : ''}${vehicle.name}`,
-      img: template.img || 'icons/svg/anchor.svg'
-    };
-
-    // PHASE 1: Don't set ownership here
-    // PHASE 6: PlacementRouter will handle ownership
-
-    // Return MutationPlan, don't apply it
-    plans.push({
-      create: {
-        actors: [{
-          type: 'vehicle',
-          temporaryId: `temp_vehicle_${vehicle.id || Math.random()}`,
-          data: vehicleData
-        }]
-      },
-      // Metadata for Phase 5: Vehicle template application
-      meta: {
-        vehicleTemplate: template,
+    // PHASE 5: Use VehicleFactory to build MutationPlan
+    try {
+      const plan = VehicleFactory.buildMutationPlan({
+        template: template,
         condition: vehicle.condition
-      }
-    });
+      });
+      plans.push(plan);
+    } catch (err) {
+      SWSELogger.error('SWSE Store | VehicleFactory failed:', err);
+      throw err;
+    }
   }
 
   return plans;

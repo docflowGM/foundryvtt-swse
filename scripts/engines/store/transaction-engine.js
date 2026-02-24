@@ -25,6 +25,7 @@
 import { mergeMutationPlans } from '../mutation/merge-mutations.js';
 import { ActorEngine } from '../actor-engine/actor-engine.js';
 import { LedgerService } from './ledger-service.js';
+import { VehicleFactory } from '../vehicles/vehicle-factory.js';
 import { swseLogger } from '../../utils/logger.js';
 
 export class TransactionEngine {
@@ -212,9 +213,8 @@ export class TransactionEngine {
     try {
       switch (type) {
         case 'vehicle':
-          // TODO Phase 5: Implement VehicleFactory
-          // return VehicleFactory.buildMutationPlan(payload);
-          return null;
+          // PHASE 5: Use VehicleFactory for vehicle creation
+          return VehicleFactory.buildMutationPlan(payload);
 
         case 'droid':
           // TODO Phase 7: Implement DroidFactory
