@@ -1,15 +1,19 @@
 /**
  * Manual Step Processor
  *
- * Thin adapter for processing manual user input through the standard progression pipeline.
+ * Thin normalization adapter for processing manual user input.
  *
- * Key principle: Manual input is converted to canonical form, then processed through
- * the SAME validation and compilation pipeline as generator-sourced input.
+ * Architecture principle:
+ * - ManualStepProcessor: Normalizes UI input to canonical selections
+ * - ProgressionCompiler: Owns ALL intent building, validation, and delta compilation
+ * - UI layers never see or construct intent objects
+ * - One pipeline: Manual and Generator both call ProgressionCompiler.compileStep()
  *
- * No special logic. No duplicate compilers. One pipeline.
+ * ManualStepProcessor is intentionally small: normalize → snapshot → compile.
+ * No intent building. No prerequisite validation (compiler owns that).
+ * Normalization only.
  */
 
-import { PrerequisiteChecker } from '../../../data/prerequisite-checker.js';
 import { ProgressionCompiler } from '../ProgressionCompiler.js';
 import { swseLogger } from '../../../utils/logger.js';
 
@@ -18,49 +22,44 @@ export class ManualStepProcessor {
   /**
    * Process a manually-entered step.
    *
+   * Three-phase pipeline:
+   * 1. Normalize: UI input → canonical selections
+   * 2. Snapshot: Read-only actor state
+   * 3. Compile: Delegate to ProgressionCompiler (owns validation + intent + delta)
+   *
    * @param {Actor} actor - Current actor
    * @param {string} stepId - Step identifier (background, species, feats, talents, etc.)
    * @param {Object} input - Raw user input (varies by step type)
    * @param {Object} options - Processing options
    * @param {boolean} options.freebuild - Bypass sequencing restrictions (default: false)
-   * @param {boolean} options.suppressWarnings - Suppress validation warnings (default: false)
    * @returns {Promise<Object>} mutationPlan - Structured mutation plan { set, add, delete }
    * @throws {ProgressionStepError} If stepId unrecognized
-   * @throws {ProgressionValidationError} If prerequisites unmet
+   * @throws {ProgressionValidationError} If selections invalid or prerequisites unmet
    */
   static async processManualStep(actor, stepId, input, options = {}) {
-    const { freebuild = false, suppressWarnings = false } = options;
+    const { freebuild = false } = options;
 
     swseLogger.debug('ManualStepProcessor.processManualStep', {
       actor: actor.id,
       stepId,
-      freebuild,
-      suppressWarnings
+      freebuild
     });
 
-    // Phase 1: Validate step ID
+    // Phase 1: Validate step ID exists
     this._assertValidStep(stepId);
 
-    // Phase 2: Normalize input to canonical form
-    const normalizedInput = await this._normalizeInput(stepId, input, actor);
+    // Phase 2: Normalize raw input to canonical selections
+    const selections = await this._normalizeInput(stepId, input);
 
-    // Phase 3: Build snapshot (read-only state)
+    // Phase 3: Build snapshot (read-only actor state for validation)
     const snapshot = this._buildSnapshot(actor, { freebuild });
 
-    // Phase 4: Validate prerequisites
-    await this._validatePrerequisites(
+    // Phase 4: Delegate to compiler (compiler owns intent building, validation, delta)
+    const mutationPlan = ProgressionCompiler.compileStep(
       snapshot,
       stepId,
-      normalizedInput,
-      { freebuild, suppressWarnings }
-    );
-
-    // Phase 5: Compile using standard pipeline
-    const mutationPlan = this._compileStep(
-      snapshot,
-      stepId,
-      normalizedInput,
-      { source: 'manual', freebuild }
+      selections,
+      { freebuild }
     );
 
     swseLogger.debug('ManualStepProcessor.processManualStep: Complete', { mutationPlan });
@@ -94,11 +93,15 @@ export class ManualStepProcessor {
   }
 
   /**
-   * Normalize raw user input to canonical internal form.
+   * Normalize raw user input to canonical selections form.
    * This is step-specific and handles UI → domain transformation.
+   *
+   * Note: Normalizers return ONLY the data needed by the compiler.
+   * No intent types. No "source" field. Just selections.
+   *
    * @private
    */
-  static async _normalizeInput(stepId, input, actor) {
+  static async _normalizeInput(stepId, input) {
     swseLogger.debug('ManualStepProcessor._normalizeInput', { stepId, input });
 
     switch (stepId) {
@@ -139,7 +142,7 @@ export class ManualStepProcessor {
 
   /**
    * Species normalization.
-   * Input: { speciesId: "wookiee" } or { name: "Wookiee" }
+   * Input: { speciesId: "wookiee" } or { id: "wookiee" }
    * Output: { id: "wookiee" }
    * @private
    */
@@ -151,7 +154,7 @@ export class ManualStepProcessor {
       throw new ProgressionValidationError('Species ID required');
     }
 
-    return { id: speciesId, source: 'manual' };
+    return { id: speciesId };
   }
 
   /**
@@ -167,15 +170,14 @@ export class ManualStepProcessor {
     if (input.freeform && input.name) {
       return {
         name: input.name,
-        freeform: true,
-        source: 'manual'
+        freeform: true
       };
     }
 
     // Option B: Select from list
     const backgroundId = input.backgroundId || input.id;
     if (backgroundId) {
-      return { id: backgroundId, source: 'manual' };
+      return { id: backgroundId };
     }
 
     throw new ProgressionValidationError(
@@ -210,7 +212,7 @@ export class ManualStepProcessor {
       }
     }
 
-    return { ...scores, source: 'manual' };
+    return { ...scores };
   }
 
   /**
@@ -224,14 +226,13 @@ export class ManualStepProcessor {
     if (input.freeform && input.name) {
       return {
         name: input.name,
-        freeform: true,
-        source: 'manual'
+        freeform: true
       };
     }
 
     const classId = input.classId || input.id;
     if (classId) {
-      return { id: classId, source: 'manual' };
+      return { id: classId };
     }
 
     throw new ProgressionValidationError(
@@ -250,8 +251,7 @@ export class ManualStepProcessor {
     }
 
     return {
-      skillIds: input.skillIds,
-      source: 'manual'
+      skillIds: input.skillIds
     };
   }
 
@@ -269,8 +269,7 @@ export class ManualStepProcessor {
     }
 
     return {
-      featIds,
-      source: 'manual'
+      featIds
     };
   }
 
@@ -288,8 +287,7 @@ export class ManualStepProcessor {
     }
 
     return {
-      talentIds,
-      source: 'manual'
+      talentIds
     };
   }
 
@@ -307,8 +305,7 @@ export class ManualStepProcessor {
     }
 
     return {
-      secretIds,
-      source: 'manual'
+      secretIds
     };
   }
 
@@ -326,8 +323,7 @@ export class ManualStepProcessor {
     }
 
     return {
-      techniqueIds,
-      source: 'manual'
+      techniqueIds
     };
   }
 
@@ -345,8 +341,7 @@ export class ManualStepProcessor {
     }
 
     return {
-      powerIds,
-      source: 'manual'
+      powerIds
     };
   }
 
@@ -366,107 +361,6 @@ export class ManualStepProcessor {
     };
   }
 
-  /**
-   * Validate prerequisites for this step.
-   * Reuses PrerequisiteChecker used by ProgressionCompiler.
-   * @private
-   */
-  static async _validatePrerequisites(snapshot, stepId, normalizedInput, options = {}) {
-    swseLogger.debug('ManualStepProcessor._validatePrerequisites', {
-      stepId,
-      freebuild: options.freebuild
-    });
-
-    // For each item being added, validate prerequisites
-    const itemIds = normalizedInput.featIds || normalizedInput.talentIds ||
-                    normalizedInput.powerIds || normalizedInput.secretIds ||
-                    normalizedInput.techniqueIds || [];
-
-    for (const itemId of itemIds) {
-      const prereq = PrerequisiteChecker.checkPrerequisites(
-        snapshot,
-        this._mapStepToType(stepId),
-        itemId
-      );
-
-      if (!prereq.met) {
-        if (options.freebuild) {
-          // Freebuild: warn but allow
-          if (!options.suppressWarnings) {
-            swseLogger.warn(
-              `ManualStepProcessor: Prerequisites unmet (freebuild allowed): ${prereq.missing.join(', ')}`
-            );
-          }
-        } else {
-          // Normal mode: enforce
-          throw new ProgressionValidationError(
-            `Prerequisites unmet for ${itemId}: ${prereq.missing.join(', ')}`
-          );
-        }
-      }
-    }
-  }
-
-  /**
-   * Map step ID to item type for PrerequisiteChecker.
-   * @private
-   */
-  static _mapStepToType(stepId) {
-    const typeMap = {
-      'feats': 'feat',
-      'talents': 'talent',
-      'forcePowers': 'forcePower',
-      'forceSecrets': 'forceSecret',
-      'forceTechniques': 'forceTechnique'
-    };
-    return typeMap[stepId] || stepId;
-  }
-
-  /**
-   * Compile step using standard ProgressionCompiler.
-   * This is where the actual mutationPlan is built.
-   * @private
-   */
-  static _compileStep(snapshot, stepId, normalizedInput, metadata = {}) {
-    // Build intent object for ProgressionCompiler
-    const intent = this._buildIntent(stepId, normalizedInput);
-
-    // Use standard compiler — same pipeline as generator
-    return ProgressionCompiler.compile(snapshot, intent);
-  }
-
-  /**
-   * Build intent object for ProgressionCompiler.
-   * @private
-   */
-  static _buildIntent(stepId, normalizedInput) {
-    // Map steps to compiler intent types
-    switch (stepId) {
-      case 'feats':
-        return {
-          type: 'chooseFeat',
-          featId: normalizedInput.featIds[0] // Compiler handles one at a time
-        };
-
-      case 'talents':
-        return {
-          type: 'chooseTalent',
-          talentId: normalizedInput.talentIds[0]
-        };
-
-      case 'class':
-        return {
-          type: 'confirmClass',
-          classId: normalizedInput.id || normalizedInput.classId
-        };
-
-      // Future: Add other step compilers as they're added to ProgressionCompiler
-      default:
-        throw new ProgressionStepError(
-          `No compiler intent builder for step: ${stepId}`
-        );
-    }
-  }
 }
 
 /**
