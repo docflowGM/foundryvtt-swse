@@ -1,0 +1,520 @@
+{
+  "tabPartialMap": {
+    "character": {
+      "tabs": [
+        {
+          "id": "overview",
+          "label": "Overview",
+          "primary": "identity-strip.hbs",
+          "secondary": [
+            "ability-scores.hbs",
+            "defenses.hbs",
+            "hp-condition-panel.hbs"
+          ],
+          "description": "Quick summary of character vitals and key stats"
+        },
+        {
+          "id": "combat",
+          "label": "Combat",
+          "primary": "attacks-panel.hbs",
+          "secondary": [
+            "initiative-control.hbs",
+            "actions-panel.hbs",
+            "combat-action-table.hbs"
+          ],
+          "description": "Combat actions, attacks, and initiative"
+        },
+        {
+          "id": "skills",
+          "label": "Skills",
+          "primary": "skills-panel.hbs",
+          "secondary": [
+            "skill-actions-panel.hbs",
+            "skill-action-card.hbs"
+          ],
+          "description": "Skill checks and related modifiers"
+        },
+        {
+          "id": "talents",
+          "label": "Talents",
+          "primary": "Talents.hbs",
+          "secondary": [
+            "talent-abilities-panel.hbs",
+            "ability-card.hbs",
+            "xp-panel.hbs"
+          ],
+          "description": "Character talents and tree progression"
+        },
+        {
+          "id": "feats",
+          "label": "Feats",
+          "primary": "feat-actions-panel.hbs",
+          "secondary": [
+            "ability-card.hbs",
+            "item-controls.hbs"
+          ],
+          "description": "Feat list and benefits"
+        },
+        {
+          "id": "force",
+          "label": "Force",
+          "primary": "Force.hbs",
+          "secondary": [
+            "dark-side-panel.hbs",
+            "second-wind-panel.hbs"
+          ],
+          "description": "Force powers and Force points"
+        },
+        {
+          "id": "gear",
+          "label": "Gear",
+          "primary": "inventory-panel.hbs",
+          "secondary": [
+            "inventory-weapon-card.hbs",
+            "inventory-armor-card.hbs",
+            "inventory-item-card.hbs"
+          ],
+          "description": "Inventory, weapons, armor"
+        },
+        {
+          "id": "biography",
+          "label": "Biography",
+          "primary": "persistent-header.hbs",
+          "secondary": [
+            "ability-block.hbs",
+            "suggestion-card.hbs"
+          ],
+          "description": "Character background and flavor"
+        },
+        {
+          "id": "other",
+          "label": "Other",
+          "primary": "crew-action-cards.hbs",
+          "secondary": [
+            "suggestion-card.hbs",
+            "item-controls.hbs"
+          ],
+          "description": "Relationships and linked actors",
+          "suggested_rename": "Companions",
+          "suggested_split": "relationships"
+        }
+      ],
+      "suggested_new_tabs": [
+        {
+          "id": "relationships",
+          "label": "Relationships",
+          "primary": "crew-action-cards.hbs",
+          "secondary": [
+            "suggestion-card.hbs",
+            "item-controls.hbs"
+          ],
+          "priority": "recommended",
+          "reason": "Dedicated space for companion relationships"
+        },
+        {
+          "id": "resources",
+          "label": "Resources",
+          "primary": "xp-panel.hbs",
+          "secondary": [
+            "second-wind-panel.hbs",
+            "dark-side-panel.hbs"
+          ],
+          "priority": "optional",
+          "reason": "Consolidate XP, destiny, second wind, force points"
+        }
+      ]
+    },
+    "droid": {
+      "tabs": [
+        {
+          "id": "overview",
+          "label": "Overview",
+          "primary": "identity-strip.hbs",
+          "secondary": [
+            "ability-scores.hbs",
+            "droid-systems-panel.hbs",
+            "hp-condition-panel.hbs"
+          ],
+          "description": "Droid designation and core specs"
+        },
+        {
+          "id": "combat",
+          "label": "Combat",
+          "primary": "attacks-panel.hbs",
+          "secondary": [
+            "actions-panel.hbs",
+            "combat-action-card.hbs",
+            "defenses.hbs"
+          ],
+          "description": "Combat capabilities and actions"
+        },
+        {
+          "id": "skills",
+          "label": "Skills",
+          "primary": "skills-panel.hbs",
+          "secondary": [
+            "skill-action-card.hbs",
+            "feat-actions-panel.hbs"
+          ],
+          "description": "Droid programming and skills"
+        },
+        {
+          "id": "talents",
+          "label": "Talents",
+          "primary": "Talents.hbs",
+          "secondary": [
+            "talent-abilities-panel.hbs",
+            "ability-card.hbs"
+          ],
+          "description": "Droid talent tree and upgrades"
+        },
+        {
+          "id": "abilities",
+          "label": "Abilities",
+          "primary": "abilities-panel.hbs",
+          "secondary": [
+            "ability-card.hbs",
+            "ability-block.hbs"
+          ],
+          "description": "Droid core abilities and subroutines"
+        },
+        {
+          "id": "systems",
+          "label": "Systems",
+          "primary": "droid-systems-panel.hbs",
+          "secondary": [
+            "droid-builder-budget.hbs",
+            "droid-build-history.hbs",
+            "inventory-panel.hbs"
+          ],
+          "description": "Droid systems, modifications, hardpoints"
+        },
+        {
+          "id": "gear",
+          "label": "Gear",
+          "primary": "inventory-panel.hbs",
+          "secondary": [
+            "inventory-item-card.hbs",
+            "item-controls.hbs"
+          ],
+          "description": "Droid equipment and tools"
+        },
+        {
+          "id": "other",
+          "label": "Other",
+          "primary": "persistent-header.hbs",
+          "secondary": [
+            "crew-action-cards.hbs",
+            "suggestion-card.hbs"
+          ],
+          "description": "Droid relationships and ownership"
+        }
+      ],
+      "suggested_new_tabs": [
+        {
+          "id": "relationships",
+          "label": "Relationships",
+          "primary": "crew-action-cards.hbs",
+          "secondary": ["suggestion-card.hbs"],
+          "priority": "recommended",
+          "reason": "Owner, creator, affiliated entities"
+        },
+        {
+          "id": "build-config",
+          "label": "Build Config",
+          "primary": "droid-builder-budget.hbs",
+          "secondary": [
+            "droid-build-history.hbs",
+            "inventory-panel.hbs"
+          ],
+          "priority": "optional",
+          "reason": "Split from systems tab for builder-focused UI"
+        }
+      ]
+    },
+    "npc": {
+      "tabs": [
+        {
+          "id": "overview",
+          "label": "Overview",
+          "primary": "persistent-header.hbs",
+          "secondary": [
+            "ability-scores.hbs",
+            "defenses.hbs",
+            "hp-condition-panel.hbs"
+          ],
+          "description": "Quick NPC summary and key stats"
+        },
+        {
+          "id": "combat",
+          "label": "Combat",
+          "primary": "attacks-panel.hbs",
+          "secondary": [
+            "combat-action-table.hbs",
+            "actions-panel.hbs",
+            "initiative-control.hbs"
+          ],
+          "description": "Combat abilities and actions"
+        },
+        {
+          "id": "abilities",
+          "label": "Abilities",
+          "primary": "abilities-panel.hbs",
+          "secondary": [
+            "ability-card.hbs",
+            "ability-block.hbs"
+          ],
+          "description": "Core NPC abilities and traits"
+        },
+        {
+          "id": "talents",
+          "label": "Talents",
+          "primary": "Talents.hbs",
+          "secondary": [
+            "talent-abilities-panel.hbs",
+            "ability-card.hbs"
+          ],
+          "description": "NPC talent tree and special abilities"
+        },
+        {
+          "id": "stats",
+          "label": "Stats",
+          "primary": "ability-scores.hbs",
+          "secondary": [
+            "skill-row-static.hbs",
+            "defenses.hbs",
+            "defense-breakdown-tooltip.hbs"
+          ],
+          "description": "Detailed stat breakdowns"
+        },
+        {
+          "id": "force",
+          "label": "Force",
+          "primary": "Force.hbs",
+          "secondary": [
+            "dark-side-panel.hbs",
+            "ability-card.hbs"
+          ],
+          "description": "Force powers (if Force-sensitive)"
+        },
+        {
+          "id": "gear",
+          "label": "Gear",
+          "primary": "inventory-panel.hbs",
+          "secondary": [
+            "inventory-weapon-card.hbs",
+            "inventory-armor-card.hbs",
+            "inventory-item-card.hbs"
+          ],
+          "description": "NPC equipment and possessions"
+        },
+        {
+          "id": "systems",
+          "label": "Systems",
+          "primary": "abilities-panel.hbs",
+          "secondary": [
+            "ability-card.hbs",
+            "feat-actions-panel.hbs"
+          ],
+          "description": "Special abilities and mechanics"
+        },
+        {
+          "id": "beast",
+          "label": "Beast",
+          "primary": "abilities-panel.hbs",
+          "secondary": [
+            "ability-card.hbs",
+            "skill-row-static.hbs"
+          ],
+          "description": "Beast-specific traits (for creatures)"
+        }
+      ],
+      "suggested_new_tabs": [
+        {
+          "id": "relationships",
+          "label": "Relationships",
+          "primary": "crew-action-cards.hbs",
+          "secondary": ["suggestion-card.hbs"],
+          "priority": "recommended",
+          "reason": "Allies, minions, patrons, contacts"
+        },
+        {
+          "id": "notes",
+          "label": "Notes",
+          "primary": "persistent-header.hbs",
+          "secondary": [
+            "suggestion-card.hbs",
+            "ability-block.hbs"
+          ],
+          "priority": "optional",
+          "reason": "DM notes and campaign integration"
+        }
+      ]
+    },
+    "vehicle": {
+      "tabs": [
+        {
+          "id": "overview",
+          "label": "Overview",
+          "primary": "identity-panel.hbs",
+          "secondary": [
+            "hp-condition-panel.hbs",
+            "defenses-panel.hbs",
+            "crew-panel.hbs"
+          ],
+          "description": "Vehicle summary and status"
+        },
+        {
+          "id": "systems",
+          "label": "Systems",
+          "primary": "resource-cartridges.hbs",
+          "secondary": [
+            "damage-threshold-panel.hbs",
+            "inventory-panel.hbs",
+            "item-controls.hbs"
+          ],
+          "description": "Upgrades and modifications"
+        },
+        {
+          "id": "weapons",
+          "label": "Weapons",
+          "primary": "attacks-panel.hbs",
+          "secondary": [
+            "combat-action-table.hbs",
+            "inventory-weapon-card.hbs",
+            "item-controls.hbs"
+          ],
+          "description": "Installed weapons and hardpoints"
+        },
+        {
+          "id": "crew",
+          "label": "Crew",
+          "primary": "crew-panel.hbs",
+          "secondary": [
+            "crew-action-cards.hbs",
+            "skill-action-card.hbs",
+            "item-controls.hbs"
+          ],
+          "description": "Crew assignments and roles"
+        }
+      ],
+      "suggested_new_tabs": [
+        {
+          "id": "cargo",
+          "label": "Cargo",
+          "primary": "inventory-panel.hbs",
+          "secondary": [
+            "inventory-item-card.hbs",
+            "item-controls.hbs"
+          ],
+          "priority": "recommended",
+          "reason": "Split from systems; cargo vs upgrades distinction"
+        },
+        {
+          "id": "hangar",
+          "label": "Hangar",
+          "primary": "crew-action-cards.hbs",
+          "secondary": ["item-controls.hbs"],
+          "priority": "optional",
+          "reason": "Multi-vehicle management (fleets, wings)"
+        }
+      ]
+    }
+  },
+  "partialReusability": {
+    "mostUsed": [
+      {
+        "rank": 1,
+        "partial": "ability-card.hbs",
+        "uses": 12,
+        "score": "████████████"
+      },
+      {
+        "rank": 2,
+        "partial": "inventory-panel.hbs",
+        "uses": 8,
+        "score": "███████████"
+      },
+      {
+        "rank": 3,
+        "partial": "attacks-panel.hbs",
+        "uses": 8,
+        "score": "███████████"
+      },
+      {
+        "rank": 4,
+        "partial": "ability-scores.hbs",
+        "uses": 7,
+        "score": "██████████"
+      },
+      {
+        "rank": 5,
+        "partial": "defenses.hbs",
+        "uses": 6,
+        "score": "█████████"
+      },
+      {
+        "rank": 6,
+        "partial": "item-controls.hbs",
+        "uses": 6,
+        "score": "█████████"
+      },
+      {
+        "rank": 7,
+        "partial": "abilities-panel.hbs",
+        "uses": 5,
+        "score": "████████"
+      },
+      {
+        "rank": 8,
+        "partial": "persistent-header.hbs",
+        "uses": 5,
+        "score": "████████"
+      },
+      {
+        "rank": 9,
+        "partial": "crew-action-cards.hbs",
+        "uses": 4,
+        "score": "███████"
+      },
+      {
+        "rank": 10,
+        "partial": "suggestion-card.hbs",
+        "uses": 4,
+        "score": "███████"
+      }
+    ]
+  },
+  "implementationPhases": {
+    "phase1": {
+      "name": "Must Have",
+      "priority": "critical",
+      "items": [
+        "All current tabs with suggested partials",
+        "All identity/header partials on overview tabs",
+        "ability-card.hbs implementation",
+        "inventory-panel.hbs implementation",
+        "attacks-panel.hbs implementation"
+      ]
+    },
+    "phase2": {
+      "name": "Should Have",
+      "priority": "high",
+      "items": [
+        "Separate 'Relationships' tab (Character + Droid + NPC)",
+        "Separate 'Cargo' tab (Vehicle)",
+        "Rename 'other' to 'Companions' for clarity"
+      ]
+    },
+    "phase3": {
+      "name": "Nice to Have",
+      "priority": "medium",
+      "items": [
+        "Resources tab consolidation (Character)",
+        "Build Config tab (Droid)",
+        "Notes tab (NPC)",
+        "Hangar tab (Vehicle fleets)"
+      ]
+    }
+  }
+}

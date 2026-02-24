@@ -1,0 +1,111 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                       TAB → PARTIAL QUICK REFERENCE                             ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CHARACTER SHEET (9 tabs)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  overview      →  identity-strip.hbs + ability-scores.hbs + defenses.hbs
+  combat        →  attacks-panel.hbs + initiative-control.hbs + actions-panel.hbs
+  skills        →  skills-panel.hbs + skill-actions-panel.hbs
+  talents       →  Talents.hbs + talent-abilities-panel.hbs + xp-panel.hbs
+  feats         →  feat-actions-panel.hbs + ability-card.hbs
+  force         →  Force.hbs + dark-side-panel.hbs
+  gear          →  inventory-panel.hbs + inventory-weapon-card.hbs + inventory-armor-card.hbs
+  biography     →  persistent-header.hbs + ability-block.hbs + suggestion-card.hbs
+  other         →  crew-action-cards.hbs + suggestion-card.hbs
+
+  🔔 NEW TAB SUGGESTION: "Relationships" (split from "other")
+     relationships → crew-action-cards.hbs + item-controls.hbs
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DROID SHEET (8 tabs)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  overview      →  identity-strip.hbs + ability-scores.hbs + droid-systems-panel.hbs
+  combat        →  attacks-panel.hbs + actions-panel.hbs + defenses.hbs
+  skills        →  skills-panel.hbs + skill-action-card.hbs
+  talents       →  Talents.hbs + talent-abilities-panel.hbs
+  abilities     →  abilities-panel.hbs + ability-card.hbs
+  systems       →  droid-systems-panel.hbs + droid-builder-budget.hbs + droid-build-history.hbs
+  gear          →  inventory-panel.hbs + inventory-item-card.hbs
+  other         →  persistent-header.hbs + crew-action-cards.hbs
+
+  🔔 NEW TAB SUGGESTIONS:
+     relationships → crew-action-cards.hbs
+     build-config  → droid-builder-budget.hbs + droid-build-history.hbs
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+NPC SHEET (9 tabs)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  overview      →  persistent-header.hbs + ability-scores.hbs + defenses.hbs
+  combat        →  attacks-panel.hbs + combat-action-table.hbs + actions-panel.hbs
+  abilities     →  abilities-panel.hbs + ability-card.hbs
+  talents       →  Talents.hbs + talent-abilities-panel.hbs
+  stats         →  ability-scores.hbs + skill-row-static.hbs + defenses.hbs
+  force         →  Force.hbs + dark-side-panel.hbs (if applicable)
+  gear          →  inventory-panel.hbs + inventory-weapon-card.hbs + inventory-armor-card.hbs
+  systems       →  abilities-panel.hbs + ability-card.hbs + feat-actions-panel.hbs
+  beast         →  abilities-panel.hbs + ability-card.hbs + skill-row-static.hbs
+
+  🔔 NEW TAB SUGGESTIONS:
+     relationships → crew-action-cards.hbs
+     notes         → persistent-header.hbs + suggestion-card.hbs
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VEHICLE SHEET (4 tabs) + SUGGESTED NEW TABS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  overview      →  identity-panel.hbs + hp-condition-panel.hbs + defenses-panel.hbs
+  systems       →  resource-cartridges.hbs + damage-threshold-panel.hbs
+  weapons       →  attacks-panel.hbs + combat-action-table.hbs + inventory-weapon-card.hbs
+  crew          →  crew-panel.hbs + crew-action-cards.hbs
+
+  🔔 NEW TAB SUGGESTIONS (RECOMMENDED):
+     cargo        → inventory-panel.hbs + inventory-item-card.hbs (split from systems)
+     hangar       → crew-action-cards.hbs (adapted, for vehicle fleets)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                    TOP 10 MOST USED PARTIALS (Reusability)                     ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+  1️⃣  ability-card.hbs                 [████████████] 12+ uses
+  2️⃣  inventory-panel.hbs              [███████████] 8+ uses
+  3️⃣  attacks-panel.hbs                [███████████] 8+ uses
+  4️⃣  ability-scores.hbs               [██████████] 7+ uses
+  5️⃣  defenses.hbs                     [█████████] 6+ uses
+  6️⃣  item-controls.hbs                [█████████] 6+ uses
+  7️⃣  abilities-panel.hbs              [████████] 5+ uses
+  8️⃣  persistent-header.hbs            [████████] 5+ uses
+  9️⃣  crew-action-cards.hbs            [███████] 4+ uses
+  🔟 suggestion-card.hbs               [███████] 4+ uses
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                           IMPLEMENTATION PRIORITY                               ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+PHASE 1 (Must Have)
+├─ Implement all current tabs with suggested partials ✅
+├─ All identity/header partials on overview tabs ✅
+├─ ability-card.hbs (most versatile) ✅
+├─ inventory-panel.hbs for gear/cargo ✅
+└─ attacks-panel.hbs for combat ✅
+
+PHASE 2 (Should Have)
+├─ ⭐ Separate "Relationships" tab (Character + Droid + NPC)
+├─ ⭐ Separate "Cargo" tab (Vehicle)
+└─ ⭐ Rename "other" to "Companions" (clarity)
+
+PHASE 3 (Nice to Have)
+├─ 💡 "Resources" tab consolidation (Character)
+├─ 💡 "Build Config" tab (Droid)
+├─ 💡 "Notes" tab (NPC)
+└─ 💡 "Hangar" tab (Vehicle fleets)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
