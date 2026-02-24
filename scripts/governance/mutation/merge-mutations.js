@@ -42,32 +42,57 @@ import { swseLogger } from '../../utils/logger.js';
 export function mergeMutationPlans(plans = [], options = {}) {
   const { detectConflicts = true } = options;
 
-  if (!Array.isArray(plans) || plans.length === 0) {
+  // Handle single plan passed directly (convert to array)
+  const planArray = Array.isArray(plans) ? plans : (plans && Object.keys(plans).length > 0 ? [plans] : []);
+
+  if (!Array.isArray(planArray) || planArray.length === 0) {
     return { set: {}, add: {}, delete: {} };
   }
 
   swseLogger.debug('mergeMutationPlans', {
-    count: plans.length,
+    count: planArray.length,
     detectConflicts
   });
 
   try {
-    // Phase 1: Merge DELETE buckets
+    // Phase 1: Initialize merged plan with all buckets
     const merged = {
+      create: {},
       set: {},
       add: {},
       delete: {}
     };
 
+    const createConflicts = [];
     const deleteConflicts = [];
     const setConflicts = [];
     const addDeleteConflicts = [];
 
     // Collect all operations
-    for (let i = 0; i < plans.length; i++) {
-      const plan = plans[i];
+    for (let i = 0; i < planArray.length; i++) {
+      const plan = planArray[i];
       if (!plan || typeof plan !== 'object') {
         continue;
+      }
+
+      // PHASE 2: Process CREATE
+      if (plan.create && plan.create.actors && Array.isArray(plan.create.actors)) {
+        merged.create.actors = merged.create.actors || [];
+        for (const spec of plan.create.actors) {
+          if (!spec || !spec.temporaryId) {
+            continue;
+          }
+          // Check for duplicate temporaryId
+          const exists = merged.create.actors.some(s => s.temporaryId === spec.temporaryId);
+          if (exists) {
+            createConflicts.push({
+              temporaryId: spec.temporaryId,
+              stepIndex: i,
+              conflictType: 'duplicate_create'
+            });
+          }
+          merged.create.actors.push(spec);
+        }
       }
 
       // Process DELETE
@@ -137,6 +162,20 @@ export function mergeMutationPlans(plans = [], options = {}) {
 
     // Phase 3: Report conflicts if detected
     if (detectConflicts) {
+      // PHASE 2: Check CREATE conflicts
+      if (createConflicts.length > 0) {
+        const first = createConflicts[0];
+        throw new DeltaConflictError(
+          `CREATE conflict: duplicate temporaryId "${first.temporaryId}"`,
+          {
+            temporaryId: first.temporaryId,
+            conflictType: first.conflictType,
+            stepIndex: first.stepIndex,
+            allConflicts: createConflicts
+          }
+        );
+      }
+
       if (setConflicts.length > 0) {
         const first = setConflicts[0];
         throw new DeltaConflictError(
@@ -165,6 +204,9 @@ export function mergeMutationPlans(plans = [], options = {}) {
     }
 
     // Clean empty buckets
+    if (!merged.create || !merged.create.actors || merged.create.actors.length === 0) {
+      delete merged.create;
+    }
     if (Object.keys(merged.delete).length === 0) {
       delete merged.delete;
     }
@@ -176,10 +218,12 @@ export function mergeMutationPlans(plans = [], options = {}) {
     }
 
     swseLogger.debug('mergeMutationPlans: Complete', {
+      hasCreates: !!merged.create && merged.create.actors && merged.create.actors.length > 0,
       hasSets: !!merged.set && Object.keys(merged.set).length > 0,
       hasAdds: !!merged.add && Object.keys(merged.add).length > 0,
       hasDeletes: !!merged.delete && Object.keys(merged.delete).length > 0,
       conflicts: {
+        createConflicts: createConflicts.length,
         setConflicts: setConflicts.length,
         addDeleteConflicts: addDeleteConflicts.length
       }
