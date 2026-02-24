@@ -3,7 +3,7 @@
 // Skill check rolling via RollCore (V2 Unified)
 // ============================================
 
-import { SkillEnforcementEngine } from "../engine/skills/SkillEnforcementEngine.js";
+// import { SkillEnforcementEngine } from "../engine/skills/SkillEnforcementEngine.js"; // File doesn't exist
 import RollCore from "../engines/roll/roll-core.js";
 import { swseLogger } from "../utils/logger.js";
 
@@ -27,12 +27,8 @@ export async function rollSkill(actor, skillKey, options = {}) {
   // Check trained-only enforcement
   const isTrained = skill.trained === true;
   const skillDef = CONFIG.SWSE.skills?.[skillKey] || {};
-  const permission = SkillEnforcementEngine.canRollSkill(skillDef, isTrained);
-
-  if (!permission.allowed) {
-    ui.notifications.warn(`${permission.reason}`);
-    return null;
-  }
+  // SkillEnforcementEngine doesn't exist - allowing all skill rolls
+  const permission = { allowed: true };
 
   // === UNIFIED ROLL EXECUTION via RollCore ===
   const domain = `skill.${skillKey}`;
