@@ -2,6 +2,7 @@ import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
 import { InventoryEngine } from "../../engine/inventory/InventoryEngine.js";
 import { CombatRollConfigDialog } from "../../apps/combat/combat-roll-config-dialog.js";
 import { MentorChatDialog } from "../../mentor/mentor-chat-dialog.js";
+import { DropResolutionEngine } from "../../engines/interactions/drop-resolution-engine.js";
 
 const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api;
 
@@ -360,5 +361,34 @@ export class SWSEV2CharacterSheet extends
   _openMentorConversation() {
     const actor = this.actor;
     new MentorChatDialog(actor).render(true);
+  }
+
+  /* ============================================================
+     DROP HANDLING (TAB-AGNOSTIC)
+  ============================================================ */
+
+  async _onDrop(event) {
+    event.preventDefault();
+
+    // Extract drag data
+    const data = TextEditor.getDragEventData(event);
+    if (!data) return;
+
+    // Resolve drop to mutationPlan (pure classification)
+    const mutationPlan = await DropResolutionEngine.resolve({
+      actor: this.actor,
+      dropData: data
+    });
+
+    // If no plan (duplicate or invalid), silently skip
+    if (!mutationPlan) return;
+
+    // Apply mutations via sovereign ActorEngine
+    try {
+      await ActorEngine.apply(this.actor, mutationPlan);
+    } catch (err) {
+      console.error('Drop application failed:', err);
+      ui?.notifications?.error?.(`Failed to add dropped item: ${err.message}`);
+    }
   }
 }

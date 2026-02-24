@@ -9,7 +9,7 @@ import { DroidBuilderApp } from '../../apps/droid-builder-app.js';
 import { SWSELevelUp } from '../../apps/swse-levelup.js';
 import { rollSkill } from '../../rolls/skills.js';
 import { rollAttack } from '../../combat/rolls/attacks.js';
-import { DropService } from '../../services/drop-service.js';
+import { DropResolutionEngine } from '../../engines/interactions/drop-resolution-engine.js';
 import { isXPEnabled } from '../../engines/progression/xp-engine.js';
 import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
 
@@ -519,11 +519,32 @@ export class SWSEV2DroidSheet extends
   }
 
   /* -------- -------- -------- -------- -------- -------- -------- -------- */
-  /* DRAG & DROP HANDLING                                                     */
+  /* DRAG & DROP HANDLING (Sovereign via DropResolutionEngine)                 */
   /* -------- -------- -------- -------- -------- -------- -------- -------- */
 
   async _onDrop(event) {
-    return DropService.onDrop(event, this);
+    event.preventDefault();
+
+    // Extract drag data
+    const data = TextEditor.getDragEventData(event);
+    if (!data) return;
+
+    // Resolve drop to mutationPlan (pure classification)
+    const mutationPlan = await DropResolutionEngine.resolve({
+      actor: this.actor,
+      dropData: data
+    });
+
+    // If no plan (duplicate or invalid), silently skip
+    if (!mutationPlan) return;
+
+    // Apply mutations via sovereign ActorEngine
+    try {
+      await ActorEngine.apply(this.actor, mutationPlan);
+    } catch (err) {
+      console.error('Drop application failed:', err);
+      ui?.notifications?.error?.(`Failed to add dropped item: ${err.message}`);
+    }
   }
 
   /* ------------------------------------------------------------------------ */

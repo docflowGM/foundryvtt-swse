@@ -7,7 +7,7 @@ import { RenderAssertions } from '../../core/render-assertions.js';
 import { initiateItemSale } from '../../apps/item-selling-system.js';
 import { SWSELevelUp } from '../../apps/swse-levelup.js';
 import { rollAttack } from '../../combat/rolls/attacks.js';
-import { DropService } from '../../services/drop-service.js';
+import { DropResolutionEngine } from '../../engines/interactions/drop-resolution-engine.js';
 import { SubsystemEngine } from '../../engines/combat/starship/subsystem-engine.js';
 import { EnhancedShields } from '../../engines/combat/starship/enhanced-shields.js';
 import { EnhancedEngineer } from '../../engines/combat/starship/enhanced-engineer.js';
@@ -549,7 +549,28 @@ export class SWSEV2VehicleSheet extends
   /* -------- -------- -------- -------- -------- -------- -------- -------- */
 
   async _onDrop(event) {
-    return DropService.onDrop(event, this);
+    event.preventDefault();
+
+    // Extract drag data
+    const data = TextEditor.getDragEventData(event);
+    if (!data) return;
+
+    // Resolve drop to mutationPlan (pure classification)
+    const mutationPlan = await DropResolutionEngine.resolve({
+      actor: this.actor,
+      dropData: data
+    });
+
+    // If no plan (duplicate or invalid), silently skip
+    if (!mutationPlan) return;
+
+    // Apply mutations via sovereign ActorEngine
+    try {
+      await ActorEngine.apply(this.actor, mutationPlan);
+    } catch (err) {
+      console.error('Drop application failed:', err);
+      ui?.notifications?.error?.(`Failed to add dropped item: ${err.message}`);
+    }
   }
 
   /* ------------------------------------------------------------------------ */
