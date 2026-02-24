@@ -3,7 +3,7 @@
  * Registers Dark Side Devotee talent mechanics and macros with the system
  */
 
-import DarkSideDevoteeMechanics from './dark-side-devotee-mechanics.js';
+import DarkSideDevoteeMechanics from '../engines/talent/dark-side-devotee-mechanics.js';
 import DarkSideDevoteeMacros from './dark-side-devotee-macros.js';
 import { SWSELogger } from '../utils/logger.js';
 

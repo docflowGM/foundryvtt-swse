@@ -3,7 +3,7 @@
  * Registers Dark Side talent mechanics and macros with the system
  */
 
-import DarkSideTalentMechanics from './dark-side-talent-mechanics.js';
+import DarkSideTalentMechanics from '../engines/talent/dark-side-talent-mechanics.js';
 import DarkSideTalentMacros from './dark-side-talent-macros.js';
 import { SWSELogger } from '../utils/logger.js';
 

@@ -4,7 +4,7 @@
  * Register these in macro-functions.js to make them available in hotbars
  */
 
-import LightSideTalentMechanics from './light-side-talent-mechanics.js';
+import LightSideTalentMechanics from '../engines/talent/light-side-talent-mechanics.js';
 import { SWSELogger } from '../utils/logger.js';
 
 export class LightSideTalentMacros {

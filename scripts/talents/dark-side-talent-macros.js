@@ -4,7 +4,7 @@
  * Register these in macro-functions.js to make them available in hotbars
  */
 
-import DarkSideTalentMechanics from './dark-side-talent-mechanics.js';
+import DarkSideTalentMechanics from '../engines/talent/dark-side-talent-mechanics.js';
 import { SWSELogger } from '../utils/logger.js';
 import { createChatMessage } from '../core/document-api-v13.js';
 
