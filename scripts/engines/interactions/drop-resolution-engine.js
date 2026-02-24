@@ -8,7 +8,8 @@
  * - Normalize compendium/UUID sources
  * - Classify by document type and item type
  * - Build declarative mutationPlan
- * - Return plan only (no mutations)
+ * - Include UI target tab for post-drop feedback
+ * - Return plan + tab only (no mutations)
  *
  * Architecture:
  * - Tab-agnostic (drop classification independent of sheet location)
@@ -16,20 +17,24 @@
  * - Duplicate-aware (silent skip for duplicates)
  * - Stack-aware (gear quantity handling)
  * - Sovereign (returns data only, never mutates)
+ * - UI-informed (includes uiTargetTab for tab highlighting)
  *
  * Usage:
- *   const plan = await DropResolutionEngine.resolve({ actor, dropData });
- *   if (plan) await ActorEngine.apply(actor, plan);
+ *   const result = await DropResolutionEngine.resolve({ actor, dropData });
+ *   if (result) {
+ *     await ActorEngine.apply(actor, result.mutationPlan);
+ *     sheet._pulseTab(result.uiTargetTab);  // UI feedback
+ *   }
  */
 
 export class DropResolutionEngine {
   /**
-   * Main entry point: resolve drop to mutationPlan
+   * Main entry point: resolve drop to mutationPlan + UI feedback
    *
    * @param {Object} config
    * @param {Actor} config.actor - target actor
    * @param {Object} config.dropData - drag event data
-   * @returns {Promise<Object|null>} mutationPlan or null if invalid/duplicate
+   * @returns {Promise<Object|null>} { mutationPlan, uiTargetTab } or null if invalid/duplicate
    */
   static async resolve({ actor, dropData }) {
     if (!actor) {
@@ -121,7 +126,7 @@ export class DropResolutionEngine {
    * @private
    * @param {Actor} actor
    * @param {Item} item
-   * @returns {Object|null} mutationPlan or null
+   * @returns {Object|null} { mutationPlan, uiTargetTab } or null
    */
   static _handleItemDrop(actor, item) {
     const itemType = item.type;
@@ -142,7 +147,7 @@ export class DropResolutionEngine {
    * @private
    * @param {Actor} actor - target actor
    * @param {Actor} droppedActor - dropped actor
-   * @returns {Object|null} mutationPlan or null
+   * @returns {Object|null} { mutationPlan, uiTargetTab } or null
    */
   static _handleActorDrop(actor, droppedActor) {
     // Reject vehicle cross-drops
@@ -173,9 +178,12 @@ export class DropResolutionEngine {
     };
 
     return {
-      update: {
-        'system.relationships': [...relationships, newRelationship]
-      }
+      mutationPlan: {
+        update: {
+          'system.relationships': [...relationships, newRelationship]
+        }
+      },
+      uiTargetTab: 'other'  // UI feedback: highlight "Other" tab
     };
   }
 }
@@ -183,8 +191,8 @@ export class DropResolutionEngine {
 /**
  * DROP_RULES: Type-to-handler mapping
  *
- * Each handler is a pure function: (actor, item) => mutationPlan | null
- * Handlers check for duplicates and return null for skip, or mutationPlan for create.
+ * Each handler is a pure function: (actor, item) => { mutationPlan, uiTargetTab } | null
+ * Handlers check for duplicates and return null for skip, or { mutationPlan, uiTargetTab } for create.
  */
 
 function handleTalent(actor, item) {
@@ -195,7 +203,10 @@ function handleTalent(actor, item) {
     return null;
   }
 
-  return _createItemMutation(item);
+  return {
+    mutationPlan: _createItemMutation(item),
+    uiTargetTab: 'talents'  // Highlight talents tab
+  };
 }
 
 function handleFeat(actor, item) {
@@ -210,17 +221,26 @@ function handleFeat(actor, item) {
     }
   }
 
-  return _createItemMutation(item);
+  return {
+    mutationPlan: _createItemMutation(item),
+    uiTargetTab: 'talents'  // Highlight talents tab (feats usually on talents tab)
+  };
 }
 
 function handleWeapon(actor, item) {
   // Weapons allow multiples (separate entries)
-  return _createItemMutation(item);
+  return {
+    mutationPlan: _createItemMutation(item),
+    uiTargetTab: 'combat'  // Highlight combat tab
+  };
 }
 
 function handleArmor(actor, item) {
   // Armor allows multiples (separate entries)
-  return _createItemMutation(item);
+  return {
+    mutationPlan: _createItemMutation(item),
+    uiTargetTab: 'inventory'  // Highlight inventory tab
+  };
 }
 
 function handleGear(actor, item) {
@@ -234,29 +254,41 @@ function handleGear(actor, item) {
     if (existing) {
       // Increment quantity instead of creating new
       return {
-        updateEmbedded: [
-          {
-            _id: existing.id,
-            update: {
-              'system.quantity': (existing.system?.quantity ?? 1) + 1
+        mutationPlan: {
+          updateEmbedded: [
+            {
+              _id: existing.id,
+              update: {
+                'system.quantity': (existing.system?.quantity ?? 1) + 1
+              }
             }
-          }
-        ]
+          ]
+        },
+        uiTargetTab: 'inventory'  // Highlight inventory tab
       };
     }
   }
 
-  return _createItemMutation(item);
+  return {
+    mutationPlan: _createItemMutation(item),
+    uiTargetTab: 'inventory'  // Highlight inventory tab
+  };
 }
 
 function handleEnergyShield(actor, item) {
   // Energy shields create separate entries (only one is active)
-  return _createItemMutation(item);
+  return {
+    mutationPlan: _createItemMutation(item),
+    uiTargetTab: 'inventory'  // Highlight inventory tab
+  };
 }
 
 function handleForcePower(actor, item) {
   // Force powers are always allowed as separate entries (never blocked)
-  return _createItemMutation(item);
+  return {
+    mutationPlan: _createItemMutation(item),
+    uiTargetTab: 'force'  // Highlight force tab
+  };
 }
 
 function handleClassFeature(actor, item) {
@@ -265,8 +297,16 @@ function handleClassFeature(actor, item) {
   return null;
 }
 
+function handleEquipment(actor, item) {
+  // Equipment (generic) goes to inventory
+  return {
+    mutationPlan: _createItemMutation(item),
+    uiTargetTab: 'inventory'  // Highlight inventory tab
+  };
+}
+
 /**
- * Shared helper: create item mutation
+ * Shared helper: create item mutation with embedded format
  *
  * @private
  * @param {Item} item
@@ -287,6 +327,7 @@ function _createItemMutation(item) {
  * DROP_RULES mapping
  *
  * Associates item type → handler function
+ * Returns { mutationPlan, uiTargetTab } or null
  */
 const DROP_RULES = {
   talent: handleTalent,
@@ -296,5 +337,6 @@ const DROP_RULES = {
   gear: handleGear,
   energyShield: handleEnergyShield,
   forcePower: handleForcePower,
-  classFeature: handleClassFeature
+  classFeature: handleClassFeature,
+  equipment: handleEquipment
 };

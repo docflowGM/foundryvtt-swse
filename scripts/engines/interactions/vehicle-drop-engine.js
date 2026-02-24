@@ -8,33 +8,38 @@
  * - Route by document type and item type
  * - Classify by vehicle domain (armament, cargo, crew, hangar)
  * - Build declarative mutationPlan
- * - Return plan only (no mutations)
+ * - Include UI target tab for post-drop feedback
+ * - Return plan + tab only (no mutations)
  *
  * Architecture:
  * - Vehicle-only (separate from character/NPC/droid drops)
  * - Type-aware (vehicleWeapon vs equipment vs actor vs vehicle)
  * - Domain-enforced (armament ≠ cargo ≠ crew ≠ hangar)
  * - Sovereign (returns data only, never mutates)
+ * - UI-informed (includes uiTargetTab for tab highlighting)
  *
  * Usage:
- *   const plan = await VehicleDropEngine.resolve({ actor, dropData });
- *   if (plan) await ActorEngine.apply(actor, plan);
+ *   const result = await VehicleDropEngine.resolve({ actor, dropData });
+ *   if (result) {
+ *     await ActorEngine.apply(actor, result.mutationPlan);
+ *     sheet._pulseTab(result.uiTargetTab);  // UI feedback
+ *   }
  *
  * Domain Separation:
- * - VehicleWeapon → armament system (combat)
- * - Equipment/other items → cargo (inventory)
- * - Actor (NPC/character/droid) → crew (command)
- * - Vehicle → hangar/wing (transport)
+ * - VehicleWeapon → armament system (combat tab)
+ * - Equipment/other items → cargo (inventory tab)
+ * - Actor (NPC/character/droid) → crew (crew tab)
+ * - Vehicle → hangar/wing (hangar tab - future)
  */
 
 export class VehicleDropEngine {
   /**
-   * Main entry point: resolve vehicle drop to mutationPlan
+   * Main entry point: resolve vehicle drop to mutationPlan + UI feedback
    *
    * @param {Object} config
    * @param {Actor} config.actor - target vehicle actor
    * @param {Object} config.dropData - drag event data
-   * @returns {Promise<Object|null>} mutationPlan or null if invalid/duplicate
+   * @returns {Promise<Object|null>} { mutationPlan, uiTargetTab } or null if invalid/duplicate
    */
   static async resolve({ actor, dropData }) {
     if (!actor || actor.type !== 'vehicle') {
@@ -187,12 +192,15 @@ export class VehicleDropEngine {
    */
   static _addWeapon(vehicle, weapon) {
     return {
-      createEmbedded: [
-        {
-          type: 'Item',
-          data: weapon.toObject()
-        }
-      ]
+      mutationPlan: {
+        createEmbedded: [
+          {
+            type: 'Item',
+            data: weapon.toObject()
+          }
+        ]
+      },
+      uiTargetTab: 'armament'  // Highlight armament tab
     };
   }
 
@@ -227,26 +235,32 @@ export class VehicleDropEngine {
       if (existing) {
         // Increment quantity instead of creating new
         return {
-          updateEmbedded: [
-            {
-              _id: existing.id,
-              update: {
-                'system.quantity': (existing.system?.quantity ?? 1) + 1
+          mutationPlan: {
+            updateEmbedded: [
+              {
+                _id: existing.id,
+                update: {
+                  'system.quantity': (existing.system?.quantity ?? 1) + 1
+                }
               }
-            }
-          ]
+            ]
+          },
+          uiTargetTab: 'cargo'  // Highlight cargo tab
         };
       }
     }
 
     // Create new cargo entry
     return {
-      createEmbedded: [
-        {
-          type: 'Item',
-          data: item.toObject()
-        }
-      ]
+      mutationPlan: {
+        createEmbedded: [
+          {
+            type: 'Item',
+            data: item.toObject()
+          }
+        ]
+      },
+      uiTargetTab: 'cargo'  // Highlight cargo tab
     };
   }
 
@@ -286,9 +300,12 @@ export class VehicleDropEngine {
     };
 
     return {
-      update: {
-        'system.crew': [...crew, crewMember]
-      }
+      mutationPlan: {
+        update: {
+          'system.crew': [...crew, crewMember]
+        }
+      },
+      uiTargetTab: 'crew'  // Highlight crew tab
     };
   }
 }
