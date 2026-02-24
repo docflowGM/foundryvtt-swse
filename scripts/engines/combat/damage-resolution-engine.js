@@ -1,5 +1,6 @@
 import { ModifierEngine } from "../effects/modifiers/ModifierEngine.js";
 import { ThresholdEngine } from "./threshold-engine.js";
+import { DamageMitigationManager } from "./damage-mitigation-manager.js";
 
 /**
  * DamageResolutionEngine — Unified damage orchestration
@@ -47,13 +48,13 @@ export class DamageResolutionEngine {
   /**
    * Resolve damage application.
    *
-   * Pure calculation pipeline:
+   * Pure calculation pipeline (V2 Locked Order):
    * 1. Collect Bonus HP (ModifierEngine domain, highest only)
-   * 2. Subtract damage: Bonus HP first, then HP
-   * 3. Check Damage Threshold
+   * 2. Apply DamageMitigationManager: SR → DR → Temp HP → HP
+   * 3. Check Damage Threshold (uses mitigated damage)
    * 4. Calculate condition track impact
    * 5. Determine death/destroy eligibility
-   * 6. Return complete resolution state
+   * 6. Return complete resolution state with mitigation breakdown
    *
    * @param {Object} params
    * @param {Actor} params.actor - Target actor (read-only)
@@ -157,12 +158,53 @@ export class DamageResolutionEngine {
     }
 
     /* ===================================================================
-       PHASE 2: HP REDUCTION
+       PHASE 2: DAMAGE MITIGATION (V2 Locked Order)
+       SR → DR → Temp HP → HP
        ================================================================= */
 
+    let mitigationResult = {};
+    try {
+      mitigationResult = DamageMitigationManager.resolve({
+        damage: remainingDamage,
+        actor,
+        damageType,
+        weapon: options.weapon || null
+      });
+
+      // Validation (debug only)
+      const issues = DamageMitigationManager.validate(mitigationResult);
+      if (issues.length > 0) {
+        console.warn('DamageResolutionEngine: Mitigation validation issues:', issues);
+      }
+    } catch (err) {
+      console.warn('DamageResolutionEngine: DamageMitigationManager failed:', err);
+      // Fallback: use raw damage (no mitigation)
+      mitigationResult = {
+        originalDamage: remainingDamage,
+        afterShield: remainingDamage,
+        afterDR: remainingDamage,
+        afterTempHP: remainingDamage,
+        hpDamage: remainingDamage,
+        shield: { applied: 0, degraded: 0, remaining: 0, source: 'Error' },
+        damageReduction: { applied: 0, source: '', bypassed: false },
+        tempHP: { absorbed: 0, before: 0, after: 0 },
+        breakdown: []
+      };
+    }
+
+    // Apply mitigated damage to HP
     const maxHP = system.hp?.max ?? 100;
-    result.damageToHP = remainingDamage;
-    result.hpAfter = Math.max(0, result.hpBefore - remainingDamage);
+    result.damageToHP = mitigationResult.hpDamage;
+    result.hpAfter = Math.max(0, result.hpBefore - mitigationResult.hpDamage);
+
+    // Store mitigation details in result
+    result.mitigation = {
+      originalDamage: mitigationResult.originalDamage,
+      shield: mitigationResult.shield,
+      damageReduction: mitigationResult.damageReduction,
+      tempHP: mitigationResult.tempHP,
+      breakdown: mitigationResult.breakdown
+    };
 
     /* ===================================================================
        PHASE 3: DAMAGE THRESHOLD CHECK

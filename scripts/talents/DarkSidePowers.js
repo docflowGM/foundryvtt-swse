@@ -234,8 +234,8 @@ export class DarkSidePowers {
     });
 
     for (const dmg of applicableDamages) {
-      const newHp = Math.max(0, actor.system.hp?.value - dmg.damage);
-      await ActorEngine.updateActor(actor, { 'system.hp.value': newHp });
+      // Use proper damage application pipeline (ActorEngine + Thresholds)
+      await actor.applyDamage(dmg.damage);
 
       const messageContent = `
         <div class="swse-wrath-damage">
@@ -310,8 +310,8 @@ export class DarkSidePowers {
     if (!roll) { SWSELogger.error('Damage roll failed'); return; }
     const damageAmount = roll.total;
 
-    const newHp = Math.max(0, targetToken.actor.system.hp.value - damageAmount);
-    await ActorEngine.updateActor(targetToken.actor, { 'system.hp.value': newHp });
+    // Use proper damage application pipeline (ActorEngine + Thresholds)
+    await targetToken.actor.applyDamage(damageAmount);
 
     const chatContent = `
       <div class="swse-channel-aggression">
@@ -1234,8 +1234,8 @@ export class DarkSidePowers {
       if (!damageRoll) { SWSELogger.error('Damage roll failed'); continue; }
       const damageAmount = damageRoll.total;
 
-      const newHp = Math.max(0, targetActor.system.hp.value - damageAmount);
-      await ActorEngine.updateActor(targetActor, { 'system.hp.value': newHp });
+      // Use proper damage application pipeline (ActorEngine + Thresholds)
+      await targetActor.applyDamage(damageAmount);
 
       const chatContent = `
         <div class="swse-affliction-damage">

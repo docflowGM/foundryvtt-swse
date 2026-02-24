@@ -1,0 +1,35 @@
+{{!-- Shield Rating Display Partial
+     Pure display — no logic, no mutations
+     Reads: system.derived.shield.* (engine-computed)
+--}}
+
+<section class="summary-block sr-block {{#unless actor.system.derived.shield.active}}inactive{{/unless}}">
+  <header class="summary-header">
+    <span class="header-label">Shield Rating</span>
+  </header>
+
+  {{#if actor.system.derived.shield.max}}
+    <div class="sr-content">
+      <div class="sr-bar">
+        <div class="sr-fill"
+             style="width: {{percentage actor.system.derived.shield.current actor.system.derived.shield.max}}%;"></div>
+      </div>
+
+      <div class="sr-values">
+        <span class="sr-current">SR {{actor.system.derived.shield.current}}</span>
+        <span class="sr-separator">/</span>
+        <span class="sr-max">{{actor.system.derived.shield.max}}</span>
+      </div>
+
+      {{#if actor.system.derived.shield.source}}
+        <div class="sr-source">
+          {{actor.system.derived.shield.source}}
+        </div>
+      {{/if}}
+    </div>
+  {{else}}
+    <div class="sr-none">
+      <em>None</em>
+    </div>
+  {{/if}}
+</section>

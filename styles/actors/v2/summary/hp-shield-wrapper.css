@@ -1,0 +1,121 @@
+/* HP + Shield Rating Visual Wrapper
+   SR creates a glowing ring around HP
+   Animated depletion + recharge
+   No logic — pure display and animation */
+
+.hp-shield-wrapper {
+  position: relative;
+  display: inline-block;
+  --sr-percent: 0%;
+  transition: transform 0.15s ease;
+}
+
+/* ====================================================================
+   SR RING (Outer Glow with Animation)
+   ==================================================================== */
+
+.sr-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 10px;
+  padding: 4px;
+  pointer-events: none;
+
+  /* Conic gradient creates the ring fill based on SR percentage */
+  background: conic-gradient(
+    #00e5ff calc(var(--sr-percent) * 1%),
+    rgba(0, 0, 0, 0.15) 0
+  );
+
+  /* Mask out the center to create a ring (not a full circle) */
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: destination-out;
+
+  /* Smooth transition when SR changes */
+  transition: background 0.35s ease;
+}
+
+/* ====================================================================
+   SHIELD GLOW ANIMATION (Active SR)
+   ==================================================================== */
+
+.hp-shield-wrapper:not(.sr-empty) .sr-ring {
+  animation: sr-glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes sr-glow {
+  from {
+    box-shadow: 0 0 6px rgba(0, 200, 255, 0.6);
+  }
+  to {
+    box-shadow: 0 0 14px rgba(0, 200, 255, 0.9);
+  }
+}
+
+/* ====================================================================
+   SHIELD COLLAPSE ANIMATION (SR Depleted)
+   ==================================================================== */
+
+.hp-shield-wrapper.sr-empty .sr-ring {
+  animation: sr-collapse 0.3s ease forwards;
+}
+
+@keyframes sr-collapse {
+  0% {
+    box-shadow: 0 0 20px rgba(0, 200, 255, 1);
+  }
+  100% {
+    box-shadow: none;
+  }
+}
+
+/* ====================================================================
+   HP CONTAINER (Inner)
+   ==================================================================== */
+
+.hp-container {
+  position: relative;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 8px;
+  padding: 6px;
+}
+
+/* ====================================================================
+   HP BAR
+   ==================================================================== */
+
+.hp-bar {
+  height: 12px;
+  background: #111;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.hp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff4444, #aa0000);
+  transition: width 0.25s ease;
+}
+
+/* ====================================================================
+   HP VALUES
+   ==================================================================== */
+
+.hp-values {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* ====================================================================
+   ACCESSIBILITY
+   ==================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .sr-ring {
+    animation: none !important;
+  }
+}
