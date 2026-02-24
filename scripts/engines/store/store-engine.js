@@ -279,14 +279,34 @@ export class StoreEngine {
       });
 
       // Step 2: Grant items (if callback provided)
+      // PHASE 1: Callback now returns MutationPlans instead of mutating directly
       if (itemGrantCallback && typeof itemGrantCallback === 'function') {
         try {
-          await itemGrantCallback(freshActor, items);
+          const grantPlans = await itemGrantCallback(freshActor, items) || [];
+          if (!Array.isArray(grantPlans)) {
+            throw new Error('itemGrantCallback must return an array of MutationPlans');
+          }
+
+          // TEMPORARY ADAPTER (Phase 1 only):
+          // Apply plans sequentially via ActorEngine
+          // (Phase 4 will merge these and apply atomically)
+          for (const plan of grantPlans) {
+            try {
+              await ActorEngine.applyMutationPlan(freshActor, plan);
+            } catch (applyErr) {
+              logger().error('StoreEngine: Failed to apply grant plan', {
+                transactionId,
+                error: applyErr.message
+              });
+              throw applyErr;
+            }
+          }
         } catch (grantErr) {
-          logger().warn('StoreEngine: Item grant failed (credits deducted)', {
+          logger().error('StoreEngine: Item grant failed (credits deducted)', {
             transactionId,
             error: grantErr.message
           });
+          throw grantErr;
         }
       }
 

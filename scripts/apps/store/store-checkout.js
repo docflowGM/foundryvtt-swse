@@ -286,14 +286,12 @@ export async function buyDroid(store, actorId) {
             items: [droidTemplate],
             totalCost: finalCost,
             itemGrantCallback: async (actor, items) => {
-                // Create droid actor with player ownership (UI responsibility)
-                const droidData = droidTemplate.toObject();
-                droidData.name = `${droidTemplate.name} (${store.actor.name}'s)`;
-                droidData.ownership = {
-                    default: 0,
-                    [game.user.id]: 3  // Owner permission
-                };
-                await createActor(droidData);
+                // PHASE 1: Return MutationPlans instead of mutating directly
+                return createDroidPlans([{
+                    id: actorId,
+                    name: droidTemplate.name,
+                    actor: droidTemplate
+                }]);
             }
         });
 
@@ -379,20 +377,13 @@ export async function buyVehicle(store, actorId, condition) {
             items: [vehicleTemplate],
             totalCost: finalCost,
             itemGrantCallback: async (actor, items) => {
-                // Create vehicle actor with player ownership (UI responsibility)
-                const vehicleData = vehicleTemplate.toObject();
-                vehicleData.name = `${condition === 'used' ? '(Used) ' : ''}${vehicleTemplate.name}`;
-                vehicleData.ownership = {
-                    default: 0,
-                    [game.user.id]: 3  // Owner permission
-                };
-
-                // Mark as used if applicable
-                if (condition === 'used' && vehicleData.system) {
-                    vehicleData.system.condition = 'used';
-                }
-
-                const newVehicle = await createActor(vehicleData);
+                // PHASE 1: Return MutationPlans instead of mutating directly
+                return createVehiclePlans([{
+                    id: actorId,
+                    name: vehicleTemplate.name,
+                    template: vehicleTemplate,
+                    condition: condition
+                }], store.itemsById);
             }
         });
 
@@ -647,6 +638,108 @@ function revalidateCart(store) {
 }
 
 /**
+ * PHASE 1: Compile regular items into MutationPlan
+ * Returns plans instead of mutating directly.
+ * @param {Array} cartItems - Items from cart
+ * @returns {Array<Object>} MutationPlans
+ */
+function createItemPlans(cartItems) {
+  if (!cartItems || cartItems.length === 0) return [];
+
+  const itemsToCreate = cartItems.map(cartItem => {
+    const item = cartItem.item;
+    return item.toObject ? item.toObject() : item;
+  });
+
+  if (itemsToCreate.length === 0) return [];
+
+  // Return MutationPlan, don't apply it
+  return [{
+    add: {
+      items: itemsToCreate
+    }
+  }];
+}
+
+/**
+ * PHASE 1: Compile droids into MutationPlans
+ * Returns plans instead of mutating directly.
+ * @param {Array} cartDroids - Droids from cart
+ * @returns {Array<Object>} MutationPlans
+ */
+function createDroidPlans(cartDroids) {
+  const plans = [];
+
+  for (const droid of cartDroids) {
+    const droidData = droid.actor.toObject ? droid.actor.toObject() : droid.actor;
+    droidData.name = `${droid.name}`;
+    droidData.type = 'droid';
+
+    // PHASE 1: Don't set ownership here
+    // PHASE 6: PlacementRouter will handle ownership
+
+    // Return MutationPlan, don't apply it
+    plans.push({
+      create: {
+        actors: [{
+          type: 'droid',
+          temporaryId: `temp_droid_${droid.id || Math.random()}`,
+          data: droidData
+        }]
+      }
+    });
+  }
+
+  return plans;
+}
+
+/**
+ * PHASE 1: Compile vehicles into MutationPlans
+ * Returns plans instead of mutating directly.
+ * @param {Array} cartVehicles - Vehicles from cart
+ * @param {Map} itemsById - Store inventory map
+ * @returns {Array<Object>} MutationPlans
+ */
+function createVehiclePlans(cartVehicles, itemsById) {
+  const plans = [];
+
+  for (const vehicle of cartVehicles) {
+    const template = vehicle.template || itemsById?.get(vehicle.id);
+    if (!template) {
+      throw new Error(`Vehicle template not found for id=${vehicle.id}`);
+    }
+
+    // Create shell vehicle actor
+    const vehicleData = {
+      type: 'vehicle',
+      name: `${vehicle.condition === 'used' ? '(Used) ' : ''}${vehicle.name}`,
+      img: template.img || 'icons/svg/anchor.svg'
+    };
+
+    // PHASE 1: Don't set ownership here
+    // PHASE 6: PlacementRouter will handle ownership
+
+    // Return MutationPlan, don't apply it
+    plans.push({
+      create: {
+        actors: [{
+          type: 'vehicle',
+          temporaryId: `temp_vehicle_${vehicle.id || Math.random()}`,
+          data: vehicleData
+        }]
+      },
+      // Metadata for Phase 5: Vehicle template application
+      meta: {
+        vehicleTemplate: template,
+        condition: vehicle.condition
+      }
+    });
+  }
+
+  return plans;
+}
+
+/**
  * Checkout and purchase all items in cart
  * @param {Object} store - Store instance
  * @param {Function} animateNumberCallback - Callback to animate numbers
@@ -711,48 +804,20 @@ export async function checkout(store, animateNumberCallback) {
                     items: store.cart,
                     totalCost: total,
                     itemGrantCallback: async (purchasingActor, cartItems) => {
-                        // Add regular items to actor
-                        const itemsToCreate = store.cart.items.map(cartItem => {
-                            const item = cartItem.item;
-                            return item.toObject ? item.toObject() : item;
-                        });
-                        if (itemsToCreate.length > 0) {
-                            // PHASE 8: Use ActorEngine
-                            await ActorEngine.createEmbeddedDocuments(purchasingActor, 'Item', itemsToCreate);
-                        }
+                        // PHASE 1: Compile all MutationPlans instead of mutating directly
+                        const plans = [];
 
-                        // Create droid actors
-                        for (const droid of store.cart.droids) {
-                            const droidData = droid.actor.toObject ? droid.actor.toObject() : droid.actor;
-                            droidData.name = `${droid.name} (${purchasingActor.name}'s)`;
-                            droidData.ownership = {
-                                default: 0,
-                                [game.user.id]: 3
-                            };
-                            await createActor(droidData);
-                        }
+                        // Compile item plans
+                        plans.push(...createItemPlans(store.cart.items));
 
-                        // Create vehicle actors from Item templates
-                        for (const vehicle of store.cart.vehicles) {
-                            const template = vehicle.template || store.itemsById?.get(vehicle.id);
-                            if (!template) {
-                                throw new Error(`Vehicle template not found for id=${vehicle.id}`);
-                            }
+                        // Compile droid plans
+                        plans.push(...createDroidPlans(store.cart.droids));
 
-                            const vehicleActor = await createActor({
-                                name: `${vehicle.condition === 'used' ? '(Used) ' : ''}${vehicle.name}`,
-                                type: 'vehicle',
-                                img: template.img || 'icons/svg/anchor.svg',
-                                ownership: {
-                                    default: 0,
-                                    [game.user.id]: 3
-                                }
-                            }, { renderSheet: false });
+                        // Compile vehicle plans
+                        plans.push(...createVehiclePlans(store.cart.vehicles, store.itemsById));
 
-                            await SWSEVehicleHandler.applyVehicleTemplate(vehicleActor, template, {
-                                condition: vehicle.condition
-                            });
-                        }
+                        // Return plans for engine to apply
+                        return plans;
                     }
                 });
 
