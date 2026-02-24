@@ -1,239 +1,73 @@
 /**
- * BuildIdentityAnchor (ArchetypeDetector)
+ * BuildIdentityAnchor (PHASE F PART 3B: Refactored Facade)
  *
- * Phase 2A: Identity Anchor Lifecycle
+ * Public API compatibility layer for anchor management.
+ * Delegates to BuildIdentityDetector (logic) and AnchorRepository (persistence).
  *
- * Detects build archetypes / identity anchors and manages their lifecycle.
- * Anchors represent the "who you are becoming" - a stable identity for the character.
- *
- * Anchor States:
- * - NONE: No anchor detected
- * - PROPOSED: Anchor detected but not confirmed (consistency >= 0.6)
- * - LOCKED: Anchor confirmed by player (manually activated)
- * - WEAKENING: Anchor locked but consistency dropped (< 0.4 for 2+ levels)
- * - RELEASED: Anchor was weakening for 3+ levels, now freed to pivot
- *
- * Key Rules:
- * - Anchors never auto-lock (require player confirmation)
- * - Lock requires consistency over recent levels
- * - Decay happens gradually (avoid mis-classification)
- * - Released anchors allow pivots
+ * GOVERNANCE:
+ * - All detection logic → BuildIdentityDetector (pure, testable)
+ * - All persistence → AnchorRepository (through SuggestionStateService)
+ * - This module is a backwards-compatible facade only
  */
 
 import { SWSELogger } from '../../utils/logger.js';
-import { BUILD_THEMES } from './BuildIntent.js';
+import { BuildIdentityDetector, ANCHOR_STATE, THEME_TO_ARCHETYPE } from './BuildIdentityDetector.js';
+import { AnchorRepository } from './AnchorRepository.js';
 
 
-
-// === ARCHETYPE_JSON_WIRING_START ===
-// eslint-disable-next-line
-import CLASS_ARCHETYPES from '../../data/class-archetypes.json' with { type: 'json' };
-
-function initializeArchetypes(buildState, classKey) {
-  const classBlock = CLASS_ARCHETYPES.classes?.[classKey];
-  if (!classBlock) return { active: {}, affinities: {} };
-
-  const affinities = {};
-  for (const key of Object.keys(classBlock.archetypes)) {
-    affinities[key] = 0;
-  }
-
-  return {
-    active: classBlock.archetypes,
-    affinities
-  };
-}
-// === ARCHETYPE_JSON_WIRING_END ===// ─────────────────────────────────────────────────────────────
-// Anchor State Enum
-// ─────────────────────────────────────────────────────────────
-
-export const ANCHOR_STATE = {
-  NONE: 'none',
-  PROPOSED: 'proposed',
-  LOCKED: 'locked',
-  WEAKENING: 'weakening',
-  RELEASED: 'released'
-};
 
 // ─────────────────────────────────────────────────────────────
-// Theme to Archetype Mapping
-// Maps BUILD_THEMES to primary and secondary archetypes
+// Re-exports for backwards compatibility
+// Actual definitions in BuildIdentityDetector
 // ─────────────────────────────────────────────────────────────
 
-export const THEME_TO_ARCHETYPE = {
-  [BUILD_THEMES.MELEE]: ['frontline_damage', 'assassin'],
-  [BUILD_THEMES.FORCE]: ['force_dps', 'force_control'],
-  [BUILD_THEMES.RANGED]: ['sniper', 'assassin'],
-  [BUILD_THEMES.STEALTH]: ['assassin', 'sniper'],
-  [BUILD_THEMES.SOCIAL]: ['face', 'controller'],
-  [BUILD_THEMES.TECH]: ['tech_specialist', 'skill_monkey'],
-  [BUILD_THEMES.LEADERSHIP]: ['controller', 'face'],
-  [BUILD_THEMES.SUPPORT]: ['force_control', 'controller'],
-  [BUILD_THEMES.COMBAT]: ['frontline_damage', 'controller'],
-  [BUILD_THEMES.EXPLORATION]: ['skill_monkey', 'sniper'],
-  [BUILD_THEMES.VEHICLE]: ['sniper', 'tech_specialist'],
-  [BUILD_THEMES.TRACKING]: ['sniper', 'skill_monkey']
-};
+export { ANCHOR_STATE, THEME_TO_ARCHETYPE } from './BuildIdentityDetector.js';
 
 export class BuildIdentityAnchor {
 
   /**
    * Detect potential anchor based on recent player choices
-   * Analyzes accepted suggestions and their themes
+   * Delegates to BuildIdentityDetector (pure logic)
    *
    * @param {Actor} actor
-   * @returns {Object} { archetype: "key" | null, confidence: 0-1, evidence: {...} }
+   * @returns {Object} { archetype: "key" | null, consistency: 0-1, confidence: 0-1, evidence: {...} }
    */
   static detectAnchor(actor) {
     try {
-      const history = actor.system.suggestionEngine?.history?.recent || [];
-
-      // Get recent accepted suggestions
-      const acceptedSuggestions = history.filter(e => e.outcome === 'accepted');
-      if (acceptedSuggestions.length === 0) {
-        return { archetype: null, confidence: 0, evidence: { reason: 'no accepted suggestions yet' } };
-      }
-
-      // Count theme frequencies in recent accepted picks
-      const themeCounts = {};
-      for (const entry of acceptedSuggestions) {
-        if (!entry.theme) continue;
-        themeCounts[entry.theme] = (themeCounts[entry.theme] || 0) + 1;
-      }
-
-      // Find dominant theme
-      let dominantTheme = null;
-      let dominantCount = 0;
-      for (const [theme, count] of Object.entries(themeCounts)) {
-        if (count > dominantCount) {
-          dominantTheme = theme;
-          dominantCount = count;
-        }
-      }
-
-      if (!dominantTheme) {
-        return { archetype: null, confidence: 0, evidence: { reason: 'no themes in recent picks' } };
-      }
-
-      // Calculate consistency score: how dominant is the theme?
-      // Range 0-1, where 1.0 = 100% of picks are this theme
-      const consistencyScore = dominantCount / acceptedSuggestions.length;
-
-      // Map theme to archetype(s)
-      const primaryArchetype = THEME_TO_ARCHETYPE[dominantTheme]?.[0];
-      if (!primaryArchetype) {
-        return { archetype: null, confidence: 0, evidence: { reason: `theme "${dominantTheme}" has no archetype mapping` } };
-      }
-
-      return {
-        archetype: primaryArchetype,
-        consistency: consistencyScore,
-        confidence: Math.min(1.0, consistencyScore + 0.2),  // Boost confidence slightly
-        evidence: {
-          dominantTheme,
-          themeCounts,
-          dominantCount,
-          totalSuggestions: acceptedSuggestions.length,
-          consistency: consistencyScore
-        }
-      };
+      const history = actor?.system?.suggestionEngine?.history?.recent || [];
+      return BuildIdentityDetector.detectAnchor(history);
     } catch (err) {
       SWSELogger.error('[BuildIdentityAnchor] Error detecting anchor:', err);
-      return { archetype: null, confidence: 0, evidence: { error: err.message } };
+      return { archetype: null, consistency: 0, confidence: 0, evidence: { error: err.message } };
     }
   }
 
   /**
    * Validate and update primary anchor after level-up
-   * Advances anchor state machine based on consistency and player decisions
+   * Delegates to BuildIdentityDetector (state machine logic) and AnchorRepository (persistence)
    *
    * @param {Actor} actor
    * @returns {Promise<Object>} { updated: boolean, anchor, newState }
    */
   static async validateAndUpdateAnchor(actor) {
     try {
-      await this.initializeStorage(actor);
+      await AnchorRepository.initializeStorage(actor);
 
-      const primaryAnchor = actor.system.suggestionEngine.anchors.primary;
-      if (!primaryAnchor || primaryAnchor.state === ANCHOR_STATE.NONE) {
-        // No anchor currently - try to detect one
-        const detected = this.detectAnchor(actor);
-        if (detected.archetype && detected.consistency >= 0.6) {
-          primaryAnchor.state = ANCHOR_STATE.PROPOSED;
-          primaryAnchor.archetype = detected.archetype;
-          primaryAnchor.consistency = detected.consistency;
-          primaryAnchor.confidence = detected.confidence;
-          primaryAnchor.evidence = detected.evidence;
-          primaryAnchor.detectedAt = Date.now();
+      const primaryAnchor = AnchorRepository.getPrimaryAnchor(actor);
+      const history = actor?.system?.suggestionEngine?.history?.recent || [];
+      const currentLevel = actor?.system?.level ?? 1;
 
-          SWSELogger.log(`[BuildIdentityAnchor] Anchor proposed: ${detected.archetype} (consistency: ${detected.consistency.toFixed(2)})`);
-          return { updated: true, anchor: primaryAnchor, newState: ANCHOR_STATE.PROPOSED };
-        }
-        return { updated: false, anchor: primaryAnchor, newState: ANCHOR_STATE.NONE };
+      // Use BuildIdentityDetector to determine next state (pure logic)
+      const result = BuildIdentityDetector.determineNextState(primaryAnchor, history, currentLevel);
+
+      if (result.transitioned) {
+        // Persist the state change through AnchorRepository
+        const updated = await AnchorRepository.updateAnchor(actor, 'primary', result.anchor);
+        SWSELogger.log(`[BuildIdentityAnchor] Anchor state transitioned: ${result.newState}`);
+        return { updated: true, anchor: updated, newState: result.newState };
       }
 
-      // Anchor exists - validate and advance state
-      const detected = this.detectAnchor(actor);
-      const currentConsistency = detected.consistency || 0;
-
-      // State machine transitions
-      if (primaryAnchor.state === ANCHOR_STATE.PROPOSED) {
-        // PROPOSED -> LOCKED (if player confirms) or PROPOSED -> NONE (if consistency drops)
-        if (currentConsistency < 0.5) {
-          primaryAnchor.state = ANCHOR_STATE.NONE;
-          primaryAnchor.archetype = null;
-          SWSELogger.log('[BuildIdentityAnchor] Proposed anchor cancelled (consistency dropped)');
-          return { updated: true, anchor: primaryAnchor, newState: ANCHOR_STATE.NONE };
-        }
-        // Stay PROPOSED until confirmed
-        primaryAnchor.consistency = currentConsistency;
-        return { updated: false, anchor: primaryAnchor, newState: ANCHOR_STATE.PROPOSED };
-      }
-
-      if (primaryAnchor.state === ANCHOR_STATE.LOCKED) {
-        // LOCKED -> WEAKENING (if consistency drops below 0.4 for one level)
-        if (currentConsistency < 0.4) {
-          primaryAnchor.weakeningStartLevel = actor.system.level;
-          primaryAnchor.state = ANCHOR_STATE.WEAKENING;
-          SWSELogger.log(`[BuildIdentityAnchor] Anchor weakening at level ${actor.system.level}`);
-          return { updated: true, anchor: primaryAnchor, newState: ANCHOR_STATE.WEAKENING };
-        }
-        // Stay LOCKED, update consistency
-        primaryAnchor.consistency = currentConsistency;
-        return { updated: false, anchor: primaryAnchor, newState: ANCHOR_STATE.LOCKED };
-      }
-
-      if (primaryAnchor.state === ANCHOR_STATE.WEAKENING) {
-        // WEAKENING -> LOCKED (if consistency recovers)
-        if (currentConsistency >= 0.6) {
-          primaryAnchor.state = ANCHOR_STATE.LOCKED;
-          primaryAnchor.weakeningStartLevel = null;
-          SWSELogger.log('[BuildIdentityAnchor] Anchor stabilized back to LOCKED');
-          return { updated: true, anchor: primaryAnchor, newState: ANCHOR_STATE.LOCKED };
-        }
-
-        // WEAKENING -> RELEASED (if consistency stays low for 3+ levels)
-        const weakeningDuration = (actor.system.level || 1) - (primaryAnchor.weakeningStartLevel || actor.system.level);
-        if (weakeningDuration >= 3 && currentConsistency < 0.3) {
-          primaryAnchor.state = ANCHOR_STATE.RELEASED;
-          primaryAnchor.releasedAt = Date.now();
-          SWSELogger.log('[BuildIdentityAnchor] Anchor released after 3+ levels of weakening');
-          return { updated: true, anchor: primaryAnchor, newState: ANCHOR_STATE.RELEASED };
-        }
-
-        primaryAnchor.consistency = currentConsistency;
-        return { updated: false, anchor: primaryAnchor, newState: ANCHOR_STATE.WEAKENING };
-      }
-
-      if (primaryAnchor.state === ANCHOR_STATE.RELEASED) {
-        // RELEASED -> NONE (reset anchor, allow new detection)
-        primaryAnchor.state = ANCHOR_STATE.NONE;
-        primaryAnchor.archetype = null;
-        SWSELogger.log('[BuildIdentityAnchor] Anchor reset from RELEASED');
-        return { updated: true, anchor: primaryAnchor, newState: ANCHOR_STATE.NONE };
-      }
-
-      return { updated: false, anchor: primaryAnchor, newState: primaryAnchor.state };
+      return { updated: false, anchor: result.anchor, newState: result.newState };
     } catch (err) {
       SWSELogger.error('[BuildIdentityAnchor] Error validating anchor:', err);
       return { updated: false, anchor: null, newState: ANCHOR_STATE.NONE };
@@ -242,40 +76,31 @@ export class BuildIdentityAnchor {
 
   /**
    * Player confirms an anchor (locks it in)
+   * Delegates to AnchorRepository (persistence)
+   *
    * @param {Actor} actor
    * @param {string} archetypeKey
-   * @returns {Promise<void>}
+   * @returns {Promise<Object>} Updated anchor
    */
   static async confirmAnchor(actor, archetypeKey) {
     try {
-      await this.initializeStorage(actor);
-
-      const primaryAnchor = actor.system.suggestionEngine.anchors.primary;
-      if (!primaryAnchor) return;
-
-      if (primaryAnchor.state === ANCHOR_STATE.PROPOSED) {
-        primaryAnchor.state = ANCHOR_STATE.LOCKED;
-        primaryAnchor.confirmedBy = 'player';
-        primaryAnchor.confirmedAt = Date.now();
-
-        SWSELogger.log(`[BuildIdentityAnchor] Anchor confirmed and locked: ${archetypeKey}`);
-      }
+      return await AnchorRepository.confirmAnchor(actor, 'primary');
     } catch (err) {
       SWSELogger.error('[BuildIdentityAnchor] Error confirming anchor:', err);
+      return null;
     }
   }
 
   /**
    * Player rejects a proposed anchor
+   * Delegates to AnchorRepository (persistence)
+   *
    * @param {Actor} actor
-   * @returns {Promise<void>}
+   * @returns {Promise<Object>} Updated anchor
    */
   static async rejectAnchor(actor) {
     try {
-      await this.initializeStorage(actor);
-
-      const primaryAnchor = actor.system.suggestionEngine.anchors.primary;
-      if (!primaryAnchor) return;
+      return await AnchorRepository.rejectAnchor(actor, 'primary');
 
       if (primaryAnchor.state === ANCHOR_STATE.PROPOSED) {
         primaryAnchor.state = ANCHOR_STATE.NONE;
@@ -328,15 +153,15 @@ export class BuildIdentityAnchor {
 
   /**
    * Get anchor by position
+   * Delegates to AnchorRepository (read-only)
+   *
    * @param {Actor} actor
    * @param {string} position - "primary" | "secondary"
    * @returns {Object|null}
    */
-  static getAnchor(actor, position = "primary") {
+  static getAnchor(actor, position = 'primary') {
     try {
-      if (!actor.system.suggestionEngine) return null;
-      const anchor = actor.system.suggestionEngine.anchors?.[position];
-      return anchor || null;
+      return AnchorRepository.getAnchor(actor, position);
     } catch (err) {
       SWSELogger.error('[BuildIdentityAnchor] Error getting anchor:', err);
       return null;
@@ -394,39 +219,14 @@ export class BuildIdentityAnchor {
 
   /**
    * Initialize anchor storage
+   * Delegates to AnchorRepository (persistence)
+   *
    * @param {Actor} actor
    * @returns {Promise<void>}
    */
   static async initializeStorage(actor) {
     try {
-      if (!actor.system.suggestionEngine) {
-        actor.system.suggestionEngine = {};
-      }
-      if (!actor.system.suggestionEngine.anchors) {
-        actor.system.suggestionEngine.anchors = {
-          primary: {
-            state: ANCHOR_STATE.NONE,
-            archetype: null,
-            consistency: 0,
-            confidence: 0,
-            evidence: {},
-            detectedAt: null,
-            confirmedAt: null,
-            confirmedBy: null,
-            weakeningStartLevel: null,
-            releasedAt: null
-          },
-          secondary: {
-            state: ANCHOR_STATE.NONE,
-            archetype: null,
-            consistency: 0,
-            confidence: 0,
-            evidence: {}
-          },
-          history: []
-        };
-        SWSELogger.log('[BuildIdentityAnchor] Storage initialized');
-      }
+      return await AnchorRepository.initializeStorage(actor);
     } catch (err) {
       SWSELogger.error('[BuildIdentityAnchor] Error initializing storage:', err);
     }

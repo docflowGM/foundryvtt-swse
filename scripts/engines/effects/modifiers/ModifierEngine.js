@@ -170,7 +170,7 @@ export class ModifierEngine {
     try {
       // Build modifier breakdown for storage
       const skillTargets = this._getAllSkillTargets(actor);
-      const defenseTargets = ['defense.fort', 'defense.reflex', 'defense.will', 'defense.damageThreshold'];
+      const defenseTargets = ['defense.fortitude', 'defense.reflex', 'defense.will', 'defense.damageThreshold'];
       const allTargets = [...skillTargets, ...defenseTargets, 'hp.max', 'bab.total', 'initiative.total', 'speed.base'];
 
       const modifierBreakdown = ModifierUtils.buildModifierBreakdown(allModifiers, allTargets);
@@ -203,8 +203,8 @@ export class ModifierEngine {
         }
 
         const defensePaths = {
-          fort: 'defense.fort',
-          fortitude: 'defense.fort',
+          fort: 'defense.fortitude',
+          fortitude: 'defense.fortitude',
           ref: 'defense.reflex',
           reflex: 'defense.reflex',
           will: 'defense.will'
@@ -629,7 +629,7 @@ export class ModifierEngine {
       }
 
       // Apply to defenses
-      for (const defense of ['defense.fort', 'defense.reflex', 'defense.will']) {
+      for (const defense of ['defense.fortitude', 'defense.reflex', 'defense.will']) {
         try {
           modifiers.push(createModifier({
             source: ModifierSource.CONDITION,
@@ -709,16 +709,16 @@ export class ModifierEngine {
 
       // ===== REFLEX DEFENSE BONUS =====
       const baseArmorBonus = armorSystem.defenseBonus || 0;
+      const actorLevel = actor?.system?.level || 1;
       if (baseArmorBonus !== 0) {
         // Calculate talent-adjusted armor bonus
         let armorBonusForReflex = baseArmorBonus;
         if (hasImprovedArmoredDefense) {
           // Improved Armored Defense: Use max(level + floor(armor/2), armor)
-          // We'll register the base bonus; the character's level adjustment is separate
-          armorBonusForReflex = Math.max(baseArmorBonus, baseArmorBonus); // Full bonus
+          armorBonusForReflex = Math.max(baseArmorBonus, actorLevel + Math.floor(baseArmorBonus / 2));
         } else if (hasArmoredDefense) {
           // Armored Defense: Use max(level, armor)
-          armorBonusForReflex = Math.max(baseArmorBonus, baseArmorBonus); // Full bonus
+          armorBonusForReflex = Math.max(baseArmorBonus, actorLevel);
         }
         // No talent: Armor bonus is used as-is
 
@@ -749,7 +749,7 @@ export class ModifierEngine {
               source: ModifierSource.ITEM,
               sourceId: armorId,
               sourceName: `${armorName} (Equipment Bonus)`,
-              target: 'defense.fort',
+              target: 'defense.fortitude',
               type: ModifierType.EQUIPMENT,
               value: fortBonus,
               enabled: true,
@@ -939,7 +939,7 @@ export class ModifierEngine {
                 source: ModifierSource.ITEM,
                 sourceId: upgradeId,
                 sourceName: `${upgradeName} (Fort Bonus)`,
-                target: 'defense.fort',
+                target: 'defense.fortitude',
                 type: ModifierType.ENHANCEMENT,
                 value: upgradeModifiers.fortBonus,
                 enabled: true,

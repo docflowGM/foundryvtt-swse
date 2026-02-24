@@ -16,9 +16,11 @@ export const swseHelpers = {
   },
 
   forceRerollDice: (level) => {
+    // Display helper for showing Force Point dice bonus
+    // Uses standard heroic scaling: 1d6 (default), 2d6 (level 8+), 3d6 (level 15+)
     const l = Number(level || 1);
-    if (l >= 15) {return '+3d6';}
-    if (l >= 8) {return '+2d6';}
+    if (l >= 15) return '+3d6 (take highest)';
+    if (l >= 8) return '+2d6 (take highest)';
     return '+1d6';
   },
 

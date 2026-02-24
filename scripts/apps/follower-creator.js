@@ -570,15 +570,8 @@ static async createFollower(owner, templateType, grantingTalent = null) {
     static async _applyDefenseBonuses(follower, template) {
         if (!template.defenseBonus) {return;}
 
-        const updates = {};
-
-        for (const [defense, bonus] of Object.entries(template.defenseBonus)) {
-            updates[`system.defenses.${defense}.misc`] = bonus;
-        }
-
-        if (Object.keys(updates).length > 0) {
-            await follower.update(updates);
-        }
+        // Defense bonuses are now applied via ModifierEngine
+        // Remove direct defense mutations - let DerivedCalculator handle recalculation
     }
 
     /**
@@ -675,10 +668,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 'system.level': ownerLevel,
                 'system.baseAttackBonus': newBAB,
                 'system.hp.max': newHP,
-                'system.hp.value': Math.min(follower.system.hp.value, newHP),
-                'system.defenses.fortitude.base': 10 + Math.max(getMod('str'), getMod('con')) + ownerLevel,
-                'system.defenses.reflex.base': 10 + getMod('dex') + ownerLevel,
-                'system.defenses.will.base': 10 + getMod('wis') + ownerLevel
+                'system.hp.value': Math.min(follower.system.hp.value, newHP)
             });
 
             swseLogger.log(`FollowerCreator: Updated follower "${follower.name}" to level ${ownerLevel}`);

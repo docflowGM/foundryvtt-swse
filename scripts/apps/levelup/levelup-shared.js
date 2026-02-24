@@ -5,6 +5,7 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { getClassProperty } from '../chargen/chargen-property-accessor.js';
+import { HPGeneratorEngine } from '../engines/HP/HPGeneratorEngine.js';
 
 /**
  * List of base classes in SWSE (legacy - should use isBaseClass with class docs instead)
@@ -314,40 +315,11 @@ export function calculateHPGain(classDoc, actor, newLevel) {
       SWSELogger.warn(`SWSE LevelUp | Class "${className}" not in hit dice map, using ${hitDie} from class data`);
     }
   }
-  // Droids don't have Constitution and receive no HP from CON modifier
-  const isDroid = actor.system.isDroid || false;
-  const conMod = isDroid ? 0 : (actor.system.attributes.con?.mod || 0);
-  const hpGeneration = game.settings.get('foundryvtt-swse', 'hpGeneration') || 'average';
-  const maxHPLevels = game.settings.get('foundryvtt-swse', 'maxHPLevels') || 1;
+  // Use centralized HP generator engine
+  const hpGain = HPGeneratorEngine.calculateHPGain(actor, newLevel, hitDie, {
+    context: 'levelup',
+    isNonheroic
+  });
 
-  let hpGain = 0;
-
-  if (newLevel <= maxHPLevels) {
-    hpGain = hitDie + conMod;
-  } else {
-    switch (hpGeneration) {
-      case 'maximum':
-        hpGain = hitDie + conMod;
-        break;
-      case 'average':
-        hpGain = Math.floor(hitDie / 2) + 1 + conMod;
-        break;
-      case 'roll':
-        hpGain = Math.floor(Math.random() * hitDie) + 1 + conMod;
-        break;
-      case 'average_minimum': {
-        const rolled = Math.floor(Math.random() * hitDie) + 1;
-        const average = Math.floor(hitDie / 2) + 1;
-        hpGain = Math.max(rolled, average) + conMod;
-        break;
-      }
-      default:
-        hpGain = Math.floor(hitDie / 2) + 1 + conMod;
-    }
-  }
-
-  const finalHPGain = Math.max(1, hpGain);
-  SWSELogger.log(`SWSE LevelUp | HP gain: ${finalHPGain} (d${hitDie}${isNonheroic ? ' [nonheroic]' : ''}, method: ${hpGeneration})`);
-
-  return finalHPGain;
+  return hpGain;
 }

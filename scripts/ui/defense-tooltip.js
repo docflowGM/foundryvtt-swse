@@ -291,12 +291,17 @@ export class DefenseTooltip {
     }
 
     // Check for condition track penalties
-    if (actor.system.conditionTrack?.penalty > 0) {
-      effects.push({
-        type: 'penalty',
-        name: 'Condition Track',
-        description: `−${actor.system.conditionTrack.penalty} all defenses`
-      });
+    const ctStep = actor.system.conditionTrack?.current ?? 0;
+    if (ctStep >= 1 && ctStep <= 4) {
+      const conditionPenalties = { 1: 1, 2: 2, 3: 5, 4: 10 };
+      const penalty = conditionPenalties[ctStep] || 0;
+      if (penalty > 0) {
+        effects.push({
+          type: 'penalty',
+          name: 'Condition Track',
+          description: `−${penalty} all defenses`
+        });
+      }
     }
 
     return effects;

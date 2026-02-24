@@ -421,11 +421,11 @@ export class DarkSidePowers {
 
     await actor.unsetFlag('foundryvtt-swse', 'isChannelAngerRaging');
 
-    const currentCondition = actor.system.conditionTrack?.value || 0;
+    const currentCondition = actor.system.conditionTrack?.current || 0;
     const newCondition = Math.max(0, currentCondition - 1);
 
     await ActorEngine.updateActor(actor, {
-      'system.conditionTrack.value': newCondition
+      'system.conditionTrack.current': newCondition
     });
 
     const chatContent = `
@@ -1141,7 +1141,7 @@ export class DarkSidePowers {
     }
 
     const targetActor = targetToken.actor;
-    const currentCondition = targetActor.system.conditionTrack?.value || 0;
+    const currentCondition = targetActor.system.conditionTrack?.current || 0;
     const newCondition = Math.max(0, currentCondition - 2);
 
     // PHASE 1: BUILD PLAN
@@ -1163,7 +1163,7 @@ export class DarkSidePowers {
       actorId: targetActor.id,
       type: "update",
       data: {
-        "system.conditionTrack.value": newCondition
+        "system.conditionTrack.current": newCondition
       }
     });
 

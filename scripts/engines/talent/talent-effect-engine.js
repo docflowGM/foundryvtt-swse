@@ -360,7 +360,7 @@ export class TalentEffectEngine {
     }
 
     // --- Compute condition change ---
-    const currentCondition = sourceActor.system.conditionTrack?.value ?? 0;
+    const currentCondition = sourceActor.system.conditionTrack?.current ?? 0;
     const newCondition = Math.max(0, currentCondition - 1);
 
     // --- Build mutations ---
@@ -381,7 +381,7 @@ export class TalentEffectEngine {
       actorId: sourceActor.id,
       type: "update",
       data: {
-        "system.conditionTrack.value": newCondition
+        "system.conditionTrack.current": newCondition
       }
     });
 
@@ -1547,12 +1547,7 @@ export class TalentEffectEngine {
       data: [{
         name: 'Blurring Burst - Reflex Bonus',
         icon: 'icons/svg/aura.svg',
-        changes: [{
-          key: 'system.defenses.reflex.bonus',
-          mode: 2, // ADD
-          value: 2,
-          priority: 20
-        }],
+        changes: [],
         duration: {
           combat: combatId
         },
@@ -1653,12 +1648,7 @@ export class TalentEffectEngine {
         data: [{
           name: `Weaving Stride - Dodge Bonus (${dodgeBonus})`,
           icon: 'icons/svg/daze.svg',
-          changes: [{
-            key: 'system.defenses.reflex.bonus',
-            mode: 2, // ADD
-            value: dodgeBonus,
-            priority: 20
-          }],
+          changes: [],
           duration: {
             rounds: 1,
             startRound: game.combat?.round,

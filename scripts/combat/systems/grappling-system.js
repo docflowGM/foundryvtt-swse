@@ -165,11 +165,7 @@ export class SWSEGrappling {
           label: 'Grabbed',
           icon: 'icons/svg/net.svg',
           origin: sourceActor.uuid,
-          changes: [{
-            key: 'system.defenses.reflex.bonus',
-            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
-            value: -5
-          }],
+          changes: [],
           flags: { swse: { grapple: 'grabbed', source: sourceActor.id } }
         };
         break;
@@ -179,11 +175,7 @@ export class SWSEGrappling {
           label: 'Grappled',
           icon: 'icons/svg/anchor.svg',
           origin: sourceActor.uuid,
-          changes: [{
-            key: 'system.defenses.reflex.bonus',
-            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
-            value: -5
-          }],
+          changes: [],
           flags: { swse: { grapple: 'grappled', source: sourceActor.id } }
         };
         break;
@@ -193,10 +185,7 @@ export class SWSEGrappling {
           label: 'Pinned',
           icon: 'icons/svg/trap.svg',
           origin: sourceActor.uuid,
-          changes: [
-            { key: 'system.defenses.reflex.bonus', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -10 },
-            { key: 'system.conditionTrack.current', mode: 'OVERRIDE', value: 5 }
-          ],
+          changes: [],
           flags: { swse: { grapple: 'pinned', source: sourceActor.id } }
         };
         break;

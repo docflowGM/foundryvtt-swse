@@ -32,6 +32,7 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { ModifierEngine } from "../effects/modifiers/ModifierEngine.js";
+import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
 
 export class ThresholdEngine {
 
@@ -66,7 +67,7 @@ export class ThresholdEngine {
     if (!actor) return 0;
 
     const system = actor.system;
-    const fort = system.defenses?.fortitude?.total ?? 10;
+    const fort = system.derived?.defenses?.fortitude?.total ?? 10;
 
     // Map size string to threshold bonus (RAW)
     const sizeString = (system.size ?? 'medium').toLowerCase();
@@ -163,7 +164,7 @@ export class ThresholdEngine {
     }
 
     // Character / Droid / NPC
-    const fortTotal = system.defenses?.fort?.total ?? 10;
+    const fortTotal = system.derived?.defenses?.fortitude?.total ?? 10;
     const heroicLevel = system.heroicLevel ?? system.level ?? 1;
     const sizeMod = this._getCharacterSizeModifier(system.size);
 
@@ -299,30 +300,20 @@ export class ThresholdEngine {
 
     const target = result.target;
     const currentCT = target.system.conditionTrack?.current ?? 0;
-    const currentPersistent = target.system.conditionTrack?.persistentSteps ?? 0;
 
     let totalShift = 0;
-    let persistentShift = 0;
 
     for (const shift of result.ctShifts) {
       totalShift += Math.abs(shift.steps);
-      if (shift.persistent) {
-        persistentShift += Math.abs(shift.steps);
-      }
     }
-
-    // Cap persistent at configured max (default: 3)
-    const persistentCap = this._setting('persistentDTPenaltyCap') ?? 3;
-    const newPersistent = Math.min(currentPersistent + persistentShift, persistentCap);
 
     // Apply CT movement
     const newCT = Math.min(currentCT + totalShift, 5);
 
     // Stun knockout: move to bottom of CT
     if (result.stunKnockout) {
-      await target.update({
-        'system.conditionTrack.current': 5,
-        'system.conditionTrack.persistentSteps': newPersistent
+      await ActorEngine.updateActor(target, {
+        'system.conditionTrack.current': 5
       });
       await this._postChatMessage(target, result, 5);
       return;
@@ -332,12 +323,7 @@ export class ThresholdEngine {
       'system.conditionTrack.current': newCT
     };
 
-    // Only update persistentSteps if enhanced massive damage is enabled
-    if (this.enabled && this._setting('persistentDTPenalty')) {
-      updates['system.conditionTrack.persistentSteps'] = newPersistent;
-    }
-
-    await target.update(updates);
+    await ActorEngine.updateActor(target, updates);
     await this._postChatMessage(target, result, newCT);
   }
 

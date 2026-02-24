@@ -68,47 +68,37 @@ export class SWSEActiveEffectsManager {
     normal: {
       name: 'Normal',
       icon: 'systems/foundryvtt-swse/icons/conditions/normal.svg',
-      updates: {}
+      updates: {},
+      flags: { conditionTrack: 'normal', statusId: 'normal' }
     },
     '-1': {
       name: 'Injured (-1)',
       icon: 'systems/foundryvtt-swse/icons/conditions/injured-1.svg',
-      updates: {
-        'system.conditionPenalty': { mode: 'ADD', value: -1 }
-      },
+      updates: {},
       flags: { conditionTrack: '-1', statusId: 'condition-1' }
     },
     '-2': {
       name: 'Wounded (-2)',
       icon: 'systems/foundryvtt-swse/icons/conditions/injured-2.svg',
-      updates: {
-        'system.conditionPenalty': { mode: 'ADD', value: -2 }
-      },
+      updates: {},
       flags: { conditionTrack: '-2', statusId: 'condition-2' }
     },
     '-5': {
       name: 'Severely Wounded (-5)',
       icon: 'systems/foundryvtt-swse/icons/conditions/injured-5.svg',
-      updates: {
-        'system.conditionPenalty': { mode: 'ADD', value: -5 }
-      },
+      updates: {},
       flags: { conditionTrack: '-5', statusId: 'condition-5' }
     },
     '-10': {
       name: 'Critical (-10)',
       icon: 'systems/foundryvtt-swse/icons/conditions/injured-10.svg',
-      updates: {
-        'system.conditionPenalty': { mode: 'ADD', value: -10 }
-      },
+      updates: {},
       flags: { conditionTrack: '-10', statusId: 'condition-10' }
     },
     helpless: {
       name: 'Helpless',
       icon: 'systems/foundryvtt-swse/icons/conditions/helpless.svg',
-      updates: {
-        'system.conditionPenalty': { mode: 'ADD', value: -10 },
-        'system.defenses.reflex.bonus': { mode: 'ADD', value: -10 }
-      },
+      updates: {},
       flags: { conditionTrack: 'helpless', statusId: 'helpless' }
     }
   };
@@ -135,11 +125,7 @@ export class SWSEActiveEffectsManager {
       name: 'Destiny: Defense Bonus',
       icon: 'icons/svg/shield.svg',
       duration: { hours: 24 },
-      updates: {
-        'system.defenses.reflex.misc': { mode: 'ADD', value: 2 },
-        'system.defenses.fortitude.misc': { mode: 'ADD', value: 2 },
-        'system.defenses.will.misc': { mode: 'ADD', value: 2 }
-      },
+      updates: {},
       flags: { destinyEffect: 'defense-bonus', duration: '24h' }
     },
     'noble-sacrifice': {
@@ -166,7 +152,6 @@ export class SWSEActiveEffectsManager {
       icon: 'icons/svg/shield.svg',
       duration: { rounds: 1 },
       updates: {
-        'system.defenses.reflex.bonus': { mode: 'ADD', value: 2 },
         'system.attackPenalty': { mode: 'ADD', value: -5 }
       },
       flags: { combatAction: 'fighting-defensively' }
@@ -175,35 +160,25 @@ export class SWSEActiveEffectsManager {
       name: 'Total Defense',
       icon: 'icons/svg/shield.svg',
       duration: { rounds: 1 },
-      updates: {
-        'system.defenses.reflex.bonus': { mode: 'ADD', value: 5 },
-        'system.defenses.fortitude.bonus': { mode: 'ADD', value: 5 },
-        'system.defenses.will.bonus': { mode: 'ADD', value: 5 }
-      },
+      updates: {},
       flags: { combatAction: 'total-defense' }
     },
     'cover-partial': {
       name: 'Partial Cover',
       icon: 'icons/svg/wall.svg',
-      updates: {
-        'system.defenses.reflex.bonus': { mode: 'ADD', value: 2 }
-      },
+      updates: {},
       flags: { combatAction: 'cover-partial' }
     },
     'cover-full': {
       name: 'Full Cover',
       icon: 'icons/svg/wall.svg',
-      updates: {
-        'system.defenses.reflex.bonus': { mode: 'ADD', value: 5 }
-      },
+      updates: {},
       flags: { combatAction: 'cover-full' }
     },
     'cover-improved': {
       name: 'Improved Cover',
       icon: 'icons/svg/wall.svg',
-      updates: {
-        'system.defenses.reflex.bonus': { mode: 'ADD', value: 10 }
-      },
+      updates: {},
       flags: { combatAction: 'cover-improved' }
     }
   };

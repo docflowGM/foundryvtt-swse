@@ -117,9 +117,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       // Condition Track
       conditionTrack: new fields.SchemaField({
         current: new fields.NumberField({ required: true, initial: 0, min: 0, max: 5, integer: true }),
-        persistent: new fields.BooleanField({ required: true, initial: false }),
-        persistentSteps: new fields.NumberField({ required: true, initial: 0, min: 0, integer: true }),
-        penalty: new fields.NumberField({ required: true, initial: 0, integer: true })
+        persistent: new fields.BooleanField({ required: true, initial: false })
       }),
 
       // Mount System — rider state
@@ -667,9 +665,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
         skill.hasOccupationBonus = false;
       }
 
-      // Apply condition track penalty (affects all skills and rolls)
-      const conditionPenalty = this.conditionTrack?.penalty || 0;
-      total += conditionPenalty; // Note: penalty is negative, so we add it
+      // Condition track penalties applied by ModifierEngine, not here
 
       // Determine if skill can be used untrained
       let canUseUntrained = data.untrained;
@@ -763,47 +759,59 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       this.forcePoints = { value: 0, max: 0, die: '1d6' };
     }
 
-    // NONHEROIC RULE: Nonheroic characters do not gain Force Points
-    // Only use heroic level for Force Point calculation
-    const heroicLevel = this.heroicLevel ?? this.level ?? 1;
+    // CANONICAL AUTHORITY: ForcePointsService
+    // This method mirrors ForcePointsService.getMax() for derived data calculation
+    // Uses totalLevel (heroic + nonheroic) for max calculation
 
-    // If character has no heroic levels, they get no Force Points
-    if (heroicLevel === 0) {
+    const heroicLevel = this.heroicLevel ?? 0;
+    const nonheroicLevel = this.nonheroicLevel ?? 0;
+    const totalLevel = heroicLevel + nonheroicLevel;
+
+    // If character has no levels, they get no Force Points
+    if (totalLevel === 0) {
       this.forcePoints.max = 0;
       this.forcePoints.value = Math.min(this.forcePoints.value, 0);
       this.forcePoints.die = '1d6';
       return;
     }
 
+    // Determine Force Point base (5, 6, or 7)
+    // Note: This is a simplified version; full prestige logic is in ForcePointsService
+    // For accurate prestige detection, rely on ForcePointsService at runtime
+    let base = 5;
+
+    // Check persistent flags (if available via parent actor context)
+    // This is best-effort; full detection happens in ForcePointsService
+    if (this.parent?.getFlag?.('swse', 'hasBase7FP')) {
+      base = 7;
+    } else if (this.parent?.getFlag?.('swse', 'hasPrestigeFPBonus')) {
+      base = 6;
+    }
+
     // Check for daily Force Points optional rule
     const useDailyForcePoints = game.settings?.get('foundryvtt-swse', 'dailyForcePoints') || false;
 
     if (useDailyForcePoints) {
-      // Daily Force Points based on heroic level ranges
+      // Daily Force Points based on total level ranges
       // 1-5: 1 FP, 6-10: 2 FP, 11-15: 3 FP, 16+: 4 FP
-      if (heroicLevel >= 16) {
+      if (totalLevel >= 16) {
         this.forcePoints.max = 4;
-      } else if (heroicLevel >= 11) {
+      } else if (totalLevel >= 11) {
         this.forcePoints.max = 3;
-      } else if (heroicLevel >= 6) {
+      } else if (totalLevel >= 6) {
         this.forcePoints.max = 2;
       } else {
         this.forcePoints.max = 1;
       }
     } else {
-      // Standard Force Points: 5 + half heroic level (rounded down)
-      this.forcePoints.max = 5 + Math.floor(heroicLevel / 2);
+      // Standard Force Points: base + floor(totalLevel / 2)
+      this.forcePoints.max = base + Math.floor(totalLevel / 2);
     }
 
-    // Calculate Force Point die based on heroic level
-    // 1-7: 1d6, 8-14: 2d6 (take highest), 15+: 3d6 (take highest)
-    if (heroicLevel >= 15) {
-      this.forcePoints.die = '3d6';
-    } else if (heroicLevel >= 8) {
-      this.forcePoints.die = '2d6';
-    } else {
-      this.forcePoints.die = '1d6';
-    }
+    // Store die SIZE only (d6 or d8)
+    // Heroic level scaling (1/2/3 dice count) is handled by ForcePointsService.getScalingDice()
+    // Die size upgrade (d8) is handled by ModifierEngine (domain: "force.dieSize")
+    this.forcePoints.die = 'd6'; // Default; d8 set by feats/talents via ModifierEngine
   }
 
   _calculateDestinyPoints() {

@@ -12,6 +12,7 @@
  * - Optionally persist minimal SuggestionState in actor flags
  */
 import { SWSELogger } from '../../utils/logger.js';
+import { HouseRuleService } from '../system/HouseRuleService.js';
 import { SuggestionEngineCoordinator } from './SuggestionEngineCoordinator.js';
 import { CompendiumResolver } from './CompendiumResolver.js';
 import { createActor } from '../../core/document-api-v13.js';
@@ -167,7 +168,7 @@ export class SuggestionService {
       return cached.suggestions;
     }
 
-    const trace = game.settings.get('foundryvtt-swse', 'enableSuggestionTrace') ?? false;
+    const trace = HouseRuleService.get('enableSuggestionTrace') ?? false;
 
     let suggestions = [];
     const debug = null;
@@ -449,7 +450,7 @@ export class SuggestionService {
   }
 
   static validateSuggestionDTO(suggestions, { context = null, domain = null } = {}) {
-    const trace = game.settings.get('foundryvtt-swse', 'enableSuggestionTrace') ?? false;
+    const trace = HouseRuleService.get('enableSuggestionTrace') ?? false;
     if (!trace) {return;}
 
     const bad = [];

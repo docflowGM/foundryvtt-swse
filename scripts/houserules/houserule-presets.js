@@ -24,6 +24,8 @@ export const HOUSERULE_PRESETS = {
         maxHPLevels: 0
       },
       secondWindImproved: false,
+      secondWindRecovery: 'encounter',
+      secondWindWebEnhancement: false,
       talentEveryLevel: false,
       deathSystem: {
         system: 'standard',
@@ -65,6 +67,8 @@ export const HOUSERULE_PRESETS = {
         maxHPLevels: 1
       },
       secondWindImproved: true,
+      secondWindRecovery: 'encounter',
+      secondWindWebEnhancement: false,
       talentEveryLevel: false,
       deathSystem: {
         system: 'standard',
@@ -106,6 +110,8 @@ export const HOUSERULE_PRESETS = {
         maxHPLevels: 20
       },
       secondWindImproved: true,
+      secondWindRecovery: 'encounter',
+      secondWindWebEnhancement: false,
       talentEveryLevel: true,
       deathSystem: {
         system: 'threeStrikes',
@@ -212,6 +218,8 @@ export function exportSettings() {
   const allowedKeys = [
     'characterCreation',
     'secondWindImproved',
+    'secondWindRecovery',
+    'secondWindWebEnhancement',
     'talentEveryLevel',
     'deathSystem',
     'crossClassSkillTraining',

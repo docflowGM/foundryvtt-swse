@@ -61,9 +61,7 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
       // Condition Track
       conditionTrack: new fields.SchemaField({
         current: new fields.NumberField({ required: true, initial: 0, min: 0, max: 5, integer: true }),
-        persistent: new fields.BooleanField({ required: true, initial: false }),
-        persistentSteps: new fields.NumberField({ required: true, initial: 0, min: 0, integer: true }),
-        penalty: new fields.NumberField({ required: true, initial: 0, integer: true })
+        persistent: new fields.BooleanField({ required: true, initial: false })
       }),
 
       // Defenses
@@ -139,16 +137,20 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
   prepareDerivedData() {
     this._calculateAbilities();
-    this._applyConditionPenalties();
+    // PHASE 2 CONSOLIDATION: Condition penalties moved to ModifierEngine
+    // this._applyConditionPenalties();
 
     if (this.parent?.type === 'droid') {
       this._calculateDroidDerivedData();
     }
 
-    this._calculateDefenses();
+    // PHASE 2 CONSOLIDATION: Defense calculation moved to DerivedCalculator
+    // DerivedCalculator is the sole authority for system.derived.defenses.*
+    // this._calculateDefenses();
     this._calculateSkills();
     // BAB is progression-owned, never computed here (see PROGRESSION_COMPILER.md)
-    this._calculateDamageThreshold();
+    // PHASE 2 CONSOLIDATION: Damage threshold calculated from derived defenses
+    // this._calculateDamageThreshold();
     this._calculateInitiative();
   }
 
@@ -165,12 +167,8 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
   /* -------------------------------------------------------------------------- */
   /* CONDITION TRACK                                                            */
+  /* Condition track is managed by ActorEngine and ModifierEngine               */
   /* -------------------------------------------------------------------------- */
-
-  _applyConditionPenalties() {
-    const penalties = [0, -1, -2, -5, -10, 0];
-    this.conditionTrack.penalty = penalties[this.conditionTrack.current] || 0;
-  }
 
   /* -------------------------------------------------------------------------- */
   /* DROID DERIVED DATA                                                         */
@@ -198,27 +196,27 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
   _calculateDefenses() {
     const lvl = this.level;
-    const cond = this.conditionTrack.penalty;
 
     // PHASE 2 COMPLETION: Base-only calculation
     // Armor modifiers are applied by ModifierEngine, NOT here
+    // Condition penalties applied by ModifierEngine, NOT here
     // This is the CRITICAL FIX: Remove direct armor calculation
     // Reflex.armor property removed from calculation (handled by ModifierEngine)
 
     this.defenses.reflex.total =
       10 + this.abilities.dex.mod +
       this.defenses.reflex.classBonus +
-      this.defenses.reflex.misc + cond;
+      this.defenses.reflex.misc;
 
     this.defenses.fort.total =
       10 + lvl + this.abilities.str.mod +
       this.defenses.fort.classBonus +
-      this.defenses.fort.misc + cond;
+      this.defenses.fort.misc;
 
     this.defenses.will.total =
       10 + lvl + this.abilities.wis.mod +
       this.defenses.will.classBonus +
-      this.defenses.will.misc + cond;
+      this.defenses.will.misc;
   }
 
   /* -------------------------------------------------------------------------- */
@@ -237,8 +235,7 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
         half + this.abilities[ability].mod +
         (skill.trained ? 5 : 0) +
         (skill.focused ? 5 : 0) +
-        (skill.miscMod || 0) +
-        this.conditionTrack.penalty;
+        (skill.miscMod || 0);
     }
   }
 

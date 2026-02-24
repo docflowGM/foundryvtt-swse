@@ -147,6 +147,13 @@ export class CombatActionBar {
             ${actor.system.secondWind?.uses < 1 || !econ.swift ? 'disabled' : ''}>
             <i class="fa-solid fa-heart-pulse"></i> Second Wind (${actor.system.secondWind?.uses}/1)
           </button>
+
+          <!-- PHASE C: Edge of Exhaustion button (appears only when uses = 0) -->
+          <button class="swse-btn edge-of-exhaustion" data-action="edge-of-exhaustion"
+            ${actor.system.secondWind?.uses > 0 || actor.system.conditionTrack?.current >= 5 ? 'disabled' : ''}
+            title="Trade -1 condition for 1 Second Wind use">
+            <i class="fa-solid fa-bolt"></i> Edge of Exhaustion
+          </button>
         </div>
 
       </section>`;
@@ -190,6 +197,7 @@ export class CombatActionBar {
       'charge': () => this._doCharge(actor),
       'aid-another': () => this._aidAnother(actor),
       'second-wind': () => this._secondWind(actor),
+      'edge-of-exhaustion': () => this._edgeOfExhaustion(actor),
       'end-turn': () => game.combat?.nextTurn()
     };
 
@@ -244,8 +252,7 @@ export class CombatActionBar {
       name: 'Charging',
       duration: { turns: 1 },
       changes: [
-        { key: 'system.attackBonus', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 2 },
-        { key: 'system.defenses.reflex.bonus', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -2 }
+        { key: 'system.attackBonus', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 2 }
       ]
     });
     this._useAction(actor, 'fullRound');
@@ -264,14 +271,63 @@ export class CombatActionBar {
     const result = await ActorEngine.applySecondWind(actor);
 
     if (result.success) {
+      // PHASE C: Enhanced chat message with full context
+      let chatContent = `<b>${escapeHTML(actor.name)}</b> uses <strong>Second Wind</strong>, regaining <strong>${result.healed}</strong> HP (${result.newHP}/${actor.system?.hp?.max || 0})!`;
+
+      // Add condition improvement note if applicable
+      if (result.conditionImproved) {
+        chatContent += `<br><em style="color: #ff9500;">✦ Condition improved: Step ${result.newCondition}</em>`;
+      }
+
       createChatMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
-        content: `<b>${escapeHTML(actor.name)}</b> regains <strong>${result.healed}</strong> HP!`
+        content: chatContent
       });
 
       this._useAction(actor, 'swift');
     } else {
       ui.notifications.warn(result.reason || 'Could not use Second Wind');
+    }
+  }
+
+  /**
+   * PHASE C: Edge of Exhaustion handler
+   *
+   * Trade -1 condition track for +1 Second Wind use when out of uses
+   */
+  static async _edgeOfExhaustion(actor) {
+    const uses = actor.system.secondWind?.uses ?? 0;
+    if (uses > 0) {
+      return ui.notifications.warn('Second Wind uses still available.');
+    }
+
+    // Prompt confirmation
+    const confirmed = await Dialog.confirm({
+      title: 'Edge of Exhaustion',
+      content: '<p>Accept <strong>-1 condition track</strong> to regain <strong>1 Second Wind use</strong>?</p>',
+      yes: () => true,
+      no: () => false
+    });
+
+    if (!confirmed) {return;}
+
+    // Apply through ActorEngine
+    const result = await ActorEngine.applySecondWindEdgeOfExhaustion(actor);
+
+    if (result.success) {
+      // PHASE C: Enhanced chat message with condition trade details
+      const chatContent = `<b>${escapeHTML(actor.name)}</b> reaches the <strong>Edge of Exhaustion</strong>!<br>
+        <em style="color: #ff0000;">⚠ Trades <strong>-1 condition step</strong> (Step ${result.condition} → ${result.newCondition})</em><br>
+        <em style="color: #0099ff;">✦ Regains <strong>1 Second Wind use</strong></em>`;
+
+      createChatMessage({
+        speaker: ChatMessage.getSpeaker({ actor }),
+        content: chatContent
+      });
+
+      this._useAction(actor, 'swift');
+    } else {
+      ui.notifications.warn(result.reason || 'Could not use Edge of Exhaustion');
     }
   }
 

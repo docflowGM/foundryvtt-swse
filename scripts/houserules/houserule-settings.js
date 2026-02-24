@@ -325,6 +325,15 @@ export function registerHouseruleSettings() {
     default: 'encounter'
   });
 
+  register('secondWindWebEnhancement', {
+    name: 'Web Enhancement: Second Wind Formula',
+    hint: 'Alternative healing formula: 5 + (CHA Mod) + 1d4 instead of standard 5 + floor(level/4)*5',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   /* -------------------------------------------------------------------------- */
   /*                            SKILLS & FEATS                                  */
   /* -------------------------------------------------------------------------- */
@@ -1260,15 +1269,6 @@ export function registerHouseruleSettings() {
   /* -------------------------------------------------------------------------- */
   /*                        CHARACTER CREATION - RESTRICTIONS                    */
   /* -------------------------------------------------------------------------- */
-
-  register('enableBackgrounds', {
-    name: 'Enable Backgrounds in Character Generation',
-    hint: 'If disabled, the Background step is removed from character creation (though templates still apply backgrounds).',
-    scope: 'world',
-    config: true,
-    type: Boolean,
-    default: true
-  });
 
   register('bannedSpecies', {
     name: 'Banned Species/Races',

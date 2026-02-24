@@ -235,23 +235,59 @@ async function cmdRollSWSE(args) {
   return false;
 }
 
-/** /rest */
-async function cmdRest() {
+/** /rest [type] — Rest actors (short/extended/full) */
+async function cmdRest(args) {
   const tokens = getSelectedTokensOrWarn();
   if (!tokens) {return false;}
+
+  // PHASE C: Support different rest types
+  const restType = (args[0] || 'extended').toLowerCase();
+  const validTypes = ['short', 'extended', 'full', 'long'];
+
+  if (!validTypes.includes(restType)) {
+    ui.notifications.warn(`Invalid rest type: ${restType}. Use: short, extended, or full.`);
+    return false;
+  }
+
+  // Normalize type (full/long → extended)
+  const normalizedType = (restType === 'full' || restType === 'long') ? 'extended' : restType;
+
+  const { SecondWindEngine } = await import('../../engines/combat/SecondWindEngine.js');
 
   for (const t of tokens) {
     const a = t.actor;
 
-    // PHASE 2: Read from authoritative source, write to correct location
-    await globalThis.SWSE.ActorEngine.updateActor(a, {
+    // Base recovery: HP and force (always)
+    const updateData = {
       'system.derived.hp.value': a.system?.derived?.hp?.max || a.system?.hp?.max || 0,
       'system.force.value': a.system.force.max ?? 0,
       'system.conditions': {}
+    };
+
+    // Second Wind recovery based on rest type and houserule setting
+    if (normalizedType === 'short') {
+      // Short rest: may restore Second Wind if houserule setting allows
+      const recoveryMode = game.settings.get('foundryvtt-swse', 'secondWindRecovery');
+      if (recoveryMode === 'short') {
+        const maxUses = a.system.secondWind?.max ?? 1;
+        updateData['system.secondWind.uses'] = maxUses;
+      }
+    } else if (normalizedType === 'extended') {
+      // Extended rest: always restore Second Wind (RAW rule)
+      const maxUses = a.system.secondWind?.max ?? 1;
+      updateData['system.secondWind.uses'] = maxUses;
+    }
+
+    await globalThis.SWSE.ActorEngine.updateActor(a, updateData);
+
+    swseLogger.log(`${a.name} completed ${normalizedType} rest`, {
+      restType: normalizedType,
+      secondWindRestored: updateData['system.secondWind.uses'] ? 'yes' : 'no'
     });
   }
 
-  ui.notifications.info('Actors fully rested.');
+  const typeLabel = normalizedType === 'extended' ? 'fully' : normalizedType;
+  ui.notifications.info(`Actors ${typeLabel} rested.`);
 
   return false;
 }

@@ -1,4 +1,5 @@
 import { ProgressionEngine } from '../engines/progression/engine/progression-engine.js';
+import { ForcePointsService } from '../engines/force/force-points-service.js';
 import { createChatMessage } from '../core/document-api-v13.js';
 /**
  * Force Points utility functions for rolling and spending Force Points
@@ -8,6 +9,8 @@ export class ForcePointsUtil {
 
   /**
    * Roll Force Point dice and optionally apply Dark Side temptation
+   * Uses ForcePointsService for canonical heroic scaling
+   *
    * @param {Actor} actor - The actor spending the Force Point
    * @param {Object} options - Options for the roll
    * @param {string} options.reason - The reason for spending the Force Point
@@ -23,24 +26,16 @@ export class ForcePointsUtil {
 
     const { reason = 'boost', useDarkSide = false } = options;
 
-    // Get Force Point dice configuration based on level and dice type
-    const diceType = actor.system.forcePoints?.diceType || 'd6';
-    const level = actor.system.level?.heroic || actor.system.level || 1;
+    // Get heroic scaling from ForcePointsService (canonical source)
+    const { diceCount, dieSize } = await ForcePointsService.getScalingDice(actor);
+    const forceDice = `${diceCount}${dieSize}`;
 
-    // Determine number of dice to roll
-    let numDice = 1;
-    if (level >= 15) {
-      numDice = 3;
-    } else if (level >= 8) {
-      numDice = 2;
-    }
-
-    // Roll the dice with the selected dice type
-    const roll = await globalThis.SWSE.RollEngine.safeRoll(`${numDice}${diceType}`).evaluate();
+    // Roll the dice with heroic scaling
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(forceDice).evaluate();
 
     // For multiple dice, take the highest
     let bonus = 0;
-    if (numDice > 1) {
+    if (diceCount > 1) {
       bonus = Math.max(...roll.dice[0].results.map(r => r.result));
     } else {
       bonus = roll.total;
@@ -50,7 +45,7 @@ export class ForcePointsUtil {
     let darkSideBonus = 0;
     let darkSideUsed = false;
     if (useDarkSide) {
-      const darkSideRoll = await globalThis.SWSE.RollEngine.safeRoll(`1${diceType}`).evaluate();
+      const darkSideRoll = await globalThis.SWSE.RollEngine.safeRoll(`1${dieSize}`).evaluate();
       darkSideBonus = darkSideRoll.total;
       darkSideUsed = true;
     }
@@ -64,7 +59,7 @@ export class ForcePointsUtil {
       bonus,
       darkSideRoll: darkSideUsed ? darkSideBonus : null,
       totalBonus,
-      numDice
+      diceCount
     });
 
     await createChatMessage({
@@ -109,15 +104,8 @@ export class ForcePointsUtil {
    */
   static async showForcePointDialog(actor, reason = 'boost') {
     const canDarkSide = this.canUseDarkSide(actor);
-    const diceType = actor.system.forcePoints?.diceType || 'd6';
-    const level = actor.system.level?.heroic || actor.system.level || 1;
-    let numDice = 1;
-    if (level >= 15) {
-      numDice = 3;
-    } else if (level >= 8) {
-      numDice = 2;
-    }
-    const diceDesc = numDice > 1 ? `${numDice}${diceType} (take highest)` : `${numDice}${diceType}`;
+    const diceDesc = await ForcePointsService.getFormulaDisplay(actor);
+    const { diceCount, dieSize } = await ForcePointsService.getScalingDice(actor);
 
     return new Promise((resolve) => {
       const dialog = new SWSEDialogV2({
@@ -126,13 +114,13 @@ export class ForcePointsUtil {
           <form>
             <div class="form-group">
               <label>Spend a Force Point for ${reason}?</label>
-              <p>You will roll ${diceDesc} and add the ${numDice > 1 ? 'highest result' : 'result'} to your roll.</p>
+              <p>You will roll ${diceDesc} and add the ${diceCount > 1 ? 'highest result' : 'result'} to your roll.</p>
             </div>
             ${canDarkSide ? `
               <div class="form-group">
                 <label>
                   <input type="checkbox" name="useDarkSide"/>
-                  Call upon the Dark Side (+1${diceType}, increases Dark Side Score by 1)
+                  Call upon the Dark Side (+1${dieSize}, increases Dark Side Score by 1)
                 </label>
               </div>
             ` : ''}
@@ -170,7 +158,7 @@ export class ForcePointsUtil {
    * @private
    */
   static async _createForcePointMessage(actor, data) {
-    const { reason, roll, bonus, darkSideRoll, totalBonus, numDice } = data;
+    const { reason, roll, bonus, darkSideRoll, totalBonus, diceCount } = data;
 
     const html = `
       <div class="swse force-point-roll">
@@ -179,10 +167,10 @@ export class ForcePointsUtil {
           <div class="dice-formula">${roll.formula}</div>
           <div class="dice-tooltip">
             ${roll.dice[0].results.map((r, i) =>
-              `<span class="die d6 ${i === roll.dice[0].results.findIndex(x => x.result === bonus) && numDice > 1 ? 'max' : ''}">${r.result}</span>`
+              `<span class="die d6 ${i === roll.dice[0].results.findIndex(x => x.result === bonus) && diceCount > 1 ? 'max' : ''}">${r.result}</span>`
             ).join(' ')}
           </div>
-          ${numDice > 1 ? `<div class="dice-total">Highest: <strong>${bonus}</strong></div>` : `<div class="dice-total">Result: <strong>${bonus}</strong></div>`}
+          ${diceCount > 1 ? `<div class="dice-total">Highest: <strong>${bonus}</strong></div>` : `<div class="dice-total">Result: <strong>${bonus}</strong></div>`}
         </div>
         ${darkSideRoll !== null ? `
           <div class="dark-side-bonus">
@@ -215,9 +203,19 @@ export class ForcePointsUtil {
       return false;
     }
 
-    // Spend the Force Point
-    const spent = await actor.spendForcePoint('reducing Dark Side Score');
-    if (!spent) {return false;}
+    // Validate Force Point availability via ForcePointsService
+    const validation = ForcePointsService.validateSpend(actor, {
+      reason: 'reducing Dark Side Score',
+      amount: 1
+    });
+
+    if (!validation.valid) {
+      ui.notifications.error(`Cannot reduce Dark Side Score: ${validation.message}`);
+      return false;
+    }
+
+    // Spend the Force Point via ActorEngine
+    await globalThis.SWSE?.ActorEngine?.spendForcePoints(actor, 1);
 
     // Reduce Dark Side Score
     await globalThis.SWSE?.ActorEngine?.updateActor(actor, { 'system.darkSideScore': currentDarkSide - 1 });
@@ -227,21 +225,50 @@ export class ForcePointsUtil {
 
   /**
    * Avoid death by spending a Force Point
+   * Uses ForcePointsService eligibility checks and ActorEngine mutation
+   *
    * @param {Actor} actor - The actor avoiding death
+   * @param {Object} context - Death context (damage, threshold, etc.)
    * @returns {Promise<boolean>} Whether death was avoided
    */
-  static async avoidDeath(actor) {
-    // Spend the Force Point
-    const spent = await actor.spendForcePoint('avoiding death');
-    if (!spent) {return false;}
+  static async avoidDeath(actor, context = {}) {
+    // Check eligibility via ForcePointsService
+    const canRescue = ForcePointsService.canRescue(actor, context);
+    if (!canRescue) {
+      ui.notifications.error('Cannot use Force Point to avoid death: requirements not met (HP not at death, already rescued, or no Force Points)');
+      return false;
+    }
 
-    // Set HP to 0 and set condition track to helpless but alive
-    await globalThis.SWSE?.ActorEngine?.updateActor(actor, {
-      'system.hp.value': 0,
-      'system.conditionTrack.current': Math.min(4, actor.system.conditionTrack.current)
+    // Validate spend
+    const validation = ForcePointsService.validateSpend(actor, {
+      reason: 'avoiding death',
+      amount: 1
     });
 
+    if (!validation.valid) {
+      ui.notifications.error(`Cannot avoid death: ${validation.message}`);
+      return false;
+    }
 
+    // Spend the Force Point via ActorEngine (mutation authority)
+    await globalThis.SWSE?.ActorEngine?.spendForcePoints(actor, 1);
+
+    // Mark as rescued this resolution (prevents multiple rescues)
+    // This flag should be cleared at the start of the next damage resolution
+    await actor.setFlag('foundryvtt-swse', 'alreadyRescuedThisResolution', true);
+
+    // Set HP to 0 and condition track to helpless (step 4)
+    // Uses system.hp.value as canonical HP field
+    const maxConditionTrack = 5; // Standard max
+    const helplesstep = 4;
+    const newConditionTrack = Math.min(helplesstep, actor.system.conditionTrack?.current ?? 0);
+
+    await globalThis.SWSE?.ActorEngine?.updateActor(actor, {
+      'system.hp.value': 0,
+      'system.conditionTrack.current': newConditionTrack
+    });
+
+    // Chat notification
     createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
       content: `<p><strong>${actor.name}</strong> spends a Force Point to avoid death and falls unconscious!</p>`

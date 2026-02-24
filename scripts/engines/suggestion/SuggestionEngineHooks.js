@@ -2,16 +2,20 @@
  * SuggestionEngineHooks
  *
  * Phase 2: Event Hook Wiring
+ * Phase F: Refactored to use SuggestionStateService (separation of concerns)
  *
  * Central registry for all suggestion engine event hooks.
  * Wires callbacks for feat/talent selection, level-up, mentor dialog, etc.
- * Coordinates the lifecycle of anchors, pivots, and history tracking.
+ *
+ * GOVERNANCE: This module orchestrates state changes but does NOT mutate directly.
+ * All state persistence goes through SuggestionStateService.
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { swseLogger } from '../../utils/logger.js';
 import { PlayerHistoryTracker } from './PlayerHistoryTracker.js';
 import { BuildIdentityAnchor } from './BuildIdentityAnchor.js';
 import { PivotDetector } from './PivotDetector.js';
+import { SuggestionStateService } from './SuggestionStateService.js';
 
 export class SuggestionEngineHooks {
 
@@ -67,8 +71,9 @@ export class SuggestionEngineHooks {
       // Update pivot state (may transition between states)
       const pivotResult = PivotDetector.updatePivotState(actor);
       if (pivotResult.transitioned && pivotResult.newState) {
-        actor.system.suggestionEngine.pivotDetector.state = pivotResult.newState;
-        SWSELogger.log(`[Hooks] Pivot state changed: ${pivotResult.newState} (divergence: ${pivotResult.divergence.toFixed(2)})`);
+        // Route through SuggestionStateService instead of direct mutation
+        await SuggestionStateService.updatePivotState(actor, pivotResult.newState);
+        swseLogger.log(`[Hooks] Pivot state changed: ${pivotResult.newState} (divergence: ${pivotResult.divergence.toFixed(2)})`);
       }
     } catch (err) {
       SWSELogger.error('[Hooks] Error in selection handler:', err);
@@ -118,16 +123,16 @@ export class SuggestionEngineHooks {
       // Update pivot state based on recent picks
       const pivotResult = PivotDetector.updatePivotState(actor);
       if (pivotResult.transitioned && pivotResult.newState) {
-        actor.system.suggestionEngine.pivotDetector.state = pivotResult.newState;
-        SWSELogger.log(`[Hooks] Pivot state: ${pivotResult.newState} (divergence: ${pivotResult.divergence.toFixed(2)})`);
+        // Route through SuggestionStateService instead of direct mutation
+        await SuggestionStateService.updatePivotState(actor, pivotResult.newState);
+        swseLogger.log(`[Hooks] Pivot state: ${pivotResult.newState} (divergence: ${pivotResult.divergence.toFixed(2)})`);
       }
 
-      // Store level-up metadata
-      if (!actor.system.suggestionEngine.meta) {
-        actor.system.suggestionEngine.meta = {};
-      }
-      actor.system.suggestionEngine.meta.lastLevelUp = Date.now();
-      actor.system.suggestionEngine.meta.lastUpdatedAtLevel = newLevel;
+      // Store level-up metadata through SuggestionStateService
+      await SuggestionStateService.updateMetadata(actor, {
+        lastLevelUp: Date.now(),
+        lastUpdatedAtLevel: newLevel
+      });
     } catch (err) {
       SWSELogger.error('[Hooks] Error in level-up handler:', err);
     }

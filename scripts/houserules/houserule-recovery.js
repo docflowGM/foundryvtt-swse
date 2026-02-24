@@ -132,5 +132,33 @@ export class RecoveryMechanics {
         }
       }
     }
+
+    // PHASE C INTEGRATION: Reset Second Wind uses per houserule setting
+    try {
+      const { SecondWindEngine } = await import('../../engines/combat/SecondWindEngine.js');
+
+      // Determine rest type for SecondWindEngine
+      const restType = isFullRest ? 'extended-rest' : 'short-rest';
+
+      // Reset Second Wind uses for all combatants
+      const swReset = await SecondWindEngine.resetAllSecondWind(restType);
+
+      swseLogger.log(`[RECOVERY] Second Wind reset during rest`, {
+        restType,
+        updated: swReset.updated,
+        skipped: swReset.skipped
+      });
+
+      // Emit hook for observers
+      Hooks.call('swseRestCompleted', {
+        restType,
+        secondWindReset: swReset.updated,
+        isFullRest,
+        duration: data.duration
+      });
+
+    } catch (err) {
+      swseLogger.error(`[RECOVERY] Failed to reset Second Wind during rest`, { error: err });
+    }
   }
 }

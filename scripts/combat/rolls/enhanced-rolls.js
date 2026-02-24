@@ -3,6 +3,7 @@ import { RollEngine } from '../../engine/roll-engine.js';
 import { rollDamage } from './damage.js';
 import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance } from '../utils/combat-utils.js';
 import { getEffectiveHalfLevel } from '../../actors/derived/level-split.js';
+import { ForcePointsService } from '../../engines/force/force-points-service.js';
 import { AmmoSystem } from '../../engines/inventory/ammo-system.js';
 import {
   ROLL_HOOKS,
@@ -109,13 +110,17 @@ export class SWSERoll {
     const fp = actor.system.forcePoints;
     if (!fp || fp.value <= 0) {return 0;}
 
+    // Get canonical dice from ForcePointsService
+    const { diceCount: numDice, dieSize: die } = await ForcePointsService.getScalingDice(actor);
+    const formulaDisplay = await ForcePointsService.getFormulaDisplay(actor);
+
     const confirmed = await new Promise(resolve => {
       new SWSEDialogV2({
         title: 'Spend a Force Point?',
         content: `
           <p>Spend a Force Point to boost your ${reason}?</p>
           <p>FP: ${fp.value}/${fp.max}</p>
-          <p>Die: <strong>${fp.die || '1d6'}</strong></p>
+          <p>Die: <strong>${formulaDisplay}</strong></p>
         `,
         buttons: {
           yes: { label: 'Use Force Point', callback: () => resolve(true) },
@@ -129,8 +134,8 @@ export class SWSERoll {
 
     // Build FP context (middleware pattern)
     const fpContext = {
-      numDice: this._determineBaseFPDice(actor),
-      die: actor.system.forcePoints?.die || 'd6',
+      numDice: numDice,
+      die: die,
       keep: 'highest', // RAW
       flatBonus: 0,
       multiplier: 1,
@@ -201,18 +206,6 @@ export class SWSERoll {
     return result;
   }
 
-  /**
-   * Determine base Force Point dice based on character level
-   * @param {Actor} actor
-   * @returns {number} Number of dice (1-3)
-   * @private
-   */
-  static _determineBaseFPDice(actor) {
-    const lvl = actor.system.level ?? 1;
-    if (lvl >= 15) {return 3;}
-    if (lvl >= 8) {return 2;}
-    return 1;
-  }
 
   /* ========================================================================== */
   /* ATTACK ROLLS                                                               */

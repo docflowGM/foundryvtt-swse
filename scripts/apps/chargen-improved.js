@@ -9,6 +9,7 @@ import CharacterGenerator from './chargen/chargen-main.js';
 import { getClassProperty, getHitDie, getTrainedSkills, getTalentTrees } from './chargen/chargen-property-accessor.js';
 import { createActor } from '../core/document-api-v13.js';
 import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
+import { HPGeneratorEngine } from '../engines/HP/HPGeneratorEngine.js';
 
 export default class CharacterGeneratorImproved extends CharacterGenerator {
 
@@ -473,47 +474,14 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
     const classData = this.characterData.classData;
     const conMod = this.characterData.isDroid ? 0 : (this.characterData.abilities.con.mod || 0);
 
-    // Calculate HP gain based on houserule settings
-    let hpGeneration = 'average';
-    let maxHPLevels = 1;
-    try {
-      hpGeneration = game.settings.get('foundryvtt-swse', 'hpGeneration') || 'average';
-      maxHPLevels = game.settings.get('foundryvtt-swse', 'maxHPLevels') || 1;
-    } catch (err) {
-      hpGeneration = 'average';
-      maxHPLevels = 1;
-    }
-
-    let hpGain = 0;
+    // Calculate HP gain using centralized engine
     const hitDie = classData.hitDie;
-
-    if (newLevel <= maxHPLevels) {
-      // Levels within maxHPLevels get maximum HP
-      hpGain = hitDie + conMod;
-      SWSELogger.log(`SWSE CharGen | Level ${newLevel} gets max HP: ${hpGain}`);
-    } else {
-      // Apply HP generation method
-      switch (hpGeneration) {
-        case 'maximum':
-          hpGain = hitDie + conMod;
-          break;
-        case 'average':
-          hpGain = Math.floor(hitDie / 2) + 1 + conMod;
-          break;
-        case 'roll':
-          hpGain = Math.floor(Math.random() * hitDie) + 1 + conMod;
-          break;
-        case 'average_minimum': {
-          const rolled = Math.floor(Math.random() * hitDie) + 1;
-          const average = Math.floor(hitDie / 2) + 1;
-          hpGain = Math.max(rolled, average) + conMod;
-          break;
-        }
-        default:
-          hpGain = Math.floor(hitDie / 2) + 1 + conMod;
-      }
-      SWSELogger.log(`SWSE CharGen | Level ${newLevel} HP roll (${hpGeneration}): ${hpGain}`);
-    }
+    const hpGain = HPGeneratorEngine.calculateHPGain(
+      actor,
+      newLevel,
+      hitDie,
+      { context: 'chargen', isNonheroic }
+    );
 
     // Update actor
     const currentHP = actor.system.hp.max || 0;

@@ -1,5 +1,6 @@
 import { swseLogger } from '../utils/logger.js';
 import { escapeHTML } from '../utils/security-utils.js';
+import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 
 /**
  * SWSE Damage System (v13+)
@@ -231,7 +232,7 @@ export class DamageSystem {
             label: 'Apply',
             callback: async html => {
               const newCT = Number((html?.[0] ?? html)?.querySelector('[name="ct"]')?.value);
-              await target.update({ 'system.conditionTrack.current': newCT });
+              await ActorEngine.updateActor(target, { 'system.conditionTrack.current': newCT });
               resolve(newCT);
             }
           },

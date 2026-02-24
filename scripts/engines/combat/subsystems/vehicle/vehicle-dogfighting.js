@@ -162,9 +162,7 @@ export class VehicleDogfighting {
       label: 'Being Tailed',
       icon: 'icons/svg/arrow-left.svg',
       origin: tailer.uuid,
-      changes: [
-        { key: 'system.defenses.reflex.bonus', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -2 }
-      ],
+      changes: [],
       flags: { swse: { vehicleDogfight: 'tailed', source: tailer.id } }
     };
 
