@@ -66,6 +66,11 @@ export class ModifierEngine {
         modifiers.push(...this._getDroidModModifiers(actor));
       }
 
+      // Source 7b: Vehicle Modifications (Phase 6 - vehicles only)
+      if (actor.type === 'vehicle') {
+        modifiers.push(...this._getVehicleModModifiers(actor));
+      }
+
       // Source 8: Custom modifiers (Phase B - user-defined via UI)
       modifiers.push(...this._getCustomModifiers(actor));
 
@@ -1151,6 +1156,75 @@ export class ModifierEngine {
       return modifiers;
     } catch (err) {
       swseLogger.warn(`[ModifierEngine] Error collecting droid mod modifiers:`, err);
+      return modifiers;
+    }
+  }
+
+  /**
+   * Collect modifiers from vehicle systems (Phase 6)
+   * Vehicles can install modifications that contribute modifiers
+   *
+   * @private
+   * @param {Actor} actor - Must be a vehicle actor
+   * @returns {Modifier[]}
+   */
+  static _getVehicleModModifiers(actor) {
+    const modifiers = [];
+
+    if (actor.type !== 'vehicle') {
+      return modifiers;
+    }
+
+    try {
+      const installedSystems = actor?.system?.installedSystems;
+
+      if (installedSystems && typeof installedSystems === 'object') {
+        try {
+          const { VEHICLE_SYSTEM_DEFINITIONS, getVehicleSystemDefinition } = await import('../../domain/vehicles/vehicle-system-definitions.js');
+
+          for (const [systemId, installed] of Object.entries(installedSystems)) {
+            const def = getVehicleSystemDefinition(systemId);
+            if (!def) {
+              continue;
+            }
+
+            const systemName = def.name || systemId;
+            const effects = Array.isArray(def.effects) ? def.effects : [];
+
+            for (const effect of effects) {
+              if (!effect || typeof effect !== 'object') continue;
+
+              const target = String(effect.target || '').trim();
+              const type = String(effect.type || 'untyped').trim().toLowerCase();
+              const value = Number(effect.value) || 0;
+
+              if (!target) continue;
+
+              try {
+                modifiers.push(createModifier({
+                  source: ModifierSource.VEHICLE_MOD,
+                  sourceId: systemId,
+                  sourceName: systemName,
+                  target: target,
+                  type: type,
+                  value: value,
+                  enabled: true,
+                  description: `${systemName}: ${target} ${value > 0 ? '+' : ''}${value}`
+                }));
+              } catch (err) {
+                swseLogger.warn(`Failed to create modifier for vehicle system ${systemName}:`, err);
+              }
+            }
+          }
+        } catch (err) {
+          swseLogger.warn(`[ModifierEngine] Error processing vehicle systems:`, err);
+        }
+      }
+
+      swseLogger.debug(`[ModifierEngine] Collected ${modifiers.length} modifiers from vehicle modifications`);
+      return modifiers;
+    } catch (err) {
+      swseLogger.warn(`[ModifierEngine] Error collecting vehicle mod modifiers:`, err);
       return modifiers;
     }
   }
