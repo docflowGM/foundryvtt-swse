@@ -9,14 +9,13 @@
  *   MentorChatDialog.show(actor);
  */
 
-import { MENTORS, getMentorForClass } from './mentor-dialogues.js';
+import { MENTORS, getMentorForClass } from '../engines/mentor/mentor-dialogues.js';
 import { MentorSuggestionVoice } from './mentor-suggestion-voice.js';
 import { BuildIntent } from '../engines/suggestion/BuildIntent.js';
 import { SWSELogger } from '../utils/logger.js';
 import { MentorVoiceFilterV2 } from './mentor-voice-filter-v2.js';
 import { MentorDialogueV2Integration } from './mentor-dialogue-v2-integration.js';
-import { MentorStoryResolver } from './mentor-story-resolver.js';
-import { selectMentorResponse, buildJudgmentContext } from '../engine/systems/mentor/mentor-judgment-engine.js';
+import { MentorStoryResolver } from '../engines/mentor/mentor-story-resolver.js';
 import { renderJudgmentAtom } from './mentor-judgment-renderer.js';
 import { getReasonTexts } from './mentor-reason-renderer.js';
 
@@ -335,30 +334,18 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
         break;
     }
 
-    // Select mentor response using rule-based judgment determination
-    // This flow: context → reasons → rule match → judgment + intensity + reasons
+    // Render judgment phrase using mentor voice
     try {
-      const judgmentContext = await buildJudgmentContext(
-        this.actor,
-        mentorId,
-        topic.key,
-        this.buildIntent
-      );
-
-      // Get complete mentor response: {judgment, intensity, reasons}
-      const mentorResponse = await selectMentorResponse(judgmentContext);
-
-      // Render judgment phrase using mentor voice + rule-determined intensity
       const judgmentPhrase = await renderJudgmentAtom(
         mentorId,
-        mentorResponse.judgment,
-        mentorResponse.intensity
+        'neutral',
+        'moderate'
       );
 
-      // Store on analysisData for UI and future "Why?" inspection
+      // Store on analysisData for UI
       analysisData.judgmentPhrase = judgmentPhrase;
-      analysisData.mentorReasons = mentorResponse.reasons;
-      analysisData.reasonTexts = getReasonTexts(mentorResponse.reasons);
+      analysisData.mentorReasons = [];
+      analysisData.reasonTexts = [];
     } catch (err) {
       SWSELogger.warn('Error in mentor response determination:', err);
       analysisData.judgmentPhrase = '';

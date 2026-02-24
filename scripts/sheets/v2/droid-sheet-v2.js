@@ -2,16 +2,13 @@
  * DroidSheetV2 — Complete Droid Sheet UI
  * Displays and edits droid configuration: systems, modifications, appendages, costs
  *
- * PHASE 6B-2: All mutations route through ActorEngine + DroidEngine
+ * PHASE 6B-2: All mutations route through ActorEngine
  * - No direct actor.update() calls
  * - All UI actions → descriptor → plan → single atomic update
  * - Derived recalculation handled by engine
  */
 
-import { DroidValidationEngine } from '../../engine/droid-validation-engine.js';
-import { DroidModValidator } from '../../engine/droid-mod-validator.js';
-import { DroidEngine } from '../../engine/droid-engine.js';
-import { ActorEngine } from '../engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 
 export class DroidSheetV2 extends ActorSheet {
   static get defaultOptions() {
