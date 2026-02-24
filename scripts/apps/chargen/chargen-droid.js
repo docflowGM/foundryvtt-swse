@@ -580,22 +580,26 @@ export function _onPurchaseSystem(event) {
   const category = button.dataset.category;
   const subcategory = button.dataset.subcategory;
   const id = button.dataset.id;
-  const cost = Number(button.dataset.cost || 0);
+  // PHASE 1: SECURITY FIX — Do NOT read cost from DOM, will get from system data below
   const weight = Number(button.dataset.weight || 0);
 
-  // Check if can afford
-  if (cost > this.characterData.droidCredits.remaining) {
-    ui.notifications.warn('Not enough credits!');
-    return;
-  }
-
-  // Find the system data
+  // Find the system data FIRST (server-authoritative source)
   let system;
+  let cost = 0;  // Will be set from system data
   let replacementCost = 0;  // Track if we're replacing an existing system
 
   if (category === 'locomotion') {
     system = DROID_SYSTEMS.locomotion.find(s => s.id === id);
     if (system) {
+      // PHASE 1: Get cost from system data, NOT from DOM
+      cost = Number(system.cost || 0);
+
+      // Check if can afford
+      if (cost > this.characterData.droidCredits.remaining) {
+        ui.notifications.warn('Not enough credits!');
+        return;
+      }
+
       // If replacing existing locomotion, subtract old cost
       if (this.characterData.droidSystems.locomotion) {
         replacementCost = this.characterData.droidSystems.locomotion.cost;
@@ -614,6 +618,14 @@ export function _onPurchaseSystem(event) {
   } else if (category === 'processor') {
     system = DROID_SYSTEMS.processors.find(s => s.id === id);
     if (system) {
+      cost = Number(system.cost || 0);
+
+      // Check if can afford
+      if (cost > this.characterData.droidCredits.remaining) {
+        ui.notifications.warn('Not enough credits!');
+        return;
+      }
+
       // If replacing existing processor, subtract old cost
       if (this.characterData.droidSystems.processor) {
         replacementCost = this.characterData.droidSystems.processor.cost;
@@ -630,9 +642,17 @@ export function _onPurchaseSystem(event) {
   } else if (category === 'appendage') {
     system = DROID_SYSTEMS.appendages.find(s => s.id === id);
     if (system) {
+      cost = Number(system.cost || 0);
+
       // Check if this is a free hand
       const freeHandCount = this.characterData.droidSystems.appendages.filter(a => a.id === 'hand' && a.cost === 0).length;
       const actualCost = (id === 'hand' && freeHandCount < 2) ? 0 : cost;
+
+      // Check if can afford
+      if (actualCost > this.characterData.droidCredits.remaining) {
+        ui.notifications.warn('Not enough credits!');
+        return;
+      }
 
       this.characterData.droidSystems.appendages.push({
         id: system.id,
@@ -647,6 +667,14 @@ export function _onPurchaseSystem(event) {
     const accessoryCategory = DROID_SYSTEMS.accessories[subcategory];
     system = accessoryCategory?.find(s => s.id === id);
     if (system) {
+      cost = Number(system.cost || 0);
+
+      // Check if can afford
+      if (cost > this.characterData.droidCredits.remaining) {
+        ui.notifications.warn('Not enough credits!');
+        return;
+      }
+
       this.characterData.droidSystems.accessories.push({
         id: system.id,
         name: system.name,
@@ -660,6 +688,14 @@ export function _onPurchaseSystem(event) {
     const enhancementId = button.dataset.enhancement || id;
     const enhancement = DROID_SYSTEMS.locomotionEnhancements.find(e => e.id === enhancementId);
     if (enhancement) {
+      cost = Number(enhancement.cost || 0);
+
+      // Check if can afford
+      if (cost > this.characterData.droidCredits.remaining) {
+        ui.notifications.warn('Not enough credits!');
+        return;
+      }
+
       if (!this.characterData.droidSystems.locomotionEnhancements) {
         this.characterData.droidSystems.locomotionEnhancements = [];
       }
@@ -674,6 +710,14 @@ export function _onPurchaseSystem(event) {
     const enhancementId = button.dataset.enhancement || id;
     const enhancement = DROID_SYSTEMS.appendageEnhancements.find(e => e.id === enhancementId);
     if (enhancement) {
+      cost = Number(enhancement.cost || 0);
+
+      // Check if can afford
+      if (cost > this.characterData.droidCredits.remaining) {
+        ui.notifications.warn('Not enough credits!');
+        return;
+      }
+
       if (!this.characterData.droidSystems.appendageEnhancements) {
         this.characterData.droidSystems.appendageEnhancements = [];
       }

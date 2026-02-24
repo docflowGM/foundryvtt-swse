@@ -10,6 +10,8 @@
 import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 import { GearTemplatesEngine } from './gear-templates-engine.js';
 import { UpgradeRulesEngine } from './upgrade-rules-engine.js';
+import { mergeMutationPlans } from '../governance/mutation/merge-mutations.js';
+import { LedgerService } from '../engines/store/ledger-service.js';
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -214,17 +216,29 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
     const cost = validation.cost;
     const slots = validation.slotsNeeded;
-    const credits = Number(actor.system.credits ?? 0);
     const tokens = Number(actor.system.modificationTokens ?? 0);
 
-    // Build atomic update: deduct credits and tokens (if tokens exist)
-    const updateData = { 'system.credits': credits - cost };
-    if (actor.system.modificationTokens !== undefined) {
-      updateData['system.modificationTokens'] = Math.max(0, tokens - 1);
+    // PHASE 2: STEP 1 — Use LedgerService for credit validation
+    // Validate funds BEFORE any mutations
+    const fundValidation = LedgerService.validateFunds(actor, cost);
+    if (!fundValidation.ok) {
+      ui.notifications.error(`Insufficient credits: ${fundValidation.reason}`);
+      return;
     }
 
-    await ActorEngine.updateActor(actor, updateData, { diff: true });
+    // PHASE 2: STEP 2 — Use LedgerService to build credit delta (no inline arithmetic)
+    try {
+      const creditPlan = LedgerService.buildCreditDelta(actor, cost);
 
+      // Add token reduction if applicable
+      if (actor.system.modificationTokens !== undefined) {
+        creditPlan.set['system.modificationTokens'] = Math.max(0, tokens - 1);
+      }
+
+      // PHASE 1: STEP 2 — Prepare both mutations before executing ANY changes
+      // This ensures we can validate both operations before partial state corruption
+
+    // Prepare upgrade installation data
     const installed = this.item.system.installedUpgrades ?? [];
     const nextInstalled = [
       ...installed,
@@ -238,13 +252,24 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
       }
     ];
 
-    // PHASE 9: Governance boundary
-    // - Embedded item → route through ActorEngine (via actor.updateOwnedItem)
-    // - World/compendium item → allow direct update
-    if (actor?.updateOwnedItem && this.item.isEmbedded) {
-      await actor.updateOwnedItem(this.item, { 'system.installedUpgrades': nextInstalled });
-    } else {
-      await this.item.update({ 'system.installedUpgrades': nextInstalled });
+    // Prepare both mutations in one transaction attempt
+    try {
+      // Execute actor mutations atomically (credit deduction + token reduction)
+      await ActorEngine.applyMutationPlan(actor, creditPlan);
+
+      // Then execute item mutation (governance boundary)
+      // PHASE 9: Governance boundary
+      // - Embedded item → route through ActorEngine (via actor.updateOwnedItem)
+      // - World/compendium item → allow direct update
+      if (actor?.updateOwnedItem && this.item.isEmbedded) {
+        await actor.updateOwnedItem(this.item, { 'system.installedUpgrades': nextInstalled });
+      } else {
+        await this.item.update({ 'system.installedUpgrades': nextInstalled });
+      }
+    } catch (err) {
+      // PHASE 1: Atomicity error handling
+      ui.notifications.error(`Upgrade installation failed: ${err.message}. Please try again.`);
+      throw err;
     }
 
     ui.notifications.info('Upgrade installed successfully.');
@@ -354,7 +379,8 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
     const templateKey = event.currentTarget?.dataset?.templateKey;
     const templateName = event.currentTarget?.dataset?.templateName;
-    const templateCost = Number(event.currentTarget?.dataset?.templateCost || 0);
+    // PHASE 1: SECURITY FIX — Get cost from server-authoritative source, NOT from DOM
+    const templateCost = GearTemplatesEngine.getTemplateCost(templateKey);
 
     const actor = this.item.actor;
     if (!actor) {
@@ -368,10 +394,12 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
       return;
     }
 
-    const credits = Number(actor.system.credits || 0);
     const tokens = Number(actor.system.modificationTokens ?? 0);
-    if (credits < templateCost) {
-      ui.notifications.warn(`Not enough credits! Need ${templateCost}, have ${credits}.`);
+
+    // PHASE 2: STEP 1 — Use LedgerService for credit validation (not inline checks)
+    const fundValidation = LedgerService.validateFunds(actor, templateCost);
+    if (!fundValidation.ok) {
+      ui.notifications.error(`Insufficient credits: ${fundValidation.reason}`);
       return;
     }
 
@@ -390,13 +418,18 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
     if (!confirmed) {return;}
 
-    // Build atomic update: deduct credits and tokens (if tokens exist)
-    const updateData = { 'system.credits': credits - templateCost };
-    if (actor.system.modificationTokens !== undefined) {
-      updateData['system.modificationTokens'] = Math.max(0, tokens - 1);
-    }
+    // PHASE 2: STEP 2 — Use LedgerService to build credit delta (no inline arithmetic)
+    try {
+      const updateData = LedgerService.buildCreditDelta(actor, templateCost);
+      if (actor.system.modificationTokens !== undefined) {
+        updateData['system.modificationTokens'] = Math.max(0, tokens - 1);
+      }
 
-    await ActorEngine.updateActor(actor, updateData, { diff: true });
+      await ActorEngine.applyMutationPlan(actor, updateData, { diff: true });
+    } catch (err) {
+      ui.notifications.error(`Template application failed: ${err.message}`);
+      return;
+    }
     await GearTemplatesEngine.applyTemplate(this.item, templateKey);
     this.render({ force: true });
   }

@@ -83,6 +83,9 @@ export class UpgradeRulesEngine {
    * @param {Object} upgrade - The upgrade to install
    * @param {Object} actor - The actor performing the upgrade (if owned)
    * @returns {Object} Validation result: { valid, reason, cost, slotsNeeded }
+   *
+   * PHASE 2: This engine validates SLOT and RESTRICTION logic only.
+   * Credit validation has been moved to LedgerService.validateFunds().
    */
   static validateUpgradeInstallation(item, upgrade, actor) {
     // Basic contract: always return structured validation result
@@ -120,19 +123,9 @@ export class UpgradeRulesEngine {
       };
     }
 
-    // Check actor credits if actor provided
-    if (actor && actor.system) {
-      const credits = Number(actor.system.credits ?? 0);
-      if (upgradeCost > credits) {
-        return {
-          ...baseResult,
-          valid: false,
-          reason: `Insufficient credits. Need ${upgradeCost}, have ${credits}.`,
-          cost: upgradeCost,
-          slotsNeeded
-        };
-      }
-    }
+    // PHASE 2: Credit validation removed from here
+    // LedgerService.validateFunds() is now the sole credit authority
+    // UpgradeRulesEngine handles only slot and restriction logic
 
     // TODO: Implement upgrade restriction checking when rules are finalized
     // This would check things like: weapon type compatibility, armor class compatibility, etc.

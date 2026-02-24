@@ -148,4 +148,47 @@ export class LedgerService {
       newBalance: newBalance
     };
   }
+
+  /**
+   * PHASE 3: Calculate canonical resale value (50% of base cost)
+   * @param {number} baseCost - Original cost of item/upgrade
+   * @returns {number} Resale value
+   */
+  static calculateResale(baseCost) {
+    if (typeof baseCost !== 'number' || baseCost < 0) {
+      return 0;
+    }
+    // Canonical resale: 50% of base cost
+    return Math.floor(baseCost * 0.5);
+  }
+
+  /**
+   * PHASE 3: Build resale credit delta (opposite of purchase)
+   * @param {Actor} actor - Actor selling/removing item
+   * @param {number} baseCost - Original cost of removed item
+   * @returns {Object} MutationPlan with refund delta
+   */
+  static buildResaleDelta(actor, baseCost) {
+    if (!actor) {
+      throw new Error('buildResaleDelta: No actor provided');
+    }
+
+    const resaleValue = this.calculateResale(baseCost);
+    const currentCredits = Number(actor.system?.credits ?? 0) || 0;
+    const newCredits = normalizeCredits(currentCredits + resaleValue);
+
+    swseLogger.debug('LedgerService.buildResaleDelta', {
+      actor: actor.id,
+      baseCost,
+      resaleValue,
+      currentCredits,
+      newCredits
+    });
+
+    return {
+      set: {
+        'system.credits': newCredits
+      }
+    };
+  }
 }

@@ -70,6 +70,7 @@ export const ModifierSource = Object.freeze({
   ITEM: 'item',
   EFFECT: 'effect',
   DROID_MOD: 'droidMod',
+  VEHICLE_MOD: 'vehicleMod',
   CUSTOM: 'custom'
 });
 
