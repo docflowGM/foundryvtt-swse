@@ -26,6 +26,7 @@ import { mergeMutationPlans } from '../mutation/merge-mutations.js';
 import { ActorEngine } from '../actor-engine/actor-engine.js';
 import { LedgerService } from './ledger-service.js';
 import { VehicleFactory } from '../vehicles/vehicle-factory.js';
+import { PlacementRouter } from './placement-router.js';
 import { swseLogger } from '../../utils/logger.js';
 
 export class TransactionEngine {
@@ -135,19 +136,52 @@ export class TransactionEngine {
       // Merge credit plan
       mergedPlan = mergeMutationPlans([mergedPlan, creditPlan]);
 
-      // TODO Phase 6: Merge placement plans
-      // for (const item of cartItems) {
-      //   if (mergedPlan.create?.actors?.length) {
-      //     for (const created of mergedPlan.create.actors) {
-      //       const placementPlan = PlacementRouter.route({
-      //         purchaser,
-      //         createdTempId: created.temporaryId,
-      //         assetType: item.type
-      //       });
-      //       mergedPlan = mergeMutationPlans([mergedPlan, placementPlan]);
-      //     }
-      //   }
-      // }
+      // ============================================================
+      // PHASE 4b: COMPILE PLACEMENT PLANS (Phase 6)
+      // ============================================================
+
+      // PHASE 6: Route created assets to placement locations
+      if (mergedPlan.create?.actors && mergedPlan.create.actors.length > 0) {
+        const placementPlans = [];
+
+        for (const createdSpec of mergedPlan.create.actors) {
+          // Find the corresponding cart item to determine asset type
+          let assetType = 'item'; // default
+          for (const item of cartItems) {
+            if (item.payload?.template?.id === createdSpec.data.system?.buildMetadata?.templateId) {
+              assetType = 'vehicle';
+              break;
+            }
+          }
+
+          try {
+            const placementPlan = PlacementRouter.route({
+              purchaser,
+              createdTempId: createdSpec.temporaryId,
+              assetType: assetType
+            });
+
+            swseLogger.debug('TransactionEngine: Placement plan compiled', {
+              tempId: createdSpec.temporaryId,
+              assetType,
+              purchaserType: purchaser.type
+            });
+
+            placementPlans.push(placementPlan);
+          } catch (err) {
+            swseLogger.error('TransactionEngine: Failed to route placement', {
+              error: err.message,
+              tempId: createdSpec.temporaryId
+            });
+            throw err;
+          }
+        }
+
+        // Merge placement plans
+        for (const plan of placementPlans) {
+          mergedPlan = mergeMutationPlans([mergedPlan, plan]);
+        }
+      }
 
       swseLogger.info('TransactionEngine: Plans merged', {
         transactionId,
