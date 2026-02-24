@@ -1,11 +1,11 @@
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 /**
  * Force Power Hooks
  * Handles automatic force power grants when feats are added or abilities change
  * PHASE 10: Recursive guards prevent infinite item creation loops
  */
 
-import { ForcePowerManager } from '../utils/force-power-manager.js';
+import { ForcePowerManager } from '../../utils/force-power-manager.js';
 
 export function initializeForcePowerHooks() {
 
