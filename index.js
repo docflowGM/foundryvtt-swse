@@ -121,7 +121,6 @@ import { preloadHandlebarsTemplates, assertPartialsResolved } from './scripts/co
 
 // ---- engines ----
 import { RulesEngine } from './scripts/rules/rules-engine.js';
-import { SWSEProgressionEngine, initializeProgressionHooks } from './scripts/engines/progression.js';
 import { TalentEffectEngine } from './scripts/engines/talent/talent-effect-engine.js';
 import TalentActionLinker from './scripts/engines/talent/talent-action-linker.js';
 import { SWSELanguageModule } from './scripts/engines/progression/modules/language-module.js';
@@ -317,7 +316,6 @@ Hooks.once('ready', async () => {
 
   initializeForcePowerHooks();
   initializeFollowerHooks();
-  initializeProgressionHooks();
   SWSELanguageModule.init();
 
   /* ---------- suggestions ---------- */
