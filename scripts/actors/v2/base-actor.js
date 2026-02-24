@@ -1,6 +1,6 @@
 // scripts/actors/v2/base-actor.js
 import { SWSEActorBase } from '../base/swse-actor-base.js';
-import { ActorEngine } from '../engine/actor-engine.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 import { DerivedCalculator } from '../derived/derived-calculator.js';
 import { ModifierEngine } from '../../engines/effects/modifiers/ModifierEngine.js';
 import { computeCharacterDerived } from './character-actor.js';

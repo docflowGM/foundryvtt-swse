@@ -16,10 +16,10 @@ async function loadJSON(url) {
 // ======================================================================
 
 import { TalentTreeGraph } from './TalentTreeGraph.js';
-import { PrerequisiteEnricher } from '../../utils/PrerequisiteEnricher.js';
-import { SWSELogger } from '../../utils/logger.js';
-import { TalentTreeDB } from '../../data/talent-tree-db.js';
-import { normalizeTalentTreeId } from '../../data/talent-tree-normalizer.js';
+import { PrerequisiteEnricher } from '../utils/PrerequisiteEnricher.js';
+import { SWSELogger } from '../../../utils/logger.js';
+import { TalentTreeDB } from '../../../data/talent-tree-db.js';
+import { normalizeTalentTreeId } from '../../../data/talent-tree-normalizer.js';
 
 export class TalentTreeRegistry {
   static trees = new Map(); // treeName → TalentTreeGraph

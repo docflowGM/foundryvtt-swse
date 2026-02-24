@@ -1,5 +1,5 @@
 import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
-import { InventoryEngine } from "../../engine/inventory/InventoryEngine.js";
+import { InventoryEngine } from "../../engines/inventory/InventoryEngine.js";
 import { CombatRollConfigDialog } from "../../apps/combat/combat-roll-config-dialog.js";
 import { MentorChatDialog } from "../../mentor/mentor-chat-dialog.js";
 import { DropResolutionEngine } from "../../engines/interactions/drop-resolution-engine.js";
