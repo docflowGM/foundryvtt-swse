@@ -22,6 +22,7 @@
 
 import { DroidModificationFactory } from '../domain/droids/droid-modification-factory.js';
 import { DROID_SYSTEM_DEFINITIONS, getSystemsBySlot } from '../domain/droids/droid-system-definitions.js';
+import { DroidTransactionService } from '../domain/droids/droid-transaction-service.js';
 import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
@@ -187,11 +188,16 @@ export class DroidModificationApp extends HandlebarsApplicationMixin(Application
 
     try {
       // PHASE 4 STEP 5: Route through GM review pipeline
-      // For now, directly apply. Will be replaced with GM review in next step.
-      await ActorEngine.applyMutationPlan(this.actor, planResult.plan);
+      const submitResult = await DroidTransactionService.submitForReview(this.actor, planResult);
+
+      if (!submitResult.success) {
+        ui.notifications.error(`Failed to submit: ${submitResult.error}`);
+        return;
+      }
 
       // Log transaction for audit
-      console.log('PHASE 4: Droid modification applied', {
+      console.log('PHASE 4 STEP 5: Droid modification submitted for GM review', {
+        transactionId: submitResult.transactionId,
         actor: this.actor.id,
         actorName: this.actor.name,
         added: planResult.summary.systemsAdded,
@@ -200,12 +206,12 @@ export class DroidModificationApp extends HandlebarsApplicationMixin(Application
         newBalance: planResult.summary.newCredits
       });
 
-      ui.notifications.info('Droid modifications applied successfully!');
+      ui.notifications.info('Modifications submitted for GM review!');
       this.close();
 
     } catch (error) {
-      console.error('PHASE 4: Droid modification failed', error);
-      ui.notifications.error(`Modification failed: ${error.message}`);
+      console.error('PHASE 4 STEP 5: Failed to submit for review', error);
+      ui.notifications.error(`Failed to submit: ${error.message}`);
     }
   }
 
