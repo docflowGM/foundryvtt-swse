@@ -28,6 +28,7 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { extractAbilityScores } from './shared-suggestion-utilities.js';
 import { UNIFIED_TIERS, getTierMetadata } from './suggestion-unified-tiers.js';
 
 // DEPRECATED: Legacy tier definitions (kept for backwards compatibility)
@@ -88,19 +89,9 @@ export class Level1SkillSuggestionEngine {
         }));
       }
 
-      // Get ability scores
-      const abilities = actor.system?.attributes || {};
+      // Get ability scores (consolidated from shared utilities)
+      const abilityScores = extractAbilityScores(actor);
       const classSkills = pendingData?.classSkills || [];
-
-      // Find ability modifiers
-      const abilityScores = {
-        str: abilities.str?.base || 10,
-        dex: abilities.dex?.base || 10,
-        con: abilities.con?.base || 10,
-        int: abilities.int?.base || 10,
-        wis: abilities.wis?.base || 10,
-        cha: abilities.cha?.base || 10
-      };
 
       const suggestedSkills = availableSkills.map(skill => {
         let tier = LEVEL1_SKILL_TIERS.AVAILABLE;

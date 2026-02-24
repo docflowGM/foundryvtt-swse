@@ -22,6 +22,7 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { extractAbilityScores } from './shared-suggestion-utilities.js';
 import { Level1SkillSuggestionEngine } from './Level1SkillSuggestionEngine.js';
 
 export class ProgressionAdvisor {
@@ -33,17 +34,8 @@ export class ProgressionAdvisor {
    */
   static deriveAttributeBuildIntent(actor) {
     try {
-      const abilities = actor.system?.attributes || {};
-
-      // Get ability scores
-      const scores = {
-        str: abilities.str?.base || 10,
-        dex: abilities.dex?.base || 10,
-        con: abilities.con?.base || 10,
-        int: abilities.int?.base || 10,
-        wis: abilities.wis?.base || 10,
-        cha: abilities.cha?.base || 10
-      };
+      // Get ability scores (consolidated from shared utilities)
+      const scores = extractAbilityScores(actor);
 
       // Find primary and secondary abilities
       const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
