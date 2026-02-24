@@ -1,6 +1,7 @@
 import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
 import { InventoryEngine } from "../../engine/inventory/InventoryEngine.js";
 import { CombatRollConfigDialog } from "../../apps/combat/combat-roll-config-dialog.js";
+import { MentorChatDialog } from "../../mentor/mentor-chat-dialog.js";
 
 const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api;
 
@@ -206,6 +207,12 @@ export class SWSEV2CharacterSheet extends
         .classList.remove("flipped");
     });
 
+    // Mentor Button
+    html.on("click", '[data-action="open-mentor"]', (ev) => {
+      ev.preventDefault();
+      this._openMentorConversation();
+    });
+
     // Inventory Panel Handlers
     this._activateInventoryUI(html);
 
@@ -344,5 +351,14 @@ export class SWSEV2CharacterSheet extends
       const table = html.find(`table[data-group='${groupKey}']`);
       table.toggleClass("collapsed");
     });
+  }
+
+  /* ============================================================
+     MENTOR CONVERSATION
+  ============================================================ */
+
+  _openMentorConversation() {
+    const actor = this.actor;
+    new MentorChatDialog(actor).render(true);
   }
 }
