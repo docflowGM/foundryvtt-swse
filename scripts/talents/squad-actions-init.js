@@ -3,7 +3,7 @@
  * Exposes a macro menu for Squad Actions talent (followers).
  */
 
-import SquadActionsMechanics from './squad-actions-mechanics.js';
+import SquadActionsMechanics from '../engines/talent/squad-actions-mechanics.js';
 import { SWSELogger } from '../utils/logger.js';
 
 Hooks.once('ready', () => {

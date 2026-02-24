@@ -3,7 +3,7 @@
  * Registers Light Side (Jedi) talent mechanics and macros with the system
  */
 
-import LightSideTalentMechanics from './light-side-talent-mechanics.js';
+import LightSideTalentMechanics from '../engines/talent/light-side-talent-mechanics.js';
 import LightSideTalentMacros from './light-side-talent-macros.js';
 import { SWSELogger } from '../utils/logger.js';
 
