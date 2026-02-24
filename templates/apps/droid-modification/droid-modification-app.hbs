@@ -57,71 +57,104 @@
   {{/if}}
 
   <!-- Modification Interface -->
-  <div class="modification-content">
-    <div class="modification-panel available-systems">
-      <h3>Available Systems</h3>
-      <div class="systems-list">
-        {{#each systemsBySlot}}
-          <div class="slot-group">
-            <h4>{{@key}}</h4>
-            {{#each this}}
-              <div class="system-item {{#if this.installed}}installed{{/if}}" data-system-id="{{this.id}}">
-                <div class="system-info">
-                  <span class="system-name">{{this.name}}</span>
-                  <span class="system-cost">{{this.cost}} cr</span>
+  <div class="modification-content {{#if isSellOnly}}sell-only-mode{{/if}}">
+    {{#if modifyMode}}
+      <div class="modification-panel available-systems">
+        <h3>Available Systems</h3>
+        <div class="systems-list">
+          {{#each systemsBySlot}}
+            <div class="slot-group">
+              <h4>{{@key}}</h4>
+              {{#each this}}
+                <div class="system-item {{#if this.installed}}installed{{/if}}" data-system-id="{{this.id}}">
+                  <div class="system-info">
+                    <span class="system-name">{{this.name}}</span>
+                    <span class="system-cost">{{this.cost}} cr</span>
+                  </div>
+                  <div class="system-actions">
+                    {{#unless this.installed}}
+                      <button type="button"
+                              class="btn btn-add {{#if (contains ../selectedAdditions this.id)}}selected{{/if}}"
+                              data-action="add-system"
+                              data-system-id="{{this.id}}"
+                              title="Add {{this.name}}">
+                        {{#if (contains ../selectedAdditions this.id)}}✓ Selected{{else}}+ Add{{/if}}
+                      </button>
+                    {{else}}
+                      <button type="button"
+                              class="btn btn-remove {{#if (contains ../selectedRemovals this.id)}}selected{{/if}}"
+                              data-action="remove-system"
+                              data-system-id="{{this.id}}"
+                              title="Remove {{this.name}}">
+                        {{#if (contains ../selectedRemovals this.id)}}✓ Removing{{else}}− Remove{{/if}}
+                      </button>
+                    {{/if}}
+                  </div>
                 </div>
-                <div class="system-actions">
-                  {{#unless this.installed}}
-                    <button type="button"
-                            class="btn btn-add {{#if (contains ../selectedAdditions this.id)}}selected{{/if}}"
-                            data-action="add-system"
-                            data-system-id="{{this.id}}"
-                            title="Add {{this.name}}">
-                      {{#if (contains ../selectedAdditions this.id)}}✓ Selected{{else}}+ Add{{/if}}
-                    </button>
-                  {{else}}
-                    <button type="button"
-                            class="btn btn-remove {{#if (contains ../selectedRemovals this.id)}}selected{{/if}}"
-                            data-action="remove-system"
-                            data-system-id="{{this.id}}"
-                            title="Remove {{this.name}}">
-                      {{#if (contains ../selectedRemovals this.id)}}✓ Removing{{else}}− Remove{{/if}}
-                    </button>
-                  {{/if}}
+              {{/each}}
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
+
+    {{#if modifyMode}}
+      <div class="modification-panel current-systems">
+        <h3>Currently Installed</h3>
+        {{#if installed}}
+          <div class="installed-list">
+            {{#each installed}}
+              <div class="installed-item">
+                <div class="installed-info">
+                  <span class="installed-name">{{this.name}}</span>
+                  <span class="installed-cost">Cost: {{this.cost}} cr (Resale: {{this.resaleValue}} cr)</span>
+                </div>
+                <div class="installed-actions">
+                  <button type="button"
+                          class="btn btn-remove {{#if (contains ../selectedRemovals this.id)}}selected{{/if}}"
+                          data-action="remove-system"
+                          data-system-id="{{this.id}}"
+                          title="Remove {{this.name}}">
+                    {{#if (contains ../selectedRemovals this.id)}}✓ Removing{{else}}− Remove{{/if}}
+                  </button>
                 </div>
               </div>
             {{/each}}
           </div>
-        {{/each}}
+        {{else}}
+          <p class="empty-message">No systems currently installed</p>
+        {{/if}}
       </div>
-    </div>
+    {{/if}}
 
-    <div class="modification-panel current-systems">
-      <h3>Currently Installed</h3>
-      {{#if installed}}
-        <div class="installed-list">
-          {{#each installed}}
-            <div class="installed-item">
-              <div class="installed-info">
-                <span class="installed-name">{{this.name}}</span>
-                <span class="installed-cost">Cost: {{this.cost}} cr (Resale: {{this.resaleValue}} cr)</span>
+    {{#if isSellOnly}}
+      <div class="modification-panel sell-only-panel">
+        <h3>💰 Sell Systems for Resale Value</h3>
+        {{#if installed}}
+          <div class="installed-list sell-only-list">
+            {{#each installed}}
+              <div class="installed-item sell-item">
+                <div class="installed-info">
+                  <span class="installed-name">{{this.name}}</span>
+                  <span class="installed-cost">Original: {{this.cost}} cr → Resale: {{this.resaleValue}} cr</span>
+                </div>
+                <div class="installed-actions">
+                  <button type="button"
+                          class="btn btn-remove {{#if (contains ../selectedRemovals this.id)}}selected{{/if}}"
+                          data-action="remove-system"
+                          data-system-id="{{this.id}}"
+                          title="Sell {{this.name}}">
+                    {{#if (contains ../selectedRemovals this.id)}}✓ Selling for {{this.resaleValue}} cr{{else}}💵 Sell{{/if}}
+                  </button>
+                </div>
               </div>
-              <div class="installed-actions">
-                <button type="button"
-                        class="btn btn-remove {{#if (contains ../selectedRemovals this.id)}}selected{{/if}}"
-                        data-action="remove-system"
-                        data-system-id="{{this.id}}"
-                        title="Remove {{this.name}}">
-                  {{#if (contains ../selectedRemovals this.id)}}✓ Removing{{else}}− Remove{{/if}}
-                </button>
-              </div>
-            </div>
-          {{/each}}
-        </div>
-      {{else}}
-        <p class="empty-message">No systems currently installed</p>
-      {{/if}}
-    </div>
+            {{/each}}
+          </div>
+        {{else}}
+          <p class="empty-message">No systems to sell</p>
+        {{/if}}
+      </div>
+    {{/if}}
   </div>
 
   <!-- Action Buttons -->

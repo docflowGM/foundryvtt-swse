@@ -33,6 +33,7 @@ export class DroidModificationApp extends HandlebarsApplicationMixin(Application
     this.actor = actor;
     this.selectedAdditions = new Set();
     this.selectedRemovals = new Set();
+    this.mode = options.mode || 'modify'; // 'modify' or 'sell-only'
   }
 
   static DEFAULT_OPTIONS = {
@@ -116,7 +117,10 @@ export class DroidModificationApp extends HandlebarsApplicationMixin(Application
       hasChanges: this.selectedAdditions.size > 0 || this.selectedRemovals.size > 0,
       isValid: planResult.valid,
       errorMessage: planResult.error,
-      errorDetails: planResult.details || []
+      errorDetails: planResult.details || [],
+      mode: this.mode,
+      isSellOnly: this.mode === 'sell-only',
+      modifyMode: this.mode === 'modify'
     };
   }
 
@@ -169,9 +173,24 @@ export class DroidModificationApp extends HandlebarsApplicationMixin(Application
     }
 
     // Final validation
+    let addSystems = Array.from(this.selectedAdditions);
+    let removeSystems = Array.from(this.selectedRemovals);
+
+    // PHASE 4 STEP 8: Enforce sell-only mode
+    if (this.mode === 'sell-only') {
+      if (addSystems.length > 0) {
+        ui.notifications.error('Sell-only mode: cannot add new systems');
+        return;
+      }
+      if (removeSystems.length === 0) {
+        ui.notifications.error('Sell-only mode: select systems to sell');
+        return;
+      }
+    }
+
     const changeSet = {
-      add: Array.from(this.selectedAdditions),
-      remove: Array.from(this.selectedRemovals)
+      add: addSystems,
+      remove: removeSystems
     };
 
     const planResult = DroidModificationFactory.planModifications(this.actor, changeSet);
