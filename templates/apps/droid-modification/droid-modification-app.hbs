@@ -1,0 +1,139 @@
+<!-- Droid Modification App - Transaction UI -->
+<div class="droid-modification-app">
+  <!-- Header -->
+  <div class="modification-header">
+    <h2>{{actor.name}} — Droid System Modifications</h2>
+    <div class="credit-display">
+      <span class="label">Available Credits:</span>
+      <span class="amount {{#if transaction.summary.newCredits}}positive{{/if}}">{{currentCredits}}</span>
+    </div>
+  </div>
+
+  <!-- Error Display -->
+  {{#if errorMessage}}
+    <div class="modification-error">
+      <h3>⚠️ {{errorMessage}}</h3>
+      {{#each errorDetails}}
+        <p>• {{this}}</p>
+      {{/each}}
+    </div>
+  {{/if}}
+
+  <!-- Transaction Summary -->
+  {{#if isValid}}
+    <div class="modification-summary">
+      <h3>Transaction Summary</h3>
+      <div class="summary-grid">
+        <div class="summary-item">
+          <span class="label">Systems to Add:</span>
+          <span class="value">{{transaction.summary.systemsAdded.length}}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Systems to Remove:</span>
+          <span class="value">{{transaction.summary.systemsRemoved.length}}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Purchase Cost:</span>
+          <span class="value">{{transaction.summary.totalPurchaseCost}} cr</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Resale Value:</span>
+          <span class="value positive">{{transaction.summary.totalResaleValue}} cr</span>
+        </div>
+        <div class="summary-item highlight">
+          <span class="label">Net Cost:</span>
+          <span class="value {{#if transaction.summary.netCost}}cost{{else}}free{{/if}}">
+            {{transaction.summary.netCost}} cr
+          </span>
+        </div>
+        <div class="summary-item highlight">
+          <span class="label">New Balance:</span>
+          <span class="value {{#if transaction.summary.newCredits}}positive{{else}}negative{{/if}}">
+            {{transaction.summary.newCredits}} cr
+          </span>
+        </div>
+      </div>
+    </div>
+  {{/if}}
+
+  <!-- Modification Interface -->
+  <div class="modification-content">
+    <div class="modification-panel available-systems">
+      <h3>Available Systems</h3>
+      <div class="systems-list">
+        {{#each systemsBySlot}}
+          <div class="slot-group">
+            <h4>{{@key}}</h4>
+            {{#each this}}
+              <div class="system-item {{#if this.installed}}installed{{/if}}" data-system-id="{{this.id}}">
+                <div class="system-info">
+                  <span class="system-name">{{this.name}}</span>
+                  <span class="system-cost">{{this.cost}} cr</span>
+                </div>
+                <div class="system-actions">
+                  {{#unless this.installed}}
+                    <button type="button"
+                            class="btn btn-add {{#if (contains ../selectedAdditions this.id)}}selected{{/if}}"
+                            data-action="add-system"
+                            data-system-id="{{this.id}}"
+                            title="Add {{this.name}}">
+                      {{#if (contains ../selectedAdditions this.id)}}✓ Selected{{else}}+ Add{{/if}}
+                    </button>
+                  {{else}}
+                    <button type="button"
+                            class="btn btn-remove {{#if (contains ../selectedRemovals this.id)}}selected{{/if}}"
+                            data-action="remove-system"
+                            data-system-id="{{this.id}}"
+                            title="Remove {{this.name}}">
+                      {{#if (contains ../selectedRemovals this.id)}}✓ Removing{{else}}− Remove{{/if}}
+                    </button>
+                  {{/if}}
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="modification-panel current-systems">
+      <h3>Currently Installed</h3>
+      {{#if installed}}
+        <div class="installed-list">
+          {{#each installed}}
+            <div class="installed-item">
+              <div class="installed-info">
+                <span class="installed-name">{{this.name}}</span>
+                <span class="installed-cost">Cost: {{this.cost}} cr (Resale: {{this.resaleValue}} cr)</span>
+              </div>
+              <div class="installed-actions">
+                <button type="button"
+                        class="btn btn-remove {{#if (contains ../selectedRemovals this.id)}}selected{{/if}}"
+                        data-action="remove-system"
+                        data-system-id="{{this.id}}"
+                        title="Remove {{this.name}}">
+                  {{#if (contains ../selectedRemovals this.id)}}✓ Removing{{else}}− Remove{{/if}}
+                </button>
+              </div>
+            </div>
+          {{/each}}
+        </div>
+      {{else}}
+        <p class="empty-message">No systems currently installed</p>
+      {{/if}}
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="modification-footer">
+    <button type="button" class="btn btn-secondary" data-action="reset" title="Clear all selections">
+      Clear Selections
+    </button>
+    <button type="button" class="btn btn-primary" data-action="submit" {{#unless hasChanges}}disabled{{/unless}} title="Submit for GM review">
+      {{#if hasChanges}}Submit for Review{{else}}No Changes{{/if}}
+    </button>
+    <button type="button" class="btn btn-close" data-action="close" title="Close">
+      Close
+    </button>
+  </div>
+</div>
