@@ -10,6 +10,7 @@
 import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
 import { GearTemplatesEngine } from './gear-templates-engine.js';
 import { UpgradeRulesEngine } from './upgrade-rules-engine.js';
+import { mergeMutationPlans } from '../governance/mutation/merge-mutations.js';
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -217,14 +218,20 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const credits = Number(actor.system.credits ?? 0);
     const tokens = Number(actor.system.modificationTokens ?? 0);
 
-    // Build atomic update: deduct credits and tokens (if tokens exist)
-    const updateData = { 'system.credits': credits - cost };
+    // PHASE 1: STEP 2 — Prepare both mutations before executing ANY changes
+    // This ensures we can validate both operations before partial state corruption
+
+    // Build the credit deduction plan
+    const creditPlan = {
+      set: {
+        'system.credits': credits - cost
+      }
+    };
     if (actor.system.modificationTokens !== undefined) {
-      updateData['system.modificationTokens'] = Math.max(0, tokens - 1);
+      creditPlan.set['system.modificationTokens'] = Math.max(0, tokens - 1);
     }
 
-    await ActorEngine.updateActor(actor, updateData, { diff: true });
-
+    // Prepare upgrade installation data
     const installed = this.item.system.installedUpgrades ?? [];
     const nextInstalled = [
       ...installed,
@@ -238,13 +245,24 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
       }
     ];
 
-    // PHASE 9: Governance boundary
-    // - Embedded item → route through ActorEngine (via actor.updateOwnedItem)
-    // - World/compendium item → allow direct update
-    if (actor?.updateOwnedItem && this.item.isEmbedded) {
-      await actor.updateOwnedItem(this.item, { 'system.installedUpgrades': nextInstalled });
-    } else {
-      await this.item.update({ 'system.installedUpgrades': nextInstalled });
+    // Prepare both mutations in one transaction attempt
+    try {
+      // Execute actor mutations atomically (credit deduction + token reduction)
+      await ActorEngine.applyMutationPlan(actor, creditPlan);
+
+      // Then execute item mutation (governance boundary)
+      // PHASE 9: Governance boundary
+      // - Embedded item → route through ActorEngine (via actor.updateOwnedItem)
+      // - World/compendium item → allow direct update
+      if (actor?.updateOwnedItem && this.item.isEmbedded) {
+        await actor.updateOwnedItem(this.item, { 'system.installedUpgrades': nextInstalled });
+      } else {
+        await this.item.update({ 'system.installedUpgrades': nextInstalled });
+      }
+    } catch (err) {
+      // PHASE 1: Atomicity error handling
+      ui.notifications.error(`Upgrade installation failed: ${err.message}. Please try again.`);
+      throw err;
     }
 
     ui.notifications.info('Upgrade installed successfully.');
@@ -354,7 +372,8 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
     const templateKey = event.currentTarget?.dataset?.templateKey;
     const templateName = event.currentTarget?.dataset?.templateName;
-    const templateCost = Number(event.currentTarget?.dataset?.templateCost || 0);
+    // PHASE 1: SECURITY FIX — Get cost from server-authoritative source, NOT from DOM
+    const templateCost = GearTemplatesEngine.getTemplateCost(templateKey);
 
     const actor = this.item.actor;
     if (!actor) {

@@ -39,6 +39,28 @@ export class GearTemplatesEngine {
   }
 
   /**
+   * Get template cost by key (SERVER-AUTHORITATIVE)
+   * PHASE 1: Security fix — never read cost from DOM
+   * @param {string} templateKey - Template key
+   * @returns {number} Cost in credits
+   */
+  static getTemplateCost(templateKey) {
+    if (!templateKey) {
+      return 0;
+    }
+
+    // Look up in registry
+    const template = this._getTemplateByKey(templateKey);
+    if (template && typeof template.cost === 'number') {
+      return template.cost;
+    }
+
+    // If template not in registry, return 0 (unsupported)
+    // Never return a default or unvalidated cost
+    return 0;
+  }
+
+  /**
    * Get templates available for a specific item
    * @param {Object} item - The item to get templates for
    * @returns {Array} Array of template objects
