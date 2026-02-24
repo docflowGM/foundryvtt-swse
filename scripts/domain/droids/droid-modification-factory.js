@@ -35,6 +35,7 @@
  */
 
 import { DROID_SYSTEM_DEFINITIONS, getDroidSystemDefinition, isSystemCompatible, getSystemsBySlot } from './droid-system-definitions.js';
+import { DroidSlotGovernanceEngine } from './droid-slot-governance.js';
 import { LedgerService } from '../../engines/store/ledger-service.js';
 import { swseLogger } from '../../utils/logger.js';
 import { normalizeCredits } from '../../utils/credit-normalization.js';
@@ -77,6 +78,24 @@ export class DroidModificationFactory {
         valid: false,
         error: 'Invalid changeSet structure',
         details: ['add and remove must be arrays of system IDs']
+      };
+    }
+
+    // PHASE 4 STEP 6: Enforce domain slot governance
+    const chassisType = actor.system?.droidSystems?.size || 'medium';
+    const currentSystems = Object.keys(actor.system?.installedSystems ?? {});
+    const slotValidation = DroidSlotGovernanceEngine.validateModifications(
+      currentSystems,
+      systemsToAdd,
+      systemsToRemove,
+      chassisType
+    );
+
+    if (!slotValidation.valid) {
+      return {
+        valid: false,
+        error: 'Modifications violate domain slot governance',
+        details: slotValidation.violations
       };
     }
 
