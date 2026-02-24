@@ -4,6 +4,7 @@ import { HookInvestigator } from "./sentinel/hook-investigator.js";
  */
 import { SWSELogger } from '../utils/logger.js';
 import { GMDroidApprovalDashboard } from '../apps/gm-droid-approval-dashboard.js';
+import { registerVehiclePreCreateHooks } from '../actors/vehicle/vehicle-precreate-hooks.js';
 
 Hooks.once('init', () => {
   SWSELogger.log('SWSE system initialized successfully.');
@@ -34,9 +35,11 @@ Hooks.once("init", () => {
   HookInvestigator.initialize();
 });
 
-
-
-);
+// Register vehicle preCreate hooks
+Hooks.once("init", () => {
+  registerVehiclePreCreateHooks();
+  SWSELogger.log('Vehicle preCreate hooks registered');
+});
 
 
 
