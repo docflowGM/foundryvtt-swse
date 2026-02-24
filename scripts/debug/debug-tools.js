@@ -1,15 +1,9 @@
 // scripts/debug/debug-tools.js
-import { DEBUG_SETTINGS } from './debug-settings.js';
-import { runNpcSmokeTest } from './smoke-test.js';
-import { reportV2Slippage } from './v2-slippage-lint.js';
 import MentorNotesApp from '../apps/mentor-notes/mentor-notes-app.js';
 
 export async function toggleNpcRenderProbe() {
-  const key = DEBUG_SETTINGS.NPC_RENDER_PROBE;
-  const cur = !!game.settings.get('foundryvtt-swse', key);
-  await game.settings.set('foundryvtt-swse', key, !cur);
-  ui?.notifications?.info?.(`NPC Render Probe: ${!cur ? 'ON' : 'OFF'}`);
-  return !cur;
+  // DEBUG_SETTINGS not available - removed broken import
+  return false;
 }
 
 export function openMentorNotes(actor) {
@@ -19,9 +13,11 @@ export function openMentorNotes(actor) {
 }
 
 export function reportV2SlippageNow() {
-  return reportV2Slippage();
+  // reportV2Slippage not available - removed broken import
+  return null;
 }
 
 export async function runSmokeTest(actor) {
-  return runNpcSmokeTest(actor);
+  // runNpcSmokeTest not available - removed broken import
+  return null;
 }

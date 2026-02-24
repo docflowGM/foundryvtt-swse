@@ -14,8 +14,8 @@
  * await swse.debug.batch2.testCombatComplete()
  */
 
-import { ActorEngine } from '../actors/engine/actor-engine.js';
-import { DerivedCalculator } from '../actors/derived/derived-calculator.js';
+import { ActorEngine } from '../../scripts/governance/actor-engine/actor-engine.js';
+import { DerivedCalculator } from '../../scripts/actors/derived/derived-calculator.js';
 
 export class Batch2ComprehensiveTest {
   static results = {

@@ -2,7 +2,7 @@ import { HookInvestigator } from "./sentinel/hook-investigator.js";
 /**
  * SWSE Init — placeholder to satisfy Foundry system validation
  */
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from './logger.js';
 import { GMDroidApprovalDashboard } from '../apps/gm-droid-approval-dashboard.js';
 import { registerVehiclePreCreateHooks } from '../actors/vehicle/vehicle-precreate-hooks.js';
 
