@@ -1,10 +1,10 @@
 // scripts/hooks/suggestion-hooks.js
 
 import { HooksRegistry } from './hooks-registry.js';
-import { SuggestionService } from '../engines/suggestion/SuggestionService.js';
-import { SuggestionEngineCoordinator } from '../engines/suggestion/SuggestionEngineCoordinator.js';
-import { SWSELogger } from '../utils/logger.js';
-import MentorNotesApp from '../apps/mentor-notes/mentor-notes-app.js';
+import { SuggestionService } from '../../engines/suggestion/SuggestionService.js';
+import { SuggestionEngineCoordinator } from '../../engines/suggestion/SuggestionEngineCoordinator.js';
+import { SWSELogger } from '../../utils/logger.js';
+import MentorNotesApp from '../../apps/mentor-notes/mentor-notes-app.js';
 
 function safeGetActorId(doc) {
   return doc?.actor?.id || doc?.parent?.id || doc?.id || null;

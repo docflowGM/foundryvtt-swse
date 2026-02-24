@@ -7,7 +7,6 @@ import combatActions from "../../../data/combat-actions.json" with { type: "json
 import speciesTraits from "../../../data/species-traits.json" with { type: "json" };
 import { FeatActionsMapper } from "../../utils/feat-actions-mapper.js";
 import { EncumbranceEngine } from "../../engine/encumbrance/EncumbranceEngine.js";
-import { PrerequisiteEngine } from "../../engine/prerequisites/PrerequisiteEngine.js";
 import { InventoryEngine } from "../../engines/inventory/InventoryEngine.js";
 
 /**

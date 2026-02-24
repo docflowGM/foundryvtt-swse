@@ -12,8 +12,8 @@
 
 import { createSuggestionReport, generateReportId, validateSuggestionReport } from './report-schema.js';
 import { emitSuggestionReport } from '../gm/init.js';
-import { getCurrentPhase } from '../state/phase.js';
-import { SWSELogger } from '../../utils/logger.js';
+import { getCurrentPhase } from '../../../state/phase.js';
+import { SWSELogger } from '../../../utils/logger.js';
 import { TacticalEvaluator } from './tactical-evaluator.js';
 
 export class CombatSuggestionEngine {
