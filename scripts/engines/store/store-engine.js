@@ -13,6 +13,7 @@
 import { buildStoreIndex } from './index.js';
 import { STORE_RULES } from './store-constants.js';
 import { LedgerService } from './ledger-service.js';
+import { TransactionEngine } from './transaction-engine.js';
 import { SWSELogger } from '../../utils/logger.js';
 import { normalizeCredits } from '../../utils/credit-normalization.js';
 
