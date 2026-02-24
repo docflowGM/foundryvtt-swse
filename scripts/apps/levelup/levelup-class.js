@@ -498,10 +498,11 @@ export async function createOrUpdateClassItem(classDoc, actor) {
   const classLevel = existingClass ? (existingClass.system.level || 0) + 1 : 1;
 
   if (existingClass) {
-    // Level up existing class
-    await existingClass.update({
+    // Level up existing class via ActorEngine for mutation authority
+    await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{
+      _id: existingClass.id,
       'system.level': classLevel
-    });
+    }]);
   } else {
     // Create new class item with full class data
     // Get defense bonuses for this class - prefer compendium data
