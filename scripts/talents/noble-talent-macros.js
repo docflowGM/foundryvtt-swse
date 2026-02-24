@@ -4,7 +4,7 @@
  * Register these in macro-functions.js to make them available in hotbars
  */
 
-import NobleTalentMechanics from './noble-talent-mechanics.js';
+import NobleTalentMechanics from '../engines/talent/noble-talent-mechanics.js';
 import { SWSELogger } from '../utils/logger.js';
 
 export class NobleTalentMacros {

@@ -4,7 +4,6 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
-import { StarshipManeuversEngine } from '../../engine/StarshipManeuversEngine.js';
 
 export class VehicleCrewPositions {
   /**
@@ -201,19 +200,13 @@ export class VehicleCrewPositions {
     }
 
     try {
-      // Use the engine's crew maneuvers method to get position-filtered maneuvers
-      const maneuverData = StarshipManeuversEngine.getCrewManeuvers(pilotActor, 'pilot');
-
-      // If pilot has Starship Tactics and maneuvers, return the organized suite
-      if (maneuverData.hasStartshipTactics && maneuverData.total > 0) {
-        return {
-          maneuvers: maneuverData.maneuvers,
-          organized: maneuverData.organized,
-          total: maneuverData.total,
-          hasStartshipTactics: true,
-          message: `Pilot has ${maneuverData.total} starship maneuver(s)`
-        };
-      }
+      // StarshipManeuversEngine not yet implemented
+      const maneuverData = {
+        maneuvers: [],
+        organized: {},
+        total: 0,
+        hasStartshipTactics: false
+      };
 
       return maneuverData;
     } catch (error) {

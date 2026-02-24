@@ -4,7 +4,7 @@
  * Register these in macro-functions.js to make them available in hotbars
  */
 
-import ScoutTalentMechanics from './scout-talent-mechanics.js';
+import ScoutTalentMechanics from '../engines/talent/scout-talent-mechanics.js';
 import { SWSELogger } from '../utils/logger.js';
 
 export class ScoutTalentMacros {
