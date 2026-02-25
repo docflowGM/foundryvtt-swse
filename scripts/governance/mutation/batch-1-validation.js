@@ -184,7 +184,7 @@ export class Batch1Validation {
     this.results.totalTests++;
 
     try {
-      const { DerivedCalculator } = await import('../../../actors/derived/derived-calculator.js');
+      const { DerivedCalculator } = await import('../../../derived-calculator.js');
       const { ActorEngine } = await import('../actor-engine/actor-engine.js');
 
       // Instrument DerivedCalculator.computeAll()

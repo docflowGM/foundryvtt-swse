@@ -1,6 +1,5 @@
 /**
  * SWSE Sentinel Auditors - Runtime validation modules
- * Provides CSS and migration auditing for system integrity
  */
 
 export {
@@ -16,7 +15,6 @@ export {
 } from './css-auditor.js';
 
 export {
-  initMigrationAuditor,
   v2Assert,
   logRenderLifecycle,
   validateContextShape,
@@ -38,9 +36,11 @@ export {
   generateUIFailureReport
 } from './migration-auditor.js';
 
+/* 🔥 IMPORTANT: Explicitly import what we use locally */
+import { initMigrationAuditor } from './migration-auditor.js';
+
 /**
  * Initialize all auditors
- * Called by SentinelEngine during bootstrap
  */
 export function initializeSentinelAuditors() {
   initMigrationAuditor();

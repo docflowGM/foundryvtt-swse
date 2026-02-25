@@ -1110,7 +1110,7 @@ export class ModifierEngine {
       // PHASE 4 STEP 7: New path - installedSystems from DROID_SYSTEM_DEFINITIONS
       if (installedSystems && typeof installedSystems === 'object') {
         try {
-          const { DROID_SYSTEM_DEFINITIONS, getDroidSystemDefinition } = await import('../../domain/droids/droid-system-definitions.js');
+          const { DROID_SYSTEM_DEFINITIONS, getDroidSystemDefinition } = await import('../../../../droid-system-definitions.js');
 
           for (const [systemId, installed] of Object.entries(installedSystems)) {
             const def = getDroidSystemDefinition(systemId);
@@ -1180,7 +1180,7 @@ export class ModifierEngine {
 
       if (installedSystems && typeof installedSystems === 'object') {
         try {
-          const { VEHICLE_SYSTEM_DEFINITIONS, getVehicleSystemDefinition } = await import('../../domain/vehicles/vehicle-system-definitions.js');
+          const { VEHICLE_SYSTEM_DEFINITIONS, getVehicleSystemDefinition } = await import('../../../../vehicle-system-definitions.js');
 
           for (const [systemId, installed] of Object.entries(installedSystems)) {
             const def = getVehicleSystemDefinition(systemId);

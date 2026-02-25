@@ -86,7 +86,7 @@ export function getCharacterClasses(actor) {
  */
 export async function getClassDefenseBonuses(className) {
   // Try to load from compendium first
-  const { getClassData } = await import('../../progression/utils/class-data-loader.js');
+  const { getClassData } = await import('../../engines/progression/utils/class-data-loader.js');
   const classData = await getClassData(className);
 
   if (classData && classData.defenses) {

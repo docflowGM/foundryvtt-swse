@@ -165,8 +165,8 @@ export async function _calculateForcePowerSuggestions(powers) {
   }
 
   try {
-    const { SuggestionService } = await import('../../../engines/suggestion/SuggestionService.js');
-    const { UNIFIED_TIERS } = await import('../../../engines/suggestion/suggestion-unified-tiers.js');
+    const { SuggestionService } = await import('../../../SuggestionService.js');
+    const { UNIFIED_TIERS } = await import('../../../suggestion-unified-tiers.js');
 
     const tempActor = this._createTempActorForValidation();
     if (!tempActor) {

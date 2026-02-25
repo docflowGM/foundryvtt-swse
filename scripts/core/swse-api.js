@@ -21,7 +21,7 @@ import {
   disableStrictV2,
   generateMigrationReport,
   generateUIFailureReport
-} from './migration-auditor.js';
+} from '../../migration-auditor.js';
 
 /**
  * Smoke Test Suite - Basic validation that SWSE loads correctly

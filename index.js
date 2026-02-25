@@ -172,48 +172,42 @@ async function bootstrapSuggestionSystem() {
   initializeGMSuggestions();
 }
 
-/* ==========================================================================
-   INIT
+/* ========================================================================== 
+   INIT 
    ========================================================================== */
-
-
-
-/* =========================
-   V13 SHEET REGISTRATION (SETUP PHASE)
-   ========================= */
 
 Hooks.once("setup", () => {
 
-  console.log("[SWSE] Registering V2 sheets in setup phase");
+  console.log("[SWSE] Registering V2 sheets (v13 compliant)");
 
-  Actors.registerSheet("foundryvtt-swse", SWSEV2CharacterSheet, {
+  const ActorCollection = foundry.documents.collections.Actors;
+  const ItemCollection = foundry.documents.collections.Items;
+
+  ActorCollection.registerSheet("foundryvtt-swse", SWSEV2CharacterSheet, {
     types: ["character"],
     makeDefault: true
   });
 
-  Actors.registerSheet("foundryvtt-swse", SWSEV2NpcSheet, {
+  ActorCollection.registerSheet("foundryvtt-swse", SWSEV2NpcSheet, {
     types: ["npc"],
     makeDefault: true
   });
 
-  Actors.registerSheet("foundryvtt-swse", SWSEV2DroidSheet, {
+  ActorCollection.registerSheet("foundryvtt-swse", SWSEV2DroidSheet, {
     types: ["droid"],
     makeDefault: true
   });
 
-  Actors.registerSheet("foundryvtt-swse", SWSEV2VehicleSheet, {
+  ActorCollection.registerSheet("foundryvtt-swse", SWSEV2VehicleSheet, {
     types: ["vehicle"],
     makeDefault: true
   });
 
-  Items.registerSheet("foundryvtt-swse", SWSEItemSheet, {
+  ItemCollection.registerSheet("foundryvtt-swse", SWSEItemSheet, {
     makeDefault: true
   });
 
-  console.log("[SWSE] SheetClasses after setup:",
-    CONFIG.Actor.sheetClasses
-  );
-
+  console.log("[SWSE] V2 Sheets Registered Cleanly");
 });
 
 Hooks.once('init', async () => {
@@ -222,7 +216,7 @@ Hooks.once('init', async () => {
 
   swseLogger.log('SWSE | Init start');
 
-  /* ---------- PHASE -1: v13 hardening (must be first) ---------- */
+  /* ---------- PHASE -1: v13 hardening ---------- */
   await initializeHardeningSystem();
   registerHardeningHooks();
 
@@ -240,33 +234,14 @@ Hooks.once('init', async () => {
   registerKeybindings();
 
   /* ---------- PHASE 2: UI infrastructure ---------- */
-  
   await bootstrapTemplates();
 
-  /* ---------- PHASE 3: documents & sheets ---------- */
-  CONFIG.SWSE = SWSE;// SAFE v13 sheet registration
-  /* ---------- CLEAN SHEET REGISTRATION (v13 SAFE) ---------- */
-
-  // Reset all sheet registrations
-  
-
-  // Unregister core BaseSheet
-  
-
-  // Register SWSE sheets
-  console.log("[SWSE] V2 Sheets Registered Cleanly");
-
-
-  
-  /* ---------- PHASE 3: Structural Enforcement Layer ---------- */
+  /* ---------- PHASE 3: structural enforcement ---------- */
   await initializeV2RenderGuard();
-
-  /* ---------- PHASE 3: MUTATION AUTHORITY (BATCH 1) ---------- */
   MutationInterceptor.initialize();
 
   swseLogger.log('SWSE | Init complete');
 });
-
 /* ==========================================================================
    READY
    ========================================================================== */

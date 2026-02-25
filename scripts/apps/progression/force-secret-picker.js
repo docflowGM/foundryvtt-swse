@@ -119,7 +119,7 @@ async _prepareContext(options) {
 
   async _askMentor() {
     try {
-      const { ForceSecretSuggestionEngine } = await import('../../progression/engine/force-secret-suggestion-engine.js');
+      const { ForceSecretSuggestionEngine } = await import('../../../force-secret-suggestion-engine.js');
 
       if (!this.actor) {return;}
 

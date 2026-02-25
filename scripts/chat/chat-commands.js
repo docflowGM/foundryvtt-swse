@@ -252,7 +252,7 @@ async function cmdRest(args) {
   // Normalize type (full/long → extended)
   const normalizedType = (restType === 'full' || restType === 'long') ? 'extended' : restType;
 
-  const { SecondWindEngine } = await import('../../engines/combat/SecondWindEngine.js');
+  const { SecondWindEngine } = await import('../../SecondWindEngine.js');
 
   for (const t of tokens) {
     const a = t.actor;

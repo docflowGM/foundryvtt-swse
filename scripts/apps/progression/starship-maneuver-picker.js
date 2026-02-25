@@ -119,7 +119,7 @@ async _prepareContext(options) {
 
   async _askMentor() {
     try {
-      const { StarshipManeuverSuggestionEngine } = await import('../../progression/engine/starship-maneuver-suggestion-engine.js');
+      const { StarshipManeuverSuggestionEngine } = await import('../../../starship-maneuver-suggestion-engine.js');
 
       if (!this.actor) {return;}
 

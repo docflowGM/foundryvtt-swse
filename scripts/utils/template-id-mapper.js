@@ -214,7 +214,7 @@ export class TemplateIdMapper {
 
     try {
       // Try FeatureIndex first (SSOT for indexed features)
-      const { FeatureIndex } = await import('../../engines/progression/engine/feature-index.js');
+      const { FeatureIndex } = await import('../../feature-index.js');
       const feat = FeatureIndex.getFeat?.(featName);
       if (feat) {
         swseLogger.log(`[TEMPLATE-MAPPER] Feat found in FeatureIndex: ${featName} → ${feat._id}`);
@@ -358,7 +358,7 @@ export class TemplateIdMapper {
 
     try {
       // Try FeatureIndex first (SSOT for indexed features)
-      const { FeatureIndex } = await import('../../engines/progression/engine/feature-index.js');
+      const { FeatureIndex } = await import('../../feature-index.js');
       const power = FeatureIndex.getPower?.(powerName);
       if (power) {
         swseLogger.log(`[TEMPLATE-MAPPER] Force power found in FeatureIndex: ${powerName} → ${power._id}`);

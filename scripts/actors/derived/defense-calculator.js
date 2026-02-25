@@ -85,7 +85,7 @@ export class DefenseCalculator {
    * @private
    */
   static async _getSaveBonus(classLevels, saveType) {
-    const { getClassData } = await import('../../progression/utils/class-data-loader.js');
+    const { getClassData } = await import('../../engines/progression/utils/class-data-loader.js');
 
     let maxBonus = 0;
     const uniqueClasses = new Set(classLevels.map(cl => cl.class));

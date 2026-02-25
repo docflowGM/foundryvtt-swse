@@ -222,7 +222,7 @@ export class CombatUIAdapter {
    * @param {Object} opts
    */
   static async rollDamageUI(attacker, weapon, target, opts = {}) {
-    const { computeDamageBonus } = await import('../utils/combat-utils.js');
+    const { computeDamageBonus } = await import('../../../../combat-utils.js');
     const { RollEngine } = globalThis.SWSE;
 
     const dmgBonus = computeDamageBonus(attacker, weapon);

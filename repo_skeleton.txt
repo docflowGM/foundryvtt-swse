@@ -1203,8 +1203,6 @@ foundryvtt-swse/
       lazy-loader.js
       load-templates.js
       logger.js
-      migration-auditor.js
-      migration-manager.js
       mutation-safety.js
       pack-existence-check.js
       phase5-init.js
@@ -1632,6 +1630,7 @@ foundryvtt-swse/
         integration-tests.js
         investigator.js
         migration-auditor.js
+        migration-manager.js
         mutation-integrity-layer.js
         mutation-interceptor-lock.js
         performance-sovereignty-lock.js
@@ -2330,5 +2329,6 @@ foundryvtt-swse/
   index.js
   package-lock.json
   package.json
+  repo_skeleton.txt
   system.json
   template.json

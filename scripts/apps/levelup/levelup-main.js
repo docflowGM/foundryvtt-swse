@@ -745,7 +745,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
     try {
       const { getAvailableForcePowers } = await import('../levelup/levelup-force-powers.js');
-      const { ForceOptionSuggestionEngine } = await import('../../../engines/suggestion/ForceOptionSuggestionEngine.js');
+      const { ForceOptionSuggestionEngine } = await import('../../../ForceOptionSuggestionEngine.js');
 
       const availablePowers = await getAvailableForcePowers(this.actor, {});
 
