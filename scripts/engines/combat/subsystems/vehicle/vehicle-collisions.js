@@ -16,7 +16,7 @@
  *  - Chat messaging
  */
 
-import { DamageEngine } from '../../../../combat/damage-system.js';
+import { DamageEngine } from '../../damage-engine.js';
 import { ThresholdEngine } from '../../threshold-engine.js';
 import { SubsystemEngine } from '../../starship/subsystem-engine.js';
 import { ActorEngine } from '../../../../governance/actor-engine/actor-engine.js';
