@@ -3,7 +3,7 @@ import SWSEApplicationV2 from '../base/swse-application-v2.js';
 import { SWSELogger } from '../../utils/logger.js';
 import { isEpicOverrideEnabled } from '../../settings/epic-override.js';
 import { getLevelSplit } from '../../actors/derived/level-split.js';
-import { ensureNpcProgressionMode, revertNpcToStatblock, levelUpNpcNonheroic } from '../../engine/npc-levelup.js';
+import { NpcProgressionEngine } from '../../engines/progression/npc-progression-engine.js';
 import { SWSELevelUpEnhanced } from './levelup-enhanced.js';
 import { SWSEDialogV2 } from '../dialogs/swse-dialog-v2.js';
 
@@ -40,7 +40,7 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
     const nonheroicAdvisory = nonheroicNext > 20 && epicOverrideEnabled;
 
     const mode = actor?.getFlag('foundryvtt-swse', 'npcLevelUp.mode') ?? 'statblock';
-    const hasSnapshot = !!actor?.getFlag('foundryvtt-swse', 'npcLevelUp.snapshot');
+    const hasSnapshot = NpcProgressionEngine.hasSnapshot(actor);
 
     return {
       actorName: actor?.name ?? 'NPC',
@@ -117,9 +117,22 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
       if (!ok) {return;}
     }
 
-    await ensureNpcProgressionMode(this.actor, { track: 'heroic' });
-    this.close();
-    new SWSELevelUpEnhanced(this.actor).render(true);
+    try {
+      // Build heroic progression packet through NPC engine
+      const packet = await NpcProgressionEngine.buildHeroicLevelPacket(this.actor, {
+        createSnapshot: true
+      });
+
+      // Apply through unified ActorEngine for governance
+      await NpcProgressionEngine.applyProgression(this.actor, packet);
+
+      // Close this dialog and open full level-up UI
+      this.close();
+      new SWSELevelUpEnhanced(this.actor).render(true);
+    } catch (err) {
+      SWSELogger.error('Heroic level-up failed:', err);
+      ui.notifications.error('Failed to apply heroic level-up.');
+    }
   }
 
   async _handleNonheroic() {
@@ -141,22 +154,43 @@ export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
       if (!ok) {return;}
     }
 
-    await ensureNpcProgressionMode(this.actor, { track: 'nonheroic' });
-    this.close();
-    await levelUpNpcNonheroic(this.actor);
+    try {
+      // Build nonheroic progression packet through NPC engine
+      const packet = await NpcProgressionEngine.buildNonheroicLevelPacket(this.actor, {
+        createSnapshot: true
+      });
+
+      // Apply through unified ActorEngine for governance
+      await NpcProgressionEngine.applyProgression(this.actor, packet);
+
+      this.close();
+    } catch (err) {
+      SWSELogger.error('Nonheroic level-up failed:', err);
+      ui.notifications.error('Failed to apply nonheroic level-up.');
+    }
   }
 
   async _handleRevert() {
     if (!game.user?.isGM) {return ui.notifications.warn('GM only.');}
 
+    const snapshotInfo = NpcProgressionEngine.getSnapshotInfo(this.actor);
+    if (!snapshotInfo) {
+      return ui.notifications.warn('No snapshot available to revert to.');
+    }
+
     const ok = await SWSEDialogV2.confirm({
       title: 'Revert NPC to Statblock Snapshot',
-      content: '<p>This restores the NPC exactly to the snapshot taken before the first level-up (including items and effects).</p>'
+      content: `<p>This restores the NPC to: <strong>${snapshotInfo.label}</strong> (${snapshotInfo.date})</p><p>Items, effects, and all attributes will be restored exactly.</p>`
     });
     if (!ok) {return;}
 
-    await revertNpcToStatblock(this.actor);
-    this.close();
+    try {
+      await NpcProgressionEngine.revertToSnapshot(this.actor);
+      this.close();
+    } catch (err) {
+      SWSELogger.error('Snapshot revert failed:', err);
+      ui.notifications.error('Failed to revert NPC to snapshot.');
+    }
   }
 }
 

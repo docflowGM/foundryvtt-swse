@@ -7,6 +7,11 @@
  * Formula (SWSE): Defense = 10 + heroic level + class bonus + ability mod
  * Where class bonus = highest bonus from all classes.
  *
+ * NONHEROIC CHARACTERS:
+ * - Nonheroic characters do NOT add their nonheroic level to defense
+ * - Only heroic levels count toward defense
+ * - Formula: Defense = 10 + heroic_level + class bonus + ability mod
+ *
  * DROID EXCEPTION:
  * - Fortitude defense: Uses STR mod only (no CON mod, droids are mechanical)
  * - Reflex defense: Uses DEX mod (same as living creatures)
@@ -15,6 +20,7 @@
  */
 
 import { swseLogger } from '../../utils/logger.js';
+import { getHeroicLevel } from './level-split.js';
 
 export class DefenseCalculator {
   /**
@@ -22,6 +28,9 @@ export class DefenseCalculator {
    * Async, but called during recalculation, not mutation.
    *
    * Phase 0: Accepts modifier adjustments from ModifierEngine
+   *
+   * Only heroic levels are added to defense calculations.
+   * Nonheroic levels do NOT contribute to defense.
    *
    * @param {Actor} actor - for ability modifier access
    * @param {Array} classLevels - from actor.system.progression.classLevels
@@ -37,6 +46,9 @@ export class DefenseCalculator {
     const dexMod = derivedAttrs.dex?.mod || 0;
     const conMod = derivedAttrs.con?.mod || 0;
     const wisMod = derivedAttrs.wis?.mod || 0;
+
+    // Get heroic level only (nonheroic does NOT add to defense)
+    const heroicLevel = getHeroicLevel(actor);
 
     // Calculate class bonuses (highest from all classes)
     const fortBonus = await this._getSaveBonus(classLevels, 'fort');
@@ -54,8 +66,9 @@ export class DefenseCalculator {
     const willAdjust = adjustments.will || 0;
 
     // Calculate base and total for each defense
+    // Formula: 10 + heroic_level + class_bonus + ability_mod
     const calcDefense = (classBonus, abilityMod, adjustment) => {
-      const base = 10 + classBonus + abilityMod;
+      const base = 10 + heroicLevel + classBonus + abilityMod;
       const total = Math.max(1, base + adjustment);
       return { base, total, adjustment };
     };

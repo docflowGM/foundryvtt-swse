@@ -12,12 +12,12 @@
  */
 
 import { swseLogger } from '../../../utils/logger.js';
-import { SWSEProgressionEngine } from '../../engine/progression.js';
+import { SWSEProgressionEngine } from '../../../engine/progression.js';
 import { ForcePowerEngine } from './force-power-engine.js';
-import { PROGRESSION_RULES } from '../../data/progression-data.js';
+import { PROGRESSION_RULES } from '../data/progression-data.js';
 import { ActorProgressionUpdater } from './progression-actor-updater.js';
 import { TemplateEngine } from './template-engine.js';
-import { BackgroundRegistry } from '../../registries/background-registry.js';
+import { BackgroundRegistry } from '../../../registries/background-registry.js';
 
 export class ProgressionEngine {
   /**

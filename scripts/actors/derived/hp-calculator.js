@@ -8,6 +8,12 @@
  * - First level: 3x hit die + CON mod
  * - All other levels: (hit die / 2 + 1) + CON mod
  *
+ * NONHEROIC CHARACTERS:
+ * - Nonheroic classes use hit die = 4 (1d4)
+ * - First level: 3 * 4 + CON = 12 + CON mod
+ * - Other levels: 2 + 1 + CON = 3 + CON mod (floor(4/2) + 1)
+ * - HP pools for heroic and nonheroic stack additively
+ *
  * DROID EXCEPTION:
  * - Droids do NOT gain CON modifier to HP (mechanical construction, not biological)
  * - Droids still gain standard hit die rolls from their class levels
@@ -16,6 +22,7 @@
 
 import { PROGRESSION_RULES } from '../../engines/progression/data/progression-data.js';
 import { swseLogger } from '../../utils/logger.js';
+import { getLevelSplit } from './level-split.js';
 
 export class HPCalculator {
   /**
@@ -23,6 +30,11 @@ export class HPCalculator {
    * Synchronous, pure function.
    *
    * Phase 0: Accepts modifier adjustments from ModifierEngine
+   *
+   * Handles both heroic and nonheroic classes:
+   * - Heroic: uses class-defined hit die from PROGRESSION_RULES
+   * - Nonheroic: uses hit die = 4 (1d4)
+   * - HP pools stack additively
    *
    * @param {Actor} actor - for isDroid, CON mod access
    * @param {Array} classLevels - from actor.system.progression.classLevels
@@ -48,7 +60,9 @@ export class HPCalculator {
         swseLogger.warn(`HPCalculator: Unknown class "${classLevel.class}", assuming hitDie=6`);
       }
 
-      const hitDie = classData?.hitDie || 6;
+      // Determine hit die: nonheroic uses d4, heroic uses class-defined die
+      const isNonheroic = classData?.isNonheroic === true;
+      const hitDie = isNonheroic ? 4 : (classData?.hitDie || 6);
 
       // First level: 3x max hit die + CON mod
       if (isFirstLevel) {

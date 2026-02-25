@@ -4,7 +4,7 @@
  * Maps (mentorId, atomId, intensity) → short phrase.
  * Pure lookup: loads data from JSON; contains NO dialogue strings.
  */
-import { INTENSITY_ATOMS } from './mentor-intensity-atoms.js';
+import { INTENSITY_ATOMS } from '../engines/mentor/mentor-intensity-atoms.js';
 import { getJudgmentLine, resolveMentorId } from './mentor-dialogue-registry.js';
 
 function normalizeIntensityToAtom(intensity) {

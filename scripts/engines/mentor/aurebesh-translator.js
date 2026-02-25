@@ -7,4 +7,4 @@
  * and is re-exported here for compatibility with mentor integration module imports.
  */
 
-export { AurebeshTranslator } from '../ui/dialogue/aurebesh-translator.js';
+export { AurebeshTranslator } from '../../ui/dialogue/aurebesh-translator.js';

@@ -1,5 +1,5 @@
 
-import { RollEngine } from '../roll-engine.js';
+import { RollEngine } from '../../engine/roll-engine.js';
 import { SWSEInitiative } from './SWSEInitiative.js';
 import { DamageEngine } from './damage-engine.js';
 import { ThresholdEngine } from './threshold-engine.js';
