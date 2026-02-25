@@ -23,7 +23,7 @@ import { swseLogger } from '../../utils/logger.js';
 import { HouseRuleService } from '../system/HouseRuleService.js';
 import { HPGeneratorEngine } from '../HP/HPGeneratorEngine.js';
 import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
-import { PROGRESSION_RULES } from '../progression/data/progression-data.js';
+import { PROGRESSION_RULES } from '../../engines/progression/data/progression-data.js';
 
 export class CharacterGenerationEngine {
   /**

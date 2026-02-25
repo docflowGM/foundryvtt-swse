@@ -9,7 +9,7 @@ import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-co
 import { ClassesDB } from '../../data/classes-db.js';
 import { SuggestionService } from '../../engines/suggestion/SuggestionService.js';
 import { BuildIntent } from '../../engines/suggestion/BuildIntent.js';
-import { MentorSurvey } from '../engines/mentor/mentor-survey.js';
+import { MentorSurvey } from '../../engines/mentor/mentor-survey.js';
 import { _findTalentItem } from './chargen-shared.js';
 import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 

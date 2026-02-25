@@ -7,7 +7,7 @@ import { ProgressionEngine } from '../../engines/progression/engine/progression-
 import { SWSELogger } from '../../utils/logger.js';
 import { SuggestionService } from '../../engines/suggestion/SuggestionService.js';
 import { warnGM } from '../../utils/warn-gm.js';
-import { getMentorForClass, getMentorGreeting, getLevel1Class, setLevel1Class } from '../engines/mentor/mentor-dialogues.js';
+import { getMentorForClass, getMentorGreeting, getLevel1Class, setLevel1Class } from '../../engines/mentor/mentor-dialogues.js';
 import { isBaseClass, getCharacterClasses, getClassDefenseBonuses, calculateHPGain } from './levelup-shared.js';
 import { meetsClassPrerequisites } from './levelup-validation.js';
 import { getClassProperty } from '../chargen/chargen-property-accessor.js';
