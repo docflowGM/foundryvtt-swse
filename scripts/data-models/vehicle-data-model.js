@@ -687,70 +687,8 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
   }
 
   prepareDerivedData() {
-    // ========================================================================
-    // PHASE 2 COMPLETION: DataModel is now BASE STRUCTURE ONLY
-    // All derived computation moved to DerivedCalculator (system.derived.*)
-    // ========================================================================
-
-    // ⚠️ PHASE 2: Ability modifiers now computed ONLY in DerivedCalculator
-    // DO NOT compute ability.mod or ability.total here
-    // Instead: Mirror DerivedCalculator output for backward compat
-    for (const [key, ability] of Object.entries(this.attributes)) {
-      const total = ability.base + ability.racial + ability.temp;
-      ability.total = total;
-      ability.mod = Math.floor((total - 10) / 2);
-    }
-
-    // Set default emplacement points based on size if not explicitly set
-    if (this.emplacementPoints === null || this.emplacementPoints === undefined) {
-      this.emplacementPoints = SWSEVehicleDataModel.getDefaultEmplacementPoints(this.size);
-    }
-
-    // ⚠️ PHASE 2: Defense calculations removed
-    // DO NOT compute reflexDefense, flatFooted, fortitudeDefense, damageThreshold
-    // These are now computed ONLY in DerivedCalculator
-    // See: DerivedCalculator → DefenseCalculator for vehicles
-    // Get size modifier (structural, not derived)
-    const sizeModifier = this._getSizeModifier();
-    const sizeDamageModifier = this._getSizeDamageThresholdModifier();
-
-    // Store for reference only (totals calculated in DerivedCalculator)
-    // This.reflexDefense = ...;  // REMOVED - computed in DerivedCalculator
-    // This.flatFooted = ...;      // REMOVED - computed in DerivedCalculator
-    // This.fortitudeDefense = ...; // REMOVED - computed in DerivedCalculator
-    // This.damageThreshold = ...;  // REMOVED - computed in DerivedCalculator
-
-    // Enhanced Massive Damage: override DT if formula modified (structural override)
-    this._applyEnhancedDamageThreshold(sizeDamageModifier);
-
-    // ⚠️ PHASE 2: Condition Track penalty now in ModifierEngine, not here
-    // DO NOT compute numeric penalties
-    if (this.conditionTrack) {
-      this.conditionTrack.penalty ??= 0;
-    }
-
-    // Calculate Perception (best crew member perception)
-    this._calculatePerception();
-
-    // Calculate Attack Bonus (Gunner's BAB + Vehicle INT modifier)
-    this._calculateAttackBonus();
-
-    // Calculate Grapple Modifier (Pilot's BAB + Vehicle STR modifier + size modifier)
-    this._calculateGrappleModifier();
-
-    // Calculate Initiative (Pilot's Initiative mod + Vehicle size + Vehicle DEX)
-    this._calculateInitiative();
-
-    // Ensure shield/hull values are numbers
-    if (this.shields) {
-      this.shields.value = Number(this.shields.value) || 0;
-      this.shields.max = Number(this.shields.max) || 0;
-    }
-
-    if (this.hull) {
-      this.hull.value = Number(this.hull.value) || 0;
-      this.hull.max = Number(this.hull.max) || 0;
-    }
+    // SOVEREIGNTY CONSOLIDATION: All derived computation delegated to DerivedCalculator.
+    // This method intentionally does nothing.
   }
 
   /**
@@ -967,26 +905,8 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
   }
 
   /**
-   * Apply enhanced DT formula override from ThresholdEngine settings.
-   * Only activates if both enableEnhancedMassiveDamage and modifyDamageThresholdFormula are true.
-   * @param {number} sizeDamageModifier - The size-based DT modifier already calculated
+   * SOVEREIGNTY CONSOLIDATION: _applyEnhancedDamageThreshold() moved to DerivedCalculator.computeAll()
+   * Damage threshold is now computed exclusively in DerivedCalculator and written to
+   * system.derived.damageThreshold. No longer computed in DataModel.
    */
-  _applyEnhancedDamageThreshold(sizeDamageModifier) {
-    try {
-      const enabled = game.settings?.get('foundryvtt-swse', 'enableEnhancedMassiveDamage');
-      const modifyFormula = game.settings?.get('foundryvtt-swse', 'modifyDamageThresholdFormula');
-      if (!enabled || !modifyFormula) return;
-
-      const formulaType = game.settings?.get('foundryvtt-swse', 'damageThresholdFormulaType') ?? 'fullLevel';
-      const vehicleLevel = this.challengeLevel ?? 0;
-
-      if (formulaType === 'halfLevel') {
-        this.damageThreshold = this.fortitudeDefense + Math.floor(vehicleLevel / 2) + sizeDamageModifier;
-      } else {
-        this.damageThreshold = this.fortitudeDefense + vehicleLevel + sizeDamageModifier;
-      }
-    } catch {
-      // Settings not yet registered or not available; skip silently
-    }
-  }
 }

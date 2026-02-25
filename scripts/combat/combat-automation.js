@@ -73,7 +73,7 @@ export class SWSECombatAutomation {
    * but threshold logic is already handled inside Actor.applyDamage().
    */
   static async checkDamageThreshold(actor, damage) {
-    const threshold = actor.system.damageThreshold;
+    const threshold = actor.system.derived?.damageThreshold ?? actor.system.damageThreshold ?? 0;
 
     if (damage < threshold) {return false;}
 

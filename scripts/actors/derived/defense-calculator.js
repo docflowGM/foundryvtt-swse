@@ -29,13 +29,14 @@ export class DefenseCalculator {
    * @returns {Promise<Object>} { fortitude, reflex, will }
    */
   static async calculate(actor, classLevels, options = {}) {
-    const abilities = actor.system.attributes || {};
+    // Read derived attributes (computed in DerivedCalculator)
+    const derivedAttrs = actor.system.derived?.attributes || {};
 
-    // Get ability modifiers
-    const strMod = abilities.str?.mod || 0;
-    const dexMod = abilities.dex?.mod || 0;
-    const conMod = abilities.con?.mod || 0;
-    const wisMod = abilities.wis?.mod || 0;
+    // Get ability modifiers from derived layer (SOVEREIGNTY: single authority)
+    const strMod = derivedAttrs.str?.mod || 0;
+    const dexMod = derivedAttrs.dex?.mod || 0;
+    const conMod = derivedAttrs.con?.mod || 0;
+    const wisMod = derivedAttrs.wis?.mod || 0;
 
     // Calculate class bonuses (highest from all classes)
     const fortBonus = await this._getSaveBonus(classLevels, 'fort');

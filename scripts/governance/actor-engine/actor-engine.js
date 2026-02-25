@@ -5,6 +5,7 @@ import { MutationInterceptor } from '../mutation/MutationInterceptor.js';
 import { determineLevelFromXP } from '../../engines/shared/xp-system.js';
 import { DerivedCalculator } from '../derived/derived-calculator.js';
 import { ModifierEngine } from '../../engines/effects/modifiers/ModifierEngine.js';
+import { MutationApplicationError } from '../mutation/mutation-errors.js';
 
 /**
  * ActorEngine
@@ -17,28 +18,11 @@ export const ActorEngine = {
    * Runs after every validated update. Non-blocking.
    */
   async recalcAll(actor) {
+    if (!actor) throw new Error('recalcAll() called with no actor');
+
     try {
-      if (!actor) {throw new Error('recalcAll() called with no actor');}
-
-      const systemData = actor.system;
-      if (!systemData) {
-        SWSELogger.warn(`ActorEngine.recalcAll: Actor ${actor.name} has no system data.`);
-        return;
-      }
-
-      // Future recalculations go here.
-      SWSELogger.debug(`Recalculating derived data for: ${actor.name}`);
-
-      // If system implements a prepareDerivedData hook, call it safely.
-      if (typeof actor.prepareDerivedData === 'function') {
-        actor.prepareDerivedData();
-      }
-
-      // Optionally refresh effects, bonuses, etc.
-      if (typeof actor.prepareSynthetics === 'function') {
-        actor.prepareSynthetics();
-      }
-
+      await DerivedCalculator.computeAll(actor);
+      await ModifierEngine.applyAll(actor);
     } catch (err) {
       SWSELogger.error('ActorEngine.recalcAll failed:', err);
     }
@@ -83,7 +67,7 @@ export const ActorEngine = {
       await this.recalcAll(actor);
 
     } catch (err) {
-      swseLogger.error(`ActorEngine.applyTemplate failed on ${actor?.name ?? 'unknown actor'}`, err);
+      SWSELogger.error(`ActorEngine.applyTemplate failed on ${actor?.name ?? 'unknown actor'}`, err);
     }
   },
 
@@ -112,7 +96,7 @@ export const ActorEngine = {
         throw new Error(`Invalid updateData passed to updateActor for ${actor.name}`);
       }
 
-      swseLogger.debug(`ActorEngine.updateActor → ${actor.name}`, {
+      SWSELogger.debug(`ActorEngine.updateActor → ${actor.name}`, {
         updateData,
         meta: options.meta,
         guardKey: options.meta?.guardKey
@@ -123,7 +107,7 @@ export const ActorEngine = {
       // ========================================
       const meta = options.meta || {};
       if (meta.guardKey) {
-        swseLogger.debug(`[GUARD] updateActor with guardKey: ${meta.guardKey}`);
+        SWSELogger.debug(`[GUARD] updateActor with guardKey: ${meta.guardKey}`);
       }
 
       // ========================================
@@ -135,12 +119,12 @@ export const ActorEngine = {
       if (isMigration && !isMigrationActive) {
         // Mark migration as active
         this._markMigrationActive(actor.id);
-        swseLogger.debug(`[MIGRATION] Starting migration for ${actor.name}`);
+        SWSELogger.debug(`[MIGRATION] Starting migration for ${actor.name}`);
       }
 
       if (isMigration && isMigrationActive) {
         // Prevent recursive mutations during migration
-        swseLogger.warn(`[MIGRATION] Suppressing recursive mutation during migration for ${actor.name}`);
+        SWSELogger.warn(`[MIGRATION] Suppressing recursive mutation during migration for ${actor.name}`);
         return { prevented: true, actor };
       }
 
@@ -156,16 +140,7 @@ export const ActorEngine = {
           meta: meta
         };
         const result = await applyActorUpdateAtomic(actor, updateData, optsWithMeta);
-
-        // Kick off a recalculation pass (async, not awaited)
-        setTimeout(() => {
-          try {
-            this.recalcAll(actor);
-          } catch (e) {
-            swseLogger.warn(`ActorEngine.recalcAll threw during async pass for ${actor.name}`, e);
-          }
-        }, 0);
-
+        await this.recalcAll(actor);
         return result;
       } finally {
         // Always clear context, even on error
@@ -174,12 +149,12 @@ export const ActorEngine = {
         // PHASE 11: Clear migration context if this was a migration
         if (isMigration && !isMigrationActive) {
           this._clearMigrationActive(actor.id);
-          swseLogger.debug(`[MIGRATION] Completed migration for ${actor.name}`);
+          SWSELogger.debug(`[MIGRATION] Completed migration for ${actor.name}`);
         }
       }
 
     } catch (err) {
-      swseLogger.error(`ActorEngine.updateActor failed for ${actor?.name ?? 'unknown actor'}`, {
+      SWSELogger.error(`ActorEngine.updateActor failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err,
         updateData,
         meta: options.meta?.guardKey
@@ -205,7 +180,7 @@ export const ActorEngine = {
       if (!embeddedName) {throw new Error('updateEmbeddedDocuments() called without embeddedName');}
       if (!Array.isArray(updates)) {throw new Error('updateEmbeddedDocuments() requires updates array');}
 
-      swseLogger.debug(`ActorEngine.updateEmbeddedDocuments → ${actor.name}`, {
+      SWSELogger.debug(`ActorEngine.updateEmbeddedDocuments → ${actor.name}`, {
         embeddedName,
         updates,
         options
@@ -217,21 +192,13 @@ export const ActorEngine = {
       MutationInterceptor.setContext(`ActorEngine.updateEmbeddedDocuments[${embeddedName}]`);
       try {
         const result = await actor.updateEmbeddedDocuments(embeddedName, updates, options);
-
-        setTimeout(() => {
-          try {
-            this.recalcAll(actor);
-          } catch (e) {
-            swseLogger.warn(`ActorEngine.recalcAll threw during async pass for ${actor.name}`, e);
-          }
-        }, 0);
-
+        await this.recalcAll(actor);
         return result;
       } finally {
         MutationInterceptor.clearContext();
       }
     } catch (err) {
-      swseLogger.error(`ActorEngine.updateEmbeddedDocuments failed for ${actor?.name ?? 'unknown actor'}`, {
+      SWSELogger.error(`ActorEngine.updateEmbeddedDocuments failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err,
         embeddedName,
         updates
@@ -260,7 +227,7 @@ export const ActorEngine = {
       if (!embeddedName) {throw new Error('createEmbeddedDocuments() called without embeddedName');}
       if (!Array.isArray(data)) {throw new Error('createEmbeddedDocuments() requires data array');}
 
-      swseLogger.debug(`ActorEngine.createEmbeddedDocuments → ${actor.name}`, {
+      SWSELogger.debug(`ActorEngine.createEmbeddedDocuments → ${actor.name}`, {
         embeddedName,
         count: data.length
       });
@@ -268,13 +235,13 @@ export const ActorEngine = {
       MutationInterceptor.setContext(`ActorEngine.createEmbeddedDocuments[${embeddedName}]`);
       try {
         const result = await actor.createEmbeddedDocuments(embeddedName, data, options);
-        setTimeout(() => this.recalcAll(actor), 0);
+        await this.recalcAll(actor);
         return result;
       } finally {
         MutationInterceptor.clearContext();
       }
     } catch (err) {
-      swseLogger.error(`ActorEngine.createEmbeddedDocuments failed for ${actor?.name ?? 'unknown actor'}`, err);
+      SWSELogger.error(`ActorEngine.createEmbeddedDocuments failed for ${actor?.name ?? 'unknown actor'}`, err);
       throw err;
     }
   },
@@ -289,7 +256,7 @@ export const ActorEngine = {
       if (!embeddedName) {throw new Error('deleteEmbeddedDocuments() called without embeddedName');}
       if (!Array.isArray(ids)) {throw new Error('deleteEmbeddedDocuments() requires ids array');}
 
-      swseLogger.debug(`ActorEngine.deleteEmbeddedDocuments → ${actor.name}`, {
+      SWSELogger.debug(`ActorEngine.deleteEmbeddedDocuments → ${actor.name}`, {
         embeddedName,
         count: ids.length
       });
@@ -297,13 +264,13 @@ export const ActorEngine = {
       MutationInterceptor.setContext(`ActorEngine.deleteEmbeddedDocuments[${embeddedName}]`);
       try {
         const result = await actor.deleteEmbeddedDocuments(embeddedName, ids, options);
-        setTimeout(() => this.recalcAll(actor), 0);
+        await this.recalcAll(actor);
         return result;
       } finally {
         MutationInterceptor.clearContext();
       }
     } catch (err) {
-      swseLogger.error(`ActorEngine.deleteEmbeddedDocuments failed for ${actor?.name ?? 'unknown actor'}`, err);
+      SWSELogger.error(`ActorEngine.deleteEmbeddedDocuments failed for ${actor?.name ?? 'unknown actor'}`, err);
       throw err;
     }
   },
@@ -336,7 +303,7 @@ export const ActorEngine = {
       if (!embeddedName) {throw new Error('moveEmbeddedDocuments() called without embeddedName');}
       if (!Array.isArray(ids)) {throw new Error('moveEmbeddedDocuments() requires ids array');}
 
-      swseLogger.debug(`ActorEngine.moveEmbeddedDocuments → ${sourceActor.name} → ${targetActor.name}`, {
+      SWSELogger.debug(`ActorEngine.moveEmbeddedDocuments → ${sourceActor.name} → ${targetActor.name}`, {
         embeddedName,
         count: ids.length
       });
@@ -350,7 +317,7 @@ export const ActorEngine = {
       }).filter(obj => obj); // Remove nulls
 
       if (itemsToMove.length === 0) {
-        swseLogger.warn(`No items to move from ${sourceActor.name}`);
+        SWSELogger.warn(`No items to move from ${sourceActor.name}`);
         return [];
       }
 
@@ -367,21 +334,15 @@ export const ActorEngine = {
         const created = await targetActor.createEmbeddedDocuments(embeddedName, itemsToMove, options);
 
         // Recalculate both actors
-        setTimeout(() => {
-          try {
-            this.recalcAll(sourceActor);
-            this.recalcAll(targetActor);
-          } catch (e) {
-            swseLogger.warn(`ActorEngine.recalcAll threw during moveEmbeddedDocuments for ${sourceActor.name} or ${targetActor.name}`, e);
-          }
-        }, 0);
+        await this.recalcAll(sourceActor);
+        await this.recalcAll(targetActor);
 
         return created;
       } finally {
         MutationInterceptor.clearContext();
       }
     } catch (err) {
-      swseLogger.error(`ActorEngine.moveEmbeddedDocuments failed`, {
+      SWSELogger.error(`ActorEngine.moveEmbeddedDocuments failed`, {
         error: err,
         sourceActor: sourceActor?.name,
         targetActor: targetActor?.name,
@@ -430,7 +391,7 @@ export const ActorEngine = {
         throw new Error('Invalid delta.delete: must be object with feature arrays');
       }
 
-      swseLogger.debug(`ActorEngine.applyDelta → ${actor.name}`, { delta });
+      SWSELogger.debug(`ActorEngine.applyDelta → ${actor.name}`, { delta });
 
       // ---- Phase 4: Apply SET operations (field updates) ----
       const updates = {};
@@ -499,10 +460,10 @@ export const ActorEngine = {
         }
       }
 
-      swseLogger.log(`ActorEngine.applyDelta completed for ${actor.name}`);
+      SWSELogger.log(`ActorEngine.applyDelta completed for ${actor.name}`);
 
     } catch (err) {
-      swseLogger.error(`ActorEngine.applyDelta failed for ${actor?.name ?? 'unknown actor'}`, {
+      SWSELogger.error(`ActorEngine.applyDelta failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err,
         delta
       });
@@ -554,7 +515,7 @@ export const ActorEngine = {
 
       const isAdoption = mutationPlan.replaceSystem !== undefined;
 
-      swseLogger.debug(`ActorEngine.apply → ${actor.name}`, {
+      SWSELogger.debug(`ActorEngine.apply → ${actor.name}`, {
         isAdoption,
         mutationPlan: isAdoption ? { adoption: true } : mutationPlan
       });
@@ -564,7 +525,7 @@ export const ActorEngine = {
       // ========================================
 
       if (isAdoption) {
-        swseLogger.info(`[Adoption] ${actor.name} (ID: ${actor.id}) adopting from ${mutationPlan._adoptionSource}`);
+        SWSELogger.info(`[Adoption] ${actor.name} (ID: ${actor.id}) adopting from ${mutationPlan._adoptionSource}`);
 
         // ---- ADOPTION PHASE 1: Delete all existing embedded documents ----
         if (actor.items?.length > 0) {
@@ -661,13 +622,13 @@ export const ActorEngine = {
       }
 
       if (isAdoption) {
-        swseLogger.log(`[Adoption] Complete: ${actor.name} (ID: ${actor.id})`);
+        SWSELogger.log(`[Adoption] Complete: ${actor.name} (ID: ${actor.id})`);
       } else {
-        swseLogger.log(`ActorEngine.apply completed for ${actor.name}`);
+        SWSELogger.log(`ActorEngine.apply completed for ${actor.name}`);
       }
 
     } catch (err) {
-      swseLogger.error(`ActorEngine.apply failed for ${actor?.name ?? 'unknown actor'}`, {
+      SWSELogger.error(`ActorEngine.apply failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err,
         isAdoption: mutationPlan?.replaceSystem !== undefined,
         mutationPlan: mutationPlan?.replaceSystem ? { adoption: true } : mutationPlan
@@ -709,7 +670,7 @@ export const ActorEngine = {
         throw new Error(`Invalid damage amount: ${damagePacket.amount}`);
       }
 
-      swseLogger.debug(`ActorEngine.applyDamage → ${actor.name}`, {
+      SWSELogger.debug(`ActorEngine.applyDamage → ${actor.name}`, {
         amount: damagePacket.amount,
         type: damagePacket.type,
         source: damagePacket.source
@@ -753,7 +714,7 @@ export const ActorEngine = {
       // Apply all updates in one mutation
       await this.updateActor(actor, updates);
 
-      swseLogger.log(`Damage applied to ${actor.name}: ${finalDamage}HP (final: ${newHP}/${maxHP})`, {
+      SWSELogger.log(`Damage applied to ${actor.name}: ${finalDamage}HP (final: ${newHP}/${maxHP})`, {
         source: damagePacket.source,
         conditionShifted: shouldShiftCondition
       });
@@ -765,7 +726,7 @@ export const ActorEngine = {
       };
 
     } catch (err) {
-      swseLogger.error(`ActorEngine.applyDamage failed for ${actor?.name ?? 'unknown actor'}`, {
+      SWSELogger.error(`ActorEngine.applyDamage failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err,
         damagePacket
       });
@@ -790,7 +751,7 @@ export const ActorEngine = {
         throw new Error(`Invalid healing amount: ${amount}`);
       }
 
-      swseLogger.debug(`ActorEngine.applyHealing → ${actor.name}`, {
+      SWSELogger.debug(`ActorEngine.applyHealing → ${actor.name}`, {
         amount,
         source
       });
@@ -801,7 +762,7 @@ export const ActorEngine = {
       const actualHealing = newHP - currentHP;
 
       if (actualHealing === 0) {
-        swseLogger.debug(`${actor.name} healing had no effect (already at max HP)`);
+        SWSELogger.debug(`${actor.name} healing had no effect (already at max HP)`);
         return { applied: 0, newHP };
       }
 
@@ -809,7 +770,7 @@ export const ActorEngine = {
         'system.attributes.hp.value': newHP
       });
 
-      swseLogger.log(`Healing applied to ${actor.name}: +${actualHealing}HP (now: ${newHP}/${maxHP})`, {
+      SWSELogger.log(`Healing applied to ${actor.name}: +${actualHealing}HP (now: ${newHP}/${maxHP})`, {
         source
       });
 
@@ -819,7 +780,7 @@ export const ActorEngine = {
       };
 
     } catch (err) {
-      swseLogger.error(`ActorEngine.applyHealing failed for ${actor?.name ?? 'unknown actor'}`, {
+      SWSELogger.error(`ActorEngine.applyHealing failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err,
         amount,
         source
@@ -845,11 +806,11 @@ export const ActorEngine = {
         throw new Error(`Invalid condition step: ${step}`);
       }
 
-      const clampedStep = Math.clamp(step, 0, 5);
+      const clampedStep = Math.min(5, Math.max(0, step));
       const current = actor.system.conditionTrack?.current || 0;
 
       if (clampedStep === current) {
-        swseLogger.debug(`${actor.name} condition already at step ${clampedStep}`);
+        SWSELogger.debug(`${actor.name} condition already at step ${clampedStep}`);
         return { applied: 0, newStep: clampedStep };
       }
 
@@ -857,7 +818,7 @@ export const ActorEngine = {
         'system.conditionTrack.current': clampedStep
       });
 
-      swseLogger.log(`Condition step updated for ${actor.name}`, {
+      SWSELogger.log(`Condition step updated for ${actor.name}`, {
         from: current,
         to: clampedStep,
         source
@@ -866,7 +827,7 @@ export const ActorEngine = {
       return { applied: 1, newStep: clampedStep };
 
     } catch (err) {
-      swseLogger.error(`ActorEngine.setConditionStep failed for ${actor?.name ?? 'unknown actor'}`, {
+      SWSELogger.error(`ActorEngine.setConditionStep failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err,
         step,
         source
@@ -891,7 +852,7 @@ export const ActorEngine = {
       const current = actor.system.conditionTrack?.persistent ?? false;
 
       if (persistent === current) {
-        swseLogger.debug(`${actor.name} persistent condition already ${persistent ? 'set' : 'clear'}`);
+        SWSELogger.debug(`${actor.name} persistent condition already ${persistent ? 'set' : 'clear'}`);
         return { applied: 0, persistent };
       }
 
@@ -899,7 +860,7 @@ export const ActorEngine = {
         'system.conditionTrack.persistent': persistent
       });
 
-      swseLogger.log(`Condition persistent flag updated for ${actor.name}`, {
+      SWSELogger.log(`Condition persistent flag updated for ${actor.name}`, {
         persistent,
         source
       });
@@ -907,7 +868,7 @@ export const ActorEngine = {
       return { applied: 1, persistent };
 
     } catch (err) {
-      swseLogger.error(`ActorEngine.setConditionPersistent failed for ${actor?.name ?? 'unknown actor'}`, {
+      SWSELogger.error(`ActorEngine.setConditionPersistent failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err,
         persistent,
         source
@@ -933,16 +894,16 @@ export const ActorEngine = {
         throw new Error(`Invalid shift direction: ${direction} (must be +1 or -1)`);
       }
 
-      swseLogger.debug(`ActorEngine.applyConditionShift → ${actor.name}`, {
+      SWSELogger.debug(`ActorEngine.applyConditionShift → ${actor.name}`, {
         direction,
         source
       });
 
-      const currentCondition = actor.system.progression?.conditionTrack || 0;
+      const currentCondition = actor.system.conditionTrack?.current || 0;
       const newCondition = Math.max(0, currentCondition + direction);
 
       if (newCondition === currentCondition) {
-        swseLogger.debug(`${actor.name} condition shift had no effect (at boundary)`);
+        SWSELogger.debug(`${actor.name} condition shift had no effect (at boundary)`);
         return { applied: 0, newCondition };
       }
 
@@ -951,7 +912,7 @@ export const ActorEngine = {
       });
 
       const directionLabel = direction > 0 ? 'worsened' : 'improved';
-      swseLogger.log(`Condition ${directionLabel} for ${actor.name} (now: ${newCondition})`, {
+      SWSELogger.log(`Condition ${directionLabel} for ${actor.name} (now: ${newCondition})`, {
         source
       });
 
@@ -961,7 +922,7 @@ export const ActorEngine = {
       };
 
     } catch (err) {
-      swseLogger.error(`ActorEngine.applyConditionShift failed for ${actor?.name ?? 'unknown actor'}`, {
+      SWSELogger.error(`ActorEngine.applyConditionShift failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err,
         direction,
         source
@@ -986,7 +947,7 @@ export const ActorEngine = {
         throw new Error('updateActionEconomy() requires actionEconomy object');
       }
 
-      swseLogger.debug(`ActorEngine.updateActionEconomy → ${actor.name}`, {
+      SWSELogger.debug(`ActorEngine.updateActionEconomy → ${actor.name}`, {
         swift: actionEconomy.swift,
         move: actionEconomy.move,
         standard: actionEconomy.standard,
@@ -998,14 +959,14 @@ export const ActorEngine = {
         'system.actionEconomy': actionEconomy
       });
 
-      swseLogger.log(`Action economy updated for ${actor.name}`, {
+      SWSELogger.log(`Action economy updated for ${actor.name}`, {
         actionEconomy
       });
 
       return { updated: true, actionEconomy };
 
     } catch (err) {
-      swseLogger.error(`ActorEngine.updateActionEconomy failed for ${actor?.name ?? 'unknown actor'}`, {
+      SWSELogger.error(`ActorEngine.updateActionEconomy failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err,
         actionEconomy
       });
@@ -1032,7 +993,7 @@ export const ActorEngine = {
       const actualGain = newFP - currentFP;
 
       if (actualGain === 0) {
-        swseLogger.debug(`${actor.name} force points already at max`);
+        SWSELogger.debug(`${actor.name} force points already at max`);
         return { gained: 0, current: newFP, max: maxFP };
       }
 
@@ -1040,14 +1001,14 @@ export const ActorEngine = {
         'system.forcePoints.value': newFP
       });
 
-      swseLogger.log(`Force points gained: ${actor.name} gained ${actualGain}FP (now: ${newFP}/${maxFP})`, {
+      SWSELogger.log(`Force points gained: ${actor.name} gained ${actualGain}FP (now: ${newFP}/${maxFP})`, {
         amount: actualGain
       });
 
       return { gained: actualGain, current: newFP, max: maxFP };
 
     } catch (err) {
-      swseLogger.error(`ActorEngine.gainForcePoints failed for ${actor?.name ?? 'unknown actor'}`, {
+      SWSELogger.error(`ActorEngine.gainForcePoints failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err,
         amount
       });
@@ -1073,7 +1034,7 @@ export const ActorEngine = {
       const actualSpent = currentFP - newFP;
 
       if (actualSpent === 0) {
-        swseLogger.debug(`${actor.name} has no force points to spend`);
+        SWSELogger.debug(`${actor.name} has no force points to spend`);
         return { spent: 0, remaining: newFP };
       }
 
@@ -1081,14 +1042,14 @@ export const ActorEngine = {
         'system.forcePoints.value': newFP
       });
 
-      swseLogger.log(`Force points spent: ${actor.name} used ${actualSpent}FP (now: ${newFP})`, {
+      SWSELogger.log(`Force points spent: ${actor.name} used ${actualSpent}FP (now: ${newFP})`, {
         amount: actualSpent
       });
 
       return { spent: actualSpent, remaining: newFP };
 
     } catch (err) {
-      swseLogger.error(`ActorEngine.spendForcePoints failed for ${actor?.name ?? 'unknown actor'}`, {
+      SWSELogger.error(`ActorEngine.spendForcePoints failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err,
         amount
       });
@@ -1114,7 +1075,7 @@ export const ActorEngine = {
       const actualSpent = currentDP - newDP;
 
       if (actualSpent === 0) {
-        swseLogger.debug(`${actor.name} has no destiny points to spend`);
+        SWSELogger.debug(`${actor.name} has no destiny points to spend`);
         return { spent: 0, remaining: newDP };
       }
 
@@ -1122,14 +1083,14 @@ export const ActorEngine = {
         'system.destinyPoints.value': newDP
       });
 
-      swseLogger.log(`Destiny points spent: ${actor.name} used ${actualSpent}DP (now: ${newDP})`, {
+      SWSELogger.log(`Destiny points spent: ${actor.name} used ${actualSpent}DP (now: ${newDP})`, {
         amount: actualSpent
       });
 
       return { spent: actualSpent, remaining: newDP };
 
     } catch (err) {
-      swseLogger.error(`ActorEngine.spendDestinyPoints failed for ${actor?.name ?? 'unknown actor'}`, {
+      SWSELogger.error(`ActorEngine.spendDestinyPoints failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err,
         amount
       });
@@ -1158,7 +1119,7 @@ export const ActorEngine = {
                        (actor.type === 'npc' && actor.system.class);
 
       if (!isHeroic) {
-        swseLogger.warn(`Second Wind attempt on non-heroic actor: ${actor.name}`);
+        SWSELogger.warn(`Second Wind attempt on non-heroic actor: ${actor.name}`);
         return {
           success: false,
           reason: `${actor.name} is not a heroic character and cannot use Second Wind`
@@ -1196,7 +1157,7 @@ export const ActorEngine = {
         const d4Roll = Math.floor(Math.random() * 4) + 1; // 1d4
         heal = 5 + chaMod + d4Roll;
 
-        swseLogger.debug(`Web Enhancement Second Wind: 5 + CHA(${chaMod}) + 1d4(${d4Roll}) = ${heal} HP`);
+        SWSELogger.debug(`Web Enhancement Second Wind: 5 + CHA(${chaMod}) + 1d4(${d4Roll}) = ${heal} HP`);
       }
 
       // Get authoritative HP source
@@ -1219,7 +1180,7 @@ export const ActorEngine = {
         const currentCT = actor.system.conditionTrack?.current ?? 0;
         improvements['system.conditionTrack.current'] = Math.max(0, currentCT - 1);
 
-        swseLogger.debug(`Improved Second Wind enabled: moving condition track from ${currentCT} to ${Math.max(0, currentCT - 1)}`);
+        SWSELogger.debug(`Improved Second Wind enabled: moving condition track from ${currentCT} to ${Math.max(0, currentCT - 1)}`);
       }
 
       // Batch update: HP restoration + use consumption + optional condition improvement
@@ -1237,7 +1198,7 @@ export const ActorEngine = {
         resultLog.newCondition = Math.max(0, (actor.system.conditionTrack?.current ?? 0) - 1);
       }
 
-      swseLogger.log(`Second wind used by ${actor.name}`, resultLog);
+      SWSELogger.log(`Second wind used by ${actor.name}`, resultLog);
 
       return {
         success: true,
@@ -1249,7 +1210,7 @@ export const ActorEngine = {
       };
 
     } catch (err) {
-      swseLogger.error(`ActorEngine.applySecondWind failed for ${actor?.name ?? 'unknown actor'}`, {
+      SWSELogger.error(`ActorEngine.applySecondWind failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err
       });
       throw err;
@@ -1276,7 +1237,7 @@ export const ActorEngine = {
         'system.secondWind.uses': maxUses
       });
 
-      swseLogger.log(`Second wind reset for ${actor.name}`, {
+      SWSELogger.log(`Second wind reset for ${actor.name}`, {
         restoredUses: maxUses,
         max: maxUses
       });
@@ -1288,7 +1249,7 @@ export const ActorEngine = {
       };
 
     } catch (err) {
-      swseLogger.error(`ActorEngine.resetSecondWind failed for ${actor?.name ?? 'unknown actor'}`, { error: err });
+      SWSELogger.error(`ActorEngine.resetSecondWind failed for ${actor?.name ?? 'unknown actor'}`, { error: err });
       throw err;
     }
   },
@@ -1361,7 +1322,7 @@ export const ActorEngine = {
         'system.conditionTrack.current': newCT
       });
 
-      swseLogger.log(`${actor.name} accepts Edge of Exhaustion`, {
+      SWSELogger.log(`${actor.name} accepts Edge of Exhaustion`, {
         trade: 'condition for Second Wind',
         conditionBefore: currentCT,
         conditionAfter: newCT,
@@ -1376,7 +1337,7 @@ export const ActorEngine = {
       };
 
     } catch (err) {
-      swseLogger.error(`ActorEngine.applySecondWindEdgeOfExhaustion failed for ${actor?.name ?? 'unknown actor'}`, {
+      SWSELogger.error(`ActorEngine.applySecondWindEdgeOfExhaustion failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err
       });
       throw err;
@@ -1422,7 +1383,7 @@ export const ActorEngine = {
       const newLevel = determineLevelFromXP(newXPTotal);
       const leveledUp = newLevel > oldLevel;
 
-      swseLogger.log(`[PROGRESSION] Applying progression to ${actor.name}:`, {
+      SWSELogger.log(`[PROGRESSION] Applying progression to ${actor.name}:`, {
         xpDelta: progressionPacket.xpDelta,
         leveledUp: leveledUp ? `${oldLevel} → ${newLevel}` : 'no level change',
         featsAdded: progressionPacket.featsAdded?.length || 0,
@@ -1463,16 +1424,16 @@ export const ActorEngine = {
         // PHASE 4A: APPLY ROOT UPDATE (Mutation #1)
         // ====================================================================
         if (Object.keys(rootUpdates).length > 0) {
-          swseLogger.debug(`[PROGRESSION] Applying ${Object.keys(rootUpdates).length} root updates`);
-          await actor.update(rootUpdates, { diff: false });
+          SWSELogger.debug(`[PROGRESSION] Applying ${Object.keys(rootUpdates).length} root updates`);
+          await this.updateActor(actor, rootUpdates, { source: 'ActorEngine.applyProgression' });
         }
 
         // ====================================================================
         // PHASE 4B: DELETE ITEMS (Mutation #2, only if needed)
         // ====================================================================
         if (itemsToDelete.length > 0) {
-          swseLogger.debug(`[PROGRESSION] Deleting ${itemsToDelete.length} items`);
-          await actor.deleteEmbeddedDocuments('Item', itemsToDelete);
+          SWSELogger.debug(`[PROGRESSION] Deleting ${itemsToDelete.length} items`);
+          await this.deleteEmbeddedDocuments(actor, 'Item', itemsToDelete, { source: 'ActorEngine.applyProgression' });
         }
 
         // ====================================================================
@@ -1480,8 +1441,8 @@ export const ActorEngine = {
         // ====================================================================
         const createdItems = [];
         if (itemsToCreate.length > 0) {
-          swseLogger.debug(`[PROGRESSION] Creating ${itemsToCreate.length} items`);
-          const created = await actor.createEmbeddedDocuments('Item', itemsToCreate);
+          SWSELogger.debug(`[PROGRESSION] Creating ${itemsToCreate.length} items`);
+          const created = await this.createEmbeddedDocuments(actor, 'Item', itemsToCreate, { source: 'ActorEngine.applyProgression' });
           createdItems.push(...created.map(i => i.id));
         }
 
@@ -1512,7 +1473,7 @@ export const ActorEngine = {
         // ====================================================================
         // CRITICAL: No sheet rendering, no lifecycle hooks
         // Direct state computation
-        swseLogger.debug(`[PROGRESSION] Triggering derived recalculation`);
+        SWSELogger.debug(`[PROGRESSION] Triggering derived recalculation`);
 
         // Step 1: Compute all derived values
         await DerivedCalculator.computeAll(actor);
@@ -1520,7 +1481,7 @@ export const ActorEngine = {
         // Step 2: Apply all modifiers
         await ModifierEngine.applyAll(actor);
 
-        swseLogger.log(`[PROGRESSION] ✅ Progression applied to ${actor.name}:`, {
+        SWSELogger.log(`[PROGRESSION] ✅ Progression applied to ${actor.name}:`, {
           mutationCount: (itemsToDelete.length > 0 ? 1 : 0) + (itemsToCreate.length > 0 ? 1 : 0) + 1,
           itemsCreated: createdItems.length,
           itemsDeleted: itemsToDelete.length,
@@ -1554,7 +1515,7 @@ export const ActorEngine = {
       }
 
     } catch (err) {
-      swseLogger.error(`ActorEngine.applyProgression failed for ${actor?.name ?? 'unknown actor'}`, {
+      SWSELogger.error(`ActorEngine.applyProgression failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err,
         packet: progressionPacket
       });
@@ -1601,7 +1562,7 @@ export const ActorEngine = {
         throw new Error('applyTalentEffect() plan has no mutations');
       }
 
-      swseLogger.log(`[TALENT EFFECT] Applying ${plan.effect} with ${plan.mutations.length} mutations`, {
+      SWSELogger.log(`[TALENT EFFECT] Applying ${plan.effect} with ${plan.mutations.length} mutations`, {
         damageAmount: plan.damageAmount,
         roll: plan.roll?.result
       });
@@ -1616,18 +1577,9 @@ export const ActorEngine = {
         const mutation = plan.mutations[i];
 
         try {
-          // Set context for this mutation
-          // Each mutation is individually governed (not wrapped together)
-          MutationInterceptor.setContext({
-            operation: 'applyTalentEffect',
-            effect: plan.effect,
-            mutationIndex: i,
-            totalMutations: plan.mutations.length
-          });
-
           // Execute mutation based on type
           if (mutation.type === 'update') {
-            swseLogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: update ${mutation.actor.name}`, {
+            SWSELogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: update ${mutation.actor.name}`, {
               data: mutation.data
             });
 
@@ -1642,7 +1594,7 @@ export const ActorEngine = {
             appliedMutations.push(mutation);
 
           } else if (mutation.type === 'setFlag') {
-            swseLogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: setFlag ${mutation.actor.name}`, {
+            SWSELogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: setFlag ${mutation.actor.name}`, {
               scope: mutation.scope,
               key: mutation.key,
               value: mutation.value
@@ -1659,7 +1611,7 @@ export const ActorEngine = {
             appliedMutations.push(mutation);
 
           } else if (mutation.type === 'unsetFlag') {
-            swseLogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: unsetFlag ${mutation.actor.name}`, {
+            SWSELogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: unsetFlag ${mutation.actor.name}`, {
               scope: mutation.scope,
               key: mutation.key
             });
@@ -1675,7 +1627,7 @@ export const ActorEngine = {
             appliedMutations.push(mutation);
 
           } else if (mutation.type === 'createEmbedded') {
-            swseLogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: createEmbedded ${mutation.actor.name}`, {
+            SWSELogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: createEmbedded ${mutation.actor.name}`, {
               embeddedName: mutation.embeddedName,
               count: mutation.data.length
             });
@@ -1696,7 +1648,7 @@ export const ActorEngine = {
             appliedMutations.push(mutation);
 
           } else if (mutation.type === 'deleteEmbedded') {
-            swseLogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: deleteEmbedded ${mutation.actor.name}`, {
+            SWSELogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: deleteEmbedded ${mutation.actor.name}`, {
               embeddedName: mutation.embeddedName,
               count: mutation.ids.length
             });
@@ -1717,7 +1669,7 @@ export const ActorEngine = {
             appliedMutations.push(mutation);
 
           } else if (mutation.type === 'updateOwnedItems') {
-            swseLogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: updateOwnedItems ${mutation.actor.name}`, {
+            SWSELogger.debug(`[TALENT EFFECT] Mutation ${i + 1}: updateOwnedItems ${mutation.actor.name}`, {
               itemCount: mutation.items.length
             });
 
@@ -1737,7 +1689,7 @@ export const ActorEngine = {
           }
 
         } catch (mutationErr) {
-          swseLogger.error(`[TALENT EFFECT] Mutation ${i + 1} failed: ${mutation.type} on ${mutation.actor.name}`, {
+          SWSELogger.error(`[TALENT EFFECT] Mutation ${i + 1} failed: ${mutation.type} on ${mutation.actor.name}`, {
             error: mutationErr,
             appliedSoFar: appliedMutations.length,
             totalMutations: plan.mutations.length
@@ -1755,17 +1707,13 @@ export const ActorEngine = {
           throw new Error(
             `Talent effect ${plan.effect} failed at mutation ${i + 1}: ${mutationErr.message}`
           );
-
-        } finally {
-          // Always clear context
-          MutationInterceptor.clearContext();
         }
       }
 
       // ====================================================================
       // PHASE 2: All mutations succeeded
       // ====================================================================
-      swseLogger.log(`[TALENT EFFECT] ✅ ${plan.effect} applied successfully`, {
+      SWSELogger.log(`[TALENT EFFECT] ✅ ${plan.effect} applied successfully`, {
         mutationCount: plan.mutations.length,
         damageAmount: plan.damageAmount,
         resultSummary: results.map(r => `${r.type}:${r.success ? 'OK' : 'FAIL'}`)
@@ -1871,7 +1819,7 @@ export const ActorEngine = {
         await this.createEmbeddedDocuments(actor, 'ActiveEffect', effectsToCreate, options);
       }
 
-      swseLogger.log(`[SNAPSHOT] ✅ Restoration complete for ${actor.name}`, {
+      SWSELogger.log(`[SNAPSHOT] ✅ Restoration complete for ${actor.name}`, {
         itemsDeleted: currentItemIds.length,
         itemsCreated: itemsToCreate.length,
         effectsDeleted: currentEffectIds.length,
@@ -1889,7 +1837,7 @@ export const ActorEngine = {
       };
 
     } catch (err) {
-      swseLogger.error(`ActorEngine.restoreFromSnapshot failed for ${actor?.name ?? 'unknown actor'}`, {
+      SWSELogger.error(`ActorEngine.restoreFromSnapshot failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err,
         snapshotItemCount: (snapshot?.items || []).length
       });
@@ -1961,7 +1909,7 @@ export const ActorEngine = {
         description: `Create ${documents.length} ${embeddedName}(s)`
       };
     } catch (err) {
-      swseLogger.error('buildEmbeddedCreatePlan failed:', err);
+      SWSELogger.error('buildEmbeddedCreatePlan failed:', err);
       return {
         success: false,
         reason: err.message
@@ -2027,7 +1975,7 @@ export const ActorEngine = {
         description: `Delete ${ids.length} ${embeddedName}(s)`
       };
     } catch (err) {
-      swseLogger.error('buildEmbeddedDeletePlan failed:', err);
+      SWSELogger.error('buildEmbeddedDeletePlan failed:', err);
       return {
         success: false,
         reason: err.message
@@ -2102,7 +2050,7 @@ export const ActorEngine = {
         description: `Replace ${idsToDelete?.length || 0} with ${docsToCreate?.length || 0} ${embeddedName}(s)`
       };
     } catch (err) {
-      swseLogger.error('buildEmbeddedReplacePlan failed:', err);
+      SWSELogger.error('buildEmbeddedReplacePlan failed:', err);
       return {
         success: false,
         reason: err.message
@@ -2154,7 +2102,7 @@ export const ActorEngine = {
         description: `Clone ${actor.name} with modifications`
       };
     } catch (err) {
-      swseLogger.error('buildCloneActorPlan failed:', err);
+      SWSELogger.error('buildCloneActorPlan failed:', err);
       return {
         success: false,
         reason: err.message
@@ -2223,7 +2171,7 @@ export const ActorEngine = {
             });
           }
         } catch (mutationErr) {
-          swseLogger.error(`executeEmbeddedPlan mutation failed (${mutation.type}):`, mutationErr);
+          SWSELogger.error(`executeEmbeddedPlan mutation failed (${mutation.type}):`, mutationErr);
           throw mutationErr;
         }
       }
@@ -2234,7 +2182,7 @@ export const ActorEngine = {
         mutations: results
       };
     } catch (err) {
-      swseLogger.error('executeEmbeddedPlan failed:', err);
+      SWSELogger.error('executeEmbeddedPlan failed:', err);
       throw err;
     }
   }
@@ -2311,7 +2259,7 @@ export const ActorEngine = {
       // Import error classes dynamically to avoid circular deps
       const { MutationApplicationError } = await import('../../governance/mutation/mutation-errors.js');
 
-      swseLogger.debug('ActorEngine.applyMutationPlan', {
+      SWSELogger.debug('ActorEngine.applyMutationPlan', {
         actor: actor.id,
         source,
         hasCreates: !!mutationPlan.create && !!mutationPlan.create.actors && mutationPlan.create.actors.length > 0,
@@ -2359,13 +2307,13 @@ export const ActorEngine = {
         await this.recalcAll(actor);
       }
 
-      swseLogger.info('ActorEngine.applyMutationPlan: Success', {
+      SWSELogger.info('ActorEngine.applyMutationPlan: Success', {
         actor: actor.id,
         source
       });
 
     } catch (error) {
-      swseLogger.error('ActorEngine.applyMutationPlan failed:', {
+      SWSELogger.error('ActorEngine.applyMutationPlan failed:', {
         actor: actor?.id,
         source,
         error: error.message
@@ -2379,8 +2327,6 @@ export const ActorEngine = {
    * @private
    */
   _validateMutationPlan(plan) {
-    const { MutationApplicationError } = require('../../governance/mutation/mutation-errors.js');
-
     // Validate create bucket (PHASE 2)
     if (plan.create && typeof plan.create !== 'object') {
       throw new MutationApplicationError('create bucket must be an object', { operation: 'create' });
@@ -2460,7 +2406,7 @@ export const ActorEngine = {
           continue;
         }
 
-        swseLogger.debug('ActorEngine._applyCreateOps', {
+        SWSELogger.debug('ActorEngine._applyCreateOps', {
           temporaryId: spec.temporaryId,
           type: spec.type || 'unknown'
         });
@@ -2471,7 +2417,7 @@ export const ActorEngine = {
           if (created) {
             // Map temporary ID to real ID
             tempIdMap[spec.temporaryId] = created.id;
-            swseLogger.info('ActorEngine: Created actor', {
+            SWSELogger.info('ActorEngine: Created actor', {
               temporaryId: spec.temporaryId,
               realId: created.id,
               type: spec.type
@@ -2514,7 +2460,7 @@ export const ActorEngine = {
         addBucket[collection] = ids.map(id => {
           if (typeof id === 'string' && tempIdMap[id]) {
             const realId = tempIdMap[id];
-            swseLogger.debug('ActorEngine: Rewrote temp ID', {
+            SWSELogger.debug('ActorEngine: Rewrote temp ID', {
               temporaryId: id,
               realId
             });
@@ -2524,7 +2470,6 @@ export const ActorEngine = {
         });
       }
     } catch (error) {
-      const { MutationApplicationError } = require('../../governance/mutation/mutation-errors.js');
       throw new MutationApplicationError(
         `Failed to rewrite temporary IDs: ${error.message}`,
         {}
@@ -2547,7 +2492,7 @@ export const ActorEngine = {
           continue;
         }
 
-        swseLogger.debug('ActorEngine._applyDeleteOps', {
+        SWSELogger.debug('ActorEngine._applyDeleteOps', {
           actor: actor.id,
           collection,
           count: ids.length
@@ -2580,7 +2525,7 @@ export const ActorEngine = {
     }
 
     try {
-      swseLogger.debug('ActorEngine._applySetOps', {
+      SWSELogger.debug('ActorEngine._applySetOps', {
         actor: actor.id,
         paths: Object.keys(setOps)
       });
@@ -2611,24 +2556,30 @@ export const ActorEngine = {
     }
 
     try {
-      for (const [collection, ids] of Object.entries(addOps)) {
-        if (!Array.isArray(ids) || ids.length === 0) {
+      for (const [collection, documents] of Object.entries(addOps)) {
+        if (!Array.isArray(documents) || documents.length === 0) {
           continue;
         }
 
-        swseLogger.debug('ActorEngine._applyAddOps', {
+        SWSELogger.debug('ActorEngine._applyAddOps', {
           actor: actor.id,
           collection,
-          count: ids.length
+          count: documents.length
         });
 
-        // TODO: In full implementation, resolve IDs to item data
-        // For now, assume IDs are valid document IDs
-        // In reality, would need to fetch item compendiums and create embedded docs
-        // This is a placeholder for the vertical slice
+        try {
+          const embeddedName =
+            collection.charAt(0).toUpperCase() + collection.slice(1, -1);
+
+          await this.createEmbeddedDocuments(actor, embeddedName, documents, { source });
+        } catch (err) {
+          throw new MutationApplicationError(
+            `Failed to add documents to ${collection}: ${err.message}`,
+            { operation: 'add', collection }
+          );
+        }
       }
     } catch (error) {
-      const { MutationApplicationError } = await import('../../governance/mutation/mutation-errors.js');
       throw new MutationApplicationError(
         `Failed to add items: ${error.message}`,
         {

@@ -1,4 +1,4 @@
-import { HookInvestigator } from "./sentinel/hook-investigator.js";
+import { HookInvestigator } from "../governance/sentinel/hook-investigator.js";
 /**
  * SWSE Init — placeholder to satisfy Foundry system validation
  */

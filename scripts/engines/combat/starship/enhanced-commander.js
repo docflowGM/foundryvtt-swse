@@ -211,7 +211,7 @@ export class EnhancedCommander {
 
     // Gather target info
     const isVehicle = target.type === 'vehicle';
-    const dt = target.system.damageThreshold ?? 0;
+    const dt = target.system.derived?.damageThreshold ?? target.system.damageThreshold ?? 0;
     const ctStep = target.system.conditionTrack?.current ?? 0;
     const ctLabels = ['Normal', '-1', '-2', '-5', '-10', 'Helpless'];
 

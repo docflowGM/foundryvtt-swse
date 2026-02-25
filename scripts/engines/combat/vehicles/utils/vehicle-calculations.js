@@ -131,7 +131,7 @@ export function computeVehicleDefensiveStats(vehicleActor) {
 
   const sr = system.shields?.rating ?? 0;
   const dr = system.damageReduction ?? 0;
-  const threshold = system.damageThreshold ?? 10;
+  const threshold = system.derived?.damageThreshold ?? system.damageThreshold ?? 10;
 
   return { sr, dr, threshold };
 }
