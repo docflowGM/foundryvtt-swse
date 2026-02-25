@@ -219,6 +219,10 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
         damageThreshold: new fields.NumberField({ required: true, initial: 0, integer: true }),
 
+        // Heroic and nonheroic levels (computed from class items)
+        heroicLevel: new fields.NumberField({ required: true, initial: 0, integer: true }),
+        nonheroicLevel: new fields.NumberField({ required: true, initial: 0, integer: true }),
+
         // Base attack bonus
         bab: new fields.NumberField({ required: true, initial: 0, integer: true }),
         babAdjustment: new fields.NumberField({ required: true, initial: 0, integer: true }),

@@ -28,6 +28,7 @@ import { DefenseCalculator } from './defense-calculator.js';
 import { ModifierEngine } from '../../engines/effects/modifiers/ModifierEngine.js';
 import { swseLogger } from '../../utils/logger.js';
 import { MutationIntegrityLayer } from '../../governance/sentinel/mutation-integrity-layer.js';
+import { getLevelSplit } from './level-split.js';
 
 export class DerivedCalculator {
   /**
@@ -74,6 +75,13 @@ export class DerivedCalculator {
 
       // Build update object (all writes go to system.derived.*)
       const updates = {};
+
+      // ========================================
+      // Level Split (Heroic vs Nonheroic)
+      // ========================================
+      const { heroicLevel, nonheroicLevel } = getLevelSplit(actor);
+      updates['system.derived.heroicLevel'] = heroicLevel;
+      updates['system.derived.nonheroicLevel'] = nonheroicLevel;
 
       // ========================================
       // Ability Modifiers (Phase 2: moved from DataModel)
@@ -279,7 +287,7 @@ export class DerivedCalculator {
 
         if (enableEnhanced && modifyFormula) {
           const formulaType = game.settings?.get('foundryvtt-swse', 'damageThresholdFormulaType') ?? 'fullLevel';
-          const heroicLevel = actor.system.heroicLevel ?? actor.system.level ?? 1;
+          const computedHeroicLevel = heroicLevel || actor.system.level || 1;  // Use computed value or fallback
           const sizeModifiers = {
             'fine': -10, 'diminutive': -5, 'tiny': -2, 'small': -1,
             'medium': 0, 'large': 1, 'huge': 2, 'gargantuan': 5, 'colossal': 10
@@ -288,9 +296,9 @@ export class DerivedCalculator {
           const sizeMod = sizeModifiers[actorSize] ?? 0;
 
           if (formulaType === 'halfLevel') {
-            damageThreshold = damageThreshold + Math.floor(heroicLevel / 2) + sizeMod;
+            damageThreshold = damageThreshold + Math.floor(computedHeroicLevel / 2) + sizeMod;
           } else {
-            damageThreshold = damageThreshold + heroicLevel + sizeMod;
+            damageThreshold = damageThreshold + computedHeroicLevel + sizeMod;
           }
         }
 
