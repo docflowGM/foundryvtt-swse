@@ -1168,7 +1168,7 @@ export class ModifierEngine {
    * @param {Actor} actor - Must be a vehicle actor
    * @returns {Modifier[]}
    */
-  static _getVehicleModModifiers(actor) {
+  static async _getVehicleModModifiers(actor) {
     const modifiers = [];
 
     if (actor.type !== 'vehicle') {
