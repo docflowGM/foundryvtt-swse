@@ -20,7 +20,7 @@ import { DamageEngine } from '../../damage-engine.js';
 import { ThresholdEngine } from '../../threshold-engine.js';
 import { SubsystemEngine } from '../../starship/subsystem-engine.js';
 import { ActorEngine } from '../../../../governance/actor-engine/actor-engine.js';
-import { createChatMessage } from '../../../core/document-api-v13.js';
+import { createChatMessage } from '../../../../core/document-api-v13.js';
 
 export class VehicleCollisions {
 
