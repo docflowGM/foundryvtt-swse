@@ -125,7 +125,120 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
       languageUuids: new fields.ArrayField(new fields.StringField({ required: true, initial: '' }), { required: true, initial: [] }),
       backgroundId: new fields.StringField({ required: false, initial: '' }),
       backgroundUuid: new fields.StringField({ required: false, initial: '' }),
-      progression: new fields.ObjectField({ required: true, initial: {} })
+      progression: new fields.ObjectField({ required: true, initial: {} }),
+
+      // SOVEREIGNTY CONSOLIDATION: Derived values (computed exclusively by DerivedCalculator)
+      // These are OUTPUT-ONLY fields. Never write to them except through DerivedCalculator.
+      derived: new fields.SchemaField({
+        // Derived ability scores and modifiers
+        attributes: new fields.SchemaField({
+          str: new fields.SchemaField({
+            base: new fields.NumberField({ required: true, initial: 10, integer: true }),
+            racial: new fields.NumberField({ required: true, initial: 0, integer: true }),
+            enhancement: new fields.NumberField({ required: true, initial: 0, integer: true }),
+            temp: new fields.NumberField({ required: true, initial: 0, integer: true }),
+            total: new fields.NumberField({ required: true, initial: 10, integer: true }),
+            mod: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          dex: new fields.SchemaField({
+            base: new fields.NumberField({ required: true, initial: 10, integer: true }),
+            racial: new fields.NumberField({ required: true, initial: 0, integer: true }),
+            enhancement: new fields.NumberField({ required: true, initial: 0, integer: true }),
+            temp: new fields.NumberField({ required: true, initial: 0, integer: true }),
+            total: new fields.NumberField({ required: true, initial: 10, integer: true }),
+            mod: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          con: new fields.SchemaField({
+            base: new fields.NumberField({ required: true, initial: 10, integer: true }),
+            racial: new fields.NumberField({ required: true, initial: 0, integer: true }),
+            enhancement: new fields.NumberField({ required: true, initial: 0, integer: true }),
+            temp: new fields.NumberField({ required: true, initial: 0, integer: true }),
+            total: new fields.NumberField({ required: true, initial: 10, integer: true }),
+            mod: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          int: new fields.SchemaField({
+            base: new fields.NumberField({ required: true, initial: 10, integer: true }),
+            racial: new fields.NumberField({ required: true, initial: 0, integer: true }),
+            enhancement: new fields.NumberField({ required: true, initial: 0, integer: true }),
+            temp: new fields.NumberField({ required: true, initial: 0, integer: true }),
+            total: new fields.NumberField({ required: true, initial: 10, integer: true }),
+            mod: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          wis: new fields.SchemaField({
+            base: new fields.NumberField({ required: true, initial: 10, integer: true }),
+            racial: new fields.NumberField({ required: true, initial: 0, integer: true }),
+            enhancement: new fields.NumberField({ required: true, initial: 0, integer: true }),
+            temp: new fields.NumberField({ required: true, initial: 0, integer: true }),
+            total: new fields.NumberField({ required: true, initial: 10, integer: true }),
+            mod: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          cha: new fields.SchemaField({
+            base: new fields.NumberField({ required: true, initial: 10, integer: true }),
+            racial: new fields.NumberField({ required: true, initial: 0, integer: true }),
+            enhancement: new fields.NumberField({ required: true, initial: 0, integer: true }),
+            temp: new fields.NumberField({ required: true, initial: 0, integer: true }),
+            total: new fields.NumberField({ required: true, initial: 10, integer: true }),
+            mod: new fields.NumberField({ required: true, initial: 0, integer: true })
+          })
+        }),
+
+        // Derived defenses
+        defenses: new fields.SchemaField({
+          fortitude: new fields.SchemaField({
+            base: new fields.NumberField({ required: true, initial: 10, integer: true }),
+            total: new fields.NumberField({ required: true, initial: 10, integer: true }),
+            adjustment: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          reflex: new fields.SchemaField({
+            base: new fields.NumberField({ required: true, initial: 10, integer: true }),
+            total: new fields.NumberField({ required: true, initial: 10, integer: true }),
+            adjustment: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          will: new fields.SchemaField({
+            base: new fields.NumberField({ required: true, initial: 10, integer: true }),
+            total: new fields.NumberField({ required: true, initial: 10, integer: true }),
+            adjustment: new fields.NumberField({ required: true, initial: 0, integer: true })
+          })
+        }),
+
+        // Derived initiative
+        initiative: new fields.SchemaField({
+          dexModifier: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          adjustment: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          total: new fields.NumberField({ required: true, initial: 0, integer: true })
+        }),
+
+        // Derived HP and damage threshold
+        hp: new fields.SchemaField({
+          base: new fields.NumberField({ required: true, initial: 10, integer: true }),
+          max: new fields.NumberField({ required: true, initial: 10, integer: true }),
+          total: new fields.NumberField({ required: true, initial: 10, integer: true }),
+          value: new fields.NumberField({ required: true, initial: 10, integer: true }),
+          adjustment: new fields.NumberField({ required: true, initial: 0, integer: true })
+        }),
+
+        damageThreshold: new fields.NumberField({ required: true, initial: 0, integer: true }),
+
+        // Base attack bonus
+        bab: new fields.NumberField({ required: true, initial: 0, integer: true }),
+        babAdjustment: new fields.NumberField({ required: true, initial: 0, integer: true }),
+
+        // Force and Destiny points
+        forcePoints: new fields.SchemaField({
+          wisdom: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          classBonus: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          total: new fields.NumberField({ required: true, initial: 0, integer: true })
+        }),
+
+        destinyPoints: new fields.SchemaField({
+          charisma: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          classBonus: new fields.NumberField({ required: true, initial: 0, integer: true }),
+          total: new fields.NumberField({ required: true, initial: 0, integer: true })
+        }),
+
+        // Modifier engine output
+        modifiers: new fields.ObjectField({ required: true, initial: {} })
+      })
     };
   }
 
