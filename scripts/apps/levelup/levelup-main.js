@@ -94,9 +94,8 @@ import {
 // Import suggestion and roadmap features
 import { showPrestigeRoadmap } from './prestige-roadmap.js';
 import { showGMDebugPanel } from './debug-panel.js';
-import { PathPreview } from '../../engine/PathPreview.js';
-import { findActiveSynergies } from '../../engine/CommunityMetaSynergies.js';
-import { MentorSuggestionVoice } from '../mentor/mentor-suggestion-voice.js';
+import { PathPreview } from '../../engines/suggestion/PathPreview.js';
+import { findActiveSynergies } from '../../engines/suggestion/CommunityMetaSynergies.js';
 import { MentorSuggestionDialog } from '../../mentor/mentor-suggestion-dialog.js';
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 
@@ -104,7 +103,7 @@ import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 import { decayAllMentorCommitments, updateAllMentorMemories } from '../../engines/mentor/mentor-memory.js';
 
 // Import mentor wishlist integration
-import { MentorWishlistIntegration } from '../../engine/MentorWishlistIntegration.js';
+import { MentorWishlistIntegration } from '../../engines/suggestion/MentorWishlistIntegration.js';
 
 // V2 API base class
 import SWSEFormApplicationV2 from '../base/swse-form-application-v2.js';
