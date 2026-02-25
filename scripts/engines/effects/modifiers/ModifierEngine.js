@@ -13,8 +13,8 @@
 
 import { ModifierType, ModifierSource, createModifier, isValidModifier } from './ModifierTypes.js';
 import ModifierUtils from './ModifierUtils.js';
-import { EncumbranceEngine } from '../../engine/encumbrance/EncumbranceEngine.js';
-import { WeaponsEngine } from '../combat/weapons-engine.js';
+import { EncumbranceEngine } from '../../../engine/encumbrance/EncumbranceEngine.js';
+import { WeaponsEngine } from '../../engines/combat/weapons-engine.js';
 import { StructuredRuleEvaluator } from './StructuredRuleEvaluator.js';
 import { swseLogger } from '../../../utils/logger.js';
 
