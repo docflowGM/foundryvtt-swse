@@ -9,12 +9,12 @@
  * Also registers a ready hook for species reroll system initialization.
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 import { HooksRegistry } from './hooks-registry.js';
 import { registerCombatHooks } from './combat-hooks.js';
 import { registerActorHooks } from './actor-hooks.js';
 import { registerUIHooks } from './ui-hooks.js';
-import { registerRerollListeners } from '../species/species-reroll-handler.js';
+import { registerRerollListeners } from '../../species/species-reroll-handler.js';
 
 /**
  * Register initialization hooks
