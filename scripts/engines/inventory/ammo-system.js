@@ -17,7 +17,7 @@
  * - Routes updates through ActorEngine for owned items
  */
 
-import { SWSELogger as swseLogger } from '../../utils/logging.js';
+import { SWSELogger as swseLogger } from '../../utils/logger.js';
 
 export class AmmoSystem {
   /**

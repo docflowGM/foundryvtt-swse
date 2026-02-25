@@ -5,7 +5,7 @@
  * Integrates with configuration dialogs and item management.
  */
 
-import { SWSELogger as swseLogger } from '../utils/logging.js';
+import { SWSELogger as swseLogger } from '../../utils/logger.js';
 import WeaponConfigDialog from './weapon-config-dialog.js';
 
 export class InventoryHandlers {

@@ -7,7 +7,7 @@
  * AppV2-based implementation
  */
 
-import { MentorSuggestionVoice } from '../../../engines/mentor/mentor-suggestion-voice.js';
+import { MentorSuggestionVoice } from '../../mentor/mentor-suggestion-voice.js';
 import { MENTORS } from '../engines/mentor/mentor-dialogues.js';
 import { MentorTranslationIntegration } from '../../../engines/mentor/mentor-translation-integration.js';
 
