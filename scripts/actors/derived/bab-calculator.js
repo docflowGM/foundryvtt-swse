@@ -20,9 +20,38 @@
  * Prestige Classes:
  * - Must have level_progression data in compendium or hardcoded fallback
  * - If missing, throws error (fail-fast instead of silent skip)
+ *
+ * NONHEROIC CHARACTERS:
+ * - Nonheroic classes use SWSE nonheroic BAB progression (not class-based)
+ * - Nonheroic BAB: +0, +1, +2, +3, +3, +4, +5, +6, +6, +7, +8, +9, +9, +10, +11, +12, +12, +13, +14, +15 (levels 1-20)
+ * - Heroic and nonheroic BAB stack: total BAB = heroic BAB + nonheroic BAB
  */
 
 import { swseLogger } from '../../utils/logger.js';
+
+// SWSE Nonheroic BAB Progression (per nonheroic class level)
+const NONHEROIC_BAB_PROGRESSION = [
+  0,  // Level 1
+  1,  // Level 2
+  2,  // Level 3
+  3,  // Level 4
+  3,  // Level 5
+  4,  // Level 6
+  5,  // Level 7
+  6,  // Level 8
+  6,  // Level 9
+  7,  // Level 10
+  8,  // Level 11
+  9,  // Level 12
+  9,  // Level 13
+  10, // Level 14
+  11, // Level 15
+  12, // Level 16
+  12, // Level 17
+  13, // Level 18
+  14, // Level 19
+  15  // Level 20
+];
 
 export class BABCalculator {
   /**
@@ -31,8 +60,13 @@ export class BABCalculator {
    *
    * Phase 0: Accepts modifier adjustments from ModifierEngine
    *
+   * Handles both heroic and nonheroic classes:
+   * - Heroic: uses class-based progression from compendium
+   * - Nonheroic: uses SWSE nonheroic progression table
+   * - Stacking: total BAB = sum of all class BAB values
+   *
    * @param {Array} classLevels - from actor.system.progression.classLevels
-   * @param {Object} options - { adjustment: number } modifier adjustments
+   * @param {Object} options - { adjustment: number, actor: Actor } modifier adjustments and context
    * @returns {Promise<number>} total BAB (adjusted)
    */
   static async calculate(classLevels, options = {}) {
@@ -56,21 +90,33 @@ export class BABCalculator {
         );
       }
 
-      const rawData = classData._raw;
-      const levelProgression = rawData?.level_progression || [];
       const levelsInClass = classLevel.level || 1;
 
-      // Verify level progression data exists (fail-fast on config errors)
-      if (!levelProgression || levelProgression.length === 0) {
-        throw new Error(
-          `BABCalculator: Class "${classLevel.class}" has no level_progression data. ` +
-          `Verify class definition includes level progression.`
-        );
-      }
+      // Check if this is a nonheroic class
+      const isNonheroic = classData.isNonheroic === true;
 
-      if (levelsInClass > 0 && levelsInClass <= levelProgression.length) {
-        const finalLevelData = levelProgression[levelsInClass - 1];
-        totalBAB += finalLevelData.bab || 0;
+      if (isNonheroic) {
+        // Use SWSE nonheroic BAB progression table
+        if (levelsInClass > 0 && levelsInClass <= NONHEROIC_BAB_PROGRESSION.length) {
+          totalBAB += NONHEROIC_BAB_PROGRESSION[levelsInClass - 1];
+        }
+      } else {
+        // Use heroic class progression
+        const rawData = classData._raw;
+        const levelProgression = rawData?.level_progression || [];
+
+        // Verify level progression data exists (fail-fast on config errors)
+        if (!levelProgression || levelProgression.length === 0) {
+          throw new Error(
+            `BABCalculator: Class "${classLevel.class}" has no level_progression data. ` +
+            `Verify class definition includes level progression.`
+          );
+        }
+
+        if (levelsInClass > 0 && levelsInClass <= levelProgression.length) {
+          const finalLevelData = levelProgression[levelsInClass - 1];
+          totalBAB += finalLevelData.bab || 0;
+        }
       }
     }
 
