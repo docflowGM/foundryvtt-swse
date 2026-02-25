@@ -17,8 +17,8 @@
  * - Initiative orchestration (CombatEngine)
  */
 
-import { createChatMessage } from '../../core/document-api-v13.js';
-import { DamageSystem } from '../damage-system.js';
+import { createChatMessage } from '../../../core/document-api-v13.js';
+import { DamageSystem } from '../../damage-system.js';
 
 export class CombatUIAdapter {
 
