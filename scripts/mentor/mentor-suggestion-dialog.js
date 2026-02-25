@@ -8,8 +8,8 @@
  */
 
 import { MentorSuggestionVoice } from './mentor-suggestion-voice.js';
-import { MENTORS } from './mentor-dialogues.js';
-import { MentorTranslationIntegration } from './mentor-translation-integration.js';
+import { MENTORS } from '../engines/mentor/mentor-dialogues.js';
+import { MentorTranslationIntegration } from '../engines/mentor/mentor-translation-integration.js';
 
 export class MentorSuggestionDialog extends foundry.applications.api.ApplicationV2 {
   static DEFAULT_OPTIONS = {

@@ -7,10 +7,10 @@
  * Features typing animation for mentor text.
  */
 
-import { MENTORS } from './mentor-dialogues.js';
+import { MENTORS } from '../engines/mentor/mentor-dialogues.js';
 import { MentorTranslationIntegration } from './mentor-translation-integration.js';
 import { swseLogger } from '../utils/logger.js';
-import { seedMentorMemoryFromSurvey, getMentorMemory, setMentorMemory } from './mentor-memory.js';
+import { seedMentorMemoryFromSurvey, getMentorMemory, setMentorMemory } from '../engines/mentor/mentor-memory.js';
 
 /**
  * Survey questions with mentor voice variants

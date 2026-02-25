@@ -8,7 +8,7 @@
 
 import { ClassSuggestionEngine } from '../../engines/suggestion/ClassSuggestionEngine.js';
 import { BuildIntent, PRESTIGE_SIGNALS } from '../../engines/suggestion/BuildIntent.js';
-import { PathPreview } from '../../engine/PathPreview.js';
+import { PathPreview } from '../../engines/suggestion/PathPreview.js';
 import { SWSELogger } from '../../utils/logger.js';
 
 // V2 API base class
