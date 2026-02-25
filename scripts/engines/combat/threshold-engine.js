@@ -146,7 +146,7 @@ export class ThresholdEngine {
 
     // If enhanced massive damage is disabled, use RAW calculation
     if (!this.enabled || !this._setting('modifyDamageThresholdFormula')) {
-      return system.damageThreshold ?? 0;
+      return system.derived?.damageThreshold ?? system.damageThreshold ?? 0;
     }
 
     // Enhanced formula

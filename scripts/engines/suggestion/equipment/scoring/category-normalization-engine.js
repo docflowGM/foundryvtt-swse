@@ -75,8 +75,10 @@ export class CategoryNormalizationEngine {
     const hasSpecial = [];
 
     peerGroup.forEach(weapon => {
-      if (weapon.system?.damage) {
-        const avgDamage = this._calculateAverageDamage(weapon.system.damage);
+      // PHASE 2: Read from v2 structured schema with fallback
+      const damageDice = weapon.system.combat?.damage?.dice ?? weapon.system.damage;
+      if (damageDice) {
+        const avgDamage = this._calculateAverageDamage(damageDice);
         damages.push(avgDamage);
       }
 

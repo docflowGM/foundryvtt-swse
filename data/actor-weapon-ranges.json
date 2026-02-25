@@ -1,0 +1,133 @@
+[
+  {
+    "id": "rifles",
+    "slug": "rifles",
+    "description": "Blaster Rifles and similar weapons",
+    "bands": {
+      "pb": {
+        "min": 0,
+        "max": 6,
+        "attackMod": 0,
+        "label": "Point Blank (0-6 sq)"
+      },
+      "short": {
+        "min": 7,
+        "max": 12,
+        "attackMod": -2,
+        "label": "Short Range (7-12 sq)"
+      },
+      "medium": {
+        "min": 13,
+        "max": 30,
+        "attackMod": -5,
+        "label": "Medium Range (13-30 sq)"
+      },
+      "long": {
+        "min": 31,
+        "max": 60,
+        "attackMod": -10,
+        "label": "Long Range (31-60 sq)"
+      }
+    }
+  },
+  {
+    "id": "pistols",
+    "slug": "pistols",
+    "description": "Blaster Pistols and hand weapons",
+    "bands": {
+      "pb": {
+        "min": 0,
+        "max": 4,
+        "attackMod": 0,
+        "label": "Point Blank (0-4 sq)"
+      },
+      "short": {
+        "min": 5,
+        "max": 8,
+        "attackMod": -2,
+        "label": "Short Range (5-8 sq)"
+      },
+      "medium": {
+        "min": 9,
+        "max": 16,
+        "attackMod": -5,
+        "label": "Medium Range (9-16 sq)"
+      },
+      "long": {
+        "min": 17,
+        "max": 32,
+        "attackMod": -10,
+        "label": "Long Range (17-32 sq)"
+      }
+    }
+  },
+  {
+    "id": "heavy-weapons",
+    "slug": "heavy-weapons",
+    "description": "Heavy weapons and cannons",
+    "bands": {
+      "pb": {
+        "min": 0,
+        "max": 8,
+        "attackMod": 0,
+        "label": "Point Blank (0-8 sq)"
+      },
+      "short": {
+        "min": 9,
+        "max": 16,
+        "attackMod": -2,
+        "label": "Short Range (9-16 sq)"
+      },
+      "medium": {
+        "min": 17,
+        "max": 40,
+        "attackMod": -5,
+        "label": "Medium Range (17-40 sq)"
+      },
+      "long": {
+        "min": 41,
+        "max": 80,
+        "attackMod": -10,
+        "label": "Long Range (41-80 sq)"
+      }
+    }
+  },
+  {
+    "id": "simple-weapons",
+    "slug": "simple-weapons",
+    "description": "Melee weapons and simple arms",
+    "bands": {
+      "melee": {
+        "min": 0,
+        "max": 1,
+        "attackMod": 0,
+        "label": "Melee (touch)"
+      }
+    }
+  },
+  {
+    "id": "grenades",
+    "slug": "grenades",
+    "description": "Grenades and thrown weapons",
+    "bands": {
+      "pb": {
+        "min": 0,
+        "max": 4,
+        "attackMod": 0,
+        "label": "Point Blank (0-4 sq)"
+      },
+      "short": {
+        "min": 5,
+        "max": 8,
+        "attackMod": -2,
+        "label": "Short Range (5-8 sq)"
+      },
+      "medium": {
+        "min": 9,
+        "max": 16,
+        "attackMod": -5,
+        "label": "Medium Range (9-16 sq)"
+      }
+    }
+  }
+]
