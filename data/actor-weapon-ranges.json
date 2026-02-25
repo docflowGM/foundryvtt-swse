@@ -1,0 +1,62 @@
+[
+  {
+    "id": "heavy-weapons",
+    "name": "Heavy Weapons",
+    "slug": "heavy-weapons",
+    "bands": {
+      "pb": { "min": 0, "max": 50, "attackMod": 0 },
+      "short": { "min": 51, "max": 100, "attackMod": -2 },
+      "medium": { "min": 101, "max": 250, "attackMod": -5 },
+      "long": { "min": 251, "max": 500, "attackMod": -10 }
+    },
+    "notes": null
+  },
+  {
+    "id": "pistols",
+    "name": "Pistols",
+    "slug": "pistols",
+    "bands": {
+      "pb": { "min": 0, "max": 20, "attackMod": 0 },
+      "short": { "min": 21, "max": 40, "attackMod": -2 },
+      "medium": { "min": 41, "max": 60, "attackMod": -5 },
+      "long": { "min": 61, "max": 80, "attackMod": -10 }
+    },
+    "notes": null
+  },
+  {
+    "id": "rifles",
+    "name": "Rifles",
+    "slug": "rifles",
+    "bands": {
+      "pb": { "min": 0, "max": 30, "attackMod": 0 },
+      "short": { "min": 31, "max": 60, "attackMod": -2 },
+      "medium": { "min": 61, "max": 150, "attackMod": -5 },
+      "long": { "min": 151, "max": 300, "attackMod": -10 }
+    },
+    "notes": null
+  },
+  {
+    "id": "simple-weapons",
+    "name": "Simple Weapons",
+    "slug": "simple-weapons",
+    "bands": {
+      "pb": { "min": 0, "max": 20, "attackMod": 0 },
+      "short": { "min": 21, "max": 40, "attackMod": -2 },
+      "medium": { "min": 41, "max": 60, "attackMod": -5 },
+      "long": { "min": 61, "max": 80, "attackMod": -10 }
+    },
+    "notes": "See rulebook for special cases."
+  },
+  {
+    "id": "thrown-weapons",
+    "name": "Thrown Weapons",
+    "slug": "thrown-weapons",
+    "bands": {
+      "pb": { "min": 0, "max": 6, "attackMod": 0 },
+      "short": { "min": 7, "max": 8, "attackMod": -2 },
+      "medium": { "min": 9, "max": 10, "attackMod": -5 },
+      "long": { "min": 11, "max": 12, "attackMod": -10 }
+    },
+    "notes": "Thrown weapons may use Strength for range increment."
+  }
+]

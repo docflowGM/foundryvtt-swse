@@ -4,16 +4,16 @@
     "name": "Blaster Cannons",
     "slug": "blaster-cannons",
     "character": {
-      "pb": "0-120",
-      "short": "121-240",
-      "medium": "241-600",
-      "long": "601-1200"
+      "pb": { "min": 0, "max": 120 },
+      "short": { "min": 121, "max": 240 },
+      "medium": { "min": 241, "max": 600 },
+      "long": { "min": 601, "max": 1200 }
     },
     "starship": {
-      "pb": "0-1",
-      "short": "2",
-      "medium": "3-4",
-      "long": "5-8"
+      "pb": { "min": 0, "max": 1 },
+      "short": { "min": 2, "max": 2 },
+      "medium": { "min": 3, "max": 4 },
+      "long": { "min": 5, "max": 8 }
     },
     "notes": null
   },
@@ -22,13 +22,13 @@
     "name": "Gravity Well Projectors",
     "slug": "gravity-well-projectors",
     "character": {
-      "pb": "0-1500",
+      "pb": { "min": 0, "max": 1500 },
       "short": null,
       "medium": null,
       "long": null
     },
     "starship": {
-      "pb": "0-10",
+      "pb": { "min": 0, "max": 10 },
       "short": null,
       "medium": null,
       "long": null
@@ -40,16 +40,16 @@
     "name": "Ion Cannons",
     "slug": "ion-cannons",
     "character": {
-      "pb": "0-300",
-      "short": "301-600",
-      "medium": "601-1500",
-      "long": "1501-3000"
+      "pb": { "min": 0, "max": 300 },
+      "short": { "min": 301, "max": 600 },
+      "medium": { "min": 601, "max": 1500 },
+      "long": { "min": 1501, "max": 3000 }
     },
     "starship": {
-      "pb": "0-2",
-      "short": "3-4",
-      "medium": "5-10",
-      "long": "11-20"
+      "pb": { "min": 0, "max": 2 },
+      "short": { "min": 3, "max": 4 },
+      "medium": { "min": 5, "max": 10 },
+      "long": { "min": 11, "max": 20 }
     },
     "notes": "Heavy and Hapan Triple require Colossal (Frigate)+"
   },
@@ -58,16 +58,16 @@
     "name": "Laser Cannons",
     "slug": "laser-cannons",
     "character": {
-      "pb": "0-150",
-      "short": "151-300",
-      "medium": "301-750",
-      "long": "751-1500"
+      "pb": { "min": 0, "max": 150 },
+      "short": { "min": 151, "max": 300 },
+      "medium": { "min": 301, "max": 750 },
+      "long": { "min": 751, "max": 1500 }
     },
     "starship": {
-      "pb": "0-1",
-      "short": "2",
-      "medium": "3-5",
-      "long": "6-10"
+      "pb": { "min": 0, "max": 1 },
+      "short": { "min": 2, "max": 2 },
+      "medium": { "min": 3, "max": 5 },
+      "long": { "min": 6, "max": 10 }
     },
     "notes": null
   },
@@ -76,16 +76,16 @@
     "name": "Missiles or Torpedoes",
     "slug": "missiles-torpedoes",
     "character": {
-      "pb": "0-450",
-      "short": "451-900",
-      "medium": "901-2250",
-      "long": "2251-4500"
+      "pb": { "min": 0, "max": 450 },
+      "short": { "min": 451, "max": 900 },
+      "medium": { "min": 901, "max": 2250 },
+      "long": { "min": 2251, "max": 4500 }
     },
     "starship": {
-      "pb": "0-3",
-      "short": "4-6",
-      "medium": "7-15",
-      "long": "16-30"
+      "pb": { "min": 0, "max": 3 },
+      "short": { "min": 4, "max": 6 },
+      "medium": { "min": 7, "max": 15 },
+      "long": { "min": 16, "max": 30 }
     },
     "notes": null
   },
@@ -94,16 +94,16 @@
     "name": "Point-Defense",
     "slug": "point-defense",
     "character": {
-      "pb": "0-150",
-      "short": "151-300",
-      "medium": "301-750",
-      "long": "751-1500"
+      "pb": { "min": 0, "max": 150 },
+      "short": { "min": 151, "max": 300 },
+      "medium": { "min": 301, "max": 750 },
+      "long": { "min": 751, "max": 1500 }
     },
     "starship": {
-      "pb": "0-1",
-      "short": "2",
-      "medium": "3-5",
-      "long": "6-10"
+      "pb": { "min": 0, "max": 1 },
+      "short": { "min": 2, "max": 2 },
+      "medium": { "min": 3, "max": 5 },
+      "long": { "min": 6, "max": 10 }
     },
     "notes": "Colossal (Frigate)+ only"
   },
@@ -112,16 +112,16 @@
     "name": "Shieldbuster Torpedoes",
     "slug": "shieldbuster-torpedoes",
     "character": {
-      "pb": "0-450",
-      "short": "451-900",
-      "medium": "901-2250",
-      "long": "2251-4000"
+      "pb": { "min": 0, "max": 450 },
+      "short": { "min": 451, "max": 900 },
+      "medium": { "min": 901, "max": 2250 },
+      "long": { "min": 2251, "max": 4000 }
     },
     "starship": {
-      "pb": "0-3",
-      "short": "4-6",
-      "medium": "7-15",
-      "long": "16-30"
+      "pb": { "min": 0, "max": 3 },
+      "short": { "min": 4, "max": 6 },
+      "medium": { "min": 7, "max": 15 },
+      "long": { "min": 16, "max": 30 }
     },
     "notes": null
   },
@@ -130,16 +130,16 @@
     "name": "Tractor Beams",
     "slug": "tractor-beams",
     "character": {
-      "pb": "0-150",
-      "short": "151-300",
-      "medium": "301-750",
-      "long": "751-1500"
+      "pb": { "min": 0, "max": 150 },
+      "short": { "min": 151, "max": 300 },
+      "medium": { "min": 301, "max": 750 },
+      "long": { "min": 751, "max": 1500 }
     },
     "starship": {
-      "pb": "0-1",
-      "short": "2",
-      "medium": "3-5",
-      "long": "6-10"
+      "pb": { "min": 0, "max": 1 },
+      "short": { "min": 2, "max": 2 },
+      "medium": { "min": 3, "max": 5 },
+      "long": { "min": 6, "max": 10 }
     },
     "notes": null
   },
@@ -148,16 +148,16 @@
     "name": "Turbolasers",
     "slug": "turbolasers",
     "character": {
-      "pb": "0-600",
-      "short": "601-1200",
-      "medium": "1201-3000",
-      "long": "3001-6000"
+      "pb": { "min": 0, "max": 600 },
+      "short": { "min": 601, "max": 1200 },
+      "medium": { "min": 1201, "max": 3000 },
+      "long": { "min": 3001, "max": 6000 }
     },
     "starship": {
-      "pb": "0-4",
-      "short": "5-8",
-      "medium": "9-20",
-      "long": "21-40"
+      "pb": { "min": 0, "max": 4 },
+      "short": { "min": 5, "max": 8 },
+      "medium": { "min": 9, "max": 20 },
+      "long": { "min": 21, "max": 40 }
     },
     "notes": "Colossal (Frigate)+ only"
   }
