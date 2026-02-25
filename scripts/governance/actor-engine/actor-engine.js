@@ -1843,7 +1843,7 @@ export const ActorEngine = {
       });
       throw err;
     }
-  }
+  },
 
   // ========================================================================
   // PHASE 8: EMBEDDED DOCUMENT PLAN BUILDERS
@@ -1915,7 +1915,7 @@ export const ActorEngine = {
         reason: err.message
       };
     }
-  }
+  },
 
   /**
    * Build a plan to delete embedded documents
@@ -1981,7 +1981,7 @@ export const ActorEngine = {
         reason: err.message
       };
     }
-  }
+  },
 
   /**
    * Build a plan to replace embedded documents (delete old, create new)
@@ -2056,7 +2056,7 @@ export const ActorEngine = {
         reason: err.message
       };
     }
-  }
+  },
 
   /**
    * Build a plan to clone an actor and apply modifications
@@ -2108,7 +2108,7 @@ export const ActorEngine = {
         reason: err.message
       };
     }
-  }
+  },
 
   /**
    * Execute an embedded operation plan
@@ -2219,7 +2219,7 @@ export const ActorEngine = {
       abilities,
       conditionSteps
     };
-  }
+  },
 
   /* ============================================================
      APPLY MUTATION PLAN (Deterministic Progression)
@@ -2320,7 +2320,7 @@ export const ActorEngine = {
       });
       throw error;
     }
-  }
+  },
 
   /**
    * Validate mutation plan structure
@@ -2388,7 +2388,7 @@ export const ActorEngine = {
         }
       }
     }
-  }
+  },
 
   /**
    * PHASE 2: Apply CREATE operations
@@ -2438,7 +2438,7 @@ export const ActorEngine = {
         { specCount: actorSpecs.length }
       );
     }
-  }
+  },
 
   /**
    * PHASE 2: Rewrite temporary IDs to real IDs in add bucket
@@ -2475,7 +2475,7 @@ export const ActorEngine = {
         {}
       );
     }
-  }
+  },
 
   /**
    * Apply DELETE operations
@@ -2513,7 +2513,7 @@ export const ActorEngine = {
         }
       );
     }
-  }
+  },
 
   /**
    * Apply SET operations
@@ -2544,7 +2544,7 @@ export const ActorEngine = {
         }
       );
     }
-  }
+  },
 
   /**
    * Apply ADD operations
@@ -2590,4 +2590,4 @@ export const ActorEngine = {
       );
     }
   }
-
+};
