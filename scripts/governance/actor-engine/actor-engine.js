@@ -2246,7 +2246,7 @@ export const ActorEngine = {
      BUILD DERIVED STATE (AUTHORITATIVE)
   ============================================================ */
 
-  static buildDerivedState(actor) {
+  buildDerivedState(actor) {
 
     const abilityKeys = ["str","dex","con","int","wis","cha"];
 
@@ -2296,7 +2296,7 @@ export const ActorEngine = {
    * @returns {Promise<void>}
    * @throws {MutationApplicationError} If any operation fails
    */
-  static async applyMutationPlan(actor, mutationPlan = {}, options = {}) {
+  async applyMutationPlan(actor, mutationPlan = {}, options = {}) {
     const {
       validate = true,
       rederive = true,
@@ -2378,7 +2378,7 @@ export const ActorEngine = {
    * Validate mutation plan structure
    * @private
    */
-  static _validateMutationPlan(plan) {
+  _validateMutationPlan(plan) {
     const { MutationApplicationError } = require('../../governance/mutation/mutation-errors.js');
 
     // Validate create bucket (PHASE 2)
@@ -2449,7 +2449,7 @@ export const ActorEngine = {
    * Creates world actors from specs and builds tempId→realId map.
    * @private
    */
-  static async _applyCreateOps(actorSpecs, tempIdMap, source) {
+  async _applyCreateOps(actorSpecs, tempIdMap, source) {
     if (!Array.isArray(actorSpecs) || actorSpecs.length === 0) {
       return;
     }
@@ -2499,7 +2499,7 @@ export const ActorEngine = {
    * After CREATE phase creates actors, map temp IDs to real IDs.
    * @private
    */
-  static _rewriteTemporaryIds(addBucket, tempIdMap) {
+  _rewriteTemporaryIds(addBucket, tempIdMap) {
     if (!addBucket || typeof addBucket !== 'object') {
       return;
     }
@@ -2536,7 +2536,7 @@ export const ActorEngine = {
    * Apply DELETE operations
    * @private
    */
-  static async _applyDeleteOps(actor, deleteOps, source) {
+  async _applyDeleteOps(actor, deleteOps, source) {
     if (!deleteOps || Object.keys(deleteOps).length === 0) {
       return;
     }
@@ -2574,7 +2574,7 @@ export const ActorEngine = {
    * Apply SET operations
    * @private
    */
-  static async _applySetOps(actor, setOps, source) {
+  async _applySetOps(actor, setOps, source) {
     if (!setOps || Object.keys(setOps).length === 0) {
       return;
     }
@@ -2605,7 +2605,7 @@ export const ActorEngine = {
    * Apply ADD operations
    * @private
    */
-  static async _applyAddOps(actor, addOps, source) {
+  async _applyAddOps(actor, addOps, source) {
     if (!addOps || Object.keys(addOps).length === 0) {
       return;
     }
