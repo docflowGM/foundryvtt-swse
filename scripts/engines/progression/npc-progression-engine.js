@@ -23,6 +23,9 @@ export class NpcProgressionEngine {
    * Build progression packet for heroic NPC level-up
    * Heroic track: same as PC progression (feats, talents, items)
    *
+   * Creates or updates a heroic class item to track levels through the progression system.
+   * This allows proper derived calculation through DerivedCalculator.
+   *
    * @param {Actor} actor - The NPC actor
    * @param {Object} options - Level-up options
    * @returns {Promise<Object>} progressionPacket for ActorEngine.applyProgression()
@@ -45,26 +48,76 @@ export class NpcProgressionEngine {
       );
     }
 
-    // For now, heroic NPC level-up is minimal:
-    // - Increment level
-    // - No XP scaling (NPCs don't use XP by default)
+    // Find or create heroic class item
+    // For now, use first non-nonheroic class, or create "Heroic" generic class
+    let heroicClass = actor.items.find(item =>
+      item.type === 'class' && item.system.isNonheroic !== true
+    );
+
+    const itemsToCreate = [];
+    const stateUpdates = {
+      'system.level': newLevel,
+      // Mark NPC as in progression mode (not statblock)
+      'flags.foundryvtt-swse.npcLevelUp.mode': 'progression'
+    };
+
+    if (heroicClass) {
+      // Update existing heroic class level
+      stateUpdates[`items.${heroicClass.id}.system.level`] = (heroicClass.system.level || 1) + 1;
+    } else {
+      // Create new generic heroic class item
+      const newHeroicClass = {
+        name: 'Heroic',
+        type: 'class',
+        system: {
+          level: 1,
+          isNonheroic: false,
+          hitDie: '1d6',
+          babProgression: 'medium',
+          fortSave: 'slow',
+          refSave: 'slow',
+          willSave: 'slow',
+          classSkills: [],
+          defenseBonus: 0,
+          reputation: 0,
+          baseClass: false,
+          forceSensitive: false,
+          defenses: {
+            fortitude: 0,
+            reflex: 0,
+            will: 0
+          },
+          talentTrees: [],
+          levelProgression: [],
+          startingFeatures: [],
+          trainedSkills: 0
+        }
+      };
+      itemsToCreate.push(newHeroicClass);
+    }
+
+    // Heroic progression:
+    // - Update/create heroic class item
+    // - Increment actor level
     // - Let derived data recalculate feats/talents slots
     return {
       xpDelta: 0,
       featsAdded: [],
       talentsAdded: [],
-      itemsToCreate: [],
+      itemsToCreate,
       featsRemoved: [],
       talentsRemoved: [],
-      stateUpdates: {
-        'system.level': newLevel
-      }
+      stateUpdates
     };
   }
 
   /**
    * Build progression packet for nonheroic NPC level-up
    * Nonheroic track: skills and limited feats only (no talents)
+   *
+   * IMPORTANT: Nonheroic levels are tracked via class items with isNonheroic=true.
+   * This allows the derived calculators to properly compute BAB, defenses, HP, etc.
+   * per SWSE nonheroic rules.
    *
    * @param {Actor} actor - The NPC actor
    * @param {Object} options - Level-up options
@@ -88,22 +141,67 @@ export class NpcProgressionEngine {
       );
     }
 
+    // Find or create nonheroic class item
+    const nonheroicClass = actor.items.find(item =>
+      item.type === 'class' && item.system.isNonheroic === true
+    );
+
+    const itemsToCreate = [];
+    const stateUpdates = {
+      'system.level': newLevel,
+      // Mark NPC as in progression mode (not statblock)
+      'flags.foundryvtt-swse.npcLevelUp.mode': 'progression'
+    };
+
+    if (nonheroicClass) {
+      // Update existing nonheroic class level
+      // Include in stateUpdates so it gets applied atomically
+      stateUpdates[`items.${nonheroicClass.id}.system.level`] = (nonheroicClass.system.level || 1) + 1;
+    } else {
+      // Create new nonheroic class item (generic "Nonheroic" class)
+      const newNonheroicClass = {
+        name: 'Nonheroic',
+        type: 'class',
+        system: {
+          level: 1,
+          isNonheroic: true,
+          hitDie: '1d4',
+          babProgression: 'slow',
+          fortSave: 'slow',
+          refSave: 'slow',
+          willSave: 'slow',
+          classSkills: [],
+          defenseBonus: 0,
+          reputation: 0,
+          baseClass: false,
+          forceSensitive: false,
+          defenses: {
+            fortitude: 0,
+            reflex: 0,
+            will: 0
+          },
+          talentTrees: [],
+          levelProgression: [],
+          startingFeatures: [],
+          trainedSkills: 0
+        }
+      };
+      itemsToCreate.push(newNonheroicClass);
+    }
+
     // Nonheroic progression:
-    // - Increment level
+    // - Update/create nonheroic class item
+    // - Increment actor level
     // - Recalculate based on class (may grant feats, skills)
-    // - NO talents (enforced by class data or this logic)
+    // - NO talents (enforced by isNonheroic flag)
     return {
       xpDelta: 0,
       featsAdded: [],
       talentsAdded: [],
-      itemsToCreate: [],
+      itemsToCreate,
       featsRemoved: [],
       talentsRemoved: [],
-      stateUpdates: {
-        'system.level': newLevel,
-        // Mark NPC as nonheroic in flags for UI/logic checks
-        'flags.foundryvtt-swse.npcProgression': 'nonheroic'
-      }
+      stateUpdates
     };
   }
 
