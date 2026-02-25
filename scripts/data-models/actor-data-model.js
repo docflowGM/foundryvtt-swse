@@ -1,7 +1,5 @@
 import { SWSELogger } from '../utils/logger.js';
 
-import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
-
 export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
   static defineSchema() {
@@ -136,118 +134,9 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
   /* -------------------------------------------------------------------------- */
 
   prepareDerivedData() {
-    this._calculateAbilities();
-    // PHASE 2 CONSOLIDATION: Condition penalties moved to ModifierEngine
-    // this._applyConditionPenalties();
-
-    if (this.parent?.type === 'droid') {
-      this._calculateDroidDerivedData();
-    }
-
-    // PHASE 2 CONSOLIDATION: Defense calculation moved to DerivedCalculator
-    // DerivedCalculator is the sole authority for system.derived.defenses.*
-    // this._calculateDefenses();
-    this._calculateSkills();
-    // BAB is progression-owned, never computed here (see PROGRESSION_COMPILER.md)
-    // PHASE 2 CONSOLIDATION: Damage threshold calculated from derived defenses
-    // this._calculateDamageThreshold();
-    this._calculateInitiative();
+    // SOVEREIGNTY CONSOLIDATION: All derived math has moved to DerivedCalculator.
+    // This method intentionally does nothing to prevent dual-authority computation.
+    // DerivedCalculator.computeAll() is the SOLE authority for all derived values.
   }
 
-  /* -------------------------------------------------------------------------- */
-  /* ABILITIES                                                                  */
-  /* -------------------------------------------------------------------------- */
-
-  _calculateAbilities() {
-    for (const ability of Object.values(this.abilities)) {
-      ability.total = ability.base + ability.racial + ability.misc;
-      ability.mod = Math.floor((ability.total - 10) / 2);
-    }
-  }
-
-  /* -------------------------------------------------------------------------- */
-  /* CONDITION TRACK                                                            */
-  /* Condition track is managed by ActorEngine and ModifierEngine               */
-  /* -------------------------------------------------------------------------- */
-
-  /* -------------------------------------------------------------------------- */
-  /* DROID DERIVED DATA                                                         */
-  /* -------------------------------------------------------------------------- */
-
-  _calculateDroidDerivedData() {
-    const system = this;
-
-    // --- STR replaces CON (except HP)
-    system.attributes.con.mod = system.attributes.str.mod;
-
-    // --- Locomotion speed
-    if (system.activeLocomotion && system.locomotion?.length) {
-      const loco = system.locomotion.find(l => l.id === system.activeLocomotion);
-      if (loco?.speedBySize) {
-        system.speed = loco.speedBySize[system.size] ?? system.speed;
-      }
-    }
-
-  }
-
-  /* -------------------------------------------------------------------------- */
-  /* DEFENSES                                                                   */
-  /* -------------------------------------------------------------------------- */
-
-  _calculateDefenses() {
-    const lvl = this.level;
-
-    // PHASE 2 COMPLETION: Base-only calculation
-    // Armor modifiers are applied by ModifierEngine, NOT here
-    // Condition penalties applied by ModifierEngine, NOT here
-    // This is the CRITICAL FIX: Remove direct armor calculation
-    // Reflex.armor property removed from calculation (handled by ModifierEngine)
-
-    this.defenses.reflex.total =
-      10 + this.abilities.dex.mod +
-      this.defenses.reflex.classBonus +
-      this.defenses.reflex.misc;
-
-    this.defenses.fort.total =
-      10 + lvl + this.abilities.str.mod +
-      this.defenses.fort.classBonus +
-      this.defenses.fort.misc;
-
-    this.defenses.will.total =
-      10 + lvl + this.abilities.wis.mod +
-      this.defenses.will.classBonus +
-      this.defenses.will.misc;
-  }
-
-  /* -------------------------------------------------------------------------- */
-  /* SKILLS                                                                     */
-  /* -------------------------------------------------------------------------- */
-
-  _calculateSkills() {
-    const half = this.parent ? getEffectiveHalfLevel(this.parent) : Math.floor((Number(this.level) || 0) / 2);
-    const map = {
-      endurance: 'str'
-    };
-
-    for (const [k, skill] of Object.entries(this.skills)) {
-      const ability = map[k] ?? skill.selectedAbility ?? 'dex';
-      skill.total =
-        half + this.abilities[ability].mod +
-        (skill.trained ? 5 : 0) +
-        (skill.focused ? 5 : 0) +
-        (skill.miscMod || 0);
-    }
-  }
-
-  /* -------------------------------------------------------------------------- */
-  /* DAMAGE THRESHOLD                                                           */
-  /* -------------------------------------------------------------------------- */
-
-  _calculateDamageThreshold() {
-    this.damageThreshold = this.defenses.fort.total;
-  }
-
-  _calculateInitiative() {
-    this.initiative = this.skills.initiative.total;
-  }
 }
