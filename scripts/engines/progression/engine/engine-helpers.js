@@ -9,8 +9,8 @@
  * - Item data builders
  */
 
-import { SWSELogger } from '../../utils/logger.js';
-import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
+import { SWSELogger } from '../../../utils/logger.js';
+import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
 
 export const ProgressionEngineHelpers = {
 

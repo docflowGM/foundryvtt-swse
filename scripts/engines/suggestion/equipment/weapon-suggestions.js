@@ -6,7 +6,7 @@
  */
 
 import { WeaponScoringEngine } from './weapon-scoring-engine.js';
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../../../utils/logger.js';
 
 export class WeaponSuggestions {
   /**

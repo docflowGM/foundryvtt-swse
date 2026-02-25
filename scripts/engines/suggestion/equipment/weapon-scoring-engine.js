@@ -27,7 +27,7 @@
  * - Tag-driven reasoning
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../../../utils/logger.js';
 import { AxisAEngine } from './scoring/axis-a-engine.js';
 import { AxisBEngine } from './scoring/axis-b-engine.js';
 import { TradeoffResolver } from './scoring/tradeoff-resolver.js';

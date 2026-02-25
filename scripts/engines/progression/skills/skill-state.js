@@ -5,8 +5,8 @@
  * Tracks which skills have been trained through progression (not miscmod).
  */
 
-import { SWSELogger } from '../../utils/logger.js';
-import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
+import { SWSELogger } from '../../../utils/logger.js';
+import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
 
 export const SkillState = {
 

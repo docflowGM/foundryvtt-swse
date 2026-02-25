@@ -9,7 +9,7 @@
  * - Bonus feat classifications
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../../../utils/logger.js';
 
 export const FeatNormalizer = {
 

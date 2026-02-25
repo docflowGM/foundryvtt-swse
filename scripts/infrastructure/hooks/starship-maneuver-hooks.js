@@ -1,4 +1,4 @@
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 /**
  * Starship Maneuver Hooks
  * Handles automatic maneuver grants when feats are added or abilities change

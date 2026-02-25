@@ -11,7 +11,7 @@
 
 import { TALENT_EFFECTS } from '../engines/talent/talents.js';
 import { TalentNormalizerEngine } from '../engines/talent/TalentNormalizerEngine.js';
-import { swseLogger } from '../utils/logger.js';
+import { swseLogger } from '../../utils/logger.js';
 
 function _buildEffectData(actor, talentItem, effectDef, idx) {
   const label = `${talentItem.name} (${idx + 1})`;

@@ -4,7 +4,7 @@
  * Provides quality-of-life feedback and GM review capabilities.
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../../../utils/logger.js';
 
 export class LevelDiffInspector {
 

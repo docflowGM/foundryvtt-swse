@@ -8,7 +8,7 @@
  * - Width/height constraints on core UI elements
  */
 
-import { Sentinel } from './sentinel-core.js';
+import { Sentinel } from '../sentinel-core.js';
 
 export const CSSLayer = {
   /**

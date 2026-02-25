@@ -16,7 +16,7 @@ import ModifierUtils from './ModifierUtils.js';
 import { EncumbranceEngine } from '../../engine/encumbrance/EncumbranceEngine.js';
 import { WeaponsEngine } from '../combat/weapons-engine.js';
 import { StructuredRuleEvaluator } from './StructuredRuleEvaluator.js';
-import { swseLogger } from '../../utils/logger.js';
+import { swseLogger } from '../../../utils/logger.js';
 
 export class ModifierEngine {
   /**

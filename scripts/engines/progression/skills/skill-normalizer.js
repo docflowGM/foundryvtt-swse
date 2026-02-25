@@ -8,7 +8,7 @@
  * - Prerequisites
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../../../utils/logger.js';
 
 export const SkillNormalizer = {
 

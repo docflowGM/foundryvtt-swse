@@ -6,7 +6,7 @@
  * Integrates with SuggestionService for context-aware recommendations.
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../../../utils/logger.js';
 import { SnapshotManager } from '../../utils/snapshot-manager.js';
 import { FeatEngine } from '../feats/feat-engine.js';
 import { SkillEngine } from '../skills/skill-engine.js';

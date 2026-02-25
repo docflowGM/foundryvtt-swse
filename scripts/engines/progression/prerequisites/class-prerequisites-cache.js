@@ -20,7 +20,7 @@
 
 import { normalizeClassPrerequisites } from './class-prereq-normalizer.js';
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../../../utils/logger.js';
 
 /**
  * In-memory cache: className → normalized prerequisites + eligibility

@@ -5,8 +5,8 @@
  * Tracks which feats have been selected through progression (not starting feats).
  */
 
-import { SWSELogger } from '../../utils/logger.js';
-import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
+import { SWSELogger } from '../../../utils/logger.js';
+import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
 
 export const FeatState = {
 

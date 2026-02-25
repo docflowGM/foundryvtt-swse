@@ -3,7 +3,7 @@
  * Checks if a character meets prerequisites for prestige classes
  */
 
-import { swseLogger } from '../../../utils/logger.js';
+import { swseLogger } from '../../../../utils/logger.js';
 
 /**
  * Evaluate prestige class readiness for all prestige classes

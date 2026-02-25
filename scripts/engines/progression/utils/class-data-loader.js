@@ -12,7 +12,7 @@
  * requiring immediate refactoring of all consumers.
  */
 
-import { swseLogger } from '../../utils/logger.js';
+import { swseLogger } from '../../../utils/logger.js';
 import { normalizeClass } from '../../data/class-normalizer.js';
 import { adaptClassForLoaderCompatibility } from '../../data/adapters/ClassModelAdapters.js';
 

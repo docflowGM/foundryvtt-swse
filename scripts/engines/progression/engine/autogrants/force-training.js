@@ -3,7 +3,7 @@
  * Automatically grants force powers when Force Training feat is taken
  */
 
-import { swseLogger } from '../../../utils/logger.js';
+import { swseLogger } from '../../../../utils/logger.js';
 
 /**
  * Auto-grant force powers for Force Training feat

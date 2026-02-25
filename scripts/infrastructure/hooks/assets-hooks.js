@@ -3,7 +3,7 @@
 // This is best-effort glue for Assets tab integration.
 // PHASE 10: All mutations route through ActorEngine for governance.
 
-import { swseLogger } from '../utils/logger.js';
+import { swseLogger } from '../../utils/logger.js';
 
 Hooks.on('createActor', async (actor, options, userId) => {
   try {

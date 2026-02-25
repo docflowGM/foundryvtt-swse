@@ -19,7 +19,7 @@
 import { RollEngine } from '../../roll-engine.js';
 import { computeDogfightingModifier } from '../../vehicles/utils/vehicle-calculations.js';
 import { measureSquares } from '../../vehicles/utils/vehicle-shared.js';
-import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
+import { ActorEngine } from '../../../../governance/actor-engine/actor-engine.js';
 import { createChatMessage } from '../../../core/document-api-v13.js';
 
 export class VehicleDogfighting {

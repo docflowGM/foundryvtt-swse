@@ -3,8 +3,8 @@
  * Multi-state history for progression with rollback capability
  */
 
-import { swseLogger } from '../../../utils/logger.js';
-import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
+import { swseLogger } from '../../../../utils/logger.js';
+import { ActorEngine } from '../../../../governance/actor-engine/actor-engine.js';
 
 /**
  * Rollback Store - Maintains history of actor states for undo functionality

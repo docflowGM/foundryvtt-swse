@@ -15,7 +15,7 @@
  */
 
 import { ProgressionEngineHelpers as H } from './engine-helpers.js';
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../../../utils/logger.js';
 
 export const FeatureNormalizer = {
 

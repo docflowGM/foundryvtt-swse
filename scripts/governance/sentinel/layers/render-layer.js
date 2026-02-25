@@ -3,7 +3,7 @@
  * Validates only SWSE-owned AppV2 windows.
  */
 
-import { Sentinel } from './sentinel-core.js';
+import { Sentinel } from '../sentinel-core.js';
 
 export const RenderLayer = {
 

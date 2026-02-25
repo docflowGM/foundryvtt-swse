@@ -7,7 +7,7 @@
  * - bonus_feat: Automatic bonus feat grants
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../../../utils/logger.js';
 import { FeatEngine } from './feat-engine.js';
 
 export const FEAT_FEATURE_DISPATCH = {

@@ -12,8 +12,8 @@
  * - Credit allocation and tracking
  */
 
-import { SWSELogger } from '../../utils/logger.js';
-import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
+import { SWSELogger } from '../../../utils/logger.js';
+import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
 
 export class EquipmentEngine {
 

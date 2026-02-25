@@ -17,7 +17,7 @@
  */
 
 import { normalizeAndCacheAll } from './class-prerequisites-cache.js';
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../../../utils/logger.js';
 
 /**
  * Initialize class prerequisites cache.

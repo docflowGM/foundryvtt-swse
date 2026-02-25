@@ -12,8 +12,8 @@
  * - Force Sensitivity prerequisites
  */
 
-import { SWSELogger } from '../../utils/logger.js';
-import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
+import { SWSELogger } from '../../../utils/logger.js';
+import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
 import { ApplyHandlers } from '../../utils/apply-handlers.js';
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 

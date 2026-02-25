@@ -6,7 +6,7 @@
  */
 
 import { ArmorScoringEngine } from './armor-scoring-engine.js';
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../../../utils/logger.js';
 import { assignTier } from './shared-scoring-utils.js';
 
 export class ArmorSuggestions {
