@@ -1381,8 +1381,9 @@ export class SWSERoll {
         return { cancelled: true };
       }
 
-      const dexMod = actor.system.attributes?.dex?.mod ?? 0;
-      const initBonus = actor.system.initiative?.misc ?? 0;
+      // Read dex mod from derived (SOVEREIGNTY: single authority)
+      const dexMod = actor.system.derived?.attributes?.dex?.mod ?? actor.system.attributes?.dex?.mod ?? 0;
+      const initBonus = actor.system.derived?.initiative?.adjustment ?? actor.system.initiative?.misc ?? 0;
       const total = dexMod + initBonus;
 
       const formula = `1d20 + ${total}`;
