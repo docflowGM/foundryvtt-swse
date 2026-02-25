@@ -279,35 +279,10 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
   }
 
   /**
-   * Apply enhanced DT formula override from ThresholdEngine settings.
-   * Only activates if both enableEnhancedMassiveDamage and modifyDamageThresholdFormula are true.
+   * SOVEREIGNTY CONSOLIDATION: _applyEnhancedDamageThreshold() moved to DerivedCalculator.computeAll()
+   * Damage threshold is now computed exclusively in DerivedCalculator and written to
+   * system.derived.damageThreshold. No longer computed in DataModel.
    */
-  _applyEnhancedDamageThreshold() {
-    try {
-      const enabled = game.settings?.get('foundryvtt-swse', 'enableEnhancedMassiveDamage');
-      const modifyFormula = game.settings?.get('foundryvtt-swse', 'modifyDamageThresholdFormula');
-      if (!enabled || !modifyFormula) return;
-
-      const formulaType = game.settings?.get('foundryvtt-swse', 'damageThresholdFormulaType') ?? 'fullLevel';
-      const fortTotal = this.defenses?.fort?.total ?? 10;
-      const heroicLevel = this.heroicLevel ?? this.level ?? 1;
-
-      // Character size modifier for DT
-      const sizeModifiers = {
-        'fine': -10, 'diminutive': -5, 'tiny': -2, 'small': -1,
-        'medium': 0, 'large': 1, 'huge': 2, 'gargantuan': 5, 'colossal': 10
-      };
-      const sizeMod = sizeModifiers[(this.parent?.system?.size || 'medium').toLowerCase()] ?? 0;
-
-      if (formulaType === 'halfLevel') {
-        this.damageThreshold = fortTotal + Math.floor(heroicLevel / 2) + sizeMod;
-      } else {
-        this.damageThreshold = fortTotal + heroicLevel + sizeMod;
-      }
-    } catch {
-      // Settings not yet registered or not available; skip silently
-    }
-  }
 
   /**
    * Calculate armor check penalties and speed reduction from equipped armor
@@ -486,112 +461,11 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     return nonheroicBABTable[Math.min(level - 1, 19)] || 0;
   }
 
-  _prepareSkills() {
-    // Use camelCase keys to match the schema definition in _getSkillDefinitions()
-    const skillData = {
-      acrobatics: { defaultAbility: 'dex', untrained: true, armorPenalty: true },
-      climb: { defaultAbility: 'str', untrained: true, armorPenalty: true },
-      deception: { defaultAbility: 'cha', untrained: true, armorPenalty: false },
-      endurance: { defaultAbility: 'con', untrained: true, armorPenalty: true },
-      gatherInformation: { defaultAbility: 'cha', untrained: true, armorPenalty: false },
-      initiative: { defaultAbility: 'dex', untrained: true, armorPenalty: true },
-      jump: { defaultAbility: 'str', untrained: true, armorPenalty: true },
-      knowledgeBureaucracy: { defaultAbility: 'int', untrained: false, armorPenalty: false },
-      knowledgeGalacticLore: { defaultAbility: 'int', untrained: false, armorPenalty: false },
-      knowledgeLifeSciences: { defaultAbility: 'int', untrained: false, armorPenalty: false },
-      knowledgePhysicalSciences: { defaultAbility: 'int', untrained: false, armorPenalty: false },
-      knowledgeSocialSciences: { defaultAbility: 'int', untrained: false, armorPenalty: false },
-      knowledgeTactics: { defaultAbility: 'int', untrained: false, armorPenalty: false },
-      knowledgeTechnology: { defaultAbility: 'int', untrained: false, armorPenalty: false },
-      mechanics: { defaultAbility: 'int', untrained: true, armorPenalty: false },
-      perception: { defaultAbility: 'wis', untrained: true, armorPenalty: false },
-      persuasion: { defaultAbility: 'cha', untrained: true, armorPenalty: false },
-      pilot: { defaultAbility: 'dex', untrained: true, armorPenalty: false },
-      ride: { defaultAbility: 'dex', untrained: true, armorPenalty: false },
-      stealth: { defaultAbility: 'dex', untrained: true, armorPenalty: true },
-      survival: { defaultAbility: 'wis', untrained: true, armorPenalty: false },
-      swim: { defaultAbility: 'str', untrained: true, armorPenalty: true },
-      treatInjury: { defaultAbility: 'wis', untrained: true, armorPenalty: false },
-      useComputer: { defaultAbility: 'int', untrained: true, armorPenalty: false },
-      useTheForce: { defaultAbility: 'cha', untrained: true, armorPenalty: false }
-    };
-
-    // Use the already calculated halfLevel property
-    const halfLevel = this.halfLevel || 0;
-
-    // Droids can only use these skills untrained (unless they have Heuristic Processor)
-    const droidUntrainedSkills = ['acrobatics', 'climb', 'jump', 'perception'];
-
-    // Get occupation bonus from background (applies +2 to untrained checks for specific skills)
-    // This is accessed via actor flags, so we need to check if parent exists
-    let occupationBonus = null;
-    if (this.parent?.flags?.swse?.occupationBonus) {
-      occupationBonus = this.parent.flags.swse.occupationBonus;
-    }
-
-    // Get species skill bonuses (calculated in _applySpeciesTraitBonuses)
-    const speciesSkillBonuses = this.speciesSkillBonuses || {};
-
-    for (const [skillKey, skill] of Object.entries(this.skills)) {
-      const data = skillData[skillKey];
-      if (!data) {continue;}
-
-      // Use selectedAbility if set, otherwise use default
-      const abilityKey = skill.selectedAbility || data.defaultAbility;
-      const abilityMod = this.attributes[abilityKey]?.mod || 0;
-
-      // Calculate total bonus
-      let total = abilityMod + (skill.miscMod || 0);
-
-      // Add species trait bonus for this skill
-      const speciesBonus = speciesSkillBonuses[skillKey] || 0;
-      if (speciesBonus !== 0) {
-        total += speciesBonus;
-        skill.speciesBonus = speciesBonus; // Store for display
-      }
-
-      // Add training bonus (+5)
-      if (skill.trained) {
-        total += 5;
-      }
-
-      // Add half level (always, even untrained)
-      total += halfLevel;
-
-      // Add skill focus bonus (+5 if focused checkbox is checked)
-      if (skill.focused) {
-        total += 5;
-      }
-
-      // Apply occupation bonus from background (only to untrained checks)
-      // Occupation bonus gives +2 to specific skills when making untrained checks
-      if (!skill.trained && occupationBonus?.skills?.includes(skillKey)) {
-        total += occupationBonus.value || 2;
-        skill.hasOccupationBonus = true;
-      } else {
-        skill.hasOccupationBonus = false;
-      }
-
-      // Condition track penalties applied by ModifierEngine, not here
-
-      // Determine if skill can be used untrained
-      let canUseUntrained = data.untrained;
-
-      // Droids have restricted untrained skills
-      if (this.isDroid && !skill.trained) {
-        canUseUntrained = droidUntrainedSkills.includes(skillKey);
-      }
-
-      // Store calculated values
-      skill.total = total;
-      skill.abilityMod = abilityMod;
-      skill.defaultAbility = data.defaultAbility;  // Store default for reference
-      skill.untrained = canUseUntrained;
-      skill.canUse = skill.trained || canUseUntrained;
-    }
-  }
-
   /**
+   * SOVEREIGNTY CONSOLIDATION: _prepareSkills() moved to DerivedCalculator.computeAll()
+   * Skill totals are now computed exclusively in DerivedCalculator and written to
+   * system.derived.skills[skillKey].total. No longer computed in DataModel.
+   *
    * Apply species trait bonuses using the Species Trait Engine
    * This method processes all automated species traits and applies their bonuses
    */

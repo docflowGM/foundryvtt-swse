@@ -905,26 +905,8 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
   }
 
   /**
-   * Apply enhanced DT formula override from ThresholdEngine settings.
-   * Only activates if both enableEnhancedMassiveDamage and modifyDamageThresholdFormula are true.
-   * @param {number} sizeDamageModifier - The size-based DT modifier already calculated
+   * SOVEREIGNTY CONSOLIDATION: _applyEnhancedDamageThreshold() moved to DerivedCalculator.computeAll()
+   * Damage threshold is now computed exclusively in DerivedCalculator and written to
+   * system.derived.damageThreshold. No longer computed in DataModel.
    */
-  _applyEnhancedDamageThreshold(sizeDamageModifier) {
-    try {
-      const enabled = game.settings?.get('foundryvtt-swse', 'enableEnhancedMassiveDamage');
-      const modifyFormula = game.settings?.get('foundryvtt-swse', 'modifyDamageThresholdFormula');
-      if (!enabled || !modifyFormula) return;
-
-      const formulaType = game.settings?.get('foundryvtt-swse', 'damageThresholdFormulaType') ?? 'fullLevel';
-      const vehicleLevel = this.challengeLevel ?? 0;
-
-      if (formulaType === 'halfLevel') {
-        this.damageThreshold = this.fortitudeDefense + Math.floor(vehicleLevel / 2) + sizeDamageModifier;
-      } else {
-        this.damageThreshold = this.fortitudeDefense + vehicleLevel + sizeDamageModifier;
-      }
-    } catch {
-      // Settings not yet registered or not available; skip silently
-    }
-  }
 }
