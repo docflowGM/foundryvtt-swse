@@ -3,7 +3,7 @@
  */
 
 import { ProgressionEngine } from '../../engine/progression-engine.js';
-import { PROGRESSION_RULES } from '../../data/progression-data.js';
+import { PROGRESSION_RULES } from '../../engines/progression/data/progression-data.js';
 import { HouseRuleService } from '../../system/HouseRuleService.js';
 
 export class ProgressionUI {

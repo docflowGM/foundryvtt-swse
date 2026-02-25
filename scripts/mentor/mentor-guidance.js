@@ -8,7 +8,7 @@ import {
     getMentorForClass,
     getMentorGuidance,
     getLevel1Class
-} from './mentor-dialogues.js';
+} from '../engines/mentor/mentor-dialogues.js';
 
 import { swseLogger } from '../utils/logger.js';
 import { TypingAnimation } from '../utils/typing-animation.js';
