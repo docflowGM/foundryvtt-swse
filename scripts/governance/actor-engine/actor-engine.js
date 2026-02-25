@@ -1782,7 +1782,7 @@ export const ActorEngine = {
       };
 
     } catch (err) {
-      swseLogger.error(`ActorEngine.applyTalentEffect failed`, {
+      SWSELogger.error(`ActorEngine.applyTalentEffect failed`, {
         error: err,
         effect: plan?.effect,
         plan: plan
@@ -1796,7 +1796,7 @@ export const ActorEngine = {
         timestamp: new Date().toISOString()
       };
     }
-  }
+  },
 
   /**
    * restoreFromSnapshot() — Atomic snapshot restoration
@@ -1816,7 +1816,7 @@ export const ActorEngine = {
       if (!actor) {throw new Error('restoreFromSnapshot() requires actor');}
       if (!snapshot) {throw new Error('restoreFromSnapshot() requires snapshot');}
 
-      swseLogger.log(`[SNAPSHOT] Restoring ${actor.name} from snapshot`, {
+      SWSELogger.log(`[SNAPSHOT] Restoring ${actor.name} from snapshot`, {
         systemFieldCount: Object.keys(snapshot.system || {}).length,
         itemCount: (snapshot.items || []).length,
         effectCount: (snapshot.effects || []).length
