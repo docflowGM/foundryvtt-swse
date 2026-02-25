@@ -15,7 +15,7 @@
  */
 
 import { getVehicleCTPenalty, measureDistance, measureSquares } from './vehicle-shared.js';
-import { computeAttackBonus } from '../../utils/combat-utils.js';
+import { computeAttackBonus } from '../../../../combat/utils/combat-utils.js';
 
 /**
  * Determine which modifier is used for vehicle weapons.

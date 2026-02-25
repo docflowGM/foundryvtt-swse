@@ -215,10 +215,4 @@ export class PivotLogic {
       return suggestions;
     }
   }
-
-  export default {
-    calculatePivotState,
-    filterSuggestionsByState,
-    PIVOT_STATE
-  };
 }

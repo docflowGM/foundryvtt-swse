@@ -6,7 +6,7 @@
  * All effects are soft (multipliers, never hard locks).
  */
 
-import { getMentorMemory } from './mentor-memory.js';
+import { getMentorMemory } from '../engines/mentor/mentor-memory.js';
 import { getArchetype, getArchetypeRoleBias } from './mentor-archetype-paths.js';
 import { calculateDspSaturation, getDarkSideBiasMultiplier } from '../engine/dsp-saturation.js';
 

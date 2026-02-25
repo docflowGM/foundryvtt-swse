@@ -4,7 +4,7 @@
  */
 
 import { SWSELogger } from '../utils/logger.js';
-import { WishlistEngine } from '../engine/WishlistEngine.js';
+import { WishlistEngine } from '../engines/suggestion/WishlistEngine.js';
 
 export class WishlistUI {
   /**

@@ -4,7 +4,7 @@
  * Handles trigger detection, collection, and selection of starship maneuvers.
  */
 
-import { StarshipManeuverPicker } from '../ui/starship-maneuver-picker.js';
+import { StarshipManeuverPicker } from '../../../apps/progression/starship-maneuver-picker.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
 

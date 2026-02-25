@@ -13,7 +13,7 @@
 
 import { SWSELogger } from '../../../utils/logger.js';
 import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
-import { LanguageRegistry } from '../../registries/language-registry.js';
+import { LanguageRegistry } from '../../../registries/language-registry.js';
 
 export class LanguageEngine {
 

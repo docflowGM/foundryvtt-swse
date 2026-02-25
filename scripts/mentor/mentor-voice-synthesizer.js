@@ -13,7 +13,7 @@
  */
 
 import { MentorDialogueResponses } from './mentor-dialogue-responses.js';
-import { MentorSynthesisConfig } from './mentor-synthesis-config.js';
+import { MentorSynthesisConfig } from '../engines/mentor/mentor-synthesis-config.js';
 import { SWSELogger } from '../utils/logger.js';
 
 export class MentorVoiceSynthesizer {

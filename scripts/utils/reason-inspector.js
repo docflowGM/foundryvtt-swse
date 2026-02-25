@@ -12,7 +12,7 @@
  */
 
 import { SWSELogger } from './logger.js';
-import { ReasonFactory } from '../engine/ReasonFactory.js';
+import { ReasonFactory } from '../engines/suggestion/ReasonFactory.js';
 
 export class ReasonInspector {
   /**

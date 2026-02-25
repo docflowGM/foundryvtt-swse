@@ -12,8 +12,8 @@
  */
 
 import { TestUtils } from './test-utils.js';
-import { ModifierEngine } from '../scripts/engine/modifiers/ModifierEngine.js';
-import { ModifierTypes } from '../scripts/engine/modifiers/ModifierTypes.js';
+import { ModifierEngine } from '../scripts/engines/effects/modifiers/ModifierEngine.js';
+import { ModifierTypes } from '../scripts/engines/effects/modifiers/ModifierTypes.js';
 import { EncumbranceEngine } from '../scripts/engine/encumbrance/EncumbranceEngine.js';
 
 describe('Phase B - Skill Misc Breakdown Validation Matrix', () => {

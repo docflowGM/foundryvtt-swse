@@ -242,15 +242,4 @@ export class AnchorRepository {
       SWSELogger.error(`[AnchorRepository] Error recording anchor history:`, err);
     }
   }
-
-  export default {
-    initializeStorage,
-    getAnchor,
-    getPrimaryAnchor,
-    getSecondaryAnchor,
-    updateAnchor,
-    confirmAnchor,
-    rejectAnchor,
-    recordAnchorHistory
-  };
 }

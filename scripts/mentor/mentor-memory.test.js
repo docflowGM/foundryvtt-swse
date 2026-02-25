@@ -24,7 +24,7 @@ import {
   setCommittedPath,
   setTargetClass,
   formatMentorMemory
-} from './mentor-memory.js';
+} from '../engines/mentor/mentor-memory.js';
 
 import {
   calculateDspSaturation,

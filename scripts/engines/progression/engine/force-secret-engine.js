@@ -4,7 +4,7 @@
  * Handles trigger detection, collection, and selection of force secrets.
  */
 
-import { ForceSecretPicker } from '../ui/force-secret-picker.js';
+import { ForceSecretPicker } from '../../../apps/progression/force-secret-picker.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
 

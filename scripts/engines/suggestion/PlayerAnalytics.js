@@ -240,7 +240,7 @@ export class PlayerAnalytics {
     }
   }
 
-  /**
+    /**
    * Calculate theme frequency distribution
    *
    * @param {Array} history - Recent history entries
@@ -269,14 +269,4 @@ export class PlayerAnalytics {
       return {};
     }
   }
-
-  export default {
-    getAcceptanceRateByTheme,
-    getIgnoredThemeWeights,
-    getLastSuggestionTime,
-    calculateMetrics,
-    calculateOverallAcceptanceRate,
-    getDominantTheme,
-    getThemeDistribution
-  };
 }

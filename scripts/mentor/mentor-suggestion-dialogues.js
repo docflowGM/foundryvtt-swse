@@ -22,7 +22,7 @@
 // ============================================================================
 
 import { getDialoguePhase, SUGGESTION_CONTEXTS, DIALOGUE_PHASES } from '../engines/mentor/mentor-dialogues.js';
-import { getMentor, getReasons, selectBestReason, getMentorDialogueFromJSON } from './mentor-json-loader.js';
+import { getMentor, getReasons, selectBestReason, getMentorDialogueFromJSON } from '../engines/mentor/mentor-json-loader.js';
 import { SWSELogger } from '../utils/logger.js';
 
 // ============================================================================

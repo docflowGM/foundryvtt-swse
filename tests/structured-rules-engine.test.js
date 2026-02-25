@@ -9,8 +9,8 @@
  * - Stacking rules application
  */
 
-import { StructuredRuleEvaluator } from '../scripts/engine/modifiers/StructuredRuleEvaluator.js';
-import { ModifierEngine } from '../scripts/engine/modifiers/ModifierEngine.js';
+import { StructuredRuleEvaluator } from '../scripts/engines/effects/modifiers/StructuredRuleEvaluator.js';
+import { ModifierEngine } from '../scripts/engines/effects/modifiers/ModifierEngine.js';
 
 describe('StructuredRuleEvaluator', () => {
   /**

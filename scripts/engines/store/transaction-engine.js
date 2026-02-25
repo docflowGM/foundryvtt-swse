@@ -22,8 +22,8 @@
  * If ANY step fails: NOTHING is applied
  */
 
-import { mergeMutationPlans } from '../mutation/merge-mutations.js';
-import { ActorEngine } from '../actor-engine/actor-engine.js';
+import { mergeMutationPlans } from '../../governance/mutation/merge-mutations.js';
+import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 import { LedgerService } from './ledger-service.js';
 import { VehicleFactory } from '../vehicles/vehicle-factory.js';
 import { DroidFactory } from '../droids/droid-factory.js';

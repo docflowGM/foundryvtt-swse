@@ -4,7 +4,7 @@
 // Loads all backend talent registries during system initialization.
 // ======================================================================
 
-import { TalentTreeRegistry } from "../scripts/progression/talents/TalentTreeRegistry.js";
+import { TalentTreeRegistry } from "../scripts/engines/progression/talents/TalentTreeRegistry.js";
 import { TalentTreeDB } from "../scripts/data/talent-tree-db.js";
 
 // Wait for SSOT registries to be built first, then build TalentTreeRegistry

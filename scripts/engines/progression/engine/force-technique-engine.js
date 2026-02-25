@@ -4,7 +4,7 @@
  * Handles trigger detection, collection, and selection of force techniques.
  */
 
-import { ForceTechniquePicker } from '../ui/force-technique-picker.js';
+import { ForceTechniquePicker } from '../../../apps/progression/force-technique-picker.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
 

@@ -189,13 +189,4 @@ export class PivotStateManager {
       SWSELogger.error(`[PivotStateManager] Error recording state change:`, err);
     }
   }
-
-  export default {
-    initializeStorage,
-    getState,
-    getPivotState,
-    updatePivotState,
-    resetToStable,
-    recordStateChange
-  };
 }

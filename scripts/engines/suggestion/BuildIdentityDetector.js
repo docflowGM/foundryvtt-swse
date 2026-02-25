@@ -238,7 +238,7 @@ export class BuildIdentityDetector {
       };
     } catch (err) {
       SWSELogger.error('[BuildIdentityDetector] Error determining next state:', err);
-      return {
+     return {
         transitioned: false,
         newState: currentAnchor?.state ?? ANCHOR_STATE.NONE,
         anchor: currentAnchor,
@@ -246,11 +246,4 @@ export class BuildIdentityDetector {
       };
     }
   }
-
-  export default {
-    detectAnchor,
-    determineNextState,
-    ANCHOR_STATE,
-    THEME_TO_ARCHETYPE
-  };
 }

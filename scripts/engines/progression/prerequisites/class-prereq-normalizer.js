@@ -16,8 +16,8 @@
  * ============================================
  */
 
-import { PRESTIGE_PREREQUISITES } from '../../data/prestige-prerequisites.js';
-import { TalentTreeDB } from '../../data/talent-tree-db.js';
+import { PRESTIGE_PREREQUISITES } from '../../../data/prestige-prerequisites.js';
+import { TalentTreeDB } from '../../../data/talent-tree-db.js';
 
 /**
  * Talent tree name → ID mapping (from talent_trees.db)

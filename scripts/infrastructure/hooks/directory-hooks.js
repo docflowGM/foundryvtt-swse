@@ -4,8 +4,8 @@
  * Safe V13 pattern - no sidebar or layout contamination
  */
 
-import CharacterGenerator from '../apps/chargen/chargen-main.js';
-import { TemplateCharacterCreator } from '../apps/template-character-creator.js';
+import CharacterGenerator from '../../apps/chargen/chargen-main.js';
+import { TemplateCharacterCreator } from '../../apps/template-character-creator.js';
 
 /**
  * Add character creation buttons to Actor Directory header

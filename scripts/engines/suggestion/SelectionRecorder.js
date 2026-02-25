@@ -182,24 +182,15 @@ export class SelectionRecorder {
     return actor?.system?.suggestionEngine?.history?.recent || [];
   }
 
-  /**
+    /**
    * Get history entries with a specific outcome
    *
    * @param {Actor} actor - Target actor
-   * @param {string} outcome - 'accepted', 'ignored', 'passiveIgnored', or null for unresolved
+   * @param {string|null} outcome - 'accepted', 'ignored', 'passiveIgnored', or null for unresolved
    * @returns {Array} Filtered history entries
    */
   static getHistoryByOutcome(actor, outcome) {
     const history = this.getRecentHistory(actor);
     return history.filter(e => e.outcome === outcome);
   }
-
-  export default {
-    recordSuggestionShown,
-    recordSuggestionAccepted,
-    recordSuggestionIgnored,
-    recordSuggestionPassiveIgnored,
-    getRecentHistory,
-    getHistoryByOutcome
-  };
 }

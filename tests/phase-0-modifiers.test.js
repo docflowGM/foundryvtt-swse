@@ -10,9 +10,9 @@
  */
 
 import { TestUtils } from './test-utils.js';
-import { ModifierEngine } from '../scripts/engine/modifiers/ModifierEngine.js';
-import { ModifierTypes } from '../scripts/engine/modifiers/ModifierTypes.js';
-import { ModifierUtils } from '../scripts/engine/modifiers/ModifierUtils.js';
+import { ModifierEngine } from '../scripts/engines/effects/modifiers/ModifierEngine.js';
+import { ModifierTypes } from '../scripts/engines/effects/modifiers/ModifierTypes.js';
+import { ModifierUtils } from '../scripts/engines/effects/modifiers/ModifierUtils.js';
 import { DerivedCalculator } from '../scripts/../scripts/actors/derived/derived-calculator.js';
 import { HPCalculator } from '../scripts/actors/derived/hp-calculator.js';
 import { DefenseCalculator } from '../scripts/actors/derived/defense-calculator.js';

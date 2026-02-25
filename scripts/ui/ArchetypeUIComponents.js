@@ -17,7 +17,7 @@ import {
   getPrimaryArchetype,
   formatAffinityForDisplay,
   getPrestigePathRecommendations
-} from '../engine/ArchetypeSuggestionIntegration.js';
+} from '../engines/suggestion/ArchetypeSuggestionIntegration.js';
 
 // ─────────────────────────────────────────────────────────────
 // AFFINITY DISPLAY COMPONENT

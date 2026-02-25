@@ -10,10 +10,10 @@
  */
 
 import { SWSELogger } from '../../utils/logger.js';
-import { SkillRegistry } from '../skills/skill-registry-ui.js';
-import { FeatRegistry } from '../feats/feat-registry-ui.js';
-import { TalentRegistry } from '../talents/talent-registry-ui.js';
-import { ForceRegistry } from '../force/force-registry-ui.js';
+import { SkillRegistry } from '../../engines/progression/skills/skill-registry-ui.js';
+import { FeatRegistry } from '../../engines/progression/feats/feat-registry-ui.js';
+import { TalentRegistry } from '../../engines/progression/talents/talent-registry-ui.js';
+import { ForceRegistry } from '../../engines/progression/force/force-registry-ui.js';
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 import { enforcePrerequisiteConsolidation } from '../../data/prerequisite-checker-regression-guard.js';
 import { SuggestionEngineCoordinator } from '../../engines/suggestion/SuggestionEngineCoordinator.js';

@@ -1,5 +1,5 @@
-import { PROGRESSION_RULES } from '../../data/progression-data.js';
-import { SWSEProgressionEngine } from '../../engine/progression.js';
+import { PROGRESSION_RULES } from '../data/progression-data.js';
+import { SWSEProgressionEngine } from '../../../engine/progression.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
 

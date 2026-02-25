@@ -8,7 +8,7 @@
  *  - Weapon batteries (multiple shots as one attack)
  */
 
-import { measureDistance, facingTowards } from './vehicle-shared.js';
+import { measureDistance, facingTowards } from '../../../engines/combat/vehicles/utils/vehicle-shared.js';
 import { createChatMessage } from '../../../core/document-api-v13.js';
 import { SWSERoll } from '../../rolls/enhanced-rolls.js';
 

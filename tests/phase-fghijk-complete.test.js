@@ -4,9 +4,9 @@
  */
 
 import { TestUtils } from './test-utils.js';
-import { MassiveDamageEngine } from '../scripts/engine/combat/massive-damage-engine.js';
+import { MassiveDamageEngine } from '../scripts/engines/combat/massive-damage-engine.js';
 import { EncumbranceFinalizer } from '../scripts/engine/encumbrance/encumbrance-finalization.js';
-import { CrewInteractionEngine } from '../scripts/engine/crew/crew-interaction-engine.js';
+import { CrewInteractionEngine } from '../scripts/engines/crew/crew-interaction-engine.js';
 import { DeterminismAudit } from '../scripts/engine/audit/determinism-audit.js';
 
 describe('Phases F-K: Complete System Validation', () => {

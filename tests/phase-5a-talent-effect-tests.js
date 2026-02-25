@@ -9,9 +9,9 @@
  *   Phase5ATests.runAllTests();
  */
 
-import { DarkSideDevoteeMechanics } from '../scripts/talents/dark-side-devotee-mechanics.js';
-import { TalentEffectEngine } from '../scripts/talents/talent-effect-engine.js';
-import { ActorEngine } from '../scripts/../scripts/actors/engine/actor-engine.js';
+import { DarkSideDevoteeMechanics } from '../scripts/engines/talent/dark-side-devotee-mechanics.js';
+import { TalentEffectEngine } from '../scripts/engines/talent/talent-effect-engine.js';
+import { ActorEngine } from '../scripts/governance/actor-engine/actor-engine.js';
 
 export const Phase5ATests = {
 

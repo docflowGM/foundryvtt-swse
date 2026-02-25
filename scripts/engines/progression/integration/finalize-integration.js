@@ -12,16 +12,16 @@
 
 import { swseLogger as SWSELogger } from '../../../utils/logger.js';
 import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
-import { SnapshotManager } from '../../utils/snapshot-manager.js';
-import { dispatchFeature } from '../../engine/feature-dispatcher.js';
-import { ForceProgressionEngine } from '../../engine/force-progression.js';
-import { ForceTechniqueEngine } from '../../engine/force-technique-engine.js';
-import { ForceSecretEngine } from '../../engine/force-secret-engine.js';
-import { StarshipManeuverEngine } from '../../engine/starship-maneuver-engine.js';
-import { LanguageEngine } from '../../engine/language-engine.js';
-import { EquipmentEngine } from '../../engine/equipment-engine.js';
-import { DerivedCalculator } from '../../actors/derived/derived-calculator.js';
-import { LevelDiffInspector } from '../../utils/level-diff-inspector.js';
+import { SnapshotManager } from '../utils/snapshot-manager.js';
+import { dispatchFeature } from '../engine/feature-dispatcher.js';
+import { ForceProgressionEngine } from '../engine/force-progression.js';
+import { ForceTechniqueEngine } from '../engine/force-technique-engine.js';
+import { ForceSecretEngine } from '../engine/force-secret-engine.js';
+import { StarshipManeuverEngine } from '../engine/starship-maneuver-engine.js';
+import { LanguageEngine } from '../engine/language-engine.js';
+import { EquipmentEngine } from '../engine/equipment-engine.js';
+import { DerivedCalculator } from '../../../actors/derived/derived-calculator.js';
+import { LevelDiffInspector } from '../utils/level-diff-inspector.js';
 
 export class FinalizeIntegration {
 

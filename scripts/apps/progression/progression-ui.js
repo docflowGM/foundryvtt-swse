@@ -4,7 +4,7 @@
 
 import { ProgressionEngine } from '../../engine/progression-engine.js';
 import { PROGRESSION_RULES } from '../../engines/progression/data/progression-data.js';
-import { HouseRuleService } from '../../system/HouseRuleService.js';
+import { HouseRuleService } from '../../engines/system/HouseRuleService.js';
 
 export class ProgressionUI {
   static async openStartSelector(actor) {
