@@ -5,7 +5,7 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { getClassProperty } from '../chargen/chargen-property-accessor.js';
-import { HPGeneratorEngine } from '../engines/HP/HPGeneratorEngine.js';
+import { HPGeneratorEngine } from '../../engines/HP/HPGeneratorEngine.js';
 
 /**
  * List of base classes in SWSE (legacy - should use isBaseClass with class docs instead)

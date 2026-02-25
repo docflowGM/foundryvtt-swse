@@ -7,7 +7,7 @@
  * - Stack trace analysis for origin
  */
 
-import { Sentinel } from './sentinel-core.js';
+import { Sentinel } from '../sentinel-core.js';
 
 export const PromisesLayer = {
   /**

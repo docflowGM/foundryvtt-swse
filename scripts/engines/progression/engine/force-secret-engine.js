@@ -5,8 +5,8 @@
  */
 
 import { ForceSecretPicker } from '../ui/force-secret-picker.js';
-import { swseLogger } from '../../utils/logger.js';
-import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
+import { swseLogger } from '../../../utils/logger.js';
+import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
 
 export class ForceSecretEngine {
   /**

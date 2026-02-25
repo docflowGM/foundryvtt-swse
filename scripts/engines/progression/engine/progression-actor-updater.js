@@ -9,8 +9,8 @@
  */
 
 import { PROGRESSION_RULES } from '../../data/progression-data.js';
-import { swseLogger } from '../../utils/logger.js';
-import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
+import { swseLogger } from '../../../utils/logger.js';
+import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
 
 export class ActorProgressionUpdater {
   /**

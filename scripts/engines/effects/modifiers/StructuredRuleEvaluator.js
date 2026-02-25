@@ -12,7 +12,7 @@
  */
 
 import { ModifierType, ModifierSource, createModifier } from './ModifierTypes.js';
-import { swseLogger } from '../../utils/logger.js';
+import { swseLogger } from '../../../utils/logger.js';
 
 export class StructuredRuleEvaluator {
   /**

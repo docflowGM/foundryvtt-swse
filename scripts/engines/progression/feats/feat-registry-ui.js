@@ -3,7 +3,7 @@
  * Loads and indexes feats with prerequisite validation
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../../../utils/logger.js';
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 
 export const FeatRegistry = {

@@ -16,7 +16,7 @@ async function loadJSON(url) {
  * for fast O(1) lookups by name.
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../../../utils/logger.js';
 import { toStableKey } from '../../utils/stable-key.js';
 
 export const FeatRegistry = {

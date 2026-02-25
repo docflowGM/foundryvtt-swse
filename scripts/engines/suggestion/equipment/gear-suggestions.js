@@ -5,7 +5,7 @@
  * Evaluates utility items, gadgets, and specialized equipment.
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../../../utils/logger.js';
 import { assignTier, clampScore } from './shared-scoring-utils.js';
 
 export class GearSuggestions {

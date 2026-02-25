@@ -3,7 +3,7 @@
  * Loads and indexes skills for the level-up UI
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../../../utils/logger.js';
 
 export const SkillRegistry = {
   _skills: [],

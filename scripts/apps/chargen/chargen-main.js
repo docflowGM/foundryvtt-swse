@@ -14,9 +14,9 @@ import { getTalentTreeName, getClassProperty, getTalentTrees, getHitDie } from '
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 import { BuildIntent } from '../../engines/suggestion/BuildIntent.js';
 import { SuggestionService } from '../../engines/suggestion/SuggestionService.js';
-import { MentorSurvey } from '../engines/mentor/mentor-survey.js';
-import { MentorSuggestionDialog } from '../engines/mentor/mentor-suggestion-dialog.js';
-import { MENTORS } from '../engines/mentor/mentor-dialogues.js';
+import { MentorSurvey } from '../../mentor/mentor-survey.js';
+import { MentorSuggestionDialog } from '../../mentor/mentor-suggestion-dialog.js';
+import { MENTORS } from '../../engines/mentor/mentor-dialogues.js';
 import { getMentorMemory, setMentorMemory, setTargetClass } from '../../engines/mentor/mentor-memory.js';
 import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 import { BackgroundRegistry } from '../../registries/background-registry.js';

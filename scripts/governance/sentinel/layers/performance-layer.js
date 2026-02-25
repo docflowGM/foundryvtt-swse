@@ -8,7 +8,7 @@
  * - Overall system initialization time
  */
 
-import { Sentinel } from './sentinel-core.js';
+import { Sentinel } from '../sentinel-core.js';
 
 export const PerformanceLayer = {
   #measurements = new Map(),

@@ -10,7 +10,7 @@
  * - All mutations are properly awaited
  */
 
-import { Sentinel } from './sentinel-core.js';
+import { Sentinel } from '../sentinel-core.js';
 
 export const HooksMutationLayer = {
   #hookStack = [],

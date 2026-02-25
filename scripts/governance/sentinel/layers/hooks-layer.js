@@ -8,7 +8,7 @@
  * - Unexpected hook frequencies
  */
 
-import { Sentinel } from './sentinel-core.js';
+import { Sentinel } from '../sentinel-core.js';
 
 export const HooksLayer = {
   #hookCallCounts = new Map(),

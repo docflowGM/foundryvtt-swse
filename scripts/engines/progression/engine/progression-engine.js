@@ -11,7 +11,7 @@
  *  const opts = ProgressionEngine.getAvailableOptions(actor, stepId)
  */
 
-import { swseLogger } from '../../utils/logger.js';
+import { swseLogger } from '../../../utils/logger.js';
 import { SWSEProgressionEngine } from '../../engine/progression.js';
 import { ForcePowerEngine } from './force-power-engine.js';
 import { PROGRESSION_RULES } from '../../data/progression-data.js';

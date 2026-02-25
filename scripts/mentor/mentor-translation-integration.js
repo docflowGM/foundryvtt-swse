@@ -12,7 +12,7 @@
  *   });
  */
 
-import { AurebeshTranslator } from './aurebesh-translator.js';
+import { AurebeshTranslator } from '../engines/mentor/aurebesh-translator.js';
 import { TRANSLATION_PRESETS, MENTOR_PRESET_MAP } from '../ui/dialogue/translation-presets.js';
 
 export class MentorTranslationIntegration {
@@ -219,5 +219,5 @@ export class MentorTranslationIntegration {
 }
 
 // Export for convenience
-export { AurebeshTranslator } from './aurebesh-translator.js';
-export { TRANSLATION_PRESETS } from './translation-presets.js';
+export { AurebeshTranslator } from '../engines/mentor/aurebesh-translator.js';
+export { TRANSLATION_PRESETS } from '../ui/dialogue/translation-presets.js';

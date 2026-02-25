@@ -15,7 +15,7 @@
  * - No direct math outside this engine
  */
 
-import { SWSELogger as swseLogger } from '../../utils/logging.js';
+import { SWSELogger as swseLogger } from '../../utils/logger.js';
 import { ModifierSource, ModifierType, createModifier } from '../effects/modifiers/ModifierTypes.js';
 import { getEffectiveHalfLevel } from '../../actors/derived/level-split.js';
 

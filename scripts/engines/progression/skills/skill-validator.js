@@ -8,7 +8,7 @@
  * - If prerequisites are met
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../../../utils/logger.js';
 import { SkillRegistry } from './skill-registry.js';
 import { SkillState } from './skill-state.js';
 

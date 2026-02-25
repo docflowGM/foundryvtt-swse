@@ -7,7 +7,7 @@
  * is routed through this dispatcher to the appropriate handler.
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../../../utils/logger.js';
 
 // ============================================================
 // FEATURE HANDLER DEFINITIONS

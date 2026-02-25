@@ -13,7 +13,7 @@
  * ```
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../../../utils/logger.js';
 
 export const FeatureIndex = {
     // Lookup maps - keyed by lowercase name for case-insensitive lookup

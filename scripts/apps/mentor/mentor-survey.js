@@ -7,8 +7,8 @@
  * Features typing animation for mentor text.
  */
 
-import { MENTORS } from './mentor-dialogues.js';
-import { MentorTranslationIntegration } from '../../engines/mentor/mentor-translation-integration.js';
+import { MENTORS } from '../engines/mentor/mentor-dialogues.js';
+import { MentorTranslationIntegration } from '../../../engines/mentor/mentor-translation-integration.js';
 import { swseLogger } from '../../utils/logger.js';
 import { seedMentorMemoryFromSurvey, getMentorMemory, setMentorMemory } from '../../engines/mentor/mentor-memory.js';
 import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';

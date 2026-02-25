@@ -5,7 +5,7 @@
  * PHASE 10: All mutations route through ActorEngine for governance.
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../../../utils/logger.js';
 
 export class SnapshotManager {
 

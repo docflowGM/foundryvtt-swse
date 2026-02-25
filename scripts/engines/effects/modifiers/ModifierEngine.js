@@ -16,7 +16,7 @@ import ModifierUtils from './ModifierUtils.js';
 import { EncumbranceEngine } from '../../engine/encumbrance/EncumbranceEngine.js';
 import { WeaponsEngine } from '../combat/weapons-engine.js';
 import { StructuredRuleEvaluator } from './StructuredRuleEvaluator.js';
-import { swseLogger } from '../../utils/logger.js';
+import { swseLogger } from '../../../utils/logger.js';
 
 export class ModifierEngine {
   /**
@@ -63,7 +63,7 @@ export class ModifierEngine {
 
       // Source 7: Droid Modifications (Phase A - droids only)
       if (actor.type === 'droid') {
-        modifiers.push(...this._getDroidModModifiers(actor));
+        modifiers.push(...await this._getDroidModModifiers(actor));
       }
 
       // Source 7b: Vehicle Modifications (Phase 6 - vehicles only)
@@ -1053,7 +1053,7 @@ export class ModifierEngine {
    * @param {Actor} actor - Must be a droid actor
    * @returns {Modifier[]}
    */
-  static _getDroidModModifiers(actor) {
+  static async _getDroidModModifiers(actor) {
     const modifiers = [];
 
     if (actor.type !== 'droid') {

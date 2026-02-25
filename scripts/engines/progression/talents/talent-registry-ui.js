@@ -3,7 +3,7 @@
  * Loads and organizes talents by tree
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../../../utils/logger.js';
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 
 export const TalentRegistry = {

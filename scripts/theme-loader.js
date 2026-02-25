@@ -4,7 +4,7 @@
  * Only loads the active theme to improve performance
  */
 
-import { SWSELogger } from './utils/logger.js';
+import { SWSELogger } from 'utils/logger.js';
 
 export class ThemeLoader {
   /**

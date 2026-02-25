@@ -7,7 +7,7 @@
  */
 
 import { FeatureIndex } from './feature-index.js';
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../../../utils/logger.js';
 
 export const StartingFeatureRegistrar = {
 
