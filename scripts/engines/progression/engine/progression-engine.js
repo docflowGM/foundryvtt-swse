@@ -361,6 +361,6 @@ static async _triggerForcePowers(actor) {
 }
 
 // Also export the new engine for direct access
-export { SWSEProgressionEngine } from '../../engine/progression.js';
+export { SWSEProgressionEngine } from '../../../engine/progression.js';
 
 swseLogger.log('Progression Engine (compatibility layer) loaded');
