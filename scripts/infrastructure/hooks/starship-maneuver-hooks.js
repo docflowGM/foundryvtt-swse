@@ -5,7 +5,7 @@ import { SWSELogger } from '../../utils/logger.js';
  * PHASE 10: Recursive guards prevent infinite item creation loops
  */
 
-import { StarshipManeuverManager } from '../utils/starship-maneuver-manager.js';
+import { StarshipManeuverManager } from '../../utils/starship-maneuver-manager.js';
 
 export function initializeStarshipManeuverHooks() {
 

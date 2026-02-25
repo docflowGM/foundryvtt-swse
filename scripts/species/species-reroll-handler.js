@@ -3,11 +3,13 @@
  * Handles species-granted reroll abilities (like Duros Expert Pilot, Bothan Spy Network)
  */
 
-import { SpeciesTraitEngine } from '../engine/systems/species/species-trait-engine.js';
-import { SPECIES_TRAIT_TYPES } from '../engine/systems/species/species-trait-types.js';
+// TODO: SpeciesTraitEngine not found - file may have been deleted or moved
+// import { SpeciesTraitEngine } from '../engine/systems/species/species-trait-engine.js';
+import { SPECIES_TRAIT_TYPES } from './species-trait-types.js';
 import { createChatMessage } from '../core/document-api-v13.js';
 import { SWSELogger } from '../utils/logger.js';
 import { RollEngine } from '../engine/roll-engine.js';
+import { SWSEDialogV2 } from '../apps/dialogs/swse-dialog-v2.js';
 
 /**
  * Handler for species reroll abilities

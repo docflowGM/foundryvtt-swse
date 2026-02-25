@@ -14,7 +14,7 @@
  * - Stealth/Assassin: Dastardly Strike + flat-footed exploits
  */
 
-import { MetaTuning } from './MetaTuning.js';
+import { MetaTuning } from '../../engine/MetaTuning.js';
 import { isEpicActor, getPlannedHeroicLevel } from '../../actors/derived/level-split.js';
 
 // ──────────────────────────────────────────────────────────────

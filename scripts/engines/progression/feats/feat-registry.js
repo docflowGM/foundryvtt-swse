@@ -17,7 +17,7 @@ async function loadJSON(url) {
  */
 
 import { SWSELogger } from '../../../utils/logger.js';
-import { toStableKey } from '../../utils/stable-key.js';
+import { toStableKey } from '../../../utils/stable-key.js';
 
 export const FeatRegistry = {
 

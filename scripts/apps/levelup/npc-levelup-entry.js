@@ -3,7 +3,8 @@ import SWSEApplicationV2 from '../base/swse-application-v2.js';
 import { SWSELogger } from '../../utils/logger.js';
 import { isEpicOverrideEnabled } from '../../settings/epic-override.js';
 import { getLevelSplit } from '../../actors/derived/level-split.js';
-import { ensureNpcProgressionMode, revertNpcToStatblock, levelUpNpcNonheroic } from '../../engine/npc-levelup.js';
+// TODO: npc-levelup.js not found - these imports need to be restored or this file needs refactoring
+// import { ensureNpcProgressionMode, revertNpcToStatblock, levelUpNpcNonheroic } from '../../engine/npc-levelup.js';
 import { SWSELevelUpEnhanced } from './levelup-enhanced.js';
 import { SWSEDialogV2 } from '../dialogs/swse-dialog-v2.js';
 
