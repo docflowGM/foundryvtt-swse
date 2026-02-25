@@ -2185,7 +2185,7 @@ export const ActorEngine = {
       SWSELogger.error('executeEmbeddedPlan failed:', err);
       throw err;
     }
-  }
+  },
 
 
 
