@@ -243,11 +243,18 @@ export class SWSEVehicleCore {
       const rollMode = game.settings?.get('core', 'rollMode') ?? 'public';
       const rollData = vehicle.getRollData();
 
-      const bonus = weaponItem.system.attackBonus || '+0';
-      const damage = weaponItem.system.damage || '0d0';
+      // PHASE 2: Read from v2 structured schema
+      const bonus = (weaponItem.system.combat?.attack?.bonus ?? 0);
+      const bonusStr = bonus > 0 ? `+${bonus}` : '+0';
+      const damage = weaponItem.system.combat?.damage?.dice || '0d0';
+
+      // Guard: Detect legacy schema
+      if (weaponItem.system.schemaVersion !== 2 && (weaponItem.system.attackBonus || weaponItem.system.damage) && !weaponItem.system.combat?.attack?.bonus) {
+        throw new Error(`[VehicleCore] Legacy weapon schema detected for "${weaponItem.name}". Weapons must use v2 structured schema.`);
+      }
 
       // Attack roll
-      const attack = await game.swse.RollEngine.safeRoll(`1d20${bonus}`, rollData);
+      const attack = await game.swse.RollEngine.safeRoll(`1d20${bonusStr}`, rollData);
       await attack.toMessage({
         speaker: ChatMessage.getSpeaker({ actor: vehicle }),
         flavor: `<strong>${weaponItem.name}</strong> Attack Roll`,

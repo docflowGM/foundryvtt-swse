@@ -176,7 +176,14 @@ export class CombatEngine {
     }
 
     /* DAMAGE */
-    const damageFormula = weapon.system.damage ?? "1d6";
+    // PHASE 2: Read from structured v2 schema only
+    const damageFormula = weapon.system.combat?.damage?.dice ?? "1d6";
+
+    // Guard: Detect legacy weapon schema
+    if (weapon.system.schemaVersion !== 2 && weapon.system.damage && !weapon.system.combat?.damage?.dice) {
+      throw new Error(`[CombatEngine] Legacy weapon schema detected for "${weapon.name}". Weapons must use v2 structured schema.`);
+    }
+
     const damageBonus = options.damageBonus ?? 0;
     const fullDamageFormula = damageBonus > 0 ? `${damageFormula} + ${damageBonus}` : damageFormula;
     const damageRoll = await RollEngine.safeRoll(fullDamageFormula);

@@ -147,7 +147,8 @@ export function computeCategoryAdjustment(item, peerGroup, scoreFn = null) {
 export function extractDamageBands(item) {
   const bands = [];
 
-  // Check for primary damage
+  // PHASE 2: Check for damage in v2 schema structure
+  // Note: equipment scoring expects primary/secondary structure which may differ from normalized schema
   if (item.system?.damage?.primary) {
     const primary = item.system.damage.primary;
     if (primary.dice) {
@@ -156,6 +157,17 @@ export function extractDamageBands(item) {
         dice: primary.dice,
         bonus: primary.bonus || 0,
         average: computeDiceAverage(primary.dice, primary.bonus || 0)
+      });
+    }
+  } else if (item.system.combat?.damage?.dice) {
+    // Fallback to v2 normalized structure
+    const damage = item.system.combat.damage;
+    if (damage.dice) {
+      bands.push({
+        type: 'primary',
+        dice: damage.dice,
+        bonus: damage.bonus || 0,
+        average: computeDiceAverage(damage.dice, damage.bonus || 0)
       });
     }
   }

@@ -644,10 +644,10 @@ export class SWSERoll {
             const diceMatch = baseFormula.match(/d(\d+)/);
             const diceType = diceMatch ? diceMatch[0] : 'd6';
 
-            // Temporarily modify weapon damage for burst fire calculation
-            const originalDamage = weapon.system?.damage;
+            // PHASE 2: Temporarily modify weapon damage for burst fire calculation using v2 schema
+            const originalDamage = weapon.system.combat?.damage?.dice;
             const modifiedDamage = `${baseFormula} + 2${diceType}`;
-            await weapon.update({ 'system.damage': modifiedDamage });
+            await weapon.update({ 'system.combat.damage.dice': modifiedDamage });
 
             try {
               damageRoll = await rollDamage(actor, weapon, {
@@ -656,7 +656,7 @@ export class SWSERoll {
               });
             } finally {
               // Restore original damage formula
-              await weapon.update({ 'system.damage': originalDamage });
+              await weapon.update({ 'system.combat.damage.dice': originalDamage });
             }
           } else {
             damageRoll = await rollDamage(actor, weapon, {
