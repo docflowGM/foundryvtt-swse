@@ -22,6 +22,7 @@ import { FORCE_POWER_DATA } from '../data/progression-data.js';
 import { ForcePowerPicker } from '../../../apps/progression/force-power-picker.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
+import { ForceRegistry } from '../../../engine/registries/force-registry.js';
 
 export class ForcePowerEngine {
   /**
@@ -157,22 +158,22 @@ static async handleForcePowerTriggers(actor, updateSummary = {}) {
 
 static async collectAvailablePowers(actor) {
   try {
-    const pack = game.packs.get('foundryvtt-swse.forcepowers');
-
-    if (!pack) {
-      swseLogger.error('Force Power Engine: foundryvtt-swse.forcepowers compendium not found!');
+    const powers = ForceRegistry.getByType('power');
+    if (!powers || powers.length === 0) {
+      swseLogger.warn('Force Power Engine: No force powers available in registry');
       return [];
     }
 
-    if (!pack.indexed) {
-      await pack.getIndex();
+    // Fetch full documents for returned data
+    const result = [];
+    for (const entry of powers) {
+      const doc = await ForceRegistry._getDocument(entry.id);
+      if (doc) {
+        result.push(doc);
+      }
     }
 
-    const docs = pack.getDocuments
-      ? await pack.getDocuments()
-      : pack.index.map(e => e);
-
-    return docs ?? [];
+    return result;
   } catch (e) {
     swseLogger.error('ForcePowerEngine: Failed to collect powers from compendium', e);
     return [];

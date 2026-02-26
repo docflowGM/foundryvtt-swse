@@ -8,6 +8,7 @@ import { SWSELogger } from '../utils/logger.js';
 
 import { getCache } from './cache-manager.js';
 import { timed } from '../utils/performance-utils.js';
+import { ForceRegistry } from '../engine/registries/force-registry.js';
 
 export class DataPreloader {
   constructor() {
@@ -203,19 +204,20 @@ export class DataPreloader {
   }
 
   /**
-   * Preload force powers
+   * Preload force powers (now uses ForceRegistry)
    * @private
    */
   async _preloadForcePowers() {
-    const pack = game.packs.get('foundryvtt-swse.forcepowers');
-    if (!pack) {return;}
+    if (!ForceRegistry.isInitialized()) {
+      return;
+    }
 
-    const index = await pack.getIndex();
-    this._forcePowersCache.set('_index', index);
+    const powers = ForceRegistry.getByType('power');
+    this._forcePowersCache.set('_index', powers);
 
-    // Cache for quick access
+    // Cache for quick access by name
     const byName = new Map();
-    for (const entry of index) {
+    for (const entry of powers) {
       byName.set(entry.name.toLowerCase(), entry);
     }
     this._forcePowersCache.set('_byName', byName);

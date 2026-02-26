@@ -7,6 +7,7 @@
 import { ForceTechniquePicker } from '../../../apps/progression/force-technique-picker.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
+import { ForceRegistry } from '../../../engine/registries/force-registry.js';
 
 export class ForceTechniqueEngine {
   /**
@@ -27,22 +28,22 @@ export class ForceTechniqueEngine {
    */
   static async collectAvailableTechniques(actor) {
     try {
-      const pack = game.packs.get('foundryvtt-swse.forcetechniques');
-
-      if (!pack) {
-        swseLogger.warn('Force Technique Engine: foundryvtt-swse.forcetechniques compendium not found!');
+      const techniques = ForceRegistry.getByType('technique');
+      if (!techniques || techniques.length === 0) {
+        swseLogger.warn('Force Technique Engine: No force techniques available in registry');
         return [];
       }
 
-      if (!pack.indexed) {
-        await pack.getIndex();
+      // Fetch full documents
+      const result = [];
+      for (const entry of techniques) {
+        const doc = await ForceRegistry._getDocument(entry.id);
+        if (doc) {
+          result.push(doc);
+        }
       }
 
-      const docs = pack.getDocuments
-        ? await pack.getDocuments()
-        : pack.index.map(e => e);
-
-      return docs ?? [];
+      return result;
     } catch (e) {
       swseLogger.error('ForceTechniqueEngine: Failed to collect techniques from compendium', e);
       return [];

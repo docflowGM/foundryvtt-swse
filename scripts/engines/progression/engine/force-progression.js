@@ -16,6 +16,7 @@ import { SWSELogger } from '../../../utils/logger.js';
 import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
 import { ApplyHandlers } from '../utils/apply-handlers.js';
 import { AbilityEngine } from '../../../engine/abilities/AbilityEngine.js';
+import { ForceRegistry } from '../../../engine/registries/force-registry.js';
 
 export class ForceProgressionEngine {
 
@@ -78,15 +79,9 @@ export class ForceProgressionEngine {
             return false;
         }
 
-        // Find power in compendium
-        const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
-        if (!powerPack) {
-            SWSELogger.warn('Force powers compendium not found');
-            return false;
-        }
-
-        const powerIndex = powerPack.index.find(p => p.name === powerName);
-        if (!powerIndex) {
+        // Find power in registry
+        const power = ForceRegistry.getByName(powerName);
+        if (!power) {
             SWSELogger.warn(`Force power not found: ${powerName}`);
             return false;
         }
@@ -120,24 +115,28 @@ export class ForceProgressionEngine {
      * Used when class grants "Force Power Choice"
      */
     static async createForcePowerChoice(actor, count = 1, filters = {}) {
-        const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
-        if (!powerPack) {return [];}
+        const powers = ForceRegistry.getByType('power');
+        if (!powers || powers.length === 0) {return [];}
 
-        const allPowers = await powerPack.getDocuments();
-        let availablePowers = allPowers.filter(p => {
+        // Fetch full documents for filtering
+        const availablePowers = [];
+        for (const entry of powers) {
+            const doc = await ForceRegistry._getDocument(entry.id);
+            if (!doc) continue;
+
             // Filter by power level if specified
-            if (filters.maxPowerLevel && p.system?.powerLevel > filters.maxPowerLevel) {
-                return false;
+            if (filters.maxPowerLevel && doc.system?.powerLevel > filters.maxPowerLevel) {
+                continue;
             }
 
             // Exclude already-known powers
             const hasIt = actor.items.some(i =>
-                i.type === 'forcepower' && i.name === p.name
+                i.type === 'forcepower' && i.name === doc.name
             );
-            if (hasIt) {return false;}
+            if (hasIt) {continue;}
 
-            return true;
-        });
+            availablePowers.push(doc);
+        }
 
         // Filter by prerequisites if needed (must be done separately due to async)
         if (filters.checkPrerequisites) {

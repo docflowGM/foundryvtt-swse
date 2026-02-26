@@ -16,6 +16,7 @@
 import { swseLogger } from './logger.js';
 import { BackgroundRegistry } from '../registries/background-registry.js';
 import { slugify } from './stable-id.js';
+import { ForceRegistry } from '../engine/registries/force-registry.js';
 
 export class TemplateIdMapper {
   /**
@@ -365,23 +366,14 @@ export class TemplateIdMapper {
         return power._id;
       }
 
-      // Fallback: search compendium
-      const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
-      if (!powerPack) {
-        throw new Error('Force powers compendium not found');
-      }
-
-      const index = await powerPack.getIndex();
-      const powerEntry = Array.from(index).find(e =>
-        e.name.toLowerCase() === powerName.toLowerCase()
-      );
-
+      // Fallback: search registry
+      const powerEntry = ForceRegistry.getByName(powerName);
       if (!powerEntry) {
         throw new Error(`Force power not found: "${powerName}"`);
       }
 
-      swseLogger.log(`[TEMPLATE-MAPPER] Force power found in compendium: ${powerName} → ${powerEntry._id}`);
-      return powerEntry._id;
+      swseLogger.log(`[TEMPLATE-MAPPER] Force power found in registry: ${powerName} → ${powerEntry.id}`);
+      return powerEntry.id;
     } catch (err) {
       swseLogger.error(`[TEMPLATE-MAPPER] Error finding force power "${powerName}":`, err);
       throw err;

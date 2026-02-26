@@ -7,6 +7,7 @@ import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 
 import { SWSELogger } from '../../utils/logger.js';
 import { BackgroundRegistry } from '../../registries/background-registry.js';
+import { ForceRegistry } from '../../engine/registries/force-registry.js';
 
 export class CharacterTemplates {
   static _templates = null;
@@ -176,15 +177,9 @@ export class CharacterTemplates {
 
     // Validate force power IDs
     if (template.forcePowerIds && Array.isArray(template.forcePowerIds)) {
-      const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
-      if (!powerPack) {
-        errors.push('Force powers compendium not found');
-      } else {
-        for (const powerId of template.forcePowerIds) {
-          const doc = await powerPack.getDocument(powerId).catch(() => null);
-          if (!doc) {
-            errors.push(`Force power ID not found: ${powerId}`);
-          }
+      for (const powerId of template.forcePowerIds) {
+        if (!ForceRegistry.hasId(powerId)) {
+          errors.push(`Force power ID not found: ${powerId}`);
         }
       }
     }
@@ -702,29 +697,20 @@ export class CharacterTemplates {
     if (!powerNames || powerNames.length === 0) {return;}
 
     try {
-      const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
-      if (!powerPack) {
-        SWSELogger.warn('SWSE | Force powers compendium not found');
-        return;
-      }
-
-      const index = await powerPack.getIndex();
-      if (!index) {
-        SWSELogger.error('SWSE | Failed to get force powers compendium index');
-        ui.notifications.error('Failed to load force powers data. Please refresh and try again.');
-        return;
-      }
-
       const powersToAdd = [];
 
       for (const powerName of powerNames) {
-        const powerEntry = index.find(p => p.name === powerName);
+        const powerEntry = ForceRegistry.getByName(powerName);
         if (powerEntry) {
-          const power = await powerPack.getDocument(powerEntry._id);
-          const powerData = power.toObject();
-          // Strip effects during chargen to avoid Foundry v13+ validation issues
-          delete powerData.effects;
-          powersToAdd.push(powerData);
+          const power = await ForceRegistry._getDocument(powerEntry.id);
+          if (power) {
+            const powerData = power.toObject();
+            // Strip effects during chargen to avoid Foundry v13+ validation issues
+            delete powerData.effects;
+            powersToAdd.push(powerData);
+          } else {
+            SWSELogger.warn(`SWSE | Force power document not found: ${powerName}`);
+          }
         } else {
           SWSELogger.warn(`SWSE | Force power not found: ${powerName}`);
         }

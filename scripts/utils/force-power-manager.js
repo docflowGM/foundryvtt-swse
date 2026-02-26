@@ -1,5 +1,6 @@
 import { SWSELogger } from './logger.js';
 import { ForceTrainingEngine } from '../engines/Force/ForceTrainingEngine.js';
+import { ForceRegistry } from '../engine/registries/force-registry.js';
 
 /**
  * Force Power Management System
@@ -58,35 +59,27 @@ export class ForcePowerManager {
   }
 
   /**
-   * Get all available force powers from compendium
-   * Uses cache when available for better performance
+   * Get all available force powers from registry
    * @returns {Promise<Array>} Array of force power items
    */
   static async getAvailablePowers() {
     try {
-      // Try to use preloaded data if available
-      if (window.SWSE?.dataPreloader) {
-        const cache = window.SWSE.dataPreloader._forcePowersCache;
-        const cachedIndex = cache.get('_index');
-
-        if (cachedIndex) {
-          const pack = game.packs.get('foundryvtt-swse.forcepowers');
-          if (!pack) {return [];}
-
-          const powers = await pack.getDocuments();
-          return powers.map(p => p.toObject());
-        }
-      }
-
-      // Fallback to direct pack access
-      const pack = game.packs.get('foundryvtt-swse.forcepowers');
-      if (!pack) {
-        SWSELogger.warn('SWSE | Force powers compendium not found');
+      const powers = ForceRegistry.getByType('power');
+      if (!powers || powers.length === 0) {
+        SWSELogger.warn('SWSE | No force powers available in registry');
         return [];
       }
 
-      const powers = await pack.getDocuments();
-      return powers.map(p => p.toObject());
+      // Fetch full documents and convert to objects
+      const result = [];
+      for (const entry of powers) {
+        const doc = await ForceRegistry._getDocument(entry.id);
+        if (doc) {
+          result.push(doc.toObject());
+        }
+      }
+
+      return result;
     } catch (error) {
       SWSELogger.error('SWSE | Error loading force powers:', error);
       return [];

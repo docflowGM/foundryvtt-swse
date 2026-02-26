@@ -29,6 +29,7 @@ import { normalizeDocumentTalent, validateTalentTreeAssignment } from '../../../
 
 // V2 Registry Layer (normalized, registry-only safe enumerators)
 import { FeatRegistry as NormalizedFeatRegistry } from '../../../registries/feat-registry.js';
+import { ForceRegistry } from '../../../engine/registries/force-registry.js';
 
 export const SystemInitHooks = {
 
@@ -144,7 +145,11 @@ export const SystemInitHooks = {
             SWSELogger.log('  - Initializing NormalizedFeatRegistry...');
             await NormalizedFeatRegistry.initialize();
 
-            SWSELogger.log(`SSOT registries built: ${TalentTreeDB.count()} trees, ${ClassesDB.count()} classes, ${TalentDB.count()} talents, ${NormalizedFeatRegistry.count()} feats`);
+            // 6. Initialize Force Registry (V2 enumeration authority for force domains)
+            SWSELogger.log('  - Initializing ForceRegistry...');
+            await ForceRegistry.initialize();
+
+            SWSELogger.log(`SSOT registries built: ${TalentTreeDB.count()} trees, ${ClassesDB.count()} classes, ${TalentDB.count()} talents, ${NormalizedFeatRegistry.count()} feats, ${ForceRegistry.count()} force items`);
 
         } catch (err) {
             SWSELogger.error('Failed to build SSOT registries:', err);
@@ -256,14 +261,16 @@ export const SystemInitHooks = {
      */
     async _normalizeForceContent() {
         try {
-            // Normalize Force powers
-            const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
-            if (powerPack) {
-                const powers = await powerPack.getDocuments();
+            // Normalize Force powers (via ForceRegistry)
+            const powers = ForceRegistry.getByType('power');
+            if (powers && powers.length > 0) {
                 let count = 0;
-                for (const powerDoc of powers) {
-                    ForceNormalizer.normalizePower(powerDoc);
-                    count++;
+                for (const powerEntry of powers) {
+                    const powerDoc = await ForceRegistry._getDocument(powerEntry.id);
+                    if (powerDoc) {
+                        ForceNormalizer.normalizePower(powerDoc);
+                        count++;
+                    }
                 }
                 SWSELogger.log(`Normalized ${count} Force power documents`);
             }

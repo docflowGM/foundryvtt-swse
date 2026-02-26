@@ -7,6 +7,7 @@
 import { ForceSecretPicker } from '../../../apps/progression/force-secret-picker.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
+import { ForceRegistry } from '../../../engine/registries/force-registry.js';
 
 export class ForceSecretEngine {
   /**
@@ -27,22 +28,22 @@ export class ForceSecretEngine {
    */
   static async collectAvailableSecrets(actor) {
     try {
-      const pack = game.packs.get('foundryvtt-swse.forcesecrets');
-
-      if (!pack) {
-        swseLogger.warn('Force Secret Engine: foundryvtt-swse.forcesecrets compendium not found!');
+      const secrets = ForceRegistry.getByType('secret');
+      if (!secrets || secrets.length === 0) {
+        swseLogger.warn('Force Secret Engine: No force secrets available in registry');
         return [];
       }
 
-      if (!pack.indexed) {
-        await pack.getIndex();
+      // Fetch full documents
+      const result = [];
+      for (const entry of secrets) {
+        const doc = await ForceRegistry._getDocument(entry.id);
+        if (doc) {
+          result.push(doc);
+        }
       }
 
-      const docs = pack.getDocuments
-        ? await pack.getDocuments()
-        : pack.index.map(e => e);
-
-      return docs ?? [];
+      return result;
     } catch (e) {
       swseLogger.error('ForceSecretEngine: Failed to collect secrets from compendium', e);
       return [];
