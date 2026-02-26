@@ -27,6 +27,9 @@ import { ClassRelationshipRegistry } from '../../../data/class-relationship-regi
 import { StableKeyMigration } from '../../../data/stable-key-migration.js';
 import { normalizeDocumentTalent, validateTalentTreeAssignment } from '../../../data/talent-tree-normalizer.js';
 
+// V2 Registry Layer (normalized, registry-only safe enumerators)
+import { FeatRegistry as NormalizedFeatRegistry } from '../../../registries/feat-registry.js';
+
 export const SystemInitHooks = {
 
     /**
@@ -137,7 +140,11 @@ export const SystemInitHooks = {
             TalentRelationshipRegistry.build(TalentTreeDB, TalentDB);
             TalentRelationshipRegistry.validateIntegrity(TalentDB, Sentinel);
 
-            SWSELogger.log(`SSOT registries built: ${TalentTreeDB.count()} trees, ${ClassesDB.count()} classes, ${TalentDB.count()} talents`);
+            // 5. Initialize Feat Registry (V2 enumeration authority)
+            SWSELogger.log('  - Initializing NormalizedFeatRegistry...');
+            await NormalizedFeatRegistry.initialize();
+
+            SWSELogger.log(`SSOT registries built: ${TalentTreeDB.count()} trees, ${ClassesDB.count()} classes, ${TalentDB.count()} talents, ${NormalizedFeatRegistry.count()} feats`);
 
         } catch (err) {
             SWSELogger.error('Failed to build SSOT registries:', err);
