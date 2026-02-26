@@ -1,0 +1,138 @@
+<form class="class-tree-access-form" autocomplete="off">
+    <header class="sheet-header">
+        <h1>Class → Tree Access Overrides</h1>
+        <p class="subtitle">Grant additional talent tree access to classes beyond their canonical assignments.</p>
+    </header>
+
+    <section class="form-content">
+        {{#if classes}}
+            <div class="classes-grid">
+                {{#each classes as |cls|}}
+                    <div class="class-row">
+                        <div class="class-header">
+                            <h3>{{cls.name}}</h3>
+                        </div>
+                        <div class="trees-selection">
+                            {{#each cls.trees as |tree|}}
+                                <label class="checkbox-label">
+                                    <input
+                                        type="checkbox"
+                                        name="trees_{{../cls.id}}"
+                                        value="{{tree.id}}"
+                                        {{#if tree.isSelected}}checked{{/if}}
+                                    />
+                                    {{tree.name}}
+                                </label>
+                            {{/each}}
+                        </div>
+                    </div>
+                {{/each}}
+            </div>
+        {{else}}
+            <p class="info-text">No classes available. Ensure ClassRelationshipRegistry is built.</p>
+        {{/if}}
+    </section>
+
+    <footer class="sheet-footer">
+        <button type="submit" class="button">Save Overrides</button>
+    </footer>
+</form>
+
+<style>
+.class-tree-access-form {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.sheet-header {
+    padding: 10px 15px;
+    border-bottom: 2px solid #444;
+    margin-bottom: 10px;
+}
+
+.sheet-header h1 {
+    margin: 0 0 5px 0;
+    font-size: 1.5em;
+}
+
+.sheet-header .subtitle {
+    margin: 0;
+    font-size: 0.9em;
+    color: #888;
+}
+
+.form-content {
+    flex: 1;
+    padding: 10px 15px;
+    overflow-y: auto;
+}
+
+.classes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.class-row {
+    border: 1px solid #666;
+    border-radius: 4px;
+    padding: 12px;
+    background: #2b2b2b;
+}
+
+.class-header h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.1em;
+    color: #fff;
+}
+
+.trees-selection {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.95em;
+    padding: 4px 0;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.checkbox-label:hover {
+    color: #bbb;
+}
+
+.sheet-footer {
+    padding: 10px 15px;
+    border-top: 2px solid #444;
+    text-align: right;
+}
+
+.button {
+    padding: 8px 20px;
+    background: #444;
+    border: 1px solid #666;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.button:hover {
+    background: #555;
+}
+
+.info-text {
+    padding: 20px;
+    text-align: center;
+    color: #888;
+}
+</style>
