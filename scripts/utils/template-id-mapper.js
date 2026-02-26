@@ -16,9 +16,9 @@
 import { swseLogger } from './logger.js';
 import { BackgroundRegistry } from '../registries/background-registry.js';
 import { slugify } from './stable-id.js';
-import { ForceRegistry }
-from '../engine/registries/force-registry.js';
-import { SpeciesRegistry } from '../engine/registries/force-registry.js';
+import { ForceRegistry } from '../engine/registries/force-registry.js';
+import { SpeciesRegistry } from '../engine/registries/species-registry.js';
+import { ClassesRegistry } from '../engine/registries/classes-registry.js';
 
 export class TemplateIdMapper {
   /**
@@ -165,23 +165,18 @@ export class TemplateIdMapper {
         return classMatch._id;
       }
 
-      // Fallback: search compendium directly
-      const classPack = game.packs.get('foundryvtt-swse.classes');
-      if (!classPack) {
-        throw new Error('Classes compendium not found');
+      // Fallback: search registry directly
+      if (!ClassesRegistry.isInitialized()) {
+        throw new Error('ClassesRegistry not initialized');
       }
 
-      const index = await classPack.getIndex();
-      const classEntry = Array.from(index).find(e =>
-        e.name.toLowerCase() === className.toLowerCase()
-      );
-
-      if (!classEntry) {
+      const classData = ClassesRegistry.getByName(className);
+      if (!classData) {
         throw new Error(`Class not found: "${className}"`);
       }
 
-      swseLogger.log(`[TEMPLATE-MAPPER] Class found via compendium: ${className} → ${classEntry._id}`);
-      return classEntry._id;
+      swseLogger.log(`[TEMPLATE-MAPPER] Class found via registry: ${className} → ${classData.id}`);
+      return classData.id;
     } catch (err) {
       swseLogger.error(`[TEMPLATE-MAPPER] Error finding class "${className}":`, err);
       throw err;
