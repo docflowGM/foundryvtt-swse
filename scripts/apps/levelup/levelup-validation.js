@@ -7,42 +7,25 @@ import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
 import { SWSELogger } from '../../utils/logger.js';
 import { isBaseClass } from './levelup-shared.js';
 import { evaluateClassEligibility } from '../../engines/progression/prerequisites/class-prerequisites-cache.js';
-
-// Cache for prestige class prerequisites loaded from JSON
-let _prestigePrereqCache = null;
+import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 
 /**
- * Load prestige class prerequisites from JSON configuration
- * @returns {Promise<Object>} - Prerequisites object
+ * Get prestige class prerequisites from canonical source (PrerequisiteChecker).
+ * Do NOT fetch JSON directly. Always use PrerequisiteChecker as SSOT.
+ * @returns {Object} - Prerequisites object
  */
-async function loadPrestigeClassPrerequisites() {
-  if (_prestigePrereqCache) {
-    return _prestigePrereqCache;
-  }
-
-  try {
-    const response = await fetch('systems/foundryvtt-swse/data/prestige-class-prerequisites.json');
-    if (!response.ok) {
-      throw new Error(`Failed to load prerequisites: ${response.status} ${response.statusText}`);
-    }
-    _prestigePrereqCache = await response.json();
-    SWSELogger.log('SWSE LevelUp | Loaded prestige class prerequisites from JSON');
-    return _prestigePrereqCache;
-  } catch (err) {
-    SWSELogger.error('SWSE LevelUp | Failed to load prestige class prerequisites:', err);
-    ui.notifications.warn('Failed to load prestige class prerequisites. Some classes may not validate correctly.');
-    _prestigePrereqCache = {};
-    return _prestigePrereqCache;
-  }
+function loadPrestigeClassPrerequisites() {
+  SWSELogger.log('SWSE LevelUp | Getting prestige class prerequisites from PrerequisiteChecker (canonical source)');
+  return PrerequisiteChecker.getPrestigePrerequisites();
 }
 
 /**
  * Get prerequisites for a prestige class
  * @param {string} className - Name of the prestige class
- * @returns {Promise<string|null>} - Prerequisite string or null
+ * @returns {string|null} - Prerequisite string or null
  */
-export async function getPrestigeClassPrerequisites(className) {
-  const prerequisites = await loadPrestigeClassPrerequisites();
+export function getPrestigeClassPrerequisites(className) {
+  const prerequisites = loadPrestigeClassPrerequisites();
   const classPrereqs = prerequisites[className];
 
   if (!classPrereqs) {
@@ -64,8 +47,8 @@ export async function meetsClassPrerequisites(classDoc, actor, pendingData) {
   // Base classes have no prerequisites
   if (isBaseClass(classDoc)) {return true;}
 
-  // Load prerequisites for prestige classes from JSON configuration
-  const prestigePrerequisites = await getPrestigeClassPrerequisites(classDoc.name);
+  // Load prerequisites for prestige classes from canonical source (PrerequisiteChecker)
+  const prestigePrerequisites = getPrestigeClassPrerequisites(classDoc.name);
 
   // If we have prerequisites from JSON, use those
   if (prestigePrerequisites) {

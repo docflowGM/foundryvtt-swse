@@ -21,6 +21,7 @@ import { BASE_CLASSES, calculateTotalBAB } from '../../apps/levelup/levelup-shar
 import { isEpicActor, getPlannedHeroicLevel } from '../../actors/derived/level-split.js';
 import { CLASS_SYNERGY_DATA } from './shared-suggestion-utilities.js';
 import { UNIFIED_TIERS, getTierMetadata } from './suggestion-unified-tiers.js';
+import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 
 // ──────────────────────────────────────────────────────────────
 // DEPRECATED: Legacy tier definitions (kept for backwards compatibility)
@@ -288,24 +289,20 @@ export class ClassSuggestionEngine {
     // ──────────────────────────────────────────────────────────────
 
     /**
-     * Load prestige class prerequisites from JSON
+     * Load prestige class prerequisites from canonical source (PrerequisiteChecker).
+     * Do NOT fetch JSON directly. Always use PrerequisiteChecker as SSOT.
      * @returns {Promise<Object>} Prerequisites object
      */
     static async _loadPrestigePrerequisites() {
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Checking cache...`);
+        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Getting from PrerequisiteChecker (canonical source)`);
         if (this._prestigePrereqCache) {
             SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Using cached prerequisites (${Object.keys(this._prestigePrereqCache).length} classes)`);
             return this._prestigePrereqCache;
         }
 
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Cache miss, fetching from JSON...`);
         try {
-            const response = await fetch('systems/foundryvtt-swse/data/prestige-class-prerequisites.json');
-            if (!response.ok) {
-                throw new Error(`Failed to load: ${response.status}`);
-            }
-            this._prestigePrereqCache = await response.json();
-            SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Successfully loaded ${Object.keys(this._prestigePrereqCache).length} prestige class prerequisites`);
+            this._prestigePrereqCache = PrerequisiteChecker.getPrestigePrerequisites();
+            SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Successfully loaded ${Object.keys(this._prestigePrereqCache).length} prestige class prerequisites from PrerequisiteChecker`);
             SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Classes with prerequisites:`, Object.keys(this._prestigePrereqCache));
             return this._prestigePrereqCache;
         } catch (err) {

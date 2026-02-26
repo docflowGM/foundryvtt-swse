@@ -98,7 +98,6 @@ import { showGMDebugPanel } from './debug-panel.js';
 import { PathPreview } from '../../engines/suggestion/PathPreview.js';
 import { findActiveSynergies } from '../../engines/suggestion/CommunityMetaSynergies.js';
 import { MentorSuggestionDialog } from '../../mentor/mentor-suggestion-dialog.js';
-import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 
 // Import mentor memory system
 import { decayAllMentorCommitments, updateAllMentorMemories } from '../../engines/mentor/mentor-memory.js';

@@ -324,6 +324,13 @@ export class SuggestionEngine {
      * Check if option is a chain continuation and return the matching prerequisite
      * An option is a chain continuation if an owned feat or talent
      * is a direct prerequisite for this option.
+     *
+     * IMPORTANT ARCHITECTURAL NOTE:
+     * This method parses prerequisite SCHEMA to detect chains for advisory purposes only.
+     * It MUST NOT be used for legality determination.
+     * All legality decisions are made by AbilityEngine.evaluateAcquisition().
+     * This is for CHAIN DETECTION and SUGGESTION RANKING only.
+     *
      * @param {Object} option - The feat/talent being evaluated
      * @param {Object} actorState - Actor state
      * @param {Object} metadata - Optional feat metadata with chain info
