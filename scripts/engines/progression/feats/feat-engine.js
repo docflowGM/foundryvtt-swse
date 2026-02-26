@@ -13,7 +13,6 @@ import { SWSELogger } from '../../../utils/logger.js';
 import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
 import { FeatRegistry } from './feat-registry.js';
 import { FeatState } from './feat-state.js';
-import { PrerequisiteChecker } from '../../../data/prerequisite-checker.js';
 import { FeatNormalizer } from './feat-normalizer.js';
 import { AbilityEngine } from '../../../engine/abilities/AbilityEngine.js';
 
