@@ -295,5 +295,25 @@ export function registerSystemSettings() {
     default: 'roll',
   });
 
+  // House Rule: Dark Side Prestige Access to Lightsaber Trees
+  game.settings.register('foundryvtt-swse', 'enableDarkSideTreeAccess', {
+    name: 'Dark Side Prestige Access to Lightsaber Trees',
+    hint: 'If enabled, Sith Apprentice and Sith Lord gain access to Lightsaber Combat and Lightsaber Forms talent trees.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  // GM Override: Class → Tree Access Overrides
+  game.settings.register('foundryvtt-swse', 'classTreeOverrides', {
+    name: 'Class Tree Access Overrides',
+    hint: 'GM-configurable programmatic overrides for class → tree access. Format: { classId: ["treeId1", "treeId2"] }',
+    scope: 'world',
+    config: false,
+    type: Object,
+    default: {}
+  });
+
   SWSELogger.log('SWSE | Settings registered');
 }

@@ -23,6 +23,7 @@ import { TalentTreeDB } from '../../../data/talent-tree-db.js';
 import { ClassesDB } from '../../../data/classes-db.js';
 import { TalentDB } from '../../../data/talent-db.js';
 import { TalentRelationshipRegistry } from '../../../data/talent-relationship-registry.js';
+import { ClassRelationshipRegistry } from '../../../data/class-relationship-registry.js';
 import { StableKeyMigration } from '../../../data/stable-key-migration.js';
 import { normalizeDocumentTalent, validateTalentTreeAssignment } from '../../../data/talent-tree-normalizer.js';
 
@@ -118,6 +119,10 @@ export const SystemInitHooks = {
                 SWSELogger.error('ClassesDB build failed');
                 return;
             }
+
+            // 2b. Build Class Relationship Registry (canonical class → tree access)
+            SWSELogger.log('  - Building ClassRelationshipRegistry...');
+            ClassRelationshipRegistry.build(ClassesDB, TalentTreeDB);
 
             // 3. Build TalentDB (requires TalentTreeDB for linking talents to trees)
             SWSELogger.log('  - Building TalentDB...');
