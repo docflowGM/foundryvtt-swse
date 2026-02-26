@@ -10,6 +10,7 @@ import { getCache } from './cache-manager.js';
 import { timed } from '../utils/performance-utils.js';
 import { SpeciesRegistry } from '../engine/registries/species-registry.js';
 import { ForceRegistry } from '../engine/registries/force-registry.js';
+import { ClassesRegistry } from '../engine/registries/classes-registry.js';
 
 export class DataPreloader {
   constructor() {
@@ -142,16 +143,17 @@ export class DataPreloader {
    * @private
    */
   async _preloadClasses() {
-    const pack = game.packs.get('foundryvtt-swse.classes');
-    if (!pack) {return;}
+    if (!ClassesRegistry.isInitialized()) {
+      SWSELogger.warn('ClassesRegistry not initialized, skipping preload');
+      return;
+    }
 
-    const index = await pack.getIndex();
-    this._classesCache.set('_index', index);
+    const documents = ClassesRegistry.getAll();
+    this._classesCache.set('_index', documents);
 
-    // Preload actual documents for small packs
-    if (index.size <= 20) {
+    // Preload all documents (registry already has them)
+    if (documents && documents.length <= 20) {
       try {
-        const documents = await pack.getDocuments();
         for (const doc of documents) {
           this._classesCache.set(doc.id, doc);
         }

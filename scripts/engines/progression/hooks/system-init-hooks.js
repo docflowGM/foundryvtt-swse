@@ -31,6 +31,7 @@ import { normalizeDocumentTalent, validateTalentTreeAssignment } from '../../../
 import { FeatRegistry as NormalizedFeatRegistry } from '../../../registries/feat-registry.js';
 import { ForceRegistry } from '../../../engine/registries/force-registry.js';
 import { SpeciesRegistry } from '../../../engine/registries/species-registry.js';
+import { ClassesRegistry } from '../../../engine/registries/classes-registry.js';
 
 export const SystemInitHooks = {
 
@@ -154,6 +155,10 @@ export const SystemInitHooks = {
             SWSELogger.log('  - Initializing SpeciesRegistry...');
             await SpeciesRegistry.initialize();
 
+            // 8. Initialize Classes Registry (V2 enumeration authority for classes)
+            SWSELogger.log('  - Initializing ClassesRegistry...');
+            await ClassesRegistry.initialize();
+
             SWSELogger.log(`SSOT registries built: ${TalentTreeDB.count()} trees, ${ClassesDB.count()} classes, ${TalentDB.count()} talents, ${NormalizedFeatRegistry.count()} feats, ${ForceRegistry.count()} force items, ${SpeciesRegistry.count()} species`);
 
         } catch (err) {
@@ -206,13 +211,12 @@ export const SystemInitHooks = {
      */
     async _normalizeClasses() {
         try {
-            const classPack = game.packs.get('foundryvtt-swse.classes');
-            if (!classPack) {
-                SWSELogger.warn('Classes compendium not found');
+            if (!ClassesRegistry.isInitialized()) {
+                SWSELogger.warn('ClassesRegistry not initialized');
                 return;
             }
 
-            const classes = await classPack.getDocuments();
+            const classes = ClassesRegistry.getAll();
             let count = 0;
 
             for (const classDoc of classes) {

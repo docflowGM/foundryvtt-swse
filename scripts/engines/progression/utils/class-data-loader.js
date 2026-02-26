@@ -63,22 +63,17 @@ async function _loadFromCompendium() {
   const errors = [];
 
   try {
-    swseLogger.log('[CLASS-DATA-LOADER] _loadFromCompendium: Attempting to load from compendium...');
-    swseLogger.log('[CLASS-DATA-LOADER] Available packs:', game.packs ? game.packs.size : 'PACKS NOT AVAILABLE');
+    swseLogger.log('[CLASS-DATA-LOADER] _loadFromCompendium: Attempting to load from registry...');
 
-    const pack = game.packs.get('foundryvtt-swse.classes');
-    swseLogger.log(`[CLASS-DATA-LOADER] _loadFromCompendium: Pack lookup result:`, pack ? 'FOUND' : 'NOT FOUND');
-
-    if (!pack) {
-      const errorMsg = 'Class Data Loader: foundryvtt-swse.classes compendium not found!';
+    if (!ClassesRegistry.isInitialized()) {
+      const errorMsg = 'Class Data Loader: ClassesRegistry not initialized!';
       swseLogger.error(`[CLASS-DATA-LOADER] ERROR: ${errorMsg}`);
-      swseLogger.error('[CLASS-DATA-LOADER] Available packs:', Array.from(game.packs.keys()));
       ui.notifications?.error(`${errorMsg} Character progression features will not work correctly. Please ensure the SWSE system is properly installed.`, { permanent: true });
       return cache;
     }
 
-    swseLogger.log('[CLASS-DATA-LOADER] _loadFromCompendium: Fetching documents from pack...');
-    const docs = await pack.getDocuments();
+    swseLogger.log('[CLASS-DATA-LOADER] _loadFromCompendium: Fetching classes from registry...');
+    const docs = ClassesRegistry.getAll();
     swseLogger.log(`[CLASS-DATA-LOADER] _loadFromCompendium: Retrieved ${docs ? docs.length : 'null/undefined'} documents`);
 
     if (!docs || docs.length === 0) {
