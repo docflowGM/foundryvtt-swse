@@ -16,7 +16,9 @@
 import { swseLogger } from './logger.js';
 import { BackgroundRegistry } from '../registries/background-registry.js';
 import { slugify } from './stable-id.js';
-import { ForceRegistry } from '../engine/registries/force-registry.js';
+import { ForceRegistry }
+from '../engine/registries/force-registry.js';
+import { SpeciesRegistry } from '../engine/registries/force-registry.js';
 
 export class TemplateIdMapper {
   /**
@@ -90,33 +92,14 @@ export class TemplateIdMapper {
     if (!speciesName) {return null;}
 
     try {
-      // Species uses slug format: species-lowercase-name
-      const slugId = `species-${speciesName.toLowerCase().replace(/\s+/g, '-')}`;
-
-      // Verify it exists by trying to get the document
-      const speciesPack = game.packs.get('foundryvtt-swse.species');
-      if (!speciesPack) {
-        throw new Error('Species compendium not found');
+      // Try registry lookup
+      const species = SpeciesRegistry.getByName(speciesName);
+      if (species) {
+        swseLogger.log(`[TEMPLATE-MAPPER] Species found: ${speciesName} → ${species.id}`);
+        return species.id;
       }
 
-      const doc = await speciesPack.getDocument(slugId).catch(() => null);
-      if (doc) {
-        swseLogger.log(`[TEMPLATE-MAPPER] Species found: ${speciesName} → ${slugId}`);
-        return slugId;
-      }
-
-      // If slug format doesn't work, search by name
-      const index = await speciesPack.getIndex();
-      const speciesEntry = Array.from(index).find(e =>
-        e.name.toLowerCase() === speciesName.toLowerCase()
-      );
-
-      if (!speciesEntry) {
-        throw new Error(`Species not found: "${speciesName}"`);
-      }
-
-      swseLogger.log(`[TEMPLATE-MAPPER] Species found by name: ${speciesName} → ${speciesEntry._id}`);
-      return speciesEntry._id;
+      throw new Error(`Species not found: ${speciesName}`);
     } catch (err) {
       swseLogger.error(`[TEMPLATE-MAPPER] Error finding species "${speciesName}":`, err);
       throw err;

@@ -8,6 +8,7 @@ import { SWSELogger } from '../utils/logger.js';
 
 import { getCache } from './cache-manager.js';
 import { timed } from '../utils/performance-utils.js';
+import { SpeciesRegistry } from '../engine/registries/species-registry.js';
 import { ForceRegistry } from '../engine/registries/force-registry.js';
 
 export class DataPreloader {
@@ -228,17 +229,17 @@ export class DataPreloader {
    * @private
    */
   async _preloadSpecies() {
-    const pack = game.packs.get('foundryvtt-swse.species');
-    if (!pack) {return;}
+    if (!SpeciesRegistry.isInitialized()) {
+      return;
+    }
 
-    const index = await pack.getIndex();
-    this._speciesCache.set('_index', index);
+    const species = SpeciesRegistry.getAll();
+    this._speciesCache.set('_index', species);
 
-    // Preload all species documents (usually small)
+    // Cache species by ID
     try {
-      const documents = await pack.getDocuments();
-      for (const doc of documents) {
-        this._speciesCache.set(doc.id, doc);
+      for (const entry of species) {
+        this._speciesCache.set(entry.id, entry);
         this._speciesCache.set(doc.name.toLowerCase(), doc);
       }
     } catch (error) {

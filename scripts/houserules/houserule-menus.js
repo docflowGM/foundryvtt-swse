@@ -1,3 +1,4 @@
+import { SpeciesRegistry } from '../engine/registries/species-registry.js';
 /**
  * SWSE Houserule Configuration Menus (Upgraded)
  * Modernizes all FormApplication classes for Foundry VTT V13–V15 compatibility
@@ -556,17 +557,14 @@ export class CharacterRestrictionsMenu extends SWSEFormApplicationV2 {
       .map(s => s.trim())
       .filter(s => s.length > 0);
 
-    // Load species from compendium
+    // Load species from registry
     let availableSpecies = [];
     try {
-      const speciesPack = game.packs.get('foundryvtt-swse.species');
-      if (speciesPack) {
-        const species = await speciesPack.getDocuments();
-        availableSpecies = species.map(s => ({
-          name: s.name,
-          id: s.id
-        }));
-      }
+      const species = SpeciesRegistry.getAll();
+      availableSpecies = species.map(s => ({
+        name: s.name,
+        id: s.id
+      }));
     } catch (err) {
       console.error('Failed to load species list:', err);
     }

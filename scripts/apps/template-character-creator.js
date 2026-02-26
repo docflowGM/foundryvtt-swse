@@ -2,6 +2,7 @@ import SWSEFormApplicationV2 from './base/swse-form-application-v2.js';
 import { ProgressionEngine } from '../engines/progression/engine/progression-engine.js';
 import { createActor } from '../core/document-api-v13.js';
 import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
+import { SpeciesRegistry } from '../../engine/registries/species-registry.js';
 // ============================================
 // Template Character Creator
 // Class-first selection with playing card UI
@@ -721,33 +722,28 @@ async _prepareContext(options) {
   async _applySpeciesBonus(actor, speciesRefOrName, abilityUpdates) {
     try {
       const speciesName = typeof speciesRefOrName === 'string' ? speciesRefOrName : (speciesRefOrName.displayName || speciesRefOrName.name);
-      const speciesPackName = typeof speciesRefOrName === 'object' && speciesRefOrName.pack ? speciesRefOrName.pack : 'foundryvtt-swse.species';
       const speciesId = typeof speciesRefOrName === 'object' && speciesRefOrName.id ? speciesRefOrName.id : null;
-      const speciesPack = game.packs.get(speciesPackName);
-      if (!speciesPack) {return;}
 
+      let species = null;
       if (speciesId) {
-        const species = await speciesPack.getDocument(speciesId);
-        if (species) {
-          return this._applySpeciesDataToAbilities(species.system, abilityUpdates);
-        }
+        species = SpeciesRegistry.getById(speciesId);
       }
-
-      const index = await speciesPack.getIndex();
-      const speciesEntry = index.find(s => s.name === speciesName);
-
-      if (!speciesEntry) {
+      if (!species) {
+        species = SpeciesRegistry.getByName(speciesName);
+      }
+      if (!species) {
         SWSELogger.warn(`SWSE | Species not found: ${speciesName}`);
         return;
       }
 
-      const species = await speciesPack.getDocument(speciesEntry._id);
-      if (!species) {
+      // Get full document for system data if needed
+      const speciesDoc = await SpeciesRegistry._getDocument(species.id) || species;
+      if (!speciesDoc) {
         SWSELogger.warn(`SWSE | Failed to load species document for: ${speciesName}`);
         return;
       }
 
-      const speciesData = species.system;
+      const speciesData = speciesDoc.system || speciesDoc;
       return this._applySpeciesDataToAbilities(speciesData, abilityUpdates);
 
     } catch (error) {

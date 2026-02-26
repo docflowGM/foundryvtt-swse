@@ -12,6 +12,7 @@
  */
 
 import { SWSELogger } from '../../../utils/logger.js';
+import { SpeciesRegistry } from '../../../engine/registries/species-registry.js';
 import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
 import { LanguageRegistry } from '../../../registries/language-registry.js';
 
@@ -82,19 +83,13 @@ export class LanguageEngine {
      * Apply languages from species
      */
     static async applySpeciesLanguages(actor, speciesName) {
-        const speciesPack = game.packs.get('foundryvtt-swse.species');
-        if (!speciesPack) {return [];}
-
-        const speciesIndex = speciesPack.index.find(s => s.name === speciesName);
-        if (!speciesIndex) {
+        const species = SpeciesRegistry.getByName(speciesName);
+        if (!species) {
             SWSELogger.warn(`Species not found: ${speciesName}`);
             return [];
         }
 
-        const speciesDoc = await speciesPack.getDocument(speciesIndex._id);
-        if (!speciesDoc) {return [];}
-
-        const languages = speciesDoc.system?.languages || [];
+        const languages = species.languages || [];
         const results = await this.grantLanguages(actor, languages);
 
         SWSELogger.log(`Applied ${languages.length} species languages for ${speciesName}`);
