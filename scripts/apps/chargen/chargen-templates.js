@@ -9,6 +9,7 @@ import { SWSELogger } from '../../utils/logger.js';
 import { BackgroundRegistry } from '../../registries/background-registry.js';
 import { ForceRegistry } from '../../engine/registries/force-registry.js';
 import { SpeciesRegistry } from '../../engine/registries/species-registry.js';
+import { ClassesRegistry } from '../../engine/registries/classes-registry.js';
 
 export class CharacterTemplates {
   static _templates = null;
@@ -114,14 +115,9 @@ export class CharacterTemplates {
 
     // Validate class ID
     if (template.classId) {
-      const classPack = game.packs.get('foundryvtt-swse.classes');
-      if (!classPack) {
-        errors.push('Classes compendium not found');
-      } else {
-        const doc = await classPack.getDocument(template.classId).catch(() => null);
-        if (!doc) {
-          errors.push(`Class ID not found: ${template.classId}`);
-        }
+      const classData = ClassesRegistry.getById(template.classId);
+      if (!classData) {
+        errors.push(`Class ID not found: ${template.classId}`);
       }
     }
 

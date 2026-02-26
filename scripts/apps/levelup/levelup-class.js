@@ -6,6 +6,7 @@ import { ProgressionEngine } from '../../engines/progression/engine/progression-
 
 import { SWSELogger } from '../../utils/logger.js';
 import { SpeciesRegistry } from '../../engine/registries/species-registry.js';
+import { ClassesRegistry } from '../../engine/registries/classes-registry.js';
 import { SuggestionService } from '../../engines/suggestion/SuggestionService.js';
 import { warnGM } from '../../utils/warn-gm.js';
 import { getMentorForClass, getMentorGreeting, getLevel1Class, setLevel1Class } from '../../engines/mentor/mentor-dialogues.js';
@@ -78,17 +79,14 @@ export async function getAvailableClasses(actor, pendingData, options = {}) {
   const { includeSuggestions = true } = options;
   SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: START - Actor: ${actor.id} (${actor.name}), includeSuggestions: ${includeSuggestions}`);
 
-  const classPack = game.packs.get('foundryvtt-swse.classes');
-  SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Classes pack lookup:`, classPack ? 'FOUND' : 'NOT FOUND');
-  if (!classPack) {
-    SWSELogger.error(`[LEVELUP-CLASS] ERROR: Classes compendium pack not found!`);
-    SWSELogger.error(`[LEVELUP-CLASS] Available packs:`, Array.from(game.packs.keys()));
-    ui.notifications.error('Failed to load classes compendium. Classes will not be available.');
+  if (!ClassesRegistry.isInitialized()) {
+    SWSELogger.error(`[LEVELUP-CLASS] ERROR: ClassesRegistry not initialized!`);
+    ui.notifications.error('Failed to load classes. Classes will not be available.');
     return [];
   }
 
-  SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Fetching all classes from pack...`);
-  const allClasses = await classPack.getDocuments();
+  SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Fetching all classes from registry...`);
+  const allClasses = ClassesRegistry.getAll();
   SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Total classes in pack: ${allClasses.length}`);
   SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Class names:`, allClasses.map(c => c.name));
   const availableClasses = [];
@@ -322,8 +320,7 @@ export async function selectSpecies(speciesId, speciesName) {
  * @returns {Promise<Object|null>} The selected class document or null
  */
 export async function selectClass(classId, actor, context) {
-  const classPack = game.packs.get('foundryvtt-swse.classes');
-  const classDoc = await classPack.getDocument(classId);
+  const classDoc = await ClassesRegistry._getDocument(classId);
 
   if (!classDoc) {
     ui.notifications.error('Class not found!');
