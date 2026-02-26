@@ -6,6 +6,7 @@ import { determineLevelFromXP } from '../../engines/shared/xp-system.js';
 import { DerivedCalculator } from '../../actors/derived/derived-calculator.js';
 import { ModifierEngine } from '../../engines/effects/modifiers/ModifierEngine.js';
 import { MutationApplicationError } from '../mutation/mutation-errors.js';
+import { PrerequisiteIntegrityChecker } from '../integrity/prerequisite-integrity-checker.js';
 
 /**
  * ActorEngine
@@ -188,11 +189,18 @@ export const ActorEngine = {
 
       // ========================================
       // PHASE 3: Authorize mutation via context
+      // PHASE 3.1: Enforce prerequisite integrity
       // ========================================
       MutationInterceptor.setContext(`ActorEngine.updateEmbeddedDocuments[${embeddedName}]`);
       try {
         const result = await actor.updateEmbeddedDocuments(embeddedName, updates, options);
         await this.recalcAll(actor);
+
+        // PHASE 3.1: Enforce prerequisite integrity
+        if (embeddedName === 'Item') {
+          await PrerequisiteIntegrityChecker.evaluate(actor);
+        }
+
         return result;
       } finally {
         MutationInterceptor.clearContext();
@@ -220,6 +228,7 @@ export const ActorEngine = {
   /**
    * Create embedded documents while preserving the ActorEngine lifecycle.
    * PHASE 3: Only legal way to create embedded documents.
+   * PHASE 3.1: Enforces prerequisite integrity after mutation.
    */
   async createEmbeddedDocuments(actor, embeddedName, data, options = {}) {
     try {
@@ -236,6 +245,12 @@ export const ActorEngine = {
       try {
         const result = await actor.createEmbeddedDocuments(embeddedName, data, options);
         await this.recalcAll(actor);
+
+        // PHASE 3.1: Enforce prerequisite integrity
+        if (embeddedName === 'Item') {
+          await PrerequisiteIntegrityChecker.evaluate(actor);
+        }
+
         return result;
       } finally {
         MutationInterceptor.clearContext();
@@ -249,6 +264,7 @@ export const ActorEngine = {
   /**
    * Delete embedded documents while preserving the ActorEngine lifecycle.
    * PHASE 3: Only legal way to delete embedded documents.
+   * PHASE 3.1: Enforces prerequisite integrity after mutation.
    */
   async deleteEmbeddedDocuments(actor, embeddedName, ids, options = {}) {
     try {
@@ -265,6 +281,12 @@ export const ActorEngine = {
       try {
         const result = await actor.deleteEmbeddedDocuments(embeddedName, ids, options);
         await this.recalcAll(actor);
+
+        // PHASE 3.1: Enforce prerequisite integrity
+        if (embeddedName === 'Item') {
+          await PrerequisiteIntegrityChecker.evaluate(actor);
+        }
+
         return result;
       } finally {
         MutationInterceptor.clearContext();
