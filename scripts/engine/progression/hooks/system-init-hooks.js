@@ -16,6 +16,7 @@ import { SkillRegistry } from "/systems/foundryvtt-swse/scripts/engine/progressi
 import { SkillNormalizer } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-normalizer.js";
 import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-registry.js";
 import { FeatNormalizer } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-normalizer.js";
+import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
 import { Sentinel } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 
 // SSOT Data Layer (now includes talent tree normalization)
@@ -68,6 +69,9 @@ export const SystemInitHooks = {
 
             // Step 3b: Build feat registry
             await this._buildFeatRegistry();
+
+            // Step 3c: Build classes registry
+            await this._buildClassesRegistry();
 
             // Step 4: Normalize actor progression states
             await this._normalizeActorProgression();
@@ -200,13 +204,12 @@ export const SystemInitHooks = {
      */
     async _normalizeClasses() {
         try {
-            const classPack = game.packs.get('foundryvtt-swse.classes');
-            if (!classPack) {
-                SWSELogger.warn('Classes compendium not found');
+            if (!ClassesRegistry.isBuilt) {
+                SWSELogger.warn('ClassesRegistry not built');
                 return;
             }
 
-            const classes = await classPack.getDocuments();
+            const classes = ClassesRegistry.getAll();
             let count = 0;
 
             for (const classDoc of classes) {
@@ -415,6 +418,27 @@ export const SystemInitHooks = {
 
         } catch (err) {
             SWSELogger.error('Failed to build feat registry:', err);
+        }
+    },
+
+    /**
+     * Step 3c: Build classes registry
+     * @private
+     */
+    async _buildClassesRegistry() {
+        try {
+            SWSELogger.log('Building classes registry...');
+
+            const success = await ClassesRegistry.build();
+            if (!success) {
+                SWSELogger.warn('ClassesRegistry.build() returned false');
+                return;
+            }
+
+            SWSELogger.log(`Built classes registry with ${ClassesRegistry.count()} classes`);
+
+        } catch (err) {
+            SWSELogger.error('Failed to build classes registry:', err);
         }
     },
 

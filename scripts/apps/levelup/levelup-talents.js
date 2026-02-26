@@ -8,6 +8,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
 import { warnGM } from "/systems/foundryvtt-swse/scripts/utils/warn-gm.js";
 import { TalentTreeVisualizer } from "/systems/foundryvtt-swse/scripts/apps/talent-tree-visualizer.js";
 import { getClassLevel, getCharacterClasses } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js";
@@ -120,13 +121,11 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
     // Talent trees from any class the character has levels in
     SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Multiclass mode - collecting trees from all character classes`);
     const characterClasses = getCharacterClasses(actor);
-    const classPack = game.packs.get('foundryvtt-swse.classes');
     SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Character has classes:`, Object.keys(characterClasses));
 
     for (const className of Object.keys(characterClasses)) {
-      const classDoc = await classPack.index.find(c => c.name === className);
-      if (classDoc) {
-        const fullClass = await classPack.getDocument(classDoc._id);
+      const fullClass = ClassesRegistry.getByName(className);
+      if (fullClass) {
         const trees = getTalentTrees(fullClass);
         SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Class "${className}" - trees: ${trees?.length || 0}`);
         if (trees && trees.length > 0) {

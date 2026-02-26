@@ -14,6 +14,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
 
 export class EquipmentEngine {
 
@@ -26,16 +27,12 @@ export class EquipmentEngine {
 
         // Get class starting credits
         if (className) {
-            const classPack = game.packs.get('foundryvtt-swse.classes');
-            if (classPack) {
-                const classIndex = classPack.index.find(c => c.name === className);
-                if (classIndex) {
-                    const classDoc = await classPack.getDocument(classIndex._id);
-                    // NOTE: Compendium may use camelCase 'startingCredits' or snake_case 'starting_credits'
-                    const classCredits = classDoc?.system?.startingCredits || classDoc?.system?.starting_credits;
-                    if (classCredits) {
-                        credits += classCredits;
-                    }
+            const classDoc = ClassesRegistry.getByName(className);
+            if (classDoc) {
+                // NOTE: Compendium may use camelCase 'startingCredits' or snake_case 'starting_credits'
+                const classCredits = classDoc?.system?.startingCredits || classDoc?.system?.starting_credits;
+                if (classCredits) {
+                    credits += classCredits;
                 }
             }
         }
@@ -88,13 +85,7 @@ export class EquipmentEngine {
      * Get starting equipment from class
      */
     static async getClassStartingEquipment(className) {
-        const classPack = game.packs.get('foundryvtt-swse.classes');
-        if (!classPack) {return [];}
-
-        const classIndex = classPack.index.find(c => c.name === className);
-        if (!classIndex) {return [];}
-
-        const classDoc = await classPack.getDocument(classIndex._id);
+        const classDoc = ClassesRegistry.getByName(className);
         if (!classDoc) {return [];}
 
         return classDoc.system?.startingEquipment || [];

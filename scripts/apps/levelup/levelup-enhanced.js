@@ -8,6 +8,7 @@ import { SkillRegistry } from "/systems/foundryvtt-swse/scripts/engine/progressi
 import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-registry-ui.js";
 import { TalentRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/talent-registry-ui.js";
 import { ForceRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/force/force-registry-ui.js";
+import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
 import { isEpicOverrideEnabled } from "/systems/foundryvtt-swse/scripts/settings/epic-override.js";
 import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { qs, qsa } from "/systems/foundryvtt-swse/scripts/utils/dom-utils.js";
@@ -276,13 +277,12 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
    */
   async _getAvailableClasses() {
     try {
-      const pack = game.packs.get('foundryvtt-swse.classes');
-      if (!pack) {
-        SWSELogger.warn('Classes compendium not found');
+      if (!ClassesRegistry.isBuilt) {
+        SWSELogger.warn('ClassesRegistry not built');
         return [];
       }
 
-      const docs = await pack.getDocuments();
+      const docs = ClassesRegistry.getAll();
       return docs.map(c => ({
         name: c.name,
         img: c.img || null,

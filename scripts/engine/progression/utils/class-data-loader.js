@@ -15,6 +15,7 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeClass } from "/systems/foundryvtt-swse/scripts/data/class-normalizer.js";
 import { adaptClassForLoaderCompatibility } from "/systems/foundryvtt-swse/scripts/data/adapters/ClassModelAdapters.js";
+import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
 
 /**
  * Cache for loaded class data
@@ -63,32 +64,28 @@ async function _loadFromCompendium() {
   const errors = [];
 
   try {
-    swseLogger.log('[CLASS-DATA-LOADER] _loadFromCompendium: Attempting to load from compendium...');
-    swseLogger.log('[CLASS-DATA-LOADER] Available packs:', game.packs ? game.packs.size : 'PACKS NOT AVAILABLE');
+    swseLogger.log('[CLASS-DATA-LOADER] _loadFromCompendium: Attempting to load from registry...');
 
-    const pack = game.packs.get('foundryvtt-swse.classes');
-    swseLogger.log(`[CLASS-DATA-LOADER] _loadFromCompendium: Pack lookup result:`, pack ? 'FOUND' : 'NOT FOUND');
-
-    if (!pack) {
-      const errorMsg = 'Class Data Loader: foundryvtt-swse.classes compendium not found!';
+    // Check if registry is built
+    if (!ClassesRegistry.isBuilt) {
+      const errorMsg = 'Class Data Loader: ClassesRegistry not initialized!';
       swseLogger.error(`[CLASS-DATA-LOADER] ERROR: ${errorMsg}`);
-      swseLogger.error('[CLASS-DATA-LOADER] Available packs:', Array.from(game.packs.keys()));
-      ui.notifications?.error(`${errorMsg} Character progression features will not work correctly. Please ensure the SWSE system is properly installed.`, { permanent: true });
+      ui.notifications?.error(`${errorMsg} Character progression features will not work correctly.`, { permanent: true });
       return cache;
     }
 
-    swseLogger.log('[CLASS-DATA-LOADER] _loadFromCompendium: Fetching documents from pack...');
-    const docs = await pack.getDocuments();
+    swseLogger.log('[CLASS-DATA-LOADER] _loadFromCompendium: Fetching documents from registry...');
+    const docs = ClassesRegistry.getAll();
     swseLogger.log(`[CLASS-DATA-LOADER] _loadFromCompendium: Retrieved ${docs ? docs.length : 'null/undefined'} documents`);
 
     if (!docs || docs.length === 0) {
-      const errorMsg = 'Class Data Loader: Classes compendium is empty!';
+      const errorMsg = 'Class Data Loader: Classes registry is empty!';
       swseLogger.error(`[CLASS-DATA-LOADER] ERROR: ${errorMsg}`);
       ui.notifications?.error(`${errorMsg} No classes available for character creation.`, { permanent: true });
       return cache;
     }
 
-    swseLogger.log(`[CLASS-DATA-LOADER] _loadFromCompendium: Loaded ${docs.length} raw documents from compendium`);
+    swseLogger.log(`[CLASS-DATA-LOADER] _loadFromCompendium: Loaded ${docs.length} raw documents from registry`);
     swseLogger.log('[CLASS-DATA-LOADER] _loadFromCompendium: Class names:', docs.map(d => d.name));
 
     for (const doc of docs) {

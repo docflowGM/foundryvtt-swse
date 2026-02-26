@@ -8,6 +8,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 import { getCache } from "/systems/foundryvtt-swse/scripts/core/cache-manager.js";
 import { timed } from "/systems/foundryvtt-swse/scripts/utils/performance-utils.js";
+import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
 
 export class DataPreloader {
   constructor() {
@@ -140,6 +141,16 @@ export class DataPreloader {
    * @private
    */
   async _preloadClasses() {
+    // Use ClassesRegistry if available, otherwise fallback to pack
+    if (ClassesRegistry.isBuilt) {
+      const documents = ClassesRegistry.getAll();
+      this._classesCache.set('_index', new Map(documents.map(d => [d.id, d])));
+      for (const doc of documents) {
+        this._classesCache.set(doc.id, doc);
+      }
+      return;
+    }
+
     const pack = game.packs.get('foundryvtt-swse.classes');
     if (!pack) {return;}
 

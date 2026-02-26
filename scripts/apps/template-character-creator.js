@@ -10,6 +10,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { resolveSkillKey, resolveSkillName } from "/systems/foundryvtt-swse/scripts/utils/skill-resolver.js";
 import CharacterTemplates from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-templates.js";
+import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
 
 
 const TEMPLATE_PATH = 'systems/foundryvtt-swse/templates/apps/template-creator.hbs';
@@ -779,37 +780,30 @@ async _prepareContext(options) {
    */
   async _applyClass(actor, template) {
     try {
-      const classPack = game.packs.get('foundryvtt-swse.classes');
-      if (!classPack) {return;}
-
       const classRef = template.classRef || null;
       const className = classRef ? (classRef.displayName || classRef.name) : template.className;
       const classPackName = classRef?.pack || 'foundryvtt-swse.classes';
       const classId = classRef?.id || null;
 
+      let classItem = null;
+
+      // Try to get by ID if provided (supports custom packs)
       if (classId) {
         const pack = game.packs.get(classPackName);
         if (pack) {
-          const classItem = await pack.getDocument(classId);
-          if (classItem) {
-            const classData = classItem.toObject();
-            classData.system.level = template.level || 1;
-            await ActorEngine.createEmbeddedDocuments(actor, 'Item', [classData]);
-            SWSELogger.log(`SWSE | Added class: ${className}`);
-            return;
-          }
+          classItem = await pack.getDocument(classId);
         }
       }
 
-      const index = await classPack.getIndex();
-      const classEntry = index.find(c => c.name === className);
+      // Fallback: get by name from registry (standard pack only)
+      if (!classItem && classPackName === 'foundryvtt-swse.classes') {
+        classItem = ClassesRegistry.getByName(className);
+      }
 
-      if (!classEntry) {
+      if (!classItem) {
         SWSELogger.warn(`SWSE | Class not found: ${template.className}`);
         return;
       }
-
-      const classItem = await classPack.getDocument(classEntry._id);
       const classData = classItem.toObject();
       classData.system.level = template.level || 1;
 

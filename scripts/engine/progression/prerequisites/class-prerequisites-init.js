@@ -18,6 +18,7 @@
 
 import { normalizeAndCacheAll } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prerequisites-cache.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
 
 /**
  * Initialize class prerequisites cache.
@@ -29,16 +30,15 @@ export async function initializeClassPrerequisitesCache() {
     try {
         SWSELogger.log('[ClassPrereqInit] Initializing class prerequisites cache...');
 
-        // Get classes compendium
-        const classPack = game.packs.get('foundryvtt-swse.classes');
-        if (!classPack) {
-            SWSELogger.warn('[ClassPrereqInit] Classes compendium not found. Cache not initialized.');
-            return { success: false, error: 'Classes compendium not found' };
+        // Get classes from registry
+        if (!ClassesRegistry.isBuilt) {
+            SWSELogger.warn('[ClassPrereqInit] ClassesRegistry not built. Cache not initialized.');
+            return { success: false, error: 'ClassesRegistry not built' };
         }
 
         // Load all class documents
-        SWSELogger.log('[ClassPrereqInit] Loading class documents from compendium...');
-        const classDocuments = await classPack.getDocuments();
+        SWSELogger.log('[ClassPrereqInit] Loading class documents from registry...');
+        const classDocuments = ClassesRegistry.getAll();
         SWSELogger.log(`[ClassPrereqInit] Loaded ${classDocuments.length} class documents`);
 
         // Normalize and cache
