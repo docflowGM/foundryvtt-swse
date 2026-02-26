@@ -1,7 +1,7 @@
 import { DefenseSystem } from '../engine/DefenseSystem.js';
-import { SWSELogger } from '../utils/logger.js';
-import { SWSEActorDataModel } from './actor-data-model.js';
-import { warnIfMixedTracks } from '../utils/hardening.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSEActorDataModel } from "/systems/foundryvtt-swse/scripts/data-models/actor-data-model.js";
+import { warnIfMixedTracks } from "/systems/foundryvtt-swse/scripts/utils/hardening.js";
 
 export class SWSECharacterDataModel extends SWSEActorDataModel {
 

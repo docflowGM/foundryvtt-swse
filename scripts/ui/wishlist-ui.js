@@ -3,8 +3,8 @@
  * Handles UI interactions for the wishlist system
  */
 
-import { SWSELogger } from '../utils/logger.js';
-import { WishlistEngine } from '../engines/suggestion/WishlistEngine.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { WishlistEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/WishlistEngine.js";
 
 export class WishlistUI {
   /**

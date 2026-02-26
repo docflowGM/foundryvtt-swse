@@ -2,7 +2,7 @@
  * force-technique-picker.js
  * Force Technique picker UI using FormApplication + HBS template.
  */
-import SWSEFormApplicationV2 from '../../apps/base/swse-form-application-v2.js';
+import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
 
 export class ForceTechniquePicker extends SWSEFormApplicationV2 {
   /**

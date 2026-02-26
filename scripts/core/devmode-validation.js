@@ -4,7 +4,7 @@
  * Only active when Dev Mode is enabled
  */
 
-import { SWSELogger, swseLogger } from '../utils/logger.js';
+import { SWSELogger, swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class DevModeValidator {
   constructor() {

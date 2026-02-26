@@ -1,7 +1,7 @@
 /**
  * Keybindings for SWSE
  */
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export function registerKeybindings() {
   SWSELogger.log('SWSE | Registering keybindings...');

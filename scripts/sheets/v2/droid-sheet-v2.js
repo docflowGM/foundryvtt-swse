@@ -8,7 +8,7 @@
  * - Derived recalculation handled by engine
  */
 
-import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class DroidSheetV2 extends ActorSheet {
   static get defaultOptions() {

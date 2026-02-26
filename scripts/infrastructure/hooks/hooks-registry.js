@@ -25,7 +25,7 @@
  * SWSEHooks.listAll();
  */
 
-import { swseLogger } from '../../utils/logger.js';
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class HooksRegistry {
     static #registered = new Map();

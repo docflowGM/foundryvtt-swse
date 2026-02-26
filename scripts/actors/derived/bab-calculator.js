@@ -27,7 +27,7 @@
  * - Heroic and nonheroic BAB stack: total BAB = heroic BAB + nonheroic BAB
  */
 
-import { swseLogger } from '../../utils/logger.js';
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 // SWSE Nonheroic BAB Progression (per nonheroic class level)
 const NONHEROIC_BAB_PROGRESSION = [
@@ -75,7 +75,7 @@ export class BABCalculator {
     }
 
     // Lazy-load only when calculating, not at boot time
-    const { getClassData } = await import('../../engines/progression/utils/class-data-loader.js');
+    const { getClassData } = await import('../../engine/progression/utils/class-data-loader.js');
 
     let totalBAB = 0;
 

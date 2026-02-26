@@ -7,8 +7,8 @@
  * Do NOT use for ID repair (IDs must be added to compendiums directly).
  */
 
-import { SWSELogger } from '../../utils/logger.js';
-import { createActor, createItem } from '../../core/document-api-v13.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { createActor, createItem } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 
 /**
  * Scan all store items and actors for missing IDs

@@ -17,7 +17,7 @@
  * - Migration files
  */
 
-import { Sentinel } from '../sentinel-core.js';
+import { Sentinel } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 
 export const UtilityLayer = {
   /**
@@ -130,8 +130,8 @@ export const UtilityLayer = {
   _isPermittedFile(filePath) {
     const permitted = [
       'governance/actor-engine/actor-engine.js',
-      'engines/combat/damage-engine.js',
-      'engines/combat/threshold-engine.js',
+      'engine/combat/damage-engine.js',
+      'engine/combat/threshold-engine.js',
       'scripts/migrations/',
       'governance/sentinel/'
     ];

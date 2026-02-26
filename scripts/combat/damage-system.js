@@ -1,6 +1,6 @@
-import { swseLogger } from '../utils/logger.js';
-import { escapeHTML } from '../utils/security-utils.js';
-import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { escapeHTML } from "/systems/foundryvtt-swse/scripts/utils/security-utils.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * SWSE Damage System (v13+)

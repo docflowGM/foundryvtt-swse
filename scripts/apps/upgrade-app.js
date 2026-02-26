@@ -7,11 +7,11 @@
  * - Actor credits updates route through ActorEngine
  */
 
-import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
-import { GearTemplatesEngine } from './gear-templates-engine.js';
-import { UpgradeRulesEngine } from './upgrade-rules-engine.js';
-import { mergeMutationPlans } from '../governance/mutation/merge-mutations.js';
-import { LedgerService } from '../engines/store/ledger-service.js';
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { GearTemplatesEngine } from "/systems/foundryvtt-swse/scripts/apps/gear-templates-engine.js";
+import { UpgradeRulesEngine } from "/systems/foundryvtt-swse/scripts/apps/upgrade-rules-engine.js";
+import { mergeMutationPlans } from "/systems/foundryvtt-swse/scripts/governance/mutation/merge-mutations.js";
+import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 

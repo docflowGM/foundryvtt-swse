@@ -104,7 +104,7 @@ import { MutationInterceptor } from './scripts/governance/mutation/MutationInter
 import { Batch1Validation } from './scripts/governance/mutation/batch-1-validation.js';
 
 // ---- combat tests (PHASE 3) ----
-import { DamageEngineTest } from './scripts/engines/combat/damage-engine-test.js';
+import { DamageEngineTest } from './scripts/engine/combat/damage-engine-test.js';
 import { Batch2ComprehensiveTest } from './tests/archived/batch-2-comprehensive-test.js';
 
 // ---- sheets ----
@@ -121,9 +121,9 @@ import { preloadHandlebarsTemplates, assertPartialsResolved } from './scripts/co
 
 // ---- engines ----
 import { RulesEngine } from './scripts/rules/rules-engine.js';
-import { TalentEffectEngine } from './scripts/engines/talent/talent-effect-engine.js';
-import TalentActionLinker from './scripts/engines/talent/talent-action-linker.js';
-import { SWSELanguageModule } from './scripts/engines/progression/modules/language-module.js';
+import { TalentEffectEngine } from './scripts/engine/talent/talent-effect-engine.js';
+import TalentActionLinker from './scripts/engine/talent/talent-action-linker.js';
+import { SWSELanguageModule } from './scripts/engine/progression/modules/language-module.js';
 
 // ---- hooks ----
 import { registerInitHooks, registerDestinyHooks } from './scripts/infrastructure/hooks/index.js';
@@ -134,19 +134,19 @@ import { registerKeybindings } from './scripts/core/keybindings.js';
 // ---- UI systems (registered in init, initialized in ready) ----
 import { initializeSceneControls } from './scripts/scene-controls/init.js';
 import { initializeActionPalette } from './scripts/ui/action-palette/init.js';
-import { initializeGMSuggestions } from './scripts/engines/suggestion/gm/init.js';
+import { initializeGMSuggestions } from './scripts/engine/suggestion/gm/init.js';
 import { MentorTranslationSettings } from './scripts/mentor/mentor-translation-settings.js';
 
 // ---- suggestions / discovery ----
-import { SuggestionService } from './scripts/engines/suggestion/SuggestionService.js';
+import { SuggestionService } from './scripts/engine/suggestion/SuggestionService.js';
 import { registerSuggestionHooks } from './scripts/infrastructure/hooks/suggestion-hooks.js';
-import { registerCombatSuggestionHooks, requestCombatEvaluation } from './scripts/engines/suggestion/equipment/combat-hooks.js';
-import { CombatSuggestionEngine } from './scripts/engines/suggestion/equipment/combat-engine.js';
-import { testHarness } from './scripts/engines/suggestion/equipment/test-harness.js';
+import { registerCombatSuggestionHooks, requestCombatEvaluation } from './scripts/engine/suggestion/equipment/combat-hooks.js';
+import { CombatSuggestionEngine } from './scripts/engine/suggestion/equipment/combat-engine.js';
+import { testHarness } from './scripts/engine/suggestion/equipment/test-harness.js';
 import { initializeDiscoverySystem, onDiscoveryReady } from './scripts/ui/discovery/index.js';
 
 // ---- misc ----
-import { SystemInitHooks } from './scripts/engines/progression/hooks/system-init-hooks.js';
+import { SystemInitHooks } from './scripts/engine/progression/hooks/system-init-hooks.js';
 import { Upkeep } from './scripts/automation/upkeep.js';
 
 // ---- Phase 5: Observability, Testing, Forward Compatibility ----

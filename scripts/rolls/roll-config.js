@@ -4,9 +4,9 @@
  * @module rolls/roll-config
  */
 
-import { createChatMessage } from '../core/document-api-v13.js';
-import { SWSELogger } from '../utils/logger.js';
-import { RollEngine } from '../engine/roll-engine.js';
+import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 
 /* ============================================================================
    ROLL HOOKS SYSTEM

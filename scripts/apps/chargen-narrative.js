@@ -1,11 +1,11 @@
 // ============================================
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 // SWSE Character Generator - NARRATIVE ENHANCED
 // Personalized responses by Ol' Salty the Space Pirate
 // Talent tree visualization
 // ============================================
 
-import CharacterGeneratorImproved from './chargen-improved.js';
+import CharacterGeneratorImproved from "/systems/foundryvtt-swse/scripts/apps/chargen-improved.js";
 import {
   guardOnRender,
   logChargenRender,
@@ -14,14 +14,14 @@ import {
   guardActorAccess,
   trackAsyncPhase,
   logContextKey
-} from '../debug/appv2-probe.js';
-import { MENTORS } from '../engines/mentor/mentor-dialogues.js';
-import { MentorResolver } from '../engines/mentor/mentor-resolver.js';
-import { TalentTreeVisualizer } from './talent-tree-visualizer.js';
-import { getTalentTreeName } from './chargen/chargen-property-accessor.js';
-import { normalizeTalentData } from '../engines/progression/utils/item-normalizer.js';
-import { TalentDB } from '../data/talent-db.js';
-import { TalentTreeDB } from '../data/talent-tree-db.js';
+} from "/systems/foundryvtt-swse/scripts/debug/appv2-probe.js';
+import { MENTORS } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
+import { MentorResolver } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-resolver.js";
+import { TalentTreeVisualizer } from "/systems/foundryvtt-swse/scripts/apps/talent-tree-visualizer.js";
+import { getTalentTreeName } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
+import { normalizeTalentData } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/item-normalizer.js";
+import { TalentDB } from "/systems/foundryvtt-swse/scripts/data/talent-db.js";
+import { TalentTreeDB } from "/systems/foundryvtt-swse/scripts/data/talent-tree-db.js";
 
 export default class CharacterGeneratorNarrative extends CharacterGeneratorImproved {
 

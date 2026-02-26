@@ -1,5 +1,5 @@
-import SWSEFormApplicationV2 from "../base/swse-form-application-v2.js";
-import { CombatEngine } from "../../engines/combat/CombatEngine.js";
+import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
+import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
 
 export class CombatRollConfigDialog extends SWSEFormApplicationV2 {
 

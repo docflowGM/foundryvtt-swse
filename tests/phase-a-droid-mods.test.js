@@ -13,8 +13,8 @@
 
 import { TestUtils } from './test-utils.js';
 import { DroidModValidator } from '../scripts/engine/droid-mod-validator.js';
-import { ModifierEngine } from '../scripts/engines/effects/modifiers/ModifierEngine.js';
-import { ModifierTypes } from '../scripts/engines/effects/modifiers/ModifierTypes.js';
+import { ModifierEngine } from '../scripts/engine/effects/modifiers/ModifierEngine.js';
+import { ModifierTypes } from '../scripts/engine/effects/modifiers/ModifierTypes.js';
 import {
   DROID_MODIFICATION_EXAMPLES,
   DROID_HARDPOINT_ALLOCATION,

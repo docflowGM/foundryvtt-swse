@@ -8,7 +8,7 @@
  * - GM-safe action marking
  */
 
-import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class SWSECombatant extends Combatant {
 

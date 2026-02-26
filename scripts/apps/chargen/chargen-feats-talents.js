@@ -2,16 +2,16 @@
 // Feat and talent selection for CharGen
 // ============================================
 
-import { SWSELogger } from '../../utils/logger.js';
-import { getTalentTrees, getTalentTreeName } from './chargen-property-accessor.js';
-import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
-import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
-import { ClassesDB } from '../../data/classes-db.js';
-import { SuggestionService } from '../../engines/suggestion/SuggestionService.js';
-import { BuildIntent } from '../../engines/suggestion/BuildIntent.js';
-import { MentorSurvey } from '../../mentor/mentor-survey.js';
-import { _findTalentItem } from './chargen-shared.js';
-import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { getTalentTrees, getTalentTreeName } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
+import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { HouseRuleTalentCombination } from "/systems/foundryvtt-swse/scripts/houserules/houserule-talent-combination.js";
+import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
+import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
+import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
+import { MentorSurvey } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey.js";
+import { _findTalentItem } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * Calculate feat/talent suggestions during chargen

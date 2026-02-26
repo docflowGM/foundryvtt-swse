@@ -2,9 +2,9 @@
 // Droid-specific logic for CharGen
 // ============================================
 
-import { SWSELogger } from '../../utils/logger.js';
-import { DROID_SYSTEMS } from '../../data/droid-systems.js';
-import { escapeHtml } from '../../utils/string-utils.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { DROID_SYSTEMS } from "/systems/foundryvtt-swse/scripts/data/droid-systems.js";
+import { escapeHtml } from "/systems/foundryvtt-swse/scripts/utils/string-utils.js";
 
 /**
  * Handle type selection (living vs droid)

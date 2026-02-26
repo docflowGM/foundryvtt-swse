@@ -3,8 +3,8 @@
  * Creates and manages the radial menu application instance
  */
 
-import { ActionPaletteApp } from './action-palette.js';
-import { safeRender } from '../../utils/render-guard.js';
+import { ActionPaletteApp } from "/systems/foundryvtt-swse/scripts/ui/action-palette/action-palette.js";
+import { safeRender } from "/systems/foundryvtt-swse/scripts/utils/render-guard.js";
 
 let actionPaletteApp = null;
 

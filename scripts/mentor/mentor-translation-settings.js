@@ -3,7 +3,7 @@
  * Provides player-facing settings to enable/disable Aurebesh translation
  */
 
-import { MentorTranslationIntegration } from './mentor-translation-integration.js';
+import { MentorTranslationIntegration } from "/systems/foundryvtt-swse/scripts/mentor/mentor-translation-integration.js";
 
 export class MentorTranslationSettings {
   /**

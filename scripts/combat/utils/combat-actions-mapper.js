@@ -11,8 +11,8 @@
  *  - Middleware extension hooks
  */
 
-import { SWSELogger } from '../../utils/logger.js';
-import TalentActionLinker from '../../engines/talent/talent-action-linker.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import TalentActionLinker from "/systems/foundryvtt-swse/scripts/engine/talent/talent-action-linker.js";
 
 export class CombatActionsMapper {
 

@@ -1,5 +1,5 @@
-import { SWSELogger } from '../../utils/logger.js';
-import { parseVehicleSpeedText, formatSquares } from '../../utils/movement-normalizer.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { parseVehicleSpeedText, formatSquares } from "/systems/foundryvtt-swse/scripts/utils/movement-normalizer.js";
 
 /**
  * Vehicle-specific functionality

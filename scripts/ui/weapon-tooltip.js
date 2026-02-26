@@ -11,7 +11,7 @@
  */
 
 import { SWSELogger as swseLogger } from '../../utils/logger.js';
-import WeaponsEngine from '../engines/combat/weapons-engine.js';
+import WeaponsEngine from "/systems/foundryvtt-swse/scripts/engine/combat/weapons-engine.js";
 
 export class WeaponTooltip {
   /**

@@ -22,13 +22,13 @@
  * - Pure input → output transformer
  */
 
-import { HPCalculator } from './hp-calculator.js';
-import { BABCalculator } from './bab-calculator.js';
-import { DefenseCalculator } from './defense-calculator.js';
-import { ModifierEngine } from '../../engines/effects/modifiers/ModifierEngine.js';
-import { swseLogger } from '../../utils/logger.js';
-import { MutationIntegrityLayer } from '../../governance/sentinel/mutation-integrity-layer.js';
-import { getLevelSplit } from './level-split.js';
+import { HPCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/hp-calculator.js";
+import { BABCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/bab-calculator.js";
+import { DefenseCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/defense-calculator.js";
+import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { MutationIntegrityLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/mutation-integrity-layer.js";
+import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 
 export class DerivedCalculator {
   /**
@@ -276,37 +276,62 @@ export class DerivedCalculator {
         };
       }
 
+      
       // ========================================
-      // Damage Threshold (Phase 5: moved from DataModel._applyEnhancedDamageThreshold)
+      // Damage Threshold (Hardened Safe Setting Access)
       // ========================================
       try {
-        const enableEnhanced = game.settings?.get('foundryvtt-swse', 'enableEnhancedMassiveDamage');
-        const modifyFormula = game.settings?.get('foundryvtt-swse', 'modifyDamageThresholdFormula');
 
-        let damageThreshold = (updates['system.derived.defenses']?.fortitude?.total) ?? 10;
+        const safeGet = (key, fallback) =>
+          game.settings.settings.has(`foundryvtt-swse.${key}`)
+            ? game.settings.get('foundryvtt-swse', key)
+            : fallback;
+
+        const enableEnhanced = safeGet('enableEnhancedMassiveDamage', false);
+        const modifyFormula = safeGet('modifyDamageThresholdFormula', false);
+
+        let damageThreshold =
+          (updates['system.derived.defenses']?.fortitude?.total) ?? 10;
 
         if (enableEnhanced && modifyFormula) {
-          const formulaType = game.settings?.get('foundryvtt-swse', 'damageThresholdFormulaType') ?? 'fullLevel';
-          const computedHeroicLevel = heroicLevel || actor.system.level || 1;  // Use computed value or fallback
+
+          const formulaType =
+            safeGet('damageThresholdFormulaType', 'fullLevel');
+
+          const computedHeroicLevel =
+            heroicLevel || actor.system.level || 1;
+
           const sizeModifiers = {
-            'fine': -10, 'diminutive': -5, 'tiny': -2, 'small': -1,
-            'medium': 0, 'large': 1, 'huge': 2, 'gargantuan': 5, 'colossal': 10
+            fine: -10, diminutive: -5, tiny: -2, small: -1,
+            medium: 0, large: 1, huge: 2, gargantuan: 5, colossal: 10
           };
+
           const actorSize = (actor.size || 'medium').toLowerCase();
           const sizeMod = sizeModifiers[actorSize] ?? 0;
 
           if (formulaType === 'halfLevel') {
-            damageThreshold = damageThreshold + Math.floor(computedHeroicLevel / 2) + sizeMod;
+            damageThreshold =
+              damageThreshold +
+              Math.floor(computedHeroicLevel / 2) +
+              sizeMod;
           } else {
-            damageThreshold = damageThreshold + computedHeroicLevel + sizeMod;
+            damageThreshold =
+              damageThreshold +
+              computedHeroicLevel +
+              sizeMod;
           }
         }
 
         updates['system.derived.damageThreshold'] = damageThreshold;
+
       } catch (err) {
-        swseLogger.error('DerivedCalculator: Error computing damage threshold', err);
+        swseLogger.error(
+          'DerivedCalculator: Error computing damage threshold',
+          err
+        );
         updates['system.derived.damageThreshold'] = 10;
       }
+
 
       // ========================================
       // Store modifier breakdown for UI

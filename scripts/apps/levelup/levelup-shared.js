@@ -3,9 +3,9 @@
  * Contains helper functions and constants used across multiple level-up modules
  */
 
-import { SWSELogger } from '../../utils/logger.js';
-import { getClassProperty } from '../chargen/chargen-property-accessor.js';
-import { HPGeneratorEngine } from '../../engines/HP/HPGeneratorEngine.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { getClassProperty } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
+import { HPGeneratorEngine } from "/systems/foundryvtt-swse/scripts/engine/HP/HPGeneratorEngine.js";
 
 /**
  * List of base classes in SWSE (legacy - should use isBaseClass with class docs instead)
@@ -86,7 +86,7 @@ export function getCharacterClasses(actor) {
  */
 export async function getClassDefenseBonuses(className) {
   // Try to load from compendium first
-  const { getClassData } = await import('../../engines/progression/utils/class-data-loader.js');
+  const { getClassData } = await import('../../engine/progression/utils/class-data-loader.js');
   const classData = await getClassData(className);
 
   if (classData && classData.defenses) {

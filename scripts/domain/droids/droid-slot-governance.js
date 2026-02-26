@@ -20,8 +20,8 @@
  * - Consumable: enhancement, upgrade (temporary effects)
  */
 
-import { DROID_SYSTEM_DEFINITIONS, getDroidSystemDefinition } from './droid-system-definitions.js';
-import { swseLogger } from '../../utils/logger.js';
+import { DROID_SYSTEM_DEFINITIONS, getDroidSystemDefinition } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-system-definitions.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class DroidSlotGovernanceEngine {
   // Slot categories

@@ -3,9 +3,9 @@
  * Registers Dark Side Devotee talent mechanics and macros with the system
  */
 
-import DarkSideDevoteeMechanics from '../engines/talent/dark-side-devotee-mechanics.js';
-import DarkSideDevoteeMacros from './dark-side-devotee-macros.js';
-import { SWSELogger } from '../utils/logger.js';
+import DarkSideDevoteeMechanics from "/systems/foundryvtt-swse/scripts/engine/talent/dark-side-devotee-mechanics.js";
+import DarkSideDevoteeMacros from "/systems/foundryvtt-swse/scripts/talents/dark-side-devotee-macros.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * Initialize Dark Side Devotee talent systems when the world loads

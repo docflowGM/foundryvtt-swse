@@ -3,8 +3,8 @@
  * Foundry v13 native - registers all SWSE scene controls
  */
 
-import { sceneControlRegistry } from './api.js';
-import { getCurrentPhase, SWSE_PHASES } from '../state/phase.js';
+import { sceneControlRegistry } from "/systems/foundryvtt-swse/scripts/scene-controls/api.js";
+import { getCurrentPhase, SWSE_PHASES } from "/systems/foundryvtt-swse/scripts/state/phase.js";
 
 /**
  * Initialize SWSE scene controls

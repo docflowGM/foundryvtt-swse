@@ -6,7 +6,7 @@
  * that may have properties with either snake_case or camelCase naming.
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * Property name mappings for compendium data

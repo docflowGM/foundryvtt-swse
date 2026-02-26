@@ -4,7 +4,7 @@
  * Supports click-to-reveal (skip animation), multiple presets, accessibility
  */
 
-import { TRANSLATION_PRESETS } from './translation-presets.js';
+import { TRANSLATION_PRESETS } from "/systems/foundryvtt-swse/scripts/ui/dialogue/translation-presets.js";
 
 export class AurebeshTranslator {
   /**

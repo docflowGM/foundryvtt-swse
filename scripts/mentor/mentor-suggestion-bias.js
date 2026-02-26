@@ -6,8 +6,8 @@
  * All effects are soft (multipliers, never hard locks).
  */
 
-import { getMentorMemory } from '../engines/mentor/mentor-memory.js';
-import { getArchetype, getArchetypeRoleBias } from './mentor-archetype-paths.js';
+import { getMentorMemory } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-memory.js";
+import { getArchetype, getArchetypeRoleBias } from "/systems/foundryvtt-swse/scripts/mentor/mentor-archetype-paths.js";
 import { calculateDspSaturation, getDarkSideBiasMultiplier } from '../engine/dsp-saturation.js';
 
 /**

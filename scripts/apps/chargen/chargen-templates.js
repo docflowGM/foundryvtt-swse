@@ -1,12 +1,12 @@
-import { ProgressionEngine } from '../../engines/progression/engine/progression-engine.js';
-import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
+import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 // ============================================
 // Character Generation Templates Module
 // Loads and applies pre-configured character templates
 // ============================================
 
-import { SWSELogger } from '../../utils/logger.js';
-import { BackgroundRegistry } from '../../registries/background-registry.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { BackgroundRegistry } from "/systems/foundryvtt-swse/scripts/registries/background-registry.js";
 
 export class CharacterTemplates {
   static _templates = null;

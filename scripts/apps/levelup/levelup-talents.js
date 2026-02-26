@@ -7,22 +7,22 @@
  * - Class Level Talents: 1 per odd class level (1, 3, 5, 7, etc.) - ONLY from that class's trees
  */
 
-import { SWSELogger } from '../../utils/logger.js';
-import { warnGM } from '../../utils/warn-gm.js';
-import { TalentTreeVisualizer } from '../talent-tree-visualizer.js';
-import { getClassLevel, getCharacterClasses } from './levelup-shared.js';
-import { checkTalentPrerequisites } from './levelup-validation.js';
-import { getClassProperty, getTalentTrees } from '../chargen/chargen-property-accessor.js';
-import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
-import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
-import { SuggestionService } from '../../engines/suggestion/SuggestionService.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { warnGM } from "/systems/foundryvtt-swse/scripts/utils/warn-gm.js";
+import { TalentTreeVisualizer } from "/systems/foundryvtt-swse/scripts/apps/talent-tree-visualizer.js";
+import { getClassLevel, getCharacterClasses } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js";
+import { checkTalentPrerequisites } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-validation.js";
+import { getClassProperty, getTalentTrees } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
+import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { HouseRuleTalentCombination } from "/systems/foundryvtt-swse/scripts/houserules/houserule-talent-combination.js";
+import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
 import {
   getTalentCountAtHeroicLevel,
   getTalentCountAtClassLevel,
   getTalentProgressionInfo,
   getAvailableTalentTreesForHeroicTalent,
   getAvailableTalentTreesForClassTalent
-} from './levelup-dual-talent-progression.js';
+} from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-dual-talent-progression.js";
 
 /**
  * Get the number of talents granted at this level

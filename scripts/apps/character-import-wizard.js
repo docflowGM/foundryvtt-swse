@@ -4,9 +4,9 @@
  * AppV2-based implementation
  */
 
-import { createActor, createEffectOnActor, createItemInActor } from '../core/document-api-v13.js';
-import { confirm as uiConfirm } from '../utils/ui-utils.js';
-import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
+import { createActor, createEffectOnActor, createItemInActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { confirm as uiConfirm } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class CharacterImportWizard extends foundry.applications.api.ApplicationV2 {
   static DEFAULT_OPTIONS = {

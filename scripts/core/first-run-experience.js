@@ -3,8 +3,8 @@
  * ApplicationV2-safe implementation
  */
 
-import { SWSELogger } from '../utils/logger.js';
-import { initializeTooltipDiscovery } from './tooltip-discovery.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { initializeTooltipDiscovery } from "/systems/foundryvtt-swse/scripts/core/tooltip-discovery.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const SETTING_KEY = 'welcomeShown';

@@ -1,5 +1,5 @@
-import { SWSELogger } from '../utils/logger.js';
-import SWSEFormApplicationV2 from '../apps/base/swse-form-application-v2.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
 /**
  * GM Homebrew Management
  * Central system for custom rules and options

@@ -5,7 +5,7 @@
  * Separate content for players vs GMs. Entirely skippable.
  */
 
-import { DiscoveryUserState } from './user-state.js';
+import { DiscoveryUserState } from "/systems/foundryvtt-swse/scripts/ui/discovery/user-state.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const TOUR_CLASS = 'swse-discovery-tour';

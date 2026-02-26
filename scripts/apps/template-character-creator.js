@@ -1,15 +1,15 @@
-import SWSEFormApplicationV2 from './base/swse-form-application-v2.js';
-import { ProgressionEngine } from '../engines/progression/engine/progression-engine.js';
-import { createActor } from '../core/document-api-v13.js';
-import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
+import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
+import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
+import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 // ============================================
 // Template Character Creator
 // Class-first selection with playing card UI
 // ============================================
 
-import { SWSELogger } from '../utils/logger.js';
-import { resolveSkillKey, resolveSkillName } from '../utils/skill-resolver.js';
-import CharacterTemplates from './chargen/chargen-templates.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { resolveSkillKey, resolveSkillName } from "/systems/foundryvtt-swse/scripts/utils/skill-resolver.js";
+import CharacterTemplates from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-templates.js";
 
 
 const TEMPLATE_PATH = 'systems/foundryvtt-swse/templates/apps/template-creator.hbs';

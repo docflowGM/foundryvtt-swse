@@ -1,4 +1,4 @@
-import { getEffectiveHalfLevel } from '../../actors/derived/level-split.js';
+import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 /**
  * Modern SWSE Combat Utilities (v13+)
  * - Condition Track integer-based penalties

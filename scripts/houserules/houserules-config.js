@@ -3,7 +3,7 @@
  * Main launcher UI for all houserule sub-menus.
  */
 
-import SWSEFormApplicationV2 from '../apps/base/swse-form-application-v2.js';
+import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
 import {
   CharacterCreationMenu,
   AdvancementMenu,
@@ -13,7 +13,7 @@ import {
   SpaceCombatMenu,
   PresetsMenu,
   CharacterRestrictionsMenu
-} from './houserule-menus.js';
+} from "/systems/foundryvtt-swse/scripts/houserules/houserule-menus.js';
 
 export class HouserulesConfig extends SWSEFormApplicationV2 {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(

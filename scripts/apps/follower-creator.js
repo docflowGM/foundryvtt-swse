@@ -10,10 +10,10 @@
  * but maintains follower-specific stat calculations.
  */
 
-import { swseLogger } from '../utils/logger.js';
-import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
-import { resolveSkillKey } from '../utils/skill-resolver.js';
-import { createActor } from '../core/document-api-v13.js';
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { resolveSkillKey } from "/systems/foundryvtt-swse/scripts/utils/skill-resolver.js";
+import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 
 export class FollowerCreator {
 

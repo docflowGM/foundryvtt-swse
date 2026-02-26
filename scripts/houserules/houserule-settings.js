@@ -1,5 +1,5 @@
 // scripts/houserules/register-houserule-settings.js
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * Register all houserule-related Foundry settings.

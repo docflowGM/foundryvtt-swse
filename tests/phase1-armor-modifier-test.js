@@ -10,8 +10,8 @@
  * 5. No armor - should return no modifiers
  */
 
-import { ModifierEngine } from '../scripts/engines/effects/modifiers/ModifierEngine.js';
-import { ModifierType, ModifierSource } from '../scripts/engines/effects/modifiers/ModifierTypes.js';
+import { ModifierEngine } from '../scripts/engine/effects/modifiers/ModifierEngine.js';
+import { ModifierType, ModifierSource } from '../scripts/engine/effects/modifiers/ModifierTypes.js';
 
 const TEST_RESULTS = {
   passed: 0,

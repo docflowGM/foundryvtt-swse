@@ -9,7 +9,7 @@
  * - Performance bottleneck detection
  */
 
-import { swseLogger } from '../../utils/logger.js';
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class PerformanceSovereigntyLock {
   /**

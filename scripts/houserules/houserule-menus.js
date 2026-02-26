@@ -4,7 +4,7 @@
  * Includes safety, sanitation, error handling, and maintainability improvements.
  */
 
-import SWSEFormApplicationV2 from '../apps/base/swse-form-application-v2.js';
+import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
 
 const NAMESPACE = 'foundryvtt-swse';
 

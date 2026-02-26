@@ -8,8 +8,8 @@
  * level-up operations.
  */
 
-import { SWSELogger, swseLogger } from '../utils/logger.js';
-import { SWSELevelUpEnhanced } from './swse-levelup-enhanced.js';
+import { SWSELogger, swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELevelUpEnhanced } from "/systems/foundryvtt-swse/scripts/apps/swse-levelup-enhanced.js";
 
 export class SWSELevelUp {
     /**

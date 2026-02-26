@@ -3,10 +3,10 @@
  * Provides an interactive, animated talent tree selection and visualization system
  */
 
-import { SWSELogger } from '../utils/logger.js';
-import { PrerequisiteChecker } from '../data/prerequisite-checker.js';
-import { SuggestionService } from '../engines/suggestion/SuggestionService.js';
-import { getTalentTreeName } from './chargen/chargen-property-accessor.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
+import { getTalentTreeName } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
 
 export class TalentTreeVisualizer {
 

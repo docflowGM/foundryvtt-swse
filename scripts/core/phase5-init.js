@@ -9,10 +9,10 @@
  * - Trace metrics
  */
 
-import { registerTraceMetrics } from './correlation-id.js';
-import { registerSchemaValidation } from './schema-validator.js';
-import { registerVersionAdapter, validateSystemCompatibility } from './version-adapter.js';
-import { log } from './foundry-env.js';
+import { registerTraceMetrics } from "/systems/foundryvtt-swse/scripts/core/correlation-id.js";
+import { registerSchemaValidation } from "/systems/foundryvtt-swse/scripts/core/schema-validator.js";
+import { registerVersionAdapter, validateSystemCompatibility } from "/systems/foundryvtt-swse/scripts/core/version-adapter.js";
+import { log } from "/systems/foundryvtt-swse/scripts/core/foundry-env.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 

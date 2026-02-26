@@ -15,7 +15,7 @@
  * DEV MODE ONLY — Never blocks runtime
  */
 
-import { EmbeddedMutationLayer } from '../governance/mutation/embedded-mutation-layer.js';
+import { EmbeddedMutationLayer } from "/systems/foundryvtt-swse/scripts/governance/mutation/embedded-mutation-layer.js";
 
 export class SWSESentinel {
   static initialized = false;

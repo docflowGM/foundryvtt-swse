@@ -27,8 +27,8 @@
 import {
   DeltaConflictError,
   MutationApplicationError
-} from './mutation-errors.js';
-import { swseLogger } from '../../utils/logger.js';
+} from "/systems/foundryvtt-swse/scripts/governance/mutation/mutation-errors.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * Merge multiple MutationPlans into a single atomic plan.

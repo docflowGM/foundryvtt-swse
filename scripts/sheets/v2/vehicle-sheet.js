@@ -2,21 +2,21 @@
 
 const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api;
 
-import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
-import { RenderAssertions } from '../../core/render-assertions.js';
-import { initiateItemSale } from '../../apps/item-selling-system.js';
-import { SWSELevelUp } from '../../apps/swse-levelup.js';
-import { rollAttack } from '../../combat/rolls/attacks.js';
-import { VehicleDropEngine } from '../../engines/interactions/vehicle-drop-engine.js';
-import { AdoptionEngine } from '../../engines/interactions/adoption-engine.js';
-import { AdoptOrAddDialog } from '../../apps/adopt-or-add-dialog.js';
-import { SubsystemEngine } from '../../engines/combat/starship/subsystem-engine.js';
-import { EnhancedShields } from '../../engines/combat/starship/enhanced-shields.js';
-import { EnhancedEngineer } from '../../engines/combat/starship/enhanced-engineer.js';
-import { EnhancedPilot } from '../../engines/combat/starship/enhanced-pilot.js';
-import { EnhancedCommander } from '../../engines/combat/starship/enhanced-commander.js';
-import { VehicleTurnController } from '../../engines/combat/starship/vehicle-turn-controller.js';
-import { StarshipManeuversEngine } from '../../engine/StarshipManeuversEngine.js';
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
+import { initiateItemSale } from "/systems/foundryvtt-swse/scripts/apps/item-selling-system.js";
+import { SWSELevelUp } from "/systems/foundryvtt-swse/scripts/apps/swse-levelup.js";
+import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
+import { VehicleDropEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/vehicle-drop-engine.js";
+import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
+import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
+import { SubsystemEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/subsystem-engine.js";
+import { EnhancedShields } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-shields.js";
+import { EnhancedEngineer } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-engineer.js";
+import { EnhancedPilot } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-pilot.js";
+import { EnhancedCommander } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-commander.js";
+import { VehicleTurnController } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/vehicle-turn-controller.js";
+import { StarshipManeuversEngine } from "/systems/foundryvtt-swse/scripts/engine/StarshipManeuversEngine.js";
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;

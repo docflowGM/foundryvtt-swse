@@ -1,10 +1,10 @@
 // scripts/hooks/suggestion-hooks.js
 
-import { HooksRegistry } from './hooks-registry.js';
-import { SuggestionService } from '../../engines/suggestion/SuggestionService.js';
-import { SuggestionEngineCoordinator } from '../../engines/suggestion/SuggestionEngineCoordinator.js';
-import { SWSELogger } from '../../utils/logger.js';
-import MentorNotesApp from '../../apps/mentor-notes/mentor-notes-app.js';
+import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/hooks-registry.js";
+import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
+import { SuggestionEngineCoordinator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineCoordinator.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import MentorNotesApp from "/systems/foundryvtt-swse/scripts/apps/mentor-notes/mentor-notes-app.js";
 
 function safeGetActorId(doc) {
   return doc?.actor?.id || doc?.parent?.id || doc?.id || null;

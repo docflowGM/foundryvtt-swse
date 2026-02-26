@@ -1,4 +1,4 @@
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * Data Preloader
@@ -6,8 +6,8 @@ import { SWSELogger } from '../utils/logger.js';
  * Reduces load times and improves responsiveness
  */
 
-import { getCache } from './cache-manager.js';
-import { timed } from '../utils/performance-utils.js';
+import { getCache } from "/systems/foundryvtt-swse/scripts/core/cache-manager.js";
+import { timed } from "/systems/foundryvtt-swse/scripts/utils/performance-utils.js";
 
 export class DataPreloader {
   constructor() {

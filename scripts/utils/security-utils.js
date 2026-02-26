@@ -1,5 +1,5 @@
 // scripts/utils/security-utils.js
-import { swseLogger } from './logger.js';
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * Security Utilities

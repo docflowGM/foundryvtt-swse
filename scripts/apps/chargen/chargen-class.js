@@ -2,25 +2,25 @@
 // Class selection and features for CharGen
 // ============================================
 
-import { SWSELogger } from '../../utils/logger.js';
-import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
-import { applyProgressionPatch } from '../../engines/progression/engine/apply-progression-patch.js';
-import { buildClassAtomicPatch } from './steps/class-step.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { applyProgressionPatch } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/apply-progression-patch.js";
+import { buildClassAtomicPatch } from "/systems/foundryvtt-swse/scripts/apps/chargen/steps/class-step.js";
 import {
   getClassProperty,
   getHitDie,
   getTrainedSkills,
   getTalentTrees,
   validateClassDocument
-} from './chargen-property-accessor.js';
-import { MentorSurvey } from '../../mentor/mentor-survey.js';
-import { isBaseClass } from '../levelup/levelup-shared.js';
-import { _findItemByIdOrName } from './chargen-shared.js';
-import { confirm } from '../../utils/ui-utils.js';
+} from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js';
+import { MentorSurvey } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey.js";
+import { isBaseClass } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js";
+import { _findItemByIdOrName } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js";
+import { confirm } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
 
 // SSOT Data Layer
-import { ClassesDB } from '../../data/classes-db.js';
-import { calculateMaxForcePoints, initializeActorForcePoints } from '../../data/force-points.js';
+import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
+import { calculateMaxForcePoints, initializeActorForcePoints } from "/systems/foundryvtt-swse/scripts/data/force-points.js";
 
 /**
  * Handle class selection

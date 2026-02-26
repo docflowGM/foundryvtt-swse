@@ -5,7 +5,7 @@
  * Each callout appears once per user, persisted via DiscoveryUserState.
  */
 
-import { DiscoveryUserState } from './user-state.js';
+import { DiscoveryUserState } from "/systems/foundryvtt-swse/scripts/ui/discovery/user-state.js";
 
 const CALLOUT_CLASS = 'swse-discovery-callout';
 const SYSTEM_ID = 'foundryvtt-swse';

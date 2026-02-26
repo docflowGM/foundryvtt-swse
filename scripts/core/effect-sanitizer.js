@@ -10,7 +10,7 @@
  * - Effects are being embedded in documents
  */
 
-import { SWSELogger } from './logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 
 export class EffectSanitizer {
 

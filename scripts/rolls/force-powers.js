@@ -3,8 +3,8 @@
 // Force Power rolling via RollCore (V2 Unified)
 // ============================================
 
-import RollCore from "../engines/roll/roll-core.js";
-import { swseLogger } from "../utils/logger.js";
+import RollCore from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * Roll a force power use via RollCore

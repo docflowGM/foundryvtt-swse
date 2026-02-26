@@ -4,8 +4,8 @@
 // Inspired by skill tree UI with hexagonal nodes
 // ============================================
 
-import { SWSELogger } from '../../utils/logger.js';
-import { getTalentTreeName } from './chargen-property-accessor.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { getTalentTreeName } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
 
 /**
  * Parse prerequisites string to extract talent dependencies

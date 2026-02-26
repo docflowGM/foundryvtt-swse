@@ -5,7 +5,7 @@
  * Each mentor speaks in their authentic voice across all topics.
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class MentorVoiceFilter {
 

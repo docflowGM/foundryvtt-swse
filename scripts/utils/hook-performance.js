@@ -1,6 +1,6 @@
 // scripts/utils/hook-performance.js
-import { swseLogger } from './logger.js';
-import { debounce, throttle } from './performance-utils.js';
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { debounce, throttle } from "/systems/foundryvtt-swse/scripts/utils/performance-utils.js";
 
 /**
  * Hook Performance Utilities

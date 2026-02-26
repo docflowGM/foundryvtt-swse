@@ -2,9 +2,9 @@
 // Force power selection for CharGen
 // ============================================
 
-import { SWSELogger } from '../../utils/logger.js';
-import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
-import { _findClassItem } from './chargen-shared.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { _findClassItem } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js";
 
 /**
  * Handle force power selection

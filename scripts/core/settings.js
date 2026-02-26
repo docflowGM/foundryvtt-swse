@@ -1,6 +1,6 @@
-import { SWSELogger } from '../utils/logger.js';
-import { registerMetaTuningSettings } from '../engine/MetaTuning.js';
-import { registerEpicOverrideSetting } from '../settings/epic-override.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { registerMetaTuningSettings } from "/systems/foundryvtt-swse/scripts/engine/MetaTuning.js";
+import { registerEpicOverrideSetting } from "/systems/foundryvtt-swse/scripts/settings/epic-override.js";
 
 /**
  * System settings for SWSE

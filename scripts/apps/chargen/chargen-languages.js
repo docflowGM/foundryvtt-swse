@@ -2,9 +2,9 @@
 // Language selection for CharGen
 // ============================================
 
-import { SWSELogger } from '../../utils/logger.js';
-import { LanguageRegistry } from '../../registries/language-registry.js';
-import { prompt } from '../../utils/ui-utils.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { LanguageRegistry } from "/systems/foundryvtt-swse/scripts/registries/language-registry.js";
+import { prompt } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
 
 async function _syncLanguageIds() {
   const names = Array.isArray(this.characterData.languages) ? this.characterData.languages : [];

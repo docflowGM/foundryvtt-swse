@@ -4,8 +4,8 @@
  * Organized by category with elegant toggle controls
  */
 
-import { SettingsHelper } from '../utils/settings-helper.js';
-import { SWSELogger } from '../utils/logger.js';
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class HouseRulesApp extends FormApplication {
   constructor(options = {}) {

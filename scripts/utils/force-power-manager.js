@@ -1,5 +1,5 @@
-import { SWSELogger } from './logger.js';
-import { ForceTrainingEngine } from '../engines/Force/ForceTrainingEngine.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ForceTrainingEngine } from "/systems/foundryvtt-swse/scripts/engine/Force/ForceTrainingEngine.js";
 
 /**
  * Force Power Management System

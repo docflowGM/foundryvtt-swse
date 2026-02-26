@@ -14,4 +14,4 @@ export {
   getPresetForMentor,
   listPresets,
   listMentors
-} from '../ui/dialogue/translation-presets.js';
+} from "/systems/foundryvtt-swse/scripts/ui/dialogue/translation-presets.js';

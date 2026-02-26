@@ -11,7 +11,7 @@
  * Runs in WARNING mode by default; configurable to ENFORCE.
  */
 
-import { Sentinel } from '../sentinel-core.js';
+import { Sentinel } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 
 export const CombatLayer = {
   #violations = [],
@@ -61,15 +61,15 @@ export const CombatLayer = {
 
     // Files that are allowed to call these
     const authorizedOrchestrators = [
-      'scripts/engines/combat/CombatEngine.js',
-      'scripts/engines/combat/subsystems'
+      'scripts/engine/combat/CombatEngine.js',
+      'scripts/engine/combat/subsystems'
     ];
 
     const isAuthorized = authorizedOrchestrators.some(path =>
       filePath.includes(path)
     );
 
-    if (!isAuthorized && filePath.includes('scripts/engines/combat')) {
+    if (!isAuthorized && filePath.includes('scripts/engine/combat')) {
       // Forbidden orchestration calls
       const forbiddenPatterns = [
         /DamageEngine\s*\.\s*applyDamage\s*\(/,
@@ -115,7 +115,7 @@ export const CombatLayer = {
       filePath.includes(name)
     );
 
-    if (!isAuthorized && filePath.includes('scripts/engines/combat')) {
+    if (!isAuthorized && filePath.includes('scripts/engine/combat')) {
       // Forbidden direct mutations
       const mutationPatterns = [
         {
@@ -161,7 +161,7 @@ export const CombatLayer = {
     const authorizedRollContexts = [
       'SWSEInitiative.js',
       'CombatEngine.js',
-      'scripts/engines/combat/roll/'
+      'scripts/engine/combat/roll/'
     ];
 
     const isAuthorized = authorizedRollContexts.some(path =>
@@ -188,7 +188,7 @@ export const CombatLayer = {
   detectLayerViolations(filePath, content) {
     const violations = [];
 
-    if (!filePath.includes('scripts/engines/combat')) {
+    if (!filePath.includes('scripts/engine/combat')) {
       return violations; // Only check combat engine files
     }
 
@@ -224,7 +224,7 @@ export const CombatLayer = {
   detectDuplicateOrchestrators(filePath, content) {
     const violations = [];
 
-    if (!filePath.includes('scripts/engines/combat')) {
+    if (!filePath.includes('scripts/engine/combat')) {
       return violations;
     }
 
@@ -261,7 +261,7 @@ export const CombatLayer = {
   detectExecutionOrderDrift(filePath, content) {
     const violations = [];
 
-    if (!filePath.includes('scripts/engines/combat/CombatEngine.js')) {
+    if (!filePath.includes('scripts/engine/combat/CombatEngine.js')) {
       return violations; // Only check main orchestrator
     }
 
@@ -295,12 +295,12 @@ export const CombatLayer = {
 
     // Try to fetch combat domain files
     const combatFiles = [
-      'scripts/engines/combat/CombatEngine.js',
-      'scripts/engines/combat/subsystems/DamageEngine.js',
-      'scripts/engines/combat/subsystems/ThresholdEngine.js',
-      'scripts/engines/combat/subsystems/ActorEngine.js',
-      'scripts/engines/combat/subsystems/EscalationEngine.js',
-      'scripts/engines/combat/initiative/SWSEInitiative.js'
+      'scripts/engine/combat/CombatEngine.js',
+      'scripts/engine/combat/subsystems/DamageEngine.js',
+      'scripts/engine/combat/subsystems/ThresholdEngine.js',
+      'scripts/engine/combat/subsystems/ActorEngine.js',
+      'scripts/engine/combat/subsystems/EscalationEngine.js',
+      'scripts/engine/combat/initiative/SWSEInitiative.js'
     ];
 
     for (const file of combatFiles) {

@@ -3,7 +3,7 @@
  * Handles skill improvement through training points
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 const NS = 'foundryvtt-swse';
 

@@ -3,10 +3,10 @@
  * Handles prerequisite checking for classes, talents, and feats
  */
 
-import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
-import { SWSELogger } from '../../utils/logger.js';
-import { isBaseClass } from './levelup-shared.js';
-import { evaluateClassEligibility } from '../../engines/progression/prerequisites/class-prerequisites-cache.js';
+import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { isBaseClass } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js";
+import { evaluateClassEligibility } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prerequisites-cache.js";
 
 // Cache for prestige class prerequisites loaded from JSON
 let _prestigePrereqCache = null;

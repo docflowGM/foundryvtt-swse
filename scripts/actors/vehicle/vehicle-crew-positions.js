@@ -3,7 +3,7 @@
  * Manages skills, actions, and requirements for each crew position
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class VehicleCrewPositions {
   /**

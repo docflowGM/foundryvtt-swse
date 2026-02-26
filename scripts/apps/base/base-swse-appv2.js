@@ -12,10 +12,10 @@
  * Violations throw immediately.
  */
 
-import SWSEApplicationV2 from './swse-application-v2.js';
-import { swseLogger } from '../../utils/logger.js';
-import { RuntimeContract } from '../../contracts/runtime-contract.js';
-import { StructuredLogger, SEVERITY } from '../../core/structured-logger.js';
+import SWSEApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { RuntimeContract } from "/systems/foundryvtt-swse/scripts/contracts/runtime-contract.js";
+import { StructuredLogger, SEVERITY } from "/systems/foundryvtt-swse/scripts/core/structured-logger.js";
 
 export class BaseSWSEAppV2 extends SWSEApplicationV2 {
   constructor(...args) {

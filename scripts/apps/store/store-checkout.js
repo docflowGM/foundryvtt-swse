@@ -8,18 +8,18 @@
  * - Business logic (ALL delegated to StoreEngine)
  */
 
-import { ProgressionEngine } from '../../engines/progression/engine/progression-engine.js';
-import { StoreEngine } from '../../engines/store/store-engine.js';
-import { SWSELogger } from '../../utils/logger.js';
-import { normalizeCredits } from '../../utils/credit-normalization.js';
-import { calculateFinalCost, calculateUsedCost } from '../../engines/store/pricing.js';
-import CharacterGenerator from '../chargen/chargen-main.js';
-import { VehicleModificationApp } from '../vehicle-modification-app.js';
-import { DroidBuilderApp } from '../droid-builder-app.js';
-import { getRandomDialogue } from './store-shared.js';
-import { SWSEVehicleHandler } from '../../actors/vehicle/swse-vehicle-handler.js';
-import { createActor } from '../../core/document-api-v13.js';
-import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
+import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
+import { StoreEngine } from "/systems/foundryvtt-swse/scripts/engine/store/store-engine.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
+import { calculateFinalCost, calculateUsedCost } from "/systems/foundryvtt-swse/scripts/engine/store/pricing.js";
+import CharacterGenerator from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js";
+import { VehicleModificationApp } from "/systems/foundryvtt-swse/scripts/apps/vehicle-modification-app.js";
+import { DroidBuilderApp } from "/systems/foundryvtt-swse/scripts/apps/droid-builder-app.js";
+import { getRandomDialogue } from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js";
+import { SWSEVehicleHandler } from "/systems/foundryvtt-swse/scripts/actors/vehicle/swse-vehicle-handler.js";
+import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * Add item to shopping cart
@@ -669,7 +669,7 @@ function createItemPlans(cartItems) {
  */
 function createDroidPlans(cartDroids) {
   // Import DroidFactory at function level to avoid circular deps
-  const { DroidFactory } = require('../../engines/droids/droid-factory.js');
+  const { DroidFactory } = require('../../engine/droids/droid-factory.js');
 
   const plans = [];
 
@@ -699,7 +699,7 @@ function createDroidPlans(cartDroids) {
  */
 function createVehiclePlans(cartVehicles, itemsById) {
   // Import VehicleFactory at function level to avoid circular deps
-  const { VehicleFactory } = require('../../engines/vehicles/vehicle-factory.js');
+  const { VehicleFactory } = require('../../engine/vehicles/vehicle-factory.js');
 
   const plans = [];
 

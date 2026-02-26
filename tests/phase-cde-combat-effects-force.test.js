@@ -4,10 +4,10 @@
  */
 
 import { TestUtils } from './test-utils.js';
-import { DamageEngine } from '../scripts/engines/combat/damage-engine.js';
-import { ActiveEffectsEngine } from '../scripts/engines/effects/active-effects-engine.js';
-import { ForceEngine } from '../scripts/engines/force/force-engine.js';
-import { ModifierEngine } from '../scripts/engines/effects/modifiers/ModifierEngine.js';
+import { DamageEngine } from '../scripts/engine/combat/damage-engine.js';
+import { ActiveEffectsEngine } from '../scripts/engine/effects/active-effects-engine.js';
+import { ForceEngine } from '../scripts/engine/force/force-engine.js';
+import { ModifierEngine } from '../scripts/engine/effects/modifiers/ModifierEngine.js';
 
 describe('Phases C, D, E - Combat, Effects, Force', () => {
 

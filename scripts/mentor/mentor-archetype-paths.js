@@ -8,7 +8,7 @@
  */
 
 // eslint-disable-next-line
-import CLASS_ARCHETYPES from '../../data/class-archetypes.json' with { type: 'json' };
+import CLASS_ARCHETYPES from "/systems/foundryvtt-swse/data/class-archetypes.json' with { type: 'json' };
 
 function normalizeClassKey(className) {
   return String(className || '').toLowerCase().trim();

@@ -21,9 +21,9 @@
 // IMPORTS - Phase/Context helpers from canonical mentor system
 // ============================================================================
 
-import { getDialoguePhase, SUGGESTION_CONTEXTS, DIALOGUE_PHASES } from '../engines/mentor/mentor-dialogues.js';
-import { getMentor, getReasons, selectBestReason, getMentorDialogueFromJSON } from '../engines/mentor/mentor-json-loader.js';
-import { SWSELogger } from '../utils/logger.js';
+import { getDialoguePhase, SUGGESTION_CONTEXTS, DIALOGUE_PHASES } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
+import { getMentor, getReasons, selectBestReason, getMentorDialogueFromJSON } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-json-loader.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 // ============================================================================
 // PHASE DEFINITIONS - DEPRECATED (imported from mentor-dialogues.js)

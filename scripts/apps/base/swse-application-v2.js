@@ -1,18 +1,8 @@
 // scripts/apps/base/swse-application-v2.js
-/**
- * Base Application class for SWSE system - Foundry ApplicationV2 compliant
- *
- * AppV2 contract:
- * - No jQuery in render lifecycle
- * - Use `_prepareContext` + `_onRender`
- * - Scope DOM queries to `this.element`
- *
- * This base keeps a small legacy-compat shim (`defaultOptions`) so older subclasses
- * can continue to override `static get defaultOptions()` while we finish migrations.
- */
+
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
-import { guardOnRender, validateTemplate } from '../../debug/appv2-probe.js';
+import { guardOnRender, validateTemplate } from "/systems/foundryvtt-swse/scripts/debug/appv2-probe.js";
 
 export default class SWSEApplicationV2 extends HandlebarsApplicationMixin(ApplicationV2) {
   static DEFAULT_OPTIONS = {

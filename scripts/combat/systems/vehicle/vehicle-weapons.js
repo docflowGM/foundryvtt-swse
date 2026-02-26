@@ -8,9 +8,9 @@
  *  - Weapon batteries (multiple shots as one attack)
  */
 
-import { measureDistance, facingTowards } from '../../../engines/combat/vehicles/utils/vehicle-shared.js';
-import { createChatMessage } from '../../../core/document-api-v13.js';
-import { SWSERoll } from '../../rolls/enhanced-rolls.js';
+import { measureDistance, facingTowards } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicles/utils/vehicle-shared.js";
+import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 
 export class SWSEVehicleWeapons {
 

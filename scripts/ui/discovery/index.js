@@ -7,11 +7,11 @@
  * 3. First-Launch Feature Tour (opt-in, skippable)
  */
 
-import { DiscoveryUserState } from './user-state.js';
-import { TooltipRegistry } from './tooltip-registry.js';
-import { CalloutManager } from './callout-manager.js';
-import { FeatureTour } from './feature-tour.js';
-import { registerDiscoverySettings } from './discovery-settings.js';
+import { DiscoveryUserState } from "/systems/foundryvtt-swse/scripts/ui/discovery/user-state.js";
+import { TooltipRegistry } from "/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-registry.js";
+import { CalloutManager } from "/systems/foundryvtt-swse/scripts/ui/discovery/callout-manager.js";
+import { FeatureTour } from "/systems/foundryvtt-swse/scripts/ui/discovery/feature-tour.js";
+import { registerDiscoverySettings } from "/systems/foundryvtt-swse/scripts/ui/discovery/discovery-settings.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 

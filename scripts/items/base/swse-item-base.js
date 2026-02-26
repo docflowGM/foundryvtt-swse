@@ -8,7 +8,7 @@
  * - Actors and engines interpret item data and produce outcomes.
  */
 
-import { getWeaponRangeInfo } from '../weapon-ranges.js';
+import { getWeaponRangeInfo } from "/systems/foundryvtt-swse/scripts/items/weapon-ranges.js";
 
 export class SWSEItemBase extends Item {
 

@@ -10,7 +10,7 @@
  *   if (supportsFormApplicationV2()) { ... }
  */
 
-import { log } from './foundry-env.js';
+import { log } from "/systems/foundryvtt-swse/scripts/core/foundry-env.js";
 
 /**
  * Get Foundry version as semantic version parts

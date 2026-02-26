@@ -6,8 +6,8 @@
  * GM can review config and approve or reject with notes.
  */
 
-import { SWSELogger } from '../utils/logger.js';
-import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 

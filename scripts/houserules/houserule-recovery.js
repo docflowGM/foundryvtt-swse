@@ -5,8 +5,8 @@
  * PHASE 7: All mutations routed through ActorEngine for atomic governance
  */
 
-import { SWSELogger } from '../utils/logger.js';
-import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 const NS = 'foundryvtt-swse';
 

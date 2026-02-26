@@ -1,5 +1,5 @@
 // scripts/actors/v2/droid-actor.js
-import { computeCharacterDerived } from './character-actor.js';
+import { computeCharacterDerived } from "/systems/foundryvtt-swse/scripts/actors/v2/character-actor.js";
 
 /**
  * Droid configuration remains PRIMARY state in system.droidSystems.

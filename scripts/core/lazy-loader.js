@@ -1,5 +1,5 @@
-import { SWSELogger } from '../utils/logger.js';
-import { lazy } from '../utils/performance-utils.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { lazy } from "/systems/foundryvtt-swse/scripts/utils/performance-utils.js";
 
 /**
  * Lazy Loading Manager

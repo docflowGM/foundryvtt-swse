@@ -7,8 +7,8 @@
  *   - GM Mode: Three zones (Spawners, Commands, Utilities) with customizable drag-and-drop slots
  */
 
-import { sceneControlRegistry } from '../../scene-controls/api.js';
-import { getCurrentPhase, SWSE_PHASES } from '../../state/phase.js';
+import { sceneControlRegistry } from "/systems/foundryvtt-swse/scripts/scene-controls/api.js";
+import { getCurrentPhase, SWSE_PHASES } from "/systems/foundryvtt-swse/scripts/state/phase.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -182,7 +182,7 @@ export class ActionPaletteApp extends HandlebarsApplicationMixin(ApplicationV2) 
    * Open GM suggestion panel
    */
   async openGMPanel(event) {
-    const { openGMPanel } = await import('../../engines/suggestion/gm/init.js');
+    const { openGMPanel } = await import('../../engine/suggestion/gm/init.js');
     openGMPanel();
   }
 

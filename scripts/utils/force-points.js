@@ -1,6 +1,6 @@
-import { ProgressionEngine } from '../engines/progression/engine/progression-engine.js';
-import { ForcePointsService } from '../engines/force/force-points-service.js';
-import { createChatMessage } from '../core/document-api-v13.js';
+import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
+import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
+import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 /**
  * Force Points utility functions for rolling and spending Force Points
  */

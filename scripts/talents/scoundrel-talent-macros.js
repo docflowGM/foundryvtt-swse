@@ -4,8 +4,8 @@
  * Register these in macro-functions.js to make them available in hotbars
  */
 
-import ScoundrelTalentMechanics from '../engines/talent/scoundrel-talent-mechanics.js';
-import { SWSELogger } from '../utils/logger.js';
+import ScoundrelTalentMechanics from "/systems/foundryvtt-swse/scripts/engine/talent/scoundrel-talent-mechanics.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class ScoundrelTalentMacros {
 

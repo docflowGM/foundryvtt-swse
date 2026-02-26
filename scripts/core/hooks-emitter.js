@@ -17,7 +17,7 @@
  *   Hooks.on('swse.chargen.complete', (actor, selections) => {...})
  */
 
-import { log } from './foundry-env.js';
+import { log } from "/systems/foundryvtt-swse/scripts/core/foundry-env.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 

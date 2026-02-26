@@ -1,5 +1,5 @@
 // scripts/debug/debug-tools.js
-import MentorNotesApp from '../apps/mentor-notes/mentor-notes-app.js';
+import MentorNotesApp from "/systems/foundryvtt-swse/scripts/apps/mentor-notes/mentor-notes-app.js";
 
 export async function toggleNpcRenderProbe() {
   // DEBUG_SETTINGS not available - removed broken import

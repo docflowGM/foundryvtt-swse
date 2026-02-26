@@ -11,8 +11,8 @@
  * - Detecting conflicts or duplicate reasons
  */
 
-import { SWSELogger } from './logger.js';
-import { ReasonFactory } from '../engines/suggestion/ReasonFactory.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ReasonFactory } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ReasonFactory.js";
 
 export class ReasonInspector {
   /**

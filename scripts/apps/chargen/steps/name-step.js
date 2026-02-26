@@ -1,5 +1,5 @@
-import { guardAgainstMutation } from '../../../dev/mutation-guard.js';
-import { patchName } from '../../../engines/progression/engine/progression-patch.js';
+import { guardAgainstMutation } from "/systems/foundryvtt-swse/scripts/dev/mutation-guard.js";
+import { patchName } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-patch.js";
 
 function _buildNamePatch(_characterData, name) {
   return patchName(name);

@@ -200,7 +200,7 @@
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs"}}
         </div>
         <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/partials/skill-actions-panel.hbs"}}
+          {{> "systems/foundryvtt-swse/skill-systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs"}}
         </div>
       </div>
     </section>
@@ -212,13 +212,13 @@
 <section class="tab" data-group="primary" data-tab="talents">
   <div class="swse-v2-sheet-grid">
     <div class="swse-v2-full">
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/Talents.hbs"}}
+      {{> "systems/foundryvtt-swse/Talents.hbs"}}
     </div>
     <div class="swse-v2-full">
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/Feats.hbs"}}
+      {{> "systems/foundryvtt-swse/Feats.hbs"}}
     </div>
     <div class="swse-v2-full">
-      {{> "systems/foundryvtt-swse/templates/partials/talent-abilities-panel.hbs"}}
+      {{> "systems/foundryvtt-swse/talent-abilities-panel.hbs"}}
     </div>
   </div>
 </section>
@@ -228,7 +228,7 @@
     <section class="tab" data-group="primary" data-tab="force">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/Force.hbs"}}
+          {{> "systems/foundryvtt-swse/Force.hbs"}}
         </div>
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/dark-side-panel.hbs"}}
@@ -264,7 +264,7 @@
             </div>
 
             <!-- V2 INVENTORY PANEL (NEW) -->
-            {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-panel.hbs"}}
+            {{> "systems/foundryvtt-swse/inventory-panel.hbs"}}
 
             {{#if equipment}}
               <div class="equipment-list" style="border-top: 1px solid #ddd;">
@@ -641,11 +641,11 @@
 
         <!-- ABILITY BLOCKS & SUGGESTIONS -->
         <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/partials/ability-block.hbs"}}
+          {{> "systems/foundryvtt-swse/ability-block.hbs"}}
         </div>
 
         <div class="swse-v2-full">
-          {{> "systems/foundryvtt-swse/templates/partials/suggestion-card.hbs"}}
+          {{> "systems/foundryvtt-swse/suggestion-card.hbs"}}
         </div>
 
       </div>

@@ -12,15 +12,15 @@
  * - No direct mutation of actor currency/items here (handled by checkout module)
  */
 
-import { StoreEngine } from '../../engines/store/store-engine.js';
-import { ArmorSuggestions } from '../../engines/suggestion/equipment/armor-suggestions.js';
-import { WeaponSuggestions } from '../../engines/suggestion/equipment/weapon-suggestions.js';
-import { GearSuggestions } from '../../engines/suggestion/equipment/gear-suggestions.js';
-import { MentorProseGenerator } from '../../engines/suggestion/equipment/mentor-prose-generator.js';
-import { ReviewThreadAssembler } from './review-thread-assembler.js';
-import { StoreLoadingOverlay } from './store-loading-overlay.js';
-import { StoreCardInteractions } from './store-card-interactions.js';
-import { resolveStoreGlyph } from './store-glyph-map.js';
+import { StoreEngine } from "/systems/foundryvtt-swse/scripts/engine/store/store-engine.js";
+import { ArmorSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/armor-suggestions.js";
+import { WeaponSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/weapon-suggestions.js";
+import { GearSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/gear-suggestions.js";
+import { MentorProseGenerator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/mentor-prose-generator.js";
+import { ReviewThreadAssembler } from "/systems/foundryvtt-swse/scripts/apps/store/review-thread-assembler.js";
+import { StoreLoadingOverlay } from "/systems/foundryvtt-swse/scripts/apps/store/store-loading-overlay.js";
+import { StoreCardInteractions } from "/systems/foundryvtt-swse/scripts/apps/store/store-card-interactions.js";
+import { resolveStoreGlyph } from "/systems/foundryvtt-swse/scripts/apps/store/store-glyph-map.js";
 import {
   safeString,
   safeImg,
@@ -29,8 +29,8 @@ import {
   getRarityClass,
   getRarityLabel,
   getCostValue
-} from './store-shared.js';
-import { getRendarrLine } from './dialogue/rendarr-dialogue.js';
+} from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js';
+import { getRendarrLine } from "/systems/foundryvtt-swse/scripts/apps/store/dialogue/rendarr-dialogue.js";
 import {
   addItemToCart,
   addDroidToCart,
@@ -43,7 +43,7 @@ import {
   buildDroidWithBuilder,
   buildDroidFromTemplate,
   createCustomStarship
-} from './store-checkout.js';
+} from "/systems/foundryvtt-swse/scripts/apps/store/store-checkout.js';
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 

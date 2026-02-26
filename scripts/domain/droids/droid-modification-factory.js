@@ -34,11 +34,11 @@
  * }
  */
 
-import { DROID_SYSTEM_DEFINITIONS, getDroidSystemDefinition, isSystemCompatible, getSystemsBySlot } from './droid-system-definitions.js';
-import { DroidSlotGovernanceEngine } from './droid-slot-governance.js';
-import { LedgerService } from '../../engines/store/ledger-service.js';
-import { swseLogger } from '../../utils/logger.js';
-import { normalizeCredits } from '../../utils/credit-normalization.js';
+import { DROID_SYSTEM_DEFINITIONS, getDroidSystemDefinition, isSystemCompatible, getSystemsBySlot } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-system-definitions.js";
+import { DroidSlotGovernanceEngine } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-slot-governance.js";
+import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 
 export class DroidModificationFactory {
   /**

@@ -2,18 +2,18 @@
  * ENHANCED LEVEL UP UI — ENGINE-DRIVEN
  */
 
-import { ProgressionEngine } from '../../engines/progression/engine/progression-engine-instance.js';
-import { SWSELogger } from '../../utils/logger.js';
-import { SkillRegistry } from '../../engines/progression/skills/skill-registry-ui.js';
-import { FeatRegistry } from '../../engines/progression/feats/feat-registry-ui.js';
-import { TalentRegistry } from '../../engines/progression/talents/talent-registry-ui.js';
-import { ForceRegistry } from '../../engines/progression/force/force-registry-ui.js';
-import { isEpicOverrideEnabled } from '../../settings/epic-override.js';
-import { getLevelSplit } from '../../actors/derived/level-split.js';
-import { qs, qsa } from '../../utils/dom-utils.js';
+import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine-instance.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SkillRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry-ui.js";
+import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-registry-ui.js";
+import { TalentRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/talent-registry-ui.js";
+import { ForceRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/force/force-registry-ui.js";
+import { isEpicOverrideEnabled } from "/systems/foundryvtt-swse/scripts/settings/epic-override.js";
+import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { qs, qsa } from "/systems/foundryvtt-swse/scripts/utils/dom-utils.js";
 
 // V2 API base class
-import SWSEFormApplicationV2 from '../base/swse-form-application-v2.js';
+import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
 
 export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 

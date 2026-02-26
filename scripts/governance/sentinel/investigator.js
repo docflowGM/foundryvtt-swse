@@ -34,7 +34,7 @@
  * - DEV / STRICT mode only (disabled in PRODUCTION)
  */
 
-import { SentinelEngine } from './sentinel-core.js';
+import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 
 export const Investigator = {
   _initialized: false,

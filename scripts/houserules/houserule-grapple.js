@@ -3,8 +3,8 @@
  * Handles grapple combat actions and checks
  */
 
-import { SWSELogger } from '../utils/logger.js';
-import { RollEngine } from '../engine/roll-engine.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 
 const NS = 'foundryvtt-swse';
 

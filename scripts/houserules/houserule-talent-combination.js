@@ -5,7 +5,7 @@
  * this system combines Block and Deflect into a single "Block & Deflect" talent
  * in the talent selector, but grants both talents when selected.
  */
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 // Talent IDs
 const BLOCK_ID = '9379daa94a228c04';

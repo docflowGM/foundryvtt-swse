@@ -7,9 +7,9 @@
  * AppV2-based implementation
  */
 
-import { MentorSuggestionVoice } from '../../mentor/mentor-suggestion-voice.js';
-import { MENTORS } from '../../engines/mentor/mentor-dialogues.js';
-import { MentorTranslationIntegration } from '../../mentor/mentor-translation-integration.js';
+import { MentorSuggestionVoice } from "/systems/foundryvtt-swse/scripts/mentor/mentor-suggestion-voice.js";
+import { MENTORS } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
+import { MentorTranslationIntegration } from "/systems/foundryvtt-swse/scripts/mentor/mentor-translation-integration.js";
 
 export class MentorSuggestionDialog extends foundry.applications.api.ApplicationV2 {
   static DEFAULT_OPTIONS = {

@@ -8,11 +8,11 @@
  * - combat-utils (size modifiers, bonuses)
  */
 
-import { computeAttackBonus } from '../utils/combat-utils.js';
-import { SWSERoll } from '../rolls/enhanced-rolls.js';
-import { createChatMessage } from '../../core/document-api-v13.js';
-import { DamageSystem } from '../damage-system.js';
-import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
+import { computeAttackBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
+import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
+import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { DamageSystem } from "/systems/foundryvtt-swse/scripts/combat/damage-system.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class SWSEGrappling {
 

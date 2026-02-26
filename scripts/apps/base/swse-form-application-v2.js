@@ -1,5 +1,5 @@
 // scripts/apps/base/swse-form-application-v2.js
-import SWSEApplicationV2 from './swse-application-v2.js';
+import SWSEApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
 
 /**
  * SWSE FormApplicationV2 base

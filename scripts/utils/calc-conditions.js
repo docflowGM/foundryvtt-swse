@@ -2,7 +2,7 @@
  * Condition Track Effects
  */
 
-import { CONDITION_PENALTIES } from '../core/constants.js';
+import { CONDITION_PENALTIES } from "/systems/foundryvtt-swse/scripts/core/constants.js";
 
 export function applyConditionPenalty(actor) {
   const track = actor.system.conditionTrack || 'normal';

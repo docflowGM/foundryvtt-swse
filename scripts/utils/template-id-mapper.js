@@ -13,9 +13,9 @@
  * No mapping tables needed - compendiums are the system of record.
  */
 
-import { swseLogger } from './logger.js';
-import { BackgroundRegistry } from '../registries/background-registry.js';
-import { slugify } from './stable-id.js';
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { BackgroundRegistry } from "/systems/foundryvtt-swse/scripts/registries/background-registry.js";
+import { slugify } from "/systems/foundryvtt-swse/scripts/utils/stable-id.js";
 
 export class TemplateIdMapper {
   /**

@@ -18,7 +18,7 @@
  * - Timing of phases (driven by external events)
  */
 
-import { STORE_GLYPHS } from './store-glyph-map.js';
+import { STORE_GLYPHS } from "/systems/foundryvtt-swse/scripts/apps/store/store-glyph-map.js";
 
 const STATUS_MESSAGES = [
   'SYNCHRONIZING VENDOR MANIFESTS',

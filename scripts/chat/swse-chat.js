@@ -1,6 +1,6 @@
 // scripts/chat/swse-chat.js
 
-import { createChatMessage } from '../core/document-api-v13.js';
+import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 
 /**
  * SWSEChat

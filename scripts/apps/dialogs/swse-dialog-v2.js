@@ -12,8 +12,8 @@
  * NOTE: This is a "surface safety" layer for Run 1. Markup refactors belong in Run 2+.
  */
 
-import SWSEApplicationV2 from '../base/swse-application-v2.js';
-import { domQuery } from '../../utils/dom-query-shim.js';
+import SWSEApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
+import { domQuery } from "/systems/foundryvtt-swse/scripts/utils/dom-query-shim.js";
 
 export class SWSEDialogV2 extends SWSEApplicationV2 {
   static DEFAULT_OPTIONS = {

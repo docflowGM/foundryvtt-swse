@@ -1,18 +1,18 @@
-import { ProgressionEngine } from '../../engines/progression/engine/progression-engine.js';
+import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
 /**
  * Class selection and species handling for SWSE Level Up system
  * Includes level 0 character creation (species, attributes)
  */
 
-import { SWSELogger } from '../../utils/logger.js';
-import { SuggestionService } from '../../engines/suggestion/SuggestionService.js';
-import { warnGM } from '../../utils/warn-gm.js';
-import { getMentorForClass, getMentorGreeting, getLevel1Class, setLevel1Class } from '../../engines/mentor/mentor-dialogues.js';
-import { isBaseClass, getCharacterClasses, getClassDefenseBonuses, calculateHPGain } from './levelup-shared.js';
-import { meetsClassPrerequisites } from './levelup-validation.js';
-import { getClassProperty } from '../chargen/chargen-property-accessor.js';
-import { ClassSuggestionEngine } from '../../engines/suggestion/ClassSuggestionEngine.js';
-import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
+import { warnGM } from "/systems/foundryvtt-swse/scripts/utils/warn-gm.js";
+import { getMentorForClass, getMentorGreeting, getLevel1Class, setLevel1Class } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
+import { isBaseClass, getCharacterClasses, getClassDefenseBonuses, calculateHPGain } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js";
+import { meetsClassPrerequisites } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-validation.js";
+import { getClassProperty } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
+import { ClassSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ClassSuggestionEngine.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * Get class metadata (icon and description)
