@@ -3,7 +3,7 @@
 // ============================================
 
 import { SWSELogger } from '../../utils/logger.js';
-import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
+import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
 import { _findClassItem } from './chargen-shared.js';
 
 /**
@@ -84,9 +84,9 @@ export async function _onSelectForcePower(event) {
     }
 
     // Check other prerequisites
-    const prereqCheck = PrerequisiteChecker.checkFeatPrerequisites(tempActor, power, pendingData);
-    if (!prereqCheck.met) {
-      ui.notifications.warn(`Cannot select "${power.name}": ${prereqCheck.missing.join(', ')}`);
+    const assessment = AbilityEngine.evaluateAcquisition(tempActor, power, pendingData);
+    if (!assessment.legal) {
+      ui.notifications.warn(`Cannot select "${power.name}": ${assessment.missingPrereqs.join(', ')}`);
       return;
     }
   }

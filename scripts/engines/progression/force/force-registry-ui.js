@@ -4,7 +4,7 @@
  */
 
 import { SWSELogger } from '../../../utils/logger.js';
-import { PrerequisiteChecker } from '../../../data/prerequisite-checker.js';
+import { AbilityEngine } from '../../../engine/abilities/AbilityEngine.js';
 
 export const ForceRegistry = {
   _powers: [],
@@ -43,8 +43,8 @@ export const ForceRegistry = {
     return this._powers.map(p => {
       let qualified = true;
       try {
-        const result = PrerequisiteChecker.checkFeatPrerequisites(actor, p, {});
-        qualified = result.met;
+        const assessment = AbilityEngine.evaluateAcquisition(actor, p, {});
+        qualified = assessment.legal;
       } catch (err) {
         SWSELogger.warn(`Prerequisite check failed for ${p.name}:`, err);
       }

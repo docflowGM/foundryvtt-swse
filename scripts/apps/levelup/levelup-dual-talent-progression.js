@@ -13,7 +13,7 @@
 import { SWSELogger } from '../../utils/logger.js';
 import { getClassLevel, getCharacterClasses } from './levelup-shared.js';
 import { getTalentTrees } from '../chargen/chargen-property-accessor.js';
-import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
+import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
 
 /**
  * Calculate available talents at the current heroic level
@@ -117,7 +117,7 @@ export async function getAvailableTalentTreesForHeroicTalent(actor) {
 
       // Check which ones the character can access
       for (const treeConfig of forceTrees) {
-        const canAccess = await PrerequisiteChecker.canAccessTalentTree(actor, treeConfig.treeId);
+        const canAccess = await AbilityEngine.canAccessTalentTree(actor, treeConfig.treeId);
         if (canAccess) {
           allTrees.add(treeConfig.treeId);
         }

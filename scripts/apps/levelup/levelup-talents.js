@@ -13,7 +13,7 @@ import { TalentTreeVisualizer } from '../talent-tree-visualizer.js';
 import { getClassLevel, getCharacterClasses } from './levelup-shared.js';
 import { checkTalentPrerequisites } from './levelup-validation.js';
 import { getClassProperty, getTalentTrees } from '../chargen/chargen-property-accessor.js';
-import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
+import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 import { SuggestionService } from '../../engines/suggestion/SuggestionService.js';
 import {
@@ -238,11 +238,11 @@ export async function loadTalentData(actor = null, pendingData = {}) {
 
     // Add prerequisite checking results to each talent (before suggestions for future availability analysis)
     const talentsWithPrereqs = talentObjects.map(talent => {
-      const result = PrerequisiteChecker.checkTalentPrerequisites(actor, talent, pendingData);
+      const assessment = AbilityEngine.evaluateAcquisition(actor, talent, pendingData);
       return {
         ...talent,
-        isQualified: result.met,
-        prereqReasons: result.missing
+        isQualified: assessment.legal,
+        prereqReasons: assessment.missingPrereqs
       };
     });
 

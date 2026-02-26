@@ -117,6 +117,95 @@ export class AbilityEngine {
   }
 
   /**
+   * Filter feats to only those an actor qualifies for.
+   * Adds isQualified and prerequisiteReasons fields to each feat.
+   *
+   * @param {Array} feats - Array of feat items
+   * @param {Actor} actor - The actor
+   * @param {Object} pending - Pending selections
+   * @returns {Array} Feats with isQualified and prerequisiteReasons added
+   */
+  static filterQualifiedFeats(feats, actor, pending = {}) {
+    return feats.map(feat => {
+      const assessment = this.evaluateAcquisition(actor, feat, pending);
+      return {
+        ...feat,
+        isQualified: assessment.legal,
+        prerequisiteReasons: assessment.missingPrereqs
+      };
+    });
+  }
+
+  /**
+   * Filter talents to only those an actor qualifies for.
+   * Adds isQualified and prerequisiteReasons fields to each talent.
+   *
+   * @param {Array} talents - Array of talent items
+   * @param {Actor} actor - The actor
+   * @param {Object} pending - Pending selections
+   * @returns {Array} Talents with isQualified and prerequisiteReasons added
+   */
+  static filterQualifiedTalents(talents, actor, pending = {}) {
+    return talents.map(talent => {
+      const assessment = this.evaluateAcquisition(actor, talent, pending);
+      return {
+        ...talent,
+        isQualified: assessment.legal,
+        prerequisiteReasons: assessment.missingPrereqs
+      };
+    });
+  }
+
+  /**
+   * Check if an actor can access a talent tree.
+   *
+   * @param {Actor} actor - The actor
+   * @param {string} treeId - The talent tree ID
+   * @param {Object} pending - Pending selections
+   * @returns {Promise<boolean>} True if the actor can access the tree
+   */
+  static async canAccessTalentTree(actor, treeId, pending = {}) {
+    return PrerequisiteChecker.canAccessTalentTree(actor, treeId);
+  }
+
+  /**
+   * Evaluate whether an actor can acquire a prestige class.
+   *
+   * @param {Object} actor - Actor document
+   * @param {string} className - Prestige class name
+   * @param {Object} pending - Pending selections
+   * @returns {Object} Standardized legality assessment
+   */
+  static evaluatePrestigeClassAcquisition(actor, className, pending = {}) {
+    if (!actor || !className) {
+      return {
+        legal: false,
+        permanentlyBlocked: true,
+        missingPrereqs: ['Invalid actor or class name'],
+        blockingReasons: ['Cannot evaluate invalid inputs']
+      };
+    }
+
+    try {
+      const result = PrerequisiteChecker.checkPrestigeClassPrerequisites(actor, className, pending);
+      return {
+        legal: result.met === true,
+        permanentlyBlocked: false,
+        missingPrereqs: result.missing || [],
+        blockingReasons: result.missing || []
+      };
+    } catch (err) {
+      SWSELogger.error('[AbilityEngine.evaluatePrestigeClassAcquisition]', err);
+      return {
+        legal: false,
+        permanentlyBlocked: true,
+        missingPrereqs: ['Evaluation error'],
+        blockingReasons: [err.message || 'Unknown error evaluating prerequisites']
+      };
+    }
+  }
+
+  /**
    * Get card panel model for actor abilities (legacy)
    * @param {Actor} actor - The actor to get abilities for
    * @returns {Object} Model with all, feats, talents, racialAbilities

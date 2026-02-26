@@ -4,7 +4,7 @@
  */
 
 import { SWSELogger } from '../../../utils/logger.js';
-import { PrerequisiteChecker } from '../../../data/prerequisite-checker.js';
+import { AbilityEngine } from '../../../engine/abilities/AbilityEngine.js';
 
 export const TalentRegistry = {
   _trees: {},
@@ -52,8 +52,8 @@ export const TalentRegistry = {
       for (const talent of this._trees[tree]) {
         let qualified = true;
         try {
-          const result = PrerequisiteChecker.checkTalentPrerequisites(actor, talent, pending);
-          qualified = result.met;
+          const assessment = AbilityEngine.evaluateAcquisition(actor, talent, pending);
+          qualified = assessment.legal;
         } catch (err) {
           SWSELogger.warn(`Prerequisite check failed for ${talent.name}:`, err);
           qualified = false;

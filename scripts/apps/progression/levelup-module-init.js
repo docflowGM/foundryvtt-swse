@@ -14,7 +14,7 @@ import { SkillRegistry } from '../../engines/progression/skills/skill-registry-u
 import { FeatRegistry } from '../../engines/progression/feats/feat-registry-ui.js';
 import { TalentRegistry } from '../../engines/progression/talents/talent-registry-ui.js';
 import { ForceRegistry } from '../../engines/progression/force/force-registry-ui.js';
-import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
+import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
 import { enforcePrerequisiteConsolidation } from '../../data/prerequisite-checker-regression-guard.js';
 import { SuggestionEngineCoordinator } from '../../engines/suggestion/SuggestionEngineCoordinator.js';
 
@@ -92,10 +92,12 @@ export async function initializeLevelUpUI() {
       game.swse = game.swse || {};
       game.swse.prereq = {
         checkFeatPrereq: (featDoc, actor, pending) => {
-          return PrerequisiteChecker.checkFeatPrerequisites(actor, featDoc, pending);
+          const assessment = AbilityEngine.evaluateAcquisition(actor, featDoc, pending);
+          return { met: assessment.legal, missing: assessment.missingPrereqs };
         },
         checkTalentPrereq: (talentDoc, actor, pending) => {
-          return PrerequisiteChecker.checkTalentPrerequisites(actor, talentDoc, pending);
+          const assessment = AbilityEngine.evaluateAcquisition(actor, talentDoc, pending);
+          return { met: assessment.legal, missing: assessment.missingPrereqs };
         }
       };
       SWSELogger.log('[LEVELUP-INIT] - Prerequisite API set up successfully');

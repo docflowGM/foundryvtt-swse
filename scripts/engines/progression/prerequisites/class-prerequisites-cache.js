@@ -19,7 +19,7 @@
  */
 
 import { normalizeClassPrerequisites } from './class-prereq-normalizer.js';
-import { PrerequisiteChecker } from '../../../data/prerequisite-checker.js';
+import { AbilityEngine } from '../../../engine/abilities/AbilityEngine.js';
 import { SWSELogger } from '../../../utils/logger.js';
 
 /**
@@ -130,17 +130,17 @@ export function evaluateClassEligibility({
     }
 
     // Check prestige class prerequisites using normalized data
-    const result = PrerequisiteChecker.checkPrestigeClassPrerequisites(
+    const assessment = AbilityEngine.evaluatePrestigeClassAcquisition(
         actor,
         className,
         pendingData
     );
 
     return {
-        eligible: result.met,
+        eligible: assessment.legal,
         className,
         isPrestige: true,
-        eligibilityResult: result,
+        eligibilityResult: { met: assessment.legal, missing: assessment.missingPrereqs },
         reasons: {
             missing: result.missing || [],
             met: result.met ? ['All prerequisites met'] : []

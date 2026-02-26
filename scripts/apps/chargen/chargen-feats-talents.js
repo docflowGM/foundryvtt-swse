@@ -4,7 +4,7 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { getTalentTrees, getTalentTreeName } from './chargen-property-accessor.js';
-import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
+import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
 import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
 import { ClassesDB } from '../../data/classes-db.js';
 import { SuggestionService } from '../../engines/suggestion/SuggestionService.js';
@@ -205,13 +205,13 @@ export async function _onSelectFeat(event) {
       grantedFeats: grantedFeats
     };
 
-    SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Running PrerequisiteChecker for feat "${feat.name}"`);
-    const prereqCheck = PrerequisiteChecker.checkFeatPrerequisites(tempActor, feat, pendingData);
-    SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Prerequisite check result:`, prereqCheck);
+    SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Running prerequisite check for feat "${feat.name}"`);
+    const assessment = AbilityEngine.evaluateAcquisition(tempActor, feat, pendingData);
+    SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Prerequisite check result:`, assessment);
 
-    if (!prereqCheck.met) {
-      SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Prerequisites NOT met for "${feat.name}":`, prereqCheck.missing);
-      ui.notifications.warn(`Cannot select "${feat.name}": ${prereqCheck.missing.join(', ')}`);
+    if (!assessment.legal) {
+      SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Prerequisites NOT met for "${feat.name}":`, assessment.missingPrereqs);
+      ui.notifications.warn(`Cannot select "${feat.name}": ${assessment.missingPrereqs.join(', ')}`);
       return;
     }
     SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Prerequisites MET for "${feat.name}"`);
@@ -550,9 +550,9 @@ export async function _onSelectTalent(event) {
           selectedTalents: this.characterData.talents || []
         };
 
-        const prereqCheck = PrerequisiteChecker.checkTalentPrerequisites(tempActor, talentToAdd, pendingData);
-        if (!prereqCheck.met) {
-          ui.notifications.warn(`Cannot select "${talentToAdd.name}" from Block & Deflect: ${prereqCheck.missing.join(', ')}`);
+        const assessment = AbilityEngine.evaluateAcquisition(tempActor, talentToAdd, pendingData);
+        if (!assessment.legal) {
+          ui.notifications.warn(`Cannot select "${talentToAdd.name}" from Block & Deflect: ${assessment.missingPrereqs.join(', ')}`);
           return;
         }
       }
@@ -623,9 +623,9 @@ export async function _onSelectTalent(event) {
         selectedTalents: this.characterData.talents || []
       };
 
-      const prereqCheck = PrerequisiteChecker.checkTalentPrerequisites(tempActor, tal, pendingData);
-      if (!prereqCheck.met) {
-        ui.notifications.warn(`Cannot select "${tal.name}": ${prereqCheck.missing.join(', ')}`);
+      const assessment = AbilityEngine.evaluateAcquisition(tempActor, tal, pendingData);
+      if (!assessment.legal) {
+        ui.notifications.warn(`Cannot select "${tal.name}": ${assessment.missingPrereqs.join(', ')}`);
         return;
       }
     }
