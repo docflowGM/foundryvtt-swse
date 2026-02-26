@@ -192,7 +192,7 @@ export async function _onSelectFeat(event) {
 
     // Get the class being taken (first class in chargen, or for level-up use selectedClass)
     const classDoc = this.characterData.classes?.[0];
-    const grantedFeats = PrerequisiteChecker.getAllGrantedFeats(tempActor, classDoc);
+    const grantedFeats = AbilityEngine.getGrantedFeats(tempActor, classDoc);
 
     const pendingData = {
       selectedFeats: this.characterData.feats || [],

@@ -220,6 +220,44 @@ export class AbilityEngine {
   }
 
   /**
+   * WAVE 3: Metadata Accessors
+   * These methods provide structural queries (not legality checks).
+   * They delegate to PrerequisiteChecker for data retrieval.
+   */
+
+  /**
+   * Get feats granted by a class (via houserules or class definition).
+   *
+   * @param {Actor} actor - The actor
+   * @param {Object} classDoc - The class document
+   * @returns {Array} Feats granted by this class
+   */
+  static getGrantedFeats(actor, classDoc = null) {
+    return PrerequisiteChecker.getAllGrantedFeats(actor, classDoc);
+  }
+
+  /**
+   * Load talent tree access rules from storage.
+   *
+   * @returns {Promise<Object>} Talent tree access rules
+   */
+  static async loadTalentTreeAccessRules() {
+    return PrerequisiteChecker._loadTalentTreeAccessRules();
+  }
+
+  /**
+   * Batch check prerequisites for a snapshot (progression compilation).
+   *
+   * @param {Object} snapshot - Actor snapshot from progression engine
+   * @param {string} type - Item type ('feat' or 'talent')
+   * @param {string} itemId - Item ID to check
+   * @returns {Object} Prerequisite check result
+   */
+  static checkPrerequisites(snapshot, type, itemId) {
+    return PrerequisiteChecker.checkPrerequisites(snapshot, type, itemId);
+  }
+
+  /**
    * Helper: Guess if a string-based candidate is likely a feat.
    * @private
    */

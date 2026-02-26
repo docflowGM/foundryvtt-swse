@@ -107,7 +107,7 @@ export async function getAvailableTalentTreesForHeroicTalent(actor) {
 
   // Add Force Talent Trees if character is Force Sensitive
   try {
-    const accessRules = await PrerequisiteChecker._loadTalentTreeAccessRules();
+    const accessRules = await AbilityEngine.loadTalentTreeAccessRules();
 
     if (accessRules) {
       // Get all Force Talent Trees (both generic and tradition-based)

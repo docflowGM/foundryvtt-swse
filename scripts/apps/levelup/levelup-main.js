@@ -13,6 +13,7 @@
  */
 
 import { SWSEProgressionEngine } from '../../engine/progression.js';
+import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
 import { SWSELogger, swseLogger } from '../../utils/logger.js';
 import { isEpicOverrideEnabled } from '../../settings/epic-override.js';
 import { getLevelSplit } from '../../actors/derived/level-split.js';
@@ -868,7 +869,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       .map(([key]) => key);
 
     // Get granted feats (houserules + level 1 class features)
-    const grantedFeats = PrerequisiteChecker.getAllGrantedFeats(this.actor, this.selectedClass);
+    const grantedFeats = AbilityEngine.getGrantedFeats(this.actor, this.selectedClass);
 
     return {
       selectedClass: this.selectedClass,
