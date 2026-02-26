@@ -8,6 +8,7 @@ import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
 import { SWSELogger } from '../../utils/logger.js';
 import { BackgroundRegistry } from '../../registries/background-registry.js';
 import { ForceRegistry } from '../../engine/registries/force-registry.js';
+import { SpeciesRegistry } from '../../engine/registries/species-registry.js';
 
 export class CharacterTemplates {
   static _templates = null;
@@ -100,14 +101,8 @@ export class CharacterTemplates {
 
     // Validate species ID
     if (template.speciesId) {
-      const speciesPack = game.packs.get('foundryvtt-swse.species');
-      if (!speciesPack) {
-        errors.push('Species compendium not found');
-      } else {
-        const doc = await speciesPack.getDocument(template.speciesId).catch(() => null);
-        if (!doc) {
-          errors.push(`Species ID not found: ${template.speciesId}`);
-        }
+      if (!SpeciesRegistry.hasId(template.speciesId)) {
+        errors.push(`Species ID not found: ${template.speciesId}`);
       }
     }
 

@@ -5,6 +5,7 @@ import { ProgressionEngine } from '../../engines/progression/engine/progression-
  */
 
 import { SWSELogger } from '../../utils/logger.js';
+import { SpeciesRegistry } from '../../engine/registries/species-registry.js';
 import { SuggestionService } from '../../engines/suggestion/SuggestionService.js';
 import { warnGM } from '../../utils/warn-gm.js';
 import { getMentorForClass, getMentorGreeting, getLevel1Class, setLevel1Class } from '../../engines/mentor/mentor-dialogues.js';
@@ -192,15 +193,14 @@ export function getClassSuggestionEngine() {
  * @returns {Promise<Array>} Array of species objects
  */
 export async function getAvailableSpecies() {
-  const speciesPack = game.packs.get('foundryvtt-swse.species');
-  if (!speciesPack) {
-    SWSELogger.error('SWSE LevelUp | Species compendium not found!');
-    ui.notifications.error('Failed to load species compendium. Species will not be available.');
+  const allSpecies = SpeciesRegistry.getAll();
+  if (!allSpecies || allSpecies.length === 0) {
+    SWSELogger.error('SWSE LevelUp | No species available in registry!');
+    ui.notifications.error('Failed to load species. Species will not be available.');
     return [];
   }
 
-  const allSpecies = await speciesPack.getDocuments();
-  SWSELogger.log(`SWSE LevelUp | Loaded ${allSpecies.length} species from compendium`);
+  SWSELogger.log(`SWSE LevelUp | Loaded ${allSpecies.length} species from registry`);
 
   const availableSpecies = [];
 
@@ -291,17 +291,10 @@ function sortSpeciesBySource(species) {
 export async function selectSpecies(speciesId, speciesName) {
   SWSELogger.log(`SWSE LevelUp | Attempting to select species: ${speciesName} (ID: ${speciesId})`);
 
-  const speciesPack = game.packs.get('foundryvtt-swse.species');
-  if (!speciesPack) {
-    SWSELogger.error('SWSE LevelUp | Species compendium not found!');
-    ui.notifications.error('Species compendium not found! Please check that the foundryvtt-swse.species compendium exists.');
-    return null;
-  }
-
   // Try to get the document using the ID if provided
   let speciesDoc = null;
   if (speciesId && speciesId !== 'null' && speciesId !== 'undefined') {
-    speciesDoc = await speciesPack.getDocument(speciesId);
+    speciesDoc = await SpeciesRegistry._getDocument(speciesId);
   }
 
   // If not found by ID, try searching by name as a fallback

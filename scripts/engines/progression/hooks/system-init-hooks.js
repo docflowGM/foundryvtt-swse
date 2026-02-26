@@ -30,6 +30,7 @@ import { normalizeDocumentTalent, validateTalentTreeAssignment } from '../../../
 // V2 Registry Layer (normalized, registry-only safe enumerators)
 import { FeatRegistry as NormalizedFeatRegistry } from '../../../registries/feat-registry.js';
 import { ForceRegistry } from '../../../engine/registries/force-registry.js';
+import { SpeciesRegistry } from '../../../engine/registries/species-registry.js';
 
 export const SystemInitHooks = {
 
@@ -149,7 +150,11 @@ export const SystemInitHooks = {
             SWSELogger.log('  - Initializing ForceRegistry...');
             await ForceRegistry.initialize();
 
-            SWSELogger.log(`SSOT registries built: ${TalentTreeDB.count()} trees, ${ClassesDB.count()} classes, ${TalentDB.count()} talents, ${NormalizedFeatRegistry.count()} feats, ${ForceRegistry.count()} force items`);
+            // 7. Initialize Species Registry (V2 enumeration authority for species)
+            SWSELogger.log('  - Initializing SpeciesRegistry...');
+            await SpeciesRegistry.initialize();
+
+            SWSELogger.log(`SSOT registries built: ${TalentTreeDB.count()} trees, ${ClassesDB.count()} classes, ${TalentDB.count()} talents, ${NormalizedFeatRegistry.count()} feats, ${ForceRegistry.count()} force items, ${SpeciesRegistry.count()} species`);
 
         } catch (err) {
             SWSELogger.error('Failed to build SSOT registries:', err);
