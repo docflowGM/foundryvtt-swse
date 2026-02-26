@@ -1,6 +1,7 @@
 import { SWSELogger } from '../utils/logger.js';
 import { registerMetaTuningSettings } from '../engine/MetaTuning.js';
 import { registerEpicOverrideSetting } from '../settings/epic-override.js';
+import { registerHouseRuleSettings } from '../settings/house-rules.js';
 
 /**
  * System settings for SWSE
@@ -294,6 +295,9 @@ export function registerSystemSettings() {
     },
     default: 'roll',
   });
+
+  // House Rules
+  registerHouseRuleSettings();
 
   SWSELogger.log('SWSE | Settings registered');
 }

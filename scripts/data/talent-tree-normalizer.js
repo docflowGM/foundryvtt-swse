@@ -23,50 +23,6 @@ export function normalizeTalentTreeId(name) {
         .replace(/^_|_$/g, '');
 }
 
-/**
- * Infer role from tree name.
- */
-function inferTreeRole(name) {
-    const n = name.toLowerCase();
-
-    if (n.includes('jedi') || n.includes('force') || n.includes('sith') ||
-        n.includes('lightsaber') || n.includes('vitality')) return 'force';
-
-    if (n.includes('commando') || n.includes('trooper') || n.includes('weapon') ||
-        n.includes('armor') || n.includes('duelist') || n.includes('gunslinger') ||
-        n.includes('soldier') || n.includes('guardian') || n.includes('gladiator'))
-        return 'combat';
-
-    if (n.includes('slicer') || n.includes('tech') || n.includes('engineer') ||
-        n.includes('mechanic') || n.includes('droid') || n.includes('saboteur'))
-        return 'tech';
-
-    if (n.includes('leadership') || n.includes('influence') ||
-        n.includes('inspiration') || n.includes('noble') ||
-        n.includes('officer') || n.includes('diplomat'))
-        return 'leader';
-
-    return 'general';
-}
-
-/**
- * Infer category from tree name.
- */
-function inferTreeCategory(name) {
-    const n = name.toLowerCase();
-
-    if (n.includes('jedi')) return 'jedi';
-    if (n.includes('sith')) return 'sith';
-    if (n.includes('droid')) return 'droid';
-    if (n.includes('force') && !n.includes('jedi') && !n.includes('sith')) return 'force';
-    if (n.includes('bounty hunter')) return 'bounty_hunter';
-    if (n.includes('soldier') || n.includes('trooper')) return 'military';
-    if (n.includes('noble') || n.includes('officer')) return 'leadership';
-    if (n.includes('scoundrel') || n.includes('outlaw')) return 'scoundrel';
-    if (n.includes('scout') || n.includes('fringer')) return 'scout';
-
-    return 'universal';
-}
 
 /**
  * Normalize raw tree document.
@@ -80,8 +36,8 @@ export function normalizeTalentTree(rawTree) {
         name,
         sourceId: rawTree._id,
         talentIds: sys.talentIds || [],
-        role: inferTreeRole(name),
-        category: inferTreeCategory(name),
+        role: sys.role || 'general',
+        category: sys.category || 'universal',
         tags: sys.tags || [],
         compendiumName: sys.talent_tree || name,
         description: sys.description || '',
