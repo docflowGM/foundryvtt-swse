@@ -142,8 +142,8 @@ export function evaluateClassEligibility({
         isPrestige: true,
         eligibilityResult: { met: assessment.legal, missing: assessment.missingPrereqs },
         reasons: {
-            missing: result.missing || [],
-            met: result.met ? ['All prerequisites met'] : []
+            missing: assessment.missingPrereqs || [],
+            met: assessment.legal ? ['All prerequisites met'] : []
         }
     };
 }
