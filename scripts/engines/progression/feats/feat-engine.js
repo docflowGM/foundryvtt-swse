@@ -15,6 +15,7 @@ import { FeatRegistry } from './feat-registry.js';
 import { FeatState } from './feat-state.js';
 import { PrerequisiteChecker } from '../../../data/prerequisite-checker.js';
 import { FeatNormalizer } from './feat-normalizer.js';
+import { AbilityEngine } from '../../../engine/abilities/AbilityEngine.js';
 
 export const FeatEngine = {
 
@@ -71,12 +72,12 @@ export const FeatEngine = {
             };
         }
 
-        // Check requirements
-        const reqCheck = PrerequisiteChecker.meetsRequirements(actor, featDoc);
-        if (!reqCheck.valid) {
+        // Check requirements (delegated to sovereign authority)
+        const assessment = AbilityEngine.evaluateAcquisition(actor, featDoc, {});
+        if (!assessment.legal) {
             return {
                 success: false,
-                reason: `Cannot learn feat: ${reqCheck.reasons.join(', ')}`
+                reason: `Cannot learn feat: ${assessment.blockingReasons.join(', ')}`
             };
         }
 
@@ -142,8 +143,8 @@ export const FeatEngine = {
                 continue;
             }
 
-            // Must meet requirements
-            if (!PrerequisiteChecker.canLearn(actor, feat)) {
+            // Must meet requirements (delegated to sovereign authority)
+            if (!AbilityEngine.canAcquire(actor, feat, {})) {
                 continue;
             }
 
@@ -189,7 +190,8 @@ export const FeatEngine = {
             return ['Feat not found'];
         }
 
-        return PrerequisiteChecker.getUnmetRequirements(actor, featDoc);
+        // Delegated to sovereign authority
+        return AbilityEngine.getUnmetRequirements(actor, featDoc, {});
     },
 
     /**
