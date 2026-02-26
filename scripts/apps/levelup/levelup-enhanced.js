@@ -4,6 +4,7 @@
 
 import { ProgressionEngine } from '../../engines/progression/engine/progression-engine-instance.js';
 import { SWSELogger } from '../../utils/logger.js';
+import { ClassesRegistry } from '../../engine/registries/classes-registry.js';
 import { SkillRegistry } from '../../engines/progression/skills/skill-registry-ui.js';
 import { FeatRegistry } from '../../engines/progression/feats/feat-registry-ui.js';
 import { TalentRegistry } from '../../engines/progression/talents/talent-registry-ui.js';
@@ -276,13 +277,12 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
    */
   async _getAvailableClasses() {
     try {
-      const pack = game.packs.get('foundryvtt-swse.classes');
-      if (!pack) {
-        SWSELogger.warn('Classes compendium not found');
+      if (!ClassesRegistry.isInitialized()) {
+        SWSELogger.warn('ClassesRegistry not initialized');
         return [];
       }
 
-      const docs = await pack.getDocuments();
+      const docs = ClassesRegistry.getAll();
       return docs.map(c => ({
         name: c.name,
         img: c.img || null,

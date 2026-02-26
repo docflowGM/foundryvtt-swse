@@ -2,7 +2,8 @@ import SWSEFormApplicationV2 from './base/swse-form-application-v2.js';
 import { ProgressionEngine } from '../engines/progression/engine/progression-engine.js';
 import { createActor } from '../core/document-api-v13.js';
 import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
-import { SpeciesRegistry } from '../../engine/registries/species-registry.js';
+import { SpeciesRegistry } from '../engine/registries/species-registry.js';
+import { ClassesRegistry } from '../engine/registries/classes-registry.js';
 // ============================================
 // Template Character Creator
 // Class-first selection with playing card UI
@@ -775,25 +776,18 @@ async _prepareContext(options) {
    */
   async _applyClass(actor, template) {
     try {
-      const classPack = game.packs.get('foundryvtt-swse.classes');
-      if (!classPack) {return;}
-
       const classRef = template.classRef || null;
       const className = classRef ? (classRef.displayName || classRef.name) : template.className;
-      const classPackName = classRef?.pack || 'foundryvtt-swse.classes';
       const classId = classRef?.id || null;
 
       if (classId) {
-        const pack = game.packs.get(classPackName);
-        if (pack) {
-          const classItem = await pack.getDocument(classId);
-          if (classItem) {
-            const classData = classItem.toObject();
-            classData.system.level = template.level || 1;
-            await ActorEngine.createEmbeddedDocuments(actor, 'Item', [classData]);
-            SWSELogger.log(`SWSE | Added class: ${className}`);
-            return;
-          }
+        const classItem = await ClassesRegistry._getDocument(classId);
+        if (classItem) {
+          const classData = classItem.toObject();
+          classData.system.level = template.level || 1;
+          await ActorEngine.createEmbeddedDocuments(actor, 'Item', [classData]);
+          SWSELogger.log(`SWSE | Added class: ${className}`);
+          return;
         }
       }
 

@@ -12,6 +12,7 @@
 
 import { SWSELogger } from '../../utils/logger.js';
 import { getClassLevel, getCharacterClasses } from './levelup-shared.js';
+import { ClassesRegistry } from '../../engine/registries/classes-registry.js';
 import { getTalentTrees } from '../chargen/chargen-property-accessor.js';
 import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
 
@@ -89,13 +90,12 @@ export function getTalentProgressionInfo(selectedClass, actor) {
 export async function getAvailableTalentTreesForHeroicTalent(actor) {
   const allTrees = new Set();
   const characterClasses = getCharacterClasses(actor);
-  const classPack = game.packs.get('foundryvtt-swse.classes');
 
   // Collect all talent trees from all classes the character has levels in
   for (const [className] of Object.entries(characterClasses)) {
-    const classIndex = classPack?.index.find(c => c.name === className);
-    if (classIndex) {
-      const classDoc = await classPack.getDocument(classIndex._id);
+    const classData = ClassesRegistry.getByName(className);
+    if (classData) {
+      const classDoc = await ClassesRegistry._getDocument(classData.id);
       if (classDoc) {
         const trees = getTalentTrees(classDoc);
         if (trees && trees.length > 0) {

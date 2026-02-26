@@ -10,6 +10,7 @@
 import { BuildIntent, BUILD_THEMES, PRESTIGE_SIGNALS, FEAT_THEME_SIGNALS } from '../../engines/suggestion/BuildIntent.js';
 import { ClassSuggestionEngine, CLASS_SYNERGY_DATA } from '../../engines/suggestion/ClassSuggestionEngine.js';
 import { SWSELogger } from '../../utils/logger.js';
+import { ClassesRegistry } from '../../engine/registries/classes-registry.js';
 import { CORE_CLASSES } from '../../engines/progression/data/progression-data.js'; // PHASE C: Consolidate class lists
 
 // V2 API base class
@@ -200,10 +201,9 @@ export class GMDebugPanel extends SWSEApplicationV2 {
      * Analyze classes for debug display
      */
     async _analyzeClasses() {
-        const classPack = game.packs.get('foundryvtt-swse.classes');
-        if (!classPack) {return [];}
+        if (!ClassesRegistry.isInitialized()) {return [];}
 
-        const allClasses = await classPack.getDocuments();
+        const allClasses = ClassesRegistry.getAll();
         const prestigePrereqs = await ClassSuggestionEngine._loadPrestigePrerequisites();
         const actorState = await ClassSuggestionEngine._buildActorState(this.actor, this.pendingData);
 
