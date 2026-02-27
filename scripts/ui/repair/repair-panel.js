@@ -15,10 +15,10 @@
  *   - Shows governance context
  */
 
-import { ActorRepairEngine } from '../../engine/repair/actor-repair-engine.js';
-import { IntegrityDashboard } from '../../governance/ui/integrity-dashboard.js';
-import { GovernanceSystem } from '../../governance/governance-system.js';
-import { SWSELogger } from '../../utils/logger.js';
+import { ActorRepairEngine } from "/systems/foundryvtt-swse/scripts/engine/repair/actor-repair-engine.js";
+import { IntegrityDashboard } from "/systems/foundryvtt-swse/scripts/governance/ui/integrity-dashboard.js";
+import { GovernanceSystem } from "/systems/foundryvtt-swse/scripts/governance/governance-system.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 
 export class RepairPanel extends Application {
   constructor(actor, options = {}) {

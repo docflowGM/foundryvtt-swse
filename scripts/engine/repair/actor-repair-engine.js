@@ -15,11 +15,11 @@
  *   - Complexity estimates
  */
 
-import { MissingPrereqsTracker } from '../../governance/integrity/missing-prereqs-tracker.js';
-import { PrerequisiteIntegrityChecker } from '../../governance/integrity/prerequisite-integrity-checker.js';
-import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
-import { SuggestionEngine } from '../../engines/mentor/SuggestionEngine.js';
-import { SWSELogger } from '../../utils/logger.js';
+import { MissingPrereqsTracker } from "/systems/foundryvtt-swse/scripts/governance/integrity/missing-prereqs-tracker.js";
+import { PrerequisiteIntegrityChecker } from "/systems/foundryvtt-swse/scripts/governance/integrity/prerequisite-integrity-checker.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import { SuggestionEngine } from "/systems/foundryvtt-swse/scripts/engines/mentor/SuggestionEngine.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 
 export class ActorRepairEngine {
   /**

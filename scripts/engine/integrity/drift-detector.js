@@ -12,8 +12,8 @@
  * No auto-correction (advisory only).
  */
 
-import { AuditTrail } from '../../governance/audit/audit-trail.js';
-import { SWSELogger } from '../../utils/logger.js';
+import { AuditTrail } from "/systems/foundryvtt-swse/scripts/governance/audit/audit-trail.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 
 export class DriftDetector {
   /**

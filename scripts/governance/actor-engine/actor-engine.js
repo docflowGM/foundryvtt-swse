@@ -1,14 +1,14 @@
 // scripts/actor-engine.js
-import { SWSELogger } from '../../core/logger.js';
-import { applyActorUpdateAtomic } from '../../utils/actor-utils.js';
-import { MutationInterceptor } from '../mutation/MutationInterceptor.js';
-import { determineLevelFromXP } from '../../engines/shared/xp-system.js';
-import { DerivedCalculator } from '../../actors/derived/derived-calculator.js';
-import { ModifierEngine } from '../../engines/effects/modifiers/ModifierEngine.js';
-import { MutationApplicationError } from '../mutation/mutation-errors.js';
-import { PrerequisiteIntegrityChecker } from '../integrity/prerequisite-integrity-checker.js';
-import { PreflightValidator } from '../enforcement/preflight-validator.js';
-import { MissingPrereqsTracker } from '../integrity/missing-prereqs-tracker.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
+import { applyActorUpdateAtomic } from "/systems/foundryvtt-swse/scripts/utils/actor-utils.js";
+import { MutationInterceptor } from "/systems/foundryvtt-swse/scripts/governance/mutation/MutationInterceptor.js";
+import { determineLevelFromXP } from "/systems/foundryvtt-swse/scripts/engines/shared/xp-system.js";
+import { DerivedCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js";
+import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engines/effects/modifiers/ModifierEngine.js";
+import { MutationApplicationError } from "/systems/foundryvtt-swse/scripts/governance/mutation/mutation-errors.js";
+import { PrerequisiteIntegrityChecker } from "/systems/foundryvtt-swse/scripts/governance/integrity/prerequisite-integrity-checker.js";
+import { PreflightValidator } from "/systems/foundryvtt-swse/scripts/governance/enforcement/preflight-validator.js";
+import { MissingPrereqsTracker } from "/systems/foundryvtt-swse/scripts/governance/integrity/missing-prereqs-tracker.js";
 
 /**
  * ActorEngine
