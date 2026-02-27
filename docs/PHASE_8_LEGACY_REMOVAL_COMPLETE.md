@@ -57,7 +57,7 @@ itemGrantCallback: async (purchasingActor, cartItems) => {
 
 Comprehensive search results:
 
-#### Store Engine Layer (`/scripts/engines/store/`)
+#### Store Engine Layer (`/scripts/engine/store/`)
 - ✅ No direct `createActor()` calls
 - ✅ No direct `actor.update()` calls
 - ✅ No direct `Actor.create()` calls
@@ -191,7 +191,7 @@ World State (atomically updated)
 The following store files were verified as mutation-compliant:
 
 ```
-scripts/engines/store/
+scripts/engine/store/
   ✅ store-engine.js
   ✅ transaction-engine.js
   ✅ ledger-service.js

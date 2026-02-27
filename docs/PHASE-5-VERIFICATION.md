@@ -11,13 +11,13 @@
 ### SSOT → Engine → UI
 
 ✓ **SSOT (Compendiums):**
-- Single source: `STORE_PACKS` in `scripts/engines/store/store-constants.js`
+- Single source: `STORE_PACKS` in `scripts/engine/store/store-constants.js`
 - Schema validation: `compendium-schema.js` defines expected structure
 - No embedded logic: Metadata is purely declarative
 - Canonical IDs enforced: All items have `id` and `_id`
 
 ✓ **Engine (StoreEngine):**
-- Single authority: `scripts/engines/store/store-engine.js`
+- Single authority: `scripts/engine/store/store-engine.js`
 - Three public methods:
   - `getInventory(opts)` → Load + normalize + categorize + price
   - `canPurchase(context)` → Validate eligibility
@@ -240,7 +240,7 @@ The API WILL require user code changes for:
 | Guarantee | Enforced By | Evidence |
 |-----------|------------|----------|
 | Single SSOT | Engine imports only from `STORE_PACKS` | `store-engine.js` line 10 |
-| No UI logic | Engine in separate directory | `scripts/engines/store/` |
+| No UI logic | Engine in separate directory | `scripts/engine/store/` |
 | Atomic transactions | Transaction ID + logging | `store-engine.js` line 113–125 |
 | Credit safety | Eligibility check before deduction | `store-engine.js` line 94–104 |
 | Audit trail | SWSELogger calls | `store-engine.js` lines 32–70+ |

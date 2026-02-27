@@ -414,8 +414,8 @@ await ActorEngine.applyMutationPlan(actor, mutationPlan);
 
 ## 📚 Reference Files
 
-- **ProgressionCompiler**: `scripts/engines/progression/ProgressionCompiler.js`
-- **ManualStepProcessor**: `scripts/engines/progression/engine/manual-step-processor.js`
+- **ProgressionCompiler**: `scripts/engine/progression/ProgressionCompiler.js`
+- **ManualStepProcessor**: `scripts/engine/progression/engine/manual-step-processor.js`
 - **PrerequisiteChecker**: `scripts/data/prerequisite-checker.js`
 - **ActorEngine**: `governance/actor-engine/actor-engine.js`
 

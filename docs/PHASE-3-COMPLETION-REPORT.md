@@ -19,7 +19,7 @@ Phase 3 has successfully replaced all name-based detection fallbacks with struct
 
 ### A. Proficiency Detection — Name-Based → Structured
 
-**File:** `scripts/engines/effects/modifiers/ModifierEngine.js` (Lines 683-726)
+**File:** `scripts/engine/effects/modifiers/ModifierEngine.js` (Lines 683-726)
 
 #### Before (Legacy)
 ```javascript
@@ -72,7 +72,7 @@ if (!isProficient) {
 
 ### B. Talent Detection — Name-Based → Structured
 
-**File:** `scripts/engines/effects/modifiers/ModifierEngine.js` (Lines 698-740)
+**File:** `scripts/engine/effects/modifiers/ModifierEngine.js` (Lines 698-740)
 
 #### Before (Legacy)
 ```javascript

@@ -2,7 +2,7 @@
 
 **Status:** Analysis Complete
 **Date:** 2026-02-10
-**Scope:** Full store system (scripts/apps/store/*, scripts/engines/store/*, related compendiums)
+**Scope:** Full store system (scripts/apps/store/*, scripts/engine/store/*, related compendiums)
 
 ---
 

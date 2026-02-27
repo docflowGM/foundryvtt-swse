@@ -319,7 +319,7 @@ Services (dining, lodging, medical, transport, upkeep, vehicle rental) are hardc
 - `MIN_COSTS` - UI display
 
 **Current Issues:**
-- Duplicates `scripts/engines/store/store-constants.js` for STORE_PACKS
+- Duplicates `scripts/engine/store/store-constants.js` for STORE_PACKS
 - UI should use engine constants, not duplicate them
 
 **V2 Violations:** Duplicated STORE_PACKS (engine owns this)

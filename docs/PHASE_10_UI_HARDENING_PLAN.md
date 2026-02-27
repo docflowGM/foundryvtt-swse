@@ -581,7 +581,7 @@ SWSELogger.debug = function(msg, context) {
 
 ## Files to Modify
 
-### `scripts/engines/store/store-engine.js`
+### `scripts/engine/store/store-engine.js`
 - Add `_translateErrorMessage()`
 - Add `_isTransientError()`
 - Add `executeWithRetry()`
@@ -718,7 +718,7 @@ IMPROVEMENTS:
 - Improve error remediation suggestions
 
 CHANGES:
-- scripts/engines/store/store-engine.js:
+- scripts/engine/store/store-engine.js:
   - Add _translateErrorMessage() for friendly errors
   - Add _isTransientError() for transient detection
   - Add executeWithRetry() for automatic retries

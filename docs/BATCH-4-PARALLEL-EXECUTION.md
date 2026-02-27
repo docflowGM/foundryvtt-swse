@@ -105,7 +105,7 @@ For each test, look for:
 ### What's Ready
 
 ```javascript
-// In scripts/engines/store/store-transaction-engine.js
+// In scripts/engine/store/store-transaction-engine.js
 
 StoreTransactionEngine.purchaseItem({
   buyer: buyerActor,

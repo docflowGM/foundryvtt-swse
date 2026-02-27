@@ -1,25 +1,22 @@
 /**
  * force-technique-engine.js
  * Unified Force Technique engine for SWSE progression.
- * Handles trigger detection, collection, and selection of force techniques.
+ *
+ * PURE ENGINE LAYER - NO UI IMPORTS
+ *
+ * Responsibilities:
+ * - Collect available techniques from compendium (data layer)
+ * - Apply selected techniques to actor via ActorEngine (mutation)
+ * - Return structured results (no UI orchestration)
+ *
+ * Note: UI orchestration (opening pickers, user interaction) belongs in apps/ layer.
+ * Apps should call collectAvailableTechniques(), show UI, then call applySelected().
  */
 
-import { ForceTechniquePicker } from "/systems/foundryvtt-swse/scripts/apps/progression/force-technique-picker.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class ForceTechniqueEngine {
-  /**
-   * Handle force technique triggers (from feature dispatcher)
-   * @param {Actor} actor - The actor gaining techniques
-   * @param {number} count - Number of techniques to select
-   */
-  static async handleForceTechniqueTriggers(actor, count = 1) {
-    if (count > 0) {
-      await this.openPicker(actor, count);
-    }
-  }
-
   /**
    * Collect available techniques from compendium
    * @param {Actor} actor - The actor (unused but for API consistency)
@@ -50,23 +47,10 @@ export class ForceTechniqueEngine {
   }
 
   /**
-   * Open the force technique picker UI
-   * @param {Actor} actor - The actor selecting techniques
-   * @param {number} count - Number of techniques to select
-   */
-  static async openPicker(actor, count) {
-    const available = await this.collectAvailableTechniques(actor);
-    const selected = await ForceTechniquePicker.select(available, count, actor);
-
-    if (selected && selected.length) {
-      await this.applySelected(actor, selected);
-    }
-  }
-
-  /**
    * Apply selected techniques to the actor
    * @param {Actor} actor - The actor
    * @param {Array} selectedItems - Selected technique documents/objects
+   * @returns {Promise<Object>} Result object with applied items
    */
   static async applySelected(actor, selectedItems = []) {
     const existing = new Set(
@@ -99,11 +83,13 @@ export class ForceTechniqueEngine {
       }
 
       if (toCreate.length) {
-        // PHASE 3: Route through ActorEngine
         await ActorEngine.createEmbeddedDocuments(actor, 'Item', toCreate);
+        return { success: true, applied: toCreate.length };
       }
+      return { success: true, applied: 0 };
     } catch (e) {
       swseLogger.error('ForceTechniqueEngine.applySelected error', e);
+      return { success: false, error: e.message };
     }
   }
 }

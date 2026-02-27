@@ -38,7 +38,7 @@ SuggestionEngine.score(candidate)
 
 ## Current State of MentorBiasEngine
 
-**File:** `scripts/engines/suggestion/mentor-suggestion-bias.js`
+**File:** `scripts/engine/suggestion/mentor-suggestion-bias.js`
 
 ### Existing Functions
 1. `calculateMentorBias(actor, candidate)`

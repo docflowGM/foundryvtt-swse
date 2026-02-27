@@ -1,6 +1,8 @@
 /**
  * SWSE Class Suggestion Engine (PHASE 5D: UNIFIED_TIERS Refactor)
  *
+ * PURE ENGINE LAYER - NO UI IMPORTS
+ *
  * A deterministic, explainable system for suggesting classes during level-up.
  * Uses UNIFIED_TIERS system for consistent cross-engine tier definitions.
  *
@@ -17,7 +19,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { BASE_CLASSES, calculateTotalBAB } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js";
+import { BASE_CLASSES, calculateTotalBAB } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-suggestion-utilities.js";
 import { isEpicActor, getPlannedHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { CLASS_SYNERGY_DATA } from "/systems/foundryvtt-swse/scripts/engine/suggestion/shared-suggestion-utilities.js";
 import { UNIFIED_TIERS, getTierMetadata } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-unified-tiers.js";

@@ -169,7 +169,7 @@ function createVehiclePlans(cartVehicles, itemsById) {
 
 ### Step 3: Update StoreEngine.purchase() to Apply Plans
 
-**File:** `scripts/engines/store/store-engine.js`
+**File:** `scripts/engine/store/store-engine.js`
 
 **Current (callback mutates):**
 ```javascript
@@ -386,7 +386,7 @@ function createVehiclePlans(cartVehicles, itemsById) {
 
 | File | Changes | Scope |
 |------|---------|-------|
-| `scripts/engines/store/store-engine.js` | Update `purchase()` to apply returned plans via ActorEngine | Core |
+| `scripts/engine/store/store-engine.js` | Update `purchase()` to apply returned plans via ActorEngine | Core |
 | `scripts/apps/store/store-checkout.js` | Add helper functions, update callbacks, remove direct mutations | Critical |
 
 ---
@@ -396,10 +396,10 @@ function createVehiclePlans(cartVehicles, itemsById) {
 | File | Why |
 |------|-----|
 | `scripts/governance/actor-engine/actor-engine.js` | Phase 2 adds create support |
-| `scripts/engines/store/transaction-engine.js` | Phase 4 introduces this |
-| `scripts/engines/store/ledger-service.js` | Phase 3 introduces this |
-| `scripts/engines/vehicles/vehicle-factory.js` | Phase 5 introduces this |
-| `scripts/engines/store/placement-router.js` | Phase 6 introduces this |
+| `scripts/engine/store/transaction-engine.js` | Phase 4 introduces this |
+| `scripts/engine/store/ledger-service.js` | Phase 3 introduces this |
+| `scripts/engine/vehicles/vehicle-factory.js` | Phase 5 introduces this |
+| `scripts/engine/store/placement-router.js` | Phase 6 introduces this |
 
 ---
 

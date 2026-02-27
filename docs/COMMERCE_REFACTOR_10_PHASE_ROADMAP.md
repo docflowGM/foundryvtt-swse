@@ -24,7 +24,7 @@ The store, vehicle builder, droid builder, and starship builder will share a **s
 - ✅ Update `StoreEngine.purchase()` to apply returned plans via `ActorEngine`
 
 **Affected Files:**
-- `scripts/engines/store/store-engine.js` — Update `purchase()` method
+- `scripts/engine/store/store-engine.js` — Update `purchase()` method
 - `scripts/apps/store/store-checkout.js` — Update `itemGrantCallback` implementations
 - `scripts/apps/store/store-checkout.js` — Modify `buyVehicle()`, `buyDroid()`
 
@@ -90,9 +90,9 @@ The store, vehicle builder, droid builder, and starship builder will share a **s
 - ✅ Remove direct credit mutations from anywhere in store layer
 
 **Affected Files:**
-- `scripts/engines/store/ledger-service.js` (NEW)
-- `scripts/engines/store/store-engine.js` — Remove credit mutation
-- `scripts/engines/store/store-transaction-engine.js` — Use LedgerService
+- `scripts/engine/store/ledger-service.js` (NEW)
+- `scripts/engine/store/store-engine.js` — Remove credit mutation
+- `scripts/engine/store/store-transaction-engine.js` — Use LedgerService
 
 **Not Changed (Yet):**
 - ❌ TransactionEngine still doesn't exist
@@ -131,9 +131,9 @@ The store, vehicle builder, droid builder, and starship builder will share a **s
 7. If any step fails: rollback and return error
 
 **Affected Files:**
-- `scripts/engines/store/transaction-engine.js` (NEW)
+- `scripts/engine/store/transaction-engine.js` (NEW)
 - `scripts/apps/store/store-checkout.js` — Use TransactionEngine
-- `scripts/engines/store/store-engine.js` — Remove purchase logic (delegate to TransactionEngine)
+- `scripts/engine/store/store-engine.js` — Remove purchase logic (delegate to TransactionEngine)
 
 **Not Changed (Yet):**
 - ❌ PlacementRouter doesn't exist yet (hardcoded routing continues)
@@ -165,7 +165,7 @@ The store, vehicle builder, droid builder, and starship builder will share a **s
 - ✅ Integrate with TransactionEngine (Phase 4 completed first)
 
 **Affected Files:**
-- `scripts/engines/vehicles/vehicle-factory.js` (NEW)
+- `scripts/engine/vehicles/vehicle-factory.js` (NEW)
 - `scripts/apps/vehicle-modification-app.js` — Return buildSpec, not persist config
 - `scripts/apps/vehicle-modification-manager.js` — Support factory compilation
 
@@ -200,9 +200,9 @@ The store, vehicle builder, droid builder, and starship builder will share a **s
 - ✅ Integrate with TransactionEngine (Phase 4 completed first)
 
 **Affected Files:**
-- `scripts/engines/store/placement-router.js` (NEW)
+- `scripts/engine/store/placement-router.js` (NEW)
 - `scripts/apps/store/store-checkout.js` — Use router instead of hardcoding ownership
-- `scripts/engines/store/transaction-engine.js` — Consult PlacementRouter
+- `scripts/engine/store/transaction-engine.js` — Consult PlacementRouter
 
 **Not Changed (Yet):**
 - ❌ Vehicle hangar collection doesn't exist yet (separate phase)
@@ -234,7 +234,7 @@ The store, vehicle builder, droid builder, and starship builder will share a **s
 - ✅ Droid builder returns buildSpec (like vehicle builder)
 
 **Affected Files:**
-- `scripts/engines/droids/droid-factory.js` (NEW)
+- `scripts/engine/droids/droid-factory.js` (NEW)
 - `scripts/apps/store/store-checkout.js` — Use factory for droids
 - `scripts/apps/chargen/chargen-main.js` — Support factory pattern
 
@@ -266,7 +266,7 @@ The store, vehicle builder, droid builder, and starship builder will share a **s
 - ✅ Delete `system.vehicle` config storage from character schema
 
 **Affected Files:**
-- `scripts/engines/store/store-engine.js` — Remove purchase() method
+- `scripts/engine/store/store-engine.js` — Remove purchase() method
 - `scripts/apps/store/store-checkout.js` — Remove old callbacks
 - `scripts/actors/vehicle/swse-vehicle-handler.js` — Remove from critical path
 - Vehicle data model migration (remove system.vehicle)

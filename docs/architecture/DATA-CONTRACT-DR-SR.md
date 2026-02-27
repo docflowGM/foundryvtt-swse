@@ -293,9 +293,9 @@ actor.system.derived.damageReduction = {
 
 ## 🔗 References
 
-- [DamageMitigationManager](../../scripts/engines/combat/damage-mitigation-manager.js)
-- [ShieldMitigationResolver](../../scripts/engines/combat/resolvers/shield-mitigation-resolver.js)
-- [DamageReductionResolver](../../scripts/engines/combat/resolvers/damage-reduction-resolver.js)
+- [DamageMitigationManager](../../scripts/engine/combat/damage-mitigation-manager.js)
+- [ShieldMitigationResolver](../../scripts/engine/combat/resolvers/shield-mitigation-resolver.js)
+- [DamageReductionResolver](../../scripts/engine/combat/resolvers/damage-reduction-resolver.js)
 - [DerivedCalculator](../../scripts/actors/derived/derived-calculator.js)
 
 ---

@@ -48,7 +48,7 @@
 - Server-only resale calculation
 
 **Files Modified**: 1
-- `scripts/engines/store/ledger-service.js`
+- `scripts/engine/store/ledger-service.js`
 
 **Impact**: Resale policy non-negotiable, server-authoritative
 
@@ -104,8 +104,8 @@
 **Vehicle combat through ModifierEngine**
 
 **Files Modified**: 2
-- `scripts/engines/effects/modifiers/ModifierEngine.js`
-- `scripts/engines/effects/modifiers/ModifierTypes.js`
+- `scripts/engine/effects/modifiers/ModifierEngine.js`
+- `scripts/engine/effects/modifiers/ModifierTypes.js`
 
 **Changes**:
 - Added `_getVehicleModModifiers()` method
@@ -120,7 +120,7 @@
 **Unified modifier pipeline across all entity types**
 
 **Files Created**: 1
-- `scripts/engines/effects/modifiers/modifier-unification-schema.js`
+- `scripts/engine/effects/modifiers/modifier-unification-schema.js`
 
 **Components**:
 - Unified target key namespace

@@ -159,13 +159,13 @@ User → Store UI
 ## Files Created/Modified (Phase 1-4)
 
 ### New Files
-- `scripts/engines/store/ledger-service.js`
-- `scripts/engines/store/transaction-engine.js`
-- `scripts/engines/vehicles/vehicle-factory.js`
-- `scripts/engines/store/placement-router.js`
+- `scripts/engine/store/ledger-service.js`
+- `scripts/engine/store/transaction-engine.js`
+- `scripts/engine/vehicles/vehicle-factory.js`
+- `scripts/engine/store/placement-router.js`
 
 ### Modified Files
-- `scripts/engines/store/store-engine.js`
+- `scripts/engine/store/store-engine.js`
 - `scripts/apps/store/store-checkout.js`
 - `scripts/governance/actor-engine/actor-engine.js`
 - `scripts/governance/mutation/merge-mutations.js`

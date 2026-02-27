@@ -37,8 +37,8 @@ grep -r "new Roll\(" scripts/rolls/ --include="*.js"
 | `scripts/rolls/force-powers.js` | Line 139 (internal Roll for itemFormula) | ⚠️ **SAFE** — Explicit formula field only |
 
 **ONLY EXCEPTIONS (both SAFE):**
-1. `scripts/engines/roll/roll-core.js:252` — Core implementation (expected)
-2. `scripts/engines/combat/SWSEInitiative.js:87` — Tie resolution (acceptable for internal reroll)
+1. `scripts/engine/roll/roll-core.js:252` — Core implementation (expected)
+2. `scripts/engine/combat/SWSEInitiative.js:87` — Tie resolution (acceptable for internal reroll)
 3. `scripts/rolls/force-powers.js:139` — Explicit itemFormula field (safe, not regex-extracted)
 
 **VERDICT:** ✅ All Roll() instances properly consolidated.
@@ -72,7 +72,7 @@ ls: cannot access 'scripts/rolls/initiative.js': No such file or directory
 | `rollDefense()` | `scripts/rolls/defenses.js:48` | `RollCore.execute()` → `ModifierEngine.aggregateTarget()` | ✅ |
 | `rollSave()` | `scripts/rolls/saves.js:12` | `RollCore.execute()` → `ModifierEngine.aggregateTarget()` | ✅ |
 | `rollForcePower()` | `scripts/rolls/force-powers.js:14` | `RollCore.execute()` → `ModifierEngine.aggregateTarget()` | ✅ |
-| `CombatEngine.rollInitiative()` | `scripts/engines/combat/CombatEngine.js:50` | Delegates to `SWSEInitiative` → `RollCore` | ✅ |
+| `CombatEngine.rollInitiative()` | `scripts/engine/combat/CombatEngine.js:50` | Delegates to `SWSEInitiative` → `RollCore` | ✅ |
 
 **Flow Verification:**
 ```
@@ -186,7 +186,7 @@ SAME modifiers both times
 ┌─────────────────────────────────────────────────────────┐
 │                   UNIFIED ENTRY POINT                   │
 │                    RollCore.execute()                   │
-│  (scripts/engines/roll/roll-core.js)                   │
+│  (scripts/engine/roll/roll-core.js)                   │
 └────────────────────┬────────────────────────────────────┘
                      │
        ┌─────────────┴─────────────┐
@@ -235,7 +235,7 @@ Domain Engines ← Use RollCore.execute()
 ├── scripts/rolls/force-powers.js
 │   └── rollForcePower(actor, itemId)
 │
-└── scripts/engines/combat/SWSEInitiative.js
+└── scripts/engine/combat/SWSEInitiative.js
     ├── rollInitiative(actor, options)
     └── take10Initiative(actor)
 ```
@@ -271,14 +271,14 @@ ActorEngine.updateActor()  ← ONLY mutation point
 ## FILES CHANGED
 
 ### New Files Created
-1. **`scripts/engines/roll/roll-core.js`** — Core unified roll engine
+1. **`scripts/engine/roll/roll-core.js`** — Core unified roll engine
 
 ### Files Modified
 1. **`scripts/rolls/skills.js`** — Refactored to use RollCore
 2. **`scripts/rolls/defenses.js`** — Refactored to use RollCore, fixed undefined `lvl` bug
 3. **`scripts/rolls/saves.js`** — Refactored to use RollCore
 4. **`scripts/rolls/force-powers.js`** — Refactored to use RollCore, removed regex injection
-5. **`scripts/engines/combat/SWSEInitiative.js`** — Updated to use RollCore
+5. **`scripts/engine/combat/SWSEInitiative.js`** — Updated to use RollCore
 6. **`scripts/core/rolls-init.js`** — Removed legacy initiative import
 
 ### Files Deleted
@@ -435,10 +435,10 @@ ActorEngine.updateActor()  ← ONLY mutation point
    - `scripts/rolls/defenses.js`
    - `scripts/rolls/saves.js`
    - `scripts/rolls/force-powers.js`
-   - `scripts/engines/combat/SWSEInitiative.js`
+   - `scripts/engine/combat/SWSEInitiative.js`
 
 4. Delete new file:
-   - `scripts/engines/roll/roll-core.js`
+   - `scripts/engine/roll/roll-core.js`
 
 **Expected impact:** Roll system reverts to pre-consolidation state with direct math calculations.
 

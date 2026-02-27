@@ -59,7 +59,7 @@ FORCE_OPTION_TIERS = {
 ## Custom Tier Definitions (Detailed)
 
 ### 1. FORCE_SECRET_TIERS
-**File:** `scripts/engines/progression/engine/force-secret-suggestion-engine.js`
+**File:** `scripts/engine/progression/engine/force-secret-suggestion-engine.js`
 **Defined As:**
 ```javascript
 export const FORCE_SECRET_TIERS = {
@@ -82,7 +82,7 @@ export const FORCE_SECRET_TIERS = {
 - CORE_PATH → UNIFIED_TIERS.CATEGORY_SYNERGY (3)
 
 ### 2. FORCE_TECHNIQUE_TIERS
-**File:** `scripts/engines/progression/engine/force-technique-suggestion-engine.js`
+**File:** `scripts/engine/progression/engine/force-technique-suggestion-engine.js`
 **Defined As:**
 ```javascript
 export const FORCE_TECHNIQUE_TIERS = {
@@ -104,7 +104,7 @@ export const FORCE_TECHNIQUE_TIERS = {
 - TECHNIQUE_CHAIN → UNIFIED_TIERS.PATH_CONTINUATION (4)
 
 ### 3. ATTRIBUTE_TIERS
-**File:** `scripts/engines/suggestion/AttributeIncreaseSuggestionEngine.js`
+**File:** `scripts/engine/suggestion/AttributeIncreaseSuggestionEngine.js`
 **Defined As:**
 ```javascript
 export const ATTRIBUTE_TIERS = {
@@ -124,7 +124,7 @@ export const ATTRIBUTE_TIERS = {
 - HIGH_PRIORITY → UNIFIED_TIERS.CATEGORY_SYNERGY (3)
 
 ### 4. BACKGROUND_SUGGESTION_TIERS
-**File:** `scripts/engines/suggestion/BackgroundSuggestionEngine.js`
+**File:** `scripts/engine/suggestion/BackgroundSuggestionEngine.js`
 **Defined As:**
 ```javascript
 export const BACKGROUND_SUGGESTION_TIERS = {
@@ -144,7 +144,7 @@ export const BACKGROUND_SUGGESTION_TIERS = {
 - CLASS_MATCH → UNIFIED_TIERS.CATEGORY_SYNERGY (3)
 
 ### 5. CLASS_SUGGESTION_TIERS
-**File:** `scripts/engines/suggestion/ClassSuggestionEngine.js`
+**File:** `scripts/engine/suggestion/ClassSuggestionEngine.js`
 **Defined As:**
 ```javascript
 export const CLASS_SUGGESTION_TIERS = {
@@ -166,7 +166,7 @@ export const CLASS_SUGGESTION_TIERS = {
 - PRESTIGE_REQUIREMENT → UNIFIED_TIERS.PRESTIGE_PREREQUISITE (6)
 
 ### 6. FORCE_OPTION_TIERS
-**File:** `scripts/engines/suggestion/ForceOptionSuggestionEngine.js`
+**File:** `scripts/engine/suggestion/ForceOptionSuggestionEngine.js`
 **Defined As:**
 ```javascript
 export const FORCE_OPTION_TIERS = {
@@ -188,7 +188,7 @@ export const FORCE_OPTION_TIERS = {
 - POWER_CHAIN → UNIFIED_TIERS.PATH_CONTINUATION (4)
 
 ### 7. LEVEL1_SKILL_TIERS
-**File:** `scripts/engines/suggestion/Level1SkillSuggestionEngine.js`
+**File:** `scripts/engine/suggestion/Level1SkillSuggestionEngine.js`
 **Defined As:**
 ```javascript
 export const LEVEL1_SKILL_TIERS = {
@@ -211,7 +211,7 @@ export const LEVEL1_SKILL_TIERS = {
 
 ## UNIFIED_TIERS Authority
 
-**Current:** `scripts/engines/suggestion/suggestion-unified-tiers.js`
+**Current:** `scripts/engine/suggestion/suggestion-unified-tiers.js`
 
 **Strength:**
 - 7-tier hierarchy (0-6)
@@ -275,14 +275,14 @@ suggestion.color = metadata.color;
 **Output:** Tier mapping document created
 
 ### Step 2: Update ForceSecretSuggestionEngine ✅
-**File:** `scripts/engines/progression/engine/force-secret-suggestion-engine.js`
+**File:** `scripts/engine/progression/engine/force-secret-suggestion-engine.js`
 **Changes:**
 - ✅ Replaced FORCE_SECRET_TIERS with UNIFIED_TIERS imports
 - ✅ Updated tier assignments: PERFECT_FIT→5, EXCELLENT_MATCH→4, GOOD_MATCH→3, AVAILABLE_FIT→2, MARGINAL→1, NOT_YET→0
 - ✅ Changed comparison from AVAILABLE_FIT to ABILITY_SYNERGY (tier 2)
 
 ### Step 3: Update ForceTechniqueSuggestionEngine ✅
-**File:** `scripts/engines/progression/engine/force-technique-suggestion-engine.js`
+**File:** `scripts/engine/progression/engine/force-technique-suggestion-engine.js`
 **Changes:**
 - ✅ Replaced FORCE_TECHNIQUE_TIERS with UNIFIED_TIERS imports
 - ✅ Updated tier assignments: HIGH→5, MED→4, LOW→3, ARCHTYPE_ONLY→2, AVAILABLE→1, FALLBACK→0
@@ -366,8 +366,8 @@ SuggestionEngine     ForceSecretEngine     AttributeEngine
 
 ## References
 
-- UNIFIED_TIERS definition: `scripts/engines/suggestion/suggestion-unified-tiers.js`
-- SuggestionEngine mapping: `scripts/engines/suggestion/SuggestionEngine.js` (lines 41-50)
+- UNIFIED_TIERS definition: `scripts/engine/suggestion/suggestion-unified-tiers.js`
+- SuggestionEngine mapping: `scripts/engine/suggestion/SuggestionEngine.js` (lines 41-50)
 - AUDIT_GAME_PACKS_VIOLATIONS.md - Completed enumeration sovereignty fix
 - Phase 5A: Suggestion & Mentor Engine Structural Audit
 

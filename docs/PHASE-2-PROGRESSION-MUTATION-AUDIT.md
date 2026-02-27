@@ -33,8 +33,8 @@ The codebase is **production-ready for Phase 2 governance**.
 scripts/apps/chargen/**         - Character generation UI
 scripts/apps/levelup/**         - Level-up UI
 scripts/apps/progression/**     - Progression preview/UI
-scripts/engines/progression/**  - Progression business logic
-scripts/engines/suggestion/**   - Suggestion evaluation engines
+scripts/engine/progression/**  - Progression business logic
+scripts/engine/suggestion/**   - Suggestion evaluation engines
 ```
 
 ### Search Patterns Applied
@@ -134,7 +134,7 @@ actor.items.forEach(item => item.update(...));     // ❌ NOT PRESENT
 
 ### 4. PROGRESSION ENGINE — ATOMIC MUTATIONS ✅
 
-**File**: `scripts/engines/progression/engine/progression-engine.js`
+**File**: `scripts/engine/progression/engine/progression-engine.js`
 
 #### Static Entry Points
 
@@ -171,7 +171,7 @@ static async applyLevelUp(actor, { classId, level, selections = {} } = {}) {
 
 ### 5. ATTRIBUTE INCREASE HANDLER — COMPLIANT ✅
 
-**File**: `scripts/engines/progression/engine/attribute-increase-handler.js`
+**File**: `scripts/engine/progression/engine/attribute-increase-handler.js`
 
 #### Flag Usage (Properly Segregated)
 
@@ -202,7 +202,7 @@ actor.items.forEach(item => item.update(...));  // NOT PRESENT
 
 ### 6. TEMPLATE ENGINE — COMPLIANT ✅
 
-**File**: `scripts/engines/progression/engine/template-engine.js`
+**File**: `scripts/engine/progression/engine/template-engine.js`
 
 #### Audit Trail vs. Mutation
 
@@ -218,7 +218,7 @@ actor.items.forEach(item => item.update(...));  // NOT PRESENT
 
 ### 7. SNAPSHOT MANAGER — COMPLIANT ✅
 
-**File**: `scripts/engines/progression/utils/snapshot-manager.js`
+**File**: `scripts/engine/progression/utils/snapshot-manager.js`
 
 #### Safety Mechanism (Not Progression Mutation)
 
@@ -233,7 +233,7 @@ actor.items.forEach(item => item.update(...));  // NOT PRESENT
 
 ### 8. FINALIZE INTEGRATION — ATOMIC ✅
 
-**File**: `scripts/engines/progression/integration/finalize-integration.js`
+**File**: `scripts/engine/progression/integration/finalize-integration.js`
 
 #### Post-Finalization Sequencing
 
@@ -252,7 +252,7 @@ await EmitterService.emit('progression:complete', actor);
 
 ### 9. SUGGESTION ENGINES — PURE LOGIC ✅
 
-**Directory**: `scripts/engines/suggestion/**`
+**Directory**: `scripts/engine/suggestion/**`
 
 #### Evaluation Layer (Zero Mutations)
 
