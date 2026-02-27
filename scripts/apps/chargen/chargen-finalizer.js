@@ -147,6 +147,15 @@ export class ChargenFinalizer {
       SWSELogger.log(`[CHARGEN FINALIZER] Stored ${snapshot.unlockedTrees.length} unlocked trees in actor`);
     }
 
+    // Phase 1.5: Store structured feat slots
+    if (snapshot.featSlots) {
+      if (!actorData.system.progression) {
+        actorData.system.progression = {};
+      }
+      actorData.system.progression.featSlots = foundry.utils.deepClone(snapshot.featSlots);
+      SWSELogger.log(`[CHARGEN FINALIZER] Stored ${snapshot.featSlots.length} feat slots in actor`);
+    }
+
     return actorData;
   }
 

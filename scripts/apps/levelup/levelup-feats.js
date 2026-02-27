@@ -230,6 +230,7 @@ export async function loadFeats(actor, selectedClass, pendingData) {
     // Filter by class bonus feats if a class is selected and this is a class bonus feat level
     if (selectedClass && selectedClass.name) {
       const className = selectedClass.name;
+      const classId = selectedClass._id;  // Phase 1.5: Get class ID for proper comparison
       const classLevel = getClassLevel(actor, className) + 1;
 
       // Check if this level grants a bonus feat specific to this class
@@ -243,9 +244,10 @@ export async function loadFeats(actor, selectedClass, pendingData) {
             SWSELogger.log(`SWSE LevelUp | Bonus feat level detected for ${className}`);
 
             // Filter feats based on RAW rule (Option C)
+            // Phase 1.5 BUG FIX: Compare classId (not className) against bonus_feat_for array
             featObjects = featObjects.filter(f => {
               const allowed = f.system?.bonus_feat_for || [];
-              return allowed.includes(className) || allowed.includes('all');
+              return allowed.includes(classId) || allowed.includes('all');
             });
 
             SWSELogger.log(
@@ -255,7 +257,7 @@ export async function loadFeats(actor, selectedClass, pendingData) {
             // GM Warning if none found
             if (featObjects.length === 0) {
               warnGM(
-                `${className} grants a Bonus Feat at this level, but no feats exist tagged with "bonus_feat_for": ["${className}"].`
+                `${className} grants a Bonus Feat at this level, but no feats exist tagged with "bonus_feat_for": ["${classId}"].`
               );
             }
           }

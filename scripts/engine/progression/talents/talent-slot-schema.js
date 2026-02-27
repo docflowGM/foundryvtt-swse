@@ -8,14 +8,15 @@
  */
 
 /**
- * Talent Slot Object
+ * Talent Slot Object (unified schema)
  * @typedef {Object} TalentSlot
+ * @property {string} slotKind - Always "talent" for talent slots (Phase 1.5)
  * @property {string} slotType - ENUM: 'class' | 'heroic'
  * @property {string} source - Grant source for audit trail. Examples: 'class', 'houserule:talentEveryLevelExtraL1'
  * @property {string|null} classId - For class slots: the class providing this slot
  * @property {number} levelGranted - Character level when slot was granted
  * @property {boolean} consumed - Whether a talent has been selected for this slot
- * @property {string|null} talentId - ID of selected talent (if consumed)
+ * @property {string|null} itemId - ID of selected talent (if consumed) — unified with feat/maneuver model
  */
 
 export const TalentSlotSchema = {
@@ -27,12 +28,13 @@ export const TalentSlotSchema = {
    */
   createClassSlot(classId, level = 1) {
     return {
+      slotKind: 'talent',        // Phase 1.5: Unified slot model
       slotType: 'class',
       source: 'class',
       classId,
       levelGranted: level,
       consumed: false,
-      talentId: null
+      itemId: null               // Phase 1.5: Renamed from talentId for unified model
     };
   },
 
@@ -44,26 +46,27 @@ export const TalentSlotSchema = {
    */
   createHeroicSlot(source = 'heroic', level = 1) {
     return {
+      slotKind: 'talent',        // Phase 1.5: Unified slot model
       slotType: 'heroic',
       source,
       classId: null,
       levelGranted: level,
       consumed: false,
-      talentId: null
+      itemId: null               // Phase 1.5: Renamed from talentId for unified model
     };
   },
 
   /**
    * Mark a slot as consumed with a talent
    * @param {Object} slot - Slot to mark consumed
-   * @param {string} talentId - ID of selected talent
+   * @param {string} itemId - ID of selected talent
    * @returns {Object} Updated slot
    */
-  consumeSlot(slot, talentId) {
+  consumeSlot(slot, itemId) {
     return {
       ...slot,
       consumed: true,
-      talentId
+      itemId                     // Phase 1.5: Unified property name
     };
   },
 
@@ -75,11 +78,12 @@ export const TalentSlotSchema = {
   isValid(slot) {
     return (
       slot &&
+      slot.slotKind === 'talent' &&  // Phase 1.5: Validate slotKind
       ['class', 'heroic'].includes(slot.slotType) &&
       typeof slot.source === 'string' &&
       typeof slot.consumed === 'boolean' &&
       (slot.classId === null || typeof slot.classId === 'string') &&
-      (slot.talentId === null || typeof slot.talentId === 'string') &&
+      (slot.itemId === null || typeof slot.itemId === 'string') &&  // Phase 1.5: Unified property
       typeof slot.levelGranted === 'number'
     );
   }

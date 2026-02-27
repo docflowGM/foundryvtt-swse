@@ -14,6 +14,9 @@ import { _findTalentItem } from "/systems/foundryvtt-swse/scripts/apps/chargen/c
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 // Phase 1: Talent Slot Validation
 import { TalentSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/slot-validator.js";
+// Phase 1.5: Feat Slot Validation and Registry
+import { FeatSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-slot-validator.js";
+import { ClassFeatRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/class-feat-registry.js";
 
 /**
  * Calculate feat/talent suggestions during chargen
@@ -217,6 +220,31 @@ export async function _onSelectFeat(event) {
       return;
     }
     SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Prerequisites MET for "${feat.name}"`);
+
+    // Phase 1.5: Check if this is a bonus feat slot and validate against class restrictions
+    const classId = classDoc?._id;
+    if (classId && this.characterData.featsRequired && this.characterData.featsRequired > 0) {
+      // Determine if we're in a bonus feat slot (first N feats equal featsRequired)
+      const isLikelyBonusSlot = this.characterData.feats.length < this.characterData.featsRequired;
+
+      if (isLikelyBonusSlot) {
+        // Validate against class bonus feat list
+        const allowed = await ClassFeatRegistry.getClassBonusFeats(classId);
+        if (allowed.length > 0 && !allowed.includes(feat._id)) {
+          SWSELogger.log(
+            `[CHARGEN-FEATS-TALENTS] _onSelectFeat: "${feat.name}" NOT in bonus feat list for class`
+          );
+          ui.notifications.warn(
+            `Cannot select "${feat.name}": This feat is not available as a bonus feat for your class. ` +
+            `You can select it later as a bonus feat at higher levels or as a feat from training.`
+          );
+          return;
+        }
+        SWSELogger.log(
+          `[CHARGEN-FEATS-TALENTS] _onSelectFeat: "${feat.name}" IS in bonus feat list for class`
+        );
+      }
+    }
   }
 
   // Check if this is a Skill Focus feat

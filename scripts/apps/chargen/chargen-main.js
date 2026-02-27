@@ -29,6 +29,9 @@ import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
 import { TalentSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/slot-validator.js";
 import { TalentSlotMigrator } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/slot-migrator.js";
 
+// Phase 1.5: Feat Slot System
+import { FeatSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-slot-validator.js";
+
 // V2 API base class
 import SWSEApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
 

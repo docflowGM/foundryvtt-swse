@@ -2,6 +2,7 @@ import { guardAgainstMutation } from "/systems/foundryvtt-swse/scripts/dev/mutat
 import { concatPatches, makePatch, patchClass, setField } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-patch.js";
 import { TalentSlotCalculator } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/slot-calculator.js";
 import { TreeUnlockManager } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/tree-unlock-manager.js";
+import { FeatSlotSchema } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-slot-schema.js";
 
 function _buildClassSelectionPatch(_characterData, className) {
   return patchClass(className);
@@ -42,13 +43,24 @@ function _buildClassEntitlementsPatch(_characterData, talentsRequired, classDoc,
   // Initialize tree unlocks
   const unlockedTrees = TreeUnlockManager.initializeL1TreeUnlocks(classDoc, _characterData);
 
+  // Phase 1.5: Create structured feat slots
+  // At L1: featsRequired from species are all "heroic" (general) slots
+  // Class bonus feat slots are granted at L2+ via class progression
+  const featSlots = [];
+  const featsRequired = _characterData.featsRequired || 1;
+  for (let i = 0; i < featsRequired; i++) {
+    featSlots.push(FeatSlotSchema.createHeroicSlot('species', 1)); // L1 feats come from species rules
+  }
+
   return makePatch([
     // Keep numeric counter for backward compatibility and UI display
     setField('talentsRequired', Number(talentsRequired ?? 1)),
     // Add structured slots (NEW - Phase 1)
     setField('talentSlots', talentSlots),
     // Track unlocked trees (NEW - Phase 1)
-    setField('unlockedTrees', unlockedTrees)
+    setField('unlockedTrees', unlockedTrees),
+    // Phase 1.5: Add structured feat slots
+    setField('featSlots', featSlots)
   ]);
 }
 
