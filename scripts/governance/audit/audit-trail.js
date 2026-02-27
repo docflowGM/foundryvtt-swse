@@ -13,7 +13,7 @@
  * Storage: actor.system.auditLog (persisted to world data)
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 import { GovernanceSystem } from '../governance-system.js';
 
 export class AuditTrail {

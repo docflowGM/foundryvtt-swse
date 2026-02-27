@@ -20,7 +20,7 @@
 
 import { EnforcementPolicy } from './enforcement-policy.js';
 import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 
 export class PreflightValidator {
   /**

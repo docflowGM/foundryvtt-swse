@@ -15,7 +15,7 @@ import { PrerequisiteIntegrityChecker } from '../integrity/prerequisite-integrit
 import { SeverityClassifier } from '../integrity/severity-classifier.js';
 import { GovernanceSystem } from '../governance-system.js';
 import { EnforcementPolicy } from '../enforcement/enforcement-policy.js';
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 
 export class IntegrityDashboard {
   /**
