@@ -433,7 +433,7 @@ export class GMStoreDashboard extends HandlebarsApplicationMixin(ApplicationV2) 
 
       // 2. Deduct credits
       const newCredits = normalizeCredits(currentCredits - approval.costCredits);
-      await ownerActor.update({ 'system.credits': newCredits });
+      await ActorEngine.updateActor(ownerActor, { 'system.credits': newCredits });
 
       // 3. Transfer draft actor to owner
       const draftActor = game.actors.get(approval.draftActorId);

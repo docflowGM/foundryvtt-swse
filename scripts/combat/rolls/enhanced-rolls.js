@@ -644,20 +644,16 @@ export class SWSERoll {
             const diceMatch = baseFormula.match(/d(\d+)/);
             const diceType = diceMatch ? diceMatch[0] : 'd6';
 
-            // PHASE 2: Temporarily modify weapon damage for burst fire calculation using v2 schema
-            const originalDamage = weapon.system.combat?.damage?.dice;
+            // PHASE 4: Use virtual weapon object — no DB writes, no restore needed
             const modifiedDamage = `${baseFormula} + 2${diceType}`;
-            await weapon.update({ 'system.combat.damage.dice': modifiedDamage });
-
-            try {
-              damageRoll = await rollDamage(actor, weapon, {
-                isCrit: critConfirmed,
-                critMultiplier: critConfirmed ? critMultiplier : 1
-              });
-            } finally {
-              // Restore original damage formula
-              await weapon.update({ 'system.combat.damage.dice': originalDamage });
-            }
+            const virtualWeapon = {
+              ...weapon,
+              system: { ...weapon.system, damage: modifiedDamage }
+            };
+            damageRoll = await rollDamage(actor, virtualWeapon, {
+              isCrit: critConfirmed,
+              critMultiplier: critConfirmed ? critMultiplier : 1
+            });
           } else {
             damageRoll = await rollDamage(actor, weapon, {
               isCrit: critConfirmed,
