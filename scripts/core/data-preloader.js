@@ -11,6 +11,8 @@ import { timed } from '../utils/performance-utils.js';
 import { SpeciesRegistry } from '../engine/registries/species-registry.js';
 import { ForceRegistry } from '../engine/registries/force-registry.js';
 import { ClassesRegistry } from '../engine/registries/classes-registry.js';
+import { FeatRegistry } from '../registries/feat-registry.js';
+import { TalentRegistry } from '../registries/talent-registry.js';
 
 export class DataPreloader {
   constructor() {
@@ -165,39 +167,41 @@ export class DataPreloader {
   }
 
   /**
-   * Preload feats
+   * Preload feats (now uses FeatRegistry)
    * @private
    */
   async _preloadFeats() {
-    const pack = game.packs.get('foundryvtt-swse.feats');
-    if (!pack) {return;}
+    if (!FeatRegistry.isInitialized()) {
+      return;
+    }
 
-    const index = await pack.getIndex();
-    this._featsCache.set('_index', index);
+    const entries = FeatRegistry.getAll();
+    this._featsCache.set('_index', entries);
 
     // Cache the index for searching
     const byName = new Map();
-    for (const entry of index) {
+    for (const entry of entries) {
       byName.set(entry.name.toLowerCase(), entry);
     }
     this._featsCache.set('_byName', byName);
   }
 
   /**
-   * Preload talents
+   * Preload talents (now uses TalentRegistry)
    * @private
    */
   async _preloadTalents() {
-    const pack = game.packs.get('foundryvtt-swse.talents');
-    if (!pack) {return;}
+    if (!TalentRegistry.isInitialized()) {
+      return;
+    }
 
-    const index = await pack.getIndex();
-    this._talentsCache.set('_index', index);
+    const entries = TalentRegistry.getAll();
+    this._talentsCache.set('_index', entries);
 
     // Group by talent tree for quick filtering
     const byTree = new Map();
-    for (const entry of index) {
-      const tree = entry.system?.tree || 'Unknown';
+    for (const entry of entries) {
+      const tree = entry.talentTree || 'Unknown';
       if (!byTree.has(tree)) {
         byTree.set(tree, []);
       }
@@ -318,12 +322,13 @@ export class DataPreloader {
       return byTree.get(treeName) || [];
     }
 
-    // Fallback to pack lookup
-    const pack = game.packs.get('foundryvtt-swse.talents');
-    if (!pack) {return [];}
+    // Fallback to registry lookup
+    if (!TalentRegistry.isInitialized()) {
+      return [];
+    }
 
-    const index = await pack.getIndex();
-    return Array.from(index).filter(e => e.system?.tree === treeName);
+    const allTalents = TalentRegistry.getAll();
+    return allTalents.filter(e => e.talentTree === treeName);
   }
 
   /**

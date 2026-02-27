@@ -31,6 +31,8 @@ import { getSynergyForItem, findActiveSynergies } from './CommunityMetaSynergies
 import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
 import { WishlistEngine } from './WishlistEngine.js';
 import { UNIFIED_TIERS } from './suggestion-unified-tiers.js';
+import { FeatRegistry } from '../../registries/feat-registry.js';
+import { TalentRegistry } from '../../registries/talent-registry.js';
 
 // ──────────────────────────────────────────────────────────────
 // TIER DEFINITIONS (PHASE 5D: UNIFIED_TIERS Refactor)
@@ -1205,12 +1207,12 @@ export class SuggestionEngine {
 
             // Check each wishlisted item to see if this feat/talent is a prerequisite
             for (const wishedItem of wishlistedItems) {
-                // Try to find the actual item document
-                const itemPack = item.type === 'feat'
-                    ? game.packs.get('foundryvtt-swse.feats')
-                    : game.packs.get('foundryvtt-swse.talents');
+                // Verify item exists in appropriate registry
+                const itemExists = item.type === 'feat'
+                    ? FeatRegistry.hasId(item.id || item._id)
+                    : TalentRegistry.hasId(item.id || item._id);
 
-                if (!itemPack) {continue;}
+                if (!itemExists) {continue;}
 
                 // For now, match by name - could be improved with proper lookups
                 if (wishedItem.name.toLowerCase().includes(item.name.toLowerCase()) ||

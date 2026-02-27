@@ -17,6 +17,8 @@ import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
 import { ApplyHandlers } from '../utils/apply-handlers.js';
 import { AbilityEngine } from '../../../engine/abilities/AbilityEngine.js';
 import { ForceRegistry } from '../../../engine/registries/force-registry.js';
+import { FeatRegistry } from '../../../registries/feat-registry.js';
+import { TalentRegistry } from '../../../registries/talent-registry.js';
 
 export class ForceProgressionEngine {
 
@@ -184,20 +186,32 @@ export class ForceProgressionEngine {
             return false;
         }
 
-        // Find technique in feats compendium
-        const featPack = game.packs.get('foundryvtt-swse.feats');
-        if (!featPack) {
-            SWSELogger.warn('Feats compendium not found');
+        // Find technique in FeatRegistry
+        if (!FeatRegistry.isInitialized()) {
+            SWSELogger.warn('FeatRegistry not initialized');
             return false;
         }
 
-        const featIndex = featPack.index.find(f => f.name === techniqueName);
-        if (!featIndex) {
+        const technique = FeatRegistry.getByName(techniqueName);
+        if (!technique) {
             SWSELogger.warn(`Force technique not found: ${techniqueName}`);
             return false;
         }
 
-        const featDoc = await featPack.getDocument(featIndex._id);
+        // Verify it's tagged as a force technique
+        if (!technique.tags?.includes('force_technique')) {
+            SWSELogger.warn(`Not a valid force technique: ${techniqueName}`);
+            return false;
+        }
+
+        // Get the full document from compendium for application
+        const pack = game.packs.get('foundryvtt-swse.feats');
+        if (!pack) {
+            SWSELogger.warn('Feats compendium not found');
+            return false;
+        }
+
+        const featDoc = await pack.getDocument(technique.id);
         if (!featDoc) {return false;}
 
         await ApplyHandlers.applyFeat(actor, featDoc.toObject());
@@ -221,20 +235,32 @@ export class ForceProgressionEngine {
             return false;
         }
 
-        // Find secret in talents compendium
-        const talentPack = game.packs.get('foundryvtt-swse.talents');
-        if (!talentPack) {
-            SWSELogger.warn('Talents compendium not found');
+        // Find secret in TalentRegistry
+        if (!TalentRegistry.isInitialized()) {
+            SWSELogger.warn('TalentRegistry not initialized');
             return false;
         }
 
-        const talentIndex = talentPack.index.find(t => t.name === secretName);
-        if (!talentIndex) {
+        const secret = TalentRegistry.getByName(secretName);
+        if (!secret) {
             SWSELogger.warn(`Force secret not found: ${secretName}`);
             return false;
         }
 
-        const talentDoc = await talentPack.getDocument(talentIndex._id);
+        // Verify it's tagged as a force secret
+        if (!secret.tags?.includes('force_secret')) {
+            SWSELogger.warn(`Not a valid force secret: ${secretName}`);
+            return false;
+        }
+
+        // Get the full document from compendium for application
+        const pack = game.packs.get('foundryvtt-swse.talents');
+        if (!pack) {
+            SWSELogger.warn('Talents compendium not found');
+            return false;
+        }
+
+        const talentDoc = await pack.getDocument(secret.id);
         if (!talentDoc) {return false;}
 
         await ApplyHandlers.applyTalent(actor, talentDoc.toObject());
@@ -246,15 +272,23 @@ export class ForceProgressionEngine {
      * Create Force Technique choice selection
      */
     static async createForceTechniqueChoice(actor, count = 1) {
-        const featPack = game.packs.get('foundryvtt-swse.feats');
-        if (!featPack) {return [];}
+        if (!FeatRegistry.isInitialized()) {
+            return [];
+        }
 
-        const allFeats = await featPack.getDocuments();
-        const techniques = allFeats.filter(f =>
-            f.system?.tags?.includes('force_technique') &&
-            !actor.items.some(i => i.type === 'feat' && i.name === f.name)
+        // Get all feats tagged as force techniques that the actor doesn't have
+        const actorFeatNames = new Set(
+            actor.items
+                .filter(i => i.type === 'feat')
+                .map(i => i.name.toLowerCase())
         );
 
+        const techniques = FeatRegistry.search(f =>
+            f.tags?.includes('force_technique') &&
+            !actorFeatNames.has(f.name.toLowerCase())
+        );
+
+        // For now, return registry entries (could enhance to return full documents if needed)
         return techniques;
     }
 
@@ -262,15 +296,23 @@ export class ForceProgressionEngine {
      * Create Force Secret choice selection
      */
     static async createForceSecretChoice(actor, count = 1) {
-        const talentPack = game.packs.get('foundryvtt-swse.talents');
-        if (!talentPack) {return [];}
+        if (!TalentRegistry.isInitialized()) {
+            return [];
+        }
 
-        const allTalents = await talentPack.getDocuments();
-        const secrets = allTalents.filter(t =>
-            t.system?.tags?.includes('force_secret') &&
-            !actor.items.some(i => i.type === 'talent' && i.name === t.name)
+        // Get all talents tagged as force secrets that the actor doesn't have
+        const actorTalentNames = new Set(
+            actor.items
+                .filter(i => i.type === 'talent')
+                .map(i => i.name.toLowerCase())
         );
 
+        const secrets = TalentRegistry.search(t =>
+            t.tags?.includes('force_secret') &&
+            !actorTalentNames.has(t.name.toLowerCase())
+        );
+
+        // For now, return registry entries (could enhance to return full documents if needed)
         return secrets;
     }
 

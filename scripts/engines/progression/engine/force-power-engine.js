@@ -23,6 +23,7 @@ import { ForcePowerPicker } from '../../../apps/progression/force-power-picker.j
 import { swseLogger } from '../../../utils/logger.js';
 import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
 import { ForceRegistry } from '../../../engine/registries/force-registry.js';
+import { FeatRegistry } from '../../../registries/feat-registry.js';
 
 export class ForcePowerEngine {
   /**
@@ -33,35 +34,30 @@ export class ForcePowerEngine {
    * @returns {Promise<number>} Number of powers granted
    */
   static async _countFromFeat(featName, actor) {
-    // Try to find feat document on actor or in compendium
-    let featDoc = actor?.items.find(i => i.type === 'feat' && i.name === featName);
+    // Try to find feat on actor or in registry
+    let featEntry = actor?.items.find(i => i.type === 'feat' && i.name === featName);
 
-    if (!featDoc) {
-      try {
-        const pack = game.packs.get('foundryvtt-swse.feats');
-        if (!pack) {
-          // Only warn once per session
-          if (!ForcePowerEngine._featPackWarnShown) {
-            swseLogger.warn('ForcePowerEngine: foundryvtt-swse.feats compendium not found. Feat-based force power grants may not work.');
-            ForcePowerEngine._featPackWarnShown = true;
-          }
-        } else {
-          if (!pack.indexed) {
-            await pack.getIndex();
-          }
-          const index = pack.index.find(e => e.name === featName);
-          if (index) {
-            featDoc = await pack.getDocument(index._id);
-          }
-        }
-      } catch (e) {
-        swseLogger.warn(`ForcePowerEngine: Failed to load feat "${featName}" from compendium`, e);
-      }
+    if (!featEntry && FeatRegistry.isInitialized()) {
+      // Lookup in FeatRegistry (registry contains normalized data, not full documents)
+      featEntry = FeatRegistry.getByName(featName);
     }
 
-    // Check for structured field in compendium
-    if (featDoc?.system?.forcePowerGrants) {
-      return featDoc.system.forcePowerGrants;
+    if (!featEntry) {
+      // Fallback to hardcoded data
+      const f = FORCE_POWER_DATA.feats[featName];
+      if (!f) {return 0;}
+
+      // Handle ability modifier-based grants (Force Training)
+      if (f.grants === 'ability_mod') {
+        return this._countFromAbilityMod(actor);
+      }
+
+      return f.grants || 0;
+    }
+
+    // Check for structured field (works for both actor items and registry entries)
+    if (featEntry.system?.forcePowerGrants) {
+      return featEntry.system.forcePowerGrants;
     }
 
     // Fallback to hardcoded data
