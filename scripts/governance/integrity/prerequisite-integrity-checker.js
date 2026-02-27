@@ -19,7 +19,7 @@
 
 import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 import { MissingPrereqsTracker } from './missing-prereqs-tracker.js';
 import { SeverityClassifier } from './severity-classifier.js';
 
