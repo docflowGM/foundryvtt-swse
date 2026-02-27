@@ -21,6 +21,7 @@ import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
 import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
 import { SWSELogger } from '../../utils/logger.js';
 import { MissingPrereqsTracker } from './missing-prereqs-tracker.js';
+import { SeverityClassifier } from './severity-classifier.js';
 
 export class PrerequisiteIntegrityChecker {
 
@@ -176,26 +177,22 @@ export class PrerequisiteIntegrityChecker {
   }
 
   /**
-   * Classify severity of a violation.
+   * Classify severity of a violation using Phase 5B-3 severity model.
+   * PHASE 5B-3: Enhanced severity classification
    * @private
    */
   static _classifySeverity(assessment) {
-    if (assessment.permanentlyBlocked) {
-      return 'error'; // Permanent incompatibility
-    }
-    if (assessment.missingPrereqs?.length > 2) {
-      return 'error'; // Multiple missing prerequisites
-    }
-    return 'warning'; // Temporary violation, likely fixable
+    return SeverityClassifier.classifyViolation(assessment);
   }
 
   /**
    * Build summary statistics about violations.
+   * PHASE 5B-3: Enhanced with all severity levels
    * @private
    */
   static _buildSummary(violations) {
     const violationsByType = {};
-    const violationsBySeverity = { error: 0, warning: 0 };
+    const violationsBySeverity = { none: 0, warning: 0, error: 0, structural: 0 };
     let totalMissing = 0;
 
     for (const violation of Object.values(violations)) {
@@ -203,7 +200,8 @@ export class PrerequisiteIntegrityChecker {
       violationsByType[violation.itemType] = (violationsByType[violation.itemType] || 0) + 1;
 
       // By severity
-      violationsBySeverity[violation.severity]++;
+      const severity = violation.severity || 'warning';
+      violationsBySeverity[severity] = (violationsBySeverity[severity] || 0) + 1;
 
       // Total missing prerequisites
       totalMissing += violation.missingPrereqs?.length || 0;
@@ -211,10 +209,12 @@ export class PrerequisiteIntegrityChecker {
 
     return {
       totalViolations: Object.keys(violations).length,
+      structuralCount: violationsBySeverity.structural,
       errorCount: violationsBySeverity.error,
       warningCount: violationsBySeverity.warning,
       totalMissingPrereqs: totalMissing,
-      violationsByType
+      violationsByType,
+      overallSeverity: SeverityClassifier.getOverallSeverity(violations)
     };
   }
 
