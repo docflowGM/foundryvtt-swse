@@ -8,6 +8,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { TreeUnlockManager } from './tree-unlock-manager.js';
+import { getAllowedTalentTrees } from './tree-authority.js';  // Phase 2: Derived authority
 
 export class TalentSlotValidator {
   /**
@@ -44,29 +45,25 @@ export class TalentSlotValidator {
       errors.push('This slot has already been filled');
     }
 
-    // Check 2: Tree access based on slotType
-    // Key principle: Validation is IDENTICAL for all slot types
-    // Only slot AVAILABILITY differs, not validation rules
-    if (slot.slotType === 'class') {
-      // Class slots must select from class's talent tree
-      const talentTree = talent.system?.talent_tree || talent.system?.talentTree;
-      if (slot.classId && talentTree) {
-        // Simplistic check: class slot's classId should match or be in accessible trees
-        // (Full tree validation deferred to Phase 2)
-        if (!TreeUnlockManager.isTreeUnlocked(talentTree, unlockedTrees)) {
-          if (unlockedTrees.length > 0) {
-            // Only error if trees are tracked and this isn't one of them
-            errors.push(`Talent tree not unlocked for class slots: ${talentTree}`);
-          }
-        }
-      }
-    } else if (slot.slotType === 'heroic') {
-      // Heroic slots can select from any unlocked tree
-      const talentTree = talent.system?.talent_tree || talent.system?.talentTree;
-      if (talentTree && unlockedTrees.length > 0) {
-        if (!TreeUnlockManager.isTreeUnlocked(talentTree, unlockedTrees)) {
-          errors.push(`Talent tree not unlocked: ${talentTree}`);
-        }
+    // Check 2: Tree access — Phase 2 Derived Authority
+    // Use getAllowedTalentTrees() for authoritative tree list
+    // CRITICAL: No branching on source or other fields
+    const talentTree = talent.system?.talent_tree || talent.system?.talentTree;
+
+    if (talentTree) {
+      // Get allowed trees for this slot type (derived from actor state)
+      // Note: This may require access to the full actor, which we need from chargenData
+      const allowedTrees = getAllowedTalentTrees(chargenData?._actor || actor, slot);
+
+      if (allowedTrees.length > 0 && !allowedTrees.includes(talentTree)) {
+        errors.push(
+          `Talent tree "${talentTree}" is not accessible for ${slot.slotType} slot. ` +
+          `Allowed trees: ${allowedTrees.join(', ')}`
+        );
+        SWSELogger.log(
+          `[TalentSlotValidator] Tree authority FAILED for "${talent.name}": ` +
+          `tree "${talentTree}" not in allowed list`
+        );
       }
     }
 

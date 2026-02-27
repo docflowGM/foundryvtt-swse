@@ -247,6 +247,15 @@ export async function _onSelectFeat(event) {
     }
   }
 
+  // Phase 2F: Handle Force Sensitivity feat — unlock force domain
+  if (feat.name.toLowerCase() === 'force sensitivity') {
+    this.characterData.unlockedDomains = this.characterData.unlockedDomains || [];
+    if (!this.characterData.unlockedDomains.includes('force')) {
+      this.characterData.unlockedDomains.push('force');
+      SWSELogger.log('[CHARGEN-FEATS-TALENTS] Force Sensitivity selected — "force" domain unlocked');
+    }
+  }
+
   // Check if this is a Skill Focus feat
   if (feat.name.toLowerCase().includes('skill focus')) {
     // Clone before passing to handler (handler will further modify it)
