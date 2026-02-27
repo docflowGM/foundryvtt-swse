@@ -14,6 +14,7 @@
  */
 
 import { SWSELogger } from '../../../utils/logger.js';
+import { UNIFIED_TIERS, getTierMetadata } from '../../suggestion/suggestion-unified-tiers.js';
 import {
   PRESTIGE_ARCHETYPE_MAP,
   BASE_ARCHETYPE_MAP,
@@ -24,14 +25,19 @@ import {
   ITEM_TYPES
 } from './suggestion-constants.js';
 
+/**
+ * Deprecated: Use UNIFIED_TIERS instead
+ * Kept for backwards compatibility during migration
+ * @deprecated
+ */
 export const FORCE_SECRET_TIERS = {
-  PERFECT_FIT: 6,          // All conditions met + high archetype match
-  EXCELLENT_MATCH: 5,      // Most conditions met + archetype match
-  GOOD_MATCH: 4,           // All mandatory conditions + moderate match
-  AVAILABLE_FIT: 3,        // Meets minimum requirements
-  MARGINAL: 2,             // Barely meets requirements
-  POSSIBLE: 1,             // Could be learned
-  NOT_YET: 0               // Does not meet requirements
+  PERFECT_FIT: UNIFIED_TIERS.PRESTIGE_QUALIFIED_NOW,  // 5 - All conditions met + high archetype match
+  EXCELLENT_MATCH: UNIFIED_TIERS.PATH_CONTINUATION,   // 4 - Most conditions met + archetype match
+  GOOD_MATCH: UNIFIED_TIERS.CATEGORY_SYNERGY,         // 3 - All mandatory conditions + moderate match
+  AVAILABLE_FIT: UNIFIED_TIERS.ABILITY_SYNERGY,       // 2 - Meets minimum requirements
+  MARGINAL: UNIFIED_TIERS.THEMATIC_FIT,               // 1 - Barely meets requirements
+  POSSIBLE: UNIFIED_TIERS.THEMATIC_FIT,               // 1 - Could be learned
+  NOT_YET: UNIFIED_TIERS.AVAILABLE                    // 0 - Does not meet requirements
 };
 
 export class ForceSecretSuggestionEngine {
@@ -91,8 +97,8 @@ export class ForceSecretSuggestionEngine {
         options
       );
 
-      // Only suggest secrets that meet minimum viable investment (tier 3+)
-      if (suggestion && suggestion.tier >= FORCE_SECRET_TIERS.AVAILABLE_FIT) {
+      // Only suggest secrets that meet minimum viable investment (tier 2+)
+      if (suggestion && suggestion.tier >= UNIFIED_TIERS.ABILITY_SYNERGY) {
         suggestions.push({
           id: secret.id,
           name: secret.name,
@@ -155,7 +161,7 @@ export class ForceSecretSuggestionEngine {
       reasons.push(`Known ${knownPowers.length} Force Powers (requires ${minimumPowers})`);
     } else {
       reasons.push(`Need ${minimumPowers - knownPowers.length} more Force Powers`);
-      return { tier: FORCE_SECRET_TIERS.NOT_YET, score: 0, reasons, requirementsMetCount: 0 };
+      return { tier: UNIFIED_TIERS.AVAILABLE, score: 0, reasons, requirementsMetCount: 0 };
     }
 
     // Check Technique Count (mandatory)
@@ -164,25 +170,25 @@ export class ForceSecretSuggestionEngine {
       reasons.push(`Known ${knownTechniques.length} Force Techniques (requires ${minimumTechniques})`);
     } else {
       reasons.push(`Need ${minimumTechniques - knownTechniques.length} more Force Techniques`);
-      return { tier: FORCE_SECRET_TIERS.NOT_YET, score: 0, reasons, requirementsMetCount: 0 };
+      return { tier: UNIFIED_TIERS.AVAILABLE, score: 0, reasons, requirementsMetCount: 0 };
     }
 
     // If we got here, mandatory requirements are met
     let score = 1.0;
-    let tier = FORCE_SECRET_TIERS.AVAILABLE_FIT;
+    let tier = UNIFIED_TIERS.ABILITY_SYNERGY;
 
     // SECONDARY: Archetype Alignment
     const archetypeBonus = archetypeBias[archetype] || 1.0;
     score *= archetypeBonus;
 
     if (archetypeBonus >= FORCE_SECRET_ARCHETYPE_THRESHOLDS.PERFECT_FIT_MIN) {
-      tier = FORCE_SECRET_TIERS.PERFECT_FIT;
+      tier = UNIFIED_TIERS.PRESTIGE_QUALIFIED_NOW;
       reasons.push(`${archetype} path perfected`);
     } else if (archetypeBonus >= FORCE_SECRET_ARCHETYPE_THRESHOLDS.EXCELLENT_MATCH_MIN) {
-      tier = FORCE_SECRET_TIERS.EXCELLENT_MATCH;
+      tier = UNIFIED_TIERS.PATH_CONTINUATION;
       reasons.push(`Strong ${archetype} alignment`);
     } else if (archetypeBonus > FORCE_SECRET_ARCHETYPE_THRESHOLDS.GOOD_MATCH_MIN) {
-      tier = Math.max(tier, FORCE_SECRET_TIERS.GOOD_MATCH);
+      tier = Math.max(tier, UNIFIED_TIERS.CATEGORY_SYNERGY);
       reasons.push(`${archetype} compatible`);
     }
 

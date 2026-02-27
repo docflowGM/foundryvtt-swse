@@ -12,6 +12,7 @@
  */
 
 import { SWSELogger } from '../../../utils/logger.js';
+import { UNIFIED_TIERS, getTierMetadata } from '../../suggestion/suggestion-unified-tiers.js';
 import {
   PRESTIGE_ARCHETYPE_MAP,
   BASE_ARCHETYPE_MAP,
@@ -21,13 +22,18 @@ import {
   ITEM_TYPES
 } from './suggestion-constants.js';
 
+/**
+ * Deprecated: Use UNIFIED_TIERS instead
+ * Kept for backwards compatibility during migration
+ * @deprecated
+ */
 export const FORCE_TECHNIQUE_TIERS = {
-  POWER_SYNERGY_HIGH: 5,    // Known power + strong archetype match
-  POWER_SYNERGY_MED: 4,     // Known power + medium archetype match
-  POWER_SYNERGY_LOW: 3,     // Known power + weak/no archetype match
-  ARCHETYPE_ONLY: 2,        // No known power, but strong archetype
-  AVAILABLE: 1,             // Available but no synergy
-  FALLBACK: 0               // Last resort
+  POWER_SYNERGY_HIGH: UNIFIED_TIERS.PRESTIGE_QUALIFIED_NOW,     // 5 - Known power + strong archetype match
+  POWER_SYNERGY_MED: UNIFIED_TIERS.PATH_CONTINUATION,           // 4 - Known power + medium archetype match
+  POWER_SYNERGY_LOW: UNIFIED_TIERS.CATEGORY_SYNERGY,            // 3 - Known power + weak/no archetype match
+  ARCHETYPE_ONLY: UNIFIED_TIERS.ABILITY_SYNERGY,               // 2 - No known power, but strong archetype
+  AVAILABLE: UNIFIED_TIERS.THEMATIC_FIT,                        // 1 - Available but no synergy
+  FALLBACK: UNIFIED_TIERS.AVAILABLE                             // 0 - Last resort
 };
 
 export class ForceTechniqueSuggestionEngine {
@@ -114,7 +120,7 @@ export class ForceTechniqueSuggestionEngine {
    */
   static _scoreTechnique(technique, knownPowers = [], archetype = '', options = {}) {
     let score = 1.0;
-    let tier = FORCE_TECHNIQUE_TIERS.AVAILABLE;
+    let tier = UNIFIED_TIERS.THEMATIC_FIT;
     const reasons = [];
 
     if (!technique) {return null;}
@@ -150,13 +156,13 @@ export class ForceTechniqueSuggestionEngine {
 
       // Set tier based on synergy strength
       if (archetypeBonus >= FORCE_TECHNIQUE_ARCHETYPE_THRESHOLDS.HIGH_SYNERGY_MIN) {
-        tier = FORCE_TECHNIQUE_TIERS.POWER_SYNERGY_HIGH;
+        tier = UNIFIED_TIERS.PRESTIGE_QUALIFIED_NOW;
       } else if (archetypeBonus >= FORCE_TECHNIQUE_ARCHETYPE_THRESHOLDS.MED_SYNERGY_MIN) {
-        tier = FORCE_TECHNIQUE_TIERS.POWER_SYNERGY_MED;
+        tier = UNIFIED_TIERS.PATH_CONTINUATION;
       } else if (archetypeBonus > FORCE_TECHNIQUE_ARCHETYPE_THRESHOLDS.LOW_SYNERGY_MIN) {
-        tier = FORCE_TECHNIQUE_TIERS.POWER_SYNERGY_LOW;
+        tier = UNIFIED_TIERS.CATEGORY_SYNERGY;
       } else {
-        tier = FORCE_TECHNIQUE_TIERS.POWER_SYNERGY_LOW;
+        tier = UNIFIED_TIERS.CATEGORY_SYNERGY;
       }
     } else {
       // No known power: apply heavy penalty but check archetype
@@ -166,10 +172,10 @@ export class ForceTechniqueSuggestionEngine {
       const archetypeBonus = archBias[archetype] || 1.0;
       if (archetypeBonus > 1.0) {
         score *= archetypeBonus;
-        tier = FORCE_TECHNIQUE_TIERS.ARCHETYPE_ONLY;
+        tier = UNIFIED_TIERS.ABILITY_SYNERGY;
         reasons.push(`${archetype} has strong affinity`);
       } else {
-        tier = FORCE_TECHNIQUE_TIERS.AVAILABLE;
+        tier = UNIFIED_TIERS.THEMATIC_FIT;
       }
     }
 
