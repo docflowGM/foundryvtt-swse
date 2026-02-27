@@ -11,7 +11,7 @@
  * Called from level-up UI hooks.
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../utils/logger.js';
 import { GovernanceSystem } from '../governance-system.js';
 import { MissingPrereqsTracker } from '../integrity/missing-prereqs-tracker.js';
 import { RebuildOrchestrator } from '../ui/rebuild-orchestrator.js';

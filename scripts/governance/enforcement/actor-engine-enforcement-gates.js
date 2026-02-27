@@ -10,7 +10,7 @@
  * (blocking is handled by integrity checker and level-up gate).
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../utils/logger.js';
 import { GovernanceSystem } from '../governance-system.js';
 import { MissingPrereqsTracker } from '../integrity/missing-prereqs-tracker.js';
 

@@ -14,7 +14,7 @@
  * If slot no longer exists (species bonus lost), no refund.
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from '../utils/logger.js';
 import { ActorEngine } from '../actor-engine/actor-engine.js';
 
 export class SlotResolutionFlow {
