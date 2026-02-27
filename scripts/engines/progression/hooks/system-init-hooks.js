@@ -6,6 +6,7 @@
  * Ensures all game data is normalized and indexed for optimal progression engine performance.
  */
 import { ActorEngine } from '../../../governance/actor-engine/actor-engine.js';
+import { GovernanceIntegration } from '../../../governance/governance-integration.js';
 import { SWSELogger } from '../../../utils/logger.js';
 import { FeatureIndex } from '../engine/feature-index.js';
 import { ClassNormalizer } from '../engine/class-normalizer.js';
@@ -44,6 +45,9 @@ export const SystemInitHooks = {
             await this.onSystemReady();
         });
 
+        // PHASE 5B-1: Register governance hooks
+        GovernanceIntegration.registerHooks();
+
         SWSELogger.log('System initialization hooks registered');
     },
 
@@ -64,6 +68,9 @@ export const SystemInitHooks = {
 
             // Step 0: Build SSOT Data Registries (CRITICAL - must run first)
             await this._buildDataRegistries();
+
+            // Step 0.5: PHASE 5B-1 Initialize governance system
+            await GovernanceIntegration.initialize();
 
             // Step 1: Build feature index from compendiums
             await this._buildFeatureIndex();

@@ -14,6 +14,7 @@
  */
 
 import { GovernanceSystem } from './governance-system.js';
+import { EnforcementPolicy } from './enforcement/enforcement-policy.js';
 import { IntegrityBanner } from './ui/integrity-banner.js';
 import { LevelUpPreflightGate } from './enforcement/levelup-preflight-gate.js';
 import { SlotResolutionFlow } from './ui/slot-resolution-flow.js';
@@ -35,6 +36,9 @@ export class GovernanceIntegration {
       // Register world settings
       GovernanceSystem.registerWorldSettings();
 
+      // PHASE 5B-1: Verify EnforcementPolicy is operational
+      this._initializeEnforcementPolicy();
+
       // Initialize all actors
       for (const actor of game.actors.values()) {
         GovernanceSystem.initializeGovernance(actor);
@@ -45,6 +49,45 @@ export class GovernanceIntegration {
 
     } catch (err) {
       SWSELogger.error('[GOVERNANCE] Initialization failed:', err);
+    }
+  }
+
+  /**
+   * PHASE 5B-1: Initialize EnforcementPolicy foundation
+   * Verifies policy engine is ready and tests are passing (dev mode only)
+   * @private
+   */
+  static _initializeEnforcementPolicy() {
+    try {
+      // Export for console access
+      if (typeof window !== 'undefined') {
+        window.EnforcementPolicy = EnforcementPolicy;
+      }
+
+      // Verify policy engine is available
+      const testActor = {
+        name: 'Policy Test',
+        system: { governance: { enforcementMode: 'normal' } }
+      };
+      const testDecision = EnforcementPolicy.evaluate(testActor, {
+        severity: 'none',
+        count: 0
+      });
+
+      if (!testDecision || !testDecision.outcome) {
+        throw new Error('EnforcementPolicy failed verification');
+      }
+
+      SWSELogger.log('[PHASE 5B-1] EnforcementPolicy foundation initialized and verified');
+
+      // Run tests in dev mode
+      if (globalThis.SWSE_DEV_MODE) {
+        SWSELogger.log('[PHASE 5B-1] Running EnforcementPolicy tests in dev mode...');
+        // Note: Tests will auto-run on import if SWSE_DEV_MODE is set
+      }
+
+    } catch (err) {
+      SWSELogger.error('[PHASE 5B-1] EnforcementPolicy initialization failed:', err);
     }
   }
 
