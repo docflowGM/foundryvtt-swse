@@ -23,6 +23,8 @@ import {
   getAvailableTalentTreesForHeroicTalent,
   getAvailableTalentTreesForClassTalent
 } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-dual-talent-progression.js";
+import { TalentSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/slot-validator.js";
+import { getAllowedTalentTrees } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/tree-authority.js";
 
 /**
  * Get the number of talents granted at this level
@@ -560,7 +562,43 @@ export function selectTalent(talentName, talentData, actor, pendingData) {
   const talent = talentData.find(t => t.name === talentName);
   if (!talent) {return null;}
 
-  // Check prerequisites
+  // ========== PHASE 2.1: UNIFIED SLOT VALIDATION ==========
+  // Validate using the same path as chargen
+  // Determine slot type: heroic is default, class if in class-level progression
+  const isClassTalent = pendingData?.isClassTalent || false;
+  const slotType = isClassTalent ? 'class' : 'heroic';
+
+  // Get current class context if available
+  const classId = pendingData?.classId || null;
+
+  const slot = {
+    slotType,
+    classId,
+    consumed: false
+  };
+
+  // Validate talent for this slot using unified validator
+  const validation = TalentSlotValidator.validateTalentForSlot(
+    talent,
+    slot,
+    [],  // unlockedTrees - derived from actor via getAllowedTalentTrees
+    { _actor: actor, ...pendingData }
+  );
+
+  if (!validation.valid) {
+    SWSELogger.log(
+      `[LEVELUP-TALENTS] selectTalent: Tree authority FAILED for "${talentName}": ${validation.message}`
+    );
+    ui.notifications.warn(`Cannot select ${talentName}: ${validation.message}`);
+    return null;
+  }
+
+  SWSELogger.log(
+    `[LEVELUP-TALENTS] selectTalent: Tree authority PASSED for "${talentName}"`
+  );
+  // =========================================================
+
+  // Check prerequisites (existing logic, kept for completeness)
   const check = checkTalentPrerequisites(talent, actor, pendingData);
   if (!check.valid) {
     ui.notifications.warn(`Cannot select ${talentName}: ${check.reasons.join(', ')}`);

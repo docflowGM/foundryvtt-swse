@@ -30,7 +30,7 @@ export class StarshipManeuverPicker extends SWSEFormApplicationV2 {
     {
       id: 'starship-maneuver-picker',
       classes: ['swse-app', 'starship-maneuver-picker'],
-      template: 'systems/foundryvtt-swse/scripts/progression/ui/templates/starship-maneuver-picker.hbs',
+      template: 'systems/foundryvtt-swse/scripts/engine/progression/ui/templates/starship-maneuver-picker.hbs',
       position: { width: 720, height: 620 },
       resizable: true
     }

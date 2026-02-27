@@ -12,7 +12,7 @@ import {
   getTrainedSkills,
   getTalentTrees,
   validateClassDocument
-} from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js';
+} from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
 import { MentorSurvey } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey.js";
 import { isBaseClass } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js";
 import { _findItemByIdOrName } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js";
@@ -160,7 +160,12 @@ export async function _onSelectClass(event) {
   const talentEveryLevelExtraL1 = game.settings.get('foundryvtt-swse', 'talentEveryLevelExtraL1') ?? false;
   const talentsRequired = talentEveryLevelRule ? (talentEveryLevelExtraL1 ? 2 : 1) : 1;
 
-  const patch = buildClassAtomicPatch(this.characterData, className, talentsRequired);
+  // Phase 1: Pass classDoc and house rule settings for structured slot generation
+  const houseRuleSettings = {
+    talentEveryLevel: talentEveryLevelRule,
+    talentEveryLevelExtraL1: talentEveryLevelExtraL1
+  };
+  const patch = buildClassAtomicPatch(this.characterData, className, talentsRequired, classDef, houseRuleSettings);
   this.characterData = applyProgressionPatch(this.characterData, patch);
 // DIAGNOSTIC: Verify class was stored correctly
   SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: CRITICAL - Class selection stored:`, {

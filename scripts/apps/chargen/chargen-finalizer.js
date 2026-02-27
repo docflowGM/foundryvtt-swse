@@ -129,6 +129,36 @@ export class ChargenFinalizer {
       Object.assign(actorData.system, snapshot.systemData);
     }
 
+    // Phase 1: Store structured talent slots
+    if (snapshot.talentSlots) {
+      if (!actorData.system.progression) {
+        actorData.system.progression = {};
+      }
+      actorData.system.progression.talentSlots = foundry.utils.deepClone(snapshot.talentSlots);
+      SWSELogger.log(`[CHARGEN FINALIZER] Stored ${snapshot.talentSlots.length} talent slots in actor`);
+    }
+
+    // Phase 2: Store unlocked domains (REPLACES Phase 1 unlockedTrees)
+    // Authority is now derived, not persisted as static tree lists
+    if (snapshot.unlockedDomains && snapshot.unlockedDomains.length > 0) {
+      if (!actorData.system.progression) {
+        actorData.system.progression = {};
+      }
+      actorData.system.progression.unlockedDomains = foundry.utils.deepClone(snapshot.unlockedDomains);
+      SWSELogger.log(
+        `[CHARGEN FINALIZER] Stored unlocked domains: ${snapshot.unlockedDomains.join(', ')}`
+      );
+    }
+
+    // Phase 1.5: Store structured feat slots
+    if (snapshot.featSlots) {
+      if (!actorData.system.progression) {
+        actorData.system.progression = {};
+      }
+      actorData.system.progression.featSlots = foundry.utils.deepClone(snapshot.featSlots);
+      SWSELogger.log(`[CHARGEN FINALIZER] Stored ${snapshot.featSlots.length} feat slots in actor`);
+    }
+
     return actorData;
   }
 

@@ -9,7 +9,7 @@ import {
   MANEUVER_NAMES,
   MANEUVER_SCORING,
   MANEUVER_SKILL_THRESHOLDS
-} from "/systems/foundryvtt-swse/scripts/engine/progression/engine/suggestion-constants.js';
+} from "/systems/foundryvtt-swse/scripts/engine/progression/engine/suggestion-constants.js";
 
 export class StarshipManeuverSuggestionEngine {
   static MANEUVER_DIFFICULTY = {

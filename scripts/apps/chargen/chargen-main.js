@@ -25,6 +25,13 @@ import { LanguageRegistry } from "/systems/foundryvtt-swse/scripts/registries/la
 // SSOT Data Layer
 import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
 
+// Phase 1: Talent Slot System
+import { TalentSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/slot-validator.js";
+import { TalentSlotMigrator } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/slot-migrator.js";
+
+// Phase 1.5: Feat Slot System
+import { FeatSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-slot-validator.js";
+
 // V2 API base class
 import SWSEApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
 
@@ -2469,11 +2476,30 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
         break;
       }
       case 'talents': {
-        const selectedTalentsCount = (this.characterData.talents || []).length;
-        const requiredTalents = this.characterData.talentsRequired || 1;
-        if (selectedTalentsCount < requiredTalents) {
-          ui.notifications.warn(`You must select ${requiredTalents} talent(s) (currently selected: ${selectedTalentsCount}).`);
-          return false;
+        // Phase 1: Use structured slot validation
+        const talentSlots = this.characterData.talentSlots || [];
+        const selectedTalents = this.characterData.talents || [];
+        const unlockedTrees = this.characterData.unlockedTrees || [];
+
+        // Fallback to numeric validation if slots not yet initialized
+        if (!talentSlots || talentSlots.length === 0) {
+          const selectedTalentsCount = selectedTalents.length;
+          const requiredTalents = this.characterData.talentsRequired || 1;
+          if (selectedTalentsCount < requiredTalents) {
+            ui.notifications.warn(`You must select ${requiredTalents} talent(s) (currently selected: ${selectedTalentsCount}).`);
+            return false;
+          }
+        } else {
+          // Use new slot validator
+          const validation = TalentSlotValidator.validateTotalSlots(selectedTalents, talentSlots);
+          if (!validation.valid) {
+            ui.notifications.warn(validation.message);
+            return false;
+          }
+          if (selectedTalents.length < talentSlots.length) {
+            ui.notifications.warn(`You must select ${talentSlots.length} talent(s) (currently selected: ${selectedTalents.length}).`);
+            return false;
+          }
         }
         break;
       }

@@ -22,6 +22,8 @@ import { LanguageEngine } from "/systems/foundryvtt-swse/scripts/engine/progress
 import { EquipmentEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/equipment-engine.js";
 import { DerivedCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js";
 import { LevelDiffInspector } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/level-diff-inspector.js";
+import { SuiteReselectionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/suite-reselection-engine.js";
+import { isSuiteReselectionEnabled } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/suite-reselection-utils.js";
 
 export class FinalizeIntegration {
 
@@ -182,10 +184,95 @@ export class FinalizeIntegration {
         await LanguageEngine.finalizeLanguages(actor);
         SWSELogger.log('Languages finalized');
 
+        // PHASE 3.4: Suite Reselection (level-up only, after ability recalculation)
+        // Offers players to reselect Force Powers and Maneuvers with new capacity
+        if (mode === 'levelup' && isSuiteReselectionEnabled()) {
+            await this._offerSuiteReselection(actor);
+        }
+
         // Step 4: Finalize equipment (chargen only - level-up doesn't grant equipment)
         if (mode === 'chargen' && className && backgroundName) {
             await EquipmentEngine.finalizeEquipment(actor, className, backgroundName);
             SWSELogger.log('Equipment finalized');
+        }
+    }
+
+    /**
+     * Offer suite reselection (Force Powers and Maneuvers) during level-up
+     * PHASE 3.4: Triggered only during level-up, after abilities are recalculated
+     * @private
+     */
+    static async _offerSuiteReselection(actor) {
+        if (!actor) {
+            return;
+        }
+
+        try {
+            // Offer Force Power reselection
+            const confirmForce = await new Promise((resolve) => {
+                new Dialog({
+                    title: "Reselect Force Powers?",
+                    content: "<p>Would you like to reselect your Force Powers with your new capacity?</p>",
+                    buttons: {
+                        yes: {
+                            label: "Reselect",
+                            callback: () => resolve(true)
+                        },
+                        no: {
+                            label: "Keep Current",
+                            callback: () => resolve(false)
+                        }
+                    },
+                    default: "no"
+                }).render(true);
+            });
+
+            if (confirmForce) {
+                const forceResult = await SuiteReselectionEngine.clearAndReselectForcePowers(
+                    actor,
+                    "levelup"
+                );
+
+                if (!forceResult.success) {
+                    ui.notifications.error("Force Power reselection failed: " + forceResult.error);
+                } else if (forceResult.appliedCount > 0) {
+                    ui.notifications.info(`Reselected ${forceResult.appliedCount} Force Powers`);
+                }
+            }
+
+            // Offer Maneuver reselection
+            const confirmManeuvers = await new Promise((resolve) => {
+                new Dialog({
+                    title: "Reselect Starship Maneuvers?",
+                    content: "<p>Would you like to reselect your Starship Maneuvers with your new capacity?</p>",
+                    buttons: {
+                        yes: {
+                            label: "Reselect",
+                            callback: () => resolve(true)
+                        },
+                        no: {
+                            label: "Keep Current",
+                            callback: () => resolve(false)
+                        }
+                    },
+                    default: "no"
+                }).render(true);
+            });
+
+            if (confirmManeuvers) {
+                const maneuverResult = await SuiteReselectionEngine.clearAndReselectManeuvers(
+                    actor,
+                    "levelup"
+                );
+
+                if (!maneuverResult.success) {
+                    ui.notifications.error("Maneuver reselection failed: " + maneuverResult.error);
+                } else if (maneuverResult.appliedCount > 0) {
+                    ui.notifications.info(`Reselected ${maneuverResult.appliedCount} Maneuvers`);
+                }
+            }
+        } catch (e) {
+            SWSELogger.error('Suite reselection failed', e);
         }
     }
 

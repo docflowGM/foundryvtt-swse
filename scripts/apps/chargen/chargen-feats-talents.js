@@ -12,6 +12,11 @@ import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/
 import { MentorSurvey } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey.js";
 import { _findTalentItem } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+// Phase 1: Talent Slot Validation
+import { TalentSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/slot-validator.js";
+// Phase 1.5: Feat Slot Validation and Registry
+import { FeatSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-slot-validator.js";
+import { ClassFeatRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/class-feat-registry.js";
 
 /**
  * Calculate feat/talent suggestions during chargen
@@ -215,6 +220,40 @@ export async function _onSelectFeat(event) {
       return;
     }
     SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Prerequisites MET for "${feat.name}"`);
+
+    // Phase 1.5: Check if this is a bonus feat slot and validate against class restrictions
+    const classId = classDoc?._id;
+    if (classId && this.characterData.featsRequired && this.characterData.featsRequired > 0) {
+      // Determine if we're in a bonus feat slot (first N feats equal featsRequired)
+      const isLikelyBonusSlot = this.characterData.feats.length < this.characterData.featsRequired;
+
+      if (isLikelyBonusSlot) {
+        // Validate against class bonus feat list
+        const allowed = await ClassFeatRegistry.getClassBonusFeats(classId);
+        if (allowed.length > 0 && !allowed.includes(feat._id)) {
+          SWSELogger.log(
+            `[CHARGEN-FEATS-TALENTS] _onSelectFeat: "${feat.name}" NOT in bonus feat list for class`
+          );
+          ui.notifications.warn(
+            `Cannot select "${feat.name}": This feat is not available as a bonus feat for your class. ` +
+            `You can select it later as a bonus feat at higher levels or as a feat from training.`
+          );
+          return;
+        }
+        SWSELogger.log(
+          `[CHARGEN-FEATS-TALENTS] _onSelectFeat: "${feat.name}" IS in bonus feat list for class`
+        );
+      }
+    }
+  }
+
+  // Phase 2F: Handle Force Sensitivity feat — unlock force domain
+  if (feat.name.toLowerCase() === 'force sensitivity') {
+    this.characterData.unlockedDomains = this.characterData.unlockedDomains || [];
+    if (!this.characterData.unlockedDomains.includes('force')) {
+      this.characterData.unlockedDomains.push('force');
+      SWSELogger.log('[CHARGEN-FEATS-TALENTS] Force Sensitivity selected — "force" domain unlocked');
+    }
   }
 
   // Check if this is a Skill Focus feat
@@ -376,8 +415,10 @@ export async function _onRemoveFeat(event) {
   // Find the feat being removed
   const removedFeat = this.characterData.feats.find(f => f._id === id || f.name === id);
 
+  if (!removedFeat) {return;}
+
   // If it's a Skill Focus feat, unfocus the skill
-  if (removedFeat && removedFeat.name.toLowerCase().includes('skill focus')) {
+  if (removedFeat.name.toLowerCase().includes('skill focus')) {
     // Parse the focused skill from the description
     const descMatch = removedFeat.system?.description?.match(/<strong>Focused Skill:<\/strong>\s*(.+?)(?:<|$)/);
     if (descMatch) {
@@ -412,6 +453,42 @@ export async function _onRemoveFeat(event) {
     }
   }
 
+  // ========== PHASE 2.1: DOMAIN CLEANUP ON FEAT REMOVAL ==========
+  // If removing Force Sensitivity, clean up related state
+  if (removedFeat.name.toLowerCase().includes('force sensitivity')) {
+    // Remove Force domain from unlocked domains
+    if (this.characterData.unlockedDomains) {
+      const hasForceDomain = this.characterData.unlockedDomains.includes('force');
+      this.characterData.unlockedDomains = this.characterData.unlockedDomains.filter(d => d !== 'force');
+
+      if (hasForceDomain) {
+        SWSELogger.log(
+          `[CHARGEN-FEATS-TALENTS] Force domain removed from unlockedDomains due to Force Sensitivity removal`
+        );
+      }
+    }
+
+    // Remove any Force-tree talents that are selected (no longer accessible)
+    const originalTalentCount = this.characterData.talents?.length || 0;
+    this.characterData.talents = (this.characterData.talents || []).filter(t => {
+      const treeId = t.system?.talent_tree || t.system?.talentTree || t.system?.tree;
+      const isForceTree = treeId && (treeId.toLowerCase().includes('force') || treeId === 'Force');
+      return !isForceTree;
+    });
+
+    const removedTalentCount = originalTalentCount - (this.characterData.talents?.length || 0);
+    if (removedTalentCount > 0) {
+      ui.notifications.warn(
+        `${removedTalentCount} Force talent(s) removed due to Force Sensitivity removal`
+      );
+      SWSELogger.log(
+        `[CHARGEN-FEATS-TALENTS] Removed ${removedTalentCount} Force talent(s) due to Force Sensitivity removal`
+      );
+    }
+  }
+  // ================================================================
+
+  // Remove the feat from the selection
   this.characterData.feats = this.characterData.feats.filter(f => f._id !== id && f.name !== id);
   await this.render();
 }
@@ -515,9 +592,25 @@ export async function _onSelectTalent(event) {
     }
 
     // Check talent slot limit for Block & Deflect (grants 2 talents)
-    if (!this.freeBuild && (this.characterData.talents.length + talentsToAdd.length) > this.characterData.talentsRequired) {
-      ui.notifications.warn(`You don't have enough talent slots for Block & Deflect (requires ${talentsToAdd.length} slots, you have ${this.characterData.talentsRequired - this.characterData.talents.length} available)!`);
-      return;
+    // Phase 1: Use structured slot validation if available
+    if (!this.freeBuild) {
+      const talentSlots = this.characterData.talentSlots || [];
+      if (talentSlots && talentSlots.length > 0) {
+        const validation = TalentSlotValidator.validateTotalSlots(
+          [...this.characterData.talents, ...talentsToAdd],
+          talentSlots
+        );
+        if (!validation.valid) {
+          ui.notifications.warn(`${validation.message} (Block & Deflect requires ${talentsToAdd.length} slots)`);
+          return;
+        }
+      } else {
+        // Fallback to numeric validation
+        if ((this.characterData.talents.length + talentsToAdd.length) > this.characterData.talentsRequired) {
+          ui.notifications.warn(`You don't have enough talent slots for Block & Deflect (requires ${talentsToAdd.length} slots, you have ${this.characterData.talentsRequired - this.characterData.talents.length} available)!`);
+          return;
+        }
+      }
     }
 
     // Check for duplicates and prerequisites for each talent
@@ -579,9 +672,23 @@ export async function _onSelectTalent(event) {
     }
 
     // Check talent slot limit (unless free build mode is on)
-    if (!this.freeBuild && this.characterData.talents.length >= this.characterData.talentsRequired) {
-      ui.notifications.warn(`You've already selected the maximum number of talents (${this.characterData.talentsRequired})!`);
-      return;
+    // Phase 1: Use structured slot validation if available
+    if (!this.freeBuild) {
+      const talentSlots = this.characterData.talentSlots || [];
+      if (talentSlots && talentSlots.length > 0) {
+        const availableSlots = talentSlots.filter(s => !s.consumed).length;
+        const selectedCount = this.characterData.talents.length;
+        if (selectedCount >= talentSlots.length) {
+          ui.notifications.warn(`You've already selected the maximum number of talents (${talentSlots.length})!`);
+          return;
+        }
+      } else {
+        // Fallback to numeric validation
+        if (this.characterData.talents.length >= this.characterData.talentsRequired) {
+          ui.notifications.warn(`You've already selected the maximum number of talents (${this.characterData.talentsRequired})!`);
+          return;
+        }
+      }
     }
 
     // If leveling up, also check existing actor items
