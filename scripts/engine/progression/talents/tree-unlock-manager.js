@@ -62,6 +62,103 @@ export class TreeUnlockManager {
   static getAccessibleTrees(unlockedTrees = []) {
     return Array.isArray(unlockedTrees) ? [...unlockedTrees] : [];
   }
+
+  /**
+   * Remove domains that are no longer valid due to feat removal
+   * Called when a feat that unlocked a domain is removed from the actor
+   *
+   * PHASE 2.1: Runtime domain cleanup for live removals
+   *
+   * @param {Actor} actor - The actor document
+   * @param {Object} removedFeat - The feat being removed
+   * @returns {Object|null} Update object for actor or null if no change
+   */
+  static removeDomainsForRemovedFeat(actor, removedFeat) {
+    if (!actor || !removedFeat) {return null;}
+
+    const currentDomains = actor.system?.progression?.unlockedDomains || [];
+    const updatedDomains = [...currentDomains];
+    let changed = false;
+
+    // Check which domains this feat unlocked
+    const featName = removedFeat.name || removedFeat;
+    const featNameLower = typeof featName === 'string' ? featName.toLowerCase() : '';
+
+    // Force Sensitivity feat unlocks force domain
+    if (featNameLower.includes('force sensitivity')) {
+      if (updatedDomains.includes('force')) {
+        updatedDomains.splice(updatedDomains.indexOf('force'), 1);
+        changed = true;
+
+        SWSELogger.log(
+          `[TreeUnlockManager] Force domain removed due to Force Sensitivity feat removal from ${actor.name}`
+        );
+      }
+    }
+
+    // Return update object if domains changed
+    if (changed) {
+      return {
+        'system.progression.unlockedDomains': updatedDomains
+      };
+    }
+
+    return null;
+  }
+
+  /**
+   * Remove inaccessible talents when a domain is unlocked
+   * Called after domain cleanup to remove talents from affected trees
+   *
+   * PHASE 2.1: Talent cleanup for domain removal
+   *
+   * @param {Actor} actor - The actor document
+   * @param {Array<string>} removedDomains - Domains that were removed
+   * @returns {Promise<void>}
+   */
+  static async removeInaccessibleTalents(actor, removedDomains) {
+    if (!actor || !removedDomains || removedDomains.length === 0) {return;}
+
+    const talentToRemove = [];
+
+    // Find talents in removed domains
+    for (const talent of actor.items) {
+      if (talent.type !== 'talent') {continue;}
+
+      const treeId = talent.system?.talent_tree ||
+                     talent.system?.talentTree ||
+                     talent.system?.tree;
+
+      // Check if this talent's tree is in a removed domain
+      if (treeId) {
+        for (const domain of removedDomains) {
+          if (treeId.toLowerCase().includes(domain.toLowerCase())) {
+            talentToRemove.push(talent.id);
+            SWSELogger.log(
+              `[TreeUnlockManager] Talent "${talent.name}" (tree: ${treeId}) marked for removal ` +
+              `(domain "${domain}" no longer unlocked)`
+            );
+            break;
+          }
+        }
+      }
+    }
+
+    // Delete inaccessible talents
+    if (talentToRemove.length > 0) {
+      try {
+        await actor.deleteEmbeddedDocuments('Item', talentToRemove);
+        SWSELogger.log(
+          `[TreeUnlockManager] Removed ${talentToRemove.length} inaccessible talents from ${actor.name}`
+        );
+      } catch (err) {
+        SWSELogger.error(
+          `[TreeUnlockManager] Failed to remove inaccessible talents:`,
+          err
+        );
+      }
+    }
+  }
 }
 
 export default TreeUnlockManager;

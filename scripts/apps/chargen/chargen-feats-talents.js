@@ -415,8 +415,10 @@ export async function _onRemoveFeat(event) {
   // Find the feat being removed
   const removedFeat = this.characterData.feats.find(f => f._id === id || f.name === id);
 
+  if (!removedFeat) {return;}
+
   // If it's a Skill Focus feat, unfocus the skill
-  if (removedFeat && removedFeat.name.toLowerCase().includes('skill focus')) {
+  if (removedFeat.name.toLowerCase().includes('skill focus')) {
     // Parse the focused skill from the description
     const descMatch = removedFeat.system?.description?.match(/<strong>Focused Skill:<\/strong>\s*(.+?)(?:<|$)/);
     if (descMatch) {
@@ -451,6 +453,42 @@ export async function _onRemoveFeat(event) {
     }
   }
 
+  // ========== PHASE 2.1: DOMAIN CLEANUP ON FEAT REMOVAL ==========
+  // If removing Force Sensitivity, clean up related state
+  if (removedFeat.name.toLowerCase().includes('force sensitivity')) {
+    // Remove Force domain from unlocked domains
+    if (this.characterData.unlockedDomains) {
+      const hasForceDomain = this.characterData.unlockedDomains.includes('force');
+      this.characterData.unlockedDomains = this.characterData.unlockedDomains.filter(d => d !== 'force');
+
+      if (hasForceDomain) {
+        SWSELogger.log(
+          `[CHARGEN-FEATS-TALENTS] Force domain removed from unlockedDomains due to Force Sensitivity removal`
+        );
+      }
+    }
+
+    // Remove any Force-tree talents that are selected (no longer accessible)
+    const originalTalentCount = this.characterData.talents?.length || 0;
+    this.characterData.talents = (this.characterData.talents || []).filter(t => {
+      const treeId = t.system?.talent_tree || t.system?.talentTree || t.system?.tree;
+      const isForceTree = treeId && (treeId.toLowerCase().includes('force') || treeId === 'Force');
+      return !isForceTree;
+    });
+
+    const removedTalentCount = originalTalentCount - (this.characterData.talents?.length || 0);
+    if (removedTalentCount > 0) {
+      ui.notifications.warn(
+        `${removedTalentCount} Force talent(s) removed due to Force Sensitivity removal`
+      );
+      SWSELogger.log(
+        `[CHARGEN-FEATS-TALENTS] Removed ${removedTalentCount} Force talent(s) due to Force Sensitivity removal`
+      );
+    }
+  }
+  // ================================================================
+
+  // Remove the feat from the selection
   this.characterData.feats = this.characterData.feats.filter(f => f._id !== id && f.name !== id);
   await this.render();
 }

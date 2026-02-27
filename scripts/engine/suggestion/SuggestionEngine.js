@@ -31,6 +31,7 @@ import { getSynergyForItem, findActiveSynergies } from "/systems/foundryvtt-swse
 import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
 import { WishlistEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/WishlistEngine.js";
 import { UNIFIED_TIERS } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-unified-tiers.js";
+import { getAllowedTalentTrees } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/tree-authority.js";
 
 // ──────────────────────────────────────────────────────────────
 // TIER DEFINITIONS (PHASE 5D: UNIFIED_TIERS Refactor)
@@ -168,7 +169,41 @@ export class SuggestionEngine {
             }
         }
 
-        return talents.map(talent => {
+        // ========== PHASE 2.1: TREE AUTHORITY FILTERING ==========
+        // Filter candidate pool by derived authority BEFORE scoring
+        // Heroic slot is used for suggestions (broadest valid access)
+        const heroicSlot = { slotType: 'heroic' };
+        const allowedTrees = getAllowedTalentTrees(actor, heroicSlot);
+
+        const accessibleTalents = talents.filter(talent => {
+            // Get talent's tree ID (multiple possible field names for compatibility)
+            const treeId = talent.system?.talent_tree ||
+                           talent.system?.talentTree ||
+                           talent.system?.tree;
+
+            // Talents without a tree are always accessible
+            if (!treeId) return true;
+
+            // Only include talents whose tree is in allowed list
+            const isAccessible = allowedTrees.includes(treeId);
+
+            if (!isAccessible) {
+                SWSELogger.log(
+                    `[SuggestionEngine.suggestTalents] Filtering out inaccessible talent: ` +
+                    `"${talent.name}" (tree: "${treeId}", allowed: ${allowedTrees.join(', ')})`
+                );
+            }
+
+            return isAccessible;
+        });
+
+        SWSELogger.log(
+            `[SuggestionEngine.suggestTalents] Authority filtering: ${talents.length} total → ` +
+            `${accessibleTalents.length} accessible (allowed trees: ${allowedTrees.join(', ')})`
+        );
+        // =========================================================
+
+        return accessibleTalents.map(talent => {
             // Only suggest for qualified talents
             if (talent.isQualified === false) {
                 // NEW: If includeFutureAvailability option enabled, score future availability

@@ -7,6 +7,8 @@ import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progr
 
 import { ProficiencySelectionDialog } from "/systems/foundryvtt-swse/scripts/apps/proficiency-selection-dialog.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { TalentSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/slot-validator.js";
+import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
 
 export class DropHandler {
 
@@ -469,9 +471,9 @@ export class DropHandler {
 
   static async handleTalentDrop(actor, talent) {
     // Add talent:
-    // - Check tree prerequisites
-    // - Validate class access
-    // - Apply bonuses
+    // - Validate tree authority
+    // - Check prerequisites
+    // - Prevent duplicates
 
     // Check if already has talent
     const existingTalent = actor.items.find(i =>
@@ -482,6 +484,38 @@ export class DropHandler {
       ui.notifications.warn(`${actor.name} already has ${talent.name}`);
       return false;
     }
+
+    // ========== PHASE 2.1: AUTHORITY VALIDATION ==========
+    // Manual drops are treated as heroic-level access (broadest valid restrictions)
+    const slot = {
+      slotType: 'heroic',
+      consumed: false
+    };
+
+    // Validate tree authority using unified validator
+    const treeValidation = TalentSlotValidator.validateTalentForSlot(
+      talent,
+      slot,
+      [],  // unlockedTrees - derived via getAllowedTalentTrees
+      { _actor: actor }
+    );
+
+    if (!treeValidation.valid) {
+      ui.notifications.error(
+        `Cannot add ${talent.name} to ${actor.name}: ${treeValidation.message}`
+      );
+      return false;
+    }
+
+    // Also validate prerequisites
+    const prereqCheck = PrerequisiteChecker.checkTalentPrerequisites(actor, talent, {});
+    if (!prereqCheck.met) {
+      ui.notifications.error(
+        `Cannot add ${talent.name}: ${prereqCheck.missing.join(', ')}`
+      );
+      return false;
+    }
+    // ====================================================
 
     // PHASE 8: Use ActorEngine for atomic creation
     await ActorEngine.createEmbeddedDocuments(actor, 'Item', [talent.toObject()]);
