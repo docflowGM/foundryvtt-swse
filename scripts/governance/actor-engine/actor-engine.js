@@ -7,6 +7,7 @@ import { DerivedCalculator } from '../../actors/derived/derived-calculator.js';
 import { ModifierEngine } from '../../engines/effects/modifiers/ModifierEngine.js';
 import { MutationApplicationError } from '../mutation/mutation-errors.js';
 import { PrerequisiteIntegrityChecker } from '../integrity/prerequisite-integrity-checker.js';
+import { PreflightValidator } from '../enforcement/preflight-validator.js';
 
 /**
  * ActorEngine
@@ -127,6 +128,29 @@ export const ActorEngine = {
         // Prevent recursive mutations during migration
         SWSELogger.warn(`[MIGRATION] Suppressing recursive mutation during migration for ${actor.name}`);
         return { prevented: true, actor };
+      }
+
+      // ========================================
+      // PHASE 5B-2: Preflight validation
+      // ========================================
+      const mutation = {
+        operation: 'update',
+        updates: updateData,
+        itemsToAdd: [],
+        itemsToRemove: []
+      };
+
+      const preflightResult = await PreflightValidator.validateBeforeMutation(
+        actor,
+        mutation,
+        { source: 'ActorEngine', reason: options.reason }
+      );
+
+      // If blocked by policy, throw error before mutation is authorized
+      if (preflightResult.outcome === 'block') {
+        throw new Error(
+          `[GOVERNANCE] Mutation blocked: ${preflightResult.reason}`
+        );
       }
 
       // ========================================
