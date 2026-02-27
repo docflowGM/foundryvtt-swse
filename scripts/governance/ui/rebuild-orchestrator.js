@@ -14,7 +14,7 @@
  * Closes when actor.system.missingPrerequisites is empty.
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from '../../utils/logger.js';
 import { ActorEngine } from '../actor-engine/actor-engine.js';
 import { MissingPrereqsTracker } from '../integrity/missing-prereqs-tracker.js';
 import { PrerequisiteIntegrityChecker } from '../integrity/prerequisite-integrity-checker.js';
