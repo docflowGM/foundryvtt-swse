@@ -1,0 +1,305 @@
+================================================================================
+PHASE 2.1: TREE AUTHORITY CLOSURE & LIFECYCLE SEAL
+COMPLETE AUDIT & IMPLEMENTATION READY
+================================================================================
+
+STATUS: Phase 2.1 is ready for implementation
+CURRENT SCORE: 9/10 (multiple authority gaps)
+TARGET SCORE: 10/10 (complete closure)
+
+================================================================================
+CRITICAL FINDINGS
+================================================================================
+
+GAP 1: SUGGESTION LEAKAGE (HIGH PRIORITY)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+File: /home/user/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngine.js
+Issue: Suggests talents from inaccessible trees
+Example: Force talents suggested to Soldier with no Force Sensitivity
+Fix: Filter by getAllowedTalentTrees() BEFORE scoring
+Lines: 153-202 (35 lines changed)
+
+GAP 2: MANUAL DRAG-DROP BYPASS (CRITICAL)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+File: /home/user/foundryvtt-swse/scripts/drag-drop/drop-handler.js
+Issue: Talent drag-drop bypasses ALL validation
+Example: Force Talent can be dropped on any character
+Fix: Add tree authority + prerequisite validation
+Lines: 470-490 (20 lines changed)
+
+GAP 3: LEVEL-UP INCONSISTENCY (MEDIUM PRIORITY)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+File: /home/user/foundryvtt-swse/scripts/apps/levelup/levelup-talents.js
+Issue: Uses different validation than chargen (missing tree authority)
+Example: Level-up doesn't verify tree access like chargen does
+Fix: Call TalentSlotValidator.validateTalentForSlot()
+Lines: 559-572 (15 lines changed)
+
+GAP 4: NO REMOVAL SAFETY (HIGH PRIORITY)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+File: /home/user/foundryvtt-swse/scripts/apps/chargen/chargen-feats-talents.js
+Issue: Removing Force Sensitivity doesn't remove unlockedDomains
+Example: Character finalized with Force Talent but no Force Sensitivity
+Fix: Clean up unlockedDomains + Force talents on feat removal
+Lines: 411-456 (25 lines changed)
+
+GAP 5: NO UNIFIED AUTHORITY (MEDIUM PRIORITY)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Issue: Multiple parallel validation paths
+Problem: No single source of truth for tree access
+Solution: All paths route through TalentSlotValidator → getAllowedTalentTrees()
+
+================================================================================
+SOLUTION OVERVIEW
+================================================================================
+
+5 Code Changes Required:
+
+CHANGE 1: SuggestionEngine.js
+  Import: getAllowedTalentTrees
+  Action: Filter talents by tree BEFORE scoring
+  Impact: No suggestion leakage possible
+  Complexity: LOW
+  Lines: 30 (import) + 153-202 (method)
+
+CHANGE 2: levelup-talents.js  
+  Import: TalentSlotValidator, getAllowedTalentTrees
+  Action: Call validateTalentForSlot() in selectTalent()
+  Impact: Level-up validates same as chargen
+  Complexity: LOW
+  Lines: 25 (imports) + 559-572 (method)
+
+CHANGE 3: drop-handler.js
+  Import: TalentSlotValidator, PrerequisiteChecker
+  Action: Validate tree authority + prerequisites before creation
+  Impact: Close manual drag-drop bypass
+  Complexity: MEDIUM
+  Lines: 10 (imports) + 470-490 (method)
+
+CHANGE 4: chargen-feats-talents.js
+  Action: Remove unlockedDomains + Force talents on Force Sensitivity removal
+  Impact: Prevent invalid chargen state
+  Complexity: MEDIUM
+  Lines: 411-456 (method modified)
+
+CHANGE 5: tree-unlock-manager.js
+  Action: Add removeDomainsForRemovedFeat() + removeInaccessibleTalents()
+  Impact: Enable runtime domain cleanup
+  Complexity: LOW
+  Lines: ~50 (new methods at end of class)
+
+Total Changes: 5 files, ~150 lines of code
+
+================================================================================
+SUCCESS CRITERIA
+================================================================================
+
+✓ Confirmation 1: All talent selection paths call validateSlotSelection()
+✓ Confirmation 2: All candidate filtering calls getAllowedTalentTrees()
+✓ Confirmation 3: No UI-only filtering remains
+✓ Confirmation 4: No duplicate unlock logic exists
+✓ Confirmation 5: No static unlocked tree storage exists
+✓ Confirmation 6: No branch logic on source exists
+✓ Confirmation 7: Tree authority is purely derived
+
+================================================================================
+IMPLEMENTATION CHECKLIST
+================================================================================
+
+Phase 1: Preparation
+  [ ] Read PHASE_2_1_AUDIT_REPORT.md (detailed findings)
+  [ ] Read PHASE_2_1_IMPLEMENTATION_SPECS.md (detailed code specs)
+  [ ] Read PHASE_2_1_CODE_READY.md (copy-paste ready code)
+
+Phase 2: Implementation (in order)
+  [ ] Change 1: SuggestionEngine.js filtering
+  [ ] Change 2: levelup-talents.js validation
+  [ ] Change 3: drop-handler.js validation
+  [ ] Change 4: chargen-feats-talents.js cleanup
+  [ ] Change 5: tree-unlock-manager.js methods
+
+Phase 3: Verification
+  [ ] Compile without errors
+  [ ] Test: Soldier doesn't get Force talent suggestions
+  [ ] Test: Level-up rejects inaccessible talents
+  [ ] Test: Drag-drop rejects inaccessible talents
+  [ ] Test: Chargen cleanup works on Force Sensitivity removal
+  [ ] Test: All paths use validateTalentForSlot()
+
+Phase 4: Documentation
+  [ ] Document completion in commit message
+  [ ] Update system documentation
+  [ ] Mark Phase 2.1 COMPLETE
+
+================================================================================
+REFERENCE DOCUMENTS GENERATED
+================================================================================
+
+1. PHASE_2_1_AUDIT_REPORT.md (45 KB)
+   - Detailed finding for each gap
+   - Code path analysis
+   - Current state review
+   - Required changes breakdown
+
+2. PHASE_2_1_IMPLEMENTATION_SPECS.md (35 KB)
+   - Exact line numbers for each change
+   - Code snippets with context
+   - Before/after comparison
+   - Verification steps
+
+3. PHASE_2_1_CODE_READY.md (25 KB)
+   - Copy-paste ready code
+   - Import statements
+   - Line-by-line replacement guides
+   - Quick reference table
+
+4. PHASE_2_1_FINAL_SUMMARY.md (40 KB)
+   - Executive overview
+   - Gap analysis
+   - Impact summary
+   - Implementation roadmap
+
+5. PHASE_2_1_EXECUTIVE_SUMMARY.txt (this file)
+   - Quick reference
+   - Status overview
+   - Checklist
+
+================================================================================
+KEY FILES TO MODIFY
+================================================================================
+
+1. /home/user/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngine.js
+   - Import: getAllowedTalentTrees
+   - Change: suggestTalents() method (lines 153-202)
+
+2. /home/user/foundryvtt-swse/scripts/apps/levelup/levelup-talents.js
+   - Imports: TalentSlotValidator, getAllowedTalentTrees
+   - Change: selectTalent() method (lines 559-572)
+
+3. /home/user/foundryvtt-swse/scripts/drag-drop/drop-handler.js
+   - Imports: TalentSlotValidator, PrerequisiteChecker
+   - Change: handleTalentDrop() method (lines 470-490)
+
+4. /home/user/foundryvtt-swse/scripts/apps/chargen/chargen-feats-talents.js
+   - Change: _onRemoveFeat() method (lines 411-456)
+
+5. /home/user/foundryvtt-swse/scripts/engine/progression/talents/tree-unlock-manager.js
+   - Add: removeDomainsForRemovedFeat() method
+   - Add: removeInaccessibleTalents() method
+
+================================================================================
+IMPLEMENTATION TIMELINE
+================================================================================
+
+Preparation:     15 minutes (read documents)
+Change 1 (easy):  5 minutes (SuggestionEngine filtering)
+Change 2 (easy):  5 minutes (levelup validation)
+Change 3 (med):  10 minutes (drop-handler validation)
+Change 4 (med):  10 minutes (chargen cleanup)
+Change 5 (easy):  5 minutes (TreeUnlockManager methods)
+Testing:         30 minutes (verify all checks)
+Documentation:   10 minutes (commit notes)
+─────────────────────────────────
+Total:          ~90 minutes (1.5 hours)
+
+================================================================================
+RISK ASSESSMENT
+================================================================================
+
+Risk Level: LOW
+Reason: Changes are isolated, focused, and non-breaking
+
+Backward Compatibility: YES
+- No schema changes
+- No database migrations
+- No API breaking changes
+
+Test Coverage: HIGH
+- Each change can be tested independently
+- Clear success criteria
+- Existing test suite compatible
+
+Rollback: EASY
+- Each change is independent
+- Can revert individually if needed
+- No cascading dependencies
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+1. Review audit findings in PHASE_2_1_AUDIT_REPORT.md
+2. Review implementation specs in PHASE_2_1_IMPLEMENTATION_SPECS.md
+3. Copy code from PHASE_2_1_CODE_READY.md
+4. Apply 5 changes in order (1, 4, 2, 3, 5)
+5. Verify each change compiles
+6. Run test cases
+7. Commit with message: "Phase 2.1: Tree Authority Closure & Lifecycle Seal"
+
+================================================================================
+PHASE 2.1 IMPACT
+================================================================================
+
+Before:
+  - Suggestions leak inaccessible talents
+  - Manual drag-drop bypasses validation
+  - Level-up uses different validation than chargen
+  - Removal creates stale unlock state
+  - No single authority source
+  Score: 9/10
+
+After:
+  - Suggestions pre-filtered by tree authority
+  - Manual drag-drop validated through unified path
+  - Level-up identical to chargen validation
+  - Removal immediately invalidates stale state
+  - Single authority path confirmed
+  Score: 10/10 COMPLETE CLOSURE
+
+================================================================================
+CONFIRMATION STATEMENTS
+================================================================================
+
+Upon completion of Phase 2.1:
+
+"No tree leakage is possible"
+- Suggestions pre-filtered by getAllowedTalentTrees()
+- Manual operations validated through unified path
+- All paths use TalentSlotValidator
+
+"Level-Up uses identical validation to chargen"
+- Both call TalentSlotValidator.validateTalentForSlot()
+- Both use getAllowedTalentTrees() for tree authority
+- No parallel logic exists
+
+"All talent application routes through unified validator"
+- Chargen: TalentSlotValidator
+- Level-Up: TalentSlotValidator
+- Manual: TalentSlotValidator
+- Suggestions: TalentSlotValidator filtering
+
+"Removal/backtracking is safe"
+- Domain cleanup on feat removal
+- Talent removal when domain removed
+- No stale state possible
+
+"Tree authority is purely derived"
+- Only persistent: actor.system.progression.unlockedDomains
+- Only authority: getAllowedTalentTrees()
+- No per-tree flags
+- No static storage
+
+================================================================================
+END OF PHASE 2.1 EXECUTIVE SUMMARY
+================================================================================
+
+Status: READY FOR IMPLEMENTATION
+All analysis complete. Code ready. Documentation complete.
+Phase 2.1 awaits implementation to achieve 10/10 closure.
+
+For detailed information, see the generated documents:
+- PHASE_2_1_AUDIT_REPORT.md
+- PHASE_2_1_IMPLEMENTATION_SPECS.md
+- PHASE_2_1_CODE_READY.md
+- PHASE_2_1_FINAL_SUMMARY.md
+
