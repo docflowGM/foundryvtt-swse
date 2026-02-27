@@ -15,6 +15,7 @@
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { ManeuverSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/maneuvers/maneuver-slot-validator.js";
 
 export class StarshipManeuverEngine {
   /**
@@ -46,6 +47,13 @@ export class StarshipManeuverEngine {
       const maneuverIds = selectedItems
         .map(m => m.id || m._id)
         .filter(id => id);
+
+      // NEW: Pre-mutation validation
+      const validation = await ManeuverSlotValidator.validateBeforeApply(actor, maneuverIds);
+      if (!validation.valid) {
+        swseLogger.warn('[MANEUVER APPLY] Validation failed: ' + validation.error);
+        return { success: false, error: validation.error };
+      }
 
       if (maneuverIds.length > 0) {
         // Update actor's starship maneuver suite
