@@ -5,7 +5,7 @@
  * HARDENED: Per-actor schema versioning with rollback support
  */
 
-import { swseLogger } from '../utils/logger.js';
+import { swseLogger } from '../../utils/logger.js';
 import { MigrationEngine } from '../engine/migration/MigrationEngine.js';
 
 const SYSTEM_SCHEMA_VERSION = 1;
