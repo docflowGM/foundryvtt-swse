@@ -31,6 +31,7 @@
 import { FORCE_POWER_DATA } from "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { ForceSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-slot-validator.js";
 
 export class ForcePowerEngine {
   /**
@@ -208,6 +209,17 @@ static async collectAvailablePowers(actor) {
 }
 
 static async applySelected(actor, selectedItems = []) {
+  const powerIds = selectedItems
+    .map(p => p.id || p._id)
+    .filter(id => id);
+
+  // NEW (Phase 3.3): Pre-mutation validation
+  const validation = await ForceSlotValidator.validateBeforeApply(actor, powerIds);
+  if (!validation.valid) {
+    swseLogger.warn('[FORCE APPLY] Validation failed: ' + validation.error);
+    return { success: false, error: validation.error };
+  }
+
   const existing = new Set(
     actor.items
       .filter(i => i.type === 'power' || i.type === 'forcePower')

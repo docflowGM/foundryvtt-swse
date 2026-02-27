@@ -16,6 +16,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { initializeStarshipManeuverHooks } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/starship-maneuver-hooks.js";
 import { initializeForcePowerHooks } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/force-power-hooks.js";
 import { StarshipDomainLifecycle } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/starship-domain-lifecycle.js";
+import { ForceDomainLifecycle } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/force-domain-lifecycle.js";
 import { qs, qsa, setVisible, isVisible, text } from "/systems/foundryvtt-swse/scripts/utils/dom-utils.js";
 
 /**
@@ -149,6 +150,23 @@ async function handleItemCreate(item, options, userId) {
         if (featName === 'starship tactics' || featName.includes('starship tactics')) {
             SWSELogger.log('SWSE | Starship Tactics feat added, unlocking domain');
             await StarshipDomainLifecycle.handleStarshipTacticsFeatAdded(actor);
+        }
+    }
+
+    // =========================================================================
+    // FORCE SENSITIVITY & FORCE TRAINING HANDLING (Phase 3.3)
+    // =========================================================================
+    if (item.type === 'feat') {
+        const featName = item.name.toLowerCase();
+
+        if (featName.includes('force sensitivity')) {
+            SWSELogger.log('SWSE | Force Sensitivity feat added, unlocking domain');
+            await ForceDomainLifecycle.handleForceSensitivityFeatAdded(actor);
+        }
+
+        if (featName.includes('force training')) {
+            SWSELogger.log('SWSE | Force Training feat added, capacity recalculated');
+            await ForceDomainLifecycle.handleForceTrainingFeatAdded(actor);
         }
     }
 
@@ -317,6 +335,24 @@ async function handleItemDelete(item, options, userId) {
             SWSELogger.log('SWSE | Starship Tactics feat removed, locking domain');
             await StarshipDomainLifecycle.handleStarshipTacticsFeatRemoved(actor);
             return;
+        }
+    }
+
+    // =========================================================================
+    // FORCE SENSITIVITY & FORCE TRAINING REMOVAL (Phase 3.3)
+    // =========================================================================
+    if (item.type === 'feat') {
+        const featName = item.name.toLowerCase();
+
+        if (featName.includes('force sensitivity')) {
+            SWSELogger.log('SWSE | Force Sensitivity feat removed, locking domain');
+            await ForceDomainLifecycle.handleForceSensitivityFeatRemoved(actor);
+            return;
+        }
+
+        if (featName.includes('force training')) {
+            SWSELogger.log('SWSE | Force Training feat removed, capacity recalculated');
+            await ForceDomainLifecycle.handleForceTrainingFeatRemoved(actor);
         }
     }
 
