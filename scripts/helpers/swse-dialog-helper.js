@@ -2,7 +2,7 @@
  * Dialog Helper for SWSE system
  * Provides standardized dialog creation methods with V2-safe positioning options.
  */
-import { SWSEDialogV2 } from '../apps/dialogs/swse-dialog-v2.js';
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 
 export default class SWSEDialogHelper {
   /**

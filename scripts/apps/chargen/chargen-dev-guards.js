@@ -10,7 +10,7 @@
  * These guards prevent regressions and catch architectural violations early.
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class ChargenDevGuards {
   static enabled = game?.settings?.get?.('foundryvtt-swse', 'devMode') ?? false;

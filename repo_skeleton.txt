@@ -629,313 +629,408 @@ foundryvtt-swse/
     migrate-actors-to-progression.py
   packs/
     armor/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     armor-heavy/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     armor-light/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     armor-medium/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     armor-shields/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     attributes/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     backgrounds/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     beasts/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     classes/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     combat-actions/
-      000003.log
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     conditions/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     droids/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     equipment/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     equipment-comlinks/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     equipment-medical/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     equipment-other/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     equipment-security/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     equipment-survival/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     equipment-tech/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     equipment-tools/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     extraskilluses/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     feats/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     forcepowers/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     forcesecrets/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     forcetechniques/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     heroic/
-      000004.log
-      000005.ldb
+      000008.ldb
+      000010.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000009
     languages/
-      000003.log
-      CURRENT
-      LOCK
-      LOG
-      MANIFEST-000002
-    lightsaberformpowers/
-      000003.log
-      CURRENT
-      LOCK
-      LOG
-      MANIFEST-000002
-    nonheroic/
-      000004.log
       000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
+    lightsaberformpowers/
+      000007.log
+      CURRENT
+      LOCK
+      LOG
+      LOG.old
+      MANIFEST-000006
+    nonheroic/
+      000008.ldb
+      000010.log
+      CURRENT
+      LOCK
+      LOG
+      LOG.old
+      MANIFEST-000009
     npc/
-      000003.log
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     ship-combat-actions/
-      000003.log
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     skills/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     special-combat-condition/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     species/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     talent-enhancements/
-      000003.log
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     talent_trees/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     talents/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     vehicle-weapon-ranges/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     vehicle-weapons/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     vehicles/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     vehicles-speeders/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     vehicles-starships/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     vehicles-stations/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     vehicles-walkers/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     weapons/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     weapons-exotic/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     weapons-grenades/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     weapons-heavy/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     weapons-pistols/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     weapons-rifles/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     weapons-simple/
-      000003.log
+      000005.ldb
+      000007.log
       CURRENT
       LOCK
       LOG
-      MANIFEST-000002
+      LOG.old
+      MANIFEST-000006
     armor-heavy.db
     armor-light.db
     armor-medium.db
@@ -1203,8 +1298,6 @@ foundryvtt-swse/
       lazy-loader.js
       load-templates.js
       logger.js
-      migration-auditor.js
-      migration-manager.js
       mutation-safety.js
       pack-existence-check.js
       phase5-init.js
@@ -1276,15 +1369,6 @@ foundryvtt-swse/
     engine/
       abilities/
         AbilityEngine.js
-      encumbrance/
-        EncumbranceEngine.js
-      shared/
-        xp-system.js
-      MetaTuning.js
-      progression.js
-      roll-engine.js
-      StarshipManeuversEngine.js
-    engines/
       chargen/
         CharacterGenerationEngine.js
       combat/
@@ -1342,6 +1426,8 @@ foundryvtt-swse/
           ModifierUtils.js
           StructuredRuleEvaluator.js
         active-effects-engine.js
+      encumbrance/
+        EncumbranceEngine.js
       force/
         force-engine.js
         force-points-service.js
@@ -1597,6 +1683,10 @@ foundryvtt-swse/
         talents.js
       vehicles/
         vehicle-factory.js
+      MetaTuning.js
+      progression.js
+      roll-engine.js
+      StarshipManeuversEngine.js
     export/
       discover-pdf-fields.js
       pdf-exporter.js
@@ -1632,6 +1722,7 @@ foundryvtt-swse/
         integration-tests.js
         investigator.js
         migration-auditor.js
+        migration-manager.js
         mutation-integrity-layer.js
         mutation-interceptor-lock.js
         performance-sovereignty-lock.js
@@ -2330,5 +2421,6 @@ foundryvtt-swse/
   index.js
   package-lock.json
   package.json
+  repo_skeleton.txt
   system.json
   template.json

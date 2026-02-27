@@ -1,4 +1,4 @@
-import { ProgressionEngine } from '../../engines/progression/engine/progression-engine.js';
+import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
 /**
  * Combat Lifecycle Hooks
  * All combat-related hook handlers consolidated here
@@ -12,9 +12,9 @@ import { ProgressionEngine } from '../../engines/progression/engine/progression-
  * - deleteCombat: Combat cleanup, species trait reset
  */
 
-import { HooksRegistry } from './hooks-registry.js';
-import { SWSELogger } from '../../utils/logger.js';
-import { SpeciesRerollHandler } from '../../species/species-reroll-handler.js';
+import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/hooks-registry.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SpeciesRerollHandler } from "/systems/foundryvtt-swse/scripts/species/species-reroll-handler.js";
 
 /**
  * Register all combat-related hooks

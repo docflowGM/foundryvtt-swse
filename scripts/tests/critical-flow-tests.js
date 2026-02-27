@@ -10,9 +10,9 @@
  *   await SWSETests.testLevelup()
  */
 
-import { SWSELogger } from '../utils/logger.js';
-import { createActor, createItemInActor } from '../core/document-api-v13.js';
-import { validateActorSchema, validateItemSchema } from '../core/schema-validator.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { createActor, createItemInActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { validateActorSchema, validateItemSchema } from "/systems/foundryvtt-swse/scripts/core/schema-validator.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 

@@ -1,15 +1,15 @@
 // ============================================
 // SWSE Character Generator - IMPROVED
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 // Fully integrated with houserules and database
 // Multi-level support with automatic progression
 // ============================================
 
-import CharacterGenerator from './chargen/chargen-main.js';
-import { getClassProperty, getHitDie, getTrainedSkills, getTalentTrees } from './chargen/chargen-property-accessor.js';
-import { createActor } from '../core/document-api-v13.js';
-import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
-import { HPGeneratorEngine } from '../engines/HP/HPGeneratorEngine.js';
+import CharacterGenerator from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js";
+import { getClassProperty, getHitDie, getTrainedSkills, getTalentTrees } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
+import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { HPGeneratorEngine } from "/systems/foundryvtt-swse/scripts/engine/HP/HPGeneratorEngine.js";
 
 export default class CharacterGeneratorImproved extends CharacterGenerator {
 

@@ -4,10 +4,10 @@
  * Phase 2: Full system selection (locomotion, manipulators, sensors, processor, armor, weapons, accessories)
  */
 
-import { StepController } from './step-controller.js';
-import SWSEApplication from './base/swse-application.js';
-import { Seraphim } from './seraphim-narrator.js';
-import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
+import { StepController } from "/systems/foundryvtt-swse/scripts/apps/step-controller.js";
+import SWSEApplication from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
+import { Seraphim } from "/systems/foundryvtt-swse/scripts/apps/seraphim-narrator.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class DroidBuilderApp extends SWSEApplication {
 

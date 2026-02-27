@@ -3,8 +3,8 @@
  * Handles Force Sensitivity (from level 1 Jedi) and Force Training feats
  */
 
-import { SWSELogger } from '../../utils/logger.js';
-import { ForcePowerEngine } from '../../engines/progression/engine/force-power-engine.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ForcePowerEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-power-engine.js";
 
 /**
  * Determine if character gains force powers on this level up

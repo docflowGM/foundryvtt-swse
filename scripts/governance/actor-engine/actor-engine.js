@@ -2,9 +2,9 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 import { applyActorUpdateAtomic } from "/systems/foundryvtt-swse/scripts/utils/actor-utils.js";
 import { MutationInterceptor } from "/systems/foundryvtt-swse/scripts/governance/mutation/MutationInterceptor.js";
-import { determineLevelFromXP } from "/systems/foundryvtt-swse/scripts/engines/shared/xp-system.js";
+import { determineLevelFromXP } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
 import { DerivedCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js";
-import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engines/effects/modifiers/ModifierEngine.js";
+import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import { MutationApplicationError } from "/systems/foundryvtt-swse/scripts/governance/mutation/mutation-errors.js";
 import { PrerequisiteIntegrityChecker } from "/systems/foundryvtt-swse/scripts/governance/integrity/prerequisite-integrity-checker.js";
 import { PreflightValidator } from "/systems/foundryvtt-swse/scripts/governance/enforcement/preflight-validator.js";
@@ -132,29 +132,6 @@ export const ActorEngine = {
       }
 
       // ========================================
-      // PHASE 5B-2: Preflight validation
-      // ========================================
-      const mutation = {
-        operation: 'update',
-        updates: updateData,
-        itemsToAdd: [],
-        itemsToRemove: []
-      };
-
-      const preflightResult = await PreflightValidator.validateBeforeMutation(
-        actor,
-        mutation,
-        { source: 'ActorEngine', reason: options.reason }
-      );
-
-      // If blocked by policy, throw error before mutation is authorized
-      if (preflightResult.outcome === 'block') {
-        throw new Error(
-          `[GOVERNANCE] Mutation blocked: ${preflightResult.reason}`
-        );
-      }
-
-      // ========================================
       // PHASE 3: Authorize mutation via context
       // ========================================
       MutationInterceptor.setContext('ActorEngine.updateActor');
@@ -214,18 +191,11 @@ export const ActorEngine = {
 
       // ========================================
       // PHASE 3: Authorize mutation via context
-      // PHASE 3.1: Enforce prerequisite integrity
       // ========================================
       MutationInterceptor.setContext(`ActorEngine.updateEmbeddedDocuments[${embeddedName}]`);
       try {
         const result = await actor.updateEmbeddedDocuments(embeddedName, updates, options);
         await this.recalcAll(actor);
-
-        // PHASE 3.1: Enforce prerequisite integrity
-        if (embeddedName === 'Item') {
-          await PrerequisiteIntegrityChecker.evaluate(actor);
-        }
-
         return result;
       } finally {
         MutationInterceptor.clearContext();
@@ -253,7 +223,6 @@ export const ActorEngine = {
   /**
    * Create embedded documents while preserving the ActorEngine lifecycle.
    * PHASE 3: Only legal way to create embedded documents.
-   * PHASE 3.1: Enforces prerequisite integrity after mutation.
    */
   async createEmbeddedDocuments(actor, embeddedName, data, options = {}) {
     try {
@@ -270,12 +239,6 @@ export const ActorEngine = {
       try {
         const result = await actor.createEmbeddedDocuments(embeddedName, data, options);
         await this.recalcAll(actor);
-
-        // PHASE 3.1: Enforce prerequisite integrity
-        if (embeddedName === 'Item') {
-          await PrerequisiteIntegrityChecker.evaluate(actor);
-        }
-
         return result;
       } finally {
         MutationInterceptor.clearContext();
@@ -289,7 +252,6 @@ export const ActorEngine = {
   /**
    * Delete embedded documents while preserving the ActorEngine lifecycle.
    * PHASE 3: Only legal way to delete embedded documents.
-   * PHASE 3.1: Enforces prerequisite integrity after mutation.
    */
   async deleteEmbeddedDocuments(actor, embeddedName, ids, options = {}) {
     try {
@@ -306,12 +268,6 @@ export const ActorEngine = {
       try {
         const result = await actor.deleteEmbeddedDocuments(embeddedName, ids, options);
         await this.recalcAll(actor);
-
-        // PHASE 3.1: Enforce prerequisite integrity
-        if (embeddedName === 'Item') {
-          await PrerequisiteIntegrityChecker.evaluate(actor);
-        }
-
         return result;
       } finally {
         MutationInterceptor.clearContext();

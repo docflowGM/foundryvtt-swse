@@ -3,11 +3,11 @@
 // Only computed mechanical effects are mirrored into system.derived.
 // Droid configuration stays in system.droidSystems (not derived).
 
-import combatActions from "../../../data/combat-actions.json" with { type: "json" };
-import speciesTraits from "../../../data/species-traits.json" with { type: "json" };
-import { FeatActionsMapper } from "../../utils/feat-actions-mapper.js";
-import { EncumbranceEngine } from "../../engine/encumbrance/EncumbranceEngine.js";
-import { InventoryEngine } from "../../engines/inventory/InventoryEngine.js";
+import combatActions from "/systems/foundryvtt-swse/data/combat-actions.json" with { type: "json" };
+import speciesTraits from "/systems/foundryvtt-swse/data/species-traits.json" with { type: "json" };
+import { FeatActionsMapper } from "/systems/foundryvtt-swse/scripts/utils/feat-actions-mapper.js";
+import { EncumbranceEngine } from "/systems/foundryvtt-swse/scripts/engine/encumbrance/EncumbranceEngine.js";
+import { InventoryEngine } from "/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js";
 
 /**
  * Compute the minimal v2-derived fields for Characters.

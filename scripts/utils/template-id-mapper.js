@@ -13,12 +13,9 @@
  * No mapping tables needed - compendiums are the system of record.
  */
 
-import { swseLogger } from './logger.js';
-import { BackgroundRegistry } from '../registries/background-registry.js';
-import { slugify } from './stable-id.js';
-import { ForceRegistry } from '../engine/registries/force-registry.js';
-import { SpeciesRegistry } from '../engine/registries/species-registry.js';
-import { ClassesRegistry } from '../engine/registries/classes-registry.js';
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { BackgroundRegistry } from "/systems/foundryvtt-swse/scripts/registries/background-registry.js";
+import { slugify } from "/systems/foundryvtt-swse/scripts/utils/stable-id.js";
 
 export class TemplateIdMapper {
   /**
@@ -92,14 +89,33 @@ export class TemplateIdMapper {
     if (!speciesName) {return null;}
 
     try {
-      // Try registry lookup
-      const species = SpeciesRegistry.getByName(speciesName);
-      if (species) {
-        swseLogger.log(`[TEMPLATE-MAPPER] Species found: ${speciesName} → ${species.id}`);
-        return species.id;
+      // Species uses slug format: species-lowercase-name
+      const slugId = `species-${speciesName.toLowerCase().replace(/\s+/g, '-')}`;
+
+      // Verify it exists by trying to get the document
+      const speciesPack = game.packs.get('foundryvtt-swse.species');
+      if (!speciesPack) {
+        throw new Error('Species compendium not found');
       }
 
-      throw new Error(`Species not found: ${speciesName}`);
+      const doc = await speciesPack.getDocument(slugId).catch(() => null);
+      if (doc) {
+        swseLogger.log(`[TEMPLATE-MAPPER] Species found: ${speciesName} → ${slugId}`);
+        return slugId;
+      }
+
+      // If slug format doesn't work, search by name
+      const index = await speciesPack.getIndex();
+      const speciesEntry = Array.from(index).find(e =>
+        e.name.toLowerCase() === speciesName.toLowerCase()
+      );
+
+      if (!speciesEntry) {
+        throw new Error(`Species not found: "${speciesName}"`);
+      }
+
+      swseLogger.log(`[TEMPLATE-MAPPER] Species found by name: ${speciesName} → ${speciesEntry._id}`);
+      return speciesEntry._id;
     } catch (err) {
       swseLogger.error(`[TEMPLATE-MAPPER] Error finding species "${speciesName}":`, err);
       throw err;
@@ -165,18 +181,23 @@ export class TemplateIdMapper {
         return classMatch._id;
       }
 
-      // Fallback: search registry directly
-      if (!ClassesRegistry.isInitialized()) {
-        throw new Error('ClassesRegistry not initialized');
+      // Fallback: search compendium directly
+      const classPack = game.packs.get('foundryvtt-swse.classes');
+      if (!classPack) {
+        throw new Error('Classes compendium not found');
       }
 
-      const classData = ClassesRegistry.getByName(className);
-      if (!classData) {
+      const index = await classPack.getIndex();
+      const classEntry = Array.from(index).find(e =>
+        e.name.toLowerCase() === className.toLowerCase()
+      );
+
+      if (!classEntry) {
         throw new Error(`Class not found: "${className}"`);
       }
 
-      swseLogger.log(`[TEMPLATE-MAPPER] Class found via registry: ${className} → ${classData.id}`);
-      return classData.id;
+      swseLogger.log(`[TEMPLATE-MAPPER] Class found via compendium: ${className} → ${classEntry._id}`);
+      return classEntry._id;
     } catch (err) {
       swseLogger.error(`[TEMPLATE-MAPPER] Error finding class "${className}":`, err);
       throw err;
@@ -193,7 +214,7 @@ export class TemplateIdMapper {
 
     try {
       // Try FeatureIndex first (SSOT for indexed features)
-      const { FeatureIndex } = await import('../../engines/progression/engine/feature-index.js');
+      const { FeatureIndex } = await import('../../feature-index.js');
       const feat = FeatureIndex.getFeat?.(featName);
       if (feat) {
         swseLogger.log(`[TEMPLATE-MAPPER] Feat found in FeatureIndex: ${featName} → ${feat._id}`);
@@ -337,21 +358,30 @@ export class TemplateIdMapper {
 
     try {
       // Try FeatureIndex first (SSOT for indexed features)
-      const { FeatureIndex } = await import('../../engines/progression/engine/feature-index.js');
+      const { FeatureIndex } = await import('../../feature-index.js');
       const power = FeatureIndex.getPower?.(powerName);
       if (power) {
         swseLogger.log(`[TEMPLATE-MAPPER] Force power found in FeatureIndex: ${powerName} → ${power._id}`);
         return power._id;
       }
 
-      // Fallback: search registry
-      const powerEntry = ForceRegistry.getByName(powerName);
+      // Fallback: search compendium
+      const powerPack = game.packs.get('foundryvtt-swse.forcepowers');
+      if (!powerPack) {
+        throw new Error('Force powers compendium not found');
+      }
+
+      const index = await powerPack.getIndex();
+      const powerEntry = Array.from(index).find(e =>
+        e.name.toLowerCase() === powerName.toLowerCase()
+      );
+
       if (!powerEntry) {
         throw new Error(`Force power not found: "${powerName}"`);
       }
 
-      swseLogger.log(`[TEMPLATE-MAPPER] Force power found in registry: ${powerName} → ${powerEntry.id}`);
-      return powerEntry.id;
+      swseLogger.log(`[TEMPLATE-MAPPER] Force power found in compendium: ${powerName} → ${powerEntry._id}`);
+      return powerEntry._id;
     } catch (err) {
       swseLogger.error(`[TEMPLATE-MAPPER] Error finding force power "${powerName}":`, err);
       throw err;

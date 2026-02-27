@@ -4,8 +4,8 @@
  * Register these in macro-functions.js to make them available in hotbars
  */
 
-import ScoutTalentMechanics from '../engines/talent/scout-talent-mechanics.js';
-import { SWSELogger } from '../utils/logger.js';
+import ScoutTalentMechanics from "/systems/foundryvtt-swse/scripts/engine/talent/scout-talent-mechanics.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class ScoutTalentMacros {
 

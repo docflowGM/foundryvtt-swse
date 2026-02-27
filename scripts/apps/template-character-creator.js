@@ -1,17 +1,15 @@
-import SWSEFormApplicationV2 from './base/swse-form-application-v2.js';
-import { ProgressionEngine } from '../engines/progression/engine/progression-engine.js';
-import { createActor } from '../core/document-api-v13.js';
-import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
-import { SpeciesRegistry } from '../engine/registries/species-registry.js';
-import { ClassesRegistry } from '../engine/registries/classes-registry.js';
+import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
+import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
+import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 // ============================================
 // Template Character Creator
 // Class-first selection with playing card UI
 // ============================================
 
-import { SWSELogger } from '../utils/logger.js';
-import { resolveSkillKey, resolveSkillName } from '../utils/skill-resolver.js';
-import CharacterTemplates from './chargen/chargen-templates.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { resolveSkillKey, resolveSkillName } from "/systems/foundryvtt-swse/scripts/utils/skill-resolver.js";
+import CharacterTemplates from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-templates.js";
 
 
 const TEMPLATE_PATH = 'systems/foundryvtt-swse/templates/apps/template-creator.hbs';
@@ -723,28 +721,33 @@ async _prepareContext(options) {
   async _applySpeciesBonus(actor, speciesRefOrName, abilityUpdates) {
     try {
       const speciesName = typeof speciesRefOrName === 'string' ? speciesRefOrName : (speciesRefOrName.displayName || speciesRefOrName.name);
+      const speciesPackName = typeof speciesRefOrName === 'object' && speciesRefOrName.pack ? speciesRefOrName.pack : 'foundryvtt-swse.species';
       const speciesId = typeof speciesRefOrName === 'object' && speciesRefOrName.id ? speciesRefOrName.id : null;
+      const speciesPack = game.packs.get(speciesPackName);
+      if (!speciesPack) {return;}
 
-      let species = null;
       if (speciesId) {
-        species = SpeciesRegistry.getById(speciesId);
+        const species = await speciesPack.getDocument(speciesId);
+        if (species) {
+          return this._applySpeciesDataToAbilities(species.system, abilityUpdates);
+        }
       }
-      if (!species) {
-        species = SpeciesRegistry.getByName(speciesName);
-      }
-      if (!species) {
+
+      const index = await speciesPack.getIndex();
+      const speciesEntry = index.find(s => s.name === speciesName);
+
+      if (!speciesEntry) {
         SWSELogger.warn(`SWSE | Species not found: ${speciesName}`);
         return;
       }
 
-      // Get full document for system data if needed
-      const speciesDoc = await SpeciesRegistry._getDocument(species.id) || species;
-      if (!speciesDoc) {
+      const species = await speciesPack.getDocument(speciesEntry._id);
+      if (!species) {
         SWSELogger.warn(`SWSE | Failed to load species document for: ${speciesName}`);
         return;
       }
 
-      const speciesData = speciesDoc.system || speciesDoc;
+      const speciesData = species.system;
       return this._applySpeciesDataToAbilities(speciesData, abilityUpdates);
 
     } catch (error) {
@@ -776,18 +779,25 @@ async _prepareContext(options) {
    */
   async _applyClass(actor, template) {
     try {
+      const classPack = game.packs.get('foundryvtt-swse.classes');
+      if (!classPack) {return;}
+
       const classRef = template.classRef || null;
       const className = classRef ? (classRef.displayName || classRef.name) : template.className;
+      const classPackName = classRef?.pack || 'foundryvtt-swse.classes';
       const classId = classRef?.id || null;
 
       if (classId) {
-        const classItem = await ClassesRegistry._getDocument(classId);
-        if (classItem) {
-          const classData = classItem.toObject();
-          classData.system.level = template.level || 1;
-          await ActorEngine.createEmbeddedDocuments(actor, 'Item', [classData]);
-          SWSELogger.log(`SWSE | Added class: ${className}`);
-          return;
+        const pack = game.packs.get(classPackName);
+        if (pack) {
+          const classItem = await pack.getDocument(classId);
+          if (classItem) {
+            const classData = classItem.toObject();
+            classData.system.level = template.level || 1;
+            await ActorEngine.createEmbeddedDocuments(actor, 'Item', [classData]);
+            SWSELogger.log(`SWSE | Added class: ${className}`);
+            return;
+          }
         }
       }
 

@@ -3,12 +3,12 @@
  * Handles bonus feats from classes and multiclass bonuses
  */
 
-import { SWSELogger } from '../../utils/logger.js';
-import { warnGM } from '../../utils/warn-gm.js';
-import { getClassLevel } from './levelup-shared.js';
-import { filterQualifiedFeats } from './levelup-validation.js';
-import { getClassProperty } from '../chargen/chargen-property-accessor.js';
-import { SuggestionService } from '../../engines/suggestion/SuggestionService.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { warnGM } from "/systems/foundryvtt-swse/scripts/utils/warn-gm.js";
+import { getClassLevel } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js";
+import { filterQualifiedFeats } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-validation.js";
+import { getClassProperty } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
+import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
 
 // Cache for feat metadata
 let _featMetadataCache = null;

@@ -1,5 +1,5 @@
-import { createChatMessage } from '../core/document-api-v13.js';
-import { SWSELogger } from '../utils/logger.js';
+import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * SWSE Combat Automation (v13+)
@@ -50,7 +50,7 @@ export class SWSECombatAutomation {
 
         if (actor.type === 'character') {
           // PHASE 3: Route through ActorEngine
-          const { ActorEngine } = await import('../../governance/actor-engine/actor-engine.js');
+          const { ActorEngine } = await import('../../actor-engine.js');
           await ActorEngine.resetSecondWind(actor);
         }
       }

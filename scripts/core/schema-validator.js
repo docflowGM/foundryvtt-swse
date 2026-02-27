@@ -11,7 +11,7 @@
  *   validateNestedProperty(actor, 'system.hp.value', 'number')
  */
 
-import { log, isGameReady } from './foundry-env.js';
+import { log, isGameReady } from "/systems/foundryvtt-swse/scripts/core/foundry-env.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const ACTIVE = () => {

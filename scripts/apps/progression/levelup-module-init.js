@@ -9,14 +9,14 @@
  * - Prerequisite API
  */
 
-import { SWSELogger } from '../../utils/logger.js';
-import { SkillRegistry } from '../../engines/progression/skills/skill-registry-ui.js';
-import { FeatRegistry } from '../../engines/progression/feats/feat-registry-ui.js';
-import { TalentRegistry } from '../../engines/progression/talents/talent-registry-ui.js';
-import { ForceRegistry } from '../../engines/progression/force/force-registry-ui.js';
-import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
-import { enforcePrerequisiteConsolidation } from '../../data/prerequisite-checker-regression-guard.js';
-import { SuggestionEngineCoordinator } from '../../engines/suggestion/SuggestionEngineCoordinator.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SkillRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry-ui.js";
+import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-registry-ui.js";
+import { TalentRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/talent-registry-ui.js";
+import { ForceRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/force/force-registry-ui.js";
+import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { enforcePrerequisiteConsolidation } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker-regression-guard.js";
+import { SuggestionEngineCoordinator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineCoordinator.js";
 
 /**
  * Initialize the Enhanced Level-Up UI system
@@ -92,12 +92,10 @@ export async function initializeLevelUpUI() {
       game.swse = game.swse || {};
       game.swse.prereq = {
         checkFeatPrereq: (featDoc, actor, pending) => {
-          const assessment = AbilityEngine.evaluateAcquisition(actor, featDoc, pending);
-          return { met: assessment.legal, missing: assessment.missingPrereqs };
+          return PrerequisiteChecker.checkFeatPrerequisites(actor, featDoc, pending);
         },
         checkTalentPrereq: (talentDoc, actor, pending) => {
-          const assessment = AbilityEngine.evaluateAcquisition(actor, talentDoc, pending);
-          return { met: assessment.legal, missing: assessment.missingPrereqs };
+          return PrerequisiteChecker.checkTalentPrerequisites(actor, talentDoc, pending);
         }
       };
       SWSELogger.log('[LEVELUP-INIT] - Prerequisite API set up successfully');

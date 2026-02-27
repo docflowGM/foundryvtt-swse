@@ -7,7 +7,7 @@
  * This module should be imported early in system initialization to catch violations.
  */
 
-import { PrerequisiteChecker } from './prerequisite-checker.js';
+import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
 
 /**
  * Verify no illegal validators are being imported

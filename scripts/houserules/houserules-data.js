@@ -4,7 +4,7 @@
  * Includes normalized accessors and safety checks for all houserule lookups.
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /* -------------------------------------------------------------------------- */
 /*                               IMMUTABLE DATA                               */

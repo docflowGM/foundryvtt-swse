@@ -1,4 +1,4 @@
-import { SWSELogger } from './logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 /**
  * Skill Use Application Filtering and Rolling Utility
  * Handles filtering skill use applications based on character capabilities

@@ -1,7 +1,7 @@
 // scripts/apps/mentor-notes/mentor-notes-app.js
-import SWSEApplicationV2 from '../base/swse-application-v2.js';
-import { SuggestionService } from '../../engines/suggestion/SuggestionService.js';
-import { qs } from '../../utils/dom-utils.js';
+import SWSEApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
+import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
+import { qs } from "/systems/foundryvtt-swse/scripts/utils/dom-utils.js";
 
 export class MentorNotesApp extends SWSEApplicationV2 {
   static _instances = new Map();

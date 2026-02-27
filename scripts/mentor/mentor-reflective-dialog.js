@@ -3,7 +3,7 @@
  * Displays mentor reflective content during gameplay
  */
 
-import { SWSEFormApplicationV2 } from '../apps/base/swse-form-application-v2.js';
+import { SWSEFormApplicationV2 } from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
 
 export class MentorReflectiveDialog extends SWSEFormApplicationV2 {
   constructor(actor, options = {}) {

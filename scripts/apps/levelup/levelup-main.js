@@ -12,17 +12,16 @@
  * applied via engine.finalize() at completion.
  */
 
-import { SWSEProgressionEngine } from '../../engine/progression.js';
-import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
-import { SWSELogger, swseLogger } from '../../utils/logger.js';
-import { isEpicOverrideEnabled } from '../../settings/epic-override.js';
-import { getLevelSplit } from '../../actors/derived/level-split.js';
-import { getMentorForClass, getMentorGreeting, getMentorGuidance, getLevel1Class, setLevel1Class } from '../../engines/mentor/mentor-dialogues.js';
-import { MentorSurvey } from '../../mentor/mentor-survey.js';
-import { createChatMessage } from '../../core/document-api-v13.js';
-import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
-import { TypingAnimation } from '../../utils/typing-animation.js';
-import { qs, qsa, setVisible, isVisible } from '../../utils/dom-utils.js';
+import { SWSEProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression.js";
+import { SWSELogger, swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { isEpicOverrideEnabled } from "/systems/foundryvtt-swse/scripts/settings/epic-override.js";
+import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { getMentorForClass, getMentorGreeting, getMentorGuidance, getLevel1Class, setLevel1Class } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
+import { MentorSurvey } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey.js";
+import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { HouseRuleTalentCombination } from "/systems/foundryvtt-swse/scripts/houserules/houserule-talent-combination.js";
+import { TypingAnimation } from "/systems/foundryvtt-swse/scripts/utils/typing-animation.js";
+import { qs, qsa, setVisible, isVisible } from "/systems/foundryvtt-swse/scripts/utils/dom-utils.js";
 
 // Import shared utilities
 import {
@@ -34,7 +33,7 @@ import {
   calculateDefenseBonuses,
   getsAbilityIncrease,
   getsMilestoneFeat
-} from './levelup-shared.js';
+} from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js";
 
 // Import class module functions
 import {
@@ -46,7 +45,7 @@ import {
   applyClassFeatures,
   createOrUpdateClassItem,
   bindAbilitiesUI
-} from './levelup-class.js';
+} from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-class.js";
 
 // Import feat module functions
 import {
@@ -54,7 +53,7 @@ import {
   getsBonusFeat,
   selectBonusFeat,
   selectMulticlassFeat
-} from './levelup-feats.js';
+} from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-feats.js";
 
 // Import talent module functions
 import {
@@ -65,7 +64,7 @@ import {
   showEnhancedTalentTree,
   showTalentTreeDialog,
   selectTalent
-} from './levelup-talents.js';
+} from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-talents.js";
 
 // Import force power module functions
 import {
@@ -73,7 +72,7 @@ import {
   countForcePowersGained,
   loadForcePowers,
   selectForcePower
-} from './levelup-force-powers.js';
+} from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-force-powers.js";
 
 // Import dual talent selection
 import {
@@ -83,30 +82,31 @@ import {
   recordTalentSelection,
   checkTalentSelectionsComplete,
   getTalentSelectionDisplay
-} from './levelup-dual-talent-selection.js';
+} from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-dual-talent-selection.js";
 
 // Import skill module functions
 import {
   selectMulticlassSkill,
   applyTrainedSkills,
   checkIntModifierIncrease
-} from './levelup-skills.js';
+} from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-skills.js";
 
 // Import suggestion and roadmap features
-import { showPrestigeRoadmap } from './prestige-roadmap.js';
-import { showGMDebugPanel } from './debug-panel.js';
-import { PathPreview } from '../../engines/suggestion/PathPreview.js';
-import { findActiveSynergies } from '../../engines/suggestion/CommunityMetaSynergies.js';
-import { MentorSuggestionDialog } from '../../mentor/mentor-suggestion-dialog.js';
+import { showPrestigeRoadmap } from "/systems/foundryvtt-swse/scripts/apps/levelup/prestige-roadmap.js";
+import { showGMDebugPanel } from "/systems/foundryvtt-swse/scripts/apps/levelup/debug-panel.js";
+import { PathPreview } from "/systems/foundryvtt-swse/scripts/engine/suggestion/PathPreview.js";
+import { findActiveSynergies } from "/systems/foundryvtt-swse/scripts/engine/suggestion/CommunityMetaSynergies.js";
+import { MentorSuggestionDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor-suggestion-dialog.js";
+import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
 
 // Import mentor memory system
-import { decayAllMentorCommitments, updateAllMentorMemories } from '../../engines/mentor/mentor-memory.js';
+import { decayAllMentorCommitments, updateAllMentorMemories } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-memory.js";
 
 // Import mentor wishlist integration
-import { MentorWishlistIntegration } from '../../engines/suggestion/MentorWishlistIntegration.js';
+import { MentorWishlistIntegration } from "/systems/foundryvtt-swse/scripts/engine/suggestion/MentorWishlistIntegration.js";
 
 // V2 API base class
-import SWSEFormApplicationV2 from '../base/swse-form-application-v2.js';
+import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
 
 export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
@@ -745,7 +745,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
     try {
       const { getAvailableForcePowers } = await import('../levelup/levelup-force-powers.js');
-      const { ForceOptionSuggestionEngine } = await import('../../../engines/suggestion/ForceOptionSuggestionEngine.js');
+      const { ForceOptionSuggestionEngine } = await import('../../../ForceOptionSuggestionEngine.js');
 
       const availablePowers = await getAvailableForcePowers(this.actor, {});
 
@@ -868,7 +868,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       .map(([key]) => key);
 
     // Get granted feats (houserules + level 1 class features)
-    const grantedFeats = AbilityEngine.getGrantedFeats(this.actor, this.selectedClass);
+    const grantedFeats = PrerequisiteChecker.getAllGrantedFeats(this.actor, this.selectedClass);
 
     return {
       selectedClass: this.selectedClass,

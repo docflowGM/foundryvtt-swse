@@ -9,18 +9,18 @@
  *   MentorChatDialog.show(actor);
  */
 
-import { MENTORS, getMentorForClass } from '../engines/mentor/mentor-dialogues.js';
-import { MentorSuggestionVoice } from './mentor-suggestion-voice.js';
-import { BuildIntent } from '../engines/suggestion/BuildIntent.js';
-import { SWSELogger } from '../utils/logger.js';
-import { MentorVoiceFilterV2 } from './mentor-voice-filter-v2.js';
-import { MentorDialogueV2Integration } from './mentor-dialogue-v2-integration.js';
-import { MentorStoryResolver } from '../engines/mentor/mentor-story-resolver.js';
-import { renderJudgmentAtom } from './mentor-judgment-renderer.js';
-import { getReasonTexts } from './mentor-reason-renderer.js';
+import { MENTORS, getMentorForClass } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
+import { MentorSuggestionVoice } from "/systems/foundryvtt-swse/scripts/mentor/mentor-suggestion-voice.js";
+import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { MentorVoiceFilterV2 } from "/systems/foundryvtt-swse/scripts/mentor/mentor-voice-filter-v2.js";
+import { MentorDialogueV2Integration } from "/systems/foundryvtt-swse/scripts/mentor/mentor-dialogue-v2-integration.js";
+import { MentorStoryResolver } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-story-resolver.js";
+import { renderJudgmentAtom } from "/systems/foundryvtt-swse/scripts/mentor/mentor-judgment-renderer.js";
+import { getReasonTexts } from "/systems/foundryvtt-swse/scripts/mentor/mentor-reason-renderer.js";
 
 // V2 API base class
-import SWSEFormApplicationV2 from '../apps/base/swse-form-application-v2.js';
+import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
 
 const CHAT_TOPICS = [
   {

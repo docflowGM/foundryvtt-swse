@@ -14,7 +14,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { extractCategoriesFromDescriptors } from './force-suggestion-utils.js';
+import { extractCategoriesFromDescriptors } from "/systems/foundryvtt-swse/scripts/tools/force-suggestion-utils.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const secretsDbPath = path.join(__dirname, '../../packs/forcesecrets.db');

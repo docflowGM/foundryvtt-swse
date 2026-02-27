@@ -4,8 +4,8 @@
  * AppV2-based implementation
  */
 
-import { DestinyEffects } from '../utils/destiny-effects.js';
-import { SWSELogger } from '../utils/logger.js';
+import { DestinyEffects } from "/systems/foundryvtt-swse/scripts/utils/destiny-effects.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class DestinySpendingDialog extends foundry.applications.api.ApplicationV2 {
   static DEFAULT_OPTIONS = {

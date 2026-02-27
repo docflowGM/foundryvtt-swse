@@ -13,7 +13,7 @@
  * await Batch1Validation.runFullSuite()
  */
 
-import { swseLogger } from '../../utils/logger.js';
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class Batch1Validation {
   static results = {
@@ -184,7 +184,7 @@ export class Batch1Validation {
     this.results.totalTests++;
 
     try {
-      const { DerivedCalculator } = await import('../../../actors/derived/derived-calculator.js');
+      const { DerivedCalculator } = await import('../../../derived-calculator.js');
       const { ActorEngine } = await import('../actor-engine/actor-engine.js');
 
       // Instrument DerivedCalculator.computeAll()

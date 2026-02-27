@@ -8,10 +8,10 @@
  * This consolidated module provides a unified API for all Dark Side talent functionality.
  */
 
-import { SWSELogger } from '../utils/logger.js';
-import { RollEngine } from '../engine/roll-engine.js';
-import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
-import { createChatMessage, createEffectOnActor, createItemInActor } from '../core/document-api-v13.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { createChatMessage, createEffectOnActor, createItemInActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 
 export class DarkSidePowers {
 

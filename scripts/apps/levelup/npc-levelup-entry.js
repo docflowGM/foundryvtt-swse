@@ -1,11 +1,11 @@
 // scripts/apps/levelup/npc-levelup-entry.js
-import SWSEApplicationV2 from '../base/swse-application-v2.js';
-import { SWSELogger } from '../../utils/logger.js';
-import { isEpicOverrideEnabled } from '../../settings/epic-override.js';
-import { getLevelSplit } from '../../actors/derived/level-split.js';
-import { NpcProgressionEngine } from '../../engines/progression/npc-progression-engine.js';
-import { SWSELevelUpEnhanced } from './levelup-enhanced.js';
-import { SWSEDialogV2 } from '../dialogs/swse-dialog-v2.js';
+import SWSEApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { isEpicOverrideEnabled } from "/systems/foundryvtt-swse/scripts/settings/epic-override.js";
+import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { NpcProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/npc-progression-engine.js";
+import { SWSELevelUpEnhanced } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-enhanced.js";
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 
 export class SWSENpcLevelUpEntry extends SWSEApplicationV2 {
   static PARTS = {

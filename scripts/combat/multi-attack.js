@@ -10,7 +10,7 @@
  * @module combat/multi-attack
  */
 
-import { swseLogger } from '../utils/logger.js';
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * Weapon groups for Double/Triple Attack feats

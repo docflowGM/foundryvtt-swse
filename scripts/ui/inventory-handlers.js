@@ -6,7 +6,7 @@
  */
 
 import { SWSELogger as swseLogger } from '../../utils/logger.js';
-import WeaponConfigDialog from './weapon-config-dialog.js';
+import WeaponConfigDialog from "/systems/foundryvtt-swse/scripts/ui/weapon-config-dialog.js";
 
 export class InventoryHandlers {
   /**

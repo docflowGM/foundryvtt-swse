@@ -10,7 +10,7 @@
  * This loads FIRST in index.js before any other modules.
  */
 
-import { StructuredLogger, SEVERITY } from '../core/structured-logger.js';
+import { StructuredLogger, SEVERITY } from "/systems/foundryvtt-swse/scripts/core/structured-logger.js";
 
 export class RuntimeContract {
   static #initialized = false;

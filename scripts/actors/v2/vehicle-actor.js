@@ -1,6 +1,6 @@
 // scripts/actors/v2/vehicle-actor.js
 
-import { computeCharacterDerived } from './character-actor.js';
+import { computeCharacterDerived } from "/systems/foundryvtt-swse/scripts/actors/v2/character-actor.js";
 
 /**
  * Vehicles have their own derived rules in later phases.

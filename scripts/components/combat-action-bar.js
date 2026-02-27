@@ -1,8 +1,8 @@
-import { SWSEActiveEffectsManager } from '../combat/active-effects-manager.js';
-import { SWSECombat } from '../combat/systems/enhanced-combat-system.js';
-import { escapeHTML } from '../utils/security-utils.js';
-import { createChatMessage } from '../core/document-api-v13.js';
-import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
+import { SWSEActiveEffectsManager } from "/systems/foundryvtt-swse/scripts/combat/active-effects-manager.js";
+import { SWSECombat } from "/systems/foundryvtt-swse/scripts/combat/systems/enhanced-combat-system.js";
+import { escapeHTML } from "/systems/foundryvtt-swse/scripts/utils/security-utils.js";
+import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * Modernized Combat Action Bar

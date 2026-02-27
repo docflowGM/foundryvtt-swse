@@ -2,7 +2,7 @@
 // Ability scores and defenses for CharGen
 // ============================================
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 
 const _SPECIES_MOD_CLASSES = ['mod-positive', 'mod-negative', 'mod-neutral'];

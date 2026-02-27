@@ -25,18 +25,18 @@
  * - MutationApplicationError: Display application error
  */
 
-import SWSEApplicationV2 from '../base/swse-application-v2.js';
-import { swseLogger } from '../../utils/logger.js';
-import { ManualStepProcessor } from '../../engines/progression/engine/manual-step-processor.js';
-import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
-import { mergeMutationPlans } from '../../governance/mutation/merge-mutations.js';
+import SWSEApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ManualStepProcessor } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/manual-step-processor.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { mergeMutationPlans } from "/systems/foundryvtt-swse/scripts/governance/mutation/merge-mutations.js";
 import {
   ProgressionValidationError,
   DeltaConflictError,
   MutationApplicationError,
   getErrorMessage,
   categorizeError
-} from '../../governance/mutation/mutation-errors.js';
+} from "/systems/foundryvtt-swse/scripts/governance/mutation/mutation-errors.js';
 
 export class CharacterGeneratorApp extends SWSEApplicationV2 {
   /**

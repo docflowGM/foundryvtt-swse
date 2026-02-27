@@ -8,7 +8,7 @@
  * - Correlation support
  */
 
-import { swseLogger } from '../utils/logger.js';
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 const DOMAINS = {
   CHARGEN: 'CHARGEN',

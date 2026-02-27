@@ -6,7 +6,7 @@
  * Backward-compatibility stub only.
  */
 
-import { SWSEV2VehicleSheet } from '../../sheets/v2/vehicle-sheet.js';
+import { SWSEV2VehicleSheet } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet.js";
 
 /**
  * @deprecated Use {@link SWSEV2VehicleSheet}.

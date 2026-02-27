@@ -19,8 +19,8 @@
  * This is the choke point for all mutations.
  */
 
-import { swseLogger } from '../../utils/logger.js';
-import { MutationIntegrityLayer } from '../sentinel/mutation-integrity-layer.js';
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { MutationIntegrityLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/mutation-integrity-layer.js";
 
 const STRICT_MODE = false; // Set to true to throw on violations
 const DEV_MODE = true;     // Log all mutations with stack traces

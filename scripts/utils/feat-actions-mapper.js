@@ -1,12 +1,12 @@
-import { SWSELogger } from './logger.js';
-import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 /**
  * Feat Actions Mapper
  * Maps feat-granted combat actions to character abilities
  */
 
 // eslint-disable-next-line
-import featActions from '../../data/feat-combat-actions.json' with { type: 'json' };
+import featActions from "/systems/foundryvtt-swse/data/feat-combat-actions.json" with { type: 'json' };
 
 export class FeatActionsMapper {
   /**

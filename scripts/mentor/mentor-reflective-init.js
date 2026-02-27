@@ -1,6 +1,6 @@
 // scripts/apps/mentor-reflective-init.js
-import { HooksRegistry } from '../infrastructure/hooks/hooks-registry.js';
-import MentorReflectiveDialog from './mentor-reflective-dialog.js';
+import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/hooks-registry.js";
+import MentorReflectiveDialog from "/systems/foundryvtt-swse/scripts/mentor/mentor-reflective-dialog.js";
 
 /**
  * AppV2: Add Mentor button to ActorSheetV2 header.

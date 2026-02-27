@@ -1,4 +1,4 @@
-import { getEffectiveHalfLevel } from '../actors/derived/level-split.js';
+import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 /**
  * ==============================================
  * SWSE SKILLS - DATA MODEL & CALCULATIONS

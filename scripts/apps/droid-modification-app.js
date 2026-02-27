@@ -20,10 +20,10 @@
  * Result: Transaction ready for submission to GM review pipeline
  */
 
-import { DroidModificationFactory } from '../domain/droids/droid-modification-factory.js';
-import { DROID_SYSTEM_DEFINITIONS, getSystemsBySlot } from '../domain/droids/droid-system-definitions.js';
-import { DroidTransactionService } from '../domain/droids/droid-transaction-service.js';
-import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
+import { DroidModificationFactory } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-modification-factory.js";
+import { DROID_SYSTEM_DEFINITIONS, getSystemsBySlot } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-system-definitions.js";
+import { DroidTransactionService } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-transaction-service.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 

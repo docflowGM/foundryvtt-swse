@@ -3,7 +3,7 @@
  * Utilities for enriching items with wishlist data for template rendering
  */
 
-import { WishlistEngine } from '../engines/suggestion/WishlistEngine.js';
+import { WishlistEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/WishlistEngine.js";
 
 /**
  * Enrich a list of items with wishlist and prerequisite fulfillment data

@@ -20,10 +20,10 @@
  * 5. On acceptance: Remove item, add credits, animate gain, show player feedback
  */
 
-import { normalizeCredits, calculateRawSellPrice, calculatePercentageFloor } from '../utils/credit-normalization.js';
-import { SWSELogger } from '../utils/logger.js';
-import { prompt as uiPrompt } from '../utils/ui-utils.js';
-import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
+import { normalizeCredits, calculateRawSellPrice, calculatePercentageFloor } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { prompt as uiPrompt } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * Initiate item selling process

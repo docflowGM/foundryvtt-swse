@@ -18,7 +18,7 @@
  * - Direct system.derived mutations bypassing DerivedCalculator
  */
 
-import { swseLogger } from '../../utils/logger.js';
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class DerivedIntegrityLayer {
   /**

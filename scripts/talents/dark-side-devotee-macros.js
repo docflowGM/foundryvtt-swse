@@ -3,8 +3,8 @@
  * User-callable macro functions for Dark Side Devotee talents
  */
 
-import DarkSideDevoteeMechanics from '../engines/talent/dark-side-devotee-mechanics.js';
-import { SWSELogger } from '../utils/logger.js';
+import DarkSideDevoteeMechanics from "/systems/foundryvtt-swse/scripts/engine/talent/dark-side-devotee-mechanics.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class DarkSideDevoteeMacros {
 

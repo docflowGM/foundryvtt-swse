@@ -1,4 +1,4 @@
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 // ============================================
 // FILE: rolls/dice.js
 // Generic dice rolling using SWSE utils

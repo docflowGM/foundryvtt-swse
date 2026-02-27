@@ -7,8 +7,8 @@
  *
  * PHASE 7: All mutations routed through ActorEngine for atomic governance
  */
-import { escapeHTML } from '../utils/security-utils.js';
-import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
+import { escapeHTML } from "/systems/foundryvtt-swse/scripts/utils/security-utils.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class ConditionTrackComponent {
 

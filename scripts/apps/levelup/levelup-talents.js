@@ -7,23 +7,22 @@
  * - Class Level Talents: 1 per odd class level (1, 3, 5, 7, etc.) - ONLY from that class's trees
  */
 
-import { SWSELogger } from '../../utils/logger.js';
-import { warnGM } from '../../utils/warn-gm.js';
-import { ClassesRegistry } from '../../engine/registries/classes-registry.js';
-import { TalentTreeVisualizer } from '../talent-tree-visualizer.js';
-import { getClassLevel, getCharacterClasses } from './levelup-shared.js';
-import { checkTalentPrerequisites } from './levelup-validation.js';
-import { getClassProperty, getTalentTrees } from '../chargen/chargen-property-accessor.js';
-import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
-import { HouseRuleTalentCombination } from '../../houserules/houserule-talent-combination.js';
-import { SuggestionService } from '../../engines/suggestion/SuggestionService.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { warnGM } from "/systems/foundryvtt-swse/scripts/utils/warn-gm.js";
+import { TalentTreeVisualizer } from "/systems/foundryvtt-swse/scripts/apps/talent-tree-visualizer.js";
+import { getClassLevel, getCharacterClasses } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js";
+import { checkTalentPrerequisites } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-validation.js";
+import { getClassProperty, getTalentTrees } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
+import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { HouseRuleTalentCombination } from "/systems/foundryvtt-swse/scripts/houserules/houserule-talent-combination.js";
+import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
 import {
   getTalentCountAtHeroicLevel,
   getTalentCountAtClassLevel,
   getTalentProgressionInfo,
   getAvailableTalentTreesForHeroicTalent,
   getAvailableTalentTreesForClassTalent
-} from './levelup-dual-talent-progression.js';
+} from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-dual-talent-progression.js";
 
 /**
  * Get the number of talents granted at this level
@@ -121,12 +120,13 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
     // Talent trees from any class the character has levels in
     SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Multiclass mode - collecting trees from all character classes`);
     const characterClasses = getCharacterClasses(actor);
+    const classPack = game.packs.get('foundryvtt-swse.classes');
     SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Character has classes:`, Object.keys(characterClasses));
 
     for (const className of Object.keys(characterClasses)) {
-      const classData = ClassesRegistry.getByName(className);
-      if (classData) {
-        const fullClass = await ClassesRegistry._getDocument(classData.id);
+      const classDoc = await classPack.index.find(c => c.name === className);
+      if (classDoc) {
+        const fullClass = await classPack.getDocument(classDoc._id);
         const trees = getTalentTrees(fullClass);
         SWSELogger.log(`[LEVELUP-TALENTS] getAvailableTalentTrees: Class "${className}" - trees: ${trees?.length || 0}`);
         if (trees && trees.length > 0) {
@@ -238,11 +238,11 @@ export async function loadTalentData(actor = null, pendingData = {}) {
 
     // Add prerequisite checking results to each talent (before suggestions for future availability analysis)
     const talentsWithPrereqs = talentObjects.map(talent => {
-      const assessment = AbilityEngine.evaluateAcquisition(actor, talent, pendingData);
+      const result = PrerequisiteChecker.checkTalentPrerequisites(actor, talent, pendingData);
       return {
         ...talent,
-        isQualified: assessment.legal,
-        prereqReasons: assessment.missingPrereqs
+        isQualified: result.met,
+        prereqReasons: result.missing
       };
     });
 

@@ -19,11 +19,11 @@
  * - Does NOT duplicate Store UI
  */
 
-import { normalizeCredits } from '../utils/credit-normalization.js';
-import { SWSELogger } from '../utils/logger.js';
-import { calculateCartTotal } from './store/store-checkout.js';
-import { prompt as uiPrompt } from '../utils/ui-utils.js';
-import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
+import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { calculateCartTotal } from "/systems/foundryvtt-swse/scripts/apps/store/store-checkout.js";
+import { prompt as uiPrompt } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 const { ApplicationV2 } = foundry.applications.api;
 const { HandlebarsApplicationMixin } = foundry.applications.api;
@@ -380,7 +380,7 @@ export class GMStoreDashboard extends HandlebarsApplicationMixin(ApplicationV2) 
 
     if (approval.type === 'droid' && approval.chargenSnapshot) {
       // Re-launch CharGen with edit mode
-      const CharacterGenerator = (await import('../chargen/chargen-main.js')).default;
+      const CharacterGenerator = (await import('../../chargen-main.js')).default;
       const chargen = new CharacterGenerator(null, {
         droidBuilderMode: true,
         editMode: true,

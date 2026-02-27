@@ -1,9 +1,9 @@
 // scripts/sheets/v2/npc-sheet.js
-import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
-import { TalentEffectEngine } from '../../engines/talent/talent-effect-engine.js';
-import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
-import { RenderAssertions } from '../../core/render-assertions.js';
-import { RollEngine } from '../../engine/roll-engine.js';
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-effect-engine.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
+import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 
 function markActiveConditionStep(root, actor) {
   // AppV2: root is HTMLElement, not jQuery
@@ -360,7 +360,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
           const ability = this.actor.items?.get(abilityId);
           if (ability) {
             // Mark as used
-            const { AbilityUsage } = await import('../../engines/abilities/ability-usage.js');
+            const { AbilityUsage } = await import('../../engine/abilities/ability-usage.js');
             await AbilityUsage.markUsed(this.actor, abilityId);
             this.render();
           }

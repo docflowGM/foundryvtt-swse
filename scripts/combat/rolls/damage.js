@@ -1,8 +1,8 @@
-import { swseLogger } from '../../utils/logger.js';
-import { TalentEffectEngine } from '../../engines/talent/talent-effect-engine.js';
-import { RollEngine } from '../../engine/roll-engine.js';
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-effect-engine.js";
+import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 
-import { getEffectiveHalfLevel } from '../../actors/derived/level-split.js';
+import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 /**
  * Determine if a weapon is a melee weapon
  * @param {Item} weapon - The weapon item

@@ -13,15 +13,15 @@ function getDevMode() {
   return game.modules.get('_dev-mode')?.active ?? false;
 }
 
-import CharacterGenerator from '../apps/chargen/chargen-main.js';
-import { auditCSSHealth } from './css-auditor.js';
+import CharacterGenerator from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js";
+import { auditCSSHealth } from "/systems/foundryvtt-swse/scripts/core/css-auditor.js";
 import {
   v2Assert,
   enableStrictV2,
   disableStrictV2,
   generateMigrationReport,
   generateUIFailureReport
-} from './migration-auditor.js';
+} from '../../migration-auditor.js';
 
 /**
  * Smoke Test Suite - Basic validation that SWSE loads correctly

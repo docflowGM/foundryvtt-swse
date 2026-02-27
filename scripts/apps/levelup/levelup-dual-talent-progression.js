@@ -10,11 +10,10 @@
  *    - Applied when leveling up a specific class
  */
 
-import { SWSELogger } from '../../utils/logger.js';
-import { getClassLevel, getCharacterClasses } from './levelup-shared.js';
-import { ClassesRegistry } from '../../engine/registries/classes-registry.js';
-import { getTalentTrees } from '../chargen/chargen-property-accessor.js';
-import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { getClassLevel, getCharacterClasses } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js";
+import { getTalentTrees } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
+import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
 
 /**
  * Calculate available talents at the current heroic level
@@ -90,12 +89,13 @@ export function getTalentProgressionInfo(selectedClass, actor) {
 export async function getAvailableTalentTreesForHeroicTalent(actor) {
   const allTrees = new Set();
   const characterClasses = getCharacterClasses(actor);
+  const classPack = game.packs.get('foundryvtt-swse.classes');
 
   // Collect all talent trees from all classes the character has levels in
   for (const [className] of Object.entries(characterClasses)) {
-    const classData = ClassesRegistry.getByName(className);
-    if (classData) {
-      const classDoc = await ClassesRegistry._getDocument(classData.id);
+    const classIndex = classPack?.index.find(c => c.name === className);
+    if (classIndex) {
+      const classDoc = await classPack.getDocument(classIndex._id);
       if (classDoc) {
         const trees = getTalentTrees(classDoc);
         if (trees && trees.length > 0) {
@@ -107,7 +107,7 @@ export async function getAvailableTalentTreesForHeroicTalent(actor) {
 
   // Add Force Talent Trees if character is Force Sensitive
   try {
-    const accessRules = await AbilityEngine.loadTalentTreeAccessRules();
+    const accessRules = await PrerequisiteChecker._loadTalentTreeAccessRules();
 
     if (accessRules) {
       // Get all Force Talent Trees (both generic and tradition-based)
@@ -117,7 +117,7 @@ export async function getAvailableTalentTreesForHeroicTalent(actor) {
 
       // Check which ones the character can access
       for (const treeConfig of forceTrees) {
-        const canAccess = await AbilityEngine.canAccessTalentTree(actor, treeConfig.treeId);
+        const canAccess = await PrerequisiteChecker.canAccessTalentTree(actor, treeConfig.treeId);
         if (canAccess) {
           allTrees.add(treeConfig.treeId);
         }

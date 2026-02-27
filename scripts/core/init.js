@@ -1,12 +1,25 @@
-import { HookInvestigator } from "../governance/sentinel/hook-investigator.js";
+import { HookInvestigator } from "/systems/foundryvtt-swse/scripts/governance/sentinel/hook-investigator.js";
 /**
  * SWSE Init — placeholder to satisfy Foundry system validation
  */
-import { SWSELogger } from './logger.js';
-import { GMDroidApprovalDashboard } from '../apps/gm-droid-approval-dashboard.js';
-import { registerVehiclePreCreateHooks } from '../actors/vehicle/vehicle-precreate-hooks.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
+import { GMDroidApprovalDashboard } from "/systems/foundryvtt-swse/scripts/apps/gm-droid-approval-dashboard.js";
+import { registerVehiclePreCreateHooks } from "/systems/foundryvtt-swse/scripts/actors/vehicle/vehicle-precreate-hooks.js";
 
 Hooks.once('init', () => {
+
+  Hooks.once("init", () => {
+    if (!game.settings.settings.has("foundryvtt-swse.enableEnhancedMassiveDamage")) {
+      game.settings.register("foundryvtt-swse", "enableEnhancedMassiveDamage", {
+        name: "Enable Enhanced Massive Damage",
+        hint: "Use enhanced massive damage rules.",
+        scope: "world",
+        config: true,
+        type: Boolean,
+        default: false
+      });
+    }
+  });
   SWSELogger.log('SWSE system initialized successfully.');
 });
 

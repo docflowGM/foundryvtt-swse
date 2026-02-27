@@ -66,23 +66,31 @@ export function normalizeTalent(rawTalent, treeMap = null) {
     // SSOT: treeId is derived from the tree's talentIds array
     // (authoritative source is in talent_trees.db, not here)
     // Read the derived treeId that was written by the Python reconciliation script
-    let treeId = sys.treeId || null;
-    const treeName = sys.talent_tree || sys.talentTree;
+    
+    // ======================================================
+    // SSOT TREE RESOLUTION (Authoritative via TalentTreeDB)
+    // ======================================================
 
-    if (!treeId && treeName && treeMap) {
-        // Fallback for backwards compatibility (migration safety)
-        const tree = treeMap.get(treeName) || Array.from(treeMap.values()).find(t =>
-            t.name.toLowerCase() === treeName.toLowerCase()
+    let treeId = null;
+    const treeName = sys.talent_tree || sys.talentTree || null;
+
+    // Primary source: inverse index from TalentTreeDB
+    if (treeMap && treeMap.talentToTree instanceof Map) {
+        treeId = treeMap.talentToTree.get(rawTalent._id) || null;
+    }
+
+    // Legacy fallback (only if inverse index missing)
+    if (!treeId && treeName && treeMap && treeMap.trees instanceof Map) {
+        const match = Array.from(treeMap.trees.values()).find(t =>
+            t?.name?.toLowerCase() === treeName.toLowerCase()
         );
-
-        if (tree) {
-            treeId = tree.id;
-        } else {
-            console.warn(`[TalentNormalizer] Talent "${name}" has no treeId and tree "${treeName}" not found`);
+        if (match) {
+            treeId = match.id;
         }
     }
 
     return {
+
         // Identity
         id: rawTalent._id,
         name: name,

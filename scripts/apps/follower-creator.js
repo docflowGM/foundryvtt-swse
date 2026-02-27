@@ -10,11 +10,10 @@
  * but maintains follower-specific stat calculations.
  */
 
-import { swseLogger } from '../utils/logger.js';
-import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
-import { resolveSkillKey } from '../utils/skill-resolver.js';
-import { SpeciesRegistry } from '../engine/registries/species-registry.js';
-import { createActor } from '../core/document-api-v13.js';
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { resolveSkillKey } from "/systems/foundryvtt-swse/scripts/utils/skill-resolver.js";
+import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 
 export class FollowerCreator {
 
@@ -49,14 +48,15 @@ static async getInlineCreationContext(owner, templateChoices = null, grantingTal
     ? templateChoices.filter(k => templates[k])
     : Object.keys(templates);
 
-  const allSpecies = SpeciesRegistry.getAll();
-  if (!allSpecies || allSpecies.length === 0) {
-    ui.notifications.error('No species available! Cannot create follower.');
+  const speciesPack = game.packs.get('foundryvtt-swse.species');
+  if (!speciesPack) {
+    ui.notifications.error('Species compendium not found! Cannot create follower.');
     return null;
   }
 
-  const speciesList = allSpecies
-    .map(s => ({ id: s.id, name: s.name }))
+  const speciesIndex = await speciesPack.getIndex();
+  const speciesList = speciesIndex
+    .map(s => ({ id: s._id, name: s.name }))
     .sort((a, b) => a.name.localeCompare(b.name));
 
   const templateTypes = allowed.map(key => ({
@@ -148,13 +148,14 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      */
     static async _showFollowerCreationDialog(owner, template, templateType, grantingTalent) {
         // Get available species
-        const allSpecies = SpeciesRegistry.getAll();
-        if (!allSpecies || allSpecies.length === 0) {
-            ui.notifications.error('No species available! Cannot create follower.');
+        const speciesPack = game.packs.get('foundryvtt-swse.species');
+        if (!speciesPack) {
+            ui.notifications.error('Species compendium not found! Cannot create follower.');
             return null;
         }
 
-        const speciesList = allSpecies.map(s => ({ id: s.id, name: s.name })).sort((a, b) => a.name.localeCompare(b.name));
+        const speciesIndex = await speciesPack.getIndex();
+        const speciesList = speciesIndex.map(s => ({ id: s._id, name: s.name })).sort((a, b) => a.name.localeCompare(b.name));
 
         const dialogData = {
             template,
@@ -229,7 +230,8 @@ static async createFollower(owner, templateType, grantingTalent = null) {
         const followerLevel = ownerLevel; // Followers are same level as owner
 
         // Get species data
-        const speciesDoc = await SpeciesRegistry._getDocument(followerData.species);
+        const speciesPack = game.packs.get('foundryvtt-swse.species');
+        const speciesDoc = await speciesPack.getDocument(followerData.species);
 
         // Calculate base abilities (all start at 10)
         const abilities = {

@@ -10,10 +10,10 @@
  * - hotbarDrop: Hotbar macro creation
  */
 
-import { HooksRegistry } from './hooks-registry.js';
-import { SWSELogger } from '../../utils/logger.js';
-import { createItemMacro } from '../../macros/item-macro.js';
-import registerLevelUpSheetHooks from './levelup-sheet-hooks.js';
+import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/hooks-registry.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { createItemMacro } from "/systems/foundryvtt-swse/scripts/macros/item-macro.js";
+import registerLevelUpSheetHooks from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/levelup-sheet-hooks.js";
 
 /**
  * Register all UI-related hooks

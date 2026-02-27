@@ -15,8 +15,8 @@
  * - How would you play this?
  */
 
-import { MentorVoiceFilterV2 } from './mentor-voice-filter-v2.js';
-import { SWSELogger } from '../utils/logger.js';
+import { MentorVoiceFilterV2 } from "/systems/foundryvtt-swse/scripts/mentor/mentor-voice-filter-v2.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class MentorDialogueV2Integration {
   /**

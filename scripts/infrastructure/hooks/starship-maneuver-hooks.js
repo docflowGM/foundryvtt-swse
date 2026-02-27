@@ -1,11 +1,11 @@
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 /**
  * Starship Maneuver Hooks
  * Handles automatic maneuver grants when feats are added or abilities change
  * PHASE 10: Recursive guards prevent infinite item creation loops
  */
 
-import { StarshipManeuverManager } from '../../utils/starship-maneuver-manager.js';
+import { StarshipManeuverManager } from "/systems/foundryvtt-swse/scripts/utils/starship-maneuver-manager.js";
 
 export function initializeStarshipManeuverHooks() {
 

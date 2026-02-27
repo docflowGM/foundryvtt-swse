@@ -11,7 +11,7 @@
  * PHASE 7: All mutations routed through ActorEngine for atomic governance.
  */
 
-import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 const SYSTEM_SCOPE_COMPAT = 'swse';
 const FLAG_SNAPSHOT = 'npcLevelUp.snapshot';

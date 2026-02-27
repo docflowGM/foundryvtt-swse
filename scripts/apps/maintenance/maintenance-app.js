@@ -1,6 +1,6 @@
 // scripts/apps/maintenance/maintenance-app.js
-import { swseLogger } from '../../utils/logger.js';
-import SWSEApplication from '../base/swse-application.js';
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import SWSEApplication from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
 
 export class MaintenanceApp extends SWSEApplication {
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(

@@ -10,9 +10,9 @@
  *
  * Defensive: uses Roll API (Foundry) if available.
  */
-import { confirm as uiConfirm } from '../../utils/ui-utils.js';
-import { RollEngine } from '../../engine/roll-engine.js';
-import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
+import { confirm as uiConfirm } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
+import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 export class AbilityRollingController {
   constructor(actor, root, opts = {}) {
     this.actor = actor;

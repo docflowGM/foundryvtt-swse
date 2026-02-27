@@ -23,9 +23,9 @@ import {
     normalizeTalentTreeId,
     findTalentTreeByName,
     validateTalentTree
-} from './talent-tree-normalizer.js';
-import { SWSELogger } from '../utils/logger.js';
-import { toStableKey } from '../utils/stable-key.js';
+} from "/systems/foundryvtt-swse/scripts/data/talent-tree-normalizer.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { toStableKey } from "/systems/foundryvtt-swse/scripts/utils/stable-key.js";
 
 export const TalentTreeDB = {
 

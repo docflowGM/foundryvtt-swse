@@ -2,9 +2,9 @@
 // Force power selection for CharGen
 // ============================================
 
-import { SWSELogger } from '../../utils/logger.js';
-import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
-import { _findClassItem } from './chargen-shared.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { _findClassItem } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js";
 
 /**
  * Handle force power selection
@@ -84,9 +84,9 @@ export async function _onSelectForcePower(event) {
     }
 
     // Check other prerequisites
-    const assessment = AbilityEngine.evaluateAcquisition(tempActor, power, pendingData);
-    if (!assessment.legal) {
-      ui.notifications.warn(`Cannot select "${power.name}": ${assessment.missingPrereqs.join(', ')}`);
+    const prereqCheck = PrerequisiteChecker.checkFeatPrerequisites(tempActor, power, pendingData);
+    if (!prereqCheck.met) {
+      ui.notifications.warn(`Cannot select "${power.name}": ${prereqCheck.missing.join(', ')}`);
       return;
     }
   }
@@ -165,8 +165,8 @@ export async function _calculateForcePowerSuggestions(powers) {
   }
 
   try {
-    const { SuggestionService } = await import('../../../engines/suggestion/SuggestionService.js');
-    const { UNIFIED_TIERS } = await import('../../../engines/suggestion/suggestion-unified-tiers.js');
+    const { SuggestionService } = await import('../../../SuggestionService.js');
+    const { UNIFIED_TIERS } = await import('../../../suggestion-unified-tiers.js');
 
     const tempActor = this._createTempActorForValidation();
     if (!tempActor) {

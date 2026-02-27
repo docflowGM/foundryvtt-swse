@@ -2,7 +2,7 @@
  * UI Helper Utilities for SWSE
  */
 
-import { SWSEDialogV2 } from '../apps/dialogs/swse-dialog-v2.js';
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 
 /* ---------------------- Notifications ---------------------- */
 

@@ -3,8 +3,8 @@
  * Provides a searchable, filterable interface for browsing and importing nonheroic units
  */
 
-import SWSEApplication from './base/swse-application.js';
-import { createActor } from '../core/document-api-v13.js';
+import SWSEApplication from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
+import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 
 export class NonheroicUnitsBrowser extends SWSEApplication {
   constructor(options = {}) {

@@ -4,8 +4,8 @@
  * Allows users to verify eligibility for prestige class advancement
  */
 
-import PrestigeTalentMechanics from '../engines/talent/prestige-talent-mechanics.js';
-import { SWSELogger } from '../utils/logger.js';
+import PrestigeTalentMechanics from "/systems/foundryvtt-swse/scripts/engine/talent/prestige-talent-mechanics.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class PrestigeTalentMacros {
 

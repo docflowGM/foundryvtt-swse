@@ -1,20 +1,22 @@
-import { SwseFormApplicationV2 } from "../base/swse-form-application-v2.js";
-import { CombatEngine } from "../../engines/combat/CombatEngine.js";
-import { ModifierEngine } from "../../engines/effects/modifiers/ModifierEngine.js";
+import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
+import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
 
-export class CombatRollConfigDialog extends SwseFormApplicationV2 {
+export class CombatRollConfigDialog extends SWSEFormApplicationV2 {
 
-  static DEFAULT_OPTIONS = {
-    id: "swse-combat-roll-config",
-    classes: ["swse", "holo-console"],
-    template: "systems/foundryvtt-swse/templates/apps/combat/combat-roll-config-dialog.hbs",
-    width: 520,
-    height: "auto",
-    title: "Tactical Targeting Console"
-  };
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(
+    super.DEFAULT_OPTIONS,
+    {
+      id: "swse-combat-roll-config",
+      classes: ["swse", "holo-console"],
+      template: "systems/foundryvtt-swse/templates/apps/combat/combat-roll-config-dialog.hbs",
+      width: 520,
+      height: "auto",
+      title: "Tactical Targeting Console"
+    }
+  );
 
-  constructor(actor, actionData) {
-    super();
+  constructor(actor, actionData, options = {}) {
+    super(options);
     this.actor = actor;
     this.actionData = actionData;
     this.optionsData = {
@@ -30,7 +32,6 @@ export class CombatRollConfigDialog extends SwseFormApplicationV2 {
   async getData() {
     let preview;
 
-    // Support both attack and initiative modes
     if (this.actionData?.domain === "initiative") {
       preview = await CombatEngine.previewInitiative(
         this.actor,
@@ -51,20 +52,27 @@ export class CombatRollConfigDialog extends SwseFormApplicationV2 {
     };
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  _onRender(context, options) {
+    super._onRender(context, options);
 
-    html.on("change", "input, select", async (event) => {
-      const field = event.currentTarget.name;
-      const value = event.currentTarget.type === "checkbox"
-        ? event.currentTarget.checked
-        : event.currentTarget.value;
+    const root = this.element;
+    if (!root) return;
 
-      this.optionsData[field] = value;
-      this.render();
+    // Change listeners (no jQuery)
+    root.querySelectorAll("input, select").forEach(el => {
+      el.addEventListener("change", async (event) => {
+        const field = event.currentTarget.name;
+        const value = event.currentTarget.type === "checkbox"
+          ? event.currentTarget.checked
+          : event.currentTarget.value;
+
+        this.optionsData[field] = value;
+        this.render();
+      });
     });
 
-    html.on("click", ".roll-attack", async () => {
+    // Roll button
+    root.querySelector(".roll-attack")?.addEventListener("click", async () => {
       if (this.actionData?.domain === "initiative") {
         await CombatEngine.rollInitiative(this.actor, this.optionsData);
       } else {

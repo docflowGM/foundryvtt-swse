@@ -18,7 +18,7 @@ import {
   normalize,
   extractCategoriesFromDescriptors,
   findMatchingPowers
-} from './force-suggestion-utils.js';
+} from "/systems/foundryvtt-swse/scripts/tools/force-suggestion-utils.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const dbPath = path.join(__dirname, '../../packs/forcetechniques.db');

@@ -1,7 +1,7 @@
 // scripts/sheets/v2/npc-full-sheet.js
 
-import { SWSEV2CharacterSheet } from "./character-sheet.js";
-import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
+import { SWSEV2CharacterSheet } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class SWSEV2FullNpcSheet extends SWSEV2CharacterSheet {
 

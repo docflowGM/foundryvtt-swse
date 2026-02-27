@@ -4,8 +4,8 @@
  * Register these in macro-functions.js to make them available in hotbars
  */
 
-import NobleTalentMechanics from '../engines/talent/noble-talent-mechanics.js';
-import { SWSELogger } from '../utils/logger.js';
+import NobleTalentMechanics from "/systems/foundryvtt-swse/scripts/engine/talent/noble-talent-mechanics.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class NobleTalentMacros {
 

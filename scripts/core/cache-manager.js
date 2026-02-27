@@ -1,5 +1,5 @@
 /**
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
  * Cache Manager
  * Provides intelligent caching for frequently accessed data
  * Reduces compendium lookups and improves performance

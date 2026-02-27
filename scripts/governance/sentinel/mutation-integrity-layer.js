@@ -3,7 +3,7 @@
  * PHASE 3: Enforces ActorEngine as sole mutation authority
  */
 
-import { swseLogger } from '../../utils/logger.js';
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export const MutationIntegrityLayer = {
 

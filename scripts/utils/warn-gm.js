@@ -3,8 +3,8 @@
  * Notifies the GM via console and chat message of potential data issues
  */
 
-import { SWSELogger } from './logger.js';
-import { createChatMessage } from '../core/document-api-v13.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 
 export function warnGM(message) {
   // Log to console

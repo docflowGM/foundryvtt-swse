@@ -12,8 +12,8 @@
  * Much simpler, much more scalable.
  */
 
-import { MentorDialogueResponses } from './mentor-dialogue-responses.js';
-import { SWSELogger } from '../utils/logger.js';
+import { MentorDialogueResponses } from "/systems/foundryvtt-swse/scripts/mentor/mentor-dialogue-responses.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class MentorVoiceFilterV2 {
   /**

@@ -1,4 +1,4 @@
-import { getEffectiveHalfLevel } from '../../actors/derived/level-split.js';
+import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
 // - Uses new Active Effects engine

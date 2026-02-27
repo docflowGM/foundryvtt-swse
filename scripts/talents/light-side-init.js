@@ -3,9 +3,9 @@
  * Registers Light Side (Jedi) talent mechanics and macros with the system
  */
 
-import LightSideTalentMechanics from '../engines/talent/light-side-talent-mechanics.js';
-import LightSideTalentMacros from './light-side-talent-macros.js';
-import { SWSELogger } from '../utils/logger.js';
+import LightSideTalentMechanics from "/systems/foundryvtt-swse/scripts/engine/talent/light-side-talent-mechanics.js";
+import LightSideTalentMacros from "/systems/foundryvtt-swse/scripts/talents/light-side-talent-macros.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * Initialize Light Side talent systems when the world loads

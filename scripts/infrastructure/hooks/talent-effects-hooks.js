@@ -9,9 +9,9 @@
  * - On talent deletion, only effects with matching provenance are removed.
  */
 
-import { TALENT_EFFECTS } from '../../engines/talent/talents.js';
-import { TalentNormalizerEngine } from '../../engines/talent/TalentNormalizerEngine.js';
-import { swseLogger } from '../../utils/logger.js';
+import { TALENT_EFFECTS } from "/systems/foundryvtt-swse/scripts/engine/talent/talents.js";
+import { TalentNormalizerEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/TalentNormalizerEngine.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 function _buildEffectData(actor, talentItem, effectDef, idx) {
   const label = `${talentItem.name} (${idx + 1})`;

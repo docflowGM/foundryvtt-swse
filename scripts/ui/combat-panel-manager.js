@@ -9,7 +9,7 @@
  */
 
 import { SWSELogger as swseLogger } from '../../utils/logger.js';
-import WeaponTooltip from './weapon-tooltip.js';
+import WeaponTooltip from "/systems/foundryvtt-swse/scripts/ui/weapon-tooltip.js";
 
 export class CombatPanelManager {
   /**

@@ -3,10 +3,10 @@
  * Provides an interactive, animated talent tree selection and visualization system
  */
 
-import { SWSELogger } from '../utils/logger.js';
-import { AbilityEngine } from '../engine/abilities/AbilityEngine.js';
-import { SuggestionService } from '../engines/suggestion/SuggestionService.js';
-import { getTalentTreeName } from './chargen/chargen-property-accessor.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
+import { getTalentTreeName } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
 
 export class TalentTreeVisualizer {
 
@@ -249,7 +249,7 @@ export class TalentTreeVisualizer {
     SWSELogger.log(`[TALENT-TREE-VIS] ✓ Found ${talents.length} talents for tree "${treeName}"`);
 
     // Filter talents based on prerequisites - add isQualified property
-    talents = AbilityEngine.filterQualifiedTalents(talents, actor, {});
+    talents = PrerequisiteChecker.filterQualifiedTalents(talents, actor, {});
 
     // Apply suggestion engine to add tier-based recommendations
     talents = await SuggestionService.getSuggestions(actor, 'sheet', { domain: 'talents', available: talents, pendingData: {}, persist: false });

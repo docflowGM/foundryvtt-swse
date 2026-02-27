@@ -1,5 +1,5 @@
-import { swseLogger } from '../utils/logger.js';
-import { CombatEngine } from '../engines/combat/CombatEngine.js';
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
 
 /**
  * SWSE Combat Document (v13+) — PHASE 1 CONSOLIDATED
@@ -126,8 +126,8 @@ export class SWSECombatDocument extends Combat {
   async startCombat() {
     if (game.user.isGM) {
       // PHASE B FIX 7: Use SecondWindEngine for houserule-aware recovery
-      const { SecondWindEngine } = await import('../../engines/combat/SecondWindEngine.js');
-      const { ActorEngine } = await import('../../governance/actor-engine/actor-engine.js');
+      const { SecondWindEngine } = await import('../../SecondWindEngine.js');
+      const { ActorEngine } = await import('../../actor-engine.js');
 
       // Reset Second Wind based on houserule setting (defaults to per-encounter)
       await SecondWindEngine.resetAllSecondWind('encounter');
@@ -164,7 +164,7 @@ export class SWSECombatDocument extends Combat {
       const actor = c?.actor;
 
       if (actor) {
-        const { ActorEngine } = await import('../../governance/actor-engine/actor-engine.js');
+        const { ActorEngine } = await import('../../actor-engine.js');
         await ActorEngine.updateActionEconomy(actor, {
           swift: true,
           move: true,

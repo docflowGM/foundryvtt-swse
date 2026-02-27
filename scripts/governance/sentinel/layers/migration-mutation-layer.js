@@ -10,7 +10,7 @@
  * - All migrations must use meta.origin
  */
 
-import { Sentinel } from '../sentinel-core.js';
+import { Sentinel } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 
 export const MigrationMutationLayer = {
   #originalUpdate: null,

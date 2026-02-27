@@ -4,8 +4,8 @@
  * Mirrors DroidSlotGovernanceEngine
  */
 
-import { VEHICLE_SYSTEM_DEFINITIONS, getVehicleSystemDefinition } from './vehicle-system-definitions.js';
-import { swseLogger } from '../../utils/logger.js';
+import { VEHICLE_SYSTEM_DEFINITIONS, getVehicleSystemDefinition } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-system-definitions.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class VehicleSlotGovernanceEngine {
   static SLOT_CATEGORIES = {

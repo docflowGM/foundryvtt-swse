@@ -1,5 +1,5 @@
-import { FOLLOWER_TALENT_CONFIG } from '../../engines/crew/follower-talent-config.js';
-import { swseLogger } from '../../utils/logger.js';
+import { FOLLOWER_TALENT_CONFIG } from "/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * Follower Hooks (AppV2-safe)

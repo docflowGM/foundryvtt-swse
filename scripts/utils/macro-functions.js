@@ -1,4 +1,4 @@
-import { SWSELogger } from './logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 /**
  * Macro functions for SWSE
  */

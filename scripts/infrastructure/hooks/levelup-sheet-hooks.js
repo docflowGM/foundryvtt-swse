@@ -7,11 +7,11 @@
  * Characters -> SWSELevelUpEnhanced (system shim)
  * NPCs        -> SWSENpcLevelUpEntry
  */
-import { HooksRegistry } from './hooks-registry.js';
-import { SWSELogger } from '../../utils/logger.js';
-import { isEpicOverrideEnabled } from '../../settings/epic-override.js';
-import { SWSELevelUpEnhanced } from '../../apps/swse-levelup-enhanced.js';
-import { SWSENpcLevelUpEntry } from '../../apps/levelup/npc-levelup-entry.js';
+import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/hooks-registry.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { isEpicOverrideEnabled } from "/systems/foundryvtt-swse/scripts/settings/epic-override.js";
+import { SWSELevelUpEnhanced } from "/systems/foundryvtt-swse/scripts/apps/swse-levelup-enhanced.js";
+import { SWSENpcLevelUpEntry } from "/systems/foundryvtt-swse/scripts/apps/levelup/npc-levelup-entry.js";
 
 function isEpicBlocked(actor) {
   const level = Number(actor?.system?.level) || 0;

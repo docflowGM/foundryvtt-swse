@@ -3,8 +3,8 @@
  * Expands and improves condition track functionality
  */
 
-import { SWSELogger } from '../utils/logger.js';
-import { StatusEffectsMechanics } from './houserule-status-effects.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { StatusEffectsMechanics } from "/systems/foundryvtt-swse/scripts/houserules/houserule-status-effects.js";
 
 const NS = 'foundryvtt-swse';
 

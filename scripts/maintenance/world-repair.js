@@ -6,7 +6,7 @@
  * After running, delete this file.
  *
  * Usage:
- * await import('/systems/foundryvtt-swse/scripts/maintenance/world-repair.js')
+ * await import('../../world-repair.js')
  */
 
 export async function repairWorld() {

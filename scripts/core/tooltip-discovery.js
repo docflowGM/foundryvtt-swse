@@ -12,7 +12,7 @@
  *   Or: SWSETooltips.suggestTooltips()
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const SETTING_KEY = 'tooltips-discovered';

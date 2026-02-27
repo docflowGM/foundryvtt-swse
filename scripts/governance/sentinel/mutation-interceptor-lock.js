@@ -9,7 +9,7 @@
  * - Audit trail for all mutations
  */
 
-import { swseLogger } from '../../utils/logger.js';
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class MutationInterceptorLock {
   static INTERCEPTOR_ACTIVE = false;

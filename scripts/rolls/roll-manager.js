@@ -1,4 +1,4 @@
-import { createChatMessage } from '../core/document-api-v13.js';
+import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 /* scripts/rolls/roll-manager.js
    Centralized roll creation/evaluation and message helpers.
 */

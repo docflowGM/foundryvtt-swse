@@ -9,9 +9,9 @@
  * - Nested mutation blocking prevents regression
  */
 
-import { MutationIntegrityLayer } from './mutation-integrity-layer.js';
-import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
-import { swseLogger } from '../../utils/logger.js';
+import { MutationIntegrityLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/mutation-integrity-layer.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export const SentinelIntegrationTests = {
 
@@ -61,7 +61,7 @@ export const SentinelIntegrationTests = {
       MutationIntegrityLayer._activeTransaction = null;
 
       // Import FeatState dynamically to avoid circular deps
-      const { FeatState } = await import('../../progression/feats/feat-state.js');
+      const { FeatState } = await import('../../../feat-state.js');
 
       await FeatState.addFeat(actor, 'Test Feat');
 

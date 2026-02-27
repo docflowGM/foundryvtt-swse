@@ -5,7 +5,7 @@
  * Supports all condition types: feats, talents, attributes, skills, Force, etc.
  */
 
-import SWSEFormApplicationV2 from './base/swse-form-application-v2.js';
+import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
 
 export class PrerequisiteBuilderDialog extends SWSEFormApplicationV2 {
   constructor(object = {}, options = {}) {

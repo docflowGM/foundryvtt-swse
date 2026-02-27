@@ -12,7 +12,7 @@
  * - Must be called during Hooks.once('init')
  */
 
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * All templates used by the system.

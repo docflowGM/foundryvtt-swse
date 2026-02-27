@@ -11,9 +11,9 @@
  * All methods are async and return null on error.
  */
 
-import { log } from './foundry-env.js';
-import { assertEmbeddedDocOwnership, validateItemForCreation } from './mutation-safety.js';
-import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
+import { log } from "/systems/foundryvtt-swse/scripts/core/foundry-env.js";
+import { assertEmbeddedDocOwnership, validateItemForCreation } from "/systems/foundryvtt-swse/scripts/core/mutation-safety.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 

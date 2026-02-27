@@ -1,5 +1,5 @@
-import { SWSELogger } from '../utils/logger.js';
-import { slugify, stableJsonId } from '../utils/stable-id.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { slugify, stableJsonId } from "/systems/foundryvtt-swse/scripts/utils/stable-id.js";
 
 /**
  * LanguageRegistry

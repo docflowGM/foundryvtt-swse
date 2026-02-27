@@ -12,8 +12,8 @@
  * - Z-index safety scanning
  */
 
-import { HooksRegistry } from '../infrastructure/hooks/hooks-registry.js';
-import { SWSELogger } from '../utils/logger.js';
+import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/hooks-registry.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * DIAGNOSTIC MODE: Toggle Phase 3 enforcement

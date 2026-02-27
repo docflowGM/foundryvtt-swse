@@ -3,7 +3,7 @@
  * Handle Starship Maneuver selection during level-up
  */
 
-import { StarshipManeuverEngine } from '../../engines/progression/engine/starship-maneuver-engine.js';
+import { StarshipManeuverEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/starship-maneuver-engine.js";
 
 export async function getsStarshipManeuvers(selectedClass, actor) {
   // Check if character has Starship Tactics feat

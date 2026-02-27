@@ -8,7 +8,7 @@
  * - Prevention of cascading mutations
  */
 
-import { log, isGameMaster } from './foundry-env.js';
+import { log, isGameMaster } from "/systems/foundryvtt-swse/scripts/core/foundry-env.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const FLAG_MUTATION_LOCK = 'mutationLocked';

@@ -1,6 +1,6 @@
-import { ForceEnhancementDialog } from '../utils/force-enhancement-dialog.js';
-import { escapeHTML } from '../utils/security-utils.js';
-import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
+import { ForceEnhancementDialog } from "/systems/foundryvtt-swse/scripts/utils/force-enhancement-dialog.js";
+import { escapeHTML } from "/systems/foundryvtt-swse/scripts/utils/security-utils.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * Force Suite Component (RAW SWSE Accurate)

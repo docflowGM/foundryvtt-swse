@@ -10,10 +10,10 @@
  * - Favorites (pinned actions)
  */
 
-import { CombatActionsMapper } from '../combat/utils/combat-actions-mapper.js';
-import { SWSERoll } from '../combat/rolls/enhanced-rolls.js';
-import { SWSECombat } from '../combat/systems/enhanced-combat-system.js';
-import SWSEApplication from './base/swse-application.js';
+import { CombatActionsMapper } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-actions-mapper.js";
+import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
+import { SWSECombat } from "/systems/foundryvtt-swse/scripts/combat/systems/enhanced-combat-system.js";
+import SWSEApplication from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
 
 export class SWSECombatActionBrowser extends SWSEApplication {
 

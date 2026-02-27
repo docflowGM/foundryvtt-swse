@@ -9,7 +9,7 @@
 import fs from 'fs';
 
 // Import ICONS constant
-import { ICONS } from '../utils/icon-constants.js';
+import { ICONS } from "/systems/foundryvtt-swse/scripts/utils/icon-constants.js";
 
 const validKeys = new Set(Object.keys(ICONS));
 const files = process.argv.slice(2);

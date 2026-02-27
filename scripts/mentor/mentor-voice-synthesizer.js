@@ -12,9 +12,9 @@
  * 5. Return synthesized response
  */
 
-import { MentorDialogueResponses } from './mentor-dialogue-responses.js';
-import { MentorSynthesisConfig } from '../engines/mentor/mentor-synthesis-config.js';
-import { SWSELogger } from '../utils/logger.js';
+import { MentorDialogueResponses } from "/systems/foundryvtt-swse/scripts/mentor/mentor-dialogue-responses.js";
+import { MentorSynthesisConfig } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-synthesis-config.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class MentorVoiceSynthesizer {
   /**

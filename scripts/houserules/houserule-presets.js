@@ -1,5 +1,5 @@
 // scripts/houserules/houserule-presets.js
-import { SWSELogger } from '../utils/logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * CENTRAL DEFINITIONS FOR PRESET BUNDLES

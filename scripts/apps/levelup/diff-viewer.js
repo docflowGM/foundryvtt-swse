@@ -3,7 +3,7 @@
  * Displays changes before finalizing progression
  */
 
-import { swseLogger } from '../../utils/logger.js';
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * Compute differences between before and after states

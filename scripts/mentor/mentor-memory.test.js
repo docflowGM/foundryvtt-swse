@@ -24,7 +24,7 @@ import {
   setCommittedPath,
   setTargetClass,
   formatMentorMemory
-} from '../engines/mentor/mentor-memory.js';
+} from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-memory.js';
 
 import {
   calculateDspSaturation,

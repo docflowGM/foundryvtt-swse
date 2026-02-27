@@ -1,5 +1,5 @@
 // scripts/utils/actor-utils.js
-import { swseLogger } from './logger.js';
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 function toIntOrNull(value) {
   if (value === null || value === undefined) {return null;}

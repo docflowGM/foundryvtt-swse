@@ -12,10 +12,10 @@
  * - AppV2 compliant
  */
 
-import { ModifierEngine } from '../engines/effects/modifiers/ModifierEngine.js';
-import { ModifierTypes } from '../engines/effects/modifiers/ModifierTypes.js';
-import { swseLogger } from '../utils/logger.js';
-import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
+import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
+import { ModifierTypes } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class SkillModifierBreakdownApp extends Application {
   constructor(actor, skillKey, options = {}) {

@@ -5,7 +5,7 @@
  * Prevents cascading failures and makes bugs easier to diagnose.
  */
 
-import { log } from './foundry-env.js';
+import { log } from "/systems/foundryvtt-swse/scripts/core/foundry-env.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const MAX_ERROR_LOGS = 100;

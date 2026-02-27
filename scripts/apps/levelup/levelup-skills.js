@@ -3,7 +3,7 @@
  * Handles multiclass bonus skill selection and skill training
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * Select a multiclass bonus skill

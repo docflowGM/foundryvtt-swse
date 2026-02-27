@@ -1,5 +1,5 @@
-import { guardAgainstMutation } from '../../../dev/mutation-guard.js';
-import { concatPatches, makePatch, patchClass, setField } from '../../../engines/progression/engine/progression-patch.js';
+import { guardAgainstMutation } from "/systems/foundryvtt-swse/scripts/dev/mutation-guard.js";
+import { concatPatches, makePatch, patchClass, setField } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-patch.js";
 
 function _buildClassSelectionPatch(_characterData, className) {
   return patchClass(className);

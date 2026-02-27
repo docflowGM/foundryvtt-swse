@@ -5,8 +5,8 @@
  * PHASE 7: All mutations routed through ActorEngine for atomic governance
  */
 
-import { DROID_SYSTEMS } from '../data/droid-systems.js';
-import { ActorEngine } from '../governance/actor-engine/actor-engine.js';
+import { DROID_SYSTEMS } from "/systems/foundryvtt-swse/scripts/data/droid-systems.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class DroidAppendageUtils {
   /**

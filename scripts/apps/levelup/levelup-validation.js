@@ -3,29 +3,46 @@
  * Handles prerequisite checking for classes, talents, and feats
  */
 
-import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
-import { SWSELogger } from '../../utils/logger.js';
-import { isBaseClass } from './levelup-shared.js';
-import { evaluateClassEligibility } from '../../engines/progression/prerequisites/class-prerequisites-cache.js';
-import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
+import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { isBaseClass } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js";
+import { evaluateClassEligibility } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prerequisites-cache.js";
+
+// Cache for prestige class prerequisites loaded from JSON
+let _prestigePrereqCache = null;
 
 /**
- * Get prestige class prerequisites from canonical source (PrerequisiteChecker).
- * Do NOT fetch JSON directly. Always use PrerequisiteChecker as SSOT.
- * @returns {Object} - Prerequisites object
+ * Load prestige class prerequisites from JSON configuration
+ * @returns {Promise<Object>} - Prerequisites object
  */
-function loadPrestigeClassPrerequisites() {
-  SWSELogger.log('SWSE LevelUp | Getting prestige class prerequisites from PrerequisiteChecker (canonical source)');
-  return PrerequisiteChecker.getPrestigePrerequisites();
+async function loadPrestigeClassPrerequisites() {
+  if (_prestigePrereqCache) {
+    return _prestigePrereqCache;
+  }
+
+  try {
+    const response = await fetch('systems/foundryvtt-swse/data/prestige-class-prerequisites.json');
+    if (!response.ok) {
+      throw new Error(`Failed to load prerequisites: ${response.status} ${response.statusText}`);
+    }
+    _prestigePrereqCache = await response.json();
+    SWSELogger.log('SWSE LevelUp | Loaded prestige class prerequisites from JSON');
+    return _prestigePrereqCache;
+  } catch (err) {
+    SWSELogger.error('SWSE LevelUp | Failed to load prestige class prerequisites:', err);
+    ui.notifications.warn('Failed to load prestige class prerequisites. Some classes may not validate correctly.');
+    _prestigePrereqCache = {};
+    return _prestigePrereqCache;
+  }
 }
 
 /**
  * Get prerequisites for a prestige class
  * @param {string} className - Name of the prestige class
- * @returns {string|null} - Prerequisite string or null
+ * @returns {Promise<string|null>} - Prerequisite string or null
  */
-export function getPrestigeClassPrerequisites(className) {
-  const prerequisites = loadPrestigeClassPrerequisites();
+export async function getPrestigeClassPrerequisites(className) {
+  const prerequisites = await loadPrestigeClassPrerequisites();
   const classPrereqs = prerequisites[className];
 
   if (!classPrereqs) {
@@ -47,19 +64,19 @@ export async function meetsClassPrerequisites(classDoc, actor, pendingData) {
   // Base classes have no prerequisites
   if (isBaseClass(classDoc)) {return true;}
 
-  // Load prerequisites for prestige classes from canonical source (PrerequisiteChecker)
-  const prestigePrerequisites = getPrestigeClassPrerequisites(classDoc.name);
+  // Load prerequisites for prestige classes from JSON configuration
+  const prestigePrerequisites = await getPrestigeClassPrerequisites(classDoc.name);
 
   // If we have prerequisites from JSON, use those
   if (prestigePrerequisites) {
     const classDocWithPrereqs = { system: { prerequisites: prestigePrerequisites } };
-    const assessment = AbilityEngine.evaluateAcquisition(actor, classDocWithPrereqs, pendingData);
-    return assessment.legal;
+    const result = PrerequisiteChecker.checkClassLevelPrerequisites(actor, classDocWithPrereqs, pendingData);
+    return result.met;
   }
 
   // Fall back to checking classDoc prerequisites
-  const assessment = AbilityEngine.evaluateAcquisition(actor, classDoc, pendingData);
-  return assessment.legal;
+  const result = PrerequisiteChecker.checkClassLevelPrerequisites(actor, classDoc, pendingData);
+  return result.met;
 }
 
 /**
@@ -108,11 +125,11 @@ export function getClassEligibilityDetails(className, actor, pendingData = {}) {
  * @returns {{valid: boolean, reasons: string[]}}
  */
 export function checkTalentPrerequisites(talent, actor, pendingData) {
-  const assessment = AbilityEngine.evaluateAcquisition(actor, talent, pendingData);
+  const result = PrerequisiteChecker.checkTalentPrerequisites(actor, talent, pendingData);
   // Return in legacy format for backward compatibility with callers
   return {
-    valid: assessment.legal,
-    reasons: assessment.missingPrereqs
+    valid: result.met,
+    reasons: result.missing
   };
 }
 
@@ -124,5 +141,5 @@ export function checkTalentPrerequisites(talent, actor, pendingData) {
  * @returns {Array} Filtered feats with isQualified flag
  */
 export function filterQualifiedFeats(feats, actor, pendingData) {
-  return AbilityEngine.filterQualifiedFeats(feats, actor, pendingData);
+  return PrerequisiteChecker.filterQualifiedFeats(feats, actor, pendingData);
 }

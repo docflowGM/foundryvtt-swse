@@ -2,7 +2,7 @@
  * force-secret-picker.js
  * Force Secret picker UI using FormApplication + HBS template.
  */
-import SWSEFormApplicationV2 from '../../apps/base/swse-form-application-v2.js';
+import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
 
 export class ForceSecretPicker extends SWSEFormApplicationV2 {
   /**
@@ -119,7 +119,7 @@ async _prepareContext(options) {
 
   async _askMentor() {
     try {
-      const { ForceSecretSuggestionEngine } = await import('../../progression/engine/force-secret-suggestion-engine.js');
+      const { ForceSecretSuggestionEngine } = await import('../../../force-secret-suggestion-engine.js');
 
       if (!this.actor) {return;}
 

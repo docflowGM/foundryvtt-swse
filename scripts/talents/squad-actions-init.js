@@ -3,8 +3,8 @@
  * Exposes a macro menu for Squad Actions talent (followers).
  */
 
-import SquadActionsMechanics from '../engines/talent/squad-actions-mechanics.js';
-import { SWSELogger } from '../utils/logger.js';
+import SquadActionsMechanics from "/systems/foundryvtt-swse/scripts/engine/talent/squad-actions-mechanics.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 Hooks.once('ready', () => {
   SWSELogger.log('SWSE System | Initializing Squad Actions (Followers)');
