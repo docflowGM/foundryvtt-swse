@@ -448,4 +448,3 @@ WEEK 3-4 (PHASE 6):
 - Architecture is clean
 
 **Recommendation: Start today.**
-
