@@ -29,16 +29,15 @@ export async function initializeClassPrerequisitesCache() {
     try {
         SWSELogger.log('[ClassPrereqInit] Initializing class prerequisites cache...');
 
-        // Get classes compendium
-        const classPack = game.packs.get('foundryvtt-swse.classes');
-        if (!classPack) {
-            SWSELogger.warn('[ClassPrereqInit] Classes compendium not found. Cache not initialized.');
-            return { success: false, error: 'Classes compendium not found' };
+        // Get classes from registry
+        if (!ClassesRegistry.isInitialized()) {
+            SWSELogger.warn('[ClassPrereqInit] ClassesRegistry not initialized. Cache not initialized.');
+            return { success: false, error: 'ClassesRegistry not initialized' };
         }
 
         // Load all class documents
-        SWSELogger.log('[ClassPrereqInit] Loading class documents from compendium...');
-        const classDocuments = await classPack.getDocuments();
+        SWSELogger.log('[ClassPrereqInit] Loading class documents from registry...');
+        const classDocuments = ClassesRegistry.getAll();
         SWSELogger.log(`[ClassPrereqInit] Loaded ${classDocuments.length} class documents`);
 
         // Normalize and cache

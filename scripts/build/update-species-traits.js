@@ -1,3 +1,4 @@
+import { SpeciesRegistry } from '../engine/registries/species-registry.js';
 /**
  * Update Species Compendium with Racial Traits
  *

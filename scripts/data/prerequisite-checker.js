@@ -86,6 +86,26 @@ export class PrerequisiteChecker {
         }
     }
 
+    // ============================================================
+    // PRESTIGE PREREQUISITES — CANONICAL AUTHORITY
+    // ============================================================
+
+    /**
+     * Get prestige class prerequisites (CANONICAL SOURCE).
+     *
+     * This is the ONLY method in the system that loads prestige prerequisites.
+     * All other modules must call this method instead of loading JSON directly.
+     *
+     * Loads from PRESTIGE_PREREQUISITES (imported from prestige-prerequisites.js).
+     * This import is the SSOT for prestige prerequisite rules.
+     *
+     * @returns {Object} Prerequisites object - {className: prerequisiteString}
+     * @static
+     */
+    static getPrestigePrerequisites() {
+        return PRESTIGE_PREREQUISITES;
+    }
+
     /**
      * UUID-FIRST RESOLUTION for structured prerequisites.
      *

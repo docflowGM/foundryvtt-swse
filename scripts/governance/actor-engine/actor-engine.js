@@ -6,6 +6,9 @@ import { determineLevelFromXP } from "/systems/foundryvtt-swse/scripts/engine/sh
 import { DerivedCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import { MutationApplicationError } from "/systems/foundryvtt-swse/scripts/governance/mutation/mutation-errors.js";
+import { PrerequisiteIntegrityChecker } from "/systems/foundryvtt-swse/scripts/governance/integrity/prerequisite-integrity-checker.js";
+import { PreflightValidator } from "/systems/foundryvtt-swse/scripts/governance/enforcement/preflight-validator.js";
+import { MissingPrereqsTracker } from "/systems/foundryvtt-swse/scripts/governance/integrity/missing-prereqs-tracker.js";
 
 /**
  * ActorEngine
@@ -2588,6 +2591,125 @@ export const ActorEngine = {
           underlyingError: error
         }
       );
+    }
+  },
+
+  /**
+   * PHASE 5C-4: Apply a repair proposal
+   *
+   * Route GM-approved repair proposals through ActorEngine.
+   * Respects governance modes and runs full validation.
+   *
+   * @param {Actor} actor - Actor to repair
+   * @param {Object} proposal - Repair proposal from ActorRepairEngine
+   *   { type, itemId, reason, ... }
+   * @param {Object} options - Mutation options
+   * @returns {Promise<Object>} Result { success, reason, actor }
+   */
+  async applyRepair(actor, proposal, options = {}) {
+    if (!actor) {
+      throw new Error('applyRepair() called with no actor');
+    }
+
+    if (!proposal) {
+      throw new Error('applyRepair() called without proposal');
+    }
+
+    try {
+      SWSELogger.log(`[5C-4] Applying repair: ${proposal.type} on ${actor.name}`, {
+        proposalId: proposal.id,
+        proposalType: proposal.type,
+        reason: proposal.reason
+      });
+
+      // Build mutation from proposal type
+      let mutation;
+
+      switch (proposal.type) {
+        case 'removeItem':
+          // Remove item mutation
+          mutation = {
+            operation: 'remove-items',
+            itemsToRemove: [proposal.itemId],
+            updates: {},
+            reason: `Repair: ${proposal.reason}`
+          };
+          break;
+
+        case 'suggestAcquisition':
+          // This is informational only - don't auto-add
+          // Instead, return suggestion for GM to handle
+          return {
+            success: false,
+            reason: 'Acquisition must be performed manually via character sheet',
+            suggestion: {
+              type: 'suggestAcquisition',
+              candidateId: proposal.candidateId,
+              candidateName: proposal.candidateName
+            },
+            actor: actor
+          };
+
+        case 'classAdjustment':
+          // Class changes are complex - require manual review
+          return {
+            success: false,
+            reason: 'Class adjustments must be reviewed and applied manually',
+            suggestion: {
+              type: 'classAdjustment',
+              details: proposal.details
+            },
+            actor: actor
+          };
+
+        default:
+          throw new Error(`Unknown repair type: ${proposal.type}`);
+      }
+
+      // Run PreflightValidator
+      const preflightResult = await PreflightValidator.validateBeforeMutation(
+        actor,
+        mutation,
+        { source: 'repair', reason: proposal.reason }
+      );
+
+      // If blocked, return error
+      if (preflightResult.outcome === 'block') {
+        return {
+          success: false,
+          reason: `Repair blocked by governance: ${preflightResult.reason}`,
+          actor: actor
+        };
+      }
+
+      // Apply repair via appropriate method
+      let result;
+
+      if (proposal.type === 'removeItem') {
+        // Delete the item
+        await this.deleteEmbeddedDocuments(actor, 'Item', [proposal.itemId], {
+          source: 'repair'
+        });
+        result = { deletedItemId: proposal.itemId };
+      }
+
+      // Recalc and integrity check already happen in called methods
+      // Verify repair worked
+      const violations = MissingPrereqsTracker.getMissingPrereqs(actor);
+      const itemViolations = violations.filter(v => v.itemId === proposal.itemId);
+
+      return {
+        success: true,
+        reason: 'Repair applied successfully',
+        result: result,
+        remainingViolations: violations.length,
+        itemViolationsResolved: itemViolations.length === 0,
+        actor: actor
+      };
+
+    } catch (err) {
+      SWSELogger.error(`[5C-4] Repair failed on ${actor?.name}:`, err);
+      throw err;
     }
   }
 };
