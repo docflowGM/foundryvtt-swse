@@ -55,7 +55,7 @@ export const TalentDB = {
             continue;
           }
 
-          const normalized = normalizeTalent(raw, talentTreeDB?.trees);
+          const normalized = normalizeTalent(raw, talentTreeDB);
 
           if (!validateTalent(normalized)) {
             warnings++;
