@@ -1,4 +1,5 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 /**
  * Starship Maneuver Hooks
  * Handles automatic maneuver grants when feats are added or abilities change
@@ -90,9 +91,12 @@ export function initializeStarshipManeuverHooks() {
       );
 
       if (spentManeuvers.length > 0) {
-        for (const maneuver of spentManeuvers) {
-          await maneuver.update({ 'system.spent': false });
-        }
+        // PHASE 3.0: Route through ActorEngine for governance
+        const updates = spentManeuvers.map(m => ({
+          _id: m.id,
+          'system.spent': false
+        }));
+        await ActorEngine.updateItems(combatant.actor, updates);
         SWSELogger.log(`SWSE | Starship Maneuvers | Regained ${spentManeuvers.length} maneuvers for ${combatant.actor.name}`);
       }
     }

@@ -66,4 +66,59 @@ export class StarshipManeuverEngine {
       return { success: false, error: e.message };
     }
   }
+
+  /**
+   * Handle Starship Maneuver selection trigger from finalization/level-up pipeline
+   * Opens picker UI and applies selected maneuvers
+   *
+   * PHASE 3.0: Minimal implementation for emergency stabilization
+   * - Opens StarshipManeuverPicker
+   * - Applies selected via ActorEngine (no direct mutations)
+   * - No advanced authority logic (deferred to Phase 3.1+)
+   *
+   * @param {Actor} actor - The actor selecting maneuvers
+   * @param {Number} count - How many maneuvers to select
+   * @returns {Promise<Object>} Result with applied count
+   */
+  static async handleStarshipManeuverTriggers(actor, count = 1) {
+    if (count <= 0) {
+      swseLogger.log('StarshipManeuverEngine: No maneuvers to select', { count });
+      return { success: true, applied: 0 };
+    }
+
+    try {
+      // Dynamically import picker to avoid circular dependencies
+      const { StarshipManeuverPicker } = await import('/systems/foundryvtt-swse/scripts/apps/progression/starship-maneuver-picker.js');
+
+      // Get available maneuvers (actor's existing maneuver items)
+      const available = await this.collectAvailableManeuvers(actor);
+
+      if (available.length === 0) {
+        swseLogger.warn('StarshipManeuverEngine: No maneuvers available on actor');
+        ui.notifications.warn('No Starship Maneuvers available to select.');
+        return { success: true, applied: 0 };
+      }
+
+      // Open picker and get selection
+      const selected = await StarshipManeuverPicker.select(available, count, actor);
+
+      if (selected && selected.length > 0) {
+        // Apply selected maneuvers to suite via ActorEngine
+        const result = await this.applySelected(actor, selected);
+        swseLogger.log('StarshipManeuverEngine: Maneuvers selected', {
+          count: selected.length,
+          actorName: actor.name
+        });
+        return result;
+      }
+
+      swseLogger.log('StarshipManeuverEngine: User cancelled maneuver selection');
+      return { success: true, applied: 0 };
+
+    } catch (e) {
+      swseLogger.error('StarshipManeuverEngine.handleStarshipManeuverTriggers error', e);
+      ui.notifications.error('Failed to open Maneuver selection. See console for details.');
+      return { success: false, error: e.message };
+    }
+  }
 }
