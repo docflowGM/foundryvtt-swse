@@ -500,6 +500,15 @@ export function registerHouseruleSettings() {
     default: 'strict'
   });
 
+  register('allowSuiteReselection', {
+    name: 'Allow Suite Reselection on Level Up',
+    hint: 'When enabled, Force Powers and Starship Maneuvers may be fully reselected during level up. Suites are cleared and rebuilt with current derived capacity. GM-only setting.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   /* -------------------------------------------------------------------------- */
   /*                                COMBAT FEATS                                 */
   /* -------------------------------------------------------------------------- */
