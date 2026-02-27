@@ -12,6 +12,8 @@ import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/
 import { MentorSurvey } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey.js";
 import { _findTalentItem } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+// Phase 1: Talent Slot Validation
+import { TalentSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/slot-validator.js";
 
 /**
  * Calculate feat/talent suggestions during chargen
@@ -515,9 +517,25 @@ export async function _onSelectTalent(event) {
     }
 
     // Check talent slot limit for Block & Deflect (grants 2 talents)
-    if (!this.freeBuild && (this.characterData.talents.length + talentsToAdd.length) > this.characterData.talentsRequired) {
-      ui.notifications.warn(`You don't have enough talent slots for Block & Deflect (requires ${talentsToAdd.length} slots, you have ${this.characterData.talentsRequired - this.characterData.talents.length} available)!`);
-      return;
+    // Phase 1: Use structured slot validation if available
+    if (!this.freeBuild) {
+      const talentSlots = this.characterData.talentSlots || [];
+      if (talentSlots && talentSlots.length > 0) {
+        const validation = TalentSlotValidator.validateTotalSlots(
+          [...this.characterData.talents, ...talentsToAdd],
+          talentSlots
+        );
+        if (!validation.valid) {
+          ui.notifications.warn(`${validation.message} (Block & Deflect requires ${talentsToAdd.length} slots)`);
+          return;
+        }
+      } else {
+        // Fallback to numeric validation
+        if ((this.characterData.talents.length + talentsToAdd.length) > this.characterData.talentsRequired) {
+          ui.notifications.warn(`You don't have enough talent slots for Block & Deflect (requires ${talentsToAdd.length} slots, you have ${this.characterData.talentsRequired - this.characterData.talents.length} available)!`);
+          return;
+        }
+      }
     }
 
     // Check for duplicates and prerequisites for each talent
@@ -579,9 +597,23 @@ export async function _onSelectTalent(event) {
     }
 
     // Check talent slot limit (unless free build mode is on)
-    if (!this.freeBuild && this.characterData.talents.length >= this.characterData.talentsRequired) {
-      ui.notifications.warn(`You've already selected the maximum number of talents (${this.characterData.talentsRequired})!`);
-      return;
+    // Phase 1: Use structured slot validation if available
+    if (!this.freeBuild) {
+      const talentSlots = this.characterData.talentSlots || [];
+      if (talentSlots && talentSlots.length > 0) {
+        const availableSlots = talentSlots.filter(s => !s.consumed).length;
+        const selectedCount = this.characterData.talents.length;
+        if (selectedCount >= talentSlots.length) {
+          ui.notifications.warn(`You've already selected the maximum number of talents (${talentSlots.length})!`);
+          return;
+        }
+      } else {
+        // Fallback to numeric validation
+        if (this.characterData.talents.length >= this.characterData.talentsRequired) {
+          ui.notifications.warn(`You've already selected the maximum number of talents (${this.characterData.talentsRequired})!`);
+          return;
+        }
+      }
     }
 
     // If leveling up, also check existing actor items

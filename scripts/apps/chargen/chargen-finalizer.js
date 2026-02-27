@@ -129,6 +129,24 @@ export class ChargenFinalizer {
       Object.assign(actorData.system, snapshot.systemData);
     }
 
+    // Phase 1: Store structured talent slots
+    if (snapshot.talentSlots) {
+      if (!actorData.system.progression) {
+        actorData.system.progression = {};
+      }
+      actorData.system.progression.talentSlots = foundry.utils.deepClone(snapshot.talentSlots);
+      SWSELogger.log(`[CHARGEN FINALIZER] Stored ${snapshot.talentSlots.length} talent slots in actor`);
+    }
+
+    // Phase 1: Store unlocked trees
+    if (snapshot.unlockedTrees) {
+      if (!actorData.system.progression) {
+        actorData.system.progression = {};
+      }
+      actorData.system.progression.unlockedTrees = foundry.utils.deepClone(snapshot.unlockedTrees);
+      SWSELogger.log(`[CHARGEN FINALIZER] Stored ${snapshot.unlockedTrees.length} unlocked trees in actor`);
+    }
+
     return actorData;
   }
 
