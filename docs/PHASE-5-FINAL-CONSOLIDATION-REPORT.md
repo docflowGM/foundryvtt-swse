@@ -19,7 +19,7 @@ Phase 5 has successfully integrated armor upgrades into the ModifierEngine syste
 
 ### A. Upgrade Modifier Registration
 
-**File:** `scripts/engines/effects/modifiers/ModifierEngine.js` (Lines 882-984)
+**File:** `scripts/engine/effects/modifiers/ModifierEngine.js` (Lines 882-984)
 
 **Architecture:**
 

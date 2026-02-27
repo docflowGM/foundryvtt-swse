@@ -39,8 +39,8 @@ The weapons system has been completely refactored to achieve full V2 compliance.
 ### ✅ Phase 2: WeaponsEngine Implementation (COMPLETE)
 
 **Deliverables:**
-- `scripts/engines/combat/weapons-engine.js` (397 lines)
-- `scripts/engines/effects/modifiers/ModifierEngine.js` — Updated with `_getWeaponModifiers()`
+- `scripts/engine/combat/weapons-engine.js` (397 lines)
+- `scripts/engine/effects/modifiers/ModifierEngine.js` — Updated with `_getWeaponModifiers()`
 
 **Components Implemented:**
 
@@ -268,7 +268,7 @@ Weapon + Actor → WeaponsEngine.getWeaponModifiers()
 ## FILES CREATED
 
 ### Phase 2: WeaponsEngine
-- `scripts/engines/combat/weapons-engine.js` — 397 lines
+- `scripts/engine/combat/weapons-engine.js` — 397 lines
 
 ### Phase 3: Structured Flags & Migrations
 - `scripts/migration/weapon-talents-migration.js` — 240 lines
@@ -290,7 +290,7 @@ Weapon + Actor → WeaponsEngine.getWeaponModifiers()
 ## FILES MODIFIED
 
 ### Core Integration
-- `scripts/engines/effects/modifiers/ModifierEngine.js` — Added WeaponsEngine import and `_getWeaponModifiers()` method
+- `scripts/engine/effects/modifiers/ModifierEngine.js` — Added WeaponsEngine import and `_getWeaponModifiers()` method
 
 ### Template & Config
 - `template.json` — Added weaponTalentFlags and weaponProperties to schemas

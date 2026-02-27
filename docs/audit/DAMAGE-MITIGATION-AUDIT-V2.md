@@ -102,7 +102,7 @@ Item (Armor type="shield")
 
 - **Character schema**: No DR field
 - **Vehicle schema**: `system.damageReduction` (NumberField, no rules)
-- **Calculation**: `scripts/engines/combat/vehicles/utils/vehicle-calculations.js:computeVehicleDefensiveStats()`
+- **Calculation**: `scripts/engine/combat/vehicles/utils/vehicle-calculations.js:computeVehicleDefensiveStats()`
   - Reads `system.damageReduction` but returns only
   - Never called in damage application
 - **Combat integration**: Zero integration
@@ -148,7 +148,7 @@ Item (Armor type="shield")
 
 ### 5️⃣ DAMAGE RESOLUTION ENGINE — COMPLIANT (BUT INCOMPLETE)
 
-**Location**: `scripts/engines/combat/damage-resolution-engine.js`
+**Location**: `scripts/engine/combat/damage-resolution-engine.js`
 
 **Status**: ✅ Pure calculation, no mutation, correct pipeline
 

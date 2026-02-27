@@ -19,7 +19,7 @@ Phase 1 has successfully implemented armor modifier registration in ModifierEngi
 
 ### A. ModifierEngine._getItemModifiers() Implementation
 
-**File:** `/home/user/foundryvtt-swse/scripts/engines/effects/modifiers/ModifierEngine.js` (Lines 651-820)
+**File:** `/home/user/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js` (Lines 651-820)
 
 **Status:** ✅ IMPLEMENTED
 

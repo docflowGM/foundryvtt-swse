@@ -134,7 +134,7 @@ Droid actor created in world
 
 ### Current Transaction Model
 
-**File:** `scripts/engines/store/store-transaction-engine.js:43-157`
+**File:** `scripts/engine/store/store-transaction-engine.js:43-157`
 
 ```
 Phase 1: Pre-validation (read-only)

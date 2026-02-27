@@ -1,25 +1,22 @@
 /**
  * starship-maneuver-engine.js
  * Unified Starship Maneuver engine for SWSE progression.
- * Handles trigger detection, collection, and selection of starship maneuvers.
+ *
+ * PURE ENGINE LAYER - NO UI IMPORTS
+ *
+ * Responsibilities:
+ * - Collect available maneuvers from actor's items (data layer)
+ * - Apply selected maneuvers to actor via ActorEngine (mutation)
+ * - Return structured results (no UI orchestration)
+ *
+ * Note: UI orchestration (opening pickers, user interaction) belongs in apps/ layer.
+ * Apps should call collectAvailableManeuvers(), show UI, then call applySelected().
  */
 
-import { StarshipManeuverPicker } from "/systems/foundryvtt-swse/scripts/apps/progression/starship-maneuver-picker.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class StarshipManeuverEngine {
-  /**
-   * Handle starship maneuver triggers (from feature dispatcher)
-   * @param {Actor} actor - The actor gaining maneuvers
-   * @param {number} count - Number of maneuvers to select
-   */
-  static async handleStarshipManeuverTriggers(actor, count = 1) {
-    if (count > 0) {
-      await this.openPicker(actor, count);
-    }
-  }
-
   /**
    * Collect available maneuvers from actor's items (maneuvers are typically embedded)
    * @param {Actor} actor - The actor selecting maneuvers
@@ -37,23 +34,10 @@ export class StarshipManeuverEngine {
   }
 
   /**
-   * Open the starship maneuver picker UI
-   * @param {Actor} actor - The actor selecting maneuvers
-   * @param {number} count - Number of maneuvers to select
-   */
-  static async openPicker(actor, count) {
-    const available = await this.collectAvailableManeuvers(actor);
-    const selected = await StarshipManeuverPicker.select(available, count, actor);
-
-    if (selected && selected.length) {
-      await this.applySelected(actor, selected);
-    }
-  }
-
-  /**
    * Apply selected maneuvers to the actor
    * @param {Actor} actor - The actor
    * @param {Array} selectedItems - Selected maneuver documents/objects
+   * @returns {Promise<Object>} Result object with applied maneuvers
    */
   static async applySelected(actor, selectedItems = []) {
     // For maneuvers, we typically just mark them as selected in the suite
@@ -71,13 +55,15 @@ export class StarshipManeuverEngine {
         // Add new maneuvers to suite
         maneuverIds.forEach(id => existing.add(id));
 
-        // PHASE 3: Route through ActorEngine
         await ActorEngine.updateActor(actor, {
           'system.starshipManeuverSuite.maneuvers': Array.from(existing)
         });
+        return { success: true, applied: maneuverIds.length };
       }
+      return { success: true, applied: 0 };
     } catch (e) {
       swseLogger.error('StarshipManeuverEngine.applySelected error', e);
+      return { success: false, error: e.message };
     }
   }
 }

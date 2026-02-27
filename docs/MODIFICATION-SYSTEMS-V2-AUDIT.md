@@ -42,7 +42,7 @@
 - **Nature:** Feature stubbed but inactive.
 
 ### 1.6 Vehicle Combat Systems (Direct Violations)
-**File:** `scripts/engines/combat/starship/*.js`
+**File:** `scripts/engine/combat/starship/*.js`
 - **enhanced-commander.js:151** `await vehicle.update({...})`
 - **enhanced-commander.js:178** `await vehicle.update({...})`
 - **enhanced-engineer.js:179** `await vehicle.update({...})`
@@ -76,7 +76,7 @@ The codebase implements sophisticated enforcement:
 - Routes owned items via `actor.updateOwnedItem()` (safer, goes through actor mutation)
 - Allows unowned items direct `item.update()`
 
-**DroidEngine Pattern** (`scripts/engines/engine/droid-engine.js`):
+**DroidEngine Pattern** (`scripts/engine/engine/droid-engine.js`):
 - Builds `MutationPlan` with atomic updates
 - Routes all droid mod mutations through ActorEngine
 - **MODEL OF COMPLIANCE** for how mod systems should work

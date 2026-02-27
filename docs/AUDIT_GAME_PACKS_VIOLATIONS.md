@@ -168,7 +168,7 @@ game.packs.get('foundryvtt-swse.talents') [secrets] → ForceRegistry.getByType(
 - Updated getTalentsByTree() to use TalentRegistry.search()
 
 ### Step 3: Update SuggestionEngine.js ✅
-**File:** `scripts/engines/suggestion/SuggestionEngine.js`
+**File:** `scripts/engine/suggestion/SuggestionEngine.js`
 **Status:** COMPLETE
 **Lines:** 1210-1211
 **Change:** Replaced game.packs with registry existence checks
@@ -187,7 +187,7 @@ if (!itemExists) {continue;}
 ```
 
 ### Step 4: Update ForcePowerEngine.js ✅
-**File:** `scripts/engines/progression/engine/force-power-engine.js`
+**File:** `scripts/engine/progression/engine/force-power-engine.js`
 **Status:** COMPLETE
 **Lines:** 41
 **Change:** Refactored _countFromFeat() to use FeatRegistry
@@ -196,7 +196,7 @@ if (!itemExists) {continue;}
 - Falls back to hardcoded data if registry not available
 
 ### Step 5: Update ForceProgression.js ✅
-**File:** `scripts/engines/progression/engine/force-progression.js`
+**File:** `scripts/engine/progression/engine/force-progression.js`
 **Status:** COMPLETE
 **Lines:** 188, 225, 249, 265
 **Changes:**
@@ -207,7 +207,7 @@ if (!itemExists) {continue;}
 - createForceSecretChoice: Uses TalentRegistry.search() instead of game.packs.getDocuments()
 
 ### Step 6: Audit CompendiumResolver ✅
-**File:** `scripts/engines/suggestion/CompendiumResolver.js`
+**File:** `scripts/engine/suggestion/CompendiumResolver.js`
 **Status:** COMPLETE - ACCEPTABLE
 **Usage Context:**
 - Only used in SuggestionService for drift-safe reference resolution

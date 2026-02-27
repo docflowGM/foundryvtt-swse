@@ -1,8 +1,18 @@
 /**
  * force-power-engine.js
  * Unified Force Power engine for SWSE progression.
- * - Detects triggers (feats, class levels, templates) and opens the picker.
- * - Applies selected powers to the actor as Item documents.
+ *
+ * PURE ENGINE LAYER - NO UI IMPORTS
+ *
+ * Responsibilities:
+ * - Calculate force power grants from feats, class levels, templates (pure logic)
+ * - Collect available powers from compendium (data layer)
+ * - Apply selected powers to actor via ActorEngine (mutation)
+ * - Return structured trigger results (no UI orchestration)
+ *
+ * Note: UI orchestration (opening pickers, user interaction) belongs in apps/ layer.
+ * Apps should call detectForcePowerTriggers(), show UI with collectAvailablePowers(),
+ * then call applySelected().
  *
  * COMPENDIUM MIGRATION NOTES:
  * To move force power grants from hardcoded data to compendiums:
@@ -19,7 +29,6 @@
  */
 
 import { FORCE_POWER_DATA } from "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js";
-import { ForcePowerPicker } from "/systems/foundryvtt-swse/scripts/apps/progression/force-power-picker.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
@@ -129,30 +138,49 @@ static _countFromTemplate(templateId) {
 }
 
 /**
- * updateSummary is a lightweight object describing what's been added
+ * Detect force power triggers and calculate count needed
+ * Does not open UI - returns data for apps layer to use
+ * @param {Actor} actor - The actor
+ * @param {Object} updateSummary - Object describing what's been added
+ * @returns {Promise<Object>} Trigger result with count and reason
  */
-static async handleForcePowerTriggers(actor, updateSummary = {}) {
+static async detectForcePowerTriggers(actor, updateSummary = {}) {
   let selectable = 0;
+  const reasons = [];
 
   if (Array.isArray(updateSummary.featsAdded)) {
     for (const ft of updateSummary.featsAdded) {
-      selectable += await this._countFromFeat(ft, actor);
+      const count = await this._countFromFeat(ft, actor);
+      if (count > 0) {
+        selectable += count;
+        reasons.push(`Feat: ${ft} (+${count})`);
+      }
     }
   }
 
   if (Array.isArray(updateSummary.classLevelsAdded)) {
     for (const cl of updateSummary.classLevelsAdded) {
-      selectable += await this._countFromClassLevel(cl.class, cl.level);
+      const count = await this._countFromClassLevel(cl.class, cl.level);
+      if (count > 0) {
+        selectable += count;
+        reasons.push(`Class: ${cl.class} level ${cl.level} (+${count})`);
+      }
     }
   }
 
   if (typeof updateSummary.templateApplied === 'string') {
-    selectable += this._countFromTemplate(updateSummary.templateApplied);
+    const count = this._countFromTemplate(updateSummary.templateApplied);
+    if (count > 0) {
+      selectable += count;
+      reasons.push(`Template: ${updateSummary.templateApplied} (+${count})`);
+    }
   }
 
-  if (selectable > 0) {
-    await this.openPicker(actor, selectable);
-  }
+  return {
+    triggersDetected: selectable > 0,
+    selectable,
+    reasons
+  };
 }
 
 static async collectAvailablePowers(actor) {
@@ -176,15 +204,6 @@ static async collectAvailablePowers(actor) {
   } catch (e) {
     swseLogger.error('ForcePowerEngine: Failed to collect powers from compendium', e);
     return [];
-  }
-}
-
-static async openPicker(actor, count) {
-  const available = await this.collectAvailablePowers(actor);
-  const selected = await ForcePowerPicker.select(available, count);
-
-  if (selected && selected.length) {
-    await this.applySelected(actor, selected);
   }
 }
 
@@ -218,11 +237,13 @@ static async applySelected(actor, selectedItems = []) {
     }
 
     if (toCreate.length) {
-      // PHASE 3: Route through ActorEngine
       await ActorEngine.createEmbeddedDocuments(actor, 'Item', toCreate);
+      return { success: true, applied: toCreate.length };
     }
+    return { success: true, applied: 0 };
   } catch (e) {
     swseLogger.error('ForcePowerEngine.applySelected error', e);
+    return { success: false, error: e.message };
   }
 }
 }

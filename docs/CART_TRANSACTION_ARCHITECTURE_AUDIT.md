@@ -187,7 +187,7 @@ This is a UX gap but NOT an atomicity issue.
 
 ### 4️⃣ Current Transaction Flow
 
-**File:** `scripts/apps/store/store-checkout.js:654-813` + `scripts/engines/store/store-engine.js:147-320`
+**File:** `scripts/apps/store/store-checkout.js:654-813` + `scripts/engine/store/store-engine.js:147-320`
 
 ```
 checkout()

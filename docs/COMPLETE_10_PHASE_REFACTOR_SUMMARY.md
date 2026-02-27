@@ -98,7 +98,7 @@ This document summarizes the complete refactoring of the SWSE commerce system fr
 - `buildMetadata()` - return logging metadata
 
 ### Changes
-- Created `scripts/engines/store/ledger-service.js`
+- Created `scripts/engine/store/ledger-service.js`
 - `store-engine.js`: Delegated credit operations to LedgerService
 - Pure domain math, no mutations, no side effects
 
@@ -131,7 +131,7 @@ Phase 6: Apply atomically via ActorEngine
 ```
 
 ### Changes
-- Created `scripts/engines/store/transaction-engine.js`
+- Created `scripts/engine/store/transaction-engine.js`
 - TransactionEngine.execute() - 6-phase atomic pipeline
 - All plans compiled before any mutation
 - Single mutation point: ActorEngine
@@ -162,7 +162,7 @@ Phase 6: Apply atomically via ActorEngine
 - Generates temporary IDs for later resolution
 
 ### Changes
-- Created `scripts/engines/vehicles/vehicle-factory.js`
+- Created `scripts/engine/vehicles/vehicle-factory.js`
 - `store-checkout.js`: Updated `createVehiclePlans()` to use factory
 - `transaction-engine.js`: Integrated VehicleFactory into pipeline
 
@@ -191,7 +191,7 @@ Phase 6: Apply atomically via ActorEngine
 - Returns MutationPlan fragment
 
 ### Changes
-- Created `scripts/engines/store/placement-router.js`
+- Created `scripts/engine/store/placement-router.js`
 - `transaction-engine.js`: Routes created assets via PlacementRouter
 - PlacementRouter uses purchaser type to determine destination
 
@@ -220,7 +220,7 @@ Phase 6: Apply atomically via ActorEngine
 - Unified droid and vehicle creation pipeline
 
 ### Changes
-- Created `scripts/engines/droids/droid-factory.js`
+- Created `scripts/engine/droids/droid-factory.js`
 - `store-checkout.js`: Updated `createDroidPlans()` to use factory
 - `transaction-engine.js`: Updated `_compileCartItem()` to handle both
 

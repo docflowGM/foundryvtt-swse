@@ -1,25 +1,22 @@
 /**
  * force-secret-engine.js
  * Unified Force Secret engine for SWSE progression.
- * Handles trigger detection, collection, and selection of force secrets.
+ *
+ * PURE ENGINE LAYER - NO UI IMPORTS
+ *
+ * Responsibilities:
+ * - Collect available secrets from compendium (data layer)
+ * - Apply selected secrets to actor via ActorEngine (mutation)
+ * - Return structured results (no UI orchestration)
+ *
+ * Note: UI orchestration (opening pickers, user interaction) belongs in apps/ layer.
+ * Apps should call collectAvailableSecrets(), show UI, then call applySelected().
  */
 
-import { ForceSecretPicker } from "/systems/foundryvtt-swse/scripts/apps/progression/force-secret-picker.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class ForceSecretEngine {
-  /**
-   * Handle force secret triggers (from feature dispatcher)
-   * @param {Actor} actor - The actor gaining secrets
-   * @param {number} count - Number of secrets to select
-   */
-  static async handleForceSecretTriggers(actor, count = 1) {
-    if (count > 0) {
-      await this.openPicker(actor, count);
-    }
-  }
-
   /**
    * Collect available secrets from compendium
    * @param {Actor} actor - The actor (unused but for API consistency)
@@ -50,23 +47,10 @@ export class ForceSecretEngine {
   }
 
   /**
-   * Open the force secret picker UI
-   * @param {Actor} actor - The actor selecting secrets
-   * @param {number} count - Number of secrets to select
-   */
-  static async openPicker(actor, count) {
-    const available = await this.collectAvailableSecrets(actor);
-    const selected = await ForceSecretPicker.select(available, count, actor);
-
-    if (selected && selected.length) {
-      await this.applySelected(actor, selected);
-    }
-  }
-
-  /**
    * Apply selected secrets to the actor
    * @param {Actor} actor - The actor
    * @param {Array} selectedItems - Selected secret documents/objects
+   * @returns {Promise<Object>} Result object with applied items
    */
   static async applySelected(actor, selectedItems = []) {
     const existing = new Set(
@@ -99,11 +83,13 @@ export class ForceSecretEngine {
       }
 
       if (toCreate.length) {
-        // PHASE 3: Route through ActorEngine
         await ActorEngine.createEmbeddedDocuments(actor, 'Item', toCreate);
+        return { success: true, applied: toCreate.length };
       }
+      return { success: true, applied: 0 };
     } catch (e) {
       swseLogger.error('ForceSecretEngine.applySelected error', e);
+      return { success: false, error: e.message };
     }
   }
 }

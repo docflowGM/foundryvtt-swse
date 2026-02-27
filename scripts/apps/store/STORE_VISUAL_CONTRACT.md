@@ -295,7 +295,7 @@ Both are accurate; both serve their medium.
 
 ### Related Decisions
 
-* **Services Architecture:** `scripts/engines/store/SERVICES_ARCHITECTURE.md`
+* **Services Architecture:** `scripts/engine/store/SERVICES_ARCHITECTURE.md`
 * **Loading Overlay:** `scripts/apps/store/store-loading-overlay.js`
 * **Audit Trail:** See git commits tagged with "audit-store-entities"
 

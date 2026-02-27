@@ -70,7 +70,7 @@ This document summarizes the complete refactor of the damage mitigation system f
 ### Deliverables
 
 #### 1️⃣ DamageMitigationManager (Orchestrator)
-**File**: `scripts/engines/combat/damage-mitigation-manager.js`
+**File**: `scripts/engine/combat/damage-mitigation-manager.js`
 
 **Responsibility**: Orchestrates the locked damage order (no mutations)
 
@@ -106,7 +106,7 @@ const result = DamageMitigationManager.resolve({
 ```
 
 #### 2️⃣ ShieldMitigationResolver (Pure)
-**File**: `scripts/engines/combat/resolvers/shield-mitigation-resolver.js`
+**File**: `scripts/engine/combat/resolvers/shield-mitigation-resolver.js`
 
 **Responsibility**: Apply SR to damage
 
@@ -129,7 +129,7 @@ const result = DamageMitigationManager.resolve({
 ```
 
 #### 3️⃣ DamageReductionResolver (Pure)
-**File**: `scripts/engines/combat/resolvers/damage-reduction-resolver.js`
+**File**: `scripts/engine/combat/resolvers/damage-reduction-resolver.js`
 
 **Responsibility**: Apply DR to damage
 
@@ -151,7 +151,7 @@ const result = DamageMitigationManager.resolve({
 ```
 
 #### 4️⃣ TempHPResolver (Pure)
-**File**: `scripts/engines/combat/resolvers/temp-hp-resolver.js`
+**File**: `scripts/engine/combat/resolvers/temp-hp-resolver.js`
 
 **Responsibility**: Apply Temp HP to damage
 
@@ -171,7 +171,7 @@ const result = DamageMitigationManager.resolve({
 ```
 
 #### 5️⃣ Test Suite
-**File**: `scripts/engines/combat/damage-mitigation-manager.test.js`
+**File**: `scripts/engine/combat/damage-mitigation-manager.test.js`
 
 **Tests**: All resolvers + full pipeline (18+ assertions)
 
@@ -180,7 +180,7 @@ const result = DamageMitigationManager.resolve({
 ### Refactored Components
 
 #### DamageResolutionEngine
-**File**: `scripts/engines/combat/damage-resolution-engine.js`
+**File**: `scripts/engine/combat/damage-resolution-engine.js`
 
 **Changes**:
 - Integrated DamageMitigationManager into PHASE 2
@@ -333,7 +333,7 @@ Damage Reduction
 
 ### 4️⃣ Damage Log Formatter
 
-**File**: `scripts/engines/combat/damage-log-formatter.js`
+**File**: `scripts/engine/combat/damage-log-formatter.js`
 
 **Responsibility**: Create transparent damage log chat messages
 
@@ -425,14 +425,14 @@ Phase 1 (Audit)
 ├── docs/audit/DAMAGE-MITIGATION-AUDIT-V2.md
 
 Phase 2 (Core)
-├── scripts/engines/combat/damage-mitigation-manager.js
-├── scripts/engines/combat/damage-mitigation-manager.test.js
-├── scripts/engines/combat/resolvers/
+├── scripts/engine/combat/damage-mitigation-manager.js
+├── scripts/engine/combat/damage-mitigation-manager.test.js
+├── scripts/engine/combat/resolvers/
 │   ├── shield-mitigation-resolver.js
 │   ├── damage-reduction-resolver.js
 │   └── temp-hp-resolver.js
 ├── docs/governance/CI-RULES-DAMAGE-MITIGATION.md
-└── Modified: scripts/engines/combat/damage-resolution-engine.js
+└── Modified: scripts/engine/combat/damage-resolution-engine.js
 └── Modified: scripts/talents/DarkSidePowers.js (3 fixes)
 
 Phase 3 (Display)
@@ -445,7 +445,7 @@ Phase 3 (Display)
 │   └── damage-reduction.css
 ├── styles/chat/
 │   └── damage-log.css
-└── scripts/engines/combat/damage-log-formatter.js
+└── scripts/engine/combat/damage-log-formatter.js
 ```
 
 ---

@@ -1,6 +1,6 @@
 # Manual Step Processor — Design & Review
 
-**File:** `scripts/engines/progression/engine/manual-step-processor.js`
+**File:** `scripts/engine/progression/engine/manual-step-processor.js`
 
 **Status:** Ready for review before dialog integration
 

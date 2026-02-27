@@ -101,7 +101,7 @@ Dependency Hierarchy:
 | Pattern | Why Forbidden | Detection |
 |---------|---------------|-----------|
 | Engine writes to `actor.system` directly | Bypasses ActorEngine, risks desync | `actor.system` assignment in engine files |
-| Engine calls `game.settings.get()` | Multiple configuration sources cause inconsistency | Grep for `game.settings.get` in `scripts/engines/` |
+| Engine calls `game.settings.get()` | Multiple configuration sources cause inconsistency | Grep for `game.settings.get` in `scripts/engine/` |
 | Engine calls `actor.update()` | Bypasses mutation gate | Grep for `\.update\(` in engine files |
 | Engine imports UI files | Breaks separation of concerns, creates test bloat | Imports of `FormApplication`, `Dialog`, `ApplicationV2` in engines |
 | Engine imports sheet files | Sheets are views, not business logic containers | Imports of files from `scripts/sheets/` in engines |

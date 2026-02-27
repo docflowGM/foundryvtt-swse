@@ -152,7 +152,7 @@ docs/
 ├── DAMAGE-MITIGATION-IMPLEMENTATION-SUMMARY.md
 └── DAMAGE-MITIGATION-COMPLETE.md (this file)
 
-scripts/engines/combat/
+scripts/engine/combat/
 ├── damage-mitigation-manager.js
 ├── damage-mitigation-manager.test.js
 ├── damage-log-formatter.js

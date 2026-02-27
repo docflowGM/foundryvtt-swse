@@ -54,7 +54,7 @@ Foundry Event
 
 ### Code
 
-**1. StoreTransactionEngine** (`scripts/engines/store/store-transaction-engine.js`)
+**1. StoreTransactionEngine** (`scripts/engine/store/store-transaction-engine.js`)
 - 3 canonical operations: purchaseItem(), sellItem(), transferItem()
 - Phase 1: Validate (read-only)
 - Phase 2: Execute (coordinated mutations via ActorEngine)
@@ -228,7 +228,7 @@ A: Filter console for `[Sentinel]` prefix. Use console.table() for structured ou
 ## Files Changed/Created
 
 ### New Files
-- `scripts/engines/store/store-transaction-engine.js` (400 lines)
+- `scripts/engine/store/store-transaction-engine.js` (400 lines)
 - `tests/batch-4-workflow-tests.js` (600 lines)
 - `docs/BATCH-4-WORKFLOW-TESTS.md`
 - `docs/BATCH-4-REFACTORING-CANDIDATES.md`

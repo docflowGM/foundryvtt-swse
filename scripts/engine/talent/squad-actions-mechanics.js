@@ -1,15 +1,18 @@
 /**
  * Squad Actions Mechanics (Followers)
  *
- * Provides macro-driven helpers for the "Squad Actions" talent.
+ * PURE ENGINE LAYER - NO UI IMPORTS
+ *
+ * Provides mechanics helpers for the "Squad Actions" talent.
  *
  * Stability policy:
  * - No automation of line-of-sight, targeting, or damage math.
  * - The system computes *eligible follower counts* based on inventory only.
  * - The user applies the resulting modifiers manually.
+ *
+ * Note: To get followers for an actor, apps layer should pass them in or
+ * call a separate FollowerRegistry service. This engine only analyzes weapons.
  */
-
-import { FollowerCreator } from "/systems/foundryvtt-swse/scripts/apps/follower-creator.js";
 
 export default class SquadActionsMechanics {
 
@@ -38,19 +41,21 @@ export default class SquadActionsMechanics {
     return list.some(p => String(p).toLowerCase() === 'autofire');
   }
 
-  static _getEligibleFollowers(actor) {
-    const followers = FollowerCreator.getFollowers(actor) || [];
-    return followers.filter(f => f && !f.isOwner === false);
-  }
+  /**
+   * Get follower weapon counts for an actor
+   * @param {Actor} actor - The actor
+   * @param {Array} followers - Array of follower actors/objects. If not provided, empty.
+   * @returns {Object} Weapon count summary
+   */
+  static getFollowerWeaponCounts(actor, followers = []) {
+    // Filter to valid followers (not owner, not null)
+    const validFollowers = followers.filter(f => f && !f.isOwner);
 
-  static getFollowerWeaponCounts(actor) {
-    const followers = this._getEligibleFollowers(actor);
-
-    const ranged = followers.filter(f => f.items?.some(i => this._isRangedWeapon(i)));
-    const autofire = followers.filter(f => f.items?.some(i => this._isAutofireCapable(i)));
+    const ranged = validFollowers.filter(f => f.items?.some(i => this._isRangedWeapon(i)));
+    const autofire = validFollowers.filter(f => f.items?.some(i => this._isAutofireCapable(i)));
 
     return {
-      followersTotal: followers.length,
+      followersTotal: validFollowers.length,
       rangedCount: ranged.length,
       autofireCount: autofire.length,
       rangedNames: ranged.map(f => f.name),
@@ -70,8 +75,8 @@ export default class SquadActionsMechanics {
     });
   }
 
-  static async openFire(actor) {
-    const c = this.getFollowerWeaponCounts(actor);
+  static async openFire(actor, followers = []) {
+    const c = this.getFollowerWeaponCounts(actor, followers);
     await this._toChat(actor, 'Squad Actions: Open Fire', `
       <p><strong>Action:</strong> Standard Action (ranged attack vs single target).</p>
       <p><strong>Eligible followers (armed w/ ranged weapon):</strong> ${c.rangedCount}/${c.followersTotal}</p>
@@ -81,8 +86,8 @@ export default class SquadActionsMechanics {
     `);
   }
 
-  static async paintedTarget(actor) {
-    const c = this.getFollowerWeaponCounts(actor);
+  static async paintedTarget(actor, followers = []) {
+    const c = this.getFollowerWeaponCounts(actor, followers);
     await this._toChat(actor, 'Squad Actions: Painted Target', `
       <p><strong>Action:</strong> Standard Action (ranged attack vs single target).</p>
       <p><strong>Eligible followers (armed w/ ranged weapon):</strong> ${c.rangedCount}/${c.followersTotal}</p>
@@ -92,8 +97,8 @@ export default class SquadActionsMechanics {
     `);
   }
 
-  static async autofireBarrage(actor) {
-    const c = this.getFollowerWeaponCounts(actor);
+  static async autofireBarrage(actor, followers = []) {
+    const c = this.getFollowerWeaponCounts(actor, followers);
     await this._toChat(actor, 'Squad Actions: Autofire Barrage', `
       <p><strong>Action:</strong> Standard Action (Autofire attack vs legal target spaces).</p>
       <p><strong>Eligible followers (armed w/ Autofire):</strong> ${c.autofireCount}/${c.followersTotal}</p>

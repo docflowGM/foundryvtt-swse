@@ -79,7 +79,7 @@ id: foundryDocumentId  // From Foundry
 
 ## Compendium Packs (Defined in Engine)
 
-All store packs defined in `scripts/engines/store/store-constants.js`:
+All store packs defined in `scripts/engine/store/store-constants.js`:
 
 **Items:**
 - `foundryvtt-swse.weapons`

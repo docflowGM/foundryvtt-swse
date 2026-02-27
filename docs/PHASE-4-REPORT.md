@@ -123,7 +123,7 @@ ModifierEngine (derived calculation)
 - **No Authority**: Only displays, submits to GM pipeline
 
 #### 6. ModifierEngine Integration (Derived Sovereignty)
-**File**: `scripts/engines/effects/modifiers/ModifierEngine.js`
+**File**: `scripts/engine/effects/modifiers/ModifierEngine.js`
 
 - Updated `_getDroidModModifiers()` to:
   - Read legacy `droidSystems.mods` (builder system)
@@ -159,7 +159,7 @@ ModifierEngine (derived calculation)
 ### Modified (2 files)
 
 1. `scripts/sheets/v2/droid-sheet-v2.js` - Added entry point listener
-2. `scripts/engines/effects/modifiers/ModifierEngine.js` - Integration with installedSystems
+2. `scripts/engine/effects/modifiers/ModifierEngine.js` - Integration with installedSystems
 3. `templates/sheets/droid-sheet-v2.hbs` - Added "Live Modifications" button
 
 ---
