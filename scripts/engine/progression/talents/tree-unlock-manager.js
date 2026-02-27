@@ -1,11 +1,14 @@
 /**
- * Talent Tree Unlock Manager - Phase 1
+ * Talent Tree Unlock Manager - Phase 1 / Phase 4
  *
  * Manages talent tree unlock state at L1.
  * Minimal implementation: tracks which trees are accessible for talent selection.
+ *
+ * Phase 4: Route all mutations through ActorEngine (governance compliance).
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class TreeUnlockManager {
   /**
@@ -144,10 +147,10 @@ export class TreeUnlockManager {
       }
     }
 
-    // Delete inaccessible talents
+    // Delete inaccessible talents via ActorEngine (Phase 4: governance compliance)
     if (talentToRemove.length > 0) {
       try {
-        await actor.deleteEmbeddedDocuments('Item', talentToRemove);
+        await ActorEngine.deleteEmbeddedDocuments(actor, 'Item', talentToRemove);
         SWSELogger.log(
           `[TreeUnlockManager] Removed ${talentToRemove.length} inaccessible talents from ${actor.name}`
         );

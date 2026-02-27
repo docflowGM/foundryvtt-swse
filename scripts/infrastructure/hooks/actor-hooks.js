@@ -17,6 +17,7 @@ import { initializeStarshipManeuverHooks } from "/systems/foundryvtt-swse/script
 import { initializeForcePowerHooks } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/force-power-hooks.js";
 import { StarshipDomainLifecycle } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/starship-domain-lifecycle.js";
 import { ForceDomainLifecycle } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/force-domain-lifecycle.js";
+import { registerTelekineticProdigyHook } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/telekinetic-prodigy-hook.js";
 import { qs, qsa, setVisible, isVisible, text } from "/systems/foundryvtt-swse/scripts/utils/dom-utils.js";
 
 /**
@@ -72,6 +73,11 @@ export function registerActorHooks() {
 
     SWSELogger.log('Initializing Starship Maneuver hooks');
     initializeStarshipManeuverHooks();
+
+    // Phase 3.5 / Phase 4: Register selection modifier hooks at system init.
+    // The hook checks actor items fresh each call — registration is idempotent.
+    SWSELogger.log('Registering Telekinetic Prodigy selection modifier hook');
+    registerTelekineticProdigyHook();
 }
 
 /**
@@ -167,6 +173,19 @@ async function handleItemCreate(item, options, userId) {
         if (featName.includes('force training')) {
             SWSELogger.log('SWSE | Force Training feat added, capacity recalculated');
             await ForceDomainLifecycle.handleForceTrainingFeatAdded(actor);
+        }
+    }
+
+    // =========================================================================
+    // TELEKINETIC PRODIGY TALENT HANDLING (Phase 3.5 / Phase 4)
+    // =========================================================================
+    // Conditional bonus slots are selection-time only (SelectionModifierHookRegistry).
+    // Lifecycle handler logs the addition and reports bonus slot count.
+    if (item.type === 'talent') {
+        const talentName = item.name.toLowerCase();
+        if (talentName.includes('telekinetic prodigy')) {
+            SWSELogger.log('SWSE | Telekinetic Prodigy talent added');
+            await ForceDomainLifecycle.handleTelekineticProdigyTalentAdded(actor);
         }
     }
 
@@ -353,6 +372,20 @@ async function handleItemDelete(item, options, userId) {
         if (featName.includes('force training')) {
             SWSELogger.log('SWSE | Force Training feat removed, capacity recalculated');
             await ForceDomainLifecycle.handleForceTrainingFeatRemoved(actor);
+        }
+    }
+
+    // =========================================================================
+    // TELEKINETIC PRODIGY TALENT REMOVAL (Phase 3.5 / Phase 4)
+    // =========================================================================
+    // Bonus slots disappear at removal time. Lifecycle handler trims powers
+    // to base capacity (oldest first) if the actor has too many.
+    if (item.type === 'talent') {
+        const talentName = item.name.toLowerCase();
+        if (talentName.includes('telekinetic prodigy')) {
+            SWSELogger.log('SWSE | Telekinetic Prodigy talent removed, trimming to base capacity');
+            await ForceDomainLifecycle.handleTelekineticProdigyTalentRemoved(actor);
+            return;
         }
     }
 
