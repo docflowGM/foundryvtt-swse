@@ -295,5 +295,15 @@ export function registerSystemSettings() {
     default: 'roll',
   });
 
+  // Phase 3.4: Suite Reselection Houserule
+  game.settings.register('foundryvtt-swse', 'allowSuiteReselection', {
+    name: 'Allow Suite Reselection on Level Up',
+    hint: 'When enabled, Force Powers and Starship Maneuvers may be fully reselected during level up. Suites are cleared and rebuilt with current derived capacity. GM-only setting.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   SWSELogger.log('SWSE | Settings registered');
 }
