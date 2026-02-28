@@ -15,7 +15,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { ApplyHandlers } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/apply-handlers.js";
-import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 
 export class ForceProgressionEngine {
 
@@ -143,12 +143,12 @@ export class ForceProgressionEngine {
         if (filters.checkPrerequisites) {
             const { PrerequisiteValidator } = await import('../../utils/prerequisite-validator.js');
             availablePowers = availablePowers.filter(p => {
-                const canonical = PrerequisiteChecker.checkFeatPrerequisites(actor, p);
+                const assessment = AbilityEngine.evaluateAcquisition(actor, p);
                 const legacy = PrerequisiteValidator.checkFeatPrerequisites(p, actor);
-                if (canonical.met !== legacy.valid) {
-                    console.warn('Force power prereq mismatch detected', { power: p.name, canonical, legacy });
+                if (assessment.legal !== legacy.valid) {
+                    console.warn('Force power prereq mismatch detected', { power: p.name, assessment, legacy });
                 }
-                return canonical.met;
+                return assessment.legal;
             });
         }
 

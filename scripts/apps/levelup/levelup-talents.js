@@ -13,7 +13,7 @@ import { TalentTreeVisualizer } from "/systems/foundryvtt-swse/scripts/apps/tale
 import { getClassLevel, getCharacterClasses } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js";
 import { checkTalentPrerequisites } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-validation.js";
 import { getClassProperty, getTalentTrees } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
-import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { HouseRuleTalentCombination } from "/systems/foundryvtt-swse/scripts/houserules/houserule-talent-combination.js";
 import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
 import {
@@ -239,14 +239,10 @@ export async function loadTalentData(actor = null, pendingData = {}) {
     const talentObjects = talents.map(t => t.toObject ? t.toObject() : t);
 
     // Add prerequisite checking results to each talent (before suggestions for future availability analysis)
-    const talentsWithPrereqs = talentObjects.map(talent => {
-      const result = PrerequisiteChecker.checkTalentPrerequisites(actor, talent, pendingData);
-      return {
-        ...talent,
-        isQualified: result.met,
-        prereqReasons: result.missing
-      };
-    });
+    const talentsWithPrereqs = AbilityEngine.filterQualifiedTalents(talentObjects, actor, pendingData).map(talent => ({
+      ...talent,
+      prereqReasons: talent.prerequisiteReasons
+    }));
 
     // Apply suggestions using coordinator API if available, otherwise fallback
     // Include future availability scoring for unqualified talents

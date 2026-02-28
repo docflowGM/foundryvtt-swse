@@ -1,17 +1,26 @@
 /**
  * force-domain-lifecycle.js
- * Force Domain Lifecycle Management (Phase 3.3)
+ * Force Domain Lifecycle Management (Phase 3.3 + 3.5)
  *
- * Handles force system lifecycle when Force Sensitivity and Force Training feats are added/removed
+ * Handles force system lifecycle when Force Sensitivity, Force Training feats,
+ * and Telekinetic Prodigy talent are added/removed.
  *
  * PHASE 3.3: Domain unlock/lock and cleanup on feat changes.
+ * PHASE 3.5: Talent add/remove lifecycle for selection-modifier talents.
  *
  * Responsibilities:
  * 1. On Force Sensitivity feat ADD: unlock force domain
  * 2. On Force Sensitivity feat REMOVE: lock domain + cleanup excess powers
  * 3. On Force Training feat ADD: recalculate capacity
  * 4. On Force Training feat REMOVE: recalculate capacity + cleanup excess powers
- * 5. NO UI-level logic - pure infrastructure
+ * 5. On Telekinetic Prodigy talent ADD: log (bonus slots added at selection time)
+ * 6. On Telekinetic Prodigy talent REMOVE: cleanup excess powers beyond base capacity
+ * 7. NO UI-level logic - pure infrastructure
+ *
+ * PHASE 3.5 NOTE:
+ *   Telekinetic Prodigy cleanup trims to BASE capacity only (getForceCapacity).
+ *   Conditional bonus slots are selection-time only — they do not persist on actor.
+ *   Conservative cleanup is correct: user may reselect bonus powers afterward.
  *
  * Integration: These handlers are called from actor-hooks.js item add/remove handlers
  */
@@ -183,6 +192,97 @@ export class ForceDomainLifecycle {
       }
     } catch (e) {
       swseLogger.error('[FORCE DOMAIN] Error handling Force Training removal', e);
+    }
+  }
+
+  // ─── Phase 3.5: Telekinetic Prodigy Talent Lifecycle ────────────────────────
+
+  /**
+   * Handle Telekinetic Prodigy talent addition (Phase 3.5)
+   *
+   * Bonus slots are selection-time only — derived fresh each call via
+   * SelectionModifierHookRegistry. No domain or capacity changes needed here.
+   * Log for traceability.
+   *
+   * @param {Actor} actor - The actor gaining the talent
+   * @returns {Promise<void>}
+   */
+  static async handleTelekineticProdigyTalentAdded(actor) {
+    if (!actor) {
+      swseLogger.warn('[FORCE DOMAIN] handleTelekineticProdigyTalentAdded called with no actor');
+      return;
+    }
+
+    try {
+      const forceTrainingCount = actor.items.filter(
+        i => i.type === 'feat' && i.name.toLowerCase().includes('force training')
+      ).length;
+
+      swseLogger.log('[FORCE DOMAIN] Telekinetic Prodigy talent added', {
+        actor: actor.name,
+        conditionalBonusSlotsUnlocked: forceTrainingCount
+      });
+
+      // Bonus slots are derived on demand via SelectionModifierHookRegistry.
+      // No actor mutation needed.
+    } catch (e) {
+      swseLogger.error('[FORCE DOMAIN] Error handling Telekinetic Prodigy addition', e);
+    }
+  }
+
+  /**
+   * Handle Telekinetic Prodigy talent removal (Phase 3.5)
+   *
+   * Talent removal means conditional bonus slots disappear. If the actor has
+   * more powers than base capacity allows, trim the excess (oldest first).
+   *
+   * TRIM TARGET: base capacity only (getForceCapacity, not getSelectionContext).
+   * Conservative: actor may reselect after trimming.
+   *
+   * @param {Actor} actor - The actor losing the talent
+   * @returns {Promise<void>}
+   */
+  static async handleTelekineticProdigyTalentRemoved(actor) {
+    if (!actor) {
+      swseLogger.warn('[FORCE DOMAIN] handleTelekineticProdigyTalentRemoved called with no actor');
+      return;
+    }
+
+    try {
+      // Use BASE capacity — talent removal eliminates all bonus slots
+      const baseCapacity = await ForceAuthorityEngine.getForceCapacity(actor);
+      const currentPowers = actor.items.filter(i => i.type === 'forcePower');
+
+      swseLogger.log('[FORCE DOMAIN] Telekinetic Prodigy talent removed', {
+        actor: actor.name,
+        baseCapacity,
+        currentPowerCount: currentPowers.length
+      });
+
+      if (currentPowers.length > baseCapacity) {
+        // Remove excess powers (deterministic: oldest first by created timestamp)
+        const sortedPowers = currentPowers.sort((a, b) => {
+          const aTime = a.created || a.date || 0;
+          const bTime = b.created || b.date || 0;
+          return aTime - bTime;
+        });
+
+        const toRemove = sortedPowers.slice(baseCapacity);
+        const idsToRemove = toRemove.map(p => p.id || p._id).filter(id => id);
+
+        if (idsToRemove.length > 0) {
+          await ActorEngine.deleteEmbeddedDocuments(actor, 'Item', idsToRemove);
+
+          swseLogger.warn('[FORCE CLEANUP] Removed excess powers after Telekinetic Prodigy removal', {
+            actor: actor.name,
+            removed: idsToRemove.length,
+            remaining: baseCapacity,
+            baseCapacity
+          });
+        }
+      }
+    } catch (e) {
+      swseLogger.error('[FORCE DOMAIN] Error handling Telekinetic Prodigy removal', e);
     }
   }
 }

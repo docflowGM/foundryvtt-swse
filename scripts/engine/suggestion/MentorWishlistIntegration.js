@@ -5,7 +5,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { WishlistEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/WishlistEngine.js";
-import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { PrerequisiteRequirements } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/prerequisite_engine.js";
 
 export class MentorWishlistIntegration {
@@ -41,7 +41,7 @@ export class MentorWishlistIntegration {
 
       // Check if this suggestion is a prerequisite for any wishlisted item
       for (const wishedItem of allWishlisted) {
-        const canonical = PrerequisiteChecker.getUnmetRequirements(actor, wishedItem);
+        const canonical = AbilityEngine.getUnmetRequirements(actor, wishedItem);
         const legacy = PrerequisiteRequirements.getUnmetRequirements(actor, wishedItem);
         if (JSON.stringify(canonical) !== JSON.stringify(legacy)) {
           console.warn('getUnmetRequirements mismatch (wishlist)', { item: wishedItem.name, canonical, legacy });
@@ -136,7 +136,7 @@ export class MentorWishlistIntegration {
       const itemDoc = allItems.find(i => (i._id || i.id) === wishedItem.id);
       if (!itemDoc) {continue;}
 
-      const canonical = PrerequisiteChecker.getUnmetRequirements(actor, itemDoc);
+      const canonical = AbilityEngine.getUnmetRequirements(actor, itemDoc);
       const legacy = PrerequisiteRequirements.getUnmetRequirements(actor, itemDoc);
       if (JSON.stringify(canonical) !== JSON.stringify(legacy)) {
         console.warn('getUnmetRequirements mismatch (prerequisites)', { item: itemDoc.name, canonical, legacy });
@@ -221,9 +221,9 @@ export class MentorWishlistIntegration {
       // Simulate having acquired this item
       _id: item._id + '_temp'
     };
-    const unmetAfterCanonical = PrerequisiteChecker.getUnmetRequirements(actor, tempItem);
+    const unmetAfterCanonical = AbilityEngine.getUnmetRequirements(actor, tempItem);
     const unmetAfterLegacy = PrerequisiteRequirements.getUnmetRequirements(actor, tempItem);
-    const unmetBeforeCanonical = PrerequisiteChecker.getUnmetRequirements(actor, item);
+    const unmetBeforeCanonical = AbilityEngine.getUnmetRequirements(actor, item);
     const unmetBeforeLegacy = PrerequisiteRequirements.getUnmetRequirements(actor, item);
 
     if (JSON.stringify(unmetAfterCanonical) !== JSON.stringify(unmetAfterLegacy)) {

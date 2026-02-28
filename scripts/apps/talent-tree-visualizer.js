@@ -4,7 +4,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
 import { getTalentTreeName } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
 
@@ -249,7 +249,7 @@ export class TalentTreeVisualizer {
     SWSELogger.log(`[TALENT-TREE-VIS] ✓ Found ${talents.length} talents for tree "${treeName}"`);
 
     // Filter talents based on prerequisites - add isQualified property
-    talents = PrerequisiteChecker.filterQualifiedTalents(talents, actor, {});
+    talents = AbilityEngine.filterQualifiedTalents(talents, actor, {});
 
     // Apply suggestion engine to add tier-based recommendations
     talents = await SuggestionService.getSuggestions(actor, 'sheet', { domain: 'talents', available: talents, pendingData: {}, persist: false });

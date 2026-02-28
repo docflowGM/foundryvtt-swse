@@ -13,7 +13,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-registry.js";
 import { FeatState } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-state.js";
-import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { FeatNormalizer } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-normalizer.js";
 
 export const FeatEngine = {
@@ -72,11 +72,11 @@ export const FeatEngine = {
         }
 
         // Check requirements
-        const reqCheck = PrerequisiteChecker.meetsRequirements(actor, featDoc);
-        if (!reqCheck.valid) {
+        const assessment = AbilityEngine.evaluateAcquisition(actor, featDoc);
+        if (!assessment.legal) {
             return {
                 success: false,
-                reason: `Cannot learn feat: ${reqCheck.reasons.join(', ')}`
+                reason: `Cannot learn feat: ${assessment.missingPrereqs.join(', ')}`
             };
         }
 
@@ -143,7 +143,7 @@ export const FeatEngine = {
             }
 
             // Must meet requirements
-            if (!PrerequisiteChecker.canLearn(actor, feat)) {
+            if (!AbilityEngine.canAcquire(actor, feat)) {
                 continue;
             }
 
@@ -189,7 +189,7 @@ export const FeatEngine = {
             return ['Feat not found'];
         }
 
-        return PrerequisiteChecker.getUnmetRequirements(actor, featDoc);
+        return AbilityEngine.getUnmetRequirements(actor, featDoc);
     },
 
     /**

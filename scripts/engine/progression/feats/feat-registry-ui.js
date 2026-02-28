@@ -4,7 +4,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 
 export const FeatRegistry = {
   _feats: [],
@@ -36,8 +36,8 @@ export const FeatRegistry = {
     return this._feats.map(f => {
       let valid = true;
       try {
-        const result = PrerequisiteChecker.checkFeatPrerequisites(actor, f, pending);
-        valid = result.met;
+        const assessment = AbilityEngine.evaluateAcquisition(actor, f, pending);
+        valid = assessment.legal;
       } catch (err) {
         SWSELogger.warn(`Prerequisite check failed for ${f.name}:`, err);
         valid = false;

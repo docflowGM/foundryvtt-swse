@@ -13,7 +13,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { getClassLevel, getCharacterClasses } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js";
 import { getTalentTrees } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
-import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 
 /**
  * Calculate available talents at the current heroic level
@@ -107,7 +107,7 @@ export async function getAvailableTalentTreesForHeroicTalent(actor) {
 
   // Add Force Talent Trees if character is Force Sensitive
   try {
-    const accessRules = await PrerequisiteChecker._loadTalentTreeAccessRules();
+    const accessRules = await AbilityEngine.loadTalentTreeAccessRules();
 
     if (accessRules) {
       // Get all Force Talent Trees (both generic and tradition-based)
@@ -117,7 +117,7 @@ export async function getAvailableTalentTreesForHeroicTalent(actor) {
 
       // Check which ones the character can access
       for (const treeConfig of forceTrees) {
-        const canAccess = await PrerequisiteChecker.canAccessTalentTree(actor, treeConfig.treeId);
+        const canAccess = await AbilityEngine.canAccessTalentTree(actor, treeConfig.treeId);
         if (canAccess) {
           allTrees.add(treeConfig.treeId);
         }

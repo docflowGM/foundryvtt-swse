@@ -1,9 +1,10 @@
 // scripts/hooks/assets-hooks.js
 // Keeps actor.system.followers, .droids, .vehicles in sync when relevant entities are created.
 // This is best-effort glue for Assets tab integration.
-// PHASE 10: All mutations route through ActorEngine for governance.
+// PHASE 4: All mutations route through ActorEngine — no fallback direct writes.
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 Hooks.on('createActor', async (actor, options, userId) => {
   try {
@@ -23,14 +24,9 @@ Hooks.on('createActor', async (actor, options, userId) => {
           level: actor.system?.level || owner.system?.lvl || owner.system?.level || owner.system?.attributes?.level || 1,
           species: actor.system?.species || actor.system?.details?.race || 'Unknown'
         };
-        // PHASE 10: Route through ActorEngine with guard key
-        if (globalThis.SWSE?.ActorEngine?.updateActor) {
-          await globalThis.SWSE.ActorEngine.updateActor(owner, { 'system.followers': [...cur, newEntry] }, {
-            meta: { guardKey: 'follower-attach' }
-          });
-        } else {
-          await owner.update({ 'system.followers': [...cur, newEntry] });
-        }
+        await ActorEngine.updateActor(owner, { 'system.followers': [...cur, newEntry] }, {
+          meta: { guardKey: 'follower-attach' }
+        });
         swseLogger.log(`Attached follower ${actor.name} to owner ${owner.name}`);
       }
     }
@@ -42,14 +38,9 @@ Hooks.on('createActor', async (actor, options, userId) => {
       if (owner) {
         const cur = owner.system?.droids || [];
         if (!cur.some(d => d._id === actor.id)) {
-          // PHASE 10: Route through ActorEngine with guard key
-          if (globalThis.SWSE?.ActorEngine?.updateActor) {
-            await globalThis.SWSE.ActorEngine.updateActor(owner, { 'system.droids': [...cur, { _id: actor.id, name: actor.name, model: actor.system?.model || '' }] }, {
-              meta: { guardKey: 'droid-attach' }
-            });
-          } else {
-            await owner.update({ 'system.droids': [...cur, { _id: actor.id, name: actor.name, model: actor.system?.model || '' }] });
-          }
+          await ActorEngine.updateActor(owner, { 'system.droids': [...cur, { _id: actor.id, name: actor.name, model: actor.system?.model || '' }] }, {
+            meta: { guardKey: 'droid-attach' }
+          });
           swseLogger.log(`Attached droid ${actor.name} to owner ${owner.name}`);
         }
       }
@@ -59,14 +50,9 @@ Hooks.on('createActor', async (actor, options, userId) => {
       if (owner) {
         const cur = owner.system?.vehicles || [];
         if (!cur.some(v => v._id === actor.id)) {
-          // PHASE 10: Route through ActorEngine with guard key
-          if (globalThis.SWSE?.ActorEngine?.updateActor) {
-            await globalThis.SWSE.ActorEngine.updateActor(owner, { 'system.vehicles': [...cur, { _id: actor.id, name: actor.name, vehicleClass: actor.system?.vehicleClass || '' }] }, {
-              meta: { guardKey: 'vehicle-attach' }
-            });
-          } else {
-            await owner.update({ 'system.vehicles': [...cur, { _id: actor.id, name: actor.name, vehicleClass: actor.system?.vehicleClass || '' }] });
-          }
+          await ActorEngine.updateActor(owner, { 'system.vehicles': [...cur, { _id: actor.id, name: actor.name, vehicleClass: actor.system?.vehicleClass || '' }] }, {
+            meta: { guardKey: 'vehicle-attach' }
+          });
           swseLogger.log(`Attached vehicle ${actor.name} to owner ${owner.name}`);
         }
       }
@@ -94,28 +80,18 @@ Hooks.on('createItem', async (item, options, userId) => {
     if (item.type === 'vehicle') {
       const cur = owner.system?.vehicles || [];
       if (!cur.some(v => v._id === item.id)) {
-        // PHASE 10: Route through ActorEngine with guard key
-        if (globalThis.SWSE?.ActorEngine?.updateActor) {
-          await globalThis.SWSE.ActorEngine.updateActor(owner, { 'system.vehicles': [...cur, { _id: item.id, name: item.name, vehicleClass: item.system?.vehicleClass || '' }] }, {
-            meta: { guardKey: 'vehicle-item-attach' }
-          });
-        } else {
-          await owner.update({ 'system.vehicles': [...cur, { _id: item.id, name: item.name, vehicleClass: item.system?.vehicleClass || '' }] });
-        }
+        await ActorEngine.updateActor(owner, { 'system.vehicles': [...cur, { _id: item.id, name: item.name, vehicleClass: item.system?.vehicleClass || '' }] }, {
+          meta: { guardKey: 'vehicle-item-attach' }
+        });
         swseLogger.log(`Attached vehicle item ${item.name} to owner ${owner.name}`);
       }
     }
     if (item.type === 'droid') {
       const cur = owner.system?.droids || [];
       if (!cur.some(d => d._id === item.id)) {
-        // PHASE 10: Route through ActorEngine with guard key
-        if (globalThis.SWSE?.ActorEngine?.updateActor) {
-          await globalThis.SWSE.ActorEngine.updateActor(owner, { 'system.droids': [...cur, { _id: item.id, name: item.name, model: item.system?.model || '' }] }, {
-            meta: { guardKey: 'droid-item-attach' }
-          });
-        } else {
-          await owner.update({ 'system.droids': [...cur, { _id: item.id, name: item.name, model: item.system?.model || '' }] });
-        }
+        await ActorEngine.updateActor(owner, { 'system.droids': [...cur, { _id: item.id, name: item.name, model: item.system?.model || '' }] }, {
+          meta: { guardKey: 'droid-item-attach' }
+        });
         swseLogger.log(`Attached droid item ${item.name} to owner ${owner.name}`);
       }
     }

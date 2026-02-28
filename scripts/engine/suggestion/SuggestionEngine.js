@@ -28,7 +28,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
 import { getSynergyForItem, findActiveSynergies } from "/systems/foundryvtt-swse/scripts/engine/suggestion/CommunityMetaSynergies.js";
-import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { WishlistEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/WishlistEngine.js";
 import { UNIFIED_TIERS } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-unified-tiers.js";
 import { getAllowedTalentTrees } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/tree-authority.js";
@@ -1061,7 +1061,7 @@ export class SuggestionEngine {
      */
     static _scoreFutureAvailability(item, actor, actorState, buildIntent, pendingData) {
         // Analyze what prerequisites are not met
-        const unmetReqs = PrerequisiteChecker.getUnmetRequirements(actor, item);
+        const unmetReqs = AbilityEngine.getUnmetRequirements(actor, item);
 
         if (!unmetReqs || unmetReqs.length === 0) {
             // No unmet requirements (shouldn't happen, but handle it)
@@ -1248,7 +1248,7 @@ export class SuggestionEngine {
                 }
 
                 // Check if this item's unmet prerequisites include the wished-for item
-                const unmetReqs = PrerequisiteChecker.getUnmetRequirements(actor, { ...wishedItem });
+                const unmetReqs = AbilityEngine.getUnmetRequirements(actor, { ...wishedItem });
                 const prereqMentionsThisItem = unmetReqs.some(req =>
                     req.toLowerCase().includes(item.name.toLowerCase())
                 );

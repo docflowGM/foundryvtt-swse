@@ -318,7 +318,7 @@ export class SWSEV2DroidSheet extends
         if (!itemId) return;
         const item = this.document.items.get(itemId);
         if (!item) return;
-        await item.update({ "system.equipped": ev.currentTarget.checked });
+        await ActorEngine.updateEmbeddedDocuments(this.document, 'Item', [{ _id: itemId, "system.equipped": ev.currentTarget.checked }]);
       });
     }
 

@@ -97,7 +97,7 @@ import { showGMDebugPanel } from "/systems/foundryvtt-swse/scripts/apps/levelup/
 import { PathPreview } from "/systems/foundryvtt-swse/scripts/engine/suggestion/PathPreview.js";
 import { findActiveSynergies } from "/systems/foundryvtt-swse/scripts/engine/suggestion/CommunityMetaSynergies.js";
 import { MentorSuggestionDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor-suggestion-dialog.js";
-import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 
 // Import mentor memory system
 import { decayAllMentorCommitments, updateAllMentorMemories } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-memory.js";
@@ -868,7 +868,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       .map(([key]) => key);
 
     // Get granted feats (houserules + level 1 class features)
-    const grantedFeats = PrerequisiteChecker.getAllGrantedFeats(this.actor, this.selectedClass);
+    const grantedFeats = AbilityEngine.getGrantedFeats(this.actor, this.selectedClass);
 
     return {
       selectedClass: this.selectedClass,
