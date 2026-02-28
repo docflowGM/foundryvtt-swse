@@ -30,18 +30,19 @@ export class ArchetypeRegistry {
         }
 
         try {
-            // Query all items with type === 'archetype'
+            // Load archetypes from class-archetypes.json
+            await this._loadFromJSON();
+
+            // Load custom archetypes from world items
             const archetypeItems = game.items.filter(item => item.type === 'archetype');
+            SWSELogger.log(`[ArchetypeRegistry] Loading ${archetypeItems.length} custom archetypes from world`);
 
-            SWSELogger.log(`[ArchetypeRegistry] Loading ${archetypeItems.length} archetypes from world`);
-
-            // Store in cache
             for (const item of archetypeItems) {
                 const archetype = this._parseArchetypeItem(item);
                 if (archetype) {
                     this.#archetypes.set(item.id, archetype);
                     SWSELogger.log(
-                        `[ArchetypeRegistry] Loaded: "${item.name}" ` +
+                        `[ArchetypeRegistry] Loaded (custom): "${item.name}" ` +
                         `(id: ${item.id}, class: ${archetype.baseClassId})`
                     );
                 }
@@ -52,6 +53,99 @@ export class ArchetypeRegistry {
         } catch (err) {
             SWSELogger.error('[ArchetypeRegistry] Initialization failed:', err);
             this.#initialized = false;
+        }
+    }
+
+    /**
+     * Load archetypes from class-archetypes.json
+     * @private
+     * @returns {Promise<void>}
+     */
+    static async _loadFromJSON() {
+        try {
+            const response = await fetch('/systems/foundryvtt-swse/data/class-archetypes.json');
+            const data = await response.json();
+
+            SWSELogger.log(`[ArchetypeRegistry] Loading archetypes from class-archetypes.json`);
+
+            // Iterate through classes and archetypes
+            for (const [className, classData] of Object.entries(data.classes || {})) {
+                for (const [archId, archData] of Object.entries(classData.archetypes || {})) {
+                    const archetype = this._parseJSONArchetype(className, archId, archData);
+                    if (archetype) {
+                        // Use class-id format as key to avoid conflicts with world items
+                        const key = `${className}-${archId}`;
+                        this.#archetypes.set(key, archetype);
+                        SWSELogger.log(
+                            `[ArchetypeRegistry] Loaded (json): "${archetype.name}" ` +
+                            `(class: ${className})`
+                        );
+                    }
+                }
+            }
+        } catch (err) {
+            SWSELogger.error('[ArchetypeRegistry] Failed to load from class-archetypes.json:', err);
+        }
+    }
+
+    /**
+     * Parse archetype from class-archetypes.json format
+     * @private
+     * @param {string} className - Class ID (e.g., 'jedi')
+     * @param {string} archetypeId - Archetype ID (e.g., 'guardian_defender')
+     * @param {Object} archData - Archetype data from JSON
+     * @returns {Object|null} Parsed archetype or null if invalid
+     */
+    static _parseJSONArchetype(className, archetypeId, archData) {
+        try {
+            if (!archData.name) {
+                SWSELogger.warn(`[ArchetypeRegistry] Archetype "${archetypeId}" missing name`);
+                return null;
+            }
+
+            // Extract roles from roleBias (keys with value > 1.0 indicate primary roles)
+            const roleBias = archData.roleBias || {};
+            const roles = Object.entries(roleBias)
+                .filter(([_, value]) => value > 1.0)
+                .map(([role, _]) => role);
+
+            // Extract attribute priority from attributeBias (sorted by weight, descending)
+            const attributeBias = archData.attributeBias || {};
+            const attributePriority = Object.entries(attributeBias)
+                .sort(([_, a], [__, b]) => b - a)
+                .map(([attr, _]) => attr);
+
+            // Convert keyword recommendations to arrays (we'll need item lookup during runtime)
+            const talentKeywords = archData.talentKeywords || [];
+            const featKeywords = archData.featKeywords || [];
+
+            return {
+                id: `${className}-${archetypeId}`,
+                name: archData.name,
+                baseClassId: className,
+                roles: roles.length > 0 ? roles : ['generalist'],
+                prestigeTargets: [], // Not defined in JSON, can be added later
+                attributePriority: attributePriority.length > 0 ? attributePriority : [],
+                recommended: {
+                    feats: featKeywords, // Store as keywords for now
+                    talents: talentKeywords, // Store as keywords for now
+                    skills: []
+                },
+                weights: {
+                    feat: 1,
+                    talent: 1,
+                    prestige: 1,
+                    skill: 1
+                },
+                mechanicalBias: archData.mechanicalBias || {},
+                roleBias: roleBias,
+                attributeBias: attributeBias,
+                notes: archData.notes || '',
+                status: archData.status || 'active'
+            };
+        } catch (err) {
+            SWSELogger.error(`[ArchetypeRegistry] Error parsing JSON archetype "${archetypeId}":`, err);
+            return null;
         }
     }
 
