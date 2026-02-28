@@ -376,7 +376,7 @@ export class ArchetypeRegistry {
 
     /**
      * Resolve feat keywords to item IDs by searching compendiums
-     * Matches feat names against keyword list
+     * Matches feat names against keyword list with fuzzy matching
      * @param {Array<string>} keywords - Feat keywords (e.g., ['Weapon Focus (Lightsabers)'])
      * @returns {Promise<Array<string>>} Array of feat item IDs
      */
@@ -397,13 +397,13 @@ export class ArchetypeRegistry {
             const index = await pack.getIndex();
 
             for (const keyword of keywords) {
-                const normalized = this._normalizeKeyword(keyword);
-                const match = index.find(item =>
-                    this._normalizeKeyword(item.name) === normalized
-                );
+                const match = this._findBestMatch(keyword, index);
 
                 if (match) {
                     results.push(match._id);
+                    SWSELogger.debug(
+                        `[ArchetypeRegistry] Resolved feat keyword "${keyword}" to "${match.name}"`
+                    );
                 } else {
                     SWSELogger.debug(`[ArchetypeRegistry] Feat keyword not resolved: "${keyword}"`);
                 }
@@ -418,7 +418,7 @@ export class ArchetypeRegistry {
 
     /**
      * Resolve talent keywords to item IDs by searching compendiums
-     * Matches talent names against keyword list
+     * Matches talent names against keyword list with fuzzy matching
      * @param {Array<string>} keywords - Talent keywords (e.g., ['Block', 'Deflect'])
      * @returns {Promise<Array<string>>} Array of talent item IDs
      */
@@ -439,13 +439,13 @@ export class ArchetypeRegistry {
             const index = await pack.getIndex();
 
             for (const keyword of keywords) {
-                const normalized = this._normalizeKeyword(keyword);
-                const match = index.find(item =>
-                    this._normalizeKeyword(item.name) === normalized
-                );
+                const match = this._findBestMatch(keyword, index);
 
                 if (match) {
                     results.push(match._id);
+                    SWSELogger.debug(
+                        `[ArchetypeRegistry] Resolved talent keyword "${keyword}" to "${match.name}"`
+                    );
                 } else {
                     SWSELogger.debug(`[ArchetypeRegistry] Talent keyword not resolved: "${keyword}"`);
                 }
@@ -512,6 +512,91 @@ export class ArchetypeRegistry {
             SWSELogger.error('[ArchetypeRegistry] Error getting class archetypes resolved:', err);
             return [];
         }
+    }
+
+    /**
+     * Find best matching item for a keyword using fuzzy matching
+     * Strategy:
+     * 1. Exact match (normalized)
+     * 2. Substring match (keyword contains item name or vice versa)
+     * 3. Levenshtein distance (most similar)
+     * @private
+     * @param {string} keyword - The keyword to find
+     * @param {Array} indexItems - Compendium index items
+     * @returns {Object|null} Best matching item or null
+     */
+    static _findBestMatch(keyword, indexItems) {
+        const normalized = this._normalizeKeyword(keyword);
+
+        // Strategy 1: Exact match
+        const exactMatch = indexItems.find(item =>
+            this._normalizeKeyword(item.name) === normalized
+        );
+        if (exactMatch) return exactMatch;
+
+        // Strategy 2: Substring match (either direction)
+        const substringMatches = indexItems.filter(item => {
+            const itemNorm = this._normalizeKeyword(item.name);
+            return itemNorm.includes(normalized) || normalized.includes(itemNorm);
+        });
+
+        if (substringMatches.length > 0) {
+            // Return the shortest matching name (most specific)
+            return substringMatches.reduce((best, current) =>
+                current.name.length < best.name.length ? current : best
+            );
+        }
+
+        // Strategy 3: Levenshtein distance (fuzzy match)
+        let bestMatch = null;
+        let bestDistance = Infinity;
+        const threshold = 0.6; // 60% similarity
+
+        for (const item of indexItems) {
+            const distance = this._levenshteinDistance(normalized, this._normalizeKeyword(item.name));
+            const maxLen = Math.max(normalized.length, item.name.length);
+            const similarity = 1 - (distance / maxLen);
+
+            if (similarity >= threshold && distance < bestDistance) {
+                bestDistance = distance;
+                bestMatch = item;
+            }
+        }
+
+        return bestMatch;
+    }
+
+    /**
+     * Calculate Levenshtein distance between two strings
+     * Used for fuzzy matching
+     * @private
+     * @param {string} a - First string
+     * @param {string} b - Second string
+     * @returns {number} Edit distance
+     */
+    static _levenshteinDistance(a, b) {
+        if (a.length === 0) return b.length;
+        if (b.length === 0) return a.length;
+
+        const matrix = Array(b.length + 1)
+            .fill(null)
+            .map(() => Array(a.length + 1).fill(0));
+
+        for (let i = 0; i <= a.length; i++) matrix[0][i] = i;
+        for (let j = 0; j <= b.length; j++) matrix[j][0] = j;
+
+        for (let j = 1; j <= b.length; j++) {
+            for (let i = 1; i <= a.length; i++) {
+                const indicator = a[i - 1] === b[j - 1] ? 0 : 1;
+                matrix[j][i] = Math.min(
+                    matrix[j][i - 1] + 1,      // deletion
+                    matrix[j - 1][i] + 1,      // insertion
+                    matrix[j - 1][i - 1] + indicator // substitution
+                );
+            }
+        }
+
+        return matrix[b.length][a.length];
     }
 
     /**
