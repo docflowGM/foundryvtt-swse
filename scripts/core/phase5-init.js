@@ -13,6 +13,7 @@ import { registerTraceMetrics } from "/systems/foundryvtt-swse/scripts/core/corr
 import { registerSchemaValidation } from "/systems/foundryvtt-swse/scripts/core/schema-validator.js";
 import { registerVersionAdapter, validateSystemCompatibility } from "/systems/foundryvtt-swse/scripts/core/version-adapter.js";
 import { log } from "/systems/foundryvtt-swse/scripts/core/foundry-env.js";
+import { ArchetypeRegistry } from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 
@@ -32,11 +33,23 @@ export function initializePhase5() {
     // 3. Register schema validation tools
     registerSchemaValidation();
 
+    // 4. Initialize ArchetypeRegistry (Phase A & B)
+    Hooks.once('ready', async () => {
+      try {
+        await ArchetypeRegistry.initialize();
+        const stats = ArchetypeRegistry.getStats();
+        log.info(`[${SYSTEM_ID}] ArchetypeRegistry initialized: ${stats.count} archetypes`);
+      } catch (err) {
+        log.error(`[${SYSTEM_ID}] ArchetypeRegistry initialization failed:`, err);
+      }
+    });
+
     log.info(`[${SYSTEM_ID}] Phase 5 initialization complete`);
     log.info(`[${SYSTEM_ID}]   ✓ Observability (correlation IDs, tracing)`);
     log.info(`[${SYSTEM_ID}]   ✓ Data contracts (schema validation)`);
     log.info(`[${SYSTEM_ID}]   ✓ Extension safety (custom hooks)`);
     log.info(`[${SYSTEM_ID}]   ✓ Forward compatibility (version detection)`);
+    log.info(`[${SYSTEM_ID}]   ✓ Archetypes (registry, alignment scoring)`);
 
   } catch (err) {
     log.error(`Phase 5 initialization failed:`, err.message);

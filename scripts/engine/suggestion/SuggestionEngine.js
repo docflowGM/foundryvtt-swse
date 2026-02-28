@@ -32,6 +32,7 @@ import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities
 import { WishlistEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/WishlistEngine.js";
 import { UNIFIED_TIERS } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-unified-tiers.js";
 import { getAllowedTalentTrees } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/tree-authority.js";
+import { ArchetypeRegistry } from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry.js";
 
 // ──────────────────────────────────────────────────────────────
 // TIER DEFINITIONS (PHASE 5D: UNIFIED_TIERS Refactor)
@@ -535,6 +536,53 @@ export class SuggestionEngine {
     }
 
     // ──────────────────────────────────────────────────────────────
+    // PRIVATE: ARCHETYPE ALIGNMENT (Phase 1.5)
+    // ──────────────────────────────────────────────────────────────
+
+    /**
+     * Calculate archetype alignment bonus for a suggestion
+     * Returns confidence boost and matched elements for reason metadata
+     * @param {Object} item - The feat/talent being evaluated
+     * @param {Object|null} archetype - Archetype object or null
+     * @returns {Object} { bonus: 0-0.2, matchedElements: [] }
+     */
+    static _calculateArchetypeAlignment(item, archetype) {
+        if (!archetype || !ArchetypeRegistry.isInitialized()) {
+            return { bonus: 0, matchedElements: [] };
+        }
+
+        let bonus = 0;
+        const matchedElements = [];
+
+        // Check if item is in archetype's recommended feats (+0.1)
+        if (ArchetypeRegistry.isRecommendedFeat(item.id, archetype)) {
+            bonus += 0.1;
+            matchedElements.push('recommendedFeat');
+        }
+
+        // Check if item is in archetype's recommended talents (+0.1)
+        if (ArchetypeRegistry.isRecommendedTalent(item.id, archetype)) {
+            bonus += 0.1;
+            matchedElements.push('recommendedTalent');
+        }
+
+        // Check if item is recommended skill (+0.05)
+        const skillKey = item.system?.skill || item.system?.skillKey;
+        if (skillKey && ArchetypeRegistry.isRecommendedSkill(skillKey, archetype)) {
+            bonus += 0.05;
+            matchedElements.push('recommendedSkill');
+        }
+
+        // Cap bonus at 0.2
+        const cappedBonus = Math.min(bonus, 0.2);
+
+        return {
+            bonus: cappedBonus,
+            matchedElements
+        };
+    }
+
+    // ──────────────────────────────────────────────────────────────
     // PRIVATE: MENTOR BIAS MATCHING
     // ──────────────────────────────────────────────────────────────
 
@@ -608,11 +656,15 @@ export class SuggestionEngine {
      * @param {Object} actorState - Actor state
      * @param {Object} metadata - Feat metadata with chain info
      * @param {Object|null} buildIntent - Build intent analysis
-     * @param {Actor|null} actor - The actor (for synergy checks)
+     * @param {Actor|null} actor - The actor (for synergy checks and archetype)
      * @param {Object} pendingData - Pending selections
-     * @returns {Object} Suggestion metadata
+     * @returns {Object} Suggestion metadata with archetype alignment applied
      */
     static _evaluateFeat(feat, actorState, metadata = {}, buildIntent = null, actor = null, pendingData = {}) {
+        // Retrieve archetype if actor exists (Phase 1.5)
+        const archetypeId = actor?.system?.buildIntent?.archetypeId;
+        const archetype = archetypeId ? ArchetypeRegistry.get(archetypeId) : null;
+
         // Check tiers in order of priority (highest first)
 
         // Tier 6: Check if this feat is a priority prerequisite for a prestige class
@@ -622,10 +674,12 @@ export class SuggestionEngine {
                 p.type === 'feat' && p.name === feat.name
             );
             if (alignment.aligned && prestigePrereq) {
-                return this._buildSuggestion(
+                return this._buildSuggestionWithArchetype(
                     SUGGESTION_TIERS.PRESTIGE_PREREQ,
                     'PRESTIGE_PREREQ',
-                    `prestige:${prestigePrereq.forClass}`
+                    `prestige:${prestigePrereq.forClass}`,
+                    feat,
+                    archetype
                 );
             }
         }
@@ -634,20 +688,24 @@ export class SuggestionEngine {
         if (actor) {
             const wishlistPrereqCheck = this._checkWishlistPrerequisite(feat, actor);
             if (wishlistPrereqCheck) {
-                return this._buildSuggestion(
+                return this._buildSuggestionWithArchetype(
                     SUGGESTION_TIERS.WISHLIST_PATH,
                     'WISHLIST_PATH',
-                    `wishlist:${wishlistPrereqCheck.itemId || wishlistPrereqCheck.itemName}`
+                    `wishlist:${wishlistPrereqCheck.itemId || wishlistPrereqCheck.itemName}`,
+                    feat,
+                    archetype
                 );
             }
         }
 
         // Tier 5: Martial arts feat (strong recommendation)
         if (this._isMartialArtsFeat(feat)) {
-            return this._buildSuggestion(
+            return this._buildSuggestionWithArchetype(
                 SUGGESTION_TIERS.MARTIAL_ARTS,
                 'MARTIAL_ARTS',
-                null
+                null,
+                feat,
+                archetype
             );
         }
 
@@ -655,10 +713,12 @@ export class SuggestionEngine {
         if (actor) {
             const synergy = getSynergyForItem(feat.name, 'feat', actor, pendingData);
             if (synergy) {
-                return this._buildSuggestion(
+                return this._buildSuggestionWithArchetype(
                     SUGGESTION_TIERS.META_SYNERGY,
                     'META_SYNERGY',
-                    null
+                    null,
+                    feat,
+                    archetype
                 );
             }
         }
@@ -666,20 +726,24 @@ export class SuggestionEngine {
         // Tier 4.5 (with decay): Species prerequisite match
         const speciesCheck = this._checkSpeciesPrerequisite(feat, actorState);
         if (speciesCheck) {
-            return this._buildSuggestion(
+            return this._buildSuggestionWithArchetype(
                 speciesCheck.tier,
                 'SPECIES_EARLY',
-                speciesCheck.sourceId
+                speciesCheck.sourceId,
+                feat,
+                archetype
             );
         }
 
         // Tier 4: Chain continuation
         const chainPrereq = this._isChainContinuation(feat, actorState, metadata);
         if (chainPrereq) {
-            return this._buildSuggestion(
+            return this._buildSuggestionWithArchetype(
                 SUGGESTION_TIERS.CHAIN_CONTINUATION,
                 'CHAIN_CONTINUATION',
-                `chain:${chainPrereq}`
+                `chain:${chainPrereq}`,
+                feat,
+                archetype
             );
         }
 
@@ -687,39 +751,47 @@ export class SuggestionEngine {
         if (buildIntent && buildIntent.mentorBiases && Object.keys(buildIntent.mentorBiases).length > 0) {
             const mentorMatch = this._checkMentorBiasMatch(feat, buildIntent);
             if (mentorMatch) {
-                return this._buildSuggestion(
+                return this._buildSuggestionWithArchetype(
                     SUGGESTION_TIERS.MENTOR_BIAS_MATCH,
                     'MENTOR_BIAS_MATCH',
-                    mentorMatch.sourceId
+                    mentorMatch.sourceId,
+                    feat,
+                    archetype
                 );
             }
         }
 
         // Tier 3: Uses trained skill
         if (this._usesTrainedSkill(feat, actorState)) {
-            return this._buildSuggestion(
+            return this._buildSuggestionWithArchetype(
                 SUGGESTION_TIERS.SKILL_PREREQ_MATCH,
                 'SKILL_PREREQ_MATCH',
-                `skill:${actorState.trainedSkills.values().next().value || 'trained'}`
+                `skill:${actorState.trainedSkills.values().next().value || 'trained'}`,
+                feat,
+                archetype
             );
         }
 
         // Tier 2: Uses highest ability
         if (this._usesHighestAbility(feat, actorState)) {
-            return this._buildSuggestion(
+            return this._buildSuggestionWithArchetype(
                 SUGGESTION_TIERS.ABILITY_PREREQ_MATCH,
                 'ABILITY_PREREQ_MATCH',
-                `ability:${actorState.highestAbility}`
+                `ability:${actorState.highestAbility}`,
+                feat,
+                archetype
             );
         }
 
         // Tier 1: Class synergy
         if (this._matchesClass(feat, actorState)) {
             const className = actorState.classes.values().next().value || 'general';
-            return this._buildSuggestion(
+            return this._buildSuggestionWithArchetype(
                 SUGGESTION_TIERS.CLASS_SYNERGY,
                 'CLASS_SYNERGY',
-                `class:${className}`
+                `class:${className}`,
+                feat,
+                archetype
             );
         }
 
@@ -727,16 +799,18 @@ export class SuggestionEngine {
         if (buildIntent) {
             const alignment = BuildIntent.checkFeatAlignment(feat.name, buildIntent);
             if (alignment.aligned) {
-                return this._buildSuggestion(
+                return this._buildSuggestionWithArchetype(
                     SUGGESTION_TIERS.CLASS_SYNERGY,
                     'CLASS_SYNERGY',
-                    null
+                    null,
+                    feat,
+                    archetype
                 );
             }
         }
 
         // Fallback - still a legal option
-        return this._buildSuggestion(SUGGESTION_TIERS.FALLBACK, 'FALLBACK', null);
+        return this._buildSuggestionWithArchetype(SUGGESTION_TIERS.FALLBACK, 'FALLBACK', null, feat, archetype);
     }
 
     /**
@@ -744,11 +818,15 @@ export class SuggestionEngine {
      * @param {Object} talent - The talent to evaluate
      * @param {Object} actorState - Actor state
      * @param {Object|null} buildIntent - Build intent analysis
-     * @param {Actor|null} actor - The actor (for synergy checks)
+     * @param {Actor|null} actor - The actor (for synergy checks and archetype)
      * @param {Object} pendingData - Pending selections
-     * @returns {Object} Suggestion metadata
+     * @returns {Object} Suggestion metadata with archetype alignment applied
      */
     static _evaluateTalent(talent, actorState, buildIntent = null, actor = null, pendingData = {}) {
+        // Retrieve archetype if actor exists (Phase 1.5)
+        const archetypeId = actor?.system?.buildIntent?.archetypeId;
+        const archetype = archetypeId ? ArchetypeRegistry.get(archetypeId) : null;
+
         // Check tiers in order of priority (highest first)
 
         // Tier 6: Check if this talent supports a prestige class path
@@ -759,10 +837,12 @@ export class SuggestionEngine {
                 buildIntent.prestigeAffinities[0].confidence >= 0.4) {
                 // Only use tier 6 if strongly aligned with top prestige target
                 const prestigeClass = buildIntent.prestigeAffinities[0].className;
-                return this._buildSuggestion(
+                return this._buildSuggestionWithArchetype(
                     SUGGESTION_TIERS.PRESTIGE_PREREQ,
                     'PRESTIGE_PREREQ',
-                    `prestige:${prestigeClass}`
+                    `prestige:${prestigeClass}`,
+                    talent,
+                    archetype
                 );
             }
         }
@@ -771,10 +851,12 @@ export class SuggestionEngine {
         if (actor) {
             const wishlistPrereqCheck = this._checkWishlistPrerequisite(talent, actor);
             if (wishlistPrereqCheck) {
-                return this._buildSuggestion(
+                return this._buildSuggestionWithArchetype(
                     SUGGESTION_TIERS.WISHLIST_PATH,
                     'WISHLIST_PATH',
-                    `wishlist:${wishlistPrereqCheck.itemId || wishlistPrereqCheck.itemName}`
+                    `wishlist:${wishlistPrereqCheck.itemId || wishlistPrereqCheck.itemName}`,
+                    talent,
+                    archetype
                 );
             }
         }
@@ -783,10 +865,12 @@ export class SuggestionEngine {
         if (actor) {
             const synergy = getSynergyForItem(talent.name, 'talent', actor, pendingData);
             if (synergy) {
-                return this._buildSuggestion(
+                return this._buildSuggestionWithArchetype(
                     SUGGESTION_TIERS.META_SYNERGY,
                     'META_SYNERGY',
-                    null
+                    null,
+                    talent,
+                    archetype
                 );
             }
         }
@@ -794,10 +878,12 @@ export class SuggestionEngine {
         // Tier 4: Chain continuation
         const chainPrereq = this._isChainContinuation(talent, actorState);
         if (chainPrereq) {
-            return this._buildSuggestion(
+            return this._buildSuggestionWithArchetype(
                 SUGGESTION_TIERS.CHAIN_CONTINUATION,
                 'CHAIN_CONTINUATION',
-                `chain:${chainPrereq}`
+                `chain:${chainPrereq}`,
+                talent,
+                archetype
             );
         }
 
@@ -805,39 +891,47 @@ export class SuggestionEngine {
         if (buildIntent && buildIntent.mentorBiases && Object.keys(buildIntent.mentorBiases).length > 0) {
             const mentorMatch = this._checkMentorBiasMatch(talent, buildIntent);
             if (mentorMatch) {
-                return this._buildSuggestion(
+                return this._buildSuggestionWithArchetype(
                     SUGGESTION_TIERS.MENTOR_BIAS_MATCH,
                     'MENTOR_BIAS_MATCH',
-                    mentorMatch.sourceId
+                    mentorMatch.sourceId,
+                    talent,
+                    archetype
                 );
             }
         }
 
         // Tier 3: Uses trained skill
         if (this._usesTrainedSkill(talent, actorState)) {
-            return this._buildSuggestion(
+            return this._buildSuggestionWithArchetype(
                 SUGGESTION_TIERS.SKILL_PREREQ_MATCH,
                 'SKILL_PREREQ_MATCH',
-                `skill:${actorState.trainedSkills.values().next().value || 'trained'}`
+                `skill:${actorState.trainedSkills.values().next().value || 'trained'}`,
+                talent,
+                archetype
             );
         }
 
         // Tier 2: Uses highest ability
         if (this._usesHighestAbility(talent, actorState)) {
-            return this._buildSuggestion(
+            return this._buildSuggestionWithArchetype(
                 SUGGESTION_TIERS.ABILITY_PREREQ_MATCH,
                 'ABILITY_PREREQ_MATCH',
-                `ability:${actorState.highestAbility}`
+                `ability:${actorState.highestAbility}`,
+                talent,
+                archetype
             );
         }
 
         // Tier 1: Class synergy
         if (this._matchesClass(talent, actorState)) {
             const className = actorState.classes.values().next().value || 'general';
-            return this._buildSuggestion(
+            return this._buildSuggestionWithArchetype(
                 SUGGESTION_TIERS.CLASS_SYNERGY,
                 'CLASS_SYNERGY',
-                `class:${className}`
+                `class:${className}`,
+                talent,
+                archetype
             );
         }
 
@@ -846,25 +940,29 @@ export class SuggestionEngine {
             const treeName = talent.system?.tree || '';
             const alignment = BuildIntent.checkTalentAlignment(talent.name, treeName, buildIntent);
             if (alignment.aligned) {
-                return this._buildSuggestion(
+                return this._buildSuggestionWithArchetype(
                     SUGGESTION_TIERS.CLASS_SYNERGY,
                     'CLASS_SYNERGY',
-                    null
+                    null,
+                    talent,
+                    archetype
                 );
             }
         }
 
         // Fallback - still a legal option
-        return this._buildSuggestion(SUGGESTION_TIERS.FALLBACK, 'FALLBACK', null);
+        return this._buildSuggestionWithArchetype(SUGGESTION_TIERS.FALLBACK, 'FALLBACK', null, talent, archetype);
     }
 
     /**
-     * Build a suggestion metadata object with reason explanation (Phase S1)
+     * Build a suggestion metadata object with reason explanation (Phase S1 + Phase 1.5)
      * @param {number} tier - The suggestion tier (numeric)
      * @param {string} reasonCode - Semantic reason code (e.g., 'PRESTIGE_PREREQ')
      * @param {string|null} sourceId - What caused this suggestion (e.g., 'prestige:Jedi', 'skill:stealth')
      * @param {Object} options - Additional options for reason generation
      * @param {string[]} options.matchingRules - Array of matched rule identifiers
+     * @param {number} options.archetypeAlignmentBonus - Confidence boost from archetype alignment (0-0.2)
+     * @param {Object} options.archetypeAlignment - Archetype alignment details for reason metadata
      * @returns {Object} Engine suggestion metadata with reason explanation
      */
     static _buildSuggestion(tier, reasonCode = null, sourceId = null, options = {}) {
@@ -876,20 +974,76 @@ export class SuggestionEngine {
         const finalReasonCode = reasonCode || TIER_REASON_CODES[tierKey] || 'FALLBACK';
         const matchingRules = options.matchingRules || [];
 
+        // Get base confidence
+        let baseConfidence = TIER_CONFIDENCE[tierKey] || 0.2;
+
+        // Apply archetype alignment bonus (capped at +0.2, never exceed 0.95)
+        const archetypeBonus = options.archetypeAlignmentBonus || 0;
+        const cappedBonus = Math.min(archetypeBonus, 0.2);
+        const finalConfidence = Math.min(baseConfidence + cappedBonus, 0.95);
+
         // Generate human-readable explanation
         const explanation = this._generateReasonExplanation(finalReasonCode, sourceId);
+
+        // Build reason object
+        const reason = {
+            tierAssignedBy: finalReasonCode,
+            matchingRules,
+            explanation
+        };
+
+        // Add archetype alignment details if present
+        if (options.archetypeAlignment && archetypeBonus > 0) {
+            reason.archetypeAlignment = {
+                bonus: cappedBonus,
+                matchedElements: options.archetypeAlignment.matchedElements || []
+            };
+        }
 
         return {
             tier,
             reasonCode: finalReasonCode,
             sourceId,
-            confidence: TIER_CONFIDENCE[tierKey] || 0.2,
-            reason: {
-                tierAssignedBy: finalReasonCode,
-                matchingRules,
-                explanation
-            }
+            confidence: finalConfidence,
+            reason
         };
+    }
+
+    /**
+     * Wrapper for _buildSuggestion that applies archetype alignment bonus
+     * Used by _evaluateFeat and _evaluateTalent (Phase 1.5)
+     * @param {number} tier - The suggestion tier
+     * @param {string} reasonCode - Reason code
+     * @param {string|null} sourceId - Source ID
+     * @param {Object|null} item - The feat/talent being evaluated
+     * @param {Object|null} archetype - Archetype object or null
+     * @param {Object} options - Additional options
+     * @returns {Object} Suggestion with archetype alignment applied
+     */
+    static _buildSuggestionWithArchetype(tier, reasonCode, sourceId, item, archetype, options = {}) {
+        // Calculate archetype alignment if item and archetype exist
+        let archetypeAlignment = null;
+        let bonus = 0;
+
+        if (item && archetype) {
+            const alignment = this._calculateArchetypeAlignment(item, archetype);
+            if (alignment.bonus > 0) {
+                archetypeAlignment = alignment;
+                bonus = alignment.bonus;
+            }
+        }
+
+        // Build suggestion with alignment bonus
+        return this._buildSuggestion(
+            tier,
+            reasonCode,
+            sourceId,
+            {
+                ...options,
+                archetypeAlignmentBonus: bonus,
+                archetypeAlignment
+            }
+        );
     }
 
     /**
