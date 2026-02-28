@@ -373,4 +373,154 @@ export class ArchetypeRegistry {
 
         return null;
     }
+
+    /**
+     * Resolve feat keywords to item IDs by searching compendiums
+     * Matches feat names against keyword list
+     * @param {Array<string>} keywords - Feat keywords (e.g., ['Weapon Focus (Lightsabers)'])
+     * @returns {Promise<Array<string>>} Array of feat item IDs
+     */
+    static async resolveFeatKeywords(keywords) {
+        try {
+            if (!Array.isArray(keywords) || keywords.length === 0) {
+                return [];
+            }
+
+            const results = [];
+            const pack = game.packs.get('foundryvtt-swse.feats');
+
+            if (!pack) {
+                SWSELogger.warn('[ArchetypeRegistry] Feats compendium not found');
+                return [];
+            }
+
+            const index = await pack.getIndex();
+
+            for (const keyword of keywords) {
+                const normalized = this._normalizeKeyword(keyword);
+                const match = index.find(item =>
+                    this._normalizeKeyword(item.name) === normalized
+                );
+
+                if (match) {
+                    results.push(match._id);
+                } else {
+                    SWSELogger.debug(`[ArchetypeRegistry] Feat keyword not resolved: "${keyword}"`);
+                }
+            }
+
+            return results;
+        } catch (err) {
+            SWSELogger.error('[ArchetypeRegistry] Error resolving feat keywords:', err);
+            return [];
+        }
+    }
+
+    /**
+     * Resolve talent keywords to item IDs by searching compendiums
+     * Matches talent names against keyword list
+     * @param {Array<string>} keywords - Talent keywords (e.g., ['Block', 'Deflect'])
+     * @returns {Promise<Array<string>>} Array of talent item IDs
+     */
+    static async resolveTalentKeywords(keywords) {
+        try {
+            if (!Array.isArray(keywords) || keywords.length === 0) {
+                return [];
+            }
+
+            const results = [];
+            const pack = game.packs.get('foundryvtt-swse.talents');
+
+            if (!pack) {
+                SWSELogger.warn('[ArchetypeRegistry] Talents compendium not found');
+                return [];
+            }
+
+            const index = await pack.getIndex();
+
+            for (const keyword of keywords) {
+                const normalized = this._normalizeKeyword(keyword);
+                const match = index.find(item =>
+                    this._normalizeKeyword(item.name) === normalized
+                );
+
+                if (match) {
+                    results.push(match._id);
+                } else {
+                    SWSELogger.debug(`[ArchetypeRegistry] Talent keyword not resolved: "${keyword}"`);
+                }
+            }
+
+            return results;
+        } catch (err) {
+            SWSELogger.error('[ArchetypeRegistry] Error resolving talent keywords:', err);
+            return [];
+        }
+    }
+
+    /**
+     * Get resolved recommendations (item IDs) for an archetype
+     * Converts talentKeywords and featKeywords to actual item IDs
+     * @param {string} archetypeId - Archetype ID
+     * @returns {Promise<Object|null>} { feats: [ids], talents: [ids], skills: [] } or null
+     */
+    static async getResolvedRecommendations(archetypeId) {
+        try {
+            const archetype = this.get(archetypeId);
+            if (!archetype) {
+                return null;
+            }
+
+            const [resolvedFeats, resolvedTalents] = await Promise.all([
+                this.resolveFeatKeywords(archetype.recommended?.feats || []),
+                this.resolveTalentKeywords(archetype.recommended?.talents || [])
+            ]);
+
+            return {
+                feats: resolvedFeats,
+                talents: resolvedTalents,
+                skills: archetype.recommended?.skills || []
+            };
+        } catch (err) {
+            SWSELogger.error('[ArchetypeRegistry] Error getting resolved recommendations:', err);
+            return null;
+        }
+    }
+
+    /**
+     * Get all archetypes for a class with resolved recommendations
+     * @param {string} baseClassId - Class ID (e.g., 'jedi')
+     * @returns {Promise<Array>} Archetypes with resolved recommendations
+     */
+    static async getByClassResolved(baseClassId) {
+        try {
+            const archetypes = this.getByClass(baseClassId);
+            const results = [];
+
+            for (const archetype of archetypes) {
+                const resolved = await this.getResolvedRecommendations(archetype.id);
+                if (resolved) {
+                    results.push({
+                        ...archetype,
+                        recommendedIds: resolved
+                    });
+                }
+            }
+
+            return results;
+        } catch (err) {
+            SWSELogger.error('[ArchetypeRegistry] Error getting class archetypes resolved:', err);
+            return [];
+        }
+    }
+
+    /**
+     * Normalize keyword for comparison (case-insensitive, trim)
+     * @private
+     * @param {string} keyword
+     * @returns {string} Normalized keyword
+     */
+    static _normalizeKeyword(keyword) {
+        return (keyword || '').toLowerCase().trim();
+    }
 }
