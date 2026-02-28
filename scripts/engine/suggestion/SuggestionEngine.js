@@ -33,6 +33,13 @@ import { WishlistEngine } from "/systems/foundryvtt-swse/scripts/engine/suggesti
 import { UNIFIED_TIERS } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-unified-tiers.js";
 import { getAllowedTalentTrees } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/tree-authority.js";
 import { ArchetypeRegistry } from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry.js";
+import {
+    getPrimaryArchetypeForActor,
+    getArchetypeFeats,
+    getArchetypeTalents,
+    isArchetypeRecommended,
+    getRoleBiasForArchetype
+} from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry-integration.js";
 
 // ──────────────────────────────────────────────────────────────
 // TIER DEFINITIONS (PHASE 5D: UNIFIED_TIERS Refactor)
@@ -47,6 +54,7 @@ export const SUGGESTION_TIERS = {
     META_SYNERGY: UNIFIED_TIERS.PRESTIGE_QUALIFIED_NOW,          // 5
     SPECIES_EARLY: UNIFIED_TIERS.PATH_CONTINUATION,              // 4 (mapped from 4.5)
     CHAIN_CONTINUATION: UNIFIED_TIERS.PATH_CONTINUATION,         // 4
+    ARCHETYPE_RECOMMENDATION: UNIFIED_TIERS.CATEGORY_SYNERGY,    // 3 (Phase 4: Archetype Integration)
     MENTOR_BIAS_MATCH: UNIFIED_TIERS.CATEGORY_SYNERGY,           // 3 (mapped from 3.5)
     SKILL_PREREQ_MATCH: UNIFIED_TIERS.CATEGORY_SYNERGY,          // 3
     ABILITY_PREREQ_MATCH: UNIFIED_TIERS.ABILITY_SYNERGY,         // 2
@@ -59,7 +67,7 @@ export const TIER_REASON_CODES = {
     6: 'PRESTIGE_PREREQ',
     5: 'META_SYNERGY',
     4: 'CHAIN_CONTINUATION',
-    3: 'SKILL_PREREQ_MATCH',
+    3: 'ARCHETYPE_RECOMMENDATION', // Maps to both ARCHETYPE_RECOMMENDATION, MENTOR_BIAS_MATCH, and SKILL_PREREQ_MATCH
     2: 'ABILITY_PREREQ_MATCH',
     1: 'CLASS_SYNERGY',
     0: 'FALLBACK'
@@ -110,7 +118,23 @@ export class SuggestionEngine {
             }
         }
 
-        return feats.map(feat => {
+        // Get primary archetype for character (Phase 4: Archetype Integration)
+        let primaryArchetype = null;
+        let archetypeRecommendedFeatIds = [];
+        try {
+            primaryArchetype = await getPrimaryArchetypeForActor(actor);
+            if (primaryArchetype) {
+                archetypeRecommendedFeatIds = await getArchetypeFeats(actor);
+                SWSELogger.log(
+                    `[SuggestionEngine] ${actor.name} matches archetype: ${primaryArchetype.name}`
+                );
+            }
+        } catch (err) {
+            SWSELogger.debug('[SuggestionEngine] Archetype retrieval failed (optional):', err);
+            // Graceful fallback - continue without archetype
+        }
+
+        return Promise.all(feats.map(feat => {
             // Only suggest for qualified feats
             if (feat.isQualified === false) {
                 // NEW: If includeFutureAvailability option enabled, score future availability
@@ -134,13 +158,16 @@ export class SuggestionEngine {
                 };
             }
 
-            const suggestion = this._evaluateFeat(feat, actorState, featMetadata, buildIntent, actor, pendingData);
+            const suggestion = this._evaluateFeat(
+                feat, actorState, featMetadata, buildIntent, actor, pendingData,
+                primaryArchetype, archetypeRecommendedFeatIds
+            );
             return {
                 ...feat,
                 suggestion,
                 isSuggested: suggestion.tier > 0
             };
-        });
+        }));
     }
 
     /**
@@ -168,6 +195,22 @@ export class SuggestionEngine {
                     ? { mentorBiases }
                     : null;
             }
+        }
+
+        // Get primary archetype for character (Phase 4: Archetype Integration)
+        let primaryArchetype = null;
+        let archetypeRecommendedTalentIds = [];
+        try {
+            primaryArchetype = await getPrimaryArchetypeForActor(actor);
+            if (primaryArchetype) {
+                archetypeRecommendedTalentIds = await getArchetypeTalents(actor);
+                SWSELogger.log(
+                    `[SuggestionEngine] ${actor.name} matches archetype: ${primaryArchetype.name}`
+                );
+            }
+        } catch (err) {
+            SWSELogger.debug('[SuggestionEngine] Archetype retrieval failed (optional):', err);
+            // Graceful fallback - continue without archetype
         }
 
         // ========== PHASE 2.1: TREE AUTHORITY FILTERING ==========
@@ -204,7 +247,7 @@ export class SuggestionEngine {
         );
         // =========================================================
 
-        return accessibleTalents.map(talent => {
+        return Promise.all(accessibleTalents.map(talent => {
             // Only suggest for qualified talents
             if (talent.isQualified === false) {
                 // NEW: If includeFutureAvailability option enabled, score future availability
@@ -228,13 +271,16 @@ export class SuggestionEngine {
                 };
             }
 
-            const suggestion = this._evaluateTalent(talent, actorState, buildIntent, actor, pendingData);
+            const suggestion = this._evaluateTalent(
+                talent, actorState, buildIntent, actor, pendingData,
+                primaryArchetype, archetypeRecommendedTalentIds
+            );
             return {
                 ...talent,
                 suggestion,
                 isSuggested: suggestion.tier > 0
             };
-        });
+        }));
     }
 
     /**
@@ -783,10 +829,13 @@ export class SuggestionEngine {
      * @param {Object} pendingData - Pending selections
      * @returns {Object} Suggestion metadata with archetype alignment applied
      */
-    static _evaluateFeat(feat, actorState, metadata = {}, buildIntent = null, actor = null, pendingData = {}) {
-        // Retrieve archetype if actor exists (Phase 1.5)
-        const archetypeId = actor?.system?.buildIntent?.archetypeId;
-        const archetype = archetypeId ? ArchetypeRegistry.get(archetypeId) : null;
+    static _evaluateFeat(feat, actorState, metadata = {}, buildIntent = null, actor = null, pendingData = {}, primaryArchetype = null, archetypeRecommendedFeatIds = []) {
+        // Use provided archetype or try to retrieve from registry (backwards compatibility)
+        let archetype = primaryArchetype;
+        if (!archetype) {
+            const archetypeId = actor?.system?.buildIntent?.archetypeId;
+            archetype = archetypeId ? ArchetypeRegistry.get(archetypeId) : null;
+        }
 
         // Check tiers in order of priority (highest first)
 
@@ -870,6 +919,17 @@ export class SuggestionEngine {
             );
         }
 
+        // Tier 3: ARCHETYPE RECOMMENDATION - Feat is recommended by character's primary archetype (Phase 4)
+        if (primaryArchetype && archetypeRecommendedFeatIds.includes(feat.id)) {
+            return this._buildSuggestionWithArchetype(
+                SUGGESTION_TIERS.ARCHETYPE_RECOMMENDATION,
+                'ARCHETYPE_RECOMMENDATION',
+                `archetype:${primaryArchetype.id}`,
+                feat,
+                archetype
+            );
+        }
+
         // Tier 3.5: MENTOR BIAS - Feat matches L1 survey answer themes
         if (buildIntent && buildIntent.mentorBiases && Object.keys(buildIntent.mentorBiases).length > 0) {
             const mentorMatch = this._checkMentorBiasMatch(feat, buildIntent);
@@ -943,12 +1003,17 @@ export class SuggestionEngine {
      * @param {Object|null} buildIntent - Build intent analysis
      * @param {Actor|null} actor - The actor (for synergy checks and archetype)
      * @param {Object} pendingData - Pending selections
+     * @param {Object|null} primaryArchetype - Primary archetype (Phase 4)
+     * @param {Array} archetypeRecommendedTalentIds - Recommended talent IDs (Phase 4)
      * @returns {Object} Suggestion metadata with archetype alignment applied
      */
-    static _evaluateTalent(talent, actorState, buildIntent = null, actor = null, pendingData = {}) {
-        // Retrieve archetype if actor exists (Phase 1.5)
-        const archetypeId = actor?.system?.buildIntent?.archetypeId;
-        const archetype = archetypeId ? ArchetypeRegistry.get(archetypeId) : null;
+    static _evaluateTalent(talent, actorState, buildIntent = null, actor = null, pendingData = {}, primaryArchetype = null, archetypeRecommendedTalentIds = []) {
+        // Use provided archetype or try to retrieve from registry (backwards compatibility)
+        let archetype = primaryArchetype;
+        if (!archetype) {
+            const archetypeId = actor?.system?.buildIntent?.archetypeId;
+            archetype = archetypeId ? ArchetypeRegistry.get(archetypeId) : null;
+        }
 
         // Check tiers in order of priority (highest first)
 
@@ -1005,6 +1070,17 @@ export class SuggestionEngine {
                 SUGGESTION_TIERS.CHAIN_CONTINUATION,
                 'CHAIN_CONTINUATION',
                 `chain:${chainPrereq}`,
+                talent,
+                archetype
+            );
+        }
+
+        // Tier 3: ARCHETYPE RECOMMENDATION - Talent is recommended by character's primary archetype (Phase 4)
+        if (primaryArchetype && archetypeRecommendedTalentIds.includes(talent.id)) {
+            return this._buildSuggestionWithArchetype(
+                SUGGESTION_TIERS.ARCHETYPE_RECOMMENDATION,
+                'ARCHETYPE_RECOMMENDATION',
+                `archetype:${primaryArchetype.id}`,
                 talent,
                 archetype
             );
@@ -1183,6 +1259,7 @@ export class SuggestionEngine {
             'META_SYNERGY': () => `Synergy with your current build.`,
             'SPECIES_EARLY': () => `Matches your species heritage.`,
             'CHAIN_CONTINUATION': () => `Builds on existing choices.`,
+            'ARCHETYPE_RECOMMENDATION': () => `Recommended by your archetype.`,
             'MENTOR_BIAS_MATCH': () => `Aligns with your mentor guidance.`,
             'SKILL_PREREQ_MATCH': () => `Uses your trained skills.`,
             'ABILITY_PREREQ_MATCH': () => `Matches your highest ability.`,
