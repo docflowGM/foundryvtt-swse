@@ -305,18 +305,44 @@ export function registerSystemSettings() {
     default: false
   });
 
-  // Multiclass Policy: RAW vs Enhanced behavior
-  game.settings.register('foundryvtt-swse', 'multiclassPolicy', {
-    name: 'Multiclass Policy',
-    hint: 'RAW: Standard Saga rules (1 starting feat, no retraining). Enhanced: Full starting feats, skill retraining, skill training deltas for base-to-base multiclass.',
+  // Multiclass Policy: Granular feature flags for enhanced multiclass behavior
+  // All flags disabled = RAW (Standard Saga Rules)
+  // Individual flags enable specific enhanced features
+
+  game.settings.register('foundryvtt-swse', 'multiclassEnhancedEnabled', {
+    name: 'Enable Enhanced Multiclass Mode',
+    hint: 'Master toggle for enhanced multiclass features. When enabled, individual feature flags below control behavior.',
     scope: 'world',
     config: true,
-    type: String,
-    choices: {
-      RAW: 'RAW (Standard Saga Rules)',
-      ENHANCED: 'Enhanced (Houserule)'
-    },
-    default: 'RAW'
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.register('foundryvtt-swse', 'multiclassRetraining', {
+    name: 'Allow Skill Retraining on Multiclass',
+    hint: 'When enabled (and Enhanced Mode ON), players may retrain skills when multiclassing to a new base class.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.register('foundryvtt-swse', 'multiclassExtraStartingFeats', {
+    name: 'Grant Full Starting Feats on Multiclass',
+    hint: 'When enabled (and Enhanced Mode ON), grant the new class\'s full starting feat list instead of just 1.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
+  game.settings.register('foundryvtt-swse', 'multiclassBonusSkillDelta', {
+    name: 'Grant Bonus Skill Trainings (Delta Rule)',
+    hint: 'When enabled (and Enhanced Mode ON), grant bonus skill trainings equal to the delta between new class and original base class.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
   });
 
   SWSELogger.log('SWSE | Settings registered');

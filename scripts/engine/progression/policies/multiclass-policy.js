@@ -12,20 +12,24 @@ export class MulticlassPolicy {
   /**
    * Evaluate multiclass policy for a given class addition.
    *
+   * Reads individual feature flags to determine behavior.
+   * All flags off = RAW (Standard Saga Rules)
+   *
    * @param {Actor} actor - The actor gaining a class level
    * @param {Object} newClassData - ClassModel for the new class being added
    * @param {Object} context - Context object with progression state
    * @returns {Object} Policy result with grants and restrictions
    */
   static evaluate(actor, newClassData, context = {}) {
-    const mode = game.settings.get("foundryvtt-swse", "multiclassPolicy");
+    const enhancedEnabled = game.settings.get("foundryvtt-swse", "multiclassEnhancedEnabled");
 
-    if (mode === "ENHANCED") {
-      return this._enhancedPolicy(actor, newClassData, context);
+    // If enhanced mode disabled, always use RAW
+    if (!enhancedEnabled) {
+      return this._rawPolicy(actor, newClassData);
     }
 
-    // Default to RAW
-    return this._rawPolicy(actor, newClassData);
+    // Enhanced enabled: evaluate features
+    return this._enhancedPolicy(actor, newClassData, context);
   }
 
   /**
@@ -55,26 +59,20 @@ export class MulticlassPolicy {
   }
 
   /**
-   * ENHANCED Policy: Houserule multiclass expansion
+   * ENHANCED Policy: Granular feature-flag driven multiclass expansion
    *
-   * When multiclassing from one Base class into another Base class:
-   * - Grant full starting feat list (not just 1)
-   * - Allow skill retraining during level-up
-   * - Grant delta skill trainings if new class has more starting skills
-   * - Skill selection pool = union of all possessed class skills
+   * Reads individual feature flags to determine behavior:
+   * - multiclassRetraining: Allow skill retraining
+   * - multiclassExtraStartingFeats: Grant full starting feat list
+   * - multiclassBonusSkillDelta: Grant delta skill trainings
    *
-   * Prestige classes always use RAW behavior.
+   * Prestige classes ALWAYS use RAW behavior, regardless of flags.
    *
    * @private
    */
   static _enhancedPolicy(actor, newClassData, context = {}) {
-    // Prestige classes always follow RAW rules
-    if (newClassData.prestigeClass === true) {
-      return this._rawPolicy(actor, newClassData);
-    }
-
-    // Only apply enhanced logic if new class is a base class
-    if (newClassData.baseClass !== true) {
+    // CRITICAL: Prestige classes must never receive enhanced behavior
+    if (newClassData.prestigeClass === true || newClassData.baseClass !== true) {
       return this._rawPolicy(actor, newClassData);
     }
 
@@ -86,6 +84,7 @@ export class MulticlassPolicy {
     });
 
     // If no existing base classes, fall back to RAW
+    // (Enhanced features only apply to base→base multiclass)
     if (baseClassesAdded.length === 0) {
       return this._rawPolicy(actor, newClassData);
     }
@@ -95,14 +94,29 @@ export class MulticlassPolicy {
     const originalBaseClassData = context.classDataCache?.[originalBaseClass.class];
 
     if (!originalBaseClassData) {
-      // If we can't find original class data, fall back to RAW
       return this._rawPolicy(actor, newClassData);
     }
 
-    // Calculate skill training delta
-    const originalTrainings = originalBaseClassData.trainedSkills || 0;
-    const newTrainings = newClassData.trainedSkills || 0;
-    const delta = Math.max(0, newTrainings - originalTrainings);
+    // Read individual feature flags
+    const allowRetraining = game.settings.get("foundryvtt-swse", "multiclassRetraining");
+    const allowExtraFeats = game.settings.get("foundryvtt-swse", "multiclassExtraStartingFeats");
+    const allowBonusSkills = game.settings.get("foundryvtt-swse", "multiclassBonusSkillDelta");
+
+    // Calculate skill training delta (only relevant if bonus skills enabled)
+    let bonusSkillTrainings = 0;
+    if (allowBonusSkills) {
+      const originalTrainings = originalBaseClassData.trainedSkills || 0;
+      const newTrainings = newClassData.trainedSkills || 0;
+      bonusSkillTrainings = Math.max(0, newTrainings - originalTrainings);
+    }
+
+    // Get full starting feat list (only relevant if extra feats enabled)
+    let startingFeatIds = [];
+    let startingFeatGrants = 1; // Default: always at least 1 from RAW
+    if (allowExtraFeats) {
+      startingFeatIds = this._getStartingFeatIds(newClassData);
+      startingFeatGrants = startingFeatIds.length || 1;
+    }
 
     // Aggregate skill pool: union of all class skills from possessed classes + new class
     const aggregatedSkills = new Set();
@@ -120,21 +134,28 @@ export class MulticlassPolicy {
       newClassData.classSkills.forEach(skill => aggregatedSkills.add(skill));
     }
 
-    // Get full starting feat list for new class
-    const startingFeatIds = this._getStartingFeatIds(newClassData);
-
     return {
       mode: "ENHANCED",
-      startingFeatGrants: startingFeatIds.length,
+      flags: {
+        retraining: allowRetraining,
+        extraStartingFeats: allowExtraFeats,
+        bonusSkillDelta: allowBonusSkills
+      },
+      startingFeatGrants: startingFeatGrants,
       startingFeatIds: startingFeatIds,
-      retrainAllowed: true,
-      bonusSkillTrainings: delta,
+      retrainAllowed: allowRetraining,
+      bonusSkillTrainings: bonusSkillTrainings,
       skillSelectionPool: aggregatedSkills,
       exploitGuard: {
         classId: newClassData.id,
         originalBaseClassId: originalBaseClassData.id,
-        deltaSkillTrainings: delta,
-        grantedAt: new Date().toISOString()
+        deltaSkillTrainings: bonusSkillTrainings,
+        grantedAt: new Date().toISOString(),
+        enabledFlags: {
+          retraining: allowRetraining,
+          extraFeats: allowExtraFeats,
+          bonusSkills: allowBonusSkills
+        }
       }
     };
   }
@@ -229,11 +250,33 @@ export class MulticlassPolicy {
   }
 
   /**
-   * Get current multiclass policy mode.
-   * @returns {String} "RAW" or "ENHANCED"
+   * Get current multiclass policy configuration.
+   * @returns {Object} { mode: "RAW"|"ENHANCED", flags: {...} }
    */
-  static getMode() {
-    return game.settings.get("foundryvtt-swse", "multiclassPolicy") || "RAW";
+  static getConfiguration() {
+    const enhancedEnabled = game.settings.get("foundryvtt-swse", "multiclassEnhancedEnabled");
+
+    if (!enhancedEnabled) {
+      return {
+        mode: "RAW",
+        enabled: false,
+        flags: {
+          retraining: false,
+          extraStartingFeats: false,
+          bonusSkillDelta: false
+        }
+      };
+    }
+
+    return {
+      mode: "ENHANCED",
+      enabled: true,
+      flags: {
+        retraining: game.settings.get("foundryvtt-swse", "multiclassRetraining"),
+        extraStartingFeats: game.settings.get("foundryvtt-swse", "multiclassExtraStartingFeats"),
+        bonusSkillDelta: game.settings.get("foundryvtt-swse", "multiclassBonusSkillDelta")
+      }
+    };
   }
 
   /**
@@ -241,10 +284,21 @@ export class MulticlassPolicy {
    * @returns {String}
    */
   static getDescription() {
-    const mode = this.getMode();
-    if (mode === "ENHANCED") {
-      return "Enhanced: Full starting feats, skill retraining, skill trainings deltas";
+    const config = this.getConfiguration();
+
+    if (!config.enabled) {
+      return "RAW: Standard Saga multiclass rules (1 feat, no retraining, no bonus skills)";
     }
-    return "RAW: Standard Saga multiclass rules";
+
+    const features = [];
+    if (config.flags.retraining) features.push("skill retraining");
+    if (config.flags.extraStartingFeats) features.push("full starting feats");
+    if (config.flags.bonusSkillDelta) features.push("bonus skill trainings");
+
+    if (features.length === 0) {
+      return "Enhanced Mode enabled, but no features selected";
+    }
+
+    return `Enhanced: ${features.join(", ")}`;
   }
 }
