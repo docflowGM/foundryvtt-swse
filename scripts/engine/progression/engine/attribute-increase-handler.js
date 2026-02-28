@@ -95,7 +95,8 @@ export class AttributeIncreaseHandler {
     currentPending.trainedSkills = (currentPending.trainedSkills || 0) + skillsToGain;
     currentPending.languages = (currentPending.languages || 0) + languagesToGain;
 
-    await actor.setFlag('foundryvtt-swse', 'pendingAttributeGains', currentPending);
+    // PHASE 3.4.2: Route through ActorEngine for governance
+    await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'pendingAttributeGains', currentPending);
 
     // Add language choice tokens via language module
     if (SWSELanguageModule && languagesToGain > 0) {
@@ -156,7 +157,8 @@ export class AttributeIncreaseHandler {
     const currentPending = actor.getFlag('foundryvtt-swse', 'pendingAttributeGains') || {};
     currentPending.forcePowers = (currentPending.forcePowers || 0) + forcePowersToGain;
 
-    await actor.setFlag('foundryvtt-swse', 'pendingAttributeGains', currentPending);
+    // PHASE 3.4.2: Route through ActorEngine for governance
+    await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'pendingAttributeGains', currentPending);
 
     // Emit hook for UI to handle selections
     Hooks.call('swse:wisdomIncreased', {
@@ -249,7 +251,8 @@ export class AttributeIncreaseHandler {
 
     if (type) {
       delete pending[type];
-      await actor.setFlag('foundryvtt-swse', 'pendingAttributeGains', pending);
+      // PHASE 3.4.2: Route through ActorEngine for governance
+      await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'pendingAttributeGains', pending);
     } else {
       await actor.unsetFlag('foundryvtt-swse', 'pendingAttributeGains');
     }
