@@ -305,5 +305,19 @@ export function registerSystemSettings() {
     default: false
   });
 
+  // Multiclass Policy: RAW vs Enhanced behavior
+  game.settings.register('foundryvtt-swse', 'multiclassPolicy', {
+    name: 'Multiclass Policy',
+    hint: 'RAW: Standard Saga rules (1 starting feat, no retraining). Enhanced: Full starting feats, skill retraining, skill training deltas for base-to-base multiclass.',
+    scope: 'world',
+    config: true,
+    type: String,
+    choices: {
+      RAW: 'RAW (Standard Saga Rules)',
+      ENHANCED: 'Enhanced (Houserule)'
+    },
+    default: 'RAW'
+  });
+
   SWSELogger.log('SWSE | Settings registered');
 }
