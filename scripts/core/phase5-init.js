@@ -14,6 +14,7 @@ import { registerSchemaValidation } from "/systems/foundryvtt-swse/scripts/core/
 import { registerVersionAdapter, validateSystemCompatibility } from "/systems/foundryvtt-swse/scripts/core/version-adapter.js";
 import { log } from "/systems/foundryvtt-swse/scripts/core/foundry-env.js";
 import { ArchetypeRegistry } from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry.js";
+import { SuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngine.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 
@@ -33,14 +34,19 @@ export function initializePhase5() {
     // 3. Register schema validation tools
     registerSchemaValidation();
 
-    // 4. Initialize ArchetypeRegistry (Phase A & B)
+    // 4. Initialize data-driven systems (Phase A, B, Phase 3)
     Hooks.once('ready', async () => {
       try {
+        // Initialize ArchetypeRegistry (Phase A & B)
         await ArchetypeRegistry.initialize();
         const stats = ArchetypeRegistry.getStats();
         log.info(`[${SYSTEM_ID}] ArchetypeRegistry initialized: ${stats.count} archetypes`);
+
+        // Initialize SuggestionEngine data sources (Phase 3)
+        await SuggestionEngine.initialize();
+        log.info(`[${SYSTEM_ID}] SuggestionEngine data-driven systems initialized`);
       } catch (err) {
-        log.error(`[${SYSTEM_ID}] ArchetypeRegistry initialization failed:`, err);
+        log.error(`[${SYSTEM_ID}] Data-driven initialization failed:`, err);
       }
     });
 
@@ -50,6 +56,7 @@ export function initializePhase5() {
     log.info(`[${SYSTEM_ID}]   ✓ Extension safety (custom hooks)`);
     log.info(`[${SYSTEM_ID}]   ✓ Forward compatibility (version detection)`);
     log.info(`[${SYSTEM_ID}]   ✓ Archetypes (registry, alignment scoring)`);
+    log.info(`[${SYSTEM_ID}]   ✓ Data-driven signals (talent exclusions, mentor bias extensibility)`);
 
   } catch (err) {
     log.error(`Phase 5 initialization failed:`, err.message);

@@ -11,6 +11,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { PRESTIGE_SIGNALS } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
 import { BuildIdentityAnchor } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIdentityAnchor.js";
+import { SuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngine.js";
 
 export class OpportunityCostAnalyzer {
 
@@ -326,18 +327,19 @@ export class OpportunityCostAnalyzer {
         }
       }
 
-      // Minimal hardcoded rules: mutually exclusive talent trees
-      // (This is rare, and should be in compendium data)
+      // Check talent tree mutual exclusions (now data-driven via Phase 3)
       if (item.type === 'talent') {
-        const itemTree = item.system?.tree?.toLowerCase();
+        const itemTree = item.system?.tree;
+        if (!itemTree) {
+          return { cost: 0, reasons: [] };
+        }
 
-        // Example: Dark Side and Jedi trees are mutually exclusive
-        const mutuallyExclusive = {
-          'dark side': ['jedi mind tricks', 'lightsaber combat (jedi)'],
-          'jedi mind tricks': ['dark side']
-        };
+        // Get exclusions from data-driven registry (or hardcoded fallback)
+        const exclusions = SuggestionEngine.getTalentExclusions(itemTree);
+        if (!exclusions || exclusions.length === 0) {
+          return { cost: 0, reasons: [] };
+        }
 
-        const exclusions = mutuallyExclusive[itemTree] || [];
         const ownedTalentTrees = new Set(
           actor.items
             .filter(i => i.type === 'talent')
@@ -345,10 +347,11 @@ export class OpportunityCostAnalyzer {
         );
 
         for (const exclusion of exclusions) {
-          if (ownedTalentTrees.has(exclusion)) {
+          const exclusionLower = typeof exclusion === 'string' ? exclusion.toLowerCase() : '';
+          if (ownedTalentTrees.has(exclusionLower)) {
             return {
               cost: 0.10,
-              reasons: [`Locks out ${exclusion} talent tree`]
+              reasons: [`Locks out ${exclusionLower} talent tree`]
             };
           }
         }

@@ -587,9 +587,13 @@ export class SuggestionEngine {
     // ──────────────────────────────────────────────────────────────
 
     /**
-     * Check if a feat/talent matches mentor survey biases (Phase S1)
-     * Supports metadata-based bias override via item.system.buildBias
-     * Falls back to keyword matching on item name
+     * Check if a feat/talent matches mentor survey biases (Phase S1 + Phase 3)
+     * Four-tier resolution:
+     * 1. Explicit bias via item.system.buildBias (highest priority)
+     * 2. Tag-based bias via item.system.tags
+     * 3. Keyword matching on item name
+     * 4. No match (lowest priority)
+     *
      * @param {Object|string} item - Feat or talent object (or legacy: name string)
      * @param {Object} buildIntent - BuildIntent with mentorBiases
      * @returns {Object|null} Match info with sourceId, or null if no match
@@ -605,7 +609,7 @@ export class SuggestionEngine {
         // Extract item name (handle both object and legacy string format)
         const itemName = typeof item === 'string' ? item : (item?.name || '');
 
-        // PHASE S1: Check metadata-based bias override first
+        // TIER 1: Explicit bias override (Phase S1)
         if (typeof item === 'object' && item?.system?.buildBias) {
             const declaredBias = item.system.buildBias;
             if (biasTypes.includes(declaredBias) && biases[declaredBias] > 0) {
@@ -615,7 +619,21 @@ export class SuggestionEngine {
             }
         }
 
-        // Fall back to keyword matching on item name
+        // TIER 2: Tag-based bias (Phase 3 enhancement)
+        if (typeof item === 'object' && item?.system?.tags && Array.isArray(item.system.tags)) {
+            for (const tag of item.system.tags) {
+                const tagLower = tag.toLowerCase();
+                for (const biasType of biasTypes) {
+                    if (biases[biasType] > 0 && tagLower === biasType) {
+                        return {
+                            sourceId: `mentor_bias:${biasType}`
+                        };
+                    }
+                }
+            }
+        }
+
+        // TIER 3: Keyword matching on item name (fallback)
         for (const biasType of biasTypes) {
             if (biases[biasType] > 0 && this._checkBiasKeyword(itemName, biasType)) {
                 return {
@@ -644,6 +662,111 @@ export class SuggestionEngine {
         const keywords = this.BIAS_KEYWORDS[biasType];
         if (!keywords) return false;
         return keywords.some(k => name.toLowerCase().includes(k));
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // PHASE 3: DATA-DRIVEN STRUCTURAL SIGNALS
+    // ──────────────────────────────────────────────────────────────
+
+    /**
+     * Static cache for talent tree mutual exclusions loaded from world items
+     * Maps talentTreeId → [conflictingTreeIds]
+     * @private
+     */
+    static #talentExclusions = new Map();
+    static #initialized = false;
+
+    /**
+     * Initialize data-driven structural signals
+     * Called once on game ready
+     * @returns {Promise<void>}
+     */
+    static async initialize() {
+        if (this.#initialized) {
+            SWSELogger.log('[SuggestionEngine] Already initialized, skipping');
+            return;
+        }
+
+        try {
+            await this._loadTalentExclusions();
+            this.#initialized = true;
+            SWSELogger.log('[SuggestionEngine] Data-driven initialization complete');
+        } catch (err) {
+            SWSELogger.error('[SuggestionEngine] Initialization failed:', err);
+            this.#initialized = false;
+        }
+    }
+
+    /**
+     * Load talent tree mutual exclusions from world items
+     * Each talent tree item can define: system.mutuallyExclusive = ["other-tree-id"]
+     * @private
+     */
+    static async _loadTalentExclusions() {
+        this.#talentExclusions.clear();
+
+        if (!game?.items) {
+            SWSELogger.log('[SuggestionEngine] No game.items available, skipping talent exclusion load');
+            return;
+        }
+
+        try {
+            const talentTrees = game.items.filter(item => item.type === 'talentTree');
+            SWSELogger.log(`[SuggestionEngine] Loading mutual exclusions for ${talentTrees.length} talent trees`);
+
+            for (const tree of talentTrees) {
+                const treeId = tree.id;
+                const exclusions = tree.system?.mutuallyExclusive;
+
+                if (Array.isArray(exclusions) && exclusions.length > 0) {
+                    this.#talentExclusions.set(treeId, exclusions);
+                    SWSELogger.log(
+                        `[SuggestionEngine] Tree "${tree.name}" (${treeId}) excludes: ${exclusions.join(', ')}`
+                    );
+                }
+            }
+
+            SWSELogger.log(`[SuggestionEngine] Loaded ${this.#talentExclusions.size} talent tree exclusion rules`);
+        } catch (err) {
+            SWSELogger.warn('[SuggestionEngine] Error loading talent exclusions:', err);
+        }
+    }
+
+    /**
+     * Get talent tree exclusions for a given tree
+     * Checks data-driven world data, falls back to hardcoded rules if needed
+     * @param {string} treeId - Talent tree ID or name
+     * @returns {Array} Array of conflicting tree IDs
+     */
+    static getTalentExclusions(treeId) {
+        // First try cached data-driven exclusions (by ID)
+        if (this.#talentExclusions.has(treeId)) {
+            return this.#talentExclusions.get(treeId);
+        }
+
+        // If not found by ID, try finding by tree name (lowercase lookup)
+        const treeNameLower = treeId.toLowerCase();
+        for (const [id, exclusions] of this.#talentExclusions.entries()) {
+            const item = game?.items?.get(id);
+            if (item?.name?.toLowerCase() === treeNameLower) {
+                return exclusions;
+            }
+        }
+
+        // Fallback to hardcoded rules (for backward compatibility)
+        const hardcodedExclusions = {
+            'dark side': ['jedi mind tricks', 'lightsaber combat (jedi)'],
+            'jedi mind tricks': ['dark side']
+        };
+        return hardcodedExclusions[treeNameLower] || [];
+    }
+
+    /**
+     * Check if initialization is complete
+     * @returns {boolean}
+     */
+    static isInitialized() {
+        return this.#initialized;
     }
 
     // ──────────────────────────────────────────────────────────────
