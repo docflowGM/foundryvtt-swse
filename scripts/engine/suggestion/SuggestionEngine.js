@@ -539,22 +539,35 @@ export class SuggestionEngine {
     // ──────────────────────────────────────────────────────────────
 
     /**
-     * Check if a feat/talent matches mentor survey biases
-     * Maps mentor biases to feat/talent characteristics and returns match info
-     * @param {string} itemName - Name of feat or talent to check
+     * Check if a feat/talent matches mentor survey biases (Phase S1)
+     * Supports metadata-based bias override via item.system.buildBias
+     * Falls back to keyword matching on item name
+     * @param {Object|string} item - Feat or talent object (or legacy: name string)
      * @param {Object} buildIntent - BuildIntent with mentorBiases
      * @returns {Object|null} Match info with sourceId, or null if no match
      */
-    static _checkMentorBiasMatch(itemName, buildIntent) {
+    static _checkMentorBiasMatch(item, buildIntent) {
         if (!buildIntent || !buildIntent.mentorBiases) {
             return null;
         }
 
         const biases = buildIntent.mentorBiases;
-
-        // Check each bias type against item keywords
         const biasTypes = ['melee', 'ranged', 'force', 'stealth', 'social', 'tech', 'leadership', 'support', 'survival'];
 
+        // Extract item name (handle both object and legacy string format)
+        const itemName = typeof item === 'string' ? item : (item?.name || '');
+
+        // PHASE S1: Check metadata-based bias override first
+        if (typeof item === 'object' && item?.system?.buildBias) {
+            const declaredBias = item.system.buildBias;
+            if (biasTypes.includes(declaredBias) && biases[declaredBias] > 0) {
+                return {
+                    sourceId: `mentor_bias:${declaredBias}`
+                };
+            }
+        }
+
+        // Fall back to keyword matching on item name
         for (const biasType of biasTypes) {
             if (biases[biasType] > 0 && this._checkBiasKeyword(itemName, biasType)) {
                 return {
@@ -672,7 +685,7 @@ export class SuggestionEngine {
 
         // Tier 3.5: MENTOR BIAS - Feat matches L1 survey answer themes
         if (buildIntent && buildIntent.mentorBiases && Object.keys(buildIntent.mentorBiases).length > 0) {
-            const mentorMatch = this._checkMentorBiasMatch(feat.name, buildIntent);
+            const mentorMatch = this._checkMentorBiasMatch(feat, buildIntent);
             if (mentorMatch) {
                 return this._buildSuggestion(
                     SUGGESTION_TIERS.MENTOR_BIAS_MATCH,
@@ -790,7 +803,7 @@ export class SuggestionEngine {
 
         // Tier 3.5: MENTOR BIAS - Talent matches L1 survey answer themes
         if (buildIntent && buildIntent.mentorBiases && Object.keys(buildIntent.mentorBiases).length > 0) {
-            const mentorMatch = this._checkMentorBiasMatch(talent.name, buildIntent);
+            const mentorMatch = this._checkMentorBiasMatch(talent, buildIntent);
             if (mentorMatch) {
                 return this._buildSuggestion(
                     SUGGESTION_TIERS.MENTOR_BIAS_MATCH,
@@ -846,25 +859,62 @@ export class SuggestionEngine {
     }
 
     /**
-     * Build a suggestion metadata object (engine output only - no presentation data)
+     * Build a suggestion metadata object with reason explanation (Phase S1)
      * @param {number} tier - The suggestion tier (numeric)
-     * @param {string} itemName - Name of the item (for logging/tracing)
-     * @param {string|null} reasonCode - Semantic reason code (e.g., 'PRESTIGE_PREREQ')
+     * @param {string} reasonCode - Semantic reason code (e.g., 'PRESTIGE_PREREQ')
      * @param {string|null} sourceId - What caused this suggestion (e.g., 'prestige:Jedi', 'skill:stealth')
-     * @returns {Object} Engine-only suggestion metadata
+     * @param {Object} options - Additional options for reason generation
+     * @param {string[]} options.matchingRules - Array of matched rule identifiers
+     * @returns {Object} Engine suggestion metadata with reason explanation
      */
-    static _buildSuggestion(tier, itemName, reasonCode = null, sourceId = null) {
+    static _buildSuggestion(tier, reasonCode = null, sourceId = null, options = {}) {
         // Find the closest tier key for lookups (handles decimal tiers like 4.5)
         const tierKey = Object.keys(TIER_REASON_CODES)
             .map(Number)
             .sort((a, b) => Math.abs(a - tier) - Math.abs(b - tier))[0];
 
+        const finalReasonCode = reasonCode || TIER_REASON_CODES[tierKey] || 'FALLBACK';
+        const matchingRules = options.matchingRules || [];
+
+        // Generate human-readable explanation
+        const explanation = this._generateReasonExplanation(finalReasonCode, sourceId);
+
         return {
             tier,
-            reasonCode: reasonCode || TIER_REASON_CODES[tierKey] || 'FALLBACK',
+            reasonCode: finalReasonCode,
             sourceId,
-            confidence: TIER_CONFIDENCE[tierKey] || 0.2
+            confidence: TIER_CONFIDENCE[tierKey] || 0.2,
+            reason: {
+                tierAssignedBy: finalReasonCode,
+                matchingRules,
+                explanation
+            }
         };
+    }
+
+    /**
+     * Generate human-readable explanation for a suggestion (Phase S1)
+     * @param {string} reasonCode - The reason code
+     * @param {string|null} sourceId - The source identifier
+     * @returns {string} Human-readable explanation
+     */
+    static _generateReasonExplanation(reasonCode, sourceId) {
+        const explanations = {
+            'PRESTIGE_PREREQ': () => `Required for your prestige class path.`,
+            'WISHLIST_PATH': () => `Required for an item on your wishlist.`,
+            'MARTIAL_ARTS': () => `Strong martial arts foundation.`,
+            'META_SYNERGY': () => `Synergy with your current build.`,
+            'SPECIES_EARLY': () => `Matches your species heritage.`,
+            'CHAIN_CONTINUATION': () => `Builds on existing choices.`,
+            'MENTOR_BIAS_MATCH': () => `Aligns with your mentor guidance.`,
+            'SKILL_PREREQ_MATCH': () => `Uses your trained skills.`,
+            'ABILITY_PREREQ_MATCH': () => `Matches your highest ability.`,
+            'CLASS_SYNERGY': () => `Strong thematic fit with your class.`,
+            'FALLBACK': () => `General compatibility with your build.`
+        };
+
+        const explainerFn = explanations[reasonCode];
+        return explainerFn ? explainerFn() : 'Available for selection.';
     }
 
     // ──────────────────────────────────────────────────────────────
