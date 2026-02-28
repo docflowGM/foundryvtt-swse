@@ -5,7 +5,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { PrerequisiteRequirements } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/prerequisite_engine.js";
 
 export class WishlistEngine {
@@ -103,7 +103,7 @@ export class WishlistEngine {
    * @returns {Object} Prerequisite analysis with fulfilled/unfulfilled breakdown
    */
   static analyzePrerequisiteFulfillment(actor, item) {
-    const canonical = PrerequisiteChecker.getUnmetRequirements(actor, item);
+    const canonical = AbilityEngine.getUnmetRequirements(actor, item);
     const legacy = PrerequisiteRequirements.getUnmetRequirements(actor, item);
     if (JSON.stringify(canonical) !== JSON.stringify(legacy)) {
       console.warn('getUnmetRequirements mismatch (analyze fulfillment)', { item: item.name, canonical, legacy });
@@ -148,7 +148,7 @@ export class WishlistEngine {
   static getWishlistedPrerequisites(actor, item) {
     const wishlist = this._getWishlist(actor);
     const allItems = [...wishlist.feats, ...wishlist.talents];
-    const canonical = PrerequisiteChecker.getUnmetRequirements(actor, item);
+    const canonical = AbilityEngine.getUnmetRequirements(actor, item);
     const legacy = PrerequisiteRequirements.getUnmetRequirements(actor, item);
     if (JSON.stringify(canonical) !== JSON.stringify(legacy)) {
       console.warn('getUnmetRequirements mismatch (wishlisted prereqs)', { item: item.name, canonical, legacy });
@@ -176,7 +176,7 @@ export class WishlistEngine {
    * @returns {Object} Path analysis with steps and progress
    */
   static analyzePathToWishlist(actor, itemId, itemType, item) {
-    const canonical = PrerequisiteChecker.getUnmetRequirements(actor, item);
+    const canonical = AbilityEngine.getUnmetRequirements(actor, item);
     const legacy = PrerequisiteRequirements.getUnmetRequirements(actor, item);
     if (JSON.stringify(canonical) !== JSON.stringify(legacy)) {
       console.warn('getUnmetRequirements mismatch (analyze path)', { item: item.name, canonical, legacy });
@@ -235,7 +235,7 @@ export class WishlistEngine {
    * @returns {Array} Ordered recommendations
    */
   static getWishlistRecommendations(actor, item) {
-    const canonical = PrerequisiteChecker.getUnmetRequirements(actor, item);
+    const canonical = AbilityEngine.getUnmetRequirements(actor, item);
     const legacy = PrerequisiteRequirements.getUnmetRequirements(actor, item);
     if (JSON.stringify(canonical) !== JSON.stringify(legacy)) {
       console.warn('getUnmetRequirements mismatch (recommendations)', { item: item.name, canonical, legacy });

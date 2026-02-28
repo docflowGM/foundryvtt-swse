@@ -24,7 +24,7 @@
  * Phase 6: Derive (prepareDerivedData)
  */
 
-import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class ProgressionCompiler {
@@ -415,7 +415,7 @@ export class ProgressionCompiler {
 
     // Phase 2: Validate each talent
     for (const talentId of ids) {
-      const prereq = PrerequisiteChecker.checkPrerequisites(snapshot, 'talent', talentId);
+      const prereq = AbilityEngine.checkPrerequisites(snapshot, 'talent', talentId);
       if (!prereq.met) {
         throw new Error(
           `Talent "${talentId}" is illegal: ${prereq.missing.join(', ')}`
@@ -444,7 +444,7 @@ export class ProgressionCompiler {
 
     // Phase 2: Validate each feat
     for (const featId of ids) {
-      const prereq = PrerequisiteChecker.checkPrerequisites(snapshot, 'feat', featId);
+      const prereq = AbilityEngine.checkPrerequisites(snapshot, 'feat', featId);
       if (!prereq.met) {
         throw new Error(
           `Feat "${featId}" is illegal: ${prereq.missing.join(', ')}`

@@ -8,7 +8,7 @@ import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progr
 import { ProficiencySelectionDialog } from "/systems/foundryvtt-swse/scripts/apps/proficiency-selection-dialog.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { TalentSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/slot-validator.js";
-import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 
 export class DropHandler {
 
@@ -508,10 +508,10 @@ export class DropHandler {
     }
 
     // Also validate prerequisites
-    const prereqCheck = PrerequisiteChecker.checkTalentPrerequisites(actor, talent, {});
-    if (!prereqCheck.met) {
+    const assessment = AbilityEngine.evaluateAcquisition(actor, talent, {});
+    if (!assessment.legal) {
       ui.notifications.error(
-        `Cannot add ${talent.name}: ${prereqCheck.missing.join(', ')}`
+        `Cannot add ${talent.name}: ${assessment.missingPrereqs.join(', ')}`
       );
       return false;
     }

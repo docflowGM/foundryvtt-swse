@@ -14,7 +14,7 @@ import { SkillRegistry } from "/systems/foundryvtt-swse/scripts/engine/progressi
 import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-registry-ui.js";
 import { TalentRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/talent-registry-ui.js";
 import { ForceRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/force/force-registry-ui.js";
-import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { enforcePrerequisiteConsolidation } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker-regression-guard.js";
 import { SuggestionEngineCoordinator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineCoordinator.js";
 
@@ -92,10 +92,12 @@ export async function initializeLevelUpUI() {
       game.swse = game.swse || {};
       game.swse.prereq = {
         checkFeatPrereq: (featDoc, actor, pending) => {
-          return PrerequisiteChecker.checkFeatPrerequisites(actor, featDoc, pending);
+          const a = AbilityEngine.evaluateAcquisition(actor, featDoc, pending);
+          return { met: a.legal, missing: a.missingPrereqs };
         },
         checkTalentPrereq: (talentDoc, actor, pending) => {
-          return PrerequisiteChecker.checkTalentPrerequisites(actor, talentDoc, pending);
+          const a = AbilityEngine.evaluateAcquisition(actor, talentDoc, pending);
+          return { met: a.legal, missing: a.missingPrereqs };
         }
       };
       SWSELogger.log('[LEVELUP-INIT] - Prerequisite API set up successfully');

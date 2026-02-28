@@ -19,7 +19,7 @@
  */
 
 import { normalizeClassPrerequisites } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prereq-normalizer.js";
-import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
@@ -130,20 +130,20 @@ export function evaluateClassEligibility({
     }
 
     // Check prestige class prerequisites using normalized data
-    const result = PrerequisiteChecker.checkPrestigeClassPrerequisites(
+    const assessment = AbilityEngine.evaluatePrestigeClassAcquisition(
         actor,
         className,
         pendingData
     );
 
     return {
-        eligible: result.met,
+        eligible: assessment.legal,
         className,
         isPrestige: true,
-        eligibilityResult: result,
+        eligibilityResult: assessment,
         reasons: {
-            missing: result.missing || [],
-            met: result.met ? ['All prerequisites met'] : []
+            missing: assessment.missingPrereqs || [],
+            met: assessment.legal ? ['All prerequisites met'] : []
         }
     };
 }

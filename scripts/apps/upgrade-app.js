@@ -151,8 +151,8 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
       await ActorEngine.applyMutationPlan(actor, finalPlan);
 
-      if (actor?.updateOwnedItem && this.item.isEmbedded) {
-        await actor.updateOwnedItem(this.item, { 'system.installedUpgrades': nextInstalled });
+      if (actor && this.item.isEmbedded) {
+        await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: this.item.id, 'system.installedUpgrades': nextInstalled }]);
       } else {
         await this.item.update({ 'system.installedUpgrades': nextInstalled });
       }
@@ -183,8 +183,8 @@ export class SWSEUpgradeApp extends HandlebarsApplicationMixin(ApplicationV2) {
       ? installed.toSpliced(index, 1)
       : installed.filter((_, i) => i !== index);
 
-    if (actor?.updateOwnedItem && this.item.isEmbedded) {
-      await actor.updateOwnedItem(this.item, { 'system.installedUpgrades': nextInstalled });
+    if (actor && this.item.isEmbedded) {
+      await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: this.item.id, 'system.installedUpgrades': nextInstalled }]);
     } else {
       await this.item.update({ 'system.installedUpgrades': nextInstalled });
     }

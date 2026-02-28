@@ -9,7 +9,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
-import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { getTalentTreeName, getClassProperty, getTalentTrees, getHitDie } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
 import { HouseRuleTalentCombination } from "/systems/foundryvtt-swse/scripts/houserules/houserule-talent-combination.js";
 import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
@@ -817,14 +817,10 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
             selectedTalents: this.characterData.talents || []
           };
 
-          context.packs.feats = context.packs.feats.map(feat => {
-            const prereqCheck = PrerequisiteChecker.checkFeatPrerequisites(tempActor, feat, pendingDataForFeats);
-            return {
-              ...feat,
-              isQualified: prereqCheck.met,
-              prereqReasons: prereqCheck.missing
-            };
-          });
+          context.packs.feats = AbilityEngine.filterQualifiedFeats(context.packs.feats, tempActor, pendingDataForFeats).map(feat => ({
+            ...feat,
+            prereqReasons: feat.prerequisiteReasons
+          }));
 
           // Organize feats into categories for display
           try {
@@ -864,14 +860,10 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
             selectedTalents: this.characterData.talents || []
           };
 
-          context.packs.talents = context.packs.talents.map(talent => {
-            const prereqCheck = PrerequisiteChecker.checkTalentPrerequisites(tempActor, talent, pendingDataForTalents);
-            return {
-              ...talent,
-              isQualified: prereqCheck.met,
-              prereqReasons: prereqCheck.missing
-            };
-          });
+          context.packs.talents = AbilityEngine.filterQualifiedTalents(context.packs.talents, tempActor, pendingDataForTalents).map(talent => ({
+            ...talent,
+            prereqReasons: talent.prerequisiteReasons
+          }));
         } catch (err) {
           SWSELogger.warn('CharGen | Failed to add talent suggestions:', err);
         }
@@ -2543,11 +2535,11 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       const validFeats = [];
       for (const feat of this.characterData.feats) {
         const tempActor = this._createTempActorForValidation();
-        const prereqCheck = PrerequisiteChecker.checkFeatPrerequisites(feat, tempActor);
-        if (prereqCheck.met) {
+        const assessment = AbilityEngine.evaluateAcquisition(tempActor, feat);
+        if (assessment.legal) {
           validFeats.push(feat);
         } else {
-          SWSELogger.warn(`[CHARGEN] Removing feat "${feat.name}" - no longer meets prerequisites: ${prereqCheck.reasons.join(', ')}`);
+          SWSELogger.warn(`[CHARGEN] Removing feat "${feat.name}" - no longer meets prerequisites: ${assessment.missingPrereqs.join(', ')}`);
           ui.notifications.info(`Removed feat "${feat.name}" - no longer meets requirements after class change.`);
         }
       }
@@ -2559,11 +2551,11 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       const validTalents = [];
       for (const talent of this.characterData.talents) {
         const tempActor = this._createTempActorForValidation();
-        const prereqCheck = PrerequisiteChecker.checkTalentPrerequisites(talent, tempActor);
-        if (prereqCheck.met) {
+        const assessment = AbilityEngine.evaluateAcquisition(tempActor, talent);
+        if (assessment.legal) {
           validTalents.push(talent);
         } else {
-          SWSELogger.warn(`[CHARGEN] Removing talent "${talent.name}" - no longer meets prerequisites: ${prereqCheck.reasons.join(', ')}`);
+          SWSELogger.warn(`[CHARGEN] Removing talent "${talent.name}" - no longer meets prerequisites: ${assessment.missingPrereqs.join(', ')}`);
           ui.notifications.info(`Removed talent "${talent.name}" - no longer meets requirements after class change.`);
         }
       }

@@ -3,7 +3,7 @@
  * Handles prerequisite checking for classes, talents, and feats
  */
 
-import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { isBaseClass } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js";
 import { evaluateClassEligibility } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prerequisites-cache.js";
@@ -69,14 +69,15 @@ export async function meetsClassPrerequisites(classDoc, actor, pendingData) {
 
   // If we have prerequisites from JSON, use those
   if (prestigePrerequisites) {
-    const classDocWithPrereqs = { system: { prerequisites: prestigePrerequisites } };
-    const result = PrerequisiteChecker.checkClassLevelPrerequisites(actor, classDocWithPrereqs, pendingData);
-    return result.met;
+    const classDocWithPrereqs = { type: 'class', system: { prerequisites: prestigePrerequisites } };
+    const assessment = AbilityEngine.evaluateAcquisition(actor, classDocWithPrereqs, pendingData);
+    return assessment.legal;
   }
 
   // Fall back to checking classDoc prerequisites
-  const result = PrerequisiteChecker.checkClassLevelPrerequisites(actor, classDoc, pendingData);
-  return result.met;
+  const classCandidate = { ...classDoc, type: 'class' };
+  const assessment = AbilityEngine.evaluateAcquisition(actor, classCandidate, pendingData);
+  return assessment.legal;
 }
 
 /**
@@ -125,11 +126,11 @@ export function getClassEligibilityDetails(className, actor, pendingData = {}) {
  * @returns {{valid: boolean, reasons: string[]}}
  */
 export function checkTalentPrerequisites(talent, actor, pendingData) {
-  const result = PrerequisiteChecker.checkTalentPrerequisites(actor, talent, pendingData);
+  const assessment = AbilityEngine.evaluateAcquisition(actor, talent, pendingData);
   // Return in legacy format for backward compatibility with callers
   return {
-    valid: result.met,
-    reasons: result.missing
+    valid: assessment.legal,
+    reasons: assessment.missingPrereqs
   };
 }
 
@@ -141,5 +142,5 @@ export function checkTalentPrerequisites(talent, actor, pendingData) {
  * @returns {Array} Filtered feats with isQualified flag
  */
 export function filterQualifiedFeats(feats, actor, pendingData) {
-  return PrerequisiteChecker.filterQualifiedFeats(feats, actor, pendingData);
+  return AbilityEngine.filterQualifiedFeats(feats, actor, pendingData);
 }
