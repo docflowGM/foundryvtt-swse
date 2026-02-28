@@ -243,4 +243,40 @@ export class ArchetypeRegistry {
         if (!archetype?.weights) return 1.0;
         return archetype.weights[itemType] || 1.0;
     }
+
+    /**
+     * Get prestige signals for a prestige class
+     * Looks up which archetypes target this prestige and returns their recommended items
+     * This replaces hardcoded PRESTIGE_SIGNALS lookups
+     *
+     * @param {string} prestigeId - Prestige class item ID (or name as fallback)
+     * @returns {Object|null} Signals object {feats, skills, talents, talentTrees, abilities, weight} or null if not found
+     */
+    static getPrestigeSignals(prestigeId) {
+        if (!this.#initialized || !prestigeId) {
+            return null;
+        }
+
+        // Search through all archetypes for those targeting this prestige
+        for (const archetype of this.#archetypes.values()) {
+            if (archetype.prestigeTargets && archetype.prestigeTargets.includes(prestigeId)) {
+                // Return signals in standard format (compatible with PRESTIGE_SIGNALS schema)
+                return {
+                    feats: archetype.recommended?.feats || [],
+                    skills: archetype.recommended?.skills || [],
+                    talents: archetype.recommended?.talents || [],
+                    talentTrees: [], // Note: archetype registry doesn't store talent trees separately
+                    abilities: archetype.attributePriority || [],
+                    weight: {
+                        feats: archetype.weights?.feat || 1,
+                        skills: archetype.weights?.skill || 1,
+                        talents: archetype.weights?.talent || 1,
+                        abilities: 1 // Default weight for abilities
+                    }
+                };
+            }
+        }
+
+        return null;
+    }
 }

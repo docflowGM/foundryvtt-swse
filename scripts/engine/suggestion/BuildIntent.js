@@ -14,6 +14,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { CLASS_SYNERGY_DATA } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ClassSuggestionEngine.js";
+import { ArchetypeRegistry } from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry.js";
 
 // ──────────────────────────────────────────────────────────────
 // BUILD THEME DEFINITIONS
@@ -361,7 +362,7 @@ export class BuildIntent {
 
         // Calculate prestige affinities
         SWSELogger.log(`[BUILD-INTENT] analyze() - Calculating prestige affinities`);
-        this._calculatePrestigeAffinities(state, intent);
+        await this._calculatePrestigeAffinities(state, intent);
 
         // Apply template archetype bias if available
         if (appliedTemplate && appliedTemplate.archetype) {
@@ -580,61 +581,108 @@ export class BuildIntent {
 
     /**
      * Calculate prestige class affinities
+     * Now data-driven: checks ArchetypeRegistry first, falls back to hardcoded PRESTIGE_SIGNALS
+     * @private
      */
-    static _calculatePrestigeAffinities(state, intent) {
+    static async _calculatePrestigeAffinities(state, intent) {
+        // Collect all prestige classes to evaluate
+        const prestigeClassesToEvaluate = new Map();
+
+        // 1. Start with hardcoded PRESTIGE_SIGNALS for vanilla prestige classes
         for (const [className, signals] of Object.entries(PRESTIGE_SIGNALS)) {
+            prestigeClassesToEvaluate.set(className, signals);
+        }
+
+        // 2. Also load prestige class items from world to support custom prestige classes
+        if (game?.items) {
+            const prestigeItems = game.items.filter(item => item.type === 'prestige');
+            for (const prestigeItem of prestigeItems) {
+                const className = prestigeItem.name;
+
+                // Skip if already in PRESTIGE_SIGNALS
+                if (prestigeClassesToEvaluate.has(className)) {
+                    continue;
+                }
+
+                // Try to get signals from ArchetypeRegistry first
+                let signals = ArchetypeRegistry.getPrestigeSignals(prestigeItem.id);
+
+                // Fall back to prestige item's own metadata
+                if (!signals) {
+                    signals = prestigeItem.system?.prestigeSignals;
+                }
+
+                // Only add if we found signals
+                if (signals) {
+                    prestigeClassesToEvaluate.set(className, signals);
+                }
+            }
+        }
+
+        // 3. Calculate affinities for all prestige classes
+        for (const [className, signals] of prestigeClassesToEvaluate.entries()) {
+            // Ensure signals object has expected structure (with fallback defaults)
+            const normalizedSignals = {
+                feats: signals.feats || [],
+                skills: signals.skills || [],
+                talents: signals.talents || [],
+                talentTrees: signals.talentTrees || [],
+                abilities: signals.abilities || [],
+                weight: signals.weight || { feats: 2, skills: 2, talents: 2, abilities: 1 }
+            };
+
             let score = 0;
             const matches = { feats: [], skills: [], talents: [], talentTrees: [], abilities: [] };
 
             // Check feats
-            for (const feat of signals.feats) {
+            for (const feat of normalizedSignals.feats) {
                 if (state.ownedFeats.has(feat)) {
-                    score += signals.weight.feats;
+                    score += normalizedSignals.weight.feats || 2;
                     matches.feats.push(feat);
                 }
             }
 
             // Check skills
-            for (const skill of signals.skills) {
+            for (const skill of normalizedSignals.skills) {
                 const skillKey = skill.toLowerCase().replace(/\s+/g, '');
                 if (state.trainedSkills.has(skillKey)) {
-                    score += signals.weight.skills;
+                    score += normalizedSignals.weight.skills || 2;
                     matches.skills.push(skill);
                 }
             }
 
             // Check talents
-            for (const talent of signals.talents) {
+            for (const talent of normalizedSignals.talents) {
                 if (state.ownedTalents.has(talent)) {
-                    score += signals.weight.talents;
+                    score += normalizedSignals.weight.talents || 2;
                     matches.talents.push(talent);
                 }
             }
 
             // Check talent trees
-            for (const tree of signals.talentTrees) {
+            for (const tree of normalizedSignals.talentTrees) {
                 if (state.talentTrees.has(tree.toLowerCase())) {
-                    score += signals.weight.talents;
+                    score += normalizedSignals.weight.talents || 2;
                     matches.talentTrees.push(tree);
                 }
             }
 
             // Check abilities
-            for (const ability of signals.abilities) {
+            for (const ability of normalizedSignals.abilities) {
                 if (ability === state.highestAbility) {
-                    score += signals.weight.abilities;
+                    score += normalizedSignals.weight.abilities || 1;
                     matches.abilities.push(ability);
                 }
             }
 
             // Calculate max possible score
-            const talentTreeWeight = signals.weight.talentTrees || signals.weight.talents;
+            const talentTreeWeight = normalizedSignals.weight.talentTrees || normalizedSignals.weight.talents || 2;
             const maxScore =
-                signals.feats.length * signals.weight.feats +
-                signals.skills.length * signals.weight.skills +
-                signals.talents.length * signals.weight.talents +
-                signals.talentTrees.length * talentTreeWeight +
-                signals.abilities.length * signals.weight.abilities;
+                normalizedSignals.feats.length * (normalizedSignals.weight.feats || 2) +
+                normalizedSignals.skills.length * (normalizedSignals.weight.skills || 2) +
+                normalizedSignals.talents.length * (normalizedSignals.weight.talents || 2) +
+                normalizedSignals.talentTrees.length * talentTreeWeight +
+                normalizedSignals.abilities.length * (normalizedSignals.weight.abilities || 1);
 
             // Normalize to 0-1
             const confidence = maxScore > 0 ? Math.min(1, score / (maxScore * 0.6)) : 0;
@@ -649,8 +697,12 @@ export class BuildIntent {
             }
         }
 
-        // Sort by confidence
-        intent.prestigeAffinities.sort((a, b) => b.confidence - a.confidence);
+        // Sort by confidence (deterministic: stable sort by className as secondary key)
+        intent.prestigeAffinities.sort((a, b) => {
+            const confDiff = b.confidence - a.confidence;
+            if (confDiff !== 0) return confDiff;
+            return a.className.localeCompare(b.className);
+        });
     }
 
     /**
@@ -686,16 +738,27 @@ export class BuildIntent {
 
     /**
      * Identify priority prerequisites for top prestige targets
+     * Now data-driven: uses signals from ArchetypeRegistry or item metadata
+     * @private
      */
     static _identifyPriorityPrereqs(state, intent) {
         const topTargets = intent.prestigeAffinities.slice(0, 3);
 
         for (const target of topTargets) {
-            const signals = PRESTIGE_SIGNALS[target.className];
+            // Try to get signals from ArchetypeRegistry first
+            let signals = this._getPrestigeSignals(target.className);
+            if (!signals) {
+                // Fall back to hardcoded PRESTIGE_SIGNALS for vanilla prestige classes
+                signals = PRESTIGE_SIGNALS[target.className];
+            }
             if (!signals) {continue;}
 
+            // Ensure arrays exist
+            const feats = Array.isArray(signals.feats) ? signals.feats : [];
+            const skills = Array.isArray(signals.skills) ? signals.skills : [];
+
             // Check missing feats
-            for (const feat of signals.feats) {
+            for (const feat of feats) {
                 if (!state.ownedFeats.has(feat)) {
                     intent.priorityPrereqs.push({
                         type: 'feat',
@@ -707,7 +770,7 @@ export class BuildIntent {
             }
 
             // Check missing skills
-            for (const skill of signals.skills) {
+            for (const skill of skills) {
                 const skillKey = skill.toLowerCase().replace(/\s+/g, '');
                 if (!state.trainedSkills.has(skillKey)) {
                     intent.priorityPrereqs.push({
@@ -720,8 +783,42 @@ export class BuildIntent {
             }
         }
 
-        // Sort by confidence
-        intent.priorityPrereqs.sort((a, b) => b.confidence - a.confidence);
+        // Sort by confidence (deterministic: stable sort by name as secondary key)
+        intent.priorityPrereqs.sort((a, b) => {
+            const confDiff = b.confidence - a.confidence;
+            if (confDiff !== 0) return confDiff;
+            return a.name.localeCompare(b.name);
+        });
+    }
+
+    /**
+     * Get prestige signals for a prestige class name
+     * Searches through world prestige items to find matching signals
+     * @private
+     */
+    static _getPrestigeSignals(prestigeClassName) {
+        if (!game?.items || !prestigeClassName) {
+            return null;
+        }
+
+        // Find prestige item with matching name
+        const prestigeItem = game.items.find(item =>
+            item.type === 'prestige' && item.name === prestigeClassName
+        );
+
+        if (!prestigeItem) {
+            return null;
+        }
+
+        // Try ArchetypeRegistry first
+        let signals = ArchetypeRegistry.getPrestigeSignals(prestigeItem.id);
+
+        // Fall back to prestige item's own metadata
+        if (!signals) {
+            signals = prestigeItem.system?.prestigeSignals;
+        }
+
+        return signals || null;
     }
 
     /**
@@ -780,6 +877,7 @@ export class BuildIntent {
 
     /**
      * Check if a talent aligns with the build intent
+     * Now data-driven: uses signals from ArchetypeRegistry or item metadata
      * @param {string} talentName - Name of the talent
      * @param {string} treeName - Name of the talent tree
      * @param {Object} intent - Build intent object
@@ -788,7 +886,13 @@ export class BuildIntent {
     static checkTalentAlignment(talentName, treeName, intent) {
         // Check if talent tree is associated with top prestige targets
         for (const target of intent.prestigeAffinities.slice(0, 3)) {
-            const signals = PRESTIGE_SIGNALS[target.className];
+            // Try to get signals from ArchetypeRegistry first
+            let signals = this._getPrestigeSignals(target.className);
+            if (!signals) {
+                // Fall back to hardcoded PRESTIGE_SIGNALS for vanilla prestige classes
+                signals = PRESTIGE_SIGNALS[target.className];
+            }
+
             if (signals?.talentTrees?.some(t =>
                 t.toLowerCase() === treeName.toLowerCase()
             )) {
