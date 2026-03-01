@@ -23,6 +23,7 @@
 
 import { SuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngine.js";
 import { BuildAnalysisEngine } from "/systems/foundryvtt-swse/scripts/engine/analysis/build-analysis-engine.js";
+import { TrajectoryPlanningEngine } from "/systems/foundryvtt-swse/scripts/engine/analysis/trajectory-planning-engine.js";
 import { MentorJudgmentEngine } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-judgment-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
@@ -31,7 +32,7 @@ export class MentorInteractionOrchestrator {
    * Handle mentor interaction for a given mode and context
    *
    * @param {Object} context - Interaction context
-   * @param {string} context.mode - "selection", "reflection", or "hybrid"
+   * @param {string} context.mode - "selection", "reflection", "hybrid", or "trajectory"
    * @param {Object} context.actor - Foundry actor document
    * @param {Object} context.mentorId - Mentor ID (e.g., "miraj", "lead")
    * @param {Object} context.suggestion - Optional: suggestion object (for selection/hybrid)
@@ -40,9 +41,10 @@ export class MentorInteractionOrchestrator {
    *
    * @returns {Promise<Object>} Structured advisory output
    *   {
-   *     mode: "selection" | "reflection" | "hybrid",
+   *     mode: "selection" | "reflection" | "hybrid" | "trajectory",
    *     primaryAdvice: string,
    *     strategicInsight?: string,
+   *     priorities?: array,
    *     metrics?: object,
    *     conflicts?: array,
    *     deterministic: true
@@ -57,7 +59,7 @@ export class MentorInteractionOrchestrator {
         throw new Error("[MentorInteractionOrchestrator] Missing actor");
       }
 
-      if (!mode || !["selection", "reflection", "hybrid"].includes(mode)) {
+      if (!mode || !["selection", "reflection", "hybrid", "trajectory"].includes(mode)) {
         throw new Error(`[MentorInteractionOrchestrator] Invalid mode: ${mode}`);
       }
 
@@ -73,6 +75,8 @@ export class MentorInteractionOrchestrator {
           return await this._handleReflectionMode(actor, mentorId);
         case "hybrid":
           return await this._handleHybridMode(actor, mentorId, suggestion, item, pendingData);
+        case "trajectory":
+          return await this._handleTrajectoryMode(actor, mentorId);
         default:
           throw new Error(`[MentorInteractionOrchestrator] Unhandled mode: ${mode}`);
       }
@@ -221,6 +225,55 @@ export class MentorInteractionOrchestrator {
     }
 
     return merged;
+  }
+
+  /**
+   * TRAJECTORY MODE: Forward-looking strategic planning
+   * Uses TrajectoryPlanningEngine to identify next high-impact steps
+   * Optional: includes emergent archetype insight if no declared archetype
+   * Advisory only—no simulation, no mutation
+   *
+   * @private
+   */
+  static async _handleTrajectoryMode(actor, mentorId) {
+    // Generate trajectory plan
+    const plan = await TrajectoryPlanningEngine.plan(actor);
+
+    // Convert priorities to advisory atoms for mentor rendering
+    const advisoryAtoms = this._prioritiesToAdvisoryAtoms(plan.priorities);
+
+    // Generate primary trajectory advice
+    const primaryAdvice = await this._renderTrajectoryAdvice(
+      mentorId,
+      plan,
+      advisoryAtoms
+    );
+
+    // Optionally include emergent archetype insight if no declared archetype
+    let emergentInsight = null;
+    const system = actor.system || {};
+    if (!system.archetypeId) {
+      const emergent = await BuildAnalysisEngine.detectEmergentArchetype(actor);
+      if (emergent.bestMatch) {
+        emergentInsight = emergent.reasoning;
+      }
+    }
+
+    // Build result
+    const result = {
+      mode: "trajectory",
+      primaryAdvice: primaryAdvice,
+      priorities: plan.priorities,
+      horizon: plan.horizon,
+      deterministic: true
+    };
+
+    // Add emergent insight if available
+    if (emergentInsight) {
+      result.emergentInsight = emergentInsight;
+    }
+
+    return result;
   }
 
   /**
@@ -452,5 +505,83 @@ export class MentorInteractionOrchestrator {
       strength: signal.strength,
       evidence: signal.evidence?.slice(0, 2) || []
     }));
+  }
+
+  /**
+   * Convert trajectory priorities to mentor advisory atoms
+   * Maps priority categories to mentor-understood atoms
+   *
+   * @private
+   */
+  static _prioritiesToAdvisoryAtoms(priorities) {
+    const atoms = [];
+
+    const categoryMap = {
+      prestige: "prestige_advancement",
+      attribute: "attribute_development",
+      feat: "feat_selection",
+      talent: "talent_selection",
+      skill: "skill_focus",
+      "conflict_correction": "conflict_resolution",
+      role: "role_reinforcement"
+    };
+
+    for (const priority of priorities) {
+      const atom = categoryMap[priority.category];
+      if (atom && !atoms.includes(atom)) {
+        atoms.push(atom);
+      }
+    }
+
+    return atoms;
+  }
+
+  /**
+   * Render mentor trajectory advice from plan
+   * Explains priorities in mentor's voice
+   *
+   * @private
+   */
+  static async _renderTrajectoryAdvice(mentorId, plan, atoms) {
+    try {
+      const mentor = MentorJudgmentEngine.getMentor(mentorId);
+      if (!mentor) {
+        return "The mentor observes your path with interest.";
+      }
+
+      // Build trajectory summary from priorities
+      let summary = "";
+
+      if (plan.priorities.length === 0) {
+        return "Your path is well-established. Continue as you are.";
+      }
+
+      // Get top priority for primary focus
+      const topPriority = plan.priorities[0];
+      switch (topPriority.category) {
+        case "prestige":
+          summary = "Your prestige advancement requires immediate focus.";
+          break;
+        case "attribute":
+          summary = `Developing your ${topPriority.explanationContext.attribute} attribute is key.`;
+          break;
+        case "feat":
+        case "talent":
+          summary = `Adding ${topPriority.category} to your arsenal would strengthen your position.`;
+          break;
+        default:
+          summary = "Several strategic options present themselves.";
+      }
+
+      // Add horizon context
+      if (plan.horizon > 0) {
+        summary += ` You have roughly ${plan.horizon} level(s) to work with.`;
+      }
+
+      return summary;
+    } catch (error) {
+      SWSELogger.debug("[MentorInteractionOrchestrator] Trajectory advice error:", error);
+      return "The mentor considers your future carefully.";
+    }
   }
 }

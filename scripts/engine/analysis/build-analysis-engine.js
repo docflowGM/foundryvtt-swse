@@ -66,6 +66,105 @@ export class BuildAnalysisEngine {
   }
 
   /**
+   * Detect emergent archetype alignment when no explicit archetype is declared
+   * Returns probabilistic alignment, never forces classification
+   *
+   * @param {Object} actor - Foundry actor document
+   * @param {number} confidenceThreshold - Min confidence to assign (0-100, default 60)
+   * @returns {Promise<Object>} Emergent detection result
+   *   {
+   *     bestMatch: archetypeId | null,
+   *     confidence: 0-100,
+   *     topCandidates: [
+   *       { archetypeId, archetypeName, confidence },
+   *       ...
+   *     ],
+   *     reasoning: string
+   *   }
+   */
+  static async detectEmergentArchetype(actor, confidenceThreshold = 60) {
+    try {
+      // Initialize registries if needed
+      if (!ArchetypeRegistry.isInitialized?.()) {
+        await ArchetypeRegistry.initialize();
+      }
+
+      if (!ArchetypeTrendRegistry.isInitialized()) {
+        await ArchetypeTrendRegistry.initialize();
+      }
+
+      // If actor already has declared archetype, return null (explicit > inferred)
+      const context = this._buildActorContext(actor);
+      if (context.archetypeId) {
+        return {
+          bestMatch: null,
+          confidence: 100,
+          topCandidates: [],
+          reasoning: "Actor has explicitly declared archetype. Emergent detection not applicable."
+        };
+      }
+
+      // Score alignment against all archetypes
+      const allArchetypes = ArchetypeRegistry.getAll?.() || [];
+      const scores = [];
+
+      for (const archetype of allArchetypes) {
+        const score = this._computeEmergentAlignmentScore(
+          actor,
+          context,
+          archetype
+        );
+        scores.push({
+          archetypeId: archetype.id,
+          archetypeName: archetype.name || archetype.id,
+          confidence: score
+        });
+      }
+
+      // Sort by confidence descending
+      scores.sort((a, b) => b.confidence - a.confidence);
+
+      // Get top 3 candidates
+      const topCandidates = scores.slice(0, 3);
+
+      // Only assign if top confidence >= threshold
+      const bestMatch = topCandidates[0]?.confidence >= confidenceThreshold
+        ? topCandidates[0].archetypeId
+        : null;
+
+      const bestConfidence = topCandidates[0]?.confidence || 0;
+
+      // Generate reasoning
+      const reasoning = this._generateEmergentReasoning(
+        bestMatch,
+        bestConfidence,
+        topCandidates,
+        confidenceThreshold
+      );
+
+      return {
+        bestMatch,
+        confidence: bestConfidence,
+        topCandidates,
+        reasoning,
+        deterministic: true
+      };
+    } catch (error) {
+      SWSELogger.error(
+        "[BuildAnalysisEngine] detectEmergentArchetype error:",
+        error
+      );
+      return {
+        bestMatch: null,
+        confidence: 0,
+        topCandidates: [],
+        reasoning: "Unable to detect emergent archetype.",
+        error: error.message
+      };
+    }
+  }
+
+  /**
    * Build actor context from Foundry actor document
    * @private
    */
@@ -631,5 +730,180 @@ export class BuildAnalysisEngine {
     }
 
     return summary;
+  }
+
+  /**
+   * Compute emergent alignment score between actor and archetype
+   * Purely deterministic, no mutation
+   * Ranges 0-100
+   *
+   * @private
+   */
+  static _computeEmergentAlignmentScore(actor, context, archetype) {
+    if (!archetype) return 0;
+
+    let score = 0;
+
+    // 1. Attribute match ratio (40 points max)
+    const attrScore = this._scoreAttributeAlignment(context, archetype);
+    score += attrScore * 0.4;
+
+    // 2. Recommended feat adoption (20 points max)
+    const featScore = this._scoreFeatureAdoption(
+      context,
+      archetype.recommended?.feats || []
+    );
+    score += featScore * 0.2;
+
+    // 3. Recommended talent adoption (20 points max)
+    const talentScore = this._scoreFeatureAdoption(
+      context,
+      archetype.recommended?.talents || []
+    );
+    score += talentScore * 0.2;
+
+    // 4. Role bias alignment (10 points max)
+    const roleScore = this._scoreRoleBiasAlignment(context, archetype);
+    score += roleScore * 0.1;
+
+    // 5. Mechanical bias alignment (10 points max)
+    const mechanicalScore = this._scoreMechanicalBiasAlignment(
+      context,
+      archetype
+    );
+    score += mechanicalScore * 0.1;
+
+    // Cap at 100
+    return Math.min(100, Math.round(score));
+  }
+
+  /**
+   * Score attribute alignment with archetype priorities
+   * @private
+   * @returns {number} 0-100
+   */
+  static _scoreAttributeAlignment(context, archetype) {
+    const attrPriority = archetype.attributePriority || [];
+    if (attrPriority.length === 0) return 50; // Neutral if no priority
+
+    const sortedAttrs = this._getAttributesByValue(context.attributes);
+    const topAttr = sortedAttrs[0];
+
+    if (topAttr[0].toUpperCase() === attrPriority[0]) {
+      // Exact match on top priority
+      return topAttr[1] >= 16 ? 100 : 75;
+    }
+
+    if (attrPriority.includes(topAttr[0].toUpperCase())) {
+      // In priority list but not top
+      return 50;
+    }
+
+    // Not in priority list
+    return 25;
+  }
+
+  /**
+   * Score feature adoption ratio
+   * @private
+   * @returns {number} 0-100
+   */
+  static _scoreFeatureAdoption(context, recommendedFeatures) {
+    if (!recommendedFeatures || recommendedFeatures.length === 0) {
+      return 50; // Neutral if no recommendation
+    }
+
+    const adopted = recommendedFeatures.length;
+    // Simplified: we don't have item-level tracking, so estimate based on count
+    const actorFeatureCount =
+      recommendedFeatures.length > 2
+        ? context.feats.length + context.talents.length
+        : context.feats.length;
+
+    if (actorFeatureCount >= adopted) {
+      return 100;
+    } else if (actorFeatureCount >= adopted * 0.66) {
+      return 75;
+    } else if (actorFeatureCount >= adopted * 0.33) {
+      return 50;
+    } else {
+      return 25;
+    }
+  }
+
+  /**
+   * Score role bias alignment
+   * @private
+   * @returns {number} 0-100
+   */
+  static _scoreRoleBiasAlignment(context, archetype) {
+    if (!archetype.roleBias) return 50;
+
+    const roleBias = archetype.roleBias;
+    const roles = Object.keys(roleBias);
+    if (roles.length === 0) return 50;
+
+    // Simple heuristic: if archetype has clear role emphasis, and
+    // actor has equipment/features for that role, reward alignment
+    const dominantRole = roles.sort((a, b) => roleBias[b] - roleBias[a])[0];
+    const bias = roleBias[dominantRole] || 0;
+
+    if (bias <= 1.0) return 50; // Neutral
+
+    // Check for role-appropriate equipment as proxy
+    // (simplified; full implementation would check actual items)
+    return bias > 1.5 ? 75 : 50;
+  }
+
+  /**
+   * Score mechanical bias alignment
+   * @private
+   * @returns {number} 0-100
+   */
+  static _scoreMechanicalBiasAlignment(context, archetype) {
+    if (!archetype.mechanicalBias) return 50;
+
+    const biases = Object.values(archetype.mechanicalBias);
+    if (biases.length === 0) return 50;
+
+    // Check if actor has invested in the primary mechanical bias
+    const totalBias = biases.reduce((sum, b) => sum + b, 0);
+    const maxBias = Math.max(...biases);
+    const dominance = maxBias / totalBias;
+
+    if (dominance > 0.5) {
+      // Archetype has clear mechanical specialization
+      // Check if actor is specifying towards that
+      return 50; // Placeholder: actual check would examine features
+    }
+
+    return 50; // Neutral
+  }
+
+  /**
+   * Generate reasoning for emergent archetype detection
+   * @private
+   */
+  static _generateEmergentReasoning(
+    bestMatch,
+    bestConfidence,
+    topCandidates,
+    threshold
+  ) {
+    if (bestMatch) {
+      if (bestConfidence >= 80) {
+        return `You are leaning strongly toward the ${topCandidates[0].archetypeName} path — your talent and stat investments suggest that direction.`;
+      } else if (bestConfidence >= 60) {
+        return `Your build shows notable alignment with the ${topCandidates[0].archetypeName} tradition.`;
+      }
+    }
+
+    if (topCandidates.length >= 2) {
+      const first = topCandidates[0].archetypeName;
+      const second = topCandidates[1].archetypeName;
+      return `Your build resembles elements of both ${first} and ${second} traditions.`;
+    }
+
+    return "You're forging a hybrid path. Interesting.";
   }
 }

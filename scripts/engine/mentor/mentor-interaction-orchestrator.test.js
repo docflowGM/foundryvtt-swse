@@ -80,6 +80,22 @@ async function runTests() {
     results.failed++;
   }
 
+  // Test 8: Trajectory mode
+  try {
+    await testTrajectoryMode(results);
+  } catch (e) {
+    results.errors.push(`Trajectory mode: ${e.message}`);
+    results.failed++;
+  }
+
+  // Test 9: Trajectory mode determinism
+  try {
+    await testTrajectoryDeterminism(results);
+  } catch (e) {
+    results.errors.push(`Trajectory determinism: ${e.message}`);
+    results.failed++;
+  }
+
   // Print results
   console.log("\n=== MENTOR INTERACTION ORCHESTRATOR TEST RESULTS ===\n");
   console.log(`Passed: ${results.passed}`);
@@ -455,6 +471,96 @@ async function testMultipleMentors(results) {
     recordPass(results, "All mentors respond in reflection mode");
   } catch (e) {
     recordFail(results, "All mentors respond in reflection mode", e);
+  }
+}
+
+async function testTrajectoryMode(results) {
+  const actor = createMockActor();
+
+  try {
+    const result = await MentorInteractionOrchestrator.handle({
+      mode: "trajectory",
+      actor: actor,
+      mentorId: "lead"
+    });
+
+    assertTruthy(result.mode === "trajectory", "Mode should be trajectory");
+    assertExists(result.primaryAdvice, "Should have primaryAdvice");
+    assertTruthy(result.deterministic === true, "Should be deterministic");
+    assertTruthy(Array.isArray(result.priorities), "Should have priorities array");
+
+    recordPass(results, "Trajectory mode returns correct structure");
+  } catch (e) {
+    recordFail(results, "Trajectory mode returns correct structure", e);
+  }
+
+  // Verify trajectory includes horizon
+  try {
+    const result = await MentorInteractionOrchestrator.handle({
+      mode: "trajectory",
+      actor: actor,
+      mentorId: "miraj"
+    });
+
+    assertExists(result.horizon, "Should include horizon estimate");
+    assertTruthy(result.horizon >= 0, "Horizon should be non-negative");
+
+    recordPass(results, "Trajectory mode includes horizon");
+  } catch (e) {
+    recordFail(results, "Trajectory mode includes horizon", e);
+  }
+
+  // Verify no actor mutation
+  try {
+    const originalJSON = JSON.stringify(actor);
+
+    await MentorInteractionOrchestrator.handle({
+      mode: "trajectory",
+      actor: actor,
+      mentorId: "breach"
+    });
+
+    const finalJSON = JSON.stringify(actor);
+    assertEqual(originalJSON, finalJSON, "Actor should not be mutated in trajectory mode");
+
+    recordPass(results, "Trajectory mode does not mutate actor");
+  } catch (e) {
+    recordFail(results, "Trajectory mode does not mutate actor", e);
+  }
+}
+
+async function testTrajectoryDeterminism(results) {
+  const actor = createMockActor();
+
+  try {
+    // Call twice with identical input
+    const result1 = await MentorInteractionOrchestrator.handle({
+      mode: "trajectory",
+      actor: actor,
+      mentorId: "lead"
+    });
+
+    const result2 = await MentorInteractionOrchestrator.handle({
+      mode: "trajectory",
+      actor: actor,
+      mentorId: "lead"
+    });
+
+    assertEqual(
+      result1.primaryAdvice,
+      result2.primaryAdvice,
+      "Same actor should produce same trajectory advice"
+    );
+
+    assertEqual(
+      result1.priorities.length,
+      result2.priorities.length,
+      "Same actor should produce same number of priorities"
+    );
+
+    recordPass(results, "Trajectory mode is deterministic");
+  } catch (e) {
+    recordFail(results, "Trajectory mode is deterministic", e);
   }
 }
 
