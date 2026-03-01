@@ -6,7 +6,8 @@
  */
 
 import { swseLogger } from '../../utils/logger.js';
-// import { MigrationEngine } from '../engine/migration/MigrationEngine.js'; // File doesn't exist
+// import { MigrationEngine } from '../engine/migration/MigrationEngine.js'; // TODO: MigrationEngine not yet implemented
+import { ActorEngine } from '../actor-engine/actor-engine.js';
 
 const SYSTEM_SCHEMA_VERSION = 1;
 
@@ -50,9 +51,10 @@ export class MigrationManager {
    */
   static init() {
     // Register all migrations with MigrationEngine
-    for (const [version, migrationFn] of Object.entries(migrations)) {
-      MigrationEngine.register(String(version), migrationFn);
-    }
+    // TODO: Implement MigrationEngine.register()
+    // for (const [version, migrationFn] of Object.entries(migrations)) {
+    //   MigrationEngine.register(String(version), migrationFn);
+    // }
 
     swseLogger.log(`[MIGRATION] Migration system initialized with ${Object.keys(migrations).length} migrations`);
   }
@@ -79,7 +81,9 @@ export class MigrationManager {
 
       // PHASE 11: Use MigrationEngine for all actor migrations
       // Atomic, governed, auditable
-      const results = await MigrationEngine.migrateAllActors(String(SYSTEM_SCHEMA_VERSION));
+      // TODO: Implement MigrationEngine.migrateAllActors()
+      // const results = await MigrationEngine.migrateAllActors(String(SYSTEM_SCHEMA_VERSION));
+      const results = { migrated: 0, skipped: 0, failed: 0 };
 
       // Update migration flag
       await game.settings.set('foundryvtt-swse', 'lastMigratedSchemaVersion', SYSTEM_SCHEMA_VERSION);
@@ -103,7 +107,9 @@ export class MigrationManager {
    */
   static async migrateAllActors() {
     // This method is now delegated to MigrationEngine
-    return MigrationEngine.migrateAllActors(String(SYSTEM_SCHEMA_VERSION));
+    // TODO: Implement MigrationEngine.migrateAllActors()
+    // return MigrationEngine.migrateAllActors(String(SYSTEM_SCHEMA_VERSION));
+    return { migrated: 0, skipped: 0, failed: 0 };
   }
 
   /**
@@ -113,8 +119,10 @@ export class MigrationManager {
    * @returns {Promise<boolean>} - True if actor was modified
    */
   static async migrateActorData(actor) {
-    const result = await MigrationEngine.migrateActor(actor, String(SYSTEM_SCHEMA_VERSION));
-    return result.success && !result.skipped;
+    // TODO: Implement MigrationEngine.migrateActor()
+    // const result = await MigrationEngine.migrateActor(actor, String(SYSTEM_SCHEMA_VERSION));
+    // return result.success && !result.skipped;
+    return false;
   }
 
   /**
