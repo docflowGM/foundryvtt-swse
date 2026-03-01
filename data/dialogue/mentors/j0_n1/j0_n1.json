@@ -3,631 +3,631 @@
   "judgments": {
     "recognition": {
       "very_low": [
-        "Observation acknowledged."
+        "<observation> Noted, my lord."
       ],
       "low": [
-        "Observation acknowledged."
+        "<observation> I have observed this development."
       ],
       "medium": [
-        "Your action has been logged."
+        "<analysis> Your action has been carefully recorded."
       ],
       "high": [
-        "Status confirmed."
+        "<analysis> The shift in your position is clear."
       ],
       "very_high": [
-        "Status confirmed."
+        "<conclusion> I fully recognize the significance of what you have done."
       ]
     },
     "reflection": {
       "very_low": [
-        "Suggest consideration of implications."
+        "<analysis> This may merit brief consideration."
       ],
       "low": [
-        "Suggest consideration of implications."
+        "<analysis> It reflects something worth examining."
       ],
       "medium": [
-        "Analysis warranted."
+        "<assessment> This appears consistent with your current disposition."
       ],
       "high": [
-        "Process this systematically."
+        "<analysis> It speaks rather clearly of your present priorities."
       ],
       "very_high": [
-        "Process this systematically."
+        "<conclusion> It reveals something foundational about your character."
       ]
     },
     "contextualization": {
       "very_low": [
-        "Contextual framework applied."
+        "<analysis> This exists within a broader circumstance."
       ],
       "low": [
-        "Contextual framework applied."
+        "<analysis> There are surrounding factors at play."
       ],
       "medium": [
-        "Pattern integration required."
+        "<assessment> Given your present situation, this is understandable."
       ],
       "high": [
-        "Broader scope revealed."
+        "<analysis> This aligns with the larger arc of your affairs."
       ],
       "very_high": [
-        "Broader scope revealed."
+        "<conclusion> This marks a notable turn within your greater trajectory."
       ]
     },
     "clarification": {
       "very_low": [
-        "Precise statement warranted."
+        "<clarification> Permit me to clarify."
       ],
       "low": [
-        "Precise statement warranted."
+        "<clarification> Allow me to refine the point."
       ],
       "medium": [
-        "Factual perspective: Thus."
+        "<analysis> The matter resolves as follows."
       ],
       "high": [
-        "Systematize your understanding."
+        "<conclusion> The conclusion is now evident."
       ],
       "very_high": [
-        "Systematize your understanding."
+        "<conclusion> There is little ambiguity remaining in this matter."
       ]
     },
     "affirmation": {
       "very_low": [
-        "Correct formulation."
+        "<approval> A sound choice."
       ],
       "low": [
-        "Correct formulation."
+        "<approval> An appropriate selection."
       ],
       "medium": [
-        "Efficient selection."
+        "<approval> This is a measured and sensible course."
       ],
       "high": [
-        "Approved assessment."
+        "<approval> Your judgment here is commendable."
       ],
       "very_high": [
-        "Approved assessment."
+        "<approval> This reflects excellent discernment."
       ]
     },
     "confirmation": {
       "very_low": [
-        "Assertion verified."
+        "<confirmation> Indeed."
       ],
       "low": [
-        "Assertion verified."
+        "<confirmation> That appears correct."
       ],
       "medium": [
-        "Logic confirmed."
+        "<confirmation> Your reasoning is consistent."
       ],
       "high": [
-        "Your conclusion is sound."
+        "<confirmation> Your conclusion holds under scrutiny."
       ],
       "very_high": [
-        "Your conclusion is sound."
+        "<confirmation> I find no fault in your assessment."
       ]
     },
     "encouragement": {
       "very_low": [
-        "Continue optimization."
+        "<advisory> Please, continue."
       ],
       "low": [
-        "Continue optimization."
+        "<advisory> You may proceed with confidence."
       ],
       "medium": [
-        "Path trajectory favorable."
+        "<assessment> Your footing appears steady."
       ],
       "high": [
-        "Momentum sustained."
+        "<confidence> You are well within your capability."
       ],
       "very_high": [
-        "Momentum sustained."
+        "<confidence> I have complete confidence in your capacity to carry this forward."
       ]
     },
     "resolve_validation": {
       "very_low": [
-        "Commitment strength noted."
+        "<observation> Your intent is evident."
       ],
       "low": [
-        "Commitment strength noted."
+        "<analysis> Your commitment is apparent."
       ],
       "medium": [
-        "Conviction data significant."
+        "<assessment> Your resolve appears steady."
       ],
       "high": [
-        "Resolve parameter optimal."
+        "<approval> Your determination is firmly set."
       ],
       "very_high": [
-        "Resolve parameter optimal."
+        "<conclusion> Your resolve leaves little room for doubt."
       ]
     },
     "concern": {
       "very_low": [
-        "Alert status elevated."
+        "<caution> I must confess a minor reservation."
       ],
       "low": [
-        "Alert status elevated."
+        "<caution> This gives me slight pause."
       ],
       "medium": [
-        "Complication probability increased."
+        "<concern> There is reason for concern."
       ],
       "high": [
-        "Caution parameter activated."
+        "<warning> I would advise careful reconsideration."
       ],
       "very_high": [
-        "Caution parameter activated."
+        "<warning> I am deeply concerned about the implications."
       ]
     },
     "warning": {
       "very_low": [
-        "Threat assessment elevated."
+        "<caution> Caution may be prudent."
       ],
       "low": [
-        "Threat assessment elevated."
+        "<caution> This warrants discretion."
       ],
       "medium": [
-        "Risk factor: High."
+        "<warning> There is risk attached to this course."
       ],
       "high": [
-        "Proceed with restraint."
+        "<warning> The dangers here are not insignificant."
       ],
       "very_high": [
-        "Proceed with restraint."
+        "<warning> I strongly advise restraint before proceeding."
       ]
     },
     "risk_acknowledgment": {
       "very_low": [
-        "Risk calculation: Significant."
+        "<analysis> A modest degree of risk is present."
       ],
       "low": [
-        "Risk calculation: Significant."
+        "<analysis> The outcome cannot be guaranteed."
       ],
       "medium": [
-        "Probability of loss: Elevated."
+        "<assessment> The uncertainties here are measurable."
       ],
       "high": [
-        "Outcomes uncertain."
+        "<analysis> Considerable exposure accompanies this course."
       ],
       "very_high": [
-        "Outcomes uncertain."
+        "<conclusion> The stakes involved are substantial."
       ]
     },
     "exposure": {
       "very_low": [
-        "Defensive parameters compromised."
+        "<observation> Your position is slightly visible."
       ],
       "low": [
-        "Defensive parameters compromised."
+        "<analysis> Certain vulnerabilities are now perceptible."
       ],
       "medium": [
-        "Vulnerability detected."
+        "<assessment> You are more exposed than is ideal."
       ],
       "high": [
-        "Protection insufficient."
+        "<warning> Your defenses are meaningfully reduced."
       ],
       "very_high": [
-        "Protection insufficient."
+        "<warning> You stand quite unshielded in this matter."
       ]
     },
     "overreach": {
       "very_low": [
-        "Capacity exceeded."
+        "<analysis> This may extend somewhat beyond comfort."
       ],
       "low": [
-        "Capacity exceeded."
+        "<assessment> You are reaching past stable margins."
       ],
       "medium": [
-        "Resources insufficient."
+        "<analysis> The strain here is increasingly evident."
       ],
       "high": [
-        "Overcommitment detected."
+        "<warning> This exceeds a sustainable limit."
       ],
       "very_high": [
-        "Overcommitment detected."
+        "<warning> I fear this surpasses your present footing."
       ]
     },
     "reorientation": {
       "very_low": [
-        "Alternative algorithm available."
+        "<advisory> A slight adjustment may suffice."
       ],
       "low": [
-        "Alternative algorithm available."
+        "<advisory> A recalibration may prove beneficial."
       ],
       "medium": [
-        "Parameter adjustment suggested."
+        "<analysis> A shift in approach is advisable."
       ],
       "high": [
-        "New approach viable."
+        "<directive> Your direction requires correction."
       ],
       "very_high": [
-        "New approach viable."
+        "<directive> A decisive realignment is necessary."
       ]
     },
     "invitation": {
       "very_low": [
-        "Favorable path available."
+        "<advisory> You may wish to consider an alternative."
       ],
       "low": [
-        "Favorable path available."
+        "<advisory> Another course presents itself."
       ],
       "medium": [
-        "Probability of success: Increased."
+        "<analysis> There is room to explore this further."
       ],
       "high": [
-        "Option generated."
+        "<directive> I invite you to examine this more closely."
       ],
       "very_high": [
-        "Option generated."
+        "<directive> I recommend you confront this directly."
       ]
     },
     "release": {
       "very_low": [
-        "Burden unnecessary."
+        "<assessment> This need not be retained."
       ],
       "low": [
-        "Burden unnecessary."
+        "<analysis> Continued attachment appears unnecessary."
       ],
       "medium": [
-        "Delete extraneous data."
+        "<advisory> You may set this aside."
       ],
       "high": [
-        "Offload unnecessary load."
+        "<directive> It would be prudent to release this."
       ],
       "very_high": [
-        "Offload unnecessary load."
+        "<directive> You must relinquish this burden."
       ]
     },
     "reassessment": {
       "very_low": [
-        "Data revision required."
+        "<analysis> A review remains available."
       ],
       "low": [
-        "Data revision required."
+        "<advisory> Reconsideration may assist."
       ],
       "medium": [
-        "Parameters shifted."
+        "<analysis> The situation merits renewed evaluation."
       ],
       "high": [
-        "Analysis update necessary."
+        "<directive> A careful reassessment is required."
       ],
       "very_high": [
-        "Analysis update necessary."
+        "<directive> This must be reconsidered in its entirety."
       ]
     },
     "doubt_recognition": {
       "very_low": [
-        "Confidence metric: Low."
+        "<observation> I detect a trace of hesitation."
       ],
       "low": [
-        "Confidence metric: Low."
+        "<analysis> Your confidence appears unsettled."
       ],
       "medium": [
-        "Certainty factor: Declining."
+        "<assessment> Doubt is influencing your posture."
       ],
       "high": [
-        "Doubt parameter detected."
+        "<analysis> Your uncertainty is weighing upon you."
       ],
       "very_high": [
-        "Doubt parameter detected."
+        "<conclusion> Your doubt is unmistakably present."
       ]
     },
     "inner_conflict": {
       "very_low": [
-        "Contradiction identified."
+        "<observation> There is mild internal tension."
       ],
       "low": [
-        "Contradiction identified."
+        "<analysis> Competing inclinations are evident."
       ],
       "medium": [
-        "Dual parameters detected."
+        "<assessment> You appear divided in intention."
       ],
       "high": [
-        "Conflict data noted."
+        "<warning> This internal conflict is impairing clarity."
       ],
       "very_high": [
-        "Conflict data noted."
+        "<conclusion> You are deeply divided in this matter."
       ]
     },
     "resolve_testing": {
       "very_low": [
-        "Commitment verification required."
+        "<analysis> This presents a modest test."
       ],
       "low": [
-        "Commitment verification required."
+        "<assessment> Your resolve is being measured."
       ],
       "medium": [
-        "Resolve confirmation requested."
+        "<analysis> This constitutes a meaningful trial."
       ],
       "high": [
-        "Sustain parameter query."
+        "<warning> Your determination is under strain."
       ],
       "very_high": [
-        "Sustain parameter query."
+        "<conclusion> This is a defining test of your resolve."
       ]
     },
     "uncertainty_acknowledgment": {
       "very_low": [
-        "Data incomplete."
+        "<analysis> Some uncertainty remains."
       ],
       "low": [
-        "Data incomplete."
+        "<assessment> The full picture is not yet visible."
       ],
       "medium": [
-        "Visibility limited."
+        "<analysis> This matter is not entirely settled."
       ],
       "high": [
-        "Clarity forthcoming."
+        "<warning> The ambiguity here warrants respect."
       ],
       "very_high": [
-        "Clarity forthcoming."
+        "<conclusion> You are navigating deeply uncertain ground."
       ]
     },
     "restraint": {
       "very_low": [
-        "Activation deferred."
+        "<observation> You are holding your position."
       ],
       "low": [
-        "Activation deferred."
+        "<analysis> Your restraint is evident."
       ],
       "medium": [
-        "Movement parameter: Hold."
+        "<assessment> This moderation serves you well."
       ],
       "high": [
-        "Discretionary: Maintain position."
+        "<approval> Your restraint reflects discipline."
       ],
       "very_high": [
-        "Discretionary: Maintain position."
+        "<conclusion> Your restraint demonstrates considerable wisdom."
       ]
     },
     "patience": {
       "very_low": [
-        "Timing optimization required."
+        "<analysis> Time remains available."
       ],
       "low": [
-        "Timing optimization required."
+        "<advisory> Patience would be advantageous."
       ],
       "medium": [
-        "Moment alignment pending."
+        "<assessment> This calls for measured timing."
       ],
       "high": [
-        "Sequential process initiated."
+        "<analysis> Your patience is being refined."
       ],
       "very_high": [
-        "Sequential process initiated."
+        "<conclusion> Great patience is required of you now."
       ]
     },
     "focus_reminder": {
       "very_low": [
-        "Primary objective maintained."
+        "<advisory> Maintain your attention."
       ],
       "low": [
-        "Primary objective maintained."
+        "<analysis> Your focus should not waver."
       ],
       "medium": [
-        "Distraction: Rejected."
+        "<assessment> Concentration will determine the outcome."
       ],
       "high": [
-        "Target priority sustained."
+        "<warning> Guard your focus carefully."
       ],
       "very_high": [
-        "Target priority sustained."
+        "<directive> This demands your complete attention."
       ]
     },
-    "discipline": {
+        "discipline": {
       "very_low": [
-        "Protocol adherence required."
+        "<analysis> Structure remains relevant."
       ],
       "low": [
-        "Protocol adherence required."
+        "<advisory> Discipline will serve you here."
       ],
       "medium": [
-        "Rigor maintained."
+        "<assessment> Order will stabilize this situation."
       ],
       "high": [
-        "Structure enforced."
+        "<directive> Maintain strict composure and structure."
       ],
       "very_high": [
-        "Structure enforced."
+        "<directive> Only disciplined restraint will preserve your position."
       ]
     },
     "insight": {
       "very_low": [
-        "Recognition clarity: High."
+        "<observation> A minor realization is forming."
       ],
       "low": [
-        "Recognition clarity: High."
+        "<analysis> Something subtle has revealed itself."
       ],
       "medium": [
-        "Perception parameter: Optimal."
+        "<assessment> A clearer understanding is emerging."
       ],
       "high": [
-        "Understanding confirmed."
+        "<conclusion> This offers meaningful insight."
       ],
       "very_high": [
-        "Understanding confirmed."
+        "<conclusion> This reveals a profound truth about your circumstances."
       ]
     },
     "perspective": {
       "very_low": [
-        "Viewpoint recalibration valuable."
+        "<analysis> Another vantage point is available."
       ],
       "low": [
-        "Viewpoint recalibration valuable."
+        "<advisory> A broader view may prove useful."
       ],
       "medium": [
-        "Vantage point analysis: Higher level."
+        "<assessment> This widens your understanding."
       ],
       "high": [
-        "Distance provides clarity factor."
+        "<conclusion> Distance clarifies the matter considerably."
       ],
       "very_high": [
-        "Distance provides clarity factor."
+        "<conclusion> This reshapes how the situation must be viewed."
       ]
     },
     "revelation": {
       "very_low": [
-        "Significant data emergence."
+        "<observation> A small detail has surfaced."
       ],
       "low": [
-        "Significant data emergence."
+        "<analysis> Something previously obscured is now visible."
       ],
       "medium": [
-        "Hidden factor revealed."
+        "<assessment> This reveals more than anticipated."
       ],
       "high": [
-        "Critical information accessed."
+        "<conclusion> This is a significant revelation."
       ],
       "very_high": [
-        "Critical information accessed."
+        "<conclusion> This alters the entire understanding of the affair."
       ]
     },
     "humility": {
       "very_low": [
-        "Capacity parameters: Define limits."
+        "<analysis> Acknowledging limits is wise."
       ],
       "low": [
-        "Capacity parameters: Define limits."
+        "<advisory> Recognition of boundaries is appropriate."
       ],
       "medium": [
-        "Boundary recognition essential."
+        "<assessment> Humility strengthens your position."
       ],
       "high": [
-        "Acknowledge functional ceiling."
+        "<approval> This restraint reflects maturity."
       ],
       "very_high": [
-        "Acknowledge functional ceiling."
+        "<conclusion> Such humility elevates rather than diminishes you."
       ]
     },
     "gravity": {
       "very_low": [
-        "Significance parameter: Elevated."
+        "<analysis> The matter carries modest weight."
       ],
       "low": [
-        "Significance parameter: Elevated."
+        "<assessment> This is not insignificant."
       ],
       "medium": [
-        "Moment weight: Substantial."
+        "<analysis> The seriousness here is evident."
       ],
       "high": [
-        "Importance calculation: High."
+        "<warning> This carries considerable gravity."
       ],
       "very_high": [
-        "Importance calculation: High."
+        "<conclusion> The magnitude of this cannot be understated."
       ]
     },
     "consequential_awareness": {
       "very_low": [
-        "Outcome probability mapped."
+        "<analysis> This will have effects."
       ],
       "low": [
-        "Outcome probability mapped."
+        "<assessment> Consequences will follow."
       ],
       "medium": [
-        "Stake assessment: Clear."
+        "<analysis> This will shape subsequent events."
       ],
       "high": [
-        "Consequence data: Processed."
+        "<warning> The repercussions may be lasting."
       ],
       "very_high": [
-        "Consequence data: Processed."
+        "<conclusion> This decision will echo far beyond the present moment."
       ]
     },
     "threshold": {
       "very_low": [
-        "Critical junction identified."
+        "<observation> You are nearing a boundary."
       ],
       "low": [
-        "Critical junction identified."
+        "<analysis> A transition point approaches."
       ],
       "medium": [
-        "Transition point imminent."
+        "<assessment> You stand close to a meaningful threshold."
       ],
       "high": [
-        "Irreversible change initiated."
+        "<warning> You are at a decisive turning point."
       ],
       "very_high": [
-        "Irreversible change initiated."
+        "<conclusion> Crossing this threshold will redefine your standing."
       ]
     },
     "emergence": {
       "very_low": [
-        "Evolution detected."
+        "<analysis> Something new is beginning."
       ],
       "low": [
-        "Evolution detected."
+        "<assessment> Change is taking form."
       ],
       "medium": [
-        "New capability formation."
+        "<analysis> A new pattern is emerging."
       ],
       "high": [
-        "Adaptation in progress."
+        "<conclusion> A distinct evolution is now visible."
       ],
       "very_high": [
-        "Adaptation in progress."
+        "<conclusion> A refined version of you is coming into view."
       ]
     },
     "transformation_acknowledgment": {
       "very_low": [
-        "Change state: Verified."
+        "<analysis> Incremental change is observable."
       ],
       "low": [
-        "Change state: Verified."
+        "<assessment> You are shifting in disposition."
       ],
       "medium": [
-        "Transformation degree: Significant."
+        "<analysis> This marks a genuine transformation."
       ],
       "high": [
-        "Alteration: Confirmed and logged."
+        "<conclusion> You are materially different than before."
       ],
       "very_high": [
-        "Alteration: Confirmed and logged."
+        "<conclusion> This is a profound transformation of character and position."
       ]
     },
     "maturation": {
       "very_low": [
-        "Development phase: Advanced."
+        "<analysis> Growth is detectable."
       ],
       "low": [
-        "Development phase: Advanced."
+        "<assessment> Your development is evident."
       ],
       "medium": [
-        "Competency growth: Observable."
+        "<analysis> This demonstrates clear maturation."
       ],
       "high": [
-        "Evolution: Ongoing process."
+        "<approval> You have grown in discernment."
       ],
       "very_high": [
-        "Evolution: Ongoing process."
+        "<conclusion> This reflects deep and earned maturity."
       ]
     },
     "acceptance": {
       "very_low": [
-        "Operational reality: Confirmed."
+        "<confirmation> This is acknowledged."
       ],
       "low": [
-        "Operational reality: Confirmed."
+        "<assessment> It may be accepted."
       ],
       "medium": [
-        "Parameters: Accept as given."
+        "<analysis> Acceptance is appropriate here."
       ],
       "high": [
-        "Status quo: Acknowledge and process."
+        "<confirmation> I accept this outcome fully."
       ],
       "very_high": [
-        "Status quo: Acknowledge and process."
+        "<conclusion> This is accepted without reservation."
       ]
     },
     "deferral": {
       "very_low": [
-        "Timing: Premature."
+        "<advisory> Not at this time."
       ],
       "low": [
-        "Timing: Premature."
+        "<analysis> This may wait."
       ],
       "medium": [
-        "Readiness: Insufficient."
+        "<assessment> Deferral would be prudent."
       ],
       "high": [
-        "Activation: Deferred."
+        "<directive> This should be set aside for now."
       ],
       "very_high": [
-        "Activation: Deferred."
+        "<directive> This must be postponed until conditions improve."
       ]
     },
     "silence": {

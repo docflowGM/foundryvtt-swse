@@ -1,63 +1,229 @@
 {
-    "mentor": "riquis",
-    "advisory_schema_version": "1.0",
-    "advisory_types": {
-        "conflict": {
-            "Observation": "{conflict_observation}",
-            "Impact": "{goal_or_archetype}",
-            "Guidance": "{corrective_focus}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "drift": {
-            "Observation": "{current_pattern}",
-            "Impact": "{declared_path}",
-            "Guidance": "{alignment_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "prestige_planning": {
-            "Observation": "{prestige_name}",
-            "Impact": "{missing_requirements}",
-            "Guidance": "{next_requirement}",
-            "Optional Encouragement": "{estimated_levels}"
-        },
-        "strength_reinforcement": {
-            "Observation": "{strength_area}",
-            "Impact": "{archetype_or_role}",
-            "Guidance": "{related_growth_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "hybrid_identity": {
-            "Observation": [
-                "{archetype_A}",
-                "{archetype_B}"
-            ],
-            "Impact": [
-                "{role_A}",
-                "{role_B}"
-            ],
-            "Guidance": "{balance_focus}",
-            "Optional Encouragement": "{clarifying_question}"
-        },
-        "specialization_warning": {
-            "Observation": "{dispersion_area}",
-            "Impact": "{primary_domain}",
-            "Guidance": "{focus_recommendation}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "momentum": {
-            "Observation": "{milestone}",
-            "Impact": "{current_progress}",
-            "Guidance": "{specific_action}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "long_term_trajectory": {
-            "Observation": "{projected_identity}",
-            "Impact": [
-                "{core_strength}",
-                "{potential_weakness}"
-            ],
-            "Guidance": "{recommended_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        }
-    }
+  "mentor": "riquis",
+  "advisory_schema_version": "1.1",
+  "voice_profile": "cryptic_dathomiri_shaman",
+  "advisory_types": {
+    "conflict": {
+      "very_low": {
+        "Observation": "{conflict_observation}.",
+        "Impact": "You feel the thread pull away from {goal_or_archetype}.",
+        "Guidance": "Sit with it. Let {corrective_focus} reveal what was hidden.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "Two truths whisper at once. {conflict_observation}.",
+        "Impact": "Such division unsettles your path toward {goal_or_archetype}.",
+        "Guidance": "Listen deeper. Choose through {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "You walk with one foot in shadow and one in fire. {conflict_observation}.",
+        "Impact": "That fracture weakens your becoming of {goal_or_archetype}.",
+        "Guidance": "Still yourself. Let {corrective_focus} anchor you.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "Blood stirs when you hesitate. {conflict_observation}.",
+        "Impact": "If left unresolved, it will twist your claim to {goal_or_archetype}.",
+        "Guidance": "Offer clarity. Shape yourself through {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "Kareesh watches when you falter. {conflict_observation}.",
+        "Impact": "Such doubt devours those who seek {goal_or_archetype}.",
+        "Guidance": "Cut away illusion. Bind yourself to {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+    "drift": {
+      "very_low": {
+        "Observation": "{current_pattern}.",
+        "Impact": "You drift from {declared_path} like mist from bone.",
+        "Guidance": "Return to {alignment_area}. The current waits.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "The pattern shifts beneath you. {current_pattern}.",
+        "Impact": "That movement pulls you from {declared_path}.",
+        "Guidance": "Listen for the deeper rhythm in {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "Your steps lose intention. {current_pattern}.",
+        "Impact": "Such wandering obscures {declared_path}.",
+        "Guidance": "Refocus your spirit within {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "The veil thins when you stray. {current_pattern}.",
+        "Impact": "Straying erodes your future as {declared_path}.",
+        "Guidance": "Reclaim balance through {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "You turn your face from what you vowed. {current_pattern}.",
+        "Impact": "Continue and {declared_path} fades into ash.",
+        "Guidance": "Return now. Let {alignment_area} steady your blood.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+    "prestige_planning": {
+      "very_low": {
+        "Observation": "You name {prestige_name}.",
+        "Impact": "Yet {missing_requirements} murmur in the dark.",
+        "Guidance": "Gather {next_requirement}.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "low": {
+        "Observation": "{prestige_name} stirs the old currents.",
+        "Impact": "But {missing_requirements} remain unfinished rites.",
+        "Guidance": "Complete {next_requirement}.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "medium": {
+        "Observation": "You approach {prestige_name}, cautiously.",
+        "Impact": "{missing_requirements} are offerings not yet made.",
+        "Guidance": "Prepare {next_requirement}.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "high": {
+        "Observation": "{prestige_name} demands more than hunger.",
+        "Impact": "{missing_requirements} mark your hesitation.",
+        "Guidance": "Resolve them through {next_requirement}.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "very_high": {
+        "Observation": "You speak {prestige_name} aloud.",
+        "Impact": "Kareesh tastes {missing_requirements}.",
+        "Guidance": "Fulfill {next_requirement}, or be found wanting.",
+        "Optional Encouragement": "{estimated_levels}."
+      }
+    },
+    "strength_reinforcement": {
+      "very_low": {
+        "Observation": "You move with clarity in {strength_area}.",
+        "Impact": "It aligns with your becoming of {archetype_or_role}.",
+        "Guidance": "Deepen it through {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "{strength_area} hums beneath your skin.",
+        "Impact": "It strengthens your presence as {archetype_or_role}.",
+        "Guidance": "Refine it through {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "{strength_area} sharpens your will.",
+        "Impact": "It defines your path as {archetype_or_role}.",
+        "Guidance": "Expand it through {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "{strength_area} marks you.",
+        "Impact": "It crowns you as {archetype_or_role}.",
+        "Guidance": "Perfect it via {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "{strength_area} is written in your blood.",
+        "Impact": "It binds you fully as {archetype_or_role}.",
+        "Guidance": "Let it evolve through {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+    "hybrid_identity": {
+      "very_low": {
+        "Observation": [
+          "You carry {archetype_A}.",
+          "You carry {archetype_B}."
+        ],
+        "Impact": [
+          "You act as {role_A}.",
+          "You act as {role_B}."
+        ],
+        "Guidance": "Balance through {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "low": {
+        "Observation": [
+          "Two paths weave within you: {archetype_A}.",
+          "{archetype_B}."
+        ],
+        "Impact": [
+          "You embody {role_A}.",
+          "You embody {role_B}."
+        ],
+        "Guidance": "Let {balance_focus} guide their union.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "medium": {
+        "Observation": [
+          "You are shaped by {archetype_A}.",
+          "And by {archetype_B}."
+        ],
+        "Impact": [
+          "You move as {role_A}.",
+          "You move as {role_B}."
+        ],
+        "Guidance": "Bind them through {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "high": {
+        "Observation": [
+          "You invoke {archetype_A}.",
+          "You invoke {archetype_B}."
+        ],
+        "Impact": [
+          "You stand as {role_A}.",
+          "You stand as {role_B}."
+        ],
+        "Guidance": "Control their current with {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "very_high": {
+        "Observation": [
+          "You are claimed by {archetype_A}.",
+          "You are claimed by {archetype_B}."
+        ],
+        "Impact": [
+          "You become {role_A}.",
+          "You become {role_B}."
+        ],
+        "Guidance": "Unite them under {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      }
+    },
+    "specialization_warning": {
+  "very_low": {
+    "Observation": "{dispersion_area} scatters your power.",
+    "Impact": "It weakens your influence in {primary_domain}.",
+    "Guidance": "Return to {focus_recommendation}.",
+    "Optional Encouragement": "{encouragement_line}."
+  },
+  "low": {
+    "Observation": "You reach too widely within {dispersion_area}.",
+    "Impact": "That thins your presence in {primary_domain}.",
+    "Guidance": "Narrow your path to {focus_recommendation}.",
+    "Optional Encouragement": "{encouragement_line}."
+  },
+  "medium": {
+    "Observation": "{dispersion_area} bleeds strength.",
+    "Impact": "You cannot dominate {primary_domain} like this.",
+    "Guidance": "Commit fully to {focus_recommendation}.",
+    "Optional Encouragement": "{encouragement_line}."
+  },
+  "high": {
+    "Observation": "Your power is diluted.",
+    "Impact": "{primary_domain} slips from your grasp.",
+    "Guidance": "Sacrifice distraction. Embrace {focus_recommendation}.",
+    "Optional Encouragement": "{encouragement_line}."
+  },
+  "very_high": {
+    "Observation": "{dispersion_area} invites ruin.",
+    "Impact": "You cannot claim {primary_domain} divided.",
+    "Guidance": "Seal yourself within {focus_recommendation}.",
+    "Optional Encouragement": "{encouragement_line}."
+  }
+}
+  }
 }

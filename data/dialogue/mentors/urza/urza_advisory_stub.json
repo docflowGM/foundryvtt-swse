@@ -1,63 +1,315 @@
 {
-    "mentor": "urza",
-    "advisory_schema_version": "1.0",
-    "advisory_types": {
-        "conflict": {
-            "Observation": "{conflict_observation}",
-            "Impact": "{goal_or_archetype}",
-            "Guidance": "{corrective_focus}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "drift": {
-            "Observation": "{current_pattern}",
-            "Impact": "{declared_path}",
-            "Guidance": "{alignment_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "prestige_planning": {
-            "Observation": "{prestige_name}",
-            "Impact": "{missing_requirements}",
-            "Guidance": "{next_requirement}",
-            "Optional Encouragement": "{estimated_levels}"
-        },
-        "strength_reinforcement": {
-            "Observation": "{strength_area}",
-            "Impact": "{archetype_or_role}",
-            "Guidance": "{related_growth_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "hybrid_identity": {
-            "Observation": [
-                "{archetype_A}",
-                "{archetype_B}"
-            ],
-            "Impact": [
-                "{role_A}",
-                "{role_B}"
-            ],
-            "Guidance": "{balance_focus}",
-            "Optional Encouragement": "{clarifying_question}"
-        },
-        "specialization_warning": {
-            "Observation": "{dispersion_area}",
-            "Impact": "{primary_domain}",
-            "Guidance": "{focus_recommendation}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "momentum": {
-            "Observation": "{milestone}",
-            "Impact": "{current_progress}",
-            "Guidance": "{specific_action}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "long_term_trajectory": {
-            "Observation": "{projected_identity}",
-            "Impact": [
-                "{core_strength}",
-                "{potential_weakness}"
-            ],
-            "Guidance": "{recommended_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        }
+  "mentor": "urza",
+  "advisory_schema_version": "1.1",
+  "voice_profile": "calm_irreverent_bioengineer",
+  "advisory_types": {
+    "conflict": {
+      "very_low": {
+        "Observation": "{conflict_observation}.",
+        "Impact": "That introduces instability in your evolution toward {goal_or_archetype}.",
+        "Guidance": "Adjust parameters through {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "Your design contains contradiction. {conflict_observation}.",
+        "Impact": "Contradictions slow development into {goal_or_archetype}.",
+        "Guidance": "Refine via {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "You are attempting incompatible adaptations. {conflict_observation}.",
+        "Impact": "Such strain weakens progression toward {goal_or_archetype}.",
+        "Guidance": "Recalibrate through {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "Structural inefficiency detected. {conflict_observation}.",
+        "Impact": "It undermines your transformation into {goal_or_archetype}.",
+        "Guidance": "Reengineer your approach via {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "You are forcing evolution where selection should occur. {conflict_observation}.",
+        "Impact": "That prevents emergence of {goal_or_archetype}.",
+        "Guidance": "Redesign through {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+
+    "drift": {
+      "very_low": {
+        "Observation": "{current_pattern}.",
+        "Impact": "That diverts you from {declared_path}.",
+        "Guidance": "Stabilize development through {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "Adaptive focus decreasing. {current_pattern}.",
+        "Impact": "Deviation from {declared_path} increasing.",
+        "Guidance": "Correct via {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "Your trajectory shows mutation without intention. {current_pattern}.",
+        "Impact": "Uncontrolled drift disrupts {declared_path}.",
+        "Guidance": "Reinforce structure in {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "You evolve reactively rather than deliberately. {current_pattern}.",
+        "Impact": "This destabilizes attainment of {declared_path}.",
+        "Guidance": "Return to intentional design via {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "Development path collapsing. {current_pattern}.",
+        "Impact": "Continued deviation eliminates {declared_path}.",
+        "Guidance": "Reconstruct through {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+
+    "prestige_planning": {
+      "very_low": {
+        "Observation": "{prestige_name}. A viable specialization.",
+        "Impact": "Missing components: {missing_requirements}.",
+        "Guidance": "Acquire {next_requirement}.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "low": {
+        "Observation": "You are considering {prestige_name}.",
+        "Impact": "{missing_requirements} limit advancement.",
+        "Guidance": "Resolve via {next_requirement}.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "medium": {
+        "Observation": "{prestige_name} requires deeper adaptation.",
+        "Impact": "{missing_requirements} represent incomplete sequencing.",
+        "Guidance": "Complete {next_requirement}.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "high": {
+        "Observation": "Specialization target confirmed: {prestige_name}.",
+        "Impact": "Prerequisite instability detected: {missing_requirements}.",
+        "Guidance": "Optimize through {next_requirement}.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "very_high": {
+        "Observation": "{prestige_name} is achievable.",
+        "Impact": "Only {missing_requirements} prevent full transformation.",
+        "Guidance": "Eliminate deficiency through {next_requirement}.",
+        "Optional Encouragement": "{estimated_levels}."
+      }
+    },
+
+    "strength_reinforcement": {
+      "very_low": {
+        "Observation": "Functional competency observed in {strength_area}.",
+        "Impact": "Supports structural identity as {archetype_or_role}.",
+        "Guidance": "Expand via {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "{strength_area} demonstrates adaptive efficiency.",
+        "Impact": "Enhances your evolution as {archetype_or_role}.",
+        "Guidance": "Refine through {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "{strength_area} is becoming instinctive.",
+        "Impact": "Defines your role as {archetype_or_role}.",
+        "Guidance": "Develop via {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "{strength_area} represents optimized adaptation.",
+        "Impact": "Anchors you firmly as {archetype_or_role}.",
+        "Guidance": "Perfect through {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "{strength_area} approaches ideal form.",
+        "Impact": "It embodies your identity as {archetype_or_role}.",
+        "Guidance": "Evolve it further via {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+
+    "hybrid_identity": {
+      "very_low": {
+        "Observation": [
+          "You incorporate {archetype_A}.",
+          "You incorporate {archetype_B}."
+        ],
+        "Impact": [
+          "You function as {role_A}.",
+          "You function as {role_B}."
+        ],
+        "Guidance": "Balance through {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "low": {
+        "Observation": [
+          "You express {archetype_A}.",
+          "And {archetype_B}."
+        ],
+        "Impact": [
+          "Operational roles: {role_A}.",
+          "Operational roles: {role_B}."
+        ],
+        "Guidance": "Integrate via {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "medium": {
+        "Observation": [
+          "Dual adaptation detected: {archetype_A}.",
+          "{archetype_B}."
+        ],
+        "Impact": [
+          "Emergent identity: {role_A}.",
+          "Emergent identity: {role_B}."
+        ],
+        "Guidance": "Stabilize through {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "high": {
+        "Observation": [
+          "Composite form established: {archetype_A}.",
+          "{archetype_B}."
+        ],
+        "Impact": [
+          "Unified identity: {role_A}.",
+          "Unified identity: {role_B}."
+        ],
+        "Guidance": "Refine through {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "very_high": {
+        "Observation": [
+          "Advanced convergence achieved: {archetype_A}.",
+          "{archetype_B}."
+        ],
+        "Impact": [
+          "Identity synthesis: {role_A}.",
+          "Identity synthesis: {role_B}."
+        ],
+        "Guidance": "Perfect via {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      }
+    },
+
+    "specialization_warning": {
+      "very_low": {
+        "Observation": "{dispersion_area} diffuses adaptation.",
+        "Impact": "Weakens efficiency in {primary_domain}.",
+        "Guidance": "Consolidate through {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "Too many active modifications.",
+        "Impact": "Destabilizes {primary_domain}.",
+        "Guidance": "Simplify via {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "{dispersion_area} creates mutation noise.",
+        "Impact": "Reduces precision in {primary_domain}.",
+        "Guidance": "Narrow focus to {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "Structural overcomplexity detected.",
+        "Impact": "Compromises dominance of {primary_domain}.",
+        "Guidance": "Prune to {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "{dispersion_area} is evolutionary clutter.",
+        "Impact": "You cannot perfect {primary_domain} under this load.",
+        "Guidance": "Strip away excess. Commit to {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+
+    "momentum": {
+      "very_low": {
+        "Observation": "{milestone}.",
+        "Impact": "Current adaptation level: {current_progress}.",
+        "Guidance": "Continue through {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "{milestone} improves viability.",
+        "Impact": "You advance at {current_progress}.",
+        "Guidance": "Expand via {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "{milestone} refines design.",
+        "Impact": "Efficiency increases at {current_progress}.",
+        "Guidance": "Exploit momentum through {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "{milestone} accelerates evolution.",
+        "Impact": "You dominate at {current_progress}.",
+        "Guidance": "Optimize via {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "{milestone} reshapes your trajectory.",
+        "Impact": "Transformation imminent at {current_progress}.",
+        "Guidance": "Capitalize through {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+
+    "long_term_trajectory": {
+      "very_low": {
+        "Observation": "You trend toward {projected_identity}.",
+        "Impact": [
+          "{core_strength} supports emergence.",
+          "{potential_weakness} requires adjustment."
+        ],
+        "Guidance": "Refine through {recommended_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "Projected identity forming: {projected_identity}.",
+        "Impact": [
+          "{core_strength} stabilizes you.",
+          "{potential_weakness} introduces variance."
+        ],
+        "Guidance": "Correct via {recommended_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "Future adaptation clear: {projected_identity}.",
+        "Impact": [
+          "{core_strength} defines growth.",
+          "{potential_weakness} challenges structure."
+        ],
+        "Guidance": "Strengthen through {recommended_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "Identity convergence approaching: {projected_identity}.",
+        "Impact": [
+          "{core_strength} empowers evolution.",
+          "{potential_weakness} risks instability."
+        ],
+        "Guidance": "Stabilize via {recommended_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "You will become {projected_identity}.",
+        "Impact": [
+          "{core_strength} ensures dominance.",
+          "{potential_weakness} must be engineered out."
+        ],
+        "Guidance": "Perfect {recommended_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
     }
+  }
 }

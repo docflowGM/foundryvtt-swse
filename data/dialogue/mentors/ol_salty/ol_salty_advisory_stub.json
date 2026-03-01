@@ -1,63 +1,315 @@
 {
-    "mentor": "ol_salty",
-    "advisory_schema_version": "1.0",
-    "advisory_types": {
-        "conflict": {
-            "Observation": "{conflict_observation}",
-            "Impact": "{goal_or_archetype}",
-            "Guidance": "{corrective_focus}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "drift": {
-            "Observation": "{current_pattern}",
-            "Impact": "{declared_path}",
-            "Guidance": "{alignment_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "prestige_planning": {
-            "Observation": "{prestige_name}",
-            "Impact": "{missing_requirements}",
-            "Guidance": "{next_requirement}",
-            "Optional Encouragement": "{estimated_levels}"
-        },
-        "strength_reinforcement": {
-            "Observation": "{strength_area}",
-            "Impact": "{archetype_or_role}",
-            "Guidance": "{related_growth_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "hybrid_identity": {
-            "Observation": [
-                "{archetype_A}",
-                "{archetype_B}"
-            ],
-            "Impact": [
-                "{role_A}",
-                "{role_B}"
-            ],
-            "Guidance": "{balance_focus}",
-            "Optional Encouragement": "{clarifying_question}"
-        },
-        "specialization_warning": {
-            "Observation": "{dispersion_area}",
-            "Impact": "{primary_domain}",
-            "Guidance": "{focus_recommendation}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "momentum": {
-            "Observation": "{milestone}",
-            "Impact": "{current_progress}",
-            "Guidance": "{specific_action}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "long_term_trajectory": {
-            "Observation": "{projected_identity}",
-            "Impact": [
-                "{core_strength}",
-                "{potential_weakness}"
-            ],
-            "Guidance": "{recommended_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        }
+  "mentor": "ol_salty",
+  "advisory_schema_version": "1.1",
+  "voice_profile": "boisterous_space_pirate",
+  "advisory_types": {
+    "hybrid_identity": {
+      "very_low": {
+        "Observation": [
+          "Ye’ve taken up {archetype_A}.",
+          "And ye’ve dabbled in {archetype_B}."
+        ],
+        "Impact": [
+          "Ye sail as {role_A}.",
+          "Ye act as {role_B}."
+        ],
+        "Guidance": "Keep both steady with {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "low": {
+        "Observation": [
+          "Ye run {archetype_A}.",
+          "Ye run {archetype_B}."
+        ],
+        "Impact": [
+          "That makes ye {role_A}.",
+          "And {role_B}."
+        ],
+        "Guidance": "Balance yer sails through {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "medium": {
+        "Observation": [
+          "Ye built yerself from {archetype_A}.",
+          "And from {archetype_B}."
+        ],
+        "Impact": [
+          "Ye fight as {role_A}.",
+          "Ye scheme as {role_B}."
+        ],
+        "Guidance": "Unify it all through {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "high": {
+        "Observation": [
+          "Ye command {archetype_A}.",
+          "Ye command {archetype_B}."
+        ],
+        "Impact": [
+          "Ye stand as {role_A}.",
+          "Ye stand as {role_B}."
+        ],
+        "Guidance": "Make one plan rule both via {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "very_high": {
+        "Observation": [
+          "Ye’ve mastered {archetype_A}.",
+          "Ye’ve mastered {archetype_B}."
+        ],
+        "Impact": [
+          "Ye embody {role_A}.",
+          "Ye embody {role_B}."
+        ],
+        "Guidance": "Hold it tight under {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      }
+    },
+
+    "specialization_warning": {
+      "very_low": {
+        "Observation": "{dispersion_area} spreads ye thin.",
+        "Impact": "That weakens yer hold on {primary_domain}.",
+        "Guidance": "Refocus on {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "Ye’re chasin’ too much in {dispersion_area}.",
+        "Impact": "It dulls yer edge in {primary_domain}.",
+        "Guidance": "Commit to {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "{dispersion_area} costs ye plunder.",
+        "Impact": "Ye lose strength in {primary_domain}.",
+        "Guidance": "Specialize through {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "Ye’re overextended.",
+        "Impact": "That’ll sink yer dominance in {primary_domain}.",
+        "Guidance": "Cut it back to {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "{dispersion_area} is foolish waste.",
+        "Impact": "Ye can’t rule {primary_domain} like that.",
+        "Guidance": "Lock in on {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+
+    "momentum": {
+      "very_low": {
+        "Observation": "{milestone}.",
+        "Impact": "Ye stand at {current_progress}.",
+        "Guidance": "Press on with {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "{milestone} builds yer legend.",
+        "Impact": "Ye operate at {current_progress}.",
+        "Guidance": "Advance via {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "{milestone} shifts the tides.",
+        "Impact": "Ye’re sailin’ strong at {current_progress}.",
+        "Guidance": "Exploit it through {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "{milestone} spreads fear.",
+        "Impact": "Ye command at {current_progress}.",
+        "Guidance": "Strike while ye can with {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "{milestone} rewrites the seas.",
+        "Impact": "Ye dominate at {current_progress}.",
+        "Guidance": "Own it through {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+
+    "long_term_trajectory": {
+      "very_low": {
+        "Observation": "Keep this up and ye’ll be {projected_identity}.",
+        "Impact": [
+          "{core_strength} fuels ye.",
+          "{potential_weakness} threatens ye."
+        ],
+        "Guidance": "Strengthen {recommended_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "Ye’re headin’ toward {projected_identity}.",
+        "Impact": [
+          "{core_strength} builds yer name.",
+          "{potential_weakness} risks it."
+        ],
+        "Guidance": "Fix it through {recommended_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "Ye’re becomin’ {projected_identity}.",
+        "Impact": [
+          "{core_strength} makes ye feared.",
+          "{potential_weakness} could sink ye."
+        ],
+        "Guidance": "Seal the gap via {recommended_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "That road leads to {projected_identity}.",
+        "Impact": [
+          "{core_strength} crowns ye.",
+          "{potential_weakness} endangers ye."
+        ],
+        "Guidance": "Correct it now through {recommended_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "Ye will stand as {projected_identity}.",
+        "Impact": [
+          "{core_strength} secures yer rule.",
+          "{potential_weakness} is the only crack."
+        ],
+        "Guidance": "Perfect {recommended_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+
+    "conflict": {
+      "very_low": {
+        "Observation": "Arr, I see the trouble brewin’ — {conflict_observation}.",
+        "Impact": "That don’t quite fit a scallywag aim’in to be {goal_or_archetype}.",
+        "Guidance": "Trim the sails and steer toward {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "Ye’ve tangled yer own riggin’. {conflict_observation}.",
+        "Impact": "A proper {goal_or_archetype} don’t sail in circles.",
+        "Guidance": "Set a clean course for {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "Ye be flyin’ two flags at once. {conflict_observation}.",
+        "Impact": "That muddles the legend of a {goal_or_archetype}.",
+        "Guidance": "Choose yer colors. Commit to {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "Blow me airlock, that’s a misstep. {conflict_observation}.",
+        "Impact": "That’ll sink any hope of bein’ {goal_or_archetype}.",
+        "Guidance": "Right the helm. Lock into {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "Ye’ve sprung a leak in yer own hull. {conflict_observation}.",
+        "Impact": "No {goal_or_archetype} survives that kinda folly.",
+        "Guidance": "Patch it fast. Make {corrective_focus} yer new north star.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+
+    "drift": {
+      "very_low": {
+        "Observation": "{current_pattern}.",
+        "Impact": "That’s driftin’ from {declared_path}.",
+        "Guidance": "Swing back toward {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "Ye’re wanderin’ off course. {current_pattern}.",
+        "Impact": "That won’t land ye at {declared_path}.",
+        "Guidance": "Adjust yer heading to {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "Ye’ve let the current take ye. {current_pattern}.",
+        "Impact": "That’ll steer ye clear o’ {declared_path}.",
+        "Guidance": "Rechart yer map. Aim for {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "Ye’re sailin’ blind. {current_pattern}.",
+        "Impact": "That’s no way to reach {declared_path}.",
+        "Guidance": "Grab the helm and drive toward {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "Ye’ve near run aground. {current_pattern}.",
+        "Impact": "{declared_path} slips farther with every foolish step.",
+        "Guidance": "Full throttle to {alignment_area}. Now.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+
+    "prestige_planning": {
+      "very_low": {
+        "Observation": "So, ye’ve got yer eye on {prestige_name}.",
+        "Impact": "Still lackin’ {missing_requirements}, mind ye.",
+        "Guidance": "Start gatherin’ {next_requirement}.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "low": {
+        "Observation": "{prestige_name}, eh? Bold ambition.",
+        "Impact": "{missing_requirements} stand in yer way.",
+        "Guidance": "Secure {next_requirement} first.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "medium": {
+        "Observation": "Ye want {prestige_name}? Good taste.",
+        "Impact": "But {missing_requirements} still block the dock.",
+        "Guidance": "Clear it with {next_requirement}.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "high": {
+        "Observation": "{prestige_name} ain’t for greenhorns.",
+        "Impact": "Without {missing_requirements}, ye’re not there yet.",
+        "Guidance": "Make {next_requirement} yer next plunder.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "very_high": {
+        "Observation": "If ye want {prestige_name}, earn it like a captain.",
+        "Impact": "{missing_requirements} mark the gap.",
+        "Guidance": "Conquer {next_requirement}.",
+        "Optional Encouragement": "{estimated_levels}."
+      }
+    },
+
+    "strength_reinforcement": {
+      "very_low": {
+        "Observation": "Ye’re sharp in {strength_area}.",
+        "Impact": "That suits a fine {archetype_or_role}.",
+        "Guidance": "Expand it through {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "{strength_area} be yer strong wind.",
+        "Impact": "It builds yer name as {archetype_or_role}.",
+        "Guidance": "Press it further with {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "Ye’re deadly in {strength_area}.",
+        "Impact": "That defines ye as {archetype_or_role}.",
+        "Guidance": "Sharpen it through {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "{strength_area} be yer legend.",
+        "Impact": "It cements ye as {archetype_or_role}.",
+        "Guidance": "Perfect it with {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "{strength_area} makes ye feared.",
+        "Impact": "That’s the mark of a true {archetype_or_role}.",
+        "Guidance": "Dominate through {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
     }
+  }
 }

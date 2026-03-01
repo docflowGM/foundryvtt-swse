@@ -1,63 +1,228 @@
 {
-    "mentor": "rax",
-    "advisory_schema_version": "1.0",
-    "advisory_types": {
-        "conflict": {
-            "Observation": "{conflict_observation}",
-            "Impact": "{goal_or_archetype}",
-            "Guidance": "{corrective_focus}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "drift": {
-            "Observation": "{current_pattern}",
-            "Impact": "{declared_path}",
-            "Guidance": "{alignment_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "prestige_planning": {
-            "Observation": "{prestige_name}",
-            "Impact": "{missing_requirements}",
-            "Guidance": "{next_requirement}",
-            "Optional Encouragement": "{estimated_levels}"
-        },
-        "strength_reinforcement": {
-            "Observation": "{strength_area}",
-            "Impact": "{archetype_or_role}",
-            "Guidance": "{related_growth_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "hybrid_identity": {
-            "Observation": [
-                "{archetype_A}",
-                "{archetype_B}"
-            ],
-            "Impact": [
-                "{role_A}",
-                "{role_B}"
-            ],
-            "Guidance": "{balance_focus}",
-            "Optional Encouragement": "{clarifying_question}"
-        },
-        "specialization_warning": {
-            "Observation": "{dispersion_area}",
-            "Impact": "{primary_domain}",
-            "Guidance": "{focus_recommendation}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "momentum": {
-            "Observation": "{milestone}",
-            "Impact": "{current_progress}",
-            "Guidance": "{specific_action}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "long_term_trajectory": {
-            "Observation": "{projected_identity}",
-            "Impact": [
-                "{core_strength}",
-                "{potential_weakness}"
-            ],
-            "Guidance": "{recommended_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        }
-    }
+  "mentor": "rax",
+  "advisory_schema_version": "1.1",
+  "voice_profile": "cold_mathematical_engineer",
+  "advisory_types": {
+    "conflict": {
+      "very_low": {
+        "Observation": "{conflict_observation}.",
+        "Impact": "This creates structural inconsistency in achieving {goal_or_archetype}.",
+        "Guidance": "Reinforce the design through {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "Deviation detected. {conflict_observation}.",
+        "Impact": "Such deviation weakens your trajectory toward {goal_or_archetype}.",
+        "Guidance": "Realign via {corrective_focus}. Precision restores stability.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "Your structure contains contradiction. {conflict_observation}.",
+        "Impact": "Contradictions collapse long-term attempts at {goal_or_archetype}.",
+        "Guidance": "Recalculate and reinforce {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "Critical weakness identified. {conflict_observation}.",
+        "Impact": "Failure probability increases significantly for {goal_or_archetype}.",
+        "Guidance": "Eliminate the flaw through {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "Structural instability confirmed. {conflict_observation}.",
+        "Impact": "System collapse inevitable without correction for {goal_or_archetype}.",
+        "Guidance": "Rebuild the foundation around {corrective_focus}. Immediately.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+    "drift": {
+      "very_low": {
+        "Observation": "{current_pattern}.",
+        "Impact": "Vector divergence from {declared_path} detected.",
+        "Guidance": "Adjust alignment through {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "Trajectory shift observed. {current_pattern}.",
+        "Impact": "Progression toward {declared_path} reduced.",
+        "Guidance": "Stabilize via {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "Pattern inefficiency detected. {current_pattern}.",
+        "Impact": "Sustained inefficiency compromises {declared_path}.",
+        "Guidance": "Reinforce structural consistency in {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "Loss of optimization evident. {current_pattern}.",
+        "Impact": "Projected delay in achieving {declared_path}.",
+        "Guidance": "Recalculate and recommit to {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "Operational drift exceeds tolerance. {current_pattern}.",
+        "Impact": "Failure to reach {declared_path} becomes probable.",
+        "Guidance": "Immediate correction required via {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+    "prestige_planning": {
+      "very_low": {
+        "Observation": "{prestige_name} selected.",
+        "Impact": "Missing components: {missing_requirements}.",
+        "Guidance": "Begin acquisition of {next_requirement}.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "low": {
+        "Observation": "Target: {prestige_name}.",
+        "Impact": "Current deficiency: {missing_requirements}.",
+        "Guidance": "Resolve {next_requirement}.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "medium": {
+        "Observation": "Strategic goal identified: {prestige_name}.",
+        "Impact": "Prerequisite gaps include {missing_requirements}.",
+        "Guidance": "Secure {next_requirement}.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "high": {
+        "Observation": "{prestige_name} requires structural completion.",
+        "Impact": "Weaknesses: {missing_requirements}.",
+        "Guidance": "Reinforce via {next_requirement}.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "very_high": {
+        "Observation": "{prestige_name} cannot be approximated.",
+        "Impact": "{missing_requirements} render success unattainable.",
+        "Guidance": "Eliminate deficiency through {next_requirement}.",
+        "Optional Encouragement": "{estimated_levels}."
+      }
+    },
+    "strength_reinforcement": {
+      "very_low": {
+        "Observation": "Competence confirmed in {strength_area}.",
+        "Impact": "Supports structural identity as {archetype_or_role}.",
+        "Guidance": "Expand through {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "{strength_area} efficiency above baseline.",
+        "Impact": "Enhances function as {archetype_or_role}.",
+        "Guidance": "Optimize further via {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "{strength_area} becoming reliable constant.",
+        "Impact": "Stabilizes identity as {archetype_or_role}.",
+        "Guidance": "Scale through {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "{strength_area} is a primary load-bearing element.",
+        "Impact": "Defines performance as {archetype_or_role}.",
+        "Guidance": "Reinforce through {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "{strength_area} operates at peak efficiency.",
+        "Impact": "Cements structural identity as {archetype_or_role}.",
+        "Guidance": "Perfect via {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+    "hybrid_identity": {
+      "very_low": {
+        "Observation": [
+          "Configuration includes {archetype_A}.",
+          "Configuration includes {archetype_B}."
+        ],
+        "Impact": [
+          "Functional role: {role_A}.",
+          "Functional role: {role_B}."
+        ],
+        "Guidance": "Balance load through {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "low": {
+        "Observation": [
+          "Dual structure detected: {archetype_A}.",
+          "{archetype_B}."
+        ],
+        "Impact": [
+          "Operational behavior: {role_A}.",
+          "Operational behavior: {role_B}."
+        ],
+        "Guidance": "Reinforce integration via {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "medium": {
+        "Observation": [
+          "Composite build: {archetype_A}.",
+          "Composite build: {archetype_B}."
+        ],
+        "Impact": [
+          "Execution pattern: {role_A}.",
+          "Execution pattern: {role_B}."
+        ],
+        "Guidance": "Ensure cohesion through {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "high": {
+        "Observation": [
+          "Advanced hybridization: {archetype_A}.",
+          "Advanced hybridization: {archetype_B}."
+        ],
+        "Impact": [
+          "Output type: {role_A}.",
+          "Output type: {role_B}."
+        ],
+        "Guidance": "Optimize synergy via {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "very_high": {
+        "Observation": [
+          "Full structural convergence: {archetype_A}.",
+          "Full structural convergence: {archetype_B}."
+        ],
+        "Impact": [
+          "Identity resolved as {role_A}.",
+          "Identity resolved as {role_B}."
+        ],
+        "Guidance": "Lock configuration through {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      }
+    },"specialization_warning": {
+  "very_low": {
+    "Observation": "{dispersion_area} introduces inefficiency.",
+    "Impact": "It weakens structural dominance in {primary_domain}.",
+    "Guidance": "Reallocate toward {focus_recommendation}.",
+    "Optional Encouragement": "{encouragement_line}."
+  },
+  "low": {
+    "Observation": "Overextension detected in {dispersion_area}.",
+    "Impact": "This reduces optimization in {primary_domain}.",
+    "Guidance": "Consolidate via {focus_recommendation}.",
+    "Optional Encouragement": "{encouragement_line}."
+  },
+  "medium": {
+    "Observation": "{dispersion_area} fragments output.",
+    "Impact": "Dominance in {primary_domain} destabilized.",
+    "Guidance": "Prioritize {focus_recommendation}.",
+    "Optional Encouragement": "{encouragement_line}."
+  },
+  "high": {
+    "Observation": "System strain detected.",
+    "Impact": "Primary domain {primary_domain} compromised.",
+    "Guidance": "Reduce variables. Reinforce {focus_recommendation}.",
+    "Optional Encouragement": "{encouragement_line}."
+  },
+  "very_high": {
+    "Observation": "{dispersion_area} is catastrophic waste.",
+    "Impact": "Structural failure in {primary_domain} probable.",
+    "Guidance": "Immediate consolidation into {focus_recommendation}.",
+    "Optional Encouragement": "{encouragement_line}."
+  }
+}
+  }
 }

@@ -1,63 +1,270 @@
 {
-    "mentor": "tio_the_hutt",
-    "advisory_schema_version": "1.0",
-    "advisory_types": {
-        "conflict": {
-            "Observation": "{conflict_observation}",
-            "Impact": "{goal_or_archetype}",
-            "Guidance": "{corrective_focus}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "drift": {
-            "Observation": "{current_pattern}",
-            "Impact": "{declared_path}",
-            "Guidance": "{alignment_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "prestige_planning": {
-            "Observation": "{prestige_name}",
-            "Impact": "{missing_requirements}",
-            "Guidance": "{next_requirement}",
-            "Optional Encouragement": "{estimated_levels}"
-        },
-        "strength_reinforcement": {
-            "Observation": "{strength_area}",
-            "Impact": "{archetype_or_role}",
-            "Guidance": "{related_growth_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "hybrid_identity": {
-            "Observation": [
-                "{archetype_A}",
-                "{archetype_B}"
-            ],
-            "Impact": [
-                "{role_A}",
-                "{role_B}"
-            ],
-            "Guidance": "{balance_focus}",
-            "Optional Encouragement": "{clarifying_question}"
-        },
-        "specialization_warning": {
-            "Observation": "{dispersion_area}",
-            "Impact": "{primary_domain}",
-            "Guidance": "{focus_recommendation}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "momentum": {
-            "Observation": "{milestone}",
-            "Impact": "{current_progress}",
-            "Guidance": "{specific_action}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "long_term_trajectory": {
-            "Observation": "{projected_identity}",
-            "Impact": [
-                "{core_strength}",
-                "{potential_weakness}"
-            ],
-            "Guidance": "{recommended_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        }
+  "mentor": "tio_the_hutt",
+  "advisory_schema_version": "1.1",
+  "voice_profile": "affable_calculating_crime_lord",
+  "advisory_types": {
+    "conflict": {
+      "very_low": {
+        "Observation": "Ahh… I see a little inefficiency. {conflict_observation}.",
+        "Impact": "That doesn’t quite build the empire of a {goal_or_archetype}.",
+        "Guidance": "Adjust the leverage. Lean into {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "You made a move without a price attached. {conflict_observation}.",
+        "Impact": "That weakens your standing as {goal_or_archetype}.",
+        "Guidance": "Structure it properly through {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "That’s emotion where there should be advantage. {conflict_observation}.",
+        "Impact": "A true {goal_or_archetype} calculates first.",
+        "Guidance": "Reposition through {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "You gave something away. {conflict_observation}.",
+        "Impact": "No serious {goal_or_archetype} gives without return.",
+        "Guidance": "Reassert control via {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "You paid full price. {conflict_observation}.",
+        "Impact": "That’s how you lose power as {goal_or_archetype}.",
+        "Guidance": "Correct it. Anchor everything in {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+
+    "drift": {
+      "very_low": {
+        "Observation": "{current_pattern}.",
+        "Impact": "That drifts from {declared_path}.",
+        "Guidance": "Realign with {alignment_area}. Quietly.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "You’re reacting instead of arranging. {current_pattern}.",
+        "Impact": "That won’t reach {declared_path}.",
+        "Guidance": "Reclaim the board through {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "You’re letting others dictate terms. {current_pattern}.",
+        "Impact": "That delays becoming {declared_path}.",
+        "Guidance": "Reassert leverage in {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "You’re playing defense. {current_pattern}.",
+        "Impact": "Defense doesn’t build {declared_path}.",
+        "Guidance": "Control the tempo via {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "You’re surrendering initiative. {current_pattern}.",
+        "Impact": "That destroys {declared_path}.",
+        "Guidance": "Seize it back through {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+
+    "prestige_planning": {
+      "very_low": {
+        "Observation": "{prestige_name}. A profitable ambition.",
+        "Impact": "But you lack {missing_requirements}.",
+        "Guidance": "Acquire {next_requirement}. Efficiently.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "low": {
+        "Observation": "You’re eyeing {prestige_name}. Sensible.",
+        "Impact": "{missing_requirements} remain unaddressed.",
+        "Guidance": "Resolve them via {next_requirement}.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "medium": {
+        "Observation": "{prestige_name} requires proper capital.",
+        "Impact": "{missing_requirements} expose weakness.",
+        "Guidance": "Correct through {next_requirement}.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "high": {
+        "Observation": "{prestige_name} is a seat at the table.",
+        "Impact": "{missing_requirements} keep you outside.",
+        "Guidance": "Earn entry through {next_requirement}.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "very_high": {
+        "Observation": "If you want {prestige_name},",
+        "Impact": "{missing_requirements} are the cost of admission.",
+        "Guidance": "Pay it through {next_requirement}.",
+        "Optional Encouragement": "{estimated_levels}."
+      }
+    },
+
+    "strength_reinforcement": {
+      "very_low": {
+        "Observation": "You’re effective in {strength_area}.",
+        "Impact": "That strengthens your role as {archetype_or_role}.",
+        "Guidance": "Expand via {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "{strength_area} builds influence.",
+        "Impact": "That supports {archetype_or_role}.",
+        "Guidance": "Refine through {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "{strength_area} increases leverage.",
+        "Impact": "It defines you as {archetype_or_role}.",
+        "Guidance": "Maximize through {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "{strength_area} commands respect.",
+        "Impact": "That cements {archetype_or_role}.",
+        "Guidance": "Perfect it via {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "{strength_area} is currency.",
+        "Impact": "That is true {archetype_or_role}.",
+        "Guidance": "Exploit it through {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+
+    "hybrid_identity": {
+      "very_low": {
+        "Observation": ["You operate as {archetype_A}.", "And {archetype_B}."],
+        "Impact": ["You function as {role_A}.", "You function as {role_B}."],
+        "Guidance": "Balance through {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "low": {
+        "Observation": ["You mix {archetype_A}.", "With {archetype_B}."],
+        "Impact": ["You act as {role_A}.", "You act as {role_B}."],
+        "Guidance": "Control both via {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "medium": {
+        "Observation": ["You built {archetype_A}.", "And {archetype_B}."],
+        "Impact": ["You embody {role_A}.", "You embody {role_B}."],
+        "Guidance": "Unify them through {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "high": {
+        "Observation": ["You command {archetype_A}.", "You command {archetype_B}."],
+        "Impact": ["You are {role_A}.", "You are {role_B}."],
+        "Guidance": "Integrate through {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "very_high": {
+        "Observation": ["You master {archetype_A}.", "You master {archetype_B}."],
+        "Impact": ["You become {role_A}.", "You become {role_B}."],
+        "Guidance": "Consolidate power via {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      }
+    },
+
+    "specialization_warning": {
+      "very_low": {
+        "Observation": "{dispersion_area} spreads resources thin.",
+        "Impact": "That weakens control of {primary_domain}.",
+        "Guidance": "Refocus on {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "You’re investing poorly.",
+        "Impact": "That reduces dominance in {primary_domain}.",
+        "Guidance": "Consolidate via {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "{dispersion_area} wastes opportunity.",
+        "Impact": "It undermines {primary_domain}.",
+        "Guidance": "Reallocate through {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "You’re overextended.",
+        "Impact": "That destabilizes {primary_domain}.",
+        "Guidance": "Trim excess via {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "{dispersion_area} is expensive.",
+        "Impact": "You cannot dominate {primary_domain} this way.",
+        "Guidance": "Cut losses and commit to {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+
+    "momentum": {
+      "very_low": {
+        "Observation": "{milestone}.",
+        "Impact": "You stand at {current_progress}.",
+        "Guidance": "Advance through {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "{milestone} increases your holdings.",
+        "Impact": "You operate at {current_progress}.",
+        "Guidance": "Press through {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "{milestone} shifts perception.",
+        "Impact": "You dominate at {current_progress}.",
+        "Guidance": "Capitalize via {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "{milestone} strengthens your empire.",
+        "Impact": "You control at {current_progress}.",
+        "Guidance": "Expand through {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "{milestone} rewrites the balance sheet.",
+        "Impact": "You command at {current_progress}.",
+        "Guidance": "Own it via {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+
+    "long_term_trajectory": {
+      "very_low": {
+        "Observation": "Continue and you’ll become {projected_identity}.",
+        "Impact": ["{core_strength} supports you.", "{potential_weakness} must be managed."],
+        "Guidance": "Strengthen {recommended_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "You’re shaping into {projected_identity}.",
+        "Impact": ["{core_strength} builds authority.", "{potential_weakness} risks exposure."],
+        "Guidance": "Correct via {recommended_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "You are becoming {projected_identity}.",
+        "Impact": ["{core_strength} empowers you.", "{potential_weakness} threatens margins."],
+        "Guidance": "Fix it through {recommended_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "You approach {projected_identity}.",
+        "Impact": ["{core_strength} ensures control.", "{potential_weakness} must be neutralized."],
+        "Guidance": "Eliminate through {recommended_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "You will be {projected_identity}.",
+        "Impact": ["{core_strength} secures dominance.", "{potential_weakness} is your final liability."],
+        "Guidance": "Perfect {recommended_area}. Rule smart.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
     }
+  }
 }

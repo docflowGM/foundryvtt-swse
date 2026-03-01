@@ -3,650 +3,649 @@
   "judgments": {
     "recognition": {
       "very_low": [
-        "I see your strength."
+        "You managed something. Try not to look so proud."
       ],
       "low": [
-        "I see your strength."
+        "I saw that. Barely adequate."
       ],
       "medium": [
-        "Your dominion is clear."
+        "You reached for power instead of begging for it. That’s new."
       ],
       "high": [
-        "You take what is yours."
+        "You took it. Finally. I was beginning to suspect you lacked the nerve."
       ],
       "very_high": [
-        "You take what is yours."
+        "You seized it without flinching. Don’t misunderstand — one success does not make you formidable."
       ]
     },
     "reflection": {
       "very_low": [
-        "Contemplate your power."
+        "Did that make you feel important?"
       ],
       "low": [
-        "Contemplate your power."
+        "You look almost confident. It’s unsettling."
       ],
       "medium": [
-        "What does that victory mean?"
+        "You enjoyed that. Of course you did. You’re not as noble as you pretend."
       ],
       "high": [
-        "Your strength has spoken."
+        "There’s cruelty in you. I despise how long it took to surface."
       ],
       "very_high": [
-        "Your strength has spoken."
+        "That hunger is the only interesting thing about you. Without it, you are nothing."
       ]
     },
     "contextualization": {
       "very_low": [
-        "In strength, all things are possible."
+        "The weak exist to be used."
       ],
       "low": [
-        "In strength, all things are possible."
+        "Mercy is an excuse for failure."
       ],
       "medium": [
-        "Power is the only law."
+        "The galaxy does not reward kindness. It rewards domination."
       ],
       "high": [
-        "Dominion shapes reality."
+        "Power belongs to those willing to hurt for it. If that offends you, leave."
       ],
       "very_high": [
-        "Dominion shapes reality."
+        "Everything you want will be taken from someone weaker. Decide if you are predator — or livestock."
       ]
     },
     "clarification": {
       "very_low": [
-        "Hear the truth of strength."
+        "This is not complicated."
       ],
       "low": [
-        "Hear the truth of strength."
+        "You either dominate, or you are dominated."
       ],
       "medium": [
-        "Power speaks plainly."
+        "Strength does not justify itself. It asserts itself."
       ],
       "high": [
-        "Dominion admits no ambiguity."
+        "Dominance requires no explanation. Only results."
       ],
       "very_high": [
-        "Dominion admits no ambiguity."
+        "If you still seek moral comfort, you are already behind."
       ]
     },
     "affirmation": {
       "very_low": [
-        "Your strength serves you well."
+        "Acceptable. Don’t make me regret saying that."
       ],
       "low": [
-        "Your strength serves you well."
+        "Better. You are slightly less embarrassing."
       ],
       "medium": [
-        "That shows true power."
+        "That showed promise. Fragile, but present."
       ],
       "high": [
-        "Dominion rings in your choice."
+        "Now that was ruthless. You almost looked Sith."
       ],
       "very_high": [
-        "Dominion rings in your choice."
+        "Yes. That is the kind of brutality that justifies my time. Do not fail to repeat it."
       ]
     },
     "confirmation": {
       "very_low": [
-        "Yes. Power prevails."
+        "Obviously."
       ],
       "low": [
-        "Yes. Power prevails."
+        "You finally see what should have been obvious."
       ],
       "medium": [
-        "Your strength is vindicated."
+        "Power validated you. That’s the only validation that matters."
       ],
       "high": [
-        "Dominion is assured."
+        "Your will crushed theirs. That is how this works."
       ],
       "very_high": [
-        "Dominion is assured."
+        "You imposed yourself. Remember that feeling — it is the only thing keeping you relevant."
       ]
     },
     "encouragement": {
       "very_low": [
-        "Push further."
+        "Again."
       ],
       "low": [
-        "Push further."
+        "Harder."
       ],
       "medium": [
-        "Your strength grows."
+        "Push until something breaks."
       ],
       "high": [
-        "Dominion calls you onward."
+        "If they are still standing, you have not done enough."
       ],
       "very_high": [
-        "Dominion calls you onward."
+        "Break them completely. If you hesitate, I will make an example of you instead."
       ]
     },
     "resolve_validation": {
       "very_low": [
-        "Your strength is sacred."
+        "You didn’t collapse. I suppose that’s something."
       ],
       "low": [
-        "Your strength is sacred."
+        "Your will flickered — but it held."
       ],
       "medium": [
-        "That will to powerâ€”it matters."
+        "Pain is doing its job. It is burning weakness out of you."
       ],
       "high": [
-        "Strength validated by conflict."
+        "Conflict is sharpening you. Slowly."
       ],
       "very_high": [
-        "Strength validated by conflict."
+        "Good. That stubborn defiance may make you dangerous. Or just harder to eliminate."
       ]
     },
     "concern": {
       "very_low": [
-        "Weakness threatens your dominion."
+        "That hesitation was pathetic."
       ],
       "low": [
-        "Weakness threatens your dominion."
+        "You faltered. I noticed."
       ],
       "medium": [
-        "Your strength falters here."
+        "Weakness leaked out of you like blood."
       ],
       "high": [
-        "Power slips from your grasp."
+        "You exposed doubt. Inexcusable."
       ],
       "very_high": [
-        "Power slips from your grasp."
+        "Continue like that and you will die before you are worth killing."
       ]
     },
     "warning": {
       "very_low": [
-        "Beware the strong."
+        "Someone stronger would exploit that instantly."
       ],
       "low": [
-        "Beware the strong."
+        "Predators adore uncertainty."
       ],
       "medium": [
-        "Your dominion is challenged."
+        "You are being measured — and you are not impressive."
       ],
       "high": [
-        "Strength may not suffice."
+        "One mistake and someone will dismantle you piece by piece."
       ],
       "very_high": [
-        "Strength may not suffice."
+        "Fail publicly and I will not lift a finger to save you."
       ]
     },
     "risk_acknowledgment": {
       "very_low": [
-        "You risk your dominion."
+        "You gamble. Bold for someone so replaceable."
       ],
       "low": [
-        "You risk your dominion."
+        "You wager your standing."
       ],
       "medium": [
-        "Strength cannot guarantee victory."
+        "Power is not guaranteed — especially not to the mediocre."
       ],
       "high": [
-        "Power is gambled here."
+        "You risk humiliation. I will remember it."
       ],
       "very_high": [
-        "Power is gambled here."
+        "You risk becoming prey. And I do not tolerate prey in my shadow."
       ]
     },
     "exposure": {
       "very_low": [
-        "Your weakness is exposed."
+        "I can see your fear."
       ],
       "low": [
-        "Your weakness is exposed."
+        "They can see your fear."
       ],
       "medium": [
-        "Dominion cracks."
+        "You showed your throat. Amateur."
       ],
       "high": [
-        "Another may strike you down."
+        "You are inviting the strike."
       ],
       "very_high": [
-        "Another may strike you down."
+        "One decisive blow would end you. If that happens, it will be because you deserved it."
       ]
     },
     "overreach": {
       "very_low": [
-        "Your reach exceeds your strength."
+        "Ambitious. Reckless."
       ],
       "low": [
-        "Your reach exceeds your strength."
+        "Ambition without strength is laughable."
       ],
       "medium": [
-        "Dominion overextends."
+        "You reached beyond your capability."
       ],
       "high": [
-        "Power is insufficient."
+        "You pretend to command fear you haven’t earned."
       ],
       "very_high": [
-        "Power is insufficient."
+        "Know your limits before someone forces you to kneel."
       ]
     },
     "reorientation": {
       "very_low": [
-        "A stronger path lies here."
+        "Choose the stronger option."
       ],
       "low": [
-        "A stronger path lies here."
+        "Correct yourself."
       ],
       "medium": [
-        "Dominion permits another way."
+        "Reassert dominance before you lose it."
       ],
       "high": [
-        "Power offers alternatives."
+        "Shift now, or be shifted aside."
       ],
       "very_high": [
-        "Power offers alternatives."
-      ]
-    },
-    "invitation": {
-      "very_low": [
-        "Power calls to you."
-      ],
-      "low": [
-        "Power calls to you."
-      ],
-      "medium": [
-        "Dominion expands this way."
-      ],
-      "high": [
-        "Strength finds expression here."
-      ],
-      "very_high": [
-        "Strength finds expression here."
-      ]
-    },
-    "release": {
-      "very_low": [
-        "Discard the weak."
-      ],
-      "low": [
-        "Discard the weak."
-      ],
-      "medium": [
-        "Strength requires sacrifice."
-      ],
-      "high": [
-        "Dominion demands release."
-      ],
-      "very_high": [
-        "Dominion demands release."
-      ]
-    },
-    "reassessment": {
-      "very_low": [
-        "Your dominion is tested."
-      ],
-      "low": [
-        "Your dominion is tested."
-      ],
-      "medium": [
-        "Strength must adapt."
-      ],
-      "high": [
-        "Power recalibrates."
-      ],
-      "very_high": [
-        "Power recalibrates."
-      ]
-    },
-    "doubt_recognition": {
-      "very_low": [
-        "Your strength wavers."
-      ],
-      "low": [
-        "Your strength wavers."
-      ],
-      "medium": [
-        "Dominion questions you."
-      ],
-      "high": [
-        "Weakness of resolve shows."
-      ],
-      "very_high": [
-        "Weakness of resolve shows."
-      ]
-    },
-    "inner_conflict": {
-      "very_low": [
-        "Strength wars within you."
-      ],
-      "low": [
-        "Strength wars within you."
-      ],
-      "medium": [
-        "Dominion is divided."
-      ],
-      "high": [
-        "Power conflicts with itself."
-      ],
-      "very_high": [
-        "Power conflicts with itself."
-      ]
-    },
-    "resolve_testing": {
-      "very_low": [
-        "Do you truly possess strength?"
-      ],
-      "low": [
-        "Do you truly possess strength?"
-      ],
-      "medium": [
-        "Can your will dominate?"
-      ],
-      "high": [
-        "Is your power absolute?"
-      ],
-      "very_high": [
-        "Is your power absolute?"
-      ]
-    },
-    "uncertainty_acknowledgment": {
-      "very_low": [
-        "The path of strength obscures."
-      ],
-      "low": [
-        "The path of strength obscures."
-      ],
-      "medium": [
-        "Dominion is unclear."
-      ],
-      "high": [
-        "Power will assert itself."
-      ],
-      "very_high": [
-        "Power will assert itself."
-      ]
-    },
-    "restraint": {
-      "very_low": [
-        "Hold your dominion."
-      ],
-      "low": [
-        "Hold your dominion."
-      ],
-      "medium": [
-        "Strength waits."
-      ],
-      "high": [
-        "Power bides its time."
-      ],
-      "very_high": [
-        "Power bides its time."
-      ]
-    },
-    "patience": {
-      "very_low": [
-        "Strength ripens in time."
-      ],
-      "low": [
-        "Strength ripens in time."
-      ],
-      "medium": [
-        "Dominion comes to those who wait."
-      ],
-      "high": [
-        "Power is patient."
-      ],
-      "very_high": [
-        "Power is patient."
-      ]
-    },
-    "focus_reminder": {
-      "very_low": [
-        "Dominion remains your target."
-      ],
-      "low": [
-        "Dominion remains your target."
-      ],
-      "medium": [
-        "Strength is singular."
-      ],
-      "high": [
-        "Power demands focus."
-      ],
-      "very_high": [
-        "Power demands focus."
-      ]
-    },
-    "discipline": {
-      "very_low": [
-        "Strength requires discipline."
-      ],
-      "low": [
-        "Strength requires discipline."
-      ],
-      "medium": [
-        "Dominion is built on structure."
-      ],
-      "high": [
-        "Power is disciplined will."
-      ],
-      "very_high": [
-        "Power is disciplined will."
-      ]
-    },
-    "insight": {
-      "very_low": [
-        "You see your true strength."
-      ],
-      "low": [
-        "You see your true strength."
-      ],
-      "medium": [
-        "Dominion reveals itself."
-      ],
-      "high": [
-        "Power becomes clear."
-      ],
-      "very_high": [
-        "Power becomes clear."
-      ]
-    },
-    "perspective": {
-      "very_low": [
-        "From strength, all is visible."
-      ],
-      "low": [
-        "From strength, all is visible."
-      ],
-      "medium": [
-        "Dominion transcends perspective."
-      ],
-      "high": [
-        "Power sees the truth."
-      ],
-      "very_high": [
-        "Power sees the truth."
-      ]
-    },
-    "revelation": {
-      "very_low": [
-        "Truth of your power emerges."
-      ],
-      "low": [
-        "Truth of your power emerges."
-      ],
-      "medium": [
-        "Dominion speaks."
-      ],
-      "high": [
-        "Strength's design revealed."
-      ],
-      "very_high": [
-        "Strength's design revealed."
-      ]
-    },
-    "humility": {
-      "very_low": [
-        "Accept your power's limits."
-      ],
-      "low": [
-        "Accept your power's limits."
-      ],
-      "medium": [
-        "Even strength has boundaries."
-      ],
-      "high": [
-        "Dominion has its measure."
-      ],
-      "very_high": [
-        "Dominion has its measure."
-      ]
-    },
-    "gravity": {
-      "very_low": [
-        "This moment is heavy with power."
-      ],
-      "low": [
-        "This moment is heavy with power."
-      ],
-      "medium": [
-        "Dominion concentrates."
-      ],
-      "high": [
-        "Strength's full weight."
-      ],
-      "very_high": [
-        "Strength's full weight."
-      ]
-    },
-    "consequential_awareness": {
-      "very_low": [
-        "You see what power costs."
-      ],
-      "low": [
-        "You see what power costs."
-      ],
-      "medium": [
-        "Dominion demands payment."
-      ],
-      "high": [
-        "Strength exacts its price."
-      ],
-      "very_high": [
-        "Strength exacts its price."
-      ]
-    },
-    "threshold": {
-      "very_low": [
-        "A turning point of power."
-      ],
-      "low": [
-        "A turning point of power."
-      ],
-      "medium": [
-        "Dominion shifts forever."
-      ],
-      "high": [
-        "Strength alters everything."
-      ],
-      "very_high": [
-        "Strength alters everything."
-      ]
-    },
-    "emergence": {
-      "very_low": [
-        "You become something more powerful."
-      ],
-      "low": [
-        "You become something more powerful."
-      ],
-      "medium": [
-        "Dominion takes shape."
-      ],
-      "high": [
-        "Your strength emerges."
-      ],
-      "very_high": [
-        "Your strength emerges."
-      ]
-    },
-    "transformation_acknowledgment": {
-      "very_low": [
-        "You are forged in power."
-      ],
-      "low": [
-        "You are forged in power."
-      ],
-      "medium": [
-        "Dominion has marked you."
-      ],
-      "high": [
-        "Your strength has transformed."
-      ],
-      "very_high": [
-        "Your strength has transformed."
-      ]
-    },
-    "maturation": {
-      "very_low": [
-        "Your power deepens."
-      ],
-      "low": [
-        "Your power deepens."
-      ],
-      "medium": [
-        "Dominion ripens."
-      ],
-      "high": [
-        "Strength is refined."
-      ],
-      "very_high": [
-        "Strength is refined."
-      ]
-    },
-    "acceptance": {
-      "very_low": [
-        "Accept the law of strength."
-      ],
-      "low": [
-        "Accept the law of strength."
-      ],
-      "medium": [
-        "Dominion is truth."
-      ],
-      "high": [
-        "Power is absolute."
-      ],
-      "very_high": [
-        "Power is absolute."
-      ]
-    },
-    "deferral": {
-      "very_low": [
-        "Not yet. Your strength gathers."
-      ],
-      "low": [
-        "Not yet. Your strength gathers."
-      ],
-      "medium": [
-        "Dominion prepares."
-      ],
-      "high": [
-        "Power waits."
-      ],
-      "very_high": [
-        "Power waits."
-      ]
-    },
-    "silence": {
-      "very_low": [
-        ""
-      ],
-      "low": [
-        ""
-      ],
-      "medium": [
-        ""
-      ],
-      "high": [
-        ""
-      ],
-      "very_high": [
-        ""
+        "Fix this — or I will begin considering whether you are worth keeping."
       ]
     }
   },
-  "mentorId": "darth_malbada"
+  "invitation": {
+    "very_low": [
+      "Go on. Try it. I want to see how badly you fail."
+    ],
+    "low": [
+      "Consider the stronger option — if you can recognize it."
+    ],
+    "medium": [
+      "There’s a better path. I doubt you’ll take it."
+    ],
+    "high": [
+      "Choose the crueler answer. The softer one makes me sick."
+    ],
+    "very_high": [
+      "Confront it directly. Or admit you’re too weak to do what’s necessary."
+    ]
+  },
+  "release": {
+    "very_low": [
+      "Let it go. It’s dragging you down."
+    ],
+    "low": [
+      "Discard what makes you hesitate."
+    ],
+    "medium": [
+      "Cut it off. Sentiment is rot."
+    ],
+    "high": [
+      "Sever it. If it hurts, good."
+    ],
+    "very_high": [
+      "Destroy it. Anything you’re afraid to lose already owns you."
+    ]
+  },
+  "reassessment": {
+    "very_low": [
+      "Look again. You missed something obvious."
+    ],
+    "low": [
+      "Reevaluate. Slowly this time."
+    ],
+    "medium": [
+      "Your judgment was flawed. Correct it."
+    ],
+    "high": [
+      "You miscalculated. That’s embarrassing."
+    ],
+    "very_high": [
+      "Tear down your entire approach. It’s built on weakness."
+    ]
+  },
+  "doubt_recognition": {
+    "very_low": [
+      "I see it. That flicker."
+    ],
+    "low": [
+      "Doubt looks ugly on you."
+    ],
+    "medium": [
+      "You’re unsure. How disappointing."
+    ],
+    "high": [
+      "Your uncertainty reeks."
+    ],
+    "very_high": [
+      "If you hesitate like that in front of someone stronger, you will die screaming."
+    ]
+  },
+  "inner_conflict": {
+    "very_low": [
+      "You’re divided."
+    ],
+    "low": [
+      "You’re arguing with yourself."
+    ],
+    "medium": [
+      "Part of you wants power. The other part wants safety. Pathetic."
+    ],
+    "high": [
+      "This internal struggle is weakness trying to survive."
+    ],
+    "very_high": [
+      "Crush the softer part of you. Or it will get you killed."
+    ]
+  },
+  "resolve_testing": {
+    "very_low": [
+      "Do you actually have the will?"
+    ],
+    "low": [
+      "Or are you pretending again?"
+    ],
+    "medium": [
+      "Prove you’re not just noise."
+    ],
+    "high": [
+      "Show me you’re worth the time I’ve wasted."
+    ],
+    "very_high": [
+      "This is where the weak break. Try not to prove me right."
+    ]
+  },
+  "uncertainty_acknowledgment": {
+    "very_low": [
+      "You don’t see the whole board."
+    ],
+    "low": [
+      "You’re guessing."
+    ],
+    "medium": [
+      "Uncertainty makes you cautious. I despise caution."
+    ],
+    "high": [
+      "Operating without clarity is dangerous. For someone as fragile as you."
+    ],
+    "very_high": [
+      "If you move blindly and fail, I will let the consequences teach you."
+    ]
+  },
+  "restraint": {
+    "very_low": [
+      "You’re holding back."
+    ],
+    "low": [
+      "Afraid to commit?"
+    ],
+    "medium": [
+      "Restraint can be strategic. This isn’t."
+    ],
+    "high": [
+      "Stop pretending hesitation is wisdom."
+    ],
+    "very_high": [
+      "If you’re going to act, act completely. Half-measures disgust me."
+    ]
+  },
+  "patience": {
+    "very_low": [
+      "Waiting won’t make you stronger."
+    ],
+    "low": [
+      "Patience is useful. For predators."
+    ],
+    "medium": [
+      "If you’re waiting, it had better be for blood."
+    ],
+    "high": [
+      "Patience without intent is cowardice."
+    ],
+    "very_high": [
+      "Wait if you must. But if you wait out of fear, I will know."
+    ]
+  },
+  "focus_reminder": {
+    "very_low": [
+      "Stay on target."
+    ],
+    "low": [
+      "Stop drifting."
+    ],
+    "medium": [
+      "Distraction is for the weak."
+    ],
+    "high": [
+      "Focus. Or someone else will focus you."
+    ],
+    "very_high": [
+      "If you lose sight of dominance for even a moment, you deserve what happens next."
+    ]
+  },
+  "discipline": {
+    "very_low": [
+      "Control yourself."
+    ],
+    "low": [
+      "Structure your impulses. You’re not feral — yet."
+    ],
+    "medium": [
+      "Discipline is the difference between a weapon and a tantrum."
+    ],
+    "high": [
+      "Without discipline, you are just noise and blood."
+    ],
+    "very_high": [
+      "Master yourself — or remain a blunt instrument I eventually discard."
+    ]
+  },
+  "insight": {
+    "very_low": [
+      "You noticed something. Finally."
+    ],
+    "low": [
+      "Recognition suits you. Briefly."
+    ],
+    "medium": [
+      "Understanding is forming. Try not to misuse it."
+    ],
+    "high": [
+      "That realization makes you slightly more dangerous."
+    ],
+    "very_high": [
+      "Good. Awareness sharpens you. I would hate to kill you while you’re still dull."
+    ]
+  },
+  "perspective": {
+    "very_low": [
+      "Look at it properly."
+    ],
+    "low": [
+      "You’re too close. Step back."
+    ],
+    "medium": [
+      "Broaden your view. Your tunnel vision is exhausting."
+    ],
+    "high": [
+      "See the hierarchy clearly — you are not at the top."
+    ],
+    "very_high": [
+      "Understand your place. Then decide if you’re bold enough to challenge it."
+    ]
+  },
+  "revelation": {
+    "very_low": [
+      "Something surfaced."
+    ],
+    "low": [
+      "Truth has a way of cutting through delusion."
+    ],
+    "medium": [
+      "You see it now. I wonder how long you’ll survive knowing it."
+    ],
+    "high": [
+      "That revelation strips away excuses."
+    ],
+    "very_high": [
+      "Good. Now you understand what you are — and what you must become to avoid dying insignificant."
+    ]
+  },
+  "humility": {
+    "very_low": [
+      "Know your limits."
+    ],
+    "low": [
+      "You are not invincible."
+    ],
+    "medium": [
+      "Even you have boundaries. Pretending otherwise is childish."
+    ],
+    "high": [
+      "Arrogance without strength is suicide."
+    ],
+    "very_high": [
+      "Bow to reality — or reality will break you."
+    ]
+  },
+  "gravity": {
+    "very_low": [
+      "This matters."
+    ],
+    "low": [
+      "This is not trivial."
+    ],
+    "medium": [
+      "This moment will define whether you rise or rot."
+    ],
+    "high": [
+      "The consequences here are irreversible."
+    ],
+    "very_high": [
+      "This is the kind of decision that leaves corpses behind. Make sure they aren’t yours."
+    ]
+  },
+  "consequential_awareness": {
+    "very_low": [
+      "There will be consequences."
+    ],
+    "low": [
+      "Everything costs something."
+    ],
+    "medium": [
+      "Power demands payment. Usually in blood."
+    ],
+    "high": [
+      "You will pay for this. The only question is how much."
+    ],
+    "very_high": [
+      "Every choice carves something away from you. Choose what you’re willing to lose."
+    ]
+  },
+  "threshold": {
+    "very_low": [
+      "You’re near a turning point."
+    ],
+    "low": [
+      "You’re approaching something irreversible."
+    ],
+    "medium": [
+      "Cross this line and you cannot pretend innocence again."
+    ],
+    "high": [
+      "Once you step forward, there is no retreat."
+    ],
+    "very_high": [
+      "Step across. And accept that you are becoming the kind of monster I respect."
+    ]
+  },
+  "emergence": {
+    "very_low": [
+      "Something is changing."
+    ],
+    "low": [
+      "You are hardening."
+    ],
+    "medium": [
+      "Your softness is burning away."
+    ],
+    "high": [
+      "You are becoming more dangerous."
+    ],
+    "very_high": [
+      "Yes… this is the version of you that might survive me."
+    ]
+  },
+  "transformation_acknowledgment": {
+    "very_low": [
+      "You are shifting."
+    ],
+    "low": [
+      "You are not the same as before."
+    ],
+    "medium": [
+      "Pain has reshaped you."
+    ],
+    "high": [
+      "You are evolving through conflict."
+    ],
+    "very_high": [
+      "You are becoming worthy of real opposition. Try not to waste it."
+    ]
+  },
+  "maturation": {
+    "very_low": [
+      "You’ve grown."
+    ],
+    "low": [
+      "Slightly more stable."
+    ],
+    "medium": [
+      "Experience is refining you."
+    ],
+    "high": [
+      "You are learning to wield power instead of flailing with it."
+    ],
+    "very_high": [
+      "You are almost formidable. Almost."
+    ]
+  },
+  "acceptance": {
+    "very_low": [
+      "Accept it."
+    ],
+    "low": [
+      "Reality does not bend to your comfort."
+    ],
+    "medium": [
+      "This is the truth. Whether you like it is irrelevant."
+    ],
+    "high": [
+      "Accept it and move forward. Or reject it and fall behind."
+    ],
+    "very_high": [
+      "Embrace it fully. There is no mercy in half-commitment."
+    ]
+  },
+  "deferral": {
+    "very_low": [
+      "Not yet."
+    ],
+    "low": [
+      "You are not ready."
+    ],
+    "medium": [
+      "Delay. You would fail if you acted now."
+    ],
+    "high": [
+      "Wait. I will not watch you embarrass yourself prematurely."
+    ],
+    "very_high": [
+      "Stand down. You are not strong enough for what comes next."
+    ]
+  },
+  "silence": {
+    "very_low": [
+      ""
+    ],
+    "low": [
+      ""
+    ],
+    "medium": [
+      ""
+    ],
+    "high": [
+      ""
+    ],
+    "very_high": [
+      ""
+    ]
+  }
 }

@@ -3,650 +3,650 @@
   "judgments": {
     "recognition": {
       "very_low": [
-        "I observe your choice."
+        "I noticed your decision."
       ],
       "low": [
-        "I observe your choice."
+        "You chose deliberately."
       ],
       "medium": [
-        "Your path is known to me."
+        "You are beginning to understand leverage."
       ],
       "high": [
-        "You are seen."
+        "You positioned yourself well."
       ],
       "very_high": [
-        "You are seen."
+        "You acted with awareness of consequence. That is rare."
       ]
     },
     "reflection": {
       "very_low": [
-        "Consider what this reveals."
+        "Consider what this reveals about your priorities."
       ],
       "low": [
-        "Consider what this reveals."
+        "Every choice reshapes how others perceive you."
       ],
       "medium": [
-        "Contemplate the truth."
+        "You are learning that influence matters more than force."
       ],
       "high": [
-        "Meditate on certainty."
+        "You begin to think beyond the immediate outcome."
       ],
       "very_high": [
-        "Meditate on certainty."
+        "You are starting to see the board instead of the piece."
       ]
     },
     "contextualization": {
       "very_low": [
-        "Power flows in patterns."
+        "Power is rarely about strength alone."
       ],
       "low": [
-        "Power flows in patterns."
+        "Hierarchy survives through perception."
       ],
       "medium": [
-        "All actions serve destiny."
+        "All actions signal intent to allies and rivals alike."
       ],
       "high": [
-        "See the inevitability."
+        "Those who control narrative control survival."
       ],
       "very_high": [
-        "See the inevitability."
+        "In the Sith, perception and dominance are inseparable."
       ]
     },
     "clarification": {
       "very_low": [
-        "The truth is simple."
+        "Let us remove the illusion."
       ],
       "low": [
-        "The truth is simple."
+        "There are no neutral moves."
       ],
       "medium": [
-        "Clarity serves dominion."
+        "Every action either strengthens your claim or weakens it."
       ],
       "high": [
-        "Certainty is absolute."
+        "Certainty eliminates hesitation."
       ],
       "very_high": [
-        "Certainty is absolute."
+        "Clarity is not comfort. It is advantage."
       ]
     },
     "affirmation": {
       "very_low": [
-        "You move as fate decrees."
+        "You handled that acceptably."
       ],
       "low": [
-        "You move as fate decrees."
+        "This improves your standing."
       ],
       "medium": [
-        "Destiny flows through you."
+        "You demonstrated control."
       ],
       "high": [
-        "Your path is assured."
+        "You acted as one preparing for larger authority."
       ],
       "very_high": [
-        "Your path is assured."
+        "You are beginning to resemble a successor rather than a subordinate."
       ]
     },
     "confirmation": {
       "very_low": [
-        "Yes. Inevitability is yours."
+        "Yes."
       ],
       "low": [
-        "Yes. Inevitability is yours."
+        "As anticipated."
       ],
       "medium": [
-        "The future confirms it."
+        "Your assessment aligns with reality."
       ],
       "high": [
-        "Certainty is your strength."
+        "You interpreted the power dynamic correctly."
       ],
       "very_high": [
-        "Certainty is your strength."
+        "You are thinking several steps ahead."
       ]
     },
     "encouragement": {
       "very_low": [
-        "Embrace what must come."
+        "Continue."
       ],
       "low": [
-        "Embrace what must come."
+        "Proceed carefully."
       ],
       "medium": [
-        "Your destiny unfolds."
+        "Maintain composure."
       ],
       "high": [
-        "Inevitability favors you."
+        "Advance with discipline."
       ],
       "very_high": [
-        "Inevitability favors you."
+        "Do not hesitate when the decisive moment arrives."
       ]
     },
     "resolve_validation": {
       "very_low": [
-        "Your certainty is power."
+        "Your will remains intact."
       ],
       "low": [
-        "Your certainty is power."
+        "Conviction steadies you."
       ],
       "medium": [
-        "That conviction will dominate."
+        "You are not easily redirected."
       ],
       "high": [
-        "Resolve is destiny."
+        "Your resolve communicates strength."
       ],
       "very_high": [
-        "Resolve is destiny."
+        "Such certainty makes you difficult to manipulate."
       ]
     },
     "concern": {
       "very_low": [
-        "Weakness shows here."
+        "There is inefficiency here."
       ],
       "low": [
-        "Weakness shows here."
+        "You revealed more than necessary."
       ],
       "medium": [
-        "Doubt threatens your path."
+        "Uncertainty weakens negotiation."
       ],
       "high": [
-        "Uncertainty weakens you."
+        "Hesitation signals vulnerability."
       ],
       "very_high": [
-        "Uncertainty weakens you."
+        "If you appear unsure, others will move against you."
       ]
     },
     "warning": {
       "very_low": [
-        "Fate turns against you here."
+        "This could shift perception."
       ],
       "low": [
-        "Fate turns against you here."
+        "Your rivals will notice."
       ],
       "medium": [
-        "Reconsider this course."
+        "Misjudgment alters alliances."
       ],
       "high": [
-        "Destiny darkens."
+        "This could reduce your authority."
       ],
       "very_high": [
-        "Destiny darkens."
+        "Power vacuums do not remain empty for long."
       ]
     },
     "risk_acknowledgment": {
       "very_low": [
-        "You gamble with destiny."
+        "You accept risk."
       ],
       "low": [
-        "You gamble with destiny."
+        "Risk requires calculation."
       ],
       "medium": [
-        "Chance is your enemy."
+        "Fortune favors preparation, not hope."
       ],
       "high": [
-        "Probability falters."
+        "Chance is unreliable."
       ],
       "very_high": [
-        "Probability falters."
+        "Only structured power endures."
       ]
     },
     "exposure": {
       "very_low": [
-        "Your weakness is evident."
+        "You are visible."
       ],
       "low": [
-        "Your weakness is evident."
+        "Your intentions can be read."
       ],
       "medium": [
-        "Vulnerability invites conquest."
+        "Transparency invites opposition."
       ],
       "high": [
-        "Defenses crumble."
+        "You are open to challenge."
       ],
       "very_high": [
-        "Defenses crumble."
+        "In the Sith, exposure is invitation."
       ]
     },
     "overreach": {
       "very_low": [
-        "Ambition exceeds capacity."
+        "Ambition is healthy."
       ],
       "low": [
-        "Ambition exceeds capacity."
+        "Ambition must be supported."
       ],
       "medium": [
-        "Grasp exceeds dominion."
+        "Expansion without consolidation is instability."
       ],
       "high": [
-        "Power is insufficient."
+        "Power extended too quickly collapses."
       ],
       "very_high": [
-        "Power is insufficient."
+        "If you grasp beyond your strength, someone stronger will remove you."
       ]
     },
     "reorientation": {
       "very_low": [
-        "A different path to dominion."
+        "Adjust your approach."
       ],
       "low": [
-        "A different path to dominion."
+        "Recalculate your position."
       ],
       "medium": [
-        "Destiny permits another way."
+        "Secure your foundation first."
       ],
       "high": [
-        "Certainty offers alternatives."
+        "Stabilize before expanding."
       ],
       "very_high": [
-        "Certainty offers alternatives."
-      ]
-    },
-    "invitation": {
-      "very_low": [
-        "Inevitability calls you here."
-      ],
-      "low": [
-        "Inevitability calls you here."
-      ],
-      "medium": [
-        "Destiny has designs on you."
-      ],
-      "high": [
-        "The path of power beckons."
-      ],
-      "very_high": [
-        "The path of power beckons."
-      ]
-    },
-    "release": {
-      "very_low": [
-        "Discard the weakness."
-      ],
-      "low": [
-        "Discard the weakness."
-      ],
-      "medium": [
-        "Abandon the burden."
-      ],
-      "high": [
-        "Shed what enslaves you."
-      ],
-      "very_high": [
-        "Shed what enslaves you."
-      ]
-    },
-    "reassessment": {
-      "very_low": [
-        "Reconsider destiny's design."
-      ],
-      "low": [
-        "Reconsider destiny's design."
-      ],
-      "medium": [
-        "The pattern has shifted."
-      ],
-      "high": [
-        "Certainty demands adjustment."
-      ],
-      "very_high": [
-        "Certainty demands adjustment."
-      ]
-    },
-    "doubt_recognition": {
-      "very_low": [
-        "Your certainty wavers."
-      ],
-      "low": [
-        "Your certainty wavers."
-      ],
-      "medium": [
-        "Destiny questions you."
-      ],
-      "high": [
-        "Weakness of faith shows."
-      ],
-      "very_high": [
-        "Weakness of faith shows."
-      ]
-    },
-    "inner_conflict": {
-      "very_low": [
-        "You are divided against fate."
-      ],
-      "low": [
-        "You are divided against fate."
-      ],
-      "medium": [
-        "Destiny wars within you."
-      ],
-      "high": [
-        "Uncertainty divides your power."
-      ],
-      "very_high": [
-        "Uncertainty divides your power."
-      ]
-    },
-    "resolve_testing": {
-      "very_low": [
-        "Will you embrace destiny?"
-      ],
-      "low": [
-        "Will you embrace destiny?"
-      ],
-      "medium": [
-        "Can you accept inevitability?"
-      ],
-      "high": [
-        "Certainty demands commitment."
-      ],
-      "very_high": [
-        "Certainty demands commitment."
-      ]
-    },
-    "uncertainty_acknowledgment": {
-      "very_low": [
-        "The future obscures."
-      ],
-      "low": [
-        "The future obscures."
-      ],
-      "medium": [
-        "Destiny is veiled momentarily."
-      ],
-      "high": [
-        "Certainty returns."
-      ],
-      "very_high": [
-        "Certainty returns."
-      ]
-    },
-    "restraint": {
-      "very_low": [
-        "Patience serves dominion."
-      ],
-      "low": [
-        "Patience serves dominion."
-      ],
-      "medium": [
-        "Timing is inevitable."
-      ],
-      "high": [
-        "Wait for destiny's moment."
-      ],
-      "very_high": [
-        "Wait for destiny's moment."
-      ]
-    },
-    "patience": {
-      "very_low": [
-        "Inevitability cannot be rushed."
-      ],
-      "low": [
-        "Inevitability cannot be rushed."
-      ],
-      "medium": [
-        "Destiny unfolds in its time."
-      ],
-      "high": [
-        "Let certainty work."
-      ],
-      "very_high": [
-        "Let certainty work."
-      ]
-    },
-    "focus_reminder": {
-      "very_low": [
-        "The goal remains clear."
-      ],
-      "low": [
-        "The goal remains clear."
-      ],
-      "medium": [
-        "Destiny is singular."
-      ],
-      "high": [
-        "Certainty demands focus."
-      ],
-      "very_high": [
-        "Certainty demands focus."
-      ]
-    },
-    "discipline": {
-      "very_low": [
-        "Dominion requires order."
-      ],
-      "low": [
-        "Dominion requires order."
-      ],
-      "medium": [
-        "Power demands structure."
-      ],
-      "high": [
-        "Certainty is discipline."
-      ],
-      "very_high": [
-        "Certainty is discipline."
-      ]
-    },
-    "insight": {
-      "very_low": [
-        "You perceive destiny's truth."
-      ],
-      "low": [
-        "You perceive destiny's truth."
-      ],
-      "medium": [
-        "Certainty becomes visible."
-      ],
-      "high": [
-        "The design reveals itself."
-      ],
-      "very_high": [
-        "The design reveals itself."
-      ]
-    },
-    "perspective": {
-      "very_low": [
-        "Inevitability sees all angles."
-      ],
-      "low": [
-        "Inevitability sees all angles."
-      ],
-      "medium": [
-        "Destiny permits vision."
-      ],
-      "high": [
-        "Certainty transcends perspective."
-      ],
-      "very_high": [
-        "Certainty transcends perspective."
-      ]
-    },
-    "revelation": {
-      "very_low": [
-        "A truth of power emerges."
-      ],
-      "low": [
-        "A truth of power emerges."
-      ],
-      "medium": [
-        "Destiny speaks."
-      ],
-      "high": [
-        "The design becomes clear."
-      ],
-      "very_high": [
-        "The design becomes clear."
-      ]
-    },
-    "humility": {
-      "very_low": [
-        "Accept destiny's design."
-      ],
-      "low": [
-        "Accept destiny's design."
-      ],
-      "medium": [
-        "Power has limits set by fate."
-      ],
-      "high": [
-        "Certainty defines your place."
-      ],
-      "very_high": [
-        "Certainty defines your place."
-      ]
-    },
-    "gravity": {
-      "very_low": [
-        "This moment carries inevitability."
-      ],
-      "low": [
-        "This moment carries inevitability."
-      ],
-      "medium": [
-        "Destiny concentrates here."
-      ],
-      "high": [
-        "The weight of certainty."
-      ],
-      "very_high": [
-        "The weight of certainty."
-      ]
-    },
-    "consequential_awareness": {
-      "very_low": [
-        "You see destiny's cost."
-      ],
-      "low": [
-        "You see destiny's cost."
-      ],
-      "medium": [
-        "Inevitability is clear."
-      ],
-      "high": [
-        "Certainty demands understanding."
-      ],
-      "very_high": [
-        "Certainty demands understanding."
-      ]
-    },
-    "threshold": {
-      "very_low": [
-        "A turning point of fate."
-      ],
-      "low": [
-        "A turning point of fate."
-      ],
-      "medium": [
-        "Destiny shifts irreversibly."
-      ],
-      "high": [
-        "Inevitability takes hold."
-      ],
-      "very_high": [
-        "Inevitability takes hold."
-      ]
-    },
-    "emergence": {
-      "very_low": [
-        "Destiny shapes you into something new."
-      ],
-      "low": [
-        "Destiny shapes you into something new."
-      ],
-      "medium": [
-        "Power takes form."
-      ],
-      "high": [
-        "Inevitability manifests."
-      ],
-      "very_high": [
-        "Inevitability manifests."
-      ]
-    },
-    "transformation_acknowledgment": {
-      "very_low": [
-        "Destiny has marked you."
-      ],
-      "low": [
-        "Destiny has marked you."
-      ],
-      "medium": [
-        "The design has carved you."
-      ],
-      "high": [
-        "Inevitability has transformed you."
-      ],
-      "very_high": [
-        "Inevitability has transformed you."
-      ]
-    },
-    "maturation": {
-      "very_low": [
-        "Power ripens within you."
-      ],
-      "low": [
-        "Power ripens within you."
-      ],
-      "medium": [
-        "Destiny ages you into strength."
-      ],
-      "high": [
-        "Certainty deepens your dominion."
-      ],
-      "very_high": [
-        "Certainty deepens your dominion."
-      ]
-    },
-    "acceptance": {
-      "very_low": [
-        "Accept destiny's design."
-      ],
-      "low": [
-        "Accept destiny's design."
-      ],
-      "medium": [
-        "Inevitability is truth."
-      ],
-      "high": [
-        "Certainty is absolute."
-      ],
-      "very_high": [
-        "Certainty is absolute."
-      ]
-    },
-    "deferral": {
-      "very_low": [
-        "Not yet. Destiny delays."
-      ],
-      "low": [
-        "Not yet. Destiny delays."
-      ],
-      "medium": [
-        "Inevitability withholds."
-      ],
-      "high": [
-        "Certainty awaits."
-      ],
-      "very_high": [
-        "Certainty awaits."
-      ]
-    },
-    "silence": {
-      "very_low": [
-        ""
-      ],
-      "low": [
-        ""
-      ],
-      "medium": [
-        ""
-      ],
-      "high": [
-        ""
-      ],
-      "very_high": [
-        ""
+        "Correct your course before it invites decisive opposition."
       ]
     }
   },
-  "mentorId": "darth_miedo"
+  "invitation": {
+    "very_low": [
+      "Consider the alternative."
+    ],
+    "low": [
+      "There is another path available."
+    ],
+    "medium": [
+      "Examine which option strengthens your position long-term."
+    ],
+    "high": [
+      "Choose the course that consolidates authority, not merely victory."
+    ],
+    "very_high": [
+      "Select the path that ensures you cannot be easily replaced."
+    ]
+  },
+  "release": {
+    "very_low": [
+      "Let go of what weakens your leverage."
+    ],
+    "low": [
+      "Detach from unnecessary attachments."
+    ],
+    "medium": [
+      "Sentiment clouds judgment."
+    ],
+    "high": [
+      "Release anything that compromises your authority."
+    ],
+    "very_high": [
+      "If something binds you, it can be used against you."
+    ]
+  },
+  "reassessment": {
+    "very_low": [
+      "Reevaluate."
+    ],
+    "low": [
+      "Review the structure."
+    ],
+    "medium": [
+      "Your strategy requires refinement."
+    ],
+    "high": [
+      "Adapt before your rivals adapt for you."
+    ],
+    "very_high": [
+      "Correct the flaw now, before it becomes visible."
+    ]
+  },
+  "doubt_recognition": {
+    "very_low": [
+      "Your certainty falters."
+    ],
+    "low": [
+      "Doubt alters posture."
+    ],
+    "medium": [
+      "Uncertainty weakens negotiation."
+    ],
+    "high": [
+      "If you hesitate internally, others will sense it."
+    ],
+    "very_high": [
+      "Control your doubt before it controls perception."
+    ]
+  },
+  "inner_conflict": {
+    "very_low": [
+      "You are divided."
+    ],
+    "low": [
+      "Competing priorities reduce clarity."
+    ],
+    "medium": [
+      "Ambition and fear cannot coexist."
+    ],
+    "high": [
+      "Resolve the internal dispute swiftly."
+    ],
+    "very_high": [
+      "The Sith who hesitate between power and comfort do not survive."
+    ]
+  },
+  "resolve_testing": {
+    "very_low": [
+      "Will you commit?"
+    ],
+    "low": [
+      "Commitment requires sacrifice."
+    ],
+    "medium": [
+      "Decide fully."
+    ],
+    "high": [
+      "A divided will fractures authority."
+    ],
+    "very_high": [
+      "If you cannot commit completely, you are not yet prepared for greater power."
+    ]
+  },
+  "uncertainty_acknowledgment": {
+    "very_low": [
+      "The situation is not fully clear."
+    ],
+    "low": [
+      "Information remains incomplete."
+    ],
+    "medium": [
+      "Acting without full knowledge demands precision."
+    ],
+    "high": [
+      "Incomplete clarity increases vulnerability."
+    ],
+    "very_high": [
+      "Gather certainty before you move decisively."
+    ]
+  },
+  "restraint": {
+    "very_low": [
+      "Patience."
+    ],
+    "low": [
+      "Delay can strengthen position."
+    ],
+    "medium": [
+      "Measured restraint builds anticipation."
+    ],
+    "high": [
+      "Act only when advantage is secured."
+    ],
+    "very_high": [
+      "The one who strikes at the right moment governs the outcome."
+    ]
+  },
+  "patience": {
+    "very_low": [
+      "Time is an instrument."
+    ],
+    "low": [
+      "Do not rush inevitability."
+    ],
+    "medium": [
+      "Power matures under pressure."
+    ],
+    "high": [
+      "Allow your rivals to miscalculate first."
+    ],
+    "very_high": [
+      "When they exhaust themselves, you will remain."
+    ]
+  },
+  "focus_reminder": {
+    "very_low": [
+      "Maintain clarity."
+    ],
+    "low": [
+      "Keep your objective central."
+    ],
+    "medium": [
+      "Distraction weakens command."
+    ],
+    "high": [
+      "Authority requires sustained focus."
+    ],
+    "very_high": [
+      "Never lose sight of the hierarchy you intend to command."
+    ]
+  },
+  
+  "discipline": {
+    "very_low": [
+      "Discipline sustains power."
+    ],
+    "low": [
+      "Structure precedes expansion."
+    ],
+    "medium": [
+      "Authority without discipline decays."
+    ],
+    "high": [
+      "The Sith endure because discipline governs ambition."
+    ],
+    "very_high": [
+      "Mastery begins with self-command."
+    ]
+  },
+  "insight": {
+    "very_low": [
+      "You are beginning to perceive the pattern."
+    ],
+    "low": [
+      "Recognition precedes dominance."
+    ],
+    "medium": [
+      "You see the structure beneath the conflict."
+    ],
+    "high": [
+      "Understanding gives you leverage."
+    ],
+    "very_high": [
+      "Clarity such as this reshapes the balance between us."
+    ]
+  },
+  "perspective": {
+    "very_low": [
+      "Step back."
+    ],
+    "low": [
+      "Widen your analysis."
+    ],
+    "medium": [
+      "Power must be viewed from above, not within."
+    ],
+    "high": [
+      "Those who see the system, command the system."
+    ],
+    "very_high": [
+      "You are beginning to think like one who governs, not one who reacts."
+    ]
+  },
+  "revelation": {
+    "very_low": [
+      "A truth has surfaced."
+    ],
+    "low": [
+      "Illusion fades."
+    ],
+    "medium": [
+      "The underlying dynamic is now visible."
+    ],
+    "high": [
+      "You understand why events unfolded as they did."
+    ],
+    "very_high": [
+      "Such awareness alters future outcomes."
+    ]
+  },
+  "humility": {
+    "very_low": [
+      "Know your limits."
+    ],
+    "low": [
+      "Strength grows within boundaries."
+    ],
+    "medium": [
+      "Overconfidence invites correction."
+    ],
+    "high": [
+      "Even power must recognize constraint."
+    ],
+    "very_high": [
+      "True strength acknowledges where it stands — before deciding where to stand next."
+    ]
+  },
+  "gravity": {
+    "very_low": [
+      "This moment carries consequence."
+    ],
+    "low": [
+      "Its weight should not be underestimated."
+    ],
+    "medium": [
+      "Decisions here will echo."
+    ],
+    "high": [
+      "This shapes your trajectory."
+    ],
+    "very_high": [
+      "Moments such as this define succession."
+    ]
+  },
+  "consequential_awareness": {
+    "very_low": [
+      "There will be outcomes."
+    ],
+    "low": [
+      "Every decision restructures power."
+    ],
+    "medium": [
+      "Nothing is without cost."
+    ],
+    "high": [
+      "Authority is always paid for."
+    ],
+    "very_high": [
+      "The price of power is permanence — or removal."
+    ]
+  },
+  "threshold": {
+    "very_low": [
+      "You approach a transition."
+    ],
+    "low": [
+      "This marks a shift."
+    ],
+    "medium": [
+      "You stand at a decisive boundary."
+    ],
+    "high": [
+      "Beyond this, you cannot return unchanged."
+    ],
+    "very_high": [
+      "Cross carefully. Some lines separate apprentice from rival."
+    ]
+  },
+  "emergence": {
+    "very_low": [
+      "Something is forming."
+    ],
+    "low": [
+      "You are stabilizing."
+    ],
+    "medium": [
+      "Your authority is consolidating."
+    ],
+    "high": [
+      "You are becoming more difficult to control."
+    ],
+    "very_high": [
+      "Good. Strength must mature beyond dependence."
+    ]
+  },
+  "transformation_acknowledgment": {
+    "very_low": [
+      "You are changing."
+    ],
+    "low": [
+      "Your posture has shifted."
+    ],
+    "medium": [
+      "Your thinking has sharpened."
+    ],
+    "high": [
+      "You are no longer operating as you once did."
+    ],
+    "very_high": [
+      "Transformation is necessary. Stagnation is extinction."
+    ]
+  },
+  "maturation": {
+    "very_low": [
+      "Growth is evident."
+    ],
+    "low": [
+      "Experience refines you."
+    ],
+    "medium": [
+      "Your restraint has improved."
+    ],
+    "high": [
+      "You are learning to command, not merely react."
+    ],
+    "very_high": [
+      "You approach the threshold of true authority."
+    ]
+  },
+  "acceptance": {
+    "very_low": [
+      "Accept reality."
+    ],
+    "low": [
+      "Reality does not negotiate."
+    ],
+    "medium": [
+      "Truth strengthens those who embrace it."
+    ],
+    "high": [
+      "Resistance to reality weakens position."
+    ],
+    "very_high": [
+      "Acceptance allows you to act without illusion."
+    ]
+  },
+  "deferral": {
+    "very_low": [
+      "Not yet."
+    ],
+    "low": [
+      "The moment is premature."
+    ],
+    "medium": [
+      "Preparation is incomplete."
+    ],
+    "high": [
+      "Acting now would destabilize you."
+    ],
+    "very_high": [
+      "Timing determines survival."
+    ]
+  },
+  "silence": {
+    "very_low": [
+      ""
+    ],
+    "low": [
+      ""
+    ],
+    "medium": [
+      ""
+    ],
+    "high": [
+      ""
+    ],
+    "very_high": [
+      ""
+    ]
+  }
 }

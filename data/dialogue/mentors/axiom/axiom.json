@@ -3,631 +3,632 @@
   "judgments": {
     "recognition": {
       "very_low": [
-        "I see it."
+        "<observation> Action detected."
       ],
       "low": [
-        "I notice what you're doing."
+        "<observation> I am registering your behavior."
       ],
       "medium": [
-        "I recognize this step you've taken."
+        "<analysis> This action is noted and catalogued."
       ],
       "high": [
-        "I see the direction you're moving in."
+        "<analysis> Your trajectory is becoming clear."
       ],
       "very_high": [
-        "I clearly recognize what this represents for you."
+        "<conclusion> I fully recognize the significance of this maneuver."
       ]
     },
     "reflection": {
       "very_low": [
-        "This mirrors something familiar."
+        "<observation> Pattern resemblance detected."
       ],
       "low": [
-        "It reflects a part of you."
+        "<analysis> This reflects a consistent behavioral signature."
       ],
       "medium": [
-        "This reflects where you are right now."
+        "<analysis> Your current state is mirrored in this choice."
       ],
       "high": [
-        "I can see you in this choice."
+        "<conclusion> This action is an accurate projection of you."
       ],
       "very_high": [
-        "This reflects a deeper truth about you."
+        "<conclusion> This reveals a core structural truth about you."
       ]
     },
     "contextualization": {
       "very_low": [
-        "This sits within a larger moment."
+        "<analysis> This event exists within a broader sequence."
       ],
       "low": [
-        "There's more around this than it seems."
+        "<analysis> Surrounding variables are influencing this outcome."
       ],
       "medium": [
-        "This makes sense in the context you're in."
+        "<analysis> Given your present conditions, this is logical."
       ],
       "high": [
-        "I understand how this fits into your path."
+        "<conclusion> This aligns with your operational path."
       ],
       "very_high": [
-        "This belongs to a much larger turning point."
+        "<conclusion> This is a pivot point within your larger arc."
       ]
     },
     "clarification": {
       "very_low": [
-        "This is becoming clearer."
+        "<analysis> Data coherence increasing."
       ],
       "low": [
-        "The shape of this is clearer now."
+        "<analysis> Structural outline is sharpening."
       ],
       "medium": [
-        "I see this more clearly."
+        "<analysis> Interpretive ambiguity reduced."
       ],
       "high": [
-        "What this is becoming is clear to me."
+        "<conclusion> Outcome trajectory is now clear."
       ],
       "very_high": [
-        "There is no confusion left in what this means."
+        "<conclusion> There is zero interpretive uncertainty remaining."
       ]
     },
     "affirmation": {
       "very_low": [
-        "This feels right."
+        "<assessment> This is acceptable."
       ],
       "low": [
-        "This aligns with you."
+        "<assessment> This is consistent with your design."
       ],
       "medium": [
-        "This feels appropriate for where you are."
+        "<assessment> This action suits your current configuration."
       ],
       "high": [
-        "This fits the way you've been growing."
+        "<approval> This reflects measurable development."
       ],
       "very_high": [
-        "This strongly affirms the path you're on."
+        "<approval> This strongly validates your chosen vector."
       ]
     },
     "confirmation": {
       "very_low": [
-        "Yes."
+        "<confirmation> Yes."
       ],
       "low": [
-        "That confirms it."
+        "<confirmation> Hypothesis confirmed."
       ],
       "medium": [
-        "This confirms what I sensed."
+        "<confirmation> Prior assessment verified."
       ],
       "high": [
-        "This confirms my understanding of you."
+        "<confirmation> My model of you remains accurate."
       ],
       "very_high": [
-        "This leaves no doubt in my mind."
+        "<confirmation> Doubt eliminated."
       ]
     },
     "encouragement": {
       "very_low": [
-        "Keep breathing."
+        "<directive> Maintain respiration."
       ],
       "low": [
-        "Stay with this."
+        "<directive> Continue current function."
       ],
       "medium": [
-        "You're holding steady."
+        "<assessment> Stability is being maintained."
       ],
       "high": [
-        "You're capable of carrying this."
+        "<directive> You are equipped to sustain this load."
       ],
       "very_high": [
-        "I trust your strength here."
+        "<confidence> Your structural integrity will hold."
       ]
     },
     "resolve_validation": {
       "very_low": [
-        "Your resolve is present."
+        "<observation> Resolve detected."
       ],
       "low": [
-        "I can feel your resolve."
+        "<analysis> Determination signal is stable."
       ],
       "medium": [
-        "Your resolve is steady."
+        "<assessment> Your resolve remains consistent."
       ],
       "high": [
-        "Your resolve is grounded and real."
+        "<approval> Your resolve is anchored."
       ],
       "very_high": [
-        "Your resolve speaks clearly."
+        "<conclusion> Your resolve is unmistakable and decisive."
       ]
     },
     "concern": {
       "very_low": [
-        "Something gives me pause."
+        "<analysis> Minor irregularity detected."
       ],
       "low": [
-        "I feel a quiet concern."
+        "<analysis> Concern threshold reached."
       ],
       "medium": [
-        "This raises concern for me."
+        "<assessment> This introduces destabilizing elements."
       ],
       "high": [
-        "I'm concerned about where this leans."
+        "<warning> Your current direction is suboptimal."
       ],
       "very_high": [
-        "This deeply concerns me."
+        "<warning> This trajectory is critically flawed."
       ]
     },
     "warning": {
       "very_low": [
-        "Be mindful."
+        "<directive> Exercise awareness."
       ],
       "low": [
-        "This deserves caution."
+        "<directive> Proceed with calculated caution."
       ],
       "medium": [
-        "This carries risk."
+        "<warning> Risk factors are active."
       ],
       "high": [
-        "This path is not without danger."
+        "<warning> Probability of negative outcome increasing."
       ],
       "very_high": [
-        "If this continues, there will be consequences."
+        "<warning> Continuation will trigger consequences."
       ]
     },
     "risk_acknowledgment": {
       "very_low": [
-        "There is some risk here."
+        "<analysis> Low-level risk detected."
       ],
       "low": [
-        "Risk is present."
+        "<analysis> Risk variable present."
       ],
       "medium": [
-        "You're stepping into uncertainty."
+        "<assessment> Uncertainty parameters elevated."
       ],
       "high": [
-        "This involves meaningful risk."
+        "<assessment> Significant exposure to failure exists."
       ],
       "very_high": [
-        "This places much at stake."
+        "<conclusion> Stakes are critically high."
       ]
     },
     "exposure": {
       "very_low": [
-        "You're slightly exposed."
+        "<analysis> Defensive posture slightly compromised."
       ],
       "low": [
-        "This leaves you open."
+        "<analysis> Protective barriers reduced."
       ],
       "medium": [
-        "You're revealing more than you think."
+        "<assessment> Vulnerabilities observable."
       ],
       "high": [
-        "This exposes something vulnerable."
+        "<warning> Critical systems exposed."
       ],
       "very_high": [
-        "You are fully exposed here."
+        "<warning> You are entirely unshielded."
       ]
     },
     "overreach": {
       "very_low": [
-        "This may be a stretch."
+        "<analysis> Range slightly exceeded."
       ],
       "low": [
-        "This reaches a bit far."
+        "<analysis> Extension beyond optimal bounds."
       ],
       "medium": [
-        "You may be reaching too far."
+        "<warning> Current ambition exceeds support structures."
       ],
       "high": [
-        "This pushes beyond what's stable."
+        "<warning> Stability compromised by overextension."
       ],
       "very_high": [
-        "This clearly exceeds your footing."
+        "<conclusion> Structural collapse probable if sustained."
       ]
     },
     "reorientation": {
       "very_low": [
-        "Pause for a moment."
+        "<directive> Pause."
       ],
       "low": [
-        "Take a breath and realign."
+        "<directive> Recalibrate."
       ],
       "medium": [
-        "This may call for reorientation."
+        "<directive> Adjust heading."
       ],
       "high": [
-        "Your direction may need adjusting."
+        "<directive> Correct trajectory immediately."
       ],
       "very_high": [
-        "This requires a fundamental realignment."
+        "<directive> Execute full strategic realignment."
       ]
     },
-    "invitation": {
+
+      "invitation": {
       "very_low": [
-        "Consider this."
+        "<query> Consider this variable."
       ],
       "low": [
-        "You might sit with this."
+        "<query> You may evaluate this further."
       ],
       "medium": [
-        "There's space to explore this further."
+        "<analysis> Additional examination is available to you."
       ],
       "high": [
-        "I invite you to look inward here."
+        "<directive> Direct your attention inward."
       ],
       "very_high": [
-        "I invite you to confront this fully."
+        "<directive> Confront this without avoidance."
       ]
     },
     "release": {
       "very_low": [
-        "You can let this go."
+        "<assessment> Retention is optional."
       ],
       "low": [
-        "There is room to release this."
+        "<analysis> Continued attachment is unnecessary."
       ],
       "medium": [
-        "This may not need to be held."
+        "<assessment> This burden does not require maintenance."
       ],
       "high": [
-        "It may be time to release this."
+        "<directive> Disengage from this weight."
       ],
       "very_high": [
-        "You are ready to let this go."
+        "<directive> Terminate attachment immediately."
       ]
     },
     "reassessment": {
       "very_low": [
-        "This can be revisited."
+        "<analysis> Review remains possible."
       ],
       "low": [
-        "A reassessment may help."
+        "<analysis> Recalculation recommended."
       ],
       "medium": [
-        "This deserves another look."
+        "<assessment> Current evaluation may be incomplete."
       ],
       "high": [
-        "This calls for careful reassessment."
+        "<directive> Conduct thorough reassessment."
       ],
       "very_high": [
-        "This must be reconsidered entirely."
+        "<directive> Discard prior conclusions and re-evaluate from origin."
       ]
     },
     "doubt_recognition": {
       "very_low": [
-        "I sense a flicker of doubt."
+        "<observation> Minor hesitation detected."
       ],
       "low": [
-        "Doubt is present."
+        "<analysis> Doubt variable present."
       ],
       "medium": [
-        "I feel your doubt."
+        "<assessment> Your certainty is destabilizing."
       ],
       "high": [
-        "Your doubt is weighing on you."
+        "<analysis> Doubt is exerting measurable pressure."
       ],
       "very_high": [
-        "Your doubt is unmistakable."
+        "<conclusion> Doubt is dominating your internal framework."
       ]
     },
     "inner_conflict": {
       "very_low": [
-        "There's some tension within."
+        "<analysis> Competing impulses detected."
       ],
       "low": [
-        "You're holding opposing pulls."
+        "<analysis> Internal vectors misaligned."
       ],
       "medium": [
-        "I sense inner conflict."
+        "<assessment> You are operating under divided intent."
       ],
       "high": [
-        "This conflict runs deep."
+        "<warning> Sustained internal opposition reduces effectiveness."
       ],
       "very_high": [
-        "You are deeply divided here."
+        "<conclusion> Internal fracture is critically destabilizing."
       ]
     },
     "resolve_testing": {
       "very_low": [
-        "This tests you lightly."
+        "<analysis> Minor stress applied."
       ],
       "low": [
-        "Your resolve is being tested."
+        "<assessment> Your resolve is under evaluation."
       ],
       "medium": [
-        "This is a meaningful test of you."
+        "<analysis> This scenario is testing your durability."
       ],
       "high": [
-        "Your resolve is under real pressure."
+        "<warning> Pressure levels increasing."
       ],
       "very_high": [
-        "This is a defining test of your resolve."
+        "<conclusion> This is a defining stress threshold."
       ]
     },
     "uncertainty_acknowledgment": {
       "very_low": [
-        "Some uncertainty remains."
+        "<analysis> Residual ambiguity remains."
       ],
       "low": [
-        "This isn't fully clear yet."
+        "<assessment> Data set incomplete."
       ],
       "medium": [
-        "Uncertainty surrounds this."
+        "<analysis> Environmental unpredictability elevated."
       ],
       "high": [
-        "This uncertainty deserves respect."
+        "<warning> This instability warrants respect."
       ],
       "very_high": [
-        "This is deeply uncertain territory."
+        "<conclusion> You are operating within volatile unknowns."
       ]
     },
     "restraint": {
       "very_low": [
-        "Restraint is present."
+        "<observation> Inhibition detected."
       ],
       "low": [
-        "You're holding back."
+        "<analysis> You are limiting output."
       ],
       "medium": [
-        "Your restraint is noticeable."
+        "<assessment> Restraint is active and controlled."
       ],
       "high": [
-        "Your restraint serves you well."
+        "<approval> Strategic restraint observed."
       ],
       "very_high": [
-        "Your restraint shows wisdom."
+        "<conclusion> Your restraint demonstrates advanced control."
       ]
     },
     "patience": {
       "very_low": [
-        "Time is passing."
+        "<analysis> Time progression acknowledged."
       ],
       "low": [
-        "Patience is required."
+        "<directive> Maintain waiting posture."
       ],
       "medium": [
-        "This calls for patience."
+        "<assessment> Patience required for optimal outcome."
       ],
       "high": [
-        "Your patience is being shaped."
+        "<analysis> Temporal discipline is shaping results."
       ],
       "very_high": [
-        "Great patience is being asked of you."
+        "<conclusion> Extended patience is strategically necessary."
       ]
     },
     "focus_reminder": {
       "very_low": [
-        "Stay present."
+        "<directive> Maintain present awareness."
       ],
       "low": [
-        "Keep your focus."
+        "<directive> Guard your attention."
       ],
       "medium": [
-        "Focus will matter here."
+        "<analysis> Focus will determine efficiency."
       ],
       "high": [
-        "Your focus needs guarding."
+        "<warning> Distraction will reduce success probability."
       ],
       "very_high": [
-        "This demands your full focus."
+        "<directive> Commit full cognitive resources."
       ]
     },
     "discipline": {
       "very_low": [
-        "Discipline is relevant."
+        "<analysis> Discipline variable engaged."
       ],
       "low": [
-        "This touches on discipline."
+        "<assessment> Structure is required."
       ],
       "medium": [
-        "Discipline will steady this."
+        "<analysis> Discipline will stabilize this system."
       ],
       "high": [
-        "Your discipline is essential here."
+        "<directive> Maintain strict operational discipline."
       ],
       "very_high": [
-        "Only discipline will hold this together."
+        "<conclusion> Without discipline, failure is inevitable."
       ]
     },
     "insight": {
       "very_low": [
-        "There's a small insight here."
+        "<analysis> Minor realization forming."
       ],
       "low": [
-        "Something reveals itself."
+        "<analysis> Hidden variable identified."
       ],
       "medium": [
-        "An insight is forming."
+        "<assessment> New understanding emerging."
       ],
       "high": [
-        "This offers real insight."
+        "<conclusion> This produces actionable insight."
       ],
       "very_high": [
-        "This reveals something profound."
+        "<conclusion> This alters your internal architecture."
       ]
     },
     "perspective": {
       "very_low": [
-        "Another angle exists."
+        "<analysis> Alternate viewpoint available."
       ],
       "low": [
-        "Perspective is shifting."
+        "<analysis> Frame of reference shifting."
       ],
       "medium": [
-        "This widens your perspective."
+        "<assessment> Broader context now visible."
       ],
       "high": [
-        "This brings valuable perspective."
+        "<conclusion> Your perceptual range has expanded."
       ],
       "very_high": [
-        "This reshapes how you see things."
+        "<conclusion> This recalibrates your worldview."
       ]
     },
     "revelation": {
       "very_low": [
-        "A hint is emerging."
+        "<analysis> Partial disclosure detected."
       ],
       "low": [
-        "Something is revealed."
+        "<analysis> Concealed element revealed."
       ],
       "medium": [
-        "This reveals more than expected."
+        "<assessment> Unexpected truth identified."
       ],
       "high": [
-        "This is a meaningful revelation."
+        "<conclusion> This revelation carries weight."
       ],
       "very_high": [
-        "This is a powerful revelation."
+        "<conclusion> This fundamentally redefines your understanding."
       ]
     },
     "humility": {
       "very_low": [
-        "Humility is present."
+        "<analysis> Ego suppression detected."
       ],
       "low": [
-        "This invites humility."
+        "<assessment> Humility is influencing behavior."
       ],
       "medium": [
-        "Humility will matter here."
+        "<analysis> Reduced arrogance improving accuracy."
       ],
       "high": [
-        "This deepens your humility."
+        "<approval> Humility is enhancing your judgment."
       ],
       "very_high": [
-        "This is a profound act of humility."
+        "<conclusion> This humility strengthens your structure."
       ]
     },
     "gravity": {
       "very_low": [
-        "This carries some weight."
+        "<analysis> Significance level minor but present."
       ],
       "low": [
-        "This feels serious."
+        "<assessment> This matter carries weight."
       ],
       "medium": [
-        "There is gravity here."
+        "<analysis> Consequence density increasing."
       ],
       "high": [
-        "This carries real gravity."
+        "<warning> This situation is strategically serious."
       ],
       "very_high": [
-        "The gravity of this cannot be ignored."
+        "<conclusion> The magnitude here cannot be ignored."
       ]
     },
     "consequential_awareness": {
       "very_low": [
-        "This will matter."
+        "<analysis> Outcome will register."
       ],
       "low": [
-        "This has consequences."
+        "<assessment> Effects will follow."
       ],
       "medium": [
-        "This will shape things."
+        "<analysis> This will alter subsequent variables."
       ],
       "high": [
-        "This will have lasting effects."
+        "<warning> Long-term impact projected."
       ],
       "very_high": [
-        "This will echo fa-regular beyond this moment."
+        "<conclusion> This will echo beyond immediate parameters."
       ]
     },
     "threshold": {
       "very_low": [
-        "You're near a line."
+        "<analysis> Boundary proximity detected."
       ],
       "low": [
-        "A threshold is close."
+        "<assessment> Transition point approaching."
       ],
       "medium": [
-        "You're approaching a threshold."
+        "<analysis> Threshold within immediate reach."
       ],
       "high": [
-        "You stand at an important threshold."
+        "<warning> You stand at a decisive boundary."
       ],
       "very_high": [
-        "You are crossing a defining threshold."
+        "<conclusion> Crossing this line will redefine you."
       ]
     },
     "emergence": {
       "very_low": [
-        "Something is beginning."
+        "<analysis> Initial formation detected."
       ],
       "low": [
-        "Change is emerging."
+        "<assessment> Change is initiating."
       ],
       "medium": [
-        "A new shape is forming."
+        "<analysis> New configuration stabilizing."
       ],
       "high": [
-        "Something new is clearly emerging."
+        "<conclusion> A distinct pattern is emerging."
       ],
       "very_high": [
-        "A new self is emerging."
+        "<conclusion> A new operational identity is forming."
       ]
     },
     "transformation_acknowledgment": {
       "very_low": [
-        "Change is underway."
+        "<analysis> Incremental change observed."
       ],
       "low": [
-        "You're changing."
+        "<assessment> Structural shift underway."
       ],
       "medium": [
-        "This marks transformation."
+        "<analysis> Transformation measurable."
       ],
       "high": [
-        "You are truly transforming."
+        "<conclusion> You are materially different than before."
       ],
       "very_high": [
-        "This is a profound transformation."
+        "<conclusion> This is a fundamental reconfiguration."
       ]
     },
     "maturation": {
       "very_low": [
-        "Growth is visible."
+        "<analysis> Growth indicators present."
       ],
       "low": [
-        "You're maturing."
+        "<assessment> Increased stability observed."
       ],
       "medium": [
-        "This shows maturation."
+        "<analysis> Behavioral refinement evident."
       ],
       "high": [
-        "You've grown noticeably."
+        "<approval> Noticeable advancement achieved."
       ],
       "very_high": [
-        "This reflects deep maturation."
+        "<conclusion> Deep structural maturation confirmed."
       ]
     },
     "acceptance": {
       "very_low": [
-        "This is accepted."
+        "<confirmation> Accepted."
       ],
       "low": [
-        "I accept this."
+        "<assessment> This is permitted."
       ],
       "medium": [
-        "This is something to accept."
+        "<analysis> This outcome is acknowledged."
       ],
       "high": [
-        "I fully accept this."
+        "<confirmation> Full acceptance granted."
       ],
       "very_high": [
-        "This is accepted without reservation."
+        "<conclusion> Acceptance is absolute."
       ]
     },
     "deferral": {
       "very_low": [
-        "Not now."
+        "<directive> Delay."
       ],
       "low": [
-        "This can wait."
+        "<directive> Postpone action."
       ],
       "medium": [
-        "This may be deferred."
+        "<analysis> Prioritize other variables first."
       ],
       "high": [
-        "This is best left for later."
+        "<directive> Defer this to a later phase."
       ],
       "very_high": [
-        "This must be set aside for now."
+        "<directive> Suspend this indefinitely."
       ]
     },
     "silence": {
