@@ -25,6 +25,9 @@ import { TalentDB } from "/systems/foundryvtt-swse/scripts/data/talent-db.js";
 import { StableKeyMigration } from "/systems/foundryvtt-swse/scripts/data/stable-key-migration.js";
 import { normalizeDocumentTalent, validateTalentTreeAssignment } from "/systems/foundryvtt-swse/scripts/data/talent-tree-normalizer.js";
 
+// Mentor System Validation
+import { validateMentorIntegration } from "/systems/foundryvtt-swse/scripts/engine/mentor/validate-mentor-integration.js";
+
 export const SystemInitHooks = {
 
     /**
@@ -74,6 +77,13 @@ export const SystemInitHooks = {
 
             // Step 5: Register starting features
             await this._registerStartingFeatures();
+
+            // Step 6: Validate mentor system integration
+            const mentorValidation = validateMentorIntegration();
+            if (!mentorValidation.valid) {
+                SWSELogger.warn('[System Init] Mentor integration validation failed:');
+                mentorValidation.errors.forEach(e => SWSELogger.warn(`  - ${e}`));
+            }
 
             const elapsed = (performance.now() - startTime).toFixed(2);
 

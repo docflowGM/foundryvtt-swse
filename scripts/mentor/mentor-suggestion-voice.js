@@ -4,7 +4,12 @@
  * Generates mentor-voiced suggestions with contextual flavor text.
  * Each mentor has unique personality-driven explanations for suggestions.
  * Provides 5 random variations per context to prevent staleness.
+ *
+ * PHASE 2.8: Now uses MentorJudgmentEngine when atoms are available
+ * Falls back to generic variations if atoms unavailable
  */
+
+import { MentorJudgmentEngine } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-judgment-engine.js";
 
 export class MentorSuggestionVoice {
   /**
@@ -419,19 +424,41 @@ export class MentorSuggestionVoice {
 
   /**
    * Generate a fully voiced suggestion with mentor introduction and explanation
+   *
+   * PHASE 2.8: Uses atoms for atom-aware explanation if available
+   * Falls back to generic explanation if atoms unavailable
+   *
    * @param {string} mentorName - The mentor's name
-   * @param {Object} suggestion - The suggestion object with { name, tier, icon? }
+   * @param {Object} suggestion - The suggestion object with { name, tier, icon?, mentorAtoms?, mentorIntensity? }
    * @param {string} context - The context (feat_selection, talent_selection, etc.)
-   * @returns {Object} { introduction, explanation, mentorName, suggestionName }
+   * @returns {Object} { introduction, explanation, mentorName, suggestionName, tier, icon, intensity }
    */
   static generateVoicedSuggestion(mentorName, suggestion, context) {
+    let explanation = this.getRandomExplanation(mentorName, context);
+
+    // PHASE 2.8: Use atoms for atom-aware explanation if available
+    if (suggestion?.mentorAtoms && Array.isArray(suggestion.mentorAtoms) && suggestion.mentorAtoms.length > 0) {
+      try {
+        explanation = MentorJudgmentEngine.buildExplanation(
+          suggestion.mentorAtoms,
+          mentorName,
+          context,
+          suggestion.mentorIntensity || 'medium'
+        );
+      } catch (err) {
+        console.warn('[MentorSuggestionVoice] MentorJudgmentEngine failed, falling back to generic explanation:', err);
+        // Keep fallback explanation from getRandomExplanation
+      }
+    }
+
     return {
       introduction: this.getRandomIntroduction(mentorName, context),
-      explanation: this.getRandomExplanation(mentorName, context),
+      explanation,  // ← Now potentially atom-aware (Phase 2.8)
       mentorName: mentorName,
       suggestionName: suggestion.name || suggestion,
       tier: suggestion.tier || 0,
-      icon: suggestion.icon || null
+      icon: suggestion.icon || null,
+      intensity: suggestion.mentorIntensity || 'medium'  // ← For UI styling (Phase 2.8)
     };
   }
 

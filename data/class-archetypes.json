@@ -27,16 +27,16 @@
             "CON": 0.2,
             "CHA": 0.2
           },
-          "talentKeywords": [
-            "Block",
-            "Deflect",
-            "Redirect Shot"
+          "notes": "Defensive Jedi focused on protection, resilience, and battlefield control.",
+          "talents": [
+            "9379daa94a228c04",
+            "72c644f7a09b1186",
+            "941c1dfd00e697da"
           ],
-          "featKeywords": [
-            "Weapon Focus (Lightsabers)",
-            "Force Training"
-          ],
-          "notes": "Defensive Jedi focused on protection, resilience, and battlefield control."
+          "feats": [
+            "c41814601364b643",
+            "9b7b869a86f39190"
+          ]
         },
         "aggressive_duelist": {
           "name": "Aggressive Duelist",
@@ -58,16 +58,15 @@
             "CHA": 0.2,
             "CON": 0.2
           },
-          "talentKeywords": [
-            "Djem So",
-            "Shien",
-            "Powerful Charge"
+          "notes": "High-damage lightsaber specialist built for decisive duels.",
+          "talents": [
+            "9dfce712a60a097f",
+            "e0223a2b572f2ef5"
           ],
-          "featKeywords": [
-            "Power Attack",
-            "Rapid Strike"
-          ],
-          "notes": "High-damage lightsaber specialist built for decisive duels."
+          "feats": [
+            "3f76464c43c73f84",
+            "ccb33e58342499a3"
+          ]
         },
         "force_adept": {
           "name": "Force Adept",
@@ -89,15 +88,14 @@
             "CON": 0.2,
             "DEX": 0.1
           },
-          "talentKeywords": [
-            "Force Focus",
-            "Force Regimen"
+          "notes": "Force-centric Jedi emphasizing powers over weapon combat.",
+          "talents": [
+            "af51d4e76675b183"
           ],
-          "featKeywords": [
-            "Skill Focus (Use the Force)",
-            "Force Training"
-          ],
-          "notes": "Force-centric Jedi emphasizing powers over weapon combat."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "9b7b869a86f39190"
+          ]
         },
         "balanced_knight": {
           "name": "Balanced Knight",
@@ -120,16 +118,15 @@
             "WIS": 0.25,
             "CHA": 0.25
           },
-          "talentKeywords": [
-            "Block",
-            "Deflect",
-            "Force Training"
+          "notes": "Classic balanced Jedi blending combat, Force use, and adaptability.",
+          "talents": [
+            "9379daa94a228c04",
+            "72c644f7a09b1186"
           ],
-          "featKeywords": [
-            "Weapon Focus (Lightsabers)",
-            "Force Training"
-          ],
-          "notes": "Classic balanced Jedi blending combat, Force use, and adaptability."
+          "feats": [
+            "c41814601364b643",
+            "9b7b869a86f39190"
+          ]
         },
         "martial_arts_specialist": {
           "name": "Martial Arts Specialist",
@@ -149,15 +146,12 @@
             "CON": 0.2,
             "WIS": 0.15
           },
-          "talentKeywords": [
-            "Martial Arts",
-            "Acrobatic Strike"
-          ],
-          "featKeywords": [
-            "Martial Arts I",
-            "Martial Arts II"
-          ],
-          "notes": "Jedi emphasizing unarmed and hybrid combat techniques."
+          "notes": "Jedi emphasizing unarmed and hybrid combat techniques.",
+          "talents": [],
+          "feats": [
+            "92f927c92ded9fcf",
+            "5bedd71f0eead6b9"
+          ]
         },
         "zen_duelist": {
           "name": "Zen Duelist",
@@ -177,15 +171,15 @@
             "CON": 0.2,
             "CHA": 0.1
           },
-          "talentKeywords": [
-            "Combat Trance",
-            "Deflect"
+          "notes": "Defensive, meditative duelist relying on calm and precision.",
+          "talents": [
+            "675bfa10691b60f6",
+            "72c644f7a09b1186"
           ],
-          "featKeywords": [
-            "Weapon Focus (Lightsabers)",
-            "Shake It Off"
-          ],
-          "notes": "Defensive, meditative duelist relying on calm and precision."
+          "feats": [
+            "c41814601364b643",
+            "3036290329d5b3e6"
+          ]
         },
         "martial_arts_initiate": {
           "name": "Martial Arts Initiate",
@@ -205,14 +199,11 @@
             "STR": 0.2,
             "CON": 0.15
           },
-          "talentKeywords": [
-            "Martial Arts",
-            "Acrobatics"
-          ],
-          "featKeywords": [
-            "Martial Arts I"
-          ],
-          "notes": "Early-stage martial-focused Jedi, often preceding Martial Arts Master."
+          "notes": "Early-stage martial-focused Jedi, often preceding Martial Arts Master.",
+          "talents": [],
+          "feats": [
+            "92f927c92ded9fcf"
+          ]
         },
         "jedi_guardian": {
           "name": "Jedi Guardian",
@@ -233,17 +224,15 @@
             "WIS": 0.25,
             "CON": 0.15
           },
-          "talentKeywords": [
-            "Block",
-            "Deflect",
-            "Lightsaber Combat"
+          "notes": "Frontline lightsaber combatant focused on direct engagement.",
+          "talents": [
+            "9379daa94a228c04",
+            "72c644f7a09b1186"
           ],
-          "featKeywords": [
-            "Weapon Focus (Lightsabers)",
-            "Power Attack",
-            "Martial Arts"
-          ],
-          "notes": "Frontline lightsaber combatant focused on direct engagement."
+          "feats": [
+            "c41814601364b643",
+            "3f76464c43c73f84"
+          ]
         },
         "jedi_consular": {
           "name": "Jedi Consular",
@@ -263,16 +252,16 @@
             "CHA": 0.35,
             "INT": 0.2
           },
-          "talentKeywords": [
-            "Force Persuasion",
-            "Inspire Confidence"
+          "notes": "Diplomatic Force specialist emphasizing negotiation and control.",
+          "talents": [
+            "d1fd547124c1901c",
+            "4d8882a28da30454"
           ],
-          "featKeywords": [
-            "Force Training",
-            "Skill Focus (Use the Force)",
-            "Linguist"
-          ],
-          "notes": "Diplomatic Force specialist emphasizing negotiation and control."
+          "feats": [
+            "9b7b869a86f39190",
+            "1592aaedf4b6e40a",
+            "5afd91fb081e576b"
+          ]
         },
         "jedi_sentinel": {
           "name": "Jedi Sentinel",
@@ -293,15 +282,14 @@
             "WIS": 0.25,
             "CON": 0.15
           },
-          "talentKeywords": [
-            "Dark Side Sense",
-            "Resist Dark Side"
+          "notes": "Balanced Jedi investigator and covert operative.",
+          "talents": [
+            "e885f64758f5e2bd"
           ],
-          "featKeywords": [
-            "Skill Focus (Stealth)",
-            "Weapon Finesse"
-          ],
-          "notes": "Balanced Jedi investigator and covert operative."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "252b67d6e31c377e"
+          ]
         },
         "jedi_ace": {
           "name": "Jedi Ace",
@@ -322,15 +310,12 @@
             "WIS": 0.2,
             "CON": 0.1
           },
-          "talentKeywords": [
-            "Vehicle Dodge",
-            "Starfighter Ace"
-          ],
-          "featKeywords": [
-            "Vehicular Combat",
-            "Skill Focus (Pilot)"
-          ],
-          "notes": "Force-augmented pilot specializing in vehicle and starfighter combat."
+          "notes": "Force-augmented pilot specializing in vehicle and starfighter combat.",
+          "talents": [],
+          "feats": [
+            "1f2f70d34a17667d",
+            "1592aaedf4b6e40a"
+          ]
         },
         "jedi_healer": {
           "name": "Jedi Healer",
@@ -350,15 +335,12 @@
             "CHA": 0.35,
             "CON": 0.2
           },
-          "talentKeywords": [
-            "Vital Transfer",
-            "Healing Trance"
-          ],
-          "featKeywords": [
-            "Force Training",
-            "Skill Focus (Treat Injury)"
-          ],
-          "notes": "Force-based healer dedicated to sustaining allies."
+          "notes": "Force-based healer dedicated to sustaining allies.",
+          "talents": [],
+          "feats": [
+            "9b7b869a86f39190",
+            "1592aaedf4b6e40a"
+          ]
         },
         "jedi_shadow": {
           "name": "Jedi Shadow",
@@ -379,15 +361,15 @@
             "INT": 0.2,
             "CHA": 0.1
           },
-          "talentKeywords": [
-            "Dark Deception",
-            "Force Cloak"
+          "notes": "Undercover Jedi hunter of Dark Side threats.",
+          "talents": [
+            "d1561acfdeac3d78",
+            "2c18952e0c014127"
           ],
-          "featKeywords": [
-            "Skill Focus (Stealth)",
-            "Force Training"
-          ],
-          "notes": "Undercover Jedi hunter of Dark Side threats."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "9b7b869a86f39190"
+          ]
         },
         "jedi_weapon_master": {
           "name": "Jedi Weapon Master",
@@ -407,15 +389,14 @@
             "CON": 0.2,
             "WIS": 0.1
           },
-          "talentKeywords": [
-            "Twin Weapon Style",
-            "Combat Trance"
+          "notes": "Martial-focused Jedi specializing in extreme lightsaber mastery.",
+          "talents": [
+            "5ea9a4c30dff1ac8",
+            "675bfa10691b60f6"
           ],
-          "featKeywords": [
-            "Dual Weapon Mastery",
-            "Power Attack"
-          ],
-          "notes": "Martial-focused Jedi specializing in extreme lightsaber mastery."
+          "feats": [
+            "3f76464c43c73f84"
+          ]
         },
         "jedi_battlemaster": {
           "name": "Jedi Battlemaster",
@@ -436,15 +417,14 @@
             "WIS": 0.25,
             "CON": 0.15
           },
-          "talentKeywords": [
-            "Battle Meditation",
-            "Defensive Circle"
+          "notes": "Battlefield commander and Jedi combat instructor.",
+          "talents": [
+            "9461c7aa79dd07c6",
+            "d838141fe404a9fb"
           ],
-          "featKeywords": [
-            "Weapon Focus (Lightsabers)",
-            "Leadership"
-          ],
-          "notes": "Battlefield commander and Jedi combat instructor."
+          "feats": [
+            "c41814601364b643"
+          ]
         }
       }
     },
@@ -468,15 +448,14 @@
             "INT": 0.35,
             "WIS": 0.2
           },
-          "talentKeywords": [
-            "Inspire Confidence",
-            "Coordinate"
+          "notes": "High-level political figure shaping events through authority and influence.",
+          "talents": [
+            "4d8882a28da30454",
+            "a52044feeab3fe05"
           ],
-          "featKeywords": [
-            "Skill Focus (Persuasion)",
-            "Leadership"
-          ],
-          "notes": "High-level political figure shaping events through authority and influence."
+          "feats": [
+            "1592aaedf4b6e40a"
+          ]
         },
         "court_diplomat": {
           "name": "Court Diplomat",
@@ -494,15 +473,15 @@
             "INT": 0.3,
             "WIS": 0.2
           },
-          "talentKeywords": [
-            "Demand Surrender",
-            "Inspire Confidence"
+          "notes": "Formal negotiator trained in courtly and interstellar diplomacy.",
+          "talents": [
+            "871638a983029bc4",
+            "4d8882a28da30454"
           ],
-          "featKeywords": [
-            "Skill Focus (Persuasion)",
-            "Linguist"
-          ],
-          "notes": "Formal negotiator trained in courtly and interstellar diplomacy."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "5afd91fb081e576b"
+          ]
         },
         "strategic_coordinator": {
           "name": "Strategic Coordinator",
@@ -520,15 +499,15 @@
             "CHA": 0.3,
             "WIS": 0.25
           },
-          "talentKeywords": [
-            "Coordinate",
-            "Battle Analysis"
+          "notes": "Behind-the-scenes planner directing allies with precision.",
+          "talents": [
+            "a52044feeab3fe05",
+            "7df2e8e4f18dc909"
           ],
-          "featKeywords": [
-            "Skill Focus (Knowledge: Tactics)",
-            "Coordinated Attack"
-          ],
-          "notes": "Behind-the-scenes planner directing allies with precision."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "964f0781b3e3fc37"
+          ]
         },
         "wealthy_patron": {
           "name": "Wealthy Patron",
@@ -546,15 +525,15 @@
             "CHA": 0.4,
             "WIS": 0.2
           },
-          "talentKeywords": [
-            "Wealth",
-            "Connections"
+          "notes": "Resource-focused noble leveraging money, assets, and influence.",
+          "talents": [
+            "37bf53b4b2c0e539",
+            "e58a8ad63c1d8771"
           ],
-          "featKeywords": [
-            "Skill Focus (Persuasion)",
-            "Trustworthy"
-          ],
-          "notes": "Resource-focused noble leveraging money, assets, and influence."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "6d8ce2807c579289"
+          ]
         },
         "silver_tongued_manipulator": {
           "name": "Silver-Tongued Manipulator",
@@ -572,15 +551,12 @@
             "INT": 0.3,
             "WIS": 0.2
           },
-          "talentKeywords": [
-            "Deception",
-            "Influence"
-          ],
-          "featKeywords": [
-            "Skill Focus (Deception)",
-            "Skill Focus (Persuasion)"
-          ],
-          "notes": "Social engineer bending others to their will."
+          "notes": "Social engineer bending others to their will.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a",
+            "1592aaedf4b6e40a"
+          ]
         },
         "silver_tongued_negotiator": {
           "name": "Silver-Tongued Negotiator",
@@ -598,15 +574,14 @@
             "WIS": 0.3,
             "INT": 0.2
           },
-          "talentKeywords": [
-            "Inspire Confidence",
-            "Demand Surrender"
+          "notes": "Master negotiator resolving conflicts through dialogue.",
+          "talents": [
+            "4d8882a28da30454",
+            "871638a983029bc4"
           ],
-          "featKeywords": [
-            "Skill Focus (Persuasion)",
-            "Negotiator"
-          ],
-          "notes": "Master negotiator resolving conflicts through dialogue."
+          "feats": [
+            "1592aaedf4b6e40a"
+          ]
         },
         "diplomat": {
           "name": "Diplomat",
@@ -625,15 +600,15 @@
             "INT": 0.35,
             "WIS": 0.2
           },
-          "talentKeywords": [
-            "Inspire Confidence",
-            "Demand Surrender"
+          "notes": "Negotiator and ambassador specializing in diplomacy and conflict resolution.",
+          "talents": [
+            "4d8882a28da30454",
+            "871638a983029bc4"
           ],
-          "featKeywords": [
-            "Skill Focus (Persuasion)",
-            "Linguist"
-          ],
-          "notes": "Negotiator and ambassador specializing in diplomacy and conflict resolution."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "5afd91fb081e576b"
+          ]
         },
         "military_officer": {
           "name": "Military Officer",
@@ -653,15 +628,15 @@
             "WIS": 0.2,
             "DEX": 0.1
           },
-          "talentKeywords": [
-            "Coordinate",
-            "Bolster Ally"
+          "notes": "Strategic commander focused on battlefield leadership and coordination.",
+          "talents": [
+            "a52044feeab3fe05",
+            "d6e7f7178e643717"
           ],
-          "featKeywords": [
-            "Skill Focus (Knowledge: Tactics)",
-            "Coordinated Attack"
-          ],
-          "notes": "Strategic commander focused on battlefield leadership and coordination."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "964f0781b3e3fc37"
+          ]
         },
         "underworld_boss": {
           "name": "Underworld Boss",
@@ -681,15 +656,15 @@
             "CON": 0.2,
             "DEX": 0.1
           },
-          "talentKeywords": [
-            "Dastardly Strike",
-            "Inspire Fear"
+          "notes": "Crime-oriented noble ruling through fear, wealth, and influence.",
+          "talents": [
+            "9e4345faaaa94dd8",
+            "585227ba15d24a37"
           ],
-          "featKeywords": [
-            "Skill Focus (Deception)",
-            "Skill Focus (Persuasion)"
-          ],
-          "notes": "Crime-oriented noble ruling through fear, wealth, and influence."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "1592aaedf4b6e40a"
+          ]
         },
         "trading_mogul": {
           "name": "Trading Mogul",
@@ -708,15 +683,15 @@
             "CHA": 0.35,
             "WIS": 0.2
           },
-          "talentKeywords": [
-            "Wealth",
-            "Connections"
+          "notes": "Business-focused noble leveraging wealth, logistics, and contacts.",
+          "talents": [
+            "37bf53b4b2c0e539",
+            "e58a8ad63c1d8771"
           ],
-          "featKeywords": [
-            "Skill Focus (Persuasion)",
-            "Skill Focus (Knowledge: Bureaucracy)"
-          ],
-          "notes": "Business-focused noble leveraging wealth, logistics, and contacts."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "1592aaedf4b6e40a"
+          ]
         },
         "scholar": {
           "name": "Scholar",
@@ -735,15 +710,15 @@
             "WIS": 0.3,
             "CHA": 0.2
           },
-          "talentKeywords": [
-            "Educated",
-            "Connections"
+          "notes": "Academic expert and knowledge specialist.",
+          "talents": [
+            "3e98c9f5a4f450ff",
+            "e58a8ad63c1d8771"
           ],
-          "featKeywords": [
-            "Skill Focus (Knowledge)",
-            "Gearhead"
-          ],
-          "notes": "Academic expert and knowledge specialist."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "3b9b60551a3379ce"
+          ]
         }
       }
     },
@@ -766,15 +741,15 @@
             "DEX": 0.3,
             "WIS": 0.25
           },
-          "talentKeywords": [
-            "Gimmick",
-            "Fool's Luck"
+          "notes": "Jack-of-all-trades excelling at broad skill coverage.",
+          "talents": [
+            "8d8937a416fc0d81",
+            "5319a796f2c4ff64"
           ],
-          "featKeywords": [
-            "Skill Focus",
-            "Educated"
-          ],
-          "notes": "Jack-of-all-trades excelling at broad skill coverage."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "5cc1216874c79087"
+          ]
         },
         "sneak_attacker": {
           "name": "Sneak Attacker",
@@ -792,15 +767,15 @@
             "INT": 0.3,
             "CON": 0.25
           },
-          "talentKeywords": [
-            "Sneak Attack",
-            "Dastardly Strike"
+          "notes": "Precision damage dealer exploiting surprise and positioning.",
+          "talents": [
+            "1505abc8babeeb84",
+            "9e4345faaaa94dd8"
           ],
-          "featKeywords": [
-            "Weapon Finesse",
-            "Point Blank Shot"
-          ],
-          "notes": "Precision damage dealer exploiting surprise and positioning."
+          "feats": [
+            "252b67d6e31c377e",
+            "c301a0f533f15ce4"
+          ]
         },
         "charlatan": {
           "name": "Charlatan",
@@ -818,15 +793,14 @@
             "INT": 0.3,
             "WIS": 0.2
           },
-          "talentKeywords": [
-            "Fool's Luck",
-            "Fast Talk"
+          "notes": "Con artist and social infiltrator.",
+          "talents": [
+            "5319a796f2c4ff64"
           ],
-          "featKeywords": [
-            "Skill Focus (Deception)",
-            "Trustworthy"
-          ],
-          "notes": "Con artist and social infiltrator."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "6d8ce2807c579289"
+          ]
         },
         "gunslinger": {
           "name": "Gunslinger",
@@ -844,15 +818,12 @@
             "CHA": 0.3,
             "CON": 0.25
           },
-          "talentKeywords": [
-            "Quick Draw",
-            "Grazing Shot"
-          ],
-          "featKeywords": [
-            "Point Blank Shot",
-            "Precise Shot"
-          ],
-          "notes": "Fast-draw pistol specialist."
+          "notes": "Fast-draw pistol specialist.",
+          "talents": [],
+          "feats": [
+            "c301a0f533f15ce4",
+            "c180eee7d3bc29b2"
+          ]
         },
         "trickster": {
           "name": "Trickster",
@@ -870,15 +841,13 @@
             "DEX": 0.3,
             "CHA": 0.3
           },
-          "talentKeywords": [
-            "Gimmick",
-            "Trick Move"
+          "notes": "Battlefield disruptor using clever positioning and tricks.",
+          "talents": [
+            "8d8937a416fc0d81"
           ],
-          "featKeywords": [
-            "Improved Initiative",
-            "Skill Focus (Deception)"
-          ],
-          "notes": "Battlefield disruptor using clever positioning and tricks."
+          "feats": [
+            "1592aaedf4b6e40a"
+          ]
         },
         "shadow_smuggler": {
           "name": "Shadow Smuggler",
@@ -897,15 +866,14 @@
             "INT": 0.2,
             "CON": 0.15
           },
-          "talentKeywords": [
-            "Spacer's Luck",
-            "Skirmisher"
+          "notes": "Smuggler specializing in covert operations and evasion.",
+          "talents": [
+            "7b23e0812d6a8985"
           ],
-          "featKeywords": [
-            "Skill Focus (Pilot)",
-            "Vehicular Combat"
-          ],
-          "notes": "Smuggler specializing in covert operations and evasion."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "1f2f70d34a17667d"
+          ]
         },
         "infiltration_specialist": {
           "name": "Infiltration Specialist",
@@ -924,15 +892,14 @@
             "WIS": 0.2,
             "CON": 0.1
           },
-          "talentKeywords": [
-            "Stealth",
-            "Security Slicer"
+          "notes": "Stealth-based intrusion and extraction expert.",
+          "talents": [
+            "51ee1b777709cc4e"
           ],
-          "featKeywords": [
-            "Skill Focus (Stealth)",
-            "Skill Focus (Mechanics)"
-          ],
-          "notes": "Stealth-based intrusion and extraction expert."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "1592aaedf4b6e40a"
+          ]
         },
         "smuggler": {
           "name": "Smuggler",
@@ -953,17 +920,16 @@
             "INT": 0.2,
             "CON": 0.15
           },
-          "talentKeywords": [
-            "Spacer's Luck",
-            "Fast Talker",
-            "Skirmisher"
+          "notes": "Fast-talking transporter of illicit or high-value cargo.",
+          "talents": [
+            "eeed98748becb161",
+            "7b23e0812d6a8985"
           ],
-          "featKeywords": [
-            "Skill Focus (Pilot)",
-            "Vehicular Combat",
-            "Point Blank Shot"
-          ],
-          "notes": "Fast-talking transporter of illicit or high-value cargo."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "1f2f70d34a17667d",
+            "c301a0f533f15ce4"
+          ]
         },
         "pirate": {
           "name": "Pirate",
@@ -983,16 +949,14 @@
             "CON": 0.25,
             "CHA": 0.15
           },
-          "talentKeywords": [
-            "Dastardly Strike",
-            "Backstabber"
+          "notes": "Violent raider relying on intimidation and brute tactics.",
+          "talents": [
+            "9e4345faaaa94dd8"
           ],
-          "featKeywords": [
-            "Point Blank Shot",
-            "Rapid Shot",
-            "Martial Arts"
-          ],
-          "notes": "Violent raider relying on intimidation and brute tactics."
+          "feats": [
+            "c301a0f533f15ce4",
+            "94b8751efb03536a"
+          ]
         },
         "slicer": {
           "name": "Slicer",
@@ -1012,15 +976,15 @@
             "WIS": 0.2,
             "CON": 0.1
           },
-          "talentKeywords": [
-            "Security Slicer",
-            "Electronic Sabotage"
+          "notes": "Electronic warfare and systems intrusion specialist.",
+          "talents": [
+            "51ee1b777709cc4e",
+            "0290634450ab1637"
           ],
-          "featKeywords": [
-            "Skill Focus (Use Computer)",
-            "Tech Specialist"
-          ],
-          "notes": "Electronic warfare and systems intrusion specialist."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "42e2404790756700"
+          ]
         },
         "con_artist": {
           "name": "Con Artist",
@@ -1040,15 +1004,15 @@
             "DEX": 0.15,
             "WIS": 0.1
           },
-          "talentKeywords": [
-            "Fool's Luck",
-            "Gambler"
+          "notes": "Manipulator and gambler living by deception and luck.",
+          "talents": [
+            "5319a796f2c4ff64",
+            "8e4475b0f99633f3"
           ],
-          "featKeywords": [
-            "Skill Focus (Deception)",
-            "Skill Focus (Persuasion)"
-          ],
-          "notes": "Manipulator and gambler living by deception and luck."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "1592aaedf4b6e40a"
+          ]
         },
         "thief": {
           "name": "Thief",
@@ -1068,15 +1032,15 @@
             "WIS": 0.2,
             "CON": 0.1
           },
-          "talentKeywords": [
-            "Sneak Attack",
-            "Skirmisher"
+          "notes": "Stealth-focused burglar and infiltration expert.",
+          "talents": [
+            "1505abc8babeeb84",
+            "7b23e0812d6a8985"
           ],
-          "featKeywords": [
-            "Skill Focus (Stealth)",
-            "Skill Focus (Mechanics)"
-          ],
-          "notes": "Stealth-focused burglar and infiltration expert."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "1592aaedf4b6e40a"
+          ]
         },
         "spy": {
           "name": "Spy",
@@ -1096,15 +1060,15 @@
             "INT": 0.25,
             "WIS": 0.15
           },
-          "talentKeywords": [
-            "Walk the Line",
-            "Fool's Luck"
+          "notes": "Covert intelligence operative and undercover agent.",
+          "talents": [
+            "3f8f5305eabc525e",
+            "5319a796f2c4ff64"
           ],
-          "featKeywords": [
-            "Skill Focus (Deception)",
-            "Skill Focus (Stealth)"
-          ],
-          "notes": "Covert intelligence operative and undercover agent."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "1592aaedf4b6e40a"
+          ]
         }
       }
     },
@@ -1131,15 +1095,13 @@
             "CON": 0.2,
             "INT": 0.2
           },
-          "talentKeywords": [
-            "Acute Senses",
-            "Camouflage"
+          "notes": "Recon and terrain specialist operating ahead of the party.",
+          "talents": [
+            "f0166d26d9f6252a"
           ],
-          "featKeywords": [
-            "Skill Focus (Survival)",
-            "Improved Initiative"
-          ],
-          "notes": "Recon and terrain specialist operating ahead of the party."
+          "feats": [
+            "1592aaedf4b6e40a"
+          ]
         },
         "sniper": {
           "name": "Sniper",
@@ -1157,15 +1119,15 @@
             "WIS": 0.3,
             "CON": 0.2
           },
-          "talentKeywords": [
-            "Keen Shot",
-            "Improved Initiative"
+          "notes": "Long-range combat scout eliminating priority targets.",
+          "talents": [
+            "aca0598e9b0eb935",
+            "9840f0e8b8f53bb5"
           ],
-          "featKeywords": [
-            "Sniper",
-            "Far Shot"
-          ],
-          "notes": "Long-range combat scout eliminating priority targets."
+          "feats": [
+            "56367f3943ee8c17",
+            "b5a8d5899e02139c"
+          ]
         },
         "skirmisher": {
           "name": "Skirmisher",
@@ -1184,15 +1146,15 @@
             "WIS": 0.2,
             "STR": 0.15
           },
-          "talentKeywords": [
-            "Skirmisher",
-            "Evasion"
+          "notes": "Mobile hit-and-run combatant.",
+          "talents": [
+            "7b23e0812d6a8985",
+            "5400bc8cb1200624"
           ],
-          "featKeywords": [
-            "Point Blank Shot",
-            "Mobility"
-          ],
-          "notes": "Mobile hit-and-run combatant."
+          "feats": [
+            "c301a0f533f15ce4",
+            "ff8eaa4e2f6d1cf1"
+          ]
         },
         "survivalist": {
           "name": "Survivalist",
@@ -1210,15 +1172,13 @@
             "CON": 0.3,
             "DEX": 0.3
           },
-          "talentKeywords": [
-            "Expert Tracker",
-            "Endurance"
+          "notes": "Extreme-environment specialist and survival expert.",
+          "talents": [
+            "16e18057bc92365c"
           ],
-          "featKeywords": [
-            "Skill Focus (Survival)",
-            "Endurance"
-          ],
-          "notes": "Extreme-environment specialist and survival expert."
+          "feats": [
+            "1592aaedf4b6e40a"
+          ]
         },
         "forward_observer": {
           "name": "Forward Observer",
@@ -1236,15 +1196,14 @@
             "INT": 0.3,
             "DEX": 0.3
           },
-          "talentKeywords": [
-            "Reconnaissance",
-            "Coordinate"
+          "notes": "Battlefield spotter coordinating allied fire.",
+          "talents": [
+            "a52044feeab3fe05"
           ],
-          "featKeywords": [
-            "Skill Focus (Perception)",
-            "Coordinated Attack"
-          ],
-          "notes": "Battlefield spotter coordinating allied fire."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "964f0781b3e3fc37"
+          ]
         },
         "jungle_recon_specialist": {
           "name": "Jungle Recon Specialist",
@@ -1266,15 +1225,13 @@
             "CON": 0.2,
             "STR": 0.15
           },
-          "talentKeywords": [
-            "Camouflage",
-            "Ambush Specialist"
+          "notes": "Stealth-focused survivalist operating in hostile terrain.",
+          "talents": [
+            "e835b21a01ae2ee7"
           ],
-          "featKeywords": [
-            "Improved Stealth",
-            "Point Blank Shot"
-          ],
-          "notes": "Stealth-focused survivalist operating in hostile terrain."
+          "feats": [
+            "c301a0f533f15ce4"
+          ]
         },
         "forward_spotter": {
           "name": "Forward Spotter",
@@ -1296,15 +1253,12 @@
             "DEX": 0.2,
             "CON": 0.1
           },
-          "talentKeywords": [
-            "Reconnaissance",
-            "Tactical Coordination"
-          ],
-          "featKeywords": [
-            "Coordinated Attack",
-            "Skill Focus (Initiative)"
-          ],
-          "notes": "Battlefield surveillance and targeting coordinator."
+          "notes": "Battlefield surveillance and targeting coordinator.",
+          "talents": [],
+          "feats": [
+            "964f0781b3e3fc37",
+            "1592aaedf4b6e40a"
+          ]
         },
         "speeder_interceptor": {
           "name": "Speeder Interceptor",
@@ -1322,15 +1276,12 @@
             "CON": 0.3,
             "WIS": 0.25
           },
-          "talentKeywords": [
-            "Vehicle Dodge",
-            "Hot Rider"
-          ],
-          "featKeywords": [
-            "Vehicular Combat",
-            "Skill Focus (Pilot)"
-          ],
-          "notes": "High-speed speeder pursuit specialist."
+          "notes": "High-speed speeder pursuit specialist.",
+          "talents": [],
+          "feats": [
+            "1f2f70d34a17667d",
+            "1592aaedf4b6e40a"
+          ]
         },
         "survival_skirmisher": {
           "name": "Survival Skirmisher",
@@ -1348,15 +1299,14 @@
             "WIS": 0.35,
             "CON": 0.3
           },
-          "talentKeywords": [
-            "Skirmisher",
-            "Expert Tracker"
+          "notes": "Hybrid combat-survival specialist.",
+          "talents": [
+            "7b23e0812d6a8985",
+            "16e18057bc92365c"
           ],
-          "featKeywords": [
-            "Endurance",
-            "Mobility"
-          ],
-          "notes": "Hybrid combat-survival specialist."
+          "feats": [
+            "ff8eaa4e2f6d1cf1"
+          ]
         },
         "wilderness_survivalist": {
           "name": "Wilderness Survivalist",
@@ -1376,15 +1326,14 @@
             "CON": 0.25,
             "CHA": 0.1
           },
-          "talentKeywords": [
-            "Acute Senses",
-            "Expert Tracker"
+          "notes": "Environmental survival and exploration specialist.",
+          "talents": [
+            "f0166d26d9f6252a",
+            "16e18057bc92365c"
           ],
-          "featKeywords": [
-            "Skill Focus (Survival)",
-            "Endurance"
-          ],
-          "notes": "Environmental survival and exploration specialist."
+          "feats": [
+            "1592aaedf4b6e40a"
+          ]
         },
         "bounty_hunter_tracker": {
           "name": "Bounty Hunter Tracker",
@@ -1404,15 +1353,14 @@
             "INT": 0.2,
             "CON": 0.1
           },
-          "talentKeywords": [
-            "Expert Tracker",
-            "Camouflage"
+          "notes": "Relentless tracker specializing in single-target pursuits.",
+          "talents": [
+            "16e18057bc92365c"
           ],
-          "featKeywords": [
-            "Precise Shot",
-            "Quick Draw"
-          ],
-          "notes": "Relentless tracker specializing in single-target pursuits."
+          "feats": [
+            "c180eee7d3bc29b2",
+            "44705a692e2f01a6"
+          ]
         },
         "saboteur_infiltrator": {
           "name": "Saboteur Infiltrator",
@@ -1432,15 +1380,14 @@
             "WIS": 0.25,
             "CON": 0.1
           },
-          "talentKeywords": [
-            "Camouflage",
-            "Improved Stealth"
+          "notes": "Stealth-based sabotage and infrastructure disruption.",
+          "talents": [
+            "073115894cad8cf9"
           ],
-          "featKeywords": [
-            "Skill Focus (Mechanics)",
-            "Burst Fire"
-          ],
-          "notes": "Stealth-based sabotage and infrastructure disruption."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "0d4d7c147c48cdab"
+          ]
         },
         "outrider_scout": {
           "name": "Outrider Scout",
@@ -1460,15 +1407,14 @@
             "INT": 0.2,
             "CON": 0.15
           },
-          "talentKeywords": [
-            "Expert Rider",
-            "Terrain Guidance"
+          "notes": "Mounted or vehicular reconnaissance specialist.",
+          "talents": [
+            "b9169c3ac22d4652"
           ],
-          "featKeywords": [
-            "Vehicular Combat",
-            "Skill Focus (Pilot)"
-          ],
-          "notes": "Mounted or vehicular reconnaissance specialist."
+          "feats": [
+            "1f2f70d34a17667d",
+            "1592aaedf4b6e40a"
+          ]
         },
         "sniper_recon": {
           "name": "Sniper Recon",
@@ -1487,15 +1433,15 @@
             "WIS": 0.35,
             "CON": 0.2
           },
-          "talentKeywords": [
-            "Keen Shot",
-            "Improved Initiative"
+          "notes": "Long-range reconnaissance and elimination specialist.",
+          "talents": [
+            "aca0598e9b0eb935",
+            "9840f0e8b8f53bb5"
           ],
-          "featKeywords": [
-            "Deadeye",
-            "Sniper"
-          ],
-          "notes": "Long-range reconnaissance and elimination specialist."
+          "feats": [
+            "6e47c132fbedde08",
+            "56367f3943ee8c17"
+          ]
         },
         "guerilla_ambusher": {
           "name": "Guerilla Ambusher",
@@ -1515,15 +1461,12 @@
             "CON": 0.2,
             "INT": 0.1
           },
-          "talentKeywords": [
-            "Hidden Movement",
-            "Hunker Down"
+          "notes": "Terrain-based ambush and hit-and-run specialist.",
+          "talents": [
+            "d0dad96e182d63d4",
+            "11065e811d738b6e"
           ],
-          "featKeywords": [
-            "Improved Initiative",
-            "Grenades"
-          ],
-          "notes": "Terrain-based ambush and hit-and-run specialist."
+          "feats": []
         }
       }
     },
@@ -1550,15 +1493,14 @@
             "DEX": 0.2,
             "WIS": 0.1
           },
-          "talentKeywords": [
-            "Armored Defense",
-            "Meat Shield"
+          "notes": "Durable frontline soldier built to absorb punishment.",
+          "talents": [
+            "4c236343b01ea763"
           ],
-          "featKeywords": [
-            "Toughness",
-            "Improved Defenses"
-          ],
-          "notes": "Durable frontline soldier built to absorb punishment."
+          "feats": [
+            "11db29efd899c438",
+            "f8e2a30390d870e7"
+          ]
         },
         "heavy_gunner": {
           "name": "Heavy Gunner",
@@ -1580,15 +1522,12 @@
             "CON": 0.2,
             "WIS": 0.2
           },
-          "talentKeywords": [
-            "Autofire Assault",
-            "Suppressive Fire"
-          ],
-          "featKeywords": [
-            "Burst Fire",
-            "Point Blank Shot"
-          ],
-          "notes": "High-volume ranged damage dealer using autofire and suppression."
+          "notes": "High-volume ranged damage dealer using autofire and suppression.",
+          "talents": [],
+          "feats": [
+            "0d4d7c147c48cdab",
+            "c301a0f533f15ce4"
+          ]
         },
         "shock_trooper": {
           "name": "Shock Trooper",
@@ -1610,15 +1549,12 @@
             "CON": 0.25,
             "WIS": 0.15
           },
-          "talentKeywords": [
-            "Close Combat Specialist",
-            "Charging Fire"
-          ],
-          "featKeywords": [
-            "Rapid Assault",
-            "Point Blank Shot"
-          ],
-          "notes": "Aggressive close-range assault soldier."
+          "notes": "Aggressive close-range assault soldier.",
+          "talents": [],
+          "feats": [
+            "4be60753991eec43",
+            "c301a0f533f15ce4"
+          ]
         },
         "battlefield_controller": {
           "name": "Battlefield Controller",
@@ -1637,15 +1573,13 @@
             "DEX": 0.2,
             "CON": 0.1
           },
-          "talentKeywords": [
-            "Suppressive Fire",
-            "Cover Fire"
+          "notes": "Controls enemy movement and battlefield flow.",
+          "talents": [
+            "049820827d7ef32b"
           ],
-          "featKeywords": [
-            "Coordinated Attack",
-            "Improved Initiative"
-          ],
-          "notes": "Controls enemy movement and battlefield flow."
+          "feats": [
+            "964f0781b3e3fc37"
+          ]
         },
         "martial_specialist": {
           "name": "Martial Specialist",
@@ -1663,15 +1597,15 @@
             "DEX": 0.3,
             "CON": 0.3
           },
-          "talentKeywords": [
-            "Weapon Specialization",
-            "Devastating Attack"
+          "notes": "Weapon-focused frontline combatant.",
+          "talents": [
+            "869168cd679ee5d1",
+            "383915a7d11e1225"
           ],
-          "featKeywords": [
-            "Weapon Focus",
-            "Power Attack"
-          ],
-          "notes": "Weapon-focused frontline combatant."
+          "feats": [
+            "c41814601364b643",
+            "3f76464c43c73f84"
+          ]
         },
         "close_quarters_enforcer": {
           "name": "Close-Quarters Enforcer",
@@ -1689,15 +1623,14 @@
             "CON": 0.35,
             "DEX": 0.2
           },
-          "talentKeywords": [
-            "Melee Smash",
-            "Hammerblow"
+          "notes": "Brutal close-range enforcer.",
+          "talents": [
+            "e0ee525f4109cfde",
+            "4356ac9986934fbf"
           ],
-          "featKeywords": [
-            "Martial Arts",
-            "Improved Damage Threshold"
-          ],
-          "notes": "Brutal close-range enforcer."
+          "feats": [
+            "96666de28ba99b64"
+          ]
         },
         "bonecrusher_brawler": {
           "name": "Bonecrusher Brawler",
@@ -1715,15 +1648,14 @@
             "CON": 0.3,
             "DEX": 0.2
           },
-          "talentKeywords": [
-            "Hammerblow",
-            "Bonecrusher"
+          "notes": "Unarmed-heavy shock fighter focused on raw physical dominance.",
+          "talents": [
+            "4356ac9986934fbf"
           ],
-          "featKeywords": [
-            "Martial Arts II",
-            "Martial Arts III"
-          ],
-          "notes": "Unarmed-heavy shock fighter focused on raw physical dominance."
+          "feats": [
+            "5bedd71f0eead6b9",
+            "97dbebe63aa6af79"
+          ]
         },
         "covert_ops_commando": {
           "name": "Covert Ops Commando",
@@ -1743,16 +1675,16 @@
             "WIS": 0.2,
             "CON": 0.2
           },
-          "talentKeywords": [
-            "Ambush Specialist",
-            "Silent Takedown"
+          "notes": "Stealth-focused military infiltrator and special forces operative.",
+          "talents": [
+            "e835b21a01ae2ee7",
+            "b1960cbc28776a53"
           ],
-          "featKeywords": [
-            "Skill Training (Stealth)",
-            "Point Blank Shot",
-            "Precise Shot"
-          ],
-          "notes": "Stealth-focused military infiltrator and special forces operative."
+          "feats": [
+            "a9f6de36f24ef202",
+            "c301a0f533f15ce4",
+            "c180eee7d3bc29b2"
+          ]
         },
         "heavy_weapons_specialist": {
           "name": "Heavy Weapons Specialist",
@@ -1772,15 +1704,14 @@
             "DEX": 0.2,
             "WIS": 0.1
           },
-          "talentKeywords": [
-            "Devastating Attack",
-            "Barrage"
+          "notes": "Walking arsenal providing overwhelming firepower and suppression.",
+          "talents": [
+            "383915a7d11e1225"
           ],
-          "featKeywords": [
-            "Weapon Focus (Heavy Weapons)",
-            "Burst Fire"
-          ],
-          "notes": "Walking arsenal providing overwhelming firepower and suppression."
+          "feats": [
+            "c41814601364b643",
+            "0d4d7c147c48cdab"
+          ]
         },
         "tactical_officer": {
           "name": "Tactical Officer",
@@ -1800,15 +1731,15 @@
             "WIS": 0.2,
             "DEX": 0.1
           },
-          "talentKeywords": [
-            "Coordinate",
-            "Focused Targeting"
+          "notes": "Small-unit leader specializing in coordination and battlefield command.",
+          "talents": [
+            "a52044feeab3fe05",
+            "6c52d837af948ca0"
           ],
-          "featKeywords": [
-            "Coordinated Attack",
-            "Skill Focus (Knowledge: Tactics)"
-          ],
-          "notes": "Small-unit leader specializing in coordination and battlefield command."
+          "feats": [
+            "964f0781b3e3fc37",
+            "1592aaedf4b6e40a"
+          ]
         },
         "martial_arts_specialist": {
           "name": "Martial Arts Specialist",
@@ -1828,16 +1759,16 @@
             "CON": 0.2,
             "WIS": 0.1
           },
-          "talentKeywords": [
-            "Melee Smash",
-            "Hammerblow"
+          "notes": "Close-combat specialist relying on unarmed and melee techniques.",
+          "talents": [
+            "e0ee525f4109cfde",
+            "4356ac9986934fbf"
           ],
-          "featKeywords": [
-            "Martial Arts I",
-            "Martial Arts II",
-            "Combat Reflexes"
-          ],
-          "notes": "Close-combat specialist relying on unarmed and melee techniques."
+          "feats": [
+            "92f927c92ded9fcf",
+            "5bedd71f0eead6b9",
+            "7146640744fdf052"
+          ]
         },
         "bodyguard_defender": {
           "name": "Bodyguard Defender",
@@ -1857,15 +1788,15 @@
             "WIS": 0.2,
             "DEX": 0.1
           },
-          "talentKeywords": [
-            "Draw Fire",
-            "Improved Armored Defense"
+          "notes": "Dedicated protector focused on intercepting damage and guarding allies.",
+          "talents": [
+            "f29d5c0628459c94",
+            "394809ed8baff1b9"
           ],
-          "featKeywords": [
-            "Toughness",
-            "Improved Damage Threshold"
-          ],
-          "notes": "Dedicated protector focused on intercepting damage and guarding allies."
+          "feats": [
+            "11db29efd899c438",
+            "96666de28ba99b64"
+          ]
         }
       }
     },
@@ -1873,7 +1804,7 @@
       "displayName": "Imperial Knight",
       "archetypes": {
         "emperors_shield": {
-          "name": "Emperor’s Shield",
+          "name": "Emperor\u2019s Shield",
           "status": "active",
           "mechanicalBias": {
             "frontline_damage": 0.4,
@@ -1892,18 +1823,16 @@
             "WIS": 0.2,
             "STR": 0.1
           },
-          "talentKeywords": [
-            "Block",
-            "Deflect",
-            "Armor Mastery",
-            "Oath of Duty"
+          "notes": "Defensive Imperial Knight bodyguard archetype.",
+          "talents": [
+            "9379daa94a228c04",
+            "72c644f7a09b1186",
+            "d9e707f23fffc2af",
+            "001ae84d5862af55"
           ],
-          "featKeywords": [
-            "Bodyguard",
-            "Armor Proficiency",
-            "Force Training"
-          ],
-          "notes": "Defensive Imperial Knight bodyguard archetype."
+          "feats": [
+            "9b7b869a86f39190"
+          ]
         },
         "knight_inquisitor": {
           "name": "Knight Inquisitor",
@@ -1925,18 +1854,16 @@
             "STR": 0.2,
             "CON": 0.15
           },
-          "talentKeywords": [
-            "Block",
-            "Deflect",
-            "Resist Force",
-            "Redirect Shot"
+          "notes": "Anti\u2013Force-user hunter and duelist.",
+          "talents": [
+            "9379daa94a228c04",
+            "72c644f7a09b1186",
+            "941c1dfd00e697da"
           ],
-          "featKeywords": [
-            "Sith Hunter",
-            "Weapon Focus",
-            "Skill Focus (Use the Force)"
-          ],
-          "notes": "Anti–Force-user hunter and duelist."
+          "feats": [
+            "c41814601364b643",
+            "1592aaedf4b6e40a"
+          ]
         },
         "errant_knight": {
           "name": "Errant Knight",
@@ -1958,16 +1885,15 @@
             "DEX": 0.2,
             "CON": 0.2
           },
-          "talentKeywords": [
-            "Deflect",
-            "Sense Surroundings",
-            "Improved Initiative"
+          "notes": "Independent Imperial Knight operative.",
+          "talents": [
+            "72c644f7a09b1186",
+            "9840f0e8b8f53bb5"
           ],
-          "featKeywords": [
-            "Force Training",
-            "Rapid Reaction"
-          ],
-          "notes": "Independent Imperial Knight operative."
+          "feats": [
+            "9b7b869a86f39190",
+            "12d064d086102ff0"
+          ]
         },
         "imperial_knight_inquisitor": {
           "name": "Imperial Knight Inquisitor",
@@ -1987,15 +1913,15 @@
             "DEX": 0.2,
             "CON": 0.15
           },
-          "talentKeywords": [
-            "Force Perception",
-            "Dark Side Sense"
+          "notes": "Imperial Knight specializing in rooting out Force threats and corruption.",
+          "talents": [
+            "a358402a9fc26c02",
+            "e885f64758f5e2bd"
           ],
-          "featKeywords": [
-            "Skill Focus (Use the Force)",
-            "Force Training"
-          ],
-          "notes": "Imperial Knight specializing in rooting out Force threats and corruption."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "9b7b869a86f39190"
+          ]
         },
         "imperial_knight_errant": {
           "name": "Imperial Knight Errant",
@@ -2015,15 +1941,14 @@
             "WIS": 0.25,
             "CON": 0.15
           },
-          "talentKeywords": [
-            "Force Trance",
-            "Skirmisher"
+          "notes": "Independent Imperial Knight acting beyond strict court duties.",
+          "talents": [
+            "7b23e0812d6a8985"
           ],
-          "featKeywords": [
-            "Mobility",
-            "Force Training"
-          ],
-          "notes": "Independent Imperial Knight acting beyond strict court duties."
+          "feats": [
+            "ff8eaa4e2f6d1cf1",
+            "9b7b869a86f39190"
+          ]
         }
       }
     },
@@ -2048,15 +1973,14 @@
             "WIS": 0.25,
             "CON": 0.15
           },
-          "talentKeywords": [
-            "Battle Meditation",
-            "Coordinate"
+          "notes": "Jedi Knight who commands and coordinates allies in combat.",
+          "talents": [
+            "9461c7aa79dd07c6",
+            "a52044feeab3fe05"
           ],
-          "featKeywords": [
-            "Leadership",
-            "Weapon Focus (Lightsabers)"
-          ],
-          "notes": "Jedi Knight who commands and coordinates allies in combat."
+          "feats": [
+            "c41814601364b643"
+          ]
         },
         "force_duelist": {
           "name": "Force Duelist",
@@ -2075,15 +1999,14 @@
             "CON": 0.2,
             "CHA": 0.1
           },
-          "talentKeywords": [
-            "Deflect",
-            "Acrobatic Strike"
+          "notes": "Elite Force-enhanced duelist focused on one-on-one combat.",
+          "talents": [
+            "72c644f7a09b1186"
           ],
-          "featKeywords": [
-            "Weapon Finesse",
-            "Rapid Strike"
-          ],
-          "notes": "Elite Force-enhanced duelist focused on one-on-one combat."
+          "feats": [
+            "252b67d6e31c377e",
+            "ccb33e58342499a3"
+          ]
         },
         "lightsaber_vanguard": {
           "name": "Lightsaber Vanguard",
@@ -2103,15 +2026,15 @@
             "CON": 0.2,
             "WIS": 0.15
           },
-          "talentKeywords": [
-            "Block",
-            "Deflect"
+          "notes": "Frontline assault Jedi leading charges with lightsaber mastery.",
+          "talents": [
+            "9379daa94a228c04",
+            "72c644f7a09b1186"
           ],
-          "featKeywords": [
-            "Weapon Specialization (Lightsabers)",
-            "Power Attack"
-          ],
-          "notes": "Frontline assault Jedi leading charges with lightsaber mastery."
+          "feats": [
+            "7cd5ebe725910cb2",
+            "3f76464c43c73f84"
+          ]
         },
         "jedi_shadow": {
           "name": "Jedi Shadow",
@@ -2131,15 +2054,15 @@
             "INT": 0.2,
             "CHA": 0.1
           },
-          "talentKeywords": [
-            "Dark Deception",
-            "Difficult to Sense"
+          "notes": "Advanced covert Jedi specializing in hunting Dark Side threats.",
+          "talents": [
+            "d1561acfdeac3d78",
+            "8c47c02ec74fa858"
           ],
-          "featKeywords": [
-            "Skill Focus (Stealth)",
-            "Force Training"
-          ],
-          "notes": "Advanced covert Jedi specializing in hunting Dark Side threats."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "9b7b869a86f39190"
+          ]
         },
         "jedi_watchman": {
           "name": "Jedi Watchman",
@@ -2159,15 +2082,15 @@
             "INT": 0.25,
             "CHA": 0.15
           },
-          "talentKeywords": [
-            "Force Perception",
-            "Skilled Advisor"
+          "notes": "Urban investigator and Jedi intelligence operative.",
+          "talents": [
+            "a358402a9fc26c02",
+            "35cbdbe9c91ba1d0"
           ],
-          "featKeywords": [
-            "Skill Focus (Perception)",
-            "Skill Focus (Stealth)"
-          ],
-          "notes": "Urban investigator and Jedi intelligence operative."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "1592aaedf4b6e40a"
+          ]
         },
         "jedi_battlemaster": {
           "name": "Jedi Battlemaster",
@@ -2188,15 +2111,14 @@
             "WIS": 0.25,
             "CON": 0.15
           },
-          "talentKeywords": [
-            "Battle Meditation",
-            "Defensive Circle"
+          "notes": "Elite Jedi combat commander and instructor.",
+          "talents": [
+            "9461c7aa79dd07c6",
+            "d838141fe404a9fb"
           ],
-          "featKeywords": [
-            "Weapon Focus (Lightsabers)",
-            "Leadership"
-          ],
-          "notes": "Elite Jedi combat commander and instructor."
+          "feats": [
+            "c41814601364b643"
+          ]
         }
       }
     },
@@ -2220,15 +2142,12 @@
             "CHA": 0.35,
             "CON": 0.2
           },
-          "talentKeywords": [
-            "Force Mastery",
-            "Force Boon"
-          ],
-          "featKeywords": [
-            "Force Training",
-            "Skill Focus (Use the Force)"
-          ],
-          "notes": "Peak embodiment of Force mastery and balance."
+          "notes": "Peak embodiment of Force mastery and balance.",
+          "talents": [],
+          "feats": [
+            "9b7b869a86f39190",
+            "1592aaedf4b6e40a"
+          ]
         },
         "battle_sage": {
           "name": "Battle Sage",
@@ -2247,15 +2166,15 @@
             "INT": 0.3,
             "CHA": 0.3
           },
-          "talentKeywords": [
-            "Battle Meditation",
-            "Battle Analysis"
+          "notes": "Strategist blending Force insight with battlefield command.",
+          "talents": [
+            "9461c7aa79dd07c6",
+            "7df2e8e4f18dc909"
           ],
-          "featKeywords": [
-            "Force Training",
-            "Skill Focus (Knowledge: Tactics)"
-          ],
-          "notes": "Strategist blending Force insight with battlefield command."
+          "feats": [
+            "9b7b869a86f39190",
+            "1592aaedf4b6e40a"
+          ]
         },
         "spiritual_guide": {
           "name": "Spiritual Guide",
@@ -2274,15 +2193,14 @@
             "CHA": 0.35,
             "INT": 0.25
           },
-          "talentKeywords": [
-            "Inspire Confidence",
-            "Empathy"
+          "notes": "Mentor-focused Jedi Master guiding allies and students.",
+          "talents": [
+            "4d8882a28da30454"
           ],
-          "featKeywords": [
-            "Skill Focus (Persuasion)",
-            "Force Training"
-          ],
-          "notes": "Mentor-focused Jedi Master guiding allies and students."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "9b7b869a86f39190"
+          ]
         }
       }
     },
@@ -2307,15 +2225,12 @@
             "CON": 0.15,
             "DEX": 0.1
           },
-          "talentKeywords": [
-            "Dark Rage",
-            "Force Lightning"
-          ],
-          "featKeywords": [
-            "Force Training",
-            "Skill Focus (Use the Force)"
-          ],
-          "notes": "Force-focused Sith devoted to raw dark side power."
+          "notes": "Force-focused Sith devoted to raw dark side power.",
+          "talents": [],
+          "feats": [
+            "9b7b869a86f39190",
+            "1592aaedf4b6e40a"
+          ]
         },
         "aggressive_disciple": {
           "name": "Aggressive Disciple",
@@ -2335,15 +2250,12 @@
             "WIS": 0.25,
             "CON": 0.15
           },
-          "talentKeywords": [
-            "Dark Rage",
-            "Powerful Charge"
-          ],
-          "featKeywords": [
-            "Power Attack",
-            "Weapon Focus (Lightsabers)"
-          ],
-          "notes": "Violent Sith apprentice emphasizing lightsaber aggression."
+          "notes": "Violent Sith apprentice emphasizing lightsaber aggression.",
+          "talents": [],
+          "feats": [
+            "3f76464c43c73f84",
+            "c41814601364b643"
+          ]
         },
         "manipulative_student": {
           "name": "Manipulative Student",
@@ -2362,15 +2274,14 @@
             "WIS": 0.3,
             "INT": 0.25
           },
-          "talentKeywords": [
-            "Mind Trick",
-            "Force Persuasion"
+          "notes": "Scheming Sith using deception and influence to control others.",
+          "talents": [
+            "d1fd547124c1901c"
           ],
-          "featKeywords": [
-            "Skill Focus (Persuasion)",
-            "Force Training"
-          ],
-          "notes": "Scheming Sith using deception and influence to control others."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "9b7b869a86f39190"
+          ]
         }
       }
     },
@@ -2394,15 +2305,12 @@
             "CHA": 0.35,
             "CON": 0.25
           },
-          "talentKeywords": [
-            "Force Domination",
-            "Dark Side Mastery"
-          ],
-          "featKeywords": [
-            "Force Training",
-            "Skill Focus (Use the Force)"
-          ],
-          "notes": "Authoritative Sith ruler dominating through the Force."
+          "notes": "Authoritative Sith ruler dominating through the Force.",
+          "talents": [],
+          "feats": [
+            "9b7b869a86f39190",
+            "1592aaedf4b6e40a"
+          ]
         },
         "force_tyrant": {
           "name": "Force Tyrant",
@@ -2421,15 +2329,12 @@
             "CON": 0.3,
             "CHA": 0.3
           },
-          "talentKeywords": [
-            "Force Lightning Storm",
-            "Force Crush"
-          ],
-          "featKeywords": [
-            "Force Training",
-            "Improved Damage Threshold"
-          ],
-          "notes": "Sith who rules through overwhelming destructive power."
+          "notes": "Sith who rules through overwhelming destructive power.",
+          "talents": [],
+          "feats": [
+            "9b7b869a86f39190",
+            "96666de28ba99b64"
+          ]
         },
         "master_manipulator": {
           "name": "Master Manipulator",
@@ -2448,15 +2353,15 @@
             "INT": 0.3,
             "WIS": 0.25
           },
-          "talentKeywords": [
-            "Mind Probe",
-            "Dark Deception"
+          "notes": "Grand strategist Sith operating through schemes and proxies.",
+          "talents": [
+            "ccaa66ed749e3317",
+            "d1561acfdeac3d78"
           ],
-          "featKeywords": [
-            "Skill Focus (Persuasion)",
-            "Force Training"
-          ],
-          "notes": "Grand strategist Sith operating through schemes and proxies."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "9b7b869a86f39190"
+          ]
         },
         "sith_sorcerer": {
           "name": "Sith Sorcerer",
@@ -2474,15 +2379,12 @@
             "CHA": 0.35,
             "INT": 0.2
           },
-          "talentKeywords": [
-            "Dark Ritual",
-            "Force Domination"
-          ],
-          "featKeywords": [
-            "Force Training",
-            "Skill Focus (Use the Force)"
-          ],
-          "notes": "Ritual-focused Sith manipulating the Force on a grand scale."
+          "notes": "Ritual-focused Sith manipulating the Force on a grand scale.",
+          "talents": [],
+          "feats": [
+            "9b7b869a86f39190",
+            "1592aaedf4b6e40a"
+          ]
         }
       }
     },
@@ -2505,15 +2407,14 @@
             "DEX": 0.35,
             "CON": 0.25
           },
-          "talentKeywords": [
-            "Expert Tracker",
-            "Hunter's Mark"
+          "notes": "Classic pursuit-focused bounty hunter.",
+          "talents": [
+            "16e18057bc92365c",
+            "74fb6b37af983a4c"
           ],
-          "featKeywords": [
-            "Skill Focus (Survival)",
-            "Endurance"
-          ],
-          "notes": "Classic pursuit-focused bounty hunter."
+          "feats": [
+            "1592aaedf4b6e40a"
+          ]
         },
         "guns_for_hire": {
           "name": "Guns-for-Hire",
@@ -2532,15 +2433,14 @@
             "STR": 0.2,
             "WIS": 0.1
           },
-          "talentKeywords": [
-            "Debilitating Shot",
-            "Quick Draw"
+          "notes": "Combat-first bounty hunter motivated by contracts and pay.",
+          "talents": [
+            "52f51a77fd60f56f"
           ],
-          "featKeywords": [
-            "Point Blank Shot",
-            "Precise Shot"
-          ],
-          "notes": "Combat-first bounty hunter motivated by contracts and pay."
+          "feats": [
+            "c301a0f533f15ce4",
+            "c180eee7d3bc29b2"
+          ]
         },
         "close_quarters_enforcer": {
           "name": "Close-Quarters Enforcer",
@@ -2558,15 +2458,14 @@
             "CON": 0.35,
             "DEX": 0.2
           },
-          "talentKeywords": [
-            "Melee Smash",
-            "Hammerblow"
+          "notes": "Close-range capture and intimidation specialist.",
+          "talents": [
+            "e0ee525f4109cfde",
+            "4356ac9986934fbf"
           ],
-          "featKeywords": [
-            "Martial Arts",
-            "Improved Damage Threshold"
-          ],
-          "notes": "Close-range capture and intimidation specialist."
+          "feats": [
+            "96666de28ba99b64"
+          ]
         },
         "tech_hunter": {
           "name": "Tech Hunter",
@@ -2584,15 +2483,14 @@
             "DEX": 0.3,
             "WIS": 0.25
           },
-          "talentKeywords": [
-            "Personalized Mods",
-            "Hot Wire"
+          "notes": "Technology-driven hunter relying on gadgets and traps.",
+          "talents": [
+            "d2b9069670413a43"
           ],
-          "featKeywords": [
-            "Skill Focus (Mechanics)",
-            "Tech Specialist"
-          ],
-          "notes": "Technology-driven hunter relying on gadgets and traps."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "42e2404790756700"
+          ]
         },
         "silent_tracker": {
           "name": "Silent Tracker",
@@ -2612,15 +2510,15 @@
             "CON": 0.2,
             "INT": 0.1
           },
-          "talentKeywords": [
-            "Expert Tracker",
-            "Hunter's Mark"
+          "notes": "Stealth-focused hunter specializing in pursuit and capture.",
+          "talents": [
+            "16e18057bc92365c",
+            "74fb6b37af983a4c"
           ],
-          "featKeywords": [
-            "Skill Focus (Survival)",
-            "Sniper"
-          ],
-          "notes": "Stealth-focused hunter specializing in pursuit and capture."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "56367f3943ee8c17"
+          ]
         },
         "gunslinger_hunter": {
           "name": "Gunslinger Hunter",
@@ -2640,15 +2538,14 @@
             "STR": 0.2,
             "WIS": 0.15
           },
-          "talentKeywords": [
-            "Debilitating Shot",
-            "Crippling Shot"
+          "notes": "Combat-heavy bounty hunter relying on speed and firepower.",
+          "talents": [
+            "52f51a77fd60f56f"
           ],
-          "featKeywords": [
-            "Quick Draw",
-            "Precise Shot"
-          ],
-          "notes": "Combat-heavy bounty hunter relying on speed and firepower."
+          "feats": [
+            "44705a692e2f01a6",
+            "c180eee7d3bc29b2"
+          ]
         },
         "tech_bounty_hunter": {
           "name": "Tech Bounty Hunter",
@@ -2668,15 +2565,14 @@
             "WIS": 0.2,
             "CON": 0.1
           },
-          "talentKeywords": [
-            "Personalized Mods",
-            "Hot Wire"
+          "notes": "Gadget-focused hunter using technology and traps to secure targets.",
+          "talents": [
+            "d2b9069670413a43"
           ],
-          "featKeywords": [
-            "Tech Specialist",
-            "Skill Focus (Mechanics)"
-          ],
-          "notes": "Gadget-focused hunter using technology and traps to secure targets."
+          "feats": [
+            "42e2404790756700",
+            "1592aaedf4b6e40a"
+          ]
         }
       }
     },
@@ -2699,15 +2595,11 @@
             "CHA": 0.3,
             "CON": 0.25
           },
-          "talentKeywords": [
-            "Quick Draw",
-            "Reputation"
-          ],
-          "featKeywords": [
-            "Point Blank Shot",
-            "Improved Initiative"
-          ],
-          "notes": "Feared and famous gunfighter with a deadly reputation."
+          "notes": "Feared and famous gunfighter with a deadly reputation.",
+          "talents": [],
+          "feats": [
+            "c301a0f533f15ce4"
+          ]
         },
         "precision_shooter": {
           "name": "Precision Shooter",
@@ -2725,15 +2617,12 @@
             "WIS": 0.3,
             "CON": 0.2
           },
-          "talentKeywords": [
-            "Deadeye",
-            "Aim"
-          ],
-          "featKeywords": [
-            "Far Shot",
-            "Sniper"
-          ],
-          "notes": "Accuracy-focused marksman emphasizing perfect shots."
+          "notes": "Accuracy-focused marksman emphasizing perfect shots.",
+          "talents": [],
+          "feats": [
+            "b5a8d5899e02139c",
+            "56367f3943ee8c17"
+          ]
         },
         "dual_wield_specialist": {
           "name": "Dual-Wield Specialist",
@@ -2751,15 +2640,11 @@
             "CON": 0.3,
             "STR": 0.25
           },
-          "talentKeywords": [
-            "Two-Weapon Fighting",
-            "Rapid Shot"
-          ],
-          "featKeywords": [
-            "Dual Weapon Mastery",
-            "Quick Draw"
-          ],
-          "notes": "High-rate dual-pistol specialist."
+          "notes": "High-rate dual-pistol specialist.",
+          "talents": [],
+          "feats": [
+            "44705a692e2f01a6"
+          ]
         },
         "duelist_gunslinger": {
           "name": "Duelist Gunslinger",
@@ -2777,15 +2662,14 @@
             "CHA": 0.3,
             "CON": 0.25
           },
-          "talentKeywords": [
-            "Quick Draw",
-            "Debilitating Shot"
+          "notes": "Fast-draw pistol duelist focused on lethal accuracy.",
+          "talents": [
+            "52f51a77fd60f56f"
           ],
-          "featKeywords": [
-            "Point Blank Shot",
-            "Precise Shot"
-          ],
-          "notes": "Fast-draw pistol duelist focused on lethal accuracy."
+          "feats": [
+            "c301a0f533f15ce4",
+            "c180eee7d3bc29b2"
+          ]
         },
         "trick_shooter": {
           "name": "Trick Shooter",
@@ -2804,15 +2688,11 @@
             "INT": 0.3,
             "CHA": 0.3
           },
-          "talentKeywords": [
-            "Trick Shot",
-            "Ricochet"
-          ],
-          "featKeywords": [
-            "Precise Shot",
-            "Improved Initiative"
-          ],
-          "notes": "Creative shooter manipulating the battlefield with precision shots."
+          "notes": "Creative shooter manipulating the battlefield with precision shots.",
+          "talents": [],
+          "feats": [
+            "c180eee7d3bc29b2"
+          ]
         },
         "precision_marksman": {
           "name": "Precision Marksman",
@@ -2830,15 +2710,12 @@
             "WIS": 0.3,
             "CON": 0.2
           },
-          "talentKeywords": [
-            "Deadeye",
-            "Sniper Shot"
-          ],
-          "featKeywords": [
-            "Sniper",
-            "Far Shot"
-          ],
-          "notes": "Long-range firearm specialist delivering surgical kills."
+          "notes": "Long-range firearm specialist delivering surgical kills.",
+          "talents": [],
+          "feats": [
+            "56367f3943ee8c17",
+            "b5a8d5899e02139c"
+          ]
         }
       }
     },
@@ -2861,15 +2738,13 @@
             "INT": 0.35,
             "WIS": 0.2
           },
-          "talentKeywords": [
-            "Command Minions",
-            "Inspire Fear"
+          "notes": "Supreme authority over a criminal empire, ruling through fear and loyalty.",
+          "talents": [
+            "585227ba15d24a37"
           ],
-          "featKeywords": [
-            "Leadership",
-            "Skill Focus (Persuasion)"
-          ],
-          "notes": "Supreme authority over a criminal empire, ruling through fear and loyalty."
+          "feats": [
+            "1592aaedf4b6e40a"
+          ]
         },
         "shadow_broker": {
           "name": "Shadow Broker",
@@ -2887,15 +2762,12 @@
             "CHA": 0.35,
             "WIS": 0.2
           },
-          "talentKeywords": [
-            "Blackmail",
-            "Network of Spies"
-          ],
-          "featKeywords": [
-            "Skill Focus (Deception)",
-            "Skill Focus (Persuasion)"
-          ],
-          "notes": "Dealer of secrets and intelligence, manipulating events from the shadows."
+          "notes": "Dealer of secrets and intelligence, manipulating events from the shadows.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a",
+            "1592aaedf4b6e40a"
+          ]
         },
         "criminal_mastermind": {
           "name": "Criminal Mastermind",
@@ -2913,15 +2785,11 @@
             "CHA": 0.3,
             "WIS": 0.2
           },
-          "talentKeywords": [
-            "Perfect Plan",
-            "Contingency"
-          ],
-          "featKeywords": [
-            "Skill Focus (Knowledge)",
-            "Leadership"
-          ],
-          "notes": "Strategic architect of criminal operations and long-term schemes."
+          "notes": "Strategic architect of criminal operations and long-term schemes.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a"
+          ]
         },
         "gang_leader": {
           "name": "Gang Leader",
@@ -2939,15 +2807,13 @@
             "STR": 0.3,
             "CON": 0.3
           },
-          "talentKeywords": [
-            "Lead from the Front",
-            "Inspire Fear"
+          "notes": "Hands-on boss who commands through presence and violence.",
+          "talents": [
+            "585227ba15d24a37"
           ],
-          "featKeywords": [
-            "Leadership",
-            "Toughness"
-          ],
-          "notes": "Hands-on boss who commands through presence and violence."
+          "feats": [
+            "11db29efd899c438"
+          ]
         },
         "smuggling_kingpin": {
           "name": "Smuggling Kingpin",
@@ -2965,15 +2831,14 @@
             "CHA": 0.4,
             "WIS": 0.2
           },
-          "talentKeywords": [
-            "Connections",
-            "Logistics"
+          "notes": "Controls illicit trade routes and black-market logistics.",
+          "talents": [
+            "e58a8ad63c1d8771"
           ],
-          "featKeywords": [
-            "Skill Focus (Pilot)",
-            "Skill Focus (Persuasion)"
-          ],
-          "notes": "Controls illicit trade routes and black-market logistics."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "1592aaedf4b6e40a"
+          ]
         },
         "information_broker": {
           "name": "Information Broker",
@@ -2991,15 +2856,12 @@
             "CHA": 0.35,
             "WIS": 0.2
           },
-          "talentKeywords": [
-            "Intel Network",
-            "Blackmail"
-          ],
-          "featKeywords": [
-            "Skill Focus (Use Computer)",
-            "Skill Focus (Deception)"
-          ],
-          "notes": "Pure information-focused criminal operator."
+          "notes": "Pure information-focused criminal operator.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a",
+            "1592aaedf4b6e40a"
+          ]
         },
         "information_broker__shadow_master": {
           "name": "Information Broker / Shadow Master",
@@ -3007,9 +2869,9 @@
           "mechanicalBias": {},
           "roleBias": {},
           "attributeBias": {},
-          "talentKeywords": [],
-          "featKeywords": [],
-          "notes": ""
+          "notes": "",
+          "talents": [],
+          "feats": []
         }
       }
     },
@@ -3032,15 +2894,14 @@
             "CON": 0.35,
             "DEX": 0.25
           },
-          "talentKeywords": [
-            "Devastating Attack",
-            "Barrage"
+          "notes": "Overwhelming firepower shock trooper.",
+          "talents": [
+            "383915a7d11e1225"
           ],
-          "featKeywords": [
-            "Burst Fire",
-            "Weapon Focus (Heavy Weapons)"
-          ],
-          "notes": "Overwhelming firepower shock trooper."
+          "feats": [
+            "0d4d7c147c48cdab",
+            "c41814601364b643"
+          ]
         },
         "shock_commander": {
           "name": "Shock Commander",
@@ -3059,15 +2920,11 @@
             "CON": 0.25,
             "WIS": 0.1
           },
-          "talentKeywords": [
-            "Lead the Charge",
-            "Momentum"
-          ],
-          "featKeywords": [
-            "Leadership",
-            "Coordinated Attack"
-          ],
-          "notes": "Elite frontline commander leading assault units."
+          "notes": "Elite frontline commander leading assault units.",
+          "talents": [],
+          "feats": [
+            "964f0781b3e3fc37"
+          ]
         },
         "elite_enforcer": {
           "name": "Elite Enforcer",
@@ -3085,15 +2942,13 @@
             "CON": 0.35,
             "DEX": 0.25
           },
-          "talentKeywords": [
-            "Melee Smash",
-            "Intercept Attack"
+          "notes": "High-threat personal enforcer for elite operations.",
+          "talents": [
+            "e0ee525f4109cfde"
           ],
-          "featKeywords": [
-            "Martial Arts",
-            "Improved Damage Threshold"
-          ],
-          "notes": "High-threat personal enforcer for elite operations."
+          "feats": [
+            "96666de28ba99b64"
+          ]
         },
         "specops_commando": {
           "name": "SpecOps Commando",
@@ -3113,15 +2968,15 @@
             "WIS": 0.2,
             "CON": 0.2
           },
-          "talentKeywords": [
-            "Ambush Specialist",
-            "Blind Shot"
+          "notes": "Elite special forces operative for covert strike missions.",
+          "talents": [
+            "e835b21a01ae2ee7",
+            "bb484bdbc96c96ad"
           ],
-          "featKeywords": [
-            "Skill Focus (Stealth)",
-            "Point Blank Shot"
-          ],
-          "notes": "Elite special forces operative for covert strike missions."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "c301a0f533f15ce4"
+          ]
         },
         "bodyguard_enforcer": {
           "name": "Bodyguard Enforcer",
@@ -3141,15 +2996,14 @@
             "WIS": 0.2,
             "DEX": 0.1
           },
-          "talentKeywords": [
-            "Draw Fire",
-            "Intercept Attack"
+          "notes": "Elite protector and high-threat enforcer.",
+          "talents": [
+            "f29d5c0628459c94"
           ],
-          "featKeywords": [
-            "Toughness",
-            "Improved Damage Threshold"
-          ],
-          "notes": "Elite protector and high-threat enforcer."
+          "feats": [
+            "11db29efd899c438",
+            "96666de28ba99b64"
+          ]
         },
         "heavy_weapons_specialist": {
           "name": "Heavy Weapons Specialist",
@@ -3168,15 +3022,15 @@
             "DEX": 0.2,
             "WIS": 0.1
           },
-          "talentKeywords": [
-            "Devastating Attack",
-            "Cover Fire"
+          "notes": "Maximum firepower shock trooper.",
+          "talents": [
+            "383915a7d11e1225",
+            "049820827d7ef32b"
           ],
-          "featKeywords": [
-            "Burst Fire",
-            "Weapon Focus (Heavy Weapons)"
-          ],
-          "notes": "Maximum firepower shock trooper."
+          "feats": [
+            "0d4d7c147c48cdab",
+            "c41814601364b643"
+          ]
         },
         "infiltrator": {
           "name": "Infiltrator",
@@ -3196,15 +3050,15 @@
             "INT": 0.25,
             "CON": 0.1
           },
-          "talentKeywords": [
-            "Hidden Movement",
-            "Silent Takedown"
+          "notes": "Stealth-focused elite trooper for deep infiltration.",
+          "talents": [
+            "d0dad96e182d63d4",
+            "b1960cbc28776a53"
           ],
-          "featKeywords": [
-            "Skill Focus (Stealth)",
-            "Quick Draw"
-          ],
-          "notes": "Stealth-focused elite trooper for deep infiltration."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "44705a692e2f01a6"
+          ]
         },
         "sharpshooter": {
           "name": "Sharpshooter",
@@ -3222,15 +3076,14 @@
             "WIS": 0.35,
             "CON": 0.2
           },
-          "talentKeywords": [
-            "Deadeye",
-            "Improved Initiative"
+          "notes": "Elite long-range marksman eliminating priority targets.",
+          "talents": [
+            "9840f0e8b8f53bb5"
           ],
-          "featKeywords": [
-            "Sniper",
-            "Far Shot"
-          ],
-          "notes": "Elite long-range marksman eliminating priority targets."
+          "feats": [
+            "56367f3943ee8c17",
+            "b5a8d5899e02139c"
+          ]
         }
       }
     },
@@ -3253,15 +3106,12 @@
             "INT": 0.3,
             "WIS": 0.25
           },
-          "talentKeywords": [
-            "Dogfighter",
-            "Evasive Action"
-          ],
-          "featKeywords": [
-            "Vehicular Combat",
-            "Skill Focus (Pilot)"
-          ],
-          "notes": "Pure starfighter duel specialist."
+          "notes": "Pure starfighter duel specialist.",
+          "talents": [],
+          "feats": [
+            "1f2f70d34a17667d",
+            "1592aaedf4b6e40a"
+          ]
         },
         "interceptor_ace": {
           "name": "Interceptor Ace",
@@ -3279,15 +3129,13 @@
             "CON": 0.3,
             "WIS": 0.25
           },
-          "talentKeywords": [
-            "Pursuit",
-            "Afterburn"
+          "notes": "High-speed pursuit and interception specialist.",
+          "talents": [
+            "25f285b1cf4cff35"
           ],
-          "featKeywords": [
-            "Vehicular Combat",
-            "Improved Vehicular Combat"
-          ],
-          "notes": "High-speed pursuit and interception specialist."
+          "feats": [
+            "1f2f70d34a17667d"
+          ]
         },
         "daredevil_pilot": {
           "name": "Daredevil Pilot",
@@ -3305,15 +3153,11 @@
             "CON": 0.3,
             "WIS": 0.2
           },
-          "talentKeywords": [
-            "Push the Limits",
-            "Trick Pilot"
-          ],
-          "featKeywords": [
-            "Improved Vehicular Combat",
-            "Skill Focus (Pilot)"
-          ],
-          "notes": "Extreme-risk pilot performing dangerous maneuvers."
+          "notes": "Extreme-risk pilot performing dangerous maneuvers.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a"
+          ]
         },
         "starfighter_ace": {
           "name": "Starfighter Ace",
@@ -3332,15 +3176,12 @@
             "INT": 0.3,
             "WIS": 0.25
           },
-          "talentKeywords": [
-            "Dogfighter",
-            "Evasive Action"
-          ],
-          "featKeywords": [
-            "Vehicular Combat",
-            "Skill Focus (Pilot)"
-          ],
-          "notes": "Elite dogfighter dominating starship combat."
+          "notes": "Elite dogfighter dominating starship combat.",
+          "talents": [],
+          "feats": [
+            "1f2f70d34a17667d",
+            "1592aaedf4b6e40a"
+          ]
         },
         "freighter_captain": {
           "name": "Freighter Captain",
@@ -3359,15 +3200,11 @@
             "INT": 0.35,
             "CHA": 0.3
           },
-          "talentKeywords": [
-            "Evasive Maneuvers",
-            "Expert Astrogator"
-          ],
-          "featKeywords": [
-            "Starship Operation (Space Transport)",
-            "Skill Focus (Pilot)"
-          ],
-          "notes": "Transport specialist excelling at dangerous runs and escapes."
+          "notes": "Transport specialist excelling at dangerous runs and escapes.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a"
+          ]
         },
         "speeder_ace": {
           "name": "Speeder Ace",
@@ -3386,15 +3223,12 @@
             "CON": 0.3,
             "WIS": 0.25
           },
-          "talentKeywords": [
-            "Hot Rider",
-            "Vehicle Dodge"
-          ],
-          "featKeywords": [
-            "Vehicular Combat",
-            "Skill Focus (Pilot)"
-          ],
-          "notes": "High-speed ground vehicle specialist and cavalry scout."
+          "notes": "High-speed ground vehicle specialist and cavalry scout.",
+          "talents": [],
+          "feats": [
+            "1f2f70d34a17667d",
+            "1592aaedf4b6e40a"
+          ]
         },
         "blockade_runner": {
           "name": "Blockade Runner",
@@ -3413,15 +3247,15 @@
             "CHA": 0.35,
             "INT": 0.3
           },
-          "talentKeywords": [
-            "Hyperdriven",
-            "Lucky Shot"
+          "notes": "Smuggling ace specializing in evading pursuit and blockades.",
+          "talents": [
+            "29f73c36cabdeaf5",
+            "5fbf1a3504865fba"
           ],
-          "featKeywords": [
-            "Vehicular Combat",
-            "Skill Focus (Pilot)"
-          ],
-          "notes": "Smuggling ace specializing in evading pursuit and blockades."
+          "feats": [
+            "1f2f70d34a17667d",
+            "1592aaedf4b6e40a"
+          ]
         },
         "daredevil_racer": {
           "name": "Daredevil Racer",
@@ -3440,15 +3274,11 @@
             "CON": 0.3,
             "WIS": 0.2
           },
-          "talentKeywords": [
-            "Trick Pilot",
-            "Push the Limits"
-          ],
-          "featKeywords": [
-            "Vehicular Combat",
-            "Improved Vehicular Combat"
-          ],
-          "notes": "Extreme-speed pilot relying on risky maneuvers."
+          "notes": "Extreme-speed pilot relying on risky maneuvers.",
+          "talents": [],
+          "feats": [
+            "1f2f70d34a17667d"
+          ]
         },
         "walker_ace": {
           "name": "Walker Ace",
@@ -3468,15 +3298,14 @@
             "DEX": 0.2,
             "CON": 0.15
           },
-          "talentKeywords": [
-            "Vehicle Gunnery",
-            "Armored Defense"
+          "notes": "Heavy ground-vehicle commander and assault pilot.",
+          "talents": [
+            "4c236343b01ea763"
           ],
-          "featKeywords": [
-            "Weapon Proficiency (Heavy Weapons)",
-            "Vehicular Combat"
-          ],
-          "notes": "Heavy ground-vehicle commander and assault pilot."
+          "feats": [
+            "8329a353aa3899be",
+            "1f2f70d34a17667d"
+          ]
         }
       }
     },
@@ -3499,15 +3328,14 @@
             "CHA": 0.35,
             "WIS": 0.25
           },
-          "talentKeywords": [
-            "Coordinate",
-            "Focused Targeting"
+          "notes": "Battlefield tactician directing allied actions.",
+          "talents": [
+            "a52044feeab3fe05",
+            "6c52d837af948ca0"
           ],
-          "featKeywords": [
-            "Coordinated Attack",
-            "Leadership"
-          ],
-          "notes": "Battlefield tactician directing allied actions."
+          "feats": [
+            "964f0781b3e3fc37"
+          ]
         },
         "support_officer": {
           "name": "Support Officer",
@@ -3525,15 +3353,15 @@
             "INT": 0.35,
             "WIS": 0.25
           },
-          "talentKeywords": [
-            "Bolster Ally",
-            "Inspire Confidence"
+          "notes": "Morale and logistics-focused officer.",
+          "talents": [
+            "d6e7f7178e643717",
+            "4d8882a28da30454"
           ],
-          "featKeywords": [
-            "Skill Focus (Persuasion)",
-            "Shake It Off"
-          ],
-          "notes": "Morale and logistics-focused officer."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "3036290329d5b3e6"
+          ]
         },
         "strategic_leader": {
           "name": "Strategic Leader",
@@ -3551,15 +3379,13 @@
             "CHA": 0.3,
             "WIS": 0.25
           },
-          "talentKeywords": [
-            "Battle Analysis",
-            "Grand Strategy"
+          "notes": "High-level planner shaping long-term engagements.",
+          "talents": [
+            "7df2e8e4f18dc909"
           ],
-          "featKeywords": [
-            "Skill Focus (Knowledge: Tactics)",
-            "Leadership"
-          ],
-          "notes": "High-level planner shaping long-term engagements."
+          "feats": [
+            "1592aaedf4b6e40a"
+          ]
         },
         "strategic_commander": {
           "name": "Strategic Commander",
@@ -3578,15 +3404,15 @@
             "CHA": 0.35,
             "WIS": 0.25
           },
-          "talentKeywords": [
-            "Coordinate",
-            "Battle Analysis"
+          "notes": "High-level battlefield commander coordinating allied actions.",
+          "talents": [
+            "a52044feeab3fe05",
+            "7df2e8e4f18dc909"
           ],
-          "featKeywords": [
-            "Skill Focus (Knowledge: Tactics)",
-            "Coordinated Attack"
-          ],
-          "notes": "High-level battlefield commander coordinating allied actions."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "964f0781b3e3fc37"
+          ]
         },
         "logistics_officer": {
           "name": "Logistics Officer",
@@ -3605,15 +3431,12 @@
             "CHA": 0.3,
             "WIS": 0.25
           },
-          "talentKeywords": [
-            "Plan",
-            "Resource Management"
-          ],
-          "featKeywords": [
-            "Skill Focus (Knowledge: Bureaucracy)",
-            "Linguist"
-          ],
-          "notes": "Operational planner focused on supply lines and coordination."
+          "notes": "Operational planner focused on supply lines and coordination.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a",
+            "5afd91fb081e576b"
+          ]
         }
       }
     },
@@ -3636,15 +3459,12 @@
             "DEX": 0.3,
             "WIS": 0.25
           },
-          "talentKeywords": [
-            "Controlled Demolition",
-            "Explosive Setup"
-          ],
-          "featKeywords": [
-            "Skill Focus (Mechanics)",
-            "Burst Fire"
-          ],
-          "notes": "Specialist in precision explosives and controlled destruction."
+          "notes": "Specialist in precision explosives and controlled destruction.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a",
+            "0d4d7c147c48cdab"
+          ]
         },
         "covert_disruptor": {
           "name": "Covert Disruptor",
@@ -3663,15 +3483,12 @@
             "WIS": 0.25,
             "CON": 0.1
           },
-          "talentKeywords": [
-            "System Sabotage",
-            "Silent Strike"
-          ],
-          "featKeywords": [
-            "Skill Focus (Stealth)",
-            "Tech Specialist"
-          ],
-          "notes": "Quietly disables infrastructure, alarms, and defenses."
+          "notes": "Quietly disables infrastructure, alarms, and defenses.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a",
+            "42e2404790756700"
+          ]
         },
         "infrastructure_breaker": {
           "name": "Infrastructure Breaker",
@@ -3690,15 +3507,12 @@
             "WIS": 0.2,
             "CON": 0.1
           },
-          "talentKeywords": [
-            "System Sabotage",
-            "Silent Strike"
-          ],
-          "featKeywords": [
-            "Skill Focus (Use Computer)",
-            "Tech Specialist"
-          ],
-          "notes": "Strategic saboteur dismantling enemy infrastructure."
+          "notes": "Strategic saboteur dismantling enemy infrastructure.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a",
+            "42e2404790756700"
+          ]
         },
         "demolition_expert": {
           "name": "Demolition Expert",
@@ -3718,15 +3532,12 @@
             "WIS": 0.2,
             "CON": 0.1
           },
-          "talentKeywords": [
-            "Controlled Demolition",
-            "Explosive Setup"
-          ],
-          "featKeywords": [
-            "Skill Focus (Mechanics)",
-            "Burst Fire"
-          ],
-          "notes": "Explosives specialist disabling structures and defenses."
+          "notes": "Explosives specialist disabling structures and defenses.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a",
+            "0d4d7c147c48cdab"
+          ]
         }
       }
     },
@@ -3750,15 +3561,13 @@
             "WIS": 0.2,
             "CON": 0.1
           },
-          "talentKeywords": [
-            "Hidden Movement",
-            "Ghost"
+          "notes": "Core infiltration specialist focused on unseen movement.",
+          "talents": [
+            "d0dad96e182d63d4"
           ],
-          "featKeywords": [
-            "Skill Focus (Stealth)",
-            "Improved Initiative"
-          ],
-          "notes": "Core infiltration specialist focused on unseen movement."
+          "feats": [
+            "1592aaedf4b6e40a"
+          ]
         },
         "shadow_agent": {
           "name": "Shadow Agent",
@@ -3777,15 +3586,12 @@
             "INT": 0.25,
             "WIS": 0.1
           },
-          "talentKeywords": [
-            "Cover Identity",
-            "Deception"
-          ],
-          "featKeywords": [
-            "Skill Focus (Deception)",
-            "Linguist"
-          ],
-          "notes": "Deep-cover operative maintaining false identities."
+          "notes": "Deep-cover operative maintaining false identities.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a",
+            "5afd91fb081e576b"
+          ]
         },
         "silent_eliminator": {
           "name": "Silent Eliminator",
@@ -3804,15 +3610,13 @@
             "CON": 0.2,
             "WIS": 0.1
           },
-          "talentKeywords": [
-            "Silent Takedown",
-            "Melee Execution"
+          "notes": "Close-range eliminator operating without detection.",
+          "talents": [
+            "b1960cbc28776a53"
           ],
-          "featKeywords": [
-            "Martial Arts",
-            "Weapon Finesse"
-          ],
-          "notes": "Close-range eliminator operating without detection."
+          "feats": [
+            "252b67d6e31c377e"
+          ]
         },
         "specops_infiltrator": {
           "name": "SpecOps Infiltrator",
@@ -3831,15 +3635,11 @@
             "INT": 0.25,
             "CON": 0.1
           },
-          "talentKeywords": [
-            "Room Clearing",
-            "Flash Assault"
-          ],
-          "featKeywords": [
-            "Burst Fire",
-            "Improved Initiative"
-          ],
-          "notes": "Military-trained infiltration and breach specialist."
+          "notes": "Military-trained infiltration and breach specialist.",
+          "talents": [],
+          "feats": [
+            "0d4d7c147c48cdab"
+          ]
         },
         "covert_recon_agent": {
           "name": "Covert Recon Agent",
@@ -3858,15 +3658,12 @@
             "DEX": 0.25,
             "CON": 0.1
           },
-          "talentKeywords": [
-            "Reconnaissance",
-            "Sensor Sweep"
-          ],
-          "featKeywords": [
-            "Skill Focus (Perception)",
-            "Skill Focus (Stealth)"
-          ],
-          "notes": "Recon-focused infiltrator providing intelligence to allies."
+          "notes": "Recon-focused infiltrator providing intelligence to allies.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a",
+            "1592aaedf4b6e40a"
+          ]
         }
       }
     },
@@ -3889,15 +3686,12 @@
             "WIS": 0.3,
             "CON": 0.2
           },
-          "talentKeywords": [
-            "Deadeye",
-            "Crippling Shot"
-          ],
-          "featKeywords": [
-            "Sniper",
-            "Far Shot"
-          ],
-          "notes": "Long-range assassin eliminating targets before detection."
+          "notes": "Long-range assassin eliminating targets before detection.",
+          "talents": [],
+          "feats": [
+            "56367f3943ee8c17",
+            "b5a8d5899e02139c"
+          ]
         },
         "shadow_blade": {
           "name": "Shadow Blade",
@@ -3916,15 +3710,13 @@
             "CON": 0.2,
             "WIS": 0.1
           },
-          "talentKeywords": [
-            "Silent Takedown",
-            "Death Attack"
+          "notes": "Blade-focused assassin relying on speed and stealth.",
+          "talents": [
+            "b1960cbc28776a53"
           ],
-          "featKeywords": [
-            "Martial Arts",
-            "Weapon Finesse"
-          ],
-          "notes": "Blade-focused assassin relying on speed and stealth."
+          "feats": [
+            "252b67d6e31c377e"
+          ]
         },
         "venomous_infiltrator": {
           "name": "Venomous Infiltrator",
@@ -3943,15 +3735,12 @@
             "WIS": 0.2,
             "CON": 0.1
           },
-          "talentKeywords": [
-            "Poison Use",
-            "Debilitating Strike"
-          ],
-          "featKeywords": [
-            "Skill Focus (Stealth)",
-            "Skill Focus (Mechanics)"
-          ],
-          "notes": "Assassin specializing in toxins and weakening effects."
+          "notes": "Assassin specializing in toxins and weakening effects.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a",
+            "1592aaedf4b6e40a"
+          ]
         },
         "silent_killer": {
           "name": "Silent Killer",
@@ -3970,15 +3759,13 @@
             "CON": 0.2,
             "INT": 0.1
           },
-          "talentKeywords": [
-            "Silent Takedown",
-            "Death Attack"
+          "notes": "Close-quarters execution specialist relying on surprise.",
+          "talents": [
+            "b1960cbc28776a53"
           ],
-          "featKeywords": [
-            "Skill Focus (Stealth)",
-            "Martial Arts"
-          ],
-          "notes": "Close-quarters execution specialist relying on surprise."
+          "feats": [
+            "1592aaedf4b6e40a"
+          ]
         },
         "shadow_blade_assassin": {
           "name": "Shadow Blade Assassin",
@@ -3997,15 +3784,13 @@
             "CON": 0.2,
             "WIS": 0.1
           },
-          "talentKeywords": [
-            "Silent Takedown",
-            "Melee Execution"
+          "notes": "Melee-focused assassin relying on stealth and sudden violence.",
+          "talents": [
+            "b1960cbc28776a53"
           ],
-          "featKeywords": [
-            "Martial Arts",
-            "Weapon Finesse"
-          ],
-          "notes": "Melee-focused assassin relying on stealth and sudden violence."
+          "feats": [
+            "252b67d6e31c377e"
+          ]
         }
       }
     },
@@ -4030,15 +3815,12 @@
             "CON": 0.2,
             "CHA": 0.1
           },
-          "talentKeywords": [
-            "Combat Medicine",
-            "Swift Treatment"
-          ],
-          "featKeywords": [
-            "Skill Focus (Treat Injury)",
-            "Surgical Expertise"
-          ],
-          "notes": "Frontline medical specialist stabilizing allies under fire."
+          "notes": "Frontline medical specialist stabilizing allies under fire.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a",
+            "f9ae5b531ae01fd0"
+          ]
         },
         "chief_surgeon": {
           "name": "Chief Surgeon",
@@ -4057,15 +3839,12 @@
             "WIS": 0.35,
             "CHA": 0.2
           },
-          "talentKeywords": [
-            "Advanced Surgery",
-            "Medical Expertise"
-          ],
-          "featKeywords": [
-            "Skill Focus (Treat Injury)",
-            "Educated"
-          ],
-          "notes": "High-end medical expert specializing in complex treatment."
+          "notes": "High-end medical expert specializing in complex treatment.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a",
+            "5cc1216874c79087"
+          ]
         },
         "support_field_officer": {
           "name": "Support Field Officer",
@@ -4084,15 +3863,14 @@
             "INT": 0.25,
             "CON": 0.1
           },
-          "talentKeywords": [
-            "Bolster Ally",
-            "Combat Medicine"
+          "notes": "Medic providing frontline support and morale stabilization.",
+          "talents": [
+            "d6e7f7178e643717"
           ],
-          "featKeywords": [
-            "Skill Focus (Treat Injury)",
-            "Shake It Off"
-          ],
-          "notes": "Medic providing frontline support and morale stabilization."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "3036290329d5b3e6"
+          ]
         }
       }
     },
@@ -4116,16 +3894,13 @@
             "WIS": 0.35,
             "STR": 0.25
           },
-          "talentKeywords": [
-            "Defensive Martial Arts",
-            "Combat Reflexes"
-          ],
-          "featKeywords": [
-            "Martial Arts II",
-            "Martial Arts III",
-            "Improved Defenses"
-          ],
-          "notes": "Stoic unarmed guardian trained to hold ground and protect sacred sites."
+          "notes": "Stoic unarmed guardian trained to hold ground and protect sacred sites.",
+          "talents": [],
+          "feats": [
+            "5bedd71f0eead6b9",
+            "97dbebe63aa6af79",
+            "f8e2a30390d870e7"
+          ]
         },
         "bonecrusher_brawler": {
           "name": "Bonecrusher Brawler",
@@ -4143,15 +3918,14 @@
             "CON": 0.3,
             "DEX": 0.2
           },
-          "talentKeywords": [
-            "Hammerblow",
-            "Bonecrusher"
+          "notes": "Brutal close-combat specialist relying on overwhelming physical force.",
+          "talents": [
+            "4356ac9986934fbf"
           ],
-          "featKeywords": [
-            "Martial Arts III",
-            "Power Attack"
-          ],
-          "notes": "Brutal close-combat specialist relying on overwhelming physical force."
+          "feats": [
+            "97dbebe63aa6af79",
+            "3f76464c43c73f84"
+          ]
         },
         "zen_duelist": {
           "name": "Zen Duelist",
@@ -4170,15 +3944,13 @@
             "DEX": 0.3,
             "CON": 0.25
           },
-          "talentKeywords": [
-            "Combat Trance",
-            "Meditative Focus"
+          "notes": "Disciplined martial artist who blends calm, defense, and precise counters.",
+          "talents": [
+            "675bfa10691b60f6"
           ],
-          "featKeywords": [
-            "Shake It Off",
-            "Iron Will"
-          ],
-          "notes": "Disciplined martial artist who blends calm, defense, and precise counters."
+          "feats": [
+            "3036290329d5b3e6"
+          ]
         },
         "unarmed_weapon_master": {
           "name": "Unarmed Weapon Master",
@@ -4197,15 +3969,15 @@
             "CON": 0.2,
             "WIS": 0.1
           },
-          "talentKeywords": [
-            "Hammerblow",
-            "Stunning Strike"
+          "notes": "Peak unarmed combatant turning the body into a weapon.",
+          "talents": [
+            "4356ac9986934fbf",
+            "9292819462b46074"
           ],
-          "featKeywords": [
-            "Martial Arts III",
-            "Combat Reflexes"
-          ],
-          "notes": "Peak unarmed combatant turning the body into a weapon."
+          "feats": [
+            "97dbebe63aa6af79",
+            "7146640744fdf052"
+          ]
         },
         "zen_combatant": {
           "name": "Zen Combatant",
@@ -4224,15 +3996,13 @@
             "DEX": 0.3,
             "CON": 0.3
           },
-          "talentKeywords": [
-            "Combat Trance",
-            "Meditative Focus"
+          "notes": "Defensive martial artist blending discipline and flow.",
+          "talents": [
+            "675bfa10691b60f6"
           ],
-          "featKeywords": [
-            "Shake It Off",
-            "Iron Will"
-          ],
-          "notes": "Defensive martial artist blending discipline and flow."
+          "feats": [
+            "3036290329d5b3e6"
+          ]
         }
       }
     },
@@ -4256,15 +4026,13 @@
             "CON": 0.2,
             "INT": 0.15
           },
-          "talentKeywords": [
-            "Camouflage",
-            "Expert Tracker"
+          "notes": "Environmental reconnaissance expert in dense or hostile terrain.",
+          "talents": [
+            "16e18057bc92365c"
           ],
-          "featKeywords": [
-            "Skill Focus (Survival)",
-            "Endurance"
-          ],
-          "notes": "Environmental reconnaissance expert in dense or hostile terrain."
+          "feats": [
+            "1592aaedf4b6e40a"
+          ]
         },
         "forward_spotter": {
           "name": "Forward Spotter",
@@ -4282,15 +4050,12 @@
             "INT": 0.3,
             "DEX": 0.3
           },
-          "talentKeywords": [
-            "Reconnaissance",
-            "Target Designation"
-          ],
-          "featKeywords": [
-            "Skill Focus (Perception)",
-            "Coordinated Attack"
-          ],
-          "notes": "Battlefield observer coordinating allied fire and movement."
+          "notes": "Battlefield observer coordinating allied fire and movement.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a",
+            "964f0781b3e3fc37"
+          ]
         },
         "speeder_interceptor": {
           "name": "Speeder Interceptor",
@@ -4308,15 +4073,12 @@
             "CON": 0.3,
             "WIS": 0.25
           },
-          "talentKeywords": [
-            "Hot Rider",
-            "Vehicle Dodge"
-          ],
-          "featKeywords": [
-            "Vehicular Combat",
-            "Skill Focus (Pilot)"
-          ],
-          "notes": "Fast-response pursuit specialist using speeders and light vehicles."
+          "notes": "Fast-response pursuit specialist using speeders and light vehicles.",
+          "talents": [],
+          "feats": [
+            "1f2f70d34a17667d",
+            "1592aaedf4b6e40a"
+          ]
         },
         "forward_recon": {
           "name": "Forward Recon",
@@ -4336,15 +4098,14 @@
             "CON": 0.2,
             "INT": 0.15
           },
-          "talentKeywords": [
-            "Hidden Movement",
-            "Expert Tracker"
+          "notes": "Advanced reconnaissance operative operating ahead of main forces.",
+          "talents": [
+            "d0dad96e182d63d4",
+            "16e18057bc92365c"
           ],
-          "featKeywords": [
-            "Skill Focus (Stealth)",
-            "Improved Initiative"
-          ],
-          "notes": "Advanced reconnaissance operative operating ahead of main forces."
+          "feats": [
+            "1592aaedf4b6e40a"
+          ]
         },
         "deep_insertion_scout": {
           "name": "Deep Insertion Scout",
@@ -4364,15 +4125,12 @@
             "WIS": 0.25,
             "CON": 0.1
           },
-          "talentKeywords": [
-            "Camouflage",
-            "Silent Movement"
-          ],
-          "featKeywords": [
-            "Skill Focus (Survival)",
-            "Stealthy"
-          ],
-          "notes": "Long-range infiltration and intelligence-gathering specialist."
+          "notes": "Long-range infiltration and intelligence-gathering specialist.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a",
+            "0c53cb8b7c29d865"
+          ]
         }
       }
     },
@@ -4397,15 +4155,15 @@
             "WIS": 0.2,
             "CON": 0.1
           },
-          "talentKeywords": [
-            "Quick Fix",
-            "Hot Wire"
+          "notes": "On-the-fly engineer solving problems with whatever is available.",
+          "talents": [
+            "3e6f7edaeec04a06",
+            "d2b9069670413a43"
           ],
-          "featKeywords": [
-            "Skill Focus (Mechanics)",
-            "Tech Specialist"
-          ],
-          "notes": "On-the-fly engineer solving problems with whatever is available."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "42e2404790756700"
+          ]
         },
         "combat_improviser": {
           "name": "Combat Improviser",
@@ -4425,15 +4183,12 @@
             "CON": 0.2,
             "WIS": 0.15
           },
-          "talentKeywords": [
-            "Improvised Weapon",
-            "Trick Attack"
-          ],
-          "featKeywords": [
-            "Point Blank Shot",
-            "Quick Draw"
-          ],
-          "notes": "Battlefield opportunist turning chaos into advantage."
+          "notes": "Battlefield opportunist turning chaos into advantage.",
+          "talents": [],
+          "feats": [
+            "c301a0f533f15ce4",
+            "44705a692e2f01a6"
+          ]
         },
         "holo_hacker": {
           "name": "Holo-Hacker",
@@ -4451,15 +4206,12 @@
             "DEX": 0.25,
             "WIS": 0.25
           },
-          "talentKeywords": [
-            "Holo Intrusion",
-            "Signal Hijack"
-          ],
-          "featKeywords": [
-            "Skill Focus (Use Computer)",
-            "Tech Specialist"
-          ],
-          "notes": "Electronic warfare expert manipulating holographic and sensor systems."
+          "notes": "Electronic warfare expert manipulating holographic and sensor systems.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a",
+            "42e2404790756700"
+          ]
         }
       }
     },
@@ -4482,15 +4234,11 @@
             "CHA": 0.3,
             "CON": 0.25
           },
-          "talentKeywords": [
-            "Quick Draw",
-            "Fearsome Reputation"
-          ],
-          "featKeywords": [
-            "Point Blank Shot",
-            "Improved Initiative"
-          ],
-          "notes": "Infamous outlaw whose reputation is as deadly as their aim."
+          "notes": "Infamous outlaw whose reputation is as deadly as their aim.",
+          "talents": [],
+          "feats": [
+            "c301a0f533f15ce4"
+          ]
         },
         "rebel_outlaw": {
           "name": "Rebel Outlaw",
@@ -4510,15 +4258,14 @@
             "CON": 0.2,
             "WIS": 0.15
           },
-          "talentKeywords": [
-            "Born Leader",
-            "Defiant Stance"
+          "notes": "Defiant freedom fighter operating outside formal command.",
+          "talents": [
+            "6a66ba6e0834dd6f"
           ],
-          "featKeywords": [
-            "Coordinated Attack",
-            "Point Blank Shot"
-          ],
-          "notes": "Defiant freedom fighter operating outside formal command."
+          "feats": [
+            "964f0781b3e3fc37",
+            "c301a0f533f15ce4"
+          ]
         },
         "shadow_smuggler": {
           "name": "Shadow Smuggler",
@@ -4538,15 +4285,14 @@
             "INT": 0.2,
             "CON": 0.15
           },
-          "talentKeywords": [
-            "Spacer's Luck",
-            "Skirmisher"
+          "notes": "Illicit operator thriving in shadows and grey markets.",
+          "talents": [
+            "7b23e0812d6a8985"
           ],
-          "featKeywords": [
-            "Skill Focus (Pilot)",
-            "Vehicular Combat"
-          ],
-          "notes": "Illicit operator thriving in shadows and grey markets."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "1f2f70d34a17667d"
+          ]
         }
       }
     },
@@ -4571,15 +4317,14 @@
             "WIS": 0.15,
             "DEX": 0.1
           },
-          "talentKeywords": [
-            "Fool's Luck",
-            "Fast Talk"
+          "notes": "Smooth-talking manipulator relying on charm and misdirection.",
+          "talents": [
+            "5319a796f2c4ff64"
           ],
-          "featKeywords": [
-            "Skill Focus (Persuasion)",
-            "Trustworthy"
-          ],
-          "notes": "Smooth-talking manipulator relying on charm and misdirection."
+          "feats": [
+            "1592aaedf4b6e40a",
+            "6d8ce2807c579289"
+          ]
         },
         "master_of_disguise": {
           "name": "Master of Disguise",
@@ -4599,15 +4344,12 @@
             "DEX": 0.15,
             "WIS": 0.1
           },
-          "talentKeywords": [
-            "Cover Identity",
-            "Slippery Mind"
-          ],
-          "featKeywords": [
-            "Skill Focus (Deception)",
-            "Linguist"
-          ],
-          "notes": "Identity-shifting con artist and social infiltrator."
+          "notes": "Identity-shifting con artist and social infiltrator.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a",
+            "5afd91fb081e576b"
+          ]
         },
         "holostar_propagandist": {
           "name": "Holostar Propagandist",
@@ -4625,15 +4367,12 @@
             "INT": 0.3,
             "WIS": 0.2
           },
-          "talentKeywords": [
-            "Mass Influence",
-            "Reputation Control"
-          ],
-          "featKeywords": [
-            "Skill Focus (Persuasion)",
-            "Skill Focus (Deception)"
-          ],
-          "notes": "Media manipulator shaping public opinion through holonet influence."
+          "notes": "Media manipulator shaping public opinion through holonet influence.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a",
+            "1592aaedf4b6e40a"
+          ]
         }
       }
     },
@@ -4657,15 +4396,14 @@
             "CHA": 0.3,
             "INT": 0.25
           },
-          "talentKeywords": [
-            "Visions",
-            "Force Trance"
+          "notes": "Force mystic focused on foresight, visions, and esoteric knowledge.",
+          "talents": [
+            "da12fc505efc5eea"
           ],
-          "featKeywords": [
-            "Force Training",
-            "Skill Focus (Use the Force)"
-          ],
-          "notes": "Force mystic focused on foresight, visions, and esoteric knowledge."
+          "feats": [
+            "9b7b869a86f39190",
+            "1592aaedf4b6e40a"
+          ]
         },
         "force_savant": {
           "name": "Force Savant",
@@ -4685,15 +4423,12 @@
             "CON": 0.15,
             "DEX": 0.1
           },
-          "talentKeywords": [
-            "Force Power Mastery",
-            "Force Surge"
-          ],
-          "featKeywords": [
-            "Force Training",
-            "Force Boon"
-          ],
-          "notes": "Aggressive Force-user pushing raw power beyond orthodox limits."
+          "notes": "Aggressive Force-user pushing raw power beyond orthodox limits.",
+          "talents": [],
+          "feats": [
+            "9b7b869a86f39190",
+            "53444cc061d81627"
+          ]
         },
         "tradition_keeper": {
           "name": "Tradition Keeper",
@@ -4712,15 +4447,12 @@
             "INT": 0.35,
             "CHA": 0.25
           },
-          "talentKeywords": [
-            "Force Tradition",
-            "Ritual Knowledge"
-          ],
-          "featKeywords": [
-            "Skill Focus (Knowledge)",
-            "Force Training"
-          ],
-          "notes": "Guardian of non-Jedi Force traditions and ancient rites."
+          "notes": "Guardian of non-Jedi Force traditions and ancient rites.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a",
+            "9b7b869a86f39190"
+          ]
         }
       }
     },
@@ -4744,15 +4476,12 @@
             "CON": 0.3,
             "CHA": 0.25
           },
-          "talentKeywords": [
-            "Force Endurance",
-            "Meditative Focus"
-          ],
-          "featKeywords": [
-            "Force Training",
-            "Shake It Off"
-          ],
-          "notes": "Self-denying Force user focused on discipline and resilience."
+          "notes": "Self-denying Force user focused on discipline and resilience.",
+          "talents": [],
+          "feats": [
+            "9b7b869a86f39190",
+            "3036290329d5b3e6"
+          ]
         },
         "living_force_channeler": {
           "name": "Living Force Channeler",
@@ -4771,15 +4500,14 @@
             "CHA": 0.35,
             "CON": 0.25
           },
-          "talentKeywords": [
-            "Vital Transfer",
-            "Force Harmony"
+          "notes": "Embodiment of the Living Force, channeling energy through self and allies.",
+          "talents": [
+            "5b949c8cd8e78ee8"
           ],
-          "featKeywords": [
-            "Force Training",
-            "Skill Focus (Use the Force)"
-          ],
-          "notes": "Embodiment of the Living Force, channeling energy through self and allies."
+          "feats": [
+            "9b7b869a86f39190",
+            "1592aaedf4b6e40a"
+          ]
         }
       }
     },
@@ -4803,15 +4531,11 @@
             "CHA": 0.3,
             "WIS": 0.2
           },
-          "talentKeywords": [
-            "Droid Tactics",
-            "Direct Droid"
-          ],
-          "featKeywords": [
-            "Skill Focus (Use Computer)",
-            "Leadership"
-          ],
-          "notes": "Tactical commander specializing in coordinated droid forces."
+          "notes": "Tactical commander specializing in coordinated droid forces.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a"
+          ]
         },
         "droid_overmind": {
           "name": "Droid Overmind",
@@ -4828,15 +4552,12 @@
             "WIS": 0.25,
             "CHA": 0.15
           },
-          "talentKeywords": [
-            "Networked Mind",
-            "Droid Control"
-          ],
-          "featKeywords": [
-            "Skill Focus (Use Computer)",
-            "Tech Specialist"
-          ],
-          "notes": "Centralized intelligence directing multiple droids simultaneously."
+          "notes": "Centralized intelligence directing multiple droids simultaneously.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a",
+            "42e2404790756700"
+          ]
         },
         "mechanized_tactician": {
           "name": "Mechanized Tactician",
@@ -4855,15 +4576,13 @@
             "CHA": 0.3,
             "WIS": 0.25
           },
-          "talentKeywords": [
-            "Battle Analysis",
-            "Droid Coordination"
+          "notes": "Battlefield strategist integrating droids into mixed forces.",
+          "talents": [
+            "7df2e8e4f18dc909"
           ],
-          "featKeywords": [
-            "Leadership",
-            "Skill Focus (Knowledge: Tactics)"
-          ],
-          "notes": "Battlefield strategist integrating droids into mixed forces."
+          "feats": [
+            "1592aaedf4b6e40a"
+          ]
         }
       }
     },
@@ -4887,15 +4606,11 @@
             "WIS": 0.3,
             "CON": 0.2
           },
-          "talentKeywords": [
-            "Fortification",
-            "Rapid Construction"
-          ],
-          "featKeywords": [
-            "Skill Focus (Mechanics)",
-            "Engineer"
-          ],
-          "notes": "Designer of defenses, kill zones, and battlefield structures."
+          "notes": "Designer of defenses, kill zones, and battlefield structures.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a"
+          ]
         },
         "siege_specialist": {
           "name": "Siege Specialist",
@@ -4913,15 +4628,12 @@
             "CON": 0.35,
             "STR": 0.2
           },
-          "talentKeywords": [
-            "Demolition",
-            "Breach Planning"
-          ],
-          "featKeywords": [
-            "Burst Fire",
-            "Skill Focus (Mechanics)"
-          ],
-          "notes": "Expert in destroying fortifications and hardened targets."
+          "notes": "Expert in destroying fortifications and hardened targets.",
+          "talents": [],
+          "feats": [
+            "0d4d7c147c48cdab",
+            "1592aaedf4b6e40a"
+          ]
         },
         "vehicle_systems_engineer": {
           "name": "Vehicle Systems Engineer",
@@ -4940,15 +4652,12 @@
             "DEX": 0.25,
             "WIS": 0.25
           },
-          "talentKeywords": [
-            "Vehicle Repair",
-            "System Override"
-          ],
-          "featKeywords": [
-            "Skill Focus (Mechanics)",
-            "Vehicular Combat"
-          ],
-          "notes": "Specialist in modifying, repairing, and enhancing vehicles."
+          "notes": "Specialist in modifying, repairing, and enhancing vehicles.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a",
+            "1f2f70d34a17667d"
+          ]
         }
       }
     },
@@ -4972,15 +4681,11 @@
             "CON": 0.25,
             "WIS": 0.1
           },
-          "talentKeywords": [
-            "Breach Assault",
-            "Close Quarters Combat"
-          ],
-          "featKeywords": [
-            "Martial Arts",
-            "Point Blank Shot"
-          ],
-          "notes": "First-in assault specialist for hostile entry operations."
+          "notes": "First-in assault specialist for hostile entry operations.",
+          "talents": [],
+          "feats": [
+            "c301a0f533f15ce4"
+          ]
         },
         "forward_assault_leader": {
           "name": "Forward Assault Leader",
@@ -5000,15 +4705,11 @@
             "CON": 0.25,
             "DEX": 0.15
           },
-          "talentKeywords": [
-            "Lead the Charge",
-            "Momentum"
-          ],
-          "featKeywords": [
-            "Leadership",
-            "Coordinated Attack"
-          ],
-          "notes": "Aggressive squad leader pushing the fight forward."
+          "notes": "Aggressive squad leader pushing the fight forward.",
+          "talents": [],
+          "feats": [
+            "964f0781b3e3fc37"
+          ]
         },
         "urban_breach_operative": {
           "name": "Urban Breach Operative",
@@ -5028,15 +4729,11 @@
             "CON": 0.25,
             "WIS": 0.15
           },
-          "talentKeywords": [
-            "Room Clearing",
-            "Flash Assault"
-          ],
-          "featKeywords": [
-            "Burst Fire",
-            "Improved Initiative"
-          ],
-          "notes": "Close-quarters urban combat specialist."
+          "notes": "Close-quarters urban combat specialist.",
+          "talents": [],
+          "feats": [
+            "0d4d7c147c48cdab"
+          ]
         }
       }
     },
@@ -5060,15 +4757,11 @@
             "INT": 0.35,
             "DEX": 0.25
           },
-          "talentKeywords": [
-            "Command Crew",
-            "Legal Piracy"
-          ],
-          "featKeywords": [
-            "Leadership",
-            "Skill Focus (Persuasion)"
-          ],
-          "notes": "Semi-legal privateer operating under official sanction."
+          "notes": "Semi-legal privateer operating under official sanction.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a"
+          ]
         },
         "freebooter_admiral": {
           "name": "Freebooter Admiral",
@@ -5086,15 +4779,11 @@
             "INT": 0.35,
             "WIS": 0.25
           },
-          "talentKeywords": [
-            "Fleet Command",
-            "Intimidation"
-          ],
-          "featKeywords": [
-            "Leadership",
-            "Skill Focus (Knowledge: Tactics)"
-          ],
-          "notes": "Commander of multiple vessels operating beyond the law."
+          "notes": "Commander of multiple vessels operating beyond the law.",
+          "talents": [],
+          "feats": [
+            "1592aaedf4b6e40a"
+          ]
         },
         "trade_war_corsair": {
           "name": "Trade War Corsair",
@@ -5114,15 +4803,12 @@
             "INT": 0.25,
             "CON": 0.1
           },
-          "talentKeywords": [
-            "Economic Warfare",
-            "Blockade"
-          ],
-          "featKeywords": [
-            "Vehicular Combat",
-            "Skill Focus (Pilot)"
-          ],
-          "notes": "Commerce-raiding captain targeting enemy trade routes."
+          "notes": "Commerce-raiding captain targeting enemy trade routes.",
+          "talents": [],
+          "feats": [
+            "1f2f70d34a17667d",
+            "1592aaedf4b6e40a"
+          ]
         }
       }
     }

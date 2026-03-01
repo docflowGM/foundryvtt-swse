@@ -2711,5 +2711,58 @@ export const ActorEngine = {
       SWSELogger.error(`[5C-4] Repair failed on ${actor?.name}:`, err);
       throw err;
     }
+  },
+
+  /**
+   * PHASE 3.4.2: Safe flag update method for progression governance.
+   *
+   * Routes all flag updates through ActorEngine to maintain mutation authority
+   * and prevent governance leaks.
+   *
+   * Contract:
+   * - Enforces mutation context guard
+   * - Triggers single recalculation pass
+   * - Enables audit trail for flag mutations
+   * - No direct actor.setFlag() calls outside ActorEngine
+   *
+   * @param {Actor} actor - The actor to update
+   * @param {string} scope - Flag scope (e.g. 'foundryvtt-swse')
+   * @param {string} key - Flag key name
+   * @param {*} value - Flag value (any serializable type)
+   * @param {object} [options={}] - Additional options
+   */
+  async updateActorFlags(actor, scope, key, value, options = {}) {
+    try {
+      if (!actor) {throw new Error('updateActorFlags() called with no actor');}
+      if (!scope || typeof scope !== 'string') {throw new Error('updateActorFlags() requires scope string');}
+      if (!key || typeof key !== 'string') {throw new Error('updateActorFlags() requires key string');}
+
+      SWSELogger.debug(`ActorEngine.updateActorFlags → ${actor.name}`, {
+        scope,
+        key,
+        valueType: typeof value,
+        meta: options.meta
+      });
+
+      // ========================================
+      // PHASE 3: Authorize mutation via context
+      // ========================================
+      MutationInterceptor.setContext(`ActorEngine.updateActorFlags[${scope}.${key}]`);
+      try {
+        // Route through setFlag with mutation context active
+        const result = await actor.setFlag(scope, key, value);
+        await this.recalcAll(actor);
+        return result;
+      } finally {
+        MutationInterceptor.clearContext();
+      }
+    } catch (err) {
+      SWSELogger.error(`ActorEngine.updateActorFlags failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        scope,
+        key
+      });
+      throw err;
+    }
   }
 };

@@ -8,6 +8,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { MulticlassPolicyIntegration } from "/systems/foundryvtt-swse/scripts/engine/progression/policies/multiclass-policy-integration.js";
 
 // ============================================================
 // FEATURE HANDLER DEFINITIONS
@@ -169,11 +170,26 @@ async function handleSkillChoice(feature, actor, engine) {
     SWSELogger.log(`Feature: Skill choice (${feature.value || 1} skill(s))`);
 }
 
+async function handleClassLevel(feature, actor, engine) {
+    // Class level addition with multiclass policy evaluation
+    // This feature type is injected by ProgressionEngine when a class is being added
+    if (!engine.data.classLevelData) {
+        engine.data.classLevelData = [];
+    }
+
+    engine.data.classLevelData.push(feature);
+
+    SWSELogger.log(`Feature: Class level "${feature.name}"`);
+}
+
 // ============================================================
 // FEATURE DISPATCH TABLE
 // ============================================================
 
 export const FEATURE_DISPATCH_TABLE = {
+    // Class level progression (multiclass policy injection point)
+    'class_level': handleClassLevel,
+
     // Choice features (require UI selection)
     'talent_choice': handleTalentChoice,
     'feat_choice': handleFeatChoice,

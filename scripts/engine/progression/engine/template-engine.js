@@ -141,7 +141,8 @@ export class TemplateEngine {
         templateName: tpl.name || templateId,
         appliedAt: new Date().toISOString()
       });
-      await actor.setFlag('foundryvtt-swse', 'appliedTemplatePackages', pkgs);
+      // PHASE 3.4.2: Route through ActorEngine for governance
+      await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'appliedTemplatePackages', pkgs);
 
       // Apply any explicit item grants that aren't handled by progression
       if (Array.isArray(tpl.items) && tpl.items.length > 0) {
