@@ -85,6 +85,21 @@ export const TIER_CONFIDENCE = {
 };
 
 // ──────────────────────────────────────────────────────────────
+// TIER 3 SUBPRIORITY WEIGHTING (Phase 2.5)
+// ──────────────────────────────────────────────────────────────
+// Replace "first match wins" with structured subpriority scoring
+// Tier 3 remains unchanged; internal weighting provides stability
+
+export const TIER3_SUBPRIORITY = {
+    ARCHETYPE: 0.15,      // Declared structural intent (highest authority)
+    MENTOR: 0.10,         // Survey-derived preference (medium authority)
+    SKILL: 0.05,          // Mechanical synergy heuristic (lowest authority)
+    PRESTIGE: 0.15        // Prestige survey signal (same as archetype - declared intent)
+};
+
+export const TIER3_MAX_BONUS = 0.25;  // Cap total Tier 3 bonus
+
+// ──────────────────────────────────────────────────────────────
 // SUGGESTION ENGINE CLASS
 // ──────────────────────────────────────────────────────────────
 
@@ -284,7 +299,8 @@ export class SuggestionEngine {
     }
 
     /**
-     * Sort items by suggestion tier (higher first), then by name
+     * Sort items by suggestion tier (higher first), confidence, then name
+     * Deterministic ordering respects: Tier > Confidence > Item ID
      * @param {Array} items - Array of items with suggestion metadata
      * @returns {Array} Sorted items
      */
@@ -293,12 +309,26 @@ export class SuggestionEngine {
             const tierA = a.suggestion?.tier ?? -1;
             const tierB = b.suggestion?.tier ?? -1;
 
-            // Higher tier first
+            // Primary: Higher tier first
             if (tierB !== tierA) {
                 return tierB - tierA;
             }
 
-            // Then alphabetically by name
+            // Secondary: Higher confidence first (Phase 2.5 - Tier 3 subpriority)
+            const confA = a.suggestion?.confidence ?? 0;
+            const confB = b.suggestion?.confidence ?? 0;
+            if (Math.abs(confB - confA) > 0.01) {  // Account for floating point precision
+                return confB - confA;
+            }
+
+            // Tertiary: Stable ID ordering for determinism
+            const idA = a.id || a._id || '';
+            const idB = b.id || b._id || '';
+            if (idA !== idB) {
+                return idA.localeCompare(idB);
+            }
+
+            // Final: Alphabetically by name
             return (a.name || '').localeCompare(b.name || '');
         });
     }
@@ -629,6 +659,296 @@ export class SuggestionEngine {
     }
 
     // ──────────────────────────────────────────────────────────────
+    // PRIVATE: TIER 3 SUBPRIORITY EVALUATION (Phase 2.5)
+    // ──────────────────────────────────────────────────────────────
+
+    /**
+     * Evaluate all Tier 3 conditions for a feat and return best match with subpriority weighting
+     * Replaces "first match wins" with structured scoring
+     * @param {Object} feat - The feat being evaluated
+     * @param {Object} actorState - Actor state
+     * @param {Object} metadata - Feat metadata
+     * @param {Object} buildIntent - Build intent with mentor biases
+     * @param {Object} actor - The actor
+     * @param {Object} primaryArchetype - Primary archetype
+     * @param {Array} archetypeRecommendedFeatIds - Recommended feat IDs
+     * @returns {Object|null} Best Tier 3 suggestion or null
+     */
+    static _evaluateTier3Feat(feat, actorState, metadata, buildIntent, actor, primaryArchetype, archetypeRecommendedFeatIds) {
+        const matches = [];
+        let totalBonus = 0;
+
+        // Check ARCHETYPE RECOMMENDATION (weight: 0.15)
+        if (primaryArchetype && archetypeRecommendedFeatIds.includes(feat.id)) {
+            matches.push({
+                type: 'ARCHETYPE_RECOMMENDATION',
+                sourceId: `archetype:${primaryArchetype.id}`,
+                weight: TIER3_SUBPRIORITY.ARCHETYPE,
+                bonus: TIER3_SUBPRIORITY.ARCHETYPE
+            });
+            totalBonus += TIER3_SUBPRIORITY.ARCHETYPE;
+        }
+
+        // Check MENTOR BIAS MATCH (weight: 0.10, scaled by conviction)
+        if (buildIntent && buildIntent.mentorBiases && Object.keys(buildIntent.mentorBiases).length > 0) {
+            const mentorMatch = this._checkMentorBiasMatch(feat, buildIntent);
+            if (mentorMatch) {
+                // Extract bias strength from buildIntent for conviction scaling
+                const biasStrength = this._extractBiasStrength(mentorMatch.sourceId, buildIntent);
+                const scaledBonus = TIER3_SUBPRIORITY.MENTOR * biasStrength;  // Scale by 0.0-1.0
+
+                matches.push({
+                    type: 'MENTOR_BIAS_MATCH',
+                    sourceId: mentorMatch.sourceId,
+                    weight: TIER3_SUBPRIORITY.MENTOR,
+                    bonus: scaledBonus,
+                    conviction: biasStrength
+                });
+                totalBonus += scaledBonus;
+            }
+        }
+
+        // Check PRESTIGE SURVEY SIGNAL (weight: 0.15, same as archetype)
+        if (buildIntent && buildIntent.mentorBiases?.prestigeClassTarget) {
+            const prestigeMatch = this._checkFeatForPrestige(feat, buildIntent.mentorBiases.prestigeClassTarget, buildIntent);
+            if (prestigeMatch) {
+                matches.push({
+                    type: 'PRESTIGE_SIGNAL',
+                    sourceId: `prestige:${buildIntent.mentorBiases.prestigeClassTarget}`,
+                    weight: TIER3_SUBPRIORITY.PRESTIGE,
+                    bonus: TIER3_SUBPRIORITY.PRESTIGE
+                });
+                totalBonus += TIER3_SUBPRIORITY.PRESTIGE;
+            }
+        }
+
+        // Check SKILL PREREQ MATCH (weight: 0.05)
+        if (this._usesTrainedSkill(feat, actorState)) {
+            matches.push({
+                type: 'SKILL_PREREQ_MATCH',
+                sourceId: `skill:${actorState.trainedSkills.values().next().value || 'trained'}`,
+                weight: TIER3_SUBPRIORITY.SKILL,
+                bonus: TIER3_SUBPRIORITY.SKILL
+            });
+            totalBonus += TIER3_SUBPRIORITY.SKILL;
+        }
+
+        // If any Tier 3 condition matched, build suggestion with weighted confidence
+        if (matches.length === 0) {
+            return null;
+        }
+
+        // Cap total bonus
+        const cappedBonus = Math.min(totalBonus, TIER3_MAX_BONUS);
+
+        // Determine primary reason code (use highest authority match)
+        let primaryMatch = matches[0];
+        for (const match of matches) {
+            if (match.weight >= primaryMatch.weight) {
+                primaryMatch = match;
+            }
+        }
+
+        // Build suggestion with subpriority bonus and multiple matched elements
+        return this._buildSuggestionWithTier3Weighting(
+            SUGGESTION_TIERS.ARCHETYPE_RECOMMENDATION,  // Tier 3
+            primaryMatch.type,
+            primaryMatch.sourceId,
+            feat,
+            actor ? ArchetypeRegistry.get(actor.system?.buildIntent?.archetypeId) : null,
+            {
+                tier3Matches: matches,
+                tier3TotalBonus: cappedBonus,
+                tier3PrimaryMatch: primaryMatch
+            }
+        );
+    }
+
+    /**
+     * Evaluate all Tier 3 conditions for a talent and return best match with subpriority weighting
+     * @param {Object} talent - The talent being evaluated
+     * @param {Object} actorState - Actor state
+     * @param {Object} buildIntent - Build intent with mentor biases
+     * @param {Object} actor - The actor
+     * @param {Object} primaryArchetype - Primary archetype
+     * @param {Array} archetypeRecommendedTalentIds - Recommended talent IDs
+     * @returns {Object|null} Best Tier 3 suggestion or null
+     */
+    static _evaluateTier3Talent(talent, actorState, buildIntent, actor, primaryArchetype, archetypeRecommendedTalentIds) {
+        const matches = [];
+        let totalBonus = 0;
+
+        // Check ARCHETYPE RECOMMENDATION (weight: 0.15)
+        if (primaryArchetype && archetypeRecommendedTalentIds.includes(talent.id)) {
+            matches.push({
+                type: 'ARCHETYPE_RECOMMENDATION',
+                sourceId: `archetype:${primaryArchetype.id}`,
+                weight: TIER3_SUBPRIORITY.ARCHETYPE,
+                bonus: TIER3_SUBPRIORITY.ARCHETYPE
+            });
+            totalBonus += TIER3_SUBPRIORITY.ARCHETYPE;
+        }
+
+        // Check MENTOR BIAS MATCH (weight: 0.10, scaled by conviction)
+        if (buildIntent && buildIntent.mentorBiases && Object.keys(buildIntent.mentorBiases).length > 0) {
+            const mentorMatch = this._checkMentorBiasMatch(talent, buildIntent);
+            if (mentorMatch) {
+                const biasStrength = this._extractBiasStrength(mentorMatch.sourceId, buildIntent);
+                const scaledBonus = TIER3_SUBPRIORITY.MENTOR * biasStrength;
+
+                matches.push({
+                    type: 'MENTOR_BIAS_MATCH',
+                    sourceId: mentorMatch.sourceId,
+                    weight: TIER3_SUBPRIORITY.MENTOR,
+                    bonus: scaledBonus,
+                    conviction: biasStrength
+                });
+                totalBonus += scaledBonus;
+            }
+        }
+
+        // Check PRESTIGE SURVEY SIGNAL (weight: 0.15)
+        if (buildIntent && buildIntent.mentorBiases?.prestigeClassTarget) {
+            const prestigeMatch = this._checkTalentForPrestige(talent, buildIntent.mentorBiases.prestigeClassTarget, buildIntent);
+            if (prestigeMatch) {
+                matches.push({
+                    type: 'PRESTIGE_SIGNAL',
+                    sourceId: `prestige:${buildIntent.mentorBiases.prestigeClassTarget}`,
+                    weight: TIER3_SUBPRIORITY.PRESTIGE,
+                    bonus: TIER3_SUBPRIORITY.PRESTIGE
+                });
+                totalBonus += TIER3_SUBPRIORITY.PRESTIGE;
+            }
+        }
+
+        // Check SKILL PREREQ MATCH (weight: 0.05)
+        if (this._usesTrainedSkill(talent, actorState)) {
+            matches.push({
+                type: 'SKILL_PREREQ_MATCH',
+                sourceId: `skill:${actorState.trainedSkills.values().next().value || 'trained'}`,
+                weight: TIER3_SUBPRIORITY.SKILL,
+                bonus: TIER3_SUBPRIORITY.SKILL
+            });
+            totalBonus += TIER3_SUBPRIORITY.SKILL;
+        }
+
+        // If any Tier 3 condition matched, build suggestion with weighted confidence
+        if (matches.length === 0) {
+            return null;
+        }
+
+        const cappedBonus = Math.min(totalBonus, TIER3_MAX_BONUS);
+
+        // Determine primary reason code (use highest authority match)
+        let primaryMatch = matches[0];
+        for (const match of matches) {
+            if (match.weight >= primaryMatch.weight) {
+                primaryMatch = match;
+            }
+        }
+
+        return this._buildSuggestionWithTier3Weighting(
+            SUGGESTION_TIERS.ARCHETYPE_RECOMMENDATION,  // Tier 3
+            primaryMatch.type,
+            primaryMatch.sourceId,
+            talent,
+            actor ? ArchetypeRegistry.get(actor.system?.buildIntent?.archetypeId) : null,
+            {
+                tier3Matches: matches,
+                tier3TotalBonus: cappedBonus,
+                tier3PrimaryMatch: primaryMatch
+            }
+        );
+    }
+
+    /**
+     * Extract bias strength from a mentor bias source ID
+     * For conviction scaling: determines weight multiplier (0.0-1.0)
+     * @param {string} sourceId - Source ID like 'mentor_bias:melee'
+     * @param {Object} buildIntent - Build intent with mentorBiases
+     * @returns {number} Bias strength (0.0-1.0)
+     */
+    static _extractBiasStrength(sourceId, buildIntent) {
+        if (!sourceId || !buildIntent.mentorBiases) {
+            return 1.0;  // Default full weight
+        }
+
+        const match = sourceId.match(/mentor_bias:(\w+)/);
+        if (!match) {
+            return 1.0;
+        }
+
+        const biasType = match[1];
+        const biasValue = buildIntent.mentorBiases[biasType] || 1.0;
+
+        // Clamp between 0.0 and 1.0
+        return Math.max(0.0, Math.min(1.0, biasValue));
+    }
+
+    /**
+     * Check if feat matches prestige target
+     * @param {Object} feat - Feat to check
+     * @param {string} prestigeClassTarget - Target prestige class name
+     * @param {Object} buildIntent - Build intent (may contain prestige affinities)
+     * @returns {boolean} True if feat matches prestige
+     */
+    static _checkFeatForPrestige(feat, prestigeClassTarget, buildIntent) {
+        if (!prestigeClassTarget) return false;
+
+        // Check if feat is a prestige prerequisite for target class
+        if (buildIntent?.priorityPrereqs) {
+            const prestigePrereq = buildIntent.priorityPrereqs.find(p =>
+                p.type === 'feat' && p.name === feat.name && p.forClass === prestigeClassTarget
+            );
+            if (prestigePrereq) return true;
+        }
+
+        // Check if feat name suggests prestige alignment
+        const featNameLower = feat.name.toLowerCase();
+        const prestigeLower = prestigeClassTarget.toLowerCase();
+        if (featNameLower.includes(prestigeLower) || prestigeLower.includes(featNameLower)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if talent matches prestige target
+     * @param {Object} talent - Talent to check
+     * @param {string} prestigeClassTarget - Target prestige class name
+     * @param {Object} buildIntent - Build intent (may contain prestige affinities)
+     * @returns {boolean} True if talent matches prestige
+     */
+    static _checkTalentForPrestige(talent, prestigeClassTarget, buildIntent) {
+        if (!prestigeClassTarget) return false;
+
+        // Check if talent's tree is a prestige prerequisite tree
+        const talentTree = talent.system?.tree || '';
+        const treeName = talent.system?.treeName || '';
+
+        // Check build intent alignment
+        if (buildIntent?.prestigeAffinities && buildIntent.prestigeAffinities.length > 0) {
+            const topPrestige = buildIntent.prestigeAffinities[0];
+            if (topPrestige.className === prestigeClassTarget) {
+                // Check if talent tree is in prestige's required trees
+                if (topPrestige.talentTrees?.some(t =>
+                    t.toLowerCase() === talentTree.toLowerCase() ||
+                    t.toLowerCase() === treeName.toLowerCase()
+                )) {
+                    return true;
+                }
+            }
+        }
+
+        // Heuristic: check if talent name/tree mentions prestige
+        const prestigeLower = prestigeClassTarget.toLowerCase();
+        return talentTree.toLowerCase().includes(prestigeLower) ||
+               treeName.toLowerCase().includes(prestigeLower) ||
+               talent.name.toLowerCase().includes(prestigeLower);
+    }
+
+    // ──────────────────────────────────────────────────────────────
     // PRIVATE: MENTOR BIAS MATCHING
     // ──────────────────────────────────────────────────────────────
 
@@ -919,40 +1239,14 @@ export class SuggestionEngine {
             );
         }
 
-        // Tier 3: ARCHETYPE RECOMMENDATION - Feat is recommended by character's primary archetype (Phase 4)
-        if (primaryArchetype && archetypeRecommendedFeatIds.includes(feat.id)) {
-            return this._buildSuggestionWithArchetype(
-                SUGGESTION_TIERS.ARCHETYPE_RECOMMENDATION,
-                'ARCHETYPE_RECOMMENDATION',
-                `archetype:${primaryArchetype.id}`,
-                feat,
-                archetype
-            );
-        }
-
-        // Tier 3.5: MENTOR BIAS - Feat matches L1 survey answer themes
-        if (buildIntent && buildIntent.mentorBiases && Object.keys(buildIntent.mentorBiases).length > 0) {
-            const mentorMatch = this._checkMentorBiasMatch(feat, buildIntent);
-            if (mentorMatch) {
-                return this._buildSuggestionWithArchetype(
-                    SUGGESTION_TIERS.MENTOR_BIAS_MATCH,
-                    'MENTOR_BIAS_MATCH',
-                    mentorMatch.sourceId,
-                    feat,
-                    archetype
-                );
-            }
-        }
-
-        // Tier 3: Uses trained skill
-        if (this._usesTrainedSkill(feat, actorState)) {
-            return this._buildSuggestionWithArchetype(
-                SUGGESTION_TIERS.SKILL_PREREQ_MATCH,
-                'SKILL_PREREQ_MATCH',
-                `skill:${actorState.trainedSkills.values().next().value || 'trained'}`,
-                feat,
-                archetype
-            );
+        // TIER 3 SUBPRIORITY EVALUATION (Phase 2.5)
+        // Evaluate ALL Tier 3 conditions, return best match with subpriority weighting
+        const tier3Match = this._evaluateTier3Feat(
+            feat, actorState, metadata, buildIntent, actor, primaryArchetype,
+            archetypeRecommendedFeatIds
+        );
+        if (tier3Match) {
+            return tier3Match;
         }
 
         // Tier 2: Uses highest ability
@@ -1075,40 +1369,14 @@ export class SuggestionEngine {
             );
         }
 
-        // Tier 3: ARCHETYPE RECOMMENDATION - Talent is recommended by character's primary archetype (Phase 4)
-        if (primaryArchetype && archetypeRecommendedTalentIds.includes(talent.id)) {
-            return this._buildSuggestionWithArchetype(
-                SUGGESTION_TIERS.ARCHETYPE_RECOMMENDATION,
-                'ARCHETYPE_RECOMMENDATION',
-                `archetype:${primaryArchetype.id}`,
-                talent,
-                archetype
-            );
-        }
-
-        // Tier 3.5: MENTOR BIAS - Talent matches L1 survey answer themes
-        if (buildIntent && buildIntent.mentorBiases && Object.keys(buildIntent.mentorBiases).length > 0) {
-            const mentorMatch = this._checkMentorBiasMatch(talent, buildIntent);
-            if (mentorMatch) {
-                return this._buildSuggestionWithArchetype(
-                    SUGGESTION_TIERS.MENTOR_BIAS_MATCH,
-                    'MENTOR_BIAS_MATCH',
-                    mentorMatch.sourceId,
-                    talent,
-                    archetype
-                );
-            }
-        }
-
-        // Tier 3: Uses trained skill
-        if (this._usesTrainedSkill(talent, actorState)) {
-            return this._buildSuggestionWithArchetype(
-                SUGGESTION_TIERS.SKILL_PREREQ_MATCH,
-                'SKILL_PREREQ_MATCH',
-                `skill:${actorState.trainedSkills.values().next().value || 'trained'}`,
-                talent,
-                archetype
-            );
+        // TIER 3 SUBPRIORITY EVALUATION (Phase 2.5)
+        // Evaluate ALL Tier 3 conditions, return best match with subpriority weighting
+        const tier3Match = this._evaluateTier3Talent(
+            talent, actorState, buildIntent, actor, primaryArchetype,
+            archetypeRecommendedTalentIds
+        );
+        if (tier3Match) {
+            return tier3Match;
         }
 
         // Tier 2: Uses highest ability
@@ -1246,6 +1514,55 @@ export class SuggestionEngine {
     }
 
     /**
+     * Build suggestion with Tier 3 subpriority weighting (Phase 2.5)
+     * Applies structured bonus for multiple Tier 3 matches
+     * @param {number} tier - The tier (should be ARCHETYPE_RECOMMENDATION = 3)
+     * @param {string} reasonCode - Primary reason code
+     * @param {string} sourceId - Primary source ID
+     * @param {Object} item - The feat/talent
+     * @param {Object} archetype - Archetype for alignment bonus
+     * @param {Object} options - Options including tier3 weighting data
+     * @returns {Object} Suggestion with tier 3 bonus applied
+     */
+    static _buildSuggestionWithTier3Weighting(tier, reasonCode, sourceId, item, archetype, options = {}) {
+        // Calculate base archetype alignment bonus (separate from tier 3 subpriority)
+        let archetypeAlignment = null;
+        let archetypeBonus = 0;
+
+        if (item && archetype) {
+            const alignment = this._calculateArchetypeAlignment(item, archetype);
+            if (alignment.bonus > 0) {
+                archetypeAlignment = alignment;
+                archetypeBonus = alignment.bonus;
+            }
+        }
+
+        // Get tier 3 subpriority bonus (from multiple tier 3 matches)
+        const tier3Bonus = options.tier3TotalBonus || 0;
+
+        // Combine bonuses (archetype alignment + tier 3 subpriority)
+        // Cap total at TIER3_MAX_BONUS + archetype bonus
+        const totalBonus = Math.min(archetypeBonus + tier3Bonus, 0.40);  // 0.2 arch + 0.2 tier3
+
+        // Build suggestion with combined bonuses
+        return this._buildSuggestion(
+            tier,
+            reasonCode,
+            sourceId,
+            {
+                ...options,
+                archetypeAlignmentBonus: totalBonus,
+                archetypeAlignment: archetypeAlignment || (tier3Bonus > 0 ? { bonus: tier3Bonus, matchedElements: [] } : null),
+                tier3Weighting: {
+                    matches: options.tier3Matches || [],
+                    totalBonus: tier3Bonus,
+                    primaryMatch: options.tier3PrimaryMatch || null
+                }
+            }
+        );
+    }
+
+    /**
      * Generate human-readable explanation for a suggestion (Phase S1)
      * @param {string} reasonCode - The reason code
      * @param {string|null} sourceId - The source identifier
@@ -1260,6 +1577,7 @@ export class SuggestionEngine {
             'SPECIES_EARLY': () => `Matches your species heritage.`,
             'CHAIN_CONTINUATION': () => `Builds on existing choices.`,
             'ARCHETYPE_RECOMMENDATION': () => `Recommended by your archetype.`,
+            'PRESTIGE_SIGNAL': () => `Aligns with your prestige path.`,
             'MENTOR_BIAS_MATCH': () => `Aligns with your mentor guidance.`,
             'SKILL_PREREQ_MATCH': () => `Uses your trained skills.`,
             'ABILITY_PREREQ_MATCH': () => `Matches your highest ability.`,
