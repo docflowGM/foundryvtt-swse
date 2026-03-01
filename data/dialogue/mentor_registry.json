@@ -55,6 +55,11 @@
       "display_name": "The Captain",
       "aliases": []
     },
+    "delta": {
+      "mentor_id": "m12",
+      "display_name": "Delta",
+      "aliases": ["delta_assassin", "whisper"]
+    },
     "dezmin": {
       "mentor_id": "m13",
       "display_name": "Dezmin",
@@ -144,11 +149,6 @@
       "mentor_id": "m30",
       "display_name": "Seeker Vera",
       "aliases": []
-    },
-    "whisper": {
-      "mentor_id": "m31",
-      "display_name": "Delta",
-      "aliases": ["delta", "delta_assassin"]
     },
     "zhen": {
       "mentor_id": "m32",
