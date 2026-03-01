@@ -100,6 +100,38 @@ export const MENTOR_ATOM_PHRASES = {
       medium: "This shifts your direction somewhat.",
       low: "This isn't directly aligned with your goal.",
       very_low: "This doesn't support your goal."
+    },
+
+    'CommitmentIgnored': {
+      very_high: "You swore to this path. But I see you drift. Decide what you are.",
+      high: "This abandons your stated commitment.",
+      medium: "You have moved away from this direction.",
+      low: "This diverges from your earlier path.",
+      very_low: "This shifts from what you committed to."
+    },
+
+    'SynergyMissing': {
+      very_high: "Your abilities lack cohesion. Critical synergies remain unfulfilled.",
+      high: "Your selections leave profound gaps.",
+      medium: "You could strengthen this path significantly.",
+      low: "Some synergies remain unexplored.",
+      very_low: "Minor synergistic opportunities remain."
+    },
+
+    'ReadinessLacking': {
+      very_high: "You are unprepared for what you have chosen. This is dangerous.",
+      high: "Your preparation is insufficient for this path.",
+      medium: "You lack what this role demands.",
+      low: "Your readiness could be stronger.",
+      very_low: "Minor preparation gaps remain."
+    },
+
+    'ExplorationSignal': {
+      very_high: "You venture far from your path. There is courage in this.",
+      high: "Your choices suggest you are exploring new directions.",
+      medium: "You are broadening your focus.",
+      low: "You are trying new things.",
+      very_low: "Your direction shifts slightly."
     }
   },
 
@@ -177,6 +209,38 @@ export const MENTOR_ATOM_PHRASES = {
       medium: "This diverges from your goal.",
       low: "This doesn't support your aim.",
       very_low: "This misses your objective."
+    },
+
+    'CommitmentIgnored': {
+      very_high: "You're stepping off the mission. Don't half-commit.",
+      high: "You said you'd follow this path. Now you're not.",
+      medium: "This abandons your objective.",
+      low: "You're drifting from your goal.",
+      very_low: "This strays from your stated direction."
+    },
+
+    'SynergyMissing': {
+      very_high: "Your loadout is incomplete—you need these pieces.",
+      high: "Your build is missing key combinations.",
+      medium: "You could be stronger with better synergies.",
+      low: "Some abilities would work well together.",
+      very_low: "A few synergies could be better utilized."
+    },
+
+    'ReadinessLacking': {
+      very_high: "You are not combat-ready for this role. You will not survive.",
+      high: "You lack the tools this mission requires.",
+      medium: "You need better preparation for this role.",
+      low: "Your readiness could improve.",
+      very_low: "Some minor readiness gaps exist."
+    },
+
+    'ExplorationSignal': {
+      very_high: "You are taking a completely different approach. Bold move.",
+      high: "You are testing new tactics.",
+      medium: "You are branching out.",
+      low: "You are exploring new options.",
+      very_low: "You are trying something different."
     }
   },
 
@@ -254,6 +318,38 @@ export const MENTOR_ATOM_PHRASES = {
       medium: "This shifts your direction.",
       low: "This doesn't support your goal.",
       very_low: "This diverges from your aim."
+    },
+
+    'CommitmentIgnored': {
+      very_high: "You are abandoning your commitment.",
+      high: "This contradicts your earlier stated direction.",
+      medium: "You have moved away from your goal.",
+      low: "This diverges from your commitment.",
+      very_low: "This shifts from your stated path."
+    },
+
+    'SynergyMissing': {
+      very_high: "Critical synergies are missing from your build.",
+      high: "Your selection lacks meaningful combinations.",
+      medium: "You could improve synergy significantly.",
+      low: "Some synergies remain unfulfilled.",
+      very_low: "Minor synergistic gaps exist."
+    },
+
+    'ReadinessLacking': {
+      very_high: "You are not prepared for this role.",
+      high: "Your preparation is insufficient.",
+      medium: "You lack readiness for this path.",
+      low: "Your readiness could be stronger.",
+      very_low: "Minor preparation gaps remain."
+    },
+
+    'ExplorationSignal': {
+      very_high: "You are exploring a very different direction.",
+      high: "Your choices suggest experimentation.",
+      medium: "You are broadening your approach.",
+      low: "You are trying new options.",
+      very_low: "Your choices show some variation."
     }
   }
 };
