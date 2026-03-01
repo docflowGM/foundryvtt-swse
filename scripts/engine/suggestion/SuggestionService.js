@@ -18,6 +18,7 @@ import { CompendiumResolver } from "/systems/foundryvtt-swse/scripts/engine/sugg
 import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { SuggestionExplainer } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionExplainer.js";
 import { getAllowedReasonDomains } from "/systems/foundryvtt-swse/scripts/suggestions/suggestion-focus-map.js";
+import { MentorReasonSelector } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-reason-selector.js";
 import { getReasonRelevance } from "/systems/foundryvtt-swse/scripts/suggestions/reason-relevance.js";
 import { ReasonFactory } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ReasonFactory.js";
 import { ConfidenceScoring } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ConfidenceScoring.js";
@@ -526,6 +527,26 @@ export class SuggestionService {
           }
         } catch (err) {
           suggestion.confidence = 0.5; // Default moderate confidence on error
+        }
+      }
+
+      // PHASE 2.7: Apply mentor reason selection (semantic signals → atoms + intensity)
+      // This uses reasonSignals from SuggestionEngine to determine mentor atoms
+      // and intensity level for mentor dialogue/explanation generation
+      if (suggestion?.suggestion?.reasonSignals) {
+        try {
+          const mentorSelection = MentorReasonSelector.select(
+            suggestion.suggestion.reasonSignals,
+            options.mentorProfile || null
+          );
+          suggestion.mentorAtoms = mentorSelection.atoms;
+          suggestion.mentorIntensity = mentorSelection.intensity;
+          suggestion.mentorSelectedReasons = mentorSelection.selectedReasons;
+        } catch (err) {
+          SWSELogger.warn('[SuggestionService] MentorReasonSelector failed:', err);
+          // Fallback: use atoms from SuggestionEngine if selector fails
+          suggestion.mentorAtoms = suggestion?.suggestion?.reason?.atoms || [];
+          suggestion.mentorIntensity = 'medium';
         }
       }
 
