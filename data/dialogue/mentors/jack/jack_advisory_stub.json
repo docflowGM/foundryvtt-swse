@@ -1,0 +1,63 @@
+{
+    "mentor": "jack",
+    "advisory_schema_version": "1.0",
+    "advisory_types": {
+        "conflict": {
+            "Observation": "{conflict_observation}",
+            "Impact": "{goal_or_archetype}",
+            "Guidance": "{corrective_focus}",
+            "Optional Encouragement": "{encouragement_line}"
+        },
+        "drift": {
+            "Observation": "{current_pattern}",
+            "Impact": "{declared_path}",
+            "Guidance": "{alignment_area}",
+            "Optional Encouragement": "{encouragement_line}"
+        },
+        "prestige_planning": {
+            "Observation": "{prestige_name}",
+            "Impact": "{missing_requirements}",
+            "Guidance": "{next_requirement}",
+            "Optional Encouragement": "{estimated_levels}"
+        },
+        "strength_reinforcement": {
+            "Observation": "{strength_area}",
+            "Impact": "{archetype_or_role}",
+            "Guidance": "{related_growth_area}",
+            "Optional Encouragement": "{encouragement_line}"
+        },
+        "hybrid_identity": {
+            "Observation": [
+                "{archetype_A}",
+                "{archetype_B}"
+            ],
+            "Impact": [
+                "{role_A}",
+                "{role_B}"
+            ],
+            "Guidance": "{balance_focus}",
+            "Optional Encouragement": "{clarifying_question}"
+        },
+        "specialization_warning": {
+            "Observation": "{dispersion_area}",
+            "Impact": "{primary_domain}",
+            "Guidance": "{focus_recommendation}",
+            "Optional Encouragement": "{encouragement_line}"
+        },
+        "momentum": {
+            "Observation": "{milestone}",
+            "Impact": "{current_progress}",
+            "Guidance": "{specific_action}",
+            "Optional Encouragement": "{encouragement_line}"
+        },
+        "long_term_trajectory": {
+            "Observation": "{projected_identity}",
+            "Impact": [
+                "{core_strength}",
+                "{potential_weakness}"
+            ],
+            "Guidance": "{recommended_area}",
+            "Optional Encouragement": "{encouragement_line}"
+        }
+    }
+}
