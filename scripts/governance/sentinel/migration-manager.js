@@ -6,7 +6,7 @@
  */
 
 import { swseLogger } from '../../utils/logger.js';
-import { MigrationEngine } from '../engine/migration/MigrationEngine.js';
+// import { MigrationEngine } from '../engine/migration/MigrationEngine.js'; // File doesn't exist
 
 const SYSTEM_SCHEMA_VERSION = 1;
 

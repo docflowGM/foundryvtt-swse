@@ -8,7 +8,7 @@
  * - Roll action handling
  */
 
-import { SWSELogger as swseLogger } from '../../utils/logger.js';
+import { SWSELogger as swseLogger } from '../utils/logger.js';
 import WeaponTooltip from "../ui/weapon-tooltip.js";
 
 export class CombatPanelManager {

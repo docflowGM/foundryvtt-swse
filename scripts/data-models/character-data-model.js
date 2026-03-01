@@ -1,4 +1,4 @@
-import { DefenseSystem } from '../engine/DefenseSystem.js';
+// import { DefenseSystem } from '../engine/DefenseSystem.js'; // File doesn't exist
 import { SWSELogger } from "../utils/logger.js";
 import { SWSEActorDataModel } from "../data-models/actor-data-model.js";
 import { warnIfMixedTracks } from "../utils/hardening.js";

@@ -16,7 +16,7 @@
  *   - Scheduled diagnostics
  */
 
-import { PrerequisiteIntegrityChecker } from "../../engine/integrity/prerequisite-integrity-checker.js";
+import { PrerequisiteIntegrityChecker } from "../../governance/integrity/prerequisite-integrity-checker.js";
 import { MissingPrereqsTracker } from "../../governance/integrity/missing-prereqs-tracker.js";
 import { SeverityClassifier } from "../../governance/integrity/severity-classifier.js";
 import { SWSELogger } from "../../core/logger.js";
