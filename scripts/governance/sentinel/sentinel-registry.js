@@ -25,9 +25,6 @@ import { MutationIntegrityLayer } from "../../governance/sentinel/mutation-integ
 // PHASE 10: Import hook mutation detection layer
 import { HooksMutationLayer } from "../../governance/sentinel/layers/hooks-mutation-layer.js";
 
-// PHASE 11: Import migration mutation detection layer
-import { MigrationMutationLayer } from "../../governance/sentinel/layers/migration-mutation-layer.js";
-
 // PHASE 3: Import Batch 1 validation suite
 import { Batch1Validation } from "../../governance/mutation/batch-1-validation.js";
 
@@ -57,9 +54,6 @@ export function initializeSentinelLayers() {
 
   // PHASE 10: Register hook mutation detection layer
   SentinelEngine.registerLayer('hooks-mutation', HooksMutationLayer);
-
-  // PHASE 11: Register migration mutation detection layer
-  SentinelEngine.registerLayer('migration-mutation', MigrationMutationLayer);
 }
 
 /**
