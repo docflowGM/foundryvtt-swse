@@ -16,8 +16,8 @@
  * Breakpoints occur at even scores: 10, 12, 14, 16, 18, 20
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { UNIFIED_TIERS, getTierMetadata } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-unified-tiers.js";
+import { SWSELogger } from "../../utils/logger.js";
+import { UNIFIED_TIERS, getTierMetadata } from "../../engine/suggestion/suggestion-unified-tiers.js";
 
 export const ATTRIBUTE_INCREASE_LEVELS = new Set([4, 8, 12, 16, 20]);
 

@@ -1,5 +1,5 @@
-import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ProgressionEngine } from "../../engine/progression/engine/progression-engine.js";
+import { SWSELogger } from "../../utils/logger.js";
 
 /**
  * SWSE Mentor Dialogue System

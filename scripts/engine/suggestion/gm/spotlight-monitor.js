@@ -5,7 +5,7 @@
  * Triggers when suggestion quality diverges significantly between players.
  */
 
-import { INSIGHT_TYPES, validateInsight } from "/systems/foundryvtt-swse/scripts/engine/suggestion/gm/insight-types.js";
+import { INSIGHT_TYPES, validateInsight } from "../../../engine/suggestion/gm/insight-types.js";
 
 export class SpotlightMonitor {
   /**

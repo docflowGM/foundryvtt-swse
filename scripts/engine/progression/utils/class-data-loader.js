@@ -12,9 +12,9 @@
  * requiring immediate refactoring of all consumers.
  */
 
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { normalizeClass } from "/systems/foundryvtt-swse/scripts/data/class-normalizer.js";
-import { adaptClassForLoaderCompatibility } from "/systems/foundryvtt-swse/scripts/data/adapters/ClassModelAdapters.js";
+import { swseLogger } from "../../../utils/logger.js";
+import { normalizeClass } from "../../../data/class-normalizer.js";
+import { adaptClassForLoaderCompatibility } from "../../../data/adapters/ClassModelAdapters.js";
 
 /**
  * Cache for loaded class data

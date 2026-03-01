@@ -23,7 +23,7 @@
  *   The hook itself checks for talent presence each derivation call.
  */
 
-import { SelectionModifierHookRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/selection-modifier-hook-registry.js";
+import { SelectionModifierHookRegistry } from "../../../engine/progression/engine/selection-modifier-hook-registry.js";
 
 export const TELEKINETIC_PRODIGY_HOOK_ID = 'telekinetic-prodigy';
 

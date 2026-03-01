@@ -7,9 +7,9 @@
  * Now uses UNIFIED_TIERS system for consistent tier definitions.
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
-import { UNIFIED_TIERS, getTierMetadata } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-unified-tiers.js";
+import { SWSELogger } from "../../utils/logger.js";
+import { BuildIntent } from "../../engine/suggestion/BuildIntent.js";
+import { UNIFIED_TIERS, getTierMetadata } from "../../engine/suggestion/suggestion-unified-tiers.js";
 
 // DEPRECATED: Legacy tier definitions (kept for backwards compatibility)
 // Use UNIFIED_TIERS from suggestion-unified-tiers.js instead

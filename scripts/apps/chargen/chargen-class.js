@@ -2,25 +2,25 @@
 // Class selection and features for CharGen
 // ============================================
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { applyProgressionPatch } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/apply-progression-patch.js";
-import { buildClassAtomicPatch } from "/systems/foundryvtt-swse/scripts/apps/chargen/steps/class-step.js";
+import { SWSELogger } from "../../utils/logger.js";
+import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
+import { applyProgressionPatch } from "../../engine/progression/engine/apply-progression-patch.js";
+import { buildClassAtomicPatch } from "../../apps/chargen/steps/class-step.js";
 import {
   getClassProperty,
   getHitDie,
   getTrainedSkills,
   getTalentTrees,
   validateClassDocument
-} from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
-import { MentorSurvey } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey.js";
-import { isBaseClass } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js";
-import { _findItemByIdOrName } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js";
-import { confirm } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
+} from "../../apps/chargen/chargen-property-accessor.js";
+import { MentorSurvey } from "../../mentor/mentor-survey.js";
+import { isBaseClass } from "../../apps/levelup/levelup-shared.js";
+import { _findItemByIdOrName } from "../../apps/chargen/chargen-shared.js";
+import { confirm } from "../../utils/ui-utils.js";
 
 // SSOT Data Layer
-import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
-import { calculateMaxForcePoints, initializeActorForcePoints } from "/systems/foundryvtt-swse/scripts/data/force-points.js";
+import { ClassesDB } from "../../data/classes-db.js";
+import { calculateMaxForcePoints, initializeActorForcePoints } from "../../data/force-points.js";
 
 /**
  * Handle class selection

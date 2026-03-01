@@ -9,14 +9,14 @@
  * - Prerequisite API
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { SkillRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry-ui.js";
-import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-registry-ui.js";
-import { TalentRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/talent-registry-ui.js";
-import { ForceRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/force/force-registry-ui.js";
-import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
-import { enforcePrerequisiteConsolidation } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker-regression-guard.js";
-import { SuggestionEngineCoordinator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineCoordinator.js";
+import { SWSELogger } from "../../utils/logger.js";
+import { SkillRegistry } from "../../engine/progression/skills/skill-registry-ui.js";
+import { FeatRegistry } from "../../engine/progression/feats/feat-registry-ui.js";
+import { TalentRegistry } from "../../engine/progression/talents/talent-registry-ui.js";
+import { ForceRegistry } from "../../engine/progression/force/force-registry-ui.js";
+import { AbilityEngine } from "../../engine/abilities/AbilityEngine.js";
+import { enforcePrerequisiteConsolidation } from "../../data/prerequisite-checker-regression-guard.js";
+import { SuggestionEngineCoordinator } from "../../engine/suggestion/SuggestionEngineCoordinator.js";
 
 /**
  * Initialize the Enhanced Level-Up UI system

@@ -6,7 +6,7 @@
  *
  * This module performs read-only lookups.
  */
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "../../utils/logger.js";
 
 function _norm(name) {
   return String(name ?? '')

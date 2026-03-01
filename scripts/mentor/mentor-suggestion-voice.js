@@ -9,7 +9,7 @@
  * Falls back to generic variations if atoms unavailable
  */
 
-import { MentorJudgmentEngine } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-judgment-engine.js";
+import { MentorJudgmentEngine } from "../engine/mentor/mentor-judgment-engine.js";
 
 export class MentorSuggestionVoice {
   /**

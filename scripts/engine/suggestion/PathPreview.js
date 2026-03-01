@@ -11,10 +11,10 @@
  * - Provides actionable advice for reaching prestige goals
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { isEpicActor, getPlannedHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
-import { ClassSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ClassSuggestionEngine.js";
-import { BuildIntent, PRESTIGE_SIGNALS } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
+import { SWSELogger } from "../../utils/logger.js";
+import { isEpicActor, getPlannedHeroicLevel } from "../../actors/derived/level-split.js";
+import { ClassSuggestionEngine } from "../../engine/suggestion/ClassSuggestionEngine.js";
+import { BuildIntent, PRESTIGE_SIGNALS } from "../../engine/suggestion/BuildIntent.js";
 
 // ──────────────────────────────────────────────────────────────
 // PATH PREVIEW CONFIGURATION

@@ -10,11 +10,11 @@
  * - Optional: called on manual GM request
  */
 
-import { createSuggestionReport, generateReportId, validateSuggestionReport } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/report-schema.js";
-import { emitSuggestionReport } from "/systems/foundryvtt-swse/scripts/engine/suggestion/gm/init.js";
-import { getCurrentPhase } from "/systems/foundryvtt-swse/scripts/state/phase.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { TacticalEvaluator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/tactical-evaluator.js";
+import { createSuggestionReport, generateReportId, validateSuggestionReport } from "../../../engine/suggestion/equipment/report-schema.js";
+import { emitSuggestionReport } from "../../../engine/suggestion/gm/init.js";
+import { getCurrentPhase } from "../../../state/phase.js";
+import { SWSELogger } from "../../../utils/logger.js";
+import { TacticalEvaluator } from "../../../engine/suggestion/equipment/tactical-evaluator.js";
 
 export class CombatSuggestionEngine {
   /**

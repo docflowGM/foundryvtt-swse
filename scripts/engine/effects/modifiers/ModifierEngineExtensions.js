@@ -19,9 +19,9 @@
  * - No game.settings.get() calls
  */
 
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
-import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
+import { swseLogger } from "../../../utils/logger.js";
+import { HouseRuleService } from "../../../engine/system/HouseRuleService.js";
+import { ModifierEngine } from "../../../engine/effects/modifiers/ModifierEngine.js";
 
 /**
  * Specialized modifier domains with their own stacking and cap rules

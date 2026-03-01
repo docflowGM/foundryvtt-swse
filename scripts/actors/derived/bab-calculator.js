@@ -27,7 +27,7 @@
  * - Heroic and nonheroic BAB stack: total BAB = heroic BAB + nonheroic BAB
  */
 
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { swseLogger } from "../../utils/logger.js";
 
 // SWSE Nonheroic BAB Progression (per nonheroic class level)
 const NONHEROIC_BAB_PROGRESSION = [

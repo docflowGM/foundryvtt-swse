@@ -7,8 +7,8 @@
  * - bonus_feat: Automatic bonus feat grants
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { FeatEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-engine.js";
+import { SWSELogger } from "../../../utils/logger.js";
+import { FeatEngine } from "../../../engine/progression/feats/feat-engine.js";
 
 export const FEAT_FEATURE_DISPATCH = {
 

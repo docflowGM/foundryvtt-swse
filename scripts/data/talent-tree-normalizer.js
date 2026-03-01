@@ -7,7 +7,7 @@
 // Tree ownership is handled exclusively by TalentTreeDB.
 // ============================================
 
-import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
+import { SentinelEngine } from "../governance/sentinel/sentinel-core.js";
 
 export function normalizeTalentTreeId(name) {
     if (!name) return 'unknown';

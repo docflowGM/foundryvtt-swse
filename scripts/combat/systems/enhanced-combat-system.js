@@ -1,8 +1,8 @@
-import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance, checkConcealmentHit, getFlankingBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
-import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
-import { DamageSystem } from "/systems/foundryvtt-swse/scripts/combat/damage-system.js";
-import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
+import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance, checkConcealmentHit, getFlankingBonus } from "../../combat/utils/combat-utils.js";
+import { SWSERoll } from "../../combat/rolls/enhanced-rolls.js";
+import { createChatMessage } from "../../core/document-api-v13.js";
+import { DamageSystem } from "../../combat/damage-system.js";
+import { CombatEngine } from "../../engine/combat/CombatEngine.js";
 
 /**
  * SWSE Enhanced Combat System (UI Adapter)

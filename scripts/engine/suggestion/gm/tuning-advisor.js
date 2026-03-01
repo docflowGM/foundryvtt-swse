@@ -5,7 +5,7 @@
  * Non-automatic: GM decides whether to apply suggestions.
  */
 
-import { INSIGHT_TYPES, validateInsight } from "/systems/foundryvtt-swse/scripts/engine/suggestion/gm/insight-types.js";
+import { INSIGHT_TYPES, validateInsight } from "../../../engine/suggestion/gm/insight-types.js";
 
 export class TuningAdvisor {
   /**

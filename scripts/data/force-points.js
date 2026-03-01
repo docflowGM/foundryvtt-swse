@@ -29,8 +29,8 @@
 // - Level change
 // ============================================
 
-import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ClassesDB } from "../data/classes-db.js";
+import { SWSELogger } from "../utils/logger.js";
 
 /**
  * Calculate maximum Force Points for an actor.

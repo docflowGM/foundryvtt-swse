@@ -1,7 +1,7 @@
-import { PROGRESSION_RULES } from "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js";
-import { SWSEProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression.js";
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { PROGRESSION_RULES } from "../../../engine/progression/data/progression-data.js";
+import { SWSEProgressionEngine } from "../../../engine/progression.js";
+import { swseLogger } from "../../../utils/logger.js";
+import { ActorEngine } from "../../../governance/actor-engine/actor-engine.js";
 
 /**
  * TemplateEngine.applyTemplate(actor, templateId, options)

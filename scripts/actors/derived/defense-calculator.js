@@ -13,9 +13,9 @@
  *   Fortitude = STR only
  */
 
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { getHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
-import { getClassData } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-data-loader.js"; // STATIC import (no dynamic)
+import { swseLogger } from "../../utils/logger.js";
+import { getHeroicLevel } from "../../actors/derived/level-split.js";
+import { getClassData } from "../../engine/progression/utils/class-data-loader.js"; // STATIC import (no dynamic)
 
 export class DefenseCalculator {
 

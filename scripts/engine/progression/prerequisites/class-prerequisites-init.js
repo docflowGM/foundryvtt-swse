@@ -16,8 +16,8 @@
  * ============================================
  */
 
-import { normalizeAndCacheAll } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prerequisites-cache.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { normalizeAndCacheAll } from "../../../engine/progression/prerequisites/class-prerequisites-cache.js";
+import { SWSELogger } from "../../../utils/logger.js";
 
 /**
  * Initialize class prerequisites cache.

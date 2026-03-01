@@ -20,8 +20,8 @@
  * - Chat messages (that's renderers)
  */
 
-import { getTotalLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
-import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
+import { getTotalLevel } from "../../actors/derived/level-split.js";
+import { ModifierEngine } from "../../engine/effects/modifiers/ModifierEngine.js";
 
 export class ForcePointsService {
 

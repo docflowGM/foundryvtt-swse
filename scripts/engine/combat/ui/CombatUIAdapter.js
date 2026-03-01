@@ -17,8 +17,8 @@
  * - Initiative orchestration (CombatEngine)
  */
 
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
-import { DamageSystem } from "/systems/foundryvtt-swse/scripts/combat/damage-system.js";
+import { createChatMessage } from "../../../core/document-api-v13.js";
+import { DamageSystem } from "../../../combat/damage-system.js";
 
 export class CombatUIAdapter {
 

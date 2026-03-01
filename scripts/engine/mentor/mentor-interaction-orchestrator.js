@@ -21,14 +21,14 @@
  * - No refactoring of existing systems
  */
 
-import { SuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngine.js";
-import { BuildAnalysisEngine } from "/systems/foundryvtt-swse/scripts/engine/analysis/build-analysis-engine.js";
-import { TrajectoryPlanningEngine } from "/systems/foundryvtt-swse/scripts/engine/analysis/trajectory-planning-engine.js";
-import { MentorJudgmentEngine } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-judgment-engine.js";
-import { getMentor } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-json-loader.js";
-import { getEncouragementLine } from "/systems/foundryvtt-swse/scripts/dialogue/runtime/getEncouragementLine.js";
-import { getJudgmentOverlay } from "/systems/foundryvtt-swse/scripts/dialogue/runtime/getJudgmentOverlay.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SuggestionEngine } from "../../engine/suggestion/SuggestionEngine.js";
+import { BuildAnalysisEngine } from "../../engine/analysis/build-analysis-engine.js";
+import { TrajectoryPlanningEngine } from "../../engine/analysis/trajectory-planning-engine.js";
+import { MentorJudgmentEngine } from "../../engine/mentor/mentor-judgment-engine.js";
+import { getMentor } from "../../engine/mentor/mentor-json-loader.js";
+import { getEncouragementLine } from "../../dialogue/runtime/getEncouragementLine.js";
+import { getJudgmentOverlay } from "../../dialogue/runtime/getJudgmentOverlay.js";
+import { SWSELogger } from "../../utils/logger.js";
 
 export class MentorInteractionOrchestrator {
   /**

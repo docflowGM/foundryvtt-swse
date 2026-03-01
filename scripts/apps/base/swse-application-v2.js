@@ -2,7 +2,7 @@
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
-import { guardOnRender, validateTemplate } from "/systems/foundryvtt-swse/scripts/debug/appv2-probe.js";
+import { guardOnRender, validateTemplate } from "../../debug/appv2-probe.js";
 
 export default class SWSEApplicationV2 extends HandlebarsApplicationMixin(ApplicationV2) {
   static DEFAULT_OPTIONS = {

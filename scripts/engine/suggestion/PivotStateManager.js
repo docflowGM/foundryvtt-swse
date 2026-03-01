@@ -19,9 +19,9 @@
  * Never owns: Logic, calculations, state transitions
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { SuggestionStateService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionStateService.js";
-import { PIVOT_STATE } from "/systems/foundryvtt-swse/scripts/engine/suggestion/PivotLogic.js";
+import { SWSELogger } from "../../utils/logger.js";
+import { SuggestionStateService } from "../../engine/suggestion/SuggestionStateService.js";
+import { PIVOT_STATE } from "../../engine/suggestion/PivotLogic.js";
 
 export class PivotStateManager {
   /**

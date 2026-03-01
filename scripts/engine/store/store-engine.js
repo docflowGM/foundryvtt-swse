@@ -10,12 +10,12 @@
  *   - purchase(context)           : Execute atomic transaction
  */
 
-import { buildStoreIndex } from "/systems/foundryvtt-swse/scripts/engine/store/index.js";
-import { STORE_RULES } from "/systems/foundryvtt-swse/scripts/engine/store/store-constants.js";
-import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
-import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
+import { buildStoreIndex } from "../../engine/store/index.js";
+import { STORE_RULES } from "../../engine/store/store-constants.js";
+import { LedgerService } from "../../engine/store/ledger-service.js";
+import { TransactionEngine } from "../../engine/store/transaction-engine.js";
+import { SWSELogger } from "../../utils/logger.js";
+import { normalizeCredits } from "../../utils/credit-normalization.js";
 
 const logger = () => SWSELogger || globalThis.swseLogger || console;
 

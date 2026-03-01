@@ -21,8 +21,8 @@
  * - validateForceSelection(actor, powerIds) -> {valid: bool, reason: string, capacityUsed?: number}
  */
 
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { SelectionModifierHookRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/selection-modifier-hook-registry.js";
+import { swseLogger } from "../../../utils/logger.js";
+import { SelectionModifierHookRegistry } from "../../../engine/progression/engine/selection-modifier-hook-registry.js";
 
 export class ForceAuthorityEngine {
   /**

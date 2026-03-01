@@ -5,28 +5,28 @@
  * Called once from system initialization (module/system.js or equivalent).
  * Ensures all game data is normalized and indexed for optimal progression engine performance.
  */
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { FeatureIndex } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/feature-index.js";
-import { ClassNormalizer } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/class-normalizer.js";
-import { ForceNormalizer } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-normalizer.js";
-import { StartingFeatureRegistrar } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/starting-feature-registrar.js";
-import { ProgressionStateNormalizer } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-state-normalizer.js";
-import { SkillRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js";
-import { SkillNormalizer } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-normalizer.js";
-import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-registry.js";
-import { FeatNormalizer } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-normalizer.js";
-import { Sentinel } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
+import { ActorEngine } from "../../../governance/actor-engine/actor-engine.js";
+import { SWSELogger } from "../../../utils/logger.js";
+import { FeatureIndex } from "../../../engine/progression/engine/feature-index.js";
+import { ClassNormalizer } from "../../../engine/progression/engine/class-normalizer.js";
+import { ForceNormalizer } from "../../../engine/progression/engine/force-normalizer.js";
+import { StartingFeatureRegistrar } from "../../../engine/progression/engine/starting-feature-registrar.js";
+import { ProgressionStateNormalizer } from "../../../engine/progression/engine/progression-state-normalizer.js";
+import { SkillRegistry } from "../../../engine/progression/skills/skill-registry.js";
+import { SkillNormalizer } from "../../../engine/progression/skills/skill-normalizer.js";
+import { FeatRegistry } from "../../../engine/progression/feats/feat-registry.js";
+import { FeatNormalizer } from "../../../engine/progression/feats/feat-normalizer.js";
+import { Sentinel } from "../../../governance/sentinel/sentinel-core.js";
 
 // SSOT Data Layer (now includes talent tree normalization)
-import { TalentTreeDB } from "/systems/foundryvtt-swse/scripts/data/talent-tree-db.js";
-import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
-import { TalentDB } from "/systems/foundryvtt-swse/scripts/data/talent-db.js";
-import { StableKeyMigration } from "/systems/foundryvtt-swse/scripts/data/stable-key-migration.js";
-import { normalizeDocumentTalent, validateTalentTreeAssignment } from "/systems/foundryvtt-swse/scripts/data/talent-tree-normalizer.js";
+import { TalentTreeDB } from "../../../data/talent-tree-db.js";
+import { ClassesDB } from "../../../data/classes-db.js";
+import { TalentDB } from "../../../data/talent-db.js";
+import { StableKeyMigration } from "../../../data/stable-key-migration.js";
+import { normalizeDocumentTalent, validateTalentTreeAssignment } from "../../../data/talent-tree-normalizer.js";
 
 // Mentor System Validation
-import { validateMentorIntegration } from "/systems/foundryvtt-swse/scripts/engine/mentor/validate-mentor-integration.js";
+import { validateMentorIntegration } from "../../../engine/mentor/validate-mentor-integration.js";
 
 export const SystemInitHooks = {
 

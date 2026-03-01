@@ -11,8 +11,8 @@
  *   SWSE.testHarness.emitTuningMismatchReport()
  */
 
-import { createSuggestionReport, generateReportId } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/report-schema.js";
-import { emitSuggestionReport } from "/systems/foundryvtt-swse/scripts/engine/suggestion/gm/init.js";
+import { createSuggestionReport, generateReportId } from "../../../engine/suggestion/equipment/report-schema.js";
+import { emitSuggestionReport } from "../../../engine/suggestion/gm/init.js";
 
 export const testHarness = {
   /**

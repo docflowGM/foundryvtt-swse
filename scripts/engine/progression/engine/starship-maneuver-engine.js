@@ -13,9 +13,9 @@
  * Apps should call collectAvailableManeuvers(), show UI, then call applySelected().
  */
 
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { ManeuverSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/maneuvers/maneuver-slot-validator.js";
+import { swseLogger } from "../../../utils/logger.js";
+import { ActorEngine } from "../../../governance/actor-engine/actor-engine.js";
+import { ManeuverSlotValidator } from "../../../engine/progression/maneuvers/maneuver-slot-validator.js";
 
 export class StarshipManeuverEngine {
   /**
@@ -96,7 +96,7 @@ export class StarshipManeuverEngine {
 
     try {
       // Dynamically import picker to avoid circular dependencies
-      const { StarshipManeuverPicker } = await import('/systems/foundryvtt-swse/scripts/apps/progression/starship-maneuver-picker.js');
+      const { StarshipManeuverPicker } = await import("../../../apps/progression/starship-maneuver-picker.js");
 
       // Get available maneuvers (actor's existing maneuver items)
       const available = await this.collectAvailableManeuvers(actor);

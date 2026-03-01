@@ -3,10 +3,10 @@
  * Enhances mentor suggestions to consider player goals and prerequisites
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { WishlistEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/WishlistEngine.js";
-import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
-import { PrerequisiteRequirements } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/prerequisite_engine.js";
+import { SWSELogger } from "../../utils/logger.js";
+import { WishlistEngine } from "../../engine/suggestion/WishlistEngine.js";
+import { AbilityEngine } from "../../engine/abilities/AbilityEngine.js";
+import { PrerequisiteRequirements } from "../../engine/progression/feats/prerequisite_engine.js";
 
 export class MentorWishlistIntegration {
   /**

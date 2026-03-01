@@ -24,7 +24,7 @@
  * Runs AFTER ThresholdEngine in damage resolution order.
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "../../../utils/logger.js";
 
 export class SubsystemEngine {
 

@@ -8,9 +8,9 @@
  * - GM panel UI
  */
 
-import { InsightBus } from "/systems/foundryvtt-swse/scripts/engine/suggestion/gm/insight-bus.js";
-import { GMSuggestionPanel } from "/systems/foundryvtt-swse/scripts/engine/suggestion/gm/gm-suggestion-panel.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
+import { InsightBus } from "../../../engine/suggestion/gm/insight-bus.js";
+import { GMSuggestionPanel } from "../../../engine/suggestion/gm/gm-suggestion-panel.js";
+import { SWSELogger } from "../../../core/logger.js";
 
 export function initializeGMSuggestions() {
   // Register UI panel

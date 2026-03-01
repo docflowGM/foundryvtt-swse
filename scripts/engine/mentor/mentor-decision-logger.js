@@ -14,7 +14,7 @@
  * and can be called from anywhere (engine, UI, tests, etc.)
  */
 
-import { calculateIntensity, getIntensityLevel } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-intensity-atoms.js";
+import { calculateIntensity, getIntensityLevel } from "../../engine/mentor/mentor-intensity-atoms.js";
 
 /**
  * Log a mentor decision for a suggestion.

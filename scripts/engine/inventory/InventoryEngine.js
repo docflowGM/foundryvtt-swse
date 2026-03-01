@@ -8,7 +8,7 @@
  *   - No direct item.update() or item.delete()
  */
 
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
 
 const STACKABLE_TYPES = ["consumable", "equipment", "misc", "ammo"];
 const NON_STACKABLE_TYPES = ["weapon", "armor", "shield"];

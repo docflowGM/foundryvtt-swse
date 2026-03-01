@@ -12,9 +12,9 @@
  * - Never hides options or overrides RAW legality
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { CLASS_SYNERGY_DATA } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ClassSuggestionEngine.js";
-import { ArchetypeRegistry } from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry.js";
+import { SWSELogger } from "../../utils/logger.js";
+import { CLASS_SYNERGY_DATA } from "../../engine/suggestion/ClassSuggestionEngine.js";
+import { ArchetypeRegistry } from "../../engine/archetype/archetype-registry.js";
 
 // ──────────────────────────────────────────────────────────────
 // BUILD THEME DEFINITIONS
