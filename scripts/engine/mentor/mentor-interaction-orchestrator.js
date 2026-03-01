@@ -25,6 +25,8 @@ import { SuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/sugges
 import { BuildAnalysisEngine } from "/systems/foundryvtt-swse/scripts/engine/analysis/build-analysis-engine.js";
 import { TrajectoryPlanningEngine } from "/systems/foundryvtt-swse/scripts/engine/analysis/trajectory-planning-engine.js";
 import { MentorJudgmentEngine } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-judgment-engine.js";
+import { getMentor } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-json-loader.js";
+import { getEncouragementLine } from "/systems/foundryvtt-swse/scripts/dialogue/runtime/getEncouragementLine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class MentorInteractionOrchestrator {
@@ -149,6 +151,9 @@ export class MentorInteractionOrchestrator {
     const strengthSignals = analysis.strengthSignals || [];
     const metrics = analysis.metrics || {};
 
+    // Determine advisory tier from signal severity
+    const tier = conflictSignals.some(s => s.severity === "high") ? "high" : "medium";
+
     // Convert signals to mentor advisory atoms
     const advisoryAtoms = this._signalsToAdvisoryAtoms(conflictSignals, strengthSignals);
 
@@ -170,7 +175,9 @@ export class MentorInteractionOrchestrator {
       );
     }
 
-    return {
+    // Load mentor data and inject deterministic encouragement_line
+    const mentorData = await getMentor(mentorId);
+    const payload = {
       mode: "reflection",
       primaryAdvice: primaryAdvice,
       strategicInsight: strategicInsight,
@@ -183,6 +190,10 @@ export class MentorInteractionOrchestrator {
       },
       deterministic: true
     };
+
+    payload.encouragement_line = getEncouragementLine(mentorData, tier);
+
+    return payload;
   }
 
   /**
