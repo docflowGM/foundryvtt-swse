@@ -40,6 +40,8 @@ import {
     isArchetypeRecommended,
     getRoleBiasForArchetype
 } from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry-integration.js";
+import { selectReasonAtoms } from "/systems/foundryvtt-swse/scripts/engine/suggestion/selectReasonAtoms.js";
+import { REASON_TEXT_MAP } from "/systems/foundryvtt-swse/scripts/mentor/mentor-reason-renderer.js";
 
 // ──────────────────────────────────────────────────────────────
 // TIER DEFINITIONS (PHASE 5D: UNIFIED_TIERS Refactor)
@@ -1452,11 +1454,15 @@ export class SuggestionEngine {
         // Generate human-readable explanation
         const explanation = this._generateReasonExplanation(finalReasonCode, sourceId);
 
+        // Select mentor reason atoms for this code
+        const atoms = selectReasonAtoms(finalReasonCode);
+
         // Build reason object
         const reason = {
             tierAssignedBy: finalReasonCode,
             matchingRules,
-            explanation
+            explanation,
+            atoms
         };
 
         // Add archetype alignment details if present
@@ -1569,6 +1575,30 @@ export class SuggestionEngine {
      * @returns {string} Human-readable explanation
      */
     static _generateReasonExplanation(reasonCode, sourceId) {
+        // Map SuggestionEngine reason codes to canonical reasons.json keys
+        const reasonCodeToJsonKeys = {
+            'PRESTIGE_PREREQ': 'prestige_prerequisites_met',
+            'WISHLIST_PATH': 'goal_advancement',
+            'MARTIAL_ARTS': 'feat_reinforces_core_strength',
+            'META_SYNERGY': 'feat_synergy_present',
+            'SPECIES_EARLY': 'attribute_matches_feature_focus',
+            'CHAIN_CONTINUATION': 'feat_chain_continuation',
+            'ARCHETYPE_RECOMMENDATION': 'feat_supports_existing_role',
+            'PRESTIGE_SIGNAL': 'prestige_path_consistency',
+            'MENTOR_BIAS_MATCH': 'pattern_alignment',
+            'SKILL_PREREQ_MATCH': 'skill_prerequisite_met',
+            'ABILITY_PREREQ_MATCH': 'attribute_matches_feature_focus',
+            'CLASS_SYNERGY': 'class_synergy',
+            'FALLBACK': 'available_for_selection'
+        };
+
+        // Try to get explanation from reasons.json
+        const jsonKey = reasonCodeToJsonKeys[reasonCode];
+        if (jsonKey && REASON_TEXT_MAP && REASON_TEXT_MAP[jsonKey]) {
+            return REASON_TEXT_MAP[jsonKey];
+        }
+
+        // Fallback to hardcoded explanations
         const explanations = {
             'PRESTIGE_PREREQ': () => `Required for your prestige class path.`,
             'WISHLIST_PATH': () => `Required for an item on your wishlist.`,
