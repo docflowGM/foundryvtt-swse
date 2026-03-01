@@ -44,12 +44,12 @@ export class ArchitectureGuard {
       '/scripts/utils/',           // Utils layer
       '/scripts/governance/',      // Governance layer
       '/scripts/actors/',          // Actors layer
-      '/systems/foundryvtt-swse/scripts/engine/',
-      '/systems/foundryvtt-swse/scripts/shared/',
-      '/systems/foundryvtt-swse/scripts/core/',
-      '/systems/foundryvtt-swse/scripts/utils/',
-      '/systems/foundryvtt-swse/scripts/governance/',
-      '/systems/foundryvtt-swse/scripts/actors/'
+      '/scripts/engine/',
+      '/scripts/shared/',
+      '/scripts/core/',
+      '/scripts/utils/',
+      '/scripts/governance/',
+      '/scripts/actors/'
     ];
 
     return allowedPatterns.some(pattern => importPath.includes(pattern));

@@ -10,9 +10,9 @@
  * LAZY BINDING: Mentors are resolved at dialogue-open time, not at init time
  */
 
-import { MENTORS, getLevel1Class, getMentorForClass, getActiveMentor } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
-import { MentorInheritance } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-inheritance.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { MENTORS, getLevel1Class, getMentorForClass, getActiveMentor } from "/scripts/engine/mentor/mentor-dialogues.js";
+import { MentorInheritance } from "/scripts/engine/mentor/mentor-inheritance.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
 
 /**
  * Phase-specific mentor defaults

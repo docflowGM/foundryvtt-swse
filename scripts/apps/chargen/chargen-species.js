@@ -2,10 +2,10 @@
 // Species selection and traits for CharGen
 // ============================================
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { applyProgressionPatch } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/apply-progression-patch.js";
-import { buildSpeciesAtomicPatch } from "/systems/foundryvtt-swse/scripts/apps/chargen/steps/species-step.js";
-import { confirm } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { applyProgressionPatch } from "/scripts/engine/progression/engine/apply-progression-patch.js";
+import { buildSpeciesAtomicPatch } from "/scripts/apps/chargen/steps/species-step.js";
+import { confirm } from "/scripts/utils/ui-utils.js";
 
 // NOTE: _previewedSpeciesName moved to instance property (this.previewedSpeciesName)
 // to prevent race conditions with multiple CharGen windows

@@ -11,25 +11,25 @@
  * Call this from the main system initialization hook.
  */
 
-import { validateCoreData, registerSafetyDiagnostics } from "/systems/foundryvtt-swse/scripts/core/runtime-safety.js";
-import { registerMutationSafety } from "/systems/foundryvtt-swse/scripts/core/mutation-safety.js";
-import { registerDiagnosticsCommand } from "/systems/foundryvtt-swse/scripts/core/v1-api-scanner.js";
-import { log } from "/systems/foundryvtt-swse/scripts/core/foundry-env.js";
+import { validateCoreData, registerSafetyDiagnostics } from "/scripts/core/runtime-safety.js";
+import { registerMutationSafety } from "/scripts/core/mutation-safety.js";
+import { registerDiagnosticsCommand } from "/scripts/core/v1-api-scanner.js";
+import { log } from "/scripts/core/foundry-env.js";
 
 // Phase 6: Product-Grade Finish
 import {
   initializeFirstRunExperience,
   registerFirstRunSettings,
   registerFirstRunConsoleHelpers
-} from "/systems/foundryvtt-swse/scripts/core/first-run-experience.js";
+} from "/scripts/core/first-run-experience.js";
 import {
   registerFeatureSettings,
   registerFeatureFlagsConsole
-} from "/systems/foundryvtt-swse/scripts/core/feature-flags.js";
+} from "/scripts/core/feature-flags.js";
 import {
   registerTooltipSettings,
   registerTooltipDiscoveryConsole
-} from "/systems/foundryvtt-swse/scripts/core/tooltip-discovery.js";
+} from "/scripts/core/tooltip-discovery.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 

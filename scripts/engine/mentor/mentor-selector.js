@@ -3,8 +3,8 @@
  * Allows players to choose or change their mentor
  */
 
-import { MENTORS, setMentorOverride, getActiveMentor } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { MENTORS, setMentorOverride, getActiveMentor } from "/scripts/engine/mentor/mentor-dialogues.js";
+import { swseLogger } from "/scripts/utils/logger.js";
 
 export class MentorSelectorWindow {
     /**

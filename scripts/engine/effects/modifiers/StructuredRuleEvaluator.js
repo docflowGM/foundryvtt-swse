@@ -11,8 +11,8 @@
  * - Optional context conditions for conditional modifiers
  */
 
-import { ModifierType, ModifierSource, createModifier } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ModifierType, ModifierSource, createModifier } from "/scripts/engine/effects/modifiers/ModifierTypes.js";
+import { swseLogger } from "/scripts/utils/logger.js";
 
 export class StructuredRuleEvaluator {
   /**

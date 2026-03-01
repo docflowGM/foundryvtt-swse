@@ -8,10 +8,10 @@
  * Does NOT infer intent. Only warns when cost is credible and anchor is present.
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { PRESTIGE_SIGNALS } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
-import { BuildIdentityAnchor } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIdentityAnchor.js";
-import { SuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngine.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { PRESTIGE_SIGNALS } from "/scripts/engine/suggestion/BuildIntent.js";
+import { BuildIdentityAnchor } from "/scripts/engine/suggestion/BuildIdentityAnchor.js";
+import { SuggestionEngine } from "/scripts/engine/suggestion/SuggestionEngine.js";
 
 export class OpportunityCostAnalyzer {
 

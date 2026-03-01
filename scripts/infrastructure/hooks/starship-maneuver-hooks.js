@@ -1,12 +1,12 @@
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
 /**
  * Starship Maneuver Hooks
  * Handles automatic maneuver grants when feats are added or abilities change
  * PHASE 10: Recursive guards prevent infinite item creation loops
  */
 
-import { StarshipManeuverManager } from "/systems/foundryvtt-swse/scripts/utils/starship-maneuver-manager.js";
+import { StarshipManeuverManager } from "/scripts/utils/starship-maneuver-manager.js";
 
 export function initializeStarshipManeuverHooks() {
 

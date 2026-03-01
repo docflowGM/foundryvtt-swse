@@ -14,10 +14,10 @@
  * - Soft warnings only when necessary
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { BuildIdentityAnchor, ANCHOR_STATE } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIdentityAnchor.js";
-import { PivotDetector, PIVOT_STATE } from "/systems/foundryvtt-swse/scripts/engine/suggestion/PivotDetector.js";
-import { ReasonFactory } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ReasonFactory.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { BuildIdentityAnchor, ANCHOR_STATE } from "/scripts/engine/suggestion/BuildIdentityAnchor.js";
+import { PivotDetector, PIVOT_STATE } from "/scripts/engine/suggestion/PivotDetector.js";
+import { ReasonFactory } from "/scripts/engine/suggestion/ReasonFactory.js";
 
 export class SuggestionExplainer {
 

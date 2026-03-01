@@ -7,8 +7,8 @@
  *   - GM Mode: Three zones (Spawners, Commands, Utilities) with customizable drag-and-drop slots
  */
 
-import { sceneControlRegistry } from "/systems/foundryvtt-swse/scripts/scene-controls/api.js";
-import { getCurrentPhase, SWSE_PHASES } from "/systems/foundryvtt-swse/scripts/state/phase.js";
+import { sceneControlRegistry } from "/scripts/scene-controls/api.js";
+import { getCurrentPhase, SWSE_PHASES } from "/scripts/state/phase.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 

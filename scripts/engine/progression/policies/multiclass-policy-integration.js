@@ -7,7 +7,7 @@
  * Called by feature dispatcher when class_level feature is processed.
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
 import { MulticlassPolicy } from "./multiclass-policy.js";
 import { FeatSlotSchema } from "../feats/feat-slot-schema.js";
 

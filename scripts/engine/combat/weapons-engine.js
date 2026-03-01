@@ -6,9 +6,9 @@
  * No direct rule math outside ModifierEngine.
  */
 
-import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { ModifierSource, ModifierType, createModifier } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
-import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { SWSELogger as swseLogger } from "/scripts/utils/logger.js";
+import { ModifierSource, ModifierType, createModifier } from "/scripts/engine/effects/modifiers/ModifierTypes.js";
+import { getEffectiveHalfLevel } from "/scripts/actors/derived/level-split.js";
 
 export class WeaponsEngine {
 

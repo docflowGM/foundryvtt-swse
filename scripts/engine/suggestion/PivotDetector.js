@@ -10,10 +10,10 @@
  * - This module is a backwards-compatible facade only
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { PivotLogic, PIVOT_STATE } from "/systems/foundryvtt-swse/scripts/engine/suggestion/PivotLogic.js";
-import { PivotStateManager } from "/systems/foundryvtt-swse/scripts/engine/suggestion/PivotStateManager.js";
-import { AnchorRepository } from "/systems/foundryvtt-swse/scripts/engine/suggestion/AnchorRepository.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { PivotLogic, PIVOT_STATE } from "/scripts/engine/suggestion/PivotLogic.js";
+import { PivotStateManager } from "/scripts/engine/suggestion/PivotStateManager.js";
+import { AnchorRepository } from "/scripts/engine/suggestion/AnchorRepository.js";
 
 // Re-export for backwards compatibility
 export { PIVOT_STATE } from './PivotLogic.js';

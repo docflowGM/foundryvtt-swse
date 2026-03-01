@@ -5,7 +5,7 @@
  * Triggers based on suggestion repetition and novelty collapse.
  */
 
-import { INSIGHT_TYPES, PACING_STATES, validateInsight } from "/systems/foundryvtt-swse/scripts/engine/suggestion/gm/insight-types.js";
+import { INSIGHT_TYPES, PACING_STATES, validateInsight } from "/scripts/engine/suggestion/gm/insight-types.js";
 
 // Track recent reports to detect trends
 const REPORT_HISTORY = [];

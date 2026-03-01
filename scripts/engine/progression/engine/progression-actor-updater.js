@@ -8,9 +8,9 @@
  * Deprecated imports removed.
  */
 
-import { PROGRESSION_RULES } from "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js";
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { PROGRESSION_RULES } from "/scripts/engine/progression/data/progression-data.js";
+import { swseLogger } from "/scripts/utils/logger.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
 
 export class ActorProgressionUpdater {
   /**

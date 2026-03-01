@@ -15,14 +15,14 @@
  * Just replace ForceOptionSuggestionEngine with your engine.
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { ForceOptionSuggestionEngine, FORCE_OPTION_TIERS } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ForceOptionSuggestionEngine.js";
-import { getTierMetadata } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-unified-tiers.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { ForceOptionSuggestionEngine, FORCE_OPTION_TIERS } from "/scripts/engine/suggestion/ForceOptionSuggestionEngine.js";
+import { getTierMetadata } from "/scripts/engine/suggestion/suggestion-unified-tiers.js";
 import {
   enhanceSuggestionWithArchetype,
   getArchetypeExplanation,
   getPrimaryArchetype
-} from "/systems/foundryvtt-swse/scripts/engine/suggestion/ArchetypeSuggestionIntegration.js';
+} from "/scripts/engine/suggestion/ArchetypeSuggestionIntegration.js';
 
 /**
  * Enhanced Force Option Suggestion with Archetype Context

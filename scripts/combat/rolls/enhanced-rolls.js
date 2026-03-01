@@ -1,10 +1,10 @@
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
-import { rollDamage } from "/systems/foundryvtt-swse/scripts/combat/rolls/damage.js";
-import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
-import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
-import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
-import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
+import { swseLogger } from "/scripts/utils/logger.js";
+import { RollEngine } from "/scripts/engine/roll-engine.js";
+import { rollDamage } from "/scripts/combat/rolls/damage.js";
+import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance } from "/scripts/combat/utils/combat-utils.js";
+import { getEffectiveHalfLevel } from "/scripts/actors/derived/level-split.js";
+import { ForcePointsService } from "/scripts/engine/force/force-points-service.js";
+import { AmmoSystem } from "/scripts/engine/inventory/ammo-system.js";
 import {
   ROLL_HOOKS,
   callPreRollHook,
@@ -15,11 +15,11 @@ import {
   analyzeCriticalThreat,
   rollCriticalConfirmation,
   rollConcealmentCheck
-} from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js';
+} from "/scripts/rolls/roll-config.js';
 import {
   getEquippedWeapons,
   calculateFullAttackConfig,
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { createChatMessage } from "/scripts/core/document-api-v13.js";
   showFullAttackDialog,
   generateFullAttackCard
 } from '../multi-attack.js';

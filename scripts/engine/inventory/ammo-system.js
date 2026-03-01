@@ -17,7 +17,7 @@
  * - Routes updates through ActorEngine for owned items
  */
 
-import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger as swseLogger } from "/scripts/utils/logger.js";
 
 export class AmmoSystem {
   /**

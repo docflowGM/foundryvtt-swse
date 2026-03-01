@@ -51,12 +51,12 @@
 // - reasons: getter returning .missing
 // ============================================
 
-import { PRESTIGE_PREREQUISITES } from "/systems/foundryvtt-swse/scripts/data/prestige-prerequisites.js";
-import { TalentTreeDB } from "/systems/foundryvtt-swse/scripts/data/talent-tree-db.js";
-import { normalizeTalentTreeId } from "/systems/foundryvtt-swse/scripts/data/talent-tree-normalizer.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { normalizeClassPrerequisites } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prereq-normalizer.js";
-import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
+import { PRESTIGE_PREREQUISITES } from "/scripts/data/prestige-prerequisites.js";
+import { TalentTreeDB } from "/scripts/data/talent-tree-db.js";
+import { normalizeTalentTreeId } from "/scripts/data/talent-tree-normalizer.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { normalizeClassPrerequisites } from "/scripts/engine/progression/prerequisites/class-prereq-normalizer.js";
+import { ClassesDB } from "/scripts/data/classes-db.js";
 
 /**
  * MAIN CLASS: PrerequisiteChecker

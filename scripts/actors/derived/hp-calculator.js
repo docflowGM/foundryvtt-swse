@@ -20,9 +20,9 @@
  * - isDroid flag controls CON mod inclusion (see line 31)
  */
 
-import { PROGRESSION_RULES } from "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js";
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { PROGRESSION_RULES } from "/scripts/engine/progression/data/progression-data.js";
+import { swseLogger } from "/scripts/utils/logger.js";
+import { getLevelSplit } from "/scripts/actors/derived/level-split.js";
 
 export class HPCalculator {
   /**

@@ -25,24 +25,24 @@
  * It outputs UI-ready metadata: tier, icon, and human-readable reason.
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
-import { getSynergyForItem, findActiveSynergies } from "/systems/foundryvtt-swse/scripts/engine/suggestion/CommunityMetaSynergies.js";
-import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
-import { WishlistEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/WishlistEngine.js";
-import { UNIFIED_TIERS } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-unified-tiers.js";
-import { getAllowedTalentTrees } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/tree-authority.js";
-import { ArchetypeRegistry } from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { BuildIntent } from "/scripts/engine/suggestion/BuildIntent.js";
+import { getSynergyForItem, findActiveSynergies } from "/scripts/engine/suggestion/CommunityMetaSynergies.js";
+import { AbilityEngine } from "/scripts/engine/abilities/AbilityEngine.js";
+import { WishlistEngine } from "/scripts/engine/suggestion/WishlistEngine.js";
+import { UNIFIED_TIERS } from "/scripts/engine/suggestion/suggestion-unified-tiers.js";
+import { getAllowedTalentTrees } from "/scripts/engine/progression/talents/tree-authority.js";
+import { ArchetypeRegistry } from "/scripts/engine/archetype/archetype-registry.js";
 import {
     getPrimaryArchetypeForActor,
     getArchetypeFeats,
     getArchetypeTalents,
     isArchetypeRecommended,
     getRoleBiasForArchetype
-} from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry-integration.js";
-import { selectReasonAtoms } from "/systems/foundryvtt-swse/scripts/engine/suggestion/selectReasonAtoms.js";
-import { REASON_TEXT_MAP } from "/systems/foundryvtt-swse/scripts/mentor/mentor-reason-renderer.js";
-import { ReasonSignalBuilder } from "/systems/foundryvtt-swse/scripts/engine/suggestion/reason-signal-builder.js";
+} from "/scripts/engine/archetype/archetype-registry-integration.js";
+import { selectReasonAtoms } from "/scripts/engine/suggestion/selectReasonAtoms.js";
+import { REASON_TEXT_MAP } from "/scripts/mentor/mentor-reason-renderer.js";
+import { ReasonSignalBuilder } from "/scripts/engine/suggestion/reason-signal-builder.js";
 
 // ──────────────────────────────────────────────────────────────
 // TIER DEFINITIONS (PHASE 5D: UNIFIED_TIERS Refactor)

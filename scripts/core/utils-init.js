@@ -1,18 +1,18 @@
 // ============================================
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
 // FILE: utils-init.js
 // Initialize SWSE utility functions
 // ============================================
 
-import * as MathUtils from "/systems/foundryvtt-swse/scripts/utils/math-utils.js";
-import * as StringUtils from "/systems/foundryvtt-swse/scripts/utils/string-utils.js";
-import * as CombatUtils from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
-import * as CharacterUtils from "/systems/foundryvtt-swse/scripts/utils/character-utils.js";
-import * as DataUtils from "/systems/foundryvtt-swse/scripts/utils/data-utils.js";
-import * as UIUtils from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
-import * as ValidationUtils from "/systems/foundryvtt-swse/scripts/utils/validation-utils.js";
-import * as DiceUtils from "/systems/foundryvtt-swse/scripts/utils/dice-utils.js";
-import * as DebugTools from "/systems/foundryvtt-swse/scripts/debug/debug-tools.js";
+import * as MathUtils from "/scripts/utils/math-utils.js";
+import * as StringUtils from "/scripts/utils/string-utils.js";
+import * as CombatUtils from "/scripts/combat/utils/combat-utils.js";
+import * as CharacterUtils from "/scripts/utils/character-utils.js";
+import * as DataUtils from "/scripts/utils/data-utils.js";
+import * as UIUtils from "/scripts/utils/ui-utils.js";
+import * as ValidationUtils from "/scripts/utils/validation-utils.js";
+import * as DiceUtils from "/scripts/utils/dice-utils.js";
+import * as DebugTools from "/scripts/debug/debug-tools.js";
 
 /**
  * Initialize utilities and expose them on game.swse.utils

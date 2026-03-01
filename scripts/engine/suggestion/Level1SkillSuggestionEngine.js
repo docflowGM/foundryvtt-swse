@@ -27,9 +27,9 @@
  * Skills are suggested ONLY at level 1.
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { extractAbilityScores } from "/systems/foundryvtt-swse/scripts/engine/suggestion/shared-suggestion-utilities.js";
-import { UNIFIED_TIERS, getTierMetadata } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-unified-tiers.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { extractAbilityScores } from "/scripts/engine/suggestion/shared-suggestion-utilities.js";
+import { UNIFIED_TIERS, getTierMetadata } from "/scripts/engine/suggestion/suggestion-unified-tiers.js";
 
 // DEPRECATED: Legacy tier definitions (kept for backwards compatibility)
 // Use UNIFIED_TIERS from suggestion-unified-tiers.js instead

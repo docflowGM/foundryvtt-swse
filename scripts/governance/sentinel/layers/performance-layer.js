@@ -8,7 +8,7 @@
  * - Overall system initialization time
  */
 
-import { Sentinel } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
+import { Sentinel } from "/scripts/governance/sentinel/sentinel-core.js";
 
 export const PerformanceLayer = {
   #measurements = new Map(),

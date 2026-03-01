@@ -20,31 +20,31 @@
  * - State management across level-ups
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
-import { SuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngine.js";
-import { ClassSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ClassSuggestionEngine.js";
-import { BackgroundSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BackgroundSuggestionEngine.js";
-import { ForceOptionSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ForceOptionSuggestionEngine.js";
-import { Level1SkillSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/Level1SkillSuggestionEngine.js";
-import { AttributeIncreaseSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/AttributeIncreaseSuggestionEngine.js";
-import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
-import { ProgressionAdvisor } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ProgressionAdvisor.js";
-import { getSynergyForItem, findActiveSynergies } from "/systems/foundryvtt-swse/scripts/engine/suggestion/CommunityMetaSynergies.js";
-import { PathPreview } from "/systems/foundryvtt-swse/scripts/engine/suggestion/PathPreview.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { SuggestionService } from "/scripts/engine/suggestion/SuggestionService.js";
+import { SuggestionEngine } from "/scripts/engine/suggestion/SuggestionEngine.js";
+import { ClassSuggestionEngine } from "/scripts/engine/suggestion/ClassSuggestionEngine.js";
+import { BackgroundSuggestionEngine } from "/scripts/engine/suggestion/BackgroundSuggestionEngine.js";
+import { ForceOptionSuggestionEngine } from "/scripts/engine/suggestion/ForceOptionSuggestionEngine.js";
+import { Level1SkillSuggestionEngine } from "/scripts/engine/suggestion/Level1SkillSuggestionEngine.js";
+import { AttributeIncreaseSuggestionEngine } from "/scripts/engine/suggestion/AttributeIncreaseSuggestionEngine.js";
+import { BuildIntent } from "/scripts/engine/suggestion/BuildIntent.js";
+import { ProgressionAdvisor } from "/scripts/engine/suggestion/ProgressionAdvisor.js";
+import { getSynergyForItem, findActiveSynergies } from "/scripts/engine/suggestion/CommunityMetaSynergies.js";
+import { PathPreview } from "/scripts/engine/suggestion/PathPreview.js";
 
 // Phase 1B: Suggestion Engine Enhancement Classes
-import { SuggestionConfidence } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionConfidence.js";
-import { PlayerHistoryTracker } from "/systems/foundryvtt-swse/scripts/engine/suggestion/PlayerHistoryTracker.js";
-import { BuildIdentityAnchor } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIdentityAnchor.js";
-import { PivotDetector } from "/systems/foundryvtt-swse/scripts/engine/suggestion/PivotDetector.js";
-import { SuggestionExplainer } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionExplainer.js";
-import { MentorProfile } from "/systems/foundryvtt-swse/scripts/engine/suggestion/MentorProfile.js";
-import { SynergyEvaluator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SynergyEvaluator.js";
-import { BuildCoherenceAnalyzer } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildCoherenceAnalyzer.js";
-import { OpportunityCostAnalyzer } from "/systems/foundryvtt-swse/scripts/engine/suggestion/OpportunityCostAnalyzer.js";
-import { SuggestionEngineHooks } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineHooks.js";
-import { getArchetypeConfig } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ArchetypeDefinitions.js";
+import { SuggestionConfidence } from "/scripts/engine/suggestion/SuggestionConfidence.js";
+import { PlayerHistoryTracker } from "/scripts/engine/suggestion/PlayerHistoryTracker.js";
+import { BuildIdentityAnchor } from "/scripts/engine/suggestion/BuildIdentityAnchor.js";
+import { PivotDetector } from "/scripts/engine/suggestion/PivotDetector.js";
+import { SuggestionExplainer } from "/scripts/engine/suggestion/SuggestionExplainer.js";
+import { MentorProfile } from "/scripts/engine/suggestion/MentorProfile.js";
+import { SynergyEvaluator } from "/scripts/engine/suggestion/SynergyEvaluator.js";
+import { BuildCoherenceAnalyzer } from "/scripts/engine/suggestion/BuildCoherenceAnalyzer.js";
+import { OpportunityCostAnalyzer } from "/scripts/engine/suggestion/OpportunityCostAnalyzer.js";
+import { SuggestionEngineHooks } from "/scripts/engine/suggestion/SuggestionEngineHooks.js";
+import { getArchetypeConfig } from "/scripts/engine/suggestion/ArchetypeDefinitions.js";
 
 export class SuggestionEngineCoordinator {
   /**

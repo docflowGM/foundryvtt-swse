@@ -3,10 +3,10 @@
  * Displays training points, healing cooldowns, and other house rule information on character sheets
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { SkillTrainingMechanics } from "/systems/foundryvtt-swse/scripts/houserules/houserule-skill-training.js";
-import { HealingSkillIntegration } from "/systems/foundryvtt-swse/scripts/houserules/houserule-healing-skill-integration.js";
-import { ConditionTrackMechanics } from "/systems/foundryvtt-swse/scripts/houserules/houserule-condition-track.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { SkillTrainingMechanics } from "/scripts/houserules/houserule-skill-training.js";
+import { HealingSkillIntegration } from "/scripts/houserules/houserule-healing-skill-integration.js";
+import { ConditionTrackMechanics } from "/scripts/houserules/houserule-condition-track.js";
 
 const NS = 'foundryvtt-swse';
 

@@ -18,9 +18,9 @@
  * ============================================
  */
 
-import { normalizeClassPrerequisites } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prereq-normalizer.js";
-import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { normalizeClassPrerequisites } from "/scripts/engine/progression/prerequisites/class-prereq-normalizer.js";
+import { AbilityEngine } from "/scripts/engine/abilities/AbilityEngine.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
 
 /**
  * In-memory cache: className → normalized prerequisites + eligibility

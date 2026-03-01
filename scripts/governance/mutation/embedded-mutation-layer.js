@@ -18,8 +18,8 @@
  * - Supports WARNING (report only) and ENFORCE (block) modes
  */
 
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { MutationInterceptor } from "/systems/foundryvtt-swse/scripts/governance/mutation/MutationInterceptor.js";
+import { swseLogger } from "/scripts/utils/logger.js";
+import { MutationInterceptor } from "/scripts/governance/mutation/MutationInterceptor.js";
 
 export class EmbeddedMutationLayer {
   static MODE = 'WARNING'; // 'WARNING' or 'ENFORCE'

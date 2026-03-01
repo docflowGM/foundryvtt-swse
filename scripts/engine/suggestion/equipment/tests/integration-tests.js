@@ -9,11 +9,11 @@
  * - Mentor prose generation
  */
 
-import { WeaponScoringEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/weapon-scoring-engine.js";
-import { ArmorScoringEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/armor-scoring-engine.js";
-import { WeaponSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/weapon-suggestions.js";
-import { ArmorSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/armor-suggestions.js";
-import { MentorProseGenerator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/mentor-prose-generator.js";
+import { WeaponScoringEngine } from "/scripts/engine/suggestion/equipment/weapon-scoring-engine.js";
+import { ArmorScoringEngine } from "/scripts/engine/suggestion/equipment/armor-scoring-engine.js";
+import { WeaponSuggestions } from "/scripts/engine/suggestion/equipment/weapon-suggestions.js";
+import { ArmorSuggestions } from "/scripts/engine/suggestion/equipment/armor-suggestions.js";
+import { MentorProseGenerator } from "/scripts/engine/suggestion/equipment/mentor-prose-generator.js";
 
 class IntegrationTestSuite {
   constructor() {

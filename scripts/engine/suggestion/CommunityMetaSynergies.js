@@ -14,8 +14,8 @@
  * - Stealth/Assassin: Dastardly Strike + flat-footed exploits
  */
 
-import { MetaTuning } from "/systems/foundryvtt-swse/scripts/engine/MetaTuning.js";
-import { isEpicActor, getPlannedHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { MetaTuning } from "/scripts/engine/MetaTuning.js";
+import { isEpicActor, getPlannedHeroicLevel } from "/scripts/actors/derived/level-split.js";
 
 // ──────────────────────────────────────────────────────────────
 // SYNERGY DEFINITIONS

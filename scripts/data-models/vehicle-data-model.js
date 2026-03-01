@@ -1,4 +1,4 @@
-import { SWSEActorDataModel } from "/systems/foundryvtt-swse/scripts/data-models/actor-data-model.js";
+import { SWSEActorDataModel } from "/scripts/data-models/actor-data-model.js";
 
 export class SWSEVehicleDataModel extends SWSEActorDataModel {
 

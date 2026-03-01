@@ -18,10 +18,10 @@
  * }
  */
 
-import { loadRawStoreData } from "/systems/foundryvtt-swse/scripts/engine/store/loader.js";
-import { normalizeStoreItem } from "/systems/foundryvtt-swse/scripts/engine/store/normalizer.js";
-import { categorizeItem } from "/systems/foundryvtt-swse/scripts/engine/store/categorizer.js";
-import { applyPricing } from "/systems/foundryvtt-swse/scripts/engine/store/pricing.js";
+import { loadRawStoreData } from "/scripts/engine/store/loader.js";
+import { normalizeStoreItem } from "/scripts/engine/store/normalizer.js";
+import { categorizeItem } from "/scripts/engine/store/categorizer.js";
+import { applyPricing } from "/scripts/engine/store/pricing.js";
 
 /* ----------------------------------------------------------- */
 /* CATEGORY STRUCTURE BUILDER                                   */

@@ -14,8 +14,8 @@
  * - Scaling formulas
  */
 
-import { ProgressionEngineHelpers as H } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/engine-helpers.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ProgressionEngineHelpers as H } from "/scripts/engine/progression/engine/engine-helpers.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
 
 export const FeatureNormalizer = {
 

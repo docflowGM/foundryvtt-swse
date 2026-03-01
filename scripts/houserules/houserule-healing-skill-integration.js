@@ -3,9 +3,9 @@
  * Connects the HealingMechanics to the skill system for use in combat and roleplay
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { HealingMechanics } from "/systems/foundryvtt-swse/scripts/houserules/houserule-healing.js";
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { HealingMechanics } from "/scripts/houserules/houserule-healing.js";
+import { createChatMessage } from "/scripts/core/document-api-v13.js";
 
 const NS = 'foundryvtt-swse';
 

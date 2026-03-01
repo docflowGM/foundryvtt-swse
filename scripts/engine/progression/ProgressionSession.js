@@ -6,9 +6,9 @@
  * - All mutations route through ActorEngine
  * - Provides staging, validation, and atomic commit pattern
  */
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { swseLogger } from "/scripts/utils/logger.js";
+import { createChatMessage } from "/scripts/core/document-api-v13.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * ProgressionSession - Session-level transaction wrapper for character progression

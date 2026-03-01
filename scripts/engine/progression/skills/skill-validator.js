@@ -8,9 +8,9 @@
  * - If prerequisites are met
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { SkillRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js";
-import { SkillState } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-state.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { SkillRegistry } from "/scripts/engine/progression/skills/skill-registry.js";
+import { SkillState } from "/scripts/engine/progression/skills/skill-state.js";
 
 export const SkillValidator = {
 

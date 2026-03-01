@@ -11,9 +11,9 @@
  * - Droid languages
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { LanguageRegistry } from "/systems/foundryvtt-swse/scripts/registries/language-registry.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
+import { LanguageRegistry } from "/scripts/registries/language-registry.js";
 
 export class LanguageEngine {
 

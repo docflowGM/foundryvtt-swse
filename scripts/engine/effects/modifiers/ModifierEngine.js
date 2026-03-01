@@ -11,12 +11,12 @@
  * Single source of truth for modifier math.
  */
 
-import { ModifierType, ModifierSource, createModifier, isValidModifier } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
-import ModifierUtils from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierUtils.js";
-import { EncumbranceEngine } from "/systems/foundryvtt-swse/scripts/engine/encumbrance/EncumbranceEngine.js";
-import { WeaponsEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/weapons-engine.js";
-import { StructuredRuleEvaluator } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/StructuredRuleEvaluator.js";
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ModifierType, ModifierSource, createModifier, isValidModifier } from "/scripts/engine/effects/modifiers/ModifierTypes.js";
+import ModifierUtils from "/scripts/engine/effects/modifiers/ModifierUtils.js";
+import { EncumbranceEngine } from "/scripts/engine/encumbrance/EncumbranceEngine.js";
+import { WeaponsEngine } from "/scripts/engine/combat/weapons-engine.js";
+import { StructuredRuleEvaluator } from "/scripts/engine/effects/modifiers/StructuredRuleEvaluator.js";
+import { swseLogger } from "/scripts/utils/logger.js";
 
 export class ModifierEngine {
   /**

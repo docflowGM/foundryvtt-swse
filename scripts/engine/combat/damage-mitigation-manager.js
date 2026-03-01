@@ -30,9 +30,9 @@
  * - Used by: DamageEngine, CombatEngine, Talent effects
  */
 
-import { ShieldMitigationResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/resolvers/shield-mitigation-resolver.js";
-import { DamageReductionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/resolvers/damage-reduction-resolver.js";
-import { TempHPResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/resolvers/temp-hp-resolver.js";
+import { ShieldMitigationResolver } from "/scripts/engine/combat/resolvers/shield-mitigation-resolver.js";
+import { DamageReductionResolver } from "/scripts/engine/combat/resolvers/damage-reduction-resolver.js";
+import { TempHPResolver } from "/scripts/engine/combat/resolvers/temp-hp-resolver.js";
 
 export class DamageMitigationManager {
   /**

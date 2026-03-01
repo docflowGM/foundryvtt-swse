@@ -3,11 +3,11 @@
 // Provides selection logic for Event, Occupation, and Planet backgrounds
 // ============================================
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
-import { MentorTranslationIntegration } from "/systems/foundryvtt-swse/scripts/mentor/mentor-translation-integration.js";
-import { BackgroundRegistry } from "/systems/foundryvtt-swse/scripts/registries/background-registry.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
+import { SuggestionService } from "/scripts/engine/suggestion/SuggestionService.js";
+import { MentorTranslationIntegration } from "/scripts/mentor/mentor-translation-integration.js";
+import { BackgroundRegistry } from "/scripts/registries/background-registry.js";
 
 /**
  * Get filtered backgrounds for the current category

@@ -1,6 +1,6 @@
 // scripts/utils/compendium-loader.js
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { sanitizeInput, isValidDiceNotation, isValidNumber, isNonEmptyString } from "/systems/foundryvtt-swse/scripts/utils/validation-utils.js";
+import { swseLogger } from "/scripts/utils/logger.js";
+import { sanitizeInput, isValidDiceNotation, isValidNumber, isNonEmptyString } from "/scripts/utils/validation-utils.js";
 
 /**
  * Enhanced Compendium Loader

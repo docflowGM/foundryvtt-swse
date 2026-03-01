@@ -25,7 +25,7 @@ export {
   calculateIntensity,
   isValidAtom,
   filterValidFactors
-} from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-intensity-atoms.js';
+} from "/scripts/engine/mentor/mentor-intensity-atoms.js';
 
 // Decision logging: structured capture of mentor reasoning
 export {

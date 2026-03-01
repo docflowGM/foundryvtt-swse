@@ -6,7 +6,7 @@
  * SlotType determines slot behavior; Source is metadata only.
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
 import { TreeUnlockManager } from './tree-unlock-manager.js';
 import { getAllowedTalentTrees } from './tree-authority.js';  // Phase 2: Derived authority
 

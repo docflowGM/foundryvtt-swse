@@ -6,13 +6,13 @@
  * checkmarks for completed prerequisites, and clear indicators of what's next.
  */
 
-import { ClassSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ClassSuggestionEngine.js";
-import { BuildIntent, PRESTIGE_SIGNALS } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
-import { PathPreview } from "/systems/foundryvtt-swse/scripts/engine/suggestion/PathPreview.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ClassSuggestionEngine } from "/scripts/engine/suggestion/ClassSuggestionEngine.js";
+import { BuildIntent, PRESTIGE_SIGNALS } from "/scripts/engine/suggestion/BuildIntent.js";
+import { PathPreview } from "/scripts/engine/suggestion/PathPreview.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
 
 // V2 API base class
-import SWSEApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
+import SWSEApplicationV2 from "/scripts/apps/base/swse-application-v2.js";
 
 /**
  * Prestige Roadmap Application

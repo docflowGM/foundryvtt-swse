@@ -7,9 +7,9 @@
  * everything in a single, organized file.
  */
 
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
+import { createChatMessage } from "/scripts/core/document-api-v13.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { RollEngine } from "/scripts/engine/roll-engine.js";
 
 // ============================================================================
 // JUMP SKILL (STR)

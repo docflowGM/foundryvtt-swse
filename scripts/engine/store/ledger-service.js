@@ -15,8 +15,8 @@
  * - Pure domain math only
  */
 
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
+import { swseLogger } from "/scripts/utils/logger.js";
+import { normalizeCredits } from "/scripts/utils/credit-normalization.js";
 
 export class LedgerService {
   /**

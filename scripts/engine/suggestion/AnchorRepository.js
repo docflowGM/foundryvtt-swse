@@ -19,9 +19,9 @@
  * Never owns: Logic, calculations, state transitions
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { SuggestionStateService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionStateService.js";
-import { ANCHOR_STATE } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIdentityDetector.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { SuggestionStateService } from "/scripts/engine/suggestion/SuggestionStateService.js";
+import { ANCHOR_STATE } from "/scripts/engine/suggestion/BuildIdentityDetector.js";
 
 export class AnchorRepository {
   /**

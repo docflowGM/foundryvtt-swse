@@ -5,11 +5,11 @@
  * PHASE 7: All mutations routed through ActorEngine for atomic governance
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { SWSEActiveEffectsManager } from "/systems/foundryvtt-swse/scripts/combat/active-effects-manager.js";
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
-import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { SWSEActiveEffectsManager } from "/scripts/combat/active-effects-manager.js";
+import { createChatMessage } from "/scripts/core/document-api-v13.js";
+import { RollEngine } from "/scripts/engine/roll-engine.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
 
 export class DestinyEffects {
 

@@ -17,7 +17,7 @@
  * - risk: Powers that endanger the user
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
 
 // ──────────────────────────────────────────────────────────────
 // CANONICAL FORCE POWER CATEGORIES

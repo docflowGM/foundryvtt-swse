@@ -16,11 +16,11 @@
  *  - Chat messaging
  */
 
-import { DamageEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-engine.js";
-import { ThresholdEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/threshold-engine.js";
-import { SubsystemEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/subsystem-engine.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { DamageEngine } from "/scripts/engine/combat/damage-engine.js";
+import { ThresholdEngine } from "/scripts/engine/combat/threshold-engine.js";
+import { SubsystemEngine } from "/scripts/engine/combat/starship/subsystem-engine.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
+import { createChatMessage } from "/scripts/core/document-api-v13.js";
 
 export class VehicleCollisions {
 

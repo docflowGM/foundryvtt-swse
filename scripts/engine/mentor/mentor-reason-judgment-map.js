@@ -20,8 +20,8 @@
  */
 
 import { JUDGMENT_ATOMS } from '../../engine/systems/mentor/mentor-judgment-engine.js';
-import { INTENSITY_ATOMS } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-intensity-atoms.js";
-import { isValidReasonKey } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-reason-renderer.js";
+import { INTENSITY_ATOMS } from "/scripts/engine/mentor/mentor-intensity-atoms.js";
+import { isValidReasonKey } from "/scripts/engine/mentor/mentor-reason-renderer.js";
 
 /**
  * Canonical Mentor Reaction Rules

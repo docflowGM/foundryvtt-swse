@@ -17,9 +17,9 @@
  * ✅ Deterministic, testable (pure functions)
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { validateClassArchetypes } from "/systems/foundryvtt-swse/scripts/engine/suggestion/validateClassArchetypes.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { validateClassArchetypes } from "/scripts/engine/suggestion/validateClassArchetypes.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
 
 // Lazy-loaded archetype data (to avoid JSON import issues in Foundry)
 let CLASS_ARCHETYPES = null;

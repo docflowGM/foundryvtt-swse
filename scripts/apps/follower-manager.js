@@ -1,5 +1,5 @@
-import { FollowerCreator } from "/systems/foundryvtt-swse/scripts/apps/follower-creator.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { FollowerCreator } from "/scripts/apps/follower-creator.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * Follower Manager - Handles follower enhancements and bonuses

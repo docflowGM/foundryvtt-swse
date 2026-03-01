@@ -11,7 +11,7 @@
  * - Never determine placement
  */
 
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { swseLogger } from "/scripts/utils/logger.js";
 
 export class VehicleFactory {
   /**

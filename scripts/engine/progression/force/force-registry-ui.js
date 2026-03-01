@@ -3,8 +3,8 @@
  * Loads and indexes Force powers, techniques, and secrets
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { AbilityEngine } from "/scripts/engine/abilities/AbilityEngine.js";
 
 export const ForceRegistry = {
   _powers: [],

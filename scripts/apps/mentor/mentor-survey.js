@@ -7,11 +7,11 @@
  * Features typing animation for mentor text.
  */
 
-import { MENTORS } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
-import { MentorTranslationIntegration } from "/systems/foundryvtt-swse/scripts/mentor/mentor-translation-integration.js";
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { seedMentorMemoryFromSurvey, getMentorMemory, setMentorMemory } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-memory.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { MENTORS } from "/scripts/engine/mentor/mentor-dialogues.js";
+import { MentorTranslationIntegration } from "/scripts/mentor/mentor-translation-integration.js";
+import { swseLogger } from "/scripts/utils/logger.js";
+import { seedMentorMemoryFromSurvey, getMentorMemory, setMentorMemory } from "/scripts/engine/mentor/mentor-memory.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * Survey questions with mentor voice variants

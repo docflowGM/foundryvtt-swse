@@ -37,7 +37,7 @@ export {
 } from './migration-auditor.js';
 
 /* 🔥 IMPORTANT: Explicitly import what we use locally */
-import { initMigrationAuditor } from "/systems/foundryvtt-swse/scripts/governance/sentinel/migration-auditor.js";
+import { initMigrationAuditor } from "/scripts/governance/sentinel/migration-auditor.js";
 
 /**
  * Initialize all auditors

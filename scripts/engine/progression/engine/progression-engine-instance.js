@@ -6,15 +6,15 @@
  * Integrates with SuggestionService for context-aware recommendations.
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { SnapshotManager } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js";
-import { FeatEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-engine.js";
-import { SkillEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-engine.js";
-import { ForceProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-progression.js";
-import { ApplyHandlers } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/apply-handlers.js";
-import { FinalizeIntegration } from "/systems/foundryvtt-swse/scripts/engine/progression/integration/finalize-integration.js";
-import { dispatchFeature } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/feature-dispatcher.js";
-import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { SnapshotManager } from "/scripts/engine/progression/utils/snapshot-manager.js";
+import { FeatEngine } from "/scripts/engine/progression/feats/feat-engine.js";
+import { SkillEngine } from "/scripts/engine/progression/skills/skill-engine.js";
+import { ForceProgressionEngine } from "/scripts/engine/progression/engine/force-progression.js";
+import { ApplyHandlers } from "/scripts/engine/progression/utils/apply-handlers.js";
+import { FinalizeIntegration } from "/scripts/engine/progression/integration/finalize-integration.js";
+import { dispatchFeature } from "/scripts/engine/progression/engine/feature-dispatcher.js";
+import { SuggestionService } from "/scripts/engine/suggestion/SuggestionService.js";
 
 export class ProgressionEngine {
   /**

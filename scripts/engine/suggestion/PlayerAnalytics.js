@@ -17,7 +17,7 @@
  * Never owns: Recording, persistence, state mutations
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
 
 export class PlayerAnalytics {
   /**

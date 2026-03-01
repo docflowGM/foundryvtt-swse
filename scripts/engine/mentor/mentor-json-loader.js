@@ -3,7 +3,7 @@
  * Provides unified mentor interface with personalities, dialogues, and metadata
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
 
 /**
  * Cache for loaded mentors

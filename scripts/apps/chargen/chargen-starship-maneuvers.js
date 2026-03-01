@@ -2,8 +2,8 @@
 // Starship Maneuver selection for CharGen
 // ============================================
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { StarshipManeuverManager } from "/systems/foundryvtt-swse/scripts/utils/starship-maneuver-manager.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { StarshipManeuverManager } from "/scripts/utils/starship-maneuver-manager.js";
 
 /**
  * Handle starship maneuver selection

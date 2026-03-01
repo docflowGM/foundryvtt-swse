@@ -16,8 +16,8 @@
  * Never owns: State persistence, actor mutations, storage
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { BUILD_THEMES } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { BUILD_THEMES } from "/scripts/engine/suggestion/BuildIntent.js";
 
 // Anchor State Enum
 export const ANCHOR_STATE = {

@@ -11,7 +11,7 @@
  * Phase 1.5: Used by SuggestionEngine for alignment scoring
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
 
 export class ArchetypeRegistry {
     // Immutable cache

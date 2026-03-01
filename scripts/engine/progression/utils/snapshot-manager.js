@@ -5,7 +5,7 @@
  * PHASE 10: All mutations route through ActorEngine for governance.
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
 
 export class SnapshotManager {
 

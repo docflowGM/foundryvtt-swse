@@ -18,10 +18,10 @@
  * - Violates architecture if: imports sheets or UI
  */
 
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
-import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { swseLogger } from "/scripts/utils/logger.js";
+import { HouseRuleService } from "/scripts/engine/system/HouseRuleService.js";
+import { ModifierEngine } from "/scripts/engine/effects/modifiers/ModifierEngine.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
 
 export class ConditionEngine {
   /**

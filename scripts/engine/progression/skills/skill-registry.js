@@ -6,7 +6,7 @@
  * for fast O(1) lookups by name.
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
 
 export const SkillRegistry = {
 

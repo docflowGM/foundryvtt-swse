@@ -4,11 +4,11 @@ import {
   XP_LEVEL_THRESHOLDS,
   getXPFromCL,
   determineLevelFromXP   // 🔥 ADD THIS
-} from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
+} from "/scripts/engine/shared/xp-system.js";
 
-import { getTotalLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+import { getTotalLevel } from "/scripts/actors/derived/level-split.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
+import { HouseRuleService } from "/scripts/engine/system/HouseRuleService.js";
 
 /* -------------------------------------------------------------------------- */
 /*                            HOMEBREW GUARD                                  */

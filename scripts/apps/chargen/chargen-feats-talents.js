@@ -2,21 +2,21 @@
 // Feat and talent selection for CharGen
 // ============================================
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { getTalentTrees, getTalentTreeName } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
-import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
-import { HouseRuleTalentCombination } from "/systems/foundryvtt-swse/scripts/houserules/houserule-talent-combination.js";
-import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
-import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
-import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
-import { MentorSurvey } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey.js";
-import { _findTalentItem } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { getTalentTrees, getTalentTreeName } from "/scripts/apps/chargen/chargen-property-accessor.js";
+import { AbilityEngine } from "/scripts/engine/abilities/AbilityEngine.js";
+import { HouseRuleTalentCombination } from "/scripts/houserules/houserule-talent-combination.js";
+import { ClassesDB } from "/scripts/data/classes-db.js";
+import { SuggestionService } from "/scripts/engine/suggestion/SuggestionService.js";
+import { BuildIntent } from "/scripts/engine/suggestion/BuildIntent.js";
+import { MentorSurvey } from "/scripts/mentor/mentor-survey.js";
+import { _findTalentItem } from "/scripts/apps/chargen/chargen-shared.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
 // Phase 1: Talent Slot Validation
-import { TalentSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/slot-validator.js";
+import { TalentSlotValidator } from "/scripts/engine/progression/talents/slot-validator.js";
 // Phase 1.5: Feat Slot Validation and Registry
-import { FeatSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-slot-validator.js";
-import { ClassFeatRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/class-feat-registry.js";
+import { FeatSlotValidator } from "/scripts/engine/progression/feats/feat-slot-validator.js";
+import { ClassFeatRegistry } from "/scripts/engine/progression/feats/class-feat-registry.js";
 
 /**
  * Calculate feat/talent suggestions during chargen

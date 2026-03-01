@@ -1,11 +1,11 @@
 // ============================================
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
 // SWSE Character Generator - NARRATIVE ENHANCED
 // Personalized responses by Ol' Salty the Space Pirate
 // Talent tree visualization
 // ============================================
 
-import CharacterGeneratorImproved from "/systems/foundryvtt-swse/scripts/apps/chargen-improved.js";
+import CharacterGeneratorImproved from "/scripts/apps/chargen-improved.js";
 import {
   guardOnRender,
   logChargenRender,
@@ -14,14 +14,14 @@ import {
   guardActorAccess,
   trackAsyncPhase,
   logContextKey
-} from "/systems/foundryvtt-swse/scripts/debug/appv2-probe.js';
-import { MENTORS } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
-import { MentorResolver } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-resolver.js";
-import { TalentTreeVisualizer } from "/systems/foundryvtt-swse/scripts/apps/talent-tree-visualizer.js";
-import { getTalentTreeName } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
-import { normalizeTalentData } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/item-normalizer.js";
-import { TalentDB } from "/systems/foundryvtt-swse/scripts/data/talent-db.js";
-import { TalentTreeDB } from "/systems/foundryvtt-swse/scripts/data/talent-tree-db.js";
+} from "/scripts/debug/appv2-probe.js';
+import { MENTORS } from "/scripts/engine/mentor/mentor-dialogues.js";
+import { MentorResolver } from "/scripts/engine/mentor/mentor-resolver.js";
+import { TalentTreeVisualizer } from "/scripts/apps/talent-tree-visualizer.js";
+import { getTalentTreeName } from "/scripts/apps/chargen/chargen-property-accessor.js";
+import { normalizeTalentData } from "/scripts/engine/progression/utils/item-normalizer.js";
+import { TalentDB } from "/scripts/data/talent-db.js";
+import { TalentTreeDB } from "/scripts/data/talent-tree-db.js";
 
 export default class CharacterGeneratorNarrative extends CharacterGeneratorImproved {
 

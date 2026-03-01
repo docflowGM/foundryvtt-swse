@@ -1,5 +1,5 @@
 // scripts/apps/progression/progression-preview.js
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { swseLogger } from "/scripts/utils/logger.js";
 
 /**
  * Progression Preview System

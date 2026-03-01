@@ -10,13 +10,13 @@
  * All other chargen logic operates on immutable snapshots and patches.
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { EffectSanitizer } from "/systems/foundryvtt-swse/scripts/core/effect-sanitizer.js";
-import { createActor, createItemInActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { emitChargenComplete } from "/systems/foundryvtt-swse/scripts/core/hooks-emitter.js";
-import { withTraceContext, generateTraceId, TraceMetrics } from "/systems/foundryvtt-swse/scripts/core/correlation-id.js";
-import { validateActorSchema, validateImportData } from "/systems/foundryvtt-swse/scripts/core/schema-validator.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { EffectSanitizer } from "/scripts/core/effect-sanitizer.js";
+import { createActor, createItemInActor } from "/scripts/core/document-api-v13.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
+import { emitChargenComplete } from "/scripts/core/hooks-emitter.js";
+import { withTraceContext, generateTraceId, TraceMetrics } from "/scripts/core/correlation-id.js";
+import { validateActorSchema, validateImportData } from "/scripts/core/schema-validator.js";
 
 export class ChargenFinalizer {
 

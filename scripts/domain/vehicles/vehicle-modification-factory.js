@@ -5,11 +5,11 @@
  * Mirrors DroidModificationFactory architecture
  */
 
-import { VEHICLE_SYSTEM_DEFINITIONS, getVehicleSystemDefinition, isVehicleSystemCompatible } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-system-definitions.js";
-import { VehicleSlotGovernanceEngine } from "/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-slot-governance.js";
-import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
+import { VEHICLE_SYSTEM_DEFINITIONS, getVehicleSystemDefinition, isVehicleSystemCompatible } from "/scripts/domain/vehicles/vehicle-system-definitions.js";
+import { VehicleSlotGovernanceEngine } from "/scripts/domain/vehicles/vehicle-slot-governance.js";
+import { LedgerService } from "/scripts/engine/store/ledger-service.js";
+import { swseLogger } from "/scripts/utils/logger.js";
+import { normalizeCredits } from "/scripts/utils/credit-normalization.js";
 
 export class VehicleModificationFactory {
   /**

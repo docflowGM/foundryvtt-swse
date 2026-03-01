@@ -17,8 +17,8 @@
  * - No direct actor.system writes
  */
 
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { ModifierEngineExtensions, MODIFIER_DOMAINS } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngineExtensions.js";
+import { swseLogger } from "/scripts/utils/logger.js";
+import { ModifierEngineExtensions, MODIFIER_DOMAINS } from "/scripts/engine/effects/modifiers/ModifierEngineExtensions.js";
 
 export class ModifierDomainResolver {
   /**

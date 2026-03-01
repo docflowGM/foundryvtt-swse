@@ -9,7 +9,7 @@
  * Intent values: prefers_ranged, prefers_support, prefers_force, prefers_leadership, prefers_melee, prefers_stealth
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
 
 const CLARIFICATION_QUESTIONS = {
   ranged_vs_melee: {

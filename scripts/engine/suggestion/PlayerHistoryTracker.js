@@ -10,9 +10,9 @@
  * - This module is a backwards-compatible facade only
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { SelectionRecorder } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SelectionRecorder.js";
-import { PlayerAnalytics } from "/systems/foundryvtt-swse/scripts/engine/suggestion/PlayerAnalytics.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { SelectionRecorder } from "/scripts/engine/suggestion/SelectionRecorder.js";
+import { PlayerAnalytics } from "/scripts/engine/suggestion/PlayerAnalytics.js";
 
 const MAX_RECENT_SIZE = 15;
 

@@ -12,8 +12,8 @@
  * Non-blocking, advisory notifications.
  */
 
-import { WorldIntegritySweep } from "/systems/foundryvtt-swse/scripts/engine/integrity/world-integrity-sweep.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
+import { WorldIntegritySweep } from "/scripts/engine/integrity/world-integrity-sweep.js";
+import { SWSELogger } from "/scripts/core/logger.js";
 
 export class MigrationIntegrityAdapter {
   /**

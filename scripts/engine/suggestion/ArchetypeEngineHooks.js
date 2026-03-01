@@ -11,16 +11,16 @@
  * - Handle level-up recalculation
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
 import {
   initializeArchetypeData,
   initializeActorAffinity,
   recalculateActorAffinity
-} from "/systems/foundryvtt-swse/scripts/engine/suggestion/ArchetypeAffinityEngine.js';
+} from "/scripts/engine/suggestion/ArchetypeAffinityEngine.js';
 import {
   handleCharacterChange,
   handleLevelUp
-} from "/systems/foundryvtt-swse/scripts/engine/suggestion/ArchetypeSuggestionIntegration.js';
+} from "/scripts/engine/suggestion/ArchetypeSuggestionIntegration.js';
 
 // ─────────────────────────────────────────────────────────────
 // INITIALIZATION

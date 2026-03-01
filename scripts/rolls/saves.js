@@ -3,8 +3,8 @@
 // Saving throw rolls via RollCore (V2 Unified)
 // ============================================
 
-import RollCore from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import RollCore from "/scripts/engine/roll/roll-core.js";
+import { swseLogger } from "/scripts/utils/logger.js";
 
 /**
  * Roll a saving throw via RollCore

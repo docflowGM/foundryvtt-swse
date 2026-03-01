@@ -21,8 +21,8 @@
  * - Fallback reason produces minimal atoms (core understanding only)
  */
 
-import { REASON_ATOMS, isValidReasonAtom } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-reason-atoms.js';
-import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { REASON_ATOMS, isValidReasonAtom } from '/scripts/engine/mentor/mentor-reason-atoms.js';
+import { SWSELogger } from '/scripts/utils/logger.js';
 
 /**
  * Maps SuggestionEngine reason codes to arrays of mentor reason atoms.

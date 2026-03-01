@@ -9,12 +9,12 @@
  * - Trace metrics
  */
 
-import { registerTraceMetrics } from "/systems/foundryvtt-swse/scripts/core/correlation-id.js";
-import { registerSchemaValidation } from "/systems/foundryvtt-swse/scripts/core/schema-validator.js";
-import { registerVersionAdapter, validateSystemCompatibility } from "/systems/foundryvtt-swse/scripts/core/version-adapter.js";
-import { log } from "/systems/foundryvtt-swse/scripts/core/foundry-env.js";
-import { ArchetypeRegistry } from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry.js";
-import { SuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngine.js";
+import { registerTraceMetrics } from "/scripts/core/correlation-id.js";
+import { registerSchemaValidation } from "/scripts/core/schema-validator.js";
+import { registerVersionAdapter, validateSystemCompatibility } from "/scripts/core/version-adapter.js";
+import { log } from "/scripts/core/foundry-env.js";
+import { ArchetypeRegistry } from "/scripts/engine/archetype/archetype-registry.js";
+import { SuggestionEngine } from "/scripts/engine/suggestion/SuggestionEngine.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 

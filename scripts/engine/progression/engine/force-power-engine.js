@@ -28,10 +28,10 @@
  * The engine will prefer compendium data but fallback to progression-data.js
  */
 
-import { FORCE_POWER_DATA } from "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js";
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { ForceSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-slot-validator.js";
+import { FORCE_POWER_DATA } from "/scripts/engine/progression/data/progression-data.js";
+import { swseLogger } from "/scripts/utils/logger.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
+import { ForceSlotValidator } from "/scripts/engine/progression/engine/force-slot-validator.js";
 
 export class ForcePowerEngine {
   /**

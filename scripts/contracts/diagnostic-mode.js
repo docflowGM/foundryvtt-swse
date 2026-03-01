@@ -9,8 +9,8 @@
  * - Contract violation details
  */
 
-import { StructuredLogger, SEVERITY } from "/systems/foundryvtt-swse/scripts/core/structured-logger.js";
-import { RuntimeContract } from "/systems/foundryvtt-swse/scripts/contracts/runtime-contract.js";
+import { StructuredLogger, SEVERITY } from "/scripts/core/structured-logger.js";
+import { RuntimeContract } from "/scripts/contracts/runtime-contract.js";
 
 export class DiagnosticMode {
   static #enabled = false;

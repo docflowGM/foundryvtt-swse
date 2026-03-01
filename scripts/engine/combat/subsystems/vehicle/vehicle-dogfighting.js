@@ -16,11 +16,11 @@
  *  - Chat messaging
  */
 
-import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
-import { computeDogfightingModifier } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicles/utils/vehicle-calculations.js";
-import { measureSquares } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicles/utils/vehicle-shared.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { RollEngine } from "/scripts/engine/roll-engine.js";
+import { computeDogfightingModifier } from "/scripts/engine/combat/vehicles/utils/vehicle-calculations.js";
+import { measureSquares } from "/scripts/engine/combat/vehicles/utils/vehicle-shared.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
+import { createChatMessage } from "/scripts/core/document-api-v13.js";
 
 export class VehicleDogfighting {
 

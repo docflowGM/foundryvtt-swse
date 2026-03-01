@@ -2,14 +2,14 @@
 
 const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api;
 
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
-import { SWSELevelUp } from "/systems/foundryvtt-swse/scripts/apps/swse-levelup.js";
-import { rollSkill } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
-import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
-import { DropResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/drop-resolution-engine.js";
-import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
-import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
+import { RenderAssertions } from "/scripts/core/render-assertions.js";
+import { SWSELevelUp } from "/scripts/apps/swse-levelup.js";
+import { rollSkill } from "/scripts/rolls/skills.js";
+import { rollAttack } from "/scripts/combat/rolls/attacks.js";
+import { DropResolutionEngine } from "/scripts/engine/interactions/drop-resolution-engine.js";
+import { AdoptionEngine } from "/scripts/engine/interactions/adoption-engine.js";
+import { AdoptOrAddDialog } from "/scripts/apps/adopt-or-add-dialog.js";
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;

@@ -11,7 +11,7 @@
  * Runs in WARNING mode by default; configurable to ENFORCE.
  */
 
-import { Sentinel } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
+import { Sentinel } from "/scripts/governance/sentinel/sentinel-core.js";
 
 export const CombatLayer = {
   #violations = [],

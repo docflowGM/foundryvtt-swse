@@ -6,7 +6,7 @@
  * Fails gracefully on malformed files.
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
 
 const CACHE = new Map(); // id -> archetype
 const CLASS_CACHE = new Map(); // className -> [archetypes]

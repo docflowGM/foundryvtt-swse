@@ -1,8 +1,8 @@
-import { guardAgainstMutation } from "/systems/foundryvtt-swse/scripts/dev/mutation-guard.js";
-import { concatPatches, makePatch, patchClass, setField } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-patch.js";
-import { TalentSlotCalculator } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/slot-calculator.js";
-import { TreeUnlockManager } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/tree-unlock-manager.js";
-import { FeatSlotSchema } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-slot-schema.js";
+import { guardAgainstMutation } from "/scripts/dev/mutation-guard.js";
+import { concatPatches, makePatch, patchClass, setField } from "/scripts/engine/progression/engine/progression-patch.js";
+import { TalentSlotCalculator } from "/scripts/engine/progression/talents/slot-calculator.js";
+import { TreeUnlockManager } from "/scripts/engine/progression/talents/tree-unlock-manager.js";
+import { FeatSlotSchema } from "/scripts/engine/progression/feats/feat-slot-schema.js";
 
 function _buildClassSelectionPatch(_characterData, className) {
   return patchClass(className);

@@ -15,11 +15,11 @@ async function loadJSON(url) {
 //  - PrerequisiteEnricher
 // ======================================================================
 
-import { TalentTreeGraph } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/TalentTreeGraph.js";
-import { PrerequisiteEnricher } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/PrerequisiteEnricher.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { TalentTreeDB } from "/systems/foundryvtt-swse/scripts/data/talent-tree-db.js";
-import { normalizeTalentTreeId } from "/systems/foundryvtt-swse/scripts/data/talent-tree-normalizer.js";
+import { TalentTreeGraph } from "/scripts/engine/progression/talents/TalentTreeGraph.js";
+import { PrerequisiteEnricher } from "/scripts/engine/progression/utils/PrerequisiteEnricher.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { TalentTreeDB } from "/scripts/data/talent-tree-db.js";
+import { normalizeTalentTreeId } from "/scripts/data/talent-tree-normalizer.js";
 
 export class TalentTreeRegistry {
   static trees = new Map(); // treeName → TalentTreeGraph

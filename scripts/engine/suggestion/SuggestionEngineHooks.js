@@ -11,11 +11,11 @@
  * All state persistence goes through SuggestionStateService.
  */
 
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { PlayerHistoryTracker } from "/systems/foundryvtt-swse/scripts/engine/suggestion/PlayerHistoryTracker.js";
-import { BuildIdentityAnchor } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIdentityAnchor.js";
-import { PivotDetector } from "/systems/foundryvtt-swse/scripts/engine/suggestion/PivotDetector.js";
-import { SuggestionStateService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionStateService.js";
+import { swseLogger } from "/scripts/utils/logger.js";
+import { PlayerHistoryTracker } from "/scripts/engine/suggestion/PlayerHistoryTracker.js";
+import { BuildIdentityAnchor } from "/scripts/engine/suggestion/BuildIdentityAnchor.js";
+import { PivotDetector } from "/scripts/engine/suggestion/PivotDetector.js";
+import { SuggestionStateService } from "/scripts/engine/suggestion/SuggestionStateService.js";
 
 export class SuggestionEngineHooks {
 

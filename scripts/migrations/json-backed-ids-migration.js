@@ -1,6 +1,6 @@
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { BackgroundRegistry } from "/systems/foundryvtt-swse/scripts/registries/background-registry.js";
-import { LanguageRegistry } from "/systems/foundryvtt-swse/scripts/registries/language-registry.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { BackgroundRegistry } from "/scripts/registries/background-registry.js";
+import { LanguageRegistry } from "/scripts/registries/language-registry.js";
 
 const MIGRATION_VERSION = '2026-02-06-json-backed-ids-v1';
 

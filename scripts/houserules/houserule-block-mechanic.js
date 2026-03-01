@@ -13,9 +13,9 @@
  * - If weapon is non-cortosis vs lightsaber, GM decides if weapon breaks
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
 
-import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { getEffectiveHalfLevel } from "/scripts/actors/derived/level-split.js";
 export class BlockMechanicalAlternative {
   /**
    * Initialize Block Mechanic Alternative

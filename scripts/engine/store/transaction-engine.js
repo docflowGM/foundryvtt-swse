@@ -22,13 +22,13 @@
  * If ANY step fails: NOTHING is applied
  */
 
-import { mergeMutationPlans } from "/systems/foundryvtt-swse/scripts/governance/mutation/merge-mutations.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
-import { VehicleFactory } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-factory.js";
-import { DroidFactory } from "/systems/foundryvtt-swse/scripts/engine/droids/droid-factory.js";
-import { PlacementRouter } from "/systems/foundryvtt-swse/scripts/engine/store/placement-router.js";
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { mergeMutationPlans } from "/scripts/governance/mutation/merge-mutations.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
+import { LedgerService } from "/scripts/engine/store/ledger-service.js";
+import { VehicleFactory } from "/scripts/engine/vehicles/vehicle-factory.js";
+import { DroidFactory } from "/scripts/engine/droids/droid-factory.js";
+import { PlacementRouter } from "/scripts/engine/store/placement-router.js";
+import { swseLogger } from "/scripts/utils/logger.js";
 
 export class TransactionEngine {
   /**

@@ -17,11 +17,11 @@
  * - Master Negotiator: Additional -1 step on Condition Track
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-effect-engine.js";
-import { createEffectOnActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
-import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
+import { TalentEffectEngine } from "/scripts/engine/talent/talent-effect-engine.js";
+import { createEffectOnActor } from "/scripts/core/document-api-v13.js";
+import { RollEngine } from "/scripts/engine/roll-engine.js";
 
 export class LightSideTalentMechanics {
 

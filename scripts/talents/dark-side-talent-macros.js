@@ -4,9 +4,9 @@
  * Register these in macro-functions.js to make them available in hotbars
  */
 
-import DarkSideTalentMechanics from "/systems/foundryvtt-swse/scripts/engine/talent/dark-side-talent-mechanics.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import DarkSideTalentMechanics from "/scripts/engine/talent/dark-side-talent-mechanics.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { createChatMessage } from "/scripts/core/document-api-v13.js";
 
 export class DarkSideTalentMacros {
 

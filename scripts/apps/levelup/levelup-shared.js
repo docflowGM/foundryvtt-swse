@@ -3,9 +3,9 @@
  * Contains helper functions and constants used across multiple level-up modules
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { getClassProperty } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
-import { HPGeneratorEngine } from "/systems/foundryvtt-swse/scripts/engine/HP/HPGeneratorEngine.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { getClassProperty } from "/scripts/apps/chargen/chargen-property-accessor.js";
+import { HPGeneratorEngine } from "/scripts/engine/HP/HPGeneratorEngine.js";
 
 /**
  * List of base classes in SWSE (legacy - should use isBaseClass with class docs instead)

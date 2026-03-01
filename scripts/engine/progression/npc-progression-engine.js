@@ -13,9 +13,9 @@
  * - Statblock restoration: revert to pre-levelup snapshot
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { SnapshotManager } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { SnapshotManager } from "/scripts/engine/progression/utils/snapshot-manager.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
 
 export class NpcProgressionEngine {
 

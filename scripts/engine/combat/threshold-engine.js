@@ -30,9 +30,9 @@
  *   8. Apply shutdown if HP <= 0
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { ModifierEngine } from "/scripts/engine/effects/modifiers/ModifierEngine.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
 
 export class ThresholdEngine {
 

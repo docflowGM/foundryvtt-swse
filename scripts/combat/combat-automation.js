@@ -1,5 +1,5 @@
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { createChatMessage } from "/scripts/core/document-api-v13.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
 
 /**
  * SWSE Combat Automation (v13+)

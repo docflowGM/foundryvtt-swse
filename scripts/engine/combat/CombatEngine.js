@@ -1,17 +1,17 @@
 
-import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
-import { SWSEInitiative } from "/systems/foundryvtt-swse/scripts/engine/combat/SWSEInitiative.js";
-import { DamageEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-engine.js";
-import { ThresholdEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/threshold-engine.js";
-import { DamageResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-resolution-engine.js";
-import { ScaleEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/scale-engine.js";
-import { SubsystemEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/subsystem-engine.js";
-import { EnhancedShields } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-shields.js";
-import { VehicleTurnController } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/vehicle-turn-controller.js";
-import { VehicleDogfighting } from "/systems/foundryvtt-swse/scripts/engine/combat/subsystems/vehicle/vehicle-dogfighting.js";
-import { VehicleCollisions } from "/systems/foundryvtt-swse/scripts/engine/combat/subsystems/vehicle/vehicle-collisions.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { CombatUIAdapter } from "/systems/foundryvtt-swse/scripts/engine/combat/ui/CombatUIAdapter.js";
+import { RollEngine } from "/scripts/engine/roll-engine.js";
+import { SWSEInitiative } from "/scripts/engine/combat/SWSEInitiative.js";
+import { DamageEngine } from "/scripts/engine/combat/damage-engine.js";
+import { ThresholdEngine } from "/scripts/engine/combat/threshold-engine.js";
+import { DamageResolutionEngine } from "/scripts/engine/combat/damage-resolution-engine.js";
+import { ScaleEngine } from "/scripts/engine/combat/scale-engine.js";
+import { SubsystemEngine } from "/scripts/engine/combat/starship/subsystem-engine.js";
+import { EnhancedShields } from "/scripts/engine/combat/starship/enhanced-shields.js";
+import { VehicleTurnController } from "/scripts/engine/combat/starship/vehicle-turn-controller.js";
+import { VehicleDogfighting } from "/scripts/engine/combat/subsystems/vehicle/vehicle-dogfighting.js";
+import { VehicleCollisions } from "/scripts/engine/combat/subsystems/vehicle/vehicle-collisions.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
+import { CombatUIAdapter } from "/scripts/engine/combat/ui/CombatUIAdapter.js";
 
 export class CombatEngine {
 

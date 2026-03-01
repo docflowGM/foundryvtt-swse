@@ -3,9 +3,9 @@
  * Uses pdf-lib to fill a template PDF with exported actor data.
  */
 import { PDFDocument } from 'pdf-lib';
-import { buildExportModel } from "/systems/foundryvtt-swse/scripts/export/swse-export-model.js";
-import { PDF_FIELD_MAP } from "/systems/foundryvtt-swse/scripts/export/pdf-field-map.js";
-import { get } from "/systems/foundryvtt-swse/scripts/utils/object-utils.js";
+import { buildExportModel } from "/scripts/export/swse-export-model.js";
+import { PDF_FIELD_MAP } from "/scripts/export/pdf-field-map.js";
+import { get } from "/scripts/utils/object-utils.js";
 
 const PDF_TEMPLATE_PATH = 'systems/foundryvtt-swse/assets/pdf/swse-character-sheet-fillable.pdf';
 

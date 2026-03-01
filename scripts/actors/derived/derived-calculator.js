@@ -22,13 +22,13 @@
  * - Pure input → output transformer
  */
 
-import { HPCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/hp-calculator.js";
-import { BABCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/bab-calculator.js";
-import { DefenseCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/defense-calculator.js";
-import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { MutationIntegrityLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/mutation-integrity-layer.js";
-import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { HPCalculator } from "/scripts/actors/derived/hp-calculator.js";
+import { BABCalculator } from "/scripts/actors/derived/bab-calculator.js";
+import { DefenseCalculator } from "/scripts/actors/derived/defense-calculator.js";
+import { ModifierEngine } from "/scripts/engine/effects/modifiers/ModifierEngine.js";
+import { swseLogger } from "/scripts/utils/logger.js";
+import { MutationIntegrityLayer } from "/scripts/governance/sentinel/mutation-integrity-layer.js";
+import { getLevelSplit } from "/scripts/actors/derived/level-split.js";
 
 export class DerivedCalculator {
   /**

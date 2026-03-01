@@ -1,8 +1,8 @@
 /**
  * DamageApp — Phase C Combat UI
  */
-import { DamageEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-engine.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { DamageEngine } from "/scripts/engine/combat/damage-engine.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
 
 export class DamageApp extends Application {
   constructor(actor, options = {}) {

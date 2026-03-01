@@ -8,8 +8,8 @@
  * prevent partial state visibility.
  */
 
-import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { RollEngine } from "/scripts/engine/roll-engine.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
 
 export class TalentEffectEngine {
 

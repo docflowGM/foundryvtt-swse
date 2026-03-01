@@ -1,6 +1,6 @@
 // scripts/houserules/houserules-mechanics.js
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { HouseRuleFeatGrants } from "/systems/foundryvtt-swse/scripts/houserules/houserule-feat-grants.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { HouseRuleFeatGrants } from "/scripts/houserules/houserule-feat-grants.js";
 import {
   HouserulesData,
   getFeintSkill,
@@ -10,17 +10,17 @@ import {
   hasBlockDeflectCombined,
   hasDefaultWeaponFinesse,
   getRolePriorityOrder
-} from "/systems/foundryvtt-swse/scripts/houserules/houserules-data.js';
-import { GrappleMechanics } from "/systems/foundryvtt-swse/scripts/houserules/houserule-grapple.js";
-import { RecoveryMechanics } from "/systems/foundryvtt-swse/scripts/houserules/houserule-recovery.js";
-import { ConditionTrackMechanics } from "/systems/foundryvtt-swse/scripts/houserules/houserule-condition-track.js";
-import { FlankingMechanics } from "/systems/foundryvtt-swse/scripts/houserules/houserule-flanking.js";
-import { SkillTrainingMechanics } from "/systems/foundryvtt-swse/scripts/houserules/houserule-skill-training.js";
-import { StatusEffectsMechanics } from "/systems/foundryvtt-swse/scripts/houserules/houserule-status-effects.js";
-import { HealingMechanics } from "/systems/foundryvtt-swse/scripts/houserules/houserule-healing.js";
-import { HealingSkillIntegration } from "/systems/foundryvtt-swse/scripts/houserules/houserule-healing-skill-integration.js";
-import { ActorSheetEnhancements } from "/systems/foundryvtt-swse/scripts/houserules/houserule-actor-enhancements.js";
-import { BlockMechanicalAlternative, setupBlockMechanicalHooks } from "/systems/foundryvtt-swse/scripts/houserules/houserule-block-mechanic.js";
+} from "/scripts/houserules/houserules-data.js';
+import { GrappleMechanics } from "/scripts/houserules/houserule-grapple.js";
+import { RecoveryMechanics } from "/scripts/houserules/houserule-recovery.js";
+import { ConditionTrackMechanics } from "/scripts/houserules/houserule-condition-track.js";
+import { FlankingMechanics } from "/scripts/houserules/houserule-flanking.js";
+import { SkillTrainingMechanics } from "/scripts/houserules/houserule-skill-training.js";
+import { StatusEffectsMechanics } from "/scripts/houserules/houserule-status-effects.js";
+import { HealingMechanics } from "/scripts/houserules/houserule-healing.js";
+import { HealingSkillIntegration } from "/scripts/houserules/houserule-healing-skill-integration.js";
+import { ActorSheetEnhancements } from "/scripts/houserules/houserule-actor-enhancements.js";
+import { BlockMechanicalAlternative, setupBlockMechanicalHooks } from "/scripts/houserules/houserule-block-mechanic.js";
 
 /**
  * HouseruleMechanics

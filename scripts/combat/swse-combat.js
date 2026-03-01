@@ -1,5 +1,5 @@
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
+import { swseLogger } from "/scripts/utils/logger.js";
+import { CombatEngine } from "/scripts/engine/combat/CombatEngine.js";
 
 /**
  * SWSE Combat Document (v13+) — PHASE 1 CONSOLIDATED

@@ -12,8 +12,8 @@
  *   });
  */
 
-import { AurebeshTranslator } from "/systems/foundryvtt-swse/scripts/ui/dialogue/aurebesh-translator.js";
-import { TRANSLATION_PRESETS, MENTOR_PRESET_MAP } from "/systems/foundryvtt-swse/scripts/ui/dialogue/translation-presets.js";
+import { AurebeshTranslator } from "/scripts/ui/dialogue/aurebesh-translator.js";
+import { TRANSLATION_PRESETS, MENTOR_PRESET_MAP } from "/scripts/ui/dialogue/translation-presets.js";
 
 export class MentorTranslationIntegration {
   /**

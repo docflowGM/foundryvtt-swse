@@ -8,12 +8,12 @@ import {
     getMentorForClass,
     getMentorGuidance,
     getLevel1Class
-} from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
+} from "/scripts/engine/mentor/mentor-dialogues.js';
 
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { TypingAnimation } from "/systems/foundryvtt-swse/scripts/utils/typing-animation.js";
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
-import { MentorTranslationIntegration } from "/systems/foundryvtt-swse/scripts/mentor/mentor-translation-integration.js";
+import { swseLogger } from "/scripts/utils/logger.js";
+import { TypingAnimation } from "/scripts/utils/typing-animation.js";
+import { createChatMessage } from "/scripts/core/document-api-v13.js";
+import { MentorTranslationIntegration } from "/scripts/mentor/mentor-translation-integration.js";
 
 export class MentorGuidanceUI {
 

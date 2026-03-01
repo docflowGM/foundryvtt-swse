@@ -6,7 +6,7 @@
  * No persistence - all authority derived from actor state.
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
 import { TalentTreeRegistry } from "./TalentTreeRegistry.js";
 
 /**

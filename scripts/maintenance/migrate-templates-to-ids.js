@@ -27,8 +27,8 @@
  * - Includes metadata (version, migration date) in output
  */
 
-import { TemplateIdMapper } from "/systems/foundryvtt-swse/scripts/utils/template-id-mapper.js";
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { TemplateIdMapper } from "/scripts/utils/template-id-mapper.js";
+import { swseLogger } from "/scripts/utils/logger.js";
 
 /**
  * Main migration function

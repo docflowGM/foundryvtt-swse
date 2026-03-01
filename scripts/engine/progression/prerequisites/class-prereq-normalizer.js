@@ -16,8 +16,8 @@
  * ============================================
  */
 
-import { PRESTIGE_PREREQUISITES } from "/systems/foundryvtt-swse/scripts/data/prestige-prerequisites.js";
-import { TalentTreeDB } from "/systems/foundryvtt-swse/scripts/data/talent-tree-db.js";
+import { PRESTIGE_PREREQUISITES } from "/scripts/data/prestige-prerequisites.js";
+import { TalentTreeDB } from "/scripts/data/talent-tree-db.js";
 
 /**
  * Talent tree name → ID mapping (from talent_trees.db)

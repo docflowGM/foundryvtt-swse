@@ -10,10 +10,10 @@
  *    - Applied when leveling up a specific class
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { getClassLevel, getCharacterClasses } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js";
-import { getTalentTrees } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
-import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { getClassLevel, getCharacterClasses } from "/scripts/apps/levelup/levelup-shared.js";
+import { getTalentTrees } from "/scripts/apps/chargen/chargen-property-accessor.js";
+import { AbilityEngine } from "/scripts/engine/abilities/AbilityEngine.js";
 
 /**
  * Calculate available talents at the current heroic level

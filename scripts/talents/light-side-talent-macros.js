@@ -4,8 +4,8 @@
  * Register these in macro-functions.js to make them available in hotbars
  */
 
-import LightSideTalentMechanics from "/systems/foundryvtt-swse/scripts/engine/talent/light-side-talent-mechanics.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import LightSideTalentMechanics from "/scripts/engine/talent/light-side-talent-mechanics.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
 
 export class LightSideTalentMacros {
 

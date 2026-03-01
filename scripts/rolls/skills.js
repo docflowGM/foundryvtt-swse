@@ -4,8 +4,8 @@
 // ============================================
 
 // import { SkillEnforcementEngine } from "../engine/skills/SkillEnforcementEngine.js"; // File doesn't exist
-import RollCore from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import RollCore from "/scripts/engine/roll/roll-core.js";
+import { swseLogger } from "/scripts/utils/logger.js";
 
 /**
  * Roll a skill check

@@ -6,60 +6,60 @@
 // NOTE: Chargen step transitions MUST be state-driven.
 // Do not advance steps via render side-effects.
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
-import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
-import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
-import { getTalentTreeName, getClassProperty, getTalentTrees, getHitDie } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
-import { HouseRuleTalentCombination } from "/systems/foundryvtt-swse/scripts/houserules/houserule-talent-combination.js";
-import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
-import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
-import { MentorSurvey } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey.js";
-import { MentorSuggestionDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor-suggestion-dialog.js";
-import { MENTORS } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
-import { getMentorMemory, setMentorMemory, setTargetClass } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-memory.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { BackgroundRegistry } from "/systems/foundryvtt-swse/scripts/registries/background-registry.js";
-import { LanguageRegistry } from "/systems/foundryvtt-swse/scripts/registries/language-registry.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { normalizeCredits } from "/scripts/utils/credit-normalization.js";
+import { RollEngine } from "/scripts/engine/roll-engine.js";
+import { AbilityEngine } from "/scripts/engine/abilities/AbilityEngine.js";
+import { getTalentTreeName, getClassProperty, getTalentTrees, getHitDie } from "/scripts/apps/chargen/chargen-property-accessor.js";
+import { HouseRuleTalentCombination } from "/scripts/houserules/houserule-talent-combination.js";
+import { BuildIntent } from "/scripts/engine/suggestion/BuildIntent.js";
+import { SuggestionService } from "/scripts/engine/suggestion/SuggestionService.js";
+import { MentorSurvey } from "/scripts/mentor/mentor-survey.js";
+import { MentorSuggestionDialog } from "/scripts/mentor/mentor-suggestion-dialog.js";
+import { MENTORS } from "/scripts/engine/mentor/mentor-dialogues.js";
+import { getMentorMemory, setMentorMemory, setTargetClass } from "/scripts/engine/mentor/mentor-memory.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
+import { BackgroundRegistry } from "/scripts/registries/background-registry.js";
+import { LanguageRegistry } from "/scripts/registries/language-registry.js";
 
 // SSOT Data Layer
-import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
+import { ClassesDB } from "/scripts/data/classes-db.js";
 
 // Phase 1: Talent Slot System
-import { TalentSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/slot-validator.js";
-import { TalentSlotMigrator } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/slot-migrator.js";
+import { TalentSlotValidator } from "/scripts/engine/progression/talents/slot-validator.js";
+import { TalentSlotMigrator } from "/scripts/engine/progression/talents/slot-migrator.js";
 
 // Phase 1.5: Feat Slot System
-import { FeatSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-slot-validator.js";
+import { FeatSlotValidator } from "/scripts/engine/progression/feats/feat-slot-validator.js";
 
 // V2 API base class
-import SWSEApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
+import SWSEApplicationV2 from "/scripts/apps/base/swse-application-v2.js";
 
 
 // v13 Hardening
-import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { createActor } from "/scripts/core/document-api-v13.js";
 
 // Import all module functions
-import * as SharedModule from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js";
-import { ChargenDataCache } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js";
-import * as DroidModule from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-droid.js";
-import { ChargenDevGuards, initializeChargenDevGuards } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-dev-guards.js";
-import { ChargenFinalizer } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-finalizer.js";
-import * as SpeciesModule from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-species.js";
-import { _filterSpecies, _sortSpeciesBySource } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-species.js";
-import * as BackgroundsModule from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-backgrounds.js";
-import * as ClassModule from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-class.js";
-import * as AbilitiesModule from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-abilities.js";
-import * as SkillsModule from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-skills.js";
-import * as LanguagesModule from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-languages.js";
-import * as FeatsTalentsModule from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-feats-talents.js";
-import * as ForcePowersModule from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-force-powers.js";
-import * as StarshipManeuversModule from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-starship-maneuvers.js";
-import { renderTalentTreeGraph, getTalentsInTree } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-talent-tree-graph.js";
+import * as SharedModule from "/scripts/apps/chargen/chargen-shared.js";
+import { ChargenDataCache } from "/scripts/apps/chargen/chargen-shared.js";
+import * as DroidModule from "/scripts/apps/chargen/chargen-droid.js";
+import { ChargenDevGuards, initializeChargenDevGuards } from "/scripts/apps/chargen/chargen-dev-guards.js";
+import { ChargenFinalizer } from "/scripts/apps/chargen/chargen-finalizer.js";
+import * as SpeciesModule from "/scripts/apps/chargen/chargen-species.js";
+import { _filterSpecies, _sortSpeciesBySource } from "/scripts/apps/chargen/chargen-species.js";
+import * as BackgroundsModule from "/scripts/apps/chargen/chargen-backgrounds.js";
+import * as ClassModule from "/scripts/apps/chargen/chargen-class.js";
+import * as AbilitiesModule from "/scripts/apps/chargen/chargen-abilities.js";
+import * as SkillsModule from "/scripts/apps/chargen/chargen-skills.js";
+import * as LanguagesModule from "/scripts/apps/chargen/chargen-languages.js";
+import * as FeatsTalentsModule from "/scripts/apps/chargen/chargen-feats-talents.js";
+import * as ForcePowersModule from "/scripts/apps/chargen/chargen-force-powers.js";
+import * as StarshipManeuversModule from "/scripts/apps/chargen/chargen-starship-maneuvers.js";
+import { renderTalentTreeGraph, getTalentsInTree } from "/scripts/apps/chargen/chargen-talent-tree-graph.js";
 
-import { applyProgressionPatch } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/apply-progression-patch.js";
-import { buildNamePatch } from "/systems/foundryvtt-swse/scripts/apps/chargen/steps/name-step.js";
-import { confirm } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
+import { applyProgressionPatch } from "/scripts/engine/progression/engine/apply-progression-patch.js";
+import { buildNamePatch } from "/scripts/apps/chargen/steps/name-step.js";
+import { confirm } from "/scripts/utils/ui-utils.js";
 
 export default class CharacterGenerator extends SWSEApplicationV2 {
   /**

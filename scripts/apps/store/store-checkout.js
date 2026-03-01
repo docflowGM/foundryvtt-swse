@@ -8,18 +8,18 @@
  * - Business logic (ALL delegated to StoreEngine)
  */
 
-import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
-import { StoreEngine } from "/systems/foundryvtt-swse/scripts/engine/store/store-engine.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
-import { calculateFinalCost, calculateUsedCost } from "/systems/foundryvtt-swse/scripts/engine/store/pricing.js";
-import CharacterGenerator from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js";
-import { VehicleModificationApp } from "/systems/foundryvtt-swse/scripts/apps/vehicle-modification-app.js";
-import { DroidBuilderApp } from "/systems/foundryvtt-swse/scripts/apps/droid-builder-app.js";
-import { getRandomDialogue } from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js";
-import { SWSEVehicleHandler } from "/systems/foundryvtt-swse/scripts/actors/vehicle/swse-vehicle-handler.js";
-import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { ProgressionEngine } from "/scripts/engine/progression/engine/progression-engine.js";
+import { StoreEngine } from "/scripts/engine/store/store-engine.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { normalizeCredits } from "/scripts/utils/credit-normalization.js";
+import { calculateFinalCost, calculateUsedCost } from "/scripts/engine/store/pricing.js";
+import CharacterGenerator from "/scripts/apps/chargen/chargen-main.js";
+import { VehicleModificationApp } from "/scripts/apps/vehicle-modification-app.js";
+import { DroidBuilderApp } from "/scripts/apps/droid-builder-app.js";
+import { getRandomDialogue } from "/scripts/apps/store/store-shared.js";
+import { SWSEVehicleHandler } from "/scripts/actors/vehicle/swse-vehicle-handler.js";
+import { createActor } from "/scripts/core/document-api-v13.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * Add item to shopping cart

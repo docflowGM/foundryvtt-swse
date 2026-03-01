@@ -16,9 +16,9 @@
  * Never owns: State persistence, actor mutations, storage
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { ANCHOR_STATE } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIdentityDetector.js";
-import { THEME_TO_ARCHETYPE } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIdentityDetector.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { ANCHOR_STATE } from "/scripts/engine/suggestion/BuildIdentityDetector.js";
+import { THEME_TO_ARCHETYPE } from "/scripts/engine/suggestion/BuildIdentityDetector.js";
 
 // Pivot State Enum
 export const PIVOT_STATE = {

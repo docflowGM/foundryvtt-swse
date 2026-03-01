@@ -16,15 +16,15 @@
  * - static async clearAndReselectManeuvers(actor, context)
  */
 
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { ForceAuthorityEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-authority-engine.js";
-import { ForceSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-slot-validator.js";
-import { ForcePowerEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-power-engine.js";
-import { ManeuverAuthorityEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/maneuver-authority-engine.js";
-import { ManeuverSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/maneuvers/maneuver-slot-validator.js";
-import { StarshipManeuverEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/starship-maneuver-engine.js";
-import { canReselectSuite } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/suite-reselection-utils.js";
+import { swseLogger } from "/scripts/utils/logger.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
+import { ForceAuthorityEngine } from "/scripts/engine/progression/engine/force-authority-engine.js";
+import { ForceSlotValidator } from "/scripts/engine/progression/engine/force-slot-validator.js";
+import { ForcePowerEngine } from "/scripts/engine/progression/engine/force-power-engine.js";
+import { ManeuverAuthorityEngine } from "/scripts/engine/progression/engine/maneuver-authority-engine.js";
+import { ManeuverSlotValidator } from "/scripts/engine/progression/maneuvers/maneuver-slot-validator.js";
+import { StarshipManeuverEngine } from "/scripts/engine/progression/engine/starship-maneuver-engine.js";
+import { canReselectSuite } from "/scripts/engine/progression/utils/suite-reselection-utils.js";
 
 export class SuiteReselectionEngine {
 
@@ -101,7 +101,7 @@ export class SuiteReselectionEngine {
 
     // STEP 4: Open existing picker (unchanged)
     try {
-      const { ForcePowerPicker } = await import('/systems/foundryvtt-swse/scripts/apps/progression/force-power-picker.js');
+      const { ForcePowerPicker } = await import('/scripts/apps/progression/force-power-picker.js');
       const available = await ForcePowerEngine.collectAvailablePowers(actor);
 
       if (!available || available.length === 0) {
@@ -259,7 +259,7 @@ export class SuiteReselectionEngine {
 
     // STEP 4: Open existing picker (unchanged)
     try {
-      const { StarshipManeuverPicker } = await import('/systems/foundryvtt-swse/scripts/apps/progression/starship-maneuver-picker.js');
+      const { StarshipManeuverPicker } = await import('/scripts/apps/progression/starship-maneuver-picker.js');
       const available = await StarshipManeuverEngine.collectAvailableManeuvers(actor);
 
       if (!available || available.length === 0) {

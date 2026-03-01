@@ -24,8 +24,8 @@
 // All other class data is derived from this DB.
 // ============================================
 
-import { normalizeClass, normalizeClassId, validateClass } from "/systems/foundryvtt-swse/scripts/data/class-normalizer.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { normalizeClass, normalizeClassId, validateClass } from "/scripts/data/class-normalizer.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
 
 export const ClassesDB = {
 

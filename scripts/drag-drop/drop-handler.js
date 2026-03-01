@@ -1,14 +1,14 @@
-import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
+import { ProgressionEngine } from "/scripts/engine/progression/engine/progression-engine.js";
 /**
  * Centralized Drag-Drop Handler for SWSE
  * Handles dropping Items onto Actors with automatic stat application
  * PHASE 8: All embedded mutations routed through ActorEngine
  */
 
-import { ProficiencySelectionDialog } from "/systems/foundryvtt-swse/scripts/apps/proficiency-selection-dialog.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { TalentSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/slot-validator.js";
-import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import { ProficiencySelectionDialog } from "/scripts/apps/proficiency-selection-dialog.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
+import { TalentSlotValidator } from "/scripts/engine/progression/talents/slot-validator.js";
+import { AbilityEngine } from "/scripts/engine/abilities/AbilityEngine.js";
 
 export class DropHandler {
 

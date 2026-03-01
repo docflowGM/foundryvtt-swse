@@ -8,8 +8,8 @@
  *   TransactionVerification.reportTransaction()
  */
 
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { MutationIntegrityLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/mutation-integrity-layer.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
+import { MutationIntegrityLayer } from "/scripts/governance/sentinel/mutation-integrity-layer.js";
 
 export const TransactionVerification = {
 

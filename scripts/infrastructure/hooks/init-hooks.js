@@ -9,12 +9,12 @@
  * Also registers a ready hook for species reroll system initialization.
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/hooks-registry.js";
-import { registerCombatHooks } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/combat-hooks.js";
-import { registerActorHooks } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/actor-hooks.js";
-import { registerUIHooks } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/ui-hooks.js";
-import { registerRerollListeners } from "/systems/foundryvtt-swse/scripts/species/species-reroll-handler.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { HooksRegistry } from "/scripts/infrastructure/hooks/hooks-registry.js";
+import { registerCombatHooks } from "/scripts/infrastructure/hooks/combat-hooks.js";
+import { registerActorHooks } from "/scripts/infrastructure/hooks/actor-hooks.js";
+import { registerUIHooks } from "/scripts/infrastructure/hooks/ui-hooks.js";
+import { registerRerollListeners } from "/scripts/species/species-reroll-handler.js";
 
 /**
  * Register initialization hooks

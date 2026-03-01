@@ -4,8 +4,8 @@
  * Triggers suggestion evaluation at key combat moments.
  */
 
-import { CombatSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/combat-engine.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { CombatSuggestionEngine } from "/scripts/engine/suggestion/equipment/combat-engine.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
 
 export function registerCombatSuggestionHooks() {
   /**

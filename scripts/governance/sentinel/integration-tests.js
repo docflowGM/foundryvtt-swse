@@ -9,9 +9,9 @@
  * - Nested mutation blocking prevents regression
  */
 
-import { MutationIntegrityLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/mutation-integrity-layer.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { MutationIntegrityLayer } from "/scripts/governance/sentinel/mutation-integrity-layer.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
+import { swseLogger } from "/scripts/utils/logger.js";
 
 export const SentinelIntegrationTests = {
 

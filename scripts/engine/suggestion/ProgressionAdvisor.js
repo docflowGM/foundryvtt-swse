@@ -21,9 +21,9 @@
  * - Attribute-aware weighting for feats, talents, classes, force options
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { extractAbilityScores } from "/systems/foundryvtt-swse/scripts/engine/suggestion/shared-suggestion-utilities.js";
-import { Level1SkillSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/Level1SkillSuggestionEngine.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { extractAbilityScores } from "/scripts/engine/suggestion/shared-suggestion-utilities.js";
+import { Level1SkillSuggestionEngine } from "/scripts/engine/suggestion/Level1SkillSuggestionEngine.js";
 
 export class ProgressionAdvisor {
   /**

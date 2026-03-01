@@ -18,7 +18,7 @@
  * }
  */
 
-import { STORE_PACKS, STORE_RULES } from "/systems/foundryvtt-swse/scripts/engine/store/store-constants.js";
+import { STORE_PACKS, STORE_RULES } from "/scripts/engine/store/store-constants.js";
 
 const { CACHE_KEY, CACHE_TTL } = STORE_RULES;
 

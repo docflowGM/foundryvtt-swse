@@ -10,7 +10,7 @@
  *  - defense bonuses
  */
 
-import { normalizeClassFeatureList } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-feature-normalizer.js";
+import { normalizeClassFeatureList } from "/scripts/engine/progression/utils/class-feature-normalizer.js";
 
 export function normalizeClassData(rawClass) {
 

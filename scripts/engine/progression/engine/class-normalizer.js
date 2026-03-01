@@ -6,7 +6,7 @@
  *
  * Rule: only ONE file should "think" about class normalization.
  */
-import { normalizeClassData } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-normalizer.js";
+import { normalizeClassData } from "/scripts/engine/progression/utils/class-normalizer.js";
 
 export const ClassNormalizer = {
   /**

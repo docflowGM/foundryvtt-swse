@@ -6,7 +6,7 @@
  * but maintained here as a re-export for existing imports.
  */
 
-import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { PrerequisiteChecker } from "/scripts/data/prerequisite-checker.js";
 
 /**
  * PrerequisiteRequirements - Legacy alias for PrerequisiteChecker

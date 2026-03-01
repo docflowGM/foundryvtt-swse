@@ -9,12 +9,12 @@
  * - Training application
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { SkillRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js";
-import { SkillState } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-state.js";
-import { SkillValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-validator.js";
-import { SkillNormalizer } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-normalizer.js";
+import { SWSELogger } from "/scripts/utils/logger.js";
+import { ActorEngine } from "/scripts/governance/actor-engine/actor-engine.js";
+import { SkillRegistry } from "/scripts/engine/progression/skills/skill-registry.js";
+import { SkillState } from "/scripts/engine/progression/skills/skill-state.js";
+import { SkillValidator } from "/scripts/engine/progression/skills/skill-validator.js";
+import { SkillNormalizer } from "/scripts/engine/progression/skills/skill-normalizer.js";
 
 export const SkillEngine = {
 
