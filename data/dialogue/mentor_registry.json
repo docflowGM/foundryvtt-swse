@@ -55,14 +55,14 @@
       "display_name": "The Captain",
       "aliases": []
     },
-    "delta_assassin": {
+    "delta": {
       "mentor_id": "m12",
       "display_name": "Delta",
-      "aliases": []
+      "aliases": ["delta_assassin", "whisper"]
     },
-    "infiltrator": {
+    "dezmin": {
       "mentor_id": "m13",
-      "display_name": "Delta",
+      "display_name": "Dezmin",
       "aliases": []
     },
     "jack": {
@@ -148,11 +148,6 @@
     "venn": {
       "mentor_id": "m30",
       "display_name": "Seeker Vera",
-      "aliases": []
-    },
-    "whisper": {
-      "mentor_id": "m31",
-      "display_name": "Whisper",
       "aliases": []
     },
     "zhen": {

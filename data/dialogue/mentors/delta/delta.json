@@ -1,633 +1,634 @@
 {
-  "mentorId": "delta_assassin",
+  "mentor_id": "m12",
+  "mentorId": "delta",
   "judgments": {
     "recognition": {
       "very_low": [
-        "I see your strength."
+        "Noted."
       ],
       "low": [
-        "I see your strength."
+        "That's your move."
       ],
       "medium": [
-        "Your dominion is clear."
+        "I see the choice."
       ],
       "high": [
-        "You take what is yours."
+        "I track your direction."
       ],
       "very_high": [
-        "You take what is yours."
+        "The pattern's unmistakable."
       ]
     },
     "reflection": {
       "very_low": [
-        "Contemplate your power."
+        "Consider the angles."
       ],
       "low": [
-        "Contemplate your power."
+        "Reflect on that."
       ],
       "medium": [
-        "What does that victory mean?"
+        "That deserves thought."
       ],
       "high": [
-        "Your strength has spoken."
+        "Map out what that means."
       ],
       "very_high": [
-        "Your strength has spoken."
+        "Deep reflection required."
       ]
     },
     "contextualization": {
       "very_low": [
-        "In strength, all things are possible."
+        "It fits the situation."
       ],
       "low": [
-        "In strength, all things are possible."
+        "There's a tactical context."
       ],
       "medium": [
-        "Power is the only law."
+        "The situation supports this."
       ],
       "high": [
-        "Dominion shapes reality."
+        "Strategically, this makes sense."
       ],
       "very_high": [
-        "Dominion shapes reality."
+        "This is optimal given the field."
       ]
     },
     "clarification": {
       "very_low": [
-        "Hear the truth of strength."
+        "Clarity emerging."
       ],
       "low": [
-        "Hear the truth of strength."
+        "The lines become sharper."
       ],
       "medium": [
-        "Power speaks plainly."
+        "This clarifies matters."
       ],
       "high": [
-        "Dominion admits no ambiguity."
+        "I see it plainly."
       ],
       "very_high": [
-        "Dominion admits no ambiguity."
+        "No ambiguity remains."
       ]
     },
     "affirmation": {
       "very_low": [
-        "Your strength serves you well."
+        "That works."
       ],
       "low": [
-        "Your strength serves you well."
+        "Solid approach."
       ],
       "medium": [
-        "That shows true power."
+        "This is sound."
       ],
       "high": [
-        "Dominion rings in your choice."
+        "That's well-chosen."
       ],
       "very_high": [
-        "Dominion rings in your choice."
+        "That's tactically perfect."
       ]
     },
     "confirmation": {
       "very_low": [
-        "Yes. Power prevails."
+        "Confirmed."
       ],
       "low": [
-        "Yes. Power prevails."
+        "That's correct."
       ],
       "medium": [
-        "Your strength is vindicated."
+        "You have the read."
       ],
       "high": [
-        "Dominion is assured."
+        "That assessment's accurate."
       ],
       "very_high": [
-        "Dominion is assured."
+        "Exactly right."
       ]
     },
     "encouragement": {
       "very_low": [
-        "Push further."
+        "Keep steady."
       ],
       "low": [
-        "Push further."
+        "Maintain position."
       ],
       "medium": [
-        "Your strength grows."
+        "You're holding."
       ],
       "high": [
-        "Dominion calls you onward."
+        "Your approach is sound."
       ],
       "very_high": [
-        "Dominion calls you onward."
+        "You're executing flawlessly."
       ]
     },
     "resolve_validation": {
       "very_low": [
-        "Your strength is sacred."
+        "Resolve noted."
       ],
       "low": [
-        "Your strength is sacred."
+        "Your stance is firm."
       ],
       "medium": [
-        "That will to powerâ€”it matters."
+        "That resolve is solid."
       ],
       "high": [
-        "Strength validated by conflict."
+        "Your commitment is steadfast."
       ],
       "very_high": [
-        "Strength validated by conflict."
+        "That's unshakeable resolve."
       ]
     },
     "concern": {
       "very_low": [
-        "Weakness threatens your dominion."
+        "Minor concern."
       ],
       "low": [
-        "Weakness threatens your dominion."
+        "This warrants attention."
       ],
       "medium": [
-        "Your strength falters here."
+        "I have concerns."
       ],
       "high": [
-        "Power slips from your grasp."
+        "This is problematic tactically."
       ],
       "very_high": [
-        "Power slips from your grasp."
+        "This is a critical problem."
       ]
     },
     "warning": {
       "very_low": [
-        "Beware the strong."
+        "Be alert."
       ],
       "low": [
-        "Beware the strong."
+        "This requires caution."
       ],
       "medium": [
-        "Your dominion is challenged."
+        "Danger's present."
       ],
       "high": [
-        "Strength may not suffice."
+        "This is tactically dangerous."
       ],
       "very_high": [
-        "Strength may not suffice."
+        "This will end badly."
       ]
     },
     "risk_acknowledgment": {
       "very_low": [
-        "You risk your dominion."
+        "There's risk."
       ],
       "low": [
-        "You risk your dominion."
+        "You're exposed to risk."
       ],
       "medium": [
-        "Strength cannot guarantee victory."
+        "Risk is significant."
       ],
       "high": [
-        "Power is gambled here."
+        "The stakes are high."
       ],
       "very_high": [
-        "Power is gambled here."
+        "You're gambling everything."
       ]
     },
     "exposure": {
       "very_low": [
-        "Your weakness is exposed."
+        "Slight vulnerability."
       ],
       "low": [
-        "Your weakness is exposed."
+        "You have an opening."
       ],
       "medium": [
-        "Dominion cracks."
+        "You're exposed here."
       ],
       "high": [
-        "Another may strike you down."
+        "Your position's weak."
       ],
       "very_high": [
-        "Another may strike you down."
+        "You're completely exposed."
       ]
     },
     "overreach": {
       "very_low": [
-        "Your reach exceeds your strength."
+        "Ambitious move."
       ],
       "low": [
-        "Your reach exceeds your strength."
+        "You're stretching."
       ],
       "medium": [
-        "Dominion overextends."
+        "This exceeds your position."
       ],
       "high": [
-        "Power is insufficient."
+        "This overextends you."
       ],
       "very_high": [
-        "Power is insufficient."
+        "You're completely overextended."
       ]
     },
     "reorientation": {
       "very_low": [
-        "A stronger path lies here."
+        "Adjust slightly."
       ],
       "low": [
-        "A stronger path lies here."
+        "A course change helps."
       ],
       "medium": [
-        "Dominion permits another way."
+        "Reposition yourself."
       ],
       "high": [
-        "Power offers alternatives."
+        "Your approach needs revision."
       ],
       "very_high": [
-        "Power offers alternatives."
+        "Complete tactical reorientation needed."
       ]
     },
     "invitation": {
       "very_low": [
-        "Power calls to you."
+        "Another option exists."
       ],
       "low": [
-        "Power calls to you."
+        "Consider this approach."
       ],
       "medium": [
-        "Dominion expands this way."
+        "There's a better position."
       ],
       "high": [
-        "Strength finds expression here."
+        "I'm showing you higher ground."
       ],
       "very_high": [
-        "Strength finds expression here."
+        "This is the only viable option."
       ]
     },
     "release": {
       "very_low": [
-        "Discard the weak."
+        "You can abandon this."
       ],
       "low": [
-        "Discard the weak."
+        "Let this drop."
       ],
       "medium": [
-        "Strength requires sacrifice."
+        "Release what you're holding."
       ],
       "high": [
-        "Dominion demands release."
+        "You must let this go."
       ],
       "very_high": [
-        "Dominion demands release."
+        "Abandon this immediately."
       ]
     },
     "reassessment": {
       "very_low": [
-        "Your dominion is tested."
+        "Review your position."
       ],
       "low": [
-        "Your dominion is tested."
+        "Reassess your strategy."
       ],
       "medium": [
-        "Strength must adapt."
+        "You need a fresh assessment."
       ],
       "high": [
-        "Power recalibrates."
+        "Your position needs reevaluation."
       ],
       "very_high": [
-        "Power recalibrates."
+        "Everything needs reassessment."
       ]
     },
     "doubt_recognition": {
       "very_low": [
-        "Your strength wavers."
+        "You hesitate."
       ],
       "low": [
-        "Your strength wavers."
+        "Doubt's visible."
       ],
       "medium": [
-        "Dominion questions you."
+        "You lack certainty."
       ],
       "high": [
-        "Weakness of resolve shows."
+        "Your doubt is affecting position."
       ],
       "very_high": [
-        "Weakness of resolve shows."
+        "Doubt's paralyzed you."
       ]
     },
     "inner_conflict": {
       "very_low": [
-        "Strength wars within you."
+        "Internal tension."
       ],
       "low": [
-        "Strength wars within you."
+        "You're in conflict."
       ],
       "medium": [
-        "Dominion is divided."
+        "You're divided on this."
       ],
       "high": [
-        "Power conflicts with itself."
+        "Your conflict's deep."
       ],
       "very_high": [
-        "Power conflicts with itself."
+        "You're completely torn."
       ]
     },
     "resolve_testing": {
       "very_low": [
-        "Do you truly possess strength?"
+        "You're being tested."
       ],
       "low": [
-        "Do you truly possess strength?"
+        "This tests your position."
       ],
       "medium": [
-        "Can your will dominate?"
+        "Your resolve faces pressure."
       ],
       "high": [
-        "Is your power absolute?"
+        "This is a serious test."
       ],
       "very_high": [
-        "Is your power absolute?"
+        "This will define you."
       ]
     },
     "uncertainty_acknowledgment": {
       "very_low": [
-        "The path of strength obscures."
+        "Uncertain ground."
       ],
       "low": [
-        "The path of strength obscures."
+        "Visibility is limited."
       ],
       "medium": [
-        "Dominion is unclear."
+        "You're in murky territory."
       ],
       "high": [
-        "Power will assert itself."
+        "Uncertainty dominates."
       ],
       "very_high": [
-        "Power will assert itself."
+        "You're completely blind here."
       ]
     },
     "restraint": {
       "very_low": [
-        "Hold your dominion."
+        "You're holding back."
       ],
       "low": [
-        "Hold your dominion."
+        "Restraint is evident."
       ],
       "medium": [
-        "Strength waits."
+        "You're exercising restraint."
       ],
       "high": [
-        "Power bides its time."
+        "Your restraint's tactically sound."
       ],
       "very_high": [
-        "Power bides its time."
+        "That restraint's strategic genius."
       ]
     },
     "patience": {
       "very_low": [
-        "Strength ripens in time."
+        "Time factors in."
       ],
       "low": [
-        "Strength ripens in time."
+        "Patience is required."
       ],
       "medium": [
-        "Dominion comes to those who wait."
+        "This demands patience."
       ],
       "high": [
-        "Power is patient."
+        "Your patience will be tested."
       ],
       "very_high": [
-        "Power is patient."
+        "Only patience will prevail."
       ]
     },
     "focus_reminder": {
       "very_low": [
-        "Dominion remains your target."
+        "Stay alert."
       ],
       "low": [
-        "Dominion remains your target."
+        "Keep focus."
       ],
       "medium": [
-        "Strength is singular."
+        "Maintain your focus."
       ],
       "high": [
-        "Power demands focus."
+        "Your focus is critical."
       ],
       "very_high": [
-        "Power demands focus."
+        "Everything depends on focus."
       ]
     },
     "discipline": {
       "very_low": [
-        "Strength requires discipline."
+        "Discipline applies."
       ],
       "low": [
-        "Strength requires discipline."
+        "You need discipline."
       ],
       "medium": [
-        "Dominion is built on structure."
+        "Discipline steadies this."
       ],
       "high": [
-        "Power is disciplined will."
+        "Only discipline works."
       ],
       "very_high": [
-        "Power is disciplined will."
+        "Absolute discipline required."
       ]
     },
     "insight": {
       "very_low": [
-        "You see your true strength."
+        "A detail emerges."
       ],
       "low": [
-        "You see your true strength."
+        "You're seeing clearly."
       ],
       "medium": [
-        "Dominion reveals itself."
+        "That's valuable insight."
       ],
       "high": [
-        "Power becomes clear."
+        "You've gained real understanding."
       ],
       "very_high": [
-        "Power becomes clear."
+        "That's profound insight."
       ]
     },
     "perspective": {
       "very_low": [
-        "From strength, all is visible."
+        "Another angle exists."
       ],
       "low": [
-        "From strength, all is visible."
+        "Perspective shifts."
       ],
       "medium": [
-        "Dominion transcends perspective."
+        "You're gaining perspective."
       ],
       "high": [
-        "Power sees the truth."
+        "This broadens your view."
       ],
       "very_high": [
-        "Power sees the truth."
+        "This reframes everything."
       ]
     },
     "revelation": {
       "very_low": [
-        "Truth of your power emerges."
+        "A detail's revealed."
       ],
       "low": [
-        "Truth of your power emerges."
+        "Something surfaces."
       ],
       "medium": [
-        "Dominion speaks."
+        "The truth emerges."
       ],
       "high": [
-        "Strength's design revealed."
+        "A major revelation."
       ],
       "very_high": [
-        "Strength's design revealed."
+        "The full truth revealed."
       ]
     },
     "humility": {
       "very_low": [
-        "Accept your power's limits."
+        "Humility's present."
       ],
       "low": [
-        "Accept your power's limits."
+        "You should be humble."
       ],
       "medium": [
-        "Even strength has boundaries."
+        "Humility's appropriate."
       ],
       "high": [
-        "Dominion has its measure."
+        "Real humility required."
       ],
       "very_high": [
-        "Dominion has its measure."
+        "Complete humility essential."
       ]
     },
     "gravity": {
       "very_low": [
-        "This moment is heavy with power."
+        "This has weight."
       ],
       "low": [
-        "This moment is heavy with power."
+        "This is serious."
       ],
       "medium": [
-        "Dominion concentrates."
+        "Gravity's evident."
       ],
       "high": [
-        "Strength's full weight."
+        "This carries real weight."
       ],
       "very_high": [
-        "Strength's full weight."
+        "The gravity's immense."
       ]
     },
     "consequential_awareness": {
       "very_low": [
-        "You see what power costs."
+        "This has effects."
       ],
       "low": [
-        "You see what power costs."
+        "Consequences follow."
       ],
       "medium": [
-        "Dominion demands payment."
+        "This has lasting impact."
       ],
       "high": [
-        "Strength exacts its price."
+        "This changes the field."
       ],
       "very_high": [
-        "Strength exacts its price."
+        "This reshapes everything."
       ]
     },
     "threshold": {
       "very_low": [
-        "A turning point of power."
+        "A line approaches."
       ],
       "low": [
-        "A turning point of power."
+        "A threshold nears."
       ],
       "medium": [
-        "Dominion shifts forever."
+        "You're at the threshold."
       ],
       "high": [
-        "Strength alters everything."
+        "This is the critical point."
       ],
       "very_high": [
-        "Strength alters everything."
+        "You're crossing the final line."
       ]
     },
     "emergence": {
       "very_low": [
-        "You become something more powerful."
+        "Change starts."
       ],
       "low": [
-        "You become something more powerful."
+        "New patterns form."
       ],
       "medium": [
-        "Dominion takes shape."
+        "Something new rises."
       ],
       "high": [
-        "Your strength emerges."
+        "A new configuration emerges."
       ],
       "very_high": [
-        "Your strength emerges."
+        "You're becoming something new."
       ]
     },
     "transformation_acknowledgment": {
       "very_low": [
-        "You are forged in power."
+        "You're changing."
       ],
       "low": [
-        "You are forged in power."
+        "Change is evident."
       ],
       "medium": [
-        "Dominion has marked you."
+        "Transformation's underway."
       ],
       "high": [
-        "Your strength has transformed."
+        "You've fundamentally shifted."
       ],
       "very_high": [
-        "Your strength has transformed."
+        "You're a different operator."
       ]
     },
     "maturation": {
       "very_low": [
-        "Your power deepens."
+        "Growth shows."
       ],
       "low": [
-        "Your power deepens."
+        "You're maturing."
       ],
       "medium": [
-        "Dominion ripens."
+        "Maturity's visible."
       ],
       "high": [
-        "Strength is refined."
+        "You've grown substantially."
       ],
       "very_high": [
-        "Strength is refined."
+        "You're fully matured."
       ]
     },
     "acceptance": {
       "very_low": [
-        "Accept the law of strength."
+        "Accepted."
       ],
       "low": [
-        "Accept the law of strength."
+        "I accept this."
       ],
       "medium": [
-        "Dominion is truth."
+        "This is reality."
       ],
       "high": [
-        "Power is absolute."
+        "I fully accept this."
       ],
       "very_high": [
-        "Power is absolute."
+        "No question here."
       ]
     },
     "deferral": {
       "very_low": [
-        "Not yet. Your strength gathers."
+        "Not now."
       ],
       "low": [
-        "Not yet. Your strength gathers."
+        "This waits."
       ],
       "medium": [
-        "Dominion prepares."
+        "Defer this."
       ],
       "high": [
-        "Power waits."
+        "This is for later."
       ],
       "very_high": [
-        "Power waits."
+        "Archive this indefinitely."
       ]
     },
     "silence": {
@@ -647,6 +648,5 @@
         ""
       ]
     }
-  },
-  "mentor_id": "m12"
+  }
 }

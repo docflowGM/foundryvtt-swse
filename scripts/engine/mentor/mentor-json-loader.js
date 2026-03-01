@@ -40,7 +40,6 @@ export async function loadMentorsFromJSON() {
                 // Determine actual folder name (handle naming variations)
                 const folderMap = {
                     'anchorite': 'riquis',
-                    'delta_assassin': 'delta',
                     'skindar': 'marl_skindar',
                     'venn': 'vera'
                 };
