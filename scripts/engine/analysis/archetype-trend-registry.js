@@ -163,44 +163,27 @@ export class ArchetypeTrendRegistry {
 
   /**
    * Derive recommended feature adoption trends
-   * Category-level: RECOMMENDED_FEAT_MISSING, RECOMMENDED_TALENT_MISSING
-   * Not per-item level
+   * Category-level: RECOMMENDED_FEATURE_MISSING (consolidated)
+   * Evaluates feats and talents together at category level
    */
   static _deriveRecommendedFeatureAdoptionTrends(archetypes) {
-    const archsWithFeats = archetypes.filter(
-      a => a.recommended?.feats && a.recommended.feats.length > 0
+    const archsWithRecommendations = archetypes.filter(
+      a =>
+        (a.recommended?.feats && a.recommended.feats.length > 0) ||
+        (a.recommended?.talents && a.recommended.talents.length > 0)
     ).length;
 
-    if (archsWithFeats > 0) {
+    if (archsWithRecommendations > 0) {
       this.#trends.push({
-        id: 'RECOMMENDED_FEAT_MISSING',
+        id: 'RECOMMENDED_FEATURE_MISSING',
         category: 'RecommendedFeatureAdoptionTrend',
-        sourceField: 'recommended.feats',
+        sourceField: ['recommended.feats', 'recommended.talents'],
         expectation: {
-          category: 'feats',
+          category: 'abilities (feats and talents)',
           consistency:
-            'actor should adopt feats aligned with archetype recommendations'
+            'actor should adopt abilities aligned with archetype recommendations'
         },
-        derivedFromCount: archsWithFeats,
-        severity: 'low'
-      });
-    }
-
-    const archsWithTalents = archetypes.filter(
-      a => a.recommended?.talents && a.recommended.talents.length > 0
-    ).length;
-
-    if (archsWithTalents > 0) {
-      this.#trends.push({
-        id: 'RECOMMENDED_TALENT_MISSING',
-        category: 'RecommendedFeatureAdoptionTrend',
-        sourceField: 'recommended.talents',
-        expectation: {
-          category: 'talents',
-          consistency:
-            'actor should adopt talents aligned with archetype recommendations'
-        },
-        derivedFromCount: archsWithTalents,
+        derivedFromCount: archsWithRecommendations,
         severity: 'low'
       });
     }
@@ -313,39 +296,26 @@ export class ArchetypeTrendRegistry {
   /**
    * Derive chain completion trends
    * Captures multi-level or prerequisite chain expectations
+   * Consolidated: FEATURE_CHAIN_PROGRESSION (feats and talents together)
    */
   static _deriveChainCompletionTrends(archetypes) {
-    // Check for deep feat/talent chains
-    const archsWithMultiFeats = archetypes.filter(
-      a => a.recommended?.feats && a.recommended.feats.length >= 2
+    // Check for deep feat/talent chains (either or both)
+    const archsWithChains = archetypes.filter(
+      a =>
+        (a.recommended?.feats && a.recommended.feats.length >= 2) ||
+        (a.recommended?.talents && a.recommended.talents.length >= 2)
     ).length;
 
-    if (archsWithMultiFeats > 0) {
+    if (archsWithChains > 0) {
       this.#trends.push({
-        id: 'FEAT_CHAIN_PROGRESSION',
+        id: 'FEATURE_CHAIN_PROGRESSION',
         category: 'ChainCompletionTrend',
-        sourceField: 'recommended.feats',
+        sourceField: ['recommended.feats', 'recommended.talents'],
         expectation: {
-          consistency: 'feat sequences should complete logical chains'
+          consistency:
+            'ability sequences should complete logical chains (feats and/or talents)'
         },
-        derivedFromCount: archsWithMultiFeats,
-        severity: 'low'
-      });
-    }
-
-    const archsWithMultiTalents = archetypes.filter(
-      a => a.recommended?.talents && a.recommended.talents.length >= 2
-    ).length;
-
-    if (archsWithMultiTalents > 0) {
-      this.#trends.push({
-        id: 'TALENT_CHAIN_PROGRESSION',
-        category: 'ChainCompletionTrend',
-        sourceField: 'recommended.talents',
-        expectation: {
-          consistency: 'talent sequences should complete logical chains'
-        },
-        derivedFromCount: archsWithMultiTalents,
+        derivedFromCount: archsWithChains,
         severity: 'low'
       });
     }

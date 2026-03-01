@@ -164,14 +164,9 @@ export class BuildAnalysisEngine {
       return this._evaluatePrestigePrep(context, trend);
     }
 
-    // RECOMMENDED_FEAT_MISSING
-    if (trendId === 'RECOMMENDED_FEAT_MISSING') {
-      return this._evaluateRecommendedFeats(context, trend);
-    }
-
-    // RECOMMENDED_TALENT_MISSING
-    if (trendId === 'RECOMMENDED_TALENT_MISSING') {
-      return this._evaluateRecommendedTalents(context, trend);
+    // RECOMMENDED_FEATURE_MISSING (consolidated feats + talents)
+    if (trendId === 'RECOMMENDED_FEATURE_MISSING') {
+      return this._evaluateRecommendedFeatures(context, trend);
     }
 
     // SKILL_INVESTMENT_ALIGNMENT
@@ -194,14 +189,9 @@ export class BuildAnalysisEngine {
       return this._evaluateSpecialization(context, trend);
     }
 
-    // FEAT_CHAIN_PROGRESSION
-    if (trendId === 'FEAT_CHAIN_PROGRESSION') {
-      return this._evaluateFeatChain(context, trend);
-    }
-
-    // TALENT_CHAIN_PROGRESSION
-    if (trendId === 'TALENT_CHAIN_PROGRESSION') {
-      return this._evaluateTalentChain(context, trend);
+    // FEATURE_CHAIN_PROGRESSION (consolidated feats + talents)
+    if (trendId === 'FEATURE_CHAIN_PROGRESSION') {
+      return this._evaluateFeatureChain(context, trend);
     }
 
     // FORCE_ENGAGEMENT_EXPECTATION
@@ -277,41 +267,38 @@ export class BuildAnalysisEngine {
     return { violated: false, exceeded: false, evidence: {} };
   }
 
-  static _evaluateRecommendedFeats(context, trend) {
-    if (!context.archetype || !context.archetype.recommended?.feats) {
+  static _evaluateRecommendedFeatures(context, trend) {
+    if (!context.archetype) {
       return { violated: false, exceeded: false, evidence: {} };
     }
 
-    const recommendedCount = context.archetype.recommended.feats.length;
-    const adoptedCount = context.feats.length;
+    const recommendedFeats = context.archetype.recommended?.feats?.length || 0;
+    const recommendedTalents =
+      context.archetype.recommended?.talents?.length || 0;
+    const totalRecommended = recommendedFeats + recommendedTalents;
 
-    // Violated if actor has significantly fewer feats than recommended
-    const violation =
-      recommendedCount > 0 && adoptedCount < recommendedCount * 0.5;
-
-    return {
-      violated: violation,
-      exceeded: adoptedCount >= recommendedCount,
-      evidence: { recommended: recommendedCount, adopted: adoptedCount }
-    };
-  }
-
-  static _evaluateRecommendedTalents(context, trend) {
-    if (!context.archetype || !context.archetype.recommended?.talents) {
+    if (totalRecommended === 0) {
       return { violated: false, exceeded: false, evidence: {} };
     }
 
-    const recommendedCount = context.archetype.recommended.talents.length;
-    const adoptedCount = context.talents.length;
+    const adoptedFeats = context.feats.length;
+    const adoptedTalents = context.talents.length;
+    const totalAdopted = adoptedFeats + adoptedTalents;
 
-    // Violated if actor has significantly fewer talents than recommended
-    const violation =
-      recommendedCount > 0 && adoptedCount < recommendedCount * 0.5;
+    // Violated if actor has significantly fewer abilities than recommended
+    const violation = totalAdopted < totalRecommended * 0.5;
 
     return {
       violated: violation,
-      exceeded: adoptedCount >= recommendedCount,
-      evidence: { recommended: recommendedCount, adopted: adoptedCount }
+      exceeded: totalAdopted >= totalRecommended,
+      evidence: {
+        recommendedTotal: totalRecommended,
+        adoptedTotal: totalAdopted,
+        breakdown: {
+          feats: { recommended: recommendedFeats, adopted: adoptedFeats },
+          talents: { recommended: recommendedTalents, adopted: adoptedTalents }
+        }
+      }
     };
   }
 
@@ -385,42 +372,37 @@ export class BuildAnalysisEngine {
     };
   }
 
-  static _evaluateFeatChain(context, trend) {
-    const featCount = context.feats.length;
-
-    // Violated if archetype expects chains but actor has <2 feats
-    if (context.archetype?.recommended?.feats?.length >= 2 && featCount < 2) {
-      return {
-        violated: true,
-        exceeded: false,
-        evidence: { featCount, expected: '≥2' }
-      };
+  static _evaluateFeatureChain(context, trend) {
+    if (!context.archetype) {
+      return { violated: false, exceeded: false, evidence: {} };
     }
 
-    return {
-      violated: false,
-      exceeded: featCount >= 3,
-      evidence: { featCount }
-    };
-  }
+    const expectsFeatChains =
+      context.archetype.recommended?.feats?.length >= 2;
+    const expectsTalentChains =
+      context.archetype.recommended?.talents?.length >= 2;
+    const expectsChains = expectsFeatChains || expectsTalentChains;
 
-  static _evaluateTalentChain(context, trend) {
-    const talentCount = context.talents.length;
-
-    // Violated if archetype expects chains but actor has <2 talents
-    if (context.archetype?.recommended?.talents?.length >= 2 &&
-        talentCount < 2) {
-      return {
-        violated: true,
-        exceeded: false,
-        evidence: { talentCount, expected: '≥2' }
-      };
+    if (!expectsChains) {
+      return { violated: false, exceeded: false, evidence: {} };
     }
 
+    const totalFeatures = context.feats.length + context.talents.length;
+
+    // Violated if archetype expects chains but actor has <2 total abilities
+    const violation = totalFeatures < 2;
+
     return {
-      violated: false,
-      exceeded: talentCount >= 3,
-      evidence: { talentCount }
+      violated: violation,
+      exceeded: totalFeatures >= 3,
+      evidence: {
+        totalFeatureCount: totalFeatures,
+        breakdown: {
+          feats: context.feats.length,
+          talents: context.talents.length
+        },
+        expectedChains: expectsChains
+      }
     };
   }
 
