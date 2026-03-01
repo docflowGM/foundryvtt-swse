@@ -1,0 +1,148 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SWSE Advisory Schema v1.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "mentor",
+    "advisory_schema_version",
+    "voice_profile",
+    "advisory_types"
+  ],
+  "properties": {
+    "mentor": {
+      "type": "string",
+      "minLength": 1
+    },
+    "advisory_schema_version": {
+      "type": "string",
+      "const": "1.1"
+    },
+    "voice_profile": {
+      "type": "string",
+      "minLength": 1
+    },
+    "advisory_types": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "conflict",
+        "drift",
+        "prestige_planning",
+        "strength_reinforcement",
+        "hybrid_identity",
+        "specialization_warning",
+        "momentum",
+        "long_term_trajectory"
+      ],
+      "properties": {
+        "conflict": { "$ref": "#/definitions/standardScaffold" },
+        "drift": { "$ref": "#/definitions/standardScaffold" },
+        "prestige_planning": { "$ref": "#/definitions/standardScaffold" },
+        "strength_reinforcement": { "$ref": "#/definitions/standardScaffold" },
+        "hybrid_identity": { "$ref": "#/definitions/hybridScaffold" },
+        "specialization_warning": { "$ref": "#/definitions/standardScaffold" },
+        "momentum": { "$ref": "#/definitions/standardScaffold" },
+        "long_term_trajectory": { "$ref": "#/definitions/trajectoryScaffold" }
+      }
+    }
+  },
+  "definitions": {
+    "intensityTierObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "Observation",
+        "Impact",
+        "Guidance",
+        "Optional Encouragement"
+      ],
+      "properties": {
+        "Observation": { "type": "string", "minLength": 1 },
+        "Impact": { "type": "string", "minLength": 1 },
+        "Guidance": { "type": "string", "minLength": 1 },
+        "Optional Encouragement": { "type": "string", "minLength": 1 }
+      }
+    },
+    "hybridTierObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "Observation",
+        "Impact",
+        "Guidance",
+        "Optional Encouragement"
+      ],
+      "properties": {
+        "Observation": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "Impact": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "Guidance": { "type": "string", "minLength": 1 },
+        "Optional Encouragement": { "type": "string", "minLength": 1 }
+      }
+    },
+    "trajectoryTierObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "Observation",
+        "Impact",
+        "Guidance",
+        "Optional Encouragement"
+      ],
+      "properties": {
+        "Observation": { "type": "string", "minLength": 1 },
+        "Impact": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "Guidance": { "type": "string", "minLength": 1 },
+        "Optional Encouragement": { "type": "string", "minLength": 1 }
+      }
+    },
+    "standardScaffold": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["very_low", "low", "medium", "high", "very_high"],
+      "properties": {
+        "very_low": { "$ref": "#/definitions/intensityTierObject" },
+        "low": { "$ref": "#/definitions/intensityTierObject" },
+        "medium": { "$ref": "#/definitions/intensityTierObject" },
+        "high": { "$ref": "#/definitions/intensityTierObject" },
+        "very_high": { "$ref": "#/definitions/intensityTierObject" }
+      }
+    },
+    "hybridScaffold": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["very_low", "low", "medium", "high", "very_high"],
+      "properties": {
+        "very_low": { "$ref": "#/definitions/hybridTierObject" },
+        "low": { "$ref": "#/definitions/hybridTierObject" },
+        "medium": { "$ref": "#/definitions/hybridTierObject" },
+        "high": { "$ref": "#/definitions/hybridTierObject" },
+        "very_high": { "$ref": "#/definitions/hybridTierObject" }
+      }
+    },
+    "trajectoryScaffold": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["very_low", "low", "medium", "high", "very_high"],
+      "properties": {
+        "very_low": { "$ref": "#/definitions/trajectoryTierObject" },
+        "low": { "$ref": "#/definitions/trajectoryTierObject" },
+        "medium": { "$ref": "#/definitions/trajectoryTierObject" },
+        "high": { "$ref": "#/definitions/trajectoryTierObject" },
+        "very_high": { "$ref": "#/definitions/trajectoryTierObject" }
+      }
+    }
+  }
+}
