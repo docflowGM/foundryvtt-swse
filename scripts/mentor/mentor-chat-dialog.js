@@ -18,6 +18,7 @@ import { MentorDialogueV2Integration } from "../mentor/mentor-dialogue-v2-integr
 import { MentorStoryResolver } from "../engine/mentor/mentor-story-resolver.js";
 import { renderJudgmentAtom } from "../mentor/mentor-judgment-renderer.js";
 import { getReasonTexts } from "../mentor/mentor-reason-renderer.js";
+import { DSPEngine } from "../engine/darkside/dsp-engine.js";
 
 // V2 API base class
 import SWSEFormApplicationV2 from "../apps/base/swse-form-application-v2.js";
@@ -406,9 +407,7 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
     }
 
     // Check DSP saturation if available
-    const dsp = this.actor.system.darkSidePoints?.value || 0;
-    const dspMax = this.actor.system.darkSidePoints?.max || 10;
-    const dspSaturation = dspMax > 0 ? dsp / dspMax : 0;
+    const dspSaturation = DSPEngine.getSaturation(this.actor);
 
     if (dspSaturation > 0.5) {
       reflection += `\n\n⚠️ The darkness grows within you. Your path is shifting in ways that may be difficult to reverse.`;
@@ -567,9 +566,7 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
     }
 
     // DSP drift warning
-    const dsp = this.actor.system.darkSidePoints?.value || 0;
-    const dspMax = this.actor.system.darkSidePoints?.max || 10;
-    const dspSaturation = dspMax > 0 ? dsp / dspMax : 0;
+    const dspSaturation = DSPEngine.getSaturation(this.actor);
 
     if (dspSaturation > 0.3 && dspSaturation < 0.7) {
       gaps += `\n⚠️ You're drifting toward the dark side without committing. This instability will cost you when clarity matters most.\n`;
@@ -628,9 +625,7 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
   _generateRiskAwareness() {
     const combatStyle = this.buildIntent.combatStyle;
     const level = this.actor.system.level;
-    const dsp = this.actor.system.darkSidePoints?.value || 0;
-    const dspMax = this.actor.system.darkSidePoints?.max || 10;
-    const dspSaturation = dspMax > 0 ? dsp / dspMax : 0;
+    const dspSaturation = DSPEngine.getSaturation(this.actor);
 
     let risks = 'These are the dangers you face:\n\n';
 

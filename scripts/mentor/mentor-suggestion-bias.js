@@ -8,11 +8,7 @@
 
 import { getMentorMemory } from "../engine/mentor/mentor-memory.js";
 import { getArchetype, getArchetypeRoleBias } from "./mentor-archetype-paths.js";
-
-// TODO: DSP saturation functions need to be implemented
-// These should calculate dark side points influence on mentor suggestions
-// const calculateDspSaturation = (actor) => actor.system.darkSidePoints || 0;
-// const getDarkSideBiasMultiplier = (saturation) => Math.min(1.5, 1 + saturation * 0.1);
+import { DSPEngine } from "../engine/darkside/dsp-engine.js";
 
 /**
  * Calculate mentor bias for a suggestion
@@ -78,9 +74,7 @@ export function calculateMentorBias(actor, mentorId, suggestionType) {
   }
 
   // 4. DSP dark-side bias
-  // TODO: Implement DSP saturation calculation
-  const dsp = actor.system?.darkSidePoints || 0;
-  bias.darkSideBias = Math.min(1.5, 1 + (dsp * 0.1));
+  bias.darkSideBias = DSPEngine.getSuggestionBiasMultiplier(actor);
 
   // 5. Calculate total bias (conservative - no single effect > 25%)
   const totalRoleBias = Math.max(...Object.values(bias.roleBias), 1.0);

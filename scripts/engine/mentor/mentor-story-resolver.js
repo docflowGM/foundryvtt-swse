@@ -10,6 +10,7 @@
  */
 
 import { SWSELogger } from "../../utils/logger.js";
+import { DSPEngine } from "../darkside/dsp-engine.js";
 
 export class MentorStoryResolver {
   /**
@@ -135,16 +136,10 @@ export class MentorStoryResolver {
 
   /**
    * Calculate player's DSP saturation as percent
-   * DSP / WIS, clamped to [0, 1]
+   * Uses DSP Engine for authoritative calculation
    */
   static _calculatePlayerDspPercent(actor) {
-    const dsp = actor.system.darkSidePoints || 0;
-    const wisdom = actor.system.attributes?.wis?.base || 10;
-
-    if (wisdom === 0) {return 0;}
-
-    const saturation = dsp / wisdom;
-    return Math.min(saturation, 1.0); // Cap at 100%
+    return DSPEngine.calculateSaturationByWisdom(actor);
   }
 
   /**
