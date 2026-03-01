@@ -10,7 +10,7 @@
  * Non-mutating observation only
  */
 
-import { Sentinel } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
+import { Sentinel } from "../../../governance/sentinel/sentinel-core.js";
 
 export const DataLayer = {
   /**

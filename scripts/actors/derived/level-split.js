@@ -1,4 +1,4 @@
-import { warnIfMixedTracks } from "/systems/foundryvtt-swse/scripts/utils/hardening.js";
+import { warnIfMixedTracks } from "../../utils/hardening.js";
 /**
  * Level split utilities (Heroic vs Nonheroic)
  *

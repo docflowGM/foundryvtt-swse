@@ -14,8 +14,8 @@
  * Normalization only.
  */
 
-import { ProgressionCompiler } from "/systems/foundryvtt-swse/scripts/engine/progression/ProgressionCompiler.js";
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ProgressionCompiler } from "../../../engine/progression/ProgressionCompiler.js";
+import { swseLogger } from "../../../utils/logger.js";
 
 export class ManualStepProcessor {
 

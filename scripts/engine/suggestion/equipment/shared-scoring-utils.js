@@ -8,7 +8,7 @@
  * - Peer grouping (O(n) via Map)
  */
 
-import { getTierFromScore, getTierKeyFromScore } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/suggestion-tiers-canonical.js";
+import { getTierFromScore, getTierKeyFromScore } from "../../../engine/suggestion/equipment/suggestion-tiers-canonical.js";
 
 /**
  * Clamp and validate numeric score

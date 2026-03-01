@@ -16,7 +16,7 @@
  * - validateManeuverSelection(actor, maneuverIds) -> {valid: bool, reason: string, capacityUsed?: number}
  */
 
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { swseLogger } from "../../../utils/logger.js";
 
 export class ManeuverAuthorityEngine {
   /**

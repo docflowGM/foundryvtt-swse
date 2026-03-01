@@ -1,4 +1,4 @@
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "../utils/logger.js";
 /**
  * SWSE Notifications Utility
  * Centralized notification system for consistent user feedback

@@ -10,9 +10,9 @@
  * - This module is a backwards-compatible facade only
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { BuildIdentityDetector, ANCHOR_STATE, THEME_TO_ARCHETYPE } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIdentityDetector.js";
-import { AnchorRepository } from "/systems/foundryvtt-swse/scripts/engine/suggestion/AnchorRepository.js";
+import { SWSELogger } from "../../utils/logger.js";
+import { BuildIdentityDetector, ANCHOR_STATE, THEME_TO_ARCHETYPE } from "../../engine/suggestion/BuildIdentityDetector.js";
+import { AnchorRepository } from "../../engine/suggestion/AnchorRepository.js";
 
 
 

@@ -15,8 +15,8 @@
  *   → Fall back to default (Ol' Salty)
  */
 
-import { MENTORS, getMentorForClass } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { MENTORS, getMentorForClass } from "../../engine/mentor/mentor-dialogues.js";
+import { SWSELogger } from "../../utils/logger.js";
 
 /**
  * Mentor inheritance taxonomy

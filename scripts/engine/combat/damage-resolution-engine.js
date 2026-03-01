@@ -1,6 +1,6 @@
-import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
-import { ThresholdEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/threshold-engine.js";
-import { DamageMitigationManager } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-mitigation-manager.js";
+import { ModifierEngine } from "../../engine/effects/modifiers/ModifierEngine.js";
+import { ThresholdEngine } from "../../engine/combat/threshold-engine.js";
+import { DamageMitigationManager } from "../../engine/combat/damage-mitigation-manager.js";
 
 /**
  * DamageResolutionEngine — Unified damage orchestration

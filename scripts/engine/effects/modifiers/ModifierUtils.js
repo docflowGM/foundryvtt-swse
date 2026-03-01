@@ -16,7 +16,7 @@ import {
   STACKING_RULES,
   createModifier,
   compareModifierPriority
-} from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
+} from "../../../engine/effects/modifiers/ModifierTypes.js";
 
 export class ModifierUtils {
   /**

@@ -11,7 +11,7 @@
  * not random upgrades.
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "../../../utils/logger.js";
 import {
   PRESTIGE_ARCHETYPE_MAP,
   BASE_ARCHETYPE_MAP,
@@ -19,7 +19,7 @@ import {
   FORCE_TECHNIQUE_ARCHETYPE_THRESHOLDS,
   FORCE_TECHNIQUE_NO_POWER_PENALTY,
   ITEM_TYPES
-} from "/systems/foundryvtt-swse/scripts/engine/progression/engine/suggestion-constants.js';
+} from ""../../../engine/progression/engine/suggestion-constants.js';
 
 export const FORCE_TECHNIQUE_TIERS = {
   POWER_SYNERGY_HIGH: 5,    // Known power + strong archetype match

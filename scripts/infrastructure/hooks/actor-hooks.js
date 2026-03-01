@@ -1,4 +1,4 @@
-import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
+import { ProgressionEngine } from "../../engine/progression/engine/progression-engine.js";
 /**
  * Actor Lifecycle Hooks
  * All actor-related hook handlers consolidated here
@@ -11,14 +11,14 @@ import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progr
  * - dropActorSheetData: Drag-and-drop handling
  */
 
-import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/hooks-registry.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { initializeStarshipManeuverHooks } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/starship-maneuver-hooks.js";
-import { initializeForcePowerHooks } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/force-power-hooks.js";
-import { StarshipDomainLifecycle } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/starship-domain-lifecycle.js";
-import { ForceDomainLifecycle } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/force-domain-lifecycle.js";
-import { registerTelekineticProdigyHook } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/telekinetic-prodigy-hook.js";
-import { qs, qsa, setVisible, isVisible, text } from "/systems/foundryvtt-swse/scripts/utils/dom-utils.js";
+import { HooksRegistry } from "../../infrastructure/hooks/hooks-registry.js";
+import { SWSELogger } from "../../utils/logger.js";
+import { initializeStarshipManeuverHooks } from "../../infrastructure/hooks/starship-maneuver-hooks.js";
+import { initializeForcePowerHooks } from "../../infrastructure/hooks/force-power-hooks.js";
+import { StarshipDomainLifecycle } from "../../infrastructure/hooks/starship-domain-lifecycle.js";
+import { ForceDomainLifecycle } from "../../infrastructure/hooks/force-domain-lifecycle.js";
+import { registerTelekineticProdigyHook } from "../../engine/progression/engine/telekinetic-prodigy-hook.js";
+import { qs, qsa, setVisible, isVisible, text } from "../../utils/dom-utils.js";
 
 /**
  * Register all actor-related hooks

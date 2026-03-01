@@ -20,8 +20,8 @@
  *   this class remains a pure coordinator.
  */
 
-import { ForceAuthorityEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-authority-engine.js";
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ForceAuthorityEngine } from "../../../engine/progression/engine/force-authority-engine.js";
+import { swseLogger } from "../../../utils/logger.js";
 
 export class ForceSlotValidator {
   /**

@@ -14,8 +14,8 @@
  *  - Shared utilities for engine vehicle subsystems (Phase 2c+)
  */
 
-import { getVehicleCTPenalty, measureDistance, measureSquares } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicles/utils/vehicle-shared.js";
-import { computeAttackBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
+import { getVehicleCTPenalty, measureDistance, measureSquares } from "../../../../engine/combat/vehicles/utils/vehicle-shared.js";
+import { computeAttackBonus } from "../../../../combat/utils/combat-utils.js";
 
 /**
  * Determine which modifier is used for vehicle weapons.

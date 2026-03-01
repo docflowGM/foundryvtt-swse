@@ -3,7 +3,7 @@
  * Handles category filtering, availability filtering, and search
  */
 
-import { getRandomDialogue } from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js";
+import { getRandomDialogue } from "../../apps/store/store-shared.js";
 
 /**
  * Apply availability filter to currently visible items

@@ -7,7 +7,7 @@
  */
 
 import { TalentSlotSchema } from './talent-slot-schema.js';
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "../../../utils/logger.js";
 
 export class TalentSlotCalculator {
   /**

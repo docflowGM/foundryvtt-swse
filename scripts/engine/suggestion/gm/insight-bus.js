@@ -6,10 +6,10 @@
  * Provides read-only getter for UI panels.
  */
 
-import { PressureMonitor } from "/systems/foundryvtt-swse/scripts/engine/suggestion/gm/pressure-monitor.js";
-import { SpotlightMonitor } from "/systems/foundryvtt-swse/scripts/engine/suggestion/gm/spotlight-monitor.js";
-import { PacingMonitor } from "/systems/foundryvtt-swse/scripts/engine/suggestion/gm/pacing-monitor.js";
-import { TuningAdvisor } from "/systems/foundryvtt-swse/scripts/engine/suggestion/gm/tuning-advisor.js";
+import { PressureMonitor } from "../../../engine/suggestion/gm/pressure-monitor.js";
+import { SpotlightMonitor } from "../../../engine/suggestion/gm/spotlight-monitor.js";
+import { PacingMonitor } from "../../../engine/suggestion/gm/pacing-monitor.js";
+import { TuningAdvisor } from "../../../engine/suggestion/gm/tuning-advisor.js";
 
 export class InsightBus {
   static _activeInsights = [];

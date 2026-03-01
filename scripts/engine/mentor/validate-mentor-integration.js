@@ -7,9 +7,9 @@
  * Called during system initialization to catch configuration errors early.
  */
 
-import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
-import { validateAtomMappings } from '/systems/foundryvtt-swse/scripts/engine/suggestion/selectReasonAtoms.js';
-import { validateMentorRules } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-reason-judgment-map.js';
+import { SWSELogger } from "../../utils/logger.js";
+import { validateAtomMappings } from "../../engine/suggestion/selectReasonAtoms.js";
+import { validateMentorRules } from "../../engine/mentor/mentor-reason-judgment-map.js";
 
 /**
  * Run all validation checks for mentor integration

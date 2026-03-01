@@ -11,13 +11,13 @@
  * - Build identity card
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "../utils/logger.js";
 import {
   getActorAffinity,
   getPrimaryArchetype,
   formatAffinityForDisplay,
   getPrestigePathRecommendations
-} from "/systems/foundryvtt-swse/scripts/engine/suggestion/ArchetypeSuggestionIntegration.js';
+} from ""../engine/suggestion/ArchetypeSuggestionIntegration.js';
 
 // ─────────────────────────────────────────────────────────────
 // AFFINITY DISPLAY COMPONENT

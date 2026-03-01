@@ -1,10 +1,10 @@
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { InventoryEngine } from "/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js";
-import { CombatRollConfigDialog } from "/systems/foundryvtt-swse/scripts/apps/combat/combat-roll-config-dialog.js";
-import { MentorChatDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor-chat-dialog.js";
-import { DropResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/drop-resolution-engine.js";
-import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
-import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
+import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
+import { InventoryEngine } from "../../engine/inventory/InventoryEngine.js";
+import { CombatRollConfigDialog } from "../../apps/combat/combat-roll-config-dialog.js";
+import { MentorChatDialog } from "../../mentor/mentor-chat-dialog.js";
+import { DropResolutionEngine } from "../../engine/interactions/drop-resolution-engine.js";
+import { AdoptionEngine } from "../../engine/interactions/adoption-engine.js";
+import { AdoptOrAddDialog } from "../../apps/adopt-or-add-dialog.js";
 
 const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api;
 

@@ -12,9 +12,9 @@
  * await DamageEngineTest.runFullSuite()
  */
 
-import { DamageEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-engine.js";
-import { DerivedCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { DamageEngine } from "../../engine/combat/damage-engine.js";
+import { DerivedCalculator } from "../../actors/derived/derived-calculator.js";
+import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
 
 export class DamageEngineTest {
   static results = {

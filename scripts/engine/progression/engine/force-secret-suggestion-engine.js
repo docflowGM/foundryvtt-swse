@@ -13,7 +13,7 @@
  * of a character's established Force identity.
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "../../../utils/logger.js";
 import {
   PRESTIGE_ARCHETYPE_MAP,
   BASE_ARCHETYPE_MAP,
@@ -22,7 +22,7 @@ import {
   FORCE_SECRET_INSTITUTION_THRESHOLDS,
   FORCE_SECRET_DSP_THRESHOLDS,
   ITEM_TYPES
-} from "/systems/foundryvtt-swse/scripts/engine/progression/engine/suggestion-constants.js';
+} from ""../../../engine/progression/engine/suggestion-constants.js';
 
 export const FORCE_SECRET_TIERS = {
   PERFECT_FIT: 6,          // All conditions met + high archetype match

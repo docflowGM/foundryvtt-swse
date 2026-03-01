@@ -1,4 +1,4 @@
-import { SWSE_CONSTANTS } from "/systems/foundryvtt-swse/scripts/core/constants.js";
+import { SWSE_CONSTANTS } from "../core/constants.js";
 
 // ============================================
 // FILE: module/core/config.js

@@ -7,8 +7,8 @@
  * is routed through this dispatcher to the appropriate handler.
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { MulticlassPolicyIntegration } from "/systems/foundryvtt-swse/scripts/engine/progression/policies/multiclass-policy-integration.js";
+import { SWSELogger } from "../../../utils/logger.js";
+import { MulticlassPolicyIntegration } from "../../../engine/progression/policies/multiclass-policy-integration.js";
 
 // ============================================================
 // FEATURE HANDLER DEFINITIONS

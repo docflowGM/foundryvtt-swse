@@ -7,7 +7,7 @@
 
 import { FeatSlotSchema } from './feat-slot-schema.js';
 import { ClassFeatRegistry } from './class-feat-registry.js';
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "../../../utils/logger.js";
 
 export class FeatSlotMigrator {
   /**

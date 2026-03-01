@@ -18,10 +18,10 @@
  * - Reconnaissance Team Leader: Gain follower trained in Perception and Stealth
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { createEffectOnActor, createItemInActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-effect-engine.js";
+import { SWSELogger } from "../../utils/logger.js";
+import { createEffectOnActor, createItemInActor } from "../../core/document-api-v13.js";
+import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
+import { TalentEffectEngine } from "../../engine/talent/talent-effect-engine.js";
 
 export class ScoutTalentMechanics {
 

@@ -6,7 +6,7 @@
  * This registry builds caches to avoid scanning compendium repeatedly.
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "../../../utils/logger.js";
 
 export class ClassFeatRegistry {
   // Cache: classId → [feat IDs]

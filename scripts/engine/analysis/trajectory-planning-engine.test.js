@@ -15,8 +15,8 @@
  * - Proper emergent archetype handling
  */
 
-import { TrajectoryPlanningEngine } from "/systems/foundryvtt-swse/scripts/engine/analysis/trajectory-planning-engine.js";
-import { BuildAnalysisEngine } from "/systems/foundryvtt-swse/scripts/engine/analysis/build-analysis-engine.js";
+import { TrajectoryPlanningEngine } from "../../engine/analysis/trajectory-planning-engine.js";
+import { BuildAnalysisEngine } from "../../engine/analysis/build-analysis-engine.js";
 
 /**
  * TEST HARNESS

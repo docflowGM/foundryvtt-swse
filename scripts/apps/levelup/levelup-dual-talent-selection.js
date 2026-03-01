@@ -9,12 +9,12 @@
  * No mutation. No rule math. No engine logic duplication.
  */
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "../../utils/logger.js";
 import {
   getTalentProgressionInfo,
   getAvailableTalentTreesForHeroicTalent,
   getAvailableTalentTreesForClassTalent
-} from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-dual-talent-progression.js";
+} from "../../apps/levelup/levelup-dual-talent-progression.js";
 
 /**
  * Get the talent selection UI state based on current level progression.

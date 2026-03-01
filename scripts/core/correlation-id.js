@@ -17,7 +17,7 @@
  *   clearTraceId();
  */
 
-import { log } from "/systems/foundryvtt-swse/scripts/core/foundry-env.js";
+import { log } from "../core/foundry-env.js";
 
 // WeakMap for storing trace context per async operation
 let _currentTraceId = null;

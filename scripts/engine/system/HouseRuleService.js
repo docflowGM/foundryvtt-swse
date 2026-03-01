@@ -10,8 +10,8 @@
  * - Governance enforcement
  */
 
-import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SettingsHelper } from "../../utils/settings-helper.js";
+import { SWSELogger } from "../../utils/logger.js";
 
 export class HouseRuleService {
   static NS = 'foundryvtt-swse';

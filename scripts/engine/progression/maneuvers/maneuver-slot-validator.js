@@ -14,8 +14,8 @@
  * All capacity logic lives in ManeuverAuthorityEngine.
  */
 
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { ManeuverAuthorityEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/maneuver-authority-engine.js";
+import { swseLogger } from "../../../utils/logger.js";
+import { ManeuverAuthorityEngine } from "../../../engine/progression/engine/maneuver-authority-engine.js";
 
 export class ManeuverSlotValidator {
   /**

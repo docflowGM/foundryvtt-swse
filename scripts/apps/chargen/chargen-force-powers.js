@@ -2,9 +2,9 @@
 // Force power selection for CharGen
 // ============================================
 
-import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
-import { _findClassItem } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js";
+import { SWSELogger } from "../../utils/logger.js";
+import { AbilityEngine } from "../../engine/abilities/AbilityEngine.js";
+import { _findClassItem } from "../../apps/chargen/chargen-shared.js";
 
 /**
  * Handle force power selection

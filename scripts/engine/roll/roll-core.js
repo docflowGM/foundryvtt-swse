@@ -20,9 +20,9 @@
  * INVARIANT: All rolls must route through this layer.
  */
 
-import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
-import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ModifierEngine } from "../../engine/effects/modifiers/ModifierEngine.js";
+import { ForcePointsService } from "../../engine/force/force-points-service.js";
+import { swseLogger } from "../../utils/logger.js";
 
 export class RollCore {
 

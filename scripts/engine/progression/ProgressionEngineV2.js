@@ -20,12 +20,12 @@
  * - Violates architecture if: duplicates HP formula logic
  */
 
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
-import { HPGeneratorEngine } from "/systems/foundryvtt-swse/scripts/engine/HP/HPGeneratorEngine.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { determineLevelFromXP } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
-import { PROGRESSION_RULES } from "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js";
+import { swseLogger } from "../../utils/logger.js";
+import { HouseRuleService } from "../../engine/system/HouseRuleService.js";
+import { HPGeneratorEngine } from "../../engine/HP/HPGeneratorEngine.js";
+import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
+import { determineLevelFromXP } from "../../engine/shared/xp-system.js";
+import { PROGRESSION_RULES } from "../../engine/progression/data/progression-data.js";
 
 export class ProgressionEngineV2 {
   /**

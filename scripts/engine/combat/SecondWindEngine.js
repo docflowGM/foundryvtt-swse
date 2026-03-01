@@ -8,7 +8,7 @@
  * PHASE D FIX 1: Use HouseRuleService instead of direct game.settings.get()
  */
 
-import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+import { HouseRuleService } from "../../engine/system/HouseRuleService.js";
 
 export const SecondWindEngine = {
   /**
