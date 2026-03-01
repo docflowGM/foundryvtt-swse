@@ -1,6 +1,7 @@
 import { ProgressionEngine } from "../engine/progression/engine/progression-engine.js";
 import { ForcePointsService } from "../engine/force/force-points-service.js";
 import { createChatMessage } from "../core/document-api-v13.js";
+import { DSPEngine } from "../engine/darkside/dsp-engine.js";
 /**
  * Force Points utility functions for rolling and spending Force Points
  */
@@ -89,11 +90,10 @@ export class ForcePointsUtil {
     if (darkSideTemptation === 'narrative') {return false;}
 
     // Check if Dark Side Score <= half Wisdom
-    const darkSideScore = actor.system.darkSideScore || 0;
     const wisdomScore = actor.system.attributes?.wis?.total || 10;
     const halfWisdom = Math.floor(wisdomScore / 2);
 
-    return darkSideScore <= halfWisdom;
+    return DSPEngine.getValue(actor) <= halfWisdom;
   }
 
   /**

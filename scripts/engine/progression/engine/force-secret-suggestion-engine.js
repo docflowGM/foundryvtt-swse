@@ -23,6 +23,7 @@ import {
   FORCE_SECRET_DSP_THRESHOLDS,
   ITEM_TYPES
 } from ""../../../engine/progression/engine/suggestion-constants.js';
+import { DSPEngine } from "../../../engine/darkside/dsp-engine.js";
 
 export const FORCE_SECRET_TIERS = {
   PERFECT_FIT: 6,          // All conditions met + high archetype match
@@ -266,20 +267,14 @@ export class ForceSecretSuggestionEngine {
    * @private
    */
   static _getInstitution(actor = null) {
-    const dsp = actor?.system?.swse?.darkSidePoints || 0;
-    const maxDSP = actor?.system?.swse?.maxDarkSidePoints || 1;
-
     // Check explicit institution
     const explicit = actor?.system?.swse?.institution;
     if (explicit) {
       return explicit.toLowerCase();
     }
 
-    // Infer from dark side points
-    const dspPercent = maxDSP > 0 ? dsp / maxDSP : 0;
-    if (dspPercent > FORCE_SECRET_DSP_THRESHOLDS.SITH_RATIO) {return 'sith';}
-    if (dspPercent < FORCE_SECRET_DSP_THRESHOLDS.JEDI_RATIO) {return 'jedi';}
-    return DEFAULT_ARCHETYPE;
+    // Infer from dark side points using DSPEngine (canonical source)
+    return DSPEngine.getInstitution(actor);
   }
 
   /**

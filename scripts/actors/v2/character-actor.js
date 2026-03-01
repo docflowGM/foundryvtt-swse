@@ -8,6 +8,7 @@ import speciesTraits from "/systems/foundryvtt-swse/data/species-traits.json" wi
 import { FeatActionsMapper } from "../../utils/feat-actions-mapper.js";
 import { EncumbranceEngine } from "../../engine/encumbrance/EncumbranceEngine.js";
 import { InventoryEngine } from "../../engine/inventory/InventoryEngine.js";
+import { DSPEngine } from "../../engine/darkside/dsp-engine.js";
 
 /**
  * Compute the minimal v2-derived fields for Characters.
@@ -104,7 +105,7 @@ function mirrorIdentity(actor, system) {
   i.forcePointsDisplay = buildTickDisplay(i.forcePoints.value, i.forcePoints.max, RESOURCE_TICK_CAP);
   i.bab = safeNumber(system.bab?.total ?? system.bab ?? system.baseAttackBonus, 0);
   i.speed = safeNumber(system.speed?.total ?? system.speed ?? system.movement?.speed, 0);
-  i.darkSideScore = safeNumber(system.darkSideScore ?? system.darkSide?.score, 0);
+  i.darkSideScore = DSPEngine.getValue(actor);
 
   // Abilities (total + mod) are already prepared by the legacy data model.
   i.abilities = {};

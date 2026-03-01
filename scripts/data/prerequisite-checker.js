@@ -2,6 +2,8 @@
 // FILE: scripts/data/prerequisite-checker.js
 // UNIFIED Prerequisite Validator (v3)
 // ============================================
+
+import { DSPEngine } from "../engine/darkside/dsp-engine.js";
 //
 // THE CANONICAL PREREQUISITE ENGINE
 // This is the ONLY place in the system that answers "is this legal?"
@@ -982,9 +984,9 @@ export class PrerequisiteChecker {
     }
 
     static _checkDarkSideCondition(prereq, actor, pending) {
-        const darkSide = actor.system?.force?.darkSideScore ?? 0;
         const required = prereq.minimum ?? 0;
-        const met = darkSide >= required;
+        const darkSide = DSPEngine.getValue(actor);
+        const met = DSPEngine.meetsThreshold(actor, required);
         return {
             met,
             message: !met ? `Requires Dark Side Score ${required} (you have ${darkSide})` : ''
@@ -1059,9 +1061,8 @@ export class PrerequisiteChecker {
     }
 
     static _checkDarkSideDynamicCondition(prereq, actor, pending) {
-        const darkSide = actor.system?.force?.darkSideScore ?? 0;
         const wisdom = actor.system?.attributes?.wis?.total ?? 10;
-        const met = darkSide >= wisdom;
+        const met = DSPEngine.meetsThreshold(actor, wisdom);
         return {
             met,
             message: !met ? `Dark Side Score must be at least Wisdom (${wisdom})` : ''
@@ -1928,12 +1929,12 @@ function checkForceTechniques(actor, techniqueReq) {
 function checkDarkSideScore(actor, requirement) {
     if (!actor) {return { met: true };}
 
-    const darkSideScore = actor.system?.darkSideScore || actor.system?.darksideScore || 0;
+    const darkSideScore = DSPEngine.getValue(actor);
     const wisScore = actor.system?.abilities?.wis?.score || 10;
 
     // Requirement: Dark Side Score must equal Wisdom score
     return {
-        met: darkSideScore >= wisScore,
+        met: DSPEngine.meetsThreshold(actor, wisScore),
         actual: darkSideScore,
         required: wisScore
     };
