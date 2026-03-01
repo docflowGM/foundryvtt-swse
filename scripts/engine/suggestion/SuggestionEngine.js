@@ -42,6 +42,7 @@ import {
 } from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry-integration.js";
 import { selectReasonAtoms } from "/systems/foundryvtt-swse/scripts/engine/suggestion/selectReasonAtoms.js";
 import { REASON_TEXT_MAP } from "/systems/foundryvtt-swse/scripts/mentor/mentor-reason-renderer.js";
+import { ReasonSignalBuilder } from "/systems/foundryvtt-swse/scripts/engine/suggestion/reason-signal-builder.js";
 
 // ──────────────────────────────────────────────────────────────
 // TIER DEFINITIONS (PHASE 5D: UNIFIED_TIERS Refactor)
@@ -1424,15 +1425,26 @@ export class SuggestionEngine {
     }
 
     /**
-     * Build a suggestion metadata object with reason explanation (Phase S1 + Phase 1.5)
+     * Build a suggestion metadata object with semantic signals (Phase 2.6 - Mentor Integration)
+     *
+     * SCHEMA:
+     * - tier: numeric tier (0-6)
+     * - confidence: 0.0-1.0
+     * - reasonCode: semantic code (PRESTIGE_PREREQ, CHAIN_CONTINUATION, etc.)
+     * - sourceId: what triggered this (prestige:Jedi, chain:Force Training, etc.)
+     * - reasonSignals: semantic facts (alignment, prestigeSupport, mechanicalSynergy, etc.)
+     * - reason: atoms and matching rules (no explanation text - that's mentor layer responsibility)
+     *
      * @param {number} tier - The suggestion tier (numeric)
      * @param {string} reasonCode - Semantic reason code (e.g., 'PRESTIGE_PREREQ')
-     * @param {string|null} sourceId - What caused this suggestion (e.g., 'prestige:Jedi', 'skill:stealth')
-     * @param {Object} options - Additional options for reason generation
+     * @param {string|null} sourceId - What caused this suggestion (e.g., 'prestige:Jedi')
+     * @param {Object} options - Additional options
      * @param {string[]} options.matchingRules - Array of matched rule identifiers
-     * @param {number} options.archetypeAlignmentBonus - Confidence boost from archetype alignment (0-0.2)
-     * @param {Object} options.archetypeAlignment - Archetype alignment details for reason metadata
-     * @returns {Object} Engine suggestion metadata with reason explanation
+     * @param {number} options.archetypeAlignmentBonus - Confidence boost (0-0.2)
+     * @param {Object} options.archetypeAlignment - Archetype alignment details
+     * @param {Object} options.reasonSignals - Pre-built semantic signals (optional, will build if not provided)
+     * @param {Object} options.signalContext - Context for signal building
+     * @returns {Object} Engine suggestion metadata with reasonSignals
      */
     static _buildSuggestion(tier, reasonCode = null, sourceId = null, options = {}) {
         // Find the closest tier key for lookups (handles decimal tiers like 4.5)
@@ -1451,17 +1463,17 @@ export class SuggestionEngine {
         const cappedBonus = Math.min(archetypeBonus, 0.2);
         const finalConfidence = Math.min(baseConfidence + cappedBonus, 0.95);
 
-        // Generate human-readable explanation
-        const explanation = this._generateReasonExplanation(finalReasonCode, sourceId);
+        // Build or use provided reasonSignals
+        const reasonSignals = options.reasonSignals ||
+                              ReasonSignalBuilder.build(finalReasonCode, options.signalContext || {});
 
         // Select mentor reason atoms for this code
         const atoms = selectReasonAtoms(finalReasonCode);
 
-        // Build reason object
+        // Build reason object (atoms only, no explanation text)
         const reason = {
             tierAssignedBy: finalReasonCode,
             matchingRules,
-            explanation,
             atoms
         };
 
@@ -1478,6 +1490,7 @@ export class SuggestionEngine {
             reasonCode: finalReasonCode,
             sourceId,
             confidence: finalConfidence,
+            reasonSignals,
             reason
         };
     }
@@ -1569,12 +1582,27 @@ export class SuggestionEngine {
     }
 
     /**
-     * Generate human-readable explanation for a suggestion (Phase S1)
+     * DEPRECATED: Explanation generation moved to mentor layer
+     *
+     * This method is kept for backwards compatibility but should NOT be used.
+     * Explanation text generation is now the responsibility of:
+     * - MentorReasonSelector (converts signals to atoms)
+     * - MentorJudgmentEngine (builds final explanation from atoms)
+     *
+     * The reason is: SuggestionEngine should only emit facts (reasonSignals),
+     * not presentation logic. Mentor layer handles all explanation/tone/personality.
+     *
+     * @deprecated Use MentorJudgmentEngine instead
      * @param {string} reasonCode - The reason code
      * @param {string|null} sourceId - The source identifier
-     * @returns {string} Human-readable explanation
+     * @returns {string} Human-readable explanation (DEPRECATED)
      */
     static _generateReasonExplanation(reasonCode, sourceId) {
+        SWSELogger.warn(
+            '[SuggestionEngine] _generateReasonExplanation is deprecated. ' +
+            'Explanation generation is now in mentor layer (MentorJudgmentEngine).'
+        );
+
         // Map SuggestionEngine reason codes to canonical reasons.json keys
         const reasonCodeToJsonKeys = {
             'PRESTIGE_PREREQ': 'prestige_prerequisites_met',
@@ -1592,13 +1620,13 @@ export class SuggestionEngine {
             'FALLBACK': 'available_for_selection'
         };
 
-        // Try to get explanation from reasons.json
+        // Try to get explanation from reasons.json (for backwards compatibility)
         const jsonKey = reasonCodeToJsonKeys[reasonCode];
         if (jsonKey && REASON_TEXT_MAP && REASON_TEXT_MAP[jsonKey]) {
             return REASON_TEXT_MAP[jsonKey];
         }
 
-        // Fallback to hardcoded explanations
+        // Fallback to hardcoded explanations (for backwards compatibility)
         const explanations = {
             'PRESTIGE_PREREQ': () => `Required for your prestige class path.`,
             'WISHLIST_PATH': () => `Required for an item on your wishlist.`,
