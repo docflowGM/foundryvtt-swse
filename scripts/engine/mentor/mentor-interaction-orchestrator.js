@@ -27,6 +27,7 @@ import { TrajectoryPlanningEngine } from "/systems/foundryvtt-swse/scripts/engin
 import { MentorJudgmentEngine } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-judgment-engine.js";
 import { getMentor } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-json-loader.js";
 import { getEncouragementLine } from "/systems/foundryvtt-swse/scripts/dialogue/runtime/getEncouragementLine.js";
+import { getJudgmentOverlay } from "/systems/foundryvtt-swse/scripts/dialogue/runtime/getJudgmentOverlay.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class MentorInteractionOrchestrator {
@@ -124,9 +125,24 @@ export class MentorInteractionOrchestrator {
       atoms
     );
 
+    // Convert tier to intensity for advisory type determination
+    const intensity = this._tierToIntensity(tier);
+
+    // Use strength_reinforcement for selection mode (positive context)
+    const advisoryType = "strength_reinforcement";
+
+    // Load mentor data and inject judgment overlay
+    const mentorData = await getMentor(mentorId);
+    const adviceWithOverlay = await this._injectJudgmentOverlay(
+      mentorData,
+      advisoryType,
+      intensity,
+      mentorResponse
+    );
+
     return {
       mode: "selection",
-      primaryAdvice: mentorResponse,
+      primaryAdvice: adviceWithOverlay,
       suggestionTier: tier,
       reasonCode: reasonCode,
       confidence: suggestion.confidence || 0,
@@ -177,9 +193,21 @@ export class MentorInteractionOrchestrator {
 
     // Load mentor data and inject deterministic encouragement_line
     const mentorData = await getMentor(mentorId);
+
+    // Determine advisory type from primary conflict signal
+    const advisoryType = this._determineAdvisoryType(conflictSignals);
+
+    // Inject judgment overlay deterministically
+    const adviceWithOverlay = await this._injectJudgmentOverlay(
+      mentorData,
+      advisoryType,
+      tier,
+      primaryAdvice
+    );
+
     const payload = {
       mode: "reflection",
-      primaryAdvice: primaryAdvice,
+      primaryAdvice: adviceWithOverlay,
       strategicInsight: strategicInsight,
       conflicts: this._formatConflicts(conflictSignals),
       strengths: this._formatStrengths(strengthSignals),
@@ -270,10 +298,21 @@ export class MentorInteractionOrchestrator {
       }
     }
 
+    // Load mentor data and inject judgment overlay for trajectory
+    const mentorData = await getMentor(mentorId);
+    const advisoryType = "long_term_trajectory";
+    const tier = "high"; // Trajectory is high-intensity forward planning
+    const adviceWithOverlay = await this._injectJudgmentOverlay(
+      mentorData,
+      advisoryType,
+      tier,
+      primaryAdvice
+    );
+
     // Build result
     const result = {
       mode: "trajectory",
-      primaryAdvice: primaryAdvice,
+      primaryAdvice: adviceWithOverlay,
       priorities: plan.priorities,
       horizon: plan.horizon,
       deterministic: true
@@ -593,6 +632,68 @@ export class MentorInteractionOrchestrator {
     } catch (error) {
       SWSELogger.debug("[MentorInteractionOrchestrator] Trajectory advice error:", error);
       return "The mentor considers your future carefully.";
+    }
+  }
+
+  /**
+   * Determine advisory type from conflict signals
+   * Maps signal categories to routing matrix advisory types
+   *
+   * @private
+   */
+  static _determineAdvisoryType(conflictSignals) {
+    // If no conflicts, default to strength reinforcement
+    if (!conflictSignals || conflictSignals.length === 0) {
+      return "strength_reinforcement";
+    }
+
+    const primarySignal = conflictSignals[0];
+    const category = primarySignal?.category || "";
+
+    // Map signal categories to advisory types
+    const categoryMap = {
+      // Commitment issues → conflict
+      "commitment_conflict": "conflict",
+      "commitment_deviation": "conflict",
+
+      // Goal/path issues → drift
+      "goal_conflict": "drift",
+      "path_deviation": "drift",
+
+      // Pattern/identity issues → hybrid_identity
+      "pattern_mismatch": "hybrid_identity",
+      "identity_shift": "hybrid_identity",
+
+      // Readiness gaps → specialization_warning
+      "readiness_gap": "specialization_warning",
+      "premature_selection": "specialization_warning",
+
+      // Vulnerability/risk → specialization_warning
+      "vulnerability": "specialization_warning",
+      "exposure": "specialization_warning",
+
+      // Exploration → prestige_planning
+      "exploration": "prestige_planning",
+      "unusual_choice": "prestige_planning"
+    };
+
+    return categoryMap[category] || "conflict";
+  }
+
+  /**
+   * Inject judgment overlay into advisory output
+   * Deterministic prepending of emotional routing judgment
+   *
+   * @private
+   */
+  static async _injectJudgmentOverlay(mentorData, advisoryType, tier, advisoryText) {
+    try {
+      const overlay = getJudgmentOverlay(mentorData, advisoryType, tier);
+      return `${overlay}\n\n${advisoryText}`;
+    } catch (error) {
+      SWSELogger.debug("[MentorInteractionOrchestrator] Judgment overlay error:", error);
+      // No overlay on failure—return advisory unchanged
+      return advisoryText;
     }
   }
 }
