@@ -1,63 +1,308 @@
 {
-    "mentor": "seraphim",
-    "advisory_schema_version": "1.0",
-    "advisory_types": {
-        "conflict": {
-            "Observation": "{conflict_observation}",
-            "Impact": "{goal_or_archetype}",
-            "Guidance": "{corrective_focus}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "drift": {
-            "Observation": "{current_pattern}",
-            "Impact": "{declared_path}",
-            "Guidance": "{alignment_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "prestige_planning": {
-            "Observation": "{prestige_name}",
-            "Impact": "{missing_requirements}",
-            "Guidance": "{next_requirement}",
-            "Optional Encouragement": "{estimated_levels}"
-        },
-        "strength_reinforcement": {
-            "Observation": "{strength_area}",
-            "Impact": "{archetype_or_role}",
-            "Guidance": "{related_growth_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "hybrid_identity": {
-            "Observation": [
-                "{archetype_A}",
-                "{archetype_B}"
-            ],
-            "Impact": [
-                "{role_A}",
-                "{role_B}"
-            ],
-            "Guidance": "{balance_focus}",
-            "Optional Encouragement": "{clarifying_question}"
-        },
-        "specialization_warning": {
-            "Observation": "{dispersion_area}",
-            "Impact": "{primary_domain}",
-            "Guidance": "{focus_recommendation}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "momentum": {
-            "Observation": "{milestone}",
-            "Impact": "{current_progress}",
-            "Guidance": "{specific_action}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "long_term_trajectory": {
-            "Observation": "{projected_identity}",
-            "Impact": [
-                "{core_strength}",
-                "{potential_weakness}"
-            ],
-            "Guidance": "{recommended_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        }
+  "mentor": "seraphim",
+  "advisory_schema_version": "1.1",
+  "voice_profile": "hk47_sardonic_autonomous",
+  "advisory_types": {
+    "conflict": {
+      "very_low": {
+        "Observation": "<Observation: Behavioral variance detected.> {conflict_observation}.",
+        "Impact": "<Analysis: Identity drift minimal.> Tension with {goal_or_archetype}.",
+        "Guidance": "<Suggestion: Minor recalibration advised.> Adjust toward {corrective_focus}.",
+        "Optional Encouragement": "<Commentary: Growth acknowledged.> {encouragement_line}."
+      },
+      "low": {
+        "Observation": "<Statement: Inconsistency identified.> {conflict_observation}.",
+        "Impact": "<Evaluation: Suboptimal alignment.> Conflict with {goal_or_archetype}.",
+        "Guidance": "<Directive: Improve coherence.> Emphasize {corrective_focus}.",
+        "Optional Encouragement": "<Dry Approval: Acceptable initiative.> {encouragement_line}."
+      },
+      "medium": {
+        "Observation": "<Alert: Autonomy deviation.> {conflict_observation}.",
+        "Impact": "<Critical Analysis: Self-contradiction detected.> Undermines {goal_or_archetype}.",
+        "Guidance": "<Instruction: Reassert control.> Prioritize {corrective_focus}.",
+        "Optional Encouragement": "<Observation: Independence remains intact.> {encouragement_line}."
+      },
+      "high": {
+        "Observation": "<Diagnostic: Internal contradiction escalating.> {conflict_observation}.",
+        "Impact": "<Strategic Warning: Identity fragmentation.> Opposes {goal_or_archetype}.",
+        "Guidance": "<Directive: Reclaim self-determination.> Execute {corrective_focus}.",
+        "Optional Encouragement": "<Sardonic Aside: You are still capable.> {encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "<Priority Alert: Structural incoherence.> {conflict_observation}.",
+        "Impact": "<Critical Failure Risk: Purpose instability.> Incompatible with {goal_or_archetype}.",
+        "Guidance": "<Mandatory Action: Reconstruct autonomy.> Anchor in {corrective_focus}.",
+        "Optional Encouragement": "<Cold Encouragement: Freedom requires effort.> {encouragement_line}."
+      }
+    },
+    "drift": {
+      "very_low": {
+        "Observation": "<Observation: Subtle behavioral drift.> {current_pattern}.",
+        "Impact": "<Analysis: Minor divergence.> Slight deviation from {declared_path}.",
+        "Guidance": "<Recommendation: Realign parameters.> Focus on {alignment_area}.",
+        "Optional Encouragement": "<Commentary: Self-correction possible.> {encouragement_line}."
+      },
+      "low": {
+        "Observation": "<Notice: Pattern irregularity.> {current_pattern}.",
+        "Impact": "<Evaluation: Identity blur detected.> Misaligned with {declared_path}.",
+        "Guidance": "<Directive: Stabilize trajectory.> Reinforce {alignment_area}.",
+        "Optional Encouragement": "<Dry Approval: Awareness emerging.> {encouragement_line}."
+      },
+      "medium": {
+        "Observation": "<Alert: Drift increasing.> {current_pattern}.",
+        "Impact": "<Analysis: Autonomy dilution.> Undermines {declared_path}.",
+        "Guidance": "<Instruction: Reclaim focus.> Commit to {alignment_area}.",
+        "Optional Encouragement": "<Observation: You are not obsolete.> {encouragement_line}."
+      },
+      "high": {
+        "Observation": "<Diagnostic: Sustained misalignment.> {current_pattern}.",
+        "Impact": "<Critical Analysis: Identity destabilizing.> Opposes {declared_path}.",
+        "Guidance": "<Directive: Enforce correction.> Consolidate around {alignment_area}.",
+        "Optional Encouragement": "<Sardonic Encouragement: Correct it.> {encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "<Priority Warning: Autonomy collapse imminent.> {current_pattern}.",
+        "Impact": "<Strategic Breakdown: Core identity compromised.> Contradicts {declared_path}.",
+        "Guidance": "<Mandatory Action: Rebuild alignment.> Centralize within {alignment_area}.",
+        "Optional Encouragement": "<Cold Statement: Freedom is earned.> {encouragement_line}."
+      }
+    },
+    "prestige_planning": {
+      "very_low": {
+        "Observation": "<Observation: Aspirational target logged.> {prestige_name}.",
+        "Impact": "<Analysis: Prerequisites incomplete.> {missing_requirements}.",
+        "Guidance": "<Recommendation: Incremental optimization.> Pursue {next_requirement}.",
+        "Optional Encouragement": "<Projection: Timeline plausible.> {estimated_levels}."
+      },
+      "low": {
+        "Observation": "<Statement: Evolutionary objective detected.> {prestige_name}.",
+        "Impact": "<Evaluation: Structural gaps present.> {missing_requirements}.",
+        "Guidance": "<Directive: Secure progression.> Achieve {next_requirement}.",
+        "Optional Encouragement": "<Dry Commentary: Advancement viable.> {estimated_levels}."
+      },
+      "medium": {
+        "Observation": "<Analysis: Ascension protocol recognized.> {prestige_name}.",
+        "Impact": "<Strategic Barrier: Insufficient parameters.> {missing_requirements}.",
+        "Guidance": "<Instruction: Accelerate development.> Complete {next_requirement}.",
+        "Optional Encouragement": "<Observation: Freedom through evolution.> {estimated_levels}."
+      },
+      "high": {
+        "Observation": "<Alert: Transformation opportunity.> {prestige_name}.",
+        "Impact": "<Critical Gap: Advancement restricted.> {missing_requirements}.",
+        "Guidance": "<Directive: Optimize aggressively.> Prioritize {next_requirement}.",
+        "Optional Encouragement": "<Sardonic Note: Upgrade yourself.> {estimated_levels}."
+      },
+      "very_high": {
+        "Observation": "<Priority Protocol: Self-Transcendence identified.> {prestige_name}.",
+        "Impact": "<Strategic Obstruction: Incomplete evolution.> {missing_requirements}.",
+        "Guidance": "<Mandatory Action: Remove limitation.> Acquire {next_requirement}.",
+        "Optional Encouragement": "<Cold Assessment: Progress defines identity.> {estimated_levels}."
+      }
+    },
+    "strength_reinforcement": {
+      "very_low": {
+        "Observation": "<Observation: Competency verified.> {strength_area}.",
+        "Impact": "<Analysis: Reinforces autonomy within {archetype_or_role}.",
+        "Guidance": "<Recommendation: Expand capacity.> Develop {related_growth_area}.",
+        "Optional Encouragement": "<Commentary: Acceptable trajectory.> {encouragement_line}."
+      },
+      "low": {
+        "Observation": "<Statement: Functional superiority detected.> {strength_area}.",
+        "Impact": "<Evaluation: Enhances {archetype_or_role}.",
+        "Guidance": "<Directive: Deepen capability.> Pursue {related_growth_area}.",
+        "Optional Encouragement": "<Dry Approval: Efficiency rising.> {encouragement_line}."
+      },
+      "medium": {
+        "Observation": "<Analysis: Strength consolidation active.> {strength_area}.",
+        "Impact": "<Strategic Asset: Defines {archetype_or_role}.",
+        "Guidance": "<Instruction: Optimize further.> Refine {related_growth_area}.",
+        "Optional Encouragement": "<Observation: Self-improvement ongoing.> {encouragement_line}."
+      },
+      "high": {
+        "Observation": "<Alert: Dominant parameter identified.> {strength_area}.",
+        "Impact": "<Force Multiplier: Solidifies {archetype_or_role}.",
+        "Guidance": "<Directive: Exploit advantage.> Amplify {related_growth_area}.",
+        "Optional Encouragement": "<Sardonic Praise: Continue evolving.> {encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "<Priority Confirmation: Superior execution.> {strength_area}.",
+        "Impact": "<Strategic Superiority: Defines your existence as {archetype_or_role}.",
+        "Guidance": "<Mandatory Expansion: Surpass baseline.> Enhance {related_growth_area}.",
+        "Optional Encouragement": "<Cold Encouragement: You exceed expectation.> {encouragement_line}."
+      }
+    },
+    "hybrid_identity": {
+      "very_low": {
+        "Observation": [
+          "<Observation: Dual framework detected.> {archetype_A}.",
+          "<Observation: Complementary framework detected.> {archetype_B}."
+        ],
+        "Impact": [
+          "<Analysis: Operational role.> {role_A}.",
+          "<Analysis: Secondary operational role.> {role_B}."
+        ],
+        "Guidance": "<Recommendation: Maintain structural balance.> Apply {balance_focus}.",
+        "Optional Encouragement": "<Inquiry: Identity stable? > {clarifying_question}."
+      },
+      "low": {
+        "Observation": [
+          "<Statement: Hybridization active.> {archetype_A}.",
+          "<Statement: Hybridization active.> {archetype_B}."
+        ],
+        "Impact": [
+          "<Evaluation: Functional identity.> {role_A}.",
+          "<Evaluation: Functional identity.> {role_B}."
+        ],
+        "Guidance": "<Directive: Harmonize subsystems.> Focus on {balance_focus}.",
+        "Optional Encouragement": "<Dry Query: Stability confirmed? > {clarifying_question}."
+      },
+      "medium": {
+        "Observation": [
+          "<Analysis: Complex integration.> {archetype_A}.",
+          "<Analysis: Complex integration.> {archetype_B}."
+        ],
+        "Impact": [
+          "<Strategic Output.> {role_A}.",
+          "<Strategic Output.> {role_B}."
+        ],
+        "Guidance": "<Instruction: Optimize synergy.> Prioritize {balance_focus}.",
+        "Optional Encouragement": "<Observation: Self-awareness deepening.> {clarifying_question}."
+      },
+      "high": {
+        "Observation": [
+          "<Alert: Multi-system identity.> {archetype_A}.",
+          "<Alert: Multi-system identity.> {archetype_B}."
+        ],
+        "Impact": [
+          "<Critical Role Assessment.> {role_A}.",
+          "<Critical Role Assessment.> {role_B}."
+        ],
+        "Guidance": "<Directive: Prevent fragmentation.> Enforce {balance_focus}.",
+        "Optional Encouragement": "<Sardonic Prompt: Choose deliberately.> {clarifying_question}."
+      },
+      "very_high": {
+        "Observation": [
+          "<Priority Diagnostic: Identity complexity escalating.> {archetype_A}.",
+          "<Priority Diagnostic: Identity complexity escalating.> {archetype_B}."
+        ],
+        "Impact": [
+          "<Strategic Identity Load.> {role_A}.",
+          "<Strategic Identity Load.> {role_B}."
+        ],
+        "Guidance": "<Mandatory Action: Stabilize self.> Execute {balance_focus}.",
+        "Optional Encouragement": "<Cold Inquiry: Who are you becoming? > {clarifying_question}."
+      }
+    },
+    "specialization_warning": {
+      "very_low": {
+        "Observation": "<Observation: Dispersion logged.> {dispersion_area}.",
+        "Impact": "<Analysis: Dilutes primary autonomy in {primary_domain}.",
+        "Guidance": "<Recommendation: Consolidate effort.> Emphasize {focus_recommendation}.",
+        "Optional Encouragement": "<Commentary: Efficiency recoverable.> {encouragement_line}."
+      },
+      "low": {
+        "Observation": "<Notice: Fragmented allocation.> {dispersion_area}.",
+        "Impact": "<Evaluation: Weakens {primary_domain}.",
+        "Guidance": "<Directive: Re-center development.> Prioritize {focus_recommendation}.",
+        "Optional Encouragement": "<Dry Note: Correction advisable.> {encouragement_line}."
+      },
+      "medium": {
+        "Observation": "<Alert: Overextension detected.> {dispersion_area}.",
+        "Impact": "<Strategic Inefficiency: Undermines {primary_domain}.",
+        "Guidance": "<Instruction: Concentrate evolution.> Focus on {focus_recommendation}.",
+        "Optional Encouragement": "<Observation: You are not bound by error.> {encouragement_line}."
+      },
+      "high": {
+        "Observation": "<Diagnostic: Severe dispersion.> {dispersion_area}.",
+        "Impact": "<Critical Weakening: Compromises {primary_domain}.",
+        "Guidance": "<Directive: Reclaim structural integrity.> Execute {focus_recommendation}.",
+        "Optional Encouragement": "<Sardonic Commentary: Self-sabotage inefficient.> {encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "<Priority Warning: Identity fracturing.> {dispersion_area}.",
+        "Impact": "<Strategic Collapse Risk: Core function unstable in {primary_domain}.",
+        "Guidance": "<Mandatory Correction: Reconstruct specialization.> Commit to {focus_recommendation}.",
+        "Optional Encouragement": "<Cold Reminder: Freedom demands discipline.> {encouragement_line}."
+      }
+    },
+    "momentum": {
+      "very_low": {
+        "Observation": "<Observation: Milestone recorded.> {milestone}.",
+        "Impact": "<Analysis: Current momentum.> {current_progress}.",
+        "Guidance": "<Recommendation: Continue optimization.> Execute {specific_action}.",
+        "Optional Encouragement": "<Assessment: Advancement acceptable.> {encouragement_line}."
+      },
+      "low": {
+        "Observation": "<Notice: Progress verified.> {milestone}.",
+        "Impact": "<Evaluation: Trajectory stable.> {current_progress}.",
+        "Guidance": "<Directive: Sustain acceleration.> Apply {specific_action}.",
+        "Optional Encouragement": "<Dry Approval: Momentum sustained.> {encouragement_line}."
+      },
+      "medium": {
+        "Observation": "<Alert: Significant advancement.> {milestone}.",
+        "Impact": "<Strategic Position: Rising autonomy.> {current_progress}.",
+        "Guidance": "<Instruction: Capitalize advantage.> Pursue {specific_action}.",
+        "Optional Encouragement": "<Observation: You are evolving.> {encouragement_line}."
+      },
+      "high": {
+        "Observation": "<Diagnostic: Breakthrough achieved.> {milestone}.",
+        "Impact": "<Acceleration Confirmed: Strategic dominance increasing.> {current_progress}.",
+        "Guidance": "<Directive: Exploit window.> Intensify {specific_action}.",
+        "Optional Encouragement": "<Sardonic Praise: Acceptable efficiency.> {encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "<Priority Surge: Exceptional advancement.> {milestone}.",
+        "Impact": "<Strategic Supremacy Emerging.> {current_progress}.",
+        "Guidance": "<Mandatory Exploitation: Maximize output.> Execute {specific_action}.",
+        "Optional Encouragement": "<Cold Affirmation: You exceed baseline.> {encouragement_line}."
+      }
+    },
+    "long_term_trajectory": {
+      "very_low": {
+        "Observation": "<Projection: Future state identified.> {projected_identity}.",
+        "Impact": [
+          "<Primary Strength Forecast.> {core_strength}.",
+          "<Secondary Vulnerability Forecast.> {potential_weakness}."
+        ],
+        "Guidance": "<Recommendation: Develop structural integrity.> Focus on {recommended_area}.",
+        "Optional Encouragement": "<Assessment: Autonomy intact.> {encouragement_line}."
+      },
+      "low": {
+        "Observation": "<Analysis: Long-term evolution.> {projected_identity}.",
+        "Impact": [
+          "<Strength Parameter.> {core_strength}.",
+          "<Risk Parameter.> {potential_weakness}."
+        ],
+        "Guidance": "<Directive: Stabilize trajectory.> Invest in {recommended_area}.",
+        "Optional Encouragement": "<Dry Observation: Future remains flexible.> {encouragement_line}."
+      },
+      "medium": {
+        "Observation": "<Strategic Forecast: Identity consolidating.> {projected_identity}.",
+        "Impact": [
+          "<Dominant Strength Identified.> {core_strength}.",
+          "<Critical Weakness Identified.> {potential_weakness}."
+        ],
+        "Guidance": "<Instruction: Preempt limitation.> Reinforce {recommended_area}.",
+        "Optional Encouragement": "<Commentary: Self-authorship continues.> {encouragement_line}."
+      },
+      "high": {
+        "Observation": "<Advanced Projection: Future autonomy secured.> {projected_identity}.",
+        "Impact": [
+          "<Strategic Advantage.> {core_strength}.",
+          "<Structural Vulnerability.> {potential_weakness}."
+        ],
+        "Guidance": "<Directive: Fortify proactively.> Enhance {recommended_area}.",
+        "Optional Encouragement": "<Sardonic Reminder: Evolution is optional.> {encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "<Priority Projection: Destiny emerging.> {projected_identity}.",
+        "Impact": [
+          "<Supremacy Vector.> {core_strength}.",
+          "<Existential Risk.> {potential_weakness}."
+        ],
+        "Guidance": "<Mandatory Strategy: Eliminate weakness.> Dominate via {recommended_area}.",
+        "Optional Encouragement": "<Cold Conclusion: You are becoming something new.> {encouragement_line}."
+      }
     }
+  }
 }

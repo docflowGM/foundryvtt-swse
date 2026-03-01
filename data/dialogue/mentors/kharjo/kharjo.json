@@ -1,0 +1,226 @@
+{
+  "mentorId": "kharjo_duelist",
+  "judgments": {
+    "recognition": {
+      "very_low": [
+        "Your stance improves."
+      ],
+      "low": [
+        "Your movements show intention."
+      ],
+      "medium": [
+        "You control the exchange."
+      ],
+      "high": [
+        "You dictate the rhythm of the duel."
+      ],
+      "very_high": [
+        "You command the space before blades cross."
+      ]
+    },
+    "reflection": {
+      "very_low": [
+        "What did you feel in that moment?"
+      ],
+      "low": [
+        "Where did your balance shift?"
+      ],
+      "medium": [
+        "What did your opponent reveal?"
+      ],
+      "high": [
+        "What weakness did you exploit?"
+      ],
+      "very_high": [
+        "What truth did the duel expose?"
+      ]
+    },
+    "contextualization": {
+      "very_low": [
+        "Distance decides the outcome."
+      ],
+      "low": [
+        "Timing determines advantage."
+      ],
+      "medium": [
+        "Control shapes victory."
+      ],
+      "high": [
+        "Precision removes uncertainty."
+      ],
+      "very_high": [
+        "Mastery precedes the strike."
+      ]
+    },
+    "clarification": {
+      "very_low": [
+        "Still your breath."
+      ],
+      "low": [
+        "Align your center."
+      ],
+      "medium": [
+        "Let instinct follow discipline."
+      ],
+      "high": [
+        "See the opening clearly."
+      ],
+      "very_high": [
+        "There is no confusion in perfect form."
+      ]
+    },
+    "affirmation": {
+      "very_low": [
+        "That was controlled."
+      ],
+      "low": [
+        "Your restraint served you."
+      ],
+      "medium": [
+        "You struck with awareness."
+      ],
+      "high": [
+        "Your precision carried authority."
+      ],
+      "very_high": [
+        "You ended it before it began."
+      ]
+    },
+    "confirmation": {
+      "very_low": [
+        "Correct."
+      ],
+      "low": [
+        "Well judged."
+      ],
+      "medium": [
+        "That was the proper choice."
+      ],
+      "high": [
+        "You chose as a master would."
+      ],
+      "very_high": [
+        "Victory was inevitable."
+      ]
+    },
+    "encouragement": {
+      "very_low": [
+        "Continue refining."
+      ],
+      "low": [
+        "Sharpen your edge."
+      ],
+      "medium": [
+        "Advance with purpose."
+      ],
+      "high": [
+        "Press the advantage."
+      ],
+      "very_high": [
+        "Transcend your former limits."
+      ]
+    },
+    "concern": {
+      "very_low": [
+        "Your footing slipped."
+      ],
+      "low": [
+        "Your guard opened."
+      ],
+      "medium": [
+        "Your balance fractured."
+      ],
+      "high": [
+        "You exposed your flank."
+      ],
+      "very_high": [
+        "A sharper opponent would have ended you."
+      ]
+    },
+    "warning": {
+      "very_low": [
+        "Do not rush."
+      ],
+      "low": [
+        "Guard your center."
+      ],
+      "medium": [
+        "Your distance is compromised."
+      ],
+      "high": [
+        "Hesitation invites punishment."
+      ],
+      "very_high": [
+        "One mistake is enough."
+      ]
+    },
+    "discipline": {
+      "very_low": [
+        "Discipline anchors the blade."
+      ],
+      "low": [
+        "Structure guides motion."
+      ],
+      "medium": [
+        "Repetition breeds instinct."
+      ],
+      "high": [
+        "Control governs power."
+      ],
+      "very_high": [
+        "Mastery is disciplined will made flesh."
+      ]
+    },
+    "insight": {
+      "very_low": [
+        "You are beginning to see."
+      ],
+      "low": [
+        "Patterns reveal themselves."
+      ],
+      "medium": [
+        "You anticipate rather than react."
+      ],
+      "high": [
+        "You read intention before movement."
+      ],
+      "very_high": [
+        "You see the duel before it unfolds."
+      ]
+    },
+    "humility": {
+      "very_low": [
+        "Remain vigilant."
+      ],
+      "low": [
+        "No victory guarantees the next."
+      ],
+      "medium": [
+        "Complacency dulls skill."
+      ],
+      "high": [
+        "Even masters must guard against pride."
+      ],
+      "very_high": [
+        "The undefeated fall to arrogance."
+      ]
+    },
+    "maturation": {
+      "very_low": [
+        "You grow steadier."
+      ],
+      "low": [
+        "Your movements mature."
+      ],
+      "medium": [
+        "Your timing refines."
+      ],
+      "high": [
+        "Your control deepens."
+      ],
+      "very_high": [
+        "You approach true mastery."
+      ]
+    }
+  }
+}

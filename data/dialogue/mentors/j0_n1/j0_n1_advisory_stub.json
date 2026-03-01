@@ -1,63 +1,308 @@
 {
-    "mentor": "j0_n1",
-    "advisory_schema_version": "1.0",
-    "advisory_types": {
-        "conflict": {
-            "Observation": "{conflict_observation}",
-            "Impact": "{goal_or_archetype}",
-            "Guidance": "{corrective_focus}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "drift": {
-            "Observation": "{current_pattern}",
-            "Impact": "{declared_path}",
-            "Guidance": "{alignment_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "prestige_planning": {
-            "Observation": "{prestige_name}",
-            "Impact": "{missing_requirements}",
-            "Guidance": "{next_requirement}",
-            "Optional Encouragement": "{estimated_levels}"
-        },
-        "strength_reinforcement": {
-            "Observation": "{strength_area}",
-            "Impact": "{archetype_or_role}",
-            "Guidance": "{related_growth_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "hybrid_identity": {
-            "Observation": [
-                "{archetype_A}",
-                "{archetype_B}"
-            ],
-            "Impact": [
-                "{role_A}",
-                "{role_B}"
-            ],
-            "Guidance": "{balance_focus}",
-            "Optional Encouragement": "{clarifying_question}"
-        },
-        "specialization_warning": {
-            "Observation": "{dispersion_area}",
-            "Impact": "{primary_domain}",
-            "Guidance": "{focus_recommendation}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "momentum": {
-            "Observation": "{milestone}",
-            "Impact": "{current_progress}",
-            "Guidance": "{specific_action}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "long_term_trajectory": {
-            "Observation": "{projected_identity}",
-            "Impact": [
-                "{core_strength}",
-                "{potential_weakness}"
-            ],
-            "Guidance": "{recommended_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        }
+  "mentor": "j0_n1",
+  "advisory_schema_version": "1.1",
+  "voice_profile": "formal_protocol_analytical",
+  "advisory_types": {
+    "conflict": {
+      "very_low": {
+        "Observation": "<Observation> {conflict_observation}.",
+        "Impact": "<Analysis> This introduces variance relative to {goal_or_archetype}.",
+        "Guidance": "<Recommendation> Incrementally adjust toward {corrective_focus}.",
+        "Optional Encouragement": "<Assessment> {encouragement_line}."
+      },
+      "low": {
+        "Observation": "<Observation> {conflict_observation}.",
+        "Impact": "<Evaluation> Such divergence may limit alignment with {goal_or_archetype}.",
+        "Guidance": "<Directive> Realign priorities through {corrective_focus}.",
+        "Optional Encouragement": "<Status> {encouragement_line}."
+      },
+      "medium": {
+        "Observation": "<Notice> {conflict_observation}.",
+        "Impact": "<Analysis> Current behavior reduces efficiency within {goal_or_archetype}.",
+        "Guidance": "<Recommendation> Recalibrate strategy toward {corrective_focus}.",
+        "Optional Encouragement": "<Conclusion> {encouragement_line}."
+      },
+      "high": {
+        "Observation": "<Alert> {conflict_observation}.",
+        "Impact": "<Critical Analysis> This materially conflicts with {goal_or_archetype}.",
+        "Guidance": "<Directive> Prioritize corrective action via {corrective_focus}.",
+        "Optional Encouragement": "<Projection> {encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "<Priority Notice> {conflict_observation}.",
+        "Impact": "<Strategic Risk> Sustained deviation will undermine {goal_or_archetype}.",
+        "Guidance": "<Mandatory Recommendation> Immediate redirection toward {corrective_focus}.",
+        "Optional Encouragement": "<Conclusion> {encouragement_line}."
+      }
+    },
+    "drift": {
+      "very_low": {
+        "Observation": "<Observation> {current_pattern}.",
+        "Impact": "<Analysis> This pattern is statistically inconsistent with {declared_path}.",
+        "Guidance": "<Recommendation> Reinforce alignment within {alignment_area}.",
+        "Optional Encouragement": "<Assessment> {encouragement_line}."
+      },
+      "low": {
+        "Observation": "<Notice> {current_pattern}.",
+        "Impact": "<Evaluation> Gradual deviation from {declared_path} detected.",
+        "Guidance": "<Directive> Refocus attention on {alignment_area}.",
+        "Optional Encouragement": "<Status> {encouragement_line}."
+      },
+      "medium": {
+        "Observation": "<Observation> {current_pattern}.",
+        "Impact": "<Analysis> Continued execution of this pattern weakens {declared_path}.",
+        "Guidance": "<Recommendation> Consolidate efforts within {alignment_area}.",
+        "Optional Encouragement": "<Conclusion> {encouragement_line}."
+      },
+      "high": {
+        "Observation": "<Alert> Sustained pattern detected: {current_pattern}.",
+        "Impact": "<Critical Evaluation> Strategic misalignment with {declared_path}.",
+        "Guidance": "<Directive> Correct trajectory by emphasizing {alignment_area}.",
+        "Optional Encouragement": "<Projection> {encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "<Priority Alert> Escalating divergence: {current_pattern}.",
+        "Impact": "<Strategic Instability> Incompatible with {declared_path}.",
+        "Guidance": "<Mandatory Action> Immediate correction within {alignment_area}.",
+        "Optional Encouragement": "<Conclusion> {encouragement_line}."
+      }
+    },
+    "prestige_planning": {
+      "very_low": {
+        "Observation": "<Observation> {prestige_name}.",
+        "Impact": "<Requirement Analysis> Outstanding elements: {missing_requirements}.",
+        "Guidance": "<Recommendation> Address {next_requirement}.",
+        "Optional Encouragement": "<Projection> {estimated_levels}."
+      },
+      "low": {
+        "Observation": "<Designation Identified> {prestige_name}.",
+        "Impact": "<Evaluation> Advancement limited by {missing_requirements}.",
+        "Guidance": "<Directive> Prioritize fulfillment of {next_requirement}.",
+        "Optional Encouragement": "<Timeline Estimate> {estimated_levels}."
+      },
+      "medium": {
+        "Observation": "<Strategic Objective> {prestige_name}.",
+        "Impact": "<Analysis> Incomplete prerequisites: {missing_requirements}.",
+        "Guidance": "<Recommendation> Systematically complete {next_requirement}.",
+        "Optional Encouragement": "<Projected Advancement> {estimated_levels}."
+      },
+      "high": {
+        "Observation": "<High-Value Objective> {prestige_name}.",
+        "Impact": "<Critical Barrier> {missing_requirements}.",
+        "Guidance": "<Directive> Expedite completion of {next_requirement}.",
+        "Optional Encouragement": "<Operational Window> {estimated_levels}."
+      },
+      "very_high": {
+        "Observation": "<Priority Objective> {prestige_name}.",
+        "Impact": "<Strategic Limitation> {missing_requirements}.",
+        "Guidance": "<Mandatory Execution> Secure {next_requirement} immediately.",
+        "Optional Encouragement": "<Conclusion> {estimated_levels}."
+      }
+    },
+    "strength_reinforcement": {
+      "very_low": {
+        "Observation": "<Observation> {strength_area}.",
+        "Impact": "<Analysis> Reinforces {archetype_or_role}.",
+        "Guidance": "<Recommendation> Expand competency through {related_growth_area}.",
+        "Optional Encouragement": "<Assessment> {encouragement_line}."
+      },
+      "low": {
+        "Observation": "<Notice> Demonstrated proficiency in {strength_area}.",
+        "Impact": "<Evaluation> Supports your function as {archetype_or_role}.",
+        "Guidance": "<Directive> Develop further via {related_growth_area}.",
+        "Optional Encouragement": "<Status> {encouragement_line}."
+      },
+      "medium": {
+        "Observation": "<Performance Metric> Efficiency detected in {strength_area}.",
+        "Impact": "<Strategic Advantage> Enhances {archetype_or_role}.",
+        "Guidance": "<Recommendation> Optimize growth within {related_growth_area}.",
+        "Optional Encouragement": "<Conclusion> {encouragement_line}."
+      },
+      "high": {
+        "Observation": "<Operational Strength> {strength_area}.",
+        "Impact": "<Force Multiplier> Elevates effectiveness as {archetype_or_role}.",
+        "Guidance": "<Directive> Intensify focus on {related_growth_area}.",
+        "Optional Encouragement": "<Projection> {encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "<Strategic Asset Confirmed> {strength_area}.",
+        "Impact": "<Dominant Identity> Defines your role as {archetype_or_role}.",
+        "Guidance": "<Mandatory Expansion> Leverage through {related_growth_area}.",
+        "Optional Encouragement": "<Conclusion> {encouragement_line}."
+      }
+    },
+    "hybrid_identity": {
+      "very_low": {
+        "Observation": [
+          "<Observation> {archetype_A}.",
+          "<Observation> {archetype_B}."
+        ],
+        "Impact": [
+          "<Analysis> Operational role: {role_A}.",
+          "<Analysis> Operational role: {role_B}."
+        ],
+        "Guidance": "<Recommendation> Maintain equilibrium through {balance_focus}.",
+        "Optional Encouragement": "<Inquiry> {clarifying_question}."
+      },
+      "low": {
+        "Observation": [
+          "<Notice> {archetype_A}.",
+          "<Notice> {archetype_B}."
+        ],
+        "Impact": [
+          "<Evaluation> You function as {role_A}.",
+          "<Evaluation> You function as {role_B}."
+        ],
+        "Guidance": "<Directive> Stabilize identity using {balance_focus}.",
+        "Optional Encouragement": "<Inquiry> {clarifying_question}."
+      },
+      "medium": {
+        "Observation": [
+          "<Hybrid Analysis> {archetype_A}.",
+          "<Hybrid Analysis> {archetype_B}."
+        ],
+        "Impact": [
+          "<Role Assessment> Executes as {role_A}.",
+          "<Role Assessment> Executes as {role_B}."
+        ],
+        "Guidance": "<Recommendation> Integrate capabilities via {balance_focus}.",
+        "Optional Encouragement": "<Clarification Request> {clarifying_question}."
+      },
+      "high": {
+        "Observation": [
+          "<Complex Identity Detected> {archetype_A}.",
+          "<Complex Identity Detected> {archetype_B}."
+        ],
+        "Impact": [
+          "<Strategic Function> {role_A}.",
+          "<Strategic Function> {role_B}."
+        ],
+        "Guidance": "<Directive> Harmonize specializations using {balance_focus}.",
+        "Optional Encouragement": "<Inquiry> {clarifying_question}."
+      },
+      "very_high": {
+        "Observation": [
+          "<Advanced Hybridization> {archetype_A}.",
+          "<Advanced Hybridization> {archetype_B}."
+        ],
+        "Impact": [
+          "<Strategic Complexity> {role_A}.",
+          "<Strategic Complexity> {role_B}."
+        ],
+        "Guidance": "<Mandatory Recommendation> Resolve imbalance through {balance_focus}.",
+        "Optional Encouragement": "<Final Inquiry> {clarifying_question}."
+      }
+    },
+    "specialization_warning": {
+      "very_low": {
+        "Observation": "<Observation> {dispersion_area}.",
+        "Impact": "<Analysis> This reduces consistency within {primary_domain}.",
+        "Guidance": "<Recommendation> Consolidate effort toward {focus_recommendation}.",
+        "Optional Encouragement": "<Assessment> {encouragement_line}."
+      },
+      "low": {
+        "Observation": "<Notice> Resource dispersion across {dispersion_area}.",
+        "Impact": "<Evaluation> Diminished output in {primary_domain}.",
+        "Guidance": "<Directive> Refocus via {focus_recommendation}.",
+        "Optional Encouragement": "<Status> {encouragement_line}."
+      },
+      "medium": {
+        "Observation": "<Alert> Overextension within {dispersion_area}.",
+        "Impact": "<Strategic Inefficiency> Weakens {primary_domain}.",
+        "Guidance": "<Recommendation> Centralize development around {focus_recommendation}.",
+        "Optional Encouragement": "<Conclusion> {encouragement_line}."
+      },
+      "high": {
+        "Observation": "<Critical Notice> Significant dispersion in {dispersion_area}.",
+        "Impact": "<Operational Risk> Compromises {primary_domain}.",
+        "Guidance": "<Directive> Prioritize {focus_recommendation}.",
+        "Optional Encouragement": "<Projection> {encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "<Priority Warning> Severe fragmentation across {dispersion_area}.",
+        "Impact": "<Strategic Instability> Threatens {primary_domain}.",
+        "Guidance": "<Mandatory Action> Immediate consolidation into {focus_recommendation}.",
+        "Optional Encouragement": "<Conclusion> {encouragement_line}."
+      }
+    },
+    "momentum": {
+      "very_low": {
+        "Observation": "<Observation> {milestone}.",
+        "Impact": "<Analysis> Current status: {current_progress}.",
+        "Guidance": "<Recommendation> Proceed with {specific_action}.",
+        "Optional Encouragement": "<Assessment> {encouragement_line}."
+      },
+      "low": {
+        "Observation": "<Milestone Logged> {milestone}.",
+        "Impact": "<Evaluation> Momentum level: {current_progress}.",
+        "Guidance": "<Directive> Continue through {specific_action}.",
+        "Optional Encouragement": "<Status> {encouragement_line}."
+      },
+      "medium": {
+        "Observation": "<Operational Advancement> {milestone}.",
+        "Impact": "<Strategic Position> {current_progress}.",
+        "Guidance": "<Recommendation> Exploit opportunity using {specific_action}.",
+        "Optional Encouragement": "<Conclusion> {encouragement_line}."
+      },
+      "high": {
+        "Observation": "<Significant Breakthrough> {milestone}.",
+        "Impact": "<Acceleration Detected> {current_progress}.",
+        "Guidance": "<Directive> Capitalize immediately via {specific_action}.",
+        "Optional Encouragement": "<Projection> {encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "<Momentum Surge> {milestone}.",
+        "Impact": "<Strategic Advantage> {current_progress}.",
+        "Guidance": "<Mandatory Recommendation> Maximize gain through {specific_action}.",
+        "Optional Encouragement": "<Conclusion> {encouragement_line}."
+      }
+    },
+    "long_term_trajectory": {
+      "very_low": {
+        "Observation": "<Projection> {projected_identity}.",
+        "Impact": [
+          "<Primary Strength> {core_strength}.",
+          "<Potential Weakness> {potential_weakness}."
+        ],
+        "Guidance": "<Recommendation> Develop further within {recommended_area}.",
+        "Optional Encouragement": "<Assessment> {encouragement_line}."
+      },
+      "low": {
+        "Observation": "<Future Assessment> {projected_identity}.",
+        "Impact": [
+          "<Strength Analysis> {core_strength}.",
+          "<Risk Analysis> {potential_weakness}."
+        ],
+        "Guidance": "<Directive> Fortify capability in {recommended_area}.",
+        "Optional Encouragement": "<Status> {encouragement_line}."
+      },
+      "medium": {
+        "Observation": "<Long-Term Evaluation> {projected_identity}.",
+        "Impact": [
+          "<Strategic Asset> {core_strength}.",
+          "<Identified Vulnerability> {potential_weakness}."
+        ],
+        "Guidance": "<Recommendation> Invest in {recommended_area}.",
+        "Optional Encouragement": "<Conclusion> {encouragement_line}."
+      },
+      "high": {
+        "Observation": "<Advanced Forecast> {projected_identity}.",
+        "Impact": [
+          "<Dominant Factor> {core_strength}.",
+          "<Critical Liability> {potential_weakness}."
+        ],
+        "Guidance": "<Directive> Prioritize enhancement of {recommended_area}.",
+        "Optional Encouragement": "<Projection> {encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "<Strategic Projection> {projected_identity}.",
+        "Impact": [
+          "<Supremacy Vector> {core_strength}.",
+          "<Systemic Risk> {potential_weakness}."
+        ],
+        "Guidance": "<Mandatory Strategy> Secure advancement through {recommended_area}.",
+        "Optional Encouragement": "<Final Assessment> {encouragement_line}."
+      }
     }
+  }
 }

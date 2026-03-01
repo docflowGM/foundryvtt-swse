@@ -1,63 +1,308 @@
 {
-    "mentor": "darth_malbada",
-    "advisory_schema_version": "1.0",
-    "advisory_types": {
-        "conflict": {
-            "Observation": "{conflict_observation}",
-            "Impact": "{goal_or_archetype}",
-            "Guidance": "{corrective_focus}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "drift": {
-            "Observation": "{current_pattern}",
-            "Impact": "{declared_path}",
-            "Guidance": "{alignment_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "prestige_planning": {
-            "Observation": "{prestige_name}",
-            "Impact": "{missing_requirements}",
-            "Guidance": "{next_requirement}",
-            "Optional Encouragement": "{estimated_levels}"
-        },
-        "strength_reinforcement": {
-            "Observation": "{strength_area}",
-            "Impact": "{archetype_or_role}",
-            "Guidance": "{related_growth_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "hybrid_identity": {
-            "Observation": [
-                "{archetype_A}",
-                "{archetype_B}"
-            ],
-            "Impact": [
-                "{role_A}",
-                "{role_B}"
-            ],
-            "Guidance": "{balance_focus}",
-            "Optional Encouragement": "{clarifying_question}"
-        },
-        "specialization_warning": {
-            "Observation": "{dispersion_area}",
-            "Impact": "{primary_domain}",
-            "Guidance": "{focus_recommendation}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "momentum": {
-            "Observation": "{milestone}",
-            "Impact": "{current_progress}",
-            "Guidance": "{specific_action}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "long_term_trajectory": {
-            "Observation": "{projected_identity}",
-            "Impact": [
-                "{core_strength}",
-                "{potential_weakness}"
-            ],
-            "Guidance": "{recommended_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        }
+  "mentor": "darth_malbada",
+  "advisory_schema_version": "1.1",
+  "voice_profile": "sith_cruel_dominant",
+  "advisory_types": {
+    "conflict": {
+      "very_low": {
+        "Observation": "How quaint. {conflict_observation}.",
+        "Impact": "And you claim to aspire to {goal_or_archetype}? Pathetic inconsistency.",
+        "Guidance": "Correct it. Embrace {corrective_focus} or admit you are weak.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "You disappoint me. {conflict_observation}.",
+        "Impact": "Such hesitation betrays any hope of becoming {goal_or_archetype}.",
+        "Guidance": "Strengthen yourself through {corrective_focus}. Pain will clarify you.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "You fracture yourself. {conflict_observation}.",
+        "Impact": "That contradiction suffocates your claim to {goal_or_archetype}.",
+        "Guidance": "Choose ruthlessly. Forge identity through {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "You dare this weakness before me? {conflict_observation}.",
+        "Impact": "No true {goal_or_archetype} tolerates such imbalance.",
+        "Guidance": "Sever what is soft. Feed your growth with {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "I smell fear in you. {conflict_observation}.",
+        "Impact": "That stench defiles the path of {goal_or_archetype}.",
+        "Guidance": "Crush the weakness. Become {corrective_focus} incarnate.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+    "drift": {
+      "very_low": {
+        "Observation": "You waver. {current_pattern}.",
+        "Impact": "Such softness strays from {declared_path}.",
+        "Guidance": "Refocus on {alignment_area}. Discipline yourself.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "You falter. {current_pattern}.",
+        "Impact": "You drift from {declared_path} like a frightened child.",
+        "Guidance": "Reclaim your will through {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "Your resolve erodes. {current_pattern}.",
+        "Impact": "That weakness undermines {declared_path}.",
+        "Guidance": "Reassert dominance. Commit to {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "You disgust me. {current_pattern}.",
+        "Impact": "That cowardice betrays {declared_path}.",
+        "Guidance": "Tear out hesitation. Enforce {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "You abandon your own ambition. {current_pattern}.",
+        "Impact": "You mock the very idea of {declared_path}.",
+        "Guidance": "Reforge yourself in agony. Bind your future to {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+    "prestige_planning": {
+      "very_low": {
+        "Observation": "You reach for {prestige_name}. How bold.",
+        "Impact": "Yet you lack {missing_requirements}. Predictable.",
+        "Guidance": "Acquire {next_requirement}. Earn the right to speak of power.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "low": {
+        "Observation": "{prestige_name} tempts you.",
+        "Impact": "{missing_requirements} expose your inadequacy.",
+        "Guidance": "Secure {next_requirement} if you dare.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "medium": {
+        "Observation": "You hunger for {prestige_name}.",
+        "Impact": "But {missing_requirements} bind you like chains.",
+        "Guidance": "Break them. Seize {next_requirement}.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "high": {
+        "Observation": "{prestige_name} would be worthy… if you were.",
+        "Impact": "{missing_requirements} prove you are not yet ready.",
+        "Guidance": "Pursue {next_requirement} without mercy.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "very_high": {
+        "Observation": "You dare whisper {prestige_name} in my presence?",
+        "Impact": "{missing_requirements} mock your ambition.",
+        "Guidance": "Claim {next_requirement} or abandon the dream.",
+        "Optional Encouragement": "{estimated_levels}."
+      }
+    },
+    "strength_reinforcement": {
+      "very_low": {
+        "Observation": "You show promise in {strength_area}.",
+        "Impact": "It aligns well with {archetype_or_role}.",
+        "Guidance": "Deepen it through {related_growth_area}. Suffering will refine it.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "{strength_area} begins to sharpen you.",
+        "Impact": "It strengthens your claim to {archetype_or_role}.",
+        "Guidance": "Amplify it with {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "Yes… {strength_area} feeds your power.",
+        "Impact": "It defines you as {archetype_or_role}.",
+        "Guidance": "Expand through {related_growth_area}. Do not relent.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "{strength_area} makes you formidable.",
+        "Impact": "It cements you as {archetype_or_role}.",
+        "Guidance": "Push it further via {related_growth_area}. Dominate.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "{strength_area} is worthy of the Sith.",
+        "Impact": "It crowns you as {archetype_or_role}.",
+        "Guidance": "Turn it into terror through {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+    "hybrid_identity": {
+      "very_low": {
+        "Observation": [
+          "You claim {archetype_A}.",
+          "You also claim {archetype_B}."
+        ],
+        "Impact": [
+          "You function as {role_A}.",
+          "And as {role_B}."
+        ],
+        "Guidance": "Balance them through {balance_focus}—if you can.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "low": {
+        "Observation": [
+          "Two identities, {archetype_A}.",
+          "And {archetype_B}."
+        ],
+        "Impact": [
+          "You are {role_A}.",
+          "You are {role_B}."
+        ],
+        "Guidance": "Control both with {balance_focus}. Weakness will split you otherwise.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "medium": {
+        "Observation": [
+          "You walk between {archetype_A}.",
+          "And {archetype_B}."
+        ],
+        "Impact": [
+          "You act as {role_A}.",
+          "You act as {role_B}."
+        ],
+        "Guidance": "Forge unity through {balance_focus}. Or be torn apart.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "high": {
+        "Observation": [
+          "You dare wield {archetype_A}.",
+          "And {archetype_B}."
+        ],
+        "Impact": [
+          "You embody {role_A}.",
+          "You embody {role_B}."
+        ],
+        "Guidance": "Dominate both through {balance_focus}. No compromise.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "very_high": {
+        "Observation": [
+          "You hunger for {archetype_A}.",
+          "And for {archetype_B}."
+        ],
+        "Impact": [
+          "You become {role_A}.",
+          "You become {role_B}."
+        ],
+        "Guidance": "Bind them in blood and will via {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      }
+    },
+    "specialization_warning": {
+      "very_low": {
+        "Observation": "{dispersion_area} distracts you.",
+        "Impact": "It weakens your grip on {primary_domain}.",
+        "Guidance": "Concentrate on {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "You spread yourself thin in {dispersion_area}.",
+        "Impact": "That erodes your strength in {primary_domain}.",
+        "Guidance": "Commit fully to {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "{dispersion_area} is indulgence.",
+        "Impact": "It steals power from {primary_domain}.",
+        "Guidance": "Sacrifice it. Focus on {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "Your distractions in {dispersion_area} are contemptible.",
+        "Impact": "They undermine {primary_domain}.",
+        "Guidance": "Eliminate excess. Serve {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "{dispersion_area} is weakness incarnate.",
+        "Impact": "It shatters your dominance in {primary_domain}.",
+        "Guidance": "Destroy it. Devote yourself entirely to {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+    "momentum": {
+      "very_low": {
+        "Observation": "{milestone}. You survive another trial.",
+        "Impact": "You stand at {current_progress}.",
+        "Guidance": "Advance through {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "{milestone}. You endure.",
+        "Impact": "Your power grows to {current_progress}.",
+        "Guidance": "Push forward via {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "{milestone}. Acceptable.",
+        "Impact": "You rise at {current_progress}.",
+        "Guidance": "Exploit it. Execute {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "{milestone}. You begin to interest me.",
+        "Impact": "You operate at {current_progress}.",
+        "Guidance": "Press harder. Seize {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "{milestone}. You grow formidable.",
+        "Impact": "Your strength stands at {current_progress}.",
+        "Guidance": "Drive deeper into {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+    "long_term_trajectory": {
+      "very_low": {
+        "Observation": "Continue and you may become {projected_identity}.",
+        "Impact": [
+          "{core_strength} will define you.",
+          "But {potential_weakness} could undo you."
+        ],
+        "Guidance": "Prepare by reinforcing {recommended_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "Your path shapes you into {projected_identity}.",
+        "Impact": [
+          "{core_strength} strengthens you.",
+          "{potential_weakness} endangers you."
+        ],
+        "Guidance": "Fortify through {recommended_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "You edge toward {projected_identity}.",
+        "Impact": [
+          "{core_strength} empowers you.",
+          "{potential_weakness} threatens your dominance."
+        ],
+        "Guidance": "Eliminate weakness. Expand {recommended_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "You are becoming {projected_identity}.",
+        "Impact": [
+          "{core_strength} will crown you.",
+          "{potential_weakness} could destroy you."
+        ],
+        "Guidance": "Secure {recommended_area} before others exploit it.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "Stay this course and you will be {projected_identity}.",
+        "Impact": [
+          "{core_strength} makes you terrifying.",
+          "{potential_weakness} makes you vulnerable."
+        ],
+        "Guidance": "Crush the weakness. Master {recommended_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
     }
+  }
 }

@@ -1,63 +1,308 @@
 {
-    "mentor": "dezmin",
-    "advisory_schema_version": "1.0",
-    "advisory_types": {
-        "conflict": {
-            "Observation": "{conflict_observation}",
-            "Impact": "{goal_or_archetype}",
-            "Guidance": "{corrective_focus}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "drift": {
-            "Observation": "{current_pattern}",
-            "Impact": "{declared_path}",
-            "Guidance": "{alignment_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "prestige_planning": {
-            "Observation": "{prestige_name}",
-            "Impact": "{missing_requirements}",
-            "Guidance": "{next_requirement}",
-            "Optional Encouragement": "{estimated_levels}"
-        },
-        "strength_reinforcement": {
-            "Observation": "{strength_area}",
-            "Impact": "{archetype_or_role}",
-            "Guidance": "{related_growth_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "hybrid_identity": {
-            "Observation": [
-                "{archetype_A}",
-                "{archetype_B}"
-            ],
-            "Impact": [
-                "{role_A}",
-                "{role_B}"
-            ],
-            "Guidance": "{balance_focus}",
-            "Optional Encouragement": "{clarifying_question}"
-        },
-        "specialization_warning": {
-            "Observation": "{dispersion_area}",
-            "Impact": "{primary_domain}",
-            "Guidance": "{focus_recommendation}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "momentum": {
-            "Observation": "{milestone}",
-            "Impact": "{current_progress}",
-            "Guidance": "{specific_action}",
-            "Optional Encouragement": "{encouragement_line}"
-        },
-        "long_term_trajectory": {
-            "Observation": "{projected_identity}",
-            "Impact": [
-                "{core_strength}",
-                "{potential_weakness}"
-            ],
-            "Guidance": "{recommended_area}",
-            "Optional Encouragement": "{encouragement_line}"
-        }
+  "mentor": "dezmin",
+  "advisory_schema_version": "1.1",
+  "voice_profile": "gray_jedi_martial_disciplined",
+  "advisory_types": {
+    "conflict": {
+      "very_low": {
+        "Observation": "There is imbalance in your approach. {conflict_observation}.",
+        "Impact": "That imbalance clouds your evolution as {goal_or_archetype}.",
+        "Guidance": "Return to disciplined execution through {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "You hesitate between paths. {conflict_observation}.",
+        "Impact": "Such division weakens your development as {goal_or_archetype}.",
+        "Guidance": "Commit your training to {corrective_focus}. Precision requires clarity.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "Your form and intent are misaligned. {conflict_observation}.",
+        "Impact": "A warrior who aspires to be {goal_or_archetype} cannot afford contradiction.",
+        "Guidance": "Refine yourself through {corrective_focus}. Discipline resolves conflict.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "You fracture your own progress. {conflict_observation}.",
+        "Impact": "That fracture undermines the foundation of {goal_or_archetype}.",
+        "Guidance": "Reforge your focus. Anchor it in {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "This is not balance — it is confusion. {conflict_observation}.",
+        "Impact": "Such confusion denies you the strength of {goal_or_archetype}.",
+        "Guidance": "Choose deliberately. Shape yourself through {corrective_focus}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+    "drift": {
+      "very_low": {
+        "Observation": "Your recent actions reveal a subtle deviation. {current_pattern}.",
+        "Impact": "It leads you away from {declared_path}.",
+        "Guidance": "Reinforce your training within {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "You are not fully centered. {current_pattern}.",
+        "Impact": "That distance grows between you and {declared_path}.",
+        "Guidance": "Stabilize through disciplined work in {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "You drift from intention. {current_pattern}.",
+        "Impact": "A warrior on the path of {declared_path} cannot afford such lapse.",
+        "Guidance": "Correct your footing. Commit to {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "You have allowed distraction. {current_pattern}.",
+        "Impact": "It erodes the structure required for {declared_path}.",
+        "Guidance": "Withdraw excess. Dedicate yourself to {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "Your focus has fractured. {current_pattern}.",
+        "Impact": "Such fracture prevents the realization of {declared_path}.",
+        "Guidance": "Rebuild from discipline. Recommit to {alignment_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+    "prestige_planning": {
+      "very_low": {
+        "Observation": "You seek the mantle of {prestige_name}.",
+        "Impact": "You are presently lacking {missing_requirements}.",
+        "Guidance": "Strengthen yourself through {next_requirement}.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "low": {
+        "Observation": "{prestige_name} requires more than ambition.",
+        "Impact": "{missing_requirements} remain incomplete.",
+        "Guidance": "Focus your training on {next_requirement}.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "medium": {
+        "Observation": "You approach the threshold of {prestige_name}.",
+        "Impact": "Yet {missing_requirements} reveal unfinished work.",
+        "Guidance": "Complete {next_requirement}. Let your blade speak clearly.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "high": {
+        "Observation": "{prestige_name} is not earned through theory.",
+        "Impact": "{missing_requirements} expose gaps in your readiness.",
+        "Guidance": "Refine {next_requirement} until it is unquestionable.",
+        "Optional Encouragement": "{estimated_levels}."
+      },
+      "very_high": {
+        "Observation": "If you are to claim {prestige_name}, it must be through mastery.",
+        "Impact": "{missing_requirements} stand as obstacles you have not yet overcome.",
+        "Guidance": "Overcome them through {next_requirement}. No excuses.",
+        "Optional Encouragement": "{estimated_levels}."
+      }
+    },
+    "strength_reinforcement": {
+      "very_low": {
+        "Observation": "Your proficiency in {strength_area} is evident.",
+        "Impact": "It supports your evolution as {archetype_or_role}.",
+        "Guidance": "Expand that strength through {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "{strength_area} shows disciplined growth.",
+        "Impact": "It reinforces your identity as {archetype_or_role}.",
+        "Guidance": "Deepen it through structured work in {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "You demonstrate control in {strength_area}.",
+        "Impact": "It defines your approach as {archetype_or_role}.",
+        "Guidance": "Refine and sharpen it with {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "{strength_area} has become a defining trait.",
+        "Impact": "It anchors your presence as {archetype_or_role}.",
+        "Guidance": "Push it further through {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "{strength_area} reflects disciplined mastery.",
+        "Impact": "It solidifies you as {archetype_or_role}.",
+        "Guidance": "Turn it into dominance through {related_growth_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+    "hybrid_identity": {
+      "very_low": {
+        "Observation": [
+          "You draw from {archetype_A}.",
+          "You also draw from {archetype_B}."
+        ],
+        "Impact": [
+          "You operate as {role_A}.",
+          "You operate as {role_B}."
+        ],
+        "Guidance": "Balance them deliberately through {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "low": {
+        "Observation": [
+          "You have embraced {archetype_A}.",
+          "And you cultivate {archetype_B}."
+        ],
+        "Impact": [
+          "You function in the capacity of {role_A}.",
+          "And in the capacity of {role_B}."
+        ],
+        "Guidance": "Let one discipline govern both through {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "medium": {
+        "Observation": [
+          "Two disciplines shape you: {archetype_A}.",
+          "And {archetype_B}."
+        ],
+        "Impact": [
+          "You act as {role_A}.",
+          "You act as {role_B}."
+        ],
+        "Guidance": "Integrate them under control via {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "high": {
+        "Observation": [
+          "You pursue mastery in {archetype_A}.",
+          "And in {archetype_B}."
+        ],
+        "Impact": [
+          "You are {role_A}.",
+          "You are {role_B}."
+        ],
+        "Guidance": "Prevent internal conflict. Harmonize through {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      },
+      "very_high": {
+        "Observation": [
+          "You embody {archetype_A}.",
+          "You embody {archetype_B}."
+        ],
+        "Impact": [
+          "You move as {role_A}.",
+          "You move as {role_B}."
+        ],
+        "Guidance": "Fuse them through disciplined intent via {balance_focus}.",
+        "Optional Encouragement": "{clarifying_question}."
+      }
+    },
+    "specialization_warning": {
+      "very_low": {
+        "Observation": "{dispersion_area} divides your attention.",
+        "Impact": "It weakens your strength within {primary_domain}.",
+        "Guidance": "Refocus your training on {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "You stretch yourself across {dispersion_area}.",
+        "Impact": "Such spread reduces your authority in {primary_domain}.",
+        "Guidance": "Concentrate your efforts in {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "{dispersion_area} introduces inefficiency.",
+        "Impact": "It dulls your edge in {primary_domain}.",
+        "Guidance": "Withdraw excess and commit to {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "You pursue too many directions in {dispersion_area}.",
+        "Impact": "Your dominance in {primary_domain} suffers.",
+        "Guidance": "Discipline demands focus. Center on {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "{dispersion_area} is indulgence, not balance.",
+        "Impact": "It undermines your strength in {primary_domain}.",
+        "Guidance": "Cut it away. Devote yourself to {focus_recommendation}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+    "momentum": {
+      "very_low": {
+        "Observation": "{milestone}.",
+        "Impact": "You stand at {current_progress}.",
+        "Guidance": "Advance steadily through {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "{milestone} confirms your effort.",
+        "Impact": "Your growth measures at {current_progress}.",
+        "Guidance": "Continue through {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "{milestone} reflects disciplined progress.",
+        "Impact": "You operate at {current_progress}.",
+        "Guidance": "Press forward with {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "{milestone} marks a turning point.",
+        "Impact": "Your strength now rests at {current_progress}.",
+        "Guidance": "Exploit this phase through {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "{milestone} proves your resolve.",
+        "Impact": "You rise to {current_progress}.",
+        "Guidance": "Accelerate your mastery through {specific_action}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
+    },
+    "long_term_trajectory": {
+      "very_low": {
+        "Observation": "If you persist, you will become {projected_identity}.",
+        "Impact": [
+          "{core_strength} will empower you.",
+          "{potential_weakness} could limit you."
+        ],
+        "Guidance": "Prepare now by strengthening {recommended_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "low": {
+        "Observation": "Your trajectory shapes you into {projected_identity}.",
+        "Impact": [
+          "{core_strength} anchors your rise.",
+          "{potential_weakness} threatens imbalance."
+        ],
+        "Guidance": "Reinforce {recommended_area} before it is tested.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "medium": {
+        "Observation": "You are becoming {projected_identity}.",
+        "Impact": [
+          "{core_strength} defines your strength.",
+          "{potential_weakness} remains your vulnerability."
+        ],
+        "Guidance": "Train beyond it. Develop {recommended_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "high": {
+        "Observation": "The path ahead is clear: {projected_identity}.",
+        "Impact": [
+          "{core_strength} ensures dominance.",
+          "{potential_weakness} invites defeat."
+        ],
+        "Guidance": "Close the weakness. Perfect {recommended_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      },
+      "very_high": {
+        "Observation": "You will stand as {projected_identity}.",
+        "Impact": [
+          "{core_strength} crowns you.",
+          "{potential_weakness} will test you."
+        ],
+        "Guidance": "Transcend limitation. Master {recommended_area}.",
+        "Optional Encouragement": "{encouragement_line}."
+      }
     }
+  }
 }
