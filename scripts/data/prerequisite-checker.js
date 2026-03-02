@@ -1065,11 +1065,14 @@ export class PrerequisiteChecker {
     }
 
     static _checkDarkSideDynamicCondition(prereq, actor, pending) {
-        const wisdom = actor.system?.attributes?.wis?.total ?? 10;
-        const met = DSPEngine.meetsThreshold(actor, wisdom);
+        // Use GM house rule for Sith Apprentice minimum DSP requirement
+        const minDSP = DSPEngine.getSithApprenticeMinimumDSP(actor);
+        const currentDSP = DSPEngine.getValue(actor);
+        const met = DSPEngine.meetsThreshold(actor, minDSP);
+
         return {
             met,
-            message: !met ? `Dark Side Score must be at least Wisdom (${wisdom})` : ''
+            message: !met ? `Dark Side Score must be at least ${minDSP} (you have ${currentDSP})` : ''
         };
     }
 

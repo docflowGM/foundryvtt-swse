@@ -277,6 +277,41 @@ export const DSPEngine = {
   },
 
   /**
+   * Get Sith Apprentice minimum DSP requirement
+   * Based on GM house rule setting for prestige class gating
+   * PURE LOGIC - NO MUTATION
+   *
+   * @param {Actor} actor - The character
+   * @returns {number} Minimum DSP value required for Sith Apprentice
+   */
+  getSithApprenticeMinimumDSP(actor) {
+    if (!actor) return 0;
+
+    try {
+      const setting = game?.settings?.get('foundryvtt-swse', 'sithApprenticeMinimumDSP') ?? 'minimum';
+      const max = this.getMax(actor);
+
+      switch (setting) {
+        case 'minimum':
+          return 1;
+        case '10percent':
+          return Math.ceil(max * 0.1);
+        case '25percent':
+          return Math.ceil(max * 0.25);
+        case '50percent':
+          return Math.ceil(max * 0.5);
+        case '75percent':
+          return Math.ceil(max * 0.75);
+        case '100percent':
+        default:
+          return max;  // Full max (DSP = Wisdom)
+      }
+    } catch (err) {
+      return 0;  // Safe fallback
+    }
+  },
+
+  /**
    * Get corruption axis interpretation
    * Maps DSP saturation to moral stance interpretation
    * Different for each corruption axis philosophy

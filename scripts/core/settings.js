@@ -21,6 +21,23 @@ export function registerSystemSettings() {
     }
   });
 
+  game.settings.register("foundryvtt-swse", "sithApprenticeMinimumDSP", {
+    name: "Sith Apprentice Minimum DSP Requirement",
+    hint: "Determines the Dark Side Score requirement to qualify for Sith Apprentice prestige class.",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      "minimum": "At least 1 DSP",
+      "10percent": "10% of Maximum DSP",
+      "25percent": "25% of Maximum DSP",
+      "50percent": "50% of Maximum DSP",
+      "75percent": "75% of Maximum DSP",
+      "100percent": "100% of Maximum DSP (Default - DSP = Wisdom)"
+    },
+    default: "100percent"
+  });
+
   SWSELogger.log('SWSE | Registering settings...');
 
   game.settings.register('foundryvtt-swse', 'enableAutomation', {
