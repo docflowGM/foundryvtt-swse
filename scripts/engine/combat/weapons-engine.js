@@ -84,6 +84,25 @@ export class WeaponsEngine {
           }));
         }
 
+        /* ---------------- Attuned Lightsaber Bonus (+1) ---------------- */
+
+        if (weapon.system?.subtype === 'lightsaber' &&
+            weapon.flags?.swse?.builtBy === actor.id &&
+            weapon.flags?.swse?.attunedBy === actor.id) {
+
+          modifiers.push(createModifier({
+            source: ModifierSource.WEAPON,
+            sourceId: weapon.id,
+            sourceName: `${weapon.name} (Attuned)`,
+            target: 'attack.bonus',
+            type: ModifierType.UNTYPED,
+            value: 1,
+            enabled: true,
+            priority: 45,
+            description: 'Attuned lightsaber bonus'
+          }));
+        }
+
         /* ---------------- Proficiency ---------------- */
 
         const proficient = weapon.system?.proficient ?? true;
@@ -284,6 +303,71 @@ export class WeaponsEngine {
       halfLvl + abilityMod + enhancement;
 
     return { total, components };
+  }
+
+  /* ============================================================
+     ATTUNEMENT (LIGHTSABERS)
+  ============================================================ */
+
+  /**
+   * Attempt to attune a self-built lightsaber
+   * - Verifies builder ownership
+   * - Verifies not already attuned
+   * - Verifies actor has Force Point
+   * - Deducts Force Point via ActorEngine
+   * - Sets flags.swse.attunedBy
+   *
+   * @param {Actor} actor - Actor attempting attunement
+   * @param {Item} weapon - The lightsaber to attune
+   * @returns {Promise<Object>} { success, reason? }
+   */
+  static async attuneLightsaber(actor, weapon) {
+    if (!weapon || weapon.type !== 'weapon') {
+      return { success: false, reason: 'invalid_weapon' };
+    }
+
+    if (weapon.system?.subtype !== 'lightsaber') {
+      return { success: false, reason: 'not_lightsaber' };
+    }
+
+    const flags = weapon.flags?.swse ?? {};
+
+    if (flags.builtBy !== actor.id) {
+      return { success: false, reason: 'not_builder' };
+    }
+
+    if (flags.attunedBy) {
+      return { success: false, reason: 'already_attuned' };
+    }
+
+    try {
+      // Import ActorEngine dynamically to avoid circular dependencies
+      const { ActorEngine } = await import('../../governance/actor-engine/actor-engine.js');
+
+      const currentFP = actor.system?.resources?.forcePoints?.value ?? 0;
+      if (currentFP < 1) {
+        return { success: false, reason: 'no_force_points' };
+      }
+
+      // Step 1: Deduct Force Point via ActorEngine mutation plan
+      await ActorEngine.applyMutationPlan(actor, {
+        set: {
+          'system.resources.forcePoints.value': currentFP - 1
+        }
+      });
+
+      // Step 2: Set attunedBy flag on weapon via ActorEngine
+      await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{
+        _id: weapon.id,
+        'flags.swse.attunedBy': actor.id
+      }]);
+
+      return { success: true };
+
+    } catch (err) {
+      swseLogger.error('[WeaponsEngine] Attunement failed:', err);
+      return { success: false, reason: 'attunement_error', error: err.message };
+    }
   }
 
   /* ============================================================
