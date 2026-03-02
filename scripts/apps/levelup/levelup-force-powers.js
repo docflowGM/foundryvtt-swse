@@ -137,11 +137,12 @@ export function selectForcePower(powerId, availablePowers, selectedPowers = []) 
 }
 
 /**
- * Remove Light Side descriptor powers from actor when taking Sith Apprentice
+ * Remove Light Side descriptor powers from actor when taking Sith prestige class
+ * Called for both Sith Apprentice and Sith Lord
  * @param {Actor} actor - The character
  * @returns {Promise<Array>} Array of removed power IDs
  */
-export async function removeLightSidePowersForSithApprentice(actor) {
+export async function removeLightSidePowersForSith(actor) {
   if (!actor?.items) {return [];}
 
   const lightSidePowers = actor.items.filter(item => {
@@ -157,7 +158,13 @@ export async function removeLightSidePowersForSithApprentice(actor) {
   const removedIds = lightSidePowers.map(p => p.id);
   await actor.deleteEmbeddedDocuments('Item', removedIds);
 
-  SWSELogger.log(`SWSE LevelUp | Removed ${removedIds.length} Light Side powers for Sith Apprentice:`, lightSidePowers.map(p => p.name));
+  SWSELogger.log(`SWSE LevelUp | Removed ${removedIds.length} Light Side powers for Sith prestige class:`, lightSidePowers.map(p => p.name));
 
   return removedIds;
 }
+
+/**
+ * Backward compatibility export
+ * @deprecated Use removeLightSidePowersForSith instead
+ */
+export const removeLightSidePowersForSithApprentice = removeLightSidePowersForSith;

@@ -422,8 +422,8 @@ export async function applyPrestigeClassFeatures(classDoc, actor) {
 
   // Sith Apprentice/Lord: Remove Light Side descriptor powers
   if (classDoc.name === 'Sith Apprentice' || classDoc.name === 'Sith Lord') {
-    const { removeLightSidePowersForSithApprentice } = await import('./levelup-force-powers.js');
-    const removedPowers = await removeLightSidePowersForSithApprentice(actor);
+    const { removeLightSidePowersForSith } = await import('./levelup-force-powers.js');
+    const removedPowers = await removeLightSidePowersForSith(actor);
 
     if (removedPowers.length > 0) {
       ui.notifications.warn(`Becoming a ${classDoc.name} removes ${removedPowers.length} Light Side Force Powers. Select new powers to replace them.`);
