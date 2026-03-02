@@ -407,7 +407,7 @@ export async function selectClass(classId, actor, context) {
  * Apply prestige class features at level 1
  * @param {Object} classDoc - The class document
  */
-export async function applyPrestigeClassFeatures(classDoc) {
+export async function applyPrestigeClassFeatures(classDoc, actor) {
   SWSELogger.log(`SWSE LevelUp | Applying prestige class features for ${classDoc.name}`);
 
   const startingFeatures = getClassProperty(classDoc, 'startingFeatures', []);
@@ -417,6 +417,16 @@ export async function applyPrestigeClassFeatures(classDoc) {
     if (feature.type === 'proficiency' || feature.type === 'class_feature') {
       SWSELogger.log(`SWSE LevelUp | Auto-applying: ${feature.name}`);
       // Features will be applied in the complete level-up process
+    }
+  }
+
+  // Sith Apprentice/Lord: Remove Light Side descriptor powers
+  if (classDoc.name === 'Sith Apprentice' || classDoc.name === 'Sith Lord') {
+    const { removeLightSidePowersForSithApprentice } = await import('./levelup-force-powers.js');
+    const removedPowers = await removeLightSidePowersForSithApprentice(actor);
+
+    if (removedPowers.length > 0) {
+      ui.notifications.warn(`Becoming a ${classDoc.name} removes ${removedPowers.length} Light Side Force Powers. Select new powers to replace them.`);
     }
   }
 }

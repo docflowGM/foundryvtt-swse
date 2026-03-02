@@ -83,6 +83,37 @@ export async function loadForcePowers() {
 }
 
 /**
+ * Get available force powers for selection, filtered by prestige class restrictions
+ * @param {Actor} actor - The character
+ * @param {Object} options - Options object
+ * @returns {Promise<Array>} Array of available force power objects
+ */
+export async function getAvailableForcePowers(actor, options = {}) {
+  try {
+    const allPowers = await ForcePowerEngine.collectAvailablePowers();
+    if (!allPowers || allPowers.length === 0) {return [];}
+
+    // Check if character has Sith Apprentice or will take it
+    const hasSithApprentice = actor.items.some(i =>
+      i.type === 'class' && (i.name === 'Sith Apprentice' || i.name === 'Sith Lord')
+    );
+
+    // If Sith Apprentice, filter out Light Side powers
+    if (hasSithApprentice) {
+      return allPowers.filter(power => {
+        const powerDesc = `${power.name || ''} ${power.system?.description || ''} ${power.system?.descriptor || ''}`.toLowerCase();
+        return !powerDesc.includes('light side');
+      });
+    }
+
+    return allPowers;
+  } catch (err) {
+    SWSELogger.error('SWSE LevelUp | Failed to get available force powers:', err);
+    return [];
+  }
+}
+
+/**
  * Select a force power
  * @param {string} powerId - The power ID/name to select
  * @param {Array} availablePowers - List of available powers
@@ -103,4 +134,30 @@ export function selectForcePower(powerId, availablePowers, selectedPowers = []) 
     // Found, remove it
     return powersWithoutThis;
   }
+}
+
+/**
+ * Remove Light Side descriptor powers from actor when taking Sith Apprentice
+ * @param {Actor} actor - The character
+ * @returns {Promise<Array>} Array of removed power IDs
+ */
+export async function removeLightSidePowersForSithApprentice(actor) {
+  if (!actor?.items) {return [];}
+
+  const lightSidePowers = actor.items.filter(item => {
+    if (item.type !== 'forcepower') {return false;}
+
+    const powerDesc = `${item.name || ''} ${item.system?.description || ''} ${item.system?.descriptor || ''}`.toLowerCase();
+    return powerDesc.includes('light side');
+  });
+
+  if (lightSidePowers.length === 0) {return [];}
+
+  // Remove the light side powers
+  const removedIds = lightSidePowers.map(p => p.id);
+  await actor.deleteEmbeddedDocuments('Item', removedIds);
+
+  SWSELogger.log(`SWSE LevelUp | Removed ${removedIds.length} Light Side powers for Sith Apprentice:`, lightSidePowers.map(p => p.name));
+
+  return removedIds;
 }
