@@ -18,6 +18,7 @@ import { RollEngine } from "../roll-engine.js";
 import { LedgerService } from "../store/ledger-service.js";
 import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
 import { SWSELogger } from "../../core/logger.js";
+import { getHeroicLevel, getClassLevel } from "../../actors/derived/level-split.js";
 
 export class LightsaberConstructionEngine {
   /**
@@ -93,17 +94,19 @@ export class LightsaberConstructionEngine {
    * Attempt lightsaber construction
    *
    * Flow:
-   * 1. Resolve items by ID and validate constructibility
-   * 2. Validate compatibility (chassis vs upgrades)
-   * 3. Calculate final DC
-   * 4. Calculate total cost
-   * 5. Validate credit availability
-   * 6. Execute Use the Force roll
-   * 7. On success: atomic mutation (deduct credits, create item, inject metadata)
+   * 1. Basic input validation
+   * 1.5. Check actor eligibility (level, feats, force sensitivity) - FAIL FAST
+   * 2. Resolve items by ID and validate constructibility
+   * 3. Validate compatibility (chassis vs upgrades)
+   * 4. Calculate final DC
+   * 5. Calculate total cost
+   * 6. Validate credit availability
+   * 7. Execute Use the Force roll (uses actor.system.skills.useTheForce.total with all modifiers)
+   * 8. On success: atomic mutation (deduct credits, create item, inject metadata)
    *
    * @param {Actor} actor - Actor attempting construction
    * @param {Object} config - { chassisItemId, crystalItemId, accessoryItemIds: [] }
-   * @returns {Promise<Object>} { success, reason?, itemId?, finalDc?, rollTotal? }
+   * @returns {Promise<Object>} { success, reason?, itemId?, finalDc?, rollTotal?, modifier? }
    */
   static async attemptConstruction(actor, config) {
     try {
@@ -114,6 +117,12 @@ export class LightsaberConstructionEngine {
 
       if (!config?.chassisItemId) {
         return { success: false, reason: "no_chassis_selected" };
+      }
+
+      // Step 1.5: Check eligibility (fail fast, before item resolution)
+      const eligibilityCheck = this.#validateEligibility(actor);
+      if (!eligibilityCheck.eligible) {
+        return { success: false, reason: eligibilityCheck.reason };
       }
 
       // Step 2: Resolve items
@@ -321,5 +330,118 @@ export class LightsaberConstructionEngine {
     };
 
     return newItem;
+  }
+
+  /**
+   * Validate actor eligibility for lightsaber construction
+   * Checks level gating and feat requirements based on construction mode setting
+   *
+   * @private
+   * @param {Actor} actor - The actor to check
+   * @returns {Object} { eligible: boolean, reason?: string }
+   */
+  static #validateEligibility(actor) {
+    if (!actor) {
+      return { eligible: false, reason: "no_actor" };
+    }
+
+    try {
+      // Get construction mode setting
+      const mode = game?.settings?.get?.("swse", "lightsaberConstructionMode") || "raw";
+
+      // Get level authorities (NOT raw field access)
+      const heroicLevel = getHeroicLevel(actor);
+      const jediLevel = getClassLevel(actor, "jedi");
+
+      // Level gating based on mode
+      switch (mode) {
+        case "jediOnly":
+          // Jedi class required, must be level 7+ in Jedi
+          if (jediLevel < 7) {
+            return {
+              eligible: false,
+              reason: "insufficient_jedi_level",
+              details: { jediLevel, required: 7 }
+            };
+          }
+          break;
+
+        case "heroicAndJedi":
+          // Requires heroic 7 AND Jedi 1
+          if (heroicLevel < 7) {
+            return {
+              eligible: false,
+              reason: "insufficient_heroic_level",
+              details: { heroicLevel, required: 7 }
+            };
+          }
+          if (jediLevel < 1) {
+            return {
+              eligible: false,
+              reason: "insufficient_jedi_level",
+              details: { jediLevel, required: 1 }
+            };
+          }
+          break;
+
+        case "raw":
+        default:
+          // Just needs heroic 7
+          if (heroicLevel < 7) {
+            return {
+              eligible: false,
+              reason: "insufficient_heroic_level",
+              details: { heroicLevel, required: 7 }
+            };
+          }
+          break;
+      }
+
+      // Check Force Sensitivity feat/flag
+      // (Use the authoritative system.forceSensitive flag)
+      if (actor.system?.forceSensitive !== true) {
+        // Also check for feat by name as fallback
+        const hasForceSensitivity = actor.items?.some(
+          item =>
+            item.type === "feat" &&
+            (item.name?.includes("Force Sensitivity") ||
+              item.system?.id === "force-sensitivity")
+        );
+
+        if (!hasForceSensitivity) {
+          return {
+            eligible: false,
+            reason: "missing_force_sensitivity"
+          };
+        }
+      }
+
+      // Check Weapon Proficiency (Lightsabers)
+      const hasLightsaberProficiency = actor.items?.some(
+        item =>
+          item.type === "feat" &&
+          (item.name?.includes("Lightsaber") ||
+            item.name?.includes("Weapon Proficiency") && item.name?.includes("Lightsaber") ||
+            item.system?.id === "weapon-proficiency-lightsaber")
+      );
+
+      if (!hasLightsaberProficiency) {
+        return {
+          eligible: false,
+          reason: "missing_lightsaber_proficiency"
+        };
+      }
+
+      // All checks passed
+      return { eligible: true };
+
+    } catch (err) {
+      SWSELogger.error("eligibility check failed:", err);
+      return {
+        eligible: false,
+        reason: "eligibility_check_error",
+        error: err.message
+      };
+    }
   }
 }
