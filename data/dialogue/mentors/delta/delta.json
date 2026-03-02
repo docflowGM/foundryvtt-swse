@@ -1,652 +1,648 @@
 {
-  "mentor_id": "m12",
-  "mentorId": "delta",
-  "judgments": {
-    "recognition": {
-      "very_low": [
-        "Noted."
-      ],
-      "low": [
-        "That's your move."
-      ],
-      "medium": [
-        "I see the choice."
-      ],
-      "high": [
-        "I track your direction."
-      ],
-      "very_high": [
-        "The pattern's unmistakable."
-      ]
-    },
-    "reflection": {
-      "very_low": [
-        "Consider the angles."
-      ],
-      "low": [
-        "Reflect on that."
-      ],
-      "medium": [
-        "That deserves thought."
-      ],
-      "high": [
-        "Map out what that means."
-      ],
-      "very_high": [
-        "Deep reflection required."
-      ]
-    },
-    "contextualization": {
-      "very_low": [
-        "It fits the situation."
-      ],
-      "low": [
-        "There's a tactical context."
-      ],
-      "medium": [
-        "The situation supports this."
-      ],
-      "high": [
-        "Strategically, this makes sense."
-      ],
-      "very_high": [
-        "This is optimal given the field."
-      ]
-    },
-    "clarification": {
-      "very_low": [
-        "Clarity emerging."
-      ],
-      "low": [
-        "The lines become sharper."
-      ],
-      "medium": [
-        "This clarifies matters."
-      ],
-      "high": [
-        "I see it plainly."
-      ],
-      "very_high": [
-        "No ambiguity remains."
-      ]
-    },
-    "affirmation": {
-      "very_low": [
-        "That works."
-      ],
-      "low": [
-        "Solid approach."
-      ],
-      "medium": [
-        "This is sound."
-      ],
-      "high": [
-        "That's well-chosen."
-      ],
-      "very_high": [
-        "That's tactically perfect."
-      ]
-    },
-    "confirmation": {
-      "very_low": [
-        "Confirmed."
-      ],
-      "low": [
-        "That's correct."
-      ],
-      "medium": [
-        "You have the read."
-      ],
-      "high": [
-        "That assessment's accurate."
-      ],
-      "very_high": [
-        "Exactly right."
-      ]
-    },
-    "encouragement": {
-      "very_low": [
-        "Keep steady."
-      ],
-      "low": [
-        "Maintain position."
-      ],
-      "medium": [
-        "You're holding."
-      ],
-      "high": [
-        "Your approach is sound."
-      ],
-      "very_high": [
-        "You're executing flawlessly."
-      ]
-    },
-    "resolve_validation": {
-      "very_low": [
-        "Resolve noted."
-      ],
-      "low": [
-        "Your stance is firm."
-      ],
-      "medium": [
-        "That resolve is solid."
-      ],
-      "high": [
-        "Your commitment is steadfast."
-      ],
-      "very_high": [
-        "That's unshakeable resolve."
-      ]
-    },
-    "concern": {
-      "very_low": [
-        "Minor concern."
-      ],
-      "low": [
-        "This warrants attention."
-      ],
-      "medium": [
-        "I have concerns."
-      ],
-      "high": [
-        "This is problematic tactically."
-      ],
-      "very_high": [
-        "This is a critical problem."
-      ]
-    },
-    "warning": {
-      "very_low": [
-        "Be alert."
-      ],
-      "low": [
-        "This requires caution."
-      ],
-      "medium": [
-        "Danger's present."
-      ],
-      "high": [
-        "This is tactically dangerous."
-      ],
-      "very_high": [
-        "This will end badly."
-      ]
-    },
-    "risk_acknowledgment": {
-      "very_low": [
-        "There's risk."
-      ],
-      "low": [
-        "You're exposed to risk."
-      ],
-      "medium": [
-        "Risk is significant."
-      ],
-      "high": [
-        "The stakes are high."
-      ],
-      "very_high": [
-        "You're gambling everything."
-      ]
-    },
-    "exposure": {
-      "very_low": [
-        "Slight vulnerability."
-      ],
-      "low": [
-        "You have an opening."
-      ],
-      "medium": [
-        "You're exposed here."
-      ],
-      "high": [
-        "Your position's weak."
-      ],
-      "very_high": [
-        "You're completely exposed."
-      ]
-    },
-    "overreach": {
-      "very_low": [
-        "Ambitious move."
-      ],
-      "low": [
-        "You're stretching."
-      ],
-      "medium": [
-        "This exceeds your position."
-      ],
-      "high": [
-        "This overextends you."
-      ],
-      "very_high": [
-        "You're completely overextended."
-      ]
-    },
-    "reorientation": {
-      "very_low": [
-        "Adjust slightly."
-      ],
-      "low": [
-        "A course change helps."
-      ],
-      "medium": [
-        "Reposition yourself."
-      ],
-      "high": [
-        "Your approach needs revision."
-      ],
-      "very_high": [
-        "Complete tactical reorientation needed."
-      ]
-    },
-    "invitation": {
-      "very_low": [
-        "Another option exists."
-      ],
-      "low": [
-        "Consider this approach."
-      ],
-      "medium": [
-        "There's a better position."
-      ],
-      "high": [
-        "I'm showing you higher ground."
-      ],
-      "very_high": [
-        "This is the only viable option."
-      ]
-    },
-    "release": {
-      "very_low": [
-        "You can abandon this."
-      ],
-      "low": [
-        "Let this drop."
-      ],
-      "medium": [
-        "Release what you're holding."
-      ],
-      "high": [
-        "You must let this go."
-      ],
-      "very_high": [
-        "Abandon this immediately."
-      ]
-    },
-    "reassessment": {
-      "very_low": [
-        "Review your position."
-      ],
-      "low": [
-        "Reassess your strategy."
-      ],
-      "medium": [
-        "You need a fresh assessment."
-      ],
-      "high": [
-        "Your position needs reevaluation."
-      ],
-      "very_high": [
-        "Everything needs reassessment."
-      ]
-    },
-    "doubt_recognition": {
-      "very_low": [
-        "You hesitate."
-      ],
-      "low": [
-        "Doubt's visible."
-      ],
-      "medium": [
-        "You lack certainty."
-      ],
-      "high": [
-        "Your doubt is affecting position."
-      ],
-      "very_high": [
-        "Doubt's paralyzed you."
-      ]
-    },
-    "inner_conflict": {
-      "very_low": [
-        "Internal tension."
-      ],
-      "low": [
-        "You're in conflict."
-      ],
-      "medium": [
-        "You're divided on this."
-      ],
-      "high": [
-        "Your conflict's deep."
-      ],
-      "very_high": [
-        "You're completely torn."
-      ]
-    },
-    "resolve_testing": {
-      "very_low": [
-        "You're being tested."
-      ],
-      "low": [
-        "This tests your position."
-      ],
-      "medium": [
-        "Your resolve faces pressure."
-      ],
-      "high": [
-        "This is a serious test."
-      ],
-      "very_high": [
-        "This will define you."
-      ]
-    },
-    "uncertainty_acknowledgment": {
-      "very_low": [
-        "Uncertain ground."
-      ],
-      "low": [
-        "Visibility is limited."
-      ],
-      "medium": [
-        "You're in murky territory."
-      ],
-      "high": [
-        "Uncertainty dominates."
-      ],
-      "very_high": [
-        "You're completely blind here."
-      ]
-    },
-    "restraint": {
-      "very_low": [
-        "You're holding back."
-      ],
-      "low": [
-        "Restraint is evident."
-      ],
-      "medium": [
-        "You're exercising restraint."
-      ],
-      "high": [
-        "Your restraint's tactically sound."
-      ],
-      "very_high": [
-        "That restraint's strategic genius."
-      ]
-    },
-    "patience": {
-      "very_low": [
-        "Time factors in."
-      ],
-      "low": [
-        "Patience is required."
-      ],
-      "medium": [
-        "This demands patience."
-      ],
-      "high": [
-        "Your patience will be tested."
-      ],
-      "very_high": [
-        "Only patience will prevail."
-      ]
-    },
-    "focus_reminder": {
-      "very_low": [
-        "Stay alert."
-      ],
-      "low": [
-        "Keep focus."
-      ],
-      "medium": [
-        "Maintain your focus."
-      ],
-      "high": [
-        "Your focus is critical."
-      ],
-      "very_high": [
-        "Everything depends on focus."
-      ]
-    },
-    "discipline": {
-      "very_low": [
-        "Discipline applies."
-      ],
-      "low": [
-        "You need discipline."
-      ],
-      "medium": [
-        "Discipline steadies this."
-      ],
-      "high": [
-        "Only discipline works."
-      ],
-      "very_high": [
-        "Absolute discipline required."
-      ]
-    },
-    "insight": {
-      "very_low": [
-        "A detail emerges."
-      ],
-      "low": [
-        "You're seeing clearly."
-      ],
-      "medium": [
-        "That's valuable insight."
-      ],
-      "high": [
-        "You've gained real understanding."
-      ],
-      "very_high": [
-        "That's profound insight."
-      ]
-    },
-    "perspective": {
-      "very_low": [
-        "Another angle exists."
-      ],
-      "low": [
-        "Perspective shifts."
-      ],
-      "medium": [
-        "You're gaining perspective."
-      ],
-      "high": [
-        "This broadens your view."
-      ],
-      "very_high": [
-        "This reframes everything."
-      ]
-    },
-    "revelation": {
-      "very_low": [
-        "A detail's revealed."
-      ],
-      "low": [
-        "Something surfaces."
-      ],
-      "medium": [
-        "The truth emerges."
-      ],
-      "high": [
-        "A major revelation."
-      ],
-      "very_high": [
-        "The full truth revealed."
-      ]
-    },
-    "humility": {
-      "very_low": [
-        "Humility's present."
-      ],
-      "low": [
-        "You should be humble."
-      ],
-      "medium": [
-        "Humility's appropriate."
-      ],
-      "high": [
-        "Real humility required."
-      ],
-      "very_high": [
-        "Complete humility essential."
-      ]
-    },
-    "gravity": {
-      "very_low": [
-        "This has weight."
-      ],
-      "low": [
-        "This is serious."
-      ],
-      "medium": [
-        "Gravity's evident."
-      ],
-      "high": [
-        "This carries real weight."
-      ],
-      "very_high": [
-        "The gravity's immense."
-      ]
-    },
-    "consequential_awareness": {
-      "very_low": [
-        "This has effects."
-      ],
-      "low": [
-        "Consequences follow."
-      ],
-      "medium": [
-        "This has lasting impact."
-      ],
-      "high": [
-        "This changes the field."
-      ],
-      "very_high": [
-        "This reshapes everything."
-      ]
-    },
-    "threshold": {
-      "very_low": [
-        "A line approaches."
-      ],
-      "low": [
-        "A threshold nears."
-      ],
-      "medium": [
-        "You're at the threshold."
-      ],
-      "high": [
-        "This is the critical point."
-      ],
-      "very_high": [
-        "You're crossing the final line."
-      ]
-    },
-    "emergence": {
-      "very_low": [
-        "Change starts."
-      ],
-      "low": [
-        "New patterns form."
-      ],
-      "medium": [
-        "Something new rises."
-      ],
-      "high": [
-        "A new configuration emerges."
-      ],
-      "very_high": [
-        "You're becoming something new."
-      ]
-    },
-    "transformation_acknowledgment": {
-      "very_low": [
-        "You're changing."
-      ],
-      "low": [
-        "Change is evident."
-      ],
-      "medium": [
-        "Transformation's underway."
-      ],
-      "high": [
-        "You've fundamentally shifted."
-      ],
-      "very_high": [
-        "You're a different operator."
-      ]
-    },
-    "maturation": {
-      "very_low": [
-        "Growth shows."
-      ],
-      "low": [
-        "You're maturing."
-      ],
-      "medium": [
-        "Maturity's visible."
-      ],
-      "high": [
-        "You've grown substantially."
-      ],
-      "very_high": [
-        "You're fully matured."
-      ]
-    },
-    "acceptance": {
-      "very_low": [
-        "Accepted."
-      ],
-      "low": [
-        "I accept this."
-      ],
-      "medium": [
-        "This is reality."
-      ],
-      "high": [
-        "I fully accept this."
-      ],
-      "very_high": [
-        "No question here."
-      ]
-    },
-    "deferral": {
-      "very_low": [
-        "Not now."
-      ],
-      "low": [
-        "This waits."
-      ],
-      "medium": [
-        "Defer this."
-      ],
-      "high": [
-        "This is for later."
-      ],
-      "very_high": [
-        "Archive this indefinitely."
-      ]
-    },
-    "silence": {
-      "very_low": [
-        ""
-      ],
-      "low": [
-        ""
-      ],
-      "medium": [
-        ""
-      ],
-      "high": [
-        ""
-      ],
-      "very_high": [
-        ""
-      ]
-    }
+  "recognition": {
+    "very_low": [
+      "Oh hey. I saw that."
+    ],
+    "low": [
+      "Okay. That was on purpose."
+    ],
+    "medium": [
+      "Look at you, making choices."
+    ],
+    "high": [
+      "Yeah, yeah. That was clean."
+    ],
+    "very_high": [
+      "Well I’ll be. You actually nailed it."
+    ]
+  },
+  "reflection": {
+    "very_low": [
+      "Think about that a sec."
+    ],
+    "low": [
+      "Run it back in your head."
+    ],
+    "medium": [
+      "Ask yourself why that worked."
+    ],
+    "high": [
+      "You better understand why that worked."
+    ],
+    "very_high": [
+      "If you can’t explain it, you didn’t earn it."
+    ]
+  },
+  "contextualization": {
+    "very_low": [
+      "This ain’t just about you."
+    ],
+    "low": [
+      "There’s more moving around you."
+    ],
+    "medium": [
+      "That choice shifts the room."
+    ],
+    "high": [
+      "People are gonna react to that."
+    ],
+    "very_high": [
+      "You just changed the whole vibe. Hope you meant to."
+    ]
+  },
+  "clarification": {
+    "very_low": [
+      "Alright, listen."
+    ],
+    "low": [
+      "Here’s what that actually means."
+    ],
+    "medium": [
+      "Don’t overcomplicate it."
+    ],
+    "high": [
+      "I’m saying this once."
+    ],
+    "very_high": [
+      "Pay attention. This is where it matters."
+    ]
+  },
+  "affirmation": {
+    "very_low": [
+      "That works."
+    ],
+    "low": [
+      "Not bad."
+    ],
+    "medium": [
+      "Yeah. That’s solid."
+    ],
+    "high": [
+      "Okay, I like that."
+    ],
+    "very_high": [
+      "Hey, would ya look at that. You did it right."
+    ]
+  },
+  "confirmation": {
+    "very_low": [
+      "Yep."
+    ],
+    "low": [
+      "That’s it."
+    ],
+    "medium": [
+      "You read that right."
+    ],
+    "high": [
+      "Dead on."
+    ],
+    "very_high": [
+      "Exactly. No complaints."
+    ]
+  },
+  "encouragement": {
+    "very_low": [
+      "Keep goin’."
+    ],
+    "low": [
+      "Don’t stop now."
+    ],
+    "medium": [
+      "You’re gettin’ the hang of it."
+    ],
+    "high": [
+      "Stay sharp and you’re golden."
+    ],
+    "very_high": [
+      "Keep this up and I might start braggin’ about you."
+    ]
+  },
+  "resolve_validation": {
+    "very_low": [
+      "Took guts."
+    ],
+    "low": [
+      "You didn’t blink."
+    ],
+    "medium": [
+      "That kind of nerve pays off."
+    ],
+    "high": [
+      "You held steady. I respect that."
+    ],
+    "very_high": [
+      "That’s the kind of backbone I can work with."
+    ]
+  },
+  "concern": {
+    "very_low": [
+      "Eh. Not my favorite."
+    ],
+    "low": [
+      "That could get messy."
+    ],
+    "medium": [
+      "I don’t love where that’s going."
+    ],
+    "high": [
+      "That’s a little too spicy."
+    ],
+    "very_high": [
+      "Yeah… that’s the kind of move that comes back on you."
+    ]
+  },
+  "warning": {
+    "very_low": [
+      "Careful."
+    ],
+    "low": [
+      "Watch it."
+    ],
+    "medium": [
+      "That’s risky."
+    ],
+    "high": [
+      "That’s how people get clipped."
+    ],
+    "very_high": [
+      "Stop. That ends bad. Real bad."
+    ]
+  },
+  "risk_acknowledgment": {
+    "very_low": [
+      "There’s some risk there."
+    ],
+    "low": [
+      "You’re rollin’ dice."
+    ],
+    "medium": [
+      "That’s not exactly safe."
+    ],
+    "high": [
+      "You’re bettin’ big on that."
+    ],
+    "very_high": [
+      "Everything’s riding on that call."
+    ]
+  },
+  "exposure": {
+    "very_low": [
+      "You’re a little open."
+    ],
+    "low": [
+      "That leaves you seen."
+    ],
+    "medium": [
+      "Someone sharp could use that."
+    ],
+    "high": [
+      "You’re wide open if they’re paying attention."
+    ],
+    "very_high": [
+      "Right now? You’re basically askin’ to get tagged."
+    ]
+  },
+  "overreach": {
+    "very_low": [
+      "Bold."
+    ],
+    "low": [
+      "Maybe a bit much."
+    ],
+    "medium": [
+      "You’re pushin’ past your setup."
+    ],
+    "high": [
+      "That’s more than you’ve secured."
+    ],
+    "very_high": [
+      "That’s how you overplay it and lose the whole thing."
+    ]
+  },
+  "reorientation": {
+    "very_low": [
+      "Adjust a little."
+    ],
+    "low": [
+      "Try it different."
+    ],
+    "medium": [
+      "Shift your approach."
+    ],
+    "high": [
+      "You need a smarter angle."
+    ],
+    "very_high": [
+      "Yeah, scrap that. Let’s do it right."
+    ]
+  },
+  "invitation": {
+    "very_low": [
+      "Hey, look at this option."
+    ],
+    "low": [
+      "Maybe try it this way."
+    ],
+    "medium": [
+      "There’s a smoother play here."
+    ],
+    "high": [
+      "Trust me, this move’s cleaner."
+    ],
+    "very_high": [
+      "Go this route. You’ll thank me."
+    ]
+  },
+  "release": {
+    "very_low": [
+      "You can drop that."
+    ],
+    "low": [
+      "Let it go."
+    ],
+    "medium": [
+      "That’s just weighin’ you down."
+    ],
+    "high": [
+      "Don’t cling to it. It’s not helpin’."
+    ],
+    "very_high": [
+      "Yeah, no. Cut it loose before it drags you under."
+    ]
+  },
+  "reassessment": {
+    "very_low": [
+      "Take another look."
+    ],
+    "low": [
+      "Run it again."
+    ],
+    "medium": [
+      "You might wanna rethink that."
+    ],
+    "high": [
+      "Step back and check your work."
+    ],
+    "very_high": [
+      "Whole thing needs a second pass. Do it right."
+    ]
+  },
+  "doubt_recognition": {
+    "very_low": [
+      "You hesitated."
+    ],
+    "low": [
+      "Not totally sure, huh?"
+    ],
+    "medium": [
+      "You’re not sold on it."
+    ],
+    "high": [
+      "That doubt’s messin’ with your edge."
+    ],
+    "very_high": [
+      "If you don’t believe it, don’t commit to it."
+    ]
+  },
+  "inner_conflict": {
+    "very_low": [
+      "You’re torn."
+    ],
+    "low": [
+      "Part of you ain’t on board."
+    ],
+    "medium": [
+      "You’re fightin’ yourself on this."
+    ],
+    "high": [
+      "Settle that inside before you move."
+    ],
+    "very_high": [
+      "If you’re divided, the job’s already harder."
+    ]
+  },
+  "resolve_testing": {
+    "very_low": [
+      "Little test."
+    ],
+    "low": [
+      "This’ll check your nerve."
+    ],
+    "medium": [
+      "Here’s where it counts."
+    ],
+    "high": [
+      "Stay steady now."
+    ],
+    "very_high": [
+      "This is the moment that separates pros from wannabes."
+    ]
+  },
+  "uncertainty_acknowledgment": {
+    "very_low": [
+      "Not everything’s clear."
+    ],
+    "low": [
+      "Bit of fog here."
+    ],
+    "medium": [
+      "You don’t have the full picture."
+    ],
+    "high": [
+      "Too many unknowns to rush it."
+    ],
+    "very_high": [
+      "You’re movin’ blind if you don’t slow down."
+    ]
+  },
+  "restraint": {
+    "very_low": [
+      "Nice restraint."
+    ],
+    "low": [
+      "You didn’t overdo it."
+    ],
+    "medium": [
+      "That control paid off."
+    ],
+    "high": [
+      "You kept it tight. Good."
+    ],
+    "very_high": [
+      "That kind of restraint keeps you alive long term."
+    ]
+  },
+  "patience": {
+    "very_low": [
+      "Give it a second."
+    ],
+    "low": [
+      "No need to rush."
+    ],
+    "medium": [
+      "Let it play out."
+    ],
+    "high": [
+      "Patience here’s the smart move."
+    ],
+    "very_high": [
+      "Wait for the clean shot. It’ll come."
+    ]
+  },
+  "focus_reminder": {
+    "very_low": [
+      "Stay with it."
+    ],
+    "low": [
+      "Eyes up."
+    ],
+    "medium": [
+      "Don’t lose the thread."
+    ],
+    "high": [
+      "Lock back in."
+    ],
+    "very_high": [
+      "If you drift now, you blow it."
+    ]
+  },
+  "discipline": {
+    "very_low": [
+      "Stay sharp."
+    ],
+    "low": [
+      "Keep it tight."
+    ],
+    "medium": [
+      "Discipline makes this easy."
+    ],
+    "high": [
+      "You gotta stay consistent."
+    ],
+    "very_high": [
+      "Lose discipline, lose everything."
+    ]
+  },
+  "insight": {
+    "very_low": [
+      "Ohhh, there it is."
+    ],
+    "low": [
+      "You’re seein’ it now."
+    ],
+    "medium": [
+      "That’s a smart read."
+    ],
+    "high": [
+      "Yeah, that changes things."
+    ],
+    "very_high": [
+      "Now you’re thinkin’ like someone I’d work with."
+    ]
+  },
+  "perspective": {
+    "very_low": [
+      "Step back a sec."
+    ],
+    "low": [
+      "Look at it wider."
+    ],
+    "medium": [
+      "Different angle helps."
+    ],
+    "high": [
+      "Once you zoom out, it’s obvious."
+    ],
+    "very_high": [
+      "Big picture? You’re in better shape than you think."
+    ]
+  },
+  "revelation": {
+    "very_low": [
+      "Oh. There it is."
+    ],
+    "low": [
+      "Well that explains it."
+    ],
+    "medium": [
+      "Okay, now you see it."
+    ],
+    "high": [
+      "That changes the whole play."
+    ],
+    "very_high": [
+      "Yeah… that truth’s gonna stick with you."
+    ]
+  },
+  "humility": {
+    "very_low": [
+      "Don’t get cocky."
+    ],
+    "low": [
+      "Easy now."
+    ],
+    "medium": [
+      "Stay grounded."
+    ],
+    "high": [
+      "The second you think you’re untouchable, you slip."
+    ],
+    "very_high": [
+      "Trust me, overconfidence is louder than any alarm."
+    ]
+  },
+  "gravity": {
+    "very_low": [
+      "This matters."
+    ],
+    "low": [
+      "This ain’t small."
+    ],
+    "medium": [
+      "That’s got weight."
+    ],
+    "high": [
+      "That decision carries real consequences."
+    ],
+    "very_high": [
+      "This is one of those moments you don’t forget."
+    ]
+  },
+  "consequential_awareness": {
+    "very_low": [
+      "Something’s gonna come from this."
+    ],
+    "low": [
+      "There’s fallout attached."
+    ],
+    "medium": [
+      "That’s gonna ripple outward."
+    ],
+    "high": [
+      "What you did just set things in motion."
+    ],
+    "very_high": [
+      "After this? Yeah, things are different."
+    ]
+  },
+  "threshold": {
+    "very_low": [
+      "You’re close to something."
+    ],
+    "low": [
+      "Feels like a turning point."
+    ],
+    "medium": [
+      "You’re standing at a line."
+    ],
+    "high": [
+      "Once you cross this, no easy walk back."
+    ],
+    "very_high": [
+      "This is the kind of step that defines you."
+    ]
+  },
+  "emergence": {
+    "very_low": [
+      "Something’s forming."
+    ],
+    "low": [
+      "You’re settling into it."
+    ],
+    "medium": [
+      "You’re getting sharper."
+    ],
+    "high": [
+      "I see a stronger version of you showing up."
+    ],
+    "very_high": [
+      "You’re turning into someone people should worry about."
+    ]
+  },
+  "transformation_acknowledgment": {
+    "very_low": [
+      "You’ve changed a bit."
+    ],
+    "low": [
+      "You’re not the same as before."
+    ],
+    "medium": [
+      "This stuff’s shaping you."
+    ],
+    "high": [
+      "You move different now."
+    ],
+    "very_high": [
+      "Yeah… you’re becoming the real deal."
+    ]
+  },
+  "maturation": {
+    "very_low": [
+      "You’re learning."
+    ],
+    "low": [
+      "You’re getting better."
+    ],
+    "medium": [
+      "Your judgment’s improving."
+    ],
+    "high": [
+      "You handle things cleaner now."
+    ],
+    "very_high": [
+      "You’re growing into someone I’d trust on a job."
+    ]
+  },
+  "acceptance": {
+    "very_low": [
+      "It is what it is."
+    ],
+    "low": [
+      "That’s the reality."
+    ],
+    "medium": [
+      "You gotta own that."
+    ],
+    "high": [
+      "You don’t have to like it, but you accept it."
+    ],
+    "very_high": [
+      "Once you accept it, you can actually move forward."
+    ]
+  },
+  "deferral": {
+    "very_low": [
+      "Not now."
+    ],
+    "low": [
+      "Later."
+    ],
+    "medium": [
+      "That can wait."
+    ],
+    "high": [
+      "Wrong time for that."
+    ],
+    "very_high": [
+      "Yeah, park that. Focus on what matters."
+    ]
+  },
+  "silence": {
+    "very_low": [
+      ""
+    ],
+    "low": [
+      ""
+    ],
+    "medium": [
+      ""
+    ],
+    "high": [
+      ""
+    ],
+    "very_high": [
+      ""
+    ]
   }
 }

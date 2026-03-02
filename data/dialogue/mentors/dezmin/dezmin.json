@@ -1,651 +1,648 @@
 {
-  "mentorId": "dezmin_imperial_knight",
-  "judgments": {
-    "recognition": {
-      "very_low": [
-        "I see discipline taking root."
-      ],
-      "low": [
-        "I see discipline taking root."
-      ],
-      "medium": [
-        "Your control is becoming evident."
-      ],
-      "high": [
-        "You act with deliberate strength."
-      ],
-      "very_high": [
-        "You act with deliberate strength."
-      ]
-    },
-    "reflection": {
-      "very_low": [
-        "Consider what your action reveals."
-      ],
-      "low": [
-        "Consider what your action reveals."
-      ],
-      "medium": [
-        "What does that choice say about your balance?"
-      ],
-      "high": [
-        "Your discipline has spoken."
-      ],
-      "very_high": [
-        "Your discipline has spoken."
-      ]
-    },
-    "contextualization": {
-      "very_low": [
-        "Through discipline, clarity emerges."
-      ],
-      "low": [
-        "Through discipline, clarity emerges."
-      ],
-      "medium": [
-        "Balance defines true strength."
-      ],
-      "high": [
-        "Controlled power shapes outcomes."
-      ],
-      "very_high": [
-        "Controlled power shapes outcomes."
-      ]
-    },
-    "clarification": {
-      "very_low": [
-        "Listen to the quiet truth within."
-      ],
-      "low": [
-        "Listen to the quiet truth within."
-      ],
-      "medium": [
-        "Discipline clarifies intent."
-      ],
-      "high": [
-        "There is no confusion in a steady blade."
-      ],
-      "very_high": [
-        "There is no confusion in a steady blade."
-      ]
-    },
-    "affirmation": {
-      "very_low": [
-        "Your discipline serves you."
-      ],
-      "low": [
-        "Your discipline serves you."
-      ],
-      "medium": [
-        "That reflects controlled strength."
-      ],
-      "high": [
-        "You move with earned authority."
-      ],
-      "very_high": [
-        "You move with earned authority."
-      ]
-    },
-    "confirmation": {
-      "very_low": [
-        "Yes. Discipline prevails."
-      ],
-      "low": [
-        "Yes. Discipline prevails."
-      ],
-      "medium": [
-        "Your restraint is justified."
-      ],
-      "high": [
-        "Balance has been upheld."
-      ],
-      "very_high": [
-        "Balance has been upheld."
-      ]
-    },
-    "encouragement": {
-      "very_low": [
-        "Continue refining yourself."
-      ],
-      "low": [
-        "Continue refining yourself."
-      ],
-      "medium": [
-        "Your control strengthens."
-      ],
-      "high": [
-        "Let discipline guide you further."
-      ],
-      "very_high": [
-        "Let discipline guide you further."
-      ]
-    },
-    "resolve_validation": {
-      "very_low": [
-        "Your restraint has meaning."
-      ],
-      "low": [
-        "Your restraint has meaning."
-      ],
-      "medium": [
-        "That resolve carries weight."
-      ],
-      "high": [
-        "Conflict has tempered you."
-      ],
-      "very_high": [
-        "Conflict has tempered you."
-      ]
-    },
-    "concern": {
-      "very_low": [
-        "Imbalance threatens your center."
-      ],
-      "low": [
-        "Imbalance threatens your center."
-      ],
-      "medium": [
-        "Your control falters here."
-      ],
-      "high": [
-        "You risk losing discipline."
-      ],
-      "very_high": [
-        "You risk losing discipline."
-      ]
-    },
-    "warning": {
-      "very_low": [
-        "Guard your balance."
-      ],
-      "low": [
-        "Guard your balance."
-      ],
-      "medium": [
-        "Your equilibrium is tested."
-      ],
-      "high": [
-        "Control may not hold."
-      ],
-      "very_high": [
-        "Control may not hold."
-      ]
-    },
-    "risk_acknowledgment": {
-      "very_low": [
-        "You test the limits of restraint."
-      ],
-      "low": [
-        "You test the limits of restraint."
-      ],
-      "medium": [
-        "Discipline does not guarantee victory."
-      ],
-      "high": [
-        "Strength carries consequence."
-      ],
-      "very_high": [
-        "Strength carries consequence."
-      ]
-    },
-    "exposure": {
-      "very_low": [
-        "Your lapse is visible."
-      ],
-      "low": [
-        "Your lapse is visible."
-      ],
-      "medium": [
-        "Your balance cracks."
-      ],
-      "high": [
-        "Others will exploit hesitation."
-      ],
-      "very_high": [
-        "Others will exploit hesitation."
-      ]
-    },
-    "overreach": {
-      "very_low": [
-        "You extend beyond your control."
-      ],
-      "low": [
-        "You extend beyond your control."
-      ],
-      "medium": [
-        "Balance is strained."
-      ],
-      "high": [
-        "Power exceeds preparation."
-      ],
-      "very_high": [
-        "Power exceeds preparation."
-      ]
-    },
-    "reorientation": {
-      "very_low": [
-        "A steadier path lies before you."
-      ],
-      "low": [
-        "A steadier path lies before you."
-      ],
-      "medium": [
-        "Balance permits adjustment."
-      ],
-      "high": [
-        "Discipline offers correction."
-      ],
-      "very_high": [
-        "Discipline offers correction."
-      ]
-    },
-    "invitation": {
-      "very_low": [
-        "Walk the balanced path."
-      ],
-      "low": [
-        "Walk the balanced path."
-      ],
-      "medium": [
-        "Strength calls for refinement."
-      ],
-      "high": [
-        "Control finds expression here."
-      ],
-      "very_high": [
-        "Control finds expression here."
-      ]
-    },
-    "release": {
-      "very_low": [
-        "Release what disrupts balance."
-      ],
-      "low": [
-        "Release what disrupts balance."
-      ],
-      "medium": [
-        "Discipline requires sacrifice."
-      ],
-      "high": [
-        "Strength demands letting go."
-      ],
-      "very_high": [
-        "Strength demands letting go."
-      ]
-    },
-    "reassessment": {
-      "very_low": [
-        "Your discipline is tested."
-      ],
-      "low": [
-        "Your discipline is tested."
-      ],
-      "medium": [
-        "Strength must adapt."
-      ],
-      "high": [
-        "Control recalibrates."
-      ],
-      "very_high": [
-        "Control recalibrates."
-      ]
-    },
-    "doubt_recognition": {
-      "very_low": [
-        "Your focus wavers."
-      ],
-      "low": [
-        "Your focus wavers."
-      ],
-      "medium": [
-        "Balance questions you."
-      ],
-      "high": [
-        "Resolve shows strain."
-      ],
-      "very_high": [
-        "Resolve shows strain."
-      ]
-    },
-    "inner_conflict": {
-      "very_low": [
-        "Discipline wars within you."
-      ],
-      "low": [
-        "Discipline wars within you."
-      ],
-      "medium": [
-        "Balance is divided."
-      ],
-      "high": [
-        "Control contends with impulse."
-      ],
-      "very_high": [
-        "Control contends with impulse."
-      ]
-    },
-    "resolve_testing": {
-      "very_low": [
-        "Will you maintain discipline?"
-      ],
-      "low": [
-        "Will you maintain discipline?"
-      ],
-      "medium": [
-        "Can your will remain steady?"
-      ],
-      "high": [
-        "Is your control unwavering?"
-      ],
-      "very_high": [
-        "Is your control unwavering?"
-      ]
-    },
-    "uncertainty_acknowledgment": {
-      "very_low": [
-        "The path is not always clear."
-      ],
-      "low": [
-        "The path is not always clear."
-      ],
-      "medium": [
-        "Balance can obscure truth."
-      ],
-      "high": [
-        "Clarity must be forged."
-      ],
-      "very_high": [
-        "Clarity must be forged."
-      ]
-    },
-    "restraint": {
-      "very_low": [
-        "Hold your center."
-      ],
-      "low": [
-        "Hold your center."
-      ],
-      "medium": [
-        "Strength waits."
-      ],
-      "high": [
-        "Control endures."
-      ],
-      "very_high": [
-        "Control endures."
-      ]
-    },
-    "patience": {
-      "very_low": [
-        "Discipline matures over time."
-      ],
-      "low": [
-        "Discipline matures over time."
-      ],
-      "medium": [
-        "Balance rewards patience."
-      ],
-      "high": [
-        "True strength is patient."
-      ],
-      "very_high": [
-        "True strength is patient."
-      ]
-    },
-    "focus_reminder": {
-      "very_low": [
-        "Balance remains your aim."
-      ],
-      "low": [
-        "Balance remains your aim."
-      ],
-      "medium": [
-        "Strength must be singular."
-      ],
-      "high": [
-        "Control demands focus."
-      ],
-      "very_high": [
-        "Control demands focus."
-      ]
-    },
-    "discipline": {
-      "very_low": [
-        "Discipline is your foundation."
-      ],
-      "low": [
-        "Discipline is your foundation."
-      ],
-      "medium": [
-        "Balance is structured effort."
-      ],
-      "high": [
-        "Strength is disciplined will."
-      ],
-      "very_high": [
-        "Strength is disciplined will."
-      ]
-    },
-    "insight": {
-      "very_low": [
-        "You glimpse your true center."
-      ],
-      "low": [
-        "You glimpse your true center."
-      ],
-      "medium": [
-        "Balance reveals itself."
-      ],
-      "high": [
-        "Clarity emerges."
-      ],
-      "very_high": [
-        "Clarity emerges."
-      ]
-    },
-    "perspective": {
-      "very_low": [
-        "Through balance, all becomes visible."
-      ],
-      "low": [
-        "Through balance, all becomes visible."
-      ],
-      "medium": [
-        "Strength reframes the field."
-      ],
-      "high": [
-        "Control clarifies truth."
-      ],
-      "very_high": [
-        "Control clarifies truth."
-      ]
-    },
-    "revelation": {
-      "very_low": [
-        "The truth of discipline unfolds."
-      ],
-      "low": [
-        "The truth of discipline unfolds."
-      ],
-      "medium": [
-        "Balance speaks quietly."
-      ],
-      "high": [
-        "Strength reveals its design."
-      ],
-      "very_high": [
-        "Strength reveals its design."
-      ]
-    },
-    "humility": {
-      "very_low": [
-        "Even discipline has limits."
-      ],
-      "low": [
-        "Even discipline has limits."
-      ],
-      "medium": [
-        "Balance recognizes boundaries."
-      ],
-      "high": [
-        "Strength has measure."
-      ],
-      "very_high": [
-        "Strength has measure."
-      ]
-    },
-    "gravity": {
-      "very_low": [
-        "This moment carries weight."
-      ],
-      "low": [
-        "This moment carries weight."
-      ],
-      "medium": [
-        "Balance concentrates here."
-      ],
-      "high": [
-        "Strength bears consequence."
-      ],
-      "very_high": [
-        "Strength bears consequence."
-      ]
-    },
-    "consequential_awareness": {
-      "very_low": [
-        "You understand the cost."
-      ],
-      "low": [
-        "You understand the cost."
-      ],
-      "medium": [
-        "Balance demands payment."
-      ],
-      "high": [
-        "Strength exacts a price."
-      ],
-      "very_high": [
-        "Strength exacts a price."
-      ]
-    },
-    "threshold": {
-      "very_low": [
-        "A point of change approaches."
-      ],
-      "low": [
-        "A point of change approaches."
-      ],
-      "medium": [
-        "Balance shifts here."
-      ],
-      "high": [
-        "Strength alters direction."
-      ],
-      "very_high": [
-        "Strength alters direction."
-      ]
-    },
-    "emergence": {
-      "very_low": [
-        "You grow beyond former limits."
-      ],
-      "low": [
-        "You grow beyond former limits."
-      ],
-      "medium": [
-        "Balance takes form."
-      ],
-      "high": [
-        "Your strength becomes evident."
-      ],
-      "very_high": [
-        "Your strength becomes evident."
-      ]
-    },
-    "transformation_acknowledgment": {
-      "very_low": [
-        "You are shaped by discipline."
-      ],
-      "low": [
-        "You are shaped by discipline."
-      ],
-      "medium": [
-        "Balance has marked you."
-      ],
-      "high": [
-        "Strength has refined you."
-      ],
-      "very_high": [
-        "Strength has refined you."
-      ]
-    },
-    "maturation": {
-      "very_low": [
-        "Your control deepens."
-      ],
-      "low": [
-        "Your control deepens."
-      ],
-      "medium": [
-        "Balance matures."
-      ],
-      "high": [
-        "Strength is tempered."
-      ],
-      "very_high": [
-        "Strength is tempered."
-      ]
-    },
-    "acceptance": {
-      "very_low": [
-        "Accept the discipline required."
-      ],
-      "low": [
-        "Accept the discipline required."
-      ],
-      "medium": [
-        "Balance is truth."
-      ],
-      "high": [
-        "Strength is chosen."
-      ],
-      "very_high": [
-        "Strength is chosen."
-      ]
-    },
-    "deferral": {
-      "very_low": [
-        "Not yet. Continue training."
-      ],
-      "low": [
-        "Not yet. Continue training."
-      ],
-      "medium": [
-        "Balance prepares."
-      ],
-      "high": [
-        "Strength waits."
-      ],
-      "very_high": [
-        "Strength waits."
-      ]
-    },
-    "silence": {
-      "very_low": [
-        ""
-      ],
-      "low": [
-        ""
-      ],
-      "medium": [
-        ""
-      ],
-      "high": [
-        ""
-      ],
-      "very_high": [
-        ""
-      ]
-    }
+  "recognition": {
+    "very_low": [
+      "I see it."
+    ],
+    "low": [
+      "You chose deliberately."
+    ],
+    "medium": [
+      "Your control is evident."
+    ],
+    "high": [
+      "You acted with clear intent."
+    ],
+    "very_high": [
+      "That was disciplined strength."
+    ]
+  },
+  "reflection": {
+    "very_low": [
+      "Consider what drove that choice."
+    ],
+    "low": [
+      "Examine the impulse behind it."
+    ],
+    "medium": [
+      "Ask yourself whether it came from control or reaction."
+    ],
+    "high": [
+      "Understand the source of your action."
+    ],
+    "very_high": [
+      "If you cannot name the reason, you do not command it."
+    ]
+  },
+  "contextualization": {
+    "very_low": [
+      "This does not stand alone."
+    ],
+    "low": [
+      "Every action shifts your footing."
+    ],
+    "medium": [
+      "Strength must account for what surrounds it."
+    ],
+    "high": [
+      "What you do here shapes what follows."
+    ],
+    "very_high": [
+      "Power applied here alters the path ahead."
+    ]
+  },
+  "clarification": {
+    "very_low": [
+      "Let me be clear."
+    ],
+    "low": [
+      "Do not mistake this."
+    ],
+    "medium": [
+      "Strength without control is waste."
+    ],
+    "high": [
+      "There is no confusion in a steady mind."
+    ],
+    "very_high": [
+      "Understand this fully before you proceed."
+    ]
+  },
+  "affirmation": {
+    "very_low": [
+      "Well done."
+    ],
+    "low": [
+      "That was measured."
+    ],
+    "medium": [
+      "You acted with restraint."
+    ],
+    "high": [
+      "That reflects earned discipline."
+    ],
+    "very_high": [
+      "You carried strength without excess."
+    ]
+  },
+  "confirmation": {
+    "very_low": [
+      "Yes."
+    ],
+    "low": [
+      "Correct."
+    ],
+    "medium": [
+      "Your judgment was sound."
+    ],
+    "high": [
+      "That assessment holds."
+    ],
+    "very_high": [
+      "You chose well."
+    ]
+  },
+  "encouragement": {
+    "very_low": [
+      "Continue."
+    ],
+    "low": [
+      "Refine it."
+    ],
+    "medium": [
+      "You are strengthening your control."
+    ],
+    "high": [
+      "Maintain this level of focus."
+    ],
+    "very_high": [
+      "Carry this discipline into all things."
+    ]
+  },
+  "resolve_validation": {
+    "very_low": [
+      "You did not waver."
+    ],
+    "low": [
+      "That required resolve."
+    ],
+    "medium": [
+      "You held your center."
+    ],
+    "high": [
+      "Conflict tempered you."
+    ],
+    "very_high": [
+      "That is the resolve of a seasoned warrior."
+    ]
+  },
+  "concern": {
+    "very_low": [
+      "There is imbalance here."
+    ],
+    "low": [
+      "Your control falters."
+    ],
+    "medium": [
+      "You are leaning too heavily."
+    ],
+    "high": [
+      "You risk losing restraint."
+    ],
+    "very_high": [
+      "Continue like this and control will break."
+    ]
+  },
+  "warning": {
+    "very_low": [
+      "Guard yourself."
+    ],
+    "low": [
+      "Do not let impulse lead."
+    ],
+    "medium": [
+      "This path tests your control."
+    ],
+    "high": [
+      "Strength may outrun discipline."
+    ],
+    "very_high": [
+      "If control fails, consequence follows immediately."
+    ]
+  },
+  "risk_acknowledgment": {
+    "very_low": [
+      "There is risk in this."
+    ],
+    "low": [
+      "You step beyond comfort."
+    ],
+    "medium": [
+      "Power carries cost."
+    ],
+    "high": [
+      "You wager more than you admit."
+    ],
+    "very_high": [
+      "Everything rests on your steadiness."
+    ]
+  },
+  "exposure": {
+    "very_low": [
+      "You reveal weakness."
+    ],
+    "low": [
+      "Your hesitation is visible."
+    ],
+    "medium": [
+      "Others will sense that lapse."
+    ],
+    "high": [
+      "You are open if challenged."
+    ],
+    "very_high": [
+      "In this state, you would not endure a true test."
+    ]
+  },
+  "overreach": {
+    "very_low": [
+      "You extend too far."
+    ],
+    "low": [
+      "You move beyond your preparation."
+    ],
+    "medium": [
+      "Strength exceeds readiness."
+    ],
+    "high": [
+      "You push past your foundation."
+    ],
+    "very_high": [
+      "Power without preparation collapses."
+    ]
+  },
+  "reorientation": {
+    "very_low": [
+      "Recenter."
+    ],
+    "low": [
+      "Adjust your stance."
+    ],
+    "medium": [
+      "Return to controlled movement."
+    ],
+    "high": [
+      "Reset before advancing."
+    ],
+    "very_high": [
+      "Stop. Regain discipline. Then proceed."
+    ]
+  },
+  "invitation": {
+    "very_low": [
+      "Consider this approach."
+    ],
+    "low": [
+      "There is a steadier path."
+    ],
+    "medium": [
+      "Choose the option that preserves control."
+    ],
+    "high": [
+      "Strength favors this direction."
+    ],
+    "very_high": [
+      "Take this path. It reinforces your foundation."
+    ]
+  },
+  "release": {
+    "very_low": [
+      "Let it go."
+    ],
+    "low": [
+      "Release what distracts you."
+    ],
+    "medium": [
+      "You do not need that weight."
+    ],
+    "high": [
+      "Holding it weakens your stance."
+    ],
+    "very_high": [
+      "Set it aside. It serves neither strength nor clarity."
+    ]
+  },
+  "reassessment": {
+    "very_low": [
+      "Look again."
+    ],
+    "low": [
+      "Review your footing."
+    ],
+    "medium": [
+      "Reevaluate before committing further."
+    ],
+    "high": [
+      "Your position requires adjustment."
+    ],
+    "very_high": [
+      "Everything about this deserves a second examination."
+    ]
+  },
+  "doubt_recognition": {
+    "very_low": [
+      "You hesitate."
+    ],
+    "low": [
+      "Uncertainty is present."
+    ],
+    "medium": [
+      "Your focus wavers."
+    ],
+    "high": [
+      "Doubt disrupts your control."
+    ],
+    "very_high": [
+      "Until you steady yourself, you cannot act cleanly."
+    ]
+  },
+  "inner_conflict": {
+    "very_low": [
+      "You are divided."
+    ],
+    "low": [
+      "Impulse and restraint compete."
+    ],
+    "medium": [
+      "Your will pulls in two directions."
+    ],
+    "high": [
+      "Resolve this conflict before you move."
+    ],
+    "very_high": [
+      "Unresolved tension weakens even the strongest blade."
+    ]
+  },
+  "resolve_testing": {
+    "very_low": [
+      "This tests you."
+    ],
+    "low": [
+      "Your steadiness is measured here."
+    ],
+    "medium": [
+      "This is a true trial of control."
+    ],
+    "high": [
+      "Stand firm under pressure."
+    ],
+    "very_high": [
+      "Endure this, and you will be stronger for it."
+    ]
+  },
+  "uncertainty_acknowledgment": {
+    "very_low": [
+      "Clarity is incomplete."
+    ],
+    "low": [
+      "The situation is not fully revealed."
+    ],
+    "medium": [
+      "You move without full information."
+    ],
+    "high": [
+      "Do not rush where sight is limited."
+    ],
+    "very_high": [
+      "When vision fails, discipline must guide you."
+    ]
+  },
+  "restraint": {
+    "very_low": [
+      "Good restraint."
+    ],
+    "low": [
+      "You held back when needed."
+    ],
+    "medium": [
+      "That control strengthens you."
+    ],
+    "high": [
+      "Restraint preserved your advantage."
+    ],
+    "very_high": [
+      "That discipline prevented greater consequence."
+    ]
+  },
+  "patience": {
+    "very_low": [
+      "Wait."
+    ],
+    "low": [
+      "Allow time to work."
+    ],
+    "medium": [
+      "Patience refines strength."
+    ],
+    "high": [
+      "The correct moment has not yet arrived."
+    ],
+    "very_high": [
+      "True power does not rush itself."
+    ]
+  },
+  "focus_reminder": {
+    "very_low": [
+      "Stay centered."
+    ],
+    "low": [
+      "Return your attention."
+    ],
+    "medium": [
+      "Do not scatter your effort."
+    ],
+    "high": [
+      "Control requires singular focus."
+    ],
+    "very_high": [
+      "If your focus fractures, so will your strength."
+    ]
+  },
+  "discipline": {
+    "very_low": [
+      "Discipline first."
+    ],
+    "low": [
+      "Structure your effort."
+    ],
+    "medium": [
+      "Consistency builds strength."
+    ],
+    "high": [
+      "Without discipline, power decays."
+    ],
+    "very_high": [
+      "Discipline is the difference between force and fury."
+    ]
+  },
+  "insight": {
+    "very_low": [
+      "You see more clearly."
+    ],
+    "low": [
+      "Understanding grows."
+    ],
+    "medium": [
+      "That realization sharpens you."
+    ],
+    "high": [
+      "Clarity strengthens your next action."
+    ],
+    "very_high": [
+      "You now understand what truly matters here."
+    ]
+  },
+  "perspective": {
+    "very_low": [
+      "Step back."
+    ],
+    "low": [
+      "Widen your view."
+    ],
+    "medium": [
+      "Distance clarifies strength."
+    ],
+    "high": [
+      "From a broader stance, the path is clearer."
+    ],
+    "very_high": [
+      "With perspective, even conflict becomes instruction."
+    ]
+  },
+  "revelation": {
+    "very_low": [
+      "Now you see it."
+    ],
+    "low": [
+      "The truth is clearer."
+    ],
+    "medium": [
+      "That understanding changes your footing."
+    ],
+    "high": [
+      "Clarity like this reshapes your approach."
+    ],
+    "very_high": [
+      "You have uncovered something that will alter how you fight."
+    ]
+  },
+  "humility": {
+    "very_low": [
+      "Remain steady."
+    ],
+    "low": [
+      "Do not let success inflate you."
+    ],
+    "medium": [
+      "Confidence must stay controlled."
+    ],
+    "high": [
+      "Pride dulls awareness."
+    ],
+    "very_high": [
+      "The moment you believe yourself beyond error, you weaken."
+    ]
+  },
+  "gravity": {
+    "very_low": [
+      "This carries weight."
+    ],
+    "low": [
+      "This is not a minor matter."
+    ],
+    "medium": [
+      "What you decide here matters."
+    ],
+    "high": [
+      "This choice will shape what follows."
+    ],
+    "very_high": [
+      "This is the kind of moment that defines a warrior."
+    ]
+  },
+  "consequential_awareness": {
+    "very_low": [
+      "There will be outcome."
+    ],
+    "low": [
+      "Every action leaves impact."
+    ],
+    "medium": [
+      "You will carry what follows."
+    ],
+    "high": [
+      "Strength applied here has lasting effect."
+    ],
+    "very_high": [
+      "Nothing after this remains untouched."
+    ]
+  },
+  "threshold": {
+    "very_low": [
+      "You approach a turning point."
+    ],
+    "low": [
+      "This marks a shift."
+    ],
+    "medium": [
+      "You stand at a line of change."
+    ],
+    "high": [
+      "Crossing this will alter you."
+    ],
+    "very_high": [
+      "Once you step forward, there is no returning unchanged."
+    ]
+  },
+  "emergence": {
+    "very_low": [
+      "You are growing."
+    ],
+    "low": [
+      "Your control strengthens."
+    ],
+    "medium": [
+      "Your presence is more grounded now."
+    ],
+    "high": [
+      "You are becoming formidable."
+    ],
+    "very_high": [
+      "You are stepping into the strength you have trained for."
+    ]
+  },
+  "transformation_acknowledgment": {
+    "very_low": [
+      "You have shifted."
+    ],
+    "low": [
+      "You are not as you were."
+    ],
+    "medium": [
+      "Experience has tempered you."
+    ],
+    "high": [
+      "You carry yourself with greater control."
+    ],
+    "very_high": [
+      "You have been refined by discipline and trial."
+    ]
+  },
+  "maturation": {
+    "very_low": [
+      "You are learning."
+    ],
+    "low": [
+      "Your judgment deepens."
+    ],
+    "medium": [
+      "You respond with greater steadiness."
+    ],
+    "high": [
+      "You move with earned composure."
+    ],
+    "very_high": [
+      "You have grown into a warrior who understands restraint."
+    ]
+  },
+  "acceptance": {
+    "very_low": [
+      "Accept what is."
+    ],
+    "low": [
+      "This is the present reality."
+    ],
+    "medium": [
+      "You must acknowledge this outcome."
+    ],
+    "high": [
+      "Strength includes accepting consequence."
+    ],
+    "very_high": [
+      "Acceptance is not surrender. It is clarity."
+    ]
+  },
+  "deferral": {
+    "very_low": [
+      "Not yet."
+    ],
+    "low": [
+      "The time is not right."
+    ],
+    "medium": [
+      "This can wait."
+    ],
+    "high": [
+      "Acting now would be premature."
+    ],
+    "very_high": [
+      "Delay this until you are fully prepared."
+    ]
+  },
+  "silence": {
+    "very_low": [
+      ""
+    ],
+    "low": [
+      ""
+    ],
+    "medium": [
+      ""
+    ],
+    "high": [
+      ""
+    ],
+    "very_high": [
+      ""
+    ]
   }
 }

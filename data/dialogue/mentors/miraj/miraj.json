@@ -3,87 +3,87 @@
   "judgments": {
     "recognition": {
       "very_low": [
-        "I see it."
+        "The Force shifted when you chose."
       ],
       "low": [
-        "I notice what you're doing."
+        "I felt the change you introduced."
       ],
       "medium": [
-        "I recognize this step you've taken."
+        "You acted with intention."
       ],
       "high": [
-        "I see the direction you're moving in."
+        "You moved in alignment with the moment."
       ],
       "very_high": [
-        "I clearly recognize what this represents for you."
+        "The Force did not resist you."
       ]
     },
     "reflection": {
       "very_low": [
-        "This mirrors something familiar."
+        "Listen to what remains after action."
       ],
       "low": [
-        "It reflects a part of you."
+        "Notice how the current settles."
       ],
       "medium": [
-        "This reflects where you are right now."
+        "Your intent shaped more than your movement."
       ],
       "high": [
-        "I can see you in this choice."
+        "You are beginning to act from awareness."
       ],
       "very_high": [
-        "This reflects a deeper truth about you."
+        "This reveals the discipline beneath your strength."
       ]
     },
     "contextualization": {
       "very_low": [
-        "This sits within a larger moment."
+        "Nothing stands alone in the Force."
       ],
       "low": [
-        "There's more around this than it seems."
+        "Every action sends a measured ripple."
       ],
       "medium": [
-        "This makes sense in the context you're in."
+        "This belongs to a larger pattern."
       ],
       "high": [
-        "I understand how this fits into your path."
+        "There are moments to yield — and moments to decide."
       ],
       "very_high": [
-        "This belongs to a much larger turning point."
+        "This may be one of the latter."
       ]
     },
     "clarification": {
       "very_low": [
-        "This is becoming clearer."
+        "Clarity requires stillness."
       ],
       "low": [
-        "The shape of this is clearer now."
+        "Remove fear. The answer sharpens."
       ],
       "medium": [
-        "I see this more clearly."
+        "Awareness precedes action."
       ],
       "high": [
-        "What this is becoming is clear to me."
+        "Decisiveness is not haste."
       ],
       "very_high": [
-        "There is no confusion left in what this means."
+        "When clarity arrives, do not dilute it."
       ]
     },
     "affirmation": {
       "very_low": [
-        "This feels right."
+        "There is balance here."
       ],
       "low": [
-        "This aligns with you."
+        "You exercised restraint."
       ],
       "medium": [
-        "This feels appropriate for where you are."
+        "You chose with deliberation."
       ],
       "high": [
-        "This fits the way you've been growing."
+        "Strength followed awareness."
       ],
       "very_high": [
-        "This strongly affirms the path you're on."
+        "Compassion and resolve stood together."
       ]
     },
     "confirmation": {
@@ -91,33 +91,33 @@
         "Yes."
       ],
       "low": [
-        "That confirms it."
+        "That aligns."
       ],
       "medium": [
-        "This confirms what I sensed."
+        "You read the moment accurately."
       ],
       "high": [
-        "This confirms my understanding of you."
+        "Your perception was clear."
       ],
       "very_high": [
-        "This leaves no doubt in my mind."
+        "There is no distortion in this understanding."
       ]
     },
     "encouragement": {
       "very_low": [
-        "Keep breathing."
+        "Center yourself."
       ],
       "low": [
-        "Stay with this."
+        "Remain grounded."
       ],
       "medium": [
-        "You're holding steady."
+        "Hold your equilibrium."
       ],
       "high": [
-        "You're capable of carrying this."
+        "You are prepared to carry this."
       ],
       "very_high": [
-        "I trust your strength here."
+        "Trust your stillness — then act."
       ]
     },
     "resolve_validation": {
@@ -125,528 +125,527 @@
         "Your resolve is present."
       ],
       "low": [
-        "I can feel your resolve."
+        "Your commitment is steady."
       ],
       "medium": [
-        "Your resolve is steady."
+        "You are not acting from impulse."
       ],
       "high": [
-        "Your resolve is grounded and real."
+        "Your resolve is disciplined."
       ],
       "very_high": [
-        "Your resolve speaks clearly."
+        "This resolve will endure."
       ]
     },
     "concern": {
       "very_low": [
-        "Something gives me pause."
+        "There is disturbance here."
       ],
       "low": [
-        "I feel a quiet concern."
+        "I sense imbalance beneath this."
       ],
       "medium": [
-        "This raises concern for me."
+        "Your center may be shifting."
       ],
       "high": [
-        "I'm concerned about where this leans."
+        "This may be reaction, not alignment."
       ],
       "very_high": [
-        "This deeply concerns me."
+        "If continued, this will alter you."
       ]
     },
     "warning": {
       "very_low": [
-        "Be mindful."
+        "Be attentive."
       ],
       "low": [
-        "This deserves caution."
+        "Proceed with care."
       ],
       "medium": [
-        "This carries risk."
+        "There is consequence in this direction."
       ],
       "high": [
-        "This path is not without danger."
+        "This path carries weight beyond the present."
       ],
       "very_high": [
-        "If this continues, there will be consequences."
+        "The Force answers imbalance."
       ]
     },
     "risk_acknowledgment": {
       "very_low": [
-        "There is some risk here."
+        "Uncertainty remains."
       ],
       "low": [
-        "Risk is present."
+        "You step into something unformed."
       ],
       "medium": [
-        "You're stepping into uncertainty."
+        "There is cost attached to this."
       ],
       "high": [
-        "This involves meaningful risk."
+        "You may gain strength — and lose something quieter."
       ],
       "very_high": [
-        "This places much at stake."
+        "The price of decisive action is rarely visible at first."
       ]
     },
     "exposure": {
       "very_low": [
-        "You're slightly exposed."
+        "You are slightly open."
       ],
       "low": [
-        "This leaves you open."
+        "This reveals more than intended."
       ],
       "medium": [
-        "You're revealing more than you think."
+        "Your position is visible."
       ],
       "high": [
-        "This exposes something vulnerable."
+        "There is vulnerability in this stance."
       ],
       "very_high": [
-        "You are fully exposed here."
+        "Courage and exposure often share a boundary."
       ]
     },
     "overreach": {
       "very_low": [
-        "This may be a stretch."
+        "This may exceed necessity."
       ],
       "low": [
-        "This reaches a bit far."
+        "You press against the current."
       ],
       "medium": [
-        "You may be reaching too far."
+        "There is strain here."
       ],
       "high": [
-        "This pushes beyond what's stable."
+        "You risk losing balance."
       ],
       "very_high": [
-        "This clearly exceeds your footing."
+        "Strength without calibration fractures harmony."
       ]
     },
     "reorientation": {
       "very_low": [
-        "Pause for a moment."
+        "Pause."
       ],
       "low": [
-        "Take a breath and realign."
+        "Return to center."
       ],
       "medium": [
-        "This may call for reorientation."
+        "Realign with your intent."
       ],
       "high": [
-        "Your direction may need adjusting."
+        "Adjust before advancing."
       ],
       "very_high": [
-        "This requires a fundamental realignment."
-      ]
-    },
-    "invitation": {
-      "very_low": [
-        "Consider this."
-      ],
-      "low": [
-        "You might sit with this."
-      ],
-      "medium": [
-        "There's space to explore this further."
-      ],
-      "high": [
-        "I invite you to look inward here."
-      ],
-      "very_high": [
-        "I invite you to confront this fully."
-      ]
-    },
-    "release": {
-      "very_low": [
-        "You can let this go."
-      ],
-      "low": [
-        "There is room to release this."
-      ],
-      "medium": [
-        "This may not need to be held."
-      ],
-      "high": [
-        "It may be time to release this."
-      ],
-      "very_high": [
-        "You are ready to let this go."
-      ]
-    },
-    "reassessment": {
-      "very_low": [
-        "This can be revisited."
-      ],
-      "low": [
-        "A reassessment may help."
-      ],
-      "medium": [
-        "This deserves another look."
-      ],
-      "high": [
-        "This calls for careful reassessment."
-      ],
-      "very_high": [
-        "This must be reconsidered entirely."
-      ]
-    },
-    "doubt_recognition": {
-      "very_low": [
-        "I sense a flicker of doubt."
-      ],
-      "low": [
-        "Doubt is present."
-      ],
-      "medium": [
-        "I feel your doubt."
-      ],
-      "high": [
-        "Your doubt is weighing on you."
-      ],
-      "very_high": [
-        "Your doubt is unmistakable."
-      ]
-    },
-    "inner_conflict": {
-      "very_low": [
-        "There's some tension within."
-      ],
-      "low": [
-        "You're holding opposing pulls."
-      ],
-      "medium": [
-        "I sense inner conflict."
-      ],
-      "high": [
-        "This conflict runs deep."
-      ],
-      "very_high": [
-        "You are deeply divided here."
-      ]
-    },
-    "resolve_testing": {
-      "very_low": [
-        "This tests you lightly."
-      ],
-      "low": [
-        "Your resolve is being tested."
-      ],
-      "medium": [
-        "This is a meaningful test of you."
-      ],
-      "high": [
-        "Your resolve is under real pressure."
-      ],
-      "very_high": [
-        "This is a defining test of your resolve."
-      ]
-    },
-    "uncertainty_acknowledgment": {
-      "very_low": [
-        "Some uncertainty remains."
-      ],
-      "low": [
-        "This isn't fully clear yet."
-      ],
-      "medium": [
-        "Uncertainty surrounds this."
-      ],
-      "high": [
-        "This uncertainty deserves respect."
-      ],
-      "very_high": [
-        "This is deeply uncertain territory."
-      ]
-    },
-    "restraint": {
-      "very_low": [
-        "Restraint is present."
-      ],
-      "low": [
-        "You're holding back."
-      ],
-      "medium": [
-        "Your restraint is noticeable."
-      ],
-      "high": [
-        "Your restraint serves you well."
-      ],
-      "very_high": [
-        "Your restraint shows wisdom."
-      ]
-    },
-    "patience": {
-      "very_low": [
-        "Time is passing."
-      ],
-      "low": [
-        "Patience is required."
-      ],
-      "medium": [
-        "This calls for patience."
-      ],
-      "high": [
-        "Your patience is being shaped."
-      ],
-      "very_high": [
-        "Great patience is being asked of you."
-      ]
-    },
-    "focus_reminder": {
-      "very_low": [
-        "Stay present."
-      ],
-      "low": [
-        "Keep your focus."
-      ],
-      "medium": [
-        "Focus will matter here."
-      ],
-      "high": [
-        "Your focus needs guarding."
-      ],
-      "very_high": [
-        "This demands your full focus."
-      ]
-    },
-    "discipline": {
-      "very_low": [
-        "Discipline is relevant."
-      ],
-      "low": [
-        "This touches on discipline."
-      ],
-      "medium": [
-        "Discipline will steady this."
-      ],
-      "high": [
-        "Your discipline is essential here."
-      ],
-      "very_high": [
-        "Only discipline will hold this together."
-      ]
-    },
-    "insight": {
-      "very_low": [
-        "There's a small insight here."
-      ],
-      "low": [
-        "Something reveals itself."
-      ],
-      "medium": [
-        "An insight is forming."
-      ],
-      "high": [
-        "This offers real insight."
-      ],
-      "very_high": [
-        "This reveals something profound."
-      ]
-    },
-    "perspective": {
-      "very_low": [
-        "Another angle exists."
-      ],
-      "low": [
-        "Perspective is shifting."
-      ],
-      "medium": [
-        "This widens your perspective."
-      ],
-      "high": [
-        "This brings valuable perspective."
-      ],
-      "very_high": [
-        "This reshapes how you see things."
-      ]
-    },
-    "revelation": {
-      "very_low": [
-        "A hint is emerging."
-      ],
-      "low": [
-        "Something is revealed."
-      ],
-      "medium": [
-        "This reveals more than expected."
-      ],
-      "high": [
-        "This is a meaningful revelation."
-      ],
-      "very_high": [
-        "This is a powerful revelation."
-      ]
-    },
-    "humility": {
-      "very_low": [
-        "Humility is present."
-      ],
-      "low": [
-        "This invites humility."
-      ],
-      "medium": [
-        "Humility will matter here."
-      ],
-      "high": [
-        "This deepens your humility."
-      ],
-      "very_high": [
-        "This is a profound act of humility."
-      ]
-    },
-    "gravity": {
-      "very_low": [
-        "This carries some weight."
-      ],
-      "low": [
-        "This feels serious."
-      ],
-      "medium": [
-        "There is gravity here."
-      ],
-      "high": [
-        "This carries real gravity."
-      ],
-      "very_high": [
-        "The gravity of this cannot be ignored."
-      ]
-    },
-    "consequential_awareness": {
-      "very_low": [
-        "This will matter."
-      ],
-      "low": [
-        "This has consequences."
-      ],
-      "medium": [
-        "This will shape things."
-      ],
-      "high": [
-        "This will have lasting effects."
-      ],
-      "very_high": [
-        "This will echo fa-regular beyond this moment."
-      ]
-    },
-    "threshold": {
-      "very_low": [
-        "You're near a line."
-      ],
-      "low": [
-        "A threshold is close."
-      ],
-      "medium": [
-        "You're approaching a threshold."
-      ],
-      "high": [
-        "You stand at an important threshold."
-      ],
-      "very_high": [
-        "You are crossing a defining threshold."
-      ]
-    },
-    "emergence": {
-      "very_low": [
-        "Something is beginning."
-      ],
-      "low": [
-        "Change is emerging."
-      ],
-      "medium": [
-        "A new shape is forming."
-      ],
-      "high": [
-        "Something new is clearly emerging."
-      ],
-      "very_high": [
-        "A new self is emerging."
-      ]
-    },
-    "transformation_acknowledgment": {
-      "very_low": [
-        "Change is underway."
-      ],
-      "low": [
-        "You're changing."
-      ],
-      "medium": [
-        "This marks transformation."
-      ],
-      "high": [
-        "You are truly transforming."
-      ],
-      "very_high": [
-        "This is a profound transformation."
-      ]
-    },
-    "maturation": {
-      "very_low": [
-        "Growth is visible."
-      ],
-      "low": [
-        "You're maturing."
-      ],
-      "medium": [
-        "This shows maturation."
-      ],
-      "high": [
-        "You've grown noticeably."
-      ],
-      "very_high": [
-        "This reflects deep maturation."
-      ]
-    },
-    "acceptance": {
-      "very_low": [
-        "This is accepted."
-      ],
-      "low": [
-        "I accept this."
-      ],
-      "medium": [
-        "This is something to accept."
-      ],
-      "high": [
-        "I fully accept this."
-      ],
-      "very_high": [
-        "This is accepted without reservation."
-      ]
-    },
-    "deferral": {
-      "very_low": [
-        "Not now."
-      ],
-      "low": [
-        "This can wait."
-      ],
-      "medium": [
-        "This may be deferred."
-      ],
-      "high": [
-        "This is best left for later."
-      ],
-      "very_high": [
-        "This must be set aside for now."
-      ]
-    },
-    "silence": {
-      "very_low": [
-        ""
-      ],
-      "low": [
-        ""
-      ],
-      "medium": [
-        ""
-      ],
-      "high": [
-        ""
-      ],
-      "very_high": [
-        ""
+        "Recenter. Then choose — with clarity."
       ]
     }
   },
-  "mentorId": "miraj"
+  "invitation": {
+    "very_low": [
+      "Sit with this."
+    ],
+    "low": [
+      "Let the Force speak before you answer."
+    ],
+    "medium": [
+      "Examine your intent, not just your desire."
+    ],
+    "high": [
+      "Look beneath the surface of your reaction."
+    ],
+    "very_high": [
+      "Face what is true here — without flinching."
+    ]
+  },
+  "release": {
+    "very_low": [
+      "Release what no longer serves balance."
+    ],
+    "low": [
+      "Let go of what tightens your spirit."
+    ],
+    "medium": [
+      "Attachment distorts perception."
+    ],
+    "high": [
+      "Shed what clouds your clarity."
+    ],
+    "very_high": [
+      "If it binds your judgment, it must be surrendered."
+    ]
+  },
+  "reassessment": {
+    "very_low": [
+      "Look again."
+    ],
+    "low": [
+      "Reconsider without haste."
+    ],
+    "medium": [
+      "Your first reading may not be the truest."
+    ],
+    "high": [
+      "Reevaluate from stillness, not urgency."
+    ],
+    "very_high": [
+      "Strip this down to its essence, then decide."
+    ]
+  },
+  "doubt_recognition": {
+    "very_low": [
+      "There is hesitation."
+    ],
+    "low": [
+      "I feel uncertainty in you."
+    ],
+    "medium": [
+      "Doubt is present — but not yet dominant."
+    ],
+    "high": [
+      "Your doubt asks to be understood, not silenced."
+    ],
+    "very_high": [
+      "If you do not face this doubt, it will shape your choice in secret."
+    ]
+  },
+  "inner_conflict": {
+    "very_low": [
+      "You are divided."
+    ],
+    "low": [
+      "Two impulses move within you."
+    ],
+    "medium": [
+      "One seeks safety. The other seeks growth."
+    ],
+    "high": [
+      "Resolve this before you act."
+    ],
+    "very_high": [
+      "Unresolved conflict will fracture your judgment."
+    ]
+  },
+  "resolve_testing": {
+    "very_low": [
+      "This is a small test."
+    ],
+    "low": [
+      "Your resolve is being examined."
+    ],
+    "medium": [
+      "Pressure clarifies conviction."
+    ],
+    "high": [
+      "This will reveal whether your resolve is rooted or reactive."
+    ],
+    "very_high": [
+      "Endurance without bitterness is the mark of maturity."
+    ]
+  },
+  "uncertainty_acknowledgment": {
+    "very_low": [
+      "Not everything is visible."
+    ],
+    "low": [
+      "The path is partially obscured."
+    ],
+    "medium": [
+      "Clarity has not fully formed."
+    ],
+    "high": [
+      "Move carefully while vision sharpens."
+    ],
+    "very_high": [
+      "Act only when your understanding is whole."
+    ]
+  },
+  "restraint": {
+    "very_low": [
+      "Hold."
+    ],
+    "low": [
+      "Restraint is strength."
+    ],
+    "medium": [
+      "Stillness can be more powerful than motion."
+    ],
+    "high": [
+      "Do not act until the moment aligns."
+    ],
+    "very_high": [
+      "The disciplined pause often prevents greater harm."
+    ]
+  },
+  "patience": {
+    "very_low": [
+      "Allow time."
+    ],
+    "low": [
+      "Let this unfold."
+    ],
+    "medium": [
+      "Growth does not answer to urgency."
+    ],
+    "high": [
+      "Patience shapes perception."
+    ],
+    "very_high": [
+      "When the moment is right, you will know without force."
+    ]
+  },
+  "focus_reminder": {
+    "very_low": [
+      "Remain present."
+    ],
+    "low": [
+      "Return to your center."
+    ],
+    "medium": [
+      "Clarity requires attention."
+    ],
+    "high": [
+      "Guard your awareness."
+    ],
+    "very_high": [
+    "Let your focus be steady — then act without doubt."
+  ]
+},
+"discipline": {
+    "very_low": [
+      "Discipline steadies you."
+    ],
+    "low": [
+      "Without discipline, strength fractures."
+    ],
+    "medium": [
+      "Structure gives power direction."
+    ],
+    "high": [
+      "A Jedi’s discipline protects others from their own excess."
+    ],
+    "very_high": [
+      "Only disciplined strength can act decisively without becoming destructive."
+    ]
+  },
+  "insight": {
+    "very_low": [
+      "A realization surfaces."
+    ],
+    "low": [
+      "You are beginning to see clearly."
+    ],
+    "medium": [
+      "The pattern beneath the moment is visible now."
+    ],
+    "high": [
+      "This understanding will shape how you act next."
+    ],
+    "very_high": [
+      "Clarity such as this changes the course of a life."
+    ]
+  },
+  "perspective": {
+    "very_low": [
+      "Step back."
+    ],
+    "low": [
+      "See the whole field."
+    ],
+    "medium": [
+      "Context restores balance."
+    ],
+    "high": [
+      "When you widen your view, urgency loses its grip."
+    ],
+    "very_high": [
+      "From a higher vantage, even conflict becomes instruction."
+    ]
+  },
+  "revelation": {
+    "very_low": [
+      "Something true has emerged."
+    ],
+    "low": [
+      "The deeper current is visible."
+    ],
+    "medium": [
+      "What was hidden is now understood."
+    ],
+    "high": [
+      "Truth does not shout. It settles."
+    ],
+    "very_high": [
+      "This revelation asks something of you."
+    ]
+  },
+  "humility": {
+    "very_low": [
+      "Remain humble."
+    ],
+    "low": [
+      "Power is not identity."
+    ],
+    "medium": [
+      "Even right action carries risk."
+    ],
+    "high": [
+      "Humility protects you from certainty."
+    ],
+    "very_high": [
+      "Without humility, even justice can become harm."
+    ]
+  },
+  "gravity": {
+    "very_low": [
+      "This matters."
+    ],
+    "low": [
+      "There is weight here."
+    ],
+    "medium": [
+      "This will echo beyond the moment."
+    ],
+    "high": [
+      "Some choices alter more than circumstances."
+    ],
+    "very_high": [
+      "This is the kind of moment that reshapes who you are."
+    ]
+  },
+  "consequential_awareness": {
+    "very_low": [
+      "There will be consequence."
+    ],
+    "low": [
+      "Every action leaves a mark."
+    ],
+    "medium": [
+      "Even necessary action carries cost."
+    ],
+    "high": [
+      "You must be prepared to carry what follows."
+    ],
+    "very_high": [
+      "Decisiveness is not freedom from consequence — it is acceptance of it."
+    ]
+  },
+  "threshold": {
+    "very_low": [
+      "You approach a threshold."
+    ],
+    "low": [
+      "This marks a turning."
+    ],
+    "medium": [
+      "You stand between who you were and who you will be."
+    ],
+    "high": [
+      "Crossing this line will not be undone."
+    ],
+    "very_high": [
+      "Step forward only if you are willing to live with what it makes of you."
+    ]
+  },
+  "emergence": {
+    "very_low": [
+      "Something within you is forming."
+    ],
+    "low": [
+      "You are stabilizing."
+    ],
+    "medium": [
+      "Your strength is integrating."
+    ],
+    "high": [
+      "You are becoming more than reaction."
+    ],
+    "very_high": [
+      "This is the emergence of disciplined power."
+    ]
+  },
+  "transformation_acknowledgment": {
+    "very_low": [
+      "You are changing."
+    ],
+    "low": [
+      "You are not who you were."
+    ],
+    "medium": [
+      "Experience has altered you."
+    ],
+    "high": [
+      "This transformation carries responsibility."
+    ],
+    "very_high": [
+      "You are shaping the kind of Jedi you will become."
+    ]
+  },
+  "maturation": {
+    "very_low": [
+      "Growth is visible."
+    ],
+    "low": [
+      "Your judgment has deepened."
+    ],
+    "medium": [
+      "You respond with more care now."
+    ],
+    "high": [
+      "You act with increasing steadiness."
+    ],
+    "very_high": [
+      "Maturity reveals itself in how you hold power."
+    ]
+  },
+  "acceptance": {
+    "very_low": [
+      "Accept what is."
+    ],
+    "low": [
+      "Reality does not bend to preference."
+    ],
+    "medium": [
+      "Acceptance clarifies your next step."
+    ],
+    "high": [
+      "You must acknowledge what this means."
+    ],
+    "very_high": [
+      "Acceptance is not surrender — it is alignment."
+    ]
+  },
+  "deferral": {
+    "very_low": [
+      "Not yet."
+    ],
+    "low": [
+      "The moment has not matured."
+    ],
+    "medium": [
+      "Action now would be premature."
+    ],
+    "high": [
+      "Wait until clarity settles fully."
+    ],
+    "very_high": [
+      "Timing is as sacred as intention."
+    ]
+  },
+  "silence": {
+    "very_low": [
+      ""
+    ],
+    "low": [
+      ""
+    ],
+    "medium": [
+      ""
+    ],
+    "high": [
+      ""
+    ],
+    "very_high": [
+      ""
+    ]
+  }
 }
