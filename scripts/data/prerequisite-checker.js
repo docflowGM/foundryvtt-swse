@@ -821,16 +821,19 @@ export class PrerequisiteChecker {
                 const isDark = prereq.alignment?.includes('Dark');
                 const isLight = prereq.alignment?.includes('Light');
 
-                // Use DSPEngine to determine Force alignment (jedi/sith/neutral)
-                const institution = DSPEngine.getInstitution(actor);
+                // DSP scale: 0 = light side, DSP > 0 = touched by dark, DSP = WIS = fully dark
+                const dspValue = DSPEngine.getValue(actor);
+                const wisdom = actor.system?.attributes?.wis?.base ?? 10;
 
                 let met = true;
-                if (isDark && institution !== 'sith' && institution !== 'dark') {met = false;}
-                if (isLight && institution !== 'jedi' && institution !== 'light') {met = false;}
+                // Dark side powers require: DSP > 0 (even slightly dark)
+                if (isDark && dspValue === 0) {met = false;}
+                // Light side powers require: DSP = 0 (untouched by dark)
+                if (isLight && dspValue > 0) {met = false;}
 
                 return {
                     met,
-                    message: !met ? `Requires ${prereq.alignment} alignment (your alignment: ${institution})` : ''
+                    message: !met ? `Requires ${prereq.alignment} alignment (your DSP: ${dspValue}/${wisdom})` : ''
                 };
             }
             default:

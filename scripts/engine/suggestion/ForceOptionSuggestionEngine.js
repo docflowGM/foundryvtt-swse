@@ -440,25 +440,28 @@ export class ForceOptionSuggestionEngine {
       return { allowed: true, penalty: 0 };
     }
 
-    // Detect character's Force alignment (via DSPEngine for canonical DSP reading)
+    // Detect character's Force alignment via DSP values
+    // DSP scale: 0 = light side, DSP > 0 = dark side, DSP = WIS = fully dark
     const { DSPEngine } = await import("../darkside/dsp-engine.js").catch(() => ({ DSPEngine: null }));
-    const institution = DSPEngine?.getInstitution(actor) || 'neutral';
-    const isJedi = institution === 'jedi' || actor.items.some(i => i.type === 'class' && i.name.includes('Jedi'));
-    const isSith = institution === 'sith' || actor.items.some(i => i.type === 'class' && i.name.includes('Sith'));
+    const dspValue = DSPEngine?.getValue(actor) ?? 0;
+    const wisdom = actor.system?.attributes?.wis?.base ?? 10;
+
+    const isDark = dspValue > 0;
+    const isLight = dspValue === 0;
 
     // Apply moral checks
-    if (powerData.moralSlant === 'sith_only' && isJedi) {
+    if (powerData.moralSlant === 'sith_only' && isLight) {
       return { allowed: false, penalty: 0 };
     }
-    if (powerData.moralSlant === 'jedi_only' && isSith) {
+    if (powerData.moralSlant === 'jedi_only' && isDark) {
       return { allowed: false, penalty: 0 };
     }
 
     // Soft penalties for philosophical misalignment
-    if (powerData.moralSlant === 'jedi_favored' && isSith) {
+    if (powerData.moralSlant === 'jedi_favored' && isDark) {
       return { allowed: true, penalty: 0.7 };
     }
-    if (powerData.moralSlant === 'sith_favored' && isJedi) {
+    if (powerData.moralSlant === 'sith_favored' && isLight) {
       return { allowed: true, penalty: 0.7 };
     }
 
