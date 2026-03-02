@@ -398,13 +398,14 @@ export class LightsaberConstructionEngine {
       }
 
       // Check Force Sensitivity feat/flag
-      // (Use the authoritative system.forceSensitive flag)
+      // (Use the authoritative system.forceSensitive flag as primary)
       if (actor.system?.forceSensitive !== true) {
-        // Also check for feat by name as fallback
+        // Check for feat by structured ID from uuid-map
+        // Force Sensitivity → 'swse-feat-force-sensitivity'
         const hasForceSensitivity = actor.items?.some(
           item =>
             item.type === "feat" &&
-            (item.name?.includes("Force Sensitivity") ||
+            (item.system?.id === "swse-feat-force-sensitivity" ||
               item.system?.id === "force-sensitivity")
         );
 
@@ -417,12 +418,11 @@ export class LightsaberConstructionEngine {
       }
 
       // Check Weapon Proficiency (Lightsabers)
+      // Weapon Proficiency (Lightsabers) → 'swse-feat-weapon-proficiency-lightsabers'
       const hasLightsaberProficiency = actor.items?.some(
         item =>
           item.type === "feat" &&
-          (item.name?.includes("Lightsaber") ||
-            item.name?.includes("Weapon Proficiency") && item.name?.includes("Lightsaber") ||
-            item.system?.id === "weapon-proficiency-lightsaber")
+          (item.system?.id === "swse-feat-weapon-proficiency-lightsabers")
       );
 
       if (!hasLightsaberProficiency) {
