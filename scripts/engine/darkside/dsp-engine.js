@@ -313,6 +313,42 @@ export const DSPEngine = {
   },
 
   /**
+   * Get Sith Lord minimum DSP requirement
+   * Based on GM house rule setting for prestige class gating
+   * Percentages are calculated from Wisdom score
+   * PURE LOGIC - NO MUTATION
+   *
+   * @param {Actor} actor - The character
+   * @returns {number} Minimum DSP value required for Sith Lord
+   */
+  getSithLordMinimumDSP(actor) {
+    if (!actor) return 0;
+
+    try {
+      const setting = game?.settings?.get('foundryvtt-swse', 'sithLordMinimumDSP') ?? '100percent';
+      const wisdom = actor.system?.attributes?.wis?.base ?? 10;
+
+      switch (setting) {
+        case 'minimum':
+          return 1;
+        case '10percent':
+          return Math.ceil(wisdom * 0.1);
+        case '25percent':
+          return Math.ceil(wisdom * 0.25);
+        case '50percent':
+          return Math.ceil(wisdom * 0.5);
+        case '75percent':
+          return Math.ceil(wisdom * 0.75);
+        case '100percent':
+        default:
+          return wisdom;  // Full wisdom (DSP = Wisdom)
+      }
+    } catch (err) {
+      return 0;  // Safe fallback
+    }
+  },
+
+  /**
    * Get corruption axis interpretation
    * Maps DSP saturation to moral stance interpretation
    * Different for each corruption axis philosophy

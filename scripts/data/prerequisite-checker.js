@@ -505,10 +505,10 @@ export class PrerequisiteChecker {
 
         // Check Dark Side Score
         if (prereqs.darkSideScore) {
-            const darkSideCheck = checkDarkSideScore(actor, prereqs.darkSideScore);
+            const darkSideCheck = checkDarkSideScore(actor, prereqs.darkSideScore, className);
             details.darkSideScore = darkSideCheck;
             if (!darkSideCheck.met) {
-                missing.push(`Dark Side Score must equal Wisdom score (${darkSideCheck.required} needed, you have ${darkSideCheck.actual})`);
+                missing.push(`Dark Side Score must be at least ${darkSideCheck.required} (you have ${darkSideCheck.actual})`);
             }
         }
 
@@ -1933,17 +1933,24 @@ function checkForceTechniques(actor, techniqueReq) {
 /**
  * Check Dark Side Score requirement.
  */
-function checkDarkSideScore(actor, requirement) {
+function checkDarkSideScore(actor, requirement, className = null) {
     if (!actor) {return { met: true };}
 
     const darkSideScore = DSPEngine.getValue(actor);
-    const wisScore = actor.system?.abilities?.wis?.score || 10;
+    let required = actor.system?.attributes?.wis?.base || 10;
 
-    // Requirement: Dark Side Score must equal Wisdom score
+    // Use house rule setting for Sith Apprentice or Sith Lord
+    if (className === 'Sith Apprentice') {
+        required = DSPEngine.getSithApprenticeMinimumDSP(actor);
+    } else if (className === 'Sith Lord') {
+        required = DSPEngine.getSithLordMinimumDSP(actor);
+    }
+
+    // Requirement: Dark Side Score must meet the minimum
     return {
-        met: DSPEngine.meetsThreshold(actor, wisScore),
+        met: DSPEngine.meetsThreshold(actor, required),
         actual: darkSideScore,
-        required: wisScore
+        required: required
     };
 }
 

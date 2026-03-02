@@ -29,11 +29,28 @@ export function registerSystemSettings() {
     type: String,
     choices: {
       "minimum": "At least 1 DSP",
-      "10percent": "10% of Maximum DSP",
-      "25percent": "25% of Maximum DSP",
-      "50percent": "50% of Maximum DSP",
-      "75percent": "75% of Maximum DSP",
-      "100percent": "100% of Maximum DSP (Default - DSP = Wisdom)"
+      "10percent": "10% of Wisdom",
+      "25percent": "25% of Wisdom",
+      "50percent": "50% of Wisdom",
+      "75percent": "75% of Wisdom",
+      "100percent": "100% of Wisdom (Default - DSP = Wisdom)"
+    },
+    default: "100percent"
+  });
+
+  game.settings.register("foundryvtt-swse", "sithLordMinimumDSP", {
+    name: "Sith Lord Minimum DSP Requirement",
+    hint: "Determines the Dark Side Score requirement to qualify for Sith Lord prestige class.",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      "100percent": "100% of Wisdom (Default - DSP = Wisdom, RAW)",
+      "75percent": "75% of Wisdom",
+      "50percent": "50% of Wisdom",
+      "25percent": "25% of Wisdom",
+      "10percent": "10% of Wisdom",
+      "minimum": "At least 1 DSP"
     },
     default: "100percent"
   });
