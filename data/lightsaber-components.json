@@ -1,0 +1,110 @@
+[
+  {
+    "id": "lightsaber-chassis-standard",
+    "name": "Lightsaber (Standard)",
+    "type": "weapon",
+    "category": "chassis",
+    "subtype": "lightsaber",
+    "chassisId": "standard",
+    "constructible": true,
+    "baseBuildDc": 20,
+    "baseCost": 1500,
+    "damage": {
+      "dice": "2d8",
+      "type": "energy"
+    },
+    "source": "Core Rulebook",
+    "description": "A standard lightsaber with a single blade. The fundamental weapon of the Jedi and other Force users."
+  },
+  {
+    "id": "lightsaber-chassis-double",
+    "name": "Lightsaber (Double-Bladed)",
+    "type": "weapon",
+    "category": "chassis",
+    "subtype": "lightsaber",
+    "chassisId": "double",
+    "constructible": true,
+    "baseBuildDc": 20,
+    "baseCost": 3000,
+    "damage": {
+      "dice": "2d8",
+      "type": "energy"
+    },
+    "source": "Core Rulebook",
+    "description": "A double-bladed lightsaber with blades on both ends. Requires specialized training to use effectively."
+  },
+  {
+    "id": "lightsaber-crystal-ilum",
+    "name": "Ilum Crystal",
+    "type": "weaponUpgrade",
+    "category": "crystal",
+    "cost": 0,
+    "upgradeSlots": 1,
+    "rarity": "common",
+    "buildDcModifier": 0,
+    "compatibleChassis": ["standard", "double", "short", "crossguard"],
+    "modifiers": [
+      {
+        "type": "attack",
+        "value": 1,
+        "bonusType": "force"
+      }
+    ],
+    "source": "Core Rulebook",
+    "description": "A Force-attuned crystal from Ilum. Grants a +1 force bonus to attack rolls with the lightsaber."
+  },
+  {
+    "id": "lightsaber-crystal-synthetic",
+    "name": "Synthetic Crystal",
+    "type": "weaponUpgrade",
+    "category": "crystal",
+    "cost": 0,
+    "upgradeSlots": 1,
+    "rarity": "common",
+    "buildDcModifier": 0,
+    "compatibleChassis": ["*"],
+    "modifiers": [
+      {
+        "type": "attack",
+        "value": 1,
+        "bonusType": "force"
+      }
+    ],
+    "source": "Core Rulebook",
+    "description": "An artificially-created Force crystal. Grants a +1 force bonus to attack rolls. Works with any lightsaber chassis."
+  },
+  {
+    "id": "lightsaber-crystal-barab-ingot",
+    "name": "Barab Ingot",
+    "type": "weaponUpgrade",
+    "category": "crystal",
+    "cost": 0,
+    "upgradeSlots": 1,
+    "rarity": "rare",
+    "buildDcModifier": 0,
+    "compatibleChassis": ["*"],
+    "modifiers": [
+      {
+        "type": "attack",
+        "value": 1,
+        "bonusType": "force"
+      }
+    ],
+    "source": "Core Rulebook",
+    "description": "A rare red crystal from Barab I. Grants a +1 force bonus to attack rolls and changes damage type to fire. TODO: Damage type override implementation pending in construction engine."
+  },
+  {
+    "id": "lightsaber-accessory-blade-lock",
+    "name": "Blade Lock",
+    "type": "weaponUpgrade",
+    "category": "accessory",
+    "cost": 0,
+    "upgradeSlots": 0,
+    "rarity": "common",
+    "buildDcModifier": 0,
+    "compatibleChassis": ["*"],
+    "modifiers": [],
+    "source": "Core Rulebook",
+    "description": "A mechanical safety lock for the lightsaber blade. Prevents accidental activation. No mechanical game effect."
+  }
+]
