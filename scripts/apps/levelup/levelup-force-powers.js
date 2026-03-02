@@ -5,6 +5,7 @@
 
 import { SWSELogger } from "../../utils/logger.js";
 import { ForcePowerEngine } from "../../engine/progression/engine/force-power-engine.js";
+import { getClassLevel } from "../../actors/derived/level-split.js";
 
 /**
  * Determine if character gains force powers on this level up
@@ -19,9 +20,7 @@ export function getsForcePowers(actor, selectedFeats = []) {
   const newLevel = actor.system.level + 1;
   if (newLevel === 2) {
     // If this is level 2, they were level 1. Check if they're Jedi
-    const characterClasses = actor.items.filter(i => i.type === 'class');
-    const hasJedi = characterClasses.some(c => c.name === 'Jedi');
-    if (hasJedi) {return true;}
+    if (getClassLevel(actor, 'jedi') > 0) {return true;}
   }
 
   // Check if Force Training is in selected feats
@@ -45,9 +44,7 @@ export async function countForcePowersGained(actor, selectedFeats = []) {
   // Check for Force Sensitivity (level 1 Jedi)
   const newLevel = actor.system.level + 1;
   if (newLevel === 2) {
-    const characterClasses = actor.items.filter(i => i.type === 'class');
-    const hasJedi = characterClasses.some(c => c.name === 'Jedi');
-    if (hasJedi) {count += 1;}
+    if (getClassLevel(actor, 'jedi') > 0) {count += 1;}
   }
 
   // Check for Force Training feat
@@ -93,13 +90,13 @@ export async function getAvailableForcePowers(actor, options = {}) {
     const allPowers = await ForcePowerEngine.collectAvailablePowers();
     if (!allPowers || allPowers.length === 0) {return [];}
 
-    // Check if character has Sith Apprentice or will take it
-    const hasSithApprentice = actor.items.some(i =>
-      i.type === 'class' && (i.name === 'Sith Apprentice' || i.name === 'Sith Lord')
-    );
+    // Check if character has Sith Apprentice or Sith Lord (filters light side powers)
+    const hasSithClass =
+      getClassLevel(actor, 'sith_apprentice') > 0 ||
+      getClassLevel(actor, 'sith_lord') > 0;
 
-    // If Sith Apprentice, filter out Light Side powers
-    if (hasSithApprentice) {
+    // If Sith prestige class, filter out Light Side powers
+    if (hasSithClass) {
       return allPowers.filter(power => {
         const powerDesc = `${power.name || ''} ${power.system?.description || ''} ${power.system?.descriptor || ''}`.toLowerCase();
         return !powerDesc.includes('light side');

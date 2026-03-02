@@ -12,6 +12,7 @@ import { SWSELogger } from "../utils/logger.js";
 import { RollEngine } from "../engine/roll-engine.js";
 import { ActorEngine } from "../governance/actor-engine/actor-engine.js";
 import { createChatMessage, createEffectOnActor, createItemInActor } from "../core/document-api-v13.js";
+import { getClassLevel } from "../actors/derived/level-split.js";
 
 export class DarkSidePowers {
 
@@ -751,14 +752,9 @@ export class DarkSidePowers {
    * Sith talents scale off combined Sith class levels
    */
   static getSithClassLevel(actor) {
-    const sithClasses = actor.items.filter(item =>
-      item.type === 'class' &&
-      (item.name === 'Sith Apprentice' || item.name === 'Sith Lord')
-    );
-
-    const totalSithLevel = sithClasses.reduce((sum, classItem) =>
-      sum + (classItem.system.level || 0), 0
-    );
+    const sithApprenticeLevel = getClassLevel(actor, 'sith_apprentice');
+    const sithLordLevel = getClassLevel(actor, 'sith_lord');
+    const totalSithLevel = sithApprenticeLevel + sithLordLevel;
 
     return Math.max(totalSithLevel, 1); // Minimum 1
   }
@@ -1762,9 +1758,7 @@ export class DarkSidePowers {
     if (!this.hasDarkScourge(actor)) {return 0;}
 
     // Check if target is a Jedi (has Jedi class)
-    const isJedi = targetActor.items.some(item =>
-      item.type === 'class' && item.name === 'Jedi'
-    );
+    const isJedi = getClassLevel(targetActor, 'jedi') > 0;
 
     return isJedi ? 1 : 0;
   }

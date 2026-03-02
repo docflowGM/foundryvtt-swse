@@ -5,6 +5,7 @@ import { ProgressionEngine } from "../../engine/progression/engine/progression-e
  */
 
 import { SWSELogger } from "../../utils/logger.js";
+import { getClassLevel } from "../../actors/derived/level-split.js";
 import { SuggestionService } from "../../engine/suggestion/SuggestionService.js";
 import { warnGM } from "../../utils/warn-gm.js";
 import { getMentorForClass, getMentorGreeting, getLevel1Class, setLevel1Class } from "../../engine/mentor/mentor-dialogues.js";
@@ -421,7 +422,7 @@ export async function applyPrestigeClassFeatures(classDoc, actor) {
   }
 
   // Sith Apprentice/Lord: Remove Light Side descriptor powers
-  if (classDoc.name === 'Sith Apprentice' || classDoc.name === 'Sith Lord') {
+  if (classDoc.system?.classId === 'sith_apprentice' || classDoc.system?.classId === 'sith_lord') {
     const { removeLightSidePowersForSith } = await import('./levelup-force-powers.js');
     const removedPowers = await removeLightSidePowersForSith(actor);
 

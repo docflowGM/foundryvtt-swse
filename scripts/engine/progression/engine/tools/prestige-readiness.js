@@ -4,6 +4,7 @@
  */
 
 import { swseLogger } from "../../../../utils/logger.js";
+import { getClassLevel } from "../../../../actors/derived/level-split.js";
 
 /**
  * Evaluate prestige class readiness for all prestige classes
@@ -102,9 +103,10 @@ function checkClassPrerequisites(classData, actor, options = {}) {
       i.type === 'feat' && i.name.toLowerCase().includes('force sensitivity')
     );
 
-    const isForceSensitiveClass = classItems.some(cl => {
-      return cl.name === 'Jedi' || cl.name === 'Sith' || cl.system.forceSensitive === true;
-    });
+    const isForceSensitiveClass =
+      getClassLevel(actor, 'jedi') > 0 ||
+      getClassLevel(actor, 'sith') > 0 ||
+      classItems.some(cl => cl.system.forceSensitive === true);
 
     if (!hasForceSensitivity && !isForceSensitiveClass) {
       reasons.push('Force Sensitivity required');
