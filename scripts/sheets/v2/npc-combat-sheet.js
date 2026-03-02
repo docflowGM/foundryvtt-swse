@@ -348,11 +348,23 @@ export class SWSEV2CombatNpcSheet extends
     }, 800);
   }
 
-  async _updateObject(event, formData) {
-    const expanded = foundry.utils.expandObject(formData);
+  async _onSubmitForm(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const formData = new FormData(form);
+    const formDataObj = Object.fromEntries(formData.entries());
+    const expanded = foundry.utils.expandObject(formDataObj);
+
     if (!expanded) {return;}
-    // CRITICAL: Include ALL fields (name, system, etc.) not just system.
-    // Passing only { system } strips top-level fields → validation fails with "name: may not be undefined"
-    await ActorEngine.updateActor(this.actor, expanded);
+
+    try {
+      // CRITICAL: Include ALL fields (name, system, etc.) not just system.
+      // Route directly through governance layer to bypass Foundry's actor.update()
+      await ActorEngine.updateActor(this.actor, expanded);
+    } catch (err) {
+      console.error('Sheet submission failed:', err);
+      ui.notifications.error(`Failed to update actor: ${err.message}`);
+    }
   }
 }
