@@ -62,7 +62,7 @@
     <div class="darkside-header">
       <span>Dark Side Corruption</span>
       <span class="darkside-score">
-        {{system.darkSideScore}} / {{darkSideMax}}
+        {{system.darkSide.value}} / {{darkSideMax}}
       </span>
     </div>
 
@@ -77,13 +77,13 @@
     </div>
 
     <div class="darkside-state">
-      {{#if (gte system.darkSideScore darkSideMax)}}
+      {{#if (gte system.darkSide.value darkSideMax)}}
         Fully Corrupted
-      {{else if (gte system.darkSideScore (mult darkSideMax 0.75))}}
+      {{else if (gte system.darkSide.value (mult darkSideMax 0.75))}}
         Heavily Corrupted
-      {{else if (gte system.darkSideScore (mult darkSideMax 0.5))}}
+      {{else if (gte system.darkSide.value (mult darkSideMax 0.5))}}
         Moderately Corrupted
-      {{else if (gt system.darkSideScore 0)}}
+      {{else if (gt system.darkSide.value 0)}}
         Touched by the Dark Side
       {{else}}
         Pure in the Force
