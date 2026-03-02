@@ -72,8 +72,8 @@ export class ForcePointsUtil {
 
     // Increase Dark Side Score if using Dark Side
     if (darkSideUsed) {
-      const currentDarkSide = actor.system.darkSideScore || 0;
-      await globalThis.SWSE?.ActorEngine?.updateActor(actor, { 'system.darkSideScore': currentDarkSide + 1 });
+      const currentDarkSide = actor.system.darkSide?.value || 0;
+      await globalThis.SWSE?.ActorEngine?.updateActor(actor, { 'system.darkSide.value': currentDarkSide + 1 });
     }
 
     return totalBonus;
@@ -196,7 +196,7 @@ export class ForcePointsUtil {
    * @returns {Promise<boolean>} Whether the reduction was successful
    */
   static async reduceDarkSide(actor) {
-    const currentDarkSide = actor.system.darkSideScore || 0;
+    const currentDarkSide = actor.system.darkSide?.value || 0;
 
     if (currentDarkSide === 0) {
       ui.notifications.info('Your Dark Side Score is already 0.');
@@ -217,8 +217,8 @@ export class ForcePointsUtil {
     // Spend the Force Point via ActorEngine
     await globalThis.SWSE?.ActorEngine?.spendForcePoints(actor, 1);
 
-    // Reduce Dark Side Score
-    await globalThis.SWSE?.ActorEngine?.updateActor(actor, { 'system.darkSideScore': currentDarkSide - 1 });
+    // Reduce Dark Side Score in canonical location
+    await globalThis.SWSE?.ActorEngine?.updateActor(actor, { 'system.darkSide.value': currentDarkSide - 1 });
     ui.notifications.info(`Dark Side Score reduced to ${currentDarkSide - 1}`);
     return true;
   }
