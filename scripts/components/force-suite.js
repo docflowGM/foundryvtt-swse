@@ -1,6 +1,8 @@
 import { ForceEnhancementDialog } from "../utils/force-enhancement-dialog.js";
 import { escapeHTML } from "../utils/security-utils.js";
 import { ActorEngine } from "../governance/actor-engine/actor-engine.js";
+import { ForceTrainingEngine } from "../engine/force/ForceTrainingEngine.js";
+import { ForceEnhancementDetector } from "../utils/force-enhancement-detector.js";
 
 /**
  * Force Suite Component (RAW SWSE Accurate)
@@ -250,7 +252,31 @@ export class ForceSuiteComponent {
       await actor.setFlag('foundryvtt-swse', 'pendingFullRegain', true);
     }
 
+    // House rule: Auto-increase Dark Side Score if using [Dark Side] power
+    await this._checkDarkSidePowerIncrease(actor, power);
+
     return this._moveToSpent(actor, id);
+  }
+
+  /**
+   * Check if Dark Side power should auto-increase DSP
+   * @private
+   */
+  static async _checkDarkSidePowerIncrease(actor, power) {
+    // Check if house rule is enabled
+    if (!ForceTrainingEngine.shouldAutoIncreaseDarkSideScore()) {
+      return;
+    }
+
+    // Check if power has dark side descriptor
+    if (!ForceEnhancementDetector._powerHasDescriptor(power, 'dark side')) {
+      return;
+    }
+
+    // Increase DSP by 1
+    const currentDSP = actor.system.darkSide?.value || 0;
+    const newDSP = currentDSP + 1;
+    await ActorEngine.updateActor(actor, { 'system.darkSide.value': newDSP });
   }
 
   static async _regain(actor, id) {

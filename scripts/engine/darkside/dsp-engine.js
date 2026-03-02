@@ -279,6 +279,7 @@ export const DSPEngine = {
   /**
    * Get Sith Apprentice minimum DSP requirement
    * Based on GM house rule setting for prestige class gating
+   * Percentages are calculated from Wisdom score
    * PURE LOGIC - NO MUTATION
    *
    * @param {Actor} actor - The character
@@ -288,23 +289,23 @@ export const DSPEngine = {
     if (!actor) return 0;
 
     try {
-      const setting = game?.settings?.get('foundryvtt-swse', 'sithApprenticeMinimumDSP') ?? 'minimum';
-      const max = this.getMax(actor);
+      const setting = game?.settings?.get('foundryvtt-swse', 'sithApprenticeMinimumDSP') ?? '100percent';
+      const wisdom = actor.system?.attributes?.wis?.base ?? 10;
 
       switch (setting) {
         case 'minimum':
           return 1;
         case '10percent':
-          return Math.ceil(max * 0.1);
+          return Math.ceil(wisdom * 0.1);
         case '25percent':
-          return Math.ceil(max * 0.25);
+          return Math.ceil(wisdom * 0.25);
         case '50percent':
-          return Math.ceil(max * 0.5);
+          return Math.ceil(wisdom * 0.5);
         case '75percent':
-          return Math.ceil(max * 0.75);
+          return Math.ceil(wisdom * 0.75);
         case '100percent':
         default:
-          return max;  // Full max (DSP = Wisdom)
+          return wisdom;  // Full wisdom (DSP = Wisdom)
       }
     } catch (err) {
       return 0;  // Safe fallback
