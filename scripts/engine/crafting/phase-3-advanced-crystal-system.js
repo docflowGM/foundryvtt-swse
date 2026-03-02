@@ -12,6 +12,7 @@
 
 import { SWSELogger as swseLogger } from "../../utils/logger.js";
 import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
+import { LightsaberLightSync } from "../../utils/lightsaber-light-sync.js";
 
 export class Phase3CrystalSystem {
   /**
@@ -62,9 +63,17 @@ export class Phase3CrystalSystem {
         }
       ]);
 
+      // Optional: Cinematic flicker before light turns off
+      if (weapon.flags?.swse?.emitLight === true) {
+        await LightsaberLightSync.flickerTokenLight(actor, 600);
+      } else {
+        // Sync light if not emitting (clean state)
+        await LightsaberLightSync.syncActorTokenLight(actor, weapon);
+      }
+
       // Notify
       ui.notifications.error(
-        `⚠️ ${weapon.name}'s unstable crystal overloads! The weapon deactivates.`
+        `⚠️ ${weapon.name}'s unstable crystal overloads! The blade collapses!`
       );
 
       swseLogger.info(
