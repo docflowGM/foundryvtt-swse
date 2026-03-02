@@ -29,6 +29,8 @@ import { getMentor } from "../../engine/mentor/mentor-json-loader.js";
 import { getEncouragementLine } from "../../dialogue/runtime/getEncouragementLine.js";
 import { getJudgmentOverlay } from "../../dialogue/runtime/getJudgmentOverlay.js";
 import { SWSELogger } from "../../utils/logger.js";
+import { AddressEngine } from "./address-engine.js";
+import { AddressPolicy } from "./address-policy.js";
 
 export class MentorInteractionOrchestrator {
   /**
@@ -137,7 +139,9 @@ export class MentorInteractionOrchestrator {
       mentorData,
       advisoryType,
       intensity,
-      mentorResponse
+      mentorResponse,
+      actor,
+      "selection"
     );
 
     return {
@@ -202,7 +206,9 @@ export class MentorInteractionOrchestrator {
       mentorData,
       advisoryType,
       tier,
-      primaryAdvice
+      primaryAdvice,
+      actor,
+      "reflection"
     );
 
     const payload = {
@@ -306,7 +312,9 @@ export class MentorInteractionOrchestrator {
       mentorData,
       advisoryType,
       tier,
-      primaryAdvice
+      primaryAdvice,
+      actor,
+      "trajectory"
     );
 
     // Build result
@@ -681,15 +689,49 @@ export class MentorInteractionOrchestrator {
   }
 
   /**
-   * Inject judgment overlay into advisory output
+   * Inject judgment overlay and mentor address into advisory output
    * Deterministic prepending of emotional routing judgment
+   * Optional mentor address invocation (nickname/greeting)
    *
    * @private
    */
-  static async _injectJudgmentOverlay(mentorData, advisoryType, tier, advisoryText) {
+  static async _injectJudgmentOverlay(
+    mentorData,
+    advisoryType,
+    tier,
+    advisoryText,
+    actor,
+    mode
+  ) {
     try {
       const overlay = getJudgmentOverlay(mentorData, advisoryType, tier);
-      return `${overlay}\n\n${advisoryText}`;
+      let finalText = `${overlay}\n\n${advisoryText}`;
+
+      // Determine if address should be invoked
+      const policy = AddressPolicy.evaluate({
+        advisoryType,
+        tier,
+        isLevelUp: mode === "selection",
+        isFirstLevelInClass: false, // TODO: derive from actor if needed
+        isTalkInitiated: mode !== "selection"
+      });
+
+      if (policy.shouldInvoke) {
+        const address = AddressEngine.resolve({
+          mentorId: mentorData.mentorId,
+          actorName: actor.name,
+          tier,
+          forceLiteral: policy.forceLiteral
+        });
+
+        if (policy.position === "start") {
+          finalText = `${address.text}. ${finalText}`;
+        } else {
+          finalText = `${finalText}, ${address.text}.`;
+        }
+      }
+
+      return finalText;
     } catch (error) {
       SWSELogger.debug("[MentorInteractionOrchestrator] Judgment overlay error:", error);
       // No overlay on failure—return advisory unchanged
