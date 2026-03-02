@@ -1,0 +1,128 @@
+/* ============================================
+   Miraj Attunement Popup - Holographic Style
+   ============================================ */
+
+.miraj-popup {
+  position: relative;
+  padding: 20px;
+  background: rgba(0, 40, 60, 0.95);
+  border: 2px solid rgba(0, 255, 255, 0.6);
+  box-shadow:
+    0 0 20px rgba(0, 255, 255, 0.5),
+    inset 0 0 20px rgba(0, 200, 255, 0.15);
+  color: #9be7ff;
+  font-family: "Orbitron", sans-serif;
+  letter-spacing: 0.05em;
+}
+
+.miraj-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.miraj-holo {
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(circle, #00ffff, #0088ff);
+  border-radius: 50%;
+  box-shadow: 0 0 16px #00ffff, inset 0 0 8px rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+  animation: miraj-pulse 2s ease-in-out infinite;
+}
+
+@keyframes miraj-pulse {
+  0%, 100% {
+    box-shadow: 0 0 16px #00ffff, inset 0 0 8px rgba(255, 255, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 24px #00ffff, inset 0 0 12px rgba(255, 255, 255, 0.5);
+  }
+}
+
+.miraj-header h2 {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #00ffff;
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+  font-weight: bold;
+}
+
+.miraj-content {
+  margin-bottom: 16px;
+}
+
+.miraj-text {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #a0f0ff;
+}
+
+.miraj-benefit {
+  display: block;
+  margin-top: 8px;
+  font-size: 11px;
+  color: #00ff00;
+  font-style: italic;
+  text-shadow: 0 0 4px rgba(0, 255, 0, 0.4);
+}
+
+.miraj-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.miraj-buttons button {
+  flex: 1;
+  background: rgba(0, 200, 255, 0.15);
+  border: 1px solid #00ccff;
+  color: #00ffff;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-family: "Orbitron", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 8px rgba(0, 200, 255, 0.3);
+}
+
+.miraj-buttons button:hover:not(:disabled) {
+  background: rgba(0, 255, 255, 0.3);
+  border-color: #00ffff;
+  box-shadow:
+    0 0 16px #00ffff,
+    inset 0 0 8px rgba(0, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.miraj-buttons button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.miraj-buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  color: #808080;
+  border-color: #404040;
+  box-shadow: none;
+}
+
+.miraj-buttons button.attune-no {
+  background: rgba(100, 100, 100, 0.15);
+  border-color: #606060;
+  color: #a0a0a0;
+}
+
+.miraj-buttons button.attune-no:hover:not(:disabled) {
+  background: rgba(100, 100, 100, 0.25);
+  border-color: #808080;
+  box-shadow: 0 0 8px rgba(100, 100, 100, 0.3);
+}

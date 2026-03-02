@@ -1,0 +1,27 @@
+<div class="miraj-popup">
+  <div class="miraj-header">
+    <div class="miraj-holo"></div>
+    <h2>Miraj</h2>
+  </div>
+
+  <div class="miraj-content">
+    <p class="miraj-text">
+      The Force flows through your creation...
+      <br><br>
+      Your lightsaber <strong>{{weaponName}}</strong> hums in harmony with your essence.
+      <br><br>
+      Spend 1 Force Point to attune it?
+      <br>
+      <span class="miraj-benefit">(Grants +1 attack bonus when wielded.)</span>
+    </p>
+  </div>
+
+  <div class="miraj-buttons">
+    {{#if hasForcePoint}}
+      <button class="attune-yes">Attune</button>
+      <button class="attune-no">Not Yet</button>
+    {{else}}
+      <button class="attune-no" disabled>Insufficient Force Points</button>
+    {{/if}}
+  </div>
+</div>
