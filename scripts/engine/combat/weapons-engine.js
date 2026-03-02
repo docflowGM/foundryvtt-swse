@@ -200,6 +200,15 @@ export class WeaponsEngine {
             description: 'Flaming weapon'
           }));
         }
+
+        /* ================ LIGHTSABER UPGRADES (Phase 1) ================ */
+
+        // Phase 1: Safe, data-driven crystal modifiers
+        // Type A: Standard modifiers array
+        // Type B: Damage type override
+        // No conditional logic, no hardcoded crystal names
+
+        this.#gatherLightsaberUpgradeModifiers(weapon, actor, modifiers);
       }
 
     } catch (err) {
@@ -209,25 +218,168 @@ export class WeaponsEngine {
     return modifiers;
   }
 
+  /**
+   * Phase 1 Crystal Mechanics
+   * Gather and interpret lightsaber upgrade modifiers
+   *
+   * Supports:
+   * - Type A: Standard modifier objects (flat bonuses)
+   * - Type B: Damage type override
+   *
+   * Does NOT support (Phase 2+):
+   * - Conditional triggers
+   * - Crit-only effects
+   * - Force Point interactions
+   *
+   * @private
+   */
+  static #gatherLightsaberUpgradeModifiers(weapon, actor, modifiers) {
+    // Only process lightsabers with upgrades
+    if (weapon.system?.subtype !== 'lightsaber') return;
+
+    const installedUpgrades = weapon.system?.installedUpgrades ?? [];
+    if (!installedUpgrades.length) return;
+
+    // Gather all upgrade items
+    const upgrades = installedUpgrades
+      .map(id => actor.items?.get(id))
+      .filter(u => u !== undefined && u.type === 'weaponUpgrade');
+
+    for (const upgrade of upgrades) {
+      const lightsaberData = upgrade.system?.lightsaber;
+      if (!lightsaberData) continue;
+
+      // ========== TYPE A: Standard Modifiers ==========
+      // Crystals like Ilum, Synthetic, Sigil use standard modifiers array
+      if (Array.isArray(upgrade.system.modifiers)) {
+        for (const mod of upgrade.system.modifiers) {
+          modifiers.push(createModifier({
+            source: ModifierSource.WEAPON,
+            sourceId: upgrade.id,
+            sourceName: `${weapon.name} (${upgrade.name})`,
+            target: this.#mapModifierTarget(mod.domain),
+            type: mod.bonusType ? this.#mapBonusType(mod.bonusType) : ModifierType.UNTYPED,
+            value: mod.value ?? 0,
+            enabled: true,
+            priority: 55, // Crystal modifiers priority
+            description: `${upgrade.name} modifier`
+          }));
+        }
+      }
+
+      // ========== TYPE B: Damage Type Override ==========
+      // Crystals like Barab Ingot, Firkraan override damage type
+      // Note: Damage type override is handled separately in damage resolution,
+      // not as a modifier. This documents the intent.
+      if (lightsaberData.damageOverride) {
+        // Damage type is applied during roll evaluation, not as a modifier
+        // This is a structural note only.
+      }
+
+      // ========== TYPE B Basic: Damage Bonus ==========
+      // Some crystals may specify direct damage bonus
+      if (lightsaberData.damageBonus && lightsaberData.damageBonus > 0) {
+        modifiers.push(createModifier({
+          source: ModifierSource.WEAPON,
+          sourceId: upgrade.id,
+          sourceName: `${weapon.name} (${upgrade.name})`,
+          target: 'damage.melee',
+          type: ModifierType.UNTYPED,
+          value: lightsaberData.damageBonus,
+          enabled: true,
+          priority: 55,
+          description: `${upgrade.name} damage bonus`
+        }));
+      }
+    }
+  }
+
+  /**
+   * Map modifier domain strings to modifier targets
+   * @private
+   */
+  static #mapModifierTarget(domain) {
+    const domainMap = {
+      'attack': 'attack.bonus',
+      'damage': 'damage.melee',
+      'defense': 'defense.ref',
+      'skill': 'skill.general', // Generic fallback
+      'force': 'force.bonus' // If applicable
+    };
+    return domainMap[domain] ?? 'attack.bonus';
+  }
+
+  /**
+   * Map bonus type strings to ModifierType enum
+   * @private
+   */
+  static #mapBonusType(bonusType) {
+    const typeMap = {
+      'force': ModifierType.FORCE,
+      'enhancement': ModifierType.ENHANCEMENT,
+      'untyped': ModifierType.UNTYPED,
+      'equipment': ModifierType.EQUIPMENT
+    };
+    return typeMap[bonusType] ?? ModifierType.UNTYPED;
+  }
+
   /* ============================================================
      BASE DAMAGE (STRUCTURED)
   ============================================================ */
 
-  static getBaseDamage(weapon) {
+  /**
+   * Get base damage formula and type
+   * Includes lightsaber crystal damage type overrides
+   *
+   * Phase 1: Damage type override from crystals (Barab, Firkraan, etc.)
+   */
+  static getBaseDamage(weapon, actor = null) {
     if (!weapon || weapon.type !== 'weapon') {
       return null;
     }
 
     const dice = weapon.system?.combat?.damage?.dice ?? null;
-    const type = weapon.system?.combat?.damage?.type ?? 'kinetic';
+    let type = weapon.system?.combat?.damage?.type ?? 'kinetic';
 
     if (!dice) return null;
+
+    // ========== LIGHTSABER CRYSTAL DAMAGE OVERRIDE ==========
+    // Phase 1: Check for damage type override from installed upgrades
+    if (weapon.system?.subtype === 'lightsaber' && actor) {
+      const override = this.#resolveDamageTypeOverride(weapon, actor);
+      if (override) {
+        type = override;
+      }
+    }
 
     return {
       dice,
       type,
       expression: dice
     };
+  }
+
+  /**
+   * Resolve damage type override from lightsaber upgrades
+   * Checks installed upgrades for damageOverride field
+   * @private
+   */
+  static #resolveDamageTypeOverride(weapon, actor) {
+    const installedUpgrades = weapon.system?.installedUpgrades ?? [];
+    if (!installedUpgrades.length) return null;
+
+    // Check all installed upgrades for damage override
+    for (const upgradeId of installedUpgrades) {
+      const upgrade = actor.items?.get(upgradeId);
+      if (!upgrade || !upgrade.system?.lightsaber) continue;
+
+      const override = upgrade.system.lightsaber.damageOverride;
+      if (override) {
+        return override; // Return first override found
+      }
+    }
+
+    return null;
   }
 
   /* ============================================================
