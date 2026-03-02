@@ -109,6 +109,10 @@
           "max": 1
         },
         "darkSideScore": 0,
+        "darkSide": {
+          "value": 0,
+          "max": 0
+        },
         "languages": [],
         "starshipManeuverSuite": {
           "max": 0,

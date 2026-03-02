@@ -79,14 +79,45 @@ export const DSPEngine = {
   /**
    * Get maximum DSP capacity for actor
    * Reads from canonical location: system.darkSide.max
+   * Falls back to house rule calculation: wisdom × darkSideMaxMultiplier
    * PURE READ - NO MUTATION
    *
+   * House Rule Integration:
+   * - darkSideMaxMultiplier setting: controls multiplier (default: 1)
+   * - Formula: max = wisdom × multiplier
+   *
    * @param {Actor} actor - The character
-   * @returns {number} Maximum DSP value (default: 10)
+   * @returns {number} Maximum DSP value
    */
   getMax(actor) {
     if (!actor) return DSP_CONFIG.DEFAULT_MAX;
-    return actor.system?.darkSide?.max ?? DSP_CONFIG.DEFAULT_MAX;
+
+    // Check for explicit storage
+    const explicit = actor.system?.darkSide?.max;
+    if (explicit && explicit > 0) {
+      return explicit;
+    }
+
+    // Fall back to house rule calculation
+    const wisdom = actor.system?.attributes?.wis?.base ?? 10;
+    const multiplier = this._getHouseRuleMultiplier();
+    return Math.max(1, wisdom * multiplier);
+  },
+
+  /**
+   * Get darkSideMaxMultiplier house rule setting
+   * PURE READ - NO MUTATION
+   *
+   * @private
+   * @returns {number} Multiplier (default: 1)
+   */
+  _getHouseRuleMultiplier() {
+    try {
+      return game?.settings?.get('foundryvtt-swse', 'darkSideMaxMultiplier') ?? 1;
+    } catch (err) {
+      // Fallback if game not loaded
+      return 1;
+    }
   },
 
   /**
