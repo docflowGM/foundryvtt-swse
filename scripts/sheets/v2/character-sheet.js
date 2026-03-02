@@ -1,5 +1,6 @@
 import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
 import { InventoryEngine } from "../../engine/inventory/InventoryEngine.js";
+import { DSPEngine } from "../../engine/darkside/dsp-engine.js";
 import { CombatRollConfigDialog } from "../../apps/combat/combat-roll-config-dialog.js";
 import { MentorChatDialog } from "../../mentor/mentor-chat-dialog.js";
 import { DropResolutionEngine } from "../../engine/interactions/drop-resolution-engine.js";
@@ -97,6 +98,18 @@ export class SWSEV2CharacterSheet extends
       discard: forcePowers.filter(p => p.system?.discarded)
     };
 
+    // Dark Side Points context (via DSPEngine for house rule support)
+    const dspValue = DSPEngine.getValue(actor);
+    const dspMax = DSPEngine.getMax(actor);
+    const dspSegments = [];
+    for (let i = 1; i <= dspMax; i++) {
+      dspSegments.push({
+        index: i,
+        filled: i <= dspValue,
+        color: i <= dspValue ? '#E74C3C' : '#4A90E2'
+      });
+    }
+
     return {
       ...context,
       biography,
@@ -109,7 +122,9 @@ export class SWSEV2CharacterSheet extends
       combat,
       forceTags,
       forceSuite,
-      lowHand: forceSuite.hand.length > 5
+      lowHand: forceSuite.hand.length > 5,
+      darkSideMax: dspMax,
+      darkSideSegments: dspSegments
     };
   }
 

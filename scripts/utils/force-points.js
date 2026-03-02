@@ -1,6 +1,7 @@
 import { ProgressionEngine } from "../engine/progression/engine/progression-engine.js";
 import { ForcePointsService } from "../engine/force/force-points-service.js";
 import { createChatMessage } from "../core/document-api-v13.js";
+import { DSPEngine } from "../engine/darkside/dsp-engine.js";
 /**
  * Force Points utility functions for rolling and spending Force Points
  */
@@ -71,8 +72,8 @@ export class ForcePointsUtil {
 
     // Increase Dark Side Score if using Dark Side
     if (darkSideUsed) {
-      const currentDarkSide = actor.system.darkSideScore || 0;
-      await globalThis.SWSE?.ActorEngine?.updateActor(actor, { 'system.darkSideScore': currentDarkSide + 1 });
+      const currentDarkSide = actor.system.darkSide?.value || 0;
+      await globalThis.SWSE?.ActorEngine?.updateActor(actor, { 'system.darkSide.value': currentDarkSide + 1 });
     }
 
     return totalBonus;
@@ -89,11 +90,10 @@ export class ForcePointsUtil {
     if (darkSideTemptation === 'narrative') {return false;}
 
     // Check if Dark Side Score <= half Wisdom
-    const darkSideScore = actor.system.darkSideScore || 0;
     const wisdomScore = actor.system.attributes?.wis?.total || 10;
     const halfWisdom = Math.floor(wisdomScore / 2);
 
-    return darkSideScore <= halfWisdom;
+    return DSPEngine.getValue(actor) <= halfWisdom;
   }
 
   /**
@@ -196,7 +196,7 @@ export class ForcePointsUtil {
    * @returns {Promise<boolean>} Whether the reduction was successful
    */
   static async reduceDarkSide(actor) {
-    const currentDarkSide = actor.system.darkSideScore || 0;
+    const currentDarkSide = actor.system.darkSide?.value || 0;
 
     if (currentDarkSide === 0) {
       ui.notifications.info('Your Dark Side Score is already 0.');
@@ -217,8 +217,8 @@ export class ForcePointsUtil {
     // Spend the Force Point via ActorEngine
     await globalThis.SWSE?.ActorEngine?.spendForcePoints(actor, 1);
 
-    // Reduce Dark Side Score
-    await globalThis.SWSE?.ActorEngine?.updateActor(actor, { 'system.darkSideScore': currentDarkSide - 1 });
+    // Reduce Dark Side Score in canonical location
+    await globalThis.SWSE?.ActorEngine?.updateActor(actor, { 'system.darkSide.value': currentDarkSide - 1 });
     ui.notifications.info(`Dark Side Score reduced to ${currentDarkSide - 1}`);
     return true;
   }

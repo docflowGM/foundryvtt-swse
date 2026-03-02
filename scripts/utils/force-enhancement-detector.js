@@ -3,6 +3,8 @@
  * Detects applicable Force Techniques and Force Secrets that can enhance a Force Power
  */
 
+import { DSPEngine } from "../engine/darkside/dsp-engine.js";
+
 export class ForceEnhancementDetector {
 
   /**
@@ -101,10 +103,9 @@ export class ForceEnhancementDetector {
 
       case 'Corrupted Power':
         // Applicable to any power, but requires Dark Side Score >= Wisdom
-        const darkSideScore = actor.system.darkSideScore || 0;
         const wisdom = actor.system.attributes?.wisdom?.score || 10;
         const hasLightSideDescriptor = this._powerHasDescriptor(power, 'light side');
-        return darkSideScore >= wisdom && !hasLightSideDescriptor;
+        return DSPEngine.meetsThreshold(actor, wisdom) && !hasLightSideDescriptor;
 
       case 'Debilitating Power':
         // Applicable to powers that deal damage
@@ -116,9 +117,8 @@ export class ForceEnhancementDetector {
 
       case 'Pure Power':
         // Applicable to any power, but requires no Dark Side Score
-        const actorDarkSide = actor.system.darkSideScore || 0;
         const hasDarkSideDescriptor = this._powerHasDescriptor(power, 'dark side');
-        return actorDarkSide === 0 && !hasDarkSideDescriptor;
+        return DSPEngine.getValue(actor) === 0 && !hasDarkSideDescriptor;
 
       case 'Remote Power':
         // Applicable to powers with Cone, line, or radius that originate from user

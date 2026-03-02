@@ -1,0 +1,114 @@
+<div class="swse-lightsaber-construction">
+  <!-- Live Blade Projection (Cinematic) -->
+  <div class="ls-live-blade" style="--blade-color: {{bladeColorHex}}"></div>
+
+  <!-- Hologram Scanline Overlay -->
+  <div class="ls-scanline-overlay"></div>
+
+  <form class="ls-form flexcol">
+    <!-- Title Section -->
+    <header class="ls-header">
+      <h1>⚔️ Kyber Crystal Assembly</h1>
+      <p class="subtitle">Attune to the Force and construct your lightsaber</p>
+    </header>
+
+    <!-- Panel Grid -->
+    <div class="ls-panels-grid">
+      <!-- CHASSIS SELECTION -->
+      <div class="ls-panel panel-chassis">
+        <h3>Chassis</h3>
+        <div class="ls-options">
+          {{#each chassis}}
+          <div class="ls-option-card" data-chassis-id="{{this.id}}"
+               {{#if (eq this.id ../selectedChassis.id)}}data-selected="true"{{/if}}>
+            <div class="option-name">{{this.name}}</div>
+            <div class="option-stats">
+              <span class="stat-badge">DC {{this.baseBuildDc}}</span>
+              <span class="stat-badge">{{this.baseCost}} cr</span>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+
+      <!-- CRYSTAL SELECTION -->
+      <div class="ls-panel panel-crystal">
+        <h3>Kyber Crystal</h3>
+        <div class="ls-options">
+          {{#each crystals}}
+          <div class="ls-option-card crystal-option" data-crystal-id="{{this.id}}"
+               {{#if (eq this.id ../selectedCrystal.id)}}data-selected="true"{{/if}}>
+            <div class="option-name">{{this.name}}</div>
+            <div class="option-rarity rarity-{{this.rarity}}">{{this.rarity}}</div>
+            <div class="option-stats">
+              <span class="stat-badge">DC {{this.buildDcModifier}}</span>
+              <span class="stat-badge">{{this.cost}} cr</span>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+
+      <!-- BLADE COLOR (HOLOGRAPHIC) -->
+      <div class="ls-panel panel-color">
+        <h3>⚡ Blade Resonance</h3>
+        <p class="color-subtitle">Choose the kyber's harmonic frequency</p>
+        <div class="ls-color-grid">
+          {{#each colorOptions}}
+          <div class="ls-color-cell" data-color="{{this}}"
+               style="--blade-color: {{lookup ../colorMap this}}">
+            <div class="ls-blade-preview"></div>
+            <div class="ls-color-label">{{this}}</div>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+
+      <!-- ACCESSORIES -->
+      <div class="ls-panel panel-accessories">
+        <h3>Enhancements</h3>
+        <div class="ls-options">
+          {{#each accessories}}
+          <div class="ls-option-card accessory-option" data-accessory-id="{{this.id}}">
+            <div class="option-name">{{this.name}}</div>
+            <div class="option-rarity rarity-{{this.rarity}}">{{this.rarity}}</div>
+            <div class="option-stats">
+              <span class="stat-badge">DC {{this.buildDcModifier}}</span>
+              <span class="stat-badge">{{this.cost}} cr</span>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary Section -->
+    <div class="ls-panel panel-summary">
+      <div class="summary-row">
+        <span class="summary-label">Selected Blade</span>
+        <span class="summary-value" style="color: {{bladeColorHex}}">
+          {{selectedBladeColor}}
+        </span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Total Cost</span>
+        <span class="summary-value">
+          {{#if selectedChassis}}
+          {{add selectedChassis.baseCost
+                (or selectedCrystal.cost 0)
+                (sum (map selectedAccessories "cost") 0)}} credits
+          {{else}}
+          — credits
+          {{/if}}
+        </span>
+      </div>
+    </div>
+
+    <!-- Build Button -->
+    <button type="button" class="ls-build-button"
+            {{#unless (and selectedChassis selectedCrystal)}}disabled{{/unless}}>
+      <span class="button-glow"></span>
+      Construct Lightsaber
+    </button>
+  </form>
+</div>

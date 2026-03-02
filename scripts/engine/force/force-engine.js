@@ -54,11 +54,15 @@ export class ForceEngine {
 
   /**
    * Gain Dark Side Point
+   * MUTATES canonical storage location: system.darkSide.value
+   * Routes through ActorEngine for audit log + validation
    */
   static async gainDarkSidePoint(actor, reason = '') {
-    const ds = actor.system.darkSidePoints || {};
-    ds.current = (ds.current || 0) + 1;
+    // Read current value from canonical location
+    const currentValue = actor.system.darkSide?.value || 0;
+    const newValue = currentValue + 1;
 
+    // Audit log
     const log = actor.system.dspLog || [];
     log.push({
       round: game.combat?.round || 0,
@@ -66,12 +70,13 @@ export class ForceEngine {
       timestamp: Date.now()
     });
 
+    // Write to canonical location via ActorEngine
     await ActorEngine.updateActor(actor, {
-      'system.darkSidePoints': ds,
+      'system.darkSide.value': newValue,
       'system.dspLog': log
     });
 
-    return { dspCurrent: ds.current, reason };
+    return { dspCurrent: newValue, reason };
   }
 
   /**

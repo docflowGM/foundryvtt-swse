@@ -1,4 +1,3 @@
-import { DefenseSystem } from '../engine/DefenseSystem.js';
 import { SWSELogger } from "../utils/logger.js";
 import { SWSEActorDataModel } from "../data-models/actor-data-model.js";
 import { warnIfMixedTracks } from "../utils/hardening.js";

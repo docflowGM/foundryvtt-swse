@@ -1,0 +1,221 @@
+/**
+ * MIRAJ ATTUNEMENT UI
+ *
+ * Holographic Jedi AI guide for lightsaber attunement ritual
+ * Color-synced to constructed blade
+ * Architectural bridge between construction & attunement engines
+ */
+
+:root {
+  --selected-blade-color: #00ffff;
+}
+
+/* ========== ROOT CONTAINER ========== */
+
+.miraj-overlay {
+  position: relative;
+  padding: 24px;
+  background: linear-gradient(135deg, rgba(0, 20, 40, 0.98), rgba(10, 10, 30, 0.98));
+  border: 2px solid var(--selected-blade-color);
+  box-shadow:
+    0 0 30px var(--selected-blade-color),
+    inset 0 0 30px rgba(0, 255, 255, 0.1);
+  color: #9be7ff;
+  letter-spacing: 0.05em;
+  overflow: hidden;
+}
+
+/* Scanline Overlay */
+.miraj-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 3px,
+    rgba(255, 255, 255, 0.02) 4px
+  );
+  pointer-events: none;
+  opacity: 0.4;
+  z-index: 0;
+}
+
+/* ========== HOLOGRAPHIC AVATAR ========== */
+
+.miraj-holo-avatar {
+  height: 100px;
+  width: 100px;
+  margin: 0 auto 16px auto;
+  background: radial-gradient(
+    circle at 40% 40%,
+    var(--selected-blade-color),
+    rgba(0, 255, 255, 0.3) 40%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  box-shadow:
+    0 0 20px var(--selected-blade-color),
+    0 0 40px var(--selected-blade-color),
+    inset 0 0 20px rgba(255, 255, 255, 0.2);
+  animation: mirajPulse 3s ease-in-out infinite;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes mirajPulse {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+/* ========== DIALOGUE ========== */
+
+.miraj-dialogue {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.miraj-title {
+  margin: 0 0 12px 0;
+  font-size: 22px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--selected-blade-color);
+  text-shadow: 0 0 16px var(--selected-blade-color);
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.miraj-text {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.miraj-ritual {
+  display: block;
+  margin: 12px 0;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+}
+
+.miraj-cost {
+  display: block;
+  margin-top: 12px;
+  padding: 8px;
+  background: rgba(0, 255, 255, 0.05);
+  border-left: 2px solid var(--selected-blade-color);
+  border-radius: 3px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.miraj-benefit {
+  display: block;
+  margin-top: 4px;
+  font-size: 10px;
+  color: #00ff88;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+}
+
+/* ========== BUTTONS ========== */
+
+.miraj-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.miraj-buttons button {
+  padding: 12px 20px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  min-width: 140px;
+}
+
+/* Primary Attune Button */
+.miraj-button-primary {
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid var(--selected-blade-color);
+  color: var(--selected-blade-color);
+  box-shadow: 0 0 16px var(--selected-blade-color);
+  text-shadow: 0 0 8px var(--selected-blade-color);
+}
+
+.miraj-button-primary:hover:not(:disabled) {
+  background: rgba(0, 255, 255, 0.15);
+  box-shadow:
+    0 0 24px var(--selected-blade-color),
+    inset 0 0 12px rgba(0, 255, 255, 0.2);
+  transform: translateY(-2px) scale(1.02);
+}
+
+.miraj-button-primary:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+.button-glow {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 255, 255, 0.3),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Secondary "Not Yet" Button */
+.miraj-button-secondary {
+  background: rgba(100, 100, 100, 0.15);
+  border: 1px solid rgba(100, 100, 100, 0.5);
+  color: rgba(255, 255, 255, 0.6);
+  box-shadow: none;
+}
+
+.miraj-button-secondary:hover:not(:disabled) {
+  background: rgba(100, 100, 100, 0.25);
+  border-color: rgba(150, 150, 150, 0.7);
+  color: rgba(255, 255, 255, 0.8);
+  transform: translateY(-2px);
+}
+
+.miraj-button-secondary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Disabled State */
+.miraj-buttons button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}

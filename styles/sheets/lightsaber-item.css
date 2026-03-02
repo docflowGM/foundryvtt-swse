@@ -1,0 +1,54 @@
+/**
+ * LIGHTSABER ITEM SHEET STYLING
+ *
+ * Cosmetic enhancements for lightsaber item display
+ * - Blade color reflection
+ * - Light emission toggle styling
+ * - Glow effects
+ */
+
+/* Lightsaber-specific form controls */
+.sheet-item[data-item-type="weapon"] .form-group label .emit-light-toggle {
+  margin-right: 8px;
+}
+
+.sheet-item[data-item-type="weapon"] .emit-light-toggle {
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  accent-color: var(--color-accent);
+}
+
+/* Blade color indicator (when stored) */
+.sheet-item[data-item-type="weapon"].lightsaber-blade {
+  --blade-color: var(--item-blade-color, #00ffff);
+}
+
+/* Panel glow based on lightsaber color */
+.sheet-item[data-item-type="weapon"].lightsaber-blade .form-group {
+  border-left: 3px solid var(--blade-color);
+  padding-left: 8px;
+  transition: 0.2s ease;
+}
+
+.sheet-item[data-item-type="weapon"].lightsaber-blade .form-group:hover {
+  box-shadow: inset 0 0 8px var(--blade-color, transparent);
+}
+
+/* Animation for active light emission */
+.sheet-item .emit-light-toggle:checked + label,
+.emit-light-toggle:checked ~ * {
+  color: var(--blade-color, #00ffff);
+}
+
+/* Glow effect during form interaction */
+.swse-lightsaber-construction::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 150px var(--selected-blade-color, transparent);
+  opacity: 0.08;
+  border-radius: inherit;
+  transition: 0.2s ease;
+}

@@ -17,6 +17,7 @@
 
 import { MentorVoiceFilterV2 } from "../mentor/mentor-voice-filter-v2.js";
 import { SWSELogger } from "../utils/logger.js";
+import { DSPEngine } from "../engine/darkside/dsp-engine.js";
 
 export class MentorDialogueV2Integration {
   /**
@@ -62,15 +63,13 @@ export class MentorDialogueV2Integration {
   static buildAnalysisData(actor, buildIntent, topic) {
     const level = actor.system.level || 1;
     const abilities = actor.system.abilities || {};
-    const dsp = actor.system.darkSidePoints?.value || 0;
-    const dspMax = actor.system.darkSidePoints?.max || 10;
-    const dspSaturation = dspMax > 0 ? dsp / dspMax : 0;
+    const dspSaturation = DSPEngine.getSaturation(actor);
 
     const baseData = {
       level,
       dspSaturation,
-      dsp,
-      dspMax,
+      dsp: DSPEngine.getValue(actor),
+      dspMax: DSPEngine.getMax(actor),
       inferredRole: buildIntent?.inferredRole || 'adventurer',
       primaryThemes: buildIntent?.primaryThemes || [],
       combatStyle: buildIntent?.combatStyle || 'mixed',

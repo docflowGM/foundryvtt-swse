@@ -38,6 +38,24 @@ export function getTotalLevel(actor) {
 }
 
 /**
+ * Get level in a specific class by classId
+ * Uses system.classId (stable identifier), not name-based detection
+ *
+ * @param {Actor} actor - The actor
+ * @param {string} classId - Normalized class ID (e.g., "jedi", "noble", "sith_apprentice")
+ * @returns {number} Level in that class (0 if not present)
+ */
+export function getClassLevel(actor, classId) {
+  if (!actor) return 0;
+
+  const classItem = actor.items.find(i =>
+    i.type === "class" && i.system?.classId === classId
+  );
+
+  return classItem?.system?.level ?? 0;
+}
+
+/**
  * Epic = heroic level progression beyond 20 (planned or current).
  * By policy, epic play is "tolerated" (technical) but not mechanically recommended.
  */

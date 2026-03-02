@@ -2,7 +2,7 @@
  * Minimal Progression UI helpers. Replace Dialog skeletons with Applications/HBS for full UX.
  */
 
-import { ProgressionEngine } from '../../engine/progression-engine.js';
+import { ProgressionEngine } from '../../progression-engine.js';
 import { PROGRESSION_RULES } from "../../engine/progression/data/progression-data.js";
 import { HouseRuleService } from "../../engine/system/HouseRuleService.js";
 

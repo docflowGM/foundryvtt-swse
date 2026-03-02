@@ -5,6 +5,7 @@
 
 import { SWSELogger } from "../../utils/logger.js";
 import { ForcePowerEngine } from "../../engine/progression/engine/force-power-engine.js";
+import { getClassLevel } from "../../actors/derived/level-split.js";
 
 /**
  * Determine if character gains force powers on this level up
@@ -19,9 +20,7 @@ export function getsForcePowers(actor, selectedFeats = []) {
   const newLevel = actor.system.level + 1;
   if (newLevel === 2) {
     // If this is level 2, they were level 1. Check if they're Jedi
-    const characterClasses = actor.items.filter(i => i.type === 'class');
-    const hasJedi = characterClasses.some(c => c.name === 'Jedi');
-    if (hasJedi) {return true;}
+    if (getClassLevel(actor, 'jedi') > 0) {return true;}
   }
 
   // Check if Force Training is in selected feats
@@ -45,9 +44,7 @@ export async function countForcePowersGained(actor, selectedFeats = []) {
   // Check for Force Sensitivity (level 1 Jedi)
   const newLevel = actor.system.level + 1;
   if (newLevel === 2) {
-    const characterClasses = actor.items.filter(i => i.type === 'class');
-    const hasJedi = characterClasses.some(c => c.name === 'Jedi');
-    if (hasJedi) {count += 1;}
+    if (getClassLevel(actor, 'jedi') > 0) {count += 1;}
   }
 
   // Check for Force Training feat
@@ -83,6 +80,37 @@ export async function loadForcePowers() {
 }
 
 /**
+ * Get available force powers for selection, filtered by prestige class restrictions
+ * @param {Actor} actor - The character
+ * @param {Object} options - Options object
+ * @returns {Promise<Array>} Array of available force power objects
+ */
+export async function getAvailableForcePowers(actor, options = {}) {
+  try {
+    const allPowers = await ForcePowerEngine.collectAvailablePowers();
+    if (!allPowers || allPowers.length === 0) {return [];}
+
+    // Check if character has Sith Apprentice or Sith Lord (filters light side powers)
+    const hasSithClass =
+      getClassLevel(actor, 'sith_apprentice') > 0 ||
+      getClassLevel(actor, 'sith_lord') > 0;
+
+    // If Sith prestige class, filter out Light Side powers
+    if (hasSithClass) {
+      return allPowers.filter(power => {
+        const powerDesc = `${power.name || ''} ${power.system?.description || ''} ${power.system?.descriptor || ''}`.toLowerCase();
+        return !powerDesc.includes('light side');
+      });
+    }
+
+    return allPowers;
+  } catch (err) {
+    SWSELogger.error('SWSE LevelUp | Failed to get available force powers:', err);
+    return [];
+  }
+}
+
+/**
  * Select a force power
  * @param {string} powerId - The power ID/name to select
  * @param {Array} availablePowers - List of available powers
@@ -104,3 +132,36 @@ export function selectForcePower(powerId, availablePowers, selectedPowers = []) 
     return powersWithoutThis;
   }
 }
+
+/**
+ * Remove Light Side descriptor powers from actor when taking Sith prestige class
+ * Called for both Sith Apprentice and Sith Lord
+ * @param {Actor} actor - The character
+ * @returns {Promise<Array>} Array of removed power IDs
+ */
+export async function removeLightSidePowersForSith(actor) {
+  if (!actor?.items) {return [];}
+
+  const lightSidePowers = actor.items.filter(item => {
+    if (item.type !== 'forcepower') {return false;}
+
+    const powerDesc = `${item.name || ''} ${item.system?.description || ''} ${item.system?.descriptor || ''}`.toLowerCase();
+    return powerDesc.includes('light side');
+  });
+
+  if (lightSidePowers.length === 0) {return [];}
+
+  // Remove the light side powers
+  const removedIds = lightSidePowers.map(p => p.id);
+  await actor.deleteEmbeddedDocuments('Item', removedIds);
+
+  SWSELogger.log(`SWSE LevelUp | Removed ${removedIds.length} Light Side powers for Sith prestige class:`, lightSidePowers.map(p => p.name));
+
+  return removedIds;
+}
+
+/**
+ * Backward compatibility export
+ * @deprecated Use removeLightSidePowersForSith instead
+ */
+export const removeLightSidePowersForSithApprentice = removeLightSidePowersForSith;

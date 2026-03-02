@@ -81,5 +81,32 @@ export const mathHelpers = {
 
     const formatted = num.toFixed(decimals);
     return sign && num >= 0 ? `+${formatted}` : formatted;
+  },
+
+  /**
+   * Sum an array of values, optionally extracting a property.
+   * Usage: {{sum items}} or {{sum items "cost"}}
+   */
+  sum: (array, property, defaultValue = 0) => {
+    if (!Array.isArray(array)) {
+      return Number(defaultValue ?? 0);
+    }
+
+    // If property is provided, sum that property; otherwise sum values directly
+    return array.reduce((total, item) => {
+      const value = property ? Number(item?.[property] ?? 0) : Number(item ?? 0);
+      return total + value;
+    }, 0);
+  },
+
+  /**
+   * Map over an array and extract a property.
+   * Usage: {{#each (map items "cost")}}{{this}}{{/each}}
+   */
+  map: (array, property) => {
+    if (!Array.isArray(array)) {
+      return [];
+    }
+    return array.map(item => item?.[property]);
   }
 };

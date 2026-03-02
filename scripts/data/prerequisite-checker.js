@@ -2,6 +2,8 @@
 // FILE: scripts/data/prerequisite-checker.js
 // UNIFIED Prerequisite Validator (v3)
 // ============================================
+
+import { DSPEngine } from "../engine/darkside/dsp-engine.js";
 //
 // THE CANONICAL PREREQUISITE ENGINE
 // This is the ONLY place in the system that answers "is this legal?"
@@ -503,10 +505,10 @@ export class PrerequisiteChecker {
 
         // Check Dark Side Score
         if (prereqs.darkSideScore) {
-            const darkSideCheck = checkDarkSideScore(actor, prereqs.darkSideScore);
+            const darkSideCheck = checkDarkSideScore(actor, prereqs.darkSideScore, className);
             details.darkSideScore = darkSideCheck;
             if (!darkSideCheck.met) {
-                missing.push(`Dark Side Score must equal Wisdom score (${darkSideCheck.required} needed, you have ${darkSideCheck.actual})`);
+                missing.push(`Dark Side Score must be at least ${darkSideCheck.required} (you have ${darkSideCheck.actual})`);
             }
         }
 
@@ -816,18 +818,22 @@ export class PrerequisiteChecker {
                 };
             }
             case 'alignment': {
-                const lightSide = actor.system?.force?.lightSideScore ?? 0;
-                const darkSide = actor.system?.force?.darkSideScore ?? 0;
                 const isDark = prereq.alignment?.includes('Dark');
                 const isLight = prereq.alignment?.includes('Light');
 
+                // DSP scale: 0 = light side, DSP > 0 = touched by dark, DSP = WIS = fully dark
+                const dspValue = DSPEngine.getValue(actor);
+                const wisdom = actor.system?.attributes?.wis?.base ?? 10;
+
                 let met = true;
-                if (isDark && lightSide > darkSide) {met = false;}
-                if (isLight && darkSide > lightSide) {met = false;}
+                // Dark side powers require: DSP > 0 (even slightly dark)
+                if (isDark && dspValue === 0) {met = false;}
+                // Light side powers require: DSP = 0 (untouched by dark)
+                if (isLight && dspValue > 0) {met = false;}
 
                 return {
                     met,
-                    message: !met ? `Requires ${prereq.alignment} alignment` : ''
+                    message: !met ? `Requires ${prereq.alignment} alignment (your DSP: ${dspValue}/${wisdom})` : ''
                 };
             }
             default:
@@ -982,9 +988,9 @@ export class PrerequisiteChecker {
     }
 
     static _checkDarkSideCondition(prereq, actor, pending) {
-        const darkSide = actor.system?.force?.darkSideScore ?? 0;
         const required = prereq.minimum ?? 0;
-        const met = darkSide >= required;
+        const darkSide = DSPEngine.getValue(actor);
+        const met = DSPEngine.meetsThreshold(actor, required);
         return {
             met,
             message: !met ? `Requires Dark Side Score ${required} (you have ${darkSide})` : ''
@@ -1059,12 +1065,14 @@ export class PrerequisiteChecker {
     }
 
     static _checkDarkSideDynamicCondition(prereq, actor, pending) {
-        const darkSide = actor.system?.force?.darkSideScore ?? 0;
-        const wisdom = actor.system?.attributes?.wis?.total ?? 10;
-        const met = darkSide >= wisdom;
+        // Use GM house rule for Sith Apprentice minimum DSP requirement
+        const minDSP = DSPEngine.getSithApprenticeMinimumDSP(actor);
+        const currentDSP = DSPEngine.getValue(actor);
+        const met = DSPEngine.meetsThreshold(actor, minDSP);
+
         return {
             met,
-            message: !met ? `Dark Side Score must be at least Wisdom (${wisdom})` : ''
+            message: !met ? `Dark Side Score must be at least ${minDSP} (you have ${currentDSP})` : ''
         };
     }
 
@@ -1925,17 +1933,24 @@ function checkForceTechniques(actor, techniqueReq) {
 /**
  * Check Dark Side Score requirement.
  */
-function checkDarkSideScore(actor, requirement) {
+function checkDarkSideScore(actor, requirement, className = null) {
     if (!actor) {return { met: true };}
 
-    const darkSideScore = actor.system?.darkSideScore || actor.system?.darksideScore || 0;
-    const wisScore = actor.system?.abilities?.wis?.score || 10;
+    const darkSideScore = DSPEngine.getValue(actor);
+    let required = actor.system?.attributes?.wis?.base || 10;
 
-    // Requirement: Dark Side Score must equal Wisdom score
+    // Use house rule setting for Sith Apprentice or Sith Lord
+    if (className === 'Sith Apprentice') {
+        required = DSPEngine.getSithApprenticeMinimumDSP(actor);
+    } else if (className === 'Sith Lord') {
+        required = DSPEngine.getSithLordMinimumDSP(actor);
+    }
+
+    // Requirement: Dark Side Score must meet the minimum
     return {
-        met: darkSideScore >= wisScore,
+        met: DSPEngine.meetsThreshold(actor, required),
         actual: darkSideScore,
-        required: wisScore
+        required: required
     };
 }
 

@@ -2503,7 +2503,7 @@ export class TalentEffectEngine {
     }
 
     // --- Compute DSP change ---
-    const currentDSP = sourceActor.system.darkSideScore ?? 0;
+    const currentDSP = sourceActor.system.darkSide?.value ?? 0;
     const newDSP = currentDSP + 1;
 
     // --- Build talisman info ---
@@ -2534,7 +2534,7 @@ export class TalentEffectEngine {
       actorId: sourceActor.id,
       type: "update",
       data: {
-        "system.darkSideScore": newDSP
+        "system.darkSide.value": newDSP
       }
     });
 

@@ -9,6 +9,7 @@
 
 import { SWSEUpgradeApp } from "../apps/upgrade-app.js";
 import { SWSELogger } from "../utils/logger.js";
+import { BLADE_COLOR_MAP } from "../data/blade-colors.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ItemSheetV2 } = foundry.applications.sheets;
@@ -92,6 +93,9 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     // Shield activation helpers (data-only intent -> actor API)
     root.querySelector('.activate-shield')?.addEventListener('click', this.#onActivateShield.bind(this));
     root.querySelector('.deactivate-shield')?.addEventListener('click', this.#onDeactivateShield.bind(this));
+
+    // Lightsaber emit light toggle
+    root.querySelector('.emit-light-toggle')?.addEventListener('change', this.#onEmitLightToggle.bind(this));
   }
 
   async #onActivateShield(event) {
@@ -142,6 +146,57 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
 
     if (actor?.updateOwnedItem && this.item?.isEmbedded) {await actor.updateOwnedItem(this.item, updates);} else {await this.item.update(updates);}
     ui.notifications.info(`${this.item.name} deactivated!`);
+  }
+
+  async #onEmitLightToggle(event) {
+    event.preventDefault();
+
+    const enabled = event.currentTarget.checked;
+    const actor = this.item?.actor;
+
+    // Update item flag
+    if (actor?.updateOwnedItem && this.item?.isEmbedded) {
+      await actor.updateOwnedItem(this.item, { 'flags.swse.emitLight': enabled });
+    } else {
+      await this.item.update({ 'flags.swse.emitLight': enabled });
+    }
+
+    // Update token light if actor is on canvas
+    const tokens = actor?.getActiveTokens?.() || [];
+    if (tokens.length === 0) return;
+
+    const token = tokens[0];
+    if (!token?.document) return;
+
+    if (enabled) {
+      const bladeColor = this.item.flags.swse?.bladeColor;
+      const hex = BLADE_COLOR_MAP[bladeColor] ?? "#00ffff";
+
+      await token.document.update({
+        light: {
+          dim: 20,
+          bright: 10,
+          color: hex,
+          alpha: 0.3,
+          animation: {
+            type: "pulse",
+            speed: 3,
+            intensity: 2
+          }
+        }
+      });
+
+      ui.notifications.info(`${this.item.name} blade light activated!`);
+    } else {
+      await token.document.update({
+        light: {
+          dim: 0,
+          bright: 0
+        }
+      });
+
+      ui.notifications.info(`${this.item.name} blade light deactivated!`);
+    }
   }
 
   /**

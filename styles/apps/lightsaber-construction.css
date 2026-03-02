@@ -1,0 +1,420 @@
+/**
+ * LIGHTSABER CONSTRUCTION UI
+ *
+ * Cinematic holographic builder experience
+ * - Holographic energy rod color selector
+ * - Live blade beam projection
+ * - Color-reactive panels
+ * - Resonance animations
+ *
+ * Pure cosmetic. No combat math.
+ */
+
+:root {
+  --selected-blade-color: #00ffff;
+  --ls-panel-border: 1px solid rgba(0, 255, 255, 0.3);
+  --ls-panel-glow: 0 0 12px rgba(0, 255, 255, 0.2);
+}
+
+/* ========== ROOT CONTAINER ========== */
+
+.swse-lightsaber-construction {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(0, 20, 40, 0.95), rgba(10, 10, 30, 0.95));
+}
+
+/* Live Blade Projection (Center Screen) */
+.ls-live-blade {
+  position: absolute;
+  top: 8%;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 320px;
+  width: 12px;
+  background: var(--selected-blade-color);
+  box-shadow:
+    0 0 20px var(--selected-blade-color),
+    0 0 60px var(--selected-blade-color),
+    0 0 120px var(--selected-blade-color),
+    inset 0 0 20px rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  opacity: 0.25;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  animation: bladeFlicker 2s infinite ease-in-out;
+  z-index: 1;
+}
+
+.ls-live-blade.resonating {
+  animation: resonancePulse 0.6s ease-out, bladeFlicker 2s infinite ease-in-out;
+}
+
+/* Hologram Scanline Overlay */
+.ls-scanline-overlay {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 3px,
+    rgba(255, 255, 255, 0.02) 4px
+  );
+  pointer-events: none;
+  opacity: 0.4;
+  z-index: 0;
+}
+
+/* ========== FORM STRUCTURE ========== */
+
+.ls-form {
+  padding: 20px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Header */
+.ls-header {
+  text-align: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--selected-blade-color);
+  transition: border-color 0.2s ease;
+}
+
+.ls-header h1 {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--selected-blade-color);
+  text-shadow: 0 0 20px var(--selected-blade-color);
+  margin: 0 0 8px 0;
+  transition: all 0.2s ease;
+}
+
+.ls-header .subtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+  margin: 0;
+}
+
+/* ========== PANELS ========== */
+
+.ls-panel {
+  background: rgba(0, 0, 0, 0.3);
+  border: var(--ls-panel-border);
+  border-color: var(--selected-blade-color);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--ls-panel-glow), inset 0 0 8px rgba(0, 255, 255, 0.05);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.ls-panel h3 {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--selected-blade-color);
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 10px var(--selected-blade-color);
+  transition: all 0.2s ease;
+}
+
+.ls-panel:hover {
+  border-color: var(--selected-blade-color);
+  box-shadow: 0 0 20px var(--selected-blade-color), inset 0 0 12px rgba(0, 255, 255, 0.1);
+}
+
+/* Panel Grid */
+.ls-panels-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 1200px) {
+  .ls-panels-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ========== OPTIONS DISPLAY ========== */
+
+.ls-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.ls-option-card {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ls-option-card:hover {
+  border-color: var(--selected-blade-color);
+  box-shadow: 0 0 12px var(--selected-blade-color);
+  transform: translateX(4px);
+}
+
+.ls-option-card[data-selected="true"] {
+  background: rgba(0, 255, 255, 0.1);
+  border-color: var(--selected-blade-color);
+  box-shadow: 0 0 16px var(--selected-blade-color), inset 0 0 8px rgba(0, 255, 255, 0.1);
+}
+
+.option-name {
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 4px;
+}
+
+.option-rarity {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.option-rarity.rarity-common {
+  background: rgba(100, 100, 100, 0.3);
+  color: rgba(200, 200, 200, 0.8);
+}
+
+.option-rarity.rarity-rare {
+  background: rgba(255, 215, 0, 0.2);
+  color: #ffd700;
+}
+
+.option-stats {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.stat-badge {
+  font-size: 11px;
+  background: rgba(0, 255, 255, 0.15);
+  color: rgba(0, 255, 255, 0.9);
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+}
+
+/* ========== HOLOGRAPHIC COLOR SELECTOR ========== */
+
+.panel-color {
+  grid-column: 1 / -1;
+}
+
+.color-subtitle {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: -8px 0 12px 0;
+  font-style: italic;
+}
+
+.ls-color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  gap: 12px;
+}
+
+.ls-color-cell {
+  cursor: pointer;
+  text-align: center;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(100, 100, 100, 0.3);
+}
+
+.ls-color-cell:hover {
+  transform: translateY(-4px);
+  border-color: var(--blade-color);
+  box-shadow: 0 0 16px var(--blade-color);
+}
+
+/* Energy Rod Blade Preview */
+.ls-blade-preview {
+  height: 50px;
+  width: 6px;
+  margin: 0 auto 8px auto;
+  background: var(--blade-color);
+  box-shadow:
+    0 0 8px var(--blade-color),
+    0 0 18px var(--blade-color),
+    0 0 30px var(--blade-color);
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  animation: bladeFlicker 2s infinite ease-in-out;
+}
+
+.ls-color-cell:hover .ls-blade-preview {
+  transform: scaleY(1.1);
+  box-shadow:
+    0 0 12px var(--blade-color),
+    0 0 24px var(--blade-color),
+    0 0 40px var(--blade-color);
+}
+
+.ls-color-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--blade-color);
+  font-weight: 600;
+  text-shadow: 0 0 8px var(--blade-color);
+  transition: all 0.2s ease;
+}
+
+/* Selected Color Cell */
+.ls-color-cell.selected {
+  background: rgba(0, 255, 255, 0.1);
+  border: 2px solid var(--blade-color);
+  box-shadow:
+    0 0 16px var(--blade-color),
+    inset 0 0 8px rgba(0, 255, 255, 0.1);
+}
+
+.ls-color-cell.selected .ls-blade-preview {
+  transform: scaleY(1.15);
+  box-shadow:
+    0 0 16px var(--blade-color),
+    0 0 32px var(--blade-color),
+    0 0 48px var(--blade-color);
+}
+
+/* ========== SUMMARY ========== */
+
+.panel-summary {
+  background: rgba(0, 255, 255, 0.05);
+  display: flex;
+  justify-content: space-around;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.summary-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+}
+
+.summary-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.summary-value {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--selected-blade-color);
+  text-shadow: 0 0 10px var(--selected-blade-color);
+}
+
+/* ========== BUILD BUTTON ========== */
+
+.ls-build-button {
+  width: 100%;
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--selected-blade-color);
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid var(--selected-blade-color);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 20px var(--selected-blade-color);
+  text-shadow: 0 0 8px var(--selected-blade-color);
+}
+
+.ls-build-button:hover:not(:disabled) {
+  background: rgba(0, 255, 255, 0.15);
+  box-shadow:
+    0 0 30px var(--selected-blade-color),
+    inset 0 0 20px rgba(0, 255, 255, 0.2);
+  transform: scale(1.02);
+}
+
+.ls-build-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.ls-build-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.button-glow {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 255, 255, 0.3),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+/* ========== ANIMATIONS ========== */
+
+@keyframes bladeFlicker {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 1; }
+}
+
+@keyframes resonancePulse {
+  0% { transform: scaleY(1); }
+  50% { transform: scaleY(1.15); }
+  100% { transform: scaleY(1); }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ========== SCROLLBAR STYLING ========== */
+
+.ls-options::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ls-options::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.ls-options::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.ls-options::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 255, 0.5);
+}

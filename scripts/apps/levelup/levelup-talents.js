@@ -9,6 +9,7 @@
 
 import { SWSELogger } from "../../utils/logger.js";
 import { warnGM } from "../../utils/warn-gm.js";
+import { DSPEngine } from "../../engine/darkside/dsp-engine.js";
 import { TalentTreeVisualizer } from "../../apps/talent-tree-visualizer.js";
 import { getClassLevel, getCharacterClasses } from "../../apps/levelup/levelup-shared.js";
 import { checkTalentPrerequisites } from "../../apps/levelup/levelup-validation.js";
@@ -155,8 +156,7 @@ export async function getAvailableTalentTrees(selectedClass, actor) {
   // -----------------------------------------------------------
 
   // Dark Side talent tree requires DSP > 0
-  const darkSideScore = actor?.system?.darkSideScore || 0;
-  if (darkSideScore === 0) {
+  if (DSPEngine.getValue(actor) === 0) {
     availableTrees = availableTrees.filter(tree => tree !== 'Dark Side');
   }
 

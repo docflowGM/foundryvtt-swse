@@ -1,5 +1,5 @@
 import { SWSELogger } from "../utils/logger.js";
-import { ForceTrainingEngine } from "../engine/Force/ForceTrainingEngine.js";
+import { ForceTrainingEngine } from "../engine/force/ForceTrainingEngine.js";
 
 /**
  * Force Power Management System
