@@ -155,6 +155,14 @@
  <label>Cost (credits)</label>
  <input name="system.cost" type="number" value="{{system.cost}}" data-dtype="Number" />
  </div>
+ {{#if (eq system.subtype "lightsaber")}}
+ <div class="form-group">
+ <label>
+ <input type="checkbox" class="emit-light-toggle" {{#if (or item.flags.swse.emitLight item.flags.swse.emitLight)}}checked{{/if}} />
+ Emit Blade Light
+ </label>
+ </div>
+ {{/if}}
  {{/if}}
 
  <!-- Armor -->

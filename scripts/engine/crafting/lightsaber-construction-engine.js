@@ -105,7 +105,7 @@ export class LightsaberConstructionEngine {
    * 8. On success: atomic mutation (deduct credits, create item, inject metadata)
    *
    * @param {Actor} actor - Actor attempting construction
-   * @param {Object} config - { chassisItemId, crystalItemId, accessoryItemIds: [] }
+   * @param {Object} config - { chassisItemId, crystalItemId, accessoryItemIds: [], bladeColor?: string }
    * @returns {Promise<Object>} { success, reason?, itemId?, finalDc?, rollTotal?, modifier? }
    */
   static async attemptConstruction(actor, config) {
@@ -238,7 +238,8 @@ export class LightsaberConstructionEngine {
           crystal,
           accessories,
           actor.id,
-          game.time.worldTime
+          game.time.worldTime,
+          config.bladeColor
         );
 
         const created = await ActorEngine.createEmbeddedDocuments(actor, "Item", [newWeapon]);
@@ -284,7 +285,7 @@ export class LightsaberConstructionEngine {
    * Injects builder metadata
    * @private
    */
-  static #createBuiltLightsaber(chassis, crystal, accessories, builderId, builtAt) {
+  static #createBuiltLightsaber(chassis, crystal, accessories, builderId, builtAt, bladeColor = null) {
     // Clone chassis as base
     const baseData = chassis.toObject();
 
@@ -324,7 +325,8 @@ export class LightsaberConstructionEngine {
           ...(baseData.flags?.swse || {}),
           builtBy: builderId,
           builtAt: builtAt,
-          attunedBy: null
+          attunedBy: null,
+          bladeColor: bladeColor || "blue"
         }
       }
     };

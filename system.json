@@ -56,6 +56,7 @@
     "styles/sheets/unified-sheets.css",
     "styles/sheets/v2-sheet.css",
     "styles/sheets/inventory.css",
+    "styles/sheets/lightsaber-item.css",
     "styles/sheets/npc-combat-sheet.css",
     "styles/components/talent-abilities.css",
     "styles/components/panels.css",
