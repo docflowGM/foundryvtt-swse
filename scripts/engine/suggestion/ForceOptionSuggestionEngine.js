@@ -440,11 +440,11 @@ export class ForceOptionSuggestionEngine {
       return { allowed: true, penalty: 0 };
     }
 
-    // Detect character's Force alignment
-    const darkSideScore = actor.system?.force?.darkSideScore || 0;
-    const lightSideScore = actor.system?.force?.lightSideScore || 0;
-    const isJedi = actor.items.some(i => i.type === 'class' && i.name.includes('Jedi'));
-    const isSith = actor.items.some(i => i.type === 'class' && i.name.includes('Sith'));
+    // Detect character's Force alignment (via DSPEngine for canonical DSP reading)
+    const { DSPEngine } = await import("../darkside/dsp-engine.js").catch(() => ({ DSPEngine: null }));
+    const institution = DSPEngine?.getInstitution(actor) || 'neutral';
+    const isJedi = institution === 'jedi' || actor.items.some(i => i.type === 'class' && i.name.includes('Jedi'));
+    const isSith = institution === 'sith' || actor.items.some(i => i.type === 'class' && i.name.includes('Sith'));
 
     // Apply moral checks
     if (powerData.moralSlant === 'sith_only' && isJedi) {

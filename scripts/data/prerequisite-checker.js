@@ -818,18 +818,19 @@ export class PrerequisiteChecker {
                 };
             }
             case 'alignment': {
-                const lightSide = actor.system?.force?.lightSideScore ?? 0;
-                const darkSide = actor.system?.force?.darkSideScore ?? 0;
                 const isDark = prereq.alignment?.includes('Dark');
                 const isLight = prereq.alignment?.includes('Light');
 
+                // Use DSPEngine to determine Force alignment (jedi/sith/neutral)
+                const institution = DSPEngine.getInstitution(actor);
+
                 let met = true;
-                if (isDark && lightSide > darkSide) {met = false;}
-                if (isLight && darkSide > lightSide) {met = false;}
+                if (isDark && institution !== 'sith' && institution !== 'dark') {met = false;}
+                if (isLight && institution !== 'jedi' && institution !== 'light') {met = false;}
 
                 return {
                     met,
-                    message: !met ? `Requires ${prereq.alignment} alignment` : ''
+                    message: !met ? `Requires ${prereq.alignment} alignment (your alignment: ${institution})` : ''
                 };
             }
             default:
