@@ -1,62 +1,105 @@
 /**
  * Miraj Attunement Dialog
+ *
  * Holographic AI guide for lightsaber attunement
  * Displayed immediately after successful construction
+ *
+ * Orchestration layer:
+ * - UI renders decision point
+ * - Routes to WeaponsEngine for attunement
+ * - No cross-engine calls
+ * - No duplicate eligibility checks
  */
 
 import { WeaponsEngine } from "../../engine/combat/weapons-engine.js";
+import { SWSELogger } from "../../core/logger.js";
 
-export class MirajAttunementApp extends ApplicationV2 {
-  static DEFAULT_OPTIONS = {
+const { HandlebarsApplicationMixin } = foundry.applications.api;
+const { ApplicationV2 } = foundry.applications.api;
+
+export class MirajAttunementApp extends HandlebarsApplicationMixin(ApplicationV2) {
+  constructor(actor, weapon, options = {}) {
+    super(options);
+    this.actor = actor;
+    this.weapon = weapon;
+  }
+
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
     id: "miraj-attunement",
-    classes: ["swse", "miraj-attunement"],
+    classes: ["swse", "miraj-attunement", "swse-theme-holo"],
     window: {
-      title: "Miraj — The Force Resonates",
+      icon: "fas fa-jedi",
+      title: "⚡ Miraj — The Force Resonates",
       resizable: false,
       minimizable: false,
       draggable: true
     },
     position: {
-      width: 500,
-      height: 320
+      width: 480,
+      height: "auto"
+    }
+  });
+
+  static PARTS = {
+    form: {
+      template: "systems/foundryvtt-swse/templates/applications/lightsaber/miraj-attunement.hbs"
     }
   };
 
-  constructor(actor, weapon) {
-    super();
-    this.actor = actor;
-    this.weapon = weapon;
-  }
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
 
-  async getData() {
     return {
+      ...context,
+      actor: this.actor,
+      weapon: this.weapon,
       weaponName: this.weapon.name,
-      hasForcePoint: (this.actor.system?.resources?.forcePoints?.value ?? 0) >= 1
+      hasForcePoint: (this.actor.system?.resources?.forcePoints?.value ?? 0) >= 1,
+      bladeColor: this.weapon.flags?.swse?.bladeColor || "blue"
     };
   }
 
-  async _preparePartContext(partId, context) {
-    context = await super._preparePartContext(partId, context);
-    return context;
+  _onRender(context, options) {
+    super._onRender(context, options);
+
+    const root = this.element;
+    if (!root) return;
+
+    // Attune button
+    root.querySelector(".attune-yes")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      this.#onAttuneYes();
+    });
+
+    // Decline button
+    root.querySelector(".attune-no")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      this.#onAttuneNo();
+    });
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-
-    html.find(".attune-yes").on("click", async () => {
+  async #onAttuneYes() {
+    try {
+      // Route to WeaponsEngine (pure attunement logic)
       const result = await WeaponsEngine.attuneLightsaber(this.actor, this.weapon);
-      this.close();
 
       if (!result.success) {
         ui.notifications.warn(`Attunement failed: ${result.reason}`);
-      } else {
-        ui.notifications.info("The Force binds you to your lightsaber.");
+        return;
       }
-    });
 
-    html.find(".attune-no").on("click", () => {
+      // Success — close and celebrate
+      ui.notifications.info("✨ The Force binds you to your lightsaber.");
       this.close();
-      ui.notifications.info("You can attune this lightsaber later from your character sheet.");
-    });
+    } catch (err) {
+      SWSELogger.error("Attunement failed:", err);
+      ui.notifications.error("Unexpected error during attunement.");
+    }
+  }
+
+  #onAttuneNo() {
+    // Decline attunement — close dialog
+    this.close();
+    ui.notifications.info("The blade awaits your decision. You can attune later from your sheet.");
   }
 }

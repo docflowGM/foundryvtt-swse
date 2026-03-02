@@ -12,6 +12,7 @@
 
 import { LightsaberConstructionEngine } from "../../engine/crafting/lightsaber-construction-engine.js";
 import { BLADE_COLOR_MAP, VARIES_COLOR_LIST, DEFAULT_BLADE_COLOR } from "../../data/blade-colors.js";
+import { MirajAttunementApp } from "./miraj-attunement-app.js";
 import { SWSELogger } from "../../core/logger.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
@@ -184,6 +185,7 @@ export class LightsaberConstructionApp extends HandlebarsApplicationMixin(Applic
     }
 
     try {
+      // Step 1: Execute construction (pure engine call)
       const result = await LightsaberConstructionEngine.attemptConstruction(this.actor, {
         chassisItemId: this.selectedChassis.id,
         crystalItemId: this.selectedCrystal.id,
@@ -191,13 +193,41 @@ export class LightsaberConstructionApp extends HandlebarsApplicationMixin(Applic
         bladeColor: this.selectedBladeColor
       });
 
-      if (result.success) {
-        ui.notifications.info(
-          `✨ Constructed ${result.itemId}! DC: ${result.finalDc}, Roll: ${result.rollTotal}`
+      if (!result.success) {
+        ui.notifications.error(`Construction failed: ${result.reason}`);
+        return;
+      }
+
+      // Step 2: Construction succeeded — fetch created weapon
+      const createdWeapon = this.actor.items.get(result.itemId);
+      if (!createdWeapon) {
+        throw new Error("Created weapon not found in actor items");
+      }
+
+      // Step 3: Orchestrate Miraj attunement flow
+      // Check if actor has Force Points and weapon was built by them
+      const hasForcePoints = (this.actor.system?.resources?.forcePoints?.value ?? 0) >= 1;
+      const isBuiltByActor = createdWeapon.flags?.swse?.builtBy === this.actor.id;
+      const notYetAttuned = !createdWeapon.flags?.swse?.attunedBy;
+
+      if (hasForcePoints && isBuiltByActor && notYetAttuned) {
+        // Set CSS variable for Miraj glow to match blade color
+        document.documentElement.style.setProperty(
+          "--selected-blade-color",
+          BLADE_COLOR_MAP[this.selectedBladeColor] || "#00ffff"
         );
+
+        // Display Miraj attunement ritual (UI orchestration only)
+        new MirajAttunementApp(this.actor, createdWeapon).render(true);
+
+        // Close construction app after Miraj opens
         this.close();
       } else {
-        ui.notifications.error(`Construction failed: ${result.reason}`);
+        // No Force Points or already attuned — just close and notify
+        ui.notifications.info(
+          `✨ Lightsaber constructed! DC: ${result.finalDc}, Roll: ${result.rollTotal}`
+        );
+        this.close();
       }
     } catch (err) {
       SWSELogger.error("Construction failed:", err);

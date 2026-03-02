@@ -1,27 +1,46 @@
-<div class="miraj-popup">
-  <div class="miraj-header">
-    <div class="miraj-holo"></div>
-    <h2>Miraj</h2>
-  </div>
+<div class="miraj-overlay">
+  <!-- Holographic Avatar -->
+  <div class="miraj-holo-avatar"></div>
 
-  <div class="miraj-content">
+  <!-- Dialogue Content -->
+  <div class="miraj-dialogue">
+    <h2 class="miraj-title">⚡ Miraj</h2>
+
     <p class="miraj-text">
-      The Force flows through your creation...
+      The kyber sings with your creation...
       <br><br>
-      Your lightsaber <strong>{{weaponName}}</strong> hums in harmony with your essence.
+      Your lightsaber <strong style="color: var(--selected-blade-color, #00ffff);">{{weaponName}}</strong>
+      awaits your touch.
       <br><br>
-      Spend 1 Force Point to attune it?
-      <br>
-      <span class="miraj-benefit">(Grants +1 attack bonus when wielded.)</span>
+      <span class="miraj-ritual">
+        To awaken its full potential, attune your consciousness to the blade.
+      </span>
+      <br><br>
+      <span class="miraj-cost">
+        Cost: 1 Force Point
+        <br>
+        <span class="miraj-benefit">Benefit: +1 attack bonus, Resonance alignment</span>
+      </span>
     </p>
   </div>
 
+  <!-- Action Buttons -->
   <div class="miraj-buttons">
     {{#if hasForcePoint}}
-      <button class="attune-yes">Attune</button>
-      <button class="attune-no">Not Yet</button>
+      <button class="attune-yes miraj-button-primary">
+        <span class="button-text">Attune to Blade</span>
+        <span class="button-glow"></span>
+      </button>
+      <button class="attune-no miraj-button-secondary">
+        Not Yet
+      </button>
     {{else}}
-      <button class="attune-no" disabled>Insufficient Force Points</button>
+      <button class="attune-no" disabled>
+        ⚠️ Insufficient Force Points
+      </button>
     {{/if}}
   </div>
+
+  <!-- Scanline Overlay -->
+  <div class="miraj-scanlines"></div>
 </div>
