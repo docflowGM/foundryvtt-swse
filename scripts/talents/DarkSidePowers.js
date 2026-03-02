@@ -1679,13 +1679,13 @@ export class DarkSidePowers {
       'system.forcePoints.value': currentFP - 1
     });
 
-    // Get Dark Side Score
-    const dspBonus = actor.system.darkSideScore || 0;
+    // Get Dark Side Score (from canonical storage)
+    const dspBonus = actor.system.darkSide?.value || 0;
 
-    // Increase DSP by 1
+    // Increase DSP by 1 (write to canonical storage)
     const newDSP = dspBonus + 1;
     await ActorEngine.updateActor(actor, {
-      'system.darkSideScore': newDSP
+      'system.darkSide.value': newDSP
     });
 
     // Store active bonus
@@ -1991,13 +1991,13 @@ export async function _spendFP(actor, amount = 1) {
 }
 
 export function _getDSP(actor) {
-  return Number(actor?.system?.darkSideScore ?? 0);
+  return Number(actor?.system?.darkSide?.value ?? 0);
 }
 
 export async function _increaseDSP(actor, amount = 1) {
   const dsp = _getDSP(actor);
   const next = dsp + amount;
-  await ActorEngine.updateActor(actor, { 'system.darkSideScore': next });
+  await ActorEngine.updateActor(actor, { 'system.darkSide.value': next });
   return { before: dsp, after: next };
 }
 
