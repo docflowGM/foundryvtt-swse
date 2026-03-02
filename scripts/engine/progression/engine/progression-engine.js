@@ -11,13 +11,13 @@
  *  const opts = ProgressionEngine.getAvailableOptions(actor, stepId)
  */
 
-import { swseLogger } from "../../../utils/logger.js";
-import { SWSEProgressionEngine } from "../../../engine/progression.js";
-import { ForcePowerEngine } from "../../../engine/progression/engine/force-power-engine.js";
-import { PROGRESSION_RULES } from "../../../engine/progression/data/progression-data.js";
-import { ActorProgressionUpdater } from "../../../engine/progression/engine/progression-actor-updater.js";
-import { TemplateEngine } from "../../../engine/progression/engine/template-engine.js";
-import { BackgroundRegistry } from "../../../registries/background-registry.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSEProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression.js";
+import { ForcePowerEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-power-engine.js";
+import { PROGRESSION_RULES } from "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js";
+import { ActorProgressionUpdater } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-actor-updater.js";
+import { TemplateEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/template-engine.js";
+import { BackgroundRegistry } from "/systems/foundryvtt-swse/scripts/registries/background-registry.js";
 
 export class ProgressionEngine {
   /**
@@ -361,6 +361,6 @@ static async _triggerForcePowers(actor) {
 }
 
 // Also export the new engine for direct access
-export { SWSEProgressionEngine } from '../../../engine/progression.js';
+export { SWSEProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression.js";
 
 swseLogger.log('Progression Engine (compatibility layer) loaded');

@@ -5,9 +5,9 @@
  * Filters, sorts, and presents top armor recommendations for a character.
  */
 
-import { ArmorScoringEngine } from "../../../engine/suggestion/equipment/armor-scoring-engine.js";
-import { SWSELogger } from "../../../utils/logger.js";
-import { assignTier } from "../../../engine/suggestion/equipment/shared-scoring-utils.js";
+import { ArmorScoringEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/armor-scoring-engine.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { assignTier } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/shared-scoring-utils.js";
 
 export class ArmorSuggestions {
   /**

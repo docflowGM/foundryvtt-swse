@@ -3,8 +3,8 @@
  * Checks if a character meets prerequisites for prestige classes
  */
 
-import { swseLogger } from "../../../../utils/logger.js";
-import { getClassLevel } from "../../../../actors/derived/level-split.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { getClassLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 
 /**
  * Evaluate prestige class readiness for all prestige classes

@@ -3,10 +3,10 @@
  * Provides an interactive, animated talent tree selection and visualization system
  */
 
-import { SWSELogger } from "../utils/logger.js";
-import { AbilityEngine } from "../engine/abilities/AbilityEngine.js";
-import { SuggestionService } from "../engine/suggestion/SuggestionService.js";
-import { getTalentTreeName } from "../apps/chargen/chargen-property-accessor.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
+import { getTalentTreeName } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
 
 export class TalentTreeVisualizer {
 

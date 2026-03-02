@@ -12,10 +12,10 @@
  * - Force Sensitivity prerequisites
  */
 
-import { SWSELogger } from "../../../utils/logger.js";
-import { ActorEngine } from "../../../governance/actor-engine/actor-engine.js";
-import { ApplyHandlers } from "../../../engine/progression/utils/apply-handlers.js";
-import { AbilityEngine } from "../../../engine/abilities/AbilityEngine.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { ApplyHandlers } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/apply-handlers.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 
 export class ForceProgressionEngine {
 
@@ -141,7 +141,7 @@ export class ForceProgressionEngine {
 
         // Filter by prerequisites if needed (must be done separately due to async)
         if (filters.checkPrerequisites) {
-            const { PrerequisiteValidator } = await import('../../utils/prerequisite-validator.js');
+            const { PrerequisiteValidator } = await import("/systems/foundryvtt-swse/scripts/engine/utils/prerequisite-validator.js");
             availablePowers = availablePowers.filter(p => {
                 const assessment = AbilityEngine.evaluateAcquisition(actor, p);
                 const legacy = PrerequisiteValidator.checkFeatPrerequisites(p, actor);

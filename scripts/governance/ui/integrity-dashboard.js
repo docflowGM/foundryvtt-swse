@@ -10,12 +10,12 @@
  *   - Debugging and diagnostics
  */
 
-import { MissingPrereqsTracker } from '../integrity/missing-prereqs-tracker.js';
-import { PrerequisiteIntegrityChecker } from '../integrity/prerequisite-integrity-checker.js';
-import { SeverityClassifier } from '../integrity/severity-classifier.js';
-import { GovernanceSystem } from '../governance-system.js';
-import { EnforcementPolicy } from '../enforcement/enforcement-policy.js';
-import { SWSELogger } from '../../utils/logger.js';
+import { MissingPrereqsTracker } from "/systems/foundryvtt-swse/scripts/governance/integrity/missing-prereqs-tracker.js";
+import { PrerequisiteIntegrityChecker } from "/systems/foundryvtt-swse/scripts/governance/integrity/prerequisite-integrity-checker.js";
+import { SeverityClassifier } from "/systems/foundryvtt-swse/scripts/governance/integrity/severity-classifier.js";
+import { GovernanceSystem } from "/systems/foundryvtt-swse/scripts/governance/governance-system.js";
+import { EnforcementPolicy } from "/systems/foundryvtt-swse/scripts/governance/enforcement/enforcement-policy.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class IntegrityDashboard {
   /**

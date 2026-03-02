@@ -11,10 +11,10 @@
  * Called from level-up UI hooks.
  */
 
-import { SWSELogger } from '../../utils/logger.js';
-import { GovernanceSystem } from '../governance-system.js';
-import { MissingPrereqsTracker } from '../integrity/missing-prereqs-tracker.js';
-import { RebuildOrchestrator } from '../ui/rebuild-orchestrator.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { GovernanceSystem } from "/systems/foundryvtt-swse/scripts/governance/governance-system.js";
+import { MissingPrereqsTracker } from "/systems/foundryvtt-swse/scripts/governance/integrity/missing-prereqs-tracker.js";
+import { RebuildOrchestrator } from "/systems/foundryvtt-swse/scripts/governance/ui/rebuild-orchestrator.js";
 
 export class LevelUpPreflightGate {
 

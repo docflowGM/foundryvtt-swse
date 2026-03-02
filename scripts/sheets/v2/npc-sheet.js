@@ -1,9 +1,8 @@
 // scripts/sheets/v2/npc-sheet.js
-import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
-import { TalentEffectEngine } from "../../engine/talent/talent-effect-engine.js";
-import { AbilityEngine } from "../../engine/abilities/AbilityEngine.js";
-import { RenderAssertions } from "../../core/render-assertions.js";
-import { RollEngine } from "../../engine/roll-engine.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
+import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 
 function markActiveConditionStep(root, actor) {
   // AppV2: root is HTMLElement, not jQuery
@@ -88,7 +87,6 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
         role: game.user.role
       },
       config: CONFIG.SWSE,
-      talentAbilities: TalentEffectEngine.toSerializable(TalentEffectEngine.getAbilitiesForActor(actor)),
       // Abilities panel data (Phase 3)
       feats: [],
       talents: [],
@@ -99,6 +97,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
     try {
       const abilityPanel = AbilityEngine.getCardPanelModelForActor(actor);
       context.abilityPanel = abilityPanel;
+      context.talentAbilities = abilityPanel.all ?? [];
       context.feats = abilityPanel.all?.filter(a => a.type === "feat") ?? [];
       context.talents = abilityPanel.all?.filter(a => a.type === "talent") ?? [];
       context.racialAbilities = abilityPanel.all?.filter(a => a.type === "racialAbility") ?? [];
@@ -322,7 +321,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
         if (!abilityId) return;
 
         try {
-          const { ActionChatEngine } = await import('../../chat/action-chat-engine.js');
+          const { ActionChatEngine } = await import("/systems/foundryvtt-swse/scripts/chat/action-chat-engine.js");
           await ActionChatEngine.emote(this.actor, `uses ability: ${abilityId}`);
         } catch (err) {
           console.error('Error posting ability chat:', err);
@@ -340,7 +339,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
         try {
           const ability = this.actor.items?.get(abilityId);
           if (ability && typeof rollAttack === 'function') {
-            const { rollAttack } = await import('../../combat/rolls/attacks.js');
+            const { rollAttack } = await import("/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js");
             await rollAttack(this.actor, ability);
           }
         } catch (err) {
@@ -360,7 +359,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
           const ability = this.actor.items?.get(abilityId);
           if (ability) {
             // Mark as used
-            const { AbilityUsage } = await import('../../engine/abilities/ability-usage.js');
+            const { AbilityUsage } = await import("/systems/foundryvtt-swse/scripts/engine/abilities/ability-usage.js");
             await AbilityUsage.markUsed(this.actor, abilityId);
             this.render();
           }
@@ -371,9 +370,23 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
     });
   }
 
-  async _updateObject(event, formData) {
-    const expanded = foundry.utils.expandObject(formData);
-    if (!expanded?.system) {return;}
-    await ActorEngine.updateActor(this.actor, { system: expanded.system });
+  async _onSubmitForm(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const formData = new FormData(form);
+    const formDataObj = Object.fromEntries(formData.entries());
+    const expanded = foundry.utils.expandObject(formDataObj);
+
+    if (!expanded) {return;}
+
+    try {
+      // CRITICAL: Include ALL fields (name, system, etc.) not just system.
+      // Route directly through governance layer to bypass Foundry's actor.update()
+      await ActorEngine.updateActor(this.actor, expanded);
+    } catch (err) {
+      console.error('Sheet submission failed:', err);
+      ui.notifications.error(`Failed to update actor: ${err.message}`);
+    }
   }
 }

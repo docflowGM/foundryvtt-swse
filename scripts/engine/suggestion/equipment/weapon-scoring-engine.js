@@ -27,14 +27,14 @@
  * - Tag-driven reasoning
  */
 
-import { SWSELogger } from "../../../utils/logger.js";
-import { AxisAEngine } from "../../../engine/suggestion/equipment/scoring/axis-a-engine.js";
-import { AxisBEngine } from "../../../engine/suggestion/equipment/scoring/axis-b-engine.js";
-import { TradeoffResolver } from "../../../engine/suggestion/equipment/scoring/tradeoff-resolver.js";
-import { WeightedScoreEngine } from "../../../engine/suggestion/equipment/scoring/weighted-score-engine.js";
-import { CategoryNormalizationEngine } from "../../../engine/suggestion/equipment/scoring/category-normalization-engine.js";
-import { ExplainabilityGenerator } from "../../../engine/suggestion/equipment/scoring/explainability-generator.js";
-import { assignTier, clampScore, scaleNormalizedTo100, buildPeerGroupIndex, getPeerGroup } from "../../../engine/suggestion/equipment/shared-scoring-utils.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { AxisAEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/scoring/axis-a-engine.js";
+import { AxisBEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/scoring/axis-b-engine.js";
+import { TradeoffResolver } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/scoring/tradeoff-resolver.js";
+import { WeightedScoreEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/scoring/weighted-score-engine.js";
+import { CategoryNormalizationEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/scoring/category-normalization-engine.js";
+import { ExplainabilityGenerator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/scoring/explainability-generator.js";
+import { assignTier, clampScore, scaleNormalizedTo100, buildPeerGroupIndex, getPeerGroup } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/shared-scoring-utils.js";
 
 export class WeaponScoringEngine {
   /**

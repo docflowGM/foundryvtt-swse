@@ -10,20 +10,20 @@
  * - Level-up diff generation and display
  */
 
-import { swseLogger as SWSELogger } from "../../../utils/logger.js";
-import { ActorEngine } from "../../../governance/actor-engine/actor-engine.js";
-import { SnapshotManager } from "../../../engine/progression/utils/snapshot-manager.js";
-import { dispatchFeature } from "../../../engine/progression/engine/feature-dispatcher.js";
-import { ForceProgressionEngine } from "../../../engine/progression/engine/force-progression.js";
-import { ForceTechniqueEngine } from "../../../engine/progression/engine/force-technique-engine.js";
-import { ForceSecretEngine } from "../../../engine/progression/engine/force-secret-engine.js";
-import { StarshipManeuverEngine } from "../../../engine/progression/engine/starship-maneuver-engine.js";
-import { LanguageEngine } from "../../../engine/progression/engine/language-engine.js";
-import { EquipmentEngine } from "../../../engine/progression/engine/equipment-engine.js";
-import { DerivedCalculator } from "../../../actors/derived/derived-calculator.js";
-import { LevelDiffInspector } from "../../../engine/progression/utils/level-diff-inspector.js";
-import { SuiteReselectionEngine } from "../../../engine/progression/engine/suite-reselection-engine.js";
-import { isSuiteReselectionEnabled } from "../../../engine/progression/utils/suite-reselection-utils.js";
+import { swseLogger as SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { SnapshotManager } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js";
+import { dispatchFeature } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/feature-dispatcher.js";
+import { ForceProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-progression.js";
+import { ForceTechniqueEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-technique-engine.js";
+import { ForceSecretEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-secret-engine.js";
+import { StarshipManeuverEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/starship-maneuver-engine.js";
+import { LanguageEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/language-engine.js";
+import { EquipmentEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/equipment-engine.js";
+import { DerivedCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js";
+import { LevelDiffInspector } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/level-diff-inspector.js";
+import { SuiteReselectionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/suite-reselection-engine.js";
+import { isSuiteReselectionEnabled } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/suite-reselection-utils.js";
 
 export class FinalizeIntegration {
 

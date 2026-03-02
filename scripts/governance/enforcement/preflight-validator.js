@@ -18,9 +18,9 @@
  * Contract: PreflightResult
  */
 
-import { EnforcementPolicy } from './enforcement-policy.js';
-import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
-import { SWSELogger } from '../../utils/logger.js';
+import { EnforcementPolicy } from "/systems/foundryvtt-swse/scripts/governance/enforcement/enforcement-policy.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class PreflightValidator {
   /**

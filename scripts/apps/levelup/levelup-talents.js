@@ -7,25 +7,25 @@
  * - Class Level Talents: 1 per odd class level (1, 3, 5, 7, etc.) - ONLY from that class's trees
  */
 
-import { SWSELogger } from "../../utils/logger.js";
-import { warnGM } from "../../utils/warn-gm.js";
-import { DSPEngine } from "../../engine/darkside/dsp-engine.js";
-import { TalentTreeVisualizer } from "../../apps/talent-tree-visualizer.js";
-import { getClassLevel, getCharacterClasses } from "../../apps/levelup/levelup-shared.js";
-import { checkTalentPrerequisites } from "../../apps/levelup/levelup-validation.js";
-import { getClassProperty, getTalentTrees } from "../../apps/chargen/chargen-property-accessor.js";
-import { AbilityEngine } from "../../engine/abilities/AbilityEngine.js";
-import { HouseRuleTalentCombination } from "../../houserules/houserule-talent-combination.js";
-import { SuggestionService } from "../../engine/suggestion/SuggestionService.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { warnGM } from "/systems/foundryvtt-swse/scripts/utils/warn-gm.js";
+import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
+import { TalentTreeVisualizer } from "/systems/foundryvtt-swse/scripts/apps/talent-tree-visualizer.js";
+import { getClassLevel, getCharacterClasses } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js";
+import { checkTalentPrerequisites } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-validation.js";
+import { getClassProperty, getTalentTrees } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import { HouseRuleTalentCombination } from "/systems/foundryvtt-swse/scripts/houserules/houserule-talent-combination.js";
+import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
 import {
   getTalentCountAtHeroicLevel,
   getTalentCountAtClassLevel,
   getTalentProgressionInfo,
   getAvailableTalentTreesForHeroicTalent,
   getAvailableTalentTreesForClassTalent
-} from "../../apps/levelup/levelup-dual-talent-progression.js";
-import { TalentSlotValidator } from "../../engine/progression/talents/slot-validator.js";
-import { getAllowedTalentTrees } from "../../engine/progression/talents/tree-authority.js";
+} from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-dual-talent-progression.js";
+import { TalentSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/slot-validator.js";
+import { getAllowedTalentTrees } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/tree-authority.js";
 
 /**
  * Get the number of talents granted at this level

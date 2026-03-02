@@ -3,7 +3,7 @@
  * Detects applicable Force Techniques and Force Secrets that can enhance a Force Power
  */
 
-import { DSPEngine } from "../engine/darkside/dsp-engine.js";
+import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 
 export class ForceEnhancementDetector {
 

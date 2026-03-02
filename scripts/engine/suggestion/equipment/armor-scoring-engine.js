@@ -18,12 +18,12 @@
  * 7. Rank and return
  */
 
-import { SWSELogger } from "../../../utils/logger.js";
-import { ArmorAxisAEngine } from "../../../engine/suggestion/equipment/scoring/armor-axis-a-engine.js";
-import { ArmorAxisBEngine } from "../../../engine/suggestion/equipment/scoring/armor-axis-b-engine.js";
-import { ArmorRoleAlignmentEngine } from "../../../engine/suggestion/equipment/scoring/armor-role-alignment-engine.js";
-import { ArmorExplainabilityGenerator } from "../../../engine/suggestion/equipment/scoring/armor-explainability-generator.js";
-import { assignTier, clampScore } from "../../../engine/suggestion/equipment/shared-scoring-utils.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ArmorAxisAEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/scoring/armor-axis-a-engine.js";
+import { ArmorAxisBEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/scoring/armor-axis-b-engine.js";
+import { ArmorRoleAlignmentEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/scoring/armor-role-alignment-engine.js";
+import { ArmorExplainabilityGenerator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/scoring/armor-explainability-generator.js";
+import { assignTier, clampScore } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/shared-scoring-utils.js";
 
 export class ArmorScoringEngine {
   /**

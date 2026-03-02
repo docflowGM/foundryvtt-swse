@@ -19,9 +19,9 @@
  * Do not add rules without logging evidence that they fire frequently.
  */
 
-import { JUDGMENT_ATOMS } from '../../engine/mentor/mentor-judgment-engine.js';
-import { INTENSITY_ATOMS } from "../../engine/mentor/mentor-intensity-atoms.js";
-import { isValidReasonKey } from "../../engine/mentor/mentor-reason-renderer.js";
+import { JUDGMENT_ATOMS } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-judgment-atoms.js";
+import { INTENSITY_ATOMS } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-intensity-atoms.js";
+import { isValidReasonKey } from "/systems/foundryvtt-swse/scripts/mentor/mentor-reason-renderer.js";
 
 /**
  * Canonical Mentor Reaction Rules
@@ -279,13 +279,50 @@ export function findMatchingRule(reasons) {
 }
 
 /**
+ * Semantic reason key normalization map.
+ * These are simplified semantic keys used in rules.
+ * They map 1:1 to keys in reasons.json for validation.
+ *
+ * Architecture note: All keys should exist in reasons.json.
+ * No runtime transformation needed because semantic and canonical use same keys.
+ * This map documents the semantic intent of each key for clarity.
+ */
+const SEMANTIC_REASON_KEYS = new Set([
+  // Risk and consequence signals
+  'risk_increased',
+  'exposure',
+  'risk_mitigated',
+  'opportunity_cost_incurred',
+
+  // Goal and pattern signals
+  'goal_deviation',
+  'pattern_conflict',
+  'pattern_alignment',
+  'commitment_ignored',
+
+  // Synergy and readiness signals
+  'synergy_present',
+  'readiness_met',
+  'readiness_lacking',
+
+  // Growth and specialization signals
+  'specialization_forming',
+  'growth_stage_shift',
+  'exploration_signal',
+
+  // Discovery and rarity signals
+  'new_option_revealed',
+  'rare_choice'
+]);
+
+/**
  * Validate all rules in the table.
  * Called at startup to catch configuration errors.
  *
- * Checks:
- * - All judgment atoms are valid
- * - All intensity atoms are valid
- * - All reason keys are valid (or empty fallback)
+ * CRITICAL VALIDATION ORDER:
+ * 1. Check that all reason keys exist in canonical registry (reasons.json)
+ * 2. Check that all judgment atoms are valid
+ * 3. Check that all intensity atoms are valid
  *
  * @returns {Object} {isValid, errors: []}
  */
@@ -295,6 +332,17 @@ export function validateMentorRules() {
   for (let i = 0; i < MENTOR_REASON_JUDGMENT_RULES.length; i++) {
     const rule = MENTOR_REASON_JUDGMENT_RULES[i];
 
+    // CRITICAL: Check reason keys FIRST (before judgment/intensity)
+    // This validates the semantic signal layer
+    if (rule.when && rule.when.length > 0) {
+      for (const reason of rule.when) {
+        // All reason keys must be valid canonical keys
+        if (!isValidReasonKey(reason)) {
+          errors.push(`Rule ${i} (${rule.label}): Invalid reason key "${reason}" - not found in canonical registry`);
+        }
+      }
+    }
+
     // Check judgment
     if (!Object.values(JUDGMENT_ATOMS).includes(rule.judgment)) {
       errors.push(`Rule ${i} (${rule.label}): Invalid judgment "${rule.judgment}"`);
@@ -303,15 +351,6 @@ export function validateMentorRules() {
     // Check intensity
     if (!Object.values(INTENSITY_ATOMS).includes(rule.intensity)) {
       errors.push(`Rule ${i} (${rule.label}): Invalid intensity "${rule.intensity}"`);
-    }
-
-    // Check reason keys (except for fallback empty rule)
-    if (rule.when && rule.when.length > 0) {
-      for (const reason of rule.when) {
-        if (!isValidReasonKey(reason)) {
-          errors.push(`Rule ${i} (${rule.label}): Invalid reason key "${reason}"`);
-        }
-      }
     }
   }
 

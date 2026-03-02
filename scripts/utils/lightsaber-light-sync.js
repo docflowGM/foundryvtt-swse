@@ -14,8 +14,8 @@
  * All changes routed through weapon state.
  */
 
-import { BLADE_COLOR_MAP } from "../data/blade-colors.js";
-import { SWSELogger as swseLogger } from "./logger.js";
+import { BLADE_COLOR_MAP } from "/systems/foundryvtt-swse/scripts/data/blade-colors.js";
+import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class LightsaberLightSync {
   /**

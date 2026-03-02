@@ -6,9 +6,9 @@
  * - All mutations route through ActorEngine
  * - Provides staging, validation, and atomic commit pattern
  */
-import { swseLogger } from "../../utils/logger.js";
-import { createChatMessage } from "../../core/document-api-v13.js";
-import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * ProgressionSession - Session-level transaction wrapper for character progression
@@ -105,8 +105,8 @@ export class ProgressionSession {
     swseLogger.log(`[SESSION] Staging class level: ${classId}`);
 
     // Load class data for validation
-    const { PROGRESSION_RULES } = await import('./data/progression-data.js');
-    const { getClassData } = await import('./utils/class-data-loader.js');
+    const { PROGRESSION_RULES } = await import("/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js");
+    const { getClassData } = await import("/systems/foundryvtt-swse/scripts/engine/progression/utils/class-data-loader.js");
 
     let classData = PROGRESSION_RULES.classes[classId];
     if (!classData || !classData.levelProgression) {
@@ -358,7 +358,7 @@ export class ProgressionSession {
         updates['system.progression.species'] = this.stagedChanges.species.speciesId;
 
         // Apply species ability mods (would need to load species data)
-        const { PROGRESSION_RULES } = await import('./data/progression-data.js');
+        const { PROGRESSION_RULES } = await import("/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js");
         const speciesData = PROGRESSION_RULES.species[this.stagedChanges.species.speciesId];
         if (speciesData?.abilityMods) {
           for (const [ability, mod] of Object.entries(speciesData.abilityMods)) {
@@ -444,7 +444,7 @@ export class ProgressionSession {
 
       // Recalculate derived stats
       try {
-        const { recalcDerivedStats } = await import('./engine/autocalc/derived-stats.js');
+        const { recalcDerivedStats } = await import("/systems/foundryvtt-swse/scripts/engine/progression/engine/autocalc/derived-stats.js");
         await recalcDerivedStats(this.actor);
       } catch (err) {
         swseLogger.warn('Derived stats recalculation failed:', err);
@@ -671,7 +671,7 @@ export class ProgressionSession {
 
     // Create feat items
     if (this.stagedChanges.feats.length > 0) {
-      const { FeatRegistry } = await import('./feats/feat-registry.js');
+      const { FeatRegistry } = await import("/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-registry.js");
       if (!FeatRegistry.isBuilt) {await FeatRegistry.build();}
 
       for (const featName of this.stagedChanges.feats) {

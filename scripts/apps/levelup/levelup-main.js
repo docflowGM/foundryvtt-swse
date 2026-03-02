@@ -12,16 +12,16 @@
  * applied via engine.finalize() at completion.
  */
 
-import { SWSEProgressionEngine } from "../../engine/progression.js";
-import { SWSELogger, swseLogger } from "../../utils/logger.js";
-import { isEpicOverrideEnabled } from "../../settings/epic-override.js";
-import { getLevelSplit } from "../../actors/derived/level-split.js";
-import { getMentorForClass, getMentorGreeting, getMentorGuidance, getLevel1Class, setLevel1Class } from "../../engine/mentor/mentor-dialogues.js";
-import { MentorSurvey } from "../../mentor/mentor-survey.js";
-import { createChatMessage } from "../../core/document-api-v13.js";
-import { HouseRuleTalentCombination } from "../../houserules/houserule-talent-combination.js";
-import { TypingAnimation } from "../../utils/typing-animation.js";
-import { qs, qsa, setVisible, isVisible } from "../../utils/dom-utils.js";
+import { SWSEProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression.js";
+import { SWSELogger, swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { isEpicOverrideEnabled } from "/systems/foundryvtt-swse/scripts/settings/epic-override.js";
+import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { getMentorForClass, getMentorGreeting, getMentorGuidance, getLevel1Class, setLevel1Class } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
+import { MentorSurvey } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey.js";
+import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { HouseRuleTalentCombination } from "/systems/foundryvtt-swse/scripts/houserules/houserule-talent-combination.js";
+import { TypingAnimation } from "/systems/foundryvtt-swse/scripts/utils/typing-animation.js";
+import { qs, qsa, setVisible, isVisible } from "/systems/foundryvtt-swse/scripts/utils/dom-utils.js";
 
 // Import shared utilities
 import {
@@ -33,7 +33,7 @@ import {
   calculateDefenseBonuses,
   getsAbilityIncrease,
   getsMilestoneFeat
-} from "../../apps/levelup/levelup-shared.js";
+} from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js";
 
 // Import class module functions
 import {
@@ -45,7 +45,7 @@ import {
   applyClassFeatures,
   createOrUpdateClassItem,
   bindAbilitiesUI
-} from "../../apps/levelup/levelup-class.js";
+} from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-class.js";
 
 // Import feat module functions
 import {
@@ -53,7 +53,7 @@ import {
   getsBonusFeat,
   selectBonusFeat,
   selectMulticlassFeat
-} from "../../apps/levelup/levelup-feats.js";
+} from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-feats.js";
 
 // Import talent module functions
 import {
@@ -64,7 +64,7 @@ import {
   showEnhancedTalentTree,
   showTalentTreeDialog,
   selectTalent
-} from "../../apps/levelup/levelup-talents.js";
+} from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-talents.js";
 
 // Import force power module functions
 import {
@@ -72,7 +72,7 @@ import {
   countForcePowersGained,
   loadForcePowers,
   selectForcePower
-} from "../../apps/levelup/levelup-force-powers.js";
+} from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-force-powers.js";
 
 // Import dual talent selection
 import {
@@ -82,31 +82,31 @@ import {
   recordTalentSelection,
   checkTalentSelectionsComplete,
   getTalentSelectionDisplay
-} from "../../apps/levelup/levelup-dual-talent-selection.js";
+} from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-dual-talent-selection.js";
 
 // Import skill module functions
 import {
   selectMulticlassSkill,
   applyTrainedSkills,
   checkIntModifierIncrease
-} from "../../apps/levelup/levelup-skills.js";
+} from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-skills.js";
 
 // Import suggestion and roadmap features
-import { showPrestigeRoadmap } from "../../apps/levelup/prestige-roadmap.js";
-import { showGMDebugPanel } from "../../apps/levelup/debug-panel.js";
-import { PathPreview } from "../../engine/suggestion/PathPreview.js";
-import { findActiveSynergies } from "../../engine/suggestion/CommunityMetaSynergies.js";
-import { MentorSuggestionDialog } from "../../mentor/mentor-suggestion-dialog.js";
-import { AbilityEngine } from "../../engine/abilities/AbilityEngine.js";
+import { showPrestigeRoadmap } from "/systems/foundryvtt-swse/scripts/apps/levelup/prestige-roadmap.js";
+import { showGMDebugPanel } from "/systems/foundryvtt-swse/scripts/apps/levelup/debug-panel.js";
+import { PathPreview } from "/systems/foundryvtt-swse/scripts/engine/suggestion/PathPreview.js";
+import { findActiveSynergies } from "/systems/foundryvtt-swse/scripts/engine/suggestion/CommunityMetaSynergies.js";
+import { MentorSuggestionDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor-suggestion-dialog.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 
 // Import mentor memory system
-import { decayAllMentorCommitments, updateAllMentorMemories } from "../../engine/mentor/mentor-memory.js";
+import { decayAllMentorCommitments, updateAllMentorMemories } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-memory.js";
 
 // Import mentor wishlist integration
-import { MentorWishlistIntegration } from "../../engine/suggestion/MentorWishlistIntegration.js";
+import { MentorWishlistIntegration } from "/systems/foundryvtt-swse/scripts/engine/suggestion/MentorWishlistIntegration.js";
 
 // V2 API base class
-import SWSEFormApplicationV2 from "../../apps/base/swse-form-application-v2.js";
+import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
 
 export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
@@ -186,7 +186,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     if (incompleteStep) {
       ui.notifications.info('Character appears incomplete. Opening Character Generator to complete setup...');
       // Import CharacterGenerator dynamically to avoid circular dependency
-      import('../chargen/chargen-main.js').then(module => {
+      import("/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js").then(module => {
         const CharacterGenerator = module.default;
         const chargen = new CharacterGenerator(actor);
         chargen.currentStep = incompleteStep;
@@ -744,8 +744,8 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     event.preventDefault();
 
     try {
-      const { getAvailableForcePowers } = await import('../levelup/levelup-force-powers.js');
-      const { ForceOptionSuggestionEngine } = await import('../../../ForceOptionSuggestionEngine.js');
+      const { getAvailableForcePowers } = await import("/systems/foundryvtt-swse/scripts/apps/levelup/levelup-force-powers.js");
+      const { ForceOptionSuggestionEngine } = await import("/systems/foundryvtt-swse/ForceOptionSuggestionEngine.js");
 
       const availablePowers = await getAvailableForcePowers(this.actor, {});
 

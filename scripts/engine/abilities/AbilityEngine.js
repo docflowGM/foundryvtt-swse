@@ -15,8 +15,8 @@
  * SuggestionEngine does NOT call PrerequisiteChecker directly; it only reads results from this.
  */
 
-import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
-import { SWSELogger } from '../../utils/logger.js';
+import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class AbilityEngine {
   /**

@@ -2,7 +2,7 @@
  * PHASE 5B-6: Mutation Boundary Defense Unit Tests
  */
 
-import { MutationBoundaryDefense } from './mutation-boundary-defense.js';
+import { MutationBoundaryDefense } from "/systems/foundryvtt-swse/scripts/governance/sentinel/mutation-boundary-defense.js";
 
 export class MutationBoundaryDefenseTests {
   static run() {

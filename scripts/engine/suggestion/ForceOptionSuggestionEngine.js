@@ -9,14 +9,14 @@
  * Now uses UNIFIED_TIERS system for consistent tier definitions.
  */
 
-import { SWSELogger } from "../../utils/logger.js";
-import { HouseRuleService } from "../../engine/system/HouseRuleService.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import {
   FORCE_POWER_CATEGORIES,
   generateForcePowerArchetypeWeights,
   validateForcePowerCategories
-} from "../../engine/force/force-power-categories.js";
-import { UNIFIED_TIERS, getTierMetadata } from "../../engine/suggestion/suggestion-unified-tiers.js";
+} from "/systems/foundryvtt-swse/scripts/engine/force/force-power-categories.js";
+import { UNIFIED_TIERS, getTierMetadata } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-unified-tiers.js";
 
 // DEPRECATED: Legacy tier definitions (kept for backwards compatibility)
 // Use UNIFIED_TIERS from suggestion-unified-tiers.js instead
@@ -432,7 +432,7 @@ export class ForceOptionSuggestionEngine {
    * @param {Actor} actor - Character
    * @returns {{allowed: boolean, penalty: number}} Whether power is allowed and any moral penalty
    */
-  static checkMoralAlignment(power, actor) {
+  static async checkMoralAlignment(power, actor) {
     const powerName = power.name || '';
     const powerData = Object.values(FORCE_POWER_CATEGORIES).find(p => p.name === powerName);
 
@@ -442,7 +442,7 @@ export class ForceOptionSuggestionEngine {
 
     // Detect character's Force alignment via DSP values
     // DSP scale: 0 = light side, DSP > 0 = dark side, DSP = WIS = fully dark
-    const { DSPEngine } = await import("../darkside/dsp-engine.js").catch(() => ({ DSPEngine: null }));
+    const { DSPEngine } = await import("/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js").catch(() => ({ DSPEngine: null }));
     const dspValue = DSPEngine?.getValue(actor) ?? 0;
     const wisdom = actor.system?.attributes?.wis?.base ?? 10;
 

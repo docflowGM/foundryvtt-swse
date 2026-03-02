@@ -1,6 +1,6 @@
-import { SWSELogger } from "../utils/logger.js";
-import { SWSEActorDataModel } from "../data-models/actor-data-model.js";
-import { warnIfMixedTracks } from "../utils/hardening.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSEActorDataModel } from "/systems/foundryvtt-swse/scripts/data-models/actor-data-model.js";
+import { warnIfMixedTracks } from "/systems/foundryvtt-swse/scripts/utils/hardening.js";
 
 export class SWSECharacterDataModel extends SWSEActorDataModel {
 
@@ -160,13 +160,26 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
         secret: new fields.BooleanField({ required: true, initial: false })
       }),
 
-      // Biography
-      biography: new fields.StringField({ required: false, initial: '' }),
+      // Experience Points
+      xp: new fields.SchemaField({
+        total: new fields.NumberField({ required: true, initial: 0, min: 0, integer: true })
+      }),
 
-      // Background information for Biography tab
-      event: new fields.StringField({ required: false, initial: '' }),
-      profession: new fields.StringField({ required: false, initial: '' }),
-      planetOfOrigin: new fields.StringField({ required: false, initial: '' }),
+      // Biography (contains all background info)
+      biography: new fields.SchemaField({
+        // Main biography text
+        text: new fields.StringField({ required: false, initial: '' }),
+        // Background information
+        event: new fields.StringField({ required: false, initial: '' }),
+        profession: new fields.StringField({ required: false, initial: '' }),
+        planetOfOrigin: new fields.StringField({ required: false, initial: '' }),
+        // Relationship tracking
+        contacts: new fields.StringField({ required: false, initial: '' }),
+        faction: new fields.StringField({ required: false, initial: '' }),
+        reputation: new fields.StringField({ required: false, initial: '' }),
+        // GM notes
+        gmNotes: new fields.StringField({ required: false, initial: '' })
+      }),
 
       // SWSE-specific system data (mentor survey, build intent, etc.)
       swse: new fields.SchemaField({

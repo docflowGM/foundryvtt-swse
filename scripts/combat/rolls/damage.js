@@ -1,8 +1,8 @@
-import { swseLogger } from "../../utils/logger.js";
-import { TalentEffectEngine } from "../../engine/talent/talent-effect-engine.js";
-import { RollEngine } from "../../engine/roll-engine.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 
-import { getEffectiveHalfLevel } from "../../actors/derived/level-split.js";
+import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 /**
  * Determine if a weapon is a melee weapon
  * @param {Item} weapon - The weapon item
@@ -329,8 +329,8 @@ export async function rollDamageWithEffects(actor, weapon, target, context = {})
     await actor.setFlag('foundryvtt-swse', 'lastAttackTarget', target.id);
 
     // Mark sneak attack as used this round
-    const abilities = TalentEffectEngine.getAbilitiesForActor(actor);
-    if (abilities.all.some(a => a.id === 'sneak-attack')) {
+    const abilityPanel = AbilityEngine.getCardPanelModelForActor(actor);
+    if (abilityPanel.all?.some(a => a.id === 'sneak-attack')) {
       await actor.setFlag('foundryvtt-swse', 'sneakAttackUsedThisRound', true);
     }
   }

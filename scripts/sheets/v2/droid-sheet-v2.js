@@ -8,7 +8,7 @@
  * - Derived recalculation handled by engine
  */
 
-import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class DroidSheetV2 extends ActorSheet {
   static get defaultOptions() {
@@ -32,13 +32,13 @@ export class DroidSheetV2 extends ActorSheet {
     const modValidation = DroidModValidator.validateDroidModifications(ds);
 
     // Get all systems data
-    const { DROID_SYSTEMS } = await import('../../data/droid-systems.js');
+    const { DROID_SYSTEMS } = await import("/systems/foundryvtt-swse/scripts/data/droid-systems.js");
     const locomotionOptions = DROID_SYSTEMS.locomotion || [];
     const processorOptions = DROID_SYSTEMS.processor || [];
     const armorOptions = DROID_SYSTEMS.armor || [];
 
     // Hardpoint info
-    const { DROID_HARDPOINT_ALLOCATION } = await import('../../data/droid-modifications.js');
+    const { DROID_HARDPOINT_ALLOCATION } = await import("/systems/foundryvtt-swse/scripts/data/droid-modifications.js");
     const degree = ds.degree || 'Third-Degree';
     const size = ds.size || 'medium';
     const maxHardpoints = DROID_HARDPOINT_ALLOCATION[degree]?.[size] || 3;
@@ -287,7 +287,7 @@ export class DroidSheetV2 extends ActorSheet {
 
     // PHASE 4 STEP 3: Entry point for live droid modifications
     html.find('[data-action="open-modifications"]').on('click', async () => {
-      const { DroidModificationApp } = await import('../../apps/droid-modification-app.js');
+      const { DroidModificationApp } = await import("/systems/foundryvtt-swse/scripts/apps/droid-modification-app.js");
       new DroidModificationApp(this.actor).render(true);
     });
   }

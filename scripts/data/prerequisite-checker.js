@@ -3,7 +3,7 @@
 // UNIFIED Prerequisite Validator (v3)
 // ============================================
 
-import { DSPEngine } from "../engine/darkside/dsp-engine.js";
+import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 //
 // THE CANONICAL PREREQUISITE ENGINE
 // This is the ONLY place in the system that answers "is this legal?"
@@ -53,12 +53,12 @@ import { DSPEngine } from "../engine/darkside/dsp-engine.js";
 // - reasons: getter returning .missing
 // ============================================
 
-import { PRESTIGE_PREREQUISITES } from "../data/prestige-prerequisites.js";
-import { TalentTreeDB } from "../data/talent-tree-db.js";
-import { normalizeTalentTreeId } from "../data/talent-tree-normalizer.js";
-import { SWSELogger } from "../utils/logger.js";
-import { normalizeClassPrerequisites } from "../engine/progression/prerequisites/class-prereq-normalizer.js";
-import { ClassesDB } from "../data/classes-db.js";
+import { PRESTIGE_PREREQUISITES } from "/systems/foundryvtt-swse/scripts/data/prestige-prerequisites.js";
+import { TalentTreeDB } from "/systems/foundryvtt-swse/scripts/data/talent-tree-db.js";
+import { normalizeTalentTreeId } from "/systems/foundryvtt-swse/scripts/data/talent-tree-normalizer.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { normalizeClassPrerequisites } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prereq-normalizer.js";
+import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
 
 /**
  * MAIN CLASS: PrerequisiteChecker

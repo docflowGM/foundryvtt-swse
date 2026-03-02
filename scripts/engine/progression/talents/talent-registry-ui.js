@@ -3,8 +3,8 @@
  * Loads and organizes talents by tree
  */
 
-import { SWSELogger } from "../../../utils/logger.js";
-import { AbilityEngine } from "../../../engine/abilities/AbilityEngine.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 
 export const TalentRegistry = {
   _trees: {},

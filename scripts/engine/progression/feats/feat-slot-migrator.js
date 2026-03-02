@@ -5,9 +5,9 @@
  * Converts existing feat arrays into structured feat slot objects.
  */
 
-import { FeatSlotSchema } from './feat-slot-schema.js';
-import { ClassFeatRegistry } from './class-feat-registry.js';
-import { SWSELogger } from "../../../utils/logger.js";
+import { FeatSlotSchema } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-slot-schema.js";
+import { ClassFeatRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/class-feat-registry.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class FeatSlotMigrator {
   /**

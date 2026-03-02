@@ -16,7 +16,7 @@
  * Storage: World flags under 'foundryvtt-swse.droid-transactions'
  */
 
-import { swseLogger } from "../../utils/logger.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class DroidTransactionService {
   static FLAG_NAMESPACE = 'foundryvtt-swse';
@@ -159,7 +159,7 @@ export class DroidTransactionService {
         };
       }
 
-      const { ActorEngine } = await import('../../governance/actor-engine/actor-engine.js');
+      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
       await ActorEngine.applyMutationPlan(actor, transaction.plan);
 
       // Save updated transaction

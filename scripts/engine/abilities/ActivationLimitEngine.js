@@ -15,7 +15,7 @@
  * Reset is driven by Foundry combat hooks (round-change, encounter-end).
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * Limit type constants — use these instead of raw strings.

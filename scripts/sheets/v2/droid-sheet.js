@@ -2,18 +2,20 @@
 
 const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api;
 
-import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
-import { RenderAssertions } from "../../core/render-assertions.js";
-import { initiateItemSale } from "../../apps/item-selling-system.js";
-import { DroidBuilderApp } from "../../apps/droid-builder-app.js";
-import { SWSELevelUp } from "../../apps/swse-levelup.js";
-import { rollSkill } from "../../rolls/skills.js";
-import { rollAttack } from "../../combat/rolls/attacks.js";
-import { DropResolutionEngine } from "../../engine/interactions/drop-resolution-engine.js";
-import { AdoptionEngine } from "../../engine/interactions/adoption-engine.js";
-import { AdoptOrAddDialog } from "../../apps/adopt-or-add-dialog.js";
-import { isXPEnabled } from "../../engine/progression/xp-engine.js";
-import { AbilityEngine } from "../../engine/abilities/AbilityEngine.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
+import { DropService } from "/systems/foundryvtt-swse/scripts/services/drop-service.js";
+import { initiateItemSale } from "/systems/foundryvtt-swse/scripts/apps/item-selling-system.js";
+import { DroidBuilderApp } from "/systems/foundryvtt-swse/scripts/apps/droid-builder-app.js";
+import { SWSELevelUp } from "/systems/foundryvtt-swse/scripts/apps/swse-levelup.js";
+import { rollSkill } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
+import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
+import { DropResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/drop-resolution-engine.js";
+import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
+import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
+import { isXPEnabled } from "/systems/foundryvtt-swse/scripts/engine/progression/xp-engine.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -258,12 +260,12 @@ export class SWSEV2DroidSheet extends
 
     root.querySelector(".roll-initiative")?.addEventListener("click", async (ev) => {
       ev.preventDefault();
-      await this.actor.swseRollInitiative();
+      await SWSERoll.rollInitiative(this.actor, { showDialog: true });
     });
 
     root.querySelector(".take10-initiative")?.addEventListener("click", async (ev) => {
       ev.preventDefault();
-      await this.actor.swseTake10Initiative();
+      await SWSERoll.rollInitiative(this.actor, { take10: true });
     });
 
     /* ---------------- ITEM OPEN ---------------- */
@@ -472,7 +474,7 @@ export class SWSEV2DroidSheet extends
         if (!abilityId) return;
 
         try {
-          const { ActionChatEngine } = await import('../../chat/action-chat-engine.js');
+          const { ActionChatEngine } = await import("/systems/foundryvtt-swse/scripts/chat/action-chat-engine.js");
           await ActionChatEngine.emote(this.document, `uses ability: ${abilityId}`);
         } catch (err) {
           console.error('Error posting ability chat:', err);
@@ -509,7 +511,7 @@ export class SWSEV2DroidSheet extends
           const ability = this.document.items?.get(abilityId);
           if (ability) {
             // Mark as used
-            const { AbilityUsage } = await import('../../../engine/abilities/ability-usage.js');
+            const { AbilityUsage } = await import("/systems/foundryvtt-swse/scripts/engine/abilities/ability-usage.js");
             await AbilityUsage.markUsed(this.document, abilityId);
             this.render();
           }
@@ -642,9 +644,23 @@ export class SWSEV2DroidSheet extends
   /* FORM UPDATE ROUTING                                                      */
   /* ------------------------------------------------------------------------ */
 
-  async _updateObject(event, formData) {
-    const expanded = foundry.utils.expandObject(formData);
-    if (!expanded?.system) {return;}
-    await ActorEngine.updateActor(this.actor, { system: expanded.system });
+  async _onSubmitForm(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const formData = new FormData(form);
+    const formDataObj = Object.fromEntries(formData.entries());
+    const expanded = foundry.utils.expandObject(formDataObj);
+
+    if (!expanded) {return;}
+
+    try {
+      // CRITICAL: Include ALL fields (name, system, etc.) not just system.
+      // Route directly through governance layer to bypass Foundry's actor.update()
+      await ActorEngine.updateActor(this.actor, expanded);
+    } catch (err) {
+      console.error('Sheet submission failed:', err);
+      ui.notifications.error(`Failed to update actor: ${err.message}`);
+    }
   }
 }

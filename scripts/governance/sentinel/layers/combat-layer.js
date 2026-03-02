@@ -11,12 +11,12 @@
  * Runs in WARNING mode by default; configurable to ENFORCE.
  */
 
-import { Sentinel } from "../../../governance/sentinel/sentinel-core.js";
+import { Sentinel } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 
 export const CombatLayer = {
-  #violations = [],
-  #enforceMode = false, // WARNING mode by default
-  #scannedFiles = new Set(),
+  _violations: [],
+  _enforceMode: false, // WARNING mode by default
+  _scannedFiles: new Set(),
 
   /**
    * Initialize combat domain monitoring
@@ -36,7 +36,7 @@ export const CombatLayer = {
     }
 
     Sentinel.report('combat', Sentinel.SEVERITY.INFO, 'Combat domain sovereignty monitoring initialized', {
-      enforceMode: this.#enforceMode,
+      enforceMode: this._enforceMode,
       mode: 'WARNING'
     });
   },
@@ -46,7 +46,7 @@ export const CombatLayer = {
    * @param {boolean} enforce - true = fail on violation, false = warn only
    */
   setEnforceMode(enforce) {
-    this.#enforceMode = enforce;
+    this._enforceMode = enforce;
     Sentinel.report('combat', Sentinel.SEVERITY.INFO, 'Combat enforcement mode changed', {
       enforceMode: enforce
     });
@@ -291,7 +291,7 @@ export const CombatLayer = {
       return; // Not in browser context
     }
 
-    this.#violations = [];
+    this._violations = [];
 
     // Try to fetch combat domain files
     const combatFiles = [
@@ -304,14 +304,14 @@ export const CombatLayer = {
     ];
 
     for (const file of combatFiles) {
-      if (this.#scannedFiles.has(file)) continue;
+      if (this._scannedFiles.has(file)) continue;
 
       try {
         const response = await fetch(file);
         if (!response.ok) continue;
 
         const content = await response.text();
-        this.#scannedFiles.add(file);
+        this._scannedFiles.add(file);
 
         // Run all detectors
         const violations = [
@@ -324,7 +324,7 @@ export const CombatLayer = {
         ];
 
         violations.forEach(v => {
-          this.#violations.push(v);
+          this._violations.push(v);
           this.reportViolation(v);
         });
       } catch (err) {
@@ -357,7 +357,7 @@ export const CombatLayer = {
     );
 
     // In enforce mode, could escalate
-    if (this.#enforceMode && severity >= Sentinel.SEVERITY.ERROR) {
+    if (this._enforceMode && severity >= Sentinel.SEVERITY.ERROR) {
       // Future: could throw or fail build
     }
   },
@@ -366,7 +366,7 @@ export const CombatLayer = {
    * Get all detected violations
    */
   getViolations() {
-    return [...this.#violations];
+    return [...this._violations];
   },
 
   /**
@@ -375,16 +375,16 @@ export const CombatLayer = {
   generateReport() {
     const report = {
       timestamp: Date.now(),
-      enforceMode: this.#enforceMode,
-      totalViolations: this.#violations.length,
+      enforceMode: this._enforceMode,
+      totalViolations: this._violations.length,
       byType: {},
       bySeverity: {},
       topOffenders: [],
-      violations: this.#violations
+      violations: this._violations
     };
 
     // Group by type
-    this.#violations.forEach(v => {
+    this._violations.forEach(v => {
       if (!report.byType[v.type]) {
         report.byType[v.type] = 0;
       }
@@ -398,7 +398,7 @@ export const CombatLayer = {
 
     // Top offenders
     const fileCount = new Map();
-    this.#violations.forEach(v => {
+    this._violations.forEach(v => {
       fileCount.set(v.file, (fileCount.get(v.file) || 0) + 1);
     });
     report.topOffenders = Array.from(fileCount.entries())

@@ -2,7 +2,7 @@
  * PHASE 5B-5: Audit Trail Unit Tests
  */
 
-import { AuditTrail } from './audit-trail.js';
+import { AuditTrail } from "/systems/foundryvtt-swse/scripts/governance/audit/audit-trail.js";
 
 function createMockActor(name = 'Test') {
   return {

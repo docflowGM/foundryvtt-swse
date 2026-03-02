@@ -7,9 +7,9 @@
  * Called by feature dispatcher when class_level feature is processed.
  */
 
-import { SWSELogger } from "../../../utils/logger.js";
-import { MulticlassPolicy } from "./multiclass-policy.js";
-import { FeatSlotSchema } from "../feats/feat-slot-schema.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { MulticlassPolicy } from "/systems/foundryvtt-swse/scripts/engine/progression/policies/multiclass-policy.js";
+import { FeatSlotSchema } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-slot-schema.js";
 
 export class MulticlassPolicyIntegration {
   /**
@@ -89,7 +89,7 @@ export class MulticlassPolicyIntegration {
    * @private
    */
   static async _buildContext(actor) {
-    const { getClassData } = await import("../utils/class-data-loader.js");
+    const { getClassData } = await import("/systems/foundryvtt-swse/scripts/engine/progression/utils/class-data-loader.js");
 
     const classLevels = actor.system?.progression?.classLevels || [];
     const classDataCache = {};

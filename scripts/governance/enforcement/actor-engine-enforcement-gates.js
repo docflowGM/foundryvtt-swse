@@ -10,9 +10,9 @@
  * (blocking is handled by integrity checker and level-up gate).
  */
 
-import { SWSELogger } from '../../utils/logger.js';
-import { GovernanceSystem } from '../governance-system.js';
-import { MissingPrereqsTracker } from '../integrity/missing-prereqs-tracker.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { GovernanceSystem } from "/systems/foundryvtt-swse/scripts/governance/governance-system.js";
+import { MissingPrereqsTracker } from "/systems/foundryvtt-swse/scripts/governance/integrity/missing-prereqs-tracker.js";
 
 export class ActorEngineEnforcementGates {
 

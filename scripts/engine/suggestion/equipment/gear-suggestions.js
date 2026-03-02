@@ -5,8 +5,8 @@
  * Evaluates utility items, gadgets, and specialized equipment.
  */
 
-import { SWSELogger } from "../../../utils/logger.js";
-import { assignTier, clampScore } from "../../../engine/suggestion/equipment/shared-scoring-utils.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { assignTier, clampScore } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/shared-scoring-utils.js";
 
 export class GearSuggestions {
   /**

@@ -13,8 +13,8 @@
  * Storage: actor.system.auditLog (persisted to world data)
  */
 
-import { SWSELogger } from '../../utils/logger.js';
-import { GovernanceSystem } from '../governance-system.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { GovernanceSystem } from "/systems/foundryvtt-swse/scripts/governance/governance-system.js";
 
 export class AuditTrail {
   /**

@@ -18,7 +18,7 @@
 // For module usage, import createActor
 let createActor;
 try {
-  const module = await import('../core/document-api-v13.js');
+  const module = await import("/systems/foundryvtt-swse/scripts/core/document-api-v13.js");
   createActor = module.createActor;
 } catch (e) {
   // Fallback for macro context where imports don't work

@@ -14,11 +14,11 @@
  * Deterministic and testable.
  */
 
-import { RollEngine } from "../roll-engine.js";
-import { LedgerService } from "../store/ledger-service.js";
-import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
-import { SWSELogger } from "../../core/logger.js";
-import { getHeroicLevel, getClassLevel } from "../../actors/derived/level-split.js";
+import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
+import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
+import { getHeroicLevel, getClassLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 
 export class LightsaberConstructionEngine {
   /**

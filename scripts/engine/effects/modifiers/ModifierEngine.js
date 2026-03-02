@@ -11,12 +11,12 @@
  * Single source of truth for modifier math.
  */
 
-import { ModifierType, ModifierSource, createModifier, isValidModifier } from "../../../engine/effects/modifiers/ModifierTypes.js";
-import ModifierUtils from "../../../engine/effects/modifiers/ModifierUtils.js";
-import { EncumbranceEngine } from "../../../engine/encumbrance/EncumbranceEngine.js";
-import { WeaponsEngine } from "../../../engine/combat/weapons-engine.js";
-import { StructuredRuleEvaluator } from "../../../engine/effects/modifiers/StructuredRuleEvaluator.js";
-import { swseLogger } from "../../../utils/logger.js";
+import { ModifierType, ModifierSource, createModifier, isValidModifier } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
+import ModifierUtils from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierUtils.js";
+import { EncumbranceEngine } from "/systems/foundryvtt-swse/scripts/engine/encumbrance/EncumbranceEngine.js";
+import { WeaponsEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/weapons-engine.js";
+import { StructuredRuleEvaluator } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/StructuredRuleEvaluator.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class ModifierEngine {
   /**
@@ -1110,7 +1110,7 @@ export class ModifierEngine {
       // PHASE 4 STEP 7: New path - installedSystems from DROID_SYSTEM_DEFINITIONS
       if (installedSystems && typeof installedSystems === 'object') {
         try {
-          const { DROID_SYSTEM_DEFINITIONS, getDroidSystemDefinition } = await import('../../../../droid-system-definitions.js');
+          const { DROID_SYSTEM_DEFINITIONS, getDroidSystemDefinition } = await import("/systems/foundryvtt-swse/droid-system-definitions.js");
 
           for (const [systemId, installed] of Object.entries(installedSystems)) {
             const def = getDroidSystemDefinition(systemId);
@@ -1180,7 +1180,7 @@ export class ModifierEngine {
 
       if (installedSystems && typeof installedSystems === 'object') {
         try {
-          const { VEHICLE_SYSTEM_DEFINITIONS, getVehicleSystemDefinition } = await import('../../../../vehicle-system-definitions.js');
+          const { VEHICLE_SYSTEM_DEFINITIONS, getVehicleSystemDefinition } = await import("/systems/foundryvtt-swse/vehicle-system-definitions.js");
 
           for (const [systemId, installed] of Object.entries(installedSystems)) {
             const def = getVehicleSystemDefinition(systemId);

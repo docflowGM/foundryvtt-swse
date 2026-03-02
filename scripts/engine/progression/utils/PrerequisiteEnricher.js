@@ -5,7 +5,7 @@
 // Integrates the existing prerequisite-normalizer.js
 // ======================================================================
 
-import { normalizePrerequisiteString } from "../../../engine/progression/utils/prerequisite-normalizer.js";
+import { normalizePrerequisiteString } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/prerequisite-normalizer.js";
 
 export class PrerequisiteEnricher {
   /**

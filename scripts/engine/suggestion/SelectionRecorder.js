@@ -16,7 +16,7 @@
  * Never owns: Analytics, calculations, aggregations
  */
 
-import { SWSELogger } from "../../utils/logger.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 const MAX_RECENT_SIZE = 15;
 

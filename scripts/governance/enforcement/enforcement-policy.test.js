@@ -5,8 +5,8 @@
  * Each test verifies deterministic behavior.
  */
 
-import { EnforcementPolicy } from './enforcement-policy.js';
-import { GovernanceSystem } from '../governance-system.js';
+import { EnforcementPolicy } from "/systems/foundryvtt-swse/scripts/governance/enforcement/enforcement-policy.js";
+import { GovernanceSystem } from "/systems/foundryvtt-swse/scripts/governance/governance-system.js";
 
 /**
  * Mock actor factory

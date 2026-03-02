@@ -7,8 +7,8 @@
  * This is a reference file—not part of the runtime system.
  */
 
-import { ArchetypeTrendRegistry } from "../../engine/analysis/archetype-trend-registry.js";
-import { BuildAnalysisEngine } from "../../engine/analysis/build-analysis-engine.js";
+import { ArchetypeTrendRegistry } from "/systems/foundryvtt-swse/scripts/engine/analysis/archetype-trend-registry.js";
+import { BuildAnalysisEngine } from "/systems/foundryvtt-swse/scripts/engine/analysis/build-analysis-engine.js";
 
 export class Phase3Demo {
   /**

@@ -7,11 +7,11 @@
  * 3. First-Launch Feature Tour (opt-in, skippable)
  */
 
-import { DiscoveryUserState } from "../../ui/discovery/user-state.js";
-import { TooltipRegistry } from "../../ui/discovery/tooltip-registry.js";
-import { CalloutManager } from "../../ui/discovery/callout-manager.js";
-import { FeatureTour } from "../../ui/discovery/feature-tour.js";
-import { registerDiscoverySettings } from "../../ui/discovery/discovery-settings.js";
+import { DiscoveryUserState } from "/systems/foundryvtt-swse/scripts/ui/discovery/user-state.js";
+import { TooltipRegistry } from "/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-registry.js";
+import { CalloutManager } from "/systems/foundryvtt-swse/scripts/ui/discovery/callout-manager.js";
+import { FeatureTour } from "/systems/foundryvtt-swse/scripts/ui/discovery/feature-tour.js";
+import { registerDiscoverySettings } from "/systems/foundryvtt-swse/scripts/ui/discovery/discovery-settings.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 
@@ -71,7 +71,7 @@ function _onAppRender(app, html) {
 }
 
 // Re-export for direct imports
-export { DiscoveryUserState } from './user-state.js';
-export { TooltipRegistry } from './tooltip-registry.js';
-export { CalloutManager } from './callout-manager.js';
-export { FeatureTour } from './feature-tour.js';
+export { DiscoveryUserState } from "/systems/foundryvtt-swse/scripts/ui/discovery/user-state.js";
+export { TooltipRegistry } from "/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-registry.js";
+export { CalloutManager } from "/systems/foundryvtt-swse/scripts/ui/discovery/callout-manager.js";
+export { FeatureTour } from "/systems/foundryvtt-swse/scripts/ui/discovery/feature-tour.js";

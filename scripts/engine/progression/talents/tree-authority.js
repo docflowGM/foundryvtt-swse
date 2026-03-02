@@ -6,8 +6,8 @@
  * No persistence - all authority derived from actor state.
  */
 
-import { SWSELogger } from "../../../utils/logger.js";
-import { TalentTreeRegistry } from "./TalentTreeRegistry.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { TalentTreeRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/TalentTreeRegistry.js";
 
 /**
  * Get allowed talent trees for a given slot

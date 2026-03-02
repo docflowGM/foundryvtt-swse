@@ -13,15 +13,15 @@ function getDevMode() {
   return game.modules.get('_dev-mode')?.active ?? false;
 }
 
-import CharacterGenerator from "../apps/chargen/chargen-main.js";
-import { auditCSSHealth } from "../core/css-auditor.js";
+import CharacterGenerator from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js";
+import { auditCSSHealth } from "/systems/foundryvtt-swse/scripts/core/css-auditor.js";
 import {
   v2Assert,
   enableStrictV2,
   disableStrictV2,
   generateMigrationReport,
   generateUIFailureReport
-} from '../governance/sentinel/migration-auditor.js';
+} from "/systems/foundryvtt-swse/scripts/governance/sentinel/migration-auditor.js";
 
 /**
  * Smoke Test Suite - Basic validation that SWSE loads correctly
@@ -62,7 +62,7 @@ async function smokeTest() {
 
   // Test 3: Icon constants available
   try {
-    const { ICONS } = await import('../utils/icon-constants.js');
+    const { ICONS } = await import("/systems/foundryvtt-swse/scripts/utils/icon-constants.js");
     if (!ICONS || Object.keys(ICONS).length === 0) {throw new Error('ICONS constant empty');}
     results.push({ name: 'Icon constants', status: '✓', count: Object.keys(ICONS).length });
   } catch (e) {

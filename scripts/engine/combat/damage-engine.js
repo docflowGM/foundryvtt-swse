@@ -5,7 +5,7 @@
  * PHASE 3: Routed through ActorEngine for deterministic mutation control
  */
 
-import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class DamageEngine {
   static async applyDamage(actor, damage, options = {}) {

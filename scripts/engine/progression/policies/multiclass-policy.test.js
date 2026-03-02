@@ -7,7 +7,7 @@
  * Run with: npm test -- --grep "Multiclass Policy"
  */
 
-import { MulticlassPolicy } from "./multiclass-policy.js";
+import { MulticlassPolicy } from "/systems/foundryvtt-swse/scripts/engine/progression/policies/multiclass-policy.js";
 
 describe("Multiclass Policy — Feature Flags", () => {
   let mockActor;

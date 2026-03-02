@@ -2,7 +2,7 @@
  * PHASE 5C-2: Migration Integrity Adapter Unit Tests
  */
 
-import { MigrationIntegrityAdapter } from './migration-integrity-adapter.js';
+import { MigrationIntegrityAdapter } from "/systems/foundryvtt-swse/scripts/core/migration-integrity-adapter.js";
 
 export class MigrationIntegrityAdapterTests {
   static run() {

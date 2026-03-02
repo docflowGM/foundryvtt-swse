@@ -3,8 +3,8 @@
  * Handles all HP calculation logic for both character creation and level-up.
  * Single source of truth for HP generation rules.
  */
-import { SettingsHelper } from "../../utils/settings-helper.js";
-import { SWSELogger } from "../../utils/logger.js";
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class HPGeneratorEngine {
   /**

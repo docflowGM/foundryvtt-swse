@@ -7,10 +7,10 @@ import {
   normalizeTalent,
   validateTalent,
   filterTalentsByRole
-} from "../data/talent-normalizer.js";
+} from "/systems/foundryvtt-swse/scripts/data/talent-normalizer.js";
 
-import { SWSELogger } from "../utils/logger.js";
-import { toStableKey } from "../utils/stable-key.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { toStableKey } from "/systems/foundryvtt-swse/scripts/utils/stable-key.js";
 
 export const TalentDB = {
 

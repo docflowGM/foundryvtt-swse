@@ -24,7 +24,7 @@
  * - Compatible with AbilityEngine, ActorEngine, UI layers
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * Internal normalized species entry

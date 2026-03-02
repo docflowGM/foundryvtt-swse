@@ -19,7 +19,7 @@
  * - data/vehicle-weapon-ranges.json
  */
 
-import { SWSELogger } from "../../utils/logger.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export const RangeEngine = {
   _actorProfiles: null,
@@ -54,7 +54,7 @@ export const RangeEngine = {
       SWSELogger.error("[RangeEngine] Initialization failed", err);
       throw err;
     }
-  }
+  },
 
   /* ============================================
      PROFILE RESOLUTION
@@ -71,7 +71,7 @@ export const RangeEngine = {
       return null;
     }
     return this._actorProfiles.find(p => p.slug === slug) ?? null;
-  }
+  },
 
   /**
    * Get vehicle weapon profile by slug
@@ -84,7 +84,7 @@ export const RangeEngine = {
       return null;
     }
     return this._vehicleProfiles.find(p => p.slug === slug) ?? null;
-  }
+  },
 
   /* ============================================
      BAND RESOLUTION — ACTOR WEAPONS
@@ -116,7 +116,7 @@ export const RangeEngine = {
     // Out of range
     SWSELogger.debug(`[RangeEngine] Distance ${distance} out of range for ${slug}`);
     return null;
-  }
+  },
 
   /* ============================================
      BAND RESOLUTION — VEHICLE WEAPONS
@@ -147,7 +147,7 @@ export const RangeEngine = {
     // Out of range
     SWSELogger.debug(`[RangeEngine] Distance ${distance} out of range for ${slug} (${scale})`);
     return null;
-  }
+  },
 
   /* ============================================
      UTILITY
@@ -160,7 +160,7 @@ export const RangeEngine = {
   getActorProfileSlugs() {
     if (!this._actorProfiles) return [];
     return this._actorProfiles.map(p => p.slug);
-  }
+  },
 
   /**
    * Get all available vehicle weapon profiles
@@ -169,7 +169,7 @@ export const RangeEngine = {
   getVehicleProfileSlugs() {
     if (!this._vehicleProfiles) return [];
     return this._vehicleProfiles.map(p => p.slug);
-  }
+  },
 
   /**
    * Clear loaded profiles (for testing)

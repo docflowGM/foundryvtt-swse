@@ -23,8 +23,8 @@
  * - No mutation
  */
 
-import { SWSELogger } from "../../utils/logger.js";
-import { ArchetypeRegistry } from "../../engine/archetype/archetype-registry.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ArchetypeRegistry } from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry.js";
 
 export class TrajectoryPlanningEngine {
   /**

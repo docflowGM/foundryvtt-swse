@@ -133,14 +133,14 @@ export class VehicleTurnController {
     });
 
     // Reset per-turn states from other engines
-    const { EnhancedPilot } = await import('./enhanced-pilot.js');
-    const { EnhancedCommander } = await import('./enhanced-commander.js');
+    const { EnhancedPilot } = await import("/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-pilot.js");
+    const { EnhancedCommander } = await import("/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-commander.js");
 
     await EnhancedPilot.resetManeuver(vehicle);
     await EnhancedCommander.resetOrder(vehicle);
 
     // Recharge shields
-    const { EnhancedShields } = await import('./enhanced-shields.js');
+    const { EnhancedShields } = await import("/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-shields.js");
     await EnhancedShields.recharge(vehicle);
 
     await ChatMessage.create({

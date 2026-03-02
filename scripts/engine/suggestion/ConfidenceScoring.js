@@ -17,10 +17,10 @@
  * - Tier level (higher tiers naturally have higher confidence)
  */
 
-import { SWSELogger } from "../../utils/logger.js";
-import { BuildIdentityAnchor, ANCHOR_STATE } from "../../engine/suggestion/BuildIdentityAnchor.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { BuildIdentityAnchor, ANCHOR_STATE } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIdentityAnchor.js";
 
-import { getLevelSplit } from "../../actors/derived/level-split.js";
+import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 export class ConfidenceScoring {
   /**
    * Compute confidence for a suggestion

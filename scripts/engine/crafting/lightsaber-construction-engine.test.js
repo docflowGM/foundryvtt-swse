@@ -3,7 +3,7 @@
  * Phase-based testing: reads → dry run failures → success path → edge cases
  */
 
-import { LightsaberConstructionEngine } from './lightsaber-construction-engine.js';
+import { LightsaberConstructionEngine } from "/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js";
 
 /**
  * Mock Actor Factory

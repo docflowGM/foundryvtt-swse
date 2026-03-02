@@ -11,7 +11,7 @@
  * - Special effects (dex loss, etc.)
  */
 
-import { SWSELogger as swseLogger } from '../utils/logger.js';
+import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class DefenseTooltip {
   /**

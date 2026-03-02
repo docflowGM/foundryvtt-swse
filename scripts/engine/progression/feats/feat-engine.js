@@ -9,12 +9,12 @@
  * - Item creation
  */
 
-import { SWSELogger } from "../../../utils/logger.js";
-import { ActorEngine } from "../../../governance/actor-engine/actor-engine.js";
-import { FeatRegistry } from "../../../engine/progression/feats/feat-registry.js";
-import { FeatState } from "../../../engine/progression/feats/feat-state.js";
-import { AbilityEngine } from "../../../engine/abilities/AbilityEngine.js";
-import { FeatNormalizer } from "../../../engine/progression/feats/feat-normalizer.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-registry.js";
+import { FeatState } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-state.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import { FeatNormalizer } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-normalizer.js";
 
 export const FeatEngine = {
 

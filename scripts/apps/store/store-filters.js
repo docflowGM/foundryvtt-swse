@@ -3,7 +3,7 @@
  * Handles category filtering, availability filtering, and search
  */
 
-import { getRandomDialogue } from "../../apps/store/store-shared.js";
+import { getRandomDialogue } from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js";
 
 /**
  * Apply availability filter to currently visible items
@@ -211,11 +211,12 @@ export function applySorting(doc, sortValue, itemsById) {
                     return bPriceDesc - aPriceDesc;
 
                 }
-                case 'damage-desc':
+                case 'damage-desc': {
                     // Parse damage values (e.g., "3d6", "2d8+1")
                     const aDamage = parseDamage(aData?.system?.damage || '');
                     const bDamage = parseDamage(bData?.system?.damage || '');
                     return bDamage - aDamage;
+                }
 
                 case 'availability': {
                     const aAvail = aData?.system?.availability || '';
@@ -224,6 +225,7 @@ export function applySorting(doc, sortValue, itemsById) {
                     const aIndex = availOrder.findIndex(a => aAvail.includes(a));
                     const bIndex = availOrder.findIndex(b => bAvail.includes(b));
                     return (aIndex === -1 ? 999 : aIndex) - (bIndex === -1 ? 999 : bIndex);
+                }
 
                 default:
                     return 0;

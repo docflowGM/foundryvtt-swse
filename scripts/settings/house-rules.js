@@ -3,7 +3,7 @@
  * Centralized management of house rule settings and overrides
  */
 
-import { ClassRelationshipRegistry } from '../data/class-relationship-registry.js';
+import { ClassRelationshipRegistry } from "/systems/foundryvtt-swse/scripts/data/class-relationship-registry.js";
 
 export function registerHouseRuleSettings() {
     // Dark Side Prestige Access House Rule

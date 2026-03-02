@@ -1,7 +1,7 @@
-import { ProgressionEngine } from "../engine/progression/engine/progression-engine.js";
-import { ForcePointsService } from "../engine/force/force-points-service.js";
-import { createChatMessage } from "../core/document-api-v13.js";
-import { DSPEngine } from "../engine/darkside/dsp-engine.js";
+import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
+import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
+import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 /**
  * Force Points utility functions for rolling and spending Force Points
  */

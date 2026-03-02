@@ -1,15 +1,15 @@
 // scripts/actors/v2/base-actor.js
-import { SWSEActorBase } from "../../actors/base/swse-actor-base.js";
-import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
-import { DerivedCalculator } from "../../actors/derived/derived-calculator.js";
-import { ModifierEngine } from "../../engine/effects/modifiers/ModifierEngine.js";
-import { computeCharacterDerived } from "../../actors/v2/character-actor.js";
-import { computeNpcDerived } from "../../actors/v2/npc-actor.js";
-import { computeDroidDerived } from "../../actors/v2/droid-actor.js";
-import { computeVehicleDerived } from "../../actors/v2/vehicle-actor.js";
-import { shouldSkipDerivedData } from "../../utils/hardening.js";
-import { computeXpDerived } from "../../engine/progression/xp-engine.js";
-import { SWSEInitiative } from "../../engine/combat/SWSEInitiative.js";
+import { SWSEActorBase } from "/systems/foundryvtt-swse/scripts/actors/base/swse-actor-base.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { DerivedCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js";
+import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
+import { computeCharacterDerived } from "/systems/foundryvtt-swse/scripts/actors/v2/character-actor.js";
+import { computeNpcDerived } from "/systems/foundryvtt-swse/scripts/actors/v2/npc-actor.js";
+import { computeDroidDerived } from "/systems/foundryvtt-swse/scripts/actors/v2/droid-actor.js";
+import { computeVehicleDerived } from "/systems/foundryvtt-swse/scripts/actors/v2/vehicle-actor.js";
+import { shouldSkipDerivedData } from "/systems/foundryvtt-swse/scripts/utils/hardening.js";
+import { computeXpDerived } from "/systems/foundryvtt-swse/scripts/engine/progression/xp-engine.js";
+import { SWSEInitiative } from "/systems/foundryvtt-swse/scripts/engine/combat/SWSEInitiative.js";
 
 /**
  * SWSE V2 Base Actor
@@ -165,7 +165,7 @@ export class SWSEV2BaseActor extends SWSEActorBase {
     }
 
     if (kind === 'featActionToggle') {
-      const mod = await import('../../utils/feat-actions-mapper.js');
+      const mod = await import("/systems/foundryvtt-swse/scripts/utils/feat-actions-mapper.js");
       return mod.FeatActionsMapper.toggleAction(this, exec.actionKey);
     }
 
@@ -260,7 +260,7 @@ export class SWSEV2BaseActor extends SWSEActorBase {
    * @param {boolean} [options.useForce=false] Spend a Force Point for bonus die.
    */
   async swseRollInitiative(options = {}) {
-    const { CombatEngine } = await import('../../engine/combat/CombatEngine.js');
+    const { CombatEngine } = await import("/systems/foundryvtt-swse/scripts/actors/engine/combat/CombatEngine.js");
     return CombatEngine.rollInitiative(this, options);
   }
 

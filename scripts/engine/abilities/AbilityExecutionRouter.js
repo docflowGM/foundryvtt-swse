@@ -24,9 +24,9 @@
  * - GENERAL: generic ability activation (catch-all)
  */
 
-import { SWSELogger } from '../../utils/logger.js';
-import { ActivationLimitEngine, LimitType } from './ActivationLimitEngine.js';
-import { ActorEngine } from '../../governance/actor-engine/actor-engine.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActivationLimitEngine, LimitType } from "/systems/foundryvtt-swse/scripts/engine/abilities/ActivationLimitEngine.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * Execution type constants.
@@ -153,7 +153,7 @@ export class AbilityExecutionRouter {
     // Lazy-import ForceEngine to avoid circular deps at module load time
     let ForceEngine;
     try {
-      ({ ForceEngine } = await import('../force/force-engine.js'));
+      ({ ForceEngine } = await import("/systems/foundryvtt-swse/scripts/engine/force/force-engine.js"));
     } catch (_) {
       SWSELogger.warn('[AbilityExecutionRouter] ForceEngine unavailable — activation queued without spend');
       return { queued: true };
@@ -181,7 +181,7 @@ export class AbilityExecutionRouter {
     // the router ensures limit gating and records usage.
     // Effect application (e.g., condition track changes) flows through ConditionEngine.
     if (payload.conditionStep !== undefined) {
-      const { ConditionEngine } = await import('../combat/ConditionEngine.js');
+      const { ConditionEngine } = await import("/systems/foundryvtt-swse/scripts/engine/combat/ConditionEngine.js");
       if (typeof ConditionEngine?.applyConditionStep === 'function') {
         await ConditionEngine.applyConditionStep(target ?? actor, payload.conditionStep, payload.conditionOptions ?? {});
       }

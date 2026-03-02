@@ -17,8 +17,8 @@
  * - RequestAnimationFrame for smooth animation
  */
 
-import { BEAM_STYLES, getBoltColor } from "../constants/beam-styles.js";
-import { SWSELogger as swseLogger } from "../utils/logger.js";
+import { BEAM_STYLES, getBoltColor } from "/systems/foundryvtt-swse/scripts/constants/beam-styles.js";
+import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class NativeProjectileService {
   /**

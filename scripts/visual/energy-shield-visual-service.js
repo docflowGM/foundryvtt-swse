@@ -23,7 +23,7 @@
  * - Multiplicative (stacks with other visuals)
  */
 
-import { SWSELogger as swseLogger } from "../utils/logger.js";
+import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class EnergyShieldVisualService {
   // Track active shields by token ID

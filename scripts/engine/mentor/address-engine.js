@@ -11,7 +11,7 @@
  * - Pure stateless logic (no persistence)
  */
 
-import { ADDRESS_PROFILES } from "./address-profiles.js";
+import { ADDRESS_PROFILES } from "/systems/foundryvtt-swse/scripts/engine/mentor/address-profiles.js";
 
 export class AddressEngine {
   /**

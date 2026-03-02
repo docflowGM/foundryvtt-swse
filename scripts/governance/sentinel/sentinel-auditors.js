@@ -12,7 +12,7 @@ export {
   auditHidden,
   auditCSSHealth,
   runFullCSSAudit
-} from './css-auditor.js';
+} from "/systems/foundryvtt-swse/scripts/governance/sentinel/css-auditor.js";
 
 export {
   v2Assert,
@@ -34,10 +34,10 @@ export {
   validateSurfaceTransition,
   setupNoWindowSentinel,
   generateUIFailureReport
-} from './migration-auditor.js';
+} from "/systems/foundryvtt-swse/scripts/governance/sentinel/migration-auditor.js";
 
 /* 🔥 IMPORTANT: Explicitly import what we use locally */
-import { initMigrationAuditor } from "../../governance/sentinel/migration-auditor.js";
+import { initMigrationAuditor } from "/systems/foundryvtt-swse/scripts/governance/sentinel/migration-auditor.js";
 
 /**
  * Initialize all auditors

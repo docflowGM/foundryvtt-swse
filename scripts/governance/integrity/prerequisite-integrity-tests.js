@@ -9,9 +9,9 @@
  * 4. Authority isolation is maintained
  */
 
-import { PrerequisiteIntegrityChecker } from './prerequisite-integrity-checker.js';
-import { MissingPrereqsTracker } from './missing-prereqs-tracker.js';
-import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
+import { PrerequisiteIntegrityChecker } from "/systems/foundryvtt-swse/scripts/governance/integrity/prerequisite-integrity-checker.js";
+import { MissingPrereqsTracker } from "/systems/foundryvtt-swse/scripts/governance/integrity/missing-prereqs-tracker.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 
 export const PrerequisiteIntegrityTests = {
 

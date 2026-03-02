@@ -21,16 +21,17 @@
  * - No refactoring of existing systems
  */
 
-import { SuggestionEngine } from "../../engine/suggestion/SuggestionEngine.js";
-import { BuildAnalysisEngine } from "../../engine/analysis/build-analysis-engine.js";
-import { TrajectoryPlanningEngine } from "../../engine/analysis/trajectory-planning-engine.js";
-import { MentorJudgmentEngine } from "../../engine/mentor/mentor-judgment-engine.js";
-import { getMentor } from "../../engine/mentor/mentor-json-loader.js";
-import { getEncouragementLine } from "../../dialogue/runtime/getEncouragementLine.js";
-import { getJudgmentOverlay } from "../../dialogue/runtime/getJudgmentOverlay.js";
-import { SWSELogger } from "../../utils/logger.js";
-import { AddressEngine } from "./address-engine.js";
-import { AddressPolicy } from "./address-policy.js";
+import { SuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngine.js";
+import { BuildAnalysisEngine } from "/systems/foundryvtt-swse/scripts/engine/analysis/build-analysis-engine.js";
+import { TrajectoryPlanningEngine } from "/systems/foundryvtt-swse/scripts/engine/analysis/trajectory-planning-engine.js";
+import { MentorJudgmentEngine } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-judgment-engine.js";
+import { REASON_ATOMS } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-reason-atoms.js";
+import { getMentor } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-json-loader.js";
+import { getEncouragementLine } from "/systems/foundryvtt-swse/scripts/dialogue/runtime/getEncouragementLine.js";
+import { getJudgmentOverlay } from "/systems/foundryvtt-swse/scripts/dialogue/runtime/getJudgmentOverlay.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { AddressEngine } from "/systems/foundryvtt-swse/scripts/engine/mentor/address-engine.js";
+import { AddressPolicy } from "/systems/foundryvtt-swse/scripts/engine/mentor/address-policy.js";
 
 export class MentorInteractionOrchestrator {
   /**
@@ -371,31 +372,31 @@ export class MentorInteractionOrchestrator {
   static _mapSignalToAtom(signal) {
     const { category, severity } = signal;
 
-    // Map signal categories to mentor atoms
+    // Map signal categories to canonical mentor atoms (PascalCase)
     const categoryMap = {
-      // Commitment conflicts → commitment_ignored atom
-      "commitment_conflict": "commitment_ignored",
-      "commitment_deviation": "commitment_ignored",
+      // Commitment conflicts → CommitmentIgnored atom
+      "commitment_conflict": REASON_ATOMS.CommitmentIgnored,
+      "commitment_deviation": REASON_ATOMS.CommitmentIgnored,
 
-      // Goal conflicts → goal_deviation
-      "goal_conflict": "goal_deviation",
-      "path_deviation": "goal_deviation",
+      // Goal conflicts → GoalDeviation
+      "goal_conflict": REASON_ATOMS.GoalDeviation,
+      "path_deviation": REASON_ATOMS.GoalDeviation,
 
-      // Pattern misalignment → pattern_conflict
-      "pattern_mismatch": "pattern_conflict",
-      "identity_shift": "pattern_conflict",
+      // Pattern misalignment → PatternConflict
+      "pattern_mismatch": REASON_ATOMS.PatternConflict,
+      "identity_shift": REASON_ATOMS.PatternConflict,
 
-      // Readiness issues → readiness_lacking
-      "readiness_gap": "readiness_lacking",
-      "premature_selection": "readiness_lacking",
+      // Readiness issues → ReadinessLacking
+      "readiness_gap": REASON_ATOMS.ReadinessLacking,
+      "premature_selection": REASON_ATOMS.ReadinessLacking,
 
-      // Risk signals → risk_increased
-      "vulnerability": "risk_increased",
-      "exposure": "exposure",
+      // Risk signals → RiskIncreased
+      "vulnerability": REASON_ATOMS.RiskIncreased,
+      "exposure": REASON_ATOMS.RiskIncreased,
 
-      // Exploration signals → exploration_signal
-      "exploration": "exploration_signal",
-      "unusual_choice": "exploration_signal"
+      // Exploration signals → ExplorationSignal
+      "exploration": REASON_ATOMS.ExplorationSignal,
+      "unusual_choice": REASON_ATOMS.ExplorationSignal
     };
 
     return categoryMap[category] || null;
@@ -409,11 +410,12 @@ export class MentorInteractionOrchestrator {
   static _mapStrengthToAtom(signal) {
     const { category } = signal;
 
+    // Map strength signals to canonical mentor atoms (PascalCase)
     const categoryMap = {
-      "synergy": "synergy_present",
-      "alignment": "synergy_present",
-      "specialization": "feat_reinforces_core_strength",
-      "coherence": "synergy_present"
+      "synergy": REASON_ATOMS.SynergyPresent,
+      "alignment": REASON_ATOMS.PatternAlignment,
+      "specialization": REASON_ATOMS.SynergyPresent,
+      "coherence": REASON_ATOMS.SynergyPresent
     };
 
     return categoryMap[category] || null;

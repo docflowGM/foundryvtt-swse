@@ -25,9 +25,9 @@
  * Integration: These handlers are called from actor-hooks.js item add/remove handlers
  */
 
-import { swseLogger } from "../../utils/logger.js";
-import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
-import { ForceAuthorityEngine } from "../../engine/progression/engine/force-authority-engine.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { ForceAuthorityEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-authority-engine.js";
 
 export class ForceDomainLifecycle {
   /**

@@ -11,13 +11,13 @@
  * - Build identity card
  */
 
-import { SWSELogger } from "../utils/logger.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import {
   getActorAffinity,
   getPrimaryArchetype,
   formatAffinityForDisplay,
   getPrestigePathRecommendations
-} from ""../engine/suggestion/ArchetypeSuggestionIntegration.js';
+} from "/systems/foundryvtt-swse/scripts/engine/suggestion/ArchetypeSuggestionIntegration.js";
 
 // ─────────────────────────────────────────────────────────────
 // AFFINITY DISPLAY COMPONENT
@@ -40,7 +40,7 @@ export async function renderAffinityBars(actor, options = {}) {
     const affinityResult = await getActorAffinity(actor);
 
     if (Object.keys(affinityResult.affinity).length === 0) {
-      return '<p class="no-affinity">Character build not yet established.</p>';
+      return '<p class=""no-affinity">Character build not yet established.</p>';
     }
 
     const display = formatAffinityForDisplay(affinityResult.affinity, topN);

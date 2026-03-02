@@ -13,14 +13,14 @@
  * Called from system.js on initialization and from sheet classes.
  */
 
-import { GovernanceSystem } from './governance-system.js';
-import { EnforcementPolicy } from './enforcement/enforcement-policy.js';
-import { IntegrityBanner } from './ui/integrity-banner.js';
-import { LevelUpPreflightGate } from './enforcement/levelup-preflight-gate.js';
-import { SlotResolutionFlow } from './ui/slot-resolution-flow.js';
-import { ExportMarking } from './export/export-marking.js';
-import { ActorEngineEnforcementGates } from './enforcement/actor-engine-enforcement-gates.js';
-import { SWSELogger } from '../utils/logger.js';
+import { GovernanceSystem } from "/systems/foundryvtt-swse/scripts/governance/governance-system.js";
+import { EnforcementPolicy } from "/systems/foundryvtt-swse/scripts/governance/enforcement/enforcement-policy.js";
+import { IntegrityBanner } from "/systems/foundryvtt-swse/scripts/governance/ui/integrity-banner.js";
+import { LevelUpPreflightGate } from "/systems/foundryvtt-swse/scripts/governance/enforcement/levelup-preflight-gate.js";
+import { SlotResolutionFlow } from "/systems/foundryvtt-swse/scripts/governance/ui/slot-resolution-flow.js";
+import { ExportMarking } from "/systems/foundryvtt-swse/scripts/governance/export/export-marking.js";
+import { ActorEngineEnforcementGates } from "/systems/foundryvtt-swse/scripts/governance/enforcement/actor-engine-enforcement-gates.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class GovernanceIntegration {
 

@@ -3,7 +3,7 @@
  * Handles skill improvement through training points
  */
 
-import { SWSELogger } from "../utils/logger.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 const NS = 'foundryvtt-swse';
 
@@ -70,6 +70,7 @@ export class SkillTrainingMechanics {
       case 'standard': {
         const intMod = actor?.system?.attributes?.int?.mod || 0;
         return 5 + Math.max(0, intMod);
+      }
       default:
         return 0;
     }
@@ -164,7 +165,6 @@ export class SkillTrainingMechanics {
     const scale = game.settings.get(NS, 'trainingCostScale');
 
     switch (scale) {
-      }
       case 'linear':
         return spent; // 1:1 mapping
       case 'exponential':

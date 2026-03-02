@@ -3,9 +3,9 @@
  * so the Progression Engine and PrerequisiteValidator always see consistent data.
  */
 
-import { normalizePrerequisiteString } from "../../../engine/progression/utils/prerequisite-normalizer.js";
-import { normalizeSpeciesData } from "../../../engine/progression/utils/species-normalizer.js";
-import { normalizeBackgroundData } from "../../../engine/progression/utils/background-normalizer.js";
+import { normalizePrerequisiteString } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/prerequisite-normalizer.js";
+import { normalizeSpeciesData } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/species-normalizer.js";
+import { normalizeBackgroundData } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/background-normalizer.js";
 
 // ============================================================
 // FEAT NORMALIZATION

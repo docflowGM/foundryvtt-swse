@@ -10,9 +10,9 @@
  * No mentor integration.
  */
 
-import { ArchetypeTrendRegistry } from "../../engine/analysis/archetype-trend-registry.js";
-import { ArchetypeRegistry } from "../../engine/archetype/archetype-registry.js";
-import { SWSELogger } from "../../utils/logger.js";
+import { ArchetypeTrendRegistry } from "/systems/foundryvtt-swse/scripts/engine/analysis/archetype-trend-registry.js";
+import { ArchetypeRegistry } from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class BuildAnalysisEngine {
   /**

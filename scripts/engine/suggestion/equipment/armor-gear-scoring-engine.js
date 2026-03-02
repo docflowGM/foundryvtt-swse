@@ -13,7 +13,7 @@
  *   Axis B: Action Cost (action economy to activate/use)
  */
 
-import { assignTier, scaleNormalizedTo100, clampScore } from "../../../engine/suggestion/equipment/shared-scoring-utils.js";
+import { assignTier, scaleNormalizedTo100, clampScore } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/shared-scoring-utils.js";
 
 export class ArmorGearScoringEngine {
   /**

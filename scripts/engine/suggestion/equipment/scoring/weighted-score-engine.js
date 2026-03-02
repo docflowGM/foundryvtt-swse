@@ -21,7 +21,7 @@ import {
   TRADEOFF_ADJUSTMENTS,
   PRICE_BIAS,
   EXPLAINABILITY_MAP
-} from ""../../../../engine/suggestion/equipment/scoring/weight-config.js';
+} from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/scoring/weight-config.js";
 
 export class WeightedScoreEngine {
   /**

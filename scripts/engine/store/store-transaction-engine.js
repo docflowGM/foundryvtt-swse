@@ -23,8 +23,8 @@
  * - Cross-actor invariant enforcement (Foundry limitation)
  */
 
-import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
-import { swseLogger } from "../../utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class StoreTransactionEngine {
   /**

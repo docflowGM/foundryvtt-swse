@@ -1,4 +1,4 @@
-import { SpeciesRegistry } from '../engine/registries/species-registry.js';
+import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
 /**
  * Update Species Compendium with Racial Traits
  *

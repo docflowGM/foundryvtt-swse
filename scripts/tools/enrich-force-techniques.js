@@ -11,14 +11,14 @@
  * Usage: node enrich-force-techniques.js
  */
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from "fs'";
+import path from "path'";
+import { fileURLToPath } from "url'";
 import {
   normalize,
   extractCategoriesFromDescriptors,
   findMatchingPowers
-} from ""../tools/force-suggestion-utils.js';
+} from "/systems/foundryvtt-swse/scripts/tools/force-suggestion-utils.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const dbPath = path.join(__dirname, '../../packs/forcetechniques.db');

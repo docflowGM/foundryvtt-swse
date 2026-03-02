@@ -191,6 +191,22 @@
   "action_priority_alignment": "because this matches how you prioritize actions",
   "turn_economy_advantage": "because this improves the value of each turn",
   "decision_reliability": "because this option performs consistently",
-  "long_horizon_value": "because its benefits become clearer over time"
+  "long_horizon_value": "because its benefits become clearer over time",
+  "risk_increased": "because this choice introduces or increases risk",
+  "exposure": "because this choice creates vulnerability or exposure",
+  "risk_mitigated": "because this choice reduces or mitigates risk",
+  "opportunity_cost_incurred": "because this choice involves a meaningful opportunity cost",
+  "goal_deviation": "because this choice diverges from established goals",
+  "pattern_conflict": "because this choice conflicts with established patterns",
+  "commitment_ignored": "because this choice ignores previous commitments",
+  "synergy_present": "because this choice creates synergy with existing elements",
+  "readiness_met": "because you are ready for this choice",
+  "specialization_forming": "because a specialization is beginning to form",
+  "readiness_lacking": "because you lack readiness for this choice",
+  "exploration_signal": "because this represents active exploration",
+  "rare_choice": "because this is a rare choice at this stage",
+  "new_option_revealed": "because a new option has become available",
+  "growth_stage_shift": "because you have shifted to a new growth stage",
+  "pattern_alignment": "because this aligns with established patterns"
 }
 

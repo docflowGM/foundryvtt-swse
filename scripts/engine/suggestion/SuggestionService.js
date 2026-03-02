@@ -11,22 +11,22 @@
  * - Cache results and invalidate on actor changes
  * - Optionally persist minimal SuggestionState in actor flags
  */
-import { SWSELogger } from "../../utils/logger.js";
-import { HouseRuleService } from "../../engine/system/HouseRuleService.js";
-import { SuggestionEngineCoordinator } from "../../engine/suggestion/SuggestionEngineCoordinator.js";
-import { CompendiumResolver } from "../../engine/suggestion/CompendiumResolver.js";
-import { createActor } from "../../core/document-api-v13.js";
-import { SuggestionExplainer } from "../../engine/suggestion/SuggestionExplainer.js";
-import { getAllowedReasonDomains } from "../../suggestions/suggestion-focus-map.js";
-import { MentorReasonSelector } from "../../engine/mentor/mentor-reason-selector.js";
-import { getReasonRelevance } from "../../suggestions/reason-relevance.js";
-import { ReasonFactory } from "../../engine/suggestion/ReasonFactory.js";
-import { ConfidenceScoring } from "../../engine/suggestion/ConfidenceScoring.js";
-import { SnapshotBuilder } from "../../engine/suggestion/SnapshotBuilder.js";
-import { getPlannedHeroicLevel, isEpicActor } from "../../actors/derived/level-split.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+import { SuggestionEngineCoordinator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineCoordinator.js";
+import { CompendiumResolver } from "/systems/foundryvtt-swse/scripts/engine/suggestion/CompendiumResolver.js";
+import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { SuggestionExplainer } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionExplainer.js";
+import { getAllowedReasonDomains } from "/systems/foundryvtt-swse/scripts/suggestions/suggestion-focus-map.js";
+import { MentorReasonSelector } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-reason-selector.js";
+import { getReasonRelevance } from "/systems/foundryvtt-swse/scripts/suggestions/reason-relevance.js";
+import { ReasonFactory } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ReasonFactory.js";
+import { ConfidenceScoring } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ConfidenceScoring.js";
+import { SnapshotBuilder } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SnapshotBuilder.js";
+import { getPlannedHeroicLevel, isEpicActor } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 
-import { FeatEngine } from "../../engine/progression/feats/feat-engine.js";
-import { ForcePowerEngine } from "../../engine/progression/engine/force-power-engine.js";
+import { FeatEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-engine.js";
+import { ForcePowerEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-power-engine.js";
 
 function _hashString(s) {
   let h = 0;

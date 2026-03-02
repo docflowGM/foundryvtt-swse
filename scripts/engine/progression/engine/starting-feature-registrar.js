@@ -6,8 +6,8 @@
  * with all class starting features (bonus feats, automatic grants, etc.)
  */
 
-import { FeatureIndex } from "../../../engine/progression/engine/feature-index.js";
-import { SWSELogger } from "../../../utils/logger.js";
+import { FeatureIndex } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/feature-index.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export const StartingFeatureRegistrar = {
 

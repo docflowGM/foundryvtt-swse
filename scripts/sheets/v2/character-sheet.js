@@ -1,11 +1,11 @@
-import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
-import { InventoryEngine } from "../../engine/inventory/InventoryEngine.js";
-import { DSPEngine } from "../../engine/darkside/dsp-engine.js";
-import { CombatRollConfigDialog } from "../../apps/combat/combat-roll-config-dialog.js";
-import { MentorChatDialog } from "../../mentor/mentor-chat-dialog.js";
-import { DropResolutionEngine } from "../../engine/interactions/drop-resolution-engine.js";
-import { AdoptionEngine } from "../../engine/interactions/adoption-engine.js";
-import { AdoptOrAddDialog } from "../../apps/adopt-or-add-dialog.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { InventoryEngine } from "/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js";
+import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
+import { CombatRollConfigDialog } from "/systems/foundryvtt-swse/scripts/apps/combat/combat-roll-config-dialog.js";
+import { MentorChatDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor-chat-dialog.js";
+import { DropResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/drop-resolution-engine.js";
+import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
+import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
 
 const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api;
 
@@ -134,7 +134,7 @@ export class SWSEV2CharacterSheet extends
 
   async _computeBonusHP(actor) {
     try {
-      const { ModifierEngine } = await import("../../engine/effects/modifiers/ModifierEngine.js").catch(
+      const { ModifierEngine } = await import("/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js").catch(
         () => ({ ModifierEngine: null })
       );
 
@@ -529,5 +529,41 @@ export class SWSEV2CharacterSheet extends
     setTimeout(() => {
       tabButton.classList.remove('tab-pulse');
     }, 800);
+  }
+
+  /**
+   * Override form submission to route through ActorEngine governance layer.
+   *
+   * CRITICAL: This prevents Foundry's default submission pipeline entirely.
+   * - Foundry V2: _onSubmitForm → #onSubmitDocumentForm → _prepareSubmitData → _processSubmitData → actor.update()
+   * - Our override: event.preventDefault() → process data directly → ActorEngine.updateActor()
+   *
+   * Without this, governance layer violation occurs:
+   * MutationInterceptor blocks actor.update(), validation fails, sheet breaks.
+   *
+   * @param {Event} event - Form submission event
+   * @returns {Promise<void>}
+   */
+  async _onSubmitForm(event) {
+    event.preventDefault();
+
+    // Get the form element
+    const form = event.target;
+
+    // Convert FormData to plain object, then expand nested paths
+    const formData = new FormData(form);
+    const formDataObj = Object.fromEntries(formData.entries());
+    const expanded = foundry.utils.expandObject(formDataObj);
+
+    if (!expanded) {return;}
+
+    try {
+      // Route directly through governance layer
+      // This bypasses Foundry's _processSubmitData → actor.update() entirely
+      await ActorEngine.updateActor(this.actor, expanded);
+    } catch (err) {
+      console.error('Sheet submission failed:', err);
+      ui.notifications.error(`Failed to update actor: ${err.message}`);
+    }
   }
 }

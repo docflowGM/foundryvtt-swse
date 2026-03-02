@@ -6,9 +6,9 @@
  * All effects are soft (multipliers, never hard locks).
  */
 
-import { getMentorMemory } from "../engine/mentor/mentor-memory.js";
-import { getArchetype, getArchetypeRoleBias } from "./mentor-archetype-paths.js";
-import { DSPEngine } from "../engine/darkside/dsp-engine.js";
+import { getMentorMemory } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-memory.js";
+import { getArchetype, getArchetypeRoleBias } from "/systems/foundryvtt-swse/scripts/mentor/mentor-archetype-paths.js";
+import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 
 /**
  * Calculate mentor bias for a suggestion

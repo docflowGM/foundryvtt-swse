@@ -9,19 +9,19 @@
  *   MentorChatDialog.show(actor);
  */
 
-import { MENTORS, getMentorForClass } from "../engine/mentor/mentor-dialogues.js";
-import { MentorSuggestionVoice } from "../mentor/mentor-suggestion-voice.js";
-import { BuildIntent } from "../engine/suggestion/BuildIntent.js";
-import { SWSELogger } from "../utils/logger.js";
-import { MentorVoiceFilterV2 } from "../mentor/mentor-voice-filter-v2.js";
-import { MentorDialogueV2Integration } from "../mentor/mentor-dialogue-v2-integration.js";
-import { MentorStoryResolver } from "../engine/mentor/mentor-story-resolver.js";
-import { renderJudgmentAtom } from "../mentor/mentor-judgment-renderer.js";
-import { getReasonTexts } from "../mentor/mentor-reason-renderer.js";
-import { DSPEngine } from "../engine/darkside/dsp-engine.js";
+import { MENTORS, getMentorForClass } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
+import { MentorSuggestionVoice } from "/systems/foundryvtt-swse/scripts/mentor/mentor-suggestion-voice.js";
+import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { MentorVoiceFilterV2 } from "/systems/foundryvtt-swse/scripts/mentor/mentor-voice-filter-v2.js";
+import { MentorDialogueV2Integration } from "/systems/foundryvtt-swse/scripts/mentor/mentor-dialogue-v2-integration.js";
+import { MentorStoryResolver } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-story-resolver.js";
+import { renderJudgmentAtom } from "/systems/foundryvtt-swse/scripts/mentor/mentor-judgment-renderer.js";
+import { getReasonTexts } from "/systems/foundryvtt-swse/scripts/mentor/mentor-reason-renderer.js";
+import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 
 // V2 API base class
-import SWSEFormApplicationV2 from "../apps/base/swse-form-application-v2.js";
+import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
 
 const CHAT_TOPICS = [
   {

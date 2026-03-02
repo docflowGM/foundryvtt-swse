@@ -5,8 +5,8 @@
  * GM-only, non-modal, read-only suggestions with optional lever tracking.
  */
 
-import { InsightBus } from "../../../engine/suggestion/gm/insight-bus.js";
-import { INSIGHT_TYPES } from "../../../engine/suggestion/gm/insight-types.js";
+import { InsightBus } from "/systems/foundryvtt-swse/scripts/engine/suggestion/gm/insight-bus.js";
+import { INSIGHT_TYPES } from "/systems/foundryvtt-swse/scripts/engine/suggestion/gm/insight-types.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 

@@ -1,4 +1,4 @@
-import { getEffectiveHalfLevel } from "../../actors/derived/level-split.js";
+import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
 // - Uses new Active Effects engine
@@ -211,7 +211,7 @@ export async function rollAttackAndDamageWithNarration(actor, weapon) {
   // Post supplemental narration (gated by setting)
   if (typeof atkTotal === "number" && typeof dmgTotal === "number") {
     try {
-      const { ActionChatEngine } = await import("../../chat/action-chat-engine.js");
+      const { ActionChatEngine } = await import("/systems/foundryvtt-swse/scripts/chat/action-chat-engine.js");
       await ActionChatEngine.narrationAttack(actor, weapon.name ?? "Weapon", atkTotal, dmgTotal, { targetName });
     } catch {
       // Narration engine not available; continue anyway

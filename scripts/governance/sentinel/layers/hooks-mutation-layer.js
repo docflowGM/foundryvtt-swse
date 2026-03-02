@@ -10,14 +10,14 @@
  * - All mutations are properly awaited
  */
 
-import { Sentinel } from "../../../governance/sentinel/sentinel-core.js";
+import { Sentinel } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 
 export const HooksMutationLayer = {
-  #hookStack = [],
-  #mutationInHook = new Map(),
-  #originalUpdate: null,
-  #originalCreateEmbedded: null,
-  #originalDeleteEmbedded: null,
+  _hookStack: [],
+  _mutationInHook: new Map(),
+  _originalUpdate: null,
+  _originalCreateEmbedded: null,
+  _originalDeleteEmbedded: null,
 
   /**
    * Initialize hook mutation monitoring
@@ -40,11 +40,11 @@ export const HooksMutationLayer = {
     // Wrap Hooks.on to track when hooks are executing
     Hooks.on = function(hook, handler, ...args) {
       const wrappedHandler = async function(...handlerArgs) {
-        self.#hookStack.push({ hook, startTime: performance.now() });
+        self._hookStack.push({ hook, startTime: performance.now() });
         try {
           return await handler.apply(this, handlerArgs);
         } finally {
-          self.#hookStack.pop();
+          self._hookStack.pop();
         }
       };
 
@@ -54,11 +54,11 @@ export const HooksMutationLayer = {
     // Wrap Hooks.once similarly
     Hooks.once = function(hook, handler, ...args) {
       const wrappedHandler = async function(...handlerArgs) {
-        self.#hookStack.push({ hook, startTime: performance.now() });
+        self._hookStack.push({ hook, startTime: performance.now() });
         try {
           return await handler.apply(this, handlerArgs);
         } finally {
-          self.#hookStack.pop();
+          self._hookStack.pop();
         }
       };
 
@@ -79,8 +79,8 @@ export const HooksMutationLayer = {
 
     // Track direct actor.update() calls
     Actor.prototype.update = async function(data, options = {}) {
-      if (self.#hookStack.length > 0) {
-        const currentHook = self.#hookStack[self.#hookStack.length - 1];
+      if (self._hookStack.length > 0) {
+        const currentHook = self._hookStack[self._hookStack.length - 1];
         const isGuarded = options?.meta?.guardKey;
 
         // Allow ActorEngine mutations
@@ -107,8 +107,8 @@ export const HooksMutationLayer = {
 
     // Track direct createEmbeddedDocuments() calls
     Actor.prototype.createEmbeddedDocuments = async function(embeddedName, data, options = {}) {
-      if (self.#hookStack.length > 0) {
-        const currentHook = self.#hookStack[self.#hookStack.length - 1];
+      if (self._hookStack.length > 0) {
+        const currentHook = self._hookStack[self._hookStack.length - 1];
         const isGuarded = options?.meta?.guardKey;
 
         // Allow ActorEngine mutations
@@ -135,8 +135,8 @@ export const HooksMutationLayer = {
 
     // Track direct deleteEmbeddedDocuments() calls
     Actor.prototype.deleteEmbeddedDocuments = async function(embeddedName, ids, options = {}) {
-      if (self.#hookStack.length > 0) {
-        const currentHook = self.#hookStack[self.#hookStack.length - 1];
+      if (self._hookStack.length > 0) {
+        const currentHook = self._hookStack[self._hookStack.length - 1];
         const isGuarded = options?.meta?.guardKey;
 
         // Allow ActorEngine mutations
@@ -168,15 +168,15 @@ export const HooksMutationLayer = {
    * Get current hook execution depth
    */
   getHookDepth() {
-    return this.#hookStack.length;
+    return this._hookStack.length;
   },
 
   /**
    * Get current hook name if inside a hook
    */
   getCurrentHook() {
-    return this.#hookStack.length > 0
-      ? this.#hookStack[this.#hookStack.length - 1].hook
+    return this._hookStack.length > 0
+      ? this._hookStack[this._hookStack.length - 1].hook
       : null;
   }
 };

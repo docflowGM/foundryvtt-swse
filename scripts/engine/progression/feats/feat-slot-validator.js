@@ -6,8 +6,8 @@
  * Single validation path - no branching on source.
  */
 
-import { SWSELogger } from "../../../utils/logger.js";
-import { ClassFeatRegistry } from './class-feat-registry.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ClassFeatRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/class-feat-registry.js";
 
 export class FeatSlotValidator {
   /**

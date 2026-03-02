@@ -11,9 +11,9 @@
  *   - Applying results to the Combat Tracker
  */
 
-import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
-import RollCore from "../../engine/roll/roll-core.js";
-import { swseLogger } from "../../utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import RollCore from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class SWSEInitiative {
 

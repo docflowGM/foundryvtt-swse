@@ -2,10 +2,10 @@
 // Shared utilities and constants for CharGen
 // ============================================
 
-import { SWSELogger } from "../../utils/logger.js";
-import { getTalentTrees } from "../../apps/chargen/chargen-property-accessor.js";
-import { normalizeTalentData } from "../../engine/progression/utils/item-normalizer.js";
-import { normalizeClassData } from "../../engine/progression/utils/class-normalizer.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { getTalentTrees } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
+import { normalizeTalentData } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/item-normalizer.js";
+import { normalizeClassData } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-normalizer.js";
 
 /**
  * Assert that a required pack is loaded and non-empty

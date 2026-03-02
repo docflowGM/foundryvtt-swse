@@ -14,10 +14,10 @@
  * Closes when actor.system.missingPrerequisites is empty.
  */
 
-import { SWSELogger } from '../../utils/logger.js';
-import { ActorEngine } from '../actor-engine/actor-engine.js';
-import { MissingPrereqsTracker } from '../integrity/missing-prereqs-tracker.js';
-import { PrerequisiteIntegrityChecker } from '../integrity/prerequisite-integrity-checker.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { MissingPrereqsTracker } from "/systems/foundryvtt-swse/scripts/governance/integrity/missing-prereqs-tracker.js";
+import { PrerequisiteIntegrityChecker } from "/systems/foundryvtt-swse/scripts/governance/integrity/prerequisite-integrity-checker.js";
 
 export class RebuildOrchestrator {
 

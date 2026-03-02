@@ -24,8 +24,8 @@
  * Phase 6: Derive (prepareDerivedData)
  */
 
-import { AbilityEngine } from "../../engine/abilities/AbilityEngine.js";
-import { swseLogger } from "../../utils/logger.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class ProgressionCompiler {
   /**

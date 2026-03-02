@@ -6,9 +6,9 @@
  * No direct rule math outside ModifierEngine.
  */
 
-import { SWSELogger as swseLogger } from "../../utils/logger.js";
-import { ModifierSource, ModifierType, createModifier } from "../../engine/effects/modifiers/ModifierTypes.js";
-import { getEffectiveHalfLevel } from "../../actors/derived/level-split.js";
+import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ModifierSource, ModifierType, createModifier } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
+import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 
 export class WeaponsEngine {
 
@@ -494,7 +494,7 @@ export class WeaponsEngine {
 
     try {
       // Import ActorEngine dynamically to avoid circular dependencies
-      const { ActorEngine } = await import('../../governance/actor-engine/actor-engine.js');
+      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
 
       const currentFP = actor.system?.resources?.forcePoints?.value ?? 0;
       if (currentFP < 1) {

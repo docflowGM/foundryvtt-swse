@@ -24,7 +24,7 @@
  * Contract: Same inputs = Same output (guaranteed)
  */
 
-import { GovernanceSystem } from '../governance-system.js';
+import { GovernanceSystem } from "/systems/foundryvtt-swse/scripts/governance/governance-system.js";
 
 export class EnforcementPolicy {
   // Decision outcomes

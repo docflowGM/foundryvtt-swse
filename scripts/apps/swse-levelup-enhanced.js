@@ -15,4 +15,4 @@
  * - levelup/levelup-shared.js - Shared utilities and helpers
  */
 
-export { SWSELevelUpEnhanced } from './levelup/levelup-main.js';
+export { SWSELevelUpEnhanced } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-main.js";

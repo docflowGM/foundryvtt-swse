@@ -3,8 +3,8 @@
 // Force Power rolling via RollCore (V2 Unified)
 // ============================================
 
-import RollCore from "../engine/roll/roll-core.js";
-import { swseLogger } from "../utils/logger.js";
+import RollCore from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * Roll a force power use via RollCore
@@ -89,7 +89,7 @@ export async function narrateForcePowerResult(actor, powerItem, roll) {
   if (!actor || !powerItem || !roll) return;
 
   try {
-    const { ActionChatEngine } = await import("../chat/action-chat-engine.js");
+    const { ActionChatEngine } = await import("/systems/foundryvtt-swse/scripts/chat/action-chat-engine.js");
 
     const total = roll.total;
     const chart = powerItem?.system?.dcChart ?? powerItem?.system?.dcchart ?? null;

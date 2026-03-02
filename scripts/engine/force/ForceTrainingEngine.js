@@ -3,8 +3,8 @@
  * Handles Force ability attribute selection, Dark Side score, and Force point management.
  * Single source of truth for all Force-related calculations.
  */
-import { SettingsHelper } from "../../utils/settings-helper.js";
-import { SWSELogger } from "../../utils/logger.js";
+import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class ForceTrainingEngine {
   /**

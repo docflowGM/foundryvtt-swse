@@ -8,11 +8,11 @@
  * - Overall system initialization time
  */
 
-import { Sentinel } from "../../../governance/sentinel/sentinel-core.js";
+import { Sentinel } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 
 export const PerformanceLayer = {
-  #measurements = new Map(),
-  #slowThresholds = {
+  _measurements: new Map(),
+  _slowThresholds: {
     'registry-build': 500,    // 500ms
     'feature-index': 1000,    // 1s
     'sheet-render': 250,      // 250ms
@@ -59,7 +59,7 @@ export const PerformanceLayer = {
 
       requestAnimationFrame(() => {
         const duration = performance.now() - startTime;
-        const threshold = this.#slowThresholds['app-render'];
+        const threshold = this._slowThresholds['app-render'];
 
         if (duration > threshold) {
           Sentinel.report('performance', Sentinel.SEVERITY.WARN, 'Slow application render', {
@@ -69,7 +69,7 @@ export const PerformanceLayer = {
           });
         }
 
-        this.#storeMeasurement('app-render', app.constructor.name, duration);
+        this._storeMeasurement('app-render', app.constructor.name, duration);
       });
     });
 
@@ -78,7 +78,7 @@ export const PerformanceLayer = {
 
       requestAnimationFrame(() => {
         const duration = performance.now() - startTime;
-        const threshold = this.#slowThresholds['sheet-render'];
+        const threshold = this._slowThresholds['sheet-render'];
 
         if (duration > threshold) {
           Sentinel.report('performance', Sentinel.SEVERITY.WARN, 'Slow sheet render', {
@@ -89,7 +89,7 @@ export const PerformanceLayer = {
           });
         }
 
-        this.#storeMeasurement('sheet-render', sheet.constructor.name, duration);
+        this._storeMeasurement('sheet-render', sheet.constructor.name, duration);
       });
     });
   },
@@ -98,12 +98,12 @@ export const PerformanceLayer = {
    * Store measurement for analysis
    * @private
    */
-  #storeMeasurement(category, name, duration) {
+  _storeMeasurement(category, name, duration) {
     const key = `${category}:${name}`;
-    if (!this.#measurements.has(key)) {
-      this.#measurements.set(key, []);
+    if (!this._measurements.has(key)) {
+      this._measurements.set(key, []);
     }
-    this.#measurements.get(key).push(duration);
+    this._measurements.get(key).push(duration);
   },
 
   /**
@@ -112,7 +112,7 @@ export const PerformanceLayer = {
   getReport() {
     const report = {};
 
-    for (const [key, durations] of this.#measurements) {
+    for (const [key, durations] of this._measurements) {
       const avg = durations.reduce((a, b) => a + b) / durations.length;
       const max = Math.max(...durations);
       const min = Math.min(...durations);

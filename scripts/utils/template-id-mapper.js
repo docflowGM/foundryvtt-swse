@@ -13,9 +13,9 @@
  * No mapping tables needed - compendiums are the system of record.
  */
 
-import { swseLogger } from "../utils/logger.js";
-import { BackgroundRegistry } from "../registries/background-registry.js";
-import { slugify } from "../utils/stable-id.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { BackgroundRegistry } from "/systems/foundryvtt-swse/scripts/registries/background-registry.js";
+import { slugify } from "/systems/foundryvtt-swse/scripts/utils/stable-id.js";
 
 export class TemplateIdMapper {
   /**
@@ -162,7 +162,7 @@ export class TemplateIdMapper {
 
     try {
       // Import ClassesDB
-      const { ClassesDB } = await import('../data/classes-db.js');
+      const { ClassesDB } = await import("/systems/foundryvtt-swse/scripts/data/classes-db.js");
 
       // Try exact match first
       const classData = ClassesDB.getByName(className);
@@ -214,7 +214,7 @@ export class TemplateIdMapper {
 
     try {
       // Try FeatureIndex first (SSOT for indexed features)
-      const { FeatureIndex } = await import('../../feature-index.js');
+      const { FeatureIndex } = await import("/systems/foundryvtt-swse/feature-index.js");
       const feat = FeatureIndex.getFeat?.(featName);
       if (feat) {
         swseLogger.log(`[TEMPLATE-MAPPER] Feat found in FeatureIndex: ${featName} → ${feat._id}`);
@@ -254,7 +254,7 @@ export class TemplateIdMapper {
 
     try {
       // Import TalentDB
-      const { TalentDB } = await import('../data/talent-db.js');
+      const { TalentDB } = await import("/systems/foundryvtt-swse/scripts/data/talent-db.js");
 
       // Try exact match first
       const talent = TalentDB.getByName(talentName);
@@ -306,7 +306,7 @@ export class TemplateIdMapper {
 
     try {
       // Import TalentTreeDB
-      const { TalentTreeDB } = await import('../data/talent-tree-db.js');
+      const { TalentTreeDB } = await import("/systems/foundryvtt-swse/scripts/data/talent-tree-db.js");
 
       // Try exact match first
       const tree = TalentTreeDB.getByName(treeName);
@@ -358,7 +358,7 @@ export class TemplateIdMapper {
 
     try {
       // Try FeatureIndex first (SSOT for indexed features)
-      const { FeatureIndex } = await import('../../feature-index.js');
+      const { FeatureIndex } = await import("/systems/foundryvtt-swse/feature-index.js");
       const power = FeatureIndex.getPower?.(powerName);
       if (power) {
         swseLogger.log(`[TEMPLATE-MAPPER] Force power found in FeatureIndex: ${powerName} → ${power._id}`);

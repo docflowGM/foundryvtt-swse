@@ -7,9 +7,9 @@
  * - No actor mutation outside ActorEngine-owned APIs (actor.updateOwnedItem / actor.activateItem / etc.)
  */
 
-import { SWSEUpgradeApp } from "../apps/upgrade-app.js";
-import { SWSELogger } from "../utils/logger.js";
-import { BLADE_COLOR_MAP } from "../data/blade-colors.js";
+import { SWSEUpgradeApp } from "/systems/foundryvtt-swse/scripts/apps/upgrade-app.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { BLADE_COLOR_MAP } from "/systems/foundryvtt-swse/scripts/data/blade-colors.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ItemSheetV2 } = foundry.applications.sheets;

@@ -2,7 +2,7 @@
  * PHASE 5B-4: Integrity Dashboard Unit Tests
  */
 
-import { IntegrityDashboard } from './integrity-dashboard.js';
+import { IntegrityDashboard } from "/systems/foundryvtt-swse/scripts/governance/ui/integrity-dashboard.js";
 
 function createMockActor(name = 'Test', violations = []) {
   return {

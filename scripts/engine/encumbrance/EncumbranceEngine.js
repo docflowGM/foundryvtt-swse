@@ -24,7 +24,7 @@
  * - Reflex Dex removal handled separately
  */
 
-import { calculateCarryingCapacity } from "../../utils/math-utils.js";
+import { calculateCarryingCapacity } from "/systems/foundryvtt-swse/scripts/utils/math-utils.js";
 
 export class EncumbranceEngine {
   /**

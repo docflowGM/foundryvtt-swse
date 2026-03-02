@@ -5,6 +5,6 @@
 
 export { SPECIES_TRAIT_TYPES, TRAIT_TYPE_LIST, BONUS_TARGETS, CONDITIONS,
          MOVEMENT_MODES, SENSE_TYPES, EFFECT_TYPES, FREQUENCIES,
-         SKILL_DISPLAY_NAMES } from './species-trait-types.js';
+         SKILL_DISPLAY_NAMES } from "/systems/foundryvtt-swse/scripts/species/species-trait-types.js";
 
-export { SpeciesRerollHandler, registerRerollListeners } from './species-reroll-handler.js';
+export { SpeciesRerollHandler, registerRerollListeners } from "/systems/foundryvtt-swse/scripts/species/species-reroll-handler.js";

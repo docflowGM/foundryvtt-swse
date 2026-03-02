@@ -13,7 +13,7 @@
  * await Batch1Validation.runFullSuite()
  */
 
-import { swseLogger } from "../../utils/logger.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class Batch1Validation {
   static results = {
@@ -118,7 +118,7 @@ export class Batch1Validation {
 
       // Now test CORRECT path: ActorEngine.updateEmbeddedDocuments()
       console.log('Testing ActorEngine.updateEmbeddedDocuments() (CORRECT path)...');
-      const { ActorEngine } = await import('../actor-engine/actor-engine.js');
+      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
 
       await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [
         { _id: item.id, 'system.quantity': (item.system.quantity || 1) + 2 }
@@ -184,8 +184,8 @@ export class Batch1Validation {
     this.results.totalTests++;
 
     try {
-      const { DerivedCalculator } = await import('../../../derived-calculator.js');
-      const { ActorEngine } = await import('../actor-engine/actor-engine.js');
+      const { DerivedCalculator } = await import("/systems/foundryvtt-swse/derived-calculator.js");
+      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
 
       // Instrument DerivedCalculator.computeAll()
       const originalComputeAll = DerivedCalculator.computeAll;
@@ -244,8 +244,8 @@ export class Batch1Validation {
     this.results.totalTests++;
 
     try {
-      const { MutationInterceptor } = await import('./MutationInterceptor.js');
-      const { ActorEngine } = await import('../actor-engine/actor-engine.js');
+      const { MutationInterceptor } = await import("/systems/foundryvtt-swse/scripts/governance/mutation/MutationInterceptor.js");
+      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
 
       console.log('Testing context cleanup under error conditions...');
 

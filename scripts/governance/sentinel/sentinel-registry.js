@@ -5,28 +5,28 @@
  * Loads all layers and registers with kernel
  */
 
-import { SentinelEngine } from "../../governance/sentinel/sentinel-core.js";
+import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 
 // Import all layers
-import { CSSLayer } from "../../governance/sentinel/layers/css-layer.js";
-import { RenderLayer } from "../../governance/sentinel/layers/render-layer.js";
-import { DataLayer } from "../../governance/sentinel/layers/data-layer.js";
-import { HooksLayer } from "../../governance/sentinel/layers/hooks-layer.js";
-import { PromisesLayer } from "../../governance/sentinel/layers/promises-layer.js";
-import { PerformanceLayer } from "../../governance/sentinel/layers/performance-layer.js";
-import { CombatLayer } from "../../governance/sentinel/layers/combat-layer.js";
+import { CSSLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/layers/css-layer.js";
+import { RenderLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/layers/render-layer.js";
+import { DataLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/layers/data-layer.js";
+import { HooksLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/layers/hooks-layer.js";
+import { PromisesLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/layers/promises-layer.js";
+import { PerformanceLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/layers/performance-layer.js";
+import { CombatLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/layers/combat-layer.js";
 
 // PHASE 7: Import utility layer governance enforcement
-import { UtilityLayer } from "../../governance/sentinel/layers/utility-layer.js";
+import { UtilityLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/layers/utility-layer.js";
 
 // PHASE 3: Import mutation authority layer
-import { MutationIntegrityLayer } from "../../governance/sentinel/mutation-integrity-layer.js";
+import { MutationIntegrityLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/mutation-integrity-layer.js";
 
 // PHASE 10: Import hook mutation detection layer
-import { HooksMutationLayer } from "../../governance/sentinel/layers/hooks-mutation-layer.js";
+import { HooksMutationLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/layers/hooks-mutation-layer.js";
 
 // PHASE 3: Import Batch 1 validation suite
-import { Batch1Validation } from "../../governance/mutation/batch-1-validation.js";
+import { Batch1Validation } from "/systems/foundryvtt-swse/scripts/governance/mutation/batch-1-validation.js";
 
 /**
  * Initialize and register all sentinel layers

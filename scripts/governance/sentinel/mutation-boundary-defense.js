@@ -14,9 +14,9 @@
  *   PROD: Warn on violations, can block if configured
  */
 
-import { SWSELogger } from '../../utils/logger.js';
-import { MutationInterceptor } from '../mutation/MutationInterceptor.js';
-import { AuditTrail } from '../audit/audit-trail.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { MutationInterceptor } from "/systems/foundryvtt-swse/scripts/governance/mutation/MutationInterceptor.js";
+import { AuditTrail } from "/systems/foundryvtt-swse/scripts/governance/audit/audit-trail.js";
 
 export class MutationBoundaryDefense {
   /**

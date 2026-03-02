@@ -10,7 +10,7 @@
  * - Manage affinity lifecycle (caching, drift detection, updates)
  */
 
-import { SWSELogger } from "../../utils/logger.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import {
   calculateArchetypeAffinity,
   weightSuggestions,
@@ -21,7 +21,7 @@ import {
   flattenArchetypes,
   affinityNeedsRecompute,
   loadArchetypeData
-} from ""../../engine/suggestion/ArchetypeAffinityEngine.js';
+} from "/systems/foundryvtt-swse/scripts/engine/suggestion/ArchetypeAffinityEngine.js";
 
 // ─────────────────────────────────────────────────────────────
 // SUGGESTION WEIGHTING

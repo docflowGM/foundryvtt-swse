@@ -1,11 +1,11 @@
-import { SpeciesRegistry } from '../engine/registries/species-registry.js';
+import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
 /**
  * SWSE Houserule Configuration Menus (Upgraded)
  * Modernizes all FormApplication classes for Foundry VTT V13–V15 compatibility
  * Includes safety, sanitation, error handling, and maintainability improvements.
  */
 
-import SWSEFormApplicationV2 from "../apps/base/swse-form-application-v2.js";
+import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
 
 const NAMESPACE = 'foundryvtt-swse';
 
@@ -344,7 +344,7 @@ export class PresetsMenu extends SWSEFormApplicationV2 {
     });
     if (!confirmed) {return;}
 
-    const presets = await import('./houserule-presets.js');
+    const presets = await import("/systems/foundryvtt-swse/scripts/houserules/houserule-presets.js");
     await presets.applyPreset(preset);
 
     await safeSet('houserulePreset', preset);

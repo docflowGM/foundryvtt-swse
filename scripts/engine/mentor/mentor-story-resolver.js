@@ -9,8 +9,8 @@
  * Pure read-only logic with no state mutations.
  */
 
-import { SWSELogger } from "../../utils/logger.js";
-import { DSPEngine } from "../darkside/dsp-engine.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 
 export class MentorStoryResolver {
   /**

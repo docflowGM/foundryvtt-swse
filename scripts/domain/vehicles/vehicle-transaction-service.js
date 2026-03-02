@@ -4,7 +4,7 @@
  * Mirrors DroidTransactionService
  */
 
-import { swseLogger } from "../../utils/logger.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class VehicleTransactionService {
   static FLAG_NAMESPACE = 'foundryvtt-swse';
@@ -131,7 +131,7 @@ export class VehicleTransactionService {
         };
       }
 
-      const { ActorEngine } = await import('../../governance/actor-engine/actor-engine.js');
+      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
       await ActorEngine.applyMutationPlan(actor, transaction.plan);
 
       await world.setFlag(this.FLAG_NAMESPACE, this.FLAG_KEY, transactions);

@@ -2,9 +2,9 @@
  * Minimal Progression UI helpers. Replace Dialog skeletons with Applications/HBS for full UX.
  */
 
-import { ProgressionEngine } from '../../progression-engine.js';
-import { PROGRESSION_RULES } from "../../engine/progression/data/progression-data.js";
-import { HouseRuleService } from "../../engine/system/HouseRuleService.js";
+import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/progression-engine.js";
+import { PROGRESSION_RULES } from "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 export class ProgressionUI {
   static async openStartSelector(actor) {

@@ -25,7 +25,7 @@ export {
   calculateIntensity,
   isValidAtom,
   filterValidFactors
-} from "../../engine/mentor/mentor-intensity-atoms.js";
+} from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-intensity-atoms.js";
 
 // Decision logging: structured capture of mentor reasoning
 export {
@@ -34,7 +34,7 @@ export {
   validateRecord,
   serializeRecord,
   deserializeRecord
-} from './mentor-decision-logger.js';
+} from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-decision-logger.js";
 
 // Reason rendering: explanation formatting
 export {
@@ -44,4 +44,4 @@ export {
   formatDebug,
   hasSignificantIntensity,
   getIntensityDescription
-} from './mentor-reason-renderer.js';
+} from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-reason-renderer.js";

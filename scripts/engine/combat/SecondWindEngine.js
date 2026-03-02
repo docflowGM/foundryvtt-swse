@@ -8,7 +8,7 @@
  * PHASE D FIX 1: Use HouseRuleService instead of direct game.settings.get()
  */
 
-import { HouseRuleService } from "../../engine/system/HouseRuleService.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 export const SecondWindEngine = {
   /**
@@ -55,7 +55,7 @@ export const SecondWindEngine = {
    * @returns {Promise<{updated, skipped, reason?}>}
    */
   async resetAllSecondWind(triggerEvent = 'encounter') {
-    const { ActorEngine } = await import('../../governance/actor-engine/actor-engine.js');
+    const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
 
     if (!this.shouldResetSecondWind(triggerEvent)) {
       return {

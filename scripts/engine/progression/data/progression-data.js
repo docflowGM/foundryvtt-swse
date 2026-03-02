@@ -217,7 +217,7 @@ export const PROGRESSION_RULES = {
  * Calculate total Base Attack Bonus from class levels.
  */
 export async function calculateBAB(classLevels) {
-  const { getClassData } = await import('../utils/class-data-loader.js');
+  const { getClassData } = await import("/systems/foundryvtt-swse/scripts/engine/progression/utils/class-data-loader.js");
 
   let totalBAB = 0;
 
@@ -246,7 +246,7 @@ export async function calculateBAB(classLevels) {
  * Calculate the highest save bonus a character gets from their classes.
  */
 export async function calculateSaveBonus(classLevels, saveType) {
-  const { getClassData } = await import('../utils/class-data-loader.js');
+  const { getClassData } = await import("/systems/foundryvtt-swse/scripts/engine/progression/utils/class-data-loader.js");
 
   let maxBonus = 0;
   const uniqueClasses = new Set(classLevels.map(cl => cl.class));

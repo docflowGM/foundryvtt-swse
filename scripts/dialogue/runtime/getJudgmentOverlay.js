@@ -13,7 +13,7 @@
  *   output = overlay + "\n\n" + advisoryText;
  */
 
-import { emotionalRoutingMatrix } from "./emotionalRoutingMatrix.js";
+import { emotionalRoutingMatrix } from "/systems/foundryvtt-swse/scripts/dialogue/runtime/emotionalRoutingMatrix.js";
 
 /**
  * @param {Object} mentorData - Loaded mentor JSON data

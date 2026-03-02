@@ -17,7 +17,7 @@
  * - Routes updates through ActorEngine for owned items
  */
 
-import { SWSELogger as swseLogger } from "../../utils/logger.js";
+import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class AmmoSystem {
   /**
@@ -49,7 +49,7 @@ export class AmmoSystem {
     try {
       // Update through ActorEngine if owned by actor
       if (weapon.actor && weapon.actor.id === actor.id) {
-        const { ActorEngine } = await import('../../governance/actor-engine/actor-engine.js');
+        const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
         await ActorEngine.updateOwnedItems(actor, [{
           _id: weapon.id,
           'system.ammunition.current': newAmmo
@@ -108,7 +108,7 @@ export class AmmoSystem {
     try {
       // Update through ActorEngine if owned
       if (weapon.actor && weapon.actor.id === actor.id) {
-        const { ActorEngine } = await import('../../governance/actor-engine/actor-engine.js');
+        const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
         await ActorEngine.updateOwnedItems(actor, [{
           _id: weapon.id,
           'system.ammunition.current': maxAmmo
@@ -225,7 +225,7 @@ export class AmmoSystem {
 
     try {
       if (weapon.actor && weapon.actor.id === actor.id) {
-        const { ActorEngine } = await import('../../governance/actor-engine/actor-engine.js');
+        const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
         await ActorEngine.updateOwnedItems(actor, [{
           _id: weapon.id,
           'system.ammunition.current': clamped

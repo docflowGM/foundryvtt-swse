@@ -4,9 +4,9 @@
  * Tracks wishlisted items and integrates with suggestion engine
  */
 
-import { SWSELogger } from "../../utils/logger.js";
-import { AbilityEngine } from "../../engine/abilities/AbilityEngine.js";
-import { PrerequisiteRequirements } from "../../engine/progression/feats/prerequisite_engine.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import { PrerequisiteRequirements } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/prerequisite_engine.js";
 
 export class WishlistEngine {
   /**

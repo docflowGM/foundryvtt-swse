@@ -1,4 +1,4 @@
-import { SWSELogger } from "../utils/logger.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
 
@@ -109,6 +109,9 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
         max: 20,
         integer: true
       }),
+
+      // Progression system toggle
+      useProgression: new fields.BooleanField({ required: true, initial: true }),
 
       // Skills (base empty, will be extended in child classes)
       skills: new fields.SchemaField({}),

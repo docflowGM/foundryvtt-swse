@@ -2,7 +2,7 @@
  * PHASE 5C-1: World Integrity Sweep Unit Tests
  */
 
-import { WorldIntegritySweep } from './world-integrity-sweep.js';
+import { WorldIntegritySweep } from "/systems/foundryvtt-swse/scripts/engine/integrity/world-integrity-sweep.js";
 
 function createMockActor(name, violations = []) {
   return {

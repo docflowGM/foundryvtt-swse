@@ -11,8 +11,8 @@
  * - No duplicate eligibility checks
  */
 
-import { WeaponsEngine } from "../../engine/combat/weapons-engine.js";
-import { SWSELogger } from "../../core/logger.js";
+import { WeaponsEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/weapons-engine.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ApplicationV2 } = foundry.applications.api;

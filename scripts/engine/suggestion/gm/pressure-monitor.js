@@ -5,7 +5,7 @@
  * Triggers when players are being forced into defensive postures.
  */
 
-import { INSIGHT_TYPES, INSIGHT_SEVERITY, validateInsight } from "../../../engine/suggestion/gm/insight-types.js";
+import { INSIGHT_TYPES, INSIGHT_SEVERITY, validateInsight } from "/systems/foundryvtt-swse/scripts/engine/suggestion/gm/insight-types.js";
 
 export class PressureMonitor {
   /**

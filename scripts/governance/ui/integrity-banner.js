@@ -11,9 +11,9 @@
  * Only reads from MissingPrereqsTracker.
  */
 
-import { GovernanceSystem } from '../governance-system.js';
-import { MissingPrereqsTracker } from '../integrity/missing-prereqs-tracker.js';
-import { RebuildOrchestrator } from './rebuild-orchestrator.js';
+import { GovernanceSystem } from "/systems/foundryvtt-swse/scripts/governance/governance-system.js";
+import { MissingPrereqsTracker } from "/systems/foundryvtt-swse/scripts/governance/integrity/missing-prereqs-tracker.js";
+import { RebuildOrchestrator } from "/systems/foundryvtt-swse/scripts/governance/ui/rebuild-orchestrator.js";
 
 export class IntegrityBanner {
 

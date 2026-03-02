@@ -14,8 +14,8 @@
  * - Handles fallback gracefully
  */
 
-import { SWSELogger } from "../../utils/logger.js";
-import { getMentorAtomPhrase, MENTOR_ATOM_PHRASES } from "../../engine/mentor/mentor-atom-phrases.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { getMentorAtomPhrase, MENTOR_ATOM_PHRASES } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-atom-phrases.js";
 
 export class MentorJudgmentEngine {
   /**

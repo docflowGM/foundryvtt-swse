@@ -29,7 +29,7 @@
       }
 
       // import and init the controller if available
-      import('./scripts/apps/progression/sidebar.js').then(mod => {
+      import("/systems/foundryvtt-swse/scripts/apps/progression/scripts/apps/progression/sidebar.js").then(mod => {
         if (!window.SWSE_PROG_SIDEBAR) {
           window.SWSE_PROG_SIDEBAR = new mod.SWSEProgressionSidebar();
         }

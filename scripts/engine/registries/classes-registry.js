@@ -22,8 +22,8 @@
  * - Compatible with AbilityEngine, ProgressionEngine, UI layers
  */
 
-import { SWSELogger } from '../../utils/logger.js';
-import { ClassesDB } from '../../data/classes-db.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
 
 /**
  * ClassesRegistry - Enumeration authority for classes

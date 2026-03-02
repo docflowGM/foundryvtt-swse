@@ -15,7 +15,7 @@
  *   - IntegrityDashboard (display to user)
  */
 
-import { EnforcementPolicy } from '../enforcement/enforcement-policy.js';
+import { EnforcementPolicy } from "/systems/foundryvtt-swse/scripts/governance/enforcement/enforcement-policy.js";
 
 export class SeverityClassifier {
   /**

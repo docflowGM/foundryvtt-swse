@@ -8,7 +8,7 @@
  * ============================================================
  */
 
-import { SWSELogger } from "../../utils/logger.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class SWSEVehicleCore {
 
@@ -334,7 +334,7 @@ export class SWSEVehicleCore {
 
       const skillKey = this._mapSkillName(skillName);
 
-      const { SWSERoll } = await import('../../combat/rolls/enhanced-rolls.js');
+      const { SWSERoll } = await import("/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js");
 
       await SWSERoll.rollSkillCheck(actor, skillKey, {
         ...config,

@@ -9,7 +9,7 @@
  * - Performance bottleneck detection
  */
 
-import { swseLogger } from "../../utils/logger.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class PerformanceSovereigntyLock {
   /**
@@ -125,7 +125,7 @@ export class PerformanceSovereigntyLock {
    * @param {*} ...args - Arguments to pass to function
    * @returns {Object} { duration: number, result: * }
    */
-  static static async measurePerformance(calculationFn, ...args) {
+  static async measurePerformance(calculationFn, ...args) {
     const startTime = performance.now();
 
     try {

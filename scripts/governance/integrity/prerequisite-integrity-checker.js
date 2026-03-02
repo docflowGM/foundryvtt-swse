@@ -17,11 +17,11 @@
  * - Never interprets rules directly (delegates to authorities)
  */
 
-import { PrerequisiteChecker } from '../../data/prerequisite-checker.js';
-import { AbilityEngine } from '../../engine/abilities/AbilityEngine.js';
-import { SWSELogger } from '../../utils/logger.js';
-import { MissingPrereqsTracker } from './missing-prereqs-tracker.js';
-import { SeverityClassifier } from './severity-classifier.js';
+import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { MissingPrereqsTracker } from "/systems/foundryvtt-swse/scripts/governance/integrity/missing-prereqs-tracker.js";
+import { SeverityClassifier } from "/systems/foundryvtt-swse/scripts/governance/integrity/severity-classifier.js";
 
 export class PrerequisiteIntegrityChecker {
 

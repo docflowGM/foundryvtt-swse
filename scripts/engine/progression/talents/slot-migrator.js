@@ -5,8 +5,8 @@
  * Converts numeric talent counters to structured slot objects.
  */
 
-import { TalentSlotSchema } from './talent-slot-schema.js';
-import { SWSELogger } from "../../../utils/logger.js";
+import { TalentSlotSchema } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/talent-slot-schema.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class TalentSlotMigrator {
   /**

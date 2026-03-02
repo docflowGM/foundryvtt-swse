@@ -14,9 +14,9 @@
  * OUTPUT: atoms array + intensity level
  */
 
-import { SWSELogger } from "../../utils/logger.js";
-import { REASON_ATOMS } from "../../engine/mentor/mentor-reason-atoms.js";
-import { INTENSITY_ATOMS } from "../../engine/mentor/mentor-intensity-atoms.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { REASON_ATOMS } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-reason-atoms.js";
+import { INTENSITY_ATOMS } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-intensity-atoms.js";
 
 export class MentorReasonSelector {
   /**

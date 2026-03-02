@@ -2,7 +2,7 @@
  * PHASE 5C-3: Actor Repair Engine Unit Tests
  */
 
-import { ActorRepairEngine } from './actor-repair-engine.js';
+import { ActorRepairEngine } from "/systems/foundryvtt-swse/scripts/engine/repair/actor-repair-engine.js";
 
 function createMockActor(name, violations = []) {
   return {

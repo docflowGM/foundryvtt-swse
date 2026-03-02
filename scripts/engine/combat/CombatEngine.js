@@ -1,17 +1,17 @@
 
-import { RollEngine } from "../../engine/roll-engine.js";
-import { SWSEInitiative } from "../../engine/combat/SWSEInitiative.js";
-import { DamageEngine } from "../../engine/combat/damage-engine.js";
-import { ThresholdEngine } from "../../engine/combat/threshold-engine.js";
-import { DamageResolutionEngine } from "../../engine/combat/damage-resolution-engine.js";
-import { ScaleEngine } from "../../engine/combat/scale-engine.js";
-import { SubsystemEngine } from "../../engine/combat/starship/subsystem-engine.js";
-import { EnhancedShields } from "../../engine/combat/starship/enhanced-shields.js";
-import { VehicleTurnController } from "../../engine/combat/starship/vehicle-turn-controller.js";
-import { VehicleDogfighting } from "../../engine/combat/subsystems/vehicle/vehicle-dogfighting.js";
-import { VehicleCollisions } from "../../engine/combat/subsystems/vehicle/vehicle-collisions.js";
-import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
-import { CombatUIAdapter } from "../../engine/combat/ui/CombatUIAdapter.js";
+import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
+import { SWSEInitiative } from "/systems/foundryvtt-swse/scripts/engine/combat/SWSEInitiative.js";
+import { DamageEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-engine.js";
+import { ThresholdEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/threshold-engine.js";
+import { DamageResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-resolution-engine.js";
+import { ScaleEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/scale-engine.js";
+import { SubsystemEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/subsystem-engine.js";
+import { EnhancedShields } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-shields.js";
+import { VehicleTurnController } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/vehicle-turn-controller.js";
+import { VehicleDogfighting } from "/systems/foundryvtt-swse/scripts/engine/combat/subsystems/vehicle/vehicle-dogfighting.js";
+import { VehicleCollisions } from "/systems/foundryvtt-swse/scripts/engine/combat/subsystems/vehicle/vehicle-collisions.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { CombatUIAdapter } from "/systems/foundryvtt-swse/scripts/engine/combat/ui/CombatUIAdapter.js";
 
 export class CombatEngine {
 
@@ -300,7 +300,7 @@ export class CombatEngine {
    * @returns {Promise<Object>} Preview with total and breakdown
    */
   static async previewAttack(actor, actionKey, options = {}) {
-    const { ModifierEngine } = await import('../../engine/effects/modifiers/ModifierEngine.js').catch(() => ({ ModifierEngine: null }));
+    const { ModifierEngine } = await import("/systems/foundryvtt-swse/scripts/engine/engine/effects/modifiers/ModifierEngine.js").catch(() => ({ ModifierEngine: null }));
 
     if (!ModifierEngine) {
       return {
@@ -367,7 +367,7 @@ export class CombatEngine {
    * @returns {Promise<Object>} Initiative preview with breakdown
    */
   static async previewInitiative(actor, options = {}) {
-    const { ModifierEngine } = await import('../../engine/effects/modifiers/ModifierEngine.js').catch(() => ({ ModifierEngine: null }));
+    const { ModifierEngine } = await import("/systems/foundryvtt-swse/scripts/engine/engine/effects/modifiers/ModifierEngine.js").catch(() => ({ ModifierEngine: null }));
 
     const baseRoll = options.baseRoll ?? null;
 

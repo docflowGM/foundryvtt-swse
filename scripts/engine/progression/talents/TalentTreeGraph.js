@@ -4,7 +4,7 @@
 // Constructs a directed acyclic graph (DAG) of TalentNodes for each tree.
 // ======================================================================
 
-import { TalentNode } from "../../../engine/progression/talents/TalentNode.js";
+import { TalentNode } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/TalentNode.js";
 
 export class TalentTreeGraph {
   constructor(treeName) {

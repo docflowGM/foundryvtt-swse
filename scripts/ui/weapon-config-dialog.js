@@ -12,7 +12,7 @@
  * - Attack attribute selection
  */
 
-import { SWSELogger as swseLogger } from '../utils/logger.js';
+import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class WeaponConfigDialog extends FormApplication {
   static get defaultOptions() {

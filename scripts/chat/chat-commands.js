@@ -1,4 +1,4 @@
-import { SWSELogger } from "../utils/logger.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * Register SWSE Chat Commands (Advanced Version)
@@ -252,7 +252,7 @@ async function cmdRest(args) {
   // Normalize type (full/long → extended)
   const normalizedType = (restType === 'full' || restType === 'long') ? 'extended' : restType;
 
-  const { SecondWindEngine } = await import('../../SecondWindEngine.js');
+  const { SecondWindEngine } = await import("/systems/foundryvtt-swse/SecondWindEngine.js");
 
   for (const t of tokens) {
     const a = t.actor;

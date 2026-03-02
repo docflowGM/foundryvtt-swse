@@ -1,14 +1,7 @@
-#!/usr/bin/env node
-
-/**
+/*
  * CLI Validator for Advisory Schema v1.1
  *
- * Usage:
- *   node validate-advisory.js <file-or-glob-pattern>
- *
- * Examples:
- *   node validate-advisory.js data/dialogue/mentors/**/_advisory.json
- *   node validate-advisory.js data/dialogue/mentors/axiom/_advisory.json
+ * Usage: node validate-advisory.js <file-or-glob-pattern>
  *
  * Exit codes:
  *   0 = all files valid

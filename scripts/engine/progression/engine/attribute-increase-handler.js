@@ -8,9 +8,9 @@
  * - Constitution modifier increase: adds HP equal to heroic level
  */
 
-import { swseLogger } from "../../../utils/logger.js";
-import { ActorEngine } from "../../../governance/actor-engine/actor-engine.js";
-import { SWSELanguageModule } from "../../../engine/progression/modules/language-module.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { SWSELanguageModule } from "/systems/foundryvtt-swse/scripts/engine/progression/modules/language-module.js";
 
 export class AttributeIncreaseHandler {
   /**

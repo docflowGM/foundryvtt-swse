@@ -12,14 +12,14 @@
  * Non-blocking, advisory notifications.
  */
 
-import { WorldIntegritySweep } from "../engine/integrity/world-integrity-sweep.js";
-import { SWSELogger } from "../core/logger.js";
+import { WorldIntegritySweep } from "/systems/foundryvtt-swse/scripts/engine/integrity/world-integrity-sweep.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 
 export class MigrationIntegrityAdapter {
   /**
    * Settings key for storing last known version
    */
-  static readonly VERSION_SETTING = 'lastSystemVersion';
+  static VERSION_SETTING = 'lastSystemVersion';
 
   /**
    * Validate world integrity after migration

@@ -23,8 +23,8 @@
  * - Violates architecture if: applies condition mutations directly
  */
 
-import { swseLogger } from "../../utils/logger.js";
-import { HouseRuleService } from "../../engine/system/HouseRuleService.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 export class CombatMechanicsEngine {
   /**

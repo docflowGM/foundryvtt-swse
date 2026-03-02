@@ -3,9 +3,9 @@
 // Skill check rolling via RollCore (V2 Unified)
 // ============================================
 
-// import { SkillEnforcementEngine } from "../engine/skills/SkillEnforcementEngine.js"; // File doesn't exist
-import RollCore from "../engine/roll/roll-core.js";
-import { swseLogger } from "../utils/logger.js";
+// import { SkillEnforcementEngine } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillEnforcementEngine.js"; // File doesn't exist
+import RollCore from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * Roll a skill check

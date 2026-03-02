@@ -16,10 +16,10 @@
  *   - Scheduled diagnostics
  */
 
-import { PrerequisiteIntegrityChecker } from "../../governance/integrity/prerequisite-integrity-checker.js";
-import { MissingPrereqsTracker } from "../../governance/integrity/missing-prereqs-tracker.js";
-import { SeverityClassifier } from "../../governance/integrity/severity-classifier.js";
-import { SWSELogger } from "../../core/logger.js";
+import { PrerequisiteIntegrityChecker } from "/systems/foundryvtt-swse/scripts/governance/integrity/prerequisite-integrity-checker.js";
+import { MissingPrereqsTracker } from "/systems/foundryvtt-swse/scripts/governance/integrity/missing-prereqs-tracker.js";
+import { SeverityClassifier } from "/systems/foundryvtt-swse/scripts/governance/integrity/severity-classifier.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 
 export class WorldIntegritySweep {
   /**

@@ -10,7 +10,7 @@
  * @module combat/multi-attack
  */
 
-import { swseLogger } from "../utils/logger.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * Weapon groups for Double/Triple Attack feats
@@ -522,6 +522,51 @@ export async function showFullAttackDialog(actor, equippedWeapons) {
   const content = `
     <div class="swse-full-attack-dialog">
     </style>
+  `;
+}
+
+/**
+ * Generate HTML chat card for full attack results
+ *
+ * SHORT-TERM FIX: This generates the chat card HTML.
+ * LONG-TERM: This belongs in SWSEChat with card generation refactored separately.
+ *
+ * @param {Actor} actor - The attacking actor
+ * @param {Object[]} results - Array of attack/roll results
+ * @param {Object} config - Full attack configuration from calculateFullAttackConfig()
+ * @returns {string} HTML for the chat card
+ */
+export function generateFullAttackCard(actor, results, config) {
+  if (!actor || !Array.isArray(results)) {
+    return '<div class="swse-full-attack-card"><p>Invalid full attack data.</p></div>';
+  }
+
+  // Build attack results HTML
+  const attacksHtml = results.map((result, idx) => {
+    const attack = config.attacks[idx];
+    const rollHtml = result.roll ? `<div class="roll">${result.roll.formula}</div>` : '';
+    const totalHtml = result.roll ? `<div class="total">${result.roll.total}</div>` : '';
+    const damageHtml = result.damage ? `<div class="damage">${result.damage}</div>` : '';
+
+    return `
+      <div class="attack-result">
+        <div class="attack-label">${attack?.label || `Attack ${idx + 1}`}</div>
+        <div class="attack-details">
+          ${rollHtml}
+          ${totalHtml}
+          ${damageHtml}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="swse-full-attack-card">
+      <div class="actor-name">${actor.name}</div>
+      <div class="attack-sequence">
+        ${attacksHtml}
+      </div>
+    </div>
   `;
 }
 

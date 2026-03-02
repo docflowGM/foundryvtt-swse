@@ -8,12 +8,12 @@
  * - Unexpected hook frequencies
  */
 
-import { Sentinel } from "../../../governance/sentinel/sentinel-core.js";
+import { Sentinel } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 
 export const HooksLayer = {
-  #hookCallCounts = new Map(),
-  #lastRenderCycleTime = 0,
-  #renderCycleWindow = 16, // ~60fps
+  _hookCallCounts: new Map(),
+  _lastRenderCycleTime: 0,
+  _renderCycleWindow: 16, // ~60fps
 
   /**
    * Initialize hook monitoring
@@ -48,21 +48,21 @@ export const HooksLayer = {
     const now = performance.now();
 
     // Reset counts if outside render cycle window
-    if (now - this.#lastRenderCycleTime > this.#renderCycleWindow) {
-      this.#hookCallCounts.clear();
-      this.#lastRenderCycleTime = now;
+    if (now - this._lastRenderCycleTime > this._renderCycleWindow) {
+      this._hookCallCounts.clear();
+      this._lastRenderCycleTime = now;
     }
 
     // Increment counter
-    const count = (this.#hookCallCounts.get(hookName) || 0) + 1;
-    this.#hookCallCounts.set(hookName, count);
+    const count = (this._hookCallCounts.get(hookName) || 0) + 1;
+    this._hookCallCounts.set(hookName, count);
 
     // Check for excessive frequency
     if (hookName === 'updateActor' && count > 50) {
       Sentinel.report('hooks', Sentinel.SEVERITY.ERROR, 'Excessive updateActor calls detected', {
         hook: hookName,
         callsInWindow: count,
-        windowMs: this.#renderCycleWindow
+        windowMs: this._renderCycleWindow
       });
     }
 
@@ -70,7 +70,7 @@ export const HooksLayer = {
       Sentinel.report('hooks', Sentinel.SEVERITY.ERROR, 'Excessive hook call frequency', {
         hook: hookName,
         callsInWindow: count,
-        windowMs: this.#renderCycleWindow
+        windowMs: this._renderCycleWindow
       });
     }
 

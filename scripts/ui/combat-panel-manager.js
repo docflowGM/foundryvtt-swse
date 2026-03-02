@@ -8,8 +8,8 @@
  * - Roll action handling
  */
 
-import { SWSELogger as swseLogger } from '../utils/logger.js';
-import WeaponTooltip from "../ui/weapon-tooltip.js";
+import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import WeaponTooltip from "/systems/foundryvtt-swse/scripts/ui/weapon-tooltip.js";
 
 export class CombatPanelManager {
   /**

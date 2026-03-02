@@ -15,10 +15,10 @@
  *   - Shows governance context
  */
 
-import { ActorRepairEngine } from "../../engine/repair/actor-repair-engine.js";
-import { IntegrityDashboard } from "../../governance/ui/integrity-dashboard.js";
-import { GovernanceSystem } from "../../governance/governance-system.js";
-import { SWSELogger } from "../../core/logger.js";
+import { ActorRepairEngine } from "/systems/foundryvtt-swse/scripts/engine/repair/actor-repair-engine.js";
+import { IntegrityDashboard } from "/systems/foundryvtt-swse/scripts/governance/ui/integrity-dashboard.js";
+import { GovernanceSystem } from "/systems/foundryvtt-swse/scripts/governance/governance-system.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 
 export class RepairPanel extends Application {
   constructor(actor, options = {}) {
@@ -126,7 +126,7 @@ export class RepairPanel extends Application {
       if (!confirmed) return;
 
       // Apply repair
-      const { ActorEngine } = await import('../../governance/actor-engine/actor-engine.js');
+      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
       const result = await ActorEngine.applyRepair(this.actor, proposal);
 
       if (result.success) {
@@ -168,7 +168,7 @@ export class RepairPanel extends Application {
       const confirmed = await this._confirmBulkRepair(criticalProposals);
       if (!confirmed) return;
 
-      const { ActorEngine } = await import('../../governance/actor-engine/actor-engine.js');
+      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
 
       let applied = 0;
       let failed = 0;

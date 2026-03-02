@@ -246,7 +246,7 @@ class LightsaberConstructionEngineTestsStandalone {
     }));
 
     // Import engine
-    const { LightsaberConstructionEngine } = await import('./lightsaber-construction-engine.js').catch(err => {
+    const { LightsaberConstructionEngine } = await import("/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js").catch(err => {
       mockLogger.error('Failed to import engine:', err);
       throw err;
     });
@@ -297,7 +297,7 @@ class LightsaberConstructionEngineTestsStandalone {
       evaluate: async function() { return this; }
     });
 
-    const { LightsaberConstructionEngine } = await import('./lightsaber-construction-engine.js').catch(err => {
+    const { LightsaberConstructionEngine } = await import("/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js").catch(err => {
       mockLogger.error('Failed to import engine:', err);
       throw err;
     });
@@ -346,7 +346,7 @@ class LightsaberConstructionEngineTestsStandalone {
       evaluate: async function() { return this; }
     });
 
-    const { LightsaberConstructionEngine } = await import('./lightsaber-construction-engine.js').catch(err => {
+    const { LightsaberConstructionEngine } = await import("/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js").catch(err => {
       mockLogger.error('Failed to import engine:', err);
       throw err;
     });
@@ -389,7 +389,7 @@ class LightsaberConstructionEngineTestsStandalone {
       evaluate: async function() { return this; }
     });
 
-    const { LightsaberConstructionEngine } = await import('./lightsaber-construction-engine.js').catch(err => {
+    const { LightsaberConstructionEngine } = await import("/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js").catch(err => {
       mockLogger.error('Failed to import engine:', err);
       throw err;
     });
@@ -437,7 +437,7 @@ class LightsaberConstructionEngineTestsStandalone {
       evaluate: async function() { return this; }
     });
 
-    const { LightsaberConstructionEngine } = await import('./lightsaber-construction-engine.js').catch(err => {
+    const { LightsaberConstructionEngine } = await import("/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js").catch(err => {
       mockLogger.error('Failed to import engine:', err);
       throw err;
     });

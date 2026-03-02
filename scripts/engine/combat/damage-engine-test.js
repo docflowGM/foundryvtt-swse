@@ -12,9 +12,9 @@
  * await DamageEngineTest.runFullSuite()
  */
 
-import { DamageEngine } from "../../engine/combat/damage-engine.js";
-import { DerivedCalculator } from "../../actors/derived/derived-calculator.js";
-import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
+import { DamageEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-engine.js";
+import { DerivedCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class DamageEngineTest {
   static results = {
@@ -186,7 +186,7 @@ export class DamageEngineTest {
 
     try {
       // Get violation summary
-      const { MutationIntegrityLayer } = await import('../../../mutation-integrity-layer.js');
+      const { MutationIntegrityLayer } = await import("/systems/foundryvtt-swse/mutation-integrity-layer.js");
       const summary = MutationIntegrityLayer.getViolationSummary();
 
       console.log('Mutation violations:', summary.violations);
@@ -223,7 +223,7 @@ export class DamageEngineTest {
     try {
       // Check if applyConditionShift calls updateActor internally
       this.mutationLog = [];
-      const { ActorEngine } = await import('../../governance/actor-engine/actor-engine.js');
+      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
 
       console.log('Applying condition shift directly...');
       await ActorEngine.applyConditionShift(actor, 1, 'test');

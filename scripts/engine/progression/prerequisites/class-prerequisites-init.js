@@ -16,8 +16,8 @@
  * ============================================
  */
 
-import { normalizeAndCacheAll } from "../../../engine/progression/prerequisites/class-prerequisites-cache.js";
-import { SWSELogger } from "../../../utils/logger.js";
+import { normalizeAndCacheAll } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prerequisites-cache.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * Initialize class prerequisites cache.
@@ -62,7 +62,7 @@ export async function initializeClassPrerequisitesCache() {
  * In your main system load file, call:
  *
  * Hooks.once('ready', () => {
- *   import('./scripts/progression/prerequisites/class-prerequisites-init.js')
+ *   import("/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/scripts/progression/prerequisites/class-prerequisites-init.js")
  *     .then(m => m.initializeClassPrerequisitesCache());
  * });
  */

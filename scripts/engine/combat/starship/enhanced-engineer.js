@@ -257,7 +257,7 @@ export class EnhancedEngineer {
     }
 
     // DC based on current damage tier
-    const { SubsystemEngine } = await import('./subsystem-engine.js');
+    const { SubsystemEngine } = await import("/systems/foundryvtt-swse/scripts/engine/combat/starship/subsystem-engine.js");
     const currentTier = SubsystemEngine.getSubsystemTier(vehicle, subsystem);
 
     const dcMap = {

@@ -1,10 +1,10 @@
-import { swseLogger } from "../../utils/logger.js";
-import { RollEngine } from "../../engine/roll-engine.js";
-import { rollDamage } from "../../combat/rolls/damage.js";
-import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance } from "../../combat/utils/combat-utils.js";
-import { getEffectiveHalfLevel } from "../../actors/derived/level-split.js";
-import { ForcePointsService } from "../../engine/force/force-points-service.js";
-import { AmmoSystem } from "../../engine/inventory/ammo-system.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
+import { rollDamage } from "/systems/foundryvtt-swse/scripts/combat/rolls/damage.js";
+import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
+import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
+import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
 import {
   ROLL_HOOKS,
   callPreRollHook,
@@ -15,14 +15,14 @@ import {
   analyzeCriticalThreat,
   rollCriticalConfirmation,
   rollConcealmentCheck
-} from ""../../rolls/roll-config.js';
+} from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import {
   getEquippedWeapons,
   calculateFullAttackConfig,
-import { createChatMessage } from "../../core/document-api-v13.js";
   showFullAttackDialog,
   generateFullAttackCard
-} from '../multi-attack.js';
+} from "/systems/foundryvtt-swse/scripts/combat/multi-attack.js";
+import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 
 /**
  * SWSERoll — Unified SWSE Rolling Engine for v13+
@@ -179,7 +179,7 @@ export class SWSERoll {
 
     // Spend FP with error handling (PHASE 3: Route through ActorEngine)
     try {
-      const { ActorEngine } = await import('../../governance/actor-engine/actor-engine.js');
+      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
       await ActorEngine.spendForcePoints(actor, 1);
 
       // Chat message (use calculated value instead of stale reference)
@@ -1562,7 +1562,7 @@ export class SWSERoll {
         if (useDP === null) {continue;}
 
         // PHASE 3: Route resource spending through ActorEngine
-        const { ActorEngine } = await import('../../governance/actor-engine/actor-engine.js');
+        const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
 
         if (useDP) {
           const dp = actor.system.destinyPoints?.value || 0;

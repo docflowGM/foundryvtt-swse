@@ -9,11 +9,11 @@
  * - Greater Dark Side Talisman: Enhanced protective talisman
  */
 
-import { SWSELogger } from "../../utils/logger.js";
-import { createChatMessage } from "../../core/document-api-v13.js";
-import { RollEngine } from "../../engine/roll-engine.js";
-import { TalentEffectEngine } from "../../engine/talent/talent-effect-engine.js";
-import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
+import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-effect-engine.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class DarkSideDevoteeMechanics {
 

@@ -5,8 +5,8 @@
  * Integrates with configuration dialogs and item management.
  */
 
-import { SWSELogger as swseLogger } from '../utils/logger.js';
-import WeaponConfigDialog from "../ui/weapon-config-dialog.js";
+import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import WeaponConfigDialog from "/systems/foundryvtt-swse/scripts/ui/weapon-config-dialog.js";
 
 export class InventoryHandlers {
   /**

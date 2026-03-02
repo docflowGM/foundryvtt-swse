@@ -15,14 +15,14 @@
  * Just replace ForceOptionSuggestionEngine with your engine.
  */
 
-import { SWSELogger } from "../../utils/logger.js";
-import { ForceOptionSuggestionEngine, FORCE_OPTION_TIERS } from "../../engine/suggestion/ForceOptionSuggestionEngine.js";
-import { getTierMetadata } from "../../engine/suggestion/suggestion-unified-tiers.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ForceOptionSuggestionEngine, FORCE_OPTION_TIERS } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ForceOptionSuggestionEngine.js";
+import { getTierMetadata } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-unified-tiers.js";
 import {
   enhanceSuggestionWithArchetype,
   getArchetypeExplanation,
   getPrimaryArchetype
-} from ""../../engine/suggestion/ArchetypeSuggestionIntegration.js';
+} from "/systems/foundryvtt-swse/scripts/engine/suggestion/ArchetypeSuggestionIntegration.js";
 
 /**
  * Enhanced Force Option Suggestion with Archetype Context
@@ -129,7 +129,7 @@ export class ArchetypeEnhancedForceOptionSuggestionEngine {
   /**
    * Get Force option recommendations with prestige path context
    *
-   * Useful for showing: "Your Jedi Guardian build suggests these Force powers..."
+   * Useful for showing: ""Your Jedi Guardian build suggests these Force powers..."
    *
    * @param {Actor} actor
    * @returns {Promise<Object>} { primaryArchetype, prestigeHints, recommendations }

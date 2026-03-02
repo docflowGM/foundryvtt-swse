@@ -2,8 +2,8 @@
  * PHASE 5B-3: Severity Classifier Unit Tests
  */
 
-import { SeverityClassifier } from './severity-classifier.js';
-import { EnforcementPolicy } from '../enforcement/enforcement-policy.js';
+import { SeverityClassifier } from "/systems/foundryvtt-swse/scripts/governance/integrity/severity-classifier.js";
+import { EnforcementPolicy } from "/systems/foundryvtt-swse/scripts/governance/enforcement/enforcement-policy.js";
 
 export class SeverityClassifierTests {
   static run() {

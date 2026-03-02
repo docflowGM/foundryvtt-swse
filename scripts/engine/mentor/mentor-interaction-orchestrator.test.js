@@ -10,7 +10,7 @@
  * 6. All mentors respond correctly
  */
 
-import { MentorInteractionOrchestrator } from "../../engine/mentor/mentor-interaction-orchestrator.js";
+import { MentorInteractionOrchestrator } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-interaction-orchestrator.js";
 
 /**
  * TEST HARNESS

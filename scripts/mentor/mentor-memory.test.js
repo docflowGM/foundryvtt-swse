@@ -24,7 +24,7 @@ import {
   setCommittedPath,
   setTargetClass,
   formatMentorMemory
-} from "../engine/mentor/mentor-memory.js";
+} from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-memory.js";
 
 // TODO: DSP saturation functions need to be implemented
 // These calculate dark side points influence on mentor decisions
@@ -33,7 +33,7 @@ import {
 //   getDspBand,
 //   getToneModifier,
 //   formatDspInfo
-// } from '../engine/dsp-saturation.js';
+// } from "/systems/foundryvtt-swse/scripts/engine/dsp-saturation.js";
 
 /**
  * Test DSP saturation calculations

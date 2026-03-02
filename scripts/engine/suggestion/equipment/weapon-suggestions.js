@@ -5,8 +5,8 @@
  * Filters, sorts, and presents top recommendations for a character.
  */
 
-import { WeaponScoringEngine } from "../../../engine/suggestion/equipment/weapon-scoring-engine.js";
-import { SWSELogger } from "../../../utils/logger.js";
+import { WeaponScoringEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/weapon-scoring-engine.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class WeaponSuggestions {
   /**

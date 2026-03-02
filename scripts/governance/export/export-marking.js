@@ -10,8 +10,8 @@
  * - Sentinel logs governance state in DEV mode
  */
 
-import { SWSELogger } from '../../utils/logger.js';
-import { GovernanceSystem } from '../governance-system.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { GovernanceSystem } from "/systems/foundryvtt-swse/scripts/governance/governance-system.js";
 
 export class ExportMarking {
 

@@ -17,7 +17,7 @@
  * These rules exist to prevent contributor drift.
  */
 
-import { SWSELogger } from '../../utils/logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class SentinelSovereigntyEnforcement {
 

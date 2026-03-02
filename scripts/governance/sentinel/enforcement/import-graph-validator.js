@@ -8,7 +8,7 @@
  * direct calls to PrerequisiteChecker exist in production code.
  */
 
-import { SWSELogger } from '../../../utils/logger.js';
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class ImportGraphValidator {
 

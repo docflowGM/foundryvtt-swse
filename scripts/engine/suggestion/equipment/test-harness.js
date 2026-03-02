@@ -11,8 +11,8 @@
  *   SWSE.testHarness.emitTuningMismatchReport()
  */
 
-import { createSuggestionReport, generateReportId } from "../../../engine/suggestion/equipment/report-schema.js";
-import { emitSuggestionReport } from "../../../engine/suggestion/gm/init.js";
+import { createSuggestionReport, generateReportId } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/report-schema.js";
+import { emitSuggestionReport } from "/systems/foundryvtt-swse/scripts/engine/suggestion/gm/init.js";
 
 export const testHarness = {
   /**
@@ -239,7 +239,7 @@ export const testHarness = {
    * Clear all insights
    */
   async clearInsights() {
-    const { InsightBus } = await import('../gm/insight-bus.js');
+    const { InsightBus } = await import("/systems/foundryvtt-swse/scripts/engine/suggestion/gm/insight-bus.js");
     InsightBus.clear();
     console.log('[Test] All insights cleared');
   }

@@ -12,7 +12,7 @@
  * - Must be called during Hooks.once('init')
  */
 
-import { SWSELogger } from "../utils/logger.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * All templates used by the system.
@@ -42,6 +42,15 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/dark-side-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/second-wind-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/languages-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/xp-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/Talents.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/Feats.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/Force.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-armor-card.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-item-card.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-item-row.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-weapon-card.hbs',
 
   // ==============================
   // Droid v2 Partials
@@ -52,6 +61,13 @@ export const SWSE_TEMPLATES = [
   // ==============================
   // Vehicle v2 Partials
   // ==============================
+  'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/identity-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/resource-cartridges.hbs',
+  'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/hp-condition-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/defenses-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/damage-threshold-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/cargo-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/crew-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/attacks-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/actions-panel.hbs',
 

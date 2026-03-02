@@ -4,5 +4,5 @@
  * Exports all vehicle-specific combat mechanics integrated into engine domain.
  */
 
-export { VehicleDogfighting } from './vehicle-dogfighting.js';
-export { VehicleCollisions } from './vehicle-collisions.js';
+export { VehicleDogfighting } from "/systems/foundryvtt-swse/scripts/engine/combat/subsystems/vehicle/vehicle-dogfighting.js";
+export { VehicleCollisions } from "/systems/foundryvtt-swse/scripts/engine/combat/subsystems/vehicle/vehicle-collisions.js";

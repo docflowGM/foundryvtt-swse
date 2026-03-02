@@ -1,8 +1,8 @@
-import { SWSELogger } from "../utils/logger.js";
-import CharacterGeneratorNarrative from "../apps/chargen-narrative.js";
-import CharacterGeneratorImproved from "../apps/chargen-improved.js";
-import { TemplateCharacterCreator } from "../apps/template-character-creator.js";
-import { createActor } from "../core/document-api-v13.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import CharacterGeneratorNarrative from "/systems/foundryvtt-swse/scripts/apps/chargen-narrative.js";
+import CharacterGeneratorImproved from "/systems/foundryvtt-swse/scripts/apps/chargen-improved.js";
+import { TemplateCharacterCreator } from "/systems/foundryvtt-swse/scripts/apps/template-character-creator.js";
+import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 
 // Single hook to handle both create button interception and header button addition
 Hooks.on('renderActorDirectory', (app, html, data) => {
@@ -162,7 +162,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
             storeButton.innerHTML = '<i class="fa-solid fa-shopping-cart"></i> Store';
             storeButton.title = 'Open the Galactic Trade Exchange';
             storeButton.addEventListener('click', async () => {
-                const { SWSEStore } = await import('./store/store-main.js');
+                const { SWSEStore } = await import("/systems/foundryvtt-swse/scripts/apps/store/store-main.js");
                 const store = new SWSEStore();
                 store.render(true);
             });

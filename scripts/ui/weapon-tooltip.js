@@ -10,8 +10,8 @@
  * - Weapon property effects
  */
 
-import { SWSELogger as swseLogger } from '../utils/logger.js';
-import WeaponsEngine from "../engine/combat/weapons-engine.js";
+import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import WeaponsEngine from "/systems/foundryvtt-swse/scripts/engine/combat/weapons-engine.js";
 
 export class WeaponTooltip {
   /**

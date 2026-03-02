@@ -16,10 +16,10 @@
  * - Penetrating Attack: Bypass armor/DR
  */
 
-import { SWSELogger } from "../../utils/logger.js";
-import { ActorEngine } from "../../governance/actor-engine/actor-engine.js";
-import { TalentEffectEngine } from "../../engine/talent/talent-effect-engine.js";
-import { createEffectOnActor } from "../../core/document-api-v13.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-effect-engine.js";
+import { createEffectOnActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 
 export class SoldierTalentMechanics {
 
