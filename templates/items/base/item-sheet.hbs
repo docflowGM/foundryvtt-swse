@@ -155,6 +155,32 @@
  <label>Cost (credits)</label>
  <input name="system.cost" type="number" value="{{system.cost}}" data-dtype="Number" />
  </div>
+
+ {{!-- Ranged Weapon Visuals --}}
+ {{#if (eq system.meleeOrRanged "ranged")}}
+ <div class="form-group">
+ <label>Beam Style</label>
+ <select name="flags.swse.beamStyle" class="beam-style-select">
+ <option value="laser" {{#if (eq item.flags.swse.beamStyle "laser")}}selected{{/if}}>Laser Line</option>
+ <option value="bolt" {{#if (eq item.flags.swse.beamStyle "bolt")}}selected{{/if}}>Energy Bolt</option>
+ <option value="heavy" {{#if (eq item.flags.swse.beamStyle "heavy")}}selected{{/if}}>Heavy Bolt</option>
+ <option value="pulse" {{#if (eq item.flags.swse.beamStyle "pulse")}}selected{{/if}}>Rapid Pulse</option>
+ <option value="ion" {{#if (eq item.flags.swse.beamStyle "ion")}}selected{{/if}}>Ion Stream</option>
+ <option value="plasma" {{#if (eq item.flags.swse.beamStyle "plasma")}}selected{{/if}}>Plasma Shot</option>
+ </select>
+ </div>
+ <div class="form-group">
+ <label>Bolt Color</label>
+ <select name="flags.swse.boltColor" class="bolt-color-select">
+ <option value="red" {{#if (eq item.flags.swse.boltColor "red")}}selected{{/if}}>Red</option>
+ <option value="green" {{#if (eq item.flags.swse.boltColor "green")}}selected{{/if}}>Green</option>
+ <option value="blue" {{#if (eq item.flags.swse.boltColor "blue")}}selected{{/if}}>Blue</option>
+ <option value="cyan" {{#if (eq item.flags.swse.boltColor "cyan")}}selected{{/if}}>Cyan</option>
+ <option value="orange" {{#if (eq item.flags.swse.boltColor "orange")}}selected{{/if}}>Orange</option>
+ </select>
+ </div>
+ {{/if}}
+
  {{#if (eq system.subtype "lightsaber")}}
  <div class="form-group">
  <label>

@@ -379,5 +379,24 @@ export function registerSystemSettings() {
     default: false
   });
 
+  // Combat Visual Effects Settings
+  game.settings.register('foundryvtt-swse', 'enableCinematicEffects', {
+    name: 'Enable Cinematic Combat Effects',
+    hint: 'When enabled, displays projectiles, impact flashes, screen shake, and other visual effects during combat. Disable for performance or preference.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  game.settings.register('foundryvtt-swse', 'enableCinematicShields', {
+    name: 'Enable Cinematic Shield Visuals',
+    hint: 'When enabled, displays energy shield aura around tokens with active shields.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
   SWSELogger.log('SWSE | Settings registered');
 }
