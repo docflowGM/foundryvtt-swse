@@ -523,6 +523,158 @@ export class WeaponsEngine {
   }
 
   /* ============================================================
+     PHASE 2: CONDITIONAL CRYSTAL EFFECTS
+  ============================================================ */
+
+  /**
+   * Evaluate conditional crystal effects (Phase 2)
+   *
+   * Supports:
+   * - Extra dice on critical hits
+   * - Extra dice vs shields
+   * - Extra dice vs damage reduction
+   * - Extra dice vs armored targets
+   * - Conditional damage bonuses
+   *
+   * Context-driven, not hardcoded. No crystal names checked.
+   *
+   * @param {Item} weapon - Lightsaber with upgrades
+   * @param {Actor} actor - Weapon wielder
+   * @param {Object} context - Combat context { isCritical, targetHasShield, targetHasDR, targetIsArmored }
+   * @returns {Object} { extraDice: [], flatBonus: 0, appliedEffects: [] }
+   */
+  static evaluateConditionalCrystalEffects(weapon, actor, context = {}) {
+    const result = {
+      extraDice: [],
+      flatBonus: 0,
+      appliedEffects: []
+    };
+
+    // Only process lightsabers with upgrades
+    if (weapon.system?.subtype !== 'lightsaber') return result;
+    if (!weapon.system?.equippable?.equipped) return result;
+
+    const installedUpgrades = weapon.system?.installedUpgrades ?? [];
+    if (!installedUpgrades.length) return result;
+
+    // Gather all upgrade items
+    const upgrades = installedUpgrades
+      .map(id => actor.items?.get(id))
+      .filter(u => u !== undefined && u.type === 'weaponUpgrade');
+
+    for (const upgrade of upgrades) {
+      const ls = upgrade.system?.lightsaber;
+      if (!ls) continue;
+
+      // ========== DAMAGE MODIFIERS (Conditional) ==========
+      if (Array.isArray(ls.damageModifiers)) {
+        for (const mod of ls.damageModifiers) {
+          if (this.#evaluateTrigger(mod.trigger, context)) {
+            this.#applyConditionalEffect(mod.effect, result, upgrade.name);
+          }
+        }
+      }
+
+      // ========== CONDITIONAL EFFECTS ==========
+      if (Array.isArray(ls.conditionalEffects)) {
+        for (const cond of ls.conditionalEffects) {
+          if (this.#evaluateTrigger(cond.trigger, context)) {
+            this.#applyConditionalEffect(cond.effect, result, upgrade.name);
+          }
+        }
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Evaluate a trigger against combat context
+   * Generic, no hardcoded crystal logic, no crystal name checks
+   * @private
+   */
+  static #evaluateTrigger(trigger, context) {
+    // Normalize trigger
+    const t = (trigger ?? '').toLowerCase().trim();
+
+    switch (t) {
+      case 'critical':
+      case 'iscritical':
+      case 'crit':
+        return context.isCritical === true;
+
+      case 'targethasshield':
+      case 'vs_shield':
+      case 'vsshield':
+      case 'vs shield':
+        return context.targetHasShield === true;
+
+      case 'targethasdr':
+      case 'vs_dr':
+      case 'vsdr':
+      case 'vs damage reduction':
+        return context.targetHasDR === true;
+
+      case 'targetisarmored':
+      case 'vs_armor':
+      case 'vsarmor':
+      case 'vs armored':
+        return context.targetIsArmored === true;
+
+      case 'always':
+      case 'unconditional':
+      case 'true':
+        return true;
+
+      default:
+        return false;
+    }
+  }
+
+  /**
+   * Apply a conditional effect to the result
+   * Supports: extraDice, bonusDamage (flatBonus)
+   * @private
+   */
+  static #applyConditionalEffect(effect, result, sourceName) {
+    if (!effect) return;
+
+    const type = (effect.type ?? '').toLowerCase().trim();
+
+    switch (type) {
+      case 'extradice':
+        if (effect.value) {
+          result.extraDice.push(effect.value);
+          result.appliedEffects.push({
+            source: sourceName,
+            type: 'extraDice',
+            value: effect.value
+          });
+        }
+        break;
+
+      case 'bonusdamage':
+      case 'flatbonus':
+      case 'bonus':
+        if (typeof effect.value === 'number') {
+          result.flatBonus += effect.value;
+          result.appliedEffects.push({
+            source: sourceName,
+            type: 'bonusDamage',
+            value: effect.value
+          });
+        }
+        break;
+
+      default:
+        // Unknown effect type — log and ignore
+        swseLogger.warn(
+          `[WeaponsEngine Phase 2] Unknown conditional effect type: ${effect.type}`
+        );
+    }
+  }
+
+  /* ============================================================
      VALIDATION (STRUCTURED)
   ============================================================ */
 
