@@ -1,5 +1,5 @@
 /**
- * Weapon Configuration Dialog — V2 Compliant Weapon Management UI
+ * Weapon Configuration Dialog — ApplicationV2 Migration
  *
  * Provides a UI for configuring structured weapon properties and talent flags.
  * Replaces name-based detection with explicit configuration controls.
@@ -12,33 +12,39 @@
  * - Attack attribute selection
  */
 
+import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
-export class WeaponConfigDialog extends FormApplication {
+export class WeaponConfigDialog extends BaseSWSEAppV2 {
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       id: 'weapon-config-dialog',
       title: 'Weapon Configuration',
       template: 'systems/foundryvtt-swse/templates/ui/weapon-config-dialog.hbs',
-      width: 500,
-      height: 700,
-      resizable: true,
+      position: {
+        width: 500,
+        height: 700
+      },
+      window: {
+        resizable: true
+      },
       classes: ['swse-dialog', 'weapon-config']
     });
   }
 
   constructor(weapon, options = {}) {
-    super(weapon, options);
+    super(options);
     this.weapon = weapon;
   }
 
   /**
    * Prepare data for template rendering
    */
-  async getData() {
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
     const weaponData = this.weapon.system || {};
 
-    return {
+    return foundry.utils.mergeObject(context, {
       weapon: this.weapon,
       weaponName: this.weapon.name,
       system: weaponData,
@@ -75,39 +81,43 @@ export class WeaponConfigDialog extends FormApplication {
         attackAttributes: ['str', 'dex', 'con', 'int', 'wis', 'cha'],
         weaponCategories: ['simple', 'martial', 'exotic', 'improvised']
       }
-    };
+    });
   }
 
   /**
-   * Register dialog event listeners
+   * Register dialog event listeners (ApplicationV2 contract)
    */
-  activateListeners(html) {
-    super.activateListeners(html);
+  wireEvents() {
+    const root = this.element;
 
     // Property toggle listeners
-    html.find('input[type="checkbox"]').on('change', (e) => {
-      this._onPropertyToggle(e);
+    root.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+      checkbox.addEventListener('change', (e) => this._onPropertyToggle(e));
     });
 
     // Damage dice input validation
-    html.find('input[name="damageDice"]').on('change', (e) => {
-      this._validateDamageInput(e);
-    });
+    const damageDiceInput = root.querySelector('input[name="damageDice"]');
+    if (damageDiceInput) {
+      damageDiceInput.addEventListener('change', (e) => this._validateDamageInput(e));
+    }
 
     // Save button
-    html.find('button.save-config').on('click', () => {
-      this._saveConfiguration(html);
-    });
+    const saveBtn = root.querySelector('button.save-config');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', () => this._saveConfiguration());
+    }
 
     // Cancel button
-    html.find('button.cancel-config').on('click', () => {
-      this.close();
-    });
+    const cancelBtn = root.querySelector('button.cancel-config');
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', () => this.close());
+    }
 
     // Reset to defaults button
-    html.find('button.reset-defaults').on('click', () => {
-      this._resetToDefaults(html);
-    });
+    const resetBtn = root.querySelector('button.reset-defaults');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => this._resetToDefaults());
+    }
   }
 
   /**
@@ -118,13 +128,14 @@ export class WeaponConfigDialog extends FormApplication {
     const checkbox = event.target;
     const property = checkbox.name;
     const isChecked = checkbox.checked;
+    const root = this.element;
 
     // Validation: Can't be both light and two-handed
     if (property === 'isLight' && isChecked) {
-      document.querySelector('input[name="isTwoHanded"]').checked = false;
+      root.querySelector('input[name="isTwoHanded"]').checked = false;
     }
     if (property === 'isTwoHanded' && isChecked) {
-      document.querySelector('input[name="isLight"]').checked = false;
+      root.querySelector('input[name="isLight"]').checked = false;
     }
   }
 
@@ -146,31 +157,32 @@ export class WeaponConfigDialog extends FormApplication {
    * Save weapon configuration
    * @private
    */
-  async _saveConfiguration(html) {
+  async _saveConfiguration() {
     try {
+      const root = this.element;
       const updates = {
         system: {
-          proficient: html.find('input[name="proficient"]').prop('checked'),
-          equipped: html.find('input[name="equipped"]').prop('checked'),
-          dualWielded: html.find('input[name="dualWielded"]').prop('checked'),
-          wieldedTwoHanded: html.find('input[name="wieldedTwoHanded"]').prop('checked'),
+          proficient: root.querySelector('input[name="proficient"]').checked,
+          equipped: root.querySelector('input[name="equipped"]').checked,
+          dualWielded: root.querySelector('input[name="dualWielded"]').checked,
+          wieldedTwoHanded: root.querySelector('input[name="wieldedTwoHanded"]').checked,
 
-          damageDice: parseInt(html.find('input[name="damageDice"]').val()),
-          damageDiceType: html.find('select[name="damageDiceType"]').val(),
-          damageType: html.find('select[name="damageType"]').val(),
-          attackAttribute: html.find('select[name="attackAttribute"]').val(),
-          attackBonus: parseInt(html.find('input[name="attackBonus"]').val()) || 0,
-          criticalRange: html.find('input[name="criticalRange"]').val(),
-          criticalMultiplier: html.find('input[name="criticalMultiplier"]').val(),
+          damageDice: parseInt(root.querySelector('input[name="damageDice"]').value),
+          damageDiceType: root.querySelector('select[name="damageDiceType"]').value,
+          damageType: root.querySelector('select[name="damageType"]').value,
+          attackAttribute: root.querySelector('select[name="attackAttribute"]').value,
+          attackBonus: parseInt(root.querySelector('input[name="attackBonus"]').value) || 0,
+          criticalRange: root.querySelector('input[name="criticalRange"]').value,
+          criticalMultiplier: root.querySelector('input[name="criticalMultiplier"]').value,
 
           weaponProperties: {
-            isLight: html.find('input[name="isLight"]').prop('checked'),
-            isTwoHanded: html.find('input[name="isTwoHanded"]').prop('checked'),
-            keen: html.find('input[name="keen"]').prop('checked'),
-            flaming: html.find('input[name="flaming"]').prop('checked'),
-            frost: html.find('input[name="frost"]').prop('checked'),
-            shock: html.find('input[name="shock"]').prop('checked'),
-            vorpal: html.find('input[name="vorpal"]').prop('checked')
+            isLight: root.querySelector('input[name="isLight"]').checked,
+            isTwoHanded: root.querySelector('input[name="isTwoHanded"]').checked,
+            keen: root.querySelector('input[name="keen"]').checked,
+            flaming: root.querySelector('input[name="flaming"]').checked,
+            frost: root.querySelector('input[name="frost"]').checked,
+            shock: root.querySelector('input[name="shock"]').checked,
+            vorpal: root.querySelector('input[name="vorpal"]').checked
           }
         }
       };
@@ -191,25 +203,26 @@ export class WeaponConfigDialog extends FormApplication {
    * Reset to default values
    * @private
    */
-  _resetToDefaults(html) {
-    html.find('input[name="proficient"]').prop('checked', true);
-    html.find('input[name="equipped"]').prop('checked', false);
-    html.find('input[name="dualWielded"]').prop('checked', false);
-    html.find('input[name="wieldedTwoHanded"]').prop('checked', false);
+  _resetToDefaults() {
+    const root = this.element;
+    root.querySelector('input[name="proficient"]').checked = true;
+    root.querySelector('input[name="equipped"]').checked = false;
+    root.querySelector('input[name="dualWielded"]').checked = false;
+    root.querySelector('input[name="wieldedTwoHanded"]').checked = false;
 
-    html.find('input[name="damageDice"]').val(1);
-    html.find('select[name="damageDiceType"]').val('d6');
-    html.find('select[name="damageType"]').val('kinetic');
-    html.find('select[name="attackAttribute"]').val('str');
-    html.find('input[name="attackBonus"]').val(0);
+    root.querySelector('input[name="damageDice"]').value = 1;
+    root.querySelector('select[name="damageDiceType"]').value = 'd6';
+    root.querySelector('select[name="damageType"]').value = 'kinetic';
+    root.querySelector('select[name="attackAttribute"]').value = 'str';
+    root.querySelector('input[name="attackBonus"]').value = 0;
 
-    html.find('input[name="isLight"]').prop('checked', false);
-    html.find('input[name="isTwoHanded"]').prop('checked', false);
-    html.find('input[name="keen"]').prop('checked', false);
-    html.find('input[name="flaming"]').prop('checked', false);
-    html.find('input[name="frost"]').prop('checked', false);
-    html.find('input[name="shock"]').prop('checked', false);
-    html.find('input[name="vorpal"]').prop('checked', false);
+    root.querySelector('input[name="isLight"]').checked = false;
+    root.querySelector('input[name="isTwoHanded"]').checked = false;
+    root.querySelector('input[name="keen"]').checked = false;
+    root.querySelector('input[name="flaming"]').checked = false;
+    root.querySelector('input[name="frost"]').checked = false;
+    root.querySelector('input[name="shock"]').checked = false;
+    root.querySelector('input[name="vorpal"]').checked = false;
 
     ui.notifications.info('Weapon configuration reset to defaults');
   }
