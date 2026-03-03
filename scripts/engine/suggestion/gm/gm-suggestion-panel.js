@@ -5,12 +5,11 @@
  * GM-only, non-modal, read-only suggestions with optional lever tracking.
  */
 
+import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { InsightBus } from "/systems/foundryvtt-swse/scripts/engine/suggestion/gm/insight-bus.js";
 import { INSIGHT_TYPES } from "/systems/foundryvtt-swse/scripts/engine/suggestion/gm/insight-types.js";
 
-const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
-
-export class GMSuggestionPanel extends HandlebarsApplicationMixin(ApplicationV2) {
+export class GMSuggestionPanel extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
     id: 'swse-gm-suggestion-panel',
     tag: 'div',

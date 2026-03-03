@@ -8,10 +8,9 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 
-const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
-
-export class GMDroidApprovalDashboard extends HandlebarsApplicationMixin(ApplicationV2) {
+export class GMDroidApprovalDashboard extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
     id: 'gm-droid-approval',
     tag: 'section',

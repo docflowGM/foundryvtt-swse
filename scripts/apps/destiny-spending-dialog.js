@@ -6,8 +6,9 @@
 
 import { DestinyEffects } from "/systems/foundryvtt-swse/scripts/utils/destiny-effects.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 
-export class DestinySpendingDialog extends foundry.applications.api.ApplicationV2 {
+export class DestinySpendingDialog extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
     classes: ['swse', 'swse-inwindow-modal'],
     id: 'destiny-spending-dialog',

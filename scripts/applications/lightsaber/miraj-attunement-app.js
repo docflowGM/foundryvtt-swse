@@ -11,13 +11,11 @@
  * - No duplicate eligibility checks
  */
 
+import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { WeaponsEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/weapons-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 
-const { HandlebarsApplicationMixin } = foundry.applications.api;
-const { ApplicationV2 } = foundry.applications.api;
-
-export class MirajAttunementApp extends HandlebarsApplicationMixin(ApplicationV2) {
+export class MirajAttunementApp extends BaseSWSEAppV2 {
   constructor(actor, weapon, options = {}) {
     super(options);
     this.actor = actor;

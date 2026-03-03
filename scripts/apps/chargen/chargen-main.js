@@ -32,7 +32,8 @@ import { TalentSlotMigrator } from "/systems/foundryvtt-swse/scripts/engine/prog
 // Phase 1.5: Feat Slot System
 import { FeatSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-slot-validator.js";
 
-// V2 API base class
+// V2 API base classes
+import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import SWSEApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
 
 
@@ -3667,7 +3668,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
  * Feat Suggestions Dialog (AppV2-based)
  * Displays mentor feat suggestions with inline toggle
  */
-class FeatSuggestionsDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
+class FeatSuggestionsDialog extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
     id: 'swse-feat-suggestions-dialog',
     tag: 'div',
@@ -3722,7 +3723,7 @@ class FeatSuggestionsDialog extends foundry.applications.api.HandlebarsApplicati
  * Class Required Dialog (AppV2-based)
  * Prompts user when class is required but not selected
  */
-class ClassRequiredDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
+class ClassRequiredDialog extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
     id: 'swse-class-required-dialog',
     tag: 'div',

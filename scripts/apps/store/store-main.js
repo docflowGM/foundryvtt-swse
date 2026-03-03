@@ -12,6 +12,7 @@
  * - No direct mutation of actor currency/items here (handled by checkout module)
  */
 
+import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { StoreEngine } from "/systems/foundryvtt-swse/scripts/engine/store/store-engine.js";
 import { ArmorSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/armor-suggestions.js";
 import { WeaponSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/weapon-suggestions.js";
@@ -45,8 +46,6 @@ import {
   createCustomStarship
 } from "/systems/foundryvtt-swse/scripts/apps/store/store-checkout.js";
 
-const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
-
 const CART_FLAG_SCOPE = 'foundryvtt-swse';
 const CART_FLAG_KEY = 'storeCart';
 
@@ -58,7 +57,7 @@ function asArray(v) {
   return Array.isArray(v) ? v : [];
 }
 
-export class SWSEStore extends HandlebarsApplicationMixin(ApplicationV2) {
+export class SWSEStore extends BaseSWSEAppV2 {
 
   static DEFAULT_OPTIONS = {
     id: 'swse-store',

@@ -7,12 +7,11 @@
  *   - GM Mode: Three zones (Spawners, Commands, Utilities) with customizable drag-and-drop slots
  */
 
+import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { sceneControlRegistry } from "/systems/foundryvtt-swse/scripts/scene-controls/api.js";
 import { getCurrentPhase, SWSE_PHASES } from "/systems/foundryvtt-swse/scripts/state/phase.js";
 
-const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
-
-export class ActionPaletteApp extends HandlebarsApplicationMixin(ApplicationV2) {
+export class ActionPaletteApp extends BaseSWSEAppV2 {
   constructor(options = {}) {
     super(options);
 

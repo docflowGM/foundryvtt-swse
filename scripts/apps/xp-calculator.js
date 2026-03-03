@@ -1,7 +1,6 @@
 // scripts/apps/xp-calculator.js
 
-const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
-
+import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { calculateEncounterXP, applyXP, isXPEnabled } from "/systems/foundryvtt-swse/engine/progression/xp-engine.js";
 import { getXPFromCL } from "/systems/foundryvtt-swse/engine/progression/xp-constants.js";
 
@@ -10,7 +9,7 @@ import { getXPFromCL } from "/systems/foundryvtt-swse/engine/progression/xp-cons
  * AppV2 utility for calculating and distributing encounter XP.
  * Supports multiple enemies (multi-CL), per-CL reduction, and GM multiplier.
  */
-export class SWSEXPCalculator extends HandlebarsApplicationMixin(ApplicationV2) {
+export class SWSEXPCalculator extends BaseSWSEAppV2 {
 
   static PARTS = {
     body: {
