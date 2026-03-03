@@ -1,4 +1,4 @@
-import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 
 export class UIManager {
 
@@ -25,7 +25,9 @@ export class UIManager {
   static applyTheme(theme) {
     document.body.dataset.theme = theme;
     console.log(`[SWSE UI] Theme applied: ${theme}`);
-    this._rerenderSWSESheets();
+    // DISABLED: Forcing re-render during ready hook was collapsing Foundry core windows
+    // CSS theme variables are applied via data-theme attribute - no re-render needed
+    // this._rerenderSWSESheets();
   }
 
   static async setTheme(theme) {

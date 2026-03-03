@@ -1,5 +1,5 @@
 // scripts/apps/mentor-notes/mentor-notes-app.js
-import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
 import { qs } from "/systems/foundryvtt-swse/scripts/utils/dom-utils.js";
 

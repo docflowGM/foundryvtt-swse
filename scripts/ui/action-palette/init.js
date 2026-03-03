@@ -26,16 +26,29 @@ export function initializeActionPalette() {
 
   // Register ready hook to inject sidebar button
   Hooks.once('ready', () => {
-    _createSidebarButton();
+    // DISABLED: The _createSidebarButton() method was appending directly to #sidebar-tabs using appendChild(),
+    // which created ChildList mutations during boot that broke Foundry's sidebar tab activation system.
+    // Similar issue to combat-action-browser.js - direct DOM manipulation of sidebar structure breaks
+    // Foundry's internal tab registry, causing ui.sidebar.activeTab to become undefined.
+    // _createSidebarButton();
+
     _loadUserPreferences();
   });
 }
 
 /**
- * Create and inject the sidebar toggle button
+ * DEPRECATED: This function directly manipulated the sidebar DOM using appendChild(),
+ * which broke Foundry's tab activation system during boot.
+ *
+ * The function should be replaced with a proper sidebar button registration approach
+ * that doesn't mutate the sidebar structure directly.
+ *
+ * @deprecated Use proper Foundry UI registration instead
  * @private
  */
 function _createSidebarButton() {
+  // DISABLED CODE BELOW - DO NOT USE
+  /*
   // Find the controls bar or create UI element
   const sidebarControls = document.getElementById('sidebar-tabs');
   if (!sidebarControls) {return;}
@@ -58,6 +71,7 @@ function _createSidebarButton() {
   });
 
   sidebarControls.appendChild(button);
+  */
 }
 
 /**

@@ -18,7 +18,7 @@
  * - Clear UX
  */
 
-import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 
 export class AdoptOrAddDialog extends BaseSWSEAppV2 {
   static get defaultOptions() {

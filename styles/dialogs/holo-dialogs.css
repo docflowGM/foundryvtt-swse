@@ -561,3 +561,13 @@ body.system-foundryvtt-swse[data-theme=holo] button.ui-control.plain.icon::befor
    - [data-theme=holo] #sidebar-content > * { overflow: auto; }
    - [data-theme=holo] #sidebar, #sidebar-content, .app.window-app with contain: layout paint
 */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DIALOG BUTTONS (consolidated from swse-system.css)
+   ═════════════════════════════════════════════════════════════════════════ */
+
+.application.swse.dialog .dialog-buttons {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--swse-space-md);
+}

@@ -12,7 +12,7 @@
  * - Attack attribute selection
  */
 
-import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class WeaponConfigDialog extends BaseSWSEAppV2 {

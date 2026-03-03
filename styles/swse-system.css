@@ -1,44 +1,54 @@
 /* ============================================================================
-   SWSE SYSTEM — CLEAN, ORGANIZED, SAFE, OPTIMIZED STYLESHEET
-   Mode: Readable (Option A)
-   Notes:
-   - All unsafe global selectors removed
-   - Namespaced under .swse-app-app and .application.swse
-   - Themes intact
-   - High Contrast and Canvas Fix included safely
+   SWSE SYSTEM — FOUNDATIONAL NAMESPACE & REFERENCE STYLESHEET
+
+   This file defines:
+   - High-level application window styling
+   - Core namespacing for .swse and .application.swse
+   - Foundation for all component and sheet styling
+
+   Component-specific rules are consolidated into:
+   - styles/components/ (forms, buttons, tabs, panels, etc.)
+   - styles/sheets/ (character, droid, vehicle sheets)
+   - styles/apps/ (app-specific styling)
+   - styles/dialogs/ (dialog styling)
+   - styles/themes/ (theme variables and overrides)
+
+   Holo aesthetic preserved through CSS variables and theme isolation.
    ============================================================================ */
 
 /* ================================
-   SECTION 1 — DESIGN TOKENS
+   DESIGN TOKENS REFERENCE
    ================================ */
 
 /* PHASE 4: Canonical variables moved to styles/core/variables.css
-   These variables are now defined in a single source of truth.
-   Remove duplicate :root definitions to prevent override conflicts.
-
-   REMOVED:
-   - --swse-primary
-   - --swse-secondary
-   - --swse-accent
-   - --swse-bg-dark, --swse-bg-mid, --swse-bg-light, --swse-bg-hover
-   - --swse-border-default, --swse-border-hover
-   - --swse-text-primary, --swse-text-secondary
-   - --swse-space-sm, --swse-space-md
-   - --swse-font-primary, --swse-font-secondary
-
-   All SWSE variables are now consolidated in styles/core/variables.css
+   All SWSE variables are now defined in a single source of truth:
+   - Color variables (--swse-primary, --swse-secondary, etc.)
+   - Spacing variables (--swse-space-sm, --swse-space-md, etc.)
+   - Typography variables (--swse-font-primary, --swse-font-secondary, etc.)
+   - Background variables (--swse-bg-dark, --swse-bg-mid, --swse-bg-light)
+   - Border variables (--swse-border-default, --swse-border-hover)
 */
 
 /* ================================
-   SECTION 2 — THEMES
-   Theme variables are defined in styles/themes/swse-theme-*.css
-   (loaded via system.json after this file).
-   Do NOT define partial theme overrides here — they create conflicts.
+   THEMES
    ================================ */
 
+/* Theme variables are defined in:
+   - styles/themes/swse-theme-holo.css
+   - styles/themes/swse-theme-jedi.css
+   - styles/themes/swse-theme-high-republic.css
+   - styles/themes/swse-theme-sand-people.css
+   - styles/themes/swse-theme-high-contrast.css
+   - styles/themes/swse-theme-starship.css
+
+   Themes do NOT contain layout rules.
+   Themes ONLY override CSS custom properties.
+*/
+
 /* ================================
-   SECTION 3 — APPLICATION WINDOWS
+   APPLICATION WINDOWS (FOUNDATIONAL)
    ================================ */
+
 .application.swse,
 .swse-app-app {
   font-family: var(--swse-font-secondary);
@@ -59,46 +69,18 @@
 }
 
 /* ================================
-   SECTION 4 — FORM ELEMENTS
+   TABLES & LISTS
    ================================ */
-.swse-app-app input,
-.swse-app-app select,
-.swse-app-app textarea {
-  background: var(--swse-bg-mid);
-  border: 1px solid var(--swse-border-default);
-  color: var(--swse-text-primary);
-}
 
-/* ================================
-   SECTION 5 — BUTTONS
-   ================================ */
-.swse-app-app button {
-  background: linear-gradient(180deg, var(--swse-secondary), var(--swse-primary));
-  border-radius: 6px;
-  padding: 4px 12px;
-  cursor: pointer;
-}
-
-/* ================================
-   SECTION 6 — TABS
-   ================================ */
-.swse-app-app .sheet-tabs {
-  display: flex;
-  border-bottom: 1px solid var(--swse-border-default);
-  margin-bottom: var(--swse-space-md);
-}
-
-/* ================================
-   SECTION 7 — TABLES & LISTS
-   ================================ */
 .swse-app-app table {
   width: 100%;
   border-collapse: collapse;
 }
 
 /* ================================
-   SECTION 8 — CHARACTER SHEET
+   CHARACTER SHEET (FOUNDATIONAL)
    ================================ */
+
 .swse-app-app.sheet.actor .sheet-header {
   display: flex;
   gap: var(--swse-space-md);
@@ -106,24 +88,16 @@
 }
 
 /* ================================
-   SECTION 9 — VEHICLE SHEET
+   VEHICLE SHEET (FOUNDATIONAL)
    ================================ */
+
 .swse-app-app.vehicle-sheet .sheet-header {
   display: flex;
   gap: var(--swse-space-md);
 }
 
 /* ================================
-   SECTION 10 — DIALOGS
-   ================================ */
-.application.swse.dialog .dialog-buttons {
-  display: flex;
-  justify-content: flex-end;
-  padding: var(--swse-space-md);
-}
-
-/* ================================
-   SECTION 11 — THEME EFFECTS
+   THEME EFFECTS (FOUNDATIONAL)
    ================================ */
 
 .swse-app-app::before {
@@ -135,8 +109,17 @@
 }
 
 /* ================================
-   SECTION 12 — CANVAS FIX (SAFE)
+   SAFETY RAILS
    ================================ */
+
+.swse-app-app {
+  position: relative;
+}
+
+/* ================================
+   CANVAS FIX (SAFE - JUSTIFIED !important)
+   ================================ */
+
 .swse-app-app #board canvas,
 .swse-app-app canvas {
   display: block !important;
@@ -145,8 +128,9 @@
 }
 
 /* ================================
-   SECTION 13 — HIGH CONTRAST FIX
+   HIGH CONTRAST ACCESSIBILITY
    ================================ */
+
 @media (prefers-contrast: high) {
   .application.swse {
     border: 2px solid var(--swse-secondary);
@@ -158,236 +142,35 @@
     border-width: 2px;
   }
 }
-/* SAFETY RAILS */
-.swse-app-app {
-  position: relative;
-}
 
-.swse-app-app button:not(.ui-control):not(.icon) {
-  background: linear-gradient(180deg, var(--swse-secondary), var(--swse-primary));
-  border-radius: 6px;
-  padding: 4px 12px;
-  cursor: pointer;
-}
+/* ============================================================================
+   CONSOLIDATED COMPONENTS
 
-/* Sidebar icon mask baseline moved to styles/core-overrides.css */
+   The following have been extracted to component files for architectural clarity:
 
+   FORMS (styles/components/forms.css):
+   - Input, select, textarea styling
+   - Focus and accessibility states
 
+   BUTTONS (styles/components/buttons.css):
+   - Button styling and hover states
 
-/* ==========================================================
-   GLOBAL HOLO SELECT THEME
-========================================================== */
+   TABS (styles/components/tabs.css):
+   - Sheet tabs and tab navigation
 
-.swse select,
-.swse .window-content select {
-  background: linear-gradient(
-    180deg,
-    rgba(0, 30, 50, 0.95),
-    rgba(0, 15, 30, 0.95)
-  ) !important;
+   DIALOGS (styles/dialogs/holo-dialogs.css):
+   - Dialog button styling
 
-  color: #00ff88 !important;
-  border: 1px solid rgba(0,255,170,0.6) !important;
-  border-radius: 8px !important;
-  padding: 4px 8px !important;
-  font-weight: 600;
-  cursor: pointer;
+   HEADERS (styles/sheets/character-sheet.css):
+   - SWSE header styling
+   - Character sheet header layout
 
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-}
+   SCROLL FIXES (styles/sheets/character-sheet.css):
+   - V13 AppV2 scroll restoration
+   - Overflow handling for sheets
 
-/* Dropdown options */
-.swse select option {
-  background: rgba(0, 20, 35, 0.98);
-  color: #00ff88;
-}
+   HOLO SELECT (styles/themes/holo.css):
+   - Holo theme select dropdown styling
+   - Theme-specific color handling
 
-/* Hover */
-.swse select:hover {
-  box-shadow: 0 0 10px rgba(0,255,170,0.7);
-}
-
-/* Focus */
-.swse select:focus {
-  outline: none;
-  box-shadow: 0 0 15px rgba(0,255,170,1);
-}
-
-/* Disabled */
-.swse select:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-
-
-/* ==========================================================
-   SWSE HEADER REFACTOR
-========================================================== */
-
-@font-face {
-  font-family: "SWSEAurebesh";
-  src: url("/systems/foundryvtt-swse/assets/fonts/Aurabesh/Aurebesh Bold Italic.otf") format("opentype");
-  font-weight: bold;
-  font-style: italic;
-}
-
-.swse-datapad-title {
-  font-family: "SWSEAurebesh";
-  text-align: center;
-  font-size: 0.85rem;
-  letter-spacing: 0.35em;
-  padding: 6px 0 4px;
-  opacity: 0.8;
-  border-bottom: 1px solid rgba(0,255,255,0.2);
-}
-
-.swse-header {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 10px 14px;
-}
-
-.header-row {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.identity-row {
-  gap: 14px;
-}
-
-.header-portrait {
-  width: 64px;
-  height: 64px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.identity-block {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.header-name {
-  font-size: 1.3rem;
-  font-weight: bold;
-}
-
-.identity-subline {
-  font-size: 0.8rem;
-  opacity: 0.7;
-}
-
-.level-line {
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.half-level {
-  opacity: 0.6;
-  font-size: 0.75rem;
-  margin-left: 6px;
-}
-
-.status-row {
-  justify-content: space-between;
-}
-
-.status-block {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 120px;
-}
-
-.status-label {
-  font-size: 0.7rem;
-  opacity: 0.7;
-}
-
-.status-bar {
-  height: 8px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.1);
-  overflow: hidden;
-}
-
-.status-bar .fill {
-  height: 100%;
-  background: #00ff88;
-}
-
-.fp-dots,
-.ct-mini {
-  display: flex;
-  gap: 4px;
-}
-
-.fp-dot,
-.ct-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.2);
-}
-
-.fp-dot.used {
-  background: rgba(255,255,255,0.1);
-}
-
-.ct-dot.active {
-  background: #ff4444;
-}
-
-.command-row {
-  gap: 10px;
-}
-
-.header-btn {
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.1);
-  border: none;
-  cursor: pointer;
-}
-
-.header-btn.ready {
-  box-shadow: 0 0 12px rgba(0,255,170,0.8);
-}
-
-
-
-/* ==========================================================
-   V13 APPV2 SCROLL RESTORE
-========================================================== */
-
-.swse-character-sheet .window-content {
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto !important;
-  overflow-x: hidden;
-}
-
-.swse-character-sheet .sheet-inner {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-
-.swse-character-sheet .sheet-body {
-  flex: 1;
-  overflow-y: auto !important;
-  overflow-x: hidden;
-  min-height: 0;
-}
-
-.swse-character-sheet .tab {
-  height: auto !important;
-  overflow-y: auto !important;
-}
+   ============================================================================ */

@@ -51,27 +51,37 @@
 
 /* ===========================
    APP ROOT — SWSE FLEX LAYOUT
-   =========================== */
+   ===========================
 
-/* AppV2 root: let parent window-app control height */
-.application.swse {
-  display: flex;
-  flex-direction: column;
-}
+   REMOVED: display: flex rule that was breaking Foundry core window layout.
+   Foundry V13 ApplicationV2 manages its own flex internally.
+   Do NOT reassign display on .application - even scoped.
+
+   ===========================*/
 
 /* ===========================
    MEASUREMENT STABILITY
+   Scoped to SWSE app containers only - prevents affecting Foundry chrome
    =========================== */
 
-.swse,
-.swse > *,
-.swse button,
-.swse input,
-.swse select,
-.swse textarea,
-.swse .form-group,
-.swse .panel,
-.swse .list-container {
+.application.swse,
+.application.swse > *,
+.application.swse button,
+.application.swse input,
+.application.swse select,
+.application.swse textarea,
+.application.swse .form-group,
+.application.swse .panel,
+.application.swse .list-container,
+.swse-app,
+.swse-app > *,
+.swse-app button,
+.swse-app input,
+.swse-app select,
+.swse-app textarea,
+.swse-app .form-group,
+.swse-app .panel,
+.swse-app .list-container {
   box-sizing: border-box;
 }
 

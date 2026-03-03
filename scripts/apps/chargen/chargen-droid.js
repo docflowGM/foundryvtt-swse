@@ -2,7 +2,7 @@
 // Droid-specific logic for CharGen
 // ============================================
 
-import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { DROID_SYSTEMS } from "/systems/foundryvtt-swse/scripts/data/droid-systems.js";
 import { escapeHtml } from "/systems/foundryvtt-swse/scripts/utils/string-utils.js";

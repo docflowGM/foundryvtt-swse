@@ -10,7 +10,7 @@
  * Pure UI layer. All mutations routed to LightsaberConstructionEngine.
  */
 
-import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { LightsaberConstructionEngine } from "/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js";
 import { BLADE_COLOR_MAP, VARIES_COLOR_LIST, DEFAULT_BLADE_COLOR } from "/systems/foundryvtt-swse/scripts/data/blade-colors.js";
 import { MirajAttunementApp } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/miraj-attunement-app.js";

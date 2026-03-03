@@ -12,7 +12,7 @@ import { GearTemplatesEngine } from "/systems/foundryvtt-swse/scripts/apps/gear-
 import { UpgradeRulesEngine } from "/systems/foundryvtt-swse/scripts/apps/upgrade-rules-engine.js";
 import { mergeMutationPlans } from "/systems/foundryvtt-swse/scripts/governance/mutation/merge-mutations.js";
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
-import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 
 export class SWSEUpgradeApp extends BaseSWSEAppV2 {
 

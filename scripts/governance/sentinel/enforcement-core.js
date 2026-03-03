@@ -11,6 +11,7 @@
  */
 
 import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
+import { SentinelReporter } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-reporter.js";
 
 export class SentinelEnforcement {
   static #violations = [];
@@ -19,6 +20,12 @@ export class SentinelEnforcement {
   static #currentRenderApp = null;
   static #hookulatePatch = null;
   static #layoutReadDetector = null;
+
+  // PHASE 3.5: Mutation Forensics
+  static #mutationObserver = null;
+  static #mutationHistory = [];
+  static #renderStack = [];
+  static #maxMutations = 100;
 
   /**
    * Initialize unified enforcement layer
@@ -35,6 +42,9 @@ export class SentinelEnforcement {
    * @private
    */
   static _initializeEnforcement() {
+    // PHASE 3.5: Initialize mutation forensics during boot only
+    this._initializeMutationForensics();
+
     // Hook 1: Render Contract Layer
     this._registerRenderContractLayer();
 
@@ -52,7 +62,8 @@ export class SentinelEnforcement {
 
     SentinelEngine.report('enforcement', SentinelEngine.SEVERITY.INFO,
       'Unified enforcement layer initialized', {
-        layers: 5,
+        layers: 6,
+        mutations: 'tracking',
         violations: 0
       });
   }
@@ -169,6 +180,79 @@ export class SentinelEnforcement {
         return origCallHook.call(this, hookName, ...args);
       };
     }
+  }
+
+  /**
+   * PHASE 3.5: Initialize mutation forensics
+   * Tracks DOM mutations during boot to diagnose layout collapse
+   * @private
+   */
+  static _initializeMutationForensics() {
+    // Only track during first 10 seconds of boot
+    const stopAfter = 10000;
+    let mutationStartTime = Date.now();
+
+    // Wrap Application.prototype.render to capture render calls
+    const origRender = Application.prototype.render;
+    Application.prototype.render = function(...args) {
+      const appName = this?.constructor?.name || 'Unknown';
+      const elapsed = Date.now() - mutationStartTime;
+
+      if (elapsed < stopAfter) {
+        SentinelEnforcement.#renderStack.push({
+          app: appName,
+          timestamp: elapsed,
+          args: args[0] === true ? 'force-render' : 'soft-render',
+          stack: new Error().stack?.split('\n').slice(1, 4).join(' → ')
+        });
+      }
+
+      return origRender.call(this, ...args);
+    };
+
+    // Attach mutation observer to sidebar and body
+    this.#mutationObserver = new MutationObserver((mutations) => {
+      const elapsed = Date.now() - mutationStartTime;
+
+      if (elapsed < stopAfter) {
+        mutations.forEach(mutation => {
+          this.#mutationHistory.push({
+            type: mutation.type,
+            element: mutation.target?.id || mutation.target?.className || 'unknown',
+            timestamp: elapsed,
+            details: {
+              addedNodes: mutation.addedNodes?.length || 0,
+              removedNodes: mutation.removedNodes?.length || 0,
+              attributeName: mutation.attributeName,
+              oldValue: mutation.oldValue?.slice(0, 50)
+            }
+          });
+
+          if (this.#mutationHistory.length > this.#maxMutations) {
+            this.#mutationHistory.shift();
+          }
+        });
+      }
+    });
+
+    // Start observing after ready hook
+    Hooks.once('ready', () => {
+      const sidebar = document.querySelector('#sidebar');
+      if (sidebar) {
+        this.#mutationObserver.observe(sidebar, {
+          attributes: true,
+          attributeOldValue: true,
+          childList: true,
+          subtree: true,
+          characterData: false
+        });
+      }
+
+      // Stop observing after timeout
+      setTimeout(() => {
+        this.#mutationObserver?.disconnect();
+      }, stopAfter);
+    });
   }
 
   /**
@@ -456,14 +540,50 @@ export class SentinelEnforcement {
       criticalCount: this.#violations.filter(v => v.severity === 'CRITICAL').length
     };
   }
+
+  /**
+   * PHASE 3.5: Public getters for mutation forensics
+   * @public
+   */
+  static getMutationHistory() {
+    return this.#mutationHistory;
+  }
+
+  static getRenderStack() {
+    return this.#renderStack;
+  }
+
+  static getForensics() {
+    return {
+      mutations: this.#mutationHistory.slice(-20),
+      renders: this.#renderStack.slice(-10),
+      sidebarState: {
+        display: getComputedStyle(document.querySelector('#scenes')).display,
+        classes: document.querySelector('#scenes')?.className || 'missing',
+        hasActive: document.querySelector('#scenes')?.classList.contains('active') || false
+      }
+    };
+  }
 }
 
-// Expose enforcement API
+// Expose enforcement API + PHASE 3.5 mutation forensics + reporting
 if (typeof window !== 'undefined') {
   window._SWSE_Enforcement = {
     violations: () => SentinelEnforcement.getViolations(),
     export: () => SentinelEnforcement.exportViolations(),
     summary: () => SentinelEnforcement.getSummary(),
-    clear: () => SentinelEnforcement.clearViolations()
+    clear: () => SentinelEnforcement.clearViolations(),
+
+    // PHASE 3.5: Mutation forensics (using public getters)
+    mutations: () => SentinelEnforcement.getMutationHistory(),
+    renderStack: () => SentinelEnforcement.getRenderStack(),
+    forensics: () => SentinelEnforcement.getForensics(),
+
+    // Reporting: Generate and save comprehensive audit reports
+    report: {
+      getFullReport: () => SentinelReporter.getReportAsString(),
+      printReport: () => SentinelReporter.printReport(),
+      saveAsLog: (filename) => SentinelReporter.saveReportToDocuments(filename || 'swse-sentinel-audit')
+    }
   };
 }

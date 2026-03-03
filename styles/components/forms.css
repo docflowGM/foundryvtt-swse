@@ -1,0 +1,28 @@
+/* ============================================================================
+   SWSE FORM COMPONENTS
+
+   Consolidated form control styling:
+   - Input fields
+   - Select dropdowns
+   - Textareas
+   - Labels
+   - Focus and disabled states
+   ============================================================================ */
+
+/* Base form controls - scoped to SWSE applications only */
+.application.swse input,
+.application.swse select,
+.application.swse textarea {
+  background: var(--swse-bg-mid);
+  border: 1px solid var(--swse-border-default);
+  color: var(--swse-text-primary);
+}
+
+/* High contrast accessibility */
+@media (prefers-contrast: high) {
+  .application.swse input,
+  .application.swse select,
+  .application.swse textarea {
+    border-width: 2px;
+  }
+}

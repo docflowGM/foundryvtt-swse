@@ -1,7 +1,7 @@
 /**
  * DamageApp — ApplicationV2 Migration
  */
-import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { DamageEngine } from "/systems/foundryvtt-swse/engine/combat/damage-engine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 

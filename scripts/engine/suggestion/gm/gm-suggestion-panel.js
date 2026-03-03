@@ -5,7 +5,7 @@
  * GM-only, non-modal, read-only suggestions with optional lever tracking.
  */
 
-import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { InsightBus } from "/systems/foundryvtt-swse/scripts/engine/suggestion/gm/insight-bus.js";
 import { INSIGHT_TYPES } from "/systems/foundryvtt-swse/scripts/engine/suggestion/gm/insight-types.js";
 

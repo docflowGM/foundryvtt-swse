@@ -16,26 +16,36 @@
 
   Hooks.on('swse:progression:created', async (engine) => {
     try {
+      // DISABLED: Rendering progression sidebar to document.body at boot was causing ChildList mutations at 194ms
+      // that broke Foundry's sidebar activation system. The sidebar template was being appended before
+      // Foundry's sidebar controller could initialize properly, causing ui.sidebar.activeTab to become undefined.
+      //
+      // The progression sidebar will be rendered on-demand by the progression engine itself when needed,
+      // or by explicit UI initialization (chargen, levelup, etc.).
+      //
       // render sidebar if missing
-      if (!document.querySelector('.swse-prog-sidebar')) {
-        try {
-          const steps = (typeof engine.getSteps === 'function') ? engine.getSteps() : (engine.steps || []);
-          const progress = (Array.isArray(steps) && steps.length) ? Math.round((steps.filter(s => s.completed).length / steps.length)*100) : 0;
-          const html = await renderTemplate('systems/foundryvtt-swse/templates/apps/progression/sidebar.hbs', { steps, progress });
-          const wrapper = document.createElement('div');
-          wrapper.innerHTML = html;
-          document.body.appendChild(wrapper.firstElementChild);
-        } catch (e) { console.warn('SWSE | engine-autoload: sidebar render failed', e); }
-      }
+      // if (!document.querySelector('.swse-prog-sidebar')) {
+      //   try {
+      //     const steps = (typeof engine.getSteps === 'function') ? engine.getSteps() : (engine.steps || []);
+      //     const progress = (Array.isArray(steps) && steps.length) ? Math.round((steps.filter(s => s.completed).length / steps.length)*100) : 0;
+      //     const html = await renderTemplate('systems/foundryvtt-swse/templates/apps/progression/sidebar.hbs', { steps, progress });
+      //     const wrapper = document.createElement('div');
+      //     wrapper.innerHTML = html;
+      //     document.body.appendChild(wrapper.firstElementChild);
+      //   } catch (e) { console.warn('SWSE | engine-autoload: sidebar render failed', e); }
+      // }
 
+      // DISABLED: Import path has a bug (doubled directory path) and the sidebar controller should only
+      // be initialized on-demand, not automatically at boot.
+      //
       // import and init the controller if available
-      import("/systems/foundryvtt-swse/scripts/apps/progression/scripts/apps/progression/sidebar.js").then(mod => {
-        if (!window.SWSE_PROG_SIDEBAR) {
-          window.SWSE_PROG_SIDEBAR = new mod.SWSEProgressionSidebar();
-        }
-        Hooks.call('swse:progression:init', engine);
-        Hooks.call('swse:progression:updated');
-      }).catch(e => console.warn('SWSE | engine-autoload: sidebar import failed', e));
+      // import("/systems/foundryvtt-swse/scripts/apps/progression/scripts/apps/progression/sidebar.js").then(mod => {
+      //   if (!window.SWSE_PROG_SIDEBAR) {
+      //     window.SWSE_PROG_SIDEBAR = new mod.SWSEProgressionSidebar();
+      //   }
+      //   Hooks.call('swse:progression:init', engine);
+      //   Hooks.call('swse:progression:updated');
+      // }).catch(e => console.warn('SWSE | engine-autoload: sidebar import failed', e));
     } catch (e) { console.warn('SWSE | engine-autoload error', e); }
   });
 

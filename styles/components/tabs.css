@@ -201,3 +201,13 @@
   color: var(--swse-text-white);
   box-shadow: var(--swse-glow);
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   SHEET TABS (consolidated from swse-system.css)
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app-app .sheet-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--swse-border-default);
+  margin-bottom: var(--swse-space-md);
+}

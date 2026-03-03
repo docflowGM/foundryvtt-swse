@@ -1,0 +1,16 @@
+/* ============================================================================
+   SWSE BUTTON COMPONENTS
+
+   Consolidated button styling:
+   - Base button styling
+   - Hover and active states
+   - Disabled states
+   ============================================================================ */
+
+/* Base button styling - scoped to SWSE applications only */
+.application.swse button {
+  background: linear-gradient(180deg, var(--swse-secondary), var(--swse-primary));
+  border-radius: 6px;
+  padding: 4px 12px;
+  cursor: pointer;
+}

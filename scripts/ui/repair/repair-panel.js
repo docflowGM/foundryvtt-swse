@@ -15,7 +15,7 @@
  *   - Shows governance context
  */
 
-import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { ActorRepairEngine } from "/systems/foundryvtt-swse/scripts/engine/repair/actor-repair-engine.js";
 import { IntegrityDashboard } from "/systems/foundryvtt-swse/scripts/governance/ui/integrity-dashboard.js";
 import { GovernanceSystem } from "/systems/foundryvtt-swse/scripts/governance/governance-system.js";

@@ -12,7 +12,7 @@
  * - No direct mutation of actor currency/items here (handled by checkout module)
  */
 
-import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { StoreEngine } from "/systems/foundryvtt-swse/scripts/engine/store/store-engine.js";
 import { ArmorSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/armor-suggestions.js";
 import { WeaponSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/weapon-suggestions.js";

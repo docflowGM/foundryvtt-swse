@@ -36,6 +36,9 @@ export {
   generateUIFailureReport
 } from "/systems/foundryvtt-swse/scripts/governance/sentinel/migration-auditor.js";
 
+// Sentinel Reporter - File export utility
+export { SentinelReporter } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-reporter.js";
+
 /* 🔥 IMPORTANT: Explicitly import what we use locally */
 import { initMigrationAuditor } from "/systems/foundryvtt-swse/scripts/governance/sentinel/migration-auditor.js";
 

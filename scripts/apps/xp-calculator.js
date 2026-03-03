@@ -1,6 +1,6 @@
 // scripts/apps/xp-calculator.js
 
-import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { calculateEncounterXP, applyXP, isXPEnabled } from "/systems/foundryvtt-swse/engine/progression/xp-engine.js";
 import { getXPFromCL } from "/systems/foundryvtt-swse/engine/progression/xp-constants.js";
 

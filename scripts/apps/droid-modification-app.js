@@ -24,7 +24,7 @@ import { DroidModificationFactory } from "/systems/foundryvtt-swse/scripts/domai
 import { DROID_SYSTEM_DEFINITIONS, getSystemsBySlot } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-system-definitions.js";
 import { DroidTransactionService } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-transaction-service.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 
 export class DroidModificationApp extends BaseSWSEAppV2 {
   constructor(actor, options = {}) {

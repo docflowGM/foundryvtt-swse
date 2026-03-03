@@ -12,7 +12,7 @@
  * - AppV2 compliant
  */
 
-import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/engine/effects/modifiers/ModifierEngine.js";
 import { ModifierTypes } from "/systems/foundryvtt-swse/engine/effects/modifiers/ModifierTypes.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";

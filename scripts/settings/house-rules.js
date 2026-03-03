@@ -3,7 +3,7 @@
  * Centralized management of house rule settings and overrides
  */
 
-import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { ClassRelationshipRegistry } from "/systems/foundryvtt-swse/scripts/data/class-relationship-registry.js";
 
 export function registerHouseRuleSettings() {

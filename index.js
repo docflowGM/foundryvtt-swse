@@ -74,7 +74,7 @@ import { registerSystemSettings } from './scripts/core/settings.js';
 import { initializeUtils } from './scripts/core/utils-init.js';
 import { initializeRolls } from './scripts/core/rolls-init.js';
 import { SentinelEngine } from './scripts/governance/sentinel/sentinel-core.js';
-import { initializeSentinelAuditors, auditCSSHealth, generateMigrationReport } from './scripts/governance/sentinel/sentinel-auditors.js';
+import { initializeSentinelAuditors, auditCSSHealth, generateMigrationReport, SentinelReporter } from './scripts/governance/sentinel/sentinel-auditors.js';
 
 // ---- v13 hardening ----
 import { initializeHardeningSystem, validateSystemReady, registerHardeningHooks } from './scripts/core/hardening-init.js';
@@ -339,6 +339,12 @@ Hooks.once('ready', async () => {
     auditors: {
       cssHealth: () => auditCSSHealth(),
       migrationReport: () => generateMigrationReport()
+    },
+    // Reporting: Generate and export comprehensive audit reports
+    reporting: {
+      getFullReport: () => SentinelReporter.getReportAsString(),
+      printReport: () => SentinelReporter.printReport(),
+      saveAsLog: (filename) => SentinelReporter.saveReportToDocuments(filename || 'swse-sentinel-audit-' + Date.now())
     }
   };
 

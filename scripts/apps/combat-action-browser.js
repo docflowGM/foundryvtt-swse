@@ -49,11 +49,35 @@ export class SWSECombatActionBrowser extends SWSEApplication {
   /* ------------------------------- */
 
   static init() {
-    this._addSidebarButton();
+    // DISABLED: The _addSidebarButton() method was appending directly to #sidebar-tabs using appendChild(),
+    // which created ChildList mutations at 194ms during boot. These DOM mutations occurred before Foundry's
+    // sidebar controller could properly initialize the tabs, causing:
+    // - ui.sidebar.activeTab to become undefined
+    // - All tabs to have active: false
+    // - Sidebar tabs to display as display: none
+    //
+    // The appendChild() operation breaks Foundry's internal tab structure tracking.
+    // The combat action browser button should be registered through Foundry's proper UI systems,
+    // not by directly mutating the sidebar-tabs DOM.
+    //
+    // this._addSidebarButton();
+
     this._addHUDButtonHook();
   }
 
+  /**
+   * DEPRECATED: This method directly manipulated the sidebar DOM using appendChild(),
+   * which broke Foundry's tab activation system during boot.
+   *
+   * The method should be replaced with a proper tab registration approach
+   * that doesn't mutate the sidebar structure directly.
+   *
+   * @deprecated Use proper Foundry UI registration instead
+   * @private
+   */
   static _addSidebarButton() {
+    // DISABLED CODE BELOW - DO NOT USE
+    /*
     Hooks.on('renderSidebar', () => {
       const sidebar = document.querySelector('#sidebar-tabs');
       if (!sidebar) {return;}
@@ -69,6 +93,7 @@ export class SWSECombatActionBrowser extends SWSEApplication {
       });
       sidebar.appendChild(btn);
     });
+    */
   }
 
   static _addHUDButtonHook() {

@@ -2,7 +2,7 @@
 // Language selection for CharGen
 // ============================================
 
-import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { LanguageRegistry } from "/systems/foundryvtt-swse/scripts/registries/language-registry.js";
 import { prompt } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";

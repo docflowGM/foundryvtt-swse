@@ -24,7 +24,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { calculateCartTotal } from "/systems/foundryvtt-swse/scripts/apps/store/store-checkout.js";
 import { prompt as uiPrompt } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 
 export class GMStoreDashboard extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {

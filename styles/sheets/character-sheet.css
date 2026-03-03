@@ -1,24 +1,185 @@
 /* ============================================================
-   SWSE CHARACTER SHEET V3
-   Modular Loader
+   SWSE CHARACTER SHEET V2
+
+   ARCHITECTURE NOTE (2026-03-03):
+   V3 sheet system has been archived to styles/archive/sheets-v3/
+   The V2 sheet system is the active system.
+
+   V3 was an experimental architecture that was not integrated.
+   All styling for the active character sheet comes from:
+   - styles/sheets/unified-sheets.css
+   - styles/sheets/v2-sheet.css
+   - styles/sheets/inventory.css
+   - Component files (tabs, panels, etc.)
+
+   If V3 migration is planned, restore from archive and re-integrate.
    ============================================================ */
 
-@import "v3/core/variables.css";
-@import "v3/core/layout.css";
-@import "v3/core/typography.css";
-@import "v3/core/numbers.css";
+/* ============================================================================
+   SWSE HEADER — CHARACTER SHEET
+   Consolidated from swse-system.css (lines 223-355)
+   ============================================================================ */
 
-@import "v3/components/buttons.css";
-@import "v3/components/cards.css";
-@import "v3/components/hover.css";
+@font-face {
+  font-family: "SWSEAurebesh";
+  src: url("/systems/foundryvtt-swse/assets/fonts/Aurabesh/Aurebesh Bold Italic.otf") format("opentype");
+  font-weight: bold;
+  font-style: italic;
+}
 
-/* Partials */
-@import "v3/partials/header.css";
-@import "v3/partials/identity.css";
-@import "v3/partials/hp-condition.css";
-@import "v3/partials/defenses.css";
-@import "v3/partials/skills.css";
-@import "v3/partials/combat.css";
-@import "v3/partials/feats.css";
-@import "v3/partials/destiny.css";
-@import "v3/partials/biography.css";
+.swse-datapad-title {
+  font-family: "SWSEAurebesh";
+  text-align: center;
+  font-size: 0.85rem;
+  letter-spacing: 0.35em;
+  padding: 6px 0 4px;
+  opacity: 0.8;
+  border-bottom: 1px solid rgba(0,255,255,0.2);
+}
+
+.swse-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 14px;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.identity-row {
+  gap: 14px;
+}
+
+.header-portrait {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.identity-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.header-name {
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.identity-subline {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.level-line {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.half-level {
+  opacity: 0.6;
+  font-size: 0.75rem;
+  margin-left: 6px;
+}
+
+.status-row {
+  justify-content: space-between;
+}
+
+.status-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 120px;
+}
+
+.status-label {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+.status-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.1);
+  overflow: hidden;
+}
+
+.status-bar .fill {
+  height: 100%;
+  background: #00ff88;
+}
+
+.fp-dots,
+.ct-mini {
+  display: flex;
+  gap: 4px;
+}
+
+.fp-dot,
+.ct-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+}
+
+.fp-dot.used {
+  background: rgba(255,255,255,0.1);
+}
+
+.ct-dot.active {
+  background: #ff4444;
+}
+
+.command-row {
+  gap: 10px;
+}
+
+.header-btn {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.1);
+  border: none;
+  cursor: pointer;
+}
+
+.header-btn.ready {
+  box-shadow: 0 0 12px rgba(0,255,170,0.8);
+}
+
+/* ============================================================================
+   V13 APPV2 SCROLL RESTORE
+   Consolidated from swse-system.css (lines 363-386)
+   ============================================================================ */
+
+.swse-character-sheet .window-content {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto !important;
+  overflow-x: hidden;
+}
+
+.swse-character-sheet .sheet-inner {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.swse-character-sheet .sheet-body {
+  flex: 1;
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  min-height: 0;
+}
+
+.swse-character-sheet .tab {
+  height: auto !important;
+  overflow-y: auto !important;
+}

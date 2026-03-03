@@ -11,7 +11,7 @@
  * - No duplicate eligibility checks
  */
 
-import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { WeaponsEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/weapons-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 

@@ -5,7 +5,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { initializeTooltipDiscovery } from "/systems/foundryvtt-swse/scripts/core/tooltip-discovery.js";
-import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const SETTING_KEY = 'welcomeShown';

@@ -33,7 +33,7 @@ import { TalentSlotMigrator } from "/systems/foundryvtt-swse/scripts/engine/prog
 import { FeatSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-slot-validator.js";
 
 // V2 API base classes
-import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import SWSEApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
 
 

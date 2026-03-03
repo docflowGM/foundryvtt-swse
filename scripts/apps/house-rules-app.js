@@ -4,7 +4,7 @@
  * Organized by category with elegant toggle controls
  */
 
-import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 

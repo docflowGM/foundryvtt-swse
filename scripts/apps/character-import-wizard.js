@@ -7,7 +7,7 @@
 import { createActor, createEffectOnActor, createItemInActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { confirm as uiConfirm } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 
 export class CharacterImportWizard extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
