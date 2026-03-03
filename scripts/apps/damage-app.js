@@ -1,10 +1,11 @@
 /**
- * DamageApp — Phase C Combat UI
+ * DamageApp — ApplicationV2 Migration
  */
+import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { DamageEngine } from "/systems/foundryvtt-swse/engine/combat/damage-engine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
-export class DamageApp extends Application {
+export class DamageApp extends BaseSWSEAppV2 {
   constructor(actor, options = {}) {
     super(options);
     this.actor = actor;
@@ -17,42 +18,72 @@ export class DamageApp extends Application {
       id: 'damage-app',
       title: 'Apply Damage',
       template: 'modules/foundryvtt-swse/templates/apps/damage-app.hbs',
-      width: 300,
-      height: 'auto',
-      resizable: false,
+      position: {
+        width: 300,
+        height: 'auto'
+      },
+      window: {
+        resizable: false
+      },
       classes: ['damage-app']
     });
   }
 
-  async getData() {
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
     const hpStatus = DamageEngine.getHPStatus(this.actor);
     const dt = DamageEngine.getDamageThreshold(this.actor);
 
-    return {
+    return foundry.utils.mergeObject(context, {
       actor: this.actor,
       hpStatus,
       dt,
       damageInput: this.damageInput,
       bypassDT: this.bypassDT
-    };
+    });
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  wireEvents() {
+    const root = this.element;
 
-    html.find('input[name="damage"]').on('change', (e) => {
-      this.damageInput = Math.max(0, Number(e.currentTarget.value) || 0);
-    });
+    const damageInput = root.querySelector('input[name="damage"]');
+    if (damageInput) {
+      damageInput.addEventListener('change', (e) => {
+        this.damageInput = Math.max(0, Number(e.currentTarget.value) || 0);
+      });
+    }
 
-    html.find('input[name="bypassDT"]').on('change', (e) => {
-      this.bypassDT = e.currentTarget.checked;
-    });
+    const bypassDTInput = root.querySelector('input[name="bypassDT"]');
+    if (bypassDTInput) {
+      bypassDTInput.addEventListener('change', (e) => {
+        this.bypassDT = e.currentTarget.checked;
+      });
+    }
 
-    html.find('[data-action="apply"]').on('click', () => this._applyDamage());
-    html.find('[data-action="apply-half"]').on('click', () => this._applyDamage(true));
-    html.find('[data-action="apply-double"]').on('click', () => this._applyDamage(false, true));
-    html.find('[data-action="heal"]').on('click', () => this._heal());
-    html.find('[data-action="restore-temp"]').on('click', () => this._restoreTemp());
+    const applyBtn = root.querySelector('[data-action="apply"]');
+    if (applyBtn) {
+      applyBtn.addEventListener('click', () => this._applyDamage());
+    }
+
+    const applyHalfBtn = root.querySelector('[data-action="apply-half"]');
+    if (applyHalfBtn) {
+      applyHalfBtn.addEventListener('click', () => this._applyDamage(true));
+    }
+
+    const applyDoubleBtn = root.querySelector('[data-action="apply-double"]');
+    if (applyDoubleBtn) {
+      applyDoubleBtn.addEventListener('click', () => this._applyDamage(false, true));
+    }
+
+    const healBtn = root.querySelector('[data-action="heal"]');
+    if (healBtn) {
+      healBtn.addEventListener('click', () => this._heal());
+    }
+
+    const restoreTempBtn = root.querySelector('[data-action="restore-temp"]');
+    if (restoreTempBtn) {
+      restoreTempBtn.addEventListener('click', () => this._restoreTemp());
+    }
   }
 
   async _applyDamage(half = false, double = false) {

@@ -166,8 +166,8 @@ export function registerSystemSettings() {
     default: 'holo',
     onChange: async (value) => {
       if (game.ready) {
-        const { ThemeLoader } = await import("/systems/foundryvtt-swse/scripts/theme-loader.js");
-        ThemeLoader.applyTheme(value);
+        const { UIManager } = await import("/systems/foundryvtt-swse/scripts/ui/ui-manager.js");
+        await UIManager.setTheme(value);
       }
     }
   });

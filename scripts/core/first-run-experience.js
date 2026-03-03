@@ -5,6 +5,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { initializeTooltipDiscovery } from "/systems/foundryvtt-swse/scripts/core/tooltip-discovery.js";
+import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const SETTING_KEY = 'welcomeShown';
@@ -49,12 +50,9 @@ export async function resetWelcome() {
 /* Welcome Dialog */
 /* -------------------------------------------- */
 
-class WelcomeDialog extends foundry.applications.api.HandlebarsApplicationMixin(
-  foundry.applications.api.ApplicationV2
-) {
+class WelcomeDialog extends BaseSWSEAppV2 {
 
   static DEFAULT_OPTIONS = {
-    ...foundry.applications.api.ApplicationV2.DEFAULT_OPTIONS,
     id: 'swse-welcome-dialog',
     classes: ['swse-app'],
     window: {

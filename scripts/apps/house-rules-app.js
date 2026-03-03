@@ -4,32 +4,38 @@
  * Organized by category with elegant toggle controls
  */
 
+import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
-export class HouseRulesApp extends FormApplication {
+export class HouseRulesApp extends BaseSWSEAppV2 {
   constructor(options = {}) {
     super(options);
     this.NS = 'foundryvtt-swse';
   }
 
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       id: 'swse-house-rules-app',
       title: 'House Rules Configuration',
       template: 'systems/foundryvtt-swse/templates/apps/house-rules/house-rules.hbs',
-      width: 800,
-      height: 600,
-      resizable: true,
-      minimizable: true,
+      position: {
+        width: 800,
+        height: 600
+      },
+      window: {
+        resizable: true,
+        draggable: true
+      },
       classes: ['swse-house-rules-datapad']
     });
   }
 
   /**
-   * Organize rules into categories
+   * Organize rules into categories (ApplicationV2 lifecycle)
    */
-  async _prepareContext() {
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
     const rules = {
       characterCreation: this._getRulesForCategory('characterCreation'),
       combat: this._getRulesForCategory('combat'),
@@ -44,15 +50,10 @@ export class HouseRulesApp extends FormApplication {
       .filter(r => r.enabled)
       .length;
 
-    return {
+    return foundry.utils.mergeObject(context, {
       rules,
       activeRuleCount
-    };
-  }
-
-  async getData(options = {}) {
-    const data = await super.getData(options);
-    return mergeObject(data, await this._prepareContext());
+    });
   }
 
   /**
@@ -240,32 +241,35 @@ export class HouseRulesApp extends FormApplication {
   }
 
   /**
-   * Activators and event listeners
+   * Wire event listeners (ApplicationV2 contract)
    */
-  activateListeners(html) {
-    super.activateListeners(html);
+  wireEvents() {
+    const root = this.element;
 
     // Toggle switches
-    html.on('change', 'input[type="checkbox"]', async (event) => {
-      const key = event.target.dataset.ruleKey;
-      const checked = event.target.checked;
+    root.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+      checkbox.addEventListener('change', async (event) => {
+        const key = event.target.dataset.ruleKey;
+        const checked = event.target.checked;
 
-      try {
-        await game.settings.set(this.NS, key, checked);
-        SWSELogger.info(`[HouseRulesApp] Updated ${key} = ${checked}`);
-      } catch (err) {
-        SWSELogger.error(`[HouseRulesApp] Failed to update ${key}:`, err);
-        event.target.checked = !checked; // Revert on error
-      }
+        try {
+          await game.settings.set(this.NS, key, checked);
+          SWSELogger.info(`[HouseRulesApp] Updated ${key} = ${checked}`);
+        } catch (err) {
+          SWSELogger.error(`[HouseRulesApp] Failed to update ${key}:`, err);
+          event.target.checked = !checked; // Revert on error
+        }
+      });
     });
 
     // Animate category hover
-    html.on('mouseenter', '.rule-category', function () {
-      $(this).addClass('hovered');
-    });
-
-    html.on('mouseleave', '.rule-category', function () {
-      $(this).removeClass('hovered');
+    root.querySelectorAll('.rule-category').forEach(category => {
+      category.addEventListener('mouseenter', (event) => {
+        event.currentTarget.classList.add('hovered');
+      });
+      category.addEventListener('mouseleave', (event) => {
+        event.currentTarget.classList.remove('hovered');
+      });
     });
   }
 }

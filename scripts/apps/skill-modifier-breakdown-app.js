@@ -1,5 +1,5 @@
 /**
- * SkillModifierBreakdownApp — Phase B
+ * SkillModifierBreakdownApp — ApplicationV2 Migration
  *
  * Popout panel for viewing and editing skill modifier breakdown.
  * Displays canonical modifiers from ModifierEngine (read-only).
@@ -12,12 +12,13 @@
  * - AppV2 compliant
  */
 
+import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/engine/effects/modifiers/ModifierEngine.js";
 import { ModifierTypes } from "/systems/foundryvtt-swse/engine/effects/modifiers/ModifierTypes.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
-export class SkillModifierBreakdownApp extends Application {
+export class SkillModifierBreakdownApp extends BaseSWSEAppV2 {
   constructor(actor, skillKey, options = {}) {
     super(options);
 
@@ -37,15 +38,20 @@ export class SkillModifierBreakdownApp extends Application {
       id: 'skill-modifier-breakdown',
       title: 'Skill Modifier Breakdown',
       template: 'modules/foundryvtt-swse/templates/apps/skill-modifier-breakdown.hbs',
-      width: 360,
-      height: 'auto',
-      resizable: false,
-      minimizable: true,
+      position: {
+        width: 360,
+        height: 'auto'
+      },
+      window: {
+        resizable: false,
+        draggable: true
+      },
       classes: ['skill-modifier-breakdown']
     });
   }
 
-  async getData() {
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
     const target = `skill.${this.skillKey}`;
 
     // Get canonical modifiers from derived data
@@ -58,7 +64,7 @@ export class SkillModifierBreakdownApp extends Application {
       : [];
     this.customModifiers = allCustom.filter(m => m.target === target);
 
-    return {
+    return foundry.utils.mergeObject(context, {
       actor: this.actor,
       skillKey: this.skillKey,
       skillName: this.skillName,
@@ -95,66 +101,88 @@ export class SkillModifierBreakdownApp extends Application {
       // Helpers
       hasModifiers: (this.derivedModifiers.applied || []).length > 0,
       hasCustom: this.customModifiers.length > 0
-    };
+    });
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  wireEvents() {
+    const root = this.element;
 
     // Add Custom Modifier button
-    html.find('[data-action="add-custom"]').on('click', (e) => {
-      e.preventDefault();
-      this.isAddingCustom = true;
-      this.render();
-    });
+    const addBtn = root.querySelector('[data-action="add-custom"]');
+    if (addBtn) {
+      addBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.isAddingCustom = true;
+        this.render();
+      });
+    }
 
     // Cancel Add Custom
-    html.find('[data-action="cancel-custom"]').on('click', (e) => {
-      e.preventDefault();
-      this.isAddingCustom = false;
-      this.newCustomData = { sourceName: '', type: 'untyped', value: 0 };
-      this.render();
-    });
+    const cancelBtn = root.querySelector('[data-action="cancel-custom"]');
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.isAddingCustom = false;
+        this.newCustomData = { sourceName: '', type: 'untyped', value: 0 };
+        this.render();
+      });
+    }
 
     // Submit new custom modifier
-    html.find('[data-action="submit-custom"]').on('click', (e) => {
-      e.preventDefault();
-      this._submitCustomModifier(html);
-    });
+    const submitBtn = root.querySelector('[data-action="submit-custom"]');
+    if (submitBtn) {
+      submitBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this._submitCustomModifier();
+      });
+    }
 
     // Remove custom modifier
-    html.find('[data-action="remove-custom"]').on('click', (e) => {
-      e.preventDefault();
-      const index = Number(e.currentTarget.dataset.index);
-      this._removeCustomModifier(index);
+    root.querySelectorAll('[data-action="remove-custom"]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const index = Number(e.currentTarget.dataset.index);
+        this._removeCustomModifier(index);
+      });
     });
 
     // Toggle custom modifier enabled state
-    html.find('[data-action="toggle-custom"]').on('click', (e) => {
-      e.preventDefault();
-      const index = Number(e.currentTarget.dataset.index);
-      this._toggleCustomModifier(index);
+    root.querySelectorAll('[data-action="toggle-custom"]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const index = Number(e.currentTarget.dataset.index);
+        this._toggleCustomModifier(index);
+      });
     });
 
     // Update form fields in add custom section
-    html.find('input[name="sourceName"]').on('change', (e) => {
-      this.newCustomData.sourceName = e.currentTarget.value;
-    });
+    const sourceInput = root.querySelector('input[name="sourceName"]');
+    if (sourceInput) {
+      sourceInput.addEventListener('change', (e) => {
+        this.newCustomData.sourceName = e.currentTarget.value;
+      });
+    }
 
-    html.find('select[name="type"]').on('change', (e) => {
-      this.newCustomData.type = e.currentTarget.value;
-    });
+    const typeSelect = root.querySelector('select[name="type"]');
+    if (typeSelect) {
+      typeSelect.addEventListener('change', (e) => {
+        this.newCustomData.type = e.currentTarget.value;
+      });
+    }
 
-    html.find('input[name="value"]').on('change', (e) => {
-      this.newCustomData.value = Number(e.currentTarget.value) || 0;
-    });
+    const valueInput = root.querySelector('input[name="value"]');
+    if (valueInput) {
+      valueInput.addEventListener('change', (e) => {
+        this.newCustomData.value = Number(e.currentTarget.value) || 0;
+      });
+    }
   }
 
   /**
    * Submit new custom modifier
    * @private
    */
-  async _submitCustomModifier(html) {
+  async _submitCustomModifier() {
     const { sourceName, type, value } = this.newCustomData;
 
     // Validate

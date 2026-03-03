@@ -11,6 +11,7 @@
  * Call this from the main system initialization hook.
  */
 
+import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { validateCoreData, registerSafetyDiagnostics } from "/systems/foundryvtt-swse/scripts/core/runtime-safety.js";
 import { registerMutationSafety } from "/systems/foundryvtt-swse/scripts/core/mutation-safety.js";
 import { registerDiagnosticsCommand } from "/systems/foundryvtt-swse/scripts/core/v1-api-scanner.js";
@@ -135,7 +136,7 @@ export async function validateSystemReady() {
  * Show hardening status panel (GM command)
  * AppV2-based implementation
  */
-class HardeningStatusPanel extends foundry.applications.api.ApplicationV2 {
+class HardeningStatusPanel extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
     id: 'swse-hardening-status',
     tag: 'div',

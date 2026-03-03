@@ -2,6 +2,7 @@
 // Feat and talent selection for CharGen
 // ============================================
 
+import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { getTalentTrees, getTalentTreeName } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
@@ -1090,7 +1091,7 @@ export function _getStartingClassFeatures() {
  * Skill Focus Feat Dialog (AppV2-based)
  * Allows selection of a skill to apply Skill Focus feat to
  */
-class SkillFocusDialog extends foundry.applications.api.ApplicationV2 {
+class SkillFocusDialog extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
     id: 'swse-skill-focus-dialog',
     tag: 'div',

@@ -2,6 +2,7 @@
 // Droid-specific logic for CharGen
 // ============================================
 
+import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { DROID_SYSTEMS } from "/systems/foundryvtt-swse/scripts/data/droid-systems.js";
 import { escapeHtml } from "/systems/foundryvtt-swse/scripts/utils/string-utils.js";
@@ -1197,7 +1198,7 @@ export async function _onImportDroid(event) {
  * Droid Import Dialog (AppV2-based)
  * Handles searchable droid import functionality
  */
-class DroidImportDialog extends foundry.applications.api.ApplicationV2 {
+class DroidImportDialog extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
     id: 'swse-droid-import-dialog',
     tag: 'div',

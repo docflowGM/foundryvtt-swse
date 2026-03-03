@@ -17,9 +17,21 @@ export class ActorSheetEnhancements {
   static initialize() {
     // Hook into actor sheet rendering to add house rule information
     Hooks.on('renderApplicationV2', (app) => {
-      const html = app.element;
-      const data = {};
-      this.enhanceActorSheet(app, html, data);
+      try {
+        // Guard: Only process SWSE actor sheets
+        if (!app?.constructor?.name?.startsWith("SWSE")) return;
+        if (!app?.actor) return;
+        if (app.actor.type !== 'character') return;
+        if (!app.element) return;
+
+        // Guard: Ensure render is complete
+        if (!app.element.querySelector(".window-content")) return;
+
+        const root = app.element;
+        this.enhanceActorSheet(app, root, {});
+      } catch (err) {
+        console.error('[SWSE ActorEnhancements] renderApplicationV2 hook error:', err);
+      }
     });
 
     SWSELogger.debug('Actor sheet enhancements initialized');
@@ -28,34 +40,35 @@ export class ActorSheetEnhancements {
   /**
    * Enhance actor sheet with house rule information
    */
-  static enhanceActorSheet(app, html, data) {
+  static enhanceActorSheet(app, root, data) {
     const actor = app.actor;
-    if (!actor || actor.type !== 'character') {return;}
+    if (!actor || actor.type !== 'character') return;
 
-    this._addTrainingPointsDisplay(app, html, actor);
-    this._addHealingCooldownDisplay(app, html, actor);
-    this._addConditionTrackDisplay(app, html, actor);
+    this._addTrainingPointsDisplay(root, actor);
+    this._addHealingCooldownDisplay(root, actor);
+    this._addConditionTrackDisplay(root, actor);
   }
 
   /**
    * Add training points display to skills tab
    * @private
    */
-  static _addTrainingPointsDisplay(app, html, actor) {
-    if (!game.settings.get(NS, 'skillTrainingEnabled')) {return;}
+  static _addTrainingPointsDisplay(root, actor) {
+    if (!game.settings.get(NS, 'skillTrainingEnabled')) return;
+
+    // Prevent duplicate injection
+    if (root.querySelector(".swse-training-points-display")) return;
+
+    const skillsTab = root.querySelector("[data-tab='skills']");
+    if (!skillsTab) return;
 
     const trainingPoints = SkillTrainingMechanics.getTrainingPoints(actor);
     const level = actor.system?.details?.level || 1;
     const maxPerSkill = game.settings.get(NS, 'skillTrainingCap');
 
-    // Find or create house rules section in skills tab
-    const root = html?.[0] ?? html;
-      const skillsTab = root?.querySelector?.("[data-tab='skills']");
-    if (!skillsTab) {return;}
-
     // Create training points display
     const trainingDisplay = `
-      <div class="house-rules-section training-section">
+      <div class="swse-training-points-display house-rules-section training-section">
         <h3>Training Points</h3>
         <div class="training-info">
           <p class="training-available">
@@ -120,16 +133,19 @@ export class ActorSheetEnhancements {
    * Add healing cooldown display to bio tab
    * @private
    */
-  static _addHealingCooldownDisplay(app, html, actor) {
-    if (!game.settings.get(NS, 'healingSkillEnabled')) {return;}
+  static _addHealingCooldownDisplay(root, actor) {
+    if (!game.settings.get(NS, 'healingSkillEnabled')) return;
+
+    // Prevent duplicate injection
+    if (root.querySelector(".swse-healing-cooldown-display")) return;
 
     const bioTab = root.querySelector("[data-tab='bio']");
-    if (bioTab.length === 0) {return;}
+    if (!bioTab) return;
 
     const cooldowns = HealingSkillIntegration.getHealingCooldownInfo(actor);
 
     const cooldownDisplay = `
-      <div class="house-rules-section healing-cooldown-section">
+      <div class="swse-healing-cooldown-display house-rules-section healing-cooldown-section">
         <h3>Healing Cooldowns</h3>
         <div class="cooldown-info">
           ${cooldowns
@@ -153,11 +169,14 @@ export class ActorSheetEnhancements {
    * Add condition track display to bio tab
    * @private
    */
-  static _addConditionTrackDisplay(app, html, actor) {
-    if (!game.settings.get(NS, 'conditionTrackEnabled')) {return;}
+  static _addConditionTrackDisplay(root, actor) {
+    if (!game.settings.get(NS, 'conditionTrackEnabled')) return;
+
+    // Prevent duplicate injection
+    if (root.querySelector(".swse-condition-track-display")) return;
 
     const bioTab = root.querySelector("[data-tab='bio']");
-    if (bioTab.length === 0) {return;}
+    if (!bioTab) return;
 
     const trackLevel = ConditionTrackMechanics.getConditionTrackLevel(actor);
     const variant = game.settings.get(NS, 'conditionTrackVariant');
@@ -165,7 +184,7 @@ export class ActorSheetEnhancements {
     const penalties = ConditionTrackMechanics.getTrackPenalties(actor);
 
     const trackDisplay = `
-      <div class="house-rules-section condition-track-section">
+      <div class="swse-condition-track-display house-rules-section condition-track-section">
         <h3>Condition Track</h3>
         <div class="condition-info">
           <p class="track-level">

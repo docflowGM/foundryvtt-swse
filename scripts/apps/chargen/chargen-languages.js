@@ -2,6 +2,7 @@
 // Language selection for CharGen
 // ============================================
 
+import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { LanguageRegistry } from "/systems/foundryvtt-swse/scripts/registries/language-registry.js";
 import { prompt } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
@@ -501,7 +502,7 @@ export function _bindLanguageCardUI(root) {
  * Custom Language Input Dialog (AppV2-based)
  * Prompts user for a custom language name with explanatory text
  */
-class CustomLanguageDialog extends foundry.applications.api.ApplicationV2 {
+class CustomLanguageDialog extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
     id: 'swse-custom-language-dialog',
     tag: 'div',

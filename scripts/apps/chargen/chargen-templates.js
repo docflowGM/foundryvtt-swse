@@ -1,3 +1,4 @@
+import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 // ============================================
@@ -784,7 +785,7 @@ export class CharacterTemplates {
  * Template Selection Dialog (AppV2-based)
  * Displays template options with tabbed interface and selection buttons
  */
-class TemplateSelectionDialog extends foundry.applications.api.ApplicationV2 {
+class TemplateSelectionDialog extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
     classes: ['swse', 'swse-inwindow-modal'],
     id: 'swse-template-selection-dialog',

@@ -3,6 +3,7 @@
  * Centralized management of house rule settings and overrides
  */
 
+import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { ClassRelationshipRegistry } from "/systems/foundryvtt-swse/scripts/data/class-relationship-registry.js";
 
 export function registerHouseRuleSettings() {
@@ -38,19 +39,24 @@ export function registerHouseRuleSettings() {
 /**
  * Form application for configuring class → tree access overrides
  */
-export class ClassTreeAccessForm extends FormApplication {
+export class ClassTreeAccessForm extends BaseSWSEAppV2 {
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {
             title: 'Class → Tree Access Overrides',
             id: 'class-tree-access-form',
             template: 'systems/foundryvtt-swse/templates/apps/class-tree-access-form.html',
-            width: 700,
-            height: 'auto',
-            resizable: true
+            position: {
+                width: 700,
+                height: 'auto'
+            },
+            window: {
+                resizable: true
+            }
         });
     }
 
-    async getData(options = {}) {
+    async _prepareContext(options) {
+        const context = await super._prepareContext(options);
         const overrides = game.settings.get('foundryvtt-swse', 'classTreeOverrides');
         const allTrees = this._getAvailableTrees();
         const selectedTrees = overrides || {};
@@ -67,31 +73,45 @@ export class ClassTreeAccessForm extends FormApplication {
             }))
             .sort((a, b) => a.name.localeCompare(b.name));
 
-        return {
+        return foundry.utils.mergeObject(context, {
             classes
-        };
+        });
     }
 
-    activateListeners(html) {
-        super.activateListeners(html);
-        // Custom listeners can be added here if needed
+    wireEvents() {
+        const root = this.element;
+
+        // Handle form submission
+        const form = root.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                await this._onSubmit(event);
+            });
+        }
     }
 
-    async _updateObject(event, formData) {
+    async _onSubmit(event) {
+        const root = this.element;
+        const form = root.querySelector('form');
+        const formData = new FormData(form);
         const overrides = {};
 
         // Parse form data - handle nested checkbox arrays
-        for (const [key, value] of Object.entries(formData)) {
+        for (const [key, value] of formData.entries()) {
             if (key.startsWith('trees_')) {
                 const classId = key.replace('trees_', '');
-                const treeIds = Array.isArray(value) ? value : (value ? [value] : []);
-                if (treeIds.length > 0) {
-                    overrides[classId] = treeIds;
+                if (!overrides[classId]) {
+                    overrides[classId] = [];
+                }
+                if (value && !overrides[classId].includes(value)) {
+                    overrides[classId].push(value);
                 }
             }
         }
 
         await game.settings.set('foundryvtt-swse', 'classTreeOverrides', overrides);
+        this.close();
     }
 
     _getClassName(classId) {

@@ -87,9 +87,10 @@ export class CharacterGeneratorApp extends SWSEApplicationV2 {
   }
 
   /**
-   * Get the data to pass to the template
+   * Get the data to pass to the template (ApplicationV2 lifecycle)
    */
-  async getData() {
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
     const currentStep = this.steps[this.currentStepIndex];
     const currentSelection = this.stepSelections[currentStep];
 
@@ -97,7 +98,7 @@ export class CharacterGeneratorApp extends SWSEApplicationV2 {
     const completedSteps = Object.keys(this.compiledPlans).length;
     const isLastStep = this.currentStepIndex === this.steps.length - 1;
 
-    return {
+    return foundry.utils.mergeObject(context, {
       actor: this.actor,
       fullMode: this.fullMode,
       currentStep,
@@ -118,7 +119,7 @@ export class CharacterGeneratorApp extends SWSEApplicationV2 {
         isComplete: this.compiledPlans[step] !== undefined,
         isCurrent: idx === this.currentStepIndex
       }))
-    };
+    });
   }
 
   /**
@@ -190,38 +191,59 @@ export class CharacterGeneratorApp extends SWSEApplicationV2 {
   }
 
   /**
-   * Activate listeners on render
+   * Wire event listeners (ApplicationV2 contract)
    */
-  activateListeners(html) {
-    super.activateListeners(html);
+  wireEvents() {
+    const root = this.element;
 
     // Step selection (background, class, etc.)
-    html.find('select[name=""step-select"]').change((event) => {
-      const currentStep = this.steps[this.currentStepIndex];
-      this.stepSelections[currentStep] = event.target.value;
-      this.render();
-    });
+    const stepSelect = root.querySelector('select[name="step-select"]');
+    if (stepSelect) {
+      stepSelect.addEventListener('change', (event) => {
+        const currentStep = this.steps[this.currentStepIndex];
+        this.stepSelections[currentStep] = event.target.value;
+        this.render();
+      });
+    }
 
     // Confirm/Compile step
-    html.find('button.confirm-step').click(() => this._confirmStep());
+    const confirmBtn = root.querySelector('button.confirm-step');
+    if (confirmBtn) {
+      confirmBtn.addEventListener('click', () => this._confirmStep());
+    }
 
     // Next step (full mode only)
-    html.find('button.next-step').click(() => this._nextStep());
+    const nextBtn = root.querySelector('button.next-step');
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => this._nextStep());
+    }
 
     // Previous step (full mode only)
-    html.find('button.previous-step').click(() => this._previousStep());
+    const prevBtn = root.querySelector('button.previous-step');
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => this._previousStep());
+    }
 
     // Apply all steps
-    html.find('button.apply-all').click(() => this._applyAllSteps());
+    const applyBtn = root.querySelector('button.apply-all');
+    if (applyBtn) {
+      applyBtn.addEventListener('click', () => this._applyAllSteps());
+    }
 
     // Cancel
-    html.find('button.cancel-step').click(() => this.close());
+    const cancelBtn = root.querySelector('button.cancel-step');
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', () => this.close());
+    }
 
     // Clear error
-    html.find('button.clear-error').click(() => {
-      this.lastError = null;
-      this.render();
-    });
+    const clearErrorBtn = root.querySelector('button.clear-error');
+    if (clearErrorBtn) {
+      clearErrorBtn.addEventListener('click', () => {
+        this.lastError = null;
+        this.render();
+      });
+    }
   }
 
   /**
