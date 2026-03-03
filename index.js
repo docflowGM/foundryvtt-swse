@@ -73,10 +73,7 @@ import { SWSE } from './scripts/core/config.js';
 import { registerSystemSettings } from './scripts/core/settings.js';
 import { initializeUtils } from './scripts/core/utils-init.js';
 import { initializeRolls } from './scripts/core/rolls-init.js';
-import { SWSESentinel } from './scripts/core/swse-sentinel.js';
 import { SentinelEngine } from './scripts/governance/sentinel/sentinel-core.js';
-import { Sentry } from './scripts/governance/sentinel/sentry.js';
-import { Investigator } from './scripts/governance/sentinel/investigator.js';
 import { initializeSentinelAuditors, auditCSSHealth, generateMigrationReport } from './scripts/governance/sentinel/sentinel-auditors.js';
 
 // ---- v13 hardening ----
@@ -84,7 +81,7 @@ import { initializeHardeningSystem, validateSystemReady, registerHardeningHooks 
 
 // ---- phase 3 contracts ----
 import { DiagnosticMode } from './scripts/contracts/diagnostic-mode.js';
-import { initializeV2RenderGuard } from './scripts/core/v2-render-guard.js';
+import { initializeSentinelGovernance } from './scripts/governance/sentinel/sentinel-init.js';
 
 // ---- logging / perf ----
 import { swseLogger } from './scripts/utils/logger.js';
@@ -236,8 +233,8 @@ Hooks.once('init', async () => {
   /* ---------- PHASE 2: UI infrastructure ---------- */
   await bootstrapTemplates();
 
-  /* ---------- PHASE 3: structural enforcement ---------- */
-  await initializeV2RenderGuard();
+  /* ---------- PHASE 3: unified sentinel enforcement ---------- */
+  initializeSentinelGovernance();
   MutationInterceptor.initialize();
 
   swseLogger.log('SWSE | Init complete');
@@ -259,11 +256,6 @@ Hooks.once('ready', async () => {
 
   errorHandler.initialize();
   initializeRolls();
-
-  /* ---------- Sentinel Engine + Sentry + Investigator ---------- */
-  SentinelEngine.bootstrap();
-  Sentry.init();
-  Investigator.init();
 
   /* ---------- Sentinel Auditors (CSS + Migration validation) ---------- */
   initializeSentinelAuditors();
