@@ -15,10 +15,11 @@
 
 /**
  * Safe accessor for devMode setting
- * Uses _dev-mode module if available, otherwise returns false
+ * DISABLED: Always returns true to run audits for all users
+ * (was: Uses _dev-mode module if available, otherwise returns false)
  */
 function getDevMode() {
-  return game.modules.get('_dev-mode')?.active ?? false;
+  return true; // Audits enabled for all users
 }
 
 /**
@@ -177,10 +178,7 @@ export function auditHidden(el, label) {
  * @returns {Object} Health report with pass/fail status
  */
 export function auditCSSHealth() {
-  if (!getDevMode()) {
-    console.warn('[CSS Auditor] Skipped (dev mode disabled)');
-    return false;
-  }
+  // Dev mode check disabled - audit runs for all users
 
   console.group('%c[SWSE CSS Health Audit]', 'color: #00ccff; font-weight: bold;');
 
@@ -261,14 +259,28 @@ export function auditCSSHealth() {
   const passed = results.filter(r => r.pass).length;
   const failed = results.filter(r => !r.pass).length;
 
+  // Build report object for sentinel-reporter
+  const report = {
+    healthy: failed === 0,
+    totalRules: results.length,
+    passed,
+    failed,
+    issues: results.filter(r => !r.pass).map((r, i) => ({
+      type: 'CSS_HEALTH',
+      description: r.label,
+      selector: 'N/A',
+      details: r.reason || (r.hidden ? 'Content clipped' : 'OK')
+    }))
+  };
+
   if (failed > 0) {
     console.error(`CSS health FAILED: ${failed} violations found`);
     console.groupEnd();
-    return false;
+    return report;
   } else {
     console.log(`✓ All ${passed} CSS tests passed`);
     console.groupEnd();
-    return true;
+    return report;
   }
 }
 

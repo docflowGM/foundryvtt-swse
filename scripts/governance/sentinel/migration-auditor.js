@@ -15,10 +15,11 @@
 
 /**
  * Safe accessor for devMode setting
- * Uses _dev-mode module if available, otherwise returns false
+ * DISABLED: Always returns true to run audits for all users
+ * (was: Uses _dev-mode module if available, otherwise returns false)
  */
 function getDevMode() {
-  return game.modules.get('_dev-mode')?.active ?? false;
+  return true; // Audits enabled for all users
 }
 
 /**

@@ -12,6 +12,7 @@
 
 import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 import { SentinelReporter } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-reporter.js";
+import { auditCSSHealth } from "/systems/foundryvtt-swse/scripts/governance/sentinel/css-auditor.js";
 
 export class SentinelEnforcement {
   static #violations = [];
@@ -26,6 +27,8 @@ export class SentinelEnforcement {
   static #mutationHistory = [];
   static #renderStack = [];
   static #maxMutations = 100;
+  static #cssCheckpoints = [];
+  static #maxCheckpoints = 200;
 
   /**
    * Initialize unified enforcement layer
@@ -60,10 +63,14 @@ export class SentinelEnforcement {
     // Hook 5: Layout Thrashing Detection
     this._registerLayoutThashingDetection();
 
+    // Hook 6: CSS Checkpoints - Monitor when sidebar breaks during boot
+    this._registerCSSCheckpoints();
+
     SentinelEngine.report('enforcement', SentinelEngine.SEVERITY.INFO,
       'Unified enforcement layer initialized', {
-        layers: 6,
+        layers: 7,
         mutations: 'tracking',
+        cssCheckpoints: 'active',
         violations: 0
       });
   }
@@ -449,6 +456,134 @@ export class SentinelEnforcement {
   }
 
   /**
+   * LAYER 6: CSS Checkpoints
+   * Monitor CSS health at key initialization points to pinpoint when sidebar breaks
+   * @private
+   */
+  static _registerCSSCheckpoints() {
+    const checkpoints = [
+      'setup',
+      'init',
+      'ready',
+      'setupModules',
+      'initializeModule'
+    ];
+
+    // Store previous CSS state to detect changes
+    let previousSidebarState = null;
+
+    const sidebarCheckpoint = (hookName) => {
+      try {
+        const scenes = document.querySelector('#scenes');
+        const combat = document.querySelector('#combat');
+
+        if (!scenes || !combat) return;
+
+        const currentState = {
+          scenesDisplay: getComputedStyle(scenes).display,
+          scenesClasses: scenes.className,
+          scenesActive: scenes.classList.contains('active'),
+          combatDisplay: getComputedStyle(combat).display,
+          combatClasses: combat.className,
+          combatActive: combat.classList.contains('active'),
+          sidebarActiveTab: ui?.sidebar?.activeTab || null,
+          allTabs: Array.from(document.querySelectorAll('#sidebar-tabs li')).map(tab => ({
+            id: tab.id,
+            classes: tab.className,
+            active: tab.classList.contains('active'),
+            display: getComputedStyle(tab).display
+          }))
+        };
+
+        // Compare to previous state and report changes
+        if (previousSidebarState) {
+          const changed = JSON.stringify(currentState) !== JSON.stringify(previousSidebarState);
+
+          if (changed) {
+            // Detailed change detection
+            const changes = [];
+            if (currentState.scenesDisplay !== previousSidebarState.scenesDisplay) {
+              changes.push(`scenes display: ${previousSidebarState.scenesDisplay} → ${currentState.scenesDisplay}`);
+            }
+            if (currentState.combatDisplay !== previousSidebarState.combatDisplay) {
+              changes.push(`combat display: ${previousSidebarState.combatDisplay} → ${currentState.combatDisplay}`);
+            }
+            if (currentState.scenesActive !== previousSidebarState.scenesActive) {
+              changes.push(`scenes active: ${previousSidebarState.scenesActive} → ${currentState.scenesActive}`);
+            }
+            if (currentState.combatActive !== previousSidebarState.combatActive) {
+              changes.push(`combat active: ${previousSidebarState.combatActive} → ${currentState.combatActive}`);
+            }
+
+            SentinelEngine.report('enforcement', SentinelEngine.SEVERITY.WARN,
+              `CSS Checkpoint [${hookName}]: Sidebar state changed`,
+              {
+                hookName,
+                changes: changes.join(', '),
+                currentState: {
+                  scenesDisplay: currentState.scenesDisplay,
+                  combatDisplay: currentState.combatDisplay,
+                  activeTab: currentState.sidebarActiveTab
+                }
+              });
+          }
+        }
+
+        // Store checkpoint for forensics
+        this.#cssCheckpoints.push({
+          timestamp: Date.now(),
+          hookName,
+          state: currentState,
+          changed: previousSidebarState ? JSON.stringify(currentState) !== JSON.stringify(previousSidebarState) : false
+        });
+
+        if (this.#cssCheckpoints.length > this.#maxCheckpoints) {
+          this.#cssCheckpoints.shift();
+        }
+
+        previousSidebarState = currentState;
+      } catch (err) {
+        SentinelEngine.report('enforcement', SentinelEngine.SEVERITY.ERROR,
+          `CSS Checkpoint error [${hookName}]`,
+          { error: err.message });
+      }
+    };
+
+    // Register checkpoints
+    for (const hook of checkpoints) {
+      if (hook === 'ready') {
+        Hooks.once('ready', () => sidebarCheckpoint('ready'));
+      } else {
+        // Try common module initialization hooks
+        Hooks.on(`${hook}`, () => sidebarCheckpoint(hook));
+      }
+    }
+
+    // Also check after renderApplicationV2 for SWSE apps
+    Hooks.on('renderApplicationV2', (app) => {
+      const appName = app?.constructor?.name || 'Unknown';
+      if (appName.includes('SWSE')) {
+        sidebarCheckpoint(`renderApplicationV2:${appName}`);
+      }
+    });
+
+    // Check after renderSidebar
+    Hooks.on('renderSidebar', () => {
+      sidebarCheckpoint('renderSidebar');
+    });
+
+    // Periodic checks during boot (every 100ms for first 3 seconds)
+    let checkCount = 0;
+    const bootCheckInterval = setInterval(() => {
+      checkCount++;
+      sidebarCheckpoint(`boot-check-${checkCount}`);
+      if (checkCount >= 30) { // 3 seconds
+        clearInterval(bootCheckInterval);
+      }
+    }, 100);
+  }
+
+  /**
    * Add violation to store
    * @private
    */
@@ -553,10 +688,15 @@ export class SentinelEnforcement {
     return this.#renderStack;
   }
 
+  static getCSSCheckpoints() {
+    return this.#cssCheckpoints;
+  }
+
   static getForensics() {
     return {
       mutations: this.#mutationHistory.slice(-20),
       renders: this.#renderStack.slice(-10),
+      cssCheckpoints: this.#cssCheckpoints.slice(-30),
       sidebarState: {
         display: getComputedStyle(document.querySelector('#scenes')).display,
         classes: document.querySelector('#scenes')?.className || 'missing',
@@ -577,6 +717,7 @@ if (typeof window !== 'undefined') {
     // PHASE 3.5: Mutation forensics (using public getters)
     mutations: () => SentinelEnforcement.getMutationHistory(),
     renderStack: () => SentinelEnforcement.getRenderStack(),
+    cssCheckpoints: () => SentinelEnforcement.getCSSCheckpoints(),
     forensics: () => SentinelEnforcement.getForensics(),
 
     // Reporting: Generate and save comprehensive audit reports

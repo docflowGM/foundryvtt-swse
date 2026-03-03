@@ -15,11 +15,16 @@ let actionPaletteApp = null;
  * - Register event handlers
  */
 export function initializeActionPalette() {
-  // Load CSS
+  // DISABLED: Action palette CSS was globally injecting .action-palette-wrapper with height: 100% and display: flex,
+  // causing containment mutations that affected Foundry's sidebar layout and app rendering.
+  // This created zero-dimension renders and sidebar tab deactivation during boot.
+  // CSS will be removed/rebuilt when action palette is refactored as ApplicationV2.
+  /*
   const link = document.createElement('link');
   link.rel = 'stylesheet';
   link.href = 'systems/foundryvtt-swse/scripts/ui/action-palette/action-palette.css';
   document.head.appendChild(link);
+  */
 
   // Create the application
   actionPaletteApp = new ActionPaletteApp();

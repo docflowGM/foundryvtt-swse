@@ -103,9 +103,37 @@ export class SentinelReporter {
     }
     lines.push('');
 
-    // SECTION 6: All Reports by Layer
+    // SECTION 6: CSS Checkpoint Timeline
     lines.push('┌' + '─'.repeat(78) + '┐');
-    lines.push('│ SECTION 6: DETAILED FINDINGS BY LAYER                                    │');
+    lines.push('│ SECTION 6: CSS CHECKPOINT TIMELINE                                       │');
+    lines.push('└' + '─'.repeat(78) + '┘');
+    try {
+      const checkpoints = window._SWSE_Enforcement?.cssCheckpoints?.() || [];
+      if (checkpoints.length === 0) {
+        lines.push('No CSS checkpoints recorded');
+      } else {
+        lines.push(`Total checkpoints: ${checkpoints.length}`);
+        const failurePoints = checkpoints.filter(cp => cp.changed);
+        if (failurePoints.length > 0) {
+          lines.push(`⚠️  State changes detected at ${failurePoints.length} checkpoints:`);
+          failurePoints.slice(-10).forEach((cp, i) => {
+            const time = new Date(cp.timestamp).toISOString();
+            const hook = cp.hookName;
+            const display = cp.state?.scenesDisplay || 'unknown';
+            lines.push(`  ${i + 1}. [${time}] ${hook}: scenes.display = "${display}"`);
+          });
+        } else {
+          lines.push('✓ No sidebar state changes detected');
+        }
+      }
+    } catch (err) {
+      lines.push(`⚠️  CSS checkpoints unavailable: ${err.message}`);
+    }
+    lines.push('');
+
+    // SECTION 7: All Reports by Layer
+    lines.push('┌' + '─'.repeat(78) + '┐');
+    lines.push('│ SECTION 7: DETAILED FINDINGS BY LAYER                                    │');
     lines.push('└' + '─'.repeat(78) + '┘');
     try {
       const allReports = SentinelEngine.getReports() || [];

@@ -92,6 +92,9 @@ export async function initializeHardeningSystem() {
     // Defensive: Remove any app classes that may have leaked into sidebar during module load
     _restoreSidebarDefaults();
 
+    // Ensure sidebar tab visibility is guaranteed during ready phase
+    _ensureSidebarTabsVisible();
+
     log.info('SWSE | v13 hardening systems initialized');
     log.info('SWSE | Phase 6 (First-run, Feature Flags, Tooltip Discovery) ready');
     return true;
@@ -99,6 +102,56 @@ export async function initializeHardeningSystem() {
     log.error('Failed to initialize hardening systems:', err.message);
     return false;
   }
+}
+
+/**
+ * Ensure sidebar tabs are visible and active tab is initialized
+ * Called from ready hook to fix sidebar display issues
+ * @private
+ */
+function _ensureSidebarTabsVisible() {
+  // Register to run AFTER ready hook completes and modules are loaded
+  Hooks.on('ready', () => {
+    // Defer execution to ensure Foundry initialization is complete
+    setTimeout(() => {
+      try {
+        const scenes = document.querySelector('#scenes');
+        const combat = document.querySelector('#combat');
+
+        if (!scenes || !combat) {
+          log.warn('SWSE | Sidebar tabs not found in DOM');
+          return;
+        }
+
+        // Force display of sidebar tabs in case Foundry failed to initialize them
+        scenes.style.display = '';
+        combat.style.display = '';
+
+        log.info('SWSE | Forced sidebar tabs display to visible');
+
+        // If no active tab is set, default to scenes
+        if (!ui.sidebar || !ui.sidebar.activeTab) {
+          log.warn('SWSE | Sidebar activeTab was null; attempting to activate scenes tab');
+          try {
+            // Try to activate the scenes tab
+            const scenesTab = document.querySelector('#scenes');
+            if (scenesTab) {
+              scenesTab.classList.add('active');
+              if (ui.sidebar && ui.sidebar.tabs && ui.sidebar.tabs.characters) {
+                ui.sidebar.tabs.characters.activate();
+              }
+            }
+          } catch (activateErr) {
+            log.warn('SWSE | Failed to activate sidebar tab:', activateErr.message);
+          }
+        }
+
+        log.info('SWSE | Sidebar tab visibility restoration complete');
+      } catch (err) {
+        log.warn('SWSE | Sidebar tab visibility restoration failed:', err.message);
+      }
+    }, 500); // Wait 500ms after ready for full initialization
+  });
 }
 
 /**
@@ -238,5 +291,29 @@ export function registerHardeningHooks() {
       window.game.swse = window.game.swse || {};
       window.game.swse.showStatus = showHardeningStatus;
     }
+  });
+
+  // GUARANTEED SIDEBAR FIX: Run after all other ready hooks complete
+  Hooks.once('ready', () => {
+    setTimeout(() => {
+      try {
+        const scenes = document.querySelector('#scenes');
+        const combat = document.querySelector('#combat');
+
+        if (scenes && combat) {
+          // Force visible
+          scenes.style.display = '';
+          combat.style.display = '';
+
+          // Ensure at least one is active
+          if (!scenes.classList.contains('active') && !combat.classList.contains('active')) {
+            scenes.classList.add('active');
+            log.info('SWSE | Forced #scenes tab to active state');
+          }
+        }
+      } catch (err) {
+        log.warn('SWSE | Guaranteed sidebar fix failed:', err.message);
+      }
+    }, 1000); // Run 1 second after ready
   });
 }

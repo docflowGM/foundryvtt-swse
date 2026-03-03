@@ -1,0 +1,545 @@
+/* ============================================================
+   SWSE DATAPAD CORE THEME (V2 SAFE)
+   Fully Namespaced — No Global Overrides
+   Cyberpunk/Sci-Fi Theme with Console Typography
+   ============================================================ */
+
+/* =========================
+   ROOT DATAPAD CONTAINER
+   ========================= */
+
+.swse-sheet {
+  --swse-bg-primary: #0b1e2d;
+  --swse-bg-secondary: #0f2a3d;
+  --swse-bg-panel: #112f45;
+
+  --swse-border-cyan: #00eaff;
+  --swse-text-main: #d8faff;
+  --swse-text-dim: #7fbec9;
+
+  --swse-accent-orange: #ff9f1c;
+  --swse-accent-yellow: #ffe600;
+  --swse-accent-green: #00ff88;
+  --swse-accent-red: #ff3b3b;
+
+  --swse-glow-cyan: 0 0 6px #00eaff88;
+  --swse-glow-soft: 0 0 4px #00eaff44;
+
+  background: var(--swse-bg-primary);
+  color: var(--swse-text-main);
+  font-family: "Courier New", Consolas, monospace;
+
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+
+  border: 2px solid var(--swse-border-cyan);
+}
+
+/* =========================
+   DATA GRID BACKGROUND (Animated)
+   ========================= */
+
+@keyframes swse-grid-move {
+  from { background-position: 0 0; }
+  to   { background-position: 40px 40px; }
+}
+
+.swse-sheet {
+  background-image:
+    linear-gradient(rgba(0, 234, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 234, 255, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: swse-grid-move 60s linear infinite;
+}
+
+/* =========================
+   SCANLINE OVERLAY (CRT Effect)
+   ========================= */
+
+.swse-sheet::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 234, 255, 0.04) 0px,
+    rgba(0, 234, 255, 0.04) 1px,
+    transparent 2px,
+    transparent 4px
+  );
+  mix-blend-mode: screen;
+  opacity: 0.25;
+  z-index: 1;
+}
+
+/* =========================
+   DATAPAD CORNER FRAME (Sci-Fi Edge)
+   ========================= */
+
+.swse-sheet::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: 2px solid transparent;
+  border-image: linear-gradient(
+    45deg,
+    var(--swse-border-cyan),
+    transparent 40%,
+    transparent 60%,
+    var(--swse-border-cyan)
+  ) 1;
+  z-index: 0;
+}
+
+/* =========================
+   MAIN CONTENT WRAPPER
+   ========================= */
+
+.swse-sheet > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* =========================
+   HEADER
+   ========================= */
+
+.swse-sheet .sheet-header {
+  background: var(--swse-bg-secondary);
+  border-bottom: 2px solid var(--swse-border-cyan);
+  box-shadow: var(--swse-glow-soft);
+  padding: 0.75rem;
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.swse-sheet .sheet-header h1 {
+  flex: 1;
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+/* =========================
+   MAIN CONTENT AREA
+   ========================= */
+
+.swse-sheet .sheet-body {
+  flex: 1;
+  background: var(--swse-bg-panel);
+  padding: 0.75rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* =========================
+   PANELS / SECTIONS
+   ========================= */
+
+.swse-sheet .datapad-panel {
+  background: var(--swse-bg-secondary);
+  border: 1px solid var(--swse-border-cyan);
+  box-shadow: var(--swse-glow-soft);
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Holographic Pulse Animation */
+@keyframes swse-pulse-glow {
+  0%   { box-shadow: 0 0 4px #00eaff44; }
+  50%  { box-shadow: 0 0 12px #00eaff88; }
+  100% { box-shadow: 0 0 4px #00eaff44; }
+}
+
+.swse-sheet .datapad-panel {
+  animation: swse-pulse-glow 4s ease-in-out infinite;
+}
+
+/* =========================
+   HEADINGS
+   ========================= */
+
+.swse-sheet h1,
+.swse-sheet h2,
+.swse-sheet h3,
+.swse-sheet h4,
+.swse-sheet h5,
+.swse-sheet h6 {
+  color: var(--swse-border-cyan);
+  text-shadow: 0 0 6px #00eaff66;
+  letter-spacing: 1px;
+  margin: 0.5rem 0;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+/* =========================
+   BUTTONS
+   ========================= */
+
+.swse-sheet button,
+.swse-sheet .btn {
+  background: transparent;
+  border: 1px solid var(--swse-border-cyan);
+  color: var(--swse-text-main);
+  padding: 0.35rem 0.75rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.swse-sheet button:hover,
+.swse-sheet .btn:hover {
+  background: #00eaff22;
+  box-shadow: var(--swse-glow-cyan);
+  transform: translateY(-1px);
+}
+
+.swse-sheet button:active,
+.swse-sheet .btn:active {
+  transform: translateY(0);
+}
+
+/* =========================
+   INPUTS
+   ========================= */
+
+.swse-sheet input,
+.swse-sheet select,
+.swse-sheet textarea {
+  background: #08151f;
+  border: 1px solid var(--swse-border-cyan);
+  color: var(--swse-text-main);
+  font-family: inherit;
+  padding: 0.35rem;
+  font-size: 0.9rem;
+}
+
+.swse-sheet input::placeholder,
+.swse-sheet textarea::placeholder {
+  color: var(--swse-text-dim);
+  opacity: 0.6;
+}
+
+.swse-sheet input:focus,
+.swse-sheet textarea:focus,
+.swse-sheet select:focus {
+  outline: none;
+  box-shadow: var(--swse-glow-cyan);
+  background: #0f1f2f;
+}
+
+/* =========================
+   LABELS
+   ========================= */
+
+.swse-sheet label {
+  color: var(--swse-text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.85rem;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+/* =========================
+   TABS
+   ========================= */
+
+.swse-sheet .tabs,
+.swse-sheet .sheet-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--swse-border-cyan);
+  margin-bottom: 0.75rem;
+  gap: 0;
+  background: transparent;
+}
+
+.swse-sheet .tabs a,
+.swse-sheet .sheet-tabs a {
+  border: 1px solid var(--swse-border-cyan);
+  border-bottom: none;
+  padding: 0.35rem 0.75rem;
+  margin-right: -1px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+  color: var(--swse-text-dim);
+  background: transparent;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.swse-sheet .tabs a.active,
+.swse-sheet .sheet-tabs a.active {
+  background: #00eaff22;
+  color: var(--swse-border-cyan);
+  box-shadow: inset 0 0 8px #00eaff44;
+  border-color: var(--swse-border-cyan);
+}
+
+.swse-sheet .tabs a:hover,
+.swse-sheet .sheet-tabs a:hover {
+  background: #00eaff11;
+  color: var(--swse-border-cyan);
+}
+
+/* =========================
+   TAB CONTENT
+   ========================= */
+
+/* Handle both .tab-content (standard) and .tab (legacy template) */
+.swse-sheet .tab-content,
+.swse-sheet section.tab,
+.swse-sheet div.tab {
+  display: none;
+}
+
+.swse-sheet .tab-content.active,
+.swse-sheet section.tab.active,
+.swse-sheet div.tab.active {
+  display: block;
+}
+
+/* =========================
+   ACCENT TEXT COLORS
+   ========================= */
+
+.swse-sheet .accent-orange { color: var(--swse-accent-orange); }
+.swse-sheet .accent-yellow { color: var(--swse-accent-yellow); }
+.swse-sheet .accent-green  { color: var(--swse-accent-green); }
+.swse-sheet .accent-red    { color: var(--swse-accent-red); }
+
+.swse-sheet .text-primary   { color: var(--swse-text-main); }
+.swse-sheet .text-secondary { color: var(--swse-text-dim); }
+.swse-sheet .text-cyan      { color: var(--swse-border-cyan); }
+
+/* =========================
+   SCROLLBAR (Scoped)
+   ========================= */
+
+.swse-sheet ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.swse-sheet ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.swse-sheet ::-webkit-scrollbar-thumb {
+  background: var(--swse-border-cyan);
+  box-shadow: var(--swse-glow-soft);
+  border-radius: 2px;
+}
+
+.swse-sheet ::-webkit-scrollbar-thumb:hover {
+  background: var(--swse-accent-orange);
+  box-shadow: 0 0 8px #ff9f1c88;
+}
+
+/* =========================
+   DATA READOUT STYLE
+   ========================= */
+
+.swse-sheet .readout {
+  background: #051019;
+  border: 1px solid var(--swse-border-cyan);
+  padding: 0.5rem;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: bold;
+  box-shadow: var(--swse-glow-soft);
+}
+
+/* =========================
+   TABLES
+   ========================= */
+
+.swse-sheet table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.75rem 0;
+}
+
+.swse-sheet table th {
+  background: var(--swse-bg-secondary);
+  border: 1px solid var(--swse-border-cyan);
+  padding: 0.5rem;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: bold;
+  color: var(--swse-border-cyan);
+}
+
+.swse-sheet table td {
+  border: 1px solid #00eaff44;
+  padding: 0.5rem;
+}
+
+.swse-sheet table tr:hover td {
+  background: #00eaff11;
+}
+
+/* =========================
+   LISTS
+   ========================= */
+
+.swse-sheet ul,
+.swse-sheet ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.swse-sheet li {
+  margin: 0.25rem 0;
+  color: var(--swse-text-main);
+}
+
+/* =========================
+   ALERTS / WARNINGS
+   ========================= */
+
+@keyframes swse-flicker {
+  0% { opacity: 1; }
+  48% { opacity: 1; }
+  50% { opacity: 0.4; }
+  52% { opacity: 1; }
+  100% { opacity: 1; }
+}
+
+.swse-sheet .alert,
+.swse-sheet .alert-warning {
+  color: var(--swse-accent-red);
+  animation: swse-flicker 3s infinite;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.swse-sheet .alert-success {
+  color: var(--swse-accent-green);
+  font-weight: bold;
+}
+
+.swse-sheet .alert-info {
+  color: var(--swse-accent-yellow);
+  font-weight: bold;
+}
+
+/* =========================
+   FLEX UTILITY CLASSES
+   ========================= */
+
+.swse-sheet .flex-row {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+}
+
+.swse-sheet .flex-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.swse-sheet .flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swse-sheet .flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* =========================
+   GRID UTILITY CLASSES
+   ========================= */
+
+.swse-sheet .grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.swse-sheet .grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.swse-sheet .grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
+/* =========================
+   SPACING UTILITIES
+   ========================= */
+
+.swse-sheet .mt-1 { margin-top: 0.25rem; }
+.swse-sheet .mt-2 { margin-top: 0.5rem; }
+.swse-sheet .mt-3 { margin-top: 0.75rem; }
+.swse-sheet .mb-1 { margin-bottom: 0.25rem; }
+.swse-sheet .mb-2 { margin-bottom: 0.5rem; }
+.swse-sheet .mb-3 { margin-bottom: 0.75rem; }
+.swse-sheet .p-1 { padding: 0.25rem; }
+.swse-sheet .p-2 { padding: 0.5rem; }
+.swse-sheet .p-3 { padding: 0.75rem; }
+
+/* =========================
+   FOOTER
+   ========================= */
+
+.swse-sheet .sheet-footer {
+  background: var(--swse-bg-secondary);
+  border-top: 2px solid var(--swse-border-cyan);
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+/* =========================
+   LOADING / DISABLED STATES
+   ========================= */
+
+.swse-sheet [disabled],
+.swse-sheet .disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.swse-sheet .loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* =========================
+   FOCUS VISIBLE (Accessibility)
+   ========================= */
+
+.swse-sheet button:focus-visible,
+.swse-sheet input:focus-visible,
+.swse-sheet select:focus-visible,
+.swse-sheet textarea:focus-visible {
+  outline: 2px solid var(--swse-border-cyan);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   END SWSE CORE THEME
+   ============================================================ */
