@@ -1,3 +1,4 @@
+import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 
 export class UIManager {
 
@@ -59,27 +60,33 @@ export class UIManager {
   }
 }
 
-class ThemePickerDialog extends foundry.applications.api.ApplicationV2 {
+class ThemePickerDialog extends BaseSWSEAppV2 {
 
-  static DEFAULT_OPTIONS = {
-    id: "swse-theme-picker",
-    window: { title: "Choose Your Theme" }
-  };
-
-  async _renderHTML(context, options) {
-    const themes = ["holo","high-contrast","starship","sand-people","jedi","high-republic"];
-    return `
-      <div class="swse-theme-picker">
-        <h2>Select Your Theme</h2>
-        <div class="theme-options">
-          ${themes.map(t => `<button data-theme="${t}">${t}</button>`).join("")}
-        </div>
-      </div>
-    `;
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      id: "swse-theme-picker",
+      title: "Choose Your Theme",
+      template: "systems/foundryvtt-swse/templates/apps/theme-picker-dialog.hbs",
+      position: {
+        width: 400,
+        height: "auto"
+      },
+      window: {
+        resizable: false
+      }
+    });
   }
 
-  activateListeners(html) {
-    html.querySelectorAll("button[data-theme]").forEach(btn => {
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
+    return foundry.utils.mergeObject(context, {
+      themes: ["holo", "high-contrast", "starship", "sand-people", "jedi", "high-republic"]
+    });
+  }
+
+  wireEvents() {
+    const root = this.element;
+    root.querySelectorAll("button[data-theme]").forEach(btn => {
       btn.addEventListener("click", async () => {
         const theme = btn.dataset.theme;
         await UIManager.setTheme(theme);
