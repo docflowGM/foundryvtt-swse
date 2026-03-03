@@ -1,5 +1,5 @@
 /**
- * PHASE 5C-5: Repair Panel UI
+ * PHASE 5C-5: Repair Panel UI — ApplicationV2 Migration
  *
  * Application for viewing and applying repairs.
  *
@@ -15,12 +15,13 @@
  *   - Shows governance context
  */
 
+import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { ActorRepairEngine } from "/systems/foundryvtt-swse/scripts/engine/repair/actor-repair-engine.js";
 import { IntegrityDashboard } from "/systems/foundryvtt-swse/scripts/governance/ui/integrity-dashboard.js";
 import { GovernanceSystem } from "/systems/foundryvtt-swse/scripts/governance/governance-system.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 
-export class RepairPanel extends Application {
+export class RepairPanel extends BaseSWSEAppV2 {
   constructor(actor, options = {}) {
     super(options);
 
@@ -37,21 +38,27 @@ export class RepairPanel extends Application {
    * Default application options
    */
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       id: 'repair-panel',
+      title: 'Character Integrity & Repair',
       template: 'modules/foundryvtt-swse/templates/repair-panel.html',
-      width: 600,
-      height: 800,
-      resizable: true,
-      minimizable: true,
-      title: 'Character Integrity & Repair'
+      position: {
+        width: 600,
+        height: 800
+      },
+      window: {
+        resizable: true,
+        draggable: true
+      },
+      classes: []
     });
   }
 
   /**
    * Prepare data for rendering
    */
-  async getData() {
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
     // Get integrity analysis
     this.dashboard = IntegrityDashboard.getState(this.actor);
     this.analysis = ActorRepairEngine.analyze(this.actor);
@@ -59,7 +66,7 @@ export class RepairPanel extends Application {
     // Get governance info
     const governance = GovernanceSystem.initializeGovernance(this.actor);
 
-    return {
+    return foundry.utils.mergeObject(context, {
       actor: this.actor,
       dashboard: this.dashboard,
       analysis: this.analysis,
@@ -73,35 +80,46 @@ export class RepairPanel extends Application {
       isCompliant: this.dashboard.compliance.isCompliant,
       severityColor: this._getSeverityColor(this.dashboard.severity.overall),
       recommendations: this.dashboard.recommendations
-    };
+    });
   }
 
   /**
-   * Activate event listeners
+   * Wire event listeners (ApplicationV2 contract)
    */
-  activateListeners(html) {
-    super.activateListeners(html);
+  wireEvents() {
+    const root = this.element;
 
     // Apply individual proposals
-    html.on('click', '[data-action="apply-proposal"]', async (e) => {
-      const proposalId = e.currentTarget.dataset.proposalId;
-      await this._applyProposal(proposalId);
+    root.querySelectorAll('[data-action="apply-proposal"]').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const proposalId = e.currentTarget.dataset.proposalId;
+        await this._applyProposal(proposalId);
+      });
     });
 
     // Apply all critical proposals
-    html.on('click', '[data-action="apply-all-critical"]', async (e) => {
-      await this._applyAllCritical();
-    });
+    const applyAllBtn = root.querySelector('[data-action="apply-all-critical"]');
+    if (applyAllBtn) {
+      applyAllBtn.addEventListener('click', async (e) => {
+        await this._applyAllCritical();
+      });
+    }
 
     // Refresh analysis
-    html.on('click', '[data-action="refresh"]', async (e) => {
-      this.render(true);
-    });
+    const refreshBtn = root.querySelector('[data-action="refresh"]');
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', async (e) => {
+        this.render(true);
+      });
+    }
 
     // Close panel
-    html.on('click', '[data-action="close"]', (e) => {
-      this.close();
-    });
+    const closeBtn = root.querySelector('[data-action="close"]');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', (e) => {
+        this.close();
+      });
+    }
   }
 
   /**

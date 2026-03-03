@@ -1,5 +1,5 @@
 /**
- * AdoptOrAddDialog
+ * AdoptOrAddDialog — ApplicationV2 Migration
  *
  * PHASE 3: Modal dialog for GM to choose Add or Adopt behavior.
  *
@@ -18,29 +18,26 @@
  * - Clear UX
  */
 
-const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 
-export class AdoptOrAddDialog extends HandlebarsApplicationMixin(ApplicationV2) {
-  static DEFAULT_OPTIONS = {
-    id: "swse-adopt-or-add",
-    tag: "dialog",
-    window: {
+export class AdoptOrAddDialog extends BaseSWSEAppV2 {
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      id: "swse-adopt-or-add",
       title: "Actor Drop",
-      icon: "fas fa-object-group",
-      minimizable: false,
-      resizable: false
-    },
-    position: {
-      width: 400,
-      height: "auto"
-    }
-  };
-
-  static PARTS = {
-    content: {
-      template: "systems/foundryvtt-swse/templates/apps/adopt-or-add-dialog.hbs"
-    }
-  };
+      template: "systems/foundryvtt-swse/templates/apps/adopt-or-add-dialog.hbs",
+      position: {
+        width: 400,
+        height: "auto"
+      },
+      window: {
+        icon: "fas fa-object-group",
+        minimizable: false,
+        resizable: false,
+        frame: true
+      }
+    });
+  }
 
   constructor(actor, callback) {
     super();
@@ -60,29 +57,38 @@ export class AdoptOrAddDialog extends HandlebarsApplicationMixin(ApplicationV2) 
   }
 
   /**
-   * Register event listeners
+   * Wire event listeners (ApplicationV2 contract)
    */
-  activateListeners(html) {
-    super.activateListeners(html);
+  wireEvents() {
+    const root = this.element;
 
     // Add button
-    html.find('[data-action="add"]').on("click", (ev) => {
-      ev.preventDefault();
-      this._callback("add");
-      this.close();
-    });
+    const addBtn = root.querySelector('[data-action="add"]');
+    if (addBtn) {
+      addBtn.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        this._callback("add");
+        this.close();
+      });
+    }
 
     // Adopt button
-    html.find('[data-action="adopt"]').on("click", (ev) => {
-      ev.preventDefault();
-      this._callback("adopt");
-      this.close();
-    });
+    const adoptBtn = root.querySelector('[data-action="adopt"]');
+    if (adoptBtn) {
+      adoptBtn.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        this._callback("adopt");
+        this.close();
+      });
+    }
 
     // Close on cancel
-    html.find('[data-action="cancel"]').on("click", (ev) => {
-      ev.preventDefault();
-      this.close();
-    });
+    const cancelBtn = root.querySelector('[data-action="cancel"]');
+    if (cancelBtn) {
+      cancelBtn.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        this.close();
+      });
+    }
   }
 }

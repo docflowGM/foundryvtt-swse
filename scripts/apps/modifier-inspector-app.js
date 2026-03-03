@@ -1,11 +1,12 @@
 /**
- * ModifierInspectorApp — Phase I
+ * ModifierInspectorApp — ApplicationV2 Migration
  * System-wide modifier transparency and debugging
  */
+import BaseSWSEAppV2 from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/engine/effects/modifiers/ModifierEngine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
-export class ModifierInspectorApp extends Application {
+export class ModifierInspectorApp extends BaseSWSEAppV2 {
   constructor(actor, options = {}) {
     super(options);
     this.actor = actor;
@@ -18,14 +19,19 @@ export class ModifierInspectorApp extends Application {
       id: 'modifier-inspector',
       title: 'Modifier Inspector',
       template: 'modules/foundryvtt-swse/templates/apps/modifier-inspector.hbs',
-      width: 600,
-      height: 500,
-      resizable: true,
+      position: {
+        width: 600,
+        height: 500
+      },
+      window: {
+        resizable: true
+      },
       classes: ['modifier-inspector']
     });
   }
 
-  async getData() {
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
     const allModifiers = await ModifierEngine.getAllModifiers(this.actor);
     const aggregated = await ModifierEngine.aggregateAll(this.actor);
 
@@ -52,7 +58,7 @@ export class ModifierInspectorApp extends Application {
       targetSummary[target] = { total, modCount: allModifiers.filter(m => m.target === target).length };
     }
 
-    return {
+    return foundry.utils.mergeObject(context, {
       actor: this.actor,
       allModifiers: filtered,
       aggregated,
@@ -62,32 +68,43 @@ export class ModifierInspectorApp extends Application {
       sortBy: this.sortBy,
       totalModifiers: allModifiers.length,
       totalTargets: Object.keys(targetSummary).length
-    };
+    });
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  wireEvents() {
+    const root = this.element;
 
-    html.find('select[name="filter"]').on('change', (e) => {
-      this.filterSource = e.currentTarget.value || null;
-      this.render();
+    const filterSelect = root.querySelector('select[name="filter"]');
+    if (filterSelect) {
+      filterSelect.addEventListener('change', (e) => {
+        this.filterSource = e.currentTarget.value || null;
+        this.render();
+      });
+    }
+
+    const sortSelect = root.querySelector('select[name="sort"]');
+    if (sortSelect) {
+      sortSelect.addEventListener('change', (e) => {
+        this.sortBy = e.currentTarget.value;
+        this.render();
+      });
+    }
+
+    root.querySelectorAll('[data-action="toggle-modifier"]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const modId = e.currentTarget.dataset.modId;
+        this._toggleModifier(modId);
+      });
     });
 
-    html.find('select[name="sort"]').on('change', (e) => {
-      this.sortBy = e.currentTarget.value;
-      this.render();
-    });
-
-    html.find('[data-action="toggle-modifier"]').on('click', (e) => {
-      const modId = e.currentTarget.dataset.modId;
-      this._toggleModifier(modId);
-    });
-
-    html.find('[data-action="copy-json"]').on('click', (e) => {
-      const json = JSON.stringify(this.actor.system.derived?.modifiers, null, 2);
-      navigator.clipboard.writeText(json);
-      ui.notifications.info('Modifier data copied to clipboard');
-    });
+    const copyBtn = root.querySelector('[data-action="copy-json"]');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', (e) => {
+        const json = JSON.stringify(this.actor.system.derived?.modifiers, null, 2);
+        navigator.clipboard.writeText(json);
+        ui.notifications.info('Modifier data copied to clipboard');
+      });
+    }
   }
 
   async _toggleModifier(modId) {
