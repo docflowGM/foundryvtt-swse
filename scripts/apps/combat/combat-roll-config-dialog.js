@@ -29,7 +29,8 @@ export class CombatRollConfigDialog extends SWSEFormApplicationV2 {
     };
   }
 
-  async getData() {
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
     let preview;
 
     if (this.actionData?.domain === "initiative") {
@@ -45,11 +46,11 @@ export class CombatRollConfigDialog extends SWSEFormApplicationV2 {
       );
     }
 
-    return {
+    return foundry.utils.mergeObject(context, {
       action: this.actionData,
       options: this.optionsData,
       preview
-    };
+    });
   }
 
   _onRender(context, options) {
