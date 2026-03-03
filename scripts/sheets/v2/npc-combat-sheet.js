@@ -32,7 +32,7 @@ export class SWSEV2CombatNpcSheet extends
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["swse", "swse-app", "swse-sheet", "swse-npc-sheet", "swse-npc-combat-sheet", "v2"],
+      classes: ["swse", "sheet", "actor", "npc", "swse-sheet", "swse-npc-sheet", "swse-npc-combat-sheet", "v2"],
       width: 800,
       height: 700,
       resizable: true,
@@ -41,6 +41,14 @@ export class SWSEV2CombatNpcSheet extends
         submitOnChange: false
       }
     });
+  }
+
+  /**
+   * Convenience getter for accessing the actor document
+   * Used throughout the sheet as this.actor instead of this.document
+   */
+  get actor() {
+    return this.document;
   }
 
   constructor(document, options = {}) {

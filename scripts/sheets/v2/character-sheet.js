@@ -22,7 +22,7 @@ export class SWSEV2CharacterSheet extends
   static get defaultOptions() {
     return {
       ...super.defaultOptions,
-      classes: ["swse", "swse-character-sheet"],
+      classes: ["swse", "sheet", "actor", "character", "swse-character-sheet"],
       width: 900,
       height: 950,
       resizable: true

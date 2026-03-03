@@ -43,12 +43,6 @@
     "styles/core-overrides.css",
     "styles/swse-system.css",
     "styles/layout/sheet-layout.css",
-    "styles/themes/swse-theme-holo.css",
-    "styles/themes/swse-theme-high-contrast.css",
-    "styles/themes/swse-theme-starship.css",
-    "styles/themes/swse-theme-sand-people.css",
-    "styles/themes/swse-theme-jedi.css",
-    "styles/themes/swse-theme-high-republic.css",
     "styles/dialogs/holo-dialogs.css",
     "styles/sheets/character-sheet.css",
     "styles/sheets/droid-sheet.css",
@@ -97,12 +91,12 @@
     },
     {
       "lang": "es",
-      "name": "Espa\u00f1ol",
+      "name": "Español",
       "path": "lang/es.json"
     },
     {
       "lang": "fr",
-      "name": "Fran\u00e7ais",
+      "name": "Français",
       "path": "lang/fr.json"
     },
     {
@@ -112,7 +106,7 @@
     },
     {
       "lang": "ru",
-      "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
+      "name": "Русский",
       "path": "lang/ru.json"
     }
   ],
@@ -552,7 +546,7 @@
       "type": "Number",
       "default": 50,
       "name": "Automatic Sale Value (%)",
-      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10\u2013100%)",
+      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10–100%)",
       "range": {
         "min": 10,
         "max": 100,

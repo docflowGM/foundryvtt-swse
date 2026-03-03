@@ -1371,6 +1371,13 @@ export class SWSERoll {
    */
   static async rollInitiative(actor, options = {}) {
     try {
+      // Guard: actor must be provided
+      if (!actor) {
+        swseLogger.error('rollInitiative: No actor provided');
+        ui.notifications.error('Initiative roll failed: No actor selected');
+        return null;
+      }
+
       const context = { actor };
 
       if (!callPreRollHook(ROLL_HOOKS.PRE_INITIATIVE, context)) {

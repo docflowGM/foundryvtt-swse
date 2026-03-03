@@ -38,7 +38,7 @@ export class SWSEV2DroidSheet extends
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["swse", "swse-app", "swse-sheet", "swse-droid-sheet", "v2"],
+      classes: ["swse", "sheet", "actor", "droid", "swse-sheet", "swse-droid-sheet", "v2"],
       width: 820,
       height: 920,
       resizable: true,
@@ -47,6 +47,14 @@ export class SWSEV2DroidSheet extends
         submitOnChange: false
       }
     });
+  }
+
+  /**
+   * Convenience getter for accessing the actor document
+   * Used throughout the sheet as this.actor instead of this.document
+   */
+  get actor() {
+    return this.document;
   }
 
   constructor(document, options = {}) {

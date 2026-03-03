@@ -35,12 +35,20 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ['swse', 'swse-sheet', 'swse-npc-sheet', 'v2'],
+      classes: ['swse', 'sheet', 'actor', 'npc', 'swse-sheet', 'swse-npc-sheet', 'v2'],
       width: 820,
       height: 920,
       tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'summary' }],
       scrollY: ['.sheet-body']
     });
+  }
+
+  /**
+   * Convenience getter for accessing the actor document
+   * Used throughout the sheet as this.actor instead of this.document
+   */
+  get actor() {
+    return this.document;
   }
 
   async _prepareContext(options) {
@@ -108,7 +116,10 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
     RenderAssertions.assertContextSerializable(context, "SWSEV2NpcSheet");
 
     this._talentAbilitiesCache = context.talentAbilities;
-    return foundry.utils.mergeObject(baseContext, context);
+    // CRITICAL: Return context directly, do NOT use mergeObject with Documents
+    // mergeObject tries to deeply clone all properties including Document references,
+    // which have read-only 'id' properties. Context is already complete and serializable.
+    return context;
   }
 
   async _onRender(context, options) {
