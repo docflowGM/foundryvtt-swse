@@ -14,12 +14,13 @@ import { PassiveAdapter } from "./passive/passive-adapter.js";
 import { ActiveAdapter } from "./active/active-adapter.js";
 import { AttackOptionAdapter } from "./attack-option/attack-option-adapter.js";
 import { UnlockAdapter } from "./unlock/unlock-adapter.js";
+import { ProgressionAdapter } from "./progression/progression-adapter.js";
 
 export class AbilityExecutionCoordinator {
 
   /**
    * Register all abilities on an actor at boot time.
-   * Handles PASSIVE, ACTIVE, ATTACK_OPTION, and UNLOCK execution models.
+   * Handles PASSIVE, ACTIVE, ATTACK_OPTION, UNLOCK, and PROGRESSION execution models.
    *
    * CRITICAL LIFECYCLE SAFETY:
    * This method is called repeatedly (on updateActor, createItem, deleteItem, sheet open, etc.).
@@ -57,6 +58,8 @@ export class AbilityExecutionCoordinator {
         AttackOptionAdapter.register(actor, ability);
       } else if (ability.system.executionModel === "UNLOCK") {
         UnlockAdapter.register(actor, ability);
+      } else if (ability.system.executionModel === "PROGRESSION") {
+        ProgressionAdapter.register(actor, ability);
       }
     }
   }
