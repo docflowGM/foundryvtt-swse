@@ -6,19 +6,18 @@
  * Current scope:
  * - PASSIVE execution model registration
  * - ACTIVE execution model registration
- *
- * Future expansion (NOT implemented yet):
- * - ATTACK_OPTION
+ * - ATTACK_OPTION execution model registration
  */
 
 import { PassiveAdapter } from "./passive/passive-adapter.js";
 import { ActiveAdapter } from "./active/active-adapter.js";
+import { AttackOptionAdapter } from "./attack-option/attack-option-adapter.js";
 
 export class AbilityExecutionCoordinator {
 
   /**
    * Register all abilities on an actor at boot time.
-   * Handles PASSIVE and ACTIVE execution models.
+   * Handles PASSIVE, ACTIVE, and ATTACK_OPTION execution models.
    *
    * @param {Object} actor - The actor document
    */
@@ -32,6 +31,8 @@ export class AbilityExecutionCoordinator {
         PassiveAdapter.register(actor, ability);
       } else if (ability.system.executionModel === "ACTIVE") {
         ActiveAdapter.register(actor, ability);
+      } else if (ability.system.executionModel === "ATTACK_OPTION") {
+        AttackOptionAdapter.register(actor, ability);
       }
     }
   }
