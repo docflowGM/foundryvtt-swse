@@ -5,6 +5,7 @@
 
 import RollCore from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 /**
  * Roll a saving throw via RollCore
@@ -50,11 +51,12 @@ export async function rollSave(actor, type, options = {}) {
   // === RENDER TO CHAT ===
   if (rollResult.roll) {
     const typeLabel = utils.string.capitalize(type);
-    await rollResult.roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor }),
+    await SWSEChat.postRoll({
+      roll: rollResult.roll,
+      actor,
       flavor: `<strong>${typeLabel} Save</strong><br/>Modifier: ${rollResult.modifierTotal}
                ${rollResult.forcePointBonus > 0 ? `<br/>+ ${rollResult.forcePointBonus} (Force)` : ''}`
-    }, { create: true });
+    });
   }
 
   return rollResult.roll;

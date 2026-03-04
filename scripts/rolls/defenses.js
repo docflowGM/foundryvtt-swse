@@ -6,6 +6,7 @@ import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/d
 
 import RollCore from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 /**
  * DEPRECATED: calculateDefense() - Use RollCore + ModifierEngine instead
@@ -66,11 +67,12 @@ export async function rollDefense(actor, defenseType, options = {}) {
 
   // === RENDER TO CHAT ===
   if (rollResult.roll) {
-    await rollResult.roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor }),
+    await SWSEChat.postRoll({
+      roll: rollResult.roll,
+      actor,
       flavor: `<strong>${label} Defense</strong><br/>Modifier: ${rollResult.modifierTotal}
                ${rollResult.forcePointBonus > 0 ? `<br/>+ ${rollResult.forcePointBonus} (Force)` : ''}`
-    }, { create: true });
+    });
   }
 
   return rollResult.roll;

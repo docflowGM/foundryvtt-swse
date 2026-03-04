@@ -1,8 +1,10 @@
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+
 /**
  * ==============================================
  * SWSE SKILLS - DATA MODEL & CALCULATIONS
- * Qassets/uick reference for implementation
+ * Quick reference for implementation
  * ==============================================
  */
 
@@ -354,10 +356,11 @@ class SWSEActor extends Actor {
     const modifier = this.getSkillModifier(skillKey, options);
     const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${modifier}`).evaluate({ async: true });
 
-    await roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor: this }),
+    await SWSEChat.postRoll({
+      roll,
+      actor: this,
       flavor: `${skillKey} Check (${modifier >= 0 ? '+' : ''}${modifier})`
-    } , { create: true });
+    });
 
     return roll;
   }

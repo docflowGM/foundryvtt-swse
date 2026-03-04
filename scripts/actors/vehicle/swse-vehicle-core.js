@@ -9,6 +9,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 export class SWSEVehicleCore {
 
@@ -255,11 +256,12 @@ export class SWSEVehicleCore {
 
       // Attack roll
       const attack = await game.swse.RollEngine.safeRoll(`1d20${bonusStr}`, rollData);
-      await attack.toMessage({
-        speaker: ChatMessage.getSpeaker({ actor: vehicle }),
+      await SWSEChat.postRoll({
+        roll: attack,
+        actor: vehicle,
         flavor: `<strong>${weaponItem.name}</strong> Attack Roll`,
         rollMode
-      } , { create: true });
+      });
 
       // Confirm → damage
       const hit = await SWSEDialogV2.confirm({
@@ -269,11 +271,12 @@ export class SWSEVehicleCore {
 
       if (hit) {
         const dmg = await game.swse.RollEngine.safeRoll(damage, rollData);
-        await dmg.toMessage({
-          speaker: ChatMessage.getSpeaker({ actor: vehicle }),
+        await SWSEChat.postRoll({
+          roll: dmg,
+          actor: vehicle,
           flavor: `<strong>${weaponItem.name}</strong> Damage`,
           rollMode
-        } , { create: true });
+        });
       }
 
       return true;

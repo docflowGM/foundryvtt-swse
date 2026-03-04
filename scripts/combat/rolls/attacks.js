@@ -1,4 +1,6 @@
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
 // - Uses new Active Effects engine
@@ -83,10 +85,11 @@ export async function rollAttack(actor, weapon) {
   const rollFormula = `1d20 + ${atkBonus}`;
   const roll = await globalThis.SWSE.RollEngine.safeRoll(rollFormula).evaluate({ async: true });
 
-  await roll.toMessage({
-    speaker: ChatMessage.getSpeaker({ actor }),
+  await SWSEChat.postRoll({
+    roll,
+    actor,
     flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? '+' : ''}${atkBonus})`
-  } , { create: true });
+  });
 
   return roll;
 }
@@ -130,10 +133,11 @@ export async function rollDamage(actor, weapon) {
 
   const roll = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({ async: true });
 
-  await roll.toMessage({
-    speaker: ChatMessage.getSpeaker({ actor }),
+  await SWSEChat.postRoll({
+    roll,
+    actor,
     flavor: `${weapon.name} Damage (${formula})`
-  } , { create: true });
+  });
 
   return roll;
 }
@@ -197,16 +201,18 @@ export async function rollAttackAndDamageWithNarration(actor, weapon) {
   const dmgTotal = damageRoll?.total;
 
   // Post attack roll card
-  await attackRoll.toMessage({
-    speaker: ChatMessage.getSpeaker({ actor }),
+  await SWSEChat.postRoll({
+    roll: attackRoll,
+    actor,
     flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? '+' : ''}${atkBonus})`
-  }, { create: true });
+  });
 
   // Post damage roll card
-  await damageRoll.toMessage({
-    speaker: ChatMessage.getSpeaker({ actor }),
+  await SWSEChat.postRoll({
+    roll: damageRoll,
+    actor,
     flavor: `${weapon.name} Damage`
-  }, { create: true });
+  });
 
   // Post supplemental narration (gated by setting)
   if (typeof atkTotal === "number" && typeof dmgTotal === "number") {

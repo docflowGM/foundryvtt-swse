@@ -5,6 +5,7 @@
 
 import RollCore from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 /**
  * Roll a force power use via RollCore
@@ -70,10 +71,11 @@ export async function rollForcePower(actor, itemId, options = {}) {
                     DC: ${powerDC} | Force Cost: ${powerCost}<br/>
                     <em>${success ? '✓ Success' : '✗ Failed'}</em>`;
 
-    await rollResult.roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor }),
+    await SWSEChat.postRoll({
+      roll: rollResult.roll,
+      actor,
       flavor: flavor
-    }, { create: true });
+    });
   }
 
   return rollResult.roll;

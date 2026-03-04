@@ -3,6 +3,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 function markActiveConditionStep(root, actor) {
   // AppV2: root is HTMLElement, not jQuery
@@ -301,7 +302,11 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
               subAbility.rollData.dcLabel ? `${subAbility.rollData.dcLabel}` : ''
             ].filter(Boolean);
 
-            await roll.toMessage({ speaker, flavor: flavorParts.join(' ') });
+            await SWSEChat.postRoll({
+              roll,
+              actor: this.actor,
+              flavor: flavorParts.join(' ')
+            });
             return;
           }
 
@@ -313,7 +318,10 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
             </div>
           `;
 
-          await ChatMessage.create({ speaker, content });
+          await SWSEChat.postHTML({
+            content,
+            actor: this.actor
+          });
         }
       });
 

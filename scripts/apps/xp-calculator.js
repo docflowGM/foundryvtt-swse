@@ -3,6 +3,7 @@
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { calculateEncounterXP, applyXP, isXPEnabled } from "/systems/foundryvtt-swse/engine/progression/xp-engine.js";
 import { getXPFromCL } from "/systems/foundryvtt-swse/engine/progression/xp-constants.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 /**
  * GM Encounter XP Calculator
@@ -174,7 +175,7 @@ export class SWSEXPCalculator extends BaseSWSEAppV2 {
 
         if (results.length > 0) {
           // Post results to chat
-          ChatMessage.create({
+          await SWSEChat.postHTML({
             content: `<div class="swse-xp-award">
               <h3>XP Awarded</h3>
               <p>${xpPerChar} XP per character</p>

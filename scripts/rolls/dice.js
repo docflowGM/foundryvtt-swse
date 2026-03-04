@@ -1,4 +1,6 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+
 // ============================================
 // FILE: rolls/dice.js
 // Generic dice rolling using SWSE utils
@@ -15,10 +17,11 @@ export async function rollDice(formula, data = {}, label = 'Roll') {
   try {
     const roll = await globalThis.SWSE.RollEngine.safeRoll(formula, data).evaluate({ async: true });
 
-    await roll.toMessage({
+    await SWSEChat.postRoll({
+      roll,
       speaker: ChatMessage.getSpeaker(),
       flavor: label
-    } , { create: true });
+    });
 
     return roll;
   } catch (err) {
@@ -40,10 +43,11 @@ export async function rollWithAdvantage(formula, label = 'Roll with Advantage') 
 
   const higherRoll = roll1.total >= roll2.total ? roll1 : roll2;
 
-  await higherRoll.toMessage({
+  await SWSEChat.postRoll({
+    roll: higherRoll,
     speaker: ChatMessage.getSpeaker(),
     flavor: `${label} (${roll1.total} vs ${roll2.total})`
-  } , { create: true });
+  });
 
   return higherRoll;
 }
@@ -60,10 +64,11 @@ export async function rollWithDisadvantage(formula, label = 'Roll with Disadvant
 
   const lowerRoll = roll1.total <= roll2.total ? roll1 : roll2;
 
-  await lowerRoll.toMessage({
+  await SWSEChat.postRoll({
+    roll: lowerRoll,
     speaker: ChatMessage.getSpeaker(),
     flavor: `${label} (${roll1.total} vs ${roll2.total})`
-  } , { create: true });
+  });
 
   return lowerRoll;
 }

@@ -1,6 +1,7 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 /**
@@ -228,10 +229,11 @@ export async function rollDamage(actor, weapon, context = {}) {
     if (mode !== 'progression' && npc?.useFlat === true && typeof flatFormula === 'string' && flatFormula.trim()) {
       const roll = await RollEngine.safeRoll(flatFormula);
       if (roll) {
-        await roll.toMessage({
-          speaker: ChatMessage.getSpeaker({ actor }),
+        await SWSEChat.postRoll({
+          roll,
+          actor,
           flavor: `${actor.name} — ${weapon.name} Damage`
-        }, { create: true });
+        });
       }
       return roll;
     }
@@ -289,10 +291,11 @@ export async function rollDamage(actor, weapon, context = {}) {
     ui.notifications.info(notification);
   }
 
-  await roll.toMessage({
-    speaker: ChatMessage.getSpeaker({ actor }),
+  await SWSEChat.postRoll({
+    roll,
+    actor,
     flavor
-  } , { create: true });
+  });
 
   return roll;
 }
@@ -349,10 +352,11 @@ export async function rollDamageGeneric(actor, formula = '1d6', label = 'Damage'
 
   const roll = await globalThis.SWSE.RollEngine.safeRoll(formula).evaluate({ async: true });
 
-  await roll.toMessage({
-    speaker: ChatMessage.getSpeaker({ actor }),
+  await SWSEChat.postRoll({
+    roll,
+    actor,
     flavor: `${label} (${formula})`
-  } , { create: true });
+  });
 
   return roll;
 }
