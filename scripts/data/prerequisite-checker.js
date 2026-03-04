@@ -1577,6 +1577,81 @@ export class PrerequisiteChecker {
 
         return result.missing || [];
     }
+
+    /**
+     * Check if actor owns a specific feat (by slug or UUID).
+     * Used by CapabilityRegistry.hasFeat()
+     *
+     * @param {Object} actor
+     * @param {string} slugOrUuid - Feat slug or UUID
+     * @returns {boolean}
+     */
+    static checkFeatOwnership(actor, slugOrUuid) {
+        if (!actor?.items) return false;
+
+        const feats = actor.items.filter(i => i.type === 'feat') || [];
+
+        return feats.some(f =>
+            f.id === slugOrUuid ||
+            f.system?.slug === slugOrUuid ||
+            f.name?.toLowerCase() === slugOrUuid?.toLowerCase()
+        );
+    }
+
+    /**
+     * Check if actor owns a specific talent (by slug or UUID).
+     * Used by CapabilityRegistry.hasTalent()
+     *
+     * @param {Object} actor
+     * @param {string} slugOrUuid - Talent slug or UUID
+     * @returns {boolean}
+     */
+    static checkTalentOwnership(actor, slugOrUuid) {
+        if (!actor?.items) return false;
+
+        const talents = actor.items.filter(i => i.type === 'talent') || [];
+
+        return talents.some(t =>
+            t.id === slugOrUuid ||
+            t.system?.slug === slugOrUuid ||
+            t.name?.toLowerCase() === slugOrUuid?.toLowerCase()
+        );
+    }
+
+    /**
+     * Check if actor has access to a Force domain.
+     * Used by CapabilityRegistry.hasForceDomain()
+     *
+     * @param {Object} actor
+     * @param {string} domain - Domain slug (e.g., 'universal', 'control', 'sense')
+     * @returns {boolean}
+     */
+    static checkForceDomain(actor, domain) {
+        if (!actor) return false;
+
+        // First check: is actor Force Sensitive?
+        if (!this.checkFeatOwnership(actor, 'force-sensitivity')) {
+            return false;
+        }
+
+        // Second check: does actor have explicit domain access?
+        // This could be from a feat, talent, houserule, etc.
+        // Check all feats/talents for domain access indicators
+        const hasDomainFeat = (actor.items || []).some(i =>
+            (i.type === 'feat' || i.type === 'talent') &&
+            i.name?.toLowerCase().includes(`${domain.toLowerCase()} domain`)
+        );
+
+        if (hasDomainFeat) return true;
+
+        // Third check: check actor system state for domain access array
+        const accessedDomains = actor.system?.forceDomains || [];
+        if (Array.isArray(accessedDomains)) {
+            return accessedDomains.includes(domain);
+        }
+
+        return false;
+    }
 }
 
 /**
