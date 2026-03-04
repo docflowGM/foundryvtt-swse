@@ -21,9 +21,29 @@ export class AbilityExecutionCoordinator {
    * Register all abilities on an actor at boot time.
    * Handles PASSIVE, ACTIVE, ATTACK_OPTION, and UNLOCK execution models.
    *
+   * CRITICAL LIFECYCLE SAFETY:
+   * This method is called repeatedly (on updateActor, createItem, deleteItem, sheet open, etc.).
+   * We MUST reset collections before rebuilding, not accumulate across cycles.
+   *
+   * If we don't reset:
+   * - Open sheet: +1 modifier
+   * - Close sheet: still +1
+   * - Open again: +2 (WRONG - should still be +1)
+   * - This cascades: every prepare cycle adds a layer
+   *
+   * Solution: Clear collections at start of each registration cycle.
+   * This ensures deterministic state - we rebuild from scratch every time.
+   *
    * @param {Object} actor - The actor document
    */
   static registerActorAbilities(actor) {
+    // ========================================
+    // CRITICAL: Reset all ability collections
+    // Ensures we rebuild from scratch, not accumulate
+    // ========================================
+    actor._passiveModifiers = {};
+    // (Other execution models will add their resets here in future phases)
+
     const abilities = actor.items.filter(i =>
       ["talent", "feat"].includes(i.type)
     );
