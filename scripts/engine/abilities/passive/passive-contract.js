@@ -24,20 +24,14 @@ export class PassiveContractValidator {
     if (ability.system?.executionModel !== "PASSIVE") return false;
     if (!subType) throw new Error(`PASSIVE ability ${ability.name} missing subType`);
 
-    switch (subType) {
-      case PASSIVE_SUBTYPES.MODIFIER:
-        return this.validateModifier(meta);
-      case PASSIVE_SUBTYPES.RULE:
-        return this.validateRule(meta);
-      case PASSIVE_SUBTYPES.DERIVED_OVERRIDE:
-        return this.validateDerived(meta);
-      case PASSIVE_SUBTYPES.AURA:
-        return this.validateAura(meta);
-      case PASSIVE_SUBTYPES.TRIGGERED:
-        return this.validateTriggered(meta);
-      default:
-        throw new Error(`Unknown PASSIVE subType: ${subType}`);
+    // PHASE 1: Enforce strict PASSIVE contract - MODIFIER only
+    if (subType !== PASSIVE_SUBTYPES.MODIFIER) {
+      throw new Error(
+        `PASSIVE Phase 1 only supports MODIFIER subtype. Got: ${subType} on ${ability.name}`
+      );
     }
+
+    return this.validateModifier(meta);
   }
 
   /**

@@ -74,6 +74,9 @@ export class ModifierEngine {
       // Source 8: Custom modifiers (Phase B - user-defined via UI)
       modifiers.push(...this._getCustomModifiers(actor));
 
+      // Source 8b: PASSIVE modifiers (Phase 1 - execution model infrastructure)
+      modifiers.push(...this._getPassiveModifiers(actor));
+
       // Source 9: Active Effects (Phase D - temporary/duration-based)
       modifiers.push(...this._getActiveEffectModifiers(actor));
 
@@ -1279,6 +1282,42 @@ export class ModifierEngine {
       return modifiers;
     } catch (err) {
       swseLogger.warn(`[ModifierEngine] Error collecting custom modifiers:`, err);
+      return modifiers;
+    }
+  }
+
+  /**
+   * Collect modifiers from PASSIVE execution model abilities (Phase 1)
+   *
+   * PASSIVE MODIFIER abilities register themselves in actor._passiveModifiers
+   * during PassiveAdapter.handleModifier() execution.
+   *
+   * @private
+   * @param {Actor} actor
+   * @returns {Modifier[]}
+   */
+  static _getPassiveModifiers(actor) {
+    const modifiers = [];
+
+    try {
+      // PHASE 4: Wire into actor preparation
+      // PASSIVE modifiers are stored on actor during registration
+      const passiveModifiers = actor?._passiveModifiers || {};
+
+      for (const abilityId in passiveModifiers) {
+        const mods = passiveModifiers[abilityId];
+        if (Array.isArray(mods)) {
+          modifiers.push(...mods);
+        }
+      }
+
+      if (modifiers.length > 0) {
+        swseLogger.debug(`[ModifierEngine] Collected ${modifiers.length} PASSIVE modifiers`);
+      }
+
+      return modifiers;
+    } catch (err) {
+      swseLogger.warn(`[ModifierEngine] Error collecting PASSIVE modifiers:`, err);
       return modifiers;
     }
   }

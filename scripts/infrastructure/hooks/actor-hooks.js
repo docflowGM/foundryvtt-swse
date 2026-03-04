@@ -1,4 +1,5 @@
 import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
+import { AbilityExecutionCoordinator } from "/systems/foundryvtt-swse/scripts/engine/abilities/ability-execution-coordinator.js";
 /**
  * Actor Lifecycle Hooks
  * All actor-related hook handlers consolidated here
@@ -27,6 +28,18 @@ import { qs, qsa, setVisible, isVisible, text } from "/systems/foundryvtt-swse/s
 export function registerActorHooks() {
     SWSELogger.log('Registering actor hooks');
 
+    // PHASE 4: Register PASSIVE abilities during actor preparation
+    // Called when actors are loaded or recomputed
+    Hooks.on('updateActor', (actor, changes, options, userId) => {
+        // PHASE 6: Only activate if executionModel === "PASSIVE"
+        // No auto-migration - abilities must explicitly set executionModel
+        try {
+            AbilityExecutionCoordinator.registerActorAbilities(actor);
+        } catch (err) {
+            SWSELogger.warn(`[PASSIVE] Error registering abilities for ${actor?.name}:`, err);
+        }
+    });
+
     // Pre-update actor validation
     HooksRegistry.register('preUpdateActor', handleActorPreUpdate, {
         id: 'actor-pre-update',
@@ -51,12 +64,42 @@ export function registerActorHooks() {
         category: 'actor'
     });
 
+    // PHASE 4: Re-register PASSIVE abilities when items are created
+    // Ensures new PASSIVE abilities are properly registered
+    Hooks.on('createItem', (item, options, userId) => {
+        const actor = item.parent;
+        if (actor && ["feat", "talent"].includes(item.type)) {
+            try {
+                AbilityExecutionCoordinator.registerActorAbilities(actor);
+            } catch (err) {
+                SWSELogger.warn(`[PASSIVE] Error re-registering abilities on item create:`, err);
+            }
+        }
+    });
+
     // Handle item deletion for special feats like Skill Focus
     HooksRegistry.register('deleteItem', handleItemDelete, {
         id: 'item-delete-handler',
         priority: 0,
         description: 'Handle special item deletion like Skill Focus feat',
         category: 'actor'
+    });
+
+    // PHASE 4: Re-register PASSIVE abilities when items are deleted
+    // Ensures PASSIVE modifiers from deleted abilities are removed
+    Hooks.on('deleteItem', (item, options, userId) => {
+        const actor = item.parent;
+        if (actor && ["feat", "talent"].includes(item.type)) {
+            try {
+                // Clear the deleted ability's modifiers
+                if (actor._passiveModifiers) {
+                    delete actor._passiveModifiers[item.id];
+                }
+                AbilityExecutionCoordinator.registerActorAbilities(actor);
+            } catch (err) {
+                SWSELogger.warn(`[PASSIVE] Error re-registering abilities on item delete:`, err);
+            }
+        }
     });
 
     // Handle INT increase skill selection
