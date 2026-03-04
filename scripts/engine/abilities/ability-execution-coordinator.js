@@ -7,17 +7,19 @@
  * - PASSIVE execution model registration
  * - ACTIVE execution model registration
  * - ATTACK_OPTION execution model registration
+ * - UNLOCK execution model registration
  */
 
 import { PassiveAdapter } from "./passive/passive-adapter.js";
 import { ActiveAdapter } from "./active/active-adapter.js";
 import { AttackOptionAdapter } from "./attack-option/attack-option-adapter.js";
+import { UnlockAdapter } from "./unlock/unlock-adapter.js";
 
 export class AbilityExecutionCoordinator {
 
   /**
    * Register all abilities on an actor at boot time.
-   * Handles PASSIVE, ACTIVE, and ATTACK_OPTION execution models.
+   * Handles PASSIVE, ACTIVE, ATTACK_OPTION, and UNLOCK execution models.
    *
    * @param {Object} actor - The actor document
    */
@@ -33,6 +35,8 @@ export class AbilityExecutionCoordinator {
         ActiveAdapter.register(actor, ability);
       } else if (ability.system.executionModel === "ATTACK_OPTION") {
         AttackOptionAdapter.register(actor, ability);
+      } else if (ability.system.executionModel === "UNLOCK") {
+        UnlockAdapter.register(actor, ability);
       }
     }
   }
