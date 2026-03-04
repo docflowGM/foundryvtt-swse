@@ -8,6 +8,8 @@
  */
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
+import { CAPABILITY_SLUGS } from "/systems/foundryvtt-swse/scripts/constants/capability-slugs.js";
 
 export class StarshipManeuverManager {
   /**
@@ -227,9 +229,11 @@ export class StarshipManeuverManager {
    * @returns {Number} Count of feats
    */
   static countStartshipTacticsFeats(actor) {
-    return actor.items.filter(item =>
+    // Count Starship Tactics feats via CapabilityRegistry
+    return (actor.items || []).filter(item =>
       item.type === 'feat' &&
-      (item.name === 'Starship Tactics' || item.name.includes('Starship Tactics'))
+      (item.system?.slug === CAPABILITY_SLUGS.STARSHIP_TACTICS ||
+       item.name === 'Starship Tactics')  // Fallback for items without slug
     ).length;
   }
 

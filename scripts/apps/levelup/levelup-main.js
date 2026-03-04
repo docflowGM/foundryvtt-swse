@@ -16,6 +16,7 @@ import { SWSEProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/p
 import { SWSELogger, swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { isEpicOverrideEnabled } from "/systems/foundryvtt-swse/scripts/settings/epic-override.js";
 import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { CAPABILITY_SLUGS } from "/systems/foundryvtt-swse/scripts/constants/capability-slugs.js";
 import { getMentorForClass, getMentorGreeting, getMentorGuidance, getLevel1Class, setLevel1Class } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
 import { MentorSurvey } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
@@ -948,9 +949,10 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     }
 
     // Check if this feat requires a dialog for selection
-    if (feat.name.includes('Force Training')) {
+    const featSlug = feat.system?.slug || feat.name?.toLowerCase().replace(/\s+/g, '-');
+    if (featSlug === CAPABILITY_SLUGS.FORCE_TRAINING || feat.name.includes('Force Training')) {
       await this._handleForceTrainingFeat(feat);
-    } else if (feat.name === 'Skill Training') {
+    } else if (featSlug === CAPABILITY_SLUGS.SKILL_TRAINING || feat.name === 'Skill Training') {
       // Only show dialog if feat is exactly "Skill Training" (not already specified)
       await this._handleSkillTrainingFeat(feat);
     } else if ((feat.name === 'Weapon Proficiency' || feat.name === 'Exotic Weapon Proficiency' || feat.name === 'Weapon Focus') ||

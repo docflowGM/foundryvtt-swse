@@ -4,6 +4,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { StarshipManeuverManager } from "/systems/foundryvtt-swse/scripts/utils/starship-maneuver-manager.js";
+import { CAPABILITY_SLUGS } from "/systems/foundryvtt-swse/scripts/constants/capability-slugs.js";
 
 /**
  * Handle starship maneuver selection
@@ -80,7 +81,8 @@ export async function _onRemoveStarshipManeuver(event) {
 export function _getStarshipManeuversNeeded() {
   // Only grant maneuvers if character has Starship Tactics feat
   const hasStartshipTactics = this.characterData.feats?.some(f =>
-    f.name === 'Starship Tactics' || f.name?.includes('Starship Tactics')
+    (f.system?.slug === CAPABILITY_SLUGS.STARSHIP_TACTICS ||
+     f.name === 'Starship Tactics')  // Fallback for items without slug
   );
 
   if (!hasStartshipTactics) {
