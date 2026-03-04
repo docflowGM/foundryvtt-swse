@@ -121,6 +121,7 @@ import { RulesEngine } from './scripts/rules/rules-engine.js';
 import { TalentEffectEngine } from './scripts/engine/talent/talent-effect-engine.js';
 import TalentActionLinker from './scripts/engine/talent/talent-action-linker.js';
 import { SWSELanguageModule } from './scripts/engine/progression/modules/language-module.js';
+import { AbilityExecutionCoordinator } from './scripts/engine/abilities/ability-execution-coordinator.js';
 
 // ---- hooks ----
 import { registerInitHooks, registerDestinyHooks } from './scripts/infrastructure/hooks/index.js';
@@ -304,7 +305,8 @@ Hooks.once('ready', async () => {
     TalentEffectEngine,
     TalentActionLinker,
     CombatSuggestionEngine,
-    requestCombatEvaluation
+    requestCombatEvaluation,
+    AbilityExecutionCoordinator
   };
 
   const debugAPI = {
