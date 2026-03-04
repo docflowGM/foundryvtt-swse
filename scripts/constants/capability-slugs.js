@@ -47,6 +47,12 @@ export const CAPABILITY_SLUGS = {
   VEHICULAR_COMBAT: 'vehicular-combat',
   STARSHIP_TACTICS: 'starship-tactics',
 
+  // ========== UTILITY FEATS ==========
+  LINGUIST: 'linguist',
+  FORCE_TRAINING: 'force-training',
+  SKILL_TRAINING: 'skill-training',
+  SKILL_FOCUS: 'skill-focus',
+
   // ========== TALENT PATTERNS ==========
   ARMORED_DEFENSE: 'armored-defense',
   IMPROVED_ARMORED_DEFENSE: 'improved-armored-defense',

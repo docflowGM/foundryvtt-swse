@@ -11,6 +11,7 @@ import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/documen
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
 
 // ============================================================================
 // JUMP SKILL (STR)
@@ -3162,7 +3163,7 @@ export class UseTheForceUses {
 
   static hasForceStensitivity(actor) {
     if (!actor) {return false;}
-    return actor.items?.some(item => item.name === 'Force Sensitivity') || false;
+    return CapabilityRegistry.isForceSensitive(actor);
   }
 }
 
