@@ -11,6 +11,8 @@
  */
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
+import { CAPABILITY_SLUGS } from "/systems/foundryvtt-swse/scripts/constants/capability-slugs.js";
 
 /**
  * Weapon groups for Double/Triple Attack feats
@@ -224,19 +226,13 @@ export function getTripleAttackGroups(actor) {
 export function getDualWeaponMasteryLevel(actor) {
   let level = 0;
 
-  for (const item of actor.items) {
-    if (item.type !== 'feat') {continue;}
-
-    const name = item.name?.toLowerCase() || '';
-
-    if (name.includes('dual weapon mastery iii') || name.includes('dual weapon mastery 3')) {
-      level = Math.max(level, 3);
-    } else if (name.includes('dual weapon mastery ii') || name.includes('dual weapon mastery 2')) {
-      level = Math.max(level, 2);
-    } else if (name.includes('dual weapon mastery i') || name.includes('dual weapon mastery 1') ||
-               name === 'dual weapon mastery') {
-      level = Math.max(level, 1);
-    }
+  // Check for each DWM level in reverse order (highest first)
+  if (CapabilityRegistry.hasFeat(actor, CAPABILITY_SLUGS.DUAL_WEAPON_MASTERY_III)) {
+    level = 3;
+  } else if (CapabilityRegistry.hasFeat(actor, CAPABILITY_SLUGS.DUAL_WEAPON_MASTERY_II)) {
+    level = 2;
+  } else if (CapabilityRegistry.hasFeat(actor, CAPABILITY_SLUGS.DUAL_WEAPON_MASTERY_I)) {
+    level = 1;
   }
 
   return level;
