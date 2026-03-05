@@ -39,17 +39,20 @@ export class PassiveAdapter {
       return;
     }
 
-    // PHASE 1: Validate strict contract
+    // PHASE 3: Validate strict contract (supports MODIFIER and DERIVED_OVERRIDE)
     PassiveContractValidator.validate(ability);
 
-    // PHASE 1: MODIFIER only in Phase 1
-    if (ability.system.subType !== PASSIVE_SUBTYPES.MODIFIER) {
+    // PHASE 3: Route to appropriate handler
+    const subType = ability.system.subType;
+    if (subType === PASSIVE_SUBTYPES.MODIFIER) {
+      this.handleModifier(actor, ability);
+    } else if (subType === 'DERIVED_OVERRIDE') {
+      this.handleDerivedOverride(actor, ability);
+    } else {
       throw new Error(
-        `PASSIVE Phase 1 only supports MODIFIER subtype. Got: ${ability.system.subType}`
+        `PASSIVE ${subType} not supported. Use: MODIFIER, DERIVED_OVERRIDE`
       );
     }
-
-    this.handleModifier(actor, ability);
   }
 
   /**
@@ -206,10 +209,102 @@ export class PassiveAdapter {
     };
   }
 
-  // PHASE 1: MODIFIER only - other subtypes deferred to future phases
-  // - RULE: Phase 2 (integrate with RuleRegistry)
-  // - DERIVED_OVERRIDE: Phase 3 (integrate with DerivedStatBuilder)
-  // - AURA: Phase 4 (integrate with AuraEngine)
-  // - TRIGGERED: Phase 5 (integrate with event surface)
+  /**
+   * Handle DERIVED_OVERRIDE subtype integration.
+   *
+   * PHASE 3: Derived stat overrides (ADD-only)
+   *   - overrides: array of override objects
+   *     - target: defense.*, hp.*, bab.*, initiative.*, speed.*
+   *     - operation: ADD only (REPLACE deferred to Phase 4+)
+   *     - value: {type, ability?, amount?}
+   *     - conditions: optional prerequisite checks
+   *
+   * Applied post-calculation in DerivedCalculator.
+   * Does not modify calculation logic, only augments output.
+   *
+   * @param {Object} actor - The actor document
+   * @param {Object} ability - The ability item
+   * @throws {Error} If configuration is invalid
+   */
+  static handleDerivedOverride(actor, ability) {
+    // Guard against UNLOCK mixing
+    if (ability.system.grants) {
+      throw new Error(
+        `PASSIVE DERIVED_OVERRIDE ${ability.name} cannot have 'grants' field. ` +
+        `Use separate UNLOCK ability for capability grants.`
+      );
+    }
+
+    // Guard against other execution models
+    if (ability.system.trigger) {
+      throw new Error(
+        `PASSIVE DERIVED_OVERRIDE ${ability.name} cannot have 'trigger' field. ` +
+        `Use TRIGGERED subtype for reactive abilities.`
+      );
+    }
+
+    if (ability.system.formula) {
+      throw new Error(
+        `PASSIVE DERIVED_OVERRIDE ${ability.name} cannot have 'formula' field. ` +
+        `DERIVED_OVERRIDE uses structured value specifications only.`
+      );
+    }
+
+    // Get override metadata
+    const meta = ability.system.abilityMeta;
+    if (!meta?.overrides || !Array.isArray(meta.overrides)) {
+      throw new Error(
+        `PASSIVE DERIVED_OVERRIDE ${ability.name} missing or invalid overrides array`
+      );
+    }
+
+    // PHASE 3: Validate all overrides are ADD (no REPLACE in Phase 3)
+    for (const override of meta.overrides) {
+      if (override.operation && override.operation !== 'ADD') {
+        throw new Error(
+          `PASSIVE DERIVED_OVERRIDE ${ability.name}: Phase 3 only supports ADD operation. ` +
+          `Got: ${override.operation} on target ${override.target}`
+        );
+      }
+
+      // Guard against dangerous targets
+      const dangerousTargets = [
+        'attributes.str.base',
+        'attributes.dex.base',
+        'attributes.con.base',
+        'attributes.int.base',
+        'attributes.wis.base',
+        'attributes.cha.base',
+        'level',
+        'progression',
+        'credits'
+      ];
+
+      if (dangerousTargets.some(t => override.target?.startsWith(t))) {
+        throw new Error(
+          `PASSIVE DERIVED_OVERRIDE ${ability.name} cannot modify ${override.target}. ` +
+          `Overrides can only modify derived stats, not base values.`
+        );
+      }
+    }
+
+    // Store overrides on actor for DerivedCalculator to pick up
+    if (!actor._derivedOverrides) {
+      actor._derivedOverrides = {};
+    }
+    actor._derivedOverrides[ability.id] = meta.overrides;
+
+    if (meta.overrides.length > 0) {
+      swseLogger.debug(
+        `[PassiveAdapter] DERIVED_OVERRIDE ${ability.name} ` +
+        `registering ${meta.overrides.length} overrides for ${actor.name}`
+      );
+    }
+  }
+
+  // PHASE 3: Deferred subtypes
+  // - RULE: Phase 4 (integrate with RuleRegistry)
+  // - AURA: Phase 5 (integrate with AuraEngine)
+  // - TRIGGERED: Phase 6 (integrate with event surface)
   // All other subtypes are rejected at validation time.
 }
