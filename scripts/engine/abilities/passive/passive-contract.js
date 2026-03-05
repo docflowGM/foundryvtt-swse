@@ -308,16 +308,21 @@ export class PassiveContractValidator {
 
   /**
    * Validate RULE subtype structure.
-   * Rules are declarative boolean capabilities, not numeric or mutation logic.
+   * Rules are declarative boolean capability tokens.
+   * No numeric injection, no mutation, no side effects.
    *
-   * PHASE 4: Rules must have type, optional conditions.
-   * Rules CANNOT have: value, overrides, grants, formulas.
+   * PHASE 4: Legacy rules array format (single rule per ability)
+   * PHASE 4E: Structured rule objects with params
    *
    * @param {Object} meta
    * @returns {boolean}
    * @throws {Error}
    */
   static validateRule(meta) {
+    // Import locally to avoid circular dependency
+    const { RULES, isValidRule } = require("/systems/foundryvtt-swse/scripts/engine/execution/rules/rule-enum.js");
+    const { hasRuleDefinition, getRuleDefinition } = require("/systems/foundryvtt-swse/scripts/engine/execution/rules/rule-definitions.js");
+
     if (!meta?.rules) {
       throw new Error("PASSIVE RULE missing rules array");
     }
@@ -330,29 +335,37 @@ export class PassiveContractValidator {
       throw new Error("PASSIVE RULE rules array cannot be empty");
     }
 
-    // PHASE 4: Validate each rule
+    // Validate each rule
     for (const rule of meta.rules) {
       if (!rule || typeof rule !== 'object') {
         throw new Error("PASSIVE RULE rule is not an object");
       }
 
-      // Validate rule type
+      // Validate rule identifier
       if (!rule.type || typeof rule.type !== 'string') {
         throw new Error(
           "PASSIVE RULE rule missing required 'type' field"
         );
       }
 
-      // Validate against whitelist
-      try {
-        validateRuleType(rule.type);
-      } catch (err) {
+      // PHASE 4E: Validate rule type is in enum
+      if (!isValidRule(rule.type)) {
         throw new Error(
-          `PASSIVE RULE invalid rule type: ${err.message}`
+          `PASSIVE RULE type '${rule.type}' not in RULES enum. ` +
+          `Supported rules: ${Object.values(RULES).join(', ')}`
         );
       }
 
-      // REJECT numeric fields
+      // Validate rule definition exists
+      if (!hasRuleDefinition(rule.type)) {
+        throw new Error(
+          `PASSIVE RULE type '${rule.type}' has no definition in RULE_DEFINITIONS`
+        );
+      }
+
+      const definition = getRuleDefinition(rule.type);
+
+      // REJECT all numeric fields
       if (rule.value !== undefined) {
         throw new Error(
           `PASSIVE RULE cannot have 'value' field. ` +
@@ -362,29 +375,86 @@ export class PassiveContractValidator {
 
       if (rule.amount !== undefined) {
         throw new Error(
-          `PASSIVE RULE cannot have 'amount' field. ` +
-          `Rules are boolean, not numeric.`
+          `PASSIVE RULE cannot have 'amount' field. Rules are boolean, not numeric.`
         );
       }
 
       if (rule.operation !== undefined) {
         throw new Error(
-          `PASSIVE RULE cannot have 'operation' field. ` +
-          `Use DERIVED_OVERRIDE for augmentation logic.`
+          `PASSIVE RULE cannot have 'operation' field. Use DERIVED_OVERRIDE for augmentation.`
         );
       }
 
-      // PHASE 4E: Skill-scoped rule validation
-      if (rule.type === 'TREAT_SKILL_AS_TRAINED') {
-        if (!rule.skill || typeof rule.skill !== 'string') {
+      // REJECT complex fields
+      if (rule.modifiers !== undefined) {
+        throw new Error(
+          `PASSIVE RULE cannot have 'modifiers' field. Use MODIFIER subtype instead.`
+        );
+      }
+
+      if (rule.target !== undefined) {
+        throw new Error(
+          `PASSIVE RULE cannot have 'target' field. Rules are not numeric injection.`
+        );
+      }
+
+      // PHASE 4E: Validate params against definition
+      if (definition.params === null) {
+        // No params allowed
+        if (rule.params !== undefined && rule.params !== null) {
           throw new Error(
-            `PASSIVE RULE TREAT_SKILL_AS_TRAINED requires 'skill' property. ` +
-            `Example: { type: "TREAT_SKILL_AS_TRAINED", skill: "useTheForce" }`
+            `PASSIVE RULE ${rule.type} does not accept params, but params were provided`
           );
+        }
+      } else {
+        // Params required/allowed
+        if (rule.params === undefined || rule.params === null) {
+          if (definition.required) {
+            throw new Error(
+              `PASSIVE RULE ${rule.type} requires params: ${definition.required.join(', ')}`
+            );
+          }
+        } else {
+          // Validate params structure
+          if (typeof rule.params !== 'object' || Array.isArray(rule.params)) {
+            throw new Error(
+              `PASSIVE RULE ${rule.type} params must be an object, not ${typeof rule.params}`
+            );
+          }
+
+          // Validate required params
+          if (definition.required) {
+            for (const requiredKey of definition.required) {
+              if (rule.params[requiredKey] === undefined) {
+                throw new Error(
+                  `PASSIVE RULE ${rule.type} missing required param '${requiredKey}'`
+                );
+              }
+            }
+          }
+
+          // Validate param types
+          for (const [paramKey, paramValue] of Object.entries(rule.params)) {
+            if (!definition.params[paramKey]) {
+              throw new Error(
+                `PASSIVE RULE ${rule.type} has unknown param '${paramKey}'. ` +
+                `Allowed params: ${Object.keys(definition.params).join(', ')}`
+              );
+            }
+
+            const expectedType = definition.params[paramKey];
+            const actualType = typeof paramValue;
+
+            if (actualType !== expectedType) {
+              throw new Error(
+                `PASSIVE RULE ${rule.type} param '${paramKey}' must be ${expectedType}, got ${actualType}`
+              );
+            }
+          }
         }
       }
 
-      // Validate optional conditions
+      // Validate optional conditions (legacy, may be used for rule activation)
       if (rule.conditions && Array.isArray(rule.conditions)) {
         for (const condition of rule.conditions) {
           if (!condition.type || typeof condition.type !== 'string') {
