@@ -38,12 +38,36 @@ export class PassiveContractValidator {
    * Validate MODIFIER subtype structure.
    * Requires modifiers array.
    *
+   * PHASE 2: Support optional conditions on each modifier.
+   * Each condition must have type and value.
+   *
    * @param {Object} meta
    * @returns {boolean}
    * @throws {Error}
    */
   static validateModifier(meta) {
     if (!meta?.modifiers) throw new Error("PASSIVE MODIFIER missing modifiers array");
+
+    // PHASE 2: Validate conditions if present
+    if (Array.isArray(meta.modifiers)) {
+      for (const modifier of meta.modifiers) {
+        if (modifier.conditions && Array.isArray(modifier.conditions)) {
+          for (const condition of modifier.conditions) {
+            if (!condition.type || typeof condition.type !== "string") {
+              throw new Error(
+                "PASSIVE MODIFIER condition missing required 'type' field"
+              );
+            }
+            if (condition.value === undefined || condition.value === null) {
+              throw new Error(
+                "PASSIVE MODIFIER condition missing required 'value' field"
+              );
+            }
+          }
+        }
+      }
+    }
+
     return true;
   }
 

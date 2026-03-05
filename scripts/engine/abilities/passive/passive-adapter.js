@@ -92,6 +92,30 @@ export class PassiveAdapter {
       );
     }
 
+    // PHASE 2F: Safety check - no trigger field
+    if (ability.system.trigger) {
+      throw new Error(
+        `PASSIVE MODIFIER ${ability.name} cannot have 'trigger' field. ` +
+        `Use TRIGGERED subtype for reactive abilities.`
+      );
+    }
+
+    // PHASE 2F: Safety check - no formula field
+    if (ability.system.formula) {
+      throw new Error(
+        `PASSIVE MODIFIER ${ability.name} cannot have 'formula' field. ` +
+        `PASSIVE modifiers use fixed numeric values only.`
+      );
+    }
+
+    // PHASE 2F: Safety check - no progressionHistory mutation
+    if (ability.system.abilityMeta?.modifiesProgressionHistory) {
+      throw new Error(
+        `PASSIVE MODIFIER ${ability.name} cannot modify progressionHistory. ` +
+        `Use PROGRESSION execution model for level-based grants.`
+      );
+    }
+
     // Get modifier metadata
     const meta = ability.system.abilityMeta;
     if (!meta?.modifiers || !Array.isArray(meta.modifiers)) {
