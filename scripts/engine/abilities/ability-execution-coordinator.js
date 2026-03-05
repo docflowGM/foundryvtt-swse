@@ -15,6 +15,7 @@ import { ActiveAdapter } from "./active/active-adapter.js";
 import { AttackOptionAdapter } from "./attack-option/attack-option-adapter.js";
 import { UnlockAdapter } from "./unlock/unlock-adapter.js";
 import { ProgressionAdapter } from "./progression/progression-adapter.js";
+import { RuleCollector } from "/systems/foundryvtt-swse/scripts/engine/execution/rules/rule-collector.js";
 
 export class AbilityExecutionCoordinator {
 
@@ -46,13 +47,17 @@ export class AbilityExecutionCoordinator {
     actor._ruleTokens = [];
     // (Other execution models will add their resets here in future phases)
 
+    // PHASE 4E: Create RuleCollector for this prepare cycle
+    // Will aggregate all RULE entries and finalize into frozen snapshot
+    const ruleCollector = new RuleCollector();
+
     const abilities = actor.items.filter(i =>
       ["talent", "feat"].includes(i.type)
     );
 
     for (const ability of abilities) {
       if (ability.system.executionModel === "PASSIVE") {
-        PassiveAdapter.register(actor, ability);
+        PassiveAdapter.register(actor, ability, ruleCollector);
       } else if (ability.system.executionModel === "ACTIVE") {
         ActiveAdapter.register(actor, ability);
       } else if (ability.system.executionModel === "ATTACK_OPTION") {
@@ -63,5 +68,8 @@ export class AbilityExecutionCoordinator {
         ProgressionAdapter.register(actor, ability);
       }
     }
+
+    // PHASE 4E: Finalize rule collection into frozen snapshots
+    ruleCollector.finalize(actor);
   }
 }

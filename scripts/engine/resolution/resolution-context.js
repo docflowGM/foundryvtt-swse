@@ -2,16 +2,15 @@
  * PASSIVE Phase 4E - ResolutionContext
  *
  * Abstraction layer for resolution logic to query rule state.
- * Decouples resolution utilities from actor internals and RuleRegistry.
+ * Reads from frozen RULE snapshots (actor._ruleSet, actor._ruleParams).
  * Provides single interface for all rule checks during combat/skill resolution.
  *
  * CRITICAL: ResolutionContext is stateless.
- * It only holds a reference to the actor and delegates to RuleRegistry.
- * No caching. No mutation.
+ * It reads from pre-built frozen snapshots during prepare cycle.
+ * No scanning. No mutation. Deterministic and fast.
  */
 
-import { RuleRegistry } from "../abilities/passive/rule-registry.js";
-import { RULE_TYPES } from "../abilities/passive/rule-types.js";
+import { RULES } from "/systems/foundryvtt-swse/scripts/engine/execution/rules/rule-enum.js";
 
 export class ResolutionContext {
   /**
@@ -25,18 +24,49 @@ export class ResolutionContext {
 
   /**
    * Check if actor has a specific rule.
-   * Delegates to RuleRegistry — no local state.
+   * Reads from frozen actor._ruleSet and actor._ruleParams.
    *
-   * @param {string} ruleType - Rule type to check (from RULE_TYPES)
+   * PHASE 4E: Direct query of frozen snapshots populated during prepareDerivedData.
+   *
+   * @param {string} ruleType - Rule type to check (from RULES enum)
    * @param {Object} [options] - Optional context for rule evaluation
+   * @param {string} [options.skillId] - For TREAT_SKILL_AS_TRAINED: the skill ID to check
    * @returns {boolean} True if rule is active
    *
    * @example
-   * if (context.hasRule(RULE_TYPES.IGNORE_COVER)) { ... }
-   * if (context.hasRule(RULE_TYPES.TREAT_SKILL_AS_TRAINED, { skill: 'useTheForce' })) { ... }
+   * if (context.hasRule(RULES.IGNORE_COVER)) { ... }
+   * if (context.hasRule(RULES.TREAT_SKILL_AS_TRAINED, { skillId: 'useTheForce' })) { ... }
    */
   hasRule(ruleType, options = null) {
-    return RuleRegistry.has(this.actor, ruleType, options);
+    if (!this.actor) return false;
+
+    // Check simple rules in frozen _ruleSet
+    const ruleSet = this.actor._ruleSet ?? new Set();
+    if (ruleSet.has(ruleType)) {
+      // For simple rules, no options needed
+      if (!options) return true;
+    }
+
+    // Check param rules in frozen _ruleParams
+    const ruleParams = this.actor._ruleParams ?? new Map();
+    if (ruleParams.has(ruleType)) {
+      // Rule type exists in params map
+      // For TREAT_SKILL_AS_TRAINED, check if specific skill is in the set
+      if (ruleType === RULES.TREAT_SKILL_AS_TRAINED) {
+        if (!options?.skillId) {
+          // No skill filter: just check if any instance exists
+          return true;
+        }
+        // Check if specific skill is in the parameterized set
+        const skillSet = ruleParams.get(ruleType);
+        return skillSet.has(options.skillId);
+      }
+
+      // Other param rules: no additional context filtering
+      return true;
+    }
+
+    return false;
   }
 }
 

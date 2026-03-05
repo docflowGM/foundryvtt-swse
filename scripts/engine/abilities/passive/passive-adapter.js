@@ -27,12 +27,14 @@ export class PassiveAdapter {
    *
    * PHASE 1: Enforce strict PASSIVE contract (MODIFIER only)
    * PHASE 6: No auto-migration - only activate if executionModel === "PASSIVE"
+   * PHASE 4E: Accept optional ruleCollector for deterministic RULE aggregation
    *
    * @param {Object} actor - The actor document
    * @param {Object} ability - The ability item
+   * @param {RuleCollector} ruleCollector - Optional collector for RULE aggregation
    * @throws {Error} If validation fails
    */
-  static register(actor, ability) {
+  static register(actor, ability, ruleCollector = null) {
     if (ability.system.executionModel !== "PASSIVE") return;
 
     // PHASE 6: Enforce no auto-migration
@@ -51,7 +53,7 @@ export class PassiveAdapter {
     } else if (subType === 'DERIVED_OVERRIDE') {
       this.handleDerivedOverride(actor, ability);
     } else if (subType === 'RULE') {
-      this.handleRule(actor, ability);
+      this.handleRule(actor, ability, ruleCollector);
     } else {
       throw new Error(
         `PASSIVE ${subType} not supported. Use: MODIFIER, DERIVED_OVERRIDE, RULE`
@@ -307,21 +309,23 @@ export class PassiveAdapter {
   }
 
   /**
-   * Handle RULE subtype integration with RuleRegistry.
+   * Handle RULE subtype integration with RuleCollector.
    *
    * PHASE 4: Boolean rule tokens (resolution hints)
    *   - rules: array of rule objects
    *     - type: IGNORE_COVER, CANNOT_BE_FLANKED, TREAT_SKILL_AS_TRAINED
    *     - conditions: optional prerequisite checks
    *
-   * Rules are registered as tokens on actor._ruleTokens.
-   * Resolution logic (combat, skill checks, etc.) queries RuleRegistry.
+   * PHASE 4E: Rules aggregated via RuleCollector during prepare cycle.
+   * Produces frozen snapshots (actor._ruleSet, actor._ruleParams).
+   * Resolution logic (combat, skill checks, etc.) queries frozen storage via ResolutionContext.
    *
    * @param {Object} actor - The actor document
    * @param {Object} ability - The ability item
+   * @param {RuleCollector} ruleCollector - Collector for this prepare cycle
    * @throws {Error} If configuration is invalid or mixing detected
    */
-  static handleRule(actor, ability) {
+  static handleRule(actor, ability, ruleCollector = null) {
     // Guard against UNLOCK mixing
     if (ability.system.grants) {
       throw new Error(
@@ -368,11 +372,6 @@ export class PassiveAdapter {
       );
     }
 
-    // Initialize actor rule tokens if needed
-    if (!actor._ruleTokens) {
-      RuleRegistry.initializeTokens(actor);
-    }
-
     // Process each rule
     for (const rule of meta.rules) {
       try {
@@ -384,14 +383,11 @@ export class PassiveAdapter {
           }
         }
 
-        // PHASE 4E: Add rule token
-        // For skill-scoped rules (TREAT_SKILL_AS_TRAINED), pass the full rule object
-        // For simple rules, pass just the type string
-        const token = rule.type === 'TREAT_SKILL_AS_TRAINED'
-          ? rule  // Pass full object with skill property
-          : rule.type;  // Pass type string
-
-        RuleRegistry.addToken(actor, token);
+        // PHASE 4E: Add rule to collector (if provided)
+        // Collector deduplicates and handles param extraction
+        if (ruleCollector) {
+          ruleCollector.add(rule);
+        }
       } catch (err) {
         throw new Error(
           `PASSIVE RULE ${ability.name} error processing rule ${rule.type}: ${err.message}`
