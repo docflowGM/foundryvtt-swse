@@ -4,56 +4,68 @@
  * Authoritative, frozen list of all allowed rule types.
  * RULE types are boolean capability tokens - not numeric, not duration-based.
  *
+ * GOVERNANCE: Enums may exist without integration.
+ * An enum being defined does NOT mean it has integration into resolution sites.
+ * Integration is explicit and happens deliberately per enum, not automatically.
+ * This prevents mid-flight enum discovery during content migration.
+ *
  * CRITICAL: This enum is frozen. No runtime mutation.
  * To add new rules: modify this enum explicitly, update RULE_DEFINITIONS,
  * update validator, update rule-types.js for backward compatibility.
  */
 
 export const RULES = Object.freeze({
-  // --- Defense Immunities ---
-  /**
-   * IMMUNE_FEAR
-   * Actor is immune to fear effects.
-   * Params: none
-   */
+  // === STATUS & EFFECT IMMUNITIES ===
   IMMUNE_FEAR: "IMMUNE_FEAR",
-
-  /**
-   * IMMUNE_POISON
-   * Actor is immune to poison effects.
-   * Params: none
-   */
   IMMUNE_POISON: "IMMUNE_POISON",
-
-  /**
-   * IMMUNE_MIND_AFFECTING
-   * Actor is immune to mind-affecting effects.
-   * Params: none
-   */
+  IMMUNE_DISEASE: "IMMUNE_DISEASE",
+  IMMUNE_RADIATION: "IMMUNE_RADIATION",
   IMMUNE_MIND_AFFECTING: "IMMUNE_MIND_AFFECTING",
+  IMMUNE_SLEEP: "IMMUNE_SLEEP",
+  IMMUNE_PARALYSIS: "IMMUNE_PARALYSIS",
+  IMMUNE_STUN: "IMMUNE_STUN",
+  IMMUNE_DAZE: "IMMUNE_DAZE",
+  IMMUNE_NAUSEA: "IMMUNE_NAUSEA",
+  IMMUNE_SICKENED: "IMMUNE_SICKENED",
+  IMMUNE_FATIGUE: "IMMUNE_FATIGUE",
+  IMMUNE_EXHAUSTION: "IMMUNE_EXHAUSTION",
+  IMMUNE_BLEED: "IMMUNE_BLEED",
+  IMMUNE_BLINDNESS: "IMMUNE_BLINDNESS",
+  IMMUNE_DEAFNESS: "IMMUNE_DEAFNESS",
+  IMMUNE_DEATH_EFFECTS: "IMMUNE_DEATH_EFFECTS",
+  IMMUNE_CRITICAL_HITS: "IMMUNE_CRITICAL_HITS",
+  IMMUNE_PRECISION_DAMAGE: "IMMUNE_PRECISION_DAMAGE",
 
-  // --- Combat Resolution Modifiers ---
-  /**
-   * IGNORE_COVER
-   * Attacker ignores cover defense bonuses.
-   * Params: none
-   */
+  // === SENSES & DETECTION ===
+  DARKVISION: "DARKVISION",
+  LOW_LIGHT_VISION: "LOW_LIGHT_VISION",
+  BLINDSENSE: "BLINDSENSE",
+  BLINDSIGHT: "BLINDSIGHT",
+  TREMORSENSE: "TREMORSENSE",
+  SCENT: "SCENT",
+  SEE_INVISIBLE: "SEE_INVISIBLE",
+  TRUE_SIGHT: "TRUE_SIGHT",
+
+  // === COMBAT TARGETING & POSITION ===
   IGNORE_COVER: "IGNORE_COVER",
-
-  /**
-   * CANNOT_BE_FLANKED
-   * Defender cannot be flanked (no flanking bonus applies).
-   * Params: none
-   */
+  IGNORE_CONCEALMENT: "IGNORE_CONCEALMENT",
+  IGNORE_TOTAL_CONCEALMENT: "IGNORE_TOTAL_CONCEALMENT",
   CANNOT_BE_FLANKED: "CANNOT_BE_FLANKED",
+  CANNOT_BE_SURPRISED: "CANNOT_BE_SURPRISED",
+  RETAINS_DEX_TO_REFLEX_WHEN_FLAT_FOOTED: "RETAINS_DEX_TO_REFLEX_WHEN_FLAT_FOOTED",
+  IMMUNE_FLAT_FOOTED: "IMMUNE_FLAT_FOOTED",
 
-  // --- Skill Resolution ---
-  /**
-   * TREAT_SKILL_AS_TRAINED
-   * Actor treats a specific skill as trained.
-   * Params: required { skillId: string }
-   */
+  // === OPPORTUNITY & PROVOCATION ===
+  DOES_NOT_PROVOKE_AOO: "DOES_NOT_PROVOKE_AOO",
+  IMMUNE_AOO: "IMMUNE_AOO",
+
+  // === SKILL PERMISSION (PARAM RULES) ===
   TREAT_SKILL_AS_TRAINED: "TREAT_SKILL_AS_TRAINED",
+  ALLOW_UNTRAINED_USE: "ALLOW_UNTRAINED_USE",
+
+  // === AREA EFFECT MITIGATION ===
+  EVASION: "EVASION",
+  IMPROVED_EVASION: "IMPROVED_EVASION",
 });
 
 /**
