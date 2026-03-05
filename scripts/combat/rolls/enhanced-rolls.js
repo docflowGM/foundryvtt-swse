@@ -1128,7 +1128,7 @@ export class SWSERoll {
     const requiresTraining = !skill.untrained;  // trainedOnly = !untrained
     if (requiresTraining && !skill.trained) {
       const context = new ResolutionContext(actor);
-      if (!context.hasRule(RULE_TYPES.TREAT_SKILL_AS_TRAINED, { skill: skillKey })) {
+      if (!context.hasRule(RULE_TYPES.TREAT_SKILL_AS_TRAINED, { skillId: skillKey })) {
         ui.notifications.warn(`${skillKey} requires training.`);
         return null;
       }
