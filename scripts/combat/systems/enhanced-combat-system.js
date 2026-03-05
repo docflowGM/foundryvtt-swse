@@ -3,6 +3,7 @@ import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { DamageSystem } from "/systems/foundryvtt-swse/scripts/combat/damage-system.js";
 import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
+import { ResolutionContext } from "/systems/foundryvtt-swse/scripts/engine/resolution/resolution-context.js";
 
 /**
  * SWSE Enhanced Combat System (UI Adapter)
@@ -50,14 +51,18 @@ export class SWSECombat {
 
     /* GATHER TACTICAL MODIFIERS */
     const coverType = opts.coverType || 'none';
-    const coverBonus = getCoverBonus(coverType);
+    // PHASE 4E: Pass attacker context for IGNORE_COVER rule
+    const attackerContext = new ResolutionContext(attacker);
+    const coverBonus = getCoverBonus(coverType, attackerContext);
 
     const concealment = opts.concealment || 'none';
     const concealChance = getConcealmentMissChance(concealment);
 
     let flankingBonus = 0;
     if (attackerToken && targetToken && this._checkFlanking(attackerToken, targetToken)) {
-      flankingBonus = getFlankingBonus(true);
+      // PHASE 4E: Pass target context for CANNOT_BE_FLANKED rule
+      const targetContext = new ResolutionContext(target);
+      flankingBonus = getFlankingBonus(true, targetContext);
     }
 
     /* DELEGATE ATTACK ORCHESTRATION TO COMBATENGINE */

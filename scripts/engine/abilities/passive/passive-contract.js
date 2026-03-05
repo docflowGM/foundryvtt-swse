@@ -311,6 +311,16 @@ export class PassiveContractValidator {
         );
       }
 
+      // PHASE 4E: Skill-scoped rule validation
+      if (rule.type === 'TREAT_SKILL_AS_TRAINED') {
+        if (!rule.skill || typeof rule.skill !== 'string') {
+          throw new Error(
+            `PASSIVE RULE TREAT_SKILL_AS_TRAINED requires 'skill' property. ` +
+            `Example: { type: "TREAT_SKILL_AS_TRAINED", skill: "useTheForce" }`
+          );
+        }
+      }
+
       // Validate optional conditions
       if (rule.conditions && Array.isArray(rule.conditions)) {
         for (const condition of rule.conditions) {

@@ -19,14 +19,38 @@ export class RuleRegistry {
    * Check if an actor has a specific rule token.
    * Stateless query - checks actor._ruleTokens populated during registration.
    *
+   * Supports optional context for rule types that need additional parameters.
+   * For example, TREAT_SKILL_AS_TRAINED requires a skill property.
+   *
    * @param {Object} actor - The actor
    * @param {string} ruleType - Rule type to check (from RULE_TYPES)
+   * @param {Object} [options] - Optional context for rule evaluation
+   * @param {string} [options.skill] - For TREAT_SKILL_AS_TRAINED: the skill key to check
    * @returns {boolean} True if rule is active
    */
-  static has(actor, ruleType) {
+  static has(actor, ruleType, options = null) {
     if (!actor) return false;
     const tokens = actor._ruleTokens ?? [];
-    return tokens.includes(ruleType);
+
+    // Find matching token
+    return tokens.some(token => {
+      // Support both string tokens (legacy) and object tokens (Phase 4E+)
+      const tokenType = typeof token === 'string' ? token : token?.type;
+
+      if (tokenType !== ruleType) return false;
+
+      // No options filter: match by type alone
+      if (!options) return true;
+
+      // Options filter: check rule-specific properties
+      if (ruleType === 'TREAT_SKILL_AS_TRAINED') {
+        // TREAT_SKILL_AS_TRAINED must match the skill key
+        return token?.skill === options.skill;
+      }
+
+      // Other rules: no additional context needed
+      return true;
+    });
   }
 
   /**
@@ -45,18 +69,18 @@ export class RuleRegistry {
    * Query if actor has a rule with specific context.
    * Some rules may have additional context (e.g., TREAT_SKILL_AS_TRAINED needs skill name).
    *
-   * This is a placeholder for future expansion.
-   * Phase 4 scope: Simple token checks only.
+   * Phase 4E: This now properly delegates to has() with options.
    *
    * @param {Object} actor - The actor
    * @param {string} ruleType - Rule type to check
-   * @param {Object} context - Optional context object
+   * @param {Object} [options] - Optional context object with rule-specific properties
    * @returns {boolean} True if rule applies to context
+   *
+   * @example
+   * RuleRegistry.hasWithContext(actor, RULE_TYPES.TREAT_SKILL_AS_TRAINED, { skill: 'useTheForce' })
    */
-  static hasWithContext(actor, ruleType, context) {
-    // Phase 4: Just delegate to simple has() check
-    // Future phases: Add context-aware evaluation
-    return this.has(actor, ruleType);
+  static hasWithContext(actor, ruleType, options) {
+    return this.has(actor, ruleType, options);
   }
 
   /**
@@ -74,11 +98,15 @@ export class RuleRegistry {
    * Add a rule token to actor.
    * Called during PassiveAdapter.handleRule() for each active rule.
    *
+   * Supports both simple string tokens and structured object tokens.
+   * String tokens: 'IGNORE_COVER'
+   * Object tokens: { type: 'TREAT_SKILL_AS_TRAINED', skill: 'useTheForce' }
+   *
    * @param {Object} actor - The actor
-   * @param {string} ruleType - Rule type token to add
-   * @throws {Error} If actor is invalid
+   * @param {string | Object} ruleToken - Rule token to add (string or object with type property)
+   * @throws {Error} If actor is invalid or token format is invalid
    */
-  static addToken(actor, ruleType) {
+  static addToken(actor, ruleToken) {
     if (!actor) {
       throw new Error("[RuleRegistry] Cannot add token to null actor");
     }
@@ -87,11 +115,34 @@ export class RuleRegistry {
       actor._ruleTokens = [];
     }
 
-    // Add token (no duplicates)
-    if (!actor._ruleTokens.includes(ruleType)) {
-      actor._ruleTokens.push(ruleType);
+    // Get the type for deduplication
+    const tokenType = typeof ruleToken === 'string' ? ruleToken : ruleToken?.type;
+    if (!tokenType) {
+      throw new Error("[RuleRegistry] Invalid rule token format");
+    }
+
+    // Deduplicate based on type and content
+    const isDuplicate = actor._ruleTokens.some(existing => {
+      const existingType = typeof existing === 'string' ? existing : existing?.type;
+      if (existingType !== tokenType) return false;
+
+      // For string tokens, exact match is enough
+      if (typeof ruleToken === 'string') return true;
+
+      // For object tokens, check if same type and all properties match
+      if (typeof existing === 'object' && typeof ruleToken === 'object') {
+        // Check all keys match the same values
+        return Object.keys(ruleToken).every(key => existing[key] === ruleToken[key]);
+      }
+
+      return false;
+    });
+
+    if (!isDuplicate) {
+      actor._ruleTokens.push(ruleToken);
+      const tokenDisplay = typeof ruleToken === 'string' ? ruleToken : JSON.stringify(ruleToken);
       swseLogger.debug(
-        `[RuleRegistry] Added rule token '${ruleType}' to ${actor.name}`
+        `[RuleRegistry] Added rule token '${tokenDisplay}' to ${actor.name}`
       );
     }
   }

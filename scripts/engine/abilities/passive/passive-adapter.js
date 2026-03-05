@@ -384,8 +384,14 @@ export class PassiveAdapter {
           }
         }
 
-        // Add rule token if conditions pass (or no conditions)
-        RuleRegistry.addToken(actor, rule.type);
+        // PHASE 4E: Add rule token
+        // For skill-scoped rules (TREAT_SKILL_AS_TRAINED), pass the full rule object
+        // For simple rules, pass just the type string
+        const token = rule.type === 'TREAT_SKILL_AS_TRAINED'
+          ? rule  // Pass full object with skill property
+          : rule.type;  // Pass type string
+
+        RuleRegistry.addToken(actor, token);
       } catch (err) {
         throw new Error(
           `PASSIVE RULE ${ability.name} error processing rule ${rule.type}: ${err.message}`
