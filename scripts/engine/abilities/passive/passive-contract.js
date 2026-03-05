@@ -49,6 +49,12 @@ export class PassiveContractValidator {
    * PHASE 2: Support optional conditions on each modifier.
    * Each condition must have type and value.
    *
+   * PHASE 2 (Wave 2): Support singular condition object with strict enum validation.
+   * - Only one condition per modifier
+   * - Allowed types: action, attack_type, defense_vs, damage_type
+   * - Strict enum values (no arbitrary strings)
+   * - No nesting, no arrays
+   *
    * @param {Object} meta
    * @returns {boolean}
    * @throws {Error}
@@ -56,19 +62,76 @@ export class PassiveContractValidator {
   static validateModifier(meta) {
     if (!meta?.modifiers) throw new Error("PASSIVE MODIFIER missing modifiers array");
 
-    // PHASE 2: Validate conditions if present
+    // Allowed Wave 2 condition types
+    const allowedConditionTypes = ['action', 'attack_type', 'defense_vs', 'damage_type'];
+
+    // Strict enums for each condition type
+    const conditionEnums = {
+      action: ['charge', 'fight_defensively', 'full_attack', 'standard_action'],
+      attack_type: ['melee', 'ranged'],
+      defense_vs: ['fear', 'poison', 'mind_affecting', 'disease'],
+      damage_type: ['fire', 'cold', 'electricity', 'acid', 'sonic', 'energy']
+    };
+
+    // Validate modifiers
     if (Array.isArray(meta.modifiers)) {
       for (const modifier of meta.modifiers) {
+        // PHASE 2 (Wave 2): Validate singular condition (new)
+        if (modifier.condition) {
+          if (typeof modifier.condition !== 'object' || Array.isArray(modifier.condition)) {
+            throw new Error(
+              "PASSIVE MODIFIER condition must be a single object, not an array"
+            );
+          }
+
+          if (!modifier.condition.type || typeof modifier.condition.type !== 'string') {
+            throw new Error(
+              "PASSIVE MODIFIER condition missing required 'type' field"
+            );
+          }
+
+          if (modifier.condition.value === undefined || modifier.condition.value === null) {
+            throw new Error(
+              "PASSIVE MODIFIER condition missing required 'value' field"
+            );
+          }
+
+          // Validate condition type is allowed
+          if (!allowedConditionTypes.includes(modifier.condition.type)) {
+            throw new Error(
+              `PASSIVE MODIFIER condition type '${modifier.condition.type}' not allowed. ` +
+              `Allowed types: ${allowedConditionTypes.join(', ')}`
+            );
+          }
+
+          // Validate condition value against enum
+          const enumValues = conditionEnums[modifier.condition.type];
+          if (enumValues && !enumValues.includes(modifier.condition.value)) {
+            throw new Error(
+              `PASSIVE MODIFIER condition value '${modifier.condition.value}' not allowed for type '${modifier.condition.type}'. ` +
+              `Allowed values: ${enumValues.join(', ')}`
+            );
+          }
+
+          // Reject old-style conditions array if condition is present
+          if (modifier.conditions && Array.isArray(modifier.conditions)) {
+            throw new Error(
+              "PASSIVE MODIFIER cannot have both 'condition' and 'conditions'. Use singular 'condition' for Wave 2."
+            );
+          }
+        }
+
+        // PHASE 2 (legacy): Support conditions array (for backward compatibility with RULE types)
         if (modifier.conditions && Array.isArray(modifier.conditions)) {
           for (const condition of modifier.conditions) {
             if (!condition.type || typeof condition.type !== "string") {
               throw new Error(
-                "PASSIVE MODIFIER condition missing required 'type' field"
+                "PASSIVE MODIFIER legacy conditions array: condition missing required 'type' field"
               );
             }
             if (condition.value === undefined || condition.value === null) {
               throw new Error(
-                "PASSIVE MODIFIER condition missing required 'value' field"
+                "PASSIVE MODIFIER legacy conditions array: condition missing required 'value' field"
               );
             }
           }
