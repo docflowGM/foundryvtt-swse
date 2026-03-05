@@ -16,7 +16,6 @@
 import { PROGRESSION_EXECUTION_MODEL } from "./progression-types.js";
 import { ProgressionContractValidator } from "./progression-contract.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import talentTreeClassMap from "/systems/foundryvtt-swse/data/talent_tree_class_map.json" assert { type: "json" };
 
 export class ProgressionEventProcessor {
 
@@ -114,7 +113,8 @@ export class ProgressionEventProcessor {
    * @returns {number} Total Lineage-eligible levels
    */
   static _computeLineageEligibleLevel(actor) {
-    // Get authoritative list of Lineage-granting classes
+    // Lazy-load talent tree class map (supports both Foundry and test environments)
+    const talentTreeClassMap = this._getTalentTreeClassMap();
     const lineageClasses = talentTreeClassMap["Lineage"] ?? [];
 
     if (!Array.isArray(actor.system.classes)) {
@@ -124,6 +124,25 @@ export class ProgressionEventProcessor {
     return actor.system.classes
       .filter(c => lineageClasses.includes(c.classId))
       .reduce((sum, c) => sum + (c.level || 0), 0);
+  }
+
+  /**
+   * Get talent tree class map with fallback for test injection.
+   * @private
+   */
+  static _getTalentTreeClassMap() {
+    // Allow tests to inject the map
+    if (this._injectedTalentTreeClassMap) {
+      return this._injectedTalentTreeClassMap;
+    }
+
+    // Try to get from global if already loaded by system
+    if (globalThis.talentTreeClassMap) {
+      return globalThis.talentTreeClassMap;
+    }
+
+    // Default: return empty map (will be initialized by system startup)
+    return {};
   }
 
   /**
