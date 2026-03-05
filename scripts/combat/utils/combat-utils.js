@@ -1,4 +1,5 @@
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { RULE_TYPES } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/rule-types.js";
 /**
  * Modern SWSE Combat Utilities (v13+)
  * - Condition Track integer-based penalties
@@ -265,15 +266,28 @@ export function computeDamageBonus(actor, weapon, options = {}) {
 
 /**
  * RAW cover bonuses to Reflex.
+ * Integrates with ResolutionContext for IGNORE_COVER rule.
+ *
  * @param {string} type - "none", "partial", "cover", "improved"
+ * @param {ResolutionContext} [context] - Optional context for rule evaluation
+ * @returns {number} Cover bonus (0-10)
+ *
+ * If context is provided and attacker has IGNORE_COVER rule, returns 0.
+ * Otherwise, uses standard cover table.
  */
-export function getCoverBonus(type) {
+export function getCoverBonus(type, context = null) {
   const table = {
     none: 0,
     partial: 2,
     cover: 5,
     improved: 10
   };
+
+  // Check if attacker ignores cover (only if context provided)
+  if (context?.hasRule && context.hasRule(RULE_TYPES.IGNORE_COVER)) {
+    return 0;
+  }
+
   return table[type] ?? 0;
 }
 
@@ -303,8 +317,21 @@ export function checkConcealmentHit(missChance) {
 
 /**
  * RAW flanking bonus.
+ * Integrates with ResolutionContext for CANNOT_BE_FLANKED rule.
+ *
+ * @param {boolean} isFlanking - Whether defender is flanked
+ * @param {ResolutionContext} [context] - Optional context for rule evaluation
+ * @returns {number} Flanking bonus (0-2)
+ *
+ * If context is provided and defender has CANNOT_BE_FLANKED rule, returns 0.
+ * Otherwise, uses standard flanking table.
  */
-export function getFlankingBonus(isFlanking) {
+export function getFlankingBonus(isFlanking, context = null) {
+  // Check if defender cannot be flanked (only if context provided)
+  if (context?.hasRule && context.hasRule(RULE_TYPES.CANNOT_BE_FLANKED)) {
+    return 0;
+  }
+
   return isFlanking ? 2 : 0;
 }
 

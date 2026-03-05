@@ -26,6 +26,7 @@ import { HPCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/hp
 import { BABCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/bab-calculator.js";
 import { DefenseCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/defense-calculator.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
+import { DerivedOverrideEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/derived-override-engine.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { MutationIntegrityLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/mutation-integrity-layer.js";
 import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
@@ -349,6 +350,19 @@ export class DerivedCalculator {
         all: allModifiers,
         breakdown: modifierBreakdown
       };
+
+      // ========================================
+      // PHASE 3: Apply DERIVED_OVERRIDE
+      // ========================================
+      // Collect and apply derived overrides from PASSIVE DERIVED_OVERRIDE abilities
+      // Overrides augment calculated values (ADD-only in Phase 3)
+      const derivedOverrides = DerivedOverrideEngine.collectOverrides(actor);
+      if (derivedOverrides.length > 0) {
+        DerivedOverrideEngine.apply(actor, derivedOverrides, updates);
+        swseLogger.debug(
+          `[DerivedCalculator] Applied ${derivedOverrides.length} derived overrides to ${actor.name}`
+        );
+      }
 
       swseLogger.debug(`DerivedCalculator computed for ${actor.name}`, { updates });
 
