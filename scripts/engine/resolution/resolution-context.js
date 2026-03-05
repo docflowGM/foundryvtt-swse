@@ -10,7 +10,7 @@
  * No scanning. No mutation. Deterministic and fast.
  */
 
-import { RULES } from "/systems/foundryvtt-swse/scripts/engine/execution/rules/rule-enum.js";
+import { RULES } from "../execution/rules/rule-enum.js";
 
 export class ResolutionContext {
   /**
