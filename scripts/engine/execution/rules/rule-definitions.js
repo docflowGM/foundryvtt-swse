@@ -14,74 +14,183 @@
 import { RULES } from "./rule-enum.js";
 
 export const RULE_DEFINITIONS = Object.freeze({
-  /**
-   * IMMUNE_FEAR
-   * No parameters.
-   * Queried as: context.hasRule(RULES.IMMUNE_FEAR)
-   */
+  // === STATUS & EFFECT IMMUNITIES ===
   [RULES.IMMUNE_FEAR]: {
     params: null,
     description: "Actor is immune to fear effects"
   },
-
-  /**
-   * IMMUNE_POISON
-   * No parameters.
-   * Queried as: context.hasRule(RULES.IMMUNE_POISON)
-   */
   [RULES.IMMUNE_POISON]: {
     params: null,
     description: "Actor is immune to poison effects"
   },
-
-  /**
-   * IMMUNE_MIND_AFFECTING
-   * No parameters.
-   * Queried as: context.hasRule(RULES.IMMUNE_MIND_AFFECTING)
-   */
+  [RULES.IMMUNE_DISEASE]: {
+    params: null,
+    description: "Actor is immune to disease effects"
+  },
+  [RULES.IMMUNE_RADIATION]: {
+    params: null,
+    description: "Actor is immune to radiation damage"
+  },
   [RULES.IMMUNE_MIND_AFFECTING]: {
     params: null,
     description: "Actor is immune to mind-affecting effects"
   },
+  [RULES.IMMUNE_SLEEP]: {
+    params: null,
+    description: "Actor is immune to sleep effects"
+  },
+  [RULES.IMMUNE_PARALYSIS]: {
+    params: null,
+    description: "Actor is immune to paralysis"
+  },
+  [RULES.IMMUNE_STUN]: {
+    params: null,
+    description: "Actor is immune to stun effects"
+  },
+  [RULES.IMMUNE_DAZE]: {
+    params: null,
+    description: "Actor is immune to daze effects"
+  },
+  [RULES.IMMUNE_NAUSEA]: {
+    params: null,
+    description: "Actor is immune to nausea"
+  },
+  [RULES.IMMUNE_SICKENED]: {
+    params: null,
+    description: "Actor is immune to sickened condition"
+  },
+  [RULES.IMMUNE_FATIGUE]: {
+    params: null,
+    description: "Actor is immune to fatigue"
+  },
+  [RULES.IMMUNE_EXHAUSTION]: {
+    params: null,
+    description: "Actor is immune to exhaustion"
+  },
+  [RULES.IMMUNE_BLEED]: {
+    params: null,
+    description: "Actor is immune to bleed damage"
+  },
+  [RULES.IMMUNE_BLINDNESS]: {
+    params: null,
+    description: "Actor is immune to blindness"
+  },
+  [RULES.IMMUNE_DEAFNESS]: {
+    params: null,
+    description: "Actor is immune to deafness"
+  },
+  [RULES.IMMUNE_DEATH_EFFECTS]: {
+    params: null,
+    description: "Actor is immune to death effects"
+  },
+  [RULES.IMMUNE_CRITICAL_HITS]: {
+    params: null,
+    description: "Actor is immune to critical hits"
+  },
+  [RULES.IMMUNE_PRECISION_DAMAGE]: {
+    params: null,
+    description: "Actor is immune to precision damage (sneak attack, etc.)"
+  },
 
-  /**
-   * IGNORE_COVER
-   * No parameters.
-   * Queried as: context.hasRule(RULES.IGNORE_COVER)
-   * Used by: getCoverBonus() during defense calculation
-   */
+  // === SENSES & DETECTION ===
+  [RULES.DARKVISION]: {
+    params: null,
+    description: "Actor has darkvision (sees in darkness)"
+  },
+  [RULES.LOW_LIGHT_VISION]: {
+    params: null,
+    description: "Actor has low-light vision"
+  },
+  [RULES.BLINDSENSE]: {
+    params: null,
+    description: "Actor has blindsense"
+  },
+  [RULES.BLINDSIGHT]: {
+    params: null,
+    description: "Actor has blindsight (sees without eyes)"
+  },
+  [RULES.TREMORSENSE]: {
+    params: null,
+    description: "Actor has tremorsense (detects vibrations)"
+  },
+  [RULES.SCENT]: {
+    params: null,
+    description: "Actor has scent ability"
+  },
+  [RULES.SEE_INVISIBLE]: {
+    params: null,
+    description: "Actor can see invisible creatures"
+  },
+  [RULES.TRUE_SIGHT]: {
+    params: null,
+    description: "Actor has true sight"
+  },
+
+  // === COMBAT TARGETING & POSITION ===
   [RULES.IGNORE_COVER]: {
     params: null,
     description: "Attacker ignores cover defense bonuses"
   },
-
-  /**
-   * CANNOT_BE_FLANKED
-   * No parameters.
-   * Queried as: context.hasRule(RULES.CANNOT_BE_FLANKED)
-   * Used by: getFlankingBonus() during attack resolution
-   */
+  [RULES.IGNORE_CONCEALMENT]: {
+    params: null,
+    description: "Attacker ignores concealment penalties"
+  },
+  [RULES.IGNORE_TOTAL_CONCEALMENT]: {
+    params: null,
+    description: "Attacker ignores total concealment"
+  },
   [RULES.CANNOT_BE_FLANKED]: {
     params: null,
     description: "Defender cannot be flanked (no flanking bonus applies)"
   },
+  [RULES.CANNOT_BE_SURPRISED]: {
+    params: null,
+    description: "Actor cannot be surprised"
+  },
+  [RULES.RETAINS_DEX_TO_REFLEX_WHEN_FLAT_FOOTED]: {
+    params: null,
+    description: "Actor retains Dexterity to Reflex Defense when flat-footed"
+  },
+  [RULES.IMMUNE_FLAT_FOOTED]: {
+    params: null,
+    description: "Actor cannot be flat-footed"
+  },
 
-  /**
-   * TREAT_SKILL_AS_TRAINED
-   * REQUIRED params: { skillId: string }
-   * Queried as: context.hasRule(RULES.TREAT_SKILL_AS_TRAINED, { skillId })
-   * Used by: Skill resolution to check trained requirements
-   *
-   * Example:
-   * { type: "RULE", rule: "TREAT_SKILL_AS_TRAINED", params: { skillId: "useTheForce" } }
-   */
+  // === OPPORTUNITY & PROVOCATION ===
+  [RULES.DOES_NOT_PROVOKE_AOO]: {
+    params: null,
+    description: "Actor's actions do not provoke attacks of opportunity"
+  },
+  [RULES.IMMUNE_AOO]: {
+    params: null,
+    description: "Actor cannot be subject to attacks of opportunity"
+  },
+
+  // === SKILL PERMISSION (PARAM RULES) ===
   [RULES.TREAT_SKILL_AS_TRAINED]: {
     params: {
-      skillId: "string" // Required field, must be string
+      skillId: "string"
     },
     description: "Actor treats a specific skill as trained",
     required: ["skillId"]
-  }
+  },
+  [RULES.ALLOW_UNTRAINED_USE]: {
+    params: {
+      skillId: "string"
+    },
+    description: "Actor can use a specific skill even if untrained",
+    required: ["skillId"]
+  },
+
+  // === AREA EFFECT MITIGATION ===
+  [RULES.EVASION]: {
+    params: null,
+    description: "Actor gains evasion (half damage on Reflex save)"
+  },
+  [RULES.IMPROVED_EVASION]: {
+    params: null,
+    description: "Actor gains improved evasion (half damage even on failed Reflex save)"
+  },
 });
 
 /**
