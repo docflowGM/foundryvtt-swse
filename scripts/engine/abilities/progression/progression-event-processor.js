@@ -16,6 +16,7 @@
 import { PROGRESSION_EXECUTION_MODEL } from "./progression-types.js";
 import { ProgressionContractValidator } from "./progression-contract.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import talentTreeClassMap from "/systems/foundryvtt-swse/data/talent_tree_class_map.json" assert { type: "json" };
 
 export class ProgressionEventProcessor {
 
@@ -91,26 +92,45 @@ export class ProgressionEventProcessor {
       `triggered by event ${eventType}`
     );
 
-    // INFRASTRUCTURE ONLY: Log effect but don't apply
-    // In future phases: this._processEffect(actor, ability, meta.effect, context)
+    // PHASE 4: Process effect
     const effect = meta.effect;
-    swseLogger.debug(
-      `[ProgressionEventProcessor] Effect pending: type=${effect.type}, ` +
-      `formula=${effect.formula || 'none'}, ` +
-      `value=${effect.value || 'none'}, ` +
-      `oncePerLevel=${effect.oncePerLevel || false}`
-    );
+    try {
+      this._processEffect(actor, ability, effect, context);
+    } catch (err) {
+      swseLogger.error(
+        `[ProgressionEventProcessor] Error processing effect for ` +
+        `${ability.name}: ${err.message}`
+      );
+      throw err;
+    }
   }
 
   /**
-   * Process effect application (FUTURE - NOT IMPLEMENTED)
+   * Compute the total Lineage-eligible level for an actor.
+   * Sums levels from all classes that provide Lineage talent tree access.
    *
-   * In Phase 4+ this will:
-   * - Check idempotency (_progressionHistory)
-   * - Evaluate formulas
-   * - Mutate actor currency/items
+   * @private
+   * @param {Object} actor - The actor document
+   * @returns {number} Total Lineage-eligible levels
+   */
+  static _computeLineageEligibleLevel(actor) {
+    // Get authoritative list of Lineage-granting classes
+    const lineageClasses = talentTreeClassMap["Lineage"] ?? [];
+
+    if (!Array.isArray(actor.system.classes)) {
+      return 0;
+    }
+
+    return actor.system.classes
+      .filter(c => lineageClasses.includes(c.classId))
+      .reduce((sum, c) => sum + (c.level || 0), 0);
+  }
+
+  /**
+   * Process effect application (PHASE 4 IMPLEMENTATION)
    *
-   * CURRENTLY: Infrastructure scaffolding only
+   * Routes effect processing based on type.
+   * Currently implements GRANT_CREDITS with idempotency.
    *
    * @private
    * @param {Object} actor - The actor document
@@ -118,11 +138,137 @@ export class ProgressionEventProcessor {
    * @param {Object} effect - The effect definition
    * @param {Object} context - Event context
    */
-  static _processEffect(actor, ability, effect, context) {
-    // NOT IMPLEMENTED
-    // This will be Phase 4+
-    // - Do not mutate actor
-    // - Do not grant currency
-    // - Do not evaluate formulas
+  static async _processEffect(actor, ability, effect, context) {
+    if (!effect || !effect.type) return;
+
+    switch (effect.type) {
+      case "GRANT_CREDITS":
+        await this._grantCredits(actor, ability, effect, context);
+        break;
+
+      case "GRANT_XP":
+        // TODO: Phase 5 - Implement XP granting
+        break;
+
+      case "GRANT_ITEM":
+        // TODO: Phase 5 - Implement item cloning and granting
+        break;
+
+      case "CUSTOM":
+        // TODO: Phase 5 - Custom effect handlers
+        break;
+
+      default:
+        swseLogger.warn(
+          `[ProgressionEventProcessor] Unknown effect type: ${effect.type}`
+        );
+    }
+  }
+
+  /**
+   * Grant credits based on effect amount type.
+   * Currently supports LINEAGE_LEVEL_MULTIPLIER.
+   *
+   * @private
+   * @param {Object} actor - The actor document
+   * @param {Object} ability - The ability item
+   * @param {Object} effect - The effect definition (has amount field)
+   * @param {Object} context - Event context
+   */
+  static async _grantCredits(actor, ability, effect, context) {
+    // Import ActorEngine for mutation
+    const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+
+    if (!effect.amount) {
+      // Legacy fallback: formula or value
+      if (typeof effect.value === 'number') {
+        await this._applyCreditsUpdate(actor, effect.value, ability.name, ActorEngine);
+      }
+      return;
+    }
+
+    // PHASE 4: Handle LINEAGE_LEVEL_MULTIPLIER
+    if (effect.amount.type === "LINEAGE_LEVEL_MULTIPLIER") {
+      // Initialize progressionHistory flags if needed
+      if (!actor.flags?.swse) {
+        actor.flags = actor.flags || {};
+        actor.flags.swse = {};
+      }
+      if (!actor.flags.swse.progressionHistory) {
+        actor.flags.swse.progressionHistory = {};
+      }
+
+      const abilityId = ability.id;
+      const progressionHistory = actor.flags.swse.progressionHistory;
+      const historyEntry = progressionHistory[abilityId] || { levelsGranted: [] };
+      const levelsGranted = historyEntry.levelsGranted || [];
+
+      // Compute current Lineage-eligible level
+      const currentLineageLevel = this._computeLineageEligibleLevel(actor);
+      let creditsToGrant = 0;
+      const newLevelsGranted = [...levelsGranted];
+
+      // Grant for each level that hasn't been granted yet
+      for (let level = 1; level <= currentLineageLevel; level++) {
+        if (!levelsGranted.includes(level)) {
+          creditsToGrant += effect.amount.multiplier;
+          newLevelsGranted.push(level);
+        }
+      }
+
+      // Apply mutation only if there are credits to grant
+      if (creditsToGrant > 0) {
+        swseLogger.debug(
+          `[ProgressionEventProcessor] GRANT_CREDITS: Ability ${ability.name} ` +
+          `granting ${creditsToGrant} credits ` +
+          `(${newLevelsGranted.length} Lineage levels, multiplier: ${effect.amount.multiplier})`
+        );
+
+        // Update credits
+        await this._applyCreditsUpdate(
+          actor,
+          creditsToGrant,
+          ability.name,
+          ActorEngine
+        );
+
+        // Update progression history with new levels granted
+        progressionHistory[abilityId] = {
+          levelsGranted: newLevelsGranted
+        };
+
+        // Persist history to flags
+        await ActorEngine.updateActor(actor, {
+          "flags.swse.progressionHistory": progressionHistory
+        });
+
+        swseLogger.log(
+          `[ProgressionEventProcessor] GRANT_CREDITS: ${ability.name} ` +
+          `granted ${creditsToGrant} credits. ` +
+          `Lineage levels granted: ${newLevelsGranted.join(', ')}`
+        );
+      } else {
+        swseLogger.debug(
+          `[ProgressionEventProcessor] GRANT_CREDITS: ${ability.name} ` +
+          `no new Lineage levels to grant (already have: ${levelsGranted.join(', ')})`
+        );
+      }
+    }
+  }
+
+  /**
+   * Apply credits update through ActorEngine.
+   *
+   * @private
+   * @param {Object} actor - The actor document
+   * @param {number} creditsToAdd - Amount of credits to add
+   * @param {string} abilityName - Name of the ability for logging
+   * @param {Object} ActorEngine - ActorEngine class
+   */
+  static async _applyCreditsUpdate(actor, creditsToAdd, abilityName, ActorEngine) {
+    const newCredits = (actor.system.credits || 0) + creditsToAdd;
+    await ActorEngine.updateActor(actor, {
+      "system.credits": newCredits
+    });
   }
 }

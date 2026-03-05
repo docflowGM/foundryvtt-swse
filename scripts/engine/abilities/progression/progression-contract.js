@@ -7,7 +7,7 @@
  * PHASE 6: Contract validation infrastructure (no effect processing yet)
  */
 
-import { PROGRESSION_TRIGGERS, PROGRESSION_EFFECTS, PROGRESSION_EXECUTION_MODEL } from "./progression-types.js";
+import { PROGRESSION_TRIGGERS, PROGRESSION_EFFECTS, PROGRESSION_AMOUNT_TYPES, PROGRESSION_EXECUTION_MODEL } from "./progression-types.js";
 
 export class ProgressionContractValidator {
 
@@ -85,14 +85,50 @@ export class ProgressionContractValidator {
   static _validateEffectSchema(ability, effect) {
     switch (effect.type) {
       case "GRANT_CREDITS":
-        // Must have formula or fixed value
-        if (!effect.formula && typeof effect.value !== 'number') {
+        // Must have either: amount field (Phase 4) OR legacy formula/value
+        if (effect.amount) {
+          // New amount-based structure
+          if (!effect.amount.type) {
+            throw new Error(
+              `PROGRESSION ability ${ability.name} GRANT_CREDITS effect ` +
+              `amount missing type`
+            );
+          }
+
+          const validAmountTypes = Object.values(PROGRESSION_AMOUNT_TYPES);
+          if (!validAmountTypes.includes(effect.amount.type)) {
+            throw new Error(
+              `PROGRESSION ability ${ability.name} GRANT_CREDITS effect ` +
+              `has invalid amount type: ${effect.amount.type}. ` +
+              `Must be one of: ${validAmountTypes.join(', ')}`
+            );
+          }
+
+          // Type-specific validation
+          if (effect.amount.type === "LINEAGE_LEVEL_MULTIPLIER") {
+            if (typeof effect.amount.multiplier !== 'number') {
+              throw new Error(
+                `PROGRESSION ability ${ability.name} GRANT_CREDITS effect ` +
+                `LINEAGE_LEVEL_MULTIPLIER missing or invalid multiplier`
+              );
+            }
+            if (effect.amount.multiplier <= 0 || effect.amount.multiplier > 1000000) {
+              throw new Error(
+                `PROGRESSION ability ${ability.name} GRANT_CREDITS effect ` +
+                `multiplier must be between 1 and 1000000, got ${effect.amount.multiplier}`
+              );
+            }
+          }
+          return true;
+        } else if (effect.formula || typeof effect.value === 'number') {
+          // Legacy formula or value (for backward compatibility)
+          return true;
+        } else {
           throw new Error(
             `PROGRESSION ability ${ability.name} GRANT_CREDITS effect ` +
-            `missing formula or value`
+            `missing amount, formula, or value`
           );
         }
-        return true;
 
       case "GRANT_XP":
         // Must have formula or fixed value

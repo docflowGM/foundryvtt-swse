@@ -4,15 +4,17 @@
 
 The PROGRESSION execution model handles lifecycle-triggered ability effects such as wealth grants, item grants, and other progression-dependent actions.
 
-**Status: INFRASTRUCTURE ONLY - Phase 1-6 Complete**
+**Status: Phase 1-3 Infrastructure Complete, Phase 4 Wealth Implemented**
 
 - ✅ Schema defined
 - ✅ Contract validation implemented
-- ✅ Event routing scaffolded
-- ✅ Idempotency guard structure initialized
-- ⏳ Effect processing (Phase 4+, NOT IMPLEMENTED)
-- ⏳ Currency mutation (Phase 4+, NOT IMPLEMENTED)
-- ⏳ Formula evaluation (Phase 4+, NOT IMPLEMENTED)
+- ✅ Event routing implemented
+- ✅ Idempotency guard with persistence (actor.flags.swse.progressionHistory)
+- ✅ Effect processing (Phase 4: GRANT_CREDITS with LINEAGE_LEVEL_MULTIPLIER)
+- ✅ Currency mutation via ActorEngine
+- ⏳ Formula evaluation (Phase 5+, NOT IMPLEMENTED)
+- ⏳ GRANT_XP effect (Phase 5+, NOT IMPLEMENTED)
+- ⏳ GRANT_ITEM effect (Phase 5+, NOT IMPLEMENTED)
 
 ## System.abilityMeta Schema
 
@@ -51,7 +53,7 @@ The PROGRESSION execution model handles lifecycle-triggered ability effects such
 
 ## Examples
 
-### Example 1: Wealth (500 credits per level)
+### Example 1: Wealth (5000 credits per Lineage level)
 
 ```javascript
 {
@@ -63,18 +65,23 @@ The PROGRESSION execution model handles lifecycle-triggered ability effects such
       trigger: "LEVEL_UP",
       effect: {
         type: "GRANT_CREDITS",
-        formula: "500 * CLASS_LEVEL"
+        amount: {
+          type: "LINEAGE_LEVEL_MULTIPLIER",
+          multiplier: 5000
+        },
+        oncePerLineageLevel: true
       }
     }
   }
 }
 ```
 
-**Behavior:**
-- Triggers every time actor levels up (in any class)
-- Formula `500 * CLASS_LEVEL` is evaluated
-- Result granted as credits (NOT YET IMPLEMENTED)
-- Will prevent double-grant via `oncePerLevel: true` when enabled
+**Behavior (Phase 4 IMPLEMENTED):**
+- Triggers every time actor gains a level in any class
+- Computes total Lineage-eligible level = Noble levels + Corporate Agent levels
+- Grants 5000 × Lineage-eligible level credits
+- Idempotent: tracks granted levels in `actor.flags.swse.progressionHistory`
+- Never double-grants on reload (persisted in flags)
 
 ### Example 2: Starting Equipment (One-time grant)
 
@@ -142,9 +149,15 @@ Fired the first time the ability is added to an actor.
 
 ### GRANT_CREDITS
 Grants wealth/credits to actor.
-- **Requires:** `formula` XOR `value`
-- **Status:** NOT IMPLEMENTED
-- **Future behavior:** Will add to actor.system.currency.credits
+- **Requires:** `amount` (Phase 4) OR legacy `formula` XOR `value`
+- **Status:** Phase 4 IMPLEMENTED for LINEAGE_LEVEL_MULTIPLIER
+- **Behavior:** Adds to `actor.system.credits` via ActorEngine
+
+**Amount Types (Phase 4):**
+- **LINEAGE_LEVEL_MULTIPLIER:** Grants `multiplier × Lineage-eligible level` credits
+  - Lineage-eligible = Noble levels + Corporate Agent levels
+  - Idempotent per level (tracked in `actor.flags.swse.progressionHistory`)
+  - Example: Noble 3 + Corporate Agent 2 = 5 Lineage levels × 5000 credits = 25000 credits
 
 ### GRANT_XP
 Grants experience points to actor.
@@ -165,33 +178,35 @@ Custom effect handler (for future extensibility).
 
 ## Idempotency & Duplicate Prevention
 
-### _progressionHistory Structure
+### actor.flags.swse.progressionHistory Structure (Phase 4 IMPLEMENTED)
 
-Each actor maintains a progression history to prevent double-granting:
+Each actor maintains a persisted progression history to prevent double-granting:
 
 ```javascript
-actor._progressionHistory = {
+actor.flags.swse.progressionHistory = {
   [abilityId]: {
-    levelsTriggered: [3, 4, 5],  // Which levels triggered this ability
-    lastTriggeredAt: timestamp    // For time-based duplicate detection
+    levelsGranted: [1, 2, 3, 5]  // Which Lineage levels have been granted
   }
 }
 ```
 
-**Status:** SCAFFOLDING ONLY
-- Structure is initialized but not used for duplicate detection
-- Will be used in Phase 4+ when effect processing is implemented
+**Status:** PHASE 4 IMPLEMENTED
+- Structure persisted in actor flags (survives world reload)
+- Checked on every effect processing
+- Prevents duplicate grants across sessions
 
-### oncePerLevel Flag
+### oncePerLineageLevel Flag
 
-When `effect.oncePerLevel = true`:
-- Ability will only grant once per character level
-- If actor re-levels or sheet reloads, grant is not duplicated
-- Tracked in `_progressionHistory[abilityId].levelsTriggered`
+When `effect.oncePerLineageLevel = true`:
+- Ability grants once per Lineage-eligible level
+- If actor gains new Lineage level, only that level is granted
+- If actor reloads world, previously granted levels are skipped
+- Tracked in `actor.flags.swse.progressionHistory[abilityId].levelsGranted`
 
-**Status:** NOT IMPLEMENTED
-- Flag is validated but not enforced
-- Will be enforced in Phase 4+
+**Status:** PHASE 4 IMPLEMENTED
+- Enforced during effect processing
+- Multi-level gains are idempotent
+- Reload-safe persistence in flags
 
 ## Contract Validation
 
@@ -212,22 +227,31 @@ All PROGRESSION abilities must pass `ProgressionContractValidator.validate()`:
 
 ## Implementation Status
 
-### Completed (Phases 1-6)
+### Completed (Phases 1-3)
 ✅ Type definitions (progression-types.js)
 ✅ Contract validation (progression-contract.js)
-✅ Event routing scaffolding (progression-event-processor.js)
+✅ Event routing (progression-event-processor.js)
 ✅ Adapter registration (progression-adapter.js)
 ✅ Ability coordinator integration (ability-execution-coordinator.js)
 ✅ Progression engine hooking (progression-engine.js)
-✅ Idempotency guard scaffolding (actor._progressionHistory)
+✅ Idempotency guard with persistence (actor.flags.swse.progressionHistory)
 
-### NOT IMPLEMENTED (Phase 4+)
-❌ Effect processing (_processEffect)
-❌ Currency mutation (credits, XP)
-❌ Formula evaluation (500 * CLASS_LEVEL)
-❌ Item cloning and granting
-❌ Duplicate prevention logic
-❌ oncePerLevel enforcement
+### Completed (Phase 4: Wealth Implementation)
+✅ Effect processing (_processEffect)
+✅ Currency mutation via ActorEngine
+✅ LINEAGE_LEVEL_MULTIPLIER amount type
+✅ Lineage-eligible level computation
+✅ Per-level idempotent tracking
+✅ Persisted progression history (survives reload)
+✅ Contract validation for amount field
+
+### NOT IMPLEMENTED (Phase 5+)
+❌ Formula evaluation (dynamic formulas)
+❌ GRANT_XP effect type
+❌ GRANT_ITEM effect type with item cloning
+❌ CLASS_LEVEL_GAIN trigger for class-specific effects
+❌ FIRST_ACQUIRED trigger for one-time grants
+❌ Custom effect handlers
 
 ## Key Safety Guarantees
 
@@ -251,12 +275,13 @@ All PROGRESSION abilities must pass `ProgressionContractValidator.validate()`:
    - No changes to existing progression logic
    - Easy rollback if needed
 
-## Next Steps (Phase 4+)
+## Next Steps (Phase 5+)
 
-1. Implement `ProgressionEventProcessor._processEffect()`
-2. Add currency mutation for GRANT_CREDITS
-3. Add XP mutation for GRANT_XP
-4. Implement item cloning for GRANT_ITEM
-5. Enforce oncePerLevel duplicate prevention
-6. Add comprehensive testing suite
-7. Document formula evaluation context
+1. ✅ COMPLETED: Implement `ProgressionEventProcessor._processEffect()` (Phase 4)
+2. ✅ COMPLETED: Add currency mutation for GRANT_CREDITS (Phase 4)
+3. Implement GRANT_XP effect type (Phase 5)
+4. Implement item cloning for GRANT_ITEM (Phase 5)
+5. Add formula evaluation engine (Phase 5)
+6. Implement CLASS_LEVEL_GAIN and FIRST_ACQUIRED triggers (Phase 5)
+7. Add comprehensive test suite for all effect types (Phases 5+)
+8. Create compendium Wealth feat with correct schema (Phase 4 closing)

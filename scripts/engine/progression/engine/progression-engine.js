@@ -172,6 +172,15 @@ export class ProgressionEngine {
       swseLogger.log(`[PROGRESSION-ENGINE] applyLevelUp: Actor finalized, triggering force powers...`);
       await this._triggerForcePowers(actor);
 
+      // Initialize progression history if needed (Phase 4)
+      if (!actor.flags?.swse) {
+        actor.flags = actor.flags || {};
+        actor.flags.swse = {};
+      }
+      if (!actor.flags.swse.progressionHistory) {
+        actor.flags.swse.progressionHistory = {};
+      }
+
       // PHASE 4: Trigger PROGRESSION abilities on level up
       swseLogger.log(`[PROGRESSION-ENGINE] applyLevelUp: Processing PROGRESSION abilities...`);
       try {

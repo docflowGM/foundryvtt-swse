@@ -20,10 +20,17 @@ export const PROGRESSION_TRIGGERS = {
  * Effect types for PROGRESSION abilities
  */
 export const PROGRESSION_EFFECTS = {
-  GRANT_CREDITS: "GRANT_CREDITS",        // Grant wealth/credits (NOT IMPLEMENTED)
+  GRANT_CREDITS: "GRANT_CREDITS",        // Grant wealth/credits (Phase 4: Implemented)
   GRANT_XP: "GRANT_XP",                  // Grant experience points (NOT IMPLEMENTED)
   GRANT_ITEM: "GRANT_ITEM",              // Grant item by UUID (NOT IMPLEMENTED)
   CUSTOM: "CUSTOM"                       // Custom effect handler (NOT IMPLEMENTED)
+};
+
+/**
+ * Effect amount types for GRANT_CREDITS
+ */
+export const PROGRESSION_AMOUNT_TYPES = {
+  LINEAGE_LEVEL_MULTIPLIER: "LINEAGE_LEVEL_MULTIPLIER"  // 5000 credits per Lineage level
 };
 
 /**
