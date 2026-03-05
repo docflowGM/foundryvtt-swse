@@ -26,6 +26,34 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class DerivedOverrideEngine {
   /**
+   * Whitelist of valid derived override targets.
+   * No dynamic resolution - targets must be explicitly enumerated.
+   * Prevents typos and schema corruption via silent path creation.
+   *
+   * @private
+   * @type {Set<string>}
+   */
+  static #VALID_TARGETS = new Set([
+    // Defense targets
+    'defense.reflex',
+    'defense.fortitude',
+    'defense.will',
+    // HP targets
+    'hp.max',
+    'hp.total',
+    // BAB targets
+    'bab.total',
+    'bab',
+    // Initiative targets
+    'initiative.total',
+    'initiative',
+    // Speed targets
+    'speed.base',
+    'speed',
+    'speed.total'
+  ]);
+
+  /**
    * Apply all derived overrides to calculated values.
    * Modifies values in-place in the updates object.
    *
@@ -151,34 +179,44 @@ export class DerivedOverrideEngine {
   /**
    * Apply a computed value to a target path in updates.
    * Handles both defense paths and other derived paths.
+   * Throws on invalid targets (no silent path creation).
    *
-   * Examples:
-   * - "defense.reflex" → "system.derived.defenses.reflex.total"
-   * - "hp.max" → "system.derived.hp.total"
-   * - "initiative.total" → "system.derived.initiative.total"
+   * Supported targets:
+   * - "defense.reflex", "defense.fortitude", "defense.will"
+   * - "hp.max", "hp.total"
+   * - "bab.total", "bab"
+   * - "initiative.total", "initiative"
+   * - "speed.base", "speed", "speed.total"
    *
    * @private
    * @param {Object} updates - Update object to modify
-   * @param {string} target - Target path (defense.*, hp.*, initiative.*, etc.)
+   * @param {string} target - Target path (must be one of supported types)
    * @param {number} value - Value to add
+   * @throws {Error} If target is not supported
    */
   static _applyToTarget(updates, target, value) {
     if (typeof value !== 'number' || value === 0) {
       return; // No change
     }
 
+    // Whitelist validation: fail fast on invalid targets
+    if (!this.#VALID_TARGETS.has(target)) {
+      throw new Error(
+        `[DerivedOverrideEngine] Invalid derived override target: ${target}. ` +
+        `Supported targets: ${Array.from(this.#VALID_TARGETS).sort().join(', ')}`
+      );
+    }
+
     // Defense targets: defense.reflex, defense.fortitude, defense.will
     if (target.startsWith('defense.')) {
       const defenseType = target.replace('defense.', '');
       const updateKey = `system.derived.defenses.${defenseType}.total`;
-
-      // Get current value (either from updates or default to 10)
       const current = updates[updateKey] ?? 10;
       updates[updateKey] = current + value;
       return;
     }
 
-    // HP target: hp.max
+    // HP target: hp.max, hp.total
     if (target === 'hp.max' || target === 'hp.total') {
       const updateKey = 'system.derived.hp.total';
       const current = updates[updateKey] ?? 1;
@@ -186,7 +224,7 @@ export class DerivedOverrideEngine {
       return;
     }
 
-    // BAB target: bab.total
+    // BAB target: bab.total, bab
     if (target === 'bab.total' || target === 'bab') {
       const updateKey = 'system.derived.bab';
       const current = updates[updateKey] ?? 0;
@@ -194,7 +232,7 @@ export class DerivedOverrideEngine {
       return;
     }
 
-    // Initiative target: initiative.total
+    // Initiative target: initiative.total, initiative
     if (target === 'initiative.total' || target === 'initiative') {
       const updateKey = 'system.derived.initiative.total';
       const current = updates[updateKey] ?? 0;
@@ -202,19 +240,18 @@ export class DerivedOverrideEngine {
       return;
     }
 
-    // Speed target: speed.base
-    if (target === 'speed.base' || target === 'speed') {
+    // Speed target: speed.base, speed, speed.total
+    if (target === 'speed.base' || target === 'speed' || target === 'speed.total') {
       const updateKey = 'system.derived.speed.total';
       const current = updates[updateKey] ?? 0;
       updates[updateKey] = Math.max(0, current + value);
       return;
     }
 
-    // Fallback: try to set directly
-    swseLogger.warn(
-      `[DerivedOverrideEngine] Unknown target path: ${target}. Attempting direct set.`
+    // Unreachable: whitelist validation above catches all invalid targets
+    throw new Error(
+      `[DerivedOverrideEngine] Unhandled target (should be caught by whitelist): ${target}`
     );
-    updates[`system.derived.${target}`] = (updates[`system.derived.${target}`] ?? 0) + value;
   }
 
   /**
