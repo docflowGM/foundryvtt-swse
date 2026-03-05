@@ -15,6 +15,8 @@
 import { PASSIVE_SUBTYPES } from "./passive-types.js";
 import { PassiveContractValidator } from "./passive-contract.js";
 import { ModifierSource } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
+import { ConditionEvaluator } from "./condition-evaluator.js";
+import { RuleRegistry } from "./rule-registry.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class PassiveAdapter {
@@ -39,18 +41,20 @@ export class PassiveAdapter {
       return;
     }
 
-    // PHASE 3: Validate strict contract (supports MODIFIER and DERIVED_OVERRIDE)
+    // PHASE 4: Validate strict contract (supports MODIFIER, DERIVED_OVERRIDE, RULE)
     PassiveContractValidator.validate(ability);
 
-    // PHASE 3: Route to appropriate handler
+    // PHASE 4: Route to appropriate handler
     const subType = ability.system.subType;
     if (subType === PASSIVE_SUBTYPES.MODIFIER) {
       this.handleModifier(actor, ability);
     } else if (subType === 'DERIVED_OVERRIDE') {
       this.handleDerivedOverride(actor, ability);
+    } else if (subType === 'RULE') {
+      this.handleRule(actor, ability);
     } else {
       throw new Error(
-        `PASSIVE ${subType} not supported. Use: MODIFIER, DERIVED_OVERRIDE`
+        `PASSIVE ${subType} not supported. Use: MODIFIER, DERIVED_OVERRIDE, RULE`
       );
     }
   }
@@ -302,8 +306,103 @@ export class PassiveAdapter {
     }
   }
 
-  // PHASE 3: Deferred subtypes
-  // - RULE: Phase 4 (integrate with RuleRegistry)
+  /**
+   * Handle RULE subtype integration with RuleRegistry.
+   *
+   * PHASE 4: Boolean rule tokens (resolution hints)
+   *   - rules: array of rule objects
+   *     - type: IGNORE_COVER, CANNOT_BE_FLANKED, TREAT_SKILL_AS_TRAINED
+   *     - conditions: optional prerequisite checks
+   *
+   * Rules are registered as tokens on actor._ruleTokens.
+   * Resolution logic (combat, skill checks, etc.) queries RuleRegistry.
+   *
+   * @param {Object} actor - The actor document
+   * @param {Object} ability - The ability item
+   * @throws {Error} If configuration is invalid or mixing detected
+   */
+  static handleRule(actor, ability) {
+    // Guard against UNLOCK mixing
+    if (ability.system.grants) {
+      throw new Error(
+        `PASSIVE RULE ${ability.name} cannot have 'grants' field. ` +
+        `Use separate UNLOCK ability for capability grants.`
+      );
+    }
+
+    // Guard against other execution models
+    if (ability.system.trigger) {
+      throw new Error(
+        `PASSIVE RULE ${ability.name} cannot have 'trigger' field. ` +
+        `Use TRIGGERED subtype for reactive abilities.`
+      );
+    }
+
+    if (ability.system.formula) {
+      throw new Error(
+        `PASSIVE RULE ${ability.name} cannot have 'formula' field. ` +
+        `Rules are declarative boolean states, not formulas.`
+      );
+    }
+
+    // Guard against numeric injection
+    if (ability.system.abilityMeta?.modifiers) {
+      throw new Error(
+        `PASSIVE RULE ${ability.name} cannot have 'modifiers'. ` +
+        `Use MODIFIER subtype for numeric effects.`
+      );
+    }
+
+    if (ability.system.abilityMeta?.overrides) {
+      throw new Error(
+        `PASSIVE RULE ${ability.name} cannot have 'overrides'. ` +
+        `Use DERIVED_OVERRIDE subtype for derived stat augmentation.`
+      );
+    }
+
+    // Get rule metadata
+    const meta = ability.system.abilityMeta;
+    if (!meta?.rules || !Array.isArray(meta.rules)) {
+      throw new Error(
+        `PASSIVE RULE ${ability.name} missing or invalid rules array`
+      );
+    }
+
+    // Initialize actor rule tokens if needed
+    if (!actor._ruleTokens) {
+      RuleRegistry.initializeTokens(actor);
+    }
+
+    // Process each rule
+    for (const rule of meta.rules) {
+      try {
+        // Check conditions if present
+        if (rule.conditions?.length) {
+          if (!ConditionEvaluator.evaluateAll(actor, rule.conditions)) {
+            // Conditions not met, skip this rule
+            continue;
+          }
+        }
+
+        // Add rule token if conditions pass (or no conditions)
+        RuleRegistry.addToken(actor, rule.type);
+      } catch (err) {
+        throw new Error(
+          `PASSIVE RULE ${ability.name} error processing rule ${rule.type}: ${err.message}`
+        );
+      }
+    }
+
+    // Log registration
+    if (meta.rules.length > 0) {
+      swseLogger.debug(
+        `[PassiveAdapter] RULE ${ability.name} ` +
+        `registering ${meta.rules.length} rules for ${actor.name}`
+      );
+    }
+  }
+
+  // PHASE 4: Deferred subtypes
   // - AURA: Phase 5 (integrate with AuraEngine)
   // - TRIGGERED: Phase 6 (integrate with event surface)
   // All other subtypes are rejected at validation time.

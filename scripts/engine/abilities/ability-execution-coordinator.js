@@ -43,6 +43,7 @@ export class AbilityExecutionCoordinator {
     // Ensures we rebuild from scratch, not accumulate
     // ========================================
     actor._passiveModifiers = {};
+    actor._ruleTokens = [];
     // (Other execution models will add their resets here in future phases)
 
     const abilities = actor.items.filter(i =>

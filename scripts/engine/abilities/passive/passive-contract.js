@@ -6,6 +6,7 @@
  */
 
 import { PASSIVE_SUBTYPES } from "./passive-types.js";
+import { validateRuleType } from "./rule-types.js";
 
 export class PassiveContractValidator {
 
@@ -13,7 +14,7 @@ export class PassiveContractValidator {
    * Master validation entry point.
    * Validates ability structure and delegates to subtype-specific validators.
    *
-   * PHASE 3: Support both MODIFIER and DERIVED_OVERRIDE subtypes.
+   * PHASE 4: Support MODIFIER, DERIVED_OVERRIDE, and RULE subtypes.
    *
    * @param {Object} ability - The ability item
    * @returns {boolean}
@@ -26,15 +27,17 @@ export class PassiveContractValidator {
     if (ability.system?.executionModel !== "PASSIVE") return false;
     if (!subType) throw new Error(`PASSIVE ability ${ability.name} missing subType`);
 
-    // PHASE 3: Support MODIFIER and DERIVED_OVERRIDE
+    // PHASE 4: Support MODIFIER, DERIVED_OVERRIDE, and RULE
     if (subType === PASSIVE_SUBTYPES.MODIFIER) {
       return this.validateModifier(meta);
     } else if (subType === 'DERIVED_OVERRIDE') {
       return this.validateDerivedOverride(meta);
+    } else if (subType === 'RULE') {
+      return this.validateRule(meta);
     } else {
       throw new Error(
-        `PASSIVE ${subType} not supported in Phase 3. ` +
-        `Supported: MODIFIER, DERIVED_OVERRIDE. Got: ${subType} on ${ability.name}`
+        `PASSIVE ${subType} not supported in Phase 4. ` +
+        `Supported: MODIFIER, DERIVED_OVERRIDE, RULE. Got: ${subType} on ${ability.name}`
       );
     }
   }
@@ -231,6 +234,94 @@ export class PassiveContractValidator {
           if (condition.value === undefined || condition.value === null) {
             throw new Error(
               "PASSIVE DERIVED_OVERRIDE condition missing required 'value' field"
+            );
+          }
+        }
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * Validate RULE subtype structure.
+   * Rules are declarative boolean capabilities, not numeric or mutation logic.
+   *
+   * PHASE 4: Rules must have type, optional conditions.
+   * Rules CANNOT have: value, overrides, grants, formulas.
+   *
+   * @param {Object} meta
+   * @returns {boolean}
+   * @throws {Error}
+   */
+  static validateRule(meta) {
+    if (!meta?.rules) {
+      throw new Error("PASSIVE RULE missing rules array");
+    }
+
+    if (!Array.isArray(meta.rules)) {
+      throw new Error("PASSIVE RULE rules must be an array");
+    }
+
+    if (meta.rules.length === 0) {
+      throw new Error("PASSIVE RULE rules array cannot be empty");
+    }
+
+    // PHASE 4: Validate each rule
+    for (const rule of meta.rules) {
+      if (!rule || typeof rule !== 'object') {
+        throw new Error("PASSIVE RULE rule is not an object");
+      }
+
+      // Validate rule type
+      if (!rule.type || typeof rule.type !== 'string') {
+        throw new Error(
+          "PASSIVE RULE rule missing required 'type' field"
+        );
+      }
+
+      // Validate against whitelist
+      try {
+        validateRuleType(rule.type);
+      } catch (err) {
+        throw new Error(
+          `PASSIVE RULE invalid rule type: ${err.message}`
+        );
+      }
+
+      // REJECT numeric fields
+      if (rule.value !== undefined) {
+        throw new Error(
+          `PASSIVE RULE cannot have 'value' field. ` +
+          `Rules are boolean, not numeric. Use MODIFIER for numeric effects.`
+        );
+      }
+
+      if (rule.amount !== undefined) {
+        throw new Error(
+          `PASSIVE RULE cannot have 'amount' field. ` +
+          `Rules are boolean, not numeric.`
+        );
+      }
+
+      if (rule.operation !== undefined) {
+        throw new Error(
+          `PASSIVE RULE cannot have 'operation' field. ` +
+          `Use DERIVED_OVERRIDE for augmentation logic.`
+        );
+      }
+
+      // Validate optional conditions
+      if (rule.conditions && Array.isArray(rule.conditions)) {
+        for (const condition of rule.conditions) {
+          if (!condition.type || typeof condition.type !== 'string') {
+            throw new Error(
+              "PASSIVE RULE condition missing required 'type' field"
+            );
+          }
+          if (condition.value === undefined || condition.value === null) {
+            throw new Error(
+              "PASSIVE RULE condition missing required 'value' field"
             );
           }
         }
