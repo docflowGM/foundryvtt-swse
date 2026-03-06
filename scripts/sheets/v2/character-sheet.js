@@ -7,10 +7,10 @@ import { DropResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/in
 import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
 
-const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api;
+const { HandlebarsApplicationMixin } = foundry.applications.api;
 
 export class SWSEV2CharacterSheet extends
-  HandlebarsApplicationMixin(DocumentSheetV2) {
+  HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
 
   static PARTS = {
     ...super.PARTS,
@@ -19,18 +19,28 @@ export class SWSEV2CharacterSheet extends
     }
   };
 
+  static tabGroups = {
+    primary: {
+      initial: "overview"
+    }
+  };
+
   static get defaultOptions() {
-    return {
-      ...super.defaultOptions,
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "actor", "character", "swse-character-sheet"],
       width: 900,
       height: 950,
       resizable: true
-    };
+    });
   }
 
   constructor(document, options = {}) {
     super(document, options);
+  }
+
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    this.activateListeners(this.element);
   }
 
   /* ============================================================
@@ -190,45 +200,64 @@ export class SWSEV2CharacterSheet extends
   ============================================================ */
 
   activateListeners(html) {
-    super.activateListeners(html);
-
     // Toggle Abilities Panel
-    html.on("click", "[data-action='toggle-abilities']", ev => {
-      const panel = html.find(".abilities-panel");
-      const button = html.find(".abilities-toggle");
-      panel.toggleClass("expanded");
-      button.text(panel.hasClass("expanded") ? "Less" : "More");
+    html.querySelectorAll("[data-action='toggle-abilities']").forEach(button => {
+      button.addEventListener("click", ev => {
+        const panel = html.querySelector(".abilities-panel");
+        const toggleBtn = html.querySelector(".abilities-toggle");
+        if (panel) {
+          panel.classList.toggle("expanded");
+          if (toggleBtn) {
+            toggleBtn.textContent = panel.classList.contains("expanded") ? "Less" : "More";
+          }
+        }
+      });
     });
 
     // Toggle Defenses Panel
-    html.on("click", "[data-action='toggle-defenses']", ev => {
-      const panel = html.find(".defenses-panel");
-      const button = html.find(".defenses-toggle");
-      panel.toggleClass("expanded");
-      button.text(panel.hasClass("expanded") ? "Less" : "More");
+    html.querySelectorAll("[data-action='toggle-defenses']").forEach(button => {
+      button.addEventListener("click", ev => {
+        const panel = html.querySelector(".defenses-panel");
+        const toggleBtn = html.querySelector(".defenses-toggle");
+        if (panel) {
+          panel.classList.toggle("expanded");
+          if (toggleBtn) {
+            toggleBtn.textContent = panel.classList.contains("expanded") ? "Less" : "More";
+          }
+        }
+      });
     });
 
     // UI-only preview math for ability pills
-    html.on("input", ".ability-expanded input", ev => {
-      const row = ev.currentTarget.closest(".ability-row");
-      this._previewAbilityRow(row);
+    html.querySelectorAll(".ability-expanded input").forEach(input => {
+      input.addEventListener("input", ev => {
+        const row = ev.currentTarget.closest(".ability-row");
+        this._previewAbilityRow(row);
+      });
     });
 
     // Force Card Flip
-    html.on("click", ".force-card", ev => {
-      ev.currentTarget.classList.toggle("flipped");
+    html.querySelectorAll(".force-card").forEach(card => {
+      card.addEventListener("click", ev => {
+        card.classList.toggle("flipped");
+      });
     });
 
-    html.on("click", ".flip-back", ev => {
-      ev.stopPropagation();
-      ev.currentTarget.closest(".force-card")
-        .classList.remove("flipped");
+    // Flip Back
+    html.querySelectorAll(".flip-back").forEach(btn => {
+      btn.addEventListener("click", ev => {
+        ev.stopPropagation();
+        const card = ev.currentTarget.closest(".force-card");
+        if (card) card.classList.remove("flipped");
+      });
     });
 
     // Mentor Button
-    html.on("click", '[data-action="open-mentor"]', (ev) => {
-      ev.preventDefault();
-      this._openMentorConversation();
+    html.querySelectorAll('[data-action="open-mentor"]').forEach(button => {
+      button.addEventListener("click", ev => {
+        ev.preventDefault();
+        this._openMentorConversation();
+      });
     });
 
     // Inventory Panel Handlers
@@ -312,32 +341,39 @@ export class SWSEV2CharacterSheet extends
 
   _activateInventoryUI(html) {
     // Equip / Unequip toggle
-    html.on("click", ".item-equip", async (event) => {
-      const row = event.currentTarget.closest(".inventory-row");
-      const itemId = row.dataset.itemId;
-      await InventoryEngine.toggleEquip(this.actor, itemId);
+    html.querySelectorAll(".item-equip").forEach(button => {
+      button.addEventListener("click", async (event) => {
+        const row = event.currentTarget.closest(".inventory-row");
+        const itemId = row?.dataset.itemId;
+        if (itemId) await InventoryEngine.toggleEquip(this.actor, itemId);
+      });
     });
 
     // Edit item
-    html.on("click", ".item-edit", (event) => {
-      const row = event.currentTarget.closest(".inventory-row");
-      const itemId = row.dataset.itemId;
-      this.actor.items.get(itemId)?.sheet.render(true);
+    html.querySelectorAll(".item-edit").forEach(button => {
+      button.addEventListener("click", (event) => {
+        const row = event.currentTarget.closest(".inventory-row");
+        const itemId = row?.dataset.itemId;
+        if (itemId) this.actor.items.get(itemId)?.sheet.render(true);
+      });
     });
 
     // Add/increment quantity
-    html.on("click", ".item-add", async (event) => {
-      const row = event.currentTarget.closest(".inventory-row");
-      const itemId = row.dataset.itemId;
-      await InventoryEngine.incrementQuantity(this.actor, itemId);
+    html.querySelectorAll(".item-add").forEach(button => {
+      button.addEventListener("click", async (event) => {
+        const row = event.currentTarget.closest(".inventory-row");
+        const itemId = row?.dataset.itemId;
+        if (itemId) await InventoryEngine.incrementQuantity(this.actor, itemId);
+      });
     });
 
     // Sell item
-    html.on("click", ".item-sell", async (event) => {
-      const row = event.currentTarget.closest(".inventory-row");
-      const itemId = row.dataset.itemId;
-      // TODO: Integrate with StoreEngine when implemented
-      await InventoryEngine.decrementQuantity(this.actor, itemId);
+    html.querySelectorAll(".item-sell").forEach(button => {
+      button.addEventListener("click", async (event) => {
+        const row = event.currentTarget.closest(".inventory-row");
+        const itemId = row?.dataset.itemId;
+        if (itemId) await InventoryEngine.decrementQuantity(this.actor, itemId);
+      });
     });
   }
 
@@ -347,27 +383,37 @@ export class SWSEV2CharacterSheet extends
 
   _activateCombatUI(html) {
     // Action click (cards and table rows)
-    html.on("click", ".swse-combat-action-card, .action-row", async (event) => {
-      if (event.target.classList.contains("hide-action")) return;
-      const key = event.currentTarget.dataset.actionKey;
-      const actionData = this.actor.getFlag("swse", "combatActions")?.[key];
-      if (actionData) {
-        new CombatRollConfigDialog(this.actor, actionData).render(true);
-      }
+    html.querySelectorAll(".swse-combat-action-card, .action-row").forEach(element => {
+      element.addEventListener("click", async (event) => {
+        if (event.target.classList.contains("hide-action")) return;
+        const key = event.currentTarget.dataset.actionKey;
+        if (!key) return;
+
+        const data = this.actor.flags?.swse?.combatActions?.[key];
+        if (data) {
+          new CombatRollConfigDialog(this.actor, data).render(true);
+        }
+      });
     });
 
     // Hide individual action
-    html.on("click", ".hide-action", (event) => {
-      event.stopPropagation();
-      const el = event.currentTarget.closest(".swse-combat-action-card, .action-row");
-      el.classList.add("collapsed");
+    html.querySelectorAll(".hide-action").forEach(button => {
+      button.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const el = event.currentTarget.closest(".swse-combat-action-card, .action-row");
+        if (el) el.classList.add("collapsed");
+      });
     });
 
     // Collapse group (table mode)
-    html.on("click", ".collapse-group", (event) => {
-      const groupKey = event.currentTarget.dataset.group;
-      const table = html.find(`table[data-group='${groupKey}']`);
-      table.toggleClass("collapsed");
+    html.querySelectorAll(".collapse-group").forEach(button => {
+      button.addEventListener("click", (event) => {
+        const groupKey = event.currentTarget.dataset.group;
+        if (groupKey) {
+          const table = html.querySelector(`table[data-group='${groupKey}']`);
+          if (table) table.classList.toggle("collapsed");
+        }
+      });
     });
   }
 

@@ -15,20 +15,20 @@
     </div>
   </header>
 
-  <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item active" data-tab="overview">Overview</a>
-    <a class="item" data-tab="systems">Systems</a>
-    <a class="item" data-tab="combat">Combat</a>
-    <a class="item" data-tab="skills">Skills</a>
-    <a class="item" data-tab="abilities">Abilities</a>
-    <a class="item" data-tab="talents">Talents</a>
-    <a class="item" data-tab="gear">Gear</a>
-    <a class="item" data-tab="relationships">Relationships</a>
-    <a class="item" data-tab="notes">Notes</a>
+  <nav class="sheet-tabs tabs" data-tab-group="primary">
+    <a class="item active" data-action="tab" data-tab="overview">Overview</a>
+    <a class="item" data-action="tab" data-tab="systems">Systems</a>
+    <a class="item" data-action="tab" data-tab="combat">Combat</a>
+    <a class="item" data-action="tab" data-tab="skills">Skills</a>
+    <a class="item" data-action="tab" data-tab="abilities">Abilities</a>
+    <a class="item" data-action="tab" data-tab="talents">Talents</a>
+    <a class="item" data-action="tab" data-tab="gear">Gear</a>
+    <a class="item" data-action="tab" data-tab="relationships">Relationships</a>
+    <a class="item" data-action="tab" data-tab="notes">Notes</a>
   </nav>
 
   <section class="sheet-body">
-    <section class="tab active" data-group="primary" data-tab="overview">
+    <section class="tab active" data-tab-group="primary" data-tab="overview">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-left">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/identity-strip.hbs"}}
@@ -41,7 +41,7 @@
       </div>
     </section>
 
-    <section class="tab" data-group="primary" data-tab="systems">
+    <section class="tab" data-tab-group="primary" data-tab="systems">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-panel.hbs"}}
@@ -53,7 +53,7 @@
       </div>
     </section>
 
-    <section class="tab" data-group="primary" data-tab="combat">
+    <section class="tab" data-tab-group="primary" data-tab="combat">
       <div class="swse-v2-sheet-grid">
 
         <!-- INITIATIVE DISPLAY -->
@@ -87,7 +87,7 @@
       </div>
     </section>
 
-    <section class="tab" data-group="primary" data-tab="skills">
+    <section class="tab" data-tab-group="primary" data-tab="skills">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs"}}
@@ -95,7 +95,7 @@
       </div>
     </section>
 
-    <section class="tab" data-group="primary" data-tab="abilities">
+    <section class="tab" data-tab-group="primary" data-tab="abilities">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/abilities-panel.hbs"}}
@@ -103,7 +103,7 @@
       </div>
     </section>
 
-    <section class="tab" data-group="primary" data-tab="talents">
+    <section class="tab" data-tab-group="primary" data-tab="talents">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/Talents.hbs"}}
@@ -114,7 +114,7 @@
       </div>
     </section>
 
-    <section class="tab" data-group="primary" data-tab="gear">
+    <section class="tab" data-tab-group="primary" data-tab="gear">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           <section class="gear-section">
@@ -258,7 +258,7 @@
       </div>
     </section>
 
-    <section class="tab" data-group="primary" data-tab="relationships">
+    <section class="tab" data-tab-group="primary" data-tab="relationships">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           <div class="holo-panel">
@@ -302,7 +302,7 @@
       </div>
     </section>
 
-    <section class="tab" data-group="primary" data-tab="notes">
+    <section class="tab" data-tab-group="primary" data-tab="notes">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/partials/suggestion-card.hbs"}}

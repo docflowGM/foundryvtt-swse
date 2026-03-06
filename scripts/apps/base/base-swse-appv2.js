@@ -33,28 +33,6 @@ export class BaseSWSEAppV2 extends SWSEApplicationV2 {
       id: this.id || `app-${Math.random().toString(36).substr(2, 9)}`
     };
 
-    // Freeze element access until render (contract enforcement)
-    Object.defineProperty(this, 'element', {
-      get() {
-        if (this._lifecycle.phase === 'constructor') {
-          const error = new Error(
-            `[${this.constructor.name}] DOM ACCESS CONTRACT VIOLATION: element accessed in constructor. ` +
-            `Move DOM logic to _onRender() or _prepareContext().`
-          );
-          StructuredLogger.app(SEVERITY.ERROR, error.message, {
-            app: this.constructor.name,
-            phase: this._lifecycle.phase
-          });
-          throw error;
-        }
-        return this._element || null;
-      },
-      set(value) {
-        this._element = value;
-      },
-      configurable: true
-    });
-
     StructuredLogger.app(SEVERITY.DEBUG, `${this.constructor.name} instantiated (AppV2)`, {
       appId: this._lifecycle.id
     });

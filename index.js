@@ -63,6 +63,7 @@ if (typeof $ !== 'undefined' || typeof jQuery !== 'undefined') {
 
 import './scripts/apps/dialogs/swse-dialog-v2.js';
 import { RuntimeContract } from './scripts/contracts/runtime-contract.js';
+import { FlagRegistry } from './scripts/core/flag-registry.js';
 
 /* =========================
    IMPORTS
@@ -106,6 +107,7 @@ import { Batch2ComprehensiveTest } from './tests/archived/batch-2-comprehensive-
 
 // ---- sheets ----
 import { SWSEV2CharacterSheet } from './scripts/sheets/v2/character-sheet.js';
+import { SWSEMinimalTestSheet } from './scripts/sheets/v2/minimal-test-sheet.js';
 import { SWSEV2NpcSheet } from './scripts/sheets/v2/npc-sheet.js';
 import { SWSEV2DroidSheet } from './scripts/sheets/v2/droid-sheet.js';
 import { SWSEV2VehicleSheet } from './scripts/sheets/v2/vehicle-sheet.js';
@@ -183,6 +185,12 @@ Hooks.once("setup", () => {
   ActorCollection.registerSheet("foundryvtt-swse", SWSEV2CharacterSheet, {
     types: ["character"],
     makeDefault: true
+  });
+
+  ActorCollection.registerSheet("foundryvtt-swse", SWSEMinimalTestSheet, {
+    types: ["character"],
+    makeDefault: false,
+    label: "SWSE Minimal Test Sheet"
   });
 
   ActorCollection.registerSheet("foundryvtt-swse", SWSEV2NpcSheet, {

@@ -7,7 +7,6 @@ import { guardOnRender, validateTemplate } from "/systems/foundryvtt-swse/script
 export default class SWSEApplicationV2 extends HandlebarsApplicationMixin(ApplicationV2) {
   static DEFAULT_OPTIONS = {
     classes: ['swse', 'swse-window'],
-    tag: 'div',
     position: {
       width: 600,
       height: 'auto'
@@ -42,6 +41,9 @@ export default class SWSEApplicationV2 extends HandlebarsApplicationMixin(Applic
     try {
       guardOnRender(context, options, this);
       validateTemplate(this);
+
+      await super._onRender(context, options);
+
     } catch (error) {
       this._handleError('_onRender', error);
     }

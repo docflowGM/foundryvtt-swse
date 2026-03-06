@@ -25,6 +25,7 @@
   "download": "https://github.com/docflowGM/foundryvtt-swse/releases/download/v1.2.0/foundryvtt-swse.zip",
   "esmodules": [
     "index.js",
+    "scripts/bootstrap/holo-init.js",
     "scripts/engine/progression/talents/TalentNode.js",
     "scripts/engine/progression/talents/TalentTreeGraph.js",
     "scripts/engine/progression/utils/PrerequisiteEnricher.js",
@@ -36,7 +37,8 @@
     "scripts/talents/light-side-init.js"
   ],
   "styles": [
-    "styles/swse-core.css"
+    "styles/swse-core.css",
+    "styles/swse-holo.css"
   ],
   "languages": [
     {

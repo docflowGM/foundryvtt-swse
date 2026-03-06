@@ -61,7 +61,8 @@ export class CombatUIAdapter {
       damageRoll: result.damageRoll,
       damage: result.damage,
       damageApplied: result.damageApplied,
-      threshold: result.threshold
+      threshold: result.threshold,
+      reactions: result.reactions
     };
 
     /* Create and post chat card */

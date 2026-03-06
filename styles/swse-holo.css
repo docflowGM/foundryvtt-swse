@@ -1,0 +1,175 @@
+/* =========================================
+   SWSE HOLO ROLL STYLING (Phase A Foundation)
+   ========================================= */
+
+/* Color palette */
+:root {
+  --swse-holo-bg: #071421;
+  --swse-holo-panel: #0c2236;
+  --swse-holo-border: #00eaff;
+  --swse-holo-glow: 0 0 8px #00eaffaa;
+  --swse-holo-text: #bff6ff;
+  --swse-holo-positive: #00ff88;
+  --swse-holo-negative: #ff3b3b;
+  --swse-holo-accent: #00eaff;
+}
+
+/* =========================================
+   HOLO ROLL CARD
+   ========================================= */
+
+.swse-holo-roll {
+  background: var(--swse-holo-bg);
+  border: 1px solid var(--swse-holo-border);
+  box-shadow: var(--swse-holo-glow);
+  padding: 1rem;
+  font-family: 'Courier New', monospace;
+  color: var(--swse-holo-text);
+  margin: 0.5rem 0;
+}
+
+/* Flavor text */
+.swse-roll-flavor {
+  color: var(--swse-holo-text);
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
+
+/* Formula line */
+.swse-roll-formula {
+  color: var(--swse-holo-text);
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+  opacity: 0.8;
+}
+
+/* Dice breakdown */
+.swse-roll-breakdown {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.swse-die-group {
+  display: inline-flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.swse-die-result {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  line-height: 2rem;
+  text-align: center;
+  border: 1px solid var(--swse-holo-border);
+  background: rgba(0, 234, 255, 0.1);
+  color: var(--swse-holo-text);
+  font-weight: bold;
+  text-shadow: 0 0 4px var(--swse-holo-accent);
+}
+
+.swse-die-result.inactive {
+  opacity: 0.4;
+  border-color: var(--swse-holo-border);
+  background: rgba(0, 234, 255, 0.05);
+}
+
+.swse-die-label {
+  font-size: 0.75rem;
+  color: var(--swse-holo-text);
+  opacity: 0.6;
+}
+
+/* Operators */
+.swse-operator {
+  color: var(--swse-holo-text);
+  opacity: 0.7;
+  margin: 0 0.25rem;
+}
+
+/* Modifiers */
+.swse-modifier {
+  font-weight: bold;
+}
+
+.swse-modifier.positive {
+  color: var(--swse-holo-positive);
+}
+
+.swse-modifier.negative {
+  color: var(--swse-holo-negative);
+}
+
+/* Roll total */
+.swse-roll-total {
+  font-size: 2.2rem;
+  font-weight: bold;
+  text-align: center;
+  color: var(--swse-holo-accent);
+  text-shadow: 0 0 10px var(--swse-holo-accent);
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(0, 234, 255, 0.3);
+}
+
+/* =========================================
+   CATEGORY-SPECIFIC STYLING
+   ========================================= */
+
+.swse-holo-roll[data-category="crit"] {
+  border-color: var(--swse-holo-positive);
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.5);
+}
+
+.swse-holo-roll[data-category="crit"] .swse-roll-total {
+  color: var(--swse-holo-positive);
+  text-shadow: 0 0 10px var(--swse-holo-positive);
+}
+
+.swse-holo-roll[data-category="fail"] {
+  border-color: var(--swse-holo-negative);
+  box-shadow: 0 0 12px rgba(255, 59, 59, 0.5);
+}
+
+.swse-holo-roll[data-category="fail"] .swse-roll-total {
+  color: var(--swse-holo-negative);
+  text-shadow: 0 0 10px var(--swse-holo-negative);
+}
+
+/* =========================================
+   REACTION BUTTONS
+   ========================================= */
+
+.swse-reaction-buttons {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(0, 234, 255, 0.2);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.swse-reaction-btn {
+  padding: 0.5rem 0.75rem;
+  background: var(--swse-holo-panel);
+  border: 1px solid var(--swse-holo-border);
+  color: var(--swse-holo-text);
+  font-family: Consolas, monospace;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.swse-reaction-btn:hover {
+  background: rgba(0, 234, 255, 0.15);
+  box-shadow: 0 0 8px var(--swse-holo-accent);
+}
+
+.swse-reaction-btn:active {
+  background: rgba(0, 234, 255, 0.25);
+  border-color: var(--swse-holo-accent);
+}

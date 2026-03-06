@@ -125,20 +125,20 @@
     </div>
   {{/if}}
 
-  <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item active" data-tab="overview">Overview</a>
-    <a class="item" data-tab="combat">Combat</a>
-    <a class="item" data-tab="skills">Skills</a>
-    <a class="item" data-tab="talents">Talents</a>
-    {{#if actor.system.forceSensitive}}<a class="item" data-tab="force">Force</a>{{/if}}
-    <a class="item" data-tab="gear">Gear</a>
-    <a class="item" data-tab="relationships">Relationships</a>
-    <a class="item" data-tab="notes">Notes</a>
-    {{#if xpEnabled}}<a class="item" data-tab="resources">Resources</a>{{/if}}
+  <nav class="sheet-tabs tabs" data-tab-group="primary">
+    <a class="item active" data-action="tab" data-tab="overview">Overview</a>
+    <a class="item" data-action="tab" data-tab="combat">Combat</a>
+    <a class="item" data-action="tab" data-tab="skills">Skills</a>
+    <a class="item" data-action="tab" data-tab="talents">Talents</a>
+    {{#if actor.system.forceSensitive}}<a class="item" data-action="tab" data-tab="force">Force</a>{{/if}}
+    <a class="item" data-action="tab" data-tab="gear">Gear</a>
+    <a class="item" data-action="tab" data-tab="relationships">Relationships</a>
+    <a class="item" data-action="tab" data-tab="notes">Notes</a>
+    {{#if xpEnabled}}<a class="item" data-action="tab" data-tab="resources">Resources</a>{{/if}}
   </nav>
 
   <section class="sheet-body">
-    <section class="tab active" data-group="primary" data-tab="overview">
+    <section class="tab active" data-tab-group="primary" data-tab="overview">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-left">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/identity-strip.hbs"}}
@@ -155,7 +155,7 @@
       </div>
     </section>
 
-    <section class="tab" data-group="primary" data-tab="combat">
+    <section class="tab" data-tab-group="primary" data-tab="combat">
       <div class="swse-v2-sheet-grid">
 
         <!-- INITIATIVE DISPLAY -->
@@ -194,7 +194,7 @@
       </div>
     </section>
 
-    <section class="tab" data-group="primary" data-tab="skills">
+    <section class="tab" data-tab-group="primary" data-tab="skills">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs"}}
@@ -209,7 +209,7 @@
 
     
 
-<section class="tab" data-group="primary" data-tab="talents">
+<section class="tab" data-tab-group="primary" data-tab="talents">
   <div class="swse-v2-sheet-grid">
     <div class="swse-v2-full">
       {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/Talents.hbs"}}
@@ -225,7 +225,7 @@
 
 
     {{#if actor.system.forceSensitive}}
-    <section class="tab" data-group="primary" data-tab="force">
+    <section class="tab" data-tab-group="primary" data-tab="force">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/Force.hbs"}}
@@ -237,7 +237,7 @@
     </section>
     {{/if}}
 
-    <section class="tab" data-group="primary" data-tab="gear" data-drop-zone="inventory">
+    <section class="tab" data-tab-group="primary" data-tab="gear" data-drop-zone="inventory">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           <section class="gear-section">
@@ -463,7 +463,7 @@
       </div>
     </section>
 
-    <section class="tab" data-group="primary" data-tab="relationships">
+    <section class="tab" data-tab-group="primary" data-tab="relationships">
       <div class="swse-v2-sheet-grid">
         <section class="relationships-section">
           <h3>Followers & Assets</h3>
@@ -571,7 +571,7 @@
       </div>
     </section>
 
-    <section class="tab" data-group="primary" data-tab="notes">
+    <section class="tab" data-tab-group="primary" data-tab="notes">
       <div class="swse-v2-sheet-grid">
 
         <!-- CHARACTER NOTES & BACKGROUND -->
@@ -653,7 +653,7 @@
 
     <!-- RESOURCES TAB (XP) -->
     {{#if xpEnabled}}
-    <section class="tab" data-group="primary" data-tab="resources">
+    <section class="tab" data-tab-group="primary" data-tab="resources">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/xp-panel.hbs"}}
@@ -661,3 +661,6 @@
       </div>
     </section>
     {{/if}}
+  </section>
+  </div>
+</div>

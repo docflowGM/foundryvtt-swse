@@ -12,6 +12,7 @@ import { VehicleDogfighting } from "/systems/foundryvtt-swse/scripts/engine/comb
 import { VehicleCollisions } from "/systems/foundryvtt-swse/scripts/engine/combat/subsystems/vehicle/vehicle-collisions.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { CombatUIAdapter } from "/systems/foundryvtt-swse/scripts/engine/combat/ui/CombatUIAdapter.js";
+import { ReactionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-engine.js";
 
 export class CombatEngine {
 
@@ -175,6 +176,22 @@ export class CombatEngine {
       return missResult;
     }
 
+    /* ===================================================================
+       REACTION ELIGIBILITY (Phase 1)
+       Fetch available reactions for defender before damage resolution.
+       Reactions flow through chat context to holo template.
+       ================================================================= */
+    const attackContext = {
+      attacker,
+      target,
+      weapon,
+      attackType: weapon.system.combat?.range === 'ranged' ? 'ranged' : 'melee',
+      damageTypes: [weapon.system.combat?.damageType || 'kinetic'],
+      trigger: 'ON_ATTACK_DECLARED'
+    };
+
+    const reactions = await ReactionEngine.getAvailableReactions(target, attackContext);
+
     /* DAMAGE */
     // PHASE 2: Read from structured v2 schema only
     const damageFormula = weapon.system.combat?.damage?.dice ?? "1d6";
@@ -224,6 +241,7 @@ export class CombatEngine {
       damageApplied: damageResult,
       threshold: thresholdResult,
       context,
+      reactions,
       attacker,
       target,
       weapon

@@ -1,6 +1,7 @@
 // scripts/chat/swse-chat.js
 
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { SWSERollEngine } from "/systems/foundryvtt-swse/scripts/engine/rolls/swse-roll-engine.js";
 
 /**
  * SWSEChat
@@ -8,8 +9,9 @@ import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/documen
  * Centralizes chat output so message creation is v13+ explicit and consistent.
  *
  * Rules:
- * - Rolls should be posted with Roll#toMessage and { create: true }.
- * - Non-roll messages should use createChatMessage or ChatMessage.create with `style` (not `type`).
+ * - All rolls render through postRoll() with holo template.
+ * - Non-roll messages should use postHTML().
+ * - Single roll pipeline: postRoll() → holo-roll.hbs → ChatMessage.create()
  */
 export class SWSEChat {
   static speaker({ actor = null, token = null, alias = null } = {}) {
@@ -25,19 +27,45 @@ export class SWSEChat {
     flags = {},
     rollMode = null,
     whisper = null,
-    blind = false
+    blind = false,
+    context = {}
   } = {}) {
     if (!roll) {throw new Error('SWSEChat.postRoll requires a Roll.');}
 
+    // Build structured roll data for holo rendering
+    const holoData = SWSERollEngine.buildHoloRollData({
+      roll,
+      actor,
+      flavor,
+      context
+    });
+
+    // Render holo roll template
+    const content = await renderTemplate(
+      'systems/foundryvtt-swse/templates/chat/holo-roll.hbs',
+      holoData
+    );
+
     const msgSpeaker = speaker ?? this.speaker({ actor, token });
 
-    const messageData = { speaker: msgSpeaker, flavor, flags, blind };
+    const messageData = {
+      user: game.user.id,
+      speaker: msgSpeaker,
+      content,
+      flags: {
+        ...flags,
+        swse: { holo: true }  // Mark as holo-rendered
+      },
+      blind,
+      type: CONST.CHAT_MESSAGE_TYPES.ROLL
+    };
+
     if (Array.isArray(whisper)) {messageData.whisper = whisper;}
 
     const options = { create: true };
     if (rollMode) {options.rollMode = rollMode;}
 
-    return roll.toMessage(messageData, options);
+    return ChatMessage.create(messageData, options);
   }
 
   static async postHTML({
