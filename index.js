@@ -117,6 +117,7 @@ import { SWSEItemSheet } from './scripts/items/swse-item-sheet.js';
 // ---- audits (Phase A2 - dev-only diagnostics) ----
 import { SWSEV2CharacterSheetAudit } from './scripts/sheets/v2/character-sheet-integration-audit.js';
 import { CharacterSheetIntegrationTestHarness } from './scripts/sheets/v2/character-sheet-integration-test-harness.js';
+import { SWSEV2SheetDiagnostics } from './scripts/sheets/v2/sheet-diagnostics.js';
 
 // ---- handlebars ----
 import { registerHandlebarsHelpers } from './helpers/handlebars/index.js';
