@@ -25,6 +25,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class SubsystemEngine {
 
@@ -315,7 +316,8 @@ export class SubsystemEngine {
 
   /** @private */
   static async _setSubsystemTier(vehicle, subsystem, tier) {
-    await vehicle.update({
+    // PHASE 2B: Route through ActorEngine
+    await ActorEngine.updateActor(vehicle, {
       [`system.subsystems.${subsystem}`]: tier
     });
   }

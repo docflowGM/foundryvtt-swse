@@ -1,4 +1,5 @@
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * EnhancedEngineer — Power allocation and repair action system.
@@ -178,7 +179,8 @@ export class EnhancedEngineer {
       }
     }
 
-    await vehicle.update({
+    // PHASE 2B: Route through ActorEngine
+    await ActorEngine.updateActor(vehicle, {
       'system.powerAllocation.weapons': allocation.weapons ?? 2,
       'system.powerAllocation.shields': allocation.shields ?? 2,
       'system.powerAllocation.engines': allocation.engines ?? 2

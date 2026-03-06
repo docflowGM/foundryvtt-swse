@@ -1,4 +1,5 @@
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * EnhancedCommander — Tactical boosts, coordination, and battlefield control.
@@ -150,7 +151,8 @@ export class EnhancedCommander {
       return false;
     }
 
-    await vehicle.update({
+    // PHASE 2B: Route through ActorEngine
+    await ActorEngine.updateActor(vehicle, {
       'system.commanderOrder': order
     });
 
@@ -177,7 +179,8 @@ export class EnhancedCommander {
    */
   static async resetOrder(vehicle) {
     if (!vehicle || vehicle.type !== 'vehicle') return;
-    await vehicle.update({ 'system.commanderOrder': this.ORDERS.NONE });
+    // PHASE 2B: Route through ActorEngine
+    await ActorEngine.updateActor(vehicle, { 'system.commanderOrder': this.ORDERS.NONE });
   }
 
   /* -------------------------------------------------------------------------- */

@@ -16,6 +16,7 @@
  */
 
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class EnhancedPilot {
 
@@ -123,7 +124,8 @@ export class EnhancedPilot {
       return false;
     }
 
-    await vehicle.update({
+    // PHASE 2B: Route through ActorEngine
+    await ActorEngine.updateActor(vehicle, {
       'system.pilotManeuver': maneuver
     });
 
@@ -148,7 +150,8 @@ export class EnhancedPilot {
    */
   static async resetManeuver(vehicle) {
     if (!vehicle || vehicle.type !== 'vehicle') return;
-    await vehicle.update({ 'system.pilotManeuver': this.MANEUVERS.NONE });
+    // PHASE 2B: Route through ActorEngine
+    await ActorEngine.updateActor(vehicle, { 'system.pilotManeuver': this.MANEUVERS.NONE });
   }
 
   /* -------------------------------------------------------------------------- */
