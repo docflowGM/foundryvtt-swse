@@ -33,6 +33,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 export class ThresholdEngine {
 
@@ -402,13 +403,13 @@ export class ThresholdEngine {
     });
 
     // Post chat message
-    await ChatMessage.create({
+    await SWSEChat.postHTML({
       content: `<div class="swse-threshold-msg">
         <strong>Last Grasp!</strong><br>
         ${pilot.name} spends a Force Point to take one final action before the vehicle is disabled.
         <br><em>One Standard Action allowed. Then vehicle enters disabled state.</em>
       </div>`,
-      speaker: ChatMessage.getSpeaker({ actor: pilot })
+      actor: pilot
     });
 
     return true;
@@ -464,18 +465,18 @@ export class ThresholdEngine {
     const dc = 20;
     if (mechanicsCheck < dc) {
       const msg = `Emergency Patch failed! ${engineer.name} rolled ${mechanicsCheck} vs DC ${dc}. Force Point spent.`;
-      await ChatMessage.create({
+      await SWSEChat.postHTML({
         content: `<div class="swse-threshold-msg"><strong>Emergency Patch Failed</strong><br>${msg}</div>`,
-        speaker: ChatMessage.getSpeaker({ actor: engineer })
+        actor: engineer
       });
       return { success: false, message: msg };
     }
 
     // Success — caller handles the actual subsystem tier change
     const msg = `Emergency Patch succeeded! ${engineer.name} rolled ${mechanicsCheck} vs DC ${dc}. ${subsystem} downgraded by one damage tier.`;
-    await ChatMessage.create({
+    await SWSEChat.postHTML({
       content: `<div class="swse-threshold-msg"><strong>Emergency Patch Succeeded!</strong><br>${msg}</div>`,
-      speaker: ChatMessage.getSpeaker({ actor: engineer })
+      actor: engineer
     });
 
     return { success: true, message: msg };
@@ -522,13 +523,13 @@ export class ThresholdEngine {
       'system.conditionTrack.current': 5
     });
 
-    await ChatMessage.create({
+    await SWSEChat.postHTML({
       content: `<div class="swse-threshold-msg">
         <strong>Death Prevented!</strong><br>
         ${target.name} drops to 0 HP and becomes helpless instead of dying.
         <br><em>Stabilization rules apply.</em>
       </div>`,
-      speaker: ChatMessage.getSpeaker({ actor: target })
+      actor: target
     });
   }
 
@@ -560,12 +561,12 @@ export class ThresholdEngine {
     const labels = ['Normal', '-1', '-2', '-5', '-10', 'Helpless'];
     parts.push(`Condition Track: ${labels[newCT] ?? 'Unknown'}${persistentNote}`);
 
-    await ChatMessage.create({
+    await SWSEChat.postHTML({
       content: `<div class="swse-threshold-msg">
         <strong>Massive Damage — ${target.name}</strong><br>
         ${parts.join('<br>')}
       </div>`,
-      speaker: ChatMessage.getSpeaker({ actor: target })
+      actor: target
     });
   }
 
