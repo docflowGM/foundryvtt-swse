@@ -55,6 +55,17 @@ export class SWSEV2CharacterSheet extends
     // SAFEGUARD: Ensure all expected nested properties exist with empty defaults
     const derived = foundry.utils.duplicate(actor.system?.derived ?? {});
 
+    // Define ability constants used for multiple safeguards
+    const ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+    const ABILITY_LABELS = {
+      str: 'Strength',
+      dex: 'Dexterity',
+      con: 'Constitution',
+      int: 'Intelligence',
+      wis: 'Wisdom',
+      cha: 'Charisma'
+    };
+
     // Normalize critical derived structures to prevent undefined path errors in templates
     derived.talents ??= {};
     derived.talents.groups ??= [];
@@ -67,6 +78,11 @@ export class SWSEV2CharacterSheet extends
 
     derived.identity ??= {};
     derived.identity.halfLevel ??= 0;
+    // Provide ability array for skills panel selectors (used in skills-panel.hbs line 75)
+    derived.identity.abilities ??= ABILITY_KEYS.map(key => ({
+      key,
+      label: ABILITY_LABELS[key]
+    }));
 
     derived.encumbrance ??= {};
     derived.encumbrance.state ??= "normal";
@@ -81,15 +97,6 @@ export class SWSEV2CharacterSheet extends
     // Build abilities array from system.abilities object
     // Convert {str: {...}, dex: {...}, ...} → [{key: 'str', label: 'Strength', ...}, ...]
     const abilitiesMap = system.abilities ?? {};
-    const ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
-    const ABILITY_LABELS = {
-      str: 'Strength',
-      dex: 'Dexterity',
-      con: 'Constitution',
-      int: 'Intelligence',
-      wis: 'Wisdom',
-      cha: 'Charisma'
-    };
     const abilities = ABILITY_KEYS.map(key => {
       const ability = abilitiesMap[key] ?? {};
       return {
