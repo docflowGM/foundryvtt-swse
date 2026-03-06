@@ -52,7 +52,29 @@ export class SWSEV2CharacterSheet extends
     const context = await super._prepareContext(options);
 
     // Authoritative derived state (populated by character-actor.js computeCharacterDerived)
-    const derived = actor.system?.derived ?? {};
+    // SAFEGUARD: Ensure all expected nested properties exist with empty defaults
+    const derived = foundry.utils.duplicate(actor.system?.derived ?? {});
+
+    // Normalize critical derived structures to prevent undefined path errors in templates
+    derived.talents ??= {};
+    derived.talents.groups ??= [];
+    derived.talents.list ??= [];
+
+    derived.skills ??= [];
+
+    derived.attacks ??= {};
+    derived.attacks.list ??= [];
+
+    derived.identity ??= {};
+    derived.identity.halfLevel ??= 0;
+
+    derived.encumbrance ??= {};
+    derived.encumbrance.state ??= "normal";
+    derived.encumbrance.label ??= "Unencumbered";
+    derived.encumbrance.total ??= 0;
+    derived.encumbrance.lightLoad ??= 0;
+    derived.encumbrance.mediumLoad ??= 0;
+    derived.encumbrance.heavyLoad ??= 0;
 
     const inventory = this._buildInventoryModel(actor);
 
@@ -100,6 +122,17 @@ export class SWSEV2CharacterSheet extends
       attacks: derived?.attacks?.list ?? []
     };
 
+    // Force Points visual array (value as dots, with used state)
+    const fpValue = system.forcePoints?.value ?? 0;
+    const fpMax = system.forcePoints?.max ?? 0;
+    const forcePoints = [];
+    for (let i = 1; i <= fpMax; i++) {
+      forcePoints.push({
+        index: i,
+        used: i <= fpValue
+      });
+    }
+
     // Force suite context (hand/discard zones + tag filtering)
     const forcePowers = (actor?.items ?? []).filter(i => i.type === 'force-power');
     const forceTags = [...new Set(forcePowers.flatMap(p => p.system?.tags ?? []))].sort();
@@ -130,6 +163,7 @@ export class SWSEV2CharacterSheet extends
       conditionSteps,
       initiativeTotal,
       combat,
+      forcePoints,
       forceTags,
       forceSuite,
       lowHand: forceSuite.hand.length > 5,
