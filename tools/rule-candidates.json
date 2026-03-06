@@ -1,0 +1,56 @@
+{
+  "timestamp": "2026-03-05T22:54:39.045Z",
+  "totalCandidates": 8,
+  "categorized": {
+    "TREAT_SKILL_AS_TRAINED": [
+      {
+        "id": "0adc25cfaa35147a",
+        "name": "Insight of the Force",
+        "type": "talent"
+      },
+      {
+        "id": "63143040b7c229a7",
+        "name": "Scholarly Knowledge",
+        "type": "talent"
+      },
+      {
+        "id": "d46612d82307f0db",
+        "name": "Drain Knowledge",
+        "type": "talent"
+      }
+    ],
+    "IGNORE_COVER": [
+      {
+        "id": "34669d959223b187",
+        "name": "Boarder",
+        "type": "talent"
+      },
+      {
+        "id": "76eb427551c6495c",
+        "name": "Curved Throw",
+        "type": "talent"
+      }
+    ],
+    "IMMUNE_MIND_AFFECTING": [
+      {
+        "id": "3df46d093b31411d",
+        "name": "Indomitable class feature",
+        "type": "talent"
+      }
+    ],
+    "IMMUNE_POISON": [
+      {
+        "id": "6714ab8e28708f50",
+        "name": "Fortified Body",
+        "type": "talent"
+      }
+    ],
+    "CANNOT_BE_FLANKED": [
+      {
+        "id": "c7f46a5c92d7dd5e",
+        "name": "Uncanny Dodge II",
+        "type": "talent"
+      }
+    ]
+  }
+}

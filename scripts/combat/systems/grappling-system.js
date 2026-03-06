@@ -13,6 +13,7 @@ import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { DamageSystem } from "/systems/foundryvtt-swse/scripts/combat/damage-system.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
 
 export class SWSEGrappling {
 
@@ -89,7 +90,7 @@ export class SWSEGrappling {
   // ---------------------------------------------------------------------------
 
   static async attemptPin(attacker, defender) {
-    if (!this._hasFeat(attacker, 'Pin')) {
+    if (!CapabilityRegistry.hasFeat(attacker, 'pin')) {
       ui.notifications.warn(`${attacker.name} lacks the Pin feat.`);
       return false;
     }
@@ -197,10 +198,6 @@ export class SWSEGrappling {
   static async _clearState(actor) {
     const effects = actor.effects.filter(e => e.flags?.swse?.grapple);
     await ActorEngine.deleteEmbeddedDocuments(actor, 'ActiveEffect', effects.map(e => e.id));
-  }
-
-  static _hasFeat(actor, name) {
-    return actor.items.some(i => i.type === 'feat' && i.name.toLowerCase().includes(name.toLowerCase()));
   }
 
   static _hasGrappledState(actor) {

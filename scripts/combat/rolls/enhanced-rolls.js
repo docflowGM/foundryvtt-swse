@@ -5,6 +5,8 @@ import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMi
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
 import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
+import { ResolutionContext } from "/systems/foundryvtt-swse/scripts/engine/resolution/resolution-context.js";
+import { RULE_TYPES } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/rule-types.js";
 import {
   ROLL_HOOKS,
   callPreRollHook,
@@ -1118,6 +1120,18 @@ export class SWSERoll {
     if (!skill) {
       ui.notifications.warn(`Skill ${skillKey} not found.`);
       return null;
+    }
+
+    // PHASE 4E: Check skill training requirement
+    // If skill requires training (trainedOnly/untrained=false) and actor is untrained,
+    // check if TREAT_SKILL_AS_TRAINED rule applies
+    const requiresTraining = !skill.untrained;  // trainedOnly = !untrained
+    if (requiresTraining && !skill.trained) {
+      const context = new ResolutionContext(actor);
+      if (!context.hasRule(RULE_TYPES.TREAT_SKILL_AS_TRAINED, { skillId: skillKey })) {
+        ui.notifications.warn(`${skillKey} requires training.`);
+        return null;
+      }
     }
 
     try {

@@ -18,6 +18,7 @@ import { TalentSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/pro
 // Phase 1.5: Feat Slot Validation and Registry
 import { FeatSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-slot-validator.js";
 import { ClassFeatRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/class-feat-registry.js";
+import { CAPABILITY_SLUGS } from "/systems/foundryvtt-swse/scripts/constants/capability-slugs.js";
 
 /**
  * Calculate feat/talent suggestions during chargen
@@ -258,7 +259,8 @@ export async function _onSelectFeat(event) {
   }
 
   // Check if this is a Skill Focus feat
-  if (feat.name.toLowerCase().includes('skill focus')) {
+  const featSlug = feat.system?.slug || feat.name?.toLowerCase().replace(/\s+/g, '-');
+  if (featSlug === CAPABILITY_SLUGS.SKILL_FOCUS || feat.name.toLowerCase().includes('skill focus')) {
     // Clone before passing to handler (handler will further modify it)
     await this._handleSkillFocusFeat(foundry.utils.deepClone(feat));
   } else {

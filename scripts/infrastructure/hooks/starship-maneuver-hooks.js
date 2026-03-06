@@ -7,6 +7,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
  */
 
 import { StarshipManeuverManager } from "/systems/foundryvtt-swse/scripts/utils/starship-maneuver-manager.js";
+import { CAPABILITY_SLUGS } from "/systems/foundryvtt-swse/scripts/constants/capability-slugs.js";
 
 export function initializeStarshipManeuverHooks() {
 
@@ -64,7 +65,10 @@ export function initializeStarshipManeuverHooks() {
 
     // Check if actor has Starship Tactics feat
     const hasStartshipTactics = actor.items.some(item =>
-      item.type === 'feat' && (item.name === 'Starship Tactics' || item.name.includes('Starship Tactics'))
+      item.type === 'feat' && (
+        item.system?.slug === CAPABILITY_SLUGS.STARSHIP_TACTICS ||
+        item.name === 'Starship Tactics'  // Fallback for items without slug
+      )
     );
     if (!hasStartshipTactics) {return;}
 

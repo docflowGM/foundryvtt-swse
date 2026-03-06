@@ -18,6 +18,7 @@ import { PROGRESSION_RULES } from "/systems/foundryvtt-swse/scripts/engine/progr
 import { ActorProgressionUpdater } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-actor-updater.js";
 import { TemplateEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/template-engine.js";
 import { BackgroundRegistry } from "/systems/foundryvtt-swse/scripts/registries/background-registry.js";
+import { ProgressionEventProcessor } from "/systems/foundryvtt-swse/scripts/engine/abilities/progression/progression-event-processor.js";
 
 export class ProgressionEngine {
   /**
@@ -170,6 +171,28 @@ export class ProgressionEngine {
       await ActorProgressionUpdater.finalize(actor);
       swseLogger.log(`[PROGRESSION-ENGINE] applyLevelUp: Actor finalized, triggering force powers...`);
       await this._triggerForcePowers(actor);
+
+      // Initialize progression history if needed (Phase 4)
+      if (!actor.flags?.swse) {
+        actor.flags = actor.flags || {};
+        actor.flags.swse = {};
+      }
+      if (!actor.flags.swse.progressionHistory) {
+        actor.flags.swse.progressionHistory = {};
+      }
+
+      // PHASE 4: Trigger PROGRESSION abilities on level up
+      swseLogger.log(`[PROGRESSION-ENGINE] applyLevelUp: Processing PROGRESSION abilities...`);
+      try {
+        ProgressionEventProcessor.handle(actor, "LEVEL_UP", {
+          classLevel: level,
+          classId: classId
+        });
+      } catch (err) {
+        swseLogger.error(`[PROGRESSION-ENGINE] Error processing PROGRESSION abilities:`, err);
+        // Don't throw - progression continues even if ability processing fails
+      }
+
       swseLogger.log(`[PROGRESSION-ENGINE] applyLevelUp: COMPLETE - Level up applied successfully`);
 
     } catch (err) {

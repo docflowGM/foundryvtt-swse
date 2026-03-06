@@ -6,6 +6,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ForcePowerEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-power-engine.js";
 import { getClassLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { CAPABILITY_SLUGS } from "/systems/foundryvtt-swse/scripts/constants/capability-slugs.js";
 
 /**
  * Determine if character gains force powers on this level up
@@ -24,9 +25,11 @@ export function getsForcePowers(actor, selectedFeats = []) {
   }
 
   // Check if Force Training is in selected feats
-  const hasForceTraining = selectedFeats.some(f =>
-    typeof f === 'string' ? f === 'Force Training' : f.name === 'Force Training'
-  );
+  const hasForceTraining = selectedFeats.some(f => {
+    const slug = typeof f === 'string' ? f : f.system?.slug || f.name?.toLowerCase().replace(/\s+/g, '-');
+    return slug === CAPABILITY_SLUGS.FORCE_TRAINING ||
+           (typeof f === 'string' ? f === 'Force Training' : f.name === 'Force Training');
+  });
   if (hasForceTraining) {return true;}
 
   return false;
@@ -50,7 +53,8 @@ export async function countForcePowersGained(actor, selectedFeats = []) {
   // Check for Force Training feat
   for (const feat of selectedFeats) {
     const featName = typeof feat === 'string' ? feat : feat.name;
-    if (featName === 'Force Training') {
+    const featSlug = typeof feat === 'string' ? feat : (feat.system?.slug || featName?.toLowerCase().replace(/\s+/g, '-'));
+    if (featSlug === CAPABILITY_SLUGS.FORCE_TRAINING || featName === 'Force Training') {
       // Force Training grants 1 + WIS mod (or CHA mod with house rule), minimum 1
       const wisAbility = actor.system.abilities?.wis;
       const chaAbility = actor.system.abilities?.cha;

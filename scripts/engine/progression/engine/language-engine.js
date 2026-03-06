@@ -14,6 +14,8 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { LanguageRegistry } from "/systems/foundryvtt-swse/scripts/registries/language-registry.js";
+import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
+import { CAPABILITY_SLUGS } from "/systems/foundryvtt-swse/scripts/constants/capability-slugs.js";
 
 export class LanguageEngine {
 
@@ -148,8 +150,11 @@ export class LanguageEngine {
      * Linguist feat grants +2 languages per feat
      */
     static async applyLinguistLanguages(actor) {
-        const linguistFeats = actor.items.filter(i =>
-            i.type === 'feat' && i.name === 'Linguist'
+        const linguistFeats = (actor.items || []).filter(i =>
+            i.type === 'feat' && (
+                i.system?.slug === CAPABILITY_SLUGS.LINGUIST ||
+                i.name === 'Linguist'  // Fallback for items without slug
+            )
         );
 
         const bonusLanguages = linguistFeats.length * 2;

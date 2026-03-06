@@ -17,6 +17,7 @@ import { EncumbranceEngine } from "/systems/foundryvtt-swse/scripts/engine/encum
 import { WeaponsEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/weapons-engine.js";
 import { StructuredRuleEvaluator } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/StructuredRuleEvaluator.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ConditionEvaluator } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/condition-evaluator.js";
 
 export class ModifierEngine {
   /**
@@ -74,6 +75,9 @@ export class ModifierEngine {
       // Source 8: Custom modifiers (Phase B - user-defined via UI)
       modifiers.push(...this._getCustomModifiers(actor));
 
+      // Source 8b: PASSIVE modifiers (Phase 1 - execution model infrastructure)
+      modifiers.push(...this._getPassiveModifiers(actor));
+
       // Source 9: Active Effects (Phase D - temporary/duration-based)
       modifiers.push(...this._getActiveEffectModifiers(actor));
 
@@ -89,6 +93,9 @@ export class ModifierEngine {
   /**
    * Aggregate all modifiers: collect, group by target, apply stacking
    *
+   * PHASE 2: Evaluate conditions during aggregation.
+   * Modifiers with unsatisfied conditions are excluded from aggregation.
+   *
    * @param {Actor} actor
    * @returns {Object<string, number>} Map of target → total modifier value
    */
@@ -99,9 +106,18 @@ export class ModifierEngine {
     // Group by target
     const byTarget = ModifierUtils.groupByTarget(allModifiers);
 
-    // For each target, resolve stacking and sum
+    // For each target, evaluate conditions, resolve stacking and sum
     for (const [target, modsForTarget] of byTarget.entries()) {
-      const resolved = ModifierUtils.resolveStacking(modsForTarget);
+      // PHASE 2: Filter modifiers based on conditions
+      const applicableModifiers = modsForTarget.filter(mod =>
+        ConditionEvaluator.evaluateAll(actor, mod.conditions)
+      );
+
+      if (applicableModifiers.length === 0) {
+        continue; // No applicable modifiers for this target
+      }
+
+      const resolved = ModifierUtils.resolveStacking(applicableModifiers);
       const total = ModifierUtils.sumModifiers(resolved);
 
       if (total !== 0) {
@@ -115,17 +131,25 @@ export class ModifierEngine {
   /**
    * Get aggregated modifier value for specific target
    *
+   * PHASE 2: Evaluate conditions before calculating total.
+   *
    * @param {Actor} actor
    * @param {string} target - Target key
    * @returns {number}
    */
   static async aggregateTarget(actor, target) {
     const allModifiers = await this.getAllModifiers(actor);
-    return ModifierUtils.calculateModifierTotal(allModifiers, target);
+    // PHASE 2: Filter based on conditions
+    const applicableModifiers = allModifiers.filter(mod =>
+      ConditionEvaluator.evaluateAll(actor, mod.conditions)
+    );
+    return ModifierUtils.calculateModifierTotal(applicableModifiers, target);
   }
 
   /**
    * Get detailed modifier breakdown for UI display
+   *
+   * PHASE 2: Evaluate conditions before breakdown.
    *
    * @param {Actor} actor
    * @param {string} target - Target key
@@ -133,7 +157,11 @@ export class ModifierEngine {
    */
   static async getModifierDetail(actor, target) {
     const allModifiers = await this.getAllModifiers(actor);
-    return ModifierUtils.getModifierDetail(allModifiers, target);
+    // PHASE 2: Filter based on conditions
+    const applicableModifiers = allModifiers.filter(mod =>
+      ConditionEvaluator.evaluateAll(actor, mod.conditions)
+    );
+    return ModifierUtils.getModifierDetail(applicableModifiers, target);
   }
 
   /**
@@ -1279,6 +1307,42 @@ export class ModifierEngine {
       return modifiers;
     } catch (err) {
       swseLogger.warn(`[ModifierEngine] Error collecting custom modifiers:`, err);
+      return modifiers;
+    }
+  }
+
+  /**
+   * Collect modifiers from PASSIVE execution model abilities (Phase 1)
+   *
+   * PASSIVE MODIFIER abilities register themselves in actor._passiveModifiers
+   * during PassiveAdapter.handleModifier() execution.
+   *
+   * @private
+   * @param {Actor} actor
+   * @returns {Modifier[]}
+   */
+  static _getPassiveModifiers(actor) {
+    const modifiers = [];
+
+    try {
+      // PHASE 4: Wire into actor preparation
+      // PASSIVE modifiers are stored on actor during registration
+      const passiveModifiers = actor?._passiveModifiers || {};
+
+      for (const abilityId in passiveModifiers) {
+        const mods = passiveModifiers[abilityId];
+        if (Array.isArray(mods)) {
+          modifiers.push(...mods);
+        }
+      }
+
+      if (modifiers.length > 0) {
+        swseLogger.debug(`[ModifierEngine] Collected ${modifiers.length} PASSIVE modifiers`);
+      }
+
+      return modifiers;
+    } catch (err) {
+      swseLogger.warn(`[ModifierEngine] Error collecting PASSIVE modifiers:`, err);
       return modifiers;
     }
   }
