@@ -97,8 +97,8 @@ export class SentinelAppV2Auditor {
       }
     });
 
-    // Warn via Sentinel if found
-    if (audit.contracts.legacyOptions.length > 0 && audit.config.integrateSentinel) {
+    // Warn via Sentinel if found (guard: Sentinel must be initialized)
+    if (audit.contracts.legacyOptions.length > 0 && audit.config.integrateSentinel && Sentinel?.isActive?.()) {
       Sentinel.report('appv2', Sentinel.SEVERITY.WARN, `Legacy options detected in ${audit.appClass}`, {
         appClass: audit.appClass,
         appId: audit.appId,
@@ -190,14 +190,20 @@ export class SentinelAppV2Auditor {
           audit.lifecycle.rendering = false;
           audit.lifecycle.rendered = true;
 
-          // Phase 2: Detect if super._onRender was called by checking if element exists and has content
-          // (SWSEApplicationV2._onRender calls await super._onRender before checking)
-          if (this.element instanceof HTMLElement && this.element.innerHTML && this.element.innerHTML.trim().length > 0) {
+          // Phase 2: Detect if super._onRender was called
+          // Hardened: check for V13-compliant structure (contentElement resolver)
+          // + confirm contentElement is properly accessible
+          const hasValidContent =
+            this.element instanceof HTMLElement &&
+            this.contentElement !== null &&
+            this.contentElement instanceof HTMLElement;
+
+          if (hasValidContent) {
             audit.contracts.hasSuperOnRender = true;
           } else {
             audit.violations.push({
               type: 'MISSING_SUPER_ONRENDER',
-              message: 'Likely missing await super._onRender(...) call',
+              message: 'Missing await super._onRender(...) or contentElement not accessible',
               timestamp: new Date().toISOString()
             });
           }
@@ -235,9 +241,10 @@ export class SentinelAppV2Auditor {
           if (audit.config.enableTabDiagnostics && this.element && audit.contracts.hasSuperOnRender) {
             const tabReport = SentinelTabDiagnostics.diagnose(this.element, { silent: true });
 
-            // Only flag mismatches if tabGroups exist in DEFAULT_OPTIONS
-            const appOptions = this.constructor?.DEFAULT_OPTIONS || this.constructor?.defaultOptions || {};
-            const hasStaticTabGroups = appOptions.tabGroups && Object.keys(appOptions.tabGroups).length > 0;
+            // Check for static tabGroups (V13 pattern): constructor.tabGroups or app.options.tabGroups
+            const hasStaticTabGroups =
+              (this.constructor?.tabGroups && Object.keys(this.constructor.tabGroups).length > 0) ||
+              (this.options?.tabGroups && Object.keys(this.options.tabGroups).length > 0);
 
             if (hasStaticTabGroups && tabReport.summary.severityLevel !== 'OK') {
               audit.contracts.tabGroupsMismatch = {
@@ -246,8 +253,8 @@ export class SentinelAppV2Auditor {
                 recommendations: tabReport.summary.recommendations
               };
 
-              // Report to Sentinel
-              if (audit.config.integrateSentinel) {
+              // Report to Sentinel (guard: Sentinel must be initialized)
+              if (audit.config.integrateSentinel && Sentinel?.isActive?.()) {
                 Sentinel.report('appv2', Sentinel.SEVERITY.WARN,
                   `Tab structure mismatch in ${audit.appClass}`, {
                   appId: audit.appId,
@@ -283,8 +290,8 @@ export class SentinelAppV2Auditor {
             error: error.message
           });
 
-          // Report to Sentinel
-          if (audit.config.integrateSentinel) {
+          // Report to Sentinel (guard: Sentinel must be initialized)
+          if (audit.config.integrateSentinel && Sentinel?.isActive?.()) {
             Sentinel.report('appv2', Sentinel.SEVERITY.ERROR,
               `${audit.appClass} render failed`, {
               appId: audit.appId,
@@ -366,8 +373,8 @@ export class SentinelAppV2Auditor {
       violations: audit.violations.slice(0, 5) // First 5 for logging
     });
 
-    // Phase 2: Report to Sentinel for aggregation and health state
-    if (audit.config.integrateSentinel) {
+    // Phase 2: Report to Sentinel for aggregation and health state (guard: Sentinel must be initialized)
+    if (audit.config.integrateSentinel && Sentinel?.isActive?.()) {
       const sentinelSeverity = audit.violations.some(v => v.type === 'RENDER_ERROR' || v.type === 'ELEMENT_NOT_VALID')
         ? Sentinel.SEVERITY.ERROR
         : Sentinel.SEVERITY.WARN;
