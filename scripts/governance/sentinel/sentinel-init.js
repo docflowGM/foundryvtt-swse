@@ -6,6 +6,7 @@
 import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 import { SentinelEnforcement } from "/systems/foundryvtt-swse/scripts/governance/sentinel/enforcement-core.js";
 import { SheetIntegrationLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/layers/sheet-integration-layer.js";
+import { V2ComprehensiveAudit } from "/systems/foundryvtt-swse/scripts/governance/sentinel/v2-comprehensive-audit.js";
 
 export function initializeSentinelGovernance() {
   // Initialize enforcement layer
@@ -14,6 +15,14 @@ export function initializeSentinelGovernance() {
   // Register sheet integration audit layer (Phase A2)
   SentinelEngine.registerLayer('sheet-integration', {
     init: () => SheetIntegrationLayer.init(),
+    enabled: true
+  });
+
+  // Register V2 comprehensive governance audit (Phase 1: Survey)
+  SentinelEngine.registerLayer('v2-comprehensive-audit', {
+    init: () => {
+      // Audit is on-demand via game.SWSE.debug.runV2ComprehensiveAudit()
+    },
     enabled: true
   });
 
