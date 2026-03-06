@@ -10,6 +10,9 @@ import CharacterGenerator from "/systems/foundryvtt-swse/scripts/apps/chargen/ch
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
 import { SWSELevelUpEnhanced } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-main.js";
 import { MentorNotesApp } from "/systems/foundryvtt-swse/scripts/apps/mentor-notes/mentor-notes-app.js";
+import { CombatExecutor } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-executor.js";
+import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
+import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animation-engine.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -740,24 +743,13 @@ export class SWSEV2CharacterSheet extends
         const power = this.actor.items.get(itemId);
         if (!power || power.type !== "force-power") return;
 
-        // Toggle force power state (use flag or system field)
-        const plan = {
-          update: {
-            "items": {
-              [itemId]: {
-                "system.discarded": !power.system?.discarded ?? false
-              }
-            }
-          }
-        };
+        // Determine if this is a recovery or activation
+        const isRecovery = power.system?.discarded ?? false;
 
         try {
-          await ActorEngine.apply(this.actor, plan);
-          // Trigger animation
-          if (!power.system?.discarded) {
-            this._handleForceRecoveryAnimation([itemId]);
-          } else {
-            this._handleForceDiscardAnimation(itemId);
+          const result = await ForceExecutor.activateForce(this.actor, itemId, isRecovery);
+          if (result.success) {
+            ui?.notifications?.info?.(`${power.name} ${isRecovery ? "recovered" : "used"}`);
           }
         } catch (err) {
           console.error("Force activation failed:", err);
