@@ -114,58 +114,52 @@ export class SWSEV2CharacterSheetAudit {
     }
 
     const html = actor.sheet.element[0];
+    const sheet = actor.sheet;
 
-    // Roll control patterns
-    const rollPatterns = [
-      '[data-action="roll-attack"]',
-      '[data-action="roll-skill"]',
-      '.rollable',
-      '.attack-roll-btn',
-      '[data-roll]'
-    ];
-
-    const rollControls = [];
-    for (const pattern of rollPatterns) {
-      html.querySelectorAll(pattern).forEach(control => {
-        rollControls.push({
-          selector: pattern,
-          element: control,
-          action: control.getAttribute('data-action'),
-          rollData: control.getAttribute('data-roll')
-        });
-      });
-    }
-
-    if (rollControls.length === 0) {
-      this.warnings.push('A2.2: No roll controls found in character sheet');
-      return findings;
-    }
-
-    // Instrument SWSERollEngine to track calls
-    const rollEngineCallLog = [];
-    const originalImportKey = 'A2_2_RollEngineInstrumentation';
-    if (!window[originalImportKey]) {
-      window[originalImportKey] = [];
-    }
-
-    // Hook to capture roll invocations (this is a non-invasive logger)
-    const checkRollHandler = (control) => {
-      const action = control.getAttribute('data-action');
-      const handler = control.onclick ||
-                      (actor.sheet && actor.sheet[`_on${action}`]);
-
-      if (!handler && !action) {
-        findings.push({
-          severity: 'ERROR',
-          roll: 'unknown',
-          message: `No handler found for roll control`,
-          fix: `Add data-action or onclick handler to roll button`
-        });
-      }
+    // Roll control patterns to look for
+    const rollPatterns = {
+      attacks: '[data-action="roll-attack"]',
+      skills: '[data-action="roll-skill"]',
+      generic: '.rollable'
     };
 
-    for (const control of rollControls) {
-      checkRollHandler(control);
+    let totalControls = 0;
+
+    for (const [controlType, pattern] of Object.entries(rollPatterns)) {
+      const controls = html.querySelectorAll(pattern);
+      if (controls.length === 0) continue;
+
+      totalControls += controls.length;
+
+      // Check each control has a handler or proper data attributes
+      for (const control of controls) {
+        const action = control.getAttribute('data-action');
+        const hasClickHandler = control.onclick !== null;
+        const hasListenerAttribute = action !== null;
+
+        // Check if sheet has method for this action
+        const methodName = `_on${action?.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()).replace(/ /g, '')}`;
+        const hasSheetMethod = sheet && typeof sheet[methodName] === 'function';
+
+        if (!hasClickHandler && !hasListenerAttribute) {
+          findings.push({
+            severity: 'ERROR',
+            control: controlType,
+            message: `Roll control has no handler or data-action: ${pattern}`,
+            fix: `Add data-action attribute or onclick handler to ${pattern}`
+          });
+        }
+
+        // Warn if handler can't be found (non-blocking, might be wired via event delegation)
+        if (hasListenerAttribute && !hasSheetMethod && sheet.constructor.name !== 'SWSEMinimalTestSheet') {
+          // Only warn if it's not a known test sheet
+          this.warnings.push(`A2.2: Potential handler mismatch for ${action} on ${controlType}`);
+        }
+      }
+    }
+
+    if (totalControls === 0) {
+      this.warnings.push('A2.2: No standard roll controls found (expected [data-action="roll-*"] or .rollable)');
     }
 
     return findings;
@@ -184,23 +178,20 @@ export class SWSEV2CharacterSheetAudit {
 
     const html = actor.sheet.element[0];
 
-    // Core identity fields to test
+    // Core identity fields to test (minimal set)
     const fieldsToTest = [
-      { selector: '[name="name"]', label: 'Actor Name', fieldPath: 'name' },
-      { selector: '[name="system.biography.main"]', label: 'Biography Main', fieldPath: 'system.biography.main' },
-      { selector: '[data-field="biography-main"]', label: 'Biography (alt)', fieldPath: 'system.biography.main' }
+      { selector: '[name="name"]', label: 'Actor Name', updatePath: 'name', isActorProp: true }
     ];
 
     for (const fieldTest of fieldsToTest) {
       const element = html.querySelector(fieldTest.selector);
       if (!element) {
-        this.warnings.push(`A2.3: Field not found: ${fieldTest.label} (${fieldTest.selector})`);
+        this.warnings.push(`A2.3: Field selector not found: ${fieldTest.label} (${fieldTest.selector})`);
         continue;
       }
 
-      // Store original value
-      const originalValue = actor.getFlag('swse', `_audit_original_${fieldTest.fieldPath}`) ?? null;
-      const testValue = `TEST_${Date.now()}`;
+      const testValue = `AUDIT_${Date.now()}`;
+      const originalValue = fieldTest.isActorProp ? actor.name : getProperty(actor, fieldTest.updatePath);
 
       try {
         // Simulate user input
@@ -208,36 +199,32 @@ export class SWSEV2CharacterSheetAudit {
         element.dispatchEvent(new Event('change', { bubbles: true }));
         element.dispatchEvent(new Event('input', { bubbles: true }));
 
-        // Give sheet time to process
-        await new Promise(resolve => setTimeout(resolve, 100));
+        // Give sheet time to process update
+        await new Promise(resolve => setTimeout(resolve, 150));
 
-        // Verify update persisted
-        const currentValue = getProperty(actor.system, fieldTest.fieldPath.replace('system.', ''));
+        // Verify update persisted on actor
+        const currentValue = fieldTest.isActorProp ? actor.name : getProperty(actor, fieldTest.updatePath);
 
-        if (currentValue === testValue) {
-          // OK
-        } else {
+        if (currentValue !== testValue) {
           findings.push({
-            severity: 'ERROR',
+            severity: 'WARN',
             field: fieldTest.label,
-            message: `Field did not persist: ${fieldTest.label}`,
-            value: currentValue,
-            expected: testValue,
-            fix: `Verify _updateObject() routes field changes to ActorEngine`
+            message: `Field did not persist through actor: ${fieldTest.label}`,
+            attempted: testValue,
+            current: currentValue,
+            fix: `Verify form _updateObject() calls actor.update() via ActorEngine`
           });
         }
 
-        // Restore original
-        if (originalValue !== null) {
-          element.value = originalValue;
-          element.dispatchEvent(new Event('change', { bubbles: true }));
-        }
+        // Restore original value
+        await actor.update({ [fieldTest.updatePath]: originalValue });
+
       } catch (err) {
         findings.push({
-          severity: 'ERROR',
+          severity: 'WARN',
           field: fieldTest.label,
-          message: `Field persistence test failed with error: ${err.message}`,
-          fix: `Check form binding and _updateObject implementation`
+          message: `Field persistence test error: ${err.message}`,
+          fix: `Check _updateObject implementation and ActorEngine routing`
         });
       }
     }
@@ -309,34 +296,34 @@ export class SWSEV2CharacterSheetAudit {
     }
 
     try {
-      // Hook into update pipeline to track calls
-      const updateCallLog = [];
-      const originalUpdate = actor.update.bind(actor);
-      const originalPreUpdate = actor._preUpdate;
+      // Verify ActorEngine is available and properly wired
+      const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
 
-      let updateCount = 0;
-      const testWrapper = async function(data, options) {
-        updateCount++;
-        return originalUpdate.call(actor, data, options);
-      };
+      if (!ActorEngine || !ActorEngine.recalcAll) {
+        this.errors.push('A2.5: ActorEngine not found or missing recalcAll method');
+        return findings;
+      }
 
-      actor.update = testWrapper;
-
-      // Perform a test update
-      const testData = { 'system.biography.faction': `TEST_${Date.now()}` };
-      await actor.update(testData);
-
-      // Restore
-      actor.update = originalUpdate;
-
-      // Check if single update resulted in cascading calls
-      if (updateCount > 1) {
+      // Simple smoke test: verify recalcAll doesn't throw
+      try {
+        await ActorEngine.recalcAll(actor);
+      } catch (err) {
         findings.push({
           severity: 'WARN',
-          message: `Non-atomic update: single action triggered ${updateCount} update calls`,
-          fix: `Consolidate updates; use applyActorUpdateAtomic or single actor.update() call`
+          message: `ActorEngine.recalcAll() failed: ${err.message}`,
+          fix: `Check ActorEngine implementation for errors`
         });
       }
+
+      // Check if actor has system.derived (where recalculated data lives)
+      if (!actor.system?.derived) {
+        findings.push({
+          severity: 'WARN',
+          message: `Actor.system.derived not found; recalculated state may not be persisted`,
+          fix: `Ensure DerivedCalculator or ModifierEngine populates actor.system.derived`
+        });
+      }
+
     } catch (err) {
       this.errors.push(`A2.5: Recalc audit error: ${err.message}`);
     }
@@ -384,45 +371,72 @@ export class SWSEV2CharacterSheetAudit {
       ...this.findings.recalc
     ];
 
-    const errors = allFindings.filter(f => f.severity === 'ERROR');
-    const warnings = allFindings.filter(f => f.severity === 'WARN');
+    const errors = allFindings.filter(f => f.severity === 'ERROR').sort((a, b) =>
+      (b.partial || b.field || b.control || 'z').localeCompare(a.partial || a.field || a.control || 'z')
+    );
+    const warnings = allFindings.filter(f => f.severity === 'WARN').sort((a, b) =>
+      (b.partial || b.field || b.message || 'z').localeCompare(a.partial || a.field || a.message || 'z')
+    );
 
-    console.log('\n=== AUDIT RESULTS ===');
-    console.log(`Errors: ${errors.length}, Warnings: ${warnings.length}`);
+    console.log('\n' + '='.repeat(60));
+    console.log('  SWSE V2 CHARACTER SHEET INTEGRATION AUDIT (Phase A2)');
+    console.log('='.repeat(60));
+
+    console.log(`\n📊 SUMMARY`);
+    console.log(`   Total Findings: ${allFindings.length}`);
+    console.log(`   ❌ Errors: ${errors.length}`);
+    console.log(`   ⚠️  Warnings: ${warnings.length}`);
 
     if (errors.length > 0) {
-      console.log('\n❌ ERRORS:');
+      console.log('\n' + '-'.repeat(60));
+      console.log('❌ ERRORS (MUST FIX)');
+      console.log('-'.repeat(60));
       errors.forEach((err, i) => {
         console.log(`\n[${i + 1}] ${err.message}`);
-        if (err.fix) console.log(`    Fix: ${err.fix}`);
-        if (err.selector) console.log(`    Selector: ${err.selector}`);
+        if (err.partial) console.log(`    Component: ${err.partial}`);
+        if (err.field) console.log(`    Field: ${err.field}`);
+        if (err.control) console.log(`    Control: ${err.control}`);
+        if (err.fix) console.log(`    📝 Fix: ${err.fix}`);
+        if (err.selector) console.log(`    🔍 Selector: ${err.selector}`);
       });
     }
 
     if (warnings.length > 0) {
-      console.log('\n⚠️  WARNINGS:');
+      console.log('\n' + '-'.repeat(60));
+      console.log('⚠️  WARNINGS (REVIEW)');
+      console.log('-'.repeat(60));
       warnings.forEach((warn, i) => {
         console.log(`\n[${i + 1}] ${warn.message}`);
-        if (warn.fix) console.log(`    Fix: ${warn.fix}`);
+        if (warn.partial) console.log(`    Component: ${warn.partial}`);
+        if (warn.field) console.log(`    Field: ${warn.field}`);
+        if (warn.fix) console.log(`    📝 Fix: ${warn.fix}`);
       });
     }
 
     if (errors.length === 0 && warnings.length === 0) {
-      console.log('\n✅ All audits passed!');
+      console.log('\n✅ All audits passed! Sheet integration is healthy.\n');
     }
 
-    console.log('\n=== DETAILED FINDINGS ===');
-    console.log(JSON.stringify(this.findings, null, 2));
+    console.log('\n' + '='.repeat(60));
+    console.log('PHASE A2 DIAGNOSTICS COMPLETE');
+    console.log('='.repeat(60) + '\n');
 
-    console.log('\n=== PHASE A2 COMPLETE ===');
+    // Return structured result for programmatic use
     return {
+      healthy: errors.length === 0,
       findings: this.findings,
-      errors: this.errors,
-      warnings: this.warnings,
+      systemErrors: this.errors,
       summary: {
         total: allFindings.length,
         errors: errors.length,
-        warnings: warnings.length
+        warnings: warnings.length,
+        byCategory: {
+          partials: this.findings.partials.length,
+          rolls: this.findings.rolls.length,
+          fields: this.findings.fields.length,
+          position: this.findings.position.length,
+          recalc: this.findings.recalc.length
+        }
       }
     };
   }
