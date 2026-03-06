@@ -411,6 +411,18 @@ export class SWSEV2CharacterSheet extends
 
     // SWSE Combat UI Wiring
     this._activateCombatUI(html);
+
+    // Skills Panel Handlers
+    this._activateSkillsUI(html);
+
+    // Force Suite Handlers
+    this._activateForceUI(html);
+
+    // Feats/Talents Handlers
+    this._activateAbilitiesUI(html);
+
+    // Misc Handlers (languages, rest, DSP)
+    this._activateMiscUI(html);
   }
 
   /* ============================================================
@@ -521,6 +533,37 @@ export class SWSEV2CharacterSheet extends
         if (itemId) await InventoryEngine.decrementQuantity(this.actor, itemId);
       });
     });
+
+    // Delete/Remove item
+    html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="edit"], [data-action="configure"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const action = button.dataset.action;
+        const itemId = button.dataset.itemId || event.currentTarget.closest("[data-item-id]")?.dataset.itemId;
+
+        if (!itemId) return;
+        const item = this.actor.items.get(itemId);
+        if (!item) return;
+
+        switch (action) {
+          case "delete":
+            await item.delete();
+            break;
+          case "equip":
+            await InventoryEngine.toggleEquip(this.actor, itemId);
+            break;
+          case "edit":
+            item.sheet.render(true);
+            break;
+          case "configure":
+            // For weapons: open a configuration dialog
+            if (item.type === "weapon") {
+              item.sheet.render(true); // For now, just open the item sheet
+            }
+            break;
+        }
+      });
+    });
   }
 
   /* ============================================================
@@ -558,6 +601,358 @@ export class SWSEV2CharacterSheet extends
         if (groupKey) {
           const table = html.querySelector(`table[data-group='${groupKey}']`);
           if (table) table.classList.toggle("collapsed");
+        }
+      });
+    });
+
+    // Use action button
+    html.querySelectorAll('[data-action="swse-v2-use-action"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const actionId = button.dataset.actionId;
+        if (!actionId) return;
+
+        // Trigger action execution (typically a roll or effect)
+        const data = this.actor.flags?.swse?.combatActions?.[actionId];
+        if (data) {
+          // Open the config dialog to show details before rolling
+          new CombatRollConfigDialog(this.actor, data).render(true);
+        }
+      });
+    });
+  }
+
+  /* ============================================================
+     SKILLS UI WIRING
+  ============================================================ */
+
+  _activateSkillsUI(html) {
+    // Filter skills by text
+    html.querySelectorAll('[data-action="filter-skills"]').forEach(input => {
+      input.addEventListener("input", (event) => {
+        const filterText = event.target.value.toLowerCase();
+        const skillRows = html.querySelectorAll(".skill-row-container");
+
+        skillRows.forEach(row => {
+          const skillName = row.dataset.name?.toLowerCase() || "";
+          const skillLabel = row.dataset.label?.toLowerCase() || "";
+          const matches = skillName.includes(filterText) || skillLabel.includes(filterText);
+          row.style.display = matches ? "" : "none";
+        });
+      });
+    });
+
+    // Sort skills
+    html.querySelectorAll('[data-action="sort-skills"]').forEach(select => {
+      select.addEventListener("change", (event) => {
+        const sortBy = event.target.value;
+        const skillsList = html.querySelector(".skills-list");
+        if (!skillsList) return;
+
+        const rows = Array.from(skillsList.querySelectorAll(".skill-row-container"));
+        rows.sort((a, b) => {
+          switch (sortBy) {
+            case "name":
+              return (a.dataset.name || "").localeCompare(b.dataset.name || "");
+            case "total-desc":
+              return Number(b.dataset.total || 0) - Number(a.dataset.total || 0);
+            case "trained":
+              return (b.dataset.trained === "true" ? 1 : 0) - (a.dataset.trained === "true" ? 1 : 0);
+            case "favorite":
+              return (b.dataset.favorite === "true" ? 1 : 0) - (a.dataset.favorite === "true" ? 1 : 0);
+            case "default":
+            default:
+              return 0;
+          }
+        });
+
+        rows.forEach(row => skillsList.appendChild(row));
+      });
+    });
+  }
+
+  /* ============================================================
+     FORCE SUITE UI WIRING
+  ============================================================ */
+
+  _activateForceUI(html) {
+    // Force sort dropdown
+    html.querySelectorAll('[data-action="force-sort"]').forEach(select => {
+      select.addEventListener("change", (event) => {
+        const sortBy = event.target.value;
+        const cardGrid = html.querySelector(".force-card-grid");
+        if (!cardGrid) return;
+
+        const cards = Array.from(cardGrid.querySelectorAll(".force-card:not(.discarded)"));
+        cards.sort((a, b) => {
+          const aName = a.querySelector(".force-name")?.textContent || "";
+          const aTagString = a.dataset.tags || "";
+          const bName = b.querySelector(".force-name")?.textContent || "";
+          const bTagString = b.dataset.tags || "";
+
+          switch (sortBy) {
+            case "tag":
+              return aTagString.localeCompare(bTagString);
+            case "name":
+            default:
+              return aName.localeCompare(bName);
+          }
+        });
+
+        cards.forEach(card => cardGrid.appendChild(card));
+      });
+    });
+
+    // Force tag filter buttons
+    html.querySelectorAll('[data-action="force-tag-filter"]').forEach(button => {
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        const tag = button.dataset.tag;
+        if (!tag) return;
+
+        // Toggle button active state
+        button.classList.toggle("active");
+
+        // Filter cards
+        const activeFilters = Array.from(html.querySelectorAll('[data-action="force-tag-filter"].active'))
+          .map(b => b.dataset.tag);
+
+        const cards = html.querySelectorAll(".force-card:not(.discarded)");
+        cards.forEach(card => {
+          if (activeFilters.length === 0) {
+            card.style.display = "";
+          } else {
+            const cardTags = (card.dataset.tags || "").split(" ");
+            const matches = activeFilters.some(f => cardTags.includes(f));
+            card.style.display = matches ? "" : "none";
+          }
+        });
+      });
+    });
+
+    // Activate force button
+    html.querySelectorAll('[data-action="activate-force"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        if (!itemId) return;
+
+        const power = this.actor.items.get(itemId);
+        if (!power || power.type !== "force-power") return;
+
+        // Toggle force power state (use flag or system field)
+        const plan = {
+          update: {
+            "items": {
+              [itemId]: {
+                "system.discarded": !power.system?.discarded ?? false
+              }
+            }
+          }
+        };
+
+        try {
+          await ActorEngine.apply(this.actor, plan);
+          // Trigger animation
+          if (!power.system?.discarded) {
+            this._handleForceRecoveryAnimation([itemId]);
+          } else {
+            this._handleForceDiscardAnimation(itemId);
+          }
+        } catch (err) {
+          console.error("Force activation failed:", err);
+          ui?.notifications?.error?.(`Force activation failed: ${err.message}`);
+        }
+      });
+    });
+  }
+
+  /* ============================================================
+     FEATS/TALENTS/ABILITIES UI WIRING
+  ============================================================ */
+
+  _activateAbilitiesUI(html) {
+    // Open ability/feat/talent sheet
+    html.querySelectorAll('[data-action="open-ability"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        if (!itemId) return;
+
+        const item = this.actor.items.get(itemId);
+        if (item) {
+          item.sheet.render(true);
+        }
+      });
+    });
+
+    // Add feat button
+    html.querySelectorAll('[data-action="add-feat"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        // Open a dialog to select/create a feat
+        // For now, just open the item creation dialog
+        const itemData = {
+          type: "feat",
+          name: "New Feat",
+          system: {}
+        };
+        const doc = await Item.create(itemData, { parent: this.actor });
+        if (doc) doc.sheet.render(true);
+      });
+    });
+
+    // Delete feat button
+    html.querySelectorAll('[data-action="delete-feat"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        if (!itemId) return;
+
+        const item = this.actor.items.get(itemId);
+        if (item) {
+          await item.delete();
+        }
+      });
+    });
+
+    // Add talent button
+    html.querySelectorAll('[data-action="add-talent"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        // Open a dialog to select a talent
+        // For now, just open the item creation dialog
+        const itemData = {
+          type: "talent",
+          name: "New Talent",
+          system: {}
+        };
+        const doc = await Item.create(itemData, { parent: this.actor });
+        if (doc) doc.sheet.render(true);
+      });
+    });
+  }
+
+  /* ============================================================
+     MISCELLANEOUS UI WIRING (LANGUAGES, REST, DSP, ETC)
+  ============================================================ */
+
+  _activateMiscUI(html) {
+    // Add language button
+    html.querySelectorAll('[data-action="add-language"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        // Open a dialog for language selection
+        const languages = this.actor.system?.languages ?? [];
+        const newLang = prompt("Enter language name:");
+        if (newLang) {
+          const plan = {
+            update: {
+              "system.languages": [...languages, newLang]
+            }
+          };
+          try {
+            await ActorEngine.apply(this.actor, plan);
+          } catch (err) {
+            console.error("Failed to add language:", err);
+            ui?.notifications?.error?.(`Failed to add language: ${err.message}`);
+          }
+        }
+      });
+    });
+
+    // Remove language button
+    html.querySelectorAll('[data-action="remove-language"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const langName = button.dataset.language;
+        if (!langName) return;
+
+        const languages = (this.actor.system?.languages ?? []).filter(l => l !== langName);
+        const plan = {
+          update: {
+            "system.languages": languages
+          }
+        };
+
+        try {
+          await ActorEngine.apply(this.actor, plan);
+        } catch (err) {
+          console.error("Failed to remove language:", err);
+          ui?.notifications?.error?.(`Failed to remove language: ${err.message}`);
+        }
+      });
+    });
+
+    // Rest / Second Wind button
+    html.querySelectorAll('[data-action="rest-second-wind"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        // Restore second wind uses
+        const plan = {
+          update: {
+            "system.secondWind": {
+              current: this.actor.system?.secondWind?.max ?? 1
+            }
+          }
+        };
+
+        try {
+          await ActorEngine.apply(this.actor, plan);
+          ui?.notifications?.info?.("Second Wind restored!");
+        } catch (err) {
+          console.error("Rest failed:", err);
+          ui?.notifications?.error?.(`Rest failed: ${err.message}`);
+        }
+      });
+    });
+
+    // Set dark side score button
+    html.querySelectorAll('[data-action="set-dark-side-score"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const currentDSP = DSPEngine.getValue(this.actor);
+        const newValue = prompt(`Current Dark Side Points: ${currentDSP}\n\nEnter new value:`, String(currentDSP));
+
+        if (newValue !== null) {
+          const value = Math.max(0, Math.min(Number(newValue) || 0, DSPEngine.getMax(this.actor)));
+          const plan = {
+            update: {
+              "system.darkSidePoints": value
+            }
+          };
+
+          try {
+            await ActorEngine.apply(this.actor, plan);
+          } catch (err) {
+            console.error("Failed to set DSP:", err);
+            ui?.notifications?.error?.(`Failed to set DSP: ${err.message}`);
+          }
+        }
+      });
+    });
+
+    // Use extra skill button
+    html.querySelectorAll('[data-action="use-extra-skill"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const skillKey = button.dataset.skill;
+        if (!skillKey) return;
+
+        // Increment extra skill uses
+        const current = this.actor.system?.skills?.[skillKey]?.extra ?? 0;
+        const plan = {
+          update: {
+            [`system.skills.${skillKey}.extra`]: current + 1
+          }
+        };
+
+        try {
+          await ActorEngine.apply(this.actor, plan);
+          ui?.notifications?.info?.(`Extra skill use recorded for ${skillKey}`);
+        } catch (err) {
+          console.error("Failed to use extra skill:", err);
+          ui?.notifications?.error?.(`Failed to use extra skill: ${err.message}`);
         }
       });
     });
