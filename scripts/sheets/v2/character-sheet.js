@@ -76,6 +76,55 @@ export class SWSEV2CharacterSheet extends
     derived.encumbrance.mediumLoad ??= 0;
     derived.encumbrance.heavyLoad ??= 0;
 
+    derived.defenses ??= {};
+
+    // Build abilities array from system.abilities object
+    // Convert {str: {...}, dex: {...}, ...} → [{key: 'str', label: 'Strength', ...}, ...]
+    const abilitiesMap = system.abilities ?? {};
+    const ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+    const ABILITY_LABELS = {
+      str: 'Strength',
+      dex: 'Dexterity',
+      con: 'Constitution',
+      int: 'Intelligence',
+      wis: 'Wisdom',
+      cha: 'Charisma'
+    };
+    const abilities = ABILITY_KEYS.map(key => {
+      const ability = abilitiesMap[key] ?? {};
+      return {
+        key,
+        label: ABILITY_LABELS[key],
+        base: ability.base ?? 10,
+        racial: ability.racial ?? 0,
+        temp: ability.temp ?? 0,
+        total: ability.total ?? 10,
+        mod: ability.mod ?? 0
+      };
+    });
+
+    // Build headerDefenses array from derived.defenses object
+    // Convert {fort: 10, ref: 10, will: 10, flatFooted: 10} → [{key: 'fort', label: 'Fortitude', total: 10, ...}, ...]
+    const defenseKeys = [
+      { key: 'fort', label: 'Fortitude' },
+      { key: 'ref', label: 'Reflex' },
+      { key: 'will', label: 'Will' },
+      { key: 'flatFooted', label: 'Flat-Footed' }
+    ];
+    const headerDefenses = defenseKeys.map(def => ({
+      key: def.key,
+      label: def.label,
+      total: derived.defenses[def.key] ?? 10,
+      armorBonus: derived.defenses[`${def.key}ArmorBonus`] ?? 0,
+      abilityMod: derived.defenses[`${def.key}AbilityMod`] ?? 0,
+      classDef: derived.defenses[`${def.key}ClassDef`] ?? 0,
+      miscMod: derived.defenses[`${def.key}MiscMod`] ?? 0
+    }));
+
+    // Identity + visual customization
+    const forceSensitive = system.forceSensitive ?? false;
+    const identityGlowColor = forceSensitive ? '#88cfff' : '#666666';
+
     const inventory = this._buildInventoryModel(actor);
 
     // Presentation-only normalization (no mutation)
@@ -168,7 +217,11 @@ export class SWSEV2CharacterSheet extends
       forceSuite,
       lowHand: forceSuite.hand.length > 5,
       darkSideMax: dspMax,
-      darkSideSegments: dspSegments
+      darkSideSegments: dspSegments,
+      abilities,
+      headerDefenses,
+      forceSensitive,
+      identityGlowColor
     };
   }
 
