@@ -6,6 +6,10 @@ import { MentorChatDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor
 import { DropResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/drop-resolution-engine.js";
 import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
+import CharacterGenerator from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js";
+import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
+import { SWSELevelUpEnhanced } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-main.js";
+import { MentorNotesApp } from "/systems/foundryvtt-swse/scripts/apps/mentor-notes/mentor-notes-app.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -209,6 +213,9 @@ export class SWSEV2CharacterSheet extends
       });
     }
 
+    // Build mode (free build = prerequisites not enforced, typically set during chargen)
+    const buildMode = actor.system?.buildMode ?? "normal";
+
     return {
       ...context,
       biography,
@@ -228,7 +235,8 @@ export class SWSEV2CharacterSheet extends
       abilities,
       headerDefenses,
       forceSensitive,
-      identityGlowColor
+      identityGlowColor,
+      buildMode
     };
   }
 
@@ -351,6 +359,50 @@ export class SWSEV2CharacterSheet extends
       button.addEventListener("click", ev => {
         ev.preventDefault();
         this._openMentorConversation();
+      });
+    });
+
+    // Header Command Buttons
+    html.querySelectorAll('[data-action="cmd-chargen"]').forEach(button => {
+      button.addEventListener("click", async ev => {
+        ev.preventDefault();
+        const chargen = new CharacterGenerator(this.actor);
+        chargen.render(true);
+      });
+    });
+
+    html.querySelectorAll('[data-action="cmd-levelup"]').forEach(button => {
+      button.addEventListener("click", async ev => {
+        ev.preventDefault();
+        const levelup = new SWSELevelUpEnhanced(this.actor);
+        levelup.render(true);
+      });
+    });
+
+    html.querySelectorAll('[data-action="cmd-store"]').forEach(button => {
+      button.addEventListener("click", async ev => {
+        ev.preventDefault();
+        const store = new SWSEStore(this.actor);
+        store.render(true);
+      });
+    });
+
+    html.querySelectorAll('[data-action="cmd-conditions"]').forEach(button => {
+      button.addEventListener("click", async ev => {
+        ev.preventDefault();
+        // Switch to overview tab and scroll to health panel
+        await this.activateTab("overview");
+        const healthPanel = html.querySelector(".hp-condition-panel");
+        if (healthPanel) {
+          healthPanel.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      });
+    });
+
+    html.querySelectorAll('[data-action="revalidate-build"]').forEach(button => {
+      button.addEventListener("click", async ev => {
+        ev.preventDefault();
+        await this._revalidateBuild();
       });
     });
 
@@ -669,6 +721,30 @@ export class SWSEV2CharacterSheet extends
     setTimeout(() => {
       tabButton.classList.remove('tab-pulse');
     }, 800);
+  }
+
+  /**
+   * Revalidate character build by switching from free build mode to normal mode.
+   * This enforces prerequisites and restrictions that were bypassed in free build.
+   *
+   * @private
+   * @returns {Promise<void>}
+   */
+  async _revalidateBuild() {
+    try {
+      // Switch from free build mode to normal mode (prerequisites enforced)
+      const plan = {
+        update: {
+          'system.buildMode': 'normal'
+        }
+      };
+
+      await ActorEngine.apply(this.actor, plan);
+      ui?.notifications?.info?.('Build revalidated — prerequisites now enforced');
+    } catch (err) {
+      console.error('Build revalidation failed:', err);
+      ui?.notifications?.error?.(`Build revalidation failed: ${err.message}`);
+    }
   }
 
   /**
