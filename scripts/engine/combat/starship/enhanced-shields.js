@@ -1,3 +1,5 @@
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+
 /**
  * EnhancedShields — Directional shield management and recharge mechanics.
  *
@@ -122,12 +124,12 @@ export class EnhancedShields {
       'system.enhancedShields.starboard': distribution.starboard ?? 0
     });
 
-    await ChatMessage.create({
+    await SWSEChat.postHTML({
       content: `<div class="swse-shields-msg">
         <strong>Shields Redistributed — ${vehicle.name}</strong><br>
         Fore: ${distribution.fore} | Aft: ${distribution.aft} | Port: ${distribution.port} | Starboard: ${distribution.starboard}
       </div>`,
-      speaker: ChatMessage.getSpeaker({ actor: vehicle })
+      actor: vehicle
     });
 
     return true;
@@ -202,12 +204,12 @@ export class EnhancedShields {
     });
 
     if (absorbed > 0) {
-      await ChatMessage.create({
+      await SWSEChat.postHTML({
         content: `<div class="swse-shields-msg">
           ${vehicle.name}'s ${zone} shields absorb ${absorbed} damage.
           ${overflow > 0 ? `<br><strong>${overflow} damage passes through to hull!</strong>` : ''}
         </div>`,
-        speaker: ChatMessage.getSpeaker({ actor: vehicle })
+        actor: vehicle
       });
     }
 
@@ -286,11 +288,11 @@ export class EnhancedShields {
 
     const recharged = rechargeAmount - remaining;
     if (recharged > 0) {
-      await ChatMessage.create({
+      await SWSEChat.postHTML({
         content: `<div class="swse-shields-msg">
           ${vehicle.name}'s shields recharge ${recharged} points.
         </div>`,
-        speaker: ChatMessage.getSpeaker({ actor: vehicle })
+        actor: vehicle
       });
     }
 

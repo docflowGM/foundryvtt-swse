@@ -1,3 +1,5 @@
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+
 /**
  * EnhancedEngineer — Power allocation and repair action system.
  *
@@ -186,7 +188,7 @@ export class EnhancedEngineer {
     const sMod = this.POWER_MODIFIERS.shields[allocation.shields] ?? {};
     const eMod = this.POWER_MODIFIERS.engines[allocation.engines] ?? {};
 
-    await ChatMessage.create({
+    await SWSEChat.postHTML({
       content: `<div class="swse-engineer-msg">
         <strong>Power Reallocated — ${vehicle.name}</strong><br>
         Weapons: ${wMod.label} (${allocation.weapons}) |
@@ -194,7 +196,7 @@ export class EnhancedEngineer {
         Engines: ${eMod.label} (${allocation.engines})<br>
         <em>Budget: ${total}/${budget}</em>
       </div>`,
-      speaker: ChatMessage.getSpeaker({ actor: vehicle })
+      actor: vehicle
     });
 
     return true;
@@ -276,18 +278,18 @@ export class EnhancedEngineer {
       await SubsystemEngine.repairSubsystem(vehicle, subsystem);
 
       const msg = `${engineer.name} successfully repairs ${subsystem} (rolled ${mechanicsCheck} vs DC ${dc}).`;
-      await ChatMessage.create({
+      await SWSEChat.postHTML({
         content: `<div class="swse-engineer-msg"><strong>Repair Successful!</strong><br>${msg}</div>`,
-        speaker: ChatMessage.getSpeaker({ actor: engineer })
+        actor: engineer
       });
 
       return { success: true, message: msg };
     }
 
     const msg = `${engineer.name} fails to repair ${subsystem} (rolled ${mechanicsCheck} vs DC ${dc}).`;
-    await ChatMessage.create({
+    await SWSEChat.postHTML({
       content: `<div class="swse-engineer-msg"><strong>Repair Failed</strong><br>${msg}</div>`,
-      speaker: ChatMessage.getSpeaker({ actor: engineer })
+      actor: engineer
     });
 
     return { success: false, message: msg };

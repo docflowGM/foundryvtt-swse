@@ -15,6 +15,8 @@
  * Provides modifiers that combat resolution consumes.
  */
 
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+
 export class EnhancedPilot {
 
   static MANEUVERS = Object.freeze({
@@ -127,12 +129,12 @@ export class EnhancedPilot {
 
     const data = this.MANEUVER_DATA[maneuver];
 
-    await ChatMessage.create({
+    await SWSEChat.postHTML({
       content: `<div class="swse-pilot-msg">
         <strong>${data.label} — ${vehicle.name}</strong><br>
         ${data.description}
       </div>`,
-      speaker: ChatMessage.getSpeaker({ actor: vehicle })
+      actor: vehicle
     });
 
     return true;
@@ -174,9 +176,9 @@ export class EnhancedPilot {
     if (pilotCheck > targetPilotCheck) {
       const msg = `Trick Maneuver succeeds! ${vehicle.name} (${pilotCheck}) outmaneuvers ${targetVehicle.name} (${targetPilotCheck}). Target is flat-footed until end of next turn.`;
 
-      await ChatMessage.create({
+      await SWSEChat.postHTML({
         content: `<div class="swse-pilot-msg"><strong>Trick Maneuver — Success!</strong><br>${msg}</div>`,
-        speaker: ChatMessage.getSpeaker({ actor: vehicle })
+        actor: vehicle
       });
 
       return { success: true, message: msg };
@@ -184,9 +186,9 @@ export class EnhancedPilot {
 
     const msg = `Trick Maneuver fails! ${vehicle.name} (${pilotCheck}) is outmaneuvered by ${targetVehicle.name} (${targetPilotCheck}). You are flat-footed until end of your next turn.`;
 
-    await ChatMessage.create({
+    await SWSEChat.postHTML({
       content: `<div class="swse-pilot-msg"><strong>Trick Maneuver — Failed!</strong><br>${msg}</div>`,
-      speaker: ChatMessage.getSpeaker({ actor: vehicle })
+      actor: vehicle
     });
 
     return { success: false, message: msg };
@@ -222,9 +224,9 @@ export class EnhancedPilot {
 
     const msg = `${pursuer.name} ${verb} ${prey.name}! Pursuer: ${effectivePursuerCheck} (${pursuerCheck}${speedBonus >= 0 ? '+' : ''}${speedBonus} speed) vs Prey: ${preyCheck}.`;
 
-    await ChatMessage.create({
+    await SWSEChat.postHTML({
       content: `<div class="swse-pilot-msg"><strong>Pursuit Resolution</strong><br>${msg}</div>`,
-      speaker: ChatMessage.getSpeaker({ actor: pursuer })
+      actor: pursuer
     });
 
     return { caught, message: msg };
