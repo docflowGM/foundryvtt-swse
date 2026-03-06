@@ -8,11 +8,14 @@
  * - Position stability (window position preserved on update)
  * - Atomic recalculation (updates are transactional, no partial state)
  *
+ * Findings reported to Sentinel engine for centralized governance.
+ *
  * Run: game.swseCharacterSheetAudit.runFullAudit()
  */
 
 export class SWSEV2CharacterSheetAudit {
   constructor() {
+    this._sentinelLayer = null;
     this.findings = {
       partials: [],
       rolls: [],
@@ -22,6 +25,13 @@ export class SWSEV2CharacterSheetAudit {
     };
     this.errors = [];
     this.warnings = [];
+  }
+
+  /**
+   * Set Sentinel layer for reporting findings
+   */
+  setSentinelLayer(layer) {
+    this._sentinelLayer = layer;
   }
 
   /**
@@ -378,6 +388,35 @@ export class SWSEV2CharacterSheetAudit {
       (b.partial || b.field || b.message || 'z').localeCompare(a.partial || a.field || a.message || 'z')
     );
 
+    // Build result object
+    const result = {
+      healthy: errors.length === 0,
+      findings: this.findings,
+      systemErrors: this.errors,
+      summary: {
+        total: allFindings.length,
+        errors: errors.length,
+        warnings: warnings.length,
+        byCategory: {
+          partials: this.findings.partials.length,
+          rolls: this.findings.rolls.length,
+          fields: this.findings.fields.length,
+          position: this.findings.position.length,
+          recalc: this.findings.recalc.length
+        }
+      }
+    };
+
+    // Report findings to Sentinel engine
+    try {
+      if (this._sentinelLayer) {
+        this._sentinelLayer.reportAuditFindings(result);
+      }
+    } catch (err) {
+      console.warn('Failed to report findings to Sentinel:', err.message);
+    }
+
+    // Console output
     console.log('\n' + '='.repeat(60));
     console.log('  SWSE V2 CHARACTER SHEET INTEGRATION AUDIT (Phase A2)');
     console.log('='.repeat(60));
@@ -419,34 +458,27 @@ export class SWSEV2CharacterSheetAudit {
 
     console.log('\n' + '='.repeat(60));
     console.log('PHASE A2 DIAGNOSTICS COMPLETE');
+    console.log('Sentinel Report: game.SWSE.debug.sentinel.reports("sheet-integration")');
     console.log('='.repeat(60) + '\n');
 
-    // Return structured result for programmatic use
-    return {
-      healthy: errors.length === 0,
-      findings: this.findings,
-      systemErrors: this.errors,
-      summary: {
-        total: allFindings.length,
-        errors: errors.length,
-        warnings: warnings.length,
-        byCategory: {
-          partials: this.findings.partials.length,
-          rolls: this.findings.rolls.length,
-          fields: this.findings.fields.length,
-          position: this.findings.position.length,
-          recalc: this.findings.recalc.length
-        }
-      }
-    };
+    return result;
   }
 }
 
 // Global registration for dev console
-if (!window.game || !game.swseCharacterSheetAudit) {
+if (typeof window !== 'undefined') {
   window.swseCharacterSheetAudit = {
     async runFullAudit(actor) {
       const audit = new SWSEV2CharacterSheetAudit();
+
+      // Wire Sentinel layer for reporting
+      try {
+        const { SheetIntegrationLayer } = await import('/systems/foundryvtt-swse/scripts/governance/sentinel/layers/sheet-integration-layer.js');
+        audit.setSentinelLayer(SheetIntegrationLayer);
+      } catch (err) {
+        console.warn('[A2 Audit] Sentinel layer not available:', err.message);
+      }
+
       await audit.runFullAudit(actor);
       return audit;
     }

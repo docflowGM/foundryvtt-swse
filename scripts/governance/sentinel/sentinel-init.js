@@ -5,10 +5,17 @@
 
 import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 import { SentinelEnforcement } from "/systems/foundryvtt-swse/scripts/governance/sentinel/enforcement-core.js";
+import { SheetIntegrationLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/layers/sheet-integration-layer.js";
 
 export function initializeSentinelGovernance() {
   // Initialize enforcement layer
   SentinelEnforcement.init();
+
+  // Register sheet integration audit layer (Phase A2)
+  SentinelEngine.registerLayer('sheet-integration', {
+    init: () => SheetIntegrationLayer.init(),
+    enabled: true
+  });
 
   // Register performance metrics layer
   registerPerformanceLayer();
