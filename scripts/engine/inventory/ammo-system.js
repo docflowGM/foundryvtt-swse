@@ -47,15 +47,15 @@ export class AmmoSystem {
     const newAmmo = currentAmmo - amount;
 
     try {
-      // Update through ActorEngine if owned by actor
-      if (weapon.actor && weapon.actor.id === actor.id) {
+      // PHASE 2B: Update through ActorEngine if owned by any actor
+      if (weapon.actor) {
         const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
-        await ActorEngine.updateOwnedItems(actor, [{
+        await ActorEngine.updateOwnedItems(weapon.actor, [{
           _id: weapon.id,
           'system.ammunition.current': newAmmo
         }]);
       } else {
-        // Direct update for non-owned weapons
+        // Fallback for unowned weapons (compendium, etc)
         await weapon.update({ 'system.ammunition.current': newAmmo });
       }
 
@@ -107,14 +107,15 @@ export class AmmoSystem {
 
     try {
       // Update through ActorEngine if owned
-      if (weapon.actor && weapon.actor.id === actor.id) {
+      // PHASE 2B: Update through ActorEngine if owned by any actor
+      if (weapon.actor) {
         const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
-        await ActorEngine.updateOwnedItems(actor, [{
+        await ActorEngine.updateOwnedItems(weapon.actor, [{
           _id: weapon.id,
           'system.ammunition.current': maxAmmo
         }]);
       } else {
-        // Direct update
+        // Fallback for unowned weapons (compendium, etc)
         await weapon.update({ 'system.ammunition.current': maxAmmo });
       }
 
@@ -224,13 +225,15 @@ export class AmmoSystem {
     const clamped = Math.max(0, Math.min(amount, max));
 
     try {
-      if (weapon.actor && weapon.actor.id === actor.id) {
+      // PHASE 2B: Update through ActorEngine if owned by any actor
+      if (weapon.actor) {
         const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
-        await ActorEngine.updateOwnedItems(actor, [{
+        await ActorEngine.updateOwnedItems(weapon.actor, [{
           _id: weapon.id,
           'system.ammunition.current': clamped
         }]);
       } else {
+        // Fallback for unowned weapons (compendium, etc)
         await weapon.update({ 'system.ammunition.current': clamped });
       }
 

@@ -398,7 +398,8 @@ export class ThresholdEngine {
     const currentFP = pilot.system.forcePoints?.value ?? 0;
     if (currentFP < 1) return false;
 
-    await pilot.update({
+    // PHASE 2B: Route through ActorEngine
+    await ActorEngine.updateActor(pilot, {
       'system.forcePoints.value': currentFP - 1
     });
 
@@ -454,8 +455,9 @@ export class ThresholdEngine {
       return { success: false, message: `${engineer.name} has no Force Points remaining.` };
     }
 
+    // PHASE 2B: Route through ActorEngine
     // Deduct Force Point regardless of outcome
-    await engineer.update({
+    await ActorEngine.updateActor(engineer, {
       'system.forcePoints.value': engineerFP - 1
     });
 
@@ -518,7 +520,8 @@ export class ThresholdEngine {
     const isVehicle = target.type === 'vehicle';
     const hpField = isVehicle ? 'system.hull.value' : 'system.hp.value';
 
-    await target.update({
+    // PHASE 2B: Route through ActorEngine
+    await ActorEngine.updateActor(target, {
       [hpField]: 0,
       'system.conditionTrack.current': 5
     });
