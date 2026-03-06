@@ -119,12 +119,14 @@
               <h4 class="card-title">{{this.name}}</h4>
 
               {{!-- Suggestion Explanation Bullets --}}
-              {{#if this.suggestion.bullets}}
-                <div class="card-explanations">
-                  {{#each this.suggestion.bullets}}
-                    <div class="explanation-bullet">• {{this}}</div>
-                  {{/each}}
-                </div>
+              {{#if this.suggestion}}
+                {{#if this.suggestion.bullets}}
+                  <div class="card-explanations">
+                    {{#each this.suggestion.bullets}}
+                      <div class="explanation-bullet">• {{this}}</div>
+                    {{/each}}
+                  </div>
+                {{/if}}
               {{/if}}
 
               {{!-- Price Section --}}

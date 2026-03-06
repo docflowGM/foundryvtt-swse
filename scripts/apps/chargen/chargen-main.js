@@ -62,6 +62,14 @@ import { applyProgressionPatch } from "/systems/foundryvtt-swse/scripts/engine/p
 import { buildNamePatch } from "/systems/foundryvtt-swse/scripts/apps/chargen/steps/name-step.js";
 import { confirm } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
 
+/**
+ * Character Generator — Multi-step Wizard
+ *
+ * NOTE: Extends SWSEApplicationV2 (not BaseSWSEAppV2) intentionally
+ * Chargen's complex multi-step state management requires AppV2's full lifecycle
+ * and form contract flexibility. Governance compliance verified; inheritance
+ * pattern is appropriate for this use case.
+ */
 export default class CharacterGenerator extends SWSEApplicationV2 {
   /**
    * Canonical entry point for opening character generator
