@@ -30,6 +30,7 @@ export class SentinelAppV2Auditor {
   /**
    * Install auditing on an ApplicationV2 instance
    * Phase 2: Enhanced contract detection + Sentinel integration
+   * Phase 3: Strict mode support
    * @param {ApplicationV2} app - Application instance to audit
    * @param {Object} config - Audit configuration
    */
@@ -38,9 +39,19 @@ export class SentinelAppV2Auditor {
       return this._error('Invalid application instance');
     }
 
+    // Phase 3: Detect if app is SWSE-owned (extends BaseSWSEAppV2)
+    const isSwseOwned = this._isSwseOwnedApp(app);
+
+    // Phase 3: Check if strict mode is enabled (dev-mode only)
+    const devMode = game.settings?.get?.('foundryvtt-swse', 'devMode') ?? false;
+    const strictModeSetting = game.settings?.get?.('foundryvtt-swse', 'sentinelAppv2Strict') ?? false;
+    const strictModeActive = devMode && strictModeSetting;
+
     const audit = {
       appId: app.id || `app-${Math.random().toString(36).substr(2, 9)}`,
       appClass: app.constructor.name,
+      isSwseOwned, // Phase 3
+      strictMode: strictModeActive, // Phase 3
       lifecycle: {
         prepared: false,
         rendering: false,
@@ -77,6 +88,23 @@ export class SentinelAppV2Auditor {
     });
 
     return audit;
+  }
+
+  /**
+   * Phase 3: Detect if app is SWSE-owned (extends BaseSWSEAppV2)
+   * @private
+   */
+  static _isSwseOwnedApp(app) {
+    // Check if app's prototype chain includes BaseSWSEAppV2
+    // By checking constructor names in the chain
+    let proto = Object.getPrototypeOf(app);
+    while (proto && proto !== Object.prototype) {
+      if (proto.constructor?.name === 'BaseSWSEAppV2') {
+        return true;
+      }
+      proto = Object.getPrototypeOf(proto);
+    }
+    return false;
   }
 
   /**
@@ -201,11 +229,33 @@ export class SentinelAppV2Auditor {
           if (hasValidContent) {
             audit.contracts.hasSuperOnRender = true;
           } else {
+            // Phase 3: Determine severity based on strict mode
+            const severity = audit.strictMode && audit.isSwseOwned ? 'ERROR' : 'WARN';
+
             audit.violations.push({
               type: 'MISSING_SUPER_ONRENDER',
+              severity, // Phase 3: can be ERROR in strict mode for SWSE apps
               message: 'Missing await super._onRender(...) or contentElement not accessible',
+              recommendation: 'Ensure overridden _onRender calls await super._onRender(context, options) before DOM work.',
+              strictMode: audit.strictMode, // Phase 3
+              isSwseOwned: audit.isSwseOwned, // Phase 3
               timestamp: new Date().toISOString()
             });
+
+            // Phase 3: Report immediately as ERROR if strict mode + SWSE-owned
+            if (audit.strictMode && audit.isSwseOwned && audit.config.integrateSentinel && Sentinel?.isActive?.()) {
+              Sentinel.report('appv2', Sentinel.SEVERITY.ERROR,
+                `${audit.appClass} missing super._onRender (STRICT MODE)`, {
+                appId: audit.appId,
+                appClass: audit.appClass,
+                isSwseOwned: true,
+                strictMode: true,
+                recommendation: 'Ensure overridden _onRender calls await super._onRender(context, options) before DOM work.'
+              }, {
+                aggregateKey: `appv2-missing-super-${audit.appClass}`,
+                threshold: 1 // Immediate escalation in strict mode
+              });
+            }
           }
 
           // Verify element exists
@@ -374,20 +424,26 @@ export class SentinelAppV2Auditor {
     });
 
     // Phase 2: Report to Sentinel for aggregation and health state (guard: Sentinel must be initialized)
+    // Phase 3: Include strict mode violations as ERROR
     if (audit.config.integrateSentinel && Sentinel?.isActive?.()) {
-      const sentinelSeverity = audit.violations.some(v => v.type === 'RENDER_ERROR' || v.type === 'ELEMENT_NOT_VALID')
-        ? Sentinel.SEVERITY.ERROR
-        : Sentinel.SEVERITY.WARN;
+      // Phase 3: Check for ERROR-severity violations (strict mode MISSING_SUPER_ONRENDER)
+      const hasErrorSeverity = audit.violations.some(v =>
+        v.severity === 'ERROR' || v.type === 'RENDER_ERROR' || v.type === 'ELEMENT_NOT_VALID'
+      );
+
+      const sentinelSeverity = hasErrorSeverity ? Sentinel.SEVERITY.ERROR : Sentinel.SEVERITY.WARN;
 
       Sentinel.report('appv2', sentinelSeverity,
         `${audit.appClass} contract violations`, {
         appId: audit.appId,
+        isSwseOwned: audit.isSwseOwned,
+        strictMode: audit.strictMode,
         violations: audit.violations.length,
         types: Object.keys(summary.byType),
         legacyOptions: audit.contracts.legacyOptions.length
       }, {
         aggregateKey: `appv2-violations-${audit.appClass}`,
-        threshold: 10
+        threshold: hasErrorSeverity ? 1 : 10 // Immediate in strict mode
       });
     }
   }
