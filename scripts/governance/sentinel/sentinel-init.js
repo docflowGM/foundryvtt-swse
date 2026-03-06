@@ -7,6 +7,7 @@ import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sent
 import { SentinelEnforcement } from "/systems/foundryvtt-swse/scripts/governance/sentinel/enforcement-core.js";
 import { SheetIntegrationLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/layers/sheet-integration-layer.js";
 import { V2ComprehensiveAudit } from "/systems/foundryvtt-swse/scripts/governance/sentinel/v2-comprehensive-audit.js";
+import { SWSEV2SheetDiagnostics } from "/systems/foundryvtt-swse/scripts/sheets/v2/sheet-diagnostics.js";
 
 export function initializeSentinelGovernance() {
   // Initialize enforcement layer
@@ -86,6 +87,31 @@ function registerPerformanceLayer() {
  */
 function registerConsoleExport() {
   if (typeof window !== 'undefined') {
+    // Initialize main sentinel namespace
+    if (!window.sentinel) {
+      window.sentinel = {};
+    }
+
+    // Expose sheet audit diagnostics under sentinel.sheetaudit
+    window.sentinel.sheetaudit = {
+      /**
+       * Run V2 sheet diagnostics and copy report to clipboard
+       * Usage: sentinel.sheetaudit.runandcopy()
+       */
+      runandcopy: async (actor = null) => {
+        return await SWSEV2SheetDiagnostics.runAndCopy(actor);
+      },
+
+      /**
+       * Run diagnostics without clipboard copy
+       * Usage: sentinel.sheetaudit.run()
+       */
+      run: async (actor = null) => {
+        return await SWSEV2SheetDiagnostics.runDiagnostics(actor);
+      }
+    };
+
+    // Keep legacy _SWSE_Sentinel for backward compatibility
     window._SWSE_Sentinel = {
       report: {
         /**
@@ -133,7 +159,15 @@ function registerConsoleExport() {
     };
 
     console.log(
-      '%c[SWSE SENTINEL] Console API available at window._SWSE_Sentinel.report.export()',
+      '%c[SWSE SENTINEL] Console API ready',
+      'color:cyan;font-weight:bold;'
+    );
+    console.log(
+      '%c  Sheet Diagnostics: sentinel.sheetaudit.runandcopy()',
+      'color:cyan;'
+    );
+    console.log(
+      '%c  Report Export: window._SWSE_Sentinel.report.export()',
       'color:cyan;'
     );
   }

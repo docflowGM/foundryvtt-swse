@@ -267,5 +267,5 @@ export class SWSEV2SheetDiagnostics {
   }
 }
 
-// Global exposure for console access
-window.SWSEV2SheetDiagnostics = SWSEV2SheetDiagnostics;
+// Note: This class is registered in Sentinel at window.sentinel.sheetaudit
+// For direct access (if needed): window.SWSEV2SheetDiagnostics
