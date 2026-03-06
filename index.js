@@ -116,6 +116,7 @@ import { SWSEItemSheet } from './scripts/items/swse-item-sheet.js';
 
 // ---- audits (Phase A2 - dev-only diagnostics) ----
 import { SWSEV2CharacterSheetAudit } from './scripts/sheets/v2/character-sheet-integration-audit.js';
+import { CharacterSheetIntegrationTestHarness } from './scripts/sheets/v2/character-sheet-integration-test-harness.js';
 
 // ---- handlebars ----
 import { registerHandlebarsHelpers } from './helpers/handlebars/index.js';
@@ -367,6 +368,11 @@ Hooks.once('ready', async () => {
           const audit = new SWSEV2CharacterSheetAudit();
           await audit.runFullAudit();
           return audit;
+        },
+        // Phase B: Quick smoke tests after fixes
+        test: async (actor) => {
+          const harness = new CharacterSheetIntegrationTestHarness(actor);
+          return await harness.runAll();
         }
       }
     },
