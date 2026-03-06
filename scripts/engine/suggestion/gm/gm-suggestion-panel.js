@@ -46,7 +46,8 @@ export class GMSuggestionPanel extends BaseSWSEAppV2 {
    * Initialize the panel
    */
   async _onRender(context, options) {
-    super._onRender(context, options);
+    // Phase 3: Enforce super._onRender call (AppV2 contract)
+    await super._onRender(context, options);
 
     // Update on insights change
     Hooks.on('swse:gm-insights-updated', () => {

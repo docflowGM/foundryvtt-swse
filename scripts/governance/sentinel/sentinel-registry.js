@@ -28,6 +28,9 @@ import { HooksMutationLayer } from "/systems/foundryvtt-swse/scripts/governance/
 // PHASE 3: Import Batch 1 validation suite
 import { Batch1Validation } from "/systems/foundryvtt-swse/scripts/governance/mutation/batch-1-validation.js";
 
+// PHASE 2: Import AppV2 Auditor Layer (V13 foundation enforcement)
+import { AppV2AuditorLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/appv2-auditor.js";
+
 /**
  * Initialize and register all sentinel layers
  * Called during system bootstrap
@@ -54,6 +57,10 @@ export function initializeSentinelLayers() {
 
   // PHASE 10: Register hook mutation detection layer
   SentinelEngine.registerLayer('hooks-mutation', HooksMutationLayer);
+
+  // PHASE 2: Register AppV2 Auditor (V13 foundation enforcement)
+  // Reports through Sentinel for unified health state + aggregation
+  SentinelEngine.registerLayer('appv2', AppV2AuditorLayer);
 }
 
 /**

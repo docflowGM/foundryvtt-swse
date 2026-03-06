@@ -164,6 +164,9 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
   }
 
   async _onRender(context, options) {
+    // Phase 3: Enforce super._onRender call (AppV2 contract)
+    await super._onRender(context, options);
+
     const root = this.element;
     if (!(root instanceof HTMLElement)) {
       return;
