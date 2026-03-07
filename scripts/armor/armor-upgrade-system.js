@@ -11,6 +11,8 @@
  * - Modifiers flow through the standard V2 pipeline
  */
 
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+
 export class ArmorUpgradeSystem {
   /**
    * Upgrade type definitions with their typical modifier profiles
@@ -180,7 +182,17 @@ export class ArmorUpgradeSystem {
     try {
       const installed = armorItem.system.installedUpgrades || [];
       const updated = [...installed, upgradeDef];
-      await armorItem.update({ 'system.installedUpgrades': updated });
+
+      // PHASE 2B: Route through ActorEngine if owned by an actor
+      if (armorItem.actor) {
+        await ActorEngine.updateOwnedItems(armorItem.actor, [{
+          _id: armorItem.id,
+          'system.installedUpgrades': updated
+        }]);
+      } else {
+        await armorItem.update({ 'system.installedUpgrades': updated });
+      }
+
       return { success: true };
     } catch (err) {
       return {
@@ -200,7 +212,17 @@ export class ArmorUpgradeSystem {
     try {
       const installed = armorItem.system.installedUpgrades || [];
       const updated = installed.filter(u => u.id !== upgradeId);
-      await armorItem.update({ 'system.installedUpgrades': updated });
+
+      // PHASE 2B: Route through ActorEngine if owned by an actor
+      if (armorItem.actor) {
+        await ActorEngine.updateOwnedItems(armorItem.actor, [{
+          _id: armorItem.id,
+          'system.installedUpgrades': updated
+        }]);
+      } else {
+        await armorItem.update({ 'system.installedUpgrades': updated });
+      }
+
       return { success: true };
     } catch (err) {
       return {

@@ -114,6 +114,11 @@ import { SWSEV2DroidSheet } from './scripts/sheets/v2/droid-sheet.js';
 import { SWSEV2VehicleSheet } from './scripts/sheets/v2/vehicle-sheet.js';
 import { SWSEItemSheet } from './scripts/items/swse-item-sheet.js';
 
+// ---- audits (Phase A2 - dev-only diagnostics) ----
+import { SWSEV2CharacterSheetAudit } from './scripts/sheets/v2/character-sheet-integration-audit.js';
+import { CharacterSheetIntegrationTestHarness } from './scripts/sheets/v2/character-sheet-integration-test-harness.js';
+import { SWSEV2SheetDiagnostics } from './scripts/sheets/v2/sheet-diagnostics.js';
+
 // ---- handlebars ----
 import { registerHandlebarsHelpers } from './helpers/handlebars/index.js';
 import { registerSWSEPartials } from './helpers/handlebars/partials-auto.js';
@@ -352,7 +357,25 @@ Hooks.once('ready', async () => {
       migrationReport: () => generateMigrationReport(),
       appv2Audit: () => AppV2AuditRunner.runAudit(),
       appv2AuditQuick: () => AppV2AuditRunner.quickCheck(),
-      appv2AuditExport: () => AppV2AuditRunner.exportReport()
+      appv2AuditExport: () => AppV2AuditRunner.exportReport(),
+      // Phase A2: Character Sheet Integration Audit (partials, rolls, fields, position, recalc)
+      characterSheetA2: {
+        audit: async (actor) => {
+          const audit = new SWSEV2CharacterSheetAudit();
+          await audit.runFullAudit(actor);
+          return audit;
+        },
+        runOnSelected: async () => {
+          const audit = new SWSEV2CharacterSheetAudit();
+          await audit.runFullAudit();
+          return audit;
+        },
+        // Phase B: Quick smoke tests after fixes
+        test: async (actor) => {
+          const harness = new CharacterSheetIntegrationTestHarness(actor);
+          return await harness.runAll();
+        }
+      }
     },
     // Reporting: Generate and export comprehensive audit reports
     reporting: {

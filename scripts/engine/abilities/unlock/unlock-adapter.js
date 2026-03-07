@@ -20,7 +20,7 @@
  * - Compatibility with PASSIVE/ACTIVE ability systems
  */
 
-import { CapabilityRegistry } from "../../capabilities/capability-registry.js";
+import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
 
 export class UnlockAdapter {
 

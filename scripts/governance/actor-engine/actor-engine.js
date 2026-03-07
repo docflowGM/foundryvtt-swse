@@ -34,6 +34,50 @@ export const ActorEngine = {
   // PHASE 11: Track active migrations to prevent recursion
   _activeMigrations: new Set(),
 
+  // PHASE 2B: Loop detection for cascading mutations
+  _updateStack: new Map(), // actor.id → { count, timestamp, sources }
+
+  /**
+   * Detect and report cascading update loops
+   * @private
+   * @param {Actor} actor
+   * @param {string} source - Caller or guardKey
+   */
+  _detectUpdateLoop(actor, source) {
+    const key = actor.id;
+    const now = performance.now();
+
+    if (!this._updateStack.has(key)) {
+      this._updateStack.set(key, { count: 0, timestamp: now, sources: [] });
+    }
+
+    const state = this._updateStack.get(key);
+
+    // Reset if > 50ms has passed (new mutation cycle)
+    if (now - state.timestamp > 50) {
+      state.count = 0;
+      state.sources = [];
+      state.timestamp = now;
+    }
+
+    state.count++;
+    state.sources.push(source);
+
+    // WARN if same actor updated >5 times in 50ms
+    if (state.count > 5 && globalThis.SWSE?.SentinelEngine) {
+      globalThis.SWSE.SentinelEngine.report('actor-update-loop',
+        globalThis.SWSE.SentinelEngine.SEVERITY?.WARN ?? 'warn',
+        `Possible update loop: ${actor.name} updated ${state.count}x in 50ms`,
+        {
+          actorId: actor.id,
+          actorName: actor.name,
+          count: state.count,
+          sources: state.sources
+        }
+      );
+    }
+  },
+
   /**
    * Track migration context
    * @private
@@ -104,6 +148,12 @@ export const ActorEngine = {
         meta: options.meta,
         guardKey: options.meta?.guardKey
       });
+
+      // ========================================
+      // PHASE 2B: Detect cascading update loops
+      // ========================================
+      const source = options.meta?.guardKey || 'unguarded';
+      this._detectUpdateLoop(actor, source);
 
       // ========================================
       // PHASE 10: Extract and propagate metadata

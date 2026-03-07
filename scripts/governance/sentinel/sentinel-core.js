@@ -137,7 +137,10 @@ export class SentinelEngine {
    * @param {number} severity - SEVERITY constant
    * @param {string} message - Human-readable message
    * @param {Object} meta - Additional context
-   * @param {Object} options - Aggregation options { aggregateKey, sample, threshold }
+   * @param {Object} options - Reporting options {
+   *   aggregateKey, sample, threshold,
+   *   category, subcode, source, evidence, captureStack
+   * }
    */
   static report(layer, severity, message, meta = {}, options = {}) {
     if (this.#mode === this.MODES.OFF) return;
@@ -146,7 +149,7 @@ export class SentinelEngine {
     // ========== PHASE 1: Aggregation Logic ==========
     const { aggregateKey, sample = true, threshold = 50 } = options;
     if (aggregateKey) {
-      return this.#handleAggregation(layer, severity, message, meta, aggregateKey, sample, threshold);
+      return this.#handleAggregation(layer, severity, message, meta, aggregateKey, sample, threshold, options);
     }
 
     // Standard report flow
@@ -158,8 +161,21 @@ export class SentinelEngine {
       meta,
       timestamp: Date.now(),
       correlationId: this.#bootId,
-      aggregated: false
+      aggregated: false,
+      // PHASE 11: Categorization & Source Mapping
+      category: options.category || null,
+      subcode: options.subcode || null,
+      source: options.source || null,
+      evidence: options.evidence || null
     };
+
+    // Auto-capture stack if requested or if ERROR/CRITICAL
+    if (options.captureStack || severity >= this.SEVERITY.ERROR) {
+      if (!report.source) {
+        const stack = new Error().stack;
+        report.meta.stack = stack;
+      }
+    }
 
     this.#reportLog.push(report);
 
@@ -174,7 +190,7 @@ export class SentinelEngine {
    * PHASE 1: Handle aggregation
    * @private
    */
-  static #handleAggregation(layer, severity, message, meta, aggregateKey, sample, threshold) {
+  static #handleAggregation(layer, severity, message, meta, aggregateKey, sample, threshold, options = {}) {
     if (!this.#aggregates.has(aggregateKey)) {
       this.#aggregates.set(aggregateKey, {
         layer,
@@ -183,7 +199,9 @@ export class SentinelEngine {
         samples: [],
         severity,
         firstSeen: Date.now(),
-        escalated: false
+        escalated: false,
+        category: options.category || null,
+        subcode: options.subcode || null
       });
     }
 
@@ -192,7 +210,12 @@ export class SentinelEngine {
 
     // Store up to 5 samples
     if (sample && agg.samples.length < 5) {
-      agg.samples.push({ meta, timestamp: Date.now() });
+      agg.samples.push({
+        meta,
+        timestamp: Date.now(),
+        source: options.source || null,
+        evidence: options.evidence || null
+      });
     }
 
     // Check for escalation

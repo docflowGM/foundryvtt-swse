@@ -3,6 +3,8 @@
  * Single authority for supplemental narration messages.
  * Must never replace existing roll cards; supplements only.
  */
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+
 export class ActionChatEngine {
   static settingEnabled() {
     try {
@@ -18,10 +20,10 @@ export class ActionChatEngine {
 
     const name = actor?.name ?? "Someone";
     const content = `<p>[${name}] ${this._escape(text)}!</p>`;
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
+    await SWSEChat.postHTML({
       content,
-      type: CONST.CHAT_MESSAGE_TYPES.EMOTE,
+      actor,
+      style: CONST.CHAT_MESSAGE_STYLES.EMOTE
     });
   }
 
@@ -46,10 +48,10 @@ export class ActionChatEngine {
     const extra = opts?.extra ? ` ${this._escape(opts.extra)}` : "";
     const content = `<p>[${aName}] does [${this._escape(actionName)}]${targetClause} and rolls a [${totalStr}]${tail}.${extra}</p>`;
 
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
+    await SWSEChat.postHTML({
       content,
-      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+      actor,
+      style: CONST.CHAT_MESSAGE_STYLES.OTHER
     });
   }
 
@@ -67,10 +69,10 @@ export class ActionChatEngine {
       attackTotal
     )}]! It does [${Math.trunc(damageTotal)}].</p>`;
 
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
+    await SWSEChat.postHTML({
       content,
-      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+      actor,
+      style: CONST.CHAT_MESSAGE_STYLES.OTHER
     });
   }
 
@@ -85,10 +87,10 @@ export class ActionChatEngine {
     const extra = opts?.extra ? ` ${this._escape(opts.extra)}` : "";
     const content = `<p>[${aName}] uses the Force and casts [${this._escape(powerName)}], rolling [${Math.trunc(total)}]!${extra}</p>`;
 
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
+    await SWSEChat.postHTML({
       content,
-      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+      actor,
+      style: CONST.CHAT_MESSAGE_STYLES.OTHER
     });
   }
 

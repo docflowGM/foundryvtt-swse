@@ -41,9 +41,11 @@
               </div>
 
               <div class="force-tags">
-                {{#each power.tags}}
-                  <span class="tag">{{this}}</span>
-                {{/each}}
+                {{#if power.tags}}
+                  {{#each power.tags}}
+                    <span class="tag">{{this}}</span>
+                  {{/each}}
+                {{/if}}
               </div>
 
               <div class="flip-indicator">
@@ -54,7 +56,9 @@
             <div class="force-card-face back">
 
               <div class="force-back-content">
-                {{{power.system.description}}}
+                {{#if power.system}}
+                  {{{power.system.description}}}
+                {{/if}}
               </div>
 
               <div class="force-back-actions">

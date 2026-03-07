@@ -191,7 +191,8 @@ export class DropService {
       }
 
       owned.push({ id: droppedActor.id, type: droppedActor.type });
-      await targetActor.update({ "system.ownedActors": owned });
+      // PHASE 2B+: Route through ActorEngine
+      await ActorEngine.updateActor(targetActor, { "system.ownedActors": owned });
 
       const label = targetActor.type === "vehicle" ? "crew member" : "owned actor";
       ui.notifications.info(`Added ${droppedActor.name} as ${label}.`);
