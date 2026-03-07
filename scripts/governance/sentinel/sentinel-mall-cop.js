@@ -14,7 +14,7 @@
  * Reports via SentinelEngine (no auto-fixes, no DOM mutation, dev-mode)
  */
 
-import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-engine.js";
+import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 
 export class SentinelMallCop {
   /**

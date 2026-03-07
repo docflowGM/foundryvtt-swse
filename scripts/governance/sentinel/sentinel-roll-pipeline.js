@@ -10,7 +10,7 @@
  * Passive sampling (first 50 rolls, then 1-in-10).
  */
 
-import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-engine.js";
+import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 
 export class SentinelRollPipeline {
   static rollCount = 0;

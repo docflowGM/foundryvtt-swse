@@ -10,7 +10,7 @@
  * Passive, static validation at boot + runtime spot checks.
  */
 
-import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-engine.js";
+import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 
 export class SentinelTemplateIntegrity {
   static KNOWN_TEMPLATES = new Map(); // path → content

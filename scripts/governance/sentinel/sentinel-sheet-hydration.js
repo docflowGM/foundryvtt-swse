@@ -9,7 +9,7 @@
  * Passive monitoring, sampled, rate-limited, non-mutating.
  */
 
-import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-engine.js";
+import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 
 export class SentinelSheetHydration {
   static CHECKED_INSTANCES = new Set();

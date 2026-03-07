@@ -9,7 +9,7 @@
  * Integrates with ActorEngine loop detector.
  */
 
-import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-engine.js";
+import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 
 export class SentinelUpdateAtomicity {
   static updateTracking = new Map(); // actorId → { updates: [], lastCheck: timestamp }
