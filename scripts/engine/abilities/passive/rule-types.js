@@ -43,6 +43,30 @@ export const RULE_TYPES = {
    * Schema: { type: "TREAT_SKILL_AS_TRAINED", skill: "knowledge" }
    */
   TREAT_SKILL_AS_TRAINED: 'TREAT_SKILL_AS_TRAINED'
+,
+
+  // ======================================================================
+  // "Max enum now" additions (unconditional, boolean capability tokens)
+  // These are safe to enumerate even if not all are queried by resolution yet.
+  // ======================================================================
+
+  /**
+   * DARKVISION
+   * Actor can see in darkness (rules query owned by vision/senses layer).
+   */
+  DARKVISION: 'DARKVISION',
+
+  /**
+   * LOW_LIGHT_VISION
+   * Actor can see better in dim light.
+   */
+  LOW_LIGHT_VISION: 'LOW_LIGHT_VISION',
+
+  /**
+   * SCENT
+   * Actor has scent ability.
+   */
+  SCENT: 'SCENT'
 };
 
 /**

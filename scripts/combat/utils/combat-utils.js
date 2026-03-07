@@ -1,5 +1,4 @@
-import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
-import { RULE_TYPES } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/rule-types.js";
+import { getEffectiveHalfLevel } from '../../actors/derived/level-split.js';
 /**
  * Modern SWSE Combat Utilities (v13+)
  * - Condition Track integer-based penalties
@@ -56,6 +55,10 @@ export function computeAttackBonus(actor, weapon) {
   // Weapon-based bonuses
   const misc = weapon.system?.attackBonus ?? 0;
 
+  // Species combat bonuses (from SpeciesTraitEngine)
+  const speciesCombat = actor.system?.speciesCombatBonuses || actor.system?.speciesTraitBonuses?.combat || {};
+  const speciesAttackBonus = (weapon.system?.ranged ? (speciesCombat.rangedAttack || 0) : (speciesCombat.meleeAttack || 0));
+
   // Condition Track penalties
   const ctPenalty = actor.system.conditionTrack?.penalty ?? 0;
 
@@ -74,6 +77,7 @@ export function computeAttackBonus(actor, weapon) {
     halfLvl +
     abilityMod +
     misc +
+    speciesAttackBonus +
     sizeMod +
     aePenalty +
     ctPenalty +
@@ -214,6 +218,12 @@ export function computeDamageBonus(actor, weapon, options = {}) {
   const halfLvl = getEffectiveHalfLevel(actor);
   let bonus = halfLvl + (weapon.system?.attackBonus ?? 0);
 
+  // Species combat bonuses (from SpeciesTraitEngine)
+  const speciesCombat = actor.system?.speciesCombatBonuses || actor.system?.speciesTraitBonuses?.combat || {};
+  const isRangedWeapon = !!weapon.system?.ranged;
+  const speciesDamageBonus = (isRangedWeapon ? (speciesCombat.rangedDamage || 0) : (speciesCombat.meleeDamage || 0));
+  bonus += speciesDamageBonus;
+
   const strMod = actor.system.attributes?.str?.mod ?? 0;
   const dexMod = actor.system.attributes?.dex?.mod ?? 0;
 
@@ -266,28 +276,15 @@ export function computeDamageBonus(actor, weapon, options = {}) {
 
 /**
  * RAW cover bonuses to Reflex.
- * Integrates with ResolutionContext for IGNORE_COVER rule.
- *
  * @param {string} type - "none", "partial", "cover", "improved"
- * @param {ResolutionContext} [context] - Optional context for rule evaluation
- * @returns {number} Cover bonus (0-10)
- *
- * If context is provided and attacker has IGNORE_COVER rule, returns 0.
- * Otherwise, uses standard cover table.
  */
-export function getCoverBonus(type, context = null) {
+export function getCoverBonus(type) {
   const table = {
     none: 0,
     partial: 2,
     cover: 5,
     improved: 10
   };
-
-  // Check if attacker ignores cover (only if context provided)
-  if (context?.hasRule && context.hasRule(RULE_TYPES.IGNORE_COVER)) {
-    return 0;
-  }
-
   return table[type] ?? 0;
 }
 
@@ -317,21 +314,8 @@ export function checkConcealmentHit(missChance) {
 
 /**
  * RAW flanking bonus.
- * Integrates with ResolutionContext for CANNOT_BE_FLANKED rule.
- *
- * @param {boolean} isFlanking - Whether defender is flanked
- * @param {ResolutionContext} [context] - Optional context for rule evaluation
- * @returns {number} Flanking bonus (0-2)
- *
- * If context is provided and defender has CANNOT_BE_FLANKED rule, returns 0.
- * Otherwise, uses standard flanking table.
  */
-export function getFlankingBonus(isFlanking, context = null) {
-  // Check if defender cannot be flanked (only if context provided)
-  if (context?.hasRule && context.hasRule(RULE_TYPES.CANNOT_BE_FLANKED)) {
-    return 0;
-  }
-
+export function getFlankingBonus(isFlanking) {
   return isFlanking ? 2 : 0;
 }
 

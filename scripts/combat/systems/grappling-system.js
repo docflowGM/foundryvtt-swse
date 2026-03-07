@@ -8,12 +8,11 @@
  * - combat-utils (size modifiers, bonuses)
  */
 
-import { computeAttackBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
-import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
-import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
-import { DamageSystem } from "/systems/foundryvtt-swse/scripts/combat/damage-system.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
+import { computeAttackBonus } from '../utils/combat-utils.js';
+import { SWSERoll } from '../rolls/enhanced-rolls.js';
+import { createChatMessage } from '../../core/document-api-v13.js';
+import { DamageSystem } from '../damage-system.js';
+import { ActorEngine } from '../../actors/engine/actor-engine.js';
 
 export class SWSEGrappling {
 
@@ -90,7 +89,7 @@ export class SWSEGrappling {
   // ---------------------------------------------------------------------------
 
   static async attemptPin(attacker, defender) {
-    if (!CapabilityRegistry.hasFeat(attacker, 'pin')) {
+    if (!this._hasFeat(attacker, 'Pin')) {
       ui.notifications.warn(`${attacker.name} lacks the Pin feat.`);
       return false;
     }
@@ -138,7 +137,10 @@ export class SWSEGrappling {
     const str = actor.system.attributes.str?.mod ?? 0;
     const sizeMod = this._sizeMod(actor.system.size);
 
-    return bab + str + sizeMod;
+    const speciesCombat = actor.system?.speciesCombatBonuses || actor.system?.speciesTraitBonuses?.combat || {};
+    const speciesGrapple = speciesCombat.grapple || 0;
+
+    return bab + str + sizeMod + speciesGrapple;
   }
 
   static _sizeMod(size) {
@@ -166,7 +168,11 @@ export class SWSEGrappling {
           label: 'Grabbed',
           icon: 'icons/svg/net.svg',
           origin: sourceActor.uuid,
-          changes: [],
+          changes: [{
+            key: 'system.defenses.reflex.bonus',
+            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+            value: -5
+          }],
           flags: { swse: { grapple: 'grabbed', source: sourceActor.id } }
         };
         break;
@@ -176,7 +182,11 @@ export class SWSEGrappling {
           label: 'Grappled',
           icon: 'icons/svg/anchor.svg',
           origin: sourceActor.uuid,
-          changes: [],
+          changes: [{
+            key: 'system.defenses.reflex.bonus',
+            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+            value: -5
+          }],
           flags: { swse: { grapple: 'grappled', source: sourceActor.id } }
         };
         break;
@@ -186,7 +196,10 @@ export class SWSEGrappling {
           label: 'Pinned',
           icon: 'icons/svg/trap.svg',
           origin: sourceActor.uuid,
-          changes: [],
+          changes: [
+            { key: 'system.defenses.reflex.bonus', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -10 },
+            { key: 'system.conditionTrack.current', mode: 'OVERRIDE', value: 5 }
+          ],
           flags: { swse: { grapple: 'pinned', source: sourceActor.id } }
         };
         break;
@@ -198,6 +211,10 @@ export class SWSEGrappling {
   static async _clearState(actor) {
     const effects = actor.effects.filter(e => e.flags?.swse?.grapple);
     await ActorEngine.deleteEmbeddedDocuments(actor, 'ActiveEffect', effects.map(e => e.id));
+  }
+
+  static _hasFeat(actor, name) {
+    return actor.items.some(i => i.type === 'feat' && i.name.toLowerCase().includes(name.toLowerCase()));
   }
 
   static _hasGrappledState(actor) {
