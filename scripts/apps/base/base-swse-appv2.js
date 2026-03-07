@@ -1,21 +1,33 @@
 /**
- * Enhanced BaseSWSEAppV2 - AppV2 Contract Enforcement (Phase 3)
+ * BaseSWSEAppV2 - V13-Compliant AppV2 Contract Enforcement
  *
  * CORE RULE: No app may extend ApplicationV2 directly.
  *
  * This class enforces:
  * - AppV2 lifecycle contracts
  * - Render completion tracking
- * - DOM access safety
- * - Event wiring discipline
+ * - DOM access safety (through safeQuery/safeQueryAll)
+ * - Event wiring discipline (wireEvents called post-render)
  *
- * Violations throw immediately.
+ * No invalid app-level event semantics. Use onRoot/onContent from parent.
  */
 
 import SWSEApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { RuntimeContract } from "/systems/foundryvtt-swse/scripts/contracts/runtime-contract.js";
 import { StructuredLogger, SEVERITY } from "/systems/foundryvtt-swse/scripts/core/structured-logger.js";
+
+/**
+ * Phase enum for render lifecycle
+ */
+const RENDER_PHASE = {
+  CREATED: 'created',
+  PREPARING: 'preparing',
+  RENDERING: 'rendering',
+  RENDERED: 'rendered',
+  DESTROYED: 'destroyed',
+  ERROR: 'error'
+};
 
 export class BaseSWSEAppV2 extends SWSEApplicationV2 {
   constructor(...args) {
@@ -26,10 +38,7 @@ export class BaseSWSEAppV2 extends SWSEApplicationV2 {
 
     // Track lifecycle phase (contract tracking)
     this._lifecycle = {
-      phase: 'constructor',
-      renderStarted: false,
-      renderComplete: false,
-      destroyed: false,
+      phase: RENDER_PHASE.CREATED,
       id: this.id || `app-${Math.random().toString(36).substr(2, 9)}`
     };
 
@@ -39,11 +48,11 @@ export class BaseSWSEAppV2 extends SWSEApplicationV2 {
   }
 
   /**
-   * Safe query within current render context
-   * Throws if called outside render phase
+   * Safe query within current render context.
+   * Returns null if called outside render phase.
    */
   safeQuery(selector) {
-    if (!this._lifecycle.renderComplete && this._lifecycle.phase !== 'rendering') {
+    if (this._lifecycle.phase !== RENDER_PHASE.RENDERING && this._lifecycle.phase !== RENDER_PHASE.RENDERED) {
       swseLogger.warn(
         `[${this.constructor.name}] safeQuery() called outside render phase. ` +
         `Current phase: ${this._lifecycle.phase}`
@@ -54,10 +63,11 @@ export class BaseSWSEAppV2 extends SWSEApplicationV2 {
   }
 
   /**
-   * Safe query all
+   * Safe query all within current render context.
+   * Returns empty array if called outside render phase.
    */
   safeQueryAll(selector) {
-    if (!this._lifecycle.renderComplete && this._lifecycle.phase !== 'rendering') {
+    if (this._lifecycle.phase !== RENDER_PHASE.RENDERING && this._lifecycle.phase !== RENDER_PHASE.RENDERED) {
       swseLogger.warn(
         `[${this.constructor.name}] safeQueryAll() called outside render phase. ` +
         `Current phase: ${this._lifecycle.phase}`
@@ -68,13 +78,12 @@ export class BaseSWSEAppV2 extends SWSEApplicationV2 {
   }
 
   /**
-   * Mark when we enter render phase (contract: register with tracker)
+   * Mark when we enter prepare phase (before render).
    */
   async _prepareContext(options) {
-    this._lifecycle.phase = 'prepare';
-    this._lifecycle.renderStarted = true;
+    this._lifecycle.phase = RENDER_PHASE.PREPARING;
 
-    // Register with render tracking (Phase 3 contract)
+    // Register with render tracking
     RuntimeContract.registerRender(
       this._lifecycle.id,
       this.constructor.name
@@ -84,12 +93,14 @@ export class BaseSWSEAppV2 extends SWSEApplicationV2 {
   }
 
   /**
-   * Mark when render is complete (contract: complete tracking + event wiring)
-   * Calls wireEvents() which MUST be overridden by subclasses
+   * V13 AppV2 render lifecycle.
+   * After super._onRender completes, element exists and template is rendered.
+   * Contract: wireEvents() MUST be called only after render completes.
+   * Errors rethrow to prevent zombie apps.
    */
   async _onRender(context, options) {
     try {
-      this._lifecycle.phase = 'rendering';
+      this._lifecycle.phase = RENDER_PHASE.RENDERING;
       await super._onRender(context, options);
 
       // Contract: Element must exist and have content
@@ -105,12 +116,11 @@ export class BaseSWSEAppV2 extends SWSEApplicationV2 {
         );
       }
 
-      // Contract: Subclass must wire event listeners
+      // Contract: Subclass must wire event listeners (after render)
       this.wireEvents();
 
       // Mark complete
-      this._lifecycle.phase = 'rendered';
-      this._lifecycle.renderComplete = true;
+      this._lifecycle.phase = RENDER_PHASE.RENDERED;
 
       // Track in runtime contract
       RuntimeContract.markRendered(this._lifecycle.id);
@@ -120,7 +130,7 @@ export class BaseSWSEAppV2 extends SWSEApplicationV2 {
         appId: this._lifecycle.id
       });
     } catch (error) {
-      this._lifecycle.phase = 'render-error';
+      this._lifecycle.phase = RENDER_PHASE.ERROR;
       RuntimeContract.cleanupRender(this._lifecycle.id);
 
       StructuredLogger.app(SEVERITY.ERROR, 'Render failed', {
@@ -133,48 +143,33 @@ export class BaseSWSEAppV2 extends SWSEApplicationV2 {
   }
 
   /**
-   * CONTRACT METHOD: Subclasses MUST override this
-   * Called after template renders. Wire all event listeners here.
-   * DO NOT call directly - framework calls this.
+   * CONTRACT METHOD: Subclasses MUST override this.
+   * Called after template renders. Wire all event listeners here using onRoot/onContent.
+   * DO NOT call directly - framework calls this after _onRender completes.
+   *
+   * Example:
+   *   wireEvents() {
+   *     this.onRoot('click', '[data-action="attack"]', (ev, el) => this.attackHandler(ev));
+   *   }
    */
   wireEvents() {
     // Default implementation: do nothing (subclasses override)
-    // Throwing here would force every app to implement it,
-    // which is actually desirable but breaks legacy apps.
   }
 
   /**
    * Prevent access after destruction
    */
   async close(options) {
-    this._lifecycle.destroyed = true;
+    this._lifecycle.phase = RENDER_PHASE.DESTROYED;
     RuntimeContract.cleanupRender(this._lifecycle.id);
     return super.close(options);
   }
 
   /**
-   * CONTRACT: Override addEventListener to enforce lifecycle
-   * Listeners can only be added during render phase
+   * CONTRACT: Render assertion (for external verification).
+   * Verifies render completed within timeout.
    */
-  addEventListener(type, listener, options) {
-    if (this._lifecycle.phase === 'constructor') {
-      const error = new Error(
-        `[${this.constructor.name}] EVENT LISTENER CONTRACT: Cannot add listeners in constructor. ` +
-        `Add listeners in wireEvents() which is called during render.`
-      );
-      StructuredLogger.app(SEVERITY.ERROR, error.message, {
-        app: this.constructor.name,
-        phase: this._lifecycle.phase
-      });
-      throw error;
-    }
-    return super.addEventListener(type, listener, options);
-  }
-
-  /**
-   * CONTRACT: Render assertion (for external verification)
-   */
-  assertRendered() {
-    RuntimeContract.assertRendered(this._lifecycle.id, 2000);
+  assertRendered(timeout = 2000) {
+    RuntimeContract.assertRendered(this._lifecycle.id, timeout);
   }
 }

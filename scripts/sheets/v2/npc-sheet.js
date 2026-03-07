@@ -38,9 +38,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ['swse', 'sheet', 'actor', 'npc', 'swse-sheet', 'swse-npc-sheet', 'v2'],
       width: 820,
-      height: 920,
-      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'summary' }],
-      scrollY: ['.sheet-body']
+      height: 920
     });
   }
 
@@ -124,6 +122,9 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
   }
 
   async _onRender(context, options) {
+    // Phase 3: Enforce super._onRender call (AppV2 contract)
+    await super._onRender(context, options);
+
     // AppV2 invariant: all DOM access must use this.element
     const root = this.element;
     if (!(root instanceof HTMLElement)) {

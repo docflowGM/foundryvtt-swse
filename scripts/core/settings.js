@@ -136,6 +136,16 @@ export function registerSystemSettings() {
     default: 'DEV'
   });
 
+  // Phase 3: AppV2 Strict Mode (dev-only enforcement)
+  game.settings.register('foundryvtt-swse', 'sentinelAppv2Strict', {
+    name: 'AppV2 Strict Enforcement Mode',
+    hint: 'When enabled (dev mode only): Missing super._onRender() in SWSE-owned apps becomes ERROR immediately. Foundry core apps remain WARN. Helps catch regressions during sheet migration.',
+    scope: 'client',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   game.settings.register('foundryvtt-swse', 'dailyForcePoints', {
     name: 'SWSE.Settings.DailyForcePoints.Name',
     hint: 'SWSE.Settings.DailyForcePoints.Hint',

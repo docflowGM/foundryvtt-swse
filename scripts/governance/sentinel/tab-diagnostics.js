@@ -19,13 +19,15 @@ export class SentinelTabDiagnostics {
   /**
    * Run complete tab system diagnostic
    * @param {HTMLElement} rootElement - ApplicationV2 element root
-   * @param {Object} config - Configuration
+   * @param {Object} config - Configuration { silent: false }
    * @returns {Object} Diagnostic report
    */
   static diagnose(rootElement, config = {}) {
     if (!(rootElement instanceof HTMLElement)) {
       return this._reportError('Invalid element provided to tab diagnostics');
     }
+
+    const { silent = false } = config;
 
     const report = {
       timestamp: new Date().toISOString(),
@@ -51,8 +53,10 @@ export class SentinelTabDiagnostics {
     // Phase 6: Summary
     report.summary = this._generateSummary(report.diagnostics);
 
-    // Log findings
-    this._logReport(report);
+    // Log findings (unless silent mode for integrated auditing)
+    if (!silent) {
+      this._logReport(report);
+    }
 
     return report;
   }
