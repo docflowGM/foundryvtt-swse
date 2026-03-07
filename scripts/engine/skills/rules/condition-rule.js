@@ -3,28 +3,33 @@
  *
  * Applies penalties from actor's condition track and status effects.
  *
- * Condition Track:
- * - Step 0: No penalty
- * - Step 1: -1
- * - Step 2: -2
- * - Step 3: -5
- * - Step 4: -10
- * - Step 5: Helpless (special)
+ * ✅ AUTHORITY PATTERN:
+ * Reads condition state via actor methods (the canonical read API).
+ * Never duplicates condition logic or calculations.
+ * Never mutates condition state.
  *
- * Status Effects:
- * - flatFooted: possible penalties
+ * Actor methods as authority:
+ * - actor.getConditionTrackState() → { step, max, persistent, helpless }
+ * - actor.getConditionPenalty(step) → numeric penalty
+ *
+ * Status Effects (from context, not calculated here):
+ * - flatFooted: affects some skills
  * - immobilized: affects mobility skills
  * - helpless: major restrictions
  */
 
 export function conditionRule({ actor, skillKey, context }, result) {
-  const conditionTrack = actor.system.conditionTrack || {};
-  const step = Number(conditionTrack.current ?? 0);
-  const helpless = step >= 5;
+  // Query actor for condition track state (canonical read API)
+  const conditionState = actor.getConditionTrackState?.();
+  if (!conditionState) {
+    result.diagnostics.rulesTriggered.push("conditionRule");
+    return result;
+  }
 
-  // Condition track penalties
-  const conditionPenalties = [0, -1, -2, -5, -10, 0]; // helpless = no numeric penalty
-  const penalty = conditionPenalties[step] ?? 0;
+  const { step, helpless } = conditionState;
+
+  // Query actor for condition penalty (never duplicate the calculation)
+  const penalty = actor.getConditionPenalty?.(step) ?? 0;
 
   if (penalty !== 0) {
     result.penalties.push({
