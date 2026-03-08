@@ -1,21 +1,17 @@
 // ============================================
 // FILE: rolls/skills.js
-// Skill check rolling via RollCore (V2 Unified)
+// Skill check rolling using SWSE utils
 // ============================================
 
-// import { SkillEnforcementEngine } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillEnforcementEngine.js"; // File doesn't exist
-import RollCore from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SkillEnforcementEngine } from "../engine/skills/SkillEnforcementEngine.js";
 
 /**
  * Roll a skill check
  * @param {Actor} actor - The actor making the check
  * @param {string} skillKey - The skill key
- * @param {Object} options - Additional options
- * @param {boolean} options.useForce - Spend a Force Point
- * @returns {Promise<Roll|null>} The skill check roll or null if failed
+ * @returns {Promise<Roll>} The skill check roll
  */
-export async function rollSkill(actor, skillKey, options = {}) {
+export async function rollSkill(actor, skillKey) {
   const utils = game.swse.utils;
   const skill = actor.system.skills?.[skillKey];
 
@@ -27,41 +23,58 @@ export async function rollSkill(actor, skillKey, options = {}) {
   // Check trained-only enforcement
   const isTrained = skill.trained === true;
   const skillDef = CONFIG.SWSE.skills?.[skillKey] || {};
-  // SkillEnforcementEngine doesn't exist - allowing all skill rolls
-  const permission = { allowed: true };
+  const permission = SkillEnforcementEngine.canRollSkill(skillDef, isTrained);
 
-  // === UNIFIED ROLL EXECUTION via RollCore ===
-  const domain = `skill.${skillKey}`;
-  const rollResult = await RollCore.execute({
-    actor,
-    domain,
-    rollOptions: {
-      baseDice: '1d20',
-      useForce: options.useForce || false
-    },
-    context: { skillKey }
-  });
-
-  if (!rollResult.success) {
-    ui.notifications.error(`Skill roll failed: ${rollResult.error}`);
+  if (!permission.allowed) {
+    ui.notifications.warn(`${permission.reason}`);
     return null;
   }
 
-  // === RENDER TO CHAT ===
-  if (rollResult.roll) {
-    await rollResult.roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      flavor: `<strong>${skill.label || skillKey}</strong> Check<br/>
-               Modifier: ${utils.string.formatModifier(rollResult.modifierTotal)}
-               ${rollResult.forcePointBonus > 0 ? `<br/>+ ${rollResult.forcePointBonus} (Force)` : ''}`
-    }, { create: true });
-  }
+  // Get skill modifier (use actor's method if available)
+  const mod = actor.getSkillMod ? actor.getSkillMod(skill) : calculateSkillMod(actor, skill);
 
-  return rollResult.roll;
+  const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${mod}`).evaluate({ async: true });
+
+  await roll.toMessage({
+    speaker: ChatMessage.getSpeaker({ actor }),
+    flavor: `${skill.label || skillKey} Check (${utils.string.formatModifier(mod)})`
+  } , { create: true });
+
+  return roll;
 }
 
 /**
- * Roll skill check with DC comparison (convenience wrapper)
+ * Calculate skill modifier
+ * @param {Actor} actor - The actor
+ * @param {object} skill - The skill object
+ * @param {string} actionId - Optional action ID for talent bonus lookup
+ * @returns {number} Total skill modifier
+ */
+export function calculateSkillMod(actor, skill, actionId = null) {
+  const utils = game.swse.utils;
+
+  const abilityScore = actor.system.attributes[skill.selectedAbility]?.base || 10;
+  const abilMod = utils.math.calculateAbilityModifier(abilityScore);
+  const trained = skill.trained ? 5 : 0;
+  const focus = skill.focused ? 5 : 0;
+  const halfLvl = utils.math.halfLevel(actor.system.level);
+  const misc = skill.miscMod || 0;
+  const conditionPenalty = actor.system.conditionTrack?.penalty || 0;
+
+  let talentBonus = 0;
+
+  // Apply talent bonuses if action ID is provided and TalentActionLinker is available
+  const TalentActionLinker = window.SWSE?.TalentActionLinker;
+  if (actionId && TalentActionLinker?.MAPPING) {
+    const bonusInfo = TalentActionLinker.calculateBonusForAction(actor, actionId);
+    talentBonus = bonusInfo.value;
+  }
+
+  return abilMod + trained + focus + halfLvl + misc + conditionPenalty + talentBonus;
+}
+
+/**
+ * Roll skill check with DC comparison
  * @param {Actor} actor - The actor
  * @param {string} skillKey - The skill key
  * @param {number} dc - Difficulty class
@@ -84,7 +97,7 @@ export async function rollSkillCheck(actor, skillKey, dc) {
 }
 
 /**
- * Roll opposed skill check (convenience wrapper)
+ * Roll opposed skill check
  * @param {Actor} actor1 - First actor
  * @param {string} skill1 - First actor's skill
  * @param {Actor} actor2 - Second actor
@@ -107,3 +120,41 @@ export async function rollOpposedCheck(actor1, skill1, actor2, skill2) {
     tie: winner === null
   };
 }
+
+
+/**
+ * Roll an ability check (RAW: 1d20 + ability modifier + misc bonuses)
+ * Species trait bonuses like "+2 on Strength checks" are applied if present.
+ * @param {Actor} actor
+ * @param {string} abilityKey - str|dex|con|int|wis|cha
+ * @returns {Promise<Roll|null>}
+ */
+export async function rollAbilityCheck(actor, abilityKey) {
+  const utils = game.swse.utils;
+  const key = String(abilityKey || '').toLowerCase();
+  const attr = actor.system.attributes?.[key];
+  if (!attr) {
+    ui.notifications.warn(`Ability ${abilityKey} not found`);
+    return null;
+  }
+
+  const abilityMod = attr.mod ?? utils.math.calculateAbilityModifier(attr.base ?? 10);
+
+  // Species trait ability-check bonuses (from SpeciesTraitEngine)
+  const speciesChecks = actor.system?.speciesTraitBonuses?.abilityChecks || actor.system?.speciesAbilityCheckBonuses || {};
+  const speciesBonus = Number(speciesChecks[key] || 0);
+
+  const conditionPenalty = actor.system.conditionTrack?.penalty || 0;
+
+  const total = abilityMod + speciesBonus + conditionPenalty;
+
+  const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${total}`).evaluate({ async: true });
+
+  await roll.toMessage({
+    speaker: ChatMessage.getSpeaker({ actor }),
+    flavor: `${utils.string.capitalize(key)} Check`,
+  });
+
+  return roll;
+}
+
