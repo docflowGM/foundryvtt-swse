@@ -26,11 +26,16 @@ export class ActionEconomyPersistence {
   static getTurnState(actor, combatId) {
     if (!actor) return ActionEngine.startTurn();
 
-    const flag = actor.getFlag(this.SCOPE, this.FLAG_KEY);
+    try {
+      const flag = actor.getFlag(this.SCOPE, this.FLAG_KEY);
 
-    // If flag exists and matches current combat, return it
-    if (flag && flag.combatId === combatId) {
-      return flag.turnState;
+      // If flag exists and matches current combat, return it
+      if (flag && flag.combatId === combatId) {
+        return flag.turnState;
+      }
+    } catch (error) {
+      // Flag scope may not be valid for this actor or system
+      console.debug(`[SWSE] Could not access flag scope "${this.SCOPE}":`, error.message);
     }
 
     // Otherwise, return fresh turn state

@@ -228,20 +228,25 @@ export class SWSEV2CharacterSheet extends
     let actionEconomy = null;
     if (game.combat && game.combat.combatants.some(c => c.actor?.id === actor.id)) {
       // Only show action economy if actor is in active combat
-      const combatId = game.combat.id;
-      const { ActionEconomyPersistence } = await import("/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-persistence.js");
-      const { ActionEngine } = await import("/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine-v2.js");
+      try {
+        const combatId = game.combat.id;
+        const { ActionEconomyPersistence } = await import("/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-persistence.js");
+        const { ActionEngine } = await import("/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine-v2.js");
 
-      const turnState = ActionEconomyPersistence.getTurnState(actor, combatId);
-      const state = ActionEngine.getVisualState(turnState);
-      const breakdown = ActionEngine.getTooltipBreakdown(turnState);
-      const enforcementMode = game.settings.get("swse", "actionEconomyMode");
+        const turnState = ActionEconomyPersistence.getTurnState(actor, combatId);
+        const state = ActionEngine.getVisualState(turnState);
+        const breakdown = ActionEngine.getTooltipBreakdown(turnState);
+        const enforcementMode = game.settings.get("swse", "actionEconomyMode");
 
-      actionEconomy = {
-        state,
-        breakdown,
-        enforcementMode
-      };
+        actionEconomy = {
+          state,
+          breakdown,
+          enforcementMode
+        };
+      } catch (error) {
+        console.warn('[SWSE] Failed to initialize action economy context:', error);
+        // Silently fail and continue rendering the sheet without action economy
+      }
     }
 
     return {
