@@ -11,8 +11,9 @@
  * - Supports STRICT/LOOSE/NONE enforcement modes
  */
 
-import { ActionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine.js";
-import { ActionPolicyController } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-policy.js";
+import { ActionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine-v2.js";
+import { ActionPolicyController } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-policy-controller.js";
+import { ActionEconomyPersistence } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-persistence.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
@@ -28,45 +29,45 @@ export class ActionEconomyBindings {
    * @param {HTMLElement} button - Button element to bind
    * @param {Actor} actor - Actor taking the action
    * @param {Object} actionCost - Cost of this action { standard, move, swift }
-   * @param {string} actionType - Type of action (for logging)
+   * @param {string} actionName - Action name (for logging)
    */
-  static setupPreview(button, actor, actionCost, actionType = 'action') {
+  static setupPreview(button, actor, actionCost, actionName = 'action') {
     if (!button || !actor) return;
 
     const handleMouseEnter = () => {
       try {
-        // Get current turn state
-        const turnState = actor.system.combatTurnState
-          || ActionEngine.startTurn(actor);
+        // Get current turn state from persistence layer
+        const combatId = game.combat?.id;
+        const turnState = ActionEconomyPersistence.getTurnState(actor, combatId);
 
-        // Check without consuming
-        const canCheck = ActionEngine.canConsume(turnState, actionCost);
+        // Preview consumption without modifying state
+        const previewResult = ActionEngine.previewConsume(turnState, actionCost);
 
-        // Apply policy
-        const policy = ActionPolicyController.handle(
-          { allowed: canCheck.allowed, violations: [] },
-          { actor, actionType }
-        );
+        // Apply policy (no override in preview)
+        const policy = ActionPolicyController.handle({
+          actor,
+          result: previewResult,
+          actionName
+        });
 
         // Update UI based on policy
         const { uiState } = policy;
 
-        if (uiState.disabled && policy.mode === 'strict') {
-          button.classList.add('disabled', 'action-blocked');
-          button.title = uiState.tooltip;
+        if (!policy.permitted) {
+          button.classList.add('action-blocked');
+          button.title = uiState.tooltip || '';
           button.style.cursor = 'not-allowed';
           button.style.opacity = '0.6';
         } else {
-          button.classList.remove('disabled', 'action-blocked');
+          button.classList.remove('action-blocked');
           button.style.cursor = 'pointer';
           button.style.opacity = '1';
-
           if (uiState.tooltip) {
             button.title = uiState.tooltip;
           }
         }
       } catch (err) {
-        SWSELogger.error(`[ActionEconomyBindings] Preview error for ${actionType}:`, err);
+        SWSELogger.error(`[ActionEconomyBindings] Preview error for ${actionName}:`, err);
       }
     };
 
@@ -91,110 +92,68 @@ export class ActionEconomyBindings {
    * @param {Object} actionCost - Cost { standard, move, swift }
    * @param {Function} executeCallback - Function to execute if action allowed
    * @param {Object} options - Additional options
-   * @param {string} options.actionType - Action type (for logging)
-   * @param {boolean} options.allowOverride - Allow Shift+Click override in STRICT
+   * @param {string} options.actionName - Action name (for logging)
    */
   static setupExecution(button, actor, actionCost, executeCallback, options = {}) {
     if (!button || !actor || !executeCallback) return;
 
     const {
-      actionType = 'action',
-      allowOverride = true
+      actionName = 'action'
     } = options;
 
     button.addEventListener('click', async (e) => {
       try {
-        // Get current turn state
-        const turnState = actor.system.combatTurnState
-          || ActionEngine.startTurn(actor);
+        // Get current turn state from persistence
+        const combatId = game.combat?.id;
+        if (!combatId) {
+          ui.notifications.warn('No active combat');
+          return;
+        }
+
+        const turnState = ActionEconomyPersistence.getTurnState(actor, combatId);
 
         // Attempt to consume action
-        const engineResult = ActionEngine.consumeAction(turnState, {
-          actionType: actionType,
-          cost: actionCost
-        });
+        const engineResult = ActionEngine.consume(turnState, actionCost);
 
-        // Apply policy enforcement
-        const policy = ActionPolicyController.handle(engineResult, {
+        // Apply policy enforcement (check Shift+Click for GM override)
+        const gmOverride = e.shiftKey && game.user.isGM;
+        const policy = ActionPolicyController.handle({
           actor,
-          actionType
+          result: engineResult,
+          actionName,
+          gmOverride
         });
 
         // Handle policy decision
         if (!policy.permitted) {
-          // STRICT mode blocks
-          if (policy.mode === 'strict') {
-            ui.notifications.warn(policy.uiState.tooltip);
-
-            // Check for Shift+Click override
-            if (allowOverride && e.shiftKey) {
-              const override = await this._promptOverride(policy);
-              if (!override) return;
-            } else {
-              return;  // Blocked, don't proceed
-            }
-          }
-        }
-
-        // Notify GM if LOOSE mode and violated
-        if (policy.shouldNotify && policy.mode === 'loose') {
-          ui.notifications.warn(`${actor.name}: ${policy.uiState?.tooltip || 'Action economy violation'}`);
+          ui.notifications.warn(policy.uiState.tooltip || 'Action not permitted');
+          return;  // Blocked, don't proceed
         }
 
         // Execute callback if action allowed
         const result = await executeCallback();
 
-        // Update actor's turn state on success
-        if (result && engineResult.updatedTurnState) {
-          await actor.update({
-            'system.combatTurnState': engineResult.updatedTurnState
-          });
+        // Update persistent turn state on success
+        if (result) {
+          await ActionEconomyPersistence.commitConsumption(
+            actor,
+            combatId,
+            engineResult
+          );
 
-          SWSELogger.info(`[ActionEconomyBindings] ${actor.name} consumed ${actionType}`, {
-            consumed: engineResult.consumedCost
+          SWSELogger.info(`[ActionEconomyBindings] ${actor.name} consumed ${actionName}`, {
+            consumed: engineResult.consumed
           });
         }
 
         return result;
       } catch (err) {
-        SWSELogger.error(`[ActionEconomyBindings] Execution error for ${actionType}:`, err);
+        SWSELogger.error(`[ActionEconomyBindings] Execution error for ${actionName}:`, err);
         ui.notifications.error(`Action failed: ${err.message}`);
       }
     });
   }
 
-  /**
-   * Show Shift+Click override prompt (STRICT mode only)
-   *
-   * @private
-   */
-  static async _promptOverride(policy) {
-    return new Promise((resolve) => {
-      const message = ActionPolicyController.getOverrideMessage(
-        policy.violations || []
-      );
-
-      const dialog = new Dialog({
-        title: "Override Action Economy",
-        content: `<p>${message.replace(/\n/g, '<br>')}</p>`,
-        buttons: {
-          override: {
-            icon: '<i class="fas fa-exclamation-triangle"></i>',
-            label: "Override",
-            callback: () => resolve(true)
-          },
-          cancel: {
-            icon: '<i class="fas fa-times"></i>',
-            label: "Cancel",
-            callback: () => resolve(false)
-          }
-        },
-        default: "cancel"
-      });
-
-      dialog.render(true);
-    });
-  }
 
   /**
    * Get action availability indicator for UI display
@@ -209,16 +168,18 @@ export class ActionEconomyBindings {
       return { className: 'action-unavailable', disabled: true, title: 'No actor' };
     }
 
-    const turnState = actor.system.combatTurnState
-      || ActionEngine.startTurn(actor);
+    const combatId = game.combat?.id;
+    const turnState = ActionEconomyPersistence.getTurnState(actor, combatId);
+    const previewResult = ActionEngine.previewConsume(turnState, actionCost);
 
-    const canCheck = ActionEngine.canConsume(turnState, actionCost);
-
-    if (!canCheck.allowed) {
+    if (!previewResult.allowed) {
+      const violationLabels = previewResult.violations
+        .map(v => this._violationLabel(v))
+        .join(', ');
       return {
         className: 'action-unavailable',
         disabled: true,
-        title: canCheck.reason || 'Action not available'
+        title: violationLabels || 'Action not available'
       };
     }
 
@@ -227,6 +188,20 @@ export class ActionEconomyBindings {
       disabled: false,
       title: 'Action available'
     };
+  }
+
+  /**
+   * Convert violation code to human label
+   * @private
+   */
+  static _violationLabel(code) {
+    const labels = {
+      FULL_ROUND_NOT_AVAILABLE: "full-round not available",
+      INSUFFICIENT_STANDARD: "no standard action",
+      INSUFFICIENT_MOVE: "no move action",
+      INSUFFICIENT_SWIFT: "no swift actions"
+    };
+    return labels[code] ?? code;
   }
 
   /**
@@ -239,17 +214,18 @@ export class ActionEconomyBindings {
   static createStatusBadge(actor) {
     if (!actor) return '';
 
-    const turnState = actor.system.combatTurnState
-      || ActionEngine.startTurn(actor);
-
+    const combatId = game.combat?.id;
+    const turnState = ActionEconomyPersistence.getTurnState(actor, combatId);
     const state = ActionEngine.getVisualState(turnState);
-    const summary = ActionEngine.summarizeState(turnState);
+    const breakdown = ActionEngine.getTooltipBreakdown(turnState);
+
+    const tooltipText = breakdown.join('\n');
 
     return `
-      <div class="action-economy-badge" title="${summary.summary}">
-        <span class="badge-standard action-${state.standard}"></span>
-        <span class="badge-move action-${state.move}"></span>
-        <span class="badge-swift action-${state.swift}"></span>
+      <div class="action-economy-badge swse-action-economy" title="${tooltipText}">
+        <span class="badge-standard badge-${state.standard}"></span>
+        <span class="badge-move badge-${state.move}"></span>
+        <span class="badge-swift badge-${state.swift}"></span>
       </div>
     `;
   }
@@ -260,9 +236,8 @@ export class ActionEconomyBindings {
    *
    * @param {HTMLElement} root - Root element containing buttons
    * @param {Actor} actor - Actor for all buttons
-   * @param {Function} getRollCallback - Function returning { actionCost, executeCallback }
    */
-  static setupAttackButtons(root, actor, getRollCallback) {
+  static setupAttackButtons(root, actor) {
     if (!root || !actor) return;
 
     const attackButtons = root.querySelectorAll('[data-action="attack"]');
@@ -275,11 +250,12 @@ export class ActionEconomyBindings {
 
       // Standard attack costs 1 standard action
       const actionCost = { standard: 1, move: 0, swift: 0 };
+      const actionName = `attack-${weapon.name}`;
 
-      // Setup preview
-      this.setupPreview(button, actor, actionCost, `attack-${weapon.name}`);
+      // Setup preview on hover
+      this.setupPreview(button, actor, actionCost, actionName);
 
-      // Setup execution
+      // Setup execution on click
       this.setupExecution(
         button,
         actor,
@@ -289,7 +265,7 @@ export class ActionEconomyBindings {
           const { SWSERoll } = await import("/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js");
           return await SWSERoll.rollAttack(actor, weapon);
         },
-        { actionType: 'attack', allowOverride: true }
+        { actionName }
       );
     });
   }
