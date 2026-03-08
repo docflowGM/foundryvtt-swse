@@ -96,12 +96,12 @@ export class ActionEngine {
     };
 
     // Helper: Degrade one type into another
+    // Example: degrade("move", "standard") = consume move, produce degraded standard
     const degrade = (from, to) => {
       if (state.remaining[from] > 0) {
-        state.remaining[from]--;
-        state.degraded[from]++;
-        state.remaining[to]--;
-        state.degraded[to]++;
+        state.remaining[from]--;      // Lose source action
+        state.remaining[to]++;        // Gain target action
+        state.degraded[to]++;         // Mark target as degraded
         consumed[to]++;
         return true;
       }
