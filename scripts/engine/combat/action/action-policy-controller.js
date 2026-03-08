@@ -32,6 +32,7 @@ export class ActionPolicyController {
    * @param {Object} options.result - Result from ActionEngine.consume()
    * @param {string} options.actionName - Display name ("attack", "recover", etc.)
    * @param {Object} [options.context] - Optional extra context
+   * @param {boolean} [options.gmOverride] - Force allow (from Shift+Click). GM-only.
    * @returns {Object} {
    *   permitted: boolean,
    *   uiState: {
@@ -40,7 +41,7 @@ export class ActionPolicyController {
    *   }
    * }
    */
-  static handle({ actor, result, actionName, context = {} }) {
+  static handle({ actor, result, actionName, context = {}, gmOverride = false }) {
     if (!actor || !result) {
       console.error("[SWSE] ActionPolicyController.handle missing required args");
       return {
@@ -50,6 +51,18 @@ export class ActionPolicyController {
     }
 
     const mode = game.settings.get("swse", "actionEconomyMode");
+
+    // GM OVERRIDE: Shift+Click (STRICT mode only, GM-only)
+    if (gmOverride && game.user.isGM && mode === this.MODE.STRICT) {
+      this._reportViolation(actor, result, actionName, "GM_OVERRIDE");
+      return {
+        permitted: true,
+        uiState: {
+          disable: false,
+          tooltip: "GM override applied (Shift+Click)."
+        }
+      };
+    }
 
     // NONE mode: No enforcement
     if (mode === this.MODE.NONE) {
@@ -139,20 +152,22 @@ export class ActionPolicyController {
     }
 
     // Build report
+    const combatId = game.combat?.id || "no-combat";
     const report = {
       category: "ACTION_ECONOMY",
       severity: severity,
       source: {
         actorId: actor.id,
         actorName: actor.name,
-        action: actionName
+        action: actionName,
+        combatId: combatId
       },
       message: `Action economy violation: ${actionName}`,
       details: {
         violations: result.violations,
         consumed: result.consumed
       },
-      aggregateKey: `action-economy-${actor.id}`
+      aggregateKey: `action-economy-${actor.id}-${combatId}`
     };
 
     // Send to Sentinel
