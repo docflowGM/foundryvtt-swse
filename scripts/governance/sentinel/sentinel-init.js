@@ -10,7 +10,7 @@ import { installSentinelDebugAPI } from "/systems/foundryvtt-swse/scripts/govern
 /**
  * Initialize Sentinel at system ready
  */
-export function initializeSentinel() {
+export function initializeSentinelGovernance() {
   Hooks.once("ready", () => {
     console.log("[SWSE Sentinel] Initializing diagnostic system...");
 
