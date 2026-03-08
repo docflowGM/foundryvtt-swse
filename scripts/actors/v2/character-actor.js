@@ -26,6 +26,8 @@ export function computeCharacterDerived(actor, system) {
   system.derived.attacks ??= {};
   system.derived.feats ??= {};
   system.derived.talents ??= {};
+  system.derived.forceTechniques ??= {};
+  system.derived.forceSecrets ??= {};
   system.derived.actions ??= {};
   system.derived.encumbrance ??= {};
   system.derived.racialAbilities ??= [];
@@ -68,6 +70,8 @@ export function computeCharacterDerived(actor, system) {
   mirrorAttacks(actor, system);
   mirrorFeats(actor, system);
   mirrorTalents(actor, system);
+  mirrorForceTechniques(actor, system);
+  mirrorForceSecrets(actor, system);
   mirrorRacialAbilities(system);
   mirrorActions(actor, system);
   mirrorEncumbrance(actor, system);
@@ -254,6 +258,46 @@ function mirrorTalents(actor, system) {
 
   system.derived.talents.list = list;
   system.derived.talents.groups = groups;
+}
+
+function mirrorForceTechniques(actor, system) {
+  const techniques = (actor?.items ?? []).filter(i => i.type === 'feat' && (i.system?.tags ?? []).includes('force_technique'));
+  const list = [];
+
+  for (const t of techniques) {
+    const data = t.system ?? {};
+    const entry = {
+      id: t.id,
+      name: t.name,
+      prerequisite: data.prerequisite ?? '',
+      summary: summarizeText(data.benefit ?? data.description ?? data.normalText ?? '', 160)
+    };
+    list.push(entry);
+  }
+
+  list.sort((a, b) => a.name.localeCompare(b.name));
+  system.derived.forceTechniques.list = list;
+  system.derived.forceTechniques.count = list.length;
+}
+
+function mirrorForceSecrets(actor, system) {
+  const secrets = (actor?.items ?? []).filter(i => i.type === 'feat' && (i.system?.tags ?? []).includes('force_secret'));
+  const list = [];
+
+  for (const s of secrets) {
+    const data = s.system ?? {};
+    const entry = {
+      id: s.id,
+      name: s.name,
+      prerequisite: data.prerequisite ?? '',
+      summary: summarizeText(data.benefit ?? data.description ?? data.normalText ?? '', 160)
+    };
+    list.push(entry);
+  }
+
+  list.sort((a, b) => a.name.localeCompare(b.name));
+  system.derived.forceSecrets.list = list;
+  system.derived.forceSecrets.count = list.length;
 }
 
 function mirrorActions(actor, system) {
