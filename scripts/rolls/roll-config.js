@@ -7,6 +7,7 @@
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
+import { getCriticalConfirmBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
 
 /* ============================================================================
    ROLL HOOKS SYSTEM
@@ -629,8 +630,10 @@ export async function rollCriticalConfirmation({ actor, weapon, attackBonus, tar
     return { roll: null, confirmed: false, cancelled: true };
   }
 
-  // Calculate confirmation bonus (same as attack)
-  const formula = `1d20 + ${attackBonus}`;
+  // Calculate confirmation bonus (base attack bonus + critical confirmation bonus from rules)
+  const critConfirmBonus = getCriticalConfirmBonus(actor, weapon) || 0;
+  const totalBonus = attackBonus + critConfirmBonus;
+  const formula = `1d20 + ${totalBonus}`;
 
   let roll;
   try {
