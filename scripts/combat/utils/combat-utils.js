@@ -140,6 +140,33 @@ export function getCriticalDamageBonus(actor, weapon) {
   return bonuses.length > 0 ? bonuses.join(' + ') : '';
 }
 
+/**
+ * Get critical damage multiplier with MODIFY_CRITICAL_MULTIPLIER overrides
+ * @param {Actor} actor - The attacking actor
+ * @param {Item} weapon - The weapon being used
+ * @returns {number} Critical multiplier (default 2, overridden by highest matching rule)
+ */
+export function getCriticalMultiplier(actor, weapon) {
+  const defaultMultiplier = weapon.system?.critMultiplier || 2;
+
+  if (!actor || !weapon) return defaultMultiplier;
+
+  const ctx = new ResolutionContext(actor);
+  const multRules = ctx.getRuleInstances(RULES.MODIFY_CRITICAL_MULTIPLIER);
+
+  let highestMultiplier = defaultMultiplier;
+  const weaponProf = weapon.system?.proficiency;
+
+  for (const rule of multRules) {
+    if (rule.proficiency === weaponProf && rule.multiplier) {
+      // Take the highest multiplier if multiple rules apply
+      highestMultiplier = Math.max(highestMultiplier, rule.multiplier);
+    }
+  }
+
+  return highestMultiplier;
+}
+
 /* -------------------------------------------------------------------------- */
 /* DAMAGE BONUS CALCULATION                                                    */
 /* -------------------------------------------------------------------------- */

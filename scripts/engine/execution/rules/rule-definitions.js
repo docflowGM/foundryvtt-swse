@@ -209,6 +209,14 @@ export const RULE_DEFINITIONS = Object.freeze({
     description: "Adds bonus damage when scoring a critical hit (proficiency-gated)",
     required: ["proficiency", "bonus"]
   },
+  [RULES.MODIFY_CRITICAL_MULTIPLIER]: {
+    params: {
+      proficiency: "string",
+      multiplier: "number"
+    },
+    description: "Changes critical hit damage multiplier for specific proficiency (overrides base)",
+    required: ["proficiency", "multiplier"]
+  },
 });
 
 /**

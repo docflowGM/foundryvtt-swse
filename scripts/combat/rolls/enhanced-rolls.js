@@ -1,7 +1,7 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { rollDamage } from "/systems/foundryvtt-swse/scripts/combat/rolls/damage.js";
-import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance, getEffectiveCritRange } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
+import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance, getEffectiveCritRange, getCriticalMultiplier } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
 import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
@@ -302,9 +302,9 @@ export class SWSERoll {
       // Get the d20 result
       const d20 = roll.dice[0].results[0].result;
 
-      // Get weapon crit properties (with EXTEND_CRITICAL_RANGE support)
+      // Get weapon crit properties (with rule support for range and multiplier)
       const critRange = getEffectiveCritRange(actor, weapon);
-      const critMultiplier = weapon.system?.critMultiplier || 2;
+      const critMultiplier = getCriticalMultiplier(actor, weapon);
 
       // Analyze critical threat
       const critAnalysis = analyzeCriticalThreat(d20, critRange);
@@ -618,7 +618,7 @@ export class SWSERoll {
       const d20 = roll.dice[0].results[0].result;
       const critAnalysis = analyzeCriticalThreat(weapon, d20, roll.total);
       let critConfirmed = false;
-      const critMultiplier = 2;
+      const critMultiplier = getCriticalMultiplier(actor, weapon);
 
       if (critAnalysis.isThreat && !critAnalysis.isNat20) {
         critConfirmed = await rollCriticalConfirmation(actor, weapon, context.attackBonus);
@@ -902,9 +902,9 @@ export class SWSERoll {
 
         const d20 = roll.dice[0].results[0].result;
 
-        // Get weapon crit properties (with EXTEND_CRITICAL_RANGE support)
+        // Get weapon crit properties (with rule support for range and multiplier)
         const critRange = getEffectiveCritRange(actor, weapon);
-        const critMultiplier = weapon.system?.critMultiplier || 2;
+        const critMultiplier = getCriticalMultiplier(actor, weapon);
 
         // Analyze critical threat
         const critAnalysis = analyzeCriticalThreat(d20, critRange);

@@ -82,7 +82,15 @@ export const RULE_TYPES = {
    * Queried by: Damage resolution (on confirmed critical)
    * Params: { proficiency: string, bonus: string|number }
    */
-  CRITICAL_DAMAGE_BONUS: 'CRITICAL_DAMAGE_BONUS'
+  CRITICAL_DAMAGE_BONUS: 'CRITICAL_DAMAGE_BONUS',
+
+  /**
+   * MODIFY_CRITICAL_MULTIPLIER
+   * Changes critical hit damage multiplier (default ×2).
+   * Queried by: Damage resolution (multiplier calculation)
+   * Params: { proficiency: string, multiplier: number }
+   */
+  MODIFY_CRITICAL_MULTIPLIER: 'MODIFY_CRITICAL_MULTIPLIER'
 };
 
 /**
