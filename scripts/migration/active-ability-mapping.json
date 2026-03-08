@@ -1,0 +1,216 @@
+{
+  "_comment": "ACTIVE Ability Migration Database (Phase 7)",
+  "_instructions": "Maps ability names/descriptions to ACTIVE subtypes and configurations",
+
+  "ACTIVE_EFFECT": {
+    "category": "One-time activated abilities with action costs and frequency limits",
+    "examples": [
+      "Power Attack: +2d6 damage, costs standard action",
+      "Rapid Shot: make additional attack with ranged weapon",
+      "Flurry of Blows: make extra melee attack",
+      "Backstab: +1d6 damage when flanking",
+      "Charge: move double and attack in single turn"
+    ],
+    "templates": {
+      "power_attack": {
+        "name": "Power Attack",
+        "description": "Trade accuracy for increased damage",
+        "activation": {
+          "actionType": "STANDARD"
+        },
+        "frequency": {
+          "type": "UNLIMITED",
+          "max": 1
+        },
+        "cost": {
+          "forcePoints": 0,
+          "resource": null,
+          "resourceAmount": 0
+        },
+        "targeting": {
+          "mode": "SINGLE",
+          "targetType": "SELF",
+          "range": 0
+        },
+        "effect": {
+          "type": "MODIFIER",
+          "payload": {
+            "target": "attack",
+            "value": 2,
+            "type": "untyped",
+            "description": "Power Attack bonus damage"
+          },
+          "duration": {
+            "type": "ROUND",
+            "value": 1,
+            "expires": "END_OF_SOURCE_TURN"
+          }
+        }
+      },
+      "rapid_shot": {
+        "name": "Rapid Shot",
+        "description": "Make additional ranged attack in same action",
+        "activation": {
+          "actionType": "STANDARD"
+        },
+        "frequency": {
+          "type": "ENCOUNTER",
+          "max": 1
+        },
+        "cost": {
+          "forcePoints": 0,
+          "resource": null,
+          "resourceAmount": 0
+        },
+        "targeting": {
+          "mode": "SINGLE",
+          "targetType": "ENEMY",
+          "range": 12
+        },
+        "effect": {
+          "type": "CUSTOM",
+          "payload": {
+            "handlerPath": "/systems/foundryvtt-swse/scripts/engine/abilities/active/handlers/extra-attack-handler.js",
+            "handlerName": "grantExtraAttack",
+            "params": { "attackBonus": -2 }
+          },
+          "duration": {
+            "type": "INSTANT",
+            "value": 0
+          }
+        }
+      },
+      "defensive_stance": {
+        "name": "Defensive Stance",
+        "description": "Take penalty to attack rolls for defense bonus",
+        "activation": {
+          "actionType": "STANDARD"
+        },
+        "frequency": {
+          "type": "UNLIMITED",
+          "max": 1
+        },
+        "cost": {
+          "forcePoints": 0,
+          "resource": null,
+          "resourceAmount": 0
+        },
+        "targeting": {
+          "mode": "SINGLE",
+          "targetType": "SELF",
+          "range": 0
+        },
+        "effect": {
+          "type": "MODIFIER",
+          "payload": {
+            "target": "defense",
+            "value": 2,
+            "type": "untyped",
+            "description": "Defensive stance bonus"
+          },
+          "duration": {
+            "type": "ROUND",
+            "value": 1,
+            "expires": "END_OF_SOURCE_TURN"
+          }
+        }
+      }
+    }
+  },
+
+  "ACTIVE_MODE": {
+    "category": "Toggle stances and persistent effect modes",
+    "examples": [
+      "Fighting Defensively: toggle +1 defense, -1 attack",
+      "Suppress Force: toggle to block Force abilities",
+      "Combat Stance: exclusive group with other stances",
+      "Jedi Training Mode: exclusive group, grants benefits while active"
+    ],
+    "templates": {
+      "fighting_defensively": {
+        "name": "Fighting Defensively",
+        "description": "Toggle stance: +1 defense, -1 attack",
+        "activation": {
+          "actionType": "SWIFT"
+        },
+        "mode": {
+          "exclusiveGroup": "COMBAT_STANCE",
+          "toggle": true
+        },
+        "persistentEffect": {
+          "type": "MODIFIER",
+          "payload": {
+            "defense": 1,
+            "attack": -1
+          }
+        }
+      },
+      "suppress_force": {
+        "name": "Suppress Force",
+        "description": "Toggle: suppress Force ability usage",
+        "activation": {
+          "actionType": "SWIFT"
+        },
+        "mode": {
+          "exclusiveGroup": null,
+          "toggle": true
+        },
+        "persistentEffect": {
+          "type": "RULE",
+          "payload": {
+            "rule": "forceAbilitiesDisabled",
+            "enabled": true
+          }
+        }
+      }
+    }
+  },
+
+  "DEFER_COMPLEX": {
+    "category": "Abilities with complex mechanics not yet modeled",
+    "count": 45,
+    "examples": [
+      "Chain abilities (target spreads to nearby enemies)",
+      "Conditional multi-part effects (if condition A then effect B else effect C)",
+      "Sustained abilities (ongoing effect until voluntarily dropped)",
+      "Triggered reactions (react to specific conditions)"
+    ],
+    "status": "REQUIRES_FUTURE_PHASES",
+    "reason": "Require Phase 6+ features (AURA, TRIGGERED subtypes, conditional effects)"
+  },
+
+  "DEFER_SUBSTITUTION": {
+    "category": "Abilities that replace or modify other actions",
+    "count": 15,
+    "examples": [
+      "Instead of standard attack, make special attack",
+      "Replace movement with tactical withdrawal",
+      "Substitute skill check with alternative"
+    ],
+    "status": "STAYS_DEFERRED",
+    "reason": "Require action economy substitution logic (Phase 7+)"
+  },
+
+  "DEFER_TEMPORAL": {
+    "category": "Abilities with duration/timing conditions",
+    "count": 8,
+    "examples": [
+      "Effect lasts exactly 3 rounds then automatically ends",
+      "Apply effect at end of next round",
+      "Trigger condition at specific round number"
+    ],
+    "status": "ALREADY_HANDLED",
+    "reason": "Duration tracking via DurationEngine (Phase 1)"
+  },
+
+  "SUMMARY": {
+    "total_candidates": 280,
+    "estimate_effect": 150,
+    "estimate_mode": 35,
+    "estimate_complex": 45,
+    "estimate_substitution": 15,
+    "estimate_temporal": 8,
+    "defer_count": 68,
+    "migrate_count": 212
+  }
+}
