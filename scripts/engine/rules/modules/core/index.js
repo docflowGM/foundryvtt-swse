@@ -16,7 +16,6 @@ import { conditionPenaltyRule } from "/systems/foundryvtt-swse/scripts/engine/ru
 // Critical rules
 import { criticalRule } from "/systems/foundryvtt-swse/scripts/engine/rules/modules/core/critical-rule.js";
 import { criticalConfirmBonusRule } from "/systems/foundryvtt-swse/scripts/engine/rules/modules/core/critical-confirm-bonus-rule.js";
-import { criticalConfirmBonusRule } from "/systems/foundryvtt-swse/scripts/engine/rules/modules/core/critical-confirm-bonus-rule.js";
 
 // Damage rules
 import { damageRule } from "/systems/foundryvtt-swse/scripts/engine/rules/modules/core/damage-rule.js";
