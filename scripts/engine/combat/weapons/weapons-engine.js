@@ -23,6 +23,7 @@
 
 import { ResolutionContext } from "/systems/foundryvtt-swse/scripts/engine/resolution/resolution-context.js";
 import { RULES } from "/systems/foundryvtt-swse/scripts/engine/execution/rules/rule-enum.js";
+import { CombatRulesRegistry, RuleCategories } from "/systems/foundryvtt-swse/scripts/engine/rules/rules-registry.js";
 
 export class WeaponsEngine {
   /**
@@ -78,17 +79,15 @@ export class WeaponsEngine {
 
     result.allowed = true;
 
-    // Get attack modifiers
-    const mods = this._getAttackModifiers(actor, weapon, target, context);
-    result.attack.bonuses = mods.bonuses;
-    result.attack.penalties = mods.penalties;
-    result.attack.totalModifierPreview = mods.total;
+    // Execute registered attack rules through registry
+    const attackPayload = { actor, weapon, target, context };
+    result = CombatRulesRegistry.executeRules(RuleCategories.ATTACK, attackPayload, result);
 
-    // Get critical properties
-    const crit = this._getCriticalProperties(actor, weapon);
-    result.critical = crit;
+    // Execute registered critical rules through registry
+    const critPayload = { actor, weapon, target, context };
+    result = CombatRulesRegistry.executeRules(RuleCategories.CRITICAL, critPayload, result);
 
-    // Get reach/range
+    // Get reach/range (can be made a rule later)
     const reach = this._validateReach(actor, weapon, target, context);
     result.reach = reach;
 
@@ -132,49 +131,9 @@ export class WeaponsEngine {
       return result;
     }
 
-    // Get base damage dice
-    const baseDamage = weapon.system?.damage ?? '1d6';
-    result.dice.push({
-      count: 1,
-      size: parseInt(baseDamage.match(/\d+d(\d+)/)?.[1] || '6'),
-      type: 'weapon-base'
-    });
-
-    // Get flat bonuses (strength, etc.)
-    const strMod = actor.system.attributes?.str?.mod ?? 0;
-    result.flatBonus += strMod;
-
-    // Get damage type and armor piercing
-    result.damageType = weapon.system?.damageType ?? 'kinetic';
-    result.armorPiercing = weapon.system?.armorPiercing ?? 0;
-
-    // If critical, apply critical damage modifications
-    if (critical) {
-      const crit = this._getCriticalProperties(actor, weapon);
-      result.multipliers.critMultiplier = crit.multiplier;
-
-      // Add CRITICAL_DAMAGE_BONUS rules
-      const critBonuses = this._getCriticalDamageBonuses(actor, weapon);
-      for (const bonus of critBonuses) {
-        if (typeof bonus === 'number') {
-          result.flatBonus += bonus;
-        } else {
-          // Dice format (e.g., "1d6")
-          const match = String(bonus).match(/(\d+)d(\d+)/);
-          if (match) {
-            result.dice.push({
-              count: parseInt(match[1]),
-              size: parseInt(match[2]),
-              type: 'critical-bonus'
-            });
-          }
-        }
-      }
-
-      if (telemetry) {
-        result.diagnostics.rulesTriggered.push(`CRITICAL_DAMAGE_BONUS:${critBonuses.length}`);
-      }
-    }
+    // Execute registered damage rules through registry
+    const damagePayload = { actor, weapon, target, critical, context };
+    result = CombatRulesRegistry.executeRules(RuleCategories.DAMAGE, damagePayload, result);
 
     return result;
   }
@@ -237,9 +196,7 @@ export class WeaponsEngine {
   /* ========================================================================== */
 
   static _checkLegality(actor, weapon, target, context) {
-    const issues = [];
-
-    // Weapon exists and enabled
+    // Basic legality check - weapon must exist and not be disabled
     if (!weapon || weapon.system?.disabled === true) {
       return {
         allowed: false,
@@ -247,128 +204,10 @@ export class WeaponsEngine {
       };
     }
 
-    // Check proficiency (warning, not blocking)
-    const proficient = weapon.system?.proficient ?? true;
-    if (!proficient) {
-      issues.push({ source: 'Proficiency', value: -5 });
-    }
-
     return {
       allowed: true,
-      reason: null,
-      issues
+      reason: null
     };
-  }
-
-  static _getAttackModifiers(actor, weapon, target, context) {
-    const bonuses = [];
-    const penalties = [];
-
-    // Base attack bonus
-    bonuses.push({
-      source: 'Base Attack Bonus',
-      value: actor.system.bab ?? 0
-    });
-
-    // Ability modifier
-    const attr = weapon.system?.attackAttribute ?? 'str';
-    const abilityMod = actor.system.attributes?.[attr]?.mod ?? 0;
-    if (abilityMod !== 0) {
-      bonuses.push({
-        source: `${attr.toUpperCase()} Modifier`,
-        value: abilityMod
-      });
-    }
-
-    // Proficiency penalty
-    const proficient = weapon.system?.proficient ?? true;
-    if (!proficient) {
-      penalties.push({
-        source: 'Non-Proficient',
-        value: -5
-      });
-    }
-
-    // Size modifier
-    const sizeMod = actor.system.sizeMod ?? 0;
-    if (sizeMod !== 0) {
-      bonuses.push({
-        source: 'Size Modifier',
-        value: sizeMod
-      });
-    }
-
-    // Condition penalty
-    const ctPenalty = actor.system.conditionTrack?.penalty ?? 0;
-    if (ctPenalty !== 0) {
-      penalties.push({
-        source: 'Condition Track',
-        value: ctPenalty
-      });
-    }
-
-    // Calculate total
-    const total = bonuses.reduce((sum, b) => sum + b.value, 0) +
-                  penalties.reduce((sum, p) => sum + p.value, 0);
-
-    return { bonuses, penalties, total };
-  }
-
-  static _getCriticalProperties(actor, weapon) {
-    if (!actor || !weapon) {
-      return {
-        threatRange: 20,
-        multiplier: 2,
-        autoThreat: false
-      };
-    }
-
-    const ctx = new ResolutionContext(actor);
-    const weaponProf = weapon.system?.proficiency;
-
-    // EXTEND_CRITICAL_RANGE
-    let threatRange = weapon.system?.critRange || 20;
-    const critRangeRules = ctx.getRuleInstances(RULES.EXTEND_CRITICAL_RANGE);
-    for (const rule of critRangeRules) {
-      if (rule.proficiency === weaponProf) {
-        threatRange -= (rule.by || 0);
-      }
-    }
-    threatRange = Math.max(2, threatRange);
-
-    // MODIFY_CRITICAL_MULTIPLIER
-    let multiplier = weapon.system?.critMultiplier || 2;
-    const multRules = ctx.getRuleInstances(RULES.MODIFY_CRITICAL_MULTIPLIER);
-    for (const rule of multRules) {
-      if (rule.proficiency === weaponProf && rule.multiplier) {
-        multiplier = Math.max(multiplier, rule.multiplier);
-      }
-    }
-
-    return {
-      threatRange,
-      multiplier,
-      autoThreat: false  // TODO: Improved Critical logic
-    };
-  }
-
-  static _getCriticalDamageBonuses(actor, weapon) {
-    if (!actor || !weapon) {
-      return [];
-    }
-
-    const ctx = new ResolutionContext(actor);
-    const weaponProf = weapon.system?.proficiency;
-    const bonuses = [];
-
-    const critBonusRules = ctx.getRuleInstances(RULES.CRITICAL_DAMAGE_BONUS);
-    for (const rule of critBonusRules) {
-      if (rule.proficiency === weaponProf && rule.bonus) {
-        bonuses.push(rule.bonus);
-      }
-    }
-
-    return bonuses;
   }
 
   static _validateReach(actor, weapon, target, context) {
@@ -380,42 +219,8 @@ export class WeaponsEngine {
     };
   }
 
-  static _getDiagnostics(actor, weapon, target) {
-    const diagnostics = {
-      rulesTriggered: [],
-      blockedBy: null
-    };
-
-    if (!actor || !weapon) {
-      return diagnostics;
-    }
-
-    const ctx = new ResolutionContext(actor);
-
-    // Report all triggered critical rules
-    const critRangeRules = ctx.getRuleInstances(RULES.EXTEND_CRITICAL_RANGE);
-    for (const rule of critRangeRules) {
-      diagnostics.rulesTriggered.push(
-        `EXTEND_CRITICAL_RANGE:${rule.proficiency}:${rule.by}`
-      );
-    }
-
-    const multRules = ctx.getRuleInstances(RULES.MODIFY_CRITICAL_MULTIPLIER);
-    for (const rule of multRules) {
-      diagnostics.rulesTriggered.push(
-        `MODIFY_CRITICAL_MULTIPLIER:${rule.proficiency}:${rule.multiplier}`
-      );
-    }
-
-    const bonusRules = ctx.getRuleInstances(RULES.CRITICAL_DAMAGE_BONUS);
-    for (const rule of bonusRules) {
-      diagnostics.rulesTriggered.push(
-        `CRITICAL_DAMAGE_BONUS:${rule.proficiency}:${rule.bonus}`
-      );
-    }
-
-    return diagnostics;
-  }
+  // Diagnostics now come from rules themselves via registry.executeRules()
+  // Rules add to result.diagnostics.rulesTriggered as they execute
 }
 
 export default WeaponsEngine;

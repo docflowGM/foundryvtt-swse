@@ -6,20 +6,43 @@
  */
 
 import { CombatRulesRegistry } from "/systems/foundryvtt-swse/scripts/engine/rules/rules-registry.js";
+
+// Attack rules
+import { baseAttackBonusRule } from "/systems/foundryvtt-swse/scripts/engine/rules/modules/core/base-attack-bonus-rule.js";
 import { proficiencyRule } from "/systems/foundryvtt-swse/scripts/engine/rules/modules/core/proficiency-rule.js";
+import { abilityModifierRule } from "/systems/foundryvtt-swse/scripts/engine/rules/modules/core/ability-modifier-rule.js";
+import { conditionPenaltyRule } from "/systems/foundryvtt-swse/scripts/engine/rules/modules/core/condition-penalty-rule.js";
+
+// Critical rules
 import { criticalRule } from "/systems/foundryvtt-swse/scripts/engine/rules/modules/core/critical-rule.js";
+
+// Damage rules
+import { damageRule } from "/systems/foundryvtt-swse/scripts/engine/rules/modules/core/damage-rule.js";
+import { strengthToDamageRule } from "/systems/foundryvtt-swse/scripts/engine/rules/modules/core/strength-to-damage-rule.js";
 
 /**
  * Bootstrap core rules.
  * Call this during system initialization to register core rules.
  */
 export function initializeCoreRules() {
-  CombatRulesRegistry.registerBatch([
+  const coreRules = [
+    // Attack rules (in priority order)
+    baseAttackBonusRule,
     proficiencyRule,
-    criticalRule
-  ]);
+    abilityModifierRule,
+    conditionPenaltyRule,
 
-  console.log("[CombatRulesRegistry] Core rules initialized");
+    // Critical rules
+    criticalRule,
+
+    // Damage rules
+    damageRule,
+    strengthToDamageRule
+  ];
+
+  CombatRulesRegistry.registerBatch(coreRules);
+
+  console.log(`[CombatRulesRegistry] Core rules initialized (${coreRules.length} rules registered)`);
 }
 
 export default initializeCoreRules;

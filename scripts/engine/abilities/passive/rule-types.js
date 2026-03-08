@@ -90,7 +90,15 @@ export const RULE_TYPES = {
    * Queried by: Damage resolution (multiplier calculation)
    * Params: { proficiency: string, multiplier: number }
    */
-  MODIFY_CRITICAL_MULTIPLIER: 'MODIFY_CRITICAL_MULTIPLIER'
+  MODIFY_CRITICAL_MULTIPLIER: 'MODIFY_CRITICAL_MULTIPLIER',
+
+  /**
+   * CRITICAL_CONFIRM_BONUS
+   * Adds bonus to critical confirmation rolls.
+   * Queried by: Critical confirmation resolver
+   * Params: { proficiency: string, bonus: number }
+   */
+  CRITICAL_CONFIRM_BONUS: 'CRITICAL_CONFIRM_BONUS'
 };
 
 /**

@@ -217,6 +217,14 @@ export const RULE_DEFINITIONS = Object.freeze({
     description: "Changes critical hit damage multiplier for specific proficiency (overrides base)",
     required: ["proficiency", "multiplier"]
   },
+  [RULES.CRITICAL_CONFIRM_BONUS]: {
+    params: {
+      proficiency: "string",
+      bonus: "number"
+    },
+    description: "Adds bonus to critical hit confirmation rolls for specific proficiency",
+    required: ["proficiency", "bonus"]
+  },
 });
 
 /**

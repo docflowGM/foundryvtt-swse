@@ -167,6 +167,30 @@ export function getCriticalMultiplier(actor, weapon) {
   return highestMultiplier;
 }
 
+/**
+ * Get critical confirmation bonus from CRITICAL_CONFIRM_BONUS rules
+ * @param {Actor} actor - The attacking actor
+ * @param {Item} weapon - The weapon being used
+ * @returns {number} Total confirmation bonus
+ */
+export function getCriticalConfirmBonus(actor, weapon) {
+  if (!actor || !weapon) return 0;
+
+  const ctx = new ResolutionContext(actor);
+  const confirmRules = ctx.getRuleInstances(RULES.CRITICAL_CONFIRM_BONUS);
+
+  let bonus = 0;
+  const weaponProf = weapon.system?.proficiency;
+
+  for (const rule of confirmRules) {
+    if (rule.proficiency === weaponProf && rule.bonus) {
+      bonus += rule.bonus || 0;
+    }
+  }
+
+  return bonus;
+}
+
 /* -------------------------------------------------------------------------- */
 /* DAMAGE BONUS CALCULATION                                                    */
 /* -------------------------------------------------------------------------- */
