@@ -235,7 +235,7 @@ export class SWSEV2CharacterSheet extends
       const turnState = ActionEconomyPersistence.getTurnState(actor, combatId);
       const state = ActionEngine.getVisualState(turnState);
       const breakdown = ActionEngine.getTooltipBreakdown(turnState);
-      const enforcementMode = game.settings.get("swse", "actionEconomyMode");
+      const enforcementMode = game.settings.get("foundryvtt-swse", "actionEconomyMode");
 
       actionEconomy = {
         state,
