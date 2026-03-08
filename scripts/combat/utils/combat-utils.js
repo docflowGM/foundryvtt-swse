@@ -62,8 +62,24 @@ export function computeAttackBonus(actor, weapon) {
   const speciesCombat = actor.system?.speciesCombatBonuses || actor.system?.speciesTraitBonuses?.combat || {};
   const speciesAttackBonus = (weapon.system?.ranged ? (speciesCombat.rangedAttack || 0) : (speciesCombat.meleeAttack || 0));
 
-  // Condition Track penalties
-  const ctPenalty = actor.system.conditionTrack?.penalty ?? 0;
+  // Condition Track penalties (read from authoritative derived source)
+  const ctPenalty = actor.system?.derived?.damage?.conditionPenalty ??
+                    actor.system?.conditionTrack?.penalty ??
+                    0;
+
+  // REGRESSION GUARD: Detect mismatch between system and derived penalties
+  if (game.settings.get("swse", "devMode") &&
+      actor.system?.conditionTrack &&
+      actor.system?.conditionTrack?.penalty !== undefined &&
+      actor.system?.derived?.damage?.conditionPenalty !== actor.system?.conditionTrack?.penalty) {
+    console.warn(
+      `[SWSE] Condition penalty mismatch detected for ${actor.name}.`,
+      {
+        systemPenalty: actor.system.conditionTrack.penalty,
+        derivedPenalty: actor.system.derived?.damage?.conditionPenalty
+      }
+    );
+  }
 
   // Size modifiers, if in your system
   const sizeMod = actor.system.sizeMod ?? 0;

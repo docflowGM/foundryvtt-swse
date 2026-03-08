@@ -384,6 +384,13 @@ Hooks.once('ready', async () => {
         }
       }
     },
+    // Combat regression tests
+    combat: {
+      testConditionPenalty: async (actor) => {
+        const { testConditionPenalty } = await import("/systems/foundryvtt-swse/scripts/debug/condition-penalty-regression-test.js");
+        return await testConditionPenalty(actor || canvas?.tokens?.controlled?.[0]?.actor);
+      }
+    },
     // Reporting: Generate and export comprehensive audit reports
     reporting: {
       getFullReport: () => SentinelReporter.getReportAsString(),

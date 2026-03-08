@@ -18,7 +18,9 @@ export const conditionPenaltyRule = {
   apply: (payload, result) => {
     const { actor } = payload;
 
-    const ctPenalty = actor.system.conditionTrack?.penalty ?? 0;
+    const ctPenalty = actor.system?.derived?.damage?.conditionPenalty ??
+                      actor.system?.conditionTrack?.penalty ??
+                      0;
     if (ctPenalty !== 0) {
       result.attack.penalties.push({
         source: 'Condition Track',
