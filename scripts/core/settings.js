@@ -1,6 +1,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { registerMetaTuningSettings } from "/systems/foundryvtt-swse/scripts/engine/MetaTuning.js";
 import { registerEpicOverrideSetting } from "/systems/foundryvtt-swse/scripts/settings/epic-override.js";
+import { registerActionEconomySettings } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-settings.js";
 
 /**
  * System settings for SWSE
@@ -313,6 +314,9 @@ export function registerSystemSettings() {
 
   // Register MetaTuning settings for suggestion engine
   registerMetaTuningSettings();
+
+  // Action Economy Enforcement Settings
+  registerActionEconomySettings();
 
   // Phase 1: Chat narration setting
   game.settings.register('foundryvtt-swse', 'enableChatNarrationForRolls', {
