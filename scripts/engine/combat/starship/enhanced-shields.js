@@ -1,3 +1,6 @@
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+
 /**
  * EnhancedShields — Directional shield management and recharge mechanics.
  *
@@ -78,7 +81,8 @@ export class EnhancedShields {
     const perZone = Math.floor(maxTotal / 4);
     const remainder = maxTotal - (perZone * 4);
 
-    await vehicle.update({
+    // PHASE 2B: Route through ActorEngine
+    await ActorEngine.updateActor(vehicle, {
       'system.enhancedShields.fore': perZone + remainder, // Extra point goes fore
       'system.enhancedShields.aft': perZone,
       'system.enhancedShields.port': perZone,
@@ -115,19 +119,20 @@ export class EnhancedShields {
       }
     }
 
-    await vehicle.update({
+    // PHASE 2B: Route through ActorEngine
+    await ActorEngine.updateActor(vehicle, {
       'system.enhancedShields.fore': distribution.fore ?? 0,
       'system.enhancedShields.aft': distribution.aft ?? 0,
       'system.enhancedShields.port': distribution.port ?? 0,
       'system.enhancedShields.starboard': distribution.starboard ?? 0
     });
 
-    await ChatMessage.create({
+    await SWSEChat.postHTML({
       content: `<div class="swse-shields-msg">
         <strong>Shields Redistributed — ${vehicle.name}</strong><br>
         Fore: ${distribution.fore} | Aft: ${distribution.aft} | Port: ${distribution.port} | Starboard: ${distribution.starboard}
       </div>`,
-      speaker: ChatMessage.getSpeaker({ actor: vehicle })
+      actor: vehicle
     });
 
     return true;
@@ -197,17 +202,18 @@ export class EnhancedShields {
     const absorbed = Math.min(current, damage);
     const overflow = damage - absorbed;
 
-    await vehicle.update({
+    // PHASE 2B: Route through ActorEngine
+    await ActorEngine.updateActor(vehicle, {
       [`system.enhancedShields.${zone}`]: current - absorbed
     });
 
     if (absorbed > 0) {
-      await ChatMessage.create({
+      await SWSEChat.postHTML({
         content: `<div class="swse-shields-msg">
           ${vehicle.name}'s ${zone} shields absorb ${absorbed} damage.
           ${overflow > 0 ? `<br><strong>${overflow} damage passes through to hull!</strong>` : ''}
         </div>`,
-        speaker: ChatMessage.getSpeaker({ actor: vehicle })
+        actor: vehicle
       });
     }
 
@@ -281,16 +287,17 @@ export class EnhancedShields {
     }
 
     if (Object.keys(updates).length > 0) {
-      await vehicle.update(updates);
+      // PHASE 2B: Route through ActorEngine
+      await ActorEngine.updateActor(vehicle, updates);
     }
 
     const recharged = rechargeAmount - remaining;
     if (recharged > 0) {
-      await ChatMessage.create({
+      await SWSEChat.postHTML({
         content: `<div class="swse-shields-msg">
           ${vehicle.name}'s shields recharge ${recharged} points.
         </div>`,
-        speaker: ChatMessage.getSpeaker({ actor: vehicle })
+        actor: vehicle
       });
     }
 

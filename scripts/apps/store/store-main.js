@@ -644,6 +644,12 @@ export class SWSEStore extends BaseSWSEAppV2 {
       viewCartBtn.addEventListener('click', () => this._showCartSidebar(root));
     }
 
+    // Close cart button (HANDLER FIX)
+    const closeCartBtn = root.querySelector('[data-action="close-cart"]');
+    if (closeCartBtn) {
+      closeCartBtn.addEventListener('click', () => this._hideCartSidebar(root));
+    }
+
     // Legacy buy item buttons (for backward compat)
     root.querySelectorAll('.buy-item').forEach(btn => {
       btn.addEventListener('click', ev => {

@@ -1,3 +1,6 @@
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+
 /**
  * EnhancedCommander — Tactical boosts, coordination, and battlefield control.
  *
@@ -148,20 +151,21 @@ export class EnhancedCommander {
       return false;
     }
 
-    await vehicle.update({
+    // PHASE 2B: Route through ActorEngine
+    await ActorEngine.updateActor(vehicle, {
       'system.commanderOrder': order
     });
 
     const data = this.ORDER_DATA[order];
     const commanderName = commander?.name ?? 'Commander';
 
-    await ChatMessage.create({
+    await SWSEChat.postHTML({
       content: `<div class="swse-commander-msg">
         <strong>${data.label} — ${vehicle.name}</strong><br>
         <em>${commanderName} issues orders.</em><br>
         ${data.description}
       </div>`,
-      speaker: ChatMessage.getSpeaker({ actor: commander ?? vehicle })
+      actor: commander ?? vehicle
     });
 
     return true;
@@ -175,7 +179,8 @@ export class EnhancedCommander {
    */
   static async resetOrder(vehicle) {
     if (!vehicle || vehicle.type !== 'vehicle') return;
-    await vehicle.update({ 'system.commanderOrder': this.ORDERS.NONE });
+    // PHASE 2B: Route through ActorEngine
+    await ActorEngine.updateActor(vehicle, { 'system.commanderOrder': this.ORDERS.NONE });
   }
 
   /* -------------------------------------------------------------------------- */
@@ -199,12 +204,12 @@ export class EnhancedCommander {
 
     const dc = 15;
     if (tacticsCheck < dc) {
-      await ChatMessage.create({
+      await SWSEChat.postHTML({
         content: `<div class="swse-commander-msg">
           <strong>Battle Analysis Failed</strong><br>
           ${commander.name} fails to analyze ${target.name} (rolled ${tacticsCheck} vs DC ${dc}).
         </div>`,
-        speaker: ChatMessage.getSpeaker({ actor: commander })
+        actor: commander
       });
       return { success: false, info: null };
     }
@@ -227,7 +232,7 @@ export class EnhancedCommander {
     const info = { dt, ctStep, ctLabel: ctLabels[ctStep] ?? 'Unknown', hpInfo };
 
     // Reveal to all players
-    await ChatMessage.create({
+    await SWSEChat.postHTML({
       content: `<div class="swse-commander-msg">
         <strong>Battle Analysis — ${target.name}</strong><br>
         <em>${commander.name} analyzes the enemy.</em><br>
@@ -235,7 +240,7 @@ export class EnhancedCommander {
         Condition: <strong>${info.ctLabel}</strong><br>
         ${hpInfo}
       </div>`,
-      speaker: ChatMessage.getSpeaker({ actor: commander })
+      actor: commander
     });
 
     return { success: true, info };

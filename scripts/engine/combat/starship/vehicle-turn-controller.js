@@ -17,6 +17,8 @@
  * Does NOT directly modify any engine state — coordinates flow only.
  */
 
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+
 export class VehicleTurnController {
 
   static PHASES = Object.freeze([
@@ -123,7 +125,8 @@ export class VehicleTurnController {
   static async startTurn(vehicle) {
     if (!this.enabled || !vehicle || vehicle.type !== 'vehicle') return;
 
-    await vehicle.update({
+    // PHASE 2B: Route through ActorEngine
+    await ActorEngine.updateActor(vehicle, {
       'system.turnState': {
         currentPhase: 'commander',
         phaseIndex: 0,
@@ -174,7 +177,8 @@ export class VehicleTurnController {
     const newPhase = this.PHASES[nextIdx];
     const completed = [...state.completedPhases, state.currentPhase];
 
-    await vehicle.update({
+    // PHASE 2B: Route through ActorEngine
+    await ActorEngine.updateActor(vehicle, {
       'system.turnState.currentPhase': newPhase,
       'system.turnState.phaseIndex': nextIdx,
       'system.turnState.completedPhases': completed
@@ -217,7 +221,8 @@ export class VehicleTurnController {
     const crewActed = { ...(vehicle.system.turnState?.crewActed ?? {}) };
     crewActed[position] = true;
 
-    await vehicle.update({
+    // PHASE 2B: Route through ActorEngine
+    await ActorEngine.updateActor(vehicle, {
       'system.turnState.crewActed': crewActed
     });
   }
@@ -242,8 +247,9 @@ export class VehicleTurnController {
   static async endTurn(vehicle) {
     if (!vehicle || vehicle.type !== 'vehicle') return;
 
+    // PHASE 2B: Route through ActorEngine
     // Clear turn state
-    await vehicle.update({
+    await ActorEngine.updateActor(vehicle, {
       'system.turnState': {
         currentPhase: 'cleanup',
         phaseIndex: this.PHASES.length - 1,

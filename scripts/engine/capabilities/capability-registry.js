@@ -15,7 +15,7 @@
  * - Any system querying actor capabilities
  */
 
-import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
+import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisite-checker.js";
 
 export class CapabilityRegistry {
 

@@ -18,6 +18,7 @@ import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/h
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { createItemMacro } from "/systems/foundryvtt-swse/scripts/macros/item-macro.js";
 import registerLevelUpSheetHooks from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/levelup-sheet-hooks.js";
+import registerActorSidebarControls from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/actor-sidebar-controls.js";
 
 /**
  * Register all UI-related hooks
@@ -44,6 +45,9 @@ export function registerUIHooks() {
 
     // Actor sheet header integration (Level Up)
     registerLevelUpSheetHooks();
+
+    // Actor sidebar controls (Chargen, Store, Templates)
+    registerActorSidebarControls();
 
     SWSELogger.log('SWSE | UI hooks initialized');
 }

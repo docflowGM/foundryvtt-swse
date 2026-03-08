@@ -448,12 +448,13 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
         // Also grant GM ownership
         ownership[game.user.id] = 3;
 
-        await draftActor.update({ ownership });
-
-        // Remove draft flags
-        await draftActor.unsetFlag('foundryvtt-swse', 'pendingApproval');
-        await draftActor.unsetFlag('foundryvtt-swse', 'draftOnly');
-        await draftActor.unsetFlag('foundryvtt-swse', 'ownerPlayerId');
+        // Batch all mutations into single atomic update (ATOMICITY FIX)
+        await ActorEngine.updateActor(draftActor, {
+          'ownership': ownership,
+          'flags.-=foundryvtt-swse.pendingApproval': null,
+          'flags.-=foundryvtt-swse.draftOnly': null,
+          'flags.-=foundryvtt-swse.ownerPlayerId': null
+        });
       }
 
       // 4. Log transaction

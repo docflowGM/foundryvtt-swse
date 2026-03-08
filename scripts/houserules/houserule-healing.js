@@ -50,7 +50,8 @@ export class HealingMechanics {
       const maxHP = target.system?.hp?.max || 0;
       const newHP = Math.min(currentHP + healing, maxHP);
 
-      await target.update({ 'system.hp.value': newHP });
+      // PHASE 2B: Route through ActorEngine
+      await ActorEngine.updateActor(target, { 'system.hp.value': newHP });
 
       // Mark that this creature received First Aid (24-hour cooldown)
       const now = Date.now();
@@ -152,7 +153,8 @@ export class HealingMechanics {
         const maxHP = target.system?.hp?.max || 0;
         const newHP = Math.min(currentHP + healing, maxHP);
 
-        await target.update({ 'system.hp.value': newHP });
+        // PHASE 2B: Route through ActorEngine
+        await ActorEngine.updateActor(target, { 'system.hp.value': newHP });
         await target.setFlag(NS, 'lastLongTermCare', Date.now());
 
         results.push({
@@ -242,7 +244,8 @@ export class HealingMechanics {
         const maxHP = patient.system?.hp?.max || 0;
         const newHP = Math.min(currentHP + healing, maxHP);
 
-        await patient.update({ 'system.hp.value': newHP });
+        // PHASE 2B: Route through ActorEngine
+        await ActorEngine.updateActor(patient, { 'system.hp.value': newHP });
 
         return {
           success: true,
@@ -260,7 +263,8 @@ export class HealingMechanics {
           const currentHP = patient.system?.hp?.value || 0;
           const newHP = Math.max(0, currentHP - damageFromFailure);
 
-          await patient.update({ 'system.hp.value': newHP });
+          // PHASE 2B: Route through ActorEngine
+          await ActorEngine.updateActor(patient, { 'system.hp.value': newHP });
 
           // Check if patient dies
           const isDead = newHP <= -(patient.system?.attributes?.con?.score || 10);
@@ -342,8 +346,9 @@ export class HealingMechanics {
     }
 
     try {
+      // PHASE 2B: Route through ActorEngine
       // Bring back to 1 HP
-      await corpse.update({ 'system.hp.value': 1 });
+      await ActorEngine.updateActor(corpse, { 'system.hp.value': 1 });
 
       // Apply unconscious condition if available
       const unconsciousEffect = corpse.effects.find(e =>
@@ -409,7 +414,8 @@ export class HealingMechanics {
         const currentHP = patient.system?.hp?.value || 0;
         const newHP = Math.max(0, currentHP - damageThreshold);
 
-        await patient.update({ 'system.hp.value': newHP });
+        // PHASE 2B: Route through ActorEngine
+        await ActorEngine.updateActor(patient, { 'system.hp.value': newHP });
 
         return {
           success: false,
@@ -440,7 +446,8 @@ export class HealingMechanics {
       const maxHP = patient.system?.hp?.max || 0;
       const newHP = Math.min(currentHP + healing, maxHP);
 
-      await patient.update({ 'system.hp.value': newHP });
+      // PHASE 2B: Route through ActorEngine
+      await ActorEngine.updateActor(patient, { 'system.hp.value': newHP });
 
       // Add to care history
       recentCare.push(Date.now());

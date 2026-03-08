@@ -6,6 +6,13 @@ import { MentorChatDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor
 import { DropResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/drop-resolution-engine.js";
 import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
+import CharacterGenerator from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js";
+import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
+import { SWSELevelUpEnhanced } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-main.js";
+import { MentorNotesApp } from "/systems/foundryvtt-swse/scripts/apps/mentor-notes/mentor-notes-app.js";
+import { CombatExecutor } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-executor.js";
+import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
+import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animation-engine.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -52,7 +59,85 @@ export class SWSEV2CharacterSheet extends
     const context = await super._prepareContext(options);
 
     // Authoritative derived state (populated by character-actor.js computeCharacterDerived)
-    const derived = actor.system?.derived ?? {};
+    // SAFEGUARD: Ensure all expected nested properties exist with empty defaults
+    const derived = foundry.utils.duplicate(actor.system?.derived ?? {});
+
+    // Define ability constants used for multiple safeguards
+    const ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+    const ABILITY_LABELS = {
+      str: 'Strength',
+      dex: 'Dexterity',
+      con: 'Constitution',
+      int: 'Intelligence',
+      wis: 'Wisdom',
+      cha: 'Charisma'
+    };
+
+    // Normalize critical derived structures to prevent undefined path errors in templates
+    derived.talents ??= {};
+    derived.talents.groups ??= [];
+    derived.talents.list ??= [];
+
+    derived.skills ??= [];
+
+    derived.attacks ??= {};
+    derived.attacks.list ??= [];
+
+    derived.identity ??= {};
+    derived.identity.halfLevel ??= 0;
+    // Provide ability array for skills panel selectors (used in skills-panel.hbs line 75)
+    derived.identity.abilities ??= ABILITY_KEYS.map(key => ({
+      key,
+      label: ABILITY_LABELS[key]
+    }));
+
+    derived.encumbrance ??= {};
+    derived.encumbrance.state ??= "normal";
+    derived.encumbrance.label ??= "Unencumbered";
+    derived.encumbrance.total ??= 0;
+    derived.encumbrance.lightLoad ??= 0;
+    derived.encumbrance.mediumLoad ??= 0;
+    derived.encumbrance.heavyLoad ??= 0;
+
+    derived.defenses ??= {};
+
+    // Build abilities array from system.abilities object
+    // Convert {str: {...}, dex: {...}, ...} → [{key: 'str', label: 'Strength', ...}, ...]
+    const abilitiesMap = system.abilities ?? {};
+    const abilities = ABILITY_KEYS.map(key => {
+      const ability = abilitiesMap[key] ?? {};
+      return {
+        key,
+        label: ABILITY_LABELS[key],
+        base: ability.base ?? 10,
+        racial: ability.racial ?? 0,
+        temp: ability.temp ?? 0,
+        total: ability.total ?? 10,
+        mod: ability.mod ?? 0
+      };
+    });
+
+    // Build headerDefenses array from derived.defenses object
+    // Convert {fort: 10, ref: 10, will: 10, flatFooted: 10} → [{key: 'fort', label: 'Fortitude', total: 10, ...}, ...]
+    const defenseKeys = [
+      { key: 'fort', label: 'Fortitude' },
+      { key: 'ref', label: 'Reflex' },
+      { key: 'will', label: 'Will' },
+      { key: 'flatFooted', label: 'Flat-Footed' }
+    ];
+    const headerDefenses = defenseKeys.map(def => ({
+      key: def.key,
+      label: def.label,
+      total: derived.defenses[def.key] ?? 10,
+      armorBonus: derived.defenses[`${def.key}ArmorBonus`] ?? 0,
+      abilityMod: derived.defenses[`${def.key}AbilityMod`] ?? 0,
+      classDef: derived.defenses[`${def.key}ClassDef`] ?? 0,
+      miscMod: derived.defenses[`${def.key}MiscMod`] ?? 0
+    }));
+
+    // Identity + visual customization
+    const forceSensitive = system.forceSensitive ?? false;
+    const identityGlowColor = forceSensitive ? '#88cfff' : '#666666';
 
     const inventory = this._buildInventoryModel(actor);
 
@@ -100,6 +185,17 @@ export class SWSEV2CharacterSheet extends
       attacks: derived?.attacks?.list ?? []
     };
 
+    // Force Points visual array (value as dots, with used state)
+    const fpValue = system.forcePoints?.value ?? 0;
+    const fpMax = system.forcePoints?.max ?? 0;
+    const forcePoints = [];
+    for (let i = 1; i <= fpMax; i++) {
+      forcePoints.push({
+        index: i,
+        used: i <= fpValue
+      });
+    }
+
     // Force suite context (hand/discard zones + tag filtering)
     const forcePowers = (actor?.items ?? []).filter(i => i.type === 'force-power');
     const forceTags = [...new Set(forcePowers.flatMap(p => p.system?.tags ?? []))].sort();
@@ -120,6 +216,9 @@ export class SWSEV2CharacterSheet extends
       });
     }
 
+    // Build mode (free build = prerequisites not enforced, typically set during chargen)
+    const buildMode = actor.system?.buildMode ?? "normal";
+
     return {
       ...context,
       biography,
@@ -130,11 +229,17 @@ export class SWSEV2CharacterSheet extends
       conditionSteps,
       initiativeTotal,
       combat,
+      forcePoints,
       forceTags,
       forceSuite,
       lowHand: forceSuite.hand.length > 5,
       darkSideMax: dspMax,
-      darkSideSegments: dspSegments
+      darkSideSegments: dspSegments,
+      abilities,
+      headerDefenses,
+      forceSensitive,
+      identityGlowColor,
+      buildMode
     };
   }
 
@@ -260,11 +365,67 @@ export class SWSEV2CharacterSheet extends
       });
     });
 
+    // Header Command Buttons
+    html.querySelectorAll('[data-action="cmd-chargen"]').forEach(button => {
+      button.addEventListener("click", async ev => {
+        ev.preventDefault();
+        const chargen = new CharacterGenerator(this.actor);
+        chargen.render(true);
+      });
+    });
+
+    html.querySelectorAll('[data-action="cmd-levelup"]').forEach(button => {
+      button.addEventListener("click", async ev => {
+        ev.preventDefault();
+        const levelup = new SWSELevelUpEnhanced(this.actor);
+        levelup.render(true);
+      });
+    });
+
+    html.querySelectorAll('[data-action="cmd-store"]').forEach(button => {
+      button.addEventListener("click", async ev => {
+        ev.preventDefault();
+        const store = new SWSEStore(this.actor);
+        store.render(true);
+      });
+    });
+
+    html.querySelectorAll('[data-action="cmd-conditions"]').forEach(button => {
+      button.addEventListener("click", async ev => {
+        ev.preventDefault();
+        // Switch to overview tab and scroll to health panel
+        await this.activateTab("overview");
+        const healthPanel = html.querySelector(".hp-condition-panel");
+        if (healthPanel) {
+          healthPanel.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      });
+    });
+
+    html.querySelectorAll('[data-action="revalidate-build"]').forEach(button => {
+      button.addEventListener("click", async ev => {
+        ev.preventDefault();
+        await this._revalidateBuild();
+      });
+    });
+
     // Inventory Panel Handlers
     this._activateInventoryUI(html);
 
     // SWSE Combat UI Wiring
     this._activateCombatUI(html);
+
+    // Skills Panel Handlers
+    this._activateSkillsUI(html);
+
+    // Force Suite Handlers
+    this._activateForceUI(html);
+
+    // Feats/Talents Handlers
+    this._activateAbilitiesUI(html);
+
+    // Misc Handlers (languages, rest, DSP)
+    this._activateMiscUI(html);
   }
 
   /* ============================================================
@@ -375,6 +536,37 @@ export class SWSEV2CharacterSheet extends
         if (itemId) await InventoryEngine.decrementQuantity(this.actor, itemId);
       });
     });
+
+    // Delete/Remove item
+    html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="edit"], [data-action="configure"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const action = button.dataset.action;
+        const itemId = button.dataset.itemId || event.currentTarget.closest("[data-item-id]")?.dataset.itemId;
+
+        if (!itemId) return;
+        const item = this.actor.items.get(itemId);
+        if (!item) return;
+
+        switch (action) {
+          case "delete":
+            await item.delete();
+            break;
+          case "equip":
+            await InventoryEngine.toggleEquip(this.actor, itemId);
+            break;
+          case "edit":
+            item.sheet.render(true);
+            break;
+          case "configure":
+            // For weapons: open a configuration dialog
+            if (item.type === "weapon") {
+              item.sheet.render(true); // For now, just open the item sheet
+            }
+            break;
+        }
+      });
+    });
   }
 
   /* ============================================================
@@ -412,6 +604,347 @@ export class SWSEV2CharacterSheet extends
         if (groupKey) {
           const table = html.querySelector(`table[data-group='${groupKey}']`);
           if (table) table.classList.toggle("collapsed");
+        }
+      });
+    });
+
+    // Use action button
+    html.querySelectorAll('[data-action="swse-v2-use-action"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const actionId = button.dataset.actionId;
+        if (!actionId) return;
+
+        // Trigger action execution (typically a roll or effect)
+        const data = this.actor.flags?.swse?.combatActions?.[actionId];
+        if (data) {
+          // Open the config dialog to show details before rolling
+          new CombatRollConfigDialog(this.actor, data).render(true);
+        }
+      });
+    });
+  }
+
+  /* ============================================================
+     SKILLS UI WIRING
+  ============================================================ */
+
+  _activateSkillsUI(html) {
+    // Filter skills by text
+    html.querySelectorAll('[data-action="filter-skills"]').forEach(input => {
+      input.addEventListener("input", (event) => {
+        const filterText = event.target.value.toLowerCase();
+        const skillRows = html.querySelectorAll(".skill-row-container");
+
+        skillRows.forEach(row => {
+          const skillName = row.dataset.name?.toLowerCase() || "";
+          const skillLabel = row.dataset.label?.toLowerCase() || "";
+          const matches = skillName.includes(filterText) || skillLabel.includes(filterText);
+          row.style.display = matches ? "" : "none";
+        });
+      });
+    });
+
+    // Sort skills
+    html.querySelectorAll('[data-action="sort-skills"]').forEach(select => {
+      select.addEventListener("change", (event) => {
+        const sortBy = event.target.value;
+        const skillsList = html.querySelector(".skills-list");
+        if (!skillsList) return;
+
+        const rows = Array.from(skillsList.querySelectorAll(".skill-row-container"));
+        rows.sort((a, b) => {
+          switch (sortBy) {
+            case "name":
+              return (a.dataset.name || "").localeCompare(b.dataset.name || "");
+            case "total-desc":
+              return Number(b.dataset.total || 0) - Number(a.dataset.total || 0);
+            case "trained":
+              return (b.dataset.trained === "true" ? 1 : 0) - (a.dataset.trained === "true" ? 1 : 0);
+            case "favorite":
+              return (b.dataset.favorite === "true" ? 1 : 0) - (a.dataset.favorite === "true" ? 1 : 0);
+            case "default":
+            default:
+              return 0;
+          }
+        });
+
+        rows.forEach(row => skillsList.appendChild(row));
+      });
+    });
+  }
+
+  /* ============================================================
+     FORCE SUITE UI WIRING
+  ============================================================ */
+
+  _activateForceUI(html) {
+    // Force sort dropdown
+    html.querySelectorAll('[data-action="force-sort"]').forEach(select => {
+      select.addEventListener("change", (event) => {
+        const sortBy = event.target.value;
+        const cardGrid = html.querySelector(".force-card-grid");
+        if (!cardGrid) return;
+
+        const cards = Array.from(cardGrid.querySelectorAll(".force-card:not(.discarded)"));
+        cards.sort((a, b) => {
+          const aName = a.querySelector(".force-name")?.textContent || "";
+          const aTagString = a.dataset.tags || "";
+          const bName = b.querySelector(".force-name")?.textContent || "";
+          const bTagString = b.dataset.tags || "";
+
+          switch (sortBy) {
+            case "tag":
+              return aTagString.localeCompare(bTagString);
+            case "name":
+            default:
+              return aName.localeCompare(bName);
+          }
+        });
+
+        cards.forEach(card => cardGrid.appendChild(card));
+      });
+    });
+
+    // Force tag filter buttons
+    html.querySelectorAll('[data-action="force-tag-filter"]').forEach(button => {
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        const tag = button.dataset.tag;
+        if (!tag) return;
+
+        // Toggle button active state
+        button.classList.toggle("active");
+
+        // Filter cards
+        const activeFilters = Array.from(html.querySelectorAll('[data-action="force-tag-filter"].active'))
+          .map(b => b.dataset.tag);
+
+        const cards = html.querySelectorAll(".force-card:not(.discarded)");
+        cards.forEach(card => {
+          if (activeFilters.length === 0) {
+            card.style.display = "";
+          } else {
+            const cardTags = (card.dataset.tags || "").split(" ");
+            const matches = activeFilters.some(f => cardTags.includes(f));
+            card.style.display = matches ? "" : "none";
+          }
+        });
+      });
+    });
+
+    // Activate force button
+    html.querySelectorAll('[data-action="activate-force"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        if (!itemId) return;
+
+        const power = this.actor.items.get(itemId);
+        if (!power || power.type !== "force-power") return;
+
+        // Determine if this is a recovery or activation
+        const isRecovery = power.system?.discarded ?? false;
+
+        try {
+          const result = await ForceExecutor.activateForce(this.actor, itemId, isRecovery);
+          if (result.success) {
+            ui?.notifications?.info?.(`${power.name} ${isRecovery ? "recovered" : "used"}`);
+          }
+        } catch (err) {
+          console.error("Force activation failed:", err);
+          ui?.notifications?.error?.(`Force activation failed: ${err.message}`);
+        }
+      });
+    });
+  }
+
+  /* ============================================================
+     FEATS/TALENTS/ABILITIES UI WIRING
+  ============================================================ */
+
+  _activateAbilitiesUI(html) {
+    // Open ability/feat/talent sheet
+    html.querySelectorAll('[data-action="open-ability"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        if (!itemId) return;
+
+        const item = this.actor.items.get(itemId);
+        if (item) {
+          item.sheet.render(true);
+        }
+      });
+    });
+
+    // Add feat button
+    html.querySelectorAll('[data-action="add-feat"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        // Open a dialog to select/create a feat
+        // For now, just open the item creation dialog
+        const itemData = {
+          type: "feat",
+          name: "New Feat",
+          system: {}
+        };
+        const doc = await Item.create(itemData, { parent: this.actor });
+        if (doc) doc.sheet.render(true);
+      });
+    });
+
+    // Delete feat button
+    html.querySelectorAll('[data-action="delete-feat"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        if (!itemId) return;
+
+        const item = this.actor.items.get(itemId);
+        if (item) {
+          await item.delete();
+        }
+      });
+    });
+
+    // Add talent button
+    html.querySelectorAll('[data-action="add-talent"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        // Open a dialog to select a talent
+        // For now, just open the item creation dialog
+        const itemData = {
+          type: "talent",
+          name: "New Talent",
+          system: {}
+        };
+        const doc = await Item.create(itemData, { parent: this.actor });
+        if (doc) doc.sheet.render(true);
+      });
+    });
+  }
+
+  /* ============================================================
+     MISCELLANEOUS UI WIRING (LANGUAGES, REST, DSP, ETC)
+  ============================================================ */
+
+  _activateMiscUI(html) {
+    // Add language button
+    html.querySelectorAll('[data-action="add-language"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        // Open a dialog for language selection
+        const languages = this.actor.system?.languages ?? [];
+        const newLang = prompt("Enter language name:");
+        if (newLang) {
+          const plan = {
+            update: {
+              "system.languages": [...languages, newLang]
+            }
+          };
+          try {
+            await ActorEngine.apply(this.actor, plan);
+          } catch (err) {
+            console.error("Failed to add language:", err);
+            ui?.notifications?.error?.(`Failed to add language: ${err.message}`);
+          }
+        }
+      });
+    });
+
+    // Remove language button
+    html.querySelectorAll('[data-action="remove-language"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const langName = button.dataset.language;
+        if (!langName) return;
+
+        const languages = (this.actor.system?.languages ?? []).filter(l => l !== langName);
+        const plan = {
+          update: {
+            "system.languages": languages
+          }
+        };
+
+        try {
+          await ActorEngine.apply(this.actor, plan);
+        } catch (err) {
+          console.error("Failed to remove language:", err);
+          ui?.notifications?.error?.(`Failed to remove language: ${err.message}`);
+        }
+      });
+    });
+
+    // Rest / Second Wind button
+    html.querySelectorAll('[data-action="rest-second-wind"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        // Restore second wind uses
+        const plan = {
+          update: {
+            "system.secondWind": {
+              current: this.actor.system?.secondWind?.max ?? 1
+            }
+          }
+        };
+
+        try {
+          await ActorEngine.apply(this.actor, plan);
+          ui?.notifications?.info?.("Second Wind restored!");
+        } catch (err) {
+          console.error("Rest failed:", err);
+          ui?.notifications?.error?.(`Rest failed: ${err.message}`);
+        }
+      });
+    });
+
+    // Set dark side score button
+    html.querySelectorAll('[data-action="set-dark-side-score"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const currentDSP = DSPEngine.getValue(this.actor);
+        const newValue = prompt(`Current Dark Side Points: ${currentDSP}\n\nEnter new value:`, String(currentDSP));
+
+        if (newValue !== null) {
+          const value = Math.max(0, Math.min(Number(newValue) || 0, DSPEngine.getMax(this.actor)));
+          const plan = {
+            update: {
+              "system.darkSidePoints": value
+            }
+          };
+
+          try {
+            await ActorEngine.apply(this.actor, plan);
+          } catch (err) {
+            console.error("Failed to set DSP:", err);
+            ui?.notifications?.error?.(`Failed to set DSP: ${err.message}`);
+          }
+        }
+      });
+    });
+
+    // Use extra skill button
+    html.querySelectorAll('[data-action="use-extra-skill"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const skillKey = button.dataset.skill;
+        if (!skillKey) return;
+
+        // Increment extra skill uses
+        const current = this.actor.system?.skills?.[skillKey]?.extra ?? 0;
+        const plan = {
+          update: {
+            [`system.skills.${skillKey}.extra`]: current + 1
+          }
+        };
+
+        try {
+          await ActorEngine.apply(this.actor, plan);
+          ui?.notifications?.info?.(`Extra skill use recorded for ${skillKey}`);
+        } catch (err) {
+          console.error("Failed to use extra skill:", err);
+          ui?.notifications?.error?.(`Failed to use extra skill: ${err.message}`);
         }
       });
     });
@@ -575,6 +1108,30 @@ export class SWSEV2CharacterSheet extends
     setTimeout(() => {
       tabButton.classList.remove('tab-pulse');
     }, 800);
+  }
+
+  /**
+   * Revalidate character build by switching from free build mode to normal mode.
+   * This enforces prerequisites and restrictions that were bypassed in free build.
+   *
+   * @private
+   * @returns {Promise<void>}
+   */
+  async _revalidateBuild() {
+    try {
+      // Switch from free build mode to normal mode (prerequisites enforced)
+      const plan = {
+        update: {
+          'system.buildMode': 'normal'
+        }
+      };
+
+      await ActorEngine.apply(this.actor, plan);
+      ui?.notifications?.info?.('Build revalidated — prerequisites now enforced');
+    } catch (err) {
+      console.error('Build revalidation failed:', err);
+      ui?.notifications?.error?.(`Build revalidation failed: ${err.message}`);
+    }
   }
 
   /**

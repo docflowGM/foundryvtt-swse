@@ -16,6 +16,7 @@ import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/led
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 const logger = () => SWSELogger || globalThis.swseLogger || console;
 
@@ -288,9 +289,10 @@ export class StoreEngine {
         }
       };
 
+      // PHASE 2B: Route through ActorEngine
       // TEMPORARY: Apply flags separately since they're not in the standard mutation plan
       // TODO: Phase 4 - Integrate flags into proper MutationPlan handling
-      await freshActor.update({
+      await ActorEngine.updateActor(freshActor, {
         'system.credits': creditPlan.set['system.credits'],
         'flags.foundryvtt-swse': existingFlags
       });

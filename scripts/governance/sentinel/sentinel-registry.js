@@ -31,6 +31,13 @@ import { Batch1Validation } from "/systems/foundryvtt-swse/scripts/governance/mu
 // PHASE 2: Import AppV2 Auditor Layer (V13 foundation enforcement)
 import { AppV2AuditorLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/appv2-auditor.js";
 
+// PHASE 11: Import Always-On Audit Layers (Store + Sheet + Roll + Update + Template)
+import { SentinelMallCop } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-mall-cop.js";
+import { SentinelSheetHydration } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-sheet-hydration.js";
+import { SentinelRollPipeline } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-roll-pipeline.js";
+import { SentinelUpdateAtomicity } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-update-atomicity.js";
+import { SentinelTemplateIntegrity } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-template-integrity.js";
+
 /**
  * Initialize and register all sentinel layers
  * Called during system bootstrap
@@ -61,6 +68,12 @@ export function initializeSentinelLayers() {
   // PHASE 2: Register AppV2 Auditor (V13 foundation enforcement)
   // Reports through Sentinel for unified health state + aggregation
   SentinelEngine.registerLayer('appv2', AppV2AuditorLayer);
+
+  // PHASE 11: Initialize Always-On Audit Layers
+  // These are passive, always-enabled monitoring layers
+  // (They self-initialize via Hooks.once('ready'))
+  console.log('[Sentinel] Registering always-on audit layers...');
+  // Layers auto-init on Foundry ready, no manual registration needed
 }
 
 /**

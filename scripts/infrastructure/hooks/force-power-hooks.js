@@ -102,8 +102,21 @@ export function initializeForcePowerHooks() {
       );
 
       if (spentPowers.length > 0) {
-        for (const power of spentPowers) {
-          await power.update({ 'system.spent': false });
+        // PHASE 2B: Batch all power updates and route through ActorEngine
+        const updates = spentPowers.map(power => ({
+          _id: power.id,
+          'system.spent': false
+        }));
+
+        if (globalThis.SWSE?.ActorEngine?.updateOwnedItems) {
+          await globalThis.SWSE.ActorEngine.updateOwnedItems(combatant.actor, updates, {
+            meta: { guardKey: 'force-power-grant' }
+          });
+        } else {
+          // Fallback for non-Foundry environments
+          for (const power of spentPowers) {
+            await power.update({ 'system.spent': false });
+          }
         }
 
         if (combatant.actor.isOwner) {
