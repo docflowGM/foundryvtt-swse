@@ -16,11 +16,24 @@
    ───────────────────────────────────────────────────────────────────────── */
 
 .swse-sheet {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
   min-height: 0;
   box-sizing: border-box;
+}
+
+.swse-sheet .sheet-inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.swse-sheet .sheet-body {
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
 }
 
 .swse-character-sheet,
