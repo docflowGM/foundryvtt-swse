@@ -9,6 +9,7 @@
  */
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { DroidValidationEngine } from "/systems/foundryvtt-swse/scripts/engine/droid-validation-engine.js";
 
 export class DroidSheetV2 extends ActorSheet {
   static get defaultOptions() {

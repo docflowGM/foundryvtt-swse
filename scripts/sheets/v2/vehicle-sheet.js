@@ -3,6 +3,7 @@
 const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api;
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { DropService } from "/systems/foundryvtt-swse/scripts/services/drop-service.js";
 import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
 import { initiateItemSale } from "/systems/foundryvtt-swse/scripts/apps/item-selling-system.js";
 import { SWSELevelUp } from "/systems/foundryvtt-swse/scripts/apps/swse-levelup.js";
