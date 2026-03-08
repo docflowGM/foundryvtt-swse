@@ -37,13 +37,28 @@ export class SWSEV2CharacterSheet extends
     });
   }
 
+  get template() {
+    console.log("CHAR SHEET: template getter called");
+    return this.options?.template;
+  }
+
   constructor(document, options = {}) {
+    console.log("CHAR SHEET: constructor START");
     super(document, options);
+    console.log("CHAR SHEET: constructor END", {
+      optionsTemplate: this.options?.template,
+      systemId: game.system.id
+    });
   }
 
   async _onRender(context, options) {
+    console.log("CHAR SHEET: _onRender START");
     await super._onRender(context, options);
+    console.log("CHAR SHEET: _onRender AFTER SUPER");
+
     this.activateListeners(this.element);
+
+    console.log("CHAR SHEET: activateListeners complete");
 
     // Wire action economy bindings for combat tab
     ActionEconomyBindings.setupAttackButtons(this.element, this.document);
@@ -54,9 +69,11 @@ export class SWSEV2CharacterSheet extends
   ============================================================ */
 
   async _prepareContext(options) {
+    console.log("CHAR SHEET: _prepareContext START");
     const actor = this.document;
     const system = actor.system;
     const context = await super._prepareContext(options);
+    console.log("CHAR SHEET: after super._prepareContext");
 
     // Authoritative derived state (populated by character-actor.js computeCharacterDerived)
     // SAFEGUARD: Ensure all expected nested properties exist with empty defaults
@@ -220,6 +237,10 @@ export class SWSEV2CharacterSheet extends
 
     // Action Economy Context (for combat tab)
     let actionEconomy = null;
+    console.log("CHAR SHEET: checking actionEconomyMode setting");
+    console.log("Setting exists?",
+      game.settings.settings.has(`${game.system.id}.actionEconomyMode`)
+    );
     if (game.combat && game.combat.combatants.some(c => c.actor?.id === actor.id)) {
       // Only show action economy if actor is in active combat
       const combatId = game.combat.id;
@@ -229,7 +250,9 @@ export class SWSEV2CharacterSheet extends
       const turnState = ActionEconomyPersistence.getTurnState(actor, combatId);
       const state = ActionEngine.getVisualState(turnState);
       const breakdown = ActionEngine.getTooltipBreakdown(turnState);
-      const enforcementMode = game.settings.get("foundryvtt-swse", "actionEconomyMode");
+      console.log("CHAR SHEET: about to get actionEconomyMode");
+      const enforcementMode = game.settings.get(game.system.id, "actionEconomyMode");
+      console.log("CHAR SHEET: enforcementMode =", enforcementMode);
 
       actionEconomy = {
         state,
@@ -238,6 +261,7 @@ export class SWSEV2CharacterSheet extends
       };
     }
 
+    console.log("CHAR SHEET: _prepareContext BEFORE RETURN");
     return {
       ...context,
       biography,
