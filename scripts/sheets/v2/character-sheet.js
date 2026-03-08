@@ -420,7 +420,7 @@ export class SWSEV2CharacterSheet extends
       button.addEventListener("click", async ev => {
         ev.preventDefault();
         // Switch to overview tab and scroll to health panel
-        await this.activateTab("overview");
+        await this.changeTab("overview", "primary");
         const healthPanel = html.querySelector(".hp-condition-panel");
         if (healthPanel) {
           healthPanel.scrollIntoView({ behavior: "smooth", block: "center" });
