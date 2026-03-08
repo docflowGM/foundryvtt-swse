@@ -61,6 +61,7 @@ export class SWSEV2CharacterSheet extends
 
   async _prepareContext(options) {
     const actor = this.document;
+    const system = actor.system;
     const context = await super._prepareContext(options);
 
     // Authoritative derived state (populated by character-actor.js computeCharacterDerived)
@@ -159,7 +160,6 @@ export class SWSEV2CharacterSheet extends
           };
 
     // Compute display objects from system data
-    const system = actor.system;
     const hp = {
       value: system.hp?.value ?? 0,
       max: system.hp?.max ?? 1,
