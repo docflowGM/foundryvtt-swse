@@ -10,5 +10,6 @@ export const PASSIVE_SUBTYPES = {
   RULE: "RULE",
   DERIVED_OVERRIDE: "DERIVED_OVERRIDE",
   AURA: "AURA",
-  TRIGGERED: "TRIGGERED"
+  TRIGGERED: "TRIGGERED",
+  STATE: "STATE"  // PHASE 4: State-dependent predicates
 };

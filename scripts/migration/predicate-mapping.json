@@ -1,0 +1,199 @@
+{
+  "_comment": "PASSIVE/STATE Predicate Mapping Database (Phase 7)",
+  "_instructions": "Maps ability names/descriptions to PASSIVE/STATE predicates and modifiers",
+
+  "DEFER_TARGET": {
+    "category": "Abilities that apply against specific attack or defense types",
+    "count": 47,
+    "mappings": {
+      "hard_target": {
+        "name": "Hard Target",
+        "description": "+2 bonus to Reflex Defense against ranged attacks while moving at least 2 squares on your turn",
+        "modifier": {
+          "target": "defense.reflex",
+          "value": 2,
+          "type": "untyped",
+          "priority": 500,
+          "enabled": true
+        },
+        "predicates": ["defense.against-ranged", "movement.while-moving", "turn.on-current-turn"]
+      },
+      "defensive_stance": {
+        "name": "Defensive Stance",
+        "description": "+2 bonus to all defenses while fighting defensively",
+        "modifier": {
+          "target": "defense",
+          "value": 2,
+          "type": "untyped",
+          "priority": 500,
+          "enabled": true
+        },
+        "predicates": ["turn.on-current-turn"]
+      },
+      "melee_defense": {
+        "name": "Template: Defense vs Melee",
+        "description": "Any ability providing defense bonus against melee attacks",
+        "modifier": {
+          "target": "defense",
+          "value": 0,
+          "type": "untyped",
+          "priority": 500,
+          "enabled": true
+        },
+        "predicates": ["defense.against-melee"],
+        "NOTE": "Use this as template; replace value with actual bonus"
+      },
+      "ranged_defense": {
+        "name": "Template: Defense vs Ranged",
+        "description": "Any ability providing defense bonus against ranged attacks",
+        "modifier": {
+          "target": "defense",
+          "value": 0,
+          "type": "untyped",
+          "priority": 500,
+          "enabled": true
+        },
+        "predicates": ["defense.against-ranged"],
+        "NOTE": "Use this as template; replace value with actual bonus"
+      }
+    }
+  },
+
+  "DEFER_ACTION": {
+    "category": "Abilities that apply during specific actions or on specific turns",
+    "count": 44,
+    "mappings": {
+      "on_your_turn_bonus": {
+        "name": "Template: Bonus on Your Turn",
+        "description": "Any ability providing bonus that applies on character's turn",
+        "modifier": {
+          "target": "attack",
+          "value": 0,
+          "type": "untyped",
+          "priority": 500,
+          "enabled": true
+        },
+        "predicates": ["turn.on-current-turn"],
+        "NOTE": "Use this as template; adjust target and value"
+      },
+      "while_moving": {
+        "name": "Template: While Moving",
+        "description": "Any ability providing bonus while moving",
+        "modifier": {
+          "target": "attack",
+          "value": 0,
+          "type": "untyped",
+          "priority": 500,
+          "enabled": true
+        },
+        "predicates": ["movement.while-moving"],
+        "NOTE": "Use this as template; adjust target and value"
+      },
+      "once_per_round": {
+        "name": "Template: Once Per Round",
+        "description": "Any ability that can be used once per round",
+        "modifier": {
+          "target": "attack",
+          "value": 0,
+          "type": "untyped",
+          "priority": 500,
+          "enabled": true
+        },
+        "predicates": ["turn.once-per-round"],
+        "NOTE": "Use this as template; requires round tracking in context"
+      }
+    }
+  },
+
+  "DEFER_CONDITIONAL": {
+    "category": "Abilities with multi-part conditions (if/when/for each)",
+    "count": 81,
+    "mappings": {
+      "for_each_ally": {
+        "name": "Template: For Each Ally Bonus",
+        "description": "Bonus scales with number of allies (e.g., +1 per ally within 12 squares)",
+        "modifier": {
+          "target": "attack",
+          "value": 0,
+          "type": "dynamic",
+          "priority": 500,
+          "enabled": true,
+          "evaluateAsCount": true
+        },
+        "predicates": ["proximity.count-allies-within-12"],
+        "NOTE": "Use evaluateStatePredicatesNumeric() to get ally count"
+      },
+      "when_flanked": {
+        "name": "Template: Bonus When Enemy Flanked",
+        "description": "+2 bonus to attack when target is flanked",
+        "modifier": {
+          "target": "attack",
+          "value": 2,
+          "type": "untyped",
+          "priority": 500,
+          "enabled": true
+        },
+        "predicates": ["target.is-flanked"]
+      },
+      "vs_prone_target": {
+        "name": "Template: Bonus vs Prone",
+        "description": "+2 bonus when target is prone",
+        "modifier": {
+          "target": "attack",
+          "value": 2,
+          "type": "untyped",
+          "priority": 500,
+          "enabled": true
+        },
+        "predicates": ["target.is-prone"]
+      }
+    }
+  },
+
+  "DEFER_SUBSTITUTION": {
+    "category": "Abilities that substitute one action for another (CANNOT MIGRATE - requires action economy)",
+    "count": 13,
+    "status": "STAYS_DEFERRED",
+    "reason": "Substitution mechanics require action economy gating, not state predicates",
+    "examples": [
+      "Instead of using skill X, you can use skill Y",
+      "You can use ability A in place of ability B",
+      "Replaces standard action with full attack"
+    ]
+  },
+
+  "DEFER_TEMPORAL": {
+    "category": "Abilities tied to duration or specific round numbers (CANNOT MIGRATE - requires duration tracking)",
+    "count": 1,
+    "status": "STAYS_DEFERRED",
+    "reason": "Temporal mechanics require duration/round tracking, not state predicates",
+    "examples": [
+      "Applies for X rounds",
+      "Effect ends at beginning of next round",
+      "Lasts until end of encounter"
+    ]
+  },
+
+  "DEFER_UNKNOWN": {
+    "category": "Abilities with unclear or complex mechanics requiring manual audit",
+    "count": 57,
+    "status": "REQUIRES_MANUAL_REVIEW",
+    "instructions": [
+      "1. Read ability description carefully",
+      "2. Determine if state-dependent (predicate-based)",
+      "3. If yes: assign predicates and migrate to PASSIVE/STATE",
+      "4. If no: decide whether RULE, TRIGGERED, or stays DEFERRED",
+      "5. Document decision in this file under reviewed_*"
+    ],
+    "reviewed_examples": {}
+  },
+
+  "SUMMARY": {
+    "total_deferred": 260,
+    "migrate_to_state": 172,
+    "stay_deferred_substitution": 13,
+    "stay_deferred_temporal": 1,
+    "requires_manual_review": 57,
+    "remaining_deferred_after_migration": 71
+  }
+}

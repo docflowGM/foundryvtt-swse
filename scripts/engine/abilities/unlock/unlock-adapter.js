@@ -1,8 +1,8 @@
 /**
  * UNLOCK Execution Model - Runtime Adapter
  *
- * Scaffolding for UNLOCK ability processing.
- * UNLOCK abilities grant system access without performing an action.
+ * Registers UNLOCK abilities during actor initialization.
+ * UNLOCK abilities grant system access or capabilities without performing an action.
  *
  * Grant Categories:
  * - SYSTEM_ACCESS: Unlock Force domains, attunement, etc.
@@ -10,35 +10,54 @@
  * - DOMAIN_ACCESS: Force domain access
  * - SKILL_TRAINING: Mark skills as trained (class skills)
  *
- * Currently UNLOCK relies on prerequisite-checker for capability verification.
- * This adapter exists as a future-proof layer for capability state consolidation.
- * No state mutation or duplication of prerequisite logic occurs here.
+ * ARCHITECTURAL NOTES:
+ * - Contract validation ensures schema correctness at registration time
+ * - PrerequisiteChecker handles runtime capability verification (not duplicated here)
+ * - Grant handlers will apply state changes via ActorEngine in Phase 2
+ * - No state mutation occurs during registration - only metadata collection
  *
- * Integration points (TODO):
- * - Grant application to actor state
- * - Flag-based grant tracking
- * - Compatibility with PASSIVE/ACTIVE ability systems
+ * Integration points:
+ * - Schema validation via UnlockContractValidator
+ * - Grant handler implementation (each category routed to handler)
+ * - State application via ActorEngine (future phase)
  */
 
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { UnlockContractValidator } from "./unlock-contract.js";
 import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
 
 export class UnlockAdapter {
 
   /**
    * Register an unlock ability on an actor.
-   * Processes all grants defined in the ability.
+   * Validates schema, then routes grants to appropriate handlers.
    *
    * @param {Object} actor - The actor document
    * @param {Object} ability - The ability item
    */
   static register(actor, ability) {
-    if (ability.system.executionModel !== "UNLOCK") return;
+    try {
+      // ── Validate contract ──────────────────────────────────────────────
+      UnlockContractValidator.assert(ability);
 
-    const grants = ability.system?.abilityMeta?.grants;
-    if (!Array.isArray(grants)) return;
+      // ── Route grants to handlers ───────────────────────────────────────
+      const grants = ability.system?.abilityMeta?.grants;
+      if (!Array.isArray(grants)) return;
 
-    for (const grant of grants) {
-      this.processGrant(actor, ability, grant);
+      for (const grant of grants) {
+        this.processGrant(actor, ability, grant);
+      }
+
+      swseLogger.log(
+        `[UnlockAdapter] Registered UNLOCK ability "${ability.name}" on ${actor.name} ` +
+        `(${grants.length} grant(s))`
+      );
+    } catch (err) {
+      swseLogger.error(
+        `[UnlockAdapter] Registration failed for "${ability.name}":`,
+        err.message
+      );
+      // Non-fatal: log error but don't crash actor registration
     }
   }
 

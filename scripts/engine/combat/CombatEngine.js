@@ -170,6 +170,15 @@ export class CombatEngine {
         weapon
       };
 
+      /* PHASE 4: Fire post-attack hook for reactive PASSIVE/STATE abilities */
+      Hooks.callAll('swse.attack-resolved', {
+        attacker,
+        target,
+        weapon,
+        hitResult: false,
+        roll: attackRoll
+      });
+
       /* DELEGATE UI HANDLING TO ADAPTER (Phase 1.5 consolidation) */
       await CombatUIAdapter.handleAttackResult(missResult);
 
@@ -220,6 +229,16 @@ export class CombatEngine {
     /* HP */
     const damageResult = await DamageEngine.applyDamage(target, damage);
 
+    /* PHASE 4: Fire hook after hit determination, before threshold (allows reactions) */
+    Hooks.callAll('swse.attack-resolved', {
+      attacker,
+      target,
+      weapon,
+      hitResult: true,
+      roll: attackRoll,
+      damage
+    });
+
     /* THRESHOLD */
     const thresholdResult = ThresholdEngine.evaluateThreshold({
       target,
@@ -246,6 +265,16 @@ export class CombatEngine {
       target,
       weapon
     };
+
+    /* PHASE 4: Fire hook after all damage and threshold applied (allows post-damage effects) */
+    Hooks.callAll('swse.damage-applied', {
+      attacker,
+      target,
+      weapon,
+      damage,
+      damageApplied: damageResult,
+      threshold: thresholdResult
+    });
 
     /* DELEGATE UI HANDLING TO ADAPTER (Phase 1.5 consolidation) */
     await CombatUIAdapter.handleAttackResult(result);

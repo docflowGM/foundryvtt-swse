@@ -1,5 +1,6 @@
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
@@ -11,12 +12,15 @@ import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 
 /**
  * Compute complete attack bonus from all SWSE factors.
+ * PHASE 4: Includes state-dependent modifiers
+ *
  * @param {Actor} actor
  * @param {Item} weapon
  * @param {string} actionId - Optional action ID for talent bonus lookup (e.g., 'melee-attack', 'ranged-attack')
+ * @param {Object} context - Optional context for state predicates (weapon, attackType, etc.)
  * @returns {number}
  */
-function computeAttackBonus(actor, weapon, actionId = null) {
+function computeAttackBonus(actor, weapon, actionId = null, context = {}) {
   // Statblock NPCs can use stored totals until explicitly leveled.
   if (actor?.type === 'npc') {
     const mode = actor.getFlag?.('swse', 'npcLevelUp.mode') ?? 'statblock';
@@ -59,6 +63,43 @@ function computeAttackBonus(actor, weapon, actionId = null) {
     talentBonus = bonusInfo.value;
   }
 
+  // PHASE 4: Get state-dependent modifiers
+  let stateBonus = 0;
+  try {
+    if (actor?.items) {
+      const enrichedContext = { weapon, ...context };
+      for (const item of actor.items) {
+        if (item.system?.executionModel !== 'PASSIVE' || item.system?.subType !== 'STATE') {
+          continue;
+        }
+
+        const meta = item.system?.abilityMeta;
+        if (!meta?.modifiers || !Array.isArray(meta.modifiers)) {
+          continue;
+        }
+
+        // Apply each modifier in the PASSIVE/STATE item
+        for (const modifier of meta.modifiers) {
+          // Check if this modifier applies to attack rolls
+          const targets = Array.isArray(modifier.target) ? modifier.target : [modifier.target];
+          const appliesToAttack = targets.some(t => t === 'attack' || t === 'attack.bonus');
+
+          if (!appliesToAttack) continue;
+
+          // Evaluate predicates (all must be true)
+          const predicates = modifier.predicates || [];
+          const predicatesMatch = evaluateStatePredicates(actor, predicates, enrichedContext);
+
+          if (predicatesMatch && modifier.value) {
+            stateBonus += modifier.value;
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Error evaluating PASSIVE/STATE in attack bonus:', err);
+  }
+
   // Total attack bonus (RAW)
   return (
     bab +
@@ -69,7 +110,8 @@ function computeAttackBonus(actor, weapon, actionId = null) {
     attackPenalty +
     ctPenalty +
     proficiencyPenalty +
-    talentBonus
+    talentBonus +
+    stateBonus
   );
 }
 

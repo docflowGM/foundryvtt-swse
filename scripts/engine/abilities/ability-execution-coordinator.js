@@ -8,6 +8,8 @@
  * - ACTIVE execution model registration
  * - ATTACK_OPTION execution model registration
  * - UNLOCK execution model registration
+ * - PROGRESSION execution model registration
+ * - FORCE_POWER execution model registration
  */
 
 import { PassiveAdapter } from "./passive/passive-adapter.js";
@@ -15,6 +17,7 @@ import { ActiveAdapter } from "./active/active-adapter.js";
 import { AttackOptionAdapter } from "./attack-option/attack-option-adapter.js";
 import { UnlockAdapter } from "./unlock/unlock-adapter.js";
 import { ProgressionAdapter } from "./progression/progression-adapter.js";
+import { ForceAdapter } from "./force-power/force-power-adapter.js";
 import { RuleCollector } from "/systems/foundryvtt-swse/scripts/engine/execution/rules/rule-collector.js";
 import { SpeciesTraitPassiveAdapter } from "./passive/species-trait-passive-adapter.js";
 
@@ -22,7 +25,7 @@ export class AbilityExecutionCoordinator {
 
   /**
    * Register all abilities on an actor at boot time.
-   * Handles PASSIVE, ACTIVE, ATTACK_OPTION, UNLOCK, and PROGRESSION execution models.
+   * Handles PASSIVE, ACTIVE, ATTACK_OPTION, UNLOCK, PROGRESSION, and FORCE_POWER execution models.
    *
    * CRITICAL LIFECYCLE SAFETY:
    * This method is called repeatedly (on updateActor, createItem, deleteItem, sheet open, etc.).
@@ -53,7 +56,7 @@ export class AbilityExecutionCoordinator {
     const ruleCollector = new RuleCollector();
 
     const abilities = actor.items.filter(i =>
-      ["talent", "feat", "species"].includes(i.type)
+      ["talent", "feat", "species", "forcepower"].includes(i.type)
     );
 
     for (const ability of abilities) {
@@ -67,6 +70,8 @@ export class AbilityExecutionCoordinator {
         UnlockAdapter.register(actor, ability);
       } else if (ability.system.executionModel === "PROGRESSION") {
         ProgressionAdapter.register(actor, ability);
+      } else if (ability.system.executionModel === "FORCE_POWER") {
+        ForceAdapter.register(actor, ability);
       }
     }
 

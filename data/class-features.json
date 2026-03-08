@@ -1,0 +1,849 @@
+{
+  "schemaVersion": 1,
+  "notes": [
+    "This file is a schema-friendly, data-first registry of class feature definitions derived from the user-provided mechanical text.",
+    "IDs are deterministic and namespaced: cf.<classId>.<featureSlug>.",
+    "classification is informational and is NOT an execution model. executionModel reflects what is safe to implement today without violating PASSIVE invariants.",
+    "Most entries here are ACTIVE stubs because they are action/encounter/target/temporal/conditional or scaling-based and must not be forced into PASSIVE.",
+    "Where possible, safe unconditional immunities are encoded as PASSIVE/RULE.",
+    "Selection-based features (Force Techniques/Secrets/Medical Secrets) are modeled as ACTIVE stubs of type CHOICE_GRANT.",
+    "Lightsaber construction is marked INFO_ONLY because the user stated it is already implemented elsewhere."
+  ],
+  "abilities": [
+    {
+      "id": "cf.jedi.lightsaber-provision",
+      "classId": "jedi",
+      "name": "Lightsaber",
+      "summary": "Begins play with a Lightsaber provided by their Master.",
+      "executionModel": "INFO_ONLY",
+      "subType": "INFO",
+      "classification": "INFO_ONLY",
+      "abilityMeta": {
+        "tags": ["equipment", "lightsaber"],
+        "implementedElsewhere": true
+      },
+      "sourceText": "A Jedi begins play with a Lightsaber provided by their Master."
+    },
+    {
+      "id": "cf.jedi.lightsaber-construction",
+      "classId": "jedi",
+      "name": "Building a Lightsaber",
+      "summary": "Allows lightsaber construction at 7+ heroic levels with requirements, costs, UtF check, and attunement bonus for self-built saber.",
+      "executionModel": "INFO_ONLY",
+      "subType": "INFO",
+      "classification": "INFO_ONLY",
+      "abilityMeta": {
+        "tags": ["crafting", "lightsaber", "force-point", "use-the-force"],
+        "implementedElsewhere": true
+      },
+      "sourceText": "You can build a Lightsaber if you have at least seven Heroic Levels, as well as the Force Sensitivity and Weapon Proficiency (Lightsabers) Feats... (CHATGPT NOTE: WE HAVE ALREADY IMPLMENTED THIS BUILDING A LIGHTSABER INTO THE GAME)"
+    },
+    {
+      "id": "cf.acePilot.vehicle-dodge",
+      "classId": "acePilot",
+      "name": "Vehicle Dodge",
+      "summary": "Apply a dodge bonus to the Reflex Defense of any Vehicle you Pilot equal to half class level (rounded down); lost when you lose Dex bonus.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "PASSIVE_SCALING + CONTEXT (vehicle you pilot) + CONDITIONAL (lose Dex bonus)",
+      "abilityMeta": {
+        "tags": ["vehicle", "defense", "dodge", "scaling"],
+        "scaling": { "basis": "classLevel", "operator": "halfRoundedDown" },
+        "context": ["pilotedVehicle"],
+        "constraints": ["lostIfNoDexToReflex"]
+      },
+      "sourceText": "Beginning at 2nd level, you apply a dodge bonus to the Reflex Defense of any Vehicle you Pilot... equal to one-half your Class Level, rounded down..."
+    },
+    {
+      "id": "cf.bountyHunter.familiar-foe",
+      "classId": "bountyHunter",
+      "name": "Familiar Foe",
+      "summary": "After a full-round observe, gain bonus to attack vs target and Reflex Defense vs target equal to half class level until end of encounter; only after target has acted.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "ACTIVE (full-round), TARGET, TEMPORAL (encounter), SCALING",
+      "abilityMeta": {
+        "tags": ["observe", "target", "attack", "defense", "encounter", "scaling"],
+        "action": { "type": "fullRound" },
+        "duration": { "type": "encounter" },
+        "scaling": { "basis": "classLevel", "operator": "halfRoundedDown" },
+        "targeting": { "type": "singleOpponent" },
+        "constraints": ["cannotUseUntilTargetHasActed"]
+      },
+      "sourceText": "If you spend a Full-Round Action observing an opponent in combat, you gain a bonus on attack rolls against that opponent, and a bonus to your Reflex Defense against attacks made by that opponent equal to one-half your Class Level... The effects last until the end of the encounter..."
+    },
+    {
+      "id": "cf.crimeLord.command-cover",
+      "classId": "crimeLord",
+      "name": "Command Cover",
+      "summary": "Gain +1 cover bonus to Reflex Defense per adjacent ally, up to half class level (max +5 at 10th).",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "CONDITIONAL (adjacent allies) + SCALING, likely computed during resolution",
+      "abilityMeta": {
+        "tags": ["cover", "defense", "allies", "adjacency", "scaling"],
+        "scaling": { "basis": "classLevel", "operator": "halfRoundedDown", "cap": 5 },
+        "context": ["adjacentAlliesCount"]
+      },
+      "sourceText": "You can gain a +1 Cover bonus to your Reflex Defense for each ally that is adjacent to you, up to a maximum bonus equal to one-half your Class Level (maximum +5 at 10th level)."
+    },
+    {
+      "id": "cf.eliteTrooper.delay-damage",
+      "classId": "eliteTrooper",
+      "name": "Delay Damage",
+      "summary": "Once per encounter as a Reaction, delay the effect of a single attack/ability/effect until end of your next turn.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "ACTIVE (reaction), TEMPORAL (next turn), ENCOUNTER_LIMIT",
+      "abilityMeta": {
+        "tags": ["reaction", "encounter", "delay", "temporal"],
+        "action": { "type": "reaction", "limit": { "per": "encounter", "uses": 1 } },
+        "duration": { "type": "untilEndOfNextTurn" }
+      },
+      "sourceText": "Once per encounter as a Reaction, you can choose to delay the effect of a single attack... until the end of your next turn."
+    },
+    {
+      "id": "cf.eliteTrooper.damage-reduction",
+      "classId": "eliteTrooper",
+      "name": "Damage Reduction",
+      "summary": "Gain DR 1 at 2nd level; improves by +1 every even level thereafter.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "PASSIVE_SCALING (even levels) + needs DR hook",
+      "abilityMeta": {
+        "tags": ["damage-reduction", "scaling"],
+        "scaling": { "basis": "classLevel", "operator": "evenLevelsStartingAt2", "startValue": 1 }
+      },
+      "sourceText": "At 2nd level, you gain Damage Reduction 1 (DR 1), which means that you reduce the damage you take from any attack by 1. At every even-numbered level after 2nd, your Damage Reduction improves by 1 (DR 2 at 4th level, DR 3 at 6th level, and so on)."
+    },
+    {
+      "id": "cf.forceAdept.force-technique-choice",
+      "classId": "forceAdept",
+      "name": "Force Techniques",
+      "summary": "At every even-numbered level, gain one Force Technique; once selected cannot be changed.",
+      "executionModel": "ACTIVE",
+      "subType": "CHOICE_GRANT",
+      "classification": "CHOICE_GRANT (progression), non-PASSIVE",
+      "abilityMeta": {
+        "tags": ["choice", "force-technique", "progression"],
+        "choice": { "pool": "forceTechniques", "grant": 1, "when": "evenLevels" },
+        "constraints": ["choiceIsPermanent"]
+      },
+      "sourceText": "At every even-numbered level (2nd, 4th, 6th, and so on), a Force Adept gains one Force Technique that, once selected, cannot be changed."
+    },
+    {
+      "id": "cf.forceDisciple.indomitable",
+      "classId": "forceDisciple",
+      "name": "Indomitable",
+      "summary": "Immune to Mind-Affecting effects.",
+      "executionModel": "PASSIVE",
+      "subType": "RULE",
+      "classification": "CLEAN_PASSIVE_RULE",
+      "abilityMeta": {
+        "rules": [{ "type": "IMMUNE_MIND_AFFECTING" }]
+      },
+      "sourceText": "Force Disciples are immune to Mind-Affecting effects."
+    },
+    {
+      "id": "cf.forceDisciple.prophet",
+      "classId": "forceDisciple",
+      "name": "Prophet",
+      "summary": "Gain two Destiny Points per level instead of one; may sacrifice the extra DP immediately for a prophetic vision; may choose a new Destiny related to vision (GM adjudicated).",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "PROGRESSION + GM_ADJUDICATION",
+      "abilityMeta": {
+        "tags": ["destiny-point", "progression", "gm"],
+        "progression": { "destinyPointsPerLevel": 2, "normal": 1 },
+        "options": [{ "type": "sacrificeExtraDestinyPointForVision", "timing": "immediatelyAfterLevel" }]
+      },
+      "sourceText": "Every time you gain a level... you receive two Destiny Points instead of the usual one... you may sacrifice this extra Destiny Point immediately after gaining a Class Level..."
+    },
+    {
+      "id": "cf.forceDisciple.force-secret-choice",
+      "classId": "forceDisciple",
+      "name": "Force Secrets",
+      "summary": "At 2nd level and every level thereafter, gain one Force Secret; once selected cannot be changed.",
+      "executionModel": "ACTIVE",
+      "subType": "CHOICE_GRANT",
+      "classification": "CHOICE_GRANT (progression), non-PASSIVE",
+      "abilityMeta": {
+        "tags": ["choice", "force-secret", "progression"],
+        "choice": { "pool": "forceSecrets", "grant": 1, "when": "level>=2EachLevel" },
+        "constraints": ["choiceIsPermanent"]
+      },
+      "sourceText": "At 2nd level, and every level thereafter, the Force Disciple gains one Force Secret that, once selected, cannot be changed."
+    },
+    {
+      "id": "cf.gunslinger.trusty-sidearm",
+      "classId": "gunslinger",
+      "name": "Trusty Sidearm",
+      "summary": "At 2nd level, gain bonus to damage rolls equal to half class level when wielding a pistol; doubled on crit; in addition to normal level bonus damage.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "CONDITIONAL (pistol) + SCALING + damage hook",
+      "abilityMeta": {
+        "tags": ["weapon-gated", "pistol", "damage", "scaling", "critical"],
+        "scaling": { "basis": "classLevel", "operator": "halfRoundedDown" },
+        "context": ["weaponCategory:pistol"],
+        "critical": { "doubles": true }
+      },
+      "sourceText": "Starting at 2nd level, the Gunslinger gains a bonus on Damage rolls equal to one-half their Class Level... when wielding a Pistol..."
+    },
+    {
+      "id": "cf.jediKnight.force-technique-choice",
+      "classId": "jediKnight",
+      "name": "Force Techniques",
+      "summary": "At every even-numbered level, gain one Force Technique; once selected cannot be changed.",
+      "executionModel": "ACTIVE",
+      "subType": "CHOICE_GRANT",
+      "classification": "CHOICE_GRANT (progression), non-PASSIVE",
+      "abilityMeta": {
+        "tags": ["choice", "force-technique", "progression"],
+        "choice": { "pool": "forceTechniques", "grant": 1, "when": "evenLevels" },
+        "constraints": ["choiceIsPermanent"]
+      },
+      "sourceText": "At every even-numbered level (2nd, 4th, 6th, and so on), a Jedi Knight gains one Force Technique..."
+    },
+    {
+      "id": "cf.jediMaster.fearless",
+      "classId": "jediMaster",
+      "name": "Fearless",
+      "summary": "Immune to Fear effects.",
+      "executionModel": "PASSIVE",
+      "subType": "RULE",
+      "classification": "CLEAN_PASSIVE_RULE",
+      "abilityMeta": {
+        "rules": [{ "type": "IMMUNE_FEAR" }]
+      },
+      "sourceText": "Jedi Masters are immune to Fear effects."
+    },
+    {
+      "id": "cf.jediMaster.serenity",
+      "classId": "jediMaster",
+      "name": "Serenity",
+      "summary": "Enter trance as a full-round action; remain helpless but aware; exit as swift action; first attack roll or UtF check next round is a natural 20.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "ACTIVE (full-round + swift), TEMPORAL (next round), roll override",
+      "abilityMeta": {
+        "tags": ["meditation", "full-round", "swift", "helpless", "roll-override"],
+        "actions": [{ "type": "fullRound", "name": "enterTrance" }, { "type": "swift", "name": "exitTrance" }],
+        "effects": [{ "type": "setHelplessExceptAwareness", "whileActive": true }],
+        "rollOverride": { "appliesTo": ["attackRoll", "useTheForce"], "timing": "followingRoundFirst", "treatAs": "natural20" }
+      },
+      "sourceText": "The Jedi Master may enter a brief meditative state as a Full-Round Action... Upon emerging... the Jedi Master's first attack roll or Use the Force skill check made in the following round is considered to be a Natural 20."
+    },
+    {
+      "id": "cf.jediMaster.force-secret-choice",
+      "classId": "jediMaster",
+      "name": "Force Secrets",
+      "summary": "At 2nd level and every level thereafter, gain one Force Secret; once selected cannot be changed.",
+      "executionModel": "ACTIVE",
+      "subType": "CHOICE_GRANT",
+      "classification": "CHOICE_GRANT (progression), non-PASSIVE",
+      "abilityMeta": {
+        "tags": ["choice", "force-secret", "progression"],
+        "choice": { "pool": "forceSecrets", "grant": 1, "when": "level>=2EachLevel" },
+        "constraints": ["choiceIsPermanent"]
+      },
+      "sourceText": "At 2nd level, and every level thereafter, the Jedi Master gains one Force Secret..."
+    },
+    {
+      "id": "cf.officer.command-cover",
+      "classId": "officer",
+      "name": "Command Cover",
+      "summary": "Gain +1 cover bonus to Reflex Defense per adjacent ally, up to half class level (max +5 at 10th).",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "CONDITIONAL (adjacent allies) + SCALING",
+      "abilityMeta": {
+        "tags": ["cover", "defense", "allies", "adjacency", "scaling"],
+        "scaling": { "basis": "classLevel", "operator": "halfRoundedDown", "cap": 5 },
+        "context": ["adjacentAlliesCount"]
+      },
+      "sourceText": "You can gain a +1 Cover bonus to your Reflex Defense for each ally that is adjacent to you, up to a maximum bonus equal to one-half your Class Level..."
+    },
+    {
+      "id": "cf.officer.share-talent",
+      "classId": "officer",
+      "name": "Share Talent",
+      "summary": "At every even level choose a talent you have (from listed trees); once per day as a standard action grant it to allies within 10 squares until end of encounter; number of allies = half class level; choice permanent.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "ACTIVE (standard), CHOICE, ENCOUNTER duration, CROSS-ACTOR",
+      "abilityMeta": {
+        "tags": ["share", "talent", "allies", "standard", "daily", "encounter", "choice"],
+        "action": { "type": "standard", "limit": { "per": "day", "uses": 1 } },
+        "duration": { "type": "encounter" },
+        "scaling": { "basis": "classLevel", "operator": "halfRoundedDown", "appliesTo": "maxAllies" },
+        "range": { "type": "squares", "value": 10 },
+        "constraints": [
+          "allyMustSeeAndHear",
+          "talentMustBeOwnedByOfficer",
+          "talentMustBeFromAllowedTrees",
+          "choiceIsPermanent"
+        ]
+      },
+      "sourceText": "Once per day, as a Standard Action, you can impart the benefits of the chosen Talent to one or more allies... benefits last until the end of the encounter... number of allies equal to one-half your Class Level..."
+    },
+    {
+      "id": "cf.sithApprentice.fallen-jedi",
+      "classId": "sithApprentice",
+      "name": "Fallen Jedi",
+      "summary": "Retain all Jedi class features except Light Side Force Powers cannot be used.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "PROGRESSION TRANSFORM + content restrictions",
+      "abilityMeta": {
+        "tags": ["class-retention", "restriction", "force-power"],
+        "constraints": ["cannotUseForcePowersWithLightSideDescriptor"]
+      },
+      "sourceText": "A Jedi who turns to the Dark Side... retains all of their Jedi class features... The only exceptions are Force Powers with the [Light Side] descriptor..."
+    },
+    {
+      "id": "cf.sithApprentice.force-technique-choice",
+      "classId": "sithApprentice",
+      "name": "Force Techniques",
+      "summary": "At every even-numbered level, gain one Force Technique; once selected cannot be changed.",
+      "executionModel": "ACTIVE",
+      "subType": "CHOICE_GRANT",
+      "classification": "CHOICE_GRANT (progression)",
+      "abilityMeta": {
+        "tags": ["choice", "force-technique", "progression"],
+        "choice": { "pool": "forceTechniques", "grant": 1, "when": "evenLevels" },
+        "constraints": ["choiceIsPermanent"]
+      },
+      "sourceText": "At every even-numbered level... a Sith Apprentice gains one Force Technique..."
+    },
+    {
+      "id": "cf.sithLord.fearless",
+      "classId": "sithLord",
+      "name": "Fearless",
+      "summary": "Immune to Fear effects.",
+      "executionModel": "PASSIVE",
+      "subType": "RULE",
+      "classification": "CLEAN_PASSIVE_RULE",
+      "abilityMeta": {
+        "rules": [{ "type": "IMMUNE_FEAR" }]
+      },
+      "sourceText": "Sith Lords are immune to Fear effects."
+    },
+    {
+      "id": "cf.sithLord.temptation",
+      "classId": "sithLord",
+      "name": "Temptation",
+      "summary": "Standard action Persuasion vs Will Defense of a target in LOS; if target spends FP/DP before your next turn, suffers DSS/Condition Track consequences.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "ACTIVE (standard), TARGET, TEMPORAL (before next turn), cross-resource effects",
+      "abilityMeta": {
+        "tags": ["standard", "persuasion", "will-defense", "line-of-sight", "temporal", "dark-side-score", "condition-track"],
+        "action": { "type": "standard" },
+        "targeting": { "type": "singleOpponent", "requiresLineOfSight": true },
+        "resolution": { "check": "persuasion", "vs": "defense.will" },
+        "window": { "type": "untilYourNextTurn" }
+      },
+      "sourceText": "As a Standard Action, a Sith Lord can make a Persuasion check and compare it to the Will Defense of a single opponent within line of sight..."
+    },
+    {
+      "id": "cf.sithLord.force-secret-choice",
+      "classId": "sithLord",
+      "name": "Force Secrets",
+      "summary": "At 2nd level and every level thereafter, gain one Force Secret; once selected cannot be changed.",
+      "executionModel": "ACTIVE",
+      "subType": "CHOICE_GRANT",
+      "classification": "CHOICE_GRANT (progression)",
+      "abilityMeta": {
+        "tags": ["choice", "force-secret", "progression"],
+        "choice": { "pool": "forceSecrets", "grant": 1, "when": "level>=2EachLevel" },
+        "constraints": ["choiceIsPermanent"]
+      },
+      "sourceText": "At 2nd level, and every level thereafter, the Sith Lord gains one Force Secret..."
+    },
+    {
+      "id": "cf.corporateAgent.executive-leadership",
+      "classId": "corporateAgent",
+      "name": "Executive Leadership",
+      "summary": "As a swift action up to half level times, grant an ally in LOS a temporary boost until end of their turn: +2 speed or +2 morale to attacks or defenses.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "ACTIVE (swift), CROSS-ACTOR, TEMPORAL (end of ally turn), SCALING (uses)",
+      "abilityMeta": {
+        "tags": ["swift", "ally", "line-of-sight", "morale", "temporary", "scaling"],
+        "action": { "type": "swift", "limit": { "per": "encounter", "uses": "halfLevel" } },
+        "targeting": { "type": "ally", "requiresLineOfSight": true },
+        "duration": { "type": "untilEndOfTargetTurn" },
+        "options": [
+          { "type": "speed", "delta": 2, "kind": "baseSpeed" },
+          { "type": "attack", "delta": 2, "kind": "morale" },
+          { "type": "defenses", "delta": 2, "kind": "morale" }
+        ]
+      },
+      "sourceText": "As a Swift Action, as many times as equal to half your Corporate Agent level, you can grant an ally... Until the end of their turn..."
+    },
+    {
+      "id": "cf.gladiator.unflinching",
+      "classId": "gladiator",
+      "name": "Unflinching",
+      "summary": "At 2nd level, per encounter uses = half level; as a reaction add your level to (Fort Defense and Damage Threshold) OR Will Defense until start of your next turn; declare before knowing outcome.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "ACTIVE (reaction), TEMPORAL, CHOICE, SCALING (uses and bonus)",
+      "abilityMeta": {
+        "tags": ["reaction", "encounter", "defense", "damage-threshold", "temporal", "choice", "scaling"],
+        "action": { "type": "reaction", "limit": { "per": "encounter", "uses": "halfLevel" } },
+        "duration": { "type": "untilStartOfNextTurn" },
+        "bonus": { "basis": "classLevel", "operator": "fullLevel" },
+        "options": [
+          { "targets": ["defense.fortitude", "defense.damageThreshold"] },
+          { "targets": ["defense.will"] }
+        ],
+        "constraints": ["mustDeclareBeforeOutcomeKnown"]
+      },
+      "sourceText": "For a number of times equal to half your Gladiator level... per encounter, you may add your Gladiator level to either your Fortitude Defense (and Damage Threshold), or Will Defense until the start of your next turn as a Reaction..."
+    },
+    {
+      "id": "cf.meleeDuelist.master-of-movement",
+      "classId": "meleeDuelist",
+      "name": "Master of Movement",
+      "summary": "Per encounter uses = half level; either ignore difficult terrain/low object penalty for one move action OR reroll a Jump/Acrobatics check and keep better.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "ACTIVE (per encounter), CHOICE, skill reroll",
+      "abilityMeta": {
+        "tags": ["movement", "difficult-terrain", "reroll", "jump", "acrobatics", "encounter", "scaling"],
+        "limit": { "per": "encounter", "uses": "halfLevel" },
+        "options": [
+          { "type": "ignoreMovementPenalty", "duration": "singleMoveAction" },
+          { "type": "rerollSkillCheck", "skills": ["jump", "acrobatics"], "keep": "better" }
+        ]
+      },
+      "sourceText": "A number of times per encounter equal to half your Melee Duelist level, you can either ignore the movement penalty... or reroll a single Jump or Acrobatics check..."
+    },
+    {
+      "id": "cf.enforcer.resources",
+      "classId": "enforcer",
+      "name": "Resources",
+      "summary": "Each level gain restricted/military equipment value = heroic level x 2000 credits; may roll over to next level; appears in accessible location.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "PROGRESSION + economy + GM/availability",
+      "abilityMeta": {
+        "tags": ["equipment", "credits", "progression", "availability", "gm"],
+        "progression": { "grantValue": "heroicLevel*2000", "rolloverAllowed": true }
+      },
+      "sourceText": "Each time an Enforcer gains a level, they receive Restricted or Military Equipment... equal in value to their Heroic Level x 2,000 credits..."
+    },
+    {
+      "id": "cf.enforcer.targeted-suspect",
+      "classId": "enforcer",
+      "name": "Targeted Suspect",
+      "summary": "After full-round observe opponent, gain bonuses to attack and Deception/Perception/Persuasion vs that opponent equal to half level for remainder of encounter; only after target has acted.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "ACTIVE (full-round), TARGET, TEMPORAL (encounter), SCALING",
+      "abilityMeta": {
+        "tags": ["observe", "target", "attack", "skills", "encounter", "scaling"],
+        "action": { "type": "fullRound" },
+        "duration": { "type": "encounter" },
+        "scaling": { "basis": "classLevel", "operator": "halfRoundedDown" },
+        "bonuses": {
+          "attack": true,
+          "skills": ["deception", "perception", "persuasion"]
+        },
+        "constraints": ["cannotUseUntilTargetHasActed"]
+      },
+      "sourceText": "If an Enforcer spends a Full-Round Action observing an opponent in combat, they gain a bonus on attack rolls and Deception, Perception, and Persuasion checks equal to one-half the Enforcer's Class Level... The benefits last for the remainder of the encounter..."
+    },
+    {
+      "id": "cf.independentDroid.sapience",
+      "classId": "independentDroid",
+      "name": "Sapience",
+      "summary": "May choose to have Droid Immunities not apply to any Mind-Affecting effects, allowing beneficial Mind-Affecting abilities to affect them.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "TOGGLE / EXCEPTION to immunities; conditional to effect descriptors",
+      "abilityMeta": {
+        "tags": ["toggle", "immunity", "mind-affecting"],
+        "constraints": ["optionalDisableDroidImmunitiesForMindAffecting"]
+      },
+      "sourceText": "Independent Droids can choose to have their Droid Immunities not apply to any Mind-Affecting effects..."
+    },
+    {
+      "id": "cf.independentDroid.independent-spirit",
+      "classId": "independentDroid",
+      "name": "Independent Spirit",
+      "summary": "Once per encounter as a reaction, grant self a morale bonus to a chosen defense against a single skill check or attack roll equal to half level.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "ACTIVE (reaction), TEMPORAL (single roll), CHOICE, SCALING",
+      "abilityMeta": {
+        "tags": ["reaction", "encounter", "morale", "defense", "scaling"],
+        "action": { "type": "reaction", "limit": { "per": "encounter", "uses": 1 } },
+        "scaling": { "basis": "classLevel", "operator": "halfRoundedDown" },
+        "options": [{ "chooseDefense": true }],
+        "scope": { "type": "singleIncomingCheckOrAttack" }
+      },
+      "sourceText": "Once per encounter... grant themselves a morale bonus to any Defense Score... against a single skill check or attack roll... equal to one-half... level..."
+    },
+    {
+      "id": "cf.infiltrator.unarmed-stun",
+      "classId": "infiltrator",
+      "name": "Unarmed Stun",
+      "summary": "Designate before attack; unarmed attack deals stun and +1 die damage; increases at 6th (+2 dice) and 10th (+3 dice).",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "ACTIVE toggle per attack + SCALING dice",
+      "abilityMeta": {
+        "tags": ["unarmed", "stun", "declare", "scaling"],
+        "constraints": ["mustDeclareBeforeAttack"],
+        "scaling": { "basis": "classLevel", "milestones": [{ "level": 2, "dice": 1 }, { "level": 6, "dice": 2 }, { "level": 10, "dice": 3 }] }
+      },
+      "sourceText": "The Infiltrator must designate their intention to Stun their target before the attack is made... extra damage increases at 6th... and 10th..."
+    },
+    {
+      "id": "cf.infiltrator.lead-infiltrator",
+      "classId": "infiltrator",
+      "name": "Lead Infiltrator",
+      "summary": "Make a Stealth check for allies in LOS equal to Cha bonus (min 1); use your result in place of theirs; doubles at 8th; requires LOS to retain.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "CROSS-ACTOR substitution + SCALING",
+      "abilityMeta": {
+        "tags": ["stealth", "leadership", "cross-actor", "substitution", "scaling"],
+        "scaling": { "basis": "charismaBonus", "operator": "min1", "doublesAtLevel": 8 },
+        "constraints": ["alliesMustRemainInLineOfSight"]
+      },
+      "sourceText": "The Infiltrator can make a Stealth check... using the check result in place of their allies' Stealth checks... At 8th level... doubles..."
+    },
+    {
+      "id": "cf.masterPrivateer.lure-of-piracy",
+      "classId": "masterPrivateer",
+      "name": "Lure of Piracy",
+      "summary": "If lost to the Dark Side, cannot take further levels in this prestige class.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "PROGRESSION RESTRICTION",
+      "abilityMeta": {
+        "tags": ["restriction", "dark-side"],
+        "constraints": ["ifLostToDarkSideCannotAdvanceThisPrestigeClass"]
+      },
+      "sourceText": "If a Master Privateer is lost to The Dark Side... may no longer take any further levels..."
+    },
+    {
+      "id": "cf.masterPrivateer.veteran-privateer",
+      "classId": "masterPrivateer",
+      "name": "Veteran Privateer",
+      "summary": "On melee attack, as free action grant +2 competence bonus on that attack; uses per encounter = half level.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "ACTIVE (free action), TEMPORAL (single attack), SCALING (uses)",
+      "abilityMeta": {
+        "tags": ["melee", "free", "attack", "competence", "encounter", "scaling"],
+        "action": { "type": "free", "limit": { "per": "encounter", "uses": "halfLevel" } },
+        "scope": { "type": "singleMeleeAttackRoll" },
+        "bonus": { "type": "competence", "value": 2, "target": "attack" }
+      },
+      "sourceText": "When a Master Privateer makes a melee attack roll, as a Free Action... +2 competence bonus... number of times per encounter equal to one-half..."
+    },
+    {
+      "id": "cf.medic.medical-secret-choice",
+      "classId": "medic",
+      "name": "Medical Secrets",
+      "summary": "At each even level, gain a Medical Secret for Treat Injury applications; each treatment can be selected only once.",
+      "executionModel": "ACTIVE",
+      "subType": "CHOICE_GRANT",
+      "classification": "CHOICE_GRANT (progression)",
+      "abilityMeta": {
+        "tags": ["choice", "medical-secret", "treat-injury", "progression"],
+        "choice": { "pool": "medicalSecrets", "grant": 1, "when": "evenLevels" },
+        "constraints": ["eachTreatmentOnlyOnce"]
+      },
+      "sourceText": "At each even-numbered level... the Medic gains a Medical Secret... A Medic can select a given treatment only once."
+    },
+    {
+      "id": "cf.saboteur.unexpected-results",
+      "classId": "saboteur",
+      "name": "Unexpected Results",
+      "summary": "If an enemy attacking you rolls a natural 1 with specified weapon categories, that weapon is disabled until repaired.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "REACTIONARY TRIGGER (enemy nat1) + equipment disable + conditional weapon category",
+      "abilityMeta": {
+        "tags": ["trigger", "natural-1", "weapon-disable", "repair"],
+        "trigger": { "event": "enemyAttackRoll", "condition": "natural1", "weaponCategories": ["advancedMelee", "lightsaber", "pistol", "rifle", "heavyWeapon"] },
+        "effect": { "type": "disableWeaponUntilRepaired" }
+      },
+      "sourceText": "When an enemy... rolls a Natural 1... that Weapon is immediately disabled... until it has received Repairs..."
+    },
+    {
+      "id": "cf.saboteur.destructive",
+      "classId": "saboteur",
+      "name": "Destructive",
+      "summary": "Always deals double damage to unattended objects and vehicles.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "CONDITIONAL (target type unattended objects/vehicles) but no action/timing; could become conditional passive later",
+      "abilityMeta": {
+        "tags": ["damage", "objects", "vehicles", "conditional"],
+        "context": ["targetIsUnattendedObjectOrVehicle"],
+        "effect": { "type": "doubleDamage" }
+      },
+      "sourceText": "Starting at 2nd level, a Saboteur always deals double damage to unattended objects and Vehicles."
+    },
+    {
+      "id": "cf.saboteur.quick-sabotage",
+      "classId": "saboteur",
+      "name": "Quick Sabotage",
+      "summary": "Mechanics checks to disable devices; swift action progression by device complexity at 4/6/8.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "ACTIVE (swift), scaling by level, device complexity",
+      "abilityMeta": {
+        "tags": ["mechanics", "disable-device", "swift", "progression"],
+        "progression": [
+          { "level": 4, "device": "simple", "action": "swift" },
+          { "level": 6, "device": "tricky", "action": "swift" },
+          { "level": 8, "device": "complex", "action": "twoSwift" }
+        ]
+      },
+      "sourceText": "At 4th level... disable Simple Devices as a Swift Action... 6th Tricky... 8th Complex using two Swift Actions."
+    },
+    {
+      "id": "cf.saboteur.master-saboteur",
+      "classId": "saboteur",
+      "name": "Master Saboteur",
+      "summary": "At 10th level can reroll any Mechanics check to disable a device or Handle Explosives, keeping the better.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "REROLL capability, conditional on skill use",
+      "abilityMeta": {
+        "tags": ["reroll", "mechanics", "handle-explosives"],
+        "reroll": { "skills": ["mechanics:disableDevice", "handleExplosives"], "keep": "better" }
+      },
+      "sourceText": "10th level Saboteurs can reroll any Mechanics check to disable a device or Handle Explosives, keeping the better..."
+    },
+    {
+      "id": "cf.assassin.mark",
+      "classId": "assassin",
+      "name": "Mark",
+      "summary": "At start of encounter select a target in LOS as Mark; damage bonus vs mark = half level for encounter; can move mark on kill; swift sacrifice to render target flat-footed vs next attack this turn; then lost for encounter.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "TARGET + TEMPORAL (encounter) + SCALING + optional swift sacrifice",
+      "abilityMeta": {
+        "tags": ["mark", "target", "line-of-sight", "encounter", "damage", "scaling", "swift"],
+        "scaling": { "basis": "classLevel", "operator": "halfRoundedDown" },
+        "duration": { "type": "encounter" },
+        "actions": [{ "type": "swift", "name": "sacrificeBonusForFlatFooted" }, { "type": "free", "name": "moveMarkOnKill" }]
+      },
+      "sourceText": "At the start of the encounter... your Mark... For the duration of the encounter... bonus equal to one-half... As a Swift Action, you can sacrifice this bonus..."
+    },
+    {
+      "id": "cf.charlatan.score",
+      "classId": "charlatan",
+      "name": "Score",
+      "summary": "After full-round observe a single target, until end of encounter reroll all Deception checks vs that target, keep better.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "ACTIVE (full-round), TARGET, TEMPORAL (encounter), reroll",
+      "abilityMeta": {
+        "tags": ["observe", "target", "encounter", "reroll", "deception"],
+        "action": { "type": "fullRound" },
+        "duration": { "type": "encounter" },
+        "reroll": { "skill": "deception", "keep": "better", "scope": "vsObservedTarget" }
+      },
+      "sourceText": "If a Charlatan spends a Full-Round Action watching a single target, until the end of the encounter that Charlatan can reroll all Deception checks made against that target..."
+    },
+    {
+      "id": "cf.charlatan.swindle",
+      "classId": "charlatan",
+      "name": "Swindle",
+      "summary": "Substitute Deception for Stealth to Pick Pocket; bonus at 6 (+1), 8 (+2), 10 (+5); target realizes at end of encounter.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "SUBSTITUTION + SCALING",
+      "abilityMeta": {
+        "tags": ["substitution", "deception", "stealth", "pick-pocket", "scaling"],
+        "substitution": { "from": "stealth:pickPocket", "to": "deception" },
+        "scaling": { "basis": "classLevel", "milestones": [{ "level": 6, "bonus": 1 }, { "level": 8, "bonus": 2 }, { "level": 10, "bonus": 5 }] }
+      },
+      "sourceText": "A Charlatan can substitute Deception checks for Stealth checks made to Pick Pocket... At 6th level... +1... increases to +2 at 8th... and +5 at 10th..."
+    },
+    {
+      "id": "cf.outlaw.fugitive",
+      "classId": "outlaw",
+      "name": "Fugitive",
+      "summary": "Once per encounter starting at 2nd, move +1 square when using Withdraw; increases by +1 every even level thereafter (up to +5 at 10th).",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "ACTIVE (once/encounter), SCALING (even levels), action-context (Withdraw)",
+      "abilityMeta": {
+        "tags": ["withdraw", "movement", "encounter", "scaling"],
+        "actionContext": "withdraw",
+        "limit": { "per": "encounter", "uses": 1 },
+        "scaling": { "basis": "classLevel", "operator": "evenLevelsStartingAt2", "startValue": 1, "capAtLevel10": 5 }
+      },
+      "sourceText": "Once per encounter, starting at 2nd level... move 1 additional square whenever they use the Withdraw Action... increases by 1 at every even level thereafter..."
+    },
+    {
+      "id": "cf.droidCommander.networked-mind",
+      "classId": "droidCommander",
+      "name": "Networked Mind",
+      "summary": "Designate droid allies equal to half level as networked; they can receive beneficial mind-affecting effects from you; cannot change beneficiary until end of encounter; also LOS via active comlinks (lost if jammed).",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "CROSS-ACTOR + TEMPORAL (encounter lock-in) + equipment/comms context",
+      "abilityMeta": {
+        "tags": ["droid", "allies", "mind-affecting", "comlink", "encounter", "scaling"],
+        "scaling": { "basis": "classLevel", "operator": "halfRoundedDown", "appliesTo": "maxNetworkedAllies" },
+        "constraints": ["cannotChangeBeneficiaryUntilEncounterEnd", "requiresActiveComlinks", "lostIfCommsJammed"]
+      },
+      "sourceText": "A Droid Commander can designate a number of its Droid Allies equal to one-half its Class Level... cannot change... until after the end of the encounter... considered to have line of sight... as long as... active Comlink..."
+    },
+    {
+      "id": "cf.militaryEngineer.field-created-weapon",
+      "classId": "militaryEngineer",
+      "name": "Field-Created Weapon",
+      "summary": "Standard action Mechanics DC 20 to create melee/ranged weapon value <= 600 credits x level; weapon grants equipment bonus to attack rolls equal to half level; usable once per encounter; destroyed at end of encounter; create energy cell if needed; must be proficient.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "ACTIVE (standard), TEMPORAL (encounter), SCALING (value and bonus), crafting/spawn item",
+      "abilityMeta": {
+        "tags": ["mechanics", "crafting", "weapon", "standard", "encounter", "scaling"],
+        "action": { "type": "standard", "limit": { "per": "encounter", "uses": 1 } },
+        "resolution": { "check": "mechanics", "dc": 20 },
+        "constraints": ["weaponValueCap", "mustBeProficient", "weaponDestroyedAtEncounterEnd"],
+        "scaling": [
+          { "kind": "weaponValueCap", "basis": "classLevel", "operator": "multiply", "value": 600, "unit": "credits" },
+          { "kind": "attackBonus", "basis": "classLevel", "operator": "halfRoundedDown", "type": "equipment" }
+        ]
+      },
+      "sourceText": "As a Standard Action... Mechanics check (DC 20) to create... base value... no more than 600 credits x... level... grants... Equipment bonus on attack rolls equal to one-half... level... once per encounter... destroyed at end of encounter..."
+    },
+    {
+      "id": "cf.vanguard.surprise-attack",
+      "classId": "vanguard",
+      "name": "Surprise Attack",
+      "summary": "When attacking a target unaware of you or denied Dex to Reflex, gain a bonus on your first attack roll in a round against that target equal to half class level.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "CONDITIONAL (target state) + TEMPORAL (first attack in round) + SCALING",
+      "abilityMeta": {
+        "tags": ["surprise", "attack", "target-state", "round", "scaling"],
+        "scaling": { "basis": "classLevel", "operator": "halfRoundedDown" },
+        "constraints": ["appliesOnlyToFirstAttackInRound", "targetDeniedDexOrUnaware"]
+      },
+      "sourceText": "Whenever a Vanguard attacks a target that is unaware of them or otherwise denied their Dexterity bonus... bonus on their first attack roll in a round... equal to one-half..."
+    },
+    {
+      "id": "cf.imperialKnight.force-technique-choice",
+      "classId": "imperialKnight",
+      "name": "Force Techniques",
+      "summary": "At every even-numbered level, gain one Force Technique; once selected cannot be changed.",
+      "executionModel": "ACTIVE",
+      "subType": "CHOICE_GRANT",
+      "classification": "CHOICE_GRANT (progression)",
+      "abilityMeta": {
+        "tags": ["choice", "force-technique", "progression"],
+        "choice": { "pool": "forceTechniques", "grant": 1, "when": "evenLevels" },
+        "constraints": ["choiceIsPermanent"]
+      },
+      "sourceText": "At every even-numbered level... an Imperial Knight gains one Force Technique..."
+    },
+    {
+      "id": "cf.shaper.shaper-lore",
+      "classId": "shaper",
+      "name": "Shaper Lore",
+      "summary": "Gain bonus equal to half class level on Knowledge (Life Sciences) and Treat Injury checks regarding Biotech.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "CONDITIONAL (topic biotech) + SCALING",
+      "abilityMeta": {
+        "tags": ["biotech", "knowledge-life-sciences", "treat-injury", "scaling"],
+        "scaling": { "basis": "classLevel", "operator": "halfRoundedDown" },
+        "constraints": ["appliesOnlyToBiotechRelatedChecks"]
+      },
+      "sourceText": "A Shaper gains a bonus equal to one-half their Class Level... on all Knowledge (Life Sciences) and Treat Injury checks made with regards to Biotech..."
+    },
+    {
+      "id": "cf.shaper.shaper-hand",
+      "classId": "shaper",
+      "name": "Shaper Hand",
+      "summary": "At 6th level expected to replace a hand with Shaper Hand; replaces need for a Biotech Tool Kit; declining has social consequences.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "EQUIPMENT/CRAFT + progression milestone",
+      "abilityMeta": {
+        "tags": ["biotech", "tools", "equipment", "level-gated"],
+        "milestone": { "level": 6 },
+        "effect": { "type": "countsAsBiotechToolKit" }
+      },
+      "sourceText": "At 6th level... Shaper Hand... replaces the need for a Biotech Tool Kit."
+    },
+    {
+      "id": "cf.improviser.no-tools-required",
+      "classId": "improviser",
+      "name": "No Tools Required",
+      "summary": "Always considered to be using a Tool Kit or Security Kit for Mechanics/Use Computer checks that normally require one.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "PERMISSION/REQUIREMENT OVERRIDE (tools), conditional on check requirements",
+      "abilityMeta": {
+        "tags": ["tools", "mechanics", "use-computer", "requirements"],
+        "permissions": [{ "type": "treatAsHavingTool", "tools": ["toolKit", "securityKit"] }]
+      },
+      "sourceText": "The Improviser is always considered to be using a Tool Kit or Security Kit..."
+    },
+    {
+      "id": "cf.improviser.contraband",
+      "classId": "improviser",
+      "name": "Contraband",
+      "summary": "At 2nd level gain access to illegal goods; obtain rare/illegal items value <= 2000 credits x half class level; requires 1 hour work; budget resets on level up; no black market multipliers.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "ECONOMY + time + availability + SCALING",
+      "abilityMeta": {
+        "tags": ["contraband", "economy", "availability", "time", "scaling"],
+        "milestone": { "level": 2 },
+        "scaling": { "basis": "classLevel", "operator": "halfRoundedDown", "multiplier": 2000, "unit": "credits" },
+        "constraints": ["rareOrIllegalOnly", "requiresOneHourWork", "noBlackMarketMultipliers", "budgetResetsOnLevel"]
+      },
+      "sourceText": "At 2nd level... obtain any combination of items... up to a total value of 2,000 credits x one-half... level... requires one hour..."
+    },
+    {
+      "id": "cf.pathfinder.create-cover",
+      "classId": "pathfinder",
+      "name": "Create Cover",
+      "summary": "Starting at 2nd level as a standard action designate up to half level squares within 6 squares; squares filled with low objects provide cover; at least one square adjacent; multiple uses per encounter with total squares cap.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "ACTIVE (standard) + terrain creation + encounter pool + scaling",
+      "abilityMeta": {
+        "tags": ["cover", "terrain", "standard", "encounter", "scaling"],
+        "milestone": { "level": 2 },
+        "action": { "type": "standard" },
+        "scaling": { "basis": "classLevel", "operator": "halfRoundedDown", "appliesTo": "maxSquaresPerEncounter" },
+        "constraints": ["squaresWithin6", "atLeastOneAdjacent", "totalAcrossEncounterCapped"]
+      },
+      "sourceText": "Starting at 2nd level, as a Standard Action... designate a number of squares... <= one-half... level... within 6 squares... provide Cover... total number of squares designated across all uses never exceeds..."
+    },
+    {
+      "id": "cf.martialArtsMaster.tough-as-durasteel",
+      "classId": "martialArtsMaster",
+      "name": "Tough as Durasteel",
+      "summary": "When you damage a target with an unarmed attack while wearing light or no armor, gain bonus HP equal to class level; increases every other level.",
+      "executionModel": "ACTIVE",
+      "subType": "STUB",
+      "classification": "TRIGGERED (on hit) + CONDITIONAL (unarmed, armor) + SCALING (every other level) + temp HP hook",
+      "abilityMeta": {
+        "tags": ["unarmed", "armor-gated", "temp-hp", "trigger", "scaling"],
+        "trigger": { "event": "dealDamage", "requiresUnarmed": true, "armor": ["none", "light"] },
+        "scaling": { "basis": "classLevel", "operator": "fullLevel", "improves": "everyOtherLevel" },
+        "effect": { "type": "grantBonusHitPoints" }
+      },
+      "sourceText": "Whenever a Martial Arts Master damages a target with an Unarmed Attack while wearing Light Armor or no Armor, they gain Bonus Hit Points equal to their Class Level... increases for every other level..."
+    }
+  ]
+}
