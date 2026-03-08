@@ -1,6 +1,7 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { rollDamage } from "/systems/foundryvtt-swse/scripts/combat/rolls/damage.js";
+import { ActionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine.js";
 import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance, getEffectiveCritRange, getCriticalMultiplier } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
@@ -278,6 +279,25 @@ export class SWSERoll {
       // Call pre-roll hook (can modify context or cancel roll)
       if (!callPreRollHook(ROLL_HOOKS.PRE_ATTACK, context)) {
         return { cancelled: true };
+      }
+
+      // Check action economy (if in combat)
+      // This is informational - doesn't prevent roll, but tracks consumption
+      const combatant = game.combat?.turns?.find(t => t.actorId === actor.id);
+      if (combatant && actor.system?.combatActions) {
+        const turnState = actor.system.combatTurnState || ActionEngine.startTurn(actor);
+        const attackCost = { standard: 1, move: 0, swift: 0 }; // Standard attack action
+        const actionCheck = ActionEngine.canConsume(turnState, attackCost);
+
+        if (!actionCheck.allowed) {
+          swseLogger.warn(`[ActionEngine] Attack blocked: ${actionCheck.reason}`, { actor: actor.name, weapon: weapon.name });
+          ui.notifications.warn(`Action blocked: ${actionCheck.reason}`);
+          return { blocked: true, reason: actionCheck.reason };
+        }
+
+        // Track for diagnostics
+        context.actionCheck = actionCheck;
+        context.turnState = turnState;
       }
 
       // Force Point before roll
