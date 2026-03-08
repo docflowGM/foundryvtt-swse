@@ -46,6 +46,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/Talents.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/Feats.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/Force.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/Racial-ability.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-armor-card.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-item-card.hbs',
@@ -72,16 +73,23 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/actions-panel.hbs',
 
   // ==============================
+  // NPC Partials
+  // ==============================
+  'systems/foundryvtt-swse/templates/actors/npc/npc-image.hbs',
+
+  // ==============================
   // Shared Partials
   // ==============================
   'systems/foundryvtt-swse/templates/partials/actor/persistent-header.hbs',
   'systems/foundryvtt-swse/templates/partials/ui/condition-track.hbs',
+  'systems/foundryvtt-swse/templates/partials/ui/combat/combat-action-economy-panel.hbs',
   'systems/foundryvtt-swse/templates/partials/skill-row-static.hbs',
   'systems/foundryvtt-swse/templates/partials/skill-actions-panel.hbs',
   'systems/foundryvtt-swse/templates/partials/skill-action-card.hbs',
   'systems/foundryvtt-swse/templates/partials/feat-actions-panel.hbs',
   'systems/foundryvtt-swse/templates/partials/talent-abilities-panel.hbs',
   'systems/foundryvtt-swse/templates/partials/ability-block.hbs',
+  'systems/foundryvtt-swse/templates/partials/ability-card.hbs',
   'systems/foundryvtt-swse/templates/partials/ability-scores.hbs',
   'systems/foundryvtt-swse/templates/partials/defenses.hbs',
   'systems/foundryvtt-swse/templates/partials/ship-combat-actions-panel.hbs',
