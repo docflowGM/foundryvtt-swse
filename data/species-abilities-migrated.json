@@ -1,0 +1,294 @@
+{
+  "_comment": "Species Abilities - Migrated to ACTIVE/EFFECT Execution Model",
+  "_migrationDate": "2026-03-08",
+  "_status": "Phase 1: Schema migration complete. Phase 2: Effect handler implementation needed.",
+  "abilities": [
+    {
+      "id": "species-toxic-breath",
+      "type": "talent",
+      "name": "Toxic Breath",
+      "system": {
+        "description": "As a standard action, a Balosar may emit toxic gas; creatures adjacent to the Balosar take a -2 penalty on attack rolls until the end of the Balosar's next turn.",
+        "executionModel": "ACTIVE",
+        "subType": "EFFECT",
+        "abilityMeta": {
+          "activation": {
+            "actionType": "standard"
+          },
+          "frequency": {
+            "type": "unlimited"
+          },
+          "targeting": {
+            "type": "areaEffect",
+            "range": "adjacent",
+            "description": "Creatures adjacent to the caster"
+          },
+          "effect": {
+            "type": "modifierApplication",
+            "modifier": "attack_rolls",
+            "value": -2,
+            "duration": {
+              "type": "rounds",
+              "value": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "species-shapeshifter",
+      "type": "talent",
+      "name": "Shapeshifter",
+      "system": {
+        "description": "As a full-round action, a Clawdite may alter its appearance to resemble any Medium humanoid.",
+        "executionModel": "ACTIVE",
+        "subType": "EFFECT",
+        "abilityMeta": {
+          "activation": {
+            "actionType": "full_round"
+          },
+          "frequency": {
+            "type": "unlimited"
+          },
+          "targeting": {
+            "type": "self"
+          },
+          "effect": {
+            "type": "custom",
+            "handlerId": "shapeshifter_custom",
+            "description": "Alter appearance to resemble any Medium humanoid"
+          }
+        }
+      }
+    },
+    {
+      "id": "species-pheromones",
+      "type": "talent",
+      "name": "Pheromones",
+      "system": {
+        "description": "As a standard action, a Falleen may impose a -2 penalty to Will Defense on all living creatures within 6 squares until the end of the encounter.",
+        "executionModel": "ACTIVE",
+        "subType": "EFFECT",
+        "abilityMeta": {
+          "activation": {
+            "actionType": "standard"
+          },
+          "frequency": {
+            "type": "unlimited"
+          },
+          "targeting": {
+            "type": "areaEffect",
+            "range": 6,
+            "description": "All living creatures within 6 squares"
+          },
+          "effect": {
+            "type": "modifierApplication",
+            "modifier": "will_defense",
+            "value": -2,
+            "duration": {
+              "type": "encounter"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "species-lucky",
+      "type": "talent",
+      "name": "Lucky",
+      "system": {
+        "description": "Once per encounter, a Gungan may reroll an attack roll, skill check, or ability check but must accept the new result.",
+        "executionModel": "ACTIVE",
+        "subType": "EFFECT",
+        "abilityMeta": {
+          "activation": {
+            "actionType": "free"
+          },
+          "frequency": {
+            "type": "encounter",
+            "max": 1
+          },
+          "targeting": {
+            "type": "self"
+          },
+          "effect": {
+            "type": "custom",
+            "handlerId": "lucky_reroll",
+            "description": "Reroll attack/skill/ability check (must accept new result)"
+          }
+        }
+      }
+    },
+    {
+      "id": "species-sonic-bellow",
+      "type": "talent",
+      "name": "Sonic Bellow",
+      "system": {
+        "description": "As a standard action, an Ithorian may emit a sonic bellow that deals 1d6 sonic damage to adjacent enemies.",
+        "executionModel": "ACTIVE",
+        "subType": "EFFECT",
+        "abilityMeta": {
+          "activation": {
+            "actionType": "standard"
+          },
+          "frequency": {
+            "type": "unlimited"
+          },
+          "targeting": {
+            "type": "areaEffect",
+            "range": "adjacent",
+            "description": "Adjacent enemies"
+          },
+          "effect": {
+            "type": "damageRoll",
+            "damageType": "sonic",
+            "diceFormula": "1d6"
+          }
+        }
+      }
+    },
+    {
+      "id": "species-rage",
+      "type": "talent",
+      "name": "Rage",
+      "system": {
+        "description": "Once per day, a Mantellian Savrip can fly into a Rage as a Swift Action. While Raging, gains +2 bonus on melee attack/damage rolls, but cannot use Skills requiring patience. Lasts for CON modifier rounds, then -1 condition step penalty for 10+ minutes.",
+        "executionModel": "ACTIVE",
+        "subType": "EFFECT",
+        "abilityMeta": {
+          "activation": {
+            "actionType": "swift"
+          },
+          "frequency": {
+            "type": "day",
+            "max": 1
+          },
+          "targeting": {
+            "type": "self"
+          },
+          "effect": {
+            "type": "custom",
+            "handlerId": "rage_mode",
+            "description": "+2 melee attack/damage, CON rounds duration, -1 condition after"
+          }
+        }
+      }
+    },
+    {
+      "id": "species-regeneration",
+      "type": "talent",
+      "name": "Regeneration",
+      "system": {
+        "description": "A Trandoshan regains hit points equal to its level once per encounter when reduced below half hit points.",
+        "executionModel": "ACTIVE",
+        "subType": "EFFECT",
+        "abilityMeta": {
+          "activation": {
+            "actionType": "free"
+          },
+          "frequency": {
+            "type": "encounter",
+            "max": 1
+          },
+          "targeting": {
+            "type": "self"
+          },
+          "effect": {
+            "type": "healing",
+            "formula": "CHARACTER_LEVEL",
+            "trigger": "whenBelowHalfHealth"
+          }
+        }
+      }
+    },
+    {
+      "id": "species-irrepressible",
+      "type": "talent",
+      "name": "Irrepressible",
+      "system": {
+        "description": "Once per encounter, a Zabrak may ignore the effects of being stunned or dazed for one turn.",
+        "executionModel": "ACTIVE",
+        "subType": "EFFECT",
+        "abilityMeta": {
+          "activation": {
+            "actionType": "free"
+          },
+          "frequency": {
+            "type": "encounter",
+            "max": 1
+          },
+          "targeting": {
+            "type": "self"
+          },
+          "effect": {
+            "type": "custom",
+            "handlerId": "irrepressible_immunity",
+            "description": "Ignore stunned/dazed effects for one turn"
+          }
+        }
+      }
+    },
+    {
+      "id": "species-quey-drain",
+      "type": "talent",
+      "name": "Quey Drain",
+      "system": {
+        "description": "As a standard action, an Anzat may deal 1d6 damage to a helpless living creature and regain hit points equal to the damage dealt.",
+        "executionModel": "ACTIVE",
+        "subType": "EFFECT",
+        "abilityMeta": {
+          "activation": {
+            "actionType": "standard"
+          },
+          "frequency": {
+            "type": "unlimited"
+          },
+          "targeting": {
+            "type": "singleEnemy",
+            "requirement": "helpless",
+            "range": "touch"
+          },
+          "effect": {
+            "type": "drainHeal",
+            "damageType": "unholy",
+            "diceFormula": "1d6",
+            "healAmount": "damageDealt"
+          }
+        }
+      }
+    },
+    {
+      "id": "species-war-cry",
+      "type": "talent",
+      "name": "War Cry",
+      "system": {
+        "description": "As a swift action, an Ikkrukkian may grant allies within 6 squares a +1 bonus on attack rolls until the end of the encounter.",
+        "executionModel": "ACTIVE",
+        "subType": "EFFECT",
+        "abilityMeta": {
+          "activation": {
+            "actionType": "swift"
+          },
+          "frequency": {
+            "type": "unlimited"
+          },
+          "targeting": {
+            "type": "areaEffect",
+            "range": 6,
+            "includesSelf": true,
+            "targetType": "ally",
+            "description": "Caster and allies within 6 squares"
+          },
+          "effect": {
+            "type": "modifierApplication",
+            "modifier": "attack_rolls",
+            "value": 1,
+            "duration": {
+              "type": "encounter"
+            }
+          }
+        }
+      }
+    }
+  ]
+}
