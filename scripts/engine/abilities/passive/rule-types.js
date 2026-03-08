@@ -66,7 +66,15 @@ export const RULE_TYPES = {
    * SCENT
    * Actor has scent ability.
    */
-  SCENT: 'SCENT'
+  SCENT: 'SCENT',
+
+  /**
+   * EXTEND_CRITICAL_RANGE
+   * Extends weapon critical threat range by N for specific proficiency.
+   * Queried by: Attack roll resolvers
+   * Params: { proficiency: string, by: number }
+   */
+  EXTEND_CRITICAL_RANGE: 'EXTEND_CRITICAL_RANGE'
 };
 
 /**
