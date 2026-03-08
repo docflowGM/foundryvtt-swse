@@ -28,6 +28,7 @@ import { DefenseCalculator } from "/systems/foundryvtt-swse/scripts/actors/deriv
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import { DerivedOverrideEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/derived-override-engine.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 import { MutationIntegrityLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/mutation-integrity-layer.js";
 import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 
@@ -257,6 +258,49 @@ export class DerivedCalculator {
           hasOccupationBonus = true;
         }
 
+        // PHASE 4: Get state-dependent modifiers for this skill
+        let stateBonus = 0;
+        try {
+          if (actor?.items) {
+            const skillContext = { skillName: skillKey };
+            for (const item of actor.items) {
+              if (item.system?.executionModel !== 'PASSIVE' || item.system?.subType !== 'STATE') {
+                continue;
+              }
+
+              const meta = item.system?.abilityMeta;
+              if (!meta?.modifiers || !Array.isArray(meta.modifiers)) {
+                continue;
+              }
+
+              // Apply each modifier in the PASSIVE/STATE item
+              for (const modifier of meta.modifiers) {
+                // Check if this modifier applies to skill checks or this specific skill
+                const targets = Array.isArray(modifier.target) ? modifier.target : [modifier.target];
+                const appliesToSkill = targets.some(t =>
+                  t === 'skill' ||
+                  t === `skill.${skillKey}` ||
+                  t === `skill.bonus`
+                );
+
+                if (!appliesToSkill) continue;
+
+                // Evaluate predicates (all must be true)
+                const predicates = modifier.predicates || [];
+                const predicatesMatch = evaluateStatePredicates(actor, predicates, skillContext);
+
+                if (predicatesMatch && modifier.value) {
+                  stateBonus += modifier.value;
+                }
+              }
+            }
+          }
+        } catch (err) {
+          swseLogger.error(`Error evaluating PASSIVE/STATE for skill ${skillKey}:`, err);
+        }
+
+        total += stateBonus;
+
         // Determine if skill can be used untrained
         let canUseUntrained = skillDef.untrained;
         if (isDroid && !skill.trained) {
@@ -273,7 +317,8 @@ export class DerivedCalculator {
           speciesBonus: speciesBonus,
           hasOccupationBonus: hasOccupationBonus,
           canUseUntrained: canUseUntrained,
-          defaultAbility: skillDef.defaultAbility
+          defaultAbility: skillDef.defaultAbility,
+          stateBonus: stateBonus
         };
       }
 
