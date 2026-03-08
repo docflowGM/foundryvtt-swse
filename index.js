@@ -72,6 +72,7 @@ import { FlagRegistry } from './scripts/core/flag-registry.js';
 // ---- core / config ----
 import { SWSE } from './scripts/core/config.js';
 import { registerSystemSettings } from './scripts/core/settings.js';
+import { registerHouseruleSettings } from './scripts/houserules/houserule-settings.js';
 import { initializeUtils } from './scripts/core/utils-init.js';
 import { initializeRolls } from './scripts/core/rolls-init.js';
 import { SentinelEngine } from './scripts/governance/sentinel/sentinel-core.js';
@@ -239,6 +240,7 @@ Hooks.once('init', async () => {
 
   /* ---------- PHASE 1: settings & hooks ---------- */
   registerSystemSettings();
+  registerHouseruleSettings();
   MentorTranslationSettings.registerSettings();
   initializeDiscoverySystem();
 
