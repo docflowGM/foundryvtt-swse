@@ -73,15 +73,21 @@ export class ActionEngine {
 
   /**
    * Check if requested action can be consumed from turn state.
-   * Rules:
-   * - Full-round consumes both standard and move
-   * - Standard consumes standard action
-   * - Move consumes move action
-   * - Swift can be consumed if below max (and degrades if needed)
+   *
+   * DEGRADATION RULES (SWSE Core):
+   * - Standard action: Can degrade to Move → Swift (downward only)
+   * - Move action: Can degrade to Swift (downward only)
+   * - Swift action: Cannot degrade (terminal action)
+   * - Full-round: Requires all actions (Standard + Move + Swift)
+   *
+   * Actions use resources in this order (attempting):
+   * 1. Use the primary action type
+   * 2. If unavailable, degrade to next lower type
+   * 3. Continue down chain until resource found or chain exhausted
    *
    * @param {TurnState} turnState - Current turn state
    * @param {ActionCost} requestedCost - Cost of requested action
-   * @returns {Object} { allowed: boolean, reason: string|null }
+   * @returns {Object} { allowed: boolean, reason: string|null, degraded?: boolean, newCost?: ActionCost }
    */
   static canConsume(turnState, requestedCost) {
     if (!turnState || !requestedCost) {
@@ -92,37 +98,73 @@ export class ActionEngine {
     }
 
     const { standard = 0, move = 0, swift = 0 } = requestedCost;
+    const swiftRemaining = turnState.maxSwiftActions - turnState.swiftActionsUsed;
 
-    // Standard action required but unavailable
-    if (standard > 0 && !turnState.hasStandardAction) {
-      return {
-        allowed: false,
-        reason: 'Standard action unavailable'
-      };
-    }
-
-    // Move action required but unavailable (check if can degrade to swift)
-    if (move > 0 && !turnState.hasMoveAction) {
-      // Can degrade move → swift if swift available
-      const degradedSwiftNeeded = (swift || 0) + 1;
-      if (turnState.swiftActionsUsed + degradedSwiftNeeded > turnState.maxSwiftActions) {
+    // STANDARD ACTION: Standard → Move → Swift degradation chain
+    if (standard > 0) {
+      if (turnState.hasStandardAction) {
+        // Primary: Use Standard
+        // Continue to check Move and Swift below...
+      } else if (turnState.hasMoveAction) {
+        // Degrade to Move
+        return {
+          allowed: true,
+          reason: null,
+          degraded: true,
+          degradedFrom: 'standard→move',
+          newCost: { standard: 0, move: standard, swift }
+        };
+      } else if (swiftRemaining >= standard) {
+        // Degrade to Swift (last resort)
+        return {
+          allowed: true,
+          reason: null,
+          degraded: true,
+          degradedFrom: 'standard→move→swift',
+          newCost: { standard: 0, move: 0, swift: swift + standard }
+        };
+      } else {
         return {
           allowed: false,
-          reason: 'Move action unavailable and cannot degrade to swift (out of swift actions)'
+          reason: 'Standard action unavailable (no degradation path available)'
         };
       }
-      // Degradation possible, allowed
-      return { allowed: true, reason: null, degraded: true, newCost: { standard, move: 0, swift: degradedSwiftNeeded } };
     }
 
-    // Swift actions
-    if (swift > 0 && turnState.swiftActionsUsed + swift > turnState.maxSwiftActions) {
-      return {
-        allowed: false,
-        reason: `Swift action limit exceeded (${turnState.swiftActionsUsed}/${turnState.maxSwiftActions} used)`
-      };
+    // MOVE ACTION: Move → Swift degradation chain
+    if (move > 0) {
+      if (turnState.hasMoveAction) {
+        // Primary: Use Move
+        // Continue to check Swift below...
+      } else if (swiftRemaining >= move) {
+        // Degrade to Swift
+        return {
+          allowed: true,
+          reason: null,
+          degraded: true,
+          degradedFrom: 'move→swift',
+          newCost: { standard: 0, move: 0, swift: swift + move }
+        };
+      } else {
+        return {
+          allowed: false,
+          reason: 'Move action unavailable and insufficient swift actions for degradation'
+        };
+      }
     }
 
+    // SWIFT ACTION: No degradation possible
+    if (swift > 0) {
+      if (turnState.swiftActionsUsed + swift > turnState.maxSwiftActions) {
+        return {
+          allowed: false,
+          reason: `Insufficient swift actions (${turnState.swiftActionsUsed}/${turnState.maxSwiftActions} used, need ${swift} more)`
+        };
+      }
+      // Swift available
+    }
+
+    // All checks passed
     return { allowed: true, reason: null };
   }
 
@@ -157,12 +199,12 @@ export class ActionEngine {
       standard: { standard: 1, move: 0, swift: 0 },
       move: { standard: 0, move: 1, swift: 0 },
       swift: { standard: 0, move: 0, swift: 1 },
-      full: { standard: 1, move: 1, swift: 0 }
+      full: { standard: 1, move: 1, swift: 0 }  // Full-round uses Standard + Move (Swift still available)
     };
 
     const requestedCost = cost || costMap[actionType] || costMap.standard;
 
-    // Check if action can be consumed
+    // Check if action can be consumed (includes degradation check)
     const canCheck = this.canConsume(turnState, requestedCost);
 
     if (!canCheck.allowed) {
@@ -180,16 +222,17 @@ export class ActionEngine {
       actionsUsed: [...turnState.actionsUsed]
     };
 
+    // Use the cost (either original or degraded)
     const finalCost = canCheck.degraded ? canCheck.newCost : requestedCost;
-    let degradedAction = null;
+    const degradedAction = canCheck.degradedFrom || null;
 
-    // Apply cost to updated state
+    // Apply Standard action cost
     if (finalCost.standard > 0) {
       if (updated.hasStandardAction) {
         updated.hasStandardAction = false;
         updated.actionsUsed.push('standard');
       } else {
-        // Should have been caught in canConsume, but defensive
+        // Should have been caught by canConsume, defensive check
         return {
           allowed: false,
           updatedTurnState: turnState,
@@ -199,15 +242,13 @@ export class ActionEngine {
       }
     }
 
+    // Apply Move action cost
     if (finalCost.move > 0) {
       if (updated.hasMoveAction) {
         updated.hasMoveAction = false;
         updated.actionsUsed.push('move');
-      } else if (finalCost.swift < requestedCost.swift + 1) {
-        // Degrade move to swift
-        degradedAction = 'move→swift';
-        finalCost.swift = (finalCost.swift || 0) + 1;
       } else {
+        // Should have been caught by canConsume, defensive check
         return {
           allowed: false,
           updatedTurnState: turnState,
@@ -217,11 +258,13 @@ export class ActionEngine {
       }
     }
 
+    // Apply Swift action cost
     if (finalCost.swift > 0) {
       if (updated.swiftActionsUsed + finalCost.swift <= updated.maxSwiftActions) {
         updated.swiftActionsUsed += finalCost.swift;
         updated.actionsUsed.push(`swift×${finalCost.swift}`);
       } else {
+        // Should have been caught by canConsume, defensive check
         return {
           allowed: false,
           updatedTurnState: turnState,
@@ -235,7 +278,7 @@ export class ActionEngine {
       allowed: true,
       updatedTurnState: updated,
       reason: null,
-      degradedAction: degradedAction,
+      degradedAction: degradedAction,  // Now includes degradedFrom path
       consumedCost: finalCost
     };
   }
