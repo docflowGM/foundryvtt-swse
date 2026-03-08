@@ -193,19 +193,116 @@ export class ActiveAdapter {
    * Handle MODE subtype - Toggle stances/modes with persistent effects.
    *
    * Pipeline:
-   * 1. Check if mode is already active
-   * 2. If active: deactivate, remove persistent effect
-   * 3. If inactive: check exclusive group, deactivate other modes in group, activate this one, apply effect
-   * 4. Validate action cost if activating
-   * 5. Record activation if applicable
-   * 6. Update UI state
+   * 1. Check if mode is currently active
+   * 2. If DEACTIVATING: remove persistent effect, update state
+   * 3. If ACTIVATING:
+   *    a. Check exclusive group constraints
+   *    b. Deactivate other modes in same group (if any)
+   *    c. Validate action cost (swift/standard only)
+   *    d. Apply persistent effect
+   *    e. Update state to active
+   * 4. Record activation if applicable (usually free/no limit for toggle)
+   * 5. Post result to chat
    *
    * @param {Object} actor - Activating actor
    * @param {Object} ability - ACTIVE/MODE ability item
    * @returns {Promise<Object>} Result { success, reason, newState }
    */
   static async handleMode(actor, ability) {
-    // TODO: implement MODE logic (Phase 3)
+    try {
+      const meta = ability.system?.abilityMeta;
+      const activation = meta?.activation;
+      const mode = meta?.mode;
+      const persistentEffect = meta?.persistentEffect;
+
+      // Get current mode state from item flags
+      const isActive = ability.getFlag?.('swse', 'modeActive') ?? false;
+
+      // ─── 1. DEACTIVATION PATH ───────────────────────────────────────────────
+      if (isActive) {
+        // Remove persistent effect
+        if (persistentEffect) {
+          // TODO: Remove modifier via ModifierEngine (Phase 4)
+        }
+
+        // Deactivate the mode
+        await ability.setFlag('swse', 'modeActive', false);
+
+        await SWSEChat.postMessage({
+          flavor: `◯ ${ability.name}`,
+          content: `**${ability.name}** deactivated`,
+          actor
+        });
+
+        SWSELogger.log(`[ActiveAdapter] MODE deactivated: ${ability.name}`);
+        return { success: true, reason: 'Deactivated', newState: false };
+      }
+
+      // ─── 2. ACTIVATION PATH ─────────────────────────────────────────────────
+
+      // 2a. Check exclusive group
+      if (mode?.exclusiveGroup) {
+        const otherModes = actor.items.filter(item =>
+          item.system?.executionModel === 'ACTIVE' &&
+          item.system?.subType === 'MODE' &&
+          item.system?.abilityMeta?.mode?.exclusiveGroup === mode.exclusiveGroup &&
+          item.id !== ability.id
+        );
+
+        // 2b. Deactivate other modes in same group
+        for (const otherMode of otherModes) {
+          if (otherMode.getFlag?.('swse', 'modeActive')) {
+            await otherMode.setFlag('swse', 'modeActive', false);
+            // TODO: Remove persistent effect from other mode (Phase 4)
+            SWSELogger.log(`[ActiveAdapter] Deactivated conflicting MODE: ${otherMode.name}`);
+          }
+        }
+      }
+
+      // 2c. Validate action cost
+      if (activation?.actionType && actor.system?.combat?.actionState) {
+        const currentTurn = actor.system.combat.actionState;
+        const actionCost = this._mapActionType(activation.actionType);
+        const check = ActionEngine.previewConsume(currentTurn, actionCost);
+
+        if (!check.allowed) {
+          const reason = `Insufficient ${activation.actionType} action available`;
+          SWSELogger.log(`[ActiveAdapter] MODE blocked (action economy): ${ability.name}`);
+          await SWSEChat.postMessage({
+            flavor: `❌ ${ability.name}`,
+            content: reason,
+            actor
+          });
+          return { success: false, reason };
+        }
+
+        // Actually consume the action
+        await ActorEngine.updateActor(actor, {
+          'system.combat.actionState': check.turnState
+        });
+      }
+
+      // 2d. Apply persistent effect
+      if (persistentEffect) {
+        // TODO: Apply modifier via ModifierEngine (Phase 4)
+      }
+
+      // 2e. Activate the mode
+      await ability.setFlag('swse', 'modeActive', true);
+
+      await SWSEChat.postMessage({
+        flavor: `● ${ability.name}`,
+        content: `**${ability.name}** activated`,
+        actor
+      });
+
+      SWSELogger.log(`[ActiveAdapter] MODE activated: ${ability.name}`);
+      return { success: true, reason: 'Activated', newState: true };
+
+    } catch (err) {
+      SWSELogger.error(`[ActiveAdapter] MODE error for ${ability.name}:`, err);
+      return { success: false, reason: `Error: ${err.message}` };
+    }
   }
 
   /**
