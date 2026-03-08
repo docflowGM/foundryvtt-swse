@@ -21,7 +21,7 @@ const { HandlebarsApplicationMixin } = foundry.applications.api;
 export class SWSEV2CharacterSheet extends
   HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
 
-  static get defaultTemplate() {
+  get template() {
     return "systems/foundryvtt-swse/templates/actors/character/v2/character-sheet.hbs";
   }
 
