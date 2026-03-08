@@ -186,7 +186,7 @@ export class CharacterSheetIntegrationTestHarness {
       };
 
       // Small update
-      await this.actor.setFlag('swse', '_testPositionStable', true);
+      await this.actor.setFlag('foundryvtt-swse', '_testPositionStable', true);
 
       const after = {
         left: this.actor.sheet.position.left,
@@ -194,7 +194,7 @@ export class CharacterSheetIntegrationTestHarness {
       };
 
       // Clean up
-      await this.actor.unsetFlag('swse', '_testPositionStable');
+      await this.actor.unsetFlag('foundryvtt-swse', '_testPositionStable');
 
       if (before.left === after.left && before.top === after.top) {
         this.results.pass.push(testName);

@@ -228,7 +228,7 @@ export class ActiveAdapter {
         }
 
         // Deactivate the mode
-        await ability.setFlag('swse', 'modeActive', false);
+        await ability.setFlag('foundryvtt-swse', 'modeActive', false);
 
         await SWSEChat.postMessage({
           flavor: `◯ ${ability.name}`,
@@ -254,7 +254,7 @@ export class ActiveAdapter {
         // 2b. Deactivate other modes in same group
         for (const otherMode of otherModes) {
           if (otherMode.getFlag?.('swse', 'modeActive')) {
-            await otherMode.setFlag('swse', 'modeActive', false);
+            await otherMode.setFlag('foundryvtt-swse', 'modeActive', false);
             // TODO: Remove persistent effect from other mode (Phase 4)
             SWSELogger.log(`[ActiveAdapter] Deactivated conflicting MODE: ${otherMode.name}`);
           }
@@ -290,7 +290,7 @@ export class ActiveAdapter {
       }
 
       // 2e. Activate the mode
-      await ability.setFlag('swse', 'modeActive', true);
+      await ability.setFlag('foundryvtt-swse', 'modeActive', true);
 
       await SWSEChat.postMessage({
         flavor: `● ${ability.name}`,

@@ -15,7 +15,7 @@ import { ActionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/act
 export class ActionEconomyPersistence {
   // Flag storage key
   static FLAG_KEY = "actionEconomy";
-  static SCOPE = "swse";
+  static SCOPE = "foundryvtt-swse";
 
   /**
    * Get current turn state for an actor in a combat
@@ -26,16 +26,11 @@ export class ActionEconomyPersistence {
   static getTurnState(actor, combatId) {
     if (!actor) return ActionEngine.startTurn();
 
-    try {
-      const flag = actor.getFlag(this.SCOPE, this.FLAG_KEY);
+    const flag = actor.getFlag(this.SCOPE, this.FLAG_KEY);
 
-      // If flag exists and matches current combat, return it
-      if (flag && flag.combatId === combatId) {
-        return flag.turnState;
-      }
-    } catch (error) {
-      // Flag scope may not be valid for this actor or system
-      console.debug(`[SWSE] Could not access flag scope "${this.SCOPE}":`, error.message);
+    // If flag exists and matches current combat, return it
+    if (flag && flag.combatId === combatId) {
+      return flag.turnState;
     }
 
     // Otherwise, return fresh turn state

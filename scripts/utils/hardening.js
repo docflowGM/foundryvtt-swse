@@ -13,7 +13,7 @@
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
-const SYSTEM_SCOPE_COMPAT = 'swse';
+const SYSTEM_SCOPE_COMPAT = 'foundryvtt-swse';
 const FLAG_SNAPSHOT = 'npcLevelUp.snapshot';
 const FLAG_MODE = 'npcLevelUp.mode';
 const FLAG_TRACK = 'npcLevelUp.track';

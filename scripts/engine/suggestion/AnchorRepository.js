@@ -125,13 +125,13 @@ export class AnchorRepository {
       const updatedAnchor = { ...anchor, ...updates };
 
       // Store through SuggestionStateService
-      const currentState = actor.getFlag('swse', 'suggestionEngine') || {};
+      const currentState = actor.getFlag('foundryvtt-swse', 'suggestionEngine') || {};
       if (!currentState.anchors) {
         currentState.anchors = actor.system.suggestionEngine.anchors;
       }
       currentState.anchors[position] = updatedAnchor;
 
-      await actor.setFlag('swse', 'suggestionEngine', currentState);
+      await actor.setFlag('foundryvtt-swse', 'suggestionEngine', currentState);
 
       // Also update in-memory state for consistency
       if (actor.system.suggestionEngine.anchors) {
@@ -227,12 +227,12 @@ export class AnchorRepository {
       });
 
       // Update through SuggestionStateService
-      const currentState = actor.getFlag('swse', 'suggestionEngine') || {};
+      const currentState = actor.getFlag('foundryvtt-swse', 'suggestionEngine') || {};
       if (!currentState.anchors) {
         currentState.anchors = actor.system.suggestionEngine.anchors;
       }
 
-      await actor.setFlag('swse', 'suggestionEngine', currentState);
+      await actor.setFlag('foundryvtt-swse', 'suggestionEngine', currentState);
 
       SWSELogger.log(`[AnchorRepository] Anchor history recorded`, {
         actor: actor.name,
