@@ -259,6 +259,50 @@ export class ActionEngine {
       ].filter(Boolean).join(', ') || 'No actions remaining'
     };
   }
+
+  /**
+   * Get visual state for UI indicator.
+   * Maps turn state to visual representations (available/used/degraded).
+   *
+   * @param {TurnState} turnState - Turn state to visualize
+   * @returns {Object} { full, standard, move, swift }
+   */
+  static getVisualState(turnState) {
+    const full = (!turnState.hasStandardAction && !turnState.hasMoveAction) ? 'used' : 'available';
+    const standard = turnState.hasStandardAction ? 'available' : 'used';
+    const move = turnState.hasMoveAction ? 'available' : (turnState.swiftActionsUsed > 0 ? 'degraded' : 'used');
+    const swift = turnState.swiftActionsUsed >= turnState.maxSwiftActions ? 'used' : 'available';
+
+    return { full, standard, move, swift };
+  }
+
+  /**
+   * Get detailed breakdown for tooltip.
+   * Shows what actions were used and how they degraded.
+   *
+   * @param {TurnState} turnState - Turn state to explain
+   * @returns {Array<string>} Tooltip lines explaining the state
+   */
+  static getTooltipBreakdown(turnState) {
+    const lines = [];
+
+    if (!turnState.hasStandardAction) {
+      lines.push('Standard action used.');
+    }
+    if (!turnState.hasMoveAction) {
+      lines.push('Move action used or degraded.');
+    }
+    if (turnState.swiftActionsUsed > 0) {
+      lines.push(`Swift actions: ${turnState.swiftActionsUsed}/${turnState.maxSwiftActions} used.`);
+      if (turnState.swiftActionsUsed < turnState.maxSwiftActions) {
+        lines.push(`${turnState.maxSwiftActions - turnState.swiftActionsUsed} swift actions remaining.`);
+      }
+    } else if (turnState.maxSwiftActions > 0) {
+      lines.push(`Swift actions: ${turnState.maxSwiftActions} remaining.`);
+    }
+
+    return lines.length > 0 ? lines : ['No actions used this turn.'];
+  }
 }
 
 export default ActionEngine;

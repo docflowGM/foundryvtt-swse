@@ -1,0 +1,51 @@
+{{!-- Action Economy Indicator
+     Displays current turn state with visual hierarchy of actions
+     States: available (green), used (red), degraded (orange)
+--}}
+
+<div class="swse-action-economy-indicator">
+  <div class="indicator-label">Action Economy</div>
+
+  <div class="action-hierarchy">
+    {{!-- Full Round Row --}}
+    <div class="action-node action-state-{{actionState.full}}"
+         title="Full Round (both Standard and Move actions)">
+      <span class="action-name">Full Round</span>
+      <span class="action-status">{{actionState.full}}</span>
+    </div>
+
+    <div class="hierarchy-arrow">↓</div>
+
+    {{!-- Standard Action Row --}}
+    <div class="action-node action-state-{{actionState.standard}}"
+         title="Standard Action (one attack, one-turn feat, etc.)">
+      <span class="action-name">Standard</span>
+      <span class="action-status">{{actionState.standard}}</span>
+    </div>
+
+    <div class="hierarchy-arrow">↓</div>
+
+    {{!-- Move Action Row --}}
+    <div class="action-node action-state-{{actionState.move}}"
+         title="Move Action (move, draw weapon, etc.)">
+      <span class="action-name">Move</span>
+      <span class="action-status">{{actionState.move}}</span>
+    </div>
+
+    <div class="hierarchy-arrow">↓</div>
+
+    {{!-- Swift Action Row --}}
+    <div class="action-node action-state-{{actionState.swift}}"
+         title="Swift Actions (up to {{swiftMax}}/turn)">
+      <span class="action-name">Swift</span>
+      <span class="action-status">{{actionState.swift}}</span>
+    </div>
+  </div>
+
+  {{!-- Tooltip/Breakdown --}}
+  <div class="action-breakdown">
+    {{#each actionBreakdown}}
+      <div class="breakdown-line">{{this}}</div>
+    {{/each}}
+  </div>
+</div>

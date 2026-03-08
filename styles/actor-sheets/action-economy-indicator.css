@@ -1,0 +1,192 @@
+/**
+ * Action Economy Indicator Styles
+ * SWSE V2 Combat Panel — Action Economy Visualization
+ *
+ * Display states: available (green), used (red), degraded (orange)
+ * Namespaced with .swse-* for full CSS isolation
+ */
+
+/* ============================================================================
+   CONTAINER
+   ============================================================================ */
+
+.swse-action-economy-indicator {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.indicator-label {
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.5px;
+}
+
+/* ============================================================================
+   ACTION HIERARCHY STACK
+   ============================================================================ */
+
+.action-hierarchy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: stretch;
+}
+
+/* ============================================================================
+   ACTION NODES
+   ============================================================================ */
+
+.action-node {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* STATE: Available (Green) */
+.action-node.action-state-available {
+  background: rgba(76, 175, 80, 0.3);
+  color: #4caf50;
+  border-color: rgba(76, 175, 80, 0.5);
+  box-shadow: inset 0 0 8px rgba(76, 175, 80, 0.2);
+}
+
+.action-node.action-state-available:hover {
+  background: rgba(76, 175, 80, 0.4);
+  box-shadow: inset 0 0 12px rgba(76, 175, 80, 0.3);
+}
+
+/* STATE: Used (Red) */
+.action-node.action-state-used {
+  background: rgba(244, 67, 54, 0.3);
+  color: #f44336;
+  border-color: rgba(244, 67, 54, 0.5);
+  opacity: 0.7;
+}
+
+.action-node.action-state-used:hover {
+  background: rgba(244, 67, 54, 0.4);
+  opacity: 0.85;
+}
+
+/* STATE: Degraded (Orange) */
+.action-node.action-state-degraded {
+  background: rgba(255, 152, 0, 0.3);
+  color: #ff9800;
+  border-color: rgba(255, 152, 0, 0.5);
+  box-shadow: inset 0 0 8px rgba(255, 152, 0, 0.15);
+}
+
+.action-node.action-state-degraded:hover {
+  background: rgba(255, 152, 0, 0.4);
+  box-shadow: inset 0 0 12px rgba(255, 152, 0, 0.25);
+}
+
+/* ============================================================================
+   ACTION NODE LAYOUT
+   ============================================================================ */
+
+.action-node .action-name {
+  flex: 1;
+  text-align: left;
+}
+
+.action-node .action-status {
+  font-size: 11px;
+  opacity: 0.8;
+  text-transform: capitalize;
+  min-width: 60px;
+  text-align: right;
+}
+
+/* ============================================================================
+   HIERARCHY ARROWS
+   ============================================================================ */
+
+.hierarchy-arrow {
+  text-align: center;
+  opacity: 0.5;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.5);
+  height: 4px;
+  line-height: 1;
+}
+
+/* ============================================================================
+   ACTION BREAKDOWN (TOOLTIP TEXT)
+   ============================================================================ */
+
+.action-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  border-left: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.breakdown-line {
+  line-height: 1.4;
+  padding-left: 4px;
+}
+
+.breakdown-line::before {
+  content: "• ";
+  color: rgba(255, 255, 255, 0.4);
+  margin-right: 4px;
+}
+
+/* ============================================================================
+   RESPONSIVE SIZING
+   ============================================================================ */
+
+@media (max-width: 600px) {
+  .swse-action-economy-indicator {
+    padding: 10px;
+    gap: 6px;
+  }
+
+  .action-node {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
+  .indicator-label {
+    font-size: 11px;
+  }
+
+  .action-breakdown {
+    font-size: 10px;
+  }
+}
+
+/* ============================================================================
+   DARK THEME ADJUSTMENTS
+   ============================================================================ */
+
+.theme-dark .swse-action-economy-indicator {
+  background: rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.theme-dark .action-breakdown {
+  background: rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 255, 255, 0.15);
+}
