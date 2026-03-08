@@ -8,6 +8,8 @@
  * - ACTIVE execution model registration
  * - ATTACK_OPTION execution model registration
  * - UNLOCK execution model registration
+ * - PROGRESSION execution model registration
+ * - FORCE_POWER execution model registration
  */
 
 import { PassiveAdapter } from "./passive/passive-adapter.js";
