@@ -87,9 +87,8 @@ export class WeaponsEngine {
     const critPayload = { actor, weapon, target, context };
     result = CombatRulesRegistry.executeRules(RuleCategories.CRITICAL, critPayload, result);
 
-    // Get reach/range (can be made a rule later)
-    const reach = this._validateReach(actor, weapon, target, context);
-    result.reach = reach;
+    // Reach/range validation is now handled by reachRule in the ATTACK category
+    // (executes early via registry with priority 5)
 
     // Diagnostics
     if (telemetry) {
@@ -210,16 +209,8 @@ export class WeaponsEngine {
     };
   }
 
-  static _validateReach(actor, weapon, target, context) {
-    // TODO: Implement full reach/range checking
-    return {
-      inReach: true,
-      distance: context.distance ?? null,
-      maxReach: null
-    };
-  }
-
-  // Diagnostics now come from rules themselves via registry.executeRules()
+  // Reach/range validation is now handled by reachRule via registry.executeRules()
+  // Diagnostics come from rules themselves via registry.executeRules()
   // Rules add to result.diagnostics.rulesTriggered as they execute
 }
 

@@ -22,12 +22,18 @@ import { criticalConfirmBonusRule } from "/systems/foundryvtt-swse/scripts/engin
 import { damageRule } from "/systems/foundryvtt-swse/scripts/engine/rules/modules/core/damage-rule.js";
 import { strengthToDamageRule } from "/systems/foundryvtt-swse/scripts/engine/rules/modules/core/strength-to-damage-rule.js";
 
+// Validation rules
+import { reachRule } from "/systems/foundryvtt-swse/scripts/engine/rules/modules/core/reach-rule.js";
+
 /**
  * Bootstrap core rules.
  * Call this during system initialization to register core rules.
  */
 export function initializeCoreRules() {
   const coreRules = [
+    // Validation rules (priority 5 - very early)
+    reachRule,
+
     // Attack rules (in priority order)
     baseAttackBonusRule,
     proficiencyRule,
