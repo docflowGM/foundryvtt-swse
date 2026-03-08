@@ -118,7 +118,7 @@ export class ActionEconomyIntegration {
    * In template:
    * {{> combat/action-economy-display actionState=actionEconomy.state breakdown=actionEconomy.breakdown}}
    */
-  static getContextData(actor) {
+  static async getContextData(actor) {
     const combatId = game.combat?.id;
     const { ActionEconomyPersistence } = await import(
       "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-persistence.js"
