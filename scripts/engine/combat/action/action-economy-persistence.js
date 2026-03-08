@@ -3,7 +3,7 @@
  *
  * Manages where turn state lives and when it resets.
  *
- * Storage: actor.flags.swse.actionEconomy
+ * Storage: actor.flags.foundryvtt-swse.actionEconomy
  * Scope: Per actor per combat (survives rerenders, syncs across clients)
  * Reset: On combatant.turn hook (automatic, deterministic)
  *
