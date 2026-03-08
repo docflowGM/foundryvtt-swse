@@ -294,6 +294,13 @@ Hooks.once('ready', async () => {
     runJsonBackedIdsMigration()
   ]);
 
+  /* ---------- Combat Rules System ---------- */
+  // Initialize core and talent rules for combat resolution
+  const { initializeCoreRules } = await import('./scripts/engine/rules/modules/core/index.js');
+  const { default: initializeTalentRules } = await import('./scripts/engine/rules/modules/talents/index.js');
+  initializeCoreRules();
+  initializeTalentRules();
+
   await SystemInitHooks.onSystemReady();
 
   initializeForcePowerHooks();

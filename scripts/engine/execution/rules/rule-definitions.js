@@ -225,6 +225,16 @@ export const RULE_DEFINITIONS = Object.freeze({
     description: "Adds bonus to critical hit confirmation rolls for specific proficiency",
     required: ["proficiency", "bonus"]
   },
+
+  // === WEAPON SPECIALIZATION & BONUSES ===
+  [RULES.WEAPON_SPECIALIZATION]: {
+    params: {
+      proficiency: "string",
+      bonus: "number"
+    },
+    description: "Adds flat damage bonus for weapon specialization (proficiency-gated)",
+    required: ["proficiency", "bonus"]
+  },
 });
 
 /**

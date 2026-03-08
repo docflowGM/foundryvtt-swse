@@ -98,7 +98,15 @@ export const RULE_TYPES = {
    * Queried by: Critical confirmation resolver
    * Params: { proficiency: string, bonus: number }
    */
-  CRITICAL_CONFIRM_BONUS: 'CRITICAL_CONFIRM_BONUS'
+  CRITICAL_CONFIRM_BONUS: 'CRITICAL_CONFIRM_BONUS',
+
+  /**
+   * WEAPON_SPECIALIZATION
+   * Adds flat damage bonus for weapon specialization.
+   * Queried by: Damage resolution (base damage calculation)
+   * Params: { proficiency: string, bonus: number }
+   */
+  WEAPON_SPECIALIZATION: 'WEAPON_SPECIALIZATION'
 };
 
 /**
