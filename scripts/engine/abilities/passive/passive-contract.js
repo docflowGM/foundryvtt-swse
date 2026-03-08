@@ -14,7 +14,7 @@ export class PassiveContractValidator {
    * Master validation entry point.
    * Validates ability structure and delegates to subtype-specific validators.
    *
-   * PHASE 4: Support MODIFIER, DERIVED_OVERRIDE, and RULE subtypes.
+   * PHASE 4: Support MODIFIER, DERIVED_OVERRIDE, RULE, and STATE subtypes.
    *
    * @param {Object} ability - The ability item
    * @returns {boolean}
@@ -27,17 +27,19 @@ export class PassiveContractValidator {
     if (ability.system?.executionModel !== "PASSIVE") return false;
     if (!subType) throw new Error(`PASSIVE ability ${ability.name} missing subType`);
 
-    // PHASE 4: Support MODIFIER, DERIVED_OVERRIDE, and RULE
+    // PHASE 4: Support MODIFIER, DERIVED_OVERRIDE, RULE, and STATE
     if (subType === PASSIVE_SUBTYPES.MODIFIER) {
       return this.validateModifier(meta);
     } else if (subType === 'DERIVED_OVERRIDE') {
       return this.validateDerivedOverride(meta);
     } else if (subType === 'RULE') {
       return this.validateRule(meta);
+    } else if (subType === PASSIVE_SUBTYPES.STATE) {
+      return this.validateState(meta);
     } else {
       throw new Error(
         `PASSIVE ${subType} not supported in Phase 4. ` +
-        `Supported: MODIFIER, DERIVED_OVERRIDE, RULE. Got: ${subType} on ${ability.name}`
+        `Supported: MODIFIER, DERIVED_OVERRIDE, RULE, STATE. Got: ${subType} on ${ability.name}`
       );
     }
   }
@@ -152,6 +154,123 @@ export class PassiveContractValidator {
    */
   static validateRule(meta) {
     if (!meta?.rule) throw new Error("PASSIVE RULE missing rule block");
+    return true;
+  }
+
+  /**
+   * Validate STATE subtype structure.
+   * PHASE 4: State-dependent predicates
+   *
+   * Requires modifiers array with predicates.
+   * Each modifier must have:
+   * - target (string): What stat/defense this applies to
+   * - value (number): The modifier amount
+   * - predicates (array): List of predicate names that must all be true
+   *
+   * @param {Object} meta
+   * @returns {boolean}
+   * @throws {Error}
+   */
+  static validateState(meta) {
+    if (!meta?.modifiers) {
+      throw new Error("PASSIVE STATE missing modifiers array");
+    }
+
+    if (!Array.isArray(meta.modifiers)) {
+      throw new Error("PASSIVE STATE modifiers must be an array");
+    }
+
+    // Import predicate library to validate predicate names
+    // Dynamic import to avoid circular dependencies
+    const validateStateModifiers = async () => {
+      try {
+        const { isValidPredicate } = await import('./passive-state.js');
+
+        for (const modifier of meta.modifiers) {
+          if (!modifier || typeof modifier !== 'object') {
+            throw new Error("PASSIVE STATE modifier is not an object");
+          }
+
+          // Validate target
+          if (!modifier.target || typeof modifier.target !== 'string') {
+            throw new Error(
+              "PASSIVE STATE modifier missing required 'target' field"
+            );
+          }
+
+          // Validate value
+          if (typeof modifier.value !== 'number') {
+            throw new Error(
+              `PASSIVE STATE modifier missing numeric 'value' field on target ${modifier.target}`
+            );
+          }
+
+          // Validate predicates array
+          if (modifier.predicates) {
+            if (!Array.isArray(modifier.predicates)) {
+              throw new Error(
+                `PASSIVE STATE modifier predicates must be an array on target ${modifier.target}`
+              );
+            }
+
+            for (const predicate of modifier.predicates) {
+              if (typeof predicate !== 'string') {
+                throw new Error(
+                  `PASSIVE STATE modifier predicate must be string on target ${modifier.target}`
+                );
+              }
+
+              if (!isValidPredicate(predicate)) {
+                throw new Error(
+                  `PASSIVE STATE modifier unknown predicate '${predicate}' on target ${modifier.target}`
+                );
+              }
+            }
+          }
+        }
+
+        return true;
+      } catch (err) {
+        throw err;
+      }
+    };
+
+    // For synchronous validation, we do basic checks
+    // Full predicate validation happens at runtime
+    for (const modifier of meta.modifiers) {
+      if (!modifier || typeof modifier !== 'object') {
+        throw new Error("PASSIVE STATE modifier is not an object");
+      }
+
+      if (!modifier.target || typeof modifier.target !== 'string') {
+        throw new Error(
+          "PASSIVE STATE modifier missing required 'target' field"
+        );
+      }
+
+      if (typeof modifier.value !== 'number') {
+        throw new Error(
+          `PASSIVE STATE modifier missing numeric 'value' field on target ${modifier.target}`
+        );
+      }
+
+      if (modifier.predicates) {
+        if (!Array.isArray(modifier.predicates)) {
+          throw new Error(
+            `PASSIVE STATE modifier predicates must be an array on target ${modifier.target}`
+          );
+        }
+
+        for (const predicate of modifier.predicates) {
+          if (typeof predicate !== 'string') {
+            throw new Error(
+              `PASSIVE STATE modifier predicate must be string on target ${modifier.target}`
+            );
+          }
+        }
+      }
+    }
+
     return true;
   }
 
