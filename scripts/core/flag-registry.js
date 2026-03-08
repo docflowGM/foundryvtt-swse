@@ -1,9 +1,10 @@
 /**
  * FlagRegistry — Centralized flag scope registration
  *
- * Ensures all document classes have the 'swse' flag scope registered
+ * Ensures all document classes have the system flag scope registered
  * during the 'init' hook, preventing flag access errors in render paths.
  *
+ * Uses game.system.id to remain rename-safe and fork-safe.
  * No side effects. Idempotent. Pure metadata registration.
  */
 
@@ -26,12 +27,14 @@ export class FlagRegistry {
   }
 
   static initialize() {
-    // Register 'swse' scope on CONFIG for all document types
-    this.registerScope("Actor", "swse");
-    this.registerScope("Item", "swse");
-    this.registerScope("ChatMessage", "swse");
-    this.registerScope("Combat", "swse");
-    this.registerScope("Scene", "swse");
+    // Register system scope on CONFIG for all document types
+    // Uses game.system.id to handle system renames gracefully
+    const systemId = game.system.id;
+    this.registerScope("Actor", systemId);
+    this.registerScope("Item", systemId);
+    this.registerScope("ChatMessage", systemId);
+    this.registerScope("Combat", systemId);
+    this.registerScope("Scene", systemId);
   }
 }
 
