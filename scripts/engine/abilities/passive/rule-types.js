@@ -74,7 +74,15 @@ export const RULE_TYPES = {
    * Queried by: Attack roll resolvers
    * Params: { proficiency: string, by: number }
    */
-  EXTEND_CRITICAL_RANGE: 'EXTEND_CRITICAL_RANGE'
+  EXTEND_CRITICAL_RANGE: 'EXTEND_CRITICAL_RANGE',
+
+  /**
+   * CRITICAL_DAMAGE_BONUS
+   * Adds bonus damage when scoring a critical hit.
+   * Queried by: Damage resolution (on confirmed critical)
+   * Params: { proficiency: string, bonus: string|number }
+   */
+  CRITICAL_DAMAGE_BONUS: 'CRITICAL_DAMAGE_BONUS'
 };
 
 /**

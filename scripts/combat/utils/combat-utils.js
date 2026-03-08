@@ -115,6 +115,31 @@ export function getEffectiveCritRange(actor, weapon) {
   return Math.max(2, baseCritRange - bonus);
 }
 
+/**
+ * Get critical damage bonus formula from CRITICAL_DAMAGE_BONUS rules
+ * @param {Actor} actor - The attacking actor
+ * @param {Item} weapon - The weapon being used
+ * @returns {string} Bonus formula (e.g., "1d6" or "+2") to add to damage, or empty string
+ */
+export function getCriticalDamageBonus(actor, weapon) {
+  if (!actor || !weapon) return '';
+
+  const ctx = new ResolutionContext(actor);
+  const critBonusRules = ctx.getRuleInstances(RULES.CRITICAL_DAMAGE_BONUS);
+
+  const bonuses = [];
+  const weaponProf = weapon.system?.proficiency;
+
+  for (const rule of critBonusRules) {
+    if (rule.proficiency === weaponProf && rule.bonus) {
+      bonuses.push(String(rule.bonus));
+    }
+  }
+
+  // Join multiple bonuses with +
+  return bonuses.length > 0 ? bonuses.join(' + ') : '';
+}
+
 /* -------------------------------------------------------------------------- */
 /* DAMAGE BONUS CALCULATION                                                    */
 /* -------------------------------------------------------------------------- */

@@ -192,7 +192,7 @@ export const RULE_DEFINITIONS = Object.freeze({
     description: "Actor gains improved evasion (half damage even on failed Reflex save)"
   },
 
-  // === CRITICAL RANGE EXTENSION ===
+  // === CRITICAL MECHANICS ===
   [RULES.EXTEND_CRITICAL_RANGE]: {
     params: {
       proficiency: "string",
@@ -200,6 +200,14 @@ export const RULE_DEFINITIONS = Object.freeze({
     },
     description: "Extends weapon critical threat range by N for specific proficiency",
     required: ["proficiency", "by"]
+  },
+  [RULES.CRITICAL_DAMAGE_BONUS]: {
+    params: {
+      proficiency: "string",
+      bonus: "string|number"
+    },
+    description: "Adds bonus damage when scoring a critical hit (proficiency-gated)",
+    required: ["proficiency", "bonus"]
   },
 });
 
