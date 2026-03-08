@@ -13,6 +13,8 @@ import { MentorNotesApp } from "/systems/foundryvtt-swse/scripts/apps/mentor-not
 import { CombatExecutor } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-executor.js";
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
 import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animation-engine.js";
+import { ActionEconomyIntegration } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-integration.js";
+import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-bindings.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -48,6 +50,9 @@ export class SWSEV2CharacterSheet extends
   async _onRender(context, options) {
     await super._onRender(context, options);
     this.activateListeners(this.element);
+
+    // Wire action economy bindings for combat tab
+    ActionEconomyBindings.setupAttackButtons(this.element, this.document);
   }
 
   /* ============================================================
@@ -219,6 +224,26 @@ export class SWSEV2CharacterSheet extends
     // Build mode (free build = prerequisites not enforced, typically set during chargen)
     const buildMode = actor.system?.buildMode ?? "normal";
 
+    // Action Economy Context (for combat tab)
+    let actionEconomy = null;
+    if (game.combat && game.combat.combatants.some(c => c.actor?.id === actor.id)) {
+      // Only show action economy if actor is in active combat
+      const combatId = game.combat.id;
+      const { ActionEconomyPersistence } = await import("/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-persistence.js");
+      const { ActionEngine } = await import("/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine-v2.js");
+
+      const turnState = ActionEconomyPersistence.getTurnState(actor, combatId);
+      const state = ActionEngine.getVisualState(turnState);
+      const breakdown = ActionEngine.getTooltipBreakdown(turnState);
+      const enforcementMode = game.settings.get("swse", "actionEconomyMode");
+
+      actionEconomy = {
+        state,
+        breakdown,
+        enforcementMode
+      };
+    }
+
     return {
       ...context,
       biography,
@@ -239,7 +264,8 @@ export class SWSEV2CharacterSheet extends
       headerDefenses,
       forceSensitive,
       identityGlowColor,
-      buildMode
+      buildMode,
+      actionEconomy
     };
   }
 
