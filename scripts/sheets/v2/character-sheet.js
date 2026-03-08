@@ -21,10 +21,6 @@ const { HandlebarsApplicationMixin } = foundry.applications.api;
 export class SWSEV2CharacterSheet extends
   HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
 
-  get template() {
-    return "systems/foundryvtt-swse/templates/actors/character/v2/character-sheet.hbs";
-  }
-
   static tabGroups = {
     primary: {
       initial: "overview"
@@ -34,6 +30,7 @@ export class SWSEV2CharacterSheet extends
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["swse", "sheet", "actor", "character", "swse-character-sheet"],
+      template: "systems/foundryvtt-swse/templates/actors/character/v2/character-sheet.hbs",
       width: 900,
       height: 950,
       resizable: true
