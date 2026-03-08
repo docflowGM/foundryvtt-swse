@@ -349,7 +349,7 @@ export class LightsaberConstructionEngine {
 
     try {
       // Get construction mode setting
-      const mode = game?.settings?.get?.("swse", "lightsaberConstructionMode") || "raw";
+      const mode = game?.settings?.get?.(game.system.id, "lightsaberConstructionMode") || "raw";
 
       // Get level authorities (NOT raw field access)
       const heroicLevel = getHeroicLevel(actor);

@@ -87,7 +87,7 @@
     }
   ],
   "flagScopes": [
-    "swse"
+    "foundryvtt-swse"
   ],
   "packs": [
     {

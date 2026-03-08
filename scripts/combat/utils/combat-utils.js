@@ -68,7 +68,7 @@ export function computeAttackBonus(actor, weapon) {
                     0;
 
   // REGRESSION GUARD: Detect mismatch between system and derived penalties
-  if (game.settings.get("swse", "devMode") &&
+  if (game.settings.get(game.system.id, "devMode") &&
       actor.system?.conditionTrack &&
       actor.system?.conditionTrack?.penalty !== undefined &&
       actor.system?.derived?.damage?.conditionPenalty !== actor.system?.conditionTrack?.penalty) {

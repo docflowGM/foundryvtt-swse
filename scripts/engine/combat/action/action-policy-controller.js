@@ -50,7 +50,7 @@ export class ActionPolicyController {
       };
     }
 
-    const mode = game.settings.get("swse", "actionEconomyMode");
+    const mode = game.settings.get("foundryvtt-swse", "actionEconomyMode");
 
     // GM OVERRIDE: Shift+Click (STRICT mode only, GM-only)
     if (gmOverride && game.user.isGM && mode === this.MODE.STRICT) {
@@ -184,7 +184,7 @@ export class ActionPolicyController {
    * @returns {boolean}
    */
   static wouldPermit(result) {
-    const mode = game.settings.get("swse", "actionEconomyMode");
+    const mode = game.settings.get("foundryvtt-swse", "actionEconomyMode");
 
     if (mode === this.MODE.NONE) {
       return true;

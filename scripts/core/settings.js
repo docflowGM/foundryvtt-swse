@@ -412,5 +412,19 @@ export function registerSystemSettings() {
     default: true
   });
 
+  // Lightsaber Construction Mode
+  game.settings.register('foundryvtt-swse', 'lightsaberConstructionMode', {
+    name: 'Lightsaber Construction Mode',
+    hint: 'Controls how lightsaber construction validation is enforced: raw (no restrictions) or standard (with level gating).',
+    scope: 'world',
+    config: true,
+    type: String,
+    choices: {
+      raw: 'Raw (No Restrictions)',
+      standard: 'Standard (With Level Gating)'
+    },
+    default: 'raw'
+  });
+
   SWSELogger.log('SWSE | Settings registered');
 }
