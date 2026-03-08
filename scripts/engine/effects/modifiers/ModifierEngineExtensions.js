@@ -333,7 +333,7 @@ export class ModifierEngineExtensions {
 
         case 'wound': {
           // Wounds could be tracked via flags
-          const woundPenalty = actor.getFlag('swse', 'woundPenalty') ?? 0;
+          const woundPenalty = actor.getFlag('foundryvtt-swse', 'woundPenalty') ?? 0;
           if (woundPenalty !== 0) {
             breakdown.push({
               label: 'Wounds',
@@ -345,7 +345,7 @@ export class ModifierEngineExtensions {
         }
 
         case 'fatigue': {
-          const fatiguePenalty = actor.getFlag('swse', 'fatiguePenalty') ?? 0;
+          const fatiguePenalty = actor.getFlag('foundryvtt-swse', 'fatiguePenalty') ?? 0;
           if (fatiguePenalty !== 0) {
             breakdown.push({
               label: 'Fatigue',

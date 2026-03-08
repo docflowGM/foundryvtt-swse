@@ -3,7 +3,7 @@
  *
  * Manages where turn state lives and when it resets.
  *
- * Storage: actor.flags.swse.actionEconomy
+ * Storage: actor.flags.foundryvtt-swse.actionEconomy
  * Scope: Per actor per combat (survives rerenders, syncs across clients)
  * Reset: On combatant.turn hook (automatic, deterministic)
  *
@@ -15,7 +15,7 @@ import { ActionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/act
 export class ActionEconomyPersistence {
   // Flag storage key
   static FLAG_KEY = "actionEconomy";
-  static SCOPE = "swse";
+  static SCOPE = "foundryvtt-swse";
 
   /**
    * Get current turn state for an actor in a combat

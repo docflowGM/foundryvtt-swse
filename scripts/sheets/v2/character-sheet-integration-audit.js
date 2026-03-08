@@ -262,7 +262,7 @@ export class SWSEV2CharacterSheetAudit {
       };
 
       // Perform a harmless update (set a flag)
-      await actor.setFlag('swse', '_auditPositionTest', true);
+      await actor.setFlag('foundryvtt-swse', '_auditPositionTest', true);
 
       const afterPos = {
         left: actor.sheet.position.left,
@@ -286,7 +286,7 @@ export class SWSEV2CharacterSheetAudit {
       }
 
       // Clear test flag
-      await actor.unsetFlag('swse', '_auditPositionTest');
+      await actor.unsetFlag('foundryvtt-swse', '_auditPositionTest');
     } catch (err) {
       this.errors.push(`A2.4: Position audit error: ${err.message}`);
     }
