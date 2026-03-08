@@ -3,17 +3,21 @@
  *
  * Handles reaction eligibility and resolution.
  * Phase 1: Skeleton only - eligibility checking and plumbing.
- * No behavior changes, no damage modification, no cost tracking yet.
+ * Phase 5: Added cost validation, frequency checking, effect application.
  *
  * Governance:
  * - No direct ChatMessage.create()
- * - No actor.update() calls
+ * - All actor mutations route through ActorEngine
  * - No DOM mutation
  * - Pure eligibility evaluation
  * - Handlers return result objects only
  */
 
 import { ReactionRegistry } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-registry.js";
+import { ActivationLimitEngine, LimitType } from "/systems/foundryvtt-swse/scripts/engine/abilities/ActivationLimitEngine.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class ReactionEngine {
   /**
@@ -119,22 +123,39 @@ export class ReactionEngine {
   }
 
   /**
-   * Resolve a reaction
-   * Phase 1: Call handler, return result. No side effects.
+   * Resolve a reaction - PHASE 5 Enhanced version
    *
-   * @param {string} reactionKey - Reaction to resolve
-   * @param {Object} attackContext - Attack context
+   * Pipeline:
+   * 1. Validate reaction exists
+   * 2. Check frequency limit (once per round)
+   * 3. Verify cost available (Force Points if applicable)
+   * 4. Call reaction handler
+   * 5. Deduct cost
+   * 6. Record activation
+   * 7. Post result to chat
+   *
+   * @param {Object} options - Resolution options
+   *   - reactionKey: string (Reaction ID)
+   *   - defender: Actor (reacting defender)
+   *   - attacker: Actor (attacking actor)
+   *   - attackContext: Object (attack details)
+   *   - forcePointCost: number (optional, default 0)
+   *
    * @returns {Promise<Object>} Resolution result
+   *   - success: boolean
+   *   - error: string | null
    *   - modifiedDamage: number | null
-   *   - additionalRoll: Roll | null
    *   - resultMessage: string | null
    */
-  static async resolveReaction(reactionKey, attackContext = {}) {
+  static async resolveReaction(options = {}) {
+    const { reactionKey, defender, attacker, attackContext = {}, forcePointCost = 0 } = options;
+
+    // ─── 1. Validate reaction exists ─────────────────────────────────────────
     if (!reactionKey) {
       return {
+        success: false,
         error: 'No reaction key provided',
         modifiedDamage: null,
-        additionalRoll: null,
         resultMessage: null
       };
     }
@@ -143,39 +164,129 @@ export class ReactionEngine {
 
     if (!reactionDef) {
       return {
+        success: false,
         error: `Reaction "${reactionKey}" not found`,
         modifiedDamage: null,
-        additionalRoll: null,
         resultMessage: null
       };
     }
 
-    // Phase 1: Call handler, but don't apply any effects
-    let result = null;
+    if (!defender) {
+      return {
+        success: false,
+        error: 'No defender provided',
+        modifiedDamage: null,
+        resultMessage: null
+      };
+    }
 
     try {
-      result = await reactionDef.handler(attackContext);
+      // ─── 2. Check frequency limit (reactions are once per round) ──────────
+      const limitCheck = ActivationLimitEngine.canActivate(
+        defender,
+        reactionKey,
+        LimitType.ROUND,
+        1
+      );
+
+      if (!limitCheck.allowed) {
+        SWSELogger.log(`[ReactionEngine] BLOCKED "${reactionKey}": ${limitCheck.reason}`);
+        await SWSEChat.postMessage({
+          flavor: `❌ ${reactionDef.label}`,
+          content: `Reaction already used this round`,
+          actor: defender
+        });
+        return {
+          success: false,
+          error: limitCheck.reason,
+          modifiedDamage: null,
+          resultMessage: 'Reaction already used this round'
+        };
+      }
+
+      // ─── 3. Verify cost ───────────────────────────────────────────────────
+      if (forcePointCost > 0) {
+        const currentForce = defender.system?.forcePoints?.available ?? 0;
+        if (currentForce < forcePointCost) {
+          const reason = `Insufficient Force Points (need ${forcePointCost}, have ${currentForce})`;
+          SWSELogger.log(`[ReactionEngine] BLOCKED "${reactionKey}": ${reason}`);
+          await SWSEChat.postMessage({
+            flavor: `❌ ${reactionDef.label}`,
+            content: reason,
+            actor: defender
+          });
+          return {
+            success: false,
+            error: reason,
+            modifiedDamage: null,
+            resultMessage: reason
+          };
+        }
+      }
+
+      // ─── 4. Call reaction handler ──────────────────────────────────────────
+      let result = null;
+
+      try {
+        const enrichedContext = {
+          ...attackContext,
+          defender,
+          attacker
+        };
+        result = await reactionDef.handler(enrichedContext);
+      } catch (err) {
+        SWSELogger.error(`[ReactionEngine] Handler error for "${reactionKey}":`, err);
+        result = {
+          error: err.message,
+          modifiedDamage: null,
+          resultMessage: null
+        };
+      }
+
+      // ─── 5. Deduct cost ───────────────────────────────────────────────────
+      if (forcePointCost > 0) {
+        await ActorEngine.updateActor(defender, {
+          'system.forcePoints.available': Math.max(0, (defender.system?.forcePoints?.available ?? 0) - forcePointCost)
+        });
+      }
+
+      // ─── 6. Record activation ──────────────────────────────────────────────
+      ActivationLimitEngine.recordActivation(defender, reactionKey, LimitType.ROUND);
+
+      // ─── 7. Post result ────────────────────────────────────────────────────
+      const resultMsg = result?.resultMessage ?? `${reactionDef.label} triggered`;
+      await SWSEChat.postMessage({
+        flavor: `✓ ${reactionDef.label}`,
+        content: resultMsg,
+        actor: defender
+      });
+
+      SWSELogger.log(`[ReactionEngine] SUCCESS: "${reactionKey}" resolved for ${defender.name}`);
+
+      return {
+        success: true,
+        error: null,
+        modifiedDamage: result?.modifiedDamage ?? null,
+        resultMessage: resultMsg
+      };
+
     } catch (err) {
-      console.error(`ReactionEngine: Handler for "${reactionKey}" threw error:`, err);
-      result = {
-        error: err.message,
+      SWSELogger.error(`[ReactionEngine] Unexpected error resolving "${reactionKey}":`, err);
+      return {
+        success: false,
+        error: `Unexpected error: ${err.message}`,
         modifiedDamage: null,
-        additionalRoll: null,
         resultMessage: null
       };
     }
-
-    return {
-      reactionKey,
-      result: result || {},
-      timestamp: new Date().toISOString(),
-      context: attackContext
-    };
   }
 
   /**
    * Reset round-specific reaction state
-   * Phase 1: Placeholder for future round tracking
+   * PHASE 5: Reset per-round reaction limits for all combatants
+   *
+   * Called at the start of each combat round.
+   * Allows each actor to use their once-per-round reactions again.
    *
    * @param {Combat} combat
    */
@@ -184,8 +295,18 @@ export class ReactionEngine {
       return;
     }
 
-    // Phase 1: No-op. Future phases will track per-round usage.
-    // Placeholder for when reaction cost tracking is implemented.
+    // Get all actors in combat
+    const combatants = combat.combatants ?? [];
+
+    for (const combatant of combatants) {
+      const actor = combatant.actor;
+      if (!actor) continue;
+
+      // Reset per-round reaction limits
+      ActivationLimitEngine.resetRoundLimits(actor);
+    }
+
+    SWSELogger.log(`[ReactionEngine] Round state reset for ${combatants.length} combatants`);
   }
 
   /**
