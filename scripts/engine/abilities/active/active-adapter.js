@@ -14,6 +14,8 @@
 import { ACTIVE_SUBTYPES } from "./active-types.js";
 import { ActiveContractValidator } from "./active-contract.js";
 import { DurationEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/active/duration-engine.js";
+import { EffectResolver } from "/systems/foundryvtt-swse/scripts/engine/abilities/active/effect-resolver.js";
+import { TargetingEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/active/targeting-engine.js";
 import { ActivationLimitEngine, LimitType } from "/systems/foundryvtt-swse/scripts/engine/abilities/ActivationLimitEngine.js";
 import { ActionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine-v2.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
@@ -321,41 +323,12 @@ export class ActiveAdapter {
 
   /**
    * Resolve target list from targeting configuration.
-   * Handles SELF, selected tokens, and proximity-based targeting.
+   * Delegates to TargetingEngine.
    * @private
    */
   static _resolveTargets(actor, targeting) {
-    if (!targeting) return [];
-
-    const targetType = targeting.targetType?.toUpperCase();
-
-    // SELF targeting
-    if (targetType === 'SELF') {
-      return [actor];
-    }
-
-    // Get current selected tokens (assumes active scene)
-    const selectedTokens = Array.from(game?.user?.targets ?? []);
-    if (selectedTokens.length === 0) {
-      return [];
-    }
-
-    // Filter by target type
-    const validTargets = selectedTokens
-      .map(t => t.document?.actor || t.actor)
-      .filter(t => {
-        if (!t) return false;
-        if (targetType === 'ALLY') {
-          // TODO: implement alliance check (for now, assume tokens not named "Enemy")
-          return !t.name?.includes('Enemy');
-        }
-        if (targetType === 'ENEMY') {
-          return t.name?.includes('Enemy');
-        }
-        return true; // ANY
-      });
-
-    return validTargets;
+    const result = TargetingEngine.resolve(actor, targeting);
+    return result.targets;
   }
 
   /**
@@ -370,31 +343,12 @@ export class ActiveAdapter {
 
   /**
    * Apply effect to a target actor.
-   * Handles MODIFIER, STATUS, and HEAL types.
+   * Delegates to EffectResolver.
    * @private
    */
   static async _applyEffect(target, ability, effectConfig) {
     if (!target || !effectConfig) return;
-
-    const effectType = effectConfig.type?.toUpperCase();
-    const payload = effectConfig.payload ?? {};
-
-    switch (effectType) {
-      case 'MODIFIER':
-        // TODO: Apply modifier via ModifierEngine (Phase 4)
-        break;
-
-      case 'STATUS':
-        // TODO: Apply condition/status via ConditionEngine (Phase 4)
-        break;
-
-      case 'HEAL':
-        // TODO: Apply healing (Phase 4)
-        break;
-
-      case 'CUSTOM':
-        // TODO: Call custom handler (Phase 4)
-        break;
-    }
+    const result = await EffectResolver.apply(target, ability, effectConfig);
+    return result;
   }
 }
