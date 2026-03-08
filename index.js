@@ -135,6 +135,7 @@ import { AbilityExecutionCoordinator } from './scripts/engine/abilities/ability-
 import { registerInitHooks, registerDestinyHooks } from './scripts/infrastructure/hooks/index.js';
 import { initializeForcePowerHooks } from './scripts/infrastructure/hooks/force-power-hooks.js';
 import { initializeFollowerHooks } from './scripts/infrastructure/hooks/follower-hooks.js';
+import { registerActionEconomyHooks } from './scripts/engine/combat/action/action-economy-hooks.js';
 import { registerKeybindings } from './scripts/core/keybindings.js';
 
 // ---- UI systems (registered in init, initialized in ready) ----
@@ -243,6 +244,7 @@ Hooks.once('init', async () => {
 
   registerInitHooks();
   registerDestinyHooks();
+  registerActionEconomyHooks();
   registerKeybindings();
 
   /* ---------- PHASE 2: UI infrastructure ---------- */
@@ -293,6 +295,13 @@ Hooks.once('ready', async () => {
     }),
     runJsonBackedIdsMigration()
   ]);
+
+  /* ---------- Combat Rules System ---------- */
+  // Initialize core and talent rules for combat resolution
+  const { initializeCoreRules } = await import('./scripts/engine/rules/modules/core/index.js');
+  const { default: initializeTalentRules } = await import('./scripts/engine/rules/modules/talents/index.js');
+  initializeCoreRules();
+  initializeTalentRules();
 
   await SystemInitHooks.onSystemReady();
 
@@ -375,6 +384,13 @@ Hooks.once('ready', async () => {
           const harness = new CharacterSheetIntegrationTestHarness(actor);
           return await harness.runAll();
         }
+      }
+    },
+    // Combat regression tests
+    combat: {
+      testConditionPenalty: async (actor) => {
+        const { testConditionPenalty } = await import("/systems/foundryvtt-swse/scripts/debug/condition-penalty-regression-test.js");
+        return await testConditionPenalty(actor || canvas?.tokens?.controlled?.[0]?.actor);
       }
     },
     // Reporting: Generate and export comprehensive audit reports

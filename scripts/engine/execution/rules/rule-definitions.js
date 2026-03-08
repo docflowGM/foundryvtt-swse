@@ -191,6 +191,50 @@ export const RULE_DEFINITIONS = Object.freeze({
     params: null,
     description: "Actor gains improved evasion (half damage even on failed Reflex save)"
   },
+
+  // === CRITICAL MECHANICS ===
+  [RULES.EXTEND_CRITICAL_RANGE]: {
+    params: {
+      proficiency: "string",
+      by: "number"
+    },
+    description: "Extends weapon critical threat range by N for specific proficiency",
+    required: ["proficiency", "by"]
+  },
+  [RULES.CRITICAL_DAMAGE_BONUS]: {
+    params: {
+      proficiency: "string",
+      bonus: "string|number"
+    },
+    description: "Adds bonus damage when scoring a critical hit (proficiency-gated)",
+    required: ["proficiency", "bonus"]
+  },
+  [RULES.MODIFY_CRITICAL_MULTIPLIER]: {
+    params: {
+      proficiency: "string",
+      multiplier: "number"
+    },
+    description: "Changes critical hit damage multiplier for specific proficiency (overrides base)",
+    required: ["proficiency", "multiplier"]
+  },
+  [RULES.CRITICAL_CONFIRM_BONUS]: {
+    params: {
+      proficiency: "string",
+      bonus: "number"
+    },
+    description: "Adds bonus to critical hit confirmation rolls for specific proficiency",
+    required: ["proficiency", "bonus"]
+  },
+
+  // === WEAPON SPECIALIZATION & BONUSES ===
+  [RULES.WEAPON_SPECIALIZATION]: {
+    params: {
+      proficiency: "string",
+      bonus: "number"
+    },
+    description: "Adds flat damage bonus for weapon specialization (proficiency-gated)",
+    required: ["proficiency", "bonus"]
+  },
 });
 
 /**

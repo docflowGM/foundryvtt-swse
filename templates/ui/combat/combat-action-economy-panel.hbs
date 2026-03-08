@@ -1,0 +1,84 @@
+{{!-- Combat Action Economy Panel
+     Full display of action economy for current combatant
+
+     Context expected:
+     - actor: Current combatant's actor
+     - actionState: { standard, move, swift, full }
+     - breakdown: Array of description strings
+     - enforcementMode: "strict" | "loose" | "none"
+--}}
+
+<div class="swse-combat-panel-economy">
+  {{!-- STANDARD ACTION SLOT --}}
+  <div class="economy-slot">
+    <div class="economy-label">Standard</div>
+    <div class="economy-indicator">
+      {{#if (eq actionState.standard "available")}}
+        <span class="badge-available" title="Standard action available"></span>
+      {{else if (eq actionState.standard "degraded")}}
+        <span class="badge-degraded" title="Standard action (degraded)"></span>
+      {{else}}
+        <span class="badge-used" title="Standard action used"></span>
+      {{/if}}
+    </div>
+    <div class="economy-mode">
+      {{#if (eq enforcementMode "strict")}}
+        <span class="mode-indicator mode-strict" title="STRICT: Actions are blocked">🔒</span>
+      {{else if (eq enforcementMode "loose")}}
+        <span class="mode-indicator mode-loose" title="LOOSE: Actions warned">⚠️</span>
+      {{else}}
+        <span class="mode-indicator mode-none" title="NONE: No enforcement">✓</span>
+      {{/if}}
+    </div>
+  </div>
+
+  {{!-- MOVE ACTION SLOT --}}
+  <div class="economy-slot">
+    <div class="economy-label">Move</div>
+    <div class="economy-indicator">
+      {{#if (eq actionState.move "available")}}
+        <span class="badge-available" title="Move action available"></span>
+      {{else if (eq actionState.move "degraded")}}
+        <span class="badge-degraded" title="Move action (degraded)"></span>
+      {{else}}
+        <span class="badge-used" title="Move action used"></span>
+      {{/if}}
+    </div>
+  </div>
+
+  {{!-- SWIFT ACTION SLOT --}}
+  <div class="economy-slot">
+    <div class="economy-label">Swift</div>
+    <div class="economy-indicator">
+      {{#if (eq actionState.swift "available")}}
+        <span class="badge-available" title="Swift actions available"></span>
+      {{else if (eq actionState.swift "degraded")}}
+        <span class="badge-degraded" title="Swift actions (degraded)"></span>
+      {{else}}
+        <span class="badge-used" title="Swift actions used"></span>
+      {{/if}}
+    </div>
+  </div>
+</div>
+
+{{!-- INFO TEXT --}}
+<div class="swse-action-economy-info">
+  {{#each breakdown}}
+    <div class="info-line">{{this}}</div>
+  {{/each}}
+</div>
+
+{{!-- ENFORCEMENT MODE NOTICE --}}
+{{#if (eq enforcementMode "strict")}}
+  <div class="swse-enforcement-notice swse-strict">
+    <strong>⚠️ STRICT Mode:</strong> Illegal actions are blocked. (Shift+Click to override)
+  </div>
+{{else if (eq enforcementMode "loose")}}
+  <div class="swse-enforcement-notice swse-loose">
+    <strong>ℹ️ LOOSE Mode:</strong> Actions are allowed with GM warning.
+  </div>
+{{else}}
+  <div class="swse-enforcement-notice swse-none">
+    <strong>✓ NONE Mode:</strong> No enforcement. Actions tracked only.
+  </div>
+{{/if}}

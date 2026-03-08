@@ -4,6 +4,7 @@ import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities
 import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-bindings.js";
 
 function markActiveConditionStep(root, actor) {
   // AppV2: root is HTMLElement, not jQuery
@@ -112,6 +113,29 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
       console.error('Error preparing abilities panel for NPC sheet:', err);
     }
 
+    // Action Economy Context (for combat tab)
+    if (game.combat && game.combat.combatants.some(c => c.actor?.id === actor.id)) {
+      // Only show action economy if actor is in active combat
+      const combatId = game.combat.id;
+      try {
+        const { ActionEconomyPersistence } = await import("/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-persistence.js");
+        const { ActionEngine } = await import("/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine-v2.js");
+
+        const turnState = ActionEconomyPersistence.getTurnState(actor, combatId);
+        const state = ActionEngine.getVisualState(turnState);
+        const breakdown = ActionEngine.getTooltipBreakdown(turnState);
+        const enforcementMode = game.settings.get("swse", "actionEconomyMode");
+
+        context.actionEconomy = {
+          state,
+          breakdown,
+          enforcementMode
+        };
+      } catch (err) {
+        console.error("[SWSE] Error loading action economy context:", err);
+      }
+    }
+
     RenderAssertions.assertContextSerializable(context, "SWSEV2NpcSheet");
 
     this._talentAbilitiesCache = context.talentAbilities;
@@ -130,6 +154,9 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
     if (!(root instanceof HTMLElement)) {
       throw new Error("NpcSheet: element not HTMLElement");
     }
+
+    // Wire action economy bindings for combat tab
+    ActionEconomyBindings.setupAttackButtons(root, this.document);
 
     RenderAssertions.assertDOMElements(
       root,

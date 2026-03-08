@@ -1,4 +1,7 @@
 import { getEffectiveHalfLevel } from '../../actors/derived/level-split.js';
+import { ResolutionContext } from '../../engine/resolution/resolution-context.js';
+import { RULES } from '../../engine/execution/rules/rule-enum.js';
+
 /**
  * Modern SWSE Combat Utilities (v13+)
  * - Condition Track integer-based penalties
@@ -59,8 +62,24 @@ export function computeAttackBonus(actor, weapon) {
   const speciesCombat = actor.system?.speciesCombatBonuses || actor.system?.speciesTraitBonuses?.combat || {};
   const speciesAttackBonus = (weapon.system?.ranged ? (speciesCombat.rangedAttack || 0) : (speciesCombat.meleeAttack || 0));
 
-  // Condition Track penalties
-  const ctPenalty = actor.system.conditionTrack?.penalty ?? 0;
+  // Condition Track penalties (read from authoritative derived source)
+  const ctPenalty = actor.system?.derived?.damage?.conditionPenalty ??
+                    actor.system?.conditionTrack?.penalty ??
+                    0;
+
+  // REGRESSION GUARD: Detect mismatch between system and derived penalties
+  if (game.settings.get("swse", "devMode") &&
+      actor.system?.conditionTrack &&
+      actor.system?.conditionTrack?.penalty !== undefined &&
+      actor.system?.derived?.damage?.conditionPenalty !== actor.system?.conditionTrack?.penalty) {
+    console.warn(
+      `[SWSE] Condition penalty mismatch detected for ${actor.name}.`,
+      {
+        systemPenalty: actor.system.conditionTrack.penalty,
+        derivedPenalty: actor.system.derived?.damage?.conditionPenalty
+      }
+    );
+  }
 
   // Size modifiers, if in your system
   const sizeMod = actor.system.sizeMod ?? 0;
@@ -83,6 +102,109 @@ export function computeAttackBonus(actor, weapon) {
     ctPenalty +
     proficiencyPenalty
   );
+}
+
+/**
+ * Calculate effective critical threat range with EXTEND_CRITICAL_RANGE modifiers
+ * @param {Actor} actor - The attacking actor
+ * @param {Item} weapon - The weapon being used
+ * @returns {number} The adjusted critical threat range (minimum 2)
+ */
+export function getEffectiveCritRange(actor, weapon) {
+  const baseCritRange = weapon.system?.critRange || 20;
+
+  if (!actor) return baseCritRange;
+
+  const ctx = new ResolutionContext(actor);
+  const critRules = ctx.getRuleInstances(RULES.EXTEND_CRITICAL_RANGE);
+
+  let bonus = 0;
+  const weaponProf = weapon.system?.proficiency;
+
+  for (const rule of critRules) {
+    if (rule.proficiency === weaponProf) {
+      bonus += rule.by || 0;
+    }
+  }
+
+  // Ensure crit range never drops below 2 (natural rule)
+  return Math.max(2, baseCritRange - bonus);
+}
+
+/**
+ * Get critical damage bonus formula from CRITICAL_DAMAGE_BONUS rules
+ * @param {Actor} actor - The attacking actor
+ * @param {Item} weapon - The weapon being used
+ * @returns {string} Bonus formula (e.g., "1d6" or "+2") to add to damage, or empty string
+ */
+export function getCriticalDamageBonus(actor, weapon) {
+  if (!actor || !weapon) return '';
+
+  const ctx = new ResolutionContext(actor);
+  const critBonusRules = ctx.getRuleInstances(RULES.CRITICAL_DAMAGE_BONUS);
+
+  const bonuses = [];
+  const weaponProf = weapon.system?.proficiency;
+
+  for (const rule of critBonusRules) {
+    if (rule.proficiency === weaponProf && rule.bonus) {
+      bonuses.push(String(rule.bonus));
+    }
+  }
+
+  // Join multiple bonuses with +
+  return bonuses.length > 0 ? bonuses.join(' + ') : '';
+}
+
+/**
+ * Get critical damage multiplier with MODIFY_CRITICAL_MULTIPLIER overrides
+ * @param {Actor} actor - The attacking actor
+ * @param {Item} weapon - The weapon being used
+ * @returns {number} Critical multiplier (default 2, overridden by highest matching rule)
+ */
+export function getCriticalMultiplier(actor, weapon) {
+  const defaultMultiplier = weapon.system?.critMultiplier || 2;
+
+  if (!actor || !weapon) return defaultMultiplier;
+
+  const ctx = new ResolutionContext(actor);
+  const multRules = ctx.getRuleInstances(RULES.MODIFY_CRITICAL_MULTIPLIER);
+
+  let highestMultiplier = defaultMultiplier;
+  const weaponProf = weapon.system?.proficiency;
+
+  for (const rule of multRules) {
+    if (rule.proficiency === weaponProf && rule.multiplier) {
+      // Take the highest multiplier if multiple rules apply
+      highestMultiplier = Math.max(highestMultiplier, rule.multiplier);
+    }
+  }
+
+  return highestMultiplier;
+}
+
+/**
+ * Get critical confirmation bonus from CRITICAL_CONFIRM_BONUS rules
+ * @param {Actor} actor - The attacking actor
+ * @param {Item} weapon - The weapon being used
+ * @returns {number} Total confirmation bonus
+ */
+export function getCriticalConfirmBonus(actor, weapon) {
+  if (!actor || !weapon) return 0;
+
+  const ctx = new ResolutionContext(actor);
+  const confirmRules = ctx.getRuleInstances(RULES.CRITICAL_CONFIRM_BONUS);
+
+  let bonus = 0;
+  const weaponProf = weapon.system?.proficiency;
+
+  for (const rule of confirmRules) {
+    if (rule.proficiency === weaponProf && rule.bonus) {
+      bonus += rule.bonus || 0;
+    }
+  }
+
+  return bonus;
 }
 
 /* -------------------------------------------------------------------------- */

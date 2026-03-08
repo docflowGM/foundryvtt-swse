@@ -1,0 +1,194 @@
+/**
+ * Action Economy UI Styles
+ *
+ * Visual representation of turn state:
+ * - Green (available): Action available
+ * - Orange (degraded): Action obtained via degradation
+ * - Red (used): Action consumed
+ *
+ * STRICT governance: All rules use .swse-* namespace
+ */
+
+/* Action Economy Badge Container */
+.swse-action-economy {
+  display: inline-flex;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  background: rgba(0, 0, 0, 0.2);
+  align-items: center;
+}
+
+/* Individual Action Type Badge */
+.swse-action-economy .badge-standard,
+.swse-action-economy .badge-move,
+.swse-action-economy .badge-swift {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0.125rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.2s ease;
+}
+
+/* AVAILABLE state (green) */
+.swse-action-economy .badge-available {
+  background-color: #4caf50;
+  box-shadow: 0 0 0.5rem rgba(76, 175, 80, 0.5);
+}
+
+/* DEGRADED state (orange) */
+.swse-action-economy .badge-degraded {
+  background-color: #ff9800;
+  box-shadow: 0 0 0.5rem rgba(255, 152, 0, 0.5);
+}
+
+/* USED state (red/dark) */
+.swse-action-economy .badge-used {
+  background-color: #666;
+  box-shadow: none;
+  opacity: 0.5;
+}
+
+/* Action Button Styling */
+.swse-action-button {
+  position: relative;
+  transition: all 0.15s ease;
+}
+
+.swse-action-button:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.swse-action-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Action Blocked State */
+.swse-action-button.action-blocked {
+  background-color: rgba(244, 67, 54, 0.1);
+  border-color: rgba(244, 67, 54, 0.5);
+  color: #f44336;
+}
+
+.swse-action-button.action-blocked:not(:disabled):hover {
+  background-color: rgba(244, 67, 54, 0.2);
+  border-color: #f44336;
+}
+
+/* Action Available State */
+.swse-action-button.action-available {
+  background-color: rgba(76, 175, 80, 0.1);
+  border-color: rgba(76, 175, 80, 0.5);
+  color: #4caf50;
+}
+
+.swse-action-button.action-available:not(:disabled):hover {
+  background-color: rgba(76, 175, 80, 0.2);
+  border-color: #4caf50;
+}
+
+/* Combat Panel Action Economy Display */
+.swse-combat-panel-economy {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.swse-combat-panel-economy .economy-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  border-radius: 0.125rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.swse-combat-panel-economy .economy-label {
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+}
+
+.swse-combat-panel-economy .economy-indicator {
+  display: flex;
+  gap: 0.125rem;
+}
+
+.swse-combat-panel-economy .economy-indicator span {
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 0.0625rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Degraded visual indicator (subtle warning) */
+.swse-action-economy.swse-degraded {
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(255, 152, 0, 0.05));
+  border: 1px solid rgba(255, 152, 0, 0.3);
+}
+
+/* Full-round action indicator */
+.swse-full-round-action {
+  border: 2px solid rgba(76, 175, 80, 0.5);
+  box-shadow: inset 0 0 0.5rem rgba(76, 175, 80, 0.2);
+}
+
+.swse-full-round-action.swse-used {
+  border-color: rgba(244, 67, 54, 0.5);
+  box-shadow: inset 0 0 0.5rem rgba(244, 67, 54, 0.1);
+}
+
+/* Tooltip styling for action economy info */
+.swse-action-economy[title] {
+  cursor: help;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .swse-action-economy {
+    gap: 0.15rem;
+    padding: 0.2rem 0.4rem;
+  }
+
+  .swse-action-economy .badge-standard,
+  .swse-action-economy .badge-move,
+  .swse-action-economy .badge-swift {
+    width: 0.85rem;
+    height: 0.85rem;
+  }
+
+  .swse-combat-panel-economy {
+    gap: 0.35rem;
+    padding: 0.35rem;
+  }
+
+  .swse-combat-panel-economy .economy-slot {
+    padding: 0.35rem;
+  }
+}
+
+/* Animation for state changes */
+@keyframes action-economy-highlight {
+  0% {
+    box-shadow: 0 0 0.5rem rgba(76, 175, 80, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(76, 175, 80, 0);
+  }
+}
+
+.swse-action-economy.swse-just-changed {
+  animation: action-economy-highlight 0.6s ease-out;
+}

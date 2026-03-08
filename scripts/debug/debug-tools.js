@@ -1,5 +1,6 @@
 // scripts/debug/debug-tools.js
 import MentorNotesApp from "/systems/foundryvtt-swse/scripts/apps/mentor-notes/mentor-notes-app.js";
+import { testConditionPenalty } from "/systems/foundryvtt-swse/scripts/debug/condition-penalty-regression-test.js";
 
 export async function toggleNpcRenderProbe() {
   // DEBUG_SETTINGS not available - removed broken import
@@ -20,4 +21,8 @@ export function reportV2SlippageNow() {
 export async function runSmokeTest(actor) {
   // runNpcSmokeTest not available - removed broken import
   return null;
+}
+
+export async function testConditionPenaltyRegression(actor) {
+  return await testConditionPenalty(actor);
 }

@@ -1,4 +1,4 @@
-import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance, checkConcealmentHit, getFlankingBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
+import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance, checkConcealmentHit, getFlankingBonus, getEffectiveCritRange } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { DamageSystem } from "/systems/foundryvtt-swse/scripts/combat/damage-system.js";
@@ -86,6 +86,7 @@ export class SWSECombat {
 
     /* FORMAT RESULT FOR UI DISPLAY */
     const d20 = attackRoll.dice?.[0]?.results?.[0]?.result ?? 0;
+    const critRange = getEffectiveCritRange(attacker, weapon);
     const result = {
       attacker,
       weapon,
@@ -93,7 +94,7 @@ export class SWSECombat {
       roll: attackRoll,
       d20,
       total: attackRoll.total,
-      critThreat: d20 >= (weapon.system?.critRange || 20),
+      critThreat: d20 >= critRange,
       natural20: d20 === 20,
       natural1: d20 === 1,
       hit: engineResult.hit,

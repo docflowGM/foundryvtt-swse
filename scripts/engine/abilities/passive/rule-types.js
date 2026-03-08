@@ -66,7 +66,47 @@ export const RULE_TYPES = {
    * SCENT
    * Actor has scent ability.
    */
-  SCENT: 'SCENT'
+  SCENT: 'SCENT',
+
+  /**
+   * EXTEND_CRITICAL_RANGE
+   * Extends weapon critical threat range by N for specific proficiency.
+   * Queried by: Attack roll resolvers
+   * Params: { proficiency: string, by: number }
+   */
+  EXTEND_CRITICAL_RANGE: 'EXTEND_CRITICAL_RANGE',
+
+  /**
+   * CRITICAL_DAMAGE_BONUS
+   * Adds bonus damage when scoring a critical hit.
+   * Queried by: Damage resolution (on confirmed critical)
+   * Params: { proficiency: string, bonus: string|number }
+   */
+  CRITICAL_DAMAGE_BONUS: 'CRITICAL_DAMAGE_BONUS',
+
+  /**
+   * MODIFY_CRITICAL_MULTIPLIER
+   * Changes critical hit damage multiplier (default ×2).
+   * Queried by: Damage resolution (multiplier calculation)
+   * Params: { proficiency: string, multiplier: number }
+   */
+  MODIFY_CRITICAL_MULTIPLIER: 'MODIFY_CRITICAL_MULTIPLIER',
+
+  /**
+   * CRITICAL_CONFIRM_BONUS
+   * Adds bonus to critical confirmation rolls.
+   * Queried by: Critical confirmation resolver
+   * Params: { proficiency: string, bonus: number }
+   */
+  CRITICAL_CONFIRM_BONUS: 'CRITICAL_CONFIRM_BONUS',
+
+  /**
+   * WEAPON_SPECIALIZATION
+   * Adds flat damage bonus for weapon specialization.
+   * Queried by: Damage resolution (base damage calculation)
+   * Params: { proficiency: string, bonus: number }
+   */
+  WEAPON_SPECIALIZATION: 'WEAPON_SPECIALIZATION'
 };
 
 /**

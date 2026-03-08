@@ -10,6 +10,7 @@ import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attack
 import { DropResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/drop-resolution-engine.js";
 import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
+import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-bindings.js";
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -69,6 +70,29 @@ export class SWSEV2CombatNpcSheet extends
 
     const baseContext = await super._prepareContext(options);
 
+    // Action Economy Context (for combat display)
+    let actionEconomy = null;
+    if (game.combat && game.combat.combatants.some(c => c.actor?.id === actor.id)) {
+      const combatId = game.combat.id;
+      try {
+        const { ActionEconomyPersistence } = await import("/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-persistence.js");
+        const { ActionEngine } = await import("/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine-v2.js");
+
+        const turnState = ActionEconomyPersistence.getTurnState(actor, combatId);
+        const state = ActionEngine.getVisualState(turnState);
+        const breakdown = ActionEngine.getTooltipBreakdown(turnState);
+        const enforcementMode = game.settings.get("swse", "actionEconomyMode");
+
+        actionEconomy = {
+          state,
+          breakdown,
+          enforcementMode
+        };
+      } catch (err) {
+        console.error("[SWSE] Error loading action economy context:", err);
+      }
+    }
+
     const overrides = {
       actor,
       system: actor.system,
@@ -86,7 +110,8 @@ export class SWSEV2CombatNpcSheet extends
         name: game.user.name,
         role: game.user.role
       },
-      config: CONFIG.SWSE
+      config: CONFIG.SWSE,
+      actionEconomy
     };
 
     RenderAssertions.assertContextSerializable(
@@ -108,6 +133,9 @@ export class SWSEV2CombatNpcSheet extends
 
     if (root.dataset.bound === "true") return;
     root.dataset.bound = "true";
+
+    // Wire action economy bindings
+    ActionEconomyBindings.setupAttackButtons(root, this.document);
 
     markActiveConditionStep(root, this.actor);
 

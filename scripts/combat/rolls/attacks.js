@@ -36,8 +36,10 @@ function computeAttackBonus(actor, weapon, actionId = null) {
 
   const miscBonus = weapon.system?.attackBonus ?? 0;
 
-  // Condition Track penalty (RAW)
-  const ctPenalty = actor.system.conditionTrack?.penalty ?? 0;
+  // Condition Track penalty (read from authoritative derived source)
+  const ctPenalty = actor.system?.derived?.damage?.conditionPenalty ??
+                    actor.system?.conditionTrack?.penalty ??
+                    0;
 
   // Attack penalties applied from Active Effects
   const attackPenalty = actor.system.attackPenalty ?? 0;

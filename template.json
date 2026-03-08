@@ -156,6 +156,26 @@
           "meleeFiness": false,
           "powerAttack": false
         },
+        "combatActions": {
+          "maxSwiftPerTurn": 1,
+          "maxStandardPerTurn": 1,
+          "maxMovePerTurn": 1
+        },
+        "combatTurnState": {
+          "actorId": "",
+          "hasStandardAction": true,
+          "hasMoveAction": true,
+          "swiftActionsUsed": 0,
+          "maxSwiftActions": 1,
+          "actionsUsed": []
+        },
+        "sizeMod": 0,
+        "attackPenalty": 0,
+        "speciesCombatBonuses": {
+          "meleeAttack": 0,
+          "rangedAttack": 0,
+          "defense": 0
+        },
         "relationships": []
       }
     },
@@ -296,15 +316,25 @@
         "base"
       ],
       "weaponCategory": "simple",
+      "proficiency": "simple",
       "damage": "1d6",
       "damageBonus": "",
       "attackBonus": 0,
       "attackAttribute": "str",
-      "criticalRange": "20",
-      "criticalMultiplier": "x2",
+      "critRange": 20,
+      "critMultiplier": 2,
       "damageType": "energy",
+      "armorPiercing": 0,
       "autofire": false,
       "meleeOrRanged": "melee",
+      "range": "melee",
+      "ranged": false,
+      "reachBonus": 0,
+      "ranges": {
+        "short": null,
+        "medium": null,
+        "long": null
+      },
       "specialEffects": "",
       "ammunition": {
         "type": "",
@@ -314,7 +344,6 @@
       "equipped": false,
       "dualWielded": false,
       "wieldedTwoHanded": false,
-      "range": "Melee",
       "weight": 0,
       "gearTemplate": "",
       "gearTemplateSecondary": "",
@@ -387,8 +416,13 @@
       "description": ""
     },
     "combat-action": {
-      "templates": [],
-      "description": ""
+      "templates": ["base"],
+      "actionType": "standard",
+      "actionCost": {
+        "standard": 0,
+        "move": 0,
+        "swift": 0
+      }
     },
     "attribute": {
       "templates": [

@@ -3,7 +3,7 @@
 // Skill check rolling using SWSE utils
 // ============================================
 
-import { SkillEnforcementEngine } from "../engine/skills/SkillEnforcementEngine.js";
+import { SkillEnforcementEngine } from "/systems/foundryvtt-swse/scripts/engine/skills/skill-enforcement-engine.js";
 
 /**
  * Roll a skill check
