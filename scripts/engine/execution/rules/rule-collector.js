@@ -56,19 +56,15 @@ export class RuleCollector {
       return;
     }
 
-    // Param rule
+    // Param rule - store full param object
     if (definition.params && params) {
       if (!this.tempParams.has(type)) {
-        this.tempParams.set(type, new Set());
+        this.tempParams.set(type, []);
       }
 
-      const paramSet = this.tempParams.get(type);
-
-      // Store param value(s) as string for matching
-      // For TREAT_SKILL_AS_TRAINED: store skillId value
-      if (type === 'TREAT_SKILL_AS_TRAINED' && params.skillId) {
-        paramSet.add(params.skillId);
-      }
+      const paramList = this.tempParams.get(type);
+      // Store the entire params object for this rule
+      paramList.push(params);
     }
   }
 
@@ -87,10 +83,10 @@ export class RuleCollector {
     // Store simple rule set
     actor._ruleSet = new Set(this.tempSet);
 
-    // Store param rule map
+    // Store param rule map: rule type → array of param objects
     actor._ruleParams = new Map();
-    for (const [ruleType, paramSet] of this.tempParams.entries()) {
-      actor._ruleParams.set(ruleType, new Set(paramSet));
+    for (const [ruleType, paramList] of this.tempParams.entries()) {
+      actor._ruleParams.set(ruleType, [...paramList]);
     }
 
     // Optional: Freeze for extra safety

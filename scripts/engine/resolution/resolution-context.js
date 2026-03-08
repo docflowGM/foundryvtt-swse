@@ -51,15 +51,15 @@ export class ResolutionContext {
     const ruleParams = this.actor._ruleParams ?? new Map();
     if (ruleParams.has(ruleType)) {
       // Rule type exists in params map
-      // For TREAT_SKILL_AS_TRAINED, check if specific skill is in the set
+      // For TREAT_SKILL_AS_TRAINED, check if specific skill is in the list
       if (ruleType === RULES.TREAT_SKILL_AS_TRAINED) {
         if (!options?.skillId) {
           // No skill filter: just check if any instance exists
           return true;
         }
-        // Check if specific skill is in the parameterized set
-        const skillSet = ruleParams.get(ruleType);
-        return skillSet.has(options.skillId);
+        // Check if specific skill is in the parameterized instances
+        const instances = ruleParams.get(ruleType) || [];
+        return instances.some(inst => inst.skillId === options.skillId);
       }
 
       // Other param rules: no additional context filtering
@@ -67,6 +67,30 @@ export class ResolutionContext {
     }
 
     return false;
+  }
+
+  /**
+   * Get all rule instances (with params) for a specific rule type.
+   * Returns an array of param objects.
+   *
+   * @param {string} ruleType - Rule type to query (from RULES enum)
+   * @returns {Array<Object>} Array of param objects for this rule type
+   *
+   * @example
+   * const critRules = context.getRuleInstances(RULES.EXTEND_CRITICAL_RANGE);
+   * for (const rule of critRules) {
+   *   if (rule.proficiency === 'rifles') {
+   *     bonus += rule.by;
+   *   }
+   * }
+   */
+  getRuleInstances(ruleType) {
+    if (!this.actor) return [];
+
+    const ruleParams = this.actor._ruleParams ?? new Map();
+    const instances = ruleParams.get(ruleType);
+
+    return instances || [];
   }
 }
 
