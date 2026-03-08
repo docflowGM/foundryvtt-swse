@@ -72,8 +72,15 @@ import { FlagRegistry } from './scripts/core/flag-registry.js';
 // ---- core / config ----
 import { SWSE } from './scripts/core/config.js';
 import { registerSystemSettings } from './scripts/core/settings.js';
+import { registerHouseruleSettings } from './scripts/houserules/houserule-settings.js';
 import { initializeUtils } from './scripts/core/utils-init.js';
 import { initializeRolls } from './scripts/core/rolls-init.js';
+
+// ---- core engines (bootstrap attachment) ----
+import { RollEngine } from './scripts/engine/roll-engine.js';
+import { ModifierEngine } from './scripts/engine/effects/modifiers/ModifierEngine.js';
+import { DropService } from './scripts/services/drop-service.js';
+import { DroidValidationEngine } from './scripts/engine/droid-validation-engine.js';
 import { SentinelEngine } from './scripts/governance/sentinel/sentinel-core.js';
 import { initializeSentinelAuditors, auditCSSHealth, generateMigrationReport, SentinelReporter } from './scripts/governance/sentinel/sentinel-auditors.js';
 import { AppV2AuditRunner } from './scripts/governance/sentinel/appv2-audit-runner.js';
@@ -239,6 +246,7 @@ Hooks.once('init', async () => {
 
   /* ---------- PHASE 1: settings & hooks ---------- */
   registerSystemSettings();
+  registerHouseruleSettings();
   MentorTranslationSettings.registerSettings();
   initializeDiscoverySystem();
 
@@ -402,6 +410,12 @@ Hooks.once('ready', async () => {
   };
 
   window.SWSE = {
+    // Core engines (bootstrap attachment)
+    RollEngine,
+    ModifierEngine,
+    DropService,
+    DroidValidationEngine,
+    // Public APIs
     api: publicAPI,
     debug: debugAPI,
     // PHASE 10: Public API exposure

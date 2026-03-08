@@ -61,6 +61,7 @@ export class SWSEV2CharacterSheet extends
 
   async _prepareContext(options) {
     const actor = this.document;
+    const system = actor.system;
     const context = await super._prepareContext(options);
 
     // Authoritative derived state (populated by character-actor.js computeCharacterDerived)
@@ -159,7 +160,6 @@ export class SWSEV2CharacterSheet extends
           };
 
     // Compute display objects from system data
-    const system = actor.system;
     const hp = {
       value: system.hp?.value ?? 0,
       max: system.hp?.max ?? 1,
@@ -420,7 +420,7 @@ export class SWSEV2CharacterSheet extends
       button.addEventListener("click", async ev => {
         ev.preventDefault();
         // Switch to overview tab and scroll to health panel
-        await this.activateTab("overview");
+        await this.changeTab("overview", "primary");
         const healthPanel = html.querySelector(".hp-condition-panel");
         if (healthPanel) {
           healthPanel.scrollIntoView({ behavior: "smooth", block: "center" });

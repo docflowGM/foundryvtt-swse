@@ -8,6 +8,7 @@ import { StepController } from "/systems/foundryvtt-swse/scripts/apps/step-contr
 import SWSEApplication from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
 import { Seraphim } from "/systems/foundryvtt-swse/scripts/apps/seraphim-narrator.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { DroidValidationEngine } from "/systems/foundryvtt-swse/scripts/engine/droid-validation-engine.js";
 
 export class DroidBuilderApp extends SWSEApplication {
 
