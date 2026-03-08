@@ -1,4 +1,7 @@
 import { getEffectiveHalfLevel } from '../../actors/derived/level-split.js';
+import { ResolutionContext } from '../../engine/resolution/resolution-context.js';
+import { RULES } from '../../engine/execution/rules/rule-enum.js';
+
 /**
  * Modern SWSE Combat Utilities (v13+)
  * - Condition Track integer-based penalties
@@ -83,6 +86,33 @@ export function computeAttackBonus(actor, weapon) {
     ctPenalty +
     proficiencyPenalty
   );
+}
+
+/**
+ * Calculate effective critical threat range with EXTEND_CRITICAL_RANGE modifiers
+ * @param {Actor} actor - The attacking actor
+ * @param {Item} weapon - The weapon being used
+ * @returns {number} The adjusted critical threat range (minimum 2)
+ */
+export function getEffectiveCritRange(actor, weapon) {
+  const baseCritRange = weapon.system?.critRange || 20;
+
+  if (!actor) return baseCritRange;
+
+  const ctx = new ResolutionContext(actor);
+  const critRules = ctx.getRuleInstances(RULES.EXTEND_CRITICAL_RANGE);
+
+  let bonus = 0;
+  const weaponProf = weapon.system?.proficiency;
+
+  for (const rule of critRules) {
+    if (rule.proficiency === weaponProf) {
+      bonus += rule.by || 0;
+    }
+  }
+
+  // Ensure crit range never drops below 2 (natural rule)
+  return Math.max(2, baseCritRange - bonus);
 }
 
 /* -------------------------------------------------------------------------- */
