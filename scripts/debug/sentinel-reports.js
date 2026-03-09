@@ -4,6 +4,7 @@
  */
 
 import { SWSEDebugger } from "./swse-debugger.js";
+import { SentinelConfig } from "./sentinel-config.js";
 
 export class SentinelReports {
   /* ===============================
@@ -75,6 +76,8 @@ export class SentinelReports {
   =============================== */
 
   static generatePerformanceReport() {
+    // NOTE: This reads from SWSEDebugger for historical export.
+    // Real-time performance truth is in SentinelEngine.getPerformanceMetrics()
     const renderTimes = SWSEDebugger.metrics.renderTimes;
     const prepareTimes = SWSEDebugger.metrics.prepareTimes;
 
@@ -100,8 +103,8 @@ export class SentinelReports {
       prepareTimes,
       rendersByClass: renderClassStats.sort((a, b) => b.avg - a.avg),
       slowestRenderers: renderClassStats.slice(0, 5),
-      slowRenderThreshold: 120,
-      slowRendersDetected: renderClassStats.filter(r => r.avg > 120)
+      slowRenderThreshold: SentinelConfig.RENDER_SLOW_MS,
+      slowRendersDetected: renderClassStats.filter(r => r.avg > SentinelConfig.RENDER_SLOW_MS)
     };
   }
 

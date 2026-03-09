@@ -8,6 +8,8 @@
  * - Non-invasive, non-mutating observation
  */
 
+import { SentinelConfig } from "../../debug/sentinel-config.js";
+
 export class SentinelEngine {
   static MODES = {
     OFF: 0,
@@ -179,6 +181,9 @@ export class SentinelEngine {
     }
 
     this.#reportLog.push(report);
+    if (this.#reportLog.length > SentinelConfig.MAX_REPORT_LOG) {
+      this.#reportLog.shift();
+    }
 
     // ========== PHASE 2: Health State Update ==========
     this.#updateHealthState(layer, severity);
@@ -208,6 +213,12 @@ export class SentinelEngine {
 
     const agg = this.#aggregates.get(aggregateKey);
     agg.count++;
+
+    // Enforce aggregate size limit (FIFO eviction)
+    if (this.#aggregates.size > SentinelConfig.MAX_AGGREGATES) {
+      const firstKey = this.#aggregates.keys().next().value;
+      this.#aggregates.delete(firstKey);
+    }
 
     // Store up to 5 samples
     if (sample && agg.samples.length < 5) {
@@ -571,12 +582,11 @@ export class SentinelEngine {
 
     metric.average = metric.samples.reduce((a, b) => a + b, 0) / metric.samples.length;
 
-    // Warn if exceeds 2x baseline
-    const baseline = 16; // ~60fps target
-    if (elapsed > baseline * 2) {
+    // Warn if exceeds configured threshold
+    if (elapsed > SentinelConfig.RENDER_WARNING_MS) {
       this.report('sentry', this.SEVERITY.WARN, `Performance threshold exceeded: ${label}`, {
         elapsed: elapsed.toFixed(2) + 'ms',
-        baseline: baseline + 'ms',
+        threshold: SentinelConfig.RENDER_WARNING_MS + 'ms',
         average: metric.average.toFixed(2) + 'ms'
       });
     }

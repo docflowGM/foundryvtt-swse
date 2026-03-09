@@ -5,6 +5,8 @@
  * Zero behavior mutation. Zero error suppression. Toggleable.
  */
 
+import { SentinelConfig } from "./sentinel-config.js";
+
 export class SWSEDebugger {
   static enabled = false;
   static bootTime = Date.now();
@@ -14,6 +16,8 @@ export class SWSEDebugger {
     prepareTimes: [],
     crashFingerprints: {}
   };
+  static _memoryInterval = null;
+  static _patched = false;
 
   static enable() {
     this.enabled = true;
@@ -22,6 +26,10 @@ export class SWSEDebugger {
 
   static disable() {
     this.enabled = false;
+    if (this._memoryInterval) {
+      clearInterval(this._memoryInterval);
+      this._memoryInterval = null;
+    }
     console.log("SWSE DEBUG DISABLED");
   }
 
@@ -38,6 +46,9 @@ export class SWSEDebugger {
     };
 
     this.events.push(event);
+    if (this.events.length > SentinelConfig.MAX_EVENTS) {
+      this.events.shift();
+    }
 
     if (this.enabled) {
       console.log("SWSE DEBUG:", event);
@@ -55,11 +66,17 @@ export class SWSEDebugger {
 
   static recordRenderDuration(className, duration) {
     this.metrics.renderTimes.push({ className, duration, timestamp: Date.now() });
+    if (this.metrics.renderTimes.length > SentinelConfig.MAX_RENDER_SAMPLES) {
+      this.metrics.renderTimes.shift();
+    }
     this.record("metric:renderTime", { className, duration });
   }
 
   static recordPrepareDuration(className, duration) {
     this.metrics.prepareTimes.push({ className, duration, timestamp: Date.now() });
+    if (this.metrics.prepareTimes.length > SentinelConfig.MAX_PREPARE_SAMPLES) {
+      this.metrics.prepareTimes.shift();
+    }
     this.record("metric:prepareTime", { className, duration });
   }
 
@@ -252,8 +269,8 @@ export class SWSEDebugger {
     });
 
     // Periodic Memory Sampling (30 second intervals)
-    setInterval(() => {
+    this._memoryInterval = setInterval(() => {
       SWSEDebugger.recordMemorySnapshot();
-    }, 30000);
+    }, SentinelConfig.MEMORY_SAMPLE_INTERVAL_MS);
   }
 }
