@@ -1,3 +1,4 @@
+import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { InventoryEngine } from "/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
@@ -56,6 +57,10 @@ export class SWSEV2CharacterSheet extends
   async _prepareContext(options) {
     const actor = this.document;
     const system = actor.system;
+
+    // Sanity check: actor must be valid
+    RenderAssertions.assertActorValid(actor, "SWSEV2CharacterSheet");
+
     const context = await super._prepareContext(options);
 
     // Authoritative derived state (populated by character-actor.js computeCharacterDerived)
@@ -238,7 +243,7 @@ export class SWSEV2CharacterSheet extends
       };
     }
 
-    return {
+    const finalContext = {
       ...context,
       biography,
       derived,
@@ -261,6 +266,11 @@ export class SWSEV2CharacterSheet extends
       buildMode,
       actionEconomy
     };
+
+    // Verify context is serializable (no Document refs, circular refs, etc.)
+    RenderAssertions.assertContextSerializable(finalContext, "SWSEV2CharacterSheet");
+
+    return finalContext;
   }
 
   /* ============================================================

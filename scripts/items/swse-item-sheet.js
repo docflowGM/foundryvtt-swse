@@ -7,6 +7,7 @@
  * - No actor mutation outside ActorEngine-owned APIs (actor.updateOwnedItem / actor.activateItem / etc.)
  */
 
+import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
 import { SWSEUpgradeApp } from "/systems/foundryvtt-swse/scripts/apps/upgrade-app.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { BLADE_COLOR_MAP } from "/systems/foundryvtt-swse/scripts/data/blade-colors.js";
@@ -69,6 +70,9 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
 
     // Template expects this for the <form class="{{cssClass}} ..."> binding.
     context.cssClass = this.classList?.value || this.constructor.DEFAULT_OPTIONS.classes.join(' ');
+
+    // Verify context is serializable (no Document refs, circular refs, etc.)
+    RenderAssertions.assertContextSerializable(context, "SWSEItemSheet");
 
     return context;
   }
