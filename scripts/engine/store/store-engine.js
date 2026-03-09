@@ -1,13 +1,46 @@
 /**
  * scripts/engine/store/store-engine.js
  *
- * Contract API for Store Engine — Single Authority for Store Logic
- * SSOT → Engine → UI
+ * PHASE 4: Store Engine — Consolidated Single Authority
+ *
+ * This is the SSOT (Single Source of Truth) for all store operations.
+ * Replaces the dual-engine pattern (StoreEngine + TransactionEngine) with unified design.
+ *
+ * Architecture:
+ * ┌─────────────────────────────────────┐
+ * │  Store UI (store-main.js)           │
+ * │  Checkout UI (store-checkout.js)    │
+ * └──────────────┬──────────────────────┘
+ *                │
+ *                ▼
+ * ┌─────────────────────────────────────┐
+ * │  StoreEngine (THIS FILE)            │
+ * │  - getInventory()                   │
+ * │  - canPurchase()                    │
+ * │  - purchase() [ATOMIC]              │
+ * └──────────────┬──────────────────────┘
+ *                │
+ *      ┌─────────┼─────────┐
+ *      ▼         ▼         ▼
+ *   Ledger   Snapshot   Pricing
+ *  Service   Manager    Engine
+ *
+ * Design Principles (Phase 4 Consolidation):
+ * 1. Single Authority: StoreEngine is the ONLY public store API
+ * 2. Atomic Transactions: purchase() uses snapshot rollback for all-or-nothing
+ * 3. Pre-Validation: All plans validated BEFORE any credit deduction
+ * 4. Price Caching: Prices frozen at transaction start
+ * 5. No Concurrent Purchases: Per-actor locking prevents race conditions
+ *
+ * TransactionEngine (transaction-engine.js):
+ *   - Legacy atomic coordinator (kept for reference, not actively used)
+ *   - Future: Can be integrated as StoreEngine's internal implementation
+ *   - For now: StoreEngine implements atomicity via SnapshotManager
  *
  * Public API:
  *   - getInventory(options)       : Load from compendiums + apply pricing
  *   - canPurchase(context)        : Validate actor eligibility
- *   - purchase(context)           : Execute atomic transaction
+ *   - purchase(context)           : Execute atomic transaction [CONSOLIDATED]
  */
 
 import { buildStoreIndex } from "/systems/foundryvtt-swse/scripts/engine/store/index.js";
