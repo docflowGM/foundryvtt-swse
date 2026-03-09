@@ -1,4 +1,5 @@
 import { ForceEnhancementDetector } from "/systems/foundryvtt-swse/scripts/utils/force-enhancement-detector.js";
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 
 /**
  * Force Enhancement Dialog

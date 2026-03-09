@@ -1,5 +1,6 @@
 // ============================================
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { createActor, createItem } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 // FILE: scripts/world-data-loader.js
 // FIXED: Validates all data before importing

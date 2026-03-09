@@ -5,6 +5,7 @@
  */
 
 import { StepController } from "/systems/foundryvtt-swse/scripts/apps/step-controller.js";
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import SWSEApplication from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
 import { Seraphim } from "/systems/foundryvtt-swse/scripts/apps/seraphim-narrator.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";

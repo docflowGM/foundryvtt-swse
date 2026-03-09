@@ -4,6 +4,7 @@
  */
 
 import SWSEApplication from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 
 export class NonheroicUnitsBrowser extends SWSEApplication {

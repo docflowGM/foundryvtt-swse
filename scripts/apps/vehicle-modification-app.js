@@ -1,4 +1,5 @@
 import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 /**
  * Vehicle Modification Application
  * Interactive starship builder with Marl Skindar, Republic Spy narrator

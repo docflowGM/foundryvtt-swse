@@ -1,3 +1,5 @@
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+
 /**
  * V1 API Scanner - Runtime detection of deprecated patterns
  *

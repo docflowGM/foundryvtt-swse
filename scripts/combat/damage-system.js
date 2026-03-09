@@ -1,4 +1,5 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { escapeHTML } from "/systems/foundryvtt-swse/scripts/utils/security-utils.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 

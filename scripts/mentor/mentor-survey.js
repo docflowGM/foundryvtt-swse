@@ -8,6 +8,7 @@
  */
 
 import { MENTORS } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { MentorTranslationIntegration } from "/systems/foundryvtt-swse/scripts/mentor/mentor-translation-integration.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { seedMentorMemoryFromSurvey, getMentorMemory, setMentorMemory } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-memory.js";
