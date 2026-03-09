@@ -226,24 +226,63 @@ export function normalizeActors(rawActors) {
  * @param {Array<StoreItem>} items
  * @returns {Array<StoreItem>}
  */
+/**
+ * P1-1: Enhanced filtering with detailed logging for excluded items
+ * @param {Array} items - items to validate
+ * @returns {Array} valid items
+ */
 export function filterValidStoreItems(items) {
+  const logger = globalThis.swseLogger || console;
+
   return items.filter(item => {
     // Must have a name
-    if (!item.name || item.name.trim() === '') {return false;}
+    if (!item.name || item.name.trim() === '') {
+      logger.warn(`[Store] Excluded item: no name`, {
+        id: item.id || item._id,
+        type: item.type
+      });
+      return false;
+    }
 
     // Must have a valid type
-    if (!item.type) {return false;}
+    if (!item.type) {
+      logger.warn(`[Store] Excluded item: no type`, {
+        name: item.name,
+        id: item.id || item._id
+      });
+      return false;
+    }
 
     // Skip items explicitly excluded from store
-    if (item.doc?.flags?.swse?.excludeFromStore) {return false;}
+    if (item.doc?.flags?.swse?.excludeFromStore) {
+      logger.debug(`[Store] Excluded item: marked excludeFromStore`, {
+        name: item.name,
+        id: item.id || item._id
+      });
+      return false;
+    }
 
     // Services are not store inventory items
     // They are contextual expenses, not purchasable goods
-    if (item.type === 'service') {return false;}
+    if (item.type === 'service') {
+      logger.debug(`[Store] Excluded item: type=service`, {
+        name: item.name,
+        id: item.id || item._id
+      });
+      return false;
+    }
 
     // Must have a cost (all store items must be priced)
     const hasCost = item.cost !== null && item.cost !== undefined && item.cost >= 0;
-    if (!hasCost) {return false;}
+    if (!hasCost) {
+      logger.warn(`[Store] Excluded item: missing or invalid cost`, {
+        name: item.name,
+        id: item.id || item._id,
+        cost: item.cost,
+        type: item.type
+      });
+      return false;
+    }
 
     return true;
   });

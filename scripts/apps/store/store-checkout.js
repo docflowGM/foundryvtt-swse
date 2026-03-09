@@ -172,6 +172,105 @@ export async function addVehicleToCart(store, templateId, condition, updateDialo
 }
 
 /**
+ * P1-2: Re-validate cart items at final purchase time
+ * Checks that:
+ * - All items still exist in inventory
+ * - Prices haven't changed significantly
+ * - Actor still has sufficient credits
+ *
+ * @param {Object} store - Store instance
+ * @param {Object} actor - Purchasing actor
+ * @param {Number} originalTotal - Total from checkout
+ * @returns {Promise<{valid: boolean, error: string|null}>}
+ */
+async function revalidateCart(store, actor, originalTotal) {
+    try {
+        // Re-check that actor still exists and has current state
+        const freshActor = game.actors.get(actor.id);
+        if (!freshActor) {
+            return {
+                valid: false,
+                error: 'Your character was deleted. Please refresh and try again.'
+            };
+        }
+
+        const currentCredits = Number(freshActor.system?.credits) ?? 0;
+
+        // Re-check sufficient credits
+        if (currentCredits < originalTotal) {
+            return {
+                valid: false,
+                error: `Insufficient credits at purchase time. You have ${currentCredits}, but items cost ${originalTotal}.`
+            };
+        }
+
+        // Re-validate each item in cart still exists
+        for (const item of store.cart.items) {
+            const currentItem = store.itemsById?.get(item.id);
+            if (!currentItem) {
+                return {
+                    valid: false,
+                    error: `Item "${item.name}" is no longer available in the store.`
+                };
+            }
+
+            // Check price hasn't changed more than 5%
+            const priceDiff = Math.abs(currentItem.finalCost - item.cost);
+            const threshold = item.cost * 0.05;
+            if (priceDiff > threshold) {
+                return {
+                    valid: false,
+                    error: `Price of "${item.name}" changed from ${item.cost} to ${currentItem.finalCost} credits. Please review your cart.`
+                };
+            }
+        }
+
+        // Re-validate droids can be created
+        for (const droid of store.cart.droids ?? []) {
+            if (!droid.name) {
+                return {
+                    valid: false,
+                    error: 'One or more droids in cart is missing a name. Cannot purchase.'
+                };
+            }
+        }
+
+        // Re-validate vehicles still available and prices OK
+        for (const vehicle of store.cart.vehicles ?? []) {
+            const vehicleTemplate = store.itemsById?.get(vehicle.id);
+            if (!vehicleTemplate) {
+                return {
+                    valid: false,
+                    error: `Vehicle "${vehicle.name}" is no longer available in the store.`
+                };
+            }
+
+            // Check price for condition (P1-4)
+            const currentPrice = vehicle.condition === 'used'
+                ? vehicleTemplate.finalCostUsed
+                : vehicleTemplate.finalCost;
+
+            const priceDiff = Math.abs(currentPrice - vehicle.cost);
+            const threshold = vehicle.cost * 0.05;
+            if (priceDiff > threshold) {
+                return {
+                    valid: false,
+                    error: `Price of ${vehicle.condition} "${vehicle.name}" changed. Please review your cart.`
+                };
+            }
+        }
+
+        return { valid: true, error: null };
+    } catch (err) {
+        SWSELogger.warn('StoreCheckout: Cart re-validation failed, proceeding anyway', {
+            error: err.message
+        });
+        // Non-fatal: if validation fails, allow purchase to proceed
+        return { valid: true, error: null };
+    }
+}
+
+/**
  * @deprecated Services are not store inventory items.
  * Services are contextual expenses managed separately by GMs.
  * Do not use this function — it is dead code.
@@ -785,6 +884,16 @@ export async function checkout(store, animateNumberCallback) {
             cleanupListeners();
 
             try {
+                // P1-2: Re-validate cart before final purchase
+                // Check that all items still exist and prices haven't changed significantly
+                const cartValidation = await revalidateCart(store, actor, total);
+                if (!cartValidation.valid) {
+                    ui.notifications.error(cartValidation.error);
+                    if (confirmBtn) confirmBtn.disabled = false;
+                    if (cancelBtn) cancelBtn.disabled = false;
+                    return;
+                }
+
                 // PART 5: Execute engine transaction
                 const result = await StoreEngine.purchase({
                     actor,
