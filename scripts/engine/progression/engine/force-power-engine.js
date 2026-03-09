@@ -222,7 +222,7 @@ static async applySelected(actor, selectedItems = []) {
 
   const existing = new Set(
     actor.items
-      .filter(i => i.type === 'power' || i.type === 'forcePower')
+      .filter(i => i.type === 'power' || i.type === 'forcepower')
       .map(i => i.name.toLowerCase())
   );
 
@@ -241,7 +241,7 @@ static async applySelected(actor, selectedItems = []) {
       } else {
         toCreate.push({
           name: it.name || 'Force Power',
-          type: 'forcePower',
+          type: 'forcepower',
           img: it.img || 'icons/svg/mystery-man.svg',
           system: it.system || {}
         });

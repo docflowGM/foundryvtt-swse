@@ -59,7 +59,7 @@ export class SuiteReselectionEngine {
 
     // STEP 2: Clear existing powers (via ActorEngine)
     try {
-      const existingPowers = actor.items.filter(i => i.type === 'forcePower');
+      const existingPowers = actor.items.filter(i => i.type === 'forcepower');
       if (existingPowers.length > 0) {
         const powerIds = existingPowers.map(p => p.id || p._id);
         await ActorEngine.deleteEmbeddedDocuments(actor, 'Item', powerIds);
