@@ -131,6 +131,9 @@ import { SWSEV2CharacterSheetAudit } from './scripts/sheets/v2/character-sheet-i
 import { CharacterSheetIntegrationTestHarness } from './scripts/sheets/v2/character-sheet-integration-test-harness.js';
 import { SWSEV2SheetDiagnostics } from './scripts/sheets/v2/sheet-diagnostics.js';
 
+// ---- debug system ----
+import { SWSEDebugger } from './scripts/debug/swse-debugger.js';
+
 // ---- handlebars ----
 import { registerHandlebarsHelpers } from './helpers/handlebars/index.js';
 import { registerSWSEPartials } from './helpers/handlebars/partials-auto.js';
@@ -281,6 +284,11 @@ Hooks.once('ready', async () => {
 
   swseLogger.log('SWSE | Ready start');
 
+  /* ---------- Initialize debugger (lifecycle + error capture) ---------- */
+  SWSEDebugger.patch();
+  // Toggle on during debugging
+  SWSEDebugger.enable();
+
   /* ---------- v13 hardening validation ---------- */
   await validateSystemReady();
 
@@ -422,7 +430,16 @@ Hooks.once('ready', async () => {
     DroidValidationEngine,
     // Public APIs
     api: publicAPI,
-    debug: debugAPI,
+    debug: {
+      ...debugAPI,
+      // Lifecycle debugger
+      debugger: {
+        enable: () => SWSEDebugger.enable(),
+        disable: () => SWSEDebugger.disable(),
+        export: () => SWSEDebugger.exportJSON(),
+        getEvents: () => SWSEDebugger.events
+      }
+    },
     // PHASE 10: Public API exposure
     SENTINEL_STATUS: SentinelEngine.getStatus()
   };
