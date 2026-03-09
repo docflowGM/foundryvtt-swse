@@ -16,11 +16,20 @@ import { RULES } from '../../engine/execution/rules/rule-enum.js';
 
 /**
  * Get RAW SWSE condition penalty based on CT step.
+ *
+ * CT levels (RAW SWSE):
+ * - 0: Normal (0 penalty)
+ * - 1: Shaken (-1 penalty)
+ * - 2: Frightened (-2 penalty)
+ * - 3: Panicked (-5 penalty)
+ * - 4: Cowering (-10 penalty)
+ * - 5: Helpless (can't act, no numeric penalty)
+ *
  * @param {number} ctStep - Integer 0–5
  * @returns {number} Penalty value
  */
 export function getConditionPenalty(ctStep) {
-  const penalties = [0, -1, -2, -5, -10, -10];
+  const penalties = [0, -1, -2, -5, -10, 0]; // Helpless = 0 (can't act, numeric penalty irrelevant)
   return penalties[Math.clamp(ctStep, 0, 5)] ?? 0;
 }
 
