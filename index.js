@@ -30,11 +30,6 @@ window.addEventListener('unhandledrejection', (event) => {
   console.groupEnd();
 });
 
-// Global render error trap (temporary instrumentation)
-Hooks.on("error", (error) => {
-  console.error("GLOBAL RENDER ERROR:", error);
-});
-
 /* =========================
    JQUERY RUNTIME GUARD (v13 compliance)
    ========================= */
