@@ -10,6 +10,7 @@
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { sceneControlRegistry } from "/systems/foundryvtt-swse/scripts/scene-controls/api.js";
 import { getCurrentPhase, SWSE_PHASES } from "/systems/foundryvtt-swse/scripts/state/phase.js";
+import SWSEDialogV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-dialog-v2.js";
 
 export class ActionPaletteApp extends BaseSWSEAppV2 {
   constructor(options = {}) {
@@ -26,6 +27,9 @@ export class ActionPaletteApp extends BaseSWSEAppV2 {
       commands: [{}, {}, {}],      // 3 scene command slots
       utilities: [{}, {}, {}]      // 3 utility/insight slots
     };
+
+    // Hook lifecycle guard (prevent duplication)
+    this._hooksAttached = false;
 
     this._loadGMZones();
   }
@@ -466,20 +470,30 @@ export class ActionPaletteApp extends BaseSWSEAppV2 {
    * @private
    */
   _validateDroppedItem(data, zone) {
+    // Normalize type to lowercase (Foundry uses 'Actor', we store 'actor')
+    const type = (data.type || '').toLowerCase();
+
     if (zone === 'spawners') {
-      return data.type === 'Actor'; // Only actors
+      return type === 'actor'; // Accept both 'Actor' (Foundry) and 'actor' (stored)
     } else if (zone === 'commands') {
-      return data.type === 'command' || data.type === 'RollTable';
+      return type === 'command' || type === 'rolltable';
     } else if (zone === 'utilities') {
-      return data.type === 'utility' || data.type === 'Macro';
+      return type === 'utility' || type === 'macro';
     }
     return false;
   }
 
   /**
-   * Initialize hooks and listeners
+   * Initialize hooks and listeners (only once)
+   * Guard against duplicate hook registration on re-render
    */
   _attachListeners() {
+    // Skip if hooks already attached
+    if (this._hooksAttached) {
+      return;
+    }
+    this._hooksAttached = true;
+
     Hooks.on('swse:gm-insights-updated', (suggestions) => {
       this._onSuggestionsUpdated(suggestions);
     });

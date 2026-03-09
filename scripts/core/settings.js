@@ -322,6 +322,22 @@ export function registerSystemSettings() {
     default: []
   });
 
+  // GM Store Dashboard Menu (Primary Entry Point - V2 Safe)
+  // This is the cleanest entry point: no DOM mutation, no sidebar hacks, native Foundry pattern
+  try {
+    const { GMStoreDashboard } = await import('/systems/foundryvtt-swse/scripts/apps/gm-store-dashboard.js');
+    game.settings.registerMenu('foundryvtt-swse', 'gmStoreDashboard', {
+      name: 'Store Dashboard',
+      label: 'Open Store Dashboard',
+      hint: 'Manage store policies, approval queues, and inventory filters',
+      icon: 'fas fa-store',
+      type: GMStoreDashboard,
+      restricted: true  // GM-only
+    });
+  } catch (err) {
+    console.warn('[SWSE] Failed to register GM Store Dashboard menu:', err);
+  }
+
   // Register MetaTuning settings for suggestion engine
   registerMetaTuningSettings();
 

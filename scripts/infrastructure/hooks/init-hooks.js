@@ -15,6 +15,7 @@ import { registerCombatHooks } from "/systems/foundryvtt-swse/scripts/infrastruc
 import { registerActorHooks } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/actor-hooks.js";
 import { registerUIHooks } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/ui-hooks.js";
 import { registerRerollListeners } from "/systems/foundryvtt-swse/scripts/species/species-reroll-handler.js";
+import { SWSECombatActionBrowser } from "/systems/foundryvtt-swse/scripts/apps/combat-action-browser.js";
 
 /**
  * Register initialization hooks
@@ -41,6 +42,10 @@ export function registerInitHooks() {
         // Initialize species reroll system
         registerRerollListeners();
         SWSELogger.log('Species Trait Engine initialized');
+
+        // Initialize Combat Action Browser (Token HUD button)
+        SWSECombatActionBrowser.init();
+        SWSELogger.log('Combat Action Browser initialized');
 
         // Log hook statistics
         const stats = HooksRegistry.getStats();
