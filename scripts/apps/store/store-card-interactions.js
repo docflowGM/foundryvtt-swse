@@ -23,6 +23,8 @@ export class StoreCardInteractions {
     this.root = rootElement;
     this.expandedCard = null; // Currently expanded card element
     this.reduceMotion = game.user?.getFlag?.('core', 'reduce-motion') ?? false;
+    this._escapeKeyHandler = null;
+    this._documentClickHandler = null;
 
     this._attachListeners();
   }
@@ -39,21 +41,23 @@ export class StoreCardInteractions {
     this.root.addEventListener('click', (ev) => this._handleCardClick(ev));
 
     // Close on Escape key
-    document.addEventListener('keydown', (ev) => {
+    this._escapeKeyHandler = (ev) => {
       if (ev.key === 'Escape' && this.expandedCard) {
         this.collapseCard();
       }
-    });
+    };
+    document.addEventListener('keydown', this._escapeKeyHandler);
 
     // Close on click outside expanded card
-    document.addEventListener('click', (ev) => {
+    this._documentClickHandler = (ev) => {
       if (this.expandedCard && !this.expandedCard.contains(ev.target)) {
         // Allow clicks on buttons and interactive elements to propagate first
         if (!ev.target.closest('button, a, input, select, textarea')) {
           this.collapseCard();
         }
       }
-    });
+    };
+    document.addEventListener('click', this._documentClickHandler);
   }
 
   /**
@@ -123,6 +127,12 @@ export class StoreCardInteractions {
     if (this.expandedCard) {
       this.collapseCard();
     }
-    // Event listeners are removed when root element is removed
+    // Remove global event listeners
+    if (this._escapeKeyHandler) {
+      document.removeEventListener('keydown', this._escapeKeyHandler);
+    }
+    if (this._documentClickHandler) {
+      document.removeEventListener('click', this._documentClickHandler);
+    }
   }
 }

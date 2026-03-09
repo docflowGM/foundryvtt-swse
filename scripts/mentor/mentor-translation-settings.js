@@ -156,8 +156,10 @@ export class MentorTranslationSettings {
 
     // Update speed preview on slider change
     setTimeout(() => {
-      const slider = document.getElementById('animation-speed');
-      const preview = document.querySelector('.speed-preview');
+      const dialogEl = document.querySelector('#swse-dialog-v2');
+      if (!dialogEl) return;
+      const slider = dialogEl.querySelector('#animation-speed');
+      const preview = dialogEl.querySelector('.speed-preview');
       if (slider && preview) {
         slider.addEventListener('input', (e) => {
           preview.textContent = `Current: ${e.target.value}ms`;

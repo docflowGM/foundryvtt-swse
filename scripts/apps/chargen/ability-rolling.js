@@ -23,6 +23,7 @@ export class AbilityRollingController {
     this.history = [];
     this.confirmed = false;
     this._nextId = 1;
+    this._activeMenuClickHandler = null;
     this._init();
   }
 
@@ -164,6 +165,12 @@ export class AbilityRollingController {
                       <button data-action="toggleLock">${die.locked ? 'Unlock' : 'Lock'}</button>
                       <button data-action="reroll">Reroll Die</button>`;
     document.body.appendChild(menu);
+
+    // Clean up any previous menu click handler
+    if (this._activeMenuClickHandler) {
+      document.removeEventListener('click', this._activeMenuClickHandler);
+    }
+
     const onClick = async (ev) => {
       const action = ev.target.dataset.action;
       if (!action) {return;}
@@ -172,7 +179,9 @@ export class AbilityRollingController {
       if (action === 'reroll') { await this._rerollSingle(id); }
       menu.remove();
       document.removeEventListener('click', onClick);
+      this._activeMenuClickHandler = null;
     };
+    this._activeMenuClickHandler = onClick;
     setTimeout(() => document.addEventListener('click', onClick));
     const rect = btn.getBoundingClientRect();
     menu.style.position='fixed';
