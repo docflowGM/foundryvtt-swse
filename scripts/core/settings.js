@@ -312,6 +312,16 @@ export function registerSystemSettings() {
     default: false
   });
 
+  // Pending Custom Purchases Queue (for GM approval)
+  game.settings.register('foundryvtt-swse', 'pendingCustomPurchases', {
+    name: 'Pending Custom Purchases',
+    hint: 'Queue of custom droid/vehicle builds awaiting GM approval (internal use)',
+    scope: 'world',
+    config: false,  // Hidden from config UI, managed by Store GM Dashboard
+    type: Object,
+    default: []
+  });
+
   // Register MetaTuning settings for suggestion engine
   registerMetaTuningSettings();
 
