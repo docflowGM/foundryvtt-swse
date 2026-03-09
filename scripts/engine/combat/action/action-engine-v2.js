@@ -65,19 +65,46 @@ export class ActionEngine {
     const violations = [];
     const consumed = { standard: 0, move: 0, swift: 0 };
 
-    // FULL-ROUND: Requires all actions fresh
+    // FULL-ROUND: Consumes Standard + Move (Swift still available, per SWSE rules)
     if (cost.fullRound) {
-      if (
-        state.remaining.standard === 1 &&
-        state.remaining.move === 1 &&
-        state.remaining.swift === 1
-      ) {
-        state.remaining.standard = 0;
-        state.remaining.move = 0;
-        state.remaining.swift = 0;
+      // Try to consume full-round via Standard + Move (with degradation if needed)
+      let canDoFullRound = true;
+
+      // Need Standard action (or degrade to it)
+      if (state.remaining.standard > 0) {
+        state.remaining.standard--;
+        consumed.standard++;
+      } else if (state.remaining.move > 0) {
+        // Degrade Move to Standard
+        state.remaining.move--;
+        state.degraded.standard++;
+        consumed.standard++;
+      } else if (state.remaining.swift > 0) {
+        // Degrade Swift to Standard
+        state.remaining.swift--;
+        state.degraded.standard++;
+        consumed.standard++;
+      } else {
+        canDoFullRound = false;
+      }
+
+      // Need Move action (or degrade to it)
+      if (canDoFullRound) {
+        if (state.remaining.move > 0) {
+          state.remaining.move--;
+          consumed.move++;
+        } else if (state.remaining.swift > 0) {
+          // Degrade Swift to Move
+          state.remaining.swift--;
+          state.degraded.move++;
+          consumed.move++;
+        } else {
+          canDoFullRound = false;
+        }
+      }
+
+      if (canDoFullRound) {
         state.fullRoundUsed = true;
-        consumed.standard = 1;
-        consumed.move = 1;
         return { allowed: true, turnState: state, violations, consumed };
       } else {
         violations.push("FULL_ROUND_NOT_AVAILABLE");
@@ -108,18 +135,36 @@ export class ActionEngine {
       return false;
     };
 
-    // STANDARD: Try Standard → Move → Swift
+    // STANDARD: Try Standard → Move → Swift (DOWNWARD degradation only)
     const payStandard = () => {
       if (attempt("standard")) return true;
-      if (degrade("move", "standard")) return true;
-      if (degrade("swift", "standard")) return true;
+      // Downward: If Standard unavailable, use Move as Swift
+      if (state.remaining.move > 0) {
+        state.remaining.move--;
+        state.degraded.standard++;
+        consumed.standard++;
+        return true;
+      }
+      // Further down: If Move unavailable, use Swift
+      if (state.remaining.swift > 0) {
+        state.remaining.swift--;
+        state.degraded.standard++;
+        consumed.standard++;
+        return true;
+      }
       return false;
     };
 
-    // MOVE: Try Move → Swift
+    // MOVE: Try Move → Swift (DOWNWARD degradation only)
     const payMove = () => {
       if (attempt("move")) return true;
-      if (degrade("swift", "move")) return true;
+      // Downward: If Move unavailable, use Swift
+      if (state.remaining.swift > 0) {
+        state.remaining.swift--;
+        state.degraded.move++;
+        consumed.move++;
+        return true;
+      }
       return false;
     };
 
