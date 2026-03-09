@@ -26,8 +26,31 @@ export const ActorEngine = {
     try {
       await DerivedCalculator.computeAll(actor);
       await ModifierEngine.applyAll(actor);
+
+      // PHASE 3: Check prerequisite integrity after mutations
+      // Skip if flagged as integrity check (prevent recursion)
+      if (!actor._skipIntegrityCheck) {
+        await this._checkIntegrity(actor);
+      }
     } catch (err) {
       SWSELogger.error('ActorEngine.recalcAll failed:', err);
+    }
+  },
+
+  /**
+   * Check prerequisite integrity and update tracking.
+   * Called after every mutation that affects abilities.
+   * @private
+   */
+  async _checkIntegrity(actor) {
+    try {
+      const report = await PrerequisiteIntegrityChecker.evaluate(actor);
+      if (Object.keys(report.violations).length > 0) {
+        SWSELogger.warn(`[INTEGRITY] Prerequisite violations detected for ${actor.name}:`, report.violations);
+      }
+    } catch (err) {
+      SWSELogger.error('[INTEGRITY] Failed to check prerequisites:', err);
+      // Don't throw — integrity check failure shouldn't block gameplay
     }
   },
 

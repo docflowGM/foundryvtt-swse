@@ -18,9 +18,12 @@
  * - Persistence across saves
  * - Easy detection of when an ability becomes/stops being broken
  * - Rendering of broken item indicators in UI
+ *
+ * NOTE: Routes all mutations through ActorEngine to maintain governance contract.
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class MissingPrereqsTracker {
 
@@ -49,10 +52,17 @@ export class MissingPrereqsTracker {
         return;
       }
 
-      // Update actor system data
-      await actor.update({
-        'system.missingPrerequisites': newTracking
-      });
+      // Update actor system data through ActorEngine with skip flag to prevent integrity recursion
+      actor._skipIntegrityCheck = true;
+      try {
+        await ActorEngine.updateActor(actor, {
+          'system.missingPrerequisites': newTracking
+        }, {
+          meta: { guardKey: 'prerequisite-integrity-tracking' }
+        });
+      } finally {
+        actor._skipIntegrityCheck = false;
+      }
 
       SWSELogger.debug(`[MISSING-PREREQS] Updated tracking for ${actor.name}`, {
         itemsTracked: Object.keys(newTracking).length
@@ -144,9 +154,16 @@ export class MissingPrereqsTracker {
   static async clearTracking(actor) {
     if (!actor) return;
     try {
-      await actor.update({
-        'system.missingPrerequisites': {}
-      });
+      actor._skipIntegrityCheck = true;
+      try {
+        await ActorEngine.updateActor(actor, {
+          'system.missingPrerequisites': {}
+        }, {
+          meta: { guardKey: 'prerequisite-integrity-tracking' }
+        });
+      } finally {
+        actor._skipIntegrityCheck = false;
+      }
     } catch (err) {
       SWSELogger.error('[MISSING-PREREQS] Failed to clear tracking:', err);
     }
