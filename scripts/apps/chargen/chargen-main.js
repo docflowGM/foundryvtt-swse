@@ -1875,18 +1875,19 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     if (this.currentStep === 'feats') {
       SWSELogger.log(`[CHARGEN] _onAskMentor: FEATS step - showing suggestion dialog`);
 
-      // Save filter state
-      const filterCheckbox = document.querySelector('.filter-valid-feats');
+      // Save filter state (scope to component root, not global document)
+      const root = this.element;
+      const filterCheckbox = root?.querySelector?.('.filter-valid-feats');
       const wasFilterActive = filterCheckbox?.checked || false;
 
       try {
         const mentor = this._getCurrentMentor();
         const topFeats = (this.characterData.feats || []).length > 0
-          ? document.querySelectorAll('.feat-card')
+          ? root?.querySelectorAll?.('.feat-card') || []
           : [];
 
-        // Get top 5 suggested feats from the page
-        const suggestions = Array.from(document.querySelectorAll('.feat-card[data-suggestion-tier]'))
+        // Get top 5 suggested feats from the component (not global document)
+        const suggestions = Array.from(root?.querySelectorAll?.('.feat-card[data-suggestion-tier]') || [])
           .sort((a, b) => {
             const tierA = parseInt(a.dataset.suggestionTier || 0);
             const tierB = parseInt(b.dataset.suggestionTier || 0);

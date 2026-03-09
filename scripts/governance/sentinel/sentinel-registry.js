@@ -9,11 +9,12 @@ import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sent
 
 // Import all layers
 import { CSSLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/layers/css-layer.js";
-import { RenderLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/layers/render-layer.js";
+// NOTE: RenderLayer and PerformanceLayer do not exist yet (placeholder for future implementation)
+// import { RenderLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/layers/render-layer.js";
 import { DataLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/layers/data-layer.js";
 import { HooksLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/layers/hooks-layer.js";
 import { PromisesLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/layers/promises-layer.js";
-import { PerformanceLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/layers/performance-layer.js";
+// import { PerformanceLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/layers/performance-layer.js";
 import { CombatLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/layers/combat-layer.js";
 
 // PHASE 7: Import utility layer governance enforcement
@@ -47,11 +48,11 @@ export function initializeSentinelLayers() {
   // Do not change order without understanding dependencies
 
   SentinelEngine.registerLayer('css', CSSLayer);
-  SentinelEngine.registerLayer('render', RenderLayer);
+  // SentinelEngine.registerLayer('render', RenderLayer); // Placeholder layer not yet implemented
   SentinelEngine.registerLayer('data', DataLayer);
   SentinelEngine.registerLayer('hooks', HooksLayer);
   SentinelEngine.registerLayer('promises', PromisesLayer);
-  SentinelEngine.registerLayer('performance', PerformanceLayer);
+  // SentinelEngine.registerLayer('performance', PerformanceLayer); // Placeholder layer not yet implemented
 
   // PHASE 3: Register mutation authority enforcement
   SentinelEngine.registerLayer('mutation', MutationIntegrityLayer);

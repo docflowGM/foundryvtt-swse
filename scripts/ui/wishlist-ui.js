@@ -10,14 +10,34 @@ export class WishlistUI {
   /**
    * Register wishlist UI handlers
    * Should be called during app initialization
+   *
+   * NOTE: This method uses a guard to prevent duplicate handler registration.
+   * Each call will remove old handlers before registering new ones.
    */
   static registerHandlers() {
+    // Guard: prevent duplicate registration
+    if (this._handlersRegistered) {
+      // Remove old handlers
+      document.removeEventListener('contextmenu', this._handleContextMenu, true);
+      document.removeEventListener('click', this._handleWishlistClick);
+    }
+
+    // Store bound handlers for later removal
+    this._handleContextMenu = this._handleContextMenu.bind(this);
+    this._handleWishlistClick = this._handleWishlistClick.bind(this);
+
     // Context menu for adding/removing from wishlist
-    document.addEventListener('contextmenu', this._handleContextMenu.bind(this), true);
+    document.addEventListener('contextmenu', this._handleContextMenu, true);
 
     // Wishlist buttons in UI
-    document.addEventListener('click', this._handleWishlistClick.bind(this));
+    document.addEventListener('click', this._handleWishlistClick);
+
+    this._handlersRegistered = true;
   }
+
+  static _handlersRegistered = false;
+  static _handleContextMenu = null;
+  static _handleWishlistClick = null;
 
   /**
    * Show prerequisite status tooltip
