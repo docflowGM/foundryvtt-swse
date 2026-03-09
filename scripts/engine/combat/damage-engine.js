@@ -1,6 +1,15 @@
 /**
  * DamageEngine — Phase C Combat Resolution
- * Apply damage, check DT, adjust CT, handle massive damage
+ *
+ * CRITICAL FIX: DT is a TRIGGER, not damage reduction.
+ * Correct flow:
+ * 1. Apply shields/temp/bonus HP
+ * 2. Apply remaining damage to real HP (NO DT subtraction)
+ * 3. Run ThresholdEngine.evaluateThreshold() to check if DT was exceeded
+ * 4. Apply any CT shifts from threshold result
+ *
+ * This engine handles steps 1-2. ThresholdEngine handles steps 3-4.
+ * NEVER subtract DT from damage amount.
  *
  * PHASE 3: Routed through ActorEngine for deterministic mutation control
  */
@@ -11,7 +20,6 @@ export class DamageEngine {
   static async applyDamage(actor, damage, options = {}) {
     const {
       damageType = 'normal',
-      bypassDT = false,
       targetTempHP = true,
       forceMassiveDamageCheck = false
     } = options;
@@ -19,31 +27,17 @@ export class DamageEngine {
     if (!actor || damage < 0) return { success: false, reason: 'Invalid actor or negative damage' };
 
     const hp = actor.system.hp || {};
-    const derived = actor.system.derived || {};
-    const dt = derived.damageThreshold || 0;
     let finalDamage = damage;
 
-    // Temp HP first
+    // Consume temp HP first (if enabled)
     if (targetTempHP && (hp.temp || 0) > 0) {
       const tempAbsorbed = Math.min(hp.temp, finalDamage);
       finalDamage -= tempAbsorbed;
-      hp.temp = (hp.temp || 0) - tempAbsorbed;
     }
 
-    // DT check (unless bypassed)
-    if (!bypassDT && dt > 0 && finalDamage <= dt) {
-      return {
-        success: true,
-        absorbed: damage,
-        finalHP: hp.value,
-        reason: `Damage (${damage}) absorbed by DT (${dt})`
-      };
-    }
-
-    // Reduce final damage by DT
-    if (!bypassDT && dt > 0) {
-      finalDamage -= dt;
-    }
+    // CRITICAL: Do NOT subtract DT from damage.
+    // DT is a threshold trigger, not a damage reduction.
+    // ThresholdEngine handles DT logic separately.
 
     // ========================================
     // PHASE 3: Route through ActorEngine
@@ -52,7 +46,8 @@ export class DamageEngine {
     const newHP = Math.max(0, oldHP - finalDamage);
 
     // Check if condition shift needed (before mutation)
-    const isMassiveDamage = forceMassiveDamageCheck || finalDamage >= (derived.hp?.max || 1) / 2;
+    const maxHP = actor.system.hp?.max || 1;
+    const isMassiveDamage = forceMassiveDamageCheck || finalDamage >= maxHP / 2;
     const conditionShiftNeeded = (newHP <= 0) || isMassiveDamage;
 
     // Apply damage & condition logic through ActorEngine (single mutation)
