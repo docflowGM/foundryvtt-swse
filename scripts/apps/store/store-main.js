@@ -589,6 +589,11 @@ export class SWSEStore extends BaseSWSEAppV2 {
     const root = this.element;
     if (!(root instanceof HTMLElement)) {return;}
 
+    // Abort previous render's listeners
+    this._renderAbort?.abort();
+    this._renderAbort = new AbortController();
+    const { signal } = this._renderAbort;
+
     // Initialize card floating/expansion controller
     if (this.cardInteractions) {
       this.cardInteractions.destroy();
@@ -729,12 +734,16 @@ export class SWSEStore extends BaseSWSEAppV2 {
     }
 
     // Escape key: Cancel checkout mode if active (Part 8)
-    const handleEscapeKey = (ev) => {
+    // Remove old handler if it exists and register new one
+    if (this._escapeKeyHandler) {
+      document.removeEventListener('keydown', this._escapeKeyHandler);
+    }
+    this._escapeKeyHandler = (ev) => {
       if (ev.key === 'Escape' && this.isCheckoutMode) {
         this._cancelCheckout();
       }
     };
-    document.addEventListener('keydown', handleEscapeKey);
+    document.addEventListener('keydown', this._escapeKeyHandler);
 
     // Initial render once DOM exists
     this._renderCartUI();
@@ -1361,5 +1370,15 @@ export class SWSEStore extends BaseSWSEAppV2 {
     if (!this.isCheckoutMode) {return;}
     this.exitCheckoutMode();
     this._renderCartUI();
+  }
+
+  async close(options) {
+    // Clean up global event listeners
+    if (this._escapeKeyHandler) {
+      document.removeEventListener('keydown', this._escapeKeyHandler);
+      this._escapeKeyHandler = null;
+    }
+    // Call parent close
+    return super.close(options);
   }
 }
