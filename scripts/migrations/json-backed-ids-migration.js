@@ -82,7 +82,9 @@ export async function runJsonBackedIdsMigration() {
 
     if (Object.keys(update).length > 0) {
       try {
-        await actor.update(update, {
+        // Route through ActorEngine to respect governance layer
+        const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+        await ActorEngine.updateActor(actor, update, {
           diff: true,
           meta: {
             origin: 'migration',

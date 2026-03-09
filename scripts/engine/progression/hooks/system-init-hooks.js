@@ -347,7 +347,7 @@ export const SystemInitHooks = {
 
             const current = foundry.utils.getProperty(actor, 'system.progression');
 
-            if (!JSON.stringify(current) !== JSON.stringify(normalized)) {
+            if (JSON.stringify(current) !== JSON.stringify(normalized)) {
                 await ActorEngine.updateActor(actor, {
                     'system.progression': normalized
                 });
