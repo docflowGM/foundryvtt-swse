@@ -158,7 +158,7 @@ export class ActiveAdapter {
       // ─── 6. Deduct cost ─────────────────────────────────────────────────────
       if (cost?.forcePoints > 0) {
         await ActorEngine.updateActor(actor, {
-          'system.forcePoints.available': Math.max(0, (actor.system?.forcePoints?.available ?? 0) - cost.forcePoints)
+          'system.forcePoints.value': Math.max(0, (actor.system?.forcePoints?.available ?? 0) - cost.forcePoints)
         });
       }
 

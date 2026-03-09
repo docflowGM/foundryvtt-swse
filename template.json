@@ -96,7 +96,10 @@
         "event": "",
         "profession": "",
         "planetOfOrigin": "",
-        "conditionTrack": "normal",
+        "conditionTrack": {
+          "current": 0,
+          "persistent": false
+        },
         "speed": 6,
         "forcePoints": {
           "value": 5,

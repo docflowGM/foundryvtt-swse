@@ -206,7 +206,7 @@ export class ReactionEngine {
 
       // ─── 3. Verify cost ───────────────────────────────────────────────────
       if (forcePointCost > 0) {
-        const currentForce = defender.system?.forcePoints?.available ?? 0;
+        const currentForce = defender.system?.forcePoints?.value ?? 0;
         if (currentForce < forcePointCost) {
           const reason = `Insufficient Force Points (need ${forcePointCost}, have ${currentForce})`;
           SWSELogger.log(`[ReactionEngine] BLOCKED "${reactionKey}": ${reason}`);
@@ -246,7 +246,7 @@ export class ReactionEngine {
       // ─── 5. Deduct cost ───────────────────────────────────────────────────
       if (forcePointCost > 0) {
         await ActorEngine.updateActor(defender, {
-          'system.forcePoints.available': Math.max(0, (defender.system?.forcePoints?.available ?? 0) - forcePointCost)
+          'system.forcePoints.value': Math.max(0, (defender.system?.forcePoints?.value ?? 0) - forcePointCost)
         });
       }
 
