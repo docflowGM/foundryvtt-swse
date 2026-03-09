@@ -128,6 +128,7 @@ import { SWSEV2SheetDiagnostics } from './scripts/sheets/v2/sheet-diagnostics.js
 
 // ---- debug system ----
 import { SWSEDebugger } from './scripts/debug/swse-debugger.js';
+import { SentinelReports } from './scripts/debug/sentinel-reports.js';
 
 // ---- handlebars ----
 import { registerHandlebarsHelpers } from './helpers/handlebars/index.js';
@@ -435,7 +436,25 @@ Hooks.once('ready', async () => {
         getEvents: () => SWSEDebugger.events,
         getStats: () => SWSEDebugger.getStats(),
         getMetrics: () => SWSEDebugger.metrics
+      },
+      // Sentinel diagnostics reports
+      sentinel: {
+        getStatus: () => window.__SWSE_SENTINEL__?.getStatus(),
+        getReports: (...args) => window.__SWSE_SENTINEL__?.getReports(...args),
+        getHealthDetails: () => window.__SWSE_SENTINEL__?.getHealthDetails?.(),
+        getPerformanceMetrics: () => window.__SWSE_SENTINEL__?.getPerformanceMetrics()
       }
+    },
+    // Structured diagnostic reports
+    reports: {
+      health: () => SentinelReports.generateHealthReport(),
+      crashes: () => SentinelReports.generateCrashReport(),
+      performance: () => SentinelReports.generatePerformanceReport(),
+      integrity: () => SentinelReports.generateIntegrityReport(),
+      mutations: () => SentinelReports.generateMutationReport(),
+      classification: () => SentinelReports.generateClassificationReport(),
+      full: () => SentinelReports.generateFullReport(),
+      export: () => SentinelReports.exportFullReport()
     },
     // PHASE 10: Public API exposure
     SENTINEL_STATUS: SentinelEngine.getStatus()

@@ -35,6 +35,7 @@ export class SentinelEngine {
 
   // ========== PHASE 2: Health State Manager ==========
   static #healthState = 'HEALTHY';
+  static #healthReasons = [];
   static #severityCounters = {
     WARN: 0,
     ERROR: 0,
@@ -239,34 +240,60 @@ export class SentinelEngine {
     const warnCount = (this.#layerWarnCounts.get(layer) || 0) + 1;
     this.#layerWarnCounts.set(layer, warnCount);
 
-    // State transitions
+    // Build reasons for state transitions
+    const reasons = [];
+
+    // State transitions with reason tracking
     if (severity === this.SEVERITY.CRITICAL) {
-      this.#setHealthState('CRITICAL');
+      reasons.push({
+        type: 'critical-error',
+        detail: `Critical error from layer: ${layer}`,
+        threshold: 1,
+        metric: 1
+      });
+      this.#setHealthState('CRITICAL', reasons);
       this.#dumpCriticalSnapshot();
     } else if (severity === this.SEVERITY.ERROR && this.#severityCounters.ERROR >= 3) {
-      this.#setHealthState('UNSTABLE');
+      reasons.push({
+        type: 'error-frequency',
+        detail: `Error threshold exceeded (${this.#severityCounters.ERROR} errors)`,
+        threshold: 3,
+        metric: this.#severityCounters.ERROR
+      });
+      this.#setHealthState('UNSTABLE', reasons);
     } else if (severity === this.SEVERITY.WARN && warnCount >= 5) {
       if (this.#healthState !== 'UNSTABLE' && this.#healthState !== 'CRITICAL') {
-        this.#setHealthState('DEGRADED');
+        reasons.push({
+          type: 'warning-frequency',
+          detail: `Warning threshold exceeded in layer "${layer}" (${warnCount} warnings)`,
+          threshold: 5,
+          metric: warnCount
+        });
+        this.#setHealthState('DEGRADED', reasons);
       }
     }
   }
 
   /**
-   * PHASE 2: Set health state with transition logging
+   * PHASE 2: Set health state with transition logging and reason tracking
    * @private
    */
-  static #setHealthState(newState) {
+  static #setHealthState(newState, reasons = []) {
     if (this.#healthState !== newState) {
       const oldState = this.#healthState;
       this.#healthState = newState;
+      this.#healthReasons = reasons;
 
       if (oldState !== newState) {
         const report = {
           layer: 'engine',
           severity: newState === 'HEALTHY' ? 'INFO' : 'WARN',
           message: `System health changed: ${oldState} → ${newState}`,
-          meta: { from: oldState, to: newState },
+          meta: {
+            from: oldState,
+            to: newState,
+            reasons: reasons.length > 0 ? reasons : undefined
+          },
           timestamp: Date.now(),
           correlationId: this.#bootId,
           aggregated: false
@@ -447,10 +474,25 @@ export class SentinelEngine {
   }
 
   /**
+   * Get detailed health report with reasons
+   */
+  static getHealthDetails() {
+    return {
+      state: this.#healthState,
+      reasons: this.#healthReasons,
+      timestamp: Date.now(),
+      errorCount: this.#severityCounters.ERROR,
+      warningCount: this.#severityCounters.WARN,
+      criticalCount: this.#severityCounters.CRITICAL
+    };
+  }
+
+  /**
    * Reset health state (for testing or recovery)
    */
   static resetHealthState() {
     this.#healthState = 'HEALTHY';
+    this.#healthReasons = [];
     this.#severityCounters = { WARN: 0, ERROR: 0, CRITICAL: 0 };
     this.#layerWarnCounts.clear();
   }
@@ -773,8 +815,13 @@ if (typeof window !== "undefined") {
       return {
         getStatus: () => SentinelEngine.getStatus(),
         getReports: (...args) => SentinelEngine.getReports(...args),
+        getHealthDetails: () => SentinelEngine.getHealthDetails(),
         getPerformanceMetrics: () => SentinelEngine.getPerformanceMetrics(),
-        dumpSnapshot: () => SentinelEngine.dumpSnapshot()
+        dumpSnapshot: () => SentinelEngine.dumpSnapshot(),
+        reportEvent: (type, event) => {
+          // Forward events from SWSEDebugger
+          SentinelEngine.report('debugger', SentinelEngine.SEVERITY.INFO, `Debug event: ${type}`, event);
+        }
       };
     },
     configurable: true
