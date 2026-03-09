@@ -94,7 +94,7 @@ export class SWSEV2CombatNpcSheet extends
     }
 
     const overrides = {
-      actor,
+      // NOTE: 'actor' Document NOT included here — use 'document' from baseContext instead
       system: actor.system,
       derived: actor.system?.derived ?? {},
       items: actor.items.map(item => ({
@@ -110,7 +110,7 @@ export class SWSEV2CombatNpcSheet extends
         name: game.user.name,
         role: game.user.role
       },
-      config: CONFIG.SWSE,
+      // NOTE: CONFIG.SWSE removed — not serializable
       actionEconomy
     };
 

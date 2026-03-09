@@ -88,12 +88,18 @@ export class SWSEV2VehicleSheet extends
     const conditionStep = actor.system?.conditionTrack?.current ?? 0;
     const ctWarning = conditionStep > 0;
 
-    // Build owned actors map (crew members)
+    // Build owned actors map (crew members, serializable: no Document references)
     const ownedActorMap = {};
     for (const entry of actor.system.ownedActors || []) {
       const ownedActor = game.actors.get(entry.id);
       if (ownedActor) {
-        ownedActorMap[entry.id] = ownedActor;
+        // Store only serializable properties, not the Document itself
+        ownedActorMap[entry.id] = {
+          id: ownedActor.id,
+          name: ownedActor.name,
+          type: ownedActor.type,
+          img: ownedActor.img
+        };
       }
     }
 
@@ -151,7 +157,7 @@ export class SWSEV2VehicleSheet extends
     const starshipManeuvers = StarshipManeuversEngine.getManeuversForActor(actor);
 
     const overrides = {
-      actor,
+      // NOTE: 'actor' Document NOT included here — use 'document' from baseContext instead
       system: actor.system,
       derived: actor.system?.derived ?? {},
       items: actor.items.map(item => ({
@@ -170,7 +176,7 @@ export class SWSEV2VehicleSheet extends
         name: game.user.name,
         role: game.user.role
       },
-      config: CONFIG.SWSE,
+      // NOTE: CONFIG.SWSE removed — not serializable
       // DATAPAD HEADER STATES
       hpPercent,
       hpWarning,
