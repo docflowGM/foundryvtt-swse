@@ -98,7 +98,11 @@ export async function loadRawStoreData({ useCache = true } = {}) {
   /* ------------------------------------------- */
 
   const worldItems = game.items.contents || [];
-  const worldActors = game.actors.contents || [];
+
+  // P0-4: Filter world actors to only include droid/vehicle types (not PCs/NPCs)
+  // This prevents player characters from appearing as store inventory
+  const worldActors = (game.actors.contents || [])
+    .filter(a => a && a.type && (a.type === 'droid' || a.type === 'vehicle'));
 
   /* ------------------------------------------- */
   /* LOAD PACK ITEMS                              */

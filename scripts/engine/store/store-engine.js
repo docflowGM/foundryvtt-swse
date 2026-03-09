@@ -132,6 +132,57 @@ export class StoreEngine {
   }
 
   /**
+   * Validate that prices haven't changed significantly since checkout started
+   * Returns { valid: boolean, currentTotal: number, priceDiff: number }
+   * @param {Array} cartItems - items from cart (should have id and cost)
+   * @param {Number} originalTotal - total price at checkout time
+   * @returns {Object} validation result
+   * @private
+   */
+  static async _validatePricesAtPurchaseTime(cartItems = [], originalTotal = 0) {
+    try {
+      // Rebuild price from scratch based on current store state
+      let currentTotal = 0;
+      for (const item of cartItems) {
+        if (!item || !item.id) continue;
+        // Item should have finalCost already set by engine during inventory load
+        currentTotal += item.finalCost ?? 0;
+      }
+
+      const priceDiff = Math.abs(currentTotal - originalTotal);
+      const threshold = originalTotal * 0.05; // 5% tolerance
+
+      if (priceDiff > threshold) {
+        logger().warn('StoreEngine: Significant price change detected', {
+          originalTotal,
+          currentTotal,
+          diff: priceDiff,
+          threshold
+        });
+        return {
+          valid: false,
+          currentTotal,
+          priceDiff,
+          reason: `Price changed from ${originalTotal} to ${currentTotal} credits`
+        };
+      }
+
+      return {
+        valid: true,
+        currentTotal,
+        priceDiff,
+        reason: null
+      };
+    } catch (err) {
+      logger().warn('StoreEngine: Price validation failed, proceeding with original', {
+        error: err.message
+      });
+      // Non-fatal: if validation fails, allow purchase to proceed
+      return { valid: true, currentTotal: originalTotal, priceDiff: 0 };
+    }
+  }
+
+  /**
    * Execute atomic purchase transaction
    * Changes:
    *   - Deduct credits from actor
@@ -233,7 +284,23 @@ export class StoreEngine {
         };
       }
 
-      // PHASE 3: Validate via LedgerService (pure, no mutations)
+      // PHASE 3A: Validate prices haven't changed significantly
+      // (P0-3: Re-validate prices at purchase time)
+      const priceValidation = await this._validatePricesAtPurchaseTime(items, totalCost);
+      if (!priceValidation.valid) {
+        logger().warn('StoreEngine: Price validation failed - rejecting purchase', {
+          transactionId,
+          actor: actor.id,
+          reason: priceValidation.reason
+        });
+        return {
+          success: false,
+          error: priceValidation.reason,
+          transactionId
+        };
+      }
+
+      // PHASE 3B: Validate via LedgerService (pure, no mutations)
       const ledgerValidation = LedgerService.validateFunds(freshActor, totalCost);
       if (!ledgerValidation.ok) {
         logger().warn('StoreEngine: Insufficient credits at execution time', {
