@@ -57,8 +57,15 @@ export class ReviewThreadAssembler {
       return { reviews: [], isValid: false };
     }
 
-    // Deterministic RNG if seed provided
-    const rng = seed !== null ? new SeededRandom(seed) : new Math.random;
+    // Deterministic RNG if seed provided; otherwise use Math.random
+    // SeededRandom is defined below this class
+    let rng;
+    if (seed !== null) {
+      const seededInstance = new SeededRandom(seed);
+      rng = () => seededInstance.next();
+    } else {
+      rng = Math.random;
+    }
 
     const thread = [];
 

@@ -355,7 +355,8 @@ export class SWSEStore extends BaseSWSEAppV2 {
     const useAurebesh = game.settings.get('foundryvtt-swse', 'useAurebesh') ?? true;
 
     for (const item of this.storeInventory?.allItems || []) {
-      const suggestion = this.suggestions.get(item._id);
+      // Engine normalizes IDs to .id (not ._id)
+      const suggestion = this.suggestions.get(item.id);
       const view = this._viewFromItem(item);
 
       // Add category for filtering
@@ -450,10 +451,12 @@ export class SWSEStore extends BaseSWSEAppV2 {
     const sys = safeSystem(item) ?? {};
     const rarityClass = getRarityClass(sys.availability);
     return {
-      id: item._id,
+      // Engine normalizes IDs to .id (not ._id); prefer .id if available
+      id: item.id ?? item._id,
       name: safeString(item.name),
       img: safeImg(item),
-      finalCost: getCostValue(item),
+      // Display uses actual engine finalCost, not base cost
+      finalCost: item.finalCost ?? getCostValue(item),
       rarityClass,
       rarityLabel: getRarityLabel(rarityClass),
       system: sys,
@@ -784,12 +787,13 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
       const name = (item.name || '').toLowerCase();
       const desc = (item.system?.description || '').toString().toLowerCase();
-      const category = card.dataset.category || '';
-      const availability = card.dataset.availability || '';
+      // Normalize category and availability to lowercase for case-insensitive matching
+      const category = (card.dataset.category || '').toLowerCase();
+      const availability = (card.dataset.availability || '').toLowerCase();
 
       const matchesSearch = !searchTerm || name.includes(searchTerm) || desc.includes(searchTerm);
-      const matchesCategory = !categoryFilter || category === categoryFilter;
-      const matchesAvailability = !availabilityFilter || availability === availabilityFilter;
+      const matchesCategory = !categoryFilter || category === categoryFilter.toLowerCase();
+      const matchesAvailability = !availabilityFilter || availability === availabilityFilter.toLowerCase();
 
       if (matchesSearch && matchesCategory && matchesAvailability) {
         card.style.display = '';

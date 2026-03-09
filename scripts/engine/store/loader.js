@@ -114,10 +114,15 @@ export async function loadRawStoreData({ useCache = true } = {}) {
   /* LOAD PACK ACTORS (droids + vehicles)         */
   /* ------------------------------------------- */
 
+  // Load droid and vehicle actors from packs
   const packActorDocs = [
-    ...(await safeGetPackDocuments(STORE_PACKS.DROIDS)),
-    ...(await safeGetPackDocuments(STORE_PACKS.VEHICLES))
+    ...(await safeGetPackDocuments(STORE_PACKS.DROIDS))
   ];
+
+  // Load vehicles from all vehicle packs (array of pack names)
+  for (const vehiclePack of STORE_PACKS.VEHICLE_PACKS) {
+    packActorDocs.push(...(await safeGetPackDocuments(vehiclePack)));
+  }
 
   /* ------------------------------------------- */
   /* MERGE SOURCES                                */

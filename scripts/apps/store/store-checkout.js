@@ -14,6 +14,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { calculateFinalCost, calculateUsedCost } from "/systems/foundryvtt-swse/scripts/engine/store/pricing.js";
 import CharacterGenerator from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js";
+import SWSEDialogV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-dialog-v2.js";
 import { VehicleModificationApp } from "/systems/foundryvtt-swse/scripts/apps/vehicle-modification-app.js";
 import { DroidBuilderApp } from "/systems/foundryvtt-swse/scripts/apps/droid-builder-app.js";
 import { getRandomDialogue } from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js";
@@ -287,7 +288,7 @@ export async function buyDroid(store, actorId) {
             totalCost: finalCost,
             itemGrantCallback: async (actor, items) => {
                 // PHASE 1: Return MutationPlans instead of mutating directly
-                return createDroidPlans([{
+                return await createDroidPlans([{
                     id: actorId,
                     name: droidTemplate.name,
                     actor: droidTemplate
@@ -378,7 +379,7 @@ export async function buyVehicle(store, actorId, condition) {
             totalCost: finalCost,
             itemGrantCallback: async (actor, items) => {
                 // PHASE 1: Return MutationPlans instead of mutating directly
-                return createVehiclePlans([{
+                return await createVehiclePlans([{
                     id: actorId,
                     name: vehicleTemplate.name,
                     template: vehicleTemplate,
@@ -667,9 +668,9 @@ function createItemPlans(cartItems) {
  * @param {Array} cartDroids - Droids from cart
  * @returns {Array<Object>} MutationPlans
  */
-function createDroidPlans(cartDroids) {
-  // Import DroidFactory at function level to avoid circular deps
-  const { DroidFactory } = require('../engine/droids/droid-factory.js');
+async function createDroidPlans(cartDroids) {
+  // Import DroidFactory dynamically to avoid circular deps
+  const { DroidFactory } = await import('/systems/foundryvtt-swse/scripts/engine/droids/droid-factory.js');
 
   const plans = [];
 
@@ -697,9 +698,9 @@ function createDroidPlans(cartDroids) {
  * @param {Map} itemsById - Store inventory map
  * @returns {Array<Object>} MutationPlans
  */
-function createVehiclePlans(cartVehicles, itemsById) {
-  // Import VehicleFactory at function level to avoid circular deps
-  const { VehicleFactory } = require('../engine/vehicles/vehicle-factory.js');
+async function createVehiclePlans(cartVehicles, itemsById) {
+  // Import VehicleFactory dynamically to avoid circular deps
+  const { VehicleFactory } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-factory.js');
 
   const plans = [];
 
@@ -797,10 +798,14 @@ export async function checkout(store, animateNumberCallback) {
                         plans.push(...createItemPlans(store.cart.items));
 
                         // Compile droid plans
-                        plans.push(...createDroidPlans(store.cart.droids));
+                        if (store.cart.droids?.length > 0) {
+                            plans.push(...(await createDroidPlans(store.cart.droids)));
+                        }
 
                         // Compile vehicle plans
-                        plans.push(...createVehiclePlans(store.cart.vehicles, store.itemsById));
+                        if (store.cart.vehicles?.length > 0) {
+                            plans.push(...(await createVehiclePlans(store.cart.vehicles, store.itemsById)));
+                        }
 
                         // Return plans for engine to apply
                         return plans;
