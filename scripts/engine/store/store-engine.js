@@ -133,6 +133,50 @@ export class StoreEngine {
   }
 
   /**
+   * P2-6: Validate factory output structure (DroidFactory, VehicleFactory, etc.)
+   * Ensures factories produce valid, complete actor data
+   * @param {Object} factoryOutput - output from DroidFactory.create() or similar
+   * @param {String} factoryType - 'droid' or 'vehicle' for error messages
+   * @returns {Object} { valid: boolean, error: string|null }
+   * @private
+   */
+  static _validateFactoryOutput(factoryOutput, factoryType = 'item') {
+    // Must be an object
+    if (!factoryOutput || typeof factoryOutput !== 'object') {
+      return {
+        valid: false,
+        error: `${factoryType} factory produced invalid output (not an object)`
+      };
+    }
+
+    // Must have essential actor properties
+    if (!factoryOutput.name || !factoryOutput.type) {
+      return {
+        valid: false,
+        error: `${factoryType} factory output missing name or type`
+      };
+    }
+
+    // Must have system data
+    if (!factoryOutput.system || typeof factoryOutput.system !== 'object') {
+      return {
+        valid: false,
+        error: `${factoryType} factory output missing system data`
+      };
+    }
+
+    // For droids/vehicles, must have data field
+    if (factoryType !== 'generic' && !factoryOutput.data) {
+      return {
+        valid: false,
+        error: `${factoryType} factory output missing data field`
+      };
+    }
+
+    return { valid: true, error: null };
+  }
+
+  /**
    * Validate that prices haven't changed significantly since checkout started
    * Returns { valid: boolean, currentTotal: number, priceDiff: number }
    * @param {Array} cartItems - items from cart (should have id and cost)
@@ -404,6 +448,10 @@ export class StoreEngine {
 
       // PHASE 5: INITIALIZE FLAGS BEFORE MUTATIONS
       // ==========================================
+      // P2-5: Defensive null guards for flags
+      if (!freshActor.flags) {
+        freshActor.flags = {};
+      }
       const existingFlags = freshActor.flags['foundryvtt-swse'] || {};
       if (!existingFlags.meta) {
         existingFlags.meta = {
@@ -412,8 +460,8 @@ export class StoreEngine {
         };
       }
 
-      // Add purchase idempotency token
-      if (!existingFlags.sessionPurchaseIds) {
+      // Add purchase idempotency token (guard against null/undefined)
+      if (!existingFlags.sessionPurchaseIds || !Array.isArray(existingFlags.sessionPurchaseIds)) {
         existingFlags.sessionPurchaseIds = [];
       }
       existingFlags.sessionPurchaseIds.push(transactionId);
