@@ -17,6 +17,7 @@ import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { freezePricing, unfreezePricing } from "/systems/foundryvtt-swse/scripts/engine/store/pricing.js";
 
 const logger = () => SWSELogger || globalThis.swseLogger || console;
 
@@ -240,6 +241,9 @@ export class StoreEngine {
 
     const transactionId = `tx_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     this._purchasingActors.add(actor.id);
+
+    // P2-2: Freeze pricing to prevent mid-transaction changes
+    freezePricing();
 
     try {
       // HARDENING 3: Re-read fresh actor state immediately before write (closes race window)
@@ -511,8 +515,9 @@ export class StoreEngine {
         transactionId
       };
     } finally {
-      // Always release the lock
+      // Always release the lock and unfreeze pricing
       this._purchasingActors.delete(actor.id);
+      unfreezePricing();
     }
   }
 
