@@ -8,7 +8,7 @@ import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/d
 import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
 import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
 import { ResolutionContext } from "/systems/foundryvtt-swse/scripts/engine/resolution/resolution-context.js";
-import { RULE_TYPES } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/rule-types.js";
+import { RULES } from "/systems/foundryvtt-swse/scripts/engine/execution/rules/rule-enum.js";
 import {
   ROLL_HOOKS,
   callPreRollHook,
@@ -1160,7 +1160,7 @@ export class SWSERoll {
     const requiresTraining = !skill.untrained;  // trainedOnly = !untrained
     if (requiresTraining && !skill.trained) {
       const context = new ResolutionContext(actor);
-      if (!context.hasRule(RULE_TYPES.TREAT_SKILL_AS_TRAINED, { skillId: skillKey })) {
+      if (!context.hasRule(RULES.TREAT_SKILL_AS_TRAINED, { skillId: skillKey })) {
         ui.notifications.warn(`${skillKey} requires training.`);
         return null;
       }

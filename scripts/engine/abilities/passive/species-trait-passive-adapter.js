@@ -17,7 +17,7 @@
 import speciesTraits from "/systems/foundryvtt-swse/data/species-traits.json" with { type: "json" };
 import { PassiveAdapter } from "./passive-adapter.js";
 import { PASSIVE_SUBTYPES } from "./passive-types.js";
-import { RULE_TYPES } from "./rule-types.js";
+import { RULES } from "/systems/foundryvtt-swse/scripts/engine/execution/rules/rule-enum.js";
 
 // Pre-index for O(1) lookup by species name (case-insensitive)
 const SPECIES_MAP = new Map(
@@ -157,9 +157,9 @@ export class SpeciesTraitPassiveAdapter {
   static _extractSenseRules(text) {
     const lower = String(text).toLowerCase();
     const rules = [];
-    if (lower.includes("darkvision")) rules.push({ type: RULE_TYPES.DARKVISION });
-    if (lower.includes("low-light")) rules.push({ type: RULE_TYPES.LOW_LIGHT_VISION });
-    if (lower.includes("scent")) rules.push({ type: RULE_TYPES.SCENT });
+    if (lower.includes("darkvision")) rules.push({ type: RULES.DARKVISION });
+    if (lower.includes("low-light")) rules.push({ type: RULES.LOW_LIGHT_VISION });
+    if (lower.includes("scent")) rules.push({ type: RULES.SCENT });
     return rules;
   }
 

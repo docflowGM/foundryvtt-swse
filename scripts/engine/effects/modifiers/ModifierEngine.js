@@ -330,6 +330,12 @@ export class ModifierEngine {
 
     for (const feat of feats) {
       const data = feat.system ?? {};
+
+      // Skip legacy bonuses for PASSIVE execution model (handled by PASSIVE framework)
+      if (data.executionModel === 'PASSIVE') {
+        continue;
+      }
+
       const featName = feat.name || 'Unknown Feat';
       const featId = feat.id;
 
@@ -411,6 +417,12 @@ export class ModifierEngine {
 
     for (const talent of talents) {
       const data = talent.system ?? {};
+
+      // Skip legacy bonuses for PASSIVE execution model (handled by PASSIVE framework)
+      if (data.executionModel === 'PASSIVE') {
+        continue;
+      }
+
       const talentName = talent.name || 'Unknown Talent';
       const talentId = talent.id;
 

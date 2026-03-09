@@ -1,6 +1,10 @@
 /**
  * PASSIVE Phase 4 - RULE Subtype Type Definitions
  *
+ * DEPRECATED: Use RULES from rule-enum.js instead.
+ * This file exists for backwards compatibility during transition.
+ * All new code should import RULES from rule-enum.js and use isValidRule() for validation.
+ *
  * Whitelist of allowed rule types for PASSIVE/RULE abilities.
  * Rule types are declarative boolean capabilities that resolution logic queries.
  *
