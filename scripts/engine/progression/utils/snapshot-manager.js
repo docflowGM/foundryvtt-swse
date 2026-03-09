@@ -6,6 +6,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class SnapshotManager {
 
@@ -111,8 +112,8 @@ export class SnapshotManager {
 
             // PHASE 10: Route through ActorEngine with snapshot metadata
             // ActorEngine.restoreFromSnapshot() handles atomic restoration
-            if (globalThis.SWSE?.ActorEngine?.restoreFromSnapshot) {
-                await globalThis.SWSE.ActorEngine.restoreFromSnapshot(actor, actorDataToRestore, {
+            if (ActorEngine?.restoreFromSnapshot) {
+                await ActorEngine.restoreFromSnapshot(actor, actorDataToRestore, {
                     meta: { guardKey: 'snapshot-restore' }
                 });
             } else {

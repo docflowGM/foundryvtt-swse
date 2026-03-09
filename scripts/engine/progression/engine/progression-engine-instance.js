@@ -300,8 +300,8 @@ export class ProgressionEngine {
         }
       }
 
-      // Run final integration
-      await FinalizeIntegration.quickIntegrate(this.actor, this);
+      // Run final integration (mode='levelup', engine=this)
+      await FinalizeIntegration.quickIntegrate(this.actor, 'levelup', this);
 
       SWSELogger.log('Level-up finalized successfully');
       return true;
@@ -322,7 +322,7 @@ export class ProgressionEngine {
     }
 
     try {
-      await SnapshotManager.restoreSnapshot(this.actor, this.snapshot.id);
+      await SnapshotManager.restoreSnapshot(this.actor, this.snapshot.timestamp);
       SWSELogger.log(`Rolled back to snapshot: ${this.snapshot.label}`);
       return true;
     } catch (err) {

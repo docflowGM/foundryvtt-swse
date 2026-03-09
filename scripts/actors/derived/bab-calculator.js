@@ -75,7 +75,7 @@ export class BABCalculator {
     }
 
     // Lazy-load only when calculating, not at boot time
-    const { getClassData } = await import("/systems/foundryvtt-swse/scripts/actors/engine/progression/utils/class-data-loader.js");
+    const { getClassData } = await import("/systems/foundryvtt-swse/scripts/engine/progression/utils/class-data-loader.js");
 
     let totalBAB = 0;
 

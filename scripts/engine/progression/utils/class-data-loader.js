@@ -15,6 +15,7 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeClass } from "/systems/foundryvtt-swse/scripts/data/class-normalizer.js";
 import { adaptClassForLoaderCompatibility } from "/systems/foundryvtt-swse/scripts/data/adapters/ClassModelAdapters.js";
+import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
 
 /**
  * Cache for loaded class data
