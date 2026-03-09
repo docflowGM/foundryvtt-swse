@@ -76,7 +76,7 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
           source: new fields.StringField({ required: false, initial: 'level' }),
           level: new fields.NumberField({ required: false, initial: 0, integer: true })
         }),
-        fort: new fields.SchemaField({
+        fortitude: new fields.SchemaField({
           total: new fields.NumberField({ required: true, initial: 10, integer: true }),
           classBonus: new fields.NumberField({ required: true, initial: 0, integer: true }),
           misc: new fields.SchemaField({

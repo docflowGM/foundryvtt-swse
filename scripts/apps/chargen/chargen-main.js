@@ -2664,7 +2664,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       (this.characterData.secondWind.misc || 0);
 
     // Damage Threshold = Fortitude Defense
-    this.characterData.damageThreshold = this.characterData.defenses.fort.total;
+    this.characterData.damageThreshold = this.characterData.defenses.fortitude.total;
 
     // CRITICAL: Validate that recalcs produced valid values before passing to actor creation
     this._validateFinalizedValues();

@@ -184,7 +184,7 @@ async _prepareContext(options) {
         </table>
 
         <h3>Defenses</h3>
-        <p><strong>Reflex:</strong> ${unit.defenses.reflex.total} | <strong>Fortitude:</strong> ${unit.defenses.fortitude.total} | <strong>Will:</strong> ${unit.defenses.will.total}</p>
+        <p><strong>Reflex:</strong> ${unit.defenses.reflex.total} | <strong>Fortitude:</strong> ${unit.defenses.fortitudeitude.total} | <strong>Will:</strong> ${unit.defenses.will.total}</p>
         <p><strong>HP:</strong> ${unit.hp.max}</p>
 
         ${unit.feats && unit.feats.length > 0 ? `<h3>Feats</h3><p>${unit.feats.join(', ')}</p>` : ''}

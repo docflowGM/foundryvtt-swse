@@ -88,7 +88,7 @@ export function normalizeClassData(rawClass) {
 
     // fallback: if defenses exist at root
     if (typeof cls.system.fortitude === 'number') {
-        cls.system.defenses.fortitude = cls.system.fortitude;
+        cls.system.defenses.fortitudeitude = cls.system.fortitude;
     }
 
     // --------------------------------------

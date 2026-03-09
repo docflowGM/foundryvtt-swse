@@ -312,8 +312,8 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     if (!this.defenses) {
       this.defenses = {};
     }
-    if (!this.defenses.fort) {
-      this.defenses.fort = { classBonus: 0 };
+    if (!this.defenses.fortitude) {
+      this.defenses.fortitude = { classBonus: 0 };
     }
     if (!this.defenses.reflex) {
       this.defenses.reflex = { classBonus: 0 };
@@ -496,7 +496,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     const level = this.heroicLevel ?? this.level ?? 1;
 
     // Ensure individual defense objects exist
-    if (!this.defenses.reflex || !this.defenses.fort || !this.defenses.will) {
+    if (!this.defenses.reflex || !this.defenses.fortitude || !this.defenses.will) {
       SWSELogger.warn('Character defense sub-objects not initialized, skipping defense calculations');
       return;
     }
@@ -613,13 +613,13 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     }
 
     // Get species trait bonus for fortitude
-    const fortSpeciesBonus = this.defenses.fort.speciesBonus || 0;
+    const fortSpeciesBonus = this.defenses.fortitude.speciesBonus || 0;
 
     // Calculate misc bonuses (auto + user)
-    const fortMiscTotal = this._computeDefenseMisc(this.defenses.fort);
+    const fortMiscTotal = this._computeDefenseMisc(this.defenses.fortitude);
 
-    this.defenses.fort.total = 10 + level + fortAbilityMod + armorFortBonus +
-                                     (this.defenses.fort.classBonus || 0) +
+    this.defenses.fortitude.total = 10 + level + fortAbilityMod + armorFortBonus +
+                                     (this.defenses.fortitude.classBonus || 0) +
                                      fortMiscTotal +
                                      fortSpeciesBonus + conditionPenalty;
 
@@ -712,7 +712,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       this.heroicLevel = 0; // Track heroic level separately
       this.nonheroicLevel = 0; // Track nonheroic level separately
       if (this.defenses?.fort && this.defenses?.reflex && this.defenses?.will) {
-        this.defenses.fort.classBonus = 0;
+        this.defenses.fortitude.classBonus = 0;
         this.defenses.reflex.classBonus = 0;
         this.defenses.will.classBonus = 0;
       }
@@ -776,7 +776,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     // Set defense class bonuses (these get added in parent's _calculateDefenses)
     if (this.defenses?.fort && this.defenses?.reflex && this.defenses?.will) {
-      this.defenses.fort.classBonus = maxFortBonus;
+      this.defenses.fortitude.classBonus = maxFortBonus;
       this.defenses.reflex.classBonus = maxRefBonus;
       this.defenses.will.classBonus = maxWillBonus;
     }

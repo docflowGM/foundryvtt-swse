@@ -23,7 +23,7 @@ import { DamageMitigationManager } from "/systems/foundryvtt-swse/scripts/engine
  * Data Model (V2 Canonical):
  * - HP: system.hp.value (current), system.hp.max (max)
  * - Condition: system.conditionTrack.current (0-5 numeric)
- * - Defenses: system.defenses.fortitude.total
+ * - Defenses: system.defenses.fortitudeitude.total
  * - Size: system.size (string) → mapped to bonus
  */
 export class DamageResolutionEngine {
