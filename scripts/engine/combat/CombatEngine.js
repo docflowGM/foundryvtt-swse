@@ -347,7 +347,7 @@ export class CombatEngine {
    * @returns {Promise<Object>} Preview with total and breakdown
    */
   static async previewAttack(actor, actionKey, options = {}) {
-    const { ModifierEngine } = await import("/systems/foundryvtt-swse/scripts/engine/engine/effects/modifiers/ModifierEngine.js").catch(() => ({ ModifierEngine: null }));
+    const { ModifierEngine } = await import("/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js").catch(() => ({ ModifierEngine: null }));
 
     if (!ModifierEngine) {
       return {
@@ -414,7 +414,7 @@ export class CombatEngine {
    * @returns {Promise<Object>} Initiative preview with breakdown
    */
   static async previewInitiative(actor, options = {}) {
-    const { ModifierEngine } = await import("/systems/foundryvtt-swse/scripts/engine/engine/effects/modifiers/ModifierEngine.js").catch(() => ({ ModifierEngine: null }));
+    const { ModifierEngine } = await import("/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js").catch(() => ({ ModifierEngine: null }));
 
     const baseRoll = options.baseRoll ?? null;
 
