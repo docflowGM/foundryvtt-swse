@@ -199,7 +199,7 @@ export class AttributeIncreaseHandler {
 
     // PHASE 3: Route through ActorEngine
     await ActorEngine.updateActor(actor, {
-      'system.attributes.hp.max': newMaxHP
+      'system.hp.max': newMaxHP
     });
 
     ui.notifications?.info(

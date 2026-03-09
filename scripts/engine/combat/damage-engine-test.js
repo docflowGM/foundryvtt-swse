@@ -136,7 +136,7 @@ export class DamageEngineTest {
 
       // Reset to near-full HP
       await ActorEngine.updateActor(actor, {
-        'system.attributes.hp.value': maxHP
+        'system.hp.value': maxHP
       });
 
       this.mutationLog = [];
@@ -264,7 +264,7 @@ export class DamageEngineTest {
       // Reset HP to max
       const maxHP = actor.system.attributes?.hp?.max || 100;
       await ActorEngine.updateActor(actor, {
-        'system.attributes.hp.value': maxHP,
+        'system.hp.value': maxHP,
         'system.conditionTrack.current': 0
       });
 

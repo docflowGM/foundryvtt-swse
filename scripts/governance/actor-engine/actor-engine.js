@@ -778,7 +778,7 @@ export const ActorEngine = {
 
       // Build single atomic update
       const updates = {
-        'system.attributes.hp.value': newHP
+        'system.hp.value': newHP
       };
 
       if (shouldShiftCondition) {
@@ -832,8 +832,8 @@ export const ActorEngine = {
         source
       });
 
-      const currentHP = actor.system.attributes?.hp?.value || 0;
-      const maxHP = actor.system.attributes?.hp?.max || 100;
+      const currentHP = actor.system.hp?.value || 0;
+      const maxHP = actor.system.hp?.max || 100;
       const newHP = Math.min(maxHP, currentHP + amount);
       const actualHealing = newHP - currentHP;
 
@@ -843,7 +843,7 @@ export const ActorEngine = {
       }
 
       await this.updateActor(actor, {
-        'system.attributes.hp.value': newHP
+        'system.hp.value': newHP
       });
 
       SWSELogger.log(`Healing applied to ${actor.name}: +${actualHealing}HP (now: ${newHP}/${maxHP})`, {

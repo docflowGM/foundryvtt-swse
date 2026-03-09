@@ -159,7 +159,7 @@ export class ProgressionEngineV2 {
         updates: {
           'system.xp.total': newXPTotal,
           'system.level': newLevel,
-          'system.attributes.hp.max': totalHP
+          'system.hp.max': totalHP
         }
       };
 

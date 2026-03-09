@@ -936,7 +936,7 @@ export const TALENT_EFFECTS = {
 
   'Toughness': {
     effects: [{
-      key: 'system.attributes.hp.max',
+      key: 'system.hp.max',
       mode: 2,
       value: '3',
       priority: 20
@@ -946,7 +946,7 @@ export const TALENT_EFFECTS = {
 
   'Improved Toughness': {
     effects: [{
-      key: 'system.attributes.hp.max',
+      key: 'system.hp.max',
       mode: 2,
       value: '6',
       priority: 20
