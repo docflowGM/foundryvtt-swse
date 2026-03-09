@@ -1,8 +1,18 @@
 /**
  * SWSE Sentinel Reports
  * Structured system diagnostics & analysis
+ *
+ * Authority model:
+ * - SentinelEngine: health classification, performance metrics authority, aggregates
+ * - SWSEDebugger: raw forensic telemetry (crashes, events) for post-hoc analysis only
+ *
+ * Contract compliance:
+ * - All exports snapshot data (copy, not live references)
+ * - Never mutate SentinelEngine or SWSEDebugger state
+ * - Read performance truth from SentinelEngine, not SWSEDebugger
  */
 
+import { SentinelEngine } from "../governance/sentinel/sentinel-core.js";
 import { SWSEDebugger } from "./swse-debugger.js";
 import { SentinelConfig } from "./sentinel-config.js";
 
@@ -12,33 +22,35 @@ export class SentinelReports {
   =============================== */
 
   static generateHealthReport() {
-    const renderTimes = SWSEDebugger.metrics.renderTimes;
-    const avgRender = renderTimes.length
-      ? renderTimes.reduce((a, b) => a + b.duration, 0) / renderTimes.length
-      : 0;
+    // Get performance metrics from authoritative source (SentinelEngine)
+    // SentinelEngine is sole authority for performance truth
+    const engineMetrics = SentinelEngine.getPerformanceMetrics() || {};
 
-    const maxRender = renderTimes.length
-      ? Math.max(...renderTimes.map(r => r.duration))
-      : 0;
-
+    // Forensic data from SWSEDebugger: crash analysis
     const crashCount = Object.values(SWSEDebugger.metrics.crashFingerprints).reduce(
       (a, b) => a + b,
       0
     );
 
+    // Snapshot memory (copy, not live reference per Contract #8)
+    const memorySnapshot = performance.memory
+      ? {
+          usedJSHeapSize: performance.memory.usedJSHeapSize,
+          totalJSHeapSize: performance.memory.totalJSHeapSize,
+          jsHeapSizeLimit: performance.memory.jsHeapSizeLimit
+        }
+      : null;
+
     return {
-      avgRenderTime: parseFloat(avgRender.toFixed(2)),
-      maxRenderTime: maxRender,
-      totalRenderSamples: renderTimes.length,
+      // Authority: SentinelEngine
+      performanceMetrics: engineMetrics,
+      healthState: SentinelEngine.getHealthState(),
+      healthDetails: SentinelEngine.getHealthDetails(),
+      // Forensic: SWSEDebugger (for post-hoc analysis)
       crashCount,
       uniqueCrashSignatures: Object.keys(SWSEDebugger.metrics.crashFingerprints).length,
-      memory: performance.memory
-        ? {
-            usedJSHeapSize: performance.memory.usedJSHeapSize,
-            totalJSHeapSize: performance.memory.totalJSHeapSize,
-            jsHeapSizeLimit: performance.memory.jsHeapSizeLimit
-          }
-        : null,
+      // Snapshots (never live references)
+      memory: memorySnapshot,
       uptime: Date.now() - SWSEDebugger.bootTime
     };
   }
@@ -48,23 +60,26 @@ export class SentinelReports {
   =============================== */
 
   static generateCrashReport() {
-    const fingerprints = SWSEDebugger.metrics.crashFingerprints;
+    // Snapshot fingerprints (copy, not live reference)
+    const fingerprintSnapshot = { ...SWSEDebugger.metrics.crashFingerprints };
 
     // Sort by frequency
-    const sorted = Object.entries(fingerprints)
+    const sorted = Object.entries(fingerprintSnapshot)
       .sort((a, b) => b[1] - a[1])
       .map(([signature, count]) => ({
         signature,
         count,
-        percentage: ((count / Object.values(fingerprints).reduce((a, b) => a + b, 0)) * 100).toFixed(1)
+        percentage: ((count / Object.values(fingerprintSnapshot).reduce((a, b) => a + b, 0)) * 100).toFixed(1)
       }));
 
+    // Snapshot recent errors (copy array and contents)
     const recentErrors = SWSEDebugger.events
       .filter(e => e.type.startsWith("error"))
-      .slice(-50);
+      .slice(-50)
+      .map(e => ({ ...e }));  // snapshot each event object
 
     return {
-      totalCrashes: Object.values(fingerprints).reduce((a, b) => a + b, 0),
+      totalCrashes: Object.values(fingerprintSnapshot).reduce((a, b) => a + b, 0),
       uniqueSignatures: sorted.length,
       topCrashes: sorted.slice(0, 10),
       recentErrors
@@ -76,14 +91,17 @@ export class SentinelReports {
   =============================== */
 
   static generatePerformanceReport() {
-    // NOTE: This reads from SWSEDebugger for historical export.
-    // Real-time performance truth is in SentinelEngine.getPerformanceMetrics()
-    const renderTimes = SWSEDebugger.metrics.renderTimes;
-    const prepareTimes = SWSEDebugger.metrics.prepareTimes;
+    // Authority: SentinelEngine for real-time rolling metrics
+    const engineMetrics = SentinelEngine.getPerformanceMetrics() || {};
 
-    // Group renders by class
+    // Optional: snapshot raw forensic samples from SWSEDebugger for post-hoc analysis
+    // These are auxiliary to SentinelEngine's rolling metrics
+    const renderTimesSample = [...SWSEDebugger.metrics.renderTimes];  // snapshot (copy)
+    const prepareTimesSample = [...SWSEDebugger.metrics.prepareTimes];  // snapshot (copy)
+
+    // Group renders by class (from snapshot, not live reference)
     const rendersByClass = {};
-    renderTimes.forEach(r => {
+    renderTimesSample.forEach(r => {
       if (!rendersByClass[r.className]) {
         rendersByClass[r.className] = [];
       }
@@ -99,11 +117,14 @@ export class SentinelReports {
     }));
 
     return {
-      renderTimes,
-      prepareTimes,
+      // Authority: SentinelEngine
+      engineMetrics,
+      slowRenderThreshold: SentinelConfig.RENDER_SLOW_MS,
+      // Forensic: SWSEDebugger snapshots
+      forensicRenderSamples: renderTimesSample.slice(-100),  // last 100 only
+      forensicPrepareSamples: prepareTimesSample.slice(-100),  // last 100 only
       rendersByClass: renderClassStats.sort((a, b) => b.avg - a.avg),
       slowestRenderers: renderClassStats.slice(0, 5),
-      slowRenderThreshold: SentinelConfig.RENDER_SLOW_MS,
       slowRendersDetected: renderClassStats.filter(r => r.avg > SentinelConfig.RENDER_SLOW_MS)
     };
   }
@@ -113,9 +134,10 @@ export class SentinelReports {
   =============================== */
 
   static generateIntegrityReport() {
-    const settingsEvents = SWSEDebugger.events.filter(e => e.type === "settings:get");
-    const flagGetEvents = SWSEDebugger.events.filter(e => e.type === "flag:get");
-    const flagSetEvents = SWSEDebugger.events.filter(e => e.type === "flag:set");
+    // Snapshot event arrays (copy, not live references)
+    const settingsEvents = SWSEDebugger.events.filter(e => e.type === "settings:get").map(e => ({ ...e }));
+    const flagGetEvents = SWSEDebugger.events.filter(e => e.type === "flag:get").map(e => ({ ...e }));
+    const flagSetEvents = SWSEDebugger.events.filter(e => e.type === "flag:set").map(e => ({ ...e }));
 
     const uniqueSettingsKeys = [...new Set(settingsEvents.map(e => e.payload.key))];
     const uniqueFlagScopes = [...new Set([...flagGetEvents, ...flagSetEvents].map(e => e.payload.scope))];
@@ -137,7 +159,10 @@ export class SentinelReports {
   =============================== */
 
   static generateMutationReport() {
-    const actorUpdates = SWSEDebugger.events.filter(e => e.type === "actor:update");
+    // Snapshot events (copy, not live references)
+    const actorUpdates = SWSEDebugger.events
+      .filter(e => e.type === "actor:update")
+      .map(e => ({ ...e }));
 
     const actorMutations = {};
     actorUpdates.forEach(e => {
@@ -171,12 +196,9 @@ export class SentinelReports {
   =============================== */
 
   static generateClassificationReport() {
-    // Get latest classification from Sentinel if available
-    if (window.__SWSE_SENTINEL__?.getHealthDetails) {
-      return window.__SWSE_SENTINEL__.getHealthDetails();
-    }
-
-    return {
+    // Authority: SentinelEngine health classification
+    // Direct import ensures deterministic path (not window bridge)
+    return SentinelEngine.getHealthDetails() || {
       state: "UNKNOWN",
       reasons: [],
       timestamp: Date.now()
@@ -188,6 +210,9 @@ export class SentinelReports {
   =============================== */
 
   static generateFullReport() {
+    // Snapshot raw event count (don't hold live reference)
+    const rawEventCount = SWSEDebugger.events.length;
+
     return {
       generatedAt: new Date().toISOString(),
       systemId: game.system.id,
@@ -198,7 +223,7 @@ export class SentinelReports {
       performance: this.generatePerformanceReport(),
       integrity: this.generateIntegrityReport(),
       mutations: this.generateMutationReport(),
-      rawEventCount: SWSEDebugger.events.length
+      rawEventCount
     };
   }
 
