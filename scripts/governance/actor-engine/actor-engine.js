@@ -764,8 +764,8 @@ export const ActorEngine = {
       // ========================================
       // Apply damage & condition logic atomically
       // ========================================
-      const currentHP = actor.system.attributes?.hp?.value || 0;
-      const maxHP = actor.system.attributes?.hp?.max || 100;
+      const currentHP = actor.system.hp?.value || 0;
+      const maxHP = actor.system.hp?.max || 100;
       const newHP = Math.max(0, currentHP - finalDamage);
 
       // Check if condition shift needed (at threshold)
