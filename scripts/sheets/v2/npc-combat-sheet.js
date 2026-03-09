@@ -131,8 +131,10 @@ export class SWSEV2CombatNpcSheet extends
       throw new Error("CombatNpcSheet: element not HTMLElement");
     }
 
-    if (root.dataset.bound === "true") return;
-    root.dataset.bound = "true";
+    // Abort previous render's listeners to prevent duplicate event handlers
+    this._renderAbort?.abort();
+    this._renderAbort = new AbortController();
+    const { signal } = this._renderAbort;
 
     // Wire action economy bindings
     ActionEconomyBindings.setupAttackButtons(root, this.document);
@@ -142,7 +144,7 @@ export class SWSEV2CombatNpcSheet extends
     /* ---- CONDITION STEP HANDLING ---- */
 
     for (const el of root.querySelectorAll(".swse-v2-condition-step")) {
-      el.addEventListener("click", async (ev) => {
+      el.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const step = Number(ev.currentTarget?.dataset?.step);
         if (!Number.isFinite(step)) return;
@@ -156,7 +158,7 @@ export class SWSEV2CombatNpcSheet extends
 
     const improveBtn = root.querySelector(".swse-v2-condition-improve");
     if (improveBtn) {
-      improveBtn.addEventListener("click", async (ev) => {
+      improveBtn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         if (typeof this.actor?.improveConditionTrack === "function") {
           await this.actor?.improveConditionTrack();
@@ -166,7 +168,7 @@ export class SWSEV2CombatNpcSheet extends
 
     const worsenBtn = root.querySelector(".swse-v2-condition-worsen");
     if (worsenBtn) {
-      worsenBtn.addEventListener("click", async (ev) => {
+      worsenBtn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         if (typeof this.actor?.worsenConditionTrack === "function") {
           await this.actor?.worsenConditionTrack();
@@ -176,12 +178,12 @@ export class SWSEV2CombatNpcSheet extends
 
     /* ---- INITIATIVE CONTROLS ---- */
 
-    root.querySelector(".roll-initiative")?.addEventListener("click", async (ev) => {
+    root.querySelector(".roll-initiative")?.addEventListener("click", { signal }, async (ev) => {
       ev.preventDefault();
       await this.actor.swseRollInitiative();
     });
 
-    root.querySelector(".take10-initiative")?.addEventListener("click", async (ev) => {
+    root.querySelector(".take10-initiative")?.addEventListener("click", { signal }, async (ev) => {
       ev.preventDefault();
       await this.actor.swseTake10Initiative();
     });
@@ -189,7 +191,7 @@ export class SWSEV2CombatNpcSheet extends
     /* ---- SKILL ROLLING ---- */
 
     for (const el of root.querySelectorAll('[data-action="roll-skill"]')) {
-      el.addEventListener("click", async (ev) => {
+      el.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const skillKey = ev.currentTarget?.dataset?.skill;
         if (skillKey && this.actor) {
@@ -201,7 +203,7 @@ export class SWSEV2CombatNpcSheet extends
     /* ---- DEFENSE ROLLING ---- */
 
     for (const el of root.querySelectorAll('[data-action="roll-defense"]')) {
-      el.addEventListener("click", async (ev) => {
+      el.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const defenseType = ev.currentTarget?.dataset?.defense;
         if (defenseType && this.actor) {
@@ -215,7 +217,7 @@ export class SWSEV2CombatNpcSheet extends
     /* ---- WEAPON ROLLING ---- */
 
     for (const el of root.querySelectorAll('[data-action="roll-weapon"]')) {
-      el.addEventListener("click", async (ev) => {
+      el.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const itemId = ev.currentTarget?.dataset?.itemId;
         if (!itemId || !this.actor) return;
@@ -233,7 +235,7 @@ export class SWSEV2CombatNpcSheet extends
 
     const levelUpBtn = root.querySelector('[data-action="level-up"]');
     if (levelUpBtn) {
-      levelUpBtn.addEventListener("click", async (ev) => {
+      levelUpBtn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         if (this.actor) {
           await SWSELevelUp.openEnhanced(this.actor);
@@ -244,7 +246,7 @@ export class SWSEV2CombatNpcSheet extends
     /* ---- ITEM OPEN ---- */
 
     for (const el of root.querySelectorAll(".swse-v2-open-item")) {
-      el.addEventListener("click", (ev) => {
+      el.addEventListener("click", { signal }, (ev) => {
         ev.preventDefault();
         const itemId = ev.currentTarget?.dataset?.itemId;
         const item = this.actor?.items?.get(itemId);
@@ -256,7 +258,7 @@ export class SWSEV2CombatNpcSheet extends
 
     const switchFullBtn = root.querySelector('[data-action="switch-full-mode"]');
     if (switchFullBtn) {
-      switchFullBtn.addEventListener("click", async (ev) => {
+      switchFullBtn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         await ActorEngine.updateActor(this.actor, { "system.sheetMode": "full" });
       });

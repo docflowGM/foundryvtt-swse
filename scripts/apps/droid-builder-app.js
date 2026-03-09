@@ -373,6 +373,8 @@ export class DroidBuilderApp extends SWSEApplication {
    * AppV2 pattern: _onRender only binds events, no logic
    */
   async _onRender(context, options) {
+    await super._onRender(context, options);
+
     const root = this.element;
     if (!(root instanceof HTMLElement)) {return;}
 

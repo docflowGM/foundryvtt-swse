@@ -666,6 +666,8 @@ class BackgroundMentorSuggestionDialog extends BaseSWSEAppV2 {
   }
 
   async _onRender(context, options) {
+    await super._onRender(context, options);
+
     const root = this.element;
     if (!(root instanceof HTMLElement)) return;
 

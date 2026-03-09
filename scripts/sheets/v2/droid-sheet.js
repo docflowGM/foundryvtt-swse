@@ -190,8 +190,10 @@ export class SWSEV2DroidSheet extends
       throw new Error("DroidSheet: element not HTMLElement");
     }
 
-    if (root.dataset.bound === "true") return;
-    root.dataset.bound = "true";
+    // Abort previous render's listeners to prevent duplicate event handlers
+    this._renderAbort?.abort();
+    this._renderAbort = new AbortController();
+    const { signal } = this._renderAbort;
 
     RenderAssertions.assertDOMElements(
       root,
@@ -204,7 +206,7 @@ export class SWSEV2DroidSheet extends
     /* ---------------- TAB HANDLING ---------------- */
 
     for (const tabBtn of root.querySelectorAll(".sheet-tabs .item")) {
-      tabBtn.addEventListener("click", (ev) => {
+      tabBtn.addEventListener("click", { signal }, (ev) => {
         const tabName = ev.currentTarget.dataset.tab;
         if (!tabName) return;
 
@@ -224,7 +226,7 @@ export class SWSEV2DroidSheet extends
     /* ---------------- CONDITION STEP HANDLING ---------------- */
 
     for (const el of root.querySelectorAll(".swse-v2-condition-step")) {
-      el.addEventListener("click", async (ev) => {
+      el.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const step = Number(ev.currentTarget?.dataset?.step);
         if (!Number.isFinite(step)) return;
@@ -238,7 +240,7 @@ export class SWSEV2DroidSheet extends
 
     const improveBtn = root.querySelector(".swse-v2-condition-improve");
     if (improveBtn) {
-      improveBtn.addEventListener("click", async (ev) => {
+      improveBtn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         if (typeof this.actor?.improveConditionTrack === "function") {
           await this.actor?.improveConditionTrack();
@@ -248,7 +250,7 @@ export class SWSEV2DroidSheet extends
 
     const worsenBtn = root.querySelector(".swse-v2-condition-worsen");
     if (worsenBtn) {
-      worsenBtn.addEventListener("click", async (ev) => {
+      worsenBtn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         if (typeof this.actor?.worsenConditionTrack === "function") {
           await this.actor?.worsenConditionTrack();
@@ -258,7 +260,7 @@ export class SWSEV2DroidSheet extends
 
     const persistentCheckbox = root.querySelector(".swse-v2-condition-persistent");
     if (persistentCheckbox) {
-      persistentCheckbox.addEventListener("change", async (ev) => {
+      persistentCheckbox.addEventListener("change", { signal }, async (ev) => {
         const flag = ev.currentTarget?.checked === true;
         if (typeof this.actor?.setConditionTrackPersistent === "function") {
           await this.actor?.setConditionTrackPersistent(flag);
@@ -268,12 +270,12 @@ export class SWSEV2DroidSheet extends
 
     /* ---------------- INITIATIVE CONTROLS ---------------- */
 
-    root.querySelector(".roll-initiative")?.addEventListener("click", async (ev) => {
+    root.querySelector(".roll-initiative")?.addEventListener("click", { signal }, async (ev) => {
       ev.preventDefault();
       await SWSERoll.rollInitiative(this.actor, { showDialog: true });
     });
 
-    root.querySelector(".take10-initiative")?.addEventListener("click", async (ev) => {
+    root.querySelector(".take10-initiative")?.addEventListener("click", { signal }, async (ev) => {
       ev.preventDefault();
       await SWSERoll.rollInitiative(this.actor, { take10: true });
     });
@@ -281,7 +283,7 @@ export class SWSEV2DroidSheet extends
     /* ---------------- ITEM OPEN ---------------- */
 
     for (const el of root.querySelectorAll(".swse-v2-open-item")) {
-      el.addEventListener("click", (ev) => {
+      el.addEventListener("click", { signal }, (ev) => {
         ev.preventDefault();
         const itemId = ev.currentTarget?.dataset?.itemId;
         const item = this.actor?.items?.get(itemId);
@@ -292,7 +294,7 @@ export class SWSEV2DroidSheet extends
     /* ---- EQUIPMENT: SELL & DELETE ---- */
 
     for (const btn of root.querySelectorAll('[data-action="sell-item"]')) {
-      btn.addEventListener("click", async (ev) => {
+      btn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const itemId = ev.currentTarget?.dataset?.itemId;
         if (!itemId) return;
@@ -313,7 +315,7 @@ export class SWSEV2DroidSheet extends
     }
 
     for (const btn of root.querySelectorAll('[data-action="delete-item"]')) {
-      btn.addEventListener("click", async (ev) => {
+      btn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const itemId = ev.currentTarget?.dataset?.itemId;
         if (!itemId) return;
@@ -325,7 +327,7 @@ export class SWSEV2DroidSheet extends
     /* ---- ARMOR EQUIP TOGGLE ---- */
 
     for (const checkbox of root.querySelectorAll('[data-action="toggle-equip-armor"]')) {
-      checkbox.addEventListener("change", async (ev) => {
+      checkbox.addEventListener("change", { signal }, async (ev) => {
         const itemId = ev.currentTarget?.dataset?.itemId;
         if (!itemId) return;
         const item = this.document.items.get(itemId);
@@ -337,14 +339,14 @@ export class SWSEV2DroidSheet extends
     /* ---- FEAT/TALENT BUTTONS ---- */
 
     for (const btn of root.querySelectorAll('[data-action="add-feat"]')) {
-      btn.addEventListener("click", async (ev) => {
+      btn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         game.swse.progression?.openFeatSelector?.(this.document);
       });
     }
 
     for (const btn of root.querySelectorAll('[data-action="add-talent"]')) {
-      btn.addEventListener("click", async (ev) => {
+      btn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         game.swse.progression?.openTalentSelector?.(this.document);
       });
@@ -353,7 +355,7 @@ export class SWSEV2DroidSheet extends
     /* ---- OWNED ACTORS MANAGEMENT ---- */
 
     for (const btn of root.querySelectorAll('[data-action="remove-owned"]')) {
-      btn.addEventListener("click", async (ev) => {
+      btn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const actorId = ev.currentTarget?.dataset?.actorId;
         if (!actorId) return;
@@ -363,7 +365,7 @@ export class SWSEV2DroidSheet extends
     }
 
     for (const btn of root.querySelectorAll('[data-action="open-owned"]')) {
-      btn.addEventListener("click", (ev) => {
+      btn.addEventListener("click", { signal }, (ev) => {
         ev.preventDefault();
         const actorId = ev.currentTarget?.dataset?.actorId;
         if (!actorId) return;
@@ -375,7 +377,7 @@ export class SWSEV2DroidSheet extends
     /* ---------------- SKILL ROLLING ---------------- */
 
     for (const el of root.querySelectorAll('[data-action="roll-skill"]')) {
-      el.addEventListener("click", async (ev) => {
+      el.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const skillKey = ev.currentTarget?.dataset?.skill;
         if (skillKey && this.actor) {
@@ -387,7 +389,7 @@ export class SWSEV2DroidSheet extends
     /* ---------------- DEFENSE ROLLING ---------------- */
 
     for (const el of root.querySelectorAll('[data-action="roll-defense"]')) {
-      el.addEventListener("click", async (ev) => {
+      el.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const defenseType = ev.currentTarget?.dataset?.defense;
         if (defenseType && this.actor) {
@@ -401,7 +403,7 @@ export class SWSEV2DroidSheet extends
     /* ---------------- WEAPON ROLLING ---------------- */
 
     for (const el of root.querySelectorAll('[data-action="roll-weapon"]')) {
-      el.addEventListener("click", async (ev) => {
+      el.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const itemId = ev.currentTarget?.dataset?.itemId;
         if (!itemId || !this.actor) return;
@@ -418,7 +420,7 @@ export class SWSEV2DroidSheet extends
     /* ---------------- ACTION USE ---------------- */
 
     for (const el of root.querySelectorAll(".swse-v2-use-action")) {
-      el.addEventListener("click", async (ev) => {
+      el.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const actionId = ev.currentTarget?.dataset?.actionId;
         if (typeof this.actor?.useAction === "function") {
@@ -431,7 +433,7 @@ export class SWSEV2DroidSheet extends
 
     const editDroidBtn = root.querySelector(".edit-droid-systems");
     if (editDroidBtn) {
-      editDroidBtn.addEventListener("click", async (ev) => {
+      editDroidBtn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const hasConfig = !!this.actor?.system?.droidSystems?.degree;
         const mode = hasConfig ? "EDIT" : "NEW";
@@ -453,7 +455,7 @@ export class SWSEV2DroidSheet extends
 
     const levelUpBtn = root.querySelector('[data-action="level-up"]');
     if (levelUpBtn) {
-      levelUpBtn.addEventListener("click", async (ev) => {
+      levelUpBtn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         if (this.actor) {
           await SWSELevelUp.openEnhanced(this.actor);

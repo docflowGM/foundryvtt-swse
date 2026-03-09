@@ -233,8 +233,10 @@ export class SWSEV2VehicleSheet extends
       throw new Error("VehicleSheet: element not HTMLElement");
     }
 
-    if (root.dataset.bound === "true") return;
-    root.dataset.bound = "true";
+    // Abort previous render's listeners to prevent duplicate event handlers
+    this._renderAbort?.abort();
+    this._renderAbort = new AbortController();
+    const { signal } = this._renderAbort;
 
     RenderAssertions.assertDOMElements(
       root,
@@ -248,7 +250,7 @@ export class SWSEV2VehicleSheet extends
 
     try {
       for (const tabBtn of root.querySelectorAll(".sheet-tabs .item")) {
-        tabBtn.addEventListener("click", (ev) => {
+        tabBtn.addEventListener("click", { signal }, (ev) => {
           try {
             const tabName = ev.currentTarget.dataset.tab;
             if (!tabName) return;
@@ -276,7 +278,7 @@ export class SWSEV2VehicleSheet extends
 
     try {
       for (const el of root.querySelectorAll(".swse-v2-condition-step")) {
-        el.addEventListener("click", async (ev) => {
+        el.addEventListener("click", { signal }, async (ev) => {
           try {
             ev.preventDefault();
             const step = Number(ev.currentTarget?.dataset?.step);
@@ -297,7 +299,7 @@ export class SWSEV2VehicleSheet extends
 
     const improveBtn = root.querySelector(".swse-v2-condition-improve");
     if (improveBtn) {
-      improveBtn.addEventListener("click", async (ev) => {
+      improveBtn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         if (typeof this.actor?.improveConditionTrack === "function") {
           await this.actor?.improveConditionTrack();
@@ -307,7 +309,7 @@ export class SWSEV2VehicleSheet extends
 
     const worsenBtn = root.querySelector(".swse-v2-condition-worsen");
     if (worsenBtn) {
-      worsenBtn.addEventListener("click", async (ev) => {
+      worsenBtn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         if (typeof this.actor?.worsenConditionTrack === "function") {
           await this.actor?.worsenConditionTrack();
@@ -317,7 +319,7 @@ export class SWSEV2VehicleSheet extends
 
     const persistentCheckbox = root.querySelector(".swse-v2-condition-persistent");
     if (persistentCheckbox) {
-      persistentCheckbox.addEventListener("change", async (ev) => {
+      persistentCheckbox.addEventListener("change", { signal }, async (ev) => {
         const flag = ev.currentTarget?.checked === true;
         if (typeof this.actor?.setConditionTrackPersistent === "function") {
           await this.actor?.setConditionTrackPersistent(flag);
@@ -328,7 +330,7 @@ export class SWSEV2VehicleSheet extends
     /* ---------------- ITEM OPEN ---------------- */
 
     for (const el of root.querySelectorAll(".swse-v2-open-item")) {
-      el.addEventListener("click", (ev) => {
+      el.addEventListener("click", { signal }, (ev) => {
         ev.preventDefault();
         const itemId = ev.currentTarget?.dataset?.itemId;
         const item = this.actor?.items?.get(itemId);
@@ -339,7 +341,7 @@ export class SWSEV2VehicleSheet extends
     /* ---- EQUIPMENT: SELL & DELETE ---- */
 
     for (const btn of root.querySelectorAll('[data-action="sell-item"]')) {
-      btn.addEventListener("click", async (ev) => {
+      btn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const itemId = ev.currentTarget?.dataset?.itemId;
         if (!itemId) return;
@@ -360,7 +362,7 @@ export class SWSEV2VehicleSheet extends
     }
 
     for (const btn of root.querySelectorAll('[data-action="delete-item"]')) {
-      btn.addEventListener("click", async (ev) => {
+      btn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const itemId = ev.currentTarget?.dataset?.itemId;
         if (!itemId) return;
@@ -372,7 +374,7 @@ export class SWSEV2VehicleSheet extends
     /* ---- CREW MANAGEMENT ---- */
 
     for (const btn of root.querySelectorAll('[data-action="remove-owned"]')) {
-      btn.addEventListener("click", async (ev) => {
+      btn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const actorId = ev.currentTarget?.dataset?.actorId;
         if (!actorId) return;
@@ -382,7 +384,7 @@ export class SWSEV2VehicleSheet extends
     }
 
     for (const btn of root.querySelectorAll('[data-action="open-owned"]')) {
-      btn.addEventListener("click", (ev) => {
+      btn.addEventListener("click", { signal }, (ev) => {
         ev.preventDefault();
         const actorId = ev.currentTarget?.dataset?.actorId;
         if (!actorId) return;
@@ -394,7 +396,7 @@ export class SWSEV2VehicleSheet extends
     /* ---------------- WEAPON ROLLING ---------------- */
 
     for (const el of root.querySelectorAll('[data-action="roll-weapon"]')) {
-      el.addEventListener("click", async (ev) => {
+      el.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const itemId = ev.currentTarget?.dataset?.itemId;
         if (!itemId || !this.actor) return;
@@ -411,7 +413,7 @@ export class SWSEV2VehicleSheet extends
     /* ---------------- ACTION USE ---------------- */
 
     for (const el of root.querySelectorAll(".swse-v2-use-action")) {
-      el.addEventListener("click", async (ev) => {
+      el.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const actionId = ev.currentTarget?.dataset?.actionId;
         if (typeof this.actor?.useAction === "function") {
@@ -424,7 +426,7 @@ export class SWSEV2VehicleSheet extends
 
     const levelUpBtn = root.querySelector('[data-action="level-up"]');
     if (levelUpBtn) {
-      levelUpBtn.addEventListener("click", async (ev) => {
+      levelUpBtn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         if (this.actor) {
           await SWSELevelUp.openEnhanced(this.actor);
@@ -435,7 +437,7 @@ export class SWSEV2VehicleSheet extends
     /* ---- SUBSYSTEM REPAIR ---- */
 
     for (const btn of root.querySelectorAll('[data-action="repair-subsystem"]')) {
-      btn.addEventListener("click", async (ev) => {
+      btn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const subsystem = ev.currentTarget?.dataset?.subsystem;
         if (!subsystem || !this.actor) return;
@@ -446,7 +448,7 @@ export class SWSEV2VehicleSheet extends
     /* ---- ENHANCED SHIELDS ---- */
 
     for (const btn of root.querySelectorAll('[data-action="shield-focus"]')) {
-      btn.addEventListener("click", async (ev) => {
+      btn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const zone = ev.currentTarget?.dataset?.zone;
         if (!zone || !this.actor) return;
@@ -456,7 +458,7 @@ export class SWSEV2VehicleSheet extends
 
     const equalizeBtn = root.querySelector('[data-action="shield-equalize"]');
     if (equalizeBtn) {
-      equalizeBtn.addEventListener("click", async (ev) => {
+      equalizeBtn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         if (!this.actor) return;
         await EnhancedShields.equalizeShields(this.actor);
@@ -466,7 +468,7 @@ export class SWSEV2VehicleSheet extends
     /* ---- POWER ALLOCATION ---- */
 
     for (const btn of root.querySelectorAll('[data-action="power-adjust"]')) {
-      btn.addEventListener("click", async (ev) => {
+      btn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const system = ev.currentTarget?.dataset?.system;
         const direction = ev.currentTarget?.dataset?.direction;
@@ -480,7 +482,7 @@ export class SWSEV2VehicleSheet extends
     /* ---- PILOT MANEUVER ---- */
 
     for (const btn of root.querySelectorAll('[data-action="set-maneuver"]')) {
-      btn.addEventListener("click", async (ev) => {
+      btn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const maneuver = ev.currentTarget?.dataset?.maneuver;
         if (!maneuver || !this.actor) return;
@@ -491,7 +493,7 @@ export class SWSEV2VehicleSheet extends
     /* ---- COMMANDER ORDER ---- */
 
     for (const btn of root.querySelectorAll('[data-action="set-order"]')) {
-      btn.addEventListener("click", async (ev) => {
+      btn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const order = ev.currentTarget?.dataset?.order;
         if (!order || !this.actor) return;
@@ -503,7 +505,7 @@ export class SWSEV2VehicleSheet extends
 
     const advancePhaseBtn = root.querySelector('[data-action="advance-phase"]');
     if (advancePhaseBtn) {
-      advancePhaseBtn.addEventListener("click", async (ev) => {
+      advancePhaseBtn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         if (!this.actor) return;
         await VehicleTurnController.advancePhase(this.actor);
@@ -512,7 +514,7 @@ export class SWSEV2VehicleSheet extends
 
     const resetTurnBtn = root.querySelector('[data-action="reset-turn"]');
     if (resetTurnBtn) {
-      resetTurnBtn.addEventListener("click", async (ev) => {
+      resetTurnBtn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         if (!this.actor) return;
         await VehicleTurnController.startTurn(this.actor);
@@ -522,7 +524,7 @@ export class SWSEV2VehicleSheet extends
     /* ---- STARSHIP MANEUVERS ---- */
 
     for (const btn of root.querySelectorAll('[data-action="useManeuver"]')) {
-      btn.addEventListener("click", async (ev) => {
+      btn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const itemId = ev.currentTarget?.dataset?.itemId;
         if (!itemId || !this.actor) return;
@@ -533,7 +535,7 @@ export class SWSEV2VehicleSheet extends
     }
 
     for (const btn of root.querySelectorAll('[data-action="regainManeuver"]')) {
-      btn.addEventListener("click", async (ev) => {
+      btn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         const itemId = ev.currentTarget?.dataset?.itemId;
         if (!itemId || !this.actor) return;
