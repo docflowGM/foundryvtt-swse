@@ -427,12 +427,14 @@ Hooks.once('ready', async () => {
     api: publicAPI,
     debug: {
       ...debugAPI,
-      // Lifecycle debugger
+      // Lifecycle debugger (observability layer)
       debugger: {
         enable: () => SWSEDebugger.enable(),
         disable: () => SWSEDebugger.disable(),
         export: () => SWSEDebugger.exportJSON(),
-        getEvents: () => SWSEDebugger.events
+        getEvents: () => SWSEDebugger.events,
+        getStats: () => SWSEDebugger.getStats(),
+        getMetrics: () => SWSEDebugger.metrics
       }
     },
     // PHASE 10: Public API exposure

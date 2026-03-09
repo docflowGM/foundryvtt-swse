@@ -1,12 +1,19 @@
 /**
- * SWSE Structured Debugger
- * Lifecycle + Error + Sentinel Integration
+ * SWSE Structured Debugger (Extended Observability)
+ *
+ * Comprehensive lifecycle + performance + error instrumentation
+ * Zero behavior mutation. Zero error suppression. Toggleable.
  */
 
 export class SWSEDebugger {
   static enabled = false;
-  static events = [];
   static bootTime = Date.now();
+  static events = [];
+  static metrics = {
+    renderTimes: [],
+    prepareTimes: [],
+    crashFingerprints: {}
+  };
 
   static enable() {
     this.enabled = true;
@@ -16,6 +23,10 @@ export class SWSEDebugger {
   static disable() {
     this.enabled = false;
     console.log("SWSE DEBUG DISABLED");
+  }
+
+  static now() {
+    return performance.now();
   }
 
   static record(type, payload = {}) {
@@ -38,11 +49,77 @@ export class SWSEDebugger {
     }
   }
 
+  /* ===============================
+     PERFORMANCE METRICS
+  =============================== */
+
+  static recordRenderDuration(className, duration) {
+    this.metrics.renderTimes.push({ className, duration, timestamp: Date.now() });
+    this.record("metric:renderTime", { className, duration });
+  }
+
+  static recordPrepareDuration(className, duration) {
+    this.metrics.prepareTimes.push({ className, duration, timestamp: Date.now() });
+    this.record("metric:prepareTime", { className, duration });
+  }
+
+  static recordMemorySnapshot() {
+    if (!performance.memory) return;
+
+    const snapshot = {
+      usedJSHeapSize: performance.memory.usedJSHeapSize,
+      totalJSHeapSize: performance.memory.totalJSHeapSize,
+      jsHeapSizeLimit: performance.memory.jsHeapSizeLimit
+    };
+
+    this.record("metric:memory", snapshot);
+  }
+
+  /* ===============================
+     CRASH FINGERPRINTING
+  =============================== */
+
+  static fingerprint(error) {
+    const key = `${error?.message}|${error?.stack?.split("\n")[1] || "unknown"}`;
+    if (!this.metrics.crashFingerprints[key]) {
+      this.metrics.crashFingerprints[key] = 0;
+    }
+    this.metrics.crashFingerprints[key]++;
+  }
+
+  /* ===============================
+     STATISTICS & ANALYSIS
+  =============================== */
+
+  static getStats() {
+    return {
+      totalEvents: this.events.length,
+      totalRenders: this.metrics.renderTimes.length,
+      avgRenderTime: this.metrics.renderTimes.length > 0
+        ? this.metrics.renderTimes.reduce((sum, r) => sum + r.duration, 0) / this.metrics.renderTimes.length
+        : 0,
+      maxRenderTime: Math.max(...this.metrics.renderTimes.map(r => r.duration || 0), 0),
+      totalPrepares: this.metrics.prepareTimes.length,
+      avgPrepareTime: this.metrics.prepareTimes.length > 0
+        ? this.metrics.prepareTimes.reduce((sum, p) => sum + p.duration, 0) / this.metrics.prepareTimes.length
+        : 0,
+      maxPrepareTime: Math.max(...this.metrics.prepareTimes.map(p => p.duration || 0), 0),
+      crashSignatures: Object.keys(this.metrics.crashFingerprints).length,
+      topCrash: Object.entries(this.metrics.crashFingerprints).sort((a, b) => b[1] - a[1])[0]
+    };
+  }
+
+  /* ===============================
+     EXPORT
+  =============================== */
+
   static exportJSON() {
     const data = {
       exportedAt: new Date().toISOString(),
       systemId: game.system.id,
       foundryVersion: game.version,
+      stats: this.getStats(),
+      metrics: this.metrics,
       events: this.events
     };
 
@@ -57,8 +134,12 @@ export class SWSEDebugger {
     a.click();
     URL.revokeObjectURL(url);
 
-    console.log("SWSE DEBUG EXPORT COMPLETE");
+    console.log("SWSE DEBUG EXPORT COMPLETE", this.getStats());
   }
+
+  /* ===============================
+     LIFECYCLE PATCHING
+  =============================== */
 
   static patch() {
     if (this._patched) return;
@@ -66,83 +147,113 @@ export class SWSEDebugger {
 
     const App = foundry.applications.api.ApplicationV2.prototype;
 
-    // Application Init
-    const origInit = App._initializeApplication;
-    App._initializeApplication = async function (...args) {
-      SWSEDebugger.record("app:init:start", { class: this.constructor.name });
-      const result = await origInit.apply(this, args);
-      SWSEDebugger.record("app:init:end", { class: this.constructor.name });
-      return result;
-    };
-
-    // Prepare Context
+    // Context Preparation Timing
     const origPrepare = App._prepareContext;
     App._prepareContext = async function (...args) {
-      SWSEDebugger.record("app:prepare:start", { class: this.constructor.name });
+      const start = SWSEDebugger.now();
+
+      SWSEDebugger.record("app:prepare:start", {
+        class: this.constructor.name
+      });
+
       const result = await origPrepare.apply(this, args);
-      SWSEDebugger.record("app:prepare:end", { class: this.constructor.name });
+
+      const duration = SWSEDebugger.now() - start;
+      SWSEDebugger.recordPrepareDuration(this.constructor.name, duration);
+
+      SWSEDebugger.record("app:prepare:end", {
+        class: this.constructor.name,
+        duration
+      });
+
       return result;
     };
 
-    // Render
+    // Render Timing
     const origRender = App._render;
     App._render = async function (...args) {
-      SWSEDebugger.record("app:render:start", { class: this.constructor.name });
+      const start = SWSEDebugger.now();
+
+      SWSEDebugger.record("app:render:start", {
+        class: this.constructor.name
+      });
+
       const result = await origRender.apply(this, args);
-      SWSEDebugger.record("app:render:end", { class: this.constructor.name });
+
+      const duration = SWSEDebugger.now() - start;
+      SWSEDebugger.recordRenderDuration(this.constructor.name, duration);
+
+      SWSEDebugger.record("app:render:end", {
+        class: this.constructor.name,
+        duration
+      });
+
       return result;
     };
 
-    // Actor Update
+    // Actor Update Tracking
     const origActorUpdate = Actor.prototype.update;
     Actor.prototype.update = async function (data, options) {
       SWSEDebugger.record("actor:update", {
         actor: this.name,
-        data
+        keys: Object.keys(data || {})
       });
+
       return origActorUpdate.apply(this, arguments);
     };
 
-    // Settings Get
-    const origSettingsGet = game.settings.get;
+    // Settings Access Logging
+    const origGet = game.settings.get;
     game.settings.get = function (scope, key) {
       SWSEDebugger.record("settings:get", { scope, key });
-      return origSettingsGet.call(this, scope, key);
+      return origGet.call(this, scope, key);
     };
 
-    // Flag Access
+    // Flag Get Logging
     const origGetFlag = foundry.abstract.Document.prototype.getFlag;
     foundry.abstract.Document.prototype.getFlag = function (scope, key) {
       SWSEDebugger.record("flag:get", {
-        document: this.constructor.name,
+        doc: this.constructor.name,
         scope,
         key
       });
       return origGetFlag.call(this, scope, key);
     };
 
+    // Flag Set Logging
     const origSetFlag = foundry.abstract.Document.prototype.setFlag;
     foundry.abstract.Document.prototype.setFlag = function (scope, key, value) {
       SWSEDebugger.record("flag:set", {
-        document: this.constructor.name,
+        doc: this.constructor.name,
         scope,
         key
       });
       return origSetFlag.call(this, scope, key, value);
     };
 
-    // Global Errors
+    // Global Errors (Uncaught)
     window.addEventListener("error", (event) => {
+      SWSEDebugger.fingerprint(event.error);
       SWSEDebugger.record("error:global", {
         message: event.message,
+        filename: event.filename,
+        lineno: event.lineno,
+        colno: event.colno,
         stack: event.error?.stack
       });
     });
 
+    // Unhandled Promise Rejections
     window.addEventListener("unhandledrejection", (event) => {
+      SWSEDebugger.fingerprint(event.reason);
       SWSEDebugger.record("error:unhandledPromise", {
-        reason: event.reason?.stack || event.reason
+        reason: event.reason?.stack || String(event.reason)
       });
     });
+
+    // Periodic Memory Sampling (30 second intervals)
+    setInterval(() => {
+      SWSEDebugger.recordMemorySnapshot();
+    }, 30000);
   }
 }
