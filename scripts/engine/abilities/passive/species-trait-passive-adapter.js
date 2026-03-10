@@ -186,7 +186,8 @@ export class SpeciesTraitPassiveAdapter {
 
   static _extractDefenseBonuses(text) {
     const mods = [];
-    const re = /([+-]\d+)\s+species\s+bonus\s+to\s+(Fortitude|Reflex|Will)\s+Defense/gi;
+    // Match "bonus to" or "bonus on" for Defense bonuses (e.g., "+2 species bonus to Reflex Defense", "+2 species bonus on Will Defense")
+    const re = /([+-]\d+)\s+species\s+bonus\s+(?:to|on)\s+(Fortitude|Reflex|Will)\s+Defense/gi;
     let m;
     while ((m = re.exec(text)) !== null) {
       const val = Number(m[1]);
