@@ -6,12 +6,16 @@
  * deprecated/competing paths. Eliminates guessing about which path to use where.
  *
  * CANONICAL PATHS (source of truth):
- * - HP:                      system.hp.value (max: system.hp.max)
+ * - HP:                      system.hp.value (max: system.hp.max) — ONLY ActorEngine.recomputeHP() writes .max
  * - Damage Threshold:        system.derived.damageThreshold
  * - Force Points:            system.forcePoints.value
- * - Abilities (STR/DEX/etc): system.derived.abilities[ABILITY].mod
- * - Defenses (reflex/etc):   system.derived.defenses[DEFENSE].value
- * - Condition Penalty:       system.conditionTrack.current (mapped to -1, -2, -3, -4)
+ * - Ability Score:           system.attributes[ABILITY].base (persistent) or system.derived.attributes[ABILITY].total (computed)
+ * - Ability Modifier:        system.derived.attributes[ABILITY].mod
+ * - Defense Total:           system.derived.defenses[DEFENSE].total
+ * - BAB:                     system.derived.bab
+ * - Skill Total:             system.derived.skills[SKILL].total
+ * - Initiative Total:        system.derived.initiative.total (NOT skills.initiative)
+ * - Condition Penalty:       system.derived.modifiers.conditionPenalty (fallback: system.conditionTrack.current → -1 to -4)
  *
  * FALLBACK PATHS (legacy, read-only, deprecated):
  * - HP (OLD):                system.health.current / system.health.max
@@ -184,7 +188,7 @@ export class SchemaAdapters {
 
   /**
    * Get ability modifier
-   * Canonical: system.derived.abilities[ability].mod
+   * Canonical: system.derived.attributes[ability].mod (phase 1B reconciliation)
    *
    * @param {Actor} actor
    * @param {string} ability - 'str', 'dex', 'con', 'int', 'wis', 'cha'
@@ -193,21 +197,21 @@ export class SchemaAdapters {
   static getAbilityMod(actor, ability) {
     if (!actor?.system || !ability) return 0;
     const normalized = ability.toLowerCase();
-    return actor.system?.derived?.abilities?.[normalized]?.mod ?? 0;
+    return actor.system?.derived?.attributes?.[normalized]?.mod ?? 0;
   }
 
   /**
-   * Get ability score (before modifiers)
-   * Canonical: system.attributes[ABILITY].value (legacy location, may need migration)
+   * Get ability score total (with all bonuses)
+   * Canonical: system.derived.attributes[ABILITY].total (computed, read-only)
    *
    * @param {Actor} actor
-   * @param {string} ability - 'STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'
+   * @param {string} ability - 'str', 'dex', 'con', 'int', 'wis', 'cha'
    * @returns {number} Ability score
    */
   static getAbilityScore(actor, ability) {
     if (!actor?.system || !ability) return 10;
-    const normalized = ability.toUpperCase();
-    return actor.system?.attributes?.[normalized]?.value ?? 10;
+    const normalized = ability.toLowerCase();
+    return actor.system?.derived?.attributes?.[normalized]?.total ?? 10;
   }
 
   /**
@@ -217,17 +221,66 @@ export class SchemaAdapters {
    */
 
   /**
-   * Get defense value
-   * Canonical: system.derived.defenses[defense].value
+   * Get defense total (canonical)
+   * Canonical: system.derived.defenses[defense].total (phase 1B reconciliation)
+   * NOT .value — use .total for derived defenses
    *
    * @param {Actor} actor
    * @param {string} defense - 'reflex', 'fortitude', 'will'
-   * @returns {number} Defense value
+   * @returns {number} Defense total
    */
-  static getDefense(actor, defense) {
+  static getDefenseTotal(actor, defense) {
     if (!actor?.system || !defense) return 10;
     const normalized = defense.toLowerCase();
-    return actor.system?.derived?.defenses?.[normalized]?.value ?? 10;
+    return actor.system?.derived?.defenses?.[normalized]?.total ?? 10;
+  }
+
+  /**
+   * Alias for getDefenseTotal (backward compatibility)
+   * @deprecated Use getDefenseTotal() instead
+   */
+  static getDefense(actor, defense) {
+    if (globalThis.SWSE?.DEBUG_MODE) {
+      SWSELogger.warn('[DEPRECATED] SchemaAdapters.getDefense() → use getDefenseTotal() instead');
+    }
+    return this.getDefenseTotal(actor, defense);
+  }
+
+  /**
+   * Get Base Attack Bonus
+   * Canonical: system.derived.bab
+   *
+   * @param {Actor} actor
+   * @returns {number} BAB value
+   */
+  static getBAB(actor) {
+    if (!actor?.system) return 0;
+    return actor.system?.derived?.bab ?? 0;
+  }
+
+  /**
+   * Get skill total
+   * Canonical: system.derived.skills[skillKey].total
+   *
+   * @param {Actor} actor
+   * @param {string} skillKey - e.g., 'acrobatics', 'perception'
+   * @returns {number} Skill total
+   */
+  static getSkillTotal(actor, skillKey) {
+    if (!actor?.system || !skillKey) return 0;
+    return actor.system?.derived?.skills?.[skillKey]?.total ?? 0;
+  }
+
+  /**
+   * Get initiative total (combat canonical)
+   * Canonical: system.derived.initiative.total (NOT skills.initiative)
+   *
+   * @param {Actor} actor
+   * @returns {number} Initiative total
+   */
+  static getInitiativeTotal(actor) {
+    if (!actor?.system) return 0;
+    return actor.system?.derived?.initiative?.total ?? 0;
   }
 
   /**
