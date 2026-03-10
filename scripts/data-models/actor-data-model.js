@@ -243,6 +243,85 @@ export class SWSEActorDataModel extends foundry.abstract.TypeDataModel {
           total: new fields.NumberField({ required: true, initial: 0, integer: true })
         }),
 
+        // Derived skills (computed from ability mods + training + focuses + half-level + misc + state mods + condition penalty)
+        skills: new fields.SchemaField({
+          acrobatics: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          climb: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          deception: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          endurance: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          gatherInformation: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          initiative: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          jump: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          knowledgeBureaucracy: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          knowledgeGalacticLore: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          knowledgeLifeSciences: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          knowledgePhysicalSciences: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          knowledgeSocialSciences: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          knowledgeTactics: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          knowledgeTechnology: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          mechanics: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          perception: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          persuasion: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          pilot: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          ride: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          stealth: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          survival: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          swim: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          treatInjury: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          useComputer: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          }),
+          useTheForce: new fields.SchemaField({
+            total: new fields.NumberField({ required: true, initial: 0, integer: true })
+          })
+        }),
+
         // Modifier engine output
         modifiers: new fields.ObjectField({ required: true, initial: {} })
       })

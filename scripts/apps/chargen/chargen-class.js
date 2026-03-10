@@ -221,8 +221,8 @@ export async function _onSelectClass(event) {
   SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Defense data from classDef:`, classDef.defenses);
   if (this.characterData.defenses) {
     if (this.characterData.defenses.fortitude) {
-      this.characterData.defenses.fortitude.classBonus = classDef.defenses.fortitudeitude;
-      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Set fort.classBonus = ${classDef.defenses.fortitudeitude}`);
+      this.characterData.defenses.fortitude.classBonus = classDef.defenses.fortitude;
+      SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Set fort.classBonus = ${classDef.defenses.fortitude}`);
     }
     if (this.characterData.defenses.reflex) {
       this.characterData.defenses.reflex.classBonus = classDef.defenses.reflex;
@@ -232,7 +232,7 @@ export async function _onSelectClass(event) {
       this.characterData.defenses.will.classBonus = classDef.defenses.will;
       SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Set will.classBonus = ${classDef.defenses.will}`);
     }
-    SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Defense bonuses set: Fort=${classDef.defenses.fortitudeitude}, Ref=${classDef.defenses.reflex}, Will=${classDef.defenses.will}`);
+    SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: Defense bonuses set: Fort=${classDef.defenses.fortitude}, Ref=${classDef.defenses.reflex}, Will=${classDef.defenses.will}`);
   } else {
     SWSELogger.error(`[CHARGEN-CLASS] ERROR: characterData.defenses is not initialized!`);
   }

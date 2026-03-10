@@ -20,6 +20,7 @@ import { LevelUpPreflightGate } from "/systems/foundryvtt-swse/scripts/governanc
 import { SlotResolutionFlow } from "/systems/foundryvtt-swse/scripts/governance/ui/slot-resolution-flow.js";
 import { ExportMarking } from "/systems/foundryvtt-swse/scripts/governance/export/export-marking.js";
 import { ActorEngineEnforcementGates } from "/systems/foundryvtt-swse/scripts/governance/enforcement/actor-engine-enforcement-gates.js";
+import { HPRecomputeHooks } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/hp-recompute-hooks.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class GovernanceIntegration {
@@ -38,6 +39,9 @@ export class GovernanceIntegration {
 
       // PHASE 5B-1: Verify EnforcementPolicy is operational
       this._initializeEnforcementPolicy();
+
+      // Phase 4B: Initialize HP recalculation hooks
+      HPRecomputeHooks.initialize();
 
       // Initialize all actors
       for (const actor of game.actors.values()) {

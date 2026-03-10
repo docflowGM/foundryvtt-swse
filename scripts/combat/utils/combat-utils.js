@@ -59,7 +59,7 @@ export function computeAttackBonus(actor, weapon) {
   const level = actor.system.level ?? 1;
   const halfLvl = getEffectiveHalfLevel(actor);
 
-  const bab = actor.system.bab ?? 0;
+  const bab = SchemaAdapters.getBAB(actor);
 
   // Ability mod used for attack
   const attr = weapon.system?.attackAttribute ?? 'str';

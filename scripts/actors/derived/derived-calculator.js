@@ -71,7 +71,15 @@ export class DerivedCalculator {
       // ========================================
       // Compute all derived values (base only)
       // ========================================
-      const hp = HPCalculator.calculate(actor, classLevels, { adjustment: hpAdjustment });
+      // PHASE 4: HP is now mirror-only (ActorEngine.recomputeHP is sole writer of system.hp.max)
+      // Do NOT call HPCalculator.calculate() - that is now owned by ActorEngine
+      const hp = {
+        base: actor.system.hp?.max || 1,
+        max: actor.system.hp?.max || 1,
+        value: actor.system.hp?.value || actor.system.hp?.max || 1,
+        total: actor.system.hp?.max || 1,
+        adjustment: 0 // Adjustments are part of ActorEngine.recomputeHP, not derived
+      };
       const bab = await BABCalculator.calculate(classLevels, { adjustment: babAdjustment });
       const defenses = await DefenseCalculator.calculate(actor, classLevels, { adjustments: defenseAdjustments });
 
@@ -135,16 +143,16 @@ export class DerivedCalculator {
         total: chaMod + destinyClassBonus + (actor.system.destinyPoints?.bonus || 0)
       };
 
-      // HP
-      if (hp.max > 0) {
-        updates['system.derived.hp'] = {
-          base: hp.base || hp.max,  // Store base for reference
-          max: hp.max,
-          total: hp.max,
-          value: actor.system.hp?.value || hp.value, // Preserve current HP if set
-          adjustment: hpAdjustment
-        };
-      }
+      // HP: Mirror-only pattern (Phase 4)
+      // ActorEngine.recomputeHP() is the sole writer of system.hp.max
+      // DerivedCalculator mirrors system.hp.max → system.derived.hp for UI compatibility
+      updates['system.derived.hp'] = {
+        base: hp.base,
+        max: hp.max,
+        total: hp.max,
+        value: hp.value,
+        adjustment: 0 // No independent adjustments (all in ActorEngine.recomputeHP)
+      };
 
       // BAB
       if (bab >= 0) {

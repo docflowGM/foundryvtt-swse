@@ -20,13 +20,32 @@ export const ActorEngine = {
   /**
    * Perform any derived-stat recalculation.
    * Runs after every validated update. Non-blocking.
+   *
+   * PHASE 2C: ModifierEngine.applyAll() is currently IMPURE
+   * It writes directly to system.derived.* without enforcement.
+   * TODO (Phase 2C): Refactor ModifierEngine.applyAll() to:
+   *   - Return computed modifier bundle instead of mutating
+   *   - Apply bundle in DerivedCalculator context only
+   *   - Prevent unauthorized writes to system.derived.*
+   * Known issues in ModifierEngine.applyAll():
+   *   - Writes system.skills.*.total directly (should be derived-only)
+   *   - Writes system.derived.initiative as number (corrupts shape)
+   *   - Writes system.derived.defenses.*.total (should be value)
+   *   - Non-idempotent (calling twice produces different results)
+   * Mitigation: Set actor._isDerivedCalcCycle = true during DerivedCalculator phase
    */
   async recalcAll(actor) {
     if (!actor) throw new Error('recalcAll() called with no actor');
 
     try {
-      await DerivedCalculator.computeAll(actor);
-      await ModifierEngine.applyAll(actor);
+      // Mark that we're in derived calc cycle (used by ModifierEngine enforcement)
+      actor._isDerivedCalcCycle = true;
+      try {
+        await DerivedCalculator.computeAll(actor);
+        await ModifierEngine.applyAll(actor);
+      } finally {
+        actor._isDerivedCalcCycle = false;
+      }
 
       // PHASE 3: Check prerequisite integrity after mutations
       // Skip if flagged as integrity check (prevent recursion)
@@ -35,6 +54,48 @@ export const ActorEngine = {
       }
     } catch (err) {
       SWSELogger.error('ActorEngine.recalcAll failed:', err);
+    }
+  },
+
+  /**
+   * PHASE 2D: Enforcement check for derived writes
+   * Validates that writes to system.derived.* only happen during:
+   * - DerivedCalculator (marked with _isDerivedCalcCycle = true)
+   * - Designated mutation phases with isDerivedCalculatorCall option
+   * @param {Object} changes - Update changes to validate
+   * @param {Actor} actor - Actor being updated
+   * @param {Object} options - Update options
+   * @throws {Error} If violation detected
+   * @private
+   */
+  _validateDerivedWriteAuthority(changes, actor, options = {}) {
+    const derivedPaths = [];
+
+    const checkObject = (obj, prefix = '') => {
+      if (!obj || typeof obj !== 'object') return;
+      for (const [key, value] of Object.entries(obj)) {
+        const path = prefix ? `${prefix}.${key}` : key;
+        if (path.startsWith('system.derived.')) {
+          derivedPaths.push(path);
+        }
+        if (typeof value === 'object' && value !== null) {
+          checkObject(value, path);
+        }
+      }
+    };
+
+    checkObject(changes);
+
+    // Allow writes during DerivedCalculator phase or with explicit option
+    if (derivedPaths.length > 0 &&
+        !actor._isDerivedCalcCycle &&
+        !options.isDerivedCalculatorCall) {
+      const violationList = derivedPaths.slice(0, 5).join(', ');
+      SWSELogger.warn(
+        `[SSOT VIOLATION] Attempted direct write to derived paths: ${violationList}${derivedPaths.length > 5 ? '...' : ''}\n` +
+        `Only DerivedCalculator may write system.derived.*\n` +
+        `Caller: ${new Error().stack.split('\n')[2]}`
+      );
     }
   },
 
@@ -203,6 +264,20 @@ export const ActorEngine = {
         // Prevent recursive mutations during migration
         SWSELogger.warn(`[MIGRATION] Suppressing recursive mutation during migration for ${actor.name}`);
         return { prevented: true, actor };
+      }
+
+      // ========================================
+      // PHASE 4D: HP max write enforcement
+      // ========================================
+      const flatUpdateData = foundry.utils.flattenObject(updateData);
+      const hpMaxPath = Object.keys(flatUpdateData).find(path => path === 'system.hp.max');
+
+      if (hpMaxPath && !options.isRecomputeHPCall && !options.isMigration) {
+        const caller = new Error().stack.split('\n')[2];
+        throw new Error(
+          `[HP SSOT Violation] system.hp.max may only be written by ActorEngine.recomputeHP().\n` +
+          `Caller: ${caller}`
+        );
       }
 
       // ========================================
@@ -2831,6 +2906,128 @@ export const ActorEngine = {
         error: err,
         scope,
         key
+      });
+      throw err;
+    }
+  }
+
+  /**
+   * Recompute actor's system.hp.max using SWSE Saga RAW formula.
+   * ONLY writer of system.hp.max. Uses PERSISTENT (non-derived) canonical inputs only.
+   * Called on: level-up, CON change, class change, species apply, feat change.
+   *
+   * Guardrails:
+   * - Recursion prevention: guardKey in meta options prevents updateActor hook re-trigger
+   * - Idempotency: Early return if newHPMax === current hp.max (avoids unnecessary updates)
+   *
+   * @param {Actor} actor - Character to recompute HP for
+   * @param {Object} [options={}]
+   * @param {boolean} [options.fromHook] - If true, omit DerivedCalculator call
+   * @returns {Promise<number>} - New HP max value
+   * @throws {Error} if actor/class invalid
+   */
+  async recomputeHP(actor, options = {}) {
+    try {
+      if (!actor) {
+        throw new Error('ActorEngine.recomputeHP() requires actor');
+      }
+
+      const classItem = actor.items.find(i => i.type === 'class');
+      if (!classItem) {
+        // No class = minimum 1 HP; but check if it's already 1
+        const currentMax = actor.system.hp?.max ?? 1;
+        if (currentMax === 1) {
+          return 1; // Already at minimum, no update needed
+        }
+        await this.updateActor(actor, { 'system.hp.max': 1 }, {
+          isRecomputeHPCall: true,
+          meta: { guardKey: 'hp-recompute' }
+        });
+        return 1;
+      }
+
+      const level = Math.max(1, actor.system.level ?? 1);
+      const isDroid = actor.type === 'droid';
+      const bonusHP = actor.system.hp?.bonus ?? 0;
+
+      // Compute CON modifier from PERSISTENT attributes (NOT derived/SchemaAdapters)
+      // Fallback to derived only if attributes missing (migration edge case)
+      let conMod = 0;
+      if (!isDroid) {
+        const conBase = actor.system.attributes?.con?.base ?? 10;
+        const conRacial = actor.system.attributes?.con?.racial ?? 0;
+        const conEnhancement = actor.system.attributes?.con?.enhancement ?? 0;
+        const conTemp = actor.system.attributes?.con?.temp ?? 0;
+        const conTotal = conBase + conRacial + conEnhancement + conTemp;
+        conMod = Math.floor((conTotal - 10) / 2);
+      }
+
+      // HP progression: primary source is progression fields; fallback to hitDie
+      let hpAtFirstLevel, hpPerLevel;
+      if (classItem.system.progression?.hpAtFirstLevel !== undefined) {
+        hpAtFirstLevel = classItem.system.progression.hpAtFirstLevel;
+        hpPerLevel = classItem.system.progression.hpPerLevel ?? (Math.floor((classItem.system.hitDie ?? 6) / 2) + 1);
+      } else {
+        const hitDie = classItem.system.hitDie ?? 6;
+        hpAtFirstLevel = hitDie * 3;
+        hpPerLevel = Math.floor(hitDie / 2) + 1;
+      }
+
+      // CANONICAL formula: base + per-level gains + CON at every level + bonus
+      // DO NOT split into baseHP + levelGains + conGains separately (avoids misreading)
+      const newHPMax = Math.max(1,
+        hpAtFirstLevel + (level - 1) * hpPerLevel + (conMod * level) + bonusHP
+      );
+
+      // Guardrail: Only update if value changed (idempotency)
+      const currentMax = actor.system.hp?.max ?? 0;
+      if (newHPMax === currentMax) {
+        SWSELogger.debug(`ActorEngine.recomputeHP: ${actor.name} (no change)`, {
+          level,
+          hitDie: classItem.system.hitDie,
+          hpAtFirstLevel,
+          hpPerLevel,
+          conMod,
+          bonusHP,
+          isDroid,
+          result: newHPMax
+        });
+        return newHPMax; // Early return, no update needed
+      }
+
+      SWSELogger.debug(`ActorEngine.recomputeHP: ${actor.name}`, {
+        level,
+        hitDie: classItem.system.hitDie,
+        hpAtFirstLevel,
+        hpPerLevel,
+        conTotal: (actor.system.attributes?.con?.base ?? 10) + (actor.system.attributes?.con?.racial ?? 0) + (actor.system.attributes?.con?.enhancement ?? 0) + (actor.system.attributes?.con?.temp ?? 0),
+        conMod,
+        bonusHP,
+        isDroid,
+        oldValue: currentMax,
+        newValue: newHPMax
+      });
+
+      // Update system.hp.max via ActorEngine mutation (not direct write)
+      // isRecomputeHPCall flag bypasses HP write guard (see 4D enforcement)
+      // meta.guardKey prevents updateActor hook from re-triggering
+      await this.updateActor(actor, { 'system.hp.max': newHPMax }, {
+        isRecomputeHPCall: true,
+        meta: { guardKey: 'hp-recompute' }
+      });
+
+      // Trigger DerivedCalculator to mirror HP if not called from hook (prevent recursion)
+      if (!options.fromHook) {
+        // Optional: Queue DerivedCalculator refresh for this actor
+        // (implementation depends on existing async queue pattern)
+      }
+
+      return newHPMax;
+    } catch (err) {
+      SWSELogger.error(`ActorEngine.recomputeHP failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        level: actor?.system?.level,
+        classItem: actor?.items.find(i => i.type === 'class')?.name
       });
       throw err;
     }

@@ -150,6 +150,12 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
         }
       }),
 
+      // Force Points
+      forcePoints: new fields.SchemaField({
+        value: new fields.NumberField({ required: true, initial: 0, min: 0, integer: true }),
+        max: new fields.NumberField({ required: true, initial: 0, min: 0, integer: true })
+      }),
+
       // Destiny Points
       destinyPoints: new fields.SchemaField({
         value: new fields.NumberField({ required: true, initial: 0, min: 0, integer: true }),
