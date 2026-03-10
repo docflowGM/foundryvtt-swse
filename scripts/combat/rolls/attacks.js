@@ -1,6 +1,7 @@
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
@@ -36,7 +37,7 @@ function computeAttackBonus(actor, weapon, actionId = null, context = {}) {
   const bab = actor.system.bab ?? 0;
 
   // Use new data model: abilities[xxx].mod
-  const abilityMod = actor.system.attributes[weapon.system?.attackAttribute ?? 'str']?.mod ?? 0;
+  const abilityMod = SchemaAdapters.getAbilityMod(actor, weapon.system?.attackAttribute ?? 'str');
 
   const miscBonus = weapon.system?.attackBonus ?? 0;
 

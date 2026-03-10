@@ -597,7 +597,7 @@ export async function initializeActorAffinity(actor) {
 
     // Route through ActorEngine (single mutation)
     await ActorEngine.updateActor(actor, {
-      'system.flags.swse.archetypeAffinity': affinityData
+      'flags.swse.archetypeAffinity': affinityData
     });
 
     SWSELogger.log('[ArchetypeAffinityEngine] Initialized affinity for', actor.name);
@@ -636,8 +636,8 @@ export async function recalculateActorAffinity(actor) {
 
     // Update actor flags
     await ActorEngine.updateActor(actor, {
-      'system.flags.swse.archetypeAffinity': snapshot,
-      'system.flags.swse.buildGuidance': buildGuidance
+      'flags.swse.archetypeAffinity': snapshot,
+      'flags.swse.buildGuidance': buildGuidance
     });
 
     SWSELogger.log(`[ArchetypeAffinityEngine] Recalculated affinity for ${actor.name}`);

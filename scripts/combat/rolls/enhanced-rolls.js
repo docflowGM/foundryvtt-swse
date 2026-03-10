@@ -1,4 +1,5 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { rollDamage } from "/systems/foundryvtt-swse/scripts/combat/rolls/damage.js";
 import { ActionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine.js";
@@ -1223,7 +1224,7 @@ export class SWSERoll {
       if (skill.trained) {parts.push(`Trained +5`);}
       if (skill.focused) {parts.push(`Skill Focus +5`);}
 
-      const abilityMod = actor.system.attributes[skill.selectedAbility]?.mod ?? 0;
+      const abilityMod = SchemaAdapters.getAbilityMod(actor, skill.selectedAbility);
       parts.push(`${skill.selectedAbility.toUpperCase()} ${abilityMod >= 0 ? '+' : ''}${abilityMod}`);
 
       const misc = skill.miscMod ?? 0;
@@ -1786,7 +1787,7 @@ export class SWSERoll {
       parts.push(`½ Level +${halfLevel}`);
       if (skill.trained) {parts.push(`Trained +5`);}
       if (skill.focused) {parts.push(`Skill Focus +5`);}
-      const abilityMod = actor.system.attributes[skill.selectedAbility]?.mod ?? 0;
+      const abilityMod = SchemaAdapters.getAbilityMod(actor, skill.selectedAbility);
       parts.push(`${skill.selectedAbility.toUpperCase()} ${abilityMod >= 0 ? '+' : ''}${abilityMod}`);
       if (skill.miscMod) {parts.push(`Misc ${skill.miscMod >= 0 ? '+' : ''}${skill.miscMod}`);}
       if (fpBonus) {parts.push(`FP +${fpBonus}`);}

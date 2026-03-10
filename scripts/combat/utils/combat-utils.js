@@ -1,6 +1,7 @@
 import { getEffectiveHalfLevel } from '../../actors/derived/level-split.js';
 import { ResolutionContext } from '../../engine/resolution/resolution-context.js';
 import { RULES } from '../../engine/execution/rules/rule-enum.js';
+import { SchemaAdapters } from '../../utils/schema-adapters.js';
 
 /**
  * Modern SWSE Combat Utilities (v13+)
@@ -62,7 +63,7 @@ export function computeAttackBonus(actor, weapon) {
 
   // Ability mod used for attack
   const attr = weapon.system?.attackAttribute ?? 'str';
-  const abilityMod = actor.system.attributes[attr]?.mod ?? 0;
+  const abilityMod = SchemaAdapters.getAbilityMod(actor, attr);
 
   // Weapon-based bonuses
   const misc = weapon.system?.attackBonus ?? 0;
