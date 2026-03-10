@@ -6,7 +6,7 @@ import { registerActionEconomySettings } from "/systems/foundryvtt-swse/scripts/
 /**
  * System settings for SWSE
  */
-export function registerSystemSettings() {
+export async function registerSystemSettings() {
 
   game.settings.register("foundryvtt-swse", "darkSideMaxMultiplier", {
     name: "Dark Side Max Multiplier",
