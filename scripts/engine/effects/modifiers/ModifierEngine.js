@@ -653,25 +653,9 @@ export class ModifierEngine {
 
       const conditionLabel = `Condition Track (Step ${step})`;
 
-      // Apply to all skills
-      const allSkills = this._getAllSkillTargets(actor);
-      for (const skillTarget of allSkills) {
-        try {
-          modifiers.push(createModifier({
-            source: ModifierSource.CONDITION,
-            sourceId: `condition.step${step}`,
-            sourceName: conditionLabel,
-            target: skillTarget,
-            type: ModifierType.PENALTY,
-            value: penalty,
-            enabled: true,
-            priority: 20, // After other penalties
-            description: conditionLabel
-          }));
-        } catch (err) {
-          swseLogger.warn(`Failed to create condition modifier for ${skillTarget}:`, err);
-        }
-      }
+      // NOTE: Condition penalties for skills are now pre-computed in DerivedCalculator
+      // and included in system.derived.skills[skillKey].total, so we do NOT apply them
+      // here to avoid double-counting. ModifierEngine only applies situational/temporary mods.
 
       // Apply to defenses
       for (const defense of ['defense.fortitude', 'defense.reflex', 'defense.will']) {
