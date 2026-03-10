@@ -63,8 +63,24 @@ export class SWSEV2CharacterSheet extends
 
     const rawContext = await super._prepareContext(options);
     const SKIP_KEYS = new Set(['actor', 'document', 'system', 'fields']);
+    const stripFunctions = (val, depth = 0) => {
+      if (depth > 10) return val;
+      if (typeof val === 'function') return undefined;
+      if (Array.isArray(val)) return val.map(v => stripFunctions(v, depth + 1));
+      if (val && typeof val === 'object' && val.constructor === Object) {
+        return Object.fromEntries(
+          Object.entries(val)
+            .map(([k, v]) => [k, stripFunctions(v, depth + 1)])
+            .filter(([, v]) => v !== undefined)
+        );
+      }
+      return val;
+    };
     const context = Object.fromEntries(
-      Object.entries(rawContext).filter(([k, v]) => !SKIP_KEYS.has(k) && typeof v !== 'function')
+      Object.entries(rawContext)
+        .filter(([k]) => !SKIP_KEYS.has(k))
+        .map(([k, v]) => [k, stripFunctions(v)])
+        .filter(([, v]) => v !== undefined)
     );
 
     // Authoritative derived state (populated by character-actor.js computeCharacterDerived)
