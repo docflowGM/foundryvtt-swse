@@ -96,6 +96,8 @@ import { SWSEV2BaseActor } from './scripts/actors/v2/base-actor.js';
 import { SWSEItemBase } from './scripts/items/base/swse-item-base.js';
 import { ActorEngine } from "./scripts/governance/actor-engine/actor-engine.js";
 import { MutationInterceptor } from './scripts/governance/mutation/MutationInterceptor.js';
+import { EmbeddedMutationLayer } from './scripts/governance/mutation/embedded-mutation-layer.js';
+import { MutationBoundaryDefense } from './scripts/governance/sentinel/mutation-boundary-defense.js';
 import { Batch1Validation } from './scripts/governance/mutation/batch-1-validation.js';
 
 // ---- combat tests (PHASE 3) ----
@@ -278,6 +280,10 @@ Hooks.once('init', async () => {
   /* ---------- PHASE 3: unified sentinel enforcement ---------- */
   initializeSentinelGovernance();
   MutationInterceptor.initialize();
+
+  /* ---------- PHASE 3: Enforcement mode activation ---------- */
+  EmbeddedMutationLayer.initialize();
+  MutationBoundaryDefense.initialize();
 
   swseLogger.log('SWSE | Init complete');
 });

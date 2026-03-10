@@ -27,7 +27,7 @@ export class MutationBoundaryDefense {
    */
   static initialize(options = {}) {
     this.config = {
-      blockUnauthorizedMutations: options.blockUnauthorizedMutations || false,
+      blockUnauthorizedMutations: options.blockUnauthorizedMutations !== false ? true : false,
       logStackTraces: options.logStackTraces || globalThis.SWSE_DEV_MODE,
       warnOnMacroMutations: options.warnOnMacroMutations || true,
       ...options
