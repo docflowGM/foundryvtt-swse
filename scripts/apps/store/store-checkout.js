@@ -657,7 +657,7 @@ export function calculateCartTotal(cart) {
  * @param {Object} store - Store instance
  * @returns {Object} { totalRevalidated, removed, recalculated }
  */
-function revalidateCart(store) {
+function revalidateCartItems(store) {
   const report = { totalRevalidated: 0, removed: [], recalculated: [] };
 
   // Revalidate regular items
@@ -836,7 +836,7 @@ export async function checkout(store, animateNumberCallback) {
     const credits = Number(actor.system.credits) || 0;
 
     // HARDENING 4: Revalidate cart before checkout (re-price all items)
-    const revalidationReport = revalidateCart(store);
+    const revalidationReport = revalidateCartItems(store);
     if (revalidationReport.removed.length > 0) {
         ui.notifications.warn(`${revalidationReport.removed.length} item(s) no longer available and were removed.`);
     }
