@@ -20,13 +20,32 @@ export const ActorEngine = {
   /**
    * Perform any derived-stat recalculation.
    * Runs after every validated update. Non-blocking.
+   *
+   * PHASE 2C: ModifierEngine.applyAll() is currently IMPURE
+   * It writes directly to system.derived.* without enforcement.
+   * TODO (Phase 2C): Refactor ModifierEngine.applyAll() to:
+   *   - Return computed modifier bundle instead of mutating
+   *   - Apply bundle in DerivedCalculator context only
+   *   - Prevent unauthorized writes to system.derived.*
+   * Known issues in ModifierEngine.applyAll():
+   *   - Writes system.skills.*.total directly (should be derived-only)
+   *   - Writes system.derived.initiative as number (corrupts shape)
+   *   - Writes system.derived.defenses.*.total (should be value)
+   *   - Non-idempotent (calling twice produces different results)
+   * Mitigation: Set actor._isDerivedCalcCycle = true during DerivedCalculator phase
    */
   async recalcAll(actor) {
     if (!actor) throw new Error('recalcAll() called with no actor');
 
     try {
-      await DerivedCalculator.computeAll(actor);
-      await ModifierEngine.applyAll(actor);
+      // Mark that we're in derived calc cycle (used by ModifierEngine enforcement)
+      actor._isDerivedCalcCycle = true;
+      try {
+        await DerivedCalculator.computeAll(actor);
+        await ModifierEngine.applyAll(actor);
+      } finally {
+        actor._isDerivedCalcCycle = false;
+      }
 
       // PHASE 3: Check prerequisite integrity after mutations
       // Skip if flagged as integrity check (prevent recursion)
@@ -35,6 +54,48 @@ export const ActorEngine = {
       }
     } catch (err) {
       SWSELogger.error('ActorEngine.recalcAll failed:', err);
+    }
+  },
+
+  /**
+   * PHASE 2D: Enforcement check for derived writes
+   * Validates that writes to system.derived.* only happen during:
+   * - DerivedCalculator (marked with _isDerivedCalcCycle = true)
+   * - Designated mutation phases with isDerivedCalculatorCall option
+   * @param {Object} changes - Update changes to validate
+   * @param {Actor} actor - Actor being updated
+   * @param {Object} options - Update options
+   * @throws {Error} If violation detected
+   * @private
+   */
+  _validateDerivedWriteAuthority(changes, actor, options = {}) {
+    const derivedPaths = [];
+
+    const checkObject = (obj, prefix = '') => {
+      if (!obj || typeof obj !== 'object') return;
+      for (const [key, value] of Object.entries(obj)) {
+        const path = prefix ? `${prefix}.${key}` : key;
+        if (path.startsWith('system.derived.')) {
+          derivedPaths.push(path);
+        }
+        if (typeof value === 'object' && value !== null) {
+          checkObject(value, path);
+        }
+      }
+    };
+
+    checkObject(changes);
+
+    // Allow writes during DerivedCalculator phase or with explicit option
+    if (derivedPaths.length > 0 &&
+        !actor._isDerivedCalcCycle &&
+        !options.isDerivedCalculatorCall) {
+      const violationList = derivedPaths.slice(0, 5).join(', ');
+      SWSELogger.warn(
+        `[SSOT VIOLATION] Attempted direct write to derived paths: ${violationList}${derivedPaths.length > 5 ? '...' : ''}\n` +
+        `Only DerivedCalculator may write system.derived.*\n` +
+        `Caller: ${new Error().stack.split('\n')[2]}`
+      );
     }
   },
 
