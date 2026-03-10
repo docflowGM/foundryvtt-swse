@@ -1,29 +1,28 @@
 /**
- * ActionEngine — Turn-Based Action Economy
+ * ActionEngine — Legacy Compatibility Wrapper
  *
- * Manages action point allocation and consumption during combat turns.
- * Pure, deterministic rule engine for SWSE action economy.
+ * DEPRECATED: This module is now a compatibility adapter for legacy code.
+ * The canonical ActionEngine is in action-engine-v2.js (pure, state-based).
+ *
+ * This wrapper translates the old interface (TurnState + canConsume/consumeAction)
+ * into V2's modern interface (state objects + consume).
+ *
+ * All new code should import from action-engine-v2.js directly.
+ * This wrapper exists only to avoid breaking enhanced-rolls.js and other
+ * legacy consumers.
  *
  * RULES (SWSE Core Rules):
  * - One standard action + one move action per turn (equivalent to Full Round)
- * - Can degrade: Full-round → Standard + Move, Standard → Move, Move → Swift
+ * - Can degrade: Standard → Move → Swift (DOWNWARD ONLY, no upward conversion)
  * - Swift actions can be taken repeatedly (up to 1 per turn typically)
  * - No upward conversion: Can't assemble Full from partial actions
  * - No carry-over: Unused actions are lost
- *
- * ACTION HIERARCHY (downward only):
- * Full-round (requires all three) → Standard + Move → Move → Swift
- *
- * GOVERNANCE:
- * - Pure: Returns new state, doesn't mutate
- * - Deterministic: Same input = same output
- * - Side-effect-free: No actor updates, no chat posts
- * - Read-only: Only reads actor.system.combat (doesn't modify)
  */
 
+import ActionEngineV2 from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine-v2.js";
+
 /**
- * Turn State Object
- * Tracks action consumption for a single turn
+ * Turn State Object (Legacy format)
  *
  * @typedef {Object} TurnState
  * @property {string} actorId - Actor identifier
@@ -44,7 +43,38 @@
  */
 
 /**
- * Action Engine - Pure turn-based action economy
+ * Convert legacy TurnState to V2 format
+ * @private
+ */
+function _legacyToV2(legacyState, maxSwift = 1) {
+  return {
+    remaining: {
+      standard: legacyState.hasStandardAction ? 1 : 0,
+      move: legacyState.hasMoveAction ? 1 : 0,
+      swift: Math.max(0, legacyState.maxSwiftActions - legacyState.swiftActionsUsed)
+    },
+    degraded: { standard: 0, move: 0, swift: 0 },
+    fullRoundUsed: false
+  };
+}
+
+/**
+ * Convert V2 state back to legacy TurnState
+ * @private
+ */
+function _v2ToLegacy(v2State, actorId = 'unknown', maxSwift = 1) {
+  return {
+    actorId,
+    hasStandardAction: v2State.remaining.standard > 0,
+    hasMoveAction: v2State.remaining.move > 0,
+    swiftActionsUsed: Math.max(0, maxSwift - v2State.remaining.swift),
+    maxSwiftActions: maxSwift,
+    actionsUsed: []
+  };
+}
+
+/**
+ * ActionEngine - Pure turn-based action economy (Legacy wrapper)
  *
  * @class ActionEngine
  */
@@ -61,12 +91,14 @@ export class ActionEngine {
       throw new Error('ActionEngine.startTurn requires actor');
     }
 
+    const maxSwift = actor.system?.combatActions?.maxSwiftPerTurn ?? 1;
+
     return {
       actorId: actor.id,
       hasStandardAction: true,
       hasMoveAction: true,
       swiftActionsUsed: 0,
-      maxSwiftActions: actor.system?.combatActions?.maxSwiftPerTurn ?? 1,
+      maxSwiftActions: maxSwift,
       actionsUsed: []
     };
   }
@@ -78,12 +110,6 @@ export class ActionEngine {
    * - Standard action: Can degrade to Move → Swift (downward only)
    * - Move action: Can degrade to Swift (downward only)
    * - Swift action: Cannot degrade (terminal action)
-   * - Full-round: Requires all actions (Standard + Move + Swift)
-   *
-   * Actions use resources in this order (attempting):
-   * 1. Use the primary action type
-   * 2. If unavailable, degrade to next lower type
-   * 3. Continue down chain until resource found or chain exhausted
    *
    * @param {TurnState} turnState - Current turn state
    * @param {ActionCost} requestedCost - Cost of requested action
@@ -97,83 +123,36 @@ export class ActionEngine {
       };
     }
 
-    const { standard = 0, move = 0, swift = 0 } = requestedCost;
-    const swiftRemaining = turnState.maxSwiftActions - turnState.swiftActionsUsed;
+    // Convert to V2 format for calculation
+    const v2State = _legacyToV2(turnState, turnState.maxSwiftActions);
 
-    // STANDARD ACTION: Standard → Move → Swift degradation chain
-    if (standard > 0) {
-      if (turnState.hasStandardAction) {
-        // Primary: Use Standard
-        // Continue to check Move and Swift below...
-      } else if (turnState.hasMoveAction) {
-        // Degrade to Move
-        return {
-          allowed: true,
-          reason: null,
-          degraded: true,
-          degradedFrom: 'standard→move',
-          newCost: { standard: 0, move: standard, swift }
-        };
-      } else if (swiftRemaining >= standard) {
-        // Degrade to Swift (last resort)
-        return {
-          allowed: true,
-          reason: null,
-          degraded: true,
-          degradedFrom: 'standard→move→swift',
-          newCost: { standard: 0, move: 0, swift: swift + standard }
-        };
-      } else {
-        return {
-          allowed: false,
-          reason: 'Standard action unavailable (no degradation path available)'
-        };
-      }
+    // Convert cost format
+    const v2Cost = {
+      standard: requestedCost.standard || 0,
+      move: requestedCost.move || 0,
+      swift: requestedCost.swift || 0
+    };
+
+    // Use V2 preview to check if this is allowed
+    const previewResult = ActionEngineV2.previewConsume(v2State, v2Cost);
+
+    if (!previewResult.allowed) {
+      return {
+        allowed: false,
+        reason: previewResult.violations.join(', ')
+      };
     }
 
-    // MOVE ACTION: Move → Swift degradation chain
-    if (move > 0) {
-      if (turnState.hasMoveAction) {
-        // Primary: Use Move
-        // Continue to check Swift below...
-      } else if (swiftRemaining >= move) {
-        // Degrade to Swift
-        return {
-          allowed: true,
-          reason: null,
-          degraded: true,
-          degradedFrom: 'move→swift',
-          newCost: { standard: 0, move: 0, swift: swift + move }
-        };
-      } else {
-        return {
-          allowed: false,
-          reason: 'Move action unavailable and insufficient swift actions for degradation'
-        };
-      }
-    }
-
-    // SWIFT ACTION: No degradation possible
-    if (swift > 0) {
-      if (turnState.swiftActionsUsed + swift > turnState.maxSwiftActions) {
-        return {
-          allowed: false,
-          reason: `Insufficient swift actions (${turnState.swiftActionsUsed}/${turnState.maxSwiftActions} used, need ${swift} more)`
-        };
-      }
-      // Swift available
-    }
-
-    // All checks passed
-    return { allowed: true, reason: null };
+    return {
+      allowed: true,
+      reason: null,
+      degraded: false  // Legacy format doesn't track degradation type
+    };
   }
 
   /**
    * Consume action from turn state.
-   * Applies SWSE degradation rules:
-   * - Standard unavailable → degrade to Move (if available)
-   * - Move unavailable → degrade to Swift (if available)
-   * - Swift unavailable → blocked
+   * Applies SWSE degradation rules.
    *
    * Returns new turn state without mutating input.
    *
@@ -194,92 +173,35 @@ export class ActionEngine {
 
     const { actionType = 'standard', cost = null } = options;
 
-    // Default costs by action type
-    const costMap = {
-      standard: { standard: 1, move: 0, swift: 0 },
-      move: { standard: 0, move: 1, swift: 0 },
-      swift: { standard: 0, move: 0, swift: 1 },
-      full: { standard: 1, move: 1, swift: 0 }  // Full-round uses Standard + Move (Swift still available)
-    };
+    // Convert to V2 format
+    const v2State = _legacyToV2(turnState, turnState.maxSwiftActions);
 
-    const requestedCost = cost || costMap[actionType] || costMap.standard;
-
-    // Check if action can be consumed (includes degradation check)
-    const canCheck = this.canConsume(turnState, requestedCost);
-
-    if (!canCheck.allowed) {
-      return {
-        allowed: false,
-        updatedTurnState: turnState,
-        reason: canCheck.reason,
-        degradedAction: null
+    // Determine cost
+    let v2Cost = { standard: 0, move: 0, swift: 0 };
+    if (cost) {
+      v2Cost = cost;
+    } else {
+      const costMap = {
+        standard: { standard: 1, move: 0, swift: 0 },
+        move: { standard: 0, move: 1, swift: 0 },
+        swift: { standard: 0, move: 0, swift: 1 },
+        full: { fullRound: true, standard: 0, move: 0, swift: 0 }
       };
+      v2Cost = costMap[actionType] || costMap.standard;
     }
 
-    // Copy turnState to avoid mutation
-    const updated = {
-      ...turnState,
-      actionsUsed: [...turnState.actionsUsed]
-    };
+    // Consume using V2 engine
+    const v2Result = ActionEngineV2.consume(v2State, v2Cost);
 
-    // Use the cost (either original or degraded)
-    const finalCost = canCheck.degraded ? canCheck.newCost : requestedCost;
-    const degradedAction = canCheck.degradedFrom || null;
-
-    // Apply Standard action cost
-    if (finalCost.standard > 0) {
-      if (updated.hasStandardAction) {
-        updated.hasStandardAction = false;
-        updated.actionsUsed.push('standard');
-      } else {
-        // Should have been caught by canConsume, defensive check
-        return {
-          allowed: false,
-          updatedTurnState: turnState,
-          reason: 'Standard action unavailable (unexpected)',
-          degradedAction: null
-        };
-      }
-    }
-
-    // Apply Move action cost
-    if (finalCost.move > 0) {
-      if (updated.hasMoveAction) {
-        updated.hasMoveAction = false;
-        updated.actionsUsed.push('move');
-      } else {
-        // Should have been caught by canConsume, defensive check
-        return {
-          allowed: false,
-          updatedTurnState: turnState,
-          reason: 'Move action unavailable (unexpected)',
-          degradedAction: null
-        };
-      }
-    }
-
-    // Apply Swift action cost
-    if (finalCost.swift > 0) {
-      if (updated.swiftActionsUsed + finalCost.swift <= updated.maxSwiftActions) {
-        updated.swiftActionsUsed += finalCost.swift;
-        updated.actionsUsed.push(`swift×${finalCost.swift}`);
-      } else {
-        // Should have been caught by canConsume, defensive check
-        return {
-          allowed: false,
-          updatedTurnState: turnState,
-          reason: 'Swift action limit exceeded (unexpected)',
-          degradedAction: null
-        };
-      }
-    }
+    // Convert result back to legacy format
+    const updatedTurnState = _v2ToLegacy(v2Result.turnState, turnState.actorId, turnState.maxSwiftActions);
 
     return {
-      allowed: true,
-      updatedTurnState: updated,
-      reason: null,
-      degradedAction: degradedAction,  // Now includes degradedFrom path
-      consumedCost: finalCost
+      allowed: v2Result.allowed,
+      updatedTurnState,
+      reason: v2Result.violations.length > 0 ? v2Result.violations.join(', ') : null,
+      degradedAction: null,  // Legacy format doesn't track this detail
+      consumedCost: v2Cost
     };
   }
 

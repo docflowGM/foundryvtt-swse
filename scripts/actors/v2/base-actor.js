@@ -3,6 +3,7 @@ import { SWSEActorBase } from "/systems/foundryvtt-swse/scripts/actors/base/swse
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { DerivedCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
+import { AbilityExecutionCoordinator } from "/systems/foundryvtt-swse/scripts/engine/abilities/ability-execution-coordinator.js";
 import { computeCharacterDerived } from "/systems/foundryvtt-swse/scripts/actors/v2/character-actor.js";
 import { computeNpcDerived } from "/systems/foundryvtt-swse/scripts/actors/v2/npc-actor.js";
 import { computeDroidDerived } from "/systems/foundryvtt-swse/scripts/actors/v2/droid-actor.js";
@@ -62,6 +63,14 @@ export class SWSEV2BaseActor extends SWSEActorBase {
    * @private
    */
   _performDerivedCalculation(system) {
+    // PHASE 4E: Register all PASSIVE/ACTIVE/RULE abilities BEFORE derived calc
+    // This ensures modifiers are available during DerivedCalculator.computeAll()
+    try {
+      AbilityExecutionCoordinator.registerActorAbilities(this);
+    } catch (err) {
+      console.error('[ABILITY-REGISTRATION]', err);
+    }
+
     // v2: Compute HP, BAB, and defenses from progression data
     // Statblock NPCs must NOT be re-derived during AppV2 renders.
     // This is async but we fire-and-forget since Foundry doesn't await prepareDerivedData

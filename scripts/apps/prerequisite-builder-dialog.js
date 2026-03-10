@@ -6,6 +6,7 @@
  */
 
 import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 
 export class PrerequisiteBuilderDialog extends SWSEFormApplicationV2 {
   constructor(object = {}, options = {}) {

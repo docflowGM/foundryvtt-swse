@@ -283,16 +283,16 @@ export async function _onSelectFeat(event) {
     }
   }
 
-  // Save filter state before render
-  const filterCheckbox = document.querySelector('.filter-valid-feats');
+  // Save filter state before render (scope to component element, not global document)
+  const filterCheckbox = this.element?.querySelector?.('.filter-valid-feats');
   const wasFilterActive = filterCheckbox?.checked || false;
 
   // Re-render to show updated feat selection and enable Next button if requirement met
   await this.render();
 
-  // Restore filter state after render
+  // Restore filter state after render (scope to component element, not global document)
   if (wasFilterActive) {
-    const newFilterCheckbox = document.querySelector('.filter-valid-feats');
+    const newFilterCheckbox = this.element?.querySelector?.('.filter-valid-feats');
     if (newFilterCheckbox) {
       newFilterCheckbox.checked = true;
       // Trigger change event to apply filter

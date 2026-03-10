@@ -17,6 +17,7 @@ import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/Com
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animation-engine.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 export class CombatExecutor {
   /**
@@ -43,8 +44,8 @@ export class CombatExecutor {
       // Check Force Point expenditure
       let usedForce = false;
       if (options.force) {
-        const fp = actor.system?.forcePoints || {};
-        if ((fp.current || 0) <= 0) {
+        const fpValue = SchemaAdapters.getForcePoints(actor);
+        if (fpValue <= 0) {
           throw new Error("No Force Points available");
         }
         usedForce = true;
@@ -60,9 +61,10 @@ export class CombatExecutor {
 
       // Spend Force Point if used
       if (usedForce) {
+        const currentFP = SchemaAdapters.getForcePoints(actor);
         const plan = {
           update: {
-            "system.forcePoints.current": Math.max(0, (actor.system.forcePoints?.current || 1) - 1)
+            "system.forcePoints.value": Math.max(0, currentFP - 1)
           }
         };
         await ActorEngine.apply(actor, plan);
@@ -99,8 +101,8 @@ export class CombatExecutor {
       // Check Force Point
       let usedForce = false;
       if (options.useForce) {
-        const fp = actor.system?.forcePoints || {};
-        if ((fp.current || 0) <= 0) {
+        const fpValue = SchemaAdapters.getForcePoints(actor);
+        if (fpValue <= 0) {
           throw new Error("No Force Points available");
         }
         usedForce = true;
@@ -114,9 +116,10 @@ export class CombatExecutor {
 
       // Spend Force Point if used
       if (usedForce) {
+        const currentFP = SchemaAdapters.getForcePoints(actor);
         const plan = {
           update: {
-            "system.forcePoints.current": Math.max(0, (actor.system.forcePoints?.current || 1) - 1)
+            "system.forcePoints.value": Math.max(0, currentFP - 1)
           }
         };
         await ActorEngine.apply(actor, plan);
@@ -170,13 +173,11 @@ export class CombatExecutor {
       const damageResult = await this._calculateDamage(attacker, options);
 
       // Apply damage to target
-      const targetHp = target.system?.hp?.value || 0;
+      const targetHp = SchemaAdapters.getHP(target);
       const newHp = Math.max(0, targetHp - damageResult.total);
 
       const plan = {
-        update: {
-          "system.hp.value": newHp
-        }
+        update: SchemaAdapters.setHPUpdate(newHp)
       };
 
       await ActorEngine.apply(target, plan);

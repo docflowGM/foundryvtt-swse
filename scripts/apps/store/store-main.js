@@ -99,6 +99,11 @@ export class SWSEStore extends BaseSWSEAppV2 {
     this.cart = emptyCart();
     this._loaded = false;
 
+    // P2-1: Pagination for large inventories
+    this.currentPage = 1;
+    this.itemsPerPage = 50;
+    this.totalVisibleItems = 0;
+
     this.cardInteractions = null;    // Card floating/expansion controller
     this.isCheckoutMode = false;     // Checkout mode state (true = ledger view, locked cart)
 
@@ -355,7 +360,8 @@ export class SWSEStore extends BaseSWSEAppV2 {
     const useAurebesh = game.settings.get('foundryvtt-swse', 'useAurebesh') ?? true;
 
     for (const item of this.storeInventory?.allItems || []) {
-      const suggestion = this.suggestions.get(item._id);
+      // Engine normalizes IDs to .id (not ._id)
+      const suggestion = this.suggestions.get(item.id);
       const view = this._viewFromItem(item);
 
       // Add category for filtering
@@ -450,10 +456,12 @@ export class SWSEStore extends BaseSWSEAppV2 {
     const sys = safeSystem(item) ?? {};
     const rarityClass = getRarityClass(sys.availability);
     return {
-      id: item._id,
+      // Engine normalizes IDs to .id (not ._id); prefer .id if available
+      id: item.id ?? item._id,
       name: safeString(item.name),
       img: safeImg(item),
-      finalCost: getCostValue(item),
+      // Display uses actual engine finalCost, not base cost
+      finalCost: item.finalCost ?? getCostValue(item),
       rarityClass,
       rarityLabel: getRarityLabel(rarityClass),
       system: sys,
@@ -588,6 +596,11 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
     const root = this.element;
     if (!(root instanceof HTMLElement)) {return;}
+
+    // Abort previous render's listeners
+    this._renderAbort?.abort();
+    this._renderAbort = new AbortController();
+    const { signal } = this._renderAbort;
 
     // Initialize card floating/expansion controller
     if (this.cardInteractions) {
@@ -729,12 +742,16 @@ export class SWSEStore extends BaseSWSEAppV2 {
     }
 
     // Escape key: Cancel checkout mode if active (Part 8)
-    const handleEscapeKey = (ev) => {
+    // Remove old handler if it exists and register new one
+    if (this._escapeKeyHandler) {
+      document.removeEventListener('keydown', this._escapeKeyHandler);
+    }
+    this._escapeKeyHandler = (ev) => {
       if (ev.key === 'Escape' && this.isCheckoutMode) {
         this._cancelCheckout();
       }
     };
-    document.addEventListener('keydown', handleEscapeKey);
+    document.addEventListener('keydown', this._escapeKeyHandler);
 
     // Initial render once DOM exists
     this._renderCartUI();
@@ -759,7 +776,9 @@ export class SWSEStore extends BaseSWSEAppV2 {
     const grid = root.querySelector('#products-grid');
     if (!grid) {return;}
 
-    const searchTerm = root.querySelector('#store-search')?.value?.toLowerCase() || '';
+    // P2-4: Safe search term handling (Unicode-safe, case-insensitive)
+    const rawSearchTerm = root.querySelector('#store-search')?.value || '';
+    const searchTerm = rawSearchTerm.toLowerCase().trim();
     const categoryFilter = root.querySelector('#store-category-filter')?.value || '';
     const availabilityFilter = root.querySelector('#store-availability-filter')?.value || '';
     const sortValue = root.querySelector('#store-sort')?.value || 'suggested';
@@ -775,18 +794,16 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
       const name = (item.name || '').toLowerCase();
       const desc = (item.system?.description || '').toString().toLowerCase();
-      const category = card.dataset.category || '';
-      const availability = card.dataset.availability || '';
+      // Normalize category and availability to lowercase for case-insensitive matching
+      const category = (card.dataset.category || '').toLowerCase();
+      const availability = (card.dataset.availability || '').toLowerCase();
 
       const matchesSearch = !searchTerm || name.includes(searchTerm) || desc.includes(searchTerm);
-      const matchesCategory = !categoryFilter || category === categoryFilter;
-      const matchesAvailability = !availabilityFilter || availability === availabilityFilter;
+      const matchesCategory = !categoryFilter || category === categoryFilter.toLowerCase();
+      const matchesAvailability = !availabilityFilter || availability === availabilityFilter.toLowerCase();
 
       if (matchesSearch && matchesCategory && matchesAvailability) {
-        card.style.display = '';
         visibleCards.push({ card, item });
-      } else {
-        card.style.display = 'none';
       }
     });
 
@@ -800,15 +817,85 @@ export class SWSEStore extends BaseSWSEAppV2 {
     }
     // 'suggested' is default (already sorted by suggestion score)
 
-    // Reorder in DOM
-    visibleCards.forEach(({ card }) => {
+    // P2-1: Pagination - hide all cards first
+    cards.forEach(card => card.style.display = 'none');
+
+    // Calculate pagination
+    const totalVisible = visibleCards.length;
+    this.totalVisibleItems = totalVisible;
+    const totalPages = Math.ceil(totalVisible / this.itemsPerPage);
+
+    // Reset page if it's beyond range
+    if (this.currentPage > totalPages) {
+      this.currentPage = Math.max(1, totalPages);
+    }
+
+    // Show only cards for current page
+    const startIdx = (this.currentPage - 1) * this.itemsPerPage;
+    const endIdx = startIdx + this.itemsPerPage;
+    const paginatedCards = visibleCards.slice(startIdx, endIdx);
+
+    paginatedCards.forEach(({ card }) => {
       grid.appendChild(card);
+      card.style.display = '';
     });
 
     // Show/hide empty state
     const emptyState = grid.parentElement?.querySelector('.empty-state');
     if (emptyState) {
-      emptyState.style.display = visibleCards.length === 0 ? 'flex' : 'none';
+      emptyState.style.display = totalVisible === 0 ? 'flex' : 'none';
+    }
+
+    // Render pagination controls
+    this._renderPaginationControls(root, this.currentPage, totalPages);
+  }
+
+  /**
+   * P2-1: Render pagination controls
+   */
+  _renderPaginationControls(root, currentPage, totalPages) {
+    let paginationContainer = root.querySelector('#pagination-controls');
+    if (!paginationContainer) {
+      const gridContainer = root.querySelector('#products-grid')?.parentElement;
+      if (!gridContainer) return;
+      paginationContainer = document.createElement('div');
+      paginationContainer.id = 'pagination-controls';
+      paginationContainer.style.cssText = 'display: flex; justify-content: center; align-items: center; gap: 10px; padding: 15px; flex-wrap: wrap;';
+      gridContainer.appendChild(paginationContainer);
+    }
+
+    if (totalPages <= 1) {
+      paginationContainer.innerHTML = '';
+      return;
+    }
+
+    paginationContainer.innerHTML = `
+      <button id="prev-page-btn" class="pagination-btn" ${currentPage <= 1 ? 'disabled' : ''}>← Previous</button>
+      <span id="page-info" style="font-size: 0.9em; color: #888;">Page ${currentPage} of ${totalPages}</span>
+      <button id="next-page-btn" class="pagination-btn" ${currentPage >= totalPages ? 'disabled' : ''}>Next →</button>
+    `;
+
+    const prevBtn = paginationContainer.querySelector('#prev-page-btn');
+    const nextBtn = paginationContainer.querySelector('#next-page-btn');
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        if (this.currentPage > 1) {
+          this.currentPage--;
+          this._filterAndSortGrid(root);
+          root.querySelector('#products-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        if (this.currentPage < totalPages) {
+          this.currentPage++;
+          this._filterAndSortGrid(root);
+          root.querySelector('#products-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
     }
   }
 
@@ -1361,5 +1448,15 @@ export class SWSEStore extends BaseSWSEAppV2 {
     if (!this.isCheckoutMode) {return;}
     this.exitCheckoutMode();
     this._renderCartUI();
+  }
+
+  async close(options) {
+    // Clean up global event listeners
+    if (this._escapeKeyHandler) {
+      document.removeEventListener('keydown', this._escapeKeyHandler);
+      this._escapeKeyHandler = null;
+    }
+    // Call parent close
+    return super.close(options);
   }
 }

@@ -1,9 +1,16 @@
 /**
- * TransactionEngine — Sovereign Atomic Coordinator
+ * TransactionEngine — Legacy Atomic Coordinator
  *
- * PHASE 4: Core transaction orchestration
+ * PHASE 4 CONSOLIDATION NOTE:
+ * As of Phase 4 consolidation, StoreEngine is the single authority for store operations.
+ * TransactionEngine is kept as a reference implementation showing the atomic coordinator pattern.
  *
- * Responsibilities:
+ * Status:
+ * ├─ StoreEngine.purchase() ............... ACTIVE (single public API)
+ * ├─ TransactionEngine.execute() ......... REFERENCE (not actively used)
+ * └─ Future: Can be integrated if StoreEngine needs rearchitecture
+ *
+ * Purpose (when active):
  * - Orchestrate multi-item commerce transactions
  * - Compile factory plans (vehicles, droids, items)
  * - Compile credit plans
@@ -11,7 +18,7 @@
  * - Merge all plans
  * - Apply atomically via ActorEngine
  *
- * Architecture:
+ * Atomic Coordinator Pattern:
  * 1️⃣  Validate all inputs (read-only)
  * 2️⃣  Compile factory plans (no mutations)
  * 3️⃣  Compile credit plan (no mutations)
@@ -20,6 +27,9 @@
  * 6️⃣  Apply once via ActorEngine (atomic by construction)
  *
  * If ANY step fails: NOTHING is applied
+ *
+ * NOTE: StoreEngine achieves atomicity via SnapshotManager.
+ * Future refactor can consolidate both approaches.
  */
 
 import { mergeMutationPlans } from "/systems/foundryvtt-swse/scripts/governance/mutation/merge-mutations.js";

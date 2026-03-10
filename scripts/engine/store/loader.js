@@ -98,7 +98,11 @@ export async function loadRawStoreData({ useCache = true } = {}) {
   /* ------------------------------------------- */
 
   const worldItems = game.items.contents || [];
-  const worldActors = game.actors.contents || [];
+
+  // P0-4: Filter world actors to only include droid/vehicle types (not PCs/NPCs)
+  // This prevents player characters from appearing as store inventory
+  const worldActors = (game.actors.contents || [])
+    .filter(a => a && a.type && (a.type === 'droid' || a.type === 'vehicle'));
 
   /* ------------------------------------------- */
   /* LOAD PACK ITEMS                              */
@@ -114,10 +118,15 @@ export async function loadRawStoreData({ useCache = true } = {}) {
   /* LOAD PACK ACTORS (droids + vehicles)         */
   /* ------------------------------------------- */
 
+  // Load droid and vehicle actors from packs
   const packActorDocs = [
-    ...(await safeGetPackDocuments(STORE_PACKS.DROIDS)),
-    ...(await safeGetPackDocuments(STORE_PACKS.VEHICLES))
+    ...(await safeGetPackDocuments(STORE_PACKS.DROIDS))
   ];
+
+  // Load vehicles from all vehicle packs (array of pack names)
+  for (const vehiclePack of STORE_PACKS.VEHICLE_PACKS) {
+    packActorDocs.push(...(await safeGetPackDocuments(vehiclePack)));
+  }
 
   /* ------------------------------------------- */
   /* MERGE SOURCES                                */

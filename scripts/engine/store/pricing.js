@@ -95,3 +95,60 @@ export function applyPricing(item) {
 export function applyPricingAll(items) {
   return items.map(i => applyPricing(i));
 }
+
+/* -------------------------------------------------------------- */
+/* P2-2: PRICING FREEZE (During Transaction)                     */
+/* -------------------------------------------------------------- */
+
+let _pricingFrozen = false;
+let _frozenMarkup = null;
+let _frozenDiscount = null;
+
+/**
+ * Freeze current pricing percentages during transaction
+ * Prevents mid-purchase price changes from settings
+ */
+export function freezePricing() {
+  if (_pricingFrozen) {
+    return; // Already frozen
+  }
+  _pricingFrozen = true;
+  _frozenMarkup = getMarkupPercent();
+  _frozenDiscount = getDiscountPercent();
+}
+
+/**
+ * Unfreeze pricing after transaction completes
+ */
+export function unfreezePricing() {
+  _pricingFrozen = false;
+  _frozenMarkup = null;
+  _frozenDiscount = null;
+}
+
+/**
+ * Check if pricing is currently frozen
+ */
+export function isPricingFrozen() {
+  return _pricingFrozen;
+}
+
+/**
+ * Internal: Get markup respecting frozen state
+ */
+function getMarkupPercent() {
+  if (_pricingFrozen && _frozenMarkup !== null) {
+    return _frozenMarkup;
+  }
+  return Number(game.settings.get('foundryvtt-swse', 'storeMarkup') ?? 0);
+}
+
+/**
+ * Internal: Get discount respecting frozen state
+ */
+function getDiscountPercent() {
+  if (_pricingFrozen && _frozenDiscount !== null) {
+    return _frozenDiscount;
+  }
+  return Number(game.settings.get('foundryvtt-swse', 'storeDiscount') ?? 0);
+}

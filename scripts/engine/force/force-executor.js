@@ -17,6 +17,7 @@ import { ForceEngine } from "/systems/foundryvtt-swse/scripts/engine/force/force
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animation-engine.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 export class ForceExecutor {
   /**
@@ -117,8 +118,8 @@ export class ForceExecutor {
       // Validate Force Point expenditure
       let spentForce = false;
       if (useForce) {
-        const fp = actor.system?.forcePoints || {};
-        if ((fp.current || 0) <= 0) {
+        const fpValue = SchemaAdapters.getForcePoints(actor);
+        if (fpValue <= 0) {
           throw new Error("No Force Points available");
         }
         spentForce = true;
@@ -147,10 +148,10 @@ export class ForceExecutor {
 
       // Spend Force Point if applicable
       if (spentForce) {
-        const fp = actor.system?.forcePoints || {};
+        const currentFP = SchemaAdapters.getForcePoints(actor);
         const plan = {
           update: {
-            "system.forcePoints.current": Math.max(0, (fp.current || 0) - 1)
+            "system.forcePoints.value": Math.max(0, currentFP - 1)
           }
         };
         await ActorEngine.apply(actor, plan);

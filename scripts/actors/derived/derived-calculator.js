@@ -180,7 +180,28 @@ export class DerivedCalculator {
 
       // ========================================
       // Skills Derived (Phase 4: moved from DataModel._prepareSkills)
+      // SSOT: system.derived.skills[skillKey].total is the CANONICAL skill modifier
       // ========================================
+      // IMPORTANT: This is the SINGLE SOURCE OF TRUTH for skill rolls.
+      // system.derived.skills[skillKey].total includes:
+      //   - Ability modifier (from derived.attributes[abilityKey].mod)
+      //   - Training bonus (+5 if trained)
+      //   - Skill focus bonus (+5 if focused)
+      //   - Half-level bonus
+      //   - Miscellaneous user modifier
+      //   - Species skill bonuses
+      //   - Feat/talent bonuses (from ModifierEngine)
+      //   - PASSIVE/STATE conditional bonuses
+      //   - Armor check penalties (if applicable)
+      //   - Condition track penalties (from derived.damage.conditionPenalty)
+      //
+      // Skills rolls call RollCore.execute() with:
+      //   baseBonus = derived.skills[skillKey].total
+      //   modifierTotal = ModifierEngine.aggregateTarget() (situational mods only)
+      //   formula = 1d20 + baseBonus + modifierTotal
+      //
+      // If derived.skills is missing/uninitialized, rollSkill() logs a warning
+      // and returns null (graceful fallback, no recompute).
       updates['system.derived.skills'] = {};
       const skillData = {
         acrobatics: { defaultAbility: 'dex', untrained: true, armorPenalty: true },
@@ -258,6 +279,10 @@ export class DerivedCalculator {
           hasOccupationBonus = true;
         }
 
+        // Add feat/equipment/other modifiers from ModifierEngine (SSOT integration)
+        const featBonus = modifierMap[`skill.${skillKey}`] || 0;
+        total += featBonus;
+
         // PHASE 4: Get state-dependent modifiers for this skill
         let stateBonus = 0;
         try {
@@ -301,6 +326,19 @@ export class DerivedCalculator {
 
         total += stateBonus;
 
+        // Apply armor check penalty (if skill is affected by armor)
+        let armorPenalty = 0;
+        if (skillDef.armorPenalty) {
+          armorPenalty = actor.system.derived?.armor?.checkPenalty ||
+                         actor.system.armor?.checkPenalty ||
+                         0;
+          total += armorPenalty;
+        }
+
+        // Apply condition track penalty
+        const conditionPenalty = actor.system.derived?.damage?.conditionPenalty || 0;
+        total += conditionPenalty;
+
         // Determine if skill can be used untrained
         let canUseUntrained = skillDef.untrained;
         if (isDroid && !skill.trained) {
@@ -316,9 +354,12 @@ export class DerivedCalculator {
           miscMod: skill.miscMod || 0,
           speciesBonus: speciesBonus,
           hasOccupationBonus: hasOccupationBonus,
+          featBonus: featBonus,
           canUseUntrained: canUseUntrained,
           defaultAbility: skillDef.defaultAbility,
-          stateBonus: stateBonus
+          stateBonus: stateBonus,
+          armorPenalty: armorPenalty,
+          conditionPenalty: conditionPenalty
         };
       }
 

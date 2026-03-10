@@ -135,7 +135,7 @@ export class RecoveryMechanics {
 
     // PHASE C INTEGRATION: Reset Second Wind uses per houserule setting
     try {
-      const { SecondWindEngine } = await import("/systems/foundryvtt-swse/SecondWindEngine.js");
+      const { SecondWindEngine } = await import("/systems/foundryvtt-swse/scripts/engine/combat/SecondWindEngine.js");
 
       // Determine rest type for SecondWindEngine
       const restType = isFullRest ? 'extended-rest' : 'short-rest';

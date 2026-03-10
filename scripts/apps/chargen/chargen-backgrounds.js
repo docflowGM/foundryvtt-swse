@@ -374,7 +374,8 @@ export async function _onBackgroundCategoryClick(event) {
   }
 
   // Re-render background cards for the new category
-  const bgContainer = document.querySelector('#background-selection-grid');
+  // Scope query to the component element, not global document
+  const bgContainer = this.element?.querySelector?.('#background-selection-grid');
   if (bgContainer) {
     await this._renderBackgroundCards(bgContainer);
   }
@@ -389,7 +390,8 @@ export async function _onBackgroundCategoryClick(event) {
 export async function _onBackgroundFilterClick(event) {
   event.preventDefault();
 
-  const panel = document.querySelector('.background-filter-panel');
+  // Scope query to the component element, not global document
+  const panel = this.element?.querySelector?.('.background-filter-panel');
   if (!panel) {return;}
 
   panel.classList.toggle('collapsed');
@@ -666,6 +668,8 @@ class BackgroundMentorSuggestionDialog extends BaseSWSEAppV2 {
   }
 
   async _onRender(context, options) {
+    await super._onRender(context, options);
+
     const root = this.element;
     if (!(root instanceof HTMLElement)) return;
 

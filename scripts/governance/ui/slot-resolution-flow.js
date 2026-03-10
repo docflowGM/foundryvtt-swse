@@ -200,6 +200,7 @@ class SlotResolutionModal extends foundry.applications.api.DialogV2 {
    * Attach event listeners.
    */
   activateListeners(html) {
+    this.html = html;
     html.getElementById('resolve-confirm')?.addEventListener('click', () => {
       this._handleConfirm();
     });
@@ -215,7 +216,7 @@ class SlotResolutionModal extends foundry.applications.api.DialogV2 {
    */
   async _handleConfirm() {
     const selected = Array.from(
-      document.querySelectorAll('input[name="remove-item"]:checked')
+      (this.html || document).querySelectorAll('input[name="remove-item"]:checked')
     ).map(el => el.value);
 
     if (selected.length === 0) {

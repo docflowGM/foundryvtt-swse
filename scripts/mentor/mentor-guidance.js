@@ -5,6 +5,7 @@
  */
 
 import {
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
     getMentorForClass,
     getMentorGuidance,
     getLevel1Class

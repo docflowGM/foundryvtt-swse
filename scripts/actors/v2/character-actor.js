@@ -46,8 +46,8 @@ export function computeCharacterDerived(actor, system) {
   // ========================================================================
 
   // Initialize defaults (will be overwritten by DerivedCalculator async)
-  if (!system.derived.defenses.fort) {
-    system.derived.defenses.fort = 10;
+  if (!system.derived.defenses.fortitude) {
+    system.derived.defenses.fortitude = 10;
   }
   if (!system.derived.defenses.ref) {
     system.derived.defenses.ref = 10;
@@ -61,7 +61,7 @@ export function computeCharacterDerived(actor, system) {
 
   // DT initialized but will be overwritten by DerivedCalculator
   if (!system.derived.damage?.threshold) {
-    system.derived.damage.threshold = system.derived.defenses.fort || 10;
+    system.derived.damage.threshold = system.derived.defenses.fortitude || 10;
   }
 
   mirrorIdentity(actor, system);

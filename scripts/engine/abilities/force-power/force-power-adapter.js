@@ -26,6 +26,7 @@
  */
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { ForcePowerContractValidator } from "./force-power-contract.js";
 import { ForcePowerFrequencyType } from "./force-power-types.js";
 
@@ -101,7 +102,7 @@ export class ForceAdapter {
     // Check Force Points
     const meta = ability.system?.abilityMeta || {};
     const fpCost = meta.forcePointCost || 0;
-    const fpCurrent = actor.system?.forcePoints?.current || 0;
+    const fpCurrent = SchemaAdapters.getForcePoints(actor);
 
     if (fpCurrent < fpCost) {
       return {

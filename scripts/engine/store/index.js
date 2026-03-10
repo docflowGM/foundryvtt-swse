@@ -19,9 +19,10 @@
  */
 
 import { loadRawStoreData } from "/systems/foundryvtt-swse/scripts/engine/store/loader.js";
-import { normalizeStoreItem } from "/systems/foundryvtt-swse/scripts/engine/store/normalizer.js";
+import { normalizeStoreItem, filterValidStoreItems } from "/systems/foundryvtt-swse/scripts/engine/store/normalizer.js";
 import { categorizeItem } from "/systems/foundryvtt-swse/scripts/engine/store/categorizer.js";
 import { applyPricing } from "/systems/foundryvtt-swse/scripts/engine/store/pricing.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /* ----------------------------------------------------------- */
 /* CATEGORY STRUCTURE BUILDER                                   */
@@ -77,9 +78,22 @@ export async function buildStoreIndex({ useCache = true } = {}) {
   ];
 
   /* -------------------------------------- */
+  /* 2B. Filter invalid items (P0-4)        */
+  /* -------------------------------------- */
+  const filtered = normalized.filter(item => {
+    const isValid = filterValidStoreItems([item]).length > 0;
+    if (!isValid) {
+      SWSELogger.warn(`[Store] Excluding invalid item: ${item.name} (${item.id})`, {
+        reason: item.cost == null ? 'missing_cost' : 'unknown'
+      });
+    }
+    return isValid;
+  });
+
+  /* -------------------------------------- */
   /* 3. Categorize + apply pricing           */
   /* -------------------------------------- */
-  const processed = normalized
+  const processed = filtered
     .map(i => categorizeItem(i))
     .map(i => applyPricing(i));
 

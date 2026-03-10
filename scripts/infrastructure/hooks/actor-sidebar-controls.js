@@ -14,6 +14,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import CharacterGenerator from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
 import { TemplateCharacterCreator } from "/systems/foundryvtt-swse/scripts/apps/template-character-creator.js";
+import { GMStoreDashboard } from "/systems/foundryvtt-swse/scripts/apps/gm-store-dashboard.js";
 
 async function onClickChargen(app) {
   // Chargen requires an actor
@@ -60,6 +61,17 @@ async function onClickTemplates(app) {
   // Templates can create a new actor from a template
   SWSELogger.log('[Actor Sidebar] Opening Template Character Creator');
   TemplateCharacterCreator.create();
+}
+
+async function onClickGMDashboard(app) {
+  // GM Store Dashboard - GMs only
+  if (!(game.user?.isGM ?? false)) {
+    ui?.notifications?.warn?.('Only GMs can access the Store Dashboard.');
+    return;
+  }
+  SWSELogger.log('[Actor Sidebar] Opening GM Store Dashboard');
+  const dashboard = new GMStoreDashboard();
+  dashboard.render(true);
 }
 
 export function registerActorSidebarControls() {
@@ -110,6 +122,14 @@ export function registerActorSidebarControls() {
         icon: 'fa-solid fa-layer-group',
         label: 'Templates',
         onClick: () => onClickTemplates(app)
+      });
+
+      // GM Store Dashboard button (GM only)
+      controls.unshift({
+        action: 'swse-gm-store-dashboard',
+        icon: 'fa-solid fa-cog',
+        label: 'Store Dashboard',
+        onClick: () => onClickGMDashboard(app)
       });
     }
 

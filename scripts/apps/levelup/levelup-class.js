@@ -546,7 +546,7 @@ export async function createOrUpdateClassItem(classDoc, actor) {
       }
     };
 
-    SWSELogger.log(`SWSE LevelUp | Creating ${classItem.name} with defense bonuses: Fort +${classItem.system.defenses.fortitude}, Ref +${classItem.system.defenses.reflex}, Will +${classItem.system.defenses.will}`);
+    SWSELogger.log(`SWSE LevelUp | Creating ${classItem.name} with defense bonuses: Fort +${classItem.system.defenses.fortitudeitude}, Ref +${classItem.system.defenses.reflex}, Will +${classItem.system.defenses.will}`);
 
     await ActorEngine.createEmbeddedDocuments(actor, 'Item', [classItem]);
   }

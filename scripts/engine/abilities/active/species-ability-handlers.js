@@ -114,7 +114,7 @@ export async function applyDamageRoll(target, sourceAbility, effect) {
       const newHP = Math.max(0, currentHP - baseDamage);
 
       await ActorEngine.updateActor(target, {
-        'system.health.current': newHP
+        'system.hp.value': newHP
       });
 
       SWSELogger.log(
@@ -179,7 +179,7 @@ export async function applyHealing(target, sourceAbility, effect) {
     const newHP = Math.min(currentHP + amount, maxHP);
 
     await ActorEngine.updateActor(target, {
-      'system.health.current': newHP
+      'system.hp.value': newHP
     });
 
     SWSELogger.log(
@@ -240,21 +240,21 @@ export async function applyDrainHeal(target, sourceAbility, effect, source) {
     }
 
     // Apply damage to target
-    const targetHP = target.system?.health?.current ?? 0;
+    const targetHP = target.system?.hp?.value ?? 0;
     const targetNewHP = Math.max(0, targetHP - damageAmount);
 
     await ActorEngine.updateActor(target, {
-      'system.health.current': targetNewHP
+      'system.hp.value': targetNewHP
     });
 
     // Apply healing to source
     if (source) {
-      const sourceHP = source.system?.health?.current ?? 0;
-      const sourceMaxHP = source.system?.health?.max ?? 1;
+      const sourceHP = source.system?.hp?.value ?? 0;
+      const sourceMaxHP = source.system?.hp?.max ?? 1;
       const sourceNewHP = Math.min(sourceHP + damageAmount, sourceMaxHP);
 
       await ActorEngine.updateActor(source, {
-        'system.health.current': sourceNewHP
+        'system.hp.value': sourceNewHP
       });
     }
 

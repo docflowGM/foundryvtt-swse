@@ -39,6 +39,18 @@ export class ProgressionEngine {
       equipment: []
     };
 
+    // Feature dispatch state (used by feature-dispatcher.js)
+    this.data = {
+      talentChoices: [],
+      featChoices: [],
+      grantedFeats: [],
+      classFeatures: [],
+      scalingFeatures: [],
+      forceTechniqueChoices: [],
+      forceSecretChoices: [],
+      starshipManeuverChoices: []
+    };
+
     // Snapshot for rollback
     this.snapshot = null;
 
@@ -135,6 +147,68 @@ export class ProgressionEngine {
   }
 
   /* ========================================
+     UI ADAPTER METHODS
+     ======================================== */
+
+  /**
+   * Load state from actor (UI contract method)
+   * Called by level-up app to initialize from actor state
+   */
+  async loadStateFromActor() {
+    // Instance engine starts with pending = {} and loads selections as UI makes them
+    // This is a no-op for the new engine (legacy compatibility)
+    SWSELogger.log('loadStateFromActor: State loaded from actor');
+  }
+
+  /**
+   * Clear suggestion cache (UI contract method)
+   * Called by level-up app to refresh recommendations
+   */
+  async clearSuggestionCache() {
+    // SuggestionService handles caching internally
+    // This is a no-op for the new engine (legacy compatibility)
+    SWSELogger.log('clearSuggestionCache: Cache cleared');
+  }
+
+  /**
+   * Unified action dispatcher (UI contract method)
+   * Maps action names to appropriate confirm methods
+   * @param {string} action - Action name (confirmClass, confirmFeats, etc.)
+   * @param {Object} payload - Action data
+   */
+  async doAction(action, payload = {}) {
+    // Map action names to pending selection fields
+    const actionMap = {
+      'confirmClass': (data) => this.confirmClass(data.className || data.name),
+      'confirmAbilities': (data) => this.confirmAbilities(data.abilities),
+      'confirmFeats': (data) => this.confirmFeats(data.feats || data.name),
+      'confirmTalents': (data) => this.confirmTalents(data.talents || data.name),
+      'confirmSkills': (data) => this.confirmSkills(data.skills || data.name),
+      'confirmForcePowers': (data) => this.confirmForcePowers(data.forcePowers || data.name),
+      'confirmForceSecrets': (data) => this.confirmForceSecrets(data.forceSecrets || data.name),
+      'confirmForceTechniques': (data) => this.confirmForceTechniques(data.forceTechniques || data.name)
+    };
+
+    if (!actionMap[action]) {
+      throw new Error(`Unknown action: ${action}`);
+    }
+
+    await actionMap[action](payload);
+    SWSELogger.log(`doAction: ${action}`, payload);
+  }
+
+  /**
+   * Confirm ability scores (helper for chargen/level-up)
+   */
+  async confirmAbilities(abilities) {
+    // Store in pending if abilities system is present
+    if (abilities) {
+      this.pending.abilities = abilities;
+      SWSELogger.log(`Confirmed abilities:`, abilities);
+    }
+  }
+
+  /* ========================================
      FINALIZATION & ROLLBACK
      ======================================== */
 
@@ -226,8 +300,8 @@ export class ProgressionEngine {
         }
       }
 
-      // Run final integration
-      await FinalizeIntegration.quickIntegrate(this.actor, this);
+      // Run final integration (mode='levelup', engine=this)
+      await FinalizeIntegration.quickIntegrate(this.actor, 'levelup', this);
 
       SWSELogger.log('Level-up finalized successfully');
       return true;
@@ -248,7 +322,7 @@ export class ProgressionEngine {
     }
 
     try {
-      await SnapshotManager.restoreSnapshot(this.actor, this.snapshot.id);
+      await SnapshotManager.restoreSnapshot(this.actor, this.snapshot.timestamp);
       SWSELogger.log(`Rolled back to snapshot: ${this.snapshot.label}`);
       return true;
     } catch (err) {

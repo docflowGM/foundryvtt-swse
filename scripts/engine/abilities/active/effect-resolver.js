@@ -209,7 +209,7 @@ export class EffectResolver {
       const newHP = Math.min(currentHP + healAmount, maxHP);
 
       await ActorEngine.updateActor(target, {
-        'system.health.current': newHP
+        'system.hp.value': newHP
       });
 
       SWSELogger.log(

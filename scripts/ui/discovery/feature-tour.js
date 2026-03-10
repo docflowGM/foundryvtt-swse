@@ -117,7 +117,10 @@ export const FeatureTour = {
 
     // Click outside modal closes
     overlay.addEventListener('click', (ev) => {
-      if (ev.target === overlay) {close();}
+      if (ev.target === overlay) {
+        document.removeEventListener('keydown', onKey);
+        close();
+      }
     });
   }
 };

@@ -1,4 +1,5 @@
 import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 /**
  * SWSE Houserule Configuration Menus (Upgraded)
  * Modernizes all FormApplication classes for Foundry VTT V13–V15 compatibility

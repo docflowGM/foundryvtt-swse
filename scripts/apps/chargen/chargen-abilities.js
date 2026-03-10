@@ -65,10 +65,10 @@ export function _recalcDefenses() {
   }
 
   // Ensure each defense type has classBonus
-  if (!this.characterData.defenses.fort) {
-    this.characterData.defenses.fort = { base: 10, armor: 0, abilityMod: 0, classBonus: 0, misc: 0, total: 10, ability: 'con' };
-  } else if (!this.characterData.defenses.fort.ability) {
-    this.characterData.defenses.fort.ability = 'con';
+  if (!this.characterData.defenses.fortitude) {
+    this.characterData.defenses.fortitude = { base: 10, armor: 0, abilityMod: 0, classBonus: 0, misc: 0, total: 10, ability: 'con' };
+  } else if (!this.characterData.defenses.fortitude.ability) {
+    this.characterData.defenses.fortitude.ability = 'con';
   }
   if (!this.characterData.defenses.reflex) {
     this.characterData.defenses.reflex = { base: 10, armor: 0, abilityMod: 0, classBonus: 0, misc: 0, total: 12, ability: 'dex' };
@@ -88,10 +88,10 @@ export function _recalcDefenses() {
     this.characterData.abilities.con.mod || 0,
     this.characterData.abilities.str.mod || 0
   );
-  this.characterData.defenses.fort.total =
+  this.characterData.defenses.fortitude.total =
     10 + halfLevel + fortAbility +
-    (this.characterData.defenses.fort.classBonus || 0) +
-    (this.characterData.defenses.fort.misc || 0);
+    (this.characterData.defenses.fortitude.classBonus || 0) +
+    (this.characterData.defenses.fortitude.misc || 0);
 
   // Reflex: 10 + level/2 + DEX + class bonus + misc
   this.characterData.defenses.reflex.total =

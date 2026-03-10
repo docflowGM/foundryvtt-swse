@@ -107,3 +107,21 @@ function _loadUserPreferences() {
 export function getActionPaletteApp() {
   return actionPaletteApp;
 }
+
+/**
+ * Toggle the Action Palette visibility
+ * Safe public API for opening/closing the palette
+ * Used by keybindings and UI controls
+ */
+export function toggleActionPalette() {
+  if (!actionPaletteApp) {
+    console.warn('[Action Palette] App not initialized');
+    return;
+  }
+
+  if (actionPaletteApp.rendered) {
+    actionPaletteApp.close();
+  } else {
+    safeRender(actionPaletteApp, true);
+  }
+}

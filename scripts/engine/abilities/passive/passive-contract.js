@@ -6,7 +6,8 @@
  */
 
 import { PASSIVE_SUBTYPES } from "./passive-types.js";
-import { validateRuleType } from "./rule-types.js";
+import { RULES, isValidRule } from "/systems/foundryvtt-swse/scripts/engine/execution/rules/rule-enum.js";
+import { hasRuleDefinition, getRuleDefinition } from "/systems/foundryvtt-swse/scripts/engine/execution/rules/rule-definitions.js";
 
 export class PassiveContractValidator {
 
@@ -438,9 +439,7 @@ export class PassiveContractValidator {
    * @throws {Error}
    */
   static validateRule(meta) {
-    // Import locally to avoid circular dependency
-    const { RULES, isValidRule } = require("/systems/foundryvtt-swse/scripts/engine/execution/rules/rule-enum.js");
-    const { hasRuleDefinition, getRuleDefinition } = require("/systems/foundryvtt-swse/scripts/engine/execution/rules/rule-definitions.js");
+    // RULE and rule definitions imported at module level (ES compatible)
 
     if (!meta?.rules) {
       throw new Error("PASSIVE RULE missing rules array");

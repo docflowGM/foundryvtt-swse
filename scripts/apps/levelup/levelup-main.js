@@ -193,7 +193,8 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
         chargen.currentStep = incompleteStep;
         chargen.render(true);
       });
-      throw new Error('Character incomplete - redirecting to character generator');
+      // Don't throw — it can cause Foundry hook cascade failures. Instead, close this app early.
+      return;
     }
 
     this.currentStep = 'class'; // class, multiclass-bonus, ability-increase, feat, force-powers, talent, skills, summary
@@ -254,7 +255,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
     if (this._renderTimeout) clearTimeout(this._renderTimeout);
     this._renderTimeout = setTimeout(() => {
-      this._debounceRender();
+      this.render(false);  // Actually call render, not recursion
       this._pendingRender = false;
     }, 100);
   }

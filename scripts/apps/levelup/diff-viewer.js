@@ -213,7 +213,7 @@ export function showDiffDialog(diff) {
   html += '<div class="diff-section">';
   html += `<h3>Defenses</h3>`;
   html += `<p><strong>Reflex:</strong> ${diff.defenses.reflex.before} → ${diff.defenses.reflex.after}</p>`;
-  html += `<p><strong>Fortitude:</strong> ${diff.defenses.fortitude.before} → ${diff.defenses.fortitude.after}</p>`;
+  html += `<p><strong>Fortitude:</strong> ${diff.defenses.fortitudeitude.before} → ${diff.defenses.fortitudeitude.after}</p>`;
   html += `<p><strong>Will:</strong> ${diff.defenses.will.before} → ${diff.defenses.will.after}</p>`;
   html += '</div>';
 

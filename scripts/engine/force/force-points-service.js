@@ -22,6 +22,7 @@
 
 import { getTotalLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 export class ForcePointsService {
 
@@ -139,7 +140,7 @@ export class ForcePointsService {
    * @returns {number} Current Force Points remaining
    */
   static getRemaining(actor) {
-    return actor.system?.forcePoints?.value ?? 0;
+    return SchemaAdapters.getForcePoints(actor);
   }
 
   /**
@@ -235,7 +236,7 @@ export class ForcePointsService {
   static canRescue(actor, damageContext = {}) {
     if (!actor) return false;
 
-    const { damage = 0, hp = actor.system?.hp?.value, threshold = 15 } = damageContext;
+    const { damage = 0, hp = SchemaAdapters.getHP(actor), threshold = 15 } = damageContext;
 
     // Check if already rescued this resolution (via flag)
     const alreadyRescuedFlag = actor.getFlag?.('foundryvtt-swse', 'alreadyRescuedThisResolution') || false;

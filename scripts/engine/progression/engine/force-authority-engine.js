@@ -241,7 +241,7 @@ export class ForceAuthorityEngine {
       // Check 1: Verify all IDs are valid (item exists on actor)
       for (const id of powerIds) {
         const exists = actor.items.some(
-          i => i.type === 'forcePower' && (i.id === id || i._id === id)
+          i => i.type === 'forcepower' && (i.id === id || i._id === id)
         );
         if (!exists) {
           return { valid: false, reason: `Invalid power ID: ${id}` };
@@ -270,7 +270,7 @@ export class ForceAuthorityEngine {
 
         // Resolve each power item from actor.items
         const powers = powerIds.map(id =>
-          actor.items.find(i => (i.id === id || i._id === id) && i.type === 'forcePower')
+          actor.items.find(i => (i.id === id || i._id === id) && i.type === 'forcepower')
         );
 
         // Count how many selected powers are eligible for a conditional bonus slot

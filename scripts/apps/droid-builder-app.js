@@ -5,6 +5,7 @@
  */
 
 import { StepController } from "/systems/foundryvtt-swse/scripts/apps/step-controller.js";
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import SWSEApplication from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
 import { Seraphim } from "/systems/foundryvtt-swse/scripts/apps/seraphim-narrator.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
@@ -373,6 +374,8 @@ export class DroidBuilderApp extends SWSEApplication {
    * AppV2 pattern: _onRender only binds events, no logic
    */
   async _onRender(context, options) {
+    await super._onRender(context, options);
+
     const root = this.element;
     if (!(root instanceof HTMLElement)) {return;}
 

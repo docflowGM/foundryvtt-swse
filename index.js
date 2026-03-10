@@ -31,31 +31,20 @@ window.addEventListener('unhandledrejection', (event) => {
 });
 
 /* =========================
-   JQUERY RUNTIME GUARD (v13 compliance)
+   JQUERY ENFORCEMENT
    ========================= */
 
-if (typeof $ !== 'undefined' || typeof jQuery !== 'undefined') {
-  const jq = globalThis.$ || globalThis.jQuery;
-  if (jq) {
-    const originalFind = jq.fn?.find;
-    const originalOn = jq.fn?.on;
-
-    // Override jQuery methods to prevent v1 slippage
-    if (jq.fn) {
-      jq.fn.find = function() {
-        const stack = new Error().stack;
-        console.error('🔥 SWSE | jQuery.find() detected at runtime (v1 pattern). Use element.querySelector() instead.\n', stack);
-        throw new Error('SWSE: jQuery methods are not permitted in AppV2. Use DOM APIs instead.');
-      };
-
-      jq.fn.on = function() {
-        const stack = new Error().stack;
-        console.error('🔥 SWSE | jQuery.on() detected at runtime (v1 pattern). Use addEventListener() instead.\n', stack);
-        throw new Error('SWSE: jQuery event binding is not permitted in AppV2. Use addEventListener instead.');
-      };
-    }
-  }
-}
+// IMPORTANT: jQuery enforcement is now handled via ESLint + pre-commit checks
+// (removing global monkeypatching to avoid breaking Foundry core/modules).
+//
+// ESLint rule disallows: $ | jQuery | .find() | .on()
+// Pre-commit grep checks for: $( | jQuery( | .find(
+//
+// If you need to debug jQuery usage, use:
+//   grep -r "\$(\\|jQuery(" scripts/ --include="*.js"
+//
+// NOTE: We still allow Foundry core/modules to use jQuery without interference.
+// SWSE code must pass ESLint and pre-commit static checks.
 
 /* =========================
    PHASE 3: RUNTIME CONTRACT (must be first)
@@ -170,6 +159,30 @@ import { Upkeep } from './scripts/automation/upkeep.js';
 // ---- Phase 5: Observability, Testing, Forward Compatibility ----
 import { initializePhase5, getPhaseSummary } from './scripts/core/phase5-init.js';
 import { registerCriticalFlowTests } from './scripts/tests/critical-flow-tests.js';
+
+/* ==========================================================================
+   CONSOLIDATE BOOT MODULES: Import talent/progression modules in order
+   (Previously scattered across system.json esmodules; now centralized for
+   boot order discipline and window.SWSE freeze safety)
+   ========================================================================== */
+
+// Bootstrap holo UI system
+import './scripts/bootstrap/holo-init.js';
+
+// Progression / talent tree infrastructure
+import './scripts/engine/progression/talents/TalentNode.js';
+import './scripts/engine/progression/talents/TalentTreeGraph.js';
+import './scripts/engine/progression/utils/PrerequisiteEnricher.js';
+import './scripts/engine/progression/RuleEngine.js';
+import './scripts/engine/progression/talents/TalentTreeRegistry.js';
+
+// Light Side talents
+import './scripts/talents/light-side-init.js';
+
+// Dark Side powers (consolidated module + init)
+import DarkSidePowers from './scripts/talents/DarkSidePowers.js';
+import './scripts/talents/dark-side-powers-init.js';
+import './scripts/talents/squad-actions-init.js';
 
 /* ==========================================================================
    INTERNAL BOOTSTRAP HELPERS
@@ -456,6 +469,9 @@ Hooks.once('ready', async () => {
       full: () => SentinelReports.generateFullReport(),
       export: () => SentinelReports.exportFullReport()
     },
+    // Extension points for talent/ability systems (populated by init modules)
+    talents: {},
+    macros: {},
     // PHASE 10: Public API exposure
     SENTINEL_STATUS: SentinelEngine.getStatus()
   };

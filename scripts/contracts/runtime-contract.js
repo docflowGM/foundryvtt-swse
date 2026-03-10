@@ -34,47 +34,24 @@ export class RuntimeContract {
 
   /**
    * Enforce: No jQuery at runtime (v1 → v2 transition)
-   * If jQuery is present, make it unusable
+   *
+   * DISABLED (v13 safety improvement):
+   * Previously, this method monkeypatched jQuery methods to throw errors if SWSE code
+   * called them. However, this is unsafe for the ecosystem:
+   * - Foundry core and other modules may legitimately use jQuery
+   * - Global monkeypatching can cause cascading failures
+   *
+   * New approach: jQuery prevention is enforced via:
+   * - ESLint rules (disallow $, jQuery, .find(), .on())
+   * - Pre-commit git hooks (grep for $( and jQuery()
+   * - Code review
+   *
+   * This is safer and more maintainable than global runtime blockades.
+   * For dev-mode runtime detection (non-blocking), see diagnostic-mode.js.
    */
   static enforceNoJQuery() {
-    if (typeof $ === 'undefined' && typeof jQuery === 'undefined') {
-      return; // No jQuery, contract satisfied
-    }
-
-    const jq = globalThis.$ || globalThis.jQuery;
-
-    if (!jq || !jq.fn) {
-      return;
-    }
-
-    const createBlockade = (methodName, hint) => {
-      return function() {
-        const error = new Error(
-          `SWSE CONTRACT VIOLATION: jQuery.${methodName}() is forbidden in AppV2.\n` +
-          `Hint: ${hint}\n` +
-          `Use DOM APIs instead: querySelector, addEventListener, etc.`
-        );
-
-        StructuredLogger.core(SEVERITY.ERROR, `jQuery contract violation: ${methodName}`, {
-          stack: error.stack,
-          method: methodName
-        });
-
-        throw error;
-      };
-    };
-
-    // Blockade critical jQuery methods
-    jq.fn.find = createBlockade('find', 'Use element.querySelector() instead');
-    jq.fn.on = createBlockade('on', 'Use element.addEventListener() instead');
-    jq.fn.off = createBlockade('off', 'Use element.removeEventListener() instead');
-    jq.fn.html = createBlockade('html', 'Use element.innerHTML instead');
-    jq.fn.text = createBlockade('text', 'Use element.textContent instead');
-    jq.fn.val = createBlockade('val', 'Use element.value instead');
-    jq.fn.addClass = createBlockade('addClass', 'Use element.classList.add() instead');
-    jq.fn.removeClass = createBlockade('removeClass', 'Use element.classList.remove() instead');
-
-    StructuredLogger.core(SEVERITY.DEBUG, 'jQuery blockade installed');
+    // No-op: enforcement now via static analysis + pre-commit hooks
+    StructuredLogger.core(SEVERITY.DEBUG, 'jQuery enforcement via static analysis (ESLint + pre-commit)');
   }
 
   /**

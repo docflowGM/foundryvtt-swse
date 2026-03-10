@@ -1,13 +1,15 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { rollDamage } from "/systems/foundryvtt-swse/scripts/combat/rolls/damage.js";
 import { ActionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine.js";
+import { ActionEconomyPersistence } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-persistence.js";
 import { computeAttackBonus, computeDamageBonus, getCoverBonus, getConcealmentMissChance, getEffectiveCritRange, getCriticalMultiplier } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
 import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
 import { ResolutionContext } from "/systems/foundryvtt-swse/scripts/engine/resolution/resolution-context.js";
-import { RULE_TYPES } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/rule-types.js";
+import { RULES } from "/systems/foundryvtt-swse/scripts/engine/execution/rules/rule-enum.js";
 import {
   ROLL_HOOKS,
   callPreRollHook,
@@ -282,22 +284,33 @@ export class SWSERoll {
       }
 
       // Check action economy (if in combat)
-      // This is informational - doesn't prevent roll, but tracks consumption
+      // Enforce action economy through persistence layer (same as UI buttons)
       const combatant = game.combat?.turns?.find(t => t.actorId === actor.id);
       if (combatant && actor.system?.combatActions) {
-        const turnState = actor.system.combatTurnState || ActionEngine.startTurn(actor);
+        // Get persistent turn state from ActionEconomyPersistence (V2 format)
+        const persistedV2State = ActionEconomyPersistence.getTurnState(actor, game.combat.id);
+
+        // Check if action can be consumed (preview, don't mutate yet)
+        const ActionEngineV2 = (await import("/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine-v2.js")).default;
         const attackCost = { standard: 1, move: 0, swift: 0 }; // Standard attack action
-        const actionCheck = ActionEngine.canConsume(turnState, attackCost);
+        const actionCheck = ActionEngineV2.previewConsume(persistedV2State, attackCost);
 
         if (!actionCheck.allowed) {
-          swseLogger.warn(`[ActionEngine] Attack blocked: ${actionCheck.reason}`, { actor: actor.name, weapon: weapon.name });
-          ui.notifications.warn(`Action blocked: ${actionCheck.reason}`);
-          return { blocked: true, reason: actionCheck.reason };
+          swseLogger.warn(`[ActionEngine] Attack blocked: ${actionCheck.violations.join(', ')}`, { actor: actor.name, weapon: weapon.name });
+          ui.notifications.warn(`Action blocked: Insufficient actions`);
+          return { blocked: true, reason: actionCheck.violations.join(', ') };
+        }
+
+        // If allowed, consume and persist through V2 engine
+        const consumeResult = ActionEngineV2.consume(persistedV2State, attackCost);
+        if (consumeResult.allowed) {
+          await ActionEconomyPersistence.commitConsumption(actor, game.combat.id, consumeResult);
+          swseLogger.log(`[ActionEngine] Consumed standard action for ${actor.name}`);
         }
 
         // Track for diagnostics
-        context.actionCheck = actionCheck;
-        context.turnState = turnState;
+        context.actionCheck = { allowed: actionCheck.allowed, violations: actionCheck.violations };
+        context.turnState = persistedV2State;
       }
 
       // Force Point before roll
@@ -1148,7 +1161,7 @@ export class SWSERoll {
     const requiresTraining = !skill.untrained;  // trainedOnly = !untrained
     if (requiresTraining && !skill.trained) {
       const context = new ResolutionContext(actor);
-      if (!context.hasRule(RULE_TYPES.TREAT_SKILL_AS_TRAINED, { skillId: skillKey })) {
+      if (!context.hasRule(RULES.TREAT_SKILL_AS_TRAINED, { skillId: skillKey })) {
         ui.notifications.warn(`${skillKey} requires training.`);
         return null;
       }
@@ -1211,7 +1224,7 @@ export class SWSERoll {
       if (skill.trained) {parts.push(`Trained +5`);}
       if (skill.focused) {parts.push(`Skill Focus +5`);}
 
-      const abilityMod = actor.system.attributes[skill.selectedAbility]?.mod ?? 0;
+      const abilityMod = SchemaAdapters.getAbilityMod(actor, skill.selectedAbility);
       parts.push(`${skill.selectedAbility.toUpperCase()} ${abilityMod >= 0 ? '+' : ''}${abilityMod}`);
 
       const misc = skill.miscMod ?? 0;
@@ -1774,7 +1787,7 @@ export class SWSERoll {
       parts.push(`½ Level +${halfLevel}`);
       if (skill.trained) {parts.push(`Trained +5`);}
       if (skill.focused) {parts.push(`Skill Focus +5`);}
-      const abilityMod = actor.system.attributes[skill.selectedAbility]?.mod ?? 0;
+      const abilityMod = SchemaAdapters.getAbilityMod(actor, skill.selectedAbility);
       parts.push(`${skill.selectedAbility.toUpperCase()} ${abilityMod >= 0 ? '+' : ''}${abilityMod}`);
       if (skill.miscMod) {parts.push(`Misc ${skill.miscMod >= 0 ? '+' : ''}${skill.miscMod}`);}
       if (fpBonus) {parts.push(`FP +${fpBonus}`);}

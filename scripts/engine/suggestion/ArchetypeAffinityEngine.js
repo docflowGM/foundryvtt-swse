@@ -582,7 +582,7 @@ export function exportFoundryContract(archetypeAffinity, prestigeHints) {
 export async function initializeActorAffinity(actor) {
   try {
     // Check if already initialized (read-only check)
-    const existing = actor.system.flags?.swse?.archetypeAffinity;
+    const existing = actor.flags?.swse?.archetypeAffinity;
     if (existing) {
       return; // Already initialized
     }
@@ -597,7 +597,7 @@ export async function initializeActorAffinity(actor) {
 
     // Route through ActorEngine (single mutation)
     await ActorEngine.updateActor(actor, {
-      'system.flags.swse.archetypeAffinity': affinityData
+      'flags.swse.archetypeAffinity': affinityData
     });
 
     SWSELogger.log('[ArchetypeAffinityEngine] Initialized affinity for', actor.name);
@@ -636,8 +636,8 @@ export async function recalculateActorAffinity(actor) {
 
     // Update actor flags
     await ActorEngine.updateActor(actor, {
-      'system.flags.swse.archetypeAffinity': snapshot,
-      'system.flags.swse.buildGuidance': buildGuidance
+      'flags.swse.archetypeAffinity': snapshot,
+      'flags.swse.buildGuidance': buildGuidance
     });
 
     SWSELogger.log(`[ArchetypeAffinityEngine] Recalculated affinity for ${actor.name}`);
@@ -658,7 +658,7 @@ export async function getActorAffinity(actor) {
   try {
     await initializeActorAffinity(actor);
 
-    const stored = actor.system.flags.swse.archetypeAffinity;
+    const stored = actor.flags.swse.archetypeAffinity;
     const characterState = extractCharacterState(actor);
 
     const needsRecompute = affinityNeedsRecompute(stored, characterState);

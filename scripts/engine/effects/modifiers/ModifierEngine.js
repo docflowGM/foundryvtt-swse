@@ -330,6 +330,12 @@ export class ModifierEngine {
 
     for (const feat of feats) {
       const data = feat.system ?? {};
+
+      // Skip legacy bonuses for PASSIVE execution model (handled by PASSIVE framework)
+      if (data.executionModel === 'PASSIVE') {
+        continue;
+      }
+
       const featName = feat.name || 'Unknown Feat';
       const featId = feat.id;
 
@@ -411,6 +417,12 @@ export class ModifierEngine {
 
     for (const talent of talents) {
       const data = talent.system ?? {};
+
+      // Skip legacy bonuses for PASSIVE execution model (handled by PASSIVE framework)
+      if (data.executionModel === 'PASSIVE') {
+        continue;
+      }
+
       const talentName = talent.name || 'Unknown Talent';
       const talentId = talent.id;
 
@@ -641,25 +653,9 @@ export class ModifierEngine {
 
       const conditionLabel = `Condition Track (Step ${step})`;
 
-      // Apply to all skills
-      const allSkills = this._getAllSkillTargets(actor);
-      for (const skillTarget of allSkills) {
-        try {
-          modifiers.push(createModifier({
-            source: ModifierSource.CONDITION,
-            sourceId: `condition.step${step}`,
-            sourceName: conditionLabel,
-            target: skillTarget,
-            type: ModifierType.PENALTY,
-            value: penalty,
-            enabled: true,
-            priority: 20, // After other penalties
-            description: conditionLabel
-          }));
-        } catch (err) {
-          swseLogger.warn(`Failed to create condition modifier for ${skillTarget}:`, err);
-        }
-      }
+      // NOTE: Condition penalties for skills are now pre-computed in DerivedCalculator
+      // and included in system.derived.skills[skillKey].total, so we do NOT apply them
+      // here to avoid double-counting. ModifierEngine only applies situational/temporary mods.
 
       // Apply to defenses
       for (const defense of ['defense.fortitude', 'defense.reflex', 'defense.will']) {
@@ -1138,7 +1134,7 @@ export class ModifierEngine {
       // PHASE 4 STEP 7: New path - installedSystems from DROID_SYSTEM_DEFINITIONS
       if (installedSystems && typeof installedSystems === 'object') {
         try {
-          const { DROID_SYSTEM_DEFINITIONS, getDroidSystemDefinition } = await import("/systems/foundryvtt-swse/droid-system-definitions.js");
+          const { DROID_SYSTEM_DEFINITIONS, getDroidSystemDefinition } = await import("/systems/foundryvtt-swse/scripts/domain/droids/droid-system-definitions.js");
 
           for (const [systemId, installed] of Object.entries(installedSystems)) {
             const def = getDroidSystemDefinition(systemId);
@@ -1208,7 +1204,7 @@ export class ModifierEngine {
 
       if (installedSystems && typeof installedSystems === 'object') {
         try {
-          const { VEHICLE_SYSTEM_DEFINITIONS, getVehicleSystemDefinition } = await import("/systems/foundryvtt-swse/vehicle-system-definitions.js");
+          const { VEHICLE_SYSTEM_DEFINITIONS, getVehicleSystemDefinition } = await import("/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-system-definitions.js");
 
           for (const [systemId, installed] of Object.entries(installedSystems)) {
             const def = getVehicleSystemDefinition(systemId);

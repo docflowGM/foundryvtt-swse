@@ -14,6 +14,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { calculateFinalCost, calculateUsedCost } from "/systems/foundryvtt-swse/scripts/engine/store/pricing.js";
 import CharacterGenerator from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js";
+import SWSEDialogV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-dialog-v2.js";
 import { VehicleModificationApp } from "/systems/foundryvtt-swse/scripts/apps/vehicle-modification-app.js";
 import { DroidBuilderApp } from "/systems/foundryvtt-swse/scripts/apps/droid-builder-app.js";
 import { getRandomDialogue } from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js";
@@ -171,6 +172,105 @@ export async function addVehicleToCart(store, templateId, condition, updateDialo
 }
 
 /**
+ * P1-2: Re-validate cart items at final purchase time
+ * Checks that:
+ * - All items still exist in inventory
+ * - Prices haven't changed significantly
+ * - Actor still has sufficient credits
+ *
+ * @param {Object} store - Store instance
+ * @param {Object} actor - Purchasing actor
+ * @param {Number} originalTotal - Total from checkout
+ * @returns {Promise<{valid: boolean, error: string|null}>}
+ */
+async function revalidateCart(store, actor, originalTotal) {
+    try {
+        // Re-check that actor still exists and has current state
+        const freshActor = game.actors.get(actor.id);
+        if (!freshActor) {
+            return {
+                valid: false,
+                error: 'Your character was deleted. Please refresh and try again.'
+            };
+        }
+
+        const currentCredits = Number(freshActor.system?.credits) ?? 0;
+
+        // Re-check sufficient credits
+        if (currentCredits < originalTotal) {
+            return {
+                valid: false,
+                error: `Insufficient credits at purchase time. You have ${currentCredits}, but items cost ${originalTotal}.`
+            };
+        }
+
+        // Re-validate each item in cart still exists
+        for (const item of store.cart.items) {
+            const currentItem = store.itemsById?.get(item.id);
+            if (!currentItem) {
+                return {
+                    valid: false,
+                    error: `Item "${item.name}" is no longer available in the store.`
+                };
+            }
+
+            // Check price hasn't changed more than 5%
+            const priceDiff = Math.abs(currentItem.finalCost - item.cost);
+            const threshold = item.cost * 0.05;
+            if (priceDiff > threshold) {
+                return {
+                    valid: false,
+                    error: `Price of "${item.name}" changed from ${item.cost} to ${currentItem.finalCost} credits. Please review your cart.`
+                };
+            }
+        }
+
+        // Re-validate droids can be created
+        for (const droid of store.cart.droids ?? []) {
+            if (!droid.name) {
+                return {
+                    valid: false,
+                    error: 'One or more droids in cart is missing a name. Cannot purchase.'
+                };
+            }
+        }
+
+        // Re-validate vehicles still available and prices OK
+        for (const vehicle of store.cart.vehicles ?? []) {
+            const vehicleTemplate = store.itemsById?.get(vehicle.id);
+            if (!vehicleTemplate) {
+                return {
+                    valid: false,
+                    error: `Vehicle "${vehicle.name}" is no longer available in the store.`
+                };
+            }
+
+            // Check price for condition (P1-4)
+            const currentPrice = vehicle.condition === 'used'
+                ? vehicleTemplate.finalCostUsed
+                : vehicleTemplate.finalCost;
+
+            const priceDiff = Math.abs(currentPrice - vehicle.cost);
+            const threshold = vehicle.cost * 0.05;
+            if (priceDiff > threshold) {
+                return {
+                    valid: false,
+                    error: `Price of ${vehicle.condition} "${vehicle.name}" changed. Please review your cart.`
+                };
+            }
+        }
+
+        return { valid: true, error: null };
+    } catch (err) {
+        SWSELogger.warn('StoreCheckout: Cart re-validation failed, proceeding anyway', {
+            error: err.message
+        });
+        // Non-fatal: if validation fails, allow purchase to proceed
+        return { valid: true, error: null };
+    }
+}
+
+/**
  * @deprecated Services are not store inventory items.
  * Services are contextual expenses managed separately by GMs.
  * Do not use this function — it is dead code.
@@ -287,7 +387,7 @@ export async function buyDroid(store, actorId) {
             totalCost: finalCost,
             itemGrantCallback: async (actor, items) => {
                 // PHASE 1: Return MutationPlans instead of mutating directly
-                return createDroidPlans([{
+                return await createDroidPlans([{
                     id: actorId,
                     name: droidTemplate.name,
                     actor: droidTemplate
@@ -378,7 +478,7 @@ export async function buyVehicle(store, actorId, condition) {
             totalCost: finalCost,
             itemGrantCallback: async (actor, items) => {
                 // PHASE 1: Return MutationPlans instead of mutating directly
-                return createVehiclePlans([{
+                return await createVehiclePlans([{
                     id: actorId,
                     name: vehicleTemplate.name,
                     template: vehicleTemplate,
@@ -667,9 +767,9 @@ function createItemPlans(cartItems) {
  * @param {Array} cartDroids - Droids from cart
  * @returns {Array<Object>} MutationPlans
  */
-function createDroidPlans(cartDroids) {
-  // Import DroidFactory at function level to avoid circular deps
-  const { DroidFactory } = require('../engine/droids/droid-factory.js');
+async function createDroidPlans(cartDroids) {
+  // Import DroidFactory dynamically to avoid circular deps
+  const { DroidFactory } = await import('/systems/foundryvtt-swse/scripts/engine/droids/droid-factory.js');
 
   const plans = [];
 
@@ -697,9 +797,9 @@ function createDroidPlans(cartDroids) {
  * @param {Map} itemsById - Store inventory map
  * @returns {Array<Object>} MutationPlans
  */
-function createVehiclePlans(cartVehicles, itemsById) {
-  // Import VehicleFactory at function level to avoid circular deps
-  const { VehicleFactory } = require('../engine/vehicles/vehicle-factory.js');
+async function createVehiclePlans(cartVehicles, itemsById) {
+  // Import VehicleFactory dynamically to avoid circular deps
+  const { VehicleFactory } = await import('/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-factory.js');
 
   const plans = [];
 
@@ -784,6 +884,16 @@ export async function checkout(store, animateNumberCallback) {
             cleanupListeners();
 
             try {
+                // P1-2: Re-validate cart before final purchase
+                // Check that all items still exist and prices haven't changed significantly
+                const cartValidation = await revalidateCart(store, actor, total);
+                if (!cartValidation.valid) {
+                    ui.notifications.error(cartValidation.error);
+                    if (confirmBtn) confirmBtn.disabled = false;
+                    if (cancelBtn) cancelBtn.disabled = false;
+                    return;
+                }
+
                 // PART 5: Execute engine transaction
                 const result = await StoreEngine.purchase({
                     actor,
@@ -797,10 +907,14 @@ export async function checkout(store, animateNumberCallback) {
                         plans.push(...createItemPlans(store.cart.items));
 
                         // Compile droid plans
-                        plans.push(...createDroidPlans(store.cart.droids));
+                        if (store.cart.droids?.length > 0) {
+                            plans.push(...(await createDroidPlans(store.cart.droids)));
+                        }
 
                         // Compile vehicle plans
-                        plans.push(...createVehiclePlans(store.cart.vehicles, store.itemsById));
+                        if (store.cart.vehicles?.length > 0) {
+                            plans.push(...(await createVehiclePlans(store.cart.vehicles, store.itemsById)));
+                        }
 
                         // Return plans for engine to apply
                         return plans;

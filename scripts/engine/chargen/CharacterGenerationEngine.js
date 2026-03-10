@@ -116,8 +116,8 @@ export class CharacterGenerationEngine {
         updates: {
           'system.abilities': abilityScores,
           'system.wealth.credits': startingWealth,
-          'system.attributes.hp.max': hpPlan,
-          'system.attributes.hp.value': hpPlan,
+          'system.hp.max': hpPlan,
+          'system.hp.value': hpPlan,
           'system.isDroid': isDroid
         }
       };

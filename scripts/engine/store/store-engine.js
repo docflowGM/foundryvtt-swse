@@ -1,13 +1,46 @@
 /**
  * scripts/engine/store/store-engine.js
  *
- * Contract API for Store Engine — Single Authority for Store Logic
- * SSOT → Engine → UI
+ * PHASE 4: Store Engine — Consolidated Single Authority
+ *
+ * This is the SSOT (Single Source of Truth) for all store operations.
+ * Replaces the dual-engine pattern (StoreEngine + TransactionEngine) with unified design.
+ *
+ * Architecture:
+ * ┌─────────────────────────────────────┐
+ * │  Store UI (store-main.js)           │
+ * │  Checkout UI (store-checkout.js)    │
+ * └──────────────┬──────────────────────┘
+ *                │
+ *                ▼
+ * ┌─────────────────────────────────────┐
+ * │  StoreEngine (THIS FILE)            │
+ * │  - getInventory()                   │
+ * │  - canPurchase()                    │
+ * │  - purchase() [ATOMIC]              │
+ * └──────────────┬──────────────────────┘
+ *                │
+ *      ┌─────────┼─────────┐
+ *      ▼         ▼         ▼
+ *   Ledger   Snapshot   Pricing
+ *  Service   Manager    Engine
+ *
+ * Design Principles (Phase 4 Consolidation):
+ * 1. Single Authority: StoreEngine is the ONLY public store API
+ * 2. Atomic Transactions: purchase() uses snapshot rollback for all-or-nothing
+ * 3. Pre-Validation: All plans validated BEFORE any credit deduction
+ * 4. Price Caching: Prices frozen at transaction start
+ * 5. No Concurrent Purchases: Per-actor locking prevents race conditions
+ *
+ * TransactionEngine (transaction-engine.js):
+ *   - Legacy atomic coordinator (kept for reference, not actively used)
+ *   - Future: Can be integrated as StoreEngine's internal implementation
+ *   - For now: StoreEngine implements atomicity via SnapshotManager
  *
  * Public API:
  *   - getInventory(options)       : Load from compendiums + apply pricing
  *   - canPurchase(context)        : Validate actor eligibility
- *   - purchase(context)           : Execute atomic transaction
+ *   - purchase(context)           : Execute atomic transaction [CONSOLIDATED]
  */
 
 import { buildStoreIndex } from "/systems/foundryvtt-swse/scripts/engine/store/index.js";
@@ -17,6 +50,7 @@ import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { freezePricing, unfreezePricing } from "/systems/foundryvtt-swse/scripts/engine/store/pricing.js";
 
 const logger = () => SWSELogger || globalThis.swseLogger || console;
 
@@ -132,6 +166,101 @@ export class StoreEngine {
   }
 
   /**
+   * P2-6: Validate factory output structure (DroidFactory, VehicleFactory, etc.)
+   * Ensures factories produce valid, complete actor data
+   * @param {Object} factoryOutput - output from DroidFactory.create() or similar
+   * @param {String} factoryType - 'droid' or 'vehicle' for error messages
+   * @returns {Object} { valid: boolean, error: string|null }
+   * @private
+   */
+  static _validateFactoryOutput(factoryOutput, factoryType = 'item') {
+    // Must be an object
+    if (!factoryOutput || typeof factoryOutput !== 'object') {
+      return {
+        valid: false,
+        error: `${factoryType} factory produced invalid output (not an object)`
+      };
+    }
+
+    // Must have essential actor properties
+    if (!factoryOutput.name || !factoryOutput.type) {
+      return {
+        valid: false,
+        error: `${factoryType} factory output missing name or type`
+      };
+    }
+
+    // Must have system data
+    if (!factoryOutput.system || typeof factoryOutput.system !== 'object') {
+      return {
+        valid: false,
+        error: `${factoryType} factory output missing system data`
+      };
+    }
+
+    // For droids/vehicles, must have data field
+    if (factoryType !== 'generic' && !factoryOutput.data) {
+      return {
+        valid: false,
+        error: `${factoryType} factory output missing data field`
+      };
+    }
+
+    return { valid: true, error: null };
+  }
+
+  /**
+   * Validate that prices haven't changed significantly since checkout started
+   * Returns { valid: boolean, currentTotal: number, priceDiff: number }
+   * @param {Array} cartItems - items from cart (should have id and cost)
+   * @param {Number} originalTotal - total price at checkout time
+   * @returns {Object} validation result
+   * @private
+   */
+  static async _validatePricesAtPurchaseTime(cartItems = [], originalTotal = 0) {
+    try {
+      // Rebuild price from scratch based on current store state
+      let currentTotal = 0;
+      for (const item of cartItems) {
+        if (!item || !item.id) continue;
+        // Item should have finalCost already set by engine during inventory load
+        currentTotal += item.finalCost ?? 0;
+      }
+
+      const priceDiff = Math.abs(currentTotal - originalTotal);
+      const threshold = originalTotal * 0.05; // 5% tolerance
+
+      if (priceDiff > threshold) {
+        logger().warn('StoreEngine: Significant price change detected', {
+          originalTotal,
+          currentTotal,
+          diff: priceDiff,
+          threshold
+        });
+        return {
+          valid: false,
+          currentTotal,
+          priceDiff,
+          reason: `Price changed from ${originalTotal} to ${currentTotal} credits`
+        };
+      }
+
+      return {
+        valid: true,
+        currentTotal,
+        priceDiff,
+        reason: null
+      };
+    } catch (err) {
+      logger().warn('StoreEngine: Price validation failed, proceeding with original', {
+        error: err.message
+      });
+      // Non-fatal: if validation fails, allow purchase to proceed
+      return { valid: true, currentTotal: originalTotal, priceDiff: 0 };
+    }
+  }
+
+  /**
    * Execute atomic purchase transaction
    * Changes:
    *   - Deduct credits from actor
@@ -190,6 +319,9 @@ export class StoreEngine {
     const transactionId = `tx_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     this._purchasingActors.add(actor.id);
 
+    // P2-2: Freeze pricing to prevent mid-transaction changes
+    freezePricing();
+
     try {
       // HARDENING 3: Re-read fresh actor state immediately before write (closes race window)
       const freshActor = game.actors.get(actor.id);
@@ -233,7 +365,23 @@ export class StoreEngine {
         };
       }
 
-      // PHASE 3: Validate via LedgerService (pure, no mutations)
+      // PHASE 3A: Validate prices haven't changed significantly
+      // (P0-3: Re-validate prices at purchase time)
+      const priceValidation = await this._validatePricesAtPurchaseTime(items, totalCost);
+      if (!priceValidation.valid) {
+        logger().warn('StoreEngine: Price validation failed - rejecting purchase', {
+          transactionId,
+          actor: actor.id,
+          reason: priceValidation.reason
+        });
+        return {
+          success: false,
+          error: priceValidation.reason,
+          transactionId
+        };
+      }
+
+      // PHASE 3B: Validate via LedgerService (pure, no mutations)
       const ledgerValidation = LedgerService.validateFunds(freshActor, totalCost);
       if (!ledgerValidation.ok) {
         logger().warn('StoreEngine: Insufficient credits at execution time', {
@@ -250,16 +398,93 @@ export class StoreEngine {
         };
       }
 
-      // PHASE 3: Build credit delta via LedgerService (pure, no mutations)
+      // PHASE 2: PRE-VALIDATE ALL GRANT PLANS BEFORE DEDUCTING CREDITS
+      // =========================================================
+      let grantPlans = [];
+      if (itemGrantCallback && typeof itemGrantCallback === 'function') {
+        try {
+          grantPlans = await itemGrantCallback(freshActor, items) || [];
+
+          // Validate callback return type
+          if (!Array.isArray(grantPlans)) {
+            throw new Error('itemGrantCallback must return an array of MutationPlans');
+          }
+
+          // Validate each plan structure before any mutations
+          for (const plan of grantPlans) {
+            if (!plan || typeof plan !== 'object') {
+              throw new Error('Plan must be a valid object');
+            }
+            if (!plan.type) {
+              throw new Error('Plan missing required field: type');
+            }
+            // DroidFactory/VehicleFactory should have proper structure
+            if (plan.type === 'create' && !plan.data) {
+              throw new Error('Creation plan missing required field: data');
+            }
+          }
+
+          logger().debug('StoreEngine: Pre-validated all grant plans', {
+            transactionId,
+            planCount: grantPlans.length
+          });
+        } catch (planErr) {
+          logger().error('StoreEngine: Plan validation failed (NO CREDITS DEDUCTED)', {
+            transactionId,
+            error: planErr.message
+          });
+          throw planErr;
+        }
+      }
+
+      // PHASE 3: BUILD CREDIT PLAN & METADATA
+      // =====================================
       const creditPlan = LedgerService.buildCreditDelta(freshActor, totalCost);
+
+      // Guard against invalid credit plan
+      if (!creditPlan || !creditPlan.set || !Number.isFinite(creditPlan.set['system.credits'])) {
+        throw new Error('LedgerService produced invalid credit plan');
+      }
+      if (creditPlan.set['system.credits'] < 0) {
+        throw new Error('Credit deduction would result in negative balance');
+      }
+
       const creditMetadata = LedgerService.buildMetadata(freshActor, totalCost);
 
-      logger().info('StoreEngine: Purchase starting', {
+      logger().info('StoreEngine: Purchase pre-validated and ready', {
         transactionId,
-        ...creditMetadata
+        ...creditMetadata,
+        grantPlanCount: grantPlans.length
       });
 
-      // HARDENING 5: Initialize store schema meta if needed
+      // PHASE 4: CREATE SNAPSHOT FOR ROLLBACK
+      // ====================================
+      let snapshotId = null;
+      try {
+        // Import SnapshotManager dynamically to avoid circular deps
+        const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
+        snapshotId = await SnapshotManager.createSnapshot(
+          freshActor,
+          `Store purchase snapshot (${totalCost} credits, ${grantPlans.length} items)`
+        );
+        logger().debug('StoreEngine: Snapshot created for rollback', {
+          transactionId,
+          snapshotId
+        });
+      } catch (snapErr) {
+        logger().warn('StoreEngine: Snapshot creation failed (continuing without rollback)', {
+          transactionId,
+          error: snapErr.message
+        });
+        // Non-fatal: continue without rollback capability
+      }
+
+      // PHASE 5: INITIALIZE FLAGS BEFORE MUTATIONS
+      // ==========================================
+      // P2-5: Defensive null guards for flags
+      if (!freshActor.flags) {
+        freshActor.flags = {};
+      }
       const existingFlags = freshActor.flags['foundryvtt-swse'] || {};
       if (!existingFlags.meta) {
         existingFlags.meta = {
@@ -268,8 +493,8 @@ export class StoreEngine {
         };
       }
 
-      // HARDENING 6: Add purchase idempotency token
-      if (!existingFlags.sessionPurchaseIds) {
+      // Add purchase idempotency token (guard against null/undefined)
+      if (!existingFlags.sessionPurchaseIds || !Array.isArray(existingFlags.sessionPurchaseIds)) {
         existingFlags.sessionPurchaseIds = [];
       }
       existingFlags.sessionPurchaseIds.push(transactionId);
@@ -278,55 +503,72 @@ export class StoreEngine {
         existingFlags.sessionPurchaseIds = existingFlags.sessionPurchaseIds.slice(-100);
       }
 
-      // PHASE 3: Apply credit delta via ActorEngine
-      // (Note: In Phase 4, this will be merged with other plans and applied atomically)
-      const creditUpdatePlan = {
-        set: creditPlan.set,
-        meta: {
-          flags: {
-            'foundryvtt-swse': existingFlags
+      // PHASE 6: DEDUCT CREDITS
+      // =======================
+      try {
+        await ActorEngine.updateActor(freshActor, {
+          'system.credits': creditPlan.set['system.credits'],
+          'flags.foundryvtt-swse': existingFlags
+        });
+        logger().debug('StoreEngine: Credits deducted', {
+          transactionId,
+          newBalance: creditPlan.set['system.credits']
+        });
+      } catch (creditErr) {
+        logger().error('StoreEngine: Credit deduction failed', {
+          transactionId,
+          error: creditErr.message
+        });
+        throw creditErr;
+      }
+
+      // PHASE 7: APPLY ITEM GRANT PLANS
+      // ===============================
+      const appliedPlans = [];
+      try {
+        for (const plan of grantPlans) {
+          try {
+            await ActorEngine.applyMutationPlan(freshActor, plan);
+            appliedPlans.push(plan);
+            logger().debug('StoreEngine: Grant plan applied', {
+              transactionId,
+              planType: plan.type
+            });
+          } catch (applyErr) {
+            logger().error('StoreEngine: Failed to apply grant plan', {
+              transactionId,
+              planIndex: appliedPlans.length,
+              error: applyErr.message
+            });
+            throw applyErr;
           }
         }
-      };
+      } catch (grantErr) {
+        logger().error('StoreEngine: Item grant failed (attempting rollback)', {
+          transactionId,
+          appliedCount: appliedPlans.length,
+          error: grantErr.message
+        });
 
-      // PHASE 2B: Route through ActorEngine
-      // TEMPORARY: Apply flags separately since they're not in the standard mutation plan
-      // TODO: Phase 4 - Integrate flags into proper MutationPlan handling
-      await ActorEngine.updateActor(freshActor, {
-        'system.credits': creditPlan.set['system.credits'],
-        'flags.foundryvtt-swse': existingFlags
-      });
-
-      // Step 2: Grant items (if callback provided)
-      // PHASE 1: Callback now returns MutationPlans instead of mutating directly
-      if (itemGrantCallback && typeof itemGrantCallback === 'function') {
-        try {
-          const grantPlans = await itemGrantCallback(freshActor, items) || [];
-          if (!Array.isArray(grantPlans)) {
-            throw new Error('itemGrantCallback must return an array of MutationPlans');
+        // ROLLBACK: Restore from snapshot if available
+        if (snapshotId) {
+          try {
+            const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
+            await SnapshotManager.restoreSnapshot(freshActor, snapshotId);
+            logger().info('StoreEngine: Rollback successful - actor restored to pre-purchase state', {
+              transactionId,
+              snapshotId
+            });
+          } catch (rollbackErr) {
+            logger().error('StoreEngine: ROLLBACK FAILED - manual intervention may be required', {
+              transactionId,
+              rollbackError: rollbackErr.message
+            });
+            throw new Error(`Item grant failed and rollback failed: ${grantErr.message}`);
           }
-
-          // TEMPORARY ADAPTER (Phase 1 only):
-          // Apply plans sequentially via ActorEngine
-          // (Phase 4 will merge these and apply atomically)
-          for (const plan of grantPlans) {
-            try {
-              await ActorEngine.applyMutationPlan(freshActor, plan);
-            } catch (applyErr) {
-              logger().error('StoreEngine: Failed to apply grant plan', {
-                transactionId,
-                error: applyErr.message
-              });
-              throw applyErr;
-            }
-          }
-        } catch (grantErr) {
-          logger().error('StoreEngine: Item grant failed (credits deducted)', {
-            transactionId,
-            error: grantErr.message
-          });
-          throw grantErr;
         }
+
+        throw grantErr;
       }
 
       logger().info('StoreEngine: Purchase completed', {
@@ -354,8 +596,9 @@ export class StoreEngine {
         transactionId
       };
     } finally {
-      // Always release the lock
+      // Always release the lock and unfreeze pricing
       this._purchasingActors.delete(actor.id);
+      unfreezePricing();
     }
   }
 

@@ -132,9 +132,35 @@ export class FinalizeIntegration {
             }
         }
 
-        // Collect items to create (from specialized engines)
-        // This would come from Force, Equipment, etc. selections
-        // For now, empty - specialized engines will populate this
+        // Collect items to create from feats and talents
+        // Convert feat/talent names to embeddable item objects
+        if (packet.featsAdded && packet.featsAdded.length > 0) {
+            for (const featName of packet.featsAdded) {
+                const itemData = {
+                    name: featName,
+                    type: 'feat',
+                    system: {}
+                };
+                packet.itemsToCreate.push(itemData);
+                SWSELogger.debug(`[PROGRESSION] Queued feat creation: ${featName}`);
+            }
+        }
+
+        if (packet.talentsAdded && packet.talentsAdded.length > 0) {
+            for (const talentName of packet.talentsAdded) {
+                const itemData = {
+                    name: talentName,
+                    type: 'talent',
+                    system: {}
+                };
+                packet.itemsToCreate.push(itemData);
+                SWSELogger.debug(`[PROGRESSION] Queued talent creation: ${talentName}`);
+            }
+        }
+
+        // Collect items from specialized engines (Force, Equipment, etc. selections)
+        // These will be added by specialized engines during their finalization
+        // itemsToCreate += specialized engine items
 
         return packet;
     }

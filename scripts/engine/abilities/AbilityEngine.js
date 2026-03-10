@@ -48,8 +48,13 @@ export class AbilityEngine {
     }
 
     try {
-      // Detect candidate type
-      const type = candidate.type || typeof candidate === 'string' ? 'unknown' : candidate.type;
+      // Detect candidate type (fix operator precedence)
+      let type;
+      if (typeof candidate === 'string') {
+        type = 'unknown';  // String candidates are bare names, type unknown
+      } else {
+        type = candidate.type || 'unknown';  // Object candidate should have type field
+      }
 
       let result = { met: false, missing: [], details: {} };
 

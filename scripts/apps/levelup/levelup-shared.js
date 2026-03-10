@@ -174,9 +174,9 @@ export async function calculateDefenseBonuses(actor) {
 
     // Check if class item has defenses specified (FLAT bonuses, not per level!)
     if (classItem.system.defenses &&
-        (classItem.system.defenses.fortitude || classItem.system.defenses.reflex || classItem.system.defenses.will)) {
+        (classItem.system.defenses.fortitudeitude || classItem.system.defenses.reflex || classItem.system.defenses.will)) {
       // Take the MAXIMUM defense bonus from any class, not additive
-      bonuses.fortitude = Math.max(bonuses.fortitude, classItem.system.defenses.fortitude || 0);
+      bonuses.fortitude = Math.max(bonuses.fortitude, classItem.system.defenses.fortitudeitude || 0);
       bonuses.reflex = Math.max(bonuses.reflex, classItem.system.defenses.reflex || 0);
       bonuses.will = Math.max(bonuses.will, classItem.system.defenses.will || 0);
     } else {
@@ -188,7 +188,7 @@ export async function calculateDefenseBonuses(actor) {
 
       // If defenses aren't set on the class item, update it to store them
       if (classItem.system.defenses === undefined ||
-          (!classItem.system.defenses.fortitude && !classItem.system.defenses.reflex && !classItem.system.defenses.will)) {
+          (!classItem.system.defenses.fortitudeitude && !classItem.system.defenses.reflex && !classItem.system.defenses.will)) {
         SWSELogger.log(`SWSE LevelUp | Updating ${className} with defense bonuses: Fort +${progression.fortitude}, Ref +${progression.reflex}, Will +${progression.will}`);
         await classItem.update({
           'system.defenses': {

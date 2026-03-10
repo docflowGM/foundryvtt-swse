@@ -82,5 +82,22 @@ export function registerKeybindings() {
     }
   });
 
+  // Action Palette Keybinding
+  game.keybindings.register('swse', 'toggleActionPalette', {
+    name: 'Toggle Action Palette',
+    hint: 'Show/hide the action palette (radial menu)',
+    editable: [{ key: 'KeyP', modifiers: ['Control'] }],
+    onDown: async () => {
+      try {
+        const { toggleActionPalette } = await import('/systems/foundryvtt-swse/scripts/ui/action-palette/init.js');
+        toggleActionPalette();
+        return true;
+      } catch (err) {
+        console.warn('[Action Palette] Failed to toggle:', err);
+        return false;
+      }
+    }
+  });
+
   SWSELogger.log('SWSE | Keybindings registered');
 }
