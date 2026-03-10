@@ -4,6 +4,7 @@
  */
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 export class ForceEngine {
   /**
@@ -22,18 +23,19 @@ export class ForceEngine {
     force.natural20Count = (force.natural20Count || 0) + 1;
 
     // Auto-recover 1 FP on natural 20 (SWSE rule)
-    const fp = actor.system.forcePoints || {};
-    fp.current = Math.min(fp.max || 0, (fp.current || 0) + 1);
+    const fpCurrent = SchemaAdapters.getForcePoints(actor);
+    const fpMax = SchemaAdapters.getMaxForcePoints(actor);
+    const newFp = Math.min(fpMax, fpCurrent + 1);
 
     await ActorEngine.updateActor(actor, {
       'system.force': force,
-      'system.forcePoints': fp
+      ...SchemaAdapters.setForcePointsUpdate(newFp)
     });
 
     return {
       natural20Count: force.natural20Count,
       fpRecovered: 1,
-      fpCurrent: fp.current
+      fpCurrent: newFp
     };
   }
 
@@ -41,15 +43,15 @@ export class ForceEngine {
    * Spend Force Point
    */
   static async spendForcePoint(actor) {
-    const fp = actor.system.forcePoints || {};
-    if ((fp.current || 0) <= 0) {
+    const fpCurrent = SchemaAdapters.getForcePoints(actor);
+    if (fpCurrent <= 0) {
       return { success: false, reason: 'No Force Points available' };
     }
 
-    fp.current = (fp.current || 0) - 1;
-    await ActorEngine.updateActor(actor, { 'system.forcePoints': fp });
+    const newFp = fpCurrent - 1;
+    await ActorEngine.updateActor(actor, SchemaAdapters.setForcePointsUpdate(newFp));
 
-    return { success: true, fpRemaining: fp.current };
+    return { success: true, fpRemaining: newFp };
   }
 
   /**
@@ -97,11 +99,11 @@ export class ForceEngine {
    * Check if power is available (FP cost, alignment, etc.)
    */
   static canUsePower(actor, power) {
-    const fp = actor.system.forcePoints || {};
+    const fpCurrent = SchemaAdapters.getForcePoints(actor);
     const fpCost = power.fpCost || 0;
 
-    if ((fp.current || 0) < fpCost) {
-      return { canUse: false, reason: `Need ${fpCost} FP, have ${fp.current}` };
+    if (fpCurrent < fpCost) {
+      return { canUse: false, reason: `Need ${fpCost} FP, have ${fpCurrent}` };
     }
 
     return { canUse: true };
