@@ -61,7 +61,10 @@ export class SWSEV2CharacterSheet extends
     // Sanity check: actor must be valid
     RenderAssertions.assertActorValid(actor, "SWSEV2CharacterSheet");
 
-    const context = await super._prepareContext(options);
+    const rawContext = await super._prepareContext(options);
+    const context = Object.fromEntries(
+      Object.entries(rawContext).filter(([, v]) => typeof v !== 'function')
+    );
 
     // Authoritative derived state (populated by character-actor.js computeCharacterDerived)
     // SAFEGUARD: Ensure all expected nested properties exist with empty defaults
