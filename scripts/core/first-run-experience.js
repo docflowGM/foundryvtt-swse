@@ -105,7 +105,7 @@ class WelcomeDialog extends BaseSWSEAppV2 {
 
 async function showWelcomeDialog() {
   const dialog = new WelcomeDialog();
-  dialog.render(true);
+  await dialog.render(true);
 }
 
 /* -------------------------------------------- */

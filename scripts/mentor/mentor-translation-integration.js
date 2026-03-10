@@ -149,7 +149,7 @@ export class MentorTranslationIntegration {
     const link = document.createElement('link');
     link.id = 'swse-dialogue-effects-css';
     link.rel = 'stylesheet';
-    link.href = 'systems/foundryvtt-swse/scripts/ui/dialogue/dialogue-effects.css';
+    link.href = '/systems/foundryvtt-swse/scripts/ui/dialogue/dialogue-effects.css';
     document.head.appendChild(link);
 
     // Wait for CSS to load

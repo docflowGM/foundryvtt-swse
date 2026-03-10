@@ -6,7 +6,7 @@
 
 @font-face {
   font-family: "Aurebesh";
-  src: url("systems/foundryvtt-swse/assets/fonts/Starjedi.ttf") format("truetype");
+  src: url("/systems/foundryvtt-swse/assets/fonts/Starjedi.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
