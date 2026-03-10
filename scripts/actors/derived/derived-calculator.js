@@ -305,6 +305,19 @@ export class DerivedCalculator {
 
         total += stateBonus;
 
+        // Apply armor check penalty (if skill is affected by armor)
+        let armorPenalty = 0;
+        if (skillDef.armorPenalty) {
+          armorPenalty = actor.system.derived?.armor?.checkPenalty ||
+                         actor.system.armor?.checkPenalty ||
+                         0;
+          total += armorPenalty;
+        }
+
+        // Apply condition track penalty
+        const conditionPenalty = actor.system.derived?.damage?.conditionPenalty || 0;
+        total += conditionPenalty;
+
         // Determine if skill can be used untrained
         let canUseUntrained = skillDef.untrained;
         if (isDroid && !skill.trained) {
@@ -323,7 +336,9 @@ export class DerivedCalculator {
           featBonus: featBonus,
           canUseUntrained: canUseUntrained,
           defaultAbility: skillDef.defaultAbility,
-          stateBonus: stateBonus
+          stateBonus: stateBonus,
+          armorPenalty: armorPenalty,
+          conditionPenalty: conditionPenalty
         };
       }
 
