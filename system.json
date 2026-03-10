@@ -28,7 +28,10 @@
   ],
   "styles": [
     "styles/swse-core.css",
-    "styles/swse-holo.css"
+    "styles/swse-holo.css",
+    "styles/core/variables.css",
+    "scripts/ui/dialogue/dialogue-effects.css",
+    "scripts/ui/action-palette/action-palette.css"
   ],
   "languages": [
     {
