@@ -10,7 +10,7 @@
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import { sceneControlRegistry } from "/systems/foundryvtt-swse/scripts/scene-controls/api.js";
 import { getCurrentPhase, SWSE_PHASES } from "/systems/foundryvtt-swse/scripts/state/phase.js";
-import SWSEDialogV2 from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 
 export class ActionPaletteApp extends BaseSWSEAppV2 {
   constructor(options = {}) {
