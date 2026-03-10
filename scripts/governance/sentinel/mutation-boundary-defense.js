@@ -59,7 +59,7 @@ export class MutationBoundaryDefense {
 
       if (!context) {
         const stack = new Error().stack;
-        const caller = this._extractCaller(stack);
+        const caller = MutationBoundaryDefense._extractCaller(stack);
 
         // Log violation
         const violation = {
@@ -104,7 +104,7 @@ export class MutationBoundaryDefense {
 
       if (!context && embeddedName === 'Item') {
         const stack = new Error().stack;
-        const caller = this._extractCaller(stack);
+        const caller = MutationBoundaryDefense._extractCaller(stack);
 
         const violation = {
           type: 'unauthorized-embedded-mutation',
