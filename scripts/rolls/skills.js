@@ -182,10 +182,10 @@ export async function rollAbilityCheck(actor, abilityKey) {
   const utils = game.swse.utils;
   const key = String(abilityKey || '').toLowerCase();
 
-  // Verify ability exists
-  const ability = actor.system.abilities?.[key] || actor.system.attributes?.[key];
+  // Verify ability exists in derived (canonical source)
+  const ability = actor.system.derived?.attributes?.[key];
   if (!ability) {
-    ui.notifications.warn(`Ability ${abilityKey} not found`);
+    ui.notifications.warn(`Ability ${abilityKey} not found in derived attributes`);
     return null;
   }
 
