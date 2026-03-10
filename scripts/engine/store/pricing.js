@@ -11,18 +11,6 @@
  */
 
 /* -------------------------------------------------------------- */
-/* SETTINGS HELPERS (from Foundry settings)                       */
-/* -------------------------------------------------------------- */
-
-function getMarkupPercent() {
-  return Number(game.settings.get('foundryvtt-swse', 'storeMarkup') ?? 0);
-}
-
-function getDiscountPercent() {
-  return Number(game.settings.get('foundryvtt-swse', 'storeDiscount') ?? 0);
-}
-
-/* -------------------------------------------------------------- */
 /* PRICE CALCULATION                                              */
 /* -------------------------------------------------------------- */
 
