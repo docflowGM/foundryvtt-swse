@@ -258,6 +258,10 @@ export class DerivedCalculator {
           hasOccupationBonus = true;
         }
 
+        // Add feat/equipment/other modifiers from ModifierEngine (SSOT integration)
+        const featBonus = modifierMap[`skill.${skillKey}`] || 0;
+        total += featBonus;
+
         // PHASE 4: Get state-dependent modifiers for this skill
         let stateBonus = 0;
         try {
@@ -316,6 +320,7 @@ export class DerivedCalculator {
           miscMod: skill.miscMod || 0,
           speciesBonus: speciesBonus,
           hasOccupationBonus: hasOccupationBonus,
+          featBonus: featBonus,
           canUseUntrained: canUseUntrained,
           defaultAbility: skillDef.defaultAbility,
           stateBonus: stateBonus
