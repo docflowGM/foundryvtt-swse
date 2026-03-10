@@ -22,7 +22,7 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { MutationInterceptor } from "/systems/foundryvtt-swse/scripts/governance/mutation/MutationInterceptor.js";
 
 export class EmbeddedMutationLayer {
-  static MODE = 'WARNING'; // 'WARNING' or 'ENFORCE'
+  static MODE = 'ENFORCE'; // 'WARNING' or 'ENFORCE'
   static VIOLATIONS = [];
   static ENABLED = false;
 

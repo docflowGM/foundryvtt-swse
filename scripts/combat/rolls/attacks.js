@@ -42,6 +42,8 @@ function computeAttackBonus(actor, weapon, actionId = null, context = {}) {
   const miscBonus = weapon.system?.attackBonus ?? 0;
 
   // Condition Track penalty (read from authoritative derived source)
+  // CANONICAL: DerivedCalculator computes and stores this in system.derived.damage.conditionPenalty
+  // Also applied to skill totals in DerivedCalculator.computeAll() (line 339-340)
   const ctPenalty = actor.system?.derived?.damage?.conditionPenalty ??
                     actor.system?.conditionTrack?.penalty ??
                     0;
