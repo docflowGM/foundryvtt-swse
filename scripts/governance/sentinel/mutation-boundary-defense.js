@@ -51,9 +51,9 @@ export class MutationBoundaryDefense {
    * @private
    */
   static _monitorActorUpdates() {
-    const original = ActorDocument.prototype.update;
+    const original = Actor.prototype.update;
 
-    ActorDocument.prototype.update = async function(updateData, options = {}) {
+    Actor.prototype.update = async function(updateData, options = {}) {
       // Check if mutation is authorized via MutationInterceptor
       const context = MutationInterceptor._getCurrentContext?.();
 
@@ -97,9 +97,9 @@ export class MutationBoundaryDefense {
    * @private
    */
   static _monitorEmbeddedMutations() {
-    const original = ActorDocument.prototype.updateEmbeddedDocuments;
+    const original = Actor.prototype.updateEmbeddedDocuments;
 
-    ActorDocument.prototype.updateEmbeddedDocuments = async function(embeddedName, updates, options = {}) {
+    Actor.prototype.updateEmbeddedDocuments = async function(embeddedName, updates, options = {}) {
       const context = MutationInterceptor._getCurrentContext?.();
 
       if (!context && embeddedName === 'Item') {
