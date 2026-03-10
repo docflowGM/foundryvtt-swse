@@ -63,7 +63,8 @@ export class RollCore {
       domain,
       context = {},
       rollOptions = {},
-      rollData = {}
+      rollData = {},
+      baseBonus = 0
     } = options;
 
     // Validation
@@ -101,6 +102,7 @@ export class RollCore {
           actor,
           domain,
           baseDice,
+          baseBonus,
           takeXValue,
           modifierTotal,
           allModifiers,
@@ -123,7 +125,7 @@ export class RollCore {
       }
 
       // === STEP 5: Construct Formula ===
-      const formula = this._constructFormula(baseDice, modifierTotal, forcePointBonus);
+      const formula = this._constructFormula(baseDice, baseBonus, modifierTotal, forcePointBonus);
 
       // === STEP 6: Execute Roll ===
       let roll;
@@ -144,6 +146,7 @@ export class RollCore {
 
       const breakdown = {
         baseRoll: baseRollResult,
+        baseBonus,
         modifiers: modifierTotal,
         modifierBreakdown: await this._buildModifierBreakdown(allModifiers, domain),
         forcePointBonus,
@@ -153,6 +156,7 @@ export class RollCore {
       return {
         success: true,
         baseRoll: baseRollResult,
+        baseBonus,
         modifierTotal,
         forcePointBonus,
         finalTotal: roll.total,
@@ -183,12 +187,13 @@ export class RollCore {
    * @private
    */
   static async _handleTakeX(options) {
-    const { actor, domain, takeXValue, modifierTotal, allModifiers, context } = options;
+    const { actor, domain, takeXValue, baseBonus, modifierTotal, allModifiers, context } = options;
 
-    const result = takeXValue + modifierTotal;
+    const result = takeXValue + baseBonus + modifierTotal;
 
     const breakdown = {
       baseRoll: takeXValue,
+      baseBonus,
       modifiers: modifierTotal,
       modifierBreakdown: await this._buildModifierBreakdown(allModifiers, domain),
       forcePointBonus: 0,
@@ -198,6 +203,7 @@ export class RollCore {
     return {
       success: true,
       baseRoll: takeXValue,
+      baseBonus,
       modifierTotal,
       forcePointBonus: 0,
       finalTotal: result,
@@ -205,7 +211,7 @@ export class RollCore {
       domain,
       isTakeX: true,
       roll: null, // No Roll object for Take X
-      formula: `${takeXValue} + ${modifierTotal}`,
+      formula: `${takeXValue} + ${baseBonus} + ${modifierTotal}`,
       context
     };
   }
@@ -285,8 +291,12 @@ export class RollCore {
    *
    * @private
    */
-  static _constructFormula(baseDice, modifierTotal, forcePointBonus) {
+  static _constructFormula(baseDice, baseBonus, modifierTotal, forcePointBonus) {
     let formula = baseDice;
+
+    if (baseBonus !== 0) {
+      formula += ` + ${baseBonus}`;
+    }
 
     if (modifierTotal !== 0) {
       formula += ` + ${modifierTotal}`;

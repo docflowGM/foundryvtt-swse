@@ -6,6 +6,7 @@
 import { SkillEnforcementEngine } from "/systems/foundryvtt-swse/scripts/engine/skills/skill-enforcement-engine.js";
 import { RollCore } from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 /**
  * Roll a skill check using unified RollCore pipeline
@@ -17,15 +18,24 @@ import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
  */
 export async function rollSkill(actor, skillKey) {
   const utils = game.swse.utils;
-  const skill = actor.system.skills?.[skillKey];
+  // === READ FROM DERIVED (SSOT) ===
+  const derivedSkill = actor.system.derived?.skills?.[skillKey];
 
+  if (!derivedSkill) {
+    swseLogger.warn(`[Skills] Derived skill ${skillKey} not found for actor ${actor.id} - falling back to system.skills`);
+    ui.notifications.warn(`Skill ${skillKey} not found or not initialized`);
+    return null;
+  }
+
+  // Get skill metadata from raw system.skills for training check
+  const skill = actor.system.skills?.[skillKey];
   if (!skill) {
-    ui.notifications.warn(`Skill ${skillKey} not found`);
+    ui.notifications.warn(`Skill ${skillKey} not found in system`);
     return null;
   }
 
   // Check trained-only enforcement
-  const isTrained = skill.trained === true;
+  const isTrained = derivedSkill.trained === true;
   const skillDef = CONFIG.SWSE.skills?.[skillKey] || {};
   const permission = SkillEnforcementEngine.canRollSkill(skillDef, isTrained);
 
@@ -35,15 +45,17 @@ export async function rollSkill(actor, skillKey) {
   }
 
   // === UNIFIED ROLL EXECUTION via RollCore ===
-  // This ensures ModifierEngine applies all bonuses (species, feats, effects, etc.)
+  // Pass derived.skills[skillKey].total as baseBonus so formula is:
+  // 1d20 + baseBonus (all permanent components) + modifierTotal (situational mods)
   const domain = `skill.${skillKey}`;
   const rollResult = await RollCore.execute({
     actor,
     domain,
+    baseBonus: derivedSkill.total,
     rollOptions: {
       baseDice: '1d20'
     },
-    context: { skillKey }
+    context: { skillKey, trained: isTrained }
   });
 
   if (!rollResult.success) {
@@ -54,10 +66,17 @@ export async function rollSkill(actor, skillKey) {
   // === RENDER TO CHAT ===
   const skillLabel = skill.label || utils.string.capitalize(skillKey);
   if (rollResult.roll) {
+    // Build detailed modifier breakdown
+    const breakdown = [
+      `Trained: ${isTrained ? 'Yes' : 'No'}`,
+      `Base Bonus: ${rollResult.baseBonus}`,
+      `Situational Mods: ${rollResult.modifierTotal}`
+    ].join(' | ');
+
     await SWSEChat.postRoll({
       roll: rollResult.roll,
       actor,
-      flavor: `<strong>${skillLabel}</strong><br/>Trained: ${isTrained ? 'Yes' : 'No'} | Modifier: ${rollResult.modifierTotal}`
+      flavor: `<strong>${skillLabel}</strong><br/>${breakdown}`
     });
   }
 
