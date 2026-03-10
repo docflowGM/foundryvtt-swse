@@ -319,8 +319,7 @@ export class SWSEV2CharacterSheet extends
         .map(i => ({
           id: i.id,
           name: i.name,
-          img: i.img,
-          system: i.system
+          img: i.img
         }));
 
     return {
