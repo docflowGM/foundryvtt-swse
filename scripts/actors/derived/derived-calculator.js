@@ -180,7 +180,28 @@ export class DerivedCalculator {
 
       // ========================================
       // Skills Derived (Phase 4: moved from DataModel._prepareSkills)
+      // SSOT: system.derived.skills[skillKey].total is the CANONICAL skill modifier
       // ========================================
+      // IMPORTANT: This is the SINGLE SOURCE OF TRUTH for skill rolls.
+      // system.derived.skills[skillKey].total includes:
+      //   - Ability modifier (from derived.attributes[abilityKey].mod)
+      //   - Training bonus (+5 if trained)
+      //   - Skill focus bonus (+5 if focused)
+      //   - Half-level bonus
+      //   - Miscellaneous user modifier
+      //   - Species skill bonuses
+      //   - Feat/talent bonuses (from ModifierEngine)
+      //   - PASSIVE/STATE conditional bonuses
+      //   - Armor check penalties (if applicable)
+      //   - Condition track penalties (from derived.damage.conditionPenalty)
+      //
+      // Skills rolls call RollCore.execute() with:
+      //   baseBonus = derived.skills[skillKey].total
+      //   modifierTotal = ModifierEngine.aggregateTarget() (situational mods only)
+      //   formula = 1d20 + baseBonus + modifierTotal
+      //
+      // If derived.skills is missing/uninitialized, rollSkill() logs a warning
+      // and returns null (graceful fallback, no recompute).
       updates['system.derived.skills'] = {};
       const skillData = {
         acrobatics: { defaultAbility: 'dex', untrained: true, armorPenalty: true },
