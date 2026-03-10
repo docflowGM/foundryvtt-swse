@@ -13,6 +13,8 @@ import { VehicleCollisions } from "/systems/foundryvtt-swse/scripts/engine/comba
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { CombatUIAdapter } from "/systems/foundryvtt-swse/scripts/engine/combat/ui/CombatUIAdapter.js";
 import { ReactionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-engine.js";
+import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 
 export class CombatEngine {
 
@@ -374,20 +376,89 @@ export class CombatEngine {
 
   /**
    * Execute combat attack roll with full resolution.
+   * Routes attack button clicks to the proven rollAttack() pipeline.
    *
    * @param {Actor} actor - Attacking actor
-   * @param {string} actionKey - Combat action key
-   * @param {Object} options - Roll options
+   * @param {string} actionKey - Combat action key (e.g., from sheet buttons)
+   * @param {Object} options - Roll options (range, cover, concealment, aim, force, misc)
    * @returns {Promise<Object>} Attack result
    */
   static async rollAttack(actor, actionKey, options = {}) {
-    // This would be extended with full attack roll logic
-    // For now, returns a placeholder
-    return {
-      success: true,
-      actionKey,
-      options
-    };
+    try {
+      if (!actor) {
+        throw new Error('rollAttack() called with no actor');
+      }
+
+      SWSELogger.debug(`[CombatEngine.rollAttack] Starting attack: ${actionKey}`, {
+        actorId: actor.id,
+        actionKey,
+        options
+      });
+
+      // PHASE 1: Resolve the weapon/action from the action key
+      // The actionKey can be:
+      // - "combat:N" for universal combat actions (e.g., "combat:0" for Attack)
+      // - An item ID for a specific weapon
+      // - A feat/talent combat action ID
+
+      let weapon = null;
+
+      // Try to find the weapon item
+      if (actionKey?.startsWith('combat:')) {
+        // Universal combat action - resolve to a weapon
+        // For now, use the actor's primary equipped weapon
+        weapon = actor.items.find(item =>
+          item.type === 'weapon' &&
+          item.system?.equipped === true
+        );
+
+        if (!weapon) {
+          SWSELogger.warn(`[CombatEngine.rollAttack] No equipped weapon found for action ${actionKey}`);
+          ui.notifications.warn('No equipped weapon found. Equip a weapon and try again.');
+          return { success: false, reason: 'No weapon equipped' };
+        }
+      } else {
+        // Try direct item lookup
+        weapon = actor.items.get(actionKey);
+        if (!weapon || !weapon.system?.damage) {
+          SWSELogger.warn(`[CombatEngine.rollAttack] Action ${actionKey} is not a valid weapon`);
+          ui.notifications.warn(`Cannot find weapon for action ${actionKey}`);
+          return { success: false, reason: 'Invalid weapon action' };
+        }
+      }
+
+      SWSELogger.info(`[CombatEngine.rollAttack] Executing attack with ${weapon.name}`, {
+        weaponId: weapon.id,
+        actorName: actor.name
+      });
+
+      // PHASE 2: Roll the attack
+      // This delegates to the proven rollAttack() from attacks.js
+      const atkRoll = await rollAttack(actor, weapon);
+
+      if (!atkRoll) {
+        SWSELogger.warn(`[CombatEngine.rollAttack] Attack roll failed for ${weapon.name}`);
+        return { success: false, reason: 'Attack roll failed' };
+      }
+
+      SWSELogger.info(`[CombatEngine.rollAttack] Attack rolled: ${atkRoll.total}`, {
+        weaponName: weapon.name,
+        attackTotal: atkRoll.total
+      });
+
+      return {
+        success: true,
+        actionKey,
+        roll: atkRoll,
+        weapon,
+        reason: 'Attack executed'
+      };
+
+    } catch (err) {
+      SWSELogger.error(`[CombatEngine.rollAttack] Error: ${err.message}`, { error: err });
+      ui.notifications.error(`Attack failed: ${err.message}`);
+      return { success: false, reason: err.message };
+    }
   }
 
   /**
