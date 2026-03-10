@@ -2909,7 +2909,7 @@ export const ActorEngine = {
       });
       throw err;
     }
-  }
+  },
 
   /**
    * Recompute actor's system.hp.max using SWSE Saga RAW formula.
