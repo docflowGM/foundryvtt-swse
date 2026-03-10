@@ -9,6 +9,7 @@ import { MutationApplicationError } from "/systems/foundryvtt-swse/scripts/gover
 import { PrerequisiteIntegrityChecker } from "/systems/foundryvtt-swse/scripts/governance/integrity/prerequisite-integrity-checker.js";
 import { PreflightValidator } from "/systems/foundryvtt-swse/scripts/governance/enforcement/preflight-validator.js";
 import { MissingPrereqsTracker } from "/systems/foundryvtt-swse/scripts/governance/integrity/missing-prereqs-tracker.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 /**
  * ActorEngine
@@ -764,8 +765,8 @@ export const ActorEngine = {
       // ========================================
       // Apply damage & condition logic atomically
       // ========================================
-      const currentHP = actor.system.hp?.value || 0;
-      const maxHP = actor.system.hp?.max || 100;
+      const currentHP = SchemaAdapters.getHP(actor);
+      const maxHP = SchemaAdapters.getMaxHP(actor);
       const newHP = Math.max(0, currentHP - finalDamage);
 
       // Check if condition shift needed (at threshold)
@@ -777,9 +778,7 @@ export const ActorEngine = {
                                    isNowBelowThreshold;
 
       // Build single atomic update
-      const updates = {
-        'system.hp.value': newHP
-      };
+      const updates = SchemaAdapters.setHPUpdate(newHP);
 
       if (shouldShiftCondition) {
         // Shift condition track within same mutation
@@ -832,8 +831,8 @@ export const ActorEngine = {
         source
       });
 
-      const currentHP = actor.system.hp?.value || 0;
-      const maxHP = actor.system.hp?.max || 100;
+      const currentHP = SchemaAdapters.getHP(actor);
+      const maxHP = SchemaAdapters.getMaxHP(actor);
       const newHP = Math.min(maxHP, currentHP + amount);
       const actualHealing = newHP - currentHP;
 
@@ -842,9 +841,7 @@ export const ActorEngine = {
         return { applied: 0, newHP };
       }
 
-      await this.updateActor(actor, {
-        'system.hp.value': newHP
-      });
+      await this.updateActor(actor, SchemaAdapters.setHPUpdate(newHP));
 
       SWSELogger.log(`Healing applied to ${actor.name}: +${actualHealing}HP (now: ${newHP}/${maxHP})`, {
         source
@@ -1237,8 +1234,8 @@ export const ActorEngine = {
       }
 
       // Get authoritative HP source
-      const currentHP = (actor.system?.derived?.hp?.value || actor.system?.hp?.value || 0);
-      const maxHP = (actor.system?.derived?.hp?.max || actor.system?.hp?.max || 0);
+      const currentHP = SchemaAdapters.getHP(actor);
+      const maxHP = SchemaAdapters.getMaxHP(actor);
       const newHP = Math.min(currentHP + heal, maxHP);
       const actualHealing = newHP - currentHP;
 
@@ -1246,7 +1243,7 @@ export const ActorEngine = {
       // PHASE B FIX 6: Improved Second Wind houserule
       // ========================================
       const improvements = {
-        'system.hp.value': newHP,
+        ...SchemaAdapters.setHPUpdate(newHP),
         'system.secondWind.uses': Math.max(0, uses - 1)
       };
 

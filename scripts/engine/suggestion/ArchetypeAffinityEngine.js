@@ -582,7 +582,7 @@ export function exportFoundryContract(archetypeAffinity, prestigeHints) {
 export async function initializeActorAffinity(actor) {
   try {
     // Check if already initialized (read-only check)
-    const existing = actor.system.flags?.swse?.archetypeAffinity;
+    const existing = actor.flags?.swse?.archetypeAffinity;
     if (existing) {
       return; // Already initialized
     }
@@ -658,7 +658,7 @@ export async function getActorAffinity(actor) {
   try {
     await initializeActorAffinity(actor);
 
-    const stored = actor.system.flags.swse.archetypeAffinity;
+    const stored = actor.flags.swse.archetypeAffinity;
     const characterState = extractCharacterState(actor);
 
     const needsRecompute = affinityNeedsRecompute(stored, characterState);
