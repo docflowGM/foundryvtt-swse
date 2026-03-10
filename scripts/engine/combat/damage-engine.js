@@ -15,6 +15,7 @@
  */
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 export class DamageEngine {
   static async applyDamage(actor, damage, options = {}) {
@@ -82,18 +83,17 @@ export class DamageEngine {
   // These methods are deprecated but kept as stubs for compatibility
 
   static getDamageThreshold(actor) {
-    return actor.system.derived?.damageThreshold || 0;
+    return SchemaAdapters.getDamageThreshold(actor);
   }
 
   static getHPStatus(actor) {
-    const hp = actor.system.hp || {};
-    const max = hp.max || 1;
-    const current = hp.value || 0;
+    const current = SchemaAdapters.getHP(actor);
+    const max = SchemaAdapters.getMaxHP(actor);
 
     return {
       current,
       max,
-      temp: hp.temp || 0,
+      temp: actor.system?.hp?.temp || 0,
       percent: Math.round((current / max) * 100),
       isDead: current <= 0,
       isCritical: current <= max * 0.25
