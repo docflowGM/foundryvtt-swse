@@ -317,7 +317,7 @@ class SWSEActor extends Actor {
       (reflexDef.misc || 0);
 
     // Fortitude Defense
-    const fortDef = this.system.defenses.fortitudeitude;
+    const fortDef = this.system.defenses.fortitude;
     const fortAbilityMod = abilities[fortDef.abilityMod]?.mod || 0;
     fortDef.total =
       10 +

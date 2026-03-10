@@ -597,7 +597,7 @@ export class ClassDataModel extends foundry.abstract.DataModel {
     // because the mapping is not 1:1 (prestige classes can have +2, +3, +4 for "fast" saves).
 
     // Ensure defenses object exists with defaults if not already set
-    if (!this.defenses || typeof this.defenses.fortitudeitude === 'undefined') {
+    if (!this.defenses || typeof this.defenses.fortitude === 'undefined') {
       // Only set defaults if defenses aren't already populated
       if (!this.defenses) {
         this.defenses = { fortitude: 0, reflex: 0, will: 0 };

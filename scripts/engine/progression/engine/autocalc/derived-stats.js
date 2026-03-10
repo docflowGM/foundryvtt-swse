@@ -34,7 +34,7 @@ export async function recalcDerivedStats(actor) {
     'system.skills.initiative.miscMod': dex,
     'system.defenses.reflex.base': dex,
     'system.defenses.will.base': wis,
-    'system.defenses.fortitudeitude.base': con
+    'system.defenses.fortitude.base': con
   };
 
   try {
