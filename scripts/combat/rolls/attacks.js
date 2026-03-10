@@ -34,7 +34,7 @@ function computeAttackBonus(actor, weapon, actionId = null, context = {}) {
   const lvl = actor.system.level ?? 1;
   const halfLvl = getEffectiveHalfLevel(actor);
 
-  const bab = actor.system.bab ?? 0;
+  const bab = SchemaAdapters.getBAB(actor);
 
   // Use new data model: abilities[xxx].mod
   const abilityMod = SchemaAdapters.getAbilityMod(actor, weapon.system?.attackAttribute ?? 'str');

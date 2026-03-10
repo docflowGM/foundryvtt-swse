@@ -7,6 +7,7 @@ import { SkillEnforcementEngine } from "/systems/foundryvtt-swse/scripts/engine/
 import { RollCore } from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 /**
  * Roll a skill check using unified RollCore pipeline
@@ -95,20 +96,18 @@ export async function rollSkill(actor, skillKey) {
 export function calculateSkillMod(actor, skill, actionId = null) {
   const utils = game.swse.utils;
 
-  // FIXED: Read ability from canonical system.abilities path (not system.attributes)
+  // PHASE 3: Read ability mod from canonical derived source via SchemaAdapters
   const abilityKey = skill.selectedAbility || 'str';
-  const abilityScore = actor.system.abilities?.[abilityKey]?.base ||
-                       actor.system.attributes?.[abilityKey]?.base ||
-                       10;
-  const abilMod = utils.math.calculateAbilityModifier(abilityScore);
+  const abilMod = SchemaAdapters.getAbilityMod(actor, abilityKey);
   const trained = skill.trained ? 5 : 0;
   const focus = skill.focused ? 5 : 0;
   const halfLvl = utils.math.halfLevel(actor.system.level);
   const misc = skill.miscMod || 0;
 
-  // FIXED: Compute condition penalty from canonical derived source
-  // system.conditionTrack.penalty doesn't exist - compute from condition track current
-  const conditionPenalty = actor.system?.derived?.damage?.conditionPenalty ?? 0;
+  // PHASE 3: Compute condition penalty from canonical derived source
+  // Fallback to getConditionPenalty() if modifiers path doesn't exist yet
+  const conditionPenalty = actor.system?.derived?.modifiers?.conditionPenalty ??
+                          SchemaAdapters.getConditionPenalty(actor) ?? 0;
 
   let talentBonus = 0;
 

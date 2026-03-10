@@ -5,6 +5,7 @@
  */
 
 import { RuleCategories } from "/systems/foundryvtt-swse/scripts/engine/rules/rules-registry.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 export const baseAttackBonusRule = {
   id: "core.base-attack-bonus",
@@ -18,7 +19,7 @@ export const baseAttackBonusRule = {
   apply: (payload, result) => {
     const { actor } = payload;
 
-    const bab = actor.system.bab ?? 0;
+    const bab = SchemaAdapters.getBAB(actor);
     if (bab !== 0) {
       result.attack.bonuses.push({
         source: 'Base Attack Bonus',
