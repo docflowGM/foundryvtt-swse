@@ -192,8 +192,8 @@ export class SpeciesTraitPassiveAdapter {
       const val = Number(m[1]);
       if (!Number.isFinite(val)) continue;
       const def = String(m[2]).toLowerCase();
-      const key = def === "fortitude" ? "fort" : def === "reflex" ? "reflex" : "will";
-      mods.push({ target: `defense.${key}`, type: "untyped", value: val });
+      // Use full names (fortitude, reflex, will) to match feat definitions and RollCore domains
+      mods.push({ target: `defense.${def}`, type: "untyped", value: val });
     }
 
     // Damage Threshold
