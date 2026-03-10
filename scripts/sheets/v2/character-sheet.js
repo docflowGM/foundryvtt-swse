@@ -203,9 +203,10 @@ export class SWSEV2CharacterSheet extends
     // Force suite context (hand/discard zones + tag filtering)
     const forcePowers = (actor?.items ?? []).filter(i => i.type === 'force-power');
     const forceTags = [...new Set(forcePowers.flatMap(p => p.system?.tags ?? []))].sort();
+    const toPlain = p => ({ id: p.id, name: p.name, img: p.img, system: foundry.utils.duplicate(p.system ?? {}) });
     const forceSuite = {
-      hand: forcePowers.filter(p => !p.system?.discarded),
-      discard: forcePowers.filter(p => p.system?.discarded)
+      hand: forcePowers.filter(p => !p.system?.discarded).map(toPlain),
+      discard: forcePowers.filter(p => p.system?.discarded).map(toPlain)
     };
 
     // Dark Side Points context (via DSPEngine for house rule support)
