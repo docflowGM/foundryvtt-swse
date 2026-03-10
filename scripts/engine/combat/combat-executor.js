@@ -101,8 +101,8 @@ export class CombatExecutor {
       // Check Force Point
       let usedForce = false;
       if (options.useForce) {
-        const fp = actor.system?.forcePoints || {};
-        if ((fp.current || 0) <= 0) {
+        const fpValue = SchemaAdapters.getForcePoints(actor);
+        if (fpValue <= 0) {
           throw new Error("No Force Points available");
         }
         usedForce = true;
@@ -116,9 +116,10 @@ export class CombatExecutor {
 
       // Spend Force Point if used
       if (usedForce) {
+        const currentFP = SchemaAdapters.getForcePoints(actor);
         const plan = {
           update: {
-            "system.forcePoints.current": Math.max(0, (actor.system.forcePoints?.current || 1) - 1)
+            "system.forcePoints.value": Math.max(0, currentFP - 1)
           }
         };
         await ActorEngine.apply(actor, plan);

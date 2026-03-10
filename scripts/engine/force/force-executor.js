@@ -118,8 +118,8 @@ export class ForceExecutor {
       // Validate Force Point expenditure
       let spentForce = false;
       if (useForce) {
-        const fp = actor.system?.forcePoints || {};
-        if ((fp.current || 0) <= 0) {
+        const fpValue = SchemaAdapters.getForcePoints(actor);
+        if (fpValue <= 0) {
           throw new Error("No Force Points available");
         }
         spentForce = true;
