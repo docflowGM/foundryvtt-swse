@@ -62,8 +62,9 @@ export class SWSEV2CharacterSheet extends
     RenderAssertions.assertActorValid(actor, "SWSEV2CharacterSheet");
 
     const rawContext = await super._prepareContext(options);
+    const SKIP_KEYS = new Set(['actor', 'document', 'system', 'fields']);
     const context = Object.fromEntries(
-      Object.entries(rawContext).filter(([, v]) => typeof v !== 'function')
+      Object.entries(rawContext).filter(([k, v]) => !SKIP_KEYS.has(k) && typeof v !== 'function')
     );
 
     // Authoritative derived state (populated by character-actor.js computeCharacterDerived)
