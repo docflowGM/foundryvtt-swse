@@ -115,8 +115,7 @@ async function showWelcomeDialog() {
 export function initializeFirstRunExperience() {
   if (!game?.user?.isGM) return;
 
-  // Delay until UI is fully mounted
-  Hooks.once('canvasReady', async () => {
+  async function showWelcome() {
     try {
       const show = await shouldShowWelcome();
       if (!show) return;
@@ -131,7 +130,14 @@ export function initializeFirstRunExperience() {
     } catch (err) {
       SWSELogger.error('First-run experience error:', err);
     }
-  });
+  }
+
+  // If canvas is already ready, show immediately; otherwise register hook
+  if (canvas?.ready) {
+    showWelcome();
+  } else {
+    Hooks.once('canvasReady', showWelcome);
+  }
 }
 
 /* -------------------------------------------- */
