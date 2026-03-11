@@ -16,7 +16,7 @@
             "controller": 0.2
           },
           "roleBias": {
-            "offense": 1.0,
+            "offense": 1,
             "defense": 1.3,
             "support": 1.1,
             "utility": 0.8
@@ -48,7 +48,7 @@
           },
           "roleBias": {
             "offense": 1.4,
-            "defense": 1.0,
+            "defense": 1,
             "support": 0.8,
             "utility": 0.8
           },
@@ -78,7 +78,7 @@
           },
           "roleBias": {
             "offense": 0.9,
-            "defense": 1.0,
+            "defense": 1,
             "support": 1.3,
             "utility": 1.1
           },
@@ -107,10 +107,10 @@
             "utility": 0.1
           },
           "roleBias": {
-            "offense": 1.0,
-            "defense": 1.0,
-            "support": 1.0,
-            "utility": 1.0
+            "offense": 1,
+            "defense": 1,
+            "support": 1,
+            "utility": 1
           },
           "attributeBias": {
             "STR": 0.25,
@@ -273,7 +273,7 @@
           },
           "roleBias": {
             "controller": 1.2,
-            "striker": 1.0,
+            "striker": 1,
             "support": 0.8
           },
           "attributeBias": {
@@ -300,7 +300,7 @@
             "force_control": 0.2
           },
           "roleBias": {
-            "striker": 1.0,
+            "striker": 1,
             "support": 1.1,
             "controller": 0.9
           },
@@ -327,7 +327,7 @@
           },
           "roleBias": {
             "support": 1.4,
-            "controller": 1.0,
+            "controller": 1,
             "striker": 0.5
           },
           "attributeBias": {
@@ -352,7 +352,7 @@
           },
           "roleBias": {
             "controller": 1.2,
-            "striker": 1.0,
+            "striker": 1,
             "support": 0.7
           },
           "attributeBias": {
@@ -409,7 +409,7 @@
           "roleBias": {
             "controller": 1.2,
             "striker": 1.1,
-            "support": 1.0
+            "support": 1
           },
           "attributeBias": {
             "STR": 0.3,
@@ -703,7 +703,7 @@
           },
           "roleBias": {
             "utility": 1.4,
-            "support": 1.0
+            "support": 1
           },
           "attributeBias": {
             "INT": 0.5,
@@ -911,7 +911,7 @@
           },
           "roleBias": {
             "utility": 1.3,
-            "striker": 1.0,
+            "striker": 1,
             "support": 0.9
           },
           "attributeBias": {
@@ -941,7 +941,7 @@
           },
           "roleBias": {
             "striker": 1.2,
-            "controller": 1.0
+            "controller": 1
           },
           "attributeBias": {
             "DEX": 0.3,
@@ -1024,7 +1024,7 @@
           },
           "roleBias": {
             "utility": 1.2,
-            "striker": 1.0
+            "striker": 1
           },
           "attributeBias": {
             "DEX": 0.4,
@@ -1086,7 +1086,7 @@
           "roleBias": {
             "offense": 0.9,
             "defense": 0.9,
-            "support": 1.0,
+            "support": 1,
             "utility": 1.4
           },
           "attributeBias": {
@@ -1215,7 +1215,7 @@
           },
           "roleBias": {
             "offense": 0.8,
-            "defense": 1.0,
+            "defense": 1,
             "support": 0.9,
             "utility": 1.3
           },
@@ -1398,7 +1398,7 @@
             "controller": 0.3
           },
           "roleBias": {
-            "striker": 1.0,
+            "striker": 1,
             "scout": 1.2
           },
           "attributeBias": {
@@ -1482,7 +1482,7 @@
             "defense": 0.5
           },
           "roleBias": {
-            "offense": 1.0,
+            "offense": 1,
             "defense": 1.4,
             "support": 0.9,
             "utility": 0.7
@@ -1539,7 +1539,7 @@
           },
           "roleBias": {
             "offense": 1.3,
-            "defense": 1.0,
+            "defense": 1,
             "support": 0.8,
             "utility": 0.9
           },
@@ -1751,7 +1751,7 @@
           },
           "roleBias": {
             "striker": 1.2,
-            "defender": 1.0
+            "defender": 1
           },
           "attributeBias": {
             "STR": 0.35,
@@ -1804,7 +1804,7 @@
       "displayName": "Imperial Knight",
       "archetypes": {
         "emperors_shield": {
-          "name": "Emperor\u2019s Shield",
+          "name": "Emperor’s Shield",
           "status": "active",
           "mechanicalBias": {
             "frontline_damage": 0.4,
@@ -1812,7 +1812,7 @@
             "force_control": 0.4
           },
           "roleBias": {
-            "offense": 1.0,
+            "offense": 1,
             "defense": 1.4,
             "support": 1.1,
             "utility": 0.8
@@ -1854,7 +1854,7 @@
             "STR": 0.2,
             "CON": 0.15
           },
-          "notes": "Anti\u2013Force-user hunter and duelist.",
+          "notes": "Anti–Force-user hunter and duelist.",
           "talents": [
             "9379daa94a228c04",
             "72c644f7a09b1186",
@@ -1876,8 +1876,8 @@
           "roleBias": {
             "offense": 1.1,
             "defense": 1.1,
-            "support": 1.0,
-            "utility": 1.0
+            "support": 1,
+            "utility": 1
           },
           "attributeBias": {
             "CHA": 0.3,
@@ -2046,7 +2046,7 @@
           },
           "roleBias": {
             "controller": 1.2,
-            "striker": 1.0
+            "striker": 1
           },
           "attributeBias": {
             "DEX": 0.35,
@@ -2074,7 +2074,7 @@
           },
           "roleBias": {
             "controller": 1.1,
-            "striker": 1.0
+            "striker": 1
           },
           "attributeBias": {
             "DEX": 0.3,
@@ -2103,7 +2103,7 @@
           "roleBias": {
             "controller": 1.2,
             "striker": 1.1,
-            "support": 1.0
+            "support": 1
           },
           "attributeBias": {
             "STR": 0.3,
@@ -2159,7 +2159,7 @@
           },
           "roleBias": {
             "controller": 1.3,
-            "support": 1.0
+            "support": 1
           },
           "attributeBias": {
             "WIS": 0.4,
@@ -2186,7 +2186,7 @@
           },
           "roleBias": {
             "support": 1.4,
-            "controller": 1.0
+            "controller": 1
           },
           "attributeBias": {
             "WIS": 0.4,
@@ -2346,7 +2346,7 @@
           },
           "roleBias": {
             "controller": 1.4,
-            "support": 1.0
+            "support": 1
           },
           "attributeBias": {
             "CHA": 0.45,
@@ -2681,7 +2681,7 @@
           },
           "roleBias": {
             "controller": 1.2,
-            "striker": 1.0
+            "striker": 1
           },
           "attributeBias": {
             "DEX": 0.4,
@@ -3042,7 +3042,7 @@
           },
           "roleBias": {
             "controller": 1.2,
-            "striker": 1.0
+            "striker": 1
           },
           "attributeBias": {
             "DEX": 0.35,
@@ -3216,7 +3216,7 @@
           },
           "roleBias": {
             "striker": 1.1,
-            "controller": 1.0
+            "controller": 1
           },
           "attributeBias": {
             "DEX": 0.45,
@@ -3524,7 +3524,7 @@
           },
           "roleBias": {
             "controller": 1.3,
-            "striker": 1.0
+            "striker": 1
           },
           "attributeBias": {
             "INT": 0.4,
@@ -3807,7 +3807,7 @@
           },
           "roleBias": {
             "support": 1.4,
-            "controller": 1.0
+            "controller": 1
           },
           "attributeBias": {
             "WIS": 0.4,
@@ -4090,7 +4090,7 @@
           },
           "roleBias": {
             "scout": 1.3,
-            "controller": 1.0
+            "controller": 1
           },
           "attributeBias": {
             "DEX": 0.35,
@@ -4147,7 +4147,7 @@
           },
           "roleBias": {
             "utility": 1.4,
-            "controller": 1.0
+            "controller": 1
           },
           "attributeBias": {
             "INT": 0.45,
@@ -4175,7 +4175,7 @@
           },
           "roleBias": {
             "controller": 1.2,
-            "striker": 1.0
+            "striker": 1
           },
           "attributeBias": {
             "INT": 0.35,
@@ -4277,7 +4277,7 @@
           },
           "roleBias": {
             "utility": 1.3,
-            "controller": 1.0
+            "controller": 1
           },
           "attributeBias": {
             "DEX": 0.35,
@@ -4389,7 +4389,7 @@
           },
           "roleBias": {
             "controller": 1.3,
-            "support": 1.0
+            "support": 1
           },
           "attributeBias": {
             "WIS": 0.45,
@@ -4493,7 +4493,7 @@
           },
           "roleBias": {
             "support": 1.3,
-            "controller": 1.0
+            "controller": 1
           },
           "attributeBias": {
             "WIS": 0.4,
@@ -4795,7 +4795,7 @@
           },
           "roleBias": {
             "controller": 1.2,
-            "striker": 1.0
+            "striker": 1
           },
           "attributeBias": {
             "DEX": 0.35,

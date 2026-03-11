@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Archetype Schema",
+  "description": "Formal schema for SWSE Suggestion Engine archetypes. Enforces contract discipline and prevents bias key drift.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "mechanicalBias", "roleBias", "attributeBias"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Display name of the archetype"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "experimental", "disabled", "stub"],
+      "description": "Archetype lifecycle status"
+    },
+    "mechanicalBias": {
+      "type": "object",
+      "description": "Mechanical style biases",
+      "additionalProperties": false,
+      "properties": {
+        "controller": { "type": "number", "minimum": 0 },
+        "defender": { "type": "number", "minimum": 0 },
+        "defense": { "type": "number", "minimum": 0 },
+        "force_control": { "type": "number", "minimum": 0 },
+        "force_dps": { "type": "number", "minimum": 0 },
+        "frontline_damage": { "type": "number", "minimum": 0 },
+        "pilot": { "type": "number", "minimum": 0 },
+        "ranged": { "type": "number", "minimum": 0 },
+        "sniper": { "type": "number", "minimum": 0 },
+        "striker": { "type": "number", "minimum": 0 },
+        "support": { "type": "number", "minimum": 0 },
+        "utility": { "type": "number", "minimum": 0 }
+      }
+    },
+    "roleBias": {
+      "type": "object",
+      "description": "Role-based biases",
+      "additionalProperties": false,
+      "properties": {
+        "controller": { "type": "number", "minimum": 0 },
+        "defender": { "type": "number", "minimum": 0 },
+        "defense": { "type": "number", "minimum": 0 },
+        "offense": { "type": "number", "minimum": 0 },
+        "scout": { "type": "number", "minimum": 0 },
+        "striker": { "type": "number", "minimum": 0 },
+        "support": { "type": "number", "minimum": 0 },
+        "utility": { "type": "number", "minimum": 0 }
+      }
+    },
+    "attributeBias": {
+      "type": "object",
+      "description": "Attribute score biases (D20 attributes)",
+      "additionalProperties": false,
+      "properties": {
+        "STR": { "type": "number", "minimum": 0 },
+        "DEX": { "type": "number", "minimum": 0 },
+        "CON": { "type": "number", "minimum": 0 },
+        "INT": { "type": "number", "minimum": 0 },
+        "WIS": { "type": "number", "minimum": 0 },
+        "CHA": { "type": "number", "minimum": 0 }
+      }
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional flavor or design notes"
+    },
+    "talents": {
+      "type": "array",
+      "description": "Legacy talent item IDs",
+      "items": {
+        "type": "string"
+      }
+    },
+    "feats": {
+      "type": "array",
+      "description": "Legacy feat item IDs",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

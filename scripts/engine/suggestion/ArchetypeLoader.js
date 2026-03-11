@@ -4,9 +4,15 @@
  * Loads archetypes from data/archetypes directory or falls back to class-archetypes.json
  * Supports both individual files and SSOT master file.
  * Fails gracefully on malformed files.
+ *
+ * Integrates archetype validation to prevent bias key drift and scoring corruption.
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import {
+  validateArchetype,
+  normalizeArchetype
+} from "/systems/foundryvtt-swse/scripts/validation/archetype-validator.js";
 
 const CACHE = new Map(); // id -> archetype
 const CLASS_CACHE = new Map(); // className -> [archetypes]
@@ -93,6 +99,7 @@ export async function loadAllArchetypes() {
 
 /**
  * Load master archetype data from class-archetypes.json (SSOT fallback)
+ * Validates each archetype and disables invalid ones.
  * @private
  */
 async function _loadMasterArchetypes() {
@@ -103,7 +110,30 @@ async function _loadMasterArchetypes() {
     if (!response.ok) {throw new Error(`Failed to load: ${response.statusText}`);}
 
     const data = await response.json();
-    MASTER_ARCHETYPES = data.classes || {};
+    const classes = data.classes || {};
+
+    // Validate all archetypes
+    for (const [className, classData] of Object.entries(classes)) {
+      for (const [archetypeName, archetype] of Object.entries(classData)) {
+        const fullName = `${className}/${archetypeName}`;
+        const validation = validateArchetype(archetype, fullName);
+
+        if (!validation.isValid) {
+          SWSELogger.error(
+            `[ArchetypeLoader] Validation failed for ${fullName}: ${validation.errors
+              .map(e => (e instanceof Error ? e.message : e))
+              .join("; ")}. Disabling archetype.`
+          );
+          // Disable invalid archetype
+          archetype.status = "disabled";
+        }
+
+        // Normalize archetype (freeze, ensure defaults)
+        classes[className][archetypeName] = normalizeArchetype(archetype);
+      }
+    }
+
+    MASTER_ARCHETYPES = classes;
     return MASTER_ARCHETYPES;
   } catch (err) {
     SWSELogger.error('[ArchetypeLoader] Failed to load master archetypes:', err);
