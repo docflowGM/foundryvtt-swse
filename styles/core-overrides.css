@@ -12,3 +12,81 @@
    Mask overrides here were competing with Foundry's own icon system.
    Reverted to Foundry default control icon behavior.
    If sidebar icons break, investigate JS-side icon registration first. */
+
+/* ============================================================================
+   SIDEBAR ICON FALLBACK SYSTEM
+   When Font Awesome fails to load, this system provides backup PNG/SVG icons.
+   The .swse-sidebar-icons-fallback class is applied by JavaScript detection.
+   ============================================================================ */
+
+.swse-sidebar-icons-fallback #sidebar-tabs .item[data-tab="chat"] .control-icon::before {
+  background-image: url('../assets/icons/chat.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  content: '' !important;
+}
+
+.swse-sidebar-icons-fallback #sidebar-tabs .item[data-tab="combat"] .control-icon::before {
+  background-image: url('../assets/icons/combat.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  content: '' !important;
+}
+
+.swse-sidebar-icons-fallback #sidebar-tabs .item[data-tab="actors"] .control-icon::before {
+  background-image: url('../assets/icons/actors.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  content: '' !important;
+}
+
+.swse-sidebar-icons-fallback #sidebar-tabs .item[data-tab="items"] .control-icon::before {
+  background-image: url('../assets/icons/items.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  content: '' !important;
+}
+
+.swse-sidebar-icons-fallback #sidebar-tabs .item[data-tab="journal"] .control-icon::before {
+  background-image: url('../assets/icons/journal.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  content: '' !important;
+}
+
+.swse-sidebar-icons-fallback #sidebar-tabs .item[data-tab="tables"] .control-icon::before {
+  background-image: url('../assets/icons/tables.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  content: '' !important;
+}
+
+.swse-sidebar-icons-fallback #sidebar-tabs .item[data-tab="playlists"] .control-icon::before {
+  background-image: url('../assets/icons/playlists.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  content: '' !important;
+}
+
+.swse-sidebar-icons-fallback #sidebar-tabs .item[data-tab="compendium"] .control-icon::before {
+  background-image: url('../assets/icons/compendium.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  content: '' !important;
+}
+
+.swse-sidebar-icons-fallback #sidebar-tabs .item[data-tab="settings"] .control-icon::before {
+  background-image: url('../assets/icons/settings.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  content: '' !important;
+}
