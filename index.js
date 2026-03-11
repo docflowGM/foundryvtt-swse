@@ -64,6 +64,7 @@ import { registerSystemSettings } from './scripts/core/settings.js';
 import { registerHouseruleSettings } from './scripts/houserules/houserule-settings.js';
 import { initializeUtils } from './scripts/core/utils-init.js';
 import { initializeRolls } from './scripts/core/rolls-init.js';
+import { initSidebarIconFallback } from './scripts/core/sidebar-icon-fallback.js';
 
 // ---- core engines (bootstrap attachment) ----
 import { RollEngine } from './scripts/engine/roll-engine.js';
@@ -351,6 +352,7 @@ Hooks.once('ready', async () => {
   /* ---------- UI (DOM-safe) ---------- */
   initializeSceneControls();
   initializeActionPalette();
+  initSidebarIconFallback();
   MentorTranslationSettings.loadSettings();
 
   /* ---------- engines ---------- */
