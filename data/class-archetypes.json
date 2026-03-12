@@ -47,7 +47,6 @@
             "reactionDefense": 3
           },
           "roleBias": {
-            "tank": 3,
             "defender": 3
           },
           "attributeBias": {
@@ -105,7 +104,7 @@
           },
           "roleBias": {
             "striker": 3,
-            "glassCannon": 2
+            "offense": 2
           },
           "attributeBias": {
             "cha": 3,
@@ -162,9 +161,9 @@
           "name": "Battlefield Commander",
           "status": "active",
           "mechanicalBias": {
-            "allyAttackBonus": 3,
             "moraleBonus": 3,
-            "initiative": 2
+            "initiative": 2,
+            "commandAuthority": 3
           },
           "roleBias": {
             "support": 3,
@@ -217,7 +216,7 @@
           "status": "active",
           "mechanicalBias": {
             "initiative": 3,
-            "allyBonus": 2
+            "allySupport": 2
           },
           "roleBias": {
             "support": 3,
@@ -270,8 +269,8 @@
           "name": "Inspirational Supporter",
           "status": "active",
           "mechanicalBias": {
-            "allyDefenseBonus": 3,
-            "moraleBonus": 3
+            "moraleBonus": 3,
+            "damageMitigationAura": 3
           },
           "roleBias": {
             "support": 3,
@@ -561,8 +560,8 @@
             "evasion": 2
           },
           "roleBias": {
-            "specialist": 3,
-            "skirmisher": 1
+            "skirmisher": 1,
+            "flex": 3
           },
           "attributeBias": {
             "dex": 3,
@@ -594,8 +593,8 @@
             "areaControl": 2
           },
           "roleBias": {
-            "areaStriker": 3,
-            "controller": 2
+            "controller": 2,
+            "striker": 3
           },
           "attributeBias": {
             "str": 3,
@@ -624,8 +623,8 @@
             "meleeDamage": 2
           },
           "roleBias": {
-            "tank": 3,
-            "bruiser": 3
+            "bruiser": 3,
+            "defender": 3
           },
           "attributeBias": {
             "str": 3,
@@ -683,7 +682,7 @@
           },
           "roleBias": {
             "striker": 3,
-            "assault": 2
+            "bruiser": 2
           },
           "attributeBias": {
             "str": 2,
