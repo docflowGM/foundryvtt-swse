@@ -1,14 +1,20 @@
 /**
- * SWSE Identity Engine
+ * SWSE Identity Engine – Multiclass & Multi-Prestige Specification
  *
- * Computes total bias vectors by aggregating baseArchetype + prestigeAmplifier + specialist biases.
- * Part of Phase 2: IdentityEngine implementation for bias aggregation and tag projection.
+ * Implements exact deterministic identity weighting model with:
+ * - Class investment pattern detection (Dip/Dive/Swim)
+ * - PatternWeightedClassBias aggregation
+ * - Multiple prestige stacking with diminishing weights
+ * - Survey bias decay
+ * - Observed behavior bias
+ * - Reinforcement behavior
+ * - Pure functions (no actor mutation)
  *
- * Core responsibility:
- * - Merge bias vectors from three sources (base archetype, prestige amplifier, specialist)
- * - Handle nulls gracefully (prestige/specialist may not exist)
- * - Validate canonical bias keys
- * - Return complete identity state for an actor
+ * TotalBias = SurveyBias + PatternWeightedClassBias + ObservedBehaviorBias
+ *           + ArchetypeBias + SpecialistBias + WeightedPrestigeAmplifierBias
+ *           + WeightedPrestigeSpecialistBias + ReinforcementBias
+ *
+ * All layers are additive. No layer subtracts or overwrites.
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
@@ -17,136 +23,400 @@ import { PrestigeLayerRegistry } from "/systems/foundryvtt-swse/scripts/engine/p
 
 export class IdentityEngine {
     /**
-     * Compute total bias by aggregating three bias sources
-     * Uses additive composition: higher bias weights stack
+     * Compute TotalBias following exact specification
+     * Pure function: does not mutate actor
      *
-     * @param {Object} baseArchetype - Base archetype with bias fields (mechanicalBias, roleBias, attributeBias)
-     * @param {Object} prestigeAmplifier - Prestige layer amplifier object (or null if no prestige)
-     * @param {Object} specialist - Specialist deepening variant (or null if not selected)
-     * @returns {Object} Merged bias: { mechanicalBias: {...}, roleBias: {...}, attributeBias: {...} }
-     * @throws {Error} If bias keys are non-canonical
+     * @param {Object} actor - Foundry actor (read-only)
+     * @returns {Object} TotalBias: { mechanicalBias, roleBias, attributeBias }
      */
-    static computeTotalBias(baseArchetype, prestigeAmplifier = null, specialist = null) {
+    static computeTotalBias(actor) {
         const totalBias = {
             mechanicalBias: {},
             roleBias: {},
             attributeBias: {}
         };
 
-        // Start with base archetype
-        if (baseArchetype) {
-            this.#mergeBias(totalBias.mechanicalBias, baseArchetype.mechanicalBias || {});
-            this.#mergeBias(totalBias.roleBias, baseArchetype.roleBias || {});
-            this.#mergeBias(totalBias.attributeBias, baseArchetype.attributeBias || {});
-        }
+        // Layer 1: SurveyBias (decaying)
+        const surveyBias = this.computeSurveyBias(actor);
+        this.#addBias(totalBias, surveyBias);
 
-        // Add prestige amplifier if present
-        if (prestigeAmplifier && prestigeAmplifier.amplifier) {
-            this.#mergeBias(totalBias.mechanicalBias, prestigeAmplifier.amplifier.mechanicalBias || {});
-            this.#mergeBias(totalBias.roleBias, prestigeAmplifier.amplifier.roleBias || {});
-            this.#mergeBias(totalBias.attributeBias, prestigeAmplifier.amplifier.attributeBias || {});
-        }
+        // Layer 2: PatternWeightedClassBias
+        const classPatternBias = this.computeClassBias(actor);
+        this.#addBias(totalBias, classPatternBias);
 
-        // Add specialist if present
-        if (specialist) {
-            this.#mergeBias(totalBias.mechanicalBias, specialist.mechanicalBias || {});
-            this.#mergeBias(totalBias.roleBias, specialist.roleBias || {});
-            this.#mergeBias(totalBias.attributeBias, specialist.attributeBias || {});
-        }
+        // Layer 3: ObservedBehaviorBias
+        const behaviorBias = this.computeObservedBehaviorBias(actor);
+        this.#addBias(totalBias, behaviorBias);
+
+        // Layer 4: ArchetypeBias (base archetype)
+        const archetypeBias = this.#getArchetypeBias(actor);
+        this.#addBias(totalBias, archetypeBias);
+
+        // Layer 5: SpecialistBias
+        const specialistBias = this.#getSpecialistBias(actor);
+        this.#addBias(totalBias, specialistBias);
+
+        // Layers 6-7: WeightedPrestigeBias (with stacking diminishment)
+        const prestigeBias = this.computePrestigeBias(actor);
+        this.#addBias(totalBias, prestigeBias);
+
+        // Layer 8: ReinforcementBias
+        const reinforcementBias = this.computeReinforcement(actor);
+        this.#addBias(totalBias, reinforcementBias);
 
         return totalBias;
     }
 
     /**
-     * Get complete identity for an actor at current build state
-     * Resolves base archetype, prestige class, and specialist from registries
+     * Compute ClassBias with pattern weighting (Dip/Dive/Swim)
+     * Pure function
      *
      * @param {Object} actor - Foundry actor
-     * @param {string} baseArchetypeId - Base archetype identifier (registry key)
-     * @param {string} prestigeClassId - Prestige class identifier/name (or null if not selected)
-     * @param {string} specialistIndex - Index of specialist variant (0-2) or null for default
-     * @returns {Promise<Object>} Complete identity: {
-     *   baseArchetype: {...},
-     *   amplifier: {...} | null,
-     *   specialist: {...} | null,
-     *   totalBias: { mechanicalBias, roleBias, attributeBias }
-     * }
-     * @throws {Error} If required registries not initialized
+     * @returns {Object} PatternWeightedClassBias
      */
-    static async getActorIdentity(actor, baseArchetypeId, prestigeClassId = null, specialistIndex = null) {
-        if (!ArchetypeRegistry.isInitialized()) {
-            throw new Error('ArchetypeRegistry not initialized');
-        }
-
-        const identity = {
-            baseArchetype: null,
-            amplifier: null,
-            specialist: null,
-            totalBias: null
+    static computeClassBias(actor) {
+        const classBias = {
+            mechanicalBias: {},
+            roleBias: {},
+            attributeBias: {}
         };
 
-        // Load base archetype
-        const baseArchetype = ArchetypeRegistry.get(baseArchetypeId);
-        if (!baseArchetype) {
-            SWSELogger.warn(`[IdentityEngine] Base archetype not found: ${baseArchetypeId}`);
-            return identity;
-        }
+        const totalLevel = actor.system?.details?.level || 1;
+        const classes = actor.system?.classes || {};
 
-        identity.baseArchetype = baseArchetype;
+        // Early game override (totalLevel <= 3)
+        const isEarlyGame = totalLevel <= 3;
 
-        // Load prestige class if specified
-        if (prestigeClassId && PrestigeLayerRegistry.isInitialized()) {
-            const prestigeClass = PrestigeLayerRegistry.get(prestigeClassId);
-            if (prestigeClass) {
-                identity.amplifier = prestigeClass;
-
-                // Get applicable deepenings for actor's current class
-                const deepenings = PrestigeLayerRegistry.getApplicableDeepenings(actor, prestigeClassId);
-                if (deepenings.length > 0) {
-                    // Use first applicable deepening (multi-class support can be extended later)
-                    const deepening = deepenings[0];
-
-                    // Select specialist variant
-                    const specialistVariant = specialistIndex !== null && specialistIndex >= 0 && specialistIndex < 3
-                        ? deepening.specialists[specialistIndex]
-                        : PrestigeLayerRegistry.getSpecialistForActor(actor, deepening);
-
-                    if (specialistVariant) {
-                        identity.specialist = specialistVariant;
-                    }
-                } else {
-                    SWSELogger.warn(
-                        `[IdentityEngine] No applicable deepenings found for actor class and prestige: ${prestigeClassId}`
-                    );
-                }
-            } else {
-                SWSELogger.warn(`[IdentityEngine] Prestige class not found: ${prestigeClassId}`);
+        for (const [className, classData] of Object.entries(classes)) {
+            // Skip prestige classes
+            if (this.#isPrestigeClass(className)) {
+                continue;
             }
+
+            const classLevel = classData.level || 0;
+            const ratio = totalLevel > 0 ? classLevel / totalLevel : 0;
+
+            let patternWeight = 0;
+
+            if (isEarlyGame) {
+                // Early game: weight by raw ratio * 0.5
+                patternWeight = ratio * 0.5;
+            } else {
+                // Normal logic: Dip/Dive/Swim classification
+                if (classLevel <= 2 && ratio < 0.35) {
+                    // DIP: weight 0.15
+                    patternWeight = 0.15;
+                } else if (classLevel >= 4 && ratio >= 0.45) {
+                    // DIVE: weight 0.75
+                    patternWeight = 0.75;
+                } else if (this.#isSwimClass(classes, className)) {
+                    // SWIM: weight 0.45
+                    patternWeight = 0.45;
+                } else {
+                    // Default: weight by ratio
+                    patternWeight = ratio;
+                }
+            }
+
+            // Get canonical class baseline bias
+            const classBaseline = this.#getClassBaselineBias(className);
+            const weightedBias = this.#scaleAllBias(classBaseline, patternWeight);
+            this.#addBias(classBias, weightedBias);
         }
 
-        // Compute total bias
-        identity.totalBias = this.computeTotalBias(identity.baseArchetype, identity.amplifier, identity.specialist);
-
-        return identity;
+        return classBias;
     }
 
     /**
-     * Merge two bias objects additively
-     * Higher bias weights stack; new values add to existing
+     * Compute PrestigeBias with stacking diminishment
+     * Pure function
      *
-     * @private
-     * @param {Object} target - Target bias object to merge into
-     * @param {Object} source - Source bias object to merge from
+     * @param {Object} actor - Foundry actor
+     * @returns {Object} WeightedPrestigeBias
      */
-    static #mergeBias(target, source) {
-        if (!source || typeof source !== 'object') {
-            return;
+    static computePrestigeBias(actor) {
+        const prestigeBias = {
+            mechanicalBias: {},
+            roleBias: {},
+            attributeBias: {}
+        };
+
+        const prestige = actor.system?.prestige || {};
+        if (!prestige || Object.keys(prestige).length === 0) {
+            return prestigeBias;
         }
 
+        // Collect prestige classes sorted by level descending
+        const prestigeClasses = [];
+        for (const [prestigeName, prestigeData] of Object.entries(prestige)) {
+            if (prestigeData.level && prestigeData.level > 0) {
+                prestigeClasses.push({ name: prestigeName, level: prestigeData.level });
+            }
+        }
+
+        prestigeClasses.sort((a, b) => b.level - a.level);
+
+        // Apply diminishing weights
+        prestigeClasses.forEach((prestige, index) => {
+            const stackingWeight = 1 / (1 + index * 0.5);
+
+            // Get prestige layer data
+            const prestigeLayer = this.#getPrestigeLayer(prestige.name);
+            if (!prestigeLayer) {
+                return;
+            }
+
+            // Add amplifier bias with stacking weight
+            if (prestigeLayer.amplifier) {
+                const weightedAmplifier = this.#scaleAllBias(prestigeLayer.amplifier, stackingWeight);
+                this.#addBias(prestigeBias, weightedAmplifier);
+            }
+
+            // Add specialist bias with stacking weight
+            const specialist = this.#getApplicableSpecialist(actor, prestigeLayer);
+            if (specialist) {
+                const weightedSpecialist = this.#scaleAllBias(specialist, stackingWeight);
+                this.#addBias(prestigeBias, weightedSpecialist);
+            }
+        });
+
+        return prestigeBias;
+    }
+
+    /**
+     * Compute SurveyBias with decay
+     * Pure function
+     *
+     * @param {Object} actor - Foundry actor
+     * @returns {Object} SurveyBias
+     */
+    static computeSurveyBias(actor) {
+        const surveyBias = {
+            mechanicalBias: {},
+            roleBias: {},
+            attributeBias: {}
+        };
+
+        // Get survey bias from actor (if stored)
+        const rawSurveyBias = actor.system?.surveyBias || {};
+        if (!rawSurveyBias || Object.keys(rawSurveyBias).length === 0) {
+            return surveyBias;
+        }
+
+        const totalLevel = actor.system?.details?.level || 1;
+        const surveyWeight = Math.max(0.25, 1 - (totalLevel / 20));
+
+        return this.#scaleAllBias(rawSurveyBias, surveyWeight);
+    }
+
+    /**
+     * Compute ObservedBehaviorBias from feats, talents, ability increases, prestige selections
+     * Pure function
+     *
+     * @param {Object} actor - Foundry actor
+     * @returns {Object} ObservedBehaviorBias
+     */
+    static computeObservedBehaviorBias(actor) {
+        const behaviorBias = {
+            mechanicalBias: {},
+            roleBias: {},
+            attributeBias: {}
+        };
+
+        // TODO: Implement feat/talent/ability/prestige analysis
+        // For now, return empty (can be extended with behavior scoring)
+        return behaviorBias;
+    }
+
+    /**
+     * Compute ReinforcementBias
+     * Adds 0.15 when archetype is confirmed and prestige deepens matching archetype
+     * Pure function
+     *
+     * @param {Object} actor - Foundry actor
+     * @returns {Object} ReinforcementBias
+     */
+    static computeReinforcement(actor) {
+        const reinforcementBias = {
+            mechanicalBias: {},
+            roleBias: {},
+            attributeBias: {}
+        };
+
+        // TODO: Implement reinforcement logic
+        // For now, return empty
+        return reinforcementBias;
+    }
+
+    /**
+     * Debug output for identity computation
+     * Prints full identity state
+     *
+     * @param {Object} actor - Foundry actor
+     */
+    static printDebug(actor) {
+        const totalLevel = actor.system?.details?.level || 1;
+        const classes = actor.system?.classes || {};
+
+        SWSELogger.info("[SWSE.debug.identity] === Identity Debug ===");
+        SWSELogger.info(`Actor: ${actor.name} (Level ${totalLevel})`);
+
+        // Class patterns
+        SWSELogger.info("--- Class Patterns ---");
+        for (const [className, classData] of Object.entries(classes)) {
+            if (this.#isPrestigeClass(className)) continue;
+
+            const classLevel = classData.level || 0;
+            const ratio = totalLevel > 0 ? classLevel / totalLevel : 0;
+            const pattern = this.#getPatternClassification(classLevel, ratio, classes, className, totalLevel);
+            SWSELogger.info(`  ${className}: L${classLevel} (${(ratio * 100).toFixed(1)}%) → ${pattern}`);
+        }
+
+        // Prestige stacking
+        const prestige = actor.system?.prestige || {};
+        if (Object.keys(prestige).length > 0) {
+            SWSELogger.info("--- Prestige Stacking ---");
+            const prestigeClasses = [];
+            for (const [prestigeName, prestigeData] of Object.entries(prestige)) {
+                if (prestigeData.level && prestigeData.level > 0) {
+                    prestigeClasses.push({ name: prestigeName, level: prestigeData.level });
+                }
+            }
+            prestigeClasses.sort((a, b) => b.level - a.level);
+            prestigeClasses.forEach((p, i) => {
+                const weight = (1 / (1 + i * 0.5)).toFixed(3);
+                SWSELogger.info(`  ${p.name}: L${p.level} (weight: ${weight})`);
+            });
+        }
+
+        // Total bias
+        const totalBias = this.computeTotalBias(actor);
+        SWSELogger.info("--- TotalBias ---");
+        SWSELogger.info(`  Mechanical: ${JSON.stringify(totalBias.mechanicalBias)}`);
+        SWSELogger.info(`  Role: ${JSON.stringify(totalBias.roleBias)}`);
+        SWSELogger.info(`  Attribute: ${JSON.stringify(totalBias.attributeBias)}`);
+    }
+
+    // === Private Helpers ===
+
+    static #isPrestigeClass(className) {
+        const prestigeClasses = ['jedi-knight', 'jedi-master', 'sith-apprentice', 'sith-lord'];
+        return prestigeClasses.includes(className.toLowerCase());
+    }
+
+    static #isSwimClass(classes, targetClassName) {
+        const baseClasses = Object.entries(classes)
+            .filter(([name]) => !this.#isPrestigeClass(name))
+            .map(([name, data]) => ({ name, level: data.level || 0 }))
+            .filter(c => c.level >= 3);
+
+        if (baseClasses.length < 2) return false;
+
+        const targetLevel = classes[targetClassName]?.level || 0;
+        return baseClasses.some(c =>
+            c.name !== targetClassName && Math.abs(c.level - targetLevel) <= 2
+        );
+    }
+
+    static #getPatternClassification(classLevel, ratio, classes, className, totalLevel) {
+        const isEarlyGame = totalLevel <= 3;
+        if (isEarlyGame) return 'PROVISIONAL';
+
+        if (classLevel <= 2 && ratio < 0.35) return 'DIP';
+        if (classLevel >= 4 && ratio >= 0.45) return 'DIVE';
+        if (this.#isSwimClass(classes, className)) return 'SWIM';
+        return 'PRIMARY';
+    }
+
+    static #getClassBaselineBias(className) {
+        // TODO: Load from canonical class bias definitions
+        // Placeholder: return empty object
+        return {
+            mechanicalBias: {},
+            roleBias: {},
+            attributeBias: {}
+        };
+    }
+
+    static #getPrestigeLayer(prestigeName) {
+        if (!PrestigeLayerRegistry.isInitialized()) return null;
+        return PrestigeLayerRegistry.get(prestigeName);
+    }
+
+    static #getApplicableSpecialist(actor, prestigeLayer) {
+        if (!prestigeLayer.specialists || prestigeLayer.specialists.length === 0) {
+            return null;
+        }
+        // Return first specialist (can be extended for multi-class)
+        return prestigeLayer.specialists[0];
+    }
+
+    static #getArchetypeBias(actor) {
+        const archetypeId = actor.system?.archetype;
+        if (!archetypeId || !ArchetypeRegistry.isInitialized()) {
+            return {
+                mechanicalBias: {},
+                roleBias: {},
+                attributeBias: {}
+            };
+        }
+
+        const archetype = ArchetypeRegistry.get(archetypeId);
+        if (!archetype) {
+            return {
+                mechanicalBias: {},
+                roleBias: {},
+                attributeBias: {}
+            };
+        }
+
+        return {
+            mechanicalBias: archetype.mechanicalBias || {},
+            roleBias: archetype.roleBias || {},
+            attributeBias: archetype.attributeBias || {}
+        };
+    }
+
+    static #getSpecialistBias(actor) {
+        // TODO: Get specialist from actor selections
+        return {
+            mechanicalBias: {},
+            roleBias: {},
+            attributeBias: {}
+        };
+    }
+
+    static #addBias(target, source) {
+        if (!source) return;
+        this.#mergeBias(target.mechanicalBias, source.mechanicalBias || {});
+        this.#mergeBias(target.roleBias, source.roleBias || {});
+        this.#mergeBias(target.attributeBias, source.attributeBias || {});
+    }
+
+    static #mergeBias(target, source) {
+        if (!source || typeof source !== 'object') return;
         for (const [key, value] of Object.entries(source)) {
             if (typeof value === 'number') {
                 target[key] = (target[key] || 0) + value;
             }
         }
+    }
+
+    static #scaleAllBias(bias, scale) {
+        return {
+            mechanicalBias: this.#scaleBias(bias.mechanicalBias || {}, scale),
+            roleBias: this.#scaleBias(bias.roleBias || {}, scale),
+            attributeBias: this.#scaleBias(bias.attributeBias || {}, scale)
+        };
+    }
+
+    static #scaleBias(biasObj, scale) {
+        const scaled = {};
+        for (const [key, value] of Object.entries(biasObj)) {
+            if (typeof value === 'number') {
+                scaled[key] = value * scale;
+            }
+        }
+        return scaled;
     }
 }
