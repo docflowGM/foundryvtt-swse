@@ -15,6 +15,7 @@ import { registerVersionAdapter, validateSystemCompatibility } from "/systems/fo
 import { log } from "/systems/foundryvtt-swse/scripts/core/foundry-env.js";
 import { ArchetypeRegistry } from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry.js";
 import { PrestigeLayerRegistry } from "/systems/foundryvtt-swse/scripts/engine/prestige/prestige-layer-registry.js";
+import { IdentityEngine } from "/systems/foundryvtt-swse/scripts/engine/prestige/identity-engine.js";
 import { SuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngine.js";
 import { initializePrestigeSignals } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
 
@@ -36,7 +37,7 @@ export function initializePhase5() {
     // 3. Register schema validation tools
     registerSchemaValidation();
 
-    // 4. Initialize data-driven systems (Phase A, B, Phase 1 Remaining, Phase 3)
+    // 4. Initialize data-driven systems (Phase A, B, Phase 1 Remaining, Phase 2, Phase 3)
     Hooks.once('ready', async () => {
       try {
         // Initialize prestige signals eagerly (Phase 1 Remaining: Game Ready Hook)
@@ -52,6 +53,10 @@ export function initializePhase5() {
         await PrestigeLayerRegistry.initialize();
         const presStats = PrestigeLayerRegistry.getStats();
         log.info(`[${SYSTEM_ID}] PrestigeLayerRegistry initialized: ${presStats.count} prestige layers`);
+
+        // Initialize IdentityEngine registries (Phase 2: Core)
+        await IdentityEngine.initialize();
+        log.info(`[${SYSTEM_ID}] IdentityEngine registries initialized`);
 
         // Validate registries (Phase 1 Remaining: Registry Validation)
         const arcValidation = await ArchetypeRegistry.validateArchetypeReferences();

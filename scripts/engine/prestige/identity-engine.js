@@ -105,6 +105,74 @@ export class IdentityEngine {
     }
 
     /**
+     * Get complete identity for an actor at current build state
+     * Resolves base archetype, prestige amplifier, and specialist
+     * Returns transient identity (not persisted to actor)
+     * Pure async function: does not mutate actor
+     *
+     * @param {Object} actor - Foundry actor (read-only)
+     * @param {string} baseArchetypeId - Base archetype identifier
+     * @param {string} prestigeClassId - Prestige class identifier (or null)
+     * @param {number} specialistIndex - Specialist variant index (or null for first)
+     * @returns {Promise<Object>} Identity: { baseArchetype, amplifier, specialist, totalBias }
+     */
+    static async getActorIdentity(actor, baseArchetypeId, prestigeClassId = null, specialistIndex = null) {
+        const identity = {
+            baseArchetype: null,
+            amplifier: null,
+            specialist: null,
+            totalBias: null
+        };
+
+        if (!baseArchetypeId) {
+            SWSELogger.warn('[IdentityEngine.getActorIdentity] No baseArchetypeId provided');
+            return identity;
+        }
+
+        // Resolve base archetype
+        if (!ArchetypeRegistry.isInitialized()) {
+            SWSELogger.warn('[IdentityEngine.getActorIdentity] ArchetypeRegistry not initialized');
+            return identity;
+        }
+
+        identity.baseArchetype = ArchetypeRegistry.get(baseArchetypeId);
+        if (!identity.baseArchetype) {
+            SWSELogger.warn(`[IdentityEngine.getActorIdentity] Archetype not found: ${baseArchetypeId}`);
+            return identity;
+        }
+
+        // Resolve prestige amplifier if provided
+        if (prestigeClassId) {
+            if (!PrestigeLayerRegistry.isInitialized()) {
+                SWSELogger.warn('[IdentityEngine.getActorIdentity] PrestigeLayerRegistry not initialized');
+            } else {
+                const prestigeLayer = PrestigeLayerRegistry.get(prestigeClassId);
+                if (prestigeLayer) {
+                    identity.amplifier = prestigeLayer.amplifier || null;
+
+                    // Select specialist (first applicable for actor's classes)
+                    if (prestigeLayer.specialists && prestigeLayer.specialists.length > 0) {
+                        // Use specialistIndex if provided, otherwise default to first
+                        const idx = specialistIndex ?? 0;
+                        if (idx >= 0 && idx < prestigeLayer.specialists.length) {
+                            identity.specialist = prestigeLayer.specialists[idx];
+                        } else {
+                            identity.specialist = prestigeLayer.specialists[0];
+                        }
+                    }
+                } else {
+                    SWSELogger.warn(`[IdentityEngine.getActorIdentity] Prestige layer not found: ${prestigeClassId}`);
+                }
+            }
+        }
+
+        // Compute total bias
+        identity.totalBias = this.computeTotalBias(actor);
+
+        return identity;
+    }
+
+    /**
      * Compute ClassBias with pattern weighting (Dip/Dive/Swim)
      * Pure function
      *
