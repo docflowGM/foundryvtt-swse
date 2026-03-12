@@ -3031,9 +3031,16 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       planetOfOrigin: this.characterData.background && this.characterData.background.category === 'planet' ? this.characterData.background.name : '',
       // Progression structure for level-up system
       progression: progression,
-      // Mentor system data for suggestion engine
+      // Mentor system data for IdentityEngine bias layer
       swse: {
-        mentorBuildIntentBiases: this.characterData.mentorBiases || {},
+        // Survey bias is stored in IdentityEngine.layers.surveyBias format
+        surveyBias: this.characterData.mentorBiases || {
+          mechanicalBias: {},
+          roleBias: {},
+          attributeBias: {}
+        },
+        // Legacy field: kept for backward compatibility with old code reading mentorBuildIntentBiases
+        mentorBuildIntentBiases: this.characterData.mentorBiases?.mechanicalBias ? {} : (this.characterData.mentorBiases || {}),
         mentorSurveyCompleted: this.characterData.mentorSurveyCompleted || false
       }
     };

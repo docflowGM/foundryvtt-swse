@@ -931,74 +931,30 @@ export class BuildIntent {
     }
 
     /**
-     * Apply mentor survey biases to theme scores
-     * Mentor biases provide soft influence based on player intent questionnaire
+     * [DEPRECATED] Apply mentor survey biases to theme scores
+     *
+     * DEPRECATED: Survey bias is now handled exclusively by IdentityEngine.
+     * This method exists only for backward compatibility and will log a deprecation warning.
+     * All survey influence now flows through:
+     *   1. MentorSurvey.convertSurveyAnswersToBias() - converts survey to bias layers
+     *   2. IdentityEngine.injectSurveyBias() - injects bias into identity layer
+     *   3. IdentityEngine.computeTotalBias() - aggregates all layers including survey
+     *
+     * BuildIntent no longer modifies bias. It only reads identity for analysis.
+     *
+     * @deprecated Use IdentityEngine.injectSurveyBias() instead
      * @private
-     * @param {Actor} actor - The actor being analyzed
-     * @param {Object} intent - The build intent object to update
-     * @param {Object} pendingData - Pending selections (may contain mentorBiases during chargen)
+     * @param {Actor} actor - The actor being analyzed (unused)
+     * @param {Object} intent - The build intent object (not modified)
+     * @param {Object} pendingData - Pending selections (unused)
      */
     static _applyMentorBiases(actor, intent, pendingData = {}) {
-        SWSELogger.log(`[BUILD-INTENT] _applyMentorBiases() START - Actor: ${actor.id} (${actor.name})`);
-
-        // Try to get biases from actor first, then fall back to pendingData (for chargen flow)
-        let mentorBiases = actor.system?.swse?.mentorBuildIntentBiases || {};
-        SWSELogger.log(`[BUILD-INTENT] _applyMentorBiases() - Retrieved actor biases:`, mentorBiases);
-
-        // Fallback to pendingData.mentorBiases if actor doesn't have biases (chargen scenario)
-        if ((!mentorBiases || Object.keys(mentorBiases).length === 0) && pendingData?.mentorBiases) {
-            mentorBiases = pendingData.mentorBiases;
-            SWSELogger.log(`[BUILD-INTENT] _applyMentorBiases() - Using pendingData.mentorBiases fallback:`, mentorBiases);
-        }
-
-        if (!mentorBiases || Object.keys(mentorBiases).length === 0) {
-            SWSELogger.log(`[BUILD-INTENT] _applyMentorBiases() - No mentor biases to apply`);
-            return; // No mentor biases to apply
-        }
-
-        // Map bias keys to theme keys
-        const biasToThemeMap = {
-            forceFocus: BUILD_THEMES.FORCE,
-            combatStyle: null, // Handled separately
-            melee: BUILD_THEMES.MELEE,
-            ranged: BUILD_THEMES.RANGED,
-            stealth: BUILD_THEMES.STEALTH,
-            social: BUILD_THEMES.SOCIAL,
-            tech: BUILD_THEMES.TECH,
-            leadership: BUILD_THEMES.LEADERSHIP,
-            awareness: null, // Handled as a signal
-            mobility: null, // Handled as a signal
-            survival: BUILD_THEMES.EXPLORATION,
-            control: null, // Influences prestige
-            damage: null, // Influences feat selection
-            survivability: null, // Influences survivability focus
-            utility: null, // Influences skill/versatility
-            support: BUILD_THEMES.SUPPORT,
-            specialization: null, // Meta-preference
-            generalist: null, // Meta-preference
-            balance: null, // Meta-preference
-            order: null, // Meta-preference
-            pragmatic: null, // Meta-preference
-            riskTolerance: null, // Meta-preference
-            authority: null // Meta-preference
-        };
-
-        // Apply biases to themes with small weight (0.05x multiplier)
-        SWSELogger.log(`[BUILD-INTENT] _applyMentorBiases() - Processing ${Object.keys(mentorBiases).length} bias entries`);
-        for (const [biasKey, biasValue] of Object.entries(mentorBiases)) {
-            const themeKey = biasToThemeMap[biasKey];
-            SWSELogger.log(`[BUILD-INTENT] _applyMentorBiases() - Bias key: "${biasKey}", value: ${biasValue}, maps to theme: "${themeKey}"`);
-            if (themeKey && biasValue > 0) {
-                // Apply bias with light weighting (don't let survey override actual choices)
-                const biasContribution = biasValue * 0.05;
-                intent.themes[themeKey] = (intent.themes[themeKey] || 0) + biasContribution;
-                SWSELogger.log(`[BUILD-INTENT] _applyMentorBiases() - Applied bias to theme "${themeKey}": +${biasContribution}, new score: ${intent.themes[themeKey]}`);
-            }
-        }
-
-        // Store mentor biases in intent for reference
-        intent.mentorBiases = mentorBiases;
-        SWSELogger.log(`[BUILD-INTENT] _applyMentorBiases() COMPLETE - Final themes after bias:`, intent.themes);
+        SWSELogger.warn(
+            `[BUILD-INTENT] _applyMentorBiases() DEPRECATED - ` +
+            `Survey bias is now injected via IdentityEngine.injectSurveyBias(). ` +
+            `This method no longer does anything.`
+        );
+        // DEPRECATED: Do nothing. Survey authority has moved to IdentityEngine.
     }
 }
 
