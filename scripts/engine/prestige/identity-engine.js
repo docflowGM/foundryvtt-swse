@@ -81,8 +81,16 @@ export class IdentityEngine {
             attributeBias: {}
         };
 
-        const totalLevel = actor.system?.details?.level || 1;
         const classes = actor.system?.classes || {};
+
+        // Calculate totalLevel from BASE CLASSES ONLY (exclude prestige)
+        let totalLevel = 0;
+        for (const [className, classData] of Object.entries(classes)) {
+            if (!this.#isPrestigeClass(className)) {
+                totalLevel += classData.level || 0;
+            }
+        }
+        totalLevel = Math.max(1, totalLevel); // Prevent divide-by-zero
 
         // Early game override (totalLevel <= 3)
         const isEarlyGame = totalLevel <= 3;
@@ -203,7 +211,16 @@ export class IdentityEngine {
             return surveyBias;
         }
 
-        const totalLevel = actor.system?.details?.level || 1;
+        // Calculate totalLevel from BASE CLASSES ONLY (exclude prestige)
+        const classes = actor.system?.classes || {};
+        let totalLevel = 0;
+        for (const [className, classData] of Object.entries(classes)) {
+            if (!this.#isPrestigeClass(className)) {
+                totalLevel += classData.level || 0;
+            }
+        }
+        totalLevel = Math.max(1, totalLevel);
+
         const surveyWeight = Math.max(0.25, 1 - (totalLevel / 20));
 
         return this.#scaleAllBias(rawSurveyBias, surveyWeight);
@@ -255,11 +272,22 @@ export class IdentityEngine {
      * @param {Object} actor - Foundry actor
      */
     static printDebug(actor) {
-        const totalLevel = actor.system?.details?.level || 1;
         const classes = actor.system?.classes || {};
 
+        // Calculate totalLevel from base classes only
+        let totalLevel = 0;
+        for (const [className, classData] of Object.entries(classes)) {
+            if (!this.#isPrestigeClass(className)) {
+                totalLevel += classData.level || 0;
+            }
+        }
+        totalLevel = Math.max(1, totalLevel);
+
+        const allLevel = actor.system?.details?.level || 1;
+        const isEarlyGame = totalLevel <= 3;
+
         SWSELogger.info("[SWSE.debug.identity] === Identity Debug ===");
-        SWSELogger.info(`Actor: ${actor.name} (Level ${totalLevel})`);
+        SWSELogger.info(`Actor: ${actor.name} (Total L${allLevel}, Base Classes L${totalLevel})`);
 
         // Class patterns
         SWSELogger.info("--- Class Patterns ---");
@@ -269,7 +297,24 @@ export class IdentityEngine {
             const classLevel = classData.level || 0;
             const ratio = totalLevel > 0 ? classLevel / totalLevel : 0;
             const pattern = this.#getPatternClassification(classLevel, ratio, classes, className, totalLevel);
-            SWSELogger.info(`  ${className}: L${classLevel} (${(ratio * 100).toFixed(1)}%) → ${pattern}`);
+
+            // Calculate actual weight used
+            let weight = 0;
+            if (isEarlyGame) {
+                weight = ratio * 0.5;
+            } else {
+                if (classLevel <= 2 && ratio < 0.35) {
+                    weight = 0.15;
+                } else if (classLevel >= 4 && ratio >= 0.45) {
+                    weight = 0.75;
+                } else if (this.#isSwimClass(classes, className)) {
+                    weight = 0.45;
+                } else {
+                    weight = ratio;
+                }
+            }
+
+            SWSELogger.info(`  ${className}: L${classLevel} (${(ratio * 100).toFixed(1)}%) → ${pattern} [weight: ${weight.toFixed(3)}]`);
         }
 
         // Prestige stacking
