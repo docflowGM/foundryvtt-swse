@@ -1,0 +1,248 @@
+{
+  "_meta": {
+    "description": "Complete metadata assignments for Soldier, Scoundrel, Scout, Noble base classes",
+    "version": "1.0",
+    "total_items": 90,
+    "classes": ["soldier", "scoundrel", "scout", "noble"]
+  },
+  "soldier": {
+    "heavy_weapons_specialist": {
+      "talents": [
+        { "name": "Autofire Assault", "playstyle": "ranged", "tier": 1 },
+        { "name": "Devastating Attack", "playstyle": "ranged", "tier": 1 },
+        { "name": "Penetrating Attack", "playstyle": "ranged", "tier": 2 }
+      ],
+      "feats": [
+        { "name": "Burst Fire", "playstyle": "ranged", "tier": 0 },
+        { "name": "Autofire Sweep", "playstyle": "ranged", "tier": 1 },
+        { "name": "Weapon Focus (Heavy Weapons)", "playstyle": "ranged", "tier": 0 },
+        { "name": "Weapon Specialization (Heavy Weapons)", "playstyle": "ranged", "tier": 1 }
+      ]
+    },
+    "armored_shock_trooper": {
+      "talents": [
+        { "name": "Armor Specialist", "playstyle": "defense", "tier": 1 },
+        { "name": "Improved Damage Reduction", "playstyle": "defense", "tier": 2 },
+        { "name": "Melee Smash", "playstyle": "melee", "tier": 1 }
+      ],
+      "feats": [
+        { "name": "Armor Proficiency (Heavy)", "playstyle": "defense", "tier": 0 },
+        { "name": "Power Attack", "playstyle": "melee", "tier": 1 },
+        { "name": "Toughness", "playstyle": "defense", "tier": 0 },
+        { "name": "Weapon Focus (Advanced Melee)", "playstyle": "melee", "tier": 0 }
+      ]
+    },
+    "precision_rifleman": {
+      "talents": [
+        { "name": "Devastating Attack", "playstyle": "ranged", "tier": 1 },
+        { "name": "Deadeye", "playstyle": "ranged", "tier": 1 },
+        { "name": "Weapon Specialization", "playstyle": "ranged", "tier": 1 }
+      ],
+      "feats": [
+        { "name": "Weapon Focus (Rifles)", "playstyle": "ranged", "tier": 0 },
+        { "name": "Improved Critical (Rifles)", "playstyle": "ranged", "tier": 1 },
+        { "name": "Careful Shot", "playstyle": "ranged", "tier": 1 }
+      ]
+    },
+    "close_quarters_breacher": {
+      "talents": [
+        { "name": "Devastating Attack", "playstyle": "melee", "tier": 1 },
+        { "name": "Melee Smash", "playstyle": "melee", "tier": 1 },
+        { "name": "Assault Tactics", "playstyle": "melee", "tier": 2 }
+      ],
+      "feats": [
+        { "name": "Point Blank Shot", "playstyle": "melee", "tier": 0 },
+        { "name": "Rapid Shot", "playstyle": "melee", "tier": 1 },
+        { "name": "Weapon Focus (Rifles)", "playstyle": "melee", "tier": 0 }
+      ]
+    },
+    "battlefield_enforcer": {
+      "talents": [
+        { "name": "Devastating Attack", "playstyle": "melee", "tier": 1 },
+        { "name": "Penetrating Attack", "playstyle": "control", "tier": 2 },
+        { "name": "Improved Suppression", "playstyle": "control", "tier": 2 }
+      ],
+      "feats": [
+        { "name": "Power Attack", "playstyle": "melee", "tier": 1 },
+        { "name": "Weapon Focus (Advanced Melee)", "playstyle": "melee", "tier": 0 },
+        { "name": "Improved Trip", "playstyle": "control", "tier": 1 }
+      ]
+    }
+  },
+  "scoundrel": {
+    "opportunistic_precision_striker": {
+      "talents": [
+        { "name": "Sneak Attack", "playstyle": "ranged", "tier": 0 },
+        { "name": "Dastardly Strike", "playstyle": "ranged", "tier": 1 },
+        { "name": "Hidden Movement", "playstyle": "ranged", "tier": 1 }
+      ],
+      "feats": [
+        { "name": "Point Blank Shot", "playstyle": "ranged", "tier": 0 },
+        { "name": "Precise Shot", "playstyle": "ranged", "tier": 1 },
+        { "name": "Improved Critical (Pistols)", "playstyle": "ranged", "tier": 1 }
+      ]
+    },
+    "debilitating_trickster": {
+      "talents": [
+        { "name": "Dastardly Strike", "playstyle": "control", "tier": 1 },
+        { "name": "Sneak Attack", "playstyle": "ranged", "tier": 0 },
+        { "name": "Improved Feint", "playstyle": "control", "tier": 2 }
+      ],
+      "feats": [
+        { "name": "Skill Focus (Deception)", "playstyle": "support", "tier": 0 },
+        { "name": "Weapon Focus (Pistols)", "playstyle": "ranged", "tier": 0 }
+      ]
+    },
+    "gunslinger_duelist": {
+      "talents": [
+        { "name": "Deadeye", "playstyle": "ranged", "tier": 1 },
+        { "name": "Sneak Attack", "playstyle": "ranged", "tier": 0 },
+        { "name": "Lucky Shot", "playstyle": "ranged", "tier": 1 }
+      ],
+      "feats": [
+        { "name": "Weapon Focus (Pistols)", "playstyle": "ranged", "tier": 0 },
+        { "name": "Improved Critical (Pistols)", "playstyle": "ranged", "tier": 1 },
+        { "name": "Rapid Shot", "playstyle": "ranged", "tier": 1 }
+      ]
+    },
+    "social_manipulator": {
+      "talents": [
+        { "name": "Skilled Advisor", "playstyle": "support", "tier": 0 },
+        { "name": "Connections", "playstyle": "utility", "tier": 1 },
+        { "name": "Trustworthy", "playstyle": "support", "tier": 1 }
+      ],
+      "feats": [
+        { "name": "Skill Focus (Persuasion)", "playstyle": "support", "tier": 0 },
+        { "name": "Skill Focus (Deception)", "playstyle": "support", "tier": 0 }
+      ]
+    },
+    "saboteur_technician": {
+      "talents": [
+        { "name": "Tech Specialist", "playstyle": "utility", "tier": 1 },
+        { "name": "Sabotage", "playstyle": "utility", "tier": 2 },
+        { "name": "Skilled Advisor", "playstyle": "utility", "tier": 0 }
+      ],
+      "feats": [
+        { "name": "Skill Focus (Mechanics)", "playstyle": "utility", "tier": 0 },
+        { "name": "Gearhead", "playstyle": "utility", "tier": 1 }
+      ]
+    }
+  },
+  "scout": {
+    "mobile_skirmisher": {
+      "talents": [
+        { "name": "Skirmisher", "playstyle": "melee", "tier": 0 },
+        { "name": "Evasion", "playstyle": "defense", "tier": 1 },
+        { "name": "Improved Initiative", "playstyle": "utility", "tier": 0 }
+      ],
+      "feats": [
+        { "name": "Running Attack", "playstyle": "melee", "tier": 1 },
+        { "name": "Point Blank Shot", "playstyle": "ranged", "tier": 0 },
+        { "name": "Weapon Focus (Rifles)", "playstyle": "ranged", "tier": 0 }
+      ]
+    },
+    "wilderness_survivalist": {
+      "talents": [
+        { "name": "Acute Senses", "playstyle": "utility", "tier": 0 },
+        { "name": "Improved Initiative", "playstyle": "utility", "tier": 0 },
+        { "name": "Evasion", "playstyle": "defense", "tier": 1 }
+      ],
+      "feats": [
+        { "name": "Skill Focus (Survival)", "playstyle": "utility", "tier": 0 },
+        { "name": "Skill Focus (Perception)", "playstyle": "utility", "tier": 0 }
+      ]
+    },
+    "recon_sniper": {
+      "talents": [
+        { "name": "Skirmisher", "playstyle": "melee", "tier": 0 },
+        { "name": "Acute Senses", "playstyle": "utility", "tier": 0 },
+        { "name": "Improved Stealth", "playstyle": "utility", "tier": 1 }
+      ],
+      "feats": [
+        { "name": "Weapon Focus (Rifles)", "playstyle": "ranged", "tier": 0 },
+        { "name": "Improved Critical (Rifles)", "playstyle": "ranged", "tier": 1 },
+        { "name": "Careful Shot", "playstyle": "ranged", "tier": 1 }
+      ]
+    },
+    "condition_harrier": {
+      "talents": [
+        { "name": "Skirmisher", "playstyle": "melee", "tier": 0 },
+        { "name": "Improved Initiative", "playstyle": "utility", "tier": 0 },
+        { "name": "Evasion", "playstyle": "defense", "tier": 1 }
+      ],
+      "feats": [
+        { "name": "Running Attack", "playstyle": "melee", "tier": 1 },
+        { "name": "Weapon Focus (Rifles)", "playstyle": "ranged", "tier": 0 },
+        { "name": "Rapid Shot", "playstyle": "ranged", "tier": 1 }
+      ]
+    },
+    "pilot_operative": {
+      "talents": [
+        { "name": "Evasion", "playstyle": "defense", "tier": 1 },
+        { "name": "Improved Initiative", "playstyle": "utility", "tier": 0 },
+        { "name": "Vehicular Combat", "playstyle": "utility", "tier": 1 }
+      ],
+      "feats": [
+        { "name": "Skill Focus (Pilot)", "playstyle": "utility", "tier": 0 },
+        { "name": "Vehicular Combat", "playstyle": "utility", "tier": 1 }
+      ]
+    }
+  },
+  "noble": {
+    "battlefield_commander": {
+      "talents": [
+        { "name": "Inspire Confidence", "playstyle": "support", "tier": 0 },
+        { "name": "Coordinate", "playstyle": "support", "tier": 1 },
+        { "name": "Rally", "playstyle": "support", "tier": 1 }
+      ],
+      "feats": [
+        { "name": "Skill Focus (Persuasion)", "playstyle": "support", "tier": 0 },
+        { "name": "Improved Initiative", "playstyle": "utility", "tier": 0 }
+      ]
+    },
+    "master_orator": {
+      "talents": [
+        { "name": "Demand Surrender", "playstyle": "support", "tier": 2 },
+        { "name": "Inspire Confidence", "playstyle": "support", "tier": 0 },
+        { "name": "Trustworthy", "playstyle": "support", "tier": 1 }
+      ],
+      "feats": [
+        { "name": "Skill Focus (Persuasion)", "playstyle": "support", "tier": 0 },
+        { "name": "Skill Focus (Deception)", "playstyle": "support", "tier": 0 }
+      ]
+    },
+    "tactical_coordinator": {
+      "talents": [
+        { "name": "Coordinate", "playstyle": "support", "tier": 1 },
+        { "name": "Born Leader", "playstyle": "support", "tier": 1 },
+        { "name": "Inspire Confidence", "playstyle": "support", "tier": 0 }
+      ],
+      "feats": [
+        { "name": "Improved Initiative", "playstyle": "utility", "tier": 0 },
+        { "name": "Skill Focus (Persuasion)", "playstyle": "support", "tier": 0 }
+      ]
+    },
+    "political_strategist": {
+      "talents": [
+        { "name": "Connections", "playstyle": "utility", "tier": 1 },
+        { "name": "Resource Access", "playstyle": "utility", "tier": 2 },
+        { "name": "Trustworthy", "playstyle": "support", "tier": 1 }
+      ],
+      "feats": [
+        { "name": "Skill Focus (Gather Information)", "playstyle": "utility", "tier": 0 },
+        { "name": "Skill Focus (Knowledge)", "playstyle": "utility", "tier": 0 }
+      ]
+    },
+    "inspirational_supporter": {
+      "talents": [
+        { "name": "Inspire Confidence", "playstyle": "support", "tier": 0 },
+        { "name": "Rally", "playstyle": "support", "tier": 1 },
+        { "name": "Bolster Ally", "playstyle": "support", "tier": 1 }
+      ],
+      "feats": [
+        { "name": "Skill Focus (Persuasion)", "playstyle": "support", "tier": 0 },
+        { "name": "Improved Defenses", "playstyle": "defense", "tier": 1 }
+      ]
+    }
+  }
+}
