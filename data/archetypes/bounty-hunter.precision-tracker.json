@@ -7,21 +7,23 @@
   "secondaryTags": ["striker", "stealth", "positioning"],
   "avoidTags": ["burst-damage", "melee", "heavy-weapons"],
   "mechanicalBias": {
-    "striker": 0.4,
-    "scout": 0.3,
-    "precision": 0.3
+    "accuracy": 0.3,
+    "trackingMastery": 0.3,
+    "predatoryInstinct": 0.4
   },
   "roleBias": {
+    "striker": 0.4,
+    "scout": 0.3,
     "offense": 1.1,
     "defense": 0.9,
     "support": 0.6,
     "utility": 1.1
   },
   "attributeBias": {
-    "DEX": 0.35,
-    "WIS": 0.3,
-    "INT": 0.2,
-    "STR": 0.15
+    "dex": 0.35,
+    "wis": 0.3,
+    "int": 0.2,
+    "str": 0.15
   },
   "talentKeywords": ["Tracker", "Sniper", "Perception", "Ambush"],
   "featKeywords": ["Weapon Focus (Ranged)", "Point-Blank Shot", "Precise Shot"],

@@ -7,21 +7,22 @@
   "secondaryTags": ["force", "positioning", "controller"],
   "avoidTags": ["evasion", "support", "light-side"],
   "mechanicalBias": {
-    "force_offense": 0.5,
-    "striker": 0.3,
-    "dark_side": 0.2
+    "forceSecret": 0.5,
+    "burstDamage": 0.3,
+    "darkSideAffinity": 0.2
   },
   "roleBias": {
+    "striker": 0.3,
     "offense": 1.4,
     "defense": 0.8,
     "support": 0.5,
     "utility": 0.7
   },
   "attributeBias": {
-    "CHA": 0.3,
-    "STR": 0.3,
-    "CON": 0.2,
-    "WIS": 0.1
+    "cha": 0.3,
+    "str": 0.3,
+    "con": 0.2,
+    "wis": 0.1
   },
   "talentKeywords": ["Force Rage", "Force Lightning", "Choke", "Dominate"],
   "featKeywords": ["Force Training", "Improved Force Training"],
