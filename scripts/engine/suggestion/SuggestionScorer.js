@@ -30,7 +30,8 @@ export function scoreSuggestion(candidate, characterSnapshot, archetype = {}, op
     abilitySynergy: 0,
     chainContinuation: 0,
     mentorBiasAlignment: 0,
-    lateGameScaling: 0
+    lateGameScaling: 0,
+    conditionalBonus: 0
   };
 
   let score = 0;
@@ -134,6 +135,19 @@ export function scoreSuggestion(candidate, characterSnapshot, archetype = {}, op
     }
   }
 
+  // ─────────────────────────────────────────────────────────────
+  // 8. SPECIES CONDITIONAL OPPORTUNITY BOOST (Chargen Only)
+  // ─────────────────────────────────────────────────────────────
+
+  const actor = options.actor;
+  if (actor && _isChargenContext(actor, options)) {
+    const conditionalBonus = _computeSpeciesConditionalBonus(candidate, actor);
+    if (conditionalBonus > 0) {
+      breakdown.conditionalBonus = conditionalBonus;
+      score += conditionalBonus;
+    }
+  }
+
   return {
     score,
     breakdown,
@@ -225,7 +239,116 @@ function _generateReasons(candidate, breakdown, archetype) {
     reasons.push(`Improves at higher levels, valuable for late-game`);
   }
 
+  if (breakdown.conditionalBonus > 0) {
+    reasons.push(`Unlocks a species conditional opportunity`);
+  }
+
   return reasons;
+}
+
+/**
+ * Check if current context is chargen (level 1 or explicit flag)
+ * @private
+ */
+function _isChargenContext(actor, options = {}) {
+  if (options.context === 'chargen') return true;
+  if (actor.system?.flags?.chargen === true) return true;
+  if (actor.system?.level === 1) return true;
+  return false;
+}
+
+/**
+ * Get unresolved species conditional rules
+ * @private
+ */
+function _getUnresolvedSpeciesConditionals(actor) {
+  const unresolved = [];
+  const species = actor.system?.species;
+
+  if (!species) return unresolved;
+
+  const bonusFeats = species.bonusFeats || [];
+  const selectedFeats = (actor.system?.selectedFeats || []).map(f =>
+    typeof f === 'string' ? f : f.id
+  );
+  const trainedSkills = (actor.system?.skills || {});
+
+  for (const bonusFeat of bonusFeats) {
+    const rules = bonusFeat.rules || [];
+
+    for (const rule of rules) {
+      if (rule.type === 'featGrant' && rule.when) {
+        // Check if condition is already satisfied
+        const isSatisfied = _isConditionalSatisfied(rule.when, selectedFeats, trainedSkills);
+        if (!isSatisfied) {
+          unresolved.push(rule);
+        }
+      }
+    }
+  }
+
+  return unresolved;
+}
+
+/**
+ * Check if a conditional rule is already satisfied
+ * @private
+ */
+function _isConditionalSatisfied(whenCondition, selectedFeats, trainedSkills) {
+  if (whenCondition.type === 'skillTrained') {
+    const skillId = whenCondition.skillId;
+    return trainedSkills[skillId]?.trained === true;
+  }
+
+  if (whenCondition.type === 'featTaken') {
+    const featId = whenCondition.featId;
+    return selectedFeats.includes(featId);
+  }
+
+  return false;
+}
+
+/**
+ * Check if an option resolves an unresolved conditional
+ * @private
+ */
+function _doesOptionResolveConditional(candidate, rule) {
+  if (rule.when.type === 'skillTrained') {
+    // Check if candidate grants training in the required skill
+    const skillId = rule.when.skillId;
+    const grantedSkills = candidate.grantedSkills || [];
+    return grantedSkills.includes(skillId);
+  }
+
+  if (rule.when.type === 'featTaken') {
+    // Check if candidate IS the required feat
+    const featId = rule.when.featId;
+    return candidate.id === featId;
+  }
+
+  return false;
+}
+
+/**
+ * Compute species conditional opportunity bonus (chargen only)
+ * @private
+ */
+function _computeSpeciesConditionalBonus(candidate, actor) {
+  const unresolved = _getUnresolvedSpeciesConditionals(actor);
+
+  if (unresolved.length === 0) return 0;
+
+  let totalBonus = 0;
+  const baseBonus = 0.08;
+
+  for (const rule of unresolved) {
+    if (_doesOptionResolveConditional(candidate, rule)) {
+      totalBonus += baseBonus;
+    }
+  }
+
+  // Cap at 0.12 per contract
+  return Math.min(totalBonus, 0.12);
 }
 
 /**
