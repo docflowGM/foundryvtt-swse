@@ -227,8 +227,9 @@ export class IdentityEngine {
     }
 
     /**
-     * Compute ObservedBehaviorBias from feats, talents, ability increases, prestige selections
-     * Pure function
+     * Compute ObservedBehaviorBias from actor primitives
+     * Uses PrimitiveBiasRegistry for deterministic mapping
+     * Pure function - does not mutate actor
      *
      * @param {Object} actor - Foundry actor
      * @returns {Object} ObservedBehaviorBias
@@ -240,9 +241,169 @@ export class IdentityEngine {
             attributeBias: {}
         };
 
-        // TODO: Implement feat/talent/ability/prestige analysis
-        // For now, return empty (can be extended with behavior scoring)
+        // Load mapping registries (would be loaded from files in real implementation)
+        // For now, return empty until registries are integrated
+        // TODO: Load primitive-bias-mapping.json and primitive-classification.json
+
+        // Iterate through actor items and process primitives
+        if (!actor.items || actor.items.length === 0) {
+            return behaviorBias;
+        }
+
+        // Process each item's rules/primitives
+        for (const item of actor.items) {
+            if (!item.system?.rules) {
+                continue;
+            }
+
+            const rules = Array.isArray(item.system.rules) ? item.system.rules : [];
+            for (const rule of rules) {
+                const primitive = this.#processPrimitive(rule, actor);
+                this.#addBias(behaviorBias, primitive);
+            }
+        }
+
         return behaviorBias;
+    }
+
+    /**
+     * Process a single primitive and map to bias
+     * Uses PrimitiveBiasRegistry for deterministic mapping
+     * Pure function
+     *
+     * @private
+     * @param {Object} rule - The primitive rule object
+     * @param {Object} actor - Foundry actor (for context only, not modified)
+     * @returns {Object} Mapped bias: { mechanicalBias, roleBias, attributeBias }
+     */
+    static #processPrimitive(rule, actor) {
+        const bias = {
+            mechanicalBias: {},
+            roleBias: {},
+            attributeBias: {}
+        };
+
+        if (!rule || !rule.type) {
+            return bias;
+        }
+
+        const ruleType = rule.type;
+
+        // Skip vehicle-only and mechanical-only primitives
+        if (this.#isVehicleOnly(ruleType) || this.#isMechanicalOnly(ruleType)) {
+            return bias;
+        }
+
+        // Get mapping for this primitive type
+        const mapping = this.#getPrimitiveMapping(ruleType, rule);
+        if (!mapping) {
+            return bias; // No mapping; skip
+        }
+
+        // Apply mapping to bias
+        if (mapping.mechanicalBias) {
+            this.#mergeBias(bias.mechanicalBias, mapping.mechanicalBias);
+        }
+        if (mapping.roleBias) {
+            this.#mergeBias(bias.roleBias, mapping.roleBias);
+        }
+        if (mapping.attributeBias) {
+            this.#mergeBias(bias.attributeBias, mapping.attributeBias);
+        }
+
+        // Apply conditional weighting if needed
+        if (!this.#isAlwaysActive(rule)) {
+            const weight = this.#getConditionalWeight(ruleType, rule);
+            bias = this.#scaleAllBias(bias, weight);
+        }
+
+        return bias;
+    }
+
+    /**
+     * Get bias mapping for primitive type and target
+     * Consults PrimitiveBiasRegistry
+     * Pure function
+     *
+     * @private
+     * @param {string} ruleType - The primitive type
+     * @param {Object} rule - The rule object with target/skillId/etc
+     * @returns {Object|null} Mapping object or null if not found
+     */
+    static #getPrimitiveMapping(ruleType, rule) {
+        // TODO: Load primitive-bias-mapping.json at startup
+        // For now, return null (will be integrated with registry loading)
+        // This is a placeholder for the actual mapping lookup
+        return null;
+    }
+
+    /**
+     * Check if primitive is vehicle-only
+     * Pure function
+     *
+     * @private
+     * @param {string} ruleType - The primitive type
+     * @returns {boolean}
+     */
+    static #isVehicleOnly(ruleType) {
+        const vehicleOnlyTypes = ['vehicleEvasion', 'shipCombatAction', 'vehicle'];
+        return vehicleOnlyTypes.includes(ruleType);
+    }
+
+    /**
+     * Check if primitive is mechanical-only (non-identity)
+     * Pure function
+     *
+     * @private
+     * @param {string} ruleType - The primitive type
+     * @returns {boolean}
+     */
+    static #isMechanicalOnly(ruleType) {
+        const mechanicalOnlyTypes = [
+            'IMMUNE_FEAR', 'IMMUNE_MIND_AFFECTING',
+            'breathing', 'size', 'movement', 'restriction', 'trade',
+            'skillSubstitution', 'negatesPenalty', 'keepDexBonus'
+        ];
+        return mechanicalOnlyTypes.includes(ruleType);
+    }
+
+    /**
+     * Check if primitive is always active
+     * Pure function
+     *
+     * @private
+     * @param {Object} rule - The rule object
+     * @returns {boolean}
+     */
+    static #isAlwaysActive(rule) {
+        if (!rule.when) return true;
+        return rule.when.type === 'always';
+    }
+
+    /**
+     * Get conditional weight factor for situational primitives
+     * Pure function
+     *
+     * @private
+     * @param {string} ruleType - The primitive type
+     * @param {Object} rule - The rule object
+     * @returns {number} Weight multiplier (0.5–1.0)
+     */
+    static #getConditionalWeight(ruleType, rule) {
+        // Highly situational: 0.5x
+        if (ruleType === 'meleeCultureBonus') return 0.5;
+        if (ruleType === 'concealment') return 0.5;
+
+        // Moderately situational: 0.7x
+        if (ruleType === 'reroll') return 0.7;
+        if (ruleType === 'evasion') return 0.75;
+
+        // Usually active: 1.0x
+        if (ruleType === 'fastHealing') return 1.0;
+        if (ruleType === 'damageReduction') return 1.0;
+
+        // Default: 0.7x for unknown conditionals
+        return 0.7;
     }
 
     /**
@@ -333,6 +494,41 @@ export class IdentityEngine {
                 SWSELogger.info(`  ${p.name}: L${p.level} (weight: ${weight})`);
             });
         }
+
+        // Observed Behavior Bias (from primitives)
+        const behaviorBias = this.computeObservedBehaviorBias(actor);
+        SWSELogger.info("--- ObservedBehaviorBias (from primitives) ---");
+
+        // Count primitives processed
+        let primitiveCount = 0;
+        let conditionalCount = 0;
+        let skippedCount = 0;
+        if (actor.items && actor.items.length > 0) {
+            for (const item of actor.items) {
+                if (item.system?.rules) {
+                    const rules = Array.isArray(item.system.rules) ? item.system.rules : [];
+                    for (const rule of rules) {
+                        if (rule.type) {
+                            if (this.#isMechanicalOnly(rule.type) || this.#isVehicleOnly(rule.type)) {
+                                skippedCount++;
+                            } else if (!this.#isAlwaysActive(rule)) {
+                                conditionalCount++;
+                                primitiveCount++;
+                            } else {
+                                primitiveCount++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        SWSELogger.info(`  Primitives processed: ${primitiveCount}`);
+        SWSELogger.info(`  Conditional primitives: ${conditionalCount}`);
+        SWSELogger.info(`  Skipped (mechanical-only): ${skippedCount}`);
+        SWSELogger.info(`  Mechanical: ${JSON.stringify(behaviorBias.mechanicalBias)}`);
+        SWSELogger.info(`  Role: ${JSON.stringify(behaviorBias.roleBias)}`);
+        SWSELogger.info(`  Attribute: ${JSON.stringify(behaviorBias.attributeBias)}`);
 
         // Total bias
         const totalBias = this.computeTotalBias(actor);

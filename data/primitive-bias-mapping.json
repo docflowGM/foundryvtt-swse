@@ -1,0 +1,406 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "purpose": "Map primitive signatures to canonical bias keys for IdentityEngine",
+    "maintenance": "Architecture Team",
+    "lastUpdated": "2026-03-12",
+    "enforcement": "IdentityEngine.computeObservedBehaviorBias() MUST use this registry exclusively",
+    "note": "This is the authoritative translation layer. Changes to primitives require updates here.",
+    "ssot": "Primitives remain SSOT. This layer only interprets them."
+  },
+
+  "skillModifier": {
+    "description": "Bonus to specific skill",
+    "mapping": {
+      "stealth": {
+        "mechanicalBias": { "stealthMastery": 0.3 }
+      },
+      "persuasion": {
+        "mechanicalBias": { "persuasionMastery": 0.25 }
+      },
+      "deception": {
+        "mechanicalBias": { "deceptionMastery": 0.25 }
+      },
+      "knowledgeGalacticLore": {
+        "mechanicalBias": { "knowledgeMastery": 0.2 }
+      },
+      "knowledgeLifeSciences": {
+        "mechanicalBias": { "knowledgeMastery": 0.2 }
+      },
+      "perception": {
+        "mechanicalBias": { "tacticalAwareness": 0.2 }
+      },
+      "survival": {
+        "mechanicalBias": { "survivalism": 0.25 }
+      },
+      "pilot": {
+        "mechanicalBias": { "pilotMastery": 0.3 }
+      },
+      "mechanics": {
+        "mechanicalBias": { "mechanicalMastery": 0.25 }
+      },
+      "gatherInfo": {
+        "mechanicalBias": { "informationControl": 0.25 }
+      },
+      "acrobatics": {
+        "mechanicalBias": { "evasion": 0.2 },
+        "roleBias": { "skirmisher": 0.1 }
+      },
+      "endurance": {
+        "mechanicalBias": { "combatStamina": 0.2 }
+      },
+      "initiative": {
+        "mechanicalBias": { "initiative": 0.25 }
+      },
+      "perform": {
+        "mechanicalBias": { "forceArtistry": 0.2 }
+      },
+      "useTheForce": {
+        "mechanicalBias": { "forceDC": 0.3 }
+      },
+      "default": {
+        "mechanicalBias": { "skillUtility": 0.15 }
+      }
+    }
+  },
+
+  "skillBonus": {
+    "description": "Generic skill bonus",
+    "mapping": {
+      "default": {
+        "mechanicalBias": { "skillUtility": 0.2 }
+      }
+    }
+  },
+
+  "skillTrained": {
+    "description": "Skill marked as trained",
+    "mapping": {
+      "default": {
+        "mechanicalBias": { "skillUtility": 0.1 }
+      }
+    }
+  },
+
+  "damageModifier": {
+    "description": "Bonus to specific damage type",
+    "mapping": {
+      "melee": {
+        "mechanicalBias": { "meleeDamage": 0.3 },
+        "roleBias": { "striker": 0.15 }
+      },
+      "ranged": {
+        "mechanicalBias": { "firepower": 0.3 },
+        "roleBias": { "striker": 0.15 }
+      },
+      "area": {
+        "mechanicalBias": { "areaDamage": 0.3 },
+        "roleBias": { "controller": 0.15 }
+      },
+      "default": {
+        "mechanicalBias": { "burstDamage": 0.2 }
+      }
+    }
+  },
+
+  "damageBonus": {
+    "description": "Generic damage bonus",
+    "mapping": {
+      "default": {
+        "mechanicalBias": { "singleTargetDamage": 0.2 }
+      }
+    }
+  },
+
+  "defenseModifier": {
+    "description": "Bonus to specific defense",
+    "mapping": {
+      "reflex": {
+        "mechanicalBias": { "evasion": 0.25 }
+      },
+      "fortitude": {
+        "mechanicalBias": { "damageReduction": 0.25 }
+      },
+      "will": {
+        "mechanicalBias": { "reactionDefense": 0.25 }
+      },
+      "default": {
+        "mechanicalBias": { "reactionDefense": 0.2 }
+      }
+    }
+  },
+
+  "defenseBonus": {
+    "description": "Generic defense bonus",
+    "mapping": {
+      "default": {
+        "mechanicalBias": { "reactionDefense": 0.15 }
+      }
+    }
+  },
+
+  "attackBonus": {
+    "description": "Bonus to attack rolls",
+    "mapping": {
+      "melee": {
+        "mechanicalBias": { "accuracy": 0.25 },
+        "roleBias": { "striker": 0.1 }
+      },
+      "ranged": {
+        "mechanicalBias": { "accuracy": 0.25 },
+        "roleBias": { "striker": 0.1 }
+      },
+      "all": {
+        "mechanicalBias": { "accuracy": 0.3 }
+      },
+      "default": {
+        "mechanicalBias": { "accuracy": 0.2 }
+      }
+    }
+  },
+
+  "attackPenaltyReduction": {
+    "description": "Reduces attack penalties",
+    "mapping": {
+      "default": {
+        "mechanicalBias": { "combatAdaptability": 0.2 }
+      }
+    }
+  },
+
+  "abilityScoreModifier": {
+    "description": "Modifier to ability score",
+    "mapping": {
+      "str": {
+        "attributeBias": { "str": 1 }
+      },
+      "dex": {
+        "attributeBias": { "dex": 1 }
+      },
+      "con": {
+        "attributeBias": { "con": 1 }
+      },
+      "int": {
+        "attributeBias": { "int": 1 }
+      },
+      "wis": {
+        "attributeBias": { "wis": 1 }
+      },
+      "cha": {
+        "attributeBias": { "cha": 1 }
+      }
+    }
+  },
+
+  "speedBonus": {
+    "description": "Bonus to movement speed",
+    "mapping": {
+      "low": {
+        "mechanicalBias": { "mobility": 0.1 },
+        "condition": "value < 5"
+      },
+      "medium": {
+        "mechanicalBias": { "mobility": 0.2 },
+        "roleBias": { "skirmisher": 0.1 },
+        "condition": "value >= 5 && value < 10"
+      },
+      "high": {
+        "mechanicalBias": { "mobility": 0.3 },
+        "roleBias": { "skirmisher": 0.2 },
+        "condition": "value >= 10"
+      }
+    }
+  },
+
+  "initiative": {
+    "description": "Bonus to initiative rolls",
+    "mapping": {
+      "default": {
+        "mechanicalBias": { "initiative": 0.2 }
+      }
+    }
+  },
+
+  "damageReduction": {
+    "description": "Reduction to incoming damage",
+    "mapping": {
+      "low": {
+        "mechanicalBias": { "damageReduction": 0.15 },
+        "condition": "value < 5"
+      },
+      "medium": {
+        "mechanicalBias": { "damageReduction": 0.3 },
+        "condition": "value >= 5 && value < 10"
+      },
+      "high": {
+        "mechanicalBias": { "damageReduction": 0.4 },
+        "condition": "value >= 10"
+      }
+    }
+  },
+
+  "counterattack": {
+    "description": "Grants counterattack ability",
+    "mapping": {
+      "default": {
+        "mechanicalBias": { "counterAttack": 0.3 },
+        "roleBias": { "defender": 0.15 }
+      }
+    }
+  },
+
+  "fastHealing": {
+    "description": "Fast healing per round",
+    "mapping": {
+      "low": {
+        "mechanicalBias": { "healingMastery": 0.2 },
+        "condition": "value < 5"
+      },
+      "medium": {
+        "mechanicalBias": { "combatStamina": 0.3 },
+        "roleBias": { "defender": 0.15 },
+        "condition": "value >= 5 && value < 10"
+      },
+      "high": {
+        "mechanicalBias": { "combatStamina": 0.4 },
+        "roleBias": { "defender": 0.2 },
+        "condition": "value >= 10"
+      }
+    }
+  },
+
+  "stealthBonus": {
+    "description": "Bonus to stealth rolls",
+    "mapping": {
+      "default": {
+        "mechanicalBias": { "stealthMastery": 0.25 },
+        "roleBias": { "scout": 0.1 }
+      }
+    }
+  },
+
+  "meleeCultureBonus": {
+    "description": "Culture-specific melee bonus (CONDITIONAL)",
+    "mapping": {
+      "default": {
+        "mechanicalBias": { "meleeDamage": 0.1 },
+        "condition": "only applies in specific culture",
+        "weight": 0.5
+      }
+    }
+  },
+
+  "reroll": {
+    "description": "Allows rerolling a check (CONDITIONAL)",
+    "mapping": {
+      "skillCheck": {
+        "mechanicalBias": { "adaptability": 0.15 },
+        "condition": "only triggers on failed check",
+        "weight": 0.7
+      },
+      "default": {
+        "mechanicalBias": { "resourcefulness": 0.15 },
+        "weight": 0.7
+      }
+    }
+  },
+
+  "featGrant": {
+    "description": "Grants a feat (STRUCTURAL ACCESS)",
+    "note": "Do NOT apply bias here. Recursively extract primitives from granted feat.",
+    "rule": "if primitive.type === 'featGrant': lookup feat by name; process its rules instead"
+  },
+
+  "featPattern": {
+    "description": "Pattern-based feat grant (STRUCTURAL ACCESS)",
+    "note": "Resolve all matching feats, extract their primitives",
+    "rule": "Resolve feat pattern, process all matching feats' primitives"
+  },
+
+  "talentFromTree": {
+    "description": "Grants talent from tree (STRUCTURAL ACCESS)",
+    "note": "Resolve talent, extract its primitives",
+    "rule": "Lookup talent by ID, process its rules"
+  },
+
+  "naturalWeapon": {
+    "description": "Grants natural weapon (STRUCTURAL ACCESS)",
+    "mapping": {
+      "default": {
+        "mechanicalBias": { "meleeDamage": 0.3 },
+        "roleBias": { "striker": 0.2, "bruiser": 0.1 }
+      }
+    }
+  },
+
+  "grantItem": {
+    "description": "Grants item/equipment (STRUCTURAL ACCESS)",
+    "note": "Lookup item, extract its primitives (if any)",
+    "rule": "Resolve item by ID, process its rules"
+  },
+
+  "sense": {
+    "description": "Grants special sense (STRUCTURAL ACCESS)",
+    "mapping": {
+      "darkvision": {
+        "mechanicalBias": { "tacticalAwareness": 0.2 }
+      },
+      "blindsense": {
+        "mechanicalBias": { "tacticalAwareness": 0.25 }
+      },
+      "tremorsense": {
+        "mechanicalBias": { "perception": 0.2 }
+      },
+      "default": {
+        "mechanicalBias": { "tacticalAwareness": 0.15 }
+      }
+    }
+  },
+
+  "immunity": {
+    "description": "Grants immunity (STRUCTURAL ACCESS)",
+    "mapping": {
+      "fear": {
+        "mechanicalBias": { "moraleImpact": 0.2 }
+      },
+      "mindAffecting": {
+        "mechanicalBias": { "reactionDefense": 0.25 }
+      },
+      "disease": {
+        "mechanicalBias": { "combatStamina": 0.15 }
+      },
+      "poison": {
+        "mechanicalBias": { "combatStamina": 0.15 }
+      },
+      "default": {
+        "mechanicalBias": { "damageReduction": 0.15 }
+      }
+    }
+  },
+
+  "proficiency": {
+    "description": "Grants weapon/armor proficiency (STRUCTURAL ACCESS)",
+    "mapping": {
+      "weaponProficiency": {
+        "mechanicalBias": { "weaponMastery": 0.2 }
+      },
+      "armorProficiency": {
+        "mechanicalBias": { "armorMastery": 0.15 }
+      },
+      "default": {
+        "mechanicalBias": { "weaponMastery": 0.15 }
+      }
+    }
+  },
+
+  "implementation_notes": {
+    "note_1": "All mappings are additive. Never subtract or override.",
+    "note_2": "CONDITIONAL primitives apply weight factor (0.5–1.0). Apply weight multiplier to mechanicalBias values.",
+    "note_3": "STRUCTURAL_ACCESS primitives require secondary lookup. Do NOT apply mapping here; extract primitive instead.",
+    "note_4": "attributeBias values use ability score deltas (e.g., 1 = +1 to ability).",
+    "note_5": "All mechanical bias values should be 0.1–0.5 range for proportional contribution.",
+    "note_6": "Role bias contributions should be 0.1–0.25 for subsidiary roles.",
+    "note_7": "If primitive has multiple bonuses (e.g., +2 to melee, +1 morale), apply all applicable mappings.",
+    "note_8": "Never use feat name or tag to infer bias. Use only primitive type and target fields."
+  }
+}
