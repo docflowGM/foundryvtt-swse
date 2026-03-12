@@ -18,6 +18,8 @@ import { ArchetypeRegistry } from "/systems/foundryvtt-swse/scripts/engine/arche
 import { PrestigeLayerRegistry } from "/systems/foundryvtt-swse/scripts/engine/prestige/prestige-layer-registry.js";
 import { IdentityEngine } from "/systems/foundryvtt-swse/scripts/engine/prestige/identity-engine.js";
 import { BiasTagProjection } from "/systems/foundryvtt-swse/scripts/engine/prestige/bias-tag-projection.js";
+import { BuildThemeProjection } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildThemeProjection.js";
+import { PrestigeAffinityEngine, initializePrestigeSignals } from "/systems/foundryvtt-swse/scripts/engine/suggestion/PrestigeAffinityEngine.js";
 
 // ──────────────────────────────────────────────────────────────
 // PRESTIGE SIGNALS LOADER
@@ -30,7 +32,7 @@ let PRESTIGE_SIGNALS = {};
  * Initialize prestige signals from /data/prestige-signals.json
  * Called once at module load
  */
-export async function initializePrestigeSignals() {
+export async function initializePrestigeSignalsData() {
     try {
         const response = await fetch('/systems/foundryvtt-swse/data/prestige-signals.json');
         if (!response.ok) {
@@ -39,9 +41,13 @@ export async function initializePrestigeSignals() {
         const data = await response.json();
         PRESTIGE_SIGNALS = data.signals || {};
         SWSELogger.log(`[BuildIntent] Loaded ${Object.keys(PRESTIGE_SIGNALS).length} prestige class signals from data file`);
+
+        // Also initialize PrestigeAffinityEngine with signals
+        initializePrestigeSignals(PRESTIGE_SIGNALS);
     } catch (err) {
         SWSELogger.error('[BuildIntent] Failed to load prestige signals from data file:', err);
         PRESTIGE_SIGNALS = {}; // Fall back to empty, signals will be sourced from registry only
+        initializePrestigeSignals({});
     }
 }
 
@@ -184,25 +190,19 @@ export class BuildIntent {
             SWSELogger.log(`[BUILD-INTENT] analyze() - Character uses template: ${appliedTemplate.name} (${appliedTemplate.archetype})`);
         }
 
-        // Analyze themes from feats
-        SWSELogger.log(`[BUILD-INTENT] analyze() - Analyzing ${state.ownedFeats.size} feats`);
-        this._analyzeFeats(state, intent);
+        // Analyze themes using BuildThemeProjection
+        SWSELogger.log(`[BUILD-INTENT] analyze() - Delegating theme analysis to BuildThemeProjection`);
+        const themeData = BuildThemeProjection.analyzeSignals(state);
+        intent.themes = themeData.themes;
+        intent.primaryThemes = themeData.primaryThemes;
+        intent.combatStyle = themeData.combatStyle;
+        intent.signals = themeData.signals;
 
-        // Analyze themes from talents
-        SWSELogger.log(`[BUILD-INTENT] analyze() - Analyzing ${state.ownedTalents.size} talents`);
-        this._analyzeTalents(state, intent);
-
-        // Analyze themes from skills
-        SWSELogger.log(`[BUILD-INTENT] analyze() - Analyzing ${state.trainedSkills.size} skills`);
-        this._analyzeSkills(state, intent);
-
-        // Analyze themes from classes
-        SWSELogger.log(`[BUILD-INTENT] analyze() - Analyzing ${Object.keys(state.classes).length} classes`);
-        this._analyzeClasses(state, intent);
-
-        // Calculate prestige affinities
-        SWSELogger.log(`[BUILD-INTENT] analyze() - Calculating prestige affinities`);
-        await this._calculatePrestigeAffinities(state, intent);
+        // Calculate prestige affinities using PrestigeAffinityEngine
+        SWSELogger.log(`[BUILD-INTENT] analyze() - Delegating prestige analysis to PrestigeAffinityEngine`);
+        const prestigeData = await PrestigeAffinityEngine.analyzePrestigeTargets(state, intent);
+        intent.prestigeAffinities = prestigeData.prestigeAffinities;
+        intent.priorityPrereqs = prestigeData.priorityPrereqs;
 
         // PHASE 2 SHIFT: Identity computation moved to IdentityEngine
         // BuildIntent no longer computes or owns identity.
@@ -219,20 +219,15 @@ export class BuildIntent {
         SWSELogger.log(`[BUILD-INTENT] analyze() - Applying mentor survey biases`);
         this._applyMentorBiases(actor, intent, pendingData);
 
-        // Determine primary themes
-        this._determinePrimaryThemes(intent);
-        SWSELogger.log(`[BUILD-INTENT] analyze() - Primary themes determined:`, intent.primaryThemes);
-
-        // Infer combat style
-        this._inferCombatStyle(intent);
-        SWSELogger.log(`[BUILD-INTENT] analyze() - Combat style inferred:`, intent.combatStyle);
+        // Primary themes and combat style already determined by BuildThemeProjection
+        SWSELogger.log(`[BUILD-INTENT] analyze() - Primary themes:`, intent.primaryThemes);
+        SWSELogger.log(`[BUILD-INTENT] analyze() - Combat style:`, intent.combatStyle);
 
         // Check for Force focus
         intent.forceFocus = (intent.themes[BUILD_THEMES.FORCE] || 0) >= 0.3;
         SWSELogger.log(`[BUILD-INTENT] analyze() - Force focus:`, intent.forceFocus);
 
-        // Identify priority prerequisites
-        this._identifyPriorityPrereqs(state, intent);
+        // Priority prerequisites already identified by PrestigeAffinityEngine
         SWSELogger.log(`[BUILD-INTENT] analyze() - Priority prereqs identified:`, intent.priorityPrereqs.length);
 
         SWSELogger.log(`[BUILD-INTENT] analyze() COMPLETE - Intent summary:`, {
@@ -314,247 +309,7 @@ export class BuildIntent {
         };
     }
 
-    /**
-     * Analyze feats for theme signals
-     */
-    static _analyzeFeats(state, intent) {
-        for (const featName of state.ownedFeats) {
-            // Check direct theme mapping
-            const theme = FEAT_THEME_SIGNALS[featName];
-            if (theme) {
-                intent.themes[theme] = (intent.themes[theme] || 0) + 0.15;
-                intent.signals.feats.push({ name: featName, theme });
-            }
 
-            // Check partial matches for weapon proficiencies etc.
-            if (featName.includes('Lightsaber')) {
-                intent.themes[BUILD_THEMES.FORCE] = (intent.themes[BUILD_THEMES.FORCE] || 0) + 0.1;
-            }
-            if (featName.includes('Pistol') || featName.includes('Rifle')) {
-                intent.themes[BUILD_THEMES.RANGED] = (intent.themes[BUILD_THEMES.RANGED] || 0) + 0.1;
-            }
-            if (featName.includes('Melee') || featName.includes('Martial')) {
-                intent.themes[BUILD_THEMES.MELEE] = (intent.themes[BUILD_THEMES.MELEE] || 0) + 0.1;
-            }
-        }
-    }
-
-    /**
-     * Analyze talents for theme signals
-     */
-    static _analyzeTalents(state, intent) {
-        // Force talents
-        if (state.talentTrees.has('lightsaber combat') ||
-            state.talentTrees.has('jedi mind tricks') ||
-            state.talentTrees.has('telekinetic savant')) {
-            intent.themes[BUILD_THEMES.FORCE] = (intent.themes[BUILD_THEMES.FORCE] || 0) + 0.2;
-        }
-
-        // Stealth talents
-        if (state.talentTrees.has('camouflage') || state.talentTrees.has('spy')) {
-            intent.themes[BUILD_THEMES.STEALTH] = (intent.themes[BUILD_THEMES.STEALTH] || 0) + 0.2;
-        }
-
-        // Combat talents
-        if (state.talentTrees.has('armor specialist') ||
-            state.talentTrees.has('weapon specialist') ||
-            state.talentTrees.has('commando')) {
-            intent.themes[BUILD_THEMES.COMBAT] = (intent.themes[BUILD_THEMES.COMBAT] || 0) + 0.2;
-        }
-
-        // Social talents
-        if (state.talentTrees.has('influence') ||
-            state.talentTrees.has('inspiration') ||
-            state.talentTrees.has('leadership')) {
-            intent.themes[BUILD_THEMES.SOCIAL] = (intent.themes[BUILD_THEMES.SOCIAL] || 0) + 0.2;
-            intent.themes[BUILD_THEMES.LEADERSHIP] = (intent.themes[BUILD_THEMES.LEADERSHIP] || 0) + 0.15;
-        }
-
-        // Ranged talents
-        if (state.talentTrees.has('sharpshooter') || state.talentTrees.has('gunslinger')) {
-            intent.themes[BUILD_THEMES.RANGED] = (intent.themes[BUILD_THEMES.RANGED] || 0) + 0.2;
-        }
-
-        // Melee talents
-        if (state.talentTrees.has('melee smash') || state.talentTrees.has('brawler')) {
-            intent.themes[BUILD_THEMES.MELEE] = (intent.themes[BUILD_THEMES.MELEE] || 0) + 0.2;
-        }
-
-        // Tracking talents
-        if (state.talentTrees.has('awareness')) {
-            intent.themes[BUILD_THEMES.TRACKING] = (intent.themes[BUILD_THEMES.TRACKING] || 0) + 0.2;
-        }
-    }
-
-    /**
-     * Analyze skills for theme signals
-     */
-    static _analyzeSkills(state, intent) {
-        const skillThemes = {
-            usetheforce: BUILD_THEMES.FORCE,
-            stealth: BUILD_THEMES.STEALTH,
-            deception: BUILD_THEMES.SOCIAL,
-            persuasion: BUILD_THEMES.SOCIAL,
-            mechanics: BUILD_THEMES.TECH,
-            usecomputer: BUILD_THEMES.TECH,
-            pilot: BUILD_THEMES.VEHICLE,
-            survival: BUILD_THEMES.EXPLORATION,
-            treatinjury: BUILD_THEMES.SUPPORT
-        };
-
-        for (const skill of state.trainedSkills) {
-            const theme = skillThemes[skill];
-            if (theme) {
-                intent.themes[theme] = (intent.themes[theme] || 0) + 0.1;
-                intent.signals.skills.push({ name: skill, theme });
-            }
-        }
-    }
-
-    /**
-     * Analyze classes for theme signals
-     */
-    static _analyzeClasses(state, intent) {
-        for (const className of Object.keys(state.classes)) {
-            const synergy = CLASS_SYNERGY_DATA[className];
-            if (synergy?.theme) {
-                intent.themes[synergy.theme] = (intent.themes[synergy.theme] || 0) + 0.25;
-                intent.signals.classes.push({ name: className, theme: synergy.theme });
-            }
-        }
-    }
-
-    /**
-     * Calculate prestige class affinities
-     * Now data-driven: checks ArchetypeRegistry first, falls back to hardcoded PRESTIGE_SIGNALS
-     * @private
-     */
-    static async _calculatePrestigeAffinities(state, intent) {
-        // Collect all prestige classes to evaluate
-        const prestigeClassesToEvaluate = new Map();
-
-        // 1. Start with loaded PRESTIGE_SIGNALS from data file (vanilla prestige classes)
-        for (const [className, signals] of Object.entries(PRESTIGE_SIGNALS)) {
-            // Validate that this prestige class exists in the registry
-            const registryPrestige = PrestigeLayerRegistry.get(className);
-            if (registryPrestige) {
-                prestigeClassesToEvaluate.set(className, signals);
-            } else {
-                SWSELogger.warn(`[BuildIntent] Prestige signal for "${className}" has no matching PrestigeLayerRegistry entry`);
-            }
-        }
-
-        // 2. Also load prestige class items from world to support custom prestige classes
-        if (game?.items) {
-            const prestigeItems = game.items.filter(item => item.type === 'prestige');
-            for (const prestigeItem of prestigeItems) {
-                const className = prestigeItem.name;
-
-                // Skip if already added from loaded signals
-                if (prestigeClassesToEvaluate.has(className)) {
-                    continue;
-                }
-
-                // Try to get signals from ArchetypeRegistry first
-                let signals = ArchetypeRegistry.getPrestigeSignals(prestigeItem.id);
-
-                // Fall back to prestige item's own metadata
-                if (!signals) {
-                    signals = prestigeItem.system?.prestigeSignals;
-                }
-
-                // Only add if we found signals
-                if (signals) {
-                    prestigeClassesToEvaluate.set(className, signals);
-                }
-            }
-        }
-
-        // 3. Calculate affinities for all prestige classes
-        for (const [className, signals] of prestigeClassesToEvaluate.entries()) {
-            // Ensure signals object has expected structure (with fallback defaults)
-            const normalizedSignals = {
-                feats: signals.feats || [],
-                skills: signals.skills || [],
-                talents: signals.talents || [],
-                talentTrees: signals.talentTrees || [],
-                abilities: signals.abilities || [],
-                weight: signals.weight || { feats: 2, skills: 2, talents: 2, abilities: 1 }
-            };
-
-            let score = 0;
-            const matches = { feats: [], skills: [], talents: [], talentTrees: [], abilities: [] };
-
-            // Check feats
-            for (const feat of normalizedSignals.feats) {
-                if (state.ownedFeats.has(feat)) {
-                    score += normalizedSignals.weight.feats || 2;
-                    matches.feats.push(feat);
-                }
-            }
-
-            // Check skills
-            for (const skill of normalizedSignals.skills) {
-                const skillKey = skill.toLowerCase().replace(/\s+/g, '');
-                if (state.trainedSkills.has(skillKey)) {
-                    score += normalizedSignals.weight.skills || 2;
-                    matches.skills.push(skill);
-                }
-            }
-
-            // Check talents
-            for (const talent of normalizedSignals.talents) {
-                if (state.ownedTalents.has(talent)) {
-                    score += normalizedSignals.weight.talents || 2;
-                    matches.talents.push(talent);
-                }
-            }
-
-            // Check talent trees
-            for (const tree of normalizedSignals.talentTrees) {
-                if (state.talentTrees.has(tree.toLowerCase())) {
-                    score += normalizedSignals.weight.talents || 2;
-                    matches.talentTrees.push(tree);
-                }
-            }
-
-            // Check abilities
-            for (const ability of normalizedSignals.abilities) {
-                if (ability === state.highestAbility) {
-                    score += normalizedSignals.weight.abilities || 1;
-                    matches.abilities.push(ability);
-                }
-            }
-
-            // Calculate max possible score
-            const talentTreeWeight = normalizedSignals.weight.talentTrees || normalizedSignals.weight.talents || 2;
-            const maxScore =
-                normalizedSignals.feats.length * (normalizedSignals.weight.feats || 2) +
-                normalizedSignals.skills.length * (normalizedSignals.weight.skills || 2) +
-                normalizedSignals.talents.length * (normalizedSignals.weight.talents || 2) +
-                normalizedSignals.talentTrees.length * talentTreeWeight +
-                normalizedSignals.abilities.length * (normalizedSignals.weight.abilities || 1);
-
-            // Normalize to 0-1
-            const confidence = maxScore > 0 ? Math.min(1, score / (maxScore * 0.6)) : 0;
-
-            if (confidence > 0.1) {
-                intent.prestigeAffinities.push({
-                    className,
-                    confidence,
-                    score,
-                    matches
-                });
-            }
-        }
-
-        // Sort by confidence (deterministic: stable sort by className as secondary key)
-        intent.prestigeAffinities.sort((a, b) => {
-            const confDiff = b.confidence - a.confidence;
-            if (confDiff !== 0) return confDiff;
-            return a.className.localeCompare(b.className);
-        });
-    }
 
     /**
      * [DEPRECATED] Compute actor identity via IdentityEngine
@@ -581,121 +336,6 @@ export class BuildIntent {
         return null;
     }
 
-    /**
-     * Determine primary themes (top 2 with confidence > 0.2)
-     */
-    static _determinePrimaryThemes(intent) {
-        const sorted = Object.entries(intent.themes)
-            .filter(([_, score]) => score >= 0.2)
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 2);
-
-        intent.primaryThemes = sorted.map(([theme]) => theme);
-    }
-
-    /**
-     * Infer combat style based on themes
-     */
-    static _inferCombatStyle(intent) {
-        const forceScore = intent.themes[BUILD_THEMES.FORCE] || 0;
-        const rangedScore = intent.themes[BUILD_THEMES.RANGED] || 0;
-        const meleeScore = intent.themes[BUILD_THEMES.MELEE] || 0;
-
-        if (forceScore > rangedScore && forceScore > meleeScore && forceScore >= 0.2) {
-            intent.combatStyle = 'lightsaber';
-        } else if (rangedScore > meleeScore && rangedScore >= 0.2) {
-            intent.combatStyle = 'ranged';
-        } else if (meleeScore >= 0.2) {
-            intent.combatStyle = 'melee';
-        } else {
-            intent.combatStyle = 'mixed';
-        }
-    }
-
-    /**
-     * Identify priority prerequisites for top prestige targets
-     * Now data-driven: uses signals from ArchetypeRegistry or item metadata
-     * @private
-     */
-    static _identifyPriorityPrereqs(state, intent) {
-        const topTargets = intent.prestigeAffinities.slice(0, 3);
-
-        for (const target of topTargets) {
-            // Try to get signals from ArchetypeRegistry first
-            let signals = this._getPrestigeSignals(target.className);
-            if (!signals) {
-                // Fall back to hardcoded PRESTIGE_SIGNALS for vanilla prestige classes
-                signals = PRESTIGE_SIGNALS[target.className];
-            }
-            if (!signals) {continue;}
-
-            // Ensure arrays exist
-            const feats = Array.isArray(signals.feats) ? signals.feats : [];
-            const skills = Array.isArray(signals.skills) ? signals.skills : [];
-
-            // Check missing feats
-            for (const feat of feats) {
-                if (!state.ownedFeats.has(feat)) {
-                    intent.priorityPrereqs.push({
-                        type: 'feat',
-                        name: feat,
-                        forClass: target.className,
-                        confidence: target.confidence
-                    });
-                }
-            }
-
-            // Check missing skills
-            for (const skill of skills) {
-                const skillKey = skill.toLowerCase().replace(/\s+/g, '');
-                if (!state.trainedSkills.has(skillKey)) {
-                    intent.priorityPrereqs.push({
-                        type: 'skill',
-                        name: skill,
-                        forClass: target.className,
-                        confidence: target.confidence
-                    });
-                }
-            }
-        }
-
-        // Sort by confidence (deterministic: stable sort by name as secondary key)
-        intent.priorityPrereqs.sort((a, b) => {
-            const confDiff = b.confidence - a.confidence;
-            if (confDiff !== 0) return confDiff;
-            return a.name.localeCompare(b.name);
-        });
-    }
-
-    /**
-     * Get prestige signals for a prestige class name
-     * Searches through world prestige items to find matching signals
-     * @private
-     */
-    static _getPrestigeSignals(prestigeClassName) {
-        if (!game?.items || !prestigeClassName) {
-            return null;
-        }
-
-        // Find prestige item with matching name
-        const prestigeItem = game.items.find(item =>
-            item.type === 'prestige' && item.name === prestigeClassName
-        );
-
-        if (!prestigeItem) {
-            return null;
-        }
-
-        // Try ArchetypeRegistry first
-        let signals = ArchetypeRegistry.getPrestigeSignals(prestigeItem.id);
-
-        // Fall back to prestige item's own metadata
-        if (!signals) {
-            signals = prestigeItem.system?.prestigeSignals;
-        }
-
-        return signals || null;
-    }
 
     /**
      * Check if a feat aligns with the build intent
@@ -791,6 +431,36 @@ export class BuildIntent {
         }
 
         return { aligned: false, reason: null };
+    }
+
+    /**
+     * Get prestige signals for a prestige class name
+     * Searches through world prestige items to find matching signals
+     * @private
+     */
+    static _getPrestigeSignals(prestigeClassName) {
+        if (!game?.items || !prestigeClassName) {
+            return null;
+        }
+
+        // Find prestige item with matching name
+        const prestigeItem = game.items.find(item =>
+            item.type === 'prestige' && item.name === prestigeClassName
+        );
+
+        if (!prestigeItem) {
+            return null;
+        }
+
+        // Try ArchetypeRegistry first
+        let signals = ArchetypeRegistry.getPrestigeSignals(prestigeItem.id);
+
+        // Fall back to prestige item's own metadata
+        if (!signals) {
+            signals = prestigeItem.system?.prestigeSignals;
+        }
+
+        return signals || null;
     }
 
     /**
