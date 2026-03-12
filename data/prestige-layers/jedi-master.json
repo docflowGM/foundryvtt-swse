@@ -1,0 +1,257 @@
+{
+  "name": "Jedi Master Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "forceSecret": 3,
+      "forceDC": 2,
+      "forceRecovery": 2,
+      "allySupport": 1
+    },
+    "roleBias": {
+      "support": 2,
+      "controller": 1
+    },
+    "attributeBias": {
+      "wis": 2,
+      "cha": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Jedi Force Controller",
+      "specialists": [
+        {
+          "name": "Extended Technique Master",
+          "mechanicalBias": {
+            "forceSecret": 2,
+            "areaControl": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Enhances duration and reach of Force abilities."
+        },
+        {
+          "name": "Potency Amplifier",
+          "mechanicalBias": {
+            "forceDC": 2,
+            "conditionTrack": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Increases raw effectiveness of Force powers."
+        },
+        {
+          "name": "Sustained Conduit",
+          "mechanicalBias": {
+            "forceRecovery": 2,
+            "initiative": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Optimizes longevity and repeated use of powers."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Jedi Guardian Defender",
+      "specialists": [
+        {
+          "name": "Master of Defense",
+          "mechanicalBias": {
+            "reactionDefense": 2,
+            "forceSecret": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Elevates defensive Force mastery."
+        },
+        {
+          "name": "Force Shield Sovereign",
+          "mechanicalBias": {
+            "damageMitigationAura": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Turns defense into team-wide protection."
+        },
+        {
+          "name": "Unshakable Presence",
+          "mechanicalBias": {
+            "moraleBonus": 2,
+            "forceRecovery": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Projects stabilizing Force authority."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Jedi Duelist",
+      "specialists": [
+        {
+          "name": "Secret of Precision",
+          "mechanicalBias": {
+            "critRange": 2,
+            "forceSecret": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Enhances saber techniques through Force insight."
+        },
+        {
+          "name": "Master Counter",
+          "mechanicalBias": {
+            "counterAttack": 2,
+            "reactionDefense": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Perfects reactive dueling."
+        },
+        {
+          "name": "Refined Tempo",
+          "mechanicalBias": {
+            "initiative": 2,
+            "forceSecret": 1
+          },
+          "roleBias": {
+            "skirmisher": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Controls engagement rhythm with mastery."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Jedi Sentinel Hybrid",
+      "specialists": [
+        {
+          "name": "Balanced Master",
+          "mechanicalBias": {
+            "forceSecret": 2,
+            "skillUtility": 1
+          },
+          "roleBias": {
+            "flex": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Deepens versatility rather than narrowing focus."
+        },
+        {
+          "name": "Mystic Commander",
+          "mechanicalBias": {
+            "allySupport": 2,
+            "forceDC": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Leads through spiritual authority."
+        },
+        {
+          "name": "Secret Weaver",
+          "mechanicalBias": {
+            "forceRecovery": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Optimizes Force secrets for sustained mastery."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Jedi Dark Side Striker",
+      "specialists": [
+        {
+          "name": "Secret of Fury",
+          "mechanicalBias": {
+            "burstDamage": 2,
+            "forceSecret": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Enhances aggressive Force techniques."
+        },
+        {
+          "name": "Crushing Will",
+          "mechanicalBias": {
+            "forceDC": 2,
+            "conditionTrack": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Amplifies dominance over opponents."
+        },
+        {
+          "name": "Dark Insight Master",
+          "mechanicalBias": {
+            "forceRecovery": 2,
+            "initiative": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Combines sustained power with lethal focus."
+        }
+      ]
+    }
+  ]
+}

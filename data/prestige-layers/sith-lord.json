@@ -1,0 +1,257 @@
+{
+  "name": "Sith Lord Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "darkSideAffinity": 3,
+      "forceSecret": 2,
+      "forceDC": 2,
+      "burstDamage": 2
+    },
+    "roleBias": {
+      "striker": 2,
+      "controller": 1
+    },
+    "attributeBias": {
+      "cha": 2,
+      "wis": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Jedi Dark Side Striker",
+      "specialists": [
+        {
+          "name": "Overwhelming Tyrant",
+          "mechanicalBias": {
+            "burstDamage": 2,
+            "forceDC": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Maximizes devastating Force assaults."
+        },
+        {
+          "name": "Crushing Presence",
+          "mechanicalBias": {
+            "conditionTrack": 2,
+            "moraleImpact": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Destabilizes opponents through sheer dominance."
+        },
+        {
+          "name": "Secret of Ruin",
+          "mechanicalBias": {
+            "forceSecret": 2,
+            "darkSideAffinity": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Enhances Force techniques into catastrophic effects."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Jedi Duelist",
+      "specialists": [
+        {
+          "name": "Duel of Domination",
+          "mechanicalBias": {
+            "singleTargetDamage": 2,
+            "darkSideAffinity": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Turns duels into displays of supremacy."
+        },
+        {
+          "name": "Relentless Executioner",
+          "mechanicalBias": {
+            "burstDamage": 2,
+            "attackBonus": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Optimizes lethal finishing power."
+        },
+        {
+          "name": "Secret of Precision",
+          "mechanicalBias": {
+            "critRange": 2,
+            "forceSecret": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Enhances saber lethality through dark secrets."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Jedi Force Controller",
+      "specialists": [
+        {
+          "name": "Willbreaker Supreme",
+          "mechanicalBias": {
+            "forceDC": 2,
+            "conditionTrack": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Focuses on absolute mental domination."
+        },
+        {
+          "name": "Storm Conductor",
+          "mechanicalBias": {
+            "areaDamage": 2,
+            "burstDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Amplifies area devastation."
+        },
+        {
+          "name": "Secret of Subjugation",
+          "mechanicalBias": {
+            "forceSecret": 2,
+            "darkSideAffinity": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Enhances long-term control effects."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Jedi Sentinel Hybrid",
+      "specialists": [
+        {
+          "name": "Dark Strategist",
+          "mechanicalBias": {
+            "forceSecret": 2,
+            "initiative": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Blends cunning with overwhelming power."
+        },
+        {
+          "name": "Corruption Weaver",
+          "mechanicalBias": {
+            "darkSideAffinity": 2,
+            "forceRecovery": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Sustains dark power through mastery."
+        },
+        {
+          "name": "Dominion Master",
+          "mechanicalBias": {
+            "allySupport": 2,
+            "moraleImpact": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Commands through fear and Force presence."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Sith Apprentice",
+      "specialists": [
+        {
+          "name": "Grand Alchemist",
+          "mechanicalBias": {
+            "sithAlchemy": 2,
+            "darkSideAffinity": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Elevates alchemical enhancement to its peak."
+        },
+        {
+          "name": "Cataclysm Channeler",
+          "mechanicalBias": {
+            "burstDamage": 2,
+            "forceDC": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Channels catastrophic Force power."
+        },
+        {
+          "name": "Secret of Ruination",
+          "mechanicalBias": {
+            "forceSecret": 2,
+            "conditionTrack": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Perfects destructive Force secrets."
+        }
+      ]
+    }
+  ]
+}

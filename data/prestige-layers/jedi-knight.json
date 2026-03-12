@@ -1,0 +1,257 @@
+{
+  "name": "Jedi Knight Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "lightSideAffinity": 2,
+      "formMastery": 3,
+      "forceDC": 2,
+      "allySupport": 1
+    },
+    "roleBias": {
+      "striker": 2,
+      "defender": 1
+    },
+    "attributeBias": {
+      "wis": 2,
+      "dex": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Jedi Force Controller",
+      "specialists": [
+        {
+          "name": "Precision Technique Master",
+          "mechanicalBias": {
+            "formMastery": 2,
+            "forceDC": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Refines Force control through formal discipline."
+        },
+        {
+          "name": "Willful Authority",
+          "mechanicalBias": {
+            "forceDC": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Strengthens Force save DCs through mastery."
+        },
+        {
+          "name": "Sustained Command",
+          "mechanicalBias": {
+            "forceRecovery": 2,
+            "lightSideAffinity": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Optimizes repeated technique application."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Jedi Guardian Defender",
+      "specialists": [
+        {
+          "name": "Form Master",
+          "mechanicalBias": {
+            "formMastery": 2,
+            "reactionDefense": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Perfects lightsaber form execution."
+        },
+        {
+          "name": "Protective Presence",
+          "mechanicalBias": {
+            "damageMitigationAura": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Extends defense to team members."
+        },
+        {
+          "name": "Balanced Resolve",
+          "mechanicalBias": {
+            "moraleBonus": 2,
+            "forceRecovery": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Steadies allies through calm presence."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Jedi Duelist",
+      "specialists": [
+        {
+          "name": "Signature Form",
+          "mechanicalBias": {
+            "formMastery": 2,
+            "critRange": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Deepens preferred lightsaber form."
+        },
+        {
+          "name": "Disciplined Retaliation",
+          "mechanicalBias": {
+            "counterAttack": 2,
+            "reactionDefense": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Counters with refined technique."
+        },
+        {
+          "name": "Blade Harmony",
+          "mechanicalBias": {
+            "initiative": 2,
+            "formMastery": 1
+          },
+          "roleBias": {
+            "skirmisher": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Controls flow of combat through mastery."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Jedi Sentinel Hybrid",
+      "specialists": [
+        {
+          "name": "Disciplined Generalist",
+          "mechanicalBias": {
+            "formMastery": 2,
+            "skillUtility": 1
+          },
+          "roleBias": {
+            "flex": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Strengthens versatility through discipline."
+        },
+        {
+          "name": "Jedi Commander",
+          "mechanicalBias": {
+            "allySupport": 2,
+            "forceDC": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Guides through wisdom and authority."
+        },
+        {
+          "name": "Seeker's Mastery",
+          "mechanicalBias": {
+            "forceRecovery": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Deepens both mystical and practical knowledge."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Tactical Precision",
+          "mechanicalBias": {
+            "formMastery": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Combines formal technique with opportunism."
+        },
+        {
+          "name": "Righteous Authority",
+          "mechanicalBias": {
+            "forceDC": 2,
+            "moraleImpact": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Enforces will through disciplined conviction."
+        },
+        {
+          "name": "Focused Strike Master",
+          "mechanicalBias": {
+            "critDamage": 2,
+            "formMastery": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Refines finishing techniques to perfection."
+        }
+      ]
+    }
+  ]
+}
