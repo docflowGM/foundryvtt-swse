@@ -1,0 +1,257 @@
+{
+  "name": "Officer Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "commandAuthority": 3,
+      "tacticalMastery": 2,
+      "unitCoordination": 2,
+      "morale": 1
+    },
+    "roleBias": {
+      "leader": 2,
+      "controller": 1
+    },
+    "attributeBias": {
+      "int": 2,
+      "cha": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Tactical Leader",
+      "specialists": [
+        {
+          "name": "Strategic Commander",
+          "mechanicalBias": {
+            "tacticalMastery": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Plans complex tactical operations."
+        },
+        {
+          "name": "Coordinated Assault Master",
+          "mechanicalBias": {
+            "unitCoordination": 2,
+            "tacticalAwareness": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Executes multi-unit coordinated attacks."
+        },
+        {
+          "name": "Adaptive Tactician",
+          "mechanicalBias": {
+            "tacticalMastery": 2,
+            "skillUtility": 1
+          },
+          "roleBias": {
+            "flex": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Adapts strategy to changing conditions."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Unit Commander",
+      "specialists": [
+        {
+          "name": "Inspiring Commander",
+          "mechanicalBias": {
+            "commandAuthority": 2,
+            "morale": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Inspires units to peak performance."
+        },
+        {
+          "name": "Formation Master",
+          "mechanicalBias": {
+            "unitCoordination": 2,
+            "formation": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Maintains tight unit formations."
+        },
+        {
+          "name": "Squad Equalizer",
+          "mechanicalBias": {
+            "unitCoordination": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Balances unit resources and threats."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Network Coordinator",
+      "specialists": [
+        {
+          "name": "Signal Master",
+          "mechanicalBias": {
+            "unitCoordination": 2,
+            "informationControl": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Maintains perfect unit communications."
+        },
+        {
+          "name": "Intelligence Officer",
+          "mechanicalBias": {
+            "tacticalMastery": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Gathers and interprets battlefield intelligence."
+        },
+        {
+          "name": "Logistics Master",
+          "mechanicalBias": {
+            "unitCoordination": 2,
+            "resourceControl": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Manages supply and resource distribution."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Veteran Soldier",
+      "specialists": [
+        {
+          "name": "Veteran Commander",
+          "mechanicalBias": {
+            "commandAuthority": 2,
+            "moraleBonus": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Commands respect through experience."
+        },
+        {
+          "name": "Battle-Tested Tactician",
+          "mechanicalBias": {
+            "tacticalMastery": 2,
+            "tacticalAwareness": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Executes tactics proven through combat."
+        },
+        {
+          "name": "Hardened Leader",
+          "mechanicalBias": {
+            "commandAuthority": 2,
+            "moraleImpact": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Projects authority through battle scars."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Tactical Executioner",
+          "mechanicalBias": {
+            "tacticalMastery": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Identifies and eliminates key targets."
+        },
+        {
+          "name": "Opportunity Spotter",
+          "mechanicalBias": {
+            "tacticalAwareness": 2,
+            "predatoryInstinct": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Spots and exploits enemy weaknesses."
+        },
+        {
+          "name": "Victory Maximizer",
+          "mechanicalBias": {
+            "commandAuthority": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Converts advantage into decisive victory."
+        }
+      ]
+    }
+  ]
+}

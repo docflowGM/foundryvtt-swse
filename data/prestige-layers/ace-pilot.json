@@ -1,0 +1,257 @@
+{
+  "name": "Ace Pilot Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "pilotMastery": 3,
+      "vehicularDamage": 2,
+      "evasion": 2,
+      "tacticalAwareness": 1
+    },
+    "roleBias": {
+      "skirmisher": 2,
+      "striker": 1
+    },
+    "attributeBias": {
+      "dex": 2,
+      "int": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Mobility Specialist",
+      "specialists": [
+        {
+          "name": "Evasion Mastery",
+          "mechanicalBias": {
+            "pilotMastery": 2,
+            "evasion": 1
+          },
+          "roleBias": {
+            "skirmisher": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Perfects evasive maneuvering in combat."
+        },
+        {
+          "name": "Precision Control",
+          "mechanicalBias": {
+            "vehicularDamage": 2,
+            "accuracy": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Enhances precision of vehicle-mounted weapons."
+        },
+        {
+          "name": "Flight Efficiency",
+          "mechanicalBias": {
+            "pilotMastery": 2,
+            "forceRecovery": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Optimizes vehicle systems and fuel efficiency."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Tactical Striker",
+      "specialists": [
+        {
+          "name": "Dogfighter Instinct",
+          "mechanicalBias": {
+            "pilotMastery": 2,
+            "initiative": 1
+          },
+          "roleBias": {
+            "skirmisher": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Dominates aerial combat engagements."
+        },
+        {
+          "name": "Crushing Attack Run",
+          "mechanicalBias": {
+            "vehicularDamage": 2,
+            "burstDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Maximizes damage passes and bombing runs."
+        },
+        {
+          "name": "Tactical Positioning",
+          "mechanicalBias": {
+            "tacticalAwareness": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Coordinates squad maneuvers flawlessly."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Precision Tracker",
+      "specialists": [
+        {
+          "name": "Target Acquisition Master",
+          "mechanicalBias": {
+            "accuracy": 2,
+            "vehicularDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Locks targets with lethal precision."
+        },
+        {
+          "name": "Evasive Maneuvers",
+          "mechanicalBias": {
+            "evasion": 2,
+            "reactionDefense": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Executes complex defensive flying."
+        },
+        {
+          "name": "Sensor Mastery",
+          "mechanicalBias": {
+            "tacticalAwareness": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Reads enemy movements through sensor fusion."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Aerial Controller",
+      "specialists": [
+        {
+          "name": "Formation Leader",
+          "mechanicalBias": {
+            "pilotMastery": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Leads coordinated aerial squadrons."
+        },
+        {
+          "name": "Area Denial Expert",
+          "mechanicalBias": {
+            "vehicularDamage": 2,
+            "areaControl": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Controls airspace through superior firepower."
+        },
+        {
+          "name": "Maneuver Innovation",
+          "mechanicalBias": {
+            "pilotMastery": 2,
+            "skillUtility": 1
+          },
+          "roleBias": {
+            "flex": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Executes innovative evasion tactics."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Rogue Operative",
+      "specialists": [
+        {
+          "name": "Stealth Flyer",
+          "mechanicalBias": {
+            "stealth": 2,
+            "pilotMastery": 1
+          },
+          "roleBias": {
+            "skirmisher": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Masters low-profile infiltration flying."
+        },
+        {
+          "name": "Precision Sniper Pilot",
+          "mechanicalBias": {
+            "accuracy": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Executes surgical airstrikes."
+        },
+        {
+          "name": "Escape Artist",
+          "mechanicalBias": {
+            "evasion": 2,
+            "initiative": 1
+          },
+          "roleBias": {
+            "skirmisher": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Extracts from any aerial engagement."
+        }
+      ]
+    }
+  ]
+}

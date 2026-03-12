@@ -1,0 +1,257 @@
+{
+  "name": "Force Adept Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "forceArtistry": 3,
+      "ritualMastery": 2,
+      "itemEnchantment": 2,
+      "mysticalInfluence": 1
+    },
+    "roleBias": {
+      "utility": 2,
+      "support": 1
+    },
+    "attributeBias": {
+      "wis": 2,
+      "int": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Force Ritualist",
+      "specialists": [
+        {
+          "name": "Ritual Master",
+          "mechanicalBias": {
+            "ritualMastery": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Perfects Force ritual execution."
+        },
+        {
+          "name": "Force Artist",
+          "mechanicalBias": {
+            "forceArtistry": 2,
+            "mysticalInfluence": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Channels Force through artistic expression."
+        },
+        {
+          "name": "Mystical Scholar",
+          "mechanicalBias": {
+            "ritualMastery": 2,
+            "forceRecovery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Studies Force mysteries for power."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Item Enchanter",
+      "specialists": [
+        {
+          "name": "Enchantment Master",
+          "mechanicalBias": {
+            "itemEnchantment": 2,
+            "resourceControl": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Imbues items with Force resonance."
+        },
+        {
+          "name": "Artifact Keeper",
+          "mechanicalBias": {
+            "itemEnchantment": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Maintains and unlocks artifact power."
+        },
+        {
+          "name": "Force Artificer",
+          "mechanicalBias": {
+            "itemEnchantment": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Creates items to empower allies."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Mystical Mystic",
+      "specialists": [
+        {
+          "name": "Force Conduit",
+          "mechanicalBias": {
+            "forceArtistry": 2,
+            "forceDC": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Channels Force power personally."
+        },
+        {
+          "name": "Meditation Master",
+          "mechanicalBias": {
+            "forceArtistry": 2,
+            "forceRecovery": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Restores Force connection through meditation."
+        },
+        {
+          "name": "Healing Adept",
+          "mechanicalBias": {
+            "mysticalInfluence": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Uses Force to heal and restore."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Knowledge Keeper",
+      "specialists": [
+        {
+          "name": "Force Historian",
+          "mechanicalBias": {
+            "ritualMastery": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Preserves lost Force knowledge."
+        },
+        {
+          "name": "Prophecy Seeker",
+          "mechanicalBias": {
+            "forceArtistry": 2,
+            "mysticalInfluence": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Interprets Force visions."
+        },
+        {
+          "name": "Lore Keeper",
+          "mechanicalBias": {
+            "itemEnchantment": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Masters history of Force artifacts."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Support Specialist",
+      "specialists": [
+        {
+          "name": "Force Supporter",
+          "mechanicalBias": {
+            "mysticalInfluence": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Strengthens allies through Force attunement."
+        },
+        {
+          "name": "Team Enchanter",
+          "mechanicalBias": {
+            "itemEnchantment": 2,
+            "forceRecovery": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Provides team equipment enhancement."
+        },
+        {
+          "name": "Force Guide",
+          "mechanicalBias": {
+            "ritualMastery": 2,
+            "moraleBonus": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Guides others through Force mysteries."
+        }
+      ]
+    }
+  ]
+}

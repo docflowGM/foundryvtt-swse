@@ -1,0 +1,257 @@
+{
+  "name": "Elite Trooper Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "armorMastery": 3,
+      "combatTactics": 2,
+      "firepower": 2,
+      "formation": 1
+    },
+    "roleBias": {
+      "defender": 2,
+      "striker": 1
+    },
+    "attributeBias": {
+      "str": 2,
+      "int": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Armor Specialist",
+      "specialists": [
+        {
+          "name": "Armored Juggernaut",
+          "mechanicalBias": {
+            "armorMastery": 2,
+            "damageReduction": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Maximizes protection through heavy armor."
+        },
+        {
+          "name": "Precision Marksman",
+          "mechanicalBias": {
+            "firepower": 2,
+            "accuracy": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Delivers accurate firepower from distance."
+        },
+        {
+          "name": "Sustained Soldier",
+          "mechanicalBias": {
+            "armorMastery": 2,
+            "forceRecovery": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "con": 1
+          },
+          "notes": "Endures extended combat operations."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Tactical Striker",
+      "specialists": [
+        {
+          "name": "Combat Tactician",
+          "mechanicalBias": {
+            "combatTactics": 2,
+            "tacticalAwareness": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Executes complex tactical maneuvers."
+        },
+        {
+          "name": "Overwhelming Firepower",
+          "mechanicalBias": {
+            "firepower": 2,
+            "burstDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Applies devastating concentrated fire."
+        },
+        {
+          "name": "Formation Leader",
+          "mechanicalBias": {
+            "formation": 2,
+            "commandAuthority": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Directs squad maneuvers with precision."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Weapon Specialist",
+      "specialists": [
+        {
+          "name": "Ballistics Master",
+          "mechanicalBias": {
+            "firepower": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Specializes in precise weapon use."
+        },
+        {
+          "name": "Defensive Shooter",
+          "mechanicalBias": {
+            "armorMastery": 2,
+            "reactionDefense": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Combines firepower with defensive posture."
+        },
+        {
+          "name": "Squad Equalizer",
+          "mechanicalBias": {
+            "firepower": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Balances squad threat coverage."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Commando",
+      "specialists": [
+        {
+          "name": "Special Operations Master",
+          "mechanicalBias": {
+            "combatTactics": 2,
+            "stealth": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Executes high-risk specialized missions."
+        },
+        {
+          "name": "Breaching Expert",
+          "mechanicalBias": {
+            "firepower": 2,
+            "initiative": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Leads decisive rapid assaults."
+        },
+        {
+          "name": "Extraction Specialist",
+          "mechanicalBias": {
+            "armorMastery": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Extracts and protects under fire."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Veteran Soldier",
+      "specialists": [
+        {
+          "name": "Battle-Hardened Veteran",
+          "mechanicalBias": {
+            "armorMastery": 2,
+            "moraleBonus": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "con": 1
+          },
+          "notes": "Stands firm through sheer experience."
+        },
+        {
+          "name": "Veteran Marksman",
+          "mechanicalBias": {
+            "firepower": 2,
+            "critRange": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Shoots with veteran precision."
+        },
+        {
+          "name": "Veteran Commander",
+          "mechanicalBias": {
+            "commandAuthority": 2,
+            "formation": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Commands respect through proven record."
+        }
+      ]
+    }
+  ]
+}

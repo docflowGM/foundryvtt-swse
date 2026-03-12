@@ -1,0 +1,257 @@
+{
+  "name": "Crime Lord Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "networkInfluence": 3,
+      "intimidation": 2,
+      "commandAuthority": 2,
+      "resourceControl": 1
+    },
+    "roleBias": {
+      "leader": 2,
+      "controller": 1
+    },
+    "attributeBias": {
+      "cha": 2,
+      "int": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Network Coordinator",
+      "specialists": [
+        {
+          "name": "Underworld Master",
+          "mechanicalBias": {
+            "networkInfluence": 2,
+            "informationControl": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Commands vast criminal networks."
+        },
+        {
+          "name": "Influence Weaver",
+          "mechanicalBias": {
+            "intimidation": 2,
+            "conditionTrack": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Extends control through fear and favor."
+        },
+        {
+          "name": "Resource Manager",
+          "mechanicalBias": {
+            "resourceControl": 2,
+            "forceRecovery": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Maintains supply lines and assets."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Tactical Striker",
+      "specialists": [
+        {
+          "name": "Enforcer Commander",
+          "mechanicalBias": {
+            "commandAuthority": 2,
+            "intimidation": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Directs enforcers with iron authority."
+        },
+        {
+          "name": "Violent Exemplar",
+          "mechanicalBias": {
+            "intimidation": 2,
+            "burstDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Inspires terror through personal brutality."
+        },
+        {
+          "name": "Strategic Coordinator",
+          "mechanicalBias": {
+            "commandAuthority": 2,
+            "tacticalAwareness": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Plans operations with surgical precision."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Precision Tracker",
+      "specialists": [
+        {
+          "name": "Information Gatherer",
+          "mechanicalBias": {
+            "networkInfluence": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Collects leverage and secrets."
+        },
+        {
+          "name": "Blackmail Master",
+          "mechanicalBias": {
+            "networkInfluence": 2,
+            "deceptionMastery": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Controls through secrets and threats."
+        },
+        {
+          "name": "Loyalty Enforcer",
+          "mechanicalBias": {
+            "intimidation": 2,
+            "moraleImpact": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Ensures compliance through retribution."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Rogue Operative",
+      "specialists": [
+        {
+          "name": "Hidden Power",
+          "mechanicalBias": {
+            "stealth": 2,
+            "networkInfluence": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Rules from shadows while others are visible."
+        },
+        {
+          "name": "Deniable Operative",
+          "mechanicalBias": {
+            "deceptionMastery": 2,
+            "commandAuthority": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Operates without leaving traceable command."
+        },
+        {
+          "name": "Contingency Master",
+          "mechanicalBias": {
+            "resourceControl": 2,
+            "tacticalAwareness": 1
+          },
+          "roleBias": {
+            "flex": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Always maintains backup plans."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Brutal Example",
+          "mechanicalBias": {
+            "intimidation": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Makes public examples of disobedience."
+        },
+        {
+          "name": "Opportunistic Predator",
+          "mechanicalBias": {
+            "networkInfluence": 2,
+            "predatoryInstinct": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Exploits every advantage in networks."
+        },
+        {
+          "name": "Faction Leader",
+          "mechanicalBias": {
+            "commandAuthority": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Rallies faction members through authority."
+        }
+      ]
+    }
+  ]
+}
