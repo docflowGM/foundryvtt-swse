@@ -802,11 +802,12 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       if (this.currentStep === 'feats' && context.packs.feats) {
         try {
           SWSELogger.log(`[CHARGEN-SUGGESTIONS] Suggesting ${context.packs.feats.length} feats with BuildIntent context...`);
-          let featsWithSuggestions = await SuggestionService.getSuggestions(tempActor, 'chargen', { domain: 'feats', available:
-            context.packs.feats,
-            tempActor,
+          let featsWithSuggestions = await SuggestionService.getSuggestions(tempActor, 'chargen', {
+            domain: 'feats',
+            available: context.packs.feats,
             pendingData,
-            buildIntent  // CRITICAL: Pass BuildIntent to include mentor survey biases
+            engineOptions: { buildIntent },
+            persist: true
           });
           // Filter out Force-dependent feats for droids (they cannot be Force-sensitive)
           featsWithSuggestions = this._filterForceDependentItems(featsWithSuggestions);
