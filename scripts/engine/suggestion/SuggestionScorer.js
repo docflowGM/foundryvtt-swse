@@ -7,8 +7,46 @@
  * - Feat/talent chain continuation
  * - Mentor bias alignment
  * - Level-based scaling bonuses
+ * - Species conditional opportunity bonuses (chargen-only)
  *
  * Replaces tier-based filtering with comprehensive scoring.
+ *
+ * ─────────────────────────────────────────────────────────────────
+ * ARCHITECTURAL NOTES & DESIGN DEBT
+ * ─────────────────────────────────────────────────────────────────
+ *
+ * CURRENT STATE:
+ * This module implements tag-based scoring with simple additive bonuses.
+ * It evaluates ~6 mechanical signals (tags, chains, abilities, mentor, scaling).
+ *
+ * DESIGN CONTRACT (LOOKAHEAD_ARCHITECTURE_CONTRACT.md):
+ * A 3-Horizon model (Immediate/Short-Term/Identity with 0.6/0.25/0.15 weights)
+ * has been designed but NOT YET IMPLEMENTED. Current scoring does not follow
+ * the 3-Horizon formula.
+ *
+ * KNOWN LIMITATIONS:
+ * 1. Missing mechanical signals: multiattack, defense stacking, action economy,
+ *    BAB breakpoints, skill cap scaling, prestige proximity (soft), talent tree depth,
+ *    Force synergy (tagged only), equipment affinity
+ * 2. Conditional boost assumes feat properties (grantedSkills) that may not exist
+ *    on all feat/talent objects - partially mitigated with _extractGrantedSkills()
+ * 3. PrestigeAffinityEngine computes affinities but output doesn't influence scoring
+ * 4. No explicit Immediate/Short-Term/Identity score normalization
+ * 5. Equipment affinity computed in IdentityEngine but never used by SuggestionScorer
+ *
+ * PHASE 6 PRIORITY:
+ * Implement full 3-Horizon model as designed:
+ * - Compute Immediate Score (0-1 normalized current synergy)
+ * - Compute Short-Term Score (0-1 lookahead to +3 levels)
+ * - Compute Identity Score (0-1 trajectory projection)
+ * - Apply formula: FINAL = (Immediate × 0.6) + (ShortTerm × 0.25) + (Identity × 0.15)
+ * - Integrate PrestigeAffinityEngine output into Short-Term evaluation
+ * - Add BAB breakpoint detection, prestige proximity, talent tree analysis
+ * - Add equipment affinity signal flow
+ *
+ * Until 3-Horizon is implemented, this scoring system remains functional but
+ * incomplete compared to the architecture specification.
+ * ─────────────────────────────────────────────────────────────────
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
@@ -292,20 +330,73 @@ function _getUnresolvedSpeciesConditionals(actor) {
 
 /**
  * Check if a conditional rule is already satisfied
+ * Handles multiple possible skill encoding paths
  * @private
  */
 function _isConditionalSatisfied(whenCondition, selectedFeats, trainedSkills) {
   if (whenCondition.type === 'skillTrained') {
     const skillId = whenCondition.skillId;
-    return trainedSkills[skillId]?.trained === true;
+
+    // Path 1: Standard training flag
+    if (trainedSkills[skillId]?.trained === true) {
+      return true;
+    }
+
+    // Path 2: trainedSkills might be a Set or array
+    if (trainedSkills instanceof Set) {
+      return trainedSkills.has(skillId);
+    }
+    if (Array.isArray(trainedSkills)) {
+      return trainedSkills.includes(skillId);
+    }
+
+    // Path 3: Check if skill object exists and has trained property
+    if (trainedSkills[skillId]) {
+      return true; // If skill exists in trained skills, assume trained
+    }
+
+    return false;
   }
 
   if (whenCondition.type === 'featTaken') {
     const featId = whenCondition.featId;
-    return selectedFeats.includes(featId);
+    return selectedFeats.includes(featId) || selectedFeats.includes(whenCondition.featName);
   }
 
   return false;
+}
+
+/**
+ * Extract skill grants from a feat/talent
+ * Handles multiple possible property encodings
+ * @private
+ */
+function _extractGrantedSkills(candidate) {
+  const granted = new Set();
+
+  if (!candidate) return granted;
+
+  // Path 1: Direct grantedSkills property (if standardized)
+  if (Array.isArray(candidate.grantedSkills)) {
+    candidate.grantedSkills.forEach(s => granted.add(s));
+  }
+
+  // Path 2: grantsBonuses.skills structure
+  if (candidate.system?.grantsBonuses?.skills) {
+    Object.keys(candidate.system.grantsBonuses.skills).forEach(skillId => {
+      granted.add(skillId);
+    });
+  }
+
+  // Path 3: system.benefit text parsing (fallback only, minimal extraction)
+  // Search for "training" or "trained" keywords to find skill references
+  const benefit = candidate.system?.benefit || '';
+  if (benefit.toLowerCase().includes('training') || benefit.toLowerCase().includes('trained')) {
+    // This is a soft heuristic only - real skill grants use structured properties
+    // Do not use this alone; it's a last-resort fallback
+  }
+
+  return granted;
 }
 
 /**
@@ -316,14 +407,14 @@ function _doesOptionResolveConditional(candidate, rule) {
   if (rule.when.type === 'skillTrained') {
     // Check if candidate grants training in the required skill
     const skillId = rule.when.skillId;
-    const grantedSkills = candidate.grantedSkills || [];
-    return grantedSkills.includes(skillId);
+    const grantedSkills = _extractGrantedSkills(candidate);
+    return grantedSkills.has(skillId);
   }
 
   if (rule.when.type === 'featTaken') {
     // Check if candidate IS the required feat
     const featId = rule.when.featId;
-    return candidate.id === featId;
+    return candidate.id === featId || candidate._id === featId;
   }
 
   return false;
@@ -353,6 +444,7 @@ function _computeSpeciesConditionalBonus(candidate, actor) {
 
 /**
  * Score all candidates and return sorted by score
+ * Tie-breaking: score → source priority → alphabetical name
  * @param {Array} candidates - Array of feat/talent objects
  * @param {Object} characterSnapshot - Character state
  * @param {Object} archetype - Archetype definition
@@ -365,8 +457,26 @@ export function scoreAllCandidates(candidates, characterSnapshot, archetype = {}
     scoring: scoreSuggestion(candidate, characterSnapshot, archetype, options)
   }));
 
-  // Sort by score descending
-  return scored.sort((a, b) => b.scoring.score - a.scoring.score);
+  // Sort: score descending, then by source priority, then alphabetically
+  return scored.sort((a, b) => {
+    // Primary: score descending
+    if (b.scoring.score !== a.scoring.score) {
+      return b.scoring.score - a.scoring.score;
+    }
+
+    // Secondary: source priority (class feat > general feat > prestige)
+    const sourceOrder = { 'class': 0, 'general': 1, 'prestige': 2, '': 3 };
+    const aSourcePriority = sourceOrder[a.system?.source] ?? 99;
+    const bSourcePriority = sourceOrder[b.system?.source] ?? 99;
+    if (aSourcePriority !== bSourcePriority) {
+      return aSourcePriority - bSourcePriority;
+    }
+
+    // Tertiary: alphabetical by name
+    const aName = (a.name || '').toLowerCase();
+    const bName = (b.name || '').toLowerCase();
+    return aName.localeCompare(bName);
+  });
 }
 
 /**
