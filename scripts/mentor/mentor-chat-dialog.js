@@ -12,6 +12,7 @@
 import { MENTORS, getMentorForClass } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
 import { MentorSuggestionVoice } from "/systems/foundryvtt-swse/scripts/mentor/mentor-suggestion-voice.js";
 import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
+import { SuggestionEngineCoordinator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineCoordinator.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { MentorVoiceFilterV2 } from "/systems/foundryvtt-swse/scripts/mentor/mentor-voice-filter-v2.js";
 import { MentorDialogueV2Integration } from "/systems/foundryvtt-swse/scripts/mentor/mentor-dialogue-v2-integration.js";
@@ -281,7 +282,7 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
 
     // Analyze build intent if not already done
     if (!this.buildIntent) {
-      this.buildIntent = BuildIntent.analyze(this.actor, {});
+      this.buildIntent = await SuggestionEngineCoordinator.analyzeBuildIntent(this.actor, {});
     }
 
     // Generate context-specific analysis (raw data)

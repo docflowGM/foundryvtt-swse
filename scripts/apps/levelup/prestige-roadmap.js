@@ -8,6 +8,7 @@
 
 import { ClassSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ClassSuggestionEngine.js";
 import { BuildIntent, PRESTIGE_SIGNALS } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
+import { SuggestionEngineCoordinator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineCoordinator.js";
 import { PathPreview } from "/systems/foundryvtt-swse/scripts/engine/suggestion/PathPreview.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
@@ -66,7 +67,7 @@ export class PrestigeRoadmap extends SWSEApplicationV2 {
     async _buildRoadmapData() {
         const actorState = await ClassSuggestionEngine._buildActorState(this.actor, this.pendingData);
         const prestigePrereqs = await ClassSuggestionEngine._loadPrestigePrerequisites();
-        const buildIntent = await BuildIntent.analyze(this.actor, this.pendingData);
+        const buildIntent = await SuggestionEngineCoordinator.analyzeBuildIntent(this.actor, this.pendingData);
         const pathPreviews = await PathPreview.generatePreviews(this.actor, this.pendingData);
 
         const classes = [];

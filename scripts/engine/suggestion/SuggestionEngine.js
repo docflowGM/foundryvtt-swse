@@ -27,6 +27,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
+import { SuggestionEngineCoordinator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineCoordinator.js";
 import { IdentityEngine } from "/systems/foundryvtt-swse/scripts/engine/prestige/identity-engine.js";
 import { getSynergyForItem, findActiveSynergies } from "/systems/foundryvtt-swse/scripts/engine/suggestion/CommunityMetaSynergies.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
@@ -142,7 +143,7 @@ export class SuggestionEngine {
         let buildIntent = options.buildIntent;
         if (!buildIntent) {
             try {
-                buildIntent = await BuildIntent.analyze(actor, pendingData);
+                buildIntent = await SuggestionEngineCoordinator.analyzeBuildIntent(actor, pendingData);
             } catch (err) {
                 SWSELogger.warn('SuggestionEngine | Failed to analyze build intent:', err);
                 // Create minimal fallback buildIntent with mentor biases to preserve mentor-based suggestions
@@ -236,7 +237,7 @@ export class SuggestionEngine {
         let buildIntent = options.buildIntent;
         if (!buildIntent) {
             try {
-                buildIntent = await BuildIntent.analyze(actor, pendingData);
+                buildIntent = await SuggestionEngineCoordinator.analyzeBuildIntent(actor, pendingData);
             } catch (err) {
                 SWSELogger.warn('SuggestionEngine | Failed to analyze build intent:', err);
                 // Create minimal fallback buildIntent with mentor biases to preserve mentor-based suggestions

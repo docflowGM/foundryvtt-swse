@@ -8,6 +8,7 @@
  */
 
 import { BuildIntent, BUILD_THEMES, PRESTIGE_SIGNALS, FEAT_THEME_SIGNALS } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
+import { SuggestionEngineCoordinator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineCoordinator.js";
 import { ClassSuggestionEngine, CLASS_SYNERGY_DATA } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ClassSuggestionEngine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { CORE_CLASSES } from "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js"; // PHASE C: Consolidate class lists
@@ -51,7 +52,7 @@ export class GMDebugPanel extends SWSEApplicationV2 {
 
         // Analyze build intent
         try {
-            this.buildIntent = await BuildIntent.analyze(this.actor, this.pendingData);
+            this.buildIntent = await SuggestionEngineCoordinator.analyzeBuildIntent(this.actor, this.pendingData);
             this.classAnalysis = await this._analyzeClasses();
         } catch (err) {
             SWSELogger.error('GMDebugPanel | Failed to analyze build intent:', err);
