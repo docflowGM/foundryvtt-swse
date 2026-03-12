@@ -1,0 +1,257 @@
+{
+  "name": "Droid Commander Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "droidControl": 3,
+      "unitCoordination": 2,
+      "tacticalMastery": 2,
+      "technicalAffinity": 1
+    },
+    "roleBias": {
+      "leader": 2,
+      "controller": 1
+    },
+    "attributeBias": {
+      "int": 2,
+      "cha": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Unit Commander",
+      "specialists": [
+        {
+          "name": "Droid Legion Master",
+          "mechanicalBias": {
+            "droidControl": 2,
+            "unitCoordination": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Commands droid legions with precision."
+        },
+        {
+          "name": "Formation Coordinator",
+          "mechanicalBias": {
+            "unitCoordination": 2,
+            "formation": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Maintains flawless droid formations."
+        },
+        {
+          "name": "Tactical Droid Coordinator",
+          "mechanicalBias": {
+            "tacticalMastery": 2,
+            "droidControl": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Executes complex droid tactics."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Tactical Striker",
+      "specialists": [
+        {
+          "name": "Droid Attack Coordinator",
+          "mechanicalBias": {
+            "droidControl": 2,
+            "burstDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Coordinates devastating droid assaults."
+        },
+        {
+          "name": "Firepower Director",
+          "mechanicalBias": {
+            "unitCoordination": 2,
+            "firepower": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Maximizes droid firepower output."
+        },
+        {
+          "name": "Swarm Master",
+          "mechanicalBias": {
+            "droidControl": 2,
+            "areaControl": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Deploys drone swarms effectively."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Network Coordinator",
+      "specialists": [
+        {
+          "name": "Droid Network Master",
+          "mechanicalBias": {
+            "droidControl": 2,
+            "informationControl": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Maintains droid communication network."
+        },
+        {
+          "name": "Signal Coordinator",
+          "mechanicalBias": {
+            "unitCoordination": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Synchronizes droid operations perfectly."
+        },
+        {
+          "name": "Programming Master",
+          "mechanicalBias": {
+            "technicalAffinity": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Programs droids for specific missions."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Precision Tracker",
+      "specialists": [
+        {
+          "name": "Droid Tactician",
+          "mechanicalBias": {
+            "droidControl": 2,
+            "tacticalAwareness": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Plans droid movements tactically."
+        },
+        {
+          "name": "Maintenance Master",
+          "mechanicalBias": {
+            "technicalAffinity": 2,
+            "resourceControl": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Maintains droid operational readiness."
+        },
+        {
+          "name": "Upgrade Specialist",
+          "mechanicalBias": {
+            "droidControl": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Upgrades droids with new capabilities."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Support Specialist",
+      "specialists": [
+        {
+          "name": "Droid Support Master",
+          "mechanicalBias": {
+            "droidControl": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Supports troops with droid assistance."
+        },
+        {
+          "name": "Morale Through Droids",
+          "mechanicalBias": {
+            "droidControl": 2,
+            "moraleBonus": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Inspires troops through droid capability."
+        },
+        {
+          "name": "Adaptive Coordinator",
+          "mechanicalBias": {
+            "tacticalMastery": 2,
+            "droidControl": 1
+          },
+          "roleBias": {
+            "flex": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Adapts droid tactics to situation."
+        }
+      ]
+    }
+  ]
+}

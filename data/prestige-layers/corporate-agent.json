@@ -1,0 +1,257 @@
+{
+  "name": "Corporate Agent Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "businessAcumen": 3,
+      "corporateInfluence": 2,
+      "resourceControl": 2,
+      "knowledgeMastery": 1
+    },
+    "roleBias": {
+      "controller": 2,
+      "support": 1
+    },
+    "attributeBias": {
+      "int": 2,
+      "cha": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Network Coordinator",
+      "specialists": [
+        {
+          "name": "Corporate Climber",
+          "mechanicalBias": {
+            "businessAcumen": 2,
+            "networkInfluence": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Ascends corporate hierarchy strategically."
+        },
+        {
+          "name": "Resources Director",
+          "mechanicalBias": {
+            "resourceControl": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Controls corporate resources."
+        },
+        {
+          "name": "Deal Maker",
+          "mechanicalBias": {
+            "businessAcumen": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "BrokersAdvantage business deals."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Hostile Takeover Specialist",
+          "mechanicalBias": {
+            "corporateInfluence": 2,
+            "predatoryInstinct": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Identifies and exploits corporate weakness."
+        },
+        {
+          "name": "Sabotage Manager",
+          "mechanicalBias": {
+            "businessAcumen": 2,
+            "infiltration": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Sabotages competitors from within."
+        },
+        {
+          "name": "Profit Maximizer",
+          "mechanicalBias": {
+            "resourceControl": 2,
+            "burstDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Pursues profitable ventures aggressively."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Precision Tracker",
+      "specialists": [
+        {
+          "name": "Market Analyst",
+          "mechanicalBias": {
+            "knowledgeMastery": 2,
+            "businessAcumen": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Analyzes markets for advantage."
+        },
+        {
+          "name": "Competitor Hunter",
+          "mechanicalBias": {
+            "trackingMastery": 2,
+            "businessAcumen": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Tracks and targets competitors."
+        },
+        {
+          "name": "Intel Gatherer",
+          "mechanicalBias": {
+            "informationControl": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Gathers corporate intelligence."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Tactical Striker",
+      "specialists": [
+        {
+          "name": "Strategic Executive",
+          "mechanicalBias": {
+            "businessAcumen": 2,
+            "tacticalAwareness": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Executes strategic business plans."
+        },
+        {
+          "name": "Corporate Diplomat",
+          "mechanicalBias": {
+            "corporateInfluence": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Negotiates corporate agreements."
+        },
+        {
+          "name": "Risk Manager",
+          "mechanicalBias": {
+            "knowledgeMastery": 2,
+            "resourceControl": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Manages and mitigates risk."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Unit Commander",
+      "specialists": [
+        {
+          "name": "Executive Leader",
+          "mechanicalBias": {
+            "commandAuthority": 2,
+            "corporateInfluence": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Commands corporate divisions."
+        },
+        {
+          "name": "Team Coordinator",
+          "mechanicalBias": {
+            "unitCoordination": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Coordinates corporate teams."
+        },
+        {
+          "name": "Expansion Master",
+          "mechanicalBias": {
+            "businessAcumen": 2,
+            "resourceControl": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Expands corporate territory."
+        }
+      ]
+    }
+  ]
+}

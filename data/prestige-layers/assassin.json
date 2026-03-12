@@ -1,0 +1,257 @@
+{
+  "name": "Assassin Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "stealthMastery": 3,
+      "deadlyPrecision": 2,
+      "deceptiveTactics": 2,
+      "silentKill": 1
+    },
+    "roleBias": {
+      "striker": 2,
+      "scout": 1
+    },
+    "attributeBias": {
+      "dex": 2,
+      "wis": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Rogue Operative",
+      "specialists": [
+        {
+          "name": "Shadow Assassin",
+          "mechanicalBias": {
+            "stealthMastery": 2,
+            "deadlyPrecision": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Eliminates from complete darkness."
+        },
+        {
+          "name": "Silent Killer",
+          "mechanicalBias": {
+            "silentKill": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Kills without trace or alarm."
+        },
+        {
+          "name": "Ghost Operative",
+          "mechanicalBias": {
+            "stealthMastery": 2,
+            "deceptiveTactics": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Appears and vanishes without evidence."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Precision Tracker",
+      "specialists": [
+        {
+          "name": "Target Specialist",
+          "mechanicalBias": {
+            "deadlyPrecision": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Specializes in singular lethal focus."
+        },
+        {
+          "name": "Vital Strike Master",
+          "mechanicalBias": {
+            "deadlyPrecision": 2,
+            "critDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Knows every lethal vital point."
+        },
+        {
+          "name": "Patient Hunter",
+          "mechanicalBias": {
+            "stealthMastery": 2,
+            "trackingMastery": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Stalks targets without detection."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Professional Assassin",
+          "mechanicalBias": {
+            "deadlyPrecision": 2,
+            "deceptionMastery": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Executes contracts with deadly efficiency."
+        },
+        {
+          "name": "Escape Specialist",
+          "mechanicalBias": {
+            "stealthMastery": 2,
+            "evasion": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Escapes without leaving evidence."
+        },
+        {
+          "name": "Finishing Technician",
+          "mechanicalBias": {
+            "silentKill": 2,
+            "initiative": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Ends lives with precision timing."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Network Coordinator",
+      "specialists": [
+        {
+          "name": "Information Broker",
+          "mechanicalBias": {
+            "networkInfluence": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Gathers intelligence on targets."
+        },
+        {
+          "name": "Contract Fixer",
+          "mechanicalBias": {
+            "deceptionMastery": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Manages contracts and payments."
+        },
+        {
+          "name": "Underground Contact",
+          "mechanicalBias": {
+            "stealthMastery": 2,
+            "resourceControl": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Maintains network of safehouses."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Dual Wielder",
+      "specialists": [
+        {
+          "name": "Blade Assassin",
+          "mechanicalBias": {
+            "deadlyPrecision": 2,
+            "dualWield": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Masters dual blade assassination."
+        },
+        {
+          "name": "Poison Master",
+          "mechanicalBias": {
+            "silentKill": 2,
+            "resourceControl": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Uses toxins for silent elimination."
+        },
+        {
+          "name": "Shadow Dancer",
+          "mechanicalBias": {
+            "stealthMastery": 2,
+            "dualWield": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Moves through shadows with dual weapons."
+        }
+      ]
+    }
+  ]
+}

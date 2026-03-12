@@ -1,0 +1,257 @@
+{
+  "name": "Medic Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "surgicalMastery": 3,
+      "healingMastery": 2,
+      "treatingInjury": 2,
+      "medicalKnowledge": 1
+    },
+    "roleBias": {
+      "support": 2,
+      "utility": 1
+    },
+    "attributeBias": {
+      "int": 2,
+      "wis": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Support Specialist",
+      "specialists": [
+        {
+          "name": "Surgical Master",
+          "mechanicalBias": {
+            "surgicalMastery": 2,
+            "treatmentExpertise": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Performs complex surgery."
+        },
+        {
+          "name": "Healing Specialist",
+          "mechanicalBias": {
+            "healingMastery": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Heals injuries rapidly."
+        },
+        {
+          "name": "Trauma Responder",
+          "mechanicalBias": {
+            "treatingInjury": 2,
+            "initiative": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Responds to trauma instantly."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Knowledge Keeper",
+      "specialists": [
+        {
+          "name": "Medical Scholar",
+          "mechanicalBias": {
+            "medicalKnowledge": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Masters medical science."
+        },
+        {
+          "name": "Anatomy Expert",
+          "mechanicalBias": {
+            "surgicalMastery": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Understands anatomy completely."
+        },
+        {
+          "name": "Disease Expert",
+          "mechanicalBias": {
+            "medicalKnowledge": 2,
+            "treatingInjury": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Cures diseases masterfully."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Emergency Responder",
+      "specialists": [
+        {
+          "name": "Combat Medic",
+          "mechanicalBias": {
+            "healingMastery": 2,
+            "initiative": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Heals under combat pressure."
+        },
+        {
+          "name": "Life Saver",
+          "mechanicalBias": {
+            "treatingInjury": 2,
+            "moraleBonus": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Saves lives with skill."
+        },
+        {
+          "name": "Recovery Master",
+          "mechanicalBias": {
+            "healingMastery": 2,
+            "forceRecovery": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Accelerates recovery time."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Field Surgeon",
+      "specialists": [
+        {
+          "name": "Field Surgery Master",
+          "mechanicalBias": {
+            "surgicalMastery": 2,
+            "treatingInjury": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Operates in field conditions."
+        },
+        {
+          "name": "Prosthetic Master",
+          "mechanicalBias": {
+            "surgicalMastery": 2,
+            "resourceControl": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Fits prosthetics masterfully."
+        },
+        {
+          "name": "Amputation Specialist",
+          "mechanicalBias": {
+            "treatingInjury": 2,
+            "surgicalMastery": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Performs amputation surgery."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Support Innovator",
+      "specialists": [
+        {
+          "name": "Medical Innovator",
+          "mechanicalBias": {
+            "medicalKnowledge": 2,
+            "technicalInnovation": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Innovates medical techniques."
+        },
+        {
+          "name": "Therapeutic Healer",
+          "mechanicalBias": {
+            "healingMastery": 2,
+            "moraleBonus": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Heals physical and mental trauma."
+        },
+        {
+          "name": "Medical Legend",
+          "mechanicalBias": {
+            "surgicalMastery": 2,
+            "healingMastery": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Becomes legendary healer."
+        }
+      ]
+    }
+  ]
+}

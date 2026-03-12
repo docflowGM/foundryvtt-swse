@@ -1,0 +1,257 @@
+{
+  "name": "Military Engineer Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "engineeringMastery": 3,
+      "tacticalSupport": 2,
+      "fortifications": 2,
+      "weaponEngineering": 1
+    },
+    "roleBias": {
+      "support": 2,
+      "controller": 1
+    },
+    "attributeBias": {
+      "int": 2,
+      "str": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Support Specialist",
+      "specialists": [
+        {
+          "name": "Combat Engineer",
+          "mechanicalBias": {
+            "engineeringMastery": 2,
+            "tacticalSupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Engineers combat solutions."
+        },
+        {
+          "name": "Fortification Master",
+          "mechanicalBias": {
+            "fortifications": 2,
+            "damageReduction": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Builds defensive fortifications."
+        },
+        {
+          "name": "Infrastructure Developer",
+          "mechanicalBias": {
+            "engineeringMastery": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Builds military infrastructure."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Knowledge Keeper",
+      "specialists": [
+        {
+          "name": "Engineering Scholar",
+          "mechanicalBias": {
+            "engineeringMastery": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Mastery military engineering."
+        },
+        {
+          "name": "Siege Specialist",
+          "mechanicalBias": {
+            "tacticalSupport": 2,
+            "fortifications": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Specializes in siege warfare."
+        },
+        {
+          "name": "Weapon Designer",
+          "mechanicalBias": {
+            "weaponEngineering": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Designs military weapons."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Tactical Specialist",
+      "specialists": [
+        {
+          "name": "Tactical Engineer",
+          "mechanicalBias": {
+            "tacticalSupport": 2,
+            "tacticalAwareness": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Applies engineering tactically."
+        },
+        {
+          "name": "Demolitions Master",
+          "mechanicalBias": {
+            "weaponEngineering": 2,
+            "burstDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Masters explosive demolition."
+        },
+        {
+          "name": "Supply Line Master",
+          "mechanicalBias": {
+            "engineeringMastery": 2,
+            "resourceControl": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Manages military logistics."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Unit Commander",
+      "specialists": [
+        {
+          "name": "Engineering Commander",
+          "mechanicalBias": {
+            "engineeringMastery": 2,
+            "commandAuthority": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Leads engineering corps."
+        },
+        {
+          "name": "Support Coordinator",
+          "mechanicalBias": {
+            "tacticalSupport": 2,
+            "unitCoordination": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Coordinates tactical support."
+        },
+        {
+          "name": "Innovation Leader",
+          "mechanicalBias": {
+            "weaponEngineering": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Leads through innovation."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Opportunistic Engineer",
+          "mechanicalBias": {
+            "engineeringMastery": 2,
+            "predatoryInstinct": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Exploits engineering advantages."
+        },
+        {
+          "name": "Explosive Expert",
+          "mechanicalBias": {
+            "weaponEngineering": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Uses explosives precisely."
+        },
+        {
+          "name": "Master Engineer",
+          "mechanicalBias": {
+            "engineeringMastery": 2,
+            "tacticalSupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Masters military engineering."
+        }
+      ]
+    }
+  ]
+}

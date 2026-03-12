@@ -1,0 +1,257 @@
+{
+  "name": "Vanguard Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "specialOps": 3,
+      "commandoTactics": 2,
+      "rapidResponse": 2,
+      "tacticalVerse": 1
+    },
+    "roleBias": {
+      "striker": 2,
+      "defender": 1
+    },
+    "attributeBias": {
+      "str": 2,
+      "dex": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Commando",
+      "specialists": [
+        {
+          "name": "Elite Commando",
+          "mechanicalBias": {
+            "specialOps": 2,
+            "commandoTactics": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Masters elite commando tactics."
+        },
+        {
+          "name": "Rapid Strike Master",
+          "mechanicalBias": {
+            "rapidResponse": 2,
+            "initiative": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Executes rapid strikes."
+        },
+        {
+          "name": "Tactical Operator",
+          "mechanicalBias": {
+            "commandoTactics": 2,
+            "tacticalAwareness": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Operates with tactical precision."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Tactical Striker",
+      "specialists": [
+        {
+          "name": "Tactical Vanguard",
+          "mechanicalBias": {
+            "commandoTactics": 2,
+            "tacticalVerse": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Applies tactics tactically."
+        },
+        {
+          "name": "Fast Attacker",
+          "mechanicalBias": {
+            "rapidResponse": 2,
+            "burstDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Attacks with speed."
+        },
+        {
+          "name": "Multi-Threat Coordinator",
+          "mechanicalBias": {
+            "specialOps": 2,
+            "areaControl": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Coordinates multi-threaded ops."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Armor Specialist",
+      "specialists": [
+        {
+          "name": "Armored Operator",
+          "mechanicalBias": {
+            "armorMastery": 2,
+            "specialOps": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Operates in heavy armor."
+        },
+        {
+          "name": "Assault Specialist",
+          "mechanicalBias": {
+            "rapidResponse": 2,
+            "burstDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Specializes in assaults."
+        },
+        {
+          "name": "Breaching Expert",
+          "mechanicalBias": {
+            "commandoTactics": 2,
+            "firepower": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Masters breaching operations."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Unit Commander",
+      "specialists": [
+        {
+          "name": "Vanguard Commander",
+          "mechanicalBias": {
+            "specialOps": 2,
+            "commandAuthority": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Commands vanguard teams."
+        },
+        {
+          "name": "Rapid Response Leader",
+          "mechanicalBias": {
+            "rapidResponse": 2,
+            "commandAuthority": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Leads rapid response units."
+        },
+        {
+          "name": "Team Coordinator",
+          "mechanicalBias": {
+            "commandoTactics": 2,
+            "unitCoordination": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Coordinates specialized teams."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Opportunistic Vanguard",
+          "mechanicalBias": {
+            "specialOps": 2,
+            "predatoryInstinct": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Exploits tactical openings."
+        },
+        {
+          "name": "Lethal Specialist",
+          "mechanicalBias": {
+            "rapidResponse": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Delivers lethal strikes."
+        },
+        {
+          "name": "Vanguard Master",
+          "mechanicalBias": {
+            "specialOps": 2,
+            "commandoTactics": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Masters vanguard operations."
+        }
+      ]
+    }
+  ]
+}

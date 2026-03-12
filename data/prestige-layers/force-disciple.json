@@ -1,0 +1,257 @@
+{
+  "name": "Force Disciple Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "forceSecret": 3,
+      "darkSideAffinity": 2,
+      "forceRecovery": 2,
+      "conditionTrack": 1
+    },
+    "roleBias": {
+      "controller": 2,
+      "striker": 1
+    },
+    "attributeBias": {
+      "cha": 2,
+      "wis": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Jedi Dark Side Striker",
+      "specialists": [
+        {
+          "name": "Dark Mastery",
+          "mechanicalBias": {
+            "darkSideAffinity": 2,
+            "forceSecret": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Masters dark-side Force techniques."
+        },
+        {
+          "name": "Devotion Amplifier",
+          "mechanicalBias": {
+            "forceSecret": 2,
+            "darkSideAffinity": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Amplifies devotion through Force."
+        },
+        {
+          "name": "Corruption Mastery",
+          "mechanicalBias": {
+            "darkSideAffinity": 2,
+            "conditionTrack": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Spreads corruption through Force."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Jedi Force Controller",
+      "specialists": [
+        {
+          "name": "Dark Control Master",
+          "mechanicalBias": {
+            "forceSecret": 2,
+            "forceDC": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Masters dark-side control."
+        },
+        {
+          "name": "Will Breaker",
+          "mechanicalBias": {
+            "conditionTrack": 2,
+            "forceSecret": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Breaks wills through Force."
+        },
+        {
+          "name": "Domination Specialist",
+          "mechanicalBias": {
+            "forceRecovery": 2,
+            "darkSideAffinity": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Sustains domination through dark power."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Force Ritualist",
+      "specialists": [
+        {
+          "name": "Dark Ritual Master",
+          "mechanicalBias": {
+            "ritualMastery": 2,
+            "darkSideAffinity": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Performs dark Force rituals."
+        },
+        {
+          "name": "Forbidden Knowledge",
+          "mechanicalBias": {
+            "forceSecret": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Accesses forbidden Force knowledge."
+        },
+        {
+          "name": "Dark Meditation Master",
+          "mechanicalBias": {
+            "forceRecovery": 2,
+            "darkSideAffinity": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Restores power through dark meditation."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Sith Apprentice",
+      "specialists": [
+        {
+          "name": "Sith Evolution",
+          "mechanicalBias": {
+            "darkSideAffinity": 2,
+            "forceSecret": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Evolves into true Sith power."
+        },
+        {
+          "name": "Alchemy Mastery",
+          "mechanicalBias": {
+            "sithAlchemy": 2,
+            "darkSideAffinity": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Masters Sith alchemical arts."
+        },
+        {
+          "name": "Dark Aura",
+          "mechanicalBias": {
+            "darkSideAffinity": 2,
+            "conditionTrack": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Radiates corrupting dark presence."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Dark Opportunist",
+          "mechanicalBias": {
+            "darkSideAffinity": 2,
+            "predatoryInstinct": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Exploits through dark Power."
+        },
+        {
+          "name": "Finishing Darkness",
+          "mechanicalBias": {
+            "forceSecret": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Ends foes with dark secrets."
+        },
+        {
+          "name": "Dark Master",
+          "mechanicalBias": {
+            "forceSecret": 2,
+            "darkSideAffinity": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Masters dark-side Force power."
+        }
+      ]
+    }
+  ]
+}

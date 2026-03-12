@@ -1,0 +1,257 @@
+{
+  "name": "Pathfinder Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "explorationMastery": 3,
+      "wildernessLore": 2,
+      "survivalSkills": 2,
+      "trackingMastery": 1
+    },
+    "roleBias": {
+      "scout": 2,
+      "utility": 1
+    },
+    "attributeBias": {
+      "wis": 2,
+      "dex": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Survival Expert",
+      "specialists": [
+        {
+          "name": "Wilderness Master",
+          "mechanicalBias": {
+            "explorationMastery": 2,
+            "survivalSkills": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Masters wilderness survival."
+        },
+        {
+          "name": "Navigation Expert",
+          "mechanicalBias": {
+            "explorationMastery": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Navigates any terrain."
+        },
+        {
+          "name": "Adaptation Master",
+          "mechanicalBias": {
+            "survivalSkills": 2,
+            "adaptability": 1
+          },
+          "roleBias": {
+            "flex": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Adapts to any environment."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Precision Tracker",
+      "specialists": [
+        {
+          "name": "Beast Tracker",
+          "mechanicalBias": {
+            "trackingMastery": 2,
+            "wildernessLore": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Tracks beasts masterfully."
+        },
+        {
+          "name": "Explorer Scout",
+          "mechanicalBias": {
+            "explorationMastery": 2,
+            "trackingMastery": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Explores unknown territories."
+        },
+        {
+          "name": "Route Finder",
+          "mechanicalBias": {
+            "explorationMastery": 2,
+            "knowledge  Mastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Finds optimal routes."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Knowledge Keeper",
+      "specialists": [
+        {
+          "name": "Wilderness Scholar",
+          "mechanicalBias": {
+            "wildernessLore": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Masters wilderness lore."
+        },
+        {
+          "name": "Beast Master",
+          "mechanicalBias": {
+            "wildernessLore": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Commands wilderness beasts."
+        },
+        {
+          "name": "Environmental Reader",
+          "mechanicalBias": {
+            "survivalSkills": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Reads environment for dangers."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Opportunistic Explorer",
+          "mechanicalBias": {
+            "explorationMastery": 2,
+            "predatoryInstinct": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Exploits exploration discoveries."
+        },
+        {
+          "name": "Wilderness Combatant",
+          "mechanicalBias": {
+            "wildernessLore": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Hunts in wilderness."
+        },
+        {
+          "name": "Pathfinder Legend",
+          "mechanicalBias": {
+            "explorationMastery": 2,
+            "survivalSkills": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Becomes legendary pathfinder."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Scout Support",
+      "specialists": [
+        {
+          "name": "Scout Leader",
+          "mechanicalBias": {
+            "explorationMastery": 2,
+            "commandAuthority": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Leads scouting expeditions."
+        },
+        {
+          "name": "Guide Master",
+          "mechanicalBias": {
+            "wildernessLore": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Guides groups through wilderness."
+        },
+        {
+          "name": "Survival Teacher",
+          "mechanicalBias": {
+            "survivalSkills": 2,
+            "moraleBonus": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Teaches survival to others."
+        }
+      ]
+    }
+  ]
+}

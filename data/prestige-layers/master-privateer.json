@@ -1,0 +1,257 @@
+{
+  "name": "Master Privateer Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "smugglingExpertise": 3,
+      "spacefarerMastery": 2,
+      "illegalTrade": 2,
+      "evasionTactics": 1
+    },
+    "roleBias": {
+      "striker": 2,
+      "scout": 1
+    },
+    "attributeBias": {
+      "dex": 2,
+      "cha": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Rogue Operative",
+      "specialists": [
+        {
+          "name": "Master Smuggler",
+          "mechanicalBias": {
+            "smugglingExpertise": 2,
+            "deceptionMastery": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Masters smuggling operations."
+        },
+        {
+          "name": "Cargo Master",
+          "mechanicalBias": {
+            "illegalTrade": 2,
+            "resourceControl": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Controls illegal cargo routes."
+        },
+        {
+          "name": "Escape Specialist",
+          "mechanicalBias": {
+            "evasionTactics": 2,
+            "evasion": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Escapes authority pursuit."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Spacefarer",
+      "specialists": [
+        {
+          "name": "Void Mastery",
+          "mechanicalBias": {
+            "spacefarerMastery": 2,
+            "pilotMastery": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Masters space navigation."
+        },
+        {
+          "name": "Trade Route Master",
+          "mechanicalBias": {
+            "smugglingExpertise": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Knows all profitable routes."
+        },
+        {
+          "name": "Crew Commander",
+          "mechanicalBias": {
+            "spacefarerMastery": 2,
+            "commandAuthority": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Leads pirate crew."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Network Coordinator",
+      "specialists": [
+        {
+          "name": "Black Market Contact",
+          "mechanicalBias": {
+            "illegalTrade": 2,
+            "networkInfluence": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Controls black market networks."
+        },
+        {
+          "name": "Fence Master",
+          "mechanicalBias": {
+            "smugglingExpertise": 2,
+            "informationControl": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Fences stolen goods masterfully."
+        },
+        {
+          "name": "Spy Network Master",
+          "mechanicalBias": {
+            "illegalTrade": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Maintains underground spy network."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Opportunistic Pirate",
+          "mechanicalBias": {
+            "smugglingExpertise": 2,
+            "predatoryInstinct": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Exploits shipping opportunities."
+        },
+        {
+          "name": "Raider Master",
+          "mechanicalBias": {
+            "evasionTactics": 2,
+            "vehicularDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Masters cargo ship raids."
+        },
+        {
+          "name": "Privateer Legend",
+          "mechanicalBias": {
+            "spacefarerMastery": 2,
+            "evasionTactics": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Becomes legendary privateer."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Rogue Operator",
+      "specialists": [
+        {
+          "name": "Shadow Trader",
+          "mechanicalBias": {
+            "illegalTrade": 2,
+            "stealth": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Trades in shadows undetected."
+        },
+        {
+          "name": "Silent Runner",
+          "mechanicalBias": {
+            "evasionTactics": 2,
+            "infiltration": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Runs cargo silently."
+        },
+        {
+          "name": "Untraceable Captain",
+          "mechanicalBias": {
+            "smugglingExpertise": 2,
+            "deceptionMastery": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Becomes untraceable legend."
+        }
+      ]
+    }
+  ]
+}

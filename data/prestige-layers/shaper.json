@@ -1,0 +1,257 @@
+{
+  "name": "Shaper Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "biotechMastery": 3,
+      "geneticEngineering": 2,
+      "livingWeaponCrafting": 2,
+      "biologicalControl": 1
+    },
+    "roleBias": {
+      "utility": 2,
+      "support": 1
+    },
+    "attributeBias": {
+      "int": 2,
+      "wis": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Knowledge Keeper",
+      "specialists": [
+        {
+          "name": "Genetic Engineer",
+          "mechanicalBias": {
+            "geneticEngineering": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Masters genetic engineering."
+        },
+        {
+          "name": "Biotech Researcher",
+          "mechanicalBias": {
+            "biotechMastery": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Researches biotech advances."
+        },
+        {
+          "name": "Organism Designer",
+          "mechanicalBias": {
+            "biologicalControl": 2,
+            "geneticEngineering": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Designs biological organisms."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Support Specialist",
+      "specialists": [
+        {
+          "name": "Living Weapon Crafter",
+          "mechanicalBias": {
+            "livingWeaponCrafting": 2,
+            "biotechMastery": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Crafts biological weapons."
+        },
+        {
+          "name": "Organism Controller",
+          "mechanicalBias": {
+            "biologicalControl": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Controls biological entities."
+        },
+        {
+          "name": "Adaptation Engineer",
+          "mechanicalBias": {
+            "biotechMastery": 2,
+            "adaptability": 1
+          },
+          "roleBias": {
+            "flex": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Adapts organisms for purposes."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Living Weapon Specialist",
+      "specialists": [
+        {
+          "name": "Perfect Creature",
+          "mechanicalBias": {
+            "livingWeaponCrafting": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Creates perfect organisms."
+        },
+        {
+          "name": "Bioweapon Master",
+          "mechanicalBias": {
+            "biologicalControl": 2,
+            "burstDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Masters bioweapon deployment."
+        },
+        {
+          "name": "Genetic Modifier",
+          "mechanicalBias": {
+            "geneticEngineering": 2,
+            "conditionTrack": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Modifies genetics for effect."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Opportunistic Shaper",
+          "mechanicalBias": {
+            "biotechMastery": 2,
+            "predatoryInstinct": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Exploits shaping opportunities."
+        },
+        {
+          "name": "Perfect Evolution",
+          "mechanicalBias": {
+            "geneticEngineering": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Evolves organisms into weapons."
+        },
+        {
+          "name": "Master Shaper",
+          "mechanicalBias": {
+            "biotechMastery": 2,
+            "livingWeaponCrafting": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Masters all biotech shaping."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Biological Leader",
+      "specialists": [
+        {
+          "name": "Creature Commander",
+          "mechanicalBias": {
+            "biologicalControl": 2,
+            "commandAuthority": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Leads biological forces."
+        },
+        {
+          "name": "Collective Coordinator",
+          "mechanicalBias": {
+            "biologicalControl": 2,
+            "unitCoordination": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Coordinates creature collectives."
+        },
+        {
+          "name": "Evolution Master",
+          "mechanicalBias": {
+            "geneticEngineering": 2,
+            "biotechMastery": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Masters biological evolution."
+        }
+      ]
+    }
+  ]
+}

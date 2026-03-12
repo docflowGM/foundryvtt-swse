@@ -1,0 +1,257 @@
+{
+  "name": "Enforcer Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "intimidation": 3,
+      "authorityPresence": 2,
+      "brutalForce": 2,
+      "lawEnforcement": 1
+    },
+    "roleBias": {
+      "defender": 2,
+      "striker": 1
+    },
+    "attributeBias": {
+      "str": 2,
+      "cha": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Tactical Striker",
+      "specialists": [
+        {
+          "name": "Intimidating Force",
+          "mechanicalBias": {
+            "intimidation": 2,
+            "burstDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Uses brutality to enforce law."
+        },
+        {
+          "name": "Authority Enforcer",
+          "mechanicalBias": {
+            "authorityPresence": 2,
+            "moraleImpact": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Enforces with badge authority."
+        },
+        {
+          "name": "Brutality Specialist",
+          "mechanicalBias": {
+            "brutalForce": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Applies brutal force to suspects."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Armor Specialist",
+      "specialists": [
+        {
+          "name": "Protected Enforcer",
+          "mechanicalBias": {
+            "armorMastery": 2,
+            "intimidation": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Wears armor as intimidation symbol."
+        },
+        {
+          "name": "Armored Wall",
+          "mechanicalBias": {
+            "damageReduction": 2,
+            "authorityPresence": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Creates physical barrier to crime."
+        },
+        {
+          "name": "Equipped Enforcer",
+          "mechanicalBias": {
+            "lawEnforcement": 2,
+            "armorMastery": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Uses law enforcement equipment."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Precision Tracker",
+      "specialists": [
+        {
+          "name": "Fugitive Hunter",
+          "mechanicalBias": {
+            "trackingMastery": 2,
+            "authorityPresence": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Hunts down lawbreakers relentlessly."
+        },
+        {
+          "name": "Crime Investigator",
+          "mechanicalBias": {
+            "knowledgeMastery": 2,
+            "lawEnforcement": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Investigates crimes thoroughly."
+        },
+        {
+          "name": "Arrest Specialist",
+          "mechanicalBias": {
+            "intimidation": 2,
+            "grappling": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Subdues and arrests suspects."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Unit Commander",
+      "specialists": [
+        {
+          "name": "Law Enforcement Commander",
+          "mechanicalBias": {
+            "commandAuthority": 2,
+            "lawEnforcement": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Commands law enforcement forces."
+        },
+        {
+          "name": "Patrol Coordinator",
+          "mechanicalBias": {
+            "unitCoordination": 2,
+            "authorityPresence": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Coordinates patrol operations."
+        },
+        {
+          "name": "Response Leader",
+          "mechanicalBias": {
+            "authorityPresence": 2,
+            "initiative": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Leads rapid response teams."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Opportunistic Enforcer",
+          "mechanicalBias": {
+            "intimidation": 2,
+            "predatoryInstinct": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Exploits law enforcement advantage."
+        },
+        {
+          "name": "Finishing Move Master",
+          "mechanicalBias": {
+            "brutalForce": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Ends confrontations decisively."
+        },
+        {
+          "name": "Crime Stopper",
+          "mechanicalBias": {
+            "lawEnforcement": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Stops crimes with authority."
+        }
+      ]
+    }
+  ]
+}
