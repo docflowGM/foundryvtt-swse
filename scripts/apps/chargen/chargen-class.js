@@ -4,6 +4,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { IdentityEngine } from "/systems/foundryvtt-swse/scripts/engine/prestige/identity-engine.js";
 import { applyProgressionPatch } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/apply-progression-patch.js";
 import { buildClassAtomicPatch } from "/systems/foundryvtt-swse/scripts/apps/chargen/steps/class-step.js";
 import {

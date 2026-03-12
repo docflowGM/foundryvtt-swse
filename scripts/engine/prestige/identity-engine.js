@@ -598,7 +598,8 @@ export class IdentityEngine {
         };
 
         // Get survey bias from actor (if stored)
-        const rawSurveyBias = actor.system?.surveyBias || {};
+        // Survey bias is stored in system.swse.surveyBias via injectSurveyBias()
+        const rawSurveyBias = actor.system?.swse?.surveyBias || {};
         if (!rawSurveyBias || Object.keys(rawSurveyBias).length === 0) {
             return surveyBias;
         }
@@ -1568,5 +1569,78 @@ export class IdentityEngine {
 
         // Return mapped variation or lowercase normalized form
         return variations[normalized] || normalized;
+    }
+
+    /**
+     * Inject survey bias into an actor's identity layer
+     * This replaces any existing survey bias and triggers recomputation
+     *
+     * Does NOT mutate the actor directly - stores in system.swse.surveyBias
+     * Caller is responsible for persisting changes if needed
+     *
+     * @param {Object} actor - Foundry actor (will have survey bias added to system data)
+     * @param {Object} biasObject - Survey bias object { mechanicalBias, roleBias, attributeBias }
+     * @returns {Object} Updated totalBias after injection
+     */
+    static injectSurveyBias(actor, biasObject = {}) {
+        if (!actor) {
+            SWSELogger.warn('[IdentityEngine.injectSurveyBias] No actor provided');
+            return this.computeTotalBias(actor);
+        }
+
+        if (!actor.system) {
+            actor.system = {};
+        }
+        if (!actor.system.swse) {
+            actor.system.swse = {};
+        }
+
+        // Replace survey bias (not additive)
+        actor.system.swse.surveyBias = {
+            mechanicalBias: biasObject.mechanicalBias || {},
+            roleBias: biasObject.roleBias || {},
+            attributeBias: biasObject.attributeBias || {}
+        };
+
+        SWSELogger.log('[IdentityEngine.injectSurveyBias] Injected survey bias:', actor.system.swse.surveyBias);
+
+        // Return recomputed total bias
+        return this.computeTotalBias(actor);
+    }
+
+    /**
+     * Clear survey bias from an actor's identity layer
+     * This removes all survey influence and triggers recomputation
+     *
+     * Does NOT mutate the actor directly - resets system.swse.surveyBias
+     * Caller is responsible for persisting changes if needed
+     *
+     * @param {Object} actor - Foundry actor
+     * @returns {Object} Updated totalBias after clearing
+     */
+    static clearSurveyBias(actor) {
+        if (!actor) {
+            SWSELogger.warn('[IdentityEngine.clearSurveyBias] No actor provided');
+            return this.computeTotalBias(actor);
+        }
+
+        if (!actor.system) {
+            actor.system = {};
+        }
+        if (!actor.system.swse) {
+            actor.system.swse = {};
+        }
+
+        // Clear survey bias
+        actor.system.swse.surveyBias = {
+            mechanicalBias: {},
+            roleBias: {},
+            attributeBias: {}
+        };
+
+        SWSELogger.log('[IdentityEngine.clearSurveyBias] Cleared survey bias for actor:', actor.id);
+
+        // Return recomputed total bias
+        return this.computeTotalBias(actor);
     }
 }
