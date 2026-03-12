@@ -118,6 +118,10 @@ export class SuggestionEngineCoordinator {
       SWSELogger.log('[Coordinator] Wiring suggestion engine event hooks');
       SuggestionEngineHooks.initialize();
 
+      // Phase 5: Register chargen hooks for reactive BuildIntent computation
+      SWSELogger.log('[Coordinator] Registering chargen reactive wiring hooks');
+      this._registerChargenHooks();
+
       SWSELogger.log('=== Suggestion Engine Coordinator initialized ===');
       Hooks.callAll('swse:suggestions:initialized');
       return true;
@@ -207,6 +211,85 @@ export class SuggestionEngineCoordinator {
     }
     keysToDelete.forEach(key => this._buildIntentCache.delete(key));
     SWSELogger.log(`Cleared BuildIntent cache for actor ${actorId}`);
+  }
+
+  /**
+   * Last computed BuildIntent for chargen reactivity
+   * Stores the most recently computed BuildIntent for UI consumption
+   * @private
+   */
+  static _lastComputedBuildIntent = null;
+
+  /**
+   * Register hooks for chargen reactivity
+   * Listens for chargen selection changes and automatically invalidates/recomputes BuildIntent
+   * @private
+   */
+  static _registerChargenHooks() {
+    // Hook: Chargen selection made (any step)
+    Hooks.on('swse:chargen:selection-made', (chargenContext, pendingData) => {
+      SWSELogger.log('[SUGGESTION-COORDINATOR] Chargen selection detected, invalidating cache and computing fresh BuildIntent');
+
+      // Invalidate cache for this actor
+      const actorId = chargenContext.characterData.id || 'chargen-temp';
+      this.clearBuildIntentCache(actorId);
+
+      // Compute fresh BuildIntent in background
+      this._computeAndCacheBuildIntent(chargenContext, pendingData);
+    });
+
+    // Hook: Chargen step changed
+    Hooks.on('swse:chargen:step-changed', (chargenContext, pendingData) => {
+      SWSELogger.log('[SUGGESTION-COORDINATOR] Chargen step changed, invalidating BuildIntent cache');
+
+      // Invalidate cache for this actor
+      const actorId = chargenContext.characterData.id || 'chargen-temp';
+      this.clearBuildIntentCache(actorId);
+
+      // Compute fresh BuildIntent in background
+      this._computeAndCacheBuildIntent(chargenContext, pendingData);
+    });
+
+    SWSELogger.log('[SUGGESTION-COORDINATOR] Chargen reactive wiring hooks registered');
+  }
+
+  /**
+   * Helper: Compute and cache BuildIntent from chargen context
+   * @private
+   */
+  static async _computeAndCacheBuildIntent(chargenContext, pendingData) {
+    try {
+      // Create temp actor from chargen data
+      const tempActor = chargenContext._createTempActorForValidation?.();
+      if (!tempActor) {
+        SWSELogger.warn('[SUGGESTION-COORDINATOR] Cannot compute BuildIntent - no temp actor');
+        return;
+      }
+
+      // Compute BuildIntent (will be cached by analyzeBuildIntent)
+      const buildIntent = await this.analyzeBuildIntent(tempActor, pendingData);
+
+      // Store last computed for UI consumption
+      this._lastComputedBuildIntent = buildIntent;
+      game.swse = game.swse || {};
+      game.swse.lastComputedBuildIntent = buildIntent;
+
+      SWSELogger.log('[SUGGESTION-COORDINATOR] BuildIntent computed and cached for chargen:', {
+        primaryThemes: buildIntent.primaryThemes,
+        combatStyle: buildIntent.combatStyle
+      });
+    } catch (err) {
+      SWSELogger.warn('[SUGGESTION-COORDINATOR] Failed to compute BuildIntent during chargen:', err);
+    }
+  }
+
+  /**
+   * Get last computed BuildIntent (from cache)
+   * Used by chargen UI for suggestion context
+   * @returns {Object|null} Last computed BuildIntent or null if not yet computed
+   */
+  static getLastComputedBuildIntent() {
+    return this._lastComputedBuildIntent || game.swse?.lastComputedBuildIntent || null;
   }
 
   /**
