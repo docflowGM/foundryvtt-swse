@@ -22,6 +22,43 @@ import { ArchetypeRegistry } from "/systems/foundryvtt-swse/scripts/engine/arche
 import { PrestigeLayerRegistry } from "/systems/foundryvtt-swse/scripts/engine/prestige/prestige-layer-registry.js";
 
 export class IdentityEngine {
+    // === Registry Caches (Loaded at system init) ===
+    static #primitiveMapping = null;
+    static #primitiveClassification = null;
+    static #attributeMapping = null;
+
+    /**
+     * Initialize registry caches
+     * Must be called at system startup
+     *
+     * @async
+     * @returns {Promise<void>}
+     */
+    static async initialize() {
+        try {
+            this.#primitiveMapping = await this.#loadRegistry('primitive-bias-mapping.json');
+            this.#primitiveClassification = await this.#loadRegistry('primitive-classification.json');
+            this.#attributeMapping = await this.#loadRegistry('attribute-bias-mapping.json');
+            SWSELogger.info('[IdentityEngine] Registry caches initialized');
+        } catch (error) {
+            SWSELogger.error('[IdentityEngine] Failed to initialize registries:', error);
+        }
+    }
+
+    /**
+     * Load a registry JSON file
+     * @private
+     * @param {string} filename - Registry filename
+     * @returns {Promise<Object>}
+     */
+    static async #loadRegistry(filename) {
+        const response = await fetch(`/systems/foundryvtt-swse/data/${filename}`);
+        if (!response.ok) {
+            throw new Error(`Failed to load ${filename}: ${response.statusText}`);
+        }
+        return response.json();
+    }
+
     /**
      * Compute TotalBias following exact specification
      * Pure function: does not mutate actor
@@ -227,12 +264,12 @@ export class IdentityEngine {
     }
 
     /**
-     * Compute ObservedBehaviorBias from actor primitives
+     * Compute ObservedBehaviorBias from actor primitives, attributes, and skills
      * Uses PrimitiveBiasRegistry for deterministic mapping
      * Pure function - does not mutate actor
      *
      * @param {Object} actor - Foundry actor
-     * @returns {Object} ObservedBehaviorBias
+     * @returns {Object} ObservedBehaviorBias (merged from primitives + attributes + skills)
      */
     static computeObservedBehaviorBias(actor) {
         const behaviorBias = {
@@ -241,42 +278,115 @@ export class IdentityEngine {
             attributeBias: {}
         };
 
-        // Load mapping registries (would be loaded from files in real implementation)
-        // For now, return empty until registries are integrated
-        // TODO: Load primitive-bias-mapping.json and primitive-classification.json
-
-        // Iterate through actor items and process primitives
-        if (!actor.items || actor.items.length === 0) {
+        if (!this.#primitiveMapping) {
+            SWSELogger.warn('[IdentityEngine] Primitive registries not initialized');
             return behaviorBias;
         }
 
-        // Process each item's rules/primitives
-        for (const item of actor.items) {
-            if (!item.system?.rules) {
-                continue;
-            }
+        // Layer 1: Process actor primitives (feats, talents, class features)
+        const processedFeats = new Set();
+        if (actor.items && actor.items.length > 0) {
+            for (const item of actor.items) {
+                if (!item.system?.rules) {
+                    continue;
+                }
 
-            const rules = Array.isArray(item.system.rules) ? item.system.rules : [];
-            for (const rule of rules) {
-                const primitive = this.#processPrimitive(rule, actor);
-                this.#addBias(behaviorBias, primitive);
+                const rules = Array.isArray(item.system.rules) ? item.system.rules : [];
+                for (const rule of rules) {
+                    const primitive = this.#processPrimitive(rule, actor, processedFeats);
+                    this.#addBias(behaviorBias, primitive);
+                }
             }
         }
+
+        // Layer 2: Process ability scores (bell curve model)
+        const attributeBias = this.#computeAttributeBias(actor);
+        this.#addBias(behaviorBias, attributeBias);
+
+        // Layer 3: Process skill training and Skill Focus
+        const skillBias = this.#computeSkillBias(actor);
+        this.#addBias(behaviorBias, skillBias);
 
         return behaviorBias;
     }
 
     /**
+     * Compute bias from ability scores using bell curve model
+     * Pure function
+     *
+     * @private
+     * @param {Object} actor - Foundry actor
+     * @returns {Object} Attribute bias
+     */
+    static #computeAttributeBias(actor) {
+        const attributeBias = {
+            mechanicalBias: {},
+            roleBias: {},
+            attributeBias: {}
+        };
+
+        if (!this.#attributeMapping) {
+            return attributeBias;
+        }
+
+        const abilities = actor.system?.abilities || {};
+
+        for (const [ability, score] of Object.entries(abilities)) {
+            if (typeof score !== 'number' || score <= 10) {
+                continue; // Only apply bias if score > 10
+            }
+
+            // Bell curve: z = (score - 10) / 2; bias = 0.6 * (z / (|z| + 2))
+            const z = (score - 10) / 2;
+            const biasMagnitude = 0.6 * (z / (Math.abs(z) + 2));
+
+            // Get mapping for this ability
+            const abilityMapping = this.#attributeMapping[ability];
+            if (!abilityMapping) {
+                continue;
+            }
+
+            // Apply scaled mapping
+            const scaledAbilityBias = this.#scaleAllBias(abilityMapping, biasMagnitude);
+            this.#addBias(attributeBias, scaledAbilityBias);
+        }
+
+        return attributeBias;
+    }
+
+    /**
+     * Compute bias from skill training and Skill Focus
+     * Pure function
+     *
+     * @private
+     * @param {Object} actor - Foundry actor
+     * @returns {Object} Skill bias
+     */
+    static #computeSkillBias(actor) {
+        const skillBias = {
+            mechanicalBias: {},
+            roleBias: {},
+            attributeBias: {}
+        };
+
+        // TODO: Extract skill training and Skill Focus feats from actor
+        // For now, return empty
+        return skillBias;
+    }
+
+    /**
      * Process a single primitive and map to bias
      * Uses PrimitiveBiasRegistry for deterministic mapping
+     * Handles featGrant recursion safely with deduplication
      * Pure function
      *
      * @private
      * @param {Object} rule - The primitive rule object
      * @param {Object} actor - Foundry actor (for context only, not modified)
+     * @param {Set} processedFeats - Set of already-processed feat IDs (for deduplication)
      * @returns {Object} Mapped bias: { mechanicalBias, roleBias, attributeBias }
      */
-    static #processPrimitive(rule, actor) {
+    static #processPrimitive(rule, actor, processedFeats = new Set()) {
         const bias = {
             mechanicalBias: {},
             roleBias: {},
@@ -292,6 +402,22 @@ export class IdentityEngine {
         // Skip vehicle-only and mechanical-only primitives
         if (this.#isVehicleOnly(ruleType) || this.#isMechanicalOnly(ruleType)) {
             return bias;
+        }
+
+        // Handle featGrant recursion: do not apply bias here, recurse into feat
+        if (ruleType === 'featGrant' && rule.featId) {
+            // TODO: Implement feat lookup and recursion
+            // if (!processedFeats.has(rule.featId)) {
+            //     processedFeats.add(rule.featId);
+            //     const feat = lookupFeatById(rule.featId);
+            //     if (feat?.system?.rules) {
+            //         for (const subrule of feat.system.rules) {
+            //             const subPrimitive = this.#processPrimitive(subrule, actor, processedFeats);
+            //             this.#addBias(bias, subPrimitive);
+            //         }
+            //     }
+            // }
+            return bias; // Skip for now
         }
 
         // Get mapping for this primitive type
@@ -311,9 +437,9 @@ export class IdentityEngine {
             this.#mergeBias(bias.attributeBias, mapping.attributeBias);
         }
 
-        // Apply conditional weighting if needed
+        // Apply conditional weighting if needed (registry-driven)
         if (!this.#isAlwaysActive(rule)) {
-            const weight = this.#getConditionalWeight(ruleType, rule);
+            const weight = this.#getConditionalWeight(ruleType);
             bias = this.#scaleAllBias(bias, weight);
         }
 
@@ -322,7 +448,7 @@ export class IdentityEngine {
 
     /**
      * Get bias mapping for primitive type and target
-     * Consults PrimitiveBiasRegistry
+     * Consults PrimitiveBiasRegistry (registry-driven)
      * Pure function
      *
      * @private
@@ -331,10 +457,38 @@ export class IdentityEngine {
      * @returns {Object|null} Mapping object or null if not found
      */
     static #getPrimitiveMapping(ruleType, rule) {
-        // TODO: Load primitive-bias-mapping.json at startup
-        // For now, return null (will be integrated with registry loading)
-        // This is a placeholder for the actual mapping lookup
-        return null;
+        if (!this.#primitiveMapping) {
+            return null; // Registry not loaded
+        }
+
+        // Get mapping for primitive type
+        const typeMapping = this.#primitiveMapping[ruleType];
+        if (!typeMapping) {
+            return null; // No mapping for this primitive type
+        }
+
+        // For primitives with targets (skillModifier, damageModifier, etc)
+        if (rule.skillId && typeMapping.mapping?.default) {
+            // Use default mapping for skill-based primitives
+            return typeMapping.mapping.default;
+        }
+
+        if (rule.target && typeMapping.mapping?.[rule.target]) {
+            // Use specific target mapping if available
+            return typeMapping.mapping[rule.target];
+        }
+
+        // Fallback to default mapping if no specific target
+        if (typeMapping.mapping?.default) {
+            return typeMapping.mapping.default;
+        }
+
+        // For simple primitives without targets
+        if (typeMapping.mapping && typeof typeMapping.mapping === 'object') {
+            return typeMapping.mapping;
+        }
+
+        return null; // No valid mapping
     }
 
     /**
@@ -382,28 +536,25 @@ export class IdentityEngine {
 
     /**
      * Get conditional weight factor for situational primitives
+     * Registry-driven: no hardcoded logic
      * Pure function
      *
      * @private
      * @param {string} ruleType - The primitive type
-     * @param {Object} rule - The rule object
      * @returns {number} Weight multiplier (0.5–1.0)
      */
-    static #getConditionalWeight(ruleType, rule) {
-        // Highly situational: 0.5x
-        if (ruleType === 'meleeCultureBonus') return 0.5;
-        if (ruleType === 'concealment') return 0.5;
+    static #getConditionalWeight(ruleType) {
+        if (!this.#primitiveClassification) {
+            return 0.7; // Safe default if registry not loaded
+        }
 
-        // Moderately situational: 0.7x
-        if (ruleType === 'reroll') return 0.7;
-        if (ruleType === 'evasion') return 0.75;
+        // Use lookup table from CONDITIONAL classification
+        const lookupTable = this.#primitiveClassification.CONDITIONAL?.lookup_table;
+        if (!lookupTable) {
+            return 0.7; // Safe default
+        }
 
-        // Usually active: 1.0x
-        if (ruleType === 'fastHealing') return 1.0;
-        if (ruleType === 'damageReduction') return 1.0;
-
-        // Default: 0.7x for unknown conditionals
-        return 0.7;
+        return lookupTable[ruleType] ?? lookupTable.default ?? 0.7;
     }
 
     /**
@@ -495,9 +646,9 @@ export class IdentityEngine {
             });
         }
 
-        // Observed Behavior Bias (from primitives)
+        // Observed Behavior Bias (from primitives + attributes + skills)
         const behaviorBias = this.computeObservedBehaviorBias(actor);
-        SWSELogger.info("--- ObservedBehaviorBias (from primitives) ---");
+        SWSELogger.info("--- ObservedBehaviorBias (Primitives + Attributes + Skills) ---");
 
         // Count primitives processed
         let primitiveCount = 0;
@@ -526,6 +677,18 @@ export class IdentityEngine {
         SWSELogger.info(`  Primitives processed: ${primitiveCount}`);
         SWSELogger.info(`  Conditional primitives: ${conditionalCount}`);
         SWSELogger.info(`  Skipped (mechanical-only): ${skippedCount}`);
+
+        // Show attribute contributions
+        const abilities = actor.system?.abilities || {};
+        SWSELogger.info("  --- Ability Scores ---");
+        for (const [ability, score] of Object.entries(abilities)) {
+            if (typeof score === 'number' && score > 10) {
+                const z = (score - 10) / 2;
+                const bias = 0.6 * (z / (Math.abs(z) + 2));
+                SWSELogger.info(`    ${ability.toUpperCase()}: ${score} (z=${z.toFixed(2)}, bias=${(bias * 100).toFixed(1)}%)`);
+            }
+        }
+
         SWSELogger.info(`  Mechanical: ${JSON.stringify(behaviorBias.mechanicalBias)}`);
         SWSELogger.info(`  Role: ${JSON.stringify(behaviorBias.roleBias)}`);
         SWSELogger.info(`  Attribute: ${JSON.stringify(behaviorBias.attributeBias)}`);

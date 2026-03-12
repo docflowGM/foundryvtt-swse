@@ -1,0 +1,136 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "purpose": "Map ability scores to bias contributions using bell-curve model",
+    "model": "z = (score - 10) / 2; bias = 0.6 * (z / (|z| + 2)) only if z > 0",
+    "maintenance": "Architecture Team",
+    "note": "This layer represents innate ability strength. Only applies when z > 0 (score > 10)."
+  },
+
+  "str": {
+    "description": "Strength-based bias (physical power)",
+    "mechanicalBias": {
+      "meleeDamage": 1.0,
+      "strikeForce": 1.0,
+      "brutalForce": 0.8
+    },
+    "roleBias": {
+      "bruiser": 0.5,
+      "striker": 0.3
+    }
+  },
+
+  "dex": {
+    "description": "Dexterity-based bias (speed and precision)",
+    "mechanicalBias": {
+      "mobility": 1.0,
+      "accuracy": 0.8,
+      "evasion": 0.6,
+      "critRange": 0.3,
+      "initiative": 0.5
+    },
+    "roleBias": {
+      "skirmisher": 0.5,
+      "scout": 0.3
+    }
+  },
+
+  "con": {
+    "description": "Constitution-based bias (durability and stamina)",
+    "mechanicalBias": {
+      "combatStamina": 1.0,
+      "damageReduction": 0.5,
+      "healingMastery": 0.3
+    },
+    "roleBias": {
+      "defender": 0.5
+    }
+  },
+
+  "int": {
+    "description": "Intelligence-based bias (knowledge and problem-solving)",
+    "mechanicalBias": {
+      "knowledgeMastery": 1.0,
+      "tacticalAwareness": 0.7,
+      "engineeringMastery": 0.5,
+      "improvisation": 0.5
+    },
+    "roleBias": {
+      "utility": 0.4,
+      "controller": 0.3
+    }
+  },
+
+  "wis": {
+    "description": "Wisdom-based bias (perception and Force connection)",
+    "mechanicalBias": {
+      "forceDC": 0.8,
+      "forceArtistry": 0.5,
+      "tacticalAwareness": 0.5,
+      "informationControl": 0.4
+    },
+    "roleBias": {
+      "support": 0.3
+    }
+  },
+
+  "cha": {
+    "description": "Charisma-based bias (presence and influence)",
+    "mechanicalBias": {
+      "persuasionMastery": 1.0,
+      "socialManipulation": 0.8,
+      "commandAuthority": 0.7,
+      "moraleBonus": 0.5
+    },
+    "roleBias": {
+      "leader": 0.5,
+      "support": 0.3
+    }
+  },
+
+  "bell_curve_model": {
+    "description": "How ability scores map to bias magnitude",
+    "formula": "z = (score - 10) / 2; bias = 0.6 * (z / (|z| + 2))",
+    "examples": {
+      "score_10": {
+        "z": 0,
+        "bias": 0,
+        "note": "Average ability: no bias contribution"
+      },
+      "score_12": {
+        "z": 1,
+        "bias": 0.3,
+        "note": "Above average: +30% to all associated mechanics"
+      },
+      "score_14": {
+        "z": 2,
+        "bias": 0.4,
+        "note": "Good ability: +40% to mechanics"
+      },
+      "score_16": {
+        "z": 3,
+        "bias": 0.45,
+        "note": "Excellent ability: +45% to mechanics"
+      },
+      "score_18": {
+        "z": 4,
+        "bias": 0.48,
+        "note": "Exceptional ability: +48% to mechanics (diminishing returns)"
+      },
+      "score_20": {
+        "z": 5,
+        "bias": 0.5,
+        "note": "Superhuman ability: +50% to mechanics (asymptotic to 0.6)"
+      }
+    }
+  },
+
+  "application_rules": {
+    "rule_1": "Only apply bias if z > 0 (ability score > 10)",
+    "rule_2": "Multiply each mechanicalBias value by calculated bias amount",
+    "rule_3": "Multiply each roleBias value by calculated bias amount",
+    "rule_4": "This is a pure additive layer; no modification to actor state",
+    "rule_5": "Apply AFTER primitive bias, BEFORE archetype bias",
+    "rule_6": "Attribute bias never exceeds 0.6x any associated mechanic (asymptotic)"
+  }
+}

@@ -180,7 +180,7 @@
 
     "CONDITIONAL": {
       "description": "Primitives that apply only under specific conditions",
-      "note": "All CONDITIONAL primitives receive 0.7x weighting (30% reduction for situational application)",
+      "note": "Weights are deterministic and registry-driven. No hardcoded logic.",
       "primitives": {
         "meleeCultureBonus": {
           "type": "CONDITIONAL",
@@ -217,7 +217,23 @@
           "condition": "Only dodge attacks (action economy)",
           "weight": 0.75,
           "reason": "Limited by action economy; not always applicable"
+        },
+        "counterattack": {
+          "type": "CONDITIONAL",
+          "condition": "Only triggers in response to enemy action",
+          "weight": 0.6,
+          "reason": "Reactive; depends on enemy behavior"
         }
+      },
+      "lookup_table": {
+        "meleeCultureBonus": 0.5,
+        "reroll": 0.7,
+        "fastHealing": 1.0,
+        "damageReduction": 1.0,
+        "concealment": 0.5,
+        "evasion": 0.75,
+        "counterattack": 0.6,
+        "default": 0.7
       }
     },
 
