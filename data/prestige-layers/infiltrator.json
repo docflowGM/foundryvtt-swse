@@ -1,0 +1,257 @@
+{
+  "name": "Infiltrator Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "infiltrationMastery": 3,
+      "deceptionMastery": 2,
+      "stealth": 2,
+      "identityShift": 1
+    },
+    "roleBias": {
+      "scout": 2,
+      "controller": 1
+    },
+    "attributeBias": {
+      "dex": 2,
+      "cha": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Rogue Operative",
+      "specialists": [
+        {
+          "name": "Master Infiltrator",
+          "mechanicalBias": {
+            "infiltrationMastery": 2,
+            "stealth": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Masters infiltration techniques."
+        },
+        {
+          "name": "Deep Cover Specialist",
+          "mechanicalBias": {
+            "deceptionMastery": 2,
+            "infiltrationMastery": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Maintains deep cover identities."
+        },
+        {
+          "name": "Extraction Master",
+          "mechanicalBias": {
+            "infiltrationMastery": 2,
+            "evasion": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Extracts from infiltration sites."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Precision Tracker",
+      "specialists": [
+        {
+          "name": "Target Infiltrator",
+          "mechanicalBias": {
+            "infiltrationMastery": 2,
+            "trackingMastery": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Infiltrates to track targets."
+        },
+        {
+          "name": "Intelligence Harvester",
+          "mechanicalBias": {
+            "informationControl": 2,
+            "infiltrationMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Gathers intelligence from within."
+        },
+        {
+          "name": "Surveillance Expert",
+          "mechanicalBias": {
+            "stealth": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Maintains undetected surveillance."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Network Coordinator",
+      "specialists": [
+        {
+          "name": "Network Infiltrator",
+          "mechanicalBias": {
+            "infiltrationMastery": 2,
+            "networkInfluence": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Infiltrates and controls networks."
+        },
+        {
+          "name": "Inside Man Master",
+          "mechanicalBias": {
+            "deceptionMastery": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Becomes trusted insider."
+        },
+        {
+          "name": "Sabotage Coordinator",
+          "mechanicalBias": {
+            "infiltrationMastery": 2,
+            "tacticalAwareness": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Coordinates sabotage from within."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Opportunistic Infiltrator",
+          "mechanicalBias": {
+            "infiltrationMastery": 2,
+            "predatoryInstinct": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Exploits infiltration position."
+        },
+        {
+          "name": "Silent Eliminator",
+          "mechanicalBias": {
+            "stealth": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Eliminates silently from within."
+        },
+        {
+          "name": "Perfect Spy",
+          "mechanicalBias": {
+            "deceptionMastery": 2,
+            "infiltrationMastery": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Masters perfect deception and infiltration."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Identity Shifter",
+      "specialists": [
+        {
+          "name": "Multiple Identity Master",
+          "mechanicalBias": {
+            "identityShift": 2,
+            "deceptionMastery": 1
+          },
+          "roleBias": {
+            "flex": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Masters multiple false identities."
+        },
+        {
+          "name": "Behavioral Mimic",
+          "mechanicalBias": {
+            "identityShift": 2,
+            "infiltrationMastery": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Mimics behavior flawlessly."
+        },
+        {
+          "name": "Unseen Operative",
+          "mechanicalBias": {
+            "stealth": 2,
+            "identityShift": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Becomes unnoticed through identity shifts."
+        }
+      ]
+    }
+  ]
+}

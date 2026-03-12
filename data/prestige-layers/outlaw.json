@@ -1,0 +1,257 @@
+{
+  "name": "Outlaw Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "outlawSkills": 3,
+      "survivalism": 2,
+      "criminalExpertise": 2,
+      "freedomPursuit": 1
+    },
+    "roleBias": {
+      "striker": 2,
+      "scout": 1
+    },
+    "attributeBias": {
+      "dex": 2,
+      "wis": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Rogue Operative",
+      "specialists": [
+        {
+          "name": "Wanted Master",
+          "mechanicalBias": {
+            "outlawSkills": 2,
+            "stealth": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Masters being wanted skillfully."
+        },
+        {
+          "name": "Criminal Operator",
+          "mechanicalBias": {
+            "criminalExpertise": 2,
+            "deceptionMastery": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Executes crimes masterfully."
+        },
+        {
+          "name": "Escape Outlaw",
+          "mechanicalBias": {
+            "freedomPursuit": 2,
+            "evasion": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Escapes authority relentlessly."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Survival Expert",
+      "specialists": [
+        {
+          "name": "Wild Survivor",
+          "mechanicalBias": {
+            "survivalism": 2,
+            "outlawSkills": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Survives anywhere as outlaw."
+        },
+        {
+          "name": "Hidden Refuge Master",
+          "mechanicalBias": {
+            "survivalism": 2,
+            "stealth": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Finds and uses hidden refuges."
+        },
+        {
+          "name": "Resource Scavenger",
+          "mechanicalBias": {
+            "outlawSkills": 2,
+            "resourcefulness": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Scavenges resources cleverly."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Precision Tracker",
+      "specialists": [
+        {
+          "name": "Bounty Evader",
+          "mechanicalBias": {
+            "freedomPursuit": 2,
+            "evasion": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Evades bounty hunters constantly."
+        },
+        {
+          "name": "Wanted Tracker Killer",
+          "mechanicalBias": {
+            "outlawSkills": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Kills those hunting outlaws."
+        },
+        {
+          "name": "Underground Network Master",
+          "mechanicalBias": {
+            "criminalExpertise": 2,
+            "networkInfluence": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Masters underground networks."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Opportunistic Outlaw",
+          "mechanicalBias": {
+            "outlawSkills": 2,
+            "predatoryInstinct": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Exploits outlaw opportunities."
+        },
+        {
+          "name": "Desperate Killer",
+          "mechanicalBias": {
+            "criminalExpertise": 2,
+            "burstDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Kills desperately and lethally."
+        },
+        {
+          "name": "Freedom Fighter",
+          "mechanicalBias": {
+            "freedomPursuit": 2,
+            "outlawSkills": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Fights for outlaw freedom."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Survival Support",
+      "specialists": [
+        {
+          "name": "Outlaw Leader",
+          "mechanicalBias": {
+            "outlawSkills": 2,
+            "commandAuthority": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Leads outlaw gang."
+        },
+        {
+          "name": "Outlaw Support",
+          "mechanicalBias": {
+            "survivalism": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Supports other outlaws."
+        },
+        {
+          "name": "Wanted Legend",
+          "mechanicalBias": {
+            "outlawSkills": 2,
+            "freedomPursuit": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Becomes legendary outlaw."
+        }
+      ]
+    }
+  ]
+}

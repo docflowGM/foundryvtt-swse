@@ -1,0 +1,257 @@
+{
+  "name": "Bounty Hunter Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "trackingMastery": 3,
+      "singleTargetDamage": 2,
+      "deceptionMastery": 2,
+      "predatoryInstinct": 1
+    },
+    "roleBias": {
+      "striker": 2,
+      "scout": 1
+    },
+    "attributeBias": {
+      "wis": 2,
+      "dex": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Precision Tracker",
+      "specialists": [
+        {
+          "name": "Relentless Pursuit",
+          "mechanicalBias": {
+            "trackingMastery": 2,
+            "initiative": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Never loses a target once marked."
+        },
+        {
+          "name": "Prey Hunter",
+          "mechanicalBias": {
+            "singleTargetDamage": 2,
+            "predatoryInstinct": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Specializes in singular lethal focus."
+        },
+        {
+          "name": "Environmental Reader",
+          "mechanicalBias": {
+            "trackingMastery": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Reads terrain and environment for advantage."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Rogue Operative",
+      "specialists": [
+        {
+          "name": "Deception Master",
+          "mechanicalBias": {
+            "deceptionMastery": 2,
+            "infiltration": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Infiltrates through social camouflage."
+        },
+        {
+          "name": "Ambush Executor",
+          "mechanicalBias": {
+            "singleTargetDamage": 2,
+            "initiative": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Maximizes first-strike advantage."
+        },
+        {
+          "name": "Mark Specialist",
+          "mechanicalBias": {
+            "trackingMastery": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Marks targets for team exploitation."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Tactical Striker",
+      "specialists": [
+        {
+          "name": "Tactical Predator",
+          "mechanicalBias": {
+            "predatoryInstinct": 2,
+            "tacticalAwareness": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Hunts with calculated strategy."
+        },
+        {
+          "name": "Finishing Blow Master",
+          "mechanicalBias": {
+            "singleTargetDamage": 2,
+            "critDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Executes decisive eliminations."
+        },
+        {
+          "name": "Coordinated Strike",
+          "mechanicalBias": {
+            "predatoryInstinct": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Directs team attacks on target."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Network Coordinator",
+      "specialists": [
+        {
+          "name": "Information Broker",
+          "mechanicalBias": {
+            "trackingMastery": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Gathers intelligence through networks."
+        },
+        {
+          "name": "Contact Master",
+          "mechanicalBias": {
+            "deceptionMastery": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Mobilizes network for target acquisition."
+        },
+        {
+          "name": "Leverage Expert",
+          "mechanicalBias": {
+            "deceptionMastery": 2,
+            "conditionTrack": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Exploits weaknesses and leverage points."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Deadly Opportunist",
+          "mechanicalBias": {
+            "singleTargetDamage": 2,
+            "predatoryInstinct": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Exploits openings for maximum damage."
+        },
+        {
+          "name": "Patient Stalker",
+          "mechanicalBias": {
+            "trackingMastery": 2,
+            "stealth": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Maintains pursuit without detection."
+        },
+        {
+          "name": "Contract Specialist",
+          "mechanicalBias": {
+            "deceptionMastery": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Specializes in clean, profitable eliminations."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,257 @@
+{
+  "name": "Gunslinger Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "quickDraw": 3,
+      "dualWield": 2,
+      "precisePistolry": 2,
+      "triggerDiscipline": 1
+    },
+    "roleBias": {
+      "striker": 2,
+      "skirmisher": 1
+    },
+    "attributeBias": {
+      "dex": 2,
+      "wis": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Precision Sharpshooter",
+      "specialists": [
+        {
+          "name": "Marksman's Eye",
+          "mechanicalBias": {
+            "precisePistolry": 2,
+            "accuracy": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Delivers consistent deadly accuracy."
+        },
+        {
+          "name": "Rapid Gunner",
+          "mechanicalBias": {
+            "quickDraw": 2,
+            "initiative": 1
+          },
+          "roleBias": {
+            "skirmisher": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Draws and fires with lightning speed."
+        },
+        {
+          "name": "Steady Hand",
+          "mechanicalBias": {
+            "precisePistolry": 2,
+            "reactionDefense": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Maintains balance while firing."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Dual Wielder",
+      "specialists": [
+        {
+          "name": "Ambidextrous Master",
+          "mechanicalBias": {
+            "dualWield": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Masters dual pistol combat."
+        },
+        {
+          "name": "Dual Gunslinger",
+          "mechanicalBias": {
+            "quickDraw": 2,
+            "dualWield": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Draws both weapons and dominates."
+        },
+        {
+          "name": "Suppressive Fire Master",
+          "mechanicalBias": {
+            "dualWield": 2,
+            "areaControl": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Controls space through dual fire."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Rogue Operative",
+      "specialists": [
+        {
+          "name": "Deadeye Assassin",
+          "mechanicalBias": {
+            "precisePistolry": 2,
+            "stealth": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Executes silent eliminations."
+        },
+        {
+          "name": "Shadow Gunner",
+          "mechanicalBias": {
+            "quickDraw": 2,
+            "stealth": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Strikes from darkness undetected."
+        },
+        {
+          "name": "Trick Shot Specialist",
+          "mechanicalBias": {
+            "precisePistolry": 2,
+            "skillUtility": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Executes impossible trick shots."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Quick Draw Expert",
+      "specialists": [
+        {
+          "name": "Quick Draw Master",
+          "mechanicalBias": {
+            "quickDraw": 2,
+            "triggerDiscipline": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Wins through sheer speed."
+        },
+        {
+          "name": "Combat Duelist",
+          "mechanicalBias": {
+            "quickDraw": 2,
+            "initiative": 1
+          },
+          "roleBias": {
+            "skirmisher": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Dominates pistol duels."
+        },
+        {
+          "name": "Reaction Gunner",
+          "mechanicalBias": {
+            "triggerDiscipline": 2,
+            "reactionDefense": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Reacts to threats instantaneously."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Opportunistic Marksman",
+          "mechanicalBias": {
+            "precisePistolry": 2,
+            "predatoryInstinct": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Exploits openings for lethal shots."
+        },
+        {
+          "name": "Finishing Gunner",
+          "mechanicalBias": {
+            "precisePistolry": 2,
+            "critDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Delivers finishing shots with precision."
+        },
+        {
+          "name": "Tactical Gunslinger",
+          "mechanicalBias": {
+            "quickDraw": 2,
+            "tacticalAwareness": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Positions for maximum tactical advantage."
+        }
+      ]
+    }
+  ]
+}

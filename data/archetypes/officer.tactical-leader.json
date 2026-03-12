@@ -7,22 +7,26 @@
   "secondaryTags": ["striker", "defender", "perception", "leadership"],
   "avoidTags": ["stealth", "solo", "evasion"],
   "mechanicalBias": {
+    "commandAuthority": 0.4,
+    "unitCoordination": 0.3,
+    "moraleBonus": 0.2,
+    "tacticalAwareness": 0.1
+  },
+  "roleBias": {
     "leader": 0.4,
     "controller": 0.3,
     "defender": 0.2,
-    "striker": 0.1
-  },
-  "roleBias": {
+    "striker": 0.1,
     "offense": 1.0,
     "defense": 1.1,
     "support": 1.3,
     "utility": 0.9
   },
   "attributeBias": {
-    "CHA": 0.3,
-    "WIS": 0.3,
-    "STR": 0.2,
-    "INT": 0.2
+    "cha": 0.3,
+    "wis": 0.3,
+    "str": 0.2,
+    "int": 0.2
   },
   "talentKeywords": ["Command", "Tactics", "Rally", "Inspire"],
   "featKeywords": ["Leadership", "Skill Focus (Profession)"],

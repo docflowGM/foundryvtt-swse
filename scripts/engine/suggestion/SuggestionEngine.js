@@ -43,6 +43,7 @@ import {
 import { selectReasonAtoms } from "/systems/foundryvtt-swse/scripts/engine/suggestion/selectReasonAtoms.js";
 import { REASON_TEXT_MAP } from "/systems/foundryvtt-swse/scripts/mentor/mentor-reason-renderer.js";
 import { ReasonSignalBuilder } from "/systems/foundryvtt-swse/scripts/engine/suggestion/reason-signal-builder.js";
+import { ArchetypeMetadataEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ArchetypeMetadataEngine.js";
 
 // ──────────────────────────────────────────────────────────────
 // TIER DEFINITIONS (PHASE 5D: UNIFIED_TIERS Refactor)
@@ -1174,7 +1175,8 @@ export class SuggestionEngine {
                     'PRESTIGE_PREREQ',
                     `prestige:${prestigePrereq.forClass}`,
                     feat,
-                    archetype
+                    archetype,
+                    { actor }
                 );
             }
         }
@@ -1188,7 +1190,8 @@ export class SuggestionEngine {
                     'WISHLIST_PATH',
                     `wishlist:${wishlistPrereqCheck.itemId || wishlistPrereqCheck.itemName}`,
                     feat,
-                    archetype
+                    archetype,
+                    { actor }
                 );
             }
         }
@@ -1460,8 +1463,14 @@ export class SuggestionEngine {
 
         // Apply archetype alignment bonus (capped at +0.2, never exceed 0.95)
         const archetypeBonus = options.archetypeAlignmentBonus || 0;
-        const cappedBonus = Math.min(archetypeBonus, 0.2);
-        const finalConfidence = Math.min(baseConfidence + cappedBonus, 0.95);
+        const cappedArchBonus = Math.min(archetypeBonus, 0.2);
+
+        // Apply metadata bonus (capped at +0.25, additive with archetype bonus)
+        const metadataBonus = options.metadataBonus || 0;
+        const cappedMetaBonus = Math.min(metadataBonus, 0.25);
+
+        // Combine bonuses (capped at 0.95 total)
+        const finalConfidence = Math.min(baseConfidence + cappedArchBonus + cappedMetaBonus, 0.95);
 
         // Build or use provided reasonSignals
         const reasonSignals = options.reasonSignals ||
@@ -1480,8 +1489,16 @@ export class SuggestionEngine {
         // Add archetype alignment details if present
         if (options.archetypeAlignment && archetypeBonus > 0) {
             reason.archetypeAlignment = {
-                bonus: cappedBonus,
+                bonus: cappedArchBonus,
                 matchedElements: options.archetypeAlignment.matchedElements || []
+            };
+        }
+
+        // Add metadata boost details if present
+        if (options.metadataBoost && cappedMetaBonus > 0) {
+            reason.metadataBoost = {
+                bonus: cappedMetaBonus,
+                reasons: options.metadataBoost.reasons || []
             };
         }
 
@@ -1496,38 +1513,106 @@ export class SuggestionEngine {
     }
 
     /**
+     * Build suggestion with metadata-driven boost (Tier 1 improvements)
+     * Applies archetype, playstyle, and tier appropriateness signals
+     * @param {number} tier - The suggestion tier
+     * @param {string} reasonCode - Reason code
+     * @param {string|null} sourceId - Source ID
+     * @param {Object|null} item - The feat/talent being evaluated
+     * @param {Object|null} archetype - Archetype object or null
+     * @param {Object|null} actor - Actor for playstyle detection
+     * @param {Object} options - Additional options
+     * @returns {Object} Suggestion with metadata boost applied
+     */
+    static _buildSuggestionWithMetadata(tier, reasonCode, sourceId, item, archetype, actor, options = {}) {
+        // Calculate metadata boost if item and actor exist
+        let metadataBoost = null;
+        let metadataBoostAmount = 0;
+
+        if (item && actor) {
+            const characterData = {
+                level: actor.system?.level || 1,
+                detectedPlaystyle: ArchetypeMetadataEngine.detectCharacterPlaystyle(actor),
+                primaryArchetype: archetype
+            };
+
+            const boost = ArchetypeMetadataEngine.calculateMetadataBoost(item, characterData);
+            if (boost.boost > 0) {
+                metadataBoost = boost;
+                metadataBoostAmount = boost.boost;
+            }
+        }
+
+        // Build suggestion with metadata boost
+        return this._buildSuggestionWithArchetype(
+            tier,
+            reasonCode,
+            sourceId,
+            item,
+            archetype,
+            {
+                ...options,
+                metadataBonus: metadataBoostAmount,
+                metadataBoost: metadataBoost
+            }
+        );
+    }
+
+    /**
      * Wrapper for _buildSuggestion that applies archetype alignment bonus
      * Used by _evaluateFeat and _evaluateTalent (Phase 1.5)
+     * Now also applies metadata boost (Tier 1 improvements)
      * @param {number} tier - The suggestion tier
      * @param {string} reasonCode - Reason code
      * @param {string|null} sourceId - Source ID
      * @param {Object|null} item - The feat/talent being evaluated
      * @param {Object|null} archetype - Archetype object or null
      * @param {Object} options - Additional options
-     * @returns {Object} Suggestion with archetype alignment applied
+     * @param {Object} options.actor - Actor (for metadata boost calculation)
+     * @returns {Object} Suggestion with archetype alignment and metadata boost applied
      */
     static _buildSuggestionWithArchetype(tier, reasonCode, sourceId, item, archetype, options = {}) {
         // Calculate archetype alignment if item and archetype exist
         let archetypeAlignment = null;
-        let bonus = 0;
+        let archetypeBonus = 0;
 
         if (item && archetype) {
             const alignment = this._calculateArchetypeAlignment(item, archetype);
             if (alignment.bonus > 0) {
                 archetypeAlignment = alignment;
-                bonus = alignment.bonus;
+                archetypeBonus = alignment.bonus;
             }
         }
 
-        // Build suggestion with alignment bonus
+        // Calculate metadata boost if item and actor exist (Tier 1: archetype, playstyle, tier)
+        let metadataBoost = null;
+        let metadataBoostAmount = 0;
+
+        if (item && options.actor) {
+            const characterData = {
+                level: options.actor.system?.level || 1,
+                detectedPlaystyle: ArchetypeMetadataEngine.detectCharacterPlaystyle(options.actor),
+                primaryArchetype: archetype
+            };
+
+            const boost = ArchetypeMetadataEngine.calculateMetadataBoost(item, characterData);
+            if (boost.boost > 0) {
+                metadataBoost = boost;
+                metadataBoostAmount = boost.boost;
+            }
+        }
+
+        // Build suggestion with both bonuses
         return this._buildSuggestion(
             tier,
             reasonCode,
             sourceId,
             {
                 ...options,
-                archetypeAlignmentBonus: bonus,
-                archetypeAlignment
+                archetypeAlignmentBonus: archetypeBonus,
+                archetypeAlignment,
+                metadataBonus: metadataBoostAmount,
+                metadataBoost
             }
         );
     }

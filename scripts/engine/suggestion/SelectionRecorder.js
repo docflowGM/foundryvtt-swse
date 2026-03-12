@@ -6,11 +6,16 @@
  * Records facts about player selections: suggestions shown, outcomes recorded.
  * Pure recording logic - no calculations or analytics.
  *
+ * CRITICAL FIX: All mutations are now persisted to actor flags to prevent
+ * data loss on reload. History is stored in both actor.system (volatile) and
+ * actor.flags (persistent).
+ *
  * Owns:
  * - Recording when suggestions are shown
  * - Recording selection outcomes (accepted/ignored)
  * - Maintaining selection history
  * - History pruning (keeps recent N entries)
+ * - Persisting history to actor flags
  *
  * Delegates to: None (pure recording)
  * Never owns: Analytics, calculations, aggregations
@@ -20,6 +25,26 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 const MAX_RECENT_SIZE = 15;
 
+/**
+ * Persist selection history to actor flags
+ * @private
+ */
+async function _persistHistory(actor) {
+  try {
+    if (!actor?.system?.suggestionEngine?.history?.recent) {
+      return;
+    }
+    // Persist to actor flags for durability across reloads
+    await actor.setFlag(
+      'foundryvtt-swse',
+      'suggestionEngine.history.recent',
+      actor.system.suggestionEngine.history.recent
+    );
+  } catch (err) {
+    SWSELogger.error('[SelectionRecorder] Failed to persist history:', err);
+  }
+}
+
 export class SelectionRecorder {
   /**
    * Record that a suggestion was shown to the player
@@ -28,9 +53,9 @@ export class SelectionRecorder {
    * @param {Object} suggestion - { itemId, itemName, category, theme }
    * @param {Object} confidence - { confidence, level }
    * @param {Object} context - { mentorAlignment, classSynergy, buildCoherence, archetypeMatch }
-   * @returns {string} Suggestion ID (for later outcome tracking)
+   * @returns {Promise<string>} Suggestion ID (for later outcome tracking)
    */
-  static recordSuggestionShown(actor, suggestion, confidence, context) {
+  static async recordSuggestionShown(actor, suggestion, confidence, context) {
     try {
       if (!actor?.system?.suggestionEngine?.history?.recent) {
         SWSELogger.warn('[SelectionRecorder] History not initialized, cannot record shown suggestion');
@@ -68,6 +93,9 @@ export class SelectionRecorder {
         actor.system.suggestionEngine.history.recent.shift();
       }
 
+      // Persist to flags
+      await _persistHistory(actor);
+
       SWSELogger.log(`[SelectionRecorder] Suggestion shown: ${suggestion.itemName} (${suggestionId})`);
       return suggestionId;
     } catch (err) {
@@ -83,7 +111,7 @@ export class SelectionRecorder {
    * @param {string} suggestionId - ID returned from recordSuggestionShown
    * @returns {boolean} true if recorded successfully
    */
-  static recordSuggestionAccepted(actor, suggestionId) {
+  static async recordSuggestionAccepted(actor, suggestionId) {
     try {
       const history = actor?.system?.suggestionEngine?.history?.recent;
       if (!history) {
@@ -100,6 +128,9 @@ export class SelectionRecorder {
       entry.outcome = 'accepted';
       entry.outcomeAt = Date.now();
 
+      // Persist to flags
+      await _persistHistory(actor);
+
       SWSELogger.log(`[SelectionRecorder] Suggestion accepted: ${entry.itemName}`);
       return true;
     } catch (err) {
@@ -115,7 +146,7 @@ export class SelectionRecorder {
    * @param {string} suggestionId - ID returned from recordSuggestionShown
    * @returns {boolean} true if recorded successfully
    */
-  static recordSuggestionIgnored(actor, suggestionId) {
+  static async recordSuggestionIgnored(actor, suggestionId) {
     try {
       const history = actor?.system?.suggestionEngine?.history?.recent;
       if (!history) {
@@ -132,6 +163,9 @@ export class SelectionRecorder {
       entry.outcome = 'ignored';
       entry.outcomeAt = Date.now();
 
+      // Persist to flags
+      await _persistHistory(actor);
+
       SWSELogger.log(`[SelectionRecorder] Suggestion explicitly ignored: ${entry.itemName}`);
       return true;
     } catch (err) {
@@ -147,7 +181,7 @@ export class SelectionRecorder {
    * @param {string} suggestionId - ID returned from recordSuggestionShown
    * @returns {boolean} true if recorded successfully
    */
-  static recordSuggestionPassiveIgnored(actor, suggestionId) {
+  static async recordSuggestionPassiveIgnored(actor, suggestionId) {
     try {
       const history = actor?.system?.suggestionEngine?.history?.recent;
       if (!history) {
@@ -163,6 +197,9 @@ export class SelectionRecorder {
 
       entry.outcome = 'passiveIgnored';
       entry.outcomeAt = Date.now();
+
+      // Persist to flags
+      await _persistHistory(actor);
 
       SWSELogger.log(`[SelectionRecorder] Suggestion passively ignored: ${entry.itemName}`);
       return true;

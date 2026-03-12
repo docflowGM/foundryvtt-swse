@@ -57,6 +57,103 @@ export class ArchetypeRegistry {
     }
 
     /**
+     * Validate all registered archetypes for referential integrity
+     * Checks that bias keys are canonical and data is complete
+     * Called after initialization to ensure data quality
+     * @returns {Promise<Object>} Validation report {valid: boolean, errors: [], warnings: []}
+     */
+    static async validateArchetypeReferences() {
+        const report = {
+            valid: true,
+            errors: [],
+            warnings: []
+        };
+
+        if (!this.#initialized) {
+            report.errors.push('Registry not initialized');
+            report.valid = false;
+            return report;
+        }
+
+        try {
+            // Load canonical bias keys
+            const response = await fetch('/systems/foundryvtt-swse/data/bias-keys-canonical.json');
+            if (!response.ok) {
+                report.warnings.push('Could not load canonical bias keys for validation');
+                return report;
+            }
+
+            const canonical = await response.json();
+            const canonicalMech = new Set(Object.keys(canonical.mechanicalBias || {}));
+            const canonicalRole = new Set(Object.keys(canonical.roleBias || {}));
+            const canonicalAttr = new Set(Object.keys(canonical.attributeBias || {}));
+
+            // Validate each archetype
+            for (const [key, archetype] of this.#archetypes) {
+                // Check bias keys are canonical
+                if (archetype.mechanicalBias) {
+                    for (const biasKey of Object.keys(archetype.mechanicalBias)) {
+                        if (!canonicalMech.has(biasKey)) {
+                            report.warnings.push(
+                                `Archetype "${archetype.name}" has non-canonical mechanicalBias key: "${biasKey}"`
+                            );
+                        }
+                    }
+                }
+
+                if (archetype.roleBias) {
+                    for (const biasKey of Object.keys(archetype.roleBias)) {
+                        if (!canonicalRole.has(biasKey)) {
+                            report.warnings.push(
+                                `Archetype "${archetype.name}" has non-canonical roleBias key: "${biasKey}"`
+                            );
+                        }
+                    }
+                }
+
+                if (archetype.attributeBias) {
+                    for (const biasKey of Object.keys(archetype.attributeBias)) {
+                        if (!canonicalAttr.has(biasKey)) {
+                            report.warnings.push(
+                                `Archetype "${archetype.name}" has non-canonical attributeBias key: "${biasKey}"`
+                            );
+                        }
+                    }
+                }
+
+                // Check required fields
+                if (!archetype.name) {
+                    report.errors.push(`Archetype with key "${key}" missing name`);
+                    report.valid = false;
+                }
+
+                if (!archetype.baseClassId) {
+                    report.errors.push(`Archetype "${archetype.name || key}" missing baseClassId`);
+                    report.valid = false;
+                }
+            }
+
+            if (report.errors.length > 0) {
+                SWSELogger.error('[ArchetypeRegistry] Validation failed with errors:', report.errors);
+            }
+
+            if (report.warnings.length > 0) {
+                SWSELogger.warn('[ArchetypeRegistry] Validation warnings:', report.warnings);
+            }
+
+            if (report.errors.length === 0 && report.warnings.length === 0) {
+                SWSELogger.log('[ArchetypeRegistry] Validation passed with no errors or warnings');
+            }
+
+        } catch (err) {
+            report.warnings.push(`Validation error: ${err.message}`);
+            SWSELogger.error('[ArchetypeRegistry] Validation error:', err);
+        }
+
+        return report;
+    }
+
+    /**
      * Load archetypes from class-archetypes.json
      * @private
      * @returns {Promise<void>}
@@ -115,9 +212,9 @@ export class ArchetypeRegistry {
                 .sort(([_, a], [__, b]) => b - a)
                 .map(([attr, _]) => attr);
 
-            // Convert keyword recommendations to arrays (we'll need item lookup during runtime)
-            const talentKeywords = archData.talentKeywords || [];
-            const featKeywords = archData.featKeywords || [];
+            // Read canonical ID arrays, with fallback to legacy keyword format
+            const talents = archData.talents ?? archData.talentKeywords ?? [];
+            const feats = archData.feats ?? archData.featKeywords ?? [];
 
             return {
                 id: `${className}-${archetypeId}`,
@@ -127,8 +224,8 @@ export class ArchetypeRegistry {
                 prestigeTargets: [], // Not defined in JSON, can be added later
                 attributePriority: attributePriority.length > 0 ? attributePriority : [],
                 recommended: {
-                    feats: featKeywords, // Store as keywords for now
-                    talents: talentKeywords, // Store as keywords for now
+                    feats: feats,
+                    talents: talents,
                     skills: []
                 },
                 weights: {
@@ -380,13 +477,14 @@ export class ArchetypeRegistry {
      * @param {Array<string>} keywords - Feat keywords (e.g., ['Weapon Focus (Lightsabers)'])
      * @returns {Promise<Array<string>>} Array of feat item IDs
      */
-    static async resolveFeatKeywords(keywords) {
+    static async resolveFeatKeywords(items) {
         try {
-            if (!Array.isArray(keywords) || keywords.length === 0) {
+            if (!Array.isArray(items) || items.length === 0) {
                 return [];
             }
 
             const results = [];
+            const seenIds = new Set();
             const pack = game.packs.get('foundryvtt-swse.feats');
 
             if (!pack) {
@@ -394,18 +492,48 @@ export class ArchetypeRegistry {
                 return [];
             }
 
-            const index = await pack.getIndex();
+            // Check if any items are keywords (need index lookup)
+            let index = null;
+            const needsIndex = items.some(item => {
+                const isId = typeof item === 'string' && /^[A-Za-z0-9]{16}$/.test(item);
+                return !isId;
+            });
 
-            for (const keyword of keywords) {
-                const match = this._findBestMatch(keyword, index);
+            if (needsIndex) {
+                try {
+                    index = await pack.getIndex();
+                } catch (err) {
+                    SWSELogger.warn('[ArchetypeRegistry] Failed to get feats index:', err);
+                }
+            }
 
-                if (match) {
-                    results.push(match._id);
-                    SWSELogger.debug(
-                        `[ArchetypeRegistry] Resolved feat keyword "${keyword}" to "${match.name}"`
-                    );
-                } else {
-                    SWSELogger.debug(`[ArchetypeRegistry] Feat keyword not resolved: "${keyword}"`);
+            for (const item of items) {
+                // Skip falsy entries
+                if (!item) continue;
+
+                // If it's already a Foundry ID (16-char alphanumeric), use as-is
+                const isId = typeof item === 'string' && /^[A-Za-z0-9]{16}$/.test(item);
+
+                if (isId) {
+                    if (!seenIds.has(item)) {
+                        results.push(item);
+                        seenIds.add(item);
+                    }
+                    continue;
+                }
+
+                // Otherwise treat as keyword and fuzzy-match
+                if (typeof item === 'string' && item.trim().length > 0 && index) {
+                    const match = this._findBestMatch(item, index);
+                    if (match && !seenIds.has(match._id)) {
+                        results.push(match._id);
+                        seenIds.add(match._id);
+                        SWSELogger.debug(
+                            `[ArchetypeRegistry] Resolved feat keyword "${item}" to "${match.name}"`
+                        );
+                    } else if (!match) {
+                        SWSELogger.debug(`[ArchetypeRegistry] Feat keyword not resolved: "${item}"`);
+                    }
                 }
             }
 
@@ -422,13 +550,14 @@ export class ArchetypeRegistry {
      * @param {Array<string>} keywords - Talent keywords (e.g., ['Block', 'Deflect'])
      * @returns {Promise<Array<string>>} Array of talent item IDs
      */
-    static async resolveTalentKeywords(keywords) {
+    static async resolveTalentKeywords(items) {
         try {
-            if (!Array.isArray(keywords) || keywords.length === 0) {
+            if (!Array.isArray(items) || items.length === 0) {
                 return [];
             }
 
             const results = [];
+            const seenIds = new Set();
             const pack = game.packs.get('foundryvtt-swse.talents');
 
             if (!pack) {
@@ -436,18 +565,48 @@ export class ArchetypeRegistry {
                 return [];
             }
 
-            const index = await pack.getIndex();
+            // Check if any items are keywords (need index lookup)
+            let index = null;
+            const needsIndex = items.some(item => {
+                const isId = typeof item === 'string' && /^[A-Za-z0-9]{16}$/.test(item);
+                return !isId;
+            });
 
-            for (const keyword of keywords) {
-                const match = this._findBestMatch(keyword, index);
+            if (needsIndex) {
+                try {
+                    index = await pack.getIndex();
+                } catch (err) {
+                    SWSELogger.warn('[ArchetypeRegistry] Failed to get talents index:', err);
+                }
+            }
 
-                if (match) {
-                    results.push(match._id);
-                    SWSELogger.debug(
-                        `[ArchetypeRegistry] Resolved talent keyword "${keyword}" to "${match.name}"`
-                    );
-                } else {
-                    SWSELogger.debug(`[ArchetypeRegistry] Talent keyword not resolved: "${keyword}"`);
+            for (const item of items) {
+                // Skip falsy entries
+                if (!item) continue;
+
+                // If it's already a Foundry ID (16-char alphanumeric), use as-is
+                const isId = typeof item === 'string' && /^[A-Za-z0-9]{16}$/.test(item);
+
+                if (isId) {
+                    if (!seenIds.has(item)) {
+                        results.push(item);
+                        seenIds.add(item);
+                    }
+                    continue;
+                }
+
+                // Otherwise treat as keyword and fuzzy-match
+                if (typeof item === 'string' && item.trim().length > 0 && index) {
+                    const match = this._findBestMatch(item, index);
+                    if (match && !seenIds.has(match._id)) {
+                        results.push(match._id);
+                        seenIds.add(match._id);
+                        SWSELogger.debug(
+                            `[ArchetypeRegistry] Resolved talent keyword "${item}" to "${match.name}"`
+                        );
+                    } else if (!match) {
+                        SWSELogger.debug(`[ArchetypeRegistry] Talent keyword not resolved: "${item}"`);
+                    }
                 }
             }
 

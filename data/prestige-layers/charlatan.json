@@ -1,0 +1,257 @@
+{
+  "name": "Charlatan Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "deceptionMastery": 3,
+      "socialManipulation": 2,
+      "conArtistry": 2,
+      "persuasionMastery": 1
+    },
+    "roleBias": {
+      "controller": 2,
+      "utility": 1
+    },
+    "attributeBias": {
+      "cha": 2,
+      "int": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Network Coordinator",
+      "specialists": [
+        {
+          "name": "Master Con Artist",
+          "mechanicalBias": {
+            "conArtistry": 2,
+            "deceptionMastery": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Masters elaborate confidence schemes."
+        },
+        {
+          "name": "Identity Thief",
+          "mechanicalBias": {
+            "deceptionMastery": 2,
+            "infiltration": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Assumes false identities perfectly."
+        },
+        {
+          "name": "Influence Manipulator",
+          "mechanicalBias": {
+            "socialManipulation": 2,
+            "networkInfluence": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Controls through social leverage."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Rogue Operative",
+      "specialists": [
+        {
+          "name": "Shadow Schemer",
+          "mechanicalBias": {
+            "deceptionMastery": 2,
+            "stealth": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Schemes from hidden positions."
+        },
+        {
+          "name": "False Evidence Expert",
+          "mechanicalBias": {
+            "conArtistry": 2,
+            "deceptionMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Fabricates convincing false evidence."
+        },
+        {
+          "name": "Quick Change Artist",
+          "mechanicalBias": {
+            "deceptionMastery": 2,
+            "skillUtility": 1
+          },
+          "roleBias": {
+            "flex": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Changes tactics mid-scheme instantly."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Precision Tracker",
+      "specialists": [
+        {
+          "name": "Victim Profiler",
+          "mechanicalBias": {
+            "socialManipulation": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Identifies and targets vulnerable marks."
+        },
+        {
+          "name": "Trust Builder",
+          "mechanicalBias": {
+            "persuasionMastery": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Builds unwarranted trust rapidly."
+        },
+        {
+          "name": "Relationship Exploiter",
+          "mechanicalBias": {
+            "socialManipulation": 2,
+            "conArtistry": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Weaponizes relationships against marks."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Opportunistic Deceiver",
+          "mechanicalBias": {
+            "deceptionMastery": 2,
+            "predatoryInstinct": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Exploits every chance opening."
+        },
+        {
+          "name": "Finishing Con",
+          "mechanicalBias": {
+            "conArtistry": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Closes cons with final deception."
+        },
+        {
+          "name": "Escape Master",
+          "mechanicalBias": {
+            "deceptionMastery": 2,
+            "evasion": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Disappears when schemes unravel."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Support Specialist",
+      "specialists": [
+        {
+          "name": "Confidence Supplier",
+          "mechanicalBias": {
+            "persuasionMastery": 2,
+            "moraleBonus": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Boosts confidence in schemes."
+        },
+        {
+          "name": "Scheme Director",
+          "mechanicalBias": {
+            "conArtistry": 2,
+            "commandAuthority": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Orchestrates multi-person cons."
+        },
+        {
+          "name": "Recovery Specialist",
+          "mechanicalBias": {
+            "socialManipulation": 2,
+            "forceRecovery": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Recovers from blown schemes quickly."
+        }
+      ]
+    }
+  ]
+}

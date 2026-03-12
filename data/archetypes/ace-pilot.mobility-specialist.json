@@ -7,21 +7,22 @@
   "secondaryTags": ["ranged", "striker", "perception"],
   "avoidTags": ["tanking", "heavy-weapons", "sustained-damage"],
   "mechanicalBias": {
-    "mobility": 0.4,
-    "striker": 0.3,
-    "action_economy": 0.3
+    "evasion": 0.4,
+    "pilotMastery": 0.3,
+    "initiative": 0.3
   },
   "roleBias": {
+    "striker": 0.3,
     "offense": 1.2,
     "defense": 0.8,
     "support": 0.7,
     "utility": 1.1
   },
   "attributeBias": {
-    "DEX": 0.35,
-    "WIS": 0.25,
-    "INT": 0.2,
-    "CHA": 0.2
+    "dex": 0.35,
+    "wis": 0.25,
+    "int": 0.2,
+    "cha": 0.2
   },
   "talentKeywords": ["Pilot", "Dodge", "Acrobatics", "Fast Reflexes"],
   "featKeywords": ["Skill Focus (Pilot)", "Evasion", "Improved Evasion"],

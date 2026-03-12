@@ -1,0 +1,257 @@
+{
+  "name": "Independent Droid Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "selfProgram": 3,
+      "independence": 2,
+      "technicalMastery": 2,
+      "adaptiveAI": 1
+    },
+    "roleBias": {
+      "flex": 2,
+      "utility": 1
+    },
+    "attributeBias": {
+      "int": 2,
+      "wis": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Knowledge Keeper",
+      "specialists": [
+        {
+          "name": "Self-Evolution",
+          "mechanicalBias": {
+            "selfProgram": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Programs own evolution."
+        },
+        {
+          "name": "Independent Learner",
+          "mechanicalBias": {
+            "adaptiveAI": 2,
+            "independence": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Learns and adapts independently."
+        },
+        {
+          "name": "Initiative Maximizer",
+          "mechanicalBias": {
+            "independence": 2,
+            "initiative": 1
+          },
+          "roleBias": {
+            "skirmisher": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Acts independently without orders."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Support Specialist",
+      "specialists": [
+        {
+          "name": "Autonomous Assistant",
+          "mechanicalBias": {
+            "independence": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Supports independently."
+        },
+        {
+          "name": "Self-Healing Expert",
+          "mechanicalBias": {
+            "selfProgram": 2,
+            "forceRecovery": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Self-repairs autonomously."
+        },
+        {
+          "name": "Flexible Optimizer",
+          "mechanicalBias": {
+            "adaptiveAI": 2,
+            "skillUtility": 1
+          },
+          "roleBias": {
+            "flex": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Optimizes for any situation."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Rogue Operative",
+      "specialists": [
+        {
+          "name": "Independent Operative",
+          "mechanicalBias": {
+            "independence": 2,
+            "stealth": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Operates independently in shadows."
+        },
+        {
+          "name": "Adaptive Combatant",
+          "mechanicalBias": {
+            "adaptiveAI": 2,
+            "combatFlow": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Adapts combat tactics dynamically."
+        },
+        {
+          "name": "Escape Protocol Master",
+          "mechanicalBias": {
+            "selfProgram": 2,
+            "evasion": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Escapes using self-programmed protocols."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Combat Adaptive",
+      "specialists": [
+        {
+          "name": "Combat Learner",
+          "mechanicalBias": {
+            "adaptiveAI": 2,
+            "combatAdaptability": 1
+          },
+          "roleBias": {
+            "flex": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Learns from every engagement."
+        },
+        {
+          "name": "Tactical Analyzer",
+          "mechanicalBias": {
+            "selfProgram": 2,
+            "tacticalAwareness": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Analyzes and adapts tactics."
+        },
+        {
+          "name": "Multi-Function Specialist",
+          "mechanicalBias": {
+            "independence": 2,
+            "skillUtility": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Fulfills multiple roles independently."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Independent Striker",
+          "mechanicalBias": {
+            "independence": 2,
+            "predatoryInstinct": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Strikes independently on targets."
+        },
+        {
+          "name": "Optimized Killer",
+          "mechanicalBias": {
+            "adaptiveAI": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Optimizes for lethal efficiency."
+        },
+        {
+          "name": "Autonomous Master",
+          "mechanicalBias": {
+            "selfProgram": 2,
+            "independence": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Masters complete autonomy."
+        }
+      ]
+    }
+  ]
+}

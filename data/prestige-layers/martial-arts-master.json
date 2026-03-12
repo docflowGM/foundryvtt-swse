@@ -1,0 +1,257 @@
+{
+  "name": "Martial Arts Master Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "unarmeddMastery": 3,
+      "flowState": 2,
+      "strikeForce": 2,
+      "defenseForm": 1
+    },
+    "roleBias": {
+      "striker": 2,
+      "defender": 1
+    },
+    "attributeBias": {
+      "str": 2,
+      "dex": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Martial Fighter",
+      "specialists": [
+        {
+          "name": "Striking Master",
+          "mechanicalBias": {
+            "unarmeddMastery": 2,
+            "strikeForce": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Masters devastating strikes."
+        },
+        {
+          "name": "Flow Fighter",
+          "mechanicalBias": {
+            "flowState": 2,
+            "combatFlow": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Maintains perfect combat flow."
+        },
+        {
+          "name": "Pressure Point Master",
+          "mechanicalBias": {
+            "unarmeddMastery": 2,
+            "conditionTrack": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Targets pressure points with precision."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Defensive Specialist",
+      "specialists": [
+        {
+          "name": "Defensive Forms Master",
+          "mechanicalBias": {
+            "defenseForm": 2,
+            "reactionDefense": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Masters defensive martial forms."
+        },
+        {
+          "name": "Evasion Master",
+          "mechanicalBias": {
+            "flowState": 2,
+            "evasion": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Evades all strikes through form."
+        },
+        {
+          "name": "Counter Strike Master",
+          "mechanicalBias": {
+            "unarmeddMastery": 2,
+            "counterAttack": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Counters with martial technique."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Combat Endurance",
+      "specialists": [
+        {
+          "name": "Tireless Fighter",
+          "mechanicalBias": {
+            "combatStamina": 2,
+            "unarmeddMastery": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "con": 1
+          },
+          "notes": "Fights without tiring."
+        },
+        {
+          "name": "Sustained Flow",
+          "mechanicalBias": {
+            "flowState": 2,
+            "forceRecovery": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Sustains flow state indefinitely."
+        },
+        {
+          "name": "Endurance Striker",
+          "mechanicalBias": {
+            "strikeForce": 2,
+            "combatStamina": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Maintains striking power endlessly."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Tempo Controller",
+      "specialists": [
+        {
+          "name": "Rhythm Master",
+          "mechanicalBias": {
+            "flowState": 2,
+            "combatFlow": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Controls combat rhythm perfectly."
+        },
+        {
+          "name": "Tempo Dancer",
+          "mechanicalBias": {
+            "unarmeddMastery": 2,
+            "flowState": 1
+          },
+          "roleBias": {
+            "skirmisher": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Dances through combat with style."
+        },
+        {
+          "name": "Initiative Master",
+          "mechanicalBias": {
+            "flowState": 2,
+            "initiative": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Controls initiative through form."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Opportunistic Martial Artist",
+          "mechanicalBias": {
+            "unarmeddMastery": 2,
+            "predatoryInstinct": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Exploits openings with strikes."
+        },
+        {
+          "name": "Finishing Technique Master",
+          "mechanicalBias": {
+            "strikeForce": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Ends fights with finishing techniques."
+        },
+        {
+          "name": "Martial Arts Master",
+          "mechanicalBias": {
+            "unarmeddMastery": 2,
+            "flowState": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Masters the martial arts completely."
+        }
+      ]
+    }
+  ]
+}

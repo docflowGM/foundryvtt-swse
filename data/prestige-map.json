@@ -1,0 +1,150 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "description": "Prestige class hints mapping - maps base archetypes to prestige classes that deepen them",
+    "purpose": "ArchetypeAffinityEngine uses this to generate prestige class hints for characters matching specific archetypes",
+    "note": "This is an inverted view of prestige-layers data (archetype -> prestige instead of prestige -> archetype)"
+  },
+
+  "Commando": [
+    "Elite Trooper",
+    "Vanguard"
+  ],
+
+  "Tactical Striker": [
+    "Vanguard"
+  ],
+
+  "Armor Specialist": [
+    "Elite Trooper",
+    "Vanguard"
+  ],
+
+  "Unit Commander": [
+    "Elite Trooper",
+    "Vanguard",
+    "Officer"
+  ],
+
+  "Opportunistic Precision Striker": [
+    "Vanguard",
+    "Shaper",
+    "Assassin",
+    "Infiltrator"
+  ],
+
+  "Knowledge Keeper": [
+    "Shaper",
+    "Medic"
+  ],
+
+  "Support Specialist": [
+    "Shaper",
+    "Medic"
+  ],
+
+  "Living Weapon Specialist": [
+    "Shaper",
+    "Gladiator"
+  ],
+
+  "Biological Leader": [
+    "Shaper",
+    "Officer"
+  ],
+
+  "Force Mystic": [
+    "Jedi Knight",
+    "Jedi Master",
+    "Sith Apprentice",
+    "Sith Lord",
+    "Force Adept"
+  ],
+
+  "Lightsaber Master": [
+    "Jedi Knight",
+    "Jedi Master",
+    "Sith Apprentice",
+    "Sith Lord",
+    "Imperial Knight",
+    "Melee Duelist"
+  ],
+
+  "Gunsmith": [
+    "Gunslinger",
+    "Military Engineer",
+    "Weaponsmith"
+  ],
+
+  "Tech Specialist": [
+    "Military Engineer",
+    "Saboteur",
+    "Independent Droid"
+  ],
+
+  "Smuggler": [
+    "Ace Pilot",
+    "Master Privateer",
+    "Outlaw",
+    "Charlatan"
+  ],
+
+  "Scout": [
+    "Bounty Hunter",
+    "Pathfinder"
+  ],
+
+  "Shadow Operative": [
+    "Assassin",
+    "Infiltrator",
+    "Crime Lord"
+  ],
+
+  "Melee Fighter": [
+    "Martial Arts Master",
+    "Gladiator",
+    "Melee Duelist",
+    "Vanguard"
+  ],
+
+  "Leader": [
+    "Officer",
+    "Vanguard"
+  ],
+
+  "Doctor": [
+    "Medic"
+  ],
+
+  "Droid": [
+    "Independent Droid"
+  ],
+
+  "Gambler": [
+    "Charlatan"
+  ],
+
+  "Business Savvy": [
+    "Corporate Agent",
+    "Crime Lord"
+  ],
+
+  "Force Wielder": [
+    "Force Adept",
+    "Force Disciple",
+    "Jedi Knight",
+    "Jedi Master",
+    "Sith Apprentice",
+    "Sith Lord"
+  ],
+
+  "Duelist": [
+    "Melee Duelist",
+    "Martial Arts Master"
+  ],
+
+  "Survivor": [
+    "Pathfinder",
+    "Outlaw"
+  ]
+}

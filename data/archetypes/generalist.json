@@ -3,24 +3,27 @@
   "status": "active",
   "description": "Flexible build emphasizing versatility and survivability when archetype is unclear.",
   "mechanicalBias": {
+    "damageReduction": 0.4,
+    "skillUtility": 0.3,
+    "adaptability": 0.2,
+    "evasion": 0.1
+  },
+  "roleBias": {
     "defender": 0.4,
     "controller": 0.3,
     "support": 0.2,
-    "striker": 0.1
-  },
-  "roleBias": {
+    "striker": 0.1,
     "offense": 0.8,
     "defense": 1.0,
-    "support": 1.0,
     "utility": 1.1
   },
   "attributeBias": {
-    "STR": 0.2,
-    "DEX": 0.2,
-    "CON": 0.25,
-    "INT": 0.15,
-    "WIS": 0.2,
-    "CHA": 0.2
+    "str": 0.2,
+    "dex": 0.2,
+    "con": 0.25,
+    "int": 0.15,
+    "wis": 0.2,
+    "cha": 0.2
   },
   "talentKeywords": [
     "Skill Training",

@@ -1,0 +1,257 @@
+{
+  "name": "Gladiator Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "arenaExpertise": 3,
+      "heavyWeaponMastery": 2,
+      "combatStamina": 2,
+      "crowd": 1
+    },
+    "roleBias": {
+      "striker": 2,
+      "defender": 1
+    },
+    "attributeBias": {
+      "str": 2,
+      "con": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Weapon Specialist",
+      "specialists": [
+        {
+          "name": "Heavy Weapon Master",
+          "mechanicalBias": {
+            "heavyWeaponMastery": 2,
+            "weaponMastery": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Masters all heavy weapons."
+        },
+        {
+          "name": "Crushing Impact Master",
+          "mechanicalBias": {
+            "burstDamage": 2,
+            "heavyWeaponMastery": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Maximizes crushing weapon damage."
+        },
+        {
+          "name": "Arena Fighter",
+          "mechanicalBias": {
+            "arenaExpertise": 2,
+            "combatStamina": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Survives prolonged arena combat."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Armor Specialist",
+      "specialists": [
+        {
+          "name": "Gladiator Armor Master",
+          "mechanicalBias": {
+            "armorMastery": 2,
+            "arenaExpertise": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Masters gladiatorial armor."
+        },
+        {
+          "name": "Protected Fighter",
+          "mechanicalBias": {
+            "damageReduction": 2,
+            "combatStamina": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "con": 1
+          },
+          "notes": "Endures through heavy armor."
+        },
+        {
+          "name": "Intimidating Gladiator",
+          "mechanicalBias": {
+            "arenaExpertise": 2,
+            "intimidation": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Uses armor to intimidate."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Tactical Striker",
+      "specialists": [
+        {
+          "name": "Arena Tactician",
+          "mechanicalBias": {
+            "arenaExpertise": 2,
+            "tacticalAwareness": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Dominates arena strategy."
+        },
+        {
+          "name": "Crowd Manipulator",
+          "mechanicalBias": {
+            "crowd": 2,
+            "moraleBonus": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Manipulates crowd for advantage."
+        },
+        {
+          "name": "Finishing Blow Master",
+          "mechanicalBias": {
+            "heavyWeaponMastery": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Delivers dramatic finishing blows."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Combat Endurance",
+      "specialists": [
+        {
+          "name": "Tireless Gladiator",
+          "mechanicalBias": {
+            "combatStamina": 2,
+            "forceRecovery": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "con": 1
+          },
+          "notes": "Fights without tiring."
+        },
+        {
+          "name": "Sustained Fighter",
+          "mechanicalBias": {
+            "arenaExpertise": 2,
+            "combatStamina": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "con": 1
+          },
+          "notes": "Maintains peak performance."
+        },
+        {
+          "name": "Recovery Master",
+          "mechanicalBias": {
+            "combatStamina": 2,
+            "moraleBonus": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Recovers visibly for crowd."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Opportunistic Gladiator",
+          "mechanicalBias": {
+            "arenaExpertise": 2,
+            "predatoryInstinct": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Exploits arena weakness patterns."
+        },
+        {
+          "name": "Lethal Finale",
+          "mechanicalBias": {
+            "heavyWeaponMastery": 2,
+            "burstDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Ends combats with dramatic power."
+        },
+        {
+          "name": "Champion Fighter",
+          "mechanicalBias": {
+            "arenaExpertise": 2,
+            "combatFlow": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Champions the arena."
+        }
+      ]
+    }
+  ]
+}

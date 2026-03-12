@@ -1,0 +1,257 @@
+{
+  "name": "Melee Duelist Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "dualistTechnique": 3,
+      "counterMastery": 2,
+      "defensiveSwordsmanship": 2,
+      "combatFlow": 1
+    },
+    "roleBias": {
+      "defender": 2,
+      "striker": 1
+    },
+    "attributeBias": {
+      "dex": 2,
+      "wis": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Precision Duelist",
+      "specialists": [
+        {
+          "name": "Signature Technique Master",
+          "mechanicalBias": {
+            "dualistTechnique": 2,
+            "critRange": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Perfects personal signature technique."
+        },
+        {
+          "name": "Refined Swordsmanship",
+          "mechanicalBias": {
+            "dualistTechnique": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Delivers refined, controlled strikes."
+        },
+        {
+          "name": "Blade Harmony",
+          "mechanicalBias": {
+            "defensiveSwordsmanship": 2,
+            "reactionDefense": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Maintains perfect offensive-defensive balance."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Counter Master",
+      "specialists": [
+        {
+          "name": "Reactive Duelist",
+          "mechanicalBias": {
+            "counterMastery": 2,
+            "reactionDefense": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Turns defense into lethal counters."
+        },
+        {
+          "name": "Parry Expert",
+          "mechanicalBias": {
+            "defensiveSwordsmanship": 2,
+            "counterMastery": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Masters defensive parrying and riposte."
+        },
+        {
+          "name": "Opportunistic Counterattacker",
+          "mechanicalBias": {
+            "counterMastery": 2,
+            "predatoryInstinct": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Exploits every defensive opening."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Defensive Specialist",
+      "specialists": [
+        {
+          "name": "Untouchable Duelist",
+          "mechanicalBias": {
+            "defensiveSwordsmanship": 2,
+            "evasion": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Minimizes damage through defensive skill."
+        },
+        {
+          "name": "Fortress Master",
+          "mechanicalBias": {
+            "defensiveSwordsmanship": 2,
+            "damageReduction": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Creates impenetrable defensive stance."
+        },
+        {
+          "name": "Group Protector",
+          "mechanicalBias": {
+            "defensiveSwordsmanship": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Protects allies through skilled positioning."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Tempo Controller",
+      "specialists": [
+        {
+          "name": "Combat Tempo Master",
+          "mechanicalBias": {
+            "combatFlow": 2,
+            "initiative": 1
+          },
+          "roleBias": {
+            "skirmisher": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Controls pace of engagement."
+        },
+        {
+          "name": "Rhythm Dancer",
+          "mechanicalBias": {
+            "combatFlow": 2,
+            "dualistTechnique": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Moves with perfect combat rhythm."
+        },
+        {
+          "name": "Flow State Adept",
+          "mechanicalBias": {
+            "combatFlow": 2,
+            "forceRecovery": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Sustains peak performance through flow."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Decisive Duelist",
+          "mechanicalBias": {
+            "dualistTechnique": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Ends duels with decisive strikes."
+        },
+        {
+          "name": "Exploitative Swordsman",
+          "mechanicalBias": {
+            "dualistTechnique": 2,
+            "predatoryInstinct": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Punishes every opponent weakness."
+        },
+        {
+          "name": "Master Bladesman",
+          "mechanicalBias": {
+            "dualistTechnique": 2,
+            "critDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Masters the art of killing with blades."
+        }
+      ]
+    }
+  ]
+}

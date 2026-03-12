@@ -15,6 +15,35 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { CLASS_SYNERGY_DATA } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ClassSuggestionEngine.js";
 import { ArchetypeRegistry } from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry.js";
+import { PrestigeLayerRegistry } from "/systems/foundryvtt-swse/scripts/engine/prestige/prestige-layer-registry.js";
+import { IdentityEngine } from "/systems/foundryvtt-swse/scripts/engine/prestige/identity-engine.js";
+import { BiasTagProjection } from "/systems/foundryvtt-swse/scripts/engine/prestige/bias-tag-projection.js";
+
+// ──────────────────────────────────────────────────────────────
+// PRESTIGE SIGNALS LOADER
+// Load from data file instead of hardcoding
+// ──────────────────────────────────────────────────────────────
+
+let PRESTIGE_SIGNALS = {};
+
+/**
+ * Initialize prestige signals from /data/prestige-signals.json
+ * Called once at module load
+ */
+export async function initializePrestigeSignals() {
+    try {
+        const response = await fetch('/systems/foundryvtt-swse/data/prestige-signals.json');
+        if (!response.ok) {
+            throw new Error(`Failed to load prestige signals: ${response.status}`);
+        }
+        const data = await response.json();
+        PRESTIGE_SIGNALS = data.signals || {};
+        SWSELogger.log(`[BuildIntent] Loaded ${Object.keys(PRESTIGE_SIGNALS).length} prestige class signals from data file`);
+    } catch (err) {
+        SWSELogger.error('[BuildIntent] Failed to load prestige signals from data file:', err);
+        PRESTIGE_SIGNALS = {}; // Fall back to empty, signals will be sourced from registry only
+    }
+}
 
 // ──────────────────────────────────────────────────────────────
 // BUILD THEME DEFINITIONS
@@ -35,197 +64,8 @@ export const BUILD_THEMES = {
     TRACKING: 'tracking'
 };
 
-// ──────────────────────────────────────────────────────────────
-// PRESTIGE CLASS SIGNALS
-// Maps prestige classes to the signals that indicate interest
-// ──────────────────────────────────────────────────────────────
-
-export const PRESTIGE_SIGNALS = {
-    'Ace Pilot': {
-        feats: ['Vehicular Combat', 'Skill Focus (Pilot)'],
-        skills: ['pilot'],
-        talents: [],
-        talentTrees: ['Spacer'],
-        abilities: ['dex', 'int'],
-        weight: { feats: 2, skills: 2, talents: 1, abilities: 1 }
-    },
-    'Assassin': {
-        feats: ['Sniper', 'Point-Blank Shot', 'Precise Shot'],
-        skills: ['stealth'],
-        talents: ['Dastardly Strike'],
-        talentTrees: ['Misfortune'],
-        abilities: ['dex', 'int'],
-        weight: { feats: 1, skills: 1, talents: 3, abilities: 1 }
-    },
-    'Bounty Hunter': {
-        feats: [],
-        skills: ['survival', 'perception'],
-        talents: [],
-        talentTrees: ['Awareness'],
-        abilities: ['wis', 'dex'],
-        weight: { feats: 1, skills: 2, talents: 2, abilities: 1 }
-    },
-    'Crime Lord': {
-        feats: [],
-        skills: ['deception', 'persuasion'],
-        talents: [],
-        talentTrees: ['Fortune', 'Lineage', 'Misfortune'],
-        abilities: ['cha', 'int'],
-        weight: { feats: 1, skills: 2, talents: 2, abilities: 1 }
-    },
-    'Elite Trooper': {
-        feats: ['Armor Proficiency (Medium)', 'Martial Arts I', 'Point-Blank Shot', 'Flurry'],
-        skills: ['endurance'],
-        talents: [],
-        talentTrees: ['Armor Specialist', 'Commando', 'Weapon Specialist'],
-        abilities: ['str', 'con'],
-        weight: { feats: 2, skills: 1, talents: 2, abilities: 1 }
-    },
-    'Force Adept': {
-        feats: ['Force Sensitivity', 'Force Training'],
-        skills: ['useTheForce'],
-        talents: [],
-        talentTrees: ['Alter', 'Control', 'Sense'],
-        abilities: ['wis', 'cha'],
-        weight: { feats: 2, skills: 2, talents: 2, abilities: 1 }
-    },
-    'Force Disciple': {
-        feats: ['Force Sensitivity', 'Force Training'],
-        skills: ['useTheForce'],
-        talents: [],
-        talentTrees: ['Dark Side Devotee', 'Force Adept', 'Force Item'],
-        abilities: ['wis', 'cha'],
-        weight: { feats: 2, skills: 2, talents: 2, abilities: 1 }
-    },
-    'Gladiator': {
-        feats: ['Improved Damage Threshold', 'Weapon Proficiency (Advanced Melee Weapons)'],
-        skills: [],
-        talents: [],
-        talentTrees: [],
-        abilities: ['str', 'con'],
-        weight: { feats: 3, skills: 1, talents: 1, abilities: 1 }
-    },
-    'Gunslinger': {
-        feats: ['Point-Blank Shot', 'Precise Shot', 'Quick Draw', 'Weapon Proficiency (Pistols)'],
-        skills: [],
-        talents: [],
-        talentTrees: ['Fortune'],
-        abilities: ['dex'],
-        weight: { feats: 3, skills: 1, talents: 1, abilities: 2 }
-    },
-    'Imperial Knight': {
-        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)', 'Armor Proficiency (Medium)'],
-        skills: ['useTheForce'],
-        talents: [],
-        talentTrees: ['Lightsaber Combat'],
-        abilities: ['str', 'wis'],
-        weight: { feats: 2, skills: 2, talents: 2, abilities: 1 }
-    },
-    'Infiltrator': {
-        feats: ['Skill Focus (Stealth)'],
-        skills: ['perception', 'stealth'],
-        talents: [],
-        talentTrees: ['Camouflage', 'Spy'],
-        abilities: ['dex', 'int'],
-        weight: { feats: 1, skills: 2, talents: 2, abilities: 1 }
-    },
-    'Jedi Knight': {
-        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
-        skills: ['useTheForce'],
-        talents: [],
-        talentTrees: ['Lightsaber Combat', 'Jedi Mind Tricks'],
-        abilities: ['wis', 'cha'],
-        weight: { feats: 2, skills: 2, talents: 2, abilities: 1 }
-    },
-    'Jedi Master': {
-        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
-        skills: ['useTheForce'],
-        talents: [],
-        talentTrees: ['Lightsaber Combat', 'Jedi Mind Tricks'],
-        abilities: ['wis', 'cha'],
-        weight: { feats: 2, skills: 2, talents: 2, abilities: 1 }
-    },
-    'Martial Arts Master': {
-        feats: ['Martial Arts I', 'Martial Arts II', 'Melee Defense'],
-        skills: [],
-        talents: [],
-        talentTrees: ['Brawler', 'Survivor'],
-        abilities: ['str', 'dex'],
-        weight: { feats: 3, skills: 1, talents: 1, abilities: 1 }
-    },
-    'Medic': {
-        feats: ['Surgical Expertise'],
-        skills: ['treatInjury', 'knowledge'],
-        talents: [],
-        talentTrees: [],
-        abilities: ['int', 'wis'],
-        weight: { feats: 2, skills: 3, talents: 1, abilities: 1 }
-    },
-    'Melee Duelist': {
-        feats: ['Melee Defense', 'Rapid Strike', 'Weapon Focus'],
-        skills: [],
-        talents: [],
-        talentTrees: [],
-        abilities: ['str', 'dex'],
-        weight: { feats: 3, skills: 1, talents: 1, abilities: 1 }
-    },
-    'Military Engineer': {
-        feats: [],
-        skills: ['mechanics', 'useComputer'],
-        talents: [],
-        talentTrees: [],
-        abilities: ['int'],
-        weight: { feats: 1, skills: 3, talents: 1, abilities: 2 }
-    },
-    'Officer': {
-        feats: [],
-        skills: ['knowledge'],
-        talents: [],
-        talentTrees: ['Leadership', 'Commando', 'Veteran'],
-        abilities: ['cha', 'int'],
-        weight: { feats: 1, skills: 2, talents: 2, abilities: 1 }
-    },
-    'Pathfinder': {
-        feats: [],
-        skills: ['perception', 'survival'],
-        talents: [],
-        talentTrees: ['Awareness', 'Camouflage', 'Survivor'],
-        abilities: ['wis', 'con'],
-        weight: { feats: 1, skills: 2, talents: 2, abilities: 1 }
-    },
-    'Saboteur': {
-        feats: [],
-        skills: ['deception', 'mechanics', 'useComputer'],
-        talents: [],
-        talentTrees: [],
-        abilities: ['int', 'dex'],
-        weight: { feats: 1, skills: 3, talents: 1, abilities: 1 }
-    },
-    'Sith Apprentice': {
-        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
-        skills: ['useTheForce'],
-        talents: [],
-        talentTrees: ['Dark Side', 'Lightsaber Combat'],
-        abilities: ['cha', 'str'],
-        weight: { feats: 2, skills: 2, talents: 2, abilities: 1 }
-    },
-    'Sith Lord': {
-        feats: ['Force Sensitivity', 'Weapon Proficiency (Lightsabers)'],
-        skills: ['useTheForce'],
-        talents: [],
-        talentTrees: ['Dark Side', 'Lightsaber Combat'],
-        abilities: ['cha', 'str'],
-        weight: { feats: 2, skills: 2, talents: 2, abilities: 1 }
-    },
-    'Vanguard': {
-        feats: [],
-        skills: ['perception', 'stealth'],
-        talents: [],
-        talentTrees: ['Camouflage', 'Commando'],
-        abilities: ['dex', 'con'],
-        weight: { feats: 1, skills: 2, talents: 2, abilities: 1 }
-    }
-};
+// Note: PRESTIGE_SIGNALS is now loaded from /data/prestige-signals.json
+// See initializePrestigeSignals() above
 
 // ──────────────────────────────────────────────────────────────
 // FEAT SIGNAL MAPPINGS
@@ -334,7 +174,9 @@ export class BuildIntent {
             // Priority prerequisites to suggest
             priorityPrereqs: [],
             // Template information if applied
-            appliedTemplate: null
+            appliedTemplate: null,
+            // Phase 2: Actor identity (transient, not persisted)
+            identity: null
         };
 
         // Check for applied template to inform build intent
@@ -363,6 +205,10 @@ export class BuildIntent {
         // Calculate prestige affinities
         SWSELogger.log(`[BUILD-INTENT] analyze() - Calculating prestige affinities`);
         await this._calculatePrestigeAffinities(state, intent);
+
+        // Phase 2: Compute actor identity (bias aggregation)
+        SWSELogger.log(`[BUILD-INTENT] analyze() - Computing actor identity`);
+        intent.identity = await this._computeActorIdentity(actor, appliedTemplate, intent);
 
         // Apply template archetype bias if available
         if (appliedTemplate && appliedTemplate.archetype) {
@@ -588,9 +434,15 @@ export class BuildIntent {
         // Collect all prestige classes to evaluate
         const prestigeClassesToEvaluate = new Map();
 
-        // 1. Start with hardcoded PRESTIGE_SIGNALS for vanilla prestige classes
+        // 1. Start with loaded PRESTIGE_SIGNALS from data file (vanilla prestige classes)
         for (const [className, signals] of Object.entries(PRESTIGE_SIGNALS)) {
-            prestigeClassesToEvaluate.set(className, signals);
+            // Validate that this prestige class exists in the registry
+            const registryPrestige = PrestigeLayerRegistry.get(className);
+            if (registryPrestige) {
+                prestigeClassesToEvaluate.set(className, signals);
+            } else {
+                SWSELogger.warn(`[BuildIntent] Prestige signal for "${className}" has no matching PrestigeLayerRegistry entry`);
+            }
         }
 
         // 2. Also load prestige class items from world to support custom prestige classes
@@ -599,7 +451,7 @@ export class BuildIntent {
             for (const prestigeItem of prestigeItems) {
                 const className = prestigeItem.name;
 
-                // Skip if already in PRESTIGE_SIGNALS
+                // Skip if already added from loaded signals
                 if (prestigeClassesToEvaluate.has(className)) {
                     continue;
                 }
@@ -703,6 +555,62 @@ export class BuildIntent {
             if (confDiff !== 0) return confDiff;
             return a.className.localeCompare(b.className);
         });
+    }
+
+    /**
+     * Phase 2: Compute actor identity via IdentityEngine
+     * Aggregates baseArchetype + prestigeAmplifier + specialist biases
+     * Returns transient identity object (not persisted to actor.system)
+     * @private
+     */
+    static async _computeActorIdentity(actor, appliedTemplate, intent) {
+        try {
+            // Determine base archetype
+            let baseArchetypeId = null;
+            if (appliedTemplate && appliedTemplate.archetype) {
+                baseArchetypeId = appliedTemplate.archetype;
+            }
+
+            if (!baseArchetypeId) {
+                SWSELogger.log('[BUILD-INTENT] No base archetype found for identity computation');
+                return null;
+            }
+
+            // Get highest prestige affinity as candidate prestige class
+            let prestigeClassId = null;
+            if (intent.prestigeAffinities && intent.prestigeAffinities.length > 0) {
+                const topAffinity = intent.prestigeAffinities[0];
+                // Only use prestige if confidence is meaningful (> 0.2)
+                if (topAffinity.confidence > 0.2) {
+                    prestigeClassId = topAffinity.className;
+                }
+            }
+
+            // Compute identity using IdentityEngine
+            const identity = await IdentityEngine.getActorIdentity(
+                actor,
+                baseArchetypeId,
+                prestigeClassId,
+                null // specialistIndex: use default specialist selection
+            );
+
+            if (identity && identity.totalBias) {
+                // Project bias to tags for debug output
+                const projected = BiasTagProjection.project(identity.totalBias);
+                BiasTagProjection.debugPrint(identity.totalBias, projected);
+                SWSELogger.log('[BUILD-INTENT] Actor identity computed:', {
+                    baseArchetype: identity.baseArchetype?.name,
+                    prestige: identity.amplifier?.name || 'none',
+                    specialist: identity.specialist?.name || 'none',
+                    projectedTags: projected
+                });
+            }
+
+            return identity;
+        } catch (err) {
+            SWSELogger.warn('[BUILD-INTENT] Failed to compute actor identity:', err);
+            return null;
+        }
     }
 
     /**

@@ -7,423 +7,149 @@
     "jedi": {
       "displayName": "Jedi",
       "archetypes": {
-        "guardian_defender": {
-          "name": "Guardian Defender",
+        "precision_striker": {
+          "name": "Precision Striker",
           "status": "active",
           "mechanicalBias": {
-            "frontline_damage": 0.4,
-            "force_control": 0.4,
-            "controller": 0.2
+            "accuracy": 3,
+            "critRange": 3,
+            "reactionDefense": 2,
+            "evasion": 2
           },
           "roleBias": {
-            "offense": 1.0,
-            "defense": 1.3,
-            "support": 1.1,
-            "utility": 0.8
+            "striker": 3,
+            "skirmisher": 2
           },
           "attributeBias": {
-            "STR": 0.3,
-            "WIS": 0.3,
-            "CON": 0.2,
-            "CHA": 0.2
+            "dex": 3,
+            "str": 2,
+            "cha": 1
           },
-          "notes": "Defensive Jedi focused on protection, resilience, and battlefield control.",
+          "notes": "Single-target lightsaber specialist focusing on crit expansion, precision attack chains, and defensive reactions.",
           "talents": [
-            "9379daa94a228c04",
-            "72c644f7a09b1186",
-            "941c1dfd00e697da"
+            "Block",
+            "Deflect",
+            "Riposte",
+            "Ataru"
           ],
           "feats": [
-            "c41814601364b643",
-            "9b7b869a86f39190"
+            "Weapon Focus (Lightsabers)",
+            "Weapon Specialization (Lightsabers)",
+            "Improved Critical (Lightsabers)",
+            "Acrobatic Strike"
           ]
         },
-        "aggressive_duelist": {
-          "name": "Aggressive Duelist",
+        "tank_guardian": {
+          "name": "Tank Guardian",
           "status": "active",
           "mechanicalBias": {
-            "frontline_damage": 0.6,
-            "force_dps": 0.3,
-            "controller": 0.1
+            "damageReduction": 2,
+            "reactionDefense": 3
           },
           "roleBias": {
-            "offense": 1.4,
-            "defense": 1.0,
-            "support": 0.8,
-            "utility": 0.8
+            "defender": 3
           },
           "attributeBias": {
-            "STR": 0.35,
-            "DEX": 0.25,
-            "CHA": 0.2,
-            "CON": 0.2
+            "con": 3,
+            "str": 2,
+            "wis": 1
           },
-          "notes": "High-damage lightsaber specialist built for decisive duels.",
+          "notes": "Durable frontline Jedi focused on mitigation, defensive reactions, and anchoring combat.",
           "talents": [
-            "9dfce712a60a097f",
-            "e0223a2b572f2ef5"
+            "Improved Block",
+            "Improved Deflect",
+            "Damage Reduction",
+            "Guardian Spirit"
           ],
           "feats": [
-            "3f76464c43c73f84",
-            "ccb33e58342499a3"
+            "Toughness",
+            "Improved Defenses",
+            "Weapon Focus (Lightsabers)"
           ]
         },
-        "force_adept": {
-          "name": "Force Adept",
+        "battlefield_controller": {
+          "name": "Battlefield Controller",
           "status": "active",
           "mechanicalBias": {
-            "force_control": 0.5,
-            "controller": 0.3,
-            "support": 0.2
+            "forceDC": 3,
+            "areaControl": 3,
+            "conditionTrack": 2
           },
           "roleBias": {
-            "offense": 0.9,
-            "defense": 1.0,
-            "support": 1.3,
-            "utility": 1.1
+            "controller": 3,
+            "support": 1
           },
           "attributeBias": {
-            "CHA": 0.4,
-            "WIS": 0.3,
-            "CON": 0.2,
-            "DEX": 0.1
+            "cha": 3,
+            "wis": 2
           },
-          "notes": "Force-centric Jedi emphasizing powers over weapon combat.",
+          "notes": "Battlefield control Jedi specializing in forced movement, crowd disruption, and action denial.",
           "talents": [
-            "af51d4e76675b183"
+            "Force Slam",
+            "Force Grip",
+            "Telekinetic Savant"
           ],
           "feats": [
-            "1592aaedf4b6e40a",
-            "9b7b869a86f39190"
+            "Force Training",
+            "Skill Focus (Use the Force)"
           ]
         },
-        "balanced_knight": {
-          "name": "Balanced Knight",
-          "status": "active",
+        "force_burst_striker": {
+          "name": "Force Burst Striker",
+          "status": "experimental",
           "mechanicalBias": {
-            "striker": 0.35,
-            "controller": 0.35,
-            "support": 0.2,
-            "utility": 0.1
+            "forceSecret": 3,
+            "burstDamage": 3,
+            "accuracy": 2
           },
           "roleBias": {
-            "offense": 1.0,
-            "defense": 1.0,
-            "support": 1.0,
-            "utility": 1.0
+            "striker": 3,
+            "offense": 2
           },
           "attributeBias": {
-            "STR": 0.25,
-            "DEX": 0.25,
-            "WIS": 0.25,
-            "CHA": 0.25
+            "cha": 3,
+            "str": 1,
+            "dex": 1
           },
-          "notes": "Classic balanced Jedi blending combat, Force use, and adaptability.",
+          "notes": "Aggressive damage-focused build leveraging high-impact Force powers and offensive momentum.",
           "talents": [
-            "9379daa94a228c04",
-            "72c644f7a09b1186"
+            "Force Lightning",
+            "Dark Rage",
+            "Power of the Dark Side"
           ],
           "feats": [
-            "c41814601364b643",
-            "9b7b869a86f39190"
+            "Force Training",
+            "Strong in the Force",
+            "Skill Focus (Use the Force)"
           ]
         },
-        "martial_arts_specialist": {
-          "name": "Martial Arts Specialist",
+        "sentinel_generalist": {
+          "name": "Sentinel Generalist",
           "status": "active",
           "mechanicalBias": {
-            "striker": 0.5,
-            "defender": 0.3,
-            "controller": 0.2
+            "skillUtility": 3,
+            "accuracy": 2,
+            "forceRecovery": 2
           },
           "roleBias": {
-            "offense": 1.2,
-            "defense": 1.1
+            "flex": 3,
+            "skirmisher": 2
           },
           "attributeBias": {
-            "DEX": 0.35,
-            "STR": 0.3,
-            "CON": 0.2,
-            "WIS": 0.15
+            "dex": 2,
+            "cha": 2,
+            "int": 1
           },
-          "notes": "Jedi emphasizing unarmed and hybrid combat techniques.",
-          "talents": [],
-          "feats": [
-            "92f927c92ded9fcf",
-            "5bedd71f0eead6b9"
-          ]
-        },
-        "zen_duelist": {
-          "name": "Zen Duelist",
-          "status": "active",
-          "mechanicalBias": {
-            "controller": 0.4,
-            "defender": 0.3,
-            "support": 0.3
-          },
-          "roleBias": {
-            "defense": 1.2,
-            "support": 1.1
-          },
-          "attributeBias": {
-            "WIS": 0.4,
-            "DEX": 0.3,
-            "CON": 0.2,
-            "CHA": 0.1
-          },
-          "notes": "Defensive, meditative duelist relying on calm and precision.",
+          "notes": "Balanced Jedi build combining combat competence, skill utility, and flexible Force use.",
           "talents": [
-            "675bfa10691b60f6",
-            "72c644f7a09b1186"
+            "Skilled Advisor",
+            "Block",
+            "Force Perception"
           ],
           "feats": [
-            "c41814601364b643",
-            "3036290329d5b3e6"
-          ]
-        },
-        "martial_arts_initiate": {
-          "name": "Martial Arts Initiate",
-          "status": "active",
-          "mechanicalBias": {
-            "striker": 0.4,
-            "utility": 0.3,
-            "controller": 0.3
-          },
-          "roleBias": {
-            "offense": 1.1,
-            "utility": 1.1
-          },
-          "attributeBias": {
-            "DEX": 0.35,
-            "WIS": 0.3,
-            "STR": 0.2,
-            "CON": 0.15
-          },
-          "notes": "Early-stage martial-focused Jedi, often preceding Martial Arts Master.",
-          "talents": [],
-          "feats": [
-            "92f927c92ded9fcf"
-          ]
-        },
-        "jedi_guardian": {
-          "name": "Jedi Guardian",
-          "status": "active",
-          "mechanicalBias": {
-            "frontline_damage": 0.6,
-            "controller": 0.2,
-            "force_control": 0.2
-          },
-          "roleBias": {
-            "striker": 1.2,
-            "defender": 1.1,
-            "support": 0.7
-          },
-          "attributeBias": {
-            "STR": 0.35,
-            "DEX": 0.25,
-            "WIS": 0.25,
-            "CON": 0.15
-          },
-          "notes": "Frontline lightsaber combatant focused on direct engagement.",
-          "talents": [
-            "9379daa94a228c04",
-            "72c644f7a09b1186"
-          ],
-          "feats": [
-            "c41814601364b643",
-            "3f76464c43c73f84"
-          ]
-        },
-        "jedi_consular": {
-          "name": "Jedi Consular",
-          "status": "active",
-          "mechanicalBias": {
-            "force_control": 0.5,
-            "support": 0.3,
-            "controller": 0.2
-          },
-          "roleBias": {
-            "support": 1.3,
-            "controller": 1.1,
-            "striker": 0.6
-          },
-          "attributeBias": {
-            "WIS": 0.45,
-            "CHA": 0.35,
-            "INT": 0.2
-          },
-          "notes": "Diplomatic Force specialist emphasizing negotiation and control.",
-          "talents": [
-            "d1fd547124c1901c",
-            "4d8882a28da30454"
-          ],
-          "feats": [
-            "9b7b869a86f39190",
-            "1592aaedf4b6e40a",
-            "5afd91fb081e576b"
-          ]
-        },
-        "jedi_sentinel": {
-          "name": "Jedi Sentinel",
-          "status": "active",
-          "mechanicalBias": {
-            "controller": 0.4,
-            "frontline_damage": 0.3,
-            "utility": 0.3
-          },
-          "roleBias": {
-            "controller": 1.2,
-            "striker": 1.0,
-            "support": 0.8
-          },
-          "attributeBias": {
-            "DEX": 0.3,
-            "INT": 0.3,
-            "WIS": 0.25,
-            "CON": 0.15
-          },
-          "notes": "Balanced Jedi investigator and covert operative.",
-          "talents": [
-            "e885f64758f5e2bd"
-          ],
-          "feats": [
-            "1592aaedf4b6e40a",
-            "252b67d6e31c377e"
-          ]
-        },
-        "jedi_ace": {
-          "name": "Jedi Ace",
-          "status": "active",
-          "mechanicalBias": {
-            "pilot": 0.5,
-            "utility": 0.3,
-            "force_control": 0.2
-          },
-          "roleBias": {
-            "striker": 1.0,
-            "support": 1.1,
-            "controller": 0.9
-          },
-          "attributeBias": {
-            "DEX": 0.4,
-            "INT": 0.3,
-            "WIS": 0.2,
-            "CON": 0.1
-          },
-          "notes": "Force-augmented pilot specializing in vehicle and starfighter combat.",
-          "talents": [],
-          "feats": [
-            "1f2f70d34a17667d",
-            "1592aaedf4b6e40a"
-          ]
-        },
-        "jedi_healer": {
-          "name": "Jedi Healer",
-          "status": "active",
-          "mechanicalBias": {
-            "support": 0.6,
-            "force_control": 0.3,
-            "controller": 0.1
-          },
-          "roleBias": {
-            "support": 1.4,
-            "controller": 1.0,
-            "striker": 0.5
-          },
-          "attributeBias": {
-            "WIS": 0.45,
-            "CHA": 0.35,
-            "CON": 0.2
-          },
-          "notes": "Force-based healer dedicated to sustaining allies.",
-          "talents": [],
-          "feats": [
-            "9b7b869a86f39190",
-            "1592aaedf4b6e40a"
-          ]
-        },
-        "jedi_shadow": {
-          "name": "Jedi Shadow",
-          "status": "active",
-          "mechanicalBias": {
-            "controller": 0.4,
-            "utility": 0.4,
-            "frontline_damage": 0.2
-          },
-          "roleBias": {
-            "controller": 1.2,
-            "striker": 1.0,
-            "support": 0.7
-          },
-          "attributeBias": {
-            "DEX": 0.35,
-            "WIS": 0.35,
-            "INT": 0.2,
-            "CHA": 0.1
-          },
-          "notes": "Undercover Jedi hunter of Dark Side threats.",
-          "talents": [
-            "d1561acfdeac3d78",
-            "2c18952e0c014127"
-          ],
-          "feats": [
-            "1592aaedf4b6e40a",
-            "9b7b869a86f39190"
-          ]
-        },
-        "jedi_weapon_master": {
-          "name": "Jedi Weapon Master",
-          "status": "active",
-          "mechanicalBias": {
-            "frontline_damage": 0.7,
-            "controller": 0.2,
-            "force_control": 0.1
-          },
-          "roleBias": {
-            "striker": 1.4,
-            "defender": 0.9
-          },
-          "attributeBias": {
-            "STR": 0.4,
-            "DEX": 0.3,
-            "CON": 0.2,
-            "WIS": 0.1
-          },
-          "notes": "Martial-focused Jedi specializing in extreme lightsaber mastery.",
-          "talents": [
-            "5ea9a4c30dff1ac8",
-            "675bfa10691b60f6"
-          ],
-          "feats": [
-            "3f76464c43c73f84"
-          ]
-        },
-        "jedi_battlemaster": {
-          "name": "Jedi Battlemaster",
-          "status": "active",
-          "mechanicalBias": {
-            "controller": 0.4,
-            "frontline_damage": 0.4,
-            "support": 0.2
-          },
-          "roleBias": {
-            "controller": 1.2,
-            "striker": 1.1,
-            "support": 1.0
-          },
-          "attributeBias": {
-            "STR": 0.3,
-            "CHA": 0.3,
-            "WIS": 0.25,
-            "CON": 0.15
-          },
-          "notes": "Battlefield commander and Jedi combat instructor.",
-          "talents": [
-            "9461c7aa79dd07c6",
-            "d838141fe404a9fb"
-          ],
-          "feats": [
-            "c41814601364b643"
+            "Skill Focus (Use the Force)",
+            "Weapon Focus (Lightsabers)",
+            "Force Training"
           ]
         }
       }
@@ -431,293 +157,138 @@
     "noble": {
       "displayName": "Noble",
       "archetypes": {
-        "political_leader": {
-          "name": "Political Leader",
+        "battlefield_commander": {
+          "name": "Battlefield Commander",
           "status": "active",
           "mechanicalBias": {
-            "support": 0.4,
-            "controller": 0.4,
-            "utility": 0.2
+            "moraleBonus": 3,
+            "initiative": 2,
+            "commandAuthority": 3
           },
           "roleBias": {
-            "support": 1.3,
-            "controller": 1.2
+            "support": 3,
+            "leader": 3
           },
           "attributeBias": {
-            "CHA": 0.45,
-            "INT": 0.35,
-            "WIS": 0.2
+            "cha": 3,
+            "int": 2
           },
-          "notes": "High-level political figure shaping events through authority and influence.",
+          "notes": "Combat-oriented Noble focused on improving allies' accuracy, morale, and coordination.",
           "talents": [
-            "4d8882a28da30454",
-            "a52044feeab3fe05"
+            "Inspire Confidence",
+            "Coordinate",
+            "Rally"
           ],
           "feats": [
-            "1592aaedf4b6e40a"
+            "Skill Focus (Persuasion)",
+            "Improved Initiative"
           ]
         },
-        "court_diplomat": {
-          "name": "Court Diplomat",
+        "master_orator": {
+          "name": "Master Orator",
           "status": "active",
           "mechanicalBias": {
-            "support": 0.5,
-            "utility": 0.3,
-            "controller": 0.2
+            "socialManipulation": 3,
+            "skillUtility": 3,
+            "networkInfluence": 3
           },
           "roleBias": {
-            "support": 1.4
+            "support": 2,
+            "controller": 3
           },
           "attributeBias": {
-            "CHA": 0.5,
-            "INT": 0.3,
-            "WIS": 0.2
+            "cha": 3,
+            "int": 1
           },
-          "notes": "Formal negotiator trained in courtly and interstellar diplomacy.",
+          "notes": "Charisma-maximizing Noble focused on persuasion, negotiation, and narrative control.",
           "talents": [
-            "871638a983029bc4",
-            "4d8882a28da30454"
+            "Demand Surrender",
+            "Inspire Confidence",
+            "Trustworthy"
           ],
           "feats": [
-            "1592aaedf4b6e40a",
-            "5afd91fb081e576b"
+            "Skill Focus (Persuasion)",
+            "Skill Focus (Deception)"
           ]
         },
-        "strategic_coordinator": {
-          "name": "Strategic Coordinator",
+        "tactical_coordinator": {
+          "name": "Tactical Coordinator",
           "status": "active",
           "mechanicalBias": {
-            "controller": 0.5,
-            "support": 0.3,
-            "utility": 0.2
+            "initiative": 3,
+            "allySupport": 2
           },
           "roleBias": {
-            "controller": 1.3
+            "support": 3,
+            "leader": 2
           },
           "attributeBias": {
-            "INT": 0.45,
-            "CHA": 0.3,
-            "WIS": 0.25
+            "cha": 2,
+            "int": 2,
+            "dex": 1
           },
-          "notes": "Behind-the-scenes planner directing allies with precision.",
+          "notes": "Optimized around granting allies extra actions, improving initiative flow, and battlefield coordination.",
           "talents": [
-            "a52044feeab3fe05",
-            "7df2e8e4f18dc909"
+            "Coordinate",
+            "Born Leader",
+            "Inspire Confidence"
           ],
           "feats": [
-            "1592aaedf4b6e40a",
-            "964f0781b3e3fc37"
+            "Improved Initiative",
+            "Skill Focus (Persuasion)"
           ]
         },
-        "wealthy_patron": {
-          "name": "Wealthy Patron",
+        "political_strategist": {
+          "name": "Political Strategist",
           "status": "active",
           "mechanicalBias": {
-            "utility": 0.5,
-            "support": 0.3,
-            "controller": 0.2
+            "skillUtility": 3,
+            "resourceControl": 3,
+            "networkInfluence": 3
           },
           "roleBias": {
-            "utility": 1.4
+            "utility": 3,
+            "support": 2
           },
           "attributeBias": {
-            "INT": 0.4,
-            "CHA": 0.4,
-            "WIS": 0.2
+            "int": 3,
+            "cha": 2
           },
-          "notes": "Resource-focused noble leveraging money, assets, and influence.",
+          "notes": "Resource-focused Noble emphasizing contacts, influence networks, and long-term strategic advantage.",
           "talents": [
-            "37bf53b4b2c0e539",
-            "e58a8ad63c1d8771"
+            "Connections",
+            "Resource Access",
+            "Trustworthy"
           ],
           "feats": [
-            "1592aaedf4b6e40a",
-            "6d8ce2807c579289"
+            "Skill Focus (Gather Information)",
+            "Skill Focus (Knowledge)"
           ]
         },
-        "silver_tongued_manipulator": {
-          "name": "Silver-Tongued Manipulator",
+        "inspirational_supporter": {
+          "name": "Inspirational Supporter",
           "status": "active",
           "mechanicalBias": {
-            "controller": 0.5,
-            "support": 0.3,
-            "utility": 0.2
+            "moraleBonus": 3,
+            "damageMitigationAura": 3
           },
           "roleBias": {
-            "controller": 1.3
+            "support": 3,
+            "defender": 1
           },
           "attributeBias": {
-            "CHA": 0.5,
-            "INT": 0.3,
-            "WIS": 0.2
+            "cha": 3,
+            "wis": 1
           },
-          "notes": "Social engineer bending others to their will.",
-          "talents": [],
-          "feats": [
-            "1592aaedf4b6e40a",
-            "1592aaedf4b6e40a"
-          ]
-        },
-        "silver_tongued_negotiator": {
-          "name": "Silver-Tongued Negotiator",
-          "status": "active",
-          "mechanicalBias": {
-            "support": 0.4,
-            "controller": 0.4,
-            "utility": 0.2
-          },
-          "roleBias": {
-            "support": 1.3
-          },
-          "attributeBias": {
-            "CHA": 0.5,
-            "WIS": 0.3,
-            "INT": 0.2
-          },
-          "notes": "Master negotiator resolving conflicts through dialogue.",
+          "notes": "Defensive support Noble focused on morale bonuses and helping allies recover from condition penalties.",
           "talents": [
-            "4d8882a28da30454",
-            "871638a983029bc4"
+            "Inspire Confidence",
+            "Rally",
+            "Bolster Ally"
           ],
           "feats": [
-            "1592aaedf4b6e40a"
-          ]
-        },
-        "diplomat": {
-          "name": "Diplomat",
-          "status": "active",
-          "mechanicalBias": {
-            "support": 0.5,
-            "utility": 0.3,
-            "controller": 0.2
-          },
-          "roleBias": {
-            "support": 1.4,
-            "controller": 1.1
-          },
-          "attributeBias": {
-            "CHA": 0.45,
-            "INT": 0.35,
-            "WIS": 0.2
-          },
-          "notes": "Negotiator and ambassador specializing in diplomacy and conflict resolution.",
-          "talents": [
-            "4d8882a28da30454",
-            "871638a983029bc4"
-          ],
-          "feats": [
-            "1592aaedf4b6e40a",
-            "5afd91fb081e576b"
-          ]
-        },
-        "military_officer": {
-          "name": "Military Officer",
-          "status": "active",
-          "mechanicalBias": {
-            "support": 0.4,
-            "controller": 0.4,
-            "utility": 0.2
-          },
-          "roleBias": {
-            "support": 1.3,
-            "controller": 1.2
-          },
-          "attributeBias": {
-            "INT": 0.35,
-            "CHA": 0.35,
-            "WIS": 0.2,
-            "DEX": 0.1
-          },
-          "notes": "Strategic commander focused on battlefield leadership and coordination.",
-          "talents": [
-            "a52044feeab3fe05",
-            "d6e7f7178e643717"
-          ],
-          "feats": [
-            "1592aaedf4b6e40a",
-            "964f0781b3e3fc37"
-          ]
-        },
-        "underworld_boss": {
-          "name": "Underworld Boss",
-          "status": "active",
-          "mechanicalBias": {
-            "controller": 0.4,
-            "utility": 0.3,
-            "support": 0.3
-          },
-          "roleBias": {
-            "controller": 1.3,
-            "support": 1.1
-          },
-          "attributeBias": {
-            "CHA": 0.4,
-            "INT": 0.3,
-            "CON": 0.2,
-            "DEX": 0.1
-          },
-          "notes": "Crime-oriented noble ruling through fear, wealth, and influence.",
-          "talents": [
-            "9e4345faaaa94dd8",
-            "585227ba15d24a37"
-          ],
-          "feats": [
-            "1592aaedf4b6e40a",
-            "1592aaedf4b6e40a"
-          ]
-        },
-        "trading_mogul": {
-          "name": "Trading Mogul",
-          "status": "active",
-          "mechanicalBias": {
-            "utility": 0.5,
-            "support": 0.3,
-            "controller": 0.2
-          },
-          "roleBias": {
-            "utility": 1.4,
-            "support": 1.1
-          },
-          "attributeBias": {
-            "INT": 0.45,
-            "CHA": 0.35,
-            "WIS": 0.2
-          },
-          "notes": "Business-focused noble leveraging wealth, logistics, and contacts.",
-          "talents": [
-            "37bf53b4b2c0e539",
-            "e58a8ad63c1d8771"
-          ],
-          "feats": [
-            "1592aaedf4b6e40a",
-            "1592aaedf4b6e40a"
-          ]
-        },
-        "scholar": {
-          "name": "Scholar",
-          "status": "active",
-          "mechanicalBias": {
-            "utility": 0.6,
-            "controller": 0.2,
-            "support": 0.2
-          },
-          "roleBias": {
-            "utility": 1.4,
-            "support": 1.0
-          },
-          "attributeBias": {
-            "INT": 0.5,
-            "WIS": 0.3,
-            "CHA": 0.2
-          },
-          "notes": "Academic expert and knowledge specialist.",
-          "talents": [
-            "3e98c9f5a4f450ff",
-            "e58a8ad63c1d8771"
-          ],
-          "feats": [
-            "1592aaedf4b6e40a",
-            "3b9b60551a3379ce"
+            "Skill Focus (Persuasion)",
+            "Improved Defenses"
           ]
         }
       }
@@ -725,349 +296,142 @@
     "scoundrel": {
       "displayName": "Scoundrel",
       "archetypes": {
-        "skill_monkey": {
-          "name": "Skill Monkey",
+        "opportunistic_precision_striker": {
+          "name": "Opportunistic Precision Striker",
           "status": "active",
           "mechanicalBias": {
-            "utility": 0.6,
-            "controller": 0.2,
-            "support": 0.2
+            "deadlyPrecision": 3,
+            "singleTargetDamage": 3,
+            "accuracy": 2,
+            "critRange": 2
           },
           "roleBias": {
-            "utility": 1.4
+            "striker": 3
           },
           "attributeBias": {
-            "INT": 0.45,
-            "DEX": 0.3,
-            "WIS": 0.25
+            "dex": 3,
+            "cha": 1,
+            "int": 1
           },
-          "notes": "Jack-of-all-trades excelling at broad skill coverage.",
+          "notes": "High-damage build focused on triggering Sneak Attack consistently through positioning and debuffs.",
           "talents": [
-            "8d8937a416fc0d81",
-            "5319a796f2c4ff64"
+            "Sneak Attack",
+            "Dastardly Strike",
+            "Hidden Movement"
           ],
           "feats": [
-            "1592aaedf4b6e40a",
-            "5cc1216874c79087"
+            "Point Blank Shot",
+            "Precise Shot",
+            "Improved Critical (Pistols)"
           ]
         },
-        "sneak_attacker": {
-          "name": "Sneak Attacker",
+        "debilitating_trickster": {
+          "name": "Debilitating Trickster",
           "status": "active",
           "mechanicalBias": {
-            "striker": 0.6,
-            "controller": 0.3,
-            "utility": 0.1
+            "conditionTrack": 3,
+            "deadlyPrecision": 2
           },
           "roleBias": {
-            "striker": 1.4
+            "controller": 3,
+            "striker": 1
           },
           "attributeBias": {
-            "DEX": 0.45,
-            "INT": 0.3,
-            "CON": 0.25
+            "dex": 2,
+            "cha": 2,
+            "int": 1
           },
-          "notes": "Precision damage dealer exploiting surprise and positioning.",
+          "notes": "Build designed to push enemies down the condition track through trickery and precision strikes.",
           "talents": [
-            "1505abc8babeeb84",
-            "9e4345faaaa94dd8"
+            "Dastardly Strike",
+            "Sneak Attack",
+            "Improved Feint"
           ],
           "feats": [
-            "252b67d6e31c377e",
-            "c301a0f533f15ce4"
+            "Skill Focus (Deception)",
+            "Weapon Focus (Pistols)"
           ]
         },
-        "charlatan": {
-          "name": "Charlatan",
+        "gunslinger_duelist": {
+          "name": "Gunslinger Duelist",
           "status": "active",
           "mechanicalBias": {
-            "controller": 0.4,
-            "support": 0.3,
-            "utility": 0.3
+            "accuracy": 3,
+            "critRange": 3,
+            "singleTargetDamage": 2
           },
           "roleBias": {
-            "controller": 1.3
+            "striker": 3,
+            "skirmisher": 2
           },
           "attributeBias": {
-            "CHA": 0.5,
-            "INT": 0.3,
-            "WIS": 0.2
+            "dex": 3,
+            "cha": 1
           },
-          "notes": "Con artist and social infiltrator.",
+          "notes": "Pistol-focused build emphasizing accuracy stacking and critical hit optimization.",
           "talents": [
-            "5319a796f2c4ff64"
+            "Deadeye",
+            "Sneak Attack",
+            "Lucky Shot"
           ],
           "feats": [
-            "1592aaedf4b6e40a",
-            "6d8ce2807c579289"
+            "Weapon Focus (Pistols)",
+            "Improved Critical (Pistols)",
+            "Rapid Shot"
           ]
         },
-        "gunslinger": {
-          "name": "Gunslinger",
+        "social_manipulator": {
+          "name": "Social Manipulator",
           "status": "active",
           "mechanicalBias": {
-            "striker": 0.6,
-            "controller": 0.2,
-            "utility": 0.2
+            "socialManipulation": 3,
+            "skillUtility": 3,
+            "allySupport": 1
           },
           "roleBias": {
-            "striker": 1.3
+            "support": 3,
+            "controller": 2
           },
           "attributeBias": {
-            "DEX": 0.45,
-            "CHA": 0.3,
-            "CON": 0.25
+            "cha": 3,
+            "int": 2
           },
-          "notes": "Fast-draw pistol specialist.",
-          "talents": [],
-          "feats": [
-            "c301a0f533f15ce4",
-            "c180eee7d3bc29b2"
-          ]
-        },
-        "trickster": {
-          "name": "Trickster",
-          "status": "active",
-          "mechanicalBias": {
-            "controller": 0.4,
-            "utility": 0.4,
-            "support": 0.2
-          },
-          "roleBias": {
-            "controller": 1.2
-          },
-          "attributeBias": {
-            "INT": 0.4,
-            "DEX": 0.3,
-            "CHA": 0.3
-          },
-          "notes": "Battlefield disruptor using clever positioning and tricks.",
+          "notes": "Charisma-driven build focused on influence, deception, and non-combat control.",
           "talents": [
-            "8d8937a416fc0d81"
+            "Skilled Advisor",
+            "Connections",
+            "Trustworthy"
           ],
           "feats": [
-            "1592aaedf4b6e40a"
+            "Skill Focus (Persuasion)",
+            "Skill Focus (Deception)"
           ]
         },
-        "shadow_smuggler": {
-          "name": "Shadow Smuggler",
+        "saboteur_technician": {
+          "name": "Saboteur Technician",
           "status": "active",
           "mechanicalBias": {
-            "utility": 0.4,
-            "controller": 0.3,
-            "striker": 0.3
+            "hackingSkills": 3,
+            "skillUtility": 3,
+            "areaControl": 2
           },
           "roleBias": {
-            "utility": 1.3
+            "controller": 3,
+            "utility": 3
           },
           "attributeBias": {
-            "DEX": 0.35,
-            "CHA": 0.3,
-            "INT": 0.2,
-            "CON": 0.15
+            "int": 3,
+            "dex": 2
           },
-          "notes": "Smuggler specializing in covert operations and evasion.",
+          "notes": "Mechanics-focused scoundrel specializing in slicing, sabotage, and technical battlefield disruption.",
           "talents": [
-            "7b23e0812d6a8985"
+            "Tech Specialist",
+            "Sabotage",
+            "Skilled Advisor"
           ],
           "feats": [
-            "1592aaedf4b6e40a",
-            "1f2f70d34a17667d"
-          ]
-        },
-        "infiltration_specialist": {
-          "name": "Infiltration Specialist",
-          "status": "active",
-          "mechanicalBias": {
-            "controller": 0.4,
-            "utility": 0.4,
-            "striker": 0.2
-          },
-          "roleBias": {
-            "controller": 1.2
-          },
-          "attributeBias": {
-            "DEX": 0.4,
-            "INT": 0.3,
-            "WIS": 0.2,
-            "CON": 0.1
-          },
-          "notes": "Stealth-based intrusion and extraction expert.",
-          "talents": [
-            "51ee1b777709cc4e"
-          ],
-          "feats": [
-            "1592aaedf4b6e40a",
-            "1592aaedf4b6e40a"
-          ]
-        },
-        "smuggler": {
-          "name": "Smuggler",
-          "status": "active",
-          "mechanicalBias": {
-            "utility": 0.4,
-            "striker": 0.3,
-            "controller": 0.3
-          },
-          "roleBias": {
-            "utility": 1.3,
-            "striker": 1.0,
-            "support": 0.9
-          },
-          "attributeBias": {
-            "DEX": 0.35,
-            "CHA": 0.3,
-            "INT": 0.2,
-            "CON": 0.15
-          },
-          "notes": "Fast-talking transporter of illicit or high-value cargo.",
-          "talents": [
-            "eeed98748becb161",
-            "7b23e0812d6a8985"
-          ],
-          "feats": [
-            "1592aaedf4b6e40a",
-            "1f2f70d34a17667d",
-            "c301a0f533f15ce4"
-          ]
-        },
-        "pirate": {
-          "name": "Pirate",
-          "status": "active",
-          "mechanicalBias": {
-            "striker": 0.5,
-            "controller": 0.3,
-            "utility": 0.2
-          },
-          "roleBias": {
-            "striker": 1.2,
-            "controller": 1.0
-          },
-          "attributeBias": {
-            "DEX": 0.3,
-            "STR": 0.3,
-            "CON": 0.25,
-            "CHA": 0.15
-          },
-          "notes": "Violent raider relying on intimidation and brute tactics.",
-          "talents": [
-            "9e4345faaaa94dd8"
-          ],
-          "feats": [
-            "c301a0f533f15ce4",
-            "94b8751efb03536a"
-          ]
-        },
-        "slicer": {
-          "name": "Slicer",
-          "status": "active",
-          "mechanicalBias": {
-            "utility": 0.6,
-            "controller": 0.3,
-            "striker": 0.1
-          },
-          "roleBias": {
-            "utility": 1.4,
-            "controller": 1.1
-          },
-          "attributeBias": {
-            "INT": 0.45,
-            "DEX": 0.25,
-            "WIS": 0.2,
-            "CON": 0.1
-          },
-          "notes": "Electronic warfare and systems intrusion specialist.",
-          "talents": [
-            "51ee1b777709cc4e",
-            "0290634450ab1637"
-          ],
-          "feats": [
-            "1592aaedf4b6e40a",
-            "42e2404790756700"
-          ]
-        },
-        "con_artist": {
-          "name": "Con Artist",
-          "status": "active",
-          "mechanicalBias": {
-            "utility": 0.5,
-            "controller": 0.3,
-            "support": 0.2
-          },
-          "roleBias": {
-            "support": 1.3,
-            "controller": 1.1
-          },
-          "attributeBias": {
-            "CHA": 0.45,
-            "INT": 0.3,
-            "DEX": 0.15,
-            "WIS": 0.1
-          },
-          "notes": "Manipulator and gambler living by deception and luck.",
-          "talents": [
-            "5319a796f2c4ff64",
-            "8e4475b0f99633f3"
-          ],
-          "feats": [
-            "1592aaedf4b6e40a",
-            "1592aaedf4b6e40a"
-          ]
-        },
-        "thief": {
-          "name": "Thief",
-          "status": "active",
-          "mechanicalBias": {
-            "utility": 0.4,
-            "striker": 0.3,
-            "controller": 0.3
-          },
-          "roleBias": {
-            "utility": 1.2,
-            "striker": 1.0
-          },
-          "attributeBias": {
-            "DEX": 0.4,
-            "INT": 0.3,
-            "WIS": 0.2,
-            "CON": 0.1
-          },
-          "notes": "Stealth-focused burglar and infiltration expert.",
-          "talents": [
-            "1505abc8babeeb84",
-            "7b23e0812d6a8985"
-          ],
-          "feats": [
-            "1592aaedf4b6e40a",
-            "1592aaedf4b6e40a"
-          ]
-        },
-        "spy": {
-          "name": "Spy",
-          "status": "active",
-          "mechanicalBias": {
-            "controller": 0.4,
-            "utility": 0.4,
-            "striker": 0.2
-          },
-          "roleBias": {
-            "controller": 1.2,
-            "utility": 1.2
-          },
-          "attributeBias": {
-            "CHA": 0.3,
-            "DEX": 0.3,
-            "INT": 0.25,
-            "WIS": 0.15
-          },
-          "notes": "Covert intelligence operative and undercover agent.",
-          "talents": [
-            "3f8f5305eabc525e",
-            "5319a796f2c4ff64"
-          ],
-          "feats": [
-            "1592aaedf4b6e40a",
-            "1592aaedf4b6e40a"
+            "Skill Focus (Mechanics)",
+            "Gearhead"
           ]
         }
       }
@@ -1075,727 +439,294 @@
     "scout": {
       "displayName": "Scout",
       "archetypes": {
-        "pathfinder": {
-          "name": "Pathfinder",
+        "mobile_skirmisher": {
+          "name": "Mobile Skirmisher",
           "status": "active",
           "mechanicalBias": {
-            "controller": 0.3,
-            "utility": 0.4,
-            "sniper": 0.3
+            "evasion": 3,
+            "accuracy": 2,
+            "strikeForce": 3
           },
           "roleBias": {
-            "offense": 0.9,
-            "defense": 0.9,
-            "support": 1.0,
-            "utility": 1.4
+            "skirmisher": 3,
+            "striker": 2
           },
           "attributeBias": {
-            "DEX": 0.3,
-            "WIS": 0.3,
-            "CON": 0.2,
-            "INT": 0.2
+            "dex": 3,
+            "wis": 1,
+            "con": 1
           },
-          "notes": "Recon and terrain specialist operating ahead of the party.",
+          "notes": "Hit-and-run combatant leveraging movement-based bonuses and positioning.",
           "talents": [
-            "f0166d26d9f6252a"
+            "Skirmisher",
+            "Evasion",
+            "Improved Initiative"
           ],
           "feats": [
-            "1592aaedf4b6e40a"
-          ]
-        },
-        "sniper": {
-          "name": "Sniper",
-          "status": "active",
-          "mechanicalBias": {
-            "striker": 0.6,
-            "controller": 0.2,
-            "utility": 0.2
-          },
-          "roleBias": {
-            "striker": 1.3
-          },
-          "attributeBias": {
-            "DEX": 0.5,
-            "WIS": 0.3,
-            "CON": 0.2
-          },
-          "notes": "Long-range combat scout eliminating priority targets.",
-          "talents": [
-            "aca0598e9b0eb935",
-            "9840f0e8b8f53bb5"
-          ],
-          "feats": [
-            "56367f3943ee8c17",
-            "b5a8d5899e02139c"
-          ]
-        },
-        "skirmisher": {
-          "name": "Skirmisher",
-          "status": "active",
-          "mechanicalBias": {
-            "striker": 0.4,
-            "utility": 0.3,
-            "controller": 0.3
-          },
-          "roleBias": {
-            "striker": 1.1
-          },
-          "attributeBias": {
-            "DEX": 0.4,
-            "CON": 0.25,
-            "WIS": 0.2,
-            "STR": 0.15
-          },
-          "notes": "Mobile hit-and-run combatant.",
-          "talents": [
-            "7b23e0812d6a8985",
-            "5400bc8cb1200624"
-          ],
-          "feats": [
-            "c301a0f533f15ce4",
-            "ff8eaa4e2f6d1cf1"
-          ]
-        },
-        "survivalist": {
-          "name": "Survivalist",
-          "status": "active",
-          "mechanicalBias": {
-            "utility": 0.5,
-            "controller": 0.3,
-            "support": 0.2
-          },
-          "roleBias": {
-            "utility": 1.3
-          },
-          "attributeBias": {
-            "WIS": 0.4,
-            "CON": 0.3,
-            "DEX": 0.3
-          },
-          "notes": "Extreme-environment specialist and survival expert.",
-          "talents": [
-            "16e18057bc92365c"
-          ],
-          "feats": [
-            "1592aaedf4b6e40a"
-          ]
-        },
-        "forward_observer": {
-          "name": "Forward Observer",
-          "status": "active",
-          "mechanicalBias": {
-            "support": 0.4,
-            "controller": 0.4,
-            "utility": 0.2
-          },
-          "roleBias": {
-            "support": 1.3
-          },
-          "attributeBias": {
-            "WIS": 0.4,
-            "INT": 0.3,
-            "DEX": 0.3
-          },
-          "notes": "Battlefield spotter coordinating allied fire.",
-          "talents": [
-            "a52044feeab3fe05"
-          ],
-          "feats": [
-            "1592aaedf4b6e40a",
-            "964f0781b3e3fc37"
-          ]
-        },
-        "jungle_recon_specialist": {
-          "name": "Jungle Recon Specialist",
-          "status": "active",
-          "mechanicalBias": {
-            "controller": 0.4,
-            "utility": 0.4,
-            "frontline_damage": 0.2
-          },
-          "roleBias": {
-            "offense": 0.8,
-            "defense": 1.0,
-            "support": 0.9,
-            "utility": 1.3
-          },
-          "attributeBias": {
-            "DEX": 0.3,
-            "WIS": 0.35,
-            "CON": 0.2,
-            "STR": 0.15
-          },
-          "notes": "Stealth-focused survivalist operating in hostile terrain.",
-          "talents": [
-            "e835b21a01ae2ee7"
-          ],
-          "feats": [
-            "c301a0f533f15ce4"
-          ]
-        },
-        "forward_spotter": {
-          "name": "Forward Spotter",
-          "status": "active",
-          "mechanicalBias": {
-            "support": 0.5,
-            "controller": 0.3,
-            "utility": 0.2
-          },
-          "roleBias": {
-            "offense": 0.6,
-            "defense": 0.8,
-            "support": 1.4,
-            "utility": 1.2
-          },
-          "attributeBias": {
-            "INT": 0.35,
-            "WIS": 0.35,
-            "DEX": 0.2,
-            "CON": 0.1
-          },
-          "notes": "Battlefield surveillance and targeting coordinator.",
-          "talents": [],
-          "feats": [
-            "964f0781b3e3fc37",
-            "1592aaedf4b6e40a"
-          ]
-        },
-        "speeder_interceptor": {
-          "name": "Speeder Interceptor",
-          "status": "active",
-          "mechanicalBias": {
-            "striker": 0.4,
-            "utility": 0.3,
-            "controller": 0.3
-          },
-          "roleBias": {
-            "striker": 1.1
-          },
-          "attributeBias": {
-            "DEX": 0.45,
-            "CON": 0.3,
-            "WIS": 0.25
-          },
-          "notes": "High-speed speeder pursuit specialist.",
-          "talents": [],
-          "feats": [
-            "1f2f70d34a17667d",
-            "1592aaedf4b6e40a"
-          ]
-        },
-        "survival_skirmisher": {
-          "name": "Survival Skirmisher",
-          "status": "active",
-          "mechanicalBias": {
-            "striker": 0.4,
-            "utility": 0.3,
-            "controller": 0.3
-          },
-          "roleBias": {
-            "striker": 1.1
-          },
-          "attributeBias": {
-            "DEX": 0.35,
-            "WIS": 0.35,
-            "CON": 0.3
-          },
-          "notes": "Hybrid combat-survival specialist.",
-          "talents": [
-            "7b23e0812d6a8985",
-            "16e18057bc92365c"
-          ],
-          "feats": [
-            "ff8eaa4e2f6d1cf1"
+            "Running Attack",
+            "Point Blank Shot",
+            "Weapon Focus (Rifles)"
           ]
         },
         "wilderness_survivalist": {
           "name": "Wilderness Survivalist",
           "status": "active",
           "mechanicalBias": {
-            "utility": 0.5,
-            "controller": 0.3,
-            "striker": 0.2
+            "combatStamina": 3,
+            "tacticalAwareness": 2
           },
           "roleBias": {
-            "scout": 1.4,
-            "controller": 0.8
+            "utility": 3,
+            "defender": 1
           },
           "attributeBias": {
-            "WIS": 0.35,
-            "DEX": 0.3,
-            "CON": 0.25,
-            "CHA": 0.1
+            "wis": 3,
+            "con": 2
           },
-          "notes": "Environmental survival and exploration specialist.",
+          "notes": "Environment-focused build specializing in survival, tracking, and terrain advantage.",
           "talents": [
-            "f0166d26d9f6252a",
-            "16e18057bc92365c"
+            "Acute Senses",
+            "Improved Initiative",
+            "Evasion"
           ],
           "feats": [
-            "1592aaedf4b6e40a"
+            "Skill Focus (Survival)",
+            "Skill Focus (Perception)"
           ]
         },
-        "bounty_hunter_tracker": {
-          "name": "Bounty Hunter Tracker",
+        "recon_sniper": {
+          "name": "Recon Sniper",
           "status": "active",
           "mechanicalBias": {
-            "striker": 0.4,
-            "utility": 0.3,
-            "controller": 0.3
+            "singleTargetDamage": 3,
+            "accuracy": 3,
+            "stealth": 2
           },
           "roleBias": {
-            "striker": 1.1,
-            "scout": 1.1
+            "striker": 3,
+            "scout": 3
           },
           "attributeBias": {
-            "DEX": 0.35,
-            "WIS": 0.35,
-            "INT": 0.2,
-            "CON": 0.1
+            "dex": 3,
+            "wis": 1
           },
-          "notes": "Relentless tracker specializing in single-target pursuits.",
+          "notes": "Long-range precision build combining stealth, perception, and ranged accuracy.",
           "talents": [
-            "16e18057bc92365c"
+            "Skirmisher",
+            "Acute Senses",
+            "Improved Stealth"
           ],
           "feats": [
-            "c180eee7d3bc29b2",
-            "44705a692e2f01a6"
+            "Weapon Focus (Rifles)",
+            "Improved Critical (Rifles)",
+            "Careful Shot"
           ]
         },
-        "saboteur_infiltrator": {
-          "name": "Saboteur Infiltrator",
+        "condition_harrier": {
+          "name": "Condition Harrier",
           "status": "active",
           "mechanicalBias": {
-            "controller": 0.5,
-            "utility": 0.3,
-            "striker": 0.2
+            "conditionTrack": 3,
+            "evasion": 2,
+            "accuracy": 2
           },
           "roleBias": {
-            "controller": 1.2,
-            "scout": 1.3
+            "controller": 3,
+            "skirmisher": 2
           },
           "attributeBias": {
-            "DEX": 0.35,
-            "INT": 0.3,
-            "WIS": 0.25,
-            "CON": 0.1
+            "dex": 2,
+            "wis": 2,
+            "con": 1
           },
-          "notes": "Stealth-based sabotage and infrastructure disruption.",
+          "notes": "Mobile combatant designed to apply steady condition track pressure while avoiding retaliation.",
           "talents": [
-            "073115894cad8cf9"
+            "Skirmisher",
+            "Improved Initiative",
+            "Evasion"
           ],
           "feats": [
-            "1592aaedf4b6e40a",
-            "0d4d7c147c48cdab"
+            "Running Attack",
+            "Weapon Focus (Rifles)",
+            "Rapid Shot"
           ]
         },
-        "outrider_scout": {
-          "name": "Outrider Scout",
+        "pilot_operative": {
+          "name": "Pilot Operative",
           "status": "active",
           "mechanicalBias": {
-            "striker": 0.4,
-            "utility": 0.3,
-            "controller": 0.3
+            "pilotMastery": 3,
+            "initiative": 2,
+            "evasion": 2
           },
           "roleBias": {
-            "striker": 1.0,
-            "scout": 1.2
+            "skirmisher": 1,
+            "flex": 3
           },
           "attributeBias": {
-            "DEX": 0.4,
-            "WIS": 0.25,
-            "INT": 0.2,
-            "CON": 0.15
+            "dex": 3,
+            "int": 2
           },
-          "notes": "Mounted or vehicular reconnaissance specialist.",
+          "notes": "Scout build oriented toward starship combat, piloting optimization, and initiative control.",
           "talents": [
-            "b9169c3ac22d4652"
+            "Evasion",
+            "Improved Initiative",
+            "Vehicular Combat"
           ],
           "feats": [
-            "1f2f70d34a17667d",
-            "1592aaedf4b6e40a"
+            "Skill Focus (Pilot)",
+            "Vehicular Combat"
           ]
-        },
-        "sniper_recon": {
-          "name": "Sniper Recon",
-          "status": "active",
-          "mechanicalBias": {
-            "striker": 0.6,
-            "utility": 0.2,
-            "controller": 0.2
-          },
-          "roleBias": {
-            "striker": 1.3,
-            "scout": 1.2
-          },
-          "attributeBias": {
-            "DEX": 0.45,
-            "WIS": 0.35,
-            "CON": 0.2
-          },
-          "notes": "Long-range reconnaissance and elimination specialist.",
-          "talents": [
-            "aca0598e9b0eb935",
-            "9840f0e8b8f53bb5"
-          ],
-          "feats": [
-            "6e47c132fbedde08",
-            "56367f3943ee8c17"
-          ]
-        },
-        "guerilla_ambusher": {
-          "name": "Guerilla Ambusher",
-          "status": "active",
-          "mechanicalBias": {
-            "controller": 0.4,
-            "striker": 0.4,
-            "utility": 0.2
-          },
-          "roleBias": {
-            "controller": 1.1,
-            "striker": 1.1
-          },
-          "attributeBias": {
-            "DEX": 0.35,
-            "WIS": 0.35,
-            "CON": 0.2,
-            "INT": 0.1
-          },
-          "notes": "Terrain-based ambush and hit-and-run specialist.",
-          "talents": [
-            "d0dad96e182d63d4",
-            "11065e811d738b6e"
-          ],
-          "feats": []
         }
       }
     },
     "soldier": {
       "displayName": "Soldier",
       "archetypes": {
-        "frontline_tank": {
-          "name": "Frontline Tank",
-          "status": "active",
-          "mechanicalBias": {
-            "frontline_damage": 0.3,
-            "controller": 0.2,
-            "defense": 0.5
-          },
-          "roleBias": {
-            "offense": 1.0,
-            "defense": 1.4,
-            "support": 0.9,
-            "utility": 0.7
-          },
-          "attributeBias": {
-            "CON": 0.4,
-            "STR": 0.3,
-            "DEX": 0.2,
-            "WIS": 0.1
-          },
-          "notes": "Durable frontline soldier built to absorb punishment.",
-          "talents": [
-            "4c236343b01ea763"
-          ],
-          "feats": [
-            "11db29efd899c438",
-            "f8e2a30390d870e7"
-          ]
-        },
-        "heavy_gunner": {
-          "name": "Heavy Gunner",
-          "status": "active",
-          "mechanicalBias": {
-            "frontline_damage": 0.6,
-            "controller": 0.2,
-            "ranged": 0.2
-          },
-          "roleBias": {
-            "offense": 1.4,
-            "defense": 0.9,
-            "support": 0.7,
-            "utility": 0.8
-          },
-          "attributeBias": {
-            "DEX": 0.4,
-            "STR": 0.2,
-            "CON": 0.2,
-            "WIS": 0.2
-          },
-          "notes": "High-volume ranged damage dealer using autofire and suppression.",
-          "talents": [],
-          "feats": [
-            "0d4d7c147c48cdab",
-            "c301a0f533f15ce4"
-          ]
-        },
-        "shock_trooper": {
-          "name": "Shock Trooper",
-          "status": "active",
-          "mechanicalBias": {
-            "frontline_damage": 0.5,
-            "controller": 0.3,
-            "defense": 0.2
-          },
-          "roleBias": {
-            "offense": 1.3,
-            "defense": 1.0,
-            "support": 0.8,
-            "utility": 0.9
-          },
-          "attributeBias": {
-            "STR": 0.35,
-            "DEX": 0.25,
-            "CON": 0.25,
-            "WIS": 0.15
-          },
-          "notes": "Aggressive close-range assault soldier.",
-          "talents": [],
-          "feats": [
-            "4be60753991eec43",
-            "c301a0f533f15ce4"
-          ]
-        },
-        "battlefield_controller": {
-          "name": "Battlefield Controller",
-          "status": "active",
-          "mechanicalBias": {
-            "controller": 0.5,
-            "support": 0.3,
-            "striker": 0.2
-          },
-          "roleBias": {
-            "controller": 1.3
-          },
-          "attributeBias": {
-            "INT": 0.4,
-            "WIS": 0.3,
-            "DEX": 0.2,
-            "CON": 0.1
-          },
-          "notes": "Controls enemy movement and battlefield flow.",
-          "talents": [
-            "049820827d7ef32b"
-          ],
-          "feats": [
-            "964f0781b3e3fc37"
-          ]
-        },
-        "martial_specialist": {
-          "name": "Martial Specialist",
-          "status": "active",
-          "mechanicalBias": {
-            "striker": 0.5,
-            "defender": 0.3,
-            "controller": 0.2
-          },
-          "roleBias": {
-            "striker": 1.2
-          },
-          "attributeBias": {
-            "STR": 0.4,
-            "DEX": 0.3,
-            "CON": 0.3
-          },
-          "notes": "Weapon-focused frontline combatant.",
-          "talents": [
-            "869168cd679ee5d1",
-            "383915a7d11e1225"
-          ],
-          "feats": [
-            "c41814601364b643",
-            "3f76464c43c73f84"
-          ]
-        },
-        "close_quarters_enforcer": {
-          "name": "Close-Quarters Enforcer",
-          "status": "active",
-          "mechanicalBias": {
-            "striker": 0.6,
-            "defender": 0.2,
-            "controller": 0.2
-          },
-          "roleBias": {
-            "striker": 1.3
-          },
-          "attributeBias": {
-            "STR": 0.45,
-            "CON": 0.35,
-            "DEX": 0.2
-          },
-          "notes": "Brutal close-range enforcer.",
-          "talents": [
-            "e0ee525f4109cfde",
-            "4356ac9986934fbf"
-          ],
-          "feats": [
-            "96666de28ba99b64"
-          ]
-        },
-        "bonecrusher_brawler": {
-          "name": "Bonecrusher Brawler",
-          "status": "active",
-          "mechanicalBias": {
-            "striker": 0.6,
-            "defender": 0.3,
-            "controller": 0.1
-          },
-          "roleBias": {
-            "striker": 1.3
-          },
-          "attributeBias": {
-            "STR": 0.5,
-            "CON": 0.3,
-            "DEX": 0.2
-          },
-          "notes": "Unarmed-heavy shock fighter focused on raw physical dominance.",
-          "talents": [
-            "4356ac9986934fbf"
-          ],
-          "feats": [
-            "5bedd71f0eead6b9",
-            "97dbebe63aa6af79"
-          ]
-        },
-        "covert_ops_commando": {
-          "name": "Covert Ops Commando",
-          "status": "active",
-          "mechanicalBias": {
-            "striker": 0.4,
-            "controller": 0.4,
-            "utility": 0.2
-          },
-          "roleBias": {
-            "striker": 1.1,
-            "controller": 1.1
-          },
-          "attributeBias": {
-            "DEX": 0.35,
-            "INT": 0.25,
-            "WIS": 0.2,
-            "CON": 0.2
-          },
-          "notes": "Stealth-focused military infiltrator and special forces operative.",
-          "talents": [
-            "e835b21a01ae2ee7",
-            "b1960cbc28776a53"
-          ],
-          "feats": [
-            "a9f6de36f24ef202",
-            "c301a0f533f15ce4",
-            "c180eee7d3bc29b2"
-          ]
-        },
         "heavy_weapons_specialist": {
           "name": "Heavy Weapons Specialist",
           "status": "active",
           "mechanicalBias": {
-            "striker": 0.6,
-            "controller": 0.2,
-            "defender": 0.2
+            "burstDamage": 3,
+            "areaDamage": 3,
+            "accuracy": 2,
+            "areaControl": 2
           },
           "roleBias": {
-            "striker": 1.4,
-            "defender": 1.1
+            "controller": 2,
+            "striker": 3
           },
           "attributeBias": {
-            "STR": 0.35,
-            "CON": 0.35,
-            "DEX": 0.2,
-            "WIS": 0.1
+            "str": 3,
+            "con": 2,
+            "dex": 1
           },
-          "notes": "Walking arsenal providing overwhelming firepower and suppression.",
+          "notes": "Autofire-focused build that dominates space and pressures multiple enemies simultaneously.",
           "talents": [
-            "383915a7d11e1225"
+            "Autofire Assault",
+            "Devastating Attack",
+            "Penetrating Attack"
           ],
           "feats": [
-            "c41814601364b643",
-            "0d4d7c147c48cdab"
+            "Burst Fire",
+            "Autofire Sweep",
+            "Weapon Focus (Heavy Weapons)",
+            "Weapon Specialization (Heavy Weapons)"
           ]
         },
-        "tactical_officer": {
-          "name": "Tactical Officer",
+        "armored_shock_trooper": {
+          "name": "Armored Shock Trooper",
           "status": "active",
           "mechanicalBias": {
-            "support": 0.5,
-            "controller": 0.3,
-            "utility": 0.2
+            "damageReduction": 2,
+            "armorMastery": 3,
+            "meleeDamage": 2
           },
           "roleBias": {
-            "support": 1.3,
-            "controller": 1.1
+            "bruiser": 3,
+            "defender": 3
           },
           "attributeBias": {
-            "INT": 0.4,
-            "CHA": 0.3,
-            "WIS": 0.2,
-            "DEX": 0.1
+            "str": 3,
+            "con": 3
           },
-          "notes": "Small-unit leader specializing in coordination and battlefield command.",
+          "notes": "Heavy armor frontline build designed to absorb punishment and maintain offensive pressure.",
           "talents": [
-            "a52044feeab3fe05",
-            "6c52d837af948ca0"
+            "Armor Specialist",
+            "Improved Damage Reduction",
+            "Melee Smash"
           ],
           "feats": [
-            "964f0781b3e3fc37",
-            "1592aaedf4b6e40a"
+            "Armor Proficiency (Heavy)",
+            "Power Attack",
+            "Toughness",
+            "Weapon Focus (Advanced Melee)"
           ]
         },
-        "martial_arts_specialist": {
-          "name": "Martial Arts Specialist",
+        "precision_rifleman": {
+          "name": "Precision Rifleman",
           "status": "active",
           "mechanicalBias": {
-            "striker": 0.5,
-            "defender": 0.3,
-            "controller": 0.2
+            "singleTargetDamage": 3,
+            "accuracy": 3,
+            "critRange": 2
           },
           "roleBias": {
-            "striker": 1.2,
-            "defender": 1.0
+            "striker": 3
           },
           "attributeBias": {
-            "STR": 0.35,
-            "DEX": 0.35,
-            "CON": 0.2,
-            "WIS": 0.1
+            "dex": 3,
+            "int": 1,
+            "con": 1
           },
-          "notes": "Close-combat specialist relying on unarmed and melee techniques.",
+          "notes": "Long-range accuracy-focused build emphasizing aimed shots and critical expansion.",
           "talents": [
-            "e0ee525f4109cfde",
-            "4356ac9986934fbf"
+            "Devastating Attack",
+            "Deadeye",
+            "Weapon Specialization"
           ],
           "feats": [
-            "92f927c92ded9fcf",
-            "5bedd71f0eead6b9",
-            "7146640744fdf052"
+            "Weapon Focus (Rifles)",
+            "Improved Critical (Rifles)",
+            "Careful Shot"
           ]
         },
-        "bodyguard_defender": {
-          "name": "Bodyguard Defender",
+        "close_quarters_breacher": {
+          "name": "Close-Quarters Breacher",
           "status": "active",
           "mechanicalBias": {
-            "defender": 0.6,
-            "controller": 0.2,
-            "support": 0.2
+            "singleTargetDamage": 3,
+            "accuracy": 2,
+            "evasion": 1,
+            "areaDamage": 2
           },
           "roleBias": {
-            "defender": 1.4,
-            "support": 1.1
+            "striker": 3,
+            "bruiser": 2
           },
           "attributeBias": {
-            "CON": 0.4,
-            "STR": 0.3,
-            "WIS": 0.2,
-            "DEX": 0.1
+            "str": 2,
+            "dex": 2,
+            "con": 2
           },
-          "notes": "Dedicated protector focused on intercepting damage and guarding allies.",
+          "notes": "Short-range aggressive build specializing in tight-quarters combat and high burst damage.",
           "talents": [
-            "f29d5c0628459c94",
-            "394809ed8baff1b9"
+            "Devastating Attack",
+            "Melee Smash",
+            "Assault Tactics"
           ],
           "feats": [
-            "11db29efd899c438",
-            "96666de28ba99b64"
+            "Point Blank Shot",
+            "Rapid Shot",
+            "Weapon Focus (Rifles)"
+          ]
+        },
+        "battlefield_enforcer": {
+          "name": "Battlefield Enforcer",
+          "status": "active",
+          "mechanicalBias": {
+            "conditionTrack": 3,
+            "accuracy": 2
+          },
+          "roleBias": {
+            "controller": 3,
+            "bruiser": 2
+          },
+          "attributeBias": {
+            "str": 2,
+            "con": 2,
+            "dex": 2
+          },
+          "notes": "Build focused on pushing enemies down the condition track and maintaining combat pressure.",
+          "talents": [
+            "Devastating Attack",
+            "Penetrating Attack",
+            "Improved Suppression"
+          ],
+          "feats": [
+            "Power Attack",
+            "Weapon Focus (Advanced Melee)",
+            "Improved Trip"
           ]
         }
       }
@@ -1807,21 +738,21 @@
           "name": "Emperor\u2019s Shield",
           "status": "active",
           "mechanicalBias": {
-            "frontline_damage": 0.4,
-            "controller": 0.2,
-            "force_control": 0.4
+            "burstDamage": 0.4,
+            "forceDC": 0.4
           },
           "roleBias": {
-            "offense": 1.0,
+            "offense": 1,
             "defense": 1.4,
             "support": 1.1,
-            "utility": 0.8
+            "utility": 0.8,
+            "controller": 0.2
           },
           "attributeBias": {
-            "CON": 0.35,
-            "CHA": 0.35,
-            "WIS": 0.2,
-            "STR": 0.1
+            "con": 0.35,
+            "cha": 0.35,
+            "wis": 0.2,
+            "str": 0.1
           },
           "notes": "Defensive Imperial Knight bodyguard archetype.",
           "talents": [
@@ -1838,21 +769,21 @@
           "name": "Knight Inquisitor",
           "status": "active",
           "mechanicalBias": {
-            "force_dps": 0.5,
-            "controller": 0.3,
-            "frontline_damage": 0.2
+            "forceSecret": 0.5,
+            "burstDamage": 0.2
           },
           "roleBias": {
             "offense": 1.3,
             "defense": 1.2,
             "support": 0.8,
-            "utility": 0.9
+            "utility": 0.9,
+            "controller": 0.3
           },
           "attributeBias": {
-            "WIS": 0.35,
-            "CHA": 0.3,
-            "STR": 0.2,
-            "CON": 0.15
+            "wis": 0.35,
+            "cha": 0.3,
+            "str": 0.2,
+            "con": 0.15
           },
           "notes": "Anti\u2013Force-user hunter and duelist.",
           "talents": [
@@ -1869,21 +800,21 @@
           "name": "Errant Knight",
           "status": "active",
           "mechanicalBias": {
-            "frontline_damage": 0.3,
-            "controller": 0.3,
-            "force_control": 0.4
+            "burstDamage": 0.3,
+            "forceDC": 0.4
           },
           "roleBias": {
             "offense": 1.1,
             "defense": 1.1,
-            "support": 1.0,
-            "utility": 1.0
+            "support": 1,
+            "utility": 1,
+            "controller": 0.3
           },
           "attributeBias": {
-            "CHA": 0.3,
-            "WIS": 0.3,
-            "DEX": 0.2,
-            "CON": 0.2
+            "cha": 0.3,
+            "wis": 0.3,
+            "dex": 0.2,
+            "con": 0.2
           },
           "notes": "Independent Imperial Knight operative.",
           "talents": [
@@ -1898,20 +829,18 @@
         "imperial_knight_inquisitor": {
           "name": "Imperial Knight Inquisitor",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.4,
+            "offense": 1.1,
             "striker": 0.4,
             "utility": 0.2
           },
-          "roleBias": {
-            "controller": 1.2,
-            "offense": 1.1
-          },
           "attributeBias": {
-            "WIS": 0.35,
-            "CHA": 0.3,
-            "DEX": 0.2,
-            "CON": 0.15
+            "wis": 0.35,
+            "cha": 0.3,
+            "dex": 0.2,
+            "con": 0.15
           },
           "notes": "Imperial Knight specializing in rooting out Force threats and corruption.",
           "talents": [
@@ -1926,20 +855,18 @@
         "imperial_knight_errant": {
           "name": "Imperial Knight Errant",
           "status": "active",
-          "mechanicalBias": {
-            "striker": 0.4,
-            "support": 0.3,
-            "controller": 0.3
-          },
+          "mechanicalBias": {},
           "roleBias": {
             "offense": 1.1,
-            "support": 1.1
+            "support": 0.3,
+            "striker": 0.4,
+            "controller": 0.3
           },
           "attributeBias": {
-            "DEX": 0.3,
-            "CHA": 0.3,
-            "WIS": 0.25,
-            "CON": 0.15
+            "dex": 0.3,
+            "cha": 0.3,
+            "wis": 0.25,
+            "con": 0.15
           },
           "notes": "Independent Imperial Knight acting beyond strict court duties.",
           "talents": [
@@ -1958,20 +885,18 @@
         "battle_master": {
           "name": "Battle Master",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.4,
+            "offense": 1.1,
             "striker": 0.4,
             "support": 0.2
           },
-          "roleBias": {
-            "controller": 1.2,
-            "offense": 1.1
-          },
           "attributeBias": {
-            "STR": 0.3,
-            "CHA": 0.3,
-            "WIS": 0.25,
-            "CON": 0.15
+            "str": 0.3,
+            "cha": 0.3,
+            "wis": 0.25,
+            "con": 0.15
           },
           "notes": "Jedi Knight who commands and coordinates allies in combat.",
           "talents": [
@@ -1985,19 +910,18 @@
         "force_duelist": {
           "name": "Force Duelist",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
+            "offense": 1.3,
             "striker": 0.6,
             "controller": 0.3,
             "utility": 0.1
           },
-          "roleBias": {
-            "offense": 1.3
-          },
           "attributeBias": {
-            "DEX": 0.4,
-            "WIS": 0.3,
-            "CON": 0.2,
-            "CHA": 0.1
+            "dex": 0.4,
+            "wis": 0.3,
+            "con": 0.2,
+            "cha": 0.1
           },
           "notes": "Elite Force-enhanced duelist focused on one-on-one combat.",
           "talents": [
@@ -2011,20 +935,19 @@
         "lightsaber_vanguard": {
           "name": "Lightsaber Vanguard",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
+            "offense": 1.2,
+            "defense": 1.1,
             "striker": 0.5,
             "defender": 0.3,
             "controller": 0.2
           },
-          "roleBias": {
-            "offense": 1.2,
-            "defense": 1.1
-          },
           "attributeBias": {
-            "STR": 0.35,
-            "DEX": 0.3,
-            "CON": 0.2,
-            "WIS": 0.15
+            "str": 0.35,
+            "dex": 0.3,
+            "con": 0.2,
+            "wis": 0.15
           },
           "notes": "Frontline assault Jedi leading charges with lightsaber mastery.",
           "talents": [
@@ -2039,20 +962,17 @@
         "jedi_shadow": {
           "name": "Jedi Shadow",
           "status": "active",
-          "mechanicalBias": {
-            "controller": 0.4,
-            "utility": 0.4,
-            "striker": 0.2
-          },
+          "mechanicalBias": {},
           "roleBias": {
-            "controller": 1.2,
-            "striker": 1.0
+            "controller": 0.4,
+            "striker": 0.2,
+            "utility": 0.4
           },
           "attributeBias": {
-            "DEX": 0.35,
-            "WIS": 0.35,
-            "INT": 0.2,
-            "CHA": 0.1
+            "dex": 0.35,
+            "wis": 0.35,
+            "int": 0.2,
+            "cha": 0.1
           },
           "notes": "Advanced covert Jedi specializing in hunting Dark Side threats.",
           "talents": [
@@ -2067,20 +987,17 @@
         "jedi_watchman": {
           "name": "Jedi Watchman",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.4,
             "striker": 0.3,
             "utility": 0.3
           },
-          "roleBias": {
-            "controller": 1.1,
-            "striker": 1.0
-          },
           "attributeBias": {
-            "DEX": 0.3,
-            "WIS": 0.3,
-            "INT": 0.25,
-            "CHA": 0.15
+            "dex": 0.3,
+            "wis": 0.3,
+            "int": 0.25,
+            "cha": 0.15
           },
           "notes": "Urban investigator and Jedi intelligence operative.",
           "talents": [
@@ -2095,21 +1012,17 @@
         "jedi_battlemaster": {
           "name": "Jedi Battlemaster",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.4,
             "striker": 0.4,
             "support": 0.2
           },
-          "roleBias": {
-            "controller": 1.2,
-            "striker": 1.1,
-            "support": 1.0
-          },
           "attributeBias": {
-            "STR": 0.3,
-            "CHA": 0.3,
-            "WIS": 0.25,
-            "CON": 0.15
+            "str": 0.3,
+            "cha": 0.3,
+            "wis": 0.25,
+            "con": 0.15
           },
           "notes": "Elite Jedi combat commander and instructor.",
           "talents": [
@@ -2129,18 +1042,16 @@
           "name": "Force Paragon",
           "status": "active",
           "mechanicalBias": {
-            "force_control": 0.5,
+            "forceDC": 0.5
+          },
+          "roleBias": {
             "support": 0.3,
             "controller": 0.2
           },
-          "roleBias": {
-            "support": 1.3,
-            "controller": 1.1
-          },
           "attributeBias": {
-            "WIS": 0.45,
-            "CHA": 0.35,
-            "CON": 0.2
+            "wis": 0.45,
+            "cha": 0.35,
+            "con": 0.2
           },
           "notes": "Peak embodiment of Force mastery and balance.",
           "talents": [],
@@ -2153,18 +1064,16 @@
           "name": "Battle Sage",
           "status": "active",
           "mechanicalBias": {
-            "controller": 0.4,
-            "force_control": 0.4,
-            "support": 0.2
+            "forceDC": 0.4
           },
           "roleBias": {
-            "controller": 1.3,
-            "support": 1.0
+            "controller": 0.4,
+            "support": 0.2
           },
           "attributeBias": {
-            "WIS": 0.4,
-            "INT": 0.3,
-            "CHA": 0.3
+            "wis": 0.4,
+            "int": 0.3,
+            "cha": 0.3
           },
           "notes": "Strategist blending Force insight with battlefield command.",
           "talents": [
@@ -2179,19 +1088,16 @@
         "spiritual_guide": {
           "name": "Spiritual Guide",
           "status": "active",
-          "mechanicalBias": {
-            "support": 0.5,
-            "utility": 0.3,
-            "controller": 0.2
-          },
+          "mechanicalBias": {},
           "roleBias": {
-            "support": 1.4,
-            "controller": 1.0
+            "support": 0.5,
+            "controller": 0.2,
+            "utility": 0.3
           },
           "attributeBias": {
-            "WIS": 0.4,
-            "CHA": 0.35,
-            "INT": 0.25
+            "wis": 0.4,
+            "cha": 0.35,
+            "int": 0.25
           },
           "notes": "Mentor-focused Jedi Master guiding allies and students.",
           "talents": [
@@ -2211,19 +1117,17 @@
           "name": "Dark Acolyte",
           "status": "active",
           "mechanicalBias": {
-            "force_control": 0.5,
+            "forceDC": 0.5
+          },
+          "roleBias": {
             "striker": 0.3,
             "controller": 0.2
           },
-          "roleBias": {
-            "striker": 1.2,
-            "controller": 1.1
-          },
           "attributeBias": {
-            "WIS": 0.4,
-            "CHA": 0.35,
-            "CON": 0.15,
-            "DEX": 0.1
+            "wis": 0.4,
+            "cha": 0.35,
+            "con": 0.15,
+            "dex": 0.1
           },
           "notes": "Force-focused Sith devoted to raw dark side power.",
           "talents": [],
@@ -2236,19 +1140,17 @@
           "name": "Aggressive Disciple",
           "status": "active",
           "mechanicalBias": {
-            "striker": 0.6,
-            "force_control": 0.3,
-            "controller": 0.1
+            "forceDC": 0.3
           },
           "roleBias": {
-            "striker": 1.4,
-            "controller": 0.9
+            "striker": 0.6,
+            "controller": 0.1
           },
           "attributeBias": {
-            "STR": 0.35,
-            "DEX": 0.25,
-            "WIS": 0.25,
-            "CON": 0.15
+            "str": 0.35,
+            "dex": 0.25,
+            "wis": 0.25,
+            "con": 0.15
           },
           "notes": "Violent Sith apprentice emphasizing lightsaber aggression.",
           "talents": [],
@@ -2260,19 +1162,16 @@
         "manipulative_student": {
           "name": "Manipulative Student",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.5,
             "support": 0.3,
             "utility": 0.2
           },
-          "roleBias": {
-            "controller": 1.3,
-            "support": 1.1
-          },
           "attributeBias": {
-            "CHA": 0.45,
-            "WIS": 0.3,
-            "INT": 0.25
+            "cha": 0.45,
+            "wis": 0.3,
+            "int": 0.25
           },
           "notes": "Scheming Sith using deception and influence to control others.",
           "talents": [
@@ -2292,18 +1191,16 @@
           "name": "Dark Overlord",
           "status": "active",
           "mechanicalBias": {
-            "controller": 0.4,
-            "force_control": 0.4,
-            "striker": 0.2
+            "forceDC": 0.4
           },
           "roleBias": {
-            "controller": 1.3,
-            "striker": 1.1
+            "controller": 0.4,
+            "striker": 0.2
           },
           "attributeBias": {
-            "WIS": 0.4,
-            "CHA": 0.35,
-            "CON": 0.25
+            "wis": 0.4,
+            "cha": 0.35,
+            "con": 0.25
           },
           "notes": "Authoritative Sith ruler dominating through the Force.",
           "talents": [],
@@ -2316,18 +1213,16 @@
           "name": "Force Tyrant",
           "status": "active",
           "mechanicalBias": {
-            "force_control": 0.5,
+            "forceDC": 0.5
+          },
+          "roleBias": {
             "striker": 0.3,
             "controller": 0.2
           },
-          "roleBias": {
-            "striker": 1.3,
-            "controller": 1.1
-          },
           "attributeBias": {
-            "WIS": 0.4,
-            "CON": 0.3,
-            "CHA": 0.3
+            "wis": 0.4,
+            "con": 0.3,
+            "cha": 0.3
           },
           "notes": "Sith who rules through overwhelming destructive power.",
           "talents": [],
@@ -2339,19 +1234,16 @@
         "master_manipulator": {
           "name": "Master Manipulator",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.5,
             "support": 0.3,
             "utility": 0.2
           },
-          "roleBias": {
-            "controller": 1.4,
-            "support": 1.0
-          },
           "attributeBias": {
-            "CHA": 0.45,
-            "INT": 0.3,
-            "WIS": 0.25
+            "cha": 0.45,
+            "int": 0.3,
+            "wis": 0.25
           },
           "notes": "Grand strategist Sith operating through schemes and proxies.",
           "talents": [
@@ -2367,17 +1259,16 @@
           "name": "Sith Sorcerer",
           "status": "active",
           "mechanicalBias": {
-            "force_control": 0.6,
+            "forceDC": 0.6
+          },
+          "roleBias": {
             "controller": 0.3,
             "support": 0.1
           },
-          "roleBias": {
-            "controller": 1.4
-          },
           "attributeBias": {
-            "WIS": 0.45,
-            "CHA": 0.35,
-            "INT": 0.2
+            "wis": 0.45,
+            "cha": 0.35,
+            "int": 0.2
           },
           "notes": "Ritual-focused Sith manipulating the Force on a grand scale.",
           "talents": [],
@@ -2394,18 +1285,16 @@
         "tracker": {
           "name": "Tracker",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "utility": 0.4,
             "controller": 0.3,
             "striker": 0.3
           },
-          "roleBias": {
-            "utility": 1.2
-          },
           "attributeBias": {
-            "WIS": 0.4,
-            "DEX": 0.35,
-            "CON": 0.25
+            "wis": 0.4,
+            "dex": 0.35,
+            "con": 0.25
           },
           "notes": "Classic pursuit-focused bounty hunter.",
           "talents": [
@@ -2419,19 +1308,18 @@
         "guns_for_hire": {
           "name": "Guns-for-Hire",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
+            "offense": 1.3,
             "striker": 0.6,
             "utility": 0.2,
             "controller": 0.2
           },
-          "roleBias": {
-            "offense": 1.3
-          },
           "attributeBias": {
-            "DEX": 0.4,
-            "CON": 0.3,
-            "STR": 0.2,
-            "WIS": 0.1
+            "dex": 0.4,
+            "con": 0.3,
+            "str": 0.2,
+            "wis": 0.1
           },
           "notes": "Combat-first bounty hunter motivated by contracts and pay.",
           "talents": [
@@ -2445,18 +1333,17 @@
         "close_quarters_enforcer": {
           "name": "Close-Quarters Enforcer",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
+            "offense": 1.3,
             "striker": 0.6,
             "defender": 0.2,
             "controller": 0.2
           },
-          "roleBias": {
-            "offense": 1.3
-          },
           "attributeBias": {
-            "STR": 0.45,
-            "CON": 0.35,
-            "DEX": 0.2
+            "str": 0.45,
+            "con": 0.35,
+            "dex": 0.2
           },
           "notes": "Close-range capture and intimidation specialist.",
           "talents": [
@@ -2470,18 +1357,16 @@
         "tech_hunter": {
           "name": "Tech Hunter",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "utility": 0.5,
             "controller": 0.3,
             "striker": 0.2
           },
-          "roleBias": {
-            "utility": 1.3
-          },
           "attributeBias": {
-            "INT": 0.45,
-            "DEX": 0.3,
-            "WIS": 0.25
+            "int": 0.45,
+            "dex": 0.3,
+            "wis": 0.25
           },
           "notes": "Technology-driven hunter relying on gadgets and traps.",
           "talents": [
@@ -2495,20 +1380,18 @@
         "silent_tracker": {
           "name": "Silent Tracker",
           "status": "active",
-          "mechanicalBias": {
-            "utility": 0.4,
-            "striker": 0.3,
-            "controller": 0.3
-          },
+          "mechanicalBias": {},
           "roleBias": {
             "scout": 1.2,
-            "striker": 1.1
+            "striker": 0.3,
+            "utility": 0.4,
+            "controller": 0.3
           },
           "attributeBias": {
-            "WIS": 0.35,
-            "DEX": 0.35,
-            "CON": 0.2,
-            "INT": 0.1
+            "wis": 0.35,
+            "dex": 0.35,
+            "con": 0.2,
+            "int": 0.1
           },
           "notes": "Stealth-focused hunter specializing in pursuit and capture.",
           "talents": [
@@ -2523,20 +1406,17 @@
         "gunslinger_hunter": {
           "name": "Gunslinger Hunter",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "striker": 0.6,
             "controller": 0.2,
             "utility": 0.2
           },
-          "roleBias": {
-            "striker": 1.4,
-            "controller": 0.9
-          },
           "attributeBias": {
-            "DEX": 0.4,
-            "CON": 0.25,
-            "STR": 0.2,
-            "WIS": 0.15
+            "dex": 0.4,
+            "con": 0.25,
+            "str": 0.2,
+            "wis": 0.15
           },
           "notes": "Combat-heavy bounty hunter relying on speed and firepower.",
           "talents": [
@@ -2550,20 +1430,17 @@
         "tech_bounty_hunter": {
           "name": "Tech Bounty Hunter",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "utility": 0.5,
             "controller": 0.3,
             "striker": 0.2
           },
-          "roleBias": {
-            "utility": 1.3,
-            "controller": 1.1
-          },
           "attributeBias": {
-            "INT": 0.4,
-            "DEX": 0.3,
-            "WIS": 0.2,
-            "CON": 0.1
+            "int": 0.4,
+            "dex": 0.3,
+            "wis": 0.2,
+            "con": 0.1
           },
           "notes": "Gadget-focused hunter using technology and traps to secure targets.",
           "talents": [
@@ -2582,18 +1459,17 @@
         "notorious_gunslinger": {
           "name": "Notorious Gunslinger",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
+            "offense": 1.3,
             "striker": 0.6,
             "controller": 0.2,
             "utility": 0.2
           },
-          "roleBias": {
-            "offense": 1.3
-          },
           "attributeBias": {
-            "DEX": 0.45,
-            "CHA": 0.3,
-            "CON": 0.25
+            "dex": 0.45,
+            "cha": 0.3,
+            "con": 0.25
           },
           "notes": "Feared and famous gunfighter with a deadly reputation.",
           "talents": [],
@@ -2604,18 +1480,17 @@
         "precision_shooter": {
           "name": "Precision Shooter",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
+            "offense": 1.3,
             "striker": 0.7,
             "controller": 0.2,
             "utility": 0.1
           },
-          "roleBias": {
-            "offense": 1.3
-          },
           "attributeBias": {
-            "DEX": 0.5,
-            "WIS": 0.3,
-            "CON": 0.2
+            "dex": 0.5,
+            "wis": 0.3,
+            "con": 0.2
           },
           "notes": "Accuracy-focused marksman emphasizing perfect shots.",
           "talents": [],
@@ -2627,18 +1502,17 @@
         "dual_wield_specialist": {
           "name": "Dual-Wield Specialist",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
+            "offense": 1.3,
             "striker": 0.6,
             "controller": 0.3,
             "utility": 0.1
           },
-          "roleBias": {
-            "offense": 1.3
-          },
           "attributeBias": {
-            "DEX": 0.45,
-            "CON": 0.3,
-            "STR": 0.25
+            "dex": 0.45,
+            "con": 0.3,
+            "str": 0.25
           },
           "notes": "High-rate dual-pistol specialist.",
           "talents": [],
@@ -2649,18 +1523,16 @@
         "duelist_gunslinger": {
           "name": "Duelist Gunslinger",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "striker": 0.6,
             "controller": 0.2,
             "utility": 0.2
           },
-          "roleBias": {
-            "striker": 1.4
-          },
           "attributeBias": {
-            "DEX": 0.45,
-            "CHA": 0.3,
-            "CON": 0.25
+            "dex": 0.45,
+            "cha": 0.3,
+            "con": 0.25
           },
           "notes": "Fast-draw pistol duelist focused on lethal accuracy.",
           "talents": [
@@ -2674,19 +1546,16 @@
         "trick_shooter": {
           "name": "Trick Shooter",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.4,
             "striker": 0.4,
             "utility": 0.2
           },
-          "roleBias": {
-            "controller": 1.2,
-            "striker": 1.0
-          },
           "attributeBias": {
-            "DEX": 0.4,
-            "INT": 0.3,
-            "CHA": 0.3
+            "dex": 0.4,
+            "int": 0.3,
+            "cha": 0.3
           },
           "notes": "Creative shooter manipulating the battlefield with precision shots.",
           "talents": [],
@@ -2697,18 +1566,16 @@
         "precision_marksman": {
           "name": "Precision Marksman",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "striker": 0.7,
             "controller": 0.2,
             "utility": 0.1
           },
-          "roleBias": {
-            "striker": 1.3
-          },
           "attributeBias": {
-            "DEX": 0.5,
-            "WIS": 0.3,
-            "CON": 0.2
+            "dex": 0.5,
+            "wis": 0.3,
+            "con": 0.2
           },
           "notes": "Long-range firearm specialist delivering surgical kills.",
           "talents": [],
@@ -2725,18 +1592,16 @@
         "underworld_kingpin": {
           "name": "Underworld Kingpin",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.5,
             "support": 0.3,
             "utility": 0.2
           },
-          "roleBias": {
-            "controller": 1.4
-          },
           "attributeBias": {
-            "CHA": 0.45,
-            "INT": 0.35,
-            "WIS": 0.2
+            "cha": 0.45,
+            "int": 0.35,
+            "wis": 0.2
           },
           "notes": "Supreme authority over a criminal empire, ruling through fear and loyalty.",
           "talents": [
@@ -2749,18 +1614,16 @@
         "shadow_broker": {
           "name": "Shadow Broker",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.5,
             "utility": 0.4,
             "support": 0.1
           },
-          "roleBias": {
-            "controller": 1.4
-          },
           "attributeBias": {
-            "INT": 0.45,
-            "CHA": 0.35,
-            "WIS": 0.2
+            "int": 0.45,
+            "cha": 0.35,
+            "wis": 0.2
           },
           "notes": "Dealer of secrets and intelligence, manipulating events from the shadows.",
           "talents": [],
@@ -2772,18 +1635,16 @@
         "criminal_mastermind": {
           "name": "Criminal Mastermind",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.6,
             "utility": 0.3,
             "support": 0.1
           },
-          "roleBias": {
-            "controller": 1.4
-          },
           "attributeBias": {
-            "INT": 0.5,
-            "CHA": 0.3,
-            "WIS": 0.2
+            "int": 0.5,
+            "cha": 0.3,
+            "wis": 0.2
           },
           "notes": "Strategic architect of criminal operations and long-term schemes.",
           "talents": [],
@@ -2794,18 +1655,16 @@
         "gang_leader": {
           "name": "Gang Leader",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "support": 0.4,
             "controller": 0.4,
             "striker": 0.2
           },
-          "roleBias": {
-            "support": 1.3
-          },
           "attributeBias": {
-            "CHA": 0.4,
-            "STR": 0.3,
-            "CON": 0.3
+            "cha": 0.4,
+            "str": 0.3,
+            "con": 0.3
           },
           "notes": "Hands-on boss who commands through presence and violence.",
           "talents": [
@@ -2818,18 +1677,16 @@
         "smuggling_kingpin": {
           "name": "Smuggling Kingpin",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "utility": 0.5,
             "controller": 0.3,
             "support": 0.2
           },
-          "roleBias": {
-            "utility": 1.4
-          },
           "attributeBias": {
-            "INT": 0.4,
-            "CHA": 0.4,
-            "WIS": 0.2
+            "int": 0.4,
+            "cha": 0.4,
+            "wis": 0.2
           },
           "notes": "Controls illicit trade routes and black-market logistics.",
           "talents": [
@@ -2843,18 +1700,16 @@
         "information_broker": {
           "name": "Information Broker",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.5,
             "utility": 0.4,
             "support": 0.1
           },
-          "roleBias": {
-            "controller": 1.4
-          },
           "attributeBias": {
-            "INT": 0.45,
-            "CHA": 0.35,
-            "WIS": 0.2
+            "int": 0.45,
+            "cha": 0.35,
+            "wis": 0.2
           },
           "notes": "Pure information-focused criminal operator.",
           "talents": [],
@@ -2881,18 +1736,17 @@
         "heavy_assault": {
           "name": "Heavy Assault",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
+            "offense": 1.3,
             "striker": 0.6,
             "defender": 0.2,
             "controller": 0.2
           },
-          "roleBias": {
-            "offense": 1.3
-          },
           "attributeBias": {
-            "STR": 0.4,
-            "CON": 0.35,
-            "DEX": 0.25
+            "str": 0.4,
+            "con": 0.35,
+            "dex": 0.25
           },
           "notes": "Overwhelming firepower shock trooper.",
           "talents": [
@@ -2906,19 +1760,17 @@
         "shock_commander": {
           "name": "Shock Commander",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "support": 0.4,
             "striker": 0.4,
             "controller": 0.2
           },
-          "roleBias": {
-            "support": 1.2
-          },
           "attributeBias": {
-            "CHA": 0.35,
-            "STR": 0.3,
-            "CON": 0.25,
-            "WIS": 0.1
+            "cha": 0.35,
+            "str": 0.3,
+            "con": 0.25,
+            "wis": 0.1
           },
           "notes": "Elite frontline commander leading assault units.",
           "talents": [],
@@ -2929,18 +1781,17 @@
         "elite_enforcer": {
           "name": "Elite Enforcer",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
+            "offense": 1.2,
             "striker": 0.5,
             "defender": 0.3,
             "controller": 0.2
           },
-          "roleBias": {
-            "offense": 1.2
-          },
           "attributeBias": {
-            "STR": 0.4,
-            "CON": 0.35,
-            "DEX": 0.25
+            "str": 0.4,
+            "con": 0.35,
+            "dex": 0.25
           },
           "notes": "High-threat personal enforcer for elite operations.",
           "talents": [
@@ -2953,20 +1804,17 @@
         "specops_commando": {
           "name": "SpecOps Commando",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "striker": 0.4,
             "controller": 0.4,
             "utility": 0.2
           },
-          "roleBias": {
-            "striker": 1.1,
-            "controller": 1.1
-          },
           "attributeBias": {
-            "DEX": 0.35,
-            "INT": 0.25,
-            "WIS": 0.2,
-            "CON": 0.2
+            "dex": 0.35,
+            "int": 0.25,
+            "wis": 0.2,
+            "con": 0.2
           },
           "notes": "Elite special forces operative for covert strike missions.",
           "talents": [
@@ -2981,20 +1829,17 @@
         "bodyguard_enforcer": {
           "name": "Bodyguard Enforcer",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "defender": 0.6,
             "support": 0.2,
             "controller": 0.2
           },
-          "roleBias": {
-            "defender": 1.4,
-            "support": 1.1
-          },
           "attributeBias": {
-            "CON": 0.4,
-            "STR": 0.3,
-            "WIS": 0.2,
-            "DEX": 0.1
+            "con": 0.4,
+            "str": 0.3,
+            "wis": 0.2,
+            "dex": 0.1
           },
           "notes": "Elite protector and high-threat enforcer.",
           "talents": [
@@ -3008,19 +1853,17 @@
         "heavy_weapons_specialist": {
           "name": "Heavy Weapons Specialist",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "striker": 0.6,
             "controller": 0.2,
             "defender": 0.2
           },
-          "roleBias": {
-            "striker": 1.4
-          },
           "attributeBias": {
-            "STR": 0.35,
-            "CON": 0.35,
-            "DEX": 0.2,
-            "WIS": 0.1
+            "str": 0.35,
+            "con": 0.35,
+            "dex": 0.2,
+            "wis": 0.1
           },
           "notes": "Maximum firepower shock trooper.",
           "talents": [
@@ -3035,20 +1878,17 @@
         "infiltrator": {
           "name": "Infiltrator",
           "status": "active",
-          "mechanicalBias": {
-            "controller": 0.5,
-            "utility": 0.3,
-            "striker": 0.2
-          },
+          "mechanicalBias": {},
           "roleBias": {
-            "controller": 1.2,
-            "striker": 1.0
+            "controller": 0.5,
+            "striker": 0.2,
+            "utility": 0.3
           },
           "attributeBias": {
-            "DEX": 0.35,
-            "WIS": 0.3,
-            "INT": 0.25,
-            "CON": 0.1
+            "dex": 0.35,
+            "wis": 0.3,
+            "int": 0.25,
+            "con": 0.1
           },
           "notes": "Stealth-focused elite trooper for deep infiltration.",
           "talents": [
@@ -3063,18 +1903,16 @@
         "sharpshooter": {
           "name": "Sharpshooter",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "striker": 0.6,
             "controller": 0.2,
             "utility": 0.2
           },
-          "roleBias": {
-            "striker": 1.3
-          },
           "attributeBias": {
-            "DEX": 0.45,
-            "WIS": 0.35,
-            "CON": 0.2
+            "dex": 0.45,
+            "wis": 0.35,
+            "con": 0.2
           },
           "notes": "Elite long-range marksman eliminating priority targets.",
           "talents": [
@@ -3094,17 +1932,17 @@
           "name": "Dogfighter",
           "status": "active",
           "mechanicalBias": {
-            "striker": 0.6,
-            "pilot": 0.3,
-            "controller": 0.1
+            "pilotMastery": 0.3
           },
           "roleBias": {
-            "offense": 1.3
+            "offense": 1.3,
+            "striker": 0.6,
+            "controller": 0.1
           },
           "attributeBias": {
-            "DEX": 0.45,
-            "INT": 0.3,
-            "WIS": 0.25
+            "dex": 0.45,
+            "int": 0.3,
+            "wis": 0.25
           },
           "notes": "Pure starfighter duel specialist.",
           "talents": [],
@@ -3117,17 +1955,17 @@
           "name": "Interceptor Ace",
           "status": "active",
           "mechanicalBias": {
-            "striker": 0.5,
-            "pilot": 0.4,
-            "utility": 0.1
+            "pilotMastery": 0.4
           },
           "roleBias": {
-            "offense": 1.2
+            "offense": 1.2,
+            "striker": 0.5,
+            "utility": 0.1
           },
           "attributeBias": {
-            "DEX": 0.45,
-            "CON": 0.3,
-            "WIS": 0.25
+            "dex": 0.45,
+            "con": 0.3,
+            "wis": 0.25
           },
           "notes": "High-speed pursuit and interception specialist.",
           "talents": [
@@ -3141,17 +1979,16 @@
           "name": "Daredevil Pilot",
           "status": "active",
           "mechanicalBias": {
-            "controller": 0.4,
-            "pilot": 0.4,
-            "striker": 0.2
+            "pilotMastery": 0.4
           },
           "roleBias": {
-            "controller": 1.2
+            "controller": 0.4,
+            "striker": 0.2
           },
           "attributeBias": {
-            "DEX": 0.5,
-            "CON": 0.3,
-            "WIS": 0.2
+            "dex": 0.5,
+            "con": 0.3,
+            "wis": 0.2
           },
           "notes": "Extreme-risk pilot performing dangerous maneuvers.",
           "talents": [],
@@ -3163,18 +2000,17 @@
           "name": "Starfighter Ace",
           "status": "active",
           "mechanicalBias": {
-            "pilot": 0.6,
-            "striker": 0.3,
-            "controller": 0.1
+            "pilotMastery": 0.6
           },
           "roleBias": {
-            "striker": 1.3,
-            "support": 0.9
+            "striker": 0.3,
+            "support": 0.9,
+            "controller": 0.1
           },
           "attributeBias": {
-            "DEX": 0.45,
-            "INT": 0.3,
-            "WIS": 0.25
+            "dex": 0.45,
+            "int": 0.3,
+            "wis": 0.25
           },
           "notes": "Elite dogfighter dominating starship combat.",
           "talents": [],
@@ -3187,18 +2023,16 @@
           "name": "Freighter Captain",
           "status": "active",
           "mechanicalBias": {
-            "utility": 0.5,
-            "pilot": 0.3,
-            "support": 0.2
+            "pilotMastery": 0.3
           },
           "roleBias": {
-            "utility": 1.3,
-            "support": 1.1
+            "utility": 0.5,
+            "support": 0.2
           },
           "attributeBias": {
-            "DEX": 0.35,
-            "INT": 0.35,
-            "CHA": 0.3
+            "dex": 0.35,
+            "int": 0.35,
+            "cha": 0.3
           },
           "notes": "Transport specialist excelling at dangerous runs and escapes.",
           "talents": [],
@@ -3210,18 +2044,17 @@
           "name": "Speeder Ace",
           "status": "active",
           "mechanicalBias": {
-            "pilot": 0.5,
-            "striker": 0.3,
-            "utility": 0.2
+            "pilotMastery": 0.5
           },
           "roleBias": {
-            "striker": 1.1,
-            "controller": 1.0
+            "striker": 0.3,
+            "controller": 1,
+            "utility": 0.2
           },
           "attributeBias": {
-            "DEX": 0.45,
-            "CON": 0.3,
-            "WIS": 0.25
+            "dex": 0.45,
+            "con": 0.3,
+            "wis": 0.25
           },
           "notes": "High-speed ground vehicle specialist and cavalry scout.",
           "talents": [],
@@ -3234,18 +2067,17 @@
           "name": "Blockade Runner",
           "status": "active",
           "mechanicalBias": {
-            "utility": 0.5,
-            "pilot": 0.3,
-            "controller": 0.2
+            "pilotMastery": 0.3
           },
           "roleBias": {
             "support": 1.2,
-            "utility": 1.1
+            "utility": 0.5,
+            "controller": 0.2
           },
           "attributeBias": {
-            "DEX": 0.35,
-            "CHA": 0.35,
-            "INT": 0.3
+            "dex": 0.35,
+            "cha": 0.35,
+            "int": 0.3
           },
           "notes": "Smuggling ace specializing in evading pursuit and blockades.",
           "talents": [
@@ -3261,18 +2093,16 @@
           "name": "Daredevil Racer",
           "status": "active",
           "mechanicalBias": {
-            "controller": 0.4,
-            "pilot": 0.4,
-            "striker": 0.2
+            "pilotMastery": 0.4
           },
           "roleBias": {
-            "controller": 1.2,
-            "striker": 0.9
+            "controller": 0.4,
+            "striker": 0.2
           },
           "attributeBias": {
-            "DEX": 0.5,
-            "CON": 0.3,
-            "WIS": 0.2
+            "dex": 0.5,
+            "con": 0.3,
+            "wis": 0.2
           },
           "notes": "Extreme-speed pilot relying on risky maneuvers.",
           "talents": [],
@@ -3283,20 +2113,18 @@
         "walker_ace": {
           "name": "Walker Ace",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "defender": 0.5,
+            "support": 0.8,
             "controller": 0.3,
             "striker": 0.2
           },
-          "roleBias": {
-            "defender": 1.2,
-            "support": 0.8
-          },
           "attributeBias": {
-            "INT": 0.35,
-            "STR": 0.3,
-            "DEX": 0.2,
-            "CON": 0.15
+            "int": 0.35,
+            "str": 0.3,
+            "dex": 0.2,
+            "con": 0.15
           },
           "notes": "Heavy ground-vehicle commander and assault pilot.",
           "talents": [
@@ -3315,18 +2143,16 @@
         "tactical_commander": {
           "name": "Tactical Commander",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "support": 0.4,
             "controller": 0.4,
             "utility": 0.2
           },
-          "roleBias": {
-            "support": 1.3
-          },
           "attributeBias": {
-            "INT": 0.4,
-            "CHA": 0.35,
-            "WIS": 0.25
+            "int": 0.4,
+            "cha": 0.35,
+            "wis": 0.25
           },
           "notes": "Battlefield tactician directing allied actions.",
           "talents": [
@@ -3340,18 +2166,16 @@
         "support_officer": {
           "name": "Support Officer",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "support": 0.5,
             "utility": 0.3,
             "controller": 0.2
           },
-          "roleBias": {
-            "support": 1.4
-          },
           "attributeBias": {
-            "CHA": 0.4,
-            "INT": 0.35,
-            "WIS": 0.25
+            "cha": 0.4,
+            "int": 0.35,
+            "wis": 0.25
           },
           "notes": "Morale and logistics-focused officer.",
           "talents": [
@@ -3366,18 +2190,16 @@
         "strategic_leader": {
           "name": "Strategic Leader",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.5,
             "support": 0.3,
             "utility": 0.2
           },
-          "roleBias": {
-            "controller": 1.3
-          },
           "attributeBias": {
-            "INT": 0.45,
-            "CHA": 0.3,
-            "WIS": 0.25
+            "int": 0.45,
+            "cha": 0.3,
+            "wis": 0.25
           },
           "notes": "High-level planner shaping long-term engagements.",
           "talents": [
@@ -3390,19 +2212,16 @@
         "strategic_commander": {
           "name": "Strategic Commander",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "support": 0.5,
             "controller": 0.3,
             "utility": 0.2
           },
-          "roleBias": {
-            "support": 1.4,
-            "controller": 1.2
-          },
           "attributeBias": {
-            "INT": 0.4,
-            "CHA": 0.35,
-            "WIS": 0.25
+            "int": 0.4,
+            "cha": 0.35,
+            "wis": 0.25
           },
           "notes": "High-level battlefield commander coordinating allied actions.",
           "talents": [
@@ -3417,19 +2236,16 @@
         "logistics_officer": {
           "name": "Logistics Officer",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "utility": 0.5,
             "support": 0.3,
             "controller": 0.2
           },
-          "roleBias": {
-            "utility": 1.4,
-            "support": 1.1
-          },
           "attributeBias": {
-            "INT": 0.45,
-            "CHA": 0.3,
-            "WIS": 0.25
+            "int": 0.45,
+            "cha": 0.3,
+            "wis": 0.25
           },
           "notes": "Operational planner focused on supply lines and coordination.",
           "talents": [],
@@ -3446,18 +2262,16 @@
         "explosives_expert": {
           "name": "Explosives Expert",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.6,
             "striker": 0.3,
             "utility": 0.1
           },
-          "roleBias": {
-            "controller": 1.4
-          },
           "attributeBias": {
-            "INT": 0.45,
-            "DEX": 0.3,
-            "WIS": 0.25
+            "int": 0.45,
+            "dex": 0.3,
+            "wis": 0.25
           },
           "notes": "Specialist in precision explosives and controlled destruction.",
           "talents": [],
@@ -3469,19 +2283,17 @@
         "covert_disruptor": {
           "name": "Covert Disruptor",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.5,
             "utility": 0.3,
             "striker": 0.2
           },
-          "roleBias": {
-            "controller": 1.3
-          },
           "attributeBias": {
-            "DEX": 0.35,
-            "INT": 0.3,
-            "WIS": 0.25,
-            "CON": 0.1
+            "dex": 0.35,
+            "int": 0.3,
+            "wis": 0.25,
+            "con": 0.1
           },
           "notes": "Quietly disables infrastructure, alarms, and defenses.",
           "talents": [],
@@ -3493,19 +2305,17 @@
         "infrastructure_breaker": {
           "name": "Infrastructure Breaker",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.6,
             "utility": 0.3,
             "striker": 0.1
           },
-          "roleBias": {
-            "controller": 1.4
-          },
           "attributeBias": {
-            "INT": 0.45,
-            "DEX": 0.25,
-            "WIS": 0.2,
-            "CON": 0.1
+            "int": 0.45,
+            "dex": 0.25,
+            "wis": 0.2,
+            "con": 0.1
           },
           "notes": "Strategic saboteur dismantling enemy infrastructure.",
           "talents": [],
@@ -3517,20 +2327,17 @@
         "demolition_expert": {
           "name": "Demolition Expert",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.5,
             "striker": 0.3,
             "utility": 0.2
           },
-          "roleBias": {
-            "controller": 1.3,
-            "striker": 1.0
-          },
           "attributeBias": {
-            "INT": 0.4,
-            "DEX": 0.3,
-            "WIS": 0.2,
-            "CON": 0.1
+            "int": 0.4,
+            "dex": 0.3,
+            "wis": 0.2,
+            "con": 0.1
           },
           "notes": "Explosives specialist disabling structures and defenses.",
           "talents": [],
@@ -3547,19 +2354,17 @@
         "stealth_operative": {
           "name": "Stealth Operative",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.4,
             "utility": 0.4,
             "striker": 0.2
           },
-          "roleBias": {
-            "controller": 1.2
-          },
           "attributeBias": {
-            "DEX": 0.4,
-            "INT": 0.3,
-            "WIS": 0.2,
-            "CON": 0.1
+            "dex": 0.4,
+            "int": 0.3,
+            "wis": 0.2,
+            "con": 0.1
           },
           "notes": "Core infiltration specialist focused on unseen movement.",
           "talents": [
@@ -3572,19 +2377,17 @@
         "shadow_agent": {
           "name": "Shadow Agent",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.5,
             "utility": 0.3,
             "support": 0.2
           },
-          "roleBias": {
-            "controller": 1.3
-          },
           "attributeBias": {
-            "DEX": 0.35,
-            "CHA": 0.3,
-            "INT": 0.25,
-            "WIS": 0.1
+            "dex": 0.35,
+            "cha": 0.3,
+            "int": 0.25,
+            "wis": 0.1
           },
           "notes": "Deep-cover operative maintaining false identities.",
           "talents": [],
@@ -3596,19 +2399,18 @@
         "silent_eliminator": {
           "name": "Silent Eliminator",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
+            "offense": 1.3,
             "striker": 0.5,
             "controller": 0.3,
             "utility": 0.2
           },
-          "roleBias": {
-            "offense": 1.3
-          },
           "attributeBias": {
-            "DEX": 0.45,
-            "STR": 0.25,
-            "CON": 0.2,
-            "WIS": 0.1
+            "dex": 0.45,
+            "str": 0.25,
+            "con": 0.2,
+            "wis": 0.1
           },
           "notes": "Close-range eliminator operating without detection.",
           "talents": [
@@ -3621,19 +2423,17 @@
         "specops_infiltrator": {
           "name": "SpecOps Infiltrator",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.4,
             "striker": 0.4,
             "utility": 0.2
           },
-          "roleBias": {
-            "controller": 1.2
-          },
           "attributeBias": {
-            "DEX": 0.35,
-            "WIS": 0.3,
-            "INT": 0.25,
-            "CON": 0.1
+            "dex": 0.35,
+            "wis": 0.3,
+            "int": 0.25,
+            "con": 0.1
           },
           "notes": "Military-trained infiltration and breach specialist.",
           "talents": [],
@@ -3644,19 +2444,17 @@
         "covert_recon_agent": {
           "name": "Covert Recon Agent",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "utility": 0.5,
             "controller": 0.3,
             "support": 0.2
           },
-          "roleBias": {
-            "utility": 1.3
-          },
           "attributeBias": {
-            "WIS": 0.35,
-            "INT": 0.3,
-            "DEX": 0.25,
-            "CON": 0.1
+            "wis": 0.35,
+            "int": 0.3,
+            "dex": 0.25,
+            "con": 0.1
           },
           "notes": "Recon-focused infiltrator providing intelligence to allies.",
           "talents": [],
@@ -3673,18 +2471,16 @@
         "deathmark_sniper": {
           "name": "Deathmark Sniper",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "striker": 0.7,
             "controller": 0.2,
             "utility": 0.1
           },
-          "roleBias": {
-            "striker": 1.4
-          },
           "attributeBias": {
-            "DEX": 0.5,
-            "WIS": 0.3,
-            "CON": 0.2
+            "dex": 0.5,
+            "wis": 0.3,
+            "con": 0.2
           },
           "notes": "Long-range assassin eliminating targets before detection.",
           "talents": [],
@@ -3696,19 +2492,18 @@
         "shadow_blade": {
           "name": "Shadow Blade",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
+            "offense": 1.4,
             "striker": 0.6,
             "controller": 0.3,
             "utility": 0.1
           },
-          "roleBias": {
-            "offense": 1.4
-          },
           "attributeBias": {
-            "DEX": 0.45,
-            "STR": 0.25,
-            "CON": 0.2,
-            "WIS": 0.1
+            "dex": 0.45,
+            "str": 0.25,
+            "con": 0.2,
+            "wis": 0.1
           },
           "notes": "Blade-focused assassin relying on speed and stealth.",
           "talents": [
@@ -3721,19 +2516,17 @@
         "venomous_infiltrator": {
           "name": "Venomous Infiltrator",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.4,
             "striker": 0.4,
             "utility": 0.2
           },
-          "roleBias": {
-            "controller": 1.2
-          },
           "attributeBias": {
-            "DEX": 0.4,
-            "INT": 0.3,
-            "WIS": 0.2,
-            "CON": 0.1
+            "dex": 0.4,
+            "int": 0.3,
+            "wis": 0.2,
+            "con": 0.1
           },
           "notes": "Assassin specializing in toxins and weakening effects.",
           "talents": [],
@@ -3745,19 +2538,17 @@
         "silent_killer": {
           "name": "Silent Killer",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "striker": 0.6,
             "controller": 0.3,
             "utility": 0.1
           },
-          "roleBias": {
-            "striker": 1.4
-          },
           "attributeBias": {
-            "DEX": 0.45,
-            "WIS": 0.25,
-            "CON": 0.2,
-            "INT": 0.1
+            "dex": 0.45,
+            "wis": 0.25,
+            "con": 0.2,
+            "int": 0.1
           },
           "notes": "Close-quarters execution specialist relying on surprise.",
           "talents": [
@@ -3770,19 +2561,17 @@
         "shadow_blade_assassin": {
           "name": "Shadow Blade Assassin",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "striker": 0.6,
             "controller": 0.3,
             "utility": 0.1
           },
-          "roleBias": {
-            "striker": 1.4
-          },
           "attributeBias": {
-            "DEX": 0.45,
-            "STR": 0.25,
-            "CON": 0.2,
-            "WIS": 0.1
+            "dex": 0.45,
+            "str": 0.25,
+            "con": 0.2,
+            "wis": 0.1
           },
           "notes": "Melee-focused assassin relying on stealth and sudden violence.",
           "talents": [
@@ -3800,20 +2589,17 @@
         "battlefield_medic": {
           "name": "Battlefield Medic",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "support": 0.6,
             "controller": 0.2,
             "utility": 0.2
           },
-          "roleBias": {
-            "support": 1.4,
-            "controller": 1.0
-          },
           "attributeBias": {
-            "WIS": 0.4,
-            "INT": 0.3,
-            "CON": 0.2,
-            "CHA": 0.1
+            "wis": 0.4,
+            "int": 0.3,
+            "con": 0.2,
+            "cha": 0.1
           },
           "notes": "Frontline medical specialist stabilizing allies under fire.",
           "talents": [],
@@ -3825,19 +2611,16 @@
         "chief_surgeon": {
           "name": "Chief Surgeon",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "support": 0.5,
             "utility": 0.3,
             "controller": 0.2
           },
-          "roleBias": {
-            "support": 1.3,
-            "utility": 1.1
-          },
           "attributeBias": {
-            "INT": 0.45,
-            "WIS": 0.35,
-            "CHA": 0.2
+            "int": 0.45,
+            "wis": 0.35,
+            "cha": 0.2
           },
           "notes": "High-end medical expert specializing in complex treatment.",
           "talents": [],
@@ -3849,19 +2632,17 @@
         "support_field_officer": {
           "name": "Support Field Officer",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "support": 0.5,
             "controller": 0.3,
             "utility": 0.2
           },
-          "roleBias": {
-            "support": 1.4
-          },
           "attributeBias": {
-            "WIS": 0.35,
-            "CHA": 0.3,
-            "INT": 0.25,
-            "CON": 0.1
+            "wis": 0.35,
+            "cha": 0.3,
+            "int": 0.25,
+            "con": 0.1
           },
           "notes": "Medic providing frontline support and morale stabilization.",
           "talents": [
@@ -3880,19 +2661,18 @@
         "unarmed_temple_guardian": {
           "name": "Unarmed Temple Guardian",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
+            "defense": 1.4,
+            "support": 1.1,
             "defender": 0.5,
             "controller": 0.3,
             "striker": 0.2
           },
-          "roleBias": {
-            "defense": 1.4,
-            "support": 1.1
-          },
           "attributeBias": {
-            "CON": 0.4,
-            "WIS": 0.35,
-            "STR": 0.25
+            "con": 0.4,
+            "wis": 0.35,
+            "str": 0.25
           },
           "notes": "Stoic unarmed guardian trained to hold ground and protect sacred sites.",
           "talents": [],
@@ -3905,18 +2685,17 @@
         "bonecrusher_brawler": {
           "name": "Bonecrusher Brawler",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
+            "offense": 1.3,
             "striker": 0.6,
             "defender": 0.3,
             "controller": 0.1
           },
-          "roleBias": {
-            "offense": 1.3
-          },
           "attributeBias": {
-            "STR": 0.5,
-            "CON": 0.3,
-            "DEX": 0.2
+            "str": 0.5,
+            "con": 0.3,
+            "dex": 0.2
           },
           "notes": "Brutal close-combat specialist relying on overwhelming physical force.",
           "talents": [
@@ -3930,19 +2709,17 @@
         "zen_duelist": {
           "name": "Zen Duelist",
           "status": "active",
-          "mechanicalBias": {
-            "controller": 0.4,
-            "defender": 0.3,
-            "support": 0.3
-          },
+          "mechanicalBias": {},
           "roleBias": {
             "defense": 1.3,
-            "support": 1.2
+            "support": 0.3,
+            "controller": 0.4,
+            "defender": 0.3
           },
           "attributeBias": {
-            "WIS": 0.45,
-            "DEX": 0.3,
-            "CON": 0.25
+            "wis": 0.45,
+            "dex": 0.3,
+            "con": 0.25
           },
           "notes": "Disciplined martial artist who blends calm, defense, and precise counters.",
           "talents": [
@@ -3955,19 +2732,17 @@
         "unarmed_weapon_master": {
           "name": "Unarmed Weapon Master",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "striker": 0.6,
             "defender": 0.2,
             "controller": 0.2
           },
-          "roleBias": {
-            "striker": 1.3
-          },
           "attributeBias": {
-            "STR": 0.35,
-            "DEX": 0.35,
-            "CON": 0.2,
-            "WIS": 0.1
+            "str": 0.35,
+            "dex": 0.35,
+            "con": 0.2,
+            "wis": 0.1
           },
           "notes": "Peak unarmed combatant turning the body into a weapon.",
           "talents": [
@@ -3982,19 +2757,16 @@
         "zen_combatant": {
           "name": "Zen Combatant",
           "status": "active",
-          "mechanicalBias": {
-            "controller": 0.4,
-            "defender": 0.3,
-            "support": 0.3
-          },
+          "mechanicalBias": {},
           "roleBias": {
-            "controller": 1.2,
-            "support": 1.1
+            "controller": 0.4,
+            "support": 0.3,
+            "defender": 0.3
           },
           "attributeBias": {
-            "WIS": 0.4,
-            "DEX": 0.3,
-            "CON": 0.3
+            "wis": 0.4,
+            "dex": 0.3,
+            "con": 0.3
           },
           "notes": "Defensive martial artist blending discipline and flow.",
           "talents": [
@@ -4012,19 +2784,17 @@
         "jungle_recon_specialist": {
           "name": "Jungle Recon Specialist",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "utility": 0.4,
             "controller": 0.3,
             "striker": 0.3
           },
-          "roleBias": {
-            "utility": 1.3
-          },
           "attributeBias": {
-            "WIS": 0.35,
-            "DEX": 0.3,
-            "CON": 0.2,
-            "INT": 0.15
+            "wis": 0.35,
+            "dex": 0.3,
+            "con": 0.2,
+            "int": 0.15
           },
           "notes": "Environmental reconnaissance expert in dense or hostile terrain.",
           "talents": [
@@ -4037,18 +2807,16 @@
         "forward_spotter": {
           "name": "Forward Spotter",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "support": 0.4,
             "controller": 0.4,
             "utility": 0.2
           },
-          "roleBias": {
-            "support": 1.3
-          },
           "attributeBias": {
-            "WIS": 0.4,
-            "INT": 0.3,
-            "DEX": 0.3
+            "wis": 0.4,
+            "int": 0.3,
+            "dex": 0.3
           },
           "notes": "Battlefield observer coordinating allied fire and movement.",
           "talents": [],
@@ -4060,18 +2828,17 @@
         "speeder_interceptor": {
           "name": "Speeder Interceptor",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
+            "offense": 1.1,
             "striker": 0.4,
             "utility": 0.3,
             "controller": 0.3
           },
-          "roleBias": {
-            "offense": 1.1
-          },
           "attributeBias": {
-            "DEX": 0.45,
-            "CON": 0.3,
-            "WIS": 0.25
+            "dex": 0.45,
+            "con": 0.3,
+            "wis": 0.25
           },
           "notes": "Fast-response pursuit specialist using speeders and light vehicles.",
           "talents": [],
@@ -4083,20 +2850,18 @@
         "forward_recon": {
           "name": "Forward Recon",
           "status": "active",
-          "mechanicalBias": {
-            "utility": 0.4,
-            "controller": 0.3,
-            "striker": 0.3
-          },
+          "mechanicalBias": {},
           "roleBias": {
             "scout": 1.3,
-            "controller": 1.0
+            "controller": 0.3,
+            "utility": 0.4,
+            "striker": 0.3
           },
           "attributeBias": {
-            "DEX": 0.35,
-            "WIS": 0.3,
-            "CON": 0.2,
-            "INT": 0.15
+            "dex": 0.35,
+            "wis": 0.3,
+            "con": 0.2,
+            "int": 0.15
           },
           "notes": "Advanced reconnaissance operative operating ahead of main forces.",
           "talents": [
@@ -4110,20 +2875,18 @@
         "deep_insertion_scout": {
           "name": "Deep Insertion Scout",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.4,
+            "scout": 1.2,
             "utility": 0.4,
             "striker": 0.2
           },
-          "roleBias": {
-            "controller": 1.2,
-            "scout": 1.2
-          },
           "attributeBias": {
-            "DEX": 0.35,
-            "INT": 0.3,
-            "WIS": 0.25,
-            "CON": 0.1
+            "dex": 0.35,
+            "int": 0.3,
+            "wis": 0.25,
+            "con": 0.1
           },
           "notes": "Long-range infiltration and intelligence-gathering specialist.",
           "talents": [],
@@ -4140,20 +2903,17 @@
         "field_engineer": {
           "name": "Field Engineer",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "utility": 0.5,
             "controller": 0.3,
             "support": 0.2
           },
-          "roleBias": {
-            "utility": 1.4,
-            "controller": 1.0
-          },
           "attributeBias": {
-            "INT": 0.45,
-            "DEX": 0.25,
-            "WIS": 0.2,
-            "CON": 0.1
+            "int": 0.45,
+            "dex": 0.25,
+            "wis": 0.2,
+            "con": 0.1
           },
           "notes": "On-the-fly engineer solving problems with whatever is available.",
           "talents": [
@@ -4168,20 +2928,17 @@
         "combat_improviser": {
           "name": "Combat Improviser",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.4,
             "striker": 0.3,
             "utility": 0.3
           },
-          "roleBias": {
-            "controller": 1.2,
-            "striker": 1.0
-          },
           "attributeBias": {
-            "INT": 0.35,
-            "DEX": 0.3,
-            "CON": 0.2,
-            "WIS": 0.15
+            "int": 0.35,
+            "dex": 0.3,
+            "con": 0.2,
+            "wis": 0.15
           },
           "notes": "Battlefield opportunist turning chaos into advantage.",
           "talents": [],
@@ -4193,18 +2950,16 @@
         "holo_hacker": {
           "name": "Holo-Hacker",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "utility": 0.6,
             "controller": 0.3,
             "support": 0.1
           },
-          "roleBias": {
-            "utility": 1.4
-          },
           "attributeBias": {
-            "INT": 0.5,
-            "DEX": 0.25,
-            "WIS": 0.25
+            "int": 0.5,
+            "dex": 0.25,
+            "wis": 0.25
           },
           "notes": "Electronic warfare expert manipulating holographic and sensor systems.",
           "talents": [],
@@ -4221,18 +2976,17 @@
         "notorious_gunslinger": {
           "name": "Notorious Gunslinger",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
+            "offense": 1.3,
             "striker": 0.6,
             "controller": 0.2,
             "utility": 0.2
           },
-          "roleBias": {
-            "offense": 1.3
-          },
           "attributeBias": {
-            "DEX": 0.45,
-            "CHA": 0.3,
-            "CON": 0.25
+            "dex": 0.45,
+            "cha": 0.3,
+            "con": 0.25
           },
           "notes": "Infamous outlaw whose reputation is as deadly as their aim.",
           "talents": [],
@@ -4243,20 +2997,17 @@
         "rebel_outlaw": {
           "name": "Rebel Outlaw",
           "status": "active",
-          "mechanicalBias": {
-            "striker": 0.4,
-            "controller": 0.3,
-            "support": 0.3
-          },
+          "mechanicalBias": {},
           "roleBias": {
-            "striker": 1.1,
-            "support": 1.1
+            "striker": 0.4,
+            "support": 0.3,
+            "controller": 0.3
           },
           "attributeBias": {
-            "DEX": 0.35,
-            "CHA": 0.3,
-            "CON": 0.2,
-            "WIS": 0.15
+            "dex": 0.35,
+            "cha": 0.3,
+            "con": 0.2,
+            "wis": 0.15
           },
           "notes": "Defiant freedom fighter operating outside formal command.",
           "talents": [
@@ -4270,20 +3021,17 @@
         "shadow_smuggler": {
           "name": "Shadow Smuggler",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "utility": 0.4,
             "controller": 0.3,
             "striker": 0.3
           },
-          "roleBias": {
-            "utility": 1.3,
-            "controller": 1.0
-          },
           "attributeBias": {
-            "DEX": 0.35,
-            "CHA": 0.3,
-            "INT": 0.2,
-            "CON": 0.15
+            "dex": 0.35,
+            "cha": 0.3,
+            "int": 0.2,
+            "con": 0.15
           },
           "notes": "Illicit operator thriving in shadows and grey markets.",
           "talents": [
@@ -4302,20 +3050,17 @@
         "silver_tongued_grifter": {
           "name": "Silver-Tongued Grifter",
           "status": "active",
-          "mechanicalBias": {
-            "support": 0.4,
-            "utility": 0.3,
-            "controller": 0.3
-          },
+          "mechanicalBias": {},
           "roleBias": {
-            "support": 1.3,
-            "controller": 1.1
+            "support": 0.4,
+            "controller": 0.3,
+            "utility": 0.3
           },
           "attributeBias": {
-            "CHA": 0.5,
-            "INT": 0.25,
-            "WIS": 0.15,
-            "DEX": 0.1
+            "cha": 0.5,
+            "int": 0.25,
+            "wis": 0.15,
+            "dex": 0.1
           },
           "notes": "Smooth-talking manipulator relying on charm and misdirection.",
           "talents": [
@@ -4329,20 +3074,17 @@
         "master_of_disguise": {
           "name": "Master of Disguise",
           "status": "active",
-          "mechanicalBias": {
-            "utility": 0.4,
-            "controller": 0.4,
-            "support": 0.2
-          },
+          "mechanicalBias": {},
           "roleBias": {
-            "controller": 1.3,
-            "support": 1.1
+            "controller": 0.4,
+            "support": 0.2,
+            "utility": 0.4
           },
           "attributeBias": {
-            "CHA": 0.45,
-            "INT": 0.3,
-            "DEX": 0.15,
-            "WIS": 0.1
+            "cha": 0.45,
+            "int": 0.3,
+            "dex": 0.15,
+            "wis": 0.1
           },
           "notes": "Identity-shifting con artist and social infiltrator.",
           "talents": [],
@@ -4354,18 +3096,16 @@
         "holostar_propagandist": {
           "name": "Holostar Propagandist",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.5,
             "support": 0.3,
             "utility": 0.2
           },
-          "roleBias": {
-            "controller": 1.3
-          },
           "attributeBias": {
-            "CHA": 0.5,
-            "INT": 0.3,
-            "WIS": 0.2
+            "cha": 0.5,
+            "int": 0.3,
+            "wis": 0.2
           },
           "notes": "Media manipulator shaping public opinion through holonet influence.",
           "talents": [],
@@ -4383,18 +3123,17 @@
           "name": "Mystic Seer",
           "status": "active",
           "mechanicalBias": {
-            "force_control": 0.5,
-            "utility": 0.3,
-            "controller": 0.2
+            "forceDC": 0.5
           },
           "roleBias": {
-            "controller": 1.3,
-            "support": 1.0
+            "controller": 0.2,
+            "support": 1,
+            "utility": 0.3
           },
           "attributeBias": {
-            "WIS": 0.45,
-            "CHA": 0.3,
-            "INT": 0.25
+            "wis": 0.45,
+            "cha": 0.3,
+            "int": 0.25
           },
           "notes": "Force mystic focused on foresight, visions, and esoteric knowledge.",
           "talents": [
@@ -4409,19 +3148,17 @@
           "name": "Force Savant",
           "status": "active",
           "mechanicalBias": {
-            "force_control": 0.4,
+            "forceDC": 0.4
+          },
+          "roleBias": {
             "striker": 0.4,
             "controller": 0.2
           },
-          "roleBias": {
-            "striker": 1.1,
-            "controller": 1.1
-          },
           "attributeBias": {
-            "WIS": 0.4,
-            "CHA": 0.35,
-            "CON": 0.15,
-            "DEX": 0.1
+            "wis": 0.4,
+            "cha": 0.35,
+            "con": 0.15,
+            "dex": 0.1
           },
           "notes": "Aggressive Force-user pushing raw power beyond orthodox limits.",
           "talents": [],
@@ -4433,19 +3170,16 @@
         "tradition_keeper": {
           "name": "Tradition Keeper",
           "status": "active",
-          "mechanicalBias": {
-            "support": 0.4,
-            "utility": 0.4,
-            "controller": 0.2
-          },
+          "mechanicalBias": {},
           "roleBias": {
-            "support": 1.3,
-            "controller": 1.1
+            "support": 0.4,
+            "controller": 0.2,
+            "utility": 0.4
           },
           "attributeBias": {
-            "WIS": 0.4,
-            "INT": 0.35,
-            "CHA": 0.25
+            "wis": 0.4,
+            "int": 0.35,
+            "cha": 0.25
           },
           "notes": "Guardian of non-Jedi Force traditions and ancient rites.",
           "talents": [],
@@ -4462,19 +3196,16 @@
         "ascetic_disciple": {
           "name": "Ascetic Disciple",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "support": 0.4,
             "controller": 0.4,
             "utility": 0.2
           },
-          "roleBias": {
-            "support": 1.2,
-            "controller": 1.1
-          },
           "attributeBias": {
-            "WIS": 0.45,
-            "CON": 0.3,
-            "CHA": 0.25
+            "wis": 0.45,
+            "con": 0.3,
+            "cha": 0.25
           },
           "notes": "Self-denying Force user focused on discipline and resilience.",
           "talents": [],
@@ -4487,18 +3218,16 @@
           "name": "Living Force Channeler",
           "status": "active",
           "mechanicalBias": {
-            "force_control": 0.5,
+            "forceDC": 0.5
+          },
+          "roleBias": {
             "support": 0.3,
             "controller": 0.2
           },
-          "roleBias": {
-            "support": 1.3,
-            "controller": 1.0
-          },
           "attributeBias": {
-            "WIS": 0.4,
-            "CHA": 0.35,
-            "CON": 0.25
+            "wis": 0.4,
+            "cha": 0.35,
+            "con": 0.25
           },
           "notes": "Embodiment of the Living Force, channeling energy through self and allies.",
           "talents": [
@@ -4517,19 +3246,16 @@
         "battle_droid_coordinator": {
           "name": "Battle Droid Coordinator",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.6,
             "support": 0.3,
             "utility": 0.1
           },
-          "roleBias": {
-            "controller": 1.4,
-            "support": 1.1
-          },
           "attributeBias": {
-            "INT": 0.5,
-            "CHA": 0.3,
-            "WIS": 0.2
+            "int": 0.5,
+            "cha": 0.3,
+            "wis": 0.2
           },
           "notes": "Tactical commander specializing in coordinated droid forces.",
           "talents": [],
@@ -4540,17 +3266,15 @@
         "droid_overmind": {
           "name": "Droid Overmind",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.7,
             "utility": 0.3
           },
-          "roleBias": {
-            "controller": 1.5
-          },
           "attributeBias": {
-            "INT": 0.6,
-            "WIS": 0.25,
-            "CHA": 0.15
+            "int": 0.6,
+            "wis": 0.25,
+            "cha": 0.15
           },
           "notes": "Centralized intelligence directing multiple droids simultaneously.",
           "talents": [],
@@ -4562,19 +3286,16 @@
         "mechanized_tactician": {
           "name": "Mechanized Tactician",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.5,
             "support": 0.3,
             "utility": 0.2
           },
-          "roleBias": {
-            "controller": 1.3,
-            "support": 1.1
-          },
           "attributeBias": {
-            "INT": 0.45,
-            "CHA": 0.3,
-            "WIS": 0.25
+            "int": 0.45,
+            "cha": 0.3,
+            "wis": 0.25
           },
           "notes": "Battlefield strategist integrating droids into mixed forces.",
           "talents": [
@@ -4592,19 +3313,16 @@
         "battlefield_architect": {
           "name": "Battlefield Architect",
           "status": "active",
-          "mechanicalBias": {
-            "controller": 0.5,
-            "utility": 0.3,
-            "support": 0.2
-          },
+          "mechanicalBias": {},
           "roleBias": {
-            "controller": 1.3,
-            "support": 1.1
+            "controller": 0.5,
+            "support": 0.2,
+            "utility": 0.3
           },
           "attributeBias": {
-            "INT": 0.5,
-            "WIS": 0.3,
-            "CON": 0.2
+            "int": 0.5,
+            "wis": 0.3,
+            "con": 0.2
           },
           "notes": "Designer of defenses, kill zones, and battlefield structures.",
           "talents": [],
@@ -4615,18 +3333,16 @@
         "siege_specialist": {
           "name": "Siege Specialist",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.6,
             "striker": 0.3,
             "utility": 0.1
           },
-          "roleBias": {
-            "controller": 1.4
-          },
           "attributeBias": {
-            "INT": 0.45,
-            "CON": 0.35,
-            "STR": 0.2
+            "int": 0.45,
+            "con": 0.35,
+            "str": 0.2
           },
           "notes": "Expert in destroying fortifications and hardened targets.",
           "talents": [],
@@ -4638,19 +3354,16 @@
         "vehicle_systems_engineer": {
           "name": "Vehicle Systems Engineer",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "utility": 0.5,
             "support": 0.3,
             "controller": 0.2
           },
-          "roleBias": {
-            "utility": 1.4,
-            "support": 1.1
-          },
           "attributeBias": {
-            "INT": 0.5,
-            "DEX": 0.25,
-            "WIS": 0.25
+            "int": 0.5,
+            "dex": 0.25,
+            "wis": 0.25
           },
           "notes": "Specialist in modifying, repairing, and enhancing vehicles.",
           "talents": [],
@@ -4667,19 +3380,17 @@
         "shock_entry_specialist": {
           "name": "Shock Entry Specialist",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "striker": 0.5,
             "controller": 0.3,
             "defender": 0.2
           },
-          "roleBias": {
-            "striker": 1.3
-          },
           "attributeBias": {
-            "STR": 0.35,
-            "DEX": 0.3,
-            "CON": 0.25,
-            "WIS": 0.1
+            "str": 0.35,
+            "dex": 0.3,
+            "con": 0.25,
+            "wis": 0.1
           },
           "notes": "First-in assault specialist for hostile entry operations.",
           "talents": [],
@@ -4690,20 +3401,17 @@
         "forward_assault_leader": {
           "name": "Forward Assault Leader",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "striker": 0.4,
             "support": 0.3,
             "controller": 0.3
           },
-          "roleBias": {
-            "striker": 1.2,
-            "support": 1.1
-          },
           "attributeBias": {
-            "STR": 0.3,
-            "CHA": 0.3,
-            "CON": 0.25,
-            "DEX": 0.15
+            "str": 0.3,
+            "cha": 0.3,
+            "con": 0.25,
+            "dex": 0.15
           },
           "notes": "Aggressive squad leader pushing the fight forward.",
           "talents": [],
@@ -4714,20 +3422,17 @@
         "urban_breach_operative": {
           "name": "Urban Breach Operative",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.4,
             "striker": 0.4,
             "utility": 0.2
           },
-          "roleBias": {
-            "controller": 1.2,
-            "striker": 1.1
-          },
           "attributeBias": {
-            "DEX": 0.35,
-            "INT": 0.25,
-            "CON": 0.25,
-            "WIS": 0.15
+            "dex": 0.35,
+            "int": 0.25,
+            "con": 0.25,
+            "wis": 0.15
           },
           "notes": "Close-quarters urban combat specialist.",
           "talents": [],
@@ -4743,19 +3448,16 @@
         "letter_of_marque_captain": {
           "name": "Letter of Marque Captain",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "support": 0.4,
             "controller": 0.3,
             "utility": 0.3
           },
-          "roleBias": {
-            "support": 1.2,
-            "controller": 1.1
-          },
           "attributeBias": {
-            "CHA": 0.4,
-            "INT": 0.35,
-            "DEX": 0.25
+            "cha": 0.4,
+            "int": 0.35,
+            "dex": 0.25
           },
           "notes": "Semi-legal privateer operating under official sanction.",
           "talents": [],
@@ -4766,18 +3468,16 @@
         "freebooter_admiral": {
           "name": "Freebooter Admiral",
           "status": "active",
-          "mechanicalBias": {
+          "mechanicalBias": {},
+          "roleBias": {
             "controller": 0.5,
             "support": 0.3,
             "utility": 0.2
           },
-          "roleBias": {
-            "controller": 1.3
-          },
           "attributeBias": {
-            "CHA": 0.4,
-            "INT": 0.35,
-            "WIS": 0.25
+            "cha": 0.4,
+            "int": 0.35,
+            "wis": 0.25
           },
           "notes": "Commander of multiple vessels operating beyond the law.",
           "talents": [],
@@ -4788,20 +3488,17 @@
         "trade_war_corsair": {
           "name": "Trade War Corsair",
           "status": "active",
-          "mechanicalBias": {
-            "controller": 0.4,
-            "utility": 0.3,
-            "striker": 0.3
-          },
+          "mechanicalBias": {},
           "roleBias": {
-            "controller": 1.2,
-            "striker": 1.0
+            "controller": 0.4,
+            "striker": 0.3,
+            "utility": 0.3
           },
           "attributeBias": {
-            "DEX": 0.35,
-            "CHA": 0.3,
-            "INT": 0.25,
-            "CON": 0.1
+            "dex": 0.35,
+            "cha": 0.3,
+            "int": 0.25,
+            "con": 0.1
           },
           "notes": "Commerce-raiding captain targeting enemy trade routes.",
           "talents": [],

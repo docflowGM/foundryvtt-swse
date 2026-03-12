@@ -1,0 +1,257 @@
+{
+  "name": "Improviser Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "improvisation": 3,
+      "mechanicalMastery": 2,
+      "technicalInnovation": 2,
+      "resourcefulness": 1
+    },
+    "roleBias": {
+      "utility": 2,
+      "support": 1
+    },
+    "attributeBias": {
+      "int": 2,
+      "dex": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Support Specialist",
+      "specialists": [
+        {
+          "name": "Equipment Improver",
+          "mechanicalBias": {
+            "improvisation": 2,
+            "mechanicalMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Improves equipment on the fly."
+        },
+        {
+          "name": "Makeshift Master",
+          "mechanicalBias": {
+            "resourcefulness": 2,
+            "technicalInnovation": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Creates solutions from scrap."
+        },
+        {
+          "name": "Team Enabler",
+          "mechanicalBias": {
+            "improvisation": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Enables teammates through gear."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Knowledge Keeper",
+      "specialists": [
+        {
+          "name": "Technical Innovator",
+          "mechanicalBias": {
+            "technicalInnovation": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Innovates technical solutions."
+        },
+        {
+          "name": "Repair Specialist",
+          "mechanicalBias": {
+            "mechanicalMastery": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Masters mechanical repair."
+        },
+        {
+          "name": "System Debugger",
+          "mechanicalBias": {
+            "improvisation": 2,
+            "tacticalAwareness": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Identifies and fixes system flaws."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Rogue Operative",
+      "specialists": [
+        {
+          "name": "Clever Improviser",
+          "mechanicalBias": {
+            "improvisation": 2,
+            "stealth": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Improvises stealthy solutions."
+        },
+        {
+          "name": "Quick Mechanic",
+          "mechanicalBias": {
+            "mechanicalMastery": 2,
+            "initiative": 1
+          },
+          "roleBias": {
+            "skirmisher": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Repairs and fixes rapidly."
+        },
+        {
+          "name": "Infiltration Engineer",
+          "mechanicalBias": {
+            "technicalInnovation": 2,
+            "infiltration": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Improvises infiltration tech."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Support Innovator",
+      "specialists": [
+        {
+          "name": "Adaptive Support",
+          "mechanicalBias": {
+            "improvisation": 2,
+            "skillUtility": 1
+          },
+          "roleBias": {
+            "flex": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Adapts support as needed."
+        },
+        {
+          "name": "Resource Stretcher",
+          "mechanicalBias": {
+            "resourcefulness": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Stretches resources further."
+        },
+        {
+          "name": "Problem Solver",
+          "mechanicalBias": {
+            "technicalInnovation": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Solves technical problems."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Clever Combatant",
+          "mechanicalBias": {
+            "improvisation": 2,
+            "predatoryInstinct": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Improvises combat tactics."
+        },
+        {
+          "name": "Tool Weaponizer",
+          "mechanicalBias": {
+            "mechanicalMastery": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Weaponizes tools for combat."
+        },
+        {
+          "name": "Finishing Innovation",
+          "mechanicalBias": {
+            "technicalInnovation": 2,
+            "burstDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Innovates finishing moves."
+        }
+      ]
+    }
+  ]
+}

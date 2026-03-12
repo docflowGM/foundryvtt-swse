@@ -1,0 +1,257 @@
+{
+  "name": "Saboteur Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "sabotageExpertise": 3,
+      "explosiveMastery": 2,
+      "hackingSkills": 2,
+      "infiltrationTactics": 1
+    },
+    "roleBias": {
+      "striker": 2,
+      "scout": 1
+    },
+    "attributeBias": {
+      "int": 2,
+      "dex": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Rogue Operative",
+      "specialists": [
+        {
+          "name": "Master Saboteur",
+          "mechanicalBias": {
+            "sabotageExpertise": 2,
+            "infiltrationTactics": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Masters sabotage operations."
+        },
+        {
+          "name": "Hidden Destroyer",
+          "mechanicalBias": {
+            "explosiveMastery": 2,
+            "stealth": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Destroys from hidden positions."
+        },
+        {
+          "name": "Precision Destroyer",
+          "mechanicalBias": {
+            "sabotageExpertise": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Destroys targets precisely."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Tech Specialist",
+      "specialists": [
+        {
+          "name": "System Hacker",
+          "mechanicalBias": {
+            "hackingSkills": 2,
+            "sabotageExpertise": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Hacks systems to sabotage."
+        },
+        {
+          "name": "Code Breaker",
+          "mechanicalBias": {
+            "hackingSkills": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Breaks security codes."
+        },
+        {
+          "name": "Malware Specialist",
+          "mechanicalBias": {
+            "hackingSkills": 2,
+            "infiltrationTactics": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Deploys malicious code."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Explosive Expert",
+      "specialists": [
+        {
+          "name": "Bomb Master",
+          "mechanicalBias": {
+            "explosiveMastery": 2,
+            "sabotageExpertise": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Masters explosive sabotage."
+        },
+        {
+          "name": "Demolition Master",
+          "mechanicalBias": {
+            "explosiveMastery": 2,
+            "burstDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Demolishes structures."
+        },
+        {
+          "name": "Trap Setter",
+          "mechanicalBias": {
+            "sabotageExpertise": 2,
+            "areaControl": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Sets deadly traps."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Opportunistic Saboteur",
+          "mechanicalBias": {
+            "sabotageExpertise": 2,
+            "predatoryInstinct": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Exploits sabotage opportunities."
+        },
+        {
+          "name": "Lethal Sabotage",
+          "mechanicalBias": {
+            "explosiveMastery": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Delivers lethal sabotage."
+        },
+        {
+          "name": "Saboteur Legend",
+          "mechanicalBias": {
+            "sabotageExpertise": 2,
+            "hackingSkills": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Becomes legendary saboteur."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Covert Coordinator",
+      "specialists": [
+        {
+          "name": "Sabotage Coordinator",
+          "mechanicalBias": {
+            "sabotageExpertise": 2,
+            "commandAuthority": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Coordinates sabotage teams."
+        },
+        {
+          "name": "Infrastructure Saboteur",
+          "mechanicalBias": {
+            "hackingSkills": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Sabotages infrastructure."
+        },
+        {
+          "name": "Underground Asset",
+          "mechanicalBias": {
+            "infiltrationTactics": 2,
+            "networkInfluence": 1
+          },
+          "roleBias": {
+            "scout": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Maintains underground assets."
+        }
+      ]
+    }
+  ]
+}

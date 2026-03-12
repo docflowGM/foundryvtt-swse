@@ -1,0 +1,257 @@
+{
+  "name": "Sith Apprentice Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "darkSideAffinity": 3,
+      "burstDamage": 2,
+      "sithAlchemy": 3,
+      "meleeDamage": 1
+    },
+    "roleBias": {
+      "striker": 2,
+      "controller": 1
+    },
+    "attributeBias": {
+      "cha": 2,
+      "str": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Jedi Dark Side Striker",
+      "specialists": [
+        {
+          "name": "Alchemy Blade",
+          "mechanicalBias": {
+            "sithAlchemy": 2,
+            "meleeDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Enhances personal weaponry through Sith alchemy."
+        },
+        {
+          "name": "Rage Channeler",
+          "mechanicalBias": {
+            "burstDamage": 2,
+            "darkSideAffinity": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Channels Dark Side fury for explosive output."
+        },
+        {
+          "name": "Corruption Adept",
+          "mechanicalBias": {
+            "conditionTrack": 2,
+            "darkSideAffinity": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Weakens opponents through corruptive Force use."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Jedi Duelist",
+      "specialists": [
+        {
+          "name": "Predatory Duelist",
+          "mechanicalBias": {
+            "singleTargetDamage": 2,
+            "darkSideAffinity": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Replaces discipline with ruthless aggression."
+        },
+        {
+          "name": "Savage Counter",
+          "mechanicalBias": {
+            "counterAttack": 2,
+            "burstDamage": 1
+          },
+          "roleBias": {
+            "bruiser": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Turns retaliation into brutal punishment."
+        },
+        {
+          "name": "Alchemical Edge",
+          "mechanicalBias": {
+            "sithAlchemy": 2,
+            "critDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Infuses weapons with dark enhancements."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Jedi Sentinel Hybrid",
+      "specialists": [
+        {
+          "name": "Forbidden Scholar",
+          "mechanicalBias": {
+            "sithAlchemy": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Explores dark knowledge and item corruption."
+        },
+        {
+          "name": "Corrupting Strategist",
+          "mechanicalBias": {
+            "darkSideAffinity": 2,
+            "initiative": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Applies dark influence strategically."
+        },
+        {
+          "name": "Shadow Artisan",
+          "mechanicalBias": {
+            "sithAlchemy": 2,
+            "forceRecovery": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Optimizes long-term equipment enhancement."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Jedi Guardian Defender",
+      "specialists": [
+        {
+          "name": "Dark Bulwark",
+          "mechanicalBias": {
+            "sithAlchemy": 2,
+            "damageReduction": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Enhances armor and resilience through alchemy."
+        },
+        {
+          "name": "Pain Channeler",
+          "mechanicalBias": {
+            "burstDamage": 2,
+            "conditionTrack": 1
+          },
+          "roleBias": {
+            "bruiser": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Converts suffering into offensive power."
+        },
+        {
+          "name": "Corrupted Protector",
+          "mechanicalBias": {
+            "darkSideAffinity": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Shields allies through dark empowerment."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Assassin of the Dark",
+          "mechanicalBias": {
+            "singleTargetDamage": 2,
+            "stealth": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Blends dark Force use with precision elimination."
+        },
+        {
+          "name": "Soul Breaker",
+          "mechanicalBias": {
+            "conditionTrack": 2,
+            "darkSideAffinity": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Focuses on mentally crushing opponents."
+        },
+        {
+          "name": "Hexed Blade",
+          "mechanicalBias": {
+            "sithAlchemy": 2,
+            "meleeDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Uses alchemy to empower assassination tools."
+        }
+      ]
+    }
+  ]
+}

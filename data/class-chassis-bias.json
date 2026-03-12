@@ -1,0 +1,202 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "purpose": "Static class chassis bias from Saga mechanics (BAB, defense, HD, skills)",
+    "maintenance": "Architecture Team",
+    "note": "Class chassis bias is structural identity seed. Does NOT scale per level. Does NOT apply pattern weight to defense or skill breadth.",
+    "sagaSource": "Star Wars Saga Edition core rules",
+    "classes": [
+      "jedi",
+      "scout",
+      "soldier",
+      "noble",
+      "scoundrel"
+    ]
+  },
+
+  "jedi": {
+    "name": "Jedi",
+    "bab": "medium",
+    "hitDie": "d8",
+    "defenseProgressions": {
+      "reflex": "high",
+      "fortitude": "low",
+      "will": "high"
+    },
+    "trainedSkillsAtLevel1": 6,
+    "classSkills": [
+      "acrobatics",
+      "initiative",
+      "perception",
+      "piloting",
+      "useTheForce",
+      "knowledgeGalacticLore"
+    ],
+    "notes": "Force-oriented class with balanced defenses. Medium BAB, strong Will & Reflex."
+  },
+
+  "scout": {
+    "name": "Scout",
+    "bab": "medium",
+    "hitDie": "d8",
+    "defenseProgressions": {
+      "reflex": "high",
+      "fortitude": "low",
+      "will": "average"
+    },
+    "trainedSkillsAtLevel1": 8,
+    "classSkills": [
+      "acrobatics",
+      "endurance",
+      "initiative",
+      "perception",
+      "piloting",
+      "stealth",
+      "survival",
+      "useTheForce"
+    ],
+    "notes": "Mobility and skill-focused. High Reflex, broadest skill list."
+  },
+
+  "soldier": {
+    "name": "Soldier",
+    "bab": "high",
+    "hitDie": "d10",
+    "defenseProgressions": {
+      "reflex": "low",
+      "fortitude": "high",
+      "will": "low"
+    },
+    "trainedSkillsAtLevel1": 4,
+    "classSkills": [
+      "athletics",
+      "endurance",
+      "initiative",
+      "perception"
+    ],
+    "notes": "Combat-focused. Highest BAB, d10 hit die, strong Fortitude. Fewest trained skills."
+  },
+
+  "noble": {
+    "name": "Noble",
+    "bab": "low",
+    "hitDie": "d6",
+    "defenseProgressions": {
+      "reflex": "average",
+      "fortitude": "low",
+      "will": "high"
+    },
+    "trainedSkillsAtLevel1": 7,
+    "classSkills": [
+      "deception",
+      "gatherInfo",
+      "initiative",
+      "knowledgeGalacticLore",
+      "perception",
+      "persuasion",
+      "piloting"
+    ],
+    "notes": "Social and strategic. Lowest BAB & HD, strong Will. Leadership focus."
+  },
+
+  "scoundrel": {
+    "name": "Scoundrel",
+    "bab": "medium",
+    "hitDie": "d8",
+    "defenseProgressions": {
+      "reflex": "high",
+      "fortitude": "low",
+      "will": "average"
+    },
+    "trainedSkillsAtLevel1": 8,
+    "classSkills": [
+      "acrobatics",
+      "deception",
+      "gatherInfo",
+      "initiative",
+      "perception",
+      "piloting",
+      "stealth",
+      "useTheForce"
+    ],
+    "notes": "Cunning and mobile. Similar to Scout but with social focus."
+  },
+
+  "bab_bias_mapping": {
+    "low": {
+      "mechanicalBias": { "meleeDamage": 0.0 },
+      "roleBias": { "support": 0.05 }
+    },
+    "medium": {
+      "mechanicalBias": { "meleeDamage": 0.2 },
+      "roleBias": { "striker": 0.15 }
+    },
+    "high": {
+      "mechanicalBias": { "meleeDamage": 0.4 },
+      "roleBias": { "striker": 0.25 }
+    }
+  },
+
+  "hd_bias_mapping": {
+    "d6": {
+      "mechanicalBias": { "combatStamina": 0.0 },
+      "roleBias": { "defender": 0.0 }
+    },
+    "d8": {
+      "mechanicalBias": { "combatStamina": 0.1 },
+      "roleBias": { "defender": 0.05 }
+    },
+    "d10": {
+      "mechanicalBias": { "combatStamina": 0.25 },
+      "roleBias": { "defender": 0.1 }
+    },
+    "d12": {
+      "mechanicalBias": { "combatStamina": 0.3 },
+      "roleBias": { "defender": 0.15 }
+    }
+  },
+
+  "defense_tier_mapping": {
+    "low": {
+      "mechanicalBias": -0.15,
+      "roleBias_scale": -0.5
+    },
+    "average": {
+      "mechanicalBias": 0.0,
+      "roleBias_scale": 0.0
+    },
+    "high": {
+      "mechanicalBias": 0.15,
+      "roleBias_scale": 0.5
+    }
+  },
+
+  "defense_bias_keys": {
+    "reflex": {
+      "mechanicalBias": "mobility",
+      "roleBias": "skirmisher"
+    },
+    "fortitude": {
+      "mechanicalBias": "combatStamina",
+      "roleBias": "defender"
+    },
+    "will": {
+      "mechanicalBias": "forceConnection",
+      "roleBias": "support"
+    }
+  },
+
+  "skill_breadth_bias": {
+    "description": "Skill breadth ratio = trainedSkillsAtLevel1 / maxTrainedSkillsAcross(allBaseClasses)",
+    "mechanicalBias": "skillUtility",
+    "mechanicalBias_scale": 0.25,
+    "roleBias": "strategist",
+    "roleBias_scale": 0.15,
+    "notes": "Applied once for union of skills across multiclass."
+  },
+
+  "prestige_chassis_scaling": {
+    "description": "Prestige chassis bias = (bias × 0.5) × diminishing_stack_weight",
+    "note": "No Dip/Dive/Swim applied to prestige chassis. No skill breadth for prestige."
+  }
+}

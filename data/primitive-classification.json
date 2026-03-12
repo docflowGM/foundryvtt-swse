@@ -1,0 +1,346 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "purpose": "Classify all 192 primitive types for IdentityEngine integration",
+    "maintenance": "Architecture Team",
+    "lastUpdated": "2026-03-12",
+    "note": "This is authoritative. Changes require architectural review."
+  },
+
+  "classification": {
+    "IDENTITY_RELEVANT": {
+      "description": "Primitives that directly affect character identity bias",
+      "primitives": {
+        "skillModifier": {
+          "type": "IDENTITY_RELEVANT",
+          "reason": "Skill bonuses indicate capability specialization",
+          "mappingStrategy": "skillId → mechanicalBias.knowledgeMastery or stealthMastery, etc.",
+          "occurrences": 57
+        },
+        "skillBonus": {
+          "type": "IDENTITY_RELEVANT",
+          "reason": "Generic skill bonus affects mechanical identity",
+          "mappingStrategy": "value → appropriate mechanicalBias",
+          "occurrences": 9
+        },
+        "skillTrained": {
+          "type": "IDENTITY_RELEVANT",
+          "reason": "Trained skills indicate specialization",
+          "mappingStrategy": "skillId → mechanicalBias.skillUtility + 0.1",
+          "occurrences": 3
+        },
+        "damageModifier": {
+          "type": "IDENTITY_RELEVANT",
+          "reason": "Damage indicates offensive capability",
+          "mappingStrategy": "attackType → meleeDamage, firepower, areaDamage",
+          "occurrences": 16
+        },
+        "damageBonus": {
+          "type": "IDENTITY_RELEVANT",
+          "reason": "Damage bonus indicates offensive bias",
+          "mappingStrategy": "value → meleeDamage or firepower (0.1–0.3 per +2)",
+          "occurrences": 9
+        },
+        "defenseModifier": {
+          "type": "IDENTITY_RELEVANT",
+          "reason": "Defense bonuses indicate defensive specialization",
+          "mappingStrategy": "defense (reflex/fort/will) → reactionDefense or damageReduction",
+          "occurrences": 29
+        },
+        "defenseBonus": {
+          "type": "IDENTITY_RELEVANT",
+          "reason": "Defense bonus affects defensive identity",
+          "mappingStrategy": "value → reactionDefense (0.05–0.2 per point)",
+          "occurrences": 16
+        },
+        "attackBonus": {
+          "type": "IDENTITY_RELEVANT",
+          "reason": "Attack bonus indicates offensive focus",
+          "mappingStrategy": "target → accuracy or weaponMastery (0.1–0.25 per +1)",
+          "occurrences": 11
+        },
+        "attackPenaltyReduction": {
+          "type": "IDENTITY_RELEVANT",
+          "reason": "Penalty reduction indicates combat stability",
+          "mappingStrategy": "value → combatAdaptability (0.1–0.2)",
+          "occurrences": 3
+        },
+        "abilityScoreModifier": {
+          "type": "IDENTITY_RELEVANT",
+          "reason": "Ability mods affect attributeBias directly",
+          "mappingStrategy": "ability → attributeBias.str|dex|con|int|wis|cha",
+          "occurrences": 2
+        },
+        "speedBonus": {
+          "type": "IDENTITY_RELEVANT",
+          "reason": "Speed indicates mobility/skirmisher role",
+          "mappingStrategy": "value >= 10 → mobility (0.3), roleBias.skirmisher (0.2)",
+          "occurrences": 7
+        },
+        "initiative": {
+          "type": "IDENTITY_RELEVANT",
+          "reason": "Initiative bonus indicates tactical awareness",
+          "mappingStrategy": "value → tacticalAwareness (0.1–0.15)",
+          "occurrences": 2
+        },
+        "damageReduction": {
+          "type": "IDENTITY_RELEVANT",
+          "reason": "DR is defensive capability",
+          "mappingStrategy": "value → damageReduction (0.2–0.4)",
+          "occurrences": 5
+        },
+        "counterattack": {
+          "type": "IDENTITY_RELEVANT",
+          "reason": "Reaction attacks indicate defensive role",
+          "mappingStrategy": "action → counterAttack (0.3), roleBias.defender (0.1)",
+          "occurrences": 2
+        },
+        "fastHealing": {
+          "type": "IDENTITY_RELEVANT",
+          "reason": "Healing per round indicates durability",
+          "mappingStrategy": "value >= 5 → combatStamina (0.4), roleBias.defender (0.2)",
+          "occurrences": 4
+        },
+        "stealthBonus": {
+          "type": "IDENTITY_RELEVANT",
+          "reason": "Stealth bonus indicates scout/infiltrator",
+          "mappingStrategy": "value → stealthMastery (0.2–0.3)",
+          "occurrences": 3
+        },
+        "meleeCultureBonus": {
+          "type": "IDENTITY_RELEVANT",
+          "reason": "Culture-specific bonus affects identity conditionally",
+          "condition": "only applies in specific culture",
+          "mappingStrategy": "value → meleeDamage (0.1) weighted by 0.5 for conditional",
+          "occurrences": 2
+        },
+        "reroll": {
+          "type": "IDENTITY_RELEVANT",
+          "reason": "Reroll indicates adaptability/resourcefulness",
+          "condition": "only triggers on failed check",
+          "mappingStrategy": "skillId → adaptability or resourcefulness (weighted 0.7)",
+          "occurrences": 9
+        }
+      }
+    },
+
+    "STRUCTURAL_ACCESS": {
+      "description": "Primitives that grant access to mechanics (require secondary lookup)",
+      "primitives": {
+        "featGrant": {
+          "type": "STRUCTURAL_ACCESS",
+          "reason": "Feat grant references feat by name; must resolve to primitives",
+          "mappingStrategy": "Recurse into granted feat's primitives; do not double-count",
+          "occurrences": 7
+        },
+        "featPattern": {
+          "type": "STRUCTURAL_ACCESS",
+          "reason": "Pattern-based feat granting; complex resolution",
+          "mappingStrategy": "Resolve matching feats, extract their primitives",
+          "occurrences": 1
+        },
+        "talentFromTree": {
+          "type": "STRUCTURAL_ACCESS",
+          "reason": "Talent grant; must resolve from talent registry",
+          "mappingStrategy": "Look up talent, extract its primitives",
+          "occurrences": 1
+        },
+        "naturalWeapon": {
+          "type": "STRUCTURAL_ACCESS",
+          "reason": "Grants natural attack; affects melee identity",
+          "mappingStrategy": "meleeDamage (0.3) + striker (0.2) + bruiser (0.1)",
+          "occurrences": 6
+        },
+        "grantItem": {
+          "type": "STRUCTURAL_ACCESS",
+          "reason": "Grants equipment; may affect bias via item primitives",
+          "mappingStrategy": "Resolve item, extract its primitives (if any)",
+          "occurrences": 8
+        },
+        "sense": {
+          "type": "STRUCTURAL_ACCESS",
+          "reason": "Grants special sense; affects tactical awareness",
+          "mappingStrategy": "senseType (darkvision, blindsense) → tacticalAwareness (0.15–0.2)",
+          "occurrences": 9
+        },
+        "immunity": {
+          "type": "STRUCTURAL_ACCESS",
+          "reason": "Grants immunity; depends on immunity type",
+          "mappingStrategy": "immunity === 'fear' → moraleImpact (0.2); immunity === 'mind' → defenseBonus (0.2)",
+          "occurrences": 2
+        },
+        "proficiency": {
+          "type": "STRUCTURAL_ACCESS",
+          "reason": "Weapon/armor proficiency; affects combat readiness",
+          "mappingStrategy": "weaponProficiency → weaponMastery (0.1); armorProficiency → armorMastery (0.1)",
+          "occurrences": 3
+        }
+      }
+    },
+
+    "CONDITIONAL": {
+      "description": "Primitives that apply only under specific conditions",
+      "note": "Weights are deterministic and registry-driven. No hardcoded logic.",
+      "primitives": {
+        "meleeCultureBonus": {
+          "type": "CONDITIONAL",
+          "condition": "Only in specific culture",
+          "weight": 0.5,
+          "reason": "Highly situational; culture dependency makes it unreliable"
+        },
+        "reroll": {
+          "type": "CONDITIONAL",
+          "condition": "Triggers only on failed check",
+          "weight": 0.7,
+          "reason": "Not guaranteed; depends on failure outcome"
+        },
+        "fastHealing": {
+          "type": "CONDITIONAL",
+          "condition": "Only while in combat",
+          "weight": 1.0,
+          "reason": "Always applies in relevant context (combat)"
+        },
+        "damageReduction": {
+          "type": "CONDITIONAL",
+          "condition": "Only against physical damage",
+          "weight": 1.0,
+          "reason": "Most attacks are physical; safe to apply fully"
+        },
+        "concealment": {
+          "type": "CONDITIONAL",
+          "condition": "Depends on lighting/environment",
+          "weight": 0.5,
+          "reason": "Situational effectiveness"
+        },
+        "evasion": {
+          "type": "CONDITIONAL",
+          "condition": "Only dodge attacks (action economy)",
+          "weight": 0.75,
+          "reason": "Limited by action economy; not always applicable"
+        },
+        "counterattack": {
+          "type": "CONDITIONAL",
+          "condition": "Only triggers in response to enemy action",
+          "weight": 0.6,
+          "reason": "Reactive; depends on enemy behavior"
+        }
+      },
+      "lookup_table": {
+        "meleeCultureBonus": 0.5,
+        "reroll": 0.7,
+        "fastHealing": 1.0,
+        "damageReduction": 1.0,
+        "concealment": 0.5,
+        "evasion": 0.75,
+        "counterattack": 0.6,
+        "default": 0.7
+      }
+    },
+
+    "MECHANICAL_ONLY": {
+      "description": "Primitives that affect game mechanics but not character identity",
+      "note": "These should be EXCLUDED from IdentityEngine",
+      "primitives": {
+        "IMMUNE_FEAR": {
+          "type": "MECHANICAL_ONLY",
+          "reason": "Binary mechanical state; covered by immunity primitive"
+        },
+        "IMMUNE_MIND_AFFECTING": {
+          "type": "MECHANICAL_ONLY",
+          "reason": "Binary mechanical state; covered by immunity primitive"
+        },
+        "breathing": {
+          "type": "MECHANICAL_ONLY",
+          "reason": "Physiology flavor; no identity impact"
+        },
+        "size": {
+          "type": "MECHANICAL_ONLY",
+          "reason": "Size category is mechanical, not identity"
+        },
+        "movement": {
+          "type": "MECHANICAL_ONLY",
+          "reason": "Movement type (swim, fly); use speedBonus for identity instead"
+        },
+        "restriction": {
+          "type": "MECHANICAL_ONLY",
+          "reason": "Restriction on what can be done; not identity"
+        },
+        "trade": {
+          "type": "MECHANICAL_ONLY",
+          "reason": "Represents culture/background flavor only"
+        },
+        "skillSubstitution": {
+          "type": "MECHANICAL_ONLY",
+          "reason": "Allows using one skill for another; not identity bias"
+        },
+        "negatesPenalty": {
+          "type": "MECHANICAL_ONLY",
+          "reason": "Removes penalties; not additive identity bias"
+        },
+        "keepDexBonus": {
+          "type": "MECHANICAL_ONLY",
+          "reason": "Preserves mechanical bonus; not identity"
+        }
+      }
+    },
+
+    "VEHICLE_ONLY": {
+      "description": "Primitives that apply only to vehicles/ships",
+      "note": "MUST BE EXCLUDED from character-based IdentityEngine",
+      "primitives": {
+        "vehicleEvasion": {
+          "type": "VEHICLE_ONLY",
+          "reason": "Vehicle combat mechanic"
+        },
+        "shipCombatAction": {
+          "type": "VEHICLE_ONLY",
+          "reason": "Ship combat mechanic"
+        },
+        "vehicle": {
+          "type": "VEHICLE_ONLY",
+          "reason": "Vehicle-related primitive"
+        }
+      }
+    },
+
+    "UNKNOWN_UNMAPPABLE": {
+      "description": "Primitives without clear identity mapping",
+      "note": "These require manual classification decision",
+      "primitives": {
+        "autoRedirect": "Automatic redirection; unclear what redirects",
+        "chargeBenefit": "Benefit to charge action; needs tactical mapping",
+        "costReduction": "Reduces cost of actions; unclear which cost",
+        "darkSideScoreDynamic": "Dark Side corruption tracking; separate system",
+        "drainHeal": "Drain = heal conversion; needs damage context",
+        "guaranteedResult": "Automatic success; not identity bias",
+        "halfDamageOnHit": "Take half damage on hit; defensive but unclear scope",
+        "missChance": "Gives miss chance to enemies; situational defensive",
+        "rangePenalty": "Range-based penalty; mechanical not identity",
+        "suppressionPenalty": "Suppression effect; tactical not identity",
+        "talentTree": "Talent tree reference; structural access only"
+      }
+    }
+  },
+
+  "summary": {
+    "IDENTITY_RELEVANT": 20,
+    "STRUCTURAL_ACCESS": 8,
+    "CONDITIONAL": 6,
+    "MECHANICAL_ONLY": 10,
+    "VEHICLE_ONLY": 3,
+    "UNKNOWN_UNMAPPABLE": 10,
+    "total": 57,
+    "note": "Out of 192 total primitive types, 57 are relevant to identity. 135 are metadata/structural/mechanical only."
+  },
+
+  "implementation_rules": {
+    "rule_1": "IDENTITY_RELEVANT primitives map directly to mechanicalBias, roleBias, or attributeBias",
+    "rule_2": "STRUCTURAL_ACCESS primitives require secondary lookup (feat → primitives, talent → primitives)",
+    "rule_3": "CONDITIONAL primitives receive weighting (0.5–1.0 depending on situational reliability)",
+    "rule_4": "MECHANICAL_ONLY primitives are skipped entirely",
+    "rule_5": "VEHICLE_ONLY primitives are skipped (not character-based)",
+    "rule_6": "UNKNOWN_UNMAPPABLE primitives are skipped; require future architectural decision",
+    "rule_7": "No feat-metadata bias fields; no tags used; only primitives processed",
+    "rule_8": "Recursive grants (feat → feat, talent → feat) must be deduplicated"
+  }
+}

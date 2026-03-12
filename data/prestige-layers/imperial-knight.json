@@ -1,0 +1,257 @@
+{
+  "name": "Imperial Knight Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "forceBond": 3,
+      "imperialDuty": 2,
+      "dualistMastery": 2,
+      "enforceAuthority": 1
+    },
+    "roleBias": {
+      "defender": 2,
+      "striker": 1
+    },
+    "attributeBias": {
+      "wis": 2,
+      "dex": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Jedi Guardian Defender",
+      "specialists": [
+        {
+          "name": "Imperial Defender",
+          "mechanicalBias": {
+            "forceBond": 2,
+            "reactionDefense": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Protects empire through Force."
+        },
+        {
+          "name": "Loyalty Enforcer",
+          "mechanicalBias": {
+            "imperialDuty": 2,
+            "moraleBonus": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Enforces loyalty through authority."
+        },
+        {
+          "name": "Sentinel Guardian",
+          "mechanicalBias": {
+            "forceBond": 2,
+            "damageReduction": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Guards through Force attunement."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Jedi Duelist",
+      "specialists": [
+        {
+          "name": "Imperial Duelist",
+          "mechanicalBias": {
+            "dualistMastery": 2,
+            "imperialDuty": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Duels for imperial honor."
+        },
+        {
+          "name": "Emperor's Blade",
+          "mechanicalBias": {
+            "dualistMastery": 2,
+            "enforceAuthority": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Executes imperial will."
+        },
+        {
+          "name": "Precision Loyalist",
+          "mechanicalBias": {
+            "dualistMastery": 2,
+            "forceBond": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Channels Force for precision."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Armor Specialist",
+      "specialists": [
+        {
+          "name": "Imperial Armor Master",
+          "mechanicalBias": {
+            "armorMastery": 2,
+            "imperialDuty": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Wears imperial armor with pride."
+        },
+        {
+          "name": "Force-Armored Knight",
+          "mechanicalBias": {
+            "forceBond": 2,
+            "damageReduction": 1
+          },
+          "roleBias": {
+            "defender": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Enhances armor through Force."
+        },
+        {
+          "name": "Knight Presence",
+          "mechanicalBias": {
+            "imperialDuty": 2,
+            "intimidation": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Intimidates through imperial status."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Unit Commander",
+      "specialists": [
+        {
+          "name": "Imperial Commander",
+          "mechanicalBias": {
+            "imperialDuty": 2,
+            "commandAuthority": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Leads imperial forces."
+        },
+        {
+          "name": "Force Bond Coordinator",
+          "mechanicalBias": {
+            "forceBond": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "wis": 1
+          },
+          "notes": "Bonds allies through Force."
+        },
+        {
+          "name": "Imperial Authority",
+          "mechanicalBias": {
+            "enforceAuthority": 2,
+            "moraleBonus": 1
+          },
+          "roleBias": {
+            "leader": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Projects imperial authority."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Imperial Executioner",
+          "mechanicalBias": {
+            "imperialDuty": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Executes imperial enemies."
+        },
+        {
+          "name": "Force Enforcer",
+          "mechanicalBias": {
+            "forceBond": 2,
+            "enforceAuthority": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Enforces through Force."
+        },
+        {
+          "name": "Imperial Master",
+          "mechanicalBias": {
+            "dualistMastery": 2,
+            "imperialDuty": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Masters imperial combat."
+        }
+      ]
+    }
+  ]
+}

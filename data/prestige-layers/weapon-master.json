@@ -1,0 +1,257 @@
+{
+  "name": "Weapon Master Prestige",
+  "status": "active",
+  "amplifier": {
+    "mechanicalBias": {
+      "weaponVersatility": 3,
+      "combatAdaptability": 2,
+      "weaponMastery": 2,
+      "fightingSynergyze": 1
+    },
+    "roleBias": {
+      "striker": 2,
+      "flex": 1
+    },
+    "attributeBias": {
+      "str": 2,
+      "dex": 1
+    }
+  },
+  "archetypeDeepenings": [
+    {
+      "baseArchetype": "Weapon Specialist",
+      "specialists": [
+        {
+          "name": "Weapon Virtuoso",
+          "mechanicalBias": {
+            "weaponMastery": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Masters individual weapons to perfection."
+        },
+        {
+          "name": "Adaptive Fighter",
+          "mechanicalBias": {
+            "weaponVersatility": 2,
+            "combatAdaptability": 1
+          },
+          "roleBias": {
+            "flex": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Switches weapons seamlessly mid-combat."
+        },
+        {
+          "name": "Balanced Arsenal Master",
+          "mechanicalBias": {
+            "weaponVersatility": 2,
+            "skillUtility": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Maintains mastery across multiple weapons."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Melee Master",
+      "specialists": [
+        {
+          "name": "Bladed Virtuoso",
+          "mechanicalBias": {
+            "weaponMastery": 2,
+            "critDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Masters all bladed weapons."
+        },
+        {
+          "name": "Heavy Weapon Master",
+          "mechanicalBias": {
+            "weaponMastery": 2,
+            "burstDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Specializes in heavy melee weapons."
+        },
+        {
+          "name": "Melee Coordinator",
+          "mechanicalBias": {
+            "weaponVersatility": 2,
+            "allySupport": 1
+          },
+          "roleBias": {
+            "support": 1
+          },
+          "attributeBias": {
+            "cha": 1
+          },
+          "notes": "Leads melee combatants."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Ranged Expert",
+      "specialists": [
+        {
+          "name": "Ranged Virtuoso",
+          "mechanicalBias": {
+            "weaponMastery": 2,
+            "accuracy": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Masters all ranged weapons."
+        },
+        {
+          "name": "Precision Marksman",
+          "mechanicalBias": {
+            "combatAdaptability": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Adjusts aim for any target type."
+        },
+        {
+          "name": "Suppressive Fire Coordinator",
+          "mechanicalBias": {
+            "weaponVersatility": 2,
+            "areaControl": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Controls space with ranged weapons."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Combat Versatile",
+      "specialists": [
+        {
+          "name": "Armory Mastery",
+          "mechanicalBias": {
+            "weaponVersatility": 2,
+            "knowledgeMastery": 1
+          },
+          "roleBias": {
+            "utility": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Knows every weapon's strengths."
+        },
+        {
+          "name": "Style Swapper",
+          "mechanicalBias": {
+            "combatAdaptability": 2,
+            "combatFlow": 1
+          },
+          "roleBias": {
+            "skirmisher": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Transitions seamlessly between styles."
+        },
+        {
+          "name": "Tactical Arsenal",
+          "mechanicalBias": {
+            "weaponVersatility": 2,
+            "tacticalAwareness": 1
+          },
+          "roleBias": {
+            "controller": 1
+          },
+          "attributeBias": {
+            "int": 1
+          },
+          "notes": "Chooses weapons tactically per situation."
+        }
+      ]
+    },
+    {
+      "baseArchetype": "Opportunistic Precision Striker",
+      "specialists": [
+        {
+          "name": "Lethal Opportunist",
+          "mechanicalBias": {
+            "weaponMastery": 2,
+            "predatoryInstinct": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Exploits weaknesses with right weapon."
+        },
+        {
+          "name": "Finishing Specialist",
+          "mechanicalBias": {
+            "combatAdaptability": 2,
+            "singleTargetDamage": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "dex": 1
+          },
+          "notes": "Ends fights decisively with any weapon."
+        },
+        {
+          "name": "Combat Master",
+          "mechanicalBias": {
+            "weaponVersatility": 2,
+            "critRange": 1
+          },
+          "roleBias": {
+            "striker": 1
+          },
+          "attributeBias": {
+            "str": 1
+          },
+          "notes": "Master of combat in all its forms."
+        }
+      ]
+    }
+  ]
+}
