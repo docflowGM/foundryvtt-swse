@@ -1,0 +1,139 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Prestige Layer Schema",
+  "description": "Formal schema for SWSE Prestige Layers. Enforces structure and bias key discipline.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "status", "amplifier", "archetypeDeepenings"],
+
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Display name of the prestige layer (e.g., 'Jedi Master Prestige')"
+    },
+
+    "status": {
+      "type": "string",
+      "enum": ["active", "experimental", "disabled"],
+      "description": "Prestige layer lifecycle status"
+    },
+
+    "amplifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mechanicalBias", "roleBias", "attributeBias"],
+      "description": "Amplifier block that applies to all deepenings",
+
+      "properties": {
+        "mechanicalBias": {
+          "type": "object",
+          "description": "Mechanical style amplifiers",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 5
+          }
+        },
+
+        "roleBias": {
+          "type": "object",
+          "description": "Role-based amplifiers",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 5
+          }
+        },
+
+        "attributeBias": {
+          "type": "object",
+          "description": "Attribute score amplifiers",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 5
+          }
+        }
+      }
+    },
+
+    "archetypeDeepenings": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "description": "Exactly 5 archetype deepenings (one per base archetype class)",
+
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["baseArchetype", "specialists"],
+
+        "properties": {
+          "baseArchetype": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Name of the base archetype this deepening enhances"
+          },
+
+          "specialists": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "description": "Exactly 3 specialist paths for this deepening",
+
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["name", "mechanicalBias", "roleBias", "attributeBias", "notes"],
+
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Display name of specialist (e.g., 'Overwhelming Tyrant')"
+                },
+
+                "mechanicalBias": {
+                  "type": "object",
+                  "description": "Specialist mechanical amplifiers",
+                  "additionalProperties": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 5
+                  }
+                },
+
+                "roleBias": {
+                  "type": "object",
+                  "description": "Specialist role amplifiers",
+                  "additionalProperties": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 5
+                  }
+                },
+
+                "attributeBias": {
+                  "type": "object",
+                  "description": "Specialist attribute amplifiers",
+                  "additionalProperties": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 5
+                  }
+                },
+
+                "notes": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Flavor text describing what this specialist does"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
