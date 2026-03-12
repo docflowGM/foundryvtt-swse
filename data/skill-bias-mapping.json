@@ -1,0 +1,162 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "purpose": "Interpretation layer mapping trained skills to canonical bias keys",
+    "maintenance": "Architecture Team",
+    "note": "Skills are early-game identity signals. Weights are small (0.15-0.3) and registry-driven, not embedded in skill definitions.",
+    "integration": "IdentityEngine.#computeSkillBias() applies training (×1.0) and Skill Focus (×2.0)"
+  },
+
+  "skillHierarchy": {
+    "description": "Relative strength of identity signals",
+    "attribute": "0.1–0.4",
+    "skillTraining": "0.2–0.3",
+    "skillFocus": "0.4–0.6",
+    "featPrimitive": "0.3–0.5",
+    "prestigeLayer": "0.6–1.0",
+    "note": "Skills refine identity, do not define it. Skills cannot override archetype."
+  },
+
+  "acrobatics": {
+    "mechanicalBias": { "mobility": 0.2, "evasion": 0.1 },
+    "roleBias": { "skirmisher": 0.15 },
+    "notes": "Mobility and evasion through agility"
+  },
+
+  "athletics": {
+    "mechanicalBias": { "strikeForce": 0.15 },
+    "roleBias": { "striker": 0.1 },
+    "notes": "Physical power and offensive movement"
+  },
+
+  "deception": {
+    "mechanicalBias": { "socialManipulation": 0.2 },
+    "roleBias": { "controller": 0.15 },
+    "notes": "Verbal manipulation and misdirection"
+  },
+
+  "endurance": {
+    "mechanicalBias": { "combatStamina": 0.2 },
+    "roleBias": { "defender": 0.1 },
+    "notes": "Physical resilience and recovery"
+  },
+
+  "gatherInfo": {
+    "mechanicalBias": { "informationControl": 0.2 },
+    "roleBias": { "controller": 0.15 },
+    "notes": "Intelligence gathering and network use"
+  },
+
+  "initiative": {
+    "mechanicalBias": { "initiative": 0.2, "mobility": 0.1 },
+    "roleBias": { "skirmisher": 0.1 },
+    "notes": "Combat readiness and tactical positioning"
+  },
+
+  "knowledgeGalacticLore": {
+    "mechanicalBias": { "knowledgeMastery": 0.2 },
+    "roleBias": { "strategist": 0.15 },
+    "notes": "Knowledge of worlds, history, and factions"
+  },
+
+  "knowledgeLifeSciences": {
+    "mechanicalBias": { "knowledgeMastery": 0.2 },
+    "roleBias": { "utility": 0.1 },
+    "notes": "Understanding biology, medicine, and creatures"
+  },
+
+  "knowledgePhysicalSciences": {
+    "mechanicalBias": { "knowledgeMastery": 0.2 },
+    "roleBias": { "utility": 0.1 },
+    "notes": "Understanding physics, technology, and engineering"
+  },
+
+  "knowledgeSocialSciences": {
+    "mechanicalBias": { "knowledgeMastery": 0.2 },
+    "roleBias": { "strategist": 0.15 },
+    "notes": "Understanding societies, cultures, and politics"
+  },
+
+  "knowledgeTechnology": {
+    "mechanicalBias": { "techControl": 0.25 },
+    "roleBias": { "utility": 0.15 },
+    "notes": "Technical expertise and cybernetics"
+  },
+
+  "mechanics": {
+    "mechanicalBias": { "techControl": 0.25 },
+    "roleBias": { "utility": 0.2 },
+    "notes": "Mechanical repair and engineering"
+  },
+
+  "perception": {
+    "mechanicalBias": { "tacticalAwareness": 0.15 },
+    "roleBias": {},
+    "notes": "Awareness without role specialization - cross-role skill"
+  },
+
+  "persuasion": {
+    "mechanicalBias": { "persuasionMastery": 0.25 },
+    "roleBias": { "support": 0.2 },
+    "notes": "Honest influence and leadership"
+  },
+
+  "pilot": {
+    "mechanicalBias": { "pilotMastery": 0.25, "mobility": 0.1 },
+    "roleBias": { "skirmisher": 0.15, "controller": 0.1 },
+    "notes": "Vehicle and starship piloting"
+  },
+
+  "ride": {
+    "mechanicalBias": { "mobility": 0.15 },
+    "roleBias": { "skirmisher": 0.1 },
+    "notes": "Animal riding and mounted combat"
+  },
+
+  "stealthMastery": {
+    "mechanicalBias": { "stealthMastery": 0.25, "evasion": 0.15 },
+    "roleBias": { "scout": 0.2 },
+    "notes": "Stealth and infiltration"
+  },
+
+  "survival": {
+    "mechanicalBias": { "survivalism": 0.2, "tacticalAwareness": 0.1 },
+    "roleBias": { "skirmisher": 0.1, "utility": 0.1 },
+    "notes": "Wilderness survival and tracking"
+  },
+
+  "treatInjury": {
+    "mechanicalBias": { "healingMastery": 0.3 },
+    "roleBias": { "support": 0.25 },
+    "notes": "Medical expertise and recovery"
+  },
+
+  "useTheForce": {
+    "mechanicalBias": { "forceConnection": 0.3, "forceDC": 0.15 },
+    "roleBias": { "controller": 0.2 },
+    "notes": "Force sensitivity and connection"
+  },
+
+  "default": {
+    "mechanicalBias": { "skillUtility": 0.15 },
+    "roleBias": {},
+    "notes": "Default for skills without explicit mapping"
+  },
+
+  "skillFocusScaling": {
+    "description": "Skill Focus (feat) grants +3 to a skill and doubles the bias contribution",
+    "trainingWeight": 1.0,
+    "focusWeight": 2.0,
+    "example": "Skill Focus (Stealth) applies stealthMastery × 2.0 instead of × 1.0"
+  },
+
+  "applicationRules": {
+    "rule_1": "Skill bias applies when actor.system.skills[skillKey].trained === true",
+    "rule_2": "Skill Focus feats are detected by name pattern 'Skill Focus (SkillName)'",
+    "rule_3": "Skill Focus applies 2.0× multiplier to skill mapping bias",
+    "rule_4": "All skill biases are additive; multiple trained skills accumulate",
+    "rule_5": "Skill bias weights are 0.1–0.3 range (smaller than feat primitives)",
+    "rule_6": "Skills refine archetype identity, never override it",
+    "rule_7": "Use skill mapping from registry; never infer from skill name"
+  }
+}

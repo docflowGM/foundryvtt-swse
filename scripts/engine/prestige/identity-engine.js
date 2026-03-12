@@ -27,6 +27,7 @@ export class IdentityEngine {
     static #primitiveClassification = null;
     static #attributeMapping = null;
     static #classChassisMapping = null;
+    static #skillBiasMapping = null;
 
     /**
      * Initialize registry caches
@@ -41,6 +42,7 @@ export class IdentityEngine {
             this.#primitiveClassification = await this.#loadRegistry('primitive-classification.json');
             this.#attributeMapping = await this.#loadRegistry('attribute-bias-mapping.json');
             this.#classChassisMapping = await this.#loadRegistry('class-chassis-bias.json');
+            this.#skillBiasMapping = await this.#loadRegistry('skill-bias-mapping.json');
             SWSELogger.info('[IdentityEngine] Registry caches initialized');
         } catch (error) {
             SWSELogger.error('[IdentityEngine] Failed to initialize registries:', error);
@@ -715,37 +717,12 @@ export class IdentityEngine {
             attributeBias: {}
         };
 
-        if (!this.#primitiveMapping) {
+        if (!this.#skillBiasMapping) {
             return skillBias;
         }
 
-        // Extract trained skills from actor
-        const trainedSkills = new Set();
-        const skills = actor.system?.skills || {};
-        for (const [skillKey, skillData] of Object.entries(skills)) {
-            if (skillData?.trained) {
-                trainedSkills.add(skillKey.toLowerCase());
-            }
-        }
-
-        // Add bias for trained skills
-        for (const trainedSkill of trainedSkills) {
-            // Get mapping for this trained skill
-            const skillModifierMapping = this.#primitiveMapping.skillTrained;
-            if (!skillModifierMapping) continue;
-
-            // Use default mapping for trained skills
-            const mapping = skillModifierMapping.mapping?.default;
-            if (mapping && mapping.mechanicalBias) {
-                this.#mergeBias(skillBias.mechanicalBias, mapping.mechanicalBias);
-            }
-            if (mapping && mapping.roleBias) {
-                this.#mergeBias(skillBias.roleBias, mapping.roleBias);
-            }
-        }
-
-        // Extract Skill Focus feats from actor items
-        // Skill Focus feats grant +3 to a specific skill
+        // Detect Skill Focus feats to apply 2.0× multiplier
+        const skillFocusByName = new Set();
         if (actor.items && actor.items.length > 0) {
             for (const item of actor.items) {
                 if (item.type !== 'feat') continue;
@@ -754,21 +731,46 @@ export class IdentityEngine {
                 // Extract skill name from feat (e.g., "Skill Focus (Persuasion)" → "persuasion")
                 const skillMatch = item.name.match(/\(([^)]+)\)/);
                 if (skillMatch && skillMatch[1]) {
-                    const focusSkill = skillMatch[1].toLowerCase();
+                    skillFocusByName.add(skillMatch[1].toLowerCase());
+                }
+            }
+        }
 
-                    // Use skillModifier mapping for focused skills
-                    const skillModifierMapping = this.#primitiveMapping.skillModifier;
-                    if (!skillModifierMapping || !skillModifierMapping.mapping) continue;
+        // Apply skill training bias from skill-bias-mapping registry
+        const skills = actor.system?.skills || {};
+        for (const [skillKey, skillData] of Object.entries(skills)) {
+            if (!skillData?.trained) {
+                continue;
+            }
 
-                    // Look for specific skill mapping
-                    const skillMapping = skillModifierMapping.mapping[focusSkill];
-                    if (skillMapping && skillMapping.mechanicalBias) {
-                        // Apply Skill Focus bonus (scaled up from +3)
-                        const focusScaled = this.#scaleBias(skillMapping.mechanicalBias, 0.3);
-                        this.#mergeBias(skillBias.mechanicalBias, focusScaled);
+            // Convert skill key to registry key (e.g., "useTheForce" or normalize for lookup)
+            const skillRegistryKey = this.#normalizeSkillKey(skillKey);
+
+            // Look up skill in bias mapping registry
+            const skillMapping = this.#skillBiasMapping[skillRegistryKey] || this.#skillBiasMapping.default;
+            if (!skillMapping) {
+                continue;
+            }
+
+            // Determine weight: 1.0 for training, 2.0 for Skill Focus
+            let weight = 1.0;
+            if (skillFocusByName.has(skillRegistryKey)) {
+                weight = 2.0;
+            }
+
+            // Apply weighted skill bias
+            if (skillMapping.mechanicalBias) {
+                for (const [key, value] of Object.entries(skillMapping.mechanicalBias)) {
+                    if (typeof value === 'number') {
+                        skillBias.mechanicalBias[key] = (skillBias.mechanicalBias[key] || 0) + (value * weight);
                     }
-                    if (skillMapping && skillMapping.roleBias) {
-                        this.#mergeBias(skillBias.roleBias, skillMapping.roleBias);
+                }
+            }
+
+            if (skillMapping.roleBias) {
+                for (const [key, value] of Object.entries(skillMapping.roleBias)) {
+                    if (typeof value === 'number') {
+                        skillBias.roleBias[key] = (skillBias.roleBias[key] || 0) + (value * weight);
                     }
                 }
             }
@@ -1364,5 +1366,49 @@ export class IdentityEngine {
             }
         }
         return scaled;
+    }
+
+    static #normalizeSkillKey(skillKey) {
+        // Normalize various skill key formats to canonical registry keys
+        // Examples: "perception" → "perception", "useTheForce" → "useTheForce"
+        // This handles camelCase and lowercase variations
+
+        if (!skillKey) return '';
+
+        const lower = skillKey.toLowerCase();
+
+        // Direct matches (already canonical)
+        if (lower === 'acrobatics' || lower === 'athletics' || lower === 'deception' ||
+            lower === 'endurance' || lower === 'gatherinfo' || lower === 'initiative' ||
+            lower === 'knowledgegalacticlore' || lower === 'knowledgelifesciences' ||
+            lower === 'knowledgephysicalsciences' || lower === 'knowledgesocialsciences' ||
+            lower === 'knowledgetechnology' || lower === 'mechanics' || lower === 'perception' ||
+            lower === 'persuasion' || lower === 'pilot' || lower === 'ride' ||
+            lower === 'stealthmastery' || lower === 'survival' || lower === 'treatinjury' ||
+            lower === 'usetheforce') {
+            return lower;
+        }
+
+        // Convert hyphenated to camelCase
+        const normalized = skillKey
+            .replace(/[\s-]+/g, '') // Remove spaces and hyphens
+            .toLowerCase(); // Ensure lowercase
+
+        // Map common variations to canonical keys
+        const variations = {
+            'gatherinfo': 'gatherInfo',
+            'knowledgegalactic': 'knowledgeGalacticLore',
+            'knowledgelife': 'knowledgeLifeSciences',
+            'knowledgephysical': 'knowledgePhysicalSciences',
+            'knowledgesocial': 'knowledgeSocialSciences',
+            'knowledgetech': 'knowledgeTechnology',
+            'stealth': 'stealthMastery',
+            'treatinjury': 'treatInjury',
+            'useof': 'useTheForce',
+            'useforce': 'useTheForce'
+        };
+
+        // Return mapped variation or lowercase normalized form
+        return variations[normalized] || normalized;
     }
 }
