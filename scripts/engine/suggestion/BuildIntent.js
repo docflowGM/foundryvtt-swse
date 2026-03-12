@@ -174,9 +174,7 @@ export class BuildIntent {
             // Priority prerequisites to suggest
             priorityPrereqs: [],
             // Template information if applied
-            appliedTemplate: null,
-            // Phase 2: Actor identity (transient, not persisted)
-            identity: null
+            appliedTemplate: null
         };
 
         // Check for applied template to inform build intent
@@ -206,9 +204,10 @@ export class BuildIntent {
         SWSELogger.log(`[BUILD-INTENT] analyze() - Calculating prestige affinities`);
         await this._calculatePrestigeAffinities(state, intent);
 
-        // Phase 2: Compute actor identity (bias aggregation)
-        SWSELogger.log(`[BUILD-INTENT] analyze() - Computing actor identity`);
-        intent.identity = await this._computeActorIdentity(actor, appliedTemplate, intent);
+        // PHASE 2 SHIFT: Identity computation moved to IdentityEngine
+        // BuildIntent no longer computes or owns identity.
+        // SuggestionEngine and callers now compute identityBias directly via IdentityEngine.computeTotalBias()
+        SWSELogger.log(`[BUILD-INTENT] analyze() - Identity authority shifted to IdentityEngine.computeTotalBias()`);
 
         // Apply template archetype bias if available
         if (appliedTemplate && appliedTemplate.archetype) {
@@ -558,59 +557,28 @@ export class BuildIntent {
     }
 
     /**
-     * Phase 2: Compute actor identity via IdentityEngine
-     * Aggregates baseArchetype + prestigeAmplifier + specialist biases
-     * Returns transient identity object (not persisted to actor.system)
+     * [DEPRECATED] Compute actor identity via IdentityEngine
+     *
+     * DEPRECATED IN PHASE 2: This method has been removed from the analysis pipeline.
+     * Identity authority is now with IdentityEngine.computeTotalBias().
+     *
+     * SuggestionEngine and all callers must now:
+     * 1. Call IdentityEngine.computeTotalBias(actor) directly
+     * 2. Pass identityBias as a parameter to suggestion engines
+     *
+     * This method is preserved as a stub for backwards compatibility only.
+     * It should not be called from new code.
+     *
+     * @deprecated Use IdentityEngine.computeTotalBias(actor) instead
      * @private
      */
     static async _computeActorIdentity(actor, appliedTemplate, intent) {
-        try {
-            // Determine base archetype
-            let baseArchetypeId = null;
-            if (appliedTemplate && appliedTemplate.archetype) {
-                baseArchetypeId = appliedTemplate.archetype;
-            }
-
-            if (!baseArchetypeId) {
-                SWSELogger.log('[BUILD-INTENT] No base archetype found for identity computation');
-                return null;
-            }
-
-            // Get highest prestige affinity as candidate prestige class
-            let prestigeClassId = null;
-            if (intent.prestigeAffinities && intent.prestigeAffinities.length > 0) {
-                const topAffinity = intent.prestigeAffinities[0];
-                // Only use prestige if confidence is meaningful (> 0.2)
-                if (topAffinity.confidence > 0.2) {
-                    prestigeClassId = topAffinity.className;
-                }
-            }
-
-            // Compute identity using IdentityEngine
-            const identity = await IdentityEngine.getActorIdentity(
-                actor,
-                baseArchetypeId,
-                prestigeClassId,
-                null // specialistIndex: use default specialist selection
-            );
-
-            if (identity && identity.totalBias) {
-                // Project bias to tags for debug output
-                const projected = BiasTagProjection.project(identity.totalBias);
-                BiasTagProjection.debugPrint(identity.totalBias, projected);
-                SWSELogger.log('[BUILD-INTENT] Actor identity computed:', {
-                    baseArchetype: identity.baseArchetype?.name,
-                    prestige: identity.amplifier?.name || 'none',
-                    specialist: identity.specialist?.name || 'none',
-                    projectedTags: projected
-                });
-            }
-
-            return identity;
-        } catch (err) {
-            SWSELogger.warn('[BUILD-INTENT] Failed to compute actor identity:', err);
-            return null;
-        }
+        SWSELogger.warn(
+            '[BUILD-INTENT] _computeActorIdentity() DEPRECATED - ' +
+            'This method has been removed from the analysis pipeline. ' +
+            'Use IdentityEngine.computeTotalBias(actor) directly instead.'
+        );
+        return null;
     }
 
     /**
