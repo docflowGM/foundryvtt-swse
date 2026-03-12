@@ -26,6 +26,7 @@ export class IdentityEngine {
     static #primitiveMapping = null;
     static #primitiveClassification = null;
     static #attributeMapping = null;
+    static #classChassisMapping = null;
 
     /**
      * Initialize registry caches
@@ -39,6 +40,7 @@ export class IdentityEngine {
             this.#primitiveMapping = await this.#loadRegistry('primitive-bias-mapping.json');
             this.#primitiveClassification = await this.#loadRegistry('primitive-classification.json');
             this.#attributeMapping = await this.#loadRegistry('attribute-bias-mapping.json');
+            this.#classChassisMapping = await this.#loadRegistry('class-chassis-bias.json');
             SWSELogger.info('[IdentityEngine] Registry caches initialized');
         } catch (error) {
             SWSELogger.error('[IdentityEngine] Failed to initialize registries:', error);
@@ -77,11 +79,11 @@ export class IdentityEngine {
         const surveyBias = this.computeSurveyBias(actor);
         this.#addBias(totalBias, surveyBias);
 
-        // Layer 2: PatternWeightedClassBias
-        const classPatternBias = this.computeClassBias(actor);
-        this.#addBias(totalBias, classPatternBias);
+        // Layer 2: ClassChassisBias (Saga mechanics: BAB, HD, defense tier, skill breadth)
+        const classChassisBias = this.computeClassChassisBias(actor);
+        this.#addBias(totalBias, classChassisBias);
 
-        // Layer 3: ObservedBehaviorBias
+        // Layer 3: ObservedBehaviorBias (primitives + attributes + skills)
         const behaviorBias = this.computeObservedBehaviorBias(actor);
         this.#addBias(totalBias, behaviorBias);
 
@@ -93,7 +95,11 @@ export class IdentityEngine {
         const specialistBias = this.#getSpecialistBias(actor);
         this.#addBias(totalBias, specialistBias);
 
-        // Layers 6-7: WeightedPrestigeBias (with stacking diminishment)
+        // Layer 6: PrestigeClassChassisBias (prestige class mechanics: BAB, HD, defense with 0.5 scaling)
+        const prestigeClassChassisBias = this.computePrestigeClassChassisBias(actor);
+        this.#addBias(totalBias, prestigeClassChassisBias);
+
+        // Layer 7: WeightedPrestigeBias (prestige amplifier + specialist with stacking diminishment)
         const prestigeBias = this.computePrestigeBias(actor);
         this.#addBias(totalBias, prestigeBias);
 
@@ -238,6 +244,278 @@ export class IdentityEngine {
         }
 
         return classBias;
+    }
+
+    /**
+     * Compute Class Chassis Bias from Saga mechanics
+     * Pure function - static structural identity seed
+     * Does NOT scale per level
+     *
+     * Layers:
+     * 1. BAB bias (with pattern weight applied)
+     * 2. Hit Die bias (with pattern weight applied)
+     * 3. Defense tier bias (NO pattern weight - best tier only)
+     * 4. Skill breadth bias (NO pattern weight - union of skills)
+     *
+     * @param {Object} actor - Foundry actor
+     * @returns {Object} ClassChassisBias
+     */
+    static computeClassChassisBias(actor) {
+        const chassisBias = {
+            mechanicalBias: {},
+            roleBias: {},
+            attributeBias: {}
+        };
+
+        if (!this.#classChassisMapping) {
+            return chassisBias;
+        }
+
+        const classes = actor.system?.classes || {};
+        const baseClasses = Object.entries(classes)
+            .filter(([name]) => !this.#isPrestigeClass(name))
+            .map(([name, data]) => ({ name: name.toLowerCase(), level: data.level || 0 }));
+
+        if (baseClasses.length === 0) {
+            return chassisBias;
+        }
+
+        // Calculate totalLevel for pattern weight computation
+        let totalLevel = 0;
+        for (const cls of baseClasses) {
+            totalLevel += cls.level;
+        }
+        totalLevel = Math.max(1, totalLevel);
+        const isEarlyGame = totalLevel <= 3;
+
+        // ===== Layer 1: BAB Bias (with pattern weight) =====
+        for (const cls of baseClasses) {
+            const classMetadata = this.#classChassisMapping[cls.name];
+            if (!classMetadata || !classMetadata.bab) continue;
+
+            const babMapping = this.#classChassisMapping.bab_bias_mapping?.[classMetadata.bab];
+            if (!babMapping) continue;
+
+            // Compute pattern weight for this class
+            const ratio = totalLevel > 0 ? cls.level / totalLevel : 0;
+            let patternWeight = 0;
+
+            if (isEarlyGame) {
+                patternWeight = ratio * 0.5;
+            } else {
+                if (cls.level <= 2 && ratio < 0.35) {
+                    patternWeight = 0.15; // DIP
+                } else if (cls.level >= 4 && ratio >= 0.45) {
+                    patternWeight = 0.75; // DIVE
+                } else if (this.#isSwimClass(classes, cls.name)) {
+                    patternWeight = 0.45; // SWIM
+                } else {
+                    patternWeight = ratio; // PRIMARY
+                }
+            }
+
+            // Apply weighted BAB bias
+            const scaledBAB = this.#scaleAllBias(babMapping, patternWeight);
+            this.#addBias(chassisBias, scaledBAB);
+        }
+
+        // ===== Layer 2: Hit Die Bias (with pattern weight) =====
+        for (const cls of baseClasses) {
+            const classMetadata = this.#classChassisMapping[cls.name];
+            if (!classMetadata || !classMetadata.hitDie) continue;
+
+            const hdMapping = this.#classChassisMapping.hd_bias_mapping?.[classMetadata.hitDie];
+            if (!hdMapping) continue;
+
+            // Compute pattern weight for this class (same as BAB)
+            const ratio = totalLevel > 0 ? cls.level / totalLevel : 0;
+            let patternWeight = 0;
+
+            if (isEarlyGame) {
+                patternWeight = ratio * 0.5;
+            } else {
+                if (cls.level <= 2 && ratio < 0.35) {
+                    patternWeight = 0.15;
+                } else if (cls.level >= 4 && ratio >= 0.45) {
+                    patternWeight = 0.75;
+                } else if (this.#isSwimClass(classes, cls.name)) {
+                    patternWeight = 0.45;
+                } else {
+                    patternWeight = ratio;
+                }
+            }
+
+            // Apply weighted HD bias
+            const scaledHD = this.#scaleAllBias(hdMapping, patternWeight);
+            this.#addBias(chassisBias, scaledHD);
+        }
+
+        // ===== Layer 3: Defense Tier Bias (NO pattern weight - best tier only) =====
+        const bestDefenseTiers = {};
+        for (const defenseType of ['reflex', 'fortitude', 'will']) {
+            let bestTier = 'low';
+            let bestTierRank = 0;
+
+            // Find best tier across all base classes
+            for (const cls of baseClasses) {
+                const classMetadata = this.#classChassisMapping[cls.name];
+                if (!classMetadata || !classMetadata.defenseProgressions) continue;
+
+                const tier = classMetadata.defenseProgressions[defenseType];
+                if (!tier) continue;
+
+                const tierRank = tier === 'high' ? 2 : tier === 'average' ? 1 : 0;
+                if (tierRank > bestTierRank) {
+                    bestTier = tier;
+                    bestTierRank = tierRank;
+                }
+            }
+
+            bestDefenseTiers[defenseType] = bestTier;
+
+            // Apply defense tier bias (no pattern weight)
+            const tierMapping = this.#classChassisMapping.defense_tier_mapping?.[bestTier];
+            if (!tierMapping) continue;
+
+            const defenseKeys = this.#classChassisMapping.defense_bias_keys?.[defenseType];
+            if (!defenseKeys) continue;
+
+            // Apply mechanical bias
+            if (defenseKeys.mechanicalBias) {
+                const key = defenseKeys.mechanicalBias;
+                chassisBias.mechanicalBias[key] = (chassisBias.mechanicalBias[key] || 0) + tierMapping.mechanicalBias;
+            }
+
+            // Apply role bias (scaled by tier)
+            if (defenseKeys.roleBias && tierMapping.roleBias_scale !== 0) {
+                const key = defenseKeys.roleBias;
+                const roleValue = tierMapping.roleBias_scale * 0.5; // 0.5 is role bias scaling factor
+                chassisBias.roleBias[key] = (chassisBias.roleBias[key] || 0) + roleValue;
+            }
+        }
+
+        // ===== Layer 4: Skill Breadth Bias (NO pattern weight - union of skills) =====
+        const allClassSkills = new Set();
+        let maxTrainedSkills = 0;
+
+        for (const cls of baseClasses) {
+            const classMetadata = this.#classChassisMapping[cls.name];
+            if (!classMetadata) continue;
+
+            // Track max trained skills for ratio calculation
+            if (classMetadata.trainedSkillsAtLevel1 > maxTrainedSkills) {
+                maxTrainedSkills = classMetadata.trainedSkillsAtLevel1;
+            }
+
+            // Add all class skills to union
+            if (classMetadata.classSkills && Array.isArray(classMetadata.classSkills)) {
+                classMetadata.classSkills.forEach(skill => allClassSkills.add(skill));
+            }
+        }
+
+        if (maxTrainedSkills > 0 && allClassSkills.size > 0) {
+            const skillBreadthRatio = allClassSkills.size / maxTrainedSkills;
+
+            // Apply skill breadth bias
+            const skillBreadthMapping = this.#classChassisMapping.skill_breadth_bias;
+            if (skillBreadthMapping) {
+                const mechanicalValue = skillBreadthRatio * skillBreadthMapping.mechanicalBias_scale;
+                const roleValue = skillBreadthRatio * skillBreadthMapping.roleBias_scale;
+
+                if (skillBreadthMapping.mechanicalBias) {
+                    chassisBias.mechanicalBias[skillBreadthMapping.mechanicalBias] =
+                        (chassisBias.mechanicalBias[skillBreadthMapping.mechanicalBias] || 0) + mechanicalValue;
+                }
+
+                if (skillBreadthMapping.roleBias) {
+                    chassisBias.roleBias[skillBreadthMapping.roleBias] =
+                        (chassisBias.roleBias[skillBreadthMapping.roleBias] || 0) + roleValue;
+                }
+            }
+        }
+
+        return chassisBias;
+    }
+
+    /**
+     * Compute Prestige Chassis Bias
+     * Separate from base class chassis (subtle, scaled 0.5, diminishing stack)
+     * Pure function
+     *
+     * @param {Object} actor - Foundry actor
+     * @returns {Object} PrestigeClassChassisBias
+     */
+    static computePrestigeClassChassisBias(actor) {
+        const prestigeChassisBias = {
+            mechanicalBias: {},
+            roleBias: {},
+            attributeBias: {}
+        };
+
+        if (!this.#classChassisMapping) {
+            return prestigeChassisBias;
+        }
+
+        const prestige = actor.system?.prestige || {};
+        const prestigeClasses = [];
+
+        for (const [prestigeName, prestigeData] of Object.entries(prestige)) {
+            if (prestigeData.level && prestigeData.level > 0) {
+                prestigeClasses.push({ name: prestigeName.toLowerCase(), level: prestigeData.level });
+            }
+        }
+
+        prestigeClasses.sort((a, b) => b.level - a.level);
+
+        // Apply prestige chassis bias with diminishing stack weight
+        for (let i = 0; i < prestigeClasses.length; i++) {
+            const prestige = prestigeClasses[i];
+            const stackingWeight = 1 / (1 + i * 0.5);
+            const prestigeMetadata = this.#classChassisMapping[prestige.name];
+
+            if (!prestigeMetadata) continue;
+
+            // BAB bias with 0.5 scaling and diminishing weight
+            if (prestigeMetadata.bab) {
+                const babMapping = this.#classChassisMapping.bab_bias_mapping?.[prestigeMetadata.bab];
+                if (babMapping) {
+                    const prestige_scaled = this.#scaleAllBias(babMapping, 0.5 * stackingWeight);
+                    this.#addBias(prestigeChassisBias, prestige_scaled);
+                }
+            }
+
+            // HD bias with 0.5 scaling and diminishing weight
+            if (prestigeMetadata.hitDie) {
+                const hdMapping = this.#classChassisMapping.hd_bias_mapping?.[prestigeMetadata.hitDie];
+                if (hdMapping) {
+                    const prestige_scaled = this.#scaleAllBias(hdMapping, 0.5 * stackingWeight);
+                    this.#addBias(prestigeChassisBias, prestige_scaled);
+                }
+            }
+
+            // Defense tier bias (best tier if higher than base classes)
+            // Only apply if prestige defines higher defense progression
+            for (const defenseType of ['reflex', 'fortitude', 'will']) {
+                const prestigeTier = prestigeMetadata.defenseProgressions?.[defenseType];
+                if (!prestigeTier) continue;
+
+                // Would need to compare with base class best tier here
+                // For now, apply subtly if prestige has defense boost
+                const tierMapping = this.#classChassisMapping.defense_tier_mapping?.[prestigeTier];
+                if (tierMapping && tierMapping.mechanicalBias > 0) {
+                    const defenseKeys = this.#classChassisMapping.defense_bias_keys?.[defenseType];
+                    if (defenseKeys && defenseKeys.mechanicalBias) {
+                        const prestige_scaled = tierMapping.mechanicalBias * 0.5 * stackingWeight;
+                        prestigeChassisBias.mechanicalBias[defenseKeys.mechanicalBias] =
+                            (prestigeChassisBias.mechanicalBias[defenseKeys.mechanicalBias] || 0) + prestige_scaled;
+                    }
+                }
+            }
+
+            // Note: NO skill breadth bias from prestige
+        }
+
+        return prestigeChassisBias;
     }
 
     /**
@@ -864,6 +1142,24 @@ export class IdentityEngine {
                 const weight = (1 / (1 + i * 0.5)).toFixed(3);
                 SWSELogger.info(`  ${p.name}: L${p.level} (weight: ${weight})`);
             });
+        }
+
+        // Class Chassis Bias (Saga mechanics: BAB, HD, defense tiers, skill breadth)
+        const classChassisBias = this.computeClassChassisBias(actor);
+        SWSELogger.info("--- Class Chassis Bias ---");
+        SWSELogger.info(`  BAB & HD contributions with pattern weight applied`);
+        SWSELogger.info(`  Defense tiers (best progression, no pattern weight)`);
+        SWSELogger.info(`  Skill breadth ratio (union of skills, no pattern weight)`);
+        SWSELogger.info(`  Mechanical: ${JSON.stringify(classChassisBias.mechanicalBias)}`);
+        SWSELogger.info(`  Role: ${JSON.stringify(classChassisBias.roleBias)}`);
+
+        // Prestige Class Chassis Bias
+        if (Object.keys(prestige).length > 0) {
+            const prestigeClassChassisBias = this.computePrestigeClassChassisBias(actor);
+            SWSELogger.info("--- Prestige Class Chassis Bias ---");
+            SWSELogger.info(`  BAB & HD scaled ×0.5 and diminishing stacked`);
+            SWSELogger.info(`  Mechanical: ${JSON.stringify(prestigeClassChassisBias.mechanicalBias)}`);
+            SWSELogger.info(`  Role: ${JSON.stringify(prestigeClassChassisBias.roleBias)}`);
         }
 
         // Observed Behavior Bias (from primitives + attributes + skills)
