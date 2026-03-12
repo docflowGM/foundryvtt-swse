@@ -853,3 +853,175 @@ export function processSurveyAnswers(surveyAnswers) {
 
   return biases;
 }
+
+/**
+ * Convert survey answers to IdentityEngine bias layer format
+ * Maps survey response dimensions to mechanicalBias, roleBias, and attributeBias
+ *
+ * @param {Object} surveyAnswers - The survey answers object from showSurvey()
+ * @returns {Object} Bias layer object { mechanicalBias, roleBias, attributeBias }
+ */
+export function convertSurveyAnswersToBias(surveyAnswers) {
+  swseLogger.log(`[MENTOR-SURVEY] convertSurveyAnswersToBias: Converting survey answers to bias layers`);
+
+  const biasLayers = {
+    mechanicalBias: {},
+    roleBias: {},
+    attributeBias: {}
+  };
+
+  if (!surveyAnswers || Object.keys(surveyAnswers).length === 0) {
+    swseLogger.log(`[MENTOR-SURVEY] convertSurveyAnswersToBias: No survey answers provided`);
+    return biasLayers;
+  }
+
+  // Mapping table: Survey response dimension → { mechanicalBias, roleBias, attributeBias }
+  const dimensionMapping = {
+    forceFocus: {
+      mechanicalBias: { force: 0.4 },
+      roleBias: { control: 0.32 },
+      attributeBias: { wisdom: 0.2 }
+    },
+    melee: {
+      mechanicalBias: { melee: 0.4 },
+      roleBias: { striker: 0.28 },
+      attributeBias: { strength: 0.2 }
+    },
+    ranged: {
+      mechanicalBias: { ranged: 0.4 },
+      roleBias: { striker: 0.28 },
+      attributeBias: { dexterity: 0.2 }
+    },
+    stealth: {
+      mechanicalBias: { stealth: 0.4 },
+      roleBias: { infiltrator: 0.28 },
+      attributeBias: { dexterity: 0.3 }
+    },
+    social: {
+      mechanicalBias: { social: 0.3 },
+      roleBias: { influence: 0.25 },
+      attributeBias: { charisma: 0.2 }
+    },
+    tech: {
+      mechanicalBias: { tech: 0.4 },
+      roleBias: { engineer: 0.28 },
+      attributeBias: { intelligence: 0.2 }
+    },
+    support: {
+      mechanicalBias: { support: 0.3 },
+      roleBias: { healer: 0.25 },
+      attributeBias: { wisdom: 0.2 }
+    },
+    leadership: {
+      mechanicalBias: { leadership: 0.3 },
+      roleBias: { leader: 0.25 },
+      attributeBias: { charisma: 0.25 }
+    },
+    survivability: {
+      mechanicalBias: { survivability: 0.3 },
+      roleBias: { tank: 0.25 },
+      attributeBias: { constitution: 0.2 }
+    },
+    guardian: {
+      mechanicalBias: { guardian: 0.3 },
+      roleBias: { tank: 0.25 },
+      attributeBias: { constitution: 0.2 }
+    },
+    striker: {
+      mechanicalBias: { melee: 0.3 },
+      roleBias: { striker: 0.3 },
+      attributeBias: { strength: 0.2 }
+    },
+    control: {
+      mechanicalBias: { control: 0.3 },
+      roleBias: { control: 0.25 },
+      attributeBias: { intelligence: 0.2 }
+    },
+    damage: {
+      mechanicalBias: { melee: 0.2 },
+      roleBias: { striker: 0.25 },
+      attributeBias: { strength: 0.25 }
+    },
+    balance: {
+      mechanicalBias: { versatility: 0.2 },
+      roleBias: { versatile: 0.15 },
+      attributeBias: { dexterity: 0.1 }
+    },
+    awareness: {
+      mechanicalBias: { awareness: 0.2 },
+      roleBias: { scout: 0.2 },
+      attributeBias: { wisdom: 0.25 }
+    },
+    mobility: {
+      mechanicalBias: { mobility: 0.3 },
+      roleBias: { scout: 0.2 },
+      attributeBias: { dexterity: 0.25 }
+    },
+    survival: {
+      mechanicalBias: { survival: 0.3 },
+      roleBias: { scout: 0.25 },
+      attributeBias: { wisdom: 0.2 }
+    },
+    order: {
+      mechanicalBias: {},
+      roleBias: { leader: 0.15 },
+      attributeBias: { wisdom: 0.15 }
+    },
+    pragmatic: {
+      mechanicalBias: { utility: 0.2 },
+      roleBias: { versatile: 0.15 },
+      attributeBias: { intelligence: 0.15 }
+    },
+    riskTolerance: {
+      mechanicalBias: { damage: 0.2 },
+      roleBias: { striker: 0.15 },
+      attributeBias: { dexterity: 0.1 }
+    },
+    authority: {
+      mechanicalBias: { leadership: 0.2 },
+      roleBias: { leader: 0.2 },
+      attributeBias: { charisma: 0.2 }
+    }
+  };
+
+  // Process each survey answer
+  for (const answerId in surveyAnswers) {
+    const answer = surveyAnswers[answerId];
+    const answerBiases = answer.biases || {};
+
+    swseLogger.log(`[MENTOR-SURVEY] convertSurveyAnswersToBias: Processing answer "${answerId}":`, answerBiases);
+
+    // For each bias key in the answer, map it to the appropriate bias layer
+    for (const biasKey in answerBiases) {
+      if (biasKey === 'prestigeClass' || biasKey === 'archetype') {
+        // Skip prestige class and archetype tags (handled separately)
+        continue;
+      }
+
+      const biasValue = answerBiases[biasKey];
+      const mapping = dimensionMapping[biasKey];
+
+      if (mapping && biasValue > 0) {
+        // Add to mechanicalBias
+        for (const [key, val] of Object.entries(mapping.mechanicalBias)) {
+          biasLayers.mechanicalBias[key] = (biasLayers.mechanicalBias[key] || 0) + (val * biasValue);
+        }
+
+        // Add to roleBias
+        for (const [key, val] of Object.entries(mapping.roleBias)) {
+          biasLayers.roleBias[key] = (biasLayers.roleBias[key] || 0) + (val * biasValue);
+        }
+
+        // Add to attributeBias
+        for (const [key, val] of Object.entries(mapping.attributeBias)) {
+          biasLayers.attributeBias[key] = (biasLayers.attributeBias[key] || 0) + (val * biasValue);
+        }
+
+        swseLogger.log(`[MENTOR-SURVEY] convertSurveyAnswersToBias: Mapped "${biasKey}" (${biasValue}) to all layers`);
+      }
+    }
+  }
+
+  swseLogger.log(`[MENTOR-SURVEY] convertSurveyAnswersToBias: Final bias layers:`, biasLayers);
+  return biasLayers;
+}

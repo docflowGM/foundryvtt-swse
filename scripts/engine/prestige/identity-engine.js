@@ -28,6 +28,7 @@ export class IdentityEngine {
     static #attributeMapping = null;
     static #classChassisMapping = null;
     static #skillBiasMapping = null;
+    static #equipmentAffinityMapping = null;
 
     /**
      * Initialize registry caches
@@ -43,6 +44,8 @@ export class IdentityEngine {
             this.#attributeMapping = await this.#loadRegistry('attribute-bias-mapping.json');
             this.#classChassisMapping = await this.#loadRegistry('class-chassis-bias.json');
             this.#skillBiasMapping = await this.#loadRegistry('skill-bias-mapping.json');
+            this.#equipmentAffinityMapping = await this.#loadRegistry('equipment-affinity-mapping.json');
+            Object.freeze(this.#equipmentAffinityMapping);
             SWSELogger.info('[IdentityEngine] Registry caches initialized');
         } catch (error) {
             SWSELogger.error('[IdentityEngine] Failed to initialize registries:', error);
@@ -89,23 +92,27 @@ export class IdentityEngine {
         const behaviorBias = this.computeObservedBehaviorBias(actor);
         this.#addBias(totalBias, behaviorBias);
 
-        // Layer 4: ArchetypeBias (base archetype)
+        // Layer 4: EquipmentAffinityBias (equipment structural categories - optional refinement)
+        const equipmentAffinityBias = this.computeEquipmentAffinityBias(actor);
+        this.#addBias(totalBias, equipmentAffinityBias);
+
+        // Layer 5: ArchetypeBias (base archetype)
         const archetypeBias = this.#getArchetypeBias(actor);
         this.#addBias(totalBias, archetypeBias);
 
-        // Layer 5: SpecialistBias
+        // Layer 6: SpecialistBias
         const specialistBias = this.#getSpecialistBias(actor);
         this.#addBias(totalBias, specialistBias);
 
-        // Layer 6: PrestigeClassChassisBias (prestige class mechanics: BAB, HD, defense with 0.5 scaling)
+        // Layer 7: PrestigeClassChassisBias (prestige class mechanics: BAB, HD, defense with 0.5 scaling)
         const prestigeClassChassisBias = this.computePrestigeClassChassisBias(actor);
         this.#addBias(totalBias, prestigeClassChassisBias);
 
-        // Layer 7: WeightedPrestigeBias (prestige amplifier + specialist with stacking diminishment)
+        // Layer 8: WeightedPrestigeBias (prestige amplifier + specialist with stacking diminishment)
         const prestigeBias = this.computePrestigeBias(actor);
         this.#addBias(totalBias, prestigeBias);
 
-        // Layer 8: ReinforcementBias
+        // Layer 9: ReinforcementBias
         const reinforcementBias = this.computeReinforcement(actor);
         this.#addBias(totalBias, reinforcementBias);
 
@@ -591,7 +598,8 @@ export class IdentityEngine {
         };
 
         // Get survey bias from actor (if stored)
-        const rawSurveyBias = actor.system?.surveyBias || {};
+        // Survey bias is stored in system.swse.surveyBias via injectSurveyBias()
+        const rawSurveyBias = actor.system?.swse?.surveyBias || {};
         if (!rawSurveyBias || Object.keys(rawSurveyBias).length === 0) {
             return surveyBias;
         }
@@ -777,6 +785,117 @@ export class IdentityEngine {
         }
 
         return skillBias;
+    }
+
+    /**
+     * Compute Equipment Affinity Bias from equipped items
+     * Maps weapon groups and armor categories to identity bias
+     * Enforces threshold rule: 2+ items in same category before applying
+     * Caps total contribution to prevent gear from dominating identity
+     * Pure function - does not mutate actor
+     *
+     * @param {Object} actor - Foundry actor
+     * @returns {Object} EquipmentAffinityBias { mechanicalBias, roleBias, attributeBias }
+     */
+    static computeEquipmentAffinityBias(actor) {
+        const equipmentBias = {
+            mechanicalBias: {},
+            roleBias: {},
+            attributeBias: {}
+        };
+
+        if (!this.#equipmentAffinityMapping) {
+            return equipmentBias;
+        }
+
+        const rules = this.#equipmentAffinityMapping.rules || {};
+        const minimumCategoryCount = rules.minimumCategoryCount || 2;
+        const maxTotalContribution = rules.maxTotalAffinityContribution || 0.5;
+
+        // Collect equipped items only
+        const weaponsByGroup = {};
+        const armorsByCategory = {};
+        let totalEquippedSlots = 0;
+
+        if (actor.items && actor.items.length > 0) {
+            for (const item of actor.items) {
+                if (!item.system?.equipped) {
+                    continue;
+                }
+
+                if (item.type === 'weapon') {
+                    const weaponGroup = item.system?.group;
+                    if (weaponGroup) {
+                        weaponsByGroup[weaponGroup] = (weaponsByGroup[weaponGroup] || 0) + 1;
+                        totalEquippedSlots++;
+                    }
+                } else if (item.type === 'armor') {
+                    const armorCategory = item.system?.category;
+                    if (armorCategory) {
+                        armorsByCategory[armorCategory] = (armorsByCategory[armorCategory] || 0) + 1;
+                        totalEquippedSlots++;
+                    }
+                } else if (item.type === 'equipment' || item.type === 'gear') {
+                    totalEquippedSlots++;
+                }
+            }
+        }
+
+        // Apply weapon group affinity with threshold
+        const weaponAffinities = this.#equipmentAffinityMapping.weapon_group_affinity || {};
+        for (const [weaponGroup, count] of Object.entries(weaponsByGroup)) {
+            if (count >= minimumCategoryCount) {
+                const affinity = weaponAffinities[weaponGroup];
+                if (affinity) {
+                    this.#addBias(equipmentBias, affinity);
+                }
+            }
+        }
+
+        // Apply armor category affinity with threshold
+        const armorAffinities = this.#equipmentAffinityMapping.armor_category_affinity || {};
+        for (const [armorCategory, count] of Object.entries(armorsByCategory)) {
+            if (count >= minimumCategoryCount) {
+                const affinity = armorAffinities[armorCategory];
+                if (affinity) {
+                    this.#addBias(equipmentBias, affinity);
+                }
+            }
+        }
+
+        // Cap total equipment affinity contribution
+        const totalMagnitude = this.#calculateBiasMagnitude(equipmentBias);
+        if (totalMagnitude > maxTotalContribution) {
+            const scale = maxTotalContribution / totalMagnitude;
+            const scaled = this.#scaleAllBias(equipmentBias, scale);
+            equipmentBias.mechanicalBias = scaled.mechanicalBias;
+            equipmentBias.roleBias = scaled.roleBias;
+            equipmentBias.attributeBias = scaled.attributeBias;
+        }
+
+        return equipmentBias;
+    }
+
+    /**
+     * Calculate total magnitude of bias contribution
+     * Used for capping equipment affinity
+     *
+     * @private
+     * @param {Object} bias - Bias object with mechanicalBias, roleBias, attributeBias
+     * @returns {number} Total magnitude (sum of absolute values)
+     */
+    static #calculateBiasMagnitude(bias) {
+        let magnitude = 0;
+        for (const [key, value] of Object.entries(bias.mechanicalBias || {})) {
+            if (typeof value === 'number') magnitude += Math.abs(value);
+        }
+        for (const [key, value] of Object.entries(bias.roleBias || {})) {
+            if (typeof value === 'number') magnitude += Math.abs(value);
+        }
+        for (const [key, value] of Object.entries(bias.attributeBias || {})) {
+            if (typeof value === 'number') magnitude += Math.abs(value);
+        }
+        return magnitude;
     }
 
     /**
@@ -1211,6 +1330,46 @@ export class IdentityEngine {
         SWSELogger.info(`  Role: ${JSON.stringify(behaviorBias.roleBias)}`);
         SWSELogger.info(`  Attribute: ${JSON.stringify(behaviorBias.attributeBias)}`);
 
+        // Equipment Affinity Bias
+        const equipmentAffinityBias = this.computeEquipmentAffinityBias(actor);
+        SWSELogger.info("--- Equipment Affinity Bias ---");
+
+        // Analyze equipped items by category
+        const weaponsByGroup = {};
+        const armorsByCategory = {};
+        if (actor.items && actor.items.length > 0) {
+            for (const item of actor.items) {
+                if (!item.system?.equipped) continue;
+                if (item.type === 'weapon') {
+                    const group = item.system?.group;
+                    if (group) weaponsByGroup[group] = (weaponsByGroup[group] || 0) + 1;
+                } else if (item.type === 'armor') {
+                    const category = item.system?.category;
+                    if (category) armorsByCategory[category] = (armorsByCategory[category] || 0) + 1;
+                }
+            }
+        }
+
+        if (Object.keys(weaponsByGroup).length > 0 || Object.keys(armorsByCategory).length > 0) {
+            SWSELogger.info("  Equipment categories detected:");
+            for (const [group, count] of Object.entries(weaponsByGroup)) {
+                SWSELogger.info(`    Weapon group '${group}': ${count} items${count >= 2 ? ' [APPLIED]' : ' [below threshold]'}`);
+            }
+            for (const [category, count] of Object.entries(armorsByCategory)) {
+                SWSELogger.info(`    Armor category '${category}': ${count} items${count >= 2 ? ' [APPLIED]' : ' [below threshold]'}`);
+            }
+            const magnitude = this.#calculateBiasMagnitude(equipmentAffinityBias);
+            SWSELogger.info(`  Total affinity contribution: ${magnitude.toFixed(3)} (max: 0.5)`);
+            if (magnitude >= 0.5) {
+                SWSELogger.info(`  [CAP APPLIED: scaling factor = ${(0.5 / magnitude).toFixed(3)}]`);
+            }
+        } else {
+            SWSELogger.info("  No equipped items with structural categories.");
+        }
+
+        SWSELogger.info(`  Mechanical: ${JSON.stringify(equipmentAffinityBias.mechanicalBias)}`);
+        SWSELogger.info(`  Role: ${JSON.stringify(equipmentAffinityBias.roleBias)}`);
+
         // Total bias
         const totalBias = this.computeTotalBias(actor);
         SWSELogger.info("--- TotalBias ---");
@@ -1410,5 +1569,78 @@ export class IdentityEngine {
 
         // Return mapped variation or lowercase normalized form
         return variations[normalized] || normalized;
+    }
+
+    /**
+     * Inject survey bias into an actor's identity layer
+     * This replaces any existing survey bias and triggers recomputation
+     *
+     * Does NOT mutate the actor directly - stores in system.swse.surveyBias
+     * Caller is responsible for persisting changes if needed
+     *
+     * @param {Object} actor - Foundry actor (will have survey bias added to system data)
+     * @param {Object} biasObject - Survey bias object { mechanicalBias, roleBias, attributeBias }
+     * @returns {Object} Updated totalBias after injection
+     */
+    static injectSurveyBias(actor, biasObject = {}) {
+        if (!actor) {
+            SWSELogger.warn('[IdentityEngine.injectSurveyBias] No actor provided');
+            return this.computeTotalBias(actor);
+        }
+
+        if (!actor.system) {
+            actor.system = {};
+        }
+        if (!actor.system.swse) {
+            actor.system.swse = {};
+        }
+
+        // Replace survey bias (not additive)
+        actor.system.swse.surveyBias = {
+            mechanicalBias: biasObject.mechanicalBias || {},
+            roleBias: biasObject.roleBias || {},
+            attributeBias: biasObject.attributeBias || {}
+        };
+
+        SWSELogger.log('[IdentityEngine.injectSurveyBias] Injected survey bias:', actor.system.swse.surveyBias);
+
+        // Return recomputed total bias
+        return this.computeTotalBias(actor);
+    }
+
+    /**
+     * Clear survey bias from an actor's identity layer
+     * This removes all survey influence and triggers recomputation
+     *
+     * Does NOT mutate the actor directly - resets system.swse.surveyBias
+     * Caller is responsible for persisting changes if needed
+     *
+     * @param {Object} actor - Foundry actor
+     * @returns {Object} Updated totalBias after clearing
+     */
+    static clearSurveyBias(actor) {
+        if (!actor) {
+            SWSELogger.warn('[IdentityEngine.clearSurveyBias] No actor provided');
+            return this.computeTotalBias(actor);
+        }
+
+        if (!actor.system) {
+            actor.system = {};
+        }
+        if (!actor.system.swse) {
+            actor.system.swse = {};
+        }
+
+        // Clear survey bias
+        actor.system.swse.surveyBias = {
+            mechanicalBias: {},
+            roleBias: {},
+            attributeBias: {}
+        };
+
+        SWSELogger.log('[IdentityEngine.clearSurveyBias] Cleared survey bias for actor:', actor.id);
+
+        // Return recomputed total bias
+        return this.computeTotalBias(actor);
     }
 }

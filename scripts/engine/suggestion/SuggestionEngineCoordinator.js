@@ -29,6 +29,7 @@ import { ForceOptionSuggestionEngine } from "/systems/foundryvtt-swse/scripts/en
 import { Level1SkillSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/Level1SkillSuggestionEngine.js";
 import { AttributeIncreaseSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/AttributeIncreaseSuggestionEngine.js";
 import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
+import { IdentityEngine } from "/systems/foundryvtt-swse/scripts/engine/prestige/identity-engine.js";
 import { ProgressionAdvisor } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ProgressionAdvisor.js";
 import { getSynergyForItem, findActiveSynergies } from "/systems/foundryvtt-swse/scripts/engine/suggestion/CommunityMetaSynergies.js";
 import { PathPreview } from "/systems/foundryvtt-swse/scripts/engine/suggestion/PathPreview.js";
@@ -209,7 +210,9 @@ export class SuggestionEngineCoordinator {
   }
 
   /**
-   * Suggest feats with integrated BuildIntent context
+   * Suggest feats with integrated BuildIntent and identity bias context
+   * PHASE 2: Now also computes and passes identityBias directly from IdentityEngine
+   *
    * @param {Array} feats - Array of feat objects
    * @param {Actor} actor - The character
    * @param {Object} pendingData - Pending selections
@@ -223,14 +226,19 @@ export class SuggestionEngineCoordinator {
       const buildIntent = options.buildIntent || await this.analyzeBuildIntent(actor, pendingData);
       SWSELogger.log(`[SUGGESTION-COORDINATOR] suggestFeats() - BuildIntent obtained, primary themes:`, buildIntent.primaryThemes);
 
-      // Call SuggestionEngine with BuildIntent context
+      // PHASE 2: Compute identity bias directly from IdentityEngine
+      const identityBias = options.identityBias || IdentityEngine.computeTotalBias(actor);
+      SWSELogger.log(`[SUGGESTION-COORDINATOR] suggestFeats() - Identity bias computed from IdentityEngine`);
+
+      // Call SuggestionEngine with BuildIntent and identity bias context
       const featsSuggested = await SuggestionEngine.suggestFeats(
         feats,
         actor,
         pendingData,
         {
           ...options,
-          buildIntent
+          buildIntent,
+          identityBias
         }
       );
 
@@ -251,7 +259,9 @@ export class SuggestionEngineCoordinator {
   }
 
   /**
-   * Suggest talents with integrated BuildIntent context
+   * Suggest talents with integrated BuildIntent and identity bias context
+   * PHASE 2: Now also computes and passes identityBias directly from IdentityEngine
+   *
    * @param {Array} talents - Array of talent objects
    * @param {Actor} actor - The character
    * @param {Object} pendingData - Pending selections
@@ -263,14 +273,18 @@ export class SuggestionEngineCoordinator {
       // Get or compute BuildIntent for context
       const buildIntent = options.buildIntent || await this.analyzeBuildIntent(actor, pendingData);
 
-      // Call SuggestionEngine with BuildIntent context
+      // PHASE 2: Compute identity bias directly from IdentityEngine
+      const identityBias = options.identityBias || IdentityEngine.computeTotalBias(actor);
+
+      // Call SuggestionEngine with BuildIntent and identity bias context
       const talentsSuggested = await SuggestionEngine.suggestTalents(
         talents,
         actor,
         pendingData,
         {
           ...options,
-          buildIntent
+          buildIntent,
+          identityBias
         }
       );
 
@@ -392,10 +406,12 @@ export class SuggestionEngineCoordinator {
 
   /**
    * Suggest Force options (powers, secrets, techniques)
+   * PHASE 2: Now also computes and passes identityBias directly from IdentityEngine
+   *
    * @param {Array} options - Array of Force options to suggest from
    * @param {Actor} actor - The character
    * @param {Object} pendingData - Pending selections
-   * @param {Object} contextOptions - Additional options (buildIntent, etc)
+   * @param {Object} contextOptions - Additional options (buildIntent, identityBias, etc)
    * @returns {Promise<Array>} Force options with suggestion metadata
    */
   static async suggestForceOptions(options, actor, pendingData = {}, contextOptions = {}) {
@@ -403,14 +419,18 @@ export class SuggestionEngineCoordinator {
       // Get or compute BuildIntent for context
       const buildIntent = contextOptions.buildIntent || await this.analyzeBuildIntent(actor, pendingData);
 
-      // Call ForceOptionSuggestionEngine with BuildIntent context
+      // PHASE 2: Compute identity bias directly from IdentityEngine
+      const identityBias = contextOptions.identityBias || IdentityEngine.computeTotalBias(actor);
+
+      // Call ForceOptionSuggestionEngine with BuildIntent and identity bias context
       const optionsSuggested = await ForceOptionSuggestionEngine.suggestForceOptions(
         options,
         actor,
         pendingData,
         {
           ...contextOptions,
-          buildIntent
+          buildIntent,
+          identityBias
         }
       );
 
@@ -464,11 +484,13 @@ export class SuggestionEngineCoordinator {
   }
 
   /**
-   * Suggest attribute increases with integrated BuildIntent context
+   * Suggest attribute increases with integrated BuildIntent and identity bias context
    * Called at levels 4, 8, 12, 16, 20
+   * PHASE 2: Now also computes and passes identityBias directly from IdentityEngine
+   *
    * @param {Actor} actor - The character
    * @param {Object} pendingData - Pending selections (trained skills, etc)
-   * @param {Object} contextOptions - Additional options (buildIntent, etc)
+   * @param {Object} contextOptions - Additional options (buildIntent, identityBias, etc)
    * @returns {Promise<Array>} Abilities with suggestion metadata
    */
   static async suggestAttributeIncreases(actor, pendingData = {}, contextOptions = {}) {
@@ -476,13 +498,17 @@ export class SuggestionEngineCoordinator {
       // Get or compute BuildIntent for context
       const buildIntent = contextOptions.buildIntent || await this.analyzeBuildIntent(actor, pendingData);
 
-      // Call AttributeIncreaseSuggestionEngine with BuildIntent context
+      // PHASE 2: Compute identity bias directly from IdentityEngine
+      const identityBias = contextOptions.identityBias || IdentityEngine.computeTotalBias(actor);
+
+      // Call AttributeIncreaseSuggestionEngine with BuildIntent and identity bias context
       const attributesSuggested = await AttributeIncreaseSuggestionEngine.suggestAttributeIncreases(
         actor,
         pendingData,
         {
           ...contextOptions,
-          buildIntent
+          buildIntent,
+          identityBias
         }
       );
 

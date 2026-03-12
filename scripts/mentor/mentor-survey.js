@@ -1165,6 +1165,171 @@ export class MentorSurvey {
     swseLogger.log(`[MENTOR-SURVEY] hasSurveyBeenCompleted: Actor ${actor.id} (${actor.name}) - ${completed ? 'COMPLETED' : 'NOT COMPLETED'}`);
     return completed;
   }
+
+  /**
+   * Convert survey responses to IdentityEngine bias vectors
+   * Maps survey response dimensions to mechanicalBias, roleBias, attributeBias
+   *
+   * Survey responses use theme-space keys (forceFocus, melee, ranged, etc.)
+   * This function converts them to bias-space suitable for IdentityEngine injection
+   *
+   * @param {Object} surveyAnswers - Survey answers with bias properties
+   * @returns {Object} Bias structure { mechanicalBias, roleBias, attributeBias }
+   */
+  static convertResponsesToBias(surveyAnswers) {
+    swseLogger.log(`[MENTOR-SURVEY] convertResponsesToBias: Converting survey responses to bias vectors`);
+
+    // Initialize the three bias layers
+    const convertedBias = {
+      mechanicalBias: {},
+      roleBias: {},
+      attributeBias: {}
+    };
+
+    if (!surveyAnswers || Object.keys(surveyAnswers).length === 0) {
+      swseLogger.log(`[MENTOR-SURVEY] convertResponsesToBias: No survey answers provided, returning empty bias`);
+      return convertedBias;
+    }
+
+    // Mapping table: Survey response keys → bias vector distribution
+    // Each survey response influences multiple bias dimensions
+    const mappingTable = {
+      forceFocus: {
+        mechanicalBias: { force: 0.4 },
+        roleBias: { control: 0.32 },
+        attributeBias: { wisdom: 0.2 }
+      },
+      melee: {
+        mechanicalBias: { melee: 0.4 },
+        roleBias: { striker: 0.28 },
+        attributeBias: { strength: 0.2 }
+      },
+      ranged: {
+        mechanicalBias: { ranged: 0.4 },
+        roleBias: { striker: 0.28 },
+        attributeBias: { dexterity: 0.2 }
+      },
+      stealth: {
+        mechanicalBias: { stealth: 0.4 },
+        roleBias: { infiltrator: 0.28 },
+        attributeBias: { dexterity: 0.3 }
+      },
+      social: {
+        mechanicalBias: { social: 0.3 },
+        roleBias: { influence: 0.25 },
+        attributeBias: { charisma: 0.2 }
+      },
+      tech: {
+        mechanicalBias: { tech: 0.4 },
+        roleBias: { engineer: 0.28 },
+        attributeBias: { intelligence: 0.2 }
+      },
+      support: {
+        mechanicalBias: { support: 0.3 },
+        roleBias: { healer: 0.25 },
+        attributeBias: { wisdom: 0.2 }
+      },
+      leadership: {
+        mechanicalBias: { leadership: 0.3 },
+        roleBias: { leader: 0.25 },
+        attributeBias: { charisma: 0.25 }
+      },
+      survivability: {
+        mechanicalBias: { survivability: 0.3 },
+        roleBias: { tank: 0.25 },
+        attributeBias: { constitution: 0.2 }
+      },
+      // Also support guardian, striker, control, etc. if they appear directly
+      guardian: {
+        mechanicalBias: { survivability: 0.3 },
+        roleBias: { guardian: 0.35 },
+        attributeBias: { constitution: 0.2 }
+      },
+      striker: {
+        mechanicalBias: { melee: 0.2, ranged: 0.2 },
+        roleBias: { striker: 0.35 },
+        attributeBias: { strength: 0.15 }
+      },
+      control: {
+        mechanicalBias: { force: 0.3 },
+        roleBias: { control: 0.35 },
+        attributeBias: { wisdom: 0.2 }
+      },
+      infiltrator: {
+        mechanicalBias: { stealth: 0.3 },
+        roleBias: { infiltrator: 0.35 },
+        attributeBias: { dexterity: 0.25 }
+      },
+      engineer: {
+        mechanicalBias: { tech: 0.3 },
+        roleBias: { engineer: 0.35 },
+        attributeBias: { intelligence: 0.2 }
+      },
+      influence: {
+        mechanicalBias: { social: 0.2 },
+        roleBias: { influence: 0.35 },
+        attributeBias: { charisma: 0.25 }
+      },
+      healer: {
+        mechanicalBias: { support: 0.3 },
+        roleBias: { healer: 0.35 },
+        attributeBias: { wisdom: 0.25 }
+      },
+      leader: {
+        mechanicalBias: { leadership: 0.3 },
+        roleBias: { leader: 0.35 },
+        attributeBias: { charisma: 0.25 }
+      },
+      tank: {
+        mechanicalBias: { survivability: 0.3 },
+        roleBias: { tank: 0.35 },
+        attributeBias: { constitution: 0.25 }
+      }
+    };
+
+    // Process each survey answer
+    for (const answerId in surveyAnswers) {
+      const answer = surveyAnswers[answerId];
+      const answerBiases = answer.biases || {};
+
+      // Skip prestige class and other metadata
+      for (const biasKey in answerBiases) {
+        if (biasKey === 'prestigeClass' || biasKey === 'prestigeClassTarget' || biasKey === 'archetype') {
+          continue;
+        }
+
+        // Look up mapping for this bias key
+        const mapping = mappingTable[biasKey];
+        if (mapping) {
+          // Apply mechanical bias
+          if (mapping.mechanicalBias) {
+            for (const [key, value] of Object.entries(mapping.mechanicalBias)) {
+              convertedBias.mechanicalBias[key] = (convertedBias.mechanicalBias[key] || 0) + value;
+            }
+          }
+
+          // Apply role bias
+          if (mapping.roleBias) {
+            for (const [key, value] of Object.entries(mapping.roleBias)) {
+              convertedBias.roleBias[key] = (convertedBias.roleBias[key] || 0) + value;
+            }
+          }
+
+          // Apply attribute bias
+          if (mapping.attributeBias) {
+            for (const [key, value] of Object.entries(mapping.attributeBias)) {
+              convertedBias.attributeBias[key] = (convertedBias.attributeBias[key] || 0) + value;
+            }
+          }
+
+          swseLogger.log(`[MENTOR-SURVEY] convertResponsesToBias: Mapped "${biasKey}" to bias vectors`);
+        }
+      }
+    }
+
+    swseLogger.log(`[MENTOR-SURVEY] convertResponsesToBias: Final converted bias:`, convertedBias);
+    return convertedBias;
+  }
 }
 
 

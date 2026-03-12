@@ -4,6 +4,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { IdentityEngine } from "/systems/foundryvtt-swse/scripts/engine/prestige/identity-engine.js";
 import { applyProgressionPatch } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/apply-progression-patch.js";
 import { buildClassAtomicPatch } from "/systems/foundryvtt-swse/scripts/apps/chargen/steps/class-step.js";
 import {
@@ -362,10 +363,21 @@ export async function _onSelectClass(event) {
       SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ✓ showSurvey() returned:`, surveyAnswers ? 'ANSWERS_RECEIVED' : 'DISMISSED');
 
       if (surveyAnswers) {
-        const biases = MentorSurvey.processSurveyAnswers(surveyAnswers);
-        this.characterData.mentorBiases = biases;
+        // Convert survey answers to IdentityEngine bias layer format
+        const { convertSurveyAnswersToBias } = await import("/systems/foundryvtt-swse/scripts/apps/mentor/mentor-survey.js");
+        const surveyBiasLayers = convertSurveyAnswersToBias(surveyAnswers);
+
+        // Store for later persistence
+        this.characterData.mentorBiases = surveyBiasLayers;
         this.characterData.mentorSurveyCompleted = true;
-        SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ✓ Mentor biases stored`, biases);
+        SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ✓ Survey bias layers created`, surveyBiasLayers);
+
+        // Inject survey bias into temporary actor for identity computation
+        const tempIdentity = IdentityEngine.injectSurveyBias(tempActor, surveyBiasLayers);
+        SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: ✓ Survey bias injected to temp actor, recomputed identity`, {
+          totalBiasKeys: Object.keys(tempIdentity).length
+        });
+
         ui.notifications.info('Survey completed! Your mentor will use this to personalize suggestions.');
       } else {
         SWSELogger.log(`[CHARGEN-CLASS] _onSelectClass: User skipped mentor survey (can be completed later)`);

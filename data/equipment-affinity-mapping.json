@@ -1,0 +1,45 @@
+{
+  "metadata": {
+    "purpose": "Map equipment structural categories to identity bias",
+    "note": "Interpretation layer only. Not scoring weights."
+  },
+  "weapon_group_affinity": {
+    "simple_melee": {
+      "mechanicalBias": { "meleeDamage": 0.2 },
+      "roleBias": { "striker": 0.15 }
+    },
+    "advanced_melee": {
+      "mechanicalBias": { "meleeDamage": 0.25 },
+      "roleBias": { "striker": 0.2 }
+    },
+    "advanced_ranged": {
+      "mechanicalBias": { "critRange": 0.2 },
+      "roleBias": { "striker": 0.15 }
+    },
+    "grenade": {
+      "mechanicalBias": { "areaDamage": 0.25 },
+      "roleBias": { "controller": 0.2 }
+    },
+    "lightsaber": {
+      "mechanicalBias": { "forceConnection": 0.2 },
+      "roleBias": { "striker": 0.15 }
+    }
+  },
+  "armor_category_affinity": {
+    "light": {
+      "mechanicalBias": { "mobility": 0.2 },
+      "roleBias": { "skirmisher": 0.15 }
+    },
+    "medium": {
+      "mechanicalBias": { "combatStamina": 0.15 }
+    },
+    "heavy": {
+      "mechanicalBias": { "combatStamina": 0.3 },
+      "roleBias": { "defender": 0.2 }
+    }
+  },
+  "rules": {
+    "minimumCategoryCount": 2,
+    "maxTotalAffinityContribution": 0.5
+  }
+}

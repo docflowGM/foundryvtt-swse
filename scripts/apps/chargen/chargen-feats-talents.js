@@ -10,6 +10,7 @@ import { HouseRuleTalentCombination } from "/systems/foundryvtt-swse/scripts/hou
 import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
 import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
 import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
+import { SuggestionEngineCoordinator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineCoordinator.js";
 import { MentorSurvey } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey.js";
 import { _findTalentItem } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
@@ -69,7 +70,7 @@ export async function calculateChargenSuggestions(items, chargenContext, itemTyp
 
     // Compute BuildIntent with L1 mentor survey biases
     SWSELogger.log(`[CHARGEN-SUGGESTIONS] Computing BuildIntent (will include L1 survey biases)...`);
-    const buildIntent = await BuildIntent.analyze(tempActor, pendingData);
+    const buildIntent = await SuggestionEngineCoordinator.analyzeBuildIntent(tempActor, pendingData);
 
     SWSELogger.log(`[CHARGEN-SUGGESTIONS] BuildIntent computed:`, {
       themes: Object.keys(buildIntent.themes),

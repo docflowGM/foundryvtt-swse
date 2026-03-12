@@ -27,6 +27,8 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
+import { SuggestionEngineCoordinator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineCoordinator.js";
+import { IdentityEngine } from "/systems/foundryvtt-swse/scripts/engine/prestige/identity-engine.js";
 import { getSynergyForItem, findActiveSynergies } from "/systems/foundryvtt-swse/scripts/engine/suggestion/CommunityMetaSynergies.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { WishlistEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/WishlistEngine.js";
@@ -111,22 +113,37 @@ export class SuggestionEngine {
 
     /**
      * Generate suggestions for a list of feats
+     * PHASE 2: Now accepts identityBias directly from IdentityEngine
+     *
      * @param {Array} feats - Array of feat objects (should already be filtered for qualification)
      * @param {Actor} actor - The actor (character)
      * @param {Object} pendingData - Pending selections from level-up
      * @param {Object} options - Additional options
      * @param {Object} options.buildIntent - Pre-computed BuildIntent (optional, will compute if not provided)
+     * @param {Object} options.identityBias - Pre-computed identity bias from IdentityEngine (optional, will compute if not provided)
      * @returns {Promise<Array>} Feats with suggestion metadata attached
      */
     static async suggestFeats(feats, actor, pendingData = {}, options = {}) {
         const actorState = this._buildActorState(actor, pendingData);
         const featMetadata = options.featMetadata || {};
 
+        // PHASE 2: Get or compute identity bias directly from IdentityEngine
+        let identityBias = options.identityBias;
+        if (!identityBias) {
+            try {
+                identityBias = IdentityEngine.computeTotalBias(actor);
+                SWSELogger.log('[SuggestionEngine.suggestFeats] Computed identity bias directly from IdentityEngine');
+            } catch (err) {
+                SWSELogger.warn('[SuggestionEngine.suggestFeats] Failed to compute identity bias:', err);
+                identityBias = null;
+            }
+        }
+
         // Get or compute build intent
         let buildIntent = options.buildIntent;
         if (!buildIntent) {
             try {
-                buildIntent = await BuildIntent.analyze(actor, pendingData);
+                buildIntent = await SuggestionEngineCoordinator.analyzeBuildIntent(actor, pendingData);
             } catch (err) {
                 SWSELogger.warn('SuggestionEngine | Failed to analyze build intent:', err);
                 // Create minimal fallback buildIntent with mentor biases to preserve mentor-based suggestions
@@ -191,21 +208,36 @@ export class SuggestionEngine {
 
     /**
      * Generate suggestions for a list of talents
+     * PHASE 2: Now accepts identityBias directly from IdentityEngine
+     *
      * @param {Array} talents - Array of talent objects (should already be filtered for qualification)
      * @param {Actor} actor - The actor (character)
      * @param {Object} pendingData - Pending selections from level-up
      * @param {Object} options - Additional options
      * @param {Object} options.buildIntent - Pre-computed BuildIntent (optional, will compute if not provided)
+     * @param {Object} options.identityBias - Pre-computed identity bias from IdentityEngine (optional, will compute if not provided)
      * @returns {Promise<Array>} Talents with suggestion metadata attached
      */
     static async suggestTalents(talents, actor, pendingData = {}, options = {}) {
         const actorState = this._buildActorState(actor, pendingData);
 
+        // PHASE 2: Get or compute identity bias directly from IdentityEngine
+        let identityBias = options.identityBias;
+        if (!identityBias) {
+            try {
+                identityBias = IdentityEngine.computeTotalBias(actor);
+                SWSELogger.log('[SuggestionEngine.suggestTalents] Computed identity bias directly from IdentityEngine');
+            } catch (err) {
+                SWSELogger.warn('[SuggestionEngine.suggestTalents] Failed to compute identity bias:', err);
+                identityBias = null;
+            }
+        }
+
         // Get or compute build intent
         let buildIntent = options.buildIntent;
         if (!buildIntent) {
             try {
-                buildIntent = await BuildIntent.analyze(actor, pendingData);
+                buildIntent = await SuggestionEngineCoordinator.analyzeBuildIntent(actor, pendingData);
             } catch (err) {
                 SWSELogger.warn('SuggestionEngine | Failed to analyze build intent:', err);
                 // Create minimal fallback buildIntent with mentor biases to preserve mentor-based suggestions

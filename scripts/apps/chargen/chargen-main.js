@@ -13,6 +13,7 @@ import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities
 import { getTalentTreeName, getClassProperty, getTalentTrees, getHitDie } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
 import { HouseRuleTalentCombination } from "/systems/foundryvtt-swse/scripts/houserules/houserule-talent-combination.js";
 import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
+import { SuggestionEngineCoordinator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineCoordinator.js";
 import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
 import { MentorSurvey } from "/systems/foundryvtt-swse/scripts/mentor/mentor-survey.js";
 import { MentorSuggestionDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor-suggestion-dialog.js";
@@ -788,7 +789,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       SWSELogger.log(`[CHARGEN-SUGGESTIONS] Computing BuildIntent for ${this.currentStep}...`);
       let buildIntent = null;
       try {
-        buildIntent = await BuildIntent.analyze(tempActor, pendingData);
+        buildIntent = await SuggestionEngineCoordinator.analyzeBuildIntent(tempActor, pendingData);
         SWSELogger.log(`[CHARGEN-SUGGESTIONS] BuildIntent computed:`, {
           primaryThemes: buildIntent.primaryThemes,
           combatStyle: buildIntent.combatStyle,
@@ -802,11 +803,12 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       if (this.currentStep === 'feats' && context.packs.feats) {
         try {
           SWSELogger.log(`[CHARGEN-SUGGESTIONS] Suggesting ${context.packs.feats.length} feats with BuildIntent context...`);
-          let featsWithSuggestions = await SuggestionService.getSuggestions(tempActor, 'chargen', { domain: 'feats', available:
-            context.packs.feats,
-            tempActor,
+          let featsWithSuggestions = await SuggestionService.getSuggestions(tempActor, 'chargen', {
+            domain: 'feats',
+            available: context.packs.feats,
             pendingData,
-            buildIntent  // CRITICAL: Pass BuildIntent to include mentor survey biases
+            engineOptions: { buildIntent },
+            persist: true
           });
           // Filter out Force-dependent feats for droids (they cannot be Force-sensitive)
           featsWithSuggestions = this._filterForceDependentItems(featsWithSuggestions);
@@ -3031,9 +3033,16 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       planetOfOrigin: this.characterData.background && this.characterData.background.category === 'planet' ? this.characterData.background.name : '',
       // Progression structure for level-up system
       progression: progression,
-      // Mentor system data for suggestion engine
+      // Mentor system data for IdentityEngine bias layer
       swse: {
-        mentorBuildIntentBiases: this.characterData.mentorBiases || {},
+        // Survey bias is stored in IdentityEngine.layers.surveyBias format
+        surveyBias: this.characterData.mentorBiases || {
+          mechanicalBias: {},
+          roleBias: {},
+          attributeBias: {}
+        },
+        // Legacy field: kept for backward compatibility with old code reading mentorBuildIntentBiases
+        mentorBuildIntentBiases: this.characterData.mentorBiases?.mechanicalBias ? {} : (this.characterData.mentorBiases || {}),
         mentorSurveyCompleted: this.characterData.mentorSurveyCompleted || false
       }
     };
