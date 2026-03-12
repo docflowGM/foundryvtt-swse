@@ -280,7 +280,10 @@
       "toggleable": false,
       "toggled": false,
       "variable": false,
-      "variableValue": 0
+      "variableValue": 0,
+      "archetype": "",
+      "playstyle": "",
+      "tier": 0
     },
     "talent": {
       "templates": [
@@ -296,7 +299,10 @@
       "toggleable": false,
       "toggled": false,
       "variable": false,
-      "variableValue": 0
+      "variableValue": 0,
+      "archetype": "",
+      "playstyle": "",
+      "tier": 0
     },
     "forcepower": {
       "templates": [
