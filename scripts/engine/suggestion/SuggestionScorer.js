@@ -17,7 +17,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
  * Score a candidate feat or talent based on multiple factors
  * @param {Object} candidate - Feat or talent object with tags[] array
  * @param {Object} characterSnapshot - Character state (level, class, selectedFeats, selectedTalents, abilities)
- * @param {Object} archetype - Archetype definition with preferredTags, secondaryTags, avoidTags
+ * @param {Object} archetype - Archetype definition with (preferredTags/secondaryTags/avoidTags) OR (mechanicalBias/roleBias/attributeBias)
  * @param {Object} options - Additional scoring options
  * @returns {Object} Scoring breakdown {score, breakdown, reasons}
  */
@@ -34,12 +34,30 @@ export function scoreSuggestion(candidate, characterSnapshot, archetype = {}, op
 
   let score = 0;
 
+  // Determine if archetype provides tags or bias fields
+  const hasTags = archetype.preferredTags || archetype.secondaryTags || archetype.avoidTags;
+  const hasBias = archetype.mechanicalBias || archetype.roleBias || archetype.attributeBias;
+
+  // If archetype uses bias fields instead of tags, derive synthetic tags
+  // (This is a temporary bridge; BiasTagProjection will handle this permanently)
+  let preferredTags, secondaryTags, avoidTags;
+
+  if (hasBias && !hasTags) {
+    // Fallback: use bias field names as synthetic tags
+    preferredTags = Object.keys(archetype.mechanicalBias || {}).concat(Object.keys(archetype.roleBias || {}));
+    secondaryTags = Object.keys(archetype.attributeBias || {});
+    avoidTags = [];
+  } else {
+    preferredTags = archetype.preferredTags || [];
+    secondaryTags = archetype.secondaryTags || [];
+    avoidTags = archetype.avoidTags || [];
+  }
+
+  const candidateTags = candidate.tags || [];
+
   // ─────────────────────────────────────────────────────────────
   // 1. PREFERRED TAG MATCHING (+5 per tag)
   // ─────────────────────────────────────────────────────────────
-
-  const preferredTags = archetype.preferredTags || [];
-  const candidateTags = candidate.tags || [];
 
   for (const tag of preferredTags) {
     if (candidateTags.includes(tag)) {
@@ -52,7 +70,6 @@ export function scoreSuggestion(candidate, characterSnapshot, archetype = {}, op
   // 2. SECONDARY TAG MATCHING (+2 per tag)
   // ─────────────────────────────────────────────────────────────
 
-  const secondaryTags = archetype.secondaryTags || [];
   for (const tag of secondaryTags) {
     if (candidateTags.includes(tag) && !preferredTags.includes(tag)) {
       breakdown.secondaryTagMatches++;
@@ -64,7 +81,6 @@ export function scoreSuggestion(candidate, characterSnapshot, archetype = {}, op
   // 3. AVOID TAG MATCHING (-6 per tag)
   // ─────────────────────────────────────────────────────────────
 
-  const avoidTags = archetype.avoidTags || [];
   for (const tag of avoidTags) {
     if (candidateTags.includes(tag)) {
       breakdown.avoidTagMatches++;
