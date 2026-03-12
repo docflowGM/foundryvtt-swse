@@ -437,8 +437,65 @@ export class IdentityEngine {
             attributeBias: {}
         };
 
-        // TODO: Extract skill training and Skill Focus feats from actor
-        // For now, return empty
+        if (!this.#primitiveMapping) {
+            return skillBias;
+        }
+
+        // Extract trained skills from actor
+        const trainedSkills = new Set();
+        const skills = actor.system?.skills || {};
+        for (const [skillKey, skillData] of Object.entries(skills)) {
+            if (skillData?.trained) {
+                trainedSkills.add(skillKey.toLowerCase());
+            }
+        }
+
+        // Add bias for trained skills
+        for (const trainedSkill of trainedSkills) {
+            // Get mapping for this trained skill
+            const skillModifierMapping = this.#primitiveMapping.skillTrained;
+            if (!skillModifierMapping) continue;
+
+            // Use default mapping for trained skills
+            const mapping = skillModifierMapping.mapping?.default;
+            if (mapping && mapping.mechanicalBias) {
+                this.#mergeBias(skillBias.mechanicalBias, mapping.mechanicalBias);
+            }
+            if (mapping && mapping.roleBias) {
+                this.#mergeBias(skillBias.roleBias, mapping.roleBias);
+            }
+        }
+
+        // Extract Skill Focus feats from actor items
+        // Skill Focus feats grant +3 to a specific skill
+        if (actor.items && actor.items.length > 0) {
+            for (const item of actor.items) {
+                if (item.type !== 'feat') continue;
+                if (!item.name || !item.name.toLowerCase().includes('skill focus')) continue;
+
+                // Extract skill name from feat (e.g., "Skill Focus (Persuasion)" → "persuasion")
+                const skillMatch = item.name.match(/\(([^)]+)\)/);
+                if (skillMatch && skillMatch[1]) {
+                    const focusSkill = skillMatch[1].toLowerCase();
+
+                    // Use skillModifier mapping for focused skills
+                    const skillModifierMapping = this.#primitiveMapping.skillModifier;
+                    if (!skillModifierMapping || !skillModifierMapping.mapping) continue;
+
+                    // Look for specific skill mapping
+                    const skillMapping = skillModifierMapping.mapping[focusSkill];
+                    if (skillMapping && skillMapping.mechanicalBias) {
+                        // Apply Skill Focus bonus (scaled up from +3)
+                        const focusScaled = this.#scaleBias(skillMapping.mechanicalBias, 0.3);
+                        this.#mergeBias(skillBias.mechanicalBias, focusScaled);
+                    }
+                    if (skillMapping && skillMapping.roleBias) {
+                        this.#mergeBias(skillBias.roleBias, skillMapping.roleBias);
+                    }
+                }
+            }
+        }
+
         return skillBias;
     }
 
@@ -472,20 +529,50 @@ export class IdentityEngine {
             return bias;
         }
 
-        // Handle featGrant recursion: do not apply bias here, recurse into feat
-        if (ruleType === 'featGrant' && rule.featId) {
-            // TODO: Implement feat lookup and recursion
-            // if (!processedFeats.has(rule.featId)) {
-            //     processedFeats.add(rule.featId);
-            //     const feat = lookupFeatById(rule.featId);
-            //     if (feat?.system?.rules) {
-            //         for (const subrule of feat.system.rules) {
-            //             const subPrimitive = this.#processPrimitive(subrule, actor, processedFeats);
-            //             this.#addBias(bias, subPrimitive);
-            //         }
-            //     }
-            // }
-            return bias; // Skip for now
+        // Handle featGrant recursion: do not apply bias here, recurse into granted feat
+        if (ruleType === 'featGrant' && (rule.featId || rule.featName)) {
+            const featId = rule.featId;
+            const featName = rule.featName;
+
+            // Prevent infinite recursion via deduplication
+            if (featId && !processedFeats.has(featId)) {
+                processedFeats.add(featId);
+
+                // Look up feat item from actor's items
+                if (actor.items && actor.items.length > 0) {
+                    for (const item of actor.items) {
+                        if (item.type === 'feat' && item.id === featId) {
+                            // Found the feat; recurse into its primitives
+                            if (item.system?.rules && Array.isArray(item.system.rules)) {
+                                for (const subrule of item.system.rules) {
+                                    const subPrimitive = this.#processPrimitive(subrule, actor, processedFeats);
+                                    this.#addBias(bias, subPrimitive);
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+            } else if (featName && !processedFeats.has(featName)) {
+                processedFeats.add(featName);
+
+                // Fallback: look up by name if ID not available
+                if (actor.items && actor.items.length > 0) {
+                    for (const item of actor.items) {
+                        if (item.type === 'feat' && item.name === featName) {
+                            // Found the feat; recurse into its primitives
+                            if (item.system?.rules && Array.isArray(item.system.rules)) {
+                                for (const subrule of item.system.rules) {
+                                    const subPrimitive = this.#processPrimitive(subrule, actor, processedFeats);
+                                    this.#addBias(bias, subPrimitive);
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+            return bias; // Don't apply bias to featGrant itself; only to granted feat's primitives
         }
 
         // Get mapping for this primitive type
@@ -627,7 +714,8 @@ export class IdentityEngine {
 
     /**
      * Compute ReinforcementBias
-     * Adds 0.15 when archetype is confirmed and prestige deepens matching archetype
+     * Adds bonus when prestige class deepens the base archetype
+     * Reinforcement occurs when prestige deepening name matches base archetype
      * Pure function
      *
      * @param {Object} actor - Foundry actor
@@ -640,8 +728,72 @@ export class IdentityEngine {
             attributeBias: {}
         };
 
-        // TODO: Implement reinforcement logic
-        // For now, return empty
+        // Check if actor has a prestige class
+        const prestige = actor.system?.prestige || {};
+        if (!prestige || Object.keys(prestige).length === 0) {
+            return reinforcementBias;
+        }
+
+        // Get base archetype
+        const baseArchetypeId = actor.system?.archetype;
+        if (!baseArchetypeId || !ArchetypeRegistry.isInitialized()) {
+            return reinforcementBias;
+        }
+
+        const baseArchetype = ArchetypeRegistry.get(baseArchetypeId);
+        if (!baseArchetype) {
+            return reinforcementBias;
+        }
+
+        // Check if any prestige class deepens this archetype
+        if (!PrestigeLayerRegistry.isInitialized()) {
+            return reinforcementBias;
+        }
+
+        for (const [prestigeName, prestigeData] of Object.entries(prestige)) {
+            if (!prestigeData.level || prestigeData.level <= 0) continue;
+
+            const prestigeLayer = PrestigeLayerRegistry.get(prestigeName);
+            if (!prestigeLayer || !prestigeLayer.archetypeDeepenings) continue;
+
+            // Check if this prestige has a deepening that matches the base archetype
+            // Deepenings are keyed by base class (e.g., "jedi", "scout")
+            // Match against archetype name or ID
+            for (const [deepeningKey, deepening] of Object.entries(prestigeLayer.archetypeDeepenings)) {
+                // Simple check: if deepening name or key contains archetype name, it's a match
+                const archetypeName = baseArchetype.name ? baseArchetype.name.toLowerCase() : '';
+                const deependingName = deepening.name ? deepening.name.toLowerCase() : '';
+
+                if (archetypeName && (deependingName.includes(archetypeName) || archetypeName.includes(deependingName))) {
+                    // Reinforcement bonus: add 0.15 to all bias categories of base archetype
+                    const reinforcementBonus = 0.15;
+                    if (baseArchetype.mechanicalBias) {
+                        for (const [key, value] of Object.entries(baseArchetype.mechanicalBias)) {
+                            if (typeof value === 'number') {
+                                reinforcementBias.mechanicalBias[key] = (reinforcementBias.mechanicalBias[key] || 0) + (value * reinforcementBonus);
+                            }
+                        }
+                    }
+                    if (baseArchetype.roleBias) {
+                        for (const [key, value] of Object.entries(baseArchetype.roleBias)) {
+                            if (typeof value === 'number') {
+                                reinforcementBias.roleBias[key] = (reinforcementBias.roleBias[key] || 0) + (value * reinforcementBonus);
+                            }
+                        }
+                    }
+                    if (baseArchetype.attributeBias) {
+                        for (const [key, value] of Object.entries(baseArchetype.attributeBias)) {
+                            if (typeof value === 'number') {
+                                reinforcementBias.attributeBias[key] = (reinforcementBias.attributeBias[key] || 0) + (value * reinforcementBonus);
+                            }
+                        }
+                    }
+                    // Found a match; can break now
+                    return reinforcementBias;
+                }
+            }
+        }
+
         return reinforcementBias;
     }
 
@@ -801,8 +953,15 @@ export class IdentityEngine {
     }
 
     static #getClassBaselineBias(className) {
-        // TODO: Load from canonical class bias definitions
-        // Placeholder: return empty object
+        // Base classes (Jedi, Scout, Soldier, Noble, Scoundrel) don't have intrinsic bias
+        // Bias comes entirely from the selected archetype within the class
+        // This method returns empty as a placeholder for future class-level bias (if needed)
+        //
+        // Note: If class-level bias is needed in future, implement:
+        // 1. Create class-baseline-bias.json with bias for each class
+        // 2. Load registry in #loadRegistry()
+        // 3. Look up className in registry here
+
         return {
             mechanicalBias: {},
             roleBias: {},
@@ -850,11 +1009,30 @@ export class IdentityEngine {
     }
 
     static #getSpecialistBias(actor) {
-        // TODO: Get specialist from actor selections
+        // Get specialist from actor system (if stored during build)
+        const specialist = actor.system?.specialist;
+        if (!specialist) {
+            return {
+                mechanicalBias: {},
+                roleBias: {},
+                attributeBias: {}
+            };
+        }
+
+        // Specialist may be stored as full object or just ID
+        const specialistData = typeof specialist === 'object' ? specialist : null;
+        if (!specialistData) {
+            return {
+                mechanicalBias: {},
+                roleBias: {},
+                attributeBias: {}
+            };
+        }
+
         return {
-            mechanicalBias: {},
-            roleBias: {},
-            attributeBias: {}
+            mechanicalBias: specialistData.mechanicalBias || {},
+            roleBias: specialistData.roleBias || {},
+            attributeBias: specialistData.attributeBias || {}
         };
     }
 
