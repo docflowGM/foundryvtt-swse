@@ -16,6 +16,8 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { CLASS_SYNERGY_DATA } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ClassSuggestionEngine.js";
 import { ArchetypeRegistry } from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry.js";
 import { PrestigeLayerRegistry } from "/systems/foundryvtt-swse/scripts/engine/prestige/prestige-layer-registry.js";
+import { IdentityEngine } from "/systems/foundryvtt-swse/scripts/engine/prestige/identity-engine.js";
+import { BiasTagProjection } from "/systems/foundryvtt-swse/scripts/engine/prestige/bias-tag-projection.js";
 
 // ──────────────────────────────────────────────────────────────
 // PRESTIGE SIGNALS LOADER
@@ -172,7 +174,9 @@ export class BuildIntent {
             // Priority prerequisites to suggest
             priorityPrereqs: [],
             // Template information if applied
-            appliedTemplate: null
+            appliedTemplate: null,
+            // Phase 2: Actor identity (transient, not persisted)
+            identity: null
         };
 
         // Check for applied template to inform build intent
@@ -201,6 +205,10 @@ export class BuildIntent {
         // Calculate prestige affinities
         SWSELogger.log(`[BUILD-INTENT] analyze() - Calculating prestige affinities`);
         await this._calculatePrestigeAffinities(state, intent);
+
+        // Phase 2: Compute actor identity (bias aggregation)
+        SWSELogger.log(`[BUILD-INTENT] analyze() - Computing actor identity`);
+        intent.identity = await this._computeActorIdentity(actor, appliedTemplate, intent);
 
         // Apply template archetype bias if available
         if (appliedTemplate && appliedTemplate.archetype) {
@@ -547,6 +555,62 @@ export class BuildIntent {
             if (confDiff !== 0) return confDiff;
             return a.className.localeCompare(b.className);
         });
+    }
+
+    /**
+     * Phase 2: Compute actor identity via IdentityEngine
+     * Aggregates baseArchetype + prestigeAmplifier + specialist biases
+     * Returns transient identity object (not persisted to actor.system)
+     * @private
+     */
+    static async _computeActorIdentity(actor, appliedTemplate, intent) {
+        try {
+            // Determine base archetype
+            let baseArchetypeId = null;
+            if (appliedTemplate && appliedTemplate.archetype) {
+                baseArchetypeId = appliedTemplate.archetype;
+            }
+
+            if (!baseArchetypeId) {
+                SWSELogger.log('[BUILD-INTENT] No base archetype found for identity computation');
+                return null;
+            }
+
+            // Get highest prestige affinity as candidate prestige class
+            let prestigeClassId = null;
+            if (intent.prestigeAffinities && intent.prestigeAffinities.length > 0) {
+                const topAffinity = intent.prestigeAffinities[0];
+                // Only use prestige if confidence is meaningful (> 0.2)
+                if (topAffinity.confidence > 0.2) {
+                    prestigeClassId = topAffinity.className;
+                }
+            }
+
+            // Compute identity using IdentityEngine
+            const identity = await IdentityEngine.getActorIdentity(
+                actor,
+                baseArchetypeId,
+                prestigeClassId,
+                null // specialistIndex: use default specialist selection
+            );
+
+            if (identity && identity.totalBias) {
+                // Project bias to tags for debug output
+                const projected = BiasTagProjection.project(identity.totalBias);
+                BiasTagProjection.debugPrint(identity.totalBias, projected);
+                SWSELogger.log('[BUILD-INTENT] Actor identity computed:', {
+                    baseArchetype: identity.baseArchetype?.name,
+                    prestige: identity.amplifier?.name || 'none',
+                    specialist: identity.specialist?.name || 'none',
+                    projectedTags: projected
+                });
+            }
+
+            return identity;
+        } catch (err) {
+            SWSELogger.warn('[BUILD-INTENT] Failed to compute actor identity:', err);
+            return null;
+        }
     }
 
     /**

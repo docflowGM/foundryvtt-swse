@@ -299,6 +299,176 @@ export class PrestigeLayerRegistry {
     }
 
     /**
+     * Validate all registered prestige layers for referential integrity
+     * Checks that referenced archetypes exist and bias keys are canonical
+     * Called after initialization to ensure data quality
+     * @returns {Promise<Object>} Validation report {valid: boolean, errors: [], warnings: []}
+     */
+    static async validatePrestigeReferences() {
+        const report = {
+            valid: true,
+            errors: [],
+            warnings: []
+        };
+
+        if (!this.#initialized) {
+            report.errors.push('Registry not initialized');
+            report.valid = false;
+            return report;
+        }
+
+        try {
+            // Load canonical bias keys
+            const response = await fetch('/systems/foundryvtt-swse/data/bias-keys-canonical.json');
+            if (!response.ok) {
+                report.warnings.push('Could not load canonical bias keys for validation');
+                return report;
+            }
+
+            const canonical = await response.json();
+            const canonicalMech = new Set(Object.keys(canonical.mechanicalBias || {}));
+            const canonicalRole = new Set(Object.keys(canonical.roleBias || {}));
+            const canonicalAttr = new Set(Object.keys(canonical.attributeBias || {}));
+
+            // Load all archetypes to validate deepening references
+            const archetypeResponse = await fetch('/systems/foundryvtt-swse/data/class-archetypes.json');
+            const archetypeData = archetypeResponse.ok ? await archetypeResponse.json() : {};
+            const baseArchetypeNames = new Set();
+
+            for (const classData of Object.values(archetypeData.classes || {})) {
+                for (const archData of Object.values(classData.archetypes || {})) {
+                    if (archData.name) {
+                        baseArchetypeNames.add(archData.name);
+                    }
+                }
+            }
+
+            // Validate each prestige layer
+            for (const [name, prestige] of this.#prestigeLayers) {
+                // Validate amplifier bias keys
+                if (prestige.amplifier) {
+                    if (prestige.amplifier.mechanicalBias) {
+                        for (const biasKey of Object.keys(prestige.amplifier.mechanicalBias)) {
+                            if (!canonicalMech.has(biasKey)) {
+                                report.warnings.push(
+                                    `Prestige layer "${name}" amplifier has non-canonical mechanicalBias key: "${biasKey}"`
+                                );
+                            }
+                        }
+                    }
+
+                    if (prestige.amplifier.roleBias) {
+                        for (const biasKey of Object.keys(prestige.amplifier.roleBias)) {
+                            if (!canonicalRole.has(biasKey)) {
+                                report.warnings.push(
+                                    `Prestige layer "${name}" amplifier has non-canonical roleBias key: "${biasKey}"`
+                                );
+                            }
+                        }
+                    }
+
+                    if (prestige.amplifier.attributeBias) {
+                        for (const biasKey of Object.keys(prestige.amplifier.attributeBias)) {
+                            if (!canonicalAttr.has(biasKey)) {
+                                report.warnings.push(
+                                    `Prestige layer "${name}" amplifier has non-canonical attributeBias key: "${biasKey}"`
+                                );
+                            }
+                        }
+                    }
+                }
+
+                // Validate deepenings reference existing archetypes
+                if (Array.isArray(prestige.archetypeDeepenings)) {
+                    if (prestige.archetypeDeepenings.length !== 5) {
+                        report.warnings.push(
+                            `Prestige layer "${name}" has ${prestige.archetypeDeepenings.length} deepenings (expected 5)`
+                        );
+                    }
+
+                    for (const deepening of prestige.archetypeDeepenings) {
+                        if (!baseArchetypeNames.has(deepening.baseArchetype)) {
+                            report.warnings.push(
+                                `Prestige layer "${name}" references unknown baseArchetype: "${deepening.baseArchetype}"`
+                            );
+                        }
+
+                        // Validate specialist bias keys
+                        if (Array.isArray(deepening.specialists)) {
+                            if (deepening.specialists.length !== 3) {
+                                report.warnings.push(
+                                    `Prestige layer "${name}" deepening for "${deepening.baseArchetype}" has ${deepening.specialists.length} specialists (expected 3)`
+                                );
+                            }
+
+                            for (const specialist of deepening.specialists) {
+                                if (specialist.mechanicalBias) {
+                                    for (const biasKey of Object.keys(specialist.mechanicalBias)) {
+                                        if (!canonicalMech.has(biasKey)) {
+                                            report.warnings.push(
+                                                `Prestige layer "${name}" specialist "${specialist.name}" has non-canonical mechanicalBias key: "${biasKey}"`
+                                            );
+                                        }
+                                    }
+                                }
+
+                                if (specialist.roleBias) {
+                                    for (const biasKey of Object.keys(specialist.roleBias)) {
+                                        if (!canonicalRole.has(biasKey)) {
+                                            report.warnings.push(
+                                                `Prestige layer "${name}" specialist "${specialist.name}" has non-canonical roleBias key: "${biasKey}"`
+                                            );
+                                        }
+                                    }
+                                }
+
+                                if (specialist.attributeBias) {
+                                    for (const biasKey of Object.keys(specialist.attributeBias)) {
+                                        if (!canonicalAttr.has(biasKey)) {
+                                            report.warnings.push(
+                                                `Prestige layer "${name}" specialist "${specialist.name}" has non-canonical attributeBias key: "${biasKey}"`
+                                            );
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Validate required fields
+                if (!prestige.name) {
+                    report.errors.push(`Prestige layer missing name`);
+                    report.valid = false;
+                }
+
+                if (!['active', 'experimental', 'disabled'].includes(prestige.status)) {
+                    report.errors.push(`Prestige layer "${name}" invalid status: "${prestige.status}"`);
+                    report.valid = false;
+                }
+            }
+
+            if (report.errors.length > 0) {
+                SWSELogger.error('[PrestigeLayerRegistry] Validation failed with errors:', report.errors);
+            }
+
+            if (report.warnings.length > 0) {
+                SWSELogger.warn('[PrestigeLayerRegistry] Validation warnings:', report.warnings);
+            }
+
+            if (report.errors.length === 0 && report.warnings.length === 0) {
+                SWSELogger.log('[PrestigeLayerRegistry] Validation passed with no errors or warnings');
+            }
+
+        } catch (err) {
+            report.warnings.push(`Validation error: ${err.message}`);
+            SWSELogger.error('[PrestigeLayerRegistry] Validation error:', err);
+        }
+
+        return report;
+    }
+
+    /**
      * Get a prestige layer by name
      * @param {string} name - Prestige layer name (e.g., 'Jedi Master Prestige')
      * @returns {Object|null} Prestige layer object or null if not found
@@ -342,6 +512,65 @@ export class PrestigeLayerRegistry {
         return this.getAllActive().filter(prestige =>
             prestige.archetypeDeepenings.some(d => d.baseArchetype === baseArchetypeName)
         );
+    }
+
+    /**
+     * Get applicable deepenings for an actor based on their current classes
+     * Handles multi-class by returning deepenings for all current classes
+     * @param {Object} actor - Foundry actor
+     * @param {string} prestigeName - Name of prestige layer
+     * @returns {Array<Object>} Array of applicable deepenings for actor's classes
+     */
+    static getApplicableDeepenings(actor, prestigeName) {
+        if (!actor || !prestigeName) {
+            return [];
+        }
+
+        const prestige = this.get(prestigeName);
+        if (!prestige || !Array.isArray(prestige.archetypeDeepenings)) {
+            return [];
+        }
+
+        // Get actor's current class(es) from items
+        const actorClasses = new Set();
+        for (const item of actor.items) {
+            if (item.type === 'class' && item.system?.classId) {
+                actorClasses.add(item.system.classId);
+            }
+        }
+
+        // Find deepenings matching actor's classes
+        const applicableDeepenings = [];
+        for (const deepening of prestige.archetypeDeepenings) {
+            // Prestige data uses baseArchetype names, which we need to match against class
+            // This is a simplified match - may need refinement if base archetype names differ from class IDs
+            for (const classId of actorClasses) {
+                if (deepening.baseArchetype && deepening.baseArchetype.toLowerCase().includes(classId.toLowerCase())) {
+                    applicableDeepenings.push(deepening);
+                    break;
+                }
+            }
+        }
+
+        return applicableDeepenings.length > 0 ? applicableDeepenings : [];
+    }
+
+    /**
+     * Get specialist variant for an actor within a deepening
+     * Selects specialist based on actor's ability scores and build intent
+     * For now, returns first specialist as default; can be extended with scoring logic
+     * @param {Object} actor - Foundry actor
+     * @param {Object} deepening - Deepening object from prestige layer
+     * @returns {Object|null} Selected specialist or null if not found
+     */
+    static getSpecialistForActor(actor, deepening) {
+        if (!deepening || !Array.isArray(deepening.specialists) || deepening.specialists.length === 0) {
+            return null;
+        }
+
+        // For Phase 2, default to first specialist
+        // Future Phase 3 enhancement: select based on actor's ability scores and build intent
+        return deepening.specialists[0] || null;
     }
 
     /**

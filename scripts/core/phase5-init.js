@@ -14,7 +14,9 @@ import { registerSchemaValidation } from "/systems/foundryvtt-swse/scripts/core/
 import { registerVersionAdapter, validateSystemCompatibility } from "/systems/foundryvtt-swse/scripts/core/version-adapter.js";
 import { log } from "/systems/foundryvtt-swse/scripts/core/foundry-env.js";
 import { ArchetypeRegistry } from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry.js";
+import { PrestigeLayerRegistry } from "/systems/foundryvtt-swse/scripts/engine/prestige/prestige-layer-registry.js";
 import { SuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngine.js";
+import { initializePrestigeSignals } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 
@@ -34,13 +36,29 @@ export function initializePhase5() {
     // 3. Register schema validation tools
     registerSchemaValidation();
 
-    // 4. Initialize data-driven systems (Phase A, B, Phase 3)
+    // 4. Initialize data-driven systems (Phase A, B, Phase 1 Remaining, Phase 3)
     Hooks.once('ready', async () => {
       try {
+        // Initialize prestige signals eagerly (Phase 1 Remaining: Game Ready Hook)
+        await initializePrestigeSignals();
+        log.info(`[${SYSTEM_ID}] Prestige signals initialized`);
+
         // Initialize ArchetypeRegistry (Phase A & B)
         await ArchetypeRegistry.initialize();
-        const stats = ArchetypeRegistry.getStats();
-        log.info(`[${SYSTEM_ID}] ArchetypeRegistry initialized: ${stats.count} archetypes`);
+        const arcStats = ArchetypeRegistry.getStats();
+        log.info(`[${SYSTEM_ID}] ArchetypeRegistry initialized: ${arcStats.count} archetypes`);
+
+        // Initialize PrestigeLayerRegistry (Phase 1 Remaining)
+        await PrestigeLayerRegistry.initialize();
+        const presStats = PrestigeLayerRegistry.getStats();
+        log.info(`[${SYSTEM_ID}] PrestigeLayerRegistry initialized: ${presStats.count} prestige layers`);
+
+        // Validate registries (Phase 1 Remaining: Registry Validation)
+        const arcValidation = await ArchetypeRegistry.validateArchetypeReferences();
+        const presValidation = await PrestigeLayerRegistry.validatePrestigeReferences();
+        if (!arcValidation.valid || !presValidation.valid) {
+          log.warn(`[${SYSTEM_ID}] Registry validation found errors - review console logs`);
+        }
 
         // Initialize SuggestionEngine data sources (Phase 3)
         await SuggestionEngine.initialize();

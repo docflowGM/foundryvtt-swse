@@ -12,6 +12,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { BiasTagProjection } from "/systems/foundryvtt-swse/scripts/engine/prestige/bias-tag-projection.js";
 
 /**
  * Score a candidate feat or talent based on multiple factors
@@ -38,15 +39,19 @@ export function scoreSuggestion(candidate, characterSnapshot, archetype = {}, op
   const hasTags = archetype.preferredTags || archetype.secondaryTags || archetype.avoidTags;
   const hasBias = archetype.mechanicalBias || archetype.roleBias || archetype.attributeBias;
 
-  // If archetype uses bias fields instead of tags, derive synthetic tags
-  // (This is a temporary bridge; BiasTagProjection will handle this permanently)
+  // If archetype uses bias fields instead of tags, project to synthetic tags using BiasTagProjection
   let preferredTags, secondaryTags, avoidTags;
 
   if (hasBias && !hasTags) {
-    // Fallback: use bias field names as synthetic tags
-    preferredTags = Object.keys(archetype.mechanicalBias || {}).concat(Object.keys(archetype.roleBias || {}));
-    secondaryTags = Object.keys(archetype.attributeBias || {});
-    avoidTags = [];
+    // Use BiasTagProjection to convert bias vectors to tags (Phase 2)
+    const projected = BiasTagProjection.project({
+      mechanicalBias: archetype.mechanicalBias || {},
+      roleBias: archetype.roleBias || {},
+      attributeBias: archetype.attributeBias || {}
+    });
+    preferredTags = projected.preferredTags;
+    secondaryTags = projected.secondaryTags;
+    avoidTags = projected.avoidTags;
   } else {
     preferredTags = archetype.preferredTags || [];
     secondaryTags = archetype.secondaryTags || [];

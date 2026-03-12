@@ -57,6 +57,103 @@ export class ArchetypeRegistry {
     }
 
     /**
+     * Validate all registered archetypes for referential integrity
+     * Checks that bias keys are canonical and data is complete
+     * Called after initialization to ensure data quality
+     * @returns {Promise<Object>} Validation report {valid: boolean, errors: [], warnings: []}
+     */
+    static async validateArchetypeReferences() {
+        const report = {
+            valid: true,
+            errors: [],
+            warnings: []
+        };
+
+        if (!this.#initialized) {
+            report.errors.push('Registry not initialized');
+            report.valid = false;
+            return report;
+        }
+
+        try {
+            // Load canonical bias keys
+            const response = await fetch('/systems/foundryvtt-swse/data/bias-keys-canonical.json');
+            if (!response.ok) {
+                report.warnings.push('Could not load canonical bias keys for validation');
+                return report;
+            }
+
+            const canonical = await response.json();
+            const canonicalMech = new Set(Object.keys(canonical.mechanicalBias || {}));
+            const canonicalRole = new Set(Object.keys(canonical.roleBias || {}));
+            const canonicalAttr = new Set(Object.keys(canonical.attributeBias || {}));
+
+            // Validate each archetype
+            for (const [key, archetype] of this.#archetypes) {
+                // Check bias keys are canonical
+                if (archetype.mechanicalBias) {
+                    for (const biasKey of Object.keys(archetype.mechanicalBias)) {
+                        if (!canonicalMech.has(biasKey)) {
+                            report.warnings.push(
+                                `Archetype "${archetype.name}" has non-canonical mechanicalBias key: "${biasKey}"`
+                            );
+                        }
+                    }
+                }
+
+                if (archetype.roleBias) {
+                    for (const biasKey of Object.keys(archetype.roleBias)) {
+                        if (!canonicalRole.has(biasKey)) {
+                            report.warnings.push(
+                                `Archetype "${archetype.name}" has non-canonical roleBias key: "${biasKey}"`
+                            );
+                        }
+                    }
+                }
+
+                if (archetype.attributeBias) {
+                    for (const biasKey of Object.keys(archetype.attributeBias)) {
+                        if (!canonicalAttr.has(biasKey)) {
+                            report.warnings.push(
+                                `Archetype "${archetype.name}" has non-canonical attributeBias key: "${biasKey}"`
+                            );
+                        }
+                    }
+                }
+
+                // Check required fields
+                if (!archetype.name) {
+                    report.errors.push(`Archetype with key "${key}" missing name`);
+                    report.valid = false;
+                }
+
+                if (!archetype.baseClassId) {
+                    report.errors.push(`Archetype "${archetype.name || key}" missing baseClassId`);
+                    report.valid = false;
+                }
+            }
+
+            if (report.errors.length > 0) {
+                SWSELogger.error('[ArchetypeRegistry] Validation failed with errors:', report.errors);
+            }
+
+            if (report.warnings.length > 0) {
+                SWSELogger.warn('[ArchetypeRegistry] Validation warnings:', report.warnings);
+            }
+
+            if (report.errors.length === 0 && report.warnings.length === 0) {
+                SWSELogger.log('[ArchetypeRegistry] Validation passed with no errors or warnings');
+            }
+
+        } catch (err) {
+            report.warnings.push(`Validation error: ${err.message}`);
+            SWSELogger.error('[ArchetypeRegistry] Validation error:', err);
+        }
+
+        return report;
+    }
+
+    /**
      * Load archetypes from class-archetypes.json
      * @private
      * @returns {Promise<void>}
