@@ -1687,8 +1687,21 @@ export class SuggestionEngine {
                 // Build SuggestionV2-compatible scoring object
                 scoring = this._buildScoringObject(scorerResult);
 
-                // Debug logging: uncomment to verify weight and dominance flow
-                // console.log(`[SuggestionEngine] Emitted signals for ${options.candidate.name}:`, { signals, scoring });
+                // PHASE 1 VALIDATION: Log all emission details
+                console.log(`[SuggestionEngine.Phase1Validation] ${options.candidate.name}:`, JSON.stringify({
+                    name: options.candidate.name,
+                    tier: tier,
+                    reasonCode: finalReasonCode,
+                    signals: signals.map(s => ({ type: s.type, weight: s.weight.toFixed(2), horizon: s.horizon })),
+                    scoring: {
+                        immediate: scoring.immediate.toFixed(2),
+                        shortTerm: scoring.shortTerm.toFixed(2),
+                        identity: scoring.identity.toFixed(2),
+                        final: scoring.final.toFixed(2),
+                        confidence: scoring.confidence.toFixed(2),
+                        dominantHorizon: scoring.dominantHorizon
+                    }
+                }, null, 2));
             } catch (err) {
                 // Graceful fallback: if SuggestionScorer fails, continue with old format
                 SWSELogger.warn('[SuggestionEngine] SuggestionScorer failed, continuing with v1 format:', err);
