@@ -61,7 +61,7 @@ function normalizeMetricScore(rawBias, maxValue = 2.0) {
  * @param {Object} candidate - Feat or talent to score
  * @param {Object} actor - Character performing the evaluation
  * @param {Object} buildIntent - BuildIntent analysis (themes, prestige, signals)
- * @param {Object} options - Additional context (identity bias, chargen flag, etc.)
+ * @param {Object} options - Additional context (identity bias, chargen flag, slotContext, etc.)
  * @returns {Object} {immediateScore, shortTermScore, identityScore, conditionalBonus, finalScore, breakdown}
  */
 export function scoreSuggestion(candidate, actor, buildIntent = {}, options = {}) {
@@ -79,6 +79,9 @@ export function scoreSuggestion(candidate, actor, buildIntent = {}, options = {}
 
   // Get identity bias (authoritative from IdentityEngine)
   let identityBias = options.identityBias || { mechanicalBias: {}, roleBias: {}, attributeBias: {} };
+
+  // Get slot context (Phase 2A: used for domain-aware scoring)
+  let slotContext = options.slotContext || null;
 
   // Extract prestige forecast for class candidates (if available in buildIntent)
   let prestigeForecast = {};
@@ -104,7 +107,8 @@ export function scoreSuggestion(candidate, actor, buildIntent = {}, options = {}
     actor,
     identityBias,
     buildIntent,
-    options
+    options,
+    slotContext
   );
 
   // ─────────────────────────────────────────────────────────────────
@@ -214,9 +218,10 @@ export function scoreSuggestion(candidate, actor, buildIntent = {}, options = {}
 
 /**
  * Evaluate current state synergy (identity-weighted)
- * Considers: Force sync, damage alignment, ability alignment, role alignment, chains, equipment, skills
+ * Considers: Force sync, damage alignment, ability alignment, role alignment, chains, equipment, skills, defense need
+ * @param {Object} slotContext - (Optional) Slot context for domain-aware scoring
  */
-function _computeImmediateScore(candidate, actor, identityBias, buildIntent, options) {
+function _computeImmediateScore(candidate, actor, identityBias, buildIntent, options, slotContext = null) {
   const metrics = {};
   let totalWeight = 0;
   let weightedSum = 0;

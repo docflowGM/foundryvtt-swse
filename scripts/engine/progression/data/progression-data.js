@@ -13,6 +13,53 @@ export const CORE_CLASSES = [
 
 export const REQUIRED_PRESTIGE_LEVEL = 7;
 
+// ═══════════════════════════════════════════════════════════════
+// FEAT PROGRESSION CADENCE - SWSE RAW
+// ═══════════════════════════════════════════════════════════════
+// Phase 2B: Feat acquisition levels based on SWSE official rules
+// Used by: MilestoneComputer, ProgressionSession, SuggestionEngine
+
+/**
+ * General Feat Acquisition Levels (Heroic)
+ * Based on TOTAL character level (not per-class)
+ * All characters get 1 feat at level 1, then at levels 3, 6, 9, 12, 15, 18
+ * Source: SWSE RAW - Acquiring Feats section
+ */
+export const GENERAL_FEAT_LEVELS = [1, 3, 6, 9, 12, 15, 18];
+
+/**
+ * Class Bonus Feat Acquisition Levels
+ * Based on EACH CLASS's individual level (not total level)
+ * Granted at each even-numbered CLASS level: 2, 4, 6, 8, 10, 12, 14, 16, 18, 20
+ * Only for Heroic Classes (Prestige Classes do NOT receive bonus feats)
+ * Source: SWSE RAW - Class Bonus Feats section
+ */
+export const CLASS_BONUS_FEAT_LEVELS = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20];
+
+/**
+ * Check if a total character level grants a general feat
+ * @param {number} totalLevel - Total character level
+ * @returns {boolean} True if this level grants a general feat
+ */
+export function isGeneralFeatLevel(totalLevel) {
+  return GENERAL_FEAT_LEVELS.includes(totalLevel);
+}
+
+/**
+ * Check if a class level grants a bonus feat (for Heroic Classes only)
+ * @param {number} classLevel - Level in a specific class
+ * @param {boolean} isPrestigeClass - Whether this class is a Prestige Class
+ * @returns {boolean} True if this class level grants a bonus feat
+ */
+export function doesClassGrantBonusFeatAtLevel(classLevel, isPrestigeClass = false) {
+  // Prestige Classes never grant bonus feats
+  if (isPrestigeClass) {
+    return false;
+  }
+  // Heroic Classes grant bonus feats at even levels
+  return CLASS_BONUS_FEAT_LEVELS.includes(classLevel);
+}
+
 export const PROGRESSION_RULES = {
   species: {
     Human: {
