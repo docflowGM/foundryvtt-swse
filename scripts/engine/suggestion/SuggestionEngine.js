@@ -1533,38 +1533,98 @@ export class SuggestionEngine {
 
     /**
      * Build signals array from SuggestionScorer result and reason code.
-     * Each signal includes type, weight, horizon, and metadata.
+     * CRITICAL: Emits multi-horizon signals reflecting actual breakdown.
+     * This preserves the three-horizon structure computed by SuggestionScorer.
+     *
+     * Emits one signal per horizon that exceeds threshold, using actual horizon
+     * scores as weights. Falls back to primary reason code if all horizons weak.
      * @private
      */
     static _buildSignalsFromScorer(reasonCode, scorerResult, candidate) {
-        // Map reason code to ReasonType
-        const mapping = mapReasonCodeToReasonType(reasonCode);
-        if (!mapping || !mapping.type) {
-            // Fallback: no primary signal
-            return [];
-        }
+        const signals = [];
+        const { immediate, shortTerm, identity } = scorerResult.breakdown;
 
-        // Use mapping as base for signal
-        const weight = mapping.weight;
-        const horizon = mapping.horizon;
+        // Threshold: only emit signals with meaningful contribution
+        const SIGNAL_THRESHOLD = 0.05;
 
-        // Build metadata based on candidate and scorer result
-        const metadata = {};
-        if (candidate?.system?.prestigious) {
-            metadata.prestigeClass = candidate.name;
-        }
-        if (candidate?.talentTree) {
-            metadata.talentTree = candidate.talentTree;
-        }
-
-        const signal = {
-            type: mapping.type,
-            weight,
-            horizon,
-            metadata
+        // Map each horizon to appropriate ReasonType
+        // These represent what each horizon actually measures
+        const horizonTypeMap = {
+            immediate: ReasonType.ATTRIBUTE_SYNERGY,      // Current state synergy
+            shortTerm: ReasonType.PRESTIGE_PROXIMITY,     // Proximity + breakpoints
+            identity: ReasonType.IDENTITY_ALIGNMENT       // Archetype alignment
         };
 
-        return [signal];
+        // Build base metadata from candidate
+        const baseMetadata = {};
+        if (candidate?.system?.prestigious) {
+            baseMetadata.prestigeClass = candidate.name;
+        }
+        if (candidate?.talentTree) {
+            baseMetadata.talentTree = candidate.talentTree;
+        }
+
+        // Emit immediate signal if above threshold
+        if (immediate > SIGNAL_THRESHOLD) {
+            signals.push({
+                type: horizonTypeMap.immediate,
+                weight: immediate,
+                horizon: 'immediate',
+                metadata: {
+                    ...baseMetadata,
+                    reasonCode,
+                    source: 'immediate_synergy'
+                }
+            });
+        }
+
+        // Emit shortTerm signal if above threshold
+        if (shortTerm > SIGNAL_THRESHOLD) {
+            signals.push({
+                type: horizonTypeMap.shortTerm,
+                weight: shortTerm,
+                horizon: 'shortTerm',
+                metadata: {
+                    ...baseMetadata,
+                    reasonCode,
+                    source: 'prestige_proximity'
+                }
+            });
+        }
+
+        // Emit identity signal if above threshold
+        if (identity > SIGNAL_THRESHOLD) {
+            signals.push({
+                type: horizonTypeMap.identity,
+                weight: identity,
+                horizon: 'identity',
+                metadata: {
+                    ...baseMetadata,
+                    reasonCode,
+                    source: 'identity_alignment'
+                }
+            });
+        }
+
+        // Fallback: if no signals emitted (all horizons weak), use primary reason code mapping
+        // This ensures we always have at least one signal for the tier/reason link
+        if (signals.length === 0) {
+            const mapping = mapReasonCodeToReasonType(reasonCode);
+            if (mapping && mapping.type) {
+                signals.push({
+                    type: mapping.type,
+                    weight: mapping.weight,
+                    horizon: mapping.horizon,
+                    metadata: {
+                        ...baseMetadata,
+                        reasonCode,
+                        source: 'primary_reason_fallback'
+                    }
+                });
+            }
+        }
+
+        return signals;
     }
 
     /**
