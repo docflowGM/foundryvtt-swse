@@ -73,6 +73,20 @@ export class MentorReasonSelector {
       const confidence = scoring.confidence || 0.5;
       const intensity = this._computeIntensity(topWeight, confidence);
 
+      // PHASE 2 VALIDATION: Log atom selection with dominance details
+      console.log(`[MentorReasonSelector.Phase2Validation] Atom selection:`, {
+        signals: topSignals.map(s => ({
+          type: s.type,
+          weight: s.weight.toFixed(3),
+          horizon: s.horizon
+        })),
+        atoms: uniqueAtoms,
+        intensity,
+        confidence: confidence.toFixed(3),
+        dominantHorizon: topSignals[0]?.horizon || 'unknown',
+        topSignalType: topSignals[0]?.type || 'none'
+      });
+
       SWSELogger.debug('[MentorReasonSelector] Atoms selected:', {
         topSignals: topSignals.length,
         atoms: uniqueAtoms.length,
