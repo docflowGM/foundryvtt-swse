@@ -1,0 +1,920 @@
+{
+  "sith": {
+    "tags": [
+      "force",
+      "alchemy",
+      "controller",
+      "damage"
+    ]
+  },
+  "fencing": {
+    "tags": [
+      "melee",
+      "accuracy",
+      "striker"
+    ]
+  },
+  "jedi-guardian": {
+    "tags": [
+      "lightsaber",
+      "melee",
+      "defender",
+      "durability"
+    ]
+  },
+  "provocateur": {
+    "tags": [
+      "deception",
+      "social",
+      "controller"
+    ]
+  },
+  "jedi-watchman": {
+    "tags": [
+      "investigation",
+      "force",
+      "scout",
+      "utility"
+    ]
+  },
+  "disgrace": {
+    "tags": [
+      "social",
+      "deception",
+      "utility"
+    ]
+  },
+  "gand-findsman": {
+    "tags": [
+      "bounty",
+      "force",
+      "scout",
+      "utility"
+    ]
+  },
+  "slicer": {
+    "tags": [
+      "slicing",
+      "tech",
+      "utility"
+    ]
+  },
+  "versatility": {
+    "tags": [
+      "utility",
+      "action-economy",
+      "scout"
+    ]
+  },
+  "melee-duelist": {
+    "tags": [
+      "melee",
+      "accuracy",
+      "striker",
+      "damage"
+    ]
+  },
+  "republic-commando": {
+    "tags": [
+      "tactics",
+      "team-support",
+      "ranged",
+      "damage"
+    ]
+  },
+  "recklessness": {
+    "tags": [
+      "mobility",
+      "striker",
+      "damage"
+    ]
+  },
+  "smuggling": {
+    "tags": [
+      "smuggling",
+      "crime",
+      "deception",
+      "utility"
+    ]
+  },
+  "inspiration": {
+    "tags": [
+      "leadership",
+      "team-support",
+      "support"
+    ]
+  },
+  "pathfinder": {
+    "tags": [
+      "survival",
+      "scout",
+      "utility"
+    ]
+  },
+  "camouflage": {
+    "tags": [
+      "stealth",
+      "scout",
+      "utility"
+    ]
+  },
+  "mystic": {
+    "tags": [
+      "force",
+      "utility",
+      "controller"
+    ]
+  },
+  "misfortune": {
+    "tags": [
+      "deception",
+      "controller",
+      "utility"
+    ]
+  },
+  "infamy": {
+    "tags": [
+      "crime",
+      "social",
+      "deception",
+      "utility"
+    ]
+  },
+  "fringer": {
+    "tags": [
+      "survival",
+      "scout",
+      "utility"
+    ]
+  },
+  "beastwarden": {
+    "tags": [
+      "beast",
+      "force",
+      "utility"
+    ]
+  },
+  "jedi-archivist": {
+    "tags": [
+      "force",
+      "tech",
+      "utility"
+    ]
+  },
+  "blockade-runner": {
+    "tags": [
+      "pilot",
+      "vehicle",
+      "mobility",
+      "utility"
+    ]
+  },
+  "brawler": {
+    "tags": [
+      "melee",
+      "unarmed",
+      "striker",
+      "damage"
+    ]
+  },
+  "lightsaber-forms": {
+    "tags": [
+      "lightsaber",
+      "melee",
+      "controller",
+      "utility"
+    ]
+  },
+  "expert-pilot": {
+    "tags": [
+      "pilot",
+      "vehicle",
+      "mobility",
+      "accuracy"
+    ]
+  },
+  "privateer": {
+    "tags": [
+      "pilot",
+      "vehicle",
+      "crime",
+      "utility"
+    ]
+  },
+  "hyperspace-explorer": {
+    "tags": [
+      "pilot",
+      "vehicle",
+      "survival",
+      "scout"
+    ]
+  },
+  "force-item": {
+    "tags": [
+      "force",
+      "crafting",
+      "utility"
+    ]
+  },
+  "assassin": {
+    "tags": [
+      "stealth",
+      "crime",
+      "striker",
+      "damage"
+    ]
+  },
+  "imperial-inquisitor": {
+    "tags": [
+      "force",
+      "investigation",
+      "controller",
+      "utility"
+    ]
+  },
+  "jedi-healer": {
+    "tags": [
+      "force",
+      "medicine",
+      "support",
+      "utility"
+    ]
+  },
+  "trickery": {
+    "tags": [
+      "deception",
+      "social",
+      "controller",
+      "utility"
+    ]
+  },
+  "corporate-power": {
+    "tags": [
+      "influence",
+      "social",
+      "leadership",
+      "utility"
+    ]
+  },
+  "squadron-leader": {
+    "tags": [
+      "pilot",
+      "vehicle",
+      "leadership",
+      "team-support",
+      "tactics"
+    ]
+  },
+  "vanguard": {
+    "tags": [
+      "scout",
+      "tactics",
+      "mobility",
+      "utility"
+    ]
+  },
+  "outlaw-tech": {
+    "tags": [
+      "tech",
+      "utility",
+      "slicing"
+    ]
+  },
+  "run-and-gun": {
+    "tags": [
+      "mobility",
+      "ranged",
+      "striker",
+      "utility"
+    ]
+  },
+  "bounty-hunter": {
+    "tags": [
+      "bounty",
+      "scout",
+      "striker",
+      "utility"
+    ]
+  },
+  "gunner": {
+    "tags": [
+      "pilot",
+      "vehicle",
+      "ranged",
+      "damage"
+    ]
+  },
+  "critical-master": {
+    "tags": [
+      "ranged",
+      "melee",
+      "striker",
+      "damage"
+    ]
+  },
+  "unpredictable": {
+    "tags": [
+      "mobility",
+      "defender",
+      "utility"
+    ]
+  },
+  "military-engineer": {
+    "tags": [
+      "tech",
+      "explosives",
+      "utility"
+    ]
+  },
+  "awareness": {
+    "tags": [
+      "investigation",
+      "scout",
+      "utility"
+    ]
+  },
+  "weapon-master": {
+    "tags": [
+      "ranged",
+      "melee",
+      "accuracy",
+      "damage"
+    ]
+  },
+  "naval-officer": {
+    "tags": [
+      "pilot",
+      "vehicle",
+      "leadership",
+      "tactics",
+      "team-support"
+    ]
+  },
+  "turret": {
+    "tags": [
+      "tech",
+      "ranged",
+      "controller",
+      "utility"
+    ]
+  },
+  "piracy": {
+    "tags": [
+      "pilot",
+      "vehicle",
+      "crime",
+      "utility"
+    ]
+  },
+  "force-hunter": {
+    "tags": [
+      "bounty",
+      "investigation",
+      "utility"
+    ]
+  },
+  "rebel-recruiter": {
+    "tags": [
+      "leadership",
+      "social",
+      "team-support",
+      "support"
+    ]
+  },
+  "telepath": {
+    "tags": [
+      "force",
+      "controller",
+      "utility"
+    ]
+  },
+  "pistoleer": {
+    "tags": [
+      "ranged",
+      "striker",
+      "damage",
+      "accuracy"
+    ]
+  },
+  "spacer": {
+    "tags": [
+      "pilot",
+      "vehicle",
+      "survival",
+      "utility"
+    ]
+  },
+  "enforcement": {
+    "tags": [
+      "investigation",
+      "bounty",
+      "utility",
+      "controller"
+    ]
+  },
+  "leadership": {
+    "tags": [
+      "leadership",
+      "team-support",
+      "support"
+    ]
+  },
+  "ideologue": {
+    "tags": [
+      "leadership",
+      "social",
+      "team-support",
+      "controller"
+    ]
+  },
+  "jedi-refugee": {
+    "tags": [
+      "stealth",
+      "force",
+      "utility"
+    ]
+  },
+  "outlaw": {
+    "tags": [
+      "crime",
+      "survival",
+      "utility"
+    ]
+  },
+  "loyal-protector": {
+    "tags": [
+      "defender",
+      "team-support",
+      "durability"
+    ]
+  },
+  "duelist": {
+    "tags": [
+      "lightsaber",
+      "melee",
+      "accuracy",
+      "striker"
+    ]
+  },
+  "gladiatorial-combat": {
+    "tags": [
+      "melee",
+      "unarmed",
+      "striker",
+      "damage"
+    ]
+  },
+  "influence": {
+    "tags": [
+      "influence",
+      "social",
+      "controller",
+      "team-support"
+    ]
+  },
+  "infiltration": {
+    "tags": [
+      "stealth",
+      "espionage",
+      "scout",
+      "utility"
+    ]
+  },
+  "mastermind": {
+    "tags": [
+      "crime",
+      "controller",
+      "team-support",
+      "utility"
+    ]
+  },
+  "carbineer": {
+    "tags": [
+      "ranged",
+      "accuracy",
+      "striker",
+      "damage"
+    ]
+  },
+  "advanced-medicine": {
+    "tags": [
+      "medicine",
+      "support",
+      "utility"
+    ]
+  },
+  "mercenary": {
+    "tags": [
+      "ranged",
+      "melee",
+      "striker",
+      "utility"
+    ]
+  },
+  "brute-squad": {
+    "tags": [
+      "melee",
+      "striker",
+      "damage"
+    ]
+  },
+  "jedi-instructor": {
+    "tags": [
+      "leadership",
+      "force",
+      "team-support",
+      "support"
+    ]
+  },
+  "mandalorian-warrior": {
+    "tags": [
+      "armor",
+      "melee",
+      "striker",
+      "durability"
+    ]
+  },
+  "implant": {
+    "tags": [
+      "tech",
+      "medicine",
+      "utility"
+    ]
+  },
+  "jedi-consular": {
+    "tags": [
+      "force",
+      "social",
+      "support",
+      "utility"
+    ]
+  },
+  "melee-specialist": {
+    "tags": [
+      "melee",
+      "striker",
+      "damage"
+    ]
+  },
+  "ambusher": {
+    "tags": [
+      "stealth",
+      "ranged",
+      "striker",
+      "damage"
+    ]
+  },
+  "collaborator": {
+    "tags": [
+      "deception",
+      "social",
+      "utility"
+    ]
+  },
+  "lineage": {
+    "tags": [
+      "social",
+      "influence",
+      "utility"
+    ]
+  },
+  "dark-side-devotee": {
+    "tags": [
+      "force",
+      "alchemy",
+      "striker",
+      "damage"
+    ]
+  },
+  "armor-specialist": {
+    "tags": [
+      "armor",
+      "defender",
+      "durability"
+    ]
+  },
+  "wingman": {
+    "tags": [
+      "pilot",
+      "vehicle",
+      "team-support",
+      "utility"
+    ]
+  },
+  "military-tactics": {
+    "tags": [
+      "tactics",
+      "leadership",
+      "team-support",
+      "controller"
+    ]
+  },
+  "jedi-shadow": {
+    "tags": [
+      "stealth",
+      "force",
+      "controller",
+      "utility"
+    ]
+  },
+  "protection": {
+    "tags": [
+      "defender",
+      "team-support",
+      "durability"
+    ]
+  },
+  "malkite-poisoner": {
+    "tags": [
+      "crime",
+      "deception",
+      "striker",
+      "damage"
+    ]
+  },
+  "jedi-investigator": {
+    "tags": [
+      "investigation",
+      "force",
+      "utility"
+    ]
+  },
+  "bothan-spynet": {
+    "tags": [
+      "espionage",
+      "stealth",
+      "scout",
+      "utility"
+    ]
+  },
+  "opportunist": {
+    "tags": [
+      "crime",
+      "striker",
+      "utility"
+    ]
+  },
+  "sith-alchemy": {
+    "tags": [
+      "alchemy",
+      "force",
+      "utility"
+    ]
+  },
+  "jedi-weapon-master": {
+    "tags": [
+      "lightsaber",
+      "ranged",
+      "melee",
+      "damage"
+    ]
+  },
+  "reconnaissance": {
+    "tags": [
+      "scout",
+      "stealth",
+      "utility"
+    ]
+  },
+  "lightsaber-combat": {
+    "tags": [
+      "lightsaber",
+      "melee",
+      "accuracy",
+      "damage"
+    ]
+  },
+  "sith-commander": {
+    "tags": [
+      "leadership",
+      "force",
+      "controller",
+      "team-support"
+    ]
+  },
+  "gunslinger": {
+    "tags": [
+      "ranged",
+      "striker",
+      "accuracy",
+      "damage"
+    ]
+  },
+  "fortune": {
+    "tags": [
+      "utility",
+      "action-economy",
+      "deception"
+    ]
+  },
+  "survivor": {
+    "tags": [
+      "survival",
+      "durability",
+      "scout",
+      "utility"
+    ]
+  },
+  "spy": {
+    "tags": [
+      "espionage",
+      "stealth",
+      "scout",
+      "utility"
+    ]
+  },
+  "fugitive-commander": {
+    "tags": [
+      "leadership",
+      "tactics",
+      "team-support",
+      "support"
+    ]
+  },
+  "jedi-battlemaster": {
+    "tags": [
+      "lightsaber",
+      "tactics",
+      "leadership",
+      "team-support"
+    ]
+  },
+  "procurement": {
+    "tags": [
+      "tech",
+      "utility",
+      "social"
+    ]
+  },
+  "sabotage": {
+    "tags": [
+      "explosives",
+      "tech",
+      "controller",
+      "utility"
+    ]
+  },
+  "force-adept": {
+    "tags": [
+      "force",
+      "survival",
+      "utility"
+    ]
+  },
+  "improviser": {
+    "tags": [
+      "tech",
+      "utility",
+      "action-economy"
+    ]
+  },
+  "yuuzhan-vong-biotech": {
+    "tags": [
+      "tech",
+      "crafting",
+      "utility"
+    ]
+  },
+  "jedi-artisan": {
+    "tags": [
+      "crafting",
+      "force",
+      "utility"
+    ]
+  },
+  "surveillance": {
+    "tags": [
+      "investigation",
+      "scout",
+      "utility"
+    ]
+  },
+  "jedi-sentinel": {
+    "tags": [
+      "force",
+      "stealth",
+      "controller",
+      "utility"
+    ]
+  },
+  "shaper": {
+    "tags": [
+      "tech",
+      "crafting",
+      "utility"
+    ]
+  },
+  "gambling-leader": {
+    "tags": [
+      "leadership",
+      "utility",
+      "team-support"
+    ]
+  },
+  "commando": {
+    "tags": [
+      "tactics",
+      "team-support",
+      "defender",
+      "durability"
+    ]
+  },
+  "knight-s-resolve": {
+    "tags": [
+      "force",
+      "defender",
+      "durability"
+    ]
+  },
+  "knight-s-armor": {
+    "tags": [
+      "armor",
+      "force",
+      "defender",
+      "durability"
+    ]
+  },
+  "master-of-teras-kasi": {
+    "tags": [
+      "unarmed",
+      "melee",
+      "striker",
+      "damage"
+    ]
+  },
+  "genohardan": {
+    "tags": [
+      "crime",
+      "deception",
+      "controller",
+      "utility"
+    ]
+  },
+  "dark-side": {
+    "tags": [
+      "force",
+      "alchemy",
+      "striker",
+      "damage"
+    ]
+  },
+  "light-side": {
+    "tags": [
+      "force",
+      "social",
+      "support",
+      "utility"
+    ]
+  },
+  "sense": {
+    "tags": [
+      "force",
+      "investigation",
+      "scout",
+      "utility"
+    ]
+  },
+  "alter": {
+    "tags": [
+      "force",
+      "utility",
+      "controller"
+    ]
+  },
+  "control": {
+    "tags": [
+      "force",
+      "utility",
+      "controller"
+    ]
+  },
+  "guardian-spirit": {
+    "tags": [
+      "lightsaber",
+      "melee",
+      "defender",
+      "durability"
+    ]
+  },
+  "felucian-shaman": {
+    "tags": [
+      "force",
+      "medicine",
+      "support",
+      "utility"
+    ]
+  },
+  "soldier-combat": {
+    "tags": [
+      "melee",
+      "ranged",
+      "striker",
+      "damage"
+    ]
+  },
+  "unknown": {
+    "tags": [
+      "utility"
+    ]
+  }
+}

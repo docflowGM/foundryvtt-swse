@@ -20,6 +20,9 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { projectBAB } from "/systems/foundryvtt-swse/scripts/engine/suggestion/prestige-delay-calculator.js";
+import { generateAdvisory } from "/systems/foundryvtt-swse/scripts/engine/suggestion/AdvisoryEngine.js";
+import { ChainRegistry } from "/systems/foundryvtt-swse/scripts/engine/archetype/chain-registry.js";
 
 // ─────────────────────────────────────────────────────────────────
 // DEBUG MODE CONFIGURATION
@@ -58,7 +61,7 @@ function normalizeMetricScore(rawBias, maxValue = 2.0) {
  * @param {Object} candidate - Feat or talent to score
  * @param {Object} actor - Character performing the evaluation
  * @param {Object} buildIntent - BuildIntent analysis (themes, prestige, signals)
- * @param {Object} options - Additional context (identity bias, chargen flag, etc.)
+ * @param {Object} options - Additional context (identity bias, chargen flag, slotContext, etc.)
  * @returns {Object} {immediateScore, shortTermScore, identityScore, conditionalBonus, finalScore, breakdown}
  */
 export function scoreSuggestion(candidate, actor, buildIntent = {}, options = {}) {
@@ -69,8 +72,31 @@ export function scoreSuggestion(candidate, actor, buildIntent = {}, options = {}
   // Fallback if buildIntent missing
   buildIntent = buildIntent || { primaryThemes: [], prestigeAffinities: [], priorityPrereqs: [] };
 
+  // Set primaryPrestige if not already set (used by advisory generation)
+  if (!buildIntent.primaryPrestige && buildIntent.prestigeAffinities?.length > 0) {
+    buildIntent.primaryPrestige = buildIntent.prestigeAffinities[0].className;
+  }
+
   // Get identity bias (authoritative from IdentityEngine)
   let identityBias = options.identityBias || { mechanicalBias: {}, roleBias: {}, attributeBias: {} };
+
+  // Get slot context (Phase 2A: used for domain-aware scoring)
+  let slotContext = options.slotContext || null;
+
+  // Extract prestige forecast for class candidates (if available in buildIntent)
+  let prestigeForecast = {};
+  let riskTags = [];
+  if (candidate.type === "class" && buildIntent.prestigeDelays && buildIntent.primaryPrestige) {
+    const candidateClassName = candidate.system?.classId || candidate.name;
+
+    if (buildIntent.prestigeDelays.has(buildIntent.primaryPrestige)) {
+      const classDelaysMap = buildIntent.prestigeDelays.get(buildIntent.primaryPrestige);
+      if (classDelaysMap.has(candidateClassName)) {
+        prestigeForecast = classDelaysMap.get(candidateClassName) || {};
+        riskTags = prestigeForecast.riskTags || [];
+      }
+    }
+  }
 
   // ─────────────────────────────────────────────────────────────────
   // HORIZON 1: IMMEDIATE SCORE (Current State Synergy)
@@ -81,7 +107,8 @@ export function scoreSuggestion(candidate, actor, buildIntent = {}, options = {}
     actor,
     identityBias,
     buildIntent,
-    options
+    options,
+    slotContext
   );
 
   // ─────────────────────────────────────────────────────────────────
@@ -103,6 +130,7 @@ export function scoreSuggestion(candidate, actor, buildIntent = {}, options = {}
     candidate,
     actor,
     buildIntent,
+    identityBias,
     options
   );
 
@@ -141,6 +169,22 @@ export function scoreSuggestion(candidate, actor, buildIntent = {}, options = {}
   }
 
   // ─────────────────────────────────────────────────────────────────
+  // ADVISORY GENERATION (Read-only Explanation Layer)
+  // ─────────────────────────────────────────────────────────────────
+
+  const advisories = generateAdvisory(candidate, {
+    actor,
+    horizons: {
+      immediate: immediateResult.score,
+      shortTerm: shortTermResult.score,
+      identity: identityResult.score
+    },
+    prestigeForecast,
+    riskTags,
+    buildIntent
+  });
+
+  // ─────────────────────────────────────────────────────────────────
   // RETURN STRUCTURED RESULT
   // ─────────────────────────────────────────────────────────────────
 
@@ -157,6 +201,7 @@ export function scoreSuggestion(candidate, actor, buildIntent = {}, options = {}
       shortTerm: shortTermResult,
       identity: identityResult
     },
+    advisories,
     reasons: _generateReasons(candidate, immediateResult, shortTermResult, identityResult)
   };
 
@@ -173,9 +218,10 @@ export function scoreSuggestion(candidate, actor, buildIntent = {}, options = {}
 
 /**
  * Evaluate current state synergy (identity-weighted)
- * Considers: Force sync, damage alignment, ability alignment, role alignment, chains, equipment, skills
+ * Considers: Force sync, damage alignment, ability alignment, role alignment, chains, equipment, skills, defense need
+ * @param {Object} slotContext - (Optional) Slot context for domain-aware scoring
  */
-function _computeImmediateScore(candidate, actor, identityBias, buildIntent, options) {
+function _computeImmediateScore(candidate, actor, identityBias, buildIntent, options, slotContext = null) {
   const metrics = {};
   let totalWeight = 0;
   let weightedSum = 0;
@@ -261,6 +307,16 @@ function _computeImmediateScore(candidate, actor, identityBias, buildIntent, opt
     }
   }
 
+  // METRIC 8: Defense Need (Phase 2C)
+  if (candidate.system?.tags?.includes('defense') || candidate.tags?.includes('defense')) {
+    const defenseNeed = _computeDefenseNeedBoost(actor);
+    if (defenseNeed > 0) {
+      metrics.defenseNeed = defenseNeed;
+      totalWeight += 0.10;
+      weightedSum += defenseNeed * 0.10;
+    }
+  }
+
   // Compute final immediate score
   const immediateScore = totalWeight > 0 ? weightedSum / totalWeight : 0.3; // 0.3 baseline
 
@@ -342,55 +398,142 @@ function _computeShortTermScore(candidate, actor, buildIntent, options) {
  * Considers: Theme alignment, archetype consistency, prestige trajectory, identity flexibility
  * NON-PUNITIVE: No negative scoring, always neutral or positive
  */
-function _computeIdentityProjectionScore(candidate, actor, buildIntent, options) {
+/**
+ * TIER 1 Enhancement: Identity Projection with Affinity + Chain Continuation
+ *
+ * Locked formula with adjusted caps:
+ * - prestigeTrajectory: max 0.18 (was 0.25)
+ * - archetypeAffinity: max 0.06 (new signal)
+ * - chainContinuation: max 0.06 (new signal)
+ * - total cap: 0.25
+ *
+ * All signals additive, identity-focused (no mechanical distortion)
+ */
+function _computeIdentityProjectionScore(candidate, actor, buildIntent, identityBias, options = {}) {
+  // Ensure identityBias has required structure
+  if (!identityBias) {
+    identityBias = {
+      mechanicalBias: {},
+      roleBias: {},
+      attributeBias: {}
+    };
+  }
+
+  // Caps (locked per architecture review)
+  const CAP_TOTAL = 0.25;
+  const CAP_PRESTIGE = 0.18;
+  const CAP_AFFINITY = 0.06;
+  const CAP_CHAIN = 0.06;
+
+  let score = 0;
   const breakdown = {};
-  let identityScore = 0;
 
-  // If no build intent, use neutral baseline
-  if (!buildIntent || !buildIntent.primaryThemes || buildIntent.primaryThemes.length === 0) {
-    return { score: 0.5, breakdown: { baseline: 0.5 } };
+  // Ensure actor has item ID set for O(1) lookups
+  if (actor && !actor._itemIdSet) {
+    actor._itemIdSet = new Set(actor.items.map(i => i.id));
   }
 
-  // SIGNAL 1: Theme Alignment (matching primary themes)
-  const matchingThemes = buildIntent.primaryThemes.filter(t =>
-    candidate.tags?.includes(t)
-  ).length;
-  if (matchingThemes > 0) {
-    const themeScore = (matchingThemes / buildIntent.primaryThemes.length) * 0.4;
-    breakdown.themeAlignment = themeScore;
-    identityScore += themeScore;
+  // ─────────────────────────────────────────────────────────────
+  // SIGNAL 1: Prestige Trajectory Reinforcement
+  // ─────────────────────────────────────────────────────────────
+  const topPrestige = buildIntent?.prestigeAffinities?.[0];
+  if (topPrestige?.confidence > 0) {
+    const prestige = Math.min(CAP_PRESTIGE, topPrestige.confidence * 0.25);
+    breakdown.prestigeTrajectory = prestige;
+    score += prestige;
   }
 
-  // SIGNAL 2: Archetype Consistency (no penalty for divergence)
-  if (buildIntent.appliedTemplate?.archetype) {
-    const archetypeMatch = candidate.tags?.includes(buildIntent.appliedTemplate.archetype);
-    if (archetypeMatch) {
-      breakdown.archetypeConsistency = 0.25;
-      identityScore += 0.25;
+  // ─────────────────────────────────────────────────────────────
+  // SIGNAL 2: Archetype Affinity Reinforcement (TIER 1)
+  // ─────────────────────────────────────────────────────────────
+  if (buildIntent?.primaryArchetypeId && buildIntent?.archetypeAffinityIndex) {
+    const affinityEntry = buildIntent.archetypeAffinityIndex.get(candidate.id);
+
+    if (affinityEntry && affinityEntry.confidence > 0.40) {
+      const freq = Math.max(1, affinityEntry.archetypeFrequency || 1);
+      const maxFreq = Math.max(1, buildIntent.maxArchetypeFrequency || 1);
+
+      // Logarithmic frequency modifier
+      const freqModifier = 1 + (Math.log(freq) / Math.log(maxFreq)) * 0.35;
+
+      // Optional: contextual alignment
+      const alignment = _computeAffinityAlignment(affinityEntry, identityBias);
+
+      const baseAffinity = affinityEntry.confidence;
+      const raw = baseAffinity * freqModifier * alignment;
+      const affinityBoost = Math.min(CAP_AFFINITY, raw);
+
+      breakdown.archetypeAffinity = affinityBoost;
+      score += affinityBoost;
     }
-    // Note: No penalty if NOT matching archetype
   }
 
-  // SIGNAL 3: Prestige Trajectory Reinforcement (only if high affinity exists)
-  if (buildIntent.prestigeAffinities && buildIntent.prestigeAffinities.length > 0) {
-    const topPrestige = buildIntent.prestigeAffinities[0];
-    if (topPrestige.confidence > 0) {
-      const prestigeScore = topPrestige.confidence * 0.25; // Up to 0.25
-      breakdown.prestigeTrajectory = prestigeScore;
-      identityScore += prestigeScore;
+  // ─────────────────────────────────────────────────────────────
+  // SIGNAL 3: Chain Continuation Bonus (TIER 1, tier-weighted)
+  // ─────────────────────────────────────────────────────────────
+  const chainTheme = candidate.system?.chainTheme;
+  const parentId = candidate.system?.upgradeOf || null;
+
+  if (chainTheme && parentId && ChainRegistry.isValidTheme(chainTheme)) {
+    const actorHasParent = actor?._itemIdSet?.has(parentId) || false;
+
+    if (actorHasParent) {
+      const tier = Math.max(1, candidate.system?.chainTier || 1);
+      const tierWeight = Math.max(0.25, 1 / tier); // Floor at 0.25
+
+      const themeAffinity = identityBias?.mechanicalBias?.[chainTheme] || 0;
+
+      if (themeAffinity > 0.3) {
+        const baseBonus = 0.10;
+        const raw = baseBonus * themeAffinity * tierWeight;
+        const continuation = Math.min(CAP_CHAIN, raw);
+
+        breakdown.chainContinuation = continuation;
+        score += continuation;
+      }
     }
   }
 
-  // SIGNAL 4: Identity Flexibility (how many new prestige paths does this enable?)
-  // Simplified: evaluate if option is multiclass-safe or opens alternatives
-  const flexibilityScore = 0.10; // Modest bonus for keeping options open
+  // ─────────────────────────────────────────────────────────────
+  // SIGNAL 4: Identity Flexibility (existing, simplified)
+  // ─────────────────────────────────────────────────────────────
+  const flexibilityScore = 0.05; // Modest bonus
   breakdown.identityFlexibility = flexibilityScore;
-  identityScore += flexibilityScore;
+  score += flexibilityScore;
+
+  // ─────────────────────────────────────────────────────────────
+  // FINAL CAP
+  // ─────────────────────────────────────────────────────────────
+  score = Math.min(CAP_TOTAL, score);
 
   return {
-    score: Math.min(identityScore, 1.0), // Normalize to 0-1
+    score,
     breakdown
   };
+}
+
+// ─────────────────────────────────────────────────────────────────
+// AFFINITY ALIGNMENT HELPER (contextual weighting)
+// ─────────────────────────────────────────────────────────────────
+
+function _computeAffinityAlignment(affinityEntry, identityBias) {
+  // Default: neutral alignment
+  if (!affinityEntry.roleAffinity) return 1.0;
+
+  const roleBias = identityBias?.roleBias || {};
+  let total = 0;
+  let weight = 0;
+
+  for (const [role, aff] of Object.entries(affinityEntry.roleAffinity)) {
+    const b = roleBias[role] || 0;
+    total += aff * b;
+    weight += Math.abs(aff);
+  }
+
+  if (weight <= 0) return 1.0;
+
+  // Normalize into friendly range, clamp [0.5, 1.25]
+  return Math.max(0.5, Math.min(1.25, total / weight));
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -423,6 +566,27 @@ function _evaluatePrestigeProximity(candidate, actor, buildIntent, currentLevel)
     // Compute proximity score weighted by prestige confidence
     const proximityScore = (1 - (distance / 3)) * prestige.confidence;
     totalPrestigeScore += proximityScore;
+  }
+
+  // ENHANCEMENT: If candidate is a class and we have prestige delay data,
+  // use it to refine prestige proximity scoring
+  if (candidate.type === "class" && buildIntent.prestigeDelays) {
+    const candidateClassName = candidate.system?.classId || candidate.name;
+
+    for (const [prestigeName, classDelaysMap] of buildIntent.prestigeDelays.entries()) {
+      const delayData = classDelaysMap.get(candidateClassName);
+      if (delayData && delayData.delay <= 3) {
+        // Prestige is accessible within +6 levels
+        // Bonus for early access (delay 0-1) penalty for later access
+        const delayScore = Math.max(0, (3 - delayData.delay) / 3) * 0.15;
+        totalPrestigeScore += delayScore;
+
+        // If prestige delay includes BAB breakpoint, additional bonus
+        if (delayData.riskTags?.includes("BAB_BREAKPOINT_REACHED")) {
+          totalPrestigeScore += 0.1;
+        }
+      }
+    }
   }
 
   // Hard cap prestige contribution at 0.25 (per contract)
@@ -732,6 +896,36 @@ function _doesOptionResolveConditional(candidate, rule) {
   }
 
   return false;
+}
+
+/**
+ * Compute defense need boost (Phase 2C)
+ * Returns boost (0-1) if actor's defenses are below expected baseline
+ * @private
+ */
+function _computeDefenseNeedBoost(actor) {
+  if (!actor) return 0;
+
+  const defenses = actor.system?.defenses || {};
+  const currentLevel = actor.system?.level || 1;
+
+  // Baseline defensive values expected at this level (rough heuristic)
+  // At level 1: baseline ~12, at level 10: baseline ~14, at level 20: baseline ~16
+  const baselines = {
+    reflex: 12 + Math.floor(currentLevel / 5),
+    fortitude: 12 + Math.floor(currentLevel / 5),
+    will: 11 + Math.floor(currentLevel / 5)
+  };
+
+  // Calculate average defense deficit
+  const refDeficit = Math.max(0, (baselines.reflex - (defenses.reflex || 10)) / 10);
+  const fortDeficit = Math.max(0, (baselines.fortitude - (defenses.fortitude || 10)) / 10);
+  const willDeficit = Math.max(0, (baselines.will - (defenses.will || 9)) / 10);
+
+  const avgDeficit = (refDeficit + fortDeficit + willDeficit) / 3;
+
+  // Return normalized boost (0-1), capped at 0.8 to not overwhelm other metrics
+  return Math.min(avgDeficit, 0.8);
 }
 
 /**

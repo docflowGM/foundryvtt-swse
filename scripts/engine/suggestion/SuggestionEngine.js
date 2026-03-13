@@ -48,6 +48,13 @@ import { ReasonSignalBuilder } from "/systems/foundryvtt-swse/scripts/engine/sug
 import { ArchetypeMetadataEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ArchetypeMetadataEngine.js";
 // PHASE 1: SuggestionV2 Retrofit
 import { scoreSuggestion } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionScorer.js";
+// Phase 2D: Force Techniques
+import { ForceTechniqueSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-technique-suggestion-engine.js";
+// Phase 2E: Attribute Increases
+import { scoreAttributeAllocations } from "/systems/foundryvtt-swse/scripts/engine/suggestion/AttributeIncreaseScorer.js";
+// Phase 2A: Slot context detection
+import { getActiveSlotContext } from "/systems/foundryvtt-swse/scripts/engine/suggestion/slot-context-detector.js";
+import { enrichBuildIntentWithPrestigeDelays } from "/systems/foundryvtt-swse/scripts/engine/suggestion/prestige-delay-calculator.js";
 import { ReasonType } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionV2Contract.ts";
 import { mapReasonCodeToReasonType } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ReasonCodeToReasonTypeMapping.js";
 
@@ -158,6 +165,16 @@ export class SuggestionEngine {
             }
         }
 
+        // Enrich buildIntent with prestige delay calculations (for class suggestions)
+        if (buildIntent) {
+            try {
+                buildIntent = await enrichBuildIntentWithPrestigeDelays(buildIntent, actor);
+            } catch (err) {
+                SWSELogger.debug('[SuggestionEngine.suggestFeats] Prestige delay enrichment failed (optional):', err);
+                // Graceful fallback - continue with buildIntent without prestige delays
+            }
+        }
+
         // Get primary archetype for character (Phase 4: Archetype Integration)
         let primaryArchetype = null;
         let archetypeRecommendedFeatIds = [];
@@ -249,6 +266,16 @@ export class SuggestionEngine {
                 buildIntent = mentorBiases && Object.keys(mentorBiases).length > 0
                     ? { mentorBiases }
                     : null;
+            }
+        }
+
+        // Enrich buildIntent with prestige delay calculations (for class suggestions)
+        if (buildIntent) {
+            try {
+                buildIntent = await enrichBuildIntentWithPrestigeDelays(buildIntent, actor);
+            } catch (err) {
+                SWSELogger.debug('[SuggestionEngine.suggestTalents] Prestige delay enrichment failed (optional):', err);
+                // Graceful fallback - continue with buildIntent without prestige delays
             }
         }
 
@@ -371,6 +398,93 @@ export class SuggestionEngine {
             // Final: Alphabetically by name
             return (a.name || '').localeCompare(b.name || '');
         });
+    }
+
+    /**
+     * Generate suggestions for Force Techniques (Phase 2D)
+     * @param {Array} techniques - Array of force technique objects
+     * @param {Actor} actor - The actor
+     * @param {Object} pendingData - Pending selections from level-up
+     * @param {Object} options - Additional options
+     * @returns {Promise<Array>} Techniques with suggestion metadata
+     */
+    static async suggestForceTechniques(techniques, actor, pendingData = {}, options = {}) {
+        if (!techniques || techniques.length === 0) {
+            return [];
+        }
+
+        SWSELogger.log('[SuggestionEngine.suggestForceTechniques] Suggesting force techniques');
+
+        // Get or compute identity bias
+        let identityBias = options.identityBias;
+        if (!identityBias) {
+            try {
+                identityBias = IdentityEngine.computeTotalBias(actor);
+            } catch (err) {
+                SWSELogger.warn('[SuggestionEngine.suggestForceTechniques] Failed to compute identity bias:', err);
+                identityBias = null;
+            }
+        }
+
+        // Get or compute build intent
+        let buildIntent = options.buildIntent;
+        if (!buildIntent) {
+            try {
+                buildIntent = await SuggestionEngineCoordinator.analyzeBuildIntent(actor, pendingData);
+            } catch (err) {
+                SWSELogger.warn('[SuggestionEngine.suggestForceTechniques] Failed to analyze build intent:', err);
+                buildIntent = null;
+            }
+        }
+
+        // Use ForceTechniqueSuggestionEngine which already scores them
+        try {
+            const scored = await ForceTechniqueSuggestionEngine.suggestForceOptions(techniques, actor, options);
+            return scored.map(suggestion => ({
+                ...suggestion,
+                isSuggested: true
+            }));
+        } catch (err) {
+            SWSELogger.warn('[SuggestionEngine.suggestForceTechniques] Failed to suggest force techniques:', err);
+            return techniques.map(t => ({
+                ...t,
+                isSuggested: false
+            }));
+        }
+    }
+
+    /**
+     * Generate suggestions for Attribute Increases (Phase 2E)
+     * @param {Actor} actor - The actor
+     * @param {Object} pendingData - Pending selections from level-up
+     * @param {Object} options - Additional options
+     * @returns {Promise<Array>} Attribute allocations with scores and reasons
+     */
+    static async suggestAttributeIncreases(actor, pendingData = {}, options = {}) {
+        SWSELogger.log('[SuggestionEngine.suggestAttributeIncreases] Suggesting attribute increases');
+
+        // Get or compute build intent (for identity alignment)
+        let buildIntent = options.buildIntent;
+        if (!buildIntent) {
+            try {
+                buildIntent = await SuggestionEngineCoordinator.analyzeBuildIntent(actor, pendingData);
+            } catch (err) {
+                SWSELogger.warn('[SuggestionEngine.suggestAttributeIncreases] Failed to analyze build intent:', err);
+                buildIntent = {};
+            }
+        }
+
+        // Score attribute allocations
+        try {
+            const scored = await scoreAttributeAllocations(actor, buildIntent);
+            return scored.map(allocation => ({
+                ...allocation,
+                isSuggested: true
+            }));
+        } catch (err) {
+            SWSELogger.warn('[SuggestionEngine.suggestAttributeIncreases] Failed to score allocations:', err);
+            return [];
+        }
     }
 
     // ──────────────────────────────────────────────────────────────
