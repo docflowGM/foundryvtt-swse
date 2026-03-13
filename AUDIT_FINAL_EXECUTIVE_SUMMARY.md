@@ -151,12 +151,22 @@ levelup → Same validation before applying
 - **Action Required:** Fix critical violations before release
 
 ### ✅ PHASE 3: Data Authority
-- **Result:** 15+ direct mutation sites outside ActorEngine
+- **Result:** 15+ direct mutation sites outside ActorEngine identified
 - **Status:** COMPLETE - Detailed violation report provided
-- **Critical Files:** follower-creator.js, character-import-wizard.js, actor-base.js
+- **Critical Files:**
+  - follower-creator.js (5 critical mutations)
+  - character-import-wizard.js (1 critical, bulk system mutation)
+  - actor-base.js (4 critical fallback mutations)
+  - follower-manager.js (3 critical mutations)
+  - sheets, hooks, vehicle core (6+ additional violations)
+- **Root Cause:** Fallback mutations when ActorEngine unavailable (try/catch pattern)
 - **Fix Time:** 8 hours
-- **Root Cause:** Fallback mutations when ActorEngine unavailable
-- **Action Required:** Route all mutations through ActorEngine, remove fallbacks
+- **Total Violations:** 8 critical, 12+ high-severity
+- **Action Required:**
+  1. Route all mutations through ActorEngine
+  2. Remove fallback direct mutation patterns
+  3. Ensure ActorEngine always available or fail gracefully
+  4. Remove derived value storage (xp-engine.js)
 
 ### ✅ PHASE 4: Progression Logic Integrity
 - **Result:** 8 logic bugs affecting game balance

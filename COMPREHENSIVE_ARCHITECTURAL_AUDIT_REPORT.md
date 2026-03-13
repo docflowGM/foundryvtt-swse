@@ -150,36 +150,89 @@ The SWSE progression system is a **complex, multi-layered architecture** with si
 
 ---
 
-## PHASE 3: DATA AUTHORITY AUDIT 🔄
+## PHASE 3: DATA AUTHORITY AUDIT ✅
 
-**Status:** IN PROGRESS - Agent analysis running
+**Status:** COMPLETE - 15+ violations identified and catalogued
 
-### Preliminary Findings (from code review):
+### Critical Finding:
 
-The progression system has a **well-defined ActorEngine as mutation authority**, but with **integration fragilities**:
+**VIOLATION SEVERITY:** 🔴 CRITICAL - Multiple systems directly mutating `actor.system` data
 
-#### Mutation Points Identified:
+The system violates the architectural requirement that **only ActorEngine should mutate actor state**. 15+ direct mutation sites found across 9 files.
 
-**During Chargen:**
-- CharGen → ActorEngine.apply() → actor.update() ✅ Correct pattern
-- Chargen validation uses tempActor (non-destructive) ✅ Correct
+### Violation Summary:
 
-**During Level-Up:**
-- LevelUp → ProgressionEngine → ActorEngine.apply() ✅ Correct pattern
-- Suggestion engine reads-only from actor ✅ Correct
+| Component | File | Violations | Risk |
+|-----------|------|-----------|------|
+| **Follower System** | follower-creator.js | 5 critical | Direct actor.update() calls |
+| **Character Import** | character-import-wizard.js | 1 critical | Bulk system object mutation |
+| **Follower Sync** | follower-manager.js | 3 critical | Level synchronization bypass |
+| **Actor Base Class** | swse-actor-base.js | 4 high | Fallback mutations in async methods |
+| **Hooks** | follower-hooks.js | 1 critical | Fallback when ActorEngine unavailable |
+| **LevelUp Utils** | levelup-shared.js | 1 high | Defense bonus caching |
+| **Vehicle Crew** | swse-vehicle-core.js | 2 high | Sheet-level mutations |
+| **Sheets** | droid-sheet.js, vehicle-sheet.js | 6+ high | Direct component mutations |
+| **XP Engine** | xp-engine.js | 1 medium | Derived value storage |
 
-#### Known Issues (Pending Full Audit):
+### Root Cause: Fallback Mutation Pattern
 
-1. **Chargen BAB Pre-Calculation Hack**
-   - File: chargen-feats-talents.js lines 45-51
-   - Issue: Mutates `tempActor.system.bab` to compensate
-   - Root Cause: Missing BAB in chargen context
-   - Should: Integrate BAB calculation into tempActor creation
+```javascript
+// ANTI-PATTERN Found Throughout System:
+try {
+    await ActorEngine.updateActor(...)
+} catch (err) {
+    await this.update(...)  // ← VIOLATION: Direct mutation fallback!
+}
+```
 
-2. **tempActor Creation Non-Deterministic**
-   - Multiple chargen modules create tempActor slightly differently
-   - Could lead to inconsistent prerequisite evaluation
-   - Should: Centralize tempActor creation logic
+When ActorEngine is unavailable (loading race, module error), system falls back to direct mutations, breaking consistency.
+
+### Critical Violations (8):
+
+**1. Follower Creator** (follower-creator.js)
+   - Lines 330, 406-408, 537-539, 594-599, 666-671
+   - Mutations: progression, abilities, skills, level, BAB, HP
+   - Authority: Bypassed (direct actor.update())
+
+**2. Character Import Wizard** (character-import-wizard.js)
+   - Lines 289-294
+   - Mutation: Entire system object
+   - Authority: Bypassed (bulk direct mutation)
+
+**3. Fallback Mutations in Actor Base** (swse-actor-base.js)
+   - Lines 189, 363, 401, 462
+   - Methods: healDamage(), spendForcePoints(), regainForcePoints(), spendDestinyPoints()
+   - Authority: Falls back to direct when ActorEngine unavailable
+
+**4. Follower Manager** (follower-manager.js)
+   - Lines 243-245, 248-251, 260-262
+   - Mutations: level, HP, BAB
+   - Authority: Bypassed (during level sync)
+
+### High-Severity Violations (12+):
+
+- Follower hooks fallback (line 67)
+- LevelUp defense caching (levelup-shared.js:193-199)
+- Vehicle crew mutations (swse-vehicle-core.js:42-47, 80-82)
+- Sheet mutations (droid-sheet.js, vehicle-sheet.js - multiple lines)
+- Upgrade app item mutations (upgrade-app.js)
+
+### Secondary Issues:
+
+**Derived Value Storage** (xp-engine.js:106, 126-139)
+- XP progression data computed and stored instead of computed at access
+- Should: Compute on access, not persist
+
+### Recommendation:
+
+**IMMEDIATE ACTION REQUIRED:**
+1. Remove all try/catch fallback mutations
+2. Route ALL mutations through ActorEngine
+3. Fail gracefully if ActorEngine unavailable (don't fallback to direct mutations)
+4. Ensure ActorEngine is always loaded before any mutation attempts
+5. Consolidate mutation patterns into single authority
+
+**Estimated Fix Time:** 8 hours
 
 ---
 
