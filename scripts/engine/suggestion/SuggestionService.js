@@ -530,10 +530,26 @@ export class SuggestionService {
         }
       }
 
-      // PHASE 2.7: Apply mentor reason selection (semantic signals → atoms + intensity)
-      // This uses reasonSignals from SuggestionEngine to determine mentor atoms
-      // and intensity level for mentor dialogue/explanation generation
-      if (suggestion?.suggestion?.reasonSignals) {
+      // PHASE 2: Apply mentor reason selection (SuggestionV2 signals → atoms + intensity)
+      // Uses new selectFromSuggestionV2() with weighted multi-horizon signals
+      if (suggestion?.suggestion?.signals && suggestion?.suggestion?.scoring) {
+        try {
+          const mentorSelection = MentorReasonSelector.selectFromSuggestionV2(
+            suggestion.suggestion.signals,
+            suggestion.suggestion.scoring,
+            { mentorProfile: options.mentorProfile || null }
+          );
+          suggestion.mentorAtoms = mentorSelection.atoms;
+          suggestion.mentorIntensity = mentorSelection.intensity;
+        } catch (err) {
+          SWSELogger.warn('[SuggestionService] MentorReasonSelector.selectFromSuggestionV2 failed:', err);
+          // Fallback: use atoms from SuggestionEngine if selector fails
+          suggestion.mentorAtoms = suggestion?.suggestion?.reason?.atoms || [];
+          suggestion.mentorIntensity = 'medium';
+        }
+      }
+      // Fallback to deprecated v1 format if v2 signals not available
+      else if (suggestion?.suggestion?.reasonSignals) {
         try {
           const mentorSelection = MentorReasonSelector.select(
             suggestion.suggestion.reasonSignals,
@@ -542,8 +558,9 @@ export class SuggestionService {
           suggestion.mentorAtoms = mentorSelection.atoms;
           suggestion.mentorIntensity = mentorSelection.intensity;
           suggestion.mentorSelectedReasons = mentorSelection.selectedReasons;
+          SWSELogger.debug('[SuggestionService] Using v1 reasonSignals (v2 signals not available)');
         } catch (err) {
-          SWSELogger.warn('[SuggestionService] MentorReasonSelector failed:', err);
+          SWSELogger.warn('[SuggestionService] MentorReasonSelector.select failed:', err);
           // Fallback: use atoms from SuggestionEngine if selector fails
           suggestion.mentorAtoms = suggestion?.suggestion?.reason?.atoms || [];
           suggestion.mentorIntensity = 'medium';
