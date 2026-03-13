@@ -191,11 +191,18 @@ levelup → Same validation before applying
 - **Action Required:** Add UI transparency features, remove workarounds
 
 ### ✅ PHASE 6: Mentor System Integration
-- **Result:** Mentor system working well with engagement issues identified
-- **Status:** COMPLETE
-- **Findings:** (See detailed mentor audit for specifics)
-- **Fix Time:** TBD (awaiting detailed findings)
-- **Action Required:** Review detailed findings in task output
+- **Result:** Well-architected but largely DISCONNECTED from progression flows
+- **Status:** COMPLETE - 9+ critical integration gaps identified
+- **Key Finding:** MentorInteractionOrchestrator never called in production; memory frozen after chargen
+- **Severity:** 4 critical gaps, 5 major gaps, 2 moderate gaps
+- **Core Issue:** Mentor has 3 advanced modes (trajectory, reflection, commitment tracking) that are unreachable
+- **Root Cause:** No progression event hooks; manual button-only activation
+- **Fix Time:** 12-16 hours (non-critical but high-impact for player experience)
+- **Action Required:**
+  1. Hook MentorInteractionOrchestrator into levelup finalization
+  2. Implement memory updates (commitment decay, role inference)
+  3. Connect BuildIntent/IdentityEngine to mentor dialogue
+  4. Expose trajectory/reflection modes via UI
 
 ### ✅ PHASE 7: UI Architecture
 - **Result:** Good separation of concerns with pattern inconsistencies

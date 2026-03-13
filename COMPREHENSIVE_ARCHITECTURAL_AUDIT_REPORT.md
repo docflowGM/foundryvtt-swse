@@ -310,16 +310,161 @@ The suggestion engine is **well-architected** with proper separation of concerns
 
 ---
 
-## PHASE 6: MENTOR SYSTEM INTEGRATION 🔄
+## PHASE 6: MENTOR SYSTEM INTEGRATION ✅
 
-**Status:** IN PROGRESS - Agent analysis running
+**Status:** COMPLETE - 9+ integration gaps identified
 
-Expected findings on:
-- Mentor reaction triggers during progression
-- Signal consumption from BuildIntent
-- Mentor responsiveness and memory
-- Dialogue quality and atom system
-- Mentor-Suggestion seam integration
+### Critical Finding:
+
+The mentor system is **well-architected but largely DISCONNECTED from progression flows**. Advanced features exist but are unreachable.
+
+### Integration Gaps Summary (9+ Critical Issues):
+
+| Gap | Location | Severity | Impact |
+|-----|----------|----------|--------|
+| MentorInteractionOrchestrator never called | Production flow | CRITICAL | All advanced features dead code |
+| Memory frozen after chargen | mentor-memory.js | CRITICAL | Mentor never adapts or learns |
+| No progression event hooks | finalize-integration.js | CRITICAL | Mentor unaware of levelups |
+| Trajectory mode unreachable | mentor-interaction-orchestrator.js | MAJOR | Strategic advice inaccessible |
+| BuildIntent not read | mentor-interaction-orchestrator.js | MAJOR | No build-direction awareness |
+| IdentityEngine archetype not used | mentor-interaction-orchestrator.js | MAJOR | No archetype-aware responses |
+| No override detection | mentor-suggestion-dialog.js | MAJOR | Mentor doesn't learn from rejections |
+| Missing key atoms | mentor-atom-phrases.js | MAJOR | Can't express commitment breaks |
+| Coherence metrics unused | BuildAnalysisEngine | MODERATE | Can't warn about build dissonance |
+| Reflection mode unreachable | mentor-interaction-orchestrator.js | MODERATE | Analysis feature inaccessible |
+
+### Root Cause Analysis:
+
+**Primary Issue:** MentorInteractionOrchestrator exists with 3 modes but is never called:
+- **Mode 1: Selection** - React to feat/talent/class choices
+- **Mode 2: Trajectory** - Plan future build direction
+- **Mode 3: Reflection** - Analyze build coherence and conflicts
+
+All three modes are **unreachable** because there are no progression event hooks.
+
+**Secondary Issue:** Memory System Static After Chargen
+- Mentor memory initialized from survey biases ✓
+- Memory persists across sessions ✓
+- BUT: Never updated after chargen
+- Functions exist (`updateAllMentorMemories()`, `decayAllMentorCommitments()`) but never called
+- No tracking of player decisions, override patterns, or build evolution
+
+**Tertiary Issue:** Missing Signal Integration
+- BuildIntent computed for suggestions but mentor doesn't read it
+- IdentityEngine detects emergent archetypes but mentor ignores it
+- Suggestion override patterns not tracked
+- No consequence system for ignored advice
+
+### Mentor Reaction Triggers:
+
+**Current:** Manual button-only (chargen + levelup)
+- `.ask-mentor-feat-suggestion` button exists ✓
+- Triggers `MentorSuggestionDialog.show()` ✓
+- BUT: Only responds to explicit click, never automatically
+
+**Should Be:** Event-driven progression hooks
+1. On chargen step completion → Auto-mentor reaction
+2. On levelup feat/talent selection → Show mentor response
+3. On levelup finalization → Memory updates + commitment decay
+4. On suggestion override → Track pattern + adjust confidence
+
+**Where to Add:**
+- `/home/user/foundryvtt-swse/scripts/engine/progression/integration/finalize-integration.js` line 55 (levelup end)
+- `/home/user/foundryvtt-swse/scripts/apps/levelup/levelup-main.js` (feature selection)
+- `/home/user/foundryvtt-swse/scripts/apps/chargen/chargen-main.js` (step transitions)
+
+### Memory System Issues:
+
+**Current State:**
+```javascript
+// Memory initialized at chargen from survey
+mentorMemory = {
+  trust: 0.5,
+  inferredRole: "Guardian",
+  committedPath: "Force-Sensitive",
+  targetClass: "Jedi",
+  philosophyAxes: { restraint: 0.6, ... }
+}
+// Never updated after chargen.json saved
+```
+
+**Should Be:**
+```javascript
+// Memory evolves with progression
+mentorMemory = {
+  // ... existing fields ...
+  decisionsTracked: [
+    { level: 1, choice: "feat", selected: "Force Training", suggested: true },
+    { level: 2, choice: "talent", selected: "off-archetype talent", suggested: false },
+  ],
+  commitmentDecay: 0.8,  // Updated each levelup
+  inferred_archetype: "Sentinel",  // Updated from BuildIntent
+  suggestion_acceptance_rate: 0.6,  // Track if mentor is being followed
+}
+```
+
+**Missing Functions to Call:**
+- `updateAllMentorMemories(actor)` - Recompute archetype, roles from current build
+- `decayAllMentorCommitments(actor)` - Decay committed path intensity each levelup
+- `recordDecision(actor, decision)` - Track feat/talent/class choices
+- `analyzeSuggestionPattern(actor)` - Compute acceptance rate, confidence adjustment
+
+### Signal Integration Issues:
+
+**BuildIntent Not Read:**
+- `BuildIntent.analyze()` computes build themes (FORCE, MELEE, RANGED, STEALTH) ✓
+- Mentor orchestrator never imports BuildIntent
+- Mentor cannot say "You're building a Force-sensitive Guardian"
+- Should: Pass BuildIntent analysis to mentor dialogue generation
+
+**IdentityEngine Archetype Not Used:**
+- `IdentityEngine.computeTotalBias()` detects archetype alignment ✓
+- `BuildAnalysisEngine.detectEmergentArchetype()` infers character type ✓
+- Mentor orchestrator never reads archetype
+- Mentor cannot react differently to on-archetype vs off-archetype choices
+- Should: Include archetype in mentor's context
+
+**Suggestion Override Not Tracked:**
+- When player selects non-suggested item, no signal to mentor
+- When player ignores mentor advice, mentor never knows
+- Mentor cannot detect patterns ("You keep ignoring Force suggestions")
+- Should: Track override patterns, adjust mentor confidence/tone
+
+### Dialogue Quality Issues:
+
+**Strengths:**
+- Atom system well-designed (80+ variants per mentor, 5 intensity levels)
+- Mentor voices distinctive (Miraj mystical, Lead tactical)
+- Intensity scaling works
+
+**Weaknesses:**
+- All responses generic (no "for a Jedi" vs "for a Scoundrel" variants)
+- No historical callbacks ("Since you became a Jedi...")
+- No relationship arc (mentor tone doesn't evolve)
+- No consequence system (mentor never mentions ignored advice)
+- Missing atoms for key moments (CommitmentBroken, SuggestionIgnored, MilestoneReached)
+
+### Recommendations (Priority Order):
+
+**Priority 1 (Critical - Enable Mentor Features):**
+1. Hook MentorInteractionOrchestrator into levelup finalization
+2. Implement memory updates (commitment decay, role inference)
+3. Add progression step tracking to MentorMemory
+4. Track suggestion acceptance/rejection
+
+**Priority 2 (High - Smart Mentor):**
+1. Connect BuildIntent to mentor (for build-aware responses)
+2. Read IdentityEngine archetype in mentor responses
+3. Expose trajectory mode UI ("Ask mentor about my future")
+4. Expose reflection mode at key points
+
+**Priority 3 (Medium - Rich Dialogue):**
+1. Expand atoms for commitment/override/milestone moments
+2. Add historical callbacks ("Since you became a Jedi...")
+3. Implement mentor confidence calibration
+4. Add post-action confirmations
+
+**Estimated Fix Time:** 12-16 hours (non-blocking, high-value improvement)
 
 ---
 
