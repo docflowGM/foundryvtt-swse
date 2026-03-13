@@ -21,6 +21,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { projectBAB } from "/systems/foundryvtt-swse/scripts/engine/suggestion/prestige-delay-calculator.js";
+import { generateAdvisory } from "/systems/foundryvtt-swse/scripts/engine/suggestion/AdvisoryEngine.js";
 
 // ─────────────────────────────────────────────────────────────────
 // DEBUG MODE CONFIGURATION
@@ -70,8 +71,28 @@ export function scoreSuggestion(candidate, actor, buildIntent = {}, options = {}
   // Fallback if buildIntent missing
   buildIntent = buildIntent || { primaryThemes: [], prestigeAffinities: [], priorityPrereqs: [] };
 
+  // Set primaryPrestige if not already set (used by advisory generation)
+  if (!buildIntent.primaryPrestige && buildIntent.prestigeAffinities?.length > 0) {
+    buildIntent.primaryPrestige = buildIntent.prestigeAffinities[0].className;
+  }
+
   // Get identity bias (authoritative from IdentityEngine)
   let identityBias = options.identityBias || { mechanicalBias: {}, roleBias: {}, attributeBias: {} };
+
+  // Extract prestige forecast for class candidates (if available in buildIntent)
+  let prestigeForecast = {};
+  let riskTags = [];
+  if (candidate.type === "class" && buildIntent.prestigeDelays && buildIntent.primaryPrestige) {
+    const candidateClassName = candidate.system?.classId || candidate.name;
+
+    if (buildIntent.prestigeDelays.has(buildIntent.primaryPrestige)) {
+      const classDelaysMap = buildIntent.prestigeDelays.get(buildIntent.primaryPrestige);
+      if (classDelaysMap.has(candidateClassName)) {
+        prestigeForecast = classDelaysMap.get(candidateClassName) || {};
+        riskTags = prestigeForecast.riskTags || [];
+      }
+    }
+  }
 
   // ─────────────────────────────────────────────────────────────────
   // HORIZON 1: IMMEDIATE SCORE (Current State Synergy)
@@ -142,6 +163,22 @@ export function scoreSuggestion(candidate, actor, buildIntent = {}, options = {}
   }
 
   // ─────────────────────────────────────────────────────────────────
+  // ADVISORY GENERATION (Read-only Explanation Layer)
+  // ─────────────────────────────────────────────────────────────────
+
+  const advisories = generateAdvisory(candidate, {
+    actor,
+    horizons: {
+      immediate: immediateResult.score,
+      shortTerm: shortTermResult.score,
+      identity: identityResult.score
+    },
+    prestigeForecast,
+    riskTags,
+    buildIntent
+  });
+
+  // ─────────────────────────────────────────────────────────────────
   // RETURN STRUCTURED RESULT
   // ─────────────────────────────────────────────────────────────────
 
@@ -158,6 +195,7 @@ export function scoreSuggestion(candidate, actor, buildIntent = {}, options = {}
       shortTerm: shortTermResult,
       identity: identityResult
     },
+    advisories,
     reasons: _generateReasons(candidate, immediateResult, shortTermResult, identityResult)
   };
 
