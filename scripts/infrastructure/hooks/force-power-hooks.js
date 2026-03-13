@@ -6,6 +6,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
  */
 
 import { ForcePowerManager } from "/systems/foundryvtt-swse/scripts/utils/force-power-manager.js";
+import { ForcePowerEffectsEngine } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-effects-engine.js";
 
 export function initializeForcePowerHooks() {
 
@@ -124,6 +125,27 @@ export function initializeForcePowerHooks() {
         }
       }
     }
+  });
+
+  /**
+   * Hook into item deletion to remove associated force power effects
+   */
+  Hooks.on('deleteItem', async (item, options, userId) => {
+    // Only process on the deleting user's client
+    if (game.user.id !== userId) {return;}
+
+    // Only process force powers
+    if (!['forcepower', 'force-power'].includes(item.type)) {return;}
+
+    // Only process if item has a parent actor
+    if (!item.parent || item.parent.documentName !== 'Actor') {return;}
+
+    const actor = item.parent;
+
+    // Remove any active effects from this force power
+    await ForcePowerEffectsEngine.removePowerEffects(actor, item);
+
+    SWSELogger.log(`SWSE | Force Power Effects | Cleaned up effects for deleted power: ${item.name}`);
   });
 
   SWSELogger.log('SWSE | Force Power hooks initialized');
