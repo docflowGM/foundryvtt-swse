@@ -26,12 +26,24 @@ As feats/talents are suggested, console will show an **object** (not JSON):
     tier: 6,
     reasonCode: "PRESTIGE_PREREQ"
   },
-  signals: [
+  signals: [                                    // ← NOW HAS UP TO 3 SIGNALS (multi-horizon)
     {
       type: "PRESTIGE_PROXIMITY",
-      weight: 0.85,                    // ← MUST BE NUMBER not "0.85"
-      weight_type: "number",           // ← CRITICAL: Verify this says "number"
+      weight: 0.62,                             // ← Actual shortTerm score, not static 0.85
+      weight_type: "number",                    // ← CRITICAL: Verify this says "number"
       horizon: "shortTerm"
+    },
+    {
+      type: "ATTRIBUTE_SYNERGY",
+      weight: 0.35,                             // ← Actual immediate score
+      weight_type: "number",
+      horizon: "immediate"
+    },
+    {
+      type: "IDENTITY_ALIGNMENT",
+      weight: 0.28,                             // ← Actual identity score
+      weight_type: "number",
+      horizon: "identity"
     }
   ],
   scoring: {
@@ -49,8 +61,10 @@ As feats/talents are suggested, console will show an **object** (not JSON):
       confidence: "number"
     }
   },
-  signals_by_weight: [                 // ← SORTING TEST
-    "[0.850] PRESTIGE_PROXIMITY"       // ← Shows weights sort correctly
+  signals_by_weight: [                           // ← SORTING TEST
+    "[0.620] PRESTIGE_PROXIMITY",               // ← Sorted by actual scores
+    "[0.350] ATTRIBUTE_SYNERGY",
+    "[0.280] IDENTITY_ALIGNMENT"
   ]
 }
 ```
@@ -65,7 +79,9 @@ As feats/talents are suggested, console will show an **object** (not JSON):
 // Right-click → Copy → Paste into notepad
 
 // ALL of these MUST be true:
-- weight_type: "number"  (NOT "string")
+- signals[0].weight_type === "number"  (NOT "string")
+- signals[1].weight_type === "number"  (if exists)
+- signals[2].weight_type === "number"  (if exists)
 - typeof scoring.immediate === "number"
 - typeof scoring.shortTerm === "number"
 - typeof scoring.identity === "number"
@@ -75,25 +91,49 @@ As feats/talents are suggested, console will show an **object** (not JSON):
 // If ANY are "string", Phase 2 will FAIL at weight sorting
 ```
 
-#### B. Weight Sorting Test
-- [ ] `signals_by_weight` shows weights sorted in descending order
-- [ ] Check: `[0.85] > [0.65] > [0.45]` (numeric, not lexicographic)
-- [ ] Confirm: `0.9` sorts correctly vs `0.85` (not "0.9" < "0.85" string sort)
+#### B. Multi-Signal Emission (NEW - Critical Change)
+- [ ] signals.length is typically 2-3 (not always 1)
+  - [ ] When all horizons > 0.05: expect 3 signals
+  - [ ] When some horizons < 0.05: expect 1-2 signals
+  - [ ] Fallback only if ALL horizons weak: expect 1 signal
+- [ ] Each signal weight matches the actual horizon score:
+  - [ ] signals[0].weight ≈ scoring.shortTerm (if shortTerm dominant)
+  - [ ] signals[1].weight ≈ scoring.immediate (if present)
+  - [ ] signals[2].weight ≈ scoring.identity (if present)
 
-#### C. Dominant Horizon Correctness
+#### C. Weight Sorting Test (Numeric Sorting)
+- [ ] `signals_by_weight` shows weights sorted in descending order
+- [ ] Check: `[0.62] > [0.35] > [0.28]` (numeric, not lexicographic)
+- [ ] Confirm: `0.9` sorts correctly vs `0.85` (not "0.9" < "0.85" string sort)
+- [ ] Each signal weight matches horizon score with 0.01 tolerance
+
+#### D. Dominant Horizon Correctness
 - [ ] Test Case 1: immediate=0.65, shortTerm=0.25, identity=0.10
   - [ ] MUST have `dominantHorizon: "immediate"`
+  - [ ] MUST have signal with `horizon: "immediate"` (weight ≈ 0.65)
+  - [ ] That signal should be TOP in signals_by_weight
 - [ ] Test Case 2: immediate=0.30, shortTerm=0.70, identity=0.25
   - [ ] MUST have `dominantHorizon: "shortTerm"`
+  - [ ] MUST have signal with `horizon: "shortTerm"` (weight ≈ 0.70)
+  - [ ] That signal should be TOP in signals_by_weight
 - [ ] Test Case 3: immediate=0.40, shortTerm=0.35, identity=0.65
   - [ ] MUST have `dominantHorizon: "identity"`
+  - [ ] MUST have signal with `horizon: "identity"` (weight ≈ 0.65)
+  - [ ] That signal should be TOP in signals_by_weight
 
-#### D. Confidence Variation
+#### E. Signal Weight Accuracy
+- [ ] Each signal.weight matches its corresponding horizon score within 0.01
+  - [ ] ATTRIBUTE_SYNERGY.weight ≈ scoring.immediate
+  - [ ] PRESTIGE_PROXIMITY.weight ≈ scoring.shortTerm
+  - [ ] IDENTITY_ALIGNMENT.weight ≈ scoring.identity
+- [ ] weights are actual scores, not static mappings
+
+#### F. Confidence Variation
 - [ ] Close scores (0.42/0.40/0.38): confidence should be LOWER
 - [ ] Separated scores (0.75/0.30/0.25): confidence should be HIGHER
 - [ ] Check: confidence varies across different suggestions (not static 0.6–0.7)
 
-#### E. Score Range Validation
+#### G. Score Range Validation
 - [ ] All scores in range [0.0, 1.0] (NO negative or >1.0)
 - [ ] finalScore = weighted average of three horizons
 - [ ] Check: finalScore is roughly `0.6*immediate + 0.25*shortTerm + 0.15*identity`
@@ -188,18 +228,32 @@ Implementation details:
 
 **All of these must be true before flipping MentorReasonSelector:**
 
-- [ ] **TYPE CHECK**: weight_type === "number" (not "string")
+- [ ] **TYPE CHECK**: All signal.weight_type === "number" (not "string")
 - [ ] **TYPE CHECK**: all scoring.types say "number" (not "string")
-- [ ] **SORTING TEST**: signals_by_weight sorts numerically correct (0.9 > 0.85 > 0.5)
+- [ ] **MULTI-SIGNAL TEST**: signals.length is typically 2-3 (not always 1)
+  - [ ] Found suggestions with 3 signals (all horizons > 0.05)
+  - [ ] Found suggestions with 1-2 signals (some weak horizons)
+  - [ ] Signals vary based on breakdown (not static)
+- [ ] **WEIGHT ACCURACY**: Each signal.weight matches horizon score
+  - [ ] ATTRIBUTE_SYNERGY.weight ≈ scoring.immediate
+  - [ ] PRESTIGE_PROXIMITY.weight ≈ scoring.shortTerm
+  - [ ] IDENTITY_ALIGNMENT.weight ≈ scoring.identity
+- [ ] **SORTING TEST**: signals_by_weight sorts numerically correct
+  - [ ] Descending order (highest first)
+  - [ ] Weights match horizon scores (0.62 > 0.35 > 0.28 etc.)
+  - [ ] 0.9 sorts correctly vs 0.85 (numeric, not lexicographic)
 - [ ] **DOMINANCE TEST A**: Found suggestion with immediate dominant
   - [ ] dominantHorizon === "immediate" ✓
-  - [ ] signal.horizon === "immediate" ✓
+  - [ ] Top signal.horizon === "immediate" ✓
+  - [ ] signal.weight ≈ scoring.immediate ✓
 - [ ] **DOMINANCE TEST B**: Found suggestion with shortTerm dominant
   - [ ] dominantHorizon === "shortTerm" ✓
-  - [ ] signal.horizon === "shortTerm" ✓
+  - [ ] Top signal.horizon === "shortTerm" ✓
+  - [ ] signal.weight ≈ scoring.shortTerm ✓
 - [ ] **DOMINANCE TEST C**: Found suggestion with identity dominant
   - [ ] dominantHorizon === "identity" ✓
-  - [ ] signal.horizon === "identity" ✓
+  - [ ] Top signal.horizon === "identity" ✓
+  - [ ] signal.weight ≈ scoring.identity ✓
   - [ ] If NOT found: **STOP — Scoring may be misconfigured**
 - [ ] **CONFIDENCE TEST**: Confidence varies meaningfully across suggestions
   - [ ] Not all ~0.6–0.7 (that's broken)
