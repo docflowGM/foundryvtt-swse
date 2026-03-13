@@ -18,6 +18,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animation-engine.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
+import { ForcePowerEffectsEngine } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-effects-engine.js";
 
 export class ForceExecutor {
   /**
@@ -160,6 +161,11 @@ export class ForceExecutor {
       // Mark power as used
       await this.activateForce(actor, powerId, false);
 
+      // Apply force power effects if successful
+      if (success) {
+        await ForcePowerEffectsEngine.applyPowerEffect(actor, power, total);
+      }
+
       // Generate chat message
       await this._generateForcePowerRollMessage(
         actor,
@@ -228,6 +234,11 @@ export class ForceExecutor {
       };
 
       await ActorEngine.apply(actor, plan);
+
+      // Remove any active effects from recovered powers
+      for (const power of powersToRecover) {
+        await ForcePowerEffectsEngine.removePowerEffects(actor, power);
+      }
 
       // Generate chat message
       await SWSEChat.createMessage({
