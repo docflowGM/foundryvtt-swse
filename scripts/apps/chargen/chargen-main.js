@@ -3217,11 +3217,14 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
         }
       }
 
-      // Save character generation data to flags for reference
+      // Phase 3: Save character generation data to flags through ActorEngine authority
+      // Route through ActorEngine.updateActor() instead of direct setFlag() bypass
       try {
-        await created.setFlag('foundryvtt-swse', 'chargenData', this.characterData);
+        await ActorEngine.updateActor(created, {
+          'flags.foundryvtt-swse.chargenData': this.characterData
+        }, { source: 'chargen-finalization', skipValidation: true });
       } catch (flagError) {
-        SWSELogger.warn('Failed to save chargen data to flags:', flagError);
+        SWSELogger.warn('Failed to save chargen data to flags via ActorEngine:', flagError);
         // Non-critical error, continue
       }
 
