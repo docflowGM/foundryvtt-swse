@@ -1,0 +1,84 @@
+{
+  "title": "Talent Tree Tag Metadata - Phase 2F",
+  "description": "Maps talent tree UUIDs to their inherited tags for candidate enrichment",
+  "schema_version": "1.0",
+  "generatedDate": "2026-03-13",
+  "notes": "This is the boot-time SSOT (Single Source of Truth) for talent tree tags. Extend this file with additional trees as needed.",
+  "treeMetadata": {
+    "lightsaber-combat": {
+      "name": "Lightsaber Combat",
+      "descriptor": "Core lightsaber mastery and combat forms",
+      "tags": ["lightsaber", "melee", "accuracy", "damage", "defense", "jediSynergy"]
+    },
+    "armor-specialist": {
+      "name": "Armor Specialist",
+      "descriptor": "Armor, defense, and durability mastery",
+      "tags": ["armor", "defender", "durability", "defense", "support"]
+    },
+    "force-control": {
+      "name": "Force Control",
+      "descriptor": "Force power control and precision",
+      "tags": ["force", "control", "utility", "mind", "jediSynergy"]
+    },
+    "force-offense": {
+      "name": "Force Offense",
+      "descriptor": "Offensive Force power development",
+      "tags": ["force", "damage", "offense", "control", "jediSynergy"]
+    },
+    "force-defense": {
+      "name": "Force Defense",
+      "descriptor": "Defensive Force power development",
+      "tags": ["force", "defense", "utility", "support", "jediSynergy"]
+    },
+    "telekinetic-mastery": {
+      "name": "Telekinetic Mastery",
+      "descriptor": "Telekinetic Force powers and control",
+      "tags": ["force", "telekinetic", "control", "utility", "damage", "jediSynergy"]
+    },
+    "mind-affecting": {
+      "name": "Mind Affecting",
+      "descriptor": "Mind-affecting Force powers and mental control",
+      "tags": ["force", "mind", "control", "debuff", "socialSynergy", "jediSynergy"]
+    },
+    "healing": {
+      "name": "Healing Arts",
+      "descriptor": "Healing and restoration powers",
+      "tags": ["healing", "support", "utility", "light", "jediSynergy"]
+    },
+    "melee-combat": {
+      "name": "Melee Combat",
+      "descriptor": "Melee combat techniques and mastery",
+      "tags": ["melee", "damage", "accuracy", "defense"]
+    },
+    "ranged-combat": {
+      "name": "Ranged Combat",
+      "descriptor": "Ranged weapon and tactical skills",
+      "tags": ["ranged", "damage", "accuracy", "utility"]
+    },
+    "piloting": {
+      "name": "Piloting",
+      "descriptor": "Vehicle and starship piloting",
+      "tags": ["pilotSynergy", "utility", "mobility", "control"]
+    },
+    "stealth": {
+      "name": "Stealth and Infiltration",
+      "descriptor": "Stealth, infiltration, and evasion",
+      "tags": ["stealth", "utility", "mobility", "control", "socialSynergy"]
+    },
+    "social-influence": {
+      "name": "Social Influence",
+      "descriptor": "Social skills and influence",
+      "tags": ["socialSynergy", "utility", "control"]
+    },
+    "acrobatics": {
+      "name": "Acrobatics and Movement",
+      "descriptor": "Movement, acrobatics, and mobility",
+      "tags": ["mobility", "utility", "defense"]
+    },
+    "tech-expertise": {
+      "name": "Technical Expertise",
+      "descriptor": "Technical skills and tech knowledge",
+      "tags": ["utility", "control", "tech"]
+    }
+  }
+}

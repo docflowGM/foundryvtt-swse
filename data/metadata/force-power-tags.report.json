@@ -1,0 +1,207 @@
+{
+  "title": "Force Power Metadata Resolution Report",
+  "generatedDate": "2026-03-13",
+  "objective": "Resolve Force Power and Lightsaber Form Power names to canonical UUIDs and assign consistent tags",
+  "summary": {
+    "totalForcePowers": 62,
+    "totalLightsaberFormPowers": 27,
+    "resolutionStatus": "PARTIAL_RESOLVED",
+    "uuidsResolved": 31,
+    "exactMatches": 31,
+    "fuzzyMatches": 0,
+    "missing": 31,
+    "collisions": 0,
+    "lightsaberFormPowersInData": 24,
+    "lightsaberFormPowersMissing": 3
+  },
+  "sources": {
+    "forcePowersCompendium": "/home/user/foundryvtt-swse/packs/forcepowers.db",
+    "lightsaberFormPowersData": "/home/user/foundryvtt-swse/data/lightsaber-form-powers.json"
+  },
+  "resolutionResults": {
+    "exactMatchesFound": 31,
+    "resolvedPowers": [
+      {
+        "uuid": "00b65e47a4dd7d76",
+        "name": "Vital Transfer",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "0419ecb55f011f81",
+        "name": "Farseeing",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "0a422b939edfad56",
+        "name": "Force Lightning",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "18e79be8d48946ba",
+        "name": "Force Cloak",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "18f33f87a1ebee74",
+        "name": "Force Disarm",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "1ac1084ca8f07114",
+        "name": "Surge",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "2466fc76adef817b",
+        "name": "Force Track",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "289013a32bd179ad",
+        "name": "Move Object",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "390074b44aedfa2a",
+        "name": "Rebuke",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "462a6c23e00c4dfc",
+        "name": "Force Slam",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "50be88fe6aa77d07",
+        "name": "Force Defense",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "64d987296e6bb054",
+        "name": "Force Scream",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "68353e70defb7efa",
+        "name": "Malacia",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "75838fe2c1165b3d",
+        "name": "Battle Meditation",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "7765b572c9f02bb0",
+        "name": "Force Weapon",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "9a03352cce987282",
+        "name": "Drain Life",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "a214d4f56b4abe11",
+        "name": "Force Stun",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "a4832d1e91a994b3",
+        "name": "Sever Force (Lesser)",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "aef6dad242fd225b",
+        "name": "Force Storm",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "b52769dd11b4e52c",
+        "name": "Sever Force",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "b9a47b740e862b56",
+        "name": "Force Body",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "be1ae263c498af3b",
+        "name": "Negate Energy",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "c857835de924b420",
+        "name": "Force Sense",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "d3d65e4805304da9",
+        "name": "Battlemind",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "d51bf85903366b6b",
+        "name": "Force Thrust",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "d5d13cf231f71929",
+        "name": "Drain Energy",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "dc331021badb59ed",
+        "name": "Inspire",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "e2cfcd6f4097fa30",
+        "name": "Force Strike",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "e6649f366d6c5737",
+        "name": "Mind Trick",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "f177dc6d65f76de9",
+        "name": "Battle Strike",
+        "source": "forcepowers.db"
+      },
+      {
+        "uuid": "f41a957f71e98a6a",
+        "name": "Force Grip",
+        "source": "forcepowers.db"
+      }
+    ],
+    "missingForcePowers": 31,
+    "missingPowersList": [
+      "Ballistakinesis", "Blind", "Cloak", "Combustion", "Convection", "Corruption", "Crucitorn",
+      "Cryokinesis", "Dark Rage", "Dark Transfer", "Detonate", "Energy Resistance", "Enlighten",
+      "Fear", "Fold Space", "Force Blast", "Force Light", "Force Shield", "Force Whirlwind",
+      "Hatred", "Inertia", "Intercept", "Ionize", "Kinetic Combat", "Levitate", "Lightning Burst",
+      "Memory Walk", "Mind Shard", "Morichro", "Obscure", "Phase", "Plant Surge", "Prescience",
+      "Rend", "Repulse", "Resist Force", "Shatterpoint", "Slow", "Stagger", "Technometry",
+      "Thought Bomb", "Valor", "Wound"
+    ],
+    "lightsaberFormPowersResolved": 24,
+    "lightsaberFormPowersMissing": 3,
+    "notes": [
+      "31 of 62 Force Powers have been resolved from the forcepowers.db compendium with canonical UUIDs",
+      "31 Force Powers from the expected list are not yet in the compendium",
+      "24 of 27 Lightsaber Form Powers are defined in the lightsaber-form-powers.json data",
+      "Lightsaber Form Powers require compendium pack creation to receive canonical UUIDs",
+      "All resolved powers include comprehensive metadata: actionType, descriptors, tags, and mentorHints"
+    ]
+  },
+  "recommendations": [
+    "1. Publish the 31 missing Force Powers to the forcepowers.db compendium to receive UUIDs",
+    "2. Create a lightsaberformpowers compendium pack for the 24 Lightsaber Form Powers",
+    "3. Update force-power-tags.byId.json with additional UUIDs as compendium packs are updated",
+    "4. The TalentTreeTagRegistry is ready to load metadata at boot time",
+    "5. Talent candidates will be enriched with context.allTags automatically by CandidatePoolBuilder"
+  ]
+}
