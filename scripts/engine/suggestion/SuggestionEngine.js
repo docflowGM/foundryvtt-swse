@@ -46,6 +46,10 @@ import { selectReasonAtoms } from "/systems/foundryvtt-swse/scripts/engine/sugge
 import { REASON_TEXT_MAP } from "/systems/foundryvtt-swse/scripts/mentor/mentor-reason-renderer.js";
 import { ReasonSignalBuilder } from "/systems/foundryvtt-swse/scripts/engine/suggestion/reason-signal-builder.js";
 import { ArchetypeMetadataEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ArchetypeMetadataEngine.js";
+// PHASE 1: SuggestionV2 Retrofit
+import { scoreSuggestion } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionScorer.js";
+import { ReasonType } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionV2Contract.ts";
+import { mapReasonCodeToReasonType } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ReasonCodeToReasonTypeMapping.js";
 
 // ──────────────────────────────────────────────────────────────
 // TIER DEFINITIONS (PHASE 5D: UNIFIED_TIERS Refactor)
@@ -1193,6 +1197,15 @@ export class SuggestionEngine {
             archetype = archetypeId ? ArchetypeRegistry.get(archetypeId) : null;
         }
 
+        // PHASE 1: Build options object with context for SuggestionV2 retrofit
+        // This is threaded through all _buildSuggestionWithArchetype calls
+        const buildSuggestionOptions = {
+            actor,
+            candidate: feat,
+            buildIntent,
+            identityBias: null  // Could compute if needed, but SuggestionScorer will compute if not provided
+        };
+
         // Check tiers in order of priority (highest first)
 
         // Tier 6: Check if this feat is a priority prerequisite for a prestige class
@@ -1208,7 +1221,7 @@ export class SuggestionEngine {
                     `prestige:${prestigePrereq.forClass}`,
                     feat,
                     archetype,
-                    { actor }
+                    buildSuggestionOptions
                 );
             }
         }
@@ -1223,7 +1236,7 @@ export class SuggestionEngine {
                     `wishlist:${wishlistPrereqCheck.itemId || wishlistPrereqCheck.itemName}`,
                     feat,
                     archetype,
-                    { actor }
+                    buildSuggestionOptions
                 );
             }
         }
@@ -1235,7 +1248,8 @@ export class SuggestionEngine {
                 'MARTIAL_ARTS',
                 null,
                 feat,
-                archetype
+                archetype,
+                buildSuggestionOptions
             );
         }
 
@@ -1248,7 +1262,8 @@ export class SuggestionEngine {
                     'META_SYNERGY',
                     null,
                     feat,
-                    archetype
+                    archetype,
+                    buildSuggestionOptions
                 );
             }
         }
@@ -1261,7 +1276,8 @@ export class SuggestionEngine {
                 'SPECIES_EARLY',
                 speciesCheck.sourceId,
                 feat,
-                archetype
+                archetype,
+                buildSuggestionOptions
             );
         }
 
@@ -1273,7 +1289,8 @@ export class SuggestionEngine {
                 'CHAIN_CONTINUATION',
                 `chain:${chainPrereq}`,
                 feat,
-                archetype
+                archetype,
+                buildSuggestionOptions
             );
         }
 
@@ -1294,7 +1311,8 @@ export class SuggestionEngine {
                 'ABILITY_PREREQ_MATCH',
                 `ability:${actorState.highestAbility}`,
                 feat,
-                archetype
+                archetype,
+                buildSuggestionOptions
             );
         }
 
@@ -1306,7 +1324,8 @@ export class SuggestionEngine {
                 'CLASS_SYNERGY',
                 `class:${className}`,
                 feat,
-                archetype
+                archetype,
+                buildSuggestionOptions
             );
         }
 
@@ -1319,13 +1338,14 @@ export class SuggestionEngine {
                     'CLASS_SYNERGY',
                     null,
                     feat,
-                    archetype
+                    archetype,
+                    buildSuggestionOptions
                 );
             }
         }
 
         // Fallback - still a legal option
-        return this._buildSuggestionWithArchetype(SUGGESTION_TIERS.FALLBACK, 'FALLBACK', null, feat, archetype);
+        return this._buildSuggestionWithArchetype(SUGGESTION_TIERS.FALLBACK, 'FALLBACK', null, feat, archetype, buildSuggestionOptions);
     }
 
     /**
@@ -1347,6 +1367,14 @@ export class SuggestionEngine {
             archetype = archetypeId ? ArchetypeRegistry.get(archetypeId) : null;
         }
 
+        // PHASE 1: Build options object with context for SuggestionV2 retrofit
+        const buildSuggestionOptions = {
+            actor,
+            candidate: talent,
+            buildIntent,
+            identityBias: null
+        };
+
         // Check tiers in order of priority (highest first)
 
         // Tier 6: Check if this talent supports a prestige class path
@@ -1362,7 +1390,8 @@ export class SuggestionEngine {
                     'PRESTIGE_PREREQ',
                     `prestige:${prestigeClass}`,
                     talent,
-                    archetype
+                    archetype,
+                    buildSuggestionOptions
                 );
             }
         }
@@ -1376,7 +1405,8 @@ export class SuggestionEngine {
                     'WISHLIST_PATH',
                     `wishlist:${wishlistPrereqCheck.itemId || wishlistPrereqCheck.itemName}`,
                     talent,
-                    archetype
+                    archetype,
+                    buildSuggestionOptions
                 );
             }
         }
@@ -1390,7 +1420,8 @@ export class SuggestionEngine {
                     'META_SYNERGY',
                     null,
                     talent,
-                    archetype
+                    archetype,
+                    buildSuggestionOptions
                 );
             }
         }
@@ -1403,7 +1434,8 @@ export class SuggestionEngine {
                 'CHAIN_CONTINUATION',
                 `chain:${chainPrereq}`,
                 talent,
-                archetype
+                archetype,
+                buildSuggestionOptions
             );
         }
 
@@ -1424,7 +1456,8 @@ export class SuggestionEngine {
                 'ABILITY_PREREQ_MATCH',
                 `ability:${actorState.highestAbility}`,
                 talent,
-                archetype
+                archetype,
+                buildSuggestionOptions
             );
         }
 
@@ -1436,7 +1469,8 @@ export class SuggestionEngine {
                 'CLASS_SYNERGY',
                 `class:${className}`,
                 talent,
-                archetype
+                archetype,
+                buildSuggestionOptions
             );
         }
 
@@ -1450,13 +1484,168 @@ export class SuggestionEngine {
                     'CLASS_SYNERGY',
                     null,
                     talent,
-                    archetype
+                    archetype,
+                    buildSuggestionOptions
                 );
             }
         }
 
         // Fallback - still a legal option
-        return this._buildSuggestionWithArchetype(SUGGESTION_TIERS.FALLBACK, 'FALLBACK', null, talent, archetype);
+        return this._buildSuggestionWithArchetype(SUGGESTION_TIERS.FALLBACK, 'FALLBACK', null, talent, archetype, buildSuggestionOptions);
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────────
+    // PHASE 1: SuggestionV2 Retrofit Helper Functions
+    // ──────────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Determine the dominant horizon (which of immediate/shortTerm/identity is largest).
+     * @private
+     */
+    static _determineDominantHorizon(immediate, shortTerm, identity) {
+        if (immediate >= shortTerm && immediate >= identity) return 'immediate';
+        if (shortTerm >= identity) return 'shortTerm';
+        return 'identity';
+    }
+
+    /**
+     * Compute confidence from SuggestionScorer breakdown.
+     * Higher final score + better separation between horizons = higher confidence.
+     * @private
+     */
+    static _computeConfidenceFromScorer(scorerResult) {
+        // Base confidence from final score
+        const baseConfidence = Math.min(scorerResult.finalScore, 1.0);
+
+        // Separation bonus: how clearly one horizon dominates
+        const scores = [
+            scorerResult.breakdown.immediate,
+            scorerResult.breakdown.shortTerm,
+            scorerResult.breakdown.identity
+        ].sort((a, b) => b - a);
+        const separation = scores[0] - scores[1];
+
+        // Higher separation = higher confidence (up to +0.2 lift)
+        const confidenceLift = Math.min(separation * 0.4, 0.2);
+
+        return Math.min(baseConfidence + confidenceLift, 0.95);
+    }
+
+    /**
+     * Build signals array from SuggestionScorer result and reason code.
+     * CRITICAL: Emits multi-horizon signals reflecting actual breakdown.
+     * This preserves the three-horizon structure computed by SuggestionScorer.
+     *
+     * Emits one signal per horizon that exceeds threshold, using actual horizon
+     * scores as weights. Falls back to primary reason code if all horizons weak.
+     * @private
+     */
+    static _buildSignalsFromScorer(reasonCode, scorerResult, candidate) {
+        const signals = [];
+        const { immediate, shortTerm, identity } = scorerResult.breakdown;
+
+        // Threshold: only emit signals with meaningful contribution
+        const SIGNAL_THRESHOLD = 0.05;
+
+        // Map each horizon to appropriate ReasonType
+        // These represent what each horizon actually measures
+        const horizonTypeMap = {
+            immediate: ReasonType.ATTRIBUTE_SYNERGY,      // Current state synergy
+            shortTerm: ReasonType.PRESTIGE_PROXIMITY,     // Proximity + breakpoints
+            identity: ReasonType.IDENTITY_ALIGNMENT       // Archetype alignment
+        };
+
+        // Build base metadata from candidate
+        const baseMetadata = {};
+        if (candidate?.system?.prestigious) {
+            baseMetadata.prestigeClass = candidate.name;
+        }
+        if (candidate?.talentTree) {
+            baseMetadata.talentTree = candidate.talentTree;
+        }
+
+        // Emit immediate signal if above threshold
+        if (immediate > SIGNAL_THRESHOLD) {
+            signals.push({
+                type: horizonTypeMap.immediate,
+                weight: immediate,
+                horizon: 'immediate',
+                metadata: {
+                    ...baseMetadata,
+                    reasonCode,
+                    source: 'immediate_synergy'
+                }
+            });
+        }
+
+        // Emit shortTerm signal if above threshold
+        if (shortTerm > SIGNAL_THRESHOLD) {
+            signals.push({
+                type: horizonTypeMap.shortTerm,
+                weight: shortTerm,
+                horizon: 'shortTerm',
+                metadata: {
+                    ...baseMetadata,
+                    reasonCode,
+                    source: 'prestige_proximity'
+                }
+            });
+        }
+
+        // Emit identity signal if above threshold
+        if (identity > SIGNAL_THRESHOLD) {
+            signals.push({
+                type: horizonTypeMap.identity,
+                weight: identity,
+                horizon: 'identity',
+                metadata: {
+                    ...baseMetadata,
+                    reasonCode,
+                    source: 'identity_alignment'
+                }
+            });
+        }
+
+        // Fallback: if no signals emitted (all horizons weak), use primary reason code mapping
+        // This ensures we always have at least one signal for the tier/reason link
+        if (signals.length === 0) {
+            const mapping = mapReasonCodeToReasonType(reasonCode);
+            if (mapping && mapping.type) {
+                signals.push({
+                    type: mapping.type,
+                    weight: mapping.weight,
+                    horizon: mapping.horizon,
+                    metadata: {
+                        ...baseMetadata,
+                        reasonCode,
+                        source: 'primary_reason_fallback'
+                    }
+                });
+            }
+        }
+
+        return signals;
+    }
+
+    /**
+     * Build scoring object for SuggestionV2 compatibility.
+     * @private
+     */
+    static _buildScoringObject(scorerResult) {
+        const immediate = scorerResult.breakdown.immediate;
+        const shortTerm = scorerResult.breakdown.shortTerm;
+        const identity = scorerResult.breakdown.identity;
+        const dominantHorizon = this._determineDominantHorizon(immediate, shortTerm, identity);
+        const confidence = this._computeConfidenceFromScorer(scorerResult);
+
+        return {
+            immediate,
+            shortTerm,
+            identity,
+            final: scorerResult.finalScore,
+            confidence,
+            dominantHorizon
+        };
     }
 
     /**
@@ -1534,13 +1723,83 @@ export class SuggestionEngine {
             };
         }
 
+        // ──────────────────────────────────────────────────────────────────────────
+        // PHASE 1: Emit SuggestionV2 format (signals + scoring)
+        // ──────────────────────────────────────────────────────────────────────────
+
+        // Build signals and scoring if candidate and actor provided (for mentor system)
+        let signals = [];
+        let scoring = null;
+
+        if (options.candidate && options.actor && options.buildIntent) {
+            try {
+                // Call SuggestionScorer to get three-horizon breakdown
+                const scorerResult = scoreSuggestion(
+                    options.candidate,
+                    options.actor,
+                    options.buildIntent,
+                    { identityBias: options.identityBias }
+                );
+
+                // Build SuggestionV2-compatible signals array
+                signals = this._buildSignalsFromScorer(finalReasonCode, scorerResult, options.candidate);
+
+                // Build SuggestionV2-compatible scoring object
+                scoring = this._buildScoringObject(scorerResult);
+
+                // PHASE 1 VALIDATION: Log all emission details
+                // CRITICAL: Type verification for Phase 2 weight-sorting
+                console.log(`[SuggestionEngine.Phase1Validation] ${options.candidate.name}:`, {
+                    metadata: {
+                        name: options.candidate.name,
+                        tier: tier,
+                        reasonCode: finalReasonCode
+                    },
+                    signals: signals.map(s => ({
+                        type: s.type,
+                        weight: s.weight,
+                        weight_type: typeof s.weight,  // CRITICAL: Should be "number"
+                        horizon: s.horizon
+                    })),
+                    scoring: {
+                        immediate: scoring.immediate,
+                        shortTerm: scoring.shortTerm,
+                        identity: scoring.identity,
+                        final: scoring.final,
+                        confidence: scoring.confidence,
+                        dominantHorizon: scoring.dominantHorizon,
+                        // Type verification
+                        types: {
+                            immediate: typeof scoring.immediate,  // Should be "number"
+                            shortTerm: typeof scoring.shortTerm,
+                            identity: typeof scoring.identity,
+                            final: typeof scoring.final,
+                            confidence: typeof scoring.confidence
+                        }
+                    },
+                    // Weight sorting test
+                    signals_by_weight: signals
+                        .map((s, idx) => ({ idx, weight: s.weight, type: s.type }))
+                        .sort((a, b) => b.weight - a.weight)
+                        .map(s => `[${s.weight.toFixed(3)}] ${s.type}`)
+                });
+            } catch (err) {
+                // Graceful fallback: if SuggestionScorer fails, continue with old format
+                SWSELogger.warn('[SuggestionEngine] SuggestionScorer failed, continuing with v1 format:', err);
+                // signals and scoring remain empty
+            }
+        }
+
         return {
             tier,
             reasonCode: finalReasonCode,
             sourceId,
             confidence: finalConfidence,
             reasonSignals,
-            reason
+            reason,
+            // PHASE 1: New fields for SuggestionV2
+            signals,    // Array of { type, weight, horizon, metadata }
+            scoring     // Object with { immediate, shortTerm, identity, final, confidence, dominantHorizon }
         };
     }
 

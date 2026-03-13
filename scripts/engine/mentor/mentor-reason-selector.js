@@ -1,32 +1,120 @@
 /**
  * MENTOR REASON SELECTOR
  *
- * Converts SuggestionEngine semantic signals into mentor reason atoms.
+ * PHASE 2 REFACTOR: SuggestionV2 Integration
+ *
+ * Converts structured ReasonSignal[] from SuggestionV2 into mentor reason atoms.
  *
  * RESPONSIBILITY:
- * - Transform reasonSignals (facts) into semantic atoms
- * - Apply mentor personality weighting (future)
- * - Determine intensity based on conviction
- * - Select appropriate reasons.json keys for judgment engine
- * - Deterministic selection (same signals → same atoms)
+ * - Accept ReasonSignal[] (weighted, typed signals)
+ * - Map ReasonType → REASON_ATOMS deterministically
+ * - Sort signals by weight (top reasons first)
+ * - Select top 3–4 signals
+ * - Deduplicate atoms
+ * - Compute intensity from signal weight + scoring confidence
+ * - Return atoms + intensity for MentorJudgmentEngine
  *
- * INPUT: reasonSignals from SuggestionEngine
- * OUTPUT: atoms array + intensity level
+ * INPUT: signals (ReasonSignal[]) from SuggestionV2.signals
+ * OUTPUT: { atoms: REASON_ATOMS[], intensity: 'high' | 'medium' | 'low' }
+ *
+ * BACKWARDS COMPATIBILITY:
+ * - Old select(reasonSignals, mentorProfile) still supported (deprecated)
+ * - New selectFromSuggestionV2(signals, scoring) is primary
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { REASON_ATOMS } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-reason-atoms.js";
 import { INTENSITY_ATOMS } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-intensity-atoms.js";
+import {
+  mapReasonTypeToAtoms,
+  validateReasonTypeMapping
+} from "/systems/foundryvtt-swse/scripts/engine/mentor/ReasonTypeToReasonAtomsMapping.js";
 
 export class MentorReasonSelector {
   /**
-   * Select mentor reason atoms based on semantic signals
+   * Select mentor atoms from SuggestionV2 signals (PRIMARY)
    *
-   * @param {Object} reasonSignals - Semantic signals from SuggestionEngine
-   * @param {Object} mentorProfile - Mentor personality profile (future use)
-   * @returns {Object} { atoms: [...], intensity: 'high', selectedReasons: [...] }
+   * @param {Array<ReasonSignal>} signals - Weighted signals from SuggestionV2.signals
+   * @param {Object} scoring - Scoring breakdown { final, confidence }
+   * @param {Object} options - Optional: { topN: 3, mentorProfile: {} }
+   * @returns {Object} { atoms: REASON_ATOMS[], intensity: 'high'|'medium'|'low' }
+   */
+  static selectFromSuggestionV2(signals, scoring = {}, options = {}) {
+    const { topN = 3, mentorProfile = {} } = options;
+
+    // Validate inputs
+    if (!Array.isArray(signals) || signals.length === 0) {
+      SWSELogger.debug('[MentorReasonSelector] No signals; returning fallback');
+      return this._emptySelection();
+    }
+
+    try {
+      // Step 1: Sort signals by weight descending
+      const sorted = [...signals].sort((a, b) => b.weight - a.weight);
+
+      // Step 2: Select top N signals
+      const topSignals = sorted.slice(0, topN);
+
+      // Step 3: Map each ReasonType → REASON_ATOMS + deduplicate
+      const atoms = new Set();
+      for (const signal of topSignals) {
+        const mapped = mapReasonTypeToAtoms(signal.type);
+        if (mapped && mapped.length > 0) {
+          mapped.forEach(atom => atoms.add(atom));
+        } else {
+          SWSELogger.warn(`[MentorReasonSelector] Unmapped ReasonType: ${signal.type}`);
+        }
+      }
+
+      const uniqueAtoms = Array.from(atoms);
+
+      // Step 4: Compute intensity from top signal weight + scoring confidence
+      const topWeight = topSignals[0]?.weight || 0;
+      const confidence = scoring.confidence || 0.5;
+      const intensity = this._computeIntensity(topWeight, confidence);
+
+      // PHASE 2 VALIDATION: Log atom selection with dominance details
+      console.log(`[MentorReasonSelector.Phase2Validation] Atom selection:`, {
+        signals: topSignals.map(s => ({
+          type: s.type,
+          weight: s.weight.toFixed(3),
+          horizon: s.horizon
+        })),
+        atoms: uniqueAtoms,
+        intensity,
+        confidence: confidence.toFixed(3),
+        dominantHorizon: topSignals[0]?.horizon || 'unknown',
+        topSignalType: topSignals[0]?.type || 'none'
+      });
+
+      SWSELogger.debug('[MentorReasonSelector] Atoms selected:', {
+        topSignals: topSignals.length,
+        atoms: uniqueAtoms.length,
+        intensity,
+        topWeight
+      });
+
+      return {
+        atoms: uniqueAtoms,
+        intensity
+      };
+    } catch (err) {
+      SWSELogger.error('[MentorReasonSelector] Error selecting atoms:', err);
+      return this._emptySelection();
+    }
+  }
+
+  /**
+   * Legacy support: Select mentor atoms from old reasonSignals format
+   *
+   * @deprecated Use selectFromSuggestionV2() instead
+   * @param {Object} reasonSignals - Old format { alignment, prestigeSupport, ... }
+   * @param {Object} mentorProfile - Mentor personality profile (future)
+   * @returns {Object} { atoms: REASON_ATOMS[], intensity: 'high', selectedReasons: [...] }
    */
   static select(reasonSignals, mentorProfile = {}) {
+    SWSELogger.warn('[MentorReasonSelector] Using deprecated select(); migrate to selectFromSuggestionV2()');
+
     if (!reasonSignals || typeof reasonSignals !== 'object') {
       SWSELogger.warn('[MentorReasonSelector] Invalid reasonSignals');
       return this._emptySelection();
@@ -92,7 +180,7 @@ export class MentorReasonSelector {
     const uniqueAtoms = [...new Set(atoms)];
 
     // Determine intensity based on conviction and signal strength
-    const intensity = this._determineIntensity(reasonSignals, uniqueAtoms);
+    const intensity = this._determineIntensityLegacy(reasonSignals, uniqueAtoms);
 
     return {
       atoms: uniqueAtoms,
@@ -102,14 +190,36 @@ export class MentorReasonSelector {
   }
 
   /**
-   * Determine intensity level based on signals
+   * Compute intensity from weighted signal + confidence
    *
+   * @private
+   * @param {number} topWeight - Weight of strongest signal (0–1)
+   * @param {number} confidence - Scoring confidence (0–1)
+   * @returns {string} Intensity: 'high' | 'medium' | 'low'
+   */
+  static _computeIntensity(topWeight, confidence) {
+    // Combined strength: weight (60%) + confidence (40%)
+    const strength = (topWeight * 0.6) + (confidence * 0.4);
+
+    if (strength > 0.65) {
+      return 'high';
+    } else if (strength > 0.35) {
+      return 'medium';
+    } else {
+      return 'low';
+    }
+  }
+
+  /**
+   * Determine intensity level based on old reasonSignals (legacy)
+   *
+   * @deprecated Use _computeIntensity() instead
    * @private
    * @param {Object} reasonSignals - The semantic signals
    * @param {string[]} atoms - Selected atoms (for counting)
    * @returns {string} Intensity level: very_low, low, medium, high, very_high
    */
-  static _determineIntensity(reasonSignals, atoms) {
+  static _determineIntensityLegacy(reasonSignals, atoms) {
     const signalCount = [
       reasonSignals.prestigeSupport,
       reasonSignals.mechanicalSynergy,
@@ -141,8 +251,7 @@ export class MentorReasonSelector {
   static _emptySelection() {
     return {
       atoms: [REASON_ATOMS.ReadinessMet],
-      intensity: 'low',
-      selectedReasons: []
+      intensity: 'medium'
     };
   }
 
@@ -159,5 +268,21 @@ export class MentorReasonSelector {
 
     const validAtomList = Object.values(REASON_ATOMS);
     return atoms.every(atom => validAtomList.includes(atom));
+  }
+
+  /**
+   * Validate the entire ReasonType→REASON_ATOMS mapping
+   * Run at system init to catch incomplete mappings
+   *
+   * @throws Error if mapping is incomplete
+   */
+  static validateMapping() {
+    try {
+      validateReasonTypeMapping();
+      return true;
+    } catch (err) {
+      SWSELogger.error('[MentorReasonSelector] Mapping validation failed:', err);
+      throw err;
+    }
   }
 }
