@@ -37,7 +37,10 @@ export class SnapshotManager {
 
             history.push(snapshot);
 
-            await actor.setFlag('foundryvtt-swse', 'snapshots', history);
+            // Route through ActorEngine for mutation authority
+            await ActorEngine.updateActor(actor, {
+              'flags.foundryvtt-swse.snapshots': history
+            }, { source: 'snapshot-create', skipValidation: true });
 
             SWSELogger.log(`Snapshot created: "${label}" for ${actor.name}`);
             return snapshot;
@@ -122,7 +125,10 @@ export class SnapshotManager {
 
             // Restore snapshots flag
             if (preservedSnapshots) {
-                await actor.setFlag('foundryvtt-swse', 'snapshots', preservedSnapshots);
+                // Route through ActorEngine for mutation authority
+                await ActorEngine.updateActor(actor, {
+                  'flags.foundryvtt-swse.snapshots': preservedSnapshots
+                }, { source: 'snapshot-restore', skipValidation: true });
             }
 
             const dateStr = new Date(snapshot.timestamp).toLocaleString();
@@ -155,7 +161,10 @@ export class SnapshotManager {
             }
 
             snapshots.splice(index, 1);
-            await actor.setFlag('foundryvtt-swse', 'snapshots', snapshots);
+            // Route through ActorEngine for mutation authority
+            await ActorEngine.updateActor(actor, {
+              'flags.foundryvtt-swse.snapshots': snapshots
+            }, { source: 'snapshot-delete', skipValidation: true });
 
             SWSELogger.log(`Snapshot deleted for ${actor.name}`);
             return true;
@@ -172,7 +181,10 @@ export class SnapshotManager {
      */
     static async clearSnapshots(actor) {
         try {
-            await actor.setFlag('foundryvtt-swse', 'snapshots', []);
+            // Route through ActorEngine for mutation authority
+            await ActorEngine.updateActor(actor, {
+              'flags.foundryvtt-swse.snapshots': []
+            }, { source: 'snapshot-clear', skipValidation: true });
             SWSELogger.log(`Snapshots cleared for ${actor.name}`);
             return true;
         } catch (err) {

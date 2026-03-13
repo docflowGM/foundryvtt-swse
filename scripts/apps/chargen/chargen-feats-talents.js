@@ -849,7 +849,70 @@ export function _getFeatsNeeded() {
 }
 
 /**
+ * Build the items list for tempActor validation.
+ * Extracted as helper to ensure deterministic behavior across all item collection methods.
+ * @private
+ * @returns {Array<Object>} List of items in deterministic order
+ */
+function _buildTempActorItems(characterData, classFeatures) {
+  const items = [];
+
+  // Add auto-granted class features first (in deterministic order)
+  if (classFeatures && classFeatures.length > 0) {
+    for (const feature of classFeatures) {
+      items.push({
+        type: 'feat',
+        name: feature.name,
+        system: feature.system || {}
+      });
+    }
+  }
+
+  // Add feats
+  if (characterData.feats) {
+    for (const feat of characterData.feats) {
+      items.push({
+        type: 'feat',
+        name: feat.name || feat,
+        system: feat.system || {}
+      });
+    }
+  }
+
+  // Add talents
+  if (characterData.talents) {
+    for (const talent of characterData.talents) {
+      items.push({
+        type: 'talent',
+        name: talent.name || talent,
+        system: {
+          tree: getTalentTreeName(talent) || talent.system?.talent_tree || 'Unknown',
+          prerequisite: talent.system?.prerequisite || '',
+          benefit: talent.system?.benefit || '',
+          special: talent.system?.special || '',
+          uses: talent.system?.uses || { current: 0, max: 0, perEncounter: false, perDay: false }
+        }
+      });
+    }
+  }
+
+  // Add classes
+  if (characterData.classes) {
+    for (const cls of characterData.classes) {
+      items.push({
+        type: 'class',
+        name: cls.name || cls,
+        system: cls.system || { level: 1 }
+      });
+    }
+  }
+
+  return items;
+}
+
+/**
  * Create a temporary actor-like object for prerequisite validation during character generation
+ * DETERMINISM: All items are built via _buildTempActorItems() to ensure consistent behavior
  */
 export function _createTempActorForValidation() {
   // Ensure abilities are calculated
@@ -857,6 +920,9 @@ export function _createTempActorForValidation() {
 
   // Get starting class features (e.g., Force Sensitivity from Jedi)
   const classFeatures = this._getStartingClassFeatures();
+
+  // Build items list once for use in all item collection methods
+  const builtItems = _buildTempActorItems(this.characterData, classFeatures);
 
   // Create a mock actor object with the structure expected by PrerequisiteValidator
   const tempActor = {
@@ -876,171 +942,9 @@ export function _createTempActorForValidation() {
       }
     },
     items: {
-      filter: (filterFn) => {
-        const items = [];
-
-        // Add auto-granted class features
-        if (classFeatures && classFeatures.length > 0) {
-          for (const feature of classFeatures) {
-            items.push({
-              type: 'feat',
-              name: feature.name,
-              system: feature.system || {}
-            });
-          }
-        }
-
-        // Add feats
-        if (this.characterData.feats) {
-          for (const feat of this.characterData.feats) {
-            items.push({
-              type: 'feat',
-              name: feat.name || feat,
-              system: feat.system || {}
-            });
-          }
-        }
-
-        // Add talents
-        if (this.characterData.talents) {
-          for (const talent of this.characterData.talents) {
-            items.push({
-              type: 'talent',
-              name: talent.name || talent,
-              system: {
-                tree: getTalentTreeName(talent) || talent.system?.talent_tree || 'Unknown',
-                prerequisite: talent.system?.prerequisite || '',
-                benefit: talent.system?.benefit || '',
-                special: talent.system?.special || '',
-                uses: talent.system?.uses || { current: 0, max: 0, perEncounter: false, perDay: false }
-              }
-            });
-          }
-        }
-
-        // Add classes
-        if (this.characterData.classes) {
-          for (const cls of this.characterData.classes) {
-            items.push({
-              type: 'class',
-              name: cls.name || cls,
-              system: cls.system || { level: 1 }
-            });
-          }
-        }
-
-        return items.filter(filterFn);
-      },
-      some: (filterFn) => {
-        const items = [];
-
-        // Add auto-granted class features
-        if (classFeatures && classFeatures.length > 0) {
-          for (const feature of classFeatures) {
-            items.push({
-              type: 'feat',
-              name: feature.name,
-              system: feature.system || {}
-            });
-          }
-        }
-
-        // Add feats
-        if (this.characterData.feats) {
-          for (const feat of this.characterData.feats) {
-            items.push({
-              type: 'feat',
-              name: feat.name || feat,
-              system: feat.system || {}
-            });
-          }
-        }
-
-        // Add talents
-        if (this.characterData.talents) {
-          for (const talent of this.characterData.talents) {
-            items.push({
-              type: 'talent',
-              name: talent.name || talent,
-              system: {
-                tree: getTalentTreeName(talent) || talent.system?.talent_tree || 'Unknown',
-                prerequisite: talent.system?.prerequisite || '',
-                benefit: talent.system?.benefit || '',
-                special: talent.system?.special || '',
-                uses: talent.system?.uses || { current: 0, max: 0, perEncounter: false, perDay: false }
-              }
-            });
-          }
-        }
-
-        // Add classes
-        if (this.characterData.classes) {
-          for (const cls of this.characterData.classes) {
-            items.push({
-              type: 'class',
-              name: cls.name || cls,
-              system: cls.system || { level: 1, forceSensitive: cls.system?.forceSensitive || false }
-            });
-          }
-        }
-
-        return items.some(filterFn);
-      },
-      find: (filterFn) => {
-        const items = [];
-
-        // Add auto-granted class features
-        if (classFeatures && classFeatures.length > 0) {
-          for (const feature of classFeatures) {
-            items.push({
-              type: 'feat',
-              name: feature.name,
-              system: feature.system || {}
-            });
-          }
-        }
-
-        // Add feats
-        if (this.characterData.feats) {
-          for (const feat of this.characterData.feats) {
-            items.push({
-              type: 'feat',
-              name: feat.name || feat,
-              system: feat.system || {}
-            });
-          }
-        }
-
-        // Add talents
-        if (this.characterData.talents) {
-          for (const talent of this.characterData.talents) {
-            items.push({
-              type: 'talent',
-              name: talent.name || talent,
-              system: {
-                tree: getTalentTreeName(talent) || talent.system?.talent_tree || 'Unknown',
-                prerequisite: talent.system?.prerequisite || '',
-                benefit: talent.system?.benefit || '',
-                special: talent.system?.special || '',
-                uses: talent.system?.uses || { current: 0, max: 0, perEncounter: false, perDay: false }
-              }
-            });
-          }
-        }
-
-        // Add classes
-        if (this.characterData.classes) {
-          for (const cls of this.characterData.classes) {
-            items.push({
-              type: 'class',
-              name: cls.name || cls,
-              system: cls.system || { level: 1, forceSensitive: cls.system?.forceSensitive || false }
-            });
-          }
-        }
-
-        return items.find(filterFn);
-      }
+      filter: (filterFn) => builtItems.filter(filterFn),
+      some: (filterFn) => builtItems.some(filterFn),
+      find: (filterFn) => builtItems.find(filterFn)
     }
   };
 
