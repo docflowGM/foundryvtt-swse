@@ -259,6 +259,20 @@ export async function _onSelectFeat(event) {
     }
   }
 
+  // Phase 2: VALIDATOR WIRING - Validate feat against feat slots
+  if (!this.freeBuild && (this.characterData.featSlots && this.characterData.featSlots.length > 0)) {
+    const availableSlot = this.characterData.featSlots.find(s => !s.consumed);
+    if (availableSlot) {
+      const validation = await FeatSlotValidator.validateFeatForSlot(feat, availableSlot, this.actor);
+      if (!validation.valid) {
+        SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Feat slot validation FAILED for "${feat.name}": ${validation.message}`);
+        ui.notifications.warn(`Cannot select "${feat.name}": ${validation.message}`);
+        return;
+      }
+      SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Feat slot validation PASSED for "${feat.name}"`);
+    }
+  }
+
   // Check if this is a Skill Focus feat
   const featSlug = feat.system?.slug || feat.name?.toLowerCase().replace(/\s+/g, '-');
   if (featSlug === CAPABILITY_SLUGS.SKILL_FOCUS || feat.name.toLowerCase().includes('skill focus')) {
@@ -652,6 +666,18 @@ export async function _onSelectTalent(event) {
           ui.notifications.warn(`Cannot select "${talentToAdd.name}" from Block & Deflect: ${assessment.missingPrereqs.join(', ')}`);
           return;
         }
+
+        // Phase 2: VALIDATOR WIRING - Validate talent against talent slots
+        if (this.characterData.talentSlots && this.characterData.talentSlots.length > 0) {
+          const availableSlot = this.characterData.talentSlots.find(s => !s.consumed);
+          if (availableSlot) {
+            const validation = TalentSlotValidator.validateTalentForSlot(talentToAdd, availableSlot, this.characterData.unlockedTrees || [], this.characterData);
+            if (!validation.valid) {
+              ui.notifications.warn(`Cannot select "${talentToAdd.name}" from Block & Deflect: ${validation.message}`);
+              return;
+            }
+          }
+        }
       }
     }
 
@@ -738,6 +764,20 @@ export async function _onSelectTalent(event) {
       if (!assessment.legal) {
         ui.notifications.warn(`Cannot select "${tal.name}": ${assessment.missingPrereqs.join(', ')}`);
         return;
+      }
+    }
+
+    // Phase 2: VALIDATOR WIRING - Validate talent against talent slots
+    if (!this.freeBuild && (this.characterData.talentSlots && this.characterData.talentSlots.length > 0)) {
+      const availableSlot = this.characterData.talentSlots.find(s => !s.consumed);
+      if (availableSlot) {
+        const validation = TalentSlotValidator.validateTalentForSlot(tal, availableSlot, this.characterData.unlockedTrees || [], this.characterData);
+        if (!validation.valid) {
+          SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectTalent: Talent slot validation FAILED for "${tal.name}": ${validation.message}`);
+          ui.notifications.warn(`Cannot select "${tal.name}": ${validation.message}`);
+          return;
+        }
+        SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectTalent: Talent slot validation PASSED for "${tal.name}"`);
       }
     }
 
