@@ -106,6 +106,9 @@ import { decayAllMentorCommitments, updateAllMentorMemories } from "/systems/fou
 // Import mentor wishlist integration
 import { MentorWishlistIntegration } from "/systems/foundryvtt-swse/scripts/engine/suggestion/MentorWishlistIntegration.js";
 
+// PHASE 4: Import mentor interaction orchestrator integration
+import { MentorInteractionIntegration } from "/systems/foundryvtt-swse/scripts/apps/levelup/mentor-interaction-integration.js";
+
 // V2 API base class
 import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
 
@@ -620,17 +623,36 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       // Get mentor context considering wishlist
       const mentorContext = MentorWishlistIntegration.getMentorWishlistContext(topSuggestion, this.actor, this.mentor);
 
+      // PHASE 4: Enrich suggestion with mentor interaction orchestrator reasoning
+      const enrichedSuggestion = await MentorInteractionIntegration.enrichMentorSuggestion(
+        this.actor,
+        this.mentor,
+        topSuggestion,
+        'feat_selection',
+        { pendingData: this._buildPendingData() }
+      );
+
       // Show mentor dialog with suggestion (expects class key like "Jedi")
-      const result = await MentorSuggestionDialog.show(this.currentMentorClass, topSuggestion, 'feat_selection');
+      const result = await MentorSuggestionDialog.show(this.currentMentorClass, enrichedSuggestion, 'feat_selection');
 
       if (result && result.applied) {
         // Auto-select the feat
         const featId = topSuggestion._id;
         await this._onSelectBonusFeat({ currentTarget: { dataset: { featId } } });
 
+        // Record mentor decision for memory tracking
+        await MentorInteractionIntegration.recordMentorDecision(
+          this.actor,
+          this.mentor,
+          topSuggestion,
+          'feat_selection'
+        );
+
         // Show mentor context if available
         if (mentorContext) {
           ui.notifications.info(mentorContext);
+        } else if (enrichedSuggestion.mentorAdvice) {
+          ui.notifications.info(enrichedSuggestion.mentorAdvice);
         } else {
           ui.notifications.info(`${this.mentor.name} suggests: ${topSuggestion.name}`);
         }
@@ -719,12 +741,29 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       // Get mentor context considering wishlist
       const mentorContext = MentorWishlistIntegration.getMentorWishlistContext(topSuggestion, this.actor, this.mentor);
 
+      // PHASE 4: Enrich suggestion with mentor interaction orchestrator reasoning
+      const enrichedSuggestion = await MentorInteractionIntegration.enrichMentorSuggestion(
+        this.actor,
+        this.mentor,
+        topSuggestion,
+        'talent_selection',
+        { pendingData }
+      );
+
       // Show mentor dialog with suggestion (expects class key like "Jedi")
-      const result = await MentorSuggestionDialog.show(this.currentMentorClass, topSuggestion, 'talent_selection');
+      const result = await MentorSuggestionDialog.show(this.currentMentorClass, enrichedSuggestion, 'talent_selection');
 
       if (result && result.applied) {
         // Auto-select the talent
         await this._selectTalent(topSuggestion.name);
+
+        // Record mentor decision for memory tracking
+        await MentorInteractionIntegration.recordMentorDecision(
+          this.actor,
+          this.mentor,
+          topSuggestion,
+          'talent_selection'
+        );
 
         // Show mentor context if available
         if (mentorContext) {
