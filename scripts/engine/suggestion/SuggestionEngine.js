@@ -1688,20 +1688,41 @@ export class SuggestionEngine {
                 scoring = this._buildScoringObject(scorerResult);
 
                 // PHASE 1 VALIDATION: Log all emission details
-                console.log(`[SuggestionEngine.Phase1Validation] ${options.candidate.name}:`, JSON.stringify({
-                    name: options.candidate.name,
-                    tier: tier,
-                    reasonCode: finalReasonCode,
-                    signals: signals.map(s => ({ type: s.type, weight: s.weight.toFixed(2), horizon: s.horizon })),
+                // CRITICAL: Type verification for Phase 2 weight-sorting
+                console.log(`[SuggestionEngine.Phase1Validation] ${options.candidate.name}:`, {
+                    metadata: {
+                        name: options.candidate.name,
+                        tier: tier,
+                        reasonCode: finalReasonCode
+                    },
+                    signals: signals.map(s => ({
+                        type: s.type,
+                        weight: s.weight,
+                        weight_type: typeof s.weight,  // CRITICAL: Should be "number"
+                        horizon: s.horizon
+                    })),
                     scoring: {
-                        immediate: scoring.immediate.toFixed(2),
-                        shortTerm: scoring.shortTerm.toFixed(2),
-                        identity: scoring.identity.toFixed(2),
-                        final: scoring.final.toFixed(2),
-                        confidence: scoring.confidence.toFixed(2),
-                        dominantHorizon: scoring.dominantHorizon
-                    }
-                }, null, 2));
+                        immediate: scoring.immediate,
+                        shortTerm: scoring.shortTerm,
+                        identity: scoring.identity,
+                        final: scoring.final,
+                        confidence: scoring.confidence,
+                        dominantHorizon: scoring.dominantHorizon,
+                        // Type verification
+                        types: {
+                            immediate: typeof scoring.immediate,  // Should be "number"
+                            shortTerm: typeof scoring.shortTerm,
+                            identity: typeof scoring.identity,
+                            final: typeof scoring.final,
+                            confidence: typeof scoring.confidence
+                        }
+                    },
+                    // Weight sorting test
+                    signals_by_weight: signals
+                        .map((s, idx) => ({ idx, weight: s.weight, type: s.type }))
+                        .sort((a, b) => b.weight - a.weight)
+                        .map(s => `[${s.weight.toFixed(3)}] ${s.type}`)
+                });
             } catch (err) {
                 // Graceful fallback: if SuggestionScorer fails, continue with old format
                 SWSELogger.warn('[SuggestionEngine] SuggestionScorer failed, continuing with v1 format:', err);

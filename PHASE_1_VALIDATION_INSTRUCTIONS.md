@@ -17,83 +17,131 @@ Detailed validation logging is active in SuggestionEngine._buildSuggestion() to 
 
 ### Step 2: Capture Validation Logs
 
-As feats/talents are suggested, console will show:
+As feats/talents are suggested, console will show an **object** (not JSON):
 
-```
-[SuggestionEngine.Phase1Validation] <FeatName>: {
-  "name": "<FeatName>",
-  "tier": 4,
-  "reasonCode": "CHAIN_CONTINUATION",
-  "signals": [
+```javascript
+[SuggestionEngine.Phase1Validation] Force Focus: {
+  metadata: {
+    name: "Force Focus",
+    tier: 6,
+    reasonCode: "PRESTIGE_PREREQ"
+  },
+  signals: [
     {
-      "type": "FEAT_CHAIN_SETUP",
-      "weight": "0.70",
-      "horizon": "immediate"
+      type: "PRESTIGE_PROXIMITY",
+      weight: 0.85,                    // ← MUST BE NUMBER not "0.85"
+      weight_type: "number",           // ← CRITICAL: Verify this says "number"
+      horizon: "shortTerm"
     }
   ],
-  "scoring": {
-    "immediate": "0.45",
-    "shortTerm": "0.28",
-    "identity": "0.15",
-    "final": "0.35",
-    "confidence": "0.48",
-    "dominantHorizon": "immediate"
-  }
+  scoring: {
+    immediate: 0.35,                   // ← MUST BE NUMBER
+    shortTerm: 0.62,                   // ← MUST BE NUMBER
+    identity: 0.28,                    // ← MUST BE NUMBER
+    final: 0.47,                       // ← MUST BE NUMBER
+    confidence: 0.64,                  // ← MUST BE NUMBER
+    dominantHorizon: "shortTerm",
+    types: {
+      immediate: "number",             // ← ALL MUST SAY "number"
+      shortTerm: "number",
+      identity: "number",
+      final: "number",
+      confidence: "number"
+    }
+  },
+  signals_by_weight: [                 // ← SORTING TEST
+    "[0.850] PRESTIGE_PROXIMITY"       // ← Shows weights sort correctly
+  ]
 }
 ```
 
-### Step 3: Validate Output Structure
+### Step 3: Critical Type Validation
 
-For each log entry, verify:
+**MUST VERIFY BEFORE PHASE 2:**
 
-#### A. Signals Array Present
-- [ ] `signals` field exists
-- [ ] `signals` is an array (not empty)
-- [ ] Each signal has: `type`, `weight`, `horizon`
+#### A. Weight Type Check (CRITICAL FOR SORTING)
+```javascript
+// Open console and check one log entry:
+// Right-click → Copy → Paste into notepad
 
-#### B. Scoring Object Present
-- [ ] `scoring` field exists
-- [ ] Has: `immediate`, `shortTerm`, `identity`, `final`, `confidence`, `dominantHorizon`
-- [ ] All values are numbers in range [0.0, 1.0]
+// ALL of these MUST be true:
+- weight_type: "number"  (NOT "string")
+- typeof scoring.immediate === "number"
+- typeof scoring.shortTerm === "number"
+- typeof scoring.identity === "number"
+- typeof scoring.final === "number"
+- typeof scoring.confidence === "number"
 
-#### C. Weight Differentiation
-- [ ] If multiple signals: weights vary (not all 0.5)
-- [ ] Weights reflect signal importance
+// If ANY are "string", Phase 2 will FAIL at weight sorting
+```
 
-#### D. Dominant Horizon Correctness
-- [ ] `dominantHorizon` = horizon with highest score
-- [ ] If immediate=0.45, shortTerm=0.28, identity=0.15 → dominantHorizon should be "immediate"
+#### B. Weight Sorting Test
+- [ ] `signals_by_weight` shows weights sorted in descending order
+- [ ] Check: `[0.85] > [0.65] > [0.45]` (numeric, not lexicographic)
+- [ ] Confirm: `0.9` sorts correctly vs `0.85` (not "0.9" < "0.85" string sort)
 
-#### E. Tier/Score Separation Invariant
-- [ ] Tier and finalScore can diverge (this is correct!)
-- [ ] Example: Tier 6 feat can have finalScore 0.35
-- [ ] Example: Tier 1 feat can have finalScore 0.65
+#### C. Dominant Horizon Correctness
+- [ ] Test Case 1: immediate=0.65, shortTerm=0.25, identity=0.10
+  - [ ] MUST have `dominantHorizon: "immediate"`
+- [ ] Test Case 2: immediate=0.30, shortTerm=0.70, identity=0.25
+  - [ ] MUST have `dominantHorizon: "shortTerm"`
+- [ ] Test Case 3: immediate=0.40, shortTerm=0.35, identity=0.65
+  - [ ] MUST have `dominantHorizon: "identity"`
 
-### Step 4: Collect Examples
+#### D. Confidence Variation
+- [ ] Close scores (0.42/0.40/0.38): confidence should be LOWER
+- [ ] Separated scores (0.75/0.30/0.25): confidence should be HIGHER
+- [ ] Check: confidence varies across different suggestions (not static 0.6–0.7)
 
-Capture **two key scenarios**:
+#### E. Score Range Validation
+- [ ] All scores in range [0.0, 1.0] (NO negative or >1.0)
+- [ ] finalScore = weighted average of three horizons
+- [ ] Check: finalScore is roughly `0.6*immediate + 0.25*shortTerm + 0.15*identity`
 
-**Scenario A: Prestige-Heavy Suggestion**
-Expected pattern:
-- Tier: 6 (PRESTIGE_PREREQ)
-- dominantHorizon: likely "shortTerm" or "identity"
-- final score: may be lower (0.3-0.6)
-- confidence: high (0.6+)
+### Step 4: Collect Behavior Contrast Examples
 
-**Scenario B: Attribute-Heavy Suggestion**
-Expected pattern:
-- Tier: 2-4 (depends on rule match)
-- dominantHorizon: likely "immediate"
-- final score: varies
-- confidence: moderate
+Capture **three key scenarios** to test dominance detection:
 
-### Step 5: Report Validation Results
+**Scenario A: Immediate-Dominant**
+Look for suggestion with: immediate >> shortTerm and identity
+- Example: immediate=0.65, shortTerm=0.25, identity=0.10
+- [ ] MUST have `dominantHorizon: "immediate"`
+- [ ] MUST have signal with `horizon: "immediate"`
+- [ ] Copy full console output
 
-Copy console output showing:
-1. One prestige-heavy example (full JSON)
-2. One attribute-heavy example (full JSON)
-3. Confirm all fields present
-4. Note any missing fields or errors
+**Scenario B: Short-Term Dominant**
+Look for suggestion with: shortTerm >> immediate and identity
+- Example: immediate=0.30, shortTerm=0.70, identity=0.20
+- [ ] MUST have `dominantHorizon: "shortTerm"`
+- [ ] MUST have signal with `horizon: "shortTerm"`
+- [ ] Copy full console output
+
+**Scenario C: Identity-Dominant**
+Look for suggestion with: identity > immediate and shortTerm
+- Example: immediate=0.40, shortTerm=0.35, identity=0.65
+- [ ] MUST have `dominantHorizon: "identity"`
+- [ ] If you CANNOT produce identity dominance, scoring may be misconfigured
+- [ ] Copy full console output
+
+### Step 5: Verify Type Safety
+
+From ANY of the three scenarios above, verify:
+```javascript
+// In console, expand the log object and check:
+scoring.types.immediate === "number"    // NOT "string"
+scoring.types.shortTerm === "number"    // NOT "string"
+scoring.types.identity === "number"     // NOT "string"
+signals[0].weight_type === "number"     // NOT "string"
+```
+
+### Step 6: Report Validation Results
+
+Provide:
+1. Screenshot or copy of **ONE example from each scenario** (A, B, C)
+2. Confirm `weight_type: "number"` in all examples
+3. Confirm all scoring types are "number"
+4. Confirm `signals_by_weight` shows correct numeric sorting
+5. Note any errors or unexpected patterns
 
 ## Expected Behavior (No Changes Expected)
 
@@ -136,17 +184,33 @@ Implementation details:
 - **Imports**: SuggestionScorer, ReasonType, ReasonCodeToReasonTypeMapping
 - **Imports**: All added at top of file (line 50-52)
 
-## Validation Checklist
+## Phase 2 Decision Gate (DO NOT PROCEED WITHOUT ALL CHECKED)
 
-- [ ] Opened Foundry VTT browser console
-- [ ] Triggered feat/talent suggestions
-- [ ] Found Phase1Validation logs
-- [ ] Verified signals[] present and non-empty
-- [ ] Verified scoring object present with all fields
-- [ ] Confirmed dominantHorizon matches highest score
-- [ ] Captured prestige-heavy example
-- [ ] Captured attribute-heavy example
-- [ ] Confirmed tier/score separation (can diverge)
-- [ ] Noted any errors or missing fields
-- [ ] Ready for Phase 2
+**All of these must be true before flipping MentorReasonSelector:**
+
+- [ ] **TYPE CHECK**: weight_type === "number" (not "string")
+- [ ] **TYPE CHECK**: all scoring.types say "number" (not "string")
+- [ ] **SORTING TEST**: signals_by_weight sorts numerically correct (0.9 > 0.85 > 0.5)
+- [ ] **DOMINANCE TEST A**: Found suggestion with immediate dominant
+  - [ ] dominantHorizon === "immediate" ✓
+  - [ ] signal.horizon === "immediate" ✓
+- [ ] **DOMINANCE TEST B**: Found suggestion with shortTerm dominant
+  - [ ] dominantHorizon === "shortTerm" ✓
+  - [ ] signal.horizon === "shortTerm" ✓
+- [ ] **DOMINANCE TEST C**: Found suggestion with identity dominant
+  - [ ] dominantHorizon === "identity" ✓
+  - [ ] signal.horizon === "identity" ✓
+  - [ ] If NOT found: **STOP — Scoring may be misconfigured**
+- [ ] **CONFIDENCE TEST**: Confidence varies meaningfully across suggestions
+  - [ ] Not all ~0.6–0.7 (that's broken)
+  - [ ] Shows clear spread (some 0.45, some 0.80, etc.)
+- [ ] **UI REGRESSION TEST**: Tier ordering unchanged
+  - [ ] Tier 6 suggestions still grouped at top
+  - [ ] Tier 0 suggestions still at bottom
+  - [ ] Sorting by tier (not score) still applies
+
+**If ANY of these are false:**
+- Do NOT proceed to Phase 2
+- Fix the issue in Phase 1
+- Re-validate before Phase 2
 
