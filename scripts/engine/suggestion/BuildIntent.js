@@ -20,6 +20,7 @@ import { IdentityEngine } from "/systems/foundryvtt-swse/scripts/engine/prestige
 import { BiasTagProjection } from "/systems/foundryvtt-swse/scripts/engine/prestige/bias-tag-projection.js";
 import { BuildThemeProjection } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildThemeProjection.js";
 import { PrestigeAffinityEngine, initializePrestigeSignals } from "/systems/foundryvtt-swse/scripts/engine/suggestion/PrestigeAffinityEngine.js";
+import { MilestoneComputer } from "/systems/foundryvtt-swse/scripts/engine/suggestion/MilestoneComputer.js";
 
 // ──────────────────────────────────────────────────────────────
 // PRESTIGE SIGNALS LOADER
@@ -249,12 +250,31 @@ export class BuildIntent {
         // Priority prerequisites already identified by PrestigeAffinityEngine
         SWSELogger.log(`[BUILD-INTENT] analyze() - Priority prereqs identified:`, intent.priorityPrereqs.length);
 
+        // Phase 2B: Compute next-level milestones for forecasting
+        SWSELogger.log(`[BUILD-INTENT] analyze() - Computing next-level milestones`);
+        try {
+            const milestoneData = MilestoneComputer.computeNextLevelMilestones(actor);
+            intent.nextLevelMilestones = milestoneData.nextLevelMilestones;
+            intent.nextLevelMilestonesByClass = milestoneData.nextLevelMilestonesByClass;
+            SWSELogger.log(`[BUILD-INTENT] analyze() - Milestones computed:`, {
+                nextHeroicLevel: intent.nextLevelMilestones.nextHeroicLevel,
+                nextAttributeIncrease: intent.nextLevelMilestones.nextAttributeIncreaseLevel,
+                classMilestones: intent.nextLevelMilestonesByClass.size
+            });
+        } catch (err) {
+            SWSELogger.warn(`[BUILD-INTENT] analyze() - Failed to compute milestones:`, err);
+            // Graceful fallback - continue without milestones
+            intent.nextLevelMilestones = {};
+            intent.nextLevelMilestonesByClass = new Map();
+        }
+
         SWSELogger.log(`[BUILD-INTENT] analyze() COMPLETE - Intent summary:`, {
             themes: intent.themes,
             primaryThemes: intent.primaryThemes,
             combatStyle: intent.combatStyle,
             forceFocus: intent.forceFocus,
-            mentorBiases: intent.mentorBiases ? Object.keys(intent.mentorBiases) : 'NONE'
+            mentorBiases: intent.mentorBiases ? Object.keys(intent.mentorBiases) : 'NONE',
+            nextLevelMilestones: !!intent.nextLevelMilestones
         });
 
         return intent;
