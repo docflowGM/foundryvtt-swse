@@ -46,6 +46,10 @@ import { selectReasonAtoms } from "/systems/foundryvtt-swse/scripts/engine/sugge
 import { REASON_TEXT_MAP } from "/systems/foundryvtt-swse/scripts/mentor/mentor-reason-renderer.js";
 import { ReasonSignalBuilder } from "/systems/foundryvtt-swse/scripts/engine/suggestion/reason-signal-builder.js";
 import { ArchetypeMetadataEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ArchetypeMetadataEngine.js";
+// PHASE 1: SuggestionV2 Retrofit
+import { scoreSuggestion } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionScorer.js";
+import { ReasonType } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionV2Contract.ts";
+import { mapReasonCodeToReasonType } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ReasonCodeToReasonTypeMapping.js";
 
 // ──────────────────────────────────────────────────────────────
 // TIER DEFINITIONS (PHASE 5D: UNIFIED_TIERS Refactor)
@@ -1193,6 +1197,15 @@ export class SuggestionEngine {
             archetype = archetypeId ? ArchetypeRegistry.get(archetypeId) : null;
         }
 
+        // PHASE 1: Build options object with context for SuggestionV2 retrofit
+        // This is threaded through all _buildSuggestionWithArchetype calls
+        const buildSuggestionOptions = {
+            actor,
+            candidate: feat,
+            buildIntent,
+            identityBias: null  // Could compute if needed, but SuggestionScorer will compute if not provided
+        };
+
         // Check tiers in order of priority (highest first)
 
         // Tier 6: Check if this feat is a priority prerequisite for a prestige class
@@ -1208,7 +1221,7 @@ export class SuggestionEngine {
                     `prestige:${prestigePrereq.forClass}`,
                     feat,
                     archetype,
-                    { actor }
+                    buildSuggestionOptions
                 );
             }
         }
@@ -1459,6 +1472,100 @@ export class SuggestionEngine {
         return this._buildSuggestionWithArchetype(SUGGESTION_TIERS.FALLBACK, 'FALLBACK', null, talent, archetype);
     }
 
+    // ──────────────────────────────────────────────────────────────────────────────
+    // PHASE 1: SuggestionV2 Retrofit Helper Functions
+    // ──────────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Determine the dominant horizon (which of immediate/shortTerm/identity is largest).
+     * @private
+     */
+    static _determineDominantHorizon(immediate, shortTerm, identity) {
+        if (immediate >= shortTerm && immediate >= identity) return 'immediate';
+        if (shortTerm >= identity) return 'shortTerm';
+        return 'identity';
+    }
+
+    /**
+     * Compute confidence from SuggestionScorer breakdown.
+     * Higher final score + better separation between horizons = higher confidence.
+     * @private
+     */
+    static _computeConfidenceFromScorer(scorerResult) {
+        // Base confidence from final score
+        const baseConfidence = Math.min(scorerResult.finalScore, 1.0);
+
+        // Separation bonus: how clearly one horizon dominates
+        const scores = [
+            scorerResult.breakdown.immediate,
+            scorerResult.breakdown.shortTerm,
+            scorerResult.breakdown.identity
+        ].sort((a, b) => b - a);
+        const separation = scores[0] - scores[1];
+
+        // Higher separation = higher confidence (up to +0.2 lift)
+        const confidenceLift = Math.min(separation * 0.4, 0.2);
+
+        return Math.min(baseConfidence + confidenceLift, 0.95);
+    }
+
+    /**
+     * Build signals array from SuggestionScorer result and reason code.
+     * Each signal includes type, weight, horizon, and metadata.
+     * @private
+     */
+    static _buildSignalsFromScorer(reasonCode, scorerResult, candidate) {
+        // Map reason code to ReasonType
+        const mapping = mapReasonCodeToReasonType(reasonCode);
+        if (!mapping || !mapping.type) {
+            // Fallback: no primary signal
+            return [];
+        }
+
+        // Use mapping as base for signal
+        const weight = mapping.weight;
+        const horizon = mapping.horizon;
+
+        // Build metadata based on candidate and scorer result
+        const metadata = {};
+        if (candidate?.system?.prestigious) {
+            metadata.prestigeClass = candidate.name;
+        }
+        if (candidate?.talentTree) {
+            metadata.talentTree = candidate.talentTree;
+        }
+
+        const signal = {
+            type: mapping.type,
+            weight,
+            horizon,
+            metadata
+        };
+
+        return [signal];
+    }
+
+    /**
+     * Build scoring object for SuggestionV2 compatibility.
+     * @private
+     */
+    static _buildScoringObject(scorerResult) {
+        const immediate = scorerResult.breakdown.immediate;
+        const shortTerm = scorerResult.breakdown.shortTerm;
+        const identity = scorerResult.breakdown.identity;
+        const dominantHorizon = this._determineDominantHorizon(immediate, shortTerm, identity);
+        const confidence = this._computeConfidenceFromScorer(scorerResult);
+
+        return {
+            immediate,
+            shortTerm,
+            identity,
+            final: scorerResult.finalScore,
+            confidence,
+            dominantHorizon
+        };
+    }
+
     /**
      * Build a suggestion metadata object with semantic signals (Phase 2.6 - Mentor Integration)
      *
@@ -1534,13 +1641,49 @@ export class SuggestionEngine {
             };
         }
 
+        // ──────────────────────────────────────────────────────────────────────────
+        // PHASE 1: Emit SuggestionV2 format (signals + scoring)
+        // ──────────────────────────────────────────────────────────────────────────
+
+        // Build signals and scoring if candidate and actor provided (for mentor system)
+        let signals = [];
+        let scoring = null;
+
+        if (options.candidate && options.actor && options.buildIntent) {
+            try {
+                // Call SuggestionScorer to get three-horizon breakdown
+                const scorerResult = scoreSuggestion(
+                    options.candidate,
+                    options.actor,
+                    options.buildIntent,
+                    { identityBias: options.identityBias }
+                );
+
+                // Build SuggestionV2-compatible signals array
+                signals = this._buildSignalsFromScorer(finalReasonCode, scorerResult, options.candidate);
+
+                // Build SuggestionV2-compatible scoring object
+                scoring = this._buildScoringObject(scorerResult);
+
+                // Debug logging: uncomment to verify weight and dominance flow
+                // console.log(`[SuggestionEngine] Emitted signals for ${options.candidate.name}:`, { signals, scoring });
+            } catch (err) {
+                // Graceful fallback: if SuggestionScorer fails, continue with old format
+                SWSELogger.warn('[SuggestionEngine] SuggestionScorer failed, continuing with v1 format:', err);
+                // signals and scoring remain empty
+            }
+        }
+
         return {
             tier,
             reasonCode: finalReasonCode,
             sourceId,
             confidence: finalConfidence,
             reasonSignals,
-            reason
+            reason,
+            // PHASE 1: New fields for SuggestionV2
+            signals,    // Array of { type, weight, horizon, metadata }
+            scoring     // Object with { immediate, shortTerm, identity, final, confidence, dominantHorizon }
         };
     }
 
