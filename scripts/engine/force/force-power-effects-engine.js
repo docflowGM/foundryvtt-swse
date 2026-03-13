@@ -69,8 +69,9 @@ export class ForcePowerEffectsEngine {
   static _buildEffectDataForPower(actor, powerItem, rollTotal) {
     const powerName = powerItem.name.toLowerCase();
     const system = powerItem.system;
+    const tags = system.tags || [];
 
-    // Check for specific power handlers
+    // === DEFENSE POWERS ===
     if (powerName.includes('force shield')) {
       return this._buildForceShieldEffect(actor, powerItem, rollTotal);
     }
@@ -87,8 +88,81 @@ export class ForcePowerEffectsEngine {
       return this._buildResistForceEffect(actor, powerItem, rollTotal);
     }
 
-    // Generic handler for other defense/control powers
-    if (system.tags?.includes('defense') || system.tags?.includes('control')) {
+    if (powerName.includes('force defense')) {
+      return this._buildForceDefenseEffect(actor, powerItem, rollTotal);
+    }
+
+    if (powerName.includes('force body')) {
+      return this._buildForceBodyEffect(actor, powerItem, rollTotal);
+    }
+
+    if (powerName.includes('negate energy')) {
+      return this._buildNegateEnergyEffect(actor, powerItem, rollTotal);
+    }
+
+    // === ATTACK/DAMAGE POWERS ===
+    if (tags.includes('damage') && !tags.includes('healing')) {
+      return this._buildDamagePowerEffect(actor, powerItem, rollTotal);
+    }
+
+    // === ENHANCEMENT POWERS ===
+    if (powerName.includes('prescience') || powerName.includes('surge')) {
+      return this._buildEnhancementEffect(actor, powerItem, rollTotal);
+    }
+
+    if (powerName.includes('battlemind')) {
+      return this._buildBattlemindEffect(actor, powerItem, rollTotal);
+    }
+
+    if (powerName.includes('force weapon')) {
+      return this._buildForceWeaponEffect(actor, powerItem, rollTotal);
+    }
+
+    if (powerName.includes('force strike')) {
+      return this._buildForceStrikeEffect(actor, powerItem, rollTotal);
+    }
+
+    if (powerName.includes('valor')) {
+      return this._buildValorEffect(actor, powerItem, rollTotal);
+    }
+
+    // === DEBUFF POWERS ===
+    if (powerName.includes('blind') || powerName.includes('fear') ||
+        powerName.includes('slow') || powerName.includes('stagger') ||
+        powerName.includes('malacia')) {
+      return this._buildDebuffEffect(actor, powerItem, rollTotal);
+    }
+
+    if (powerName.includes('force grip') || powerName.includes('force thrust')) {
+      return this._buildImmobilizeEffect(actor, powerItem, rollTotal);
+    }
+
+    // === UTILITY/CONTROL POWERS ===
+    if (powerName.includes('cloak')) {
+      return this._buildCloakEffect(actor, powerItem, rollTotal);
+    }
+
+    if (powerName.includes('levitate')) {
+      return this._buildLevitateEffect(actor, powerItem, rollTotal);
+    }
+
+    if (powerName.includes('move object')) {
+      return this._buildMoveObjectEffect(actor, powerItem, rollTotal);
+    }
+
+    // === HEALING POWERS ===
+    if (tags.includes('healing')) {
+      return this._buildHealingEffect(actor, powerItem, rollTotal);
+    }
+
+    // === SENSE POWERS ===
+    if (powerName.includes('force sense') || powerName.includes('force track') ||
+        powerName.includes('farseeing') || powerName.includes('prescience')) {
+      return this._buildSenseEffect(actor, powerItem, rollTotal);
+    }
+
+    // === GENERIC HANDLERS ===
+    if (tags.includes('defense') || tags.includes('control')) {
       return this._buildGenericDefenseEffect(actor, powerItem, rollTotal);
     }
 
@@ -243,11 +317,443 @@ export class ForcePowerEffectsEngine {
   }
 
   /**
+   * Build Force Defense effect
+   * @private
+   */
+  static _buildForceDefenseEffect(actor, powerItem, rollTotal) {
+    const defenseBonus = this._extractDefenseBonusFromChart(powerItem.system.dcChart, rollTotal);
+
+    if (defenseBonus <= 0) {
+      return [];
+    }
+
+    const duration = this._parseDuration(powerItem.system.duration);
+
+    return [{
+      label: `${powerItem.name} (+${defenseBonus})`,
+      icon: powerItem.img || 'icons/svg/shield.svg',
+      origin: powerItem.uuid,
+      disabled: false,
+      transfer: false,
+      duration: duration,
+      changes: [
+        {
+          key: 'system.derived.defense.all',
+          mode: 2, // Add
+          value: defenseBonus.toString(),
+          priority: 20
+        }
+      ],
+      flags: {
+        swse: {
+          effectType: 'defenseBonus'
+        }
+      }
+    }];
+  }
+
+  /**
+   * Build Force Body effect (reduces damage taken)
+   * @private
+   */
+  static _buildForceBodyEffect(actor, powerItem, rollTotal) {
+    const reduction = this._extractDRFromChart(powerItem.system.dcChart, rollTotal);
+
+    if (reduction <= 0) {
+      return [];
+    }
+
+    return [{
+      label: `${powerItem.name} (${reduction} DR)`,
+      icon: powerItem.img || 'icons/svg/shield.svg',
+      origin: powerItem.uuid,
+      disabled: false,
+      transfer: false,
+      duration: { type: 'turns', duration: 1 },
+      changes: [
+        {
+          key: 'system.derived.damageReduction.all',
+          mode: 2,
+          value: reduction.toString(),
+          priority: 20
+        }
+      ],
+      flags: {
+        swse: {
+          effectType: 'damageReduction'
+        }
+      }
+    }];
+  }
+
+  /**
+   * Build Negate Energy effect
+   * @private
+   */
+  static _buildNegateEnergyEffect(actor, powerItem, rollTotal) {
+    const drValue = this._extractDRFromChart(powerItem.system.dcChart, rollTotal);
+
+    if (drValue <= 0) {
+      return [];
+    }
+
+    const duration = this._parseDuration(powerItem.system.duration);
+
+    return [{
+      label: `${powerItem.name} (${drValue})`,
+      icon: powerItem.img || 'icons/svg/shield.svg',
+      origin: powerItem.uuid,
+      disabled: false,
+      transfer: false,
+      duration: duration,
+      changes: [
+        {
+          key: 'system.derived.damageReduction.energy',
+          mode: 2,
+          value: drValue.toString(),
+          priority: 20
+        }
+      ],
+      flags: {
+        swse: {
+          effectType: 'energyNegation'
+        }
+      }
+    }];
+  }
+
+  /**
+   * Build effects for damage powers
+   * @private
+   */
+  static _buildDamagePowerEffect(actor, powerItem, rollTotal) {
+    // Damage powers typically don't apply persistent effects on the caster
+    // They affect targets through damage rolls in combat
+    // Could track damage bonus if the power grants +damage to attacks
+    return [];
+  }
+
+  /**
+   * Build enhancement effect for prescience, surge, etc.
+   * @private
+   */
+  static _buildEnhancementEffect(actor, powerItem, rollTotal) {
+    const bonus = this._extractBonusValue(powerItem.system.dcChart, rollTotal);
+
+    if (bonus <= 0) {
+      return [];
+    }
+
+    const powerName = powerItem.name.toLowerCase();
+    const duration = this._parseDuration(powerItem.system.duration);
+    let label, effectKey;
+
+    if (powerName.includes('prescience')) {
+      label = `${powerItem.name} (+${bonus} insight)`;
+      effectKey = 'system.derived.insight';
+    } else if (powerName.includes('surge')) {
+      label = `${powerItem.name} (+${bonus} damage)`;
+      effectKey = 'system.derived.damageBonus';
+    } else {
+      label = `${powerItem.name} (+${bonus})`;
+      effectKey = 'system.derived.bonus';
+    }
+
+    return [{
+      label: label,
+      icon: powerItem.img || 'icons/svg/magic.svg',
+      origin: powerItem.uuid,
+      disabled: false,
+      transfer: false,
+      duration: duration,
+      changes: [
+        {
+          key: effectKey,
+          mode: 2, // Add
+          value: bonus.toString(),
+          priority: 20
+        }
+      ],
+      flags: {
+        swse: {
+          effectType: 'enhancement'
+        }
+      }
+    }];
+  }
+
+  /**
+   * Build Battlemind effect (bonus to defenses and damage)
+   * @private
+   */
+  static _buildBattlemindEffect(actor, powerItem, rollTotal) {
+    // Battlemind grants +1/2 level bonus to defenses and damage
+    const bonus = Math.floor((actor.system.derived?.heroicLevel || 1) / 2);
+
+    if (bonus <= 0) {
+      return [];
+    }
+
+    const duration = this._parseDuration(powerItem.system.duration);
+
+    return [{
+      label: `${powerItem.name} (+${bonus})`,
+      icon: powerItem.img || 'icons/svg/combat.svg',
+      origin: powerItem.uuid,
+      disabled: false,
+      transfer: false,
+      duration: duration,
+      changes: [
+        {
+          key: 'system.derived.defense.all',
+          mode: 2,
+          value: bonus.toString(),
+          priority: 20
+        },
+        {
+          key: 'system.derived.meleeBonus',
+          mode: 2,
+          value: bonus.toString(),
+          priority: 20
+        }
+      ],
+      flags: {
+        swse: {
+          effectType: 'enhancement'
+        }
+      }
+    }];
+  }
+
+  /**
+   * Build Force Weapon effect (bonus to weapon attacks)
+   * @private
+   */
+  static _buildForceWeaponEffect(actor, powerItem, rollTotal) {
+    const bonus = this._extractBonusValue(powerItem.system.dcChart, rollTotal);
+
+    if (bonus <= 0) {
+      return [];
+    }
+
+    const duration = this._parseDuration(powerItem.system.duration);
+
+    return [{
+      label: `${powerItem.name} (+${bonus})`,
+      icon: powerItem.img || 'icons/svg/melee.svg',
+      origin: powerItem.uuid,
+      disabled: false,
+      transfer: false,
+      duration: duration,
+      changes: [
+        {
+          key: 'system.derived.weaponBonus',
+          mode: 2,
+          value: bonus.toString(),
+          priority: 20
+        }
+      ],
+      flags: {
+        swse: {
+          effectType: 'weaponEnhancement'
+        }
+      }
+    }];
+  }
+
+  /**
+   * Build Force Strike effect
+   * @private
+   */
+  static _buildForceStrikeEffect(actor, powerItem, rollTotal) {
+    const bonus = this._extractBonusValue(powerItem.system.dcChart, rollTotal);
+
+    if (bonus <= 0) {
+      return [];
+    }
+
+    return [{
+      label: `${powerItem.name} (+${bonus} damage)`,
+      icon: powerItem.img || 'icons/svg/melee.svg',
+      origin: powerItem.uuid,
+      disabled: false,
+      transfer: false,
+      duration: { type: 'turns', duration: 1 },
+      changes: [
+        {
+          key: 'system.derived.damageBonus',
+          mode: 2,
+          value: bonus.toString(),
+          priority: 20
+        }
+      ],
+      flags: {
+        swse: {
+          effectType: 'damageBonus'
+        }
+      }
+    }];
+  }
+
+  /**
+   * Build Valor effect (increases defense and attack rolls)
+   * @private
+   */
+  static _buildValorEffect(actor, powerItem, rollTotal) {
+    const bonus = this._extractBonusValue(powerItem.system.dcChart, rollTotal);
+
+    if (bonus <= 0) {
+      return [];
+    }
+
+    const duration = this._parseDuration(powerItem.system.duration);
+
+    return [{
+      label: `${powerItem.name} (+${bonus})`,
+      icon: powerItem.img || 'icons/svg/aura.svg',
+      origin: powerItem.uuid,
+      disabled: false,
+      transfer: false,
+      duration: duration,
+      changes: [
+        {
+          key: 'system.derived.defense.all',
+          mode: 2,
+          value: bonus.toString(),
+          priority: 20
+        },
+        {
+          key: 'system.derived.attackBonus',
+          mode: 2,
+          value: bonus.toString(),
+          priority: 20
+        }
+      ],
+      flags: {
+        swse: {
+          effectType: 'enhancement'
+        }
+      }
+    }];
+  }
+
+  /**
+   * Build debuff effect (blind, fear, slow, stagger, malacia)
+   * @private
+   */
+  static _buildDebuffEffect(actor, powerItem, rollTotal) {
+    // Debuff effects typically target enemies, not the caster
+    // Could track debuff immunity if the power grants it
+    return [];
+  }
+
+  /**
+   * Build immobilize effect (force grip, force thrust)
+   * @private
+   */
+  static _buildImmobilizeEffect(actor, powerItem, rollTotal) {
+    // Immobilize effects typically target enemies
+    // Could apply to caster if they're using it on themselves
+    return [];
+  }
+
+  /**
+   * Build Cloak effect (stealth bonus)
+   * @private
+   */
+  static _buildCloakEffect(actor, powerItem, rollTotal) {
+    const bonus = this._extractBonusValue(powerItem.system.dcChart, rollTotal);
+
+    if (bonus <= 0) {
+      return [];
+    }
+
+    const duration = this._parseDuration(powerItem.system.duration);
+
+    return [{
+      label: `${powerItem.name} (+${bonus} stealth)`,
+      icon: powerItem.img || 'icons/svg/invisibility.svg',
+      origin: powerItem.uuid,
+      disabled: false,
+      transfer: false,
+      duration: duration,
+      changes: [
+        {
+          key: 'system.derived.stealthBonus',
+          mode: 2,
+          value: bonus.toString(),
+          priority: 20
+        }
+      ],
+      flags: {
+        swse: {
+          effectType: 'stealth'
+        }
+      }
+    }];
+  }
+
+  /**
+   * Build Levitate effect (movement bonus)
+   * @private
+   */
+  static _buildLevitateEffect(actor, powerItem, rollTotal) {
+    // Levitate grants movement capability, hard to model as numeric effect
+    // Could track as a movement modifier if needed
+    return [];
+  }
+
+  /**
+   * Build Move Object effect
+   * @private
+   */
+  static _buildMoveObjectEffect(actor, powerItem, rollTotal) {
+    // Move Object is telekinesis, not a persistent effect on caster
+    return [];
+  }
+
+  /**
+   * Build healing effect
+   * @private
+   */
+  static _buildHealingEffect(actor, powerItem, rollTotal) {
+    // Healing powers don't apply persistent effects
+    // They heal HP when used
+    return [];
+  }
+
+  /**
+   * Build sense effect (force sense, force track, farseeing)
+   * @private
+   */
+  static _buildSenseEffect(actor, powerItem, rollTotal) {
+    // Sense powers grant awareness, not mechanical bonuses
+    // Could apply a visual indicator or modifier flag
+    const duration = this._parseDuration(powerItem.system.duration);
+
+    return [{
+      label: `${powerItem.name} (active)`,
+      icon: powerItem.img || 'icons/svg/vision.svg',
+      origin: powerItem.uuid,
+      disabled: false,
+      transfer: false,
+      duration: duration,
+      changes: [],
+      flags: {
+        swse: {
+          effectType: 'senseAbility',
+          powerName: powerItem.name
+        }
+      }
+    }];
+  }
+
+  /**
    * Generic defense effect builder for other powers
    * @private
    */
   static _buildGenericDefenseEffect(actor, powerItem, rollTotal) {
-    // For now, return empty - can be extended with more powers
+    // For powers without specific handlers
     return [];
   }
 
@@ -309,6 +815,42 @@ export class ForcePowerEffectsEngine {
       if (rollTotal >= entry.dc) {
         // Try to extract +X value
         const match = entry.description?.match(/\+(\d+)/);
+        if (match) {
+          bestValue = parseInt(match[1], 10);
+        }
+      }
+    }
+    return bestValue;
+  }
+
+  /**
+   * Extract bonus value from dcChart (generic numeric bonus)
+   * @private
+   */
+  static _extractBonusValue(dcChart, rollTotal) {
+    if (!Array.isArray(dcChart)) {
+      return 0;
+    }
+
+    let bestValue = 0;
+    for (const entry of dcChart) {
+      if (rollTotal >= entry.dc) {
+        // Try various patterns: +X, X points, X bonus, etc
+        let match = entry.description?.match(/\+(\d+)/);
+        if (match) {
+          bestValue = parseInt(match[1], 10);
+          continue;
+        }
+
+        // Try "Xd" pattern (like in damage)
+        match = entry.description?.match(/(\d+)d\d+/);
+        if (match) {
+          bestValue = parseInt(match[1], 10);
+          continue;
+        }
+
+        // Try "X damage" or "X bonus"
+        match = entry.description?.match(/(\d+)\s+(damage|bonus|penalty)/i);
         if (match) {
           bestValue = parseInt(match[1], 10);
         }
