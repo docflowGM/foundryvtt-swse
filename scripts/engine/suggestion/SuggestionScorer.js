@@ -126,6 +126,7 @@ export function scoreSuggestion(candidate, actor, buildIntent = {}, options = {}
     candidate,
     actor,
     buildIntent,
+    identityBias,
     options
   );
 
@@ -393,12 +394,15 @@ function _computeShortTermScore(candidate, actor, buildIntent, options) {
  *
  * All signals additive, identity-focused (no mechanical distortion)
  */
-function _computeIdentityProjectionScore(candidate, actor, buildIntent, options) {
-  const identityBias = options.identityBias || {
-    mechanicalBias: {},
-    roleBias: {},
-    attributeBias: {}
-  };
+function _computeIdentityProjectionScore(candidate, actor, buildIntent, identityBias, options = {}) {
+  // Ensure identityBias has required structure
+  if (!identityBias) {
+    identityBias = {
+      mechanicalBias: {},
+      roleBias: {},
+      attributeBias: {}
+    };
+  }
 
   // Caps (locked per architecture review)
   const CAP_TOTAL = 0.25;
