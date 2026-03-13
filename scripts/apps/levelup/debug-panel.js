@@ -41,6 +41,8 @@ export class GMDebugPanel extends SWSEApplicationV2 {
         this.buildIntent = null;
         this.classAnalysis = null;
         this.pendingData = options.pendingData || {};
+        // Event listener tracking for proper cleanup
+        this._eventListeners = [];
     }
 
     get title() {
@@ -239,29 +241,60 @@ export class GMDebugPanel extends SWSEApplicationV2 {
         return analysis;
     }
 
-    async _onRender(html, options) {
-        await super._onRender(html, options);
+    /**
+     * Bind event listeners (ApplicationV2 lifecycle)
+     * @private
+     */
+    _bindEventListeners() {
+        const root = this.element;
+        if (!(root instanceof HTMLElement)) return;
 
-        const root = (this.element instanceof HTMLElement) ? this.element : (html?.[0] ?? html);
-        if (!(root instanceof HTMLElement)) {return;}
+        // Helper to add listener with tracking
+        const addListener = (selector, eventType, handler) => {
+            for (const el of root.querySelectorAll(selector)) {
+                const boundHandler = handler.bind(this);
+                el.addEventListener(eventType, boundHandler);
+                this._eventListeners.push({ el, eventType, handler: boundHandler });
+            }
+        };
 
         // Refresh button
-        root.querySelectorAll('.refresh-analysis').forEach(btn => btn.addEventListener('click', () => this.render(true)));
+        addListener('.refresh-analysis', 'click', () => this.render(true));
 
         // Copy JSON button
-        root.querySelectorAll('.copy-json').forEach(btn => btn.addEventListener('click', () => {
+        addListener('.copy-json', 'click', () => {
             const json = JSON.stringify(this.buildIntent, null, 2);
             navigator.clipboard.writeText(json);
             ui.notifications.info('BuildIntent JSON copied to clipboard');
-        }));
+        });
 
         // Collapsible sections
-        root.querySelectorAll('.collapsible-header').forEach(header => {
-            header.addEventListener('click', event => {
-                const section = event.currentTarget?.closest('.collapsible-section');
-                section?.classList?.toggle('collapsed');
-            });
+        addListener('.collapsible-header', 'click', (event) => {
+            const section = event.currentTarget?.closest('.collapsible-section');
+            section?.classList?.toggle('collapsed');
         });
+    }
+
+    /**
+     * Render lifecycle hook (ApplicationV2)
+     * Binds event listeners after template is rendered
+     */
+    async _onRender(context, options) {
+        await super._onRender(context, options);
+        this._bindEventListeners();
+    }
+
+    /**
+     * Close and clean up event listeners
+     */
+    async close() {
+        // Clean up tracked event listeners
+        for (const { el, eventType, handler } of this._eventListeners) {
+            el.removeEventListener(eventType, handler);
+        }
+        this._eventListeners = [];
+
+        return super.close();
     }
 }
 

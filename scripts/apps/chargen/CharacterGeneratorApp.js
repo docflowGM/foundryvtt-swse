@@ -84,6 +84,9 @@ export class CharacterGeneratorApp extends SWSEApplicationV2 {
 
     this.isProcessing = false;
     this.lastError = null;
+
+    // Event listener tracking for proper cleanup
+    this._eventListeners = [];
   }
 
   /**
@@ -191,59 +194,67 @@ export class CharacterGeneratorApp extends SWSEApplicationV2 {
   }
 
   /**
-   * Wire event listeners (ApplicationV2 contract)
+   * Bind event listeners (ApplicationV2 lifecycle)
+   * Called from _onRender() after template is rendered
+   * Clears previous listeners before rebinding to prevent accumulation
+   * @private
    */
-  wireEvents() {
+  _bindEventListeners() {
     const root = this.element;
+    if (!(root instanceof HTMLElement)) return;
+
+    // Clear previous listeners before rebinding
+    for (const { el, eventType, handler } of this._eventListeners) {
+      el.removeEventListener(eventType, handler);
+    }
+    this._eventListeners = [];
+
+    // Helper to add listener with tracking
+    const addListener = (selector, eventType, handler) => {
+      const el = root.querySelector(selector);
+      if (el) {
+        const boundHandler = handler.bind(this);
+        el.addEventListener(eventType, boundHandler);
+        this._eventListeners.push({ el, eventType, handler: boundHandler });
+      }
+    };
 
     // Step selection (background, class, etc.)
-    const stepSelect = root.querySelector('select[name="step-select"]');
-    if (stepSelect) {
-      stepSelect.addEventListener('change', (event) => {
-        const currentStep = this.steps[this.currentStepIndex];
-        this.stepSelections[currentStep] = event.target.value;
-        this.render();
-      });
-    }
+    addListener('select[name="step-select"]', 'change', (event) => {
+      const currentStep = this.steps[this.currentStepIndex];
+      this.stepSelections[currentStep] = event.target.value;
+      this.render();
+    });
 
     // Confirm/Compile step
-    const confirmBtn = root.querySelector('button.confirm-step');
-    if (confirmBtn) {
-      confirmBtn.addEventListener('click', () => this._confirmStep());
-    }
+    addListener('button.confirm-step', 'click', () => this._confirmStep());
 
     // Next step (full mode only)
-    const nextBtn = root.querySelector('button.next-step');
-    if (nextBtn) {
-      nextBtn.addEventListener('click', () => this._nextStep());
-    }
+    addListener('button.next-step', 'click', () => this._nextStep());
 
     // Previous step (full mode only)
-    const prevBtn = root.querySelector('button.previous-step');
-    if (prevBtn) {
-      prevBtn.addEventListener('click', () => this._previousStep());
-    }
+    addListener('button.previous-step', 'click', () => this._previousStep());
 
     // Apply all steps
-    const applyBtn = root.querySelector('button.apply-all');
-    if (applyBtn) {
-      applyBtn.addEventListener('click', () => this._applyAllSteps());
-    }
+    addListener('button.apply-all', 'click', () => this._applyAllSteps());
 
     // Cancel
-    const cancelBtn = root.querySelector('button.cancel-step');
-    if (cancelBtn) {
-      cancelBtn.addEventListener('click', () => this.close());
-    }
+    addListener('button.cancel-step', 'click', () => this.close());
 
     // Clear error
-    const clearErrorBtn = root.querySelector('button.clear-error');
-    if (clearErrorBtn) {
-      clearErrorBtn.addEventListener('click', () => {
-        this.lastError = null;
-        this.render();
-      });
-    }
+    addListener('button.clear-error', 'click', () => {
+      this.lastError = null;
+      this.render();
+    });
+  }
+
+  /**
+   * Render lifecycle hook (ApplicationV2)
+   * Binds event listeners after template is rendered
+   */
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    this._bindEventListeners();
   }
 
   /**
@@ -456,9 +467,15 @@ export class CharacterGeneratorApp extends SWSEApplicationV2 {
   }
 
   /**
-   * Close the dialog
+   * Close the dialog and clean up event listeners
    */
   async close() {
-    super.close();
+    // Clean up tracked event listeners
+    for (const { el, eventType, handler } of this._eventListeners) {
+      el.removeEventListener(eventType, handler);
+    }
+    this._eventListeners = [];
+
+    return super.close();
   }
 }

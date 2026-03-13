@@ -39,6 +39,8 @@ export class PrestigeRoadmap extends SWSEApplicationV2 {
         this.pendingData = options.pendingData || {};
         this.selectedClass = null;
         this.roadmapData = null;
+        // Event listener tracking for proper cleanup
+        this._eventListeners = [];
     }
 
     get title() {
@@ -298,21 +300,57 @@ export class PrestigeRoadmap extends SWSEApplicationV2 {
         return breakdown;
     }
 
-    async _onRender(html, options) {
-        await super._onRender(html, options);
+    /**
+     * Bind event listeners (ApplicationV2 lifecycle)
+     * @private
+     */
+    _bindEventListeners() {
+        const root = this.element;
+        if (!(root instanceof HTMLElement)) return;
+
+        // Helper to add listener with tracking
+        const addListener = (selector, eventType, handler) => {
+            for (const el of root.querySelectorAll(selector)) {
+                const boundHandler = handler.bind(this);
+                el.addEventListener(eventType, boundHandler);
+                this._eventListeners.push({ el, eventType, handler: boundHandler });
+            }
+        };
 
         // Class card selection
-        root.querySelectorAll('.roadmap-class-card').click(event => {
+        addListener('.roadmap-class-card', 'click', (event) => {
             const className = event.currentTarget?.dataset?.className;
             this.selectedClass = this.selectedClass === className ? null : className;
             this.render();
         });
 
         // Collapse/expand sections
-        root.querySelectorAll('.section-header').click(event => {
-            const section = event.currentTarget?.closest?.('.roadmap-section');
+        addListener('.section-header', 'click', (event) => {
+            const section = event.currentTarget?.closest('.roadmap-section');
             section?.classList?.toggle('collapsed');
         });
+    }
+
+    /**
+     * Render lifecycle hook (ApplicationV2)
+     * Binds event listeners after template is rendered
+     */
+    async _onRender(context, options) {
+        await super._onRender(context, options);
+        this._bindEventListeners();
+    }
+
+    /**
+     * Close and clean up event listeners
+     */
+    async close() {
+        // Clean up tracked event listeners
+        for (const { el, eventType, handler } of this._eventListeners) {
+            el.removeEventListener(eventType, handler);
+        }
+        this._eventListeners = [];
+
+        return super.close();
     }
 }
 
