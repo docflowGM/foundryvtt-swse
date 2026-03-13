@@ -180,7 +180,11 @@ export class BuildIntent {
             // Priority prerequisites to suggest
             priorityPrereqs: [],
             // Template information if applied
-            appliedTemplate: null
+            appliedTemplate: null,
+            // TIER 1: Archetype affinity data for identity projection
+            primaryArchetypeId: null,
+            maxArchetypeFrequency: 1,
+            archetypeAffinityIndex: new Map() // Map<itemId, { confidence, archetypeFrequency, roleAffinity? }>
         };
 
         // Check for applied template to inform build intent
@@ -213,6 +217,21 @@ export class BuildIntent {
         if (appliedTemplate && appliedTemplate.archetype) {
             SWSELogger.log(`[BUILD-INTENT] analyze() - Applying template archetype bias: ${appliedTemplate.archetype}`);
             this._applyTemplateArchetypeBias(intent, appliedTemplate.archetype);
+
+            // TIER 1: Compute archetype affinity index for identity projection scoring
+            intent.primaryArchetypeId = appliedTemplate.archetype;
+            const affinityData = this._computeArchetypeAffinityIndex(
+                appliedTemplate.archetype,
+                state.ownedFeats,
+                state.ownedTalents
+            );
+            intent.archetypeAffinityIndex = affinityData.index;
+            intent.maxArchetypeFrequency = affinityData.maxFrequency;
+            SWSELogger.log(`[BUILD-INTENT] analyze() - Archetype affinity computed:`, {
+                archetype: appliedTemplate.archetype,
+                itemsIndexed: affinityData.index.size,
+                maxFrequency: affinityData.maxFrequency
+            });
         }
 
         // Apply mentor survey biases if available (check pendingData as fallback for chargen)
@@ -593,6 +612,100 @@ export class BuildIntent {
             `This method no longer does anything.`
         );
         // DEPRECATED: Do nothing. Survey authority has moved to IdentityEngine.
+    }
+
+    /**
+     * TIER 1: Compute archetype affinity index for items
+     *
+     * For each owned feat/talent, determines:
+     * - How many archetypes recommend it (frequency)
+     * - Confidence score based on frequency
+     * - Optional role affinity if archetype has roles
+     *
+     * @private
+     * @param {string} primaryArchetypeId - The primary archetype ID
+     * @param {Set<string>} ownedFeats - Set of owned feat item IDs
+     * @param {Set<string>} ownedTalents - Set of owned talent item IDs
+     * @returns {Object} { index: Map<itemId, affinityEntry>, maxFrequency: number }
+     */
+    static _computeArchetypeAffinityIndex(primaryArchetypeId, ownedFeats, ownedTalents) {
+        const index = new Map();
+        let maxFrequency = 1;
+
+        try {
+            // Get primary archetype
+            const primaryArchetype = ArchetypeRegistry.get(primaryArchetypeId);
+            if (!primaryArchetype) {
+                SWSELogger.warn(
+                    `[BUILD-INTENT] Primary archetype "${primaryArchetypeId}" not found in registry`
+                );
+                return { index, maxFrequency };
+            }
+
+            // Get all archetypes to count recommendations
+            const allArchetypes = ArchetypeRegistry.getAll();
+            if (!allArchetypes || allArchetypes.length === 0) {
+                SWSELogger.warn('[BUILD-INTENT] No archetypes available for affinity computation');
+                return { index, maxFrequency };
+            }
+
+            // Combine owned feats and talents
+            const ownedItems = new Set([...ownedFeats, ...ownedTalents]);
+
+            // For each owned item, count how many archetypes recommend it
+            for (const itemId of ownedItems) {
+                let frequency = 0;
+                let recommendedByArchetypes = [];
+
+                for (const arch of allArchetypes) {
+                    const isFeatRecommended = ArchetypeRegistry.isRecommendedFeat(itemId, arch);
+                    const isTalentRecommended = ArchetypeRegistry.isRecommendedTalent(itemId, arch);
+
+                    if (isFeatRecommended || isTalentRecommended) {
+                        frequency++;
+                        recommendedByArchetypes.push(arch);
+                    }
+                }
+
+                if (frequency > 0) {
+                    // Frequency-based confidence: archetypes that recommend this item
+                    // Normalized: frequency / total archetypes
+                    const confidence = Math.min(1.0, frequency / Math.max(allArchetypes.length, 1));
+
+                    // Build role affinity if primary archetype has roles
+                    let roleAffinity = null;
+                    if (primaryArchetype.roles && primaryArchetype.roles.length > 0) {
+                        roleAffinity = {};
+                        for (const role of primaryArchetype.roles) {
+                            // Simple: 1.0 for primary archetype's role, 0.5 for others
+                            const matchCount = recommendedByArchetypes.filter(
+                                a => a.roles && a.roles.includes(role)
+                            ).length;
+                            roleAffinity[role] = matchCount > 0 ? 1.0 : 0.5;
+                        }
+                    }
+
+                    const affinityEntry = {
+                        id: itemId,
+                        archetypeFrequency: frequency,
+                        confidence,
+                        roleAffinity
+                    };
+
+                    index.set(itemId, affinityEntry);
+                    maxFrequency = Math.max(maxFrequency, frequency);
+                }
+            }
+
+            SWSELogger.log(
+                `[BUILD-INTENT] Archetype affinity index built:`,
+                { itemCount: index.size, maxFrequency, primaryArchetype: primaryArchetype.name }
+            );
+        } catch (err) {
+            SWSELogger.error('[BUILD-INTENT] Error computing archetype affinity index:', err);
+        }
+
+        return { index, maxFrequency };
     }
 }
 

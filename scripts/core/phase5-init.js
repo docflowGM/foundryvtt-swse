@@ -18,6 +18,7 @@ import { PrestigeLayerRegistry } from "/systems/foundryvtt-swse/scripts/engine/p
 import { IdentityEngine } from "/systems/foundryvtt-swse/scripts/engine/prestige/identity-engine.js";
 import { SuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngine.js";
 import { initializePrestigeSignals } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
+import { ChainRegistry } from "/systems/foundryvtt-swse/scripts/engine/archetype/chain-registry.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 
@@ -48,6 +49,15 @@ export function initializePhase5() {
         await ArchetypeRegistry.initialize();
         const arcStats = ArchetypeRegistry.getStats();
         log.info(`[${SYSTEM_ID}] ArchetypeRegistry initialized: ${arcStats.count} archetypes`);
+
+        // Initialize ChainRegistry (TIER 1: Feat/Talent chain DAG validation)
+        const featIndex = game.items.filter(i => i.type === 'feat');
+        const talentIndex = game.items.filter(i => i.type === 'talent');
+        ChainRegistry.initialize(
+          new Map(featIndex.map(i => [i.id, i])),
+          new Map(talentIndex.map(i => [i.id, i]))
+        );
+        log.info(`[${SYSTEM_ID}] ChainRegistry initialized`);
 
         // Initialize PrestigeLayerRegistry (Phase 1 Remaining)
         await PrestigeLayerRegistry.initialize();
