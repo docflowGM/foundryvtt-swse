@@ -20,6 +20,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { projectBAB } from "/systems/foundryvtt-swse/scripts/engine/suggestion/prestige-delay-calculator.js";
 
 // ─────────────────────────────────────────────────────────────────
 // DEBUG MODE CONFIGURATION
@@ -423,6 +424,27 @@ function _evaluatePrestigeProximity(candidate, actor, buildIntent, currentLevel)
     // Compute proximity score weighted by prestige confidence
     const proximityScore = (1 - (distance / 3)) * prestige.confidence;
     totalPrestigeScore += proximityScore;
+  }
+
+  // ENHANCEMENT: If candidate is a class and we have prestige delay data,
+  // use it to refine prestige proximity scoring
+  if (candidate.type === "class" && buildIntent.prestigeDelays) {
+    const candidateClassName = candidate.system?.classId || candidate.name;
+
+    for (const [prestigeName, classDelaysMap] of buildIntent.prestigeDelays.entries()) {
+      const delayData = classDelaysMap.get(candidateClassName);
+      if (delayData && delayData.delay <= 3) {
+        // Prestige is accessible within +6 levels
+        // Bonus for early access (delay 0-1) penalty for later access
+        const delayScore = Math.max(0, (3 - delayData.delay) / 3) * 0.15;
+        totalPrestigeScore += delayScore;
+
+        // If prestige delay includes BAB breakpoint, additional bonus
+        if (delayData.riskTags?.includes("BAB_BREAKPOINT_REACHED")) {
+          totalPrestigeScore += 0.1;
+        }
+      }
+    }
   }
 
   // Hard cap prestige contribution at 0.25 (per contract)

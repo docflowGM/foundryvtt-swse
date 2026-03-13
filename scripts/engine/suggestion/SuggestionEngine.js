@@ -48,6 +48,7 @@ import { ReasonSignalBuilder } from "/systems/foundryvtt-swse/scripts/engine/sug
 import { ArchetypeMetadataEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ArchetypeMetadataEngine.js";
 // PHASE 1: SuggestionV2 Retrofit
 import { scoreSuggestion } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionScorer.js";
+import { enrichBuildIntentWithPrestigeDelays } from "/systems/foundryvtt-swse/scripts/engine/suggestion/prestige-delay-calculator.js";
 import { ReasonType } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionV2Contract.ts";
 import { mapReasonCodeToReasonType } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ReasonCodeToReasonTypeMapping.js";
 
@@ -158,6 +159,16 @@ export class SuggestionEngine {
             }
         }
 
+        // Enrich buildIntent with prestige delay calculations (for class suggestions)
+        if (buildIntent) {
+            try {
+                buildIntent = await enrichBuildIntentWithPrestigeDelays(buildIntent, actor);
+            } catch (err) {
+                SWSELogger.debug('[SuggestionEngine.suggestFeats] Prestige delay enrichment failed (optional):', err);
+                // Graceful fallback - continue with buildIntent without prestige delays
+            }
+        }
+
         // Get primary archetype for character (Phase 4: Archetype Integration)
         let primaryArchetype = null;
         let archetypeRecommendedFeatIds = [];
@@ -249,6 +260,16 @@ export class SuggestionEngine {
                 buildIntent = mentorBiases && Object.keys(mentorBiases).length > 0
                     ? { mentorBiases }
                     : null;
+            }
+        }
+
+        // Enrich buildIntent with prestige delay calculations (for class suggestions)
+        if (buildIntent) {
+            try {
+                buildIntent = await enrichBuildIntentWithPrestigeDelays(buildIntent, actor);
+            } catch (err) {
+                SWSELogger.debug('[SuggestionEngine.suggestTalents] Prestige delay enrichment failed (optional):', err);
+                // Graceful fallback - continue with buildIntent without prestige delays
             }
         }
 
