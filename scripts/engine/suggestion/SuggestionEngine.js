@@ -1236,7 +1236,7 @@ export class SuggestionEngine {
                     `wishlist:${wishlistPrereqCheck.itemId || wishlistPrereqCheck.itemName}`,
                     feat,
                     archetype,
-                    { actor }
+                    buildSuggestionOptions
                 );
             }
         }
@@ -1248,7 +1248,8 @@ export class SuggestionEngine {
                 'MARTIAL_ARTS',
                 null,
                 feat,
-                archetype
+                archetype,
+                buildSuggestionOptions
             );
         }
 
@@ -1261,7 +1262,8 @@ export class SuggestionEngine {
                     'META_SYNERGY',
                     null,
                     feat,
-                    archetype
+                    archetype,
+                    buildSuggestionOptions
                 );
             }
         }
@@ -1274,7 +1276,8 @@ export class SuggestionEngine {
                 'SPECIES_EARLY',
                 speciesCheck.sourceId,
                 feat,
-                archetype
+                archetype,
+                buildSuggestionOptions
             );
         }
 
@@ -1286,7 +1289,8 @@ export class SuggestionEngine {
                 'CHAIN_CONTINUATION',
                 `chain:${chainPrereq}`,
                 feat,
-                archetype
+                archetype,
+                buildSuggestionOptions
             );
         }
 
@@ -1307,7 +1311,8 @@ export class SuggestionEngine {
                 'ABILITY_PREREQ_MATCH',
                 `ability:${actorState.highestAbility}`,
                 feat,
-                archetype
+                archetype,
+                buildSuggestionOptions
             );
         }
 
@@ -1319,7 +1324,8 @@ export class SuggestionEngine {
                 'CLASS_SYNERGY',
                 `class:${className}`,
                 feat,
-                archetype
+                archetype,
+                buildSuggestionOptions
             );
         }
 
@@ -1332,13 +1338,14 @@ export class SuggestionEngine {
                     'CLASS_SYNERGY',
                     null,
                     feat,
-                    archetype
+                    archetype,
+                    buildSuggestionOptions
                 );
             }
         }
 
         // Fallback - still a legal option
-        return this._buildSuggestionWithArchetype(SUGGESTION_TIERS.FALLBACK, 'FALLBACK', null, feat, archetype);
+        return this._buildSuggestionWithArchetype(SUGGESTION_TIERS.FALLBACK, 'FALLBACK', null, feat, archetype, buildSuggestionOptions);
     }
 
     /**
@@ -1360,6 +1367,14 @@ export class SuggestionEngine {
             archetype = archetypeId ? ArchetypeRegistry.get(archetypeId) : null;
         }
 
+        // PHASE 1: Build options object with context for SuggestionV2 retrofit
+        const buildSuggestionOptions = {
+            actor,
+            candidate: talent,
+            buildIntent,
+            identityBias: null
+        };
+
         // Check tiers in order of priority (highest first)
 
         // Tier 6: Check if this talent supports a prestige class path
@@ -1375,7 +1390,8 @@ export class SuggestionEngine {
                     'PRESTIGE_PREREQ',
                     `prestige:${prestigeClass}`,
                     talent,
-                    archetype
+                    archetype,
+                    buildSuggestionOptions
                 );
             }
         }
@@ -1389,7 +1405,8 @@ export class SuggestionEngine {
                     'WISHLIST_PATH',
                     `wishlist:${wishlistPrereqCheck.itemId || wishlistPrereqCheck.itemName}`,
                     talent,
-                    archetype
+                    archetype,
+                    buildSuggestionOptions
                 );
             }
         }
@@ -1403,7 +1420,8 @@ export class SuggestionEngine {
                     'META_SYNERGY',
                     null,
                     talent,
-                    archetype
+                    archetype,
+                    buildSuggestionOptions
                 );
             }
         }
@@ -1416,7 +1434,8 @@ export class SuggestionEngine {
                 'CHAIN_CONTINUATION',
                 `chain:${chainPrereq}`,
                 talent,
-                archetype
+                archetype,
+                buildSuggestionOptions
             );
         }
 
@@ -1437,7 +1456,8 @@ export class SuggestionEngine {
                 'ABILITY_PREREQ_MATCH',
                 `ability:${actorState.highestAbility}`,
                 talent,
-                archetype
+                archetype,
+                buildSuggestionOptions
             );
         }
 
@@ -1449,7 +1469,8 @@ export class SuggestionEngine {
                 'CLASS_SYNERGY',
                 `class:${className}`,
                 talent,
-                archetype
+                archetype,
+                buildSuggestionOptions
             );
         }
 
@@ -1463,13 +1484,14 @@ export class SuggestionEngine {
                     'CLASS_SYNERGY',
                     null,
                     talent,
-                    archetype
+                    archetype,
+                    buildSuggestionOptions
                 );
             }
         }
 
         // Fallback - still a legal option
-        return this._buildSuggestionWithArchetype(SUGGESTION_TIERS.FALLBACK, 'FALLBACK', null, talent, archetype);
+        return this._buildSuggestionWithArchetype(SUGGESTION_TIERS.FALLBACK, 'FALLBACK', null, talent, archetype, buildSuggestionOptions);
     }
 
     // ──────────────────────────────────────────────────────────────────────────────
