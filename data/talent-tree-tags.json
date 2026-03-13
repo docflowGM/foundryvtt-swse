@@ -819,19 +819,102 @@
       "durability"
     ]
   },
-  "__unresolved": [
-    "Knight S Resolve",
-    "Unknown",
-    "Dark Side",
-    "Guardian Spirit",
-    "Alter",
-    "Control",
-    "Knight S Armor",
-    "Sense",
-    "Light Side",
-    "Master Of Teras Kasi",
-    "Soldier Combat",
-    "Genohardan",
-    "Felucian Shaman"
-  ]
+  "knight-s-resolve": {
+    "tags": [
+      "force",
+      "defender",
+      "durability"
+    ]
+  },
+  "knight-s-armor": {
+    "tags": [
+      "armor",
+      "force",
+      "defender",
+      "durability"
+    ]
+  },
+  "master-of-teras-kasi": {
+    "tags": [
+      "unarmed",
+      "melee",
+      "striker",
+      "damage"
+    ]
+  },
+  "genohardan": {
+    "tags": [
+      "crime",
+      "deception",
+      "controller",
+      "utility"
+    ]
+  },
+  "dark-side": {
+    "tags": [
+      "force",
+      "alchemy",
+      "striker",
+      "damage"
+    ]
+  },
+  "light-side": {
+    "tags": [
+      "force",
+      "social",
+      "support",
+      "utility"
+    ]
+  },
+  "sense": {
+    "tags": [
+      "force",
+      "investigation",
+      "scout",
+      "utility"
+    ]
+  },
+  "alter": {
+    "tags": [
+      "force",
+      "utility",
+      "controller"
+    ]
+  },
+  "control": {
+    "tags": [
+      "force",
+      "utility",
+      "controller"
+    ]
+  },
+  "guardian-spirit": {
+    "tags": [
+      "lightsaber",
+      "melee",
+      "defender",
+      "durability"
+    ]
+  },
+  "felucian-shaman": {
+    "tags": [
+      "force",
+      "medicine",
+      "support",
+      "utility"
+    ]
+  },
+  "soldier-combat": {
+    "tags": [
+      "melee",
+      "ranged",
+      "striker",
+      "damage"
+    ]
+  },
+  "unknown": {
+    "tags": [
+      "utility"
+    ]
+  }
 }
