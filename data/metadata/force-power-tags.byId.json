@@ -643,7 +643,8 @@
     }
   },
   "pendingResolution": {
-    "note": "The following 31 Force Powers are in the expected list but not yet in the compendium and need UUID assignment:",
+    "note": "The following 43 Force Powers are in the expected list but not yet in the compendium and need UUID assignment:",
+    "count": 43,
     "forcePowers": [
       "Ballistakinesis", "Blind", "Cloak", "Combustion", "Convection", "Corruption", "Crucitorn",
       "Cryokinesis", "Dark Rage", "Dark Transfer", "Detonate", "Energy Resistance", "Enlighten",
@@ -652,6 +653,15 @@
       "Memory Walk", "Mind Shard", "Morichro", "Obscure", "Phase", "Plant Surge", "Prescience",
       "Rend", "Repulse", "Resist Force", "Shatterpoint", "Slow", "Stagger", "Technometry",
       "Thought Bomb", "Valor", "Wound"
+    ]
+  },
+  "bonusResolution": {
+    "note": "The following 11 Force Powers are in the compendium but were not in the original expected list. They should be added to the metadata:",
+    "count": 11,
+    "forcePowers": [
+      "Battle Meditation", "Battlemind", "Drain Energy", "Drain Life", "Force Body",
+      "Force Cloak", "Force Defense", "Force Sense", "Force Strike", "Force Weapon",
+      "Sever Force (Lesser)"
     ]
   }
 }

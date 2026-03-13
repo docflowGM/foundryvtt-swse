@@ -3,13 +3,14 @@
   "generatedDate": "2026-03-13",
   "objective": "Resolve Force Power and Lightsaber Form Power names to canonical UUIDs and assign consistent tags",
   "summary": {
-    "totalForcePowers": 62,
-    "totalLightsaberFormPowers": 27,
+    "expectedFromPayload": 62,
+    "actualInCompendium": 31,
+    "bonusInCompendium": 11,
+    "totalMissing": 43,
     "resolutionStatus": "PARTIAL_RESOLVED",
     "uuidsResolved": 31,
     "exactMatches": 31,
     "fuzzyMatches": 0,
-    "missing": 31,
     "collisions": 0,
     "lightsaberFormPowersInData": 24,
     "lightsaberFormPowersMissing": 3
@@ -177,7 +178,7 @@
         "source": "forcepowers.db"
       }
     ],
-    "missingForcePowers": 31,
+    "missingForcePowers": 43,
     "missingPowersList": [
       "Ballistakinesis", "Blind", "Cloak", "Combustion", "Convection", "Corruption", "Crucitorn",
       "Cryokinesis", "Dark Rage", "Dark Transfer", "Detonate", "Energy Resistance", "Enlighten",
@@ -187,21 +188,29 @@
       "Rend", "Repulse", "Resist Force", "Shatterpoint", "Slow", "Stagger", "Technometry",
       "Thought Bomb", "Valor", "Wound"
     ],
+    "bonusPowersInCompendium": 11,
+    "bonusPowersList": [
+      "Battle Meditation", "Battlemind", "Drain Energy", "Drain Life", "Force Body",
+      "Force Cloak", "Force Defense", "Force Sense", "Force Strike", "Force Weapon",
+      "Sever Force (Lesser)"
+    ],
     "lightsaberFormPowersResolved": 24,
     "lightsaberFormPowersMissing": 3,
     "notes": [
-      "31 of 62 Force Powers have been resolved from the forcepowers.db compendium with canonical UUIDs",
-      "31 Force Powers from the expected list are not yet in the compendium",
+      "31 Force Powers have been resolved from the forcepowers.db compendium with canonical UUIDs",
+      "43 Force Powers from the expected payload are not yet in the compendium (31 + 11 bonus = 74 total vs. 62 expected)",
+      "11 'bonus' Force Powers are in the compendium but were not in the original expected list (Battle Meditation, Battlemind, Drain Energy, Drain Life, Force Body, Force Cloak, Force Defense, Force Sense, Force Strike, Force Weapon, Sever Force (Lesser))",
       "24 of 27 Lightsaber Form Powers are defined in the lightsaber-form-powers.json data",
       "Lightsaber Form Powers require compendium pack creation to receive canonical UUIDs",
       "All resolved powers include comprehensive metadata: actionType, descriptors, tags, and mentorHints"
     ]
   },
   "recommendations": [
-    "1. Publish the 31 missing Force Powers to the forcepowers.db compendium to receive UUIDs",
-    "2. Create a lightsaberformpowers compendium pack for the 24 Lightsaber Form Powers",
-    "3. Update force-power-tags.byId.json with additional UUIDs as compendium packs are updated",
-    "4. The TalentTreeTagRegistry is ready to load metadata at boot time",
-    "5. Talent candidates will be enriched with context.allTags automatically by CandidatePoolBuilder"
+    "1. Publish the 43 missing Force Powers to the forcepowers.db compendium to receive UUIDs",
+    "2. The 11 bonus powers (Battle Meditation, Battlemind, etc.) are already in the compendium with UUIDs and should be added to force-power-tags.byId.json",
+    "3. Create a lightsaberformpowers compendium pack for the 24 Lightsaber Form Powers",
+    "4. Update force-power-tags.byId.json with additional UUIDs as missing powers are added to the compendium",
+    "5. The TalentTreeTagRegistry is ready to load metadata at boot time",
+    "6. Talent candidates will be enriched with context.allTags automatically by CandidatePoolBuilder"
   ]
 }
