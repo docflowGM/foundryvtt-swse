@@ -11,6 +11,7 @@ import { ClassFeatRegistry } from "/systems/foundryvtt-swse/scripts/engine/progr
 import { getAllowedTalentTrees } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/tree-authority.js";
 import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisite-checker.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { TalentCandidateEnricher } from "/systems/foundryvtt-swse/scripts/engine/suggestion/TalentCandidateEnricher.js";
 
 /**
  * Filters candidate pools based on slot context
@@ -137,6 +138,7 @@ export class CandidatePoolBuilder {
 
   /**
    * Filter talent candidates based on talent slot rules
+   * Also enriches candidates with tree context (Phase 2F: Tag Inheritance)
    * @private
    */
   static _filterTalentCandidates(actor, slotContext, allCandidates) {
@@ -152,10 +154,19 @@ export class CandidatePoolBuilder {
     }
 
     // Filter to candidates in allowed trees
-    return allCandidates.filter((candidate) => {
+    const filtered = allCandidates.filter((candidate) => {
       const treeId = candidate.system?.talent_tree || candidate.system?.tree_id;
       return allowedTrees.includes(treeId);
     });
+
+    // Enrich each candidate with tree context (Phase 2F: Tag Inheritance)
+    // This adds context.allTags = union(candidate.tags + tree.tags)
+    for (const candidate of filtered) {
+      const treeId = candidate.system?.talent_tree || candidate.system?.tree_id;
+      TalentCandidateEnricher.enrich(candidate, treeId);
+    }
+
+    return filtered;
   }
 
   /**

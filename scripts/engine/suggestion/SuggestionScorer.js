@@ -56,6 +56,33 @@ function normalizeMetricScore(rawBias, maxValue = 2.0) {
 }
 
 /**
+ * Get effective tags for a candidate (Phase 2F: Tag Inheritance)
+ * Returns allTags if enriched with context, otherwise candidate.tags
+ * This ensures tree-inherited tags are used in scoring without breaking compatibility
+ * @param {Object} candidate - Candidate item
+ * @returns {Array<string>} Array of tags
+ */
+function getCandidateTags(candidate) {
+  // Phase 2F: Use enriched allTags if available (from tag inheritance)
+  if (candidate?.context?.allTags) {
+    return candidate.context.allTags;
+  }
+  // Fallback to candidate's own tags for backward compatibility
+  return candidate?.tags || candidate?.system?.tags || [];
+}
+
+/**
+ * Check if candidate has a tag (Phase 2F: Tag Inheritance aware)
+ * Uses enriched context if available, falls back to direct tag check
+ * @param {Object} candidate - Candidate item
+ * @param {string} tag - Tag to check
+ * @returns {boolean}
+ */
+function candidateHasTag(candidate, tag) {
+  return getCandidateTags(candidate).includes(tag);
+}
+
+/**
  * Main scoring function — 3-Horizon Model
  *
  * @param {Object} candidate - Feat or talent to score
@@ -227,7 +254,7 @@ function _computeImmediateScore(candidate, actor, identityBias, buildIntent, opt
   let weightedSum = 0;
 
   // METRIC 1: Force Synergy
-  if (candidate.tags?.includes('force') || candidate.tags?.includes('forcePower')) {
+  if (candidateHasTag(candidate, 'force') || candidateHasTag(candidate, 'forcePower')) {
     const forceBias = Math.min(
       identityBias.mechanicalBias.forceSecret || 0,
       identityBias.mechanicalBias.forceDC || 0
@@ -239,7 +266,7 @@ function _computeImmediateScore(candidate, actor, identityBias, buildIntent, opt
   }
 
   // METRIC 2: Damage Output Alignment
-  if (candidate.tags?.includes('damage') || candidate.tags?.includes('combat') || candidate.tags?.includes('weapon')) {
+  if (candidateHasTag(candidate, 'damage') || candidateHasTag(candidate, 'combat') || candidateHasTag(candidate, 'weapon')) {
     const damageType = candidate.system?.damageType || 'melee';
     const damageKey = `${damageType}Damage`;
     const damageBias = identityBias.mechanicalBias[damageKey] || 0;
@@ -264,7 +291,7 @@ function _computeImmediateScore(candidate, actor, identityBias, buildIntent, opt
 
   // METRIC 4: Role/Theme Alignment
   if (buildIntent?.primaryThemes?.length > 0) {
-    const themeMatch = buildIntent.primaryThemes.some(t => candidate.tags?.includes(t));
+    const themeMatch = buildIntent.primaryThemes.some(t => candidateHasTag(candidate, t));
     let themeBias = 0;
     if (themeMatch) {
       themeBias = Math.max(...buildIntent.primaryThemes.map(t =>
@@ -285,7 +312,7 @@ function _computeImmediateScore(candidate, actor, identityBias, buildIntent, opt
   }
 
   // METRIC 6: Equipment Affinity (from IdentityEngine)
-  if (candidate.system?.tags?.includes('weapon') || candidate.system?.tags?.includes('armor')) {
+  if (candidateHasTag(candidate, 'weapon') || candidateHasTag(candidate, 'armor')) {
     const equipBias = identityBias.mechanicalBias.armorMastery ||
                       identityBias.mechanicalBias.weaponMastery || 0;
     const metricScore = normalizeMetricScore(equipBias);
@@ -308,7 +335,7 @@ function _computeImmediateScore(candidate, actor, identityBias, buildIntent, opt
   }
 
   // METRIC 8: Defense Need (Phase 2C)
-  if (candidate.system?.tags?.includes('defense') || candidate.tags?.includes('defense')) {
+  if (candidateHasTag(candidate, 'defense')) {
     const defenseNeed = _computeDefenseNeedBoost(actor);
     if (defenseNeed > 0) {
       metrics.defenseNeed = defenseNeed;
@@ -647,7 +674,7 @@ function _evaluateTalentTreeUnlock(candidate, actor, currentLevel) {
 // ─────────────────────────────────────────────────────────────────
 
 function _evaluateEquipmentAffinityContinuation(candidate, actor) {
-  if (!candidate.tags?.includes('weapon') && !candidate.tags?.includes('armor')) {
+  if (!candidateHasTag(candidate, 'weapon') && !candidateHasTag(candidate, 'armor')) {
     return 0;
   }
 
@@ -679,7 +706,7 @@ function _evaluateSkillCapScaling(candidate, actor, currentLevel) {
  * Check if candidate is part of an existing feat/talent chain
  */
 function _isFeatChainContinuation(candidate, actor) {
-  if (!candidate.tags?.includes('feat-chain') && !candidate.tags?.includes('talent-chain')) {
+  if (!candidateHasTag(candidate, 'feat-chain') && !candidateHasTag(candidate, 'talent-chain')) {
     return false;
   }
 

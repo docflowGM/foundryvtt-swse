@@ -1,0 +1,667 @@
+{
+  "note": "Force Power and Lightsaber Form Power metadata - UUID keyed. Generated for Phase 2F tag inheritance.",
+  "resolutionStatus": "PARTIAL_RESOLVED",
+  "lastGenerated": "2026-03-13",
+  "schema_version": "2.0",
+  "summary": {
+    "totalForcePowersResolved": 31,
+    "totalForcePowersExpected": 62,
+    "totalLightsaberFormPowers": 24,
+    "notes": "31 Force Powers resolved from compendium. 31 additional Force Powers pending resolution. Lightsaber Form Powers mapped but require UUID assignment in compendium."
+  },
+  "powers": {
+    "00b65e47a4dd7d76": {
+      "kind": "forcePower",
+      "name": "Vital Transfer",
+      "actionType": "standard",
+      "descriptors": ["light"],
+      "tags": ["force", "light", "healing", "support", "jediSynergy", "actionEconomy:standard"],
+      "mentorHints": {
+        "oneLiner": "Core healing tool (Light Side).",
+        "notes": "Defines healer/support identity lanes."
+      }
+    },
+    "0419ecb55f011f81": {
+      "kind": "forcePower",
+      "name": "Farseeing",
+      "actionType": "full-round",
+      "descriptors": [],
+      "tags": ["force", "utility", "control", "jediSynergy", "actionEconomy:standard"],
+      "mentorHints": {
+        "oneLiner": "Information and scouting at long range.",
+        "notes": "Best for investigative or narrative-heavy games."
+      }
+    },
+    "0a422b939edfad56": {
+      "kind": "forcePower",
+      "name": "Force Lightning",
+      "actionType": "standard",
+      "descriptors": ["dark"],
+      "tags": ["force", "dark", "damage", "debuff", "jediSynergy", "actionEconomy:standard"],
+      "mentorHints": {
+        "oneLiner": "Direct damage with Dark Side cost.",
+        "notes": "High-impact offensive identity marker."
+      }
+    },
+    "18e79be8d48946ba": {
+      "kind": "forcePower",
+      "name": "Force Cloak",
+      "actionType": "standard",
+      "descriptors": [],
+      "tags": ["force", "utility", "control", "mobility", "jediSynergy", "actionEconomy:standard"],
+      "mentorHints": {
+        "oneLiner": "Stealth utility—win by not being seen.",
+        "notes": "Pairs with Sentinel/infiltration lanes."
+      }
+    },
+    "18f33f87a1ebee74": {
+      "kind": "forcePower",
+      "name": "Force Disarm",
+      "actionType": "standard",
+      "descriptors": ["telekinetic"],
+      "tags": ["force", "telekinetic", "control", "utility", "jediSynergy", "actionEconomy:standard"],
+      "mentorHints": {
+        "oneLiner": "Remove an enemy's weapon advantage.",
+        "notes": "Strong against armed elites; pairs with control builds."
+      }
+    },
+    "1ac1084ca8f07114": {
+      "kind": "forcePower",
+      "name": "Surge",
+      "actionType": "free",
+      "descriptors": [],
+      "tags": ["force", "mobility", "utility", "pilotSynergy", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Movement tech—positioning wins fights.",
+        "notes": "Great for melee closers, escapes, and stunt play."
+      }
+    },
+    "2466fc76adef817b": {
+      "kind": "forcePower",
+      "name": "Force Track",
+      "actionType": "swift",
+      "descriptors": [],
+      "tags": ["force", "utility", "control", "actionEconomy:swift", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Hunt and pursue—force-assisted tracking.",
+        "notes": "Pairs with bounty hunter / investigator play."
+      }
+    },
+    "289013a32bd179ad": {
+      "kind": "forcePower",
+      "name": "Move Object",
+      "actionType": "standard",
+      "descriptors": ["telekinetic"],
+      "tags": ["force", "telekinetic", "utility", "control", "jediSynergy", "actionEconomy:standard"],
+      "mentorHints": {
+        "oneLiner": "The universal telekinesis tool—always useful.",
+        "notes": "Bread-and-butter utility with lots of creative uses."
+      }
+    },
+    "390074b44aedfa2a": {
+      "kind": "forcePower",
+      "name": "Rebuke",
+      "actionType": "reaction",
+      "descriptors": [],
+      "tags": ["force", "defense", "control", "actionEconomy:reaction", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Reaction defense versus hostile Force use.",
+        "notes": "Strong in Force-vs-Force campaigns."
+      }
+    },
+    "462a6c23e00c4dfc": {
+      "kind": "forcePower",
+      "name": "Force Slam",
+      "actionType": "standard",
+      "descriptors": ["telekinetic"],
+      "tags": ["force", "telekinetic", "control", "damage", "jediSynergy", "actionEconomy:standard"],
+      "mentorHints": {
+        "oneLiner": "Area disruption—knockdown/control tool.",
+        "notes": "Great for crowd control and battlefield shaping."
+      }
+    },
+    "50be88fe6aa77d07": {
+      "kind": "forcePower",
+      "name": "Force Defense",
+      "actionType": "standard",
+      "descriptors": [],
+      "tags": ["force", "defense", "utility", "jediSynergy", "actionEconomy:standard"],
+      "mentorHints": {
+        "oneLiner": "Defensive stance vs enemy Force effects.",
+        "notes": "Strong in Sith-heavy campaigns."
+      }
+    },
+    "64d987296e6bb054": {
+      "kind": "forcePower",
+      "name": "Force Scream",
+      "actionType": "standard",
+      "descriptors": ["dark"],
+      "tags": ["force", "dark", "damage", "control", "actionEconomy:standard", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Offensive Dark Side shockwave.",
+        "notes": "Aggressive identity marker for dark builds."
+      }
+    },
+    "68353e70defb7efa": {
+      "kind": "forcePower",
+      "name": "Malacia",
+      "actionType": "standard",
+      "descriptors": ["light"],
+      "tags": ["force", "light", "control", "debuff", "actionEconomy:standard", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Soft control to disrupt enemies (Light Side).",
+        "notes": "Good for non-lethal control play."
+      }
+    },
+    "75838fe2c1165b3d": {
+      "kind": "forcePower",
+      "name": "Battle Meditation",
+      "actionType": "standard",
+      "descriptors": [],
+      "tags": ["force", "utility", "support", "buff", "jediSynergy", "actionEconomy:standard"],
+      "mentorHints": {
+        "oneLiner": "Team support through battlefield awareness.",
+        "notes": "Excellent support/leader power."
+      }
+    },
+    "7765b572c9f02bb0": {
+      "kind": "forcePower",
+      "name": "Force Weapon",
+      "actionType": "standard",
+      "descriptors": ["telekinetic"],
+      "tags": ["force", "telekinetic", "utility", "buff", "actionEconomy:standard", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Enhance a weapon with Force energy.",
+        "notes": "Pairs with combat builds."
+      }
+    },
+    "9a03352cce987282": {
+      "kind": "forcePower",
+      "name": "Drain Life",
+      "actionType": "standard",
+      "descriptors": ["dark"],
+      "tags": ["force", "dark", "healing", "debuff", "actionEconomy:standard", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Dark Side restoration through harm.",
+        "notes": "Defines dark healer identity."
+      }
+    },
+    "a214d4f56b4abe11": {
+      "kind": "forcePower",
+      "name": "Force Stun",
+      "actionType": "standard",
+      "descriptors": [],
+      "tags": ["force", "control", "debuff", "jediSynergy", "actionEconomy:standard"],
+      "mentorHints": {
+        "oneLiner": "Disable a target if your Use the Force is strong.",
+        "notes": "More swingy at low levels; shines with high UtF."
+      }
+    },
+    "a4832d1e91a994b3": {
+      "kind": "forcePower",
+      "name": "Sever Force (Lesser)",
+      "actionType": "standard",
+      "descriptors": ["light"],
+      "tags": ["force", "light", "control", "debuff", "jediSynergy", "actionEconomy:standard"],
+      "mentorHints": {
+        "oneLiner": "Reduced Force access shutdown.",
+        "notes": "Scaling control option."
+      }
+    },
+    "aef6dad242fd225b": {
+      "kind": "forcePower",
+      "name": "Force Storm",
+      "actionType": "standard",
+      "descriptors": ["dark", "telekinetic"],
+      "tags": ["force", "dark", "telekinetic", "damage", "control", "actionEconomy:standard", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Dark Side area pressure.",
+        "notes": "High-commitment dark identity signal."
+      }
+    },
+    "b52769dd11b4e52c": {
+      "kind": "forcePower",
+      "name": "Sever Force",
+      "actionType": "standard",
+      "descriptors": ["light"],
+      "tags": ["force", "light", "control", "debuff", "jediSynergy", "actionEconomy:standard"],
+      "mentorHints": {
+        "oneLiner": "Shut down an enemy's Force access (Light Side).",
+        "notes": "High-value counterplay against Force users."
+      }
+    },
+    "b9a47b740e862b56": {
+      "kind": "forcePower",
+      "name": "Force Body",
+      "actionType": "standard",
+      "descriptors": [],
+      "tags": ["force", "defense", "utility", "support", "jediSynergy", "actionEconomy:standard"],
+      "mentorHints": {
+        "oneLiner": "Defensive prep against elemental threats.",
+        "notes": "Reliable mitigation in dangerous environments."
+      }
+    },
+    "be1ae263c498af3b": {
+      "kind": "forcePower",
+      "name": "Negate Energy",
+      "actionType": "reaction",
+      "descriptors": [],
+      "tags": ["force", "defense", "utility", "actionEconomy:reaction", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Reactive protection against big hits.",
+        "notes": "Excellent survivability pick; supports defender lanes."
+      }
+    },
+    "c857835de924b420": {
+      "kind": "forcePower",
+      "name": "Force Sense",
+      "actionType": "standard",
+      "descriptors": [],
+      "tags": ["force", "utility", "control", "jediSynergy", "actionEconomy:standard"],
+      "mentorHints": {
+        "oneLiner": "Detect presence and intention through Force.",
+        "notes": "Awareness utility, great for scouting."
+      }
+    },
+    "d3d65e4805304da9": {
+      "kind": "forcePower",
+      "name": "Battlemind",
+      "actionType": "standard",
+      "descriptors": [],
+      "tags": ["force", "defense", "buff", "actionEconomy:standard", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Self-enhancement for combat resilience.",
+        "notes": "Personal defense buff."
+      }
+    },
+    "d51bf85903366b6b": {
+      "kind": "forcePower",
+      "name": "Force Thrust",
+      "actionType": "standard",
+      "descriptors": ["telekinetic"],
+      "tags": ["force", "telekinetic", "control", "damage", "utility", "jediSynergy", "actionEconomy:standard"],
+      "mentorHints": {
+        "oneLiner": "Push enemies, reposition fights, control space.",
+        "notes": "Pairs well with terrain and zone control."
+      }
+    },
+    "d5d13cf231f71929": {
+      "kind": "forcePower",
+      "name": "Drain Energy",
+      "actionType": "standard",
+      "descriptors": [],
+      "tags": ["force", "utility", "control", "actionEconomy:standard", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Disable powered tech—problem-solver power.",
+        "notes": "Excellent against gear-reliant foes."
+      }
+    },
+    "dc331021badb59ed": {
+      "kind": "forcePower",
+      "name": "Inspire",
+      "actionType": "swift",
+      "descriptors": ["light"],
+      "tags": ["force", "light", "buff", "support", "socialSynergy", "actionEconomy:swift", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Fast morale/support boost.",
+        "notes": "Good for leaders and support Jedi."
+      }
+    },
+    "e2cfcd6f4097fa30": {
+      "kind": "forcePower",
+      "name": "Force Strike",
+      "actionType": "standard",
+      "descriptors": [],
+      "tags": ["force", "damage", "actionEconomy:standard", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Direct Force damage.",
+        "notes": "Straightforward offense option."
+      }
+    },
+    "e6649f366d6c5737": {
+      "kind": "forcePower",
+      "name": "Mind Trick",
+      "actionType": "standard",
+      "descriptors": ["mindAffecting"],
+      "tags": ["force", "mind", "control", "utility", "socialSynergy", "jediSynergy", "actionEconomy:standard"],
+      "mentorHints": {
+        "oneLiner": "Social/control power for subtle solutions.",
+        "notes": "Great for diplomats, sentinels, and infiltration play."
+      }
+    },
+    "f177dc6d65f76de9": {
+      "kind": "forcePower",
+      "name": "Battle Strike",
+      "actionType": "swift",
+      "descriptors": [],
+      "tags": ["force", "buff", "damage", "jediSynergy", "actionEconomy:swift"],
+      "mentorHints": {
+        "oneLiner": "Quick combat boost for your next hit.",
+        "notes": "Simple, reliable opener for saber or melee attacks."
+      }
+    },
+    "f41a957f71e98a6a": {
+      "kind": "forcePower",
+      "name": "Force Grip",
+      "actionType": "standard",
+      "descriptors": ["telekinetic"],
+      "tags": ["force", "telekinetic", "control", "debuff", "jediSynergy", "actionEconomy:standard"],
+      "mentorHints": {
+        "oneLiner": "Lock down a target and steal actions.",
+        "notes": "Control-heavy option; can define a controller lane."
+      }
+    }
+  },
+  "lightsaberFormPowers": {
+    "assured-strike": {
+      "kind": "lightsaberFormPower",
+      "name": "Assured Strike",
+      "actionType": "standard",
+      "descriptors": ["lightsaberForm"],
+      "form": "Juyo",
+      "tags": ["force", "lightsaber", "formPower", "buff", "damage", "jediSynergy", "actionEconomy:standard"],
+      "mentorHints": {
+        "oneLiner": "Form technique—trade power/accuracy to fit the moment.",
+        "notes": "Great for precision-minded duelists."
+      }
+    },
+    "barrier-of-blades": {
+      "kind": "lightsaberFormPower",
+      "name": "Barrier of Blades",
+      "actionType": "swift",
+      "descriptors": ["lightsaberForm"],
+      "form": "Shien",
+      "tags": ["force", "lightsaber", "formPower", "defense", "buff", "actionEconomy:swift", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Swift defensive form—answer ranged pressure.",
+        "notes": "Pairs with defender lanes."
+      }
+    },
+    "circle-of-shelter": {
+      "kind": "lightsaberFormPower",
+      "name": "Circle of Shelter",
+      "actionType": "standard",
+      "descriptors": ["lightsaberForm"],
+      "form": "Soresu",
+      "tags": ["force", "lightsaber", "formPower", "defense", "support", "control", "actionEconomy:standard", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Defensive zone—protect allies and space.",
+        "notes": "Great for party tank/protector play."
+      }
+    },
+    "contentious-opportunity": {
+      "kind": "lightsaberFormPower",
+      "name": "Contentious Opportunity",
+      "actionType": "free",
+      "descriptors": ["lightsaberForm"],
+      "form": "Makashi",
+      "tags": ["force", "lightsaber", "formPower", "utility", "buff", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Exploit openings—duelist tempo tool.",
+        "notes": "Rewards tactical timing."
+      }
+    },
+    "deflecting-slash": {
+      "kind": "lightsaberFormPower",
+      "name": "Deflecting Slash",
+      "actionType": "reaction",
+      "descriptors": ["lightsaberForm"],
+      "form": "Soresu",
+      "tags": ["force", "lightsaber", "formPower", "defense", "damage", "actionEconomy:reaction", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Defend, then counter—reaction dueling.",
+        "notes": "Excellent for Soresu-style defenders."
+      }
+    },
+    "disarming-slash": {
+      "kind": "lightsaberFormPower",
+      "name": "Disarming Slash",
+      "actionType": "standard",
+      "descriptors": ["lightsaberForm"],
+      "form": "Shii-Cho",
+      "tags": ["force", "lightsaber", "formPower", "control", "utility", "actionEconomy:standard", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Control enemy weapons—win by disarm.",
+        "notes": "Strong vs armed bosses."
+      }
+    },
+    "draw-closer": {
+      "kind": "lightsaberFormPower",
+      "name": "Draw Closer",
+      "actionType": "standard",
+      "descriptors": ["lightsaberForm", "telekinetic"],
+      "form": "Niman",
+      "tags": ["force", "lightsaber", "telekinetic", "formPower", "control", "mobility", "actionEconomy:standard", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Pull targets into your threat range.",
+        "notes": "Perfect for melee control setups."
+      }
+    },
+    "falling-avalanche": {
+      "kind": "lightsaberFormPower",
+      "name": "Falling Avalanche",
+      "actionType": "standard",
+      "descriptors": ["lightsaberForm"],
+      "form": "Djem So",
+      "tags": ["force", "lightsaber", "formPower", "damage", "buff", "actionEconomy:standard", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Power strike form—end fights fast.",
+        "notes": "Pairs with STR guardian lanes."
+      }
+    },
+    "fluid-riposte": {
+      "kind": "lightsaberFormPower",
+      "name": "Fluid Riposte",
+      "actionType": "reaction",
+      "descriptors": ["lightsaberForm"],
+      "form": "Djem So",
+      "tags": ["force", "lightsaber", "formPower", "defense", "damage", "actionEconomy:reaction", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Reaction counterattack—duelist staple.",
+        "notes": "Great for reactive fighters."
+      }
+    },
+    "hawk-bat-swoop": {
+      "kind": "lightsaberFormPower",
+      "name": "Hawk-Bat Swoop",
+      "actionType": "standard",
+      "descriptors": ["lightsaberForm"],
+      "form": "Ataru",
+      "tags": ["force", "lightsaber", "formPower", "mobility", "damage", "actionEconomy:standard", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Mobility strike—close distance aggressively.",
+        "notes": "Ataru skirmisher identity."
+      }
+    },
+    "high-ground-defense": {
+      "kind": "lightsaberFormPower",
+      "name": "High Ground Defense",
+      "actionType": "swift",
+      "descriptors": ["lightsaberForm"],
+      "form": "Sokan",
+      "tags": ["force", "lightsaber", "formPower", "defense", "utility", "actionEconomy:swift", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Use terrain for defense—positional advantage.",
+        "notes": "Pairs with tactical/terrain play."
+      }
+    },
+    "makashi-riposte": {
+      "kind": "lightsaberFormPower",
+      "name": "Makashi Riposte",
+      "actionType": "reaction",
+      "descriptors": ["lightsaberForm"],
+      "form": "Makashi",
+      "tags": ["force", "lightsaber", "formPower", "defense", "damage", "actionEconomy:reaction", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Duelist reaction—precision riposte.",
+        "notes": "Great in 1v1 duels."
+      }
+    },
+    "pass-the-blade": {
+      "kind": "lightsaberFormPower",
+      "name": "Pass the Blade",
+      "actionType": "standard",
+      "descriptors": ["lightsaberForm"],
+      "form": "Trakata",
+      "tags": ["force", "lightsaber", "formPower", "control", "utility", "actionEconomy:standard", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Trick technique—break defenses with timing.",
+        "notes": "Style-defining mind-game power."
+      }
+    },
+    "pushing-slash": {
+      "kind": "lightsaberFormPower",
+      "name": "Pushing Slash",
+      "actionType": "standard",
+      "descriptors": ["lightsaberForm", "telekinetic"],
+      "form": "Niman",
+      "tags": ["force", "lightsaber", "telekinetic", "formPower", "damage", "control", "actionEconomy:standard", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Hit then shove—control space after damage.",
+        "notes": "Niman control/offense blend."
+      }
+    },
+    "rising-whirlwind": {
+      "kind": "lightsaberFormPower",
+      "name": "Rising Whirlwind",
+      "actionType": "standard",
+      "descriptors": ["lightsaberForm"],
+      "form": "Jar'Kai",
+      "tags": ["force", "lightsaber", "formPower", "damage", "mobility", "actionEconomy:standard", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Dual-blade motion—pressure through speed.",
+        "notes": "Fits two-weapon / Jar'Kai lanes."
+      }
+    },
+    "saber-swarm": {
+      "kind": "lightsaberFormPower",
+      "name": "Saber Swarm",
+      "actionType": "standard",
+      "descriptors": ["lightsaberForm"],
+      "form": "Ataru",
+      "tags": ["force", "lightsaber", "formPower", "damage", "buff", "actionEconomy:standard", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Rapid strikes—aggressive Ataru offense.",
+        "notes": "Great for mobile attackers."
+      }
+    },
+    "sarlacc-sweep": {
+      "kind": "lightsaberFormPower",
+      "name": "Sarlacc Sweep",
+      "actionType": "standard",
+      "descriptors": ["lightsaberForm"],
+      "form": "Shii-Cho",
+      "tags": ["force", "lightsaber", "formPower", "damage", "control", "actionEconomy:standard", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Sweep multiple foes—classic crowd handling.",
+        "notes": "Good versus groups."
+      }
+    },
+    "shien-deflection": {
+      "kind": "lightsaberFormPower",
+      "name": "Shien Deflection",
+      "actionType": "reaction",
+      "descriptors": ["lightsaberForm"],
+      "form": "Shien",
+      "tags": ["force", "lightsaber", "formPower", "defense", "mobility", "actionEconomy:reaction", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Deflect then close—reaction reposition tool.",
+        "notes": "Ranged pressure answer."
+      }
+    },
+    "swift-flank": {
+      "kind": "lightsaberFormPower",
+      "name": "Swift Flank",
+      "actionType": "standard",
+      "descriptors": ["lightsaberForm"],
+      "form": "Vaapad",
+      "tags": ["force", "lightsaber", "formPower", "mobility", "damage", "actionEconomy:standard", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Explosive reposition into offense.",
+        "notes": "High aggression style marker."
+      }
+    },
+    "tempered-aggression": {
+      "kind": "lightsaberFormPower",
+      "name": "Tempered Aggression",
+      "actionType": "standard",
+      "descriptors": ["lightsaberForm", "dark"],
+      "form": "Vaapad",
+      "tags": ["force", "lightsaber", "formPower", "dark", "damage", "buff", "actionEconomy:standard", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Edge-of-dark offense—controlled aggression.",
+        "notes": "Vaapad identity lane; tone-sensitive."
+      }
+    },
+    "twin-strike": {
+      "kind": "lightsaberFormPower",
+      "name": "Twin Strike",
+      "actionType": "standard",
+      "descriptors": ["lightsaberForm"],
+      "form": "Jar'Kai",
+      "tags": ["force", "lightsaber", "formPower", "damage", "buff", "actionEconomy:standard", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Two-blade impact—commit to dual style.",
+        "notes": "Great if your build already leans Jar'Kai."
+      }
+    },
+    "unbalancing-block": {
+      "kind": "lightsaberFormPower",
+      "name": "Unbalancing Block",
+      "actionType": "reaction",
+      "descriptors": ["lightsaberForm"],
+      "form": "Trakata",
+      "tags": ["force", "lightsaber", "formPower", "defense", "control", "actionEconomy:reaction", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Defensive reaction with a control payoff.",
+        "notes": "Trakata trick-defense lane."
+      }
+    },
+    "unhindered-charge": {
+      "kind": "lightsaberFormPower",
+      "name": "Unhindered Charge",
+      "actionType": "standard",
+      "descriptors": ["lightsaberForm"],
+      "form": "Sokan",
+      "tags": ["force", "lightsaber", "formPower", "mobility", "utility", "actionEconomy:standard", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Close distance through terrain problems.",
+        "notes": "Sokan = positioning mastery."
+      }
+    },
+    "vornskrs-ferocity": {
+      "kind": "lightsaberFormPower",
+      "name": "Vornskr's Ferocity",
+      "actionType": "standard",
+      "descriptors": ["lightsaberForm", "dark"],
+      "form": "Juyo",
+      "tags": ["force", "lightsaber", "formPower", "dark", "damage", "buff", "actionEconomy:standard", "jediSynergy"],
+      "mentorHints": {
+        "oneLiner": "Ferocious offense—Juyo on the edge.",
+        "notes": "Dark-leaning aggressive identity."
+      }
+    }
+  },
+  "pendingResolution": {
+    "note": "The following 43 Force Powers are in the expected list but not yet in the compendium and need UUID assignment:",
+    "count": 43,
+    "forcePowers": [
+      "Ballistakinesis", "Blind", "Cloak", "Combustion", "Convection", "Corruption", "Crucitorn",
+      "Cryokinesis", "Dark Rage", "Dark Transfer", "Detonate", "Energy Resistance", "Enlighten",
+      "Fear", "Fold Space", "Force Blast", "Force Light", "Force Shield", "Force Whirlwind",
+      "Hatred", "Inertia", "Intercept", "Ionize", "Kinetic Combat", "Levitate", "Lightning Burst",
+      "Memory Walk", "Mind Shard", "Morichro", "Obscure", "Phase", "Plant Surge", "Prescience",
+      "Rend", "Repulse", "Resist Force", "Shatterpoint", "Slow", "Stagger", "Technometry",
+      "Thought Bomb", "Valor", "Wound"
+    ]
+  },
+  "bonusResolution": {
+    "note": "The following 11 Force Powers are in the compendium but were not in the original expected list. They should be added to the metadata:",
+    "count": 11,
+    "forcePowers": [
+      "Battle Meditation", "Battlemind", "Drain Energy", "Drain Life", "Force Body",
+      "Force Cloak", "Force Defense", "Force Sense", "Force Strike", "Force Weapon",
+      "Sever Force (Lesser)"
+    ]
+  }
+}
