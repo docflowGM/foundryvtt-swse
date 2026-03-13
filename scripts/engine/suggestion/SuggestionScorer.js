@@ -307,6 +307,16 @@ function _computeImmediateScore(candidate, actor, identityBias, buildIntent, opt
     }
   }
 
+  // METRIC 8: Defense Need (Phase 2C)
+  if (candidate.system?.tags?.includes('defense') || candidate.tags?.includes('defense')) {
+    const defenseNeed = _computeDefenseNeedBoost(actor);
+    if (defenseNeed > 0) {
+      metrics.defenseNeed = defenseNeed;
+      totalWeight += 0.10;
+      weightedSum += defenseNeed * 0.10;
+    }
+  }
+
   // Compute final immediate score
   const immediateScore = totalWeight > 0 ? weightedSum / totalWeight : 0.3; // 0.3 baseline
 
@@ -886,6 +896,36 @@ function _doesOptionResolveConditional(candidate, rule) {
   }
 
   return false;
+}
+
+/**
+ * Compute defense need boost (Phase 2C)
+ * Returns boost (0-1) if actor's defenses are below expected baseline
+ * @private
+ */
+function _computeDefenseNeedBoost(actor) {
+  if (!actor) return 0;
+
+  const defenses = actor.system?.defenses || {};
+  const currentLevel = actor.system?.level || 1;
+
+  // Baseline defensive values expected at this level (rough heuristic)
+  // At level 1: baseline ~12, at level 10: baseline ~14, at level 20: baseline ~16
+  const baselines = {
+    reflex: 12 + Math.floor(currentLevel / 5),
+    fortitude: 12 + Math.floor(currentLevel / 5),
+    will: 11 + Math.floor(currentLevel / 5)
+  };
+
+  // Calculate average defense deficit
+  const refDeficit = Math.max(0, (baselines.reflex - (defenses.reflex || 10)) / 10);
+  const fortDeficit = Math.max(0, (baselines.fortitude - (defenses.fortitude || 10)) / 10);
+  const willDeficit = Math.max(0, (baselines.will - (defenses.will || 9)) / 10);
+
+  const avgDeficit = (refDeficit + fortDeficit + willDeficit) / 3;
+
+  // Return normalized boost (0-1), capped at 0.8 to not overwhelm other metrics
+  return Math.min(avgDeficit, 0.8);
 }
 
 /**
