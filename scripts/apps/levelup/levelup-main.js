@@ -471,6 +471,29 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     data.showMulticlassBonus = isMulticlassing && isBase;
     data.getsTalent = this.selectedClass && getsTalent(this.selectedClass, this.actor);
 
+    // Phase 4: Generate level-up reflection and trajectory advice for summary step
+    if (this.currentStep === 'summary') {
+      try {
+        // Generate mentor reflection on the selections made
+        const reflection = await MentorInteractionIntegration.generateLevelupReflection(
+          this.actor,
+          this.mentor,
+          this._buildPendingData()
+        );
+        data.levelupReflection = reflection;
+
+        // Get mentor's trajectory/priority advice for next progression
+        const trajectory = await MentorInteractionIntegration.getTrajectoryAdvice(
+          this.actor,
+          this.mentor
+        );
+        data.mentorTrajectory = trajectory;
+      } catch (err) {
+        SWSELogger.warn('[LEVELUP] Failed to generate reflection/trajectory:', err);
+        // Graceful fallback: continue without reflection if generation fails
+      }
+    }
+
     return data;
   }
 
