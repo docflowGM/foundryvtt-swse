@@ -2,11 +2,28 @@
 /* GM STORE DASHBOARD (AppV2)                                   */
 /* ============================================================ */
 
+/* ============================================================
+   LAYOUT CONTRACT ENFORCEMENT — FOUNDRY V13 INVARIANTS
+   These rules ensure layouts don't collapse when flexcol
+   utility classes are missing from templates.
+   ============================================================ */
+
 .gm-store-dashboard-container {
   display: flex;
   flex-direction: column;
   height: 100%;
   padding: 0;
+  min-height: 0;
+}
+
+/* Dashboard content area (scrollable) */
+.gm-store-dashboard-container .dashboard-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow-y: auto;
 }
 
 .dashboard-header {

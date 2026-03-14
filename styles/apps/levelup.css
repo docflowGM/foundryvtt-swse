@@ -3,6 +3,29 @@
  * Dual Talent Progression UI
  */
 
+/* ============================================================
+   LAYOUT CONTRACT ENFORCEMENT — FOUNDRY V13 INVARIANTS
+   These rules ensure layouts don't collapse when flexcol
+   utility classes are missing from templates.
+   ============================================================ */
+
+/* Root window container */
+.swse-levelup {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Main body container */
+.swse-levelup .levelup-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+
 /* ================================================================= */
 /* DUAL TALENT SELECTION BLOCK                                      */
 /* ================================================================= */

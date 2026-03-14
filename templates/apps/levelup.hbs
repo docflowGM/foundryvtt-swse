@@ -1,4 +1,4 @@
-<div class="swse-levelup">
+<div class="swse-levelup flexcol">
   <header class="levelup-header">
     <h2>Level Up: {{actor.name}}</h2>
     <div class="level-indicator">
@@ -111,7 +111,7 @@
   </aside>
   {{/if}}
 
-  <main class="levelup-body">
+  <main class="levelup-body flexcol">
 
     {{!-- STEP 0A: SPECIES SELECTION (Level 0 only) --}}
     {{#if (eq currentStep "species")}}
