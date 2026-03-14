@@ -1,0 +1,238 @@
+/**
+ * starship-maneuver-step.js
+ *
+ * Starship Maneuver selection step — CRITICAL: uses stacking model like Force Powers.
+ * Each duplicate selection = additional use, not an error.
+ *
+ * CONDITIONAL — unlocked only when actor has starship piloting capability.
+ */
+
+import { ProgressionStepPlugin } from './step-plugin-base.js';
+import { getMentorGuidance, getMentorForClass, MENTORS } from '../../../engine/mentor/mentor-dialogues.js';
+import { handleAskMentor } from './mentor-step-integration.js';
+import { swseLogger } from '../../../utils/logger.js';
+
+export class StarshipManeuverStep extends ProgressionStepPlugin {
+  constructor(descriptor) {
+    super(descriptor);
+    this._allManeuvers = [];
+    this._legalManeuvers = [];
+    this._filteredManeuvers = [];
+    this._searchQuery = '';
+    this._focusedManeuverID = null;
+
+    /**
+     * CRITICAL (Wave 10): Starship Maneuvers use stacking model.
+     * Each selection = additional use (like "Battle Strike ×2").
+     */
+    this._committedManeuverCounts = new Map();
+
+    this._remainingPicks = 0;
+    this._utilityUnlisteners = [];
+  }
+
+  get descriptor() { return this._descriptor; }
+
+  async onStepEnter(shell) {
+    try {
+      // TODO (Wave 10): Load from registry or engine
+      this._allManeuvers = [];
+      this._remainingPicks = 0;
+
+      await this._computeLegalManeuvers(shell.actor);
+      this._applyFilters();
+      shell.mentor.askMentorEnabled = true;
+
+      swseLogger.debug(`[StarshipManeuverStep] Entered: ${this._allManeuvers.length} maneuvers`);
+    } catch (e) {
+      swseLogger.error('[StarshipManeuverStep.onStepEnter]', e);
+      this._allManeuvers = [];
+    }
+  }
+
+  async onStepExit(shell) {
+    this._utilityUnlisteners.forEach(fn => fn());
+    this._utilityUnlisteners = [];
+  }
+
+  async onDataReady(shell) {
+    const onSearch = e => {
+      this._searchQuery = e.detail.query;
+      this._applyFilters();
+      shell.render();
+    };
+
+    shell.element?.addEventListener('prog:utility:search', onSearch);
+    this._utilityUnlisteners = [
+      () => shell.element?.removeEventListener('prog:utility:search', onSearch),
+    ];
+  }
+
+  async getStepData(context) {
+    const committedSummary = Array.from(this._committedManeuverCounts.entries()).map(([id, count]) => {
+      const maneuver = this._allManeuvers.find(m => m.id === id);
+      return { id, name: maneuver?.name || id, count };
+    });
+
+    return {
+      maneuvers: this._filteredManeuvers,
+      focusedManeuverID: this._focusedManeuverID,
+      committedCounts: Object.fromEntries(this._committedManeuverCounts),
+      committedSummary,
+      remainingPicks: this._remainingPicks,
+    };
+  }
+
+  getSelection() {
+    const totalSelected = Array.from(this._committedManeuverCounts.values()).reduce((sum, c) => sum + c, 0);
+    return {
+      selected: Array.from(this._committedManeuverCounts.keys()),
+      count: totalSelected,
+      isComplete: totalSelected >= this._remainingPicks,
+    };
+  }
+
+  async onItemFocused(maneuverId, shell) {
+    const maneuver = this._allManeuvers.find(m => m.id === maneuverId);
+    if (!maneuver) return;
+
+    this._focusedManeuverID = maneuverId;
+    shell.focusedItem = maneuver;
+    await handleAskMentor(shell.actor, 'starship-maneuvers', shell);
+    shell.render();
+  }
+
+  async onItemHovered(maneuverId, shell) {}
+
+  async onItemCommitted(maneuverId, shell) {
+    const maneuver = this._allManeuvers.find(m => m.id === maneuverId);
+    if (!maneuver) return;
+
+    const currentCount = this._committedManeuverCounts.get(maneuverId) ?? 0;
+    const totalSelected = Array.from(this._committedManeuverCounts.values()).reduce((sum, c) => sum + c, 0);
+
+    if (totalSelected < this._remainingPicks) {
+      this._committedManeuverCounts.set(maneuverId, currentCount + 1);
+    }
+
+    this._focusedManeuverID = maneuverId;
+    shell.focusedItem = maneuver;
+    shell.render();
+  }
+
+  renderWorkSurface(stepData) {
+    return {
+      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/steps/starship-maneuver-work-surface.hbs',
+      data: stepData,
+    };
+  }
+
+  renderDetailsPanel(focusedItem) {
+    if (!focusedItem) {
+      return this.renderDetailsPanelEmptyState();
+    }
+
+    const currentCount = this._committedManeuverCounts.get(focusedItem.id) ?? 0;
+    const totalSelected = Array.from(this._committedManeuverCounts.values()).reduce((sum, c) => sum + c, 0);
+    const canAddMore = totalSelected < this._remainingPicks;
+
+    return {
+      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/starship-maneuver-details.hbs',
+      data: {
+        maneuver: focusedItem,
+        description: focusedItem.description || focusedItem.system?.description || '',
+        selectedCount: currentCount,
+        canAddMore,
+        buttonLabel: currentCount > 0 ? 'Add Another Use' : 'Add Maneuver',
+      },
+    };
+  }
+
+  renderDetailsPanelEmptyState() {
+    return {
+      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/empty-state.hbs',
+      data: {
+        icon: 'fa-rocket',
+        message: 'Select a Starship Maneuver to master piloting techniques.',
+      },
+    };
+  }
+
+  validate() {
+    const totalSelected = Array.from(this._committedManeuverCounts.values()).reduce((sum, c) => sum + c, 0);
+    const isValid = totalSelected >= this._remainingPicks;
+    const errors = isValid ? [] : [`Select ${this._remainingPicks - totalSelected} more Maneuver(s).`];
+    return { isValid, errors, warnings: [] };
+  }
+
+  getBlockingIssues() {
+    const totalSelected = Array.from(this._committedManeuverCounts.values()).reduce((sum, c) => sum + c, 0);
+    const remaining = this._remainingPicks - totalSelected;
+    if (remaining <= 0) return [];
+    return [`${remaining} Maneuver(s) remaining`];
+  }
+
+  getWarnings() { return []; }
+
+  getRemainingPicks() {
+    const totalSelected = Array.from(this._committedManeuverCounts.values()).reduce((sum, c) => sum + c, 0);
+    const remaining = this._remainingPicks - totalSelected;
+
+    if (remaining <= 0) {
+      const summaryParts = Array.from(this._committedManeuverCounts.entries()).map(([id, count]) => {
+        const maneuver = this._allManeuvers.find(m => m.id === id);
+        const name = maneuver?.name || id;
+        return count > 1 ? `${name} ×${count}` : name;
+      });
+      const label = summaryParts.length > 0
+        ? `✓ ${summaryParts.join(', ')}`
+        : `✓ ${totalSelected} Selected`;
+      return [{ label, isWarning: false }];
+    }
+
+    return [{ label: `${remaining} Maneuver(s) remaining`, isWarning: true }];
+  }
+
+  getUtilityBarConfig() {
+    return {
+      mode: 'rich',
+      search: { enabled: true, placeholder: 'Search Maneuvers…' },
+      filters: [],
+      sorts: [{ id: 'name', label: 'Alphabetical' }],
+    };
+  }
+
+  getUtilityBarMode() { return 'rich'; }
+
+  getMentorContext(shell) {
+    const mentorObj = this._getMentorObject(shell.actor);
+    return getMentorGuidance(mentorObj, 'starship_maneuver') || 'Choose maneuvers to enhance your piloting prowess.';
+  }
+
+  async onAskMentor(shell) {
+    await handleAskMentor(shell.actor, 'starship-maneuvers', shell);
+  }
+
+  getMentorMode() { return 'context-only'; }
+
+  // Private
+
+  async _computeLegalManeuvers(actor) {
+    this._legalManeuvers = [...this._allManeuvers]; // TODO: filter by prerequisites
+  }
+
+  _applyFilters() {
+    let filtered = [...this._legalManeuvers];
+    if (this._searchQuery) {
+      const q = this._searchQuery.toLowerCase();
+      filtered = filtered.filter(m => m.name.toLowerCase().includes(q));
+    }
+    filtered.sort((a, b) => a.name.localeCompare(b.name));
+    this._filteredManeuvers = filtered;
+  }
+
+  _getMentorObject(actor) {
+    const className = actor.system?.class?.primary?.name;
+    return getMentorForClass(className) || MENTORS.Scoundrel || Object.values(MENTORS)[0];
+  }
+}

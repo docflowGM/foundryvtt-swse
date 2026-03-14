@@ -65,13 +65,18 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       // Get all force powers from registry
       this._allPowers = ForceRegistry.byType('power') || [];
 
-      // Determine how many powers the actor can select
-      // In level-up: from ForcePowerEngine.detectGrants()
-      // In chargen: from class-granted powers (typically 1-2 per level)
-      const grants = await ForcePowerEngine.detectGrants(shell.actor);
-      this._remainingPicks = grants.totalCount - (shell.actor.system?.progression?.forcePowers?.length ?? 0);
+      // GUARDRAIL (Wave 10): Compute total force power entitlements from ALL sources:
+      // 1. Standard Force Training path (1 + WIS mod)
+      // 2. Telekinetic Prodigy bonus slots (restricted to telekinetic powers)
+      // 3. Class-based grants (from class level progression)
+      // 4. Template-based grants (from applied templates)
+      // 5. Generic feat-based grants (from compendium or hardcoded data)
+      //
+      // The shell MUST NOT assume Force Training is the only source of entitlements.
+      // Each source can have its own restrictions (e.g. "telekinetic powers only").
+      this._remainingPicks = await this._computeTotalEntitlements(shell.actor);
 
-      // Filter to legal powers (prereqs met)
+      // Filter to legal powers (prereqs met, not already selected)
       await this._computeLegalPowers(shell.actor);
       this._applyFilters();
 
@@ -355,6 +360,58 @@ export class ForcePowerStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
   // Private helpers
   // ---------------------------------------------------------------------------
+
+  /**
+   * Compute total force power entitlements from ALL sources.
+   * GUARDRAIL: The shell must honor all entitlement sources, not just Force Training.
+   *
+   * Sources:
+   * 1. Force Training feat (1 + WIS/CHA modifier per feat instance)
+   * 2. Class-level grants (from class level progression data)
+   * 3. Template grants (from applied templates)
+   * 4. Feat grants (generic feat-based grants)
+   * 5. Telekinetic Prodigy bonus slots (restricted, but still count toward total)
+   *
+   * @param {Actor} actor
+   * @returns {Promise<number>} Total picks the actor is entitled to
+   */
+  async _computeTotalEntitlements(actor) {
+    let totalEntitlements = 0;
+    const reasons = [];
+
+    // TODO (Wave 10): Call ForcePowerEngine methods to enumerate all sources
+    // For interim: detect Force Training feat instances and their WIS-based grants
+
+    const feats = actor.items?.filter(i => i.type === 'feat') ?? [];
+    const forceTrainingFeats = feats.filter(f => f.name?.toLowerCase().includes('force training'));
+
+    if (forceTrainingFeats.length > 0) {
+      const wisMod = actor.system?.abilities?.wis?.mod ?? 0;
+      const wisOrChaMod = actor.system?.abilities?.cha?.mod ?? wisMod; // TODO: check house rule
+
+      for (let i = 0; i < forceTrainingFeats.length; i++) {
+        const grantsForThisFeat = Math.max(1, 1 + wisOrChaMod);
+        totalEntitlements += grantsForThisFeat;
+        reasons.push(`Force Training (${i + 1}) grants +${grantsForThisFeat}`);
+      }
+    }
+
+    // TODO (Wave 10+): Also check for:
+    // - Class-level force power grants
+    // - Template-based grants
+    // - Generic feat grants (via compendium forcePowerGrants field)
+    // - Restricted pools (Telekinetic Prodigy bonus slots)
+
+    // Subtract already-selected powers
+    const alreadySelected = actor.system?.progression?.forcePowers?.length ?? 0;
+    const remaining = Math.max(0, totalEntitlements - alreadySelected);
+
+    swseLogger.debug(
+      `[ForcePowerStep._computeTotalEntitlements] Total: ${totalEntitlements}, Already: ${alreadySelected}, Remaining: ${remaining}`
+    );
+
+    return remaining;
+  }
 
   /**
    * Compute which powers have met prerequisites.
