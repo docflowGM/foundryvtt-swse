@@ -16,6 +16,7 @@ import {
   doesClassGrantBonusFeatAtLevel
 } from "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js";
 import { ProgressionEngineV2 } from "/systems/foundryvtt-swse/scripts/engine/progression/ProgressionEngineV2.js";
+import { TalentCadenceEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/talent-cadence-engine.js";
 import { AttributeIncreaseHandler } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/attribute-increase-handler.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
@@ -141,30 +142,24 @@ export class MilestoneComputer {
 
   /**
    * Check if a class grants a talent at a specific class level
-   * Uses ProgressionEngineV2.talentCadenceByClass lookup
+   * PHASE 2 FIX: Now uses TalentCadenceEngine as canonical source
    * @private
    */
   static _getClassGrantsTalentAtLevel(classDoc, classLevel) {
     if (!classDoc) return false;
 
     const className = classDoc.name || classDoc.system?.classId || "";
+    const isNonheroic = classDoc.system?.isNonheroic ?? false;
 
-    // Try to look up in ProgressionEngineV2 talent cadence
-    try {
-      const talentCadenceByClass = ProgressionEngineV2.talentCadenceByClass || {};
-      const cadence = talentCadenceByClass[className];
+    // PHASE 2 FIX: Use TalentCadenceEngine instead of ProgressionEngineV2
+    // This respects house rules like talentEveryLevel
+    const grantsClassTalent = TalentCadenceEngine.grantsClassTalent(classLevel, isNonheroic);
 
-      if (Array.isArray(cadence)) {
-        return cadence.includes(classLevel);
-      }
-    } catch (err) {
-      SWSELogger.debug(
-        `[MilestoneComputer] Could not determine talent cadence for ${className}`,
-        err
-      );
-    }
+    SWSELogger.debug(
+      `[MilestoneComputer] Checking class talent grant for ${className} at level ${classLevel}: ${grantsClassTalent}`
+    );
 
-    return false;
+    return grantsClassTalent;
   }
 }
 

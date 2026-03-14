@@ -208,6 +208,9 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       this.characterData = foundry.utils.deepClone(this.editSnapshot.characterData);
       this.currentStep = 'review';  // Skip to review step
     }
+
+    // Phase 3 FIX: Track listeners to prevent accumulation on rerender
+    this._eventListeners = [];
   }
 
   // NOTE: Chargen step transitions MUST be state-driven.
@@ -1501,17 +1504,28 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       game.tooltip.activate(root, { selector: '[data-tooltip]' });
     }
 
-    // Helper to bind click events to multiple elements
+    // Phase 3 FIX: Remove previous listeners before binding new ones
+    // This prevents listener accumulation on rerender
+    this._eventListeners.forEach(({ el, event, handler }) => {
+      el.removeEventListener(event, handler);
+    });
+    this._eventListeners = [];
+
+    // Phase 3 FIX: Helper to bind click events and track them
     const bindClick = (selector, handler) => {
       for (const el of root.querySelectorAll(selector)) {
-        el.addEventListener('click', handler.bind(this));
+        const boundHandler = handler.bind(this);
+        el.addEventListener('click', boundHandler);
+        this._eventListeners.push({ el, event: 'click', handler: boundHandler });
       }
     };
 
-    // Helper to bind change events to multiple elements
+    // Phase 3 FIX: Helper to bind change events and track them
     const bindChange = (selector, handler) => {
       for (const el of root.querySelectorAll(selector)) {
-        el.addEventListener('change', handler.bind(this));
+        const boundHandler = handler.bind(this);
+        el.addEventListener('change', boundHandler);
+        this._eventListeners.push({ el, event: 'change', handler: boundHandler });
       }
     };
 
@@ -1612,8 +1626,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     bindClick('.shop-tab', this._onShopTabClick);
     bindClick('.accessory-tab', this._onAccessoryTabClick);
 
-    // Delegated events for dynamically added droid shop elements
-    root.addEventListener('click', (ev) => {
+    // Phase 3 FIX: Delegated events for dynamically added droid shop elements
+    const droidShopHandler = (ev) => {
       const purchaseBtn = ev.target.closest('.purchase-system, .add-enhancement');
       if (purchaseBtn) {
         this._onPurchaseSystem(ev);
@@ -1623,9 +1637,11 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       if (removeBtn) {
         this._onRemoveSystem(ev);
       }
-    });
+    };
+    root.addEventListener('click', droidShopHandler);
+    this._eventListeners.push({ el: root, event: 'click', handler: droidShopHandler });
 
-    // Name input - use 'input' event to capture changes in real-time
+    // Phase 3 FIX: Name input - use 'input' event to capture changes in real-time
     const nameInput = root.querySelector('input[name="character-name"]');
     if (nameInput) {
       const handleNameChange = (ev) => {
@@ -1634,6 +1650,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       };
       nameInput.addEventListener('input', handleNameChange);
       nameInput.addEventListener('change', handleNameChange);
+      this._eventListeners.push({ el: nameInput, event: 'input', handler: handleNameChange });
+      this._eventListeners.push({ el: nameInput, event: 'change', handler: handleNameChange });
     }
 
     // Random name button
@@ -1642,7 +1660,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     // Random droid name button
     bindClick('.random-droid-name-btn', this._onRandomDroidName);
 
-    // Level input
+    // Phase 3 FIX: Level input
     const levelInput = root.querySelector('input[name="target-level"]');
     if (levelInput) {
       const handleLevelChange = (ev) => {
@@ -1650,6 +1668,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       };
       levelInput.addEventListener('input', handleLevelChange);
       levelInput.addEventListener('change', handleLevelChange);
+      this._eventListeners.push({ el: levelInput, event: 'input', handler: handleLevelChange });
+      this._eventListeners.push({ el: levelInput, event: 'change', handler: handleLevelChange });
     }
 
     // Shop button
@@ -1675,12 +1695,14 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       this._populateFinalDroidBuilder(root);
     }
 
-    // Class change
+    // Phase 3 FIX: Class change
     const classSelect = root.querySelector('[name="class_select"]');
     if (classSelect) {
-      classSelect.addEventListener('change', async (ev) => {
+      const handleClassChange = async (ev) => {
         await this._onClassChanged(ev, root);
-      });
+      };
+      classSelect.addEventListener('change', handleClassChange);
+      this._eventListeners.push({ el: classSelect, event: 'change', handler: handleClassChange });
     }
 
     // Background step - render cards if on background step
@@ -1724,10 +1746,10 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       // Ask mentor button for background suggestions
       bindClick('.ask-mentor-background-btn', this._onAskMentorBackgroundSuggestion);
 
-      // Homebrew planets toggle
+      // Phase 3 FIX: Homebrew planets toggle
       const homebrewToggle = root.querySelector('.allow-homebrew-toggle');
       if (homebrewToggle) {
-        homebrewToggle.addEventListener('change', (ev) => {
+        const handleHomebrewChange = (ev) => {
           this.characterData.allowHomebrewPlanets = ev.currentTarget.checked;
           // Re-render if on planets category
           if (activeCategory === 'planets') {
@@ -1736,7 +1758,9 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
               this._renderBackgroundCards(bgGrid);
             }
           }
-        });
+        };
+        homebrewToggle.addEventListener('change', handleHomebrewChange);
+        this._eventListeners.push({ el: homebrewToggle, event: 'change', handler: handleHomebrewChange });
       }
     }
 

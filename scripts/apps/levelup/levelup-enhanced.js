@@ -50,6 +50,8 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       forceSecrets: [],
       forceTechniques: []
     };
+    // Phase 3 FIX: Track listeners to prevent accumulation on rerender
+    this._eventListeners = [];
   }
 
   render(force, options) {
@@ -95,26 +97,42 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
     const root = this.element;
 
+    // Phase 3 FIX: Remove previous listeners before binding new ones
+    // This prevents listener accumulation on rerender and listener storms
+    this._eventListeners.forEach(({ el, event, handler }) => {
+      el.removeEventListener(event, handler);
+    });
+    this._eventListeners = [];
+
     if (this._epicBlocked) {
       qsa(root, '.swse-levelup-wrapper button').forEach(b => { b.disabled = true; });
       qsa(root, '.rollback-levelup').forEach(b => { b.disabled = false; });
       return;
     }
 
-    qsa(root, '.select-class').forEach(el => el.addEventListener('click', this._onSelectClass.bind(this)));
-    qsa(root, '.select-skill').forEach(el => el.addEventListener('click', this._onSelectSkill.bind(this)));
-    qsa(root, '.select-feat').forEach(el => el.addEventListener('click', this._onSelectFeat.bind(this)));
-    qsa(root, '.select-talent').forEach(el => el.addEventListener('click', this._onSelectTalent.bind(this)));
+    // Phase 3 FIX: Helper to track listeners as they're bound
+    const addListener = (selector, eventName, handler) => {
+      qsa(root, selector).forEach(el => {
+        const boundHandler = handler.bind(this);
+        el.addEventListener(eventName, boundHandler);
+        this._eventListeners.push({ el, event: eventName, handler: boundHandler });
+      });
+    };
 
-    qsa(root, '.select-force-power').forEach(el => el.addEventListener('click', this._onSelectForcePower.bind(this)));
-    qsa(root, '.select-force-secret').forEach(el => el.addEventListener('click', this._onSelectForceSecret.bind(this)));
-    qsa(root, '.select-force-technique').forEach(el => el.addEventListener('click', this._onSelectForceTechnique.bind(this)));
+    addListener('.select-class', 'click', this._onSelectClass);
+    addListener('.select-skill', 'click', this._onSelectSkill);
+    addListener('.select-feat', 'click', this._onSelectFeat);
+    addListener('.select-talent', 'click', this._onSelectTalent);
 
-    qsa(root, '.next-step').forEach(el => el.addEventListener('click', this._next.bind(this)));
-    qsa(root, '.prev-step').forEach(el => el.addEventListener('click', this._prev.bind(this)));
+    addListener('.select-force-power', 'click', this._onSelectForcePower);
+    addListener('.select-force-secret', 'click', this._onSelectForceSecret);
+    addListener('.select-force-technique', 'click', this._onSelectForceTechnique);
 
-    qsa(root, '.finalize-levelup').forEach(el => el.addEventListener('click', this._onFinalize.bind(this)));
-    qsa(root, '.rollback-levelup').forEach(el => el.addEventListener('click', this._rollback.bind(this)));
+    addListener('.next-step', 'click', this._next);
+    addListener('.prev-step', 'click', this._prev);
+
+    addListener('.finalize-levelup', 'click', this._onFinalize);
+    addListener('.rollback-levelup', 'click', this._rollback);
   }
 
   /* ------------------------

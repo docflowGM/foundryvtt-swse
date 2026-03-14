@@ -56,6 +56,10 @@ import {
   selectMulticlassFeat
 } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-feats.js";
 
+// Import feat validation
+import { FeatSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-slot-validator.js";
+import { FeatSlotSchema } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-slot-schema.js";
+
 // Import talent module functions
 import {
   getsTalent,
@@ -215,6 +219,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     this.forcePowerData = null;
     this.activeTags = []; // Track active tag filters
     this.freeBuild = false; // Free Build mode - skips validation
+    this.availableFeatSlots = []; // Phase 2 FIX: Track available feat slots
 
     // PHASE B: Performance optimization - render debouncing
     this._pendingRender = false;
@@ -401,6 +406,8 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     if (data.getsBonusFeat && !this.featData) {
       // Load feats asynchronously if needed
       await this._loadFeats();
+      // Phase 2 FIX: Initialize feat slots when feat selection step is reached
+      this._initializeFeatSlots();
     }
     // Pass categorized feats to template
     data.featCategories = this.featData?.categories || [];
@@ -923,6 +930,70 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
   }
 
   // ========================================
+  // FEAT SLOT MANAGEMENT (Phase 2 FIX)
+  // ========================================
+
+  /**
+   * Calculate and initialize available feat slots for this level-up
+   * Mirrors the approach in chargen but for the current levelup level
+   */
+  _initializeFeatSlots() {
+    // Initialize feat slots array if not present
+    if (!this.availableFeatSlots) {
+      this.availableFeatSlots = [];
+    }
+
+    const newLevel = this.actor.system.level + 1;
+
+    // Check if this level grants a bonus feat from the selected class
+    if (this.selectedClass) {
+      const classDoc = this.actor.items.find(i => i.type === 'class' && i.name === this.selectedClass.name);
+      if (classDoc) {
+        const levelProgression = classDoc.system?.levelProgression || [];
+        const levelData = levelProgression.find(lp => lp.level === newLevel);
+        if (levelData && levelData.features) {
+          const featFeature = levelData.features.find(f => f.type === 'feat_choice');
+          if (featFeature) {
+            // This level grants a class bonus feat slot
+            const slot = FeatSlotSchema.createClassSlot(this.selectedClass._id, newLevel);
+            if (!this.availableFeatSlots.find(s => s.levelGranted === newLevel && s.slotType === 'class')) {
+              this.availableFeatSlots.push(slot);
+              SWSELogger.log(`[LevelUp] Initialized class bonus feat slot for level ${newLevel}`);
+            }
+          }
+        }
+      }
+    }
+
+    // Multiclass bonus feat is a heroic slot
+    // (This would be determined by multiclass rules, but for now handled separately)
+  }
+
+  /**
+   * Get next available feat slot (not yet consumed)
+   * @returns {Object|null} Next available slot or null if none
+   */
+  _getAvailableFeatSlot() {
+    if (!this.availableFeatSlots || this.availableFeatSlots.length === 0) {
+      return null;
+    }
+    return this.availableFeatSlots.find(s => !s.consumed);
+  }
+
+  /**
+   * Mark a feat slot as consumed
+   * @param {Object} slot - Feat slot to mark consumed
+   * @param {string} featId - ID of the selected feat
+   */
+  _consumeFeatSlot(slot, featId) {
+    if (!slot) {return;}
+    const idx = this.availableFeatSlots.indexOf(slot);
+    if (idx >= 0) {
+      this.availableFeatSlots[idx] = FeatSlotSchema.consumeSlot(slot, featId);
+    }
+  }
+
+  // ========================================
   // FEAT LOADING AND SELECTION
   // ========================================
 
@@ -986,6 +1057,21 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     if (alreadySelected && !isRepeatable) {
       ui.notifications.warn(`You've already selected "${feat.name}" this level!`);
       return;
+    }
+
+    // Phase 2 FIX: FEAT SLOT VALIDATION - Validate feat against available slots
+    if (!this.freeBuild && this.availableFeatSlots && this.availableFeatSlots.length > 0) {
+      const availableSlot = this._getAvailableFeatSlot();
+      if (availableSlot) {
+        const validation = await FeatSlotValidator.validateFeatForSlot(feat, availableSlot, this.actor);
+        if (!validation.valid) {
+          SWSELogger.log(`[LevelUp] Feat slot validation FAILED for "${feat.name}": ${validation.message}`);
+          ui.notifications.warn(`Cannot select "${feat.name}": ${validation.message}`);
+          return;
+        }
+        SWSELogger.log(`[LevelUp] Feat slot validation PASSED for "${feat.name}"`);
+        this._consumeFeatSlot(availableSlot, feat._id);
+      }
     }
 
     // Check if this feat requires a dialog for selection
@@ -1382,6 +1468,20 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     if (alreadyHas) {
       ui.notifications.warn(`You already have the feat "${feat.name}"!`);
       return;
+    }
+
+    // Phase 2 FIX: FEAT SLOT VALIDATION for multiclass bonus feat
+    // Multiclass feat is a heroic (general) slot
+    if (!this.freeBuild) {
+      // Create a temporary heroic slot for validation if not already tracked
+      const multiclassSlot = FeatSlotSchema.createHeroicSlot('multiclass', this.actor.system.level + 1);
+      const validation = await FeatSlotValidator.validateFeatForSlot(feat, multiclassSlot, this.actor);
+      if (!validation.valid) {
+        SWSELogger.log(`[LevelUp] Multiclass feat slot validation FAILED for "${feat.name}": ${validation.message}`);
+        ui.notifications.warn(`Cannot select "${feat.name}": ${validation.message}`);
+        return;
+      }
+      SWSELogger.log(`[LevelUp] Multiclass feat slot validation PASSED for "${feat.name}"`);
     }
 
     this.selectedFeats = [feat];
