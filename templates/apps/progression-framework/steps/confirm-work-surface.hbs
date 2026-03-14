@@ -1,32 +1,57 @@
 {{!-- Confirm Step: Comprehensive Build Summary Review Surface --}}
-{{!-- Displays all build sections in organized grid with click-to-focus interaction --}}
+{{!-- CHARGEN: Datapad Finalization Sequence --}}
+{{!-- LEVELUP: Standard Confirmation Review --}}
 
-<div class="prog-confirm-summary">
-  {{!-- READINESS BANNER --}}
-  {{#if readiness.blockingIssues.length}}
-    <div class="prog-confirm__banner prog-confirm__banner--blocking">
-      <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+<div class="prog-confirm-summary{{#if (eq mode "chargen")}} prog-confirm-summary--datapad{{/if}}">
+  {{!-- DATAPAD TITLE + SUBTITLE (CHARGEN ONLY) --}}
+  {{#if (eq mode "chargen")}}
+    <div class="prog-confirm-datapad__header">
+      <h1 class="prog-confirm-datapad__title" data-translate-header="PROFILE FINALIZATION">
+        {{datapadPresentation.title}}
+      </h1>
+      <p class="prog-confirm-datapad__subtitle">{{datapadPresentation.subtitle}}</p>
+    </div>
+  {{/if}}
+
+  {{!-- DEPLOYMENT STATUS BANNER (CHARGEN ONLY) --}}
+  {{#if (eq mode "chargen")}}
+    <div class="prog-confirm__banner prog-confirm__banner--deployment prog-confirm__banner--{{datapadPresentation.deploymentStatus.color}}">
+      <i class="fas fa-{{#if (eq datapadPresentation.deploymentStatus.state "READY")}}check-circle{{else if (eq datapadPresentation.deploymentStatus.state "PENDING")}}clock{{else}}exclamation-circle{{/if}}" aria-hidden="true"></i>
       <div class="prog-confirm__banner-text">
-        <strong>Build Incomplete</strong>
-        <p>{{#each readiness.blockingIssues}}{{this}}{{#unless @last}}<br>{{/unless}}{{/each}}</p>
+        <strong class="prog-confirm-datapad__status-label" data-translate-header="true">
+          {{datapadPresentation.deploymentStatus.message}}
+        </strong>
       </div>
     </div>
-  {{else if readiness.warnings.length}}
-    <div class="prog-confirm__banner prog-confirm__banner--warning">
-      <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
-      <div class="prog-confirm__banner-text">
-        <strong>Review Required</strong>
-        <p>{{#each readiness.warnings}}{{this}}{{#unless @last}}<br>{{/unless}}{{/each}}</p>
+  {{/if}}
+
+  {{!-- READINESS BANNER (LEVELUP OR FALLBACK FOR CHARGEN) --}}
+  {{#if (eq mode "levelup")}}
+    {{#if readiness.blockingIssues.length}}
+      <div class="prog-confirm__banner prog-confirm__banner--blocking">
+        <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+        <div class="prog-confirm__banner-text">
+          <strong>Build Incomplete</strong>
+          <p>{{#each readiness.blockingIssues}}{{this}}{{#unless @last}}<br>{{/unless}}{{/each}}</p>
+        </div>
       </div>
-    </div>
-  {{else}}
-    <div class="prog-confirm__banner prog-confirm__banner--ready">
-      <i class="fas fa-check-circle" aria-hidden="true"></i>
-      <div class="prog-confirm__banner-text">
-        <strong>Build Complete</strong>
-        <p>All required choices made. Ready to finalize.</p>
+    {{else if readiness.warnings.length}}
+      <div class="prog-confirm__banner prog-confirm__banner--warning">
+        <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+        <div class="prog-confirm__banner-text">
+          <strong>Review Required</strong>
+          <p>{{#each readiness.warnings}}{{this}}{{#unless @last}}<br>{{/unless}}{{/each}}</p>
+        </div>
       </div>
-    </div>
+    {{else}}
+      <div class="prog-confirm__banner prog-confirm__banner--ready">
+        <i class="fas fa-check-circle" aria-hidden="true"></i>
+        <div class="prog-confirm__banner-text">
+          <strong>Build Complete</strong>
+          <p>All required choices made. Ready to finalize.</p>
+        </div>
+      </div>
+    {{/if}}
   {{/if}}
 
   {{!-- SUMMARY GRID --}}
@@ -37,8 +62,11 @@
          data-action="focus-item" data-item-id="identity"
          tabindex="0" role="button">
       <div class="prog-confirm__section-header">
-        <i class="fas fa-user" aria-hidden="true"></i>
-        <h3 class="prog-confirm__section-title">Identity</h3>
+        <i class="{{#if (eq mode "chargen")}}{{datapadPresentation.sections.identity.icon}}{{else}}fa-user{{/if}}" aria-hidden="true"></i>
+        <h3 class="prog-confirm__section-title prog-confirm-datapad__section-label"
+            {{#if (eq mode "chargen")}}data-translate-header="true"{{/if}}>
+          {{#if (eq mode "chargen")}}{{datapadPresentation.sections.identity.label}}{{else}}Identity{{/if}}
+        </h3>
       </div>
       <div class="prog-confirm__section-body">
         <div class="prog-confirm__detail-row">
@@ -65,8 +93,11 @@
          data-action="focus-item" data-item-id="attributes"
          tabindex="0" role="button">
       <div class="prog-confirm__section-header">
-        <i class="fas fa-chart-bar" aria-hidden="true"></i>
-        <h3 class="prog-confirm__section-title">Attributes</h3>
+        <i class="{{#if (eq mode "chargen")}}{{datapadPresentation.sections.attributes.icon}}{{else}}fa-chart-bar{{/if}}" aria-hidden="true"></i>
+        <h3 class="prog-confirm__section-title prog-confirm-datapad__section-label"
+            {{#if (eq mode "chargen")}}data-translate-header="true"{{/if}}>
+          {{#if (eq mode "chargen")}}{{datapadPresentation.sections.attributes.label}}{{else}}Attributes{{/if}}
+        </h3>
       </div>
       <div class="prog-confirm__section-body prog-confirm__attributes-grid">
         <div class="prog-confirm__attr">
@@ -101,8 +132,11 @@
          data-action="focus-item" data-item-id="background"
          tabindex="0" role="button">
       <div class="prog-confirm__section-header">
-        <i class="fas fa-book" aria-hidden="true"></i>
-        <h3 class="prog-confirm__section-title">Background</h3>
+        <i class="{{#if (eq mode "chargen")}}{{datapadPresentation.sections.background.icon}}{{else}}fa-book{{/if}}" aria-hidden="true"></i>
+        <h3 class="prog-confirm__section-title prog-confirm-datapad__section-label"
+            {{#if (eq mode "chargen")}}data-translate-header="true"{{/if}}>
+          {{#if (eq mode "chargen")}}{{datapadPresentation.sections.background.label}}{{else}}Background{{/if}}
+        </h3>
       </div>
       <div class="prog-confirm__section-body">
         <div class="prog-confirm__detail-value" style="font-weight: bold;">{{summary.background.name}}</div>
@@ -114,8 +148,11 @@
          data-action="focus-item" data-item-id="languages"
          tabindex="0" role="button">
       <div class="prog-confirm__section-header">
-        <i class="fas fa-comments" aria-hidden="true"></i>
-        <h3 class="prog-confirm__section-title">Languages</h3>
+        <i class="{{#if (eq mode "chargen")}}{{datapadPresentation.sections.languages.icon}}{{else}}fa-comments{{/if}}" aria-hidden="true"></i>
+        <h3 class="prog-confirm__section-title prog-confirm-datapad__section-label"
+            {{#if (eq mode "chargen")}}data-translate-header="true"{{/if}}>
+          {{#if (eq mode "chargen")}}{{datapadPresentation.sections.languages.label}}{{else}}Languages{{/if}}
+        </h3>
       </div>
       <div class="prog-confirm__section-body">
         <div class="prog-confirm__detail-row">
@@ -138,8 +175,11 @@
          data-action="focus-item" data-item-id="feats"
          tabindex="0" role="button">
       <div class="prog-confirm__section-header">
-        <i class="fas fa-star" aria-hidden="true"></i>
-        <h3 class="prog-confirm__section-title">Feats</h3>
+        <i class="{{#if (eq mode "chargen")}}{{datapadPresentation.sections.feats.icon}}{{else}}fa-star{{/if}}" aria-hidden="true"></i>
+        <h3 class="prog-confirm__section-title prog-confirm-datapad__section-label"
+            {{#if (eq mode "chargen")}}data-translate-header="true"{{/if}}>
+          {{#if (eq mode "chargen")}}{{datapadPresentation.sections.feats.label}}{{else}}Feats{{/if}}
+        </h3>
       </div>
       <div class="prog-confirm__section-body">
         <div class="prog-confirm__detail-row">
@@ -162,8 +202,11 @@
          data-action="focus-item" data-item-id="talents"
          tabindex="0" role="button">
       <div class="prog-confirm__section-header">
-        <i class="fas fa-lightbulb" aria-hidden="true"></i>
-        <h3 class="prog-confirm__section-title">Talents</h3>
+        <i class="{{#if (eq mode "chargen")}}{{datapadPresentation.sections.talents.icon}}{{else}}fa-lightbulb{{/if}}" aria-hidden="true"></i>
+        <h3 class="prog-confirm__section-title prog-confirm-datapad__section-label"
+            {{#if (eq mode "chargen")}}data-translate-header="true"{{/if}}>
+          {{#if (eq mode "chargen")}}{{datapadPresentation.sections.talents.label}}{{else}}Talents{{/if}}
+        </h3>
       </div>
       <div class="prog-confirm__section-body">
         <div class="prog-confirm__detail-row">
@@ -190,8 +233,11 @@
            data-action="focus-item" data-item-id="conditionalSteps"
            tabindex="0" role="button">
         <div class="prog-confirm__section-header">
-          <i class="fas fa-infinity" aria-hidden="true"></i>
-          <h3 class="prog-confirm__section-title">Advanced Abilities</h3>
+          <i class="{{#if (eq mode "chargen")}}{{datapadPresentation.sections.conditionalSteps.icon}}{{else}}fa-infinity{{/if}}" aria-hidden="true"></i>
+          <h3 class="prog-confirm__section-title prog-confirm-datapad__section-label"
+              {{#if (eq mode "chargen")}}data-translate-header="true"{{/if}}>
+            {{#if (eq mode "chargen")}}{{datapadPresentation.sections.conditionalSteps.label}}{{else}}Advanced Abilities{{/if}}
+          </h3>
         </div>
         <div class="prog-confirm__section-body">
           {{#if summary.conditionalSteps.forcePowers}}
@@ -227,8 +273,11 @@
          data-action="focus-item" data-item-id="credits"
          tabindex="0" role="button">
       <div class="prog-confirm__section-header">
-        <i class="fas fa-coins" aria-hidden="true"></i>
-        <h3 class="prog-confirm__section-title">Starting Credits</h3>
+        <i class="{{#if (eq mode "chargen")}}{{datapadPresentation.sections.credits.icon}}{{else}}fa-coins{{/if}}" aria-hidden="true"></i>
+        <h3 class="prog-confirm__section-title prog-confirm-datapad__section-label"
+            {{#if (eq mode "chargen")}}data-translate-header="true"{{/if}}>
+          {{#if (eq mode "chargen")}}{{datapadPresentation.sections.credits.label}}{{else}}Starting Credits{{/if}}
+        </h3>
       </div>
       <div class="prog-confirm__section-body">
         {{#if creditsState.rolled}}
@@ -317,8 +366,11 @@
            data-action="focus-item" data-item-id="store"
            tabindex="0" role="button">
         <div class="prog-confirm__section-header">
-          <i class="fas fa-shopping-bag" aria-hidden="true"></i>
-          <h3 class="prog-confirm__section-title">Equipment Store</h3>
+          <i class="{{#if (eq mode "chargen")}}{{datapadPresentation.sections.store.icon}}{{else}}fa-shopping-bag{{/if}}" aria-hidden="true"></i>
+          <h3 class="prog-confirm__section-title prog-confirm-datapad__section-label"
+              {{#if (eq mode "chargen")}}data-translate-header="true"{{/if}}>
+            {{#if (eq mode "chargen")}}{{datapadPresentation.sections.store.label}}{{else}}Equipment Store{{/if}}
+          </h3>
         </div>
         <div class="prog-confirm__section-body">
           {{#if storeVisited}}

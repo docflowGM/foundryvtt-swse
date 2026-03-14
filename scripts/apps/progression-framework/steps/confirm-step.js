@@ -21,6 +21,7 @@ import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { EquipmentEngine } from '../../../engine/progression/engine/equipment-engine.js';
 import { HPGeneratorEngine } from '../../../engine/HP/HPGeneratorEngine.js';
 import { SettingsHelper } from '../../../utils/settings-helper.js';
+import { AurebeshTranslator } from '../../../ui/dialogue/aurebesh-translator.js';
 import { getMentorGuidance } from '../../../engine/mentor/mentor-dialogues.js';
 import { swseLogger } from '../../../utils/logger.js';
 
@@ -78,6 +79,45 @@ export class ConfirmStep extends ProgressionStepPlugin {
     // No cleanup needed
   }
 
+  /**
+   * Apply Aurebesh translation effects to datapad headers (chargen only).
+   * Called after rendering to wire up header animations.
+   */
+  async afterRender(shell, workSurfaceEl) {
+    if (!workSurfaceEl || this.descriptor?.mode !== 'chargen') return;
+
+    try {
+      // Apply translation effect to headers marked with data-translate-header
+      const headers = workSurfaceEl.querySelectorAll('[data-translate-header]');
+
+      for (const header of headers) {
+        const text = header.textContent?.trim();
+        if (!text || header.classList.contains('prog-confirm-datapad__translated')) continue;
+
+        // Mark as processed to avoid duplicate animations
+        header.classList.add('prog-confirm-datapad__translated');
+
+        // Store original text and clear display
+        const originalText = text;
+        header.textContent = '';
+
+        // Apply Aurebesh-first translation animation
+        await AurebeshTranslator.render({
+          text: originalText,
+          container: header,
+          preset: 'mentor',
+          enableSkip: true,
+          onComplete: () => {
+            // Animation complete - text remains readable
+          },
+        });
+      }
+    } catch (e) {
+      swseLogger.warn('[ConfirmStep.afterRender] Translation effect error:', e);
+      // Gracefully degrade if translation fails
+    }
+  }
+
   async onDataReady(shell) {
     // No utility bar listeners needed
   }
@@ -91,6 +131,11 @@ export class ConfirmStep extends ProgressionStepPlugin {
     const summary = await this._buildSummaryData(context.actor);
     const mode = this.descriptor?.mode || 'chargen';
 
+    // Datapad presentation mapping (chargen only)
+    const datapadPresentation = mode === 'chargen'
+      ? this._buildDatapadPresentation(summary)
+      : {};
+
     return {
       summary,
       creditsState: { ...this._creditsState },
@@ -98,6 +143,73 @@ export class ConfirmStep extends ProgressionStepPlugin {
       storeVisited: this._storeVisited,
       readiness: this._readinessCache || {},
       mode,
+      datapadPresentation,
+    };
+  }
+
+  /**
+   * Build datapad-style presentation labels and deployment status.
+   */
+  _buildDatapadPresentation(summary) {
+    const sections = {
+      identity: { label: 'IDENTITY RECORD', icon: 'fa-user' },
+      attributes: { label: 'BIOMETRIC READOUT', icon: 'fa-chart-bar' },
+      background: { label: 'PROFILE MATRIX', icon: 'fa-book' },
+      languages: { label: 'LANGUAGE MATRIX', icon: 'fa-comments' },
+      feats: { label: 'COMBAT DOCTRINE', icon: 'fa-star' },
+      talents: { label: 'TACTICAL SPECIALIZATION', icon: 'fa-lightbulb' },
+      conditionalSteps: { label: 'FORCE REGISTRY', icon: 'fa-infinity' },
+      credits: { label: 'RESOURCE LEDGER', icon: 'fa-coins' },
+      store: { label: 'EQUIPMENT ACCESS', icon: 'fa-shopping-bag' },
+    };
+
+    // Build deployment status
+    const deploymentStatus = this._computeDeploymentStatus();
+
+    return {
+      title: 'PROFILE FINALIZATION',
+      subtitle: 'Your datapad profile has been compiled. Review all records, resolve resources, and confirm deployment.',
+      sections,
+      deploymentStatus,
+      creditsStatus: this._creditsState.rolled ? 'VERIFIED' : 'UNRESOLVED',
+      storeStatus: this._storeVisited ? 'COMPLETE' : 'OPTIONAL',
+      overallReady: !this.getBlockingIssues().length,
+    };
+  }
+
+  /**
+   * Compute overall deployment status based on readiness.
+   */
+  _computeDeploymentStatus() {
+    const issues = this.getBlockingIssues();
+    if (issues.length > 0) {
+      return {
+        state: 'INCOMPLETE',
+        message: `DEPLOYMENT STATUS — ${issues[0].toUpperCase()}`,
+        color: 'blocking',
+      };
+    }
+
+    if (!this._creditsState.rolled) {
+      return {
+        state: 'PENDING',
+        message: 'DEPLOYMENT STATUS — RESOURCE LEDGER UNRESOLVED',
+        color: 'warning',
+      };
+    }
+
+    if (!this._storeVisited) {
+      return {
+        state: 'READY',
+        message: 'DEPLOYMENT STATUS — EQUIPMENT ACCESS OPTIONAL',
+        color: 'neutral',
+      };
+    }
+
+    return {
+      state: 'READY',
+      message: 'DEPLOYMENT STATUS — READY FOR FINAL CONFIRMATION',
+      color: 'success',
     };
   }
 
