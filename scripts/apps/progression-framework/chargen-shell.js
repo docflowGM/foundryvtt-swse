@@ -19,6 +19,7 @@ import { SpeciesStep } from './steps/species-step.js';
 import { ClassStep } from './steps/class-step.js';
 import { L1SurveyStep } from './steps/l1-survey-step.js';
 import { AttributeStep } from './steps/attribute-step.js';
+import { BackgroundStep } from './steps/background-step.js';
 
 export class ChargenShell extends ProgressionShell {
   static async open(actor, options = {}) {
@@ -127,7 +128,7 @@ const CHARGEN_CANONICAL_STEPS = [
     label: 'Background',
     icon: 'fa-book',
     type: StepType.NARRATIVE,
-    pluginClass: null, // Wave 3+: BackgroundStep
+    pluginClass: BackgroundStep,
   },
   {
     stepId: 'languages',

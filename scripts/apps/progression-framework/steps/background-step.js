@@ -1,0 +1,411 @@
+/**
+ * BackgroundStep plugin
+ *
+ * Handles background selection with support for:
+ * - single background mode (standard)
+ * - multi-background mode (house-rule driven)
+ * - category organization (Event, Occupation, Planet)
+ *
+ * Integrates with BackgroundRegistry and backgroundSelectionCount house rule.
+ */
+
+import { ProgressionStepPlugin } from './step-plugin-base.js';
+import { BackgroundRegistry } from '/systems/foundryvtt-swse/scripts/registries/background-registry.js';
+
+const CATEGORY_LABELS = {
+  event: 'Event',
+  occupation: 'Occupation',
+  planet: 'Planet',
+};
+
+const CATEGORY_DESCRIPTIONS = {
+  event: 'A pivotal moment that shaped you',
+  occupation: 'Your profession or trade',
+  planet: 'Your homeworld or origin',
+};
+
+export class BackgroundStep extends ProgressionStepPlugin {
+  constructor(descriptor) {
+    super(descriptor);
+
+    // State
+    this._allBackgrounds = [];       // All backgrounds from registry
+    this._groupedBackgrounds = {};   // Backgrounds grouped by category
+    this._focusedBackgroundId = null;
+    this._committedBackgroundIds = [];  // May contain 1+ based on house rule
+    this._searchQuery = '';
+    this._activeCategory = 'event';  // which category tab is active
+
+    // House rule state
+    this._maxBackgrounds = 1;        // from backgroundSelectionCount setting
+  }
+
+  // ---------------------------------------------------------------------------
+  // Lifecycle
+  // ---------------------------------------------------------------------------
+
+  async onStepEnter(shell) {
+    // Load backgrounds from registry
+    await BackgroundRegistry.ensureLoaded();
+    this._allBackgrounds = BackgroundRegistry.getAll() || [];
+
+    // Load house rule: max background selections
+    const houseSetting = game?.settings?.get('foundryvtt-swse', 'backgroundSelectionCount');
+    this._maxBackgrounds = houseSetting ?? 1;
+
+    // Group backgrounds by category
+    this._groupBackgrounds();
+
+    // Enable Ask Mentor
+    shell.mentor.askMentorEnabled = true;
+  }
+
+  async onDataReady(shell) {
+    // Wire category tab navigation
+    if (!shell.element) return;
+
+    const categoryButtons = shell.element.querySelectorAll('.bg-category-btn');
+    categoryButtons.forEach(btn => {
+      const fn = (e) => {
+        e.preventDefault();
+        this._activeCategory = btn.dataset.category;
+        shell.render();
+      };
+      btn.addEventListener('click', fn);
+    });
+
+    // Wire search input
+    const searchInput = shell.element.querySelector('.bg-search-input');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        this._searchQuery = e.target.value;
+        shell.render();
+      });
+    }
+  }
+
+  async onStepExit(shell) {
+    // Cleanup if needed
+  }
+
+  // ---------------------------------------------------------------------------
+  // Data
+  // ---------------------------------------------------------------------------
+
+  async getStepData(context) {
+    const filtered = this._getFilteredBackgrounds();
+    return {
+      categories: this._getCategoryChips(),
+      backgroundsByCategory: this._formatCategoryGroups(filtered),
+      activeCategory: this._activeCategory,
+      focusedBackgroundId: this._focusedBackgroundId,
+      committedBackgroundIds: this._committedBackgroundIds,
+      selectionMode: this._maxBackgrounds > 1 ? 'multi' : 'single',
+      maxBackgrounds: this._maxBackgrounds,
+      selectionCount: this._committedBackgroundIds.length,
+      searchQuery: this._searchQuery,
+    };
+  }
+
+  getSelection() {
+    const isComplete = this._committedBackgroundIds.length > 0 &&
+                      this._committedBackgroundIds.length <= this._maxBackgrounds;
+    return {
+      selected: this._committedBackgroundIds,
+      count: this._committedBackgroundIds.length,
+      isComplete,
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Rendering
+  // ---------------------------------------------------------------------------
+
+  renderWorkSurface(stepData) {
+    return {
+      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/steps/background-work-surface.hbs',
+      data: stepData,
+    };
+  }
+
+  renderDetailsPanel(focusedItem) {
+    if (!this._focusedBackgroundId) {
+      return this.renderDetailsPanelEmptyState();
+    }
+
+    const background = this._allBackgrounds.find(b => b.id === this._focusedBackgroundId);
+    if (!background) {
+      return this.renderDetailsPanelEmptyState();
+    }
+
+    const isCommitted = this._committedBackgroundIds.includes(this._focusedBackgroundId);
+
+    return {
+      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/background-details.hbs',
+      data: {
+        background,
+        category: CATEGORY_LABELS[background.category] || background.category,
+        description: background.narrativeDescription || background.description || '',
+        trainedSkills: background.trainedSkills || [],
+        bonusLanguage: background.bonusLanguage || '',
+        source: background.source || 'Unknown',
+        isCommitted,
+        selectionMode: this._maxBackgrounds > 1 ? 'multi' : 'single',
+        canAddMore: this._maxBackgrounds > 1 && this._committedBackgroundIds.length < this._maxBackgrounds,
+        selectionStatus: this._getSelectionStatusText(),
+        buttonLabel: isCommitted
+          ? 'Remove Selection'
+          : (this._committedBackgroundIds.length >= this._maxBackgrounds && this._maxBackgrounds > 1)
+            ? 'Remove and Add This'
+            : 'Choose This Background',
+      },
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Interaction
+  // ---------------------------------------------------------------------------
+
+  async onItemFocused(id, shell) {
+    const background = this._allBackgrounds.find(b => b.id === id);
+    if (!background) return;
+
+    this._focusedBackgroundId = id;
+
+    // Mentor reaction on focus
+    const flavorText = this._getMentorFlavorForBackground(background);
+    if (flavorText) {
+      await shell.mentorRail.speak(flavorText, 'neutral');
+    }
+
+    shell.render();
+  }
+
+  async onItemCommitted(id, shell) {
+    const background = this._allBackgrounds.find(b => b.id === id);
+    if (!background) return;
+
+    // Single mode: replace selection
+    if (this._maxBackgrounds === 1) {
+      this._committedBackgroundIds = [id];
+    } else {
+      // Multi mode: toggle or add
+      const idx = this._committedBackgroundIds.indexOf(id);
+      if (idx >= 0) {
+        // Remove
+        this._committedBackgroundIds.splice(idx, 1);
+      } else if (this._committedBackgroundIds.length < this._maxBackgrounds) {
+        // Add
+        this._committedBackgroundIds.push(id);
+      } else {
+        // Limit reached — replace first with new
+        this._committedBackgroundIds[0] = id;
+      }
+    }
+
+    shell.committedSelections.set('background', {
+      backgroundIds: [...this._committedBackgroundIds],
+      backgrounds: this._committedBackgroundIds
+        .map(bgId => this._allBackgrounds.find(b => b.id === bgId))
+        .filter(Boolean),
+    });
+
+    shell.render();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Validation
+  // ---------------------------------------------------------------------------
+
+  validate() {
+    const count = this._committedBackgroundIds.length;
+    const isValid = count > 0 && count <= this._maxBackgrounds;
+
+    return {
+      isValid,
+      errors: isValid ? [] : ['Select a background to continue'],
+      warnings: [],
+    };
+  }
+
+  getBlockingIssues() {
+    const count = this._committedBackgroundIds.length;
+    if (count === 0) {
+      return ['Select a background to continue'];
+    }
+    if (count > this._maxBackgrounds) {
+      return [`Too many backgrounds selected (${count} > ${this._maxBackgrounds})`];
+    }
+    return [];
+  }
+
+  getRemainingPicks() {
+    const count = this._committedBackgroundIds.length;
+    if (count === 0) {
+      return [{
+        label: 'No background selected',
+        count: this._maxBackgrounds,
+        isWarning: true,
+      }];
+    }
+
+    if (this._maxBackgrounds === 1) {
+      return [{ label: `✓ ${this._getCommittedNames()}`, count: 0, isWarning: false }];
+    }
+
+    return [{
+      label: `${count} of ${this._maxBackgrounds} backgrounds selected`,
+      count: this._maxBackgrounds - count,
+      isWarning: count < this._maxBackgrounds,
+    }];
+  }
+
+  // ---------------------------------------------------------------------------
+  // Utility Bar Config
+  // ---------------------------------------------------------------------------
+
+  getUtilityBarConfig() {
+    return {
+      mode: 'rich',
+      search: {
+        enabled: true,
+        placeholder: 'Search backgrounds…',
+      },
+      custom: [
+        {
+          id: 'mode-indicator',
+          label: `Mode: ${this._maxBackgrounds > 1 ? `Multi (${this._maxBackgrounds} max)` : 'Single'}`,
+          type: 'text',
+        },
+      ],
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Mentor
+  // ---------------------------------------------------------------------------
+
+  getMentorContext(shell) {
+    return `Your background shapes who you are. ${
+      this._maxBackgrounds > 1
+        ? `You may choose up to ${this._maxBackgrounds} backgrounds.`
+        : 'Choose the defining moment of your past.'
+    }`;
+  }
+
+  getMentorMode() {
+    return 'context-only';
+  }
+
+  // ---------------------------------------------------------------------------
+  // Private Helpers
+  // ---------------------------------------------------------------------------
+
+  _groupBackgrounds() {
+    this._groupedBackgrounds = {
+      event: [],
+      occupation: [],
+      planet: [],
+    };
+
+    for (const bg of this._allBackgrounds) {
+      const category = bg.category || 'event';
+      if (this._groupedBackgrounds[category]) {
+        this._groupedBackgrounds[category].push(bg);
+      }
+    }
+
+    // Sort each category alphabetically
+    for (const category in this._groupedBackgrounds) {
+      this._groupedBackgrounds[category].sort((a, b) =>
+        (a.name || '').localeCompare(b.name || '')
+      );
+    }
+  }
+
+  _getFilteredBackgrounds() {
+    let filtered = this._allBackgrounds;
+
+    // Search filter
+    if (this._searchQuery) {
+      const q = this._searchQuery.toLowerCase();
+      filtered = filtered.filter(bg => {
+        const name = (bg.name || '').toLowerCase();
+        const desc = (bg.narrativeDescription || bg.description || '').toLowerCase();
+        const skills = (bg.trainedSkills || []).join(' ').toLowerCase();
+        const lang = (bg.bonusLanguage || '').toLowerCase();
+        return name.includes(q) || desc.includes(q) || skills.includes(q) || lang.includes(q);
+      });
+    }
+
+    return filtered;
+  }
+
+  _getCategoryChips() {
+    return ['event', 'occupation', 'planet'].map(category => ({
+      id: category,
+      label: CATEGORY_LABELS[category],
+      isActive: category === this._activeCategory,
+      count: this._groupedBackgrounds[category]?.length || 0,
+    }));
+  }
+
+  _formatCategoryGroups(filtered) {
+    const result = {};
+    for (const category of ['event', 'occupation', 'planet']) {
+      const backgrounds = (this._groupedBackgrounds[category] || [])
+        .filter(bg => filtered.includes(bg))
+        .map(bg => {
+          const isCommitted = this._committedBackgroundIds.includes(bg.id);
+          const isFocused = bg.id === this._focusedBackgroundId;
+          return {
+            id: bg.id,
+            name: bg.name,
+            category,
+            categoryLabel: CATEGORY_LABELS[category],
+            shortDesc: (bg.narrativeDescription || bg.description || '').slice(0, 120),
+            trainedSkills: (bg.trainedSkills || []).slice(0, 3),
+            hasMore: (bg.trainedSkills || []).length > 3,
+            isFocused,
+            isCommitted,
+          };
+        });
+
+      if (backgrounds.length > 0) {
+        result[category] = {
+          label: CATEGORY_LABELS[category],
+          description: CATEGORY_DESCRIPTIONS[category],
+          backgrounds,
+        };
+      }
+    }
+
+    return result;
+  }
+
+  _getMentorFlavorForBackground(background) {
+    const category = background.category || 'event';
+    const flavors = {
+      event: `${background.name}... A defining moment indeed.`,
+      occupation: `A ${background.name}. That shapes your perspective.`,
+      planet: `From ${background.name}. Your home shaped you.`,
+    };
+    return flavors[category] || `${background.name} — an interesting path.`;
+  }
+
+  _getSelectionStatusText() {
+    const count = this._committedBackgroundIds.length;
+    if (this._maxBackgrounds === 1) {
+      return count === 0 ? 'No background selected' : 'Single-background mode';
+    }
+
+    return `${count} of ${this._maxBackgrounds} selected`;
+  }
+
+  _getCommittedNames() {
+    return this._committedBackgroundIds
+      .map(id => this._allBackgrounds.find(b => b.id === id)?.name)
+      .filter(Boolean)
+      .join(', ');
+  }
+}
