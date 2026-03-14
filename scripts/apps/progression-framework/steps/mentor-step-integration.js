@@ -20,8 +20,8 @@ export const STEP_TO_CHOICE_TYPE = {
   'languages': 'languageGuidance',
   'general-feat': 'feat',
   'class-feat': 'feat',
-  'general-talent': 'talent',
-  'class-talent': 'talent',
+  'general-talent': 'talentGuidance',
+  'class-talent': 'talentGuidance',
   'force-powers': 'force_power',
   'confirm': 'summaryGuidance',
 };

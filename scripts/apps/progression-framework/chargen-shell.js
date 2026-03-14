@@ -22,6 +22,7 @@ import { AttributeStep } from './steps/attribute-step.js';
 import { BackgroundStep } from './steps/background-step.js';
 import { LanguageStep } from './steps/language-step.js';
 import { GeneralFeatStep, ClassFeatStep } from './steps/feat-step.js';
+import { GeneralTalentStep, ClassTalentStep } from './steps/talent-step.js';
 
 export class ChargenShell extends ProgressionShell {
   static async open(actor, options = {}) {
@@ -164,7 +165,8 @@ const CHARGEN_CANONICAL_STEPS = [
     icon: 'fa-gem',
     type: StepType.SELECTION,
     category: StepCategory.CATEGORY_SPECIFIC,
-    pluginClass: null, // Wave 8: GeneralTalentStep
+    pluginClass: GeneralTalentStep,
+    slotType: 'heroic',
   },
   {
     stepId: 'class-talent',
@@ -172,7 +174,8 @@ const CHARGEN_CANONICAL_STEPS = [
     icon: 'fa-gem',
     type: StepType.SELECTION,
     category: StepCategory.CATEGORY_SPECIFIC,
-    pluginClass: null, // Wave 8: ClassTalentStep
+    pluginClass: ClassTalentStep,
+    slotType: 'class',
   },
   {
     stepId: 'confirm',
