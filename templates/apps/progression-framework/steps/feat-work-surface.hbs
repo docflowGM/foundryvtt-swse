@@ -1,0 +1,105 @@
+{{!-- Feat Work Surface --}}
+{{!-- Grouped discovery with suggested feats first, then categorized browsing --}}
+
+<div class="feat-work-surface">
+
+  {{!-- Suggested Feats Group (Always at top) --}}
+  {{#if groupedFeats.suggested}}
+  <section class="feat-group suggested-group">
+    <div class="group-header" data-action="toggle-category" data-category="suggested">
+      <div class="header-content">
+        <i class="fa-solid fa-star group-icon"></i>
+        <h3 class="group-title">Suggested for Your Build</h3>
+        <span class="feat-count-badge">{{groupedFeats.suggested.feats.length}}</span>
+      </div>
+      <button class="expand-toggle {{#if groupedFeats.suggested.isExpanded}}expanded{{/if}}">
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
+    </div>
+
+    {{#if groupedFeats.suggested.isExpanded}}
+    <div class="feat-list suggested-list">
+      {{#each groupedFeats.suggested.feats}}
+      <div class="feat-item suggested-feat"
+           data-feat-id="{{this._id}}"
+           data-action="focus-item"
+           class="{{#if this.isFocused}}focused{{/if}} {{#if this.isSelected}}selected{{/if}}">
+        <div class="feat-item-content">
+          <span class="feat-name">{{this.name}}</span>
+          <span class="feat-suggestion-badge">
+            <i class="fa-solid fa-lightbulb"></i> Suggested
+          </span>
+        </div>
+        <span class="feat-state-indicator">
+          {{#if this.isSelected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{/if}}
+        </span>
+      </div>
+      {{/each}}
+    </div>
+    {{/if}}
+  </section>
+  {{/if}}
+
+  {{!-- Category Groups --}}
+  {{#each groupedFeats as |group categoryKey|}}
+  {{#unless (eq categoryKey "suggested")}}
+  <section class="feat-group category-group">
+    <div class="group-header" data-action="toggle-category" data-category="{{categoryKey}}">
+      <div class="header-content">
+        <i class="fa-solid {{group.icon}} group-icon"></i>
+        <h3 class="group-title">{{group.label}}</h3>
+        <span class="feat-count-badge">{{group.totalCount}}</span>
+      </div>
+      <button class="expand-toggle {{#if group.isExpanded}}expanded{{/if}}">
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
+    </div>
+
+    {{#if group.isExpanded}}
+    <div class="feat-list category-list">
+      {{#each group.feats as |feat idx|}}
+      {{#if (or (lt idx group.visibleCount) group.isExpanded)}}
+      <div class="feat-item category-feat"
+           data-feat-id="{{feat._id}}"
+           data-action="focus-item"
+           class="{{#if feat.isFocused}}focused{{/if}} {{#if feat.isSelected}}selected{{/if}}">
+        <div class="feat-item-content">
+          <span class="feat-name">{{feat.name}}</span>
+          {{#if feat.isSuggested}}
+          <span class="feat-synergy-badge">synergy</span>
+          {{/if}}
+        </div>
+        <span class="feat-state-indicator">
+          {{#if feat.isSelected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{/if}}
+        </span>
+      </div>
+      {{/if}}
+      {{/each}}
+
+      {{#if group.canExpand}}
+      <div class="feat-show-more">
+        <p class="small-text">{{subtract group.totalCount group.visibleCount}} more {{group.label}} feats...</p>
+      </div>
+      {{/if}}
+    </div>
+    {{/if}}
+  </section>
+  {{/unless}}
+  {{/each}}
+
+  {{!-- Empty State if No Feats Available --}}
+  {{#unless groupedFeats}}
+  <section class="feat-group empty-state">
+    <div class="empty-message">
+      <i class="fa-solid fa-hexagon-exclamation"></i>
+      <p>No feats available for selection.</p>
+      {{#if showAll}}
+      <p class="small">All available feats have been selected or do not meet prerequisites.</p>
+      {{else}}
+      <p class="small">No feats meet your current prerequisites. Try enabling "Show All" to see ineligible feats.</p>
+      {{/if}}
+    </div>
+  </section>
+  {{/unless}}
+
+</div>

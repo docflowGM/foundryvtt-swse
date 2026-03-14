@@ -1,0 +1,88 @@
+{{!-- Feat Details Panel --}}
+{{!-- Shows feat details, prerequisites, and selection controls --}}
+
+<div class="feat-details-panel">
+
+  {{!-- Feat Header --}}
+  <div class="details-header">
+    <h2 class="feat-name">{{feat.name}}</h2>
+    <div class="feat-meta-badges">
+      {{#if isSuggested}}
+      <div class="meta-badge suggested-badge">
+        <i class="fa-solid fa-lightbulb"></i> Suggested
+      </div>
+      {{/if}}
+      {{#if isRepeatable}}
+      <div class="meta-badge repeatable-badge">
+        <i class="fa-solid fa-repeat"></i> Repeatable
+      </div>
+      {{/if}}
+    </div>
+  </div>
+
+  {{!-- Feat Category --}}
+  <div class="feat-category-row">
+    <span class="row-label">Category:</span>
+    <span class="category-value">{{category}}</span>
+  </div>
+
+  {{!-- Feat Description --}}
+  {{#if description}}
+  <div class="feat-description-section">
+    <h3>Description</h3>
+    <p class="feat-description">{{description}}</p>
+  </div>
+  {{/if}}
+
+  {{!-- Prerequisites Section --}}
+  {{#if prerequisites}}
+  <div class="feat-prerequisites-section">
+    <h3>Prerequisites</h3>
+    <ul class="prerequisites-list">
+      {{#each prerequisites}}
+      <li class="prerequisite-item">
+        <span class="prerequisite-name">{{this}}</span>
+        <span class="prerequisite-status">
+          {{!-- Note: In a full implementation, would check actual status --}}
+          <i class="fa-solid fa-circle-check met-icon"></i> Met
+        </span>
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+  {{/if}}
+
+  {{!-- Selection Controls --}}
+  <div class="details-actions">
+    {{#if isSelected}}
+    <button class="action-btn deselect-btn" data-action="commit-item" data-item-id="{{feat._id}}">
+      <i class="fa-solid fa-times-circle"></i>
+      Deselect
+    </button>
+    {{else}}
+    <button class="action-btn select-btn" data-action="commit-item" data-item-id="{{feat._id}}">
+      <i class="fa-solid fa-check-circle"></i>
+      Choose This Feat
+    </button>
+    {{/if}}
+
+    <button class="action-btn mentor-btn" data-action="ask-mentor">
+      <i class="fa-solid fa-brain"></i>
+      Ask Mentor
+    </button>
+  </div>
+
+  {{!-- Additional Notes --}}
+  {{#if isSuggested}}
+  <div class="feat-note suggested-note">
+    <p><strong>Why suggested:</strong> This feat synergizes well with your build and class.</p>
+  </div>
+  {{/if}}
+
+  {{#if isRepeatable}}
+  <div class="feat-note repeatable-note">
+    <p><strong>Repeatable:</strong> You can select this feat multiple times if you have additional feat picks.</p>
+  </div>
+  {{/if}}
+
+</div>

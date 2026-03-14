@@ -46,7 +46,8 @@
     "styles/progression-framework/steps/l1-survey-step.css",
     "styles/progression-framework/steps/attribute-step.css",
     "styles/progression-framework/steps/background-step.css",
-    "styles/progression-framework/steps/language-step.css"
+    "styles/progression-framework/steps/language-step.css",
+    "styles/progression-framework/steps/feat-step.css"
   ],
   "languages": [
     {
