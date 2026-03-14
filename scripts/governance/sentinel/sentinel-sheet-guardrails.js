@@ -20,7 +20,11 @@ export class SentinelSheetGuardrails {
     SentinelEngine.registerLayer("sheet-guardrails", {
       enabled: true,
       readOnly: true,
-      description: "Defensive guardrails monitoring for sheet context and listener health"
+      description: "Defensive guardrails monitoring for sheet context and listener health",
+      // Layer init (called by SentinelEngine.bootstrap)
+      init: () => {
+        console.log("[SWSE Sentinel] Sheet-Guardrails layer ready");
+      }
     });
 
     console.log("[SWSE Sentinel] Sheet-Guardrails layer initialized");
