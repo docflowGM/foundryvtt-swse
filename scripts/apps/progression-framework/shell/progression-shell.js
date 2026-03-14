@@ -26,6 +26,9 @@ import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { ConditionalStepResolver } from './conditional-step-resolver.js';
 import { StepCategory } from '../steps/step-descriptor.js';
 import { ActionFooter } from './action-footer.js';
+import { MentorRail } from './mentor-rail.js';
+import { ProgressRail } from './progress-rail.js';
+import { UtilityBar } from './utility-bar.js';
 
 /**
  * Shell state model (reference — actual state lives on `this`)
@@ -71,6 +74,15 @@ export class ProgressionShell extends SWSEApplicationV2 {
   static PARTS = {
     shell: {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/progression-shell.hbs',
+    },
+    mentorRail: {
+      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/mentor-rail.hbs',
+    },
+    progressRail: {
+      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/progress-rail.hbs',
+    },
+    utilityBar: {
+      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/utility-bar.hbs',
     },
   };
 
@@ -146,6 +158,14 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     // Resolver for engine-discovered conditional steps
     this._conditionalResolver = new ConditionalStepResolver();
+
+    // Subsystem controllers
+    this.mentorRail = new MentorRail(this);
+    this.progressRail = new ProgressRail(this);
+    this.utilityBar = new UtilityBar(this);
+
+    // Track last spoken step to prevent redundant auto-speech on every full render
+    this._lastSpokenStepId = null;
   }
 
   // ---------------------------------------------------------------------------
@@ -185,6 +205,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
         this.stepPlugins.set(descriptor.stepId, new descriptor.pluginClass(descriptor));
       }
     }
+
+    // Initialize utility bar config for the current step
+    const currentPlugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
+    if (currentPlugin) this.utilityBar.setConfig(currentPlugin.getUtilityBarConfig());
 
     swseLogger.debug('ProgressionShell._initializeSteps', {
       mode: this.mode,
@@ -297,10 +321,22 @@ export class ProgressionShell extends SWSEApplicationV2 {
   async _onRender(context, options) {
     await super._onRender(context, options);
 
+    // Wire subsystem after-render hooks
+    const html = this.element;
+    this.mentorRail.afterRender(html.querySelector('[data-region="mentor-rail"]'));
+    this.progressRail.afterRender(html.querySelector('[data-region="progress-rail"]'));
+    this.utilityBar.afterRender(html.querySelector('[data-region="utility-bar"]'));
+
+    // Auto-speak only on actual step change — NOT on every full render
+    const descriptor = this.steps[this.currentStepIndex];
+    if (descriptor && descriptor.stepId !== this._lastSpokenStepId) {
+      this._lastSpokenStepId = descriptor.stepId;
+      await this.mentorRail.speakForStep(descriptor);
+    }
+
     // Notify current step plugin that render completed
-    const currentDescriptor = this.steps[this.currentStepIndex];
-    if (currentDescriptor) {
-      const plugin = this.stepPlugins.get(currentDescriptor.stepId);
+    if (descriptor) {
+      const plugin = this.stepPlugins.get(descriptor.stepId);
       if (plugin) {
         await plugin.onDataReady(this).catch(err =>
           swseLogger.error('ProgressionShell: plugin.onDataReady failed', { err })
@@ -320,6 +356,26 @@ export class ProgressionShell extends SWSEApplicationV2 {
       isLastStep,
       mode: this.mode,
     });
+  }
+
+  // ---------------------------------------------------------------------------
+  // Shell Navigation Policy
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Navigate to a step. Shell owns the navigation policy.
+   * ProgressRail and other subsystems request navigation via this method, not direct mutation.
+   * @param {number} stepIndex
+   * @param {Object} options — { source: string }
+   */
+  navigateToStep(stepIndex, { source = 'unknown' } = {}) {
+    if (stepIndex < 0 || stepIndex >= this.steps.length) return;
+    if (stepIndex >= this.currentStepIndex) return; // forward nav blocked
+    // Future: plugin onStepExit hook, validation checks
+    this.currentStepIndex = stepIndex;
+    const currentPlugin = this.stepPlugins.get(this.steps[stepIndex]?.stepId);
+    if (currentPlugin) this.utilityBar.setConfig(currentPlugin.getUtilityBarConfig());
+    this.render();
   }
 
   // ---------------------------------------------------------------------------
@@ -397,18 +453,14 @@ export class ProgressionShell extends SWSEApplicationV2 {
   // Shell UI Toggles
   // ---------------------------------------------------------------------------
 
-  _onToggleMentor(event, target) {
-    this.mentorCollapsed = !this.mentorCollapsed;
-    this.mentor.collapsed = this.mentorCollapsed;
-    // Persist to user flags
-    game.user?.setFlag('foundryvtt-swse', 'progressionMentorCollapsed', this.mentorCollapsed);
-    this.render();
+  async _onToggleMentor(event, target) {
+    event?.preventDefault();
+    await this.mentorRail.toggle();
   }
 
-  _onToggleUtilityBar(event, target) {
-    this.utilityBarCollapsed = !this.utilityBarCollapsed;
-    game.user?.setFlag('foundryvtt-swse', 'progressionUtilityBarCollapsed', this.utilityBarCollapsed);
-    this.render();
+  async _onToggleUtilityBar(event, target) {
+    event?.preventDefault();
+    await this.utilityBar.toggle();
   }
 
   async _onAskMentor(event, target) {

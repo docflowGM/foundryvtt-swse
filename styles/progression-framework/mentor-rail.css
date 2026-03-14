@@ -1,0 +1,137 @@
+/* ============================================================================
+   MENTOR RAIL — Mentor Portrait, Dialogue, Interaction
+   ============================================================================ */
+
+.progression-shell .prog-mentor-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--prog-space-md);
+  height: 100%;
+  padding: var(--prog-space-md);
+  position: relative;
+}
+
+/* Portrait circle with cyan border + glow */
+.progression-shell .prog-mentor__portrait {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid var(--prog-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--prog-accent);
+  background: var(--prog-bg-read);
+  flex-shrink: 0;
+  box-shadow: 0 0 8px rgba(0, 170, 255, 0.4), 0 0 18px rgba(0, 170, 255, 0.12);
+  overflow: hidden;
+}
+
+.progression-shell .prog-mentor__portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* Mood variants — portrait border follows mood color */
+.progression-shell [data-mood="encouraging"] .prog-mentor__portrait {
+  border-color: var(--prog-mood-encouraging);
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
+}
+
+.progression-shell [data-mood="cautionary"] .prog-mentor__portrait {
+  border-color: var(--prog-mood-cautionary);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+}
+
+.progression-shell [data-mood="celebratory"] .prog-mentor__portrait {
+  border-color: var(--prog-mood-celebratory);
+  box-shadow: 0 0 8px rgba(192, 132, 252, 0.4);
+}
+
+/* Name — small, uppercase, cyan */
+.progression-shell .prog-mentor__name {
+  font-size: var(--prog-font-size-xs);
+  text-align: center;
+  font-family: var(--prog-font);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--prog-accent);
+  text-shadow: var(--prog-heading-shadow);
+  margin: 0;
+}
+
+/* Title — smaller, dim, italic */
+.progression-shell .prog-mentor__title {
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+  font-style: italic;
+  text-align: center;
+  text-shadow: var(--prog-text-shadow);
+  margin: 0;
+}
+
+/* Dialogue box — flex-grow to fill space */
+.progression-shell .prog-mentor__dialogue {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  width: 100%;
+  background: var(--prog-bg-read);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+  padding: var(--prog-space-sm);
+}
+
+/* Dialogue text — calm cyan with subtle glow */
+.progression-shell .prog-mentor__text {
+  font-size: var(--prog-font-size-sm);
+  color: var(--prog-text-mentor);
+  line-height: 1.55;
+  margin: 0;
+  text-shadow: var(--prog-mentor-text-shadow);
+}
+
+/* Idle state — dim and italic when waiting */
+.progression-shell .prog-mentor__text--idle {
+  color: var(--prog-text-dim);
+  font-style: italic;
+  text-shadow: var(--prog-text-shadow);
+}
+
+/* Ask Mentor button */
+.progression-shell .prog-mentor__ask {
+  width: 100%;
+  font-size: var(--prog-font-size-xs);
+  padding: var(--prog-space-xs) var(--prog-space-sm);
+}
+
+/* Collapse button — absolute bottom-right corner */
+.progression-shell .prog-mentor__collapse {
+  position: absolute;
+  bottom: var(--prog-space-md);
+  right: var(--prog-space-sm);
+  background: transparent;
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+  color: var(--prog-text-dim);
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: var(--prog-font-size-xs);
+  transition: color var(--prog-transition-fast), border-color var(--prog-transition-fast);
+}
+
+.progression-shell .prog-mentor__collapse:hover {
+  color: var(--prog-accent);
+  border-color: var(--prog-accent);
+}
+
+/* Collapsed state — hide non-portrait elements */
+.progression-shell [data-region="mentor-rail"][data-collapsed="true"] .prog-mentor__name,
+.progression-shell [data-region="mentor-rail"][data-collapsed="true"] .prog-mentor__title,
+.progression-shell [data-region="mentor-rail"][data-collapsed="true"] .prog-mentor__dialogue,
+.progression-shell [data-region="mentor-rail"][data-collapsed="true"] .prog-mentor__ask {
+  display: none;
+}

@@ -22,40 +22,7 @@
   <div data-region="mentor-rail"
        data-collapsed="{{mentorCollapsed}}"
        data-mood="{{mentor.mood}}">
-
-    {{!-- Mentor rail content rendered by mentor-rail.hbs partial (Wave 2) --}}
-    {{!-- Placeholder for Wave 0/1 --}}
-    <div class="prog-mentor-placeholder">
-      <div class="prog-mentor-placeholder__portrait">
-        <i class="fas fa-user-astronaut"></i>
-      </div>
-      {{#unless mentorCollapsed}}
-        <div class="prog-mentor-placeholder__name prog-heading">
-          {{mentor.name}}
-        </div>
-        <div class="prog-mentor-placeholder__dialogue">
-          {{#if mentor.currentDialogue}}
-            <p class="prog-mentor-placeholder__text">{{mentor.currentDialogue}}</p>
-          {{else}}
-            <p class="prog-mentor-placeholder__text prog-mentor-placeholder__text--idle">
-              Standing by…
-            </p>
-          {{/if}}
-        </div>
-        <button class="prog-btn prog-mentor-placeholder__ask"
-                data-action="ask-mentor"
-                {{#unless mentor.askMentorEnabled}}disabled{{/unless}}>
-          <i class="fas fa-question-circle"></i>
-          Ask Mentor
-        </button>
-      {{/unless}}
-      <button class="prog-mentor-placeholder__collapse"
-              data-action="toggle-mentor"
-              title="{{#if mentorCollapsed}}Expand mentor{{else}}Collapse mentor{{/if}}">
-        <i class="fas fa-chevron-{{#if mentorCollapsed}}right{{else}}left{{/if}}"></i>
-      </button>
-    </div>
-
+    {{{parts.mentorRail}}}
   </div>{{!-- /mentor-rail --}}
 
 
@@ -63,33 +30,7 @@
     PROGRESS RAIL — step indicators
   ======================================================================= --}}
   <div data-region="progress-rail">
-
-    {{!-- Progress rail content rendered by progress-rail.hbs partial (Wave 2) --}}
-    {{!-- Placeholder for Wave 0/1 --}}
-    <div class="prog-progress-placeholder">
-      <div class="prog-progress-placeholder__label prog-heading">Steps</div>
-      <ol class="prog-progress-placeholder__list">
-        {{#each stepProgress}}
-          <li class="prog-progress-placeholder__step
-                     {{#if isCurrent}}prog-progress-placeholder__step--active{{/if}}
-                     {{#if isComplete}}prog-progress-placeholder__step--complete{{/if}}
-                     {{#if descriptor.isConditional}}prog-progress-placeholder__step--conditional{{/if}}"
-              data-step-index="{{index}}"
-              title="{{descriptor.label}}{{#if descriptor.unlockReason}} ({{descriptor.unlockReason}}){{/if}}">
-            <span class="prog-progress-placeholder__icon">
-              <i class="fas {{descriptor.icon}}"></i>
-            </span>
-            <span class="prog-progress-placeholder__name">
-              {{descriptor.label}}
-            </span>
-            {{#if isComplete}}
-              <i class="fas fa-check prog-progress-placeholder__check"></i>
-            {{/if}}
-          </li>
-        {{/each}}
-      </ol>
-    </div>
-
+    {{{parts.progressRail}}}
   </div>{{!-- /progress-rail --}}
 
 
@@ -104,29 +45,7 @@
     <div data-region="utility-bar"
          data-collapsed="{{utilityBarCollapsed}}"
          data-mode="{{utilityBarConfig.mode}}">
-
-      {{!-- Utility bar content rendered by utility-bar.hbs partial (Wave 2) --}}
-      {{!-- Placeholder for Wave 0/1 --}}
-      <div class="prog-utility-placeholder">
-        {{#if currentDescriptor}}
-          <i class="fas {{currentDescriptor.icon}} prog-utility-placeholder__icon"></i>
-          <span class="prog-utility-placeholder__label">
-            {{currentDescriptor.label}}
-          </span>
-          {{#if currentDescriptor.isConditional}}
-            <span class="prog-chip prog-chip--warning prog-utility-placeholder__conditional">
-              <i class="fas fa-unlock-alt"></i>
-              {{currentDescriptor.unlockReason}}
-            </span>
-          {{/if}}
-        {{/if}}
-        <button class="prog-utility-placeholder__collapse"
-                data-action="toggle-utility-bar"
-                title="{{#if utilityBarCollapsed}}Expand{{else}}Collapse{{/if}} utility bar">
-          <i class="fas fa-chevron-{{#if utilityBarCollapsed}}down{{else}}up{{/if}}"></i>
-        </button>
-      </div>
-
+      {{{parts.utilityBar}}}
     </div>{{!-- /utility-bar --}}
 
 

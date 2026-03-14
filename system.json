@@ -36,7 +36,10 @@
     "styles/progression-framework/holo-theme.css",
     "styles/progression-framework/progression-shell.css",
     "styles/progression-framework/action-footer.css",
-    "styles/progression-framework/progression-shell-placeholders.css"
+    "styles/progression-framework/progression-shell-placeholders.css",
+    "styles/progression-framework/mentor-rail.css",
+    "styles/progression-framework/progress-rail.css",
+    "styles/progression-framework/utility-bar.css"
   ],
   "languages": [
     {

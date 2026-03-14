@@ -1,0 +1,103 @@
+/* ============================================================================
+   PROGRESS RAIL — Step Indicators with Navigation State
+   ============================================================================ */
+
+.progression-shell .prog-progress-rail {
+  padding: var(--prog-space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-sm);
+}
+
+.progression-shell .prog-progress-rail__label {
+  font-size: var(--prog-font-size-xs);
+  font-family: var(--prog-font);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--prog-accent);
+  text-shadow: var(--prog-heading-shadow);
+  margin-bottom: var(--prog-space-xs);
+  margin-top: 0;
+}
+
+.progression-shell .prog-progress-rail__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Step item — default pending state */
+.progression-shell .prog-step {
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-sm);
+  padding: var(--prog-space-xs) var(--prog-space-sm);
+  border-radius: var(--prog-radius-sm);
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+  cursor: default;
+  border: 1px solid transparent;
+  transition: all var(--prog-transition-fast);
+  text-shadow: var(--prog-text-shadow);
+}
+
+/* Completed steps are clickable (tabindex=0) */
+.progression-shell .prog-step[tabindex="0"] {
+  cursor: pointer;
+}
+
+.progression-shell .prog-step[tabindex="0"]:hover {
+  border-color: var(--prog-border-bright);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Active (current) step — bright, glowing, authoritative */
+.progression-shell .prog-step--active {
+  color: var(--prog-text-heading);
+  border-color: var(--prog-accent);
+  background: rgba(0, 170, 255, 0.08);
+  box-shadow: 0 0 6px rgba(0, 170, 255, 0.3), inset 0 0 6px rgba(0, 170, 255, 0.06);
+  text-shadow: var(--prog-heading-shadow);
+}
+
+/* Completed step — positive color, subtle glow on hover */
+.progression-shell .prog-step--complete {
+  color: var(--prog-positive);
+  text-shadow: 0 0 4px rgba(34, 197, 94, 0.2), var(--prog-text-shadow);
+}
+
+.progression-shell .prog-step--complete:hover {
+  border-color: var(--prog-border-bright);
+  background: rgba(34, 197, 94, 0.05);
+}
+
+/* Conditional step — neutral/amber color */
+.progression-shell .prog-step--conditional {
+  color: var(--prog-neutral);
+  text-shadow: 0 0 4px rgba(245, 158, 11, 0.2), var(--prog-text-shadow);
+}
+
+/* Icon — fixed width, centered */
+.progression-shell .prog-step__icon {
+  width: 14px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* Step name — flex to fill, ellipsis on overflow */
+.progression-shell .prog-step__name {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Checkmark for completed steps */
+.progression-shell .prog-step__check {
+  color: var(--prog-positive);
+  font-size: 10px;
+  flex-shrink: 0;
+}
