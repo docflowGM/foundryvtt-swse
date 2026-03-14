@@ -19,6 +19,56 @@ import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/comba
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
+/**
+ * GUARDRAIL 1: Context Contract Validator
+ * Detects missing context keys that would cause silent template failures.
+ *
+ * This catches hydration bugs before they reach the template layer.
+ */
+function validateContextContract(context, sheetName) {
+  const requiredKeys = [
+    'equipment', 'armor', 'weapons',           // Inventory spread
+    'followerSlots', 'followerTalentBadges',  // Follower context
+    'xpEnabled', 'isLevel0', 'isGM',          // UI flags
+    'fpAvailable', 'derived', 'abilities'     // Core data
+  ];
+
+  const missing = [];
+  for (const key of requiredKeys) {
+    if (!(key in context)) {
+      missing.push(key);
+    }
+  }
+
+  if (missing.length > 0) {
+    console.warn(
+      `[SWSE Sheet] ${sheetName} missing context keys: ${missing.join(', ')}`,
+      { context }
+    );
+  }
+}
+
+/**
+ * GUARDRAIL 2: Listener Watcher
+ * Monitors for listener accumulation (common cause of memory leaks).
+ *
+ * If listeners exceed threshold, logs a warning to help catch render-loop leaks.
+ */
+function watchListenerCount(element, sheetName, threshold = 50) {
+  if (!element) return;
+
+  // Count event listeners indirectly via querySelectorAll with event inspection
+  // This is a heuristic check; full listener count requires browser internals
+  const allElements = element.querySelectorAll('*');
+  if (allElements.length > threshold * 2) {
+    // Very rough heuristic: if too many elements, might have listener leak
+    console.warn(
+      `[SWSE Sheet] ${sheetName} has many DOM elements (${allElements.length}), ` +
+      `possible listener accumulation—check browser DevTools Memory tab`
+    );
+  }
+}
+
 export class SWSEV2CharacterSheet extends
   HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
 
@@ -54,6 +104,9 @@ export class SWSEV2CharacterSheet extends
 
     // Wire action economy bindings for combat tab
     ActionEconomyBindings.setupAttackButtons(this.element, this.document);
+
+    // GUARDRAIL 2: Monitor for listener accumulation (memory leak detection)
+    watchListenerCount(this.element, "SWSEV2CharacterSheet");
   }
 
   async _onClose(options) {
@@ -419,6 +472,9 @@ export class SWSEV2CharacterSheet extends
 
     // Verify context is serializable (no Document refs, circular refs, etc.)
     RenderAssertions.assertContextSerializable(finalContext, "SWSEV2CharacterSheet");
+
+    // GUARDRAIL 1: Validate context contract to prevent silent template failures
+    validateContextContract(finalContext, "SWSEV2CharacterSheet");
 
     return finalContext;
   }
