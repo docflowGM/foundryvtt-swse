@@ -1,0 +1,187 @@
+/**
+ * progression-framework.css
+ *
+ * CSS custom property tokens for the SWSE Progression Framework.
+ * Contains ONLY variable definitions — no rules, no selectors beyond :root.
+ *
+ * All progression framework components reference these tokens.
+ * holo-theme.css applies them as actual visual rules.
+ *
+ * THEME DIRECTION: dark bulkhead / datapad foundation + cyan holo overlays
+ * - Reading surfaces: near-black blue-steel (very dark, high contrast with text)
+ * - Panel faces: dark navy (slightly lighter than floor, still very dark)
+ * - Chrome: cyan holo blue accents, concentrated glow on active/selected elements only
+ * - Text: pale cyan-white with dark text-shadow grounding (not floating in blue)
+ * - Semantic numbers: green/yellow/red globally enforced
+ */
+
+:root {
+  /* =========================================================================
+   * Brand / Accent
+   * ========================================================================= */
+  --prog-accent:            #00aaff;    /* Primary holo cyan — borders, highlights */
+  --prog-accent-dim:        rgba(0, 170, 255, 0.25);  /* Soft glow fill */
+
+  /* Glow discipline: concentrated on active elements, not ambient everywhere */
+  --prog-accent-glow:       0 0 5px rgba(0, 170, 255, 0.65), 0 0 12px rgba(0, 170, 255, 0.22);
+  --prog-accent-glow-soft:  0 0 4px rgba(0, 170, 255, 0.32);   /* Moderate: region frames */
+  --prog-accent-glow-heavy: 0 0 6px rgba(0, 170, 255, 0.8), 0 0 18px rgba(0, 170, 255, 0.35); /* Active step, selected */
+
+  /* =========================================================================
+   * Backgrounds — dark bulkhead hierarchy
+   *
+   * Floor:        true visual floor, deep space black-blue
+   * Mid:          region backgrounds (rails, bars)
+   * Surface:      card faces, panel interiors
+   * Read:         text-reading areas — mentor dialogue, details body, descriptions
+   *               This is the DARKEST surface intentionally — max text contrast
+   * Raised:       elevated panels within surfaces (stat blocks, sub-panels)
+   * ========================================================================= */
+  --prog-bg-floor:          #030609;   /* Absolute floor — used only as outer window bg */
+  --prog-bg-dark:           #050a12;   /* Shell container bg */
+  --prog-bg-mid:            #07101d;   /* Region backgrounds: rails, bars, borders */
+  --prog-bg-surface:        #0a1524;   /* Card faces, panel bodies */
+  --prog-bg-read:           #040810;   /* Reading surfaces: dialogue, descriptions, body text */
+  --prog-bg-raised:         #0e1c30;   /* Elevated panels within cards (stat blocks) */
+  --prog-bg-hover:          #0f1e32;   /* Hover state for interactive surfaces */
+  --prog-bg-selected:       #0c1e3c;   /* Committed / selected item */
+  --prog-bg-disabled:       rgba(5, 10, 18, 0.5);
+
+  /* =========================================================================
+   * Text — pale cyan-white with dark grounding
+   *
+   * Primary text must read cleanly on --prog-bg-read (#040810)
+   * The cooler blue-tint is retained for holo identity, but de-saturated enough
+   * to avoid blending into blue-cast surfaces.
+   * ========================================================================= */
+  --prog-text:              #b8d4ee;   /* Primary body text — pale desaturated cyan-white */
+  --prog-text-bright:       #deeeff;   /* Emphasis, headings — near-white with slight blue tint */
+  --prog-text-dim:          #5e7a92;   /* Secondary, labels */
+  --prog-text-disabled:     #354a5c;   /* Disabled state */
+  --prog-text-mentor:       #c4e4ff;   /* Mentor dialogue — slightly brighter for reading in dark box */
+  --prog-text-heading:      #e8f4ff;   /* Step names, section headings — highest brightness */
+
+  /* Text shadows — required for legibility on dark-blue surfaces */
+  --prog-text-shadow:       0 1px 2px rgba(0, 0, 0, 0.9);           /* Universal dark grounding */
+  --prog-text-shadow-strong: 0 1px 3px rgba(0, 0, 0, 1), 0 0 1px rgba(0, 0, 0, 1); /* Strong anchor */
+  --prog-heading-shadow:    0 0 6px rgba(0, 170, 255, 0.45), 0 1px 2px rgba(0, 0, 0, 0.95); /* Heading: glow + anchor */
+  --prog-mentor-text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95), 0 0 1px rgba(0, 0, 0, 1);
+
+  /* =========================================================================
+   * Semantic Colors — globally enforced, never mixed up
+   * ========================================================================= */
+  --prog-positive:          #22c55e;   /* Positive modifiers, met prerequisites, complete steps */
+  --prog-negative:          #ef4444;   /* Negative modifiers, unmet prerequisites, blocking */
+  --prog-neutral:           #f59e0b;   /* Neutral / zero values, warnings, informational */
+  --prog-info:              #38bdf8;   /* Pure informational, non-semantic highlights */
+
+  /* Semantic backgrounds (for chip fills, banners) */
+  --prog-positive-bg:       rgba(34, 197, 94, 0.10);
+  --prog-negative-bg:       rgba(239, 68, 68, 0.10);
+  --prog-neutral-bg:        rgba(245, 158, 11, 0.10);
+
+  /* =========================================================================
+   * Mentor Mood Accents
+   * Defined as concrete hex/rgba values so they can be used inside box-shadow,
+   * border, and background properties without rgba(var()) workaround.
+   * ========================================================================= */
+  --prog-mood-neutral:          #00aaff;
+  --prog-mood-encouraging:      #22c55e;
+  --prog-mood-cautionary:       #f59e0b;
+  --prog-mood-celebratory:      #c084fc;
+
+  /* Mood shadow colors — concrete RGBA for use in box-shadow values */
+  --prog-mood-neutral-shadow:    rgba(0, 170, 255, 0.22);
+  --prog-mood-encouraging-shadow: rgba(34, 197, 94, 0.22);
+  --prog-mood-cautionary-shadow: rgba(245, 158, 11, 0.22);
+  --prog-mood-celebratory-shadow: rgba(192, 132, 252, 0.22);
+
+  /* =========================================================================
+   * Borders / Separators
+   * ========================================================================= */
+  --prog-border:            #172840;   /* Default border — visible but not dominant */
+  --prog-border-bright:     #2a548a;   /* Active / focus / hover border */
+  --prog-border-accent:     rgba(0, 170, 255, 0.30);  /* Holo cyan accent border */
+  --prog-border-subtle:     rgba(255, 255, 255, 0.04); /* Ultra-subtle panel edge */
+  --prog-separator:         rgba(23, 40, 64, 0.8);    /* Within-region separators */
+
+  /* =========================================================================
+   * Suggestion Tier Badges (5-tier system — imported from suggestion-engine.css)
+   * ========================================================================= */
+  --prog-tier-optimal:      #f59e0b;   /* Tier 1 — gold */
+  --prog-tier-strong:       #22c55e;   /* Tier 2 — green */
+  --prog-tier-viable:       #38bdf8;   /* Tier 3 — blue */
+  --prog-tier-situational:  #a78bfa;   /* Tier 4 — purple */
+  --prog-tier-skip:         #4a6278;   /* Tier 5 — dim */
+
+  /* =========================================================================
+   * Progress Rail Step States
+   * ========================================================================= */
+  --prog-step-pending:      #172840;
+  --prog-step-active:       #00aaff;
+  --prog-step-complete:     #22c55e;
+  --prog-step-locked:       #0d1822;
+  --prog-step-conditional:  #f59e0b;
+
+  /* =========================================================================
+   * Typography
+   * ========================================================================= */
+  --prog-font:              'Orbitron', 'Roboto Condensed', monospace;
+  --prog-font-body:         'Roboto Condensed', 'Helvetica Neue', sans-serif;
+  --prog-font-mono:         'Roboto Mono', monospace;
+
+  --prog-font-size-xs:      0.65rem;
+  --prog-font-size-sm:      0.75rem;
+  --prog-font-size-base:    0.875rem;
+  --prog-font-size-md:      1rem;
+  --prog-font-size-lg:      1.125rem;
+  --prog-font-size-xl:      1.25rem;
+  --prog-font-size-2xl:     1.5rem;
+
+  /* =========================================================================
+   * Spacing
+   * ========================================================================= */
+  --prog-space-xs:          0.25rem;
+  --prog-space-sm:          0.5rem;
+  --prog-space-md:          0.75rem;
+  --prog-space-lg:          1rem;
+  --prog-space-xl:          1.5rem;
+  --prog-space-2xl:         2rem;
+
+  /* =========================================================================
+   * Region Sizing
+   * ========================================================================= */
+  --prog-mentor-width:        220px;
+  --prog-mentor-collapsed-w:  48px;
+  --prog-progress-width:      160px;
+  --prog-utility-bar-height:  44px;
+  --prog-utility-collapsed-h: 28px;
+  --prog-details-width:       280px;
+  --prog-footer-height:       52px;
+
+  /* =========================================================================
+   * Animation / Transitions
+   * ========================================================================= */
+  --prog-transition-fast:     0.12s ease;
+  --prog-transition-base:     0.2s ease;
+  --prog-transition-slow:     0.3s ease;
+  --prog-transition-mentor:   0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  --prog-transition-tree:     0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* =========================================================================
+   * Z-Index Stack
+   * ========================================================================= */
+  --prog-z-base:            1;
+  --prog-z-utility:         10;
+  --prog-z-tooltip:         20;
+  --prog-z-modal:           100;
+  --prog-z-overlay:         200;
+
+  /* =========================================================================
+   * Border Radius
+   * ========================================================================= */
+  --prog-radius-sm:         3px;
+  --prog-radius-md:         6px;
+  --prog-radius-lg:         10px;
+  --prog-radius-pill:       999px;
+}

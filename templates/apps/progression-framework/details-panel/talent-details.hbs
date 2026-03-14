@@ -1,0 +1,58 @@
+{{!-- Talent Details Panel --}}
+{{!-- Shows focused talent node details, prerequisites, and selection controls --}}
+
+<div class="talent-details-panel">
+
+  {{!-- Talent Header --}}
+  <div class="talent-details__header">
+    <h2 class="talent-details__name">{{talent.name}}</h2>
+    <div class="talent-details__meta">
+      <span class="talent-meta-badge tree-badge">{{treeName}}</span>
+      {{#if isSelected}}
+      <span class="talent-meta-badge selected-badge">
+        <i class="fa-solid fa-check-circle"></i> Selected
+      </span>
+      {{/if}}
+    </div>
+  </div>
+
+  {{!-- Description --}}
+  {{#if description}}
+  <div class="talent-details__section">
+    <h3 class="talent-details__section-title">Description</h3>
+    <p class="talent-details__description">{{description}}</p>
+  </div>
+  {{/if}}
+
+  {{!-- Prerequisites --}}
+  {{#if prerequisites}}
+  <div class="talent-details__section">
+    <h3 class="talent-details__section-title">Prerequisites</h3>
+    <div class="talent-prerequisites">
+      <p class="talent-prerequisites__text">{{prerequisites}}</p>
+      {{!-- TODO: If prerequisites are structured, display as list with met/unmet indicators --}}
+    </div>
+  </div>
+  {{/if}}
+
+  {{!-- Selection Controls --}}
+  <div class="talent-details__actions">
+    {{#if isSelected}}
+    <button class="action-btn deselect-btn" data-action="commit-item" data-item-id="{{talent._id}}">
+      <i class="fa-solid fa-times-circle"></i>
+      Deselect Talent
+    </button>
+    {{else}}
+    <button class="action-btn select-btn" data-action="commit-item" data-item-id="{{talent._id}}">
+      <i class="fa-solid fa-check-circle"></i>
+      Choose This Talent
+    </button>
+    {{/if}}
+
+    <button class="action-btn mentor-btn" data-action="ask-mentor">
+      <i class="fa-solid fa-brain"></i>
+      Ask Mentor
+    </button>
+  </div>
+
+</div>

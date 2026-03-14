@@ -1,0 +1,364 @@
+/* Attribute Step — numeric assignment with base/species/final/mod clarity */
+
+.progression-shell .prog-attribute-surface {
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-md);
+  padding: var(--prog-space-md);
+  overflow-y: auto;
+  height: 100%;
+}
+
+.progression-shell .prog-attribute-header {
+  border-bottom: 1px solid var(--prog-border);
+  padding-bottom: var(--prog-space-md);
+}
+
+.progression-shell .prog-attribute-title {
+  margin: 0 0 var(--prog-space-xs) 0;
+  font-size: var(--prog-font-size-lg);
+  color: var(--prog-text-heading);
+  text-shadow: var(--prog-heading-shadow);
+  font-weight: bold;
+}
+
+.progression-shell .prog-attribute-help {
+  margin: 0;
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+  line-height: 1.5;
+}
+
+/* Method Selector */
+.progression-shell .prog-attribute-method-selector {
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-sm);
+  padding: var(--prog-space-sm);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--prog-radius-sm);
+}
+
+.progression-shell .prog-attribute-method-label {
+  font-size: var(--prog-font-size-xs);
+  font-weight: bold;
+  color: var(--prog-text-heading);
+  text-shadow: var(--prog-heading-shadow);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.progression-shell .prog-attribute-method-buttons {
+  display: flex;
+  gap: var(--prog-space-xs);
+  flex: 1;
+}
+
+.progression-shell .prog-btn--method {
+  flex: 1;
+  font-size: var(--prog-font-size-xs);
+  padding: var(--prog-space-xs) var(--prog-space-sm);
+  background: var(--prog-bg-read);
+  border: 1px solid var(--prog-border);
+  color: var(--prog-text-dim);
+  cursor: pointer;
+  transition: all var(--prog-transition-fast);
+}
+
+.progression-shell .prog-btn--method:hover {
+  border-color: var(--prog-border-bright);
+}
+
+.progression-shell .prog-btn--method.active {
+  border-color: var(--prog-accent);
+  background: rgba(0, 170, 255, 0.12);
+  color: var(--prog-accent);
+  text-shadow: var(--prog-heading-shadow);
+  font-weight: bold;
+}
+
+/* Point Buy Status */
+.progression-shell .prog-attribute-pointbuy-status {
+  padding: var(--prog-space-sm);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+}
+
+.progression-shell .prog-attribute-pointbuy-status--complete {
+  border-color: var(--prog-positive);
+  background: rgba(0, 255, 128, 0.08);
+}
+
+.progression-shell .prog-attribute-pointbuy-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--prog-bg-read);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: var(--prog-space-xs);
+}
+
+.progression-shell .prog-attribute-pointbuy-used {
+  height: 100%;
+  background: linear-gradient(90deg, var(--prog-positive), var(--prog-accent));
+  transition: width var(--prog-transition-normal);
+}
+
+.progression-shell .prog-attribute-pointbuy-text {
+  font-size: var(--prog-font-size-xs);
+  text-align: center;
+  color: var(--prog-text);
+  text-shadow: var(--prog-text-shadow);
+}
+
+/* Ability Rows */
+.progression-shell .prog-attribute-rows {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--prog-space-xs);
+  padding: var(--prog-space-md) 0;
+}
+
+.progression-shell .prog-attribute-row {
+  display: grid;
+  grid-template-columns: 90px 60px 60px 60px 60px;
+  align-items: center;
+  gap: var(--prog-space-sm);
+  padding: var(--prog-space-sm);
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+  cursor: pointer;
+  transition: all var(--prog-transition-fast);
+}
+
+.progression-shell .prog-attribute-row:hover {
+  border-color: var(--prog-border-bright);
+}
+
+.progression-shell .prog-attribute-row--focused {
+  border-color: var(--prog-accent);
+  background: rgba(0, 170, 255, 0.08);
+  box-shadow: 0 0 6px rgba(0, 170, 255, 0.3);
+}
+
+.progression-shell .prog-attribute-row__label {
+  font-weight: bold;
+  font-size: var(--prog-font-size-sm);
+  color: var(--prog-text-heading);
+  text-shadow: var(--prog-heading-shadow);
+}
+
+.progression-shell .prog-attribute-row__score {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--prog-space-xs);
+}
+
+.progression-shell .prog-attribute-value {
+  font-size: var(--prog-font-size-base);
+  font-weight: bold;
+  color: var(--prog-text);
+  text-shadow: var(--prog-text-shadow);
+  text-align: center;
+}
+
+.progression-shell .prog-attribute-value--final {
+  font-size: var(--prog-font-size-lg);
+  color: var(--prog-accent);
+  text-shadow: var(--prog-heading-shadow);
+}
+
+/* Point Buy Buttons */
+.progression-shell .prog-attribute-btn {
+  appearance: none;
+  background: var(--prog-bg-read);
+  border: 1px solid var(--prog-border);
+  color: var(--prog-text-dim);
+  cursor: pointer;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 3px;
+  font-size: var(--prog-font-size-sm);
+  font-weight: bold;
+  transition: all var(--prog-transition-fast);
+}
+
+.progression-shell .prog-attribute-btn:hover:not(:disabled) {
+  border-color: var(--prog-accent);
+  color: var(--prog-accent);
+  background: rgba(0, 170, 255, 0.08);
+}
+
+.progression-shell .prog-attribute-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Semantic Colors */
+.progression-shell .prog-num--pos {
+  color: var(--prog-positive);
+  font-weight: bold;
+}
+
+.progression-shell .prog-num--neg {
+  color: var(--prog-negative);
+  font-weight: bold;
+}
+
+.progression-shell .prog-num--zero {
+  color: var(--prog-neutral);
+}
+
+/* Column Headers */
+.progression-shell .prog-attribute-headers {
+  display: grid;
+  grid-template-columns: 90px 60px 60px 60px 60px;
+  align-items: center;
+  gap: var(--prog-space-sm);
+  padding: var(--prog-space-sm);
+  font-size: var(--prog-font-size-xs);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--prog-text-dim);
+  border-bottom: 1px solid var(--prog-border);
+}
+
+.progression-shell .prog-attribute-headers__label {
+}
+
+.progression-shell .prog-attribute-headers__base,
+.progression-shell .prog-attribute-headers__species,
+.progression-shell .prog-attribute-headers__final,
+.progression-shell .prog-attribute-headers__modifier {
+  text-align: center;
+}
+
+/* Attribute Details Panel */
+.progression-shell .prog-attribute-details {
+  padding: var(--prog-space-md);
+  overflow-y: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-sm);
+}
+
+.progression-shell .prog-attribute-details__header {
+  border-bottom: 1px solid var(--prog-border);
+  padding-bottom: var(--prog-space-sm);
+}
+
+.progression-shell .prog-attribute-details__name {
+  margin: 0;
+  font-size: var(--prog-font-size-lg);
+  color: var(--prog-text-heading);
+  text-shadow: var(--prog-heading-shadow);
+}
+
+.progression-shell .prog-attribute-details__description {
+  margin: 0;
+  font-size: var(--prog-font-size-xs);
+  line-height: 1.6;
+  color: var(--prog-text);
+  text-shadow: var(--prog-text-shadow);
+  font-style: italic;
+}
+
+.progression-shell .prog-attribute-details__breakdown {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--prog-space-sm);
+  padding: var(--prog-space-sm);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--prog-radius-sm);
+  font-size: var(--prog-font-size-xs);
+}
+
+.progression-shell .prog-attribute-details__breakdown-row {
+  display: contents;
+}
+
+.progression-shell .prog-attribute-details__breakdown-row--final {
+  border-top: 1px solid var(--prog-border);
+  padding-top: var(--prog-space-xs);
+}
+
+.progression-shell .prog-attribute-details__breakdown-row > span {
+  padding: 2px 0;
+}
+
+.progression-shell .prog-attribute-details__breakdown-label {
+  color: var(--prog-text-dim);
+  font-weight: bold;
+  text-shadow: var(--prog-text-shadow);
+}
+
+.progression-shell .prog-attribute-details__breakdown-value {
+  text-align: right;
+  font-weight: bold;
+  color: var(--prog-text);
+  text-shadow: var(--prog-text-shadow);
+}
+
+.progression-shell .prog-attribute-details__breakdown-value--final {
+  font-size: var(--prog-font-size-base);
+  color: var(--prog-accent);
+  text-shadow: var(--prog-heading-shadow);
+}
+
+.progression-shell .prog-attribute-details__section {
+  margin-top: var(--prog-space-md);
+}
+
+.progression-shell .prog-attribute-details__section-title {
+  margin: 0 0 var(--prog-space-xs) 0;
+  font-size: var(--prog-font-size-sm);
+  font-weight: bold;
+  color: var(--prog-text-heading);
+  text-shadow: var(--prog-heading-shadow);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.progression-shell .prog-attribute-details__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.progression-shell .prog-attribute-details__list-item {
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text);
+  text-shadow: var(--prog-text-shadow);
+}
+
+.progression-shell .prog-attribute-details__list-item:before {
+  content: '•';
+  margin-right: var(--prog-space-xs);
+  color: var(--prog-accent);
+}
+
+.progression-shell .prog-attribute-details__guidance {
+  margin-top: auto;
+  padding: var(--prog-space-sm);
+  background: rgba(0, 170, 255, 0.08);
+  border-left: 3px solid var(--prog-accent);
+  border-radius: var(--prog-radius-sm);
+}
+
+.progression-shell .prog-attribute-details__guidance-text {
+  margin: 0;
+  font-size: var(--prog-font-size-xs);
+  line-height: 1.5;
+  color: var(--prog-text);
+  text-shadow: var(--prog-text-shadow);
+}

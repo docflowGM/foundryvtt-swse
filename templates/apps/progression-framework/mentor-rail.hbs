@@ -1,0 +1,35 @@
+<div class="prog-mentor-rail" data-mood="{{mentor.mood}}">
+  {{! Portrait — always visible }}
+  <div class="prog-mentor__portrait">
+    {{#if mentor.portrait}}
+      <img src="{{mentor.portrait}}" alt="{{mentor.name}}" width="48" height="48">
+    {{else}}
+      <i class="fas fa-user-astronaut"></i>
+    {{/if}}
+  </div>
+
+  {{! Name and title (hidden when collapsed) }}
+  <div class="prog-mentor__name">{{mentor.name}}</div>
+  <div class="prog-mentor__title">{{mentor.title}}</div>
+
+  {{! Dialogue box (hidden when collapsed) — AurebeshTranslator targets [data-mentor-dialogue] }}
+  <div class="prog-mentor__dialogue" data-mentor-dialogue>
+    <p class="prog-mentor__text{{#unless mentor.currentDialogue}} prog-mentor__text--idle{{/unless}}"
+       data-mentor-text>
+      {{#if mentor.currentDialogue}}{{mentor.currentDialogue}}{{else}}Awaiting your decision…{{/if}}
+    </p>
+  </div>
+
+  {{! Ask Mentor button (only when enabled) }}
+  {{#if mentor.askMentorEnabled}}
+    <button class="prog-btn prog-mentor__ask" data-action="ask-mentor" type="button">
+      Ask Mentor
+    </button>
+  {{/if}}
+
+  {{! Collapse button — always visible }}
+  <button class="prog-mentor__collapse" data-action="toggle-mentor" type="button"
+          title="{{#if mentorCollapsed}}Expand mentor{{else}}Collapse mentor{{/if}}">
+    <i class="fas fa-chevron-{{#if mentorCollapsed}}right{{else}}left{{/if}}"></i>
+  </button>
+</div>

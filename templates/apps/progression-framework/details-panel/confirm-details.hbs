@@ -1,0 +1,245 @@
+{{!-- Confirm Step: Details Panel --}}
+{{!-- Shows focused section details or readiness assessment --}}
+
+<div class="prog-confirm-details">
+  {{#if focusedSection}}
+
+    {{!-- IDENTITY DETAILS --}}
+    {{#if (eq focusedSection "identity")}}
+      <div class="prog-confirm-details__section">
+        <h3 class="prog-confirm-details__title">Character Identity</h3>
+        <p class="prog-confirm-details__description">
+          Your character is <strong>{{summary.identity.name}}</strong>, a <strong>{{summary.identity.species}}</strong>
+          <strong>{{summary.identity.class}}</strong> guided by <strong>{{summary.identity.mentor}}</strong>.
+        </p>
+        <p class="prog-confirm-details__note">
+          This foundation determines your abilities, progression path, and mentor. Review each section to ensure all choices align with your vision.
+        </p>
+      </div>
+    {{/if}}
+
+    {{!-- ATTRIBUTES DETAILS --}}
+    {{#if (eq focusedSection "attributes")}}
+      <div class="prog-confirm-details__section">
+        <h3 class="prog-confirm-details__title">Ability Scores</h3>
+        <p class="prog-confirm-details__description">
+          Your six core attributes have been determined by your species, class, and background choices.
+        </p>
+        <div class="prog-confirm-details__attributes">
+          <div class="prog-confirm-details__attr-row">
+            <span class="prog-confirm-details__attr-label">Strength</span>
+            <span class="prog-confirm-details__attr-value">{{summary.attributes.strength}}</span>
+          </div>
+          <div class="prog-confirm-details__attr-row">
+            <span class="prog-confirm-details__attr-label">Dexterity</span>
+            <span class="prog-confirm-details__attr-value">{{summary.attributes.dexterity}}</span>
+          </div>
+          <div class="prog-confirm-details__attr-row">
+            <span class="prog-confirm-details__attr-label">Constitution</span>
+            <span class="prog-confirm-details__attr-value">{{summary.attributes.constitution}}</span>
+          </div>
+          <div class="prog-confirm-details__attr-row">
+            <span class="prog-confirm-details__attr-label">Intelligence</span>
+            <span class="prog-confirm-details__attr-value">{{summary.attributes.intelligence}}</span>
+          </div>
+          <div class="prog-confirm-details__attr-row">
+            <span class="prog-confirm-details__attr-label">Wisdom</span>
+            <span class="prog-confirm-details__attr-value">{{summary.attributes.wisdom}}</span>
+          </div>
+          <div class="prog-confirm-details__attr-row">
+            <span class="prog-confirm-details__attr-label">Charisma</span>
+            <span class="prog-confirm-details__attr-value">{{summary.attributes.charisma}}</span>
+          </div>
+        </div>
+      </div>
+    {{/if}}
+
+    {{!-- BACKGROUND DETAILS --}}
+    {{#if (eq focusedSection "background")}}
+      <div class="prog-confirm-details__section">
+        <h3 class="prog-confirm-details__title">Your Background</h3>
+        <p class="prog-confirm-details__description">
+          <strong>{{summary.background.name}}</strong>
+        </p>
+        <p class="prog-confirm-details__note">
+          Your background has shaped your skills, starting abilities, and how others perceive you in the galaxy.
+        </p>
+      </div>
+    {{/if}}
+
+    {{!-- LANGUAGES DETAILS --}}
+    {{#if (eq focusedSection "languages")}}
+      <div class="prog-confirm-details__section">
+        <h3 class="prog-confirm-details__title">Languages Known</h3>
+        <div class="prog-confirm-details__counts">
+          <div class="prog-confirm-details__count-row">
+            <span class="prog-confirm-details__count-label">Bonus Languages:</span>
+            <span class="prog-confirm-details__count-value">{{summary.languages.bonus}}</span>
+          </div>
+          <div class="prog-confirm-details__count-row">
+            <span class="prog-confirm-details__count-label">Known Languages:</span>
+            <span class="prog-confirm-details__count-value">{{summary.languages.known}}</span>
+          </div>
+          <div class="prog-confirm-details__count-row" style="font-weight: bold;">
+            <span class="prog-confirm-details__count-label">Total:</span>
+            <span class="prog-confirm-details__count-value prog-num--pos">{{summary.languages.total}}</span>
+          </div>
+        </div>
+      </div>
+    {{/if}}
+
+    {{!-- FEATS DETAILS --}}
+    {{#if (eq focusedSection "feats")}}
+      <div class="prog-confirm-details__section">
+        <h3 class="prog-confirm-details__title">Feats Acquired</h3>
+        <div class="prog-confirm-details__counts">
+          <div class="prog-confirm-details__count-row">
+            <span class="prog-confirm-details__count-label">General Feats:</span>
+            <span class="prog-confirm-details__count-value">{{summary.feats.general}}</span>
+          </div>
+          <div class="prog-confirm-details__count-row">
+            <span class="prog-confirm-details__count-label">Class Feats:</span>
+            <span class="prog-confirm-details__count-value">{{summary.feats.class}}</span>
+          </div>
+          <div class="prog-confirm-details__count-row" style="font-weight: bold;">
+            <span class="prog-confirm-details__count-label">Total:</span>
+            <span class="prog-confirm-details__count-value prog-num--pos">{{summary.feats.total}}</span>
+          </div>
+        </div>
+      </div>
+    {{/if}}
+
+    {{!-- TALENTS DETAILS --}}
+    {{#if (eq focusedSection "talents")}}
+      <div class="prog-confirm-details__section">
+        <h3 class="prog-confirm-details__title">Talents Selected</h3>
+        <div class="prog-confirm-details__counts">
+          <div class="prog-confirm-details__count-row">
+            <span class="prog-confirm-details__count-label">Heroic Talents:</span>
+            <span class="prog-confirm-details__count-value">{{summary.talents.heroic}}</span>
+          </div>
+          <div class="prog-confirm-details__count-row">
+            <span class="prog-confirm-details__count-label">Class Talents:</span>
+            <span class="prog-confirm-details__count-value">{{summary.talents.class}}</span>
+          </div>
+          <div class="prog-confirm-details__count-row" style="font-weight: bold;">
+            <span class="prog-confirm-details__count-label">Total:</span>
+            <span class="prog-confirm-details__count-value prog-num--pos">{{summary.talents.total}}</span>
+          </div>
+        </div>
+      </div>
+    {{/if}}
+
+    {{!-- CONDITIONAL STEPS DETAILS --}}
+    {{#if (eq focusedSection "conditionalSteps")}}
+      <div class="prog-confirm-details__section">
+        <h3 class="prog-confirm-details__title">Advanced Abilities</h3>
+        <div class="prog-confirm-details__counts">
+          {{#if summary.conditionalSteps.forcePowers}}
+            <div class="prog-confirm-details__count-row">
+              <span class="prog-confirm-details__count-label">Force Powers:</span>
+              <span class="prog-confirm-details__count-value">{{summary.conditionalSteps.forcePowers}}</span>
+            </div>
+          {{/if}}
+          {{#if summary.conditionalSteps.forceSecrets}}
+            <div class="prog-confirm-details__count-row">
+              <span class="prog-confirm-details__count-label">Force Secrets:</span>
+              <span class="prog-confirm-details__count-value">{{summary.conditionalSteps.forceSecrets}}</span>
+            </div>
+          {{/if}}
+          {{#if summary.conditionalSteps.forceTechniques}}
+            <div class="prog-confirm-details__count-row">
+              <span class="prog-confirm-details__count-label">Force Techniques:</span>
+              <span class="prog-confirm-details__count-value">{{summary.conditionalSteps.forceTechniques}}</span>
+            </div>
+          {{/if}}
+          {{#if summary.conditionalSteps.starshipManeuvers}}
+            <div class="prog-confirm-details__count-row">
+              <span class="prog-confirm-details__count-label">Starship Maneuvers:</span>
+              <span class="prog-confirm-details__count-value">{{summary.conditionalSteps.starshipManeuvers}}</span>
+            </div>
+          {{/if}}
+        </div>
+      </div>
+    {{/if}}
+
+    {{!-- CREDITS DETAILS --}}
+    {{#if (eq focusedSection "credits")}}
+      <div class="prog-confirm-details__section">
+        <h3 class="prog-confirm-details__title">Starting Credits</h3>
+        {{#if creditsState.rolled}}
+          <div class="prog-confirm-details__credits-state">
+            <div class="prog-confirm-details__credits-amount">
+              <span class="prog-confirm-details__credits-label">Resolved Amount:</span>
+              <span class="prog-confirm-details__credits-value prog-num--pos">{{creditsState.amount}}</span>
+            </div>
+            <p class="prog-confirm-details__credits-formula">{{creditsState.formula}}</p>
+          </div>
+        {{else}}
+          <p class="prog-confirm-details__note">
+            You have not yet resolved your starting credits. Your credits determine initial equipment wealth.
+          </p>
+        {{/if}}
+      </div>
+    {{/if}}
+
+    {{!-- STORE DETAILS --}}
+    {{#if (eq focusedSection "store")}}
+      <div class="prog-confirm-details__section">
+        <h3 class="prog-confirm-details__title">Equipment Store</h3>
+        {{#if storeVisited}}
+          <p class="prog-confirm-details__note">You have visited the store and can return at any time before finalization.</p>
+        {{else}}
+          <p class="prog-confirm-details__note">
+            The store provides equipment options for purchase with your starting credits. Store access is optional.
+          </p>
+        {{/if}}
+      </div>
+    {{/if}}
+
+  {{else}}
+
+    {{!-- EMPTY STATE: READINESS ASSESSMENT --}}
+    <div class="prog-confirm-details__empty">
+      <div class="prog-confirm-details__readiness-header">
+        <i class="fas fa-check-circle" aria-hidden="true"></i>
+        <h3>Build Review</h3>
+      </div>
+      {{#if readiness.blockingIssues.length}}
+        <div class="prog-confirm-details__readiness-section">
+          <h4 class="prog-confirm-details__readiness-label prog-num--neg">Blocking Issues</h4>
+          <ul class="prog-confirm-details__readiness-list">
+            {{#each readiness.blockingIssues}}
+              <li>{{this}}</li>
+            {{/each}}
+          </ul>
+          <p class="prog-confirm-details__readiness-note">
+            Resolve these items to proceed to finalization.
+          </p>
+        </div>
+      {{/if}}
+      {{#if readiness.warnings.length}}
+        <div class="prog-confirm-details__readiness-section">
+          <h4 class="prog-confirm-details__readiness-label prog-num--neutral">Warnings</h4>
+          <ul class="prog-confirm-details__readiness-list">
+            {{#each readiness.warnings}}
+              <li>{{this}}</li>
+            {{/each}}
+          </ul>
+        </div>
+      {{/if}}
+      {{#if (not readiness.blockingIssues.length)}}
+        <div class="prog-confirm-details__readiness-section">
+          <p class="prog-confirm-details__readiness-success">
+            <i class="fas fa-check-circle prog-num--pos" aria-hidden="true"></i>
+            All required build elements are complete.
+          </p>
+          <p class="prog-confirm-details__readiness-note">
+            Click on any section above to review details, or proceed to finalize your character.
+          </p>
+        </div>
+      {{/if}}
+    </div>
+
+  {{/if}}
+</div>

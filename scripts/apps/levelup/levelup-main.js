@@ -144,6 +144,11 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
    * @returns {SWSELevelUpEnhanced} The level up dialog instance
    */
   static async showForActor(actor) {
+    // Feature flag: route to new ProgressionShell when enabled
+    if (game.settings?.get?.('foundryvtt-swse', 'useNewProgressionShell')) {
+      const { LevelupShell } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/levelup-shell.js');
+      return LevelupShell.open(actor);
+    }
     const dialog = new SWSELevelUpEnhanced(actor);
     dialog.render({ force: true });
     return dialog;

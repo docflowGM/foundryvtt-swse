@@ -1,0 +1,159 @@
+/**
+ * progression-shell-placeholders.css
+ *
+ * Minimal styles for Wave 0/1 placeholder regions.
+ * These are replaced by proper component CSS in Waves 2-12.
+ * Scoped to .progression-shell — no conflict with legacy shells.
+ *
+ * THEME DIRECTION applied here:
+ * - Mentor dialogue = dark reading surface (--prog-bg-read)
+ * - Details body = dark reading surface
+ * - Active step = concentrated cyan glow, not ambient
+ * - Text = pale cyan-white with dark grounding text-shadow throughout
+ * - Portrait = cyan outline glow
+ */
+
+/* =============================================================================
+ * Work Surface Placeholder
+ * ============================================================================= */
+
+.progression-shell .prog-work-placeholder {
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-lg);
+  align-items: flex-start;
+  padding: var(--prog-space-lg);
+}
+
+/* Step header: Orbitron heading + icon */
+.progression-shell .prog-work-placeholder__header {
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-md);
+  font-size: var(--prog-font-size-lg);
+  color: var(--prog-text-heading);
+  text-shadow: var(--prog-heading-shadow);
+}
+
+/* Hint text: secondary/dim with grounding */
+.progression-shell .prog-work-placeholder__hint {
+  color: var(--prog-text-dim);
+  font-size: var(--prog-font-size-sm);
+  margin: 0;
+  text-shadow: var(--prog-text-shadow);
+}
+
+/* Error banner: red with fill */
+.progression-shell .prog-work-placeholder__error {
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-sm);
+  padding: var(--prog-space-sm) var(--prog-space-md);
+  background: var(--prog-negative-bg);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: var(--prog-radius-md);
+  color: var(--prog-negative);
+  font-size: var(--prog-font-size-sm);
+  text-shadow: var(--prog-text-shadow);
+}
+
+.progression-shell .prog-work-placeholder__empty {
+  color: var(--prog-text-disabled);
+  font-style: italic;
+  text-shadow: var(--prog-text-shadow);
+}
+
+/* =============================================================================
+ * Details Panel Placeholder
+ * ============================================================================= */
+
+.progression-shell .prog-details-placeholder {
+  padding: var(--prog-space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-md);
+  height: 100%;
+}
+
+/* Section heading in details panel */
+.progression-shell .prog-details-placeholder__name {
+  font-family: var(--prog-font);
+  font-size: var(--prog-font-size-sm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--prog-text-heading);
+  border-bottom: 1px solid var(--prog-border-accent);
+  padding-bottom: var(--prog-space-sm);
+  text-shadow: var(--prog-heading-shadow);
+}
+
+/* Body content area: darkest reading surface */
+.progression-shell .prog-details-placeholder__content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  font-size: var(--prog-font-size-sm);
+  color: var(--prog-text);
+  line-height: 1.55;
+  background: var(--prog-bg-read);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+  padding: var(--prog-space-sm);
+  text-shadow: var(--prog-text-shadow);
+}
+
+/* Empty state */
+.progression-shell .prog-details-placeholder__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: var(--prog-space-lg);
+  text-align: center;
+}
+
+.progression-shell .prog-details-placeholder__empty-icon {
+  font-size: 2rem;
+  color: var(--prog-text-disabled);
+  opacity: 0.3;
+}
+
+.progression-shell .prog-details-placeholder__empty p {
+  color: var(--prog-text-dim);
+  font-size: var(--prog-font-size-sm);
+  font-style: italic;
+  margin: 0;
+  max-width: 180px;
+  text-shadow: var(--prog-text-shadow);
+}
+
+/* =============================================================================
+ * Empty State (details-panel/empty-state.hbs)
+ * ============================================================================= */
+
+.progression-shell .prog-details-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: var(--prog-space-lg);
+  text-align: center;
+  padding: var(--prog-space-xl);
+}
+
+.progression-shell .prog-details-empty-state__icon {
+  font-size: 2rem;
+  color: var(--prog-text-disabled);
+  opacity: 0.28;
+}
+
+.progression-shell .prog-details-empty-state__message {
+  color: var(--prog-text-dim);
+  font-size: var(--prog-font-size-sm);
+  font-style: italic;
+  margin: 0;
+  max-width: 200px;
+  line-height: 1.4;
+  text-shadow: var(--prog-text-shadow);
+}

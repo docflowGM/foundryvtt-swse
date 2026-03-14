@@ -1,0 +1,120 @@
+<div class="prog-nh-builder">
+
+  <div class="prog-nh-builder__baseline">
+    <h3 class="prog-nh-builder__col-title">Human Baseline</h3>
+    <ul class="prog-nh-baseline__list">
+      <li class="prog-num--zero">+0 All Attributes</li>
+      <li class="prog-num--pos">+1 Bonus Starting General Feat at Level 1</li>
+      <li class="prog-num--pos">+1 Bonus Skill Training at Level 1</li>
+    </ul>
+
+    <div class="prog-nh-sacrifice">
+      <h4 class="prog-nh-sacrifice__title">Replacement</h4>
+      <p class="prog-nh-sacrifice__help">Choose which Human benefit to sacrifice</p>
+      <label class="prog-nh-sacrifice__option">
+        <input type="radio" class="nh-sacrifice-radio" name="nh-sacrifice" value="feat"
+               {{#if (eq nearHuman.state.sacrifice "feat")}}checked{{/if}}>
+        Replace Bonus Feat
+      </label>
+      <label class="prog-nh-sacrifice__option">
+        <input type="radio" class="nh-sacrifice-radio" name="nh-sacrifice" value="skill"
+               {{#if (eq nearHuman.state.sacrifice "skill")}}checked{{/if}}>
+        Replace Skill Training
+      </label>
+    </div>
+  </div>
+
+  <div class="prog-nh-builder__center">
+    <h3 class="prog-nh-builder__col-title">Select One Near-Human Trait</h3>
+    <div class="prog-nh-traits" role="listbox">
+      {{#each nearHuman.traitsData.traits}}
+        <div class="prog-nh-trait{{#if (eq id ../nearHuman.state.traitId)}} prog-nh-trait--selected{{/if}}">
+          <button class="prog-nh-trait__btn nh-trait-btn"
+                  data-trait-id="{{id}}" type="button">
+            {{name}}
+            <i class="fas fa-chevron-right"></i>
+          </button>
+          {{#if (eq id ../nearHuman.state.traitId)}}
+            <div class="prog-nh-trait__detail">
+              <p>{{description}}</p>
+              {{#if (eq id "abilityAdjustment")}}
+                <div class="prog-nh-ability-adj">
+                  {{#each ../nearHuman.builderSummary.abilityAdjustments}}
+                    <div class="prog-nh-ability-adj__row">
+                      <span>{{this.label}}</span>
+                      <button class="nh-ability-btn" data-ability="{{this.key}}" data-delta="-2" type="button">−2</button>
+                      <span class="prog-nh-ability-adj__val {{this.cssClass}}">
+                        {{#if (gt this.value 0)}}+{{/if}}{{this.value}}
+                      </span>
+                      <button class="nh-ability-btn" data-ability="{{this.key}}" data-delta="2" type="button">+2</button>
+                    </div>
+                  {{/each}}
+                </div>
+              {{/if}}
+            </div>
+          {{/if}}
+        </div>
+      {{/each}}
+    </div>
+
+    <div class="prog-nh-variants">
+      <h4>Near-Human Variants <span class="prog-nh-variants__hint">Select up to 3 optional features.</span></h4>
+      <div class="prog-nh-variants__chips">
+        {{#each nearHuman.traitsData.variants}}
+          <button class="prog-nh-variant-chip nh-variant-chip
+                         {{#if (arrayIncludes ../nearHuman.state.variants id)}}prog-nh-variant-chip--active{{/if}}"
+                  data-variant-id="{{id}}" type="button">
+            <i class="{{#if (arrayIncludes ../nearHuman.state.variants id)}}fas fa-check-square{{else}}far fa-square{{/if}}"></i>
+            {{name}}
+          </button>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="prog-nh-status">
+      {{#if nearHuman.validation.isValid}}
+        <span class="prog-nh-status__ready">Ready to Confirm</span>
+      {{else}}
+        <span class="prog-nh-status__incomplete">Build in progress…</span>
+      {{/if}}
+    </div>
+  </div>
+
+  <div class="prog-nh-builder__summary">
+    <h3 class="prog-nh-builder__col-title">Final Summary</h3>
+
+    {{#each nearHuman.builderSummary.abilityAdjustments}}
+      <div class="prog-nh-summary__attr">
+        <span class="prog-nh-summary__attr-label">{{this.label}}</span>
+        <span class="prog-nh-summary__attr-val {{this.cssClass}}">
+          {{#if (gt this.value 0)}}+ {{this.value}}{{else if (lt this.value 0)}}− {{abs this.value}}{{else}}+ 0{{/if}}
+        </span>
+      </div>
+    {{/each}}
+
+    {{#if nearHuman.state.sacrifice}}
+      <div class="prog-nh-summary__section">Retained from Human</div>
+      <div class="prog-num--pos">
+        {{#if (eq nearHuman.state.sacrifice "feat")}}+1 Bonus Skill Training{{else}}+1 Starting General Feat{{/if}}
+      </div>
+      <div class="prog-nh-summary__section">Replaced Benefit</div>
+      <div class="prog-num--neg">
+        {{#if (eq nearHuman.state.sacrifice "feat")}}+1 Starting General Feat{{else}}+1 Bonus Skill Training{{/if}}
+        (Sacrificed)
+      </div>
+    {{/if}}
+
+    {{#if nearHuman.selectedTrait}}
+      <div class="prog-nh-summary__section">Selected Trait</div>
+      <div class="prog-num--pos">• {{nearHuman.selectedTrait.name}}</div>
+    {{/if}}
+
+    {{#if nearHuman.selectedVariants.length}}
+      <div class="prog-nh-summary__section">Variants</div>
+      {{#each nearHuman.selectedVariants}}
+        <div>• {{name}}</div>
+      {{/each}}
+    {{/if}}
+  </div>
+
+</div>

@@ -1,0 +1,197 @@
+{{!--
+  progression-shell.hbs
+  Root template for the ProgressionShell.
+
+  6 named regions — all always present:
+    mentor-rail     Always visible; collapsible to portrait strip
+    progress-rail   Step indicators
+    utility-bar     Search/filter/sort; always present; collapsible
+    work-surface    Primary step interaction area
+    details-panel   Selected item details; always mounted; empty state when nothing focused
+    action-footer   Back / Center status / Next/Confirm
+    modal-host      In-shell modal stack
+--}}
+
+<div class="progression-shell prog-holo {{#if isProcessing}}is-processing{{/if}}"
+     data-application-content>
+
+  {{!-- ======================================================================
+    MENTOR RAIL — left column
+    Always present. Collapses to portrait strip.
+  ======================================================================= --}}
+  <div data-region="mentor-rail"
+       data-collapsed="{{mentorCollapsed}}"
+       data-mood="{{mentor.mood}}">
+    {{{parts.mentorRail}}}
+  </div>{{!-- /mentor-rail --}}
+
+
+  {{!-- ======================================================================
+    PROGRESS RAIL — step indicators
+  ======================================================================= --}}
+  <div data-region="progress-rail">
+    {{{parts.progressRail}}}
+  </div>{{!-- /progress-rail --}}
+
+
+  {{!-- ======================================================================
+    MAIN COLUMN — utility-bar + content-row + action-footer
+  ======================================================================= --}}
+  <div class="prog-main-column">
+
+    {{!-- ====================================================================
+      UTILITY BAR — always present; content varies by step
+    ==================================================================== --}}
+    <div data-region="utility-bar"
+         data-collapsed="{{utilityBarCollapsed}}"
+         data-mode="{{utilityBarConfig.mode}}">
+      {{{parts.utilityBar}}}
+    </div>{{!-- /utility-bar --}}
+
+
+    {{!-- ====================================================================
+      CONTENT ROW — work-surface + details-panel
+    ==================================================================== --}}
+    <div class="prog-content-row">
+
+      {{!-- ==================================================================
+        WORK SURFACE — primary step interaction
+      ================================================================== --}}
+      <div data-region="work-surface">
+
+        {{#if workSurfaceHtml}}
+          {{{workSurfaceHtml}}}
+        {{else}}
+          <div class="prog-work-placeholder">
+            {{#if currentDescriptor}}
+              <div class="prog-work-placeholder__header prog-heading">
+                <i class="fas {{currentDescriptor.icon}}"></i>
+                {{currentDescriptor.label}}
+                {{#if currentDescriptor.isConditional}}
+                  <span class="prog-chip prog-chip--warning">
+                    Engine-Unlocked
+                  </span>
+                {{/if}}
+              </div>
+              <p class="prog-work-placeholder__hint">
+                Step {{add currentStepIndex 1}} of {{totalSteps}}
+                {{#if currentDescriptor.isConditional}}
+                  — Unlocked by: {{currentDescriptor.unlockReason}}
+                {{/if}}
+              </p>
+              {{#if lastError}}
+                <div class="prog-work-placeholder__error">
+                  <i class="fas fa-exclamation-triangle"></i>
+                  {{lastError.message}}
+                </div>
+              {{/if}}
+            {{else}}
+              <p class="prog-work-placeholder__empty">No steps available.</p>
+            {{/if}}
+          </div>
+        {{/if}}
+
+      </div>{{!-- /work-surface --}}
+
+
+      {{!-- ==================================================================
+        DETAILS PANEL — always mounted on desktop; empty state when nothing focused
+      ================================================================== --}}
+      <div data-region="details-panel">
+
+        {{#if detailsPanelHtml}}
+          {{{detailsPanelHtml}}}
+        {{else}}
+          <div class="prog-details-placeholder">
+            {{#if focusedItem}}
+              <div class="prog-details-placeholder__name prog-heading">
+                {{focusedItem.name}}
+              </div>
+              <div class="prog-details-placeholder__content">
+                <p>{{focusedItem.description}}</p>
+              </div>
+            {{else}}
+              {{#if currentDescriptor}}
+                <div class="prog-details-placeholder__empty">
+                  <i class="fas {{currentDescriptor.icon}} prog-details-placeholder__empty-icon"></i>
+                  <p>Select an item to see details.</p>
+                </div>
+              {{/if}}
+            {{/if}}
+          </div>
+        {{/if}}
+
+      </div>{{!-- /details-panel --}}
+
+    </div>{{!-- /content-row --}}
+
+
+    {{!-- ====================================================================
+      ACTION FOOTER — Back / Center / Next
+    ==================================================================== --}}
+    <div data-region="action-footer">
+
+      {{!-- Back button --}}
+      <div class="prog-footer__back">
+        <button class="prog-btn"
+                data-action="previous-step"
+                {{#unless footer.back.enabled}}disabled{{/unless}}>
+          <i class="fas fa-chevron-left"></i>
+          {{footer.back.label}}
+        </button>
+      </div>
+
+      {{!-- Center status chips --}}
+      <div class="prog-footer__center">
+        {{#each footer.center}}
+          <span class="prog-footer__center-item
+                       {{#if isBlocking}}prog-footer__center-item--blocking{{/if}}
+                       {{#if isWarning}}prog-footer__center-item--warning{{/if}}">
+            {{label}}
+          </span>
+        {{/each}}
+
+        {{!-- Blocking issues as chips --}}
+        {{#each footer.blockingIssues}}
+          <span class="prog-footer__center-item prog-footer__center-item--blocking">
+            <i class="fas fa-exclamation-circle"></i>
+            {{this}}
+          </span>
+        {{/each}}
+
+        {{!-- Warnings as chips --}}
+        {{#each footer.warnings}}
+          <span class="prog-footer__center-item prog-footer__center-item--warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            {{this}}
+          </span>
+        {{/each}}
+      </div>
+
+      {{!-- Next / Confirm button --}}
+      <div class="prog-footer__next">
+        <button class="prog-btn prog-btn--primary
+                       {{#if footer.next.isLastStep}}prog-btn--last-step{{/if}}"
+                data-action="{{#if footer.next.isLastStep}}confirm-step{{else}}next-step{{/if}}"
+                {{#unless footer.next.enabled}}disabled{{/unless}}>
+          {{footer.next.label}}
+          {{#unless footer.next.isLastStep}}
+            <i class="fas fa-chevron-right"></i>
+          {{/unless}}
+          {{#if footer.next.isLastStep}}
+            <i class="fas fa-check"></i>
+          {{/if}}
+        </button>
+      </div>
+
+    </div>{{!-- /action-footer --}}
+
+  </div>{{!-- /main-column --}}
+
+
+  {{!-- ======================================================================
+    MODAL HOST — in-shell modal stack
+  ======================================================================= --}}
+  <div data-region="modal-host"></div>
+
+</div>{{!-- /progression-shell --}}

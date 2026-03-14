@@ -1,0 +1,85 @@
+<div class="prog-background-surface">
+
+  {{!-- Header --}}
+  <div class="prog-background-header">
+    <h3 class="prog-background-title">Choose Your Background</h3>
+    <p class="prog-background-help">
+      {{#eq selectionMode "multi"}}
+        Select up to {{maxBackgrounds}} backgrounds that shaped your character.
+      {{else}}
+        Choose one background that defines your past.
+      {{/eq}}
+    </p>
+  </div>
+
+  {{!-- Search --}}
+  <div class="prog-background-search">
+    <input class="bg-search-input"
+           type="text"
+           placeholder="Search backgrounds…"
+           value="{{searchQuery}}"
+           style="width: 100%; padding: 0.5rem; border-radius: 4px; border: 1px solid var(--prog-border); background: var(--prog-bg-read);">
+  </div>
+
+  {{!-- Category Tabs --}}
+  <div class="prog-background-categories">
+    {{#each categories}}
+      <button class="prog-background-category-btn bg-category-btn
+                     {{#if isActive}}active{{/if}}"
+              data-category="{{id}}"
+              type="button">
+        <span class="prog-background-category-label">{{label}}</span>
+        <span class="prog-background-category-count">{{count}}</span>
+      </button>
+    {{/each}}
+  </div>
+
+  {{!-- Background Items --}}
+  <div class="prog-background-items">
+    {{#each backgroundsByCategory}}
+      <div class="prog-background-group">
+        <h4 class="prog-background-group-title">{{label}}</h4>
+
+        {{#each backgrounds}}
+          <button class="prog-background-item
+                         {{#if isFocused}}prog-background-item--focused{{/if}}
+                         {{#if isCommitted}}prog-background-item--committed{{/if}}"
+                  data-action="focus-item"
+                  data-item-id="{{id}}"
+                  type="button">
+
+            <div class="prog-background-item__header">
+              <div class="prog-background-item__name">{{name}}</div>
+              {{#if isCommitted}}
+                <span class="prog-background-item__committed-badge">✓</span>
+              {{/if}}
+            </div>
+
+            {{#if shortDesc}}
+              <p class="prog-background-item__desc">{{shortDesc}}</p>
+            {{/if}}
+
+            {{#if trainedSkills.length}}
+              <div class="prog-background-item__skills">
+                {{#each trainedSkills}}
+                  <span class="prog-chip prog-chip--sm">{{this}}</span>
+                {{/each}}
+                {{#if hasMore}}
+                  <span class="prog-chip prog-chip--sm prog-chip--dim">+more</span>
+                {{/if}}
+              </div>
+            {{/if}}
+
+          </button>
+        {{/each}}
+
+      </div>
+    {{else}}
+      <div class="prog-background-empty">
+        <i class="fas fa-search"></i>
+        <p>No backgrounds match your search.</p>
+      </div>
+    {{/each}}
+  </div>
+
+</div>{{!-- /background-surface --}}

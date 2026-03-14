@@ -1,0 +1,319 @@
+/* Near-Human Builder — 3-column layout for trait/sacrifice/summary */
+
+.progression-shell .prog-nh-builder {
+  display: grid;
+  grid-template-columns: 220px 1fr 220px;
+  gap: var(--prog-space-lg);
+  height: 100%;
+  padding: var(--prog-space-md);
+  overflow: hidden;
+}
+
+.progression-shell .prog-nh-builder__baseline,
+.progression-shell .prog-nh-builder__center,
+.progression-shell .prog-nh-builder__summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-sm);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.progression-shell .prog-nh-builder__col-title {
+  margin: 0 0 var(--prog-space-xs) 0;
+  font-size: var(--prog-font-size-sm);
+  font-family: var(--prog-font);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--prog-accent);
+  text-shadow: var(--prog-heading-shadow);
+}
+
+/* Baseline column */
+.progression-shell .prog-nh-baseline__list {
+  list-style: none;
+  margin: 0 0 var(--prog-space-sm) 0;
+  padding: 0;
+  font-size: var(--prog-font-size-xs);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.progression-shell .prog-nh-baseline__list li {
+  text-shadow: var(--prog-text-shadow);
+}
+
+.progression-shell .prog-nh-sacrifice {
+  padding: var(--prog-space-sm);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--prog-radius-sm);
+}
+
+.progression-shell .prog-nh-sacrifice__title {
+  margin: 0 0 var(--prog-space-xs) 0;
+  font-size: var(--prog-font-size-xs);
+  font-weight: bold;
+  color: var(--prog-text-heading);
+  text-shadow: var(--prog-heading-shadow);
+}
+
+.progression-shell .prog-nh-sacrifice__help {
+  margin: 0 0 var(--prog-space-xs) 0;
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+  font-style: italic;
+}
+
+.progression-shell .prog-nh-sacrifice__option {
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-xs);
+  font-size: var(--prog-font-size-xs);
+  margin-bottom: 4px;
+  cursor: pointer;
+  color: var(--prog-text);
+  text-shadow: var(--prog-text-shadow);
+}
+
+.progression-shell .prog-nh-sacrifice__option input {
+  cursor: pointer;
+}
+
+/* Center column — traits */
+.progression-shell .prog-nh-traits {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.progression-shell .prog-nh-trait {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.progression-shell .prog-nh-trait__btn {
+  appearance: none;
+  background: var(--prog-bg-read);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+  padding: var(--prog-space-xs) var(--prog-space-sm);
+  color: var(--prog-text);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: var(--prog-font-size-xs);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all var(--prog-transition-fast);
+  text-shadow: var(--prog-text-shadow);
+}
+
+.progression-shell .prog-nh-trait__btn:hover {
+  border-color: var(--prog-border-bright);
+}
+
+.progression-shell .prog-nh-trait__btn:focus {
+  outline: 2px solid var(--prog-accent);
+  outline-offset: -1px;
+}
+
+.progression-shell .prog-nh-trait--selected .prog-nh-trait__btn {
+  border-color: var(--prog-accent);
+  background: rgba(0, 170, 255, 0.08);
+  color: var(--prog-accent);
+  text-shadow: var(--prog-heading-shadow);
+}
+
+.progression-shell .prog-nh-trait__detail {
+  padding: var(--prog-space-xs) var(--prog-space-sm);
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: var(--prog-radius-sm);
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text);
+  text-shadow: var(--prog-text-shadow);
+}
+
+.progression-shell .prog-nh-trait__detail p {
+  margin: 0 0 var(--prog-space-xs) 0;
+  line-height: 1.4;
+}
+
+/* Ability adjustment controls */
+.progression-shell .prog-nh-ability-adj {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.progression-shell .prog-nh-ability-adj__row {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto auto;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--prog-font-size-xs);
+}
+
+.progression-shell .prog-nh-ability-adj__row > span:first-child {
+  font-weight: bold;
+}
+
+.progression-shell .prog-nh-ability-btn {
+  appearance: none;
+  background: var(--prog-bg-read);
+  border: 1px solid var(--prog-border);
+  border-radius: 2px;
+  color: var(--prog-text-dim);
+  cursor: pointer;
+  padding: 0 4px;
+  font-size: var(--prog-font-size-xs);
+  transition: all var(--prog-transition-fast);
+}
+
+.progression-shell .prog-nh-ability-btn:hover:not(:disabled) {
+  border-color: var(--prog-accent);
+  color: var(--prog-accent);
+}
+
+.progression-shell .prog-nh-ability-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.progression-shell .prog-nh-ability-adj__val {
+  text-align: center;
+  min-width: 20px;
+}
+
+/* Variants */
+.progression-shell .prog-nh-variants {
+  border-top: 1px solid var(--prog-border);
+  padding-top: var(--prog-space-sm);
+}
+
+.progression-shell .prog-nh-variants h4 {
+  margin: 0 0 var(--prog-space-xs) 0;
+  font-size: var(--prog-font-size-xs);
+  font-weight: bold;
+  color: var(--prog-text-heading);
+  text-shadow: var(--prog-heading-shadow);
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-xs);
+}
+
+.progression-shell .prog-nh-variants__hint {
+  font-size: var(--prog-font-size-xs);
+  font-weight: normal;
+  color: var(--prog-text-dim);
+  font-style: italic;
+}
+
+.progression-shell .prog-nh-variants__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.progression-shell .prog-nh-variant-chip {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px var(--prog-space-xs);
+  border-radius: var(--prog-radius-pill);
+  font-size: var(--prog-font-size-xs);
+  font-family: var(--prog-font-body);
+  border: 1px solid var(--prog-border);
+  color: var(--prog-text-dim);
+  background: rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  transition: all var(--prog-transition-fast);
+  text-shadow: var(--prog-text-shadow);
+  white-space: nowrap;
+}
+
+.progression-shell .prog-nh-variant-chip:hover {
+  border-color: var(--prog-accent);
+  color: var(--prog-accent);
+  background: rgba(0, 170, 255, 0.08);
+  text-shadow: var(--prog-heading-shadow);
+}
+
+.progression-shell .prog-nh-variant-chip--active {
+  border-color: var(--prog-accent);
+  color: var(--prog-accent);
+  background: rgba(0, 170, 255, 0.12);
+  text-shadow: var(--prog-heading-shadow);
+}
+
+/* Status */
+.progression-shell .prog-nh-status {
+  border-top: 1px solid var(--prog-border);
+  padding-top: var(--prog-space-sm);
+  font-size: var(--prog-font-size-xs);
+  font-weight: bold;
+}
+
+.progression-shell .prog-nh-status__ready {
+  color: var(--prog-positive);
+  text-shadow: var(--prog-text-shadow);
+}
+
+.progression-shell .prog-nh-status__incomplete {
+  color: var(--prog-neutral);
+  text-shadow: var(--prog-text-shadow);
+}
+
+/* Summary column */
+.progression-shell .prog-nh-summary__attr {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: var(--prog-space-sm);
+  font-size: var(--prog-font-size-xs);
+  padding: 2px 0;
+}
+
+.progression-shell .prog-nh-summary__attr-label {
+  color: var(--prog-text-dim);
+}
+
+.progression-shell .prog-nh-summary__attr-val {
+  text-align: right;
+  font-weight: bold;
+  text-shadow: var(--prog-text-shadow);
+}
+
+.progression-shell .prog-nh-summary__section {
+  margin-top: var(--prog-space-sm);
+  font-size: var(--prog-font-size-xs);
+  font-weight: bold;
+  color: var(--prog-accent);
+  text-shadow: var(--prog-heading-shadow);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.progression-shell .prog-nh-summary__section:first-child {
+  margin-top: 0;
+}
+
+.progression-shell .prog-nh-summary__trait-desc {
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+  margin-top: 2px;
+  font-style: italic;
+  line-height: 1.3;
+}
+
+/* Responsive: collapse to 1 column on narrow width */
+@media (max-width: 900px) {
+  .progression-shell .prog-nh-builder {
+    grid-template-columns: 1fr;
+  }
+}

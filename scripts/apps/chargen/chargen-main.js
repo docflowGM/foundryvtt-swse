@@ -81,6 +81,11 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
    * @returns {CharacterGenerator} The character generator dialog instance
    */
   static async open(actor) {
+    // Feature flag: route to new ProgressionShell when enabled
+    if (game.settings?.get?.('foundryvtt-swse', 'useNewProgressionShell')) {
+      const { ChargenShell } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/chargen-shell.js');
+      return ChargenShell.open(actor);
+    }
     const dialog = new CharacterGenerator(actor);
     dialog.render({ force: true });
     return dialog;

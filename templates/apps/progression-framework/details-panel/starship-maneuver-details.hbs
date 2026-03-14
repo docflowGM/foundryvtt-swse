@@ -1,0 +1,52 @@
+{{!-- Starship Maneuver Details Panel --}}
+{{!-- CRITICAL: Uses stacking model (additional uses, not unique ownership) --}}
+
+<div class="prog-starship-maneuver-details">
+  <div class="prog-starship-maneuver-details__header">
+    <h2 class="prog-starship-maneuver-details__name">{{maneuver.name}}</h2>
+    {{#if selectedCount}}
+      <span class="prog-starship-maneuver-details__selected-badge">
+        <i class="fas fa-star" aria-hidden="true"></i>
+        Selected {{selectedCount}} {{plural selectedCount "use" "uses"}}
+      </span>
+    {{/if}}
+  </div>
+
+  {{#if description}}
+    <div class="prog-starship-maneuver-details__section">
+      <h3 class="prog-starship-maneuver-details__section-title">Description</h3>
+      <p class="prog-starship-maneuver-details__description">{{description}}</p>
+    </div>
+  {{/if}}
+
+  <div class="prog-starship-maneuver-details__actions">
+    {{#if canAddMore}}
+      {{#if selectedCount}}
+        <p class="prog-starship-maneuver-details__hint">
+          <i class="fas fa-info-circle" aria-hidden="true"></i>
+          Additional uses of this maneuver can be selected.
+        </p>
+      {{else}}
+        <p class="prog-starship-maneuver-details__hint">
+          <i class="fas fa-info-circle" aria-hidden="true"></i>
+          This maneuver can be selected multiple times for additional uses.
+        </p>
+      {{/if}}
+
+      <button class="prog-btn prog-btn--primary" data-action="commit-item" data-item-id="{{maneuver.id}}" type="button">
+        <i class="fas fa-{{#if selectedCount}}plus-circle{{else}}check-circle{{/if}}"></i>
+        {{buttonLabel}}
+      </button>
+    {{else}}
+      <p class="prog-starship-maneuver-details__hint prog-starship-maneuver-details__hint--blocked">
+        <i class="fas fa-ban" aria-hidden="true"></i>
+        No more maneuver selections available.
+      </p>
+    {{/if}}
+
+    <button class="prog-btn" data-action="ask-mentor" type="button">
+      <i class="fas fa-brain" aria-hidden="true"></i>
+      Ask Mentor
+    </button>
+  </div>
+</div>

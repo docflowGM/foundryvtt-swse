@@ -1,0 +1,80 @@
+{{!-- Language Details Panel --}}
+{{!-- Shows details for focused language, selection controls, and state explanation --}}
+
+<div class="language-details-panel">
+
+  {{!-- Language Header --}}
+  <div class="details-header">
+    <h2 class="language-name">{{language.name}}</h2>
+    <div class="language-category-chip {{language.category}}">{{categoryLabel}}</div>
+  </div>
+
+  {{!-- Language Status --}}
+  <div class="language-status">
+    {{#if isKnown}}
+    <div class="status-badge known-badge">
+      <i class="fa-solid fa-check-circle"></i>
+      <span>You automatically know this language</span>
+    </div>
+    {{else if isSelected}}
+    <div class="status-badge selected-badge">
+      <i class="fa-solid fa-star"></i>
+      <span>Selected as a bonus language</span>
+    </div>
+    {{else}}
+    <div class="status-badge available-badge">
+      <i class="fa-solid fa-book-open"></i>
+      <span>Available to select</span>
+    </div>
+    {{/if}}
+  </div>
+
+  {{!-- Language Description --}}
+  {{#if language.description}}
+  <div class="language-description">
+    <h3>About This Language</h3>
+    <p>{{language.description}}</p>
+  </div>
+  {{/if}}
+
+  {{!-- Why This Language is Unavailable --}}
+  {{#if isKnown}}
+  <div class="language-note known-note">
+    <p><strong>Why it's automatic:</strong> This language comes from your species or background selection. You already know it!</p>
+  </div>
+  {{else if isSelected}}
+  <div class="language-note selected-note">
+    <p><strong>You've selected this language.</strong> Click Remove to choose a different one.</p>
+  </div>
+  {{/if}}
+
+  {{!-- Selection Controls --}}
+  <div class="details-actions">
+    {{#if isSelected}}
+    <button class="action-btn remove-btn" data-action="remove-language" data-language-id="{{language.id}}">
+      <i class="fa-solid fa-minus-circle"></i>
+      Remove Selection
+    </button>
+    {{else if canSelect}}
+    {{#if (gt remainingPicks 0)}}
+    <button class="action-btn select-btn" data-action="add-language" data-language-id="{{language.id}}">
+      <i class="fa-solid fa-plus-circle"></i>
+      Select This Language
+    </button>
+    {{else}}
+    <button class="action-btn select-btn" disabled>
+      <i class="fa-solid fa-lock"></i>
+      No Picks Remaining
+    </button>
+    {{/if}}
+    {{/if}}
+  </div>
+
+  {{!-- Remaining Picks Info --}}
+  {{#if (gt remainingPicks 0)}}
+  <div class="picks-info">
+    <p><strong>{{remainingPicks}}</strong> {{#if (eq remainingPicks 1)}}pick{{else}}picks{{/if}} remaining</p>
+  </div>
+  {{/if}}
+
+</div>

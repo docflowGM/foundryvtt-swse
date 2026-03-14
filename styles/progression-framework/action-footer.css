@@ -1,0 +1,125 @@
+/**
+ * action-footer.css
+ *
+ * Styles for the action footer region.
+ * Scoped to .progression-shell [data-region="action-footer"]
+ *
+ * Layout: Back | Center Status | Next/Confirm
+ *
+ * Semantic chip colors:
+ *   - Neutral/remaining: --prog-text-dim on dark chip
+ *   - Warning (isWarning): --prog-neutral (amber) with neutral-bg fill
+ *   - Blocking (isBlocking): --prog-negative (red) with negative-bg fill
+ */
+
+.progression-shell [data-region="action-footer"] {
+  gap: var(--prog-space-md);
+}
+
+/* Back button zone */
+.progression-shell .prog-footer__back {
+  flex: 0 0 auto;
+}
+
+/* Center status zone — takes remaining space */
+.progression-shell .prog-footer__center {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--prog-space-sm);
+  overflow: hidden;
+}
+
+/* Individual center item chips */
+.progression-shell .prog-footer__center-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--prog-space-xs);
+  padding: 3px var(--prog-space-sm);
+  border-radius: var(--prog-radius-pill);
+  font-size: var(--prog-font-size-xs);
+  font-family: var(--prog-font-body);
+  letter-spacing: 0.04em;
+  border: 1px solid var(--prog-border);
+  color: var(--prog-text-dim);
+  /* Slightly darker than footer background so chips read as distinct */
+  background: rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
+  text-shadow: var(--prog-text-shadow);
+}
+
+/* Warning chip — amber; remaining picks, not yet blocking */
+.progression-shell .prog-footer__center-item--warning {
+  border-color: rgba(245, 158, 11, 0.5);
+  color: var(--prog-neutral);
+  background: var(--prog-neutral-bg);
+  text-shadow: 0 0 4px rgba(245, 158, 11, 0.2), var(--prog-text-shadow);
+}
+
+/* Blocking chip — red; hard block, Next disabled */
+.progression-shell .prog-footer__center-item--blocking {
+  border-color: rgba(239, 68, 68, 0.5);
+  color: var(--prog-negative);
+  background: var(--prog-negative-bg);
+  text-shadow: 0 0 4px rgba(239, 68, 68, 0.2), var(--prog-text-shadow);
+}
+
+/* Blocking issue banners — appear above footer */
+.progression-shell .prog-footer__blocking {
+  position: absolute;
+  bottom: calc(var(--prog-footer-height) + 4px);
+  left: var(--prog-space-lg);
+  right: var(--prog-space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: var(--prog-z-utility);
+}
+
+.progression-shell .prog-footer__blocking-issue {
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-sm);
+  padding: var(--prog-space-xs) var(--prog-space-md);
+  border-radius: var(--prog-radius-sm);
+  font-size: var(--prog-font-size-sm);
+  background: var(--prog-negative-bg);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: var(--prog-negative);
+  text-shadow: var(--prog-text-shadow);
+}
+
+.progression-shell .prog-footer__blocking-issue i {
+  opacity: 0.85;
+  font-size: var(--prog-font-size-xs);
+}
+
+/* Warning banners — amber */
+.progression-shell .prog-footer__warning {
+  background: var(--prog-neutral-bg);
+  border-color: rgba(245, 158, 11, 0.35);
+  color: var(--prog-neutral);
+}
+
+/* Next/Confirm button zone */
+.progression-shell .prog-footer__next {
+  flex: 0 0 auto;
+}
+
+/* Last-step Confirm/Apply button — green for positive action completion */
+.progression-shell .prog-footer__next .prog-btn--last-step {
+  padding: var(--prog-space-sm) var(--prog-space-xl);
+  font-size: var(--prog-font-size-base);
+  letter-spacing: 0.1em;
+  border-color: var(--prog-positive);
+  color: var(--prog-positive);
+  background: var(--prog-positive-bg);
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.2);
+  text-shadow: 0 0 6px rgba(34, 197, 94, 0.3), var(--prog-text-shadow);
+}
+
+.progression-shell .prog-footer__next .prog-btn--last-step:hover:not(:disabled) {
+  background: rgba(34, 197, 94, 0.14);
+  box-shadow: 0 0 14px rgba(34, 197, 94, 0.35);
+}

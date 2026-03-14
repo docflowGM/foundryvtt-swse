@@ -1,0 +1,15 @@
+{{!--
+  empty-state.hbs
+  Default empty state for the details panel when nothing is focused.
+  Each step plugin provides its own empty-state message via renderDetailsPanelEmptyState().
+--}}
+<div class="prog-details-empty-state">
+  {{#if icon}}
+    <i class="fas {{icon}} prog-details-empty-state__icon"></i>
+  {{else}}
+    <i class="fas fa-circle-info prog-details-empty-state__icon"></i>
+  {{/if}}
+  <p class="prog-details-empty-state__message">
+    {{message}}
+  </p>
+</div>

@@ -1,0 +1,94 @@
+{{!-- Talent Tree Browser (Stage 1) --}}
+{{!-- Browse and select a talent tree to inspect --}}
+
+<div class="talent-work-surface talent-stage-browser">
+
+  {{!-- Header --}}
+  <div class="talent-browser-header">
+    <h3 class="talent-browser-title">
+      <i class="fa-solid fa-sitemap"></i>
+      Choose a Talent Tree
+    </h3>
+    <p class="talent-browser-hint">
+      {{#if (eq slotType "class")}}
+      Select a class-specific talent tree to explore and develop your expertise.
+      {{else}}
+      Select a heroic talent tree to develop and master a new discipline.
+      {{/if}}
+    </p>
+  </div>
+
+  {{!-- Search Bar --}}
+  <div class="talent-browser-search">
+    <input type="text" class="talent-search-input" placeholder="Search talent trees..." value="{{searchQuery}}">
+  </div>
+
+  {{!-- Suggested Trees --}}
+  {{#if suggestedTrees}}
+  <section class="talent-browser-suggested">
+    <h4 class="talent-section-title">
+      <i class="fa-solid fa-lightbulb"></i> Recommended for Your Build
+    </h4>
+    <div class="talent-tree-cards suggested-trees">
+      {{#each suggestedTrees}}
+      <button class="talent-tree-card talent-tree-card--suggested"
+              data-action="focus-tree"
+              data-tree-id="{{this._id}}">
+        <div class="talent-tree-card__content">
+          <h5 class="talent-tree-card__name">{{this.name}}</h5>
+          <p class="talent-tree-card__meta">
+            <span class="talent-tree-badge suggested-badge">
+              <i class="fa-solid fa-star"></i> Suggested
+            </span>
+          </p>
+        </div>
+        <button class="talent-tree-card__enter-btn" data-action="enter-tree" data-tree-id="{{this._id}}">
+          <i class="fa-solid fa-arrow-right"></i> Explore
+        </button>
+      </button>
+      {{/each}}
+    </div>
+  </section>
+  {{/if}}
+
+  {{!-- All Trees Grid --}}
+  <section class="talent-browser-all-trees">
+    {{#if allTrees}}
+    <div class="talent-tree-cards all-trees">
+      {{#each allTrees}}
+      <button class="talent-tree-card {{#if this.isFocused}}talent-tree-card--focused{{/if}} {{#if this.isSuggested}}talent-tree-card--suggested{{/if}}"
+              data-action="focus-tree"
+              data-tree-id="{{this._id}}">
+        <div class="talent-tree-card__content">
+          <h5 class="talent-tree-card__name">{{this.name}}</h5>
+          <p class="talent-tree-card__summary">{{this.summary}}</p>
+          <div class="talent-tree-card__meta">
+            <span class="talent-tree-badge">
+              <i class="fa-solid fa-layer-group"></i> {{this.nodeCount}} talents
+            </span>
+            {{#if (eq this.slotType "class")}}
+            <span class="talent-tree-badge class-badge">
+              <i class="fa-solid fa-lock"></i> Class
+            </span>
+            {{else}}
+            <span class="talent-tree-badge heroic-badge">
+              <i class="fa-solid fa-sparkles"></i> Heroic
+            </span>
+            {{/if}}
+          </div>
+        </div>
+        <button class="talent-tree-card__enter-btn" data-action="enter-tree" data-tree-id="{{this._id}}">
+          <i class="fa-solid fa-arrow-right"></i> Explore
+        </button>
+      </button>
+      {{/each}}
+    </div>
+    {{else}}
+    <div class="talent-empty-state">
+      <i class="fa-solid fa-hexagon-exclamation"></i>
+      <p>No talent trees available in your current context.</p>
+    </div>
+    {{/if}}
+  </section>
+
+</div>

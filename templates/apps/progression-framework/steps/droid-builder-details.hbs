@@ -1,0 +1,120 @@
+{{!-- Droid Builder Details Panel — Focused Information Surface --}}
+
+<div class="prog-droid-builder-details">
+  {{!-- BUILD SUMMARY --}}
+  <div class="details-section details-section--build-summary">
+    <h3>Build Summary</h3>
+
+    <div class="summary-grid">
+      <div class="summary-item">
+        <label>Droid Degree</label>
+        <strong>{{droidInfo.degree}}</strong>
+      </div>
+
+      <div class="summary-item">
+        <label>Size</label>
+        <strong>{{droidInfo.size}}</strong>
+      </div>
+
+      <div class="summary-item">
+        <label>Locomotion</label>
+        <span>{{#if selectedSystems.locomotion}}{{selectedSystems.locomotion.name}}{{else}}<em>Not selected</em>{{/if}}</span>
+      </div>
+
+      <div class="summary-item">
+        <label>Processor</label>
+        <span>{{#if selectedSystems.processor}}{{selectedSystems.processor.name}}{{else}}<em>Not selected</em>{{/if}}</span>
+      </div>
+
+      <div class="summary-item">
+        <label>Appendages</label>
+        <span>{{selectedSystems.appendages.length}} selected</span>
+      </div>
+
+      <div class="summary-item">
+        <label>Accessories</label>
+        <span>{{selectedSystems.accessories.length}} selected</span>
+      </div>
+    </div>
+  </div>
+
+  {{!-- SYSTEM CATEGORIES GUIDE --}}
+  <div class="details-section details-section--systems-guide">
+    <h3>System Categories</h3>
+
+    <div class="categories-list">
+      {{#each categories}}
+        <div class="category-guide">
+          <h4>
+            {{this.name}}
+            {{#if this.required}}<span class="required-label">Required</span>{{else}}<span class="optional-label">Optional</span>{{/if}}
+          </h4>
+          <p>{{this.description}}</p>
+          {{#if this.note}}
+            <p class="category-note"><em>{{this.note}}</em></p>
+          {{/if}}
+        </div>
+      {{/each}}
+    </div>
+  </div>
+
+  {{!-- RESOURCE LEDGER --}}
+  <div class="details-section details-section--budget">
+    <h3>Resource Ledger</h3>
+
+    <div class="budget-display">
+      <div class="budget-row">
+        <span class="budget-label">Base Credits</span>
+        <strong class="budget-value">{{creditsBase}} cr</strong>
+      </div>
+
+      <div class="budget-row">
+        <span class="budget-label">Spent</span>
+        <span class="budget-value">{{creditsSpent}} cr</span>
+      </div>
+
+      <div class="budget-row {{#if (lt creditsRemaining 0)}}budget-row--overbudget{{/if}}">
+        <span class="budget-label">Remaining</span>
+        <strong class="budget-value {{#if (lt creditsRemaining 0)}}budget-value--warning{{/if}}">{{creditsRemaining}} cr</strong>
+      </div>
+    </div>
+
+    {{#if (lt creditsRemaining 0)}}
+      <div class="budget-warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p>Your droid build exceeds available credits. Remove systems to proceed.</p>
+      </div>
+    {{else if (gt creditsRemaining 0)}}
+      <div class="budget-note">
+        <p>You have {{creditsRemaining}} credits available for additional systems or upgrades.</p>
+      </div>
+    {{else}}
+      <div class="budget-complete">
+        <i class="fas fa-check-circle"></i>
+        <p>Budget fully allocated to droid systems.</p>
+      </div>
+    {{/if}}
+  </div>
+
+  {{!-- BUILD TOTALS --}}
+  <div class="details-section details-section--totals">
+    <h3>Build Totals</h3>
+
+    <div class="totals-grid">
+      <div class="total-item">
+        <label>Total Cost</label>
+        <strong>{{totalCost}} cr</strong>
+      </div>
+
+      <div class="total-item">
+        <label>Total Weight</label>
+        <strong>{{totalWeight}} kg</strong>
+      </div>
+
+      <div class="total-item">
+        <label>Systems Count</label>
+        <strong>{{systemCount}}</strong>
+      </div>
+    </div>
+  </div>
+</div>

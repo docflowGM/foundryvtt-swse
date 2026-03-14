@@ -31,7 +31,27 @@
     "styles/swse-holo.css",
     "styles/core/variables.css",
     "scripts/ui/dialogue/dialogue-effects.css",
-    "scripts/ui/action-palette/action-palette.css"
+    "scripts/ui/action-palette/action-palette.css",
+    "styles/progression-framework/progression-framework.css",
+    "styles/progression-framework/holo-theme.css",
+    "styles/progression-framework/progression-shell.css",
+    "styles/progression-framework/action-footer.css",
+    "styles/progression-framework/progression-shell-placeholders.css",
+    "styles/progression-framework/mentor-rail.css",
+    "styles/progression-framework/progress-rail.css",
+    "styles/progression-framework/utility-bar.css",
+    "styles/progression-framework/steps/species-step.css",
+    "styles/progression-framework/steps/near-human-builder.css",
+    "styles/progression-framework/steps/class-step.css",
+    "styles/progression-framework/steps/l1-survey-step.css",
+    "styles/progression-framework/steps/attribute-step.css",
+    "styles/progression-framework/steps/background-step.css",
+    "styles/progression-framework/steps/language-step.css",
+    "styles/progression-framework/steps/feat-step.css",
+    "styles/progression-framework/steps/talent-step.css",
+    "styles/progression-framework/steps/force-power-step.css",
+    "styles/progression-framework/steps/confirm-step.css",
+    "styles/progression-framework/steps/droid-builder-step.css"
   ],
   "languages": [
     {

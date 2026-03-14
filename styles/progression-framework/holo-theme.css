@@ -1,0 +1,476 @@
+/**
+ * holo-theme.css
+ *
+ * Full holo aesthetic for the SWSE Progression Framework.
+ * Applied via .prog-holo class on the shell root element.
+ *
+ * Depends on: progression-framework.css (CSS variables)
+ *
+ * VISUAL DIRECTION:
+ * - Dark bulkhead / datapad foundation (near-black blue-steel)
+ * - Cyan holo overlays — framing, active elements, selected state
+ * - Crisp readable text — pale cyan-white on very dark surfaces
+ * - Concentrated glow — on borders and active elements ONLY
+ * - Controlled interior — reading areas have no ambient glow
+ * - Semantic number colors applied globally
+ *
+ * GLOW DISCIPLINE:
+ * - Heavy glow: active step, selected card, focused button, mentor aura
+ * - Moderate glow: shell framing, region borders, active button
+ * - None: panel reading areas, card interior text, paragraph backgrounds
+ */
+
+/* =============================================================================
+ * Shell Root — dark bulkhead container
+ * ============================================================================= */
+
+.progression-shell.prog-holo {
+  background: var(--prog-bg-dark);
+  color: var(--prog-text);
+  font-family: var(--prog-font-body);
+  /* Border glow only — no inset bloom on interior */
+  border: 1px solid var(--prog-border-accent);
+  box-shadow: var(--prog-accent-glow);
+}
+
+/* =============================================================================
+ * Scanline Overlay — very subtle texture, pointer-events none
+ * ============================================================================= */
+
+.prog-holo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0, 170, 255, 0.008) 3px,
+    rgba(0, 170, 255, 0.008) 4px
+  );
+  pointer-events: none;
+  z-index: var(--prog-z-overlay);
+}
+
+/* =============================================================================
+ * Holo Panels — shared dark surface styles
+ *
+ * .prog-panel        standard region/card surface
+ * .prog-panel--read  reading surface (dialogue, descriptions) — darkest
+ * .prog-panel--raised  elevated within-card panel (stat blocks)
+ * ============================================================================= */
+
+.prog-holo .prog-panel {
+  background: var(--prog-bg-surface);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-md);
+}
+
+.prog-holo .prog-panel--read {
+  background: var(--prog-bg-read);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+}
+
+.prog-holo .prog-panel--raised {
+  background: var(--prog-bg-raised);
+  border: 1px solid var(--prog-border-subtle);
+  border-radius: var(--prog-radius-sm);
+}
+
+/* =============================================================================
+ * Holo Headings / Labels
+ *
+ * text-shadow uses --prog-heading-shadow: controlled glow PLUS dark anchor.
+ * This is what makes headings read as "holo projection" without washing out.
+ * ============================================================================= */
+
+.prog-holo .prog-heading {
+  font-family: var(--prog-font);
+  font-size: var(--prog-font-size-sm);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--prog-accent);
+  text-shadow: var(--prog-heading-shadow);
+}
+
+.prog-holo .prog-label {
+  font-family: var(--prog-font-body);
+  font-size: var(--prog-font-size-sm);
+  color: var(--prog-text-dim);
+  letter-spacing: 0.04em;
+  text-shadow: var(--prog-text-shadow);
+}
+
+/* =============================================================================
+ * Body Text Grounding
+ *
+ * Applied to any element that wraps paragraph text in the shell.
+ * text-shadow grounds the text against dark backgrounds.
+ * ============================================================================= */
+
+.prog-holo p,
+.prog-holo li,
+.prog-holo td,
+.prog-holo .prog-body-text {
+  text-shadow: var(--prog-text-shadow);
+  line-height: 1.5;
+}
+
+/* =============================================================================
+ * Holo Buttons
+ * ============================================================================= */
+
+.prog-holo .prog-btn {
+  font-family: var(--prog-font);
+  font-size: var(--prog-font-size-sm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: var(--prog-space-sm) var(--prog-space-lg);
+  border: 1px solid var(--prog-border-bright);
+  border-radius: var(--prog-radius-sm);
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--prog-text-bright);
+  cursor: pointer;
+  transition: all var(--prog-transition-base);
+  outline: none;
+  text-shadow: var(--prog-text-shadow);
+}
+
+.prog-holo .prog-btn:hover {
+  border-color: var(--prog-accent);
+  color: var(--prog-accent);
+  box-shadow: var(--prog-accent-glow-soft);
+  background: rgba(0, 170, 255, 0.08);
+  text-shadow: var(--prog-heading-shadow);
+}
+
+.prog-holo .prog-btn:disabled,
+.prog-holo .prog-btn[disabled] {
+  opacity: 0.3;
+  cursor: not-allowed;
+  border-color: var(--prog-border);
+  color: var(--prog-text-disabled);
+  box-shadow: none;
+  background: transparent;
+  text-shadow: none;
+}
+
+.prog-holo .prog-btn--primary {
+  border-color: var(--prog-accent);
+  color: var(--prog-accent);
+  background: rgba(0, 170, 255, 0.08);
+  /* Glow on border only — not flooding the button face */
+  box-shadow: inset 0 0 0 1px rgba(0, 170, 255, 0.15), var(--prog-accent-glow-soft);
+  text-shadow: var(--prog-heading-shadow);
+}
+
+.prog-holo .prog-btn--primary:hover:not(:disabled) {
+  background: rgba(0, 170, 255, 0.16);
+  box-shadow: var(--prog-accent-glow);
+}
+
+.prog-holo .prog-btn--danger {
+  border-color: var(--prog-negative);
+  color: var(--prog-negative);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.prog-holo .prog-btn--danger:hover:not(:disabled) {
+  background: var(--prog-negative-bg);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.35);
+}
+
+/* =============================================================================
+ * Holo Cards
+ *
+ * Card faces use --prog-bg-surface (dark navy).
+ * Glow is concentrated on the border when focused/selected.
+ * Idle cards have no ambient glow — they are inert until interacted with.
+ * ============================================================================= */
+
+.prog-holo .prog-card {
+  background: var(--prog-bg-surface);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-md);
+  padding: var(--prog-space-md);
+  cursor: pointer;
+  transition: border-color var(--prog-transition-base),
+              background var(--prog-transition-base),
+              box-shadow var(--prog-transition-base),
+              transform var(--prog-transition-fast);
+  position: relative;
+  overflow: hidden;
+  /* No ambient glow on idle cards */
+}
+
+/* Sheen sweep on hover — polish without glow */
+.prog-holo .prog-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 170, 255, 0.03),
+    transparent
+  );
+  transition: left var(--prog-transition-slow);
+  pointer-events: none;
+}
+
+.prog-holo .prog-card:hover::before {
+  left: 160%;
+}
+
+.prog-holo .prog-card:hover {
+  border-color: var(--prog-border-bright);
+  background: var(--prog-bg-hover);
+  transform: translateY(-1px);
+  /* Glow on the border edge, not flooding the face */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 170, 255, 0.12);
+}
+
+/* Focused = single-clicked, details panel showing — glow on border */
+.prog-holo .prog-card--focused {
+  border-color: var(--prog-accent);
+  background: var(--prog-bg-selected);
+  box-shadow: var(--prog-accent-glow-heavy);
+}
+
+/* Committed = locked in — green border glow */
+.prog-holo .prog-card--committed {
+  border-color: var(--prog-positive);
+  background: rgba(34, 197, 94, 0.06);
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.25);
+}
+
+.prog-holo .prog-card--disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* =============================================================================
+ * Semantic Value Colors — globally enforced
+ *
+ * Used on number/stat displays anywhere in the progression framework.
+ * text-shadow grounds the colored text for visibility on dark surfaces.
+ * ============================================================================= */
+
+.prog-holo .prog-value--positive {
+  color: var(--prog-positive);
+  text-shadow: 0 0 6px rgba(34, 197, 94, 0.3), var(--prog-text-shadow);
+}
+
+.prog-holo .prog-value--negative {
+  color: var(--prog-negative);
+  text-shadow: 0 0 6px rgba(239, 68, 68, 0.3), var(--prog-text-shadow);
+}
+
+.prog-holo .prog-value--neutral {
+  color: var(--prog-neutral);
+  text-shadow: 0 0 6px rgba(245, 158, 11, 0.25), var(--prog-text-shadow);
+}
+
+/* Auto-prefix for positive values */
+.prog-holo .prog-value--positive::before { content: '+'; }
+
+/* =============================================================================
+ * Holo Input / Search
+ * ============================================================================= */
+
+.prog-holo .prog-input {
+  background: var(--prog-bg-read);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+  color: var(--prog-text);
+  font-family: var(--prog-font-body);
+  font-size: var(--prog-font-size-base);
+  padding: var(--prog-space-xs) var(--prog-space-md);
+  outline: none;
+  transition: border-color var(--prog-transition-base), box-shadow var(--prog-transition-base);
+  width: 100%;
+  text-shadow: var(--prog-text-shadow);
+}
+
+.prog-holo .prog-input:focus {
+  border-color: var(--prog-accent);
+  box-shadow: 0 0 0 2px rgba(0, 170, 255, 0.18);
+}
+
+.prog-holo .prog-input::placeholder {
+  color: var(--prog-text-disabled);
+  text-shadow: none;
+}
+
+/* =============================================================================
+ * Holo Scrollbars
+ * ============================================================================= */
+
+.prog-holo ::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.prog-holo ::-webkit-scrollbar-track {
+  background: var(--prog-bg-floor);
+}
+
+.prog-holo ::-webkit-scrollbar-thumb {
+  background: var(--prog-border-bright);
+  border-radius: var(--prog-radius-pill);
+}
+
+.prog-holo ::-webkit-scrollbar-thumb:hover {
+  background: var(--prog-accent);
+}
+
+/* =============================================================================
+ * Mentor Rail — Mood Accents
+ *
+ * Mood affects the right-edge border color and a concentrated inset shadow.
+ * Uses concrete RGBA values per mood (NOT rgba(var()) which is invalid CSS).
+ * Glow is on the border/edge only — not flooding the interior.
+ * ============================================================================= */
+
+/* Default state (neutral) */
+.prog-holo [data-region="mentor-rail"] {
+  border-right-color: var(--prog-mood-neutral);
+  box-shadow: inset -3px 0 12px var(--prog-mood-neutral-shadow);
+  transition: border-color var(--prog-transition-mentor),
+              box-shadow var(--prog-transition-mentor);
+}
+
+.prog-holo [data-region="mentor-rail"][data-mood="neutral"] {
+  border-right-color: var(--prog-mood-neutral);
+  box-shadow: inset -3px 0 12px var(--prog-mood-neutral-shadow);
+}
+
+.prog-holo [data-region="mentor-rail"][data-mood="encouraging"] {
+  border-right-color: var(--prog-mood-encouraging);
+  box-shadow: inset -3px 0 12px var(--prog-mood-encouraging-shadow);
+}
+
+.prog-holo [data-region="mentor-rail"][data-mood="cautionary"] {
+  border-right-color: var(--prog-mood-cautionary);
+  box-shadow: inset -3px 0 12px var(--prog-mood-cautionary-shadow);
+}
+
+.prog-holo [data-region="mentor-rail"][data-mood="celebratory"] {
+  border-right-color: var(--prog-mood-celebratory);
+  box-shadow: inset -3px 0 12px var(--prog-mood-celebratory-shadow);
+}
+
+/* =============================================================================
+ * Holo Loading Pulse
+ * ============================================================================= */
+
+.prog-holo .prog-loading {
+  animation: prog-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes prog-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+/* =============================================================================
+ * Holo Separator
+ * ============================================================================= */
+
+.prog-holo .prog-separator {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--prog-border-accent),
+    transparent
+  );
+  border: none;
+  margin: var(--prog-space-md) 0;
+}
+
+/* =============================================================================
+ * Holo Tooltip
+ * ============================================================================= */
+
+.prog-holo .prog-tooltip {
+  position: absolute;
+  z-index: var(--prog-z-tooltip);
+  background: var(--prog-bg-surface);
+  border: 1px solid var(--prog-border-accent);
+  border-radius: var(--prog-radius-md);
+  padding: var(--prog-space-sm) var(--prog-space-md);
+  font-size: var(--prog-font-size-sm);
+  color: var(--prog-text);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7), var(--prog-accent-glow-soft);
+  max-width: 260px;
+  pointer-events: none;
+  text-shadow: var(--prog-text-shadow);
+}
+
+/* =============================================================================
+ * Holo Tag / Chip
+ * ============================================================================= */
+
+.prog-holo .prog-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--prog-space-xs);
+  padding: 2px var(--prog-space-sm);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-pill);
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+  background: rgba(0, 0, 0, 0.35);
+  letter-spacing: 0.04em;
+  text-shadow: var(--prog-text-shadow);
+}
+
+.prog-holo .prog-chip--active {
+  border-color: var(--prog-accent);
+  color: var(--prog-accent);
+  background: rgba(0, 170, 255, 0.08);
+  text-shadow: var(--prog-heading-shadow);
+}
+
+.prog-holo .prog-chip--positive {
+  border-color: var(--prog-positive);
+  color: var(--prog-positive);
+  background: var(--prog-positive-bg);
+  text-shadow: 0 0 4px rgba(34, 197, 94, 0.2), var(--prog-text-shadow);
+}
+
+.prog-holo .prog-chip--warning {
+  border-color: var(--prog-neutral);
+  color: var(--prog-neutral);
+  background: var(--prog-neutral-bg);
+  text-shadow: 0 0 4px rgba(245, 158, 11, 0.2), var(--prog-text-shadow);
+}
+
+.prog-holo .prog-chip--error {
+  border-color: var(--prog-negative);
+  color: var(--prog-negative);
+  background: var(--prog-negative-bg);
+  text-shadow: 0 0 4px rgba(239, 68, 68, 0.2), var(--prog-text-shadow);
+}
+
+/* =============================================================================
+ * Prerequisites — met / unmet (for details panel, feat/talent cards)
+ * ============================================================================= */
+
+.prog-holo .prog-prereq--met {
+  color: var(--prog-positive);
+  text-shadow: 0 0 4px rgba(34, 197, 94, 0.25), var(--prog-text-shadow);
+}
+
+.prog-holo .prog-prereq--unmet {
+  color: var(--prog-negative);
+  text-shadow: 0 0 4px rgba(239, 68, 68, 0.25), var(--prog-text-shadow);
+}

@@ -1,0 +1,342 @@
+/* Background Step — category-aware browsing with multi-select support */
+
+.progression-shell .prog-background-surface {
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-md);
+  padding: var(--prog-space-md);
+  overflow-y: auto;
+  height: 100%;
+}
+
+.progression-shell .prog-background-header {
+  border-bottom: 1px solid var(--prog-border);
+  padding-bottom: var(--prog-space-md);
+}
+
+.progression-shell .prog-background-title {
+  margin: 0 0 var(--prog-space-xs) 0;
+  font-size: var(--prog-font-size-lg);
+  color: var(--prog-text-heading);
+  text-shadow: var(--prog-heading-shadow);
+  font-weight: bold;
+}
+
+.progression-shell .prog-background-help {
+  margin: 0;
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+  line-height: 1.5;
+}
+
+/* Search */
+.progression-shell .prog-background-search {
+  display: flex;
+  gap: var(--prog-space-sm);
+}
+
+.progression-shell .prog-background-search input {
+  flex: 1;
+  padding: var(--prog-space-xs) var(--prog-space-sm) !important;
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text) !important;
+  background: rgba(0, 0, 0, 0.3) !important;
+  border: 1px solid var(--prog-border) !important;
+  border-radius: var(--prog-radius-sm) !important;
+}
+
+.progression-shell .prog-background-search input::placeholder {
+  color: var(--prog-text-dim);
+}
+
+/* Category Tabs */
+.progression-shell .prog-background-categories {
+  display: flex;
+  gap: var(--prog-space-xs);
+  padding: var(--prog-space-sm);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--prog-radius-sm);
+  overflow-x: auto;
+}
+
+.progression-shell .prog-background-category-btn {
+  appearance: none;
+  background: var(--prog-bg-read);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+  padding: var(--prog-space-xs) var(--prog-space-sm);
+  color: var(--prog-text-dim);
+  font-size: var(--prog-font-size-xs);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all var(--prog-transition-fast);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-xs);
+}
+
+.progression-shell .prog-background-category-btn:hover {
+  border-color: var(--prog-border-bright);
+}
+
+.progression-shell .prog-background-category-btn.active {
+  border-color: var(--prog-accent);
+  background: rgba(0, 170, 255, 0.12);
+  color: var(--prog-accent);
+  text-shadow: var(--prog-heading-shadow);
+}
+
+.progression-shell .prog-background-category-count {
+  font-size: var(--prog-font-size-xs);
+  color: inherit;
+  opacity: 0.7;
+}
+
+/* Background Items */
+.progression-shell .prog-background-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-lg);
+  overflow-y: auto;
+  flex: 1;
+}
+
+.progression-shell .prog-background-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-xs);
+}
+
+.progression-shell .prog-background-group-title {
+  margin: 0;
+  font-size: var(--prog-font-size-sm);
+  font-weight: bold;
+  color: var(--prog-accent);
+  text-shadow: var(--prog-heading-shadow);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.progression-shell .prog-background-item {
+  appearance: none;
+  background: var(--prog-bg-read);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+  padding: var(--prog-space-sm);
+  cursor: pointer;
+  transition: all var(--prog-transition-fast);
+  text-align: left;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-xs);
+}
+
+.progression-shell .prog-background-item:hover {
+  border-color: var(--prog-border-bright);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.progression-shell .prog-background-item:focus {
+  outline: 2px solid var(--prog-accent);
+  outline-offset: -1px;
+}
+
+.progression-shell .prog-background-item--focused {
+  border-color: var(--prog-accent);
+  background: rgba(0, 170, 255, 0.08);
+  box-shadow: 0 0 6px rgba(0, 170, 255, 0.3);
+}
+
+.progression-shell .prog-background-item--committed {
+  border-color: var(--prog-positive);
+  background: rgba(0, 255, 128, 0.08);
+}
+
+.progression-shell .prog-background-item__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--prog-space-sm);
+}
+
+.progression-shell .prog-background-item__name {
+  font-weight: bold;
+  font-size: var(--prog-font-size-sm);
+  color: var(--prog-text-heading);
+  text-shadow: var(--prog-heading-shadow);
+  flex: 1;
+}
+
+.progression-shell .prog-background-item__committed-badge {
+  color: var(--prog-positive);
+  font-weight: bold;
+  font-size: var(--prog-font-size-base);
+  text-shadow: var(--prog-text-shadow);
+  flex-shrink: 0;
+}
+
+.progression-shell .prog-background-item__desc {
+  margin: 0;
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+  line-height: 1.4;
+  text-shadow: var(--prog-text-shadow);
+}
+
+.progression-shell .prog-background-item__skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.progression-shell .prog-chip--sm {
+  font-size: var(--prog-font-size-xs);
+  padding: 2px 6px;
+}
+
+.progression-shell .prog-chip--dim {
+  opacity: 0.6;
+}
+
+.progression-shell .prog-background-empty {
+  grid-column: 1 / -1;
+  padding: var(--prog-space-lg);
+  text-align: center;
+  color: var(--prog-text-dim);
+  font-style: italic;
+}
+
+.progression-shell .prog-background-empty i {
+  display: block;
+  font-size: 2rem;
+  margin-bottom: var(--prog-space-sm);
+  opacity: 0.5;
+}
+
+/* Background Details Panel */
+.progression-shell .prog-background-details {
+  padding: var(--prog-space-md);
+  overflow-y: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-sm);
+}
+
+.progression-shell .prog-background-details__header {
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-sm);
+  border-bottom: 1px solid var(--prog-border);
+  padding-bottom: var(--prog-space-sm);
+}
+
+.progression-shell .prog-background-details__name {
+  margin: 0;
+  font-size: var(--prog-font-size-lg);
+  color: var(--prog-text-heading);
+  text-shadow: var(--prog-heading-shadow);
+  flex: 1;
+}
+
+.progression-shell .prog-background-details__description {
+  margin: 0;
+  font-size: var(--prog-font-size-xs);
+  line-height: 1.6;
+  color: var(--prog-text);
+  text-shadow: var(--prog-text-shadow);
+  font-style: italic;
+}
+
+.progression-shell .prog-background-details__section {
+  margin-top: var(--prog-space-md);
+}
+
+.progression-shell .prog-background-details__section-title {
+  margin: 0 0 var(--prog-space-xs) 0;
+  font-size: var(--prog-font-size-sm);
+  font-weight: bold;
+  color: var(--prog-text-heading);
+  text-shadow: var(--prog-heading-shadow);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.progression-shell .prog-background-details__subsection {
+  margin-top: var(--prog-space-sm);
+}
+
+.progression-shell .prog-background-details__subsection-title {
+  margin: 0 0 var(--prog-space-xs) 0;
+  font-size: var(--prog-font-size-xs);
+  font-weight: bold;
+  color: var(--prog-accent);
+  text-shadow: var(--prog-heading-shadow);
+}
+
+.progression-shell .prog-background-details__skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--prog-space-xs);
+}
+
+.progression-shell .prog-background-details__bonus-lang {
+  margin: 0;
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text);
+  text-shadow: var(--prog-text-shadow);
+  padding: var(--prog-space-xs);
+  background: rgba(0, 170, 255, 0.08);
+  border-left: 3px solid var(--prog-accent);
+  border-radius: var(--prog-radius-sm);
+}
+
+.progression-shell .prog-background-details__no-grants {
+  margin: 0;
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+  font-style: italic;
+  text-shadow: var(--prog-text-shadow);
+}
+
+.progression-shell .prog-background-details__status {
+  padding: var(--prog-space-sm);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--prog-radius-sm);
+  border-left: 3px solid var(--prog-border-bright);
+}
+
+.progression-shell .prog-background-details__status--committed {
+  border-left-color: var(--prog-positive);
+  background: rgba(0, 255, 128, 0.08);
+}
+
+.progression-shell .prog-background-details__status-text {
+  margin: 0;
+  font-size: var(--prog-font-size-xs);
+  font-weight: bold;
+  color: var(--prog-text);
+  text-shadow: var(--prog-text-shadow);
+}
+
+.progression-shell .prog-background-details__source {
+  margin: 0;
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+  text-shadow: var(--prog-text-shadow);
+}
+
+.progression-shell .prog-background-details__actions {
+  display: flex;
+  gap: var(--prog-space-sm);
+  margin-top: auto;
+}
+
+.progression-shell .prog-background-details__actions .prog-btn {
+  flex: 1;
+  font-size: var(--prog-font-size-xs);
+}
