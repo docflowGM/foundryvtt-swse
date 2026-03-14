@@ -21,6 +21,9 @@ import { FeatSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progr
 import { ClassFeatRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/class-feat-registry.js";
 import { CAPABILITY_SLUGS } from "/systems/foundryvtt-swse/scripts/constants/capability-slugs.js";
 
+// PHASE 7: Mentor enrichment integration
+import { MentorInteractionIntegration } from "/systems/foundryvtt-swse/scripts/apps/levelup/mentor-interaction-integration.js";
+
 /**
  * Calculate feat/talent suggestions during chargen
  * Uses BuildIntent (which includes L1 mentor survey biases) to score feats/talents
@@ -104,6 +107,30 @@ export async function calculateChargenSuggestions(items, chargenContext, itemTyp
           persist: true
         });
 }
+
+    // PHASE 7: Enrich suggestions with mentor advice if mentor is available
+    if (chargenContext.mentor && chargenContext.mentor.key) {
+      try {
+        SWSELogger.log(`[CHARGEN-SUGGESTIONS] Enriching ${suggestedItems.length} suggestions with mentor reasoning...`);
+        const enrichedItems = [];
+        for (const item of suggestedItems) {
+          const context = itemType === 'feat' ? 'feat_selection' : 'talent_selection';
+          const enriched = await MentorInteractionIntegration.enrichMentorSuggestion(
+            chargenContext.actor || tempActor,
+            chargenContext.mentor,
+            item,
+            context,
+            { pendingData }
+          );
+          enrichedItems.push(enriched);
+        }
+        SWSELogger.log(`[CHARGEN-SUGGESTIONS] Mentor enrichment complete - ${enrichedItems.length} items enriched`);
+        return enrichedItems;
+      } catch (err) {
+        SWSELogger.warn(`[CHARGEN-SUGGESTIONS] Mentor enrichment failed, using original suggestions:`, err);
+        return suggestedItems; // Graceful fallback to original suggestions
+      }
+    }
 
     SWSELogger.log(`[CHARGEN-SUGGESTIONS] calculateChargenSuggestions() COMPLETE - ${suggestedItems.length} items scored`);
     return suggestedItems;
@@ -259,6 +286,20 @@ export async function _onSelectFeat(event) {
     }
   }
 
+  // Phase 2: VALIDATOR WIRING - Validate feat against feat slots
+  if (!this.freeBuild && (this.characterData.featSlots && this.characterData.featSlots.length > 0)) {
+    const availableSlot = this.characterData.featSlots.find(s => !s.consumed);
+    if (availableSlot) {
+      const validation = await FeatSlotValidator.validateFeatForSlot(feat, availableSlot, this.actor);
+      if (!validation.valid) {
+        SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Feat slot validation FAILED for "${feat.name}": ${validation.message}`);
+        ui.notifications.warn(`Cannot select "${feat.name}": ${validation.message}`);
+        return;
+      }
+      SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectFeat: Feat slot validation PASSED for "${feat.name}"`);
+    }
+  }
+
   // Check if this is a Skill Focus feat
   const featSlug = feat.system?.slug || feat.name?.toLowerCase().replace(/\s+/g, '-');
   if (featSlug === CAPABILITY_SLUGS.SKILL_FOCUS || feat.name.toLowerCase().includes('skill focus')) {
@@ -268,6 +309,22 @@ export async function _onSelectFeat(event) {
     // DEFENSIVE CLONE: Prevent mutation of cached compendium data
     this.characterData.feats.push(foundry.utils.deepClone(feat));
     ui.notifications.info(`Selected feat: ${feat.name}`);
+
+    // PHASE 7: Record mentor decision for feat selection
+    try {
+      if (this.mentor) {
+        await MentorInteractionIntegration.recordMentorDecision(
+          this.actor || this._createTempActorForValidation(),
+          this.mentor,
+          feat,
+          'feat_selection'
+        );
+        SWSELogger.log(`[CHARGEN-FEATS-TALENTS] Mentor decision recorded for feat: ${feat.name}`);
+      }
+    } catch (err) {
+      SWSELogger.warn(`[CHARGEN-FEATS-TALENTS] Failed to record mentor decision for feat:`, err);
+      // Gracefully continue - mentor recording failure doesn't block feat selection
+    }
   }
 
   // If opened from character sheet "Add Feat" button, add to actor and close
@@ -652,6 +709,18 @@ export async function _onSelectTalent(event) {
           ui.notifications.warn(`Cannot select "${talentToAdd.name}" from Block & Deflect: ${assessment.missingPrereqs.join(', ')}`);
           return;
         }
+
+        // Phase 2: VALIDATOR WIRING - Validate talent against talent slots
+        if (this.characterData.talentSlots && this.characterData.talentSlots.length > 0) {
+          const availableSlot = this.characterData.talentSlots.find(s => !s.consumed);
+          if (availableSlot) {
+            const validation = TalentSlotValidator.validateTalentForSlot(talentToAdd, availableSlot, this.characterData.unlockedTrees || [], this.characterData);
+            if (!validation.valid) {
+              ui.notifications.warn(`Cannot select "${talentToAdd.name}" from Block & Deflect: ${validation.message}`);
+              return;
+            }
+          }
+        }
       }
     }
 
@@ -741,9 +810,39 @@ export async function _onSelectTalent(event) {
       }
     }
 
+    // Phase 2: VALIDATOR WIRING - Validate talent against talent slots
+    if (!this.freeBuild && (this.characterData.talentSlots && this.characterData.talentSlots.length > 0)) {
+      const availableSlot = this.characterData.talentSlots.find(s => !s.consumed);
+      if (availableSlot) {
+        const validation = TalentSlotValidator.validateTalentForSlot(tal, availableSlot, this.characterData.unlockedTrees || [], this.characterData);
+        if (!validation.valid) {
+          SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectTalent: Talent slot validation FAILED for "${tal.name}": ${validation.message}`);
+          ui.notifications.warn(`Cannot select "${tal.name}": ${validation.message}`);
+          return;
+        }
+        SWSELogger.log(`[CHARGEN-FEATS-TALENTS] _onSelectTalent: Talent slot validation PASSED for "${tal.name}"`);
+      }
+    }
+
     // DEFENSIVE CLONE: Prevent mutation of cached compendium data
     this.characterData.talents.push(foundry.utils.deepClone(tal));
     ui.notifications.info(`Selected talent: ${tal.name}`);
+
+    // PHASE 7: Record mentor decision for talent selection
+    try {
+      if (this.mentor) {
+        await MentorInteractionIntegration.recordMentorDecision(
+          this.actor || this._createTempActorForValidation(),
+          this.mentor,
+          tal,
+          'talent_selection'
+        );
+        SWSELogger.log(`[CHARGEN-FEATS-TALENTS] Mentor decision recorded for talent: ${tal.name}`);
+      }
+    } catch (err) {
+      SWSELogger.warn(`[CHARGEN-FEATS-TALENTS] Failed to record mentor decision for talent:`, err);
+      // Gracefully continue - mentor recording failure doesn't block talent selection
+    }
   }
 
   // If opened from character sheet "Add Talent" button, add to actor and close
@@ -809,7 +908,70 @@ export function _getFeatsNeeded() {
 }
 
 /**
+ * Build the items list for tempActor validation.
+ * Extracted as helper to ensure deterministic behavior across all item collection methods.
+ * @private
+ * @returns {Array<Object>} List of items in deterministic order
+ */
+function _buildTempActorItems(characterData, classFeatures) {
+  const items = [];
+
+  // Add auto-granted class features first (in deterministic order)
+  if (classFeatures && classFeatures.length > 0) {
+    for (const feature of classFeatures) {
+      items.push({
+        type: 'feat',
+        name: feature.name,
+        system: feature.system || {}
+      });
+    }
+  }
+
+  // Add feats
+  if (characterData.feats) {
+    for (const feat of characterData.feats) {
+      items.push({
+        type: 'feat',
+        name: feat.name || feat,
+        system: feat.system || {}
+      });
+    }
+  }
+
+  // Add talents
+  if (characterData.talents) {
+    for (const talent of characterData.talents) {
+      items.push({
+        type: 'talent',
+        name: talent.name || talent,
+        system: {
+          tree: getTalentTreeName(talent) || talent.system?.talent_tree || 'Unknown',
+          prerequisite: talent.system?.prerequisite || '',
+          benefit: talent.system?.benefit || '',
+          special: talent.system?.special || '',
+          uses: talent.system?.uses || { current: 0, max: 0, perEncounter: false, perDay: false }
+        }
+      });
+    }
+  }
+
+  // Add classes
+  if (characterData.classes) {
+    for (const cls of characterData.classes) {
+      items.push({
+        type: 'class',
+        name: cls.name || cls,
+        system: cls.system || { level: 1 }
+      });
+    }
+  }
+
+  return items;
+}
+
+/**
  * Create a temporary actor-like object for prerequisite validation during character generation
+ * DETERMINISM: All items are built via _buildTempActorItems() to ensure consistent behavior
  */
 export function _createTempActorForValidation() {
   // Ensure abilities are calculated
@@ -817,6 +979,9 @@ export function _createTempActorForValidation() {
 
   // Get starting class features (e.g., Force Sensitivity from Jedi)
   const classFeatures = this._getStartingClassFeatures();
+
+  // Build items list once for use in all item collection methods
+  const builtItems = _buildTempActorItems(this.characterData, classFeatures);
 
   // Create a mock actor object with the structure expected by PrerequisiteValidator
   const tempActor = {
@@ -836,171 +1001,9 @@ export function _createTempActorForValidation() {
       }
     },
     items: {
-      filter: (filterFn) => {
-        const items = [];
-
-        // Add auto-granted class features
-        if (classFeatures && classFeatures.length > 0) {
-          for (const feature of classFeatures) {
-            items.push({
-              type: 'feat',
-              name: feature.name,
-              system: feature.system || {}
-            });
-          }
-        }
-
-        // Add feats
-        if (this.characterData.feats) {
-          for (const feat of this.characterData.feats) {
-            items.push({
-              type: 'feat',
-              name: feat.name || feat,
-              system: feat.system || {}
-            });
-          }
-        }
-
-        // Add talents
-        if (this.characterData.talents) {
-          for (const talent of this.characterData.talents) {
-            items.push({
-              type: 'talent',
-              name: talent.name || talent,
-              system: {
-                tree: getTalentTreeName(talent) || talent.system?.talent_tree || 'Unknown',
-                prerequisite: talent.system?.prerequisite || '',
-                benefit: talent.system?.benefit || '',
-                special: talent.system?.special || '',
-                uses: talent.system?.uses || { current: 0, max: 0, perEncounter: false, perDay: false }
-              }
-            });
-          }
-        }
-
-        // Add classes
-        if (this.characterData.classes) {
-          for (const cls of this.characterData.classes) {
-            items.push({
-              type: 'class',
-              name: cls.name || cls,
-              system: cls.system || { level: 1 }
-            });
-          }
-        }
-
-        return items.filter(filterFn);
-      },
-      some: (filterFn) => {
-        const items = [];
-
-        // Add auto-granted class features
-        if (classFeatures && classFeatures.length > 0) {
-          for (const feature of classFeatures) {
-            items.push({
-              type: 'feat',
-              name: feature.name,
-              system: feature.system || {}
-            });
-          }
-        }
-
-        // Add feats
-        if (this.characterData.feats) {
-          for (const feat of this.characterData.feats) {
-            items.push({
-              type: 'feat',
-              name: feat.name || feat,
-              system: feat.system || {}
-            });
-          }
-        }
-
-        // Add talents
-        if (this.characterData.talents) {
-          for (const talent of this.characterData.talents) {
-            items.push({
-              type: 'talent',
-              name: talent.name || talent,
-              system: {
-                tree: getTalentTreeName(talent) || talent.system?.talent_tree || 'Unknown',
-                prerequisite: talent.system?.prerequisite || '',
-                benefit: talent.system?.benefit || '',
-                special: talent.system?.special || '',
-                uses: talent.system?.uses || { current: 0, max: 0, perEncounter: false, perDay: false }
-              }
-            });
-          }
-        }
-
-        // Add classes
-        if (this.characterData.classes) {
-          for (const cls of this.characterData.classes) {
-            items.push({
-              type: 'class',
-              name: cls.name || cls,
-              system: cls.system || { level: 1, forceSensitive: cls.system?.forceSensitive || false }
-            });
-          }
-        }
-
-        return items.some(filterFn);
-      },
-      find: (filterFn) => {
-        const items = [];
-
-        // Add auto-granted class features
-        if (classFeatures && classFeatures.length > 0) {
-          for (const feature of classFeatures) {
-            items.push({
-              type: 'feat',
-              name: feature.name,
-              system: feature.system || {}
-            });
-          }
-        }
-
-        // Add feats
-        if (this.characterData.feats) {
-          for (const feat of this.characterData.feats) {
-            items.push({
-              type: 'feat',
-              name: feat.name || feat,
-              system: feat.system || {}
-            });
-          }
-        }
-
-        // Add talents
-        if (this.characterData.talents) {
-          for (const talent of this.characterData.talents) {
-            items.push({
-              type: 'talent',
-              name: talent.name || talent,
-              system: {
-                tree: getTalentTreeName(talent) || talent.system?.talent_tree || 'Unknown',
-                prerequisite: talent.system?.prerequisite || '',
-                benefit: talent.system?.benefit || '',
-                special: talent.system?.special || '',
-                uses: talent.system?.uses || { current: 0, max: 0, perEncounter: false, perDay: false }
-              }
-            });
-          }
-        }
-
-        // Add classes
-        if (this.characterData.classes) {
-          for (const cls of this.characterData.classes) {
-            items.push({
-              type: 'class',
-              name: cls.name || cls,
-              system: cls.system || { level: 1, forceSensitive: cls.system?.forceSensitive || false }
-            });
-          }
-        }
-
-        return items.find(filterFn);
-      }
+      filter: (filterFn) => builtItems.filter(filterFn),
+      some: (filterFn) => builtItems.some(filterFn),
+      find: (filterFn) => builtItems.find(filterFn)
     }
   };
 

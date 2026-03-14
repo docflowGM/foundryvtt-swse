@@ -766,16 +766,19 @@ export class CharacterTemplates {
     }
 
     // Store complete template info in actor flags for later reference
-    await actor.setFlag('foundryvtt-swse', 'appliedTemplate', {
-      id: templateData.id || templateData._templateId,
-      name: templateData.name || templateData._templateName,
-      class: templateData.class || templateData.className,
-      archetype: templateData.archetype || templateData._templateArchetype,
-      description: templateData.description || templateData._templateDescription || '',
-      notes: templateData.notes || templateData._templateNotes || '',
-      equipment: templateData.equipment || templateData._templateEquipment || [],
-      quote: templateData.quote || templateData._templateQuote || ''
-    });
+    // Route through ActorEngine for mutation authority
+    await ActorEngine.updateActor(actor, {
+      'flags.foundryvtt-swse.appliedTemplate': {
+        id: templateData.id || templateData._templateId,
+        name: templateData.name || templateData._templateName,
+        class: templateData.class || templateData.className,
+        archetype: templateData.archetype || templateData._templateArchetype,
+        description: templateData.description || templateData._templateDescription || '',
+        notes: templateData.notes || templateData._templateNotes || '',
+        equipment: templateData.equipment || templateData._templateEquipment || [],
+        quote: templateData.quote || templateData._templateQuote || ''
+      }
+    }, { source: 'chargen-template-application', skipValidation: true });
 
     ui.notifications.info(`Character created from template: ${templateData.name}`);
   }

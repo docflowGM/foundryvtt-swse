@@ -57,7 +57,7 @@ Hooks.once("init", () => {
 
 
 // ==========================================================
-// HANDLEBARS RANGE HELPER (IMMEDIATE REGISTRATION)
+// HANDLEBARS HELPERS (IMMEDIATE REGISTRATION)
 // ==========================================================
 if (!Handlebars.helpers.range) {
   Handlebars.registerHelper("range", function(start, end) {
@@ -66,5 +66,19 @@ if (!Handlebars.helpers.range) {
       arr.push(i);
     }
     return arr;
+  });
+}
+
+// Multiply helper for confidence bar width calculation
+if (!Handlebars.helpers.mul) {
+  Handlebars.registerHelper("mul", function(a, b) {
+    return (a * b);
+  });
+}
+
+// Round to percentage helper for confidence display
+if (!Handlebars.helpers.roundPercent) {
+  Handlebars.registerHelper("roundPercent", function(num) {
+    return Math.round((num || 0) * 100);
   });
 }

@@ -14,9 +14,12 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { getClassLevel, getCharacterClasses } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-shared.js";
 import { getTalentTrees } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
+import { TalentCadenceEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/talent-cadence-engine.js";
 
 /**
  * Calculate available talents at the current heroic level
+ * PHASE 2: Uses TalentCadenceEngine for authoritative talent progression
+ *
  * @param {Actor} actor - The character actor
  * @returns {number} Number of talents available at current heroic level (0 or 1)
  */
@@ -24,16 +27,18 @@ export function getTalentCountAtHeroicLevel(actor) {
   if (!actor) {return 0;}
 
   const totalLevel = actor.system?.details?.level || 1;
-  const isOddLevel = totalLevel % 2 === 1;
+  const grants = TalentCadenceEngine.grantsHeroicTalent(totalLevel);
 
-  SWSELogger.log(`[DUAL-TALENTS] getTalentCountAtHeroicLevel: level ${totalLevel}, isOdd: ${isOddLevel}`);
+  SWSELogger.log(`[DUAL-TALENTS] getTalentCountAtHeroicLevel: level ${totalLevel}, grants: ${grants}`);
 
-  // Talents only at odd levels: 1, 3, 5, 7, 9, 11, 13, 15, 17, 19
-  return isOddLevel ? 1 : 0;
+  // Use TalentCadenceEngine to determine talent grants (handles RAW + house rules)
+  return grants ? 1 : 0;
 }
 
 /**
  * Calculate available talents from class progression
+ * PHASE 2: Uses TalentCadenceEngine for authoritative talent progression
+ *
  * @param {Object} selectedClass - The class item being leveled
  * @param {Actor} actor - The character actor
  * @returns {number} Number of talents from this class at its current level
@@ -41,19 +46,19 @@ export function getTalentCountAtHeroicLevel(actor) {
 export function getTalentCountAtClassLevel(selectedClass, actor) {
   if (!selectedClass) {return 0;}
 
-  const classLevel = getClassLevel(actor, selectedClass.name) + 1; // +1 for pending level
-  const isOddLevel = classLevel % 2 === 1;
-
-  SWSELogger.log(`[DUAL-TALENTS] getTalentCountAtClassLevel: class "${selectedClass.name}" level ${classLevel}, isOdd: ${isOddLevel}`);
-
   // Nonheroic classes don't grant talents
   if (selectedClass.system?.isNonheroic) {
     SWSELogger.log(`[DUAL-TALENTS] getTalentCountAtClassLevel: "${selectedClass.name}" is nonheroic, returning 0`);
     return 0;
   }
 
-  // Talents only at odd class levels: 1, 3, 5, 7, 9, 11, 13, 15, 17, 19
-  return isOddLevel ? 1 : 0;
+  const classLevel = getClassLevel(actor, selectedClass.name); // Current level of this class
+  const grants = TalentCadenceEngine.grantsClassTalent(classLevel + 1, selectedClass.system?.isNonheroic);
+
+  SWSELogger.log(`[DUAL-TALENTS] getTalentCountAtClassLevel: class "${selectedClass.name}" level ${classLevel + 1}, grants: ${grants}`);
+
+  // Use TalentCadenceEngine to determine talent grants (handles RAW + house rules)
+  return grants;
 }
 
 /**

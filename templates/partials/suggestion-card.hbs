@@ -62,6 +62,48 @@
       <p class="suggestion-card-description">{{description}}</p>
       {{/if}}
 
+      <!-- Explanation (if available) -->
+      {{#if explanation}}
+      <div class="suggestion-card-explanation">
+        {{#if explanation.short}}
+        <p class="explanation-short">{{explanation.short}}</p>
+        {{/if}}
+        {{#if explanation.long}}
+        <p class="explanation-long">{{explanation.long}}</p>
+        {{/if}}
+      </div>
+      {{/if}}
+
+      <!-- Reasons (if available) -->
+      {{#if reasons}}
+      <div class="suggestion-card-reasons">
+        <div class="reasons-header">Why this suggestion:</div>
+        <ul class="reasons-list">
+          {{#each reasons as |reason|}}
+          <li class="reason-item" data-code="{{reason.code}}">
+            {{#if reason.strength}}
+            <span class="reason-strength" title="Strength: {{reason.strength}}">
+              {{#if (gte reason.strength 4)}}★★★{{else if (gte reason.strength 2)}}★★{{else}}★{{/if}}
+            </span>
+            {{/if}}
+            <span class="reason-text">{{reason.text}}</span>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+      {{/if}}
+
+      <!-- Confidence Indicator (if available) -->
+      {{#if confidence}}
+      <div class="suggestion-card-confidence">
+        <span class="confidence-label">Confidence:</span>
+        <div class="confidence-bar">
+          <div class="confidence-fill" style="width: {{mul confidence 100}}%"></div>
+        </div>
+        <span class="confidence-percent">{{roundPercent confidence}}%</span>
+      </div>
+      {{/if}}
+
       <!-- Additional Details -->
       {{#if details}}
       <div class="suggestion-card-details">

@@ -131,4 +131,60 @@ export default class SWSEApplicationV2 extends HandlebarsApplicationMixin(Applic
       content.addEventListener(type, handler, options);
     }
   }
+
+  /**
+   * Managed Event Listener System - Phase 6 Consolidation
+   * CANONICAL: Use this to bind listeners safely with automatic cleanup
+   *
+   * Replaces direct addEventListener calls with tracked listeners that are
+   * automatically cleaned up before re-render to prevent listener accumulation.
+   *
+   * Usage in _onRender():
+   *   this._bindTrackedListeners([
+   *     { selector: '.btn-save', event: 'click', handler: this._onSave },
+   *     { selector: '.input-name', event: 'change', handler: this._onChangeName },
+   *   ]);
+   *
+   * @param {Array<Object>} bindings - Array of { selector, event, handler } objects
+   */
+  _bindTrackedListeners(bindings = []) {
+    const root = this.element;
+    if (!root) {
+      this._log('_bindTrackedListeners: element not available');
+      return;
+    }
+
+    // Initialize tracking array if needed
+    if (!this._eventListeners) {
+      this._eventListeners = [];
+    }
+
+    // Clean up previous listeners
+    this._eventListeners.forEach(({ el, event, handler }) => {
+      el.removeEventListener(event, handler);
+    });
+    this._eventListeners = [];
+
+    // Bind new listeners with tracking
+    bindings.forEach(({ selector, event, handler }) => {
+      const nodeList = root.querySelectorAll(selector);
+      nodeList.forEach(el => {
+        const boundHandler = handler.bind(this);
+        el.addEventListener(event, boundHandler);
+        this._eventListeners.push({ el, event, handler: boundHandler });
+      });
+    });
+  }
+
+  /**
+   * Clean up all tracked listeners manually (if needed before close)
+   * Normally not necessary; listeners are cleaned in _bindTrackedListeners
+   */
+  _clearTrackedListeners() {
+    if (!this._eventListeners) return;
+    this._eventListeners.forEach(({ el, event, handler }) => {
+      el.removeEventListener(event, handler);
+    });
+    this._eventListeners = [];
+  }
 }

@@ -56,6 +56,10 @@ import {
   selectMulticlassFeat
 } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-feats.js";
 
+// Import feat validation
+import { FeatSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-slot-validator.js";
+import { FeatSlotSchema } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-slot-schema.js";
+
 // Import talent module functions
 import {
   getsTalent,
@@ -105,6 +109,9 @@ import { decayAllMentorCommitments, updateAllMentorMemories } from "/systems/fou
 
 // Import mentor wishlist integration
 import { MentorWishlistIntegration } from "/systems/foundryvtt-swse/scripts/engine/suggestion/MentorWishlistIntegration.js";
+
+// PHASE 4: Import mentor interaction orchestrator integration
+import { MentorInteractionIntegration } from "/systems/foundryvtt-swse/scripts/apps/levelup/mentor-interaction-integration.js";
 
 // V2 API base class
 import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
@@ -212,6 +219,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     this.forcePowerData = null;
     this.activeTags = []; // Track active tag filters
     this.freeBuild = false; // Free Build mode - skips validation
+    this.availableFeatSlots = []; // Phase 2 FIX: Track available feat slots
 
     // PHASE B: Performance optimization - render debouncing
     this._pendingRender = false;
@@ -262,56 +270,40 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
   /**
    * PHASE B: Comprehensive event listener binding (all listeners tracked)
-   * Replaces inline addEventListener calls from _onRender (original lines 464-519)
+   * Uses consolidated _bindTrackedListeners from base class (Phase 6)
    */
   _bindEventListenersComprehensive() {
-    // Clear previous listeners
-    this._eventListeners.forEach(({ el, event, handler }) => {
-      el.removeEventListener(event, handler);
-    });
-    this._eventListeners = [];
-
-    const root = this.element;
-    const qsa = (el, sel) => el.querySelectorAll(sel);
-
-    const addListener = (selector, eventName, handler) => {
-      qsa(root, selector).forEach(el => {
-        const boundHandler = handler.bind(this);
-        el.addEventListener(eventName, boundHandler);
-        this._eventListeners.push({ el, event: eventName, handler: boundHandler });
-      });
-    };
-
-    // All listeners from original _onRender (lines 464-519)
-    addListener('.select-class-btn', 'click', this._onSelectClass);
-    addListener('.class-choice-btn', 'click', this._onSelectClass);
-    addListener('.show-prestige-btn', 'click', this._onShowPrestigeClasses);
-    addListener('.back-to-base-classes', 'click', this._onBackToBaseClasses);
-    addListener('.select-feat-btn', 'click', this._onSelectMulticlassFeat);
-    addListener('.select-skill-btn', 'click', this._onSelectMulticlassSkill);
-    addListener('.ability-increase-btn', 'click', this._onAbilityIncrease);
-    addListener('.ask-mentor-attribute', 'click', this._onAskMentorAttributeSuggestion);
-    addListener('.select-bonus-feat', 'click', this._onSelectBonusFeat);
-    addListener('.select-force-power', 'click', this._onSelectForcePower);
-    addListener('.select-talent-tree', 'click', this._onSelectTalentTree);
-    addListener('.next-step', 'click', this._onNextStep);
-    addListener('.prev-step', 'click', this._onPrevStep);
-    addListener('.skip-step', 'click', this._onSkipStep);
-    addListener('.free-build-toggle', 'change', this._onToggleFreeBuild);
-    addListener('.complete-levelup', 'click', this._onCompleteLevelUp);
-    addListener('.category-header', 'click', this._onToggleFeatCategory);
-    addListener('.feat-search-input', 'input', this._onFeatSearch);
-    addListener('.clear-search-btn', 'click', this._onClearSearch);
-    addListener('.clear-filters-btn', 'click', this._onClearAllFilters);
-    addListener('.show-unavailable-toggle', 'change', this._onToggleShowUnavailable);
-    addListener('.feat-tag', 'click', this._onClickFeatTag);
-    addListener('.show-prestige-roadmap', 'click', this._onShowPrestigeRoadmap);
-    addListener('.show-gm-debug-panel', 'click', this._onShowGMDebugPanel);
-    addListener('.ask-mentor-class-suggestion', 'click', this._onAskMentorClassSuggestion);
-    addListener('.ask-mentor-feat-suggestion', 'click', this._onAskMentorFeatSuggestion);
-    addListener('.ask-mentor-talent-suggestion', 'click', this._onAskMentorTalentSuggestion);
-    addListener('.ask-mentor-force-power-suggestion', 'click', this._onAskMentorForcePowerSuggestion);
-    addListener('.cancel-levelup', 'click', this._onCancelLevelUp);
+    this._bindTrackedListeners([
+      { selector: '.select-class-btn', event: 'click', handler: this._onSelectClass },
+      { selector: '.class-choice-btn', event: 'click', handler: this._onSelectClass },
+      { selector: '.show-prestige-btn', event: 'click', handler: this._onShowPrestigeClasses },
+      { selector: '.back-to-base-classes', event: 'click', handler: this._onBackToBaseClasses },
+      { selector: '.select-feat-btn', event: 'click', handler: this._onSelectMulticlassFeat },
+      { selector: '.select-skill-btn', event: 'click', handler: this._onSelectMulticlassSkill },
+      { selector: '.ability-increase-btn', event: 'click', handler: this._onAbilityIncrease },
+      { selector: '.ask-mentor-attribute', event: 'click', handler: this._onAskMentorAttributeSuggestion },
+      { selector: '.select-bonus-feat', event: 'click', handler: this._onSelectBonusFeat },
+      { selector: '.select-force-power', event: 'click', handler: this._onSelectForcePower },
+      { selector: '.select-talent-tree', event: 'click', handler: this._onSelectTalentTree },
+      { selector: '.next-step', event: 'click', handler: this._onNextStep },
+      { selector: '.prev-step', event: 'click', handler: this._onPrevStep },
+      { selector: '.skip-step', event: 'click', handler: this._onSkipStep },
+      { selector: '.free-build-toggle', event: 'change', handler: this._onToggleFreeBuild },
+      { selector: '.complete-levelup', event: 'click', handler: this._onCompleteLevelUp },
+      { selector: '.category-header', event: 'click', handler: this._onToggleFeatCategory },
+      { selector: '.feat-search-input', event: 'input', handler: this._onFeatSearch },
+      { selector: '.clear-search-btn', event: 'click', handler: this._onClearSearch },
+      { selector: '.clear-filters-btn', event: 'click', handler: this._onClearAllFilters },
+      { selector: '.show-unavailable-toggle', event: 'change', handler: this._onToggleShowUnavailable },
+      { selector: '.feat-tag', event: 'click', handler: this._onClickFeatTag },
+      { selector: '.show-prestige-roadmap', event: 'click', handler: this._onShowPrestigeRoadmap },
+      { selector: '.show-gm-debug-panel', event: 'click', handler: this._onShowGMDebugPanel },
+      { selector: '.ask-mentor-class-suggestion', event: 'click', handler: this._onAskMentorClassSuggestion },
+      { selector: '.ask-mentor-feat-suggestion', event: 'click', handler: this._onAskMentorFeatSuggestion },
+      { selector: '.ask-mentor-talent-suggestion', event: 'click', handler: this._onAskMentorTalentSuggestion },
+      { selector: '.ask-mentor-force-power-suggestion', event: 'click', handler: this._onAskMentorForcePowerSuggestion },
+      { selector: '.cancel-levelup', event: 'click', handler: this._onCancelLevelUp }
+    ]);
   }
 
   /**
@@ -398,6 +390,8 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     if (data.getsBonusFeat && !this.featData) {
       // Load feats asynchronously if needed
       await this._loadFeats();
+      // Phase 2 FIX: Initialize feat slots when feat selection step is reached
+      this._initializeFeatSlots();
     }
     // Pass categorized feats to template
     data.featCategories = this.featData?.categories || [];
@@ -460,6 +454,29 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
     data.showMulticlassBonus = isMulticlassing && isBase;
     data.getsTalent = this.selectedClass && getsTalent(this.selectedClass, this.actor);
+
+    // Phase 4: Generate level-up reflection and trajectory advice for summary step
+    if (this.currentStep === 'summary') {
+      try {
+        // Generate mentor reflection on the selections made
+        const reflection = await MentorInteractionIntegration.generateLevelupReflection(
+          this.actor,
+          this.mentor,
+          this._buildPendingData()
+        );
+        data.levelupReflection = reflection;
+
+        // Get mentor's trajectory/priority advice for next progression
+        const trajectory = await MentorInteractionIntegration.getTrajectoryAdvice(
+          this.actor,
+          this.mentor
+        );
+        data.mentorTrajectory = trajectory;
+      } catch (err) {
+        SWSELogger.warn('[LEVELUP] Failed to generate reflection/trajectory:', err);
+        // Graceful fallback: continue without reflection if generation fails
+      }
+    }
 
     return data;
   }
@@ -620,17 +637,36 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       // Get mentor context considering wishlist
       const mentorContext = MentorWishlistIntegration.getMentorWishlistContext(topSuggestion, this.actor, this.mentor);
 
+      // PHASE 4: Enrich suggestion with mentor interaction orchestrator reasoning
+      const enrichedSuggestion = await MentorInteractionIntegration.enrichMentorSuggestion(
+        this.actor,
+        this.mentor,
+        topSuggestion,
+        'feat_selection',
+        { pendingData: this._buildPendingData() }
+      );
+
       // Show mentor dialog with suggestion (expects class key like "Jedi")
-      const result = await MentorSuggestionDialog.show(this.currentMentorClass, topSuggestion, 'feat_selection');
+      const result = await MentorSuggestionDialog.show(this.currentMentorClass, enrichedSuggestion, 'feat_selection');
 
       if (result && result.applied) {
         // Auto-select the feat
         const featId = topSuggestion._id;
         await this._onSelectBonusFeat({ currentTarget: { dataset: { featId } } });
 
+        // Record mentor decision for memory tracking
+        await MentorInteractionIntegration.recordMentorDecision(
+          this.actor,
+          this.mentor,
+          topSuggestion,
+          'feat_selection'
+        );
+
         // Show mentor context if available
         if (mentorContext) {
           ui.notifications.info(mentorContext);
+        } else if (enrichedSuggestion.mentorAdvice) {
+          ui.notifications.info(enrichedSuggestion.mentorAdvice);
         } else {
           ui.notifications.info(`${this.mentor.name} suggests: ${topSuggestion.name}`);
         }
@@ -719,12 +755,29 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
       // Get mentor context considering wishlist
       const mentorContext = MentorWishlistIntegration.getMentorWishlistContext(topSuggestion, this.actor, this.mentor);
 
+      // PHASE 4: Enrich suggestion with mentor interaction orchestrator reasoning
+      const enrichedSuggestion = await MentorInteractionIntegration.enrichMentorSuggestion(
+        this.actor,
+        this.mentor,
+        topSuggestion,
+        'talent_selection',
+        { pendingData }
+      );
+
       // Show mentor dialog with suggestion (expects class key like "Jedi")
-      const result = await MentorSuggestionDialog.show(this.currentMentorClass, topSuggestion, 'talent_selection');
+      const result = await MentorSuggestionDialog.show(this.currentMentorClass, enrichedSuggestion, 'talent_selection');
 
       if (result && result.applied) {
         // Auto-select the talent
         await this._selectTalent(topSuggestion.name);
+
+        // Record mentor decision for memory tracking
+        await MentorInteractionIntegration.recordMentorDecision(
+          this.actor,
+          this.mentor,
+          topSuggestion,
+          'talent_selection'
+        );
 
         // Show mentor context if available
         if (mentorContext) {
@@ -884,6 +937,70 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
   }
 
   // ========================================
+  // FEAT SLOT MANAGEMENT (Phase 2 FIX)
+  // ========================================
+
+  /**
+   * Calculate and initialize available feat slots for this level-up
+   * Mirrors the approach in chargen but for the current levelup level
+   */
+  _initializeFeatSlots() {
+    // Initialize feat slots array if not present
+    if (!this.availableFeatSlots) {
+      this.availableFeatSlots = [];
+    }
+
+    const newLevel = this.actor.system.level + 1;
+
+    // Check if this level grants a bonus feat from the selected class
+    if (this.selectedClass) {
+      const classDoc = this.actor.items.find(i => i.type === 'class' && i.name === this.selectedClass.name);
+      if (classDoc) {
+        const levelProgression = classDoc.system?.levelProgression || [];
+        const levelData = levelProgression.find(lp => lp.level === newLevel);
+        if (levelData && levelData.features) {
+          const featFeature = levelData.features.find(f => f.type === 'feat_choice');
+          if (featFeature) {
+            // This level grants a class bonus feat slot
+            const slot = FeatSlotSchema.createClassSlot(this.selectedClass._id, newLevel);
+            if (!this.availableFeatSlots.find(s => s.levelGranted === newLevel && s.slotType === 'class')) {
+              this.availableFeatSlots.push(slot);
+              SWSELogger.log(`[LevelUp] Initialized class bonus feat slot for level ${newLevel}`);
+            }
+          }
+        }
+      }
+    }
+
+    // Multiclass bonus feat is a heroic slot
+    // (This would be determined by multiclass rules, but for now handled separately)
+  }
+
+  /**
+   * Get next available feat slot (not yet consumed)
+   * @returns {Object|null} Next available slot or null if none
+   */
+  _getAvailableFeatSlot() {
+    if (!this.availableFeatSlots || this.availableFeatSlots.length === 0) {
+      return null;
+    }
+    return this.availableFeatSlots.find(s => !s.consumed);
+  }
+
+  /**
+   * Mark a feat slot as consumed
+   * @param {Object} slot - Feat slot to mark consumed
+   * @param {string} featId - ID of the selected feat
+   */
+  _consumeFeatSlot(slot, featId) {
+    if (!slot) {return;}
+    const idx = this.availableFeatSlots.indexOf(slot);
+    if (idx >= 0) {
+      this.availableFeatSlots[idx] = FeatSlotSchema.consumeSlot(slot, featId);
+    }
+  }
+
+  // ========================================
   // FEAT LOADING AND SELECTION
   // ========================================
 
@@ -947,6 +1064,21 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     if (alreadySelected && !isRepeatable) {
       ui.notifications.warn(`You've already selected "${feat.name}" this level!`);
       return;
+    }
+
+    // Phase 2 FIX: FEAT SLOT VALIDATION - Validate feat against available slots
+    if (!this.freeBuild && this.availableFeatSlots && this.availableFeatSlots.length > 0) {
+      const availableSlot = this._getAvailableFeatSlot();
+      if (availableSlot) {
+        const validation = await FeatSlotValidator.validateFeatForSlot(feat, availableSlot, this.actor);
+        if (!validation.valid) {
+          SWSELogger.log(`[LevelUp] Feat slot validation FAILED for "${feat.name}": ${validation.message}`);
+          ui.notifications.warn(`Cannot select "${feat.name}": ${validation.message}`);
+          return;
+        }
+        SWSELogger.log(`[LevelUp] Feat slot validation PASSED for "${feat.name}"`);
+        this._consumeFeatSlot(availableSlot, feat._id);
+      }
     }
 
     // Check if this feat requires a dialog for selection
@@ -1343,6 +1475,20 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     if (alreadyHas) {
       ui.notifications.warn(`You already have the feat "${feat.name}"!`);
       return;
+    }
+
+    // Phase 2 FIX: FEAT SLOT VALIDATION for multiclass bonus feat
+    // Multiclass feat is a heroic (general) slot
+    if (!this.freeBuild) {
+      // Create a temporary heroic slot for validation if not already tracked
+      const multiclassSlot = FeatSlotSchema.createHeroicSlot('multiclass', this.actor.system.level + 1);
+      const validation = await FeatSlotValidator.validateFeatForSlot(feat, multiclassSlot, this.actor);
+      if (!validation.valid) {
+        SWSELogger.log(`[LevelUp] Multiclass feat slot validation FAILED for "${feat.name}": ${validation.message}`);
+        ui.notifications.warn(`Cannot select "${feat.name}": ${validation.message}`);
+        return;
+      }
+      SWSELogger.log(`[LevelUp] Multiclass feat slot validation PASSED for "${feat.name}"`);
     }
 
     this.selectedFeats = [feat];
