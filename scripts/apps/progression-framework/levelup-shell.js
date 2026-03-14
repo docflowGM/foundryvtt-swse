@@ -16,6 +16,7 @@
 
 import { ProgressionShell } from './shell/progression-shell.js';
 import { createStepDescriptor, StepCategory, StepType } from './steps/step-descriptor.js';
+import { ConfirmStep } from './steps/confirm-step.js';
 
 export class LevelupShell extends ProgressionShell {
   static async open(actor, options = {}) {
@@ -140,7 +141,8 @@ const LEVELUP_CANONICAL_STEPS = [
     icon: 'fa-check-circle',
     type: StepType.CONFIRM,
     category: StepCategory.CONFIRMATION,
-    pluginClass: null, // Wave 3+: ConfirmStep
+    pluginClass: ConfirmStep,
+    mode: 'levelup',
   },
 ];
 

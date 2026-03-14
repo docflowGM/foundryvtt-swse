@@ -73,6 +73,13 @@ export class ProgressionShell extends SWSEApplicationV2 {
       'enter-near-human': '_onEnterNearHuman',
       'confirm-near-human': '_onConfirmNearHuman',
       'back-to-species': '_onBackToSpecies',
+      'roll-credits': '_onRollCredits',
+      'reroll-credits': '_onRollCredits',
+      'use-max-credits': '_onUseMaxCredits',
+      'roll-hp': '_onRollHP',
+      'use-max-hp': '_onUseMaxHP',
+      'enter-store': '_onEnterStore',
+      'skip-store': '_onSkipStore',
     },
   };
 
@@ -539,6 +546,60 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
     if (plugin?.exitNearHumanMode) {
       await plugin.exitNearHumanMode(this);
+    }
+  }
+
+  async _onRollCredits(event, target) {
+    event?.preventDefault();
+    const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
+    if (plugin?.rollCredits) {
+      await plugin.rollCredits(this.actor);
+      this.render();
+    }
+  }
+
+  async _onUseMaxCredits(event, target) {
+    event?.preventDefault();
+    const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
+    if (plugin?.useMaximumCredits) {
+      await plugin.useMaximumCredits(this.actor);
+      this.render();
+    }
+  }
+
+  async _onRollHP(event, target) {
+    event?.preventDefault();
+    const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
+    if (plugin?.rollHPGain) {
+      await plugin.rollHPGain(this.actor);
+      this.render();
+    }
+  }
+
+  async _onUseMaxHP(event, target) {
+    event?.preventDefault();
+    const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
+    if (plugin?.useMaximumHPGain) {
+      await plugin.useMaximumHPGain(this.actor);
+      this.render();
+    }
+  }
+
+  async _onEnterStore(event, target) {
+    event?.preventDefault();
+    const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
+    if (plugin?.enterStore) {
+      await plugin.enterStore(this.actor);
+      this.render();
+    }
+  }
+
+  async _onSkipStore(event, target) {
+    event?.preventDefault();
+    const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
+    if (plugin?.skipStore) {
+      plugin.skipStore();
+      this.render();
     }
   }
 

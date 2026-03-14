@@ -1,0 +1,346 @@
+{{!-- Confirm Step: Comprehensive Build Summary Review Surface --}}
+{{!-- Displays all build sections in organized grid with click-to-focus interaction --}}
+
+<div class="prog-confirm-summary">
+  {{!-- READINESS BANNER --}}
+  {{#if readiness.blockingIssues.length}}
+    <div class="prog-confirm__banner prog-confirm__banner--blocking">
+      <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+      <div class="prog-confirm__banner-text">
+        <strong>Build Incomplete</strong>
+        <p>{{#each readiness.blockingIssues}}{{this}}{{#unless @last}}<br>{{/unless}}{{/each}}</p>
+      </div>
+    </div>
+  {{else if readiness.warnings.length}}
+    <div class="prog-confirm__banner prog-confirm__banner--warning">
+      <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+      <div class="prog-confirm__banner-text">
+        <strong>Review Required</strong>
+        <p>{{#each readiness.warnings}}{{this}}{{#unless @last}}<br>{{/unless}}{{/each}}</p>
+      </div>
+    </div>
+  {{else}}
+    <div class="prog-confirm__banner prog-confirm__banner--ready">
+      <i class="fas fa-check-circle" aria-hidden="true"></i>
+      <div class="prog-confirm__banner-text">
+        <strong>Build Complete</strong>
+        <p>All required choices made. Ready to finalize.</p>
+      </div>
+    </div>
+  {{/if}}
+
+  {{!-- SUMMARY GRID --}}
+  <div class="prog-confirm__grid">
+
+    {{!-- IDENTITY SECTION --}}
+    <div class="prog-confirm__section prog-confirm__section--identity"
+         data-action="focus-item" data-item-id="identity"
+         tabindex="0" role="button">
+      <div class="prog-confirm__section-header">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <h3 class="prog-confirm__section-title">Identity</h3>
+      </div>
+      <div class="prog-confirm__section-body">
+        <div class="prog-confirm__detail-row">
+          <span class="prog-confirm__detail-label">Name:</span>
+          <span class="prog-confirm__detail-value">{{summary.identity.name}}</span>
+        </div>
+        <div class="prog-confirm__detail-row">
+          <span class="prog-confirm__detail-label">Species:</span>
+          <span class="prog-confirm__detail-value">{{summary.identity.species}}</span>
+        </div>
+        <div class="prog-confirm__detail-row">
+          <span class="prog-confirm__detail-label">Class:</span>
+          <span class="prog-confirm__detail-value">{{summary.identity.class}}</span>
+        </div>
+        <div class="prog-confirm__detail-row">
+          <span class="prog-confirm__detail-label">Mentor:</span>
+          <span class="prog-confirm__detail-value">{{summary.identity.mentor}}</span>
+        </div>
+      </div>
+    </div>
+
+    {{!-- ATTRIBUTES SECTION --}}
+    <div class="prog-confirm__section prog-confirm__section--attributes"
+         data-action="focus-item" data-item-id="attributes"
+         tabindex="0" role="button">
+      <div class="prog-confirm__section-header">
+        <i class="fas fa-chart-bar" aria-hidden="true"></i>
+        <h3 class="prog-confirm__section-title">Attributes</h3>
+      </div>
+      <div class="prog-confirm__section-body prog-confirm__attributes-grid">
+        <div class="prog-confirm__attr">
+          <span class="prog-confirm__attr-label">STR</span>
+          <span class="prog-confirm__attr-value">{{summary.attributes.strength}}</span>
+        </div>
+        <div class="prog-confirm__attr">
+          <span class="prog-confirm__attr-label">DEX</span>
+          <span class="prog-confirm__attr-value">{{summary.attributes.dexterity}}</span>
+        </div>
+        <div class="prog-confirm__attr">
+          <span class="prog-confirm__attr-label">CON</span>
+          <span class="prog-confirm__attr-value">{{summary.attributes.constitution}}</span>
+        </div>
+        <div class="prog-confirm__attr">
+          <span class="prog-confirm__attr-label">INT</span>
+          <span class="prog-confirm__attr-value">{{summary.attributes.intelligence}}</span>
+        </div>
+        <div class="prog-confirm__attr">
+          <span class="prog-confirm__attr-label">WIS</span>
+          <span class="prog-confirm__attr-value">{{summary.attributes.wisdom}}</span>
+        </div>
+        <div class="prog-confirm__attr">
+          <span class="prog-confirm__attr-label">CHA</span>
+          <span class="prog-confirm__attr-value">{{summary.attributes.charisma}}</span>
+        </div>
+      </div>
+    </div>
+
+    {{!-- BACKGROUND SECTION --}}
+    <div class="prog-confirm__section prog-confirm__section--background"
+         data-action="focus-item" data-item-id="background"
+         tabindex="0" role="button">
+      <div class="prog-confirm__section-header">
+        <i class="fas fa-book" aria-hidden="true"></i>
+        <h3 class="prog-confirm__section-title">Background</h3>
+      </div>
+      <div class="prog-confirm__section-body">
+        <div class="prog-confirm__detail-value" style="font-weight: bold;">{{summary.background.name}}</div>
+      </div>
+    </div>
+
+    {{!-- LANGUAGES SECTION --}}
+    <div class="prog-confirm__section prog-confirm__section--languages"
+         data-action="focus-item" data-item-id="languages"
+         tabindex="0" role="button">
+      <div class="prog-confirm__section-header">
+        <i class="fas fa-comments" aria-hidden="true"></i>
+        <h3 class="prog-confirm__section-title">Languages</h3>
+      </div>
+      <div class="prog-confirm__section-body">
+        <div class="prog-confirm__detail-row">
+          <span class="prog-confirm__detail-label">Bonus:</span>
+          <span class="prog-confirm__detail-value">{{summary.languages.bonus}}</span>
+        </div>
+        <div class="prog-confirm__detail-row">
+          <span class="prog-confirm__detail-label">Known:</span>
+          <span class="prog-confirm__detail-value">{{summary.languages.known}}</span>
+        </div>
+        <div class="prog-confirm__detail-row">
+          <span class="prog-confirm__detail-label">Total:</span>
+          <span class="prog-confirm__detail-value prog-num--pos">{{summary.languages.total}}</span>
+        </div>
+      </div>
+    </div>
+
+    {{!-- FEATS SECTION --}}
+    <div class="prog-confirm__section prog-confirm__section--feats"
+         data-action="focus-item" data-item-id="feats"
+         tabindex="0" role="button">
+      <div class="prog-confirm__section-header">
+        <i class="fas fa-star" aria-hidden="true"></i>
+        <h3 class="prog-confirm__section-title">Feats</h3>
+      </div>
+      <div class="prog-confirm__section-body">
+        <div class="prog-confirm__detail-row">
+          <span class="prog-confirm__detail-label">General:</span>
+          <span class="prog-confirm__detail-value">{{summary.feats.general}}</span>
+        </div>
+        <div class="prog-confirm__detail-row">
+          <span class="prog-confirm__detail-label">Class:</span>
+          <span class="prog-confirm__detail-value">{{summary.feats.class}}</span>
+        </div>
+        <div class="prog-confirm__detail-row">
+          <span class="prog-confirm__detail-label">Total:</span>
+          <span class="prog-confirm__detail-value prog-num--pos">{{summary.feats.total}}</span>
+        </div>
+      </div>
+    </div>
+
+    {{!-- TALENTS SECTION --}}
+    <div class="prog-confirm__section prog-confirm__section--talents"
+         data-action="focus-item" data-item-id="talents"
+         tabindex="0" role="button">
+      <div class="prog-confirm__section-header">
+        <i class="fas fa-lightbulb" aria-hidden="true"></i>
+        <h3 class="prog-confirm__section-title">Talents</h3>
+      </div>
+      <div class="prog-confirm__section-body">
+        <div class="prog-confirm__detail-row">
+          <span class="prog-confirm__detail-label">Heroic:</span>
+          <span class="prog-confirm__detail-value">{{summary.talents.heroic}}</span>
+        </div>
+        <div class="prog-confirm__detail-row">
+          <span class="prog-confirm__detail-label">Class:</span>
+          <span class="prog-confirm__detail-value">{{summary.talents.class}}</span>
+        </div>
+        <div class="prog-confirm__detail-row">
+          <span class="prog-confirm__detail-label">Total:</span>
+          <span class="prog-confirm__detail-value prog-num--pos">{{summary.talents.total}}</span>
+        </div>
+      </div>
+    </div>
+
+    {{!-- CONDITIONAL STEPS SECTION --}}
+    {{#if (or summary.conditionalSteps.forcePowers
+               summary.conditionalSteps.forceSecrets
+               summary.conditionalSteps.forceTechniques
+               summary.conditionalSteps.starshipManeuvers)}}
+      <div class="prog-confirm__section prog-confirm__section--conditionals"
+           data-action="focus-item" data-item-id="conditionalSteps"
+           tabindex="0" role="button">
+        <div class="prog-confirm__section-header">
+          <i class="fas fa-infinity" aria-hidden="true"></i>
+          <h3 class="prog-confirm__section-title">Advanced Abilities</h3>
+        </div>
+        <div class="prog-confirm__section-body">
+          {{#if summary.conditionalSteps.forcePowers}}
+            <div class="prog-confirm__detail-row">
+              <span class="prog-confirm__detail-label">Force Powers:</span>
+              <span class="prog-confirm__detail-value">{{summary.conditionalSteps.forcePowers}}</span>
+            </div>
+          {{/if}}
+          {{#if summary.conditionalSteps.forceSecrets}}
+            <div class="prog-confirm__detail-row">
+              <span class="prog-confirm__detail-label">Force Secrets:</span>
+              <span class="prog-confirm__detail-value">{{summary.conditionalSteps.forceSecrets}}</span>
+            </div>
+          {{/if}}
+          {{#if summary.conditionalSteps.forceTechniques}}
+            <div class="prog-confirm__detail-row">
+              <span class="prog-confirm__detail-label">Force Techniques:</span>
+              <span class="prog-confirm__detail-value">{{summary.conditionalSteps.forceTechniques}}</span>
+            </div>
+          {{/if}}
+          {{#if summary.conditionalSteps.starshipManeuvers}}
+            <div class="prog-confirm__detail-row">
+              <span class="prog-confirm__detail-label">Starship Maneuvers:</span>
+              <span class="prog-confirm__detail-value">{{summary.conditionalSteps.starshipManeuvers}}</span>
+            </div>
+          {{/if}}
+        </div>
+      </div>
+    {{/if}}
+
+    {{!-- STARTING CREDITS SECTION --}}
+    <div class="prog-confirm__section prog-confirm__section--credits"
+         data-action="focus-item" data-item-id="credits"
+         tabindex="0" role="button">
+      <div class="prog-confirm__section-header">
+        <i class="fas fa-coins" aria-hidden="true"></i>
+        <h3 class="prog-confirm__section-title">Starting Credits</h3>
+      </div>
+      <div class="prog-confirm__section-body">
+        {{#if creditsState.rolled}}
+          <div class="prog-confirm__detail-row">
+            <span class="prog-confirm__detail-label">Amount:</span>
+            <span class="prog-confirm__detail-value prog-num--pos">{{creditsState.amount}}</span>
+          </div>
+          <div class="prog-confirm__detail-row">
+            <span class="prog-confirm__detail-label">Source:</span>
+            <span class="prog-confirm__detail-value">{{creditsState.formula}}</span>
+          </div>
+          <div class="prog-confirm__button-group">
+            <button class="prog-btn prog-btn--secondary" data-action="reroll-credits" type="button">
+              <i class="fas fa-dice-d20"></i> Re-Roll
+            </button>
+            <button class="prog-btn prog-btn--secondary" data-action="use-max-credits" type="button">
+              <i class="fas fa-coins"></i> Use Maximum
+            </button>
+          </div>
+        {{else}}
+          <p class="prog-confirm__empty-state">Credits have not been resolved.</p>
+          <div class="prog-confirm__button-group">
+            <button class="prog-btn prog-btn--primary" data-action="roll-credits" type="button">
+              <i class="fas fa-dice-d20"></i> Roll Starting Credits
+            </button>
+            <button class="prog-btn prog-btn--primary" data-action="use-max-credits" type="button">
+              <i class="fas fa-coins"></i> Use Maximum Credits
+            </button>
+          </div>
+        {{/if}}
+      </div>
+    </div>
+
+    {{!-- HP GAIN SECTION (LEVEL-UP ONLY) --}}
+    {{#if (eq mode "levelup")}}
+      <div class="prog-confirm__section prog-confirm__section--hp"
+           data-action="focus-item" data-item-id="hp"
+           tabindex="0" role="button">
+        <div class="prog-confirm__section-header">
+          <i class="fas fa-heart" aria-hidden="true"></i>
+          <h3 class="prog-confirm__section-title">HP Gain</h3>
+        </div>
+        <div class="prog-confirm__section-body">
+          {{#if hpGainState.resolved}}
+            <div class="prog-confirm__detail-row">
+              <span class="prog-confirm__detail-label">Gain:</span>
+              <span class="prog-confirm__detail-value prog-num--pos">+{{hpGainState.gain}}</span>
+            </div>
+            <div class="prog-confirm__detail-row">
+              <span class="prog-confirm__detail-label">Method:</span>
+              <span class="prog-confirm__detail-value">{{hpGainState.method}}</span>
+            </div>
+            {{#if hpGainState.needsResolution}}
+              <button class="prog-btn prog-btn--secondary" data-action="roll-hp" type="button">
+                <i class="fas fa-dice-d20"></i> Re-Roll
+              </button>
+              <button class="prog-btn prog-btn--secondary" data-action="use-max-hp" type="button">
+                <i class="fas fa-star"></i> Use Maximum
+              </button>
+            {{/if}}
+          {{else}}
+            <p class="prog-confirm__empty-state">HP gain has not been resolved.</p>
+            {{#if hpGainState.needsResolution}}
+              <div class="prog-confirm__button-group">
+                <button class="prog-btn prog-btn--primary" data-action="roll-hp" type="button">
+                  <i class="fas fa-dice-d20"></i> Roll for HP
+                </button>
+                <button class="prog-btn prog-btn--primary" data-action="use-max-hp" type="button">
+                  <i class="fas fa-star"></i> Use Maximum HP
+                </button>
+              </div>
+            {{else}}
+              <p class="prog-confirm__store-note">HP gain is automatically calculated ({{hpGainState.method}}).</p>
+              <button class="prog-btn prog-btn--secondary" data-action="roll-hp" type="button">
+                <i class="fas fa-repeat"></i> Recalculate
+              </button>
+            {{/if}}
+          {{/if}}
+        </div>
+      </div>
+    {{/if}}
+
+    {{!-- STORE ACCESS SECTION (CHARGEN ONLY) --}}
+    {{#unless (eq mode "levelup")}}
+      <div class="prog-confirm__section prog-confirm__section--store"
+           data-action="focus-item" data-item-id="store"
+           tabindex="0" role="button">
+        <div class="prog-confirm__section-header">
+          <i class="fas fa-shopping-bag" aria-hidden="true"></i>
+          <h3 class="prog-confirm__section-title">Equipment Store</h3>
+        </div>
+        <div class="prog-confirm__section-body">
+          {{#if storeVisited}}
+            <div class="prog-confirm__detail-value">
+              <span class="prog-num--pos">✓ Store Visited</span>
+            </div>
+            <p class="prog-confirm__store-note">You may revisit the store if needed.</p>
+            <button class="prog-btn prog-btn--secondary" data-action="enter-store" type="button">
+              <i class="fas fa-shopping-bag"></i> Return to Store
+            </button>
+          {{else}}
+            <p class="prog-confirm__empty-state">Store access is optional. You may visit to purchase equipment.</p>
+            <button class="prog-btn prog-btn--secondary" data-action="enter-store" type="button">
+              <i class="fas fa-shopping-bag"></i> Visit Store
+            </button>
+            <button class="prog-btn" data-action="skip-store" type="button">
+              <i class="fas fa-check"></i> Continue Without Store
+            </button>
+          {{/if}}
+        </div>
+      </div>
+    {{/unless}}
+
+  </div>
+</div>

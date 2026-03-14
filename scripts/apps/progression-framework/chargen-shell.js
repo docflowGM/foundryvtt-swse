@@ -23,6 +23,7 @@ import { BackgroundStep } from './steps/background-step.js';
 import { LanguageStep } from './steps/language-step.js';
 import { GeneralFeatStep, ClassFeatStep } from './steps/feat-step.js';
 import { GeneralTalentStep, ClassTalentStep } from './steps/talent-step.js';
+import { ConfirmStep } from './steps/confirm-step.js';
 
 export class ChargenShell extends ProgressionShell {
   static async open(actor, options = {}) {
@@ -183,7 +184,8 @@ const CHARGEN_CANONICAL_STEPS = [
     icon: 'fa-check-circle',
     type: StepType.CONFIRM,
     category: StepCategory.CONFIRMATION,
-    pluginClass: null, // Wave 3+: ConfirmStep
+    pluginClass: ConfirmStep,
+    mode: 'chargen',
   },
 ];
 
