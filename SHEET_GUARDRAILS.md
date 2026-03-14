@@ -274,22 +274,46 @@ possible listener accumulation—check browser DevTools Memory tab
 
 ---
 
-## Future: Sentinel Integration
+## Sentinel Integration
 
-These guardrails could eventually log to the Sentinel governance layer:
+Both guardrails report violations to the Sentinel governance layer for system-wide tracking:
 
+**Guardrail 1 → Sentinel:**
 ```javascript
-// Future enhancement (not yet implemented):
-if (missing.length > 0) {
-  Sentinel.recordContextViolation({
-    sheet: sheetName,
-    missing,
-    timestamp: Date.now()
-  });
-}
+SentinelSheetGuardrails.reportMissingContextKeys(sheetName, missing, context)
+```
+- Layer: `sheet-guardrails`
+- Category: `context-hydration`
+- Severity: WARN (escalates to ERROR after 3 violations)
+- Aggregation: By sheet name and missing keys
+- Evidence: Context key sample for debugging
+
+**Guardrail 2 → Sentinel:**
+```javascript
+SentinelSheetGuardrails.reportListenerAccumulation(sheetName, elementCount, threshold)
+```
+- Layer: `sheet-guardrails`
+- Category: `memory-leak`
+- Severity: WARN → ERROR → CRITICAL (escalates with element count)
+- Aggregation: By sheet name
+- Evidence: Element count percentage over threshold
+
+**Monitoring the Guardrails:**
+
+Check Sentinel dashboard to see:
+1. Aggregated violation counts per sheet
+2. Violation history with escalation timeline
+3. Category breakdown (context-hydration vs memory-leak)
+4. Evidence samples from latest violations
+
+**Example Sentinel Query (in dev console):**
+```javascript
+// Get summary of all tracked guardrail violations
+const summary = SentinelSheetGuardrails.getViolationSummary();
+console.log(summary);
 ```
 
-This would allow system-wide tracking of hydration issues.
+This allows production systems to detect regressions automatically without manual inspection.
 
 ---
 

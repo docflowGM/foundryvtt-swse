@@ -16,6 +16,7 @@ import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/for
 import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animation-engine.js";
 import { ActionEconomyIntegration } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-integration.js";
 import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-bindings.js";
+import { SentinelSheetGuardrails } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-sheet-guardrails.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -24,6 +25,7 @@ const { HandlebarsApplicationMixin } = foundry.applications.api;
  * Detects missing context keys that would cause silent template failures.
  *
  * This catches hydration bugs before they reach the template layer.
+ * Also reports violations to Sentinel for system-wide tracking.
  */
 function validateContextContract(context, sheetName) {
   const requiredKeys = [
@@ -41,10 +43,14 @@ function validateContextContract(context, sheetName) {
   }
 
   if (missing.length > 0) {
+    // Log to console for immediate feedback
     console.warn(
       `[SWSE Sheet] ${sheetName} missing context keys: ${missing.join(', ')}`,
       { context }
     );
+
+    // Report to Sentinel for governance tracking
+    SentinelSheetGuardrails.reportMissingContextKeys(sheetName, missing, context);
   }
 }
 
@@ -53,6 +59,7 @@ function validateContextContract(context, sheetName) {
  * Monitors for listener accumulation (common cause of memory leaks).
  *
  * If listeners exceed threshold, logs a warning to help catch render-loop leaks.
+ * Also reports violations to Sentinel for governance tracking.
  */
 function watchListenerCount(element, sheetName, threshold = 50) {
   if (!element) return;
@@ -66,6 +73,9 @@ function watchListenerCount(element, sheetName, threshold = 50) {
       `[SWSE Sheet] ${sheetName} has many DOM elements (${allElements.length}), ` +
       `possible listener accumulation—check browser DevTools Memory tab`
     );
+
+    // Report to Sentinel for governance tracking
+    SentinelSheetGuardrails.reportListenerAccumulation(sheetName, allElements.length, threshold);
   }
 }
 
@@ -90,6 +100,8 @@ export class SWSEV2CharacterSheet extends
 
   constructor(document, options = {}) {
     super(document, options);
+    // Track sheet instance for Sentinel monitoring
+    SentinelSheetGuardrails.trackSheetInstance("SWSEV2CharacterSheet");
   }
 
   async _onRender(context, options) {
