@@ -276,11 +276,113 @@ export class SWSEV2CharacterSheet extends
       };
     }
 
+    /* ============================================================
+       MISSING CONTEXT KEYS (REMEDIATION)
+    ============================================================ */
+
+    // XP System Configuration and Progress
+    const xpSystem = CONFIG.SWSE?.system?.xpProgression || 'milestone';
+    const xpEnabled = xpSystem !== 'disabled';
+    const xpValue = actor.system.progression?.xp ?? 0;
+    const xpThreshold = actor.system.progression?.xpThreshold ?? 0;
+    const xpPercent = xpThreshold > 0 ? Math.round((xpValue / xpThreshold) * 100) : 0;
+    const xpLevelReady = xpPercent >= 100;
+
+    // Character Level Checks
+    const level = actor.system.level ?? 1;
+    const isLevel0 = level === 0;
+
+    // User Permission (GM status)
+    const isGM = game.user.role >= 4; // GAMEMASTER role
+
+    // Force Points Availability (fpMax and fpValue already computed above)
+    const fpAvailable = fpValue < fpMax;
+
+    // Encumbrance Display Data
+    const encumbranceState = derived.encumbrance?.state ?? 'normal';
+    const encumbranceLabel = derived.encumbrance?.label ?? 'Unencumbered';
+    const encumbranceStateCss = encumbranceState === 'heavy'
+      ? 'color: #ff6b35;'
+      : encumbranceState === 'overloaded'
+      ? 'color: #cc0000;'
+      : '';
+
+    // Inventory Weight Calculation
+    let totalWeight = 0;
+    for (const item of actor.items) {
+      if (['equipment', 'armor', 'weapon'].includes(item.type)) {
+        const weight = item.system?.weight ?? 0;
+        const qty = item.system?.quantity ?? 1;
+        totalWeight += weight * qty;
+      }
+    }
+
+    // Inventory Search Filter (initially empty, populated by user input)
+    const inventorySearch = '';
+
+    // Follower Context (from flags and system)
+    const followerSlots = actor.getFlag('swse', 'followerSlots') || [];
+    const ownedActorMap = {};
+    for (const entry of actor.system.ownedActors || []) {
+      ownedActorMap[entry.id] = {
+        id: entry.id,
+        name: entry.name,
+        type: entry.type,
+        img: entry.img,
+        system: entry
+      };
+    }
+
+    // Aggregate follower talent badges
+    const followerTalentBadges = [];
+    const seenTalents = new Set();
+    try {
+      const { FOLLOWER_TALENT_CONFIG } = await import(
+        '/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js'
+      ).catch(() => ({ FOLLOWER_TALENT_CONFIG: {} }));
+
+      for (const slot of followerSlots) {
+        if (!seenTalents.has(slot.talentName)) {
+          seenTalents.add(slot.talentName);
+          const cfg = FOLLOWER_TALENT_CONFIG[slot.talentName];
+          const filled = followerSlots
+            .filter(s => s.talentName === slot.talentName)
+            .filter(s => !!s.createdActorId).length;
+
+          followerTalentBadges.push({
+            talentName: slot.talentName,
+            current: filled,
+            max: cfg?.maxCount ?? 0
+          });
+        }
+      }
+    } catch (err) {
+      // Silently fail follower aggregation if import fails
+    }
+
+    // Enrich follower slots with actor data
+    const enrichedFollowerSlots = followerSlots.map(slot => {
+      const actorData = slot.createdActorId ? ownedActorMap[slot.createdActorId] : null;
+      return {
+        ...slot,
+        actor: actorData ? { id: actorData.id, name: actorData.name, type: actorData.type } : null,
+        tokenImg: actorData?.img || '',
+        roleLabel: slot.templateChoices?.[0] || 'Standard',
+        level: actorData?.system.level || 1,
+        hp: { value: actorData?.system.hp?.value || 0, max: actorData?.system.hp?.max || 1 },
+        tags: slot.templateChoices || [],
+        isLocked: false
+      };
+    });
+
     const finalContext = {
       ...context,
       biography,
       derived,
       inventory,
+      equipment: inventory.equipment,
+      armor: inventory.armor,
+      weapons: inventory.weapons,
       hp,
       bonusHp,
       conditionSteps,
@@ -297,7 +399,22 @@ export class SWSEV2CharacterSheet extends
       forceSensitive,
       identityGlowColor,
       buildMode,
-      actionEconomy
+      actionEconomy,
+      // Remediation: Missing context keys
+      xpEnabled,
+      xpPercent,
+      xpLevelReady,
+      isLevel0,
+      isGM,
+      fpAvailable,
+      totalWeight,
+      encumbranceStateCss,
+      encumbranceLabel,
+      inventorySearch,
+      // Follower context
+      followerSlots: enrichedFollowerSlots,
+      followerTalentBadges,
+      ownedActorMap
     };
 
     // Verify context is serializable (no Document refs, circular refs, etc.)
