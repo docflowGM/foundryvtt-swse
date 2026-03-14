@@ -1,5 +1,5 @@
-<div class="swse-sheet swse-vehicle-sheet v2">
-  <div class="sheet-inner">
+<div class="swse-sheet swse-vehicle-sheet v2 flexcol">
+  <div class="sheet-inner flexcol">
     <!-- DATAPAD HEADER -->
     <section class="datapad-header">
       <div class="header-main">
@@ -54,15 +54,15 @@
       <a class="item" data-action="tab" data-tab="systems">Systems</a>
     </nav>
 
-    <section class="sheet-body">
-      <section class="tab active" data-tab-group="primary" data-tab="overview">
+    <section class="sheet-body flexcol">
+      <section class="tab active flexcol" data-tab-group="primary" data-tab="overview">
         <div class="swse-v2-sheet-grid">
-          <div class="swse-v2-left">
+          <div class="swse-v2-left flexcol">
             {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/identity-panel.hbs"}}
             {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/resource-cartridges.hbs"}}
             {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/hp-condition-panel.hbs"}}
           </div>
-          <div class="swse-v2-right">
+          <div class="swse-v2-right flexcol">
             {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/defenses-panel.hbs"}}
             {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/damage-threshold-panel.hbs"}}
             {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/cargo-panel.hbs"}}
@@ -70,7 +70,7 @@
         </div>
       </section>
 
-      <section class="tab" data-tab-group="primary" data-tab="weapons" data-drop-zone="weapon">
+      <section class="tab flexcol" data-tab-group="primary" data-tab="weapons" data-drop-zone="weapon">
         <div class="swse-v2-grid" style="margin-top:12px;">
           <div class="swse-v2-holo-group">
             <div class="swse-v2-holo-header">Attacks</div>
@@ -79,13 +79,13 @@
         </div>
       </section>
 
-      <section class="tab" data-tab-group="primary" data-tab="crew">
+      <section class="tab flexcol" data-tab-group="primary" data-tab="crew">
         <div class="swse-v2-grid">
           {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/crew-panel.hbs"}}
         </div>
       </section>
 
-      <section class="tab" data-tab-group="primary" data-tab="systems" data-drop-zone="equipment">
+      <section class="tab flexcol" data-tab-group="primary" data-tab="systems" data-drop-zone="equipment">
         <div class="swse-v2-grid" style="margin-top:12px;">
 
           {{#if engines.subsystemsEnabled}}

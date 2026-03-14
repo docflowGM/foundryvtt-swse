@@ -28,6 +28,9 @@ export class SWSEV2FullNpcSheet extends SWSEV2CharacterSheet {
     // Call parent _onRender to set up all character sheet listeners
     await super._onRender(context, options);
 
+    // Get signal from parent's AbortController for consistent cleanup
+    const { signal } = this._renderAbort ?? {};
+
     // Add NPC-specific button handler
     const root = this.element;
     if (!(root instanceof HTMLElement)) return;
@@ -52,7 +55,7 @@ export class SWSEV2FullNpcSheet extends SWSEV2CharacterSheet {
     const switchCombatBtn = root.querySelector('[data-action="switch-combat-mode"]');
     if (switchCombatBtn && !switchCombatBtn.hasListener) {
       switchCombatBtn.hasListener = true;
-      switchCombatBtn.addEventListener("click", async (ev) => {
+      switchCombatBtn.addEventListener("click", { signal }, async (ev) => {
         ev.preventDefault();
         await ActorEngine.updateActor(this.actor, { "system.sheetMode": "combat" });
       });

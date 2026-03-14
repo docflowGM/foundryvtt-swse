@@ -2,6 +2,29 @@
    Narrative Character Generation Styles
    ============================================ */
 
+/* ============================================================
+   LAYOUT CONTRACT ENFORCEMENT — FOUNDRY V13 INVARIANTS
+   These rules ensure layouts don't collapse when flexcol
+   utility classes are missing from templates.
+   ============================================================ */
+
+/* Root window container */
+.swse-chargen-window {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Main body container */
+.swse-chargen-window .chargen-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+
 .narrative-chargen {
     background: radial-gradient(circle at center, #0a0f1a 20%, #05080e 80%);
     color: #9ed0ff;

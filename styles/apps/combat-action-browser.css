@@ -9,11 +9,29 @@
    - Only styling SWSE-specific elements within sidebar
    ===================================================== */
 
+/* ============================================================
+   LAYOUT CONTRACT ENFORCEMENT — FOUNDRY V13 INVARIANTS
+   These rules ensure layouts don't collapse when flexcol
+   utility classes are missing from templates.
+   ============================================================ */
+
 .swse-action-browser {
   display: flex;
   flex-direction: column;
   padding: 12px;
   background: rgba(0, 0, 0, 0.3);
+  height: 100%;
+  min-height: 0;
+}
+
+/* Main content area (scrollable) */
+.swse-action-browser .swse-action-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow-y: auto;
 }
 
 /* =====================================================

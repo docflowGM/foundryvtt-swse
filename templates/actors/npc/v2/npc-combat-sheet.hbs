@@ -1,4 +1,4 @@
-<div class="swse swse-sheet swse-npc-combat-sheet v2">
+<div class="swse swse-sheet swse-npc-combat-sheet v2 flexcol">
 
   <!-- Header -->
   <header class="sheet-header holo-header npc-combat-header">
@@ -18,16 +18,16 @@
   </header>
 
   <!-- Combat Grid -->
-  <section class="sheet-body npc-combat-body">
+  <section class="sheet-body npc-combat-body flexcol">
 
     <!-- Left Column: HP, Condition, Defenses -->
-    <div class="npc-combat-left">
+    <div class="npc-combat-left flexcol">
       {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs"}}
       {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs"}}
     </div>
 
     <!-- Right Column: Initiative, Attacks and Actions -->
-    <div class="npc-combat-right">
+    <div class="npc-combat-right flexcol">
 
       {{!-- Action Economy Display --}}
       {{#if actionEconomy}}

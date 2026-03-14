@@ -32,9 +32,13 @@ import { Batch1Validation } from "/systems/foundryvtt-swse/scripts/governance/mu
 // PHASE 2: Import AppV2 Auditor Layer (V13 foundation enforcement)
 import { AppV2AuditorLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/appv2-auditor.js";
 
-// PHASE 11: Import Always-On Audit Layers (Store + Sheet + Roll + Update + Template)
+// PHASE 11: Import Always-On Audit Layers (Store + Sheet + Roll + Update + Template + Guardrails + Layout + CSS + Contract)
 import { SentinelMallCop } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-mall-cop.js";
 import { SentinelSheetHydration } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-sheet-hydration.js";
+import { SentinelSheetGuardrails } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-sheet-guardrails.js";
+import { SentinelLayoutDebugger } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-layout-debugger.js";
+import { SentinelCSSContract } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-css-contract.js";
+import { SentinelLayoutEvaluator } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-layout-evaluator.js";
 import { SentinelRollPipeline } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-roll-pipeline.js";
 import { SentinelUpdateAtomicity } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-update-atomicity.js";
 import { SentinelTemplateIntegrity } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-template-integrity.js";

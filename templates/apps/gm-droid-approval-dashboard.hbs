@@ -1,11 +1,11 @@
-<div class="gm-approval-container">
+<div class="gm-approval-container flexcol">
   <header class="approval-header">
     <h1>Droid Approval Queue</h1>
     <p class="subtitle">Review and approve pending custom droids</p>
   </header>
 
   {{#if hasPending}}
-    <div class="pending-droids-list">
+    <div class="pending-droids-list flexcol">
       {{#each pendingDroids}}
         <div class="droid-approval-card">
           <div class="card-header">

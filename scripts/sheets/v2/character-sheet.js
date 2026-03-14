@@ -16,8 +16,68 @@ import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/for
 import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animation-engine.js";
 import { ActionEconomyIntegration } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-integration.js";
 import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-bindings.js";
+import { SentinelSheetGuardrails } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-sheet-guardrails.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
+
+/**
+ * GUARDRAIL 1: Context Contract Validator
+ * Detects missing context keys that would cause silent template failures.
+ *
+ * This catches hydration bugs before they reach the template layer.
+ * Also reports violations to Sentinel for system-wide tracking.
+ */
+function validateContextContract(context, sheetName) {
+  const requiredKeys = [
+    'equipment', 'armor', 'weapons',           // Inventory spread
+    'followerSlots', 'followerTalentBadges',  // Follower context
+    'xpEnabled', 'isLevel0', 'isGM',          // UI flags
+    'fpAvailable', 'derived', 'abilities'     // Core data
+  ];
+
+  const missing = [];
+  for (const key of requiredKeys) {
+    if (!(key in context)) {
+      missing.push(key);
+    }
+  }
+
+  if (missing.length > 0) {
+    // Log to console for immediate feedback
+    console.warn(
+      `[SWSE Sheet] ${sheetName} missing context keys: ${missing.join(', ')}`,
+      { context }
+    );
+
+    // Report to Sentinel for governance tracking
+    SentinelSheetGuardrails.reportMissingContextKeys(sheetName, missing, context);
+  }
+}
+
+/**
+ * GUARDRAIL 2: Listener Watcher
+ * Monitors for listener accumulation (common cause of memory leaks).
+ *
+ * If listeners exceed threshold, logs a warning to help catch render-loop leaks.
+ * Also reports violations to Sentinel for governance tracking.
+ */
+function watchListenerCount(element, sheetName, threshold = 50) {
+  if (!element) return;
+
+  // Count event listeners indirectly via querySelectorAll with event inspection
+  // This is a heuristic check; full listener count requires browser internals
+  const allElements = element.querySelectorAll('*');
+  if (allElements.length > threshold * 2) {
+    // Very rough heuristic: if too many elements, might have listener leak
+    console.warn(
+      `[SWSE Sheet] ${sheetName} has many DOM elements (${allElements.length}), ` +
+      `possible listener accumulation—check browser DevTools Memory tab`
+    );
+
+    // Report to Sentinel for governance tracking
+    SentinelSheetGuardrails.reportListenerAccumulation(sheetName, allElements.length, threshold);
+  }
+}
 
 export class SWSEV2CharacterSheet extends
   HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
@@ -40,14 +100,31 @@ export class SWSEV2CharacterSheet extends
 
   constructor(document, options = {}) {
     super(document, options);
+    // Track sheet instance for Sentinel monitoring
+    SentinelSheetGuardrails.trackSheetInstance("SWSEV2CharacterSheet");
   }
 
   async _onRender(context, options) {
     await super._onRender(context, options);
-    this.activateListeners(this.element);
+
+    // Abort previous render's listeners to prevent duplicate event handlers
+    this._renderAbort?.abort();
+    this._renderAbort = new AbortController();
+    const { signal } = this._renderAbort;
+
+    this.activateListeners(this.element, { signal });
 
     // Wire action economy bindings for combat tab
     ActionEconomyBindings.setupAttackButtons(this.element, this.document);
+
+    // GUARDRAIL 2: Monitor for listener accumulation (memory leak detection)
+    watchListenerCount(this.element, "SWSEV2CharacterSheet");
+  }
+
+  async _onClose(options) {
+    // Cleanup all event listeners on close
+    this._renderAbort?.abort();
+    return super._onClose(options);
   }
 
   /* ============================================================
@@ -264,11 +341,113 @@ export class SWSEV2CharacterSheet extends
       };
     }
 
+    /* ============================================================
+       MISSING CONTEXT KEYS (REMEDIATION)
+    ============================================================ */
+
+    // XP System Configuration and Progress
+    const xpSystem = CONFIG.SWSE?.system?.xpProgression || 'milestone';
+    const xpEnabled = xpSystem !== 'disabled';
+    const xpValue = actor.system.progression?.xp ?? 0;
+    const xpThreshold = actor.system.progression?.xpThreshold ?? 0;
+    const xpPercent = xpThreshold > 0 ? Math.round((xpValue / xpThreshold) * 100) : 0;
+    const xpLevelReady = xpPercent >= 100;
+
+    // Character Level Checks
+    const level = actor.system.level ?? 1;
+    const isLevel0 = level === 0;
+
+    // User Permission (GM status)
+    const isGM = game.user.role >= 4; // GAMEMASTER role
+
+    // Force Points Availability (fpMax and fpValue already computed above)
+    const fpAvailable = fpValue < fpMax;
+
+    // Encumbrance Display Data
+    const encumbranceState = derived.encumbrance?.state ?? 'normal';
+    const encumbranceLabel = derived.encumbrance?.label ?? 'Unencumbered';
+    const encumbranceStateCss = encumbranceState === 'heavy'
+      ? 'color: #ff6b35;'
+      : encumbranceState === 'overloaded'
+      ? 'color: #cc0000;'
+      : '';
+
+    // Inventory Weight Calculation
+    let totalWeight = 0;
+    for (const item of actor.items) {
+      if (['equipment', 'armor', 'weapon'].includes(item.type)) {
+        const weight = item.system?.weight ?? 0;
+        const qty = item.system?.quantity ?? 1;
+        totalWeight += weight * qty;
+      }
+    }
+
+    // Inventory Search Filter (initially empty, populated by user input)
+    const inventorySearch = '';
+
+    // Follower Context (from flags and system)
+    const followerSlots = actor.getFlag('swse', 'followerSlots') || [];
+    const ownedActorMap = {};
+    for (const entry of actor.system.ownedActors || []) {
+      ownedActorMap[entry.id] = {
+        id: entry.id,
+        name: entry.name,
+        type: entry.type,
+        img: entry.img,
+        system: entry
+      };
+    }
+
+    // Aggregate follower talent badges
+    const followerTalentBadges = [];
+    const seenTalents = new Set();
+    try {
+      const { FOLLOWER_TALENT_CONFIG } = await import(
+        '/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js'
+      ).catch(() => ({ FOLLOWER_TALENT_CONFIG: {} }));
+
+      for (const slot of followerSlots) {
+        if (!seenTalents.has(slot.talentName)) {
+          seenTalents.add(slot.talentName);
+          const cfg = FOLLOWER_TALENT_CONFIG[slot.talentName];
+          const filled = followerSlots
+            .filter(s => s.talentName === slot.talentName)
+            .filter(s => !!s.createdActorId).length;
+
+          followerTalentBadges.push({
+            talentName: slot.talentName,
+            current: filled,
+            max: cfg?.maxCount ?? 0
+          });
+        }
+      }
+    } catch (err) {
+      // Silently fail follower aggregation if import fails
+    }
+
+    // Enrich follower slots with actor data
+    const enrichedFollowerSlots = followerSlots.map(slot => {
+      const actorData = slot.createdActorId ? ownedActorMap[slot.createdActorId] : null;
+      return {
+        ...slot,
+        actor: actorData ? { id: actorData.id, name: actorData.name, type: actorData.type } : null,
+        tokenImg: actorData?.img || '',
+        roleLabel: slot.templateChoices?.[0] || 'Standard',
+        level: actorData?.system.level || 1,
+        hp: { value: actorData?.system.hp?.value || 0, max: actorData?.system.hp?.max || 1 },
+        tags: slot.templateChoices || [],
+        isLocked: false
+      };
+    });
+
     const finalContext = {
       ...context,
       biography,
       derived,
       inventory,
+      equipment: inventory.equipment,
+      armor: inventory.armor,
+      weapons: inventory.weapons,
       hp,
       bonusHp,
       conditionSteps,
@@ -285,11 +464,29 @@ export class SWSEV2CharacterSheet extends
       forceSensitive,
       identityGlowColor,
       buildMode,
-      actionEconomy
+      actionEconomy,
+      // Remediation: Missing context keys
+      xpEnabled,
+      xpPercent,
+      xpLevelReady,
+      isLevel0,
+      isGM,
+      fpAvailable,
+      totalWeight,
+      encumbranceStateCss,
+      encumbranceLabel,
+      inventorySearch,
+      // Follower context
+      followerSlots: enrichedFollowerSlots,
+      followerTalentBadges,
+      ownedActorMap
     };
 
     // Verify context is serializable (no Document refs, circular refs, etc.)
     RenderAssertions.assertContextSerializable(finalContext, "SWSEV2CharacterSheet");
+
+    // GUARDRAIL 1: Validate context contract to prevent silent template failures
+    validateContextContract(finalContext, "SWSEV2CharacterSheet");
 
     return finalContext;
   }
@@ -354,10 +551,10 @@ export class SWSEV2CharacterSheet extends
      LISTENERS (UI ONLY)
   ============================================================ */
 
-  activateListeners(html) {
+  activateListeners(html, { signal } = {}) {
     // Toggle Abilities Panel
     html.querySelectorAll("[data-action='toggle-abilities']").forEach(button => {
-      button.addEventListener("click", ev => {
+      button.addEventListener("click", { signal }, ev => {
         const panel = html.querySelector(".abilities-panel");
         const toggleBtn = html.querySelector(".abilities-toggle");
         if (panel) {
@@ -371,7 +568,7 @@ export class SWSEV2CharacterSheet extends
 
     // Toggle Defenses Panel
     html.querySelectorAll("[data-action='toggle-defenses']").forEach(button => {
-      button.addEventListener("click", ev => {
+      button.addEventListener("click", { signal }, ev => {
         const panel = html.querySelector(".defenses-panel");
         const toggleBtn = html.querySelector(".defenses-toggle");
         if (panel) {
@@ -385,7 +582,7 @@ export class SWSEV2CharacterSheet extends
 
     // UI-only preview math for ability pills
     html.querySelectorAll(".ability-expanded input").forEach(input => {
-      input.addEventListener("input", ev => {
+      input.addEventListener("input", { signal }, ev => {
         const row = ev.currentTarget.closest(".ability-row");
         this._previewAbilityRow(row);
       });
@@ -393,14 +590,14 @@ export class SWSEV2CharacterSheet extends
 
     // Force Card Flip
     html.querySelectorAll(".force-card").forEach(card => {
-      card.addEventListener("click", ev => {
+      card.addEventListener("click", { signal }, ev => {
         card.classList.toggle("flipped");
       });
     });
 
     // Flip Back
     html.querySelectorAll(".flip-back").forEach(btn => {
-      btn.addEventListener("click", ev => {
+      btn.addEventListener("click", { signal }, ev => {
         ev.stopPropagation();
         const card = ev.currentTarget.closest(".force-card");
         if (card) card.classList.remove("flipped");
@@ -409,7 +606,7 @@ export class SWSEV2CharacterSheet extends
 
     // Mentor Button
     html.querySelectorAll('[data-action="open-mentor"]').forEach(button => {
-      button.addEventListener("click", ev => {
+      button.addEventListener("click", { signal }, ev => {
         ev.preventDefault();
         this._openMentorConversation();
       });
@@ -417,7 +614,7 @@ export class SWSEV2CharacterSheet extends
 
     // Header Command Buttons
     html.querySelectorAll('[data-action="cmd-chargen"]').forEach(button => {
-      button.addEventListener("click", async ev => {
+      button.addEventListener("click", { signal }, async ev => {
         ev.preventDefault();
         const chargen = new CharacterGenerator(this.actor);
         chargen.render(true);
@@ -425,7 +622,7 @@ export class SWSEV2CharacterSheet extends
     });
 
     html.querySelectorAll('[data-action="cmd-levelup"]').forEach(button => {
-      button.addEventListener("click", async ev => {
+      button.addEventListener("click", { signal }, async ev => {
         ev.preventDefault();
         const levelup = new SWSELevelUpEnhanced(this.actor);
         levelup.render(true);
@@ -433,7 +630,7 @@ export class SWSEV2CharacterSheet extends
     });
 
     html.querySelectorAll('[data-action="cmd-store"]').forEach(button => {
-      button.addEventListener("click", async ev => {
+      button.addEventListener("click", { signal }, async ev => {
         ev.preventDefault();
         const store = new SWSEStore(this.actor);
         store.render(true);
@@ -441,7 +638,7 @@ export class SWSEV2CharacterSheet extends
     });
 
     html.querySelectorAll('[data-action="cmd-conditions"]').forEach(button => {
-      button.addEventListener("click", async ev => {
+      button.addEventListener("click", { signal }, async ev => {
         ev.preventDefault();
         // Switch to overview tab and scroll to health panel
         await this.changeTab("overview", "primary");
@@ -453,29 +650,29 @@ export class SWSEV2CharacterSheet extends
     });
 
     html.querySelectorAll('[data-action="revalidate-build"]').forEach(button => {
-      button.addEventListener("click", async ev => {
+      button.addEventListener("click", { signal }, async ev => {
         ev.preventDefault();
         await this._revalidateBuild();
       });
     });
 
     // Inventory Panel Handlers
-    this._activateInventoryUI(html);
+    this._activateInventoryUI(html, { signal });
 
     // SWSE Combat UI Wiring
-    this._activateCombatUI(html);
+    this._activateCombatUI(html, { signal });
 
     // Skills Panel Handlers
-    this._activateSkillsUI(html);
+    this._activateSkillsUI(html, { signal });
 
     // Force Suite Handlers
-    this._activateForceUI(html);
+    this._activateForceUI(html, { signal });
 
     // Feats/Talents Handlers
-    this._activateAbilitiesUI(html);
+    this._activateAbilitiesUI(html, { signal });
 
     // Misc Handlers (languages, rest, DSP)
-    this._activateMiscUI(html);
+    this._activateMiscUI(html, { signal });
   }
 
   /* ============================================================
@@ -550,10 +747,10 @@ export class SWSEV2CharacterSheet extends
      INVENTORY UI WIRING
   ============================================================ */
 
-  _activateInventoryUI(html) {
+  _activateInventoryUI(html, { signal } = {}) {
     // Equip / Unequip toggle
     html.querySelectorAll(".item-equip").forEach(button => {
-      button.addEventListener("click", async (event) => {
+      button.addEventListener("click", { signal }, async (event) => {
         const row = event.currentTarget.closest(".inventory-row");
         const itemId = row?.dataset.itemId;
         if (itemId) await InventoryEngine.toggleEquip(this.actor, itemId);
@@ -562,7 +759,7 @@ export class SWSEV2CharacterSheet extends
 
     // Edit item
     html.querySelectorAll(".item-edit").forEach(button => {
-      button.addEventListener("click", (event) => {
+      button.addEventListener("click", { signal }, (event) => {
         const row = event.currentTarget.closest(".inventory-row");
         const itemId = row?.dataset.itemId;
         if (itemId) this.actor.items.get(itemId)?.sheet.render(true);
@@ -571,7 +768,7 @@ export class SWSEV2CharacterSheet extends
 
     // Add/increment quantity
     html.querySelectorAll(".item-add").forEach(button => {
-      button.addEventListener("click", async (event) => {
+      button.addEventListener("click", { signal }, async (event) => {
         const row = event.currentTarget.closest(".inventory-row");
         const itemId = row?.dataset.itemId;
         if (itemId) await InventoryEngine.incrementQuantity(this.actor, itemId);
@@ -580,7 +777,7 @@ export class SWSEV2CharacterSheet extends
 
     // Sell item
     html.querySelectorAll(".item-sell").forEach(button => {
-      button.addEventListener("click", async (event) => {
+      button.addEventListener("click", { signal }, async (event) => {
         const row = event.currentTarget.closest(".inventory-row");
         const itemId = row?.dataset.itemId;
         if (itemId) await InventoryEngine.decrementQuantity(this.actor, itemId);
@@ -589,7 +786,7 @@ export class SWSEV2CharacterSheet extends
 
     // Delete/Remove item
     html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="edit"], [data-action="configure"]').forEach(button => {
-      button.addEventListener("click", async (event) => {
+      button.addEventListener("click", { signal }, async (event) => {
         event.preventDefault();
         const action = button.dataset.action;
         const itemId = button.dataset.itemId || event.currentTarget.closest("[data-item-id]")?.dataset.itemId;
@@ -623,10 +820,10 @@ export class SWSEV2CharacterSheet extends
      COMBAT UI WIRING
   ============================================================ */
 
-  _activateCombatUI(html) {
+  _activateCombatUI(html, { signal } = {}) {
     // Action click (cards and table rows)
     html.querySelectorAll(".swse-combat-action-card, .action-row").forEach(element => {
-      element.addEventListener("click", async (event) => {
+      element.addEventListener("click", { signal }, async (event) => {
         if (event.target.classList.contains("hide-action")) return;
         const key = event.currentTarget.dataset.actionKey;
         if (!key) return;
@@ -640,7 +837,7 @@ export class SWSEV2CharacterSheet extends
 
     // Hide individual action
     html.querySelectorAll(".hide-action").forEach(button => {
-      button.addEventListener("click", (event) => {
+      button.addEventListener("click", { signal }, (event) => {
         event.stopPropagation();
         const el = event.currentTarget.closest(".swse-combat-action-card, .action-row");
         if (el) el.classList.add("collapsed");
@@ -649,7 +846,7 @@ export class SWSEV2CharacterSheet extends
 
     // Collapse group (table mode)
     html.querySelectorAll(".collapse-group").forEach(button => {
-      button.addEventListener("click", (event) => {
+      button.addEventListener("click", { signal }, (event) => {
         const groupKey = event.currentTarget.dataset.group;
         if (groupKey) {
           const table = html.querySelector(`table[data-group='${groupKey}']`);
@@ -660,7 +857,7 @@ export class SWSEV2CharacterSheet extends
 
     // Use action button
     html.querySelectorAll('[data-action="swse-v2-use-action"]').forEach(button => {
-      button.addEventListener("click", async (event) => {
+      button.addEventListener("click", { signal }, async (event) => {
         event.preventDefault();
         const actionId = button.dataset.actionId;
         if (!actionId) return;
@@ -679,10 +876,10 @@ export class SWSEV2CharacterSheet extends
      SKILLS UI WIRING
   ============================================================ */
 
-  _activateSkillsUI(html) {
+  _activateSkillsUI(html, { signal } = {}) {
     // Filter skills by text
     html.querySelectorAll('[data-action="filter-skills"]').forEach(input => {
-      input.addEventListener("input", (event) => {
+      input.addEventListener("input", { signal }, (event) => {
         const filterText = event.target.value.toLowerCase();
         const skillRows = html.querySelectorAll(".skill-row-container");
 
@@ -697,7 +894,7 @@ export class SWSEV2CharacterSheet extends
 
     // Sort skills
     html.querySelectorAll('[data-action="sort-skills"]').forEach(select => {
-      select.addEventListener("change", (event) => {
+      select.addEventListener("change", { signal }, (event) => {
         const sortBy = event.target.value;
         const skillsList = html.querySelector(".skills-list");
         if (!skillsList) return;
@@ -728,10 +925,10 @@ export class SWSEV2CharacterSheet extends
      FORCE SUITE UI WIRING
   ============================================================ */
 
-  _activateForceUI(html) {
+  _activateForceUI(html, { signal } = {}) {
     // Force sort dropdown
     html.querySelectorAll('[data-action="force-sort"]').forEach(select => {
-      select.addEventListener("change", (event) => {
+      select.addEventListener("change", { signal }, (event) => {
         const sortBy = event.target.value;
         const cardGrid = html.querySelector(".force-card-grid");
         if (!cardGrid) return;
@@ -758,7 +955,7 @@ export class SWSEV2CharacterSheet extends
 
     // Force tag filter buttons
     html.querySelectorAll('[data-action="force-tag-filter"]').forEach(button => {
-      button.addEventListener("click", (event) => {
+      button.addEventListener("click", { signal }, (event) => {
         event.preventDefault();
         const tag = button.dataset.tag;
         if (!tag) return;
@@ -785,7 +982,7 @@ export class SWSEV2CharacterSheet extends
 
     // Activate force button
     html.querySelectorAll('[data-action="activate-force"]').forEach(button => {
-      button.addEventListener("click", async (event) => {
+      button.addEventListener("click", { signal }, async (event) => {
         event.preventDefault();
         const itemId = button.dataset.itemId;
         if (!itemId) return;
@@ -813,10 +1010,10 @@ export class SWSEV2CharacterSheet extends
      FEATS/TALENTS/ABILITIES UI WIRING
   ============================================================ */
 
-  _activateAbilitiesUI(html) {
+  _activateAbilitiesUI(html, { signal } = {}) {
     // Open ability/feat/talent sheet
     html.querySelectorAll('[data-action="open-ability"]').forEach(button => {
-      button.addEventListener("click", async (event) => {
+      button.addEventListener("click", { signal }, async (event) => {
         event.preventDefault();
         const itemId = button.dataset.itemId;
         if (!itemId) return;
@@ -830,7 +1027,7 @@ export class SWSEV2CharacterSheet extends
 
     // Add feat button
     html.querySelectorAll('[data-action="add-feat"]').forEach(button => {
-      button.addEventListener("click", async (event) => {
+      button.addEventListener("click", { signal }, async (event) => {
         event.preventDefault();
         // Open a dialog to select/create a feat
         // For now, just open the item creation dialog
@@ -846,7 +1043,7 @@ export class SWSEV2CharacterSheet extends
 
     // Delete feat button
     html.querySelectorAll('[data-action="delete-feat"]').forEach(button => {
-      button.addEventListener("click", async (event) => {
+      button.addEventListener("click", { signal }, async (event) => {
         event.preventDefault();
         const itemId = button.dataset.itemId;
         if (!itemId) return;
@@ -860,7 +1057,7 @@ export class SWSEV2CharacterSheet extends
 
     // Add talent button
     html.querySelectorAll('[data-action="add-talent"]').forEach(button => {
-      button.addEventListener("click", async (event) => {
+      button.addEventListener("click", { signal }, async (event) => {
         event.preventDefault();
         // Open a dialog to select a talent
         // For now, just open the item creation dialog
@@ -879,10 +1076,10 @@ export class SWSEV2CharacterSheet extends
      MISCELLANEOUS UI WIRING (LANGUAGES, REST, DSP, ETC)
   ============================================================ */
 
-  _activateMiscUI(html) {
+  _activateMiscUI(html, { signal } = {}) {
     // Add language button
     html.querySelectorAll('[data-action="add-language"]').forEach(button => {
-      button.addEventListener("click", async (event) => {
+      button.addEventListener("click", { signal }, async (event) => {
         event.preventDefault();
         // Open a dialog for language selection
         const languages = this.actor.system?.languages ?? [];
@@ -905,7 +1102,7 @@ export class SWSEV2CharacterSheet extends
 
     // Remove language button
     html.querySelectorAll('[data-action="remove-language"]').forEach(button => {
-      button.addEventListener("click", async (event) => {
+      button.addEventListener("click", { signal }, async (event) => {
         event.preventDefault();
         const langName = button.dataset.language;
         if (!langName) return;
@@ -928,7 +1125,7 @@ export class SWSEV2CharacterSheet extends
 
     // Rest / Second Wind button
     html.querySelectorAll('[data-action="rest-second-wind"]').forEach(button => {
-      button.addEventListener("click", async (event) => {
+      button.addEventListener("click", { signal }, async (event) => {
         event.preventDefault();
         // Restore second wind uses
         const plan = {
@@ -951,7 +1148,7 @@ export class SWSEV2CharacterSheet extends
 
     // Set dark side score button
     html.querySelectorAll('[data-action="set-dark-side-score"]').forEach(button => {
-      button.addEventListener("click", async (event) => {
+      button.addEventListener("click", { signal }, async (event) => {
         event.preventDefault();
         const currentDSP = DSPEngine.getValue(this.actor);
         const newValue = prompt(`Current Dark Side Points: ${currentDSP}\n\nEnter new value:`, String(currentDSP));
@@ -976,7 +1173,7 @@ export class SWSEV2CharacterSheet extends
 
     // Use extra skill button
     html.querySelectorAll('[data-action="use-extra-skill"]').forEach(button => {
-      button.addEventListener("click", async (event) => {
+      button.addEventListener("click", { signal }, async (event) => {
         event.preventDefault();
         const skillKey = button.dataset.skill;
         if (!skillKey) return;

@@ -1,4 +1,81 @@
 /* styles/sheets/v2-sheet.css */
+
+/* ============================================================
+   LAYOUT CONTRACT ENFORCEMENT — FOUNDRY V13 INVARIANTS
+   These rules are the safety net for flexcol utility classes.
+   If flexcol is missing from templates, these CSS rules ensure
+   layouts don't collapse.
+   ============================================================ */
+
+/* Root containers */
+.swse-sheet.v2 {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Sheet body (primary growing container) */
+.swse-sheet.v2 .sheet-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+
+/* Sheet inner wrapper */
+.swse-sheet.v2 .sheet-inner {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Tab navigation (fixed space) */
+.swse-sheet.v2 .sheet-tabs {
+  flex: 0 0 auto;
+}
+
+/* Tab panels (scrollable) */
+.swse-sheet.v2 .tab {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+/* Grid columns (vertical flex) */
+.swse-sheet.v2 .swse-v2-left,
+.swse-sheet.v2 .swse-v2-right {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  gap: 6px;
+}
+
+/* Dynamic sections */
+.swse-sheet.v2 .inventory-section,
+.swse-sheet.v2 .followers-section,
+.swse-sheet.v2 .biography-section {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+/* Sections and panels */
+.swse-sheet.v2 .swse-section,
+.swse-sheet.v2 .swse-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
 .swse-sheet.v2 .sheet-header { padding: 10px 12px; }
 .swse-sheet.v2 .swse-stat { min-width: 64px; text-align: center; }
 .swse-sheet.v2 .swse-stat .label { font-size: 0.7rem; opacity: 0.75; }
