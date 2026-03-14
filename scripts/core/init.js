@@ -19,6 +19,20 @@ Hooks.once('init', () => {
         default: false
       });
     }
+
+    // Progression Framework feature flag
+    // When enabled, CharacterGenerator.open() and LevelUpMain.open() route to
+    // the new ProgressionShell instead of the legacy shells.
+    if (!game.settings.settings.has("foundryvtt-swse.useNewProgressionShell")) {
+      game.settings.register("foundryvtt-swse", "useNewProgressionShell", {
+        name: "Use New Progression Shell (Beta)",
+        hint: "Enable the new unified character progression shell. Requires restart.",
+        scope: "world",
+        config: true,
+        type: Boolean,
+        default: false
+      });
+    }
   });
   SWSELogger.log('SWSE system initialized successfully.');
 });
@@ -80,5 +94,12 @@ if (!Handlebars.helpers.mul) {
 if (!Handlebars.helpers.roundPercent) {
   Handlebars.registerHelper("roundPercent", function(num) {
     return Math.round((num || 0) * 100);
+  });
+}
+
+// Add helper (used by progression-shell.hbs step counter)
+if (!Handlebars.helpers.add) {
+  Handlebars.registerHelper("add", function(a, b) {
+    return (a ?? 0) + (b ?? 0);
   });
 }

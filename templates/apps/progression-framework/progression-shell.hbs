@@ -1,0 +1,274 @@
+{{!--
+  progression-shell.hbs
+  Root template for the ProgressionShell.
+
+  6 named regions — all always present:
+    mentor-rail     Always visible; collapsible to portrait strip
+    progress-rail   Step indicators
+    utility-bar     Search/filter/sort; always present; collapsible
+    work-surface    Primary step interaction area
+    details-panel   Selected item details; always mounted; empty state when nothing focused
+    action-footer   Back / Center status / Next/Confirm
+    modal-host      In-shell modal stack
+--}}
+
+<div class="progression-shell prog-holo {{#if isProcessing}}is-processing{{/if}}"
+     data-application-content>
+
+  {{!-- ======================================================================
+    MENTOR RAIL — left column
+    Always present. Collapses to portrait strip.
+  ======================================================================= --}}
+  <div data-region="mentor-rail"
+       data-collapsed="{{mentorCollapsed}}"
+       data-mood="{{mentor.mood}}">
+
+    {{!-- Mentor rail content rendered by mentor-rail.hbs partial (Wave 2) --}}
+    {{!-- Placeholder for Wave 0/1 --}}
+    <div class="prog-mentor-placeholder">
+      <div class="prog-mentor-placeholder__portrait">
+        <i class="fas fa-user-astronaut"></i>
+      </div>
+      {{#unless mentorCollapsed}}
+        <div class="prog-mentor-placeholder__name prog-heading">
+          {{mentor.name}}
+        </div>
+        <div class="prog-mentor-placeholder__dialogue">
+          {{#if mentor.currentDialogue}}
+            <p class="prog-mentor-placeholder__text">{{mentor.currentDialogue}}</p>
+          {{else}}
+            <p class="prog-mentor-placeholder__text prog-mentor-placeholder__text--idle">
+              Standing by…
+            </p>
+          {{/if}}
+        </div>
+        <button class="prog-btn prog-mentor-placeholder__ask"
+                data-action="ask-mentor"
+                {{#unless mentor.askMentorEnabled}}disabled{{/unless}}>
+          <i class="fas fa-question-circle"></i>
+          Ask Mentor
+        </button>
+      {{/unless}}
+      <button class="prog-mentor-placeholder__collapse"
+              data-action="toggle-mentor"
+              title="{{#if mentorCollapsed}}Expand mentor{{else}}Collapse mentor{{/if}}">
+        <i class="fas fa-chevron-{{#if mentorCollapsed}}right{{else}}left{{/if}}"></i>
+      </button>
+    </div>
+
+  </div>{{!-- /mentor-rail --}}
+
+
+  {{!-- ======================================================================
+    PROGRESS RAIL — step indicators
+  ======================================================================= --}}
+  <div data-region="progress-rail">
+
+    {{!-- Progress rail content rendered by progress-rail.hbs partial (Wave 2) --}}
+    {{!-- Placeholder for Wave 0/1 --}}
+    <div class="prog-progress-placeholder">
+      <div class="prog-progress-placeholder__label prog-heading">Steps</div>
+      <ol class="prog-progress-placeholder__list">
+        {{#each stepProgress}}
+          <li class="prog-progress-placeholder__step
+                     {{#if isCurrent}}prog-progress-placeholder__step--active{{/if}}
+                     {{#if isComplete}}prog-progress-placeholder__step--complete{{/if}}
+                     {{#if descriptor.isConditional}}prog-progress-placeholder__step--conditional{{/if}}"
+              data-step-index="{{index}}"
+              title="{{descriptor.label}}{{#if descriptor.unlockReason}} ({{descriptor.unlockReason}}){{/if}}">
+            <span class="prog-progress-placeholder__icon">
+              <i class="fas {{descriptor.icon}}"></i>
+            </span>
+            <span class="prog-progress-placeholder__name">
+              {{descriptor.label}}
+            </span>
+            {{#if isComplete}}
+              <i class="fas fa-check prog-progress-placeholder__check"></i>
+            {{/if}}
+          </li>
+        {{/each}}
+      </ol>
+    </div>
+
+  </div>{{!-- /progress-rail --}}
+
+
+  {{!-- ======================================================================
+    MAIN COLUMN — utility-bar + content-row + action-footer
+  ======================================================================= --}}
+  <div class="prog-main-column">
+
+    {{!-- ====================================================================
+      UTILITY BAR — always present; content varies by step
+    ==================================================================== --}}
+    <div data-region="utility-bar"
+         data-collapsed="{{utilityBarCollapsed}}"
+         data-mode="{{utilityBarConfig.mode}}">
+
+      {{!-- Utility bar content rendered by utility-bar.hbs partial (Wave 2) --}}
+      {{!-- Placeholder for Wave 0/1 --}}
+      <div class="prog-utility-placeholder">
+        {{#if currentDescriptor}}
+          <i class="fas {{currentDescriptor.icon}} prog-utility-placeholder__icon"></i>
+          <span class="prog-utility-placeholder__label">
+            {{currentDescriptor.label}}
+          </span>
+          {{#if currentDescriptor.isConditional}}
+            <span class="prog-chip prog-chip--warning prog-utility-placeholder__conditional">
+              <i class="fas fa-unlock-alt"></i>
+              {{currentDescriptor.unlockReason}}
+            </span>
+          {{/if}}
+        {{/if}}
+        <button class="prog-utility-placeholder__collapse"
+                data-action="toggle-utility-bar"
+                title="{{#if utilityBarCollapsed}}Expand{{else}}Collapse{{/if}} utility bar">
+          <i class="fas fa-chevron-{{#if utilityBarCollapsed}}down{{else}}up{{/if}}"></i>
+        </button>
+      </div>
+
+    </div>{{!-- /utility-bar --}}
+
+
+    {{!-- ====================================================================
+      CONTENT ROW — work-surface + details-panel
+    ==================================================================== --}}
+    <div class="prog-content-row">
+
+      {{!-- ==================================================================
+        WORK SURFACE — primary step interaction
+      ================================================================== --}}
+      <div data-region="work-surface">
+
+        {{!-- Step plugin renders its own work-surface template here (Wave 3+) --}}
+        {{!-- Placeholder for Wave 0/1 --}}
+        <div class="prog-work-placeholder">
+          {{#if currentDescriptor}}
+            <div class="prog-work-placeholder__header prog-heading">
+              <i class="fas {{currentDescriptor.icon}}"></i>
+              {{currentDescriptor.label}}
+              {{#if currentDescriptor.isConditional}}
+                <span class="prog-chip prog-chip--warning">
+                  Engine-Unlocked
+                </span>
+              {{/if}}
+            </div>
+            <p class="prog-work-placeholder__hint">
+              Step {{add currentStepIndex 1}} of {{totalSteps}}
+              {{#if currentDescriptor.isConditional}}
+                — Unlocked by: {{currentDescriptor.unlockReason}}
+              {{/if}}
+            </p>
+            {{#if lastError}}
+              <div class="prog-work-placeholder__error">
+                <i class="fas fa-exclamation-triangle"></i>
+                {{lastError.message}}
+              </div>
+            {{/if}}
+          {{else}}
+            <p class="prog-work-placeholder__empty">No steps available.</p>
+          {{/if}}
+        </div>
+
+      </div>{{!-- /work-surface --}}
+
+
+      {{!-- ==================================================================
+        DETAILS PANEL — always mounted on desktop; empty state when nothing focused
+      ================================================================== --}}
+      <div data-region="details-panel">
+
+        {{!-- Step plugin renders details-panel template here (Wave 3+) --}}
+        {{!-- Placeholder for Wave 0/1 --}}
+        <div class="prog-details-placeholder">
+          {{#if focusedItem}}
+            <div class="prog-details-placeholder__name prog-heading">
+              {{focusedItem.name}}
+            </div>
+            <div class="prog-details-placeholder__content">
+              <p>{{focusedItem.description}}</p>
+            </div>
+          {{else}}
+            {{#if currentDescriptor}}
+              <div class="prog-details-placeholder__empty">
+                <i class="fas {{currentDescriptor.icon}} prog-details-placeholder__empty-icon"></i>
+                <p>Select an item to see details.</p>
+              </div>
+            {{/if}}
+          {{/if}}
+        </div>
+
+      </div>{{!-- /details-panel --}}
+
+    </div>{{!-- /content-row --}}
+
+
+    {{!-- ====================================================================
+      ACTION FOOTER — Back / Center / Next
+    ==================================================================== --}}
+    <div data-region="action-footer">
+
+      {{!-- Back button --}}
+      <div class="prog-footer__back">
+        <button class="prog-btn"
+                data-action="previous-step"
+                {{#unless footer.back.enabled}}disabled{{/unless}}>
+          <i class="fas fa-chevron-left"></i>
+          {{footer.back.label}}
+        </button>
+      </div>
+
+      {{!-- Center status chips --}}
+      <div class="prog-footer__center">
+        {{#each footer.center}}
+          <span class="prog-footer__center-item
+                       {{#if isBlocking}}prog-footer__center-item--blocking{{/if}}
+                       {{#if isWarning}}prog-footer__center-item--warning{{/if}}">
+            {{label}}
+          </span>
+        {{/each}}
+
+        {{!-- Blocking issues as chips --}}
+        {{#each footer.blockingIssues}}
+          <span class="prog-footer__center-item prog-footer__center-item--blocking">
+            <i class="fas fa-exclamation-circle"></i>
+            {{this}}
+          </span>
+        {{/each}}
+
+        {{!-- Warnings as chips --}}
+        {{#each footer.warnings}}
+          <span class="prog-footer__center-item prog-footer__center-item--warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            {{this}}
+          </span>
+        {{/each}}
+      </div>
+
+      {{!-- Next / Confirm button --}}
+      <div class="prog-footer__next">
+        <button class="prog-btn prog-btn--primary
+                       {{#if footer.next.isLastStep}}prog-btn--last-step{{/if}}"
+                data-action="{{#if footer.next.isLastStep}}confirm-step{{else}}next-step{{/if}}"
+                {{#unless footer.next.enabled}}disabled{{/unless}}>
+          {{footer.next.label}}
+          {{#unless footer.next.isLastStep}}
+            <i class="fas fa-chevron-right"></i>
+          {{/unless}}
+          {{#if footer.next.isLastStep}}
+            <i class="fas fa-check"></i>
+          {{/if}}
+        </button>
+      </div>
+
+    </div>{{!-- /action-footer --}}
+
+  </div>{{!-- /main-column --}}
+
+
+  {{!-- ======================================================================
+    MODAL HOST — in-shell modal stack
+  ======================================================================= --}}
+  <div data-region="modal-host"></div>
+
+</div>{{!-- /progression-shell --}}

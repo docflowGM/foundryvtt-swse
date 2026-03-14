@@ -1,0 +1,109 @@
+/**
+ * action-footer.css
+ *
+ * Styles for the action footer region.
+ * Scoped to .progression-shell [data-region="action-footer"]
+ *
+ * Layout: Back | Center Status | Next/Confirm
+ */
+
+.progression-shell [data-region="action-footer"] {
+  gap: var(--prog-space-md);
+}
+
+/* Back button zone */
+.progression-shell .prog-footer__back {
+  flex: 0 0 auto;
+}
+
+/* Center status zone — takes remaining space */
+.progression-shell .prog-footer__center {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--prog-space-sm);
+  overflow: hidden;
+}
+
+/* Individual center item chips */
+.progression-shell .prog-footer__center-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--prog-space-xs);
+  padding: 3px var(--prog-space-sm);
+  border-radius: var(--prog-radius-pill);
+  font-size: var(--prog-font-size-xs);
+  font-family: var(--prog-font-body);
+  letter-spacing: 0.04em;
+  border: 1px solid var(--prog-border);
+  color: var(--prog-text-dim);
+  background: var(--prog-bg-dark);
+  white-space: nowrap;
+}
+
+.progression-shell .prog-footer__center-item--warning {
+  border-color: var(--prog-neutral);
+  color: var(--prog-neutral);
+}
+
+.progression-shell .prog-footer__center-item--blocking {
+  border-color: var(--prog-negative);
+  color: var(--prog-negative);
+}
+
+/* Blocking issues — appear above footer as banner */
+.progression-shell .prog-footer__blocking {
+  position: absolute;
+  bottom: calc(var(--prog-footer-height) + 4px);
+  left: var(--prog-space-lg);
+  right: var(--prog-space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: var(--prog-z-utility);
+}
+
+.progression-shell .prog-footer__blocking-issue {
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-sm);
+  padding: var(--prog-space-xs) var(--prog-space-md);
+  border-radius: var(--prog-radius-sm);
+  font-size: var(--prog-font-size-sm);
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: var(--prog-negative);
+}
+
+.progression-shell .prog-footer__blocking-issue i {
+  opacity: 0.8;
+  font-size: var(--prog-font-size-xs);
+}
+
+/* Warnings — appear above footer as softer banner */
+.progression-shell .prog-footer__warning {
+  background: rgba(251, 191, 36, 0.1);
+  border-color: rgba(251, 191, 36, 0.3);
+  color: var(--prog-neutral);
+}
+
+/* Next/Confirm button zone */
+.progression-shell .prog-footer__next {
+  flex: 0 0 auto;
+}
+
+/* Special: last step button is larger */
+.progression-shell .prog-footer__next .prog-btn--last-step {
+  padding: var(--prog-space-sm) var(--prog-space-xl);
+  font-size: var(--prog-font-size-base);
+  letter-spacing: 0.1em;
+  border-color: var(--prog-positive);
+  color: var(--prog-positive);
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.15);
+}
+
+.progression-shell .prog-footer__next .prog-btn--last-step:hover:not(:disabled) {
+  background: rgba(34, 197, 94, 0.12);
+  box-shadow: 0 0 16px rgba(34, 197, 94, 0.3);
+}

@@ -31,7 +31,12 @@
     "styles/swse-holo.css",
     "styles/core/variables.css",
     "scripts/ui/dialogue/dialogue-effects.css",
-    "scripts/ui/action-palette/action-palette.css"
+    "scripts/ui/action-palette/action-palette.css",
+    "styles/progression-framework/progression-framework.css",
+    "styles/progression-framework/holo-theme.css",
+    "styles/progression-framework/progression-shell.css",
+    "styles/progression-framework/action-footer.css",
+    "styles/progression-framework/progression-shell-placeholders.css"
   ],
   "languages": [
     {

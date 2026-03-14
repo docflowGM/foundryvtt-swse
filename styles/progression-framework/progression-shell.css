@@ -1,0 +1,237 @@
+/**
+ * progression-shell.css
+ *
+ * Layout and region sizing for the ProgressionShell.
+ * Scoped under .progression-shell — no overlap with .swse-chargen-window or .swse-levelup.
+ *
+ * Depends on: progression-framework.css (CSS variables)
+ *
+ * Region layout (desktop):
+ *
+ *  ┌─────────────────────────────────────────────────────────────────────┐
+ *  │ .progression-shell                                                  │
+ *  │  ┌──────────────┐  ┌─────────────────────────────────────────────┐ │
+ *  │  │ mentor-rail  │  │ main-column                                 │ │
+ *  │  │              │  │  ┌──────────────────────────────────────────┤ │
+ *  │  │              │  │  │ utility-bar                              │ │
+ *  │  │              │  │  ├──────────────────────────────────────────┤ │
+ *  │  │              │  │  │ content-row                              │ │
+ *  │  │              │  │  │  ┌───────────────────┐  ┌─────────────┐ │ │
+ *  │  │              │  │  │  │ work-surface      │  │details-panel│ │ │
+ *  │  │              │  │  │  │                   │  │             │ │ │
+ *  │  │              │  │  │  └───────────────────┘  └─────────────┘ │ │
+ *  │  │              │  │  ├──────────────────────────────────────────┤ │
+ *  │  │              │  │  │ action-footer                            │ │
+ *  │  └──────────────┘  └─────────────────────────────────────────────┘ │
+ *  │                                                                     │
+ *  │  progress-rail (vertical strip between mentor and main)             │
+ *  └─────────────────────────────────────────────────────────────────────┘
+ */
+
+/* =============================================================================
+ * Shell Root
+ * ============================================================================= */
+
+.progression-shell {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Prevent scrollbar on the shell root itself — overflow handled in regions */
+.progression-shell > * {
+  box-sizing: border-box;
+}
+
+/* =============================================================================
+ * Mentor Rail (left column — always present)
+ * ============================================================================= */
+
+.progression-shell [data-region="mentor-rail"] {
+  flex: 0 0 var(--prog-mentor-width);
+  width: var(--prog-mentor-width);
+  min-width: var(--prog-mentor-width);
+  max-width: var(--prog-mentor-width);
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: width var(--prog-transition-mentor),
+              flex-basis var(--prog-transition-mentor),
+              min-width var(--prog-transition-mentor),
+              max-width var(--prog-transition-mentor);
+  border-right: 1px solid var(--prog-border);
+}
+
+.progression-shell [data-region="mentor-rail"][data-collapsed="true"] {
+  flex: 0 0 var(--prog-mentor-collapsed-w);
+  width: var(--prog-mentor-collapsed-w);
+  min-width: var(--prog-mentor-collapsed-w);
+  max-width: var(--prog-mentor-collapsed-w);
+}
+
+/* =============================================================================
+ * Progress Rail (narrow vertical strip)
+ * ============================================================================= */
+
+.progression-shell [data-region="progress-rail"] {
+  flex: 0 0 var(--prog-progress-width);
+  width: var(--prog-progress-width);
+  min-width: var(--prog-progress-width);
+  max-width: var(--prog-progress-width);
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--prog-border);
+}
+
+/* =============================================================================
+ * Main Column (everything right of mentor + progress rail)
+ * ============================================================================= */
+
+.progression-shell .prog-main-column {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* =============================================================================
+ * Utility Bar (always present, top of main column)
+ * ============================================================================= */
+
+.progression-shell [data-region="utility-bar"] {
+  flex: 0 0 var(--prog-utility-bar-height);
+  height: var(--prog-utility-bar-height);
+  min-height: var(--prog-utility-bar-height);
+  max-height: var(--prog-utility-bar-height);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  border-bottom: 1px solid var(--prog-border);
+  transition: height var(--prog-transition-base),
+              flex-basis var(--prog-transition-base),
+              min-height var(--prog-transition-base),
+              max-height var(--prog-transition-base);
+}
+
+.progression-shell [data-region="utility-bar"][data-collapsed="true"] {
+  flex: 0 0 var(--prog-utility-collapsed-h);
+  height: var(--prog-utility-collapsed-h);
+  min-height: var(--prog-utility-collapsed-h);
+  max-height: var(--prog-utility-collapsed-h);
+}
+
+/* =============================================================================
+ * Content Row (work-surface + details-panel side by side)
+ * ============================================================================= */
+
+.progression-shell .prog-content-row {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+}
+
+/* =============================================================================
+ * Work Surface (primary step interaction area)
+ * ============================================================================= */
+
+.progression-shell [data-region="work-surface"] {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--prog-space-lg);
+}
+
+/* =============================================================================
+ * Details Panel (always mounted on desktop — empty state when nothing focused)
+ * ============================================================================= */
+
+.progression-shell [data-region="details-panel"] {
+  flex: 0 0 var(--prog-details-width);
+  width: var(--prog-details-width);
+  min-width: var(--prog-details-width);
+  max-width: var(--prog-details-width);
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-left: 1px solid var(--prog-border);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Responsive: collapse details panel on narrow widths */
+@media (max-width: 900px) {
+  .progression-shell [data-region="details-panel"] {
+    display: none;
+  }
+}
+
+/* =============================================================================
+ * Action Footer (always present, bottom of main column)
+ * ============================================================================= */
+
+.progression-shell [data-region="action-footer"] {
+  flex: 0 0 var(--prog-footer-height);
+  height: var(--prog-footer-height);
+  min-height: var(--prog-footer-height);
+  max-height: var(--prog-footer-height);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid var(--prog-border);
+  padding: 0 var(--prog-space-lg);
+}
+
+/* =============================================================================
+ * Modal Host (inside shell, not a browser popup)
+ * ============================================================================= */
+
+.progression-shell [data-region="modal-host"] {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: var(--prog-z-modal);
+}
+
+.progression-shell [data-region="modal-host"]:not(:empty) {
+  pointer-events: auto;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* =============================================================================
+ * Scroll discipline — prevent double scrollbars
+ * ============================================================================= */
+
+.progression-shell [data-region="work-surface"],
+.progression-shell [data-region="details-panel"],
+.progression-shell [data-region="progress-rail"] {
+  scrollbar-width: thin;
+  scrollbar-color: var(--prog-border-bright) var(--prog-bg-dark);
+}
+
+/* =============================================================================
+ * Processing overlay
+ * ============================================================================= */
+
+.progression-shell.is-processing [data-region="work-surface"] {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.progression-shell.is-processing [data-region="action-footer"] .prog-btn--primary {
+  pointer-events: none;
+  opacity: 0.5;
+}

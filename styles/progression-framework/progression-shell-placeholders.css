@@ -1,0 +1,342 @@
+/**
+ * progression-shell-placeholders.css
+ *
+ * Minimal styles for Wave 0/1 placeholder regions.
+ * These are replaced by proper component CSS in Waves 2-12.
+ * Scoped to .progression-shell — no conflict with legacy shells.
+ */
+
+/* =============================================================================
+ * Mentor Rail Placeholder
+ * ============================================================================= */
+
+.progression-shell .prog-mentor-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--prog-space-md);
+  gap: var(--prog-space-md);
+  height: 100%;
+  position: relative;
+}
+
+.progression-shell .prog-mentor-placeholder__portrait {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid var(--prog-border-bright);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--prog-text-dim);
+  background: var(--prog-bg-surface);
+  flex-shrink: 0;
+}
+
+.progression-shell .prog-mentor-placeholder__name {
+  font-size: var(--prog-font-size-xs);
+  text-align: center;
+}
+
+.progression-shell .prog-mentor-placeholder__dialogue {
+  flex: 1 1 auto;
+  overflow-y: auto;
+}
+
+.progression-shell .prog-mentor-placeholder__text {
+  font-size: var(--prog-font-size-sm);
+  color: var(--prog-text-mentor);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.progression-shell .prog-mentor-placeholder__text--idle {
+  color: var(--prog-text-disabled);
+  font-style: italic;
+}
+
+.progression-shell .prog-mentor-placeholder__ask {
+  width: 100%;
+  font-size: var(--prog-font-size-xs);
+  padding: var(--prog-space-xs) var(--prog-space-sm);
+}
+
+.progression-shell .prog-mentor-placeholder__collapse {
+  position: absolute;
+  bottom: var(--prog-space-md);
+  right: var(--prog-space-sm);
+  background: transparent;
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+  color: var(--prog-text-dim);
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: var(--prog-font-size-xs);
+  transition: color var(--prog-transition-fast), border-color var(--prog-transition-fast);
+}
+
+.progression-shell .prog-mentor-placeholder__collapse:hover {
+  color: var(--prog-accent);
+  border-color: var(--prog-accent);
+}
+
+/* Collapsed state */
+.progression-shell [data-region="mentor-rail"][data-collapsed="true"] .prog-mentor-placeholder__name,
+.progression-shell [data-region="mentor-rail"][data-collapsed="true"] .prog-mentor-placeholder__dialogue,
+.progression-shell [data-region="mentor-rail"][data-collapsed="true"] .prog-mentor-placeholder__ask {
+  display: none;
+}
+
+/* =============================================================================
+ * Progress Rail Placeholder
+ * ============================================================================= */
+
+.progression-shell .prog-progress-placeholder {
+  padding: var(--prog-space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-sm);
+}
+
+.progression-shell .prog-progress-placeholder__label {
+  font-size: var(--prog-font-size-xs);
+  margin-bottom: var(--prog-space-xs);
+}
+
+.progression-shell .prog-progress-placeholder__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.progression-shell .prog-progress-placeholder__step {
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-sm);
+  padding: var(--prog-space-xs) var(--prog-space-sm);
+  border-radius: var(--prog-radius-sm);
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+  cursor: default;
+  border: 1px solid transparent;
+  transition: all var(--prog-transition-fast);
+}
+
+.progression-shell .prog-progress-placeholder__step--active {
+  color: var(--prog-accent);
+  border-color: var(--prog-border-accent);
+  background: rgba(0, 170, 255, 0.06);
+}
+
+.progression-shell .prog-progress-placeholder__step--complete {
+  color: var(--prog-positive);
+}
+
+.progression-shell .prog-progress-placeholder__step--conditional {
+  color: var(--prog-neutral);
+}
+
+.progression-shell .prog-progress-placeholder__icon {
+  width: 14px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.progression-shell .prog-progress-placeholder__name {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.progression-shell .prog-progress-placeholder__check {
+  color: var(--prog-positive);
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+/* =============================================================================
+ * Utility Bar Placeholder
+ * ============================================================================= */
+
+.progression-shell .prog-utility-placeholder {
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-md);
+  padding: 0 var(--prog-space-lg);
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.progression-shell .prog-utility-placeholder__icon {
+  color: var(--prog-accent);
+  font-size: var(--prog-font-size-base);
+  flex-shrink: 0;
+}
+
+.progression-shell .prog-utility-placeholder__label {
+  font-family: var(--prog-font);
+  font-size: var(--prog-font-size-sm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--prog-text-bright);
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.progression-shell .prog-utility-placeholder__conditional {
+  flex-shrink: 0;
+}
+
+.progression-shell .prog-utility-placeholder__collapse {
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+  color: var(--prog-text-dim);
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: var(--prog-font-size-xs);
+  transition: color var(--prog-transition-fast), border-color var(--prog-transition-fast);
+  margin-left: auto;
+}
+
+.progression-shell .prog-utility-placeholder__collapse:hover {
+  color: var(--prog-accent);
+  border-color: var(--prog-accent);
+}
+
+/* Collapsed utility bar hides label */
+.progression-shell [data-region="utility-bar"][data-collapsed="true"] .prog-utility-placeholder__label,
+.progression-shell [data-region="utility-bar"][data-collapsed="true"] .prog-utility-placeholder__conditional {
+  display: none;
+}
+
+/* =============================================================================
+ * Work Surface Placeholder
+ * ============================================================================= */
+
+.progression-shell .prog-work-placeholder {
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-lg);
+  align-items: flex-start;
+  padding: var(--prog-space-lg);
+}
+
+.progression-shell .prog-work-placeholder__header {
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-md);
+  font-size: var(--prog-font-size-lg);
+}
+
+.progression-shell .prog-work-placeholder__hint {
+  color: var(--prog-text-dim);
+  font-size: var(--prog-font-size-sm);
+  margin: 0;
+}
+
+.progression-shell .prog-work-placeholder__error {
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-sm);
+  padding: var(--prog-space-sm) var(--prog-space-md);
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--prog-radius-md);
+  color: var(--prog-negative);
+  font-size: var(--prog-font-size-sm);
+}
+
+.progression-shell .prog-work-placeholder__empty {
+  color: var(--prog-text-disabled);
+  font-style: italic;
+}
+
+/* =============================================================================
+ * Details Panel Placeholder
+ * ============================================================================= */
+
+.progression-shell .prog-details-placeholder {
+  padding: var(--prog-space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-md);
+  height: 100%;
+}
+
+.progression-shell .prog-details-placeholder__name {
+  font-size: var(--prog-font-size-md);
+  border-bottom: 1px solid var(--prog-separator);
+  padding-bottom: var(--prog-space-sm);
+}
+
+.progression-shell .prog-details-placeholder__content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  font-size: var(--prog-font-size-sm);
+  color: var(--prog-text);
+  line-height: 1.5;
+}
+
+.progression-shell .prog-details-placeholder__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: var(--prog-space-lg);
+  text-align: center;
+}
+
+.progression-shell .prog-details-placeholder__empty-icon {
+  font-size: 2rem;
+  color: var(--prog-text-disabled);
+  opacity: 0.4;
+}
+
+.progression-shell .prog-details-placeholder__empty p {
+  color: var(--prog-text-dim);
+  font-size: var(--prog-font-size-sm);
+  font-style: italic;
+  margin: 0;
+  max-width: 180px;
+}
+
+/* =============================================================================
+ * Empty State (details-panel/empty-state.hbs)
+ * ============================================================================= */
+
+.progression-shell .prog-details-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: var(--prog-space-lg);
+  text-align: center;
+  padding: var(--prog-space-xl);
+}
+
+.progression-shell .prog-details-empty-state__icon {
+  font-size: 2rem;
+  color: var(--prog-text-disabled);
+  opacity: 0.35;
+}
+
+.progression-shell .prog-details-empty-state__message {
+  color: var(--prog-text-dim);
+  font-size: var(--prog-font-size-sm);
+  font-style: italic;
+  margin: 0;
+  max-width: 200px;
+  line-height: 1.4;
+}

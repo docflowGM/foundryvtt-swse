@@ -1,0 +1,141 @@
+/**
+ * progression-framework.css
+ *
+ * CSS custom property tokens for the SWSE Progression Framework.
+ * Contains ONLY variable definitions — no rules, no selectors beyond :root.
+ *
+ * All progression framework components import these tokens.
+ * Override these in holo-theme.css for the full holo aesthetic.
+ */
+
+:root {
+  /* =========================================================================
+   * Brand / Accent
+   * ========================================================================= */
+  --prog-accent:          #0af;          /* Primary holo blue — used on borders, highlights */
+  --prog-accent-dim:      #0af6;         /* 40% alpha accent for subtle glows */
+  --prog-accent-glow:     0 0 8px #0af8, 0 0 20px #0af3;
+
+  /* =========================================================================
+   * Backgrounds
+   * ========================================================================= */
+  --prog-bg-dark:         #0a0f1a;       /* Shell background — deep space */
+  --prog-bg-mid:          #0d1525;       /* Region backgrounds */
+  --prog-bg-surface:      #111c2e;       /* Cards, panels, interactive surfaces */
+  --prog-bg-hover:        #162035;       /* Hover state for cards */
+  --prog-bg-selected:     #0f2040;       /* Selected/committed item */
+  --prog-bg-disabled:     #0a0f1a88;    /* Disabled state */
+
+  /* =========================================================================
+   * Text
+   * ========================================================================= */
+  --prog-text:            #9ed0ff;       /* Primary text — soft holo blue */
+  --prog-text-bright:     #cce8ff;       /* Emphasis / headings */
+  --prog-text-dim:        #5a7fa0;       /* Dim / secondary text */
+  --prog-text-disabled:   #3a5060;       /* Disabled text */
+  --prog-text-mentor:     #a0d8ef;       /* Mentor dialogue text */
+
+  /* =========================================================================
+   * Semantic Colors
+   * ========================================================================= */
+  --prog-positive:        #22c55e;       /* Positive modifiers, met prerequisites */
+  --prog-negative:        #ef4444;       /* Negative modifiers, unmet prerequisites */
+  --prog-neutral:         #fbbf24;       /* Neutral / zero values, warnings */
+  --prog-info:            #38bdf8;       /* Informational highlights */
+
+  /* =========================================================================
+   * Mentor Mood Accents
+   * ========================================================================= */
+  --prog-mood-neutral:    #0af;
+  --prog-mood-encouraging: #22c55e;
+  --prog-mood-cautionary: #fbbf24;
+  --prog-mood-celebratory: #c084fc;
+
+  /* =========================================================================
+   * Borders / Separators
+   * ========================================================================= */
+  --prog-border:          #1e3a5f;       /* Default border */
+  --prog-border-bright:   #2a5585;       /* Active / focus border */
+  --prog-border-accent:   #0af4;         /* Holo accent border */
+  --prog-separator:       #162030;       /* Subtle separator */
+
+  /* =========================================================================
+   * Suggestion Tier Badges (5-tier system — imported from suggestion-engine.css)
+   * ========================================================================= */
+  --prog-tier-optimal:    #fbbf24;       /* Tier 1 — gold */
+  --prog-tier-strong:     #22c55e;       /* Tier 2 — green */
+  --prog-tier-viable:     #38bdf8;       /* Tier 3 — blue */
+  --prog-tier-situational: #a78bfa;     /* Tier 4 — purple */
+  --prog-tier-skip:       #5a7fa0;       /* Tier 5 — dim */
+
+  /* =========================================================================
+   * Progress Rail Step States
+   * ========================================================================= */
+  --prog-step-pending:    #1e3a5f;
+  --prog-step-active:     #0af;
+  --prog-step-complete:   #22c55e;
+  --prog-step-locked:     #162030;
+  --prog-step-conditional: #fbbf24;      /* Yellow — step was engine-unlocked */
+
+  /* =========================================================================
+   * Typography
+   * ========================================================================= */
+  --prog-font:            'Orbitron', 'Roboto Condensed', monospace;
+  --prog-font-body:       'Roboto Condensed', 'Helvetica Neue', sans-serif;
+  --prog-font-mono:       'Roboto Mono', monospace;
+
+  --prog-font-size-xs:    0.65rem;
+  --prog-font-size-sm:    0.75rem;
+  --prog-font-size-base:  0.875rem;
+  --prog-font-size-md:    1rem;
+  --prog-font-size-lg:    1.125rem;
+  --prog-font-size-xl:    1.25rem;
+  --prog-font-size-2xl:   1.5rem;
+
+  /* =========================================================================
+   * Spacing
+   * ========================================================================= */
+  --prog-space-xs:        0.25rem;
+  --prog-space-sm:        0.5rem;
+  --prog-space-md:        0.75rem;
+  --prog-space-lg:        1rem;
+  --prog-space-xl:        1.5rem;
+  --prog-space-2xl:       2rem;
+
+  /* =========================================================================
+   * Region Sizing
+   * ========================================================================= */
+  --prog-mentor-width:        220px;
+  --prog-mentor-collapsed-w:  48px;
+  --prog-progress-width:      160px;
+  --prog-utility-bar-height:  44px;
+  --prog-utility-collapsed-h: 28px;
+  --prog-details-width:       280px;
+  --prog-footer-height:       52px;
+
+  /* =========================================================================
+   * Animation / Transitions
+   * ========================================================================= */
+  --prog-transition-fast:     0.12s ease;
+  --prog-transition-base:     0.2s ease;
+  --prog-transition-slow:     0.3s ease;
+  --prog-transition-mentor:   0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  --prog-transition-tree:     0.3s cubic-bezier(0.4, 0, 0.2, 1);   /* Talent tree stage transition */
+
+  /* =========================================================================
+   * Z-Index Stack
+   * ========================================================================= */
+  --prog-z-base:          1;
+  --prog-z-utility:       10;
+  --prog-z-tooltip:       20;
+  --prog-z-modal:         100;
+  --prog-z-overlay:       200;
+
+  /* =========================================================================
+   * Border Radius
+   * ========================================================================= */
+  --prog-radius-sm:       3px;
+  --prog-radius-md:       6px;
+  --prog-radius-lg:       10px;
+  --prog-radius-pill:     999px;
+}

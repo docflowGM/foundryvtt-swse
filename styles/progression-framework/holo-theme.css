@@ -1,0 +1,371 @@
+/**
+ * holo-theme.css
+ *
+ * Full holo aesthetic for the SWSE Progression Framework.
+ * Applied via .prog-holo class on the shell root element.
+ *
+ * Depends on: progression-framework.css (CSS variables)
+ *
+ * The holo theme creates a holographic datapad look:
+ * - Deep space dark backgrounds
+ * - Electric blue accent glows
+ * - Scanline overlays for sci-fi texture
+ * - Orbitron/monospace typography for UI chrome
+ * - Color-coded semantic values (green/red/yellow)
+ */
+
+/* =============================================================================
+ * Root holo theme class — applied to .progression-shell
+ * ============================================================================= */
+
+.progression-shell.prog-holo {
+  background: var(--prog-bg-dark);
+  color: var(--prog-text);
+  font-family: var(--prog-font-body);
+  border: 1px solid var(--prog-border-accent);
+  box-shadow: var(--prog-accent-glow), inset 0 0 30px rgba(0, 170, 255, 0.04);
+}
+
+/* =============================================================================
+ * Holo Panel — shared surface style for all regions
+ * ============================================================================= */
+
+.prog-holo .prog-panel {
+  background: var(--prog-bg-mid);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-md);
+}
+
+.prog-holo .prog-panel--surface {
+  background: var(--prog-bg-surface);
+}
+
+/* =============================================================================
+ * Holo Scanline Overlay — subtle texture
+ * ============================================================================= */
+
+.prog-holo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 170, 255, 0.012) 2px,
+    rgba(0, 170, 255, 0.012) 4px
+  );
+  pointer-events: none;
+  z-index: var(--prog-z-overlay);
+}
+
+/* =============================================================================
+ * Holo Headings / Labels
+ * ============================================================================= */
+
+.prog-holo .prog-heading {
+  font-family: var(--prog-font);
+  font-size: var(--prog-font-size-sm);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--prog-accent);
+  text-shadow: 0 0 6px var(--prog-accent-dim);
+}
+
+.prog-holo .prog-label {
+  font-family: var(--prog-font-body);
+  font-size: var(--prog-font-size-sm);
+  color: var(--prog-text-dim);
+  letter-spacing: 0.04em;
+}
+
+/* =============================================================================
+ * Holo Buttons
+ * ============================================================================= */
+
+.prog-holo .prog-btn {
+  font-family: var(--prog-font);
+  font-size: var(--prog-font-size-sm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: var(--prog-space-sm) var(--prog-space-lg);
+  border: 1px solid var(--prog-border-bright);
+  border-radius: var(--prog-radius-sm);
+  background: transparent;
+  color: var(--prog-text-bright);
+  cursor: pointer;
+  transition: all var(--prog-transition-base);
+  outline: none;
+}
+
+.prog-holo .prog-btn:hover {
+  border-color: var(--prog-accent);
+  color: var(--prog-accent);
+  box-shadow: 0 0 8px var(--prog-accent-dim);
+  background: rgba(0, 170, 255, 0.06);
+}
+
+.prog-holo .prog-btn:disabled,
+.prog-holo .prog-btn[disabled] {
+  opacity: 0.35;
+  cursor: not-allowed;
+  border-color: var(--prog-border);
+  color: var(--prog-text-disabled);
+  box-shadow: none;
+  background: transparent;
+}
+
+.prog-holo .prog-btn--primary {
+  border-color: var(--prog-accent);
+  color: var(--prog-accent);
+  background: rgba(0, 170, 255, 0.1);
+  box-shadow: 0 0 6px var(--prog-accent-dim);
+}
+
+.prog-holo .prog-btn--primary:hover:not(:disabled) {
+  background: rgba(0, 170, 255, 0.2);
+  box-shadow: var(--prog-accent-glow);
+}
+
+.prog-holo .prog-btn--danger {
+  border-color: var(--prog-negative);
+  color: var(--prog-negative);
+}
+
+.prog-holo .prog-btn--danger:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.1);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.3);
+}
+
+/* =============================================================================
+ * Holo Cards
+ * ============================================================================= */
+
+.prog-holo .prog-card {
+  background: var(--prog-bg-surface);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-md);
+  padding: var(--prog-space-md);
+  cursor: pointer;
+  transition: all var(--prog-transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.prog-holo .prog-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 170, 255, 0.04),
+    transparent
+  );
+  transition: left var(--prog-transition-slow);
+  pointer-events: none;
+}
+
+.prog-holo .prog-card:hover::before {
+  left: 150%;
+}
+
+.prog-holo .prog-card:hover {
+  border-color: var(--prog-border-bright);
+  background: var(--prog-bg-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 170, 255, 0.1);
+}
+
+.prog-holo .prog-card--focused {
+  border-color: var(--prog-accent);
+  background: var(--prog-bg-selected);
+  box-shadow: 0 0 0 1px var(--prog-accent-dim), 0 4px 12px rgba(0, 170, 255, 0.15);
+}
+
+.prog-holo .prog-card--committed {
+  border-color: var(--prog-positive);
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.2);
+}
+
+.prog-holo .prog-card--disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* =============================================================================
+ * Holo Semantic Values (number color language)
+ * ============================================================================= */
+
+.prog-holo .prog-value--positive { color: var(--prog-positive); }
+.prog-holo .prog-value--negative { color: var(--prog-negative); }
+.prog-holo .prog-value--neutral  { color: var(--prog-neutral); }
+
+.prog-holo .prog-value--positive::before { content: '+'; }
+.prog-holo .prog-value--negative::before { content: ''; } /* sign already in number */
+
+/* =============================================================================
+ * Holo Input / Search
+ * ============================================================================= */
+
+.prog-holo .prog-input {
+  background: var(--prog-bg-dark);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+  color: var(--prog-text);
+  font-family: var(--prog-font-body);
+  font-size: var(--prog-font-size-base);
+  padding: var(--prog-space-xs) var(--prog-space-md);
+  outline: none;
+  transition: border-color var(--prog-transition-base);
+  width: 100%;
+}
+
+.prog-holo .prog-input:focus {
+  border-color: var(--prog-accent);
+  box-shadow: 0 0 0 2px var(--prog-accent-dim);
+}
+
+.prog-holo .prog-input::placeholder {
+  color: var(--prog-text-disabled);
+}
+
+/* =============================================================================
+ * Holo Scrollbars
+ * ============================================================================= */
+
+.prog-holo ::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.prog-holo ::-webkit-scrollbar-track {
+  background: var(--prog-bg-dark);
+}
+
+.prog-holo ::-webkit-scrollbar-thumb {
+  background: var(--prog-border-bright);
+  border-radius: var(--prog-radius-pill);
+}
+
+.prog-holo ::-webkit-scrollbar-thumb:hover {
+  background: var(--prog-accent);
+}
+
+/* =============================================================================
+ * Holo Mentor Mood Accents (applied to mentor-rail)
+ * ============================================================================= */
+
+.prog-holo [data-region="mentor-rail"][data-mood="encouraging"] {
+  --prog-mood-current: var(--prog-mood-encouraging);
+}
+
+.prog-holo [data-region="mentor-rail"][data-mood="cautionary"] {
+  --prog-mood-current: var(--prog-mood-cautionary);
+}
+
+.prog-holo [data-region="mentor-rail"][data-mood="celebratory"] {
+  --prog-mood-current: var(--prog-mood-celebratory);
+}
+
+.prog-holo [data-region="mentor-rail"][data-mood="neutral"] {
+  --prog-mood-current: var(--prog-mood-neutral);
+}
+
+.prog-holo [data-region="mentor-rail"] {
+  --prog-mood-current: var(--prog-mood-neutral);
+  border-color: var(--prog-mood-current);
+  box-shadow: 0 0 10px rgba(var(--prog-mood-current), 0.15);
+  transition: border-color var(--prog-transition-mentor),
+              box-shadow var(--prog-transition-mentor);
+}
+
+/* =============================================================================
+ * Holo Loading Pulse
+ * ============================================================================= */
+
+.prog-holo .prog-loading {
+  animation: prog-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes prog-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+/* =============================================================================
+ * Holo Separator
+ * ============================================================================= */
+
+.prog-holo .prog-separator {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--prog-border-accent),
+    transparent
+  );
+  border: none;
+  margin: var(--prog-space-md) 0;
+}
+
+/* =============================================================================
+ * Holo Tooltip
+ * ============================================================================= */
+
+.prog-holo .prog-tooltip {
+  position: absolute;
+  z-index: var(--prog-z-tooltip);
+  background: var(--prog-bg-surface);
+  border: 1px solid var(--prog-border-accent);
+  border-radius: var(--prog-radius-md);
+  padding: var(--prog-space-sm) var(--prog-space-md);
+  font-size: var(--prog-font-size-sm);
+  color: var(--prog-text);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), var(--prog-accent-glow);
+  max-width: 260px;
+  pointer-events: none;
+}
+
+/* =============================================================================
+ * Holo Tag / Chip
+ * ============================================================================= */
+
+.prog-holo .prog-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--prog-space-xs);
+  padding: 2px var(--prog-space-sm);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-pill);
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+  background: var(--prog-bg-dark);
+  letter-spacing: 0.04em;
+}
+
+.prog-holo .prog-chip--active {
+  border-color: var(--prog-accent);
+  color: var(--prog-accent);
+  background: rgba(0, 170, 255, 0.08);
+}
+
+.prog-holo .prog-chip--positive {
+  border-color: var(--prog-positive);
+  color: var(--prog-positive);
+}
+
+.prog-holo .prog-chip--warning {
+  border-color: var(--prog-neutral);
+  color: var(--prog-neutral);
+}
+
+.prog-holo .prog-chip--error {
+  border-color: var(--prog-negative);
+  color: var(--prog-negative);
+}
