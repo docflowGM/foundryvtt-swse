@@ -4,6 +4,47 @@
    Run2.3 Consolidation - 2026-02-11
    =========================== */
 
+/* ============================================================
+   LAYOUT CONTRACT ENFORCEMENT — FOUNDRY V13 INVARIANTS
+   These rules ensure layouts don't collapse when flexcol
+   utility classes are missing from templates.
+   ============================================================ */
+
+/* Droid Builder Layout */
+.droid-builder-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Droid Builder Content (scrollable) */
+.droid-builder-container .builder-step {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+
+/* GM Approval Dashboard Layout */
+.gm-approval-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+/* GM Approval List (scrollable) */
+.gm-approval-container .pending-droids-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow-y: auto;
+}
+
 === chargen.hbs ===
 .chargen-app {
  font-family: "Roboto", Arial, sans-serif;
