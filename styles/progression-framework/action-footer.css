@@ -5,6 +5,11 @@
  * Scoped to .progression-shell [data-region="action-footer"]
  *
  * Layout: Back | Center Status | Next/Confirm
+ *
+ * Semantic chip colors:
+ *   - Neutral/remaining: --prog-text-dim on dark chip
+ *   - Warning (isWarning): --prog-neutral (amber) with neutral-bg fill
+ *   - Blocking (isBlocking): --prog-negative (red) with negative-bg fill
  */
 
 .progression-shell [data-region="action-footer"] {
@@ -38,21 +43,29 @@
   letter-spacing: 0.04em;
   border: 1px solid var(--prog-border);
   color: var(--prog-text-dim);
-  background: var(--prog-bg-dark);
+  /* Slightly darker than footer background so chips read as distinct */
+  background: rgba(0, 0, 0, 0.4);
   white-space: nowrap;
+  text-shadow: var(--prog-text-shadow);
 }
 
+/* Warning chip — amber; remaining picks, not yet blocking */
 .progression-shell .prog-footer__center-item--warning {
-  border-color: var(--prog-neutral);
+  border-color: rgba(245, 158, 11, 0.5);
   color: var(--prog-neutral);
+  background: var(--prog-neutral-bg);
+  text-shadow: 0 0 4px rgba(245, 158, 11, 0.2), var(--prog-text-shadow);
 }
 
+/* Blocking chip — red; hard block, Next disabled */
 .progression-shell .prog-footer__center-item--blocking {
-  border-color: var(--prog-negative);
+  border-color: rgba(239, 68, 68, 0.5);
   color: var(--prog-negative);
+  background: var(--prog-negative-bg);
+  text-shadow: 0 0 4px rgba(239, 68, 68, 0.2), var(--prog-text-shadow);
 }
 
-/* Blocking issues — appear above footer as banner */
+/* Blocking issue banners — appear above footer */
 .progression-shell .prog-footer__blocking {
   position: absolute;
   bottom: calc(var(--prog-footer-height) + 4px);
@@ -71,20 +84,21 @@
   padding: var(--prog-space-xs) var(--prog-space-md);
   border-radius: var(--prog-radius-sm);
   font-size: var(--prog-font-size-sm);
-  background: rgba(239, 68, 68, 0.12);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: var(--prog-negative-bg);
+  border: 1px solid rgba(239, 68, 68, 0.35);
   color: var(--prog-negative);
+  text-shadow: var(--prog-text-shadow);
 }
 
 .progression-shell .prog-footer__blocking-issue i {
-  opacity: 0.8;
+  opacity: 0.85;
   font-size: var(--prog-font-size-xs);
 }
 
-/* Warnings — appear above footer as softer banner */
+/* Warning banners — amber */
 .progression-shell .prog-footer__warning {
-  background: rgba(251, 191, 36, 0.1);
-  border-color: rgba(251, 191, 36, 0.3);
+  background: var(--prog-neutral-bg);
+  border-color: rgba(245, 158, 11, 0.35);
   color: var(--prog-neutral);
 }
 
@@ -93,17 +107,19 @@
   flex: 0 0 auto;
 }
 
-/* Special: last step button is larger */
+/* Last-step Confirm/Apply button — green for positive action completion */
 .progression-shell .prog-footer__next .prog-btn--last-step {
   padding: var(--prog-space-sm) var(--prog-space-xl);
   font-size: var(--prog-font-size-base);
   letter-spacing: 0.1em;
   border-color: var(--prog-positive);
   color: var(--prog-positive);
-  box-shadow: 0 0 8px rgba(34, 197, 94, 0.15);
+  background: var(--prog-positive-bg);
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.2);
+  text-shadow: 0 0 6px rgba(34, 197, 94, 0.3), var(--prog-text-shadow);
 }
 
 .progression-shell .prog-footer__next .prog-btn--last-step:hover:not(:disabled) {
-  background: rgba(34, 197, 94, 0.12);
-  box-shadow: 0 0 16px rgba(34, 197, 94, 0.3);
+  background: rgba(34, 197, 94, 0.14);
+  box-shadow: 0 0 14px rgba(34, 197, 94, 0.35);
 }
