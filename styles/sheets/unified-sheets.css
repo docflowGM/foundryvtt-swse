@@ -25,6 +25,71 @@
   overflow: hidden;
 }
 
+/* ============================================================================
+   LAYOUT CONTRACT ENFORCEMENT — NPC SHEETS
+   These rules ensure layouts don't collapse when flexcol utility classes
+   are missing from templates. Scoped to NPC and NPC Combat sheets.
+   ============================================================================ */
+
+/* Root containers */
+.swse-app .swse-npc-combat-sheet.v2 {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Sheet body (primary growing container) */
+.swse-app .swse-npc-combat-sheet.v2 .sheet-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+
+/* Grid columns (vertical flex) */
+.swse-app .swse-npc-combat-sheet.v2 .npc-combat-left,
+.swse-app .swse-npc-combat-sheet.v2 .npc-combat-right {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+/* Tab navigation (fixed space) */
+.swse-app .swse-sheet.v2 .sheet-tabs {
+  flex: 0 0 auto;
+}
+
+/* Tab panels (scrollable) */
+.swse-app .swse-sheet.v2 .tab {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+/* Grid columns for NPC sheets with tabs (vertical flex) */
+.swse-app .swse-sheet.v2 .swse-v2-left,
+.swse-app .swse-sheet.v2 .swse-v2-right {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+/* Sections and panels */
+.swse-app .swse-sheet.v2 .swse-section,
+.swse-app .swse-sheet.v2 .swse-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
 /* Prevent holo theme from attaching to <body> */
 body.swse-app-theme-holo .swse-app .swse-sheet-holo {
   /* theme effects apply ONLY inside SWSE sheets */

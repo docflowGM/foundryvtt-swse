@@ -1,4 +1,4 @@
-<div class="swse swse-sheet v2">
+<div class="swse swse-sheet v2 flexcol">
   <header class="sheet-header holo-header">
     <div class="header-left">
       <img class="profile" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="64" width="64"/>
@@ -27,21 +27,21 @@
     <a class="item" data-action="tab" data-tab="notes">Notes</a>
   </nav>
 
-  <section class="sheet-body">
-    <section class="tab active" data-tab-group="primary" data-tab="overview">
+  <section class="sheet-body flexcol">
+    <section class="tab active flexcol" data-tab-group="primary" data-tab="overview">
       <div class="swse-v2-sheet-grid">
-        <div class="swse-v2-left">
+        <div class="swse-v2-left flexcol">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/identity-strip.hbs"}}
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs"}}
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs"}}
         </div>
-        <div class="swse-v2-right">
+        <div class="swse-v2-right flexcol">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/xp-panel.hbs"}}
         </div>
       </div>
     </section>
 
-    <section class="tab" data-tab-group="primary" data-tab="systems">
+    <section class="tab flexcol" data-tab-group="primary" data-tab="systems">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-systems-panel.hbs"}}
@@ -53,7 +53,7 @@
       </div>
     </section>
 
-    <section class="tab" data-tab-group="primary" data-tab="combat">
+    <section class="tab flexcol" data-tab-group="primary" data-tab="combat">
       <div class="swse-v2-sheet-grid">
 
         <!-- INITIATIVE DISPLAY -->
@@ -87,7 +87,7 @@
       </div>
     </section>
 
-    <section class="tab" data-tab-group="primary" data-tab="skills">
+    <section class="tab flexcol" data-tab-group="primary" data-tab="skills">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs"}}
@@ -95,7 +95,7 @@
       </div>
     </section>
 
-    <section class="tab" data-tab-group="primary" data-tab="abilities">
+    <section class="tab flexcol" data-tab-group="primary" data-tab="abilities">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/abilities-panel.hbs"}}
@@ -103,7 +103,7 @@
       </div>
     </section>
 
-    <section class="tab" data-tab-group="primary" data-tab="talents">
+    <section class="tab flexcol" data-tab-group="primary" data-tab="talents">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/Talents.hbs"}}
@@ -114,7 +114,7 @@
       </div>
     </section>
 
-    <section class="tab" data-tab-group="primary" data-tab="gear">
+    <section class="tab flexcol" data-tab-group="primary" data-tab="gear">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           <section class="gear-section">
@@ -258,7 +258,7 @@
       </div>
     </section>
 
-    <section class="tab" data-tab-group="primary" data-tab="relationships">
+    <section class="tab flexcol" data-tab-group="primary" data-tab="relationships">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           <div class="holo-panel">
@@ -302,7 +302,7 @@
       </div>
     </section>
 
-    <section class="tab" data-tab-group="primary" data-tab="notes">
+    <section class="tab flexcol" data-tab-group="primary" data-tab="notes">
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-full">
           {{> "systems/foundryvtt-swse/templates/partials/suggestion-card.hbs"}}
