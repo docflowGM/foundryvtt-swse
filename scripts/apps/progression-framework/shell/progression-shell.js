@@ -24,6 +24,7 @@
 import SWSEApplicationV2 from '/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { ConditionalStepResolver } from './conditional-step-resolver.js';
+import { ProgressionFinalizer } from './progression-finalizer.js';
 import { StepCategory } from '../steps/step-descriptor.js';
 import { ActionFooter } from './action-footer.js';
 import { MentorRail } from './mentor-rail.js';
@@ -528,14 +529,61 @@ export class ProgressionShell extends SWSEApplicationV2 {
   async _onConfirmStep(event, target) {
     if (this.isProcessing) return;
 
-    swseLogger.info('ProgressionShell._onConfirmStep: progression complete', {
+    swseLogger.info('ProgressionShell._onConfirmStep: Confirm button clicked', {
       mode: this.mode,
-      steps: this.steps.map(d => d.stepId),
+      currentStep: this.steps[this.currentStepIndex]?.stepId,
     });
 
-    // TODO (Wave 3+): Trigger ChargenFinalizer (chargen) or engine.finalize() (levelup)
-    ui.notifications.info('Progression complete — finalizer not yet implemented.');
-    this.close();
+    // Delegate to finalizer — do NOT mutate actor directly
+    await this._onFinalizeProgression();
+  }
+
+  /**
+   * Finalization gateway — single seam to ActorEngine.
+   *
+   * This is the narrow bridge from UI to governance layer.
+   * All progression mutations flow through here.
+   */
+  async _onFinalizeProgression() {
+    if (this.isProcessing) return;
+
+    try {
+      this.isProcessing = true;
+
+      swseLogger.log('[ProgressionShell] Finalization initiated', {
+        mode: this.mode,
+        actorId: this.actor.id,
+        selectionsCount: this.committedSelections.size,
+      });
+
+      // Prepare session state for finalizer
+      const sessionState = {
+        mode: this.mode,
+        actor: this.actor,
+        committedSelections: this.committedSelections,
+        steps: this.steps,
+        stepData: this.stepData,
+        mentor: this.mentor,
+        sessionId: this.element?.dataset.sessionId || 'unknown',
+      };
+
+      // Hand to finalizer (not direct actor.update())
+      const result = await ProgressionFinalizer.finalize(sessionState, this.actor);
+
+      if (result.success) {
+        swseLogger.log('[ProgressionShell] Finalization successful');
+        ui.notifications.info('Character progression complete!');
+        this.close();
+      } else {
+        swseLogger.error('[ProgressionShell] Finalization failed', result.error);
+        ui.notifications.error(`Progression failed: ${result.error}`);
+      }
+    } catch (error) {
+      swseLogger.error('[ProgressionShell._onFinalizeProgression] Unexpected error', error);
+      ui.notifications.error('An unexpected error occurred during finalization.');
+    } finally {
+      this.isProcessing = false;
+    }
   }
 
   // ---------------------------------------------------------------------------
