@@ -68,6 +68,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
       'previous-step': '_onPreviousStep',
       'confirm-step': '_onConfirmStep',
       'exit-tree': '_onExitTree',
+      'focus-item': '_onFocusItem',
+      'commit-item': '_onCommitItem',
+      'enter-near-human': '_onEnterNearHuman',
+      'confirm-near-human': '_onConfirmNearHuman',
+      'back-to-species': '_onBackToSpecies',
     },
   };
 
@@ -274,6 +279,17 @@ export class ProgressionShell extends SWSEApplicationV2 {
       canNavigate: idx < this.currentStepIndex, // Can go back to completed steps
     }));
 
+    // Step data from plugin
+    const stepData = currentPlugin
+      ? await currentPlugin.getStepData(context).catch(() => ({}))
+      : {};
+
+    // Render work surface
+    const workSurfaceSpec = currentPlugin?.renderWorkSurface?.(stepData) ?? null;
+    const workSurfaceHtml = workSurfaceSpec?.template
+      ? await renderTemplate(workSurfaceSpec.template, workSurfaceSpec.data)
+      : null;
+
     // Footer data
     const isLastStep = this.currentStepIndex === this.steps.length - 1;
     const footerData = this._buildFooterData(currentPlugin, isLastStep);
@@ -284,6 +300,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // Details panel
     const detailsPanelSpec = currentPlugin?.renderDetailsPanel(this.focusedItem)
       ?? { template: null, data: {} };
+    const detailsPanelHtml = detailsPanelSpec?.template
+      ? await renderTemplate(detailsPanelSpec.template, detailsPanelSpec.data)
+      : null;
 
     return foundry.utils.mergeObject(context, {
       // Shell identity
@@ -306,8 +325,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
       // Focus/selection
       focusedItem: this.focusedItem,
 
-      // Details panel
-      detailsPanelSpec,
+      // Work surface & details panel
+      stepData,
+      workSurfaceHtml,
+      detailsPanelHtml,
 
       // Footer
       footer: footerData,
@@ -340,6 +361,12 @@ export class ProgressionShell extends SWSEApplicationV2 {
       if (plugin) {
         await plugin.onDataReady(this).catch(err =>
           swseLogger.error('ProgressionShell: plugin.onDataReady failed', { err })
+        );
+
+        // Call plugin's afterRender hook with work-surface element
+        const workSurfaceEl = html.querySelector('[data-region="work-surface"]');
+        await plugin.afterRender?.(this, workSurfaceEl).catch(err =>
+          swseLogger.error('ProgressionShell: plugin.afterRender failed', { err })
         );
       }
     }
@@ -474,6 +501,45 @@ export class ProgressionShell extends SWSEApplicationV2 {
   _onExitTree(event, target) {
     this.talentTreeStage = 'browser';
     this.render();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Step Plugin Interaction Forwarding
+  // ---------------------------------------------------------------------------
+
+  async _onFocusItem(event, target) {
+    const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
+    if (plugin) {
+      await plugin.onItemFocused(target.dataset.itemId, this);
+    }
+  }
+
+  async _onCommitItem(event, target) {
+    const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
+    if (plugin) {
+      await plugin.onItemCommitted(target.dataset.itemId, this);
+    }
+  }
+
+  async _onEnterNearHuman(event, target) {
+    const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
+    if (plugin?.enterNearHumanMode) {
+      await plugin.enterNearHumanMode(this);
+    }
+  }
+
+  async _onConfirmNearHuman(event, target) {
+    const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
+    if (plugin?.confirmNearHuman) {
+      await plugin.confirmNearHuman(this);
+    }
+  }
+
+  async _onBackToSpecies(event, target) {
+    const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
+    if (plugin?.exitNearHumanMode) {
+      await plugin.exitNearHumanMode(this);
+    }
   }
 
   // ---------------------------------------------------------------------------

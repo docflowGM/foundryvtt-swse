@@ -39,7 +39,9 @@
     "styles/progression-framework/progression-shell-placeholders.css",
     "styles/progression-framework/mentor-rail.css",
     "styles/progression-framework/progress-rail.css",
-    "styles/progression-framework/utility-bar.css"
+    "styles/progression-framework/utility-bar.css",
+    "styles/progression-framework/steps/species-step.css",
+    "styles/progression-framework/steps/near-human-builder.css"
   ],
   "languages": [
     {

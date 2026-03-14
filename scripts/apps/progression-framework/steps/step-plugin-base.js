@@ -268,4 +268,19 @@ export class ProgressionStepPlugin {
   getMentorMode() {
     return 'context-only';
   }
+
+  // ---------------------------------------------------------------------------
+  // Post-Render Lifecycle (Wiring fine-grained DOM handlers)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Called by shell._onRender() after every render with the work-surface element.
+   * Use to wire fine-grained DOM event handlers (e.g. Near-Human builder controls).
+   * @param {import('../shell/progression-shell.js').ProgressionShell} shell
+   * @param {HTMLElement} workSurfaceEl
+   * @returns {Promise<void>}
+   */
+  async afterRender(shell, workSurfaceEl) {
+    // Default: no-op
+  }
 }

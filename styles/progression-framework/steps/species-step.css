@@ -1,0 +1,190 @@
+/* Species Step — species browsing, card grid, focus/commit states */
+
+.progression-shell .prog-species-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--prog-space-sm);
+  padding: var(--prog-space-md);
+  overflow-y: auto;
+  height: 100%;
+}
+
+.progression-shell .prog-species-card {
+  appearance: none;
+  background: var(--prog-bg-read);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+  padding: var(--prog-space-sm);
+  cursor: pointer;
+  transition: all var(--prog-transition-fast);
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-xs);
+}
+
+.progression-shell .prog-species-card:hover {
+  border-color: var(--prog-border-bright);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.progression-shell .prog-species-card:focus {
+  outline: 2px solid var(--prog-accent);
+  outline-offset: -1px;
+}
+
+.progression-shell .prog-species-card--focused {
+  border-color: var(--prog-accent);
+  background: rgba(0, 170, 255, 0.08);
+  box-shadow: 0 0 6px rgba(0, 170, 255, 0.3);
+}
+
+.progression-shell .prog-species-card--committed {
+  border-color: var(--prog-positive);
+}
+
+.progression-shell .prog-species-card__name {
+  font-weight: bold;
+  font-size: var(--prog-font-size-sm);
+  color: var(--prog-text-heading);
+  text-shadow: var(--prog-heading-shadow);
+}
+
+.progression-shell .prog-species-card__attrs {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--prog-font-size-xs);
+}
+
+.progression-shell .prog-species-card__attr {
+  text-shadow: var(--prog-text-shadow);
+}
+
+.progression-shell .prog-species-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.progression-shell .prog-species-card__committed-badge {
+  color: var(--prog-positive);
+  font-size: var(--prog-font-size-xs);
+  font-weight: bold;
+  text-shadow: var(--prog-text-shadow);
+}
+
+.progression-shell .prog-species-browse__empty {
+  grid-column: 1 / -1;
+  padding: var(--prog-space-lg);
+  text-align: center;
+  color: var(--prog-text-dim);
+  font-style: italic;
+}
+
+/* Semantic number colors */
+.progression-shell .prog-num--pos {
+  color: var(--prog-positive);
+}
+
+.progression-shell .prog-num--neg {
+  color: var(--prog-negative);
+}
+
+.progression-shell .prog-num--zero {
+  color: var(--prog-neutral);
+}
+
+/* Species details panel */
+.progression-shell .prog-species-details {
+  padding: var(--prog-space-md);
+  overflow-y: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-sm);
+}
+
+.progression-shell .prog-species-details__header {
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-sm);
+  border-bottom: 1px solid var(--prog-border);
+  padding-bottom: var(--prog-space-sm);
+}
+
+.progression-shell .prog-species-details__name {
+  margin: 0;
+  font-size: var(--prog-font-size-base);
+  color: var(--prog-text-heading);
+  text-shadow: var(--prog-heading-shadow);
+}
+
+.progression-shell .prog-species-details__desc {
+  margin: 0;
+  font-size: var(--prog-font-size-xs);
+  line-height: 1.5;
+  color: var(--prog-text);
+  text-shadow: var(--prog-text-shadow);
+}
+
+.progression-shell .prog-species-details__stats {
+  font-size: var(--prog-font-size-xs);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: var(--prog-text-dim);
+}
+
+.progression-shell .prog-species-details__attrs {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--prog-space-sm) var(--prog-space-md);
+  font-size: var(--prog-font-size-xs);
+  padding: var(--prog-space-sm);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--prog-radius-sm);
+}
+
+.progression-shell .prog-species-details__attr-row {
+  display: contents;
+}
+
+.progression-shell .prog-species-details__attr-row > span:first-child {
+  text-align: right;
+  color: var(--prog-text-dim);
+}
+
+.progression-shell .prog-species-details__special,
+.progression-shell .prog-species-details__languages {
+  font-size: var(--prog-font-size-xs);
+}
+
+.progression-shell .prog-species-details__special h4,
+.progression-shell .prog-species-details__languages h4 {
+  margin: 0 0 var(--prog-space-xs) 0;
+  color: var(--prog-text-heading);
+  text-shadow: var(--prog-heading-shadow);
+  text-transform: uppercase;
+  font-size: var(--prog-font-size-xs);
+}
+
+.progression-shell .prog-species-details__ability {
+  color: var(--prog-text);
+  text-shadow: var(--prog-text-shadow);
+  margin-bottom: 2px;
+}
+
+.progression-shell .prog-species-details__actions {
+  display: flex;
+  gap: var(--prog-space-sm);
+  margin-top: auto;
+}
+
+.progression-shell .prog-species-details__actions .prog-btn {
+  flex: 1;
+  font-size: var(--prog-font-size-xs);
+}

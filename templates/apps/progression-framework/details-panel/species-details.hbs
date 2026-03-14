@@ -1,0 +1,53 @@
+<div class="prog-species-details">
+  <div class="prog-species-details__header">
+    <h2 class="prog-species-details__name">{{species.name}}</h2>
+    {{#if source}}<span class="prog-chip">{{source}}</span>{{/if}}
+  </div>
+
+  {{#if species.description}}
+    <p class="prog-species-details__desc">{{species.description}}</p>
+  {{/if}}
+
+  <div class="prog-species-details__stats">
+    {{#if size}}<div><strong>Size:</strong> {{size}}</div>{{/if}}
+    {{#if speed}}<div><strong>Speed:</strong> {{speed}}</div>{{/if}}
+  </div>
+
+  <div class="prog-species-details__attrs">
+    {{#each abilityRows}}
+      <div class="prog-species-details__attr-row">
+        <span>{{this.label}}</span>
+        <span class="{{this.cssClass}}">
+          {{#if (gt this.value 0)}}+{{/if}}{{this.value}}
+        </span>
+      </div>
+    {{/each}}
+  </div>
+
+  {{#if abilities.length}}
+    <div class="prog-species-details__special">
+      <h4>Special Abilities</h4>
+      {{#each abilities}}<div class="prog-species-details__ability">• {{this.name}}</div>{{/each}}
+    </div>
+  {{/if}}
+
+  {{#if languages.length}}
+    <div class="prog-species-details__languages">
+      <h4>Languages</h4>
+      <div>{{languages}}</div>
+    </div>
+  {{/if}}
+
+  <div class="prog-species-details__actions">
+    {{#if isNearHuman}}
+      <button class="prog-btn prog-btn--primary" data-action="enter-near-human" type="button">
+        <i class="fas fa-cogs"></i> Customize Near-Human →
+      </button>
+    {{else}}
+      <button class="prog-btn prog-btn--primary" data-action="commit-item"
+              data-item-id="{{species.id}}" type="button">
+        <i class="fas fa-check"></i> Choose {{species.name}}
+      </button>
+    {{/if}}
+  </div>
+</div>

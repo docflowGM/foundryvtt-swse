@@ -59,35 +59,37 @@
       ================================================================== --}}
       <div data-region="work-surface">
 
-        {{!-- Step plugin renders its own work-surface template here (Wave 3+) --}}
-        {{!-- Placeholder for Wave 0/1 --}}
-        <div class="prog-work-placeholder">
-          {{#if currentDescriptor}}
-            <div class="prog-work-placeholder__header prog-heading">
-              <i class="fas {{currentDescriptor.icon}}"></i>
-              {{currentDescriptor.label}}
-              {{#if currentDescriptor.isConditional}}
-                <span class="prog-chip prog-chip--warning">
-                  Engine-Unlocked
-                </span>
-              {{/if}}
-            </div>
-            <p class="prog-work-placeholder__hint">
-              Step {{add currentStepIndex 1}} of {{totalSteps}}
-              {{#if currentDescriptor.isConditional}}
-                — Unlocked by: {{currentDescriptor.unlockReason}}
-              {{/if}}
-            </p>
-            {{#if lastError}}
-              <div class="prog-work-placeholder__error">
-                <i class="fas fa-exclamation-triangle"></i>
-                {{lastError.message}}
+        {{#if workSurfaceHtml}}
+          {{{workSurfaceHtml}}}
+        {{else}}
+          <div class="prog-work-placeholder">
+            {{#if currentDescriptor}}
+              <div class="prog-work-placeholder__header prog-heading">
+                <i class="fas {{currentDescriptor.icon}}"></i>
+                {{currentDescriptor.label}}
+                {{#if currentDescriptor.isConditional}}
+                  <span class="prog-chip prog-chip--warning">
+                    Engine-Unlocked
+                  </span>
+                {{/if}}
               </div>
+              <p class="prog-work-placeholder__hint">
+                Step {{add currentStepIndex 1}} of {{totalSteps}}
+                {{#if currentDescriptor.isConditional}}
+                  — Unlocked by: {{currentDescriptor.unlockReason}}
+                {{/if}}
+              </p>
+              {{#if lastError}}
+                <div class="prog-work-placeholder__error">
+                  <i class="fas fa-exclamation-triangle"></i>
+                  {{lastError.message}}
+                </div>
+              {{/if}}
+            {{else}}
+              <p class="prog-work-placeholder__empty">No steps available.</p>
             {{/if}}
-          {{else}}
-            <p class="prog-work-placeholder__empty">No steps available.</p>
-          {{/if}}
-        </div>
+          </div>
+        {{/if}}
 
       </div>{{!-- /work-surface --}}
 
@@ -97,25 +99,27 @@
       ================================================================== --}}
       <div data-region="details-panel">
 
-        {{!-- Step plugin renders details-panel template here (Wave 3+) --}}
-        {{!-- Placeholder for Wave 0/1 --}}
-        <div class="prog-details-placeholder">
-          {{#if focusedItem}}
-            <div class="prog-details-placeholder__name prog-heading">
-              {{focusedItem.name}}
-            </div>
-            <div class="prog-details-placeholder__content">
-              <p>{{focusedItem.description}}</p>
-            </div>
-          {{else}}
-            {{#if currentDescriptor}}
-              <div class="prog-details-placeholder__empty">
-                <i class="fas {{currentDescriptor.icon}} prog-details-placeholder__empty-icon"></i>
-                <p>Select an item to see details.</p>
+        {{#if detailsPanelHtml}}
+          {{{detailsPanelHtml}}}
+        {{else}}
+          <div class="prog-details-placeholder">
+            {{#if focusedItem}}
+              <div class="prog-details-placeholder__name prog-heading">
+                {{focusedItem.name}}
               </div>
+              <div class="prog-details-placeholder__content">
+                <p>{{focusedItem.description}}</p>
+              </div>
+            {{else}}
+              {{#if currentDescriptor}}
+                <div class="prog-details-placeholder__empty">
+                  <i class="fas {{currentDescriptor.icon}} prog-details-placeholder__empty-icon"></i>
+                  <p>Select an item to see details.</p>
+                </div>
+              {{/if}}
             {{/if}}
-          {{/if}}
-        </div>
+          </div>
+        {{/if}}
 
       </div>{{!-- /details-panel --}}
 

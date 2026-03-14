@@ -1,0 +1,33 @@
+<div class="prog-species-browse">
+  <div class="prog-species-grid" role="list">
+    {{#each species}}
+      <button class="prog-species-card
+                     {{#if (eq id ../focusedSpeciesId)}}prog-species-card--focused{{/if}}
+                     {{#if (eq id ../committedSpeciesId)}}prog-species-card--committed{{/if}}"
+              data-action="focus-item"
+              data-item-id="{{this.id}}"
+              type="button"
+              role="option"
+              {{#if (eq id ../committedSpeciesId)}}aria-selected="true"{{/if}}>
+        <div class="prog-species-card__name">{{this.name}}</div>
+        <div class="prog-species-card__attrs">
+          {{#each this.abilityRows}}
+            <span class="prog-species-card__attr {{this.cssClass}}">
+              {{this.label}}: {{#if (gt this.value 0)}}+{{/if}}{{this.value}}
+            </span>
+          {{/each}}
+        </div>
+        <div class="prog-species-card__meta">
+          {{#each this.metaChips}}
+            <span class="prog-chip prog-chip--dim">{{this.label}}</span>
+          {{/each}}
+        </div>
+        {{#if (eq id ../committedSpeciesId)}}
+          <span class="prog-species-card__committed-badge">✓ Selected</span>
+        {{/if}}
+      </button>
+    {{else}}
+      <p class="prog-species-browse__empty">No species match your search or filters.</p>
+    {{/each}}
+  </div>
+</div>

@@ -15,6 +15,7 @@
 
 import { ProgressionShell } from './shell/progression-shell.js';
 import { createStepDescriptor, StepCategory, StepType } from './steps/step-descriptor.js';
+import { SpeciesStep } from './steps/species-step.js';
 
 export class ChargenShell extends ProgressionShell {
   static async open(actor, options = {}) {
@@ -90,11 +91,11 @@ const CHARGEN_CANONICAL_STEPS = [
     pluginClass: null, // Wave 3+
   },
   {
-    stepId: 'race',
+    stepId: 'species',
     label: 'Species',
     icon: 'fa-dna',
     type: StepType.IDENTITY,
-    pluginClass: null, // Wave 3: SpeciesStep
+    pluginClass: SpeciesStep,
   },
   {
     stepId: 'attribute',
