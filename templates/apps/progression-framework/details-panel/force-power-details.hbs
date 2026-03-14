@@ -1,0 +1,65 @@
+{{!-- Force Power Details Panel --}}
+{{!-- Shows focused power with stack count and add/deselect controls --}}
+
+<div class="prog-force-power-details">
+
+  {{!-- Header with power name and selected count --}}
+  <div class="prog-force-power-details__header">
+    <h2 class="prog-force-power-details__name">{{power.name}}</h2>
+    {{#if selectedCount}}
+      <span class="prog-force-power-details__selected-badge">
+        <i class="fas fa-star" aria-hidden="true"></i>
+        Selected {{selectedCount}} {{plural selectedCount "time" "times"}}
+      </span>
+    {{/if}}
+  </div>
+
+  {{!-- Description --}}
+  {{#if description}}
+    <div class="prog-force-power-details__section">
+      <h3 class="prog-force-power-details__section-title">Description</h3>
+      <p class="prog-force-power-details__description">{{description}}</p>
+    </div>
+  {{/if}}
+
+  {{!-- Prerequisites --}}
+  {{#if prerequisites}}
+    <div class="prog-force-power-details__section">
+      <h3 class="prog-force-power-details__section-title">Prerequisites</h3>
+      <p class="prog-force-power-details__prerequisites">{{prerequisites}}</p>
+    </div>
+  {{/if}}
+
+  {{!-- Selection controls --}}
+  <div class="prog-force-power-details__actions">
+    {{#if canAddMore}}
+      {{#if selectedCount}}
+        <p class="prog-force-power-details__hint">
+          <i class="fas fa-info-circle" aria-hidden="true"></i>
+          You can select this Power multiple times for additional uses.
+        </p>
+      {{else}}
+        <p class="prog-force-power-details__hint">
+          <i class="fas fa-info-circle" aria-hidden="true"></i>
+          This Power can be selected multiple times.
+        </p>
+      {{/if}}
+
+      <button class="prog-btn prog-btn--primary" data-action="commit-item" data-item-id="{{power.id}}" type="button">
+        <i class="fas fa-{{#if selectedCount}}plus-circle{{else}}check-circle{{/if}}"></i>
+        {{buttonLabel}}
+      </button>
+    {{else}}
+      <p class="prog-force-power-details__hint prog-force-power-details__hint--blocked">
+        <i class="fas fa-ban" aria-hidden="true"></i>
+        No more Power selections available.
+      </p>
+    {{/if}}
+
+    <button class="prog-btn" data-action="ask-mentor" type="button">
+      <i class="fas fa-brain" aria-hidden="true"></i>
+      Ask Mentor
+    </button>
+  </div>
+
+</div>

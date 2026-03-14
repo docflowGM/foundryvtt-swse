@@ -22,6 +22,7 @@
  */
 
 import { createStepDescriptor, StepCategory, StepType } from '../steps/step-descriptor.js';
+import { ForcePowerStep } from '../steps/force-power-step.js';
 
 /**
  * Known conditional step keys used by the progression engine.
@@ -238,7 +239,7 @@ const CONDITIONAL_STEP_CONFIG = {
     icon: 'fa-hand-sparkles',
     type: StepType.SELECTION,
     isSkippable: false,
-    pluginClass: null, // Wired in Wave 9: ForcePowerStep
+    pluginClass: ForcePowerStep, // Wave 10: ForcePowerStep
   },
   [ConditionalStepKey.FORCE_SECRETS]: {
     label: 'Force Secrets',

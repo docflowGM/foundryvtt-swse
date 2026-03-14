@@ -1,0 +1,53 @@
+{{!-- Force Power Selection Work Surface --}}
+{{!-- Shows browsable force power cards with counts for duplicate selections --}}
+
+<div class="prog-force-power-browse">
+  {{#if powers.length}}
+    <div class="prog-force-power-grid" role="list">
+      {{#each powers}}
+        <div class="prog-force-power-card
+                    {{#if (arrayIncludes ../committedCounts @key)}}prog-force-power-card--selected{{/if}}"
+             data-action="focus-item"
+             data-item-id="{{this.id}}"
+             tabindex="0" role="option"
+             aria-selected="{{#if (arrayIncludes ../committedCounts @key)}}true{{else}}false{{/if}}">
+
+          {{!-- Power name --}}
+          <div class="prog-force-power-card__header">
+            <h3 class="prog-force-power-card__name">{{this.name}}</h3>
+            {{#if (lookup ../committedCounts this.id)}}
+              <span class="prog-force-power-card__count-badge">
+                ×{{lookup ../committedCounts this.id}}
+              </span>
+            {{/if}}
+          </div>
+
+          {{!-- Description snippet --}}
+          {{#if this.description}}
+            <p class="prog-force-power-card__description">
+              {{truncate this.description 100}}
+            </p>
+          {{/if}}
+
+          {{!-- Selection state indicator --}}
+          {{#if (lookup ../committedCounts this.id)}}
+            <div class="prog-force-power-card__state-hint">
+              <i class="fas fa-star" aria-hidden="true"></i>
+              Selected {{lookup ../committedCounts this.id}} {{plural (lookup ../committedCounts this.id) "time" "times"}}
+            </div>
+          {{else}}
+            <div class="prog-force-power-card__state-hint prog-force-power-card__state-hint--available">
+              <i class="fas fa-plus-circle" aria-hidden="true"></i>
+              Available
+            </div>
+          {{/if}}
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="prog-force-power-browse__empty">
+      <i class="fas fa-hand-sparkles" aria-hidden="true"></i>
+      <p>No Force Powers match your search or filters.</p>
+    </div>
+  {{/if}}
+</div>
