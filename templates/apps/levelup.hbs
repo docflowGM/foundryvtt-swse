@@ -763,6 +763,37 @@
                 </div>
                 {{/if}}
 
+                {{! Phase 4: Suggestion Transparency - Explanation }}
+                {{#if this.explanation}}
+                <div class="feat-explanation" style="margin: 0.5em 0; padding: 0.5em; background: rgba(255,255,255,0.05); border-left: 2px solid rgba(255,215,0,0.5); border-radius: 2px; font-size: 0.9em;">
+                  {{#if this.explanation.short}}<div style="font-weight: 500;">{{this.explanation.short}}</div>{{/if}}
+                  {{#if this.explanation.long}}<div style="margin-top: 0.3em; opacity: 0.9;">{{this.explanation.long}}</div>{{/if}}
+                </div>
+                {{/if}}
+
+                {{! Phase 4: Suggestion Transparency - Reasons }}
+                {{#if this.reasons}}
+                <div class="feat-reasons" style="margin: 0.5em 0; padding: 0.5em; background: rgba(255,255,255,0.02); border-radius: 2px; font-size: 0.85em;">
+                  <div style="font-weight: 500; margin-bottom: 0.3em;">Why this feat:</div>
+                  {{#each this.reasons}}
+                  <div style="margin: 0.2em 0;">⭐ {{this.strength}} {{this.text}}</div>
+                  {{/each}}
+                </div>
+                {{/if}}
+
+                {{! Phase 4: Suggestion Transparency - Confidence }}
+                {{#if this.confidence}}
+                <div class="feat-confidence" style="margin: 0.5em 0; padding: 0.5em; font-size: 0.85em;">
+                  <div style="display: flex; align-items: center; gap: 0.5em;">
+                    <span style="flex: 0;">Confidence:</span>
+                    <div style="flex: 1; height: 6px; background: rgba(255,255,255,0.15); border-radius: 3px; overflow: hidden;">
+                      <div style="height: 100%; background: {{#if this.confidence}} {{#if (gte this.confidence 0.8)}}#4ade80{{else if (gte this.confidence 0.6)}}#fbbf24{{else}}#ef4444{{/if}} {{/if}}; width: {{mul this.confidence 100}}%; transition: width 0.2s ease;"></div>
+                    </div>
+                    <span style="flex: 0;">{{roundPercent this.confidence}}%</span>
+                  </div>
+                </div>
+                {{/if}}
+
                 <button class="select-bonus-feat choice-button"
                         data-feat-id="{{this._id}}"
                         {{#if this.isUnavailable}}disabled title="Prerequisites not met"{{/if}}

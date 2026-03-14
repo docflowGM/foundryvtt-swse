@@ -1252,6 +1252,33 @@
         {{#if this.suggestion.reason}}
         <div class="feat-tooltip-suggestion">💡 {{this.suggestion.reason}}</div>
         {{/if}}
+        {{! Phase 4: Suggestion Transparency - Explanation }}
+        {{#if this.explanation}}
+        <div class="feat-tooltip-explanation" style="margin-top: 0.5em; padding-top: 0.5em; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.9em;">
+          {{#if this.explanation.short}}<div style="font-weight: 500;">{{this.explanation.short}}</div>{{/if}}
+          {{#if this.explanation.long}}<div style="margin-top: 0.3em; opacity: 0.9;">{{this.explanation.long}}</div>{{/if}}
+        </div>
+        {{/if}}
+        {{! Phase 4: Suggestion Transparency - Reasons }}
+        {{#if this.reasons}}
+        <div class="feat-tooltip-reasons" style="margin-top: 0.5em; font-size: 0.85em;">
+          {{#each this.reasons}}
+          <div style="margin: 0.2em 0;">⭐ {{this.strength}} {{this.text}}</div>
+          {{/each}}
+        </div>
+        {{/if}}
+        {{! Phase 4: Suggestion Transparency - Confidence }}
+        {{#if this.confidence}}
+        <div class="feat-tooltip-confidence" style="margin-top: 0.5em; font-size: 0.85em;">
+          <div style="display: flex; align-items: center; gap: 0.5em;">
+            <span>Confidence:</span>
+            <div style="flex: 1; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px;">
+              <div style="height: 100%; background: {{#if this.confidence}} {{#if (gte this.confidence 0.8)}}#4ade80{{else if (gte this.confidence 0.6)}}#fbbf24{{else}}#ef4444{{/if}} {{/if}}; width: {{mul this.confidence 100}}%; border-radius: 2px;"></div>
+            </div>
+            <span style="min-width: 2em;">{{roundPercent this.confidence}}%</span>
+          </div>
+        </div>
+        {{/if}}
       </div>
     </div>
     <div class="feat-card-face feat-card-back">
@@ -1322,6 +1349,33 @@
         {{/if}}
         {{#if this.suggestion.reason}}
         <div class="feat-tooltip-suggestion">💡 {{this.suggestion.reason}}</div>
+        {{/if}}
+        {{! Phase 4: Suggestion Transparency - Explanation }}
+        {{#if this.explanation}}
+        <div class="feat-tooltip-explanation" style="margin-top: 0.5em; padding-top: 0.5em; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.9em;">
+          {{#if this.explanation.short}}<div style="font-weight: 500;">{{this.explanation.short}}</div>{{/if}}
+          {{#if this.explanation.long}}<div style="margin-top: 0.3em; opacity: 0.9;">{{this.explanation.long}}</div>{{/if}}
+        </div>
+        {{/if}}
+        {{! Phase 4: Suggestion Transparency - Reasons }}
+        {{#if this.reasons}}
+        <div class="feat-tooltip-reasons" style="margin-top: 0.5em; font-size: 0.85em;">
+          {{#each this.reasons}}
+          <div style="margin: 0.2em 0;">⭐ {{this.strength}} {{this.text}}</div>
+          {{/each}}
+        </div>
+        {{/if}}
+        {{! Phase 4: Suggestion Transparency - Confidence }}
+        {{#if this.confidence}}
+        <div class="feat-tooltip-confidence" style="margin-top: 0.5em; font-size: 0.85em;">
+          <div style="display: flex; align-items: center; gap: 0.5em;">
+            <span>Confidence:</span>
+            <div style="flex: 1; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px;">
+              <div style="height: 100%; background: {{#if this.confidence}} {{#if (gte this.confidence 0.8)}}#4ade80{{else if (gte this.confidence 0.6)}}#fbbf24{{else}}#ef4444{{/if}} {{/if}}; width: {{mul this.confidence 100}}%; border-radius: 2px;"></div>
+            </div>
+            <span style="min-width: 2em;">{{roundPercent this.confidence}}%</span>
+          </div>
+        </div>
         {{/if}}
       </div>
     </div>

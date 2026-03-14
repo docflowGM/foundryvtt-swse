@@ -99,6 +99,14 @@ export class MentorSuggestionDialog extends BaseSWSEAppV2 {
               <span class="suggestion-name">${this.voicedSuggestion.suggestionName}</span>
               ${tierLabel ? `<span class="tier-label">${tierLabel}</span>` : ''}
             </div>
+            {{! Phase 4: Mentor Enrichment - Show mentor advice }}
+            ${this.suggestion.mentorAdvice ? `<div class="mentor-advice" style="margin-top: 0.5em; padding: 0.5em; background: rgba(255,255,255,0.05); border-left: 2px solid rgba(74,222,128,0.5); border-radius: 2px; font-size: 0.9em; font-style: italic;">${this.suggestion.mentorAdvice}</div>` : ''}
+            {{! Phase 4: Mentor Enrichment - Show mentor reasons }}
+            ${this.suggestion.mentorReasons && this.suggestion.mentorReasons.length > 0 ? `<div class="mentor-reasons" style="margin-top: 0.5em; padding: 0.5em; background: rgba(255,255,255,0.02); border-radius: 2px; font-size: 0.85em;"><div style="font-weight: 500; margin-bottom: 0.3em;">Mentor's reasoning:</div>${this.suggestion.mentorReasons.map(r => `<div style="margin: 0.2em 0;">• ${typeof r === 'string' ? r : r.text}</div>`).join('')}</div>` : ''}
+            {{! Phase 4: Mentor Enrichment - Show strategic insight }}
+            ${this.suggestion.strategicInsight ? `<div class="strategic-insight" style="margin-top: 0.5em; padding: 0.5em; background: rgba(100,150,255,0.1); border-left: 2px solid rgba(100,150,255,0.5); border-radius: 2px; font-size: 0.85em;"><strong>Strategic Note:</strong> ${this.suggestion.strategicInsight}</div>` : ''}
+            {{! Phase 4: Mentor Enrichment - Show mentor confidence }}
+            ${this.suggestion.mentorConfidence !== undefined ? `<div class="mentor-confidence" style="margin-top: 0.5em; font-size: 0.85em;"><div style="display: flex; align-items: center; gap: 0.5em;"><span style="flex: 0;">Mentor confidence:</span><div style="flex: 1; height: 6px; background: rgba(255,255,255,0.15); border-radius: 3px; overflow: hidden;"><div style="height: 100%; background: ${this.suggestion.mentorConfidence >= 0.8 ? '#4ade80' : this.suggestion.mentorConfidence >= 0.6 ? '#fbbf24' : '#ef4444'}; width: ${(this.suggestion.mentorConfidence * 100)}%; transition: width 0.2s ease;"></div></div><span style="flex: 0;">${Math.round(this.suggestion.mentorConfidence * 100)}%</span></div></div>` : ''}
           </div>
 
           <p class="mentor-explanation"></p>
