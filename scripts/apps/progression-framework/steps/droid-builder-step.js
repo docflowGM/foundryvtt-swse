@@ -38,8 +38,12 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    * Initialize droid builder state from actor or defaults.
    */
   _initializeDroidState(actor) {
-    const isDroid = actor?.system?.isDroid || false;
+    if (!actor) {
+      return null;
+    }
 
+    // Check if actor is a droid character
+    const isDroid = actor?.system?.isDroid || false;
     if (!isDroid) {
       return null;
     }
@@ -47,20 +51,26 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     // Get house rule settings
     const baseCredits = game.settings.get('foundryvtt-swse', 'droidConstructionCredits') || 1000;
 
+    // Initialize with actor's current droid state, or defaults
+    const droidSystems = actor?.system?.droidSystems || {
+      locomotion: null,
+      processor: { id: 'heuristic', name: 'Heuristic Processor', cost: 0, weight: 5 },
+      appendages: [],
+      accessories: [],
+      locomotionEnhancements: [],
+      appendageEnhancements: [],
+      totalCost: 0,
+      totalWeight: 0
+    };
+
+    // Deep copy systems to avoid mutating actor data directly during building
+    const systemsCopy = JSON.parse(JSON.stringify(droidSystems));
+
     return {
       isDroid: true,
       droidDegree: actor?.system?.droidDegree || '1st-degree',
       droidSize: actor?.system?.droidSize || 'medium',
-      droidSystems: actor?.system?.droidSystems || {
-        locomotion: null,
-        processor: { id: 'heuristic', name: 'Heuristic Processor', cost: 0, weight: 5 },
-        appendages: [],
-        accessories: [],
-        locomotionEnhancements: [],
-        appendageEnhancements: [],
-        totalCost: 0,
-        totalWeight: 0
-      },
+      droidSystems: systemsCopy,
       droidCredits: {
         base: baseCredits,
         spent: actor?.system?.droidCredits?.spent || 0,
@@ -645,6 +655,42 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
   }
 
   /**
+   * Validate droid build state.
+   */
+  validate() {
+    const readiness = this._validateDroidBuild();
+    return {
+      isValid: readiness.isValid,
+      errors: readiness.isValid ? [] : readiness.issues,
+      warnings: []
+    };
+  }
+
+  /**
+   * Return footer configuration overrides for droid builder.
+   */
+  getFooterConfig() {
+    const readiness = this._validateDroidBuild();
+    return {
+      nextLabel: readiness.isValid ? 'Next: Attributes' : 'Complete Build',
+      confirmLabel: 'Finalize',
+      isBlocked: !readiness.isValid,
+    };
+  }
+
+  /**
+   * Return utility bar configuration for droid builder.
+   */
+  getUtilityBarConfig() {
+    return {
+      mode: 'droid-builder',
+      showBudgetStatus: true,
+      showSystemCount: true,
+      showSearchBar: true,
+    };
+  }
+
+  /**
    * Return mentor guidance text for this step.
    */
   getMentorContext(shell) {
@@ -754,8 +800,8 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     const success = this.purchaseSystem(category, id, subcategory);
 
     if (success) {
-      // Update work surface to reflect changes
-      shell.requestWorkSurfaceUpdate();
+      // Trigger shell re-render to reflect state changes
+      shell.render();
       ui.notifications.info(`${id} system purchased`);
     } else {
       ui.notifications.warn('Unable to purchase system - check credits and requirements');
@@ -775,8 +821,8 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     const success = this.removeSystem(category, id, subcategory);
 
     if (success) {
-      // Update work surface to reflect changes
-      shell.requestWorkSurfaceUpdate();
+      // Trigger shell re-render to reflect state changes
+      shell.render();
       ui.notifications.info(`${id} system removed`);
     }
   }
