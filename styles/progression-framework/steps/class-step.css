@@ -1,0 +1,260 @@
+/* Class Step — class browsing, card grid, focus/commit states */
+
+.progression-shell .prog-class-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--prog-space-sm);
+  padding: var(--prog-space-md);
+  overflow-y: auto;
+  height: 100%;
+}
+
+.progression-shell .prog-class-card {
+  appearance: none;
+  background: var(--prog-bg-read);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+  padding: var(--prog-space-sm);
+  cursor: pointer;
+  transition: all var(--prog-transition-fast);
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-sm);
+}
+
+.progression-shell .prog-class-card:hover {
+  border-color: var(--prog-border-bright);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.progression-shell .prog-class-card:focus {
+  outline: 2px solid var(--prog-accent);
+  outline-offset: -1px;
+}
+
+.progression-shell .prog-class-card--focused {
+  border-color: var(--prog-accent);
+  background: rgba(0, 170, 255, 0.08);
+  box-shadow: 0 0 6px rgba(0, 170, 255, 0.3);
+}
+
+.progression-shell .prog-class-card--committed {
+  border-color: var(--prog-positive);
+}
+
+.progression-shell .prog-class-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--prog-space-xs);
+  border-bottom: 1px solid var(--prog-border);
+  padding-bottom: var(--prog-space-xs);
+}
+
+.progression-shell .prog-class-card__name {
+  font-weight: bold;
+  font-size: var(--prog-font-size-base);
+  color: var(--prog-text-heading);
+  text-shadow: var(--prog-heading-shadow);
+  flex: 1;
+}
+
+.progression-shell .prog-class-card__type {
+  font-size: var(--prog-font-size-xs);
+}
+
+.progression-shell .prog-class-card__stats {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--prog-font-size-xs);
+}
+
+.progression-shell .prog-class-card__stat {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: var(--prog-space-xs);
+}
+
+.progression-shell .prog-class-card__stat-label {
+  color: var(--prog-text-dim);
+  text-shadow: var(--prog-text-shadow);
+}
+
+.progression-shell .prog-class-card__stat-value {
+  text-align: right;
+  font-weight: bold;
+  color: var(--prog-accent);
+  text-shadow: var(--prog-heading-shadow);
+}
+
+.progression-shell .prog-class-card__mentor {
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-xs);
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+  text-shadow: var(--prog-text-shadow);
+  border-top: 1px solid var(--prog-border);
+  padding-top: var(--prog-space-xs);
+}
+
+.progression-shell .prog-class-card__mentor i {
+  color: var(--prog-accent);
+}
+
+.progression-shell .prog-class-card__committed-badge {
+  color: var(--prog-positive);
+  font-size: var(--prog-font-size-xs);
+  font-weight: bold;
+  text-shadow: var(--prog-text-shadow);
+  text-align: center;
+}
+
+.progression-shell .prog-class-browse__empty {
+  grid-column: 1 / -1;
+  padding: var(--prog-space-lg);
+  text-align: center;
+  color: var(--prog-text-dim);
+  font-style: italic;
+}
+
+/* Class details panel */
+.progression-shell .prog-class-details {
+  padding: var(--prog-space-md);
+  overflow-y: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-sm);
+}
+
+.progression-shell .prog-class-details__header {
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-sm);
+  border-bottom: 1px solid var(--prog-border);
+  padding-bottom: var(--prog-space-sm);
+}
+
+.progression-shell .prog-class-details__name {
+  margin: 0;
+  font-size: var(--prog-font-size-lg);
+  color: var(--prog-text-heading);
+  text-shadow: var(--prog-heading-shadow);
+  flex: 1;
+}
+
+.progression-shell .prog-class-details__fantasy {
+  margin: 0;
+  font-size: var(--prog-font-size-xs);
+  line-height: 1.6;
+  color: var(--prog-text);
+  text-shadow: var(--prog-text-shadow);
+  font-style: italic;
+}
+
+.progression-shell .prog-class-details__stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--prog-space-sm);
+  padding: var(--prog-space-sm);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--prog-radius-sm);
+}
+
+.progression-shell .prog-class-details__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--prog-space-xs);
+  text-align: center;
+}
+
+.progression-shell .prog-class-details__stat-label {
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+  text-shadow: var(--prog-text-shadow);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.progression-shell .prog-class-details__stat-value {
+  font-size: var(--prog-font-size-base);
+  font-weight: bold;
+  color: var(--prog-accent);
+  text-shadow: var(--prog-heading-shadow);
+}
+
+.progression-shell .prog-class-details__mentor {
+  padding: var(--prog-space-sm);
+  background: rgba(0, 170, 255, 0.08);
+  border-radius: var(--prog-radius-sm);
+  border-left: 3px solid var(--prog-accent);
+}
+
+.progression-shell .prog-class-details__section-title {
+  margin: 0 0 var(--prog-space-xs) 0;
+  font-size: var(--prog-font-size-xs);
+  font-weight: bold;
+  color: var(--prog-text-heading);
+  text-shadow: var(--prog-heading-shadow);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.progression-shell .prog-class-details__mentor-name {
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-xs);
+  font-size: var(--prog-font-size-sm);
+  color: var(--prog-accent);
+  text-shadow: var(--prog-heading-shadow);
+  font-weight: bold;
+}
+
+.progression-shell .prog-class-details__mentor-name i {
+  font-size: var(--prog-font-size-lg);
+}
+
+.progression-shell .prog-class-details__abilities,
+.progression-shell .prog-class-details__skills,
+.progression-shell .prog-class-details__class-skills {
+  font-size: var(--prog-font-size-xs);
+}
+
+.progression-shell .prog-class-details__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.progression-shell .prog-class-details__list li {
+  color: var(--prog-text);
+  text-shadow: var(--prog-text-shadow);
+}
+
+.progression-shell .prog-class-details__list li:before {
+  content: '•';
+  margin-right: var(--prog-space-xs);
+  color: var(--prog-accent);
+}
+
+.progression-shell .prog-class-details__actions {
+  display: flex;
+  gap: var(--prog-space-sm);
+  margin-top: auto;
+}
+
+.progression-shell .prog-class-details__actions .prog-btn {
+  flex: 1;
+  font-size: var(--prog-font-size-xs);
+}

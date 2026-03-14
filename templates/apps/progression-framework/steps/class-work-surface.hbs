@@ -1,0 +1,39 @@
+<div class="prog-class-browse">
+  <div class="prog-class-grid" role="list">
+    {{#each classes}}
+      <button class="prog-class-card
+                     {{#if (eq id ../focusedClassId)}}prog-class-card--focused{{/if}}
+                     {{#if (eq id ../committedClassId)}}prog-class-card--committed{{/if}}"
+              data-action="focus-item"
+              data-item-id="{{this.id}}"
+              type="button"
+              role="option"
+              {{#if (eq id ../committedClassId)}}aria-selected="true"{{/if}}>
+        <div class="prog-class-card__header">
+          <div class="prog-class-card__name">{{this.name}}</div>
+          <div class="prog-class-card__type prog-chip">{{this.type}}</div>
+        </div>
+
+        <div class="prog-class-card__stats">
+          {{#each this.stats}}
+            <div class="prog-class-card__stat">
+              <span class="prog-class-card__stat-label">{{this.label}}:</span>
+              <span class="prog-class-card__stat-value">{{this.value}}</span>
+            </div>
+          {{/each}}
+        </div>
+
+        <div class="prog-class-card__mentor">
+          <i class="fas fa-user-circle"></i>
+          <span>{{this.mentorName}}</span>
+        </div>
+
+        {{#if (eq id ../committedClassId)}}
+          <span class="prog-class-card__committed-badge">✓ Selected</span>
+        {{/if}}
+      </button>
+    {{else}}
+      <p class="prog-class-browse__empty">No classes match your search or filters.</p>
+    {{/each}}
+  </div>
+</div>

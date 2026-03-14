@@ -16,6 +16,8 @@
 import { ProgressionShell } from './shell/progression-shell.js';
 import { createStepDescriptor, StepCategory, StepType } from './steps/step-descriptor.js';
 import { SpeciesStep } from './steps/species-step.js';
+import { ClassStep } from './steps/class-step.js';
+import { L1SurveyStep } from './steps/l1-survey-step.js';
 
 export class ChargenShell extends ProgressionShell {
   static async open(actor, options = {}) {
@@ -109,7 +111,7 @@ const CHARGEN_CANONICAL_STEPS = [
     label: 'Class',
     icon: 'fa-shield-alt',
     type: StepType.BUILD,
-    pluginClass: null, // Wave 4: ClassStep
+    pluginClass: ClassStep,
   },
   {
     stepId: 'l1-survey',
@@ -117,7 +119,7 @@ const CHARGEN_CANONICAL_STEPS = [
     icon: 'fa-comments',
     type: StepType.BUILD,
     isSkippable: true,
-    pluginClass: null, // Wave 4: L1SurveyStep
+    pluginClass: L1SurveyStep,
   },
   {
     stepId: 'background',
