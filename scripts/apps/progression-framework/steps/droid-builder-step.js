@@ -280,7 +280,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
         if (system) {
           const weight = this._calculateWeight(system);
           const isFreeHand = (id === 'hand' && this._countFreeHands() < 2);
-          cost = isFreeHand ? 0 : this._calculateWeight(system);
+          cost = isFreeHand ? 0 : this._calculateAppendageCost(system);
 
           if (cost > credits.remaining) {
             swseLogger.warn('[DroidBuilderStep] Not enough credits for appendage');
@@ -438,6 +438,17 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     const costFactor = this._getCostFactor();
     if (typeof system.costFormula === 'function') {
       return system.costFormula(speed, costFactor);
+    }
+    return system.cost || 0;
+  }
+
+  /**
+   * Helper: Calculate appendage cost.
+   */
+  _calculateAppendageCost(system) {
+    const costFactor = this._getCostFactor();
+    if (typeof system.cost === 'function') {
+      return system.cost(costFactor);
     }
     return system.cost || 0;
   }
@@ -679,6 +690,128 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       droidSystems: JSON.parse(JSON.stringify(this._droidState.droidSystems)),
       droidCredits: JSON.parse(JSON.stringify(this._droidState.droidCredits)),
     };
+  }
+
+  /**
+   * Called after the step is rendered in the shell.
+   * Wire up event handlers for the work surface.
+   */
+  async activateWorkSurface(shell, workSurfaceEl) {
+    if (!workSurfaceEl || !this._droidState) {
+      return;
+    }
+
+    try {
+      // Tab switching
+      const tabs = workSurfaceEl.querySelectorAll('.prog-droid-builder__tab');
+      tabs.forEach(tab => {
+        tab.addEventListener('click', (e) => this._onTabClick(e, shell, workSurfaceEl));
+      });
+
+      // Accessory tabs
+      const accTabs = workSurfaceEl.querySelectorAll('.accessory-tab');
+      accTabs.forEach(tab => {
+        tab.addEventListener('click', (e) => this._onAccessoryTabClick(e, workSurfaceEl));
+      });
+
+      // Purchase system buttons
+      const purchaseButtons = workSurfaceEl.querySelectorAll('[data-action="purchase-system"]');
+      purchaseButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => this._onPurchaseSystem(e, shell, workSurfaceEl));
+      });
+
+      // Remove system buttons
+      const removeButtons = workSurfaceEl.querySelectorAll('[data-action="remove-system"]');
+      removeButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => this._onRemoveSystem(e, shell, workSurfaceEl));
+      });
+    } catch (e) {
+      swseLogger.error('[DroidBuilderStep.activateWorkSurface]', e);
+    }
+  }
+
+  /**
+   * Handle tab click to switch between system categories.
+   */
+  _onTabClick(event, shell, workSurfaceEl) {
+    event.preventDefault();
+    const category = event.currentTarget.dataset.category;
+
+    // Update active tab
+    workSurfaceEl.querySelectorAll('.prog-droid-builder__tab').forEach(t => {
+      t.classList.remove('prog-droid-builder__tab--active');
+    });
+    event.currentTarget.classList.add('prog-droid-builder__tab--active');
+
+    // Update active panel
+    workSurfaceEl.querySelectorAll('.prog-droid-builder__panel').forEach(p => {
+      p.classList.remove('prog-droid-builder__panel--active');
+    });
+    const panel = workSurfaceEl.querySelector(`[data-panel="${category}"]`);
+    if (panel) {
+      panel.classList.add('prog-droid-builder__panel--active');
+    }
+  }
+
+  /**
+   * Handle accessory tab click.
+   */
+  _onAccessoryTabClick(event, workSurfaceEl) {
+    event.preventDefault();
+    const tabName = event.currentTarget.dataset.accessoryTab;
+
+    workSurfaceEl.querySelectorAll('.accessory-tab').forEach(t => {
+      t.classList.remove('accessory-tab--active');
+    });
+    event.currentTarget.classList.add('accessory-tab--active');
+
+    workSurfaceEl.querySelectorAll('.accessory-panel').forEach(p => {
+      p.classList.remove('accessory-panel--active');
+    });
+    const panel = workSurfaceEl.querySelector(`[data-accessory-panel="${tabName}"]`);
+    if (panel) {
+      panel.classList.add('accessory-panel--active');
+    }
+  }
+
+  /**
+   * Handle system purchase button click.
+   */
+  _onPurchaseSystem(event, shell, workSurfaceEl) {
+    event.preventDefault();
+    const btn = event.currentTarget;
+    const category = btn.dataset.category;
+    const id = btn.dataset.id;
+    const subcategory = btn.dataset.subcategory;
+
+    const success = this.purchaseSystem(category, id, subcategory);
+
+    if (success) {
+      // Update work surface to reflect changes
+      shell.requestWorkSurfaceUpdate();
+      ui.notifications.info(`${id} system purchased`);
+    } else {
+      ui.notifications.warn('Unable to purchase system - check credits and requirements');
+    }
+  }
+
+  /**
+   * Handle system removal button click.
+   */
+  _onRemoveSystem(event, shell, workSurfaceEl) {
+    event.preventDefault();
+    const btn = event.currentTarget;
+    const category = btn.dataset.category;
+    const id = btn.dataset.id;
+    const subcategory = btn.dataset.subcategory;
+
+    const success = this.removeSystem(category, id, subcategory);
+
+    if (success) {
+      // Update work surface to reflect changes
+      shell.requestWorkSurfaceUpdate();
+      ui.notifications.info(`${id} system removed`);
+    }
   }
 
   /**
