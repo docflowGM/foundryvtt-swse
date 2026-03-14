@@ -18,19 +18,19 @@ import { DROID_SYSTEMS } from '../../../data/droid-systems.js';
 import { swseLogger } from '../../../utils/logger.js';
 
 export class DroidBuilderStep extends ProgressionStepPlugin {
-  /**
-   * Initialize droid builder step.
-   * Called when step is first created.
-   */
-  async onStepInit(shell, context) {
-    // Ensure droid builder state exists in character data
-    if (!context.actor?.system?.isDroid) {
-      return; // Not a droid character - skip
-    }
+  constructor(descriptor) {
+    super(descriptor);
+    this._droidState = null;
+  }
 
-    // Initialize droid builder state if needed
+  /**
+   * Called when the shell navigates TO this step.
+   * Initialize droid builder state.
+   */
+  async onStepEnter(shell) {
+    // Ensure droid builder state exists
     if (!this._droidState) {
-      this._droidState = this._initializeDroidState(context.actor);
+      this._droidState = this._initializeDroidState(shell.actor);
     }
   }
 
@@ -73,8 +73,8 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    * Provide step data to templates.
    */
   async getStepData(context) {
-    if (!this._droidState || !this._droidState.isDroid) {
-      return { hidden: true };
+    if (!this._droidState) {
+      return {};
     }
 
     // Build presentation data for templates
@@ -88,6 +88,25 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       buildComplete: readiness.isValid,
       buildIssues: readiness.issues,
     };
+  }
+
+  /**
+   * Return selection state — droid builder works as a single configuration step.
+   */
+  getSelection() {
+    return {
+      selected: [this._droidState?.droidSize || ''],
+      count: 1,
+      isComplete: this._validateDroidBuild().isValid,
+    };
+  }
+
+  /**
+   * Return blocking issues that prevent advancing.
+   */
+  getBlockingIssues() {
+    const readiness = this._validateDroidBuild();
+    return readiness.isValid ? [] : readiness.issues;
   }
 
   /**
@@ -560,143 +579,91 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
   }
 
   /**
-   * Provide details panel data.
+   * Return work surface rendering spec.
    */
-  async getDetailsData(focusId) {
-    if (!this._droidState) return { hidden: true };
-
-    // Provide details based on focused section
-    if (focusId === 'build-summary') {
-      return {
-        title: 'Droid Build Summary',
-        content: this._getDetailsContent_BuildSummary(),
-      };
-    }
-
-    if (focusId === 'systems-guide') {
-      return {
-        title: 'System Categories',
-        content: this._getDetailsContent_SystemsGuide(),
-      };
-    }
-
-    if (focusId === 'budget-status') {
-      return {
-        title: 'Resource Ledger',
-        content: this._getDetailsContent_BudgetStatus(),
-      };
-    }
-
-    return { hidden: true };
-  }
-
-  /**
-   * Details: Build summary.
-   */
-  _getDetailsContent_BuildSummary() {
-    const sys = this._droidState.droidSystems;
+  renderWorkSurface(stepData) {
     return {
-      degree: this._droidState.droidDegree,
-      size: this._droidState.droidSize,
-      locomotion: sys.locomotion?.name || 'Not selected',
-      processor: sys.processor?.name || 'Not selected',
-      appendageCount: sys.appendages?.length || 0,
-      accessoryCount: sys.accessories?.length || 0,
+      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/steps/droid-builder-work-surface.hbs',
+      data: stepData,
     };
   }
 
   /**
-   * Details: Systems guide.
+   * Return details panel rendering spec.
    */
-  _getDetailsContent_SystemsGuide() {
-    return {
-      categories: [
-        {
-          name: 'Locomotion',
-          description: 'How your droid moves (walking, hovering, rolling, etc.)',
-          required: true
-        },
-        {
-          name: 'Processor',
-          description: 'The droid\'s "brain" - determines capabilities (always Heuristic for PC)',
-          required: true
-        },
-        {
-          name: 'Appendages',
-          description: 'Limbs and manipulation tools (hands, legs, tools)',
-          required: true,
-          note: 'First 2 hands are free'
-        },
-        {
-          name: 'Accessories',
-          description: 'Optional systems (armor, sensors, shields, etc.)',
-          required: false
-        }
-      ]
-    };
-  }
-
-  /**
-   * Details: Budget status.
-   */
-  _getDetailsContent_BudgetStatus() {
-    const credits = this._droidState.droidCredits;
-    return {
-      base: credits.base,
-      spent: credits.spent,
-      remaining: credits.remaining,
-      isOverBudget: credits.remaining < 0,
-      note: credits.remaining < 0
-        ? 'Your droid build exceeds available credits. Remove systems to proceed.'
-        : 'You have enough credits for your current build.'
-    };
-  }
-
-  /**
-   * Called when step is focused in shell.
-   */
-  async onStepFocus(shell) {
-    // Update presentation when step gains focus
-    shell.requestWorkSurfaceUpdate();
-  }
-
-  /**
-   * Called when user attempts to proceed to next step.
-   * Validates build is complete.
-   */
-  async canProceedToNext(shell) {
-    const readiness = this._validateDroidBuild();
-    if (!readiness.isValid) {
-      ui.notifications.warn(readiness.summary);
-      return false;
-    }
-    return true;
-  }
-
-  /**
-   * Called when user confirms step selection.
-   * Stores committed droid package.
-   */
-  async getCommittedSelection(context) {
+  renderDetailsPanel(focusedItem) {
     if (!this._droidState) {
-      return { skip: true };
+      return this.renderDetailsPanelEmptyState();
     }
 
-    // Commit the entire droid build as the selection
     return {
-      isDroid: true,
-      droidDegree: this._droidState.droidDegree,
-      droidSize: this._droidState.droidSize,
-      droidSystems: JSON.parse(JSON.stringify(this._droidState.droidSystems)),
-      droidCredits: JSON.parse(JSON.stringify(this._droidState.droidCredits)),
+      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/steps/droid-builder-details.hbs',
+      data: {
+        droidInfo: {
+          degree: this._droidState.droidDegree,
+          size: this._droidState.droidSize,
+        },
+        selectedSystems: this._droidState.droidSystems,
+        categories: this._getSystemCategories(),
+        creditsBase: this._droidState.droidCredits.base,
+        creditsSpent: this._droidState.droidCredits.spent,
+        creditsRemaining: this._droidState.droidCredits.remaining,
+        totalCost: this._droidState.droidSystems.totalCost,
+        totalWeight: this._droidState.droidSystems.totalWeight,
+        systemCount: this._countSelectedSystems(),
+      },
     };
+  }
+
+  /**
+   * Get system category guide for details panel.
+   */
+  _getSystemCategories() {
+    return [
+      {
+        name: 'Locomotion',
+        description: 'How your droid moves (walking, hovering, rolling, etc.)',
+        required: true
+      },
+      {
+        name: 'Processor',
+        description: 'The droid\'s "brain" - determines capabilities (always Heuristic for PC)',
+        required: true
+      },
+      {
+        name: 'Appendages',
+        description: 'Limbs and manipulation tools (hands, legs, tools)',
+        required: true,
+        note: 'First 2 hands are free'
+      },
+      {
+        name: 'Accessories',
+        description: 'Optional systems (armor, sensors, shields, etc.)',
+        required: false
+      }
+    ];
+  }
+
+  /**
+   * Return mentor guidance text for this step.
+   */
+  getMentorContext(shell) {
+    return 'You are now configuring your droid chassis. Select systems for locomotion, processing, appendages, and accessories. Build within your credit budget.';
+  }
+
+  /**
+   * Called when user clicks "Ask Mentor".
+   */
+  async onAskMentor(shell) {
+    // Could open a guidance modal or speak additional advice
+    ui.notifications.info('Mentor: Select your droid systems within your budget.');
   }
 
   /**
    * Called after the step is rendered in the shell.
    * Wire up event handlers for the work surface.
    */
-  async activateWorkSurface(shell, workSurfaceEl) {
+  async afterRender(shell, workSurfaceEl) {
     if (!workSurfaceEl || !this._droidState) {
       return;
     }
@@ -815,9 +782,38 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
   }
 
   /**
+   * Called when an item is focused (selected in work surface).
+   * Droid builder doesn't use item focus.
+   */
+  async onItemFocused(itemId, shell) {
+    // No-op for droid builder
+  }
+
+  /**
+   * Called when an item is committed (via Choose button or footer).
+   * Droid builder commits the entire build, not individual items.
+   */
+  async onItemCommitted(itemId, shell) {
+    // Store committed droid package in shell's committed selections map
+    const selection = {
+      isDroid: true,
+      droidDegree: this._droidState.droidDegree,
+      droidSize: this._droidState.droidSize,
+      droidSystems: JSON.parse(JSON.stringify(this._droidState.droidSystems)),
+      droidCredits: JSON.parse(JSON.stringify(this._droidState.droidCredits)),
+    };
+
+    shell.committedSelections.set(this.descriptor.stepId, selection);
+    swseLogger.debug('[DroidBuilderStep.onItemCommitted] Droid build committed', selection);
+  }
+
+  /**
    * Called when step is exited.
    */
   async onStepExit(shell) {
-    // No cleanup needed
+    // Automatically commit droid build when exiting this step
+    if (this._validateDroidBuild().isValid && !shell.committedSelections.has(this.descriptor.stepId)) {
+      await this.onItemCommitted(null, shell);
+    }
   }
 }

@@ -16,6 +16,8 @@
 import { ProgressionShell } from './shell/progression-shell.js';
 import { createStepDescriptor, StepCategory, StepType } from './steps/step-descriptor.js';
 import { SpeciesStep } from './steps/species-step.js';
+import { DroidBuilderStep } from './steps/droid-builder-step.js';
+import { DroidBuilderAdapter } from './steps/droid-builder-adapter.js';
 import { ClassStep } from './steps/class-step.js';
 import { L1SurveyStep } from './steps/l1-survey-step.js';
 import { AttributeStep } from './steps/attribute-step.js';
@@ -32,12 +34,37 @@ export class ChargenShell extends ProgressionShell {
 
   /**
    * Canonical chargen step sequence.
-   * Plugin classes are stubs until their respective waves implement them.
+   * Routes droid characters to droid-builder-step instead of species-step.
    *
    * @returns {import('./steps/step-descriptor.js').StepDescriptor[]}
    */
   _getCanonicalDescriptors() {
-    return CHARGEN_CANONICAL_STEPS.map(config =>
+    // Determine if this is a droid character
+    const isDroid = DroidBuilderAdapter.shouldUseDroidBuilder(this.actor?.system || {});
+
+    // Build step configs, swapping species/droid-builder based on character type
+    const stepConfigs = CHARGEN_CANONICAL_STEPS.map(config => {
+      // If this is the species step and we're a droid, use droid-builder instead
+      if (config.stepId === 'species' && isDroid) {
+        return {
+          ...config,
+          stepId: 'droid-builder',
+          label: 'Droid Builder',
+          icon: 'fa-robot',
+          pluginClass: DroidBuilderStep,
+        };
+      }
+      // If this is the species step and we're NOT a droid, use species-step
+      if (config.stepId === 'species' && !isDroid) {
+        return {
+          ...config,
+          pluginClass: SpeciesStep,
+        };
+      }
+      return config;
+    });
+
+    return stepConfigs.map(config =>
       createStepDescriptor({
         ...config,
         category: config.category ?? StepCategory.CANONICAL,
@@ -103,7 +130,9 @@ const CHARGEN_CANONICAL_STEPS = [
     label: 'Species',
     icon: 'fa-dna',
     type: StepType.IDENTITY,
-    pluginClass: SpeciesStep,
+    // Plugin is resolved dynamically in _getCanonicalDescriptors()
+    // based on whether character is droid or biological
+    pluginClass: null,
   },
   {
     stepId: 'attribute',
