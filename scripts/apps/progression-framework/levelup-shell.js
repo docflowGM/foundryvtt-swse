@@ -16,6 +16,10 @@
 
 import { ProgressionShell } from './shell/progression-shell.js';
 import { createStepDescriptor, StepCategory, StepType } from './steps/step-descriptor.js';
+import { ClassStep } from './steps/class-step.js';
+import { AttributeStep } from './steps/attribute-step.js';
+import { GeneralFeatStep, ClassFeatStep } from './steps/feat-step.js';
+import { GeneralTalentStep, ClassTalentStep } from './steps/talent-step.js';
 import { ConfirmStep } from './steps/confirm-step.js';
 
 export class LevelupShell extends ProgressionShell {
@@ -91,7 +95,7 @@ const LEVELUP_CANONICAL_STEPS = [
     label: 'Class',
     icon: 'fa-shield-alt',
     type: StepType.BUILD,
-    pluginClass: null, // Wave 4: ClassStep (shared with chargen)
+    pluginClass: ClassStep,
   },
   {
     stepId: 'attribute',
@@ -101,7 +105,7 @@ const LEVELUP_CANONICAL_STEPS = [
     // Note: attribute step in levelup is conditional (even levels only).
     // For now, it's listed as canonical but rendered empty if not applicable.
     // Wave 5 will handle the even-level gating.
-    pluginClass: null, // Wave 5: AttributeStep
+    pluginClass: AttributeStep,
   },
   {
     stepId: 'general-feat',
@@ -109,7 +113,7 @@ const LEVELUP_CANONICAL_STEPS = [
     icon: 'fa-star',
     type: StepType.SELECTION,
     category: StepCategory.CATEGORY_SPECIFIC,
-    pluginClass: null, // Wave 7: GeneralFeatStep
+    pluginClass: GeneralFeatStep,
   },
   {
     stepId: 'class-feat',
@@ -117,7 +121,7 @@ const LEVELUP_CANONICAL_STEPS = [
     icon: 'fa-star-half-alt',
     type: StepType.SELECTION,
     category: StepCategory.CATEGORY_SPECIFIC,
-    pluginClass: null, // Wave 7: ClassFeatStep
+    pluginClass: ClassFeatStep,
   },
   {
     stepId: 'general-talent',
@@ -125,7 +129,7 @@ const LEVELUP_CANONICAL_STEPS = [
     icon: 'fa-gem',
     type: StepType.SELECTION,
     category: StepCategory.CATEGORY_SPECIFIC,
-    pluginClass: null, // Wave 8: GeneralTalentStep
+    pluginClass: GeneralTalentStep,
   },
   {
     stepId: 'class-talent',
@@ -133,7 +137,7 @@ const LEVELUP_CANONICAL_STEPS = [
     icon: 'fa-gem',
     type: StepType.SELECTION,
     category: StepCategory.CATEGORY_SPECIFIC,
-    pluginClass: null, // Wave 8: ClassTalentStep
+    pluginClass: ClassTalentStep,
   },
   {
     stepId: 'confirm',

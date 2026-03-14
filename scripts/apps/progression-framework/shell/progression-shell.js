@@ -264,6 +264,58 @@ export class ProgressionShell extends SWSEApplicationV2 {
     ];
   }
 
+  /**
+   * Reconcile conditional steps when progression state changes.
+   * Call this when a choice unlocks new conditional steps.
+   *
+   * Safety guarantees:
+   * - Preserves committed selections
+   * - Preserves current step by ID when possible
+   * - Gracefully relocates if current step removed
+   * - Never leaves currentStepIndex invalid
+   * - Updates utility/mentor/footer state after reconciliation
+   *
+   * @returns {Promise<void>}
+   */
+  async reconcileConditionalSteps() {
+    const currentStepId = this.steps[this.currentStepIndex]?.stepId;
+
+    // Re-initialize steps with new conditional set
+    await this._initializeSteps();
+
+    // Find the current step by ID in the new sequence
+    const newIndex = this.steps.findIndex(d => d.stepId === currentStepId);
+
+    if (newIndex >= 0) {
+      // Current step still exists — preserve it
+      this.currentStepIndex = newIndex;
+    } else if (currentStepId && currentStepId !== 'confirm') {
+      // Current step was removed — relocate to nearest previous valid step
+      const previousSteps = this.steps.slice(0, this.currentStepIndex);
+      this.currentStepIndex = Math.max(0, previousSteps.length - 1);
+      swseLogger.warn('[ProgressionShell.reconcileConditionalSteps]', {
+        message: 'Current step removed during reconciliation',
+        previousStepId: currentStepId,
+        newStepId: this.steps[this.currentStepIndex]?.stepId,
+      });
+    }
+
+    // Safety: ensure currentStepIndex is valid
+    if (this.currentStepIndex >= this.steps.length) {
+      this.currentStepIndex = Math.max(0, this.steps.length - 1);
+    }
+
+    // Update shell state from new current plugin
+    const currentPlugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
+    if (currentPlugin) {
+      this.utilityBar.setConfig(currentPlugin.getUtilityBarConfig());
+      this.mentor.currentDialogue = currentPlugin.getMentorContext(this);
+    }
+
+    // Re-render with new step sequence
+    this.render();
+  }
+
   // ---------------------------------------------------------------------------
   // ApplicationV2 Lifecycle
   // ---------------------------------------------------------------------------
@@ -465,6 +517,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
     if (prevPlugin) {
       prevPlugin.onStepEnter(this);
       this.mentor.currentDialogue = prevPlugin.getMentorContext(this);
+      this.mentor.askMentorEnabled = prevPlugin.getMentorMode() !== null;
+      this.mentor.mentorMode = prevPlugin.getMentorMode();
+      this.utilityBar.setConfig(prevPlugin.getUtilityBarConfig());
     }
 
     this.render();
