@@ -33,6 +33,9 @@ import { TalentSlotMigrator } from "/systems/foundryvtt-swse/scripts/engine/prog
 // Phase 1.5: Feat Slot System
 import { FeatSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-slot-validator.js";
 
+// PHASE 7: Mentor enrichment integration
+import { MentorInteractionIntegration } from "/systems/foundryvtt-swse/scripts/apps/levelup/mentor-interaction-integration.js";
+
 // V2 API base classes
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 import SWSEApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js";
@@ -1238,6 +1241,24 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
           spentCredits: 0,
           remainingCredits: total
         };
+      }
+
+      // PHASE 7: Generate mentor reflection on chargen choices for summary step
+      if (this.currentStep === 'summary' && this.mentor) {
+        try {
+          const reflection = await MentorInteractionIntegration.generateLevelupReflection(
+            this.actor || this._createTempActorForValidation(),
+            this.mentor,
+            this._buildChargenPendingData()
+          );
+          if (reflection) {
+            context.chargenReflection = reflection;
+            SWSELogger.log('[CHARGEN-SUMMARY] Mentor reflection generated for summary step');
+          }
+        } catch (err) {
+          SWSELogger.warn('[CHARGEN-SUMMARY] Failed to generate mentor reflection:', err);
+          // Graceful fallback: continue without reflection if generation fails
+        }
       }
     }
 
@@ -2953,6 +2974,23 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
 
     // Re-render to show choices again
     await this.render();
+  }
+
+  /**
+   * PHASE 7: Build pending data from chargen characterData for mentor reflection
+   * Matches the shape used by MentorInteractionIntegration.generateLevelupReflection()
+   * @returns {Object} Pending data structure for mentor operations
+   */
+  _buildChargenPendingData() {
+    return {
+      selectedFeats: this.characterData.feats || [],
+      selectedTalents: this.characterData.talents || [],
+      selectedClass: this.characterData.classes?.[0],
+      selectedSkills: Object.keys(this.characterData.skills || {})
+        .filter(k => this.characterData.skills[k]?.trained)
+        .map(k => ({ key: k })),
+      abilityIncreases: {}
+    };
   }
 
   async _createActor() {

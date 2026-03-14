@@ -21,6 +21,9 @@ import { FeatSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progr
 import { ClassFeatRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/class-feat-registry.js";
 import { CAPABILITY_SLUGS } from "/systems/foundryvtt-swse/scripts/constants/capability-slugs.js";
 
+// PHASE 7: Mentor enrichment integration
+import { MentorInteractionIntegration } from "/systems/foundryvtt-swse/scripts/apps/levelup/mentor-interaction-integration.js";
+
 /**
  * Calculate feat/talent suggestions during chargen
  * Uses BuildIntent (which includes L1 mentor survey biases) to score feats/talents
@@ -104,6 +107,30 @@ export async function calculateChargenSuggestions(items, chargenContext, itemTyp
           persist: true
         });
 }
+
+    // PHASE 7: Enrich suggestions with mentor advice if mentor is available
+    if (chargenContext.mentor && chargenContext.mentor.key) {
+      try {
+        SWSELogger.log(`[CHARGEN-SUGGESTIONS] Enriching ${suggestedItems.length} suggestions with mentor reasoning...`);
+        const enrichedItems = [];
+        for (const item of suggestedItems) {
+          const context = itemType === 'feat' ? 'feat_selection' : 'talent_selection';
+          const enriched = await MentorInteractionIntegration.enrichMentorSuggestion(
+            chargenContext.actor || tempActor,
+            chargenContext.mentor,
+            item,
+            context,
+            { pendingData }
+          );
+          enrichedItems.push(enriched);
+        }
+        SWSELogger.log(`[CHARGEN-SUGGESTIONS] Mentor enrichment complete - ${enrichedItems.length} items enriched`);
+        return enrichedItems;
+      } catch (err) {
+        SWSELogger.warn(`[CHARGEN-SUGGESTIONS] Mentor enrichment failed, using original suggestions:`, err);
+        return suggestedItems; // Graceful fallback to original suggestions
+      }
+    }
 
     SWSELogger.log(`[CHARGEN-SUGGESTIONS] calculateChargenSuggestions() COMPLETE - ${suggestedItems.length} items scored`);
     return suggestedItems;
@@ -282,6 +309,22 @@ export async function _onSelectFeat(event) {
     // DEFENSIVE CLONE: Prevent mutation of cached compendium data
     this.characterData.feats.push(foundry.utils.deepClone(feat));
     ui.notifications.info(`Selected feat: ${feat.name}`);
+
+    // PHASE 7: Record mentor decision for feat selection
+    try {
+      if (this.mentor) {
+        await MentorInteractionIntegration.recordMentorDecision(
+          this.actor || this._createTempActorForValidation(),
+          this.mentor,
+          feat,
+          'feat_selection'
+        );
+        SWSELogger.log(`[CHARGEN-FEATS-TALENTS] Mentor decision recorded for feat: ${feat.name}`);
+      }
+    } catch (err) {
+      SWSELogger.warn(`[CHARGEN-FEATS-TALENTS] Failed to record mentor decision for feat:`, err);
+      // Gracefully continue - mentor recording failure doesn't block feat selection
+    }
   }
 
   // If opened from character sheet "Add Feat" button, add to actor and close
@@ -784,6 +827,22 @@ export async function _onSelectTalent(event) {
     // DEFENSIVE CLONE: Prevent mutation of cached compendium data
     this.characterData.talents.push(foundry.utils.deepClone(tal));
     ui.notifications.info(`Selected talent: ${tal.name}`);
+
+    // PHASE 7: Record mentor decision for talent selection
+    try {
+      if (this.mentor) {
+        await MentorInteractionIntegration.recordMentorDecision(
+          this.actor || this._createTempActorForValidation(),
+          this.mentor,
+          tal,
+          'talent_selection'
+        );
+        SWSELogger.log(`[CHARGEN-FEATS-TALENTS] Mentor decision recorded for talent: ${tal.name}`);
+      }
+    } catch (err) {
+      SWSELogger.warn(`[CHARGEN-FEATS-TALENTS] Failed to record mentor decision for talent:`, err);
+      // Gracefully continue - mentor recording failure doesn't block talent selection
+    }
   }
 
   // If opened from character sheet "Add Talent" button, add to actor and close
