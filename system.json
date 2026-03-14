@@ -43,7 +43,8 @@
     "styles/progression-framework/steps/species-step.css",
     "styles/progression-framework/steps/near-human-builder.css",
     "styles/progression-framework/steps/class-step.css",
-    "styles/progression-framework/steps/l1-survey-step.css"
+    "styles/progression-framework/steps/l1-survey-step.css",
+    "styles/progression-framework/steps/attribute-step.css"
   ],
   "languages": [
     {

@@ -1,0 +1,110 @@
+<div class="prog-attribute-surface">
+
+  <div class="prog-attribute-header">
+    <h3 class="prog-attribute-title">Assign Your Attributes</h3>
+    <p class="prog-attribute-help">
+      Choose your base scores, then species modifiers will be applied automatically.
+    </p>
+  </div>
+
+  {{!-- Method Selector --}}
+  <div class="prog-attribute-method-selector">
+    <label class="prog-attribute-method-label">Method:</label>
+    <div class="prog-attribute-method-buttons">
+      <button class="prog-btn prog-btn--method attr-method-btn
+                     {{#if (eq method "point-buy")}}active{{/if}}"
+              data-method="point-buy"
+              type="button"
+              title="Point buy: 25 points to allocate">
+        <i class="fas fa-coins"></i> Point Buy
+      </button>
+      <button class="prog-btn prog-btn--method attr-method-btn
+                     {{#if (eq method "standard")}}active{{/if}}"
+              data-method="standard"
+              type="button"
+              title="Standard: 4d6 drop lowest (x6)">
+        <i class="fas fa-dice-d6"></i> Standard
+      </button>
+      <button class="prog-btn prog-btn--method attr-method-btn
+                     {{#if (eq method "organic")}}active{{/if}}"
+              data-method="organic"
+              type="button"
+              title="Organic: 21d6 drop lowest 3">
+        <i class="fas fa-dice"></i> Organic
+      </button>
+    </div>
+  </div>
+
+  {{!-- Point Buy Status --}}
+  {{#if (eq method "point-buy")}}
+    <div class="prog-attribute-pointbuy-status
+                {{#if pointBuyStatus.isComplete}}prog-attribute-pointbuy--complete{{/if}}">
+      <div class="prog-attribute-pointbuy-bar">
+        <div class="prog-attribute-pointbuy-used" style="width: {{div pointBuyStatus.spent 25 100}}%"></div>
+      </div>
+      <div class="prog-attribute-pointbuy-text">
+        {{pointBuyStatus.spent}}/25 points allocated
+      </div>
+    </div>
+  {{/if}}
+
+  {{!-- Ability Rows --}}
+  <div class="prog-attribute-rows">
+    {{#each abilities}}
+      <div class="prog-attribute-row
+                  {{#if isFocused}}prog-attribute-row--focused{{/if}}"
+           data-ability-row="{{id}}"
+           role="button"
+           tabindex="0">
+
+        {{!-- Ability Name --}}
+        <div class="prog-attribute-row__label">{{label}}</div>
+
+        {{!-- Base Score --}}
+        <div class="prog-attribute-row__score prog-attribute-row__base">
+          {{#if canAdjust}}
+            <button class="prog-attribute-btn prog-attribute-btn--minus"
+                    data-ability="{{id}}"
+                    data-delta="-1"
+                    type="button">−</button>
+          {{/if}}
+          <span class="prog-attribute-value">{{base}}</span>
+          {{#if canAdjust}}
+            <button class="prog-attribute-btn prog-attribute-btn--plus"
+                    data-ability="{{id}}"
+                    data-delta="1"
+                    type="button">+</button>
+          {{/if}}
+        </div>
+
+        {{!-- Species Modifier --}}
+        <div class="prog-attribute-row__score prog-attribute-row__species">
+          <span class="prog-attribute-value {{speciesModClass}}">
+            {{#if (gt speciesMod 0)}}+{{/if}}{{speciesMod}}
+          </span>
+        </div>
+
+        {{!-- Final Score --}}
+        <div class="prog-attribute-row__score prog-attribute-row__final">
+          <span class="prog-attribute-value prog-attribute-value--final">{{final}}</span>
+        </div>
+
+        {{!-- Modifier --}}
+        <div class="prog-attribute-row__score prog-attribute-row__modifier">
+          <span class="prog-attribute-value {{modClass}}">{{modifierFormatted}}</span>
+        </div>
+
+      </div>
+    {{/each}}
+  </div>{{!-- /rows --}}
+
+  {{!-- Column Headers --}}
+  <div class="prog-attribute-headers">
+    <div class="prog-attribute-headers__label"></div>
+    <div class="prog-attribute-headers__base">Base</div>
+    <div class="prog-attribute-headers__species">Species</div>
+    <div class="prog-attribute-headers__final">Final</div>
+    <div class="prog-attribute-headers__modifier">Mod</div>
+  </div>
+
+</div>{{!-- /attribute-surface --}}

@@ -1,0 +1,62 @@
+<div class="prog-attribute-details">
+
+  <div class="prog-attribute-details__header">
+    <h2 class="prog-attribute-details__name">{{label}}</h2>
+  </div>
+
+  <p class="prog-attribute-details__description">{{description}}</p>
+
+  {{!-- Numeric Breakdown --}}
+  <div class="prog-attribute-details__breakdown">
+    <div class="prog-attribute-details__breakdown-row">
+      <span class="prog-attribute-details__breakdown-label">Base Score:</span>
+      <span class="prog-attribute-details__breakdown-value">{{baseScore}}</span>
+    </div>
+    <div class="prog-attribute-details__breakdown-row">
+      <span class="prog-attribute-details__breakdown-label">Species Modifier:</span>
+      <span class="prog-attribute-details__breakdown-value {{speciesModClass}}">
+        {{#if (gt speciesMod 0)}}+{{/if}}{{speciesMod}}
+      </span>
+    </div>
+    <div class="prog-attribute-details__breakdown-row prog-attribute-details__breakdown-row--final">
+      <span class="prog-attribute-details__breakdown-label">Final Score:</span>
+      <span class="prog-attribute-details__breakdown-value prog-attribute-details__breakdown-value--final">{{finalScore}}</span>
+    </div>
+    <div class="prog-attribute-details__breakdown-row">
+      <span class="prog-attribute-details__breakdown-label">Modifier:</span>
+      <span class="prog-attribute-details__breakdown-value {{modClass}}">{{modifierFormatted}}</span>
+    </div>
+  </div>
+
+  {{!-- What This Affects --}}
+  {{#if affects.length}}
+    <div class="prog-attribute-details__section">
+      <h4 class="prog-attribute-details__section-title">What This Affects</h4>
+      <ul class="prog-attribute-details__list">
+        {{#each affects}}
+          <li class="prog-attribute-details__list-item">{{this}}</li>
+        {{/each}}
+      </ul>
+    </div>
+  {{/if}}
+
+  {{!-- Why This Matters --}}
+  <div class="prog-attribute-details__guidance">
+    <p class="prog-attribute-details__guidance-text">
+      {{#eq ability "str"}}
+        Strength affects melee combat effectiveness, carrying capacity, and physical dominance. Soldiers benefit greatly from high Strength.
+      {{else if (eq ability "dex")}}
+        Dexterity improves initiative, ranged attacks, and your Reflex defense. Scoundrels and fast combatants value this highly.
+      {{else if (eq ability "con")}}
+        Constitution determines your hit points and Fortitude defense. Every character needs solid Constitution.
+      {{else if (eq ability "int")}}
+        Intelligence grants extra skill points and improves Knowledge abilities. Tech Specialists rely on this.
+      {{else if (eq ability "wis")}}
+        Wisdom determines your Will defense and Force affinity. Jedi and Force users need high Wisdom.
+      {{else if (eq ability "cha")}}
+        Charisma enhances social interactions, persuasion, and leadership. Essential for social characters.
+      {{/eq}}
+    </p>
+  </div>
+
+</div>{{!-- /attribute-details --}}

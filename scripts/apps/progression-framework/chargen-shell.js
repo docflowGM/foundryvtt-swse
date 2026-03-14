@@ -18,6 +18,7 @@ import { createStepDescriptor, StepCategory, StepType } from './steps/step-descr
 import { SpeciesStep } from './steps/species-step.js';
 import { ClassStep } from './steps/class-step.js';
 import { L1SurveyStep } from './steps/l1-survey-step.js';
+import { AttributeStep } from './steps/attribute-step.js';
 
 export class ChargenShell extends ProgressionShell {
   static async open(actor, options = {}) {
@@ -104,7 +105,7 @@ const CHARGEN_CANONICAL_STEPS = [
     label: 'Attributes',
     icon: 'fa-chart-bar',
     type: StepType.BUILD,
-    pluginClass: null, // Wave 5: AttributeStep
+    pluginClass: AttributeStep,
   },
   {
     stepId: 'class',
