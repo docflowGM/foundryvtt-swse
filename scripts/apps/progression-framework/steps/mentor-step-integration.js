@@ -17,7 +17,7 @@ export const STEP_TO_CHOICE_TYPE = {
   'attribute': 'ability',
   'l1-survey': 'skill',          // Survey focuses on build implications
   'background': 'background',
-  'languages': 'language',
+  'languages': 'languageGuidance',
   'general-feat': 'feat',
   'class-feat': 'feat',
   'general-talent': 'talent',

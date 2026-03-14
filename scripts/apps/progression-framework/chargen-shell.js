@@ -20,6 +20,7 @@ import { ClassStep } from './steps/class-step.js';
 import { L1SurveyStep } from './steps/l1-survey-step.js';
 import { AttributeStep } from './steps/attribute-step.js';
 import { BackgroundStep } from './steps/background-step.js';
+import { LanguageStep } from './steps/language-step.js';
 
 export class ChargenShell extends ProgressionShell {
   static async open(actor, options = {}) {
@@ -136,7 +137,7 @@ const CHARGEN_CANONICAL_STEPS = [
     icon: 'fa-language',
     type: StepType.NARRATIVE,
     category: StepCategory.CATEGORY_SPECIFIC,
-    pluginClass: null, // Wave 7+: LanguageStep
+    pluginClass: LanguageStep,
   },
   {
     stepId: 'general-feat',
