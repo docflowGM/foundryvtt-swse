@@ -25,6 +25,7 @@ import SWSEApplicationV2 from '/systems/foundryvtt-swse/scripts/apps/base/swse-a
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { ConditionalStepResolver } from './conditional-step-resolver.js';
 import { StepCategory } from '../steps/step-descriptor.js';
+import { ActionFooter } from './action-footer.js';
 
 /**
  * Shell state model (reference — actual state lives on `this`)
@@ -87,7 +88,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
       return null;
     }
 
-    const app = new ProgressionShell(actor, mode, options);
+    // `new this(...)` preserves subclass dispatch:
+    // ChargenShell.open() → new ChargenShell()  → _getCanonicalDescriptors() on ChargenShell
+    // LevelupShell.open() → new LevelupShell()  → _getCanonicalDescriptors() on LevelupShell
+    // ProgressionShell.open() → new ProgressionShell() → base returns []
+    const app = new this(actor, mode, options);
     await app._initializeSteps();
     app.render({ force: true });
     return app;
@@ -305,31 +310,16 @@ export class ProgressionShell extends SWSEApplicationV2 {
   }
 
   // ---------------------------------------------------------------------------
-  // Footer Data
+  // Footer Data — single authority: ActionFooter.build()
   // ---------------------------------------------------------------------------
 
   _buildFooterData(currentPlugin, isLastStep) {
-    const blockingIssues = currentPlugin?.getBlockingIssues() ?? [];
-    const warnings = currentPlugin?.getWarnings() ?? [];
-    const remainingPicks = currentPlugin?.getRemainingPicks() ?? [];
-    const footerOverride = currentPlugin?.getFooterConfig() ?? {};
-
-    return {
-      back: {
-        enabled: this.currentStepIndex > 0,
-        label: 'Back',
-      },
-      center: remainingPicks,
-      next: {
-        enabled: blockingIssues.length === 0 && !this.isProcessing,
-        label: isLastStep
-          ? (footerOverride.confirmLabel ?? 'Confirm')
-          : (footerOverride.nextLabel ?? 'Next'),
-        isLastStep,
-      },
-      blockingIssues,
-      warnings,
-    };
+    return ActionFooter.build({
+      shell: this,
+      currentPlugin,
+      isLastStep,
+      mode: this.mode,
+    });
   }
 
   // ---------------------------------------------------------------------------
