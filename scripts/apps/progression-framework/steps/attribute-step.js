@@ -12,6 +12,7 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
+import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 
 // Ability score constants and calculations
 const ABILITIES = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
@@ -346,8 +347,12 @@ export class AttributeStep extends ProgressionStepPlugin {
   // Mentor
   // ---------------------------------------------------------------------------
 
+  async onAskMentor(shell) {
+    await handleAskMentor(shell.actor, 'attribute', shell);
+  }
+
   getMentorContext(shell) {
-    return 'Your attributes shape your capabilities. Strength, speed, intellect — choose wisely for your path.';
+    return getStepGuidance(shell.actor, 'attribute') || 'Your attributes shape your capabilities. Strength, speed, intellect — choose wisely for your path.';
   }
 
   getMentorMode() {

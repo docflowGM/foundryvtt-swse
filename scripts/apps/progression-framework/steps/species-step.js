@@ -8,7 +8,7 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
-import { getMentorGuidance } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
+import { getStepMentorObject, getStepGuidance, handleAskMentor, STEP_TO_CHOICE_TYPE } from './mentor-step-integration.js';
 import { buildSpeciesAtomicPatch } from '/systems/foundryvtt-swse/scripts/apps/chargen/steps/species-step.js';
 import { NearHumanBuilder } from './near-human-builder.js';
 
@@ -330,11 +330,12 @@ export class SpeciesStep extends ProgressionStepPlugin {
   // Mentor
   // ---------------------------------------------------------------------------
 
+  async onAskMentor(shell) {
+    await handleAskMentor(shell.actor, 'species', shell);
+  }
+
   getMentorContext(shell) {
-    const choiceType = STEP_CHOICE_TYPE['species'];
-    return choiceType
-      ? getMentorGuidance({ id: 'ol-salty' }, choiceType)
-      : 'Choose your species carefully — it shapes your abilities and destiny.';
+    return getStepGuidance(shell.actor, 'species') || 'Choose your species carefully — it shapes your abilities and destiny.';
   }
 
   getMentorMode() {

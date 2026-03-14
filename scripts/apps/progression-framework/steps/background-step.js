@@ -11,6 +11,7 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { BackgroundRegistry } from '/systems/foundryvtt-swse/scripts/registries/background-registry.js';
+import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 
 const CATEGORY_LABELS = {
   event: 'Event',
@@ -285,12 +286,17 @@ export class BackgroundStep extends ProgressionStepPlugin {
   // Mentor
   // ---------------------------------------------------------------------------
 
+  async onAskMentor(shell) {
+    await handleAskMentor(shell.actor, 'background', shell);
+  }
+
   getMentorContext(shell) {
-    return `Your background shapes who you are. ${
-      this._maxBackgrounds > 1
-        ? `You may choose up to ${this._maxBackgrounds} backgrounds.`
-        : 'Choose the defining moment of your past.'
-    }`;
+    return getStepGuidance(shell.actor, 'background') ||
+      `Your background shapes who you are. ${
+        this._maxBackgrounds > 1
+          ? `You may choose up to ${this._maxBackgrounds} backgrounds.`
+          : 'Choose the defining moment of your past.'
+      }`;
   }
 
   getMentorMode() {

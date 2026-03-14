@@ -12,6 +12,7 @@
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
+import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 
 export class L1SurveyStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -189,9 +190,13 @@ export class L1SurveyStep extends ProgressionStepPlugin {
   // Mentor
   // ---------------------------------------------------------------------------
 
+  async onAskMentor(shell) {
+    await handleAskMentor(shell.actor, 'l1-survey', shell);
+  }
+
   getMentorContext(shell) {
-    // Mentor is already swapped to class mentor, just provide guidance
-    return 'This brief survey helps me understand how best to guide you. Answer truthfully — there are no wrong paths.';
+    return getStepGuidance(shell.actor, 'l1-survey') ||
+      'This brief survey helps me understand how best to guide you. Answer truthfully — there are no wrong paths.';
   }
 
   getMentorMode() {

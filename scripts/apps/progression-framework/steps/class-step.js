@@ -9,6 +9,7 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ClassesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js';
+import { getStepMentorObject, getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { getMentorGuidance } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
 
 export class ClassStep extends ProgressionStepPlugin {
@@ -236,8 +237,12 @@ export class ClassStep extends ProgressionStepPlugin {
   // Mentor
   // ---------------------------------------------------------------------------
 
+  async onAskMentor(shell) {
+    await handleAskMentor(shell.actor, 'class', shell);
+  }
+
   getMentorContext(shell) {
-    return 'Choose your class carefully — it defines your role and abilities. Each path leads to a different destiny.';
+    return getStepGuidance(shell.actor, 'class') || 'Choose your class carefully — it defines your role and abilities. Each path leads to a different destiny.';
   }
 
   getMentorMode() {
