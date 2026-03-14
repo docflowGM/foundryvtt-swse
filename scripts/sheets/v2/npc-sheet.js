@@ -149,6 +149,11 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
     // Phase 3: Enforce super._onRender call (AppV2 contract)
     await super._onRender(context, options);
 
+    // Abort previous render's listeners to prevent duplicate event handlers
+    this._renderAbort?.abort();
+    this._renderAbort = new AbortController();
+    const { signal } = this._renderAbort;
+
     // AppV2 invariant: all DOM access must use this.element
     const root = this.element;
     if (!(root instanceof HTMLElement)) {
@@ -169,7 +174,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
 
     // Condition step clicking
     for (const el of root.querySelectorAll('.swse-v2-condition-step')) {
-      el.addEventListener('click', async (ev) => {
+      el.addEventListener('click', { signal }, async (ev) => {
         ev.preventDefault();
         const step = Number(ev.currentTarget?.dataset?.step);
         if (!Number.isFinite(step)) {return;}
@@ -184,7 +189,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
     // Condition track improvements
     const improveBtn = root.querySelector('.swse-v2-condition-improve');
     if (improveBtn) {
-      improveBtn.addEventListener('click', async (ev) => {
+      improveBtn.addEventListener('click', { signal }, async (ev) => {
         ev.preventDefault();
         if (typeof this.actor.improveConditionTrack === 'function') {
           await this.actor.improveConditionTrack();
@@ -195,7 +200,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
     // Condition track worsening
     const worsenBtn = root.querySelector('.swse-v2-condition-worsen');
     if (worsenBtn) {
-      worsenBtn.addEventListener('click', async (ev) => {
+      worsenBtn.addEventListener('click', { signal }, async (ev) => {
         ev.preventDefault();
         if (typeof this.actor.worsenConditionTrack === 'function') {
           await this.actor.worsenConditionTrack();
@@ -204,15 +209,15 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
     }
 
     // Talent Abilities panel (multi-option actions, filtering)
-    this._bindTalentAbilitiesPanel(root);
+    this._bindTalentAbilitiesPanel(root, { signal });
 
     // Abilities tab handlers (Phase 3)
-    this._bindAbilityCardHandlers(root);
+    this._bindAbilityCardHandlers(root, { signal });
 
     // Condition track persistence toggle
     const persistentCheckbox = root.querySelector('.swse-v2-condition-persistent');
     if (persistentCheckbox) {
-      persistentCheckbox.addEventListener('change', async (ev) => {
+      persistentCheckbox.addEventListener('change', { signal }, async (ev) => {
         const flag = ev.currentTarget?.checked === true;
         if (typeof this.actor.setConditionTrackPersistent === 'function') {
           await this.actor.setConditionTrackPersistent(flag);
@@ -222,7 +227,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
 
     // Item sheet opening
     for (const el of root.querySelectorAll('.swse-v2-open-item')) {
-      el.addEventListener('click', (ev) => {
+      el.addEventListener('click', { signal }, (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
         const itemId = ev.currentTarget?.dataset?.itemId;
@@ -234,7 +239,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
 
     // Action execution
     for (const el of root.querySelectorAll('.swse-v2-use-action')) {
-      el.addEventListener('click', async (ev) => {
+      el.addEventListener('click', { signal }, async (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
         const actionId = ev.currentTarget?.dataset?.actionId;
@@ -251,7 +256,13 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
     );
   }
 
-  _bindTalentAbilitiesPanel(root) {
+  async _onClose(options) {
+    // Cleanup all event listeners on close
+    this._renderAbort?.abort();
+    return super._onClose(options);
+  }
+
+  _bindTalentAbilitiesPanel(root, { signal } = {}) {
     for (const container of root.querySelectorAll('.swse-talent-abilities-container')) {
       if (container.dataset.abilityBound === 'true') continue;
       container.dataset.abilityBound = 'true';
@@ -268,7 +279,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
         }
       };
 
-      container.addEventListener('click', async (ev) => {
+      container.addEventListener('click', { signal }, async (ev) => {
         const filterBtn = ev.target.closest('.ability-filter-btn');
         if (filterBtn?.dataset?.filter) {
           ev.preventDefault();
@@ -359,10 +370,10 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
 
   /* -------- ABILITIES TAB HANDLERS (Phase 3) -------- */
 
-  _bindAbilityCardHandlers(root) {
+  _bindAbilityCardHandlers(root, { signal } = {}) {
     // Ability card chat button
     root.querySelectorAll('.ability-chat-btn').forEach((btn) => {
-      btn.addEventListener('click', async (ev) => {
+      btn.addEventListener('click', { signal }, async (ev) => {
         ev.preventDefault();
         const abilityId = ev.currentTarget?.dataset?.abilityId;
         if (!abilityId) return;
@@ -378,7 +389,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
 
     // Ability card roll button
     root.querySelectorAll('.ability-roll-btn').forEach((btn) => {
-      btn.addEventListener('click', async (ev) => {
+      btn.addEventListener('click', { signal }, async (ev) => {
         ev.preventDefault();
         const abilityId = ev.currentTarget?.dataset?.abilityId;
         if (!abilityId) return;
@@ -397,7 +408,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
 
     // Ability card use button
     root.querySelectorAll('.ability-use-btn').forEach((btn) => {
-      btn.addEventListener('click', async (ev) => {
+      btn.addEventListener('click', { signal }, async (ev) => {
         ev.preventDefault();
         const abilityId = ev.currentTarget?.dataset?.abilityId;
         if (!abilityId) return;
