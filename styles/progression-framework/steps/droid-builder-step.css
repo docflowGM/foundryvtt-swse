@@ -1,0 +1,738 @@
+/* Droid Builder Step — Progression Framework Integration */
+/* Chassis configuration and assembly interface */
+
+.progression-shell .prog-droid-builder {
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-lg);
+  padding: var(--prog-space-md);
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* ============================================
+   HEADER SECTION
+   ============================================ */
+
+.progression-shell .prog-droid-builder__header {
+  margin-bottom: var(--prog-space-md);
+  padding-bottom: var(--prog-space-md);
+  border-bottom: 2px solid var(--prog-accent);
+  border-bottom-color: rgba(0, 170, 255, 0.3);
+}
+
+.progression-shell .prog-droid-builder__title {
+  margin: 0 0 var(--prog-space-sm) 0;
+  font-family: var(--prog-font);
+  font-size: var(--prog-font-size-lg);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--prog-accent);
+  text-shadow: 0 0 8px rgba(0, 170, 255, 0.4), var(--prog-heading-shadow);
+  line-height: 1.4;
+}
+
+.progression-shell .prog-droid-builder__subtitle {
+  margin: 0;
+  font-size: var(--prog-font-size-sm);
+  color: var(--prog-text-dim);
+  text-shadow: var(--prog-text-shadow);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* ============================================
+   METRICS BANNER
+   ============================================ */
+
+.progression-shell .prog-droid-builder__metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--prog-space-md);
+  padding: var(--prog-space-md);
+  background: rgba(0, 170, 255, 0.05);
+  border: 1px solid rgba(0, 170, 255, 0.2);
+  border-radius: var(--prog-radius-sm);
+}
+
+.progression-shell .metric-chip {
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-xs);
+  padding: var(--prog-space-md);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 170, 255, 0.15);
+  border-radius: var(--prog-radius-xs);
+}
+
+.progression-shell .metric-label {
+  font-size: var(--prog-font-size-xs);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--prog-text-dim);
+}
+
+.progression-shell .metric-value {
+  font-size: var(--prog-font-size-lg);
+  font-weight: bold;
+  color: var(--prog-accent);
+  text-shadow: 0 0 6px rgba(0, 170, 255, 0.3);
+}
+
+.progression-shell .metric-chip--warning .metric-value {
+  color: var(--prog-neutral);
+  text-shadow: 0 0 6px rgba(251, 191, 36, 0.3);
+}
+
+/* ============================================
+   CHASSIS INFO
+   ============================================ */
+
+.progression-shell .prog-droid-builder__chassis-info {
+  display: flex;
+  gap: var(--prog-space-md);
+  padding: var(--prog-space-md);
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 3px solid var(--prog-accent);
+}
+
+.progression-shell .chassis-spec {
+  font-size: var(--prog-font-size-sm);
+  color: var(--prog-text);
+}
+
+.progression-shell .chassis-spec strong {
+  color: var(--prog-accent);
+  font-weight: bold;
+  margin-right: var(--prog-space-xs);
+}
+
+/* ============================================
+   TABS
+   ============================================ */
+
+.progression-shell .prog-droid-builder__tabs {
+  display: flex;
+  gap: var(--prog-space-sm);
+  border-bottom: 1px solid var(--prog-border);
+  overflow-x: auto;
+  padding-bottom: 0;
+}
+
+.progression-shell .prog-droid-builder__tab {
+  padding: var(--prog-space-md) var(--prog-space-lg);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--prog-text-dim);
+  font-family: inherit;
+  font-size: var(--prog-font-size-sm);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all var(--prog-transition-fast);
+  white-space: nowrap;
+}
+
+.progression-shell .prog-droid-builder__tab:hover {
+  color: var(--prog-text);
+  background: rgba(0, 170, 255, 0.05);
+}
+
+.progression-shell .prog-droid-builder__tab--active {
+  color: var(--prog-accent);
+  border-bottom-color: var(--prog-accent);
+  background: rgba(0, 170, 255, 0.05);
+  text-shadow: 0 0 4px rgba(0, 170, 255, 0.3);
+}
+
+.progression-shell .prog-droid-builder__tab i {
+  margin-right: var(--prog-space-xs);
+}
+
+/* ============================================
+   PANELS
+   ============================================ */
+
+.progression-shell .prog-droid-builder__panels {
+  position: relative;
+  flex: 1;
+}
+
+.progression-shell .prog-droid-builder__panel {
+  display: none;
+  flex-direction: column;
+  gap: var(--prog-space-md);
+  height: 100%;
+  overflow-y: auto;
+  padding-bottom: var(--prog-space-lg);
+}
+
+.progression-shell .prog-droid-builder__panel--active {
+  display: flex;
+}
+
+.progression-shell .prog-droid-builder__panel-header {
+  padding: var(--prog-space-md);
+  background: rgba(0, 170, 255, 0.05);
+  border: 1px solid rgba(0, 170, 255, 0.2);
+  border-radius: var(--prog-radius-sm);
+}
+
+.progression-shell .prog-droid-builder__panel-header h3 {
+  margin: 0 0 var(--prog-space-xs) 0;
+  font-family: var(--prog-font);
+  font-size: var(--prog-font-size-base);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--prog-accent);
+}
+
+.progression-shell .panel-description {
+  margin: 0;
+  font-size: var(--prog-font-size-sm);
+  color: var(--prog-text-dim);
+}
+
+/* ============================================
+   SELECTION BANNER
+   ============================================ */
+
+.progression-shell .prog-droid-builder__selection-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-md);
+  padding: var(--prog-space-md) var(--prog-space-lg);
+  background: rgba(34, 197, 94, 0.08);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-left: 3px solid var(--prog-positive);
+  border-radius: var(--prog-radius-sm);
+}
+
+.progression-shell .prog-droid-builder__selection-banner i {
+  color: var(--prog-positive);
+  font-size: var(--prog-font-size-lg);
+  flex-shrink: 0;
+}
+
+.progression-shell .prog-droid-builder__selection-banner strong {
+  color: var(--prog-text-heading);
+}
+
+.progression-shell .selection-specs {
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+  margin-top: var(--prog-space-xs);
+}
+
+.progression-shell .selection-banner--free {
+  background: rgba(0, 170, 255, 0.08);
+  border-left-color: var(--prog-accent);
+}
+
+.progression-shell .selection-banner--free i {
+  color: var(--prog-accent);
+}
+
+.progression-shell .prog-droid-builder__remove-btn {
+  margin-left: auto;
+  padding: var(--prog-space-sm) var(--prog-space-md);
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: var(--prog-negative);
+  border-radius: var(--prog-radius-xs);
+  font-family: inherit;
+  font-size: var(--prog-font-size-sm);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all var(--prog-transition-fast);
+}
+
+.progression-shell .prog-droid-builder__remove-btn:hover {
+  background: rgba(239, 68, 68, 0.4);
+  border-color: rgba(239, 68, 68, 0.6);
+}
+
+/* ============================================
+   SYSTEMS GRID
+   ============================================ */
+
+.progression-shell .prog-droid-builder__systems-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--prog-space-md);
+}
+
+.progression-shell .system-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-sm);
+  padding: var(--prog-space-md);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+  transition: all var(--prog-transition-fast);
+}
+
+.progression-shell .system-card:hover {
+  border-color: var(--prog-accent);
+  background: rgba(0, 170, 255, 0.08);
+  box-shadow: 0 0 8px rgba(0, 170, 255, 0.1);
+}
+
+.progression-shell .system-card--selected {
+  border-color: var(--prog-positive);
+  background: rgba(34, 197, 94, 0.08);
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.2);
+}
+
+.progression-shell .system-card--required {
+  border-color: var(--prog-accent);
+  background: rgba(0, 170, 255, 0.08);
+}
+
+.progression-shell .system-card h4 {
+  margin: 0;
+  font-family: var(--prog-font);
+  font-size: var(--prog-font-size-base);
+  font-weight: bold;
+  color: var(--prog-text-heading);
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-sm);
+}
+
+.progression-shell .system-description {
+  margin: 0;
+  font-size: var(--prog-font-size-sm);
+  color: var(--prog-text-dim);
+  line-height: 1.4;
+}
+
+.progression-shell .system-specs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-xs);
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+}
+
+.progression-shell .system-specs p {
+  margin: 0;
+}
+
+.progression-shell .system-specs strong {
+  color: var(--prog-text);
+}
+
+.progression-shell .system-action-btn {
+  padding: var(--prog-space-sm) var(--prog-space-md);
+  background: rgba(0, 170, 255, 0.2);
+  border: 1px solid rgba(0, 170, 255, 0.4);
+  color: var(--prog-accent);
+  border-radius: var(--prog-radius-xs);
+  font-family: inherit;
+  font-size: var(--prog-font-size-sm);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all var(--prog-transition-fast);
+  margin-top: auto;
+}
+
+.progression-shell .system-action-btn:hover {
+  background: rgba(0, 170, 255, 0.4);
+  border-color: rgba(0, 170, 255, 0.6);
+  text-shadow: 0 0 4px rgba(0, 170, 255, 0.3);
+}
+
+/* ============================================
+   BADGES
+   ============================================ */
+
+.progression-shell .free-badge,
+.progression-shell .required-badge,
+.progression-shell .appendage-badge {
+  display: inline-block;
+  padding: var(--prog-space-xs) var(--prog-space-sm);
+  background: rgba(34, 197, 94, 0.2);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  color: var(--prog-positive);
+  border-radius: var(--prog-radius-xs);
+  font-size: var(--prog-font-size-xs);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.progression-shell .required-badge {
+  background: rgba(0, 170, 255, 0.2);
+  border-color: rgba(0, 170, 255, 0.4);
+  color: var(--prog-accent);
+}
+
+/* ============================================
+   SELECTED LIST
+   ============================================ */
+
+.progression-shell .prog-droid-builder__selected-list {
+  padding: var(--prog-space-md);
+  background: rgba(34, 197, 94, 0.05);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  border-radius: var(--prog-radius-sm);
+}
+
+.progression-shell .prog-droid-builder__selected-list h4 {
+  margin: 0 0 var(--prog-space-md) 0;
+  font-family: var(--prog-font);
+  font-size: var(--prog-font-size-sm);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--prog-accent);
+}
+
+.progression-shell .prog-droid-builder__selected-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-sm);
+}
+
+.progression-shell .selected-item {
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-md);
+  padding: var(--prog-space-sm) var(--prog-space-md);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  border-radius: var(--prog-radius-xs);
+  font-size: var(--prog-font-size-sm);
+}
+
+.progression-shell .selected-item span:first-child {
+  flex: 1;
+  color: var(--prog-text);
+}
+
+.progression-shell .cost-badge {
+  padding: var(--prog-space-xs) var(--prog-space-sm);
+  background: rgba(0, 170, 255, 0.2);
+  border: 1px solid rgba(0, 170, 255, 0.3);
+  color: var(--prog-accent);
+  border-radius: var(--prog-radius-xs);
+  font-size: var(--prog-font-size-xs);
+  font-weight: bold;
+}
+
+.progression-shell .remove-btn {
+  padding: var(--prog-space-xs) var(--prog-space-sm);
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: var(--prog-negative);
+  border-radius: var(--prog-radius-xs);
+  font-family: inherit;
+  font-size: var(--prog-font-size-xs);
+  cursor: pointer;
+  transition: all var(--prog-transition-fast);
+}
+
+.progression-shell .remove-btn:hover {
+  background: rgba(239, 68, 68, 0.4);
+  border-color: rgba(239, 68, 68, 0.6);
+}
+
+/* ============================================
+   ACCESSORY TABS & PANELS
+   ============================================ */
+
+.progression-shell .prog-droid-builder__accessory-tabs {
+  display: flex;
+  gap: var(--prog-space-sm);
+  border-bottom: 1px solid var(--prog-border);
+  margin-bottom: var(--prog-space-md);
+  overflow-x: auto;
+}
+
+.progression-shell .accessory-tab {
+  padding: var(--prog-space-sm) var(--prog-space-md);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--prog-text-dim);
+  font-family: inherit;
+  font-size: var(--prog-font-size-sm);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all var(--prog-transition-fast);
+  white-space: nowrap;
+}
+
+.progression-shell .accessory-tab:hover {
+  color: var(--prog-text);
+}
+
+.progression-shell .accessory-tab--active {
+  color: var(--prog-accent);
+  border-bottom-color: var(--prog-accent);
+}
+
+.progression-shell .prog-droid-builder__accessory-panels {
+  display: contents;
+}
+
+.progression-shell .accessory-panel {
+  display: none;
+}
+
+.progression-shell .accessory-panel--active {
+  display: block;
+}
+
+.progression-shell .no-accessories {
+  padding: var(--prog-space-lg);
+  text-align: center;
+  color: var(--prog-text-dim);
+}
+
+/* ============================================
+   STATUS SECTION
+   ============================================ */
+
+.progression-shell .prog-droid-builder__status {
+  margin-top: var(--prog-space-lg);
+}
+
+.progression-shell .status-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--prog-space-md);
+  padding: var(--prog-space-md) var(--prog-space-lg);
+  border-radius: var(--prog-radius-sm);
+  border-left: 4px solid transparent;
+}
+
+.progression-shell .status-banner--complete {
+  background: rgba(34, 197, 94, 0.08);
+  border-left-color: var(--prog-positive);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.progression-shell .status-banner--complete i {
+  color: var(--prog-positive);
+  font-size: var(--prog-font-size-lg);
+  flex-shrink: 0;
+}
+
+.progression-shell .status-banner--incomplete {
+  background: rgba(239, 68, 68, 0.08);
+  border-left-color: var(--prog-negative);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.progression-shell .status-banner--incomplete i {
+  color: var(--prog-negative);
+  font-size: var(--prog-font-size-lg);
+  flex-shrink: 0;
+}
+
+.progression-shell .status-issues {
+  flex: 1;
+}
+
+.progression-shell .status-issues strong {
+  display: block;
+  color: var(--prog-text-heading);
+  margin-bottom: var(--prog-space-sm);
+}
+
+.progression-shell .status-issues ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-xs);
+}
+
+.progression-shell .status-issues li {
+  font-size: var(--prog-font-size-sm);
+  color: var(--prog-text);
+  padding-left: var(--prog-space-md);
+  position: relative;
+}
+
+.progression-shell .status-issues li:before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--prog-negative);
+  font-weight: bold;
+}
+
+/* ============================================
+   DETAILS PANEL
+   ============================================ */
+
+.progression-shell .prog-droid-builder-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-lg);
+  height: 100%;
+  overflow-y: auto;
+  padding: var(--prog-space-md);
+}
+
+.progression-shell .details-section {
+  padding: var(--prog-space-md);
+  background: rgba(0, 170, 255, 0.05);
+  border: 1px solid rgba(0, 170, 255, 0.2);
+  border-radius: var(--prog-radius-sm);
+}
+
+.progression-shell .details-section h3 {
+  margin: 0 0 var(--prog-space-md) 0;
+  font-family: var(--prog-font);
+  font-size: var(--prog-font-size-base);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--prog-accent);
+}
+
+.progression-shell .summary-grid,
+.progression-shell .budget-display,
+.progression-shell .totals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--prog-space-md);
+}
+
+.progression-shell .summary-item,
+.progression-shell .budget-row,
+.progression-shell .total-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-xs);
+}
+
+.progression-shell .summary-item label,
+.progression-shell .budget-label,
+.progression-shell .total-item label {
+  font-size: var(--prog-font-size-xs);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--prog-text-dim);
+}
+
+.progression-shell .summary-item strong,
+.progression-shell .budget-value,
+.progression-shell .total-item strong {
+  font-size: var(--prog-font-size-base);
+  font-weight: bold;
+  color: var(--prog-text-heading);
+}
+
+.progression-shell .budget-row--overbudget .budget-value--warning {
+  color: var(--prog-negative);
+  text-shadow: 0 0 4px rgba(239, 68, 68, 0.3);
+}
+
+.progression-shell .budget-warning,
+.progression-shell .budget-note,
+.progression-shell .budget-complete {
+  margin-top: var(--prog-space-md);
+  padding: var(--prog-space-md);
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 3px solid var(--prog-neutral);
+  border-radius: var(--prog-radius-xs);
+}
+
+.progression-shell .budget-warning {
+  border-left-color: var(--prog-negative);
+}
+
+.progression-shell .budget-warning i {
+  color: var(--prog-negative);
+  margin-right: var(--prog-space-sm);
+}
+
+.progression-shell .budget-complete {
+  border-left-color: var(--prog-positive);
+}
+
+.progression-shell .budget-complete i {
+  color: var(--prog-positive);
+  margin-right: var(--prog-space-sm);
+}
+
+.progression-shell .budget-warning p,
+.progression-shell .budget-note p,
+.progression-shell .budget-complete p {
+  margin: 0;
+  font-size: var(--prog-font-size-sm);
+  color: var(--prog-text);
+}
+
+.progression-shell .categories-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--prog-space-md);
+}
+
+.progression-shell .category-guide {
+  padding: var(--prog-space-md);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 170, 255, 0.15);
+  border-radius: var(--prog-radius-xs);
+}
+
+.progression-shell .category-guide h4 {
+  margin: 0 0 var(--prog-space-sm) 0;
+  font-family: var(--prog-font);
+  font-size: var(--prog-font-size-sm);
+  font-weight: bold;
+  color: var(--prog-text-heading);
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-sm);
+}
+
+.progression-shell .required-label {
+  display: inline-block;
+  padding: var(--prog-space-xs) var(--prog-space-sm);
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--prog-negative);
+  border-radius: var(--prog-radius-xs);
+  font-size: var(--prog-font-size-xs);
+  font-weight: bold;
+}
+
+.progression-shell .optional-label {
+  display: inline-block;
+  padding: var(--prog-space-xs) var(--prog-space-sm);
+  background: rgba(251, 191, 36, 0.2);
+  color: var(--prog-neutral);
+  border-radius: var(--prog-radius-xs);
+  font-size: var(--prog-font-size-xs);
+  font-weight: bold;
+}
+
+.progression-shell .category-guide p {
+  margin: 0;
+  font-size: var(--prog-font-size-sm);
+  color: var(--prog-text-dim);
+  line-height: 1.4;
+}
+
+.progression-shell .category-note {
+  margin-top: var(--prog-space-sm) !important;
+  font-style: italic;
+  color: var(--prog-text-dim) !important;
+}
