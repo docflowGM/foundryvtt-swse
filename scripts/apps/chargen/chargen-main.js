@@ -1504,104 +1504,86 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       game.tooltip.activate(root, { selector: '[data-tooltip]' });
     }
 
-    // Phase 3 FIX: Remove previous listeners before binding new ones
-    // This prevents listener accumulation on rerender
-    this._eventListeners.forEach(({ el, event, handler }) => {
-      el.removeEventListener(event, handler);
-    });
-    this._eventListeners = [];
+    // Phase 6: Use consolidated listener binding from base class
+    const bindings = [
+      // Free Build toggle
+      { selector: '.free-build-toggle', event: 'change', handler: this._onToggleFreeBuild },
 
-    // Phase 3 FIX: Helper to bind click events and track them
-    const bindClick = (selector, handler) => {
-      for (const el of root.querySelectorAll(selector)) {
-        const boundHandler = handler.bind(this);
-        el.addEventListener('click', boundHandler);
-        this._eventListeners.push({ el, event: 'click', handler: boundHandler });
-      }
-    };
+      // Navigation
+      { selector: '.next-step', event: 'click', handler: this._onNextStep },
+      { selector: '.prev-step', event: 'click', handler: this._onPrevStep },
+      { selector: '.skip-step', event: 'click', handler: this._onSkipStep },
+      { selector: '.cancel-chargen', event: 'click', handler: this._onCancelChargen },
+      { selector: '.build-later-droid', event: 'click', handler: this._onBuildLater },
 
-    // Phase 3 FIX: Helper to bind change events and track them
-    const bindChange = (selector, handler) => {
-      for (const el of root.querySelectorAll(selector)) {
-        const boundHandler = handler.bind(this);
-        el.addEventListener('change', boundHandler);
-        this._eventListeners.push({ el, event: 'change', handler: boundHandler });
-      }
-    };
+      // Chevron step navigation (all steps now clickable with confirmation)
+      { selector: '.chevron-step', event: 'click', handler: this._onJumpToStep },
+      { selector: '.finish', event: 'click', handler: this._onFinish },
 
-    // Free Build toggle
-    bindChange('.free-build-toggle', this._onToggleFreeBuild);
+      // Selections
+      { selector: '.select-type', event: 'click', handler: this._onSelectType },
+      { selector: '.select-degree', event: 'click', handler: this._onSelectDegree },
+      { selector: '.select-size', event: 'click', handler: this._onSelectSize },
+      { selector: '.import-droid-btn', event: 'click', handler: this._onImportDroid },
 
-    // Navigation
-    bindClick('.next-step', this._onNextStep);
-    bindClick('.prev-step', this._onPrevStep);
-    bindClick('.skip-step', this._onSkipStep);
-    bindClick('.cancel-chargen', this._onCancelChargen);
-    bindClick('.build-later-droid', this._onBuildLater);
+      // Species preview and selection (expanded card flow)
+      { selector: '.preview-species', event: 'click', handler: this._onPreviewSpecies },
+      { selector: '#species-confirm-btn', event: 'click', handler: this._onConfirmSpecies },
+      { selector: '#species-back-btn, #species-close-btn', event: 'click', handler: this._onCloseSpeciesOverlay },
+      { selector: '#species-overlay', event: 'click', handler: this._onSpeciesOverlayBackdropClick },
 
-    // Chevron step navigation (all steps now clickable with confirmation)
-    bindClick('.chevron-step', this._onJumpToStep);
-    bindClick('.finish', this._onFinish);
+      // Near-Human builder
+      { selector: '.open-near-human-builder', event: 'click', handler: this._onOpenNearHumanBuilder },
+      { selector: '.sacrifice-btn', event: 'click', handler: this._onSelectNearHumanSacrifice },
+      { selector: '.trait-btn', event: 'click', handler: this._onSelectNearHumanTrait },
+      { selector: '.sacrifice-radio', event: 'change', handler: this._onSelectNearHumanSacrifice },
+      { selector: '.variant-checkbox', event: 'change', handler: this._onToggleNearHumanVariant },
+      { selector: '.ability-plus-btn, .ability-minus-btn', event: 'click', handler: this._onAdjustNearHumanAbility },
+      { selector: '#near-human-randomize-btn', event: 'click', handler: this._onRandomizeNearHuman },
+      { selector: '#near-human-confirm-btn', event: 'click', handler: this._onConfirmNearHuman },
+      { selector: '#near-human-back-btn, #near-human-close-btn', event: 'click', handler: this._onCloseNearHumanOverlay },
+      { selector: '#near-human-overlay', event: 'click', handler: this._onNearHumanOverlayBackdropClick },
 
-    // Selections
-    bindClick('.select-type', this._onSelectType);
-    bindClick('.select-degree', this._onSelectDegree);
-    bindClick('.select-size', this._onSelectSize);
-    bindClick('.import-droid-btn', this._onImportDroid);
+      // Species filters
+      { selector: '.species-filter-select', event: 'change', handler: this._onSpeciesFilterChange },
+      { selector: '.clear-species-filters', event: 'click', handler: this._onClearSpeciesFilters },
+      { selector: '.select-class', event: 'click', handler: this._onSelectClass },
+      { selector: '.select-feat', event: 'click', handler: this._onSelectFeat },
+      { selector: '.remove-feat', event: 'click', handler: this._onRemoveFeat },
+      { selector: '.filter-valid-feats', event: 'change', handler: this._onToggleFeatFilter },
+      { selector: '.select-talent-tree', event: 'click', handler: this._onSelectTalentTree },
+      { selector: '.back-to-talent-trees', event: 'click', handler: this._onBackToTalentTrees },
+      { selector: '.select-talent', event: 'click', handler: this._onSelectTalent },
+      { selector: '.remove-talent', event: 'click', handler: this._onRemoveTalent },
 
-    // Species preview and selection (expanded card flow)
-    bindClick('.preview-species', this._onPreviewSpecies);
-    bindClick('#species-confirm-btn', this._onConfirmSpecies);
-    bindClick('#species-back-btn, #species-close-btn', this._onCloseSpeciesOverlay);
-    bindClick('#species-overlay', this._onSpeciesOverlayBackdropClick);
+      // Talent tree view toggle (Graph/List)
+      { selector: '.talent-view-btn', event: 'click', handler: this._onTalentViewToggle }
+    ];
 
-    // Near-Human builder
-    bindClick('.open-near-human-builder', this._onOpenNearHumanBuilder);
-    bindClick('.sacrifice-btn', this._onSelectNearHumanSacrifice);
-    bindClick('.trait-btn', this._onSelectNearHumanTrait);
-    bindChange('.sacrifice-radio', this._onSelectNearHumanSacrifice);
-    bindChange('.variant-checkbox', this._onToggleNearHumanVariant);
-    bindClick('.ability-plus-btn, .ability-minus-btn', this._onAdjustNearHumanAbility);
-    bindClick('#near-human-randomize-btn', this._onRandomizeNearHuman);
-    bindClick('#near-human-confirm-btn', this._onConfirmNearHuman);
-    bindClick('#near-human-back-btn, #near-human-close-btn', this._onCloseNearHumanOverlay);
-    bindClick('#near-human-overlay', this._onNearHumanOverlayBackdropClick);
+    // Add remaining listeners to bindings
+    bindings.push(
+      { selector: '.select-power', event: 'click', handler: this._onSelectForcePower },
+      { selector: '.remove-power', event: 'click', handler: this._onRemoveForcePower },
+      { selector: '.ask-mentor-force-power-suggestion', event: 'click', handler: this._onAskMentorForcePowerSuggestion },
+      { selector: '.select-maneuver', event: 'click', handler: this._onSelectStarshipManeuver },
+      { selector: '.remove-maneuver', event: 'click', handler: this._onRemoveStarshipManeuver },
+      { selector: '.skill-select', event: 'change', handler: this._onSkillSelect },
+      { selector: '.train-skill-btn', event: 'click', handler: this._onTrainSkill },
+      { selector: '.untrain-skill-btn', event: 'click', handler: this._onUntrainSkill },
+      { selector: '.reset-skills-btn', event: 'click', handler: this._onResetSkills },
+      // Language selection
+      { selector: '.select-language', event: 'click', handler: this._onSelectLanguage },
+      { selector: '.remove-language', event: 'click', handler: this._onRemoveLanguage },
+      { selector: '.reset-languages-btn', event: 'click', handler: this._onResetLanguages },
+      { selector: '.add-custom-language-btn', event: 'click', handler: this._onAddCustomLanguage }
+    );
 
-    // Species filters
-    bindChange('.species-filter-select', this._onSpeciesFilterChange);
-    bindClick('.clear-species-filters', this._onClearSpeciesFilters);
-    bindClick('.select-class', this._onSelectClass);
-    bindClick('.select-feat', this._onSelectFeat);
-    bindClick('.remove-feat', this._onRemoveFeat);
-    bindChange('.filter-valid-feats', this._onToggleFeatFilter);
-    bindClick('.select-talent-tree', this._onSelectTalentTree);
-    bindClick('.back-to-talent-trees', this._onBackToTalentTrees);
-    bindClick('.select-talent', this._onSelectTalent);
-    bindClick('.remove-talent', this._onRemoveTalent);
-
-    // Talent tree view toggle (Graph/List)
-    bindClick('.talent-view-btn', this._onTalentViewToggle);
+    this._bindTrackedListeners(bindings);
 
     // Render talent tree graph if on talents step with selected tree
     if (this.currentStep === 'talents' && this.selectedTalentTree) {
       this._renderTalentTreeGraph(root);
     }
-
-    bindClick('.select-power', this._onSelectForcePower);
-    bindClick('.remove-power', this._onRemoveForcePower);
-    bindClick('.ask-mentor-force-power-suggestion', this._onAskMentorForcePowerSuggestion);
-    bindClick('.select-maneuver', this._onSelectStarshipManeuver);
-    bindClick('.remove-maneuver', this._onRemoveStarshipManeuver);
-    bindChange('.skill-select', this._onSkillSelect);
-    bindClick('.train-skill-btn', this._onTrainSkill);
-    bindClick('.untrain-skill-btn', this._onUntrainSkill);
-    bindClick('.reset-skills-btn', this._onResetSkills);
-
-    // Language selection
-    bindClick('.select-language', this._onSelectLanguage);
-    bindClick('.remove-language', this._onRemoveLanguage);
-    bindClick('.reset-languages-btn', this._onResetLanguages);
-    bindClick('.add-custom-language-btn', this._onAddCustomLanguage);
 
     if (this.currentStep === 'languages') {
       this._bindLanguageCardUI(root);
@@ -1615,16 +1597,18 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     if (this.currentStep === 'force-powers') {this._bindForcePowerCardUI(root);}
     if (this.currentStep === 'starship-maneuvers') {this._bindManeuverCardUI(root);}
 
-    // Background selection
-    bindClick('.random-background-btn', this._onRandomBackground);
-    bindClick('.change-background-btn', this._onChangeBackground);
+    // Add background and mentor listeners
+    bindings.push(
+      { selector: '.random-background-btn', event: 'click', handler: this._onRandomBackground },
+      { selector: '.change-background-btn', event: 'click', handler: this._onChangeBackground },
+      // Mentor "Ask Your Mentor" button
+      { selector: '.ask-mentor-btn, .ask-mentor-skills-btn', event: 'click', handler: this._onAskMentor },
+      // Droid builder/shop
+      { selector: '.shop-tab', event: 'click', handler: this._onShopTabClick },
+      { selector: '.accessory-tab', event: 'click', handler: this._onAccessoryTabClick }
+    );
 
-    // Mentor "Ask Your Mentor" button
-    bindClick('.ask-mentor-btn, .ask-mentor-skills-btn', this._onAskMentor);
-
-    // Droid builder/shop
-    bindClick('.shop-tab', this._onShopTabClick);
-    bindClick('.accessory-tab', this._onAccessoryTabClick);
+    this._bindTrackedListeners(bindings);
 
     // Phase 3 FIX: Delegated events for dynamically added droid shop elements
     const droidShopHandler = (ev) => {
@@ -1638,27 +1622,34 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
         this._onRemoveSystem(ev);
       }
     };
-    root.addEventListener('click', droidShopHandler);
-    this._eventListeners.push({ el: root, event: 'click', handler: droidShopHandler });
 
     // Phase 3 FIX: Name input - use 'input' event to capture changes in real-time
     const nameInput = root.querySelector('input[name="character-name"]');
+    const handleNameChange = (ev) => {
+      const patch = buildNamePatch(this.characterData, ev.target.value);
+      this.characterData = applyProgressionPatch(this.characterData, patch);
+    };
+
+    // Add special handlers that need manual tracking (delegated/input handlers)
+    if (!this._eventListeners) this._eventListeners = [];
+
+    root.addEventListener('click', droidShopHandler);
+    this._eventListeners.push({ el: root, event: 'click', handler: droidShopHandler });
+
     if (nameInput) {
-      const handleNameChange = (ev) => {
-        const patch = buildNamePatch(this.characterData, ev.target.value);
-        this.characterData = applyProgressionPatch(this.characterData, patch);
-      };
       nameInput.addEventListener('input', handleNameChange);
       nameInput.addEventListener('change', handleNameChange);
       this._eventListeners.push({ el: nameInput, event: 'input', handler: handleNameChange });
       this._eventListeners.push({ el: nameInput, event: 'change', handler: handleNameChange });
     }
 
-    // Random name button
-    bindClick('.random-name-btn', this._onRandomName);
+    // Add remaining random buttons
+    bindings.push(
+      { selector: '.random-name-btn', event: 'click', handler: this._onRandomName },
+      { selector: '.random-droid-name-btn', event: 'click', handler: this._onRandomDroidName }
+    );
 
-    // Random droid name button
-    bindClick('.random-droid-name-btn', this._onRandomDroidName);
+    this._bindTrackedListeners(bindings);
 
     // Phase 3 FIX: Level input
     const levelInput = root.querySelector('input[name="target-level"]');
@@ -1672,13 +1663,19 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       this._eventListeners.push({ el: levelInput, event: 'change', handler: handleLevelChange });
     }
 
-    // Shop button
-    bindClick('.open-shop-btn', this._onOpenShop);
+    // Add final batch of listeners
+    const finalBindings = [
+      { selector: '.open-shop-btn', event: 'click', handler: this._onOpenShop }
+    ];
+    this._bindTrackedListeners(finalBindings);
 
-    // Starting Credits
-    bindClick('.roll-credits-btn', this._onRollCredits);
-    bindClick('.take-max-credits-btn', this._onTakeMaxCredits);
-    bindClick('.reroll-credits-btn', this._onRerollCredits);
+    // Add credit and abilities listeners
+    const creditBindings = [
+      { selector: '.roll-credits-btn', event: 'click', handler: this._onRollCredits },
+      { selector: '.take-max-credits-btn', event: 'click', handler: this._onTakeMaxCredits },
+      { selector: '.reroll-credits-btn', event: 'click', handler: this._onRerollCredits }
+    ];
+    this._bindTrackedListeners(creditBindings);
 
     // Abilities UI
     if (this.currentStep === 'abilities') {
@@ -1737,14 +1734,13 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
         }
       }
 
-      // Background category tab clicks
-      bindClick('.background-category-tab', this._onBackgroundCategoryClick);
-
-      // Background skill filter button
-      bindClick('.background-filter-btn', this._onBackgroundFilterClick);
-
-      // Ask mentor button for background suggestions
-      bindClick('.ask-mentor-background-btn', this._onAskMentorBackgroundSuggestion);
+      // Background category tab clicks, filter, and mentor buttons
+      const backgroundBindings = [
+        { selector: '.background-category-tab', event: 'click', handler: this._onBackgroundCategoryClick },
+        { selector: '.background-filter-btn', event: 'click', handler: this._onBackgroundFilterClick },
+        { selector: '.ask-mentor-background-btn', event: 'click', handler: this._onAskMentorBackgroundSuggestion }
+      ];
+      this._bindTrackedListeners(backgroundBindings);
 
       // Phase 3 FIX: Homebrew planets toggle
       const homebrewToggle = root.querySelector('.allow-homebrew-toggle');

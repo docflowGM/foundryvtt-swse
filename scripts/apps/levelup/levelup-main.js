@@ -270,56 +270,40 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
   /**
    * PHASE B: Comprehensive event listener binding (all listeners tracked)
-   * Replaces inline addEventListener calls from _onRender (original lines 464-519)
+   * Uses consolidated _bindTrackedListeners from base class (Phase 6)
    */
   _bindEventListenersComprehensive() {
-    // Clear previous listeners
-    this._eventListeners.forEach(({ el, event, handler }) => {
-      el.removeEventListener(event, handler);
-    });
-    this._eventListeners = [];
-
-    const root = this.element;
-    const qsa = (el, sel) => el.querySelectorAll(sel);
-
-    const addListener = (selector, eventName, handler) => {
-      qsa(root, selector).forEach(el => {
-        const boundHandler = handler.bind(this);
-        el.addEventListener(eventName, boundHandler);
-        this._eventListeners.push({ el, event: eventName, handler: boundHandler });
-      });
-    };
-
-    // All listeners from original _onRender (lines 464-519)
-    addListener('.select-class-btn', 'click', this._onSelectClass);
-    addListener('.class-choice-btn', 'click', this._onSelectClass);
-    addListener('.show-prestige-btn', 'click', this._onShowPrestigeClasses);
-    addListener('.back-to-base-classes', 'click', this._onBackToBaseClasses);
-    addListener('.select-feat-btn', 'click', this._onSelectMulticlassFeat);
-    addListener('.select-skill-btn', 'click', this._onSelectMulticlassSkill);
-    addListener('.ability-increase-btn', 'click', this._onAbilityIncrease);
-    addListener('.ask-mentor-attribute', 'click', this._onAskMentorAttributeSuggestion);
-    addListener('.select-bonus-feat', 'click', this._onSelectBonusFeat);
-    addListener('.select-force-power', 'click', this._onSelectForcePower);
-    addListener('.select-talent-tree', 'click', this._onSelectTalentTree);
-    addListener('.next-step', 'click', this._onNextStep);
-    addListener('.prev-step', 'click', this._onPrevStep);
-    addListener('.skip-step', 'click', this._onSkipStep);
-    addListener('.free-build-toggle', 'change', this._onToggleFreeBuild);
-    addListener('.complete-levelup', 'click', this._onCompleteLevelUp);
-    addListener('.category-header', 'click', this._onToggleFeatCategory);
-    addListener('.feat-search-input', 'input', this._onFeatSearch);
-    addListener('.clear-search-btn', 'click', this._onClearSearch);
-    addListener('.clear-filters-btn', 'click', this._onClearAllFilters);
-    addListener('.show-unavailable-toggle', 'change', this._onToggleShowUnavailable);
-    addListener('.feat-tag', 'click', this._onClickFeatTag);
-    addListener('.show-prestige-roadmap', 'click', this._onShowPrestigeRoadmap);
-    addListener('.show-gm-debug-panel', 'click', this._onShowGMDebugPanel);
-    addListener('.ask-mentor-class-suggestion', 'click', this._onAskMentorClassSuggestion);
-    addListener('.ask-mentor-feat-suggestion', 'click', this._onAskMentorFeatSuggestion);
-    addListener('.ask-mentor-talent-suggestion', 'click', this._onAskMentorTalentSuggestion);
-    addListener('.ask-mentor-force-power-suggestion', 'click', this._onAskMentorForcePowerSuggestion);
-    addListener('.cancel-levelup', 'click', this._onCancelLevelUp);
+    this._bindTrackedListeners([
+      { selector: '.select-class-btn', event: 'click', handler: this._onSelectClass },
+      { selector: '.class-choice-btn', event: 'click', handler: this._onSelectClass },
+      { selector: '.show-prestige-btn', event: 'click', handler: this._onShowPrestigeClasses },
+      { selector: '.back-to-base-classes', event: 'click', handler: this._onBackToBaseClasses },
+      { selector: '.select-feat-btn', event: 'click', handler: this._onSelectMulticlassFeat },
+      { selector: '.select-skill-btn', event: 'click', handler: this._onSelectMulticlassSkill },
+      { selector: '.ability-increase-btn', event: 'click', handler: this._onAbilityIncrease },
+      { selector: '.ask-mentor-attribute', event: 'click', handler: this._onAskMentorAttributeSuggestion },
+      { selector: '.select-bonus-feat', event: 'click', handler: this._onSelectBonusFeat },
+      { selector: '.select-force-power', event: 'click', handler: this._onSelectForcePower },
+      { selector: '.select-talent-tree', event: 'click', handler: this._onSelectTalentTree },
+      { selector: '.next-step', event: 'click', handler: this._onNextStep },
+      { selector: '.prev-step', event: 'click', handler: this._onPrevStep },
+      { selector: '.skip-step', event: 'click', handler: this._onSkipStep },
+      { selector: '.free-build-toggle', event: 'change', handler: this._onToggleFreeBuild },
+      { selector: '.complete-levelup', event: 'click', handler: this._onCompleteLevelUp },
+      { selector: '.category-header', event: 'click', handler: this._onToggleFeatCategory },
+      { selector: '.feat-search-input', event: 'input', handler: this._onFeatSearch },
+      { selector: '.clear-search-btn', event: 'click', handler: this._onClearSearch },
+      { selector: '.clear-filters-btn', event: 'click', handler: this._onClearAllFilters },
+      { selector: '.show-unavailable-toggle', event: 'change', handler: this._onToggleShowUnavailable },
+      { selector: '.feat-tag', event: 'click', handler: this._onClickFeatTag },
+      { selector: '.show-prestige-roadmap', event: 'click', handler: this._onShowPrestigeRoadmap },
+      { selector: '.show-gm-debug-panel', event: 'click', handler: this._onShowGMDebugPanel },
+      { selector: '.ask-mentor-class-suggestion', event: 'click', handler: this._onAskMentorClassSuggestion },
+      { selector: '.ask-mentor-feat-suggestion', event: 'click', handler: this._onAskMentorFeatSuggestion },
+      { selector: '.ask-mentor-talent-suggestion', event: 'click', handler: this._onAskMentorTalentSuggestion },
+      { selector: '.ask-mentor-force-power-suggestion', event: 'click', handler: this._onAskMentorForcePowerSuggestion },
+      { selector: '.cancel-levelup', event: 'click', handler: this._onCancelLevelUp }
+    ]);
   }
 
   /**
