@@ -1,0 +1,48 @@
+{{!-- Force Technique Selection Work Surface --}}
+
+<div class="prog-force-technique-browse">
+  {{#if techniques.length}}
+    <div class="prog-force-technique-grid" role="list">
+      {{#each techniques}}
+        <div class="prog-force-technique-card
+                    {{#if (arrayIncludes ../committedCounts @key)}}prog-force-technique-card--selected{{/if}}"
+             data-action="focus-item"
+             data-item-id="{{this.id}}"
+             tabindex="0" role="option">
+
+          <div class="prog-force-technique-card__header">
+            <h3 class="prog-force-technique-card__name">{{this.name}}</h3>
+            {{#if (lookup ../committedCounts this.id)}}
+              <span class="prog-force-technique-card__count-badge">
+                ×{{lookup ../committedCounts this.id}}
+              </span>
+            {{/if}}
+          </div>
+
+          {{#if this.description}}
+            <p class="prog-force-technique-card__description">
+              {{truncate this.description 100}}
+            </p>
+          {{/if}}
+
+          {{#if (lookup ../committedCounts this.id)}}
+            <div class="prog-force-technique-card__state-hint">
+              <i class="fas fa-star" aria-hidden="true"></i>
+              Selected {{lookup ../committedCounts this.id}} {{plural (lookup ../committedCounts this.id) "time" "times"}}
+            </div>
+          {{else}}
+            <div class="prog-force-technique-card__state-hint prog-force-technique-card__state-hint--available">
+              <i class="fas fa-plus-circle" aria-hidden="true"></i>
+              Available
+            </div>
+          {{/if}}
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="prog-force-technique-browse__empty">
+      <i class="fas fa-book-sparkles" aria-hidden="true"></i>
+      <p>No Force Techniques match your search.</p>
+    </div>
+  {{/if}}
+</div>

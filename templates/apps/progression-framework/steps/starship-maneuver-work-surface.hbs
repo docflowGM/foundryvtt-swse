@@ -1,0 +1,49 @@
+{{!-- Starship Maneuver Selection Work Surface --}}
+{{!-- CRITICAL: Uses stacking/duplicate selection model like Force Powers --}}
+
+<div class="prog-starship-maneuver-browse">
+  {{#if maneuvers.length}}
+    <div class="prog-starship-maneuver-grid" role="list">
+      {{#each maneuvers}}
+        <div class="prog-starship-maneuver-card
+                    {{#if (arrayIncludes ../committedCounts @key)}}prog-starship-maneuver-card--selected{{/if}}"
+             data-action="focus-item"
+             data-item-id="{{this.id}}"
+             tabindex="0" role="option">
+
+          <div class="prog-starship-maneuver-card__header">
+            <h3 class="prog-starship-maneuver-card__name">{{this.name}}</h3>
+            {{#if (lookup ../committedCounts this.id)}}
+              <span class="prog-starship-maneuver-card__count-badge">
+                ×{{lookup ../committedCounts this.id}}
+              </span>
+            {{/if}}
+          </div>
+
+          {{#if this.description}}
+            <p class="prog-starship-maneuver-card__description">
+              {{truncate this.description 100}}
+            </p>
+          {{/if}}
+
+          {{#if (lookup ../committedCounts this.id)}}
+            <div class="prog-starship-maneuver-card__state-hint">
+              <i class="fas fa-star" aria-hidden="true"></i>
+              Selected {{lookup ../committedCounts this.id}} {{plural (lookup ../committedCounts this.id) "use" "uses"}}
+            </div>
+          {{else}}
+            <div class="prog-starship-maneuver-card__state-hint prog-starship-maneuver-card__state-hint--available">
+              <i class="fas fa-plus-circle" aria-hidden="true"></i>
+              Available
+            </div>
+          {{/if}}
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="prog-starship-maneuver-browse__empty">
+      <i class="fas fa-rocket" aria-hidden="true"></i>
+      <p>No Starship Maneuvers available.</p>
+    </div>
+  {{/if}}
+</div>

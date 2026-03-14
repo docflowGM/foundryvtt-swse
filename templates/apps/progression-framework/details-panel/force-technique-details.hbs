@@ -1,0 +1,38 @@
+{{!-- Force Technique Details Panel --}}
+
+<div class="prog-force-technique-details">
+  <div class="prog-force-technique-details__header">
+    <h2 class="prog-force-technique-details__name">{{technique.name}}</h2>
+    {{#if selectedCount}}
+      <span class="prog-force-technique-details__selected-badge">
+        <i class="fas fa-star" aria-hidden="true"></i>
+        Selected {{selectedCount}} {{plural selectedCount "time" "times"}}
+      </span>
+    {{/if}}
+  </div>
+
+  {{#if description}}
+    <div class="prog-force-technique-details__section">
+      <h3 class="prog-force-technique-details__section-title">Description</h3>
+      <p class="prog-force-technique-details__description">{{description}}</p>
+    </div>
+  {{/if}}
+
+  <div class="prog-force-technique-details__actions">
+    {{#if canAddMore}}
+      <button class="prog-btn prog-btn--primary" data-action="commit-item" data-item-id="{{technique.id}}" type="button">
+        <i class="fas fa-{{#if selectedCount}}plus-circle{{else}}check-circle{{/if}}"></i>
+        {{buttonLabel}}
+      </button>
+    {{else}}
+      <p class="prog-force-technique-details__hint prog-force-technique-details__hint--blocked">
+        No more selections available.
+      </p>
+    {{/if}}
+
+    <button class="prog-btn" data-action="ask-mentor" type="button">
+      <i class="fas fa-brain" aria-hidden="true"></i>
+      Ask Mentor
+    </button>
+  </div>
+</div>
