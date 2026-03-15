@@ -55,7 +55,7 @@ import { scoreAttributeAllocations } from "/systems/foundryvtt-swse/scripts/engi
 // Phase 2A: Slot context detection
 import { getActiveSlotContext } from "/systems/foundryvtt-swse/scripts/engine/suggestion/slot-context-detector.js";
 import { enrichBuildIntentWithPrestigeDelays } from "/systems/foundryvtt-swse/scripts/engine/suggestion/prestige-delay-calculator.js";
-import { ReasonType } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionV2Contract.ts";
+import { ReasonType } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionV2Contract.js";
 import { mapReasonCodeToReasonType } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ReasonCodeToReasonTypeMapping.js";
 
 // ──────────────────────────────────────────────────────────────

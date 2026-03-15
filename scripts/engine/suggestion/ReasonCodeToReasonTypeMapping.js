@@ -13,7 +13,7 @@
  * - Weight multiplier (used when no SuggestionScorer breakdown available)
  */
 
-import { ReasonType } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionV2Contract.ts";
+import { ReasonType } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionV2Contract.js";
 
 /**
  * Maps old reason codes to new ReasonType + metadata.
