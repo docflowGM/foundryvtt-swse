@@ -1,28 +1,31 @@
 
-<section class="hp-condition-panel v3-panel holo-panel">
+<section class="hp-condition-panel v3-panel holo-panel {{hp.stateClass}}">
 
   <header class="section-bar">
     <h3 class="section-header">Health</h3>
+    <span class="hp-state-label {{hp.stateClass}}">
+      {{#if (eq hp.stateClass "state--dead")}}Dead{{else if (eq hp.stateClass "state--critical")}}Critical{{else if (eq hp.stateClass "state--damaged")}}Damaged{{else if (eq hp.stateClass "state--wounded")}}Wounded{{else}}Healthy{{/if}}
+    </span>
   </header>
 
-  <!-- HP BAR -->
-  <div class="hp-bar-wrapper">
-    <div class="hp-bar">
-      <div class="fill" style="width: {{hp.percent}}%;"></div>
+  <!-- HP BAR with semantic styling -->
+  <div class="hp-bar-wrapper {{hp.stateClass}}">
+    <div class="hp-bar {{hp.stateClass}}">
+      <div class="hp-bar__fill {{hp.stateClass}}" style="width: {{hp.percent}}%;"></div>
+      <span class="hp-bar__label">{{hp.value}} / {{hp.max}}</span>
     </div>
-    <div class="hp-text">
-      {{hp.value}} / {{hp.max}}
-      {{#if bonusHp.value}}
-        <span class="bonus-hp-label">({{bonusHp.label}} bonus)</span>
-      {{/if}}
-    </div>
+    {{#if bonusHp.value}}
+      <div class="bonus-hp-info">
+        <span class="bonus-hp-label">+{{bonusHp.value}} bonus</span>
+      </div>
+    {{/if}}
   </div>
 
   <!-- CONDITION TRACK -->
   <div class="condition-track">
 
     {{#each conditionSteps as |step|}}
-      <div class="condition-chevron {{#if step.active}}active{{/if}}"></div>
+      <div class="condition-chevron {{#if step.active}}active{{/if}}" title="{{step.label}}"></div>
     {{/each}}
 
   </div>

@@ -11,8 +11,18 @@ export class SWSEMinimalTestSheet extends
     }
   };
 
-  static tabGroups = {
-    primary: { initial: "overview" }
+  static DEFAULT_OPTIONS = {
+    ...super.DEFAULT_OPTIONS,
+    classes: ["swse", "sheet", "actor", "character", "minimal-test", "v2"],
+    width: 600,
+    height: 500,
+    tabs: [
+      {
+        navSelector: ".sheet-tabs",
+        contentSelector: ".sheet-content",
+        initial: "overview"
+      }
+    ]
   };
 
   async _prepareContext(options) {
@@ -25,6 +35,20 @@ export class SWSEMinimalTestSheet extends
 
   async _onRender(context, options) {
     await super._onRender(context, options);
+
+    // Ensure tabs are activated
+    const tabNav = this.element?.querySelector('[data-group="primary"]');
+    if (tabNav) {
+      const firstTab = tabNav.querySelector('a.item');
+      if (firstTab) {
+        firstTab.classList.add('active');
+        const tabName = firstTab.getAttribute('data-tab');
+        const tabPanel = this.element.querySelector(`.tab[data-group="primary"][data-tab="${tabName}"]`);
+        if (tabPanel) {
+          tabPanel.classList.add('active');
+        }
+      }
+    }
 
     // Run tab diagnostics on the minimal test sheet
     if (this.element instanceof HTMLElement) {

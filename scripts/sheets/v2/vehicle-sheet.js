@@ -47,7 +47,14 @@ export class SWSEV2VehicleSheet extends
       form: {
         closeOnSubmit: false,
         submitOnChange: false
-      }
+      },
+      tabs: [
+        {
+          navSelector: ".sheet-tabs",
+          contentSelector: ".sheet-content",
+          initial: "overview"
+        }
+      ]
     });
   }
 

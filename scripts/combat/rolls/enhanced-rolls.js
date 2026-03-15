@@ -1308,6 +1308,102 @@ export class SWSERoll {
   }
 
   /* ========================================================================== */
+  /* ABILITY ROLLS                                                              */
+  /* ========================================================================== */
+
+  /**
+   * Roll an ability check (d20 + ability modifier)
+   * @param {Actor} actor - The actor making the ability check
+   * @param {string} abilityKey - 'str', 'dex', 'con', 'int', 'wis', or 'cha'
+   * @param {Object} [options={}] - Ability roll options
+   * @param {number} [options.dc] - DC to beat
+   * @returns {Promise<Object|null>} Ability roll result
+   */
+  static async rollAbility(actor, abilityKey, options = {}) {
+    const ability = actor.system.abilities?.[abilityKey];
+    if (!ability) {
+      ui.notifications.warn(`Ability ${abilityKey} not found.`);
+      return null;
+    }
+
+    try {
+      const abilityMod = ability.mod;
+      const formula = `1d20 + ${abilityMod}`;
+
+      const roll = await this._safeRoll(formula);
+      if (!roll) {return null;}
+
+      const d20 = roll.dice[0].results[0].result;
+
+      // Ability label map
+      const abilityLabels = {
+        str: 'Strength',
+        dex: 'Dexterity',
+        con: 'Constitution',
+        int: 'Intelligence',
+        wis: 'Wisdom',
+        cha: 'Charisma'
+      };
+      const abilityLabel = abilityLabels[abilityKey] || abilityKey.toUpperCase();
+
+      // DC comparison
+      const dc = options.dc;
+      const success = dc != null ? roll.total >= dc : null;
+
+      const result = {
+        roll,
+        d20,
+        total: roll.total,
+        abilityMod,
+        dc,
+        success
+      };
+
+      // Build chat card
+      const dcHTML = dc != null ? `
+        <div class="ability-dc">
+          <span>vs DC ${dc}</span>
+          <span class="dc-result ${success ? 'success' : 'failure'}">
+            ${success ? '<i class="fa-solid fa-check"></i> Success' : '<i class="fa-solid fa-times"></i> Failure'}
+            (${roll.total - dc >= 0 ? '+' : ''}${roll.total - dc})
+          </span>
+        </div>
+      ` : '';
+
+      const html = `
+        <div class="swse-ability-card">
+          <h3>${abilityLabel} Check</h3>
+          <div class="roll-total">${roll.total}</div>
+          <div class="roll-d20">d20: ${d20}${d20 === 20 ? ' <i class="fa-solid fa-star"></i>' : d20 === 1 ? ' <i class="fa-solid fa-skull"></i>' : ''}</div>
+          <div class="roll-formula">${formula}</div>
+          <div class="roll-breakdown">${abilityLabel} ${abilityMod >= 0 ? '+' : ''}${abilityMod}</div>
+          ${dcHTML}
+        </div>
+      `;
+
+      const msg = await createChatMessage({
+        speaker: ChatMessage.getSpeaker({ actor }),
+        content: html,
+        rolls: [roll],
+        flags: { swse: { roll: roll.toJSON() } }
+      });
+
+      result.message = msg;
+
+      if (game.dice3d) {
+        await game.dice3d.showForRoll(roll, game.user, true);
+      }
+
+      return result;
+
+    } catch (err) {
+      console.error('Ability roll failed:', err);
+      ui.notifications.error('Ability roll failed. Check console for details.');
+      return null;
+    }
+  }
+
+  /* ========================================================================== */
   /* SAVE ROLLS                                                                 */
   /* ========================================================================== */
 

@@ -1523,8 +1523,6 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     const root = this.element;
     if (!(root instanceof HTMLElement)) {return;}
 
-    this._bindInWindowModalHost(root);
-
     // Activate Foundry tooltips for feat descriptions
     if (game.tooltip) {
       game.tooltip.activate(root, { selector: '[data-tooltip]' });

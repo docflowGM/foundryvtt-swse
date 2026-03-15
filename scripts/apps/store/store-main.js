@@ -90,6 +90,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
   constructor(actor = null, options = {}) {
     super(options);
     this.actor = actor ?? null;
+    this.object = actor ?? null; // AppV2 contract: object is the document being edited
 
     this.itemsById = new Map();      // Engine provides this
     this.storeInventory = null;      // Engine inventory cache

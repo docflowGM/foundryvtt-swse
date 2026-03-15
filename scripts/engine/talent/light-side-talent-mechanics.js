@@ -1565,7 +1565,7 @@ Hooks.on('deleteCombat', async (combat) => {
 
     // Clear negotiation condition track flags (across all targets)
     // These are target-specific, so we clean up all actors' negotiation conditions
-    const flags = actor.getFlags('swse');
+    const flags = actor.getFlags('foundryvtt-swse');
     for (const [key] of Object.entries(flags || {})) {
       if (key.startsWith('negotiationCondition_')) {
         await actor.unsetFlag('foundryvtt-swse', key);

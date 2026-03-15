@@ -27,13 +27,21 @@
             {{ability.total}}
           </div>
 
-          <div class="ability-mod">
-            {{numberFormat ability.mod decimals=0 sign=true}}
+          <div class="ability-mod {{ability.modClass}}">
+            <span class="mod-value">{{numberFormat ability.mod decimals=0 sign=true}}</span>
           </div>
+
+          <button type="button"
+                  data-action="roll-ability"
+                  data-ability="{{ability.key}}"
+                  class="swse-btn roll-btn"
+                  title="Roll d20 + {{ability.key}} modifier">
+            <i class="fa-solid fa-dice-d20"></i>
+          </button>
 
         </div>
 
-        
+
         <!-- EXPANDED VIEW -->
         <div class="ability-expanded">
 
@@ -71,9 +79,17 @@
             {{ability.total}}
           </div>
 
-          <div class="math-mod">
-            {{numberFormat ability.mod decimals=0 sign=true}}
+          <div class="math-mod {{ability.modClass}}">
+            <span class="mod-value">{{numberFormat ability.mod decimals=0 sign=true}}</span>
           </div>
+
+          <button type="button"
+                  data-action="roll-ability"
+                  data-ability="{{ability.key}}"
+                  class="swse-btn roll-btn"
+                  title="Roll d20 + {{ability.key}} modifier">
+            <i class="fa-solid fa-dice-d20"></i>
+          </button>
 
         </div>
 

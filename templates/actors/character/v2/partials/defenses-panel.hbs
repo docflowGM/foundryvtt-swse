@@ -32,15 +32,14 @@
         <!-- EXPANDED -->
         <div class="defense-expanded">
 
-          <!-- Level (Derived) -->
-          <div class="math-pill derived">
-            <label>½ Lvl</label>
-            <div class="pill-value">
-              {{@root.derived.identity.halfLevel}}
-            </div>
+          <!-- Base (10) -->
+          <div class="math-pill derived base-pill">
+            <div class="pill-value">10</div>
           </div>
 
-          <!-- Armor (Derived) -->
+          <div class="math-operator">+</div>
+
+          <!-- Level or Armor (Derived) -->
           <div class="math-pill derived">
             <label>Armor</label>
             <div class="pill-value">
@@ -48,13 +47,17 @@
             </div>
           </div>
 
+          <div class="math-operator">+</div>
+
           <!-- Ability (Derived) -->
-          <div class="math-pill derived">
+          <div class="math-pill derived {{def.abilityModClass}}">
             <label>Ability</label>
             <div class="pill-value">
-              {{def.abilityMod}}
+              <span class="mod-value">{{def.abilityMod}}</span>
             </div>
           </div>
+
+          <div class="math-operator">+</div>
 
           <!-- Class (Derived if used) -->
           <div class="math-pill derived">
@@ -64,13 +67,16 @@
             </div>
           </div>
 
+          <div class="math-operator">+</div>
+
           <!-- Misc (Editable) -->
-          <div class="math-pill editable">
+          <div class="math-pill editable {{def.miscModClass}}">
             <label>Misc</label>
             <input type="number"
                    data-field="misc"
                    name="system.defenses.{{def.key}}.miscMod"
-                   value="{{def.miscMod}}">
+                   value="{{def.miscMod}}"
+                   class="misc-input {{def.miscModClass}}">
           </div>
 
           <div class="math-equals">

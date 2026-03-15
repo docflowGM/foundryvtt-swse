@@ -1,0 +1,31 @@
+{{!--
+  Sheet Header Partial
+
+  Standard header for all SWSE actor sheets.
+  Contains actor image, name, and basic info.
+
+  Can be overridden in sheet-specific templates if needed.
+--}}
+
+<header class="sheet-header flexrow">
+
+  {{#if actor.img}}
+  <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" />
+  {{/if}}
+
+  <div class="header-content flexcol">
+    <h1 class="char-name">
+      <input name="name" type="text" value="{{actor.name}}" />
+    </h1>
+    {{#if headerSubtitle}}
+    <div class="header-subtitle">{{headerSubtitle}}</div>
+    {{/if}}
+  </div>
+
+  {{#if headerExtra}}
+  <div class="header-extra">
+    {{{headerExtra}}}
+  </div>
+  {{/if}}
+
+</header>

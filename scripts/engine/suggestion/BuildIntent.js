@@ -20,6 +20,9 @@ import { IdentityEngine } from "/systems/foundryvtt-swse/scripts/engine/prestige
 import { BiasTagProjection } from "/systems/foundryvtt-swse/scripts/engine/prestige/bias-tag-projection.js";
 import { BuildThemeProjection } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildThemeProjection.js";
 import { PrestigeAffinityEngine, initializePrestigeSignals } from "/systems/foundryvtt-swse/scripts/engine/suggestion/PrestigeAffinityEngine.js";
+
+// Re-export initializePrestigeSignals for external consumers
+export { initializePrestigeSignals };
 import { MilestoneComputer } from "/systems/foundryvtt-swse/scripts/engine/suggestion/MilestoneComputer.js";
 
 // ──────────────────────────────────────────────────────────────
@@ -27,7 +30,7 @@ import { MilestoneComputer } from "/systems/foundryvtt-swse/scripts/engine/sugge
 // Load from data file instead of hardcoding
 // ──────────────────────────────────────────────────────────────
 
-let PRESTIGE_SIGNALS = {};
+export let PRESTIGE_SIGNALS = {};
 
 /**
  * Initialize prestige signals from /data/prestige-signals.json

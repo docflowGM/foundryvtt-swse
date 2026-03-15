@@ -192,7 +192,7 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
   constructor(actor, options = {}) {
     super(options);
     this.actor = actor;
-    this.actor = actor;
+    this.object = actor; // AppV2 contract: object is the document being edited
 
     // Check if character is incomplete and redirect to character generator
     const incompleteStep = this._detectIncompleteCharacter(actor);
@@ -491,6 +491,11 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
    * @returns {string}
    */
   _getMentorGuidanceForCurrentStep() {
+    // Guard: if mentor is not available, don't crash
+    if (!this.mentor) {
+      return '';
+    }
+
     const guidanceMap = {
       'class': 'class',
       'multiclass-bonus': 'multiclass',

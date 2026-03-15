@@ -17,6 +17,7 @@ import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animati
 import { ActionEconomyIntegration } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-integration.js";
 import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-bindings.js";
 import { SentinelSheetGuardrails } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-sheet-guardrails.js";
+import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -82,21 +83,26 @@ function watchListenerCount(element, sheetName, threshold = 50) {
 export class SWSEV2CharacterSheet extends
   HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
 
-  static tabGroups = {
-    primary: {
-      initial: "overview"
-    }
+  static DEFAULT_OPTIONS = {
+    ...foundry.applications.sheets.ActorSheetV2.DEFAULT_OPTIONS,
+    classes: ["swse", "sheet", "actor", "character", "swse-character-sheet", "swse-sheet", "v2"],
+    width: 900,
+    height: 950,
+    resizable: true,
+    tabs: [
+      {
+        navSelector: ".sheet-tabs",
+        contentSelector: ".sheet-content",
+        initial: "overview"
+      }
+    ]
   };
 
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["swse", "sheet", "actor", "character", "swse-character-sheet"],
-      template: "systems/foundryvtt-swse/templates/actors/character/v2/character-sheet.hbs",
-      width: 900,
-      height: 950,
-      resizable: true
-    });
-  }
+  static PARTS = {
+    body: {
+      template: "systems/foundryvtt-swse/templates/actors/character/v2/character-sheet.hbs"
+    }
+  };
 
   constructor(document, options = {}) {
     super(document, options);
@@ -112,13 +118,18 @@ export class SWSEV2CharacterSheet extends
     this._renderAbort = new AbortController();
     const { signal } = this._renderAbort;
 
-    this.activateListeners(this.element, { signal });
+    const root = this.element?.[0] ?? this.element;
+    if (!root) return;
+
+    // Do not fatal-assert window-content/body here during P0 stabilization.
+    // If content is visibly present, let the sheet continue to wire itself.
+    this.activateListeners(root, { signal });
 
     // Wire action economy bindings for combat tab
-    ActionEconomyBindings.setupAttackButtons(this.element, this.document);
+    ActionEconomyBindings.setupAttackButtons(root, this.document);
 
-    // GUARDRAIL 2: Monitor for listener accumulation (memory leak detection)
-    watchListenerCount(this.element, "SWSEV2CharacterSheet");
+    // Monitor for listener accumulation (diagnostic only)
+    watchListenerCount(root, "SWSEV2CharacterSheet");
   }
 
   async _onClose(options) {
@@ -185,6 +196,9 @@ export class SWSEV2CharacterSheet extends
     derived.attacks ??= {};
     derived.attacks.list ??= [];
 
+    derived.actions ??= {};
+    derived.actions.groups ??= [];
+
     derived.identity ??= {};
     derived.identity.halfLevel ??= 0;
     // Provide ability array for skills panel selectors (used in skills-panel.hbs line 75)
@@ -203,11 +217,46 @@ export class SWSEV2CharacterSheet extends
 
     derived.defenses ??= {};
 
-    // Build abilities array from system.abilities object
-    // Convert {str: {...}, dex: {...}, ...} → [{key: 'str', label: 'Strength', ...}, ...]
+    // SWSE Skills Registry (default definitions if actor.system.skills is empty)
+    const SWSE_SKILL_DEFINITIONS = {
+      acrobatics: { label: 'Acrobatics', ability: 'dex' },
+      climb: { label: 'Climb', ability: 'str' },
+      deception: { label: 'Deception', ability: 'cha' },
+      endurance: { label: 'Endurance', ability: 'con' },
+      gatherInformation: { label: 'Gather Information', ability: 'cha' },
+      initiative: { label: 'Initiative', ability: 'dex' },
+      jump: { label: 'Jump', ability: 'str' },
+      knowledgeBureaucracy: { label: 'Knowledge (Bureaucracy)', ability: 'int' },
+      knowledgeGalacticLore: { label: 'Knowledge (Galactic Lore)', ability: 'int' },
+      knowledgeLifeSciences: { label: 'Knowledge (Life Sciences)', ability: 'int' },
+      knowledgePhysicalSciences: { label: 'Knowledge (Physical Sciences)', ability: 'int' },
+      knowledgeSocialSciences: { label: 'Knowledge (Social Sciences)', ability: 'int' },
+      knowledgeTactics: { label: 'Knowledge (Tactics)', ability: 'int' },
+      knowledgeTechnology: { label: 'Knowledge (Technology)', ability: 'int' },
+      mechanics: { label: 'Mechanics', ability: 'int' },
+      perception: { label: 'Perception', ability: 'wis' },
+      persuasion: { label: 'Persuasion', ability: 'cha' },
+      pilot: { label: 'Pilot', ability: 'dex' },
+      ride: { label: 'Ride', ability: 'dex' },
+      stealth: { label: 'Stealth', ability: 'dex' },
+      survival: { label: 'Survival', ability: 'wis' },
+      swim: { label: 'Swim', ability: 'str' },
+      treatInjury: { label: 'Treat Injury', ability: 'wis' },
+      useComputer: { label: 'Use Computer', ability: 'int' },
+      useTheForce: { label: 'Use the Force', ability: 'cha' }
+    };
+
+    // FIRST: Build abilities map from system.abilities (needed by skills processing below)
     const abilitiesMap = system.abilities ?? {};
+    const abilityMap = {
+      'str': 'Strength', 'dex': 'Dexterity', 'con': 'Constitution',
+      'int': 'Intelligence', 'wis': 'Wisdom', 'cha': 'Charisma'
+    };
+
+    // THEN: Build abilities array from abilitiesMap
     const abilities = ABILITY_KEYS.map(key => {
       const ability = abilitiesMap[key] ?? {};
+      const mod = ability.mod ?? 0;
       return {
         key,
         label: ABILITY_LABELS[key],
@@ -215,9 +264,53 @@ export class SWSEV2CharacterSheet extends
         racial: ability.racial ?? 0,
         temp: ability.temp ?? 0,
         total: ability.total ?? 10,
-        mod: ability.mod ?? 0
+        mod,
+        // SEMANTIC: Visual state class for modifier
+        modClass: mod > 0 ? 'mod--positive' : mod < 0 ? 'mod--negative' : 'mod--zero'
       };
     });
+
+    // Build skills array from system.derived.skills (SSOT) - NO CALCULATIONS HERE
+    // The derived engine has already calculated all skill bonuses
+    const systemSkills = system.skills ?? {};
+    const derivedSkills = derived.skills ?? {};
+
+    const skillsList = Object.entries(SWSE_SKILL_DEFINITIONS).map(([key, definition]) => {
+      const skillData = systemSkills[key] ?? {};
+      const derivedData = derivedSkills[key] ?? {};
+
+      // Get selected ability from user data
+      const selectedAbilityKey = skillData.selectedAbility ?? definition.ability ?? 'str';
+      const selectedAbilityLabel = abilityMap[selectedAbilityKey] ?? 'Unknown';
+
+      // Get ability modifier - look it up from the abilities map
+      const selectedAbility = abilitiesMap[selectedAbilityKey] ?? {};
+      const abilityMod = selectedAbility.mod ?? 0;
+
+      // Get halfLevel from system (this is just display, not a calculation)
+      const halfLevel = Math.floor((system.level ?? 1) / 2);
+
+      return {
+        key,
+        label: definition.label,
+        // Use derived skill total (already calculated by engine), default to 0 if missing
+        total: derivedData.total ?? 0,
+        trained: Boolean(skillData.trained),
+        focused: Boolean(skillData.focused),
+        favorite: Boolean(skillData.favorite),
+        selectedAbility: selectedAbilityKey,
+        selectedAbilityLabel,
+        // Display the ability modifier (from the abilities, not calculated here)
+        abilityMod,
+        abilityModClass: abilityMod > 0 ? 'mod--positive' : abilityMod < 0 ? 'mod--negative' : 'mod--zero',
+        // Display half-level (not calculated, just displayed)
+        halfLevel,
+        miscMod: skillData.miscMod ?? 0,
+        extraUses: Array.isArray(skillData.extraUses) ? skillData.extraUses : []
+      };
+    });
+
+    derived.skills = skillsList;
 
     // Build headerDefenses array from derived.defenses object
     // Convert {fort: 10, ref: 10, will: 10, flatFooted: 10} → [{key: 'fort', label: 'Fortitude', total: 10, ...}, ...]
@@ -227,15 +320,22 @@ export class SWSEV2CharacterSheet extends
       { key: 'will', label: 'Will' },
       { key: 'flatFooted', label: 'Flat-Footed' }
     ];
-    const headerDefenses = defenseKeys.map(def => ({
-      key: def.key,
-      label: def.label,
-      total: derived.defenses[def.key] ?? 10,
-      armorBonus: derived.defenses[`${def.key}ArmorBonus`] ?? 0,
-      abilityMod: derived.defenses[`${def.key}AbilityMod`] ?? 0,
-      classDef: derived.defenses[`${def.key}ClassDef`] ?? 0,
-      miscMod: derived.defenses[`${def.key}MiscMod`] ?? 0
-    }));
+    const headerDefenses = defenseKeys.map(def => {
+      const abilityMod = derived.defenses[`${def.key}AbilityMod`] ?? 0;
+      const miscMod = derived.defenses[`${def.key}MiscMod`] ?? 0;
+      return {
+        key: def.key,
+        label: def.label,
+        total: derived.defenses[def.key] ?? 10,
+        armorBonus: derived.defenses[`${def.key}ArmorBonus`] ?? 0,
+        abilityMod,
+        // SEMANTIC: Visual state classes for breakdown components
+        abilityModClass: abilityMod > 0 ? 'mod--positive' : abilityMod < 0 ? 'mod--negative' : 'mod--zero',
+        classDef: derived.defenses[`${def.key}ClassDef`] ?? 0,
+        miscMod,
+        miscModClass: miscMod > 0 ? 'mod--positive' : miscMod < 0 ? 'mod--negative' : 'mod--zero'
+      };
+    });
 
     // Identity + visual customization
     const forceSensitive = system.forceSensitive ?? false;
@@ -262,6 +362,19 @@ export class SWSEV2CharacterSheet extends
       temp: system.hp?.temp ?? 0
     };
     hp.percent = Math.round((hp.value / hp.max) * 100);
+
+    // SEMANTIC: Visual state class for HP health
+    if (hp.value <= 0) {
+      hp.stateClass = 'state--dead';
+    } else if (hp.percent <= 25) {
+      hp.stateClass = 'state--critical';
+    } else if (hp.percent <= 50) {
+      hp.stateClass = 'state--damaged';
+    } else if (hp.percent < 100) {
+      hp.stateClass = 'state--wounded';
+    } else {
+      hp.stateClass = 'state--healthy';
+    }
 
     // Bonus HP (derived-only from ModifierEngine)
     const bonusHp = await this._computeBonusHP(actor);
@@ -353,12 +466,21 @@ export class SWSEV2CharacterSheet extends
     const xpPercent = xpThreshold > 0 ? Math.round((xpValue / xpThreshold) * 100) : 0;
     const xpLevelReady = xpPercent >= 100;
 
+    // SEMANTIC: XP data object with visual state
+    const xpData = {
+      level: actor.system.level ?? 1,
+      total: xpValue,
+      nextLevelAt: xpThreshold,
+      xpToNext: Math.max(0, xpThreshold - xpValue),
+      stateClass: xpLevelReady ? 'state--ready-levelup' : xpPercent >= 75 ? 'state--nearly-ready' : 'state--in-progress'
+    };
+
     // Character Level Checks
     const level = actor.system.level ?? 1;
     const isLevel0 = level === 0;
 
     // User Permission (GM status)
-    const isGM = game.user.role >= 4; // GAMEMASTER role
+    const isGM = game.user.isGM;
 
     // Force Points Availability (fpMax and fpValue already computed above)
     const fpAvailable = fpValue < fpMax;
@@ -386,7 +508,7 @@ export class SWSEV2CharacterSheet extends
     const inventorySearch = '';
 
     // Follower Context (from flags and system)
-    const followerSlots = actor.getFlag('swse', 'followerSlots') || [];
+    const followerSlots = actor.getFlag('foundryvtt-swse', 'followerSlots') || [];
     const ownedActorMap = {};
     for (const entry of actor.system.ownedActors || []) {
       ownedActorMap[entry.id] = {
@@ -469,6 +591,7 @@ export class SWSEV2CharacterSheet extends
       xpEnabled,
       xpPercent,
       xpLevelReady,
+      xpData,
       isLevel0,
       isGM,
       fpAvailable,
@@ -552,41 +675,159 @@ export class SWSEV2CharacterSheet extends
   ============================================================ */
 
   activateListeners(html, { signal } = {}) {
-    // Toggle Abilities Panel
-    html.querySelectorAll("[data-action='toggle-abilities']").forEach(button => {
-      button.addEventListener("click", { signal }, ev => {
-        const panel = html.querySelector(".abilities-panel");
-        const toggleBtn = html.querySelector(".abilities-toggle");
-        if (panel) {
-          panel.classList.toggle("expanded");
-          if (toggleBtn) {
-            toggleBtn.textContent = panel.classList.contains("expanded") ? "Less" : "More";
-          }
+    // DELEGATED: Toggle Abilities Panel - Show/Hide Expanded Views
+    // Using delegated listeners from html root for stability across rerenders
+    html.addEventListener("click", ev => {
+      const button = ev.target.closest("[data-action='toggle-abilities']");
+      if (!button) return;
+
+      console.log("✓ [DEBUG] Abilities toggle click fired");
+      ev.preventDefault();
+
+      const panel = button.closest(".abilities-panel");
+      console.log("[DEBUG] Panel found:", !!panel, "Classes:", panel?.className);
+      if (!panel) {
+        console.warn("[ERROR] Could not find .abilities-panel parent");
+        return;
+      }
+
+      console.log("[DEBUG] Classes BEFORE toggle:", panel.className);
+      const isExpanded = panel.classList.toggle("abilities-expanded");
+      console.log("[DEBUG] Classes AFTER toggle:", panel.className, "| isExpanded:", isExpanded);
+
+      // Show/hide expanded views for each ability
+      const rows = panel.querySelectorAll(".ability-row");
+      console.log("[DEBUG] Found", rows.length, "ability rows");
+      rows.forEach((row, idx) => {
+        const collapsed = row.querySelector(".ability-collapsed");
+        const expanded = row.querySelector(".ability-expanded");
+        if (collapsed) {
+          collapsed.style.display = isExpanded ? "none" : "flex";
+          console.log(`[DEBUG] Row ${idx} collapsed display:`, collapsed.style.display);
+        }
+        if (expanded) {
+          expanded.style.display = isExpanded ? "flex" : "none";
+          console.log(`[DEBUG] Row ${idx} expanded display:`, expanded.style.display);
         }
       });
+
+      // Update button text
+      button.textContent = isExpanded ? "Collapse" : "Expand";
+      console.log("[DEBUG] Button text updated to:", button.textContent);
     });
 
-    // Toggle Defenses Panel
-    html.querySelectorAll("[data-action='toggle-defenses']").forEach(button => {
-      button.addEventListener("click", { signal }, ev => {
-        const panel = html.querySelector(".defenses-panel");
-        const toggleBtn = html.querySelector(".defenses-toggle");
-        if (panel) {
-          panel.classList.toggle("expanded");
-          if (toggleBtn) {
-            toggleBtn.textContent = panel.classList.contains("expanded") ? "Less" : "More";
-          }
+    // DELEGATED: Toggle Defenses Panel - Show/Hide Expanded Views
+    html.addEventListener("click", ev => {
+      const button = ev.target.closest("[data-action='toggle-defenses']");
+      if (!button) return;
+
+      console.log("✓ [DEBUG] Defenses toggle click fired");
+      ev.preventDefault();
+
+      const panel = button.closest(".defenses-panel");
+      console.log("[DEBUG] Panel found:", !!panel, "Classes:", panel?.className);
+      if (!panel) {
+        console.warn("[ERROR] Could not find .defenses-panel parent");
+        return;
+      }
+
+      console.log("[DEBUG] Classes BEFORE toggle:", panel.className);
+      const isExpanded = panel.classList.toggle("defenses-expanded");
+      console.log("[DEBUG] Classes AFTER toggle:", panel.className, "| isExpanded:", isExpanded);
+
+      // Show/hide expanded views for each defense
+      const rows = panel.querySelectorAll(".defense-row");
+      console.log("[DEBUG] Found", rows.length, "defense rows");
+      rows.forEach((row, idx) => {
+        const collapsed = row.querySelector(".defense-collapsed");
+        const expanded = row.querySelector(".defense-expanded");
+        if (collapsed) {
+          collapsed.style.display = isExpanded ? "none" : "flex";
+          console.log(`[DEBUG] Row ${idx} collapsed display:`, collapsed.style.display);
+        }
+        if (expanded) {
+          expanded.style.display = isExpanded ? "flex" : "none";
+          console.log(`[DEBUG] Row ${idx} expanded display:`, expanded.style.display);
         }
       });
+
+      // Update button text
+      button.textContent = isExpanded ? "Collapse" : "Expand";
+      console.log("[DEBUG] Button text updated to:", button.textContent);
     });
 
-    // UI-only preview math for ability pills
-    html.querySelectorAll(".ability-expanded input").forEach(input => {
-      input.addEventListener("input", { signal }, ev => {
-        const row = ev.currentTarget.closest(".ability-row");
+    // DELEGATED: Roll Ability Check (d20 + ability modifier)
+    html.addEventListener("click", async ev => {
+      const button = ev.target.closest("[data-action='roll-ability']");
+      if (!button) return;
+
+      ev.preventDefault();
+      const abilityKey = button.dataset.ability;
+      if (!abilityKey) return;
+
+      try {
+        await SWSERoll.rollAbility(this.actor, abilityKey);
+      } catch (err) {
+        console.error("Ability roll failed:", err);
+        ui?.notifications?.error?.(`Ability roll failed: ${err.message}`);
+      }
+    });
+
+    // DELEGATED: Auto-save form inputs when they change
+    // This survives rerender because listener is on stable root element (html)
+    html.addEventListener("change", async ev => {
+      const input = ev.target.closest("input[name], textarea[name], select[name]");
+      if (!input) return;
+
+      ev.preventDefault();
+      // Find the form - look up the DOM tree from the input element
+      let form = input.closest("form");
+
+      // If not found, try to get it from the application's element
+      if (!form && this.element) {
+        form = this.element.querySelector("form");
+      }
+
+      // Last resort: look for the form in the document
+      if (!form) {
+        form = document.querySelector(`.swse-character-sheet[data-appid="${this.appId}"] form`) ||
+                document.querySelector(".swse-character-sheet form");
+      }
+
+      if (form) {
+        await this._onSubmitForm({ target: form, preventDefault: () => {} });
+      } else {
+        console.warn("Could not find form element to submit");
+      }
+    }, { signal, capture: false });
+
+    // DELEGATED: UI-only preview math for ability pills
+    // Listen on root so rerender doesn't lose listener
+    html.addEventListener("input", ev => {
+      const input = ev.target.closest(".ability-expanded input");
+      if (!input) return;
+
+      const row = input.closest(".ability-row");
+      if (row) {
         this._previewAbilityRow(row);
-      });
-    });
+      }
+    }, { signal, capture: false });
+
+    // DELEGATED: Toggle Skill Favorite
+    // Skills content may rerender, so use delegated listener
+    html.addEventListener("click", async ev => {
+      const button = ev.target.closest("[data-action='toggle-favorite']");
+      if (!button) return;
+
+      ev.preventDefault();
+      const skillKey = button.dataset.skill;
+      if (skillKey) {
+        const currentFavorite = this.actor.system.skills?.[skillKey]?.favorite ?? false;
+        await this.actor.update({
+          [`system.skills.${skillKey}.favorite`]: !currentFavorite
+        });
+      }
+    }, { signal, capture: false });
 
     // Force Card Flip
     html.querySelectorAll(".force-card").forEach(card => {
@@ -797,7 +1038,7 @@ export class SWSEV2CharacterSheet extends
 
         switch (action) {
           case "delete":
-            await item.delete();
+            await InventoryEngine.removeItem(this.actor, itemId);
             break;
           case "equip":
             await InventoryEngine.toggleEquip(this.actor, itemId);
@@ -814,6 +1055,52 @@ export class SWSEV2CharacterSheet extends
         }
       });
     });
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // GEAR TAB HANDLERS (V2 sheet)
+    // ═══════════════════════════════════════════════════════════════════════════════
+
+    // Open item sheet
+    html.querySelectorAll('[data-action="open-item"]').forEach(button => {
+      button.addEventListener("click", { signal }, (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        if (itemId) {
+          const item = this.actor.items.get(itemId);
+          if (item) item.sheet.render(true);
+        }
+      });
+    });
+
+    // Equip item
+    html.querySelectorAll('[data-action="equip-item"]').forEach(button => {
+      button.addEventListener("click", { signal }, async (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        if (itemId) await InventoryEngine.toggleEquip(this.actor, itemId);
+      });
+    });
+
+    // Edit item
+    html.querySelectorAll('[data-action="edit-item"]').forEach(button => {
+      button.addEventListener("click", { signal }, (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        if (itemId) {
+          const item = this.actor.items.get(itemId);
+          if (item) item.sheet.render(true);
+        }
+      });
+    });
+
+    // Delete item
+    html.querySelectorAll('[data-action="delete-item"]').forEach(button => {
+      button.addEventListener("click", { signal }, async (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        if (itemId) await InventoryEngine.removeItem(this.actor, itemId);
+      });
+    });
   }
 
   /* ============================================================
@@ -828,7 +1115,8 @@ export class SWSEV2CharacterSheet extends
         const key = event.currentTarget.dataset.actionKey;
         if (!key) return;
 
-        const data = this.actor.flags?.swse?.combatActions?.[key];
+        const combatActions = this.actor.getFlag(game.system.id, "combatActions") ?? {};
+        const data = combatActions[key];
         if (data) {
           new CombatRollConfigDialog(this.actor, data).render(true);
         }
@@ -863,11 +1151,31 @@ export class SWSEV2CharacterSheet extends
         if (!actionId) return;
 
         // Trigger action execution (typically a roll or effect)
-        const data = this.actor.flags?.swse?.combatActions?.[actionId];
+        const combatActions = this.actor.getFlag(game.system.id, "combatActions") ?? {};
+        const data = combatActions[actionId];
         if (data) {
           // Open the config dialog to show details before rolling
           new CombatRollConfigDialog(this.actor, data).render(true);
         }
+      });
+    });
+
+    // Weapon attack roll button (Combat Attacks simplified panel)
+    html.querySelectorAll('[data-action="roll-weapon-attack"]').forEach(button => {
+      button.addEventListener("click", { signal }, async (event) => {
+        event.preventDefault();
+        const weaponId = button.dataset.weaponId;
+        if (!weaponId) return;
+
+        const weapon = this.actor.items.get(weaponId);
+        if (!weapon || weapon.type !== "weapon") return;
+
+        // Open combat roll config dialog for the weapon
+        new CombatRollConfigDialog(this.actor, {
+          type: 'attack',
+          weaponId: weaponId,
+          weaponName: weapon.name
+        }).render(true);
       });
     });
   }
@@ -917,6 +1225,22 @@ export class SWSEV2CharacterSheet extends
         });
 
         rows.forEach(row => skillsList.appendChild(row));
+      });
+    });
+
+    // Roll skill button
+    html.querySelectorAll('[data-action="roll-skill"]').forEach(button => {
+      button.addEventListener("click", { signal }, async (event) => {
+        event.preventDefault();
+        const skillKey = button.dataset.skill;
+        if (!skillKey) return;
+
+        try {
+          await SWSERoll.rollSkill(this.actor, skillKey);
+        } catch (err) {
+          console.error("Skill roll failed:", err);
+          ui?.notifications?.error?.(`Skill roll failed: ${err.message}`);
+        }
       });
     });
   }
@@ -1048,10 +1372,7 @@ export class SWSEV2CharacterSheet extends
         const itemId = button.dataset.itemId;
         if (!itemId) return;
 
-        const item = this.actor.items.get(itemId);
-        if (item) {
-          await item.delete();
-        }
+        await InventoryEngine.removeItem(this.actor, itemId);
       });
     });
 

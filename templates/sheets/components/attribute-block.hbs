@@ -1,0 +1,39 @@
+{{!--
+  Attribute Block Component
+
+  Reusable component for displaying and editing a single attribute.
+  Used across character, vehicle, NPC, and droid sheets.
+
+  Parameters:
+  - label: Display label (e.g., "STR", "DEX")
+  - path: Data path for name attribute (e.g., "system.attributes.str.value")
+  - value: Current value to display
+  - modifier: Optional modifier to show (e.g., "+2")
+  - disabled: Optional boolean to disable input
+
+  Example usage:
+  {{> "systems/foundryvtt-swse/templates/sheets/components/attribute-block.hbs"
+    label="STR"
+    path="system.attributes.str.value"
+    value=actor.system.attributes.str.value
+    modifier=actor.system.attributes.str.modifier
+  }}
+--}}
+
+<div class="attribute-block">
+
+  <label class="attribute-label">{{label}}</label>
+
+  <input
+    type="number"
+    name="{{path}}"
+    value="{{value}}"
+    class="attribute-input"
+    {{#if disabled}}disabled{{/if}}
+  />
+
+  {{#if modifier}}
+  <span class="attribute-modifier">{{modifier}}</span>
+  {{/if}}
+
+</div>

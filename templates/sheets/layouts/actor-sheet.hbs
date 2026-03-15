@@ -1,0 +1,32 @@
+{{!--
+  SWSE Actor Sheet Layout (Foundry v13)
+
+  Canonical layout structure for all actor sheets.
+  Shared by: Character, Vehicle, NPC, Droid sheets
+
+  This layout:
+  - Establishes proper flexbox hierarchy
+  - Prevents zero-dimension panel collapse
+  - Supports tab systems with data-group="primary"
+  - Allows sheet-specific content via partial injection
+--}}
+
+<form class="sheet flexcol">
+
+  {{!-- SHEET HEADER (fixed height) --}}
+  {{> "systems/foundryvtt-swse/templates/sheets/partials/sheet-header.hbs"}}
+
+  {{!-- SHEET BODY (grows to fill) --}}
+  <section class="sheet-body flexcol">
+
+    {{!-- TAB NAVIGATION (fixed height) --}}
+    {{> "systems/foundryvtt-swse/templates/sheets/partials/sheet-tabs.hbs"}}
+
+    {{!-- TAB CONTENT (flexible, scrollable) --}}
+    <section class="sheet-content">
+      {{{tabContent}}}
+    </section>
+
+  </section>
+
+</form>

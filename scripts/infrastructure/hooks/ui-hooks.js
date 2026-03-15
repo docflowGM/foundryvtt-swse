@@ -18,6 +18,9 @@ import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/h
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { createItemMacro } from "/systems/foundryvtt-swse/scripts/macros/item-macro.js";
 import registerLevelUpSheetHooks from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/levelup-sheet-hooks.js";
+import registerChargenSheetHooks from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/chargen-sheet-hooks.js";
+import registerStoreSheetHooks from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/store-sheet-hooks.js";
+import registerMentorSheetHooks from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/mentor-sheet-hooks.js";
 import registerActorSidebarControls from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/actor-sidebar-controls.js";
 
 /**
@@ -43,8 +46,11 @@ export function registerUIHooks() {
         category: 'ui'
     });
 
-    // Actor sheet header integration (Level Up)
+    // Actor sheet header integration
     registerLevelUpSheetHooks();
+    registerChargenSheetHooks();
+    registerStoreSheetHooks();
+    registerMentorSheetHooks();
 
     // Actor sidebar controls (Chargen, Store, Templates)
     registerActorSidebarControls();

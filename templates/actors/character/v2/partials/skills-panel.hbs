@@ -1,146 +1,421 @@
+<section class="skills-panel v2-skills-grid">
 
-<section class="skills-panel v3-panel holo-panel">
-
-  <header class="section-bar">
-    <h3 class="section-header">Skills</h3>
-
-    <div class="skills-toolbar">
-      <input type="text"
-             class="skill-filter"
-             placeholder="Filter skills..."
-             data-action="filter-skills">
-
-      <select data-action="sort-skills">
-        <option value="default">Default</option>
-        <option value="name">Name A–Z</option>
-        <option value="total-desc">Total High → Low</option>
-        <option value="trained">Trained First</option>
-        <option value="favorite">Favorites First</option>
-      </select>
-    </div>
+  <header class="section-header">
+    <h3>Skills</h3>
   </header>
 
-  <div class="skills-table-header">
-    <div class="col-star">★</div>
-    <div class="col-total">Total</div>
-    <div class="col-name">Skill</div>
-    <div class="col-ability">Ability</div>
-    <div class="col-half">½ Lvl</div>
-    <div class="col-trained">T</div>
-    <div class="col-focus">F</div>
+  <!-- Skills Grid Header (Sticky) -->
+  <div class="skills-grid-header">
+    <div class="col-favorite">★</div>
+    <div class="col-skill-name">Skill</div>
+    <div class="col-skill-bonus">Bonus</div>
+    <div class="col-equals">=</div>
+    <div class="col-ability-mod">Ability</div>
+    <div class="col-half-level">½ Lvl</div>
+    <div class="col-trained">Trained</div>
+    <div class="col-focus">Focus</div>
     <div class="col-misc">Misc</div>
   </div>
 
-  <div class="skills-list">
+  <!-- Skills Grid Body -->
+  <div class="skills-grid-body">
 
     {{#each derived.skills as |skill|}}
 
-      <div class="skill-row-container"
-           data-skill="{{skill.key}}"
-           data-name="{{skill.label}}"
-           data-total="{{skill.total}}"
-           data-trained="{{skill.trained}}"
-           data-favorite="{{skill.favorite}}">
+      <div class="skills-grid-row" data-skill="{{skill.key}}">
 
-        <div class="skill-row ability-{{skill.selectedAbility}}">
+        <!-- Favorite Star -->
+        <div class="col-favorite">
+          <button type="button"
+                  class="favorite-btn {{#if skill.favorite}}favorited{{/if}}"
+                  data-action="toggle-favorite"
+                  data-skill="{{skill.key}}"
+                  title="Mark as favorite">
+            ★
+          </button>
+        </div>
 
-          <div class="col-star">
-            <button type="button"
-                    class="skill-favorite-toggle {{#if skill.favorite}}active{{/if}}"
-                    data-action="toggle-favorite"
-                    data-skill="{{skill.key}}">
-              ★
-            </button>
-          </div>
-
-          <div class="col-total rollable"
-               data-action="roll-skill"
-               data-skill="{{skill.key}}"
-               data-skill-total="{{skill.total}}"
-               title="d20 + {{numberFormat skill.total decimals=0 sign=true}} • Click to roll">
-            {{numberFormat skill.total decimals=0 sign=true}}
-          </div>
-
-          <div class="col-name rollable"
-               data-action="roll-skill"
-               data-skill="{{skill.key}}"
-               title="Click to roll {{skill.label}}">
+        <!-- Skill Name (clickable to roll) -->
+        <div class="col-skill-name">
+          <button type="button"
+                  class="skill-name-btn rollable"
+                  data-action="roll-skill"
+                  data-skill="{{skill.key}}"
+                  title="Click to roll {{skill.label}}">
             {{skill.label}}
-          </div>
-
-          <div class="col-ability">
-            <select name="system.skills.{{skill.key}}.selectedAbility"
-                    class="ability-dropdown"
-                    title="Select ability modifier for this skill">
-              {{#each @root.derived.identity.abilities as |ab|}}
-                <option value="{{ab.key}}"
-                  {{#if (eq ab.key skill.selectedAbility)}}selected{{/if}}>
-                  {{ab.label}}
-                </option>
-              {{/each}}
-            </select>
-            <span class="ability-mod"
-                  title="Current {{skill.selectedAbility}} modifier">
-              {{numberFormat skill.abilityMod decimals=0 sign=true}}
-            </span>
-          </div>
-
-          <div class="col-half"
-               title="Half character level bonus">
-            {{@root.derived.identity.halfLevel}}
-          </div>
-
-          <div class="col-trained"
-               title="Mark if you have skill ranks in this skill">
-            <input type="checkbox"
-                   name="system.skills.{{skill.key}}.trained"
-                   {{checked skill.trained}}>
-          </div>
-
-          <div class="col-focus"
-               title="Mark if this is a focused skill (additional +3 bonus)">
-            <input type="checkbox"
-                   name="system.skills.{{skill.key}}.focused"
-                   {{checked skill.focused}}>
-          </div>
-
-          <div class="col-misc"
-               title="Miscellaneous modifier (from feats, conditions, etc.)">
-            <input type="number"
-                   name="system.skills.{{skill.key}}.miscMod"
-                   value="{{skill.miscMod}}"
-                   placeholder="0">
-          </div>
-
+          </button>
         </div>
 
-        {{#if skill.extraUses.length}}
-        <div class="skill-extra-uses">
-          {{#each skill.extraUses}}
-            <div class="extra-use"
-                 data-skill="{{../skill.key}}"
-                 data-use-key="{{this.key}}"
-                 title="Special skill use: {{this.description}}">
-              <span class="extra-use-label">{{this.label}}</span>
-              {{#if this.description}}
-                <span class="extra-use-description">{{this.description}}</span>
-              {{/if}}
-              <button type="button"
-                      data-action="use-extra-skill"
-                      data-skill="{{../skill.key}}"
-                      data-use="{{this.key}}"
-                      title="Click to use {{this.label}}">
-                Use
-              </button>
-            </div>
-          {{/each}}
+        <!-- Skill Bonus (clickable to open roll dialog) -->
+        <div class="col-skill-bonus">
+          <button type="button"
+                  class="skill-bonus-btn number-display {{#if (gt skill.total 0)}}positive{{else if (lt skill.total 0)}}negative{{else}}zero{{/if}}"
+                  data-action="roll-skill"
+                  data-skill="{{skill.key}}"
+                  title="Roll {{skill.label}}">
+            {{numberFormat skill.total decimals=0 sign=true}}
+          </button>
         </div>
-        {{/if}}
+
+        <!-- Equals Operator -->
+        <div class="col-equals">=</div>
+
+        <!-- Ability Modifier (selected ability) -->
+        <div class="col-ability-mod">
+          <select name="system.skills.{{skill.key}}.selectedAbility"
+                  class="ability-select"
+                  title="Select ability modifier for {{skill.label}}">
+            {{#each @root.derived.identity.abilities as |ab|}}
+              <option value="{{ab.key}}"
+                {{#if (eq ab.key skill.selectedAbility)}}selected{{/if}}>
+                {{ab.label}}
+              </option>
+            {{/each}}
+          </select>
+          <span class="number-display {{#if (gt skill.abilityMod 0)}}positive{{else if (lt skill.abilityMod 0)}}negative{{else}}zero{{/if}}">
+            {{numberFormat skill.abilityMod decimals=0 sign=true}}
+          </span>
+        </div>
+
+        <!-- Half-Level Bonus (non-editable) -->
+        <div class="col-half-level">
+          <span class="number-display {{#if (gt skill.halfLevel 0)}}positive{{else if (lt skill.halfLevel 0)}}negative{{else}}zero{{/if}}"
+                title="Half your character level">
+            {{numberFormat skill.halfLevel decimals=0 sign=true}}
+          </span>
+        </div>
+
+        <!-- Trained Checkbox -->
+        <div class="col-trained">
+          <input type="checkbox"
+                 class="skill-checkbox"
+                 name="system.skills.{{skill.key}}.trained"
+                 {{checked skill.trained}}
+                 title="Trained: You have ranks in this skill (+5)">
+        </div>
+
+        <!-- Focus Checkbox -->
+        <div class="col-focus">
+          <input type="checkbox"
+                 class="skill-checkbox"
+                 name="system.skills.{{skill.key}}.focused"
+                 {{checked skill.focused}}
+                 title="Focus: Focused skill (+5 bonus)">
+        </div>
+
+        <!-- Miscellaneous Modifier -->
+        <div class="col-misc">
+          <input type="number"
+                 class="misc-input number-display {{#if (gt skill.miscMod 0)}}positive{{else if (lt skill.miscMod 0)}}negative{{else}}zero{{/if}}"
+                 name="system.skills.{{skill.key}}.miscMod"
+                 value="{{skill.miscMod}}"
+                 placeholder="0"
+                 title="Miscellaneous modifier (feats, conditions, etc.)">
+        </div>
 
       </div>
+
+      <!-- Extra Skill Uses (Take 10, Take 20, etc.) -->
+      {{#if skill.extraUses.length}}
+      <div class="skill-extra-uses">
+        {{#each skill.extraUses as |use|}}
+          <div class="extra-use-row">
+            <span class="extra-use-label">{{use.label}}</span>
+            {{#if use.description}}
+              <span class="extra-use-description">{{use.description}}</span>
+            {{/if}}
+            <button type="button"
+                    class="extra-use-btn"
+                    data-action="use-extra-skill"
+                    data-skill="{{../skill.key}}"
+                    data-use="{{use.key}}"
+                    title="Use {{use.label}} on {{../skill.label}}">
+              Use
+            </button>
+          </div>
+        {{/each}}
+      </div>
+      {{/if}}
 
     {{/each}}
 
   </div>
 
 </section>
+
+<!-- CSS for Traditional Grid Layout & Color Coding -->
+<style>
+.v2-skills-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+}
+
+.v2-skills-grid .section-header {
+  margin: 0;
+  padding: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+  opacity: 0.9;
+}
+
+.skills-grid-header {
+  display: grid;
+  grid-template-columns: 0.5fr 2fr 1fr 0.3fr 1fr 0.8fr 0.8fr 0.8fr 1fr;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 2px solid rgba(0, 234, 255, 0.3);
+  font-weight: 700;
+  font-size: 0.85rem;
+  opacity: 0.8;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  background: rgba(0, 20, 40, 0.95);
+  z-index: 10;
+}
+
+.skills-grid-header .col-favorite,
+.skills-grid-header .col-skill-name {
+  text-align: left;
+}
+
+.skills-grid-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.skills-grid-row {
+  display: grid;
+  grid-template-columns: 0.5fr 2fr 1fr 0.3fr 1fr 0.8fr 0.8fr 0.8fr 1fr;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 234, 255, 0.15);
+  background: rgba(0, 234, 255, 0.03);
+  transition: background 0.15s ease;
+}
+
+.skills-grid-row:hover {
+  background: rgba(0, 234, 255, 0.08);
+  border-color: rgba(0, 234, 255, 0.25);
+}
+
+.skills-grid-row .col-skill-name {
+  text-align: left;
+}
+
+.favorite-btn {
+  background: none;
+  border: none;
+  padding: 2px 4px;
+  color: rgba(255, 215, 0, 0.3);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.favorite-btn:hover {
+  color: rgba(255, 215, 0, 0.8);
+  transform: scale(1.2);
+}
+
+.favorite-btn.favorited {
+  color: #ffd700;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+}
+
+.skill-name-btn,
+.skill-bonus-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.1s ease;
+}
+
+.skill-name-btn:hover,
+.skill-bonus-btn:hover {
+  color: #00f0ff;
+}
+
+.skill-bonus-btn {
+  text-align: center;
+  width: 100%;
+  cursor: pointer;
+  border-radius: 3px;
+  padding: 2px 4px;
+  transition: all 0.15s ease;
+}
+
+.skill-bonus-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 8px rgba(0, 234, 255, 0.4);
+}
+
+/* ========== NUMBER COLOR CODING ========== */
+
+.number-display {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 2px 4px;
+  border-radius: 3px;
+  min-width: 32px;
+}
+
+.number-display.positive {
+  color: #00ff88;
+  background: rgba(0, 255, 136, 0.15);
+  border: 1px solid rgba(0, 255, 136, 0.4);
+}
+
+.number-display.negative {
+  color: #ff3b3b;
+  background: rgba(255, 59, 59, 0.15);
+  border: 1px solid rgba(255, 59, 59, 0.4);
+}
+
+.number-display.zero {
+  color: #ffd700;
+  background: rgba(255, 215, 0, 0.15);
+  border: 1px solid rgba(255, 215, 0, 0.4);
+}
+
+/* Ability Mod Display */
+.col-ability-mod {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.col-ability-mod .ability-select {
+  padding: 2px 4px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 234, 255, 0.2);
+  background: rgba(0, 20, 30, 0.6);
+  color: inherit;
+  font-size: 0.85rem;
+  flex: 1;
+}
+
+.col-ability-mod .number-display {
+  flex-shrink: 0;
+}
+
+/* Checkbox Styling */
+.skill-checkbox,
+.misc-input {
+  padding: 4px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 234, 255, 0.2);
+  background: rgba(0, 20, 30, 0.5);
+  color: inherit;
+  accent-color: #00f0ff;
+  cursor: pointer;
+  transition: border-color 0.1s ease;
+}
+
+.skill-checkbox:checked,
+.misc-input:focus {
+  border-color: rgba(0, 234, 255, 0.5);
+}
+
+.misc-input {
+  width: 100%;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+/* Scrollbar Styling */
+.skills-grid-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.skills-grid-body::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.skills-grid-body::-webkit-scrollbar-thumb {
+  background: rgba(0, 234, 255, 0.3);
+  border-radius: 3px;
+}
+
+.skills-grid-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 234, 255, 0.5);
+}
+
+/* ========== EXTRA SKILL USES ========== */
+
+.skill-extra-uses {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 8px 0 8px;
+  border-left: 2px solid rgba(0, 200, 255, 0.3);
+  margin-left: 16px;
+}
+
+.extra-use-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  background: rgba(0, 200, 255, 0.05);
+  border: 1px solid rgba(0, 200, 255, 0.15);
+  font-size: 0.9rem;
+}
+
+.extra-use-label {
+  font-weight: 600;
+  color: rgba(0, 200, 255, 0.9);
+  min-width: 80px;
+}
+
+.extra-use-description {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  flex: 1;
+  font-style: italic;
+}
+
+.extra-use-btn {
+  padding: 4px 12px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 200, 255, 0.3);
+  background: rgba(0, 200, 255, 0.1);
+  color: rgba(0, 200, 255, 0.9);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.extra-use-btn:hover {
+  background: rgba(0, 200, 255, 0.2);
+  border-color: rgba(0, 200, 255, 0.5);
+  color: #00f0ff;
+  box-shadow: 0 0 8px rgba(0, 200, 255, 0.3);
+}
+
+.extra-use-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 4px rgba(0, 200, 255, 0.2);
+}
+</style>

@@ -1,0 +1,27 @@
+{{!--
+  Sheet Tabs Partial
+
+  Data-driven tab navigation for all SWSE sheets.
+  Renders tab buttons based on context.tabsData array.
+
+  Required context:
+  - tabs: Array of tab objects with 'id' and 'label' properties
+
+  Example usage:
+  tabs: [
+    { id: "overview", label: "Overview" },
+    { id: "skills", label: "Skills" },
+    { id: "equipment", label: "Equipment" }
+  ]
+--}}
+
+<nav class="sheet-tabs tabs flexrow" data-group="primary">
+
+  {{#each tabs as |tab|}}
+  <a class="item" data-tab="{{tab.id}}">
+    {{#if tab.icon}}<i class="{{tab.icon}}"></i>{{/if}}
+    {{tab.label}}
+  </a>
+  {{/each}}
+
+</nav>

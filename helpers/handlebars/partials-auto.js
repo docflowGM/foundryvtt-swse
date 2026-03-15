@@ -4,19 +4,22 @@
 /* ========================================================================== */
 
 const PARTIALS = [
+  // Character V2 Panels
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/identity-strip.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/abilities-panel.hbs",
-  "systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs",
-  "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs",
-  "systems/foundryvtt-swse/templates/actors/character/v2/partials/xp-panel.hbs",
-  "systems/foundryvtt-swse/templates/actors/character/v2/partials/second-wind-panel.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/dark-side-panel.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2/partials/feats-panel.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2/partials/gear-panel.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/languages-panel.hbs",
-  "systems/foundryvtt-swse/templates/actors/character/v2/partials/Talents.hbs",
-  "systems/foundryvtt-swse/templates/actors/character/v2/partials/Feats.hbs",
-  "systems/foundryvtt-swse/templates/actors/character/v2/partials/Racial-ability.hbs",
-  "systems/foundryvtt-swse/templates/actors/character/v2/partials/Force.hbs",
-  "systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs"
+  "systems/foundryvtt-swse/templates/actors/character/v2/partials/second-wind-panel.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2/partials/talents-panel.hbs",
+  "systems/foundryvtt-swse/templates/actors/character/v2/partials/xp-panel.hbs"
 ];
 
 export async function registerSWSEPartials() {

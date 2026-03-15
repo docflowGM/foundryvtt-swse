@@ -479,7 +479,7 @@ export class SuggestionService {
     }
   }
 
-  static async _enrichSuggestions(actor, suggestions, { trace } = {}) {
+  static async _enrichSuggestions(actor, suggestions, options = {}) {
     if (!Array.isArray(suggestions)) {return [];}
 
     const out = [];

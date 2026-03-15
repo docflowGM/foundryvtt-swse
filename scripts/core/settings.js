@@ -147,6 +147,16 @@ export async function registerSystemSettings() {
     default: false
   });
 
+  // Sheet Guardrails monitoring
+  game.settings.register('foundryvtt-swse', 'sentinelSheetGuardrails', {
+    name: 'Sheet Guardrails Monitoring',
+    hint: 'Enable Sentinel sheet guardrails to monitor context hydration and listener accumulation.',
+    scope: 'client',
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
   game.settings.register('foundryvtt-swse', 'dailyForcePoints', {
     name: 'SWSE.Settings.DailyForcePoints.Name',
     hint: 'SWSE.Settings.DailyForcePoints.Hint',

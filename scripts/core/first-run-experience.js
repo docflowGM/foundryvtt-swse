@@ -10,6 +10,9 @@ import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-s
 const SYSTEM_ID = 'foundryvtt-swse';
 const SETTING_KEY = 'welcomeShown';
 
+// Guard flag to prevent duplicate launch within same initialization
+let welcomeDialogShown = false;
+
 /* -------------------------------------------- */
 /* Settings Helpers */
 /* -------------------------------------------- */
@@ -59,11 +62,8 @@ class WelcomeDialog extends BaseSWSEAppV2 {
       icon: 'fa-solid fa-star',
       title: '⭐ Welcome to SWSE for Foundry VTT',
       resizable: true
-    },
-    position: {
-      width: 600,
-      height: 500
     }
+    // MOVED: position config moved to _onRender() to ensure element exists
   };
 
   static PARTS = {
@@ -81,6 +81,12 @@ class WelcomeDialog extends BaseSWSEAppV2 {
 
     const root = this.element;
     if (!root) return;
+
+    // Safe to position now - element is guaranteed to exist and be in DOM
+    this.setPosition({
+      width: 600,
+      height: 500
+    });
 
     const button = root.querySelector('[data-action="got-it"]');
     if (button) {
@@ -116,10 +122,14 @@ export function initializeFirstRunExperience() {
   if (!game?.user?.isGM) return;
 
   async function showWelcome() {
+    // Guard: prevent duplicate launch within same initialization
+    if (welcomeDialogShown) return;
+
     try {
       const show = await shouldShowWelcome();
       if (!show) return;
 
+      welcomeDialogShown = true;
       SWSELogger.log('Showing first-run welcome dialog');
 
       // Allow layout cycle to complete
@@ -128,6 +138,7 @@ export function initializeFirstRunExperience() {
       await showWelcomeDialog();
 
     } catch (err) {
+      welcomeDialogShown = false;  // Reset on error so can retry
       SWSELogger.error('First-run experience error:', err);
     }
   }

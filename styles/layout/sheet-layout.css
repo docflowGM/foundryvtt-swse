@@ -264,3 +264,50 @@
 .swse-app .swse-m-md { margin: var(--swse-space-md); }
 .swse-app .swse-m-lg { margin: var(--swse-space-lg); }
 .swse-app .swse-m-xl { margin: var(--swse-space-xl); }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   FOUNDRY v13 TAB LAYOUT (CANONICAL)
+   This prevents zero-dimension panel collapse.
+   CRITICAL: sheet-tabs must be flex: 0 0 auto (no grow)
+   CRITICAL: sheet-content must be flex: 1 (grow to fill)
+   ───────────────────────────────────────────────────────────────────────── */
+
+.application.sheet .sheet-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.application.sheet .sheet-tabs {
+  flex: 0 0 auto;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-bottom: 1px solid var(--swse-border-default, #333);
+}
+
+.application.sheet .sheet-content {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.application.sheet .tab {
+  display: none;
+}
+
+.application.sheet .tab.active {
+  display: block;
+}
+
+/* Standard flexbox utilities for all applications */
+.flexcol {
+  display: flex;
+  flex-direction: column;
+}
+
+.flexrow {
+  display: flex;
+  flex-direction: row;
+}

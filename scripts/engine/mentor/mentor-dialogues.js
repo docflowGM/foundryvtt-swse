@@ -57,6 +57,11 @@ export function getMentorGreeting(mentor, level, actor = null) {
  * @returns {string} The guidance message
  */
 export function getMentorGuidance(mentor, choiceType) {
+    // Guard: if mentor is not available, return empty string
+    if (!mentor || !mentor.name) {
+      return '';
+    }
+
     SWSELogger.log(`[MENTOR-DIALOGUES] getMentorGuidance: Getting guidance from "${mentor.name}" for choice type "${choiceType}"`);
 
     const guidanceMap = {

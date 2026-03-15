@@ -65,7 +65,7 @@ export class SentinelTabDiagnostics {
    * Phase 1: Audit tab structure in DOM
    */
   static _auditStructure(rootElement) {
-    const panels = rootElement.querySelectorAll('[data-tab-group][data-tab]');
+    const panels = rootElement.querySelectorAll('.tab[data-group][data-tab]');
     const structure = {
       panelCount: panels.length,
       panels: [],
@@ -73,7 +73,7 @@ export class SentinelTabDiagnostics {
     };
 
     panels.forEach((panel, idx) => {
-      const tabGroup = panel.getAttribute('data-tab-group');
+      const tabGroup = panel.getAttribute('data-group');
       const tabName = panel.getAttribute('data-tab');
 
       structure.groups.add(tabGroup);
@@ -97,7 +97,7 @@ export class SentinelTabDiagnostics {
    * Phase 2: Audit tab panel visibility
    */
   static _auditVisibility(rootElement) {
-    const panels = rootElement.querySelectorAll('[data-tab-group][data-tab]');
+    const panels = rootElement.querySelectorAll('.tab[data-group][data-tab]');
     const visibility = {
       invisiblePanels: [],
       zeroDimensionPanels: [],
@@ -105,7 +105,7 @@ export class SentinelTabDiagnostics {
     };
 
     panels.forEach((panel) => {
-      const tabGroup = panel.getAttribute('data-tab-group');
+      const tabGroup = panel.getAttribute('data-group');
       const tabName = panel.getAttribute('data-tab');
       const key = `${tabGroup}:${tabName}`;
 
@@ -154,7 +154,7 @@ export class SentinelTabDiagnostics {
    * Phase 3: Audit CSS rules affecting panels
    */
   static _auditCSSRules(rootElement) {
-    const panels = rootElement.querySelectorAll('[data-tab-group][data-tab]');
+    const panels = rootElement.querySelectorAll('.tab[data-group][data-tab]');
     const cssAudit = {
       rulesAffectingPanels: [],
       stylesheetSources: new Set(),
@@ -163,7 +163,7 @@ export class SentinelTabDiagnostics {
 
     // For each panel, find which CSS rules apply
     panels.forEach((panel) => {
-      const tabGroup = panel.getAttribute('data-tab-group');
+      const tabGroup = panel.getAttribute('data-group');
       const tabName = panel.getAttribute('data-tab');
       const key = `${tabGroup}:${tabName}`;
 
@@ -276,7 +276,7 @@ export class SentinelTabDiagnostics {
    * Phase 4: Audit tab panel attributes
    */
   static _auditAttributes(rootElement) {
-    const panels = rootElement.querySelectorAll('[data-tab-group][data-tab]');
+    const panels = rootElement.querySelectorAll('.tab[data-group][data-tab]');
     const tabButtons = rootElement.querySelectorAll('[data-action="tab"]');
 
     const attributes = {
@@ -289,7 +289,7 @@ export class SentinelTabDiagnostics {
     panels.forEach((panel) => {
       attributes.panelAttributes.push({
         element: panel.tagName,
-        dataTabGroup: panel.getAttribute('data-tab-group'),
+        dataTabGroup: panel.getAttribute('data-group'),
         dataTab: panel.getAttribute('data-tab'),
         hasClass: panel.className
       });
@@ -320,8 +320,8 @@ export class SentinelTabDiagnostics {
     };
 
     const tabGroups = new Set();
-    rootElement.querySelectorAll('[data-tab-group]').forEach(el => {
-      tabGroups.add(el.getAttribute('data-tab-group'));
+    rootElement.querySelectorAll('.tab[data-group]').forEach(el => {
+      tabGroups.add(el.getAttribute('data-group'));
     });
 
     tabGroups.forEach((groupName) => {
@@ -332,13 +332,13 @@ export class SentinelTabDiagnostics {
         errors: []
       };
 
-      const panels = rootElement.querySelectorAll(`[data-tab-group="${groupName}"][data-tab]`);
+      const panels = rootElement.querySelectorAll(`.tab[data-group="${groupName}"][data-tab]`);
 
       panels.forEach((panel) => {
         const tabName = panel.getAttribute('data-tab');
 
         // Simulate what Foundry's changeTab() does
-        const testSelector = `[data-tab-group="${groupName}"][data-tab="${tabName}"]`;
+        const testSelector = `.tab[data-group="${groupName}"][data-tab="${tabName}"]`;
         const foundPanel = rootElement.querySelector(testSelector);
 
         const tabInfo = {
@@ -378,7 +378,7 @@ export class SentinelTabDiagnostics {
     if (diagnostics.structure.panelCount === 0) {
       summary.severityLevel = 'CRITICAL';
       summary.issues.push('No tab panels found in DOM');
-      summary.recommendations.push('Verify template contains [data-tab-group] and [data-tab] attributes');
+      summary.recommendations.push('Verify template contains [data-group] and [data-tab] attributes');
     }
 
     // Check visibility
