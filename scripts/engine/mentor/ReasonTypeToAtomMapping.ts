@@ -21,7 +21,7 @@
  * ═══════════════════════════════════════════════════════════════════════════════
  */
 
-import { ReasonType } from "../suggestion/SuggestionV2Contract";
+import { ReasonType } from "../suggestion/SuggestionV2Contract.js";
 import { MentorAtom } from "./MentorAtomTaxonomy";
 
 /**
