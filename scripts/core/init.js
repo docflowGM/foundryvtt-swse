@@ -7,33 +7,18 @@ import { GMDroidApprovalDashboard } from "/systems/foundryvtt-swse/scripts/apps/
 import { registerVehiclePreCreateHooks } from "/systems/foundryvtt-swse/scripts/actors/vehicle/vehicle-precreate-hooks.js";
 
 Hooks.once('init', () => {
+  // Register Enhanced Massive Damage setting
+  if (!game.settings.settings.has("foundryvtt-swse.enableEnhancedMassiveDamage")) {
+    game.settings.register("foundryvtt-swse", "enableEnhancedMassiveDamage", {
+      name: "Enable Enhanced Massive Damage",
+      hint: "Use enhanced massive damage rules.",
+      scope: "world",
+      config: true,
+      type: Boolean,
+      default: false
+    });
+  }
 
-  Hooks.once("init", () => {
-    if (!game.settings.settings.has("foundryvtt-swse.enableEnhancedMassiveDamage")) {
-      game.settings.register("foundryvtt-swse", "enableEnhancedMassiveDamage", {
-        name: "Enable Enhanced Massive Damage",
-        hint: "Use enhanced massive damage rules.",
-        scope: "world",
-        config: true,
-        type: Boolean,
-        default: false
-      });
-    }
-
-    // Progression Framework feature flag
-    // When enabled, CharacterGenerator.open() and LevelUpMain.open() route to
-    // the new ProgressionShell instead of the legacy shells.
-    if (!game.settings.settings.has("foundryvtt-swse.useNewProgressionShell")) {
-      game.settings.register("foundryvtt-swse", "useNewProgressionShell", {
-        name: "Use New Progression Shell (Beta)",
-        hint: "Enable the new unified character progression shell. Requires restart.",
-        scope: "world",
-        config: true,
-        type: Boolean,
-        default: false
-      });
-    }
-  });
   SWSELogger.log('SWSE system initialized successfully.');
 });
 

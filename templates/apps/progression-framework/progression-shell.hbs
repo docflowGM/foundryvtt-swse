@@ -2,22 +2,51 @@
   progression-shell.hbs
   Root template for the ProgressionShell.
 
-  6 named regions — all always present:
-    mentor-rail     Always visible; collapsible to portrait strip
-    progress-rail   Step indicators
-    utility-bar     Search/filter/sort; always present; collapsible
-    work-surface    Primary step interaction area
-    details-panel   Selected item details; always mounted; empty state when nothing focused
-    action-footer   Back / Center status / Next/Confirm
-    modal-host      In-shell modal stack
+  TWO RENDER MODES controlled by `isIntroMode`:
+
+  INTRO MODE (isIntroMode = true)
+    The shell renders as a clean boot/splash stage with no furniture.
+    Only the work-surface fills the inner frame — no mentor rail, no step
+    chips, no footer. The outer datapad frame (window chrome) persists.
+    The intro's own Continue button is the sole action.
+
+  NORMAL MODE (isIntroMode = false)
+    6 named regions — all present:
+      mentor-rail     Always visible; collapsible to portrait strip
+      progress-rail   Step indicators
+      utility-bar     Search/filter/sort; always present; collapsible
+      work-surface    Primary step interaction area
+      details-panel   Selected item details; always mounted; empty state when nothing focused
+      action-footer   Back / Center status / Next/Confirm
+      modal-host      In-shell modal stack
 --}}
 
 <div class="progression-shell prog-holo {{#if isProcessing}}is-processing{{/if}}"
-     data-application-content>
+     data-application-content
+     data-step-id="{{currentDescriptor.stepId}}">
+
+{{#if isIntroMode}}
 
   {{!-- ======================================================================
-    MENTOR RAIL — left column
-    Always present. Collapses to portrait strip.
+    INTRO MODE — Boot/splash takeover.
+    Single work-surface fills the entire shell interior.
+    No mentor rail, no progress rail, no footer. Same outer frame.
+  ======================================================================= --}}
+  <div class="prog-intro-stage" data-region="work-surface">
+    {{#if workSurfaceHtml}}
+      {{{workSurfaceHtml}}}
+    {{/if}}
+  </div>
+
+{{else}}
+
+  {{!-- ======================================================================
+    NORMAL MODE — Full shell furniture.
+  ======================================================================= --}}
+
+  {{!-- ======================================================================
+    MENTOR HEADER BAND — top of shell, horizontal layout
+    Portrait (left) + Dialogue (right)
   ======================================================================= --}}
   <div data-region="mentor-rail"
        data-collapsed="{{mentorCollapsed}}"
@@ -25,19 +54,17 @@
     {{{parts.mentorRail}}}
   </div>{{!-- /mentor-rail --}}
 
-
   {{!-- ======================================================================
-    PROGRESS RAIL — step indicators
-  ======================================================================= --}}
-  <div data-region="progress-rail">
-    {{{parts.progressRail}}}
-  </div>{{!-- /progress-rail --}}
-
-
-  {{!-- ======================================================================
-    MAIN COLUMN — utility-bar + content-row + action-footer
+    MAIN COLUMN — progress-rail (horizontal tabs) + utility-bar + content-row + action-footer
   ======================================================================= --}}
   <div class="prog-main-column">
+
+    {{!-- ====================================================================
+      PROGRESS RAIL — compact horizontal step progression
+    ==================================================================== --}}
+    <div data-region="progress-rail">
+      {{{parts.progressRail}}}
+    </div>{{!-- /progress-rail --}}
 
     {{!-- ====================================================================
       UTILITY BAR — always present; content varies by step
@@ -50,12 +77,29 @@
 
 
     {{!-- ====================================================================
-      CONTENT ROW — work-surface + details-panel
+      CONTENT ROW — summary-panel (left) + work-surface (center) + details-panel (right)
     ==================================================================== --}}
     <div class="prog-content-row">
 
       {{!-- ==================================================================
-        WORK SURFACE — primary step interaction
+        SUMMARY PANEL — left column, compact build snapshot
+      ================================================================== --}}
+      <aside data-region="summary-panel">
+
+        {{#if summaryPanelHtml}}
+          {{{summaryPanelHtml}}}
+        {{else}}
+          <div class="prog-summary-placeholder">
+            {{#if currentDescriptor}}
+              <i class="fas {{currentDescriptor.icon}} prog-summary-placeholder__icon"></i>
+            {{/if}}
+          </div>
+        {{/if}}
+
+      </aside>{{!-- /summary-panel --}}
+
+      {{!-- ==================================================================
+        WORK SURFACE — center column, primary step interaction
       ================================================================== --}}
       <div data-region="work-surface">
 
@@ -127,63 +171,78 @@
 
 
     {{!-- ====================================================================
-      ACTION FOOTER — Back / Center / Next
+      ACTION FOOTER — Back | Step Chips | Confirm
+      Three-column grid: nav anchor | step chips | confirm anchor
+      Step chips use SVG frame backgrounds per state (current/complete/locked/warning).
+      data-font-mode controls label font-family: 'standard' | 'aurabesh'
     ==================================================================== --}}
     <div data-region="action-footer">
+      <footer class="swse-footer" data-font-mode="{{fontMode}}">
 
-      {{!-- Back button --}}
-      <div class="prog-footer__back">
-        <button class="prog-btn"
-                data-action="previous-step"
-                {{#unless footer.back.enabled}}disabled{{/unless}}>
-          <i class="fas fa-chevron-left"></i>
-          {{footer.back.label}}
-        </button>
-      </div>
+        {{!-- ── LEFT: Back button ── --}}
+        <div class="action-footer__nav">
+          <button type="button"
+                  class="swse-btn swse-btn--back"
+                  data-action="previous-step"
+                  {{#unless footer.back.enabled}}disabled{{/unless}}>
+            <span class="swse-btn__label">{{footer.back.label}}</span>
+          </button>
+        </div>
 
-      {{!-- Center status chips --}}
-      <div class="prog-footer__center">
-        {{#each footer.center}}
-          <span class="prog-footer__center-item
-                       {{#if isBlocking}}prog-footer__center-item--blocking{{/if}}
-                       {{#if isWarning}}prog-footer__center-item--warning{{/if}}">
-            {{label}}
-          </span>
-        {{/each}}
+        {{!-- ── CENTER: Step chips ── --}}
+        <div class="action-footer__steps" role="tablist"
+             aria-label="Character Progression Steps">
 
-        {{!-- Blocking issues as chips --}}
-        {{#each footer.blockingIssues}}
-          <span class="prog-footer__center-item prog-footer__center-item--blocking">
-            <i class="fas fa-exclamation-circle"></i>
-            {{this}}
-          </span>
-        {{/each}}
+          {{#each visibleSteps}}
+            <button type="button"
+                    class="swse-step-btn
+                           {{#if this.isCurrent}}is-current{{/if}}
+                           {{#if this.isComplete}}is-complete{{/if}}
+                           {{#if this.isLocked}}is-locked{{/if}}
+                           {{#if this.isWarning}}is-warning{{/if}}"
+                    data-action="jump-step"
+                    data-step-id="{{this.id}}"
+                    role="tab"
+                    aria-selected="{{#if this.isCurrent}}true{{else}}false{{/if}}"
+                    title="{{this.label}}"
+                    {{#unless this.canNavigate}}disabled{{/unless}}>
+              <span class="swse-step-btn__index">{{this.index}}</span>
+              <span class="swse-step-btn__label">{{this.label}}</span>
+            </button>
+          {{/each}}
 
-        {{!-- Warnings as chips --}}
-        {{#each footer.warnings}}
-          <span class="prog-footer__center-item prog-footer__center-item--warning">
-            <i class="fas fa-exclamation-triangle"></i>
-            {{this}}
-          </span>
-        {{/each}}
-      </div>
-
-      {{!-- Next / Confirm button --}}
-      <div class="prog-footer__next">
-        <button class="prog-btn prog-btn--primary
-                       {{#if footer.next.isLastStep}}prog-btn--last-step{{/if}}"
-                data-action="{{#if footer.next.isLastStep}}confirm-step{{else}}next-step{{/if}}"
-                {{#unless footer.next.enabled}}disabled{{/unless}}>
-          {{footer.next.label}}
-          {{#unless footer.next.isLastStep}}
-            <i class="fas fa-chevron-right"></i>
-          {{/unless}}
-          {{#if footer.next.isLastStep}}
-            <i class="fas fa-check"></i>
+          {{!-- Blocking / warning status banner — sits below chips if issues exist --}}
+          {{#if footer.blockingIssues.length}}
+            <div class="swse-footer__status swse-footer__status--blocking">
+              <i class="fas fa-exclamation-circle"></i>
+              {{#each footer.blockingIssues}}
+                <span>{{this}}</span>
+              {{/each}}
+            </div>
           {{/if}}
-        </button>
-      </div>
+          {{#if footer.warnings.length}}
+            <div class="swse-footer__status swse-footer__status--warning">
+              <i class="fas fa-exclamation-triangle"></i>
+              {{#each footer.warnings}}
+                <span>{{this}}</span>
+              {{/each}}
+            </div>
+          {{/if}}
 
+        </div>
+
+        {{!-- ── RIGHT: Next / Confirm button ── --}}
+        <div class="action-footer__confirm">
+          <button type="button"
+                  class="swse-btn swse-btn--confirm
+                         {{#if footer.next.isLastStep}}swse-btn--last-step{{/if}}"
+                  data-action="{{#if footer.next.isLastStep}}confirm-step{{else}}next-step{{/if}}"
+                  {{#unless footer.next.enabled}}disabled{{/unless}}>
+            <span class="swse-btn__label">{{footer.next.label}}</span>
+          </button>
+        </div>
+
+      </footer>
     </div>{{!-- /action-footer --}}
 
   </div>{{!-- /main-column --}}
@@ -193,5 +252,7 @@
     MODAL HOST — in-shell modal stack
   ======================================================================= --}}
   <div data-region="modal-host"></div>
+
+{{/if}}{{!-- /isIntroMode --}}
 
 </div>{{!-- /progression-shell --}}

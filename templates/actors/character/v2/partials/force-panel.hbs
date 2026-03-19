@@ -13,8 +13,7 @@
       <div class="force-tag-filters">
         {{#each forceTags as |tag|}}
           <button type="button"
-                  class="force-tag-filter"
-                  data-tag="{{tag}}">
+                  class="force-tag-filter" data-action="force-tag-filter" data-tag="{{tag}}">
             {{tag}}
           </button>
         {{/each}}

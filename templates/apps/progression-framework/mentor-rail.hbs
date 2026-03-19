@@ -1,16 +1,23 @@
 <div class="prog-mentor-rail" data-mood="{{mentor.mood}}">
-  {{! Portrait — always visible }}
-  <div class="prog-mentor__portrait">
-    {{#if mentor.portrait}}
-      <img src="{{mentor.portrait}}" alt="{{mentor.name}}" width="48" height="48">
-    {{else}}
-      <i class="fas fa-user-astronaut"></i>
-    {{/if}}
-  </div>
 
-  {{! Name and title (hidden when collapsed) }}
-  <div class="prog-mentor__name">{{mentor.name}}</div>
-  <div class="prog-mentor__title">{{mentor.title}}</div>
+  {{!-- Portrait zone: portrait frame + nameplate labels
+       Grouped so CSS can treat them as one left column in the horizontal rail. --}}
+  <div class="prog-mentor__portrait-zone">
+
+    {{! Portrait — uses mentor-portrait-box.svg frame + mentor-ring.svg overlay }}
+    <div class="prog-mentor__portrait">
+      {{#if mentor.portrait}}
+        <img src="{{mentor.portrait}}" alt="{{mentor.name}}" width="58" height="58">
+      {{else}}
+        <i class="fas fa-user-astronaut"></i>
+      {{/if}}
+    </div>
+
+    {{! Name and title (hidden when mentor collapsed) }}
+    <div class="prog-mentor__name">{{mentor.name}}</div>
+    <div class="prog-mentor__title">{{mentor.title}}</div>
+
+  </div>{{!-- /portrait-zone --}}
 
   {{! Dialogue box (hidden when collapsed) — AurebeshTranslator targets [data-mentor-dialogue] }}
   <div class="prog-mentor__dialogue" data-mentor-dialogue>

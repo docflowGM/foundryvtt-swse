@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" fill="none">
+  <defs>
+    <linearGradient id="steel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3E4A57"/>
+      <stop offset="0.08" stop-color="#1D2833"/>
+      <stop offset="0.5" stop-color="#0A1017"/>
+      <stop offset="0.92" stop-color="#162431"/>
+      <stop offset="1" stop-color="#4B5A68"/>
+    </linearGradient>
+    <linearGradient id="holo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#A2F6FF"/>
+      <stop offset="0.45" stop-color="#27C9FF"/>
+      <stop offset="1" stop-color="#0077C8"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <pattern id="scan" width="6" height="6" patternUnits="userSpaceOnUse">
+      <rect width="6" height="6" fill="transparent"/>
+      <rect y="0" width="6" height="1" fill="#8EF2FF" opacity="0.06"/>
+    </pattern>
+  </defs>
+
+  <!-- back plate -->
+  <path d="M35 80L80 35H1520L1565 80V920L1520 965H80L35 920Z" fill="url(#steel)"/>
+  <path d="M52 93L92 53H1508L1548 93V907L1508 947H92L52 907Z" fill="#040A12"/>
+
+  <!-- outer cyan line -->
+  <path d="M52 93L92 53H1508L1548 93V907L1508 947H92L52 907Z" stroke="#65E6FF" stroke-width="3" filter="url(#glow)"/>
+
+  <!-- steel corner plates -->
+  <path d="M52 93L92 53H160L122 93H52Z" fill="#2C3946"/>
+  <path d="M1448 53H1508L1548 93H1478L1448 53Z" fill="#2C3946"/>
+  <path d="M52 907H122L160 947H92L52 907Z" fill="#2C3946"/>
+  <path d="M1478 907H1548L1508 947H1440L1478 907Z" fill="#2C3946"/>
+
+  <!-- edge trims -->
+  <path d="M113 73H1487" stroke="#9CEFFF" stroke-width="1.5" opacity="0.4"/>
+  <path d="M113 927H1487" stroke="#9CEFFF" stroke-width="1.5" opacity="0.28"/>
+  <path d="M73 114V886" stroke="#9CEFFF" stroke-width="1.5" opacity="0.35"/>
+  <path d="M1527 114V886" stroke="#9CEFFF" stroke-width="1.5" opacity="0.35"/>
+
+  <!-- notch details -->
+  <path d="M105 74H310L332 96H126Z" fill="#0B1722" stroke="#5CDFFF" stroke-width="1.2"/>
+  <path d="M1268 74H1495L1473 96H1246Z" fill="#0B1722" stroke="#5CDFFF" stroke-width="1.2"/>
+
+  <!-- scanline overlay -->
+  <path d="M52 93L92 53H1508L1548 93V907L1508 947H92L52 907Z" fill="url(#scan)"/>
+
+  <!-- bevel accents -->
+  <path d="M100 102H1500" stroke="url(#holo)" stroke-width="2" opacity="0.18"/>
+  <path d="M100 898H1500" stroke="url(#holo)" stroke-width="2" opacity="0.14"/>
+</svg>

@@ -53,8 +53,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
     ...SWSEApplicationV2.DEFAULT_OPTIONS,
     classes: ['swse', 'swse-window', 'progression-shell'],
     position: {
-      width: 1100,
-      height: 700,
+      width: 1000,
+      height: 750,
+      top: 50,
+      left: 100,
     },
     window: {
       resizable: true,
@@ -62,25 +64,39 @@ export class ProgressionShell extends SWSEApplicationV2 {
       frame: true,
     },
     actions: {
-      'toggle-mentor': '_onToggleMentor',
-      'toggle-utility-bar': '_onToggleUtilityBar',
-      'ask-mentor': '_onAskMentor',
-      'next-step': '_onNextStep',
-      'previous-step': '_onPreviousStep',
-      'confirm-step': '_onConfirmStep',
-      'exit-tree': '_onExitTree',
-      'focus-item': '_onFocusItem',
-      'commit-item': '_onCommitItem',
-      'enter-near-human': '_onEnterNearHuman',
-      'confirm-near-human': '_onConfirmNearHuman',
-      'back-to-species': '_onBackToSpecies',
-      'roll-credits': '_onRollCredits',
-      'reroll-credits': '_onRollCredits',
-      'use-max-credits': '_onUseMaxCredits',
-      'roll-hp': '_onRollHP',
-      'use-max-hp': '_onUseMaxHP',
-      'enter-store': '_onEnterStore',
-      'skip-store': '_onSkipStore',
+      // Foundry V13 ApplicationV2 requires functions in the actions map — not strings.
+      // handler?.call(this, event, target) is called by #onClickAction; strings have no .call.
+      // Each entry is a shorthand method so `this` resolves to the shell instance at call time.
+      'toggle-mentor'(e, t)       { return this._onToggleMentor(e, t); },
+      'toggle-utility-bar'(e, t)  { return this._onToggleUtilityBar(e, t); },
+      'ask-mentor'(e, t)          { return this._onAskMentor(e, t); },
+      'next-step'(e, t)           { return this._onNextStep(e, t); },
+      'previous-step'(e, t)       { return this._onPreviousStep(e, t); },
+      'confirm-step'(e, t)        { return this._onConfirmStep(e, t); },
+      'exit-tree'(e, t)           { return this._onExitTree(e, t); },
+      'focus-item'(e, t)          { return this._onFocusItem(e, t); },
+      'commit-item'(e, t)         { return this._onCommitItem(e, t); },
+      'enter-near-human'(e, t)    { return this._onEnterNearHuman(e, t); },
+      'confirm-near-human'(e, t)  { return this._onConfirmNearHuman(e, t); },
+      'back-to-species'(e, t)     { return this._onBackToSpecies(e, t); },
+      'roll-credits'(e, t)        { return this._onRollCredits(e, t); },
+      'reroll-credits'(e, t)      { return this._onRollCredits(e, t); },
+      'use-max-credits'(e, t)     { return this._onUseMaxCredits(e, t); },
+      'roll-hp'(e, t)             { return this._onRollHP(e, t); },
+      'use-max-hp'(e, t)          { return this._onUseMaxHP(e, t); },
+      'enter-store'(e, t)         { return this._onEnterStore(e, t); },
+      'skip-store'(e, t)          { return this._onSkipStore(e, t); },
+      // Footer step chip: navigate backward to a completed step
+      'jump-step'(e, t)           { return this._onJumpStep(e, t); },
+      // Step-specific actions delegated to current step plugin via event bubbling
+      'toggle-category'(e, t)     { return this._onStepAction(e, t); },
+      'add-language'(e, t)        { return this._onStepAction(e, t); },
+      'remove-language'(e, t)     { return this._onStepAction(e, t); },
+      'purchase-system'(e, t)     { return this._onStepAction(e, t); },
+      'remove-system'(e, t)       { return this._onStepAction(e, t); },
+      'focus-talent'(e, t)        { return this._onStepAction(e, t); },
+      'focus-tree'(e, t)          { return this._onStepAction(e, t); },
+      'enter-tree'(e, t)          { return this._onStepAction(e, t); },
     },
   };
 
@@ -119,6 +135,13 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // ProgressionShell.open() → new ProgressionShell() → base returns []
     const app = new this(actor, mode, options);
     await app._initializeSteps();
+
+    // Initialize the first step (critical for post-splash Species entry)
+    await app._initializeFirstStep().catch(err => {
+      swseLogger.error('[ProgressionShell] Error initializing first step:', err);
+      ui?.notifications?.error?.('Failed to initialize progression. Please try again.');
+    });
+
     app.render({ force: true });
     return app;
   }
@@ -131,6 +154,8 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     this.actor = actor;
     this.mode = mode;
+    this._targetStepId = options.currentStep || null;  // Store target step to navigate after init
+    this._minStepIndex = null;  // Prevent back-navigation past this index (set when targeting step)
 
     // Step state
     this.steps = [];                 // StepDescriptor[] — assembled by _initializeSteps()
@@ -147,23 +172,8 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this.utilityBarCollapsed = false;
     this.talentTreeStage = 'browser'; // 'browser' | 'graph' — for talent two-stage flow
 
-    // Mentor state
-    this.mentor = {
-      mentorId: 'ol-salty',
-      name: "Ol' Salty",
-      title: 'Seasoned Spacer',
-      portrait: null,
-      currentDialogue: '',
-      pendingDialogue: null,
-      isAnimating: false,
-      animationState: 'idle',
-      mood: 'neutral',
-      collapsed: false,
-      askMentorEnabled: false,
-      mentorMode: 'context-only',
-      lastAdvice: null,
-      mentorHistory: [],
-    };
+    // Mentor state — initialize with Ol' Salty portrait loaded from mentor data
+    this._initializeMentorState();
 
     // Processing/error state
     this.isProcessing = false;
@@ -179,6 +189,53 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     // Track last spoken step to prevent redundant auto-speech on every full render
     this._lastSpokenStepId = null;
+  }
+
+  /**
+   * Initialize the first step by calling onStepEnter on the current step plugin.
+   * This is critical for post-splash Species entry and any targeted step.
+   * @private
+   */
+  async _initializeFirstStep() {
+    const descriptor = this.steps[this.currentStepIndex];
+    if (!descriptor) return;
+
+    const plugin = this.stepPlugins.get(descriptor.stepId);
+    if (!plugin) return;
+
+    try {
+      await plugin.onStepEnter(this);
+      swseLogger.log(`[ProgressionShell] Initialized first step: ${descriptor.stepId}`);
+    } catch (err) {
+      swseLogger.error(`[ProgressionShell] Error initializing first step ${descriptor.stepId}:`, err);
+      throw err;
+    }
+  }
+
+  /**
+   * Initialize mentor state with Ol' Salty portrait loaded from mentor data.
+   * @private
+   */
+  _initializeMentorState() {
+    const MENTORS_DATA = game.system?.data?.mentors || {};
+    const olSalty = Object.values(MENTORS_DATA).find(m => m?.id === 'ol-salty');
+
+    this.mentor = {
+      mentorId: 'ol-salty',
+      name: olSalty?.name ?? "Ol' Salty",
+      title: olSalty?.title ?? 'Seasoned Spacer',
+      portrait: olSalty?.portrait ?? 'systems/foundryvtt-swse/assets/mentors/salty.webp',
+      currentDialogue: '',
+      pendingDialogue: null,
+      isAnimating: false,
+      animationState: 'idle',
+      mood: 'neutral',
+      collapsed: false,
+      askMentorEnabled: false,
+      mentorMode: 'context-only',
+      lastAdvice: null,
+      mentorHistory: [],
+    };
   }
 
   // ---------------------------------------------------------------------------
@@ -219,6 +276,19 @@ export class ProgressionShell extends SWSEApplicationV2 {
       }
     }
 
+    // Navigate to target step if specified (e.g., from splash: currentStep: 'species')
+    if (this._targetStepId) {
+      const targetIndex = this.steps.findIndex(d => d.stepId === this._targetStepId);
+      if (targetIndex >= 0) {
+        this.currentStepIndex = targetIndex;
+        this._minStepIndex = targetIndex;  // Prevent back-navigation past this step
+        swseLogger.log(`[ProgressionShell] Navigating to target step: ${this._targetStepId} (index ${targetIndex}). Back-navigation disabled until past this step.`);
+      } else {
+        swseLogger.warn(`[ProgressionShell] Target step not found: ${this._targetStepId}. Using index 0.`);
+      }
+      this._targetStepId = null; // Clear after use
+    }
+
     // Initialize utility bar config for the current step
     const currentPlugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
     if (currentPlugin) this.utilityBar.setConfig(currentPlugin.getUtilityBarConfig());
@@ -227,6 +297,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
       mode: this.mode,
       stepCount: this.steps.length,
       steps: this.steps.map(d => d.stepId),
+      currentStepId: this.steps[this.currentStepIndex]?.stepId,
     });
   }
 
@@ -347,7 +418,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // Render work surface
     const workSurfaceSpec = currentPlugin?.renderWorkSurface?.(stepData) ?? null;
     const workSurfaceHtml = workSurfaceSpec?.template
-      ? await renderTemplate(workSurfaceSpec.template, workSurfaceSpec.data)
+      ? await foundry.applications.handlebars.renderTemplate(workSurfaceSpec.template, workSurfaceSpec.data)
       : null;
 
     // Footer data
@@ -361,8 +432,23 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const detailsPanelSpec = currentPlugin?.renderDetailsPanel(this.focusedItem)
       ?? { template: null, data: {} };
     const detailsPanelHtml = detailsPanelSpec?.template
-      ? await renderTemplate(detailsPanelSpec.template, detailsPanelSpec.data)
+      ? await foundry.applications.handlebars.renderTemplate(detailsPanelSpec.template, detailsPanelSpec.data)
       : null;
+
+    // Summary panel (left column — build snapshot)
+    const summaryPanelSpec = currentPlugin?.renderSummaryPanel?.(context) ?? null;
+    const summaryPanelHtml = summaryPanelSpec?.template
+      ? await foundry.applications.handlebars.renderTemplate(summaryPanelSpec.template, summaryPanelSpec.data)
+      : null;
+
+    // ── DEBUG: shell region ownership verification ──
+    const isIntroMode = currentDescriptor?.stepId === 'intro';
+    console.log('[ProgressionShell] active step =', currentDescriptor?.stepId);
+    console.log('[ProgressionShell] isIntroMode =', isIntroMode);
+    console.log('[ProgressionShell] workSurfaceHtml payload =', workSurfaceHtml?.slice?.(0, 120) ?? '(null)');
+    console.log('[ProgressionShell] detailsPanelHtml payload =', detailsPanelHtml?.slice?.(0, 120) ?? '(null)');
+    console.log('[ProgressionShell] summaryPanelHtml payload =', summaryPanelHtml?.slice?.(0, 120) ?? '(null)');
+    // ── END DEBUG ──
 
     return foundry.utils.mergeObject(context, {
       // Shell identity
@@ -385,18 +471,79 @@ export class ProgressionShell extends SWSEApplicationV2 {
       // Focus/selection
       focusedItem: this.focusedItem,
 
-      // Work surface & details panel
+      // Work surface, summary panel, & details panel
       stepData,
+      summaryPanelHtml,
       workSurfaceHtml,
       detailsPanelHtml,
 
       // Footer
       footer: footerData,
 
+      // Step chips for footer: visible (non-hidden) steps with state flags
+      visibleSteps: this.steps
+        .filter(d => !d.hidden)
+        .map((descriptor, chipIdx) => {
+          const realIdx    = this.steps.indexOf(descriptor);
+          const isCurrent  = realIdx === this.currentStepIndex;
+          const isComplete = this.committedSelections.has(descriptor.stepId);
+          const isLocked   = realIdx > this.currentStepIndex && !isComplete;
+          const plugin     = this.stepPlugins.get(descriptor.stepId);
+          const hasWarning = !isCurrent && (plugin?.getWarnings?.()?.length ?? 0) > 0;
+          return {
+            id:          descriptor.stepId,
+            index:       chipIdx + 1,       // 1-based display number
+            label:       descriptor.label,
+            isCurrent,
+            isComplete,
+            isLocked,
+            isWarning:   hasWarning,
+            canNavigate: isCurrent || realIdx < this.currentStepIndex,
+          };
+        }),
+
+      // Font mode: 'standard' | 'aurabesh' — controls label font via data-font-mode attr
+      fontMode: 'standard',
+
+      // Intro mode: when true, the shell renders only the work-surface (boot/splash takeover).
+      // All normal furniture (mentor-rail, progress-rail, footer, panels) is removed from the DOM.
+      isIntroMode: currentDescriptor?.stepId === 'intro',
+
       // Processing state
       isProcessing: this.isProcessing,
       lastError: this.lastError,
     });
+  }
+
+  /**
+   * Compute initial window position that avoids the Foundry sidebar.
+   *
+   * Foundry V13 ApplicationV2 calls this once before first render.
+   * We override it to center the shell in the AVAILABLE canvas space
+   * (viewport minus sidebar width) rather than using a fixed left offset
+   * that can be crushed against the sidebar on different screen sizes.
+   *
+   * @returns {{ width: number, height: number, left: number, top: number }}
+   */
+  _getInitialPosition() {
+    // Sidebar is always on the right in Foundry; measure its actual rendered width.
+    const sidebarEl = ui?.sidebar?.element ?? document.querySelector('#sidebar');
+    const sidebarW  = sidebarEl ? (sidebarEl.offsetWidth  || 310) : 310;
+
+    const viewportW = window.innerWidth;
+    const viewportH = window.innerHeight;
+
+    // Available canvas space = full width minus sidebar minus a small right margin
+    const availW = Math.max(600, viewportW - sidebarW - 16);
+
+    const w = Math.min(1000, availW);
+    const h = Math.min(750,  Math.max(500, viewportH - 80));
+
+    // Center horizontally within available canvas; bias toward top
+    const left = Math.max(10, Math.floor((availW - w) / 2));
+    const top  = Math.max(20, Math.floor((viewportH - h) / 6));
+
+    return { width: w, height: h, left, top };
   }
 
   async _onRender(context, options) {
@@ -469,6 +616,21 @@ export class ProgressionShell extends SWSEApplicationV2 {
   // Navigation Actions
   // ---------------------------------------------------------------------------
 
+  /**
+   * Jump backward to a completed step via a footer step-chip click.
+   * Forward navigation is blocked (chips for future steps are disabled).
+   * @param {PointerEvent} event
+   * @param {HTMLElement} target — the step chip button
+   */
+  async _onJumpStep(event, target) {
+    if (this.isProcessing) return;
+    const stepId = target?.dataset?.stepId;
+    if (!stepId) return;
+    const stepIndex = this.steps.findIndex(d => d.stepId === stepId);
+    if (stepIndex < 0 || stepIndex >= this.currentStepIndex) return; // can only go back
+    this.navigateToStep(stepIndex, { source: 'footer-chip' });
+  }
+
   async _onNextStep(event, target) {
     if (this.isProcessing) return;
     if (this.currentStepIndex >= this.steps.length - 1) {
@@ -494,17 +656,30 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const nextDescriptor = this.steps[this.currentStepIndex];
     const nextPlugin = this.stepPlugins.get(nextDescriptor?.stepId);
     if (nextPlugin) {
-      await nextPlugin.onStepEnter(this);
-      this.mentor.currentDialogue = nextPlugin.getMentorContext(this);
-      this.mentor.askMentorEnabled = nextPlugin.getMentorMode() !== null;
-      this.mentor.mentorMode = nextPlugin.getMentorMode();
+      try {
+        await nextPlugin.onStepEnter(this);
+        this.mentor.currentDialogue = nextPlugin.getMentorContext(this);
+        this.mentor.askMentorEnabled = nextPlugin.getMentorMode() !== null;
+        this.mentor.mentorMode = nextPlugin.getMentorMode();
+      } catch (err) {
+        swseLogger.error(`[ProgressionShell] Error entering step ${nextDescriptor?.stepId}:`, err);
+        this.lastError = err.message;
+        this.currentStepIndex--;  // Go back to previous step
+        ui?.notifications?.error?.(`Failed to load ${nextDescriptor?.label}. Returning to previous step.`);
+        return;
+      }
     }
 
     this.render();
   }
 
   _onPreviousStep(event, target) {
-    if (this.currentStepIndex <= 0) return;
+    // Prevent back-navigation past minimum step (used when starting from splash at species, etc.)
+    const minIndex = this._minStepIndex ?? 0;
+    if (this.currentStepIndex <= minIndex) {
+      swseLogger.log(`[ProgressionShell] Back-navigation blocked at minimum step index ${minIndex}`);
+      return;
+    }
 
     const currentDescriptor = this.steps[this.currentStepIndex];
     const currentPlugin = this.stepPlugins.get(currentDescriptor?.stepId);
@@ -703,6 +878,30 @@ export class ProgressionShell extends SWSEApplicationV2 {
     if (plugin?.skipStore) {
       plugin.skipStore();
       this.render();
+    }
+  }
+
+  /**
+   * Generic step action handler — delegates to step plugin via event bubbling
+   * Step plugins should attach their own event listeners in onDataReady()
+   * @param {Event} event — the click event from the button
+   * @param {HTMLElement} target — the clicked button element
+   */
+  _onStepAction(event, target) {
+    event?.preventDefault();
+
+    // Allow the event to bubble to the work-surface element where step plugins
+    // have attached their own event listeners in onDataReady()
+    const workSurface = this.element?.querySelector('[data-region="work-surface"]');
+    if (workSurface && target) {
+      // Create and dispatch a custom event that step plugins can listen for
+      const actionName = target.dataset.action;
+      const customEvent = new CustomEvent('step-action', {
+        detail: { actionName, originalEvent: event, target },
+        bubbles: true,
+        cancelable: true,
+      });
+      target.dispatchEvent(customEvent);
     }
   }
 

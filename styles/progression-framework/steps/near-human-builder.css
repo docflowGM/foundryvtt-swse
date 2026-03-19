@@ -1,13 +1,27 @@
-/* Near-Human Builder — 3-column layout for trait/sacrifice/summary */
+/* ============================================================================
+   NEAR-HUMAN BUILDER — Holographic Datapad Interface (ENHANCED)
+   ============================================================================
+   Reference: Near-Human Customization datapad screen
+   3-column composition: baseline (left) | traits (center, dominant) | summary (right)
+   Visual language: hard-edged frames, BRIGHT cyan border glow, corner accents
+   Hierarchy: center column is primary focus, flanked by support panels
+   ============================================================================ */
 
 .progression-shell .prog-nh-builder {
   display: grid;
   grid-template-columns: 220px 1fr 220px;
-  gap: var(--prog-space-lg);
+  gap: 14px;
   height: 100%;
-  padding: var(--prog-space-md);
+  padding: 14px;
   overflow: hidden;
+  /* Transparent — outer shell's panel-large.svg + frame-shell.svg is the authoritative frame.
+     Interior columns (.prog-nh-builder__baseline / __center / __summary) keep their own
+     background/border chrome — they are diegetic sub-panels, not the outer shell. */
+  background: transparent;
+  position: relative;
 }
+
+/* ===== COLUMN BASE STYLING — Holographic frame effects (ENHANCED GLOW) ===== */
 
 .progression-shell .prog-nh-builder__baseline,
 .progression-shell .prog-nh-builder__center,
@@ -17,16 +31,83 @@
   gap: var(--prog-space-sm);
   overflow-y: auto;
   overflow-x: hidden;
+  position: relative;
+  border-radius: 2px;
+  padding: 14px;
 }
 
+/* BASELINE COLUMN — Left support panel (secondary) */
+.progression-shell .prog-nh-builder__baseline {
+  background: linear-gradient(180deg, rgba(6, 18, 32, 0.95), rgba(2, 10, 20, 0.98));
+  border: 1px solid rgba(100, 220, 255, 0.35);
+  box-shadow:
+    0 0 12px rgba(0, 200, 255, 0.08),
+    0 0 24px rgba(0, 160, 220, 0.04),
+    inset 0 0 10px rgba(0, 180, 255, 0.03);
+}
+
+.progression-shell .prog-nh-builder__baseline::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(100, 220, 255, 0.15);
+  pointer-events: none;
+  border-radius: 1px;
+}
+
+/* CENTER COLUMN — Primary interaction area (VISUALLY DOMINANT with bright glow) */
+.progression-shell .prog-nh-builder__center {
+  background: linear-gradient(180deg, rgba(8, 22, 40, 0.96), rgba(4, 14, 28, 0.98));
+  border: 2px solid rgba(120, 230, 255, 0.6);
+  box-shadow:
+    0 0 24px rgba(0, 210, 255, 0.18),
+    0 0 48px rgba(0, 170, 220, 0.08),
+    0 0 2px rgba(120, 230, 255, 0.3) inset;
+}
+
+.progression-shell .prog-nh-builder__center::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(120, 230, 255, 0.15);
+  pointer-events: none;
+  border-radius: 1px;
+}
+
+/* SUMMARY COLUMN — Right support panel (secondary) */
+.progression-shell .prog-nh-builder__summary {
+  background: linear-gradient(180deg, rgba(6, 18, 32, 0.95), rgba(2, 10, 20, 0.98));
+  border: 1px solid rgba(100, 220, 255, 0.35);
+  box-shadow:
+    0 0 12px rgba(0, 200, 255, 0.08),
+    0 0 24px rgba(0, 160, 220, 0.04),
+    inset 0 0 10px rgba(0, 180, 255, 0.03);
+}
+
+.progression-shell .prog-nh-builder__summary::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(100, 220, 255, 0.15);
+  pointer-events: none;
+  border-radius: 1px;
+}
+
+/* COLUMN TITLES — Strong, prominent hierarchy markers (BRIGHT GLOW) */
 .progression-shell .prog-nh-builder__col-title {
-  margin: 0 0 var(--prog-space-xs) 0;
+  margin: 0 0 var(--prog-space-sm) 0;
+  padding-bottom: 10px;
   font-size: var(--prog-font-size-sm);
   font-family: var(--prog-font);
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--prog-accent);
-  text-shadow: var(--prog-heading-shadow);
+  letter-spacing: 0.1em;
+  color: #00d4ff;
+  text-shadow:
+    0 0 12px rgba(0, 212, 255, 0.5),
+    0 0 6px rgba(0, 180, 255, 0.3),
+    0 0 2px rgba(0, 160, 220, 0.2);
+  border-bottom: 1px solid rgba(100, 220, 255, 0.3);
 }
 
 /* Baseline column */
@@ -44,40 +125,72 @@
   text-shadow: var(--prog-text-shadow);
 }
 
+/* ===== LEFT COLUMN: HUMAN BASELINE & SACRIFICE ===== */
+
+.progression-shell .prog-nh-baseline__list li {
+  text-shadow: 0 0 4px rgba(0, 170, 255, 0.15);
+  color: rgba(200, 230, 255, 0.9);
+  padding: 3px 0;
+  font-size: var(--prog-font-size-xs);
+}
+
 .progression-shell .prog-nh-sacrifice {
-  padding: var(--prog-space-sm);
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: var(--prog-radius-sm);
+  margin-top: 12px;
+  padding: 12px;
+  background: linear-gradient(180deg, rgba(0, 50, 90, 0.4), rgba(0, 30, 60, 0.5));
+  border: 1px solid rgba(100, 220, 255, 0.25);
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(0, 180, 255, 0.05);
 }
 
 .progression-shell .prog-nh-sacrifice__title {
-  margin: 0 0 var(--prog-space-xs) 0;
+  margin: 0 0 10px 0;
   font-size: var(--prog-font-size-xs);
-  font-weight: bold;
-  color: var(--prog-text-heading);
-  text-shadow: var(--prog-heading-shadow);
+  font-weight: 700;
+  color: rgba(210, 240, 255, 1);
+  text-shadow:
+    0 0 8px rgba(0, 180, 255, 0.4),
+    0 0 4px rgba(0, 160, 220, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .progression-shell .prog-nh-sacrifice__help {
-  margin: 0 0 var(--prog-space-xs) 0;
+  margin: 0 0 10px 0;
   font-size: var(--prog-font-size-xs);
-  color: var(--prog-text-dim);
+  color: rgba(160, 200, 255, 0.65);
   font-style: italic;
 }
 
 .progression-shell .prog-nh-sacrifice__option {
   display: flex;
   align-items: center;
-  gap: var(--prog-space-xs);
+  gap: 8px;
   font-size: var(--prog-font-size-xs);
-  margin-bottom: 4px;
+  margin-bottom: 8px;
   cursor: pointer;
-  color: var(--prog-text);
-  text-shadow: var(--prog-text-shadow);
+  color: rgba(200, 230, 255, 0.9);
+  text-shadow: 0 0 4px rgba(0, 170, 255, 0.15);
+  padding: 6px;
+  border-radius: 2px;
+  transition: all 100ms ease;
+}
+
+.progression-shell .prog-nh-sacrifice__option:hover {
+  background: rgba(0, 180, 255, 0.1);
+  color: rgba(220, 245, 255, 1);
+}
+
+.progression-shell .prog-nh-sacrifice__option:hover input {
+  accent-color: #00d4ff;
 }
 
 .progression-shell .prog-nh-sacrifice__option input {
   cursor: pointer;
+  accent-color: rgba(100, 220, 255, 0.7);
+  width: 16px;
+  height: 16px;
+  transition: accent-color 100ms ease;
 }
 
 /* Center column — traits */
@@ -96,46 +209,70 @@
   gap: 4px;
 }
 
+/* ===== CENTER COLUMN: TRAIT SELECTION (BRIGHT, PROMINENT) ===== */
+
 .progression-shell .prog-nh-trait__btn {
   appearance: none;
-  background: var(--prog-bg-read);
-  border: 1px solid var(--prog-border);
-  border-radius: var(--prog-radius-sm);
-  padding: var(--prog-space-xs) var(--prog-space-sm);
-  color: var(--prog-text);
+  background: linear-gradient(180deg, rgba(8, 24, 40, 0.9), rgba(4, 14, 28, 0.95));
+  border: 1px solid rgba(100, 220, 255, 0.35);
+  border-radius: 2px;
+  padding: 10px 12px;
+  color: rgba(200, 230, 255, 0.9);
   cursor: pointer;
   font-family: inherit;
   font-size: var(--prog-font-size-xs);
+  font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  transition: all var(--prog-transition-fast);
-  text-shadow: var(--prog-text-shadow);
+  transition: all 120ms ease;
+  text-shadow: 0 0 4px rgba(0, 170, 255, 0.2);
+  position: relative;
 }
 
 .progression-shell .prog-nh-trait__btn:hover {
-  border-color: var(--prog-border-bright);
+  border-color: rgba(150, 240, 255, 0.6);
+  background: linear-gradient(180deg, rgba(12, 30, 48, 0.95), rgba(8, 20, 36, 0.98));
+  box-shadow:
+    0 0 16px rgba(0, 210, 255, 0.2),
+    0 0 8px rgba(100, 220, 255, 0.15);
+  color: rgba(220, 245, 255, 1);
 }
 
 .progression-shell .prog-nh-trait__btn:focus {
-  outline: 2px solid var(--prog-accent);
-  outline-offset: -1px;
+  outline: none;
+  border-color: rgba(150, 240, 255, 0.8);
+  box-shadow:
+    0 0 20px rgba(0, 220, 255, 0.3),
+    0 0 10px rgba(100, 220, 255, 0.2);
 }
 
 .progression-shell .prog-nh-trait--selected .prog-nh-trait__btn {
-  border-color: var(--prog-accent);
-  background: rgba(0, 170, 255, 0.08);
-  color: var(--prog-accent);
-  text-shadow: var(--prog-heading-shadow);
+  border-color: rgba(150, 240, 255, 0.85);
+  background: linear-gradient(180deg, rgba(0, 60, 100, 0.75), rgba(0, 40, 70, 0.85));
+  color: #00d4ff;
+  text-shadow:
+    0 0 8px rgba(0, 212, 255, 0.6),
+    0 0 4px rgba(0, 170, 255, 0.3);
+  box-shadow:
+    0 0 20px rgba(0, 212, 255, 0.3),
+    0 0 40px rgba(0, 170, 220, 0.12),
+    inset 0 0 12px rgba(0, 180, 255, 0.1);
 }
 
+/* Detail panel for selected trait (ENHANCED) */
 .progression-shell .prog-nh-trait__detail {
-  padding: var(--prog-space-xs) var(--prog-space-sm);
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: var(--prog-radius-sm);
+  padding: 12px;
+  margin-top: 6px;
+  background: linear-gradient(180deg, rgba(0, 60, 100, 0.5), rgba(0, 40, 70, 0.6));
+  border: 1px solid rgba(100, 220, 255, 0.3);
+  border-radius: 2px;
   font-size: var(--prog-font-size-xs);
-  color: var(--prog-text);
-  text-shadow: var(--prog-text-shadow);
+  color: rgba(210, 235, 255, 0.95);
+  text-shadow: 0 0 4px rgba(0, 170, 255, 0.15);
+  box-shadow:
+    inset 0 0 12px rgba(0, 180, 255, 0.06),
+    0 0 8px rgba(0, 180, 255, 0.05);
 }
 
 .progression-shell .prog-nh-trait__detail p {
@@ -143,169 +280,244 @@
   line-height: 1.4;
 }
 
-/* Ability adjustment controls */
+/* ===== ABILITY ADJUSTMENT CONTROLS (BRIGHT) ===== */
+
 .progression-shell .prog-nh-ability-adj {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(100, 220, 255, 0.2);
 }
 
 .progression-shell .prog-nh-ability-adj__row {
   display: grid;
-  grid-template-columns: auto 1fr auto auto auto;
+  grid-template-columns: 80px auto 28px 28px 28px;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   font-size: var(--prog-font-size-xs);
+  padding: 5px 0;
 }
 
 .progression-shell .prog-nh-ability-adj__row > span:first-child {
-  font-weight: bold;
+  font-weight: 600;
+  color: rgba(210, 240, 255, 0.95);
+  text-shadow: 0 0 4px rgba(0, 170, 255, 0.15);
 }
 
 .progression-shell .prog-nh-ability-btn {
   appearance: none;
-  background: var(--prog-bg-read);
-  border: 1px solid var(--prog-border);
+  background: linear-gradient(180deg, rgba(8, 24, 40, 0.8), rgba(4, 14, 28, 0.9));
+  border: 1px solid rgba(100, 220, 255, 0.3);
   border-radius: 2px;
-  color: var(--prog-text-dim);
+  color: rgba(180, 220, 255, 0.75);
   cursor: pointer;
-  padding: 0 4px;
+  padding: 4px 8px;
   font-size: var(--prog-font-size-xs);
-  transition: all var(--prog-transition-fast);
+  font-weight: 600;
+  transition: all 100ms ease;
+  text-shadow: 0 0 4px rgba(0, 170, 255, 0.15);
+  box-shadow: 0 0 6px rgba(0, 180, 255, 0.03);
 }
 
 .progression-shell .prog-nh-ability-btn:hover:not(:disabled) {
-  border-color: var(--prog-accent);
-  color: var(--prog-accent);
+  border-color: rgba(150, 240, 255, 0.5);
+  background: linear-gradient(180deg, rgba(12, 30, 48, 0.9), rgba(8, 20, 36, 0.95));
+  color: rgba(220, 245, 255, 0.95);
+  box-shadow:
+    0 0 12px rgba(0, 210, 255, 0.15),
+    0 0 6px rgba(100, 220, 255, 0.08);
 }
 
 .progression-shell .prog-nh-ability-btn:disabled {
-  opacity: 0.4;
+  opacity: 0.25;
   cursor: not-allowed;
 }
 
 .progression-shell .prog-nh-ability-adj__val {
   text-align: center;
-  min-width: 20px;
+  min-width: 28px;
+  font-weight: 700;
+  font-size: var(--prog-font-size-xs);
+  color: #00d4ff;
+  text-shadow:
+    0 0 8px rgba(0, 212, 255, 0.4),
+    0 0 4px rgba(0, 170, 255, 0.2);
 }
 
-/* Variants */
+/* ===== VARIANTS SECTION (BRIGHT, PROMINENT) ===== */
+
 .progression-shell .prog-nh-variants {
-  border-top: 1px solid var(--prog-border);
-  padding-top: var(--prog-space-sm);
+  border-top: 1px solid rgba(100, 220, 255, 0.2);
+  margin-top: 10px;
+  padding-top: 10px;
 }
 
 .progression-shell .prog-nh-variants h4 {
-  margin: 0 0 var(--prog-space-xs) 0;
+  margin: 0 0 10px 0;
   font-size: var(--prog-font-size-xs);
-  font-weight: bold;
-  color: var(--prog-text-heading);
-  text-shadow: var(--prog-heading-shadow);
+  font-weight: 700;
+  color: rgba(210, 240, 255, 1);
+  text-shadow:
+    0 0 8px rgba(0, 180, 255, 0.4),
+    0 0 4px rgba(0, 160, 220, 0.2);
   display: flex;
   align-items: center;
-  gap: var(--prog-space-xs);
+  gap: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .progression-shell .prog-nh-variants__hint {
   font-size: var(--prog-font-size-xs);
   font-weight: normal;
-  color: var(--prog-text-dim);
+  color: rgba(160, 190, 255, 0.7);
   font-style: italic;
 }
 
 .progression-shell .prog-nh-variants__chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 6px;
 }
+
+/* ===== VARIANT CHIPS (BRIGHT, PROMINENT) ===== */
 
 .progression-shell .prog-nh-variant-chip {
   appearance: none;
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 2px var(--prog-space-xs);
-  border-radius: var(--prog-radius-pill);
+  padding: 6px 10px;
+  border-radius: 2px;
   font-size: var(--prog-font-size-xs);
+  font-weight: 600;
   font-family: var(--prog-font-body);
-  border: 1px solid var(--prog-border);
-  color: var(--prog-text-dim);
-  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(100, 220, 255, 0.3);
+  color: rgba(180, 220, 255, 0.75);
+  background: linear-gradient(180deg, rgba(6, 18, 32, 0.6), rgba(2, 10, 20, 0.7));
   cursor: pointer;
-  transition: all var(--prog-transition-fast);
-  text-shadow: var(--prog-text-shadow);
+  transition: all 100ms ease;
+  text-shadow: 0 0 4px rgba(0, 170, 255, 0.15);
   white-space: nowrap;
+  box-shadow: 0 0 8px rgba(0, 180, 255, 0.04);
 }
 
 .progression-shell .prog-nh-variant-chip:hover {
-  border-color: var(--prog-accent);
-  color: var(--prog-accent);
-  background: rgba(0, 170, 255, 0.08);
-  text-shadow: var(--prog-heading-shadow);
+  border-color: rgba(150, 240, 255, 0.5);
+  color: rgba(220, 245, 255, 0.95);
+  background: linear-gradient(180deg, rgba(8, 24, 40, 0.75), rgba(4, 14, 28, 0.85));
+  box-shadow:
+    0 0 14px rgba(0, 210, 255, 0.15),
+    0 0 6px rgba(100, 220, 255, 0.1);
 }
 
 .progression-shell .prog-nh-variant-chip--active {
-  border-color: var(--prog-accent);
-  color: var(--prog-accent);
-  background: rgba(0, 170, 255, 0.12);
-  text-shadow: var(--prog-heading-shadow);
+  border-color: rgba(150, 240, 255, 0.75);
+  color: #00d4ff;
+  background: linear-gradient(180deg, rgba(0, 60, 100, 0.6), rgba(0, 40, 70, 0.7));
+  box-shadow:
+    0 0 16px rgba(0, 212, 255, 0.25),
+    0 0 8px rgba(100, 220, 255, 0.1),
+    inset 0 0 8px rgba(0, 180, 255, 0.1);
+  text-shadow:
+    0 0 8px rgba(0, 212, 255, 0.4),
+    0 0 4px rgba(0, 170, 255, 0.2);
 }
 
-/* Status */
+/* ===== STATUS INDICATOR (BRIGHT, PROMINENT) ===== */
+
 .progression-shell .prog-nh-status {
-  border-top: 1px solid var(--prog-border);
-  padding-top: var(--prog-space-sm);
+  border-top: 1px solid rgba(100, 220, 255, 0.2);
+  margin-top: 10px;
+  padding-top: 10px;
   font-size: var(--prog-font-size-xs);
-  font-weight: bold;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .progression-shell .prog-nh-status__ready {
-  color: var(--prog-positive);
-  text-shadow: var(--prog-text-shadow);
+  color: #2cff6f;
+  text-shadow:
+    0 0 12px rgba(44, 255, 111, 0.6),
+    0 0 6px rgba(44, 255, 111, 0.3);
 }
 
 .progression-shell .prog-nh-status__incomplete {
-  color: var(--prog-neutral);
-  text-shadow: var(--prog-text-shadow);
+  color: rgba(180, 200, 220, 0.85);
+  text-shadow: 0 0 4px rgba(0, 170, 255, 0.15);
 }
 
-/* Summary column */
+/* ===== SUMMARY COLUMN — Right panel (bright, legible) ===== */
+
 .progression-shell .prog-nh-summary__attr {
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
-  gap: var(--prog-space-sm);
+  gap: 10px;
   font-size: var(--prog-font-size-xs);
-  padding: 2px 0;
+  padding: 5px 0;
 }
 
 .progression-shell .prog-nh-summary__attr-label {
-  color: var(--prog-text-dim);
+  color: rgba(170, 200, 255, 0.8);
+  text-shadow: 0 0 4px rgba(0, 170, 255, 0.15);
+  font-weight: 500;
 }
 
 .progression-shell .prog-nh-summary__attr-val {
   text-align: right;
-  font-weight: bold;
-  text-shadow: var(--prog-text-shadow);
+  font-weight: 700;
+  font-size: var(--prog-font-size-xs);
+  min-width: 40px;
 }
 
+/* Color coding for ability values (BRIGHT) */
+.progression-shell .prog-nh-summary__attr-val.prog-num--pos {
+  color: #2cff6f;
+  text-shadow:
+    0 0 8px rgba(44, 255, 111, 0.5),
+    0 0 4px rgba(44, 255, 111, 0.25);
+}
+
+.progression-shell .prog-nh-summary__attr-val.prog-num--neg {
+  color: #ff6060;
+  text-shadow:
+    0 0 8px rgba(255, 96, 96, 0.5),
+    0 0 4px rgba(255, 96, 96, 0.25);
+}
+
+.progression-shell .prog-nh-summary__attr-val.prog-num--zero {
+  color: rgba(200, 230, 255, 0.85);
+  text-shadow: 0 0 4px rgba(0, 170, 255, 0.15);
+}
+
+/* Summary section headers (BRIGHT) */
 .progression-shell .prog-nh-summary__section {
-  margin-top: var(--prog-space-sm);
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(100, 220, 255, 0.2);
   font-size: var(--prog-font-size-xs);
-  font-weight: bold;
-  color: var(--prog-accent);
-  text-shadow: var(--prog-heading-shadow);
+  font-weight: 700;
+  color: #00d4ff;
+  text-shadow:
+    0 0 8px rgba(0, 212, 255, 0.4),
+    0 0 4px rgba(0, 170, 255, 0.2);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
 }
 
 .progression-shell .prog-nh-summary__section:first-child {
   margin-top: 0;
+  padding-top: 0;
+  border-top: none;
 }
 
 .progression-shell .prog-nh-summary__trait-desc {
   font-size: var(--prog-font-size-xs);
-  color: var(--prog-text-dim);
+  color: rgba(150, 180, 255, 0.6);
   margin-top: 2px;
   font-style: italic;
   line-height: 1.3;

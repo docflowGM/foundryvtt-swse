@@ -212,7 +212,7 @@ export class SWSEV2DroidSheet extends
     /* ---------------- TAB HANDLING ---------------- */
 
     for (const tabBtn of root.querySelectorAll(".sheet-tabs .item")) {
-      tabBtn.addEventListener("click", { signal }, (ev) => {
+      tabBtn.addEventListener("click", (ev) => {
         const tabName = ev.currentTarget.dataset.tab;
         if (!tabName) return;
 
@@ -226,13 +226,13 @@ export class SWSEV2DroidSheet extends
 
         root.querySelector(`.tab[data-tab="${tabName}"]`)
           ?.classList.add("active");
-      });
+      }, { signal });
     }
 
     /* ---------------- CONDITION STEP HANDLING ---------------- */
 
     for (const el of root.querySelectorAll(".swse-v2-condition-step")) {
-      el.addEventListener("click", { signal }, async (ev) => {
+      el.addEventListener("click", async (ev) => {
         ev.preventDefault();
         const step = Number(ev.currentTarget?.dataset?.step);
         if (!Number.isFinite(step)) return;
@@ -241,68 +241,68 @@ export class SWSEV2DroidSheet extends
         } else if (this.actor) {
           await ActorEngine.updateActor(this.actor, { 'system.conditionTrack.current': step });
         }
-      });
+      }, { signal });
     }
 
     const improveBtn = root.querySelector(".swse-v2-condition-improve");
     if (improveBtn) {
-      improveBtn.addEventListener("click", { signal }, async (ev) => {
+      improveBtn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         if (typeof this.actor?.improveConditionTrack === "function") {
           await this.actor?.improveConditionTrack();
         }
-      });
+      }, { signal });
     }
 
     const worsenBtn = root.querySelector(".swse-v2-condition-worsen");
     if (worsenBtn) {
-      worsenBtn.addEventListener("click", { signal }, async (ev) => {
+      worsenBtn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         if (typeof this.actor?.worsenConditionTrack === "function") {
           await this.actor?.worsenConditionTrack();
         }
-      });
+      }, { signal });
     }
 
     const persistentCheckbox = root.querySelector(".swse-v2-condition-persistent");
     if (persistentCheckbox) {
-      persistentCheckbox.addEventListener("change", { signal }, async (ev) => {
+      persistentCheckbox.addEventListener("change", async (ev) => {
         const flag = ev.currentTarget?.checked === true;
         if (typeof this.actor?.setConditionTrackPersistent === "function") {
           await this.actor?.setConditionTrackPersistent(flag);
         }
-      });
+      }, { signal });
     }
 
     /* ---------------- INITIATIVE CONTROLS ---------------- */
 
-    root.querySelector(".roll-initiative")?.addEventListener("click", { signal }, async (ev) => {
+    root.querySelector(".roll-initiative")?.addEventListener("click", async (ev) => {
       ev.preventDefault();
       await SWSERoll.rollInitiative(this.actor, { showDialog: true });
-    });
+    }, { signal });
 
-    root.querySelector(".take10-initiative")?.addEventListener("click", { signal }, async (ev) => {
+    root.querySelector(".take10-initiative")?.addEventListener("click", async (ev) => {
       ev.preventDefault();
       await SWSERoll.rollInitiative(this.actor, { take10: true });
-    });
+    }, { signal });
 
     /* ---------------- ITEM OPEN ---------------- */
 
     for (const el of root.querySelectorAll(".swse-v2-open-item")) {
-      el.addEventListener("click", { signal }, (ev) => {
+      el.addEventListener("click", (ev) => {
         ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId;
+        const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
         const item = this.actor?.items?.get(itemId);
         item?.sheet?.render(true);
-      });
+      }, { signal });
     }
 
     /* ---- EQUIPMENT: SELL & DELETE ---- */
 
     for (const btn of root.querySelectorAll('[data-action="sell-item"]')) {
-      btn.addEventListener("click", { signal }, async (ev) => {
+      btn.addEventListener("click", async (ev) => {
         ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId;
+        const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
         if (!itemId) return;
         const item = this.document.items.get(itemId);
         if (!item) return;
@@ -317,85 +317,85 @@ export class SWSEV2DroidSheet extends
         // PHASE 8: Use ActorEngine
         await ActorEngine.deleteEmbeddedDocuments(this.document, "Item", [itemId]);
         ui.notifications.info(`Sold ${item.name} for ${price} credits`);
-      });
+      }, { signal });
     }
 
     for (const btn of root.querySelectorAll('[data-action="delete-item"]')) {
-      btn.addEventListener("click", { signal }, async (ev) => {
+      btn.addEventListener("click", async (ev) => {
         ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId;
+        const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
         if (!itemId) return;
         // PHASE 8: Use ActorEngine
         await ActorEngine.deleteEmbeddedDocuments(this.document, "Item", [itemId]);
-      });
+      }, { signal });
     }
 
     /* ---- ARMOR EQUIP TOGGLE ---- */
 
     for (const checkbox of root.querySelectorAll('[data-action="toggle-equip-armor"]')) {
-      checkbox.addEventListener("change", { signal }, async (ev) => {
-        const itemId = ev.currentTarget?.dataset?.itemId;
+      checkbox.addEventListener("change", async (ev) => {
+        const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
         if (!itemId) return;
         const item = this.document.items.get(itemId);
         if (!item) return;
         await ActorEngine.updateEmbeddedDocuments(this.document, 'Item', [{ _id: itemId, "system.equipped": ev.currentTarget.checked }]);
-      });
+      }, { signal });
     }
 
     /* ---- FEAT/TALENT BUTTONS ---- */
 
     for (const btn of root.querySelectorAll('[data-action="add-feat"]')) {
-      btn.addEventListener("click", { signal }, async (ev) => {
+      btn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         game.swse.progression?.openFeatSelector?.(this.document);
-      });
+      }, { signal });
     }
 
     for (const btn of root.querySelectorAll('[data-action="add-talent"]')) {
-      btn.addEventListener("click", { signal }, async (ev) => {
+      btn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         game.swse.progression?.openTalentSelector?.(this.document);
-      });
+      }, { signal });
     }
 
     /* ---- OWNED ACTORS MANAGEMENT ---- */
 
     for (const btn of root.querySelectorAll('[data-action="remove-owned"]')) {
-      btn.addEventListener("click", { signal }, async (ev) => {
+      btn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         const actorId = ev.currentTarget?.dataset?.actorId;
         if (!actorId) return;
         const owned = this.document.system.ownedActors?.filter(o => o.id !== actorId) || [];
         await this.document.update({ "system.ownedActors": owned });
-      });
+      }, { signal });
     }
 
     for (const btn of root.querySelectorAll('[data-action="open-owned"]')) {
-      btn.addEventListener("click", { signal }, (ev) => {
+      btn.addEventListener("click", (ev) => {
         ev.preventDefault();
         const actorId = ev.currentTarget?.dataset?.actorId;
         if (!actorId) return;
         const actor = game.actors.get(actorId);
         actor?.sheet?.render(true);
-      });
+      }, { signal });
     }
 
     /* ---------------- SKILL ROLLING ---------------- */
 
     for (const el of root.querySelectorAll('[data-action="roll-skill"]')) {
-      el.addEventListener("click", { signal }, async (ev) => {
+      el.addEventListener("click", async (ev) => {
         ev.preventDefault();
         const skillKey = ev.currentTarget?.dataset?.skill;
         if (skillKey && this.actor) {
-          await rollSkill(this.actor, skillKey);
-        }
-      });
+          await SWSERoll.rollSkill(this.actor, skillKey);
+}
+      }, { signal });
     }
 
     /* ---------------- DEFENSE ROLLING ---------------- */
 
     for (const el of root.querySelectorAll('[data-action="roll-defense"]')) {
-      el.addEventListener("click", { signal }, async (ev) => {
+      el.addEventListener("click", async (ev) => {
         ev.preventDefault();
         const defenseType = ev.currentTarget?.dataset?.defense;
         if (defenseType && this.actor) {
@@ -403,43 +403,43 @@ export class SWSEV2DroidSheet extends
             await game.swse.rolls.defenses.rollDefense(this.document, defenseType);
           }
         }
-      });
+      }, { signal });
     }
 
     /* ---------------- WEAPON ROLLING ---------------- */
 
-    for (const el of root.querySelectorAll('[data-action="roll-weapon"]')) {
-      el.addEventListener("click", { signal }, async (ev) => {
+    for (const el of root.querySelectorAll('[data-action="roll-weapon"], [data-action="roll-weapon-attack"]')) {
+      el.addEventListener("click", async (ev) => {
         ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId;
+        const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
         if (!itemId || !this.actor) return;
         const item = this.actor.items?.get(itemId);
         if (!item) return;
         if (typeof item.roll === "function") {
           await item.roll();
         } else {
-          await rollAttack(this.actor, item);
-        }
-      });
+          await SWSERoll.rollAttack(this.actor, item, { showDialog: true });
+}
+      }, { signal });
     }
 
     /* ---------------- ACTION USE ---------------- */
 
     for (const el of root.querySelectorAll(".swse-v2-use-action")) {
-      el.addEventListener("click", { signal }, async (ev) => {
+      el.addEventListener("click", async (ev) => {
         ev.preventDefault();
         const actionId = ev.currentTarget?.dataset?.actionId;
         if (typeof this.actor?.useAction === "function") {
           await this.actor?.useAction(actionId);
         }
-      });
+      }, { signal });
     }
 
     /* ---------------- EDIT DROID SYSTEMS (DROID-SPECIFIC) ---------------- */
 
     const editDroidBtn = root.querySelector(".edit-droid-systems");
     if (editDroidBtn) {
-      editDroidBtn.addEventListener("click", { signal }, async (ev) => {
+      editDroidBtn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         const hasConfig = !!this.actor?.system?.droidSystems?.degree;
         const mode = hasConfig ? "EDIT" : "NEW";
@@ -454,19 +454,19 @@ export class SWSEV2DroidSheet extends
           console.error('Failed to open droid builder:', err);
           ui.notifications.error('Failed to open droid builder.');
         }
-      });
+      }, { signal });
     }
 
     /* ---------------- PROGRESSION BUTTONS (DROID-SPECIFIC) ---------------- */
 
     const levelUpBtn = root.querySelector('[data-action="level-up"]');
     if (levelUpBtn) {
-      levelUpBtn.addEventListener("click", { signal }, async (ev) => {
+      levelUpBtn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         if (this.actor) {
           await SWSELevelUp.openEnhanced(this.actor);
         }
-      });
+      }, { signal });
     }
 
     /* ---- ABILITIES TAB HANDLERS (Phase 3) ---- */

@@ -1,0 +1,90 @@
+/**
+ * components/buttons.css
+ *
+ * Shared button styling for progression framework.
+ * Extracted from holo-theme.css to establish component ownership.
+ */
+
+/* Button styles - reusable across all steps and components */
+.prog-holo .prog-btn {
+  background: linear-gradient(180deg, rgba(0, 170, 255, 0.1), rgba(0, 170, 255, 0.05));
+  border: 1px solid rgba(0, 170, 255, 0.3);
+  color: var(--prog-text);
+  border-radius: var(--prog-radius-sm);
+  padding: var(--prog-space-sm) var(--prog-space-md);
+  font-family: var(--prog-font-body);
+  font-size: var(--prog-font-size-base);
+  cursor: pointer;
+  transition: border-color var(--prog-transition-base),
+              background var(--prog-transition-base),
+              box-shadow var(--prog-transition-base);
+  outline: none;
+}
+
+.prog-holo .prog-btn:hover {
+  border-color: rgba(0, 170, 255, 0.6);
+  background: linear-gradient(180deg, rgba(0, 170, 255, 0.15), rgba(0, 170, 255, 0.08));
+  box-shadow: 0 0 8px rgba(0, 170, 255, 0.2);
+}
+
+.prog-holo .prog-btn:focus {
+  border-color: var(--prog-accent);
+  box-shadow: 0 0 0 2px rgba(0, 170, 255, 0.25);
+}
+
+.prog-holo .prog-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 4px rgba(0, 170, 255, 0.15);
+}
+
+.prog-holo .prog-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.prog-holo .prog-btn--primary {
+  background: linear-gradient(180deg, rgba(0, 170, 255, 0.25), rgba(0, 170, 255, 0.15));
+  border-color: var(--prog-accent);
+  color: var(--prog-text-bright);
+  box-shadow: 0 0 10px rgba(0, 170, 255, 0.15);
+}
+
+.prog-holo .prog-btn--primary:hover {
+  background: linear-gradient(180deg, rgba(0, 170, 255, 0.3), rgba(0, 170, 255, 0.2));
+  border-color: var(--prog-accent);
+  box-shadow: 0 0 14px rgba(0, 170, 255, 0.25);
+}
+
+.prog-holo .prog-btn--secondary {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1));
+  border-color: var(--prog-border-dim);
+  color: var(--prog-text-dim);
+}
+
+.prog-holo .prog-btn--secondary:hover {
+  border-color: var(--prog-border);
+  color: var(--prog-text);
+}
+
+.prog-holo .prog-btn--success {
+  border-color: var(--prog-positive);
+  color: var(--prog-positive);
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.1);
+}
+
+.prog-holo .prog-btn--success:hover {
+  background: rgba(34, 197, 94, 0.08);
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.2);
+}
+
+.prog-holo .prog-btn--danger {
+  border-color: var(--prog-negative);
+  color: var(--prog-negative);
+}
+
+.prog-holo .prog-btn--danger:hover {
+  background: rgba(239, 68, 68, 0.08);
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
+}

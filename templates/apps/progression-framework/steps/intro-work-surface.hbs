@@ -1,0 +1,97 @@
+<div class="prog-intro-surface">
+  {{!-- OS Header Bar --}}
+  <div class="prog-intro-header">
+    <div class="prog-intro-header__left">
+      <span class="prog-intro-system-name">{{systemName}}</span>
+    </div>
+    <div class="prog-intro-header__center">
+      <span class="prog-intro-time">{{currentTime}}</span>
+    </div>
+    <div class="prog-intro-header__right">
+      <div class="prog-intro-signal">
+        {{#each signalBars}}
+          <span class="prog-intro-signal__bar {{#if this.active}}active{{/if}}"></span>
+        {{/each}}
+      </div>
+      <span class="prog-intro-battery">{{battery}}%</span>
+    </div>
+  </div>
+
+  {{!-- Main Panel --}}
+  <div class="prog-intro-panel">
+    {{!-- Scanline Overlay --}}
+    <div class="prog-intro-scanlines"></div>
+
+    {{!-- Text Display Area --}}
+    <div class="prog-intro-text-area">
+      {{#if currentStepData}}
+        <div class="prog-intro-text-container">
+          {{!-- Label (English) --}}
+          <div class="prog-intro-label prog-intro-label--{{currentStepData.state}}">
+            {{currentStepData.label}}
+          </div>
+
+          {{!-- Aurabesh Text (Diegetic) --}}
+          <div class="prog-intro-aurabesh prog-intro-aurabesh--{{currentStepData.state}}">
+            <span class="prog-intro-aurabesh__text">{{currentStepData.aurabesh}}</span>
+            {{#if (eq currentStepData.state "processing")}}
+              <span class="prog-intro-cursor prog-intro-cursor--blink"></span>
+            {{/if}}
+          </div>
+
+          {{!-- Status Indicator --}}
+          <div class="prog-intro-status prog-intro-status--{{currentStepData.state}}">
+            {{#if (eq currentStepData.state "processing")}}
+              <span class="prog-intro-status__icon">⊙</span>
+              <span class="prog-intro-status__text">PROCESSING</span>
+            {{else if (eq currentStepData.state "success")}}
+              <span class="prog-intro-status__icon">✓</span>
+              <span class="prog-intro-status__text">SUCCESS</span>
+            {{else if (eq currentStepData.state "unknown")}}
+              <span class="prog-intro-status__icon">!</span>
+              <span class="prog-intro-status__text">UNKNOWN</span>
+            {{else}}
+              <span class="prog-intro-status__icon">○</span>
+              <span class="prog-intro-status__text">WAITING</span>
+            {{/if}}
+          </div>
+        </div>
+      {{/if}}
+    </div>
+
+    {{!-- Progress Bar --}}
+    <div class="prog-intro-progress-container">
+      <div class="prog-intro-progress-bar">
+        <div class="prog-intro-progress-fill" style="width: {{progressPercent}}%"></div>
+      </div>
+      <div class="prog-intro-progress-text">
+        {{stepNumber}} / {{bootSequenceLength}}
+      </div>
+    </div>
+
+    {{!-- Identity Block (shown after sequence complete) --}}
+    {{#if sequenceComplete}}
+      <div class="prog-intro-identity-block prog-intro-identity-block--fade-in">
+        <div class="prog-intro-identity-label">WELCOME</div>
+        <div class="prog-intro-identity-subtext">Ready to begin character registration.</div>
+      </div>
+    {{/if}}
+  </div>
+
+  {{!-- Footer: Continue Button (shown when sequence complete) --}}
+  {{!-- data-action="next-step" delegates to shell._onNextStep via ApplicationV2 action system --}}
+  {{#if sequenceComplete}}
+    <div class="prog-intro-footer prog-intro-footer--fade-in">
+      <button class="prog-intro-continue-btn prog-btn prog-btn--primary"
+              type="button"
+              data-action="next-step">
+        <i class="fas fa-arrow-right"></i>
+        Continue
+      </button>
+    </div>
+  {{else}}
+    <div class="prog-intro-footer">
+      <div class="prog-intro-footer-placeholder"></div>
+    </div>
+  {{/if}}
+</div>

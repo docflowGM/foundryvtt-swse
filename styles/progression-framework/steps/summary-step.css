@@ -1,0 +1,443 @@
+/**
+ * Summary Step Styling
+ * Read-only review of character progression
+ */
+
+/* ------ Summary Step Surface ------ */
+.prog-summary-surface {
+  display: contents;
+}
+
+/* ------ Left Panel: Identity Card ------ */
+.prog-identity-card {
+  margin-top: 1rem;
+  padding: 1.5rem;
+  background: var(--prog-bg-raised);
+  border: 2px solid var(--prog-accent-dim);
+  border-radius: 4px;
+  box-shadow: 0 0 12px rgba(0, 170, 255, 0.15);
+}
+
+.prog-identity-name {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--prog-accent);
+  text-align: center;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+}
+
+.prog-identity-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--prog-accent), transparent);
+  margin: 1rem 0;
+}
+
+/* ------ Name Input Section (Phase 2 Summary Refactor) ------ */
+.prog-name-input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.prog-input-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--prog-text-dim);
+}
+
+.prog-text-input {
+  padding: 0.75rem;
+  background: var(--prog-bg-surface);
+  border: 1px solid var(--prog-border-accent);
+  border-radius: 3px;
+  font-size: 1rem;
+  color: var(--prog-text);
+  transition: border-color 0.2s;
+}
+
+.prog-text-input:focus {
+  outline: none;
+  border-color: var(--prog-accent);
+  box-shadow: 0 0 8px rgba(0, 170, 255, 0.3);
+}
+
+.prog-random-name-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.prog-btn--small {
+  padding: 0.5rem 0.75rem;
+  background: var(--prog-bg-surface);
+  border: 1px solid var(--prog-border-accent);
+  border-radius: 3px;
+  color: var(--prog-accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.prog-btn--small:hover {
+  background: var(--prog-bg-selected);
+  border-color: var(--prog-accent);
+  color: var(--prog-accent-bright);
+}
+
+.prog-btn--small i {
+  margin-right: 0.3rem;
+}
+
+/* ------ Level Input Section (Phase 2 Summary Refactor) ------ */
+.prog-level-input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.prog-level-display {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.prog-level-slider {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--prog-bg-surface);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.prog-level-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--prog-accent);
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(0, 170, 255, 0.4);
+  transition: all 0.2s;
+}
+
+.prog-level-slider::-webkit-slider-thumb:hover {
+  background: var(--prog-accent-bright);
+  box-shadow: 0 0 12px rgba(0, 170, 255, 0.6);
+}
+
+.prog-level-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--prog-accent);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 8px rgba(0, 170, 255, 0.4);
+  transition: all 0.2s;
+}
+
+.prog-level-slider::-moz-range-thumb:hover {
+  background: var(--prog-accent-bright);
+  box-shadow: 0 0 12px rgba(0, 170, 255, 0.6);
+}
+
+.prog-level-value {
+  min-width: 2.5rem;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--prog-accent);
+}
+
+.prog-identity-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.prog-identity-stat {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.prog-stat-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--prog-text-dim);
+}
+
+.prog-stat-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--prog-text);
+}
+
+.prog-creation-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: var(--prog-info);
+  border-left: 2px solid var(--prog-accent);
+  border-radius: 2px;
+  font-size: 0.8rem;
+  color: var(--prog-text);
+  line-height: 1.4;
+}
+
+.prog-creation-note i {
+  margin-top: 2px;
+  color: var(--prog-accent);
+  flex-shrink: 0;
+}
+
+/* ------ Center Panel: Summary Sections ------ */
+.prog-summary-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--prog-border);
+}
+
+.prog-summary-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.prog-section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--prog-text);
+  margin-bottom: 0.75rem;
+}
+
+.prog-section-header i {
+  font-size: 0.95rem;
+  color: var(--prog-accent);
+}
+
+/* Attributes Grid */
+.prog-attributes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.prog-attr-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.75rem;
+  background: var(--prog-bg-surface);
+  border: 1px solid var(--prog-border);
+  border-radius: 3px;
+}
+
+.prog-attr-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--prog-text-dim);
+  margin-bottom: 0.25rem;
+}
+
+.prog-attr-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--prog-text);
+}
+
+.prog-attr-value.prog-positive {
+  color: var(--prog-positive);
+}
+
+.prog-attr-value.prog-negative {
+  color: var(--prog-negative);
+}
+
+.prog-attr-value.prog-zero {
+  color: var(--prog-neutral);
+}
+
+/* Skills Display */
+.prog-skills-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.prog-skill-badge {
+  padding: 0.5rem 0.75rem;
+  background: var(--prog-bg-selected);
+  border: 1px solid var(--prog-positive);
+  border-radius: 3px;
+  font-size: 0.8rem;
+  color: var(--prog-positive);
+  font-weight: 600;
+}
+
+/* Items List (Feats, Talents) */
+.prog-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.prog-item-entry {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--prog-text);
+}
+
+.prog-item-entry i {
+  color: var(--prog-positive);
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+/* Empty State */
+.prog-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--prog-text-dim);
+}
+
+.prog-empty-state i {
+  font-size: 2.5rem;
+  color: var(--prog-accent);
+  margin-bottom: 0.75rem;
+  opacity: 0.5;
+}
+
+.prog-empty-state p {
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* ------ Right Panel: Checklist ------ */
+.prog-checklist {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.prog-checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+}
+
+.prog-checklist-item.complete {
+  background: var(--prog-positive-bg);
+}
+
+.prog-checklist-item i {
+  margin-top: 2px;
+  flex-shrink: 0;
+  font-size: 0.9rem;
+  color: var(--prog-text-dim);
+}
+
+.prog-checklist-item.complete i {
+  color: var(--prog-positive);
+}
+
+.prog-checklist-label {
+  font-size: 0.85rem;
+  color: var(--prog-text);
+  line-height: 1.4;
+}
+
+.prog-checklist-label strong {
+  font-weight: 700;
+  color: var(--prog-accent);
+}
+
+.prog-summary-guidance {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: var(--prog-bg-raised);
+  border-left: 3px solid var(--prog-accent);
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.prog-summary-guidance p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--prog-text-dim);
+  line-height: 1.5;
+}
+
+.prog-guidance-tip {
+  color: var(--prog-text) !important;
+  font-weight: 600;
+}
+
+.prog-guidance-tip i {
+  color: var(--prog-accent);
+  margin-right: 0.5rem;
+}
+
+/* ------ Responsive ------ */
+@media (max-width: 1200px) {
+  .prog-attributes-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .prog-identity-card {
+    padding: 1rem;
+  }
+
+  .prog-identity-name {
+    font-size: 1.4rem;
+    margin-bottom: 0.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .prog-attributes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .prog-identity-stats {
+    gap: 0.5rem;
+  }
+
+  .prog-summary-guidance {
+    padding: 0.75rem;
+    border-left-width: 2px;
+  }
+}

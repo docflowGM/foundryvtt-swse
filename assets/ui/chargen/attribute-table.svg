@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#071522"/>
+      <stop offset="1" stop-color="#020a12"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b2236" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#05121e" stop-opacity="0.97"/>
+    </linearGradient>
+    <linearGradient id="header" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0f3551"/>
+      <stop offset="0.5" stop-color="#134a70"/>
+      <stop offset="1" stop-color="#0f3551"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <pattern id="scan" patternUnits="userSpaceOnUse" width="8" height="8">
+      <rect width="8" height="1" fill="#8fe8ff" opacity="0.05"/>
+    </pattern>
+  </defs>
+
+  <rect width="720" height="420" fill="url(#bg)"/>
+  <rect x="18" y="18" width="684" height="384" rx="12" fill="url(#panel)" stroke="#4ad7ff" stroke-opacity="0.75" stroke-width="2"/>
+  <rect x="28" y="28" width="664" height="364" rx="8" fill="none" stroke="#9aefff" stroke-opacity="0.2"/>
+  <rect x="18" y="18" width="684" height="384" rx="12" fill="url(#scan)" opacity="0.35"/>
+
+  <!-- corner steel cuts -->
+  <path d="M18 50 L18 18 L50 18" fill="none" stroke="#9aefff" stroke-width="3" opacity="0.7"/>
+  <path d="M670 18 L702 18 L702 50" fill="none" stroke="#9aefff" stroke-width="3" opacity="0.7"/>
+  <path d="M18 370 L18 402 L50 402" fill="none" stroke="#9aefff" stroke-width="3" opacity="0.7"/>
+  <path d="M670 402 L702 402 L702 370" fill="none" stroke="#9aefff" stroke-width="3" opacity="0.7"/>
+
+  <rect x="44" y="40" width="632" height="46" rx="6" fill="url(#header)" stroke="#7be8ff" stroke-opacity="0.5"/>
+  <text x="360" y="70" text-anchor="middle" font-family="Orbitron, Eurostile, Arial, sans-serif" font-size="24" fill="#dffcff" letter-spacing="2">ATTRIBUTE TABLE</text>
+
+  <!-- column headers -->
+  <rect x="54" y="104" width="612" height="38" rx="4" fill="#0b2b44" stroke="#47d8ff" stroke-opacity="0.45"/>
+  <text x="92" y="128" font-family="Orbitron, Arial, sans-serif" font-size="16" fill="#bff7ff">STAT</text>
+  <text x="226" y="128" font-family="Orbitron, Arial, sans-serif" font-size="16" fill="#bff7ff">SCORE</text>
+  <text x="366" y="128" font-family="Orbitron, Arial, sans-serif" font-size="16" fill="#bff7ff">MOD</text>
+  <text x="502" y="128" font-family="Orbitron, Arial, sans-serif" font-size="16" fill="#bff7ff">STATUS</text>
+
+  <!-- rows -->
+
+  <rect x="54" y="150" width="612" height="36" rx="4" fill="#091a2a" stroke="#2bbde8" stroke-opacity="0.18"/>
+  <text x="88" y="173" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#e5fdff">STR</text>
+  <text x="232" y="173" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#e5fdff">14</text>
+  <text x="366" y="173" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#24ff7b" filter="url(#glow)">+2</text>
+  <rect x="486" y="157" width="118" height="22" rx="11" fill="#24ff7b" fill-opacity="0.12" stroke="#24ff7b" stroke-opacity="0.5"/>
+  <text x="545" y="173" text-anchor="middle" font-family="Orbitron, Arial, sans-serif" font-size="13" fill="#24ff7b">VALID</text>
+
+  <rect x="54" y="190" width="612" height="36" rx="4" fill="#091a2a" stroke="#2bbde8" stroke-opacity="0.18"/>
+  <text x="88" y="213" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#e5fdff">DEX</text>
+  <text x="232" y="213" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#e5fdff">12</text>
+  <text x="366" y="213" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#24ff7b" filter="url(#glow)">+1</text>
+  <rect x="486" y="197" width="118" height="22" rx="11" fill="#24ff7b" fill-opacity="0.12" stroke="#24ff7b" stroke-opacity="0.5"/>
+  <text x="545" y="213" text-anchor="middle" font-family="Orbitron, Arial, sans-serif" font-size="13" fill="#24ff7b">VALID</text>
+
+  <rect x="54" y="230" width="612" height="36" rx="4" fill="#091a2a" stroke="#2bbde8" stroke-opacity="0.18"/>
+  <text x="88" y="253" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#e5fdff">CON</text>
+  <text x="232" y="253" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#e5fdff">10</text>
+  <text x="366" y="253" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#ffd84a" filter="url(#glow)">+0</text>
+  <rect x="486" y="237" width="118" height="22" rx="11" fill="#ffd84a" fill-opacity="0.12" stroke="#ffd84a" stroke-opacity="0.5"/>
+  <text x="545" y="253" text-anchor="middle" font-family="Orbitron, Arial, sans-serif" font-size="13" fill="#ffd84a">REVIEW</text>
+
+  <rect x="54" y="270" width="612" height="36" rx="4" fill="#091a2a" stroke="#2bbde8" stroke-opacity="0.18"/>
+  <text x="88" y="293" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#e5fdff">INT</text>
+  <text x="232" y="293" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#e5fdff">8</text>
+  <text x="366" y="293" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#ff5858" filter="url(#glow)">-1</text>
+  <rect x="486" y="277" width="118" height="22" rx="11" fill="#ff5858" fill-opacity="0.12" stroke="#ff5858" stroke-opacity="0.5"/>
+  <text x="545" y="293" text-anchor="middle" font-family="Orbitron, Arial, sans-serif" font-size="13" fill="#ff5858">INVALID</text>
+
+  <rect x="54" y="310" width="612" height="36" rx="4" fill="#091a2a" stroke="#2bbde8" stroke-opacity="0.18"/>
+  <text x="88" y="333" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#e5fdff">WIS</text>
+  <text x="232" y="333" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#e5fdff">13</text>
+  <text x="366" y="333" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#24ff7b" filter="url(#glow)">+1</text>
+  <rect x="486" y="317" width="118" height="22" rx="11" fill="#24ff7b" fill-opacity="0.12" stroke="#24ff7b" stroke-opacity="0.5"/>
+  <text x="545" y="333" text-anchor="middle" font-family="Orbitron, Arial, sans-serif" font-size="13" fill="#24ff7b">VALID</text>
+
+  <rect x="54" y="350" width="612" height="36" rx="4" fill="#091a2a" stroke="#2bbde8" stroke-opacity="0.18"/>
+  <text x="88" y="373" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#e5fdff">CHA</text>
+  <text x="232" y="373" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#e5fdff">16</text>
+  <text x="366" y="373" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#24ff7b" filter="url(#glow)">+3</text>
+  <rect x="486" y="357" width="118" height="22" rx="11" fill="#24ff7b" fill-opacity="0.12" stroke="#24ff7b" stroke-opacity="0.5"/>
+  <text x="545" y="373" text-anchor="middle" font-family="Orbitron, Arial, sans-serif" font-size="13" fill="#24ff7b">VALID</text>
+
+  <rect x="54" y="360" width="612" height="18" rx="8" fill="#061019" stroke="#2bbde8" stroke-opacity="0.25"/>
+  <text x="72" y="374" font-family="Orbitron, Arial, sans-serif" font-size="10" fill="#7ddfff" letter-spacing="2">CURRENT BUILD SNAPSHOT • VALUES AND STATUS UPDATE LIVE</text>
+</svg>

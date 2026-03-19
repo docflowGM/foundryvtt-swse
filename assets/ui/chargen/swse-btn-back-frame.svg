@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="72" viewBox="0 0 320 72" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="72" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1D3B57"/>
+      <stop offset="1" stop-color="#09131F"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="320" y2="72" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9FE8FF"/>
+      <stop offset="0.5" stop-color="#46B9E8"/>
+      <stop offset="1" stop-color="#75D6FF"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-120%" width="160%" height="340%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <clipPath id="cut">
+      <path d="M22 2H318V58L304 70H2V14L14 2H22Z"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#cut)">
+    <path d="M22 2H318V58L304 70H2V14L14 2H22Z" fill="url(#bg)"/>
+    <path d="M22 2H318V58L304 70H2V14L14 2H22Z" stroke="url(#edge)" stroke-width="2.5"/>
+    <path d="M16 9H308V55L297 63H12V18L20 9H16Z" stroke="#B7F1FF" stroke-opacity=".28" stroke-width="1"/>
+    <path d="M26 8H314" stroke="#D7FAFF" stroke-opacity=".5" stroke-width="1.5"/>
+    <path d="M11 23V60" stroke="#7DE6FF" stroke-opacity=".45" stroke-width="2"/>
+    <path d="M17 58H298" stroke="#7DE6FF" stroke-opacity=".22" stroke-width="1.5"/>
+    <path d="M24 25H44" stroke="#96F0FF" stroke-width="2.4" stroke-linecap="round" filter="url(#glow)"/>
+    <path d="M24 25L12 36L24 47" stroke="#96F0FF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+    <rect x="54" y="25" width="196" height="20" rx="3" fill="#7DE6FF" fill-opacity=".05"/>
+  </g>
+</svg>

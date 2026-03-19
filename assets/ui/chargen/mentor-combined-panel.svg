@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="320" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#091827"/>
+      <stop offset="1" stop-color="#05101A"/>
+    </linearGradient>
+  </defs>
+  <path d="M26 18H1174L1186 30V290L1174 302H26L14 290V30L26 18Z" fill="url(#bg)" stroke="#48DBFF" stroke-width="3"/>
+  <path d="M44 36H270L278 44V248L270 256H44L36 248V44L44 36Z" fill="#0B1A29" stroke="#48DBFF" stroke-width="2.5"/>
+  <path d="M304 36H1154L1162 44V248L1154 256H304L296 248V44L304 36Z" fill="#081726" stroke="#48DBFF" stroke-width="2.5"/>
+  <path d="M296 118L278 132L296 146" stroke="#48DBFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M50 252H264L272 260V278L264 286H50L42 278V260L50 252Z" fill="#091B29" stroke="#48DBFF" stroke-opacity="0.75"/>
+  <path d="M58 38H116" stroke="#7CE9FF" stroke-width="2" stroke-opacity="0.55"/>
+  <path d="M1040 256H1138" stroke="#7CE9FF" stroke-width="2" stroke-opacity="0.35"/>
+  <path d="M330 38H420" stroke="#7CE9FF" stroke-width="2" stroke-opacity="0.55"/>
+</svg>

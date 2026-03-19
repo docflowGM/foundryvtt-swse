@@ -2,13 +2,12 @@
  * levelup-shell.js
  *
  * Level-up entry point.
- * Replaces: scripts/apps/levelup/levelup-main.js
- * (Activated when useNewProgressionShell setting is true)
+ * Sole authority for level-up progression (legacy levelup-main decommissioned)
  *
  * Canonical level-up step sequence:
  *   class → [attribute] → [skills]* → general-feat → class-feat →
  *   general-talent → class-talent → [force-powers]* → [force-secrets]* →
- *   [force-techniques]* → [starship-maneuvers]* → confirm
+ *   [force-techniques]* → [starship-maneuvers]* → FINAL (no separate confirm)
  *
  * Steps marked * are CONDITIONAL — discovered from engine via ConditionalStepResolver.
  * The shell NEVER hardcodes conditional step logic directly.
@@ -20,7 +19,6 @@ import { ClassStep } from './steps/class-step.js';
 import { AttributeStep } from './steps/attribute-step.js';
 import { GeneralFeatStep, ClassFeatStep } from './steps/feat-step.js';
 import { GeneralTalentStep, ClassTalentStep } from './steps/talent-step.js';
-import { ConfirmStep } from './steps/confirm-step.js';
 
 export class LevelupShell extends ProgressionShell {
   static async open(actor, options = {}) {
@@ -87,7 +85,7 @@ class NullStepPlugin {
 /**
  * Canonical step configuration for level-up.
  * Does NOT include conditional steps (skills, force powers, etc.).
- * Those are discovered by ConditionalStepResolver and inserted before 'confirm'.
+ * Those are discovered by ConditionalStepResolver and inserted before final step.
  */
 const LEVELUP_CANONICAL_STEPS = [
   {
@@ -139,15 +137,7 @@ const LEVELUP_CANONICAL_STEPS = [
     category: StepCategory.CATEGORY_SPECIFIC,
     pluginClass: ClassTalentStep,
   },
-  {
-    stepId: 'confirm',
-    label: 'Confirm',
-    icon: 'fa-check-circle',
-    type: StepType.CONFIRM,
-    category: StepCategory.CONFIRMATION,
-    pluginClass: ConfirmStep,
-    mode: 'levelup',
-  },
+  // NOTE: Confirm merged into final step (class-talent is final step in levelup)
 ];
 
 // Replace null pluginClass entries with NullStepPlugin

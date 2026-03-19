@@ -47,6 +47,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/feats-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/force-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/racial-ability-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/resources-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-armor-card.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-item-card.hbs',
@@ -107,9 +108,72 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/items/base/item-sheet.hbs',
 
   // ==============================
-  // Applications
+  // Progression Applications (Legacy & New Shell)
   // ==============================
+  'systems/foundryvtt-swse/templates/apps/chargen.hbs',
+  'systems/foundryvtt-swse/templates/apps/levelup.hbs',
   'systems/foundryvtt-swse/templates/apps/npc-levelup-entry.hbs',
+  'systems/foundryvtt-swse/templates/apps/levelup-engine-ui.hbs',
+  'systems/foundryvtt-swse/templates/apps/chargen-background-mentor-suggestion.hbs',
+  'systems/foundryvtt-swse/templates/apps/chargen-class-required-dialog.hbs',
+  'systems/foundryvtt-swse/templates/apps/chargen-custom-language.hbs',
+  'systems/foundryvtt-swse/templates/apps/chargen-droid-import.hbs',
+  'systems/foundryvtt-swse/templates/apps/chargen-feat-suggestions-dialog.hbs',
+  'systems/foundryvtt-swse/templates/apps/chargen-skill-focus.hbs',
+  'systems/foundryvtt-swse/templates/apps/chargen-template-selection.hbs',
+  'systems/foundryvtt-swse/templates/apps/chargen/ability-rolling.hbs',
+
+  // ==============================
+  // Progression Framework (New Shell System)
+  // ==============================
+  'systems/foundryvtt-swse/templates/apps/progression-framework/progression-shell.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/mentor-rail.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/progress-rail.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/utility-bar.hbs',
+
+  // Step Work Surfaces
+  'systems/foundryvtt-swse/templates/apps/progression-framework/steps/attribute-work-surface.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/steps/background-work-surface.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/steps/class-work-surface.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/steps/confirm-work-surface.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/steps/droid-builder-work-surface.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/steps/droid-builder-details.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/steps/feat-work-surface.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/steps/force-power-work-surface.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/steps/force-secret-work-surface.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/steps/force-technique-work-surface.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/steps/l1-survey-work-surface.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/steps/language-work-surface.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/steps/near-human-work-surface.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/steps/species-work-surface.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/steps/starship-maneuver-work-surface.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/steps/talent-tree-browser.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/steps/talent-tree-graph.hbs',
+
+  // Details Panels
+  'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/attribute-details.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/background-details.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/class-details.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/confirm-details.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/empty-state.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/feat-details.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/force-power-details.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/force-secret-details.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/force-technique-details.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/language-details.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/species-details.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/starship-maneuver-details.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/talent-details.hbs',
+
+  // Progression (Legacy)
+  'systems/foundryvtt-swse/templates/apps/progression/attribute-method.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression/sidebar.hbs',
+
+  // Chat
+  'systems/foundryvtt-swse/templates/chat/progression-session-summary.hbs',
+
+  // Chargen Partials
+  'systems/foundryvtt-swse/templates/partials/chargen/near-human.hbs',
 
 ];
 

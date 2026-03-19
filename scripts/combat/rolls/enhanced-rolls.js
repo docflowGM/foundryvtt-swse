@@ -648,7 +648,7 @@ export class SWSERoll {
       if (!roll) {return null;}
 
       // Analyze critical threat (even for autofire)
-      const d20 = roll.dice[0].results[0].result;
+      const d20 = mode === "take10" ? 10 : roll.dice[0].results[0].result;
       const critAnalysis = analyzeCriticalThreat(weapon, d20, roll.total);
       let critConfirmed = false;
       const critMultiplier = getCriticalMultiplier(actor, weapon);
@@ -1168,6 +1168,7 @@ export class SWSERoll {
     }
 
     try {
+       const mode = options?.mode ?? (options?.take10 ? "take10" : "roll");
       // Get modifiers from dialog if requested
       let modifiers = {
         customModifier: 0,
@@ -1209,12 +1210,11 @@ export class SWSERoll {
       const total = skill.total + fpBonus + modifiers.customModifier;
 
       // Build formula
-      const formula = `1d20 + ${total}`;
-
+      const formula = mode === "take10" ? `10 + ${total}` : `1d20 + ${total}`;
       const roll = await this._safeRoll(formula);
       if (!roll) {return null;}
 
-      const d20 = roll.dice[0].results[0].result;
+      const d20 = mode === "take10" ? 10 : roll.dice[0].results[0].result;
 
       // Breakdown components
       const parts = [];
@@ -1523,7 +1523,9 @@ export class SWSERoll {
 
       const context = { actor };
 
-      if (!callPreRollHook(ROLL_HOOKS.PRE_INITIATIVE, context)) {
+      
+      const mode = options?.mode ?? (options?.take10 ? "take10" : "roll");
+if (!callPreRollHook(ROLL_HOOKS.PRE_INITIATIVE, context)) {
         return { cancelled: true };
       }
 
@@ -1557,6 +1559,7 @@ export class SWSERoll {
       const html = `
         <div class="swse-initiative-card">
           <h3><i class="fa-solid fa-bolt"></i> Initiative</h3>
+          ${mode === "take10" ? `<div class="roll-mode">Take 10</div>` : ``}
           <div class="roll-total">${roll.total}</div>
           <div class="roll-formula">${formula}</div>
           <div class="roll-breakdown">DEX ${dexMod >= 0 ? '+' : ''}${dexMod}${initBonus ? `, Misc ${initBonus >= 0 ? '+' : ''}${initBonus}` : ''}</div>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 140" fill="none">
+  <defs>
+    <linearGradient id="steel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#34404D"/>
+      <stop offset="0.22" stop-color="#101922"/>
+      <stop offset="0.78" stop-color="#081018"/>
+      <stop offset="1" stop-color="#3E5261"/>
+    </linearGradient>
+  </defs>
+  <path d="M18 26L46 10H1354L1382 26V114L1354 130H46L18 114Z" fill="url(#steel)"/>
+  <path d="M30 33L52 21H1348L1370 33V107L1348 119H52L30 107Z" fill="#050B13"/>
+  <path d="M30 33L52 21H1348L1370 33V107L1348 119H52L30 107Z" stroke="#63E5FF" stroke-width="2.2"/>
+  <path d="M75 69H515" stroke="#7AECFF" opacity="0.24" stroke-width="1.4"/>
+  <path d="M885 69H1325" stroke="#7AECFF" opacity="0.24" stroke-width="1.4"/>
+  <path d="M575 38H825L848 69L825 100H575L552 69Z" fill="#081620" stroke="#63E5FF" stroke-width="1.3"/>
+</svg>

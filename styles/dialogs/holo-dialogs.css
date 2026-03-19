@@ -140,8 +140,18 @@
    DIALOG-SPECIFIC: Mentor Suggestion Dialog
    ═════════════════════════════════════════════════════════════════════════ */
 
+/* ============================================================================
+   MENTOR DIALOGS — modal-frame.svg outer chrome
+   All standalone mentor dialogs use the same datapad modal frame as the
+   progression shell. Player stays in the same device family.
+   Relative path from styles/dialogs/ → ../../assets/ui/chargen/
+   ============================================================================ */
+
 [data-theme=holo] .mentor-suggestion-dialog {
-  background: linear-gradient(135deg, var(--swse-bg-dark) 0%, var(--swse-bg-mid) 100%);
+  background-image:  url('../../assets/ui/chargen/modal-frame.svg');
+  background-size:   100% 100%;
+  background-repeat: no-repeat;
+  background-color:  #040a12;
 }
 
 [data-theme=holo] .mentor-suggestion-dialog .mentor-intro,
@@ -155,11 +165,17 @@
    ═════════════════════════════════════════════════════════════════════════ */
 
 [data-theme=holo] .mentor-chat-dialog {
-  background: linear-gradient(135deg, var(--swse-bg-dark) 0%, var(--swse-bg-mid) 100%);
+  background-image:  url('../../assets/ui/chargen/modal-frame.svg');
+  background-size:   100% 100%;
+  background-repeat: no-repeat;
+  background-color:  #040a12;
 }
 
 [data-theme=holo] .mentor-chat-dialog.kotor-style {
-  background: linear-gradient(135deg, var(--swse-bg-dark) 0%, var(--swse-bg-mid) 100%);
+  background-image:  url('../../assets/ui/chargen/modal-frame.svg');
+  background-size:   100% 100%;
+  background-repeat: no-repeat;
+  background-color:  #040a12;
 }
 
 [data-theme=holo] .kotor-conversation-box {
@@ -226,7 +242,10 @@
    ═════════════════════════════════════════════════════════════════════════ */
 
 [data-theme=holo] .mentor-reflective-dialog {
-  background: linear-gradient(135deg, var(--swse-bg-dark) 0%, var(--swse-bg-mid) 100%);
+  background-image:  url('../../assets/ui/chargen/modal-frame.svg');
+  background-size:   100% 100%;
+  background-repeat: no-repeat;
+  background-color:  #040a12;
 }
 
 [data-theme=holo] .mentor-header {

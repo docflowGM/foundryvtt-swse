@@ -448,6 +448,26 @@ export async function registerSystemSettings() {
     default: true
   });
 
+  // Store: Aurebesh font for loading overlay glyphs
+  game.settings.register('foundryvtt-swse', 'useAurebesh', {
+    name: 'Use Aurebesh Font in Store',
+    hint: 'When enabled, the Store loading overlay and item glyphs display in Aurebesh (the Star Wars alphabet). Disable for standard Latin characters.',
+    scope: 'client',
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  // Store: Skip loading overlay animation
+  game.settings.register('foundryvtt-swse', 'storeSkipLoadingOverlay', {
+    name: 'Skip Store Loading Overlay',
+    hint: 'When enabled, the Store skips the animated loading overlay and opens immediately. Useful for slower machines or accessibility preferences.',
+    scope: 'client',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   // Lightsaber Construction Mode
   game.settings.register('foundryvtt-swse', 'lightsaberConstructionMode', {
     name: 'Lightsaber Construction Mode',

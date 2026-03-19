@@ -177,6 +177,38 @@ export default class SWSEApplicationV2 extends HandlebarsApplicationMixin(Applic
   }
 
   /**
+   * Append-only tracked listener binding — does NOT clear existing listeners.
+   *
+   * Use this when you need to add supplementary bindings after a primary
+   * _bindTrackedListeners() call, without destroying the navigation buttons
+   * or other listeners already registered. All appended listeners are still
+   * tracked and will be cleared on the NEXT _bindTrackedListeners() call.
+   *
+   * @param {Array<Object>} bindings - Array of { selector, event, handler } objects
+   */
+  _extendTrackedListeners(bindings = []) {
+    const root = this.element;
+    if (!root) {
+      this._log('_extendTrackedListeners: element not available');
+      return;
+    }
+
+    if (!this._eventListeners) {
+      this._eventListeners = [];
+    }
+
+    // Append new listeners without clearing existing ones
+    bindings.forEach(({ selector, event, handler }) => {
+      const nodeList = root.querySelectorAll(selector);
+      nodeList.forEach(el => {
+        const boundHandler = handler.bind(this);
+        el.addEventListener(event, boundHandler);
+        this._eventListeners.push({ el, event, handler: boundHandler });
+      });
+    });
+  }
+
+  /**
    * Clean up all tracked listeners manually (if needed before close)
    * Normally not necessary; listeners are cleaned in _bindTrackedListeners
    */

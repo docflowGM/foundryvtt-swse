@@ -1,20 +1,24 @@
 /**
- * chargen-shell.js
+ * chargen-shell.js — Character generation shell
  *
- * Character generation entry point.
- * Replaces: scripts/apps/chargen/chargen-main.js
- * (Activated when useNewProgressionShell setting is true)
+ * Character generation entry point for the new progression framework.
+ * Sole authority for character generation (legacy monolithic chargen decommissioned)
  *
- * Canonical chargen step sequence (Heroic / NPC):
- *   name → race → attribute → class → l1-survey → background →
- *   languages → general-feat → class-feat → general-talent → class-talent →
- *   [conditional steps] → confirm → [store] → [confirm-post-store]
+ * CANONICAL PROGRESSION SEQUENCE (LOCKED — Corrective Pass + Intro Phase):
+ *   intro → species → attribute → class → l1-survey → background →
+ *   skills → feats (general+class) → talents (general+class) → languages →
+ *   summary (final registration, includes naming, money roll, HP preview)
  *
- * Droid chargen replaces race with droid-type+builder (Wave 11).
+ * Optional conditional steps (same shell, modular):
+ *   [force-selection], [starship-maneuvers]
+ *
+ * Droid chargen: species-step routes to droid-builder-step (not separate UI)
  */
 
 import { ProgressionShell } from './shell/progression-shell.js';
 import { createStepDescriptor, StepCategory, StepType } from './steps/step-descriptor.js';
+import { IntroStep } from './steps/intro-step.js';
+import { SkillsStep } from './steps/skills-step.js';
 import { SpeciesStep } from './steps/species-step.js';
 import { DroidBuilderStep } from './steps/droid-builder-step.js';
 import { DroidBuilderAdapter } from './steps/droid-builder-adapter.js';
@@ -25,13 +29,23 @@ import { BackgroundStep } from './steps/background-step.js';
 import { LanguageStep } from './steps/language-step.js';
 import { GeneralFeatStep, ClassFeatStep } from './steps/feat-step.js';
 import { GeneralTalentStep, ClassTalentStep } from './steps/talent-step.js';
-import { ConfirmStep } from './steps/confirm-step.js';
+import { SummaryStep } from './steps/summary-step.js';
 
 export class ChargenShell extends ProgressionShell {
   static async open(actor, options = {}) {
-    return ProgressionShell.open(actor, 'chargen', options);
+    // CRITICAL: Use .call(this, ...) to ensure ProgressionShell.open() creates a
+    // ChargenShell instance (not a ProgressionShell). This ensures _getCanonicalDescriptors()
+    // calls ChargenShell._getCanonicalDescriptors() (which has 13 steps), not the base
+    // ProgressionShell._getCanonicalDescriptors() (which returns empty array).
+    return ProgressionShell.open.call(this, actor, 'chargen', options);
   }
 
+  /**
+   * Canonical chargen step sequence.
+   * Routes droid characters to droid-builder-step instead of species-step.
+   *
+   * @returns {import('./steps/step-descriptor.js').StepDescriptor[]}
+   */
   /**
    * Canonical chargen step sequence.
    * Routes droid characters to droid-builder-step instead of species-step.
@@ -116,15 +130,30 @@ class NullStepPlugin {
 /**
  * Canonical step configuration for chargen.
  * Order is authoritative. Plugin classes are null until their wave implements them.
+ *
+ * NOTE: NameStep has been removed (Phase 2 Summary Refactor).
+ * Character naming is now handled in SummaryStep as "registering a datapad profile".
+ * Step sequence: Species → Attributes → Class → Skills → Feats → Talents → Summary (with naming) → Confirm
+ */
+/**
+ * CANONICAL PROGRESSION SEQUENCE (LOCKED)
+ *
+ * Order is authoritative per user specification.
+ * Intro Phase: Diegetic Versafunction Datapad boot sequence (immersive only)
+ * Corrective Pass: Reordered to match locked structure.
+ * Confirm merged into Summary (Summary is final step).
  */
 const CHARGEN_CANONICAL_STEPS = [
+  // PHASE 0: Introduction
   {
-    stepId: 'name',
-    label: 'Name',
-    icon: 'fa-id-badge',
-    type: StepType.IDENTITY,
-    pluginClass: null, // Wave 3+
+    stepId: 'intro',
+    label: 'Datapad Boot',
+    icon: 'fa-circle-notch',
+    type: 'intro',
+    pluginClass: IntroStep,
   },
+
+  // PHASE 1: Identity
   {
     stepId: 'species',
     label: 'Species',
@@ -134,6 +163,8 @@ const CHARGEN_CANONICAL_STEPS = [
     // based on whether character is droid or biological
     pluginClass: null,
   },
+
+  // PHASE 2: Core Build
   {
     stepId: 'attribute',
     label: 'Attributes',
@@ -156,6 +187,8 @@ const CHARGEN_CANONICAL_STEPS = [
     isSkippable: true,
     pluginClass: L1SurveyStep,
   },
+
+  // PHASE 3: Character Development
   {
     stepId: 'background',
     label: 'Background',
@@ -164,13 +197,14 @@ const CHARGEN_CANONICAL_STEPS = [
     pluginClass: BackgroundStep,
   },
   {
-    stepId: 'languages',
-    label: 'Languages',
-    icon: 'fa-language',
-    type: StepType.NARRATIVE,
-    category: StepCategory.CATEGORY_SPECIFIC,
-    pluginClass: LanguageStep,
+    stepId: 'skills',
+    label: 'Skills',
+    icon: 'fa-book-open',
+    type: StepType.BUILD,
+    pluginClass: SkillsStep,
   },
+
+  // PHASE 4: Abilities & Powers
   {
     stepId: 'general-feat',
     label: 'General Feat',
@@ -207,15 +241,28 @@ const CHARGEN_CANONICAL_STEPS = [
     pluginClass: ClassTalentStep,
     slotType: 'class',
   },
+
+  // PHASE 5: Communication & Registration
   {
-    stepId: 'confirm',
-    label: 'Confirm',
-    icon: 'fa-check-circle',
+    stepId: 'languages',
+    label: 'Languages',
+    icon: 'fa-language',
+    type: StepType.NARRATIVE,
+    category: StepCategory.CATEGORY_SPECIFIC,
+    pluginClass: LanguageStep,
+  },
+
+  // FINAL: Registration (encompasses both review and confirmation)
+  {
+    stepId: 'summary',
+    label: 'Summary',
+    icon: 'fa-list-check',
     type: StepType.CONFIRM,
     category: StepCategory.CONFIRMATION,
-    pluginClass: ConfirmStep,
-    mode: 'chargen',
+    pluginClass: SummaryStep,
   },
+  // NOTE: ConfirmStep merged into Summary per corrective pass.
+  // Summary is now the final canonical step.
 ];
 
 // Replace null pluginClass entries with NullStepPlugin

@@ -140,18 +140,14 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
   /**
    * Canonical entry point for opening level up UI
+   * Routes to new ProgressionShell (sole authority — legacy levelup is decommissioned)
    * @param {Actor} actor - The actor to level up
-   * @returns {SWSELevelUpEnhanced} The level up dialog instance
+   * @returns {LevelupShell} The level up progression shell instance
    */
   static async showForActor(actor) {
-    // Feature flag: route to new ProgressionShell when enabled
-    if (game.settings?.get?.('foundryvtt-swse', 'useNewProgressionShell')) {
-      const { LevelupShell } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/levelup-shell.js');
-      return LevelupShell.open(actor);
-    }
-    const dialog = new SWSELevelUpEnhanced(actor);
-    dialog.render({ force: true });
-    return dialog;
+    // NEW SHELL IS NOW THE ONLY ACTIVE PATH
+    const { LevelupShell } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/levelup-shell.js');
+    return LevelupShell.open(actor);
   }
 
   /**
@@ -194,20 +190,8 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
     this.actor = actor;
     this.object = actor; // AppV2 contract: object is the document being edited
 
-    // Check if character is incomplete and redirect to character generator
-    const incompleteStep = this._detectIncompleteCharacter(actor);
-    if (incompleteStep) {
-      ui.notifications.info('Character appears incomplete. Opening Character Generator to complete setup...');
-      // Import CharacterGenerator dynamically to avoid circular dependency
-      import("/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js").then(module => {
-        const CharacterGenerator = module.default;
-        const chargen = new CharacterGenerator(actor);
-        chargen.currentStep = incompleteStep;
-        chargen.render(true);
-      });
-      // Don't throw — it can cause Foundry hook cascade failures. Instead, close this app early.
-      return;
-    }
+    // NOTE: Removed chargen redirect — level-up must not silently swap itself for chargen.
+    // If the actor is incomplete, warn and continue. The chargen button is separate.
 
     this.currentStep = 'class'; // class, multiclass-bonus, ability-increase, feat, force-powers, talent, skills, summary
 
@@ -235,23 +219,42 @@ export class SWSELevelUpEnhanced extends SWSEFormApplicationV2 {
 
     // Initialize progression engine in levelup mode
     // This is the single source of truth for all progression data
-    this.progressionEngine = new SWSEProgressionEngine(actor, 'levelup');
-    this.progressionEngine.loadStateFromActor();
+    try {
+      this.progressionEngine = new SWSEProgressionEngine(actor, 'levelup');
+      this.progressionEngine.loadStateFromActor();
 
-    // Clear suggestion cache for fresh suggestions in this level-up session
-    this.progressionEngine.clearSuggestionCache();
+      // Clear suggestion cache for fresh suggestions in this level-up session
+      this.progressionEngine.clearSuggestionCache();
 
-    swseLogger.log('SWSE LevelUp | Initialized progression engine in levelup mode');
+      swseLogger.log('SWSE LevelUp | Initialized progression engine in levelup mode');
+    } catch (err) {
+      // Non-fatal: create a fallback progression engine
+      SWSELogger.warn('SWSE LevelUp | Progression engine initialization failed, using fallback', err);
+      try {
+        this.progressionEngine = new SWSEProgressionEngine(actor, 'levelup');
+      } catch (fallbackErr) {
+        SWSELogger.error('SWSE LevelUp | Fallback progression engine also failed', fallbackErr);
+        this.progressionEngine = null;
+      }
+    }
 
     // Mentor system - initially use base class mentor, will update when class is selected
-    const level1Class = getLevel1Class(this.actor);
-    this.mentor = getMentorForClass(level1Class);
+    try {
+      const level1Class = getLevel1Class(this.actor);
+      this.mentor = getMentorForClass(level1Class);
 
-    // Get the class level for the starting class to show appropriate mentor greeting
-    const characterClasses = getCharacterClasses(this.actor);
-    const level1ClassLevel = (characterClasses[level1Class] || 0) + 1;
-    this.mentorGreeting = getMentorGreeting(this.mentor, level1ClassLevel, this.actor);
-    this.currentMentorClass = level1Class; // Track which class's mentor we're showing
+      // Get the class level for the starting class to show appropriate mentor greeting
+      const characterClasses = getCharacterClasses(this.actor);
+      const level1ClassLevel = (characterClasses[level1Class] || 0) + 1;
+      this.mentorGreeting = getMentorGreeting(this.mentor, level1ClassLevel, this.actor);
+      this.currentMentorClass = level1Class; // Track which class's mentor we're showing
+    } catch (err) {
+      // Non-fatal: if mentor initialization fails, continue with null mentor
+      SWSELogger.warn('SWSE LevelUp | Mentor initialization failed, continuing with null mentor', err);
+      this.mentor = null;
+      this.mentorGreeting = '';
+      this.currentMentorClass = null;
+    }
   }
 
   get title() {

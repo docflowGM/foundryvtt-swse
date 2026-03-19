@@ -178,6 +178,17 @@ export class ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   /**
+   * Return template spec for the summary panel (left column).
+   * Override in subclasses to provide build-summary context.
+   * Return null to leave the panel empty (default behavior).
+   * @param {Object} context - Shell context
+   * @returns {{ template: string, data: Object } | null}
+   */
+  renderSummaryPanel(context) {
+    return null;
+  }
+
+  /**
    * Return template spec for the work-surface region.
    * @param {Object} stepData - Data from getStepData()
    * @returns {{ template: string, data: Object } | null}

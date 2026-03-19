@@ -1,33 +1,76 @@
+{{!--
+  species-work-surface.hbs
+  CENTER PANEL — dense species databank browser
+
+  Species are displayed as compact horizontal rows for efficient browsing
+  of 100+ entries. Optional small thumbnail; clean fallback if no image.
+
+  Hover → updates right details panel
+  Click → focus (selects and updates left summary)
+  Double-click or action="commit-item" → commits species
+--}}
+
 <div class="prog-species-browse">
-  <div class="prog-species-grid" role="list">
+
+  {{!-- Row list --}}
+  <div class="prog-species-list" role="listbox" aria-label="Species">
+
     {{#each species}}
-      <button class="prog-species-card
-                     {{#if (eq id ../focusedSpeciesId)}}prog-species-card--focused{{/if}}
-                     {{#if (eq id ../committedSpeciesId)}}prog-species-card--committed{{/if}}"
+      <button class="prog-species-row
+                     {{#if (eq id ../focusedSpeciesId)}}prog-species-row--focused{{/if}}
+                     {{#if (eq id ../committedSpeciesId)}}prog-species-row--committed{{/if}}"
               data-action="focus-item"
               data-item-id="{{this.id}}"
               type="button"
               role="option"
               {{#if (eq id ../committedSpeciesId)}}aria-selected="true"{{/if}}>
-        <div class="prog-species-card__name">{{this.name}}</div>
-        <div class="prog-species-card__attrs">
-          {{#each this.abilityRows}}
-            <span class="prog-species-card__attr {{this.cssClass}}">
-              {{this.label}}: {{#if (gt this.value 0)}}+{{/if}}{{this.value}}
+
+        {{!-- LEFT: thumbnail or letter badge --}}
+        <div class="prog-species-row__thumb">
+          {{#if this.img}}
+            <img class="prog-species-row__thumb-img" src="{{this.img}}" alt="">
+          {{else}}
+            <span class="prog-species-row__thumb-badge">{{this.thumbLabel}}</span>
+          {{/if}}
+        </div>
+
+        {{!-- CENTER: name + stat line --}}
+        <div class="prog-species-row__center">
+          <span class="prog-species-row__name">{{this.name}}</span>
+          <span class="prog-species-row__stats">
+            {{this.size}}
+            {{#if this.abilityModLine}}
+              <span class="prog-species-row__sep">•</span>
+              <span class="prog-species-row__mods">{{this.abilityModLine}}</span>
+            {{/if}}
+            {{#if this.speed}}
+              <span class="prog-species-row__sep">•</span>
+              Spd {{this.speed}}
+            {{/if}}
+          </span>
+          {{#if this.tags}}
+            <span class="prog-species-row__tags">
+              {{#each this.tags}}
+                <span class="prog-species-row__tag">{{this}}</span>
+              {{/each}}
             </span>
-          {{/each}}
+          {{/if}}
         </div>
-        <div class="prog-species-card__meta">
-          {{#each this.metaChips}}
-            <span class="prog-chip prog-chip--dim">{{this.label}}</span>
-          {{/each}}
+
+        {{!-- RIGHT: committed check or source --}}
+        <div class="prog-species-row__right">
+          {{#if (eq id ../committedSpeciesId)}}
+            <span class="prog-species-row__check"><i class="fas fa-check-circle"></i></span>
+          {{else}}
+            <span class="prog-species-row__source">{{this.source}}</span>
+          {{/if}}
         </div>
-        {{#if (eq id ../committedSpeciesId)}}
-          <span class="prog-species-card__committed-badge">✓ Selected</span>
-        {{/if}}
+
       </button>
     {{else}}
       <p class="prog-species-browse__empty">No species match your search or filters.</p>
     {{/each}}
-  </div>
-</div>
+
+  </div>{{!-- /prog-species-list --}}
+
+</div>{{!-- /prog-species-browse --}}

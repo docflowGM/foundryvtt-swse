@@ -14,6 +14,7 @@ import { meetsClassPrerequisites } from "/systems/foundryvtt-swse/scripts/apps/l
 import { getClassProperty } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
 import { ClassSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ClassSuggestionEngine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { SkillResolver } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-resolver.js";
 
 /**
  * Get class metadata (icon and description)
@@ -116,17 +117,26 @@ export async function getAvailableClasses(actor, pendingData, options = {}) {
       // ------------------------------------------------------------
       // VALIDATE CLASS SKILLS
       // NOTE: Compendium may use camelCase 'classSkills' or snake_case 'class_skills'
+      // Uses SkillResolver for robust matching (handles naming variations)
       // ------------------------------------------------------------
       const classSkills = classDoc.system?.classSkills || classDoc.system?.class_skills || [];
       SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: "${classDoc.name}" - classSkills:`, classSkills);
 
-      for (const skill of classSkills) {
-        if (!skillNames.includes(skill)) {
-          SWSELogger.error(`[LEVELUP-CLASS] ERROR: "${classDoc.name}" lists "${skill}" as a class skill, but this skill does NOT exist!`);
-          warnGM(
-            `${classDoc.name} lists "${skill}" as a class skill, but this skill does NOT exist in skills.db`
-          );
-        }
+      const { valid: validSkills, invalid: invalidSkills } = SkillResolver.validateClassSkills(classSkills, allSkills);
+
+      if (invalidSkills.length > 0) {
+        SWSELogger.error(
+          `[LEVELUP-CLASS] ERROR: "${classDoc.name}" has unresolved class skills:`,
+          invalidSkills
+        );
+        warnGM(
+          `${classDoc.name} has unresolved class skills that don't exist: ${invalidSkills.join(', ')}`
+        );
+      } else {
+        SWSELogger.log(
+          `[LEVELUP-CLASS] "${classDoc.name}" class skills validated successfully:`,
+          validSkills
+        );
       }
 
       const metadata = getClassMetadata(classDoc.name);
@@ -157,7 +167,7 @@ export async function getAvailableClasses(actor, pendingData, options = {}) {
 
       classesWithSuggestions = await SuggestionService.getSuggestions(actor, 'levelup', { domain: 'classes', available: availableClasses, pendingData, persist: true });// Sort by suggestion tier
       SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Sorting classes by suggestion tier...`);
-      const sortedClasses = ClassSuggestionService.sortBySuggestion(classesWithSuggestions);
+      const sortedClasses = ClassSuggestionEngine.sortBySuggestion(classesWithSuggestions);
 
       const suggestedCount = sortedClasses.filter(c => c.isSuggested).length;
       SWSELogger.log(`[LEVELUP-CLASS] getAvailableClasses: Class suggestions applied`, {

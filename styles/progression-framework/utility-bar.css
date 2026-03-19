@@ -87,6 +87,48 @@
   flex-shrink: 0;
 }
 
+/* Stat Dropdown Group — bonus/penalty filters */
+.progression-shell .prog-utility-bar__dropdown-group {
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-xs);
+  flex-shrink: 0;
+}
+
+/* Dropdown Group Label */
+.progression-shell .prog-utility-bar__dropdown-label {
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Stat Dropdown Select */
+.progression-shell .prog-utility-bar__dropdown {
+  background: var(--prog-bg-read);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+  color: var(--prog-text);
+  font-size: var(--prog-font-size-xs);
+  padding: 2px var(--prog-space-sm);
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: border-color var(--prog-transition-fast), color var(--prog-transition-fast);
+}
+
+.progression-shell .prog-utility-bar__dropdown:hover {
+  border-color: var(--prog-accent);
+  color: var(--prog-accent);
+}
+
+.progression-shell .prog-utility-bar__dropdown:focus {
+  outline: none;
+  border-color: var(--prog-accent);
+  color: var(--prog-accent);
+}
+
 /* Custom controls container */
 .progression-shell .prog-utility-bar__custom-controls {
   display: flex;
@@ -119,10 +161,11 @@
   border-color: var(--prog-accent);
 }
 
-/* Collapsed state — hide label, search, filters, sort, conditional, custom controls */
+/* Collapsed state — hide label, search, filters, dropdowns, sort, conditional, custom controls */
 .progression-shell [data-region="utility-bar"][data-collapsed="true"] .prog-utility-bar__label,
 .progression-shell [data-region="utility-bar"][data-collapsed="true"] .prog-utility-bar__search,
 .progression-shell [data-region="utility-bar"][data-collapsed="true"] .prog-utility-bar__filters,
+.progression-shell [data-region="utility-bar"][data-collapsed="true"] .prog-utility-bar__dropdown-group,
 .progression-shell [data-region="utility-bar"][data-collapsed="true"] .prog-utility-bar__sort,
 .progression-shell [data-region="utility-bar"][data-collapsed="true"] .prog-utility-bar__custom-controls,
 .progression-shell [data-region="utility-bar"][data-collapsed="true"] .prog-utility-bar__conditional {

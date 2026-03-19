@@ -1,0 +1,81 @@
+/**
+ * components/panels.css
+ *
+ * Shared panel and card styling for progression framework.
+ * Extracted from holo-theme.css to establish component ownership.
+ */
+
+.prog-holo .prog-panel {
+  background: var(--prog-bg-surface);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-md);
+  padding: var(--prog-space-md);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: all var(--prog-transition-base);
+}
+
+.prog-holo .prog-panel:hover {
+  border-color: var(--prog-border-bright);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 8px rgba(0, 170, 255, 0.08);
+}
+
+.prog-holo .prog-card {
+  background: var(--prog-bg-surface);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-md);
+  padding: var(--prog-space-md);
+  transition:
+    border-color var(--prog-transition-base),
+    background var(--prog-transition-base),
+    box-shadow var(--prog-transition-base),
+    transform var(--prog-transition-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+.prog-holo .prog-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 170, 255, 0.03),
+    transparent
+  );
+  transition: left var(--prog-transition-slow);
+  pointer-events: none;
+}
+
+.prog-holo .prog-card:hover::before {
+  left: 160%;
+}
+
+.prog-holo .prog-card:hover {
+  border-color: var(--prog-border-bright);
+  background: var(--prog-bg-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 170, 255, 0.12);
+}
+
+.prog-holo .prog-card--focused {
+  border-color: var(--prog-accent);
+  background: var(--prog-bg-selected);
+  box-shadow: var(--prog-accent-glow-heavy);
+}
+
+.prog-holo .prog-card--committed {
+  border-color: var(--prog-positive);
+  background: rgba(34, 197, 94, 0.06);
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.25);
+}
+
+.prog-holo .prog-card--disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}

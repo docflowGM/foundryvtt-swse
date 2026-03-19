@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="520" viewBox="0 0 1120 520">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#071522"/>
+      <stop offset="1" stop-color="#020a12"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b2236" stop-opacity="0.96"/>
+      <stop offset="1" stop-color="#04101a" stop-opacity="0.98"/>
+    </linearGradient>
+    <linearGradient id="header" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0f3551"/>
+      <stop offset="0.5" stop-color="#134a70"/>
+      <stop offset="1" stop-color="#0f3551"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <pattern id="grid" patternUnits="userSpaceOnUse" width="12" height="12">
+      <path d="M 12 0 L 0 0 0 12" fill="none" stroke="#8fe8ff" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1120" height="520" fill="url(#bg)"/>
+  <rect x="18" y="18" width="1084" height="484" rx="12" fill="url(#panel)" stroke="#4ad7ff" stroke-opacity="0.75" stroke-width="2"/>
+  <rect x="28" y="28" width="1064" height="464" rx="8" fill="none" stroke="#9aefff" stroke-opacity="0.18"/>
+  <rect x="18" y="18" width="1084" height="484" rx="12" fill="url(#grid)" opacity="0.45"/>
+  <path d="M18 52 L18 18 L52 18" fill="none" stroke="#9aefff" stroke-width="3" opacity="0.7"/>
+  <path d="M1068 18 L1102 18 L1102 52" fill="none" stroke="#9aefff" stroke-width="3" opacity="0.7"/>
+  <path d="M18 468 L18 502 L52 502" fill="none" stroke="#9aefff" stroke-width="3" opacity="0.7"/>
+  <path d="M1068 502 L1102 502 L1102 468" fill="none" stroke="#9aefff" stroke-width="3" opacity="0.7"/>
+
+  <rect x="42" y="38" width="1036" height="48" rx="6" fill="url(#header)" stroke="#7be8ff" stroke-opacity="0.5"/>
+  <text x="560" y="70" text-anchor="middle" font-family="Orbitron, Eurostile, Arial, sans-serif" font-size="24" fill="#dffcff" letter-spacing="2">SKILL TABLE</text>
+
+  <rect x="42" y="104" width="1036" height="40" rx="4" fill="#0b2b44" stroke="#47d8ff" stroke-opacity="0.45"/>
+  <text x="72" y="130" font-family="Orbitron, Arial, sans-serif" font-size="15" fill="#bff7ff">TRAIN</text>
+  <text x="168" y="130" font-family="Orbitron, Arial, sans-serif" font-size="15" fill="#bff7ff">SKILL</text>
+  <text x="470" y="130" font-family="Orbitron, Arial, sans-serif" font-size="15" fill="#bff7ff">ABILITY</text>
+  <text x="610" y="130" font-family="Orbitron, Arial, sans-serif" font-size="15" fill="#bff7ff">RACIAL</text>
+  <text x="748" y="130" font-family="Orbitron, Arial, sans-serif" font-size="15" fill="#bff7ff">TRAINED</text>
+  <text x="896" y="130" font-family="Orbitron, Arial, sans-serif" font-size="15" fill="#bff7ff">TOTAL</text>
+  <text x="1000" y="130" font-family="Orbitron, Arial, sans-serif" font-size="15" fill="#bff7ff">STATUS</text>
+<rect x="42" y="154" width="1036" height="42" rx="4" fill="#091a2a" stroke="#2bbde8" stroke-opacity="0.18"/><rect x="62" y="163" width="22" height="22" rx="4" fill="#0b3a2c" stroke="#24ff7b" stroke-opacity="0.65"/><path d="M68 175 l5 5 l10 -12" fill="none" stroke="#24ff7b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="168" y="181" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#e5fdff">Use the Force</text>
+    <text x="470" y="181" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#e5fdff">WIS +3</text>
+    <text x="620" y="181" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#ffd84a">+0</text>
+    <text x="758" y="181" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#24ff7b">+5</text>
+    <text x="904" y="181" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#24ff7b" filter="url(#glow)">+8</text>
+    <rect x="964" y="163" width="88" height="22" rx="11" fill="#24ff7b" fill-opacity="0.12" stroke="#24ff7b" stroke-opacity="0.45"/>
+    <text x="1008" y="178" text-anchor="middle" font-family="Orbitron, Arial, sans-serif" font-size="12.5" fill="#24ff7b">VALID</text>
+<rect x="42" y="200" width="1036" height="42" rx="4" fill="#091a2a" stroke="#2bbde8" stroke-opacity="0.18"/><rect x="62" y="209" width="22" height="22" rx="4" fill="#07111b" stroke="#8ae8ff" stroke-opacity="0.35"/>
+    <text x="168" y="227" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#e5fdff">Perception</text>
+    <text x="470" y="227" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#e5fdff">WIS +3</text>
+    <text x="620" y="227" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#24ff7b">+2</text>
+    <text x="758" y="227" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#ffd84a">+0</text>
+    <text x="904" y="227" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#ffd84a" filter="url(#glow)">+5</text>
+    <rect x="964" y="209" width="88" height="22" rx="11" fill="#ffd84a" fill-opacity="0.12" stroke="#ffd84a" stroke-opacity="0.45"/>
+    <text x="1008" y="224" text-anchor="middle" font-family="Orbitron, Arial, sans-serif" font-size="12.5" fill="#ffd84a">AVAILABLE</text>
+<rect x="42" y="246" width="1036" height="42" rx="4" fill="#091a2a" stroke="#2bbde8" stroke-opacity="0.18"/><rect x="62" y="255" width="22" height="22" rx="4" fill="#0b3a2c" stroke="#24ff7b" stroke-opacity="0.65"/><path d="M68 267 l5 5 l10 -12" fill="none" stroke="#24ff7b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="168" y="273" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#e5fdff">Pilot</text>
+    <text x="470" y="273" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#e5fdff">DEX +2</text>
+    <text x="620" y="273" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#ffd84a">+0</text>
+    <text x="758" y="273" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#24ff7b">+5</text>
+    <text x="904" y="273" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#24ff7b" filter="url(#glow)">+7</text>
+    <rect x="964" y="255" width="88" height="22" rx="11" fill="#24ff7b" fill-opacity="0.12" stroke="#24ff7b" stroke-opacity="0.45"/>
+    <text x="1008" y="270" text-anchor="middle" font-family="Orbitron, Arial, sans-serif" font-size="12.5" fill="#24ff7b">VALID</text>
+<rect x="42" y="292" width="1036" height="42" rx="4" fill="#091a2a" stroke="#2bbde8" stroke-opacity="0.18"/><rect x="62" y="301" width="22" height="22" rx="4" fill="#07111b" stroke="#8ae8ff" stroke-opacity="0.35"/>
+    <text x="168" y="319" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#e5fdff">Mechanics</text>
+    <text x="470" y="319" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#e5fdff">INT +1</text>
+    <text x="620" y="319" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#24ff7b">+2</text>
+    <text x="758" y="319" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#ffd84a">+0</text>
+    <text x="904" y="319" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#ffd84a" filter="url(#glow)">+3</text>
+    <rect x="964" y="301" width="88" height="22" rx="11" fill="#ffd84a" fill-opacity="0.12" stroke="#ffd84a" stroke-opacity="0.45"/>
+    <text x="1008" y="316" text-anchor="middle" font-family="Orbitron, Arial, sans-serif" font-size="12.5" fill="#ffd84a">AVAILABLE</text>
+<rect x="42" y="338" width="1036" height="42" rx="4" fill="#091a2a" stroke="#2bbde8" stroke-opacity="0.18"/><rect x="62" y="347" width="22" height="22" rx="4" fill="#220b0b" stroke="#ff5858" stroke-opacity="0.35"/><path d="M68 353 L80 365 M80 353 L68 365" stroke="#ff5858" stroke-width="2"/>
+    <text x="168" y="365" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#e5fdff">Persuasion</text>
+    <text x="470" y="365" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#e5fdff">CHA +1</text>
+    <text x="620" y="365" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#ffd84a">+0</text>
+    <text x="758" y="365" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#ffd84a">+0</text>
+    <text x="904" y="365" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#ff5858" filter="url(#glow)">+1</text>
+    <rect x="964" y="347" width="88" height="22" rx="11" fill="#ff5858" fill-opacity="0.12" stroke="#ff5858" stroke-opacity="0.45"/>
+    <text x="1008" y="362" text-anchor="middle" font-family="Orbitron, Arial, sans-serif" font-size="12.5" fill="#ff5858">LOCKED</text>
+<rect x="42" y="384" width="1036" height="42" rx="4" fill="#091a2a" stroke="#2bbde8" stroke-opacity="0.18"/><rect x="62" y="393" width="22" height="22" rx="4" fill="#0b3a2c" stroke="#24ff7b" stroke-opacity="0.65"/><path d="M68 405 l5 5 l10 -12" fill="none" stroke="#24ff7b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="168" y="411" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#e5fdff">Stealth</text>
+    <text x="470" y="411" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#e5fdff">DEX +2</text>
+    <text x="620" y="411" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#ffd84a">+0</text>
+    <text x="758" y="411" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#24ff7b">+5</text>
+    <text x="904" y="411" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#24ff7b" filter="url(#glow)">+7</text>
+    <rect x="964" y="393" width="88" height="22" rx="11" fill="#24ff7b" fill-opacity="0.12" stroke="#24ff7b" stroke-opacity="0.45"/>
+    <text x="1008" y="408" text-anchor="middle" font-family="Orbitron, Arial, sans-serif" font-size="12.5" fill="#24ff7b">VALID</text>
+<rect x="42" y="430" width="1036" height="42" rx="4" fill="#091a2a" stroke="#2bbde8" stroke-opacity="0.18"/><rect x="62" y="439" width="22" height="22" rx="4" fill="#07111b" stroke="#8ae8ff" stroke-opacity="0.35"/>
+    <text x="168" y="457" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#e5fdff">Survival</text>
+    <text x="470" y="457" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#e5fdff">WIS +3</text>
+    <text x="620" y="457" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#ffd84a">+0</text>
+    <text x="758" y="457" font-family="Orbitron, Arial, sans-serif" font-size="17" fill="#ffd84a">+0</text>
+    <text x="904" y="457" font-family="Orbitron, Arial, sans-serif" font-size="18" fill="#ffd84a" filter="url(#glow)">+3</text>
+    <rect x="964" y="439" width="88" height="22" rx="11" fill="#ffd84a" fill-opacity="0.12" stroke="#ffd84a" stroke-opacity="0.45"/>
+    <text x="1008" y="454" text-anchor="middle" font-family="Orbitron, Arial, sans-serif" font-size="12.5" fill="#ffd84a">AVAILABLE</text>
+
+  <rect x="42" y="470" width="1036" height="18" rx="8" fill="#061019" stroke="#2bbde8" stroke-opacity="0.25"/>
+  <text x="60" y="484" font-family="Orbitron, Arial, sans-serif" font-size="10" fill="#7ddfff" letter-spacing="2">TRAINED SKILLS SELECTED 3 / 5 • CLASS SKILLS FULL BRIGHT • NON-ELIGIBLE SKILLS DIMMED OR LOCKED</text>
+</svg>

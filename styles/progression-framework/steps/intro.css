@@ -1,0 +1,565 @@
+/**
+ * intro.css — Versafunction Datapad Boot Sequence
+ *
+ * Styles for the immersive intro splash screen.
+ * Features diegetic OS shell, Aurabesh text, color-coded states,
+ * and cyberpunk aesthetic with scanlines and glitch effects.
+ */
+
+/* ============================================================================
+   Font Faces: Aurabesh
+   ============================================================================ */
+
+@font-face {
+  font-family: 'Aurabesh Regular';
+  src: url('/systems/foundryvtt-swse/assets/fonts/Aurabesh/Aurebesh.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Aurabesh Italic';
+  src: url('/systems/foundryvtt-swse/assets/fonts/Aurabesh/Aurebesh Italic.otf') format('opentype');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Aurabesh Bold';
+  src: url('/systems/foundryvtt-swse/assets/fonts/Aurabesh/Aurebesh Bold.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Aurabesh Condensed';
+  src: url('/systems/foundryvtt-swse/assets/fonts/Aurabesh/Aurebesh Condensed.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: condensed;
+}
+
+/* ============================================================================
+   Root & Container
+   ============================================================================ */
+
+.prog-intro-surface {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  /* Transparent — outer shell's panel-large.svg and frame-shell.svg show through.
+     The progression shell's [data-region="work-surface"] is the authoritative frame;
+     the splash is interior content living inside that device. */
+  background: transparent;
+  color: rgba(210, 240, 255, 1);
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.4;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ============================================================================
+   Header Bar (OS Shell)
+   ============================================================================ */
+
+.prog-intro-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 28px;
+  background: rgba(0, 0, 0, 0.6);
+  border-bottom: 1px solid rgba(0, 180, 255, 0.3);
+  padding: 0 12px;
+  flex-shrink: 0;
+  box-shadow: 0 0 8px rgba(0, 180, 255, 0.1);
+}
+
+.prog-intro-system-name {
+  font-family: 'Aurabesh Condensed', monospace;
+  color: rgba(0, 180, 255, 0.8);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-shadow: 0 0 6px rgba(0, 180, 255, 0.3);
+}
+
+.prog-intro-time {
+  color: rgba(210, 240, 255, 0.9);
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.prog-intro-signal {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+}
+
+.prog-intro-signal__bar {
+  width: 2px;
+  height: 8px;
+  background: rgba(0, 180, 255, 0.2);
+  border: 0.5px solid rgba(0, 180, 255, 0.3);
+  transition: all 100ms ease;
+}
+
+.prog-intro-signal__bar.active {
+  background: rgba(0, 210, 255, 0.7);
+  box-shadow: 0 0 4px rgba(0, 210, 255, 0.5);
+  height: 12px;
+}
+
+.prog-intro-battery {
+  color: rgba(210, 240, 255, 0.8);
+  font-size: 11px;
+  margin-left: 8px;
+}
+
+/* ============================================================================
+   Main Panel
+   ============================================================================ */
+
+.prog-intro-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 24px;
+  margin: 16px 20px;
+  /* Interior diegetic "screen" — subtle dark fill and harmonized holo border.
+     Border at lower opacity so it reads as interior chrome, not a competing outer frame.
+     The outer shell's panel-large.svg + frame-shell.svg is the authoritative perimeter. */
+  background: linear-gradient(180deg, rgba(8, 22, 40, 0.70), rgba(4, 14, 28, 0.78));
+  border: 1px solid rgba(100, 200, 255, 0.28);
+  box-shadow:
+    0 0 18px rgba(0, 210, 255, 0.10),
+    0 0 36px rgba(0, 170, 220, 0.05),
+    inset 0 0 2px rgba(100, 200, 255, 0.14);
+}
+
+/* Scanline Overlay Effect */
+.prog-intro-scanlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  z-index: 1;
+}
+
+/* ============================================================================
+   Text Area
+   ============================================================================ */
+
+.prog-intro-text-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  min-height: 120px;
+}
+
+.prog-intro-text-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+/* ============================================================================
+   Label (English)
+   ============================================================================ */
+
+.prog-intro-label {
+  font-family: 'Aurabesh Condensed', monospace;
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: bold;
+  transition: all 300ms ease;
+}
+
+.prog-intro-label--processing {
+  color: rgba(0, 180, 220, 1);
+  text-shadow:
+    0 0 12px rgba(0, 212, 255, 0.5),
+    0 0 6px rgba(0, 180, 255, 0.3),
+    0 0 2px rgba(0, 160, 220, 0.2);
+}
+
+.prog-intro-label--unknown {
+  color: rgba(255, 100, 100, 1);
+  text-shadow:
+    0 0 12px rgba(255, 100, 100, 0.5),
+    0 0 6px rgba(255, 80, 80, 0.3);
+}
+
+.prog-intro-label--success {
+  color: rgba(44, 255, 111, 1);
+  text-shadow:
+    0 0 12px rgba(44, 255, 111, 0.5),
+    0 0 6px rgba(44, 255, 111, 0.3);
+}
+
+/* ============================================================================
+   Aurabesh Text
+   ============================================================================ */
+
+.prog-intro-aurabesh {
+  font-family: 'Aurabesh Regular', monospace;
+  font-size: 24px;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 40px;
+  transition: all 400ms ease;
+  position: relative;
+}
+
+.prog-intro-aurabesh--processing {
+  color: rgba(120, 230, 255, 1);
+  text-shadow:
+    0 0 16px rgba(0, 210, 255, 0.6),
+    0 0 32px rgba(0, 170, 220, 0.3);
+}
+
+.prog-intro-aurabesh--unknown {
+  color: rgba(255, 120, 120, 1);
+  text-shadow:
+    0 0 16px rgba(255, 100, 100, 0.6),
+    0 0 32px rgba(255, 80, 80, 0.3);
+  animation: prog-intro-glitch-unknown 600ms ease-out;
+}
+
+.prog-intro-aurabesh--success {
+  color: rgba(100, 255, 140, 1);
+  text-shadow:
+    0 0 16px rgba(44, 255, 111, 0.6),
+    0 0 32px rgba(44, 255, 111, 0.3);
+  animation: prog-intro-success-glow 800ms ease-out;
+}
+
+.prog-intro-aurabesh__text {
+  display: inline-block;
+}
+
+/* Cursor Blink */
+.prog-intro-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 24px;
+  background: rgba(0, 180, 255, 0.8);
+  box-shadow: 0 0 6px rgba(0, 180, 255, 0.5);
+}
+
+.prog-intro-cursor--blink {
+  animation: prog-intro-blink 600ms infinite;
+}
+
+@keyframes prog-intro-blink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
+}
+
+/* ============================================================================
+   Status Indicator
+   ============================================================================ */
+
+.prog-intro-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: all 300ms ease;
+}
+
+.prog-intro-status--processing {
+  color: rgba(0, 180, 220, 0.9);
+}
+
+.prog-intro-status--unknown {
+  color: rgba(255, 100, 100, 0.9);
+}
+
+.prog-intro-status--success {
+  color: rgba(44, 255, 111, 0.9);
+}
+
+.prog-intro-status__icon {
+  display: inline-block;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.prog-intro-status--processing .prog-intro-status__icon {
+  animation: prog-intro-pulse 1200ms infinite;
+}
+
+@keyframes prog-intro-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* ============================================================================
+   Progress Bar
+   ============================================================================ */
+
+.prog-intro-progress-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 2;
+  margin-top: 16px;
+}
+
+.prog-intro-progress-bar {
+  flex: 1;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 180, 255, 0.3);
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+}
+
+.prog-intro-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(0, 180, 255, 0.6), rgba(100, 230, 255, 0.9));
+  box-shadow: 0 0 8px rgba(0, 210, 255, 0.4);
+  transition: width 800ms ease-out;
+}
+
+.prog-intro-progress-text {
+  font-size: 11px;
+  color: rgba(210, 240, 255, 0.7);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  min-width: 40px;
+}
+
+/* ============================================================================
+   Identity Block (shown when sequence complete)
+   ============================================================================ */
+
+.prog-intro-identity-block {
+  position: absolute;
+  bottom: 40px;
+  left: 24px;
+  right: 24px;
+  padding: 12px;
+  background: linear-gradient(180deg, rgba(0, 60, 100, 0.4), rgba(0, 40, 80, 0.5));
+  border: 1px solid rgba(100, 220, 255, 0.25);
+  border-radius: 2px;
+  text-align: center;
+  z-index: 2;
+  box-shadow: 0 0 10px rgba(0, 180, 255, 0.05);
+  opacity: 0;
+}
+
+.prog-intro-identity-block--fade-in {
+  animation: prog-intro-fade-in 600ms ease-out forwards;
+}
+
+.prog-intro-identity-label {
+  color: rgba(210, 240, 255, 1);
+  font-family: 'Aurabesh Condensed', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 8px rgba(0, 180, 255, 0.4),
+    0 0 4px rgba(0, 160, 220, 0.2);
+  margin-bottom: 4px;
+}
+
+.prog-intro-identity-subtext {
+  color: rgba(0, 180, 220, 0.8);
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+/* ============================================================================
+   Footer & Continue Button
+   ============================================================================ */
+
+.prog-intro-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 48px;
+  padding: 0 20px 20px 20px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+}
+
+.prog-intro-footer--fade-in {
+  animation: prog-intro-fade-in 400ms ease-out;
+}
+
+.prog-intro-footer-placeholder {
+  /* Empty space to maintain layout before button appears */
+}
+
+/* ============================================================================
+   CONTINUE BUTTON — Uses button-frame-primary.svg (same as shell footer confirm).
+   Inherits geometry from .prog-svgbtn--primary in svg-components.css.
+   Override font-family to keep Aurabesh Condensed flavour on splash screen.
+   ============================================================================ */
+
+.prog-intro-continue-btn {
+  /* SVG chrome from shell button family — same device language as footer nav */
+  background-image: url('../../../assets/ui/chargen/button-frame-primary.svg');
+  background-size:   100% 100%;
+  background-repeat: no-repeat;
+  background-color:  transparent;
+  border: none;
+  border-radius: 0;
+
+  /* Sizing to match primary button geometry */
+  min-width: 180px;
+  height: 42px;
+  padding: 0 24px;
+
+  /* Splash-specific text treatment — Aurabesh Condensed in-universe flavour */
+  color: rgba(150, 240, 255, 0.95);
+  font-family: 'Aurabesh Condensed', var(--swse-font-ui, 'Orbitron', monospace);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 120ms ease, filter 120ms ease;
+}
+
+.prog-intro-continue-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.14) drop-shadow(0 0 10px rgba(100, 220, 255, 0.32));
+}
+
+.prog-intro-continue-btn:active {
+  transform: translateY(0px);
+  filter: brightness(1.06);
+}
+
+.prog-intro-continue-btn i {
+  margin-right: 6px;
+}
+
+/* ============================================================================
+   Animations
+   ============================================================================ */
+
+@keyframes prog-intro-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes prog-intro-glitch-unknown {
+  0% {
+    transform: translate(0, 0);
+    text-shadow:
+      -2px 0 rgba(255, 100, 100, 0.8),
+      2px 0 rgba(255, 200, 200, 0.6);
+  }
+  25% {
+    transform: translate(-2px, 2px);
+  }
+  50% {
+    transform: translate(2px, -2px);
+  }
+  75% {
+    transform: translate(-1px, 1px);
+  }
+  100% {
+    transform: translate(0, 0);
+    text-shadow:
+      0 0 16px rgba(255, 100, 100, 0.6),
+      0 0 32px rgba(255, 80, 80, 0.3);
+  }
+}
+
+@keyframes prog-intro-success-glow {
+  0% {
+    text-shadow:
+      0 0 8px rgba(44, 255, 111, 0.3),
+      0 0 16px rgba(44, 255, 111, 0.15);
+  }
+  50% {
+    text-shadow:
+      0 0 16px rgba(44, 255, 111, 0.6),
+      0 0 32px rgba(44, 255, 111, 0.4),
+      0 0 48px rgba(44, 255, 111, 0.2);
+  }
+  100% {
+    text-shadow:
+      0 0 16px rgba(44, 255, 111, 0.6),
+      0 0 32px rgba(44, 255, 111, 0.3);
+  }
+}
+
+/* ============================================================================
+   Responsive
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  .prog-intro-surface {
+    font-size: 12px;
+  }
+
+  .prog-intro-header {
+    height: 24px;
+    padding: 0 8px;
+  }
+
+  .prog-intro-system-name {
+    font-size: 10px;
+  }
+
+  .prog-intro-panel {
+    margin: 12px;
+    padding: 16px;
+  }
+
+  .prog-intro-aurabesh {
+    font-size: 20px;
+  }
+
+  .prog-intro-continue-btn {
+    padding: 8px 16px;
+    font-size: 11px;
+  }
+}

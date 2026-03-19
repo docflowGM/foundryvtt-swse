@@ -174,7 +174,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
 
     // Condition step clicking
     for (const el of root.querySelectorAll('.swse-v2-condition-step')) {
-      el.addEventListener('click', { signal }, async (ev) => {
+      el.addEventListener('click', async (ev) => {
         ev.preventDefault();
         const step = Number(ev.currentTarget?.dataset?.step);
         if (!Number.isFinite(step)) {return;}
@@ -183,29 +183,29 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
         } else {
           await ActorEngine.updateActor(this.actor, { 'system.conditionTrack.current': step });
         }
-      });
+      }, { signal });
     }
 
     // Condition track improvements
     const improveBtn = root.querySelector('.swse-v2-condition-improve');
     if (improveBtn) {
-      improveBtn.addEventListener('click', { signal }, async (ev) => {
+      improveBtn.addEventListener('click', async (ev) => {
         ev.preventDefault();
         if (typeof this.actor.improveConditionTrack === 'function') {
           await this.actor.improveConditionTrack();
         }
-      });
+      }, { signal });
     }
 
     // Condition track worsening
     const worsenBtn = root.querySelector('.swse-v2-condition-worsen');
     if (worsenBtn) {
-      worsenBtn.addEventListener('click', { signal }, async (ev) => {
+      worsenBtn.addEventListener('click', async (ev) => {
         ev.preventDefault();
         if (typeof this.actor.worsenConditionTrack === 'function') {
           await this.actor.worsenConditionTrack();
         }
-      });
+      }, { signal });
     }
 
     // Talent Abilities panel (multi-option actions, filtering)
@@ -217,29 +217,29 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
     // Condition track persistence toggle
     const persistentCheckbox = root.querySelector('.swse-v2-condition-persistent');
     if (persistentCheckbox) {
-      persistentCheckbox.addEventListener('change', { signal }, async (ev) => {
+      persistentCheckbox.addEventListener('change', async (ev) => {
         const flag = ev.currentTarget?.checked === true;
         if (typeof this.actor.setConditionTrackPersistent === 'function') {
           await this.actor.setConditionTrackPersistent(flag);
         }
-      });
+      }, { signal });
     }
 
     // Item sheet opening
     for (const el of root.querySelectorAll('.swse-v2-open-item')) {
-      el.addEventListener('click', { signal }, (ev) => {
+      el.addEventListener('click', (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
         const itemId = ev.currentTarget?.dataset?.itemId;
         if (!itemId) {return;}
         const item = this.actor?.items?.get(itemId);
         item?.sheet?.render(true);
-      });
+      }, { signal });
     }
 
     // Action execution
     for (const el of root.querySelectorAll('.swse-v2-use-action')) {
-      el.addEventListener('click', { signal }, async (ev) => {
+      el.addEventListener('click', async (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
         const actionId = ev.currentTarget?.dataset?.actionId;
@@ -247,7 +247,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
         if (typeof this.actor.useAction === 'function') {
           await this.actor.useAction(actionId);
         }
-      });
+      }, { signal });
     }
 
     RenderAssertions.assertRenderComplete(
@@ -279,7 +279,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
         }
       };
 
-      container.addEventListener('click', { signal }, async (ev) => {
+      container.addEventListener('click', async (ev) => {
         const filterBtn = ev.target.closest('.ability-filter-btn');
         if (filterBtn?.dataset?.filter) {
           ev.preventDefault();
@@ -362,7 +362,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
             actor: this.actor
           });
         }
-      });
+      }, { signal });
 
       applyFilter('all');
     }
@@ -373,7 +373,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
   _bindAbilityCardHandlers(root, { signal } = {}) {
     // Ability card chat button
     root.querySelectorAll('.ability-chat-btn').forEach((btn) => {
-      btn.addEventListener('click', { signal }, async (ev) => {
+      btn.addEventListener('click', async (ev) => {
         ev.preventDefault();
         const abilityId = ev.currentTarget?.dataset?.abilityId;
         if (!abilityId) return;
@@ -384,12 +384,12 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
         } catch (err) {
           console.error('Error posting ability chat:', err);
         }
-      });
+      }, { signal });
     });
 
     // Ability card roll button
     root.querySelectorAll('.ability-roll-btn').forEach((btn) => {
-      btn.addEventListener('click', { signal }, async (ev) => {
+      btn.addEventListener('click', async (ev) => {
         ev.preventDefault();
         const abilityId = ev.currentTarget?.dataset?.abilityId;
         if (!abilityId) return;
@@ -403,12 +403,12 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
         } catch (err) {
           console.error('Error rolling ability:', err);
         }
-      });
+      }, { signal });
     });
 
     // Ability card use button
     root.querySelectorAll('.ability-use-btn').forEach((btn) => {
-      btn.addEventListener('click', { signal }, async (ev) => {
+      btn.addEventListener('click', async (ev) => {
         ev.preventDefault();
         const abilityId = ev.currentTarget?.dataset?.abilityId;
         if (!abilityId) return;
@@ -424,7 +424,7 @@ export class SWSEV2NpcSheet extends HandlebarsApplicationMixin(foundry.applicati
         } catch (err) {
           console.error('Error using ability:', err);
         }
-      });
+      }, { signal });
     });
   }
 

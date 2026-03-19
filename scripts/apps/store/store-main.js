@@ -109,8 +109,8 @@ export class SWSEStore extends BaseSWSEAppV2 {
     this.isCheckoutMode = false;     // Checkout mode state (true = ledger view, locked cart)
 
     // Initialize loading overlay
-    const useAurebesh = game.settings.get('foundryvtt-swse', 'useAurebesh') ?? true;
-    const skipOverlay = game.settings.get('foundryvtt-swse', 'storeSkipLoadingOverlay') ?? false;
+    const useAurebesh = game.settings.get('foundryvtt-swse', 'useAurebesh');
+    const skipOverlay = game.settings.get('foundryvtt-swse', 'storeSkipLoadingOverlay');
     const reduceMotion = game.user?.getFlag?.('core', 'reduce-motion') ?? false;
 
     this.loadingOverlay = new StoreLoadingOverlay({
@@ -358,7 +358,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
   _buildItemsWithSuggestions() {
     const items = [];
-    const useAurebesh = game.settings.get('foundryvtt-swse', 'useAurebesh') ?? true;
+    const useAurebesh = game.settings.get('foundryvtt-swse', 'useAurebesh');
 
     for (const item of this.storeInventory?.allItems || []) {
       // Engine normalizes IDs to .id (not ._id)

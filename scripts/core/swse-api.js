@@ -115,12 +115,10 @@ async function smokeTest() {
 /**
  * Open CharGen with optional actor
  * @param {Actor} actor - Optional actor to edit
- * @returns {Promise<CharacterGenerator>}
+ * @returns {Promise<CharacterGenerator|ProgressionShell>}
  */
 async function openCharGen(actor = null) {
-  const chargen = new CharacterGenerator(actor, { actorType: actor?.type || 'character' });
-  await chargen.render(true);
-  return chargen;
+  return await CharacterGenerator.open(actor, { actorType: actor?.type || 'character' });
 }
 
 /**

@@ -26,11 +26,19 @@
   overflow-y: auto;
 }
 
-/* Store Container */
+/* ============================================================================
+   STORE CONTAINER — modal-frame.svg outer chrome
+   Gives the store the same datapad perimeter as the progression shell.
+   The player is opening a datapad catalogue, not teleporting to a different UI.
+   modal-frame.svg is 1500×920; background-color fallback matches its interior.
+   ============================================================================ */
 .swse-app-store {
   display: flex;
   flex-direction: column;
-  background: rgba(0, 10, 20, 0.95);
+  background-image:  url('../../assets/ui/chargen/modal-frame.svg');
+  background-size:   100% 100%;
+  background-repeat: no-repeat;
+  background-color:  #040a12;
   color: #e0e0e0;
 }
 

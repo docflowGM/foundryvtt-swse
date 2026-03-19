@@ -125,6 +125,17 @@ export class UtilityBar {
           { bubbles: true, detail: { sortId: this._sortValue } }));
       });
     }
+
+    // Stat dropdowns (bonus/penalty)
+    regionEl.querySelectorAll('[data-utility-select]').forEach(dropdown => {
+      track(dropdown, 'change', e => {
+        const id = dropdown.dataset.utilitySelect;
+        const value = e.target.value;
+        this._filterState[id] = value;
+        regionEl.dispatchEvent(new CustomEvent('prog:utility:filter',
+          { bubbles: true, detail: { filterId: id, value: value } }));
+      });
+    });
   }
 
   /**

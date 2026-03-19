@@ -1,0 +1,130 @@
+/* ============================================================================
+   UTILITY BAR — Step-Specific Search, Filter, Sort, and Controls
+   ============================================================================ */
+
+.progression-shell .prog-utility-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-md);
+  padding: 0 var(--prog-space-lg);
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Icon — accent color, anchors the step identity */
+.progression-shell .prog-utility-bar__icon {
+  color: var(--prog-accent);
+  font-size: var(--prog-font-size-base);
+  flex-shrink: 0;
+  text-shadow: var(--prog-heading-shadow);
+}
+
+/* Label — step name/description */
+.progression-shell .prog-utility-bar__label {
+  font-family: var(--prog-font);
+  font-size: var(--prog-font-size-sm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--prog-text-heading);
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-shadow: var(--prog-heading-shadow);
+}
+
+/* Search input */
+.progression-shell .prog-utility-bar__search {
+  flex: 0 1 200px;
+  min-width: 0;
+  font-size: var(--prog-font-size-xs);
+  padding: 2px var(--prog-space-sm);
+}
+
+/* Filter chips container */
+.progression-shell .prog-utility-bar__filters {
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-xs);
+  flex-shrink: 0;
+}
+
+/* Filter chip — toggle button style */
+.progression-shell .prog-utility-bar__filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px var(--prog-space-sm);
+  border-radius: var(--prog-radius-pill);
+  font-size: var(--prog-font-size-xs);
+  font-family: var(--prog-font-body);
+  border: 1px solid var(--prog-border);
+  color: var(--prog-text-dim);
+  background: rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  transition: all var(--prog-transition-fast);
+  text-shadow: var(--prog-text-shadow);
+  white-space: nowrap;
+}
+
+.progression-shell .prog-utility-bar__filter-chip:hover,
+.progression-shell .prog-utility-bar__filter-chip--active {
+  border-color: var(--prog-accent);
+  color: var(--prog-accent);
+  background: rgba(0, 170, 255, 0.08);
+  text-shadow: var(--prog-heading-shadow);
+}
+
+/* Sort dropdown */
+.progression-shell .prog-utility-bar__sort {
+  background: var(--prog-bg-read);
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+  color: var(--prog-text);
+  font-size: var(--prog-font-size-xs);
+  padding: 2px var(--prog-space-sm);
+  flex-shrink: 0;
+}
+
+/* Custom controls container */
+.progression-shell .prog-utility-bar__custom-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-sm);
+  flex-shrink: 0;
+}
+
+/* Conditional step indicator */
+.progression-shell .prog-utility-bar__conditional {
+  flex-shrink: 0;
+}
+
+/* Collapse button — always visible, even when collapsed */
+.progression-shell .prog-utility-bar__collapse {
+  flex-shrink: 0;
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+  color: var(--prog-text-dim);
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: var(--prog-font-size-xs);
+  transition: color var(--prog-transition-fast), border-color var(--prog-transition-fast);
+}
+
+.progression-shell .prog-utility-bar__collapse:hover {
+  color: var(--prog-accent);
+  border-color: var(--prog-accent);
+}
+
+/* Collapsed state — hide label, search, filters, sort, conditional, custom controls */
+.progression-shell [data-region="utility-bar"][data-collapsed="true"] .prog-utility-bar__label,
+.progression-shell [data-region="utility-bar"][data-collapsed="true"] .prog-utility-bar__search,
+.progression-shell [data-region="utility-bar"][data-collapsed="true"] .prog-utility-bar__filters,
+.progression-shell [data-region="utility-bar"][data-collapsed="true"] .prog-utility-bar__sort,
+.progression-shell [data-region="utility-bar"][data-collapsed="true"] .prog-utility-bar__custom-controls,
+.progression-shell [data-region="utility-bar"][data-collapsed="true"] .prog-utility-bar__conditional {
+  display: none;
+}

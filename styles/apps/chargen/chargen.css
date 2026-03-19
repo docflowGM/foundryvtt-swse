@@ -63,6 +63,50 @@
     background: #00cfff;
 }
 
+/* ============================================================
+   Form Fields - SWSE Framework
+   Override Foundry's default form-group styling
+   ============================================================ */
+
+.chargen-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.chargen-field label {
+    font-weight: 600;
+    color: #0af;
+    font-size: 0.95rem;
+}
+
+.chargen-field input,
+.chargen-field select,
+.chargen-field textarea {
+    background: rgba(10, 15, 26, 0.8);
+    border: 1px solid #0af;
+    border-radius: 4px;
+    padding: 6px 8px;
+    color: #9ed0ff;
+    font-family: "Orbitron", sans-serif;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.chargen-field input:focus,
+.chargen-field select:focus,
+.chargen-field textarea:focus {
+    outline: none;
+    border-color: #00cfff;
+    box-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
+    background: rgba(10, 15, 26, 0.95);
+}
+
+.chargen-field input::placeholder {
+    color: rgba(158, 208, 255, 0.5);
+}
+
 .voice-prompt {
     background: linear-gradient(180deg, rgba(0, 20, 40, 0.9) 0%, rgba(0, 10, 20, 0.7) 100%);
     padding: 2rem;

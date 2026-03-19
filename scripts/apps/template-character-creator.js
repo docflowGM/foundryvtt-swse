@@ -301,8 +301,7 @@ async _prepareContext(options) {
 
     // Open regular character generator
     const CharacterGenerator = (await import("/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js")).default;
-    const chargen = new CharacterGenerator();
-    chargen.render(true);
+    await CharacterGenerator.open();
   }
 
   /**

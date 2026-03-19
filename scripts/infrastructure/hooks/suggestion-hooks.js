@@ -44,6 +44,11 @@ export function registerSuggestionHooks() {
     const actor = app?.actor ?? app?.document;
     if (!actor || actor.documentName !== 'Actor') return;
 
+    // Do not inject the Mentor Notes button into the progression shell (chargen / level-up).
+    // The shell manages its own mentor region; a separate window during chargen is unwanted.
+    const appClasses = app.options?.classes ?? [];
+    if (appClasses.includes('progression-shell')) return;
+
     if (Array.isArray(controls) && controls.some(c => c?.action === 'swse-mentor-notes')) return;
 
     controls.push({

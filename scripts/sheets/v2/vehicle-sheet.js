@@ -8,6 +8,7 @@ import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-a
 import { initiateItemSale } from "/systems/foundryvtt-swse/scripts/apps/item-selling-system.js";
 import { SWSELevelUp } from "/systems/foundryvtt-swse/scripts/apps/swse-levelup.js";
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
+import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { VehicleDropEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/vehicle-drop-engine.js";
 import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
@@ -263,7 +264,7 @@ export class SWSEV2VehicleSheet extends
 
     try {
       for (const tabBtn of root.querySelectorAll(".sheet-tabs .item")) {
-        tabBtn.addEventListener("click", { signal }, (ev) => {
+        tabBtn.addEventListener("click", (ev) => {
           try {
             const tabName = ev.currentTarget.dataset.tab;
             if (!tabName) return;
@@ -281,7 +282,7 @@ export class SWSEV2VehicleSheet extends
           } catch (err) {
             console.error("Error handling tab click:", err);
           }
-        });
+        }, { signal });
       }
     } catch (err) {
       console.error("Error binding tab handlers:", err);
@@ -291,7 +292,7 @@ export class SWSEV2VehicleSheet extends
 
     try {
       for (const el of root.querySelectorAll(".swse-v2-condition-step")) {
-        el.addEventListener("click", { signal }, async (ev) => {
+        el.addEventListener("click", async (ev) => {
           try {
             ev.preventDefault();
             const step = Number(ev.currentTarget?.dataset?.step);
@@ -304,7 +305,7 @@ export class SWSEV2VehicleSheet extends
           } catch (err) {
             console.error("Error handling condition step click:", err);
           }
-        });
+        }, { signal });
       }
     } catch (err) {
       console.error("Error binding condition step handlers:", err);
@@ -312,51 +313,51 @@ export class SWSEV2VehicleSheet extends
 
     const improveBtn = root.querySelector(".swse-v2-condition-improve");
     if (improveBtn) {
-      improveBtn.addEventListener("click", { signal }, async (ev) => {
+      improveBtn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         if (typeof this.actor?.improveConditionTrack === "function") {
           await this.actor?.improveConditionTrack();
         }
-      });
+      }, { signal });
     }
 
     const worsenBtn = root.querySelector(".swse-v2-condition-worsen");
     if (worsenBtn) {
-      worsenBtn.addEventListener("click", { signal }, async (ev) => {
+      worsenBtn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         if (typeof this.actor?.worsenConditionTrack === "function") {
           await this.actor?.worsenConditionTrack();
         }
-      });
+      }, { signal });
     }
 
     const persistentCheckbox = root.querySelector(".swse-v2-condition-persistent");
     if (persistentCheckbox) {
-      persistentCheckbox.addEventListener("change", { signal }, async (ev) => {
+      persistentCheckbox.addEventListener("change", async (ev) => {
         const flag = ev.currentTarget?.checked === true;
         if (typeof this.actor?.setConditionTrackPersistent === "function") {
           await this.actor?.setConditionTrackPersistent(flag);
         }
-      });
+      }, { signal });
     }
 
     /* ---------------- ITEM OPEN ---------------- */
 
     for (const el of root.querySelectorAll(".swse-v2-open-item")) {
-      el.addEventListener("click", { signal }, (ev) => {
+      el.addEventListener("click", (ev) => {
         ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId;
+        const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
         const item = this.actor?.items?.get(itemId);
         item?.sheet?.render(true);
-      });
+      }, { signal });
     }
 
     /* ---- EQUIPMENT: SELL & DELETE ---- */
 
     for (const btn of root.querySelectorAll('[data-action="sell-item"]')) {
-      btn.addEventListener("click", { signal }, async (ev) => {
+      btn.addEventListener("click", async (ev) => {
         ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId;
+        const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
         if (!itemId) return;
         const item = this.document.items.get(itemId);
         if (!item) return;
@@ -371,117 +372,117 @@ export class SWSEV2VehicleSheet extends
         // PHASE 8: Use ActorEngine
         await ActorEngine.deleteEmbeddedDocuments(this.document, "Item", [itemId]);
         ui.notifications.info(`Sold ${item.name} for ${price} credits`);
-      });
+      }, { signal });
     }
 
     for (const btn of root.querySelectorAll('[data-action="delete-item"]')) {
-      btn.addEventListener("click", { signal }, async (ev) => {
+      btn.addEventListener("click", async (ev) => {
         ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId;
+        const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
         if (!itemId) return;
         // PHASE 8: Use ActorEngine
         await ActorEngine.deleteEmbeddedDocuments(this.document, "Item", [itemId]);
-      });
+      }, { signal });
     }
 
     /* ---- CREW MANAGEMENT ---- */
 
     for (const btn of root.querySelectorAll('[data-action="remove-owned"]')) {
-      btn.addEventListener("click", { signal }, async (ev) => {
+      btn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         const actorId = ev.currentTarget?.dataset?.actorId;
         if (!actorId) return;
         const owned = this.document.system.ownedActors?.filter(o => o.id !== actorId) || [];
         await this.document.update({ "system.ownedActors": owned });
-      });
+      }, { signal });
     }
 
     for (const btn of root.querySelectorAll('[data-action="open-owned"]')) {
-      btn.addEventListener("click", { signal }, (ev) => {
+      btn.addEventListener("click", (ev) => {
         ev.preventDefault();
         const actorId = ev.currentTarget?.dataset?.actorId;
         if (!actorId) return;
         const actor = game.actors.get(actorId);
         actor?.sheet?.render(true);
-      });
+      }, { signal });
     }
 
     /* ---------------- WEAPON ROLLING ---------------- */
 
-    for (const el of root.querySelectorAll('[data-action="roll-weapon"]')) {
-      el.addEventListener("click", { signal }, async (ev) => {
+    for (const el of root.querySelectorAll('[data-action="roll-weapon"], [data-action="roll-weapon-attack"]')) {
+      el.addEventListener("click", async (ev) => {
         ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId;
+        const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
         if (!itemId || !this.actor) return;
         const item = this.actor.items?.get(itemId);
         if (!item) return;
         if (typeof item.roll === "function") {
           await item.roll();
         } else {
-          await rollAttack(this.actor, item);
-        }
-      });
+          await SWSERoll.rollAttack(this.actor, item, { showDialog: true });
+}
+      }, { signal });
     }
 
     /* ---------------- ACTION USE ---------------- */
 
     for (const el of root.querySelectorAll(".swse-v2-use-action")) {
-      el.addEventListener("click", { signal }, async (ev) => {
+      el.addEventListener("click", async (ev) => {
         ev.preventDefault();
         const actionId = ev.currentTarget?.dataset?.actionId;
         if (typeof this.actor?.useAction === "function") {
           await this.actor?.useAction(actionId);
         }
-      });
+      }, { signal });
     }
 
     /* ---------------- PROGRESSION BUTTONS (VEHICLE-SPECIFIC) ---------------- */
 
     const levelUpBtn = root.querySelector('[data-action="level-up"]');
     if (levelUpBtn) {
-      levelUpBtn.addEventListener("click", { signal }, async (ev) => {
+      levelUpBtn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         if (this.actor) {
           await SWSELevelUp.openEnhanced(this.actor);
         }
-      });
+      }, { signal });
     }
 
     /* ---- SUBSYSTEM REPAIR ---- */
 
     for (const btn of root.querySelectorAll('[data-action="repair-subsystem"]')) {
-      btn.addEventListener("click", { signal }, async (ev) => {
+      btn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         const subsystem = ev.currentTarget?.dataset?.subsystem;
         if (!subsystem || !this.actor) return;
         await SubsystemEngine.repairSubsystem(this.actor, subsystem);
-      });
+      }, { signal });
     }
 
     /* ---- ENHANCED SHIELDS ---- */
 
     for (const btn of root.querySelectorAll('[data-action="shield-focus"]')) {
-      btn.addEventListener("click", { signal }, async (ev) => {
+      btn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         const zone = ev.currentTarget?.dataset?.zone;
         if (!zone || !this.actor) return;
         await EnhancedShields.focusShields(this.actor, zone);
-      });
+      }, { signal });
     }
 
     const equalizeBtn = root.querySelector('[data-action="shield-equalize"]');
     if (equalizeBtn) {
-      equalizeBtn.addEventListener("click", { signal }, async (ev) => {
+      equalizeBtn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         if (!this.actor) return;
         await EnhancedShields.equalizeShields(this.actor);
-      });
+      }, { signal });
     }
 
     /* ---- POWER ALLOCATION ---- */
 
     for (const btn of root.querySelectorAll('[data-action="power-adjust"]')) {
-      btn.addEventListener("click", { signal }, async (ev) => {
+      btn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         const system = ev.currentTarget?.dataset?.system;
         const direction = ev.currentTarget?.dataset?.direction;
@@ -489,73 +490,73 @@ export class SWSEV2VehicleSheet extends
         const current = this.actor.system?.powerAllocation?.[system] ?? 2;
         const newVal = direction === 'up' ? Math.min(4, current + 1) : Math.max(0, current - 1);
         await ActorEngine.updateActor(this.actor, { [`system.powerAllocation.${system}`]: newVal });
-      });
+      }, { signal });
     }
 
     /* ---- PILOT MANEUVER ---- */
 
     for (const btn of root.querySelectorAll('[data-action="set-maneuver"]')) {
-      btn.addEventListener("click", { signal }, async (ev) => {
+      btn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         const maneuver = ev.currentTarget?.dataset?.maneuver;
         if (!maneuver || !this.actor) return;
         await EnhancedPilot.setManeuver(this.actor, maneuver);
-      });
+      }, { signal });
     }
 
     /* ---- COMMANDER ORDER ---- */
 
     for (const btn of root.querySelectorAll('[data-action="set-order"]')) {
-      btn.addEventListener("click", { signal }, async (ev) => {
+      btn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         const order = ev.currentTarget?.dataset?.order;
         if (!order || !this.actor) return;
         await EnhancedCommander.issueOrder(this.actor, order);
-      });
+      }, { signal });
     }
 
     /* ---- TURN CONTROLLER ---- */
 
     const advancePhaseBtn = root.querySelector('[data-action="advance-phase"]');
     if (advancePhaseBtn) {
-      advancePhaseBtn.addEventListener("click", { signal }, async (ev) => {
+      advancePhaseBtn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         if (!this.actor) return;
         await VehicleTurnController.advancePhase(this.actor);
-      });
+      }, { signal });
     }
 
     const resetTurnBtn = root.querySelector('[data-action="reset-turn"]');
     if (resetTurnBtn) {
-      resetTurnBtn.addEventListener("click", { signal }, async (ev) => {
+      resetTurnBtn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         if (!this.actor) return;
         await VehicleTurnController.startTurn(this.actor);
-      });
+      }, { signal });
     }
 
     /* ---- STARSHIP MANEUVERS ---- */
 
     for (const btn of root.querySelectorAll('[data-action="useManeuver"]')) {
-      btn.addEventListener("click", { signal }, async (ev) => {
+      btn.addEventListener("click", async (ev) => {
         ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId;
+        const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
         if (!itemId || !this.actor) return;
         const item = this.actor.items?.get(itemId);
         if (!item) return;
         await ActorEngine.updateActor(this.actor, { [`items.${itemId}.system.spent`]: true });
-      });
+      }, { signal });
     }
 
     for (const btn of root.querySelectorAll('[data-action="regainManeuver"]')) {
-      btn.addEventListener("click", { signal }, async (ev) => {
+      btn.addEventListener("click", async (ev) => {
         ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId;
+        const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
         if (!itemId || !this.actor) return;
         const item = this.actor.items?.get(itemId);
         if (!item) return;
         await ActorEngine.updateActor(this.actor, { [`items.${itemId}.system.spent`]: false });
-      });
+      }, { signal });
     }
 
     /* ---- DRAG & DROP VISUAL FEEDBACK ---- */

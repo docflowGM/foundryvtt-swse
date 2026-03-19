@@ -1,91 +1,225 @@
-/* Species Step — species browsing, card grid, focus/commit states */
+/* ============================================================================
+   SPECIES STEP — dense horizontal-row databank browser
+   ============================================================================ */
 
-.progression-shell .prog-species-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: var(--prog-space-sm);
-  padding: var(--prog-space-md);
-  overflow-y: auto;
+/* Browse container — fills work-surface */
+.progression-shell .prog-species-browse {
+  display: flex;
+  flex-direction: column;
   height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
 
-.progression-shell .prog-species-card {
-  appearance: none;
-  background: var(--prog-bg-read);
-  border: 1px solid var(--prog-border);
-  border-radius: var(--prog-radius-sm);
-  padding: var(--prog-space-sm);
-  cursor: pointer;
-  transition: all var(--prog-transition-fast);
+/* ============================================================================
+   SPECIES LIST — scrollable vertical stack of rows
+   ============================================================================ */
+
+.progression-shell .prog-species-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1 1 auto;
+  padding: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(80, 220, 255, 0.3) rgba(10, 26, 42, 0.5);
+}
+
+/* ============================================================================
+   SPECIES ROW — compact horizontal entry
+   ============================================================================ */
+
+.progression-shell .prog-species-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  min-height: 40px;
+  width: 100%;
+  text-align: left;
   font-family: inherit;
   font-size: inherit;
-  color: inherit;
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-  gap: var(--prog-space-xs);
+  color: var(--prog-text);
+  cursor: pointer;
+
+  background: rgba(8, 22, 38, 0.7);
+  border: 1px solid rgba(50, 100, 150, 0.25);
+  border-radius: var(--prog-radius-sm);
+  transition: background var(--prog-transition-fast),
+              border-color var(--prog-transition-fast),
+              box-shadow var(--prog-transition-fast);
 }
 
-.progression-shell .prog-species-card:hover {
-  border-color: var(--prog-border-bright);
-  background: rgba(255, 255, 255, 0.03);
+.progression-shell .prog-species-row:hover {
+  background: rgba(10, 28, 48, 0.9);
+  border-color: rgba(80, 180, 255, 0.45);
 }
 
-.progression-shell .prog-species-card:focus {
-  outline: 2px solid var(--prog-accent);
-  outline-offset: -1px;
-}
-
-.progression-shell .prog-species-card--focused {
+.progression-shell .prog-species-row:focus {
+  outline: none;
   border-color: var(--prog-accent);
-  background: rgba(0, 170, 255, 0.08);
-  box-shadow: 0 0 6px rgba(0, 170, 255, 0.3);
 }
 
-.progression-shell .prog-species-card--committed {
-  border-color: var(--prog-positive);
+/* Focused (single-click selected — previewing) */
+.progression-shell .prog-species-row--focused {
+  background: rgba(0, 120, 200, 0.14);
+  border-color: rgba(100, 210, 255, 0.7);
+  box-shadow: 0 0 6px rgba(0, 150, 220, 0.25);
 }
 
-.progression-shell .prog-species-card__name {
-  font-weight: bold;
-  font-size: var(--prog-font-size-sm);
-  color: var(--prog-text-heading);
-  text-shadow: var(--prog-heading-shadow);
+/* Committed (confirmed selection) */
+.progression-shell .prog-species-row--committed {
+  background: rgba(0, 180, 80, 0.10);
+  border-color: rgba(50, 220, 120, 0.5);
+  box-shadow: 0 0 6px rgba(0, 180, 80, 0.2);
 }
 
-.progression-shell .prog-species-card__attrs {
+/* ============================================================================
+   THUMBNAIL — small portrait or letter badge
+   ============================================================================ */
+
+.progression-shell .prog-species-row__thumb {
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid rgba(80, 180, 255, 0.3);
+  background: rgba(6, 18, 30, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.progression-shell .prog-species-row__thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.progression-shell .prog-species-row__thumb-badge {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: rgba(100, 200, 255, 0.7);
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+/* ============================================================================
+   CENTER — name + compact stats + optional tags
+   ============================================================================ */
+
+.progression-shell .prog-species-row__center {
+  flex: 1 1 auto;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  font-size: var(--prog-font-size-xs);
+  gap: 1px;
+  overflow: hidden;
 }
 
-.progression-shell .prog-species-card__attr {
+/* Species name — most prominent text */
+.progression-shell .prog-species-row__name {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(210, 240, 255, 0.95);
+  text-shadow: 0 0 6px rgba(0, 170, 255, 0.3), 0 1px 2px rgba(0, 0, 0, 0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Compact stat line — size • +2 DEX, -2 CON • Spd 6 */
+.progression-shell .prog-species-row__stats {
+  font-size: 10px;
+  color: rgba(120, 180, 220, 0.75);
   text-shadow: var(--prog-text-shadow);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.progression-shell .prog-species-card__meta {
+.progression-shell .prog-species-row__sep {
+  margin: 0 3px;
+  opacity: 0.5;
+}
+
+/* Ability modifiers — subtle semantic coloring via CSS filter would be ideal,
+   but for simplicity keep same dim color */
+.progression-shell .prog-species-row__mods {
+  color: rgba(160, 210, 255, 0.85);
+}
+
+/* Optional tags — first 3 traits */
+.progression-shell .prog-species-row__tags {
   display: flex;
-  flex-wrap: wrap;
-  gap: 2px;
+  flex-wrap: nowrap;
+  gap: 3px;
+  overflow: hidden;
 }
 
-.progression-shell .prog-species-card__committed-badge {
-  color: var(--prog-positive);
-  font-size: var(--prog-font-size-xs);
-  font-weight: bold;
-  text-shadow: var(--prog-text-shadow);
+.progression-shell .prog-species-row__tag {
+  font-size: 8px;
+  padding: 1px 4px;
+  border-radius: 2px;
+  background: rgba(0, 80, 140, 0.25);
+  border: 1px solid rgba(60, 140, 220, 0.2);
+  color: rgba(120, 190, 255, 0.7);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
+
+/* ============================================================================
+   RIGHT — committed check or source label
+   ============================================================================ */
+
+.progression-shell .prog-species-row__right {
+  flex: 0 0 auto;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 40px;
+}
+
+.progression-shell .prog-species-row__check {
+  color: var(--prog-positive);
+  font-size: 14px;
+  text-shadow: 0 0 6px rgba(34, 197, 94, 0.4);
+}
+
+.progression-shell .prog-species-row__source {
+  font-size: 8px;
+  color: rgba(80, 120, 160, 0.55);
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ============================================================================
+   EMPTY STATE
+   ============================================================================ */
 
 .progression-shell .prog-species-browse__empty {
-  grid-column: 1 / -1;
   padding: var(--prog-space-lg);
   text-align: center;
   color: var(--prog-text-dim);
   font-style: italic;
 }
 
-/* Semantic number colors */
+/* ============================================================================
+   SEMANTIC NUMBER COLORS (shared utility)
+   ============================================================================ */
+
 .progression-shell .prog-num--pos {
   color: var(--prog-positive);
 }
@@ -98,7 +232,10 @@
   color: var(--prog-neutral);
 }
 
-/* Species details panel */
+/* ============================================================================
+   SPECIES DETAILS PANEL (right column — contextual info)
+   ============================================================================ */
+
 .progression-shell .prog-species-details {
   padding: var(--prog-space-md);
   overflow-y: auto;
@@ -106,6 +243,65 @@
   display: flex;
   flex-direction: column;
   gap: var(--prog-space-sm);
+}
+
+/* Ol' Salty dialogue block — top of details panel
+   dialogue-box.svg (960×240): speech bubble with chamfered frame, left-down tail.
+   SVG provides the chrome; CSS controls padding/text positioning inside frame. */
+.progression-shell .prog-species-details__salty-dialogue {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+
+  /* dialogue-box.svg frame: chamfered rect, cyan border, speech tail at bottom-left */
+  background-image:  url('../../../assets/ui/chargen/dialogue-box.svg');
+  background-size:   100% 100%;
+  background-repeat: no-repeat;
+  background-color:  transparent;
+
+  /* Remove old CSS border — SVG handles chrome */
+  border: none;
+  border-radius: 0;
+
+  /* Inset padding clears SVG frame (frame border ~26px each side, 18px top, 40px bottom
+     to clear the speech tail zone which sits at bottom-left of the SVG) */
+  padding: 14px 24px 44px 28px;
+  min-height: 60px;
+}
+
+.progression-shell .prog-species-details__salty-icon {
+  color: rgba(100, 200, 255, 0.65);
+  font-size: 13px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.progression-shell .prog-species-details__salty-text {
+  margin: 0;
+  font-size: var(--prog-font-size-xs);
+  line-height: 1.5;
+  color: rgba(160, 220, 255, 0.85);
+  text-shadow: var(--prog-text-shadow);
+  font-style: italic;
+}
+
+/* Portrait — only present when species has art */
+.progression-shell .prog-species-details__portrait {
+  width: 100%;
+  border-radius: var(--prog-radius-sm);
+  overflow: hidden;
+  border: 1px solid rgba(80, 200, 255, 0.35);
+  box-shadow:
+    0 0 10px rgba(0, 160, 220, 0.15),
+    inset 0 0 8px rgba(0, 0, 0, 0.4);
+}
+
+.progression-shell .prog-species-details__portrait-img {
+  width: 100%;
+  height: auto;
+  max-height: 180px;
+  object-fit: cover;
+  display: block;
 }
 
 .progression-shell .prog-species-details__header {
@@ -147,10 +343,6 @@
   padding: var(--prog-space-sm);
   background: rgba(0, 0, 0, 0.2);
   border-radius: var(--prog-radius-sm);
-}
-
-.progression-shell .prog-species-details__attr-row {
-  display: contents;
 }
 
 .progression-shell .prog-species-details__attr-row > span:first-child {

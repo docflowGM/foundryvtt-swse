@@ -1,0 +1,155 @@
+/**
+ * Name Step Styling
+ * Minimal, focused styles for character name and level selection
+ */
+
+/* ------ Name Step Surface ------ */
+.prog-name-surface {
+  display: contents;
+}
+
+/* ------ Left Panel: Character Overview ------ */
+.prog-panel--left .prog-summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.prog-summary-row {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--prog-border);
+}
+
+.prog-summary-row:last-child {
+  border-bottom: none;
+}
+
+.prog-summary-label {
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--prog-text-dim);
+}
+
+.prog-summary-value {
+  font-size: 0.9rem;
+  color: var(--prog-text);
+}
+
+.prog-placeholder {
+  color: var(--prog-text-disabled);
+  font-style: italic;
+}
+
+/* ------ Center Panel: Identity Inputs ------ */
+.prog-name-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.prog-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.prog-field-label {
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--prog-text);
+}
+
+.prog-input {
+  padding: 0.75rem 1rem;
+  background: var(--prog-bg-surface);
+  border: 1px solid var(--prog-border);
+  border-radius: 4px;
+  color: var(--prog-text);
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.prog-input:focus {
+  outline: none;
+  border-color: var(--prog-accent);
+  box-shadow: var(--prog-accent-glow-soft);
+}
+
+.prog-field-hint {
+  font-size: 0.8rem;
+  color: var(--prog-text-dim);
+  font-style: italic;
+}
+
+.prog-action-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.prog-btn {
+  padding: 0.75rem 1rem;
+  background: var(--prog-bg-surface);
+  border: 1px solid var(--prog-border);
+  border-radius: 4px;
+  color: var(--prog-text);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.prog-btn:hover {
+  background-color: var(--prog-bg-hover);
+  border-color: var(--prog-accent);
+}
+
+.prog-btn:active {
+  transform: scale(0.98);
+}
+
+.prog-btn i {
+  font-size: 0.9rem;
+}
+
+/* ------ Right Panel: Details ------ */
+.prog-panel--right .prog-details-text {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--prog-text-dim);
+}
+
+.prog-details-text p {
+  margin: 0;
+}
+
+.prog-details-text strong {
+  color: var(--prog-text);
+  font-weight: 600;
+}
+
+/* ------ Responsive ------ */
+@media (max-width: 1200px) {
+  .prog-action-row {
+    grid-template-columns: 1fr;
+  }
+}

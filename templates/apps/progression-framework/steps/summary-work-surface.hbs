@@ -1,0 +1,243 @@
+<div class="prog-summary-surface">
+
+  {{!-- Left Panel: Identity Card with Name Registration --}}
+  <div class="prog-panel prog-panel--left">
+    <h3 class="prog-panel-title">Register Datapad Profile</h3>
+
+    <div class="prog-identity-card">
+      {{!-- CHARACTER NAME INPUT (Editable - this step acts as "datapad profile registration") --}}
+      <div class="prog-name-input-section">
+        <label for="summary-name-input" class="prog-input-label">Character Name</label>
+        <input
+          type="text"
+          id="summary-name-input"
+          class="summary-step-name-input prog-text-input"
+          placeholder="Enter or generate a name..."
+          value="{{characterName}}"
+        />
+
+        {{!-- Random Name Generation Buttons --}}
+        <div class="prog-random-name-buttons">
+          <button class="summary-step-random-name-btn prog-btn prog-btn--small">
+            <i class="fas fa-dice"></i> Generate Name
+          </button>
+          <button class="summary-step-random-droid-name-btn prog-btn prog-btn--small">
+            <i class="fas fa-dice"></i> Droid Name
+          </button>
+        </div>
+      </div>
+
+      <div class="prog-identity-divider"></div>
+
+      {{!-- LEVEL SLIDER (Editable - 1-20) --}}
+      <div class="prog-level-input-section">
+        <label for="summary-level-input" class="prog-input-label">Starting Level</label>
+        <div class="prog-level-display">
+          <input
+            type="range"
+            id="summary-level-input"
+            class="summary-step-level-input prog-level-slider"
+            min="1"
+            max="20"
+            value="{{startingLevel}}"
+          />
+          <span class="prog-level-value">{{startingLevel}}</span>
+        </div>
+      </div>
+
+      <div class="prog-identity-divider"></div>
+
+      {{!-- CHARACTER STATS (Read-only) --}}
+      <div class="prog-identity-stats">
+        <div class="prog-identity-stat">
+          <span class="prog-stat-label">Species</span>
+          <span class="prog-stat-value">{{#if summary.species}}{{summary.species}}{{else}}<span class="prog-placeholder">—</span>{{/if}}</span>
+        </div>
+        <div class="prog-identity-stat">
+          <span class="prog-stat-label">Class</span>
+          <span class="prog-stat-value">{{#if summary.class}}{{summary.class}}{{else}}<span class="prog-placeholder">—</span>{{/if}}</span>
+        </div>
+      </div>
+
+      <div class="prog-identity-divider"></div>
+
+      <div class="prog-creation-note">
+        <i class="fas fa-datapad"></i>
+        <strong>Datapad Registration:</strong> Review all choices. Enter your character's final name above.
+        Return to any earlier step to modify selections.
+      </div>
+    </div>
+  </div>
+
+  {{!-- Center Panel: Full Progression Summary --}}
+  <div class="prog-panel prog-panel--center">
+    <h3 class="prog-panel-title">Progression Review</h3>
+
+    {{!-- Attributes Section --}}
+    <div class="prog-summary-section">
+      <div class="prog-section-header">
+        <i class="fas fa-chart-bar"></i> Attributes
+      </div>
+      {{#if summary.attributes}}
+        <div class="prog-attributes-grid">
+          {{#each summary.attributes}}
+            <div class="prog-attr-display">
+              <span class="prog-attr-name">{{capitalize @key}}</span>
+              <span class="prog-attr-value {{#if (gt this.total 10)}}prog-positive{{else if (lt this.total 10)}}prog-negative{{else}}prog-zero{{/if}}">
+                {{this.total}}
+              </span>
+            </div>
+          {{/each}}
+        </div>
+      {{else}}
+        <div class="prog-placeholder">No attributes assigned</div>
+      {{/if}}
+    </div>
+
+    {{!-- Skills Section --}}
+    {{#if summary.skills}}
+      <div class="prog-summary-section">
+        <div class="prog-section-header">
+          <i class="fas fa-book-open"></i> Trained Skills ({{summary.skills.length}})
+        </div>
+        <div class="prog-skills-display">
+          {{#each summary.skills}}
+            <div class="prog-skill-badge">{{this}}</div>
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
+
+    {{!-- Feats Section --}}
+    {{#if summary.feats}}
+      <div class="prog-summary-section">
+        <div class="prog-section-header">
+          <i class="fas fa-star"></i> Feats ({{summary.feats.length}})
+        </div>
+        <div class="prog-items-list">
+          {{#each summary.feats}}
+            <div class="prog-item-entry">
+              <i class="fas fa-check-circle"></i> {{this}}
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
+
+    {{!-- Talents Section --}}
+    {{#if summary.talents}}
+      <div class="prog-summary-section">
+        <div class="prog-section-header">
+          <i class="fas fa-gem"></i> Talents ({{summary.talents.length}})
+        </div>
+        <div class="prog-items-list">
+          {{#each summary.talents}}
+            <div class="prog-item-entry">
+              <i class="fas fa-check-circle"></i> {{this}}
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
+
+    {{!-- Empty State --}}
+    {{#unless (or summary.attributes summary.skills summary.feats summary.talents)}}
+      <div class="prog-empty-state">
+        <i class="fas fa-clipboard-list"></i>
+        <p>Progress through the earlier steps to build your character sheet here.</p>
+      </div>
+    {{/unless}}
+  </div>
+
+  {{!-- Right Panel: Validation & Next Steps --}}
+  <div class="prog-panel prog-panel--right">
+    <h3 class="prog-panel-title">Final Checklist</h3>
+
+    <div class="prog-checklist">
+      {{!-- Name is now EDITABLE on this step (was on NameStep) --}}
+      <div class="prog-checklist-item {{#if characterName}}complete{{/if}}">
+        <i class="fas {{#if characterName}}fa-check-circle{{else}}fa-circle{{/if}}"></i>
+        <span class="prog-checklist-label">
+          {{#if characterName}}
+            <i class="fas fa-pencil-alt"></i> Name Registered: <strong>{{characterName}}</strong>
+          {{else}}
+            <i class="fas fa-pencil-alt"></i> Name Registration Required (see left)
+          {{/if}}
+        </span>
+      </div>
+
+      <div class="prog-checklist-item {{#if summary.class}}complete{{/if}}">
+        <i class="fas {{#if summary.class}}fa-check-circle{{else}}fa-circle{{/if}}"></i>
+        <span class="prog-checklist-label">
+          {{#if summary.class}}
+            Class: <strong>{{summary.class}}</strong>
+          {{else}}
+            Class Selection Required
+          {{/if}}
+        </span>
+      </div>
+
+      <div class="prog-checklist-item {{#if (gt (count summary.attributes) 0)}}complete{{/if}}">
+        <i class="fas {{#if (gt (count summary.attributes) 0)}}fa-check-circle{{else}}fa-circle{{/if}}"></i>
+        <span class="prog-checklist-label">
+          {{#if (gt (count summary.attributes) 0)}}
+            Attributes: {{count summary.attributes}} assigned
+          {{else}}
+            Attributes Assignment Required
+          {{/if}}
+        </span>
+      </div>
+
+      <div class="prog-checklist-item {{#if (gt (count summary.species) 0)}}complete{{/if}}">
+        <i class="fas {{#if (gt (count summary.species) 0)}}fa-check-circle{{else}}fa-circle{{/if}}"></i>
+        <span class="prog-checklist-label">
+          {{#if (gt (count summary.species) 0)}}
+            Species: <strong>{{summary.species}}</strong>
+          {{else}}
+            Species Selection Required
+          {{/if}}
+        </span>
+      </div>
+
+      {{#if summary.languages}}
+        <div class="prog-checklist-item complete">
+          <i class="fas fa-check-circle"></i>
+          <span class="prog-checklist-label">Languages: {{summary.languages.length}} selected</span>
+        </div>
+      {{/if}}
+
+      {{#if summary.skills}}
+        <div class="prog-checklist-item complete">
+          <i class="fas fa-check-circle"></i>
+          <span class="prog-checklist-label">Skills: {{summary.skills.length}} trained</span>
+        </div>
+      {{/if}}
+
+      {{#if summary.feats}}
+        <div class="prog-checklist-item complete">
+          <i class="fas fa-check-circle"></i>
+          <span class="prog-checklist-label">Feats: {{summary.feats.length}} selected</span>
+        </div>
+      {{/if}}
+
+      {{#if summary.talents}}
+        <div class="prog-checklist-item complete">
+          <i class="fas fa-check-circle"></i>
+          <span class="prog-checklist-label">Talents: {{summary.talents.length}} selected</span>
+        </div>
+      {{/if}}
+    </div>
+
+    <div class="prog-summary-guidance">
+      <p>
+        <strong>Datapad Profile Ready:</strong> When all information is registered, proceed to finalize character creation.
+        You can return to any earlier step to make adjustments before confirming.
+      </p>
+      <p class="prog-guidance-tip">
+        <i class="fas fa-star"></i>
+        Your character sheet will be automatically populated with all selections and calculations applied.
+      </p>
+    </div>
+  </div>
+
+</div>

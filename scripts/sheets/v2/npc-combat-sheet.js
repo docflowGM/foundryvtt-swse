@@ -7,6 +7,7 @@ import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-a
 import { SWSELevelUp } from "/systems/foundryvtt-swse/scripts/apps/swse-levelup.js";
 import { rollSkill } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
+import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { DropResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/drop-resolution-engine.js";
 import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
@@ -144,7 +145,7 @@ export class SWSEV2CombatNpcSheet extends
     /* ---- CONDITION STEP HANDLING ---- */
 
     for (const el of root.querySelectorAll(".swse-v2-condition-step")) {
-      el.addEventListener("click", { signal }, async (ev) => {
+      el.addEventListener("click", async (ev) => {
         ev.preventDefault();
         const step = Number(ev.currentTarget?.dataset?.step);
         if (!Number.isFinite(step)) return;
@@ -153,57 +154,57 @@ export class SWSEV2CombatNpcSheet extends
         } else if (this.actor) {
           await ActorEngine.updateActor(this.actor, { 'system.conditionTrack.current': step });
         }
-      });
+      }, { signal });
     }
 
     const improveBtn = root.querySelector(".swse-v2-condition-improve");
     if (improveBtn) {
-      improveBtn.addEventListener("click", { signal }, async (ev) => {
+      improveBtn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         if (typeof this.actor?.improveConditionTrack === "function") {
           await this.actor?.improveConditionTrack();
         }
-      });
+      }, { signal });
     }
 
     const worsenBtn = root.querySelector(".swse-v2-condition-worsen");
     if (worsenBtn) {
-      worsenBtn.addEventListener("click", { signal }, async (ev) => {
+      worsenBtn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         if (typeof this.actor?.worsenConditionTrack === "function") {
           await this.actor?.worsenConditionTrack();
         }
-      });
+      }, { signal });
     }
 
     /* ---- INITIATIVE CONTROLS ---- */
 
-    root.querySelector(".roll-initiative")?.addEventListener("click", { signal }, async (ev) => {
+    root.querySelector(".roll-initiative")?.addEventListener("click", async (ev) => {
       ev.preventDefault();
       await this.actor.swseRollInitiative();
-    });
+    }, { signal });
 
-    root.querySelector(".take10-initiative")?.addEventListener("click", { signal }, async (ev) => {
+    root.querySelector(".take10-initiative")?.addEventListener("click", async (ev) => {
       ev.preventDefault();
       await this.actor.swseTake10Initiative();
-    });
+    }, { signal });
 
     /* ---- SKILL ROLLING ---- */
 
     for (const el of root.querySelectorAll('[data-action="roll-skill"]')) {
-      el.addEventListener("click", { signal }, async (ev) => {
+      el.addEventListener("click", async (ev) => {
         ev.preventDefault();
         const skillKey = ev.currentTarget?.dataset?.skill;
         if (skillKey && this.actor) {
-          await rollSkill(this.actor, skillKey);
-        }
-      });
+          await SWSERoll.rollSkill(this.actor, skillKey);
+}
+      }, { signal });
     }
 
     /* ---- DEFENSE ROLLING ---- */
 
     for (const el of root.querySelectorAll('[data-action="roll-defense"]')) {
-      el.addEventListener("click", { signal }, async (ev) => {
+      el.addEventListener("click", async (ev) => {
         ev.preventDefault();
         const defenseType = ev.currentTarget?.dataset?.defense;
         if (defenseType && this.actor) {
@@ -211,57 +212,57 @@ export class SWSEV2CombatNpcSheet extends
             await game.swse.rolls.defenses.rollDefense(this.document, defenseType);
           }
         }
-      });
+      }, { signal });
     }
 
     /* ---- WEAPON ROLLING ---- */
 
-    for (const el of root.querySelectorAll('[data-action="roll-weapon"]')) {
-      el.addEventListener("click", { signal }, async (ev) => {
+    for (const el of root.querySelectorAll('[data-action="roll-weapon"], [data-action="roll-weapon-attack"]')) {
+      el.addEventListener("click", async (ev) => {
         ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId;
+        const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
         if (!itemId || !this.actor) return;
         const item = this.actor.items?.get(itemId);
         if (!item) return;
         if (typeof item.roll === "function") {
           await item.roll();
         } else {
-          await rollAttack(this.actor, item);
-        }
-      });
+          await SWSERoll.rollAttack(this.actor, item, { showDialog: true });
+}
+      }, { signal });
     }
 
     /* ---- LEVEL UP ---- */
 
     const levelUpBtn = root.querySelector('[data-action="level-up"]');
     if (levelUpBtn) {
-      levelUpBtn.addEventListener("click", { signal }, async (ev) => {
+      levelUpBtn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         if (this.actor) {
           await SWSELevelUp.openEnhanced(this.actor);
         }
-      });
+      }, { signal });
     }
 
     /* ---- ITEM OPEN ---- */
 
     for (const el of root.querySelectorAll(".swse-v2-open-item")) {
-      el.addEventListener("click", { signal }, (ev) => {
+      el.addEventListener("click", (ev) => {
         ev.preventDefault();
-        const itemId = ev.currentTarget?.dataset?.itemId;
+        const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
         const item = this.actor?.items?.get(itemId);
         item?.sheet?.render(true);
-      });
+      }, { signal });
     }
 
     /* ---- SWITCH TO FULL MODE ---- */
 
     const switchFullBtn = root.querySelector('[data-action="switch-full-mode"]');
     if (switchFullBtn) {
-      switchFullBtn.addEventListener("click", { signal }, async (ev) => {
+      switchFullBtn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         await ActorEngine.updateActor(this.actor, { "system.sheetMode": "full" });
-      });
+      }, { signal });
     }
 
     /* ---- DRAG & DROP VISUAL FEEDBACK ---- */

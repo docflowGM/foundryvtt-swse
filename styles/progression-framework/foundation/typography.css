@@ -1,0 +1,98 @@
+/* ======================================================================
+ * SWSE Fonts — Aurebesh
+ * Visual immersion font (glyph substitution, not translation)
+ * ====================================================================== */
+
+/* ------------------------------
+ * Aurebesh — Regular
+ * ------------------------------ */
+@font-face {
+  font-family: "Aurebesh";
+  src: url("../assets/fonts/aurebesh/Aurebesh.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ------------------------------
+ * Aurebesh — Bold
+ * ------------------------------ */
+@font-face {
+  font-family: "Aurebesh";
+  src: url("../assets/fonts/aurebesh/Aurebesh Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ------------------------------
+ * Aurebesh — Italic
+ * ------------------------------ */
+@font-face {
+  font-family: "Aurebesh";
+  src: url("../assets/fonts/aurebesh/Aurebesh Italic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ------------------------------
+ * Aurebesh — Bold Italic
+ * ------------------------------ */
+@font-face {
+  font-family: "Aurebesh";
+  src: url("../assets/fonts/aurebesh/Aurebesh Bold Italic.otf") format("opentype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ======================================================================
+ * Optional: Condensed Variant
+ * Use for headers or holo-panels if desired
+ * ====================================================================== */
+
+@font-face {
+  font-family: "Aurebesh Condensed";
+  src: url("../assets/fonts/aurebesh/Aurebesh Condensed.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Aurebesh Condensed";
+  src: url("../assets/fonts/aurebesh/Aurebesh Condensed Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Aurebesh Condensed";
+  src: url("../assets/fonts/aurebesh/Aurebesh Condensed Italic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Aurebesh Condensed";
+  src: url("../assets/fonts/aurebesh/Aurebesh Condensed Bold Italic.otf") format("opentype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ======================================================================
+ * Usage Notes (do not uncomment globally)
+ *
+ * body.swse-aurebesh .swse {
+ *   font-family: "Aurebesh", sans-serif;
+ * }
+ *
+ * body.swse-aurebesh .swse h1,
+ * body.swse-aurebesh .swse h2 {
+ *   font-family: "Aurebesh Condensed", "Aurebesh", sans-serif;
+ * }
+ * ====================================================================== */

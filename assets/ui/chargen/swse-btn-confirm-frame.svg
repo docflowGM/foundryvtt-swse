@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="72" viewBox="0 0 320 72" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="72" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#163A45"/>
+      <stop offset="1" stop-color="#08141B"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="320" y2="72" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ABFFF2"/>
+      <stop offset="0.5" stop-color="#53E3C9"/>
+      <stop offset="1" stop-color="#9FFFE8"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-120%" width="160%" height="340%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <clipPath id="cut">
+      <path d="M16 2H298L318 20V58L304 70H2V16L16 2Z"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#cut)">
+    <path d="M16 2H298L318 20V58L304 70H2V16L16 2Z" fill="url(#bg)"/>
+    <path d="M16 2H298L318 20V58L304 70H2V16L16 2Z" stroke="url(#edge)" stroke-width="2.5"/>
+    <path d="M22 9H286L307 25V55L297 63H11V21L22 9Z" stroke="#D9FFF8" stroke-opacity=".26" stroke-width="1"/>
+    <path d="M18 8H292L304 20" stroke="#E7FFF9" stroke-opacity=".52" stroke-width="1.3"/>
+    <path d="M303 28V56" stroke="#7BFFE6" stroke-opacity=".42" stroke-width="2"/>
+    <path d="M26 36L34 44L48 27" stroke="#8CFFE4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+    <rect x="62" y="25" width="180" height="20" rx="3" fill="#7BFFE6" fill-opacity=".05"/>
+  </g>
+</svg>

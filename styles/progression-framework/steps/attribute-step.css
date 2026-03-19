@@ -1,5 +1,13 @@
 /* Attribute Step — numeric assignment with base/species/final/mod clarity */
 
+/* ============================================================================
+   ATTRIBUTE STEP — SVG chrome integration
+   attribute-table.svg (720×420): sci-fi data table with header row, column labels,
+     row chrome, corner accent marks. Used as low-opacity watermark over the surface
+     so live HTML rows are readable but the space reads as a holo data terminal.
+   holodice.svg: applied as decorative icon in the method-selector roll zone.
+   ============================================================================ */
+
 .progression-shell .prog-attribute-surface {
   display: flex;
   flex-direction: column;
@@ -7,6 +15,27 @@
   padding: var(--prog-space-md);
   overflow-y: auto;
   height: 100%;
+  position: relative;
+}
+
+/* attribute-table.svg watermark — subtle "data terminal" texture behind live rows */
+.progression-shell .prog-attribute-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:  url('../../../assets/ui/chargen/attribute-table.svg');
+  background-size:   100% auto;
+  background-position: center 60px;    /* offset below header — aligns with rows zone */
+  background-repeat: no-repeat;
+  pointer-events:    none;
+  z-index:           0;
+  opacity:           0.07;             /* atmospheric — not competing with live data */
+}
+
+/* Ensure all actual content renders above the watermark */
+.progression-shell .prog-attribute-surface > * {
+  position: relative;
+  z-index: 1;
 }
 
 .progression-shell .prog-attribute-header {
@@ -29,7 +58,7 @@
   line-height: 1.5;
 }
 
-/* Method Selector */
+/* Method Selector — holodice.svg decorates the roll zone */
 .progression-shell .prog-attribute-method-selector {
   display: flex;
   align-items: center;
@@ -37,6 +66,24 @@
   padding: var(--prog-space-sm);
   background: rgba(0, 0, 0, 0.2);
   border-radius: var(--prog-radius-sm);
+  position: relative;
+}
+
+/* holodice.svg — 36×36px decorative holo-dice icon at right end of method bar
+   Visible as a subtle glow element reinforcing the "roll" interaction zone.
+   Uses holodice.svg (256×256 square, steel gradient d20-style icon) */
+.progression-shell .prog-attribute-method-selector::after {
+  content: "";
+  flex-shrink: 0;
+  width:  36px;
+  height: 36px;
+  background-image:  url('../../../assets/ui/chargen/holodice.svg');
+  background-size:   100% 100%;
+  background-repeat: no-repeat;
+  opacity:           0.55;
+  filter:            drop-shadow(0 0 4px rgba(100, 220, 255, 0.30));
+  pointer-events:    none;
+  margin-left: auto;
 }
 
 .progression-shell .prog-attribute-method-label {

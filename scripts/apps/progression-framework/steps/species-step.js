@@ -9,7 +9,8 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
 import { getStepMentorObject, getStepGuidance, handleAskMentor, STEP_TO_CHOICE_TYPE } from './mentor-step-integration.js';
-import { buildSpeciesAtomicPatch } from '/systems/foundryvtt-swse/scripts/apps/chargen/steps/species-step.js';
+// Patch builder lives in the shared progression-framework module — NOT the legacy chargen path.
+import { buildSpeciesAtomicPatch } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shared/species-patch.js';
 import { NearHumanBuilder } from './near-human-builder.js';
 
 // Maps stepId → mentor guidance choiceType
@@ -26,7 +27,14 @@ export class SpeciesStep extends ProgressionStepPlugin {
     this._allSpecies = [];            // SpeciesRegistryEntry[] from SpeciesRegistry.getAll()
     this._filteredSpecies = [];       // after search + filter + sort applied
     this._searchQuery = '';
-    this._filters = { size: null, hasBonus: false, hasPenalty: false };
+    this._filters = {
+      size: null,
+      small: false,
+      medium: false,
+      large: false,
+      'bonus-stat': '',                 // selected stat ('str', 'dex', 'con', 'int', 'wis', 'cha', or '')
+      'penalty-stat': '',               // selected stat ('str', 'dex', 'con', 'int', 'wis', 'cha', or '')
+    };
     this._sortBy = 'source';          // 'source' | 'alpha'
 
     // Near-Human builder
@@ -41,6 +49,9 @@ export class SpeciesStep extends ProgressionStepPlugin {
     // Committed selection tracking
     this._committedSpeciesId = null;
     this._committedSpeciesName = null;
+
+    // Species image map: lowercased name → resolved file path (built once on step enter)
+    this._speciesImgMap = new Map();
   }
 
   // ---------------------------------------------------------------------------
@@ -52,19 +63,37 @@ export class SpeciesStep extends ProgressionStepPlugin {
     this._allSpecies = SpeciesRegistry.getAll();
     if (!this._allSpecies) this._allSpecies = [];
 
-    // Load Ol' Salty species dialogues (placeholder — replace with real data source)
-    this._olSaltyDialogues = {
-      // Fallback map: species name → dialogue
-      'Human': "A Human, eh? Versatile. Ambitious. Good all-around choice. Let's see what you make of it.",
-      'Near-Human': "A Near-Human variant... customizable. Dangerous if wielded by the clever type. Which you are.",
-      // Add more as needed
-    };
+    // Build image map from assets/species/ directory
+    await this._buildSpeciesImgMap();
+
+    // Load Ol' Salty species dialogues from the authoritative JSON file.
+    // Each key is a species name; each value is an array of one or more lines.
+    // _getOlSaltyDialogue() picks randomly when multiple lines are available.
+    try {
+      const res = await fetch('systems/foundryvtt-swse/data/dialogue/mentors/ol_salty/ol-salty-species-dialogues.json');
+      if (res.ok) {
+        this._olSaltyDialogues = await res.json();
+      } else {
+        console.warn('[SpeciesStep] Could not load ol-salty-species-dialogues.json — status', res.status);
+        this._olSaltyDialogues = {};
+      }
+    } catch (err) {
+      console.warn('[SpeciesStep] Failed to fetch ol-salty-species-dialogues.json:', err);
+      this._olSaltyDialogues = {};
+    }
 
     // Initial filter
     this._applyFilters();
 
     // Enable Ask Mentor for this step
     shell.mentor.askMentorEnabled = true;
+
+    // Trigger initial mentor greeting on Species entry
+    // This ensures Ol' Salty appears and speaks when entering Species
+    const initialDialogue = "Species selection, eh? Choose wisely — your ancestry shapes everything ahead. Browse the options and pick what calls to you.";
+    if (shell.mentorRail) {
+      await shell.mentorRail.speak(initialDialogue, 'neutral');
+    }
   }
 
   async onDataReady(shell) {
@@ -137,6 +166,50 @@ export class SpeciesStep extends ProgressionStepPlugin {
   // Rendering
   // ---------------------------------------------------------------------------
 
+  renderSummaryPanel(context) {
+    const actor = context.actor;
+    const system = actor?.system ?? {};
+
+    // Species: prefer committed selection, fall back to actor data
+    const committedSpecies = this._committedSpeciesName
+      ?? system.details?.species
+      ?? system.species?.value
+      ?? null;
+
+    // Class: read from actor system — first class entry if available
+    const classes = system.classes ?? system.class ?? null;
+    const currentClass = Array.isArray(classes)
+      ? (classes[0]?.name ?? null)
+      : (typeof classes === 'string' ? classes : null);
+
+    // Talents: count from actor items
+    const talentItems = actor?.items?.filter(i => i.type === 'talent') ?? [];
+    const talentCount = talentItems.length > 0 ? talentItems.length : null;
+
+    // Credits: from actor system
+    const credits = system.credits?.value ?? system.credits ?? null;
+
+    // Languages: from actor system — baseline + known
+    const langSystem = system.languages ?? {};
+    const langList = [
+      ...(langSystem.value ?? []),
+      ...(langSystem.custom ? langSystem.custom.split(',').map(s => s.trim()).filter(Boolean) : []),
+    ];
+    const languages = langList.length > 0 ? langList : null;
+
+    return {
+      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/summary-panel/species-summary.hbs',
+      data: {
+        actor,
+        currentSpecies: committedSpecies,
+        currentClass,
+        talentCount,
+        credits,
+        languages,
+      },
+    };
+  }
+
   renderWorkSurface(stepData) {
     if (this._mode === 'near-human-builder') {
       return {
@@ -153,7 +226,8 @@ export class SpeciesStep extends ProgressionStepPlugin {
   renderDetailsPanel(focusedItem) {
     if (!focusedItem) return this.renderDetailsPanelEmptyState();
 
-    const species = this._allSpecies.find(s => s.id === focusedItem.id);
+    // Stable id-based lookup — same identity used by commit path
+    const species = SpeciesRegistry.getById(focusedItem.id);
     if (!species) return this.renderDetailsPanelEmptyState();
 
     return {
@@ -167,6 +241,8 @@ export class SpeciesStep extends ProgressionStepPlugin {
         size: species.size ?? 'Medium',
         speed: species.speed ?? '30 ft.',
         source: species.source ?? 'Unknown',
+        img: this._resolveSpeciesImg(species),
+        olSaltyDialogue: this._getOlSaltyDialogue(species.name) ?? null,
       },
     };
   }
@@ -176,8 +252,11 @@ export class SpeciesStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onItemFocused(id, shell) {
-    const entry = this._allSpecies.find(s => s.id === id);
-    if (!entry) return;
+    const entry = SpeciesRegistry.getById(id);
+    if (!entry) {
+      console.warn(`[SpeciesStep] onItemFocused: no registry entry for id "${id}" — focus ignored`);
+      return;
+    }
 
     shell.focusedItem = entry;
 
@@ -191,37 +270,46 @@ export class SpeciesStep extends ProgressionStepPlugin {
   }
 
   async onItemCommitted(id, shell) {
-    const entry = this._allSpecies.find(s => s.id === id);
-    if (!entry) return;
+    // Use stable id-based lookup — avoids name-based fragility and is O(1).
+    // SpeciesRegistry.getById is synchronous; no await needed.
+    const entry = SpeciesRegistry.getById(id);
+    if (!entry) {
+      console.warn(`[SpeciesStep] No registry entry found for id: ${id}`);
+      return;
+    }
 
-    // If Near-Human: enter builder mode instead of committing
+    // If Near-Human: enter builder mode instead of committing directly
     if (id === 'near-human' || entry.name === 'Near-Human') {
       await this.enterNearHumanMode(shell);
       return;
     }
 
-    // Load full species document/data from SpeciesRegistry
-    const speciesData = await SpeciesRegistry.getByName(entry.name);
-    if (!speciesData) {
-      console.warn(`[SpeciesStep] Failed to load species data for ${entry.name}`);
-      return;
-    }
-
-    // Use the authoritative species patch builder with real data
+    // Build the patch from the registry entry directly.
+    // buildSpeciesAtomicPatch accepts SpeciesRegistryEntry (entry.source) — no
+    // full Foundry document needed, and no second registry lookup required.
     const patch = buildSpeciesAtomicPatch(
       shell.actor?.system ?? {},
-      speciesData,           // Full species doc/entry (not thin stub)
+      entry,                 // SpeciesRegistryEntry — .source is top-level, not .system.source
       shell.actor?.type ?? 'character'
     );
 
+    // Dev-aid: log the resolved patch ops so the sanity matrix can confirm
+    // species, speciesSource, and featsRequired are all present and correct.
+    console.debug('[SpeciesStep] Committing species patch:', {
+      speciesId:     id,
+      speciesName:   entry.name,
+      speciesSource: entry.source ?? '(none)',
+      patchOps:      patch?.ops ?? [],
+    });
+
     shell.committedSelections.set('species', {
-      speciesId: id,
+      speciesId:   id,
       speciesName: entry.name,
-      speciesData,           // Store full data for downstream use
+      speciesData: entry,    // Store entry for downstream reference
       patch,
     });
 
-    this._committedSpeciesId = id;
+    this._committedSpeciesId   = id;
     this._committedSpeciesName = entry.name;
     shell.focusedItem = null;
     shell.render();
@@ -311,17 +399,50 @@ export class SpeciesStep extends ProgressionStepPlugin {
   getUtilityBarConfig() {
     return {
       mode: 'rich',
-      search: { enabled: true, placeholder: 'Search species…' },
+      search: {
+        enabled: true,
+        placeholder: 'Search species… (supports wildcards: *)',
+        supportsWildcards: true,
+      },
       filters: [
-        { id: 'small', label: 'Small', defaultOn: false },
-        { id: 'medium', label: 'Medium', defaultOn: false },
-        { id: 'large', label: 'Large', defaultOn: false },
-        { id: 'has-bonus', label: 'Has Bonus', defaultOn: false },
-        { id: 'has-penalty', label: 'Has Penalty', defaultOn: false },
+        { id: 'size', label: 'Size', type: 'toggle-group', defaultOn: false },
+        { id: 'small', label: 'Small', type: 'toggle', defaultOn: false },
+        { id: 'medium', label: 'Medium', type: 'toggle', defaultOn: false },
+        { id: 'large', label: 'Large', type: 'toggle', defaultOn: false },
       ],
+      bonusDropdown: {
+        id: 'bonus-stat',
+        label: 'Has Bonus:',
+        type: 'select',
+        options: [
+          { value: '', label: '—' },
+          { value: 'str', label: 'Strength' },
+          { value: 'dex', label: 'Dexterity' },
+          { value: 'con', label: 'Constitution' },
+          { value: 'int', label: 'Intelligence' },
+          { value: 'wis', label: 'Wisdom' },
+          { value: 'cha', label: 'Charisma' },
+        ],
+        defaultValue: '',
+      },
+      penaltyDropdown: {
+        id: 'penalty-stat',
+        label: 'Has Penalty:',
+        type: 'select',
+        options: [
+          { value: '', label: '—' },
+          { value: 'str', label: 'Strength' },
+          { value: 'dex', label: 'Dexterity' },
+          { value: 'con', label: 'Constitution' },
+          { value: 'int', label: 'Intelligence' },
+          { value: 'wis', label: 'Wisdom' },
+          { value: 'cha', label: 'Charisma' },
+        ],
+        defaultValue: '',
+      },
       sorts: [
+        { id: 'alpha', label: 'A–Z', isDefault: true },
         { id: 'source', label: 'Source' },
-        { id: 'alpha', label: 'A–Z' },
       ],
     };
   }
@@ -354,29 +475,41 @@ export class SpeciesStep extends ProgressionStepPlugin {
   _applyFilters() {
     let filtered = [...this._allSpecies];
 
-    // Search by name (case-insensitive substring)
+    // Search by name (case-insensitive, with wildcard support)
     if (this._searchQuery) {
       const q = this._searchQuery.toLowerCase();
-      filtered = filtered.filter(s => s.name.toLowerCase().includes(q));
+      // Convert wildcard patterns (* → .*) to regex for pattern matching
+      const pattern = q.replace(/\*/g, '.*');
+      const regex = new RegExp(`^${pattern}$`, 'i');
+      filtered = filtered.filter(s => regex.test(s.name));
     }
 
-    // Size filter
-    if (this._filters.size) {
-      filtered = filtered.filter(s => s.size === this._filters.size);
+    // Size filters (small, medium, large) — combinable toggle buttons
+    const sizeFilters = ['small', 'medium', 'large'];
+    const activeSizeFilters = sizeFilters.filter(size => this._filters[size]);
+    if (activeSizeFilters.length > 0) {
+      filtered = filtered.filter(s => {
+        const speciesSize = (s.size || 'Medium').toLowerCase();
+        return activeSizeFilters.some(size => speciesSize === size.toLowerCase());
+      });
     }
 
-    // Has bonus (any abilityScore > 0)
-    if (this._filters.hasBonus) {
-      filtered = filtered.filter(s =>
-        Object.values(s.abilityScores || {}).some(v => v > 0)
-      );
+    // Bonus stat filter (dropdown) — filters for specific ability with positive bonus
+    if (this._filters['bonus-stat']) {
+      const targetAbility = this._filters['bonus-stat'];
+      filtered = filtered.filter(s => {
+        const abilityScores = s.abilityScores || {};
+        return abilityScores[targetAbility] > 0;
+      });
     }
 
-    // Has penalty (any abilityScore < 0)
-    if (this._filters.hasPenalty) {
-      filtered = filtered.filter(s =>
-        Object.values(s.abilityScores || {}).some(v => v < 0)
-      );
+    // Penalty stat filter (dropdown) — filters for specific ability with negative penalty
+    if (this._filters['penalty-stat']) {
+      const targetAbility = this._filters['penalty-stat'];
+      filtered = filtered.filter(s => {
+        const abilityScores = s.abilityScores || {};
+        return abilityScores[targetAbility] < 0;
+      });
     }
 
     // Sort
@@ -397,8 +530,25 @@ export class SpeciesStep extends ProgressionStepPlugin {
     this._filteredSpecies = filtered;
   }
 
+  /**
+   * Return an Ol' Salty dialogue line for the given species name.
+   * The JSON stores each entry as a string[] — if more than one line exists,
+   * one is chosen at random so repeated hovers feel natural.
+   * Returns null if no entry exists for this species.
+   *
+   * @param {string} speciesName
+   * @returns {string|null}
+   */
   _getOlSaltyDialogue(speciesName) {
-    return this._olSaltyDialogues?.[speciesName] ?? null;
+    const entry = this._olSaltyDialogues?.[speciesName];
+    if (!entry) return null;
+    // Single string (legacy compatibility) or array
+    if (typeof entry === 'string') return entry;
+    if (Array.isArray(entry) && entry.length > 0) {
+      const idx = Math.floor(Math.random() * entry.length);
+      return entry[idx];
+    }
+    return null;
   }
 
   _formatAbilityRows(scores) {
@@ -411,19 +561,71 @@ export class SpeciesStep extends ProgressionStepPlugin {
       }));
   }
 
+  /**
+   * Build a Map from lowercased species name → resolved file path,
+   * by scanning the assets/species/ directory via FilePicker.
+   * Files are named like "Bothan.webp", "Blood_Carver.webp", etc.
+   * Underscores in filenames map back to spaces.
+   */
+  async _buildSpeciesImgMap() {
+    this._speciesImgMap = new Map();
+    try {
+      // Prefer V13 API path; fall back to legacy global for compatibility
+      const FP = foundry.applications?.apps?.FilePicker ?? globalThis.FilePicker;
+      const result = await FP.browse('data', 'systems/foundryvtt-swse/assets/species');
+      for (const filePath of (result.files ?? [])) {
+        const basename = filePath.split('/').pop();           // "Blood_Carver.webp"
+        const namePart = basename
+          .replace(/\.[^.]+$/, '')                            // strip extension → "Blood_Carver"
+          .replace(/_/g, ' ');                                // underscores → spaces → "Blood Carver"
+        this._speciesImgMap.set(namePart.toLowerCase(), filePath);
+      }
+    } catch (err) {
+      console.warn('SpeciesStep | Could not browse assets/species/:', err);
+    }
+  }
+
+  /**
+   * Resolve the display image for a species entry.
+   * Priority: species.img (if set and not a generic placeholder) →
+   *           assets/species/{name}.webp|jpg lookup → null
+   */
+  _resolveSpeciesImg(species) {
+    // Use existing img if it looks like real art (not a default Foundry icon)
+    if (species.img
+      && !species.img.includes('mystery-man')
+      && !species.img.includes('icons/svg')
+      && !species.img.includes('icons/tokens')
+      && species.img !== 'icons/svg/mystery-man.svg') {
+      return species.img;
+    }
+    // Look up by name in the scanned file map
+    const key = (species.name ?? '').toLowerCase();
+    if (this._speciesImgMap.has(key)) {
+      return this._speciesImgMap.get(key);
+    }
+    return null;
+  }
+
   _formatSpeciesCard(species) {
+    // Compact ability modifier string — e.g. "+2 DEX, -2 CON"
+    const abilityModLine = Object.entries(species.abilityScores ?? {})
+      .filter(([, v]) => v !== 0)
+      .map(([key, value]) => `${value > 0 ? '+' : ''}${value} ${key.toUpperCase()}`)
+      .join(', ');
+
     return {
       id: species.id,
       name: species.name,
+      img: this._resolveSpeciesImg(species),               // resolved from assets/species/ map
+      thumbLabel: (species.name ?? '??').substring(0, 2).toUpperCase(), // fallback badge
       source: species.source ?? 'Unknown',
       size: species.size ?? 'Medium',
       speed: species.speed ?? '30 ft.',
       description: species.description ?? '',
+      abilityModLine,                                     // compact one-liner for row
       abilityRows: this._formatAbilityRows(species.abilityScores),
-      metaChips: [
-        species.size && { label: species.size },
-        species.source && { label: species.source },
-      ].filter(Boolean),
+      tags: (species.abilities ?? []).slice(0, 3),        // first 3 traits as tags
       abilities: species.abilities ?? [],
       languages: species.languages ?? [],
     };

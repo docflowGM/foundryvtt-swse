@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 240" fill="none">
+  <defs>
+    <linearGradient id="steel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#30414E"/>
+      <stop offset="0.15" stop-color="#141F29"/>
+      <stop offset="0.85" stop-color="#091018"/>
+      <stop offset="1" stop-color="#425564"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <path d="M20 34L34 20H386L400 34V206L386 220H34L20 206Z" fill="url(#steel)"/>
+  <path d="M29 40L40 29H380L391 40V200L380 211H40L29 200Z" fill="#040B13"/>
+  <path d="M29 40L40 29H380L391 40V200L380 211H40L29 200Z" stroke="#65E5FF" stroke-width="2" filter="url(#glow)"/>
+  <path d="M45 48H372" stroke="#A1F7FF" opacity="0.24"/>
+  <path d="M45 193H372" stroke="#A1F7FF" opacity="0.18"/>
+  <path d="M41 41H92L81 52H30Z" fill="#0B1722" stroke="#53DBFF"/>
+  <path d="M328 41H379L390 52H339Z" fill="#0B1722" stroke="#53DBFF"/>
+</svg>

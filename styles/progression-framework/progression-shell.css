@@ -1,113 +1,316 @@
 /**
  * progression-shell.css
  *
- * Layout and region sizing for the ProgressionShell.
- * Scoped under .progression-shell — no overlap with .swse-chargen-window or .swse-levelup.
+ * PHASE 2B: VISUAL ALIGNMENT TO BLUE HOLOGRAPHIC DATAPAD REFERENCE
+ *
+ * This refactor transforms the shell from generic dark layout to:
+ * - Hard-edged framed device (holographic datapad feel)
+ * - Strong blue border glow language
+ * - Segmented 3-panel composition
+ * - Distinct header/footer command regions
+ * - Sci-fi UI hierarchy matching Near-Human modal reference
+ *
+ * Layout still uses: mentor-rail, progress-rail, main-column structure
+ * New styling adds: frame glow, panel segmentation, device aesthetic
  *
  * Depends on: progression-framework.css (CSS variables)
- *
- * Region layout (desktop):
- *
- *  ┌─────────────────────────────────────────────────────────────────────┐
- *  │ .progression-shell                                                  │
- *  │  ┌──────────────┐  ┌─────────────────────────────────────────────┐ │
- *  │  │ mentor-rail  │  │ main-column                                 │ │
- *  │  │              │  │  ┌──────────────────────────────────────────┤ │
- *  │  │              │  │  │ utility-bar                              │ │
- *  │  │              │  │  ├──────────────────────────────────────────┤ │
- *  │  │              │  │  │ content-row                              │ │
- *  │  │              │  │  │  ┌───────────────────┐  ┌─────────────┐ │ │
- *  │  │              │  │  │  │ work-surface      │  │details-panel│ │ │
- *  │  │              │  │  │  │                   │  │             │ │ │
- *  │  │              │  │  │  └───────────────────┘  └─────────────┘ │ │
- *  │  │              │  │  ├──────────────────────────────────────────┤ │
- *  │  │              │  │  │ action-footer                            │ │
- *  │  └──────────────┘  └─────────────────────────────────────────────┘ │
- *  │                                                                     │
- *  │  progress-rail (vertical strip between mentor and main)             │
- *  └─────────────────────────────────────────────────────────────────────┘
  */
 
 /* =============================================================================
- * Shell Root
+ * FOUNDRY WINDOW HEIGHT CHAIN
+ *
+ * Foundry V13 ApplicationV2 renders parts into [data-part="shell"] divs inside
+ * section.window-content. Both section.window-content and [data-part="shell"]
+ * are plain block elements with no explicit height. This means
+ * .progression-shell { height: 100% } resolves to 0, collapsing the body.
+ *
+ * Fix: make the chain explicit so height flows from the application frame
+ * all the way down to .prog-content-row.
+ *
+ * .application.progression-shell scopes these rules to our window only —
+ * the ProgressionShell DEFAULT_OPTIONS.classes includes 'progression-shell'
+ * which gets applied to the outermost .application frame element.
+ * ============================================================================= */
+
+/* window-content → fill remaining height after the header */
+.application.progression-shell > section.window-content,
+.application.progression-shell > .window-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;          /* fill application frame height */
+  overflow: hidden;
+  padding: 0;            /* remove default Foundry padding so shell fills edge-to-edge */
+}
+
+/* [data-part="shell"] → the ApplicationV2 part container must fill window-content */
+.application.progression-shell [data-part="shell"] {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* =============================================================================
+ * SHELL ROOT — Hard-edged holographic datapad frame
  * ============================================================================= */
 
 .progression-shell {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   width: 100%;
   height: 100%;
   overflow: hidden;
   position: relative;
+
+  /* ===== FRAME STYLING — Cold-steel holographic datapad ===== */
+
+  /* frame-shell.svg: notched steel frame, chamfered corners, cyan accent lines,
+     scanline texture. Sits as the lowest background layer.
+     Radial glow gradient overlays on top to reinforce holo tint.
+     Background-color is the dark interior fallback behind the SVG. */
+  background-image:
+    radial-gradient(circle at 50% 0%, rgba(0, 180, 255, 0.09), transparent 38%),
+    url('../../assets/ui/chargen/frame-shell.svg');
+  background-size:
+    100% 100%,
+    100% 100%;
+  background-repeat: no-repeat;
+  background-color: #040a12;   /* matches SVG inner fill #040A12 */
+
+  /* CSS border — provides the luminous cyan glow the SVG stroke alone can't match */
+  border: 2px solid rgba(80, 220, 255, 0.55);
+
+  /* Frame glow — layered outer + inset halos */
+  box-shadow:
+    0 0 0 1px rgba(180, 245, 255, 0.12) inset,
+    0 0 24px rgba(0, 180, 255, 0.20),
+    0 0 64px rgba(0, 80, 130, 0.16);
 }
 
-/* Prevent scrollbar on the shell root itself — overflow handled in regions */
 .progression-shell > * {
   box-sizing: border-box;
 }
 
+/* ===== FRAME CORNER ACCENTS — Hard-edged device feel ===== */
+.progression-shell::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(80, 220, 255, 0.25);
+  box-shadow: 0 0 12px rgba(0, 180, 255, 0.15);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.progression-shell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(120,240,255,.18), transparent 8%) top left,
+    linear-gradient(225deg, rgba(120,240,255,.18), transparent 8%) top right,
+    linear-gradient(315deg, rgba(120,240,255,.18), transparent 8%) bottom right,
+    linear-gradient(45deg,  rgba(120,240,255,.18), transparent 8%) bottom left;
+  background-size: 120px 120px;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 0;
+}
+
 /* =============================================================================
- * Mentor Rail (left column — always present)
+ * MENTOR RAIL (horizontal top band — full viewport width, NOT a left column)
+ * Cancels: shell/layout.css which set this as a left column with fixed width.
  * ============================================================================= */
 
 .progression-shell [data-region="mentor-rail"] {
-  flex: 0 0 var(--prog-mentor-width);
-  width: var(--prog-mentor-width);
-  min-width: var(--prog-mentor-width);
-  max-width: var(--prog-mentor-width);
-  height: 100%;
+  flex: 0 0 auto;
+  width: 100%;
+  /* CANCEL old left-column width constraints from shell/layout.css */
+  min-width: 0;
+  max-width: none;
+  /* Explicit height so height:100% children resolve correctly (not against 'auto') */
+  height: 160px;
+  min-height: 160px;
+  max-height: 160px;
   overflow: hidden;
   display: flex;
-  flex-direction: column;
-  transition: width var(--prog-transition-mentor),
+  flex-direction: row;
+  align-items: stretch;
+  /* Inner padding is handled by .prog-mentor-rail child */
+  gap: 0;
+  padding: 0;
+
+  transition: height var(--prog-transition-mentor),
               flex-basis var(--prog-transition-mentor),
-              min-width var(--prog-transition-mentor),
-              max-width var(--prog-transition-mentor);
-  /* Background: dark navy + subtle gradient for depth, not flat */
-  background: linear-gradient(180deg, var(--prog-bg-mid) 0%, #060c18 100%);
-  border-right: 2px solid var(--prog-border);
+              min-height var(--prog-transition-mentor),
+              max-height var(--prog-transition-mentor);
+
+  /* ===== SVG PANEL CHROME — mentor-combined-panel.svg =====
+     Provides: outer chamfered steel frame, left portrait zone, right dialogue zone,
+     left-to-right connector arrow, bottom nameplate bar in portrait zone.
+     CSS overlay tint reinforces the blue holo atmosphere on top. */
+  background-image:
+    linear-gradient(90deg, rgba(0, 180, 255, 0.04), rgba(0, 120, 200, 0.02)),
+    url('../../assets/ui/chargen/mentor-combined-panel.svg');
+  background-size: 100% 100%, 100% 100%;
+  background-repeat: no-repeat;
+  background-color: #091827;     /* matches SVG fill #091827 */
+
+  /* Remove old solid gradient — SVG provides the chrome */
+  border-bottom: 1px solid rgba(80, 220, 255, 0.25);
+  box-shadow:
+    0 0 14px rgba(0, 180, 255, 0.08),
+    inset 0 0 12px rgba(0, 180, 255, 0.02);
 }
 
 .progression-shell [data-region="mentor-rail"][data-collapsed="true"] {
-  flex: 0 0 var(--prog-mentor-collapsed-w);
-  width: var(--prog-mentor-collapsed-w);
-  min-width: var(--prog-mentor-collapsed-w);
-  max-width: var(--prog-mentor-collapsed-w);
+  flex: 0 0 auto;
+  height: 60px;
+  min-height: 60px;
+  max-height: 60px;
 }
 
 /* =============================================================================
- * Progress Rail (narrow vertical strip)
+ * PROGRESS RAIL (horizontal step indicator band — full width, NOT a left column)
+ * Cancels: shell/layout.css which set this as a 160px-wide left column.
  * ============================================================================= */
 
 .progression-shell [data-region="progress-rail"] {
-  flex: 0 0 var(--prog-progress-width);
-  width: var(--prog-progress-width);
-  min-width: var(--prog-progress-width);
-  max-width: var(--prog-progress-width);
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
+  flex: 0 0 auto;
+  width: 100%;
+  /* CANCEL old left-column width constraints from shell/layout.css */
+  min-width: 0;
+  max-width: none;
+  /* CANCEL old height: 100% */
+  height: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
   display: flex;
-  flex-direction: column;
-  background: var(--prog-bg-mid);
-  border-right: 1px solid var(--prog-border);
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 12px;
+  gap: 8px;
+
+  /* ===== COMPACT HORIZONTAL RAIL STYLING ===== */
+  background: linear-gradient(90deg, rgba(6, 18, 30, 0.94), rgba(3, 10, 20, 0.96));
+  border-bottom: 1px solid rgba(80, 220, 255, 0.25);
+  box-shadow:
+    0 0 8px rgba(0, 180, 255, 0.05),
+    inset 0 0 8px rgba(0, 180, 255, 0.02);
+}
+
+/* Hide non-user-facing steps from visible rail */
+.progression-shell [data-region="progress-rail"] .prog-step[data-step-id="intro"] {
+  display: none;
+}
+
+/* Compact progress rail list — HORIZONTAL row
+   Overrides shell/progress.css which set flex-direction: column (old vertical layout) */
+.progression-shell .prog-progress-rail {
+  display: flex;
+  flex-direction: row;   /* EXPLICIT: override shell/progress.css column direction */
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: auto;   /* was height:100% — parent is height:auto so 100% is circular */
+  padding: 0;     /* EXPLICIT: override shell/progress.css padding */
+}
+
+.progression-shell .prog-progress-rail__label {
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(100, 220, 255, 0.8);
+  white-space: nowrap;
+  padding-right: 8px;
+  border-right: 1px solid rgba(80, 220, 255, 0.25);
+}
+
+.progression-shell .prog-progress-rail__list {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  flex: 1 1 auto;
+  overflow-x: auto;
+}
+
+/* Compact step items in horizontal rail */
+.progression-shell .prog-step {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  font-size: 11px;
+  white-space: nowrap;
+  border-radius: 4px;
+  background: rgba(10, 26, 42, 0.6);
+  border: 1px solid rgba(60, 200, 255, 0.3);
+  color: rgba(120, 200, 255, 0.8);
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.progression-shell .prog-step:hover {
+  background: rgba(15, 35, 55, 0.8);
+  border-color: rgba(80, 220, 255, 0.5);
+  color: rgba(150, 230, 255, 1);
+}
+
+.progression-shell .prog-step--active {
+  background: rgba(0, 150, 220, 0.3);
+  border-color: rgba(100, 230, 255, 0.8);
+  color: rgba(200, 240, 255, 1);
+  font-weight: 600;
+  box-shadow: 0 0 8px rgba(0, 150, 220, 0.3);
+}
+
+.progression-shell .prog-step--complete {
+  opacity: 0.7;
+}
+
+.progression-shell .prog-step__icon {
+  display: flex;
+  align-items: center;
+  font-size: 10px;
+  flex: 0 0 auto;
+}
+
+.progression-shell .prog-step__name {
+  flex: 0 0 auto;
+}
+
+.progression-shell .prog-step__check {
+  flex: 0 0 auto;
+  color: rgba(100, 255, 150, 0.9);
 }
 
 /* =============================================================================
- * Main Column (everything right of mentor + progress rail)
+ * MAIN COLUMN (all content below mentor-rail — takes remaining height)
+ * Cancels: shell/layout.css which set height: 100% (wrong for flex-column child).
  * ============================================================================= */
 
 .progression-shell .prog-main-column {
   flex: 1 1 auto;
-  min-width: 0;
-  height: 100%;
+  min-height: 0;        /* CRITICAL: enables flex child to shrink below content size */
+  /* CANCEL old height: 100% from shell/layout.css — flex-basis governs sizing here */
+  height: auto;
+  width: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
 /* =============================================================================
- * Utility Bar (always present, top of main column)
+ * UTILITY BAR (control band — top of main column)
  * ============================================================================= */
 
 .progression-shell [data-region="utility-bar"] {
@@ -119,13 +322,27 @@
   display: flex;
   align-items: center;
   overflow: hidden;
-  /* Utility bar: slightly lighter than work-surface to read as a control band */
-  background: var(--prog-bg-mid);
-  border-bottom: 1px solid var(--prog-border);
+
   transition: height var(--prog-transition-base),
               flex-basis var(--prog-transition-base),
               min-height var(--prog-transition-base),
               max-height var(--prog-transition-base);
+
+  /* ===== CONTROL BAND CHROME — header-bar.svg =====
+     header-bar.svg: notched steel bar, inner dark zone, cyan border stroke,
+     diamond center element at midpoint, side accent lines.
+     Same construction language as footer-bar.svg — consistent device framing. */
+  background-image:
+    linear-gradient(180deg, rgba(8, 20, 34, 0.50), rgba(4, 12, 22, 0.60)),
+    url('../../assets/ui/chargen/header-bar.svg');
+  background-size:   100% 100%, 100% 100%;
+  background-repeat: no-repeat;
+  background-color:  #050b13;
+
+  border-bottom: 1px solid rgba(80, 220, 255, 0.22);
+  box-shadow:
+    0 0 10px rgba(0, 180, 255, 0.06),
+    inset 0 0 8px rgba(0, 180, 255, 0.02);
 }
 
 .progression-shell [data-region="utility-bar"][data-collapsed="true"] {
@@ -136,50 +353,143 @@
 }
 
 /* =============================================================================
- * Content Row (work-surface + details-panel side by side)
+ * CONTENT ROW (3-panel composition: summary left + work-surface center + details right)
  * ============================================================================= */
 
 .progression-shell .prog-content-row {
   flex: 1 1 auto;
-  min-height: 0;
+  min-height: 0;        /* CRITICAL: enables flex child height to collapse for scrolling */
   display: flex;
   flex-direction: row;
+  align-items: stretch; /* All columns fill the row's computed height */
   overflow: hidden;
+  gap: 10px;
+  padding: 10px;
 }
 
 /* =============================================================================
- * Work Surface (primary step interaction area)
+ * SUMMARY PANEL (left column — compact build snapshot)
+ * ============================================================================= */
+
+.progression-shell [data-region="summary-panel"] {
+  flex: 0 0 180px;
+  width: 180px;
+  min-width: 180px;
+  max-width: 180px;
+  /* Cross-axis fill via align-items:stretch; no need for height: 100% */
+  height: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+
+  /* panel-small.svg: chamfered steel side panel with cyan border + corner accents */
+  background-image:  url('../../assets/ui/chargen/panel-small.svg');
+  background-size:   100% 100%;
+  background-repeat: no-repeat;
+  background-color:  #040b13;   /* matches SVG inner fill #040B13 */
+
+  /* Remove old gradient — SVG handles the panel chrome */
+  border: none;
+
+  box-shadow:
+    0 0 10px rgba(0, 180, 255, 0.07),
+    inset 0 0 8px rgba(0, 180, 255, 0.02);
+
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(80, 220, 255, 0.3) rgba(10, 26, 42, 0.5);
+}
+
+/* panel-small.svg provides inner stroke — no CSS ::before inner border needed */
+
+/* Collapse summary panel on narrow widths */
+@media (max-width: 1100px) {
+  .progression-shell [data-region="summary-panel"] {
+    display: none;
+  }
+}
+
+/* Placeholder when no summary panel data */
+.progression-shell .prog-summary-placeholder {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(80, 220, 255, 0.15);
+  font-size: 24px;
+}
+
+/* =============================================================================
+ * WORK SURFACE (primary step interaction area — center, visually dominant)
+ * Cancels: shell/layout.css which set height: 100% on work-surface.
  * ============================================================================= */
 
 .progression-shell [data-region="work-surface"] {
   flex: 1 1 auto;
   min-width: 0;
-  height: 100%;
+  min-height: 0;  /* CRITICAL: allows flex to shrink below content size, enabling scroll */
+  /* CANCEL old height: 100% from shell/layout.css — cross-axis fill via align-items:stretch */
+  height: auto;
   overflow-y: auto;
   overflow-x: hidden;
   padding: var(--prog-space-lg);
-  /* Darkest content region — maximum text contrast */
-  background: var(--prog-bg-dark);
+
+  /* ===== WORK SURFACE — panel-large.svg dominant center panel =====
+     panel-large.svg: full chamfered steel panel with cyan border lines,
+     corner accent marks, and inner viewport frame. Provides real panel geometry.
+     CSS gradient overlay adds holo tint on top of SVG interior. */
+  background-image:
+    linear-gradient(180deg, rgba(0, 180, 255, 0.03), rgba(0, 120, 200, 0.02)),
+    url('../../assets/ui/chargen/panel-large.svg');
+  background-size:   100% 100%, 100% 100%;
+  background-repeat: no-repeat;
+  background-color:  #040b13;   /* matches SVG inner fill */
+
+  /* Work surface has stronger outer glow — it's the dominant region */
+  border: none;
+
+  box-shadow:
+    0 0 20px rgba(0, 200, 255, 0.13),
+    inset 0 0 16px rgba(0, 200, 255, 0.04);
+
+  position: relative;
 }
 
+/* panel-large.svg provides inner stroke — no CSS ::before inner border needed */
+
 /* =============================================================================
- * Details Panel (always mounted on desktop — empty state when nothing focused)
+ * DETAILS PANEL (right support panel — always mounted on desktop)
  * ============================================================================= */
 
 .progression-shell [data-region="details-panel"] {
-  flex: 0 0 var(--prog-details-width);
-  width: var(--prog-details-width);
-  min-width: var(--prog-details-width);
-  max-width: var(--prog-details-width);
-  height: 100%;
+  flex: 0 0 280px;
+  width: 280px;
+  min-width: 280px;
+  max-width: 280px;
+  /* Cross-axis fill via align-items:stretch */
+  height: auto;
   overflow-y: auto;
   overflow-x: hidden;
-  /* Details panel: same dark as work surface, separated by accent border */
-  background: var(--prog-bg-dark);
-  border-left: 1px solid var(--prog-border-accent);
   display: flex;
   flex-direction: column;
+
+  /* panel-small.svg: chamfered steel side panel with corner accents + cyan border */
+  background-image:  url('../../assets/ui/chargen/panel-small.svg');
+  background-size:   100% 100%;
+  background-repeat: no-repeat;
+  background-color:  #040b13;   /* matches SVG inner fill */
+
+  border: none;
+
+  box-shadow:
+    0 0 12px rgba(0, 180, 255, 0.08),
+    inset 0 0 10px rgba(0, 180, 255, 0.03);
+
+  position: relative;
 }
+
+/* panel-small.svg provides inner stroke — no CSS ::before inner border needed */
 
 /* Responsive: collapse details panel on narrow widths */
 @media (max-width: 900px) {
@@ -189,7 +499,7 @@
 }
 
 /* =============================================================================
- * Action Footer (always present, bottom of main column)
+ * ACTION FOOTER (command strip — bottom of main column)
  * ============================================================================= */
 
 .progression-shell [data-region="action-footer"] {
@@ -199,16 +509,32 @@
   max-height: var(--prog-footer-height);
   width: 100%;
   display: flex;
-  align-items: center;
-  /* Darker than work-surface — the footer reads as a distinct control band */
-  background: var(--prog-bg-mid);
-  /* Strong top border — clean visual separation from content */
-  border-top: 1px solid var(--prog-border-bright);
-  padding: 0 var(--prog-space-lg);
+  align-items: stretch;
+  /* Zero lateral padding — .swse-footer grid owns its own padding: 0 8px */
+  padding: 0;
+  gap: 0;
+  /* Allow SVG drop-shadows and hover lift to breathe */
+  overflow: visible;
+
+  /* ===== COMMAND STRIP CHROME — footer-bar.svg + CSS glow =====
+     footer-bar.svg: notched steel bar, inner dark zone, cyan border stroke,
+     diamond center element, side accent lines.
+     CSS gradient underlay tints the SVG dark zones blue-navy. */
+  background-image:
+    linear-gradient(180deg, rgba(8, 20, 34, 0.55), rgba(4, 12, 22, 0.65)),
+    url('../../assets/ui/chargen/footer-bar.svg');
+  background-size:   100% 100%, 100% 100%;
+  background-repeat: no-repeat;
+  background-color:  #050b13;    /* matches SVG inner fill */
+
+  border-top: 1px solid rgba(80, 220, 255, 0.25);
+  box-shadow:
+    0 0 12px rgba(0, 180, 255, 0.07),
+    inset 0 0 10px rgba(0, 180, 255, 0.03);
 }
 
 /* =============================================================================
- * Modal Host (inside shell, not a browser popup)
+ * MODAL HOST (in-shell modal stack, not browser popup)
  * ============================================================================= */
 
 .progression-shell [data-region="modal-host"] {
@@ -224,18 +550,19 @@
 }
 
 /* =============================================================================
- * Scroll discipline — prevent double scrollbars
+ * SCROLL DISCIPLINE — prevent double scrollbars
  * ============================================================================= */
 
 .progression-shell [data-region="work-surface"],
 .progression-shell [data-region="details-panel"],
-.progression-shell [data-region="progress-rail"] {
+.progression-shell [data-region="progress-rail"],
+.progression-shell [data-region="mentor-rail"] {
   scrollbar-width: thin;
-  scrollbar-color: var(--prog-border-bright) var(--prog-bg-dark);
+  scrollbar-color: rgba(80, 220, 255, 0.3) rgba(10, 26, 42, 0.5);
 }
 
 /* =============================================================================
- * Processing overlay
+ * PROCESSING OVERLAY
  * ============================================================================= */
 
 .progression-shell.is-processing [data-region="work-surface"] {
@@ -246,4 +573,140 @@
 .progression-shell.is-processing [data-region="action-footer"] .prog-btn--primary {
   pointer-events: none;
   opacity: 0.5;
+}
+
+/* =============================================================================
+ * HOLOGRAPHIC TEXTURE OVERLAY (subtle scanline effect)
+ * ============================================================================= */
+
+.progression-shell.prog-holo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.08;
+
+  background-image:
+    linear-gradient(
+      to bottom,
+      rgba(120,240,255,0.12) 0px,
+      rgba(120,240,255,0.00) 1px
+    );
+  background-size: 100% 4px;
+
+  z-index: 0;
+}
+
+/* =============================================================================
+ * RESPONSIVE ADJUSTMENTS
+ * ============================================================================= */
+
+@media (max-width: 1200px) {
+  .progression-shell .prog-content-row {
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .progression-shell [data-region="details-panel"] {
+    flex: 0 0 240px;
+    width: 240px;
+    min-width: 240px;
+    max-width: 240px;
+  }
+}
+
+@media (max-width: 768px) {
+  .progression-shell [data-region="progress-rail"] {
+    display: none;
+  }
+
+  .progression-shell [data-region="details-panel"] {
+    display: none;
+  }
+
+  .progression-shell [data-region="mentor-rail"] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: var(--prog-mentor-width);
+    height: 100%;
+    z-index: 100;
+    box-shadow:
+      0 0 20px rgba(0, 180, 255, 0.2),
+      4px 0 12px rgba(0, 0, 0, 0.4);
+  }
+
+  .progression-shell .prog-content-row {
+    flex: 1;
+    gap: 0;
+    padding: 8px;
+  }
+
+  .progression-shell [data-region="work-surface"] {
+    flex: 1;
+  }
+}
+
+/* =============================================================================
+ * INTRO MODE — Boot/splash takeover: suppress all shell furniture, let the
+ * intro work-surface dominate the full inner frame.
+ *
+ * Triggered by data-step-id="intro" on the root .progression-shell element,
+ * which is set in progression-shell.hbs from currentDescriptor.stepId.
+ *
+ * Same outer frame + same app; only the inner furniture changes.
+ * ============================================================================= */
+
+.progression-shell[data-step-id="intro"] [data-region="mentor-rail"],
+.progression-shell[data-step-id="intro"] [data-region="progress-rail"],
+.progression-shell[data-step-id="intro"] [data-region="utility-bar"],
+.progression-shell[data-step-id="intro"] [data-region="summary-panel"],
+.progression-shell[data-step-id="intro"] [data-region="details-panel"],
+.progression-shell[data-step-id="intro"] [data-region="action-footer"] {
+  display: none !important;
+}
+
+/* Content row: remove padding/gap so work-surface fills edge-to-edge */
+.progression-shell[data-step-id="intro"] .prog-content-row {
+  padding: 0;
+  gap: 0;
+}
+
+/* Work surface: fill all remaining space, no internal padding constraint */
+.progression-shell[data-step-id="intro"] [data-region="work-surface"] {
+  flex: 1 1 auto;
+  padding: 0;
+  min-height: 0;
+}
+
+/* =============================================================================
+ * INTRO STAGE — work-surface overrides for full-bleed intro layout
+ *
+ * .prog-intro-stage[data-region="work-surface"] is the SOLE child of
+ * .progression-shell in intro mode (HBS {{#if isIntroMode}} branch removes
+ * all normal furniture from the DOM — no mentor rail, no columns, no footer).
+ *
+ * The work-surface default rules (above) apply `padding: var(--prog-space-lg)`
+ * and `overflow-y: auto` — wrong for a full-bleed boot screen. Override:
+ *   - padding: 0         → intro surface fills edge-to-edge
+ *   - display: flex      → makes .prog-intro-surface fill 100% of the stage
+ *   - overflow: hidden   → no outer scroll; inner panel controls its own scroll
+ *
+ * The panel-large.svg background from [data-region="work-surface"] intentionally
+ * shows through — the intro surface is transparent and lives inside that chrome.
+ * ============================================================================= */
+
+.progression-shell .prog-intro-stage[data-region="work-surface"] {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Make the intro surface fill the stage completely */
+.progression-shell .prog-intro-stage[data-region="work-surface"] > .prog-intro-surface {
+  flex: 1 1 auto;
+  min-height: 0;
+  /* Explicit height and width redundancy for non-flex fallback contexts */
+  width: 100%;
 }

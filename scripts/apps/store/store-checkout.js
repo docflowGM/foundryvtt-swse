@@ -532,26 +532,11 @@ export async function createCustomDroid(actor, closeCallback) {
             closeCallback();
         }
 
-        // Launch character generator in droid-building mode with draft mode enabled
-        // When chargen completes in draftMode, it will call the draftSubmissionCallback
-        const chargen = new CharacterGenerator(null, {
-            droidBuilderMode: true,
-            draftMode: true,  // Enable draft submission workflow
-            ownerActor: actor,
-            droidLevel: actor.system.level || 1,
-            availableCredits: credits,
-            droidConstructionCredits: baseCredits,
-            draftSubmissionCallback: async (chargenSnapshot, cost) => {
-                // When chargen completes in draft mode, submit to approval queue
-                const success = await submitDraftDroidForApproval(chargenSnapshot, actor, cost);
-                if (success) {
-                    // Chargen will close itself in draft mode
-                    SWSELogger.log('SWSE Store | Droid draft submitted successfully');
-                }
-            }
-        });
-
-        chargen.render(true);
+        // NOTE: Droid builder draft mode workflows are pending implementation in the new progression shell
+        // For now, show a notice that this feature is being refactored
+        SWSELogger.warn('SWSE Store | Droid builder workflows pending implementation in new progression shell');
+        ui.notifications.info('Droid builder is being refactored for the new character progression system. This feature will be available soon.');
+        return;
     } catch (err) {
         SWSELogger.error('SWSE Store | Failed to launch droid builder:', err);
         ui.notifications.error('Failed to open droid builder.');

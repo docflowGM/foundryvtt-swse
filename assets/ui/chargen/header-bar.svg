@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 180" fill="none">
+  <defs>
+    <linearGradient id="steel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#34414E"/>
+      <stop offset="0.2" stop-color="#101822"/>
+      <stop offset="0.8" stop-color="#071018"/>
+      <stop offset="1" stop-color="#405362"/>
+    </linearGradient>
+    <linearGradient id="holo" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#A9F8FF"/>
+      <stop offset="0.5" stop-color="#4FD7FF"/>
+      <stop offset="1" stop-color="#0078C5"/>
+    </linearGradient>
+  </defs>
+  <path d="M12 38L38 12H1362L1388 38V142L1362 168H38L12 142Z" fill="url(#steel)"/>
+  <path d="M24 45L45 24H1355L1376 45V135L1355 156H45L24 135Z" fill="#050B12"/>
+  <path d="M24 45L45 24H1355L1376 45V135L1355 156H45L24 135Z" stroke="#69E7FF" stroke-width="2.4"/>
+  <path d="M60 36H260L240 56H40Z" fill="#0A1722" stroke="#4EDBFF" stroke-width="1.2"/>
+  <path d="M1140 36H1340L1360 56H1160Z" fill="#0A1722" stroke="#4EDBFF" stroke-width="1.2"/>
+  <path d="M290 90H1110" stroke="url(#holo)" stroke-width="2" opacity="0.35"/>
+  <path d="M290 104H1110" stroke="#8DEEFF" stroke-width="1" opacity="0.2"/>
+</svg>

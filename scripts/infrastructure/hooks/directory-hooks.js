@@ -34,11 +34,10 @@ function handleRenderActorDirectory(app, html, data) {
   guidedBtn.classList.add('swse-chargen-btn');
   guidedBtn.type = 'button';
   guidedBtn.innerHTML = '<i class="fa-solid fa-person"></i> Chargen';
-  guidedBtn.addEventListener('click', (e) => {
+  guidedBtn.addEventListener('click', async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    const app = new CharacterGenerator();
-    app.render(true);
+    await CharacterGenerator.open();
   });
 
   // Create "Template Character" button

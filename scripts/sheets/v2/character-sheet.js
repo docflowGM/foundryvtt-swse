@@ -7,9 +7,8 @@ import { MentorChatDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor
 import { DropResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/drop-resolution-engine.js";
 import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
-import CharacterGenerator from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js";
+import { launchProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
-import { SWSELevelUpEnhanced } from "/systems/foundryvtt-swse/scripts/apps/levelup/levelup-main.js";
 import { MentorNotesApp } from "/systems/foundryvtt-swse/scripts/apps/mentor-notes/mentor-notes-app.js";
 import { CombatExecutor } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-executor.js";
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
@@ -108,6 +107,35 @@ export class SWSEV2CharacterSheet extends
     super(document, options);
     // Track sheet instance for Sentinel monitoring
     SentinelSheetGuardrails.trackSheetInstance("SWSEV2CharacterSheet");
+  }
+
+  /**
+   * Compute a safe initial position for the character sheet.
+   *
+   * Foundry V13 ApplicationV2 may persist sheet positions via user flags.
+   * If a character sheet was last closed near the right sidebar, it would re-open
+   * there — and Foundry's cascade offset would push the next window (e.g., the
+   * ProgressionShell) even further right. Override to always open within the
+   * visible canvas area, accounting for the sidebar.
+   *
+   * @returns {{ width: number, height: number, left: number, top: number }}
+   */
+  _getInitialPosition() {
+    const sidebarEl = ui?.sidebar?.element ?? document.querySelector('#sidebar');
+    const sidebarW  = sidebarEl ? (sidebarEl.offsetWidth || 310) : 310;
+
+    const viewportW = window.innerWidth;
+    const viewportH = window.innerHeight;
+
+    // Available canvas area (sidebar is on the right)
+    const availW = Math.max(500, viewportW - sidebarW - 16);
+
+    const w    = Math.min(900,  availW);
+    const h    = Math.min(950,  Math.max(600, viewportH - 60));
+    const left = Math.max(10,   Math.floor((availW - w) / 2));
+    const top  = Math.max(20,   Math.floor((viewportH - h) / 8));
+
+    return { width: w, height: h, left, top };
   }
 
   async _onRender(context, options) {
@@ -402,7 +430,24 @@ export class SWSEV2CharacterSheet extends
     // Force Points visual array (value as dots, with used state)
     const fpValue = system.forcePoints?.value ?? 0;
     const fpMax = system.forcePoints?.max ?? 0;
-    const forcePoints = [];
+
+    const destinyPointsValue = system.destinyPoints?.value ?? 0;
+    const destinyPointsMax = system.destinyPoints?.max ?? 0;
+
+    const speed = typeof system.speed === "number" ? system.speed : (system.speed?.value ?? 0);
+
+    const perceptionTotal =
+      derived.skills?.perception?.total ??
+      derived.skills?.perception ??
+      0;
+
+    const bab =
+      derived.bab ??
+      system.bab?.total ??
+      system.bab ??
+      system.baseAttackBonus ??
+      0;
+const forcePoints = [];
     for (let i = 1; i <= fpMax; i++) {
       forcePoints.push({
         index: i,
@@ -574,6 +619,13 @@ export class SWSEV2CharacterSheet extends
       bonusHp,
       conditionSteps,
       initiativeTotal,
+      speed,
+      perceptionTotal,
+      bab,
+      forcePointsValue: fpValue,
+      forcePointsMax: fpMax,
+      destinyPointsValue,
+      destinyPointsMax,
       combat,
       forcePoints,
       forceTags,
@@ -714,9 +766,9 @@ export class SWSEV2CharacterSheet extends
       // Update button text
       button.textContent = isExpanded ? "Collapse" : "Expand";
       console.log("[DEBUG] Button text updated to:", button.textContent);
-    });
+    }, { signal });
 
-    // DELEGATED: Toggle Defenses Panel - Show/Hide Expanded Views
+// DELEGATED: Toggle Defenses Panel - Show/Hide Expanded Views
     html.addEventListener("click", ev => {
       const button = ev.target.closest("[data-action='toggle-defenses']");
       if (!button) return;
@@ -754,9 +806,9 @@ export class SWSEV2CharacterSheet extends
       // Update button text
       button.textContent = isExpanded ? "Collapse" : "Expand";
       console.log("[DEBUG] Button text updated to:", button.textContent);
-    });
+    }, { signal });
 
-    // DELEGATED: Roll Ability Check (d20 + ability modifier)
+// DELEGATED: Roll Ability Check (d20 + ability modifier)
     html.addEventListener("click", async ev => {
       const button = ev.target.closest("[data-action='roll-ability']");
       if (!button) return;
@@ -771,7 +823,23 @@ export class SWSEV2CharacterSheet extends
         console.error("Ability roll failed:", err);
         ui?.notifications?.error?.(`Ability roll failed: ${err.message}`);
       }
-    });
+    }, { signal });
+
+    // DELEGATED: Roll Initiative (d20 + initiative bonus) / Take 10
+    html.addEventListener("click", async ev => {
+      const button = ev.target.closest("[data-action='roll-initiative'], [data-action='take10-initiative']");
+      if (!button) return;
+
+      ev.preventDefault();
+      const mode = button.dataset.action === "take10-initiative" ? "take10" : "roll";
+
+      try {
+        await SWSERoll.rollInitiative(this.actor, { mode });
+      } catch (err) {
+        console.error("Initiative roll failed:", err);
+        ui?.notifications?.error?.(`Initiative roll failed: ${err.message}`);
+      }
+    }, { signal });
 
     // DELEGATED: Auto-save form inputs when they change
     // This survives rerender because listener is on stable root element (html)
@@ -823,63 +891,65 @@ export class SWSEV2CharacterSheet extends
       const skillKey = button.dataset.skill;
       if (skillKey) {
         const currentFavorite = this.actor.system.skills?.[skillKey]?.favorite ?? false;
-        await this.actor.update({
-          [`system.skills.${skillKey}.favorite`]: !currentFavorite
-        });
-      }
+        const plan = {
+          update: {
+            [`system.skills.${skillKey}.favorite`]: !currentFavorite
+          }
+        };
+        await ActorEngine.apply(this.actor, plan);
+}
     }, { signal, capture: false });
 
     // Force Card Flip
     html.querySelectorAll(".force-card").forEach(card => {
-      card.addEventListener("click", { signal }, ev => {
+      card.addEventListener("click", ev => {
         card.classList.toggle("flipped");
-      });
+      }, { signal });
     });
 
     // Flip Back
     html.querySelectorAll(".flip-back").forEach(btn => {
-      btn.addEventListener("click", { signal }, ev => {
+      btn.addEventListener("click", ev => {
         ev.stopPropagation();
         const card = ev.currentTarget.closest(".force-card");
         if (card) card.classList.remove("flipped");
-      });
+      }, { signal });
     });
 
     // Mentor Button
     html.querySelectorAll('[data-action="open-mentor"]').forEach(button => {
-      button.addEventListener("click", { signal }, ev => {
+      button.addEventListener("click", ev => {
         ev.preventDefault();
         this._openMentorConversation();
-      });
+      }, { signal });
     });
 
-    // Header Command Buttons
+    // Header Command Buttons — UNIFIED PROGRESSION ENTRY
+    // ALL progression routes through launchProgression (single authority)
     html.querySelectorAll('[data-action="cmd-chargen"]').forEach(button => {
-      button.addEventListener("click", { signal }, async ev => {
+      button.addEventListener("click", async ev => {
         ev.preventDefault();
-        const chargen = new CharacterGenerator(this.actor);
-        chargen.render(true);
-      });
+        await launchProgression(this.actor);
+      }, { signal });
     });
 
     html.querySelectorAll('[data-action="cmd-levelup"]').forEach(button => {
-      button.addEventListener("click", { signal }, async ev => {
+      button.addEventListener("click", async ev => {
         ev.preventDefault();
-        const levelup = new SWSELevelUpEnhanced(this.actor);
-        levelup.render(true);
-      });
+        await launchProgression(this.actor);
+      }, { signal });
     });
 
     html.querySelectorAll('[data-action="cmd-store"]').forEach(button => {
-      button.addEventListener("click", { signal }, async ev => {
+      button.addEventListener("click", async ev => {
         ev.preventDefault();
         const store = new SWSEStore(this.actor);
         store.render(true);
-      });
+      }, { signal });
     });
 
     html.querySelectorAll('[data-action="cmd-conditions"]').forEach(button => {
-      button.addEventListener("click", { signal }, async ev => {
+      button.addEventListener("click", async ev => {
         ev.preventDefault();
         // Switch to overview tab and scroll to health panel
         await this.changeTab("overview", "primary");
@@ -887,14 +957,14 @@ export class SWSEV2CharacterSheet extends
         if (healthPanel) {
           healthPanel.scrollIntoView({ behavior: "smooth", block: "center" });
         }
-      });
+      }, { signal });
     });
 
     html.querySelectorAll('[data-action="revalidate-build"]').forEach(button => {
-      button.addEventListener("click", { signal }, async ev => {
+      button.addEventListener("click", async ev => {
         ev.preventDefault();
         await this._revalidateBuild();
-      });
+      }, { signal });
     });
 
     // Inventory Panel Handlers
@@ -991,43 +1061,43 @@ export class SWSEV2CharacterSheet extends
   _activateInventoryUI(html, { signal } = {}) {
     // Equip / Unequip toggle
     html.querySelectorAll(".item-equip").forEach(button => {
-      button.addEventListener("click", { signal }, async (event) => {
+      button.addEventListener("click", async (event) => {
         const row = event.currentTarget.closest(".inventory-row");
         const itemId = row?.dataset.itemId;
         if (itemId) await InventoryEngine.toggleEquip(this.actor, itemId);
-      });
+      }, { signal });
     });
 
     // Edit item
     html.querySelectorAll(".item-edit").forEach(button => {
-      button.addEventListener("click", { signal }, (event) => {
+      button.addEventListener("click", (event) => {
         const row = event.currentTarget.closest(".inventory-row");
         const itemId = row?.dataset.itemId;
         if (itemId) this.actor.items.get(itemId)?.sheet.render(true);
-      });
+      }, { signal });
     });
 
     // Add/increment quantity
     html.querySelectorAll(".item-add").forEach(button => {
-      button.addEventListener("click", { signal }, async (event) => {
+      button.addEventListener("click", async (event) => {
         const row = event.currentTarget.closest(".inventory-row");
         const itemId = row?.dataset.itemId;
         if (itemId) await InventoryEngine.incrementQuantity(this.actor, itemId);
-      });
+      }, { signal });
     });
 
     // Sell item
     html.querySelectorAll(".item-sell").forEach(button => {
-      button.addEventListener("click", { signal }, async (event) => {
+      button.addEventListener("click", async (event) => {
         const row = event.currentTarget.closest(".inventory-row");
         const itemId = row?.dataset.itemId;
         if (itemId) await InventoryEngine.decrementQuantity(this.actor, itemId);
-      });
+      }, { signal });
     });
 
     // Delete/Remove item
     html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="edit"], [data-action="configure"]').forEach(button => {
-      button.addEventListener("click", { signal }, async (event) => {
+      button.addEventListener("click", async (event) => {
         event.preventDefault();
         const action = button.dataset.action;
         const itemId = button.dataset.itemId || event.currentTarget.closest("[data-item-id]")?.dataset.itemId;
@@ -1053,7 +1123,7 @@ export class SWSEV2CharacterSheet extends
             }
             break;
         }
-      });
+      }, { signal });
     });
 
     // ═══════════════════════════════════════════════════════════════════════════════
@@ -1062,44 +1132,44 @@ export class SWSEV2CharacterSheet extends
 
     // Open item sheet
     html.querySelectorAll('[data-action="open-item"]').forEach(button => {
-      button.addEventListener("click", { signal }, (event) => {
+      button.addEventListener("click", (event) => {
         event.preventDefault();
         const itemId = button.dataset.itemId;
         if (itemId) {
           const item = this.actor.items.get(itemId);
           if (item) item.sheet.render(true);
         }
-      });
+      }, { signal });
     });
 
     // Equip item
     html.querySelectorAll('[data-action="equip-item"]').forEach(button => {
-      button.addEventListener("click", { signal }, async (event) => {
+      button.addEventListener("click", async (event) => {
         event.preventDefault();
         const itemId = button.dataset.itemId;
         if (itemId) await InventoryEngine.toggleEquip(this.actor, itemId);
-      });
+      }, { signal });
     });
 
     // Edit item
     html.querySelectorAll('[data-action="edit-item"]').forEach(button => {
-      button.addEventListener("click", { signal }, (event) => {
+      button.addEventListener("click", (event) => {
         event.preventDefault();
         const itemId = button.dataset.itemId;
         if (itemId) {
           const item = this.actor.items.get(itemId);
           if (item) item.sheet.render(true);
         }
-      });
+      }, { signal });
     });
 
     // Delete item
     html.querySelectorAll('[data-action="delete-item"]').forEach(button => {
-      button.addEventListener("click", { signal }, async (event) => {
+      button.addEventListener("click", async (event) => {
         event.preventDefault();
         const itemId = button.dataset.itemId;
         if (itemId) await InventoryEngine.removeItem(this.actor, itemId);
-      });
+      }, { signal });
     });
   }
 
@@ -1110,7 +1180,7 @@ export class SWSEV2CharacterSheet extends
   _activateCombatUI(html, { signal } = {}) {
     // Action click (cards and table rows)
     html.querySelectorAll(".swse-combat-action-card, .action-row").forEach(element => {
-      element.addEventListener("click", { signal }, async (event) => {
+      element.addEventListener("click", async (event) => {
         if (event.target.classList.contains("hide-action")) return;
         const key = event.currentTarget.dataset.actionKey;
         if (!key) return;
@@ -1120,32 +1190,32 @@ export class SWSEV2CharacterSheet extends
         if (data) {
           new CombatRollConfigDialog(this.actor, data).render(true);
         }
-      });
+      }, { signal });
     });
 
     // Hide individual action
     html.querySelectorAll(".hide-action").forEach(button => {
-      button.addEventListener("click", { signal }, (event) => {
+      button.addEventListener("click", (event) => {
         event.stopPropagation();
         const el = event.currentTarget.closest(".swse-combat-action-card, .action-row");
         if (el) el.classList.add("collapsed");
-      });
+      }, { signal });
     });
 
     // Collapse group (table mode)
     html.querySelectorAll(".collapse-group").forEach(button => {
-      button.addEventListener("click", { signal }, (event) => {
+      button.addEventListener("click", (event) => {
         const groupKey = event.currentTarget.dataset.group;
         if (groupKey) {
           const table = html.querySelector(`table[data-group='${groupKey}']`);
           if (table) table.classList.toggle("collapsed");
         }
-      });
+      }, { signal });
     });
 
     // Use action button
     html.querySelectorAll('[data-action="swse-v2-use-action"]').forEach(button => {
-      button.addEventListener("click", { signal }, async (event) => {
+      button.addEventListener("click", async (event) => {
         event.preventDefault();
         const actionId = button.dataset.actionId;
         if (!actionId) return;
@@ -1157,12 +1227,12 @@ export class SWSEV2CharacterSheet extends
           // Open the config dialog to show details before rolling
           new CombatRollConfigDialog(this.actor, data).render(true);
         }
-      });
+      }, { signal });
     });
 
     // Weapon attack roll button (Combat Attacks simplified panel)
     html.querySelectorAll('[data-action="roll-weapon-attack"]').forEach(button => {
-      button.addEventListener("click", { signal }, async (event) => {
+      button.addEventListener("click", async (event) => {
         event.preventDefault();
         const weaponId = button.dataset.weaponId;
         if (!weaponId) return;
@@ -1176,7 +1246,7 @@ export class SWSEV2CharacterSheet extends
           weaponId: weaponId,
           weaponName: weapon.name
         }).render(true);
-      });
+      }, { signal });
     });
   }
 
@@ -1187,7 +1257,7 @@ export class SWSEV2CharacterSheet extends
   _activateSkillsUI(html, { signal } = {}) {
     // Filter skills by text
     html.querySelectorAll('[data-action="filter-skills"]').forEach(input => {
-      input.addEventListener("input", { signal }, (event) => {
+      input.addEventListener("input", (event) => {
         const filterText = event.target.value.toLowerCase();
         const skillRows = html.querySelectorAll(".skill-row-container");
 
@@ -1197,12 +1267,12 @@ export class SWSEV2CharacterSheet extends
           const matches = skillName.includes(filterText) || skillLabel.includes(filterText);
           row.style.display = matches ? "" : "none";
         });
-      });
+      }, { signal });
     });
 
     // Sort skills
     html.querySelectorAll('[data-action="sort-skills"]').forEach(select => {
-      select.addEventListener("change", { signal }, (event) => {
+      select.addEventListener("change", (event) => {
         const sortBy = event.target.value;
         const skillsList = html.querySelector(".skills-list");
         if (!skillsList) return;
@@ -1225,12 +1295,12 @@ export class SWSEV2CharacterSheet extends
         });
 
         rows.forEach(row => skillsList.appendChild(row));
-      });
+      }, { signal });
     });
 
     // Roll skill button
     html.querySelectorAll('[data-action="roll-skill"]').forEach(button => {
-      button.addEventListener("click", { signal }, async (event) => {
+      button.addEventListener("click", async (event) => {
         event.preventDefault();
         const skillKey = button.dataset.skill;
         if (!skillKey) return;
@@ -1241,7 +1311,7 @@ export class SWSEV2CharacterSheet extends
           console.error("Skill roll failed:", err);
           ui?.notifications?.error?.(`Skill roll failed: ${err.message}`);
         }
-      });
+      }, { signal });
     });
   }
 
@@ -1252,7 +1322,7 @@ export class SWSEV2CharacterSheet extends
   _activateForceUI(html, { signal } = {}) {
     // Force sort dropdown
     html.querySelectorAll('[data-action="force-sort"]').forEach(select => {
-      select.addEventListener("change", { signal }, (event) => {
+      select.addEventListener("change", (event) => {
         const sortBy = event.target.value;
         const cardGrid = html.querySelector(".force-card-grid");
         if (!cardGrid) return;
@@ -1274,12 +1344,12 @@ export class SWSEV2CharacterSheet extends
         });
 
         cards.forEach(card => cardGrid.appendChild(card));
-      });
+      }, { signal });
     });
 
     // Force tag filter buttons
     html.querySelectorAll('[data-action="force-tag-filter"]').forEach(button => {
-      button.addEventListener("click", { signal }, (event) => {
+      button.addEventListener("click", (event) => {
         event.preventDefault();
         const tag = button.dataset.tag;
         if (!tag) return;
@@ -1301,12 +1371,12 @@ export class SWSEV2CharacterSheet extends
             card.style.display = matches ? "" : "none";
           }
         });
-      });
+      }, { signal });
     });
 
     // Activate force button
     html.querySelectorAll('[data-action="activate-force"]').forEach(button => {
-      button.addEventListener("click", { signal }, async (event) => {
+      button.addEventListener("click", async (event) => {
         event.preventDefault();
         const itemId = button.dataset.itemId;
         if (!itemId) return;
@@ -1326,7 +1396,7 @@ export class SWSEV2CharacterSheet extends
           console.error("Force activation failed:", err);
           ui?.notifications?.error?.(`Force activation failed: ${err.message}`);
         }
-      });
+      }, { signal });
     });
   }
 
@@ -1337,7 +1407,7 @@ export class SWSEV2CharacterSheet extends
   _activateAbilitiesUI(html, { signal } = {}) {
     // Open ability/feat/talent sheet
     html.querySelectorAll('[data-action="open-ability"]').forEach(button => {
-      button.addEventListener("click", { signal }, async (event) => {
+      button.addEventListener("click", async (event) => {
         event.preventDefault();
         const itemId = button.dataset.itemId;
         if (!itemId) return;
@@ -1346,12 +1416,12 @@ export class SWSEV2CharacterSheet extends
         if (item) {
           item.sheet.render(true);
         }
-      });
+      }, { signal });
     });
 
     // Add feat button
     html.querySelectorAll('[data-action="add-feat"]').forEach(button => {
-      button.addEventListener("click", { signal }, async (event) => {
+      button.addEventListener("click", async (event) => {
         event.preventDefault();
         // Open a dialog to select/create a feat
         // For now, just open the item creation dialog
@@ -1362,23 +1432,23 @@ export class SWSEV2CharacterSheet extends
         };
         const doc = await Item.create(itemData, { parent: this.actor });
         if (doc) doc.sheet.render(true);
-      });
+      }, { signal });
     });
 
     // Delete feat button
     html.querySelectorAll('[data-action="delete-feat"]').forEach(button => {
-      button.addEventListener("click", { signal }, async (event) => {
+      button.addEventListener("click", async (event) => {
         event.preventDefault();
         const itemId = button.dataset.itemId;
         if (!itemId) return;
 
         await InventoryEngine.removeItem(this.actor, itemId);
-      });
+      }, { signal });
     });
 
     // Add talent button
     html.querySelectorAll('[data-action="add-talent"]').forEach(button => {
-      button.addEventListener("click", { signal }, async (event) => {
+      button.addEventListener("click", async (event) => {
         event.preventDefault();
         // Open a dialog to select a talent
         // For now, just open the item creation dialog
@@ -1389,7 +1459,7 @@ export class SWSEV2CharacterSheet extends
         };
         const doc = await Item.create(itemData, { parent: this.actor });
         if (doc) doc.sheet.render(true);
-      });
+      }, { signal });
     });
   }
 
@@ -1400,7 +1470,7 @@ export class SWSEV2CharacterSheet extends
   _activateMiscUI(html, { signal } = {}) {
     // Add language button
     html.querySelectorAll('[data-action="add-language"]').forEach(button => {
-      button.addEventListener("click", { signal }, async (event) => {
+      button.addEventListener("click", async (event) => {
         event.preventDefault();
         // Open a dialog for language selection
         const languages = this.actor.system?.languages ?? [];
@@ -1418,12 +1488,12 @@ export class SWSEV2CharacterSheet extends
             ui?.notifications?.error?.(`Failed to add language: ${err.message}`);
           }
         }
-      });
+      }, { signal });
     });
 
     // Remove language button
     html.querySelectorAll('[data-action="remove-language"]').forEach(button => {
-      button.addEventListener("click", { signal }, async (event) => {
+      button.addEventListener("click", async (event) => {
         event.preventDefault();
         const langName = button.dataset.language;
         if (!langName) return;
@@ -1441,12 +1511,12 @@ export class SWSEV2CharacterSheet extends
           console.error("Failed to remove language:", err);
           ui?.notifications?.error?.(`Failed to remove language: ${err.message}`);
         }
-      });
+      }, { signal });
     });
 
     // Rest / Second Wind button
     html.querySelectorAll('[data-action="rest-second-wind"]').forEach(button => {
-      button.addEventListener("click", { signal }, async (event) => {
+      button.addEventListener("click", async (event) => {
         event.preventDefault();
         // Restore second wind uses
         const plan = {
@@ -1464,12 +1534,12 @@ export class SWSEV2CharacterSheet extends
           console.error("Rest failed:", err);
           ui?.notifications?.error?.(`Rest failed: ${err.message}`);
         }
-      });
+      }, { signal });
     });
 
     // Set dark side score button
     html.querySelectorAll('[data-action="set-dark-side-score"]').forEach(button => {
-      button.addEventListener("click", { signal }, async (event) => {
+      button.addEventListener("click", async (event) => {
         event.preventDefault();
         const currentDSP = DSPEngine.getValue(this.actor);
         const newValue = prompt(`Current Dark Side Points: ${currentDSP}\n\nEnter new value:`, String(currentDSP));
@@ -1489,12 +1559,12 @@ export class SWSEV2CharacterSheet extends
             ui?.notifications?.error?.(`Failed to set DSP: ${err.message}`);
           }
         }
-      });
+      }, { signal });
     });
 
     // Use extra skill button
     html.querySelectorAll('[data-action="use-extra-skill"]').forEach(button => {
-      button.addEventListener("click", { signal }, async (event) => {
+      button.addEventListener("click", async (event) => {
         event.preventDefault();
         const skillKey = button.dataset.skill;
         if (!skillKey) return;
@@ -1514,7 +1584,7 @@ export class SWSEV2CharacterSheet extends
           console.error("Failed to use extra skill:", err);
           ui?.notifications?.error?.(`Failed to use extra skill: ${err.message}`);
         }
-      });
+      }, { signal });
     });
   }
 

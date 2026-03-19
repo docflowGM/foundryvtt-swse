@@ -1,0 +1,240 @@
+/* ===== Chargen specific ===== */
+
+.swse-chargen-root {
+  width: 100%;
+  height: 100%;
+}
+
+.swse-chargen-main-title {
+  font-size: 2rem;
+  color: #00ffd0;
+  text-shadow: 0 0 12px rgba(0,255,208,.35);
+  margin: 0;
+}
+
+.swse-chargen-subtitle {
+  color: #c7d7df;
+  margin-top: 4px;
+}
+
+.swse-step-body-title {
+  margin-bottom: 12px;
+}
+
+.swse-attr-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.swse-attr-table th,
+.swse-attr-table td {
+  border: 1px solid rgba(255,255,255,.08);
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.swse-attr-table th {
+  color: #dff8ff;
+  background: rgba(255,255,255,.04);
+}
+
+.swse-points-remaining {
+  margin-top: 14px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #f0d98c;
+}
+
+.swse-ability-grid {
+  display: grid;
+  grid-template-columns: 1.4fr .8fr .8fr .9fr;
+  gap: 8px;
+  align-items: center;
+}
+
+.swse-ability-grid-header {
+  font-weight: 700;
+  color: #dff8ff;
+}
+
+.swse-ability-row {
+  display: contents;
+}
+
+.swse-ability-name {
+  padding: 10px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.03);
+}
+
+.swse-ability-box {
+  text-align: center;
+  padding: 10px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.03);
+}
+
+.swse-ability-btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 42px;
+  height: 42px;
+  border-radius: 6px;
+  border: 1px solid rgba(120,200,255,.5);
+  background: linear-gradient(rgba(35,45,55,.95), rgba(18,20,24,.95));
+  color: #fff;
+  font-size: 1.6rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.swse-details-text {
+  line-height: 1.55;
+  color: #e9edf0;
+}
+
+.swse-details-label {
+  color: #f0d98c;
+  font-weight: 700;
+}
+
+.swse-utility-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.swse-badge {
+  padding: 4px 8px;
+  border: 1px solid rgba(120,200,255,.35);
+  border-radius: 999px;
+  background: rgba(255,255,255,.05);
+  color: #dbe9ef;
+  font-size: .9rem;
+}
+
+.swse-name-layout {
+  display: grid;
+  gap: 12px;
+}
+
+.swse-action-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.swse-progress-note {
+  color: #ffffff;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+/* =========================
+   CHARGEN HOLO ENHANCEMENTS
+   ========================= */
+
+.swse-holo-main .step-name,
+.swse-holo-main .step-type,
+.swse-holo-main .step-degree,
+.swse-holo-main .step-size,
+.swse-holo-main .step-species,
+.swse-holo-main .step-abilities,
+.swse-holo-main .step-class,
+.swse-holo-main .step-background,
+.swse-holo-main .step-skills,
+.swse-holo-main .step-languages,
+.swse-holo-main .step-feats,
+.swse-holo-main .step-talents,
+.swse-holo-main .step-force-powers,
+.swse-holo-main .step-starship-maneuvers,
+.swse-holo-main .step-droid-builder,
+.swse-holo-main .step-droid-final,
+.swse-holo-main .step-summary,
+.swse-holo-main .step-shop {
+  background: transparent;
+  padding: 0;
+  margin: 0;
+}
+
+.swse-holo-main .form-actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.swse-holo-main .hint,
+.swse-holo-main .help-text,
+.swse-holo-main .hint-text,
+.swse-holo-main .level-hint {
+  color: #cdefff;
+}
+
+.swse-holo-main .choice-button,
+.swse-holo-main .type-card,
+.swse-holo-main .class-card,
+.swse-holo-main .feat-card,
+.swse-holo-main .skill-card,
+.swse-holo-main .language-card,
+.swse-holo-main .power-card,
+.swse-holo-main .maneuver-card,
+.swse-holo-main .talent-card,
+.swse-holo-main .talent-tree-card {
+  background:
+    linear-gradient(180deg, rgba(8,28,48,.82), rgba(3,12,22,.95));
+  border: 1px solid rgba(0,180,255,.35);
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0,180,255,.08);
+}
+
+.swse-holo-main .choice-button:hover,
+.swse-holo-main .type-card:hover,
+.swse-holo-main .class-card:hover,
+.swse-holo-main .feat-card:hover,
+.swse-holo-main .skill-card:hover,
+.swse-holo-main .language-card:hover,
+.swse-holo-main .power-card:hover,
+.swse-holo-main .maneuver-card:hover,
+.swse-holo-main .talent-card:hover,
+.swse-holo-main .talent-tree-card:hover {
+  border-color: rgba(0,220,255,.8);
+  box-shadow: 0 0 12px rgba(0,220,255,.2);
+}
+
+.swse-holo-sidebar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.swse-holo-sidebar-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  padding-bottom: 6px;
+}
+
+.swse-holo-detail-text {
+  line-height: 1.55;
+  color: #dff5ff;
+}
+
+.swse-holo-main .ability-card,
+.swse-holo-main .summary-card,
+.swse-holo-main .credit-wallet,
+.swse-holo-main .background-filter-panel,
+.swse-holo-main .selected-background-display,
+.swse-holo-main .language-counter-box,
+.swse-holo-main .selected-feats-summary,
+.swse-holo-main .selected-talents-summary,
+.swse-holo-main .selected-powers-summary,
+.swse-holo-main .selected-maneuvers-summary {
+  background:
+    linear-gradient(180deg, rgba(8,28,48,.72), rgba(3,12,22,.92));
+  border: 1px solid rgba(0,180,255,.28);
+  border-radius: 8px;
+  padding: 10px;
+}

@@ -843,7 +843,7 @@
 
       <div class="force-powers-grid">
         {{#each availableForcePowers}}
-        <div class="force-power-card feat-with-tooltip {{#if (eq this.id ../selectedForcePowers.*.id)}}selected{{/if}}"
+        <div class="force-power-card feat-with-tooltip"
              data-power-id="{{this.id}}"
              data-tooltip="{{this.system.description}}"
              title="{{this.system.description}}">
@@ -858,7 +858,7 @@
           {{/if}}
           <h4 class="power-name">{{this.name}}</h4>
           <button class="select-force-power choice-button" data-power-id="{{this.id}}">
-            <i class="fa-solid {{#if (eq this.id ../selectedForcePowers.*.id)}}fa-circle-check{{else}}fa-circle-plus{{/if}}"></i> {{#if (eq this.id ../selectedForcePowers.*.id)}}Selected{{else}}Select{{/if}}
+            <i class="fa-solid fa-circle-plus"></i> Select
           </button>
         </div>
         {{/each}}

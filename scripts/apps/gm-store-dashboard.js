@@ -380,17 +380,9 @@ export class GMStoreDashboard extends BaseSWSEAppV2 {
     if (!approval) return;
 
     if (approval.type === 'droid' && approval.chargenSnapshot) {
-      // Re-launch CharGen with edit mode
-      const CharacterGenerator = (await import("/systems/foundryvtt-swse/chargen-main.js")).default;
-      const chargen = new CharacterGenerator(null, {
-        droidBuilderMode: true,
-        editMode: true,
-        editSnapshot: approval.chargenSnapshot,
-        ownerActor: game.actors.get(approval.ownerActorId),
-        doidConstructionCredits: approval.costCredits,
-        approvalRequestId: approval.id
-      });
-      chargen.render(true);
+      // NOTE: Droid edit mode workflows are pending implementation in the new progression shell
+      SWSELogger.warn('SWSE GM Dashboard | Droid edit mode pending implementation in new progression shell');
+      ui.notifications.info('Droid editing is being refactored for the new character progression system. This feature will be available soon.');
     } else if (approval.type === 'vehicle') {
       ui.notifications.info('Vehicle modification editing not yet implemented.');
     }

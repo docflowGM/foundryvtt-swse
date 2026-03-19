@@ -1,0 +1,365 @@
+/**
+ * footer.css  —  SWSE Progression Shell Footer
+ *
+ * Three-column grid footer: [Back anchor] [Step chips] [Confirm anchor]
+ *
+ * SVG assets (from assets/ui/chargen/) are used as background-images for
+ * buttons and step chips. The SVGs provide shape, gradient fill, glow, and
+ * state-specific icon glyphs. CSS handles hover transitions, disabled opacity,
+ * text sizing, font-mode swap, and layout.
+ *
+ * Font modes (data-font-mode on .swse-footer):
+ *   standard  — Orbitron / Rajdhani UI font
+ *   aurabesh  — Aurebesh display font for diegetic flavor text
+ *
+ * Asset paths (relative from styles/progression-framework/shell/):
+ *   ../../../assets/ui/chargen/
+ */
+
+/* ============================================================================
+   CSS CUSTOM PROPERTIES — footer-local tokens
+   ============================================================================ */
+
+:root {
+  --swse-font-ui:       "Orbitron", "Rajdhani", sans-serif;
+  --swse-font-aurabesh: "Aurebesh", "Orbitron", sans-serif;
+
+  --swse-footer-height: 76px;
+  --swse-btn-w:         220px;   /* matches SVG viewBox width  */
+  --swse-btn-h:         64px;    /* matches SVG viewBox height (scaled down from 72) */
+  --swse-chip-w:        160px;   /* step chip target width — chips scale down for many steps */
+  --swse-chip-h:        46px;    /* step chip target height  */
+}
+
+/* ============================================================================
+   SWSE-FOOTER  —  outer grid container
+   Lives inside [data-region="action-footer"] which already provides:
+     flex: 0 0 var(--prog-footer-height); display: flex; align-items: center;
+   We replace all content with our grid.
+   ============================================================================ */
+
+.progression-shell .swse-footer {
+  /* Reset old footer layout — we own the full region */
+  display: grid;
+  grid-template-columns: var(--swse-btn-w) 1fr var(--swse-btn-w);
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  padding: 0 8px;
+
+  font-family: var(--swse-font-ui);
+}
+
+/* Aurabesh font mode — swap label font-family */
+.progression-shell .swse-footer[data-font-mode="aurabesh"] .swse-btn__label,
+.progression-shell .swse-footer[data-font-mode="aurabesh"] .swse-step-btn__label {
+  font-family: var(--swse-font-aurabesh);
+  letter-spacing: 0.08em;
+}
+
+/* ============================================================================
+   SWSE-BTN  —  Back and Confirm/Next large anchor buttons
+   SVG provides the shape + gradient fill + glyphs.
+   CSS provides hover lift, disabled dim, text sizing.
+   ============================================================================ */
+
+.progression-shell .swse-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--swse-btn-w);
+  height: var(--swse-btn-h);
+
+  /* SVG background — provides the clipped frame geometry */
+  background-color: transparent;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+
+  /* Remove default browser button chrome */
+  border: none;
+  outline: none;
+  box-shadow: none;
+
+  color: rgba(210, 245, 255, 0.92);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+
+  transition: transform 120ms ease, filter 120ms ease, opacity 120ms ease;
+  will-change: transform;
+}
+
+/* Back button — SVG provides left-cut asymmetric frame + arrow glyph */
+.progression-shell .swse-btn--back {
+  background-image: url('../../../assets/ui/chargen/swse-btn-back-frame.svg');
+  /* Text sits in the right 2/3 of the frame (SVG has arrow in left zone) */
+  padding-left: 44px;
+  padding-right: 14px;
+}
+
+/* Confirm/Next button — SVG provides right-cut frame + check/arrow glyph */
+.progression-shell .swse-btn--confirm {
+  background-image: url('../../../assets/ui/chargen/swse-btn-confirm-frame.svg');
+  /* Text sits in the right 2/3 of the frame (SVG has check in left zone) */
+  padding-left: 44px;
+  padding-right: 14px;
+}
+
+/* Last-step: confirm button gets teal glow pulse */
+.progression-shell .swse-btn--last-step {
+  filter: drop-shadow(0 0 8px rgba(90, 255, 200, 0.35));
+  animation: swse-confirm-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes swse-confirm-pulse {
+  0%, 100% { filter: drop-shadow(0 0 6px  rgba(90, 255, 200, 0.25)); }
+  50%       { filter: drop-shadow(0 0 14px rgba(90, 255, 200, 0.55)); }
+}
+
+/* Hover — lift + strengthen SVG glow */
+.progression-shell .swse-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.15) drop-shadow(0 0 10px rgba(100, 220, 255, 0.25));
+}
+
+.progression-shell .swse-btn--last-step:hover:not(:disabled) {
+  filter: brightness(1.15) drop-shadow(0 0 14px rgba(90, 255, 200, 0.5));
+  animation: none; /* stop pulse on hover */
+}
+
+/* Disabled — dim without touching geometry */
+.progression-shell .swse-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+}
+
+/* Label element — text only, positioned over SVG glyph area */
+.progression-shell .swse-btn__label {
+  flex: 1;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 0 8px rgba(0, 200, 255, 0.4), 0 1px 3px rgba(0, 0, 0, 0.9);
+  pointer-events: none;
+}
+
+/* ============================================================================
+   ACTION-FOOTER__NAV / __CONFIRM  —  left/right anchor cells
+   ============================================================================ */
+
+.progression-shell .action-footer__nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.progression-shell .action-footer__confirm {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* ============================================================================
+   ACTION-FOOTER__STEPS  —  center step-chip rail
+   ============================================================================ */
+
+.progression-shell .action-footer__steps {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  overflow: hidden;
+}
+
+/* Chip row — wraps if many steps */
+.progression-shell .action-footer__steps > [role="tab"] {
+  /* Chips are direct tab children; flex-wrap handled at chip level */
+}
+
+/* Chip wrapper flex row — chips sit in a horizontal scrollable row */
+.progression-shell .action-footer__steps {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* ============================================================================
+   SWSE-STEP-BTN  —  individual step chip
+   SVG provides shape + gradient fill + glyph indicator.
+   CSS provides text, hover, disabled, state overrides.
+   ============================================================================ */
+
+.progression-shell .swse-step-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0;
+
+  width:  var(--swse-chip-w);
+  height: var(--swse-chip-h);
+
+  /* Default chip SVG — dim blue, circle indicator */
+  background-color: transparent;
+  background-image: url('../../../assets/ui/chargen/swse-step-chip-default.svg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+
+  border: none;
+  outline: none;
+  box-shadow: none;
+
+  color: rgba(170, 210, 230, 0.80);
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: default;
+
+  transition: transform 100ms ease, filter 100ms ease, opacity 100ms ease;
+  will-change: transform;
+
+  /* Chip SVG geometry: indicator circle at x~12-40, text starts at x~52 */
+  padding-left: 42px;   /* skip indicator circle */
+  padding-right: 10px;
+}
+
+/* ACTIVE / CURRENT — bright cyan SVG */
+.progression-shell .swse-step-btn.is-current {
+  background-image: url('../../../assets/ui/chargen/swse-step-chip-active.svg');
+  color: rgba(230, 252, 255, 0.98);
+  font-weight: 700;
+  cursor: default;
+  filter: drop-shadow(0 0 6px rgba(100, 240, 255, 0.30));
+}
+
+/* COMPLETE — teal/green SVG */
+.progression-shell .swse-step-btn.is-complete:not(.is-current) {
+  background-image: url('../../../assets/ui/chargen/swse-step-chip-complete.svg');
+  color: rgba(180, 255, 230, 0.88);
+  cursor: pointer;
+}
+
+/* LOCKED / FUTURE — grey SVG */
+.progression-shell .swse-step-btn.is-locked {
+  background-image: url('../../../assets/ui/chargen/swse-step-chip-locked.svg');
+  color: rgba(130, 145, 160, 0.55);
+  cursor: not-allowed;
+}
+
+/* WARNING — amber SVG */
+.progression-shell .swse-step-btn.is-warning:not(.is-current) {
+  background-image: url('../../../assets/ui/chargen/swse-step-chip-warning.svg');
+  color: rgba(255, 225, 130, 0.90);
+  cursor: pointer;
+}
+
+/* Hover — only for navigable (complete) chips */
+.progression-shell .swse-step-btn.is-complete:hover:not(:disabled):not(.is-current) {
+  transform: translateY(-2px);
+  filter: brightness(1.12) drop-shadow(0 0 6px rgba(100, 255, 200, 0.25));
+}
+
+.progression-shell .swse-step-btn.is-warning:hover:not(:disabled):not(.is-current) {
+  transform: translateY(-2px);
+  filter: brightness(1.12) drop-shadow(0 0 6px rgba(255, 200, 60, 0.30));
+}
+
+/* Disabled — future locked chips */
+.progression-shell .swse-step-btn:disabled,
+.progression-shell .swse-step-btn.is-locked {
+  opacity: 0.50;
+}
+
+/* Step index badge — number inside the SVG circle zone */
+.progression-shell .swse-step-btn__index {
+  position: absolute;
+  left: 16px;              /* center of 28px-wide indicator circle in SVG */
+  width: 20px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: inherit;
+  text-shadow: 0 0 6px rgba(100, 220, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.9);
+  pointer-events: none;
+}
+
+/* Step label — right of circle, truncated */
+.progression-shell .swse-step-btn__label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 0 6px rgba(0, 180, 220, 0.3), 0 1px 2px rgba(0, 0, 0, 0.9);
+  pointer-events: none;
+  font-size: 9px;
+}
+
+/* ============================================================================
+   STATUS BANNERS  —  blocking / warning messages below chips
+   ============================================================================ */
+
+.progression-shell .swse-footer__status {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  font-size: 9px;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.progression-shell .swse-footer__status--blocking {
+  background: rgba(180, 30, 30, 0.20);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: rgba(255, 130, 130, 0.90);
+}
+
+.progression-shell .swse-footer__status--warning {
+  background: rgba(120, 80, 0, 0.22);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: rgba(255, 210, 100, 0.90);
+}
+
+/* ============================================================================
+   RESPONSIVE — collapse chip labels at narrow widths
+   ============================================================================ */
+
+@media (max-width: 900px) {
+  :root {
+    --swse-btn-w:  150px;
+    --swse-chip-w: 44px;   /* icon-only chip — hide label */
+  }
+
+  .progression-shell .swse-step-btn__label {
+    display: none;
+  }
+
+  .progression-shell .swse-step-btn__index {
+    left: 12px;
+  }
+}
+
+@media (max-width: 720px) {
+  .progression-shell .swse-footer {
+    grid-template-columns: auto 1fr auto;
+  }
+
+  :root {
+    --swse-btn-w: 100px;
+  }
+}

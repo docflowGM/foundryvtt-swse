@@ -132,7 +132,8 @@ export async function loadRawStoreData({ useCache = true } = {}) {
   /* MERGE SOURCES                                */
   /* ------------------------------------------- */
 
-  const allItems = [...worldItems, ...packItemDocs];
+  const allItems = [...worldItems, ...packItemDocs]
+    .filter(item => item.type !== 'weaponUpgrade'); // Exclude weaponUpgrades - they're not store inventory
   const allActors = [...worldActors, ...packActorDocs];
 
   /* ------------------------------------------- */

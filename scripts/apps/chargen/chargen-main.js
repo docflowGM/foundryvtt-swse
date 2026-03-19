@@ -77,22 +77,48 @@ import { confirm } from "/systems/foundryvtt-swse/scripts/utils/ui-utils.js";
 export default class CharacterGenerator extends SWSEApplicationV2 {
   /**
    * Canonical entry point for opening character generator
+   * Routes to new ProgressionShell (sole authority — legacy chargen is decommissioned)
    * @param {Actor} actor - The actor to generate/modify (null for new character)
-   * @returns {CharacterGenerator} The character generator dialog instance
+   * @param {Object} options - Configuration options (passed to ChargenShell if supported)
+   * @returns {ProgressionShell} The character progression shell instance
    */
-  static async open(actor) {
-    // Feature flag: route to new ProgressionShell when enabled
-    if (game.settings?.get?.('foundryvtt-swse', 'useNewProgressionShell')) {
-      const { ChargenShell } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/chargen-shell.js');
-      return ChargenShell.open(actor);
-    }
-    const dialog = new CharacterGenerator(actor);
-    dialog.render({ force: true });
-    return dialog;
+  static async open(actor, options = {}) {
+    // NEW SHELL IS NOW THE ONLY ACTIVE PATH
+    const { ChargenShell } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/chargen-shell.js');
+    return ChargenShell.open(actor);
   }
 
+  /**
+   * STATIC DEFAULT_OPTIONS (V2 style)
+   * Foundry AppV2 checks this FIRST before defaultOptions() getter
+   * Must set explicit id to prevent inheritance of stale IDs from parent classes
+   */
+  static DEFAULT_OPTIONS = {
+    id: 'chargen',
+    classes: ['swse', 'chargen', 'swse-app'],
+  };
+
   constructor(actor = null, options = {}) {
+    // TRACE: Log metadata BEFORE calling super
+    SWSELogger.log('[CharacterGenerator.constructor] METADATA BEFORE super():', {
+      'options.id': options.id,
+      'options.title': options.title,
+      'CharacterGenerator.DEFAULT_OPTIONS': CharacterGenerator.DEFAULT_OPTIONS,
+      'CharacterGenerator.defaultOptions()': {
+        id: CharacterGenerator.defaultOptions?.id,
+        title: CharacterGenerator.defaultOptions?.title,
+      },
+    });
+
     super(options);
+
+    // TRACE: Log metadata AFTER calling super
+    SWSELogger.log('[CharacterGenerator.constructor] METADATA AFTER super():', {
+      'this.id': this.id,
+      'this.title': this.title,
+      'this.options': this.options,
+    });
+
     this.actor = actor;
     this.actorType = options.actorType || 'character'; // "character" for PCs, "npc" for NPCs
     this.mentor = null; // Mentor character for survey prompts (initialized when needed)
@@ -320,7 +346,8 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
   }
 
   static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+    const merged = foundry.utils.mergeObject(super.defaultOptions, {
+      id: 'chargen',  // ← EXPLICIT ID: prevents ApplicationV2 from reusing stale IDs
       classes: ['swse', 'chargen', 'swse-app'],
       width: 900,
       height: 700,
@@ -331,6 +358,17 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       left: null,  // Allow Foundry to center
       top: null    // Allow Foundry to center
     });
+
+    // DIAGNOSTIC: Log defaultOptions to track metadata contamination
+    SWSELogger.log('[CharacterGenerator.defaultOptions] MERGED OPTIONS:', {
+      title: merged.title,
+      id: merged.id,
+      classes: merged.classes,
+      width: merged.width,
+      height: merged.height
+    });
+
+    return merged;
   }
 
   static PARTS = {
@@ -1517,7 +1555,28 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
    * @param {Object} options - Render options
    */
   async _onRender(context, options) {
+    // TRACE: Metadata BEFORE super._onRender()
+    SWSELogger.log('[CharacterGenerator._onRender] METADATA BEFORE super._onRender():', {
+      'this.id': this.id,
+      'this.title': this.title,
+      'this.constructor.name': this.constructor.name,
+      'this.options.id': this.options?.id,
+      'this.options.title': this.options?.title,
+    });
+
     await super._onRender(context, options);
+
+    // TRACE: Metadata AFTER super._onRender()
+    SWSELogger.log('[CharacterGenerator._onRender] METADATA AFTER super._onRender():', {
+      'this.id': this.id,
+      'this.title': this.title,
+      'element.className': this.element?.className,
+      'element.id': this.element?.id,
+      'element data attributes': {
+        'data-app-id': this.element?.getAttribute('data-app-id'),
+        'data-window-id': this.element?.getAttribute('data-window-id'),
+      }
+    });
 
     // V2: Access DOM via this.element (HTMLElement, not jQuery)
     const root = this.element;
@@ -1687,11 +1746,12 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       this._eventListeners.push({ el: levelInput, event: 'change', handler: handleLevelChange });
     }
 
-    // Add final batch of listeners
+    // Add final batch of listeners — use _extendTrackedListeners to avoid
+    // wiping the navigation buttons bound in the main _bindTrackedListeners call above.
     const finalBindings = [
       { selector: '.open-shop-btn', event: 'click', handler: this._onOpenShop }
     ];
-    this._bindTrackedListeners(finalBindings);
+    this._extendTrackedListeners(finalBindings);
 
     // Add credit and abilities listeners
     const creditBindings = [
@@ -1699,7 +1759,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
       { selector: '.take-max-credits-btn', event: 'click', handler: this._onTakeMaxCredits },
       { selector: '.reroll-credits-btn', event: 'click', handler: this._onRerollCredits }
     ];
-    this._bindTrackedListeners(creditBindings);
+    this._extendTrackedListeners(creditBindings);
 
     // Abilities UI
     if (this.currentStep === 'abilities') {
@@ -1764,7 +1824,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
         { selector: '.background-filter-btn', event: 'click', handler: this._onBackgroundFilterClick },
         { selector: '.ask-mentor-background-btn', event: 'click', handler: this._onAskMentorBackgroundSuggestion }
       ];
-      this._bindTrackedListeners(backgroundBindings);
+      this._extendTrackedListeners(backgroundBindings);
 
       // Phase 3 FIX: Homebrew planets toggle
       const homebrewToggle = root.querySelector('.allow-homebrew-toggle');

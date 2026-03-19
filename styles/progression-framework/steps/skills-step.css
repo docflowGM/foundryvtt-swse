@@ -1,0 +1,311 @@
+/**
+ * Skills Step Styling
+ * Skill selection interface with training counter and list
+ */
+
+/* ------ Skills Step Surface ------ */
+.prog-skills-surface {
+  display: contents;
+}
+
+/* ------ Left Panel: Training Summary ------ */
+.prog-skills-counter {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--prog-bg-raised);
+  border: 1px solid var(--prog-border);
+  border-radius: 4px;
+}
+
+.prog-counter-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--prog-bg-mid);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.prog-counter-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--prog-positive), var(--prog-accent));
+  transition: width 0.3s ease;
+}
+
+.prog-counter-text {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.prog-counter-value {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--prog-accent);
+}
+
+.prog-counter-label {
+  color: var(--prog-text-dim);
+  font-size: 0.85rem;
+}
+
+.prog-trained-skills-list {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--prog-border);
+}
+
+.prog-list-title {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--prog-text-dim);
+  margin: 0 0 0.5rem 0;
+}
+
+.prog-trained-skill-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  background: var(--prog-bg-selected);
+  border-radius: 3px;
+  font-size: 0.85rem;
+  color: var(--prog-positive);
+}
+
+.prog-trained-skill-badge i {
+  font-size: 0.8rem;
+}
+
+.prog-skills-complete {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: var(--prog-positive-bg);
+  border: 1px solid var(--prog-positive);
+  border-radius: 4px;
+  color: var(--prog-positive);
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.prog-skills-remaining {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: var(--prog-neutral-bg);
+  border: 1px solid var(--prog-neutral);
+  border-radius: 4px;
+  color: var(--prog-neutral);
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* ============================================================================
+   SKILLS STEP — SVG chrome integration
+   skill-table.svg (1120×520): sci-fi skill table with cyan column headers,
+     row chrome, and corner accent marks. Applied as low-opacity watermark.
+   ============================================================================ */
+
+/* ------ Center Panel: Skill List ------ */
+.prog-skills-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  max-height: 450px;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* skill-table.svg watermark — sci-fi data-grid background texture
+   position: relative on .prog-skills-list allows ::before to be absolute-positioned
+   within it, but overflow: auto clips it to the scrollable area (correct behavior) */
+.prog-skills-list::before {
+  content: "";
+  position: sticky;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 0;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Use a wrapper element technique: apply SVG to individual skill-surface container */
+.progression-shell .prog-skills-surface,
+.prog-skills-surface {
+  position: relative;
+}
+
+/* Atmospheric skill-table watermark on the work-surface area */
+.progression-shell [data-region="work-surface"]:has(.prog-skills-surface)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:  url('../../../assets/ui/chargen/skill-table.svg');
+  background-size:   100% auto;
+  background-position: center 20px;
+  background-repeat: no-repeat;
+  pointer-events:    none;
+  z-index:           0;
+  opacity:           0.06;
+}
+
+.prog-skill-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: var(--prog-bg-surface);
+  border: 1px solid var(--prog-border);
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.prog-skill-row:hover {
+  background: var(--prog-bg-hover);
+  border-color: var(--prog-accent);
+}
+
+.prog-skill-row.trained {
+  background: var(--prog-bg-selected);
+  border-color: var(--prog-color-positive);
+}
+
+.prog-skill-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.prog-skill-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--prog-text);
+}
+
+.prog-skill-category {
+  font-size: 0.75rem;
+  color: var(--prog-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.prog-skill-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.prog-btn {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid var(--prog-border);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+
+.prog-btn--small {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.75rem;
+}
+
+.prog-btn--secondary {
+  background: var(--prog-bg-surface);
+  color: var(--prog-text);
+}
+
+.prog-btn--secondary:hover:not(:disabled) {
+  background: var(--prog-bg-surface-hover);
+  border-color: var(--prog-accent);
+}
+
+.prog-btn--danger {
+  background: var(--prog-negative-bg);
+  color: var(--prog-negative);
+  border-color: var(--prog-negative);
+}
+
+.prog-btn--danger:hover:not(:disabled) {
+  background: var(--prog-negative-bg);
+}
+
+.prog-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.prog-btn i {
+  font-size: 0.75rem;
+}
+
+.prog-skills-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--prog-border);
+}
+
+/* ------ Right Panel: Details ------ */
+.prog-panel--right .prog-details-text {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--prog-text-dim);
+}
+
+.prog-details-text p {
+  margin: 0;
+}
+
+.prog-details-text strong {
+  color: var(--prog-text);
+  font-weight: 600;
+}
+
+.prog-guidance-tip {
+  margin-top: 0.5rem !important;
+  padding: 0.75rem;
+  background: var(--prog-info);
+  border-left: 2px solid var(--prog-accent);
+  border-radius: 2px;
+  color: var(--prog-text);
+}
+
+.prog-guidance-tip i {
+  margin-right: 0.5rem;
+  color: var(--prog-accent);
+}
+
+/* ------ Responsive ------ */
+@media (max-width: 1200px) {
+  .prog-skill-row {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .prog-skill-controls {
+    width: 100%;
+  }
+
+  .prog-btn {
+    flex: 1;
+  }
+}

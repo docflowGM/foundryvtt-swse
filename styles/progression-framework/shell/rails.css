@@ -1,0 +1,286 @@
+/* ============================================================================
+   MENTOR RAIL — Horizontal command band with SVG datapad chrome
+   ============================================================================
+   SVG assets (all relative from styles/progression-framework/shell/):
+     mentor-combined-panel.svg → full-rail background (applied in progression-shell.css)
+     mentor-portrait-box.svg  → portrait frame (chamfered steel rect, cyan border)
+     mentor-ring.svg          → holographic targeting ring overlay above portrait
+     mentor-dialogue-box.svg  → speech dialogue frame (chamfered rect, left-arrow)
+   ============================================================================ */
+
+/* ---- Inner flex row — fills [data-region="mentor-rail"] horizontal band ---- */
+.progression-shell .prog-mentor-rail {
+  display: flex;
+  flex-direction: row;       /* HORIZONTAL composition */
+  align-items: center;
+  gap: 14px;
+  flex: 1 1 auto;            /* fill full width of [data-region="mentor-rail"] flex container */
+  min-width: 0;              /* allow flex shrink below content width */
+  height: 100%;              /* resolves correctly now that parent has explicit height: 160px */
+  padding: 8px 20px;
+  position: relative;
+}
+
+/* ============================================================================
+   PORTRAIT ZONE — left column: portrait frame + nameplate below
+   ============================================================================ */
+
+.progression-shell .prog-mentor__portrait-zone {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  height: 100%;
+  min-width: 88px;
+}
+
+/* Portrait container — mentor-portrait-box.svg provides the chamfered steel frame */
+.progression-shell .prog-mentor__portrait {
+  position: relative;
+  width: 82px;
+  height: 96px;
+  flex-shrink: 0;
+  overflow: visible;          /* ring extends past container bounds */
+
+  /* SVG provides the steel rect + cyan border chrome */
+  background-image:   url('../../../assets/ui/chargen/mentor-portrait-box.svg');
+  background-size:    100% 100%;
+  background-repeat:  no-repeat;
+  background-color:   transparent;
+
+  /* Remove old circle treatment — SVG handles framing */
+  border:     none;
+  box-shadow: none;
+  border-radius: 0;
+
+  /* Center children (fallback icon) */
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+  transition: filter 180ms ease;
+}
+
+/* Portrait img — circular viewport within the rectangular SVG frame
+   Inner area of portrait-box.svg: approx y=12–80 of 96px, x=centered in 82px */
+.progression-shell .prog-mentor__portrait img {
+  position: absolute;
+  top: 13px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  z-index: 1;
+
+  /* Subtle holographic color correction */
+  filter:
+    saturate(1.02)
+    contrast(1.04)
+    brightness(0.98);
+
+  transition:
+    transform 180ms ease,
+    filter 180ms ease;
+}
+
+/* Fallback icon when no portrait image */
+.progression-shell .prog-mentor__portrait > i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -55%);  /* shift up slightly — bottom bar in SVG */
+  color: var(--prog-accent);
+  font-size: 1.4rem;
+  z-index: 1;
+}
+
+/* Holographic tint overlay — cyan glass over portrait circle */
+.progression-shell .prog-mentor__portrait::before {
+  content: "";
+  position: absolute;
+  top: 13px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 2;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(120, 240, 255, 0.10),
+      rgba(0, 180, 255, 0.06)
+    );
+  mix-blend-mode: screen;
+  opacity: 0.55;
+
+  transition: opacity 180ms ease;
+}
+
+/* Holographic targeting ring — mentor-ring.svg overlaid above portrait img
+   Ring is 72×72px centered on the 56px portrait circle (top: 13px, img center: 41px)
+   Ring center = 41px from portrait top → ring top = 41 - 36 = 5px */
+.progression-shell .prog-mentor__portrait::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 72px;
+  height: 72px;
+
+  background-image:  url('../../../assets/ui/chargen/mentor-ring.svg');
+  background-size:   100% 100%;
+  background-repeat: no-repeat;
+
+  pointer-events: none;
+  z-index: 3;
+  opacity: 0.70;
+
+  transition: opacity 180ms ease;
+}
+
+/* Hover — sharpen feed, brighten ring */
+.progression-shell .prog-mentor__portrait:hover img {
+  transform: translateX(-50%) scale(1.03);
+  filter:
+    saturate(1.06)
+    contrast(1.08)
+    brightness(1.02);
+}
+.progression-shell .prog-mentor__portrait:hover::before { opacity: 0.72; }
+.progression-shell .prog-mentor__portrait:hover::after  { opacity: 0.90; }
+
+/* Mood variants — tint ring and frame glow to match mentor mood */
+.progression-shell [data-mood="encouraging"] .prog-mentor__portrait {
+  filter: drop-shadow(0 0 6px rgba(34, 197, 94, 0.50));
+}
+.progression-shell [data-mood="cautionary"] .prog-mentor__portrait {
+  filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.50));
+}
+.progression-shell [data-mood="celebratory"] .prog-mentor__portrait {
+  filter: drop-shadow(0 0 6px rgba(192, 132, 252, 0.50));
+}
+
+/* Nameplate — small label below portrait frame, still in portrait-zone column */
+.progression-shell .prog-mentor__name {
+  font-size: 8px;
+  text-align: center;
+  font-family: var(--prog-font);
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: var(--prog-accent);
+  text-shadow: var(--prog-heading-shadow);
+  margin: 0;
+  max-width: 88px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Title — hidden in compact horizontal layout; keeps semantic markup */
+.progression-shell .prog-mentor__title {
+  display: none;
+}
+
+/* ============================================================================
+   DIALOGUE BOX — mentor-dialogue-box.svg frame, fills remaining width
+   SVG is 880×220: chamfered rect with left-pointing arrow at x=6-22, y=96-124
+   Arrow faces LEFT → points toward portrait zone on the left ✓
+   ============================================================================ */
+
+.progression-shell .prog-mentor__dialogue {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: calc(100% - 12px);
+  overflow-y: auto;
+
+  /* SVG provides the frame chrome — chamfered rect + left arrow + cyan borders */
+  background-image:  url('../../../assets/ui/chargen/mentor-dialogue-box.svg');
+  background-size:   100% 100%;
+  background-repeat: no-repeat;
+  background-color:  transparent;
+
+  /* Remove old CSS border + box-shadow — SVG handles chrome */
+  border:        none;
+  box-shadow:    none;
+  border-radius: 0;
+
+  /* Inner padding clears SVG frame borders:
+     Left  ~32px (clears left arrow zone x=0-22 plus frame border ~10px)
+     Right ~28px (SVG frame border + inner stroke)
+     Top   ~16px, Bottom ~16px */
+  padding: 16px 28px 14px 32px;
+
+  position: relative;
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(80, 220, 255, 0.3) transparent;
+}
+
+/* Remove old inner border pseudo — SVG inner stroke handles it */
+.progression-shell .prog-mentor__dialogue::before {
+  display: none;
+}
+
+/* Dialogue text — calm cyan, holographic glow */
+.progression-shell .prog-mentor__text {
+  font-size: var(--prog-font-size-sm);
+  color: var(--prog-text-mentor);
+  line-height: 1.55;
+  margin: 0;
+  text-shadow: var(--prog-mentor-text-shadow);
+  position: relative;
+  z-index: 1;
+}
+
+/* Idle state — dim and italic when awaiting input */
+.progression-shell .prog-mentor__text--idle {
+  color: var(--prog-text-dim);
+  font-style: italic;
+  text-shadow: var(--prog-text-shadow);
+}
+
+/* ============================================================================
+   CONTROLS — Ask Mentor + Collapse toggle
+   ============================================================================ */
+
+.progression-shell .prog-mentor__ask {
+  flex-shrink: 0;
+  font-size: var(--prog-font-size-xs);
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+
+.progression-shell .prog-mentor__collapse {
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid var(--prog-border);
+  border-radius: var(--prog-radius-sm);
+  color: var(--prog-text-dim);
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: var(--prog-font-size-xs);
+  transition: color var(--prog-transition-fast), border-color var(--prog-transition-fast);
+}
+.progression-shell .prog-mentor__collapse:hover {
+  color: var(--prog-accent);
+  border-color: var(--prog-accent);
+}
+
+/* ============================================================================
+   COLLAPSED STATE — hide dialogue and labels; keep portrait + toggle
+   ============================================================================ */
+
+.progression-shell [data-region="mentor-rail"][data-collapsed="true"] .prog-mentor__name,
+.progression-shell [data-region="mentor-rail"][data-collapsed="true"] .prog-mentor__title,
+.progression-shell [data-region="mentor-rail"][data-collapsed="true"] .prog-mentor__dialogue,
+.progression-shell [data-region="mentor-rail"][data-collapsed="true"] .prog-mentor__ask {
+  display: none;
+}

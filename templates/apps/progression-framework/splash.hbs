@@ -1,0 +1,71 @@
+<!-- Datapad Boot Sequence Splash Screen -->
+<div class="prog-intro-surface" data-boot-stage="init">
+  <!-- OS Header Bar -->
+  <div class="prog-intro-header">
+    <div class="prog-intro-system-name">VERSA-DATAPAD v13</div>
+    <div style="display: flex; gap: 24px; align-items: center;">
+      <div class="prog-intro-time" id="sys-time">14:32:08</div>
+      <div class="prog-intro-signal" id="signal-bars">
+        <div class="prog-intro-signal__bar" style="height: 6px;"></div>
+        <div class="prog-intro-signal__bar" style="height: 6px;"></div>
+        <div class="prog-intro-signal__bar" style="height: 6px;"></div>
+      </div>
+      <div class="prog-intro-battery">●●●●●</div>
+    </div>
+  </div>
+
+  <!-- Main Panel -->
+  <div class="prog-intro-panel">
+    <!-- Scanline Overlay -->
+    <div class="prog-intro-scanlines"></div>
+
+    <!-- Boot Sequence Area -->
+    <div class="prog-intro-text-area">
+      <div class="prog-intro-text-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 36px; width: 100%; padding: 0 40px;">
+
+        <!-- Current Status Message (single, swapped in real-time) -->
+        <div id="boot-message-area" style="text-align: center; min-height: 50px; display: flex; align-items: center; justify-content: center; width: 100%;">
+          <div class="boot-message-current" id="current-message">
+            <!-- Message text here, changes per boot stage -->
+          </div>
+        </div>
+
+        <!-- Translation result (hidden until translation completes, appears ABOVE the bar) -->
+        <div id="translation-result" style="display: none; text-align: center; min-height: 60px; margin-top: 0;">
+          <!-- Will contain translated English text with glitch -->
+        </div>
+
+        <!-- Loading Bar (central visual device) -->
+        <div class="boot-loading-container" style="width: 100%; max-width: 520px;">
+          <div class="boot-loading-bar">
+            <div class="boot-loading-fill" id="loading-fill" style="width: 0%;"></div>
+          </div>
+          <div class="boot-loading-label" id="loading-percent">0%</div>
+        </div>
+
+        <!-- Final state message (hidden until boot complete) -->
+        <div id="final-state" style="display: none; margin-top: 24px; text-align: center;">
+          <div class="prog-intro-label prog-intro-label--success" style="font-size: 16px; margin-bottom: 16px;">
+            <span class="prog-intro-status__icon">✓</span> PROFILE CREATED
+          </div>
+          <div style="font-size: 14px; color: rgba(100, 220, 255, 0.9); line-height: 1.8;">
+            Designation: <strong>{{actor.name}}</strong><br>
+            Status: AWAITING CLASSIFICATION<br>
+            <span id="mentor-status" style="opacity: 0.8; font-size: 12px;">Mentor Link: AVAILABLE</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer with Continue Button (hidden until boot complete) -->
+  <div class="prog-intro-footer" id="footer-area" style="display: none;">
+    <button
+      class="prog-intro-continue-btn boot-continue-btn"
+      data-action="continue"
+      type="button"
+    >
+      <span>► CONTINUE</span>
+    </button>
+  </div>
+</div>

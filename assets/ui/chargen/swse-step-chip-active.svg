@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="52" viewBox="0 0 220 52" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="52" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1E4662"/>
+      <stop offset="1" stop-color="#0B1521"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="220" y2="52" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#D8FDFF"/>
+      <stop offset="0.5" stop-color="#67E5FF"/>
+      <stop offset="1" stop-color="#D8FDFF"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-120%" width="180%" height="340%">
+      <feGaussianBlur stdDeviation="3.5" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <clipPath id="chip">
+      <path d="M18 2H202L218 18V34L202 50H18L2 34V18L18 2Z"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#chip)">
+    <path d="M18 2H202L218 18V34L202 50H18L2 34V18L18 2Z" fill="url(#bg)"/>
+    <path d="M18 2H202L218 18V34L202 50H18L2 34V18L18 2Z" stroke="url(#edge)" stroke-width="2.2"/>
+    <path d="M22 8H195L210 22V31L196 44H24L10 31V20L22 8Z" stroke="#F3FFFF" stroke-opacity=".30" stroke-width="1"/>
+    <rect x="12" y="13" width="28" height="26" rx="13" fill="#81F3FF" fill-opacity=".10" stroke="#81F3FF" stroke-opacity=".40"/>
+    <path d="M52 16H186" stroke="#AEFBFF" stroke-opacity=".40" stroke-width="1.2"/>
+    <path d="M52 35H170" stroke="#AEFBFF" stroke-opacity=".18" stroke-width="1.2"/>
+    <path d="M18 26H34" stroke="#AEFBFF" stroke-width="2.6" stroke-linecap="round" filter="url(#glow)"/><circle cx="26" cy="26" r="6.5" stroke="#AEFBFF" stroke-width="2" fill="none"/>
+  </g>
+</svg>

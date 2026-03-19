@@ -35,8 +35,7 @@ async function onClickChargen(app) {
   }
 
   SWSELogger.log(`[Actor Sidebar] Opening Chargen for: ${actor.name}`);
-  const chargen = new CharacterGenerator(actor);
-  chargen.render(true);
+  await CharacterGenerator.open(actor);
 }
 
 async function onClickStore(app) {

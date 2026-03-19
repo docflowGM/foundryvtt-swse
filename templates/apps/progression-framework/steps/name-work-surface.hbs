@@ -1,0 +1,135 @@
+<div class="prog-name-surface">
+
+  {{!-- Left Panel: Character Overview --}}
+  <div class="prog-panel prog-panel--left">
+    <h3 class="prog-panel-title">Character Overview</h3>
+
+    <div class="prog-summary-list">
+      <div class="prog-summary-row">
+        <span class="prog-summary-label">Name</span>
+        <span class="prog-summary-value">
+          {{#if characterName}}
+            {{characterName}}
+          {{else}}
+            <span class="prog-placeholder">—</span>
+          {{/if}}
+        </span>
+      </div>
+
+      <div class="prog-summary-row">
+        <span class="prog-summary-label">Level</span>
+        <span class="prog-summary-value">
+          {{#if startingLevel}}
+            {{startingLevel}}
+          {{else}}
+            <span class="prog-placeholder">1</span>
+          {{/if}}
+        </span>
+      </div>
+
+      <div class="prog-summary-row">
+        <span class="prog-summary-label">Species</span>
+        <span class="prog-summary-value">
+          {{#if species}}
+            {{species}}
+          {{else}}
+            <span class="prog-placeholder">—</span>
+          {{/if}}
+        </span>
+      </div>
+
+      <div class="prog-summary-row">
+        <span class="prog-summary-label">Class</span>
+        <span class="prog-summary-value">
+          {{#if class}}
+            {{class}}
+          {{else}}
+            <span class="prog-placeholder">—</span>
+          {{/if}}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  {{!-- Center Panel: Identity Inputs --}}
+  <div class="prog-panel prog-panel--center">
+    <h3 class="prog-panel-title">Define Your Identity</h3>
+
+    <p class="prog-help-text">
+      Enter your character name and set the starting level. This anchor defines how you'll be known in the galaxy.
+    </p>
+
+    <div class="prog-name-form">
+
+      {{!-- Character Name Field --}}
+      <div class="prog-field">
+        <label for="name-step-name-input" class="prog-field-label">Character Name</label>
+        <input
+          id="name-step-name-input"
+          class="prog-input name-step-input"
+          type="text"
+          value="{{characterName}}"
+          placeholder="Enter your character's name..."
+          autofocus
+        />
+      </div>
+
+      {{!-- Random Name Buttons --}}
+      <div class="prog-action-row">
+        <button
+          type="button"
+          class="prog-btn prog-btn--secondary name-step-random-name-btn"
+          title="Generate a random name for biological characters">
+          <i class="fas fa-dice"></i> Random Name
+        </button>
+        <button
+          type="button"
+          class="prog-btn prog-btn--secondary name-step-random-droid-name-btn"
+          title="Generate a random name for droids">
+          <i class="fas fa-robot"></i> Random Droid Name
+        </button>
+      </div>
+
+      {{!-- Starting Level Field --}}
+      <div class="prog-field">
+        <label for="name-step-level-input" class="prog-field-label">Starting Level</label>
+        <input
+          id="name-step-level-input"
+          class="prog-input name-step-level-input"
+          type="number"
+          value="{{startingLevel}}"
+          min="1"
+          max="20"
+          placeholder="1"
+        />
+        <small class="prog-field-hint">
+          Levels 2–20 will be automatically advanced after character creation.
+        </small>
+      </div>
+
+    </div>
+  </div>
+
+  {{!-- Right Panel: Details & Guidance --}}
+  <div class="prog-panel prog-panel--right">
+    <h3 class="prog-panel-title">Identity Anchor</h3>
+
+    <div class="prog-details-text">
+      <p>
+        Your character's name is their identity anchor in the Star Wars Saga Edition universe.
+        It's the first thing other characters will know about you, and it shapes your place in the story.
+      </p>
+
+      <p>
+        <strong>Choose wisely:</strong> A memorable name makes roleplay more immersive and helps you stay
+        connected to your character's narrative throughout the campaign.
+      </p>
+
+      <p>
+        <strong>Starting Level:</strong> Most new characters begin at Level 1. If you're joining an ongoing campaign,
+        your Game Master may have set a different starting level.
+      </p>
+    </div>
+  </div>
+
+</div>

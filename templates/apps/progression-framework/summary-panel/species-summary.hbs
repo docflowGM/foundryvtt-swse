@@ -1,0 +1,85 @@
+{{!--
+  species-summary.hbs
+  LEFT SUMMARY PANEL — compact build snapshot for Species step.
+
+  Shows the current state of the character build.
+  Unset values render as placeholders (—).
+  This panel is read-only and stable; interaction happens in work-surface.
+--}}
+
+<div class="prog-summary-panel">
+
+  {{!-- ============================================================
+    IDENTITY BLOCK — portrait + name
+  ============================================================ --}}
+  <div class="prog-summary__identity">
+
+    <div class="prog-summary__portrait">
+      {{#if actor.img}}
+        <img class="prog-summary__portrait-img" src="{{actor.img}}" alt="{{actor.name}}">
+      {{else}}
+        <div class="prog-summary__portrait-placeholder">
+          <i class="fas fa-user-astronaut"></i>
+        </div>
+      {{/if}}
+    </div>
+
+    <div class="prog-summary__name">
+      {{#if actor.name}}
+        {{actor.name}}
+      {{else}}
+        <span class="prog-summary__empty">Unnamed</span>
+      {{/if}}
+    </div>
+
+  </div>{{!-- /identity --}}
+
+  {{!-- ============================================================
+    BUILD SUMMARY — compact stat rows
+  ============================================================ --}}
+  <div class="prog-summary__build">
+
+    <div class="prog-summary__row">
+      <span class="prog-summary__row-label">Species</span>
+      <span class="prog-summary__row-value {{#unless currentSpecies}}prog-summary__empty{{/unless}}">
+        {{#if currentSpecies}}{{currentSpecies}}{{else}}—{{/if}}
+      </span>
+    </div>
+
+    <div class="prog-summary__row">
+      <span class="prog-summary__row-label">Class</span>
+      <span class="prog-summary__row-value {{#unless currentClass}}prog-summary__empty{{/unless}}">
+        {{#if currentClass}}{{currentClass}}{{else}}—{{/if}}
+      </span>
+    </div>
+
+    <div class="prog-summary__row">
+      <span class="prog-summary__row-label">Talents</span>
+      <span class="prog-summary__row-value {{#unless talentCount}}prog-summary__empty{{/unless}}">
+        {{#if talentCount}}{{talentCount}}{{else}}—{{/if}}
+      </span>
+    </div>
+
+    <div class="prog-summary__row">
+      <span class="prog-summary__row-label">Credits</span>
+      <span class="prog-summary__row-value {{#unless credits}}prog-summary__empty{{/unless}}">
+        {{#if credits}}{{credits}}{{else}}—{{/if}}
+      </span>
+    </div>
+
+    <div class="prog-summary__row prog-summary__row--languages">
+      <span class="prog-summary__row-label">Languages</span>
+      <span class="prog-summary__row-value {{#unless languages}}prog-summary__empty{{/unless}}">
+        {{#if languages}}
+          {{#each languages}}
+            <span class="prog-summary__language-tag">{{this}}</span>
+          {{/each}}
+        {{else}}
+          —
+        {{/if}}
+      </span>
+    </div>
+
+  </div>{{!-- /build --}}
+
+</div>{{!-- /prog-summary-panel --}}

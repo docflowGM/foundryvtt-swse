@@ -31,16 +31,27 @@
     "styles/swse-holo.css",
     "styles/core/variables.css",
     "styles/sheets/v2-sheet.css",
+    "styles/apps/chargen/chargen.css",
     "scripts/ui/dialogue/dialogue-effects.css",
     "scripts/ui/action-palette/action-palette.css",
-    "styles/progression-framework/progression-framework.css",
+    "styles/progression-framework/foundation/tokens.css",
+    "styles/progression-framework/foundation/effects.css",
+    "styles/progression-framework/foundation/typography.css",
+    "styles/progression-framework/shell/header.css",
+    "styles/progression-framework/shell/rails.css",
+    "styles/progression-framework/shell/progress.css",
+    "styles/progression-framework/shell/footer.css",
+    "styles/progression-framework/shell/svg-components.css",
+    "styles/progression-framework/components/buttons.css",
+    "styles/progression-framework/components/panels.css",
     "styles/progression-framework/holo-theme.css",
     "styles/progression-framework/progression-shell.css",
-    "styles/progression-framework/action-footer.css",
-    "styles/progression-framework/progression-shell-placeholders.css",
-    "styles/progression-framework/mentor-rail.css",
-    "styles/progression-framework/progress-rail.css",
     "styles/progression-framework/utility-bar.css",
+    "styles/progression-framework/summary-panel.css",
+    "styles/progression-framework/steps/intro.css",
+    "styles/progression-framework/steps/name-step.css",
+    "styles/progression-framework/steps/skills-step.css",
+    "styles/progression-framework/steps/summary-step.css",
     "styles/progression-framework/steps/species-step.css",
     "styles/progression-framework/steps/near-human-builder.css",
     "styles/progression-framework/steps/class-step.css",
@@ -52,7 +63,10 @@
     "styles/progression-framework/steps/talent-step.css",
     "styles/progression-framework/steps/force-power-step.css",
     "styles/progression-framework/steps/confirm-step.css",
-    "styles/progression-framework/steps/droid-builder-step.css"
+    "styles/progression-framework/steps/droid-builder-step.css",
+    "styles/progression-framework/splash/splash.css",
+    "styles/swse-holo-ui.css",
+    "styles/apps/chargen.css"
   ],
   "languages": [
     {
@@ -62,12 +76,12 @@
     },
     {
       "lang": "es",
-      "name": "Español",
+      "name": "Espa\u00f1ol",
       "path": "lang/es.json"
     },
     {
       "lang": "fr",
-      "name": "Français",
+      "name": "Fran\u00e7ais",
       "path": "lang/fr.json"
     },
     {
@@ -77,7 +91,7 @@
     },
     {
       "lang": "ru",
-      "name": "Русский",
+      "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
       "path": "lang/ru.json"
     }
   ],
@@ -517,7 +531,7 @@
       "type": "Number",
       "default": 50,
       "name": "Automatic Sale Value (%)",
-      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10–100%)",
+      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10\u2013100%)",
       "range": {
         "min": 10,
         "max": 100,

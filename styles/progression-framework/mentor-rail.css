@@ -4,20 +4,22 @@
 
 .progression-shell .prog-mentor-rail {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: var(--prog-space-md);
+  gap: 16px;
+  width: 100%;
   height: 100%;
-  padding: var(--prog-space-md);
+  padding: 0;
   position: relative;
 }
 
-/* Portrait circle with cyan border + glow */
+/* Portrait circle with cyan border + holographic glass effect */
 .progression-shell .prog-mentor__portrait {
-  width: 64px;
-  height: 64px;
+  position: relative;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
-  border: 2px solid var(--prog-accent);
+  border: 2px solid rgba(120, 240, 255, 0.75);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -25,8 +27,16 @@
   color: var(--prog-accent);
   background: var(--prog-bg-read);
   flex-shrink: 0;
-  box-shadow: 0 0 8px rgba(0, 170, 255, 0.4), 0 0 18px rgba(0, 170, 255, 0.12);
   overflow: hidden;
+
+  /* ===== HOLOGRAPHIC DISPLAY GLASS EFFECT ===== */
+  box-shadow:
+    0 0 18px rgba(0, 180, 255, 0.25),
+    0 0 0 2px rgba(255,255,255,0.05) inset;
+
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .progression-shell .prog-mentor__portrait img {
@@ -34,6 +44,81 @@
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
+
+  /* Subtle color correction — slightly enhanced saturation/contrast */
+  filter:
+    saturate(1.02)
+    contrast(1.04)
+    brightness(0.98);
+
+  transition:
+    transform 180ms ease,
+    filter 180ms ease;
+}
+
+/* Cyan tint overlay — appears as glass tint, not washed out */
+.progression-shell .prog-mentor__portrait::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(120, 240, 255, 0.10),
+      rgba(0, 180, 255, 0.06)
+    );
+
+  mix-blend-mode: screen;
+  opacity: 0.55;
+
+  transition: opacity 180ms ease;
+}
+
+/* Scanlines — subtle horizontal lines for holo effect */
+.progression-shell .prog-mentor__portrait::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.12;
+
+  background-image:
+    linear-gradient(
+      to bottom,
+      rgba(140, 240, 255, 0.18) 0px,
+      rgba(140, 240, 255, 0.00) 1px
+    );
+  background-size: 100% 4px;
+
+  transition: opacity 180ms ease;
+}
+
+/* Hover state — stronger "active datapad feed" appearance */
+.progression-shell .prog-mentor__portrait:hover img {
+  transform: scale(1.02);
+  filter:
+    saturate(1.06)
+    contrast(1.08)
+    brightness(1.02);
+}
+
+.progression-shell .prog-mentor__portrait:hover {
+  box-shadow:
+    0 0 24px rgba(0, 200, 255, 0.35),
+    0 0 40px rgba(0, 160, 255, 0.18),
+    inset 0 0 10px rgba(255,255,255,0.06);
+}
+
+.progression-shell .prog-mentor__portrait:hover::before {
+  opacity: 0.72;
+}
+
+.progression-shell .prog-mentor__portrait:hover::after {
+  opacity: 0.18;
 }
 
 /* Mood variants — portrait border follows mood color */
@@ -52,37 +137,45 @@
   box-shadow: 0 0 8px rgba(192, 132, 252, 0.4);
 }
 
-/* Name — small, uppercase, cyan */
+/* Name — hidden in horizontal header layout */
 .progression-shell .prog-mentor__name {
-  font-size: var(--prog-font-size-xs);
-  text-align: center;
-  font-family: var(--prog-font);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--prog-accent);
-  text-shadow: var(--prog-heading-shadow);
-  margin: 0;
+  display: none;
 }
 
-/* Title — smaller, dim, italic */
+/* Title — hidden in horizontal header layout */
 .progression-shell .prog-mentor__title {
-  font-size: var(--prog-font-size-xs);
-  color: var(--prog-text-dim);
-  font-style: italic;
-  text-align: center;
-  text-shadow: var(--prog-text-shadow);
-  margin: 0;
+  display: none;
 }
 
-/* Dialogue box — flex-grow to fill space */
+/* Dialogue box — flex-grow to fill space, holographic frame */
 .progression-shell .prog-mentor__dialogue {
   flex: 1 1 auto;
   overflow-y: auto;
   width: 100%;
-  background: var(--prog-bg-read);
-  border: 1px solid var(--prog-border);
-  border-radius: var(--prog-radius-sm);
+
+  /* ===== DIALOGUE PANEL STYLING — Holographic frame ===== */
+  background:
+    linear-gradient(180deg, rgba(10, 26, 42, 0.95), rgba(6, 18, 30, 0.96));
+
+  border: 1px solid rgba(120, 240, 255, 0.35);
+  border-radius: 2px;
+
   padding: var(--prog-space-sm);
+
+  box-shadow:
+    0 0 14px rgba(0, 180, 255, 0.12),
+    inset 0 0 12px rgba(0, 180, 255, 0.05);
+
+  position: relative;
+}
+
+.progression-shell .prog-mentor__dialogue::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(120, 240, 255, 0.12);
+  pointer-events: none;
+  border-radius: 1px;
 }
 
 /* Dialogue text — calm cyan with subtle glow */
@@ -92,6 +185,8 @@
   line-height: 1.55;
   margin: 0;
   text-shadow: var(--prog-mentor-text-shadow);
+  position: relative;
+  z-index: 1;
 }
 
 /* Idle state — dim and italic when waiting */

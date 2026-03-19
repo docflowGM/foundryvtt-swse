@@ -37,7 +37,7 @@ function parsePrerequisites(prereqString) {
  * @param {Object[]} talents - Array of talent objects
  * @returns {Object} Graph with nodes and edges
  */
-function buildDependencyGraph(talents) {
+export function buildDependencyGraph(talents) {
   const nodes = new Map();
   const edges = [];
   const talentsByName = new Map();

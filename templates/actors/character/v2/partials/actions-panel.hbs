@@ -26,7 +26,7 @@
                     <div class="swse-v2-action-row-top">
                       <div class="left">
                         {{#if this.itemId}}
-                          <a class="name swse-v2-open-item" data-item-id="{{this.itemId}}">{{this.name}}</a>
+                          <a class="name swse-v2-open-item" data-action="open-item" data-item-id="{{this.itemId}}">{{this.name}}</a>
                         {{else}}
                           <span class="name">{{this.name}}</span>
                         {{/if}}
@@ -39,7 +39,7 @@
                       </div>
                       <div class="right">
                         {{#if this.executable}}
-                          <button type="button" class="swse-v2-btn swse-v2-use-action" data-action-id="{{this.key}}">{{#if this.useLabel}}{{this.useLabel}}{{else}}Use{{/if}}</button>
+                          <button type="button" class="swse-v2-btn swse-v2-use-action" data-action="swse-v2-use-action" data-action-id="{{this.key}}">{{#if this.useLabel}}{{this.useLabel}}{{else}}Use{{/if}}</button>
                         {{/if}}
                       </div>
                     </div>

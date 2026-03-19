@@ -55,10 +55,10 @@ export class SWSEV2FullNpcSheet extends SWSEV2CharacterSheet {
     const switchCombatBtn = root.querySelector('[data-action="switch-combat-mode"]');
     if (switchCombatBtn && !switchCombatBtn.hasListener) {
       switchCombatBtn.hasListener = true;
-      switchCombatBtn.addEventListener("click", { signal }, async (ev) => {
+      switchCombatBtn.addEventListener("click", async (ev) => {
         ev.preventDefault();
         await ActorEngine.updateActor(this.actor, { "system.sheetMode": "combat" });
-      });
+      }, { signal });
     }
   }
 }

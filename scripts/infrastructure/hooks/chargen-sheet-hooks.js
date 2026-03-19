@@ -3,11 +3,11 @@
  * Actor Sheet Integration for Chargen UI (ApplicationV2)
  *
  * Adds a "Chargen" header control to ActorSheetV2 instances for characters.
- * Allows players/GMs to open the character generator for editing existing characters.
+ * Routes through unified progression entry point (launchProgression).
  */
 import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/hooks-registry.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import CharacterGenerator from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js";
+import { launchProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 
 async function onClickChargen(app) {
   const actor = app?.actor ?? app?.document;
@@ -22,8 +22,7 @@ async function onClickChargen(app) {
   }
 
   SWSELogger.log(`[Chargen Header] Opening Chargen for: ${actor.name}`);
-  const chargen = new CharacterGenerator(actor);
-  chargen.render(true);
+  await launchProgression(actor);
 }
 
 export function registerChargenSheetHooks() {

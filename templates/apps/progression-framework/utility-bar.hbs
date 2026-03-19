@@ -14,7 +14,7 @@
            autocomplete="off">
   {{/if}}
 
-  {{! Filter chips }}
+  {{! Filter chips (size buttons) }}
   {{#if utilityBarConfig.filters}}
     <div class="prog-utility-bar__filters">
       {{#each utilityBarConfig.filters}}
@@ -23,6 +23,34 @@
                 data-active="{{#if this.defaultOn}}true{{else}}false{{/if}}"
                 type="button">{{this.label}}</button>
       {{/each}}
+    </div>
+  {{/if}}
+
+  {{! Bonus Stat Dropdown }}
+  {{#if utilityBarConfig.bonusDropdown}}
+    <div class="prog-utility-bar__dropdown-group">
+      <label class="prog-utility-bar__dropdown-label">{{utilityBarConfig.bonusDropdown.label}}</label>
+      <select class="prog-utility-bar__dropdown"
+              data-utility-select="{{utilityBarConfig.bonusDropdown.id}}"
+              data-dropdown-type="bonus">
+        {{#each utilityBarConfig.bonusDropdown.options}}
+          <option value="{{this.value}}">{{this.label}}</option>
+        {{/each}}
+      </select>
+    </div>
+  {{/if}}
+
+  {{! Penalty Stat Dropdown }}
+  {{#if utilityBarConfig.penaltyDropdown}}
+    <div class="prog-utility-bar__dropdown-group">
+      <label class="prog-utility-bar__dropdown-label">{{utilityBarConfig.penaltyDropdown.label}}</label>
+      <select class="prog-utility-bar__dropdown"
+              data-utility-select="{{utilityBarConfig.penaltyDropdown.id}}"
+              data-dropdown-type="penalty">
+        {{#each utilityBarConfig.penaltyDropdown.options}}
+          <option value="{{this.value}}">{{this.label}}</option>
+        {{/each}}
+      </select>
     </div>
   {{/if}}
 

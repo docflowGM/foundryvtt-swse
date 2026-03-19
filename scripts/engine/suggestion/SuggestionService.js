@@ -265,15 +265,22 @@ export class SuggestionService {
   }
 
   static async _persistSuggestionState(actor, context, suggestions) {
-    const ids = suggestions.map(s => s?.targetRef?.id || s?.id || s?.name).filter(Boolean);
+    // Non-fatal: suggestion state persistence is optional (used for diff display only).
+    // Direct actor.setFlag() is blocked by MutationBoundaryDefense — skip silently.
+    try {
+      const ids = suggestions.map(s => s?.targetRef?.id || s?.id || s?.name).filter(Boolean);
 
-    const state = (await actor.getFlag('foundryvtt-swse', 'suggestionState')) || {};
-    state.lastShown = state.lastShown || {};
-    state.lastShown[context] = {
-      ids,
-      at: Date.now()
-    };
-    await actor.setFlag('foundryvtt-swse', 'suggestionState', state);
+      const state = (await actor.getFlag('foundryvtt-swse', 'suggestionState')) || {};
+      state.lastShown = state.lastShown || {};
+      state.lastShown[context] = {
+        ids,
+        at: Date.now()
+      };
+      await actor.setFlag('foundryvtt-swse', 'suggestionState', state);
+    } catch (err) {
+      // Swallow mutation violations and other non-critical errors silently
+      SWSELogger.log('[SuggestionService] _persistSuggestionState skipped (non-fatal):', err?.message ?? err);
+    }
   }
 
   /**
@@ -596,7 +603,7 @@ export class SuggestionService {
       out.push(suggestion);
     }
 
-    if (trace) {
+    if (options.trace) {
       SWSELogger.log('[SuggestionService] Enriched suggestions:', out.slice(0, 5));
     }
     return out;

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 920" fill="none">
+  <defs>
+    <linearGradient id="steel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#40505E"/>
+      <stop offset="0.1" stop-color="#1B2631"/>
+      <stop offset="0.5" stop-color="#07111A"/>
+      <stop offset="0.9" stop-color="#102231"/>
+      <stop offset="1" stop-color="#435564"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <path d="M34 78L86 26H1414L1466 78V842L1414 894H86L34 842Z" fill="url(#steel)"/>
+  <path d="M52 90L96 46H1404L1448 90V830L1404 874H96L52 830Z" fill="#030A12"/>
+  <path d="M52 90L96 46H1404L1448 90V830L1404 874H96L52 830Z" stroke="#6DE8FF" stroke-width="2.8" filter="url(#glow)"/>
+  <path d="M80 118H1420" stroke="#98F6FF" stroke-width="1.2" opacity="0.26"/>
+  <path d="M80 802H1420" stroke="#98F6FF" stroke-width="1.2" opacity="0.16"/>
+  <path d="M77 855H300L260 895H80L34 842V790H77Z" fill="#1A2632"/>
+  <path d="M1423 855H1200L1240 895H1420L1466 842V790H1423Z" fill="#1A2632"/>
+  <path d="M52 90H210L180 120H52Z" fill="#0A1722" stroke="#50DBFF"/>
+  <path d="M1290 46H1404L1448 90H1334Z" fill="#0A1722" stroke="#50DBFF"/>
+</svg>
