@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="128" viewBox="0 0 256 128">
+    
+    <defs>
+      <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#9de1ff" stop-opacity="0.95"/>
+        <stop offset="60%" stop-color="#4cb0ff" stop-opacity="0.75"/>
+        <stop offset="100%" stop-color="#1b4f9a" stop-opacity="0.7"/>
+      </linearGradient>
+      <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#0f233d" stop-opacity="0.55"/>
+        <stop offset="100%" stop-color="#06111f" stop-opacity="0.35"/>
+      </linearGradient>
+      <linearGradient id="glowLine" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#7fd8ff" stop-opacity="0"/>
+        <stop offset="50%" stop-color="#7fd8ff" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="#7fd8ff" stop-opacity="0"/>
+      </linearGradient>
+      <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur stdDeviation="3" result="blur"/>
+        <feMerge>
+          <feMergeNode in="blur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+      <pattern id="scan" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+        <rect x="0" y="0" width="8" height="1" fill="#b4e6ff" opacity="0.06"/>
+      </pattern>
+      
+    </defs>
+    
+    <rect x="0" y="0" width="256" height="128" fill="transparent"/>
+    
+    <path d="M 14 2 H 242 L 254 14 V 114 L 242 126 H 14 L 2 114 V 14 Z"
+          fill="url(#fill)" stroke="url(#edge)" stroke-width="2"/>
+    <path d="M 22 10 H 234 L 246 22 V 106 L 234 118 H 22 L 10 106 V 22 Z"
+          fill="none" stroke="#8fdcff" stroke-opacity="0.25" stroke-width="1"/>
+    <rect x="8" y="8" width="240" height="112" fill="url(#scan)" opacity="0.35"/>
+    <line x1="18" y1="116" x2="238" y2="116" stroke="url(#glowLine)" stroke-width="2" filter="url(#glow)"/>
+    
+    <rect x="12" y="12" width="84" height="22" rx="6" fill="#0b1830" stroke="#67c4ff" stroke-opacity="0.45"/>
+    <line x1="18" y1="23" x2="90" y2="23" stroke="url(#glowLine)" stroke-width="2"/>
+    <path d="M72 72 H148" stroke="#9ae4ff" stroke-width="4"/><path d="M142 54 L182 72 L142 90" stroke="#9ae4ff" fill="none" stroke-width="4"/><line x1="88" y1="54" x2="112" y2="90" stroke="#64c0ff" stroke-width="3"/><line x1="112" y1="54" x2="136" y2="90" stroke="#64c0ff" stroke-width="3"/>
+    <rect x="184" y="24" width="52" height="12" rx="6" fill="#0b1830" stroke="#67c4ff" stroke-opacity="0.35"/>
+    <rect x="184" y="44" width="40" height="8" rx="4" fill="#0b1830" stroke="#67c4ff" stroke-opacity="0.25"/>
+    <rect x="184" y="60" width="56" height="8" rx="4" fill="#0b1830" stroke="#67c4ff" stroke-opacity="0.25"/>
+    <rect x="24" y="96" width="208" height="12" rx="6" fill="#081222" stroke="#67c4ff" stroke-opacity="0.2"/>
+    <rect x="24" y="96" width="124" height="12" rx="6" fill="url(#glowLine)" opacity="0.8"/>
+    
+    </svg>

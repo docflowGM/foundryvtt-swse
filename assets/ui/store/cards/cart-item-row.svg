@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="280" height="86" viewBox="0 0 280 86" fill="none">
+<defs>
+  <linearGradient id="lineBlue" x1="0" y1="0" x2="280" y2="86" gradientUnits="userSpaceOnUse">
+    <stop stop-color="#7FE7FF"/>
+    <stop offset="0.55" stop-color="#64B8FF"/>
+    <stop offset="1" stop-color="#7D9CFF"/>
+  </linearGradient>
+  <linearGradient id="panelGlow" x1="0" y1="0" x2="0" y2="86" gradientUnits="userSpaceOnUse">
+    <stop stop-color="rgba(40,130,255,0.20)"/>
+    <stop offset="1" stop-color="rgba(8,26,68,0.12)"/>
+  </linearGradient>
+  <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+    <feGaussianBlur stdDeviation="3" result="blur"/>
+    <feMerge>
+      <feMergeNode in="blur"/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
+</defs>
+<rect width="280" height="86" fill="none"/>
+<polygon points="10,1 270,1 279,10 279,76 270,85 10,85 1,76 1,10" stroke="url(#lineBlue)" stroke-width="2.5" fill="rgba(8,20,42,0.52)"/>
+<polygon points="16,8 264,8 272,16 272,70 264,78 16,78 8,70 8,16" stroke="rgba(125,210,255,0.22)" stroke-width="1.2" fill="rgba(16,40,74,0.18)"/>
+<circle cx="254" cy="18" r="3" fill="#8FE6FF" filter="url(#softGlow)"/>
+<path d="M 235 18 H 266" stroke="rgba(127,231,255,0.6)" stroke-width="1.5"/>
+<path d="M 15 70 H 120" stroke="rgba(127,231,255,0.28)" stroke-width="1.4"/><path d="M 20 42 H 260" stroke="rgba(127,231,255,0.22)" stroke-width="2"/><circle cx="34" cy="42" r="6" stroke="rgba(127,231,255,0.45)" stroke-width="2"/><rect x="206" y="22" width="50" height="40" rx="8" stroke="rgba(127,231,255,0.24)" fill="rgba(18,42,76,0.10)"/>
+</svg>

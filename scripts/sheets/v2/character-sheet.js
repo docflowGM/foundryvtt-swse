@@ -17,6 +17,7 @@ import { ActionEconomyIntegration } from "/systems/foundryvtt-swse/scripts/ui/co
 import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-bindings.js";
 import { SentinelSheetGuardrails } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-sheet-guardrails.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
+import { computeCenteredPosition } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -85,8 +86,12 @@ export class SWSEV2CharacterSheet extends
   static DEFAULT_OPTIONS = {
     ...foundry.applications.sheets.ActorSheetV2.DEFAULT_OPTIONS,
     classes: ["swse", "sheet", "actor", "character", "swse-character-sheet", "swse-sheet", "v2"],
-    width: 900,
-    height: 950,
+    // NOTE: In Foundry V13 ApplicationV2, dimensions must live under `position: {}`.
+    // Bare root-level `width`/`height` are silently ignored by the V13 position system.
+    position: {
+      width: 900,
+      height: 950,
+    },
     resizable: true,
     tabs: [
       {
@@ -109,37 +114,66 @@ export class SWSEV2CharacterSheet extends
     SentinelSheetGuardrails.trackSheetInstance("SWSEV2CharacterSheet");
   }
 
-  /**
-   * Compute a safe initial position for the character sheet.
-   *
-   * Foundry V13 ApplicationV2 may persist sheet positions via user flags.
-   * If a character sheet was last closed near the right sidebar, it would re-open
-   * there — and Foundry's cascade offset would push the next window (e.g., the
-   * ProgressionShell) even further right. Override to always open within the
-   * visible canvas area, accounting for the sidebar.
-   *
-   * @returns {{ width: number, height: number, left: number, top: number }}
-   */
-  _getInitialPosition() {
-    const sidebarEl = ui?.sidebar?.element ?? document.querySelector('#sidebar');
-    const sidebarW  = sidebarEl ? (sidebarEl.offsetWidth || 310) : 310;
-
-    const viewportW = window.innerWidth;
-    const viewportH = window.innerHeight;
-
-    // Available canvas area (sidebar is on the right)
-    const availW = Math.max(500, viewportW - sidebarW - 16);
-
-    const w    = Math.min(900,  availW);
-    const h    = Math.min(950,  Math.max(600, viewportH - 60));
-    const left = Math.max(10,   Math.floor((availW - w) / 2));
-    const top  = Math.max(20,   Math.floor((viewportH - h) / 8));
-
-    return { width: w, height: h, left, top };
-  }
+  // ---------------------------------------------------------------
+  // NOTE: _getInitialPosition() was the V1 Application API.
+  // Foundry V13 ApplicationV2 does NOT call this method.
+  // Position is controlled via DEFAULT_OPTIONS.position and the V13
+  // persistent-position system (user flags).  The centering logic has
+  // been moved to _onRender (isFirstRender) below so it actually runs.
+  // ---------------------------------------------------------------
 
   async _onRender(context, options) {
     await super._onRender(context, options);
+
+    // ── DIAGNOSTIC: always log so we can confirm _onRender fires ──
+    console.log(
+      "[SheetPosition] _onRender called | openedAt =", this._openedAt,
+      "| element =", !!this.element,
+      "| current left =", this.element?.style?.left ?? this.element?.[0]?.style?.left ?? "?"
+    );
+
+    // ── CENTERING: time-windowed approach ──────────────────────────
+    // Problem: Foundry V13 persists window positions in user flags and
+    // restores them on each render — including the extra re-renders that
+    // fire during the ~2-3s init window while actor data normalizes.
+    // A one-time flag blocks re-centering on those subsequent renders,
+    // so Foundry's restore wins and the sheet ends up off to the right.
+    //
+    // Fix: stamp the open time and re-center on EVERY _onRender call
+    // for the first 5 seconds.  After that, manual drags are respected.
+    // A debounced 200 ms deferred call (belt-and-suspenders) also applies
+    // both setPosition() AND direct DOM style overrides to defeat any
+    // late Foundry restoration that runs after our synchronous call.
+    if (!this._openedAt) this._openedAt = Date.now();
+    const _age = Date.now() - this._openedAt;
+    if (_age < 5000) {
+      const pos = computeCenteredPosition(900, 950);
+
+      console.log("[SheetPosition] centering (age:", _age, "ms) | viewport =", window.innerWidth, window.innerHeight);
+      console.log("[SheetPosition] sidebar =", (ui?.sidebar?.element?.offsetWidth ?? "?"), "px");
+      console.log("[SheetPosition] pos =", pos);
+
+      // Immediate synchronous call
+      this.setPosition(pos);
+
+      // Debounced deferred call — clears any earlier pending timer so only
+      // the LAST render's deferred check fires.  Applies both the V13 API
+      // and raw DOM style to defeat any Foundry position-restore that runs
+      // asynchronously after _onRender returns.
+      clearTimeout(this._centerTimer);
+      const capturedPos = pos;
+      this._centerTimer = setTimeout(() => {
+        if (this.rendered) {
+          this.setPosition(capturedPos);
+          const el = this.element instanceof HTMLElement ? this.element : this.element?.[0];
+          if (el) {
+            el.style.left = `${capturedPos.left}px`;
+            el.style.top  = `${capturedPos.top}px`;
+            console.log("[SheetPosition] deferred DOM+API override:", capturedPos.left, capturedPos.top);
+          }
+        }
+      }, 200);
+    }
 
     // Abort previous render's listeners to prevent duplicate event handlers
     this._renderAbort?.abort();
@@ -163,6 +197,9 @@ export class SWSEV2CharacterSheet extends
   async _onClose(options) {
     // Cleanup all event listeners on close
     this._renderAbort?.abort();
+    // Reset centering state so the next open re-centers cleanly
+    this._openedAt = null;
+    clearTimeout(this._centerTimer);
     return super._onClose(options);
   }
 

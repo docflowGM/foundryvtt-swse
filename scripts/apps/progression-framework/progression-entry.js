@@ -16,6 +16,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { computeCenteredPosition } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -38,6 +39,20 @@ export async function launchProgression(actor, options = {}) {
   // WINDOW AUTHORITY: Minimize actor sheet so it does not collide with or trap chargen.
   // The sheet stays alive in memory (not closed) — user can restore it after progression.
   if (actor.sheet?.rendered) {
+    // Normalize sheet position BEFORE minimizing.
+    // When a minimized window is restored, Foundry returns it to the position it had
+    // at the moment of minimize.  If the sheet was sitting in a stale right-side
+    // position, the user would get it back there after chargen completes.
+    // Centering now means restore always returns to a sane visible location.
+    try {
+      const pos = computeCenteredPosition(900, 950);
+      actor.sheet.setPosition(pos);
+      SWSELogger.log('[Progression Entry] Actor sheet centered before minimize →', pos);
+    } catch (posErr) {
+      // Non-fatal — minimize still happens even if re-center fails
+      SWSELogger.warn('[Progression Entry] Could not center actor sheet before minimize:', posErr);
+    }
+
     actor.sheet.minimize().catch(() => {});
     SWSELogger.log('[Progression Entry] Actor sheet minimized → clearing viewport for chargen');
   }

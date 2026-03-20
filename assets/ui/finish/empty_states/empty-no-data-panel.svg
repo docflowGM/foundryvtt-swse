@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="200" viewBox="0 0 320 200" fill="none">
+
+<defs>
+  <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#07121d"/>
+    <stop offset="100%" stop-color="#0b1f31"/>
+  </linearGradient>
+  <linearGradient id="edgeGrad" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#2ed7ff" stop-opacity="0.25"/>
+    <stop offset="50%" stop-color="#8cdfff" stop-opacity="0.9"/>
+    <stop offset="100%" stop-color="#2ed7ff" stop-opacity="0.25"/>
+  </linearGradient>
+  <linearGradient id="edgeVert" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#2ed7ff" stop-opacity="0.25"/>
+    <stop offset="50%" stop-color="#8cdfff" stop-opacity="0.9"/>
+    <stop offset="100%" stop-color="#2ed7ff" stop-opacity="0.25"/>
+  </linearGradient>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur stdDeviation="3" result="blur"/>
+    <feMerge>
+      <feMergeNode in="blur"/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
+  <pattern id="scan" width="8" height="8" patternUnits="userSpaceOnUse">
+    <rect width="8" height="1" fill="#b8f1ff" opacity="0.04"/>
+  </pattern>
+</defs>
+
+<rect x="0.5" y="0.5" width="319" height="199" rx="12" fill="url(#bgGrad)" opacity="0.02"/>
+
+<rect x="14" y="14" width="292" height="172" rx="16" fill="url(#bgGrad)" stroke="url(#edgeVert)" stroke-width="2.5" filter="url(#glow)"/>
+<rect x="28" y="28" width="264" height="144" rx="10" stroke="#8cdfff" stroke-opacity="0.35" stroke-dasharray="8 6"/>
+<circle cx="160" cy="88" r="24" stroke="#8cdfff" stroke-opacity="0.6"/>
+<path d="M136 88H184M160 64V112" stroke="#8cdfff" stroke-opacity="0.6" stroke-width="2"/>
+<path d="M92 136H228" stroke="#8cdfff" stroke-opacity="0.35"/>
+
+</svg>

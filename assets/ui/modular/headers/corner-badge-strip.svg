@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="72" viewBox="0 0 520 72" fill="none">
+
+  <defs>
+    <linearGradient id="panelStroke" x1="0" y1="0" x2="520" y2="72" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8DE8FF" />
+      <stop offset="0.3" stop-color="#54B9FF" />
+      <stop offset="0.65" stop-color="#2A6AB8" />
+      <stop offset="1" stop-color="#A7F7FF" />
+    </linearGradient>
+    <linearGradient id="panelFill" x1="0" y1="0" x2="0" y2="72" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F2238" stop-opacity="0.92" />
+      <stop offset="0.55" stop-color="#0A1730" stop-opacity="0.85" />
+      <stop offset="1" stop-color="#07111F" stop-opacity="0.95" />
+    </linearGradient>
+    <linearGradient id="innerGlow" x1="0" y1="0" x2="520" y2="72">
+      <stop stop-color="#B5F9FF" stop-opacity="0.4" />
+      <stop offset="1" stop-color="#56BCFF" stop-opacity="0.05" />
+    </linearGradient>
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+    </filter>
+    <filter id="tinyGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2" result="blur" />
+      <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+    </filter>
+    <pattern id="scanlines" width="6" height="6" patternUnits="userSpaceOnUse">
+      <rect width="6" height="6" fill="transparent" />
+      <rect y="0" width="6" height="1" fill="#C9FFFF" opacity="0.06" />
+    </pattern>
+    <radialGradient id="aura" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#9FEAFF" stop-opacity="0.45"/>
+      <stop offset="55%" stop-color="#51B6FF" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#1A4B8A" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <path d="M12 14 H436 l20 10 H502 V52 l-12 10 H28 l-16 -12 Z" fill="url(#panelFill)" stroke="url(#panelStroke)" stroke-width="2.5"/>
+  <rect x="434" y="16" width="60" height="40" rx="10" fill="#0B1E36" stroke="url(#panelStroke)" stroke-width="2"/>
+  <rect x="28" y="31.0" width="370" height="10" rx="5" fill="#9EEFFF" opacity="0.11"/>
+</svg>
