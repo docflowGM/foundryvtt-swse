@@ -33,6 +33,7 @@ export const SWSE_TEMPLATES = [
   // ==============================
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/identity-strip.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/abilities-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/initiative-control.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs',
