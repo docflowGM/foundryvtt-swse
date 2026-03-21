@@ -1,5 +1,5 @@
 <div class="tab starship-maneuvers-tab" data-group="primary" data-tab="starship-maneuvers">
-<div class="starship-maneuvers-section">
+<div class="starship-maneuvers-section swse-starship-suite swse-ui-shell">
   {{#if starshipManeuvers.hasStartshipTactics}}
     <div class="maneuvers-header">
       <h3>Starship Maneuvers</h3>
@@ -12,8 +12,8 @@
     {{#if starshipManeuvers.total}}
       <!-- Starship Maneuver Suite Management -->
       <h3 class="section-header" style="margin-top: 1.5rem;">Starship Maneuver Suite</h3>
-      <div class="maneuver-suite-manager flexrow">
-        <div class="maneuvers-column known-maneuvers">
+      <div class="maneuver-suite-manager flexrow swse-store-stage">
+        <div class="maneuvers-column known-maneuvers swse-store-section">
           <h4>Known Maneuvers</h4>
           <div class="maneuvers-list drop-zone" data-zone="known">
             {{#each starshipManeuvers.all as |maneuver|}}
@@ -36,7 +36,7 @@
           <i class="{{getIconClass 'arrowsHorizontal'}}"></i>
         </div>
 
-        <div class="maneuvers-column active-suite">
+        <div class="maneuvers-column active-suite swse-store-section">
           <h4>Active Suite ({{activeSuite.length}}/{{system.starshipManeuverSuite.max}})</h4>
           <div class="maneuvers-list drop-zone suite-zone" data-zone="suite">
             {{#each activeSuite as |maneuver|}}
@@ -75,13 +75,13 @@
         </div>
       </div>
 
-      <div class="maneuvers-container" style="margin-top: 2rem;">
+      <div class="maneuvers-container swse-store-stage" style="margin-top: 2rem;">
         <!-- Maneuver Ability Cards Panel -->
         {{> "systems/foundryvtt-swse/templates/partials/starship-maneuvers-panel.hbs" maneuvers=starshipManeuvers}}
       </div>
 
       <!-- Maneuver Rules Reference -->
-      <div class="maneuvers-rules-section collapsible">
+      <div class="maneuvers-rules-section collapsible swse-store-stage">
         <h4 class="maneuvers-rules-header">
           <i class="fa-solid fa-book"></i>
           Starship Maneuvers Rules Reference
@@ -142,7 +142,7 @@
 
   {{else}}
     <div class="no-feature-message">
-      <div class="feature-locked">
+      <div class="feature-locked swse-ui-empty">
         <i class="{{getIconClass 'lock'}}"></i>
         <h3>Starship Maneuvers Locked</h3>
         <p>Take the <strong>Starship Tactics Feat</strong> to learn Starship Maneuvers.</p>

@@ -73,12 +73,13 @@
 
   {{!-- CARD FOOTER: Actions --}}
   <div class="card-footer weapon-footer">
-    <button type="button" class="btn btn-equip" title="Equip/Unequip" data-action="equip">
+    <button type="button" class="btn btn-equip" title="Equip/Unequip" data-action="equip" data-item-id="{{id}}">
       {{#if equipped}}Unequip{{else}}Equip{{/if}}
     </button>
-    <button type="button" class="btn btn-config" title="Configure Weapon Properties" data-action="configure">⚙</button>
-    <button type="button" class="btn btn-edit" title="Edit Item" data-action="edit">Edit</button>
-    <button type="button" class="btn btn-delete" title="Remove Item" data-action="delete">Delete</button>
+    <button type="button" class="btn btn-config" title="Configure Weapon Properties" data-action="configure" data-item-id="{{id}}">⚙</button>
+    <button type="button" class="btn btn-edit" title="Edit Item" data-action="edit" data-item-id="{{id}}">Edit</button>
+    <button type="button" class="btn btn-sell" title="Sell Item" data-action="sell-item" data-item-id="{{id}}">Sell</button>
+    <button type="button" class="btn btn-delete" title="Remove Item" data-action="delete" data-item-id="{{id}}">Delete</button>
   </div>
 
 </div>

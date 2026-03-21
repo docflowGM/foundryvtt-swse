@@ -34,19 +34,21 @@ export class SWSEInitiative {
     for (const group of tiedGroups) {
       if (group.length < 2) continue;
 
-      // Sort descending by initiative modifier
-      group.sort((a, b) => {
-        const modA = this._getInitMod(a);
-        const modB = this._getInitMod(b);
-        return modB - modA;
-      });
+      group.sort((a, b) => this._getInitMod(b) - this._getInitMod(a));
 
-      const highestMod = this._getInitMod(group[0]);
-      const stillTied = group.filter(c => this._getInitMod(c) === highestMod);
+      const mods = group.map(c => this._getInitMod(c));
+      const uniqueMods = new Set(mods);
 
-      if (stillTied.length > 1) {
-        await this._rerollBetween(stillTied, combat);
+      // RAW: same total initiative -> higher initiative modifier acts first.
+      // Foundry tracker sorts numerically, so we apply a tiny fractional
+      // tiebreaker when modifiers differ while preserving the visible total.
+      if (uniqueMods.size > 1) {
+        await this._applyModifierTieBreakers(group, combat);
+        continue;
       }
+
+      // Still tied on total and modifier: reroll only the tied combatants.
+      await this._rerollBetween(group, combat);
     }
   }
 
@@ -60,12 +62,32 @@ export class SWSEInitiative {
 
     for (const c of combat.combatants) {
       if (c.initiative == null) continue;
-      const key = String(c.initiative);
+      const key = String(Math.trunc(Number(c.initiative)));
       if (!groups[key]) groups[key] = [];
       groups[key].push(c);
     }
 
     return Object.values(groups).filter(g => g.length > 1);
+  }
+
+
+  /**
+   * Apply tiny deterministic fractional offsets so higher initiative
+   * modifiers sort first when the rolled total is tied.
+   * @param {Combatant[]} combatants
+   * @param {Combat} combat
+   */
+  static async _applyModifierTieBreakers(combatants, combat) {
+    const updates = combatants.map((combatant, index) => {
+      const base = Math.trunc(Number(combatant.initiative ?? 0));
+      const mod = this._getInitMod(combatant);
+      const offset = (mod / 1000) - (index / 1000000);
+      return { _id: combatant.id, initiative: Number((base + offset).toFixed(6)) };
+    });
+
+    if (updates.length) {
+      await combat.updateEmbeddedDocuments('Combatant', updates);
+    }
   }
 
   /**
@@ -75,12 +97,26 @@ export class SWSEInitiative {
    * @param {Combat} combat
    */
   static async _rerollBetween(combatants, combat) {
-    for (const c of combatants) {
-      const mod = this._getInitMod(c);
-      const formula = `1d20 + ${mod}`;
-      const roll = new Roll(formula);
-      await roll.evaluate({ async: true });
-      await combat.setInitiative(c.id, roll.total);
+    let resolved = false;
+
+    while (!resolved) {
+      const updates = [];
+      const totals = [];
+
+      for (const c of combatants) {
+        const mod = this._getInitMod(c);
+        const formula = `1d20 + ${mod}`;
+        const roll = new Roll(formula);
+        await roll.evaluate({ async: true });
+        updates.push({ _id: c.id, initiative: roll.total });
+        totals.push(roll.total);
+      }
+
+      if (updates.length) {
+        await combat.updateEmbeddedDocuments('Combatant', updates);
+      }
+
+      resolved = new Set(totals).size === totals.length;
     }
   }
 
@@ -221,10 +257,19 @@ export class SWSEInitiative {
     const combat = game.combat;
     if (!combat) return;
 
-    const combatant = combat.combatants.find(c => c.actorId === actor.id);
+    let combatant = combat.combatants.find(c => c.actorId === actor.id);
+    if (!combatant) {
+      const created = await combat.createEmbeddedDocuments('Combatant', [{
+        actorId: actor.id,
+        tokenId: actor.token?.id ?? null,
+        sceneId: canvas.scene?.id ?? null
+      }]);
+      combatant = created?.[0] ?? combat.combatants.find(c => c.actorId === actor.id);
+    }
+
     if (!combatant) return;
 
-    await combat.setInitiative(combatant.id, value);
+    await combat.setInitiative(combatant.id, Number(value));
     await this.resolveTies(combat);
   }
 }

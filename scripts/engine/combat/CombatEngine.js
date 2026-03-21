@@ -511,57 +511,16 @@ export class CombatEngine {
   }
 
   /**
-   * Roll initiative and update combat tracker.
+   * @deprecated Legacy duplicate initiative implementation kept only as a
+   * reference shim. V2 SSOT requires initiative to route through
+   * CombatEngine.rollInitiative() -> SWSEInitiative.
    *
-   * @param {Actor} actor - Actor rolling initiative
-   * @param {Object} options - Roll options
-   * @returns {Promise<void>}
+   * This method intentionally delegates to the canonical authority rather
+   * than maintaining a second implementation path.
    */
-  static async rollInitiative(actor, options = {}) {
-    const combat = game.combat;
-
-    if (!combat) {
-      ui.notifications.warn("No active combat.");
-      return;
-    }
-
-    let combatant = combat.combatants.find(c => c.actorId === actor.id);
-
-    // If actor not yet in combat, create combatant
-    if (!combatant) {
-      combatant = await combat.createEmbeddedDocuments("Combatant", [{
-        actorId: actor.id,
-        tokenId: actor.token?.id ?? null,
-        sceneId: canvas.scene?.id
-      }]).then(res => res[0]);
-    }
-
-    // Determine base roll
-    const baseRoll = options.baseRoll ??
-      (await new Roll("1d20").roll({ async: true })).total;
-
-    // Get modifier preview
-    const preview = await this.previewInitiative(actor, {
-      ...options,
-      baseRoll
-    });
-
-    // Update initiative value in tracker
-    await combat.setInitiative(combatant.id, preview.total);
-
-    // Optional: Chat Message
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: `
-        <div class="swse-init-result">
-          <strong>Initiative:</strong> ${preview.total}
-          <br>
-          Base: ${baseRoll}
-          <br>
-          Modifiers: ${preview.modifierTotal}
-        </div>
-      `
-    });
+  static async _rollInitiativeLegacyShim(actor, options = {}) {
+    SWSELogger.warn?.('[CombatEngine] Deprecated initiative shim invoked; delegating to SWSEInitiative authority.');
+    return SWSEInitiative.rollInitiative(actor, options);
   }
 
   /* -------------------------------------------- */

@@ -1,6 +1,7 @@
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import { ThresholdEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/threshold-engine.js";
 import { DamageMitigationManager } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-mitigation-manager.js";
+import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
 
 /**
  * DamageResolutionEngine — Unified damage orchestration
@@ -122,6 +123,7 @@ export class DamageResolutionEngine {
       // Threshold check
       thresholdExceeded: false,
       thresholdBreakdown: [],
+      thresholdRuleResult: null,
 
       // State changes
       conditionDelta: 0,
@@ -223,10 +225,17 @@ export class DamageResolutionEngine {
       result.thresholdTotal = thresholdData.total;
       result.thresholdBreakdown = thresholdData.breakdown;
 
-      // Threshold exceeded if raw damage >= total threshold
-      if (damage >= thresholdData.total) {
-        result.thresholdExceeded = true;
-      }
+      const thresholdDamage = mitigationResult?.afterDR ?? mitigationResult?.hpDamage ?? damage;
+      result.thresholdMeasuredDamage = thresholdDamage;
+      result.thresholdRuleResult = ThresholdEngine.evaluateThreshold({
+        target: actor,
+        damage: thresholdDamage,
+        isStun: damageType === 'stun',
+        isIon: damageType === 'ion',
+        attacker: source
+      });
+
+      result.thresholdExceeded = result.thresholdRuleResult?.thresholdExceeded === true;
     } catch (err) {
       console.warn('DamageResolutionEngine: threshold calculation failed', err);
     }
@@ -236,11 +245,14 @@ export class DamageResolutionEngine {
        ================================================================= */
 
     result.conditionAfter = result.conditionBefore;
+    result.conditionPersistent = false;
 
-    // Threshold exceeded with HP remaining: -1 step
+    // Threshold exceeded with HP remaining: use ThresholdEngine rule result (supports house rules)
     if (result.thresholdExceeded && result.hpAfter > 0) {
-      result.conditionDelta = -1;
-      result.conditionAfter = Math.min(5, result.conditionBefore - 1);
+      const thresholdShift = Math.max(0, Number(result.thresholdRuleResult?.totalCTShift ?? 1));
+      result.conditionDelta = thresholdShift;
+      result.conditionAfter = Math.min(5, result.conditionBefore + thresholdShift);
+      result.conditionPersistent = (result.thresholdRuleResult?.ctShifts || []).some(shift => shift?.persistent === true);
     }
 
     /* ===================================================================
@@ -248,20 +260,32 @@ export class DamageResolutionEngine {
        ================================================================= */
 
     if (result.hpAfter <= 0) {
-      result.unconscious = true;
-      result.conditionDelta = -5;
-      result.conditionAfter = 5; // Helpless
+      result.unconscious = actor.type === 'character' || actor.type === 'npc' || actor.type === 'beast';
+      result.disabled = actor.type === 'droid' || actor.type === 'object' || actor.type === 'device' || actor.type === 'vehicle';
+      result.conditionDelta = Math.max(0, 5 - result.conditionBefore);
+      result.conditionAfter = 5; // Bottom of the track / helpless or disabled
 
-      // Death or Destroy depends on threshold and actor type
       if (result.thresholdExceeded) {
-        result.forceRescueEligible = true;
+        const preventInstantDeath = result.thresholdRuleResult?.preventInstantDeath === true;
+        result.conditionPersistent = result.conditionPersistent || (result.thresholdRuleResult?.ctShifts || []).some(shift => shift?.persistent === true);
 
-        if (actor.type === "character") {
-          result.dead = true;
-        }
+        if (!preventInstantDeath) {
+          // Characters and droids may spend a Force Point to avoid death/destruction.
+          if (actor.type === 'character' || actor.type === 'npc' || actor.type === 'droid') {
+            result.forceRescueEligible = ForcePointsService.canRescue(actor, {
+              damage: result.thresholdMeasuredDamage,
+              hp: result.hpAfter,
+              threshold: result.thresholdTotal
+            });
+          }
 
-        if (actor.type === "droid" || actor.type === "vehicle") {
-          result.destroyed = true;
+          if (actor.type === 'character' || actor.type === 'npc' || actor.type === 'beast') {
+            result.dead = true;
+          }
+
+          if (actor.type === 'droid' || actor.type === 'object' || actor.type === 'device' || actor.type === 'vehicle') {
+            result.destroyed = true;
+          }
         }
       }
     }

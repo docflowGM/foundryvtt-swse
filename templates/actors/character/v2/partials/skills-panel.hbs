@@ -1,11 +1,11 @@
-<section class="skills-panel v2-skills-grid">
+<section class="skills-panel v2-skills-grid swse-ui-panel">
 
-  <header class="section-header">
+  <header class="section-header swse-ui-titlebar">
     <h3>Skills</h3>
   </header>
 
   <!-- Skills Grid Header (Sticky) -->
-  <div class="skills-grid-header">
+  <div class="skills-grid-header swse-grid-header">
     <div class="col-favorite">★</div>
     <div class="col-skill-name">Skill</div>
     <div class="col-skill-bonus">Bonus</div>
@@ -22,7 +22,7 @@
 
     {{#each derived.skills as |skill|}}
 
-      <div class="skills-grid-row" data-skill="{{skill.key}}">
+      <div class="skills-grid-row swse-row-surface" data-skill="{{skill.key}}">
 
         <!-- Favorite Star -->
         <div class="col-favorite">
@@ -117,21 +117,31 @@
 
       <!-- Extra Skill Uses (Take 10, Take 20, etc.) -->
       {{#if skill.extraUses.length}}
-      <div class="skill-extra-uses">
+      <div class="skill-extra-uses swse-ui-frame">
         {{#each skill.extraUses as |use|}}
-          <div class="extra-use-row">
-            <span class="extra-use-label">{{use.label}}</span>
-            {{#if use.description}}
-              <span class="extra-use-description">{{use.description}}</span>
-            {{/if}}
-            <button type="button"
-                    class="extra-use-btn"
-                    data-action="use-extra-skill"
-                    data-skill="{{../skill.key}}"
-                    data-use="{{use.key}}"
-                    title="Use {{use.label}} on {{../skill.label}}">
-              Use
-            </button>
+          <div class="extra-use-row swse-row-surface">
+            <div class="extra-use-copy">
+              <span class="extra-use-label">{{use.label}}</span>
+              {{#if use.dc}}
+                <span class="extra-use-dc">DC {{use.dc}}</span>
+              {{/if}}
+              {{#if use.description}}
+                <span class="extra-use-description">{{use.description}}</span>
+              {{/if}}
+            </div>
+            <div class="extra-use-actions">
+              {{#if use.usageCount}}
+                <span class="extra-use-count" title="Times recorded on this actor">{{use.usageCount}}×</span>
+              {{/if}}
+              <button type="button"
+                      class="extra-use-btn"
+                      data-action="use-extra-skill"
+                      data-skill="{{../skill.key}}"
+                      data-use="{{use.key}}"
+                      title="Use {{use.label}} on {{../skill.label}}">
+                Use
+              </button>
+            </div>
           </div>
         {{/each}}
       </div>

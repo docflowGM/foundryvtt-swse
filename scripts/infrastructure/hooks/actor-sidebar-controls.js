@@ -45,15 +45,13 @@ async function onClickStore(app) {
   // If we have a character, open store for that character
   if (actor && actor.type === 'character') {
     SWSELogger.log(`[Actor Sidebar] Opening Store for: ${actor.name}`);
-    const store = new SWSEStore(actor);
-    store.render(true);
+    await SWSEStore.open(actor);
     return;
   }
 
   // Otherwise open generic store
   SWSELogger.log('[Actor Sidebar] Opening Store (no actor selected)');
-  const store = new SWSEStore();
-  store.render(true);
+  await SWSEStore.open();
 }
 
 async function onClickTemplates(app) {

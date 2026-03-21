@@ -180,23 +180,24 @@ export class CustomItemDialog {
    * @param {Actor} actor - The actor to add the armor to
    * @returns {Promise<Item|null>}
    */
-  static async createArmor(actor) {
+  static async createArmor(actor, options = {}) {
     return new Promise((resolve) => {
       const dialog = new SWSEDialogV2({
-        title: 'Create Custom Armor',
+        title: options.shieldMode ? 'Create Energy Shield' : 'Create Custom Armor',
         content: `
           <form class="swse-custom-item-form">
             <div class="form-group">
               <label>Armor Name:</label>
-              <input type="text" name="name" value="Custom Armor" required/>
+              <input type="text" name="name" value="${options.shieldMode ? 'Energy Shield' : 'Custom Armor'}" required/>
             </div>
 
             <div class="form-group">
               <label>Armor Type:</label>
               <select name="armorType">
-                <option value="light" selected>Light Armor</option>
+                <option value="light" ${options.shieldMode ? '' : 'selected'}>Light Armor</option>
                 <option value="medium">Medium Armor</option>
                 <option value="heavy">Heavy Armor</option>
+                <option value="shield" ${options.shieldMode ? 'selected' : ''}>Energy Shield</option>
               </select>
             </div>
 
@@ -266,7 +267,7 @@ export class CustomItemDialog {
         buttons: {
           create: {
             icon: '<i class="fa-solid fa-check"></i>',
-            label: 'Create Armor',
+            label: options.shieldMode ? 'Create Shield' : 'Create Armor',
             callback: async (html) => {
               const root = html instanceof HTMLElement ? html : html?.[0];
               const form = root?.querySelector?.('form');
@@ -286,7 +287,7 @@ export class CustomItemDialog {
                 type: 'armor',
                 img: 'icons/equipment/chest/breastplate-cuirass-steel.webp',
                 system: {
-                  armorType: formData.armorType || 'light',
+                  armorType: formData.armorType || (options.shieldMode ? 'shield' : 'light'),
                   defenseBonus: parseInt(formData.defenseBonus, 10) || 0,
                   equipmentBonus: parseInt(formData.equipmentBonus, 10) || 0,
                   fortBonus: parseInt(formData.fortBonus, 10) || 0,
@@ -932,6 +933,9 @@ export class CustomItemDialog {
         return this.createWeapon(actor);
       case 'armor':
         return this.createArmor(actor);
+      case 'shield':
+      case 'energy-shield':
+        return this.createArmor(actor, { shieldMode: true });
       case 'equipment':
         return this.createEquipment(actor);
       case 'feat':

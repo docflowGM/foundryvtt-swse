@@ -555,8 +555,11 @@ export class SpeciesStep extends ProgressionStepPlugin {
     return Object.entries(scores ?? {})
       .filter(([, v]) => v !== 0)
       .map(([key, value]) => ({
+        key,
+        shortLabel: key.toUpperCase(),
         label: this._abilityLabel(key),
         value,
+        signedValue: `${value > 0 ? '+' : ''}${value}`,
         cssClass: value > 0 ? 'prog-num--pos' : 'prog-num--neg',
       }));
   }
@@ -608,10 +611,9 @@ export class SpeciesStep extends ProgressionStepPlugin {
   }
 
   _formatSpeciesCard(species) {
-    // Compact ability modifier string — e.g. "+2 DEX, -2 CON"
-    const abilityModLine = Object.entries(species.abilityScores ?? {})
-      .filter(([, v]) => v !== 0)
-      .map(([key, value]) => `${value > 0 ? '+' : ''}${value} ${key.toUpperCase()}`)
+    const abilityRows = this._formatAbilityRows(species.abilityScores);
+    const abilityModLine = abilityRows
+      .map(row => `${row.signedValue} ${row.shortLabel}`)
       .join(', ');
 
     return {
@@ -623,9 +625,9 @@ export class SpeciesStep extends ProgressionStepPlugin {
       size: species.size ?? 'Medium',
       speed: species.speed ?? '30 ft.',
       description: species.description ?? '',
-      abilityModLine,                                     // compact one-liner for row
-      abilityRows: this._formatAbilityRows(species.abilityScores),
-      tags: (species.abilities ?? []).slice(0, 3),        // first 3 traits as tags
+      abilityModLine,
+      abilityRows,
+      tags: (species.abilities ?? []).slice(0, 3),
       abilities: species.abilities ?? [],
       languages: species.languages ?? [],
     };

@@ -4,7 +4,7 @@
   <div class="prog-panel prog-panel--left">
     <h3 class="prog-panel-title">Register Datapad Profile</h3>
 
-    <div class="prog-identity-card">
+    <div class="prog-identity-card swse-card-schema swse-card-schema--identity swse-card-schema--filled">
       {{!-- CHARACTER NAME INPUT (Editable - this step acts as "datapad profile registration") --}}
       <div class="prog-name-input-section">
         <label for="summary-name-input" class="prog-input-label">Character Name</label>
@@ -74,7 +74,7 @@
     <h3 class="prog-panel-title">Progression Review</h3>
 
     {{!-- Attributes Section --}}
-    <div class="prog-summary-section">
+    <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
       <div class="prog-section-header">
         <i class="fas fa-chart-bar"></i> Attributes
       </div>
@@ -96,7 +96,7 @@
 
     {{!-- Skills Section --}}
     {{#if summary.skills}}
-      <div class="prog-summary-section">
+      <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
         <div class="prog-section-header">
           <i class="fas fa-book-open"></i> Trained Skills ({{summary.skills.length}})
         </div>
@@ -110,7 +110,7 @@
 
     {{!-- Feats Section --}}
     {{#if summary.feats}}
-      <div class="prog-summary-section">
+      <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
         <div class="prog-section-header">
           <i class="fas fa-star"></i> Feats ({{summary.feats.length}})
         </div>
@@ -126,7 +126,7 @@
 
     {{!-- Talents Section --}}
     {{#if summary.talents}}
-      <div class="prog-summary-section">
+      <div class="prog-summary-section swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
         <div class="prog-section-header">
           <i class="fas fa-gem"></i> Talents ({{summary.talents.length}})
         </div>
@@ -142,7 +142,7 @@
 
     {{!-- Empty State --}}
     {{#unless (or summary.attributes summary.skills summary.feats summary.talents)}}
-      <div class="prog-empty-state">
+      <div class="prog-empty-state swse-card-schema swse-card-schema--choice swse-card-schema--placeholder">
         <i class="fas fa-clipboard-list"></i>
         <p>Progress through the earlier steps to build your character sheet here.</p>
       </div>
@@ -153,7 +153,7 @@
   <div class="prog-panel prog-panel--right">
     <h3 class="prog-panel-title">Final Checklist</h3>
 
-    <div class="prog-checklist">
+    <div class="prog-checklist swse-card-schema swse-card-schema--choice swse-card-schema--pending">
       {{!-- Name is now EDITABLE on this step (was on NameStep) --}}
       <div class="prog-checklist-item {{#if characterName}}complete{{/if}}">
         <i class="fas {{#if characterName}}fa-check-circle{{else}}fa-circle{{/if}}"></i>

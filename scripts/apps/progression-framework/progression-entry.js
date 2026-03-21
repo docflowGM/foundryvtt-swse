@@ -168,14 +168,17 @@ export class SWSEProgressionSplashV2 extends HandlebarsApplicationMixin(Applicat
   /**
    * Render hook — trigger boot sequence.
    */
-  _onRender(context, options) {
-    super._onRender(context, options);
+  async _onRender(context, options) {
+    await super._onRender(context, options);
 
     // Update clock
     this._updateSystemTime();
 
-    // Start boot sequence after brief delay
-    setTimeout(() => this._startBootSequence(), 400);
+    // Start boot sequence after brief delay (tracked so close/skip can cancel it)
+    if (!this._bootStarted) {
+      clearTimeout(this._bootKickoffTimeout);
+      this._bootKickoffTimeout = setTimeout(() => this._startBootSequence(), 400);
+    }
   }
 
   /**
@@ -183,6 +186,9 @@ export class SWSEProgressionSplashV2 extends HandlebarsApplicationMixin(Applicat
    * Bar fills from 0→100 once across the entire sequence (not reset per stage).
    */
   _startBootSequence() {
+    if (this._bootStarted) return;
+    this._bootStarted = true;
+
     const surface = this.element.querySelector('.prog-intro-surface');
     if (!surface) return;
 
@@ -192,7 +198,7 @@ export class SWSEProgressionSplashV2 extends HandlebarsApplicationMixin(Applicat
     surface.offsetHeight;
     surface.style.opacity = '1';
 
-    this._bootTimeouts = [];
+    this._bootTimeouts ??= [];
 
     // Boot sequence with continuous progress bar targets
     // Format: [English source text, state, targetPercent]
@@ -450,6 +456,7 @@ export class SWSEProgressionSplashV2 extends HandlebarsApplicationMixin(Applicat
         timeElem.textContent = time;
       };
       updateClock();
+      clearInterval(this._clockInterval);
       this._clockInterval = setInterval(updateClock, 1000);
     }
   }
@@ -513,7 +520,7 @@ export class SWSEProgressionSplashV2 extends HandlebarsApplicationMixin(Applicat
           clearTimeout(timeoutId);
           cancelAnimationFrame(timeoutId);
         }
-        this._bootTimeouts = [];
+        this._bootTimeouts ??= [];
       }
 
       // Jump progress bar to 100%
@@ -606,6 +613,7 @@ export class SWSEProgressionSplashV2 extends HandlebarsApplicationMixin(Applicat
   async _onClose(options) {
     // Clean up clock interval
     if (this._clockInterval) clearInterval(this._clockInterval);
+    if (this._bootKickoffTimeout) clearTimeout(this._bootKickoffTimeout);
 
     // Clean up boot sequence timeouts and animation frames
     if (this._bootTimeouts && Array.isArray(this._bootTimeouts)) {

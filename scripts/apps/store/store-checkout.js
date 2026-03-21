@@ -924,10 +924,23 @@ export async function checkout(store, animateNumberCallback) {
                 await logPurchaseToHistory(actor, store.cart, total);
 
                 // PART 7: Clear cart and exit checkout mode
+                const purchasedItems = {
+                    items: [...(store.cart.items || [])],
+                    droids: [...(store.cart.droids || [])],
+                    vehicles: [...(store.cart.vehicles || [])]
+                };
                 clearCart(store.cart);
                 store.cartTotal = 0;
+                await store._persistCart?.();
                 store.exitCheckoutMode();
                 store._renderCartUI();
+
+                await store._handleCheckoutCompletion?.({
+                    total,
+                    purchasedItems,
+                    creditsBefore: credits,
+                    creditsAfter: newCredits
+                });
 
                 resolve();
             } catch (err) {

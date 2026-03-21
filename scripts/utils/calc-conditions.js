@@ -1,19 +1,13 @@
 /**
- * Condition Track Effects
+ * Condition Track Effects — canonical numeric adapter
  */
 
-import { CONDITION_PENALTIES } from "/systems/foundryvtt-swse/scripts/core/constants.js";
-
 export function applyConditionPenalty(actor) {
-  const track = actor.system.conditionTrack || 'normal';
-  actor.conditionPenalty = CONDITION_PENALTIES[track] || 0;
+  const step = Number(actor?.system?.conditionTrack?.current ?? 0);
+  const penalties = { 0: 0, 1: -1, 2: -2, 3: -5, 4: -10, 5: 0 };
+  actor.conditionPenalty = penalties[step] ?? 0;
 
-  // Apply additional condition effects
-  if (track === 'helpless') {
-    actor.isHelpless = true;
-    actor.isUnconscious = true;
-  } else {
-    actor.isHelpless = false;
-    actor.isUnconscious = false;
-  }
+  actor.isHelpless = step >= 5;
+  actor.isUnconscious = step >= 5 && ['character', 'npc', 'beast'].includes(actor?.type);
+  actor.isDisabled = step >= 5 && ['droid', 'object', 'device', 'vehicle'].includes(actor?.type);
 }

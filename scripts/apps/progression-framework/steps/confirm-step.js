@@ -549,16 +549,39 @@ export class ConfirmStep extends ProgressionStepPlugin {
    * Enter store.
    * Returns a promise that resolves when store is closed.
    */
-  async enterStore(actor) {
+  async enterStore(actor, shell = null) {
     const { SWSEStore } = await import('../../../apps/store/store-main.js');
-    return new Promise(resolve => {
-      const store = new SWSEStore(actor);
-      store.render(true);
+    this._storeVisited = true;
 
-      // Note: Store closing will be handled by user action
-      // For now, just track that they visited
-      this._storeVisited = true;
-      resolve();
+    return new Promise(resolve => {
+      let settled = false;
+      const settle = async () => {
+        if (settled) return;
+        settled = true;
+        if (shell?.render) {
+          shell.render();
+        }
+        resolve();
+      };
+
+      SWSEStore.open(actor, {
+        closeAfterCheckout: true,
+        onCheckoutComplete: async ({ actor: updatedActor }) => {
+          if (updatedActor) {
+            actor = updatedActor;
+          }
+        },
+        onClose: async ({ actor: updatedActor, checkoutCompleted }) => {
+          this._storeVisited = true;
+          if (updatedActor) {
+            actor = updatedActor;
+          }
+          await settle();
+        }
+      }).catch(err => {
+        swseLogger.error('[ConfirmStep.enterStore] Failed to open store', err);
+        settle();
+      });
     });
   }
 
@@ -644,7 +667,12 @@ export class ConfirmStep extends ProgressionStepPlugin {
         forceTechniques: (progression.forceTechniques || []).length,
         starshipManeuvers: (progression.starshipManeuvers || []).length,
       },
-      credits: { ...this._creditsState },
+      credits: {
+        ...this._creditsState,
+        current: Number(systemData.credits ?? 0) || 0,
+        spent: Math.max(0, (Number(this._creditsState.amount) || 0) - (Number(systemData.credits ?? 0) || 0)),
+      },
+      recentPurchases: this._getRecentPurchases(actor),
       store: this._storeVisited,
     };
   }

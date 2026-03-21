@@ -1,7 +1,7 @@
-<div class="swse swse-sheet swse-npc-combat-sheet v2 flexcol">
+<div class="swse swse-sheet swse-sheet-ui swse-ui-shell swse-npc-combat-sheet v2 flexcol">
 
   <!-- Header -->
-  <header class="sheet-header holo-header npc-combat-header">
+  <header class="sheet-header holo-header npc-combat-header swse-ui-frame">
     <div class="header-left">
       <img class="profile" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="64" width="64"/>
       <div class="title-block">
@@ -18,7 +18,7 @@
   </header>
 
   <!-- Combat Grid -->
-  <section class="sheet-body npc-combat-body flexcol">
+  <section class="sheet-body npc-combat-body flexcol swse-npc-combat-body-shell">
 
     <!-- Left Column: HP, Condition, Defenses -->
     <div class="npc-combat-left flexcol">
@@ -63,8 +63,8 @@
   </section>
 
   <!-- Quick Actions Bar -->
-  <footer class="npc-combat-footer">
-    <div class="npc-combat-actions">
+  <footer class="npc-combat-footer swse-ui-frame">
+    <div class="npc-combat-actions swse-control-cluster">
       <button type="button" class="action-btn" data-action="level-up">Level Up</button>
       <button type="button" class="action-btn" data-action="switch-full-mode">Full Mode</button>
     </div>

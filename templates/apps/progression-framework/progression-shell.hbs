@@ -21,7 +21,7 @@
       modal-host      In-shell modal stack
 --}}
 
-<div class="progression-shell prog-holo {{#if isProcessing}}is-processing{{/if}}"
+<div class="progression-shell swse-ui-shell swse-sheet-ui swse-progression-shell prog-holo {{#if isProcessing}}is-processing{{/if}}"
      data-application-content
      data-step-id="{{currentDescriptor.stepId}}">
 
@@ -89,7 +89,7 @@
         {{#if summaryPanelHtml}}
           {{{summaryPanelHtml}}}
         {{else}}
-          <div class="prog-summary-placeholder">
+          <div class="prog-summary-placeholder swse-card-schema swse-card-schema--identity swse-card-schema--placeholder">
             {{#if currentDescriptor}}
               <i class="fas {{currentDescriptor.icon}} prog-summary-placeholder__icon"></i>
             {{/if}}
@@ -106,7 +106,7 @@
         {{#if workSurfaceHtml}}
           {{{workSurfaceHtml}}}
         {{else}}
-          <div class="prog-work-placeholder">
+          <div class="prog-work-placeholder swse-card-schema swse-card-schema--choice swse-card-schema--placeholder">
             {{#if currentDescriptor}}
               <div class="prog-work-placeholder__header prog-heading">
                 <i class="fas {{currentDescriptor.icon}}"></i>
@@ -146,7 +146,7 @@
         {{#if detailsPanelHtml}}
           {{{detailsPanelHtml}}}
         {{else}}
-          <div class="prog-details-placeholder">
+          <div class="prog-details-placeholder swse-card-schema swse-card-schema--enumerated swse-card-schema--placeholder">
             {{#if focusedItem}}
               <div class="prog-details-placeholder__name prog-heading">
                 {{focusedItem.name}}
@@ -176,13 +176,13 @@
       Step chips use SVG frame backgrounds per state (current/complete/locked/warning).
       data-font-mode controls label font-family: 'standard' | 'aurabesh'
     ==================================================================== --}}
-    <div data-region="action-footer">
+    <div data-region="action-footer" class="swse-ui-frame swse-progression-footer-frame">
       <footer class="swse-footer" data-font-mode="{{fontMode}}">
 
         {{!-- ── LEFT: Back button ── --}}
         <div class="action-footer__nav">
           <button type="button"
-                  class="swse-btn swse-btn--back"
+                  class="swse-btn swse-ui-button swse-btn--back"
                   data-action="previous-step"
                   {{#unless footer.back.enabled}}disabled{{/unless}}>
             <span class="swse-btn__label">{{footer.back.label}}</span>
@@ -195,7 +195,7 @@
 
           {{#each visibleSteps}}
             <button type="button"
-                    class="swse-step-btn
+                    class="swse-step-btn swse-ui-button
                            {{#if this.isCurrent}}is-current{{/if}}
                            {{#if this.isComplete}}is-complete{{/if}}
                            {{#if this.isLocked}}is-locked{{/if}}

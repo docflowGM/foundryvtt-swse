@@ -65,19 +65,18 @@ export class DamageReductionResolver {
     let drValue = 0;
     let drSource = '';
 
-    // DR can come from:
-    // 1. Actor armor/suit (via ModifierEngine domain "damageReduction")
-    // 2. Vehicle hull/plating (system.damageReduction)
-    // 3. Talents or effects
-
-    // For now, check actor-level DR field (vehicles)
-    const actorDR = actor.system.damageReduction ?? 0;
-    if (actorDR > drValue) {
-      drValue = actorDR;
-      drSource = `Vehicle Armor (${drValue})`;
+    // DR can come from derived character/item aggregation or raw actor storage.
+    const derivedDR = Number(actor.system?.derived?.damageReduction?.highestValue ?? actor.system?.derived?.damageReduction?.all ?? actor.system?.derived?.damageReduction?.value ?? 0);
+    if (derivedDR > drValue) {
+      drValue = derivedDR;
+      drSource = `Derived DR (${drValue})`;
     }
 
-    // TODO: Integrate ModifierEngine domain "damageReduction" for characters
+    const actorDR = Number(actor.system?.damageReduction ?? 0);
+    if (actorDR > drValue) {
+      drValue = actorDR;
+      drSource = `Actor DR (${drValue})`;
+    }
 
     if (drValue <= 0) {
       return this._emptyResult(damage);
@@ -146,6 +145,6 @@ export class DamageReductionResolver {
    */
   static getCurrentDR(actor) {
     if (!actor) return 0;
-    return actor.system.damageReduction ?? 0;
+    return Number(actor.system?.derived?.damageReduction?.highestValue ?? actor.system?.derived?.damageReduction?.all ?? actor.system?.derived?.damageReduction?.value ?? actor.system?.damageReduction ?? 0);
   }
 }

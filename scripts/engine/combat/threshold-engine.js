@@ -34,6 +34,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 export class ThresholdEngine {
 
@@ -90,15 +91,17 @@ export class ThresholdEngine {
 
     let modifiers = [];
     try {
-      modifiers = await ModifierEngine.collectModifiers(actor, {
-        domain: "damageThreshold",
-        context
+      const allModifiers = await ModifierEngine.getAllModifiers(actor);
+      modifiers = (allModifiers || []).filter(m => {
+        if (!m || m.enabled === false) return false;
+        const target = String(m.target || '').toLowerCase();
+        return target === 'damagethreshold' || target === 'damage.threshold' || target === 'defense.damagethreshold';
       });
     } catch {
-      // ModifierEngine not available or error; use base only
+      // ModifierEngine unavailable; use base only
     }
 
-    const modifierTotal = modifiers.reduce((sum, m) => sum + m.value, 0);
+    const modifierTotal = modifiers.reduce((sum, m) => sum + Number(m.value || 0), 0);
 
     return {
       base,
@@ -116,12 +119,12 @@ export class ThresholdEngine {
   /* -------------------------------------------------------------------------- */
 
   static get enabled() {
-    return game.settings?.get('foundryvtt-swse', 'enableEnhancedMassiveDamage') ?? false;
+    return HouseRuleService.isEnabled('enableEnhancedMassiveDamage');
   }
 
   static _setting(key) {
     try {
-      return game.settings?.get('foundryvtt-swse', key);
+      return HouseRuleService.get(key);
     } catch {
       return false;
     }
@@ -238,18 +241,18 @@ export class ThresholdEngine {
     if (damage >= dt && dt > 0) {
       result.thresholdExceeded = true;
 
-      // Standard: -1 CT step
-      let ctShift = -1;
+      // Standard: worsen by 1 CT step
+      let ctShift = 1;
 
       // Double threshold penalty
       if (this.enabled && this._setting('doubleThresholdPenalty') && damage >= 2 * dt) {
-        ctShift = -2;
+        ctShift = 2;
         result.doubleThreshold = true;
       }
 
       // Stun threshold variant
       if (this.enabled && this._setting('stunThresholdRule') && isStun) {
-        ctShift = -2;
+        ctShift = 2;
         result.stunThreshold = true;
 
         // Stun >= 2x DT: immediately unconscious
@@ -258,9 +261,15 @@ export class ThresholdEngine {
         }
       }
 
-      // Determine persistence
-      const isPersistent = this.enabled && this._setting('persistentDTPenalty');
-      result.addCTShift(ctShift, isPersistent, 'threshold');
+      // Determine persistence with cap support
+      const persistentEnabled = this.enabled && this._setting('persistentDTPenalty');
+      const persistentCap = Math.max(0, Number(this._setting('persistentDTPenaltyCap') ?? 3));
+      const currentPersistent = Math.max(0, Number(target.system?.conditionTrack?.persistentSteps ?? 0));
+      const remainingPersistent = Math.max(0, persistentCap - currentPersistent);
+      const persistentSteps = persistentEnabled ? Math.min(ctShift, remainingPersistent) : 0;
+      const normalSteps = ctShift - persistentSteps;
+      if (persistentSteps > 0) result.addCTShift(persistentSteps, true, 'threshold');
+      if (normalSteps > 0) result.addCTShift(normalSteps, false, 'threshold');
     }
 
     // Ion-specific: DT check uses original (not halved) damage
@@ -301,30 +310,27 @@ export class ThresholdEngine {
 
     const target = result.target;
     const currentCT = target.system.conditionTrack?.current ?? 0;
+    const totalShift = result.ctShifts.reduce((sum, shift) => sum + Math.abs(Number(shift?.steps || 0)), 0);
+    const persistentShift = result.ctShifts.reduce((sum, shift) => sum + (shift?.persistent ? Math.abs(Number(shift?.steps || 0)) : 0), 0);
+    const shouldPersist = persistentShift > 0;
 
-    let totalShift = 0;
-
-    for (const shift of result.ctShifts) {
-      totalShift += Math.abs(shift.steps);
-    }
-
-    // Apply CT movement
-    const newCT = Math.min(currentCT + totalShift, 5);
-
-    // Stun knockout: move to bottom of CT
     if (result.stunKnockout) {
-      await ActorEngine.updateActor(target, {
-        'system.conditionTrack.current': 5
-      });
+      await ActorEngine.setConditionStep(target, 5, 'threshold');
+      if (shouldPersist) await ActorEngine.setConditionPersistent(target, true, 'threshold');
       await this._postChatMessage(target, result, 5);
       return;
     }
 
-    const updates = {
-      'system.conditionTrack.current': newCT
-    };
+    let newCT = currentCT;
+    if (totalShift > 0) {
+      await ActorEngine.applyConditionShift(target, totalShift, 'threshold');
+      newCT = Math.min(currentCT + totalShift, 5);
+    }
+    if (shouldPersist) {
+      await ActorEngine.setConditionPersistent(target, true, 'threshold');
+      await ActorEngine.incrementPersistentConditionSteps(target, persistentShift, 'threshold');
+    }
 
-    await ActorEngine.updateActor(target, updates);
     await this._postChatMessage(target, result, newCT);
   }
 

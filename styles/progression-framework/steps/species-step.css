@@ -380,3 +380,100 @@
   flex: 1;
   font-size: var(--prog-font-size-xs);
 }
+
+
+/* ============================================================================
+   QUICK-REFERENCE TABLE LAYOUT
+   ============================================================================ */
+
+.progression-shell .prog-quickref-stage {
+  min-height: 100%;
+}
+
+.progression-shell .prog-quickref-table {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.progression-shell .prog-quickref-table__header {
+  display: grid;
+  grid-template-columns: minmax(180px, 2fr) 90px minmax(220px, 2.2fr) 110px;
+  gap: 10px;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  padding: 10px 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10px;
+  color: rgba(120, 220, 255, 0.82);
+  background: linear-gradient(180deg, rgba(3, 11, 18, 0.98), rgba(3, 11, 18, 0.9));
+  border-bottom: 1px solid rgba(80, 220, 255, 0.16);
+}
+
+.progression-shell .prog-quickref-table__body {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.progression-shell .prog-quickref-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 2fr) 90px minmax(220px, 2.2fr) 110px;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+}
+
+.progression-shell .prog-quickref-row__cell {
+  min-width: 0;
+}
+
+.progression-shell .prog-species-row__name-cell,
+.progression-shell .prog-species-row__size,
+.progression-shell .prog-species-row__status {
+  display: flex;
+  align-items: center;
+}
+
+.progression-shell .prog-species-row__mods {
+  display: flex;
+  align-items: center;
+}
+
+.progression-shell .prog-species-row__mods-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.progression-shell .prog-species-row__mod {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(80, 220, 255, 0.12);
+  background: rgba(10, 22, 36, 0.72);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.progression-shell .prog-species-row__focus {
+  color: rgba(120, 220, 255, 0.82);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.progression-shell .prog-species-row__mods-empty {
+  color: rgba(120, 180, 220, 0.6);
+}
+
+@media (max-width: 980px) {
+  .progression-shell .prog-quickref-table__header,
+  .progression-shell .prog-quickref-row {
+    grid-template-columns: minmax(140px, 1.4fr) 72px minmax(150px, 1.6fr) 92px;
+  }
+}

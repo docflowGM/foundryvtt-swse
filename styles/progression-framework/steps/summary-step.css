@@ -441,3 +441,22 @@
     border-left-width: 2px;
   }
 }
+
+/* Phase-complete schema integration */
+.prog-identity-card.swse-card-schema,
+.prog-summary-section.swse-card-schema,
+.prog-empty-state.swse-card-schema,
+.prog-checklist.swse-card-schema {
+  position: relative;
+  overflow: hidden;
+}
+
+.prog-summary-section.swse-card-schema {
+  padding: 1rem;
+  border-bottom: none;
+  margin-bottom: 1rem;
+}
+
+.prog-summary-surface .prog-panel {
+  min-height: 0;
+}

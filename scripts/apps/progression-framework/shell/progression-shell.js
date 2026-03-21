@@ -748,7 +748,18 @@ export class ProgressionShell extends SWSEApplicationV2 {
       if (result.success) {
         swseLogger.log('[ProgressionShell] Finalization successful');
         ui.notifications.info('Character progression complete!');
-        this.close();
+        await this.close();
+        const sheet = this.actor?.sheet;
+        if (sheet) {
+          try {
+            if (sheet.minimized && typeof sheet.maximize === 'function') {
+              await sheet.maximize();
+            }
+            sheet.render(true);
+          } catch (sheetErr) {
+            swseLogger.warn('[ProgressionShell] Failed to re-open actor sheet after finalization', sheetErr);
+          }
+        }
       } else {
         swseLogger.error('[ProgressionShell] Finalization failed', result.error);
         ui.notifications.error(`Progression failed: ${result.error}`);
@@ -867,7 +878,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     event?.preventDefault();
     const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
     if (plugin?.enterStore) {
-      await plugin.enterStore(this.actor);
+      await plugin.enterStore(this.actor, this);
       this.render();
     }
   }

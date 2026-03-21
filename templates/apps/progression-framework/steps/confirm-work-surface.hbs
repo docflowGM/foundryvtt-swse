@@ -282,8 +282,16 @@
       <div class="prog-confirm__section-body">
         {{#if creditsState.rolled}}
           <div class="prog-confirm__detail-row">
-            <span class="prog-confirm__detail-label">Amount:</span>
+            <span class="prog-confirm__detail-label">Starting:</span>
             <span class="prog-confirm__detail-value prog-num--pos">{{creditsState.amount}}</span>
+          </div>
+          <div class="prog-confirm__detail-row">
+            <span class="prog-confirm__detail-label">Current:</span>
+            <span class="prog-confirm__detail-value">{{summary.credits.current}}</span>
+          </div>
+          <div class="prog-confirm__detail-row">
+            <span class="prog-confirm__detail-label">Spent:</span>
+            <span class="prog-confirm__detail-value">{{summary.credits.spent}}</span>
           </div>
           <div class="prog-confirm__detail-row">
             <span class="prog-confirm__detail-label">Source:</span>
@@ -378,6 +386,20 @@
               <span class="prog-num--pos">✓ Store Visited</span>
             </div>
             <p class="prog-confirm__store-note">You may revisit the store if needed.</p>
+            <div class="prog-confirm__detail-row">
+              <span class="prog-confirm__detail-label">Balance:</span>
+              <span class="prog-confirm__detail-value">{{summary.credits.current}}</span>
+            </div>
+            {{#if summary.recentPurchases.count}}
+              <div class="prog-confirm__detail-row">
+                <span class="prog-confirm__detail-label">Recent:</span>
+                <span class="prog-confirm__detail-value">{{summary.recentPurchases.count}} acquired</span>
+              </div>
+              <div class="prog-confirm__detail-row">
+                <span class="prog-confirm__detail-label">Items:</span>
+                <span class="prog-confirm__detail-value">{{join summary.recentPurchases.items ", "}}</span>
+              </div>
+            {{/if}}
             <button class="prog-btn prog-btn--secondary" data-action="enter-store" type="button">
               <i class="fas fa-shopping-bag"></i> Return to Store
             </button>

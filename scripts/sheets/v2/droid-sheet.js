@@ -278,12 +278,12 @@ export class SWSEV2DroidSheet extends
 
     root.querySelector(".roll-initiative")?.addEventListener("click", async (ev) => {
       ev.preventDefault();
-      await SWSERoll.rollInitiative(this.actor, { showDialog: true });
+      await this.actor.swseRollInitiative();
     }, { signal });
 
     root.querySelector(".take10-initiative")?.addEventListener("click", async (ev) => {
       ev.preventDefault();
-      await SWSERoll.rollInitiative(this.actor, { take10: true });
+      await this.actor.swseTake10Initiative();
     }, { signal });
 
     /* ---------------- ITEM OPEN ---------------- */

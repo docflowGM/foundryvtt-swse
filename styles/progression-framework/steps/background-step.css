@@ -340,3 +340,22 @@
   flex: 1;
   font-size: var(--prog-font-size-xs);
 }
+
+/* Phase-complete schema integration */
+.progression-shell .prog-background-header.swse-card-schema,
+.progression-shell .prog-background-search.swse-card-schema,
+.progression-shell .prog-background-categories.swse-card-schema,
+.progression-shell .prog-background-item.swse-card-schema,
+.progression-shell .prog-background-empty.swse-card-schema {
+  position: relative;
+  overflow: hidden;
+}
+
+.progression-shell .prog-background-search.swse-card-schema,
+.progression-shell .prog-background-categories.swse-card-schema {
+  padding: var(--prog-space-sm);
+}
+
+.progression-shell .prog-background-item.swse-card-schema {
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02), 0 0 14px rgba(0,180,255,0.08);
+}

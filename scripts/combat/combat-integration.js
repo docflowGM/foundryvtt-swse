@@ -166,7 +166,7 @@ export class ConditionTrackComponent {
         }
 
         if (persistent) {
-          return ui.notifications.warn('This condition is Persistent and cannot be removed by natural recovery.');
+          return ui.notifications.warn('This condition is Persistent and cannot be removed by the Recover Action.');
         }
 
         // Optional future action economy check
@@ -177,7 +177,7 @@ export class ConditionTrackComponent {
           }
         }
 
-        await actor.moveConditionTrack(-1);
+        await globalThis.SWSE.ActorEngine.recoverConditionStep(actor, 'recover-action');
         ui.notifications.info(`${actor.name} improves 1 step on the Condition Track.`);
       });
     }

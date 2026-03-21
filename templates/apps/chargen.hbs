@@ -1,4 +1,4 @@
-<div class="swse-chargen-root swse-frame swse-holo">
+<div class="swse-chargen-root swse-frame swse-holo swse-ui-shell swse-sheet-ui swse-chargen-shell swse-splash-screen">
 
   <header class="swse-header">
     <div>
@@ -27,7 +27,7 @@
     </div>
   </header>
 
-  <nav class="swse-step-bar">
+  <nav class="swse-step-bar swse-ui-tabs">
     <div class="swse-step {{#if (eq currentStep 'species')}}active{{/if}} {{#if characterData.species}}completed{{/if}}">
       1 Species
     </div>
@@ -45,7 +45,7 @@
     </div>
   </nav>
 
-  <div class="swse-utility-bar">
+  <div class="swse-utility-bar swse-store-stage">
     <div class="swse-progress-note">
       Step: {{uppercase currentStep}}
     </div>
@@ -75,7 +75,7 @@
   {{#if (eq currentStep "name")}}
   <main class="swse-body">
 
-    <aside class="swse-panel">
+    <aside class="swse-panel swse-card-schema swse-card-schema--identity swse-card-schema--filled">
       <h3>Character Overview</h3>
 
       <div class="swse-list">
@@ -98,7 +98,7 @@
       </div>
     </aside>
 
-    <section class="swse-panel">
+    <section class="swse-panel swse-card-schema swse-card-schema--identity swse-card-schema--pending">
       <h2 class="swse-chargen-main-title">Star Wars Saga Edition Character Generator</h2>
       <p class="swse-chargen-subtitle">Enter your character name and set the starting level.</p>
 
@@ -142,7 +142,7 @@
       </div>
     </section>
 
-    <aside class="swse-panel">
+    <aside class="swse-panel swse-card-schema swse-card-schema--identity swse-card-schema--filled">
       <h3>Details</h3>
       <div class="swse-details-text">
         The opening step defines the identity anchor for your character.
@@ -170,7 +170,7 @@
   {{#if (eq currentStep "abilities")}}
   <main class="swse-body">
 
-    <aside class="swse-panel">
+    <aside class="swse-panel swse-card-schema swse-card-schema--ability swse-card-schema--filled">
       <h3>Current Attributes</h3>
 
       <div class="swse-list">
@@ -194,7 +194,7 @@
       </div>
     </aside>
 
-    <section class="swse-panel">
+    <section class="swse-panel swse-card-schema swse-card-schema--choice swse-card-schema--pending">
       <h3 class="swse-step-body-title">Allocate Points</h3>
 
       <div class="swse-field">

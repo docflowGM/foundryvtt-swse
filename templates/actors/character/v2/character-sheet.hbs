@@ -51,6 +51,7 @@
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-left flexcol">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs"}}
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/second-wind-panel.hbs"}}
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs"}}
         </div>
         <div class="swse-v2-right flexcol">
@@ -63,6 +64,7 @@
     <!-- ABILITIES TAB -->
     <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="abilities">
       {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/abilities-panel.hbs"}}
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/racial-ability-panel.hbs"}}
     </section>
 
     <!-- SKILLS TAB -->
@@ -72,19 +74,29 @@
 
     <!-- COMBAT TAB -->
     <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="combat">
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/initiative-control.hbs"}}
+      {{#if actionEconomy}}
+        {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/action-economy-indicator.hbs"
+            actionState=actionEconomy.state
+            actionBreakdown=actionEconomy.breakdown
+            swiftMax=actionEconomy.state.swiftMax}}
+      {{/if}}
       {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs"}}
       {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs"}}
     </section>
 
     <!-- TALENTS TAB -->
     <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="talents">
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/feats-panel.hbs"}}
       {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/talents-panel.hbs"}}
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/languages-panel.hbs"}}
     </section>
 
     <!-- FORCE TAB -->
     {{#if actor.system.forceSensitive}}
     <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="force">
       {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/dark-side-panel.hbs"}}
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/force-panel.hbs"}}
     </section>
     {{/if}}
 

@@ -1,28 +1,28 @@
-<div class="holo-panel">
+<div class="holo-panel swse-ui-panel swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
   <div class="section-bar">
     <h3 class="section-header">Actions</h3>
-    <div class="muted" style="opacity:0.85; font-size:0.85rem;">Read-only — click an item-linked action to inspect</div>
+    <div class="muted swse-card-schema__eyebrow" style="opacity:0.85; font-size:0.85rem;">Read-only — click an item-linked action to inspect</div>
   </div>
 
   {{#if derived.actions.groups.length}}
-    <div class="swse-v2-actions">
+    <div class="swse-v2-actions swse-card-schema-grid">
       {{#each derived.actions.groups}}
-        <div class="swse-v2-action-group">
-          <div class="swse-v2-action-group-header">
+        <div class="swse-v2-action-group swse-ui-panel swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
+          <div class="swse-v2-action-group-header swse-card-header">
             <span class="label">{{this.label}}</span>
             <span class="count">{{this.count}}</span>
           </div>
 
           {{#each this.subgroups}}
-            <div class="swse-v2-action-subgroup">
-              <div class="swse-v2-action-subheader">
+            <div class="swse-v2-action-subgroup swse-ui-frame swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
+              <div class="swse-v2-action-subheader swse-card-header">
                 <span class="label">{{this.label}}</span>
                 <span class="count">{{this.count}}</span>
               </div>
 
               <div class="swse-v2-action-list">
                 {{#each this.items}}
-                  <div class="swse-v2-action-row">
+                  <div class="swse-v2-action-row swse-row-surface swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
                     <div class="swse-v2-action-row-top">
                       <div class="left">
                         {{#if this.itemId}}
@@ -60,7 +60,7 @@
                     {{/if}}
 
                     {{#if this.description}}
-                      <div class="muted" style="opacity:0.85; margin-top:4px;">{{this.description}}</div>
+                      <div class="muted swse-card-schema__body" style="opacity:0.85; margin-top:4px;">{{this.description}}</div>
                     {{/if}}
                   </div>
                 {{/each}}
@@ -71,6 +71,10 @@
       {{/each}}
     </div>
   {{else}}
-    <div class="muted" style="opacity:0.8;">No actions available.</div>
+    <div class="muted empty-state swse-ui-empty swse-card-schema swse-card-schema--choice swse-card-schema--placeholder" style="opacity:0.8;">
+      <span class="swse-card-schema__eyebrow">Enumerated Slot</span>
+      <span class="swse-card-schema__title">No actions available</span>
+      <span class="swse-card-schema__body">This actor does not currently expose any item-linked or condition-linked action cards.</span>
+    </div>
   {{/if}}
 </div>

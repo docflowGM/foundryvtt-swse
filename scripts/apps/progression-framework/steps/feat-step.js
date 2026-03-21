@@ -226,7 +226,7 @@ export class FeatStep extends ProgressionStepPlugin {
     // Group by category
     const categoryMap = {};
     for (const feat of legalFeats) {
-      const category = feat.system?.category || 'General';
+      const category = this._getFeatCategory(feat);
       if (!categoryMap[category]) {
         categoryMap[category] = [];
       }
@@ -263,6 +263,48 @@ export class FeatStep extends ProgressionStepPlugin {
       'Talent': 'fa-wand-magic-sparkles',
     };
     return iconMap[category] || 'fa-circle';
+  }
+
+
+  _getFeatCategory(feat) {
+    return feat?.system?.category || feat?.system?.featType || 'General';
+  }
+
+  _getFeatDescription(feat) {
+    const raw = feat?.system?.description;
+    if (typeof raw === 'string' && raw.trim()) return raw.trim();
+    if (raw && typeof raw === 'object' && typeof raw.value === 'string' && raw.value.trim()) return raw.value.trim();
+    const benefit = feat?.system?.benefit;
+    if (typeof benefit === 'string' && benefit.trim()) return benefit.trim();
+    return '';
+  }
+
+  _getFeatPrerequisites(feat) {
+    const raw = feat?.system?.prerequisites ?? feat?.system?.prerequisite;
+    if (Array.isArray(raw)) {
+      return raw.filter(Boolean).map(String).map(s => s.trim()).filter(Boolean);
+    }
+    if (typeof raw === 'string') {
+      const cleaned = raw.trim();
+      return cleaned ? [cleaned] : [];
+    }
+    return [];
+  }
+
+  /**
+   * Get prerequisite line for compact middle-panel display
+   */
+  _getPrerequisiteLine(feat) {
+    const raw = feat?.system?.prerequisites ?? feat?.system?.prerequisite;
+    if (Array.isArray(raw)) {
+      const cleaned = raw.filter(Boolean).map(String).map(s => s.trim()).filter(Boolean);
+      return cleaned.length ? cleaned.join(', ') : 'No prerequisite';
+    }
+    if (typeof raw === 'string') {
+      const cleaned = raw.trim();
+      return cleaned || 'No prerequisite';
+    }
+    return 'No prerequisite';
   }
 
   /**
@@ -329,7 +371,8 @@ export class FeatStep extends ProgressionStepPlugin {
         feats: featsToShow.map(feat => ({
           _id: feat._id,
           name: feat.name,
-          category: feat.system?.category || 'General',
+          category: this._getFeatCategory(feat),
+          prerequisiteLine: this._getPrerequisiteLine(feat),
           isSuggested: this._suggestedFeats.some(s => s._id === feat._id),
           isFocused: feat._id === this._focusedFeatId,
           isSelected: feat._id === this._selectedFeatId,
@@ -389,9 +432,9 @@ export class FeatStep extends ProgressionStepPlugin {
         feat,
         isSuggested,
         isSelected,
-        category: feat.system?.category || 'General',
-        description: feat.system?.description || '',
-        prerequisites: feat.system?.prerequisites || [],
+        category: this._getFeatCategory(feat),
+        description: this._getFeatDescription(feat),
+        prerequisites: this._getFeatPrerequisites(feat),
         isRepeatable: this._isRepeatable(feat.name),
       },
     };
@@ -429,8 +472,8 @@ export class FeatStep extends ProgressionStepPlugin {
     const q = this._searchQuery.toLowerCase();
     return feats.filter(feat =>
       feat.name.toLowerCase().includes(q) ||
-      (feat.system?.description || '').toLowerCase().includes(q) ||
-      (feat.system?.category || '').toLowerCase().includes(q)
+      this._getFeatDescription(feat).toLowerCase().includes(q) ||
+      this._getFeatCategory(feat).toLowerCase().includes(q)
     );
   }
 

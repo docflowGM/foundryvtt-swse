@@ -601,3 +601,55 @@
 .feat-show-all-toggle:hover {
   opacity: 0.8;
 }
+
+
+/* ====================================================================
+   QUICK-REFERENCE FEAT ROWS
+   ==================================================================== */
+
+.feat-work-surface {
+  min-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 2px;
+}
+
+.feat-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.feat-item-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
+}
+
+.feat-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-self: end;
+}
+
+.feat-prereq-line {
+  font-size: 0.76rem;
+  color: rgba(150, 200, 235, 0.78);
+  overflow-wrap: anywhere;
+}
+
+.feat-show-more {
+  padding: 0.4rem 0.2rem 0;
+}
+
+@media (max-width: 900px) {
+  .feat-item {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .feat-item-meta {
+    justify-self: start;
+  }
+}

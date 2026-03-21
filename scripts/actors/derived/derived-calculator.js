@@ -385,8 +385,13 @@ export class DerivedCalculator {
         const enableEnhanced = safeGet('enableEnhancedMassiveDamage', false);
         const modifyFormula = safeGet('modifyDamageThresholdFormula', false);
 
-        let damageThreshold =
-          (updates['system.derived.defenses']?.fortitude?.total) ?? 10;
+        const fortitudeTotal = (updates['system.derived.defenses']?.fortitude?.total) ?? 10;
+        const rawSizeThresholdBonuses = {
+          fine: -10, diminutive: -5, tiny: 0, small: 0,
+          medium: 0, large: 5, huge: 10, gargantuan: 20, colossal: 50
+        };
+        const actorSizeRaw = (actor.system?.size || actor.size || 'medium').toLowerCase();
+        let damageThreshold = fortitudeTotal + (rawSizeThresholdBonuses[actorSizeRaw] ?? 0);
 
         if (enableEnhanced && modifyFormula) {
 

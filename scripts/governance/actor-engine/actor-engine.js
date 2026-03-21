@@ -10,6 +10,7 @@ import { PrerequisiteIntegrityChecker } from "/systems/foundryvtt-swse/scripts/g
 import { PreflightValidator } from "/systems/foundryvtt-swse/scripts/governance/enforcement/preflight-validator.js";
 import { MissingPrereqsTracker } from "/systems/foundryvtt-swse/scripts/governance/integrity/missing-prereqs-tracker.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
+import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 
 /**
  * ActorEngine
@@ -828,51 +829,50 @@ export const ActorEngine = {
         source: damagePacket.source
       });
 
-      // ========================================
-      // Compute final damage (apply armor, abilities, etc.)
-      // ========================================
-      let finalDamage = damagePacket.amount;
+      const { DamageResolutionEngine } = await import("/systems/foundryvtt-swse/scripts/engine/combat/damage-resolution-engine.js");
+      const resolution = await DamageResolutionEngine.resolveDamage({
+        actor,
+        damage: damagePacket.amount,
+        damageType: damagePacket.type ?? 'normal',
+        source: damagePacket.sourceActor ?? null,
+        options: damagePacket.options ?? {},
+      });
 
-      // TODO: Apply ModifierEngine for damage reduction
-      // const modifiers = await ModifierEngine.getDamageModifiers(actor, damagePacket.type);
-      // finalDamage = ModifierEngine.applyModifiers(finalDamage, modifiers);
+      await this._maybeResolveForcePointRescue(actor, resolution, damagePacket);
 
-      // ========================================
-      // Apply damage & condition logic atomically
-      // ========================================
-      const currentHP = SchemaAdapters.getHP(actor);
-      const maxHP = SchemaAdapters.getMaxHP(actor);
-      const newHP = Math.max(0, currentHP - finalDamage);
+      const updates = {
+        ...SchemaAdapters.setHPUpdate(resolution.hpAfter)
+      };
 
-      // Check if condition shift needed (at threshold)
-      const conditionThreshold = Math.floor(maxHP / 4); // Quarter health
-      const wasAboveThreshold = currentHP > conditionThreshold;
-      const isNowBelowThreshold = newHP <= conditionThreshold;
-      const shouldShiftCondition = damagePacket.conditionShift &&
-                                   wasAboveThreshold &&
-                                   isNowBelowThreshold;
-
-      // Build single atomic update
-      const updates = SchemaAdapters.setHPUpdate(newHP);
-
-      if (shouldShiftCondition) {
-        // Shift condition track within same mutation
-        const currentCondition = actor.system.conditionTrack?.current || 0;
-        updates['system.conditionTrack.current'] = Math.max(0, currentCondition + 1);
+      // Persist bonus/temp HP depletion from the same authoritative resolution packet.
+      if (resolution.bonusHpAfter !== undefined) {
+        updates['system.hp.bonus'] = Math.max(0, Number(resolution.bonusHpAfter) || 0);
+      }
+      if (resolution.mitigation?.tempHP?.after !== undefined) {
+        updates['system.hp.temp'] = Math.max(0, Number(resolution.mitigation.tempHP.after) || 0);
       }
 
-      // Apply all updates in one mutation
+      if (resolution.conditionAfter !== undefined && resolution.conditionAfter !== (actor.system?.conditionTrack?.current ?? 0)) {
+        updates['system.conditionTrack.current'] = resolution.conditionAfter;
+      }
+      if (resolution.conditionPersistent === true) {
+        updates['system.conditionTrack.persistent'] = true;
+      }
+
       await this.updateActor(actor, updates);
 
-      SWSELogger.log(`Damage applied to ${actor.name}: ${finalDamage}HP (final: ${newHP}/${maxHP})`, {
+      SWSELogger.log(`Damage applied to ${actor.name}: ${damagePacket.amount} incoming → ${resolution.damageToHP} HP`, {
         source: damagePacket.source,
-        conditionShifted: shouldShiftCondition
+        thresholdExceeded: resolution.thresholdExceeded,
+        conditionAfter: resolution.conditionAfter,
+        measuredDamageForThreshold: resolution.thresholdMeasuredDamage
       });
 
       return {
-        applied: finalDamage,
-        newHP,
-        conditionShifted: shouldShiftCondition
+        applied: resolution.damageToHP,
+        newHP: resolution.hpAfter,
+        conditionShifted: resolution.conditionAfter !== (actor.system?.conditionTrack?.current ?? 0),
+        resolution
       };
 
     } catch (err) {
@@ -908,6 +908,7 @@ export const ActorEngine = {
 
       const currentHP = SchemaAdapters.getHP(actor);
       const maxHP = SchemaAdapters.getMaxHP(actor);
+      const currentCT = Number(actor.system?.conditionTrack?.current ?? 0);
       const newHP = Math.min(maxHP, currentHP + amount);
       const actualHealing = newHP - currentHP;
 
@@ -916,7 +917,16 @@ export const ActorEngine = {
         return { applied: 0, newHP };
       }
 
-      await this.updateActor(actor, SchemaAdapters.setHPUpdate(newHP));
+      const updates = {
+        ...SchemaAdapters.setHPUpdate(newHP)
+      };
+
+      // RAW: Any healing while at 0 HP / disabled revives and moves +1 step up the CT.
+      if (currentHP <= 0 && currentCT > 0) {
+        updates['system.conditionTrack.current'] = Math.max(0, currentCT - 1);
+      }
+
+      await this.updateActor(actor, updates);
 
       SWSELogger.log(`Healing applied to ${actor.name}: +${actualHealing}HP (now: ${newHP}/${maxHP})`, {
         source
@@ -1005,7 +1015,8 @@ export const ActorEngine = {
       }
 
       await this.updateActor(actor, {
-        'system.conditionTrack.persistent': persistent
+        'system.conditionTrack.persistent': persistent,
+        ...(persistent ? {} : { 'system.conditionTrack.persistentSteps': 0 })
       });
 
       SWSELogger.log(`Condition persistent flag updated for ${actor.name}`, {
@@ -1038,8 +1049,8 @@ export const ActorEngine = {
   async applyConditionShift(actor, direction, source = 'manual') {
     try {
       if (!actor) {throw new Error('applyConditionShift() called with no actor');}
-      if (direction !== 1 && direction !== -1) {
-        throw new Error(`Invalid shift direction: ${direction} (must be +1 or -1)`);
+      if (!Number.isInteger(direction) || direction === 0) {
+        throw new Error(`Invalid shift direction: ${direction} (must be a non-zero integer)`);
       }
 
       SWSELogger.debug(`ActorEngine.applyConditionShift → ${actor.name}`, {
@@ -1047,8 +1058,8 @@ export const ActorEngine = {
         source
       });
 
-      const currentCondition = actor.system.conditionTrack?.current || 0;
-      const newCondition = Math.max(0, currentCondition + direction);
+      const currentCondition = Number(actor.system.conditionTrack?.current || 0);
+      const newCondition = Math.min(5, Math.max(0, currentCondition + direction));
 
       if (newCondition === currentCondition) {
         SWSELogger.debug(`${actor.name} condition shift had no effect (at boundary)`);
@@ -1061,11 +1072,13 @@ export const ActorEngine = {
 
       const directionLabel = direction > 0 ? 'worsened' : 'improved';
       SWSELogger.log(`Condition ${directionLabel} for ${actor.name} (now: ${newCondition})`, {
-        source
+        source,
+        requestedShift: direction,
+        appliedShift: newCondition - currentCondition
       });
 
       return {
-        applied: direction,
+        applied: newCondition - currentCondition,
         newCondition
       };
 
@@ -1078,6 +1091,131 @@ export const ActorEngine = {
       throw err;
     }
   },
+
+  /**
+   * Increment persistent CT step counter.
+   * Used by threshold house rules to track capped persistent penalties.
+   */
+  async incrementPersistentConditionSteps(actor, amount = 1, source = 'threshold') {
+    try {
+      if (!actor) throw new Error('incrementPersistentConditionSteps() requires actor');
+      const delta = Math.max(0, Number(amount) || 0);
+      if (delta === 0) return { applied: 0, total: Number(actor.system?.conditionTrack?.persistentSteps ?? 0) };
+
+      const current = Math.max(0, Number(actor.system?.conditionTrack?.persistentSteps ?? 0));
+      const total = current + delta;
+      await this.updateActor(actor, { 'system.conditionTrack.persistentSteps': total });
+      return { applied: delta, total, source };
+    } catch (err) {
+      SWSELogger.error(`ActorEngine.incrementPersistentConditionSteps failed for ${actor?.name ?? 'unknown actor'}`, { error: err, amount, source });
+      throw err;
+    }
+  },
+
+  /**
+   * Offer Force Point rescue for lethal/destructive threshold hits.
+   * Mutates only the in-memory resolution packet plus FP state; caller persists actor state.
+   * @private
+   */
+  async _maybeResolveForcePointRescue(actor, resolution, damagePacket = {}) {
+    try {
+      if (!actor || !resolution?.forceRescueEligible || (!resolution.dead && !resolution.destroyed)) return false;
+
+      const { ForcePointsService } = await import('/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js');
+      const canRescue = ForcePointsService.canRescue(actor, {
+        damage: resolution.thresholdMeasuredDamage ?? damagePacket.amount ?? 0,
+        hp: resolution.hpAfter,
+        threshold: resolution.thresholdTotal
+      });
+      if (!canRescue) return false;
+
+      const { SWSEDialogV2 } = await import('/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js');
+      const label = resolution.destroyed ? 'destruction' : 'death';
+      const title = resolution.destroyed ? 'Spend Force Point to Avoid Destruction?' : 'Spend Force Point to Avoid Death?';
+      const yes = await SWSEDialogV2.confirm({
+        title,
+        content: `<p><strong>${actor.name}</strong> would suffer ${label} from this hit.</p><p>Spend 1 Force Point to remain at <strong>0 HP</strong>, move to the bottom of the Condition Track, and become ${resolution.destroyed ? 'disabled' : 'unconscious'} instead?</p>`,
+        defaultYes: true
+      });
+      if (!yes) return false;
+
+      const spend = await this.spendForcePoints(actor, 1);
+      if (!spend?.spent) return false;
+      await actor.setFlag?.('foundryvtt-swse', 'alreadyRescuedThisResolution', true);
+
+      resolution.forceRescueUsed = true;
+      resolution.forceRescueEligible = false;
+      resolution.dead = false;
+      resolution.destroyed = false;
+      resolution.unconscious = actor.type === 'character' || actor.type === 'npc' || actor.type === 'beast';
+      resolution.disabled = actor.type === 'droid' || actor.type === 'object' || actor.type === 'device' || actor.type === 'vehicle';
+      resolution.hpAfter = 0;
+      resolution.conditionAfter = 5;
+      resolution.conditionDelta = Math.max(0, 5 - Number(resolution.conditionBefore ?? 0));
+      resolution.resolutionNote = 'force-point-rescue';
+      return true;
+    } catch (err) {
+      SWSELogger.error(`ActorEngine._maybeResolveForcePointRescue failed for ${actor?.name ?? 'unknown actor'}`, { error: err });
+      return false;
+    }
+  },
+
+  /**
+   * recoverConditionStep() — RAW Recover Action support.
+   *
+   * In combat, recovering 1 CT step requires 3 Swift Actions which may be
+   * spent in the same round || across consecutive rounds. Persistent
+   * conditions block the Recover Action.
+   */
+  async recoverConditionStep(actor, source = 'recover-action') {
+    try {
+      if (!actor) throw new Error('recoverConditionStep() requires actor');
+
+      const current = Math.max(0, Number(actor.system?.conditionTrack?.current ?? 0));
+      const persistent = actor.system?.conditionTrack?.persistent === true;
+      if (current <= 0) return { applied: false, reason: 'no-condition' };
+      if (persistent) return { applied: false, reason: 'persistent' };
+
+      const combat = game.combat;
+      const combatant = combat?.combatants?.find?.(c => c.actorId === actor.id) ?? actor.combatant;
+      const inCombat = !!combat && !!combatant;
+
+      if (!inCombat) {
+        await this.applyConditionShift(actor, -1, source);
+        await actor.unsetFlag?.('foundryvtt-swse', 'conditionRecoverProgress');
+        return { applied: true, stepsRecovered: 1, spent: 3, inCombat: false, complete: true };
+      }
+
+      const progress = foundry.utils.deepClone(
+        actor.getFlag?.('foundryvtt-swse', 'conditionRecoverProgress') ?? {}
+      );
+      const combatId = combat.id;
+      const round = Number(combat.round ?? 0);
+
+      const sameCombat = progress.combatId === combatId;
+      const sameRound = Number(progress.round ?? -999) == round;
+      const nextRound = Number(progress.round ?? -999) == (round - 1);
+
+      const spent = (sameCombat && (sameRound || nextRound)) ? Number(progress.spent ?? 0) + 1 : 1;
+      const payload = { combatId, round, spent };
+
+      if (spent >= 3) {
+        await this.applyConditionShift(actor, -1, source);
+        await actor.unsetFlag?.('foundryvtt-swse', 'conditionRecoverProgress');
+        return { applied: true, stepsRecovered: 1, spent, inCombat: true, complete: true };
+      }
+
+      await actor.setFlag?.('foundryvtt-swse', 'conditionRecoverProgress', payload);
+      return { applied: false, reason: 'progress', spent, remaining: Math.max(0, 3 - spent), inCombat: true, complete: false };
+    } catch (err) {
+      SWSELogger.error(`ActorEngine.recoverConditionStep failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        source
+      });
+      return { applied: false, reason: 'error', error: err };
+    }
+  },
+
 
   /**
    * updateActionEconomy() — Update action economy state
@@ -1260,23 +1398,41 @@ export const ActorEngine = {
     try {
       if (!actor) {throw new Error('applySecondWind() requires actor');}
 
-      // ========================================
-      // PHASE A FIX 4: Heroic-only enforcement
-      // ========================================
-      const isHeroic = actor.type === 'character' ||
-                       (actor.type === 'npc' && actor.system.class);
+      const heroicLevel = Number(actor.system?.heroicLevel ?? actor.system?.level ?? 0);
+      const hasExtraSecondWindFeat = actor.items?.some(i => i.type === 'feat' && i.name === 'Extra Second Wind') === true;
+      const hasToughAsNails = actor.items?.some(i => i.type === 'talent' && i.name === 'Tough as Nails') === true;
+      const isHeroic = actor.type === 'character' || heroicLevel > 0;
+      const canNonHeroicSecondWind = hasExtraSecondWindFeat === true;
 
-      if (!isHeroic) {
+      if (!isHeroic && !canNonHeroicSecondWind) {
         SWSELogger.warn(`Second Wind attempt on non-heroic actor: ${actor.name}`);
         return {
           success: false,
-          reason: `${actor.name} is not a heroic character and cannot use Second Wind`
+          reason: `${actor.name} is not eligible to use Second Wind`
         };
       }
 
-      // ========================================
-      // PHASE B FIX 5: Swift action validation (MOVED FROM UI)
-      // ========================================
+      // RAW: You may only catch a second wind at half HP or below.
+      const currentHP = SchemaAdapters.getHP(actor);
+      const maxHP = SchemaAdapters.getMaxHP(actor);
+      if (currentHP > Math.floor(maxHP / 2)) {
+        return {
+          success: false,
+          reason: 'Second Wind may only be used at half Hit Points or lower'
+        };
+      }
+
+      // Once per encounter cap.
+      const activeCombatId = game.combat?.started ? game.combat.id : null;
+      const encounterFlag = actor.getFlag?.('foundryvtt-swse', 'secondWindEncounterUsed') ?? null;
+      if (activeCombatId && encounterFlag === activeCombatId) {
+        return {
+          success: false,
+          reason: 'Second Wind can only be used once per encounter'
+        };
+      }
+
+      // Swift action validation while in combat.
       if (options.validateCombat !== false) {
         const inCombat = game.combat?.combatants.some(c => c.actor?.id === actor.id);
         if (inCombat) {
@@ -1290,27 +1446,22 @@ export const ActorEngine = {
         }
       }
 
-      const uses = actor.system.secondWind?.uses ?? 0;
+      const conScore = Number(actor.system?.abilities?.con?.score ?? actor.system?.attributes?.con?.value ?? actor.system?.attributes?.con?.total ?? 10);
+      const conMod = Number(actor.system?.abilities?.con?.mod ?? actor.system?.derived?.attributes?.con?.mod ?? 0);
+      const fortClassBonus = Number(actor.system?.defenses?.fortitude?.classBonus ?? 0);
+      const baseDailyUses = HouseRuleService.isEnabled('secondWindWebEnhancement')
+        ? Math.max(1, 1 + fortClassBonus + conMod)
+        : 1;
+      const extraUseMultiplier = (hasExtraSecondWindFeat ? 1 : 0) + (hasToughAsNails ? 1 : 0);
+      const computedMaxUses = Math.max(1, baseDailyUses + (baseDailyUses * extraUseMultiplier));
+      const storedUses = Number(actor.system.secondWind?.uses ?? 0);
+      const uses = Math.max(0, Math.min(storedUses, computedMaxUses));
       if (uses < 1) {
         return { success: false, reason: 'No Second Wind uses remaining' };
       }
 
-      const level = actor.system.level ?? 1;
-      let heal = 5 + Math.floor(level / 4) * 5;
+      const heal = Math.max(Math.floor(maxHP / 4), conScore);
 
-      // HOUSERULE: Web Enhancement variant formula
-      const webEnhancement = game.settings.get('foundryvtt-swse', 'secondWindWebEnhancement');
-      if (webEnhancement) {
-        const chaMod = (actor.system.abilities?.cha?.mod ?? 0);
-        const d4Roll = Math.floor(Math.random() * 4) + 1; // 1d4
-        heal = 5 + chaMod + d4Roll;
-
-        SWSELogger.debug(`Web Enhancement Second Wind: 5 + CHA(${chaMod}) + 1d4(${d4Roll}) = ${heal} HP`);
-      }
-
-      // Get authoritative HP source
-      const currentHP = SchemaAdapters.getHP(actor);
-      const maxHP = SchemaAdapters.getMaxHP(actor);
       const newHP = Math.min(currentHP + heal, maxHP);
       const actualHealing = newHP - currentHP;
 
@@ -1319,10 +1470,11 @@ export const ActorEngine = {
       // ========================================
       const improvements = {
         ...SchemaAdapters.setHPUpdate(newHP),
+        'system.secondWind.max': computedMaxUses,
         'system.secondWind.uses': Math.max(0, uses - 1)
       };
 
-      const improvedSecondWind = game.settings.get('foundryvtt-swse', 'secondWindImproved');
+      const improvedSecondWind = HouseRuleService.isEnabled('secondWindImproved');
       if (improvedSecondWind) {
         // Also move up condition track (+1 improvement = -1 on numeric scale)
         const currentCT = actor.system.conditionTrack?.current ?? 0;
@@ -1333,6 +1485,9 @@ export const ActorEngine = {
 
       // Batch update: HP restoration + use consumption + optional condition improvement
       await this.updateActor(actor, improvements);
+      if (activeCombatId) {
+        await actor.setFlag?.('foundryvtt-swse', 'secondWindEncounterUsed', activeCombatId);
+      }
 
       const resultLog = {
         healed: actualHealing,
@@ -1378,12 +1533,20 @@ export const ActorEngine = {
     try {
       if (!actor) {throw new Error('resetSecondWind() called with no actor');}
 
-      // PHASE A FIX 3: Write correct field (system.secondWind.uses, not .used phantom)
-      const maxUses = actor.system.secondWind?.max ?? 1;
+      const conMod = Number(actor.system?.abilities?.con?.mod ?? actor.system?.derived?.attributes?.con?.mod ?? 0);
+      const fortClassBonus = Number(actor.system?.defenses?.fortitude?.classBonus ?? 0);
+      const hasExtraSecondWindFeat = actor.items?.some(i => i.type === 'feat' && i.name === 'Extra Second Wind') === true;
+      const hasToughAsNails = actor.items?.some(i => i.type === 'talent' && i.name === 'Tough as Nails') === true;
+      const baseDailyUses = HouseRuleService.isEnabled('secondWindWebEnhancement')
+        ? Math.max(1, 1 + fortClassBonus + conMod)
+        : 1;
+      const maxUses = Math.max(1, baseDailyUses + (baseDailyUses * ((hasExtraSecondWindFeat ? 1 : 0) + (hasToughAsNails ? 1 : 0))));
 
       await this.updateActor(actor, {
+        'system.secondWind.max': maxUses,
         'system.secondWind.uses': maxUses
       });
+      await actor.unsetFlag?.('foundryvtt-swse', 'secondWindEncounterUsed');
 
       SWSELogger.log(`Second wind reset for ${actor.name}`, {
         restoredUses: maxUses,
@@ -1467,7 +1630,8 @@ export const ActorEngine = {
 
       await this.updateActor(actor, {
         'system.secondWind.uses': 1,
-        'system.conditionTrack.current': newCT
+        'system.conditionTrack.current': newCT,
+        'system.conditionTrack.persistent': true
       });
 
       SWSELogger.log(`${actor.name} accepts Edge of Exhaustion`, {

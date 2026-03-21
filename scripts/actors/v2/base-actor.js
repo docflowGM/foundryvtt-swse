@@ -216,9 +216,7 @@ export class SWSEV2BaseActor extends SWSEActorBase {
     // If persistent and improving (lowering step), block unless forced.
     if (!force && persistent && next < current) {return false;}
 
-    await ActorEngine.updateActor(this, {
-      'system.conditionTrack.current': next
-    });
+    await ActorEngine.setConditionStep(this, next, 'BaseActor.setConditionTrackStep');
 
     return true;
   }
@@ -239,9 +237,7 @@ export class SWSEV2BaseActor extends SWSEActorBase {
   }
 
   async setConditionTrackPersistent(flag) {
-    await ActorEngine.updateActor(this, {
-      'system.conditionTrack.persistent': flag === true
-    });
+    await ActorEngine.setConditionPersistent(this, flag === true, 'BaseActor.setConditionTrackPersistent');
     return true;
   }
 

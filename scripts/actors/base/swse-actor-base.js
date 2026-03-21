@@ -107,47 +107,21 @@ export class SWSEActorBase extends Actor {
       return { success: false, applied: 0, newHP: this.system?.hp?.value ?? 0 };
     }
 
-    const hp = this.system?.hp ?? { value: 0, max: 0, bonus: 0, temp: 0 };
-    let remaining = amount;
-    const updates = {};
-
-    // Consume bonus HP first (if not ignored)
-    if (hp.bonus > 0 && !options.ignoreBonus) {
-      const used = Math.min(hp.bonus, remaining);
-      remaining -= used;
-      updates['system.hp.bonus'] = Math.max(0, hp.bonus - used);
-    }
-
-    // Consume temp HP next (if not ignored)
-    if (hp.temp > 0 && !options.ignoreTemp) {
-      const used = Math.min(hp.temp, remaining);
-      remaining -= used;
-      updates['system.hp.temp'] = Math.max(0, hp.temp - used);
-    }
-
-    // Apply remaining damage to real HP
-    let newHP = hp.value;
-    if (remaining > 0) {
-      newHP = Math.max(0, hp.value - remaining);
-      updates['system.hp.value'] = newHP;
-    }
-
-    // Apply updates
-    if (Object.keys(updates).length > 0) {
-      try {
-        const ActorEngine = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js").then(m => m.ActorEngine);
-        await ActorEngine.updateActor(this, updates, { diff: true });
-      } catch (err) {
-        // Fallback if ActorEngine not available
-        await this.update(updates, { diff: true });
-      }
-    }
+    const ActorEngine = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js").then(m => m.ActorEngine);
+    const result = await ActorEngine.applyDamage(this, {
+      amount,
+      type: options.damageType || options.type || 'normal',
+      source: options.source || 'legacy-actor-applyDamage',
+      sourceActor: options.sourceActor || null,
+      options
+    });
 
     return {
       success: true,
-      applied: amount,
-      newHP: newHP,
-      destroyed: false  // Type-specific logic (droid threshold) deferred to caller
+      applied: result?.applied ?? amount,
+      newHP: result?.newHP ?? (this.system?.hp?.value ?? 0),
+      resolution: result?.resolution,
+      destroyed: result?.resolution?.destroyed === true
     };
   }
 
@@ -170,30 +144,13 @@ export class SWSEActorBase extends Actor {
       return { success: false, healed: 0, newHP: this.system?.hp?.value ?? 0 };
     }
 
-    const hp = this.system?.hp ?? { value: 0, max: 0 };
-
-    // Prevent healing dead actors (unless forced, which is caller's responsibility)
-    if (hp.value <= -1) {
-      return { success: false, healed: 0, newHP: hp.value };
-    }
-
-    const newHP = Math.min(hp.max, hp.value + amount);
-    const healed = newHP - hp.value;
-
-    if (healed > 0) {
-      try {
-        const ActorEngine = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js").then(m => m.ActorEngine);
-        await ActorEngine.updateActor(this, { 'system.hp.value': newHP }, { diff: true });
-      } catch (err) {
-        // Fallback if ActorEngine not available
-        await this.update({ 'system.hp.value': newHP }, { diff: true });
-      }
-    }
+    const ActorEngine = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js").then(m => m.ActorEngine);
+    const result = await ActorEngine.applyHealing(this, amount, options.source || 'legacy-actor-applyHealing');
 
     return {
       success: true,
-      healed,
-      newHP
+      healed: result?.applied ?? 0,
+      newHP: result?.newHP ?? (this.system?.hp?.value ?? 0)
     };
   }
 

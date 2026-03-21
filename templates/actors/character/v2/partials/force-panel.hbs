@@ -1,10 +1,10 @@
 
-<section class="force-panel v3-panel holo-panel">
+<section class="force-panel v3-panel holo-panel swse-ui-panel swse-force-suite">
 
   <header class="section-bar force-controls">
     <h3 class="section-header">Force Suite</h3>
 
-    <div class="force-filter-bar">
+    <div class="force-filter-bar swse-control-cluster">
       <select data-action="force-sort">
         <option value="name">Sort: Name</option>
         <option value="tag">Sort: Tag</option>
@@ -21,20 +21,20 @@
     </div>
   </header>
 
-  <div class="force-zone hand-zone {{#if lowHand}}low-hand{{/if}}">
+  <div class="force-zone swse-ui-panel hand-zone {{#if lowHand}}low-hand{{/if}}">
     <div class="zone-label">
       Hand ({{forceSuite.hand.length}})
     </div>
 
-    <div class="force-card-grid">
+    <div class="force-card-grid swse-dense-grid">
       {{#each forceSuite.hand as |power|}}
-        <div class="force-card"
+        <div class="force-card swse-dense-card swse-ui-panel"
              data-item-id="{{power.id}}"
              data-tags="{{power.tagString}}">
 
           <div class="force-card-inner">
 
-            <div class="force-card-face front">
+            <div class="force-card-face front swse-card-face">
               <div class="force-card-header">
                 <span class="force-name">{{power.name}}</span>
               </div>
@@ -52,7 +52,7 @@
               </div>
             </div>
 
-            <div class="force-card-face back">
+            <div class="force-card-face back swse-card-face">
 
               <div class="force-back-content">
                 {{#if power.system}}
@@ -78,15 +78,15 @@
     </div>
   </div>
 
-  <div class="force-zone discard-zone">
+  <div class="force-zone swse-ui-panel discard-zone">
     <div class="zone-label">
       Discard ({{forceSuite.discard.length}})
     </div>
 
-    <div class="force-card-grid discard">
+    <div class="force-card-grid discard swse-dense-grid">
       {{#each forceSuite.discard as |power|}}
         <div class="force-card discarded">
-          <div class="force-card-face front">
+          <div class="force-card-face front swse-card-face">
             <span>{{power.name}}</span>
           </div>
         </div>

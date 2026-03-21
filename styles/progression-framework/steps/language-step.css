@@ -551,3 +551,21 @@
   color: #00f0ff;
   font-weight: 600;
 }
+
+/* Phase-complete schema integration */
+.language-work-surface {
+  min-height: 0;
+  height: 100%;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.language-section.swse-card-schema,
+.language-item.swse-card-schema {
+  position: relative;
+  overflow: hidden;
+}
+
+.language-item.swse-card-schema {
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02), 0 0 12px rgba(0,180,255,0.08);
+}

@@ -1,76 +1,62 @@
 {{!--
   species-work-surface.hbs
-  CENTER PANEL — dense species databank browser
+  CENTER PANEL — quick-reference species table.
 
-  Species are displayed as compact horizontal rows for efficient browsing
-  of 100+ entries. Optional small thumbnail; clean fallback if no image.
-
-  Hover → updates right details panel
-  Click → focus (selects and updates left summary)
-  Double-click or action="commit-item" → commits species
+  Rows stay compact and scrollable in the middle body.
+  Right body owns the richer descriptive details.
 --}}
 
-<div class="prog-species-browse">
+<div class="prog-species-browse prog-quickref-stage">
+  <div class="prog-quickref-table prog-species-table" role="listbox" aria-label="Species">
+    <div class="prog-quickref-table__header prog-species-table__header">
+      <span>Species</span>
+      <span>Size</span>
+      <span>Attribute Adjustments</span>
+      <span>Status</span>
+    </div>
 
-  {{!-- Row list --}}
-  <div class="prog-species-list" role="listbox" aria-label="Species">
+    <div class="prog-quickref-table__body prog-species-list">
+      {{#each species}}
+        <button class="prog-quickref-row prog-species-row
+                       {{#if (eq id ../focusedSpeciesId)}}prog-quickref-row--focused prog-species-row--focused{{/if}}
+                       {{#if (eq id ../committedSpeciesId)}}prog-quickref-row--committed prog-species-row--committed{{/if}}"
+                data-action="focus-item"
+                data-item-id="{{this.id}}"
+                type="button"
+                role="option"
+                {{#if (eq id ../committedSpeciesId)}}aria-selected="true"{{/if}}>
 
-    {{#each species}}
-      <button class="prog-species-row
-                     {{#if (eq id ../focusedSpeciesId)}}prog-species-row--focused{{/if}}
-                     {{#if (eq id ../committedSpeciesId)}}prog-species-row--committed{{/if}}"
-              data-action="focus-item"
-              data-item-id="{{this.id}}"
-              type="button"
-              role="option"
-              {{#if (eq id ../committedSpeciesId)}}aria-selected="true"{{/if}}>
+          <span class="prog-quickref-row__cell prog-species-row__name-cell">
+            <span class="prog-species-row__name">{{this.name}}</span>
+          </span>
 
-        {{!-- LEFT: thumbnail or letter badge --}}
-        <div class="prog-species-row__thumb">
-          {{#if this.img}}
-            <img class="prog-species-row__thumb-img" src="{{this.img}}" alt="">
-          {{else}}
-            <span class="prog-species-row__thumb-badge">{{this.thumbLabel}}</span>
-          {{/if}}
-        </div>
+          <span class="prog-quickref-row__cell prog-species-row__size">{{this.size}}</span>
 
-        {{!-- CENTER: name + stat line --}}
-        <div class="prog-species-row__center">
-          <span class="prog-species-row__name">{{this.name}}</span>
-          <span class="prog-species-row__stats">
-            {{this.size}}
-            {{#if this.abilityModLine}}
-              <span class="prog-species-row__sep">•</span>
-              <span class="prog-species-row__mods">{{this.abilityModLine}}</span>
-            {{/if}}
-            {{#if this.speed}}
-              <span class="prog-species-row__sep">•</span>
-              Spd {{this.speed}}
+          <span class="prog-quickref-row__cell prog-species-row__mods">
+            {{#if this.abilityRows.length}}
+              <span class="prog-species-row__mods-list">
+                {{#each this.abilityRows}}
+                  <span class="prog-species-row__mod {{this.cssClass}}">{{this.shortLabel}} {{this.signedValue}}</span>
+                {{/each}}
+              </span>
+            {{else}}
+              <span class="prog-species-row__mods-empty">—</span>
             {{/if}}
           </span>
-          {{#if this.tags}}
-            <span class="prog-species-row__tags">
-              {{#each this.tags}}
-                <span class="prog-species-row__tag">{{this}}</span>
-              {{/each}}
-            </span>
-          {{/if}}
-        </div>
 
-        {{!-- RIGHT: committed check or source --}}
-        <div class="prog-species-row__right">
-          {{#if (eq id ../committedSpeciesId)}}
-            <span class="prog-species-row__check"><i class="fas fa-check-circle"></i></span>
-          {{else}}
-            <span class="prog-species-row__source">{{this.source}}</span>
-          {{/if}}
-        </div>
-
-      </button>
-    {{else}}
-      <p class="prog-species-browse__empty">No species match your search or filters.</p>
-    {{/each}}
-
-  </div>{{!-- /prog-species-list --}}
-
-</div>{{!-- /prog-species-browse --}}
+          <span class="prog-quickref-row__cell prog-species-row__status">
+            {{#if (eq id ../committedSpeciesId)}}
+              <span class="prog-species-row__check"><i class="fas fa-check-circle"></i> Selected</span>
+            {{else if (eq id ../focusedSpeciesId)}}
+              <span class="prog-species-row__focus">Inspecting</span>
+            {{else}}
+              <span class="prog-species-row__source">{{this.source}}</span>
+            {{/if}}
+          </span>
+        </button>
+      {{else}}
+        <p class="prog-species-browse__empty">No species match your search or filters.</p>
+      {{/each}}
+    </div>
+  </div>
+</div>

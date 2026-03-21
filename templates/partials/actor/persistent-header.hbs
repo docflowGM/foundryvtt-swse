@@ -189,12 +189,7 @@
             <i class="{{getIconClass 'diceD6'}}" aria-hidden="true"></i> {{forceRerollDice}}
           </div>
 
-          <select name="system.forcePoints.diceType"
-                  class="dice-type-select"
-                  title="Dice Type">
-            <option value="d6" {{#if (eq system.forcePoints.diceType "d6")}}selected{{/if}}>d6</option>
-            <option value="d8" {{#if (eq system.forcePoints.diceType "d8")}}selected{{/if}}>d8</option>
-          </select>
+          <div class="readonly-derived-field force-die-display" title="Derived from heroic level">{{forcePointDie}}</div>
 
           <button class="roll-force-point" title="Roll Force Point" role="button" tabindex="0">
             <i class="{{getIconClass 'diceD6'}}-d6" aria-hidden="true"></i>

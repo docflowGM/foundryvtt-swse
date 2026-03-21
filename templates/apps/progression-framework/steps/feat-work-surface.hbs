@@ -1,9 +1,8 @@
 {{!-- Feat Work Surface --}}
-{{!-- Grouped discovery with suggested feats first, then categorized browsing --}}
+{{!-- Quick-reference grouped feat browser. Middle body stays compact; right body owns details. --}}
 
-<div class="feat-work-surface">
+<div class="feat-work-surface prog-quickref-stage">
 
-  {{!-- Suggested Feats Group (Always at top) --}}
   {{#if groupedFeats.suggested}}
   <section class="feat-group suggested-group">
     <div class="group-header" data-action="toggle-category" data-category="suggested">
@@ -20,19 +19,17 @@
     {{#if groupedFeats.suggested.isExpanded}}
     <div class="feat-list suggested-list">
       {{#each groupedFeats.suggested.feats}}
-      <div class="feat-item suggested-feat"
+      <div class="feat-item suggested-feat {{#if this.isFocused}}focused{{/if}} {{#if this.isSelected}}selected{{/if}}"
            data-feat-id="{{this._id}}"
-           data-action="focus-item"
-           class="{{#if this.isFocused}}focused{{/if}} {{#if this.isSelected}}selected{{/if}}">
+           data-action="focus-item">
         <div class="feat-item-content">
           <span class="feat-name">{{this.name}}</span>
-          <span class="feat-suggestion-badge">
-            <i class="fa-solid fa-lightbulb"></i> Suggested
-          </span>
+          <span class="feat-prereq-line">{{this.prerequisiteLine}}</span>
         </div>
-        <span class="feat-state-indicator">
-          {{#if this.isSelected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{/if}}
-        </span>
+        <div class="feat-item-meta">
+          <span class="feat-suggestion-badge"><i class="fa-solid fa-lightbulb"></i> Suggested</span>
+          <span class="feat-state-indicator">{{#if this.isSelected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{/if}}</span>
+        </div>
       </div>
       {{/each}}
     </div>
@@ -40,7 +37,6 @@
   </section>
   {{/if}}
 
-  {{!-- Category Groups --}}
   {{#each groupedFeats as |group categoryKey|}}
   {{#unless (eq categoryKey "suggested")}}
   <section class="feat-group category-group">
@@ -59,19 +55,19 @@
     <div class="feat-list category-list">
       {{#each group.feats as |feat idx|}}
       {{#if (or (lt idx group.visibleCount) group.isExpanded)}}
-      <div class="feat-item category-feat"
+      <div class="feat-item category-feat {{#if feat.isFocused}}focused{{/if}} {{#if feat.isSelected}}selected{{/if}}"
            data-feat-id="{{feat._id}}"
-           data-action="focus-item"
-           class="{{#if feat.isFocused}}focused{{/if}} {{#if feat.isSelected}}selected{{/if}}">
+           data-action="focus-item">
         <div class="feat-item-content">
           <span class="feat-name">{{feat.name}}</span>
+          <span class="feat-prereq-line">{{feat.prerequisiteLine}}</span>
+        </div>
+        <div class="feat-item-meta">
           {{#if feat.isSuggested}}
           <span class="feat-synergy-badge">synergy</span>
           {{/if}}
+          <span class="feat-state-indicator">{{#if feat.isSelected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{/if}}</span>
         </div>
-        <span class="feat-state-indicator">
-          {{#if feat.isSelected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{/if}}
-        </span>
       </div>
       {{/if}}
       {{/each}}
@@ -87,7 +83,6 @@
   {{/unless}}
   {{/each}}
 
-  {{!-- Empty State if No Feats Available --}}
   {{#unless groupedFeats}}
   <section class="feat-group empty-state">
     <div class="empty-message">

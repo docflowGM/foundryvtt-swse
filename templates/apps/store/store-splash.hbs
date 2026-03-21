@@ -1,0 +1,71 @@
+<div class="prog-intro-surface swse-ui-shell swse-splash-screen swse-store-splash-screen" data-boot-stage="init" tabindex="0" aria-label="Galactic Trade Exchange splash screen">
+  <div class="prog-intro-header">
+    <div class="prog-intro-system-name">GALACTIC TRADE EXCHANGE</div>
+    <div class="swse-store-splash-screen__header-meta">
+      <div class="prog-intro-time" id="store-sys-time">14:32:08</div>
+      <div class="prog-intro-signal" id="store-signal-bars" aria-label="signal strength">
+        <div class="prog-intro-signal__bar active" style="height: 6px;"></div>
+        <div class="prog-intro-signal__bar" style="height: 10px;"></div>
+        <div class="prog-intro-signal__bar" style="height: 14px;"></div>
+        <div class="prog-intro-signal__bar" style="height: 18px;"></div>
+      </div>
+      <div class="prog-intro-battery">₢ {{credits}}</div>
+    </div>
+  </div>
+
+  <div class="prog-intro-panel">
+    <div class="prog-intro-scanlines"></div>
+
+    <div class="prog-intro-text-area">
+      <div class="prog-intro-text-container swse-store-splash-screen__stack">
+        <div class="swse-store-splash-screen__identity">
+          <div class="swse-store-splash-screen__kicker">Trade Terminal Sync</div>
+          <div class="swse-store-splash-screen__account">{{actorName}}</div>
+          <div class="swse-store-splash-screen__meta-row">
+            <div class="metric-chip"><span class="metric-chip__label">Tier</span><strong>{{accountTier}}</strong></div>
+            <div class="metric-chip"><span class="metric-chip__label">Terminal</span><strong>{{terminalId}}</strong></div>
+            <div class="metric-chip"><span class="metric-chip__label">Vendor Link</span><strong>{{vendorLink}}</strong></div>
+          </div>
+        </div>
+
+        <div id="store-translation-result" class="swse-store-splash-screen__translation" style="display:none;"></div>
+
+        <div id="store-boot-message-area" class="swse-store-splash-screen__message-row">
+          <div class="boot-message-current" id="store-current-message">{{welcomeLine}}</div>
+        </div>
+
+        <div class="boot-loading-container swse-store-splash-screen__loading">
+          <div class="boot-loading-bar">
+            <div class="boot-loading-fill" id="store-loading-fill" style="width:0%;"></div>
+          </div>
+          <div class="boot-loading-label" id="store-loading-percent">0%</div>
+        </div>
+
+        <div id="store-final-state" class="swse-store-splash-screen__final" style="display:none;">
+          <div class="prog-intro-label prog-intro-label--success swse-store-splash-screen__final-title">
+            <span class="prog-intro-status__icon">✓</span> MARKET READY
+          </div>
+          <div class="swse-store-splash-screen__final-grid">
+            <div class="swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
+              <div class="swse-card-schema__eyebrow">Account</div>
+              <div class="swse-card-schema__title">{{actorName}}</div>
+              <div class="swse-card-schema__body">Funds available: {{credits}} credits</div>
+            </div>
+            <div class="swse-card-schema swse-card-schema--choice swse-card-schema--filled">
+              <div class="swse-card-schema__eyebrow">Access</div>
+              <div class="swse-card-schema__title">{{accountTier}}</div>
+              <div class="swse-card-schema__body">{{vendorLink}}</div>
+            </div>
+          </div>
+          <div class="swse-store-splash-screen__hint">Click the panel to skip boot, or press Enter once the exchange is ready.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="prog-intro-footer" id="store-footer-area" style="display:none;">
+    <button class="prog-intro-continue-btn boot-continue-btn" data-action="continue" type="button">
+      <span>► ENTER EXCHANGE</span>
+    </button>
+  </div>
+</div>

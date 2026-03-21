@@ -14,15 +14,13 @@ async function onClickStore(app) {
 
   if (actor && actor.type === 'character') {
     SWSELogger.log(`[Store Header] Opening Store for: ${actor.name}`);
-    const store = new SWSEStore(actor);
-    store.render(true);
+    await SWSEStore.open(actor);
     return;
   }
 
   // Fallback to generic store if no character
   SWSELogger.log('[Store Header] Opening Store (generic)');
-  const store = new SWSEStore();
-  store.render(true);
+  await SWSEStore.open();
 }
 
 export function registerStoreSheetHooks() {

@@ -1,8 +1,8 @@
-<div class="prog-progress-rail">
+<div class="prog-progress-rail swse-ui-panel swse-progress-rail-shell">
   <div class="prog-progress-rail__label">Steps</div>
-  <ol class="prog-progress-rail__list" role="list">
+  <ol class="prog-progress-rail__list swse-progress-step-list" role="list">
     {{#each stepProgress}}
-      <li class="prog-step
+      <li class="prog-step swse-ui-frame
               {{#if this.isCurrent}} prog-step--active{{/if}}
               {{#if this.isComplete}} prog-step--complete{{/if}}
               {{#if this.descriptor.isConditional}} prog-step--conditional{{/if}}"

@@ -66,6 +66,7 @@
     "styles/progression-framework/steps/droid-builder-step.css",
     "styles/progression-framework/splash/splash.css",
     "styles/swse-holo-ui.css",
+    "styles/ui/swse-holo-phase1.css",
     "styles/apps/chargen.css"
   ],
   "languages": [

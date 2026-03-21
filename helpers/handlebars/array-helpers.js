@@ -31,8 +31,12 @@ export const arrayHelpers = {
    */
   filterExtraUsesByTraining: (extraUses, isTrained) => {
     if (!Array.isArray(extraUses)) {return [];}
-    // If trained, show all uses; otherwise filter out "Trained Only" items
     if (isTrained) {return extraUses;}
-    return extraUses.filter(use => !use?.name?.includes('Trained Only'));
+    return extraUses.filter(use => {
+      const trainedOnly = Boolean(use?.trainedOnly);
+      if (trainedOnly) {return false;}
+      const name = String(use?.name ?? use?.label ?? '');
+      return !/trained only/i.test(name) && !/\(trained\)/i.test(name);
+    });
   }
 };

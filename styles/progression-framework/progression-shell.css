@@ -710,3 +710,23 @@
   /* Explicit height and width redundancy for non-flex fallback contexts */
   width: 100%;
 }
+
+
+/* Static audit hardening: keep body/work/details panels scroll-safe in narrow or tall-content steps */
+.progression-shell .prog-content-row,
+.progression-shell .prog-main-column,
+.progression-shell [data-region="work-surface"],
+.progression-shell [data-region="details-panel"] {
+  min-height: 0;
+}
+
+.progression-shell [data-region="work-surface"] {
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+}
+
+.progression-shell [data-region="details-panel"] {
+  overflow-y: auto;
+  overflow-x: hidden;
+}

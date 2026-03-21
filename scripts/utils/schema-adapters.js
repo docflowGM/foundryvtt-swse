@@ -299,9 +299,11 @@ export class SchemaAdapters {
    */
   static getConditionPenalty(actor) {
     if (!actor?.system) return 0;
-    const currentCT = actor.system?.conditionTrack?.current ?? 0;
-    // Map CT value to penalty: 0=0, 1=-1, 2=-2, 3=-3, 4=-4
-    return Math.max(0, currentCT);
+    const derivedPenalty = actor.system?.derived?.damage?.conditionPenalty;
+    if (typeof derivedPenalty === 'number') return derivedPenalty;
+    const currentCT = Number(actor.system?.conditionTrack?.current ?? 0);
+    const penalties = { 0: 0, 1: -1, 2: -2, 3: -5, 4: -10, 5: 0 };
+    return penalties[currentCT] ?? 0;
   }
 
   /**

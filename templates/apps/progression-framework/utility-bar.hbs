@@ -1,4 +1,4 @@
-<div class="prog-utility-bar" data-mode="{{utilityBarConfig.mode}}">
+<div class="prog-utility-bar swse-ui-panel swse-prog-utility-shell" data-mode="{{utilityBarConfig.mode}}">
   {{! Step icon + label }}
   <span class="prog-utility-bar__icon" aria-hidden="true">
     <i class="{{currentDescriptor.icon}}"></i>
@@ -7,7 +7,7 @@
 
   {{! Search input (rich and compact modes) }}
   {{#if utilityBarConfig.search.enabled}}
-    <input class="prog-input prog-utility-bar__search"
+    <input class="prog-input swse-ui-input prog-utility-bar__search"
            type="search"
            placeholder="{{utilityBarConfig.search.placeholder}}"
            data-utility-search
@@ -18,7 +18,7 @@
   {{#if utilityBarConfig.filters}}
     <div class="prog-utility-bar__filters">
       {{#each utilityBarConfig.filters}}
-        <button class="prog-utility-bar__filter-chip{{#if this.defaultOn}} prog-utility-bar__filter-chip--active{{/if}}"
+        <button class="prog-utility-bar__filter-chip swse-ui-button{{#if this.defaultOn}} prog-utility-bar__filter-chip--active{{/if}}"
                 data-utility-filter="{{this.id}}"
                 data-active="{{#if this.defaultOn}}true{{else}}false{{/if}}"
                 type="button">{{this.label}}</button>
@@ -30,7 +30,7 @@
   {{#if utilityBarConfig.bonusDropdown}}
     <div class="prog-utility-bar__dropdown-group">
       <label class="prog-utility-bar__dropdown-label">{{utilityBarConfig.bonusDropdown.label}}</label>
-      <select class="prog-utility-bar__dropdown"
+      <select class="prog-utility-bar__dropdown swse-ui-input"
               data-utility-select="{{utilityBarConfig.bonusDropdown.id}}"
               data-dropdown-type="bonus">
         {{#each utilityBarConfig.bonusDropdown.options}}
@@ -56,7 +56,7 @@
 
   {{! Sort dropdown }}
   {{#if utilityBarConfig.sorts}}
-    <select class="prog-utility-bar__sort" data-utility-sort>
+    <select class="prog-utility-bar__sort swse-ui-input" data-utility-sort>
       {{#each utilityBarConfig.sorts}}
         <option value="{{this.id}}">{{this.label}}</option>
       {{/each}}
@@ -68,7 +68,7 @@
     <div class="prog-utility-bar__custom-controls">
       {{#each utilityBarConfig.customControls}}
         {{#if (eq this.type "button")}}
-          <button class="prog-btn" data-action="{{this.action}}" type="button">
+          <button class="prog-btn swse-ui-button" data-action="{{this.action}}" type="button">
             {{#if this.icon}}<i class="{{this.icon}}"></i>{{/if}} {{this.label}}
           </button>
         {{else if (eq this.type "toggle")}}
@@ -91,7 +91,7 @@
   {{/if}}
 
   {{! Collapse button — always visible, even when collapsed }}
-  <button class="prog-utility-bar__collapse" data-action="toggle-utility-bar" type="button"
+  <button class="prog-utility-bar__collapse swse-ui-button" data-action="toggle-utility-bar" type="button"
           title="{{#if utilityBarCollapsed}}Expand{{else}}Collapse{{/if}}">
     <i class="fas fa-chevron-{{#if utilityBarCollapsed}}down{{else}}up{{/if}}"></i>
   </button>

@@ -871,7 +871,11 @@ const forcePoints = [];
       const mode = button.dataset.action === "take10-initiative" ? "take10" : "roll";
 
       try {
-        await SWSERoll.rollInitiative(this.actor, { mode });
+        if (mode === 'take10') {
+          await this.actor.swseTake10Initiative();
+        } else {
+          await this.actor.swseRollInitiative();
+        }
       } catch (err) {
         console.error("Initiative roll failed:", err);
         ui?.notifications?.error?.(`Initiative roll failed: ${err.message}`);

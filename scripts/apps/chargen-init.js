@@ -164,8 +164,7 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
             storeButton.title = 'Open the Galactic Trade Exchange';
             storeButton.addEventListener('click', async () => {
                 const { SWSEStore } = await import("/systems/foundryvtt-swse/scripts/apps/store/store-main.js");
-                const store = new SWSEStore();
-                store.render(true);
+                await SWSEStore.open();
             });
             header.appendChild(storeButton);
         }

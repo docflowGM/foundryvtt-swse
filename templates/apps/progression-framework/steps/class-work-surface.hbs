@@ -1,7 +1,7 @@
-<div class="prog-class-browse">
+<div class="prog-class-browse prog-quickref-stage">
   <div class="prog-class-grid" role="list">
     {{#each classes}}
-      <button class="prog-class-card
+      <button class="prog-class-card swse-card-schema swse-card-schema--identity swse-card-schema--filled
                      {{#if (eq id ../focusedClassId)}}prog-class-card--focused{{/if}}
                      {{#if (eq id ../committedClassId)}}prog-class-card--committed{{/if}}"
               data-action="focus-item"
@@ -33,7 +33,7 @@
         {{/if}}
       </button>
     {{else}}
-      <p class="prog-class-browse__empty">No classes match your search or filters.</p>
+      <div class="prog-class-browse__empty swse-card-schema swse-card-schema--choice swse-card-schema--placeholder"><span class="swse-card-schema__eyebrow">Choice Slot</span><span class="swse-card-schema__title">No classes found</span><span class="swse-card-schema__body">Adjust your search or filters to repopulate the class selection grid.</span></div>
     {{/each}}
   </div>
 </div>

@@ -1,7 +1,7 @@
-<div class="purchase-history">
+<div class="purchase-history swse-dense-region swse-store-stage">
   {{#each entries}}
-  <div class="history-entry">
-    <div class="history-header">
+  <div class="history-entry swse-ui-panel swse-history-entry">
+    <div class="history-header swse-card-header">
       <span class="history-date">
         <i class="{{getIconClass 'calendar'}}"></i> {{timestamp}}
       </span>
@@ -12,7 +12,7 @@
 
     <div class="history-items">
       {{#each items}}
-      <div class="history-item">
+      <div class="history-item swse-row-surface">
         <span class="item-name">{{name}}</span>
         <span class="item-qty">×{{qty}}</span>
         <span class="item-cost">

@@ -40,11 +40,15 @@
     </div>
 
     <div class="resource">
-      <div class="label">Force Points</div>
+      <div class="label">Force Points <span class="resource-subtle">({{forcePointDie}})</span></div>
       <div class="value-row">
         <input type="number" name="system.forcePoints.value" value="{{forcePointsValue}}" min="0" class="tiny-input"/>
         <span>/</span>
         <input type="number" name="system.forcePoints.max" value="{{forcePointsMax}}" min="0" class="tiny-input"/>
+      </div>
+      <div class="value-row">
+        <button type="button" class="mini-btn" data-action="spend-force-point" title="Spend 1 Force Point">-1</button>
+        <button type="button" class="mini-btn" data-action="gain-force-point" title="Restore 1 Force Point">+1</button>
       </div>
     </div>
 
@@ -103,4 +107,9 @@
   border-radius: 6px;
   padding: 2px 6px;
 }
+</style>
+
+
+<style>
+.swse-resources-panel .resource-subtle { opacity: 0.75; font-size: 0.7rem; }
 </style>

@@ -163,6 +163,9 @@ import { Upkeep } from './scripts/automation/upkeep.js';
 import { initializePhase5, getPhaseSummary } from './scripts/core/phase5-init.js';
 import { registerCriticalFlowTests } from './scripts/tests/critical-flow-tests.js';
 
+import { SWSECombatDocument } from './scripts/combat/swse-combat.js';
+import { SWSECombatant } from './scripts/combat/swse-combatant.js';
+
 /* ==========================================================================
    CONSOLIDATE BOOT MODULES: Import talent/progression modules in order
    (Previously scattered across system.json esmodules; now centralized for
@@ -213,6 +216,11 @@ async function bootstrapSuggestionSystem() {
 Hooks.once("setup", () => {
 
   console.log("[SWSE] Registering V2 sheets (v13 compliant)");
+
+  // Combat SSOT registration: ensure SWSE combat document classes are the
+  // live runtime authority for tracker state, initiative, and action economy.
+  CONFIG.Combat.documentClass = SWSECombatDocument;
+  CONFIG.Combatant.documentClass = SWSECombatant;
 
   const ActorCollection = foundry.documents.collections.Actors;
   const ItemCollection = foundry.documents.collections.Items;

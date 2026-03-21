@@ -1,12 +1,18 @@
 <div class="swse-inventory inventory-card-layout">
 
-  {{#each derived.inventory as |items group|}}
+  {{#each inventory as |items group|}}
 
     {{#if items.length}}
       <div class="inventory-group">
 
         <div class="inventory-group-header">
-          {{group}}
+          <span class="inventory-group-title">{{group}}</span>
+          <div class="inventory-group-actions">
+            {{#if (eq (lowercase group) "weapons")}}<button type="button" class="inventory-add-btn" data-action="add-item" data-item-type="weapon">Add Weapon</button>{{/if}}
+            {{#if (eq (lowercase group) "armor")}}<button type="button" class="inventory-add-btn" data-action="add-item" data-item-type="armor">Add Armor</button><button type="button" class="inventory-add-btn" data-action="add-item" data-item-type="shield">Add Shield</button>{{/if}}
+            {{#if (eq (lowercase group) "equipment")}}<button type="button" class="inventory-add-btn" data-action="add-item" data-item-type="equipment">Add Gear</button>{{/if}}
+            {{#if (eq (lowercase group) "consumables")}}<button type="button" class="inventory-add-btn" data-action="add-item" data-item-type="equipment">Add Consumable</button>{{/if}}
+          </div>
         </div>
 
         <div class="inventory-group-body inventory-cards">
@@ -44,6 +50,10 @@
 }
 
 .inventory-group-header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
   font-weight: bold;
   font-size: 13px;
   color: #aaa;
@@ -53,6 +63,9 @@
   border-bottom: 2px solid #444;
 }
 
+.inventory-group-actions { display:flex; flex-wrap:wrap; gap:6px; }
+.inventory-add-btn { font-size:11px; padding:4px 8px; }
+.inventory-empty-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
 .inventory-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));

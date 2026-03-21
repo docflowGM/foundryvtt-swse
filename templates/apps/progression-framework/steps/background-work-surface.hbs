@@ -1,7 +1,7 @@
 <div class="prog-background-surface">
 
   {{!-- Header --}}
-  <div class="prog-background-header">
+  <div class="prog-background-header swse-card-schema swse-card-schema--identity swse-card-schema--filled">
     <h3 class="prog-background-title">Choose Your Background</h3>
     <p class="prog-background-help">
       {{#eq selectionMode "multi"}}
@@ -13,7 +13,7 @@
   </div>
 
   {{!-- Search --}}
-  <div class="prog-background-search">
+  <div class="prog-background-search swse-card-schema swse-card-schema--choice swse-card-schema--pending">
     <input class="bg-search-input"
            type="text"
            placeholder="Search backgrounds…"
@@ -22,7 +22,7 @@
   </div>
 
   {{!-- Category Tabs --}}
-  <div class="prog-background-categories">
+  <div class="prog-background-categories swse-card-schema swse-card-schema--choice swse-card-schema--pending">
     {{#each categories}}
       <button class="prog-background-category-btn bg-category-btn
                      {{#if isActive}}active{{/if}}"
@@ -41,7 +41,7 @@
         <h4 class="prog-background-group-title">{{label}}</h4>
 
         {{#each backgrounds}}
-          <button class="prog-background-item
+          <button class="prog-background-item swse-card-schema swse-card-schema--identity swse-card-schema--filled
                          {{#if isFocused}}prog-background-item--focused{{/if}}
                          {{#if isCommitted}}prog-background-item--committed{{/if}}"
                   data-action="focus-item"
@@ -75,7 +75,7 @@
 
       </div>
     {{else}}
-      <div class="prog-background-empty">
+      <div class="prog-background-empty swse-card-schema swse-card-schema--choice swse-card-schema--placeholder">
         <i class="fas fa-search"></i>
         <p>No backgrounds match your search.</p>
       </div>

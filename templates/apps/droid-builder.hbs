@@ -1,7 +1,7 @@
-<div class="droid-builder-container flexcol">
+<div class="droid-builder-container flexcol swse-ui-shell swse-droid-builder-shell">
   {{!-- Seraphim Narrator Section --}}
   {{#if this.seraphim}}
-    <div class="seraphim-section">
+    <div class="seraphim-section swse-store-stage">
       <div class="seraphim-header">
         <span class="seraphim-label">Seraphim</span>
       </div>
@@ -41,7 +41,7 @@
   {{/if}}
 
   {{#if this.validationErrors.length}}
-    <div class="alert alert-error">
+    <div class="alert alert-error swse-ui-empty">
       <strong>Validation Errors:</strong>
       <ul>
         {{#each this.validationErrors}}

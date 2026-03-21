@@ -191,10 +191,20 @@ export class ForceRegistry {
     }
     tags = tags.map(t => String(t).toLowerCase().trim()).filter(t => t);
 
-    // Normalize prerequisite block
+    // Normalize prerequisite block across force schemas
+    const rawPrereqs = system.prerequisites ?? system.prerequisite ?? null;
     const prerequisites = {
-      raw: system.prerequisites || null
+      raw: rawPrereqs
     };
+
+    const description =
+      system.description?.value ||
+      system.description ||
+      system.effect ||
+      system.benefit ||
+      '';
+
+    const source = system.source || system.sourcebook || null;
 
     // Create normalized entry
     return {
@@ -205,10 +215,20 @@ export class ForceRegistry {
       category: category,
       tags: tags,
       prerequisites: prerequisites,
-      description: system.description?.value || system.description || '',
-      source: system.source || null,
-      pack: doc.pack || 'unknown'
+      description,
+      source,
+      pack: doc.pack || 'unknown',
+      system
     };
+  }
+
+
+  static async init() {
+    return this.initialize();
+  }
+
+  static byType(type) {
+    return this.getByType(type);
   }
 
   /**
@@ -243,6 +263,15 @@ export class ForceRegistry {
     return this._byName.get(String(name).toLowerCase()) || null;
   }
 
+
+  static async init() {
+    return this.initialize();
+  }
+
+  static byType(type) {
+    return this.getByType(type);
+  }
+
   /**
    * Get all force entries of a specific type
    * @param {string} type - Type: "power", "technique", or "secret"
@@ -256,6 +285,15 @@ export class ForceRegistry {
     return [...(this._byType.get(normalized) || [])];
   }
 
+
+  static async init() {
+    return this.initialize();
+  }
+
+  static byType(type) {
+    return this.getByType(type);
+  }
+
   /**
    * Get all force entries in a category
    * @param {string} category - Category (e.g., "universal", "jedi", "sith")
@@ -267,6 +305,15 @@ export class ForceRegistry {
     }
     const normalized = String(category).toLowerCase().trim();
     return [...(this._byCategory.get(normalized) || [])];
+  }
+
+
+  static async init() {
+    return this.initialize();
+  }
+
+  static byType(type) {
+    return this.getByType(type);
   }
 
   /**

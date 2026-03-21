@@ -100,9 +100,22 @@ function normalizeNumber(val) {
 
 function extractBaseCost(obj) {
   const sys = obj.system || {};
+
+  // Canonical store item pricing can appear in several shapes depending on pack type:
+  // - Item packs: system.cost or system.price
+  // - Vehicle actors: system.cost.new / system.cost.used
+  // - Some generated packs: system.costNumeric
+  // Prefer explicit numeric cost fields first, then structured cost objects.
+  const structuredCost = typeof sys.cost === 'object' && sys.cost
+    ? (normalizeNumber(sys.cost.new) ?? normalizeNumber(sys.cost.used))
+    : null;
+
   return (
+    normalizeNumber(sys.costNumeric) ??
+    structuredCost ??
     normalizeNumber(sys.cost) ??
     normalizeNumber(sys.price) ??
+    normalizeNumber(sys.priceNumeric) ??
     null
   );
 }

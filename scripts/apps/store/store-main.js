@@ -87,6 +87,13 @@ export class SWSEStore extends BaseSWSEAppV2 {
   }
 
 
+
+  static async open(actor = null, options = {}) {
+    const app = new this(actor, options);
+    app.render(true);
+    return app;
+  }
+
   constructor(actor = null, options = {}) {
     super(options);
     this.actor = actor ?? null;
@@ -118,6 +125,48 @@ export class SWSEStore extends BaseSWSEAppV2 {
       reduceMotion,
       skipOverlay
     });
+
+    this._onCheckoutComplete = typeof options.onCheckoutComplete === 'function' ? options.onCheckoutComplete : null;
+    this._onStoreClosed = typeof options.onClose === 'function' ? options.onClose : null;
+    this._closeAfterCheckout = options.closeAfterCheckout !== false;
+    this._checkoutCompleted = false;
+    this._closeHandled = false;
+  }
+
+
+
+  async close(options = {}) {
+    const result = await super.close(options);
+    if (!this._closeHandled) {
+      this._closeHandled = true;
+      try {
+        await this._onStoreClosed?.({
+          actor: this.actor,
+          checkoutCompleted: this._checkoutCompleted,
+          app: this
+        });
+      } catch (err) {
+        console.warn('[SWSE Store] onClose callback failed:', err);
+      }
+    }
+    return result;
+  }
+
+  async _handleCheckoutCompletion(payload = {}) {
+    this._checkoutCompleted = true;
+    try {
+      await this._persistCart();
+    } catch (err) {
+      console.warn('[SWSE Store] Failed to persist cart during checkout completion:', err);
+    }
+    try {
+      await this._onCheckoutComplete?.({ actor: this.actor, app: this, ...payload });
+    } catch (err) {
+      console.warn('[SWSE Store] onCheckoutComplete callback failed:', err);
+    }
+    if (this._closeAfterCheckout) {
+      await this.close();
+    }
   }
 
   async _prepareContext(_options) {

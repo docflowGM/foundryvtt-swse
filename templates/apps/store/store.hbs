@@ -1,7 +1,7 @@
 <div class="swse-sheet flexcol">
-<form class="swse-store flexcol" autocomplete="off">
+<form class="swse-store swse-store-ui swse-ui-shell flexcol" autocomplete="off">
   {{!-- Holographic Welcome Banner --}}
-  <div class="holo-banner">
+  <div class="holo-banner swse-ui-panel">
     <div class="shopkeeper-portrait">
       <img src="{{rendarrImage}}" alt="Rendarr" class="rendarr-image"/>
     </div>
@@ -17,7 +17,7 @@
   </div>
 
   {{!-- Credit Wallet Display --}}
-  <div class="credit-wallet">
+  <div class="credit-wallet swse-ui-panel">
     <div class="wallet-header">
       <i class="{{getIconClass 'wallet'}}"></i>
       <span>ACCOUNT BALANCE</span>
@@ -30,12 +30,12 @@
   </div>
 
   {{!-- Shop Navigation with Dropdown Filter --}}
-  <div class="shop-navigation">
+  <div class="shop-navigation swse-ui-panel">
     <div class="shop-filter-container">
       <label for="shop-category-filter">
         <i class="{{getIconClass 'PLACEHOLDER_'}}"></i> Category:
       </label>
-      <select id="shop-category-filter" class="shop-category-select" aria-label="Filter by category">
+      <select id="shop-category-filter" class="shop-category-select swse-ui-input" aria-label="Filter by category">
         <option value="weapons" selected>Weapons</option>
         <option value="armor">Armor</option>
         <option value="grenades">Explosives & Demolitions</option>
@@ -54,7 +54,7 @@
       <label for="shop-availability-filter">
         <i class="{{getIconClass 'shieldAlt'}}"></i> Availability:
       </label>
-      <select id="shop-availability-filter" class="shop-availability-select" aria-label="Filter by availability">
+      <select id="shop-availability-filter" class="shop-availability-select swse-ui-input" aria-label="Filter by availability">
         <option value="all" selected>All Items</option>
         <option value="Standard">Standard</option>
         <option value="Licensed">Licensed</option>
@@ -68,7 +68,7 @@
       <label for="shop-sort-select">
         <i class="{{getIconClass 'PLACEHOLDER_'}}"></i> Sort:
       </label>
-      <select id="shop-sort-select" class="shop-sort-select" aria-label="Sort items by">
+      <select id="shop-sort-select" class="shop-sort-select swse-ui-input" aria-label="Sort items by">
         <option value="name-asc" selected>Name (A-Z)</option>
         <option value="name-desc">Name (Z-A)</option>
         <option value="price-asc">Price (Low to High)</option>
@@ -83,8 +83,8 @@
       </label>
       <input type="text" id="shop-search-input" class="shop-search-input" placeholder="Type to search..." aria-label="Search store items by name or description"/>
     </div>
-    <div class="shop-actions-bar">
-      <button type="button" class="view-cart-btn holo-btn" data-tab="cart">
+    <div class="shop-actions-bar swse-control-cluster">
+      <button type="button" class="view-cart-btn holo-btn swse-ui-button" data-tab="cart">
         <i class="{{getIconClass 'cart'}}"></i>
         <span>Cart</span>
         <span class="cart-count" id="cart-count" aria-live="polite" aria-atomic="true">0</span>
@@ -98,24 +98,24 @@
   </div>
 
   {{!-- Shop Body --}}
-  <div class="shop-body flexcol">
+  <div class="shop-body flexcol swse-store-body">
 
     {{!-- Weapons Tab --}}
     <div class="shop-panel active" data-panel="weapons">
-      <div class="panel-header">
+      <div class="panel-header swse-store-panel-header">
         <h4><i class="{{getIconClass 'target'}}"></i> Weapons</h4>
         <p class="panel-desc">Blasters, vibroblades, and more</p>
       </div>
-      <div class="products-list" id="weapons-list">
+      <div class="products-list swse-store-products swse-dense-region" id="weapons-list">
         {{!-- Melee Weapons --}}
-        <div class="weapon-category">
+        <div class="weapon-category swse-ui-panel">
           <h5 class="category-header"><i class="{{getIconClass 'PLACEHOLDER_'}}"></i> Melee Weapons</h5>
 
           {{#if categories.weapons.melee.simple.length}}
           <h6 class="subcategory-header">Simple Melee Weapons</h6>
           {{#each categories.weapons.melee.simple}}
-          <div class="product-item" data-item-id="{{this.id}}">
-            <div class="product-info">
+          <div class="product-item swse-ui-panel swse-row-surface swse-store-row" data-item-id="{{this.id}}">
+            <div class="product-info swse-store-product-info">
               <h5 class="product-name">{{this.name}}</h5>
               <div class="product-details">
                 {{#if this.system.damage}}
@@ -129,7 +129,7 @@
                 <span class="detail-desc">{{truncate this.system.description 120}}</span>
               </div>
             </div>
-            <div class="product-actions">
+            <div class="product-actions swse-store-product-actions swse-store-card-actions">
               <div class="product-price">
                 <span class="credits-icon">₢</span>
                 <span class="price-amount">{{this.finalCost}}</span>
@@ -145,8 +145,8 @@
           {{#if categories.weapons.melee.advanced.length}}
           <h6 class="subcategory-header">Advanced Melee Weapons</h6>
           {{#each categories.weapons.melee.advanced}}
-          <div class="product-item" data-item-id="{{this.id}}">
-            <div class="product-info">
+          <div class="product-item swse-ui-panel swse-row-surface swse-store-row" data-item-id="{{this.id}}">
+            <div class="product-info swse-store-product-info">
               <h5 class="product-name">{{this.name}}</h5>
               <div class="product-details">
                 {{#if this.system.damage}}
@@ -160,7 +160,7 @@
                 <span class="detail-desc">{{truncate this.system.description 120}}</span>
               </div>
             </div>
-            <div class="product-actions">
+            <div class="product-actions swse-store-product-actions swse-store-card-actions">
               <div class="product-price">
                 <span class="credits-icon">₢</span>
                 <span class="price-amount">{{this.finalCost}}</span>
@@ -176,8 +176,8 @@
           {{#if categories.weapons.melee.lightsaber.length}}
           <h6 class="subcategory-header">Lightsabers</h6>
           {{#each categories.weapons.melee.lightsaber}}
-          <div class="product-item" data-item-id="{{this.id}}">
-            <div class="product-info">
+          <div class="product-item swse-ui-panel swse-row-surface swse-store-row" data-item-id="{{this.id}}">
+            <div class="product-info swse-store-product-info">
               <h5 class="product-name">{{this.name}}</h5>
               <div class="product-details">
                 {{#if this.system.damage}}
@@ -191,7 +191,7 @@
                 <span class="detail-desc">{{truncate this.system.description 120}}</span>
               </div>
             </div>
-            <div class="product-actions">
+            <div class="product-actions swse-store-product-actions swse-store-card-actions">
               <div class="product-price">
                 <span class="credits-icon">₢</span>
                 <span class="price-amount">{{this.finalCost}}</span>
@@ -207,8 +207,8 @@
           {{#if categories.weapons.melee.exotic.length}}
           <h6 class="subcategory-header">Exotic Melee Weapons</h6>
           {{#each categories.weapons.melee.exotic}}
-          <div class="product-item" data-item-id="{{this.id}}">
-            <div class="product-info">
+          <div class="product-item swse-ui-panel swse-row-surface swse-store-row" data-item-id="{{this.id}}">
+            <div class="product-info swse-store-product-info">
               <h5 class="product-name">{{this.name}}</h5>
               <div class="product-details">
                 {{#if this.system.damage}}
@@ -222,7 +222,7 @@
                 <span class="detail-desc">{{truncate this.system.description 120}}</span>
               </div>
             </div>
-            <div class="product-actions">
+            <div class="product-actions swse-store-product-actions swse-store-card-actions">
               <div class="product-price">
                 <span class="credits-icon">₢</span>
                 <span class="price-amount">{{this.finalCost}}</span>
@@ -237,14 +237,14 @@
         </div>
 
         {{!-- Ranged Weapons --}}
-        <div class="weapon-category">
+        <div class="weapon-category swse-ui-panel">
           <h5 class="category-header"><i class="{{getIconClass 'target'}}"></i> Ranged Weapons</h5>
 
           {{#if categories.weapons.ranged.simple.length}}
           <h6 class="subcategory-header">Simple Ranged Weapons</h6>
           {{#each categories.weapons.ranged.simple}}
-          <div class="product-item" data-item-id="{{this.id}}">
-            <div class="product-info">
+          <div class="product-item swse-ui-panel swse-row-surface swse-store-row" data-item-id="{{this.id}}">
+            <div class="product-info swse-store-product-info">
               <h5 class="product-name">{{this.name}}</h5>
               <div class="product-details">
                 {{#if this.system.damage}}
@@ -258,7 +258,7 @@
                 <span class="detail-desc">{{truncate this.system.description 120}}</span>
               </div>
             </div>
-            <div class="product-actions">
+            <div class="product-actions swse-store-product-actions swse-store-card-actions">
               <div class="product-price">
                 <span class="credits-icon">₢</span>
                 <span class="price-amount">{{this.finalCost}}</span>
@@ -274,8 +274,8 @@
           {{#if categories.weapons.ranged.pistol.length}}
           <h6 class="subcategory-header">Pistols</h6>
           {{#each categories.weapons.ranged.pistol}}
-          <div class="product-item" data-item-id="{{this.id}}">
-            <div class="product-info">
+          <div class="product-item swse-ui-panel swse-row-surface swse-store-row" data-item-id="{{this.id}}">
+            <div class="product-info swse-store-product-info">
               <h5 class="product-name">{{this.name}}</h5>
               <div class="product-details">
                 {{#if this.system.damage}}
@@ -289,7 +289,7 @@
                 <span class="detail-desc">{{truncate this.system.description 120}}</span>
               </div>
             </div>
-            <div class="product-actions">
+            <div class="product-actions swse-store-product-actions swse-store-card-actions">
               <div class="product-price">
                 <span class="credits-icon">₢</span>
                 <span class="price-amount">{{this.finalCost}}</span>
@@ -305,8 +305,8 @@
           {{#if categories.weapons.ranged.rifle.length}}
           <h6 class="subcategory-header">Rifles & Carbines</h6>
           {{#each categories.weapons.ranged.rifle}}
-          <div class="product-item" data-item-id="{{this.id}}">
-            <div class="product-info">
+          <div class="product-item swse-ui-panel swse-row-surface swse-store-row" data-item-id="{{this.id}}">
+            <div class="product-info swse-store-product-info">
               <h5 class="product-name">{{this.name}}</h5>
               <div class="product-details">
                 {{#if this.system.damage}}
@@ -320,7 +320,7 @@
                 <span class="detail-desc">{{truncate this.system.description 120}}</span>
               </div>
             </div>
-            <div class="product-actions">
+            <div class="product-actions swse-store-product-actions swse-store-card-actions">
               <div class="product-price">
                 <span class="credits-icon">₢</span>
                 <span class="price-amount">{{this.finalCost}}</span>
@@ -336,8 +336,8 @@
           {{#if categories.weapons.ranged.heavy.length}}
           <h6 class="subcategory-header">Heavy Weapons</h6>
           {{#each categories.weapons.ranged.heavy}}
-          <div class="product-item" data-item-id="{{this.id}}">
-            <div class="product-info">
+          <div class="product-item swse-ui-panel swse-row-surface swse-store-row" data-item-id="{{this.id}}">
+            <div class="product-info swse-store-product-info">
               <h5 class="product-name">{{this.name}}</h5>
               <div class="product-details">
                 {{#if this.system.damage}}
@@ -351,7 +351,7 @@
                 <span class="detail-desc">{{truncate this.system.description 120}}</span>
               </div>
             </div>
-            <div class="product-actions">
+            <div class="product-actions swse-store-product-actions swse-store-card-actions">
               <div class="product-price">
                 <span class="credits-icon">₢</span>
                 <span class="price-amount">{{this.finalCost}}</span>
@@ -367,8 +367,8 @@
           {{#if categories.weapons.ranged.grenade.length}}
           <h6 class="subcategory-header">Grenades & Explosives</h6>
           {{#each categories.weapons.ranged.grenade}}
-          <div class="product-item" data-item-id="{{this.id}}">
-            <div class="product-info">
+          <div class="product-item swse-ui-panel swse-row-surface swse-store-row" data-item-id="{{this.id}}">
+            <div class="product-info swse-store-product-info">
               <h5 class="product-name">{{this.name}}</h5>
               <div class="product-details">
                 {{#if this.system.damage}}
@@ -382,7 +382,7 @@
                 <span class="detail-desc">{{truncate this.system.description 120}}</span>
               </div>
             </div>
-            <div class="product-actions">
+            <div class="product-actions swse-store-product-actions swse-store-card-actions">
               <div class="product-price">
                 <span class="credits-icon">₢</span>
                 <span class="price-amount">{{this.finalCost}}</span>
@@ -398,8 +398,8 @@
           {{#if categories.weapons.ranged.exotic.length}}
           <h6 class="subcategory-header">Exotic Ranged Weapons</h6>
           {{#each categories.weapons.ranged.exotic}}
-          <div class="product-item" data-item-id="{{this.id}}">
-            <div class="product-info">
+          <div class="product-item swse-ui-panel swse-row-surface swse-store-row" data-item-id="{{this.id}}">
+            <div class="product-info swse-store-product-info">
               <h5 class="product-name">{{this.name}}</h5>
               <div class="product-details">
                 {{#if this.system.damage}}
@@ -413,7 +413,7 @@
                 <span class="detail-desc">{{truncate this.system.description 120}}</span>
               </div>
             </div>
-            <div class="product-actions">
+            <div class="product-actions swse-store-product-actions swse-store-card-actions">
               <div class="product-price">
                 <span class="credits-icon">₢</span>
                 <span class="price-amount">{{this.finalCost}}</span>
@@ -439,14 +439,14 @@
 
     {{!-- Armor Tab --}}
     <div class="shop-panel" data-panel="armor">
-      <div class="panel-header">
+      <div class="panel-header swse-store-panel-header">
         <h4><i class="{{getIconClass 'shieldAlt'}}"></i> Armor</h4>
         <p class="panel-desc">Protective equipment and gear</p>
       </div>
-      <div class="products-list" id="armor-list">
+      <div class="products-list swse-store-products swse-dense-region" id="armor-list">
         {{#each categories.armor}}
-        <div class="product-item" data-item-id="{{this.id}}">
-          <div class="product-info">
+        <div class="product-item swse-ui-panel swse-row-surface swse-store-row" data-item-id="{{this.id}}">
+          <div class="product-info swse-store-product-info">
             <h5 class="product-name">{{this.name}}</h5>
             <div class="product-details">
               {{#if this.system.reflexBonus}}
@@ -460,7 +460,7 @@
               <span class="detail-desc">{{truncate this.system.description 120}}</span>
             </div>
           </div>
-          <div class="product-actions">
+          <div class="product-actions swse-store-product-actions swse-store-card-actions">
             <div class="product-price">
               <span class="credits-icon">₢</span>
               <span class="price-amount">{{this.finalCost}}</span>
@@ -481,14 +481,14 @@
 
     {{!-- Explosives & Demolitions Tab --}}
     <div class="shop-panel" data-panel="grenades">
-      <div class="panel-header">
+      <div class="panel-header swse-store-panel-header">
         <h4><i class="{{getIconClass 'bomb'}}"></i> Explosives & Demolitions</h4>
         <p class="panel-desc">Explosive charges, detonators, timers, and demolition equipment</p>
       </div>
-      <div class="products-list" id="grenades-list">
+      <div class="products-list swse-store-products swse-dense-region" id="grenades-list">
         {{#each categories.grenades}}
-        <div class="product-item" data-item-id="{{this.id}}">
-          <div class="product-info">
+        <div class="product-item swse-ui-panel swse-row-surface swse-store-row" data-item-id="{{this.id}}">
+          <div class="product-info swse-store-product-info">
             <h5 class="product-name">{{this.name}}</h5>
             <div class="product-details">
               {{#if this.rarityClass}}
@@ -499,7 +499,7 @@
               <span class="detail-desc">{{truncate this.system.description 120}}</span>
             </div>
           </div>
-          <div class="product-actions">
+          <div class="product-actions swse-store-product-actions swse-store-card-actions">
             <div class="product-price">
               <span class="credits-icon">₢</span>
               <span class="price-amount">{{this.finalCost}}</span>
@@ -520,14 +520,14 @@
 
     {{!-- Medical Tab --}}
     <div class="shop-panel" data-panel="medical">
-      <div class="panel-header">
+      <div class="panel-header swse-store-panel-header">
         <h4><i class="fa-solid fa-kit-medical"></i> Medical Supplies</h4>
         <p class="panel-desc">Medpacs, bacta, stims, and healing items</p>
       </div>
-      <div class="products-list" id="medical-list">
+      <div class="products-list swse-store-products swse-dense-region" id="medical-list">
         {{#each categories.medical}}
-        <div class="product-item" data-item-id="{{this.id}}">
-          <div class="product-info">
+        <div class="product-item swse-ui-panel swse-row-surface swse-store-row" data-item-id="{{this.id}}">
+          <div class="product-info swse-store-product-info">
             <h5 class="product-name">{{this.name}}</h5>
             <div class="product-details">
               {{#if this.rarityClass}}
@@ -538,7 +538,7 @@
               <span class="detail-desc">{{truncate this.system.description 120}}</span>
             </div>
           </div>
-          <div class="product-actions">
+          <div class="product-actions swse-store-product-actions swse-store-card-actions">
             <div class="product-price">
               <span class="credits-icon">₢</span>
               <span class="price-amount">{{this.finalCost}}</span>
@@ -559,14 +559,14 @@
 
     {{!-- Tech Tab --}}
     <div class="shop-panel" data-panel="tech">
-      <div class="panel-header">
+      <div class="panel-header swse-store-panel-header">
         <h4><i class="{{getIconClass 'laptop'}}"></i> Tech Items</h4>
         <p class="panel-desc">Comlinks, datapads, scanners, and computers</p>
       </div>
-      <div class="products-list" id="tech-list">
+      <div class="products-list swse-store-products swse-dense-region" id="tech-list">
         {{#each categories.tech}}
-        <div class="product-item" data-item-id="{{this.id}}">
-          <div class="product-info">
+        <div class="product-item swse-ui-panel swse-row-surface swse-store-row" data-item-id="{{this.id}}">
+          <div class="product-info swse-store-product-info">
             <h5 class="product-name">{{this.name}}</h5>
             <div class="product-details">
               {{#if this.rarityClass}}
@@ -577,7 +577,7 @@
               <span class="detail-desc">{{truncate this.system.description 120}}</span>
             </div>
           </div>
-          <div class="product-actions">
+          <div class="product-actions swse-store-product-actions swse-store-card-actions">
             <div class="product-price">
               <span class="credits-icon">₢</span>
               <span class="price-amount">{{this.finalCost}}</span>
@@ -598,14 +598,14 @@
 
     {{!-- Tools Tab --}}
     <div class="shop-panel" data-panel="tools">
-      <div class="panel-header">
+      <div class="panel-header swse-store-panel-header">
         <h4><i class="{{getIconClass 'wrench'}}"></i> Tools & Kits</h4>
         <p class="panel-desc">Repair tools, fusion cutters, and equipment kits</p>
       </div>
-      <div class="products-list" id="tools-list">
+      <div class="products-list swse-store-products swse-dense-region" id="tools-list">
         {{#each categories.tools}}
-        <div class="product-item" data-item-id="{{this.id}}">
-          <div class="product-info">
+        <div class="product-item swse-ui-panel swse-row-surface swse-store-row" data-item-id="{{this.id}}">
+          <div class="product-info swse-store-product-info">
             <h5 class="product-name">{{this.name}}</h5>
             <div class="product-details">
               {{#if this.rarityClass}}
@@ -616,7 +616,7 @@
               <span class="detail-desc">{{truncate this.system.description 120}}</span>
             </div>
           </div>
-          <div class="product-actions">
+          <div class="product-actions swse-store-product-actions swse-store-card-actions">
             <div class="product-price">
               <span class="credits-icon">₢</span>
               <span class="price-amount">{{this.finalCost}}</span>
@@ -637,14 +637,14 @@
 
     {{!-- Survival Tab --}}
     <div class="shop-panel" data-panel="survival">
-      <div class="panel-header">
+      <div class="panel-header swse-store-panel-header">
         <h4><i class="{{getIconClass 'campground'}}"></i> Survival Gear</h4>
         <p class="panel-desc">Rations, breath masks, climbing gear, and survival equipment</p>
       </div>
-      <div class="products-list" id="survival-list">
+      <div class="products-list swse-store-products swse-dense-region" id="survival-list">
         {{#each categories.survival}}
-        <div class="product-item" data-item-id="{{this.id}}">
-          <div class="product-info">
+        <div class="product-item swse-ui-panel swse-row-surface swse-store-row" data-item-id="{{this.id}}">
+          <div class="product-info swse-store-product-info">
             <h5 class="product-name">{{this.name}}</h5>
             <div class="product-details">
               {{#if this.rarityClass}}
@@ -655,7 +655,7 @@
               <span class="detail-desc">{{truncate this.system.description 120}}</span>
             </div>
           </div>
-          <div class="product-actions">
+          <div class="product-actions swse-store-product-actions swse-store-card-actions">
             <div class="product-price">
               <span class="credits-icon">₢</span>
               <span class="price-amount">{{this.finalCost}}</span>
@@ -676,14 +676,14 @@
 
     {{!-- Security Tab --}}
     <div class="shop-panel" data-panel="security">
-      <div class="panel-header">
+      <div class="panel-header swse-store-panel-header">
         <h4><i class="{{getIconClass 'lock'}}"></i> Security Items</h4>
         <p class="panel-desc">Binders, locks, and security devices</p>
       </div>
-      <div class="products-list" id="security-list">
+      <div class="products-list swse-store-products swse-dense-region" id="security-list">
         {{#each categories.security}}
-        <div class="product-item" data-item-id="{{this.id}}">
-          <div class="product-info">
+        <div class="product-item swse-ui-panel swse-row-surface swse-store-row" data-item-id="{{this.id}}">
+          <div class="product-info swse-store-product-info">
             <h5 class="product-name">{{this.name}}</h5>
             <div class="product-details">
               {{#if this.rarityClass}}
@@ -694,7 +694,7 @@
               <span class="detail-desc">{{truncate this.system.description 120}}</span>
             </div>
           </div>
-          <div class="product-actions">
+          <div class="product-actions swse-store-product-actions swse-store-card-actions">
             <div class="product-price">
               <span class="credits-icon">₢</span>
               <span class="price-amount">{{this.finalCost}}</span>
@@ -715,14 +715,14 @@
 
     {{!-- Other Equipment Tab --}}
     <div class="shop-panel" data-panel="equipment">
-      <div class="panel-header">
+      <div class="panel-header swse-store-panel-header">
         <h4><i class="{{getIconClass 'toolbox'}}"></i> Other Equipment</h4>
         <p class="panel-desc">Miscellaneous supplies and general gear</p>
       </div>
-      <div class="products-list" id="equipment-list">
+      <div class="products-list swse-store-products swse-dense-region" id="equipment-list">
         {{#each categories.equipment}}
-        <div class="product-item" data-item-id="{{this.id}}">
-          <div class="product-info">
+        <div class="product-item swse-ui-panel swse-row-surface swse-store-row" data-item-id="{{this.id}}">
+          <div class="product-info swse-store-product-info">
             <h5 class="product-name">{{this.name}}</h5>
             <div class="product-details">
               {{#if this.rarityClass}}
@@ -733,7 +733,7 @@
               <span class="detail-desc">{{truncate this.system.description 120}}</span>
             </div>
           </div>
-          <div class="product-actions">
+          <div class="product-actions swse-store-product-actions swse-store-card-actions">
             <div class="product-price">
               <span class="credits-icon">₢</span>
               <span class="price-amount">{{this.finalCost}}</span>
@@ -754,24 +754,24 @@
 
     {{!-- Services Tab --}}
     <div class="shop-panel" data-panel="services">
-      <div class="panel-header">
+      <div class="panel-header swse-store-panel-header">
         <h4><i class="{{getIconClass 'conciergeBell'}}"></i> Services & Expenses</h4>
         <p class="panel-desc">Lodging, meals, medical care, transportation, and more</p>
       </div>
       <div class="products-list services-list" id="services-list">
         {{#each categories.services}}
-        <div class="service-category">
+        <div class="service-category swse-ui-panel">
           <h5 class="service-category-name"><i class="{{this.icon}}"></i> {{this.name}}</h5>
           <div class="service-items">
             {{#each this.items}}
             <div class="product-item service-item" data-service="{{this.id}}">
-              <div class="product-info">
+              <div class="product-info swse-store-product-info">
                 <h6 class="product-name">{{this.name}}</h6>
                 <div class="product-details">
                   <span class="detail-desc">{{this.notes}}</span>
                 </div>
               </div>
-              <div class="product-actions">
+              <div class="product-actions swse-store-product-actions swse-store-card-actions">
                 <div class="product-price">
                   <span class="credits-icon">₢</span>
                   <span class="price-amount">{{this.cost}}</span>
@@ -790,7 +790,7 @@
 
     {{!-- Droids Tab --}}
     <div class="shop-panel" data-panel="droids">
-      <div class="panel-header">
+      <div class="panel-header swse-store-panel-header">
         <h4><i class="{{getIconClass 'robot'}}"></i> Droids</h4>
         <p class="panel-desc">Mechanical companions and assistants</p>
       </div>
@@ -813,10 +813,10 @@
       </div>
 
       {{!-- Pre-Made Droids from Database --}}
-      <div class="products-list" id="droids-list">
+      <div class="products-list swse-store-products swse-dense-region" id="droids-list">
         {{#each categories.droids}}
         <div class="product-item droid-item" data-actor-id="{{this.id}}">
-          <div class="product-info">
+          <div class="product-info swse-store-product-info">
             <h5 class="product-name">{{this.name}}</h5>
             <div class="product-details">
               {{#if this.system.level}}
@@ -825,7 +825,7 @@
               <span class="detail-desc">{{truncate this.system.biography 120}}</span>
             </div>
           </div>
-          <div class="product-actions">
+          <div class="product-actions swse-store-product-actions swse-store-card-actions">
             <div class="product-price">
               <span class="credits-icon">₢</span>
               <span class="price-amount">{{this.finalCost}}</span>
@@ -846,7 +846,7 @@
 
     {{!-- Vehicles Tab --}}
     <div class="shop-panel" data-panel="vehicles">
-      <div class="panel-header">
+      <div class="panel-header swse-store-panel-header">
         <h4><i class="{{getIconClass 'rocket'}}"></i> Vehicles & Starships</h4>
         <p class="panel-desc">Transportation and combat vehicles</p>
       </div>
@@ -869,10 +869,10 @@
       </div>
 
       {{!-- Pre-Made Vehicles from Database --}}
-      <div class="products-list" id="vehicles-list">
+      <div class="products-list swse-store-products swse-dense-region" id="vehicles-list">
         {{#each categories.vehicles}}
         <div class="product-item vehicle-item" data-actor-id="{{this.id}}">
-          <div class="product-info">
+          <div class="product-info swse-store-product-info">
             <h5 class="product-name">{{this.name}}</h5>
             <div class="product-details">
               {{#if this.system.speed}}
@@ -915,7 +915,7 @@
 
     {{!-- Cart Tab --}}
     <div class="shop-panel cart-panel" data-panel="cart">
-      <div class="panel-header">
+      <div class="panel-header swse-store-panel-header">
         <h4><i class="{{getIconClass 'cart'}}"></i> Your Cart</h4>
         <p class="panel-desc">Review your purchases</p>
       </div>
@@ -950,10 +950,10 @@
         </div>
 
         <div class="cart-actions">
-          <button type="button" class="checkout-btn holo-btn" id="checkout-cart">
+          <button type="button" class="checkout-btn holo-btn swse-ui-button" id="checkout-cart">
             <i class="{{getIconClass 'creditCard'}}"></i> Complete Purchase
           </button>
-          <button type="button" class="clear-cart-btn holo-btn secondary" id="clear-cart">
+          <button type="button" class="clear-cart-btn holo-btn secondary swse-ui-button" id="clear-cart">
             <i class="{{getIconClass 'trash'}}"></i> Clear Cart
           </button>
         </div>
@@ -963,7 +963,7 @@
     {{!-- GM Tab --}}
     {{#if isGM}}
     <div class="shop-panel gm-panel" data-panel="gm">
-      <div class="panel-header">
+      <div class="panel-header swse-store-panel-header">
         <h4><i class="{{getIconClass 'cog'}}"></i> GM Controls</h4>
         <p class="panel-desc">Configure store settings</p>
       </div>

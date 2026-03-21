@@ -1,5 +1,5 @@
 {{!-- Droid configuration is PRIMARY state (system.droidSystems). Mechanical effects are mirrored into system.derived. Do NOT move droidSystems into derived. --}}
-<div class="holo-panel">
+<div class="holo-panel swse-ui-panel swse-droid-system-suite">
   <div class="section-bar">
     <h3 class="section-header">Droid Systems</h3>
     {{#if editable}}
@@ -10,79 +10,79 @@
   </div>
 
   {{#if system.droidSystems}}
-    <div class="droid-config-summary">
+    <div class="droid-config-summary swse-store-section">
       {{#if system.droidSystems.degree}}
-        <div class="config-item">
+        <div class="config-item swse-metric-chip">
           <span class="label">Degree:</span>
           <span class="value">{{system.droidSystems.degree}}</span>
         </div>
       {{/if}}
 
       {{#if system.droidSystems.size}}
-        <div class="config-item">
+        <div class="config-item swse-metric-chip">
           <span class="label">Size:</span>
           <span class="value">{{system.droidSystems.size}}</span>
         </div>
       {{/if}}
 
       {{#if system.droidSystems.locomotion.name}}
-        <div class="config-item">
+        <div class="config-item swse-metric-chip">
           <span class="label">Locomotion:</span>
           <span class="value">{{system.droidSystems.locomotion.name}}</span>
         </div>
       {{/if}}
 
       {{#if system.droidSystems.appendages.length}}
-        <div class="config-item">
+        <div class="config-item swse-metric-chip">
           <span class="label">Appendages:</span>
           <span class="value">{{system.droidSystems.appendages.length}}</span>
         </div>
       {{/if}}
 
       {{#if system.droidSystems.sensors.length}}
-        <div class="config-item">
+        <div class="config-item swse-metric-chip">
           <span class="label">Sensors:</span>
           <span class="value">{{system.droidSystems.sensors.length}}</span>
         </div>
       {{/if}}
 
       {{#if system.droidSystems.processor.name}}
-        <div class="config-item">
+        <div class="config-item swse-metric-chip">
           <span class="label">Processor:</span>
           <span class="value">{{system.droidSystems.processor.name}}</span>
         </div>
       {{/if}}
 
       {{#if system.droidSystems.armor.name}}
-        <div class="config-item">
+        <div class="config-item swse-metric-chip">
           <span class="label">Armor:</span>
           <span class="value">{{system.droidSystems.armor.name}}</span>
         </div>
       {{/if}}
 
       {{#if system.droidSystems.weapons.length}}
-        <div class="config-item">
+        <div class="config-item swse-metric-chip">
           <span class="label">Weapons:</span>
           <span class="value">{{system.droidSystems.weapons.length}}</span>
         </div>
       {{/if}}
 
       {{#if system.droidSystems.accessories.length}}
-        <div class="config-item">
+        <div class="config-item swse-metric-chip">
           <span class="label">Accessories:</span>
           <span class="value">{{system.droidSystems.accessories.length}}</span>
         </div>
       {{/if}}
 
       {{#if system.droidSystems.credits}}
-        <div class="config-item">
+        <div class="config-item swse-metric-chip">
           <span class="label">Cost:</span>
           <span class="value">{{system.droidSystems.credits.spent}} / {{system.droidSystems.credits.total}} credits</span>
         </div>
       {{/if}}
 
       {{#if system.droidSystems.stateMode}}
-        <div class="config-item">
+        <div class="config-item swse-metric-chip">
           <span class="label">State:</span>
           <span class="value state-{{system.droidSystems.stateMode}}">{{system.droidSystems.stateMode}}</span>
         </div>

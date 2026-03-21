@@ -258,15 +258,10 @@ export class ForcePointsUtil {
     // This flag should be cleared at the start of the next damage resolution
     await actor.setFlag('foundryvtt-swse', 'alreadyRescuedThisResolution', true);
 
-    // Set HP to 0 and condition track to helpless (step 4)
-    // Uses system.hp.value as canonical HP field
-    const maxConditionTrack = 5; // Standard max
-    const helplesstep = 4;
-    const newConditionTrack = Math.min(helplesstep, actor.system.conditionTrack?.current ?? 0);
-
+    // Canonical rescue result: remain at 0 HP and move to the bottom of the condition track.
     await globalThis.SWSE?.ActorEngine?.updateActor(actor, {
       'system.hp.value': 0,
-      'system.conditionTrack.current': newConditionTrack
+      'system.conditionTrack.current': 5
     });
 
     // Chat notification

@@ -47,7 +47,7 @@ export class ConditionTrackComponent {
 
         <div class="ct-controls">
           <button class="ct-btn improve" data-ct="improve">
-            <i class="fa-solid fa-arrow-up"></i> Recover
+            <i class="fa-solid fa-arrow-up"></i> Recover (3 Swift)
           </button>
 
           <button class="ct-btn worsen" data-ct="worsen">
@@ -128,10 +128,15 @@ export class ConditionTrackComponent {
 
     // Improve CT (respect persistent)
     root.querySelectorAll('[data-ct="improve"]').forEach(el => el.addEventListener('click', async () => {
-      if (actor.system.conditionTrack.persistent) {
+      const result = await ActorEngine.recoverConditionStep(actor, 'recover-action');
+      if (result?.reason === 'persistent') {
         return ui.notifications.warn('Condition is Persistent and cannot be removed by the Recover Action.');
       }
-      await actor.moveConditionTrack(-1);
+      if (result?.complete) {
+        ui.notifications.info('Recover Action complete: moved +1 step on the Condition Track.');
+      } else if (typeof result?.remaining === 'number') {
+        ui.notifications.info(`Recover Action progress: ${3 - result.remaining}/3 swift actions spent.`);
+      }
     }));
 
     // Worsen CT

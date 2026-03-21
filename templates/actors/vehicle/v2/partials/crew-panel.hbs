@@ -1,30 +1,28 @@
-<div class="holo-panel" data-drop-zone="crew">
+<div class="holo-panel swse-ui-panel swse-crew-suite" data-drop-zone="crew">
   <div class="section-bar">
     <h3 class="section-header">Crew Management</h3>
   </div>
 
-  <div style="padding: 12px;">
+  <div class="swse-store-section">
     {{#if actor.system.ownedActors}}
-      <div class="crew-list" style="border-top: 1px solid #ddd;">
+      <div class="crew-list swse-store-stage">
         {{#each actor.system.ownedActors as |entry|}}
           {{#with (lookup ownedActorMap entry.id)}}
-          <div class="crew-entry" style="display: grid; grid-template-columns: 1fr 80px 80px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
-            <div>
-              <strong style="color: #0d7;">{{this.name}}</strong><br>
-              <span style="font-size: 0.85em; color: #666;">{{entry.type}}</span>
+          <div class="crew-entry swse-row-surface">
+            <div class="crew-ident">
+              <strong>{{this.name}}</strong><br>
+              <span class="crew-meta">{{entry.type}}</span>
             </div>
             <button type="button"
-                    class="crew-open-btn"
+                    class="crew-open-btn swse-ui-button"
                     data-action="open-owned"
-                    data-actor-id="{{this.id}}"
-                    style="background: #0066cc; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer; font-size: 0.85em;">
+                    data-actor-id="{{this.id}}">
               Open
             </button>
             <button type="button"
-                    class="crew-remove-btn"
+                    class="crew-remove-btn swse-ui-button"
                     data-action="remove-owned"
-                    data-actor-id="{{this.id}}"
-                    style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer; font-size: 0.85em;">
+                    data-actor-id="{{this.id}}">
               Remove
             </button>
           </div>
@@ -32,7 +30,7 @@
         {{/each}}
       </div>
     {{else}}
-      <div class="muted" style="padding: 16px;">No crew members. Drag characters/NPCs here to add them.</div>
+      <div class="muted empty-state">No crew members. Drag characters/NPCs here to add them.</div>
     {{/if}}
   </div>
 </div>

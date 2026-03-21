@@ -80,29 +80,20 @@ export class ProgressionFinalizer {
    * @throws {Error} if progression incomplete
    */
   static _validateReadiness(sessionState) {
-    // Check mode
     if (!sessionState.mode || !['chargen', 'levelup'].includes(sessionState.mode)) {
       throw new Error('Invalid progression mode');
     }
-
-    // Check actor
     if (!sessionState.actor) {
       throw new Error('No actor in progression session');
     }
-
-    // For chargen: must have committed name, species/droid, class, background
+    const selections = sessionState.committedSelections || new Map();
+    const summarySelection = selections.get('summary') || sessionState.stepData?.get?.('summary') || {};
     if (sessionState.mode === 'chargen') {
-      const required = ['name', 'attribute', 'class', 'background'];
-      const missing = required.filter(k => !sessionState.committedSelections?.has(k));
-      if (missing.length > 0) {
-        throw new Error(`Chargen incomplete: missing ${missing.join(', ')}`);
-      }
-    }
-
-    // For levelup: must have class selection
-    if (sessionState.mode === 'levelup') {
-      if (!sessionState.committedSelections?.has('class')) {
-        throw new Error('Level-up requires class selection');
+      const hasName = !!(summarySelection.characterName || selections.get('name') || sessionState.actor?.name);
+      const hasClass = selections.has('class');
+      const hasAttributes = selections.has('attribute') || selections.has('attributes');
+      if (!hasName || !hasClass || !hasAttributes) {
+        throw new Error('Chargen incomplete: missing required summary, class, or attribute data');
       }
     }
   }
@@ -117,38 +108,77 @@ export class ProgressionFinalizer {
    */
   static _compileMutationPlan(sessionState, actor, options = {}) {
     const selections = sessionState.committedSelections || new Map();
+    const stepData = sessionState.stepData || new Map();
+    const summary = selections.get('summary') || stepData.get?.('summary') || {};
+    const attr = selections.get('attribute') || selections.get('attributes') || stepData.get?.('attribute') || {};
+    const species = selections.get('species') || stepData.get?.('species') || null;
+    const clazz = selections.get('class') || stepData.get?.('class') || null;
+    const background = selections.get('background') || stepData.get?.('background') || null;
+    const languages = selections.get('languages') || stepData.get?.('languages') || [];
+    const skills = selections.get('skills') || stepData.get?.('skills') || [];
 
-    const plan = {
-      // Core identity data
-      coreData: this._compileCoreData(selections, actor, sessionState),
+    const set = {};
+    const add = { items: [] };
 
-      // System data patches
-      patches: this._compilePatches(selections, actor, sessionState),
+    const name = summary.characterName || selections.get('name') || actor.name;
+    if (name) {
+      set.name = name;
+      set['system.identity.name'] = name;
+    }
+    if (summary.startingLevel) set['system.level'] = Number(summary.startingLevel);
+    if (species) {
+      set['system.species'] = species;
+      set['system.race'] = species;
+    }
+    if (background) set['system.background'] = background;
+    if (clazz) {
+      set['system.class'] = clazz;
+      set['system.className'] = clazz.name || clazz.label || clazz;
+      set['system.classes'] = [clazz];
+      add.items.push({ name: clazz.name || clazz.label || String(clazz), type: 'class', system: clazz.system || {} });
+    }
+    const attrMap = { strength: 'str', dexterity: 'dex', constitution: 'con', intelligence: 'int', wisdom: 'wis', charisma: 'cha', str: 'str', dex:'dex', con:'con', int:'int', wis:'wis', cha:'cha' };
+    for (const [k,v] of Object.entries(attr || {})) {
+      const key = attrMap[k];
+      const val = typeof v === 'object' ? v?.value : v;
+      if (key && Number.isFinite(Number(val))) set[`system.abilities.${key}.value`] = Number(val);
+    }
+    if (Array.isArray(languages)) set['system.languages'] = languages;
+    if (Array.isArray(skills)) {
+      for (const s of skills) {
+        const key = s?.key || s?.id || s?.skill;
+        if (!key) continue;
+        if (s.trained !== undefined) set[`system.skills.${key}.trained`] = !!s.trained;
+      }
+    }
+    const appendItem = (entry, fallbackType) => {
+      if (!entry) return;
+      if (Array.isArray(entry)) return entry.forEach(e => appendItem(e, fallbackType));
+      add.items.push({
+        name: entry.name || String(entry),
+        type: entry.type || fallbackType,
+        system: entry.system || {},
+        img: entry.img || undefined
+      });
+    };
+    appendItem(selections.get('general-feat') || stepData.get?.('general-feat'), 'feat');
+    appendItem(selections.get('class-feat') || stepData.get?.('class-feat'), 'feat');
+    appendItem(selections.get('general-talent') || stepData.get?.('general-talent'), 'talent');
+    appendItem(selections.get('class-talent') || stepData.get?.('class-talent'), 'talent');
+    appendItem(selections.get('force-powers') || stepData.get?.('force-powers'), 'forcepower');
 
-      // Item grants (feats, talents, force powers, etc.)
-      itemGrants: this._compileItemGrants(selections, actor, sessionState),
-
-      // Special case: droid package
-      droidPackage: selections.get('droid-builder') || null,
-
-      // Level-up special: HP resolution
-      hpResolution: sessionState.mode === 'levelup'
-        ? selections.get('hp-resolution') || null
-        : null,
-
-      // Store state if applicable
-      storeState: selections.get('store-state') || null,
-
-      // Metadata
+    return {
+      create: {},
+      set,
+      add,
+      delete: {},
       metadata: {
         mode: sessionState.mode,
         timestamp: new Date().toISOString(),
         actorId: actor.id,
-        sourceSession: sessionState.sessionId || 'unknown',
-      },
+        sourceSession: sessionState.sessionId || 'unknown'
+      }
     };
-
-    return plan;
   }
 
   /**
@@ -300,40 +330,15 @@ export class ProgressionFinalizer {
    */
   static async _applyMutationPlan(actor, mutationPlan) {
     try {
-      // Try to use ActorEngine if available
-      if (globalThis.game?.swse?.ActorEngine) {
-        swseLogger.log('[ProgressionFinalizer] Using ActorEngine for mutation');
-
-        const result = await globalThis.game.swse.ActorEngine.applyMutationPlan(
-          actor,
-          mutationPlan
-        );
-
-        return {
-          success: result.success !== false,
-          result,
-        };
+      const engine = globalThis.SWSE?.ActorEngine || globalThis.game?.swse?.ActorEngine;
+      if (!engine?.applyMutationPlan) {
+        throw new Error('ActorEngine.applyMutationPlan unavailable');
       }
-
-      // Fallback: Direct actor update (temporary - should be replaced by ActorEngine)
-      swseLogger.warn('[ProgressionFinalizer] ActorEngine not available, using fallback mutation');
-
-      await this._applyMutationPlanDirect(actor, mutationPlan);
-
-      return {
-        success: true,
-        result: {
-          actorId: actor.id,
-          patched: Object.keys(mutationPlan.patches || {}).length,
-          itemsGranted: mutationPlan.itemGrants?.length || 0,
-        },
-      };
+      await engine.applyMutationPlan(actor, mutationPlan);
+      return { success: true, result: { actorId: actor.id } };
     } catch (error) {
       swseLogger.error('[ProgressionFinalizer] Mutation plan application failed', error);
-      return {
-        success: false,
-        error: error.message,
-      };
+      return { success: false, error: error.message };
     }
   }
 

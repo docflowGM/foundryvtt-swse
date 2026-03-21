@@ -10,28 +10,35 @@
   </header>
 
   {{#if derived.feats.list.length}}
-    <div class="feat-grid">
+    <div class="feat-grid swse-dense-grid">
       {{#each derived.feats.list as |feat|}}
-        <div class="feat-card"
+        <div class="feat-card swse-dense-card swse-ui-panel swse-card-schema swse-card-schema--enumerated swse-card-schema--filled"
              data-item-id="{{feat.id}}"
              data-action="open-ability">
 
-          <div class="card-header">
+          <div class="card-header swse-card-header">
             <span class="card-title">{{feat.name}}</span>
           </div>
 
           {{#if feat.summary}}
-            <div class="card-summary">
+            <div class="card-summary swse-card-summary">
               {{feat.summary}}
             </div>
           {{/if}}
 
         </div>
       {{/each}}
+      <button type="button" class="feat-card swse-dense-card swse-ui-panel swse-card-schema swse-card-schema--choice swse-card-schema--placeholder swse-add-card" data-action="add-feat">
+        <span class="swse-card-schema__eyebrow">Choice Slot</span>
+        <span class="swse-card-schema__title">Add Feat</span>
+        <span class="swse-card-schema__body">Create a new feat entry in the same card footprint used by all feat records.</span>
+      </button>
     </div>
   {{else}}
-    <div class="muted empty-state">
-      No feats.
+    <div class="muted empty-state swse-card-schema swse-card-schema--choice swse-card-schema--placeholder">
+      <span class="swse-card-schema__eyebrow">Choice Slot</span>
+      <span class="swse-card-schema__title">No feats yet</span>
+      <span class="swse-card-schema__body">Use Add Feat to create the first standardized feat card.</span>
     </div>
   {{/if}}
 

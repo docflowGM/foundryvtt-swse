@@ -25,9 +25,10 @@
   <div class="condition-track">
 
     {{#each conditionSteps as |step|}}
-      <div class="condition-chevron {{#if step.active}}active{{/if}}" title="{{step.label}}"></div>
+      <button type="button" class="condition-chevron {{#if step.active}}active{{/if}}" data-action="set-condition-step" data-step="{{step.step}}" title="Set condition: {{step.label}}"></button>
     {{/each}}
 
   </div>
+  <div class="condition-track-status">Condition: {{system.conditionTrack.current}}</div>
 
 </section>

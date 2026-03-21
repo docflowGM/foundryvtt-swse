@@ -443,7 +443,7 @@ export class ModifierEngineExtensions {
       2: -2,
       3: -5,
       4: -10,
-      5: -999 // Helpless
+      5: 0 // Helpless is handled by canAct / state gates, not numeric modifier overflow
     };
 
     return penalties[step] ?? 0;

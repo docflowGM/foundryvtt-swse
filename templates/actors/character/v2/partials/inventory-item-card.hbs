@@ -35,8 +35,10 @@
 
   {{!-- CARD FOOTER: Actions --}}
   <div class="card-footer item-footer">
-    <button type="button" class="btn btn-edit" title="Edit Item">Edit</button>
-    <button type="button" class="btn btn-delete" title="Remove Item">Delete</button>
+    {{#if system.upgradeSlots}}<button type="button" class="btn btn-config" title="Customize Item" data-action="configure" data-item-id="{{id}}">⚙</button>{{/if}}
+    <button type="button" class="btn btn-edit" title="Edit Item" data-action="edit" data-item-id="{{id}}">Edit</button>
+    <button type="button" class="btn btn-sell" title="Sell Item" data-action="sell-item" data-item-id="{{id}}">Sell</button>
+    <button type="button" class="btn btn-delete" title="Remove Item" data-action="delete" data-item-id="{{id}}">Delete</button>
   </div>
 
 </div>

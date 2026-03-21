@@ -129,45 +129,18 @@ async function handleConditionRecovery(combat, updateData, updateOptions) {
     const actor = combatant.actor;
     if (!actor) {return;}
 
-    // Check if actor is on condition track
-    const conditionTrack = actor.system.conditionTrack;
-    if (!conditionTrack || conditionTrack.current <= 0) {return;}
-    if (conditionTrack.persistent) {return;}
+    // RAW note: Recover Action is not an Endurance check. It requires 3 Swift Actions
+    // spent in the same round or across consecutive rounds, and cannot be used while
+    // the condition is Persistent. This hook only expires stale progress when
+    // rounds are skipped so actors do not keep illegal recovery credit forever.
+    const progress = actor.getFlag?.('foundryvtt-swse', 'conditionRecoverProgress');
+    if (!progress) {return;}
 
-    // Prompt for recovery
-    const recover = await SWSEDialogV2.confirm({
-        title: game.i18n.localize('SWSE.Dialogs.ConditionRecovery.Title'),
-        content: game.i18n.format('SWSE.Dialogs.ConditionRecovery.Content', {
-            name: actor.name,
-            current: conditionTrack.current
-        })
-    });
-
-    if (!recover) {return;}
-
-    // Make recovery check
-    const endurance = actor.system.skills?.endurance;
-    const bonus = endurance?.total || 0;
-    const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${bonus}`).evaluate({ async: true });
-
-    await roll.toMessage({
-        speaker: ChatMessage.getSpeaker({ actor }),
-        flavor: game.i18n.localize('SWSE.Chat.Flavors.ConditionRecovery')
-    } , { create: true });
-
-    if (roll.total >= 10) {
-        globalThis.SWSE.ActorEngine.updateActor(actor, {
-            'system.conditionTrack.current': Math.max(0, conditionTrack.current - 1)
-        });
-
-
-        ui.notifications.info(
-            game.i18n.format('SWSE.Notifications.Condition.RecoverySuccess', { name: actor.name })
-        );
-    } else {
-        ui.notifications.warn(
-            game.i18n.format('SWSE.Notifications.Condition.RecoveryFailed', { name: actor.name })
-        );
+    const round = Number(combat.round ?? 0);
+    const progressRound = Number(progress.round ?? -999);
+    const sameCombat = progress.combatId === combat.id;
+    if (!sameCombat || round > progressRound + 1) {
+      await actor.unsetFlag?.('foundryvtt-swse', 'conditionRecoverProgress');
     }
 }
 

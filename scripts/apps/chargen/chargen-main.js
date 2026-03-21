@@ -2941,8 +2941,7 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
     // Import and open the store
     try {
       const { SWSEStore } = await import("/systems/foundryvtt-swse/scripts/apps/store/store-main.js");
-      const store = new SWSEStore(this.actor);
-      store.render(true);
+      await SWSEStore.open(this.actor);
     } catch (err) {
       SWSELogger.error('SWSE | Failed to open store:', err);
       ui.notifications.error('Failed to open the shop. You can access it from your character sheet.');
