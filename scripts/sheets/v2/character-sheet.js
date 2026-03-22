@@ -112,6 +112,37 @@ export class SWSEV2CharacterSheet extends
     super(document, options);
     // Track sheet instance for Sentinel monitoring
     SentinelSheetGuardrails.trackSheetInstance("SWSEV2CharacterSheet");
+
+    // Render loop prevention guard (same pattern as ProgressionShell)
+    this._isRendering = false;
+    this._renderCount = 0;
+  }
+
+  // ═══ AUDIT INSTRUMENTATION + RENDER GUARD ═══
+  async render(...args) {
+    // Render loop prevention: block recursive render calls during active render
+    if (this._isRendering) {
+      console.warn("[SWSEV2CharacterSheet] ⚠️ Render called while already rendering — BLOCKED (loop prevention)");
+      return this;
+    }
+
+    this._isRendering = true;
+    this._renderCount++;
+
+    console.log(`[SWSEV2CharacterSheet] RENDER START (#${this._renderCount}) position:`, this.position);
+    const result = await super.render(...args);
+    console.log(`[SWSEV2CharacterSheet] RENDER COMPLETE (#${this._renderCount}) position:`, this.position);
+
+    this._isRendering = false;
+    return result;
+  }
+
+  setPosition(position) {
+    console.log("[SWSEV2CharacterSheet] setPosition CALLED with:", position);
+    console.log("[SWSEV2CharacterSheet] current position before:", this.position);
+    const result = super.setPosition(position);
+    console.log("[SWSEV2CharacterSheet] position after setPosition:", this.position);
+    return result;
   }
 
   // ---------------------------------------------------------------
