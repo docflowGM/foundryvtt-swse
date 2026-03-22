@@ -158,11 +158,23 @@ export class SWSEV2CharacterSheet extends
   // ---------------------------------------------------------------
 
   async _onRender(context, options) {
+    // CRITICAL: Clear persistent position on first render so Foundry doesn't restore a stale position
+    // This is the key to preventing sheets from opening to the right
+    const _age = Date.now() - this._openedAt;
+    if (_age < 1000) {
+      // First second: treat as brand new open, reset any saved position flags
+      const flags = this.document?.getFlag?.('foundry', 'window.position') ?? null;
+      if (flags) {
+        console.log("[SheetPosition] NUCLEAR: Clearing stale persistent position flags", flags);
+        await this.document?.unsetFlag?.('foundry', 'window.position').catch(() => {});
+      }
+    }
+
     await super._onRender(context, options);
 
     // ── DIAGNOSTIC: always log so we can confirm _onRender fires ──
     console.log(
-      "[SheetPosition] _onRender called | openedAt =", this._openedAt,
+      "[SheetPosition] _onRender called | age =", _age, "ms",
       "| element =", !!this.element,
       "| current left =", this.element?.style?.left ?? this.element?.[0]?.style?.left ?? "?"
     );
@@ -179,8 +191,6 @@ export class SWSEV2CharacterSheet extends
     // A debounced 200 ms deferred call (belt-and-suspenders) also applies
     // both setPosition() AND direct DOM style overrides to defeat any
     // late Foundry restoration that runs after our synchronous call.
-    if (!this._openedAt) this._openedAt = Date.now();
-    const _age = Date.now() - this._openedAt;
     if (_age < 5000) {
       const pos = computeCenteredPosition(900, 950);
 
