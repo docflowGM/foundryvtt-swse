@@ -116,6 +116,10 @@ export class SWSEV2CharacterSheet extends
     // Render loop prevention guard (same pattern as ProgressionShell)
     this._isRendering = false;
     this._renderCount = 0;
+
+    // Position centering tracking — initialize EARLY so first render knows this is a new open
+    this._openedAt = Date.now();
+    this._centerTimer = null;
   }
 
   // ═══ AUDIT INSTRUMENTATION + RENDER GUARD ═══
@@ -198,9 +202,9 @@ export class SWSEV2CharacterSheet extends
           this.setPosition(capturedPos);
           const el = this.element instanceof HTMLElement ? this.element : this.element?.[0];
           if (el) {
-            el.style.left = `${capturedPos.left}px`;
-            el.style.top  = `${capturedPos.top}px`;
-            console.log("[SheetPosition] deferred DOM+API override:", capturedPos.left, capturedPos.top);
+            // Apply position with specificity to ensure it overrides Foundry's persistence
+            el.style.cssText += `left: ${capturedPos.left}px !important; top: ${capturedPos.top}px !important;`;
+            console.log("[SheetPosition] deferred DOM+API override (with !important):", capturedPos.left, capturedPos.top);
           }
         }
       }, 200);
