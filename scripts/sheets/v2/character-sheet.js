@@ -211,8 +211,18 @@ export class SWSEV2CharacterSheet extends
           const el = this.element instanceof HTMLElement ? this.element : this.element?.[0];
           if (el) {
             // Apply position with specificity to ensure it overrides Foundry's persistence
-            el.style.cssText += `left: ${capturedPos.left}px !important; top: ${capturedPos.top}px !important;`;
-            console.log("[SheetPosition] deferred DOM+API override (with !important):", capturedPos.left, capturedPos.top);
+            el.style.left = `${capturedPos.left}px !important`;
+            el.style.top = `${capturedPos.top}px !important`;
+
+            // DIAGNOSTIC: log actual rendered position
+            const computedStyle = window.getComputedStyle(el);
+            const actualLeft = computedStyle.getPropertyValue('left');
+            const actualTop = computedStyle.getPropertyValue('top');
+            console.log("[SheetPosition] deferred override (with !important):", {
+              intended: `left: ${capturedPos.left}px, top: ${capturedPos.top}px`,
+              actual: `left: ${actualLeft}, top: ${actualTop}`,
+              inlineStyle: el.style.left + ", " + el.style.top
+            });
           }
         }
       }, 200);
