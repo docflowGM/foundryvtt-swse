@@ -55,8 +55,8 @@ export class ProgressionShell extends SWSEApplicationV2 {
     position: {
       width: 1000,
       height: 750,
-      top: 50,
-      left: 100,
+      top: null,
+      left: null,
     },
     window: {
       resizable: true,
@@ -189,6 +189,37 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     // Track last spoken step to prevent redundant auto-speech on every full render
     this._lastSpokenStepId = null;
+
+    // Render loop prevention guard
+    this._isRendering = false;
+    this._renderCount = 0;
+  }
+
+  // ═══ AUDIT INSTRUMENTATION + RENDER GUARD ═══
+  async render(...args) {
+    // Render loop prevention: block recursive render calls during active render
+    if (this._isRendering) {
+      console.warn("[ProgressionShell] ⚠️ Render called while already rendering — BLOCKED (loop prevention)");
+      return this;
+    }
+
+    this._isRendering = true;
+    this._renderCount++;
+
+    console.log(`[ProgressionShell] RENDER START (#${this._renderCount}) position:`, this.position);
+    const result = await super.render(...args);
+    console.log(`[ProgressionShell] RENDER COMPLETE (#${this._renderCount}) position:`, this.position);
+
+    this._isRendering = false;
+    return result;
+  }
+
+  setPosition(position) {
+    console.log("[ProgressionShell] setPosition CALLED with:", position);
+    console.log("[ProgressionShell] current position before:", this.position);
+    const result = super.setPosition(position);
+    console.log("[ProgressionShell] position after setPosition:", this.position);
+    return result;
   }
 
   /**

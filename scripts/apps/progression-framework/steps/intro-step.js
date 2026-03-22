@@ -77,6 +77,9 @@ export class IntroStep extends ProgressionStepPlugin {
     // Signal animation state
     this._signalLevel = 0;
     this._signalDirection = 1;
+
+    // Auto-advance tracking (prevent re-triggering on every render)
+    this._autoAdvanceStarted = false;
   }
 
   // ---------------------------------------------------------------------------
@@ -90,23 +93,21 @@ export class IntroStep extends ProgressionStepPlugin {
     // Initialize boot sequence display
     this._currentStep = 0;
     this._sequenceComplete = false;
+    this._autoAdvanceStarted = false;
 
     // Start clock and signal animation
     this._startClock();
     this._startSignalAnimation();
+
+    // Start the auto-advance sequence ONCE (not on every render)
+    // This prevents the render loop: onDataReady → render → onDataReady → render...
+    this._autoAdvanceSequence(shell);
   }
 
   async onStepExit(shell) {
     // Clean up clock and signal animations
     this._stopClock();
     this._stopSignalAnimation();
-  }
-
-  async onDataReady(shell) {
-    // Auto-advance through boot sequence with timing.
-    // The Continue button uses data-action="next-step" and is handled by the shell's
-    // ApplicationV2 action delegation — no manual event listener needed here.
-    this._autoAdvanceSequence(shell);
   }
 
   // ---------------------------------------------------------------------------
