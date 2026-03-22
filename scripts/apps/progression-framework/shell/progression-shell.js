@@ -23,6 +23,7 @@
 
 import SWSEApplicationV2 from '/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { centerApplicationDuringStartup } from '/systems/foundryvtt-swse/scripts/utils/sheet-position.js';
 import { ConditionalStepResolver } from './conditional-step-resolver.js';
 import { ProgressionFinalizer } from './progression-finalizer.js';
 import { StepCategory } from '../steps/step-descriptor.js';
@@ -193,6 +194,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // Render loop prevention guard
     this._isRendering = false;
     this._renderCount = 0;
+
+    // Position centering tracking — initialize EARLY so first render knows this is a new open
+    this._openedAt = Date.now();
+    this._centerTimer = null;
   }
 
   // ═══ AUDIT INSTRUMENTATION + RENDER GUARD ═══
@@ -578,6 +583,12 @@ export class ProgressionShell extends SWSEApplicationV2 {
   }
 
   async _onRender(context, options) {
+    // POSITIONING: Center the progression shell during startup window (first 5 seconds)
+    // Foundry V13 persists window positions and restores them on each render, which can
+    // override our centered position. This time-windowed approach centers during startup,
+    // then respects manual drags after the window has settled.
+    centerApplicationDuringStartup(this, { width: 1000, height: 750 });
+
     await super._onRender(context, options);
 
     // Wire subsystem after-render hooks
