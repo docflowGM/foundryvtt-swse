@@ -115,7 +115,7 @@ export function registerActorSidebarControls() {
         if (!actor) return game.user?.isGM ?? false; // Allow GMs to open chargen standalone
         return actor.type === 'character'; // Show for characters
       },
-      onClick: () => onClickChargen(app)
+      handler: () => onClickChargen(app)
     });
 
     // Store button (for any character, or standalone)
@@ -129,7 +129,7 @@ export function registerActorSidebarControls() {
         // Show if character, or if no actor (standalone store)
         return !actor || actor.type === 'character';
       },
-      onClick: () => onClickStore(app)
+      handler: () => onClickStore(app)
     });
 
     // Templates button (GM only)
@@ -138,7 +138,7 @@ export function registerActorSidebarControls() {
         action: 'swse-templates',
         icon: 'fa-solid fa-layer-group',
         label: 'Templates',
-        onClick: () => onClickTemplates(app)
+        handler: () => onClickTemplates(app)
       });
 
       // GM Store Dashboard button (GM only)
@@ -146,7 +146,7 @@ export function registerActorSidebarControls() {
         action: 'swse-gm-store-dashboard',
         icon: 'fa-solid fa-cog',
         label: 'Store Dashboard',
-        onClick: () => onClickGMDashboard(app)
+        handler: () => onClickGMDashboard(app)
       });
     }
 

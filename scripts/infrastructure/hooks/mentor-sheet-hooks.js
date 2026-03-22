@@ -45,7 +45,7 @@ export function registerMentorSheetHooks() {
       label: 'Mentor',
       ownership: CONST?.DOCUMENT_OWNERSHIP_LEVELS?.OWNER ?? 3,
       visible: () => true,
-      onClick: () => onClickMentor(app)
+      handler: () => onClickMentor(app)
     });
   }, { id: 'swse-mentor-sheet' });
 

@@ -124,7 +124,7 @@ export function registerLevelUpSheetHooks() {
         const incomplete = detectIncompleteCharacter(actor);
         return !incomplete; // Show if character is NOT incomplete (i.e., is complete)
       },
-      onClick: () => onClickLevelUp(app)
+      handler: () => onClickLevelUp(app)
     });
   }, { id: 'swse-levelup' });
 

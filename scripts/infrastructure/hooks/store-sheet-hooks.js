@@ -45,7 +45,7 @@ export function registerStoreSheetHooks() {
       label: 'Store',
       ownership: CONST?.DOCUMENT_OWNERSHIP_LEVELS?.OWNER ?? 3,
       visible: () => true,
-      onClick: () => onClickStore(app)
+      handler: () => onClickStore(app)
     });
   }, { id: 'swse-store-sheet' });
 

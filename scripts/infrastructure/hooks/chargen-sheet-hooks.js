@@ -82,7 +82,7 @@ export function registerChargenSheetHooks() {
       ownership: CONST?.DOCUMENT_OWNERSHIP_LEVELS?.OWNER ?? 3,
       // Show chargen button ONLY if character is incomplete (hasn't finished chargen yet)
       visible: () => isChargenIncomplete(actor),
-      onClick: () => onClickChargen(app)
+      handler: () => onClickChargen(app)
     });
 
     SWSELogger.debug(`[Chargen Hook] Chargen button pushed to controls for "${actor.name}"`);
