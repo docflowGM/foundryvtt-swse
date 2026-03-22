@@ -215,15 +215,33 @@ export class SWSEV2CharacterSheet extends
             el.style.setProperty('left', `${capturedPos.left}px`, 'important');
             el.style.setProperty('top', `${capturedPos.top}px`, 'important');
 
-            // DIAGNOSTIC: log actual rendered position
+            // DIAGNOSTIC: log actual rendered position with full details
             const computedStyle = window.getComputedStyle(el);
             const actualLeft = computedStyle.getPropertyValue('left');
             const actualTop = computedStyle.getPropertyValue('top');
-            console.log("[SheetPosition] deferred override (with !important):", {
-              intended: `left: ${capturedPos.left}px, top: ${capturedPos.top}px`,
-              actual: `left: ${actualLeft}, top: ${actualTop}`,
-              inlineStyle: `left: ${el.style.left}, top: ${el.style.top}`,
-              cssTextFull: el.style.cssText
+            const actualRight = computedStyle.getPropertyValue('right');
+            const actualBottom = computedStyle.getPropertyValue('bottom');
+            const transform = computedStyle.getPropertyValue('transform');
+            const position = computedStyle.getPropertyValue('position');
+
+            console.log("[SheetPosition] ════ DEFERRED OVERRIDE (200ms) ════");
+            console.log("[SheetPosition] Intended position:", {
+              left: capturedPos.left,
+              top: capturedPos.top
+            });
+            console.log("[SheetPosition] After setProperty with !important:", {
+              inlineStyleLeft: el.style.left,
+              inlineStyleTop: el.style.top,
+              cssText: el.style.cssText
+            });
+            console.log("[SheetPosition] Actual computed values:", {
+              computedLeft: actualLeft,
+              computedTop: actualTop,
+              computedRight: actualRight,
+              computedBottom: actualBottom,
+              position: position,
+              transform: transform,
+              note: 'If computed differs from intended, something is overriding our !important or using different positioning'
             });
           }
         }

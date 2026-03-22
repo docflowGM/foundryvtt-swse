@@ -40,14 +40,42 @@ export function computeCenteredPosition(targetWidth = DEFAULTS.width, targetHeig
   const left = Math.max(MARGIN, Math.min(rawLeft, availW - width - MARGIN));
   const top = Math.max(MARGIN, Math.min(rawTop, viewportH - height - MARGIN));
 
-  // Diagnostic logging
-  console.log('[sheet-position] computeCenteredPosition:', {
-    viewport: `${viewportW}x${viewportH}`,
-    sidebarW,
-    availW,
-    targetSize: `${targetWidth}x${targetHeight}`,
-    finalSize: `${width}x${height}`,
-    position: { left, top }
+  // CRITICAL: Expanded diagnostic logging to show each calculation step
+  const sidebarDetected = !!sidebarEl;
+  console.log('[sheet-position] ════ STEP 1: Sidebar Detection ════', {
+    sidebarElement_found: sidebarDetected,
+    sidebarWidth_detected: sidebarW,
+    note: sidebarDetected ? 'Sidebar detected — right-side offset will be used' : 'NO SIDEBAR FOUND — defaulting to 310px'
+  });
+
+  console.log('[sheet-position] ════ STEP 2: Viewport & Available Space ════', {
+    viewport_width: viewportW,
+    viewport_height: viewportH,
+    sidebar_width: sidebarW,
+    available_width: availW,
+    calculation: `availW = max(500, ${viewportW} - ${sidebarW} - 16) = ${availW}`
+  });
+
+  console.log('[sheet-position] ════ STEP 3: Window Size (Target vs Final) ════', {
+    target_width: targetWidth,
+    target_height: targetHeight,
+    final_width: width,
+    final_height: height
+  });
+
+  console.log('[sheet-position] ════ STEP 4: Position Centering ════', {
+    raw_left: rawLeft,
+    raw_top: rawTop,
+    final_left: left,
+    final_top: top,
+    clamping_note: `left clamped between ${MARGIN} and ${availW - width - MARGIN}`
+  });
+
+  console.log('[sheet-position] ════ FINAL RESULT ════', {
+    width,
+    height,
+    left,
+    top
   });
 
   return { width, height, left, top };
