@@ -158,16 +158,14 @@ export class SWSEV2CharacterSheet extends
   // ---------------------------------------------------------------
 
   async _onRender(context, options) {
-    // CRITICAL: Clear persistent position on first render so Foundry doesn't restore a stale position
-    // This is the key to preventing sheets from opening to the right
+    // CRITICAL: Force position to centered BEFORE super._onRender to prevent Foundry from restoring
     const _age = Date.now() - this._openedAt;
-    if (_age < 1000) {
-      // First second: treat as brand new open, reset any saved position flags
-      const flags = this.document?.getFlag?.('foundry', 'window.position') ?? null;
-      if (flags) {
-        console.log("[SheetPosition] NUCLEAR: Clearing stale persistent position flags", flags);
-        await this.document?.unsetFlag?.('foundry', 'window.position').catch(() => {});
-      }
+    if (_age < 5000) {
+      // During startup window: force centering BEFORE rendering
+      const pos = computeCenteredPosition(900, 950);
+      console.log("[SheetPosition] PRE-RENDER: Forcing centered position before super._onRender", pos);
+      this.position.left = pos.left;
+      this.position.top = pos.top;
     }
 
     await super._onRender(context, options);
