@@ -366,29 +366,38 @@ export class IntroStep extends ProgressionStepPlugin {
         continueClicked: this._continueClicked,
       });
 
-      // Prevent double-click
-      if (this._continueClicked || this._transitionInProgress) {
-        swseLogger.warn('[IntroStep.activateListeners] Continue already clicked or transition in progress, ignoring');
-        return;
+      try {
+        // Prevent double-click
+        if (this._continueClicked || this._transitionInProgress) {
+          swseLogger.warn('[IntroStep.activateListeners] Continue already clicked or transition in progress, ignoring');
+          return;
+        }
+
+        // Only allow transition from COMPLETE_AWAITING_CLICK state
+        if (this._state !== INTRO_STATE.COMPLETE_AWAITING_CLICK) {
+          swseLogger.warn('[IntroStep.activateListeners] Cannot transition from state', { state: this._state });
+          return;
+        }
+
+        // Mark as clicked and start transition
+        this._continueClicked = true;
+        this._state = INTRO_STATE.TRANSITIONING;
+        this._transitionInProgress = true;
+
+        swseLogger.debug('[IntroStep.activateListeners] Transitioning to next step', {
+          newState: this._state,
+        });
+
+        // Transition to next step (species)
+        this._transitionToNextStep();
+      } catch (error) {
+        swseLogger.error('[IntroStep.activateListeners] ERROR handling Continue button', {
+          error: error.message,
+          stack: error.stack,
+        });
+        this._transitionInProgress = false;
+        this._continueClicked = false;
       }
-
-      // Only allow transition from COMPLETE_AWAITING_CLICK state
-      if (this._state !== INTRO_STATE.COMPLETE_AWAITING_CLICK) {
-        swseLogger.warn('[IntroStep.activateListeners] Cannot transition from state', { state: this._state });
-        return;
-      }
-
-      // Mark as clicked and start transition
-      this._continueClicked = true;
-      this._state = INTRO_STATE.TRANSITIONING;
-      this._transitionInProgress = true;
-
-      swseLogger.debug('[IntroStep.activateListeners] Transitioning to next step', {
-        newState: this._state,
-      });
-
-      // Transition to next step (species)
-      this._transitionToNextStep();
     });
 
     // Parallax camera drift on mouse movement
@@ -524,11 +533,21 @@ export class IntroStep extends ProgressionStepPlugin {
       // Transition to state where we're waiting for user to click Continue
       this._state = INTRO_STATE.COMPLETE_AWAITING_CLICK;
       this._introRunning = false;  // Stop accepting skip clicks
-      shell.render();
-      swseLogger.debug('[IntroStep.startIntroSequence] Shell rendered after completion', {
-        complete: this._complete,
-        newState: this._state,
-      });
+
+      try {
+        swseLogger.debug('[IntroStep.startIntroSequence] About to call shell.render()');
+        shell.render();
+        swseLogger.debug('[IntroStep.startIntroSequence] Shell rendered after completion', {
+          complete: this._complete,
+          newState: this._state,
+        });
+      } catch (error) {
+        swseLogger.error('[IntroStep.startIntroSequence] ERROR during shell.render()', {
+          error: error.message,
+          stack: error.stack,
+        });
+        throw error;
+      }
     } else {
       swseLogger.debug('[IntroStep.startIntroSequence] Intro animation was cancelled before completion');
     }
