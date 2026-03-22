@@ -631,6 +631,7 @@ export class IntroStep extends ProgressionStepPlugin {
    * Uses session token to prevent stale timers from running after step has exited.
    */
   async _runTranslation(shell) {
+    console.log('[IntroStep._runTranslation] Starting translation phase, text length:', this._fullText.length);
     this._translatedText = '';
     this._translationCharStates = [];
 
@@ -691,15 +692,21 @@ export class IntroStep extends ProgressionStepPlugin {
     }
 
     // Final session check before finishing
-    if (this._sessionToken !== sessionToken) return;
+    if (this._sessionToken !== sessionToken) {
+      console.log('[IntroStep._runTranslation] ABORTED: Session invalidated at end');
+      return;
+    }
 
     // Translation complete, text fully revealed (only if animation wasn't cancelled)
     if (this._introRunning) {
+      console.log('[IntroStep._runTranslation] COMPLETE: Translation finished, text length:', this._translatedText.length);
       this._translationCharStates = this._translatedText.split('').map(char => ({
         state: 'complete',
         glyph: char
       }));
       this._updateTranslationTextDOM();
+    } else {
+      console.log('[IntroStep._runTranslation] CANCELLED: _introRunning is false');
     }
   }
 
@@ -756,28 +763,33 @@ export class IntroStep extends ProgressionStepPlugin {
    * This provides live typewriter effect during translation phase.
    */
   _updateTranslationTextDOM() {
-    const translationTextEl = document.querySelector('[data-role="intro-translation"]');
-    if (!translationTextEl) {
-      // Translation element not yet rendered (not in TRANSLATING phase yet)
-      return;
+    try {
+      const translationTextEl = document.querySelector('[data-role="intro-translation"]');
+      if (!translationTextEl) {
+        // Translation element not yet rendered (not in TRANSLATING phase yet)
+        // This is normal early in the animation before translation phase starts
+        return;
+      }
+
+      // Build character HTML with state-based classes
+      let charHTML = '';
+      for (let i = 0; i < this._translatedText.length; i++) {
+        const char = this._translatedText[i];
+        const state = this._translationCharStates[i]?.state || 'stable';
+        const isGlowing = this._trailPositions?.includes(i);
+
+        let classes = 'prog-intro-char';
+        if (state === 'flickering') classes += ' prog-intro-char--flickering';
+        else if (state === 'locked' || state === 'complete') classes += ' prog-intro-char--locked';
+        if (isGlowing) classes += ' prog-intro-char--glow-trail';
+
+        charHTML += `<span class="${classes}">${char}</span>`;
+      }
+
+      translationTextEl.innerHTML = charHTML;
+    } catch (error) {
+      console.error('[IntroStep._updateTranslationTextDOM] ERROR:', error.message);
     }
-
-    // Build character HTML with state-based classes
-    let charHTML = '';
-    for (let i = 0; i < this._translatedText.length; i++) {
-      const char = this._translatedText[i];
-      const state = this._translationCharStates[i]?.state || 'stable';
-      const isGlowing = this._trailPositions?.includes(i);
-
-      let classes = 'prog-intro-char';
-      if (state === 'flickering') classes += ' prog-intro-char--flickering';
-      else if (state === 'locked' || state === 'complete') classes += ' prog-intro-char--locked';
-      if (isGlowing) classes += ' prog-intro-char--glow-trail';
-
-      charHTML += `<span class="${classes}">${char}</span>`;
-    }
-
-    translationTextEl.innerHTML = charHTML;
   }
 
   /**
