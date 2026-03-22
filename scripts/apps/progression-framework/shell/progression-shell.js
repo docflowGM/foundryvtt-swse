@@ -1019,6 +1019,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
   // ---------------------------------------------------------------------------
 
   async close(options = {}) {
+    // Cleanup centering state
+    clearTimeout(this._centerTimer);
+    this._centerTimer = null;
+    this._openedAt = null;
+
     // Notify current plugin on close
     const currentDescriptor = this.steps[this.currentStepIndex];
     const currentPlugin = this.stepPlugins.get(currentDescriptor?.stepId);
