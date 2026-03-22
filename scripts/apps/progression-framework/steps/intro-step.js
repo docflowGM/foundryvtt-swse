@@ -740,6 +740,7 @@ export class IntroStep extends ProgressionStepPlugin {
    * Transition authoratively to the next step (Species).
    * This is called when the user clicks Continue after intro completes.
    * Coordinates with the ProgressionShell to advance the progression.
+   * Uses the shell's internal _onNextStep() method to properly handle the transition.
    */
   async _transitionToNextStep() {
     try {
@@ -755,13 +756,15 @@ export class IntroStep extends ProgressionStepPlugin {
         return;
       }
 
-      swseLogger.debug('[IntroStep._transitionToNextStep] Beginning transition to species step');
+      swseLogger.debug('[IntroStep._transitionToNextStep] Beginning transition to next step via shell action');
 
       // Tell the shell to move to the next step
-      // The shell's progression system handles the actual navigation
-      await this._shell.goToStep('species');
+      // The shell's _onNextStep handles all the logic: blocking issues, plugin callbacks, rendering, etc.
+      // We create a fake event since the action system expects one
+      const fakeEvent = { preventDefault: () => {}, stopPropagation: () => {} };
+      await this._shell._onNextStep(fakeEvent, null);
 
-      swseLogger.debug('[IntroStep._transitionToNextStep] Transition complete, species step should now be active');
+      swseLogger.debug('[IntroStep._transitionToNextStep] Transition complete, next step should now be active');
     } catch (error) {
       swseLogger.error('[IntroStep._transitionToNextStep] Error during transition', { error: error.message });
       this._transitionInProgress = false;
