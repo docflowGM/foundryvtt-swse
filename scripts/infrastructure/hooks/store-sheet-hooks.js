@@ -9,18 +9,26 @@ import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/h
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
 
-async function onClickStore(app) {
+function onClickStore(app) {
   const actor = app?.actor ?? app?.document;
 
   if (actor && actor.type === 'character') {
     SWSELogger.log(`[Store Header] Opening Store for: ${actor.name}`);
-    await SWSEStore.open(actor);
+    // Launch asynchronously without await
+    // The handler should not block the UI
+    SWSEStore.open(actor).catch(err => {
+      SWSELogger.error('[Store Header] Error opening store:', err);
+      ui?.notifications?.error?.(`Failed to open store: ${err.message}`);
+    });
     return;
   }
 
   // Fallback to generic store if no character
   SWSELogger.log('[Store Header] Opening Store (generic)');
-  await SWSEStore.open();
+  SWSEStore.open().catch(err => {
+    SWSELogger.error('[Store Header] Error opening generic store:', err);
+    ui?.notifications?.error?.(`Failed to open store: ${err.message}`);
+  });
 }
 
 export function registerStoreSheetHooks() {

@@ -50,7 +50,7 @@ function detectIncompleteCharacter(actor) {
   return null; // Character is complete enough for level-up
 }
 
-async function onClickLevelUp(app) {
+function onClickLevelUp(app) {
   const actor = app?.actor ?? app?.document;
   if (!actor) {
     console.warn('[SWSE LevelUp] No actor found in app:', app);
@@ -77,12 +77,11 @@ async function onClickLevelUp(app) {
       SWSELogger.log(`[LevelUp Routing] Character is complete → unified progression entry`);
     }
 
-    try {
-      await launchProgression(actor);
-    } catch (err) {
+    // Launch progression asynchronously without await
+    launchProgression(actor).catch(err => {
       SWSELogger.error(`[LevelUp Routing] ERROR in progression:`, err);
       ui?.notifications?.error?.(`Failed to open progression: ${err.message}`);
-    }
+    });
     return;
   }
 

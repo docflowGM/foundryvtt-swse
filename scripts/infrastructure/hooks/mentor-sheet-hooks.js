@@ -9,7 +9,7 @@ import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/h
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { MentorChatDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor-chat-dialog.js";
 
-async function onClickMentor(app) {
+function onClickMentor(app) {
   const actor = app?.actor ?? app?.document;
   if (!actor) {
     console.warn('[SWSE Mentor] No actor found in app:', app);
@@ -22,8 +22,13 @@ async function onClickMentor(app) {
   }
 
   SWSELogger.log(`[Mentor Header] Opening Mentor Dialog for: ${actor.name}`);
-  const mentorDialog = new MentorChatDialog(actor);
-  mentorDialog.render(true);
+  try {
+    const mentorDialog = new MentorChatDialog(actor);
+    mentorDialog.render(true);
+  } catch (err) {
+    SWSELogger.error('[Mentor Header] Error opening mentor dialog:', err);
+    ui?.notifications?.error?.(`Failed to open mentor dialog: ${err.message}`);
+  }
 }
 
 export function registerMentorSheetHooks() {

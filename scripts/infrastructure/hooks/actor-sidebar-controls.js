@@ -16,7 +16,7 @@ import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-mai
 import { TemplateCharacterCreator } from "/systems/foundryvtt-swse/scripts/apps/template-character-creator.js";
 import { GMStoreDashboard } from "/systems/foundryvtt-swse/scripts/apps/gm-store-dashboard.js";
 
-async function onClickChargen(app) {
+function onClickChargen(app) {
   // Chargen requires an actor
   const actor = app?.actor ?? app?.document;
   if (!actor) {
@@ -35,40 +35,60 @@ async function onClickChargen(app) {
   }
 
   SWSELogger.log(`[Actor Sidebar] Opening Chargen for: ${actor.name}`);
-  await CharacterGenerator.open(actor);
+  // Launch asynchronously without await
+  CharacterGenerator.open(actor).catch(err => {
+    SWSELogger.error('[Actor Sidebar] Error opening chargen:', err);
+    ui?.notifications?.error?.(`Failed to open chargen: ${err.message}`);
+  });
 }
 
-async function onClickStore(app) {
+function onClickStore(app) {
   // Store can work with or without a selected actor
   const actor = app?.actor ?? app?.document;
 
   // If we have a character, open store for that character
   if (actor && actor.type === 'character') {
     SWSELogger.log(`[Actor Sidebar] Opening Store for: ${actor.name}`);
-    await SWSEStore.open(actor);
+    SWSEStore.open(actor).catch(err => {
+      SWSELogger.error('[Actor Sidebar] Error opening store:', err);
+      ui?.notifications?.error?.(`Failed to open store: ${err.message}`);
+    });
     return;
   }
 
   // Otherwise open generic store
   SWSELogger.log('[Actor Sidebar] Opening Store (no actor selected)');
-  await SWSEStore.open();
+  SWSEStore.open().catch(err => {
+    SWSELogger.error('[Actor Sidebar] Error opening generic store:', err);
+    ui?.notifications?.error?.(`Failed to open store: ${err.message}`);
+  });
 }
 
-async function onClickTemplates(app) {
+function onClickTemplates(app) {
   // Templates can create a new actor from a template
   SWSELogger.log('[Actor Sidebar] Opening Template Character Creator');
-  TemplateCharacterCreator.create();
+  try {
+    TemplateCharacterCreator.create();
+  } catch (err) {
+    SWSELogger.error('[Actor Sidebar] Error opening template creator:', err);
+    ui?.notifications?.error?.(`Failed to open template creator: ${err.message}`);
+  }
 }
 
-async function onClickGMDashboard(app) {
+function onClickGMDashboard(app) {
   // GM Store Dashboard - GMs only
   if (!(game.user?.isGM ?? false)) {
     ui?.notifications?.warn?.('Only GMs can access the Store Dashboard.');
     return;
   }
   SWSELogger.log('[Actor Sidebar] Opening GM Store Dashboard');
-  const dashboard = new GMStoreDashboard();
-  dashboard.render(true);
+  try {
+    const dashboard = new GMStoreDashboard();
+    dashboard.render(true);
+  } catch (err) {
+    SWSELogger.error('[Actor Sidebar] Error opening GM dashboard:', err);
+    ui?.notifications?.error?.(`Failed to open GM dashboard: ${err.message}`);
+  }
 }
 
 export function registerActorSidebarControls() {
