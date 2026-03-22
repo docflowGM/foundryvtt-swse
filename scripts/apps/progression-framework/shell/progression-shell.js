@@ -144,6 +144,21 @@ export class ProgressionShell extends SWSEApplicationV2 {
     });
 
     app.render({ force: true });
+
+    // CRITICAL: Bring the shell to front immediately after render.
+    // Ensures the chargen window is visible and cannot be hidden behind other windows.
+    // Uses setTimeout(0) to defer until after Foundry's render cycle completes.
+    // This prevents the intro step from receiving unexpected close signals during animation.
+    await new Promise(resolve => setTimeout(() => {
+      try {
+        app.bringToTop?.();
+        swseLogger.debug('[ProgressionShell.open] Shell brought to top after render');
+      } catch (err) {
+        swseLogger.warn('[ProgressionShell.open] Error bringing shell to top:', err.message);
+      }
+      resolve();
+    }, 0));
+
     return app;
   }
 
