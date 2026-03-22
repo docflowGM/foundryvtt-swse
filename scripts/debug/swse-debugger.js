@@ -50,9 +50,10 @@ export class SWSEDebugger {
       this.events.shift();
     }
 
-    if (this.enabled) {
-      console.log("SWSE DEBUG:", event);
-    }
+    // DISABLED: Console logging was flooding output
+    // if (this.enabled) {
+    //   console.log("SWSE DEBUG:", event);
+    // }
 
     // Forward to Sentinel if available
     // DISABLED: Sentinel debugger logging was causing console spam
