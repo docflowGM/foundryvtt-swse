@@ -55,9 +55,10 @@ export class SWSEDebugger {
     }
 
     // Forward to Sentinel if available
-    if (window.__SWSE_SENTINEL__?.reportEvent) {
-      window.__SWSE_SENTINEL__.reportEvent("debug", event);
-    }
+    // DISABLED: Sentinel debugger logging was causing console spam
+    // if (window.__SWSE_SENTINEL__?.reportEvent) {
+    //   window.__SWSE_SENTINEL__.reportEvent("debug", event);
+    // }
   }
 
   /* ===============================
