@@ -533,7 +533,13 @@ export class IntroStep extends ProgressionStepPlugin {
         console.log('[IntroStep.startIntroSequence] Rendering shell to prepare translation container...');
         try {
           shell.render();
-          console.log('[IntroStep.startIntroSequence] Shell rendered, translation container should now be in DOM');
+          console.log('[IntroStep.startIntroSequence] Shell.render() called');
+
+          // CRITICAL: Wait for the render cycle to actually update the DOM
+          // shell.render() queues the render but DOM updates are asynchronous
+          // We need to wait at least until the next macrotask before the element will exist
+          await new Promise(resolve => setTimeout(resolve, 0));
+          console.log('[IntroStep.startIntroSequence] Render cycle complete, translation container should now be in DOM');
         } catch (error) {
           console.error('[IntroStep.startIntroSequence] ERROR during pre-translation render:', error);
         }
