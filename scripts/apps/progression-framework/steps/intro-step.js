@@ -524,10 +524,13 @@ export class IntroStep extends ProgressionStepPlugin {
 
       // Enter this phase
       this._phase = phase.label;
+      console.log(`[IntroStep.startIntroSequence] Entering phase ${i + 1}/6:`, phase.label);
 
       // Special handling for translation phase (no progress bar, typewriter effect)
       if (phase.label === 'TRANSLATING') {
+        console.log('[IntroStep.startIntroSequence] About to call _runTranslation...');
         await this._runTranslation(shell);
+        console.log('[IntroStep.startIntroSequence] _runTranslation completed');
       } else {
         // Animate progress smoothly over the phase duration
         // This uses direct DOM mutation, not shell re-renders
