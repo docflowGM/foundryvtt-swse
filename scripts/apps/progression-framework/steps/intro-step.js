@@ -600,8 +600,9 @@ export class IntroStep extends ProgressionStepPlugin {
 
       this._progress += (100 / this._phases.length) / steps;
 
-      // Update visual progress bar directly in DOM (no shell.render())
+      // Update visual progress bar and phase label directly in DOM (no shell.render())
       this._updateProgressBarDOM();
+      this._updatePhaseDisplayDOM();
 
       // Wait before next frame
       await this.delay(stepTime);
@@ -614,6 +615,7 @@ export class IntroStep extends ProgressionStepPlugin {
     const phasePercent = ((this._phase ? this._phases.findIndex(p => p.label === this._phase) + 1 : 0) / this._phases.length) * 100;
     this._progress = Math.min(phasePercent, 100);
     this._updateProgressBarDOM();
+    this._updatePhaseDisplayDOM();
   }
 
   /**
@@ -726,6 +728,25 @@ export class IntroStep extends ProgressionStepPlugin {
           seg.classList.remove('active');
         }
       });
+    }
+  }
+
+  /**
+   * Update phase label and microlabel in DOM directly (no shell.render()).
+   * Shows current phase name in Aurabesh and diegetic system message.
+   */
+  _updatePhaseDisplayDOM() {
+    // Update phase label (Aurabesh text)
+    const aurabeshEl = document.querySelector('[data-role="intro-aurabesh"]');
+    if (aurabeshEl && this._phase) {
+      const phaseData = this.getPhaseData();
+      aurabeshEl.textContent = phaseData.phaseAurabesh;
+    }
+
+    // Update microlabel (diegetic system messages)
+    const microlabelEl = document.querySelector('[data-role="intro-microlabel"]');
+    if (microlabelEl) {
+      microlabelEl.textContent = `> ${this._currentMicrolabel}`;
     }
   }
 
