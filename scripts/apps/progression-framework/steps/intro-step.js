@@ -263,6 +263,9 @@ export class IntroStep extends ProgressionStepPlugin {
       translationCharStates: this._translationCharStates,
     };
 
+    // DIAGNOSTIC: Show what data is being returned to template
+    console.log('[IntroStep.getStepData] Complete flag:', stepData.complete, 'Phase:', stepData.phase, 'Progress:', stepData.progress);
+
     swseLogger.debug('[IntroStep.getStepData] Returning step data', {
       complete: stepData.complete,
       progress: stepData.progress,
@@ -546,13 +549,16 @@ export class IntroStep extends ProgressionStepPlugin {
       this._introRunning = false;  // Stop accepting skip clicks
 
       try {
+        console.log('[IntroStep.startIntroSequence] About to render with complete=true, state=', this._state);
         swseLogger.debug('[IntroStep.startIntroSequence] About to call shell.render()');
         shell.render();
+        console.log('[IntroStep.startIntroSequence] Shell.render() completed successfully');
         swseLogger.debug('[IntroStep.startIntroSequence] Shell rendered after completion', {
           complete: this._complete,
           newState: this._state,
         });
       } catch (error) {
+        console.error('[IntroStep.startIntroSequence] ERROR during shell.render():', error);
         swseLogger.error('[IntroStep.startIntroSequence] ERROR during shell.render()', {
           error: error.message,
           stack: error.stack,
