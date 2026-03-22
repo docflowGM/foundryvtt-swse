@@ -30,6 +30,32 @@ function onClickChargen(app) {
   });
 }
 
+/**
+ * Check whether a character is incomplete (missing required chargen data).
+ * Returns true if chargen needs to be completed.
+ */
+function isChargenIncomplete(actor) {
+  const system = actor.system;
+
+  // Brand-new actor — no level assigned yet
+  if ((system.level || 0) === 0) {
+    return true;
+  }
+
+  // Missing or placeholder name
+  if (!actor.name || actor.name.trim() === '' || actor.name === 'New Character') {
+    return true;
+  }
+
+  // No class item yet — chargen was not completed
+  const hasClass = actor.items.some(item => item.type === 'class');
+  if (!hasClass) {
+    return true;
+  }
+
+  return false; // Character has completed chargen
+}
+
 export function registerChargenSheetHooks() {
   HooksRegistry.register('getHeaderControlsApplicationV2', (app, controls) => {
     const actor = app?.actor ?? app?.document;
@@ -54,7 +80,8 @@ export function registerChargenSheetHooks() {
       icon: 'fa-solid fa-dice-d20',
       label: 'Chargen',
       ownership: CONST?.DOCUMENT_OWNERSHIP_LEVELS?.OWNER ?? 3,
-      visible: () => true,
+      // Show chargen button ONLY if character is incomplete (hasn't finished chargen yet)
+      visible: () => isChargenIncomplete(actor),
       onClick: () => onClickChargen(app)
     });
 

@@ -119,7 +119,11 @@ export function registerLevelUpSheetHooks() {
       icon: 'fa-solid fa-level-up-alt',
       label: 'Level Up',
       ownership: CONST?.DOCUMENT_OWNERSHIP_LEVELS?.OWNER ?? 3,
-      visible: () => (actor.type === 'npc' ? (game.user?.isGM ?? false) : true),
+      // Show level-up button ONLY if character is complete (has finished chargen)
+      visible: () => {
+        const incomplete = detectIncompleteCharacter(actor);
+        return !incomplete; // Show if character is NOT incomplete (i.e., is complete)
+      },
       onClick: () => onClickLevelUp(app)
     });
   }, { id: 'swse-levelup' });
