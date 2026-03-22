@@ -40,6 +40,16 @@ export function computeCenteredPosition(targetWidth = DEFAULTS.width, targetHeig
   const left = Math.max(MARGIN, Math.min(rawLeft, availW - width - MARGIN));
   const top = Math.max(MARGIN, Math.min(rawTop, viewportH - height - MARGIN));
 
+  // Diagnostic logging
+  console.log('[sheet-position] computeCenteredPosition:', {
+    viewport: `${viewportW}x${viewportH}`,
+    sidebarW,
+    availW,
+    targetSize: `${targetWidth}x${targetHeight}`,
+    finalSize: `${width}x${height}`,
+    position: { left, top }
+  });
+
   return { width, height, left, top };
 }
 
