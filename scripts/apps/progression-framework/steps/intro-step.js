@@ -481,6 +481,17 @@ export class IntroStep extends ProgressionStepPlugin {
       return;
     }
 
+    // Cache critical DOM element references for animation (only on first render)
+    if (!this._translationTextEl) {
+      this._translationTextEl = workSurfaceEl.querySelector('[data-role="intro-translation"]');
+      const translationFound = !!this._translationTextEl;
+      console.log('[IntroStep.afterRender] Translation element binding:', {
+        selector: '[data-role="intro-translation"]',
+        found: translationFound,
+        element: translationFound ? 'cached' : 'NOT FOUND',
+      });
+    }
+
     // ONLY on first render during ANIMATING state: start the animation
     if (this._state === INTRO_STATE.ANIMATING && !this._animationSequenceStarted) {
       swseLogger.debug('[IntroStep.afterRender] Starting animation sequence');
@@ -528,23 +539,9 @@ export class IntroStep extends ProgressionStepPlugin {
 
       // Special handling for translation phase (no progress bar, typewriter effect)
       if (phase.label === 'TRANSLATING') {
-        // CRITICAL: Render once before translation to ensure [data-role="intro-translation"] element exists in DOM
-        // This is necessary because the template's {{#if (or isTranslating complete)}} block doesn't render until we call shell.render()
-        console.log('[IntroStep.startIntroSequence] Rendering shell to prepare translation container...');
-        try {
-          shell.render();
-          console.log('[IntroStep.startIntroSequence] Shell.render() called');
-
-          // CRITICAL: Wait for the render cycle to actually update the DOM
-          // shell.render() queues the render but DOM updates are asynchronous
-          // We need to wait at least until the next macrotask before the element will exist
-          await new Promise(resolve => setTimeout(resolve, 0));
-          console.log('[IntroStep.startIntroSequence] Render cycle complete, translation container should now be in DOM');
-        } catch (error) {
-          console.error('[IntroStep.startIntroSequence] ERROR during pre-translation render:', error);
-        }
-
-        console.log('[IntroStep.startIntroSequence] About to call _runTranslation...');
+        // FIXED: Translation node now exists in initial template render (intro-work-surface.hbs)
+        // No mid-sequence rerender needed. Direct DOM mutation only.
+        console.log('[IntroStep.startIntroSequence] Starting translation phase (no rerender needed)');
         await this._runTranslation(shell);
         console.log('[IntroStep.startIntroSequence] _runTranslation completed');
       } else {
@@ -783,15 +780,24 @@ export class IntroStep extends ProgressionStepPlugin {
    */
   _updateTranslationTextDOM() {
     try {
-      const translationTextEl = document.querySelector('[data-role="intro-translation"]');
+      // Use cached reference if available, fallback to query
+      let translationTextEl = this._translationTextEl;
       if (!translationTextEl) {
-        // Translation element not yet rendered (not in TRANSLATING phase yet)
-        // This is normal early in the animation before translation phase starts
-        console.warn('[IntroStep._updateTranslationTextDOM] Translation element not found in DOM (phase may not be rendered yet), text length:', this._translatedText.length);
+        translationTextEl = document.querySelector('[data-role="intro-translation"]');
+      }
+
+      if (!translationTextEl) {
+        // Translation element not found - this should NOT happen now that template always renders it
+        console.error('[IntroStep._updateTranslationTextDOM] CRITICAL: Translation element not found in DOM', {
+          phase: this._phase,
+          cached: !!this._translationTextEl,
+          textLength: this._translatedText.length,
+          selector: '[data-role="intro-translation"]'
+        });
         return;
       }
 
-      console.log('[IntroStep._updateTranslationTextDOM] Found translation element, updating with', this._translatedText.length, 'characters');
+      console.log('[IntroStep._updateTranslationTextDOM] Updating translation with', this._translatedText.length, 'characters');
 
       // Build character HTML with state-based classes
       let charHTML = '';
