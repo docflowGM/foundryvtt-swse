@@ -528,6 +528,16 @@ export class IntroStep extends ProgressionStepPlugin {
 
       // Special handling for translation phase (no progress bar, typewriter effect)
       if (phase.label === 'TRANSLATING') {
+        // CRITICAL: Render once before translation to ensure [data-role="intro-translation"] element exists in DOM
+        // This is necessary because the template's {{#if (or isTranslating complete)}} block doesn't render until we call shell.render()
+        console.log('[IntroStep.startIntroSequence] Rendering shell to prepare translation container...');
+        try {
+          shell.render();
+          console.log('[IntroStep.startIntroSequence] Shell rendered, translation container should now be in DOM');
+        } catch (error) {
+          console.error('[IntroStep.startIntroSequence] ERROR during pre-translation render:', error);
+        }
+
         console.log('[IntroStep.startIntroSequence] About to call _runTranslation...');
         await this._runTranslation(shell);
         console.log('[IntroStep.startIntroSequence] _runTranslation completed');
@@ -771,8 +781,11 @@ export class IntroStep extends ProgressionStepPlugin {
       if (!translationTextEl) {
         // Translation element not yet rendered (not in TRANSLATING phase yet)
         // This is normal early in the animation before translation phase starts
+        console.warn('[IntroStep._updateTranslationTextDOM] Translation element not found in DOM (phase may not be rendered yet), text length:', this._translatedText.length);
         return;
       }
+
+      console.log('[IntroStep._updateTranslationTextDOM] Found translation element, updating with', this._translatedText.length, 'characters');
 
       // Build character HTML with state-based classes
       let charHTML = '';
@@ -790,6 +803,7 @@ export class IntroStep extends ProgressionStepPlugin {
       }
 
       translationTextEl.innerHTML = charHTML;
+      console.log('[IntroStep._updateTranslationTextDOM] Successfully updated DOM with character HTML');
     } catch (error) {
       console.error('[IntroStep._updateTranslationTextDOM] ERROR:', error.message);
     }
