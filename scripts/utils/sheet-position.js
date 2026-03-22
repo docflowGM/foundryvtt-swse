@@ -131,10 +131,13 @@ export function centerApplication(app, overrides = {}) {
     app.setPosition(pos);
     const el = app.element instanceof HTMLElement ? app.element : app.element?.[0];
     if (el) {
-      el.style.left = `${pos.left}px`;
-      el.style.top = `${pos.top}px`;
-      el.style.width = `${pos.width}px`;
-      el.style.height = `${pos.height}px`;
+      // CRITICAL: Must set position: absolute for left/top to work as absolute coordinates!
+      // Use setProperty with !important to override any conflicting CSS
+      el.style.setProperty('position', 'absolute', 'important');
+      el.style.setProperty('left', `${pos.left}px`, 'important');
+      el.style.setProperty('top', `${pos.top}px`, 'important');
+      el.style.setProperty('width', `${pos.width}px`, 'important');
+      el.style.setProperty('height', `${pos.height}px`, 'important');
     }
   }, deferMs);
 

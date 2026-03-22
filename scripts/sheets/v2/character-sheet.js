@@ -211,7 +211,9 @@ export class SWSEV2CharacterSheet extends
           const el = this.element instanceof HTMLElement ? this.element : this.element?.[0];
           if (el) {
             // Apply position with specificity to ensure it overrides Foundry's persistence
-            // CRITICAL: use setProperty() with 'important' flag, not string concatenation!
+            // CRITICAL: MUST set position: absolute AND left/top with !important
+            // Without position: absolute, left/top are treated as relative offsets, not absolute coordinates!
+            el.style.setProperty('position', 'absolute', 'important');
             el.style.setProperty('left', `${capturedPos.left}px`, 'important');
             el.style.setProperty('top', `${capturedPos.top}px`, 'important');
 
@@ -230,6 +232,7 @@ export class SWSEV2CharacterSheet extends
               top: capturedPos.top
             });
             console.log("[SheetPosition] After setProperty with !important:", {
+              inlineStylePosition: el.style.position,
               inlineStyleLeft: el.style.left,
               inlineStyleTop: el.style.top,
               cssText: el.style.cssText
