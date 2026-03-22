@@ -573,9 +573,9 @@ export class IntroStep extends ProgressionStepPlugin {
   /**
    * Animate progress from current value to 100% over a given duration.
    *
-   * ARCHITECTURE CHANGE: No longer updates DOM during animation.
-   * Just updates internal state (_progress). Visual updates happen when shell.render() is called at completion.
-   * This prevents issues with stale DOM refs after template structure changes.
+   * ARCHITECTURE: Updates internal state (_progress) and visually updates progress bar via direct DOM mutation.
+   * Does NOT call shell.render() during animation (only at completion).
+   * Direct DOM updates prevent full re-renders that would cause stale DOM ref issues.
    *
    * Can be interrupted by skip or step exit (nav away) at any time.
    * Uses session token to prevent stale timers from running after step has exited.
@@ -600,7 +600,10 @@ export class IntroStep extends ProgressionStepPlugin {
 
       this._progress += (100 / this._phases.length) / steps;
 
-      // Just wait - DOM will be updated by shell.render() at the end
+      // Update visual progress bar directly in DOM (no shell.render())
+      this._updateProgressBarDOM();
+
+      // Wait before next frame
       await this.delay(stepTime);
     }
 
@@ -610,15 +613,15 @@ export class IntroStep extends ProgressionStepPlugin {
     // Ensure we hit the exact phase boundary
     const phasePercent = ((this._phase ? this._phases.findIndex(p => p.label === this._phase) + 1 : 0) / this._phases.length) * 100;
     this._progress = Math.min(phasePercent, 100);
+    this._updateProgressBarDOM();
   }
 
   /**
    * Run the diegetic translation phase with typewriter effect.
    *
-   * ARCHITECTURE CHANGE: No longer updates DOM during animation.
-   * Just updates internal state (_translatedText, _translationCharStates).
-   * Visual updates happen when shell.render() is called at completion.
-   * This prevents issues with DOM refs that don't exist during typewriter phase.
+   * ARCHITECTURE: Updates internal state (_translatedText, _translationCharStates) and updates DOM directly.
+   * Does NOT call shell.render() during animation (only at completion).
+   * Direct DOM updates show typewriter effect without triggering full re-renders.
    *
    * Shows "TRANSLATING..." and builds English text character-by-character.
    * Includes character flicker (decryption effect) and glow trail (data processing).
@@ -649,6 +652,7 @@ export class IntroStep extends ProgressionStepPlugin {
       if (this._isSkipping) {
         this._translatedText = this._fullText;
         this._translationCharStates = this._fullText.split('').map(char => ({ state: 'complete', glyph: char }));
+        this._updateTranslationTextDOM();
         return;
       }
 
@@ -659,7 +663,7 @@ export class IntroStep extends ProgressionStepPlugin {
         this._translatedText += randomGlyph;
         this._translationCharStates[i] = { state: 'flickering', glyph: randomGlyph };
 
-        // Brief flicker delay (no DOM update)
+        // Brief flicker delay
         await this.delay(12);
 
         // Snap to correct character (with session check)
@@ -677,7 +681,10 @@ export class IntroStep extends ProgressionStepPlugin {
       if (i > 0) this._trailPositions.push(i - 1);
       if (i > 1) this._trailPositions.push(i - 2);
 
-      // Wait before next character (no DOM update - just build state)
+      // Update translation text in DOM (direct mutation, no shell.render())
+      this._updateTranslationTextDOM();
+
+      // Wait before next character
       await this.delay(CHAR_DELAY);
     }
 
@@ -690,8 +697,66 @@ export class IntroStep extends ProgressionStepPlugin {
         state: 'complete',
         glyph: char
       }));
-      // No DOM update - will render when shell.render() is called
+      this._updateTranslationTextDOM();
     }
+  }
+
+  /**
+   * Update progress bar in DOM directly (no shell.render()).
+   * Finds the progress percentage element and updates it in place.
+   * This provides visual feedback during animation without triggering full re-renders.
+   */
+  _updateProgressBarDOM() {
+    // Find progress percentage display element
+    // Query from the document since we're in an async loop
+    const progressPercentEl = document.querySelector('[data-role="intro-progress-percent"]');
+    if (progressPercentEl) {
+      progressPercentEl.textContent = `${Math.round(this._progress)}%`;
+    }
+
+    // Update segmented bar (20 segments)
+    const segments = document.querySelectorAll('[data-role="intro-segment"]');
+    if (segments.length > 0) {
+      const TOTAL_SEGMENTS = segments.length;
+      const activeCount = Math.floor((this._progress / 100) * TOTAL_SEGMENTS);
+      segments.forEach((seg, i) => {
+        if (i < activeCount) {
+          seg.classList.add('active');
+        } else {
+          seg.classList.remove('active');
+        }
+      });
+    }
+  }
+
+  /**
+   * Update translation text in DOM directly (no shell.render()).
+   * Builds character HTML with state-based styling for flicker/glow effects.
+   * This provides live typewriter effect during translation phase.
+   */
+  _updateTranslationTextDOM() {
+    const translationTextEl = document.querySelector('[data-role="intro-translation"]');
+    if (!translationTextEl) {
+      // Translation element not yet rendered (not in TRANSLATING phase yet)
+      return;
+    }
+
+    // Build character HTML with state-based classes
+    let charHTML = '';
+    for (let i = 0; i < this._translatedText.length; i++) {
+      const char = this._translatedText[i];
+      const state = this._translationCharStates[i]?.state || 'stable';
+      const isGlowing = this._trailPositions?.includes(i);
+
+      let classes = 'prog-intro-char';
+      if (state === 'flickering') classes += ' prog-intro-char--flickering';
+      else if (state === 'locked' || state === 'complete') classes += ' prog-intro-char--locked';
+      if (isGlowing) classes += ' prog-intro-char--glow-trail';
+
+      charHTML += `<span class="${classes}">${char}</span>`;
+    }
+
+    translationTextEl.innerHTML = charHTML;
   }
 
   /**
