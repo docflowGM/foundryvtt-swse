@@ -141,6 +141,9 @@ export class IntroStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onStepEnter(shell) {
+    // DIAGNOSTIC: Raw console log to verify this method is being called
+    console.log('[IntroStep.onStepEnter] CALLED', { state: this._state });
+
     swseLogger.debug('[IntroStep.onStepEnter] Entering intro step');
 
     if (this._state !== INTRO_STATE.IDLE) {
@@ -448,6 +451,14 @@ export class IntroStep extends ProgressionStepPlugin {
    * @param {HTMLElement} workSurfaceEl
    */
   async afterRender(shell, workSurfaceEl) {
+    // DIAGNOSTIC: Raw console log to verify this method is being called
+    console.log('[IntroStep.afterRender] CALLED', {
+      state: this._state,
+      workSurfaceEl: !!workSurfaceEl,
+      workSurfaceElConnected: workSurfaceEl?.isConnected ?? false,
+      animationStarted: this._animationSequenceStarted,
+    });
+
     swseLogger.debug('[IntroStep.afterRender] Called', {
       state: this._state,
       workSurfaceElConnected: workSurfaceEl?.isConnected ?? false,
