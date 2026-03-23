@@ -1,3 +1,5 @@
-2026/03/22-19:37:25.971 39d4 Recovering log #37
-2026/03/22-19:37:25.977 39d4 Delete type=0 #37
-2026/03/22-19:37:25.977 39d4 Delete type=3 #35
+2026/03/23-19:20:10.029 6bdc Recovering log #41
+2026/03/23-19:20:10.029 6bdc Level-0 table #43: started
+2026/03/23-19:20:10.035 6bdc Level-0 table #43: 5793 bytes OK
+2026/03/23-19:20:10.041 6bdc Delete type=0 #41
+2026/03/23-19:20:10.042 6bdc Delete type=3 #40

@@ -31,6 +31,7 @@ import { ActionFooter } from './action-footer.js';
 import { MentorRail } from './mentor-rail.js';
 import { ProgressRail } from './progress-rail.js';
 import { UtilityBar } from './utility-bar.js';
+import { HydrationDiagnosticsCollector, HydrationValidator, HydrationRecoveryStrategies } from '../hydration-diagnostics.js';
 
 /**
  * Shell state model (reference — actual state lives on `this`)
@@ -265,17 +266,26 @@ export class ProgressionShell extends SWSEApplicationV2 {
    */
   async _initializeFirstStep() {
     const descriptor = this.steps[this.currentStepIndex];
-    if (!descriptor) return;
+    if (!descriptor) {
+      swseLogger.warn('[ProgressionShell] No descriptor at currentStepIndex during first step init');
+      return;
+    }
 
     const plugin = this.stepPlugins.get(descriptor.stepId);
-    if (!plugin) return;
+    if (!plugin) {
+      swseLogger.warn(`[ProgressionShell] No plugin found for step ${descriptor.stepId} during first step init`);
+      return;
+    }
 
     try {
       await plugin.onStepEnter(this);
       swseLogger.log(`[ProgressionShell] Initialized first step: ${descriptor.stepId}`);
     } catch (err) {
       swseLogger.error(`[ProgressionShell] Error initializing first step ${descriptor.stepId}:`, err);
-      throw err;
+      // Report error but don't throw — allow UI to render and show error state
+      ui?.notifications?.error?.(
+        `Failed to initialize step: ${descriptor.stepId}. Try reloading the application.`
+      );
     }
   }
 
@@ -323,49 +333,73 @@ export class ProgressionShell extends SWSEApplicationV2 {
    * @returns {Promise<void>}
    */
   async _initializeSteps() {
-    const canonicalDescriptors = this._getCanonicalDescriptors();
-    const conditionalDescriptors = await this._conditionalResolver.resolveForContext(
-      this.actor,
-      this.mode
-    );
+    try {
+      const canonicalDescriptors = this._getCanonicalDescriptors();
+      const conditionalDescriptors = await this._conditionalResolver.resolveForContext(
+        this.actor,
+        this.mode
+      );
 
-    // Merge: canonical steps in order, then insert conditional steps at correct positions
-    const allDescriptors = this._mergeStepSequence(canonicalDescriptors, conditionalDescriptors);
+      // Merge: canonical steps in order, then insert conditional steps at correct positions
+      const allDescriptors = this._mergeStepSequence(canonicalDescriptors, conditionalDescriptors);
 
-    // Filter hidden steps (category steps with no choices available)
-    this.steps = allDescriptors.filter(d => !d.isHidden);
+      // Filter hidden steps (category steps with no choices available)
+      this.steps = allDescriptors.filter(d => !d.isHidden);
 
-    // Instantiate step plugins for all non-null plugin classes
-    this.stepPlugins.clear();
-    for (const descriptor of this.steps) {
-      if (descriptor.pluginClass) {
-        this.stepPlugins.set(descriptor.stepId, new descriptor.pluginClass(descriptor));
+      // Phase 8: Validate steps array is not empty (Invariant 2)
+      if (!this.steps || this.steps.length === 0) {
+        swseLogger.error('[ProgressionShell] CRITICAL: Steps array is empty after initialization');
+        ui?.notifications?.error?.(
+          'No progression steps available. The application cannot proceed. Try reloading.'
+        );
+        throw new Error('EMPTY_STEPS_ARRAY');
       }
-    }
 
-    // Navigate to target step if specified (e.g., from splash: currentStep: 'species')
-    if (this._targetStepId) {
-      const targetIndex = this.steps.findIndex(d => d.stepId === this._targetStepId);
-      if (targetIndex >= 0) {
-        this.currentStepIndex = targetIndex;
-        this._minStepIndex = targetIndex;  // Prevent back-navigation past this step
-        swseLogger.log(`[ProgressionShell] Navigating to target step: ${this._targetStepId} (index ${targetIndex}). Back-navigation disabled until past this step.`);
-      } else {
-        swseLogger.warn(`[ProgressionShell] Target step not found: ${this._targetStepId}. Using index 0.`);
+      // Instantiate step plugins for all non-null plugin classes
+      this.stepPlugins.clear();
+      for (const descriptor of this.steps) {
+        if (descriptor.pluginClass) {
+          try {
+            this.stepPlugins.set(descriptor.stepId, new descriptor.pluginClass(descriptor));
+          } catch (pluginErr) {
+            swseLogger.error(
+              `[ProgressionShell] Failed to instantiate plugin for step ${descriptor.stepId}:`,
+              pluginErr
+            );
+            // Continue without this plugin — it will be detected in _prepareContext
+          }
+        }
       }
-      this._targetStepId = null; // Clear after use
+
+      // Navigate to target step if specified (e.g., from splash: currentStep: 'species')
+      if (this._targetStepId) {
+        const targetIndex = this.steps.findIndex(d => d.stepId === this._targetStepId);
+        if (targetIndex >= 0) {
+          this.currentStepIndex = targetIndex;
+          this._minStepIndex = targetIndex;  // Prevent back-navigation past this step
+          swseLogger.log(`[ProgressionShell] Navigating to target step: ${this._targetStepId} (index ${targetIndex}). Back-navigation disabled until past this step.`);
+        } else {
+          swseLogger.warn(`[ProgressionShell] Target step not found: ${this._targetStepId}. Using index 0.`);
+        }
+        this._targetStepId = null; // Clear after use
+      }
+
+      // Initialize utility bar config for the current step
+      const currentPlugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
+      if (currentPlugin) this.utilityBar.setConfig(currentPlugin.getUtilityBarConfig());
+
+      swseLogger.debug('ProgressionShell._initializeSteps', {
+        mode: this.mode,
+        stepCount: this.steps.length,
+        steps: this.steps.map(d => d.stepId),
+        currentStepId: this.steps[this.currentStepIndex]?.stepId,
+        pluginCount: this.stepPlugins.size,
+      });
+    } catch (err) {
+      swseLogger.error('[ProgressionShell] Critical error during step initialization:', err);
+      // Re-throw so the caller (ProgressionShell.open) can handle it
+      throw err;
     }
-
-    // Initialize utility bar config for the current step
-    const currentPlugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
-    if (currentPlugin) this.utilityBar.setConfig(currentPlugin.getUtilityBarConfig());
-
-    swseLogger.debug('ProgressionShell._initializeSteps', {
-      mode: this.mode,
-      stepCount: this.steps.length,
-      steps: this.steps.map(d => d.stepId),
-      currentStepId: this.steps[this.currentStepIndex]?.stepId,
-    });
   }
 
   /**
@@ -462,10 +496,37 @@ export class ProgressionShell extends SWSEApplicationV2 {
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
 
+    // ═══ PHASE 8: HYDRATION DIAGNOSTICS ═══
+    const diagnostics = new HydrationDiagnosticsCollector({
+      currentStepIndex: this.currentStepIndex,
+      totalSteps: this.steps.length,
+    });
+
     const currentDescriptor = this.steps[this.currentStepIndex];
     const currentPlugin = currentDescriptor
       ? this.stepPlugins.get(currentDescriptor.stepId)
       : null;
+
+    // Rule 8.1: Detect missing step descriptor
+    if (!currentDescriptor) {
+      diagnostics.detectMissingDescriptor(this.currentStepIndex, this.steps);
+      // Recovery: fallback to first step
+      if (!HydrationRecoveryStrategies.fallbackToFirstStep(this, diagnostics)) {
+        diagnostics.add(
+          'error',
+          'RECOVERY_FAILED',
+          'Cannot recover from missing step descriptor',
+          'Application cannot proceed. Reload required.',
+          {}
+        );
+      }
+    }
+
+    // Rule 8.2: Detect missing plugin
+    if (currentDescriptor && !currentPlugin) {
+      diagnostics.detectMissingPlugin(currentDescriptor.stepId, this.stepPlugins);
+      // Recovery: skip plugin, show details panel as null
+    }
 
     // Step progress for progress rail
     const stepProgress = this.steps.map((descriptor, idx) => ({
@@ -482,11 +543,21 @@ export class ProgressionShell extends SWSEApplicationV2 {
       ? await currentPlugin.getStepData(context).catch(() => ({}))
       : {};
 
+    // Rule 8.4: Detect invalid step data
+    diagnostics.detectInvalidStepData(currentDescriptor?.stepId ?? 'unknown', stepData);
+
     // Render work surface
     const workSurfaceSpec = currentPlugin?.renderWorkSurface?.(stepData) ?? null;
     const workSurfaceHtml = workSurfaceSpec?.template
       ? await foundry.applications.handlebars.renderTemplate(workSurfaceSpec.template, workSurfaceSpec.data)
       : null;
+
+    // Rule 8.3: Detect blank template
+    if (!workSurfaceHtml) {
+      diagnostics.detectBlankTemplate(currentDescriptor?.stepId ?? 'unknown', workSurfaceHtml);
+      // Show placeholder UI
+      const placeholder = HydrationRecoveryStrategies.generatePlaceholderHTML();
+    }
 
     // Footer data
     const isLastStep = this.currentStepIndex === this.steps.length - 1;
@@ -516,6 +587,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
     console.log('[ProgressionShell] detailsPanelHtml payload =', detailsPanelHtml?.slice?.(0, 120) ?? '(null)');
     console.log('[ProgressionShell] summaryPanelHtml payload =', summaryPanelHtml?.slice?.(0, 120) ?? '(null)');
     // ── END DEBUG ──
+
+    // Phase 8: Log hydration diagnostics
+    diagnostics.logToConsole();
 
     return foundry.utils.mergeObject(context, {
       // Shell identity
@@ -579,6 +653,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
       // Processing state
       isProcessing: this.isProcessing,
       lastError: this.lastError,
+
+      // Phase 8: Hydration diagnostics
+      diagnostics: diagnostics.formatUI(),
+      diagnosticsFull: diagnostics.toJSON(),
     });
   }
 

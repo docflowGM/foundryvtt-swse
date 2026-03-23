@@ -1,4 +1,5 @@
 import "./scripts/ui/ui-manager.js";
+import "./scripts/ui/cursor-authority.js";
 /* ==========================================================================
    SWSE SYSTEM INDEX.JS (OPTIMIZED CANONICAL)
    Foundry V13 / AppV2 compliant

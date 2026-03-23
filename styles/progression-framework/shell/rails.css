@@ -19,6 +19,11 @@
   height: 100%;              /* resolves correctly now that parent has explicit height: 160px */
   padding: 8px 20px;
   position: relative;
+
+  /* Holographic field aura — subtle edge glow for device unification */
+  box-shadow:
+    inset 0 0 30px rgba(72, 219, 255, 0.08),
+    inset 0 1px 0 rgba(72, 219, 255, 0.15);
 }
 
 /* ============================================================================
@@ -36,66 +41,30 @@
   min-width: 88px;
 }
 
-/* Portrait container — mentor-portrait-box.svg provides the chamfered steel frame */
+/* Portrait container — Type 1 SVG: frame + portrait image embedded in one SVG scene
+   The SVG owns the entire portrait composition (frame, image, overlays) */
 .progression-shell .prog-mentor__portrait {
   position: relative;
   width: 82px;
   height: 96px;
   flex-shrink: 0;
-  overflow: visible;          /* ring extends past container bounds */
+  overflow: visible;          /* allow SVG overlays to extend slightly */
 
-  /* SVG provides the steel rect + cyan border chrome */
-  background-image:   url('../../../assets/ui/chargen/mentor-portrait-box.svg');
-  background-size:    100% 100%;
-  background-repeat:  no-repeat;
-  background-color:   transparent;
-
-  /* Remove old circle treatment — SVG handles framing */
+  /* SVG Type 1 owns all portrait styling — no background-image needed */
   border:     none;
   box-shadow: none;
   border-radius: 0;
 
-  /* Center children (fallback icon) */
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-
   transition: filter 180ms ease;
 }
 
-/* Portrait img — circular viewport within the rectangular SVG frame
-   Inner area of portrait-box.svg: approx y=12–80 of 96px, x=centered in 82px */
-.progression-shell .prog-mentor__portrait img {
-  position: absolute;
-  top: 13px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  object-fit: cover;
-  z-index: 1;
-
-  /* Subtle holographic color correction */
-  filter:
-    saturate(1.02)
-    contrast(1.04)
-    brightness(0.98);
-
-  transition:
-    transform 180ms ease,
-    filter 180ms ease;
-}
-
-/* Fallback icon when no portrait image */
-.progression-shell .prog-mentor__portrait > i {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -55%);  /* shift up slightly — bottom bar in SVG */
-  color: var(--prog-accent);
-  font-size: 1.4rem;
-  z-index: 1;
+/* SVG is now an inline element inside the portrait container
+   No special styling needed — the SVG handles its own viewBox and positioning */
+.progression-shell .prog-mentor__portrait svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transition: filter 180ms ease;
 }
 
 /* Holographic tint overlay — cyan glass over portrait circle */
@@ -123,49 +92,51 @@
   transition: opacity 180ms ease;
 }
 
-/* Holographic targeting ring — mentor-ring.svg overlaid above portrait img
-   Ring is 72×72px centered on the 56px portrait circle (top: 13px, img center: 41px)
-   Ring center = 41px from portrait top → ring top = 41 - 36 = 5px */
-.progression-shell .prog-mentor__portrait::after {
-  content: "";
-  position: absolute;
-  top: 5px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 72px;
-  height: 72px;
-
-  background-image:  url('../../../assets/ui/chargen/mentor-ring.svg');
-  background-size:   100% 100%;
-  background-repeat: no-repeat;
-
-  pointer-events: none;
-  z-index: 3;
-  opacity: 0.70;
-
-  transition: opacity 180ms ease;
+/* Hover state — SVG portrait is now Type 1, no separate overlays needed
+   The SVG itself handles all visual states */
+.progression-shell .prog-mentor__portrait:hover svg {
+  filter: drop-shadow(0 0 8px rgba(120, 240, 255, 0.4));
 }
 
-/* Hover — sharpen feed, brighten ring */
-.progression-shell .prog-mentor__portrait:hover img {
-  transform: translateX(-50%) scale(1.03);
-  filter:
-    saturate(1.06)
-    contrast(1.08)
-    brightness(1.02);
-}
-.progression-shell .prog-mentor__portrait:hover::before { opacity: 0.72; }
-.progression-shell .prog-mentor__portrait:hover::after  { opacity: 0.90; }
+/* ============================================================================
+   MOOD VARIANTS — Coordinated color language across portrait and dialogue
+   Maintains holographic aesthetic while signaling emotional context
+   ============================================================================ */
 
-/* Mood variants — tint ring and frame glow to match mentor mood */
+/* Encouraging mood — green (nurturing, affirmative, growth) */
 .progression-shell [data-mood="encouraging"] .prog-mentor__portrait {
   filter: drop-shadow(0 0 6px rgba(34, 197, 94, 0.50));
 }
+
+.progression-shell [data-mood="encouraging"] .prog-mentor__dialogue {
+  box-shadow:
+    inset 0 0 24px rgba(34, 197, 94, 0.04),
+    inset 0 1px 0 rgba(34, 197, 94, 0.10),
+    0 0 16px rgba(34, 197, 94, 0.03);
+}
+
+/* Cautionary mood — amber (warning, caution, critical thinking) */
 .progression-shell [data-mood="cautionary"] .prog-mentor__portrait {
   filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.50));
 }
+
+.progression-shell [data-mood="cautionary"] .prog-mentor__dialogue {
+  box-shadow:
+    inset 0 0 24px rgba(245, 158, 11, 0.04),
+    inset 0 1px 0 rgba(245, 158, 11, 0.10),
+    0 0 16px rgba(245, 158, 11, 0.03);
+}
+
+/* Celebratory mood — purple (achievement, excellence, recognition) */
 .progression-shell [data-mood="celebratory"] .prog-mentor__portrait {
   filter: drop-shadow(0 0 6px rgba(192, 132, 252, 0.50));
+}
+
+.progression-shell [data-mood="celebratory"] .prog-mentor__dialogue {
+  box-shadow:
+    inset 0 0 24px rgba(192, 132, 252, 0.04),
+    inset 0 1px 0 rgba(192, 132, 252, 0.10),
+    0 0 16px rgba(192, 132, 252, 0.03);
 }
 
 /* Nameplate — small label below portrait frame, still in portrait-zone column */
@@ -195,6 +166,10 @@
    Arrow faces LEFT → points toward portrait zone on the left ✓
    ============================================================================ */
 
+/* ============================================================================
+   DIALOGUE BOX — Enhanced with holographic unification effects
+   ============================================================================ */
+
 .progression-shell .prog-mentor__dialogue {
   flex: 1 1 auto;
   min-width: 0;
@@ -209,8 +184,16 @@
 
   /* Remove old CSS border + box-shadow — SVG handles chrome */
   border:        none;
-  box-shadow:    none;
   border-radius: 0;
+
+  /* Holographic edge glow — matches portrait rail aesthetic, ties zones together */
+  box-shadow:
+    inset 0 0 24px rgba(72, 219, 255, 0.06),
+    inset 0 1px 0 rgba(72, 219, 255, 0.12),
+    0 0 16px rgba(72, 219, 255, 0.04);
+
+  /* Transmission flare during text reveal — subtle glow pulse coordinated with cadence */
+  animation: mentor-dialogue-flare 1.4s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
 
   /* Inner padding clears SVG frame borders:
      Left  ~32px (clears left arrow zone x=0-22 plus frame border ~10px)
@@ -221,7 +204,13 @@
   position: relative;
 
   scrollbar-width: thin;
-  scrollbar-color: rgba(80, 220, 255, 0.3) transparent;
+  scrollbar-color: rgba(80, 220, 255, 0.5) rgba(80, 220, 255, 0.1);
+
+  /* Scroll indicator styling for long content */
+  /* Firefox custom scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(80, 220, 255, 0.5) transparent;
+}
 }
 
 /* Remove old inner border pseudo — SVG inner stroke handles it */
@@ -229,7 +218,33 @@
   display: none;
 }
 
-/* Dialogue text — calm cyan, holographic glow */
+/* ============================================================================
+   DIALOGUE BOX TEXT BOUNDS — Hardening against overflow
+   Ensures content respects SVG frame boundaries and scrolls gracefully
+   ============================================================================ */
+
+/* Text containment — ensure overflow is scrollable, not hidden */
+.progression-shell .prog-mentor__dialogue {
+  /* SVG frame interior space (accounting for borders + padding):
+     Width: ~788px content area (SVG 880px - left/right borders)
+     Height: ~120px content area (SVG 220px - top/bottom borders)
+     Effective viewport after padding: width 100%, height calc(100% - padding) */
+
+  /* Constrain content to reasonable scroll area */
+  word-break: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
+
+  /* Ensure scrollbar styling is consistent */
+  scrollbar-gutter: stable;        /* Prevent layout shift when scrollbar appears */
+}
+
+/* ============================================================================
+   DIALOGUE TEXT — Holographic transmission reveal effect
+   Text appears with cadence-driven reveal animation
+   Hardened for proper wrapping, overflow, and readability
+   ============================================================================ */
+
 .progression-shell .prog-mentor__text {
   font-size: var(--prog-font-size-sm);
   color: var(--prog-text-mentor);
@@ -238,6 +253,79 @@
   text-shadow: var(--prog-mentor-text-shadow);
   position: relative;
   z-index: 1;
+  letter-spacing: 0.01em;
+
+  /* Holographic transmission reveal — characters stream in with cadence */
+  animation: mentor-text-reveal 1.4s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+  overflow: hidden;
+  display: block;
+  width: 100%;
+  word-wrap: break-word;           /* Break long words at container edge */
+  overflow-wrap: break-word;       /* Modern standard for word-wrap */
+  hyphens: auto;                   /* Smart hyphenation for long words */
+
+  /* Transmission glow on initial appearance */
+  text-shadow:
+    var(--prog-mentor-text-shadow),
+    0 0 4px rgba(72, 219, 255, 0);
+
+  /* Widow/orphan prevention — avoid single words on last line */
+  text-align: justify;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Holographic presence — subtle scanline-inspired effect on dialogue (cyan default) */
+.progression-shell .prog-mentor__dialogue::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(72, 219, 255, 0.02),
+      rgba(72, 219, 255, 0.02) 2px,
+      transparent 2px,
+      transparent 4px
+    );
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+}
+
+/* Mood-driven scanline color shifts */
+.progression-shell [data-mood="encouraging"] .prog-mentor__dialogue::after {
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(34, 197, 94, 0.02),
+      rgba(34, 197, 94, 0.02) 2px,
+      transparent 2px,
+      transparent 4px
+    );
+}
+
+.progression-shell [data-mood="cautionary"] .prog-mentor__dialogue::after {
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(245, 158, 11, 0.02),
+      rgba(245, 158, 11, 0.02) 2px,
+      transparent 2px,
+      transparent 4px
+    );
+}
+
+.progression-shell [data-mood="celebratory"] .prog-mentor__dialogue::after {
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(192, 132, 252, 0.02),
+      rgba(192, 132, 252, 0.02) 2px,
+      transparent 2px,
+      transparent 4px
+    );
 }
 
 /* Idle state — dim and italic when awaiting input */
@@ -245,6 +333,194 @@
   color: var(--prog-text-dim);
   font-style: italic;
   text-shadow: var(--prog-text-shadow);
+  animation: mentor-idle-pulse 3s ease-in-out infinite;
+}
+
+/* Subtle pulse animation for idle dialogue — keeps holographic device feeling "alive" */
+@keyframes mentor-idle-pulse {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+/* ============================================================================
+   TEXT REVEAL ANIMATIONS — Holographic transmission cadence effects
+   ============================================================================ */
+
+/* Standard text reveal — characters appear in sequence (typewriter effect) */
+@keyframes mentor-text-reveal {
+  0% {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+    text-shadow:
+      var(--prog-mentor-text-shadow),
+      0 0 12px rgba(72, 219, 255, 0.8);
+  }
+  15% {
+    opacity: 1;
+    text-shadow:
+      var(--prog-mentor-text-shadow),
+      0 0 12px rgba(72, 219, 255, 0.8);
+  }
+  85% {
+    opacity: 1;
+    text-shadow:
+      var(--prog-mentor-text-shadow),
+      0 0 8px rgba(72, 219, 255, 0.4);
+  }
+  100% {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    text-shadow:
+      var(--prog-mentor-text-shadow),
+      0 0 4px rgba(72, 219, 255, 0);
+  }
+}
+
+/* Transmission flare animation — dialogue box glow during text reveal */
+@keyframes mentor-dialogue-flare {
+  0% {
+    box-shadow:
+      inset 0 0 24px rgba(72, 219, 255, 0.12),
+      inset 0 1px 0 rgba(72, 219, 255, 0.20),
+      0 0 32px rgba(72, 219, 255, 0.12);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 24px rgba(72, 219, 255, 0.08),
+      inset 0 1px 0 rgba(72, 219, 255, 0.15),
+      0 0 24px rgba(72, 219, 255, 0.08);
+  }
+  100% {
+    box-shadow:
+      inset 0 0 24px rgba(72, 219, 255, 0.06),
+      inset 0 1px 0 rgba(72, 219, 255, 0.12),
+      0 0 16px rgba(72, 219, 255, 0.04);
+  }
+}
+
+/* Fast cadence — encouraging mentor (energetic, quick) */
+.progression-shell [data-mood="encouraging"] .prog-mentor__text {
+  animation: mentor-text-reveal 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+}
+
+.progression-shell [data-mood="encouraging"] .prog-mentor__dialogue {
+  animation: mentor-dialogue-flare 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+}
+
+/* Standard cadence — default/neutral pacing */
+.progression-shell [data-mood="neutral"] .prog-mentor__text {
+  animation: mentor-text-reveal 1.4s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+}
+
+.progression-shell [data-mood="neutral"] .prog-mentor__dialogue {
+  animation: mentor-dialogue-flare 1.4s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+}
+
+/* Slow cadence — cautionary mentor (measured, deliberate) */
+.progression-shell [data-mood="cautionary"] .prog-mentor__text {
+  animation: mentor-text-reveal 1.8s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+}
+
+.progression-shell [data-mood="cautionary"] .prog-mentor__dialogue {
+  animation: mentor-dialogue-flare 1.8s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+}
+
+/* Celebratory cadence — triumphant, confident reveal */
+.progression-shell [data-mood="celebratory"] .prog-mentor__text {
+  animation: mentor-text-reveal 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.progression-shell [data-mood="celebratory"] .prog-mentor__dialogue {
+  animation: mentor-dialogue-flare 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* ============================================================================
+   EDGE CASE HANDLING — Special characters, long words, narrow contexts
+   ============================================================================ */
+
+/* Prevent text from expanding box on overflow (e.g., very long URLs, code) */
+.progression-shell .prog-mentor__text {
+  max-width: 100%;
+  min-width: 0;     /* Allows flex shrink below content width */
+}
+
+/* Long words that can't break (URLs, email, technical terms) */
+.progression-shell .prog-mentor__text code,
+.progression-shell .prog-mentor__text samp {
+  word-break: break-all;    /* Force break if even hyphens don't help */
+  font-family: "Courier New", monospace;
+  font-size: 0.9em;
+}
+
+/* Prevent text from creating excessive widows/orphans */
+.progression-shell .prog-mentor__text {
+  /* Avoid very short last line */
+  min-height: 1.55em;       /* At least one line of content */
+}
+
+/* Idle dialogue — no reveal animation, just subtle pulse */
+.progression-shell .prog-mentor__text--idle {
+  animation: mentor-idle-pulse 3s ease-in-out infinite;
+  clip-path: inset(0 0 0 0);
+  text-shadow: var(--prog-mentor-text-shadow);
+
+  /* Idle text also respects text wrapping constraints */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* ============================================================================
+   WEBKIT SCROLLBAR STYLING — Chrome, Safari, Edge, Opera
+   Matches Firefox thin scrollbar aesthetic with cyan theme
+   ============================================================================ */
+
+.progression-shell .prog-mentor__dialogue::-webkit-scrollbar {
+  width: 8px;
+}
+
+.progression-shell .prog-mentor__dialogue::-webkit-scrollbar-track {
+  background: rgba(80, 220, 255, 0.05);
+  border-radius: 4px;
+}
+
+.progression-shell .prog-mentor__dialogue::-webkit-scrollbar-thumb {
+  background: rgba(80, 220, 255, 0.5);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.progression-shell .prog-mentor__dialogue::-webkit-scrollbar-thumb:hover {
+  background: rgba(80, 220, 255, 0.7);
+  background-clip: content-box;
+}
+
+/* Accessibility — respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .progression-shell .prog-mentor__text {
+    animation: none;
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+    text-shadow: var(--prog-mentor-text-shadow);
+  }
+
+  .progression-shell .prog-mentor__dialogue {
+    animation: none;
+    box-shadow:
+      inset 0 0 24px rgba(72, 219, 255, 0.06),
+      inset 0 1px 0 rgba(72, 219, 255, 0.12),
+      0 0 16px rgba(72, 219, 255, 0.04);
+  }
+
+  .progression-shell .prog-mentor__text--idle {
+    animation: none;
+    opacity: 0.7;
+  }
 }
 
 /* ============================================================================

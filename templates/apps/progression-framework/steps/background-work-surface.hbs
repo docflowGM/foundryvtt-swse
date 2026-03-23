@@ -38,44 +38,55 @@
   <div class="prog-background-items">
     {{#each backgroundsByCategory}}
       <div class="prog-background-group">
-        <h4 class="prog-background-group-title">{{label}}</h4>
+        <div class="swse-section-header">
+          <h4 class="swse-section-header__title">{{label}}</h4>
+        </div>
 
-        {{#each backgrounds}}
-          <button class="prog-background-item swse-card-schema swse-card-schema--identity swse-card-schema--filled
-                         {{#if isFocused}}prog-background-item--focused{{/if}}
-                         {{#if isCommitted}}prog-background-item--committed{{/if}}"
-                  data-action="focus-item"
-                  data-item-id="{{id}}"
-                  type="button">
+        <div class="prog-background-grid" role="listbox" aria-label="{{label}} backgrounds">
+          {{#each backgrounds}}
+            <button class="swse-option-card prog-background-item
+                           {{#if isFocused}}swse-option-card--focused{{/if}}
+                           {{#if isCommitted}}swse-option-card--selected{{/if}}"
+                    data-action="focus-item"
+                    data-item-id="{{id}}"
+                    data-selected="{{#if isCommitted}}true{{else}}false{{/if}}"
+                    data-focused="{{#if isFocused}}true{{else}}false{{/if}}"
+                    type="button"
+                    role="option"
+                    {{#if isCommitted}}aria-selected="true"{{/if}}>
 
-            <div class="prog-background-item__header">
-              <div class="prog-background-item__name">{{name}}</div>
-              {{#if isCommitted}}
-                <span class="prog-background-item__committed-badge">✓</span>
-              {{/if}}
-            </div>
-
-            {{#if shortDesc}}
-              <p class="prog-background-item__desc">{{shortDesc}}</p>
-            {{/if}}
-
-            {{#if trainedSkills.length}}
-              <div class="prog-background-item__skills">
-                {{#each trainedSkills}}
-                  <span class="prog-chip prog-chip--sm">{{this}}</span>
-                {{/each}}
-                {{#if hasMore}}
-                  <span class="prog-chip prog-chip--sm prog-chip--dim">+more</span>
-                {{/if}}
+              <div class="swse-option-card__header">
+                <h3 class="swse-option-card__title prog-background-item__name">{{name}}</h3>
               </div>
-            {{/if}}
 
-          </button>
-        {{/each}}
+              {{#if shortDesc}}
+                <div class="swse-option-card__body prog-background-item__desc">{{shortDesc}}</div>
+              {{/if}}
+
+              {{#if trainedSkills.length}}
+                <div class="swse-option-card__meta">
+                  {{#each trainedSkills}}
+                    <span class="swse-option-card__badge">{{this}}</span>
+                  {{/each}}
+                  {{#if hasMore}}
+                    <span class="swse-option-card__badge">+{{subtract trainedSkills.length hasMore}} more</span>
+                  {{/if}}
+                </div>
+              {{/if}}
+
+              {{#if isCommitted}}
+                <div class="swse-option-card__meta">
+                  <span class="swse-option-card__badge"><i class="fas fa-check"></i> Selected</span>
+                </div>
+              {{/if}}
+
+            </button>
+          {{/each}}
+        </div>
 
       </div>
     {{else}}
-      <div class="prog-background-empty swse-card-schema swse-card-schema--choice swse-card-schema--placeholder">
+      <div class="prog-background-empty">
         <i class="fas fa-search"></i>
         <p>No backgrounds match your search.</p>
       </div>

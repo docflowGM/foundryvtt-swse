@@ -39,8 +39,11 @@
     "styles/progression-framework/foundation/typography.css",
     "styles/progression-framework/shell/header.css",
     "styles/progression-framework/shell/rails.css",
+    "styles/progression-framework/rail-viewport-standards.css",
     "styles/progression-framework/shell/progress.css",
     "styles/progression-framework/shell/footer.css",
+    "styles/progression-framework/footer-navigation-standards.css",
+    "styles/progression-framework/diagnostic-banners.css",
     "styles/progression-framework/shell/svg-components.css",
     "styles/progression-framework/components/buttons.css",
     "styles/progression-framework/components/panels.css",
@@ -64,9 +67,11 @@
     "styles/progression-framework/steps/force-power-step.css",
     "styles/progression-framework/steps/confirm-step.css",
     "styles/progression-framework/steps/droid-builder-step.css",
+    "styles/progression-framework/option-cards.css",
     "styles/progression-framework/splash/splash.css",
     "styles/swse-holo-ui.css",
     "styles/ui/swse-holo-phase1.css",
+    "styles/ui/swse-cursors.css",
     "styles/apps/chargen.css"
   ],
   "languages": [

@@ -27,16 +27,16 @@
     {{!-- Top-level Character Tools --}}
     <div class="character-actions">
       {{#unless chargenComplete}}
-      <button class="character-generator" title="Character Generator" role="button" tabindex="0">
+      <button type="button" data-action="cmd-chargen" title="Character Generator" role="button" tabindex="0">
         <i class="{{getIconClass 'user'}}-plus" aria-hidden="true"></i> Chargen
       </button>
       {{/unless}}
 
-      <button class="open-store" title="Open Marketplace" role="button" tabindex="0">
+      <button type="button" data-action="cmd-store" title="Open Marketplace" role="button" tabindex="0">
         <i class="{{getIconClass 'store'}}" aria-hidden="true"></i> Shop
       </button>
 
-      <button class="talk-to-mentor" title="Talk to Your Mentors" role="button" tabindex="0">
+      <button type="button" data-action="open-mentor" title="Talk to Your Mentors" role="button" tabindex="0">
         <i class="{{getIconClass 'comment'}}s" aria-hidden="true"></i> Mentor
       </button>
     </div>

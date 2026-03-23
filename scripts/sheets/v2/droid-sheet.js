@@ -286,6 +286,26 @@ export class SWSEV2DroidSheet extends
       await this.actor.swseTake10Initiative();
     }, { signal });
 
+    /* ---------------- PROGRESSION FRAMEWORK BUTTONS (Chargen/Store/Mentor) ---------------- */
+
+    root.querySelector('[data-action="cmd-chargen"]')?.addEventListener("click", async (ev) => {
+      ev.preventDefault();
+      const { launchProgression } = await import("/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/chargen-shell.js");
+      await launchProgression(this.actor);
+    }, { signal });
+
+    root.querySelector('[data-action="cmd-store"]')?.addEventListener("click", async (ev) => {
+      ev.preventDefault();
+      const { launchProgression } = await import("/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/chargen-shell.js");
+      await launchProgression(this.actor, 'store');
+    }, { signal });
+
+    root.querySelector('[data-action="open-mentor"]')?.addEventListener("click", async (ev) => {
+      ev.preventDefault();
+      // TODO: Implement mentor interaction for droid sheet
+      ui.notifications.info("Mentor interactions coming soon!");
+    }, { signal });
+
     /* ---------------- ITEM OPEN ---------------- */
 
     for (const el of root.querySelectorAll(".swse-v2-open-item")) {

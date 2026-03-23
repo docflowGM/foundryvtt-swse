@@ -637,6 +637,14 @@ const forcePoints = [];
     const level = actor.system.level ?? 1;
     const isLevel0 = level === 0;
 
+    // DIAGNOSTIC: Log level info
+    console.log('[CHARGEN DEBUG] Character level info:', {
+      'actor.system.level': actor.system.level,
+      'level (after default)': level,
+      'isLevel0': isLevel0,
+      'actor name': actor.name
+    });
+
     // User Permission (GM status)
     const isGM = game.user.isGM;
 
@@ -1044,6 +1052,36 @@ const forcePoints = [];
     // Header Command Buttons — UNIFIED PROGRESSION ENTRY
     // ALL progression routes through launchProgression (single authority)
     // TEMP AUDIT: Log button binding
+    // DIAGNOSTIC: Check sheet-actions div and what buttons are in it
+    const sheetActionsDiv = html.querySelector('.sheet-actions');
+    if (sheetActionsDiv) {
+      console.log('[CHARGEN DEBUG] sheet-actions div found');
+      console.log('[CHARGEN DEBUG] sheet-actions innerHTML:', sheetActionsDiv.innerHTML.substring(0, 300));
+      const buttonsInActions = sheetActionsDiv.querySelectorAll('button');
+      console.log('[CHARGEN DEBUG] Buttons in sheet-actions:', buttonsInActions.length);
+      buttonsInActions.forEach((btn, idx) => {
+        console.log(`[CHARGEN DEBUG] Button ${idx}:`, {
+          'data-action': btn.getAttribute('data-action'),
+          'text': btn.textContent.trim().substring(0, 20),
+          'class': btn.className
+        });
+      });
+    } else {
+      console.warn('[CHARGEN DEBUG] sheet-actions div NOT FOUND');
+    }
+
+    // DIAGNOSTIC: Check what action buttons exist in the rendered HTML
+    const allActionButtons = html.querySelectorAll('[data-action]');
+    const actionButtonsByType = {};
+    allActionButtons.forEach(btn => {
+      const action = btn.getAttribute('data-action');
+      if (!actionButtonsByType[action]) {
+        actionButtonsByType[action] = 0;
+      }
+      actionButtonsByType[action]++;
+    });
+    console.log('[CHARGEN DEBUG] All data-action buttons found:', actionButtonsByType);
+
     const chargenButtons = html.querySelectorAll('[data-action="cmd-chargen"]');
     console.log('[TEMP AUDIT] Found chargen buttons in sheet HTML:', chargenButtons.length);
     chargenButtons.forEach(button => {

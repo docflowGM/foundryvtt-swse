@@ -1,39 +1,41 @@
 <div class="prog-class-browse prog-quickref-stage">
-  <div class="prog-class-grid" role="list">
+  <div class="prog-class-grid" role="listbox" aria-label="Class">
     {{#each classes}}
-      <button class="prog-class-card swse-card-schema swse-card-schema--identity swse-card-schema--filled
-                     {{#if (eq id ../focusedClassId)}}prog-class-card--focused{{/if}}
-                     {{#if (eq id ../committedClassId)}}prog-class-card--committed{{/if}}"
+      <button class="swse-option-card prog-class-card
+                     {{#if (eq id ../focusedClassId)}}swse-option-card--focused{{/if}}
+                     {{#if (eq id ../committedClassId)}}swse-option-card--selected{{/if}}"
               data-action="focus-item"
               data-item-id="{{this.id}}"
+              data-selected="{{#if (eq id ../committedClassId)}}true{{else}}false{{/if}}"
+              data-focused="{{#if (eq id ../focusedClassId)}}true{{else}}false{{/if}}"
               type="button"
               role="option"
               {{#if (eq id ../committedClassId)}}aria-selected="true"{{/if}}>
-        <div class="prog-class-card__header">
-          <div class="prog-class-card__name">{{this.name}}</div>
-          <div class="prog-class-card__type prog-chip">{{this.type}}</div>
+
+        <div class="swse-option-card__header">
+          <h3 class="swse-option-card__title prog-class-card__name">{{this.name}}</h3>
+          <span class="swse-option-card__subtitle">{{this.type}}</span>
         </div>
 
-        <div class="prog-class-card__stats">
-          {{#each this.stats}}
-            <div class="prog-class-card__stat">
-              <span class="prog-class-card__stat-label">{{this.label}}:</span>
-              <span class="prog-class-card__stat-value">{{this.value}}</span>
-            </div>
-          {{/each}}
-        </div>
-
-        <div class="prog-class-card__mentor">
-          <i class="fas fa-user-circle"></i>
-          <span>{{this.mentorName}}</span>
-        </div>
-
-        {{#if (eq id ../committedClassId)}}
-          <span class="prog-class-card__committed-badge">✓ Selected</span>
+        {{#if this.stats}}
+          <div class="swse-option-card__body">
+            {{#each this.stats}}
+              <span class="prog-class-stat">{{this.label}}: {{this.value}}</span>
+            {{/each}}
+          </div>
         {{/if}}
+
+        <div class="swse-option-card__meta">
+          {{#if this.mentorName}}
+            <span class="swse-option-card__badge"><i class="fas fa-user-circle"></i> {{this.mentorName}}</span>
+          {{/if}}
+          {{#if (eq id ../committedClassId)}}
+            <span class="swse-option-card__badge"><i class="fas fa-check"></i> Selected</span>
+          {{/if}}
+        </div>
       </button>
     {{else}}
-      <div class="prog-class-browse__empty swse-card-schema swse-card-schema--choice swse-card-schema--placeholder"><span class="swse-card-schema__eyebrow">Choice Slot</span><span class="swse-card-schema__title">No classes found</span><span class="swse-card-schema__body">Adjust your search or filters to repopulate the class selection grid.</span></div>
+      <div class="prog-class-browse__empty">No classes found. Adjust your search or filters.</div>
     {{/each}}
   </div>
 </div>

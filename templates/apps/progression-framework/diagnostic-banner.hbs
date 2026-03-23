@@ -1,0 +1,39 @@
+{{!--
+  diagnostic-banner.hbs
+
+  Renders diagnostic error/warning banners for hydration failures.
+  Used in progression-shell.hbs to display initialization or runtime errors.
+
+  Context variables:
+  - diagnostics.blocking[]  - Array of blocking error messages (hard stops)
+  - diagnostics.warning[]   - Array of warning messages (informational)
+  - diagnostics.total      - Total number of diagnostics
+
+  Styles:
+  - .prog-diagnostic-banner-container  - Wrapper for all banners
+  - .prog-diagnostic-banner             - Individual banner
+  - .prog-diagnostic-banner--error      - Red styling for blocking errors
+  - .prog-diagnostic-banner--warning    - Amber styling for warnings
+--}}
+
+{{#if diagnostics.total}}
+  <div class="prog-diagnostic-banner-container">
+    {{!-- Blocking errors (red) take precedence --}}
+    {{#each diagnostics.blocking}}
+      <div class="prog-diagnostic-banner prog-diagnostic-banner--error" role="alert">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{this}}</span>
+      </div>
+    {{/each}}
+
+    {{!-- Warnings (amber) show if no errors --}}
+    {{#unless diagnostics.blocking.length}}
+      {{#each diagnostics.warning}}
+        <div class="prog-diagnostic-banner prog-diagnostic-banner--warning" role="alert">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>{{this}}</span>
+        </div>
+      {{/each}}
+    {{/unless}}
+  </div>
+{{/if}}

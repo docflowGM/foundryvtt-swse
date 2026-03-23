@@ -1,62 +1,50 @@
 {{!--
   species-work-surface.hbs
-  CENTER PANEL — quick-reference species table.
+  CENTER PANEL — angled option-card layout for species selection.
 
-  Rows stay compact and scrollable in the middle body.
+  Cards are presented in a responsive grid with the new SVG option frames.
   Right body owns the richer descriptive details.
 --}}
 
 <div class="prog-species-browse prog-quickref-stage">
-  <div class="prog-quickref-table prog-species-table" role="listbox" aria-label="Species">
-    <div class="prog-quickref-table__header prog-species-table__header">
-      <span>Species</span>
-      <span>Size</span>
-      <span>Attribute Adjustments</span>
-      <span>Status</span>
-    </div>
+  <div class="prog-species-grid" role="listbox" aria-label="Species">
+    {{#each species}}
+      <button class="swse-option-card prog-species-card
+                     {{#if (eq id ../focusedSpeciesId)}}swse-option-card--focused{{/if}}
+                     {{#if (eq id ../committedSpeciesId)}}swse-option-card--selected{{/if}}"
+              data-action="focus-item"
+              data-item-id="{{this.id}}"
+              data-selected="{{#if (eq id ../committedSpeciesId)}}true{{else}}false{{/if}}"
+              data-focused="{{#if (eq id ../focusedSpeciesId)}}true{{else}}false{{/if}}"
+              type="button"
+              role="option"
+              {{#if (eq id ../committedSpeciesId)}}aria-selected="true"{{/if}}>
 
-    <div class="prog-quickref-table__body prog-species-list">
-      {{#each species}}
-        <button class="prog-quickref-row prog-species-row
-                       {{#if (eq id ../focusedSpeciesId)}}prog-quickref-row--focused prog-species-row--focused{{/if}}
-                       {{#if (eq id ../committedSpeciesId)}}prog-quickref-row--committed prog-species-row--committed{{/if}}"
-                data-action="focus-item"
-                data-item-id="{{this.id}}"
-                type="button"
-                role="option"
-                {{#if (eq id ../committedSpeciesId)}}aria-selected="true"{{/if}}>
+        <div class="swse-option-card__header">
+          <h3 class="swse-option-card__title prog-species-card__name">{{this.name}}</h3>
+          <span class="swse-option-card__subtitle">Size: {{this.size}}</span>
+        </div>
 
-          <span class="prog-quickref-row__cell prog-species-row__name-cell">
-            <span class="prog-species-row__name">{{this.name}}</span>
-          </span>
+        {{#if this.abilityRows.length}}
+          <div class="swse-option-card__body prog-species-card__details">
+            {{#each this.abilityRows}}
+              <span class="prog-species-mod {{this.cssClass}}">{{this.shortLabel}} {{this.signedValue}}</span>
+            {{/each}}
+          </div>
+        {{/if}}
 
-          <span class="prog-quickref-row__cell prog-species-row__size">{{this.size}}</span>
-
-          <span class="prog-quickref-row__cell prog-species-row__mods">
-            {{#if this.abilityRows.length}}
-              <span class="prog-species-row__mods-list">
-                {{#each this.abilityRows}}
-                  <span class="prog-species-row__mod {{this.cssClass}}">{{this.shortLabel}} {{this.signedValue}}</span>
-                {{/each}}
-              </span>
-            {{else}}
-              <span class="prog-species-row__mods-empty">—</span>
-            {{/if}}
-          </span>
-
-          <span class="prog-quickref-row__cell prog-species-row__status">
-            {{#if (eq id ../committedSpeciesId)}}
-              <span class="prog-species-row__check"><i class="fas fa-check-circle"></i> Selected</span>
-            {{else if (eq id ../focusedSpeciesId)}}
-              <span class="prog-species-row__focus">Inspecting</span>
-            {{else}}
-              <span class="prog-species-row__source">{{this.source}}</span>
-            {{/if}}
-          </span>
-        </button>
-      {{else}}
-        <p class="prog-species-browse__empty">No species match your search or filters.</p>
-      {{/each}}
-    </div>
+        <div class="swse-option-card__meta">
+          {{#if (eq id ../committedSpeciesId)}}
+            <span class="swse-option-card__badge"><i class="fas fa-check"></i> Selected</span>
+          {{else if (eq id ../focusedSpeciesId)}}
+            <span class="swse-option-card__badge">Inspecting</span>
+          {{else}}
+            <span class="swse-option-card__badge">{{this.source}}</span>
+          {{/if}}
+        </div>
+      </button>
+    {{else}}
+      <div class="prog-species-browse__empty">No species match your search or filters.</div>
+    {{/each}}
   </div>
 </div>

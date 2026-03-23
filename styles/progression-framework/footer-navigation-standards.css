@@ -1,0 +1,350 @@
+/* ============================================================================
+   FOOTER NAVIGATION STANDARDS — Navigation Authority & Control Invariants
+
+   Establishes CSS-enforced button states, disabled styles, and visual feedback
+   for all progression control buttons. Works in coordination with application-
+   level validation (which must manage .disabled attributes and enabled state).
+
+   Rules enforced by this file:
+   - Button disabled appearance (opacity, cursor, hover behavior)
+   - Step chip state visualization (current/complete/locked/warning)
+   - Status message styling (blocking/warning banners)
+   - Accessibility: focus management, keyboard navigation
+   - Hover/transition effects for all interactive states
+   ============================================================================ */
+
+/* ============================================================================
+   BUTTON DISABLED STATE STANDARDIZATION — All buttons follow same rules
+   ============================================================================ */
+
+.progression-shell .swse-btn:disabled,
+.progression-shell .swse-step-btn:disabled,
+.progression-shell .swse-step-btn.is-locked {
+  opacity: 0.38;                    /* Clear visual indication of disabled */
+  cursor: not-allowed;              /* Non-interactive cursor */
+  pointer-events: auto;             /* Keep receiving events for aria updates */
+  transform: none;                  /* No hover lift */
+  filter: none;                     /* No glow */
+}
+
+/* Prevent hover effects on disabled buttons */
+.progression-shell .swse-btn:disabled:hover,
+.progression-shell .swse-step-btn:disabled:hover,
+.progression-shell .swse-step-btn.is-locked:hover {
+  transform: none;
+  filter: none;
+  opacity: 0.38;
+}
+
+/* ============================================================================
+   BACK BUTTON VALIDATION STATE — Previous-step action
+   ============================================================================ */
+
+/* Back button (default enabled state) */
+.progression-shell .swse-btn--back {
+  cursor: pointer;
+  opacity: 1;
+}
+
+/* Back disabled when: on first step (index === 0) */
+.progression-shell .swse-btn--back[data-first-step="true"] {
+  opacity: 0.38;
+  cursor: not-allowed;
+  pointer-events: auto;
+}
+
+.progression-shell .swse-btn--back[data-first-step="true"]:hover {
+  transform: none;
+  filter: none;
+}
+
+/* ============================================================================
+   NEXT BUTTON VALIDATION STATE — Next-step or confirm-step action
+   ============================================================================ */
+
+/* Next button (default enabled state) */
+.progression-shell .swse-btn--confirm {
+  cursor: pointer;
+  opacity: 1;
+}
+
+/* Next disabled when: blocking issues exist, step incomplete, or validation fails */
+.progression-shell .swse-btn--confirm:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  animation: none; /* Stop pulse animation if present */
+  filter: none;
+  transform: none;
+}
+
+/* Last-step Confirm button — green teal glow with pulse animation */
+.progression-shell .swse-btn--last-step {
+  filter: drop-shadow(0 0 8px rgba(90, 255, 200, 0.35));
+  animation: swse-confirm-pulse 2.4s ease-in-out infinite;
+}
+
+.progression-shell .swse-btn--last-step:not(:disabled):hover {
+  animation: none;
+  filter: brightness(1.15) drop-shadow(0 0 14px rgba(90, 255, 200, 0.5));
+}
+
+/* Last-step Confirm disabled — stop pulse, dim */
+.progression-shell .swse-btn--last-step:disabled {
+  animation: none;
+  opacity: 0.38;
+  cursor: not-allowed;
+  filter: none;
+  transform: none;
+}
+
+/* ============================================================================
+   STEP CHIP STATE VISUALIZATION — Visual step progression feedback
+   ============================================================================ */
+
+/* CURRENT STEP — bright cyan, not clickable, authoritative */
+.progression-shell .swse-step-btn.is-current {
+  opacity: 1;
+  cursor: default;
+  pointer-events: none;             /* Prevent accidental clicks */
+  background-image: url('../../../assets/ui/chargen/swse-step-chip-active.svg');
+  color: rgba(230, 252, 255, 0.98);
+  font-weight: 700;
+  filter: drop-shadow(0 0 6px rgba(100, 240, 255, 0.30));
+}
+
+.progression-shell .swse-step-btn.is-current:hover {
+  transform: none;                  /* No hover effect */
+  filter: drop-shadow(0 0 6px rgba(100, 240, 255, 0.30));
+}
+
+/* COMPLETE STEP — teal green, navigable, clickable */
+.progression-shell .swse-step-btn.is-complete:not(.is-current) {
+  opacity: 1;
+  cursor: pointer;
+  pointer-events: auto;
+  background-image: url('../../../assets/ui/chargen/swse-step-chip-complete.svg');
+  color: rgba(180, 255, 230, 0.88);
+}
+
+.progression-shell .swse-step-btn.is-complete:not(.is-current):hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.12) drop-shadow(0 0 6px rgba(100, 255, 200, 0.25));
+}
+
+/* LOCKED STEP — grey, future/unavailable, non-clickable */
+.progression-shell .swse-step-btn.is-locked {
+  opacity: 0.50;
+  cursor: not-allowed;
+  pointer-events: auto;             /* Keep for aria updates */
+  background-image: url('../../../assets/ui/chargen/swse-step-chip-locked.svg');
+  color: rgba(130, 145, 160, 0.55);
+}
+
+.progression-shell .swse-step-btn.is-locked:hover {
+  transform: none;
+  filter: none;
+  opacity: 0.50;
+}
+
+/* WARNING STEP — amber, conditional, navigable, distinct */
+.progression-shell .swse-step-btn.is-warning:not(.is-current) {
+  opacity: 1;
+  cursor: pointer;
+  pointer-events: auto;
+  background-image: url('../../../assets/ui/chargen/swse-step-chip-warning.svg');
+  color: rgba(255, 225, 130, 0.90);
+}
+
+.progression-shell .swse-step-btn.is-warning:not(.is-current):hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.12) drop-shadow(0 0 6px rgba(255, 200, 60, 0.30));
+}
+
+/* ============================================================================
+   FOCUS MANAGEMENT — Keyboard navigation and accessibility
+   ============================================================================ */
+
+/* Visible focus indicator for keyboard users */
+.progression-shell .swse-btn:focus-visible,
+.progression-shell .swse-step-btn:focus-visible:not(:disabled):not(.is-locked) {
+  outline: 2px solid rgba(100, 240, 255, 0.8);
+  outline-offset: 2px;
+}
+
+/* Back button focus */
+.progression-shell .swse-btn--back:focus-visible:not(:disabled) {
+  outline: 2px solid rgba(100, 220, 255, 0.8);
+  outline-offset: 2px;
+}
+
+/* Confirm button focus */
+.progression-shell .swse-btn--confirm:focus-visible:not(:disabled) {
+  outline: 2px solid rgba(100, 220, 255, 0.8);
+  outline-offset: 2px;
+}
+
+/* ============================================================================
+   STATUS MESSAGE STANDARDIZATION — Blocking and warning messages
+   ============================================================================ */
+
+/* Blocking Issue Banner — hard stop, prevents progression */
+.progression-shell .swse-footer__status--blocking {
+  background: rgba(180, 30, 30, 0.20);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: rgba(255, 130, 130, 0.90);
+  gap: 6px;
+  padding: 2px 10px;
+  font-size: 9px;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+}
+
+.progression-shell .swse-footer__status--blocking i {
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+/* Warning Banner — informational, allows progression */
+.progression-shell .swse-footer__status--warning {
+  background: rgba(120, 80, 0, 0.22);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: rgba(255, 210, 100, 0.90);
+  gap: 6px;
+  padding: 2px 10px;
+  font-size: 9px;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+}
+
+.progression-shell .swse-footer__status--warning i {
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+/* ============================================================================
+   TRANSITION & ANIMATION STANDARDIZATION — Smooth state changes
+   ============================================================================ */
+
+/* Standard button transition */
+.progression-shell .swse-btn,
+.progression-shell .swse-step-btn {
+  transition: transform 100ms ease, filter 100ms ease, opacity 100ms ease, outline 100ms ease;
+  will-change: transform;
+}
+
+/* Confirmation pulse animation — highlights last step */
+@keyframes swse-confirm-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 6px rgba(90, 255, 200, 0.25));
+  }
+  50% {
+    filter: drop-shadow(0 0 14px rgba(90, 255, 200, 0.55));
+  }
+}
+
+/* ============================================================================
+   INVARIANT ENFORCEMENT — CSS Guards against invalid states
+   ============================================================================ */
+
+/* Rule 1.2: Current step should not be clickable */
+.progression-shell .swse-step-btn.is-current {
+  pointer-events: none;
+  cursor: default;
+}
+
+/* Rule 5.4: Cannot have two current steps */
+.progression-shell .swse-step-btn.is-current + .swse-step-btn.is-current {
+  display: none;  /* Hide invalid second current state */
+}
+
+/* Rule 9.5: Only one step is current (CSS can't enforce, but can highlight issue) */
+.progression-shell [role="tablist"] .is-current {
+  z-index: 10;  /* Raise current above others for visibility */
+}
+
+/* ============================================================================
+   RESPONSIVE ADJUSTMENTS — Button sizing for smaller screens
+   ============================================================================ */
+
+@media (max-width: 900px) {
+  /* Hide step chip labels, show index only */
+  .progression-shell .swse-step-btn__label {
+    display: none;
+  }
+
+  .progression-shell .swse-step-btn {
+    width: 44px;  /* Icon-only chip */
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+@media (max-width: 720px) {
+  /* Reduce button widths */
+  .progression-shell .swse-btn {
+    width: 100px;
+  }
+
+  /* Reduce font size for cramped spaces */
+  .progression-shell .swse-btn__label {
+    font-size: 10px;
+    letter-spacing: 0.05em;
+  }
+}
+
+/* ============================================================================
+   HIGH CONTRAST MODE — Improve visibility for accessibility */
+   ============================================================================ */
+
+@media (prefers-contrast: more) {
+  /* Disabled buttons more distinct */
+  .progression-shell .swse-btn:disabled,
+  .progression-shell .swse-step-btn:disabled,
+  .progression-shell .swse-step-btn.is-locked {
+    opacity: 0.25;  /* Lower from 0.38 for more contrast */
+  }
+
+  /* Status messages more visible */
+  .progression-shell .swse-footer__status--blocking {
+    border-color: rgba(239, 68, 68, 0.6);  /* Higher from 0.35 */
+    color: rgba(255, 100, 100, 1);         /* Brighter */
+  }
+
+  .progression-shell .swse-footer__status--warning {
+    border-color: rgba(245, 158, 11, 0.6);  /* Higher from 0.35 */
+    color: rgba(255, 180, 50, 1);           /* Brighter */
+  }
+}
+
+/* ============================================================================
+   REDUCED MOTION — Respect user motion preferences
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .progression-shell .swse-btn,
+  .progression-shell .swse-step-btn {
+    transition: none;
+    will-change: auto;
+  }
+
+  .progression-shell .swse-btn--last-step {
+    animation: none;
+    filter: drop-shadow(0 0 8px rgba(90, 255, 200, 0.35));
+  }
+
+  .progression-shell .swse-btn:hover:not(:disabled) {
+    transform: none;
+  }
+
+  .progression-shell .swse-step-btn.is-complete:hover:not(:disabled):not(.is-current),
+  .progression-shell .swse-step-btn.is-warning:hover:not(:disabled):not(.is-current) {
+    transform: none;
+  }
+}
+

@@ -1,0 +1,172 @@
+/**
+ * diagnostic-banners.css
+ *
+ * Styling for Phase 8 hydration diagnostic error/warning banners.
+ * Displays initialization and runtime errors in the progression shell.
+ *
+ * States:
+ * - Blocking errors (red): Hard stops, prevent progression
+ * - Warnings (amber): Informational, allow progression
+ *
+ * CSS variables used:
+ * - --prog-negative: Red color (#EF4444)
+ * - --prog-negative-bg: Red background with opacity
+ * - --prog-neutral: Amber color (#F59E0B)
+ * - --prog-neutral-bg: Amber background with opacity
+ * - --prog-text-dim: Dim text color
+ * - --prog-space-*: Spacing variables
+ * - --prog-radius-*: Border radius variables
+ * - --prog-font-size-*: Font size variables
+ */
+
+/* ============================================================================
+   DIAGNOSTIC BANNER CONTAINER — Stacks banners vertically
+   ============================================================================ */
+
+.prog-diagnostic-banner-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: var(--prog-space-md);
+}
+
+/* ============================================================================
+   BLOCKING ERROR BANNER — Hard stop, prevents progression
+   ============================================================================ */
+
+.prog-diagnostic-banner--error {
+  background: rgba(180, 30, 30, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: rgba(255, 130, 130, 0.90);
+  padding: var(--prog-space-sm) var(--prog-space-md);
+  border-radius: var(--prog-radius-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-sm);
+  font-size: var(--prog-font-size-sm);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.prog-diagnostic-banner--error i {
+  flex-shrink: 0;
+  opacity: 0.85;
+  color: rgba(255, 130, 130, 0.90);
+}
+
+.prog-diagnostic-banner--error span {
+  flex: 1;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* ============================================================================
+   WARNING BANNER — Informational, allows progression
+   ============================================================================ */
+
+.prog-diagnostic-banner--warning {
+  background: rgba(120, 80, 0, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: rgba(255, 210, 100, 0.90);
+  padding: var(--prog-space-sm) var(--prog-space-md);
+  border-radius: var(--prog-radius-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--prog-space-sm);
+  font-size: var(--prog-font-size-sm);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.prog-diagnostic-banner--warning i {
+  flex-shrink: 0;
+  opacity: 0.85;
+  color: rgba(255, 210, 100, 0.90);
+}
+
+.prog-diagnostic-banner--warning span {
+  flex: 1;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* ============================================================================
+   DIAGNOSTIC BANNER (generic) — Shared styles for all banners
+   ============================================================================ */
+
+.prog-diagnostic-banner {
+  transition: background 150ms ease, border-color 150ms ease, opacity 150ms ease;
+}
+
+/* ============================================================================
+   ACCESSIBILITY: High contrast mode
+   ============================================================================ */
+
+@media (prefers-contrast: more) {
+  .prog-diagnostic-banner--error {
+    border-color: rgba(239, 68, 68, 0.6);
+    color: rgba(255, 100, 100, 1);
+    background: rgba(180, 30, 30, 0.25);
+  }
+
+  .prog-diagnostic-banner--warning {
+    border-color: rgba(245, 158, 11, 0.6);
+    color: rgba(255, 180, 50, 1);
+    background: rgba(120, 80, 0, 0.25);
+  }
+}
+
+/* ============================================================================
+   RESPONSIVE: Adjust padding for smaller screens
+   ============================================================================ */
+
+@media (max-width: 720px) {
+  .prog-diagnostic-banner {
+    padding: var(--prog-space-xs) var(--prog-space-sm);
+    font-size: var(--prog-font-size-xs);
+  }
+}
+
+/* ============================================================================
+   PLACEHOLDER UI — Shows when content fails to load
+   ============================================================================ */
+
+.prog-work-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: var(--prog-space-md);
+  color: var(--prog-text-dim);
+  background: rgba(50, 50, 80, 0.3);
+  border-radius: var(--prog-radius-sm);
+  padding: var(--prog-space-lg);
+}
+
+.prog-work-placeholder p {
+  font-size: var(--prog-font-size-sm);
+  text-align: center;
+  margin: 0;
+}
+
+.prog-work-placeholder button {
+  padding: var(--prog-space-sm) var(--prog-space-md);
+  background: rgba(100, 220, 255, 0.2);
+  border: 1px solid rgba(100, 220, 255, 0.5);
+  color: rgba(100, 220, 255, 0.8);
+  cursor: pointer;
+  border-radius: var(--prog-radius-sm);
+  transition: background 200ms ease, border-color 200ms ease;
+  font-family: var(--prog-font-body);
+  font-size: var(--prog-font-size-sm);
+}
+
+.prog-work-placeholder button:hover {
+  background: rgba(100, 220, 255, 0.4);
+  border-color: rgba(100, 220, 255, 0.8);
+}
+
+.prog-work-placeholder button:active {
+  background: rgba(100, 220, 255, 0.3);
+}

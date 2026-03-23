@@ -1,0 +1,302 @@
+/**
+ * option-cards.css
+ *
+ * Unified option card styling for the SWSE progression framework.
+ * Applies the new angled SVG option frame assets to selectable options across
+ * species, class, background, feat, and other choice-based progression steps.
+ *
+ * Talent trees are explicitly excluded from this pattern.
+ *
+ * Uses CSS background-image swaps to change card appearance based on state:
+ * - default: swse-angled-option-frame.svg
+ * - hover: swse-angled-option-frame-hover.svg
+ * - focused/selected: swse-angled-option-frame-selected.svg
+ * - locked/disabled: swse-angled-option-frame-locked.svg
+ * - recommended: swse-angled-option-frame-recommended.svg
+ * - compact: swse-angled-option-frame-compact.svg
+ */
+
+/* =============================================================================
+   REUSABLE OPTION CARD PATTERN
+   ============================================================================= */
+
+.swse-option-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 100px;
+  padding: 16px 20px;
+  border: none;
+  border-radius: 0;  /* SVG frame handles visual appearance */
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-position: center;
+  overflow: hidden;
+  transition: background-image 160ms ease, filter 160ms ease;
+  cursor: var(--swse-cursor-hover);
+  text-align: left;
+}
+
+.swse-option-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+/* Default state — unpicked, available option */
+.swse-option-card {
+  background-image: url('../../assets/ui/chargen/swse-angled-option-frame.svg');
+  background-color: rgba(8, 20, 36, 0.8);
+}
+
+/* Hover state — cursor over an available option */
+.swse-option-card:hover {
+  background-image: url('../../assets/ui/chargen/swse-angled-option-frame-hover.svg');
+}
+
+/* Focused state — option is being inspected/previewed */
+.swse-option-card[data-focused="true"],
+.swse-option-card.swse-option-card--focused {
+  background-image: url('../../assets/ui/chargen/swse-angled-option-frame-hover.svg');
+}
+
+/* Selected/Committed state — option has been chosen */
+.swse-option-card[data-selected="true"],
+.swse-option-card.swse-option-card--selected,
+.swse-option-card[aria-selected="true"] {
+  background-image: url('../../assets/ui/chargen/swse-angled-option-frame-selected.svg');
+}
+
+/* Locked/Disabled state — option is unavailable or locked */
+.swse-option-card[data-locked="true"],
+.swse-option-card.swse-option-card--locked,
+.swse-option-card:disabled,
+.swse-option-card[aria-disabled="true"] {
+  background-image: url('../../assets/ui/chargen/swse-angled-option-frame-locked.svg');
+  opacity: 0.65;
+  cursor: var(--swse-cursor-forbidden);
+  pointer-events: none;
+}
+
+/* Recommended state — option is flagged as synergistic/optimal */
+.swse-option-card[data-recommended="true"],
+.swse-option-card.swse-option-card--recommended {
+  background-image: url('../../assets/ui/chargen/swse-angled-option-frame-recommended.svg');
+}
+
+/* Compact variant — smaller card for dense layouts */
+.swse-option-card.swse-option-card--compact {
+  background-image: url('../../assets/ui/chargen/swse-angled-option-frame-compact.svg');
+  min-height: 80px;
+  padding: 12px 16px;
+  gap: 6px;
+}
+
+/* =============================================================================
+   OPTION CARD CONTENT — enforces bounded viewport discipline
+   ============================================================================= */
+
+.swse-option-card__header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.swse-option-card__title {
+  font-size: var(--prog-font-size-md);
+  font-weight: 600;
+  color: var(--prog-text-heading);
+  text-shadow: var(--prog-heading-shadow);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.swse-option-card__subtitle {
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+  text-shadow: var(--prog-text-shadow);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.swse-option-card__body {
+  position: relative;
+  z-index: 1;
+  font-size: var(--prog-font-size-sm);
+  color: var(--prog-text);
+  line-height: 1.4;
+  margin: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-wrap: break-word;
+  text-shadow: var(--prog-text-shadow);
+}
+
+.swse-option-card__meta {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+}
+
+.swse-option-card__badge {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(0, 170, 255, 0.1);
+  color: var(--prog-accent);
+  font-weight: 500;
+  white-space: nowrap;
+  text-shadow: var(--prog-text-shadow);
+}
+
+.swse-option-card__badge--recommended {
+  background: rgba(34, 197, 94, 0.1);
+  color: var(--prog-positive);
+}
+
+.swse-option-card__badge--locked {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--prog-negative);
+}
+
+/* =============================================================================
+   MIGRATION PATTERNS — Step-specific selectors (inherit from base classes)
+   ============================================================================= */
+
+/* These classes inherit all styling from their base .swse-option-card styles above.
+   No additional rules needed — the base styles apply automatically. */
+
+.prog-species-card { /* inherits .swse-option-card */ }
+.prog-species-card__name { /* inherits .swse-option-card__title */ }
+.prog-species-card__details { /* inherits .swse-option-card__body */ }
+
+.prog-class-card { /* inherits .swse-option-card */ }
+.prog-class-card__name { /* inherits .swse-option-card__title */ }
+.prog-class-card__type { /* inherits .swse-option-card__subtitle */ }
+
+.prog-background-item { /* inherits .swse-option-card */ }
+.prog-background-item__name { /* inherits .swse-option-card__title */ }
+.prog-background-item__description { /* inherits .swse-option-card__body */ }
+
+/* =============================================================================
+   SECTION HEADERS — using swse-section-header-plate.svg
+   ============================================================================= */
+
+.swse-section-header {
+  position: relative;
+  padding: 12px 20px;
+  background-image: url('../../assets/ui/chargen/swse-section-header-plate.svg');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-position: center;
+  background-color: rgba(6, 18, 30, 0.8);
+  border: none;
+  border-radius: 0;
+  margin: 8px 0;
+  overflow: hidden;
+}
+
+.swse-section-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.swse-section-header__title {
+  position: relative;
+  z-index: 1;
+  font-size: var(--prog-font-size-md);
+  font-weight: 600;
+  color: var(--prog-text-heading);
+  text-shadow: var(--prog-heading-shadow);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* =============================================================================
+   GRID LAYOUTS — responsive card grids for option browsing
+   ============================================================================= */
+
+.prog-species-grid,
+.prog-class-grid,
+.prog-background-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  padding: 16px 0;
+  width: 100%;
+}
+
+.prog-background-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.prog-background-grid {
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+/* Compact grid for smaller steps */
+.swse-option-card--compact {
+  grid-column: auto;
+}
+
+/* =============================================================================
+   RESPONSIVE & ACCESSIBILITY
+   ============================================================================= */
+
+.swse-option-card:focus-visible {
+  outline: 2px solid var(--prog-accent);
+  outline-offset: -2px;
+}
+
+.swse-option-card[aria-disabled="true"] {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .swse-option-card {
+    transition: none;
+  }
+}
+
+/* Compact layout support */
+@media (max-width: 768px) {
+  .swse-option-card {
+    min-height: 90px;
+    padding: 12px 16px;
+  }
+
+  .swse-option-card__body {
+    -webkit-line-clamp: 1;
+  }
+}

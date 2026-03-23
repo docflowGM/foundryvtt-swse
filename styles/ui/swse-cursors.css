@@ -1,0 +1,299 @@
+/**
+ * swse-cursors.css
+ *
+ * SWSE futuristic cursor system using custom SVG cursor assets.
+ *
+ * Implements context-aware cursor application:
+ * - default: general UI surfaces
+ * - hover: clickable controls/options/buttons
+ * - select: selected/active surfaces
+ * - grab/grabbing: draggable contexts
+ * - text: text inputs/editable areas
+ * - precision: fine control contexts
+ * - forbidden: disabled/locked/unavailable controls
+ *
+ * CSS custom properties for reusable reference:
+ * - --swse-cursor-default
+ * - --swse-cursor-hover
+ * - --swse-cursor-select
+ * - --swse-cursor-grab
+ * - --swse-cursor-grabbing
+ * - --swse-cursor-precision
+ * - --swse-cursor-text
+ * - --swse-cursor-forbidden
+ */
+
+:root {
+  /* Cursor asset path variables with hotspot offsets */
+  --swse-cursor-default:   url('../../assets/cursor/swse-cursor-default.svg') 6 4, auto;
+  --swse-cursor-hover:     url('../../assets/cursor/swse-cursor-hover.svg') 6 4, auto;
+  --swse-cursor-select:    url('../../assets/cursor/swse-cursor-select.svg') 6 4, auto;
+  --swse-cursor-grab:      url('../../assets/cursor/swse-cursor-grab.svg') 24 18, grab;
+  --swse-cursor-grabbing:  url('../../assets/cursor/swse-cursor-grabbing.svg') 24 18, grabbing;
+  --swse-cursor-precision: url('../../assets/cursor/swse-cursor-precision.svg') 24 24, crosshair;
+  --swse-cursor-text:      text;
+  --swse-cursor-forbidden: url('../../assets/cursor/swse-cursor-forbidden.svg') 24 24, not-allowed;
+}
+
+/* =============================================================================
+   DEFAULT CURSOR — general UI surfaces
+   ============================================================================= */
+
+html,
+body,
+.progression-shell,
+.swse-chargen-shell {
+  cursor: var(--swse-cursor-default);
+}
+
+/* =============================================================================
+   HOVER CURSOR — clickable elements and interactive controls
+   ============================================================================= */
+
+button,
+.prog-btn,
+[role="button"],
+[role="option"],
+.swse-option-card,
+.prog-class-card,
+.prog-species-card,
+.prog-background-item,
+.prog-quickref-row,
+a,
+[data-action] {
+  cursor: var(--swse-cursor-hover);
+}
+
+/* Hover state intensification */
+button:hover,
+.prog-btn:hover,
+[role="button"]:hover,
+.swse-option-card:hover {
+  cursor: var(--swse-cursor-hover);
+}
+
+/* =============================================================================
+   SELECT CURSOR — selected/active/committed states
+   ============================================================================= */
+
+.swse-option-card[data-selected="true"],
+.swse-option-card.swse-option-card--selected,
+.swse-option-card[aria-selected="true"],
+.prog-quickref-row--committed,
+.prog-class-card--committed,
+.prog-species-row--committed,
+.prog-background-item--committed {
+  cursor: var(--swse-cursor-select);
+}
+
+/* =============================================================================
+   FORBIDDEN CURSOR — disabled, locked, unavailable controls
+   ============================================================================= */
+
+button:disabled,
+.prog-btn:disabled,
+button[aria-disabled="true"],
+.prog-btn[aria-disabled="true"],
+[role="button"][aria-disabled="true"],
+.swse-option-card:disabled,
+.swse-option-card[aria-disabled="true"],
+.swse-option-card[data-locked="true"],
+.swse-option-card.swse-option-card--locked,
+.swse-option-card--locked,
+[data-locked="true"],
+.is-locked,
+.locked {
+  cursor: var(--swse-cursor-forbidden) !important;
+  pointer-events: none;
+}
+
+/* =============================================================================
+   GRAB CURSOR — draggable contexts
+   ============================================================================= */
+
+[draggable="true"],
+.sortable-handle,
+.drag-handle,
+[data-draggable] {
+  cursor: var(--swse-cursor-grab);
+}
+
+[draggable="true"]:active,
+.sortable-handle:active,
+.drag-handle:active,
+[data-draggable]:active {
+  cursor: var(--swse-cursor-grabbing);
+}
+
+/* =============================================================================
+   TEXT CURSOR — text inputs and editable areas
+   ============================================================================= */
+
+input[type="text"],
+input[type="search"],
+input[type="number"],
+textarea,
+[contenteditable="true"],
+.editable,
+.text-input {
+  cursor: var(--swse-cursor-text);
+}
+
+/* =============================================================================
+   PRECISION CURSOR — fine control, measurement, or exact placement
+   ============================================================================= */
+
+.precision-tool,
+[data-precision],
+.measure-tool,
+.calibrate {
+  cursor: var(--swse-cursor-precision);
+}
+
+/* =============================================================================
+   MAIN SCENE CANVAS & BOARD — Foundry V13 main play area
+   ============================================================================= */
+
+/* Primary board container — all cursor states default to SWSE cursor */
+body.game #board,
+body.game #board canvas,
+body.game .canvas,
+body.game #board .canvas-stage {
+  cursor: var(--swse-cursor-default);
+}
+
+/* Board hover/interactive states */
+body.game #board:hover,
+body.game #board canvas:hover {
+  cursor: var(--swse-cursor-default);
+}
+
+/* Placeables and interactive board elements default to SWSE cursor */
+body.game .placeable,
+body.game .placeable-object,
+body.game [data-placeable] {
+  cursor: var(--swse-cursor-default);
+}
+
+/* Hoverable/interactive placeables show hover cursor */
+body.game .placeable:hover,
+body.game .placeable-object:hover,
+body.game [data-placeable]:hover {
+  cursor: var(--swse-cursor-hover);
+}
+
+/* Locked/forbidden board items show forbidden cursor */
+body.game .placeable[data-locked="true"],
+body.game .placeable-object.is-locked,
+body.game [data-placeable][data-locked="true"] {
+  cursor: var(--swse-cursor-forbidden) !important;
+}
+
+/* Draggable board elements (tokens, templates, etc.) */
+body.game [draggable="true"].placeable,
+body.game .placeable-object.draggable {
+  cursor: var(--swse-cursor-grab);
+}
+
+body.game [draggable="true"].placeable:active,
+body.game .placeable-object.draggable:active {
+  cursor: var(--swse-cursor-grabbing);
+}
+
+/* =============================================================================
+   CONTEXT-AWARE FALLBACKS
+   ============================================================================= */
+
+/* Progression framework specific contexts */
+.progression-shell {
+  cursor: var(--swse-cursor-default);
+}
+
+.progression-shell [data-region="work-surface"] {
+  cursor: var(--swse-cursor-default);
+}
+
+.progression-shell button,
+.progression-shell [data-action],
+.progression-shell [role="button"],
+.progression-shell [role="option"] {
+  cursor: var(--swse-cursor-hover);
+}
+
+/* Mentor rail */
+.prog-mentor-rail {
+  cursor: var(--swse-cursor-default);
+}
+
+.prog-mentor__dialogue {
+  cursor: var(--swse-cursor-default);
+}
+
+.prog-mentor__collapse,
+.prog-mentor__ask {
+  cursor: var(--swse-cursor-hover);
+}
+
+/* Progress/step rail */
+[data-region="progress-rail"] {
+  cursor: var(--swse-cursor-default);
+}
+
+[data-region="progress-rail"] .prog-step-chip {
+  cursor: var(--swse-cursor-hover);
+}
+
+/* Action footer */
+[data-region="action-footer"] {
+  cursor: var(--swse-cursor-default);
+}
+
+[data-region="action-footer"] button {
+  cursor: var(--swse-cursor-hover);
+}
+
+[data-region="action-footer"] button:disabled {
+  cursor: var(--swse-cursor-forbidden) !important;
+}
+
+/* =============================================================================
+   TRANSITION STATES — smooth cursor changes
+   ============================================================================= */
+
+/* Subtle transition when hover state changes */
+@media (prefers-reduced-motion: no-preference) {
+  button,
+  [role="button"],
+  [data-action] {
+    transition: cursor 80ms ease;
+  }
+}
+
+/* =============================================================================
+   ACCESSIBILITY & HIGH CONTRAST
+   ============================================================================= */
+
+/* Larger cursor for accessibility */
+@media (prefers-color-scheme: dark) and (prefers-contrast: more) {
+  :root {
+    /* Optional: use thicker/larger cursor variants if available */
+    --swse-cursor-default:   url('../../assets/cursor/swse-cursor-default.svg') 6 4, auto;
+    --swse-cursor-hover:     url('../../assets/cursor/swse-cursor-hover.svg') 6 4, auto;
+  }
+}
+
+/* =============================================================================
+   REDUCED MOTION SUPPORT
+   ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  [draggable="true"],
+  [data-draggable] {
+    cursor: var(--swse-cursor-grab);
+  }
+
+  [draggable="true"]:active,
+  [data-draggable]:active {
+    cursor: var(--swse-cursor-grab);
+  }
+}
