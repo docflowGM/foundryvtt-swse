@@ -25,6 +25,7 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { swseLogger } from '../../../utils/logger.js';
+import { SWSETranslationEngine } from '../engine/swse-translation-engine.js';
 
 // ========== INTRO STATE MACHINE ==========
 const INTRO_STATE = {
@@ -134,6 +135,9 @@ export class IntroStep extends ProgressionStepPlugin {
 
     // Shell reference
     this._shell = null;
+
+    // Translation Engine
+    this._translationEngine = new SWSETranslationEngine();
   }
 
   // ---------------------------------------------------------------------------
@@ -484,12 +488,19 @@ export class IntroStep extends ProgressionStepPlugin {
     // Cache critical DOM element references for animation (only on first render)
     if (!this._translationTextEl) {
       this._translationTextEl = workSurfaceEl.querySelector('[data-role="intro-translation"]');
+      this._workSurfaceEl = workSurfaceEl;  // Cache for Translation Engine
       const translationFound = !!this._translationTextEl;
       console.log('[IntroStep.afterRender] Translation element binding:', {
         selector: '[data-role="intro-translation"]',
         found: translationFound,
         element: translationFound ? 'cached' : 'NOT FOUND',
       });
+
+      // Translation Engine is now lazy-loaded on first use in _runTranslationViaEngine
+      // Just verify we have the work surface for stable DOM binding
+      if (this._workSurfaceEl) {
+        swseLogger.debug('[IntroStep.afterRender] Work surface ready, translation engine will load on demand');
+      }
     }
 
     // ONLY on first render during ANIMATING state: start the animation
@@ -537,13 +548,12 @@ export class IntroStep extends ProgressionStepPlugin {
       this._phase = phase.label;
       console.log(`[IntroStep.startIntroSequence] Entering phase ${i + 1}/6:`, phase.label);
 
-      // Special handling for translation phase (no progress bar, typewriter effect)
+      // Special handling for translation phase (no progress bar, masked-reveal animation)
       if (phase.label === 'TRANSLATING') {
-        // FIXED: Translation node now exists in initial template render (intro-work-surface.hbs)
-        // No mid-sequence rerender needed. Direct DOM mutation only.
-        console.log('[IntroStep.startIntroSequence] Starting translation phase (no rerender needed)');
-        await this._runTranslation(shell);
-        console.log('[IntroStep.startIntroSequence] _runTranslation completed');
+        // Use the Translation Engine for stable, orchestrated reveal animation
+        console.log('[IntroStep.startIntroSequence] Starting translation phase via engine');
+        await this._runTranslationViaEngine(shell, this._sessionToken);
+        console.log('[IntroStep.startIntroSequence] Translation engine animation completed');
       } else {
         // Animate progress smoothly over the phase duration
         // This uses direct DOM mutation, not shell re-renders
@@ -635,6 +645,56 @@ export class IntroStep extends ProgressionStepPlugin {
   }
 
   /**
+   * Run translation phase using the SWSETranslationEngine.
+   * Orchestrates masked-reveal animation (left-to-right character reveal with cursor).
+   * Stable DOM binding prevents element-not-found errors.
+   * Session token invalidation handles shell rerenders and cancellation.
+   */
+  async _runTranslationViaEngine(shell, sessionToken) {
+    try {
+      swseLogger.debug('[IntroStep._runTranslationViaEngine] Starting engine-based translation');
+
+      // Ensure we have a work surface element
+      if (!this._workSurfaceEl?.isConnected) {
+        swseLogger.error('[IntroStep._runTranslationViaEngine] Work surface not connected');
+        return;
+      }
+
+      // Create translation session with stable DOM binding
+      const session = this._translationEngine.createSession({
+        profile: 'chargenIntro',
+        target: this._workSurfaceEl,
+        translatedText: this._fullText,
+        selectors: {
+          'translationText': '[data-role="intro-translation-text"]'
+        },
+        onComplete: () => {
+          swseLogger.debug('[IntroStep._runTranslationViaEngine] Session completed');
+          this._translatedText = this._fullText;
+        },
+        onCancel: () => {
+          swseLogger.debug('[IntroStep._runTranslationViaEngine] Session cancelled');
+        }
+      });
+
+      if (!session) {
+        swseLogger.error('[IntroStep._runTranslationViaEngine] Failed to create session');
+        return;
+      }
+
+      // Run the animation (blocking until complete or cancelled)
+      await this._translationEngine.runSession(session);
+
+      swseLogger.debug('[IntroStep._runTranslationViaEngine] Engine animation completed');
+    } catch (err) {
+      swseLogger.error('[IntroStep._runTranslationViaEngine] Error:', err);
+    }
+  }
+
+  /**
+   * DEPRECATED: Old translation method. Kept for reference.
+   * Use _runTranslationViaEngine() instead.
+   *
    * Run the diegetic translation phase with typewriter effect.
    *
    * ARCHITECTURE: Updates internal state (_translatedText, _translationCharStates) and updates DOM directly.
@@ -774,6 +834,9 @@ export class IntroStep extends ProgressionStepPlugin {
   }
 
   /**
+   * DEPRECATED: Old DOM update method. Translation Engine now handles all DOM updates.
+   * Kept for reference only.
+   *
    * Update translation text in DOM directly (no shell.render()).
    * Builds character HTML with state-based styling for flicker/glow effects.
    * This provides live typewriter effect during translation phase.

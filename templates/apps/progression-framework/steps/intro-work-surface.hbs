@@ -27,54 +27,62 @@
       {{#if currentStepData}}
         <div class="prog-intro-text-container">
           {{!-- Label (English) --}}
-          <div class="prog-intro-label prog-intro-label--{{currentStepData.state}}">
+          {{!-- STABLE DOM: Engine can bind to label for state updates --}}
+          <div class="prog-intro-label prog-intro-label--{{currentStepData.state}}" data-role="intro-label">
             {{currentStepData.label}}
           </div>
 
           {{!-- Aurabesh Text (Diegetic) --}}
-          <div class="prog-intro-aurabesh prog-intro-aurabesh--{{currentStepData.state}}">
-            <span class="prog-intro-aurabesh__text">{{currentStepData.aurabesh}}</span>
+          {{!-- STABLE DOM: Engine can bind to aurabesh and cursor --}}
+          <div class="prog-intro-aurabesh prog-intro-aurabesh--{{currentStepData.state}}" data-role="intro-aurabesh-container">
+            <span class="prog-intro-aurabesh__text" data-role="intro-aurabesh-text">{{currentStepData.aurabesh}}</span>
             {{#if (eq currentStepData.state "processing")}}
-              <span class="prog-intro-cursor prog-intro-cursor--blink"></span>
+              <span class="prog-intro-cursor prog-intro-cursor--blink" data-role="intro-cursor"></span>
             {{/if}}
           </div>
 
           {{!-- Status Indicator --}}
-          <div class="prog-intro-status prog-intro-status--{{currentStepData.state}}">
+          {{!-- STABLE DOM: Engine binds to status for state updates --}}
+          <div class="prog-intro-status prog-intro-status--{{currentStepData.state}}" data-role="intro-status">
             {{#if (eq currentStepData.state "processing")}}
-              <span class="prog-intro-status__icon">⊙</span>
-              <span class="prog-intro-status__text">PROCESSING</span>
+              <span class="prog-intro-status__icon" data-role="intro-status-icon">⊙</span>
+              <span class="prog-intro-status__text" data-role="intro-status-text">PROCESSING</span>
             {{else if (eq currentStepData.state "success")}}
-              <span class="prog-intro-status__icon">✓</span>
-              <span class="prog-intro-status__text">SUCCESS</span>
+              <span class="prog-intro-status__icon" data-role="intro-status-icon">✓</span>
+              <span class="prog-intro-status__text" data-role="intro-status-text">SUCCESS</span>
             {{else if (eq currentStepData.state "unknown")}}
-              <span class="prog-intro-status__icon">!</span>
-              <span class="prog-intro-status__text">UNKNOWN</span>
+              <span class="prog-intro-status__icon" data-role="intro-status-icon">!</span>
+              <span class="prog-intro-status__text" data-role="intro-status-text">UNKNOWN</span>
             {{else}}
-              <span class="prog-intro-status__icon">○</span>
-              <span class="prog-intro-status__text">WAITING</span>
+              <span class="prog-intro-status__icon" data-role="intro-status-icon">○</span>
+              <span class="prog-intro-status__text" data-role="intro-status-text">WAITING</span>
             {{/if}}
           </div>
         </div>
       {{/if}}
 
       {{!-- Translation Text (hidden by default, shown during TRANSLATING phase) --}}
+      {{!-- STABLE DOM: Always mounted, hidden/shown via classes for engine binding --}}
       <div class="prog-intro-text-container {{#unless isTranslating}}hidden{{/unless}}"
            data-role="intro-translation"
            style="{{#if isTranslating}}display: block{{else}}display: none{{/if}}">
-        <div class="prog-intro-label prog-intro-label--success">TRANSLATING</div>
+        <div class="prog-intro-label prog-intro-label--success" data-role="intro-status-label">TRANSLATING</div>
         <div class="prog-intro-translation-text">
-          <span class="prog-intro-translation__content">{{translatedText}}</span>
+          <span class="prog-intro-translation__content" data-role="intro-translation-text">{{translatedText}}</span>
+        </div>
+        <div class="prog-intro-source-text" data-role="intro-source-text" style="display: none;">
+          <span class="prog-intro-aurabesh" data-role="intro-aurabesh">{{currentStepData.aurabesh}}</span>
         </div>
       </div>
     </div>
 
     {{!-- Progress Bar --}}
+    {{!-- STABLE DOM: Engine binds to these for direct progress updates --}}
     <div class="prog-intro-progress-container">
       <div class="prog-intro-progress-bar">
-        <div class="prog-intro-progress-fill" style="width: {{progressPercent}}%"></div>
+        <div class="prog-intro-progress-fill" style="width: {{progressPercent}}%" data-role="intro-progress-fill"></div>
       </div>
-      <div class="prog-intro-progress-text">
+      <div class="prog-intro-progress-text" data-role="intro-progress-label">
         {{stepNumber}} / {{bootSequenceLength}}
       </div>
     </div>

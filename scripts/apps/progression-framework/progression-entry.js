@@ -29,6 +29,9 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
  * @returns {Promise<void>}
  */
 export async function launchProgression(actor, options = {}) {
+  // TEMP AUDIT: Log entry point
+  console.log('[TEMP AUDIT] launchProgression called with actor:', actor?.name, actor?.type);
+
   if (!actor) {
     ui?.notifications?.error?.('No actor provided to progression launcher.');
     return;
@@ -77,7 +80,10 @@ export async function launchProgression(actor, options = {}) {
     // The intro boot sequence renders inside the shell as a real step plugin — no standalone
     // splash window. This means only one visible app exists for the entire chargen experience.
     if (actor.type === 'character') {
+      console.log('[TEMP AUDIT] Importing ChargenShell...');
       const { ChargenShell } = await import('./chargen-shell.js');
+      console.log('[TEMP AUDIT] ChargenShell imported successfully:', ChargenShell?.name);
+      console.log('[TEMP AUDIT] Calling ChargenShell.open()...');
       return await ChargenShell.open(actor, options);
     }
 
@@ -86,6 +92,7 @@ export async function launchProgression(actor, options = {}) {
     );
     ui?.notifications?.warn?.('Progression only supports character actors.');
   } catch (err) {
+    console.log('[TEMP AUDIT] launchProgression caught exception:', err);
     SWSELogger.error('[Progression Entry] ERROR:', err);
     ui?.notifications?.error?.(`Progression failed: ${err.message}`);
   }

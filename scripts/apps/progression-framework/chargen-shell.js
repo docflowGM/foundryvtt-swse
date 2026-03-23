@@ -33,6 +33,9 @@ import { SummaryStep } from './steps/summary-step.js';
 
 export class ChargenShell extends ProgressionShell {
   static async open(actor, options = {}) {
+    // TEMP AUDIT: Log shell open call
+    console.log('[TEMP AUDIT] ChargenShell.open called for actor:', actor?.name, actor?.type);
+
     // CRITICAL: Use .call(this, ...) to ensure ProgressionShell.open() creates a
     // ChargenShell instance (not a ProgressionShell). This ensures _getCanonicalDescriptors()
     // calls ChargenShell._getCanonicalDescriptors() (which has 13 steps), not the base

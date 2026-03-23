@@ -125,6 +125,13 @@ export class ProgressionShell extends SWSEApplicationV2 {
    * @returns {Promise<ProgressionShell>}
    */
   static async open(actor, mode = 'chargen', options = {}) {
+    // TEMP AUDIT: Log open entry
+    console.log('[TEMP AUDIT] ProgressionShell.open called:', {
+      actor: actor?.name,
+      mode,
+      this: this.name
+    });
+
     if (!actor) {
       ui.notifications.error('No actor selected');
       return null;
@@ -134,16 +141,25 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // ChargenShell.open() → new ChargenShell()  → _getCanonicalDescriptors() on ChargenShell
     // LevelupShell.open() → new LevelupShell()  → _getCanonicalDescriptors() on LevelupShell
     // ProgressionShell.open() → new ProgressionShell() → base returns []
+    console.log('[TEMP AUDIT] Creating app instance of class:', this.name);
     const app = new this(actor, mode, options);
+    console.log('[TEMP AUDIT] App instance created:', app?.constructor?.name);
+
+    console.log('[TEMP AUDIT] Calling _initializeSteps...');
     await app._initializeSteps();
+    console.log('[TEMP AUDIT] Steps initialized, count:', app.steps?.length || 0);
 
     // Initialize the first step (critical for post-splash Species entry)
+    console.log('[TEMP AUDIT] Calling _initializeFirstStep...');
     await app._initializeFirstStep().catch(err => {
       swseLogger.error('[ProgressionShell] Error initializing first step:', err);
       ui?.notifications?.error?.('Failed to initialize progression. Please try again.');
     });
+    console.log('[TEMP AUDIT] First step initialized');
 
+    console.log('[TEMP AUDIT] Calling app.render()...');
     app.render({ force: true });
+    console.log('[TEMP AUDIT] Render called on app');
 
     // CRITICAL: Bring the shell to front immediately after render.
     // Ensures the chargen window is visible and cannot be hidden behind other windows.

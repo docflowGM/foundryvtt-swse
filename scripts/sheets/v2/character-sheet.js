@@ -1043,15 +1043,24 @@ const forcePoints = [];
 
     // Header Command Buttons — UNIFIED PROGRESSION ENTRY
     // ALL progression routes through launchProgression (single authority)
-    html.querySelectorAll('[data-action="cmd-chargen"]').forEach(button => {
+    // TEMP AUDIT: Log button binding
+    const chargenButtons = html.querySelectorAll('[data-action="cmd-chargen"]');
+    console.log('[TEMP AUDIT] Found chargen buttons in sheet HTML:', chargenButtons.length);
+    chargenButtons.forEach(button => {
+      console.log('[TEMP AUDIT] Binding chargen button click listener');
       button.addEventListener("click", async ev => {
+        console.log('[TEMP AUDIT] Chargen button clicked via sheet listener');
         ev.preventDefault();
         await launchProgression(this.actor);
       }, { signal });
     });
 
-    html.querySelectorAll('[data-action="cmd-levelup"]').forEach(button => {
+    const levelupButtons = html.querySelectorAll('[data-action="cmd-levelup"]');
+    console.log('[TEMP AUDIT] Found levelup buttons in sheet HTML:', levelupButtons.length);
+    levelupButtons.forEach(button => {
+      console.log('[TEMP AUDIT] Binding levelup button click listener');
       button.addEventListener("click", async ev => {
+        console.log('[TEMP AUDIT] LevelUp button clicked via sheet listener');
         ev.preventDefault();
         await launchProgression(this.actor);
       }, { signal });
