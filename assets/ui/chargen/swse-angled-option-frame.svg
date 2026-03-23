@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="960" height="220" viewBox="0 0 960 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="48" y1="34" x2="878" y2="186" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#08131C"/>
+      <stop offset="0.52" stop-color="#0A1B28"/>
+      <stop offset="1" stop-color="#071018"/>
+    </linearGradient>
+
+    <linearGradient id="innerGradient" x1="74" y1="54" x2="834" y2="166" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0D2735" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#08141E" stop-opacity="0.82"/>
+    </linearGradient>
+
+    <linearGradient id="strokeGradient" x1="54" y1="42" x2="876" y2="42" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#86F4FF"/>
+      <stop offset="0.45" stop-color="#42C7FF"/>
+      <stop offset="1" stop-color="#A7F7FF"/>
+    </linearGradient>
+
+    <linearGradient id="accentGradient" x1="54" y1="174" x2="876" y2="174" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1AC8FF" stop-opacity="0.15"/>
+      <stop offset="0.5" stop-color="#72F0FF" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#1AC8FF" stop-opacity="0.15"/>
+    </linearGradient>
+
+    <filter id="outerGlow" x="-30%" y="-100%" width="160%" height="300%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#3ED7FF" flood-opacity="0.48"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#0DBBFF" flood-opacity="0.22"/>
+    </filter>
+
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <clipPath id="panelClip">
+      <path d="M56 40H848L904 96V124L848 180H56V40Z"/>
+    </clipPath>
+
+    <pattern id="scanlines" width="6" height="6" patternUnits="userSpaceOnUse">
+      <rect width="6" height="6" fill="transparent"/>
+      <rect y="0" width="6" height="1" fill="#B9FBFF" opacity="0.045"/>
+      <rect y="3" width="6" height="1" fill="#7CEBFF" opacity="0.03"/>
+    </pattern>
+  </defs>
+
+  <!-- Base glow silhouette -->
+  <path
+    d="M56 40H848L904 96V124L848 180H56V40Z"
+    fill="#08131C"
+    opacity="0.9"
+    filter="url(#outerGlow)"
+  />
+
+  <!-- Main outer frame -->
+  <path
+    d="M56 40H848L904 96V124L848 180H56V40Z"
+    fill="url(#bgGradient)"
+    stroke="url(#strokeGradient)"
+    stroke-width="5"
+    stroke-linejoin="round"
+  />
+
+  <!-- Interior panel -->
+  <path
+    d="M74 58H839L883 101V119L839 162H74V58Z"
+    fill="url(#innerGradient)"
+    stroke="#8EEBFF"
+    stroke-opacity="0.22"
+    stroke-width="1.5"
+    clip-path="url(#panelClip)"
+  />
+
+  <!-- Scanline texture -->
+  <rect x="74" y="58" width="809" height="104" fill="url(#scanlines)" clip-path="url(#panelClip)"/>
+
+  <!-- Top accent line -->
+  <path d="M84 67H829L867 103" stroke="#B8FDFF" stroke-opacity="0.38" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- Bottom accent line -->
+  <path d="M84 153H829L867 117" stroke="#55DFFF" stroke-opacity="0.24" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- Left anchor bar -->
+  <rect x="48" y="62" width="7" height="95" rx="2" fill="#8AF4FF" opacity="0.9"/>
+  <rect x="46" y="60" width="11" height="99" rx="3" fill="#2FD1FF" opacity="0.16" filter="url(#softGlow)"/>
+
+  <!-- Lower energy band -->
+  <rect x="90" y="168" width="745" height="4" rx="2" fill="url(#accentGradient)"/>
+
+  <!-- Right beveled edge highlight -->
+  <path d="M846 41L902 96V124L846 179" stroke="#D1FFFF" stroke-opacity="0.45" stroke-width="2.2"/>
+
+  <!-- Subtle corner details -->
+  <path d="M60 44H98" stroke="#D2FFFF" stroke-opacity="0.55" stroke-width="2" stroke-linecap="round"/>
+  <path d="M60 176H98" stroke="#7DEEFF" stroke-opacity="0.35" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Safe content guide, low-opacity and theme-consistent -->
+  <rect x="104" y="78" width="694" height="64" rx="8" stroke="#8EEBFF" stroke-opacity="0.12" stroke-dasharray="6 8"/>
+
+  <!-- Optional title notch detail -->
+  <path d="M118 53H200" stroke="#68E6FF" stroke-opacity="0.5" stroke-width="3" stroke-linecap="round"/>
+</svg>
