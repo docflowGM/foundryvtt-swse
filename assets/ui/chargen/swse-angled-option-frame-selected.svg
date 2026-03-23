@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="960" height="220" viewBox="0 0 960 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="48" y1="34" x2="878" y2="186" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0A1A22"/>
+      <stop offset="0.52" stop-color="#102837"/>
+      <stop offset="1" stop-color="#09151D"/>
+    </linearGradient>
+
+    <linearGradient id="innerGradient" x1="74" y1="54" x2="834" y2="166" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#123245" stop-opacity="0.98"/>
+      <stop offset="1" stop-color="#0A1823" stop-opacity="0.90"/>
+    </linearGradient>
+
+    <linearGradient id="strokeGradient" x1="54" y1="42" x2="876" y2="42" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#D9FFFF"/>
+      <stop offset="0.35" stop-color="#8CF8FF"/>
+      <stop offset="0.7" stop-color="#45D3FF"/>
+      <stop offset="1" stop-color="#E6FFFF"/>
+    </linearGradient>
+
+    <linearGradient id="accentGradient" x1="54" y1="174" x2="876" y2="174" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#53DFFF" stop-opacity="0.18"/>
+      <stop offset="0.5" stop-color="#B9FFFF" stop-opacity="0.78"/>
+      <stop offset="1" stop-color="#53DFFF" stop-opacity="0.18"/>
+    </linearGradient>
+
+    <radialGradient id="coreGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+      gradientTransform="translate(492 110) rotate(180) scale(370 85)">
+      <stop offset="0" stop-color="#67F2FF" stop-opacity="0.24"/>
+      <stop offset="0.55" stop-color="#29CFFF" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#29CFFF" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="outerGlow" x="-35%" y="-120%" width="170%" height="340%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="0" stdDeviation="7" flood-color="#7AEFFF" flood-opacity="0.68"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="16" flood-color="#10C8FF" flood-opacity="0.35"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="28" flood-color="#0DBBFF" flood-opacity="0.18"/>
+    </filter>
+
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <clipPath id="panelClip">
+      <path d="M56 40H848L904 96V124L848 180H56V40Z"/>
+    </clipPath>
+
+    <pattern id="scanlines" width="6" height="6" patternUnits="userSpaceOnUse">
+      <rect width="6" height="6" fill="transparent"/>
+      <rect y="0" width="6" height="1" fill="#E6FFFF" opacity="0.065"/>
+      <rect y="3" width="6" height="1" fill="#8AF4FF" opacity="0.045"/>
+    </pattern>
+  </defs>
+
+  <path d="M56 40H848L904 96V124L848 180H56V40Z" fill="#0A1821" opacity="0.92" filter="url(#outerGlow)"/>
+
+  <path
+    d="M56 40H848L904 96V124L848 180H56V40Z"
+    fill="url(#bgGradient)"
+    stroke="url(#strokeGradient)"
+    stroke-width="5.5"
+    stroke-linejoin="round"
+  />
+
+  <path
+    d="M74 58H839L883 101V119L839 162H74V58Z"
+    fill="url(#innerGradient)"
+    stroke="#D9FFFF"
+    stroke-opacity="0.34"
+    stroke-width="1.8"
+  />
+
+  <rect x="74" y="58" width="809" height="104" fill="url(#coreGlow)" clip-path="url(#panelClip)"/>
+  <rect x="74" y="58" width="809" height="104" fill="url(#scanlines)" clip-path="url(#panelClip)"/>
+
+  <path d="M84 67H829L867 103" stroke="#F2FFFF" stroke-opacity="0.55" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M84 153H829L867 117" stroke="#72EAFF" stroke-opacity="0.35" stroke-width="1.8" stroke-linecap="round"/>
+
+  <rect x="48" y="62" width="8" height="95" rx="2" fill="#D7FFFF" opacity="0.95"/>
+  <rect x="45" y="59" width="14" height="101" rx="4" fill="#62E8FF" opacity="0.22" filter="url(#softGlow)"/>
+
+  <rect x="90" y="168" width="745" height="4.5" rx="2.25" fill="url(#accentGradient)"/>
+  <path d="M846 41L902 96V124L846 179" stroke="#F4FFFF" stroke-opacity="0.62" stroke-width="2.5"/>
+
+  <path d="M60 44H108" stroke="#F4FFFF" stroke-opacity="0.75" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M60 176H108" stroke="#90F5FF" stroke-opacity="0.45" stroke-width="2.2" stroke-linecap="round"/>
+
+  <rect x="104" y="78" width="694" height="64" rx="8" stroke="#D9FFFF" stroke-opacity="0.20" stroke-dasharray="6 8"/>
+
+  <path d="M118 53H222" stroke="#8EF2FF" stroke-opacity="0.75" stroke-width="3.4" stroke-linecap="round"/>
+
+  <!-- Selected-state chevrons -->
+  <path d="M820 92L838 110L820 128" stroke="#E6FFFF" stroke-opacity="0.92" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M790 92L808 110L790 128" stroke="#8EF2FF" stroke-opacity="0.78" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

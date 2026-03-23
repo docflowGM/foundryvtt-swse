@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="520" height="96" viewBox="0 0 520 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="18" y1="10" x2="480" y2="82" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#08141D"/>
+      <stop offset="0.5" stop-color="#0A1E2A"/>
+      <stop offset="1" stop-color="#071018"/>
+    </linearGradient>
+
+    <linearGradient id="strokeGradient" x1="20" y1="18" x2="468" y2="18" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9AF6FF"/>
+      <stop offset="0.48" stop-color="#43CCFF"/>
+      <stop offset="1" stop-color="#D0FFFF"/>
+    </linearGradient>
+
+    <filter id="outerGlow" x="-30%" y="-120%" width="160%" height="340%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="0" stdDeviation="4.5" flood-color="#41DBFF" flood-opacity="0.34"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="9" flood-color="#0DBBFF" flood-opacity="0.12"/>
+    </filter>
+
+    <pattern id="scanlines" width="6" height="6" patternUnits="userSpaceOnUse">
+      <rect width="6" height="6" fill="transparent"/>
+      <rect y="0" width="6" height="1" fill="#D6FFFF" opacity="0.03"/>
+      <rect y="3" width="6" height="1" fill="#88F3FF" opacity="0.02"/>
+    </pattern>
+  </defs>
+
+  <path d="M20 18H426L488 48L426 78H20V18Z"
+        fill="#08131C"
+        opacity="0.92"
+        filter="url(#outerGlow)"/>
+
+  <path d="M20 18H426L488 48L426 78H20V18Z"
+        fill="url(#bgGradient)"
+        stroke="url(#strokeGradient)"
+        stroke-width="4"
+        stroke-linejoin="round"/>
+
+  <path d="M34 30H418L458 48L418 66H34V30Z"
+        fill="#0C2431"
+        fill-opacity="0.86"
+        stroke="#98F7FF"
+        stroke-opacity="0.18"
+        stroke-width="1.2"/>
+
+  <rect x="34" y="30" width="424" height="36" fill="url(#scanlines)"/>
+
+  <rect x="14" y="32" width="5" height="32" rx="2" fill="#98F7FF" opacity="0.82"/>
+  <path d="M32 24H116" stroke="#D4FFFF" stroke-opacity="0.44" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M32 72H116" stroke="#70E9FF" stroke-opacity="0.24" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M430 18L488 48L430 78" stroke="#D9FFFF" stroke-opacity="0.38" stroke-width="1.8"/>
+
+  <!-- text safe zone -->
+  <rect x="72" y="36" width="282" height="24" rx="5" stroke="#A7F8FF" stroke-opacity="0.10" stroke-dasharray="5 6"/>
+
+  <!-- small right status bars -->
+  <rect x="374" y="40" width="28" height="4" rx="2" fill="#8EF4FF" opacity="0.40"/>
+  <rect x="374" y="48" width="42" height="4" rx="2" fill="#8EF4FF" opacity="0.28"/>
+  <rect x="374" y="56" width="18" height="4" rx="2" fill="#8EF4FF" opacity="0.20"/>
+</svg>

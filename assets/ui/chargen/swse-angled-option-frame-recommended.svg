@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="960" height="220" viewBox="0 0 960 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="48" y1="34" x2="878" y2="186" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0A1821"/>
+      <stop offset="0.50" stop-color="#0D2430"/>
+      <stop offset="1" stop-color="#08121A"/>
+    </linearGradient>
+
+    <linearGradient id="innerGradient" x1="74" y1="54" x2="834" y2="166" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#103444" stop-opacity="0.96"/>
+      <stop offset="1" stop-color="#091721" stop-opacity="0.86"/>
+    </linearGradient>
+
+    <linearGradient id="strokeGradient" x1="54" y1="42" x2="876" y2="42" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#BFF9FF"/>
+      <stop offset="0.30" stop-color="#79F0FF"/>
+      <stop offset="0.64" stop-color="#6FE8E6"/>
+      <stop offset="0.84" stop-color="#E7D58B"/>
+      <stop offset="1" stop-color="#FFF2B8"/>
+    </linearGradient>
+
+    <linearGradient id="accentGradient" x1="54" y1="174" x2="876" y2="174" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#27D5FF" stop-opacity="0.16"/>
+      <stop offset="0.58" stop-color="#FFE89A" stop-opacity="0.58"/>
+      <stop offset="1" stop-color="#FFE89A" stop-opacity="0.18"/>
+    </linearGradient>
+
+    <radialGradient id="coreGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse"
+      gradientTransform="translate(492 110) rotate(180) scale(350 80)">
+      <stop offset="0" stop-color="#67F0FF" stop-opacity="0.16"/>
+      <stop offset="0.68" stop-color="#FFD96B" stop-opacity="0.06"/>
+      <stop offset="1" stop-color="#FFD96B" stop-opacity="0"/>
+    </radialGradient>
+
+    <filter id="outerGlow" x="-35%" y="-120%" width="170%" height="340%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#5BE8FF" flood-opacity="0.48"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="13" flood-color="#FFD96B" flood-opacity="0.18"/>
+    </filter>
+
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="9" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <clipPath id="panelClip">
+      <path d="M56 40H848L904 96V124L848 180H56V40Z"/>
+    </clipPath>
+
+    <pattern id="scanlines" width="6" height="6" patternUnits="userSpaceOnUse">
+      <rect width="6" height="6" fill="transparent"/>
+      <rect y="0" width="6" height="1" fill="#E8FFFF" opacity="0.055"/>
+      <rect y="3" width="6" height="1" fill="#FFF0C0" opacity="0.028"/>
+    </pattern>
+  </defs>
+
+  <path d="M56 40H848L904 96V124L848 180H56V40Z" fill="#08131B" opacity="0.92" filter="url(#outerGlow)"/>
+
+  <path d="M56 40H848L904 96V124L848 180H56V40Z"
+        fill="url(#bgGradient)"
+        stroke="url(#strokeGradient)"
+        stroke-width="5.2"
+        stroke-linejoin="round"/>
+
+  <path d="M74 58H839L883 101V119L839 162H74V58Z"
+        fill="url(#innerGradient)"
+        stroke="#D8FCFF"
+        stroke-opacity="0.28"
+        stroke-width="1.6"/>
+
+  <rect x="74" y="58" width="809" height="104" fill="url(#coreGlow)" clip-path="url(#panelClip)"/>
+  <rect x="74" y="58" width="809" height="104" fill="url(#scanlines)" clip-path="url(#panelClip)"/>
+
+  <path d="M84 67H829L867 103" stroke="#F4FFFF" stroke-opacity="0.42" stroke-width="1.6" stroke-linecap="round"/>
+  <path d="M84 153H829L867 117" stroke="#9FEFFF" stroke-opacity="0.26" stroke-width="1.6" stroke-linecap="round"/>
+
+  <rect x="48" y="62" width="7.5" height="95" rx="2" fill="#D2FFFF" opacity="0.90"/>
+  <rect x="45" y="59" width="13" height="101" rx="4" fill="#58E5FF" opacity="0.16" filter="url(#softGlow)"/>
+
+  <rect x="90" y="168" width="745" height="4.2" rx="2.1" fill="url(#accentGradient)"/>
+  <path d="M846 41L902 96V124L846 179" stroke="#FFF3C9" stroke-opacity="0.48" stroke-width="2.25"/>
+
+  <path d="M60 44H104" stroke="#F0FFFF" stroke-opacity="0.62" stroke-width="2.1" stroke-linecap="round"/>
+  <path d="M60 176H104" stroke="#92F5FF" stroke-opacity="0.38" stroke-width="2.1" stroke-linecap="round"/>
+
+  <rect x="104" y="78" width="650" height="64" rx="8" stroke="#D4FCFF" stroke-opacity="0.15" stroke-dasharray="6 8"/>
+
+  <path d="M118 53H228" stroke="#7DEFFF" stroke-opacity="0.60" stroke-width="3.2" stroke-linecap="round"/>
+
+  <!-- Recommendation badge / beacon -->
+  <path d="M781 72H838L876 110L838 148H781Z"
+        fill="#12212C"
+        stroke="#FFE79B"
+        stroke-opacity="0.74"
+        stroke-width="2"/>
+  <path d="M797 110L810 123L840 92"
+        stroke="#FFF0B3"
+        stroke-opacity="0.92"
+        stroke-width="4"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+  <circle cx="828" cy="92" r="22" fill="#FFD96B" opacity="0.08"/>
+</svg>
