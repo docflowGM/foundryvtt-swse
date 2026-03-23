@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <filter id="g" x="-60%" y="-60%" width="220%" height="220%">
+      <feDropShadow dx="0" dy="0" stdDeviation="2.4" flood-color="#8AF6FF" flood-opacity="0.7"/>
+    </filter>
+  </defs>
+  <path d="M14 24L17 15.5C17.4 14.3 18.7 13.7 19.8 14.2C20.9 14.7 21.4 16 20.9 17.1L19.5 20.5" fill="#08131C"/>
+  <path d="M19.5 20.5L22 11.5C22.4 10.2 23.8 9.5 25.1 9.9C26.4 10.3 27.1 11.7 26.7 13L24.6 21" fill="#08131C"/>
+  <path d="M24.6 21L27.2 13.6C27.7 12.3 29.1 11.7 30.3 12.1C31.6 12.5 32.2 13.9 31.8 15.2L29.8 22.1" fill="#08131C"/>
+  <path d="M29.8 22.1L31.5 17.2C31.9 16 33.1 15.3 34.3 15.7C35.5 16.1 36.2 17.3 35.8 18.5L33.2 29.5C31.8 35.4 27.2 39.3 21.8 39.3C15.7 39.3 11.8 35.2 11.8 29.8C11.8 28.1 12.1 26.4 12.7 24.8L14 21.3" stroke="#D8FFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" filter="url(#g)"/>
+  <path d="M9 8H13" stroke="#67E8FF" stroke-width="1.4" stroke-linecap="round"/>
+  <path d="M35 8H39" stroke="#67E8FF" stroke-width="1.4" stroke-linecap="round"/>
+</svg>

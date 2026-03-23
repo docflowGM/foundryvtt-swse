@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <filter id="g" x="-60%" y="-60%" width="220%" height="220%">
+      <feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#64ECFF" flood-opacity="0.58"/>
+    </filter>
+  </defs>
+  <path d="M16 23V14C16 12.9 16.9 12 18 12C19.1 12 20 12.9 20 14V22" stroke="#BFFBFF" stroke-width="2"/>
+  <path d="M20 22V10.5C20 9.1 21.1 8 22.5 8C23.9 8 25 9.1 25 10.5V22" stroke="#BFFBFF" stroke-width="2"/>
+  <path d="M25 22V12.5C25 11.1 26.1 10 27.5 10C28.9 10 30 11.1 30 12.5V23" stroke="#BFFBFF" stroke-width="2"/>
+  <path d="M30 23V15C30 13.9 30.9 13 32 13C33.1 13 34 13.9 34 15V27C34 34.2 29.1 40 22.5 40C15.8 40 12 35 12 30V23C12 21.9 12.9 21 14 21C15.1 21 16 21.9 16 23Z" fill="#08131C" stroke="#BFFBFF" stroke-width="2" filter="url(#g)"/>
+  <path d="M10 8L7 11" stroke="#67E8FF" stroke-width="1.4" stroke-linecap="round"/>
+  <path d="M38 8L41 11" stroke="#67E8FF" stroke-width="1.4" stroke-linecap="round"/>
+</svg>
