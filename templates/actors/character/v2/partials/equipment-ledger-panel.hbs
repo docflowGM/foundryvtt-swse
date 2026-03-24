@@ -18,7 +18,7 @@
 
       <!-- Equipment Rows -->
       {{#each allEquipment}}
-        <div class="ledger-row {{#if this.equipped}}equipped{{/if}}" data-item-id="{{this.id}}">
+        <div class="ledger-row svg-row-backed {{#if this.equipped}}equipped{{/if}}" data-item-id="{{this.id}}">
           <div class="col-name">
             <span class="item-name">{{this.name}}</span>
             {{#if this.equipped}}<span class="equipped-marker">⚙</span>{{/if}}

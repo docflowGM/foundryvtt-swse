@@ -1,5 +1,5 @@
 
-<section class="hp-condition-panel v3-panel holo-panel {{hp.stateClass}}">
+<section class="hp-condition-panel v3-panel holo-panel svg-framed svg-panel-frame {{hp.stateClass}}">
 
   <header class="section-bar">
     <h3 class="section-header">Health & Conditions</h3>
@@ -38,7 +38,7 @@
 
   <!-- CONDITION TRACK BLOCK -->
   <div class="condition-section">
-    <div class="condition-track">
+    <div class="condition-track svg-framed">
       {{#each conditionSteps as |step|}}
         <button type="button" class="condition-chevron {{#if step.active}}active{{/if}}"
                 data-action="set-condition-step" data-step="{{step.step}}"

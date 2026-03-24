@@ -41,7 +41,7 @@
 .swse-sheet.tab {
   display: flex;
   flex-direction: column;
-  min-height: auto;
+  min-height: 0;
   min-width: 0;
   overflow-y: auto;
 }
@@ -1383,6 +1383,7 @@ select option:checked {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  min-height: 0;
   min-width: 0;
 }
 
@@ -1585,6 +1586,8 @@ select option:checked {
   display: flex;
   flex-direction: column;
   padding: 10px;
+  min-height: 0;
+  min-width: 0;
 }
 
 .swse-sheet.relationships-list {
@@ -1896,6 +1899,8 @@ select option:checked {
   gap: 10px;
   padding: 10px 0;
   border-top: 1px solid rgba(0, 255, 136, 0.15);
+  min-height: 0;
+  min-width: 0;
 }
 
 /* ------------------------------------------------------------------ */
@@ -1906,6 +1911,8 @@ select option:checked {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-height: 0;
+  min-width: 0;
 }
 
 .swse-sheet.section-eyebrow {
@@ -2236,6 +2243,8 @@ select option:checked {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-height: 0;
+  min-width: 0;
 }
 
 .swse-sheet .swse-attacks-grid {
@@ -2510,6 +2519,8 @@ select option:checked {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-height: 0;
+  min-width: 0;
 }
 
 .swse-sheet .talents-ledger {
@@ -2585,6 +2596,8 @@ select option:checked {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-height: 0;
+  min-width: 0;
 }
 
 .swse-sheet .force-powers-ledger {

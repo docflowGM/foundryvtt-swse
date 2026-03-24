@@ -27,7 +27,7 @@
       <div class="powers-group">
         <div class="group-header">Available ({{forceSuite.hand.length}})</div>
         {{#each forceSuite.hand}}
-          <div class="power-row" data-item-id="{{this.id}}">
+          <div class="power-row svg-row-backed" data-item-id="{{this.id}}">
             <div class="power-name">{{this.name}}</div>
             {{#if this.tags}}
               <div class="power-tags">
@@ -43,7 +43,7 @@
       <div class="powers-group">
         <div class="group-header">Discarded ({{forceSuite.discard.length}})</div>
         {{#each forceSuite.discard}}
-          <div class="power-row discarded" data-item-id="{{this.id}}">
+          <div class="power-row discarded svg-row-backed" data-item-id="{{this.id}}">
             <div class="power-name">{{this.name}}</div>
             {{#if this.tags}}
               <div class="power-tags">

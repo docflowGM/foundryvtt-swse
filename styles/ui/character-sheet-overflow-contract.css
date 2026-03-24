@@ -1,0 +1,279 @@
+/* ============================================
+   CHARACTER SHEET OVERFLOW CONTRACT
+   SVG-Framed Panel Safety: Width Wrapping & Height Scrolling
+   ============================================ */
+
+/* -----------------------------------
+   WIDTH OVERFLOW RULES
+   Ensure text wraps safely inside panel widths
+   ----------------------------------- */
+
+/* Identity header fields — wrap long names/values */
+.swse-sheet .record-field .field-value,
+.swse-sheet .record-field .record-input {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
+}
+
+/* Relationship entries — wrap long names and notes */
+.swse-sheet .relationship-name,
+.swse-sheet .relationship-notes {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
+}
+
+/* Armor summary — wrap long armor names */
+.swse-sheet .armor-name {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
+}
+
+/* Equipment ledger — wrap long item names */
+.swse-sheet .ledger-row .item-name {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
+}
+
+/* Attack blocks — wrap long attack/weapon names */
+.swse-sheet .attack-name,
+.swse-sheet .weapon-badge {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
+}
+
+/* Talent rows — wrap long talent names */
+.swse-sheet .talent-name {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
+}
+
+/* Force power rows — wrap long power names and tags */
+.swse-sheet .power-name,
+.swse-sheet .power-tags {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
+}
+
+/* Defenses panel — math pills need min-width for flex safety */
+.swse-sheet .defense-math-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.swse-sheet .math-pill {
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* -----------------------------------
+   HEIGHT OVERFLOW RULES
+   Establish scrollable content layers inside frames
+   ----------------------------------- */
+
+/* Relationships panel — scrollable entry list */
+.swse-sheet .relationships-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  z-index: 2;
+}
+
+/* Equipment ledger — scrollable row container */
+.swse-sheet .equipment-ledger {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 0;
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  z-index: 2;
+}
+
+/* Talent ledger — scrollable row container */
+.swse-sheet .talents-ledger {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-height: 0;
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  z-index: 2;
+}
+
+/* Force powers ledger — scrollable row container */
+.swse-sheet .force-powers-ledger {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-height: 0;
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  z-index: 2;
+}
+
+/* Attacks grid — scrollable container */
+.swse-sheet .swse-attacks-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+  max-height: 600px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  z-index: 2;
+}
+
+/* Combat notes textarea — constrain height within panel frame */
+.swse-sheet .combat-notes-textarea {
+  flex: 1;
+  min-height: 120px;
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  z-index: 2;
+}
+
+/* Bio profile panel — scrollable content if long narrative */
+.swse-sheet .bio-profile-content {
+  min-height: 0;
+  max-height: 350px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  z-index: 2;
+}
+
+/* Biography log panel — scrollable sections for long narratives */
+.swse-sheet .bio-log-sections {
+  min-height: 0;
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Notes panel — scrollable content for freeform notes */
+.swse-sheet .notes-content {
+  min-height: 0;
+  max-height: 350px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* -----------------------------------
+   LAYER CONTRACT
+   Frame stays stable, content scrolls
+   ----------------------------------- */
+
+/* Panel root: background/frame layer (SVG or holo treatment) */
+.swse-sheet.holo-panel.svg-framed {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Content container within framed panel gets scroll */
+.swse-sheet.holo-panel.svg-framed > :not(.section-bar):not([class*="hint"]) {
+  position: relative;
+  z-index: 2;
+}
+
+/* Section headers stay above scroll area */
+.swse-sheet .section-bar {
+  position: relative;
+  z-index: 3;
+  flex-shrink: 0;
+}
+
+/* -----------------------------------
+   SCROLLBAR STYLING
+   Consistent holo aesthetic for scrollbars
+   ----------------------------------- */
+
+.swse-sheet .relationships-list::-webkit-scrollbar,
+.swse-sheet .equipment-ledger::-webkit-scrollbar,
+.swse-sheet .talents-ledger::-webkit-scrollbar,
+.swse-sheet .force-powers-ledger::-webkit-scrollbar,
+.swse-sheet .swse-attacks-grid::-webkit-scrollbar,
+.swse-sheet .combat-notes-textarea::-webkit-scrollbar,
+.swse-sheet .bio-profile-content::-webkit-scrollbar,
+.swse-sheet .bio-log-sections::-webkit-scrollbar {
+  width: 8px;
+}
+
+.swse-sheet .relationships-list::-webkit-scrollbar-track,
+.swse-sheet .equipment-ledger::-webkit-scrollbar-track,
+.swse-sheet .talents-ledger::-webkit-scrollbar-track,
+.swse-sheet .force-powers-ledger::-webkit-scrollbar-track,
+.swse-sheet .swse-attacks-grid::-webkit-scrollbar-track,
+.swse-sheet .combat-notes-textarea::-webkit-scrollbar-track,
+.swse-sheet .bio-profile-content::-webkit-scrollbar-track,
+.swse-sheet .bio-log-sections::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.swse-sheet .relationships-list::-webkit-scrollbar-thumb,
+.swse-sheet .equipment-ledger::-webkit-scrollbar-thumb,
+.swse-sheet .talents-ledger::-webkit-scrollbar-thumb,
+.swse-sheet .force-powers-ledger::-webkit-scrollbar-thumb,
+.swse-sheet .swse-attacks-grid::-webkit-scrollbar-thumb,
+.swse-sheet .combat-notes-textarea::-webkit-scrollbar-thumb,
+.swse-sheet .bio-profile-content::-webkit-scrollbar-thumb,
+.swse-sheet .bio-log-sections::-webkit-scrollbar-thumb {
+  background: rgba(0, 200, 255, 0.4);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.swse-sheet .relationships-list::-webkit-scrollbar-thumb:hover,
+.swse-sheet .equipment-ledger::-webkit-scrollbar-thumb:hover,
+.swse-sheet .talents-ledger::-webkit-scrollbar-thumb:hover,
+.swse-sheet .force-powers-ledger::-webkit-scrollbar-thumb:hover,
+.swse-sheet .swse-attacks-grid::-webkit-scrollbar-thumb:hover,
+.swse-sheet .combat-notes-textarea::-webkit-scrollbar-thumb:hover,
+.swse-sheet .bio-profile-content::-webkit-scrollbar-thumb:hover,
+.swse-sheet .bio-log-sections::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 200, 255, 0.7);
+}
+
+/* Firefox scrollbar styling */
+.swse-sheet .relationships-list,
+.swse-sheet .equipment-ledger,
+.swse-sheet .talents-ledger,
+.swse-sheet .force-powers-ledger,
+.swse-sheet .swse-attacks-grid,
+.swse-sheet .combat-notes-textarea,
+.swse-sheet .bio-profile-content,
+.swse-sheet .bio-log-sections {
+  scrollbar-color: rgba(0, 200, 255, 0.4) rgba(0, 0, 0, 0.2);
+  scrollbar-width: thin;
+}
