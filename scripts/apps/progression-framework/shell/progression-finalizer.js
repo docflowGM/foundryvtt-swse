@@ -131,9 +131,14 @@ export class ProgressionFinalizer {
     }
     if (background) {
       set['system.background'] = background;
-      // Write back background name to profession field for sheet display
-      if (background.name) {
+      // Write back background selections to sheet-facing identity fields
+      // Background category determines which field to populate
+      if (background.category === 'occupation' && background.name) {
         set['system.profession'] = background.name;
+      } else if (background.category === 'planet' && background.name) {
+        set['system.planetOfOrigin'] = background.name;
+      } else if (background.category === 'event' && background.name) {
+        set['system.event'] = background.name;
       }
     }
     if (clazz) {
