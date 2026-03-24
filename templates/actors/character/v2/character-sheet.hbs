@@ -39,6 +39,7 @@
     <a class="item" data-action="tab" data-tab="talents" data-group="primary" data-tab-group="primary">Talents</a>
     {{#if actor.system.forceSensitive}}<a class="item" data-action="tab" data-tab="force" data-group="primary" data-tab-group="primary">Force</a>{{/if}}
     <a class="item" data-action="tab" data-tab="gear" data-group="primary" data-tab-group="primary">Gear</a>
+    <a class="item" data-action="tab" data-tab="biography" data-group="primary" data-tab-group="primary">Biography</a>
     <a class="item" data-action="tab" data-tab="relationships" data-group="primary" data-tab-group="primary">Relationships</a>
     <a class="item" data-action="tab" data-tab="notes" data-group="primary" data-tab-group="primary">Notes</a>
   </nav>
@@ -119,12 +120,14 @@
       {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-panel.hbs"}}
     </section>
 
+    <!-- BIOGRAPHY TAB -->
+    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="biography">
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/biography-log-panel.hbs"}}
+    </section>
+
     <!-- RELATIONSHIPS TAB -->
     <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="relationships">
-      <div class="tab-placeholder">
-        <h3>Relationships</h3>
-        <p>Relationships tab coming soon.</p>
-      </div>
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/relationships-panel.hbs"}}
     </section>
 
     <!-- NOTES TAB -->

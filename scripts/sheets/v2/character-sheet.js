@@ -698,6 +698,15 @@ const forcePoints = [];
     // Inventory Search Filter (initially empty, populated by user input)
     const inventorySearch = '';
 
+    // Relationships Context
+    const relationships = (actor.system?.relationships ?? []).map(rel => ({
+      uuid: rel.uuid,
+      name: rel.name,
+      type: rel.type,
+      img: rel.img || 'icons/svg/mystery-man.svg',
+      notes: rel.notes || ''
+    }));
+
     // Follower Context (from flags and system)
     const followerSlots = actor.getFlag('foundryvtt-swse', 'followerSlots') || [];
     const ownedActorMap = {};
@@ -798,6 +807,8 @@ const forcePoints = [];
       encumbranceStateCss,
       encumbranceLabel,
       inventorySearch,
+      // Campaign context
+      relationships,
       // Follower context
       followerSlots: enrichedFollowerSlots,
       followerTalentBadges,

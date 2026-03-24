@@ -1546,3 +1546,144 @@ select option:checked {
   box-shadow: 0 0 8px rgba(0, 255, 136, 0.2);
 }
 
+
+/* ------------------------------------------------------------------ */
+/* Biography Log Panel (Campaign/Journal)                              */
+/* ------------------------------------------------------------------ */
+
+.swse-sheet.biography-log-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.swse-sheet.bio-log-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.swse-sheet.bio-log-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.swse-sheet.section-subheader {
+  font-size: 0.85rem;
+  font-weight: 700;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #00ff88;
+}
+
+/* ------------------------------------------------------------------ */
+/* Relationships Panel                                                 */
+/* ------------------------------------------------------------------ */
+
+.swse-sheet.relationships-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.swse-sheet.relationships-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.swse-sheet.relationship-entry {
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  border-radius: 8px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.swse-sheet.relationship-entry:hover {
+  background: rgba(0, 0, 0, 0.35);
+  border-color: rgba(0, 255, 136, 0.4);
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.15);
+}
+
+.swse-sheet.relationship-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.swse-sheet.relationship-name-block {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.swse-sheet.relationship-portrait {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  object-fit: cover;
+  border: 1px solid rgba(0, 255, 136, 0.2);
+}
+
+.swse-sheet.relationship-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.swse-sheet.relationship-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  opacity: 0.95;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.swse-sheet.relationship-type {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  text-transform: capitalize;
+}
+
+.swse-sheet.relationship-notes {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  line-height: 1.4;
+  padding-top: 6px;
+  border-top: 1px solid rgba(0, 255, 136, 0.1);
+  font-style: italic;
+}
+
+.swse-sheet.empty-state {
+  padding: 20px 10px;
+  text-align: center;
+  opacity: 0.7;
+}
+
+.swse-sheet.empty-state p {
+  margin: 6px 0;
+  font-size: 0.95rem;
+}
+
+.swse-sheet.empty-state .hint {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.swse-sheet.relationships-notes-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0, 255, 136, 0.15);
+}
