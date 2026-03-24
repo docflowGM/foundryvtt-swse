@@ -31,6 +31,10 @@ export const SWSE_TEMPLATES = [
   // ==============================
   // Character v2 Partials
   // ==============================
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/character-record-header.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/portrait-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/bio-profile-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/notes-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/identity-strip.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/abilities-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/initiative-control.hbs',

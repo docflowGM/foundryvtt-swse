@@ -1367,3 +1367,182 @@ select option:checked {
   color: #001a4d;
 }
 
+/* ------------------------------------------------------------------ */
+/* Record Tab Layout (Sheet-Native Character Profile)                  */
+/* ------------------------------------------------------------------ */
+
+.swse-sheet.record-sheet-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 12px;
+  padding: 10px;
+}
+
+.swse-sheet.record-left,
+.swse-sheet.record-right {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+/* Portrait panel */
+.swse-sheet.portrait-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.swse-sheet.portrait-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 8px;
+}
+
+.swse-sheet.portrait-image {
+  width: 240px;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 12px;
+  cursor: pointer;
+  border: 2px solid rgba(0, 255, 136, 0.3);
+  transition: all 0.2s ease;
+}
+
+.swse-sheet.portrait-image:hover {
+  border-color: rgba(0, 255, 136, 0.6);
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.2);
+}
+
+/* Character record header */
+.swse-sheet.character-record-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.swse-sheet.record-identity-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.swse-sheet.record-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.swse-sheet.record-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.swse-sheet.field-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  opacity: 0.85;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.swse-sheet.field-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  opacity: 0.95;
+}
+
+.swse-sheet.record-input {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  border-radius: 4px;
+  color: #00ff88;
+  padding: 4px 6px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.swse-sheet.record-input:focus {
+  outline: none;
+  border-color: rgba(0, 255, 136, 0.6);
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.2);
+}
+
+/* Bio/Profile panel */
+.swse-sheet.bio-profile-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.swse-sheet.bio-profile-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.swse-sheet.bio-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.swse-sheet.bio-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.swse-sheet.bio-field.full-width {
+  grid-column: 1 / -1;
+}
+
+.swse-sheet.bio-textarea {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  border-radius: 4px;
+  color: #00ff88;
+  padding: 6px 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  min-height: 80px;
+  resize: vertical;
+  transition: all 0.2s ease;
+}
+
+.swse-sheet.bio-textarea:focus {
+  outline: none;
+  border-color: rgba(0, 255, 136, 0.6);
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.2);
+}
+
+/* Notes panel */
+.swse-sheet.notes-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.swse-sheet.notes-textarea {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  border-radius: 4px;
+  color: #00ff88;
+  padding: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  min-height: 120px;
+  resize: vertical;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.swse-sheet.notes-textarea:focus {
+  outline: none;
+  border-color: rgba(0, 255, 136, 0.6);
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.2);
+}
+

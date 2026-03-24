@@ -32,6 +32,7 @@
   <!-- TABS -->
   <nav class="sheet-tabs tabs flexrow" data-group="primary" data-tab-group="primary">
     <a class="item active" data-action="tab" data-tab="overview" data-group="primary" data-tab-group="primary">Overview</a>
+    <a class="item" data-action="tab" data-tab="record" data-group="primary" data-tab-group="primary">Record</a>
     <a class="item" data-action="tab" data-tab="abilities" data-group="primary" data-tab-group="primary">Abilities</a>
     <a class="item" data-action="tab" data-tab="skills" data-group="primary" data-tab-group="primary">Skills</a>
     <a class="item" data-action="tab" data-tab="combat" data-group="primary" data-tab-group="primary">Combat</a>
@@ -56,6 +57,20 @@
         <div class="swse-v2-right flexcol">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/xp-panel.hbs"}}
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/resources-panel.hbs"}}
+        </div>
+      </div>
+    </section>
+
+    <!-- RECORD TAB -->
+    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="record">
+      <div class="record-sheet-grid">
+        <div class="record-left flexcol">
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/portrait-panel.hbs"}}
+        </div>
+        <div class="record-right flexcol">
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/character-record-header.hbs"}}
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/bio-profile-panel.hbs"}}
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/notes-panel.hbs"}}
         </div>
       </div>
     </section>
