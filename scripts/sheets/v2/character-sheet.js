@@ -510,23 +510,32 @@ export class SWSEV2CharacterSheet extends
     const inventory = this._buildInventoryModel(actor);
 
     // Build equipment ledger (all equipment items for record-sheet display)
+    let totalEquipmentWeightNum = 0;
     const allEquipment = actor.items
       .filter(item => ['weapon', 'armor', 'equipment'].includes(item.type))
-      .map(item => ({
-        id: item.id,
-        name: item.name,
-        category: item.type === 'weapon' ? 'Weapon' :
-                  item.type === 'armor' ? 'Armor' : 'Equipment',
-        quantity: item.system?.quantity ?? 1,
-        weight: item.system?.weight ? `${item.system.weight} lbs` : '—',
-        equipped: item.system?.equipped ?? false
-      }))
+      .map(item => {
+        const itemWeight = item.system?.weight ?? 0;
+        const itemQty = item.system?.quantity ?? 1;
+        totalEquipmentWeightNum += itemWeight * itemQty;
+        return {
+          id: item.id,
+          name: item.name,
+          category: item.type === 'weapon' ? 'Weapon' :
+                    item.type === 'armor' ? 'Armor' : 'Equipment',
+          quantity: itemQty,
+          weight: itemWeight ? `${itemWeight} lbs` : '—',
+          equipped: item.system?.equipped ?? false
+        };
+      })
       .sort((a, b) => {
         // Sort: equipped first, then by type, then by name
         if (a.equipped !== b.equipped) return a.equipped ? -1 : 1;
         if (a.category !== b.category) return a.category.localeCompare(b.category);
         return a.name.localeCompare(b.name);
       });
+
+    // Format total equipment weight for display
+    const totalEquipmentWeight = totalEquipmentWeightNum > 0 ? `${totalEquipmentWeightNum} lbs` : '';
 
     // Get equipped armor (if any)
     const equippedArmorItem = actor.items.find(item =>
@@ -545,6 +554,9 @@ export class SWSEV2CharacterSheet extends
       isPowered: equippedArmorItem.system?.isPowered,
       upgradeSlots: equippedArmorItem.system?.upgradeSlots
     } : null;
+
+    // Get combat notes from flags
+    const combatNotesText = actor.flags?.swse?.sheetNotes?.specialCombatActions || '';
 
     // Presentation-only normalization (no mutation)
     const biography =
@@ -846,7 +858,10 @@ const forcePoints = [];
       inventorySearch,
       // Equipment context (record-sheet display)
       allEquipment,
+      totalEquipmentWeight,
       equippedArmor,
+      // Combat notes context
+      combatNotesText,
       // Campaign context
       relationships,
       // Follower context

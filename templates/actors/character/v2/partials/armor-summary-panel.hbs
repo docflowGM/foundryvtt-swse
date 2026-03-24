@@ -1,3 +1,22 @@
+{{!--
+  ARMOR DISPLAY RULE: Deterministic Single-Armor Display
+  -------------------------------------------------------
+  Because equipped armor uniqueness is NOT enforced at the schema level,
+  this panel uses a deterministic rule to display a single armor:
+
+  RULE: First equipped armor by document storage order (first .find() match)
+  RATIONALE: Matches ModifierEngine behavior (ModifierEngine.js)
+  PRECEDENT: No validation in inventory-handlers.js to prevent multi-equip
+  WORKAROUND: UI convention (toggle buttons) prevents accidental multi-equip
+
+  If multiple armors are accidentally marked equipped, only the first one
+  (by Foundry storage order) will display here and affect calculations.
+  This is intentional, stable, and prevents silent failures.
+
+  TODO (Phase 5): Consider adding UI validation or schema enforcement if
+  multi-slot armor becomes a real requirement.
+--}}
+
 <section class="armor-summary-panel holo-panel">
 
   <header class="section-bar">
@@ -70,7 +89,7 @@
   {{else}}
     <div class="empty-state">
       <p>No armor equipped.</p>
-      <p class="hint">Equip armor from the Gear tab to see summary here.</p>
+      <p class="hint">Equip armor from the <a data-action="tab" data-tab="gear" data-group="primary" data-tab-group="primary" style="cursor:pointer; color:inherit; text-decoration:underline;">Gear tab</a> to see summary here.</p>
     </div>
   {{/if}}
 

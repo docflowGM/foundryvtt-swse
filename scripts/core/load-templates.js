@@ -48,6 +48,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/feats-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/special-combat-actions-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/dark-side-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/second-wind-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/languages-panel.hbs',
