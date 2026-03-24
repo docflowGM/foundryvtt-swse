@@ -46,6 +46,9 @@ export class TalentStep extends ProgressionStepPlugin {
     this._graphData = null;          // Dependency graph for selected tree
     this._focusedTalentId = null;    // Focused node in graph
     this._selectedTalentId = null;   // Committed talent for this slot
+
+    // Event listener cleanup
+    this._renderAbort = null;
   }
 
   // ---------------------------------------------------------------------------

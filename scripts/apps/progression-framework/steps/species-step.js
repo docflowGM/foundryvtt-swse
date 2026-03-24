@@ -44,6 +44,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
     this._olSaltyDialogues = null;    // loaded once in onStepEnter
 
     // Event listener cleanup
+    this._renderAbort = null;
     this._utilityUnlisteners = [];    // cleanup fns for utility bar events
 
     // Committed selection tracking
@@ -97,8 +98,12 @@ export class SpeciesStep extends ProgressionStepPlugin {
   }
 
   async onDataReady(shell) {
-    // Clean up any existing listeners before rewiring (idempotent)
-    this._cleanupUtilityListeners();
+    if (!shell.element) return;
+
+    // Clean up old listeners before attaching new ones
+    this._renderAbort?.abort();
+    this._renderAbort = new AbortController();
+    const { signal } = this._renderAbort;
 
     const onSearch = e => {
       this._searchQuery = e.detail.query;
@@ -117,9 +122,9 @@ export class SpeciesStep extends ProgressionStepPlugin {
       shell.render();
     };
 
-    shell.element.addEventListener('prog:utility:search', onSearch);
-    shell.element.addEventListener('prog:utility:filter', onFilter);
-    shell.element.addEventListener('prog:utility:sort', onSort);
+    shell.element.addEventListener('prog:utility:search', onSearch, { signal });
+    shell.element.addEventListener('prog:utility:filter', onFilter, { signal });
+    shell.element.addEventListener('prog:utility:sort', onSort, { signal });
 
     this._utilityUnlisteners = [
       () => shell.element.removeEventListener('prog:utility:search', onSearch),

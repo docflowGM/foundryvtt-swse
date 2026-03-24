@@ -43,6 +43,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     this._committedPowerCounts = new Map();  // id -> count (for stacking)
 
     this._remainingPicks = 0;
+    this._renderAbort = null;
     this._utilityUnlisteners = [];
   }
 
@@ -100,6 +101,13 @@ export class ForcePowerStep extends ProgressionStepPlugin {
   }
 
   async onDataReady(shell) {
+    if (!shell.element) return;
+
+    // Clean up old listeners before attaching new ones
+    this._renderAbort?.abort();
+    this._renderAbort = new AbortController();
+    const { signal } = this._renderAbort;
+
     // Wire utility bar event listeners
     const onSearch = e => {
       this._searchQuery = e.detail.query;
@@ -117,9 +125,9 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       shell.render();
     };
 
-    shell.element?.addEventListener('prog:utility:search', onSearch);
-    shell.element?.addEventListener('prog:utility:filter', onFilter);
-    shell.element?.addEventListener('prog:utility:sort', onSort);
+    shell.element.addEventListener('prog:utility:search', onSearch, { signal });
+    shell.element.addEventListener('prog:utility:filter', onFilter, { signal });
+    shell.element.addEventListener('prog:utility:sort', onSort, { signal });
 
     this._utilityUnlisteners = [
       () => shell.element?.removeEventListener('prog:utility:search', onSearch),

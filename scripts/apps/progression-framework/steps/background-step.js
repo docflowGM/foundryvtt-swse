@@ -39,6 +39,9 @@ export class BackgroundStep extends ProgressionStepPlugin {
 
     // House rule state
     this._maxBackgrounds = 1;        // from backgroundSelectionCount setting
+
+    // Event listener cleanup
+    this._renderAbort = null;
   }
 
   // ---------------------------------------------------------------------------
@@ -62,8 +65,12 @@ export class BackgroundStep extends ProgressionStepPlugin {
   }
 
   async onDataReady(shell) {
-    // Wire category tab navigation
     if (!shell.element) return;
+
+    // Clean up old listeners before attaching new ones
+    this._renderAbort?.abort();
+    this._renderAbort = new AbortController();
+    const { signal } = this._renderAbort;
 
     const categoryButtons = shell.element.querySelectorAll('.bg-category-btn');
     categoryButtons.forEach(btn => {
@@ -72,7 +79,7 @@ export class BackgroundStep extends ProgressionStepPlugin {
         this._activeCategory = btn.dataset.category;
         shell.render();
       };
-      btn.addEventListener('click', fn);
+      btn.addEventListener('click', fn, { signal });
     });
 
     // Wire search input
@@ -81,7 +88,7 @@ export class BackgroundStep extends ProgressionStepPlugin {
       searchInput.addEventListener('input', (e) => {
         this._searchQuery = e.target.value;
         shell.render();
-      });
+      }, { signal });
     }
   }
 

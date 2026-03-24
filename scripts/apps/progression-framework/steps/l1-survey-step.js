@@ -25,6 +25,9 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     };
 
     this._isSkipped = false;
+
+    // Event listener cleanup
+    this._renderAbort = null;
   }
 
   // ---------------------------------------------------------------------------
@@ -37,8 +40,12 @@ export class L1SurveyStep extends ProgressionStepPlugin {
   }
 
   async onDataReady(shell) {
-    // Wire survey radio buttons if present
     if (!shell.element) return;
+
+    // Clean up old listeners before attaching new ones
+    this._renderAbort?.abort();
+    this._renderAbort = new AbortController();
+    const { signal } = this._renderAbort;
 
     const onPlaystyleChange = (e) => {
       this._surveyAnswers.playstyle = e.target.value;
@@ -55,17 +62,17 @@ export class L1SurveyStep extends ProgressionStepPlugin {
 
     // Playstyle radios
     shell.element.querySelectorAll('input[name="survey-playstyle"]').forEach(radio => {
-      radio.addEventListener('change', onPlaystyleChange);
+      radio.addEventListener('change', onPlaystyleChange, { signal });
     });
 
     // Focus radios
     shell.element.querySelectorAll('input[name="survey-focus"]').forEach(radio => {
-      radio.addEventListener('change', onFocusChange);
+      radio.addEventListener('change', onFocusChange, { signal });
     });
 
     // Experience radios
     shell.element.querySelectorAll('input[name="survey-experience"]').forEach(radio => {
-      radio.addEventListener('change', onExperienceChange);
+      radio.addEventListener('change', onExperienceChange, { signal });
     });
   }
 

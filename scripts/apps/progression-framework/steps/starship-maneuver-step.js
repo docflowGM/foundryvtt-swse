@@ -28,6 +28,9 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
     this._committedManeuverCounts = new Map();
 
     this._remainingPicks = 0;
+
+    // Event listener cleanup
+    this._renderAbort = null;
     this._utilityUnlisteners = [];
   }
 
@@ -56,13 +59,21 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
   }
 
   async onDataReady(shell) {
+    if (!shell.element) return;
+
+    // Clean up old listeners before attaching new ones
+    this._renderAbort?.abort();
+    this._renderAbort = new AbortController();
+    const { signal } = this._renderAbort;
+
     const onSearch = e => {
       this._searchQuery = e.detail.query;
       this._applyFilters();
       shell.render();
     };
 
-    shell.element?.addEventListener('prog:utility:search', onSearch);
+    shell.element.addEventListener('prog:utility:search', onSearch, { signal });
+
     this._utilityUnlisteners = [
       () => shell.element?.removeEventListener('prog:utility:search', onSearch),
     ];

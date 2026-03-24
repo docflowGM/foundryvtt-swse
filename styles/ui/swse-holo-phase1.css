@@ -78,7 +78,7 @@
 
 
 /* Phase 1 completion + Phase 2 shell/core panel pass */
-.swse-sheet-ui .sheet-body{padding:10px 12px 14px;gap:12px;overflow:auto;}
+.swse-sheet-ui .sheet-body{padding:10px 12px 14px;gap:12px;}
 .swse-sheet-ui .sheet-content,.swse-sheet-ui .tab{gap:12px;}
 .swse-sheet-ui .sheet-header .profile{width:86px;height:86px;border-radius:14px;object-fit:cover;border:1px solid rgba(124,232,255,.35);box-shadow:0 0 24px rgba(124,232,255,.2);background:rgba(4,12,22,.9);padding:4px;}
 .swse-sheet-ui .title-block{display:flex;flex-direction:column;gap:6px;}

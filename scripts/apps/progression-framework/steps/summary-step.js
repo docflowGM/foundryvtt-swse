@@ -43,6 +43,9 @@ export class SummaryStep extends ProgressionStepPlugin {
     this._characterName = '';
     this._startingLevel = 1;
     this._isReviewComplete = false;
+
+    // Event listener cleanup
+    this._renderAbort = null;
   }
 
   // ---------------------------------------------------------------------------
@@ -72,6 +75,11 @@ export class SummaryStep extends ProgressionStepPlugin {
   async onDataReady(shell) {
     if (!shell.element) return;
 
+    // Clean up old listeners before attaching new ones
+    this._renderAbort?.abort();
+    this._renderAbort = new AbortController();
+    const { signal } = this._renderAbort;
+
     // Wire name input (now editable on this step as "datapad profile registration")
     const nameInput = shell.element.querySelector('.summary-step-name-input');
     if (nameInput) {
@@ -79,10 +87,10 @@ export class SummaryStep extends ProgressionStepPlugin {
       nameInput.addEventListener('input', (e) => {
         this._characterName = e.target.value;
         this._summary.name = e.target.value;
-      });
+      }, { signal });
       nameInput.addEventListener('change', () => {
         shell.render();
-      });
+      }, { signal });
     }
 
     // Wire level input (level slider, also editable here)
@@ -95,10 +103,10 @@ export class SummaryStep extends ProgressionStepPlugin {
           this._startingLevel = val;
           this._summary.level = val;
         }
-      });
+      }, { signal });
       levelInput.addEventListener('change', () => {
         shell.render();
-      });
+      }, { signal });
     }
 
     // Wire random name button (for living beings)
@@ -112,7 +120,7 @@ export class SummaryStep extends ProgressionStepPlugin {
           this._summary.name = randomName;
           shell.render();
         }
-      });
+      }, { signal });
     }
 
     // Wire random droid name button (if character is droid)
@@ -126,7 +134,7 @@ export class SummaryStep extends ProgressionStepPlugin {
           this._summary.name = randomName;
           shell.render();
         }
-      });
+      }, { signal });
     }
 
     // Wire any "back to step" buttons if present (ability to return to prior steps)
@@ -139,7 +147,7 @@ export class SummaryStep extends ProgressionStepPlugin {
           swseLogger.log(`[SummaryStep] User wants to edit step: ${stepId}`);
           // This would be handled by shell navigation
         }
-      });
+      }, { signal });
     });
 
     // Mark as reviewed

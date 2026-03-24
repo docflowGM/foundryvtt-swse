@@ -69,6 +69,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
       // Foundry V13 ApplicationV2 requires functions in the actions map — not strings.
       // handler?.call(this, event, target) is called by #onClickAction; strings have no .call.
       // Each entry is a shorthand method so `this` resolves to the shell instance at call time.
+      'continue'(e, t)            { return this._onNextStep(e, t); }, // Splash screen continue button
       'toggle-mentor'(e, t)       { return this._onToggleMentor(e, t); },
       'toggle-utility-bar'(e, t)  { return this._onToggleUtilityBar(e, t); },
       'ask-mentor'(e, t)          { return this._onAskMentor(e, t); },
@@ -1051,13 +1052,16 @@ export class ProgressionShell extends SWSEApplicationV2 {
    */
   _onStepAction(event, target) {
     event?.preventDefault();
+    const actionName = target?.dataset?.action;
+    const stepId = this.steps[this.currentStepIndex]?.stepId;
+
+    swseLogger.debug(`[ProgressionShell] Step action: ${actionName} on step ${stepId}`);
 
     // Allow the event to bubble to the work-surface element where step plugins
     // have attached their own event listeners in onDataReady()
     const workSurface = this.element?.querySelector('[data-region="work-surface"]');
     if (workSurface && target) {
       // Create and dispatch a custom event that step plugins can listen for
-      const actionName = target.dataset.action;
       const customEvent = new CustomEvent('step-action', {
         detail: { actionName, originalEvent: event, target },
         bubbles: true,
