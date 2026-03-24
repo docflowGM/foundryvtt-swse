@@ -85,13 +85,18 @@ export class TalentStep extends ProgressionStepPlugin {
   async onDataReady(shell) {
     if (!shell.element) return;
 
+    // Clean up old listeners before attaching new ones
+    this._renderAbort?.abort();
+    this._renderAbort = new AbortController();
+    const { signal } = this._renderAbort;
+
     // Wire search input (Stage 1)
     const searchInput = shell.element.querySelector('.talent-search-input');
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
         this._searchQuery = e.target.value;
         shell.render();
-      });
+      }, { signal });
     }
 
     // Wire tree card focus (Stage 1)
@@ -102,7 +107,7 @@ export class TalentStep extends ProgressionStepPlugin {
         const treeId = card.dataset.treeId;
         this._focusedTreeId = treeId;
         shell.render();
-      });
+      }, { signal });
     });
 
     // Wire tree card enter (Stage 1 → Stage 2)
@@ -112,7 +117,7 @@ export class TalentStep extends ProgressionStepPlugin {
         e.preventDefault();
         const treeId = btn.dataset.treeId;
         this._enterTree(treeId, shell);
-      });
+      }, { signal });
     });
 
     // Wire exit tree button (Stage 2 → Stage 1)
@@ -121,7 +126,7 @@ export class TalentStep extends ProgressionStepPlugin {
       exitBtn.addEventListener('click', (e) => {
         e.preventDefault();
         this._exitTree(shell);
-      });
+      }, { signal });
     }
 
     // Wire talent node focus (Stage 2)
@@ -132,7 +137,7 @@ export class TalentStep extends ProgressionStepPlugin {
         const talentId = node.dataset.talentId;
         this._focusedTalentId = talentId;
         shell.render();
-      });
+      }, { signal });
     });
   }
 
