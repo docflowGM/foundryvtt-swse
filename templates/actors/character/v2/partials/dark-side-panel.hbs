@@ -1,14 +1,25 @@
 <section class="holo-panel swse-ui-panel swse-phase2-core-panel swse-dark-side-panel">
   <div class="section-bar">
     <h3 class="section-header">Dark Side Score</h3>
+    <span class="dsp-value-display">{{system.darkSide.value}} / {{darkSideMax}}</span>
   </div>
 
   <div class="swse-v2-dark-side">
-    <div class="swse-v2-ds-info">
-      <span class="ds-label">Score:</span>
-      <span class="ds-value">{{system.darkSide.value}} / {{darkSideMax}}</span>
+
+    <!-- Numbered Track Display (Record-Sheet Style) -->
+    <div class="dsp-numbered-track">
+      {{#each darkSideSegments as |segment|}}
+        <button type="button"
+                class="dsp-track-box {{#if segment.filled}}filled{{/if}}"
+                data-action="set-dark-side-score"
+                data-index="{{segment.index}}"
+                title="Set Dark Side Points to {{segment.index}}">
+          <span class="dsp-number">{{segment.index}}</span>
+        </button>
+      {{/each}}
     </div>
 
+    <!-- Interactive Spectrum (Existing Interaction Mode) -->
     <div class="swse-v2-ds-spectrum" data-action="set-dark-side-score">
       {{#each darkSideSegments as |segment|}}
         <div

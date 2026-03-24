@@ -2436,3 +2436,240 @@ select option:checked {
 /* ================================================================= */
 /* End Phase 5 Styles                                                */
 /* ================================================================= */
+
+/* ================================================================= */
+/* PHASE 6: Fidelity Layer - Record-Sheet Reference Surfaces         */
+/* ================================================================= */
+
+/* ------------------------------------------------------------------ */
+/* Dark Side Panel - Numbered Track Enhancement                       */
+/* ------------------------------------------------------------------ */
+
+.swse-sheet .swse-dark-side-panel .section-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.swse-sheet .dsp-value-display {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #e74c3c;
+  opacity: 0.9;
+}
+
+.swse-sheet .dsp-numbered-track {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 8px;
+  padding: 8px 0;
+}
+
+.swse-sheet .dsp-track-box {
+  flex: 1;
+  min-width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #aaa;
+  font-size: 0.65rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swse-sheet .dsp-track-box:hover {
+  border-color: rgba(74, 158, 255, 0.5);
+  background: rgba(74, 158, 255, 0.1);
+  color: #4a9eff;
+}
+
+.swse-sheet .dsp-track-box.filled {
+  background: rgba(231, 76, 60, 0.2);
+  border-color: rgba(231, 76, 60, 0.5);
+  color: #e74c3c;
+  font-weight: 700;
+}
+
+.swse-sheet .dsp-number {
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+/* ------------------------------------------------------------------ */
+/* Talents Known Ledger (Record-Sheet Style)                          */
+/* ------------------------------------------------------------------ */
+
+.swse-sheet .talents-known-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.swse-sheet .talents-ledger {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.swse-sheet .talent-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.15);
+}
+
+.swse-sheet .talent-group:last-child {
+  border-bottom: none;
+}
+
+.swse-sheet .group-header {
+  padding: 6px 10px;
+  background: rgba(0, 255, 136, 0.08);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #999;
+  opacity: 0.9;
+}
+
+.swse-sheet .talent-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.08);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.swse-sheet .talent-row:last-child {
+  border-bottom: none;
+}
+
+.swse-sheet .talent-row:hover {
+  background: rgba(0, 255, 136, 0.05);
+}
+
+.swse-sheet .talent-name {
+  flex: 1;
+  font-weight: 600;
+  color: #fff;
+}
+
+.swse-sheet .talent-source {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ------------------------------------------------------------------ */
+/* Force Powers Known Ledger (Record-Sheet Style)                     */
+/* ------------------------------------------------------------------ */
+
+.swse-sheet .force-powers-known-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.swse-sheet .force-powers-ledger {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid rgba(74, 158, 255, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.swse-sheet .powers-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-bottom: 1px solid rgba(74, 158, 255, 0.15);
+}
+
+.swse-sheet .powers-group:last-child {
+  border-bottom: none;
+}
+
+.swse-sheet .force-powers-ledger .group-header {
+  padding: 6px 10px;
+  background: rgba(74, 158, 255, 0.08);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #999;
+  opacity: 0.9;
+}
+
+.swse-sheet .power-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(74, 158, 255, 0.08);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.swse-sheet .power-row:last-child {
+  border-bottom: none;
+}
+
+.swse-sheet .power-row:hover {
+  background: rgba(74, 158, 255, 0.05);
+}
+
+.swse-sheet .power-row.discarded {
+  opacity: 0.65;
+}
+
+.swse-sheet .power-name {
+  flex: 1;
+  font-weight: 600;
+  color: #fff;
+}
+
+.swse-sheet .power-row.discarded .power-name {
+  color: #999;
+  text-decoration: line-through;
+}
+
+.swse-sheet .power-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.swse-sheet .power-row .tag {
+  font-size: 0.65rem;
+  padding: 1px 4px;
+  background: rgba(74, 158, 255, 0.15);
+  border: 0.5px solid rgba(74, 158, 255, 0.3);
+  border-radius: 2px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* ================================================================= */
+/* End Phase 6 Styles                                                */
+/* ================================================================= */

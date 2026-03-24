@@ -811,6 +811,9 @@ const forcePoints = [];
       };
     });
 
+    // Calculate total talent count for ledger display
+    const totalTalentCount = derived.talents?.groups?.reduce((sum, group) => sum + (group.items?.length || 0), 0) || 0;
+
     const finalContext = {
       ...context,
       biography,
@@ -862,6 +865,8 @@ const forcePoints = [];
       equippedArmor,
       // Combat notes context
       combatNotesText,
+      // Fidelity layer context (Phase 6)
+      totalTalentCount,
       // Campaign context
       relationships,
       // Follower context
