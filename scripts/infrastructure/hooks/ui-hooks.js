@@ -47,8 +47,12 @@ export function registerUIHooks() {
     });
 
     // Actor sheet header integration
-    registerLevelUpSheetHooks();
-    registerChargenSheetHooks();
+    // NOTE: Chargen and LevelUp buttons are defined in the character sheet template (character-sheet.hbs)
+    // and wired through character-sheet.js activateListeners with data-action handlers.
+    // The chargen-sheet-hooks and levelup-sheet-hooks were creating DUPLICATE header controls.
+    // Those hooks are now disabled to avoid confusion and maintain single authority (template + sheet.js).
+    // registerLevelUpSheetHooks();  // DISABLED: Template buttons are authoritative
+    // registerChargenSheetHooks();  // DISABLED: Template buttons are authoritative
     registerStoreSheetHooks();
     registerMentorSheetHooks();
 

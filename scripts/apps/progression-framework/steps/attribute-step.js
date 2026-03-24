@@ -82,6 +82,9 @@ export class AttributeStep extends ProgressionStepPlugin {
 
     // Method controls
     this._methodChanged = false;
+
+    // Event listener cleanup
+    this._renderAbort = null;
   }
 
   // ---------------------------------------------------------------------------
@@ -103,8 +106,12 @@ export class AttributeStep extends ProgressionStepPlugin {
   }
 
   async onDataReady(shell) {
-    // Wire method selector if present
     if (!shell.element) return;
+
+    // Clean up old listeners before attaching new ones
+    this._renderAbort?.abort();
+    this._renderAbort = new AbortController();
+    const { signal } = this._renderAbort;
 
     const methodButtons = shell.element.querySelectorAll('.attr-method-btn');
     methodButtons.forEach(btn => {
@@ -118,7 +125,7 @@ export class AttributeStep extends ProgressionStepPlugin {
           shell.render();
         }
       };
-      btn.addEventListener('click', fn);
+      btn.addEventListener('click', fn, { signal });
     });
 
     // Wire ability increment/decrement buttons for point buy
@@ -132,7 +139,7 @@ export class AttributeStep extends ProgressionStepPlugin {
             e.preventDefault();
             this._adjustPointBuyScore(ability, -1);
             shell.render();
-          });
+          }, { signal });
         }
 
         if (plusBtn) {
@@ -140,7 +147,7 @@ export class AttributeStep extends ProgressionStepPlugin {
             e.preventDefault();
             this._adjustPointBuyScore(ability, 1);
             shell.render();
-          });
+          }, { signal });
         }
       });
     }
@@ -153,7 +160,7 @@ export class AttributeStep extends ProgressionStepPlugin {
           e.preventDefault();
           this._focusedAbility = ability;
           shell.render();
-        });
+        }, { signal });
       }
     });
   }

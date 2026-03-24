@@ -23,6 +23,9 @@ export class SkillsStep extends ProgressionStepPlugin {
     this._allSkills = [];                 // Full skill list from registry
     this._trainedCount = 0;
     this._allowedCount = 1;               // Updated on enter from character data
+
+    // Event listener cleanup
+    this._renderAbort = null;
   }
 
   // ---------------------------------------------------------------------------
@@ -66,6 +69,11 @@ export class SkillsStep extends ProgressionStepPlugin {
   async onDataReady(shell) {
     if (!shell.element) return;
 
+    // Clean up old listeners before attaching new ones
+    this._renderAbort?.abort();
+    this._renderAbort = new AbortController();
+    const { signal } = this._renderAbort;
+
     // Wire skill checkboxes
     const skillCheckboxes = shell.element.querySelectorAll('.skills-step-skill-checkbox');
     skillCheckboxes.forEach(checkbox => {
@@ -76,7 +84,7 @@ export class SkillsStep extends ProgressionStepPlugin {
 
         this._toggleSkill(skillKey, checked);
         shell.render();
-      });
+      }, { signal });
     });
 
     // Wire train/untrain buttons
@@ -87,7 +95,7 @@ export class SkillsStep extends ProgressionStepPlugin {
         const skillKey = btn.dataset.skill;
         this._trainSkill(skillKey);
         shell.render();
-      });
+      }, { signal });
     });
 
     const untrainButtons = shell.element.querySelectorAll('.skills-step-untrain-btn');
@@ -97,7 +105,7 @@ export class SkillsStep extends ProgressionStepPlugin {
         const skillKey = btn.dataset.skill;
         this._untrainSkill(skillKey);
         shell.render();
-      });
+      }, { signal });
     });
 
     // Wire reset button
@@ -107,7 +115,7 @@ export class SkillsStep extends ProgressionStepPlugin {
         e.preventDefault();
         this._resetAllSkills();
         shell.render();
-      });
+      }, { signal });
     }
   }
 

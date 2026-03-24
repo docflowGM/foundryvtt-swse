@@ -152,6 +152,7 @@
   flex: 1 1 auto;
   overflow-y: auto;
   width: 100%;
+  margin-left: 8px;  /* Spacing for arrow connector from portrait */
 
   /* ===== DIALOGUE PANEL STYLING — Holographic frame ===== */
   background:

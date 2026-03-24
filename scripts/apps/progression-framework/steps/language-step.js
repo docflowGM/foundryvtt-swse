@@ -38,6 +38,9 @@ export class LanguageStep extends ProgressionStepPlugin {
       'widelyUsed': 'Widely Used',
       'localTrade': 'Local & Trade',
     };
+
+    // Event listener cleanup
+    this._renderAbort = null;
   }
 
   // ---------------------------------------------------------------------------
@@ -62,13 +65,18 @@ export class LanguageStep extends ProgressionStepPlugin {
   async onDataReady(shell) {
     if (!shell.element) return;
 
+    // Clean up old listeners before attaching new ones
+    this._renderAbort?.abort();
+    this._renderAbort = new AbortController();
+    const { signal } = this._renderAbort;
+
     // Wire search input
     const searchInput = shell.element.querySelector('.lang-search-input');
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
         this._searchQuery = e.target.value;
         shell.render();
-      });
+      }, { signal });
     }
 
     // Wire clear search button
@@ -79,7 +87,7 @@ export class LanguageStep extends ProgressionStepPlugin {
         this._searchQuery = '';
         if (searchInput) searchInput.value = '';
         shell.render();
-      });
+      }, { signal });
     }
 
     // Wire add/remove buttons in work surface
@@ -89,7 +97,7 @@ export class LanguageStep extends ProgressionStepPlugin {
         e.preventDefault();
         const langId = btn.dataset.languageId;
         this._selectLanguage(langId, shell);
-      });
+      }, { signal });
     });
 
     const removeBtns = shell.element.querySelectorAll('[data-action="remove-language"]');
@@ -98,7 +106,7 @@ export class LanguageStep extends ProgressionStepPlugin {
         e.preventDefault();
         const langId = btn.dataset.languageId;
         this._deselectLanguage(langId, shell);
-      });
+      }, { signal });
     });
   }
 

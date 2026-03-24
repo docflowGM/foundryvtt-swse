@@ -11,7 +11,7 @@
  */
 import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/hooks-registry.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import CharacterGenerator from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js";
+import { launchProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
 import { TemplateCharacterCreator } from "/systems/foundryvtt-swse/scripts/apps/template-character-creator.js";
 import { GMStoreDashboard } from "/systems/foundryvtt-swse/scripts/apps/gm-store-dashboard.js";
@@ -25,20 +25,20 @@ function onClickChargen(app) {
       ui?.notifications?.warn?.('No actor selected. GMs can create new actors.');
       return;
     }
-    // TODO: Allow opening chargen for new actor creation (no actor passed)
+    // TODO: Allow opening progression for new actor creation (no actor passed)
     return;
   }
 
   if (actor.type !== 'character') {
-    ui?.notifications?.warn?.('Chargen is for characters only.');
+    ui?.notifications?.warn?.('Progression is for characters only.');
     return;
   }
 
-  SWSELogger.log(`[Actor Sidebar] Opening Chargen for: ${actor.name}`);
-  // Launch asynchronously without await
-  CharacterGenerator.open(actor).catch(err => {
-    SWSELogger.error('[Actor Sidebar] Error opening chargen:', err);
-    ui?.notifications?.error?.(`Failed to open chargen: ${err.message}`);
+  SWSELogger.log(`[Actor Sidebar] Opening Progression for: ${actor.name}`);
+  // FIXED: Route through unified progression entry point (chargen vs levelup routing is done there)
+  launchProgression(actor).catch(err => {
+    SWSELogger.error('[Actor Sidebar] Error opening progression:', err);
+    ui?.notifications?.error?.(`Failed to open progression: ${err.message}`);
   });
 }
 

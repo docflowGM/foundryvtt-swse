@@ -50,6 +50,9 @@ export class FeatStep extends ProgressionStepPlugin {
 
     // UI state
     this._selectedFeatItem = null;       // The actual feat item for display
+
+    // Event listener cleanup
+    this._renderAbort = null;            // AbortController for automatic listener cleanup
   }
 
   // ---------------------------------------------------------------------------
@@ -85,13 +88,18 @@ export class FeatStep extends ProgressionStepPlugin {
   async onDataReady(shell) {
     if (!shell.element) return;
 
+    // Clean up old listeners before attaching new ones
+    this._renderAbort?.abort();
+    this._renderAbort = new AbortController();
+    const { signal } = this._renderAbort;
+
     // Wire search input
     const searchInput = shell.element.querySelector('.feat-search-input');
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
         this._searchQuery = e.target.value;
         shell.render();
-      });
+      }, { signal });
     }
 
     // Wire Show All toggle
@@ -100,7 +108,7 @@ export class FeatStep extends ProgressionStepPlugin {
       showAllToggle.addEventListener('change', (e) => {
         this._showAll = e.target.checked;
         shell.render();
-      });
+      }, { signal });
     }
 
     // Wire category expand/collapse
@@ -115,7 +123,7 @@ export class FeatStep extends ProgressionStepPlugin {
           this._expandedCategories.add(category);
         }
         shell.render();
-      });
+      }, { signal });
     });
 
     // Wire feat focus
@@ -126,7 +134,7 @@ export class FeatStep extends ProgressionStepPlugin {
         const featId = row.dataset.featId;
         this._focusedFeatId = featId;
         shell.render();
-      });
+      }, { signal });
     });
   }
 

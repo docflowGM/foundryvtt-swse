@@ -28,6 +28,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
     this._committedSecretCounts = new Map();
 
     this._remainingPicks = 0;
+    this._renderAbort = null;
     this._utilityUnlisteners = [];
   }
 
@@ -66,6 +67,13 @@ export class ForceSecretStep extends ProgressionStepPlugin {
   }
 
   async onDataReady(shell) {
+    if (!shell.element) return;
+
+    // Clean up old listeners before attaching new ones
+    this._renderAbort?.abort();
+    this._renderAbort = new AbortController();
+    const { signal } = this._renderAbort;
+
     const onSearch = e => {
       this._searchQuery = e.detail.query;
       this._applyFilters();
@@ -80,9 +88,9 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       shell.render();
     };
 
-    shell.element?.addEventListener('prog:utility:search', onSearch);
-    shell.element?.addEventListener('prog:utility:filter', onFilter);
-    shell.element?.addEventListener('prog:utility:sort', onSort);
+    shell.element.addEventListener('prog:utility:search', onSearch, { signal });
+    shell.element.addEventListener('prog:utility:filter', onFilter, { signal });
+    shell.element.addEventListener('prog:utility:sort', onSort, { signal });
 
     this._utilityUnlisteners = [
       () => shell.element?.removeEventListener('prog:utility:search', onSearch),

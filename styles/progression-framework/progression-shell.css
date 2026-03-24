@@ -243,7 +243,8 @@
 
 /* Compact step items in horizontal rail */
 .progression-shell .prog-step {
-  flex: 0 0 auto;
+  flex: 0 1 auto;
+  min-width: 0;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -433,7 +434,7 @@
   height: auto;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: var(--prog-space-lg);
+  padding: 12px;  /* Reduced: SVG border inset defines outer safe zone, CSS padding is inner content margin */
 
   /* ===== WORK SURFACE — panel-large.svg dominant center panel =====
      panel-large.svg: full chamfered steel panel with cyan border lines,

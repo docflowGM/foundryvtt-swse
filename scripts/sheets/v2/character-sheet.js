@@ -1082,25 +1082,34 @@ const forcePoints = [];
     });
     console.log('[CHARGEN DEBUG] All data-action buttons found:', actionButtonsByType);
 
+    // Progression buttons (Chargen/LevelUp) — Route through unified entry point
     const chargenButtons = html.querySelectorAll('[data-action="cmd-chargen"]');
-    console.log('[TEMP AUDIT] Found chargen buttons in sheet HTML:', chargenButtons.length);
+    console.log('[SHEET] Found Chargen buttons in template:', chargenButtons.length);
     chargenButtons.forEach(button => {
-      console.log('[TEMP AUDIT] Binding chargen button click listener');
       button.addEventListener("click", async ev => {
-        console.log('[TEMP AUDIT] Chargen button clicked via sheet listener');
+        console.log('[SHEET] ✓ Chargen button clicked → calling launchProgression()');
         ev.preventDefault();
-        await launchProgression(this.actor);
+        try {
+          await launchProgression(this.actor);
+        } catch (err) {
+          console.error('[SHEET] ✗ launchProgression failed:', err);
+          SWSELogger.error('[CharacterSheet] Progression launch failed:', err);
+        }
       }, { signal });
     });
 
     const levelupButtons = html.querySelectorAll('[data-action="cmd-levelup"]');
-    console.log('[TEMP AUDIT] Found levelup buttons in sheet HTML:', levelupButtons.length);
+    console.log('[SHEET] Found LevelUp buttons in template:', levelupButtons.length);
     levelupButtons.forEach(button => {
-      console.log('[TEMP AUDIT] Binding levelup button click listener');
       button.addEventListener("click", async ev => {
-        console.log('[TEMP AUDIT] LevelUp button clicked via sheet listener');
+        console.log('[SHEET] ✓ LevelUp button clicked → calling launchProgression()');
         ev.preventDefault();
-        await launchProgression(this.actor);
+        try {
+          await launchProgression(this.actor);
+        } catch (err) {
+          console.error('[SHEET] ✗ launchProgression failed:', err);
+          SWSELogger.error('[CharacterSheet] Progression launch failed:', err);
+        }
       }, { signal });
     });
 
@@ -1685,6 +1694,103 @@ const forcePoints = [];
         } catch (err) {
           console.error("Rest failed:", err);
           ui?.notifications?.error?.(`Rest failed: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    // Use Second Wind button
+    html.querySelectorAll('[data-action="use-second-wind"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const currentHp = this.actor.system?.hp?.value ?? 0;
+        const maxHp = this.actor.system?.hp?.max ?? 1;
+        const healing = this.actor.system?.secondWind?.healing ?? 0;
+        const newHp = Math.min(currentHp + healing, maxHp);
+        const uses = this.actor.system?.secondWind?.uses ?? 0;
+
+        const plan = {
+          update: {
+            "system.hp.value": newHp,
+            "system.secondWind.uses": Math.max(0, uses - 1)
+          }
+        };
+
+        try {
+          await ActorEngine.apply(this.actor, plan);
+          ui?.notifications?.info?.(`Regained ${healing} HP!`);
+        } catch (err) {
+          console.error("Second Wind use failed:", err);
+          ui?.notifications?.error?.(`Second Wind use failed: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    // Gain Force Point button
+    html.querySelectorAll('[data-action="gain-force-point"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const current = this.actor.system?.forcePoints?.value ?? 0;
+        const max = this.actor.system?.forcePoints?.max ?? 0;
+        const newValue = Math.min(current + 1, max);
+
+        const plan = {
+          update: {
+            "system.forcePoints.value": newValue
+          }
+        };
+
+        try {
+          await ActorEngine.apply(this.actor, plan);
+          ui?.notifications?.info?.("Force Point restored!");
+        } catch (err) {
+          console.error("Force Point restore failed:", err);
+          ui?.notifications?.error?.(`Force Point restore failed: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    // Spend Force Point button
+    html.querySelectorAll('[data-action="spend-force-point"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const current = this.actor.system?.forcePoints?.value ?? 0;
+        const newValue = Math.max(0, current - 1);
+
+        const plan = {
+          update: {
+            "system.forcePoints.value": newValue
+          }
+        };
+
+        try {
+          await ActorEngine.apply(this.actor, plan);
+          ui?.notifications?.info?.("Force Point spent!");
+        } catch (err) {
+          console.error("Force Point spend failed:", err);
+          ui?.notifications?.error?.(`Force Point spend failed: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    // Set Condition Step button
+    html.querySelectorAll('[data-action="set-condition-step"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const step = parseInt(button.dataset.step, 10);
+        if (isNaN(step) || step < 0 || step > 5) return;
+
+        const plan = {
+          update: {
+            "system.conditionTrack.current": step
+          }
+        };
+
+        try {
+          await ActorEngine.apply(this.actor, plan);
+          ui?.notifications?.info?.("Condition updated!");
+        } catch (err) {
+          console.error("Condition update failed:", err);
+          ui?.notifications?.error?.(`Condition update failed: ${err.message}`);
         }
       }, { signal });
     });

@@ -19,6 +19,9 @@ export class NameStep extends ProgressionStepPlugin {
     // State
     this._characterName = '';
     this._startingLevel = 1;
+
+    // Event listener cleanup
+    this._renderAbort = null;
   }
 
   // ---------------------------------------------------------------------------
@@ -42,15 +45,20 @@ export class NameStep extends ProgressionStepPlugin {
   async onDataReady(shell) {
     if (!shell.element) return;
 
+    // Clean up old listeners before attaching new ones
+    this._renderAbort?.abort();
+    this._renderAbort = new AbortController();
+    const { signal } = this._renderAbort;
+
     // Wire name input
     const nameInput = shell.element.querySelector('.name-step-input');
     if (nameInput) {
       nameInput.addEventListener('input', (e) => {
         this._characterName = e.target.value;
-      });
+      }, { signal });
       nameInput.addEventListener('change', () => {
         shell.render();
-      });
+      }, { signal });
     }
 
     // Wire level input
@@ -61,10 +69,10 @@ export class NameStep extends ProgressionStepPlugin {
         if (!isNaN(val) && val >= 1 && val <= 20) {
           this._startingLevel = val;
         }
-      });
+      }, { signal });
       levelInput.addEventListener('change', () => {
         shell.render();
-      });
+      }, { signal });
     }
 
     // Wire random name button (if available)
@@ -77,7 +85,7 @@ export class NameStep extends ProgressionStepPlugin {
           this._characterName = randomName;
           shell.render();
         }
-      });
+      }, { signal });
     }
 
     // Wire random droid name button (if available)
@@ -90,7 +98,7 @@ export class NameStep extends ProgressionStepPlugin {
           this._characterName = randomName;
           shell.render();
         }
-      });
+      }, { signal });
     }
   }
 

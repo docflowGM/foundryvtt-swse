@@ -30,11 +30,11 @@
 
       {{! Embedded Portrait Image — Type 1 ownership }}
       {{#if mentor.portrait}}
-        <image x="45" y="35" width="150" height="150"
+        <image x="35" y="25" width="170" height="170"
                href="{{mentor.portrait}}"
                alt="{{mentor.name}}"
                clip-path="url(#portrait-clip-{{mentor.id}})"
-               preserveAspectRatio="xMidYMid slice"
+               preserveAspectRatio="xMidYMid meet"
                onerror="this.style.display='none'"/>
       {{else}}
         {{! Fallback: if no portrait available, show placeholder circle }}

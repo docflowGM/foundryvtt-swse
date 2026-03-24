@@ -136,6 +136,16 @@
   transition: all var(--prog-transition-base);
   outline: none;
   text-shadow: var(--prog-text-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+}
+
+.prog-holo .prog-btn svg {
+  width: 1em;
+  height: 1em;
+  display: block;
 }
 
 .prog-holo .prog-btn:hover {
