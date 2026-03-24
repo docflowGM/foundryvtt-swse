@@ -35,6 +35,15 @@
   background-image: url('../../assets/ui/record-field-inline-small.svg');
 }
 
+/* HP CONDITION PANEL SVG FRAME */
+.hp-condition-panel.svg-framed {
+  background-image: url('../../assets/ui/hp-condition-panel.svg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  padding: 20px 16px;
+  min-height: 220px;
+}
+
 /* CONDITION TRACK SVG FRAME */
 .condition-track.svg-framed {
   background-image: url('../../assets/ui/condition-track-box-strip.svg');
