@@ -160,6 +160,16 @@ export class DerivedCalculator {
         updates['system.derived.babAdjustment'] = babAdjustment;
       }
 
+      // ========================================
+      // Grapple Bonus Derived (BAB + STR + Size + Species bonuses)
+      // ========================================
+      const strMod = (updates['system.derived.attributes']?.str?.mod) || 0;
+      const sizeTable = { 'fine': -8, 'diminutive': -4, 'tiny': -2, 'small': -1, 'medium': 0, 'large': 4, 'huge': 8, 'gargantuan': 12, 'colossal': 16 };
+      const sizeMod = sizeTable[actor.system?.size] || 0;
+      const speciesGrapple = actor.system?.speciesCombatBonuses?.grapple || actor.system?.speciesTraitBonuses?.combat?.grapple || 0;
+      const grappleBonus = bab.total + strMod + sizeMod + speciesGrapple;
+      updates['system.derived.grappleBonus'] = grappleBonus;
+
       // Defenses
       if (defenses.fortitude) {
         updates['system.derived.defenses'] = updates['system.derived.defenses'] || {};

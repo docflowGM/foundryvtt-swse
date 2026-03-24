@@ -123,14 +123,24 @@ export class ProgressionFinalizer {
     const name = summary.characterName || selections.get('name') || actor.name;
     if (name) {
       set.name = name;
-      set['system.identity.name'] = name;
     }
     if (summary.startingLevel) set['system.level'] = Number(summary.startingLevel);
     if (species) {
       set['system.species'] = species;
       set['system.race'] = species;
     }
-    if (background) set['system.background'] = background;
+    if (background) {
+      set['system.background'] = background;
+      // Write back background selections to sheet-facing identity fields
+      // Background category determines which field to populate
+      if (background.category === 'occupation' && background.name) {
+        set['system.profession'] = background.name;
+      } else if (background.category === 'planet' && background.name) {
+        set['system.planetOfOrigin'] = background.name;
+      } else if (background.category === 'event' && background.name) {
+        set['system.event'] = background.name;
+      }
+    }
     if (clazz) {
       set['system.class'] = clazz;
       set['system.className'] = clazz.name || clazz.label || clazz;

@@ -1,0 +1,66 @@
+{{!--
+  Force Powers Known Ledger (Record-Sheet Style)
+
+  This is a compact reference surface for known Force powers in a scannable ledger.
+  It is NOT a replacement for force-panel.hbs; it is a presentation layer for
+  quick reference during play.
+
+  CLARITY NOTE:
+  - "Hand" = currently available/known powers
+  - "Discard" = powers in discard (house-rule dependent mechanic)
+  Both are shown separately for clarity about game state.
+
+  Source: forceSuite.hand (all known available powers) + forceSuite.discard
+--}}
+
+<section class="force-powers-known-panel holo-panel">
+
+  <header class="section-bar">
+    <h3 class="section-header">Force Powers Known</h3>
+    <button type="button" class="btn-small" data-action="tab" data-tab="force" data-group="primary" data-tab-group="primary" title="Open Force tab to manage powers">Manage →</button>
+  </header>
+
+  {{#if (or (gt forceSuite.hand.length 0) (gt forceSuite.discard.length 0))}}
+    <div class="force-powers-ledger">
+
+      {{#if forceSuite.hand.length}}
+      <div class="powers-group">
+        <div class="group-header">Available ({{forceSuite.hand.length}})</div>
+        {{#each forceSuite.hand}}
+          <div class="power-row" data-item-id="{{this.id}}">
+            <div class="power-name">{{this.name}}</div>
+            {{#if this.tags}}
+              <div class="power-tags">
+                {{#each this.tags}}<span class="tag">{{this}}</span>{{/each}}
+              </div>
+            {{/if}}
+          </div>
+        {{/each}}
+      </div>
+      {{/if}}
+
+      {{#if forceSuite.discard.length}}
+      <div class="powers-group">
+        <div class="group-header">Discarded ({{forceSuite.discard.length}})</div>
+        {{#each forceSuite.discard}}
+          <div class="power-row discarded" data-item-id="{{this.id}}">
+            <div class="power-name">{{this.name}}</div>
+            {{#if this.tags}}
+              <div class="power-tags">
+                {{#each this.tags}}<span class="tag">{{this}}</span>{{/each}}
+              </div>
+            {{/if}}
+          </div>
+        {{/each}}
+      </div>
+      {{/if}}
+
+    </div>
+  {{else}}
+    <div class="empty-state">
+      <p>No Force powers known.</p>
+      <p class="hint">Force powers are managed on the Force tab.</p>
+    </div>
+  {{/if}}
+
+</section>

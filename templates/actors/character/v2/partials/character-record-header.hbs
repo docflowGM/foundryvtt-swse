@@ -1,0 +1,73 @@
+<section class="character-record-header holo-panel">
+
+  <header class="section-bar">
+    <h3 class="section-header">Character Identity</h3>
+  </header>
+
+  <div class="record-identity-grid">
+    <!-- Name & Class/Level Row -->
+    <div class="record-row">
+      <div class="record-field">
+        <label class="field-label">Name</label>
+        <input type="text" name="name" value="{{actor.name}}" class="record-input" />
+      </div>
+      <div class="record-field">
+        <label class="field-label">Class & Level</label>
+        <div class="field-value">{{classDisplay}}</div>
+      </div>
+    </div>
+
+    <!-- Species & Size Row -->
+    <div class="record-row">
+      <div class="record-field">
+        <label class="field-label">Species</label>
+        <div class="field-value">{{system.race}}</div>
+      </div>
+      <div class="record-field">
+        <label class="field-label">Size</label>
+        <div class="field-value">{{system.size}}</div>
+      </div>
+      <div class="record-field">
+        <label class="field-label">Destiny Points</label>
+        <div class="field-value">{{system.destinyPoints.value}} / {{system.destinyPoints.max}}</div>
+      </div>
+    </div>
+
+    <!-- Age, Gender, Height, Weight Row -->
+    <div class="record-row">
+      <div class="record-field">
+        <label class="field-label">Age</label>
+        <input type="text" name="flags.swse.character.age" value="{{flags.swse.character.age}}" class="record-input" placeholder="—" />
+      </div>
+      <div class="record-field">
+        <label class="field-label">Gender</label>
+        <input type="text" name="flags.swse.character.gender" value="{{flags.swse.character.gender}}" class="record-input" placeholder="—" />
+      </div>
+      <div class="record-field">
+        <label class="field-label">Height</label>
+        <input type="text" name="flags.swse.character.height" value="{{flags.swse.character.height}}" class="record-input" placeholder="—" />
+      </div>
+      <div class="record-field">
+        <label class="field-label">Weight</label>
+        <input type="text" name="flags.swse.character.weight" value="{{flags.swse.character.weight}}" class="record-input" placeholder="—" />
+      </div>
+    </div>
+
+    <!-- Homeworld, Profession, Background Row -->
+    <div class="record-row">
+      <div class="record-field">
+        <label class="field-label">Homeworld</label>
+        <input type="text" name="system.planetOfOrigin" value="{{system.planetOfOrigin}}" class="record-input" placeholder="—" />
+      </div>
+      <div class="record-field">
+        <label class="field-label">Profession</label>
+        <input type="text" name="system.profession" value="{{system.profession}}" class="record-input" placeholder="—" />
+      </div>
+      <div class="record-field">
+        <label class="field-label">Background</label>
+        <input type="text" name="system.event" value="{{system.event}}" class="record-input" placeholder="—" />
+      </div>
+    </div>
+  </div>
+
+</section>

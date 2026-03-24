@@ -38,7 +38,9 @@
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs"}}
         </div>
         <div class="swse-v2-right flexcol">
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/xp-panel.hbs"}}
+          {{#if system.useProgression}}
+            {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/xp-panel.hbs"}}
+          {{/if}}
           <div class="holo-panel">
             <div class="section-bar">
               <h3 class="section-header">Progression Mode</h3>

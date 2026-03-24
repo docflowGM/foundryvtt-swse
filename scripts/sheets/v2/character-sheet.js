@@ -478,11 +478,87 @@ export class SWSEV2CharacterSheet extends
       };
     });
 
+    // Build derived class display string from progression data
+    // Format: "Jedi 3 / Soldier 2" or "Noble 5" for single class
+    // Source: actor.system.progression.classLevels (authoritative progression engine output)
+    let classDisplay = '—';
+    const classLevels = actor.system.progression?.classLevels ?? [];
+    if (classLevels.length > 0) {
+      try {
+        const { PROGRESSION_RULES } = await import(
+          "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js"
+        );
+        const classes = PROGRESSION_RULES.classes || {};
+        classDisplay = classLevels
+          .map(cl => {
+            const className = classes[cl.class]?.name || cl.class || 'Unknown';
+            return `${className} ${cl.level}`;
+          })
+          .join(' / ');
+      } catch (err) {
+        // Fallback: use classId if import fails
+        classDisplay = classLevels
+          .map(cl => `${cl.class} ${cl.level}`)
+          .join(' / ');
+      }
+    }
+
     // Identity + visual customization
     const forceSensitive = system.forceSensitive ?? false;
     const identityGlowColor = forceSensitive ? '#88cfff' : '#666666';
 
     const inventory = this._buildInventoryModel(actor);
+
+    // Build equipment ledger (all equipment items for record-sheet display)
+    let totalEquipmentWeightNum = 0;
+    const allEquipment = actor.items
+      .filter(item => ['weapon', 'armor', 'equipment'].includes(item.type))
+      .map(item => {
+        const itemWeight = item.system?.weight ?? 0;
+        const itemQty = item.system?.quantity ?? 1;
+        const itemCost = item.system?.cost ?? 0;
+        totalEquipmentWeightNum += itemWeight * itemQty;
+        return {
+          id: item.id,
+          name: item.name,
+          category: item.type === 'weapon' ? 'Weapon' :
+                    item.type === 'armor' ? 'Armor' : 'Equipment',
+          quantity: itemQty,
+          weight: itemWeight ? `${itemWeight} lbs` : '—',
+          cost: itemCost > 0 ? itemCost.toLocaleString() : '—',
+          equipped: item.system?.equipped ?? false
+        };
+      })
+      .sort((a, b) => {
+        // Sort: equipped first, then by type, then by name
+        if (a.equipped !== b.equipped) return a.equipped ? -1 : 1;
+        if (a.category !== b.category) return a.category.localeCompare(b.category);
+        return a.name.localeCompare(b.name);
+      });
+
+    // Format total equipment weight for display
+    const totalEquipmentWeight = totalEquipmentWeightNum > 0 ? `${totalEquipmentWeightNum} lbs` : '';
+
+    // Get equipped armor (if any)
+    const equippedArmorItem = actor.items.find(item =>
+      item.type === 'armor' && item.system?.equipped === true
+    );
+    const equippedArmor = equippedArmorItem ? {
+      id: equippedArmorItem.id,
+      name: equippedArmorItem.name,
+      armorType: equippedArmorItem.system?.armorType,
+      reflexBonus: equippedArmorItem.system?.reflexBonus,
+      fortBonus: equippedArmorItem.system?.fortBonus,
+      maxDexBonus: equippedArmorItem.system?.maxDexBonus,
+      armorCheckPenalty: equippedArmorItem.system?.armorCheckPenalty,
+      speedPenalty: equippedArmorItem.system?.speedPenalty,
+      weight: equippedArmorItem.system?.weight,
+      isPowered: equippedArmorItem.system?.isPowered,
+      upgradeSlots: equippedArmorItem.system?.upgradeSlots
+    } : null;
+
+    // Get combat notes from flags
+    const combatNotesText = actor.flags?.swse?.sheetNotes?.specialCombatActions || '';
 
     // Presentation-only normalization (no mutation)
     const biography =
@@ -560,6 +636,8 @@ export class SWSEV2CharacterSheet extends
       system.bab ??
       system.baseAttackBonus ??
       0;
+
+    const grappleBonus = derived.grappleBonus ?? 0;
 const forcePoints = [];
     for (let i = 1; i <= fpMax; i++) {
       forcePoints.push({
@@ -673,6 +751,15 @@ const forcePoints = [];
     // Inventory Search Filter (initially empty, populated by user input)
     const inventorySearch = '';
 
+    // Relationships Context
+    const relationships = (actor.system?.relationships ?? []).map(rel => ({
+      uuid: rel.uuid,
+      name: rel.name,
+      type: rel.type,
+      img: rel.img || 'icons/svg/mystery-man.svg',
+      notes: rel.notes || ''
+    }));
+
     // Follower Context (from flags and system)
     const followerSlots = actor.getFlag('foundryvtt-swse', 'followerSlots') || [];
     const ownedActorMap = {};
@@ -728,6 +815,9 @@ const forcePoints = [];
       };
     });
 
+    // Calculate total talent count for ledger display
+    const totalTalentCount = derived.talents?.groups?.reduce((sum, group) => sum + (group.items?.length || 0), 0) || 0;
+
     const finalContext = {
       ...context,
       biography,
@@ -743,6 +833,7 @@ const forcePoints = [];
       speed,
       perceptionTotal,
       bab,
+      grappleBonus,
       forcePointsValue: fpValue,
       forcePointsMax: fpMax,
       destinyPointsValue,
@@ -758,6 +849,7 @@ const forcePoints = [];
       headerDefenses,
       forceSensitive,
       identityGlowColor,
+      classDisplay,
       buildMode,
       actionEconomy,
       // Remediation: Missing context keys
@@ -772,6 +864,16 @@ const forcePoints = [];
       encumbranceStateCss,
       encumbranceLabel,
       inventorySearch,
+      // Equipment context (record-sheet display)
+      allEquipment,
+      totalEquipmentWeight,
+      equippedArmor,
+      // Combat notes context
+      combatNotesText,
+      // Fidelity layer context (Phase 6)
+      totalTalentCount,
+      // Campaign context
+      relationships,
       // Follower context
       followerSlots: enrichedFollowerSlots,
       followerTalentBadges,
@@ -1407,6 +1509,23 @@ const forcePoints = [];
           weaponId: weaponId,
           weaponName: weapon.name
         }).render(true);
+      }, { signal });
+    });
+
+    // Toggle attack breakdown details
+    html.querySelectorAll('[data-action="toggle-attack-details"]').forEach(button => {
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        const attackBlock = button.closest('.swse-attack-block');
+        if (!attackBlock) return;
+
+        const breakdown = attackBlock.querySelector('.attack-breakdown');
+        if (!breakdown) return;
+
+        const isHidden = breakdown.style.display === 'none';
+        breakdown.style.display = isHidden ? 'flex' : 'none';
+        button.classList.toggle('active', isHidden);
+        button.setAttribute('aria-expanded', isHidden);
       }, { signal });
     });
   }

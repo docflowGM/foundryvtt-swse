@@ -1,3 +1,16 @@
+{{!--
+  ARMOR STATE AUDIT (Phase 5)
+  --
+  This panel shows a single "Armor" bonus per defense, derived from equipped armor.
+  NOTE: Multiple armors CAN be equipped (not schema-enforced), but the system treats
+  the FIRST equipped armor as canonical (via ModifierEngine.find()).
+
+  This panel is truthful to system behavior: it shows the armor bonus that actually
+  affects the defense calculation (first equipped by document order).
+
+  If multiple armors are accidentally equipped, only the first one's bonus will display.
+  This is consistent with combat calculations and prevents silent misalignment.
+--}}
 
 <section class="defenses-panel v3-panel holo-panel">
 
@@ -29,62 +42,59 @@
 
         </div>
 
-        <!-- EXPANDED -->
+        <!-- EXPANDED: Math Breakdown -->
         <div class="defense-expanded">
 
-          <!-- Base (10) -->
-          <div class="math-pill derived base-pill">
-            <div class="pill-value">10</div>
-          </div>
-
-          <div class="math-operator">+</div>
-
-          <!-- Level or Armor (Derived) -->
-          <div class="math-pill derived">
-            <label>Armor</label>
-            <div class="pill-value">
-              {{def.armorBonus}}
+          <!-- Math expression in clear row format -->
+          <div class="defense-math-row">
+            <!-- Base (10) -->
+            <div class="math-pill derived base-pill" title="Base defense">
+              <span class="pill-value">10</span>
             </div>
-          </div>
 
-          <div class="math-operator">+</div>
+            <div class="math-operator">+</div>
 
-          <!-- Ability (Derived) -->
-          <div class="math-pill derived {{def.abilityModClass}}">
-            <label>Ability</label>
-            <div class="pill-value">
-              <span class="mod-value">{{def.abilityMod}}</span>
+            <!-- Armor Bonus (Derived) -->
+            <div class="math-pill derived" title="From equipped armor">
+              <span class="pill-label">A</span>
+              <span class="pill-value">{{def.armorBonus}}</span>
             </div>
-          </div>
 
-          <div class="math-operator">+</div>
+            <div class="math-operator">+</div>
 
-          <!-- Class (Derived if used) -->
-          <div class="math-pill derived">
-            <label>Class</label>
-            <div class="pill-value">
-              {{def.classDef}}
+            <!-- Ability Modifier (Derived) -->
+            <div class="math-pill derived {{def.abilityModClass}}" title="Ability modifier for this defense">
+              <span class="pill-label">Abil</span>
+              <span class="pill-value">{{#if (eq def.abilityMod 0)}}0{{else}}{{#if (gt def.abilityMod 0)}}+{{/if}}{{def.abilityMod}}{{/if}}</span>
             </div>
-          </div>
 
-          <div class="math-operator">+</div>
+            <div class="math-operator">+</div>
 
-          <!-- Misc (Editable) -->
-          <div class="math-pill editable {{def.miscModClass}}">
-            <label>Misc</label>
-            <input type="number"
-                   data-field="misc"
-                   name="system.defenses.{{def.key}}.miscMod"
-                   value="{{def.miscMod}}"
-                   class="misc-input {{def.miscModClass}}">
-          </div>
+            <!-- Class Feature (Derived) -->
+            <div class="math-pill derived" title="Class bonus">
+              <span class="pill-label">C</span>
+              <span class="pill-value">{{def.classDef}}</span>
+            </div>
 
-          <div class="math-equals">
-            =
-          </div>
+            <div class="math-operator">+</div>
 
-          <div class="math-result">
-            {{def.total}}
+            <!-- Misc Modifier (Editable) -->
+            <div class="math-pill editable {{def.miscModClass}}" title="Manual adjustments">
+              <span class="pill-label">M</span>
+              <input type="number"
+                     data-field="misc"
+                     name="system.defenses.{{def.key}}.miscMod"
+                     value="{{def.miscMod}}"
+                     class="misc-input {{def.miscModClass}}"
+                     placeholder="0">
+            </div>
+
+            <div class="math-equals">=</div>
+
+            <!-- Total Result -->
+            <div class="math-result" title="Total {{def.label}} defense">
+              <span class="result-value">{{def.total}}</span>
+            </div>
           </div>
 
         </div>

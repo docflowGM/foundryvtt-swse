@@ -1,79 +1,99 @@
 {{!-- ========================================= --}}
-{{!-- SWSE V2 ATTACK CARDS (Flip Architecture) --}}
+{{!-- SWSE V2 ATTACK BLOCKS (Record-Sheet Style) --}}
 {{!-- ========================================= --}}
 
-<div class="swse-attacks-panel swse-card-schema-grid">
+<section class="swse-attacks-panel v3-panel holo-panel">
+  <header class="section-bar">
+    <h3 class="section-header">Attacks</h3>
+  </header>
+
   {{#if combat.attacks.length}}
-    {{#each combat.attacks as |attack|}}
-    <div class="swse-attack-card swse-ui-panel swse-card-schema swse-card-schema--enumerated swse-card-schema--filled" data-attack-id="{{attack.id}}">
-      <div class="card-inner">
-        <div class="card-front swse-card-face">
-          <div class="attack-name">{{attack.name}}</div>
-
-          {{#if attack.weaponId}}
-          <div class="attack-weapon-info">
-            <span class="weapon-name" title="{{attack.weaponName}}">{{attack.weaponName}}</span>
-            {{#if attack.weaponType}}<span class="weapon-type">({{attack.weaponType}})</span>{{/if}}
-          </div>
-          {{/if}}
-
-          <div class="attack-primary">
-            <div class="attack-bonus" data-weapon-id="{{attack.weaponId}}" data-attack-breakdown title="Click for breakdown">{{attack.attackTotal}}</div>
-            <div class="attack-damage" data-weapon-id="{{attack.weaponId}}" data-damage-breakdown title="Click for breakdown">{{attack.damageFormula}}</div>
-          </div>
-
-          <div class="attack-crit">
-            Crit {{attack.critRange}}×{{attack.critMult}}
-            {{#if attack.weaponProperties}}
-              {{#if attack.weaponProperties.keen}}<span class="property-indicator" title="Keen: range +1">⚔</span>{{/if}}
+    <div class="swse-attacks-grid">
+      {{#each combat.attacks as |attack|}}
+      <div class="swse-attack-block swse-ui-panel swse-card-schema swse-card-schema--enumerated swse-card-schema--filled" data-attack-id="{{attack.id}}">
+        <div class="attack-block-content">
+          <!-- Attack Header: Name & Weapon -->
+          <div class="attack-header-row">
+            <div class="attack-name">{{attack.name}}</div>
+            {{#if attack.weaponId}}
+              <div class="weapon-badge" title="{{attack.weaponName}}">
+                {{#if attack.weaponType}}<span class="weapon-type">({{attack.weaponType}})</span>{{/if}}
+              </div>
             {{/if}}
           </div>
 
-          <div class="attack-tags">
-            {{#each attack.tags}}<span class="tag">{{this}}</span>{{/each}}
+          <!-- Attack Stats Row -->
+          <div class="attack-stats-row">
+            <div class="stat-item attack-bonus" data-weapon-id="{{attack.weaponId}}" data-attack-breakdown title="Click for breakdown">
+              <span class="stat-label">To Hit</span>
+              <span class="stat-value">{{attack.attackTotal}}</span>
+            </div>
+            <div class="stat-item attack-damage" data-weapon-id="{{attack.weaponId}}" data-damage-breakdown title="Click for breakdown">
+              <span class="stat-label">Damage</span>
+              <span class="stat-value">{{attack.damageFormula}}</span>
+            </div>
+            <div class="stat-item attack-crit">
+              <span class="stat-label">Crit</span>
+              <span class="stat-value">{{attack.critRange}}×{{attack.critMult}}</span>
+              {{#if attack.weaponProperties}}
+                {{#if attack.weaponProperties.keen}}<span class="property-icon" title="Keen">⚔</span>{{/if}}
+              {{/if}}
+            </div>
+          </div>
+
+          <!-- Properties & Tags -->
+          {{#if (or attack.tags attack.weaponProperties)}}
+          <div class="attack-properties-row">
+            {{#each attack.tags}}<span class="property-tag">{{this}}</span>{{/each}}
             {{#if attack.weaponProperties}}
-              {{#if attack.weaponProperties.flaming}}<span class="tag property-tag">Flaming</span>{{/if}}
-              {{#if attack.weaponProperties.frost}}<span class="tag property-tag">Frost</span>{{/if}}
-              {{#if attack.weaponProperties.shock}}<span class="tag property-tag">Shock</span>{{/if}}
-              {{#if attack.weaponProperties.vorpal}}<span class="tag property-tag">Vorpal</span>{{/if}}
+              {{#if attack.weaponProperties.flaming}}<span class="property-tag property-tag--special">Flaming</span>{{/if}}
+              {{#if attack.weaponProperties.frost}}<span class="property-tag property-tag--special">Frost</span>{{/if}}
+              {{#if attack.weaponProperties.shock}}<span class="property-tag property-tag--special">Shock</span>{{/if}}
+              {{#if attack.weaponProperties.vorpal}}<span class="property-tag property-tag--special">Vorpal</span>{{/if}}
             {{/if}}
           </div>
-
-          <button type="button" class="attack-roll-btn" data-action="roll-weapon-attack" data-weapon-id="{{attack.weaponId}}">ROLL</button>
-        </div>
-
-        <div class="card-back swse-card-face">
-          <div class="breakdown-section">
-            <div class="section-title">Attack Breakdown</div>
-            <div class="pill-row swse-pill-row">
-              {{#each attack.breakdown.attack}}<span class="pill swse-info-pill">{{label}} {{value}}</span>{{/each}}
-            </div>
-          </div>
-
-          <div class="breakdown-section">
-            <div class="section-title">Damage Breakdown</div>
-            <div class="pill-row swse-pill-row">
-              {{#each attack.breakdown.damage}}<span class="pill swse-info-pill">{{label}} {{value}}</span>{{/each}}
-            </div>
-          </div>
-
-          {{#if attack.breakdown.conditional.length}}
-          <div class="breakdown-section">
-            <div class="section-title">Conditional</div>
-            <div class="pill-row swse-pill-row">
-              {{#each attack.breakdown.conditional}}<span class="pill conditional swse-info-pill">{{label}} {{value}}</span>{{/each}}
-            </div>
-          </div>
           {{/if}}
+
+          <!-- Roll & Details -->
+          <div class="attack-actions-row">
+            <button type="button" class="attack-roll-btn primary" data-action="roll-weapon-attack" data-weapon-id="{{attack.weaponId}}" aria-label="Roll {{attack.name}} attack">Roll Attack</button>
+            <button type="button" class="attack-details-btn secondary" data-action="toggle-attack-details" data-attack-id="{{attack.id}}" title="Show attack and damage breakdown" aria-label="Show details for {{attack.name}} (modifier breakdown)" aria-expanded="false">Details</button>
+          </div>
+
+          <!-- Collapsible Breakdown (hidden by default) -->
+          <div class="attack-breakdown" style="display: none;">
+            <div class="breakdown-section">
+              <div class="section-title">Attack Modifier</div>
+              <div class="pill-row swse-pill-row">
+                {{#each attack.breakdown.attack}}<span class="pill swse-info-pill">{{label}} {{value}}</span>{{/each}}
+              </div>
+            </div>
+
+            <div class="breakdown-section">
+              <div class="section-title">Damage Modifier</div>
+              <div class="pill-row swse-pill-row">
+                {{#each attack.breakdown.damage}}<span class="pill swse-info-pill">{{label}} {{value}}</span>{{/each}}
+              </div>
+            </div>
+
+            {{#if attack.breakdown.conditional.length}}
+            <div class="breakdown-section">
+              <div class="section-title">Conditional Modifiers</div>
+              <div class="pill-row swse-pill-row">
+                {{#each attack.breakdown.conditional}}<span class="pill conditional swse-info-pill">{{label}} {{value}}</span>{{/each}}
+              </div>
+            </div>
+            {{/if}}
+          </div>
         </div>
       </div>
+      {{/each}}
     </div>
-    {{/each}}
   {{else}}
     <div class="swse-ui-empty swse-card-schema swse-card-schema--choice swse-card-schema--placeholder">
-      <span class="swse-card-schema__eyebrow">Enumerated Slot</span>
+      <span class="swse-card-schema__eyebrow">No Attacks</span>
       <span class="swse-card-schema__title">No attacks available</span>
-      <span class="swse-card-schema__body">Equip a weapon or add a combat-ready profile to populate standardized attack cards here.</span>
+      <span class="swse-card-schema__body">Equip a weapon in the Gear tab to populate attack blocks here.</span>
     </div>
   {{/if}}
-</div>
+</section>

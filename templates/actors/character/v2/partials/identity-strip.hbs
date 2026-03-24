@@ -7,8 +7,11 @@
 
     <div class="identity-meta">
       <span>Species: {{system.race}}</span>
-      <span>Homeworld: {{system.planetOfOrigin}}</span>
-      <span>Background: {{system.profession}}</span>
+      {{!-- Character biography fields (only display for characters) --}}
+      {{#if (eq actor.type "character")}}
+        <span>Homeworld: {{system.planetOfOrigin}}</span>
+        <span>Background: {{system.profession}}</span>
+      {{/if}}
     </div>
   </div>
 
