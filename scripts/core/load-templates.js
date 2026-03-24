@@ -52,7 +52,6 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-armor-card.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-item-card.hbs',
-  'systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-item-row.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-weapon-card.hbs',
 
   // ==============================
@@ -85,7 +84,6 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/partials/actor/persistent-header.hbs',
   'systems/foundryvtt-swse/templates/partials/ui/condition-track.hbs',
   'systems/foundryvtt-swse/templates/partials/ui/combat/combat-action-economy-panel.hbs',
-  'systems/foundryvtt-swse/templates/partials/ui/combat/action-economy-display.hbs',
   'systems/foundryvtt-swse/templates/partials/skill-row-static.hbs',
   'systems/foundryvtt-swse/templates/partials/skill-actions-panel.hbs',
   'systems/foundryvtt-swse/templates/partials/skill-action-card.hbs',
@@ -95,7 +93,6 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/partials/ability-card.hbs',
   'systems/foundryvtt-swse/templates/partials/ability-scores.hbs',
   'systems/foundryvtt-swse/templates/partials/defenses.hbs',
-  'systems/foundryvtt-swse/templates/partials/ship-combat-actions-panel.hbs',
   'systems/foundryvtt-swse/templates/partials/crew-action-cards.hbs',
   'systems/foundryvtt-swse/templates/partials/tab-navigation.hbs',
   'systems/foundryvtt-swse/templates/partials/item-controls.hbs',

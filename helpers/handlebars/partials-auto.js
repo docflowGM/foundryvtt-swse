@@ -12,7 +12,6 @@ const PARTIALS = [
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/dark-side-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/feats-panel.hbs",
-  "systems/foundryvtt-swse/templates/actors/character/v2/partials/gear-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-panel.hbs",
   "systems/foundryvtt-swse/templates/actors/character/v2/partials/languages-panel.hbs",
