@@ -516,6 +516,7 @@ export class SWSEV2CharacterSheet extends
       .map(item => {
         const itemWeight = item.system?.weight ?? 0;
         const itemQty = item.system?.quantity ?? 1;
+        const itemCost = item.system?.cost ?? 0;
         totalEquipmentWeightNum += itemWeight * itemQty;
         return {
           id: item.id,
@@ -524,6 +525,7 @@ export class SWSEV2CharacterSheet extends
                     item.type === 'armor' ? 'Armor' : 'Equipment',
           quantity: itemQty,
           weight: itemWeight ? `${itemWeight} lbs` : '—',
+          cost: itemCost > 0 ? itemCost.toLocaleString() : '—',
           equipped: item.system?.equipped ?? false
         };
       })
@@ -634,6 +636,8 @@ export class SWSEV2CharacterSheet extends
       system.bab ??
       system.baseAttackBonus ??
       0;
+
+    const grappleBonus = derived.grappleBonus ?? 0;
 const forcePoints = [];
     for (let i = 1; i <= fpMax; i++) {
       forcePoints.push({
@@ -829,6 +833,7 @@ const forcePoints = [];
       speed,
       perceptionTotal,
       bab,
+      grappleBonus,
       forcePointsValue: fpValue,
       forcePointsMax: fpMax,
       destinyPointsValue,

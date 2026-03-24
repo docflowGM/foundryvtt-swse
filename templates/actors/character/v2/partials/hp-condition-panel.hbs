@@ -28,6 +28,14 @@
     {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/summary/shield-rating.hbs"}}
   {{/if}}
 
+  {{!-- Damage Reduction Display (Conditional) --}}
+  {{#if system.damageReduction}}
+    <div class="survivability-stat" title="Damage Reduction reduces incoming damage before other defenses">
+      <div class="stat-label">DR</div>
+      <div class="stat-value">{{system.damageReduction}}</div>
+    </div>
+  {{/if}}
+
   <!-- CONDITION TRACK BLOCK -->
   <div class="condition-section">
     <div class="condition-track">
