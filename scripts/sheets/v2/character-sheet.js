@@ -1520,6 +1520,7 @@ const forcePoints = [];
         const isHidden = breakdown.style.display === 'none';
         breakdown.style.display = isHidden ? 'flex' : 'none';
         button.classList.toggle('active', isHidden);
+        button.setAttribute('aria-expanded', isHidden);
       }, { signal });
     });
   }

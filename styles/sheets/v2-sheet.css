@@ -2673,3 +2673,412 @@ select option:checked {
 /* ================================================================= */
 /* End Phase 6 Styles                                                */
 /* ================================================================= */
+
+/* ================================================================= */
+/* PHASE 7: Polish & Hardening - Responsive & Print                 */
+/* ================================================================= */
+
+/* ------------------------------------------------------------------ */
+/* RESPONSIVE: Tablet (768px and below)                               */
+/* ------------------------------------------------------------------ */
+
+@media (max-width: 768px) {
+  /* Record tab - stack grid layout */
+  .swse-sheet .record-sheet-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Abilities grid - reduce columns */
+  .swse-sheet .ability-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Defense math row - wrap to multi-line gracefully */
+  .swse-sheet .defense-math-row {
+    gap: 2px;
+  }
+
+  /* Equipment ledger - adapt to narrower space */
+  .swse-sheet .ledger-header,
+  .swse-sheet .ledger-row,
+  .swse-sheet .ledger-footer {
+    grid-template-columns: 1.5fr 0.8fr 0.5fr 0.8fr;
+    font-size: 0.85rem;
+    gap: 4px;
+  }
+
+  /* Attack blocks grid - single or dual column */
+  .swse-sheet .swse-attacks-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Attack stat row - allow wrap */
+  .swse-sheet .attack-stats-row {
+    gap: 4px;
+  }
+
+  /* Resources subgrid - stack on smaller tablets */
+  .swse-sheet .resources-subgrid {
+    grid-template-columns: 1fr;
+  }
+
+  /* DSP track - wrap numerically */
+  .swse-sheet .dsp-numbered-track {
+    gap: 1px;
+  }
+
+  .swse-sheet .dsp-track-box {
+    min-width: 20px;
+    height: 20px;
+    font-size: 0.6rem;
+  }
+
+  /* Talents/Force ledgers - reduce font slightly */
+  .swse-sheet .talent-row,
+  .swse-sheet .power-row {
+    font-size: 0.85rem;
+    gap: 6px;
+  }
+
+  .swse-sheet .talent-source,
+  .swse-sheet .power-tags {
+    font-size: 0.75rem;
+  }
+
+  /* Section headers remain readable */
+  .swse-sheet .section-header {
+    font-size: 0.95rem;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* RESPONSIVE: Mobile (480px and below)                               */
+/* ------------------------------------------------------------------ */
+
+@media (max-width: 480px) {
+  /* Record sheet header - stack fields */
+  .swse-sheet .sheet-header {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .swse-sheet .header-right {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: space-between;
+  }
+
+  .swse-sheet .swse-stat {
+    min-width: 48px;
+    font-size: 0.75rem;
+  }
+
+  /* Tabs - horizontal scroll on very narrow */
+  .swse-sheet .sheet-tabs {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .swse-sheet .sheet-tabs .item {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+  }
+
+  /* Equipment ledger - hide less critical columns */
+  .swse-sheet .ledger-header,
+  .swse-sheet .ledger-row,
+  .swse-sheet .ledger-footer {
+    grid-template-columns: 2fr 0.8fr;
+    font-size: 0.8rem;
+  }
+
+  .swse-sheet .col-type,
+  .swse-sheet .col-weight {
+    display: none;
+  }
+
+  .swse-sheet .col-qty {
+    display: none;
+  }
+
+  /* Defense math - reduce pill size */
+  .swse-sheet .math-pill {
+    padding: 4px 6px;
+    min-width: 32px;
+  }
+
+  .swse-sheet .pill-label {
+    font-size: 0.6rem;
+  }
+
+  .swse-sheet .pill-value {
+    font-size: 0.8rem;
+  }
+
+  .swse-sheet .math-operator,
+  .swse-sheet .math-equals {
+    margin: 0 1px;
+    font-size: 0.8rem;
+  }
+
+  /* Attack stats - stack vertically */
+  .swse-sheet .attack-stats-row {
+    flex-direction: column;
+  }
+
+  .swse-sheet .stat-item {
+    width: 100%;
+  }
+
+  /* Talents/Force rows - simplify */
+  .swse-sheet .talent-row,
+  .swse-sheet .power-row {
+    flex-direction: column;
+    gap: 2px;
+    padding: 4px 8px;
+  }
+
+  .swse-sheet .talent-source,
+  .swse-sheet .power-tags {
+    font-size: 0.7rem;
+  }
+
+  /* Conditions - horizontal scroll if needed */
+  .swse-sheet .condition-track {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* DSP track - smaller boxes, allow scroll */
+  .swse-sheet .dsp-numbered-track {
+    gap: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+
+  .swse-sheet .dsp-track-box {
+    min-width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  /* Hide non-essential action buttons on narrow screens */
+  .swse-sheet .card-footer .btn {
+    display: none;
+  }
+
+  .swse-sheet .card-footer .btn-equip,
+  .swse-sheet .card-footer .btn-edit {
+    display: flex;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* PRINT: Record/Reference Surfaces                                   */
+/* ------------------------------------------------------------------ */
+
+@media print {
+  /* Hide interactive controls that don't make sense in print */
+  .swse-sheet .sheet-actions,
+  .swse-sheet .sheet-tabs,
+  .swse-sheet .mini-btn,
+  .swse-sheet .attack-roll-btn,
+  .swse-sheet .attack-details-btn,
+  .swse-sheet .inventory-add-btn,
+  .swse-sheet .swse-btn,
+  .swse-sheet [data-action],
+  .swse-sheet button {
+    display: none !important;
+  }
+
+  /* Print-friendly background */
+  .swse-sheet .holo-panel {
+    background: #fff;
+    box-shadow: none;
+    border: 1px solid #000;
+    page-break-inside: avoid;
+  }
+
+  /* Keep borders for structure */
+  .swse-sheet .section-bar {
+    background: #f5f5f5;
+    border-bottom: 2px solid #000;
+  }
+
+  .swse-sheet .section-header {
+    color: #000;
+    font-weight: 700;
+  }
+
+  /* Text colors for readability */
+  .swse-sheet {
+    color: #000;
+  }
+
+  /* Equipment/Talent ledgers */
+  .swse-sheet .ledger-row,
+  .swse-sheet .talent-row,
+  .swse-sheet .power-row {
+    background: #fff;
+    border-bottom: 1px solid #999;
+    page-break-inside: avoid;
+  }
+
+  /* Defense math - readable in monochrome */
+  .swse-sheet .math-pill {
+    background: #f9f9f9;
+    border: 1px solid #000;
+    color: #000;
+  }
+
+  .swse-sheet .math-result {
+    background: #efefef;
+    border: 1px solid #000;
+    color: #000;
+  }
+
+  /* DSP track - visible in grayscale */
+  .swse-sheet .dsp-track-box {
+    background: #f5f5f5;
+    border: 1px solid #000;
+    color: #000;
+  }
+
+  .swse-sheet .dsp-track-box.filled {
+    background: #cccccc;
+    border: 1px solid #000;
+  }
+
+  /* Attack blocks */
+  .swse-sheet .swse-attack-block {
+    background: #fff;
+    border: 1px solid #000;
+    page-break-inside: avoid;
+  }
+
+  /* Condition track */
+  .swse-sheet .condition-chevron {
+    background: #f5f5f5;
+    border: 1px solid #000;
+    color: #000;
+  }
+
+  .swse-sheet .condition-chevron.active {
+    background: #999;
+    color: #fff;
+  }
+
+  /* Remove gradients and glow effects */
+  .swse-sheet .hp-bar,
+  .swse-sheet .swse-attack-card,
+  .swse-sheet .inventory-card {
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+
+  /* Ensure text is dark and readable */
+  .swse-sheet {
+    background: #fff;
+  }
+
+  .swse-sheet .muted {
+    color: #666;
+  }
+
+  /* Page breaks for major sections */
+  .swse-sheet .tab {
+    page-break-before: auto;
+  }
+
+  .swse-sheet .record-equipment-section {
+    page-break-inside: avoid;
+  }
+
+  /* Reduce excessive whitespace for print */
+  .swse-sheet .sheet-content {
+    padding: 8px;
+  }
+
+  .swse-sheet .holo-panel {
+    margin-bottom: 8px;
+  }
+}
+
+/* ================================================================= */
+/* ACCESSIBILITY: Improvements                                        */
+/* ================================================================= */
+
+/* Ensure focus states are visible */
+.swse-sheet button:focus,
+.swse-sheet input:focus,
+.swse-sheet textarea:focus {
+  outline: 2px solid #4a9eff;
+  outline-offset: 2px;
+}
+
+/* Better contrast for labels */
+.swse-sheet .stat-label,
+.swse-sheet .mod-label,
+.swse-sheet .defense-label {
+  font-weight: 700;
+}
+
+/* Improve button text clarity */
+.swse-sheet .btn,
+.swse-sheet button {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Attack details toggle - visible state */
+.swse-sheet .attack-details-btn.active {
+  background: rgba(74, 158, 255, 0.25);
+  border-color: rgba(74, 158, 255, 0.8);
+}
+
+/* Condition chevron - clearer numbering */
+.swse-sheet .condition-chevron {
+  font-variant-numeric: tabular-nums;
+}
+
+/* DSP track - clearer numbering */
+.swse-sheet .dsp-track-box {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ================================================================= */
+/* End Phase 7 Styles                                                */
+/* ================================================================= */
+
+/* ================================================================= */
+/* ACCESSIBILITY: Screen Reader Only Content                         */
+/* ================================================================= */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ================================================================= */
+/* UX BRIDGES: Navigation Button Styling                             */
+/* ================================================================= */
+
+.swse-sheet .section-bar .btn-small {
+  margin-left: auto;
+}
+
+/* Ensure manage buttons are accessible */
+.swse-sheet .btn-small {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}

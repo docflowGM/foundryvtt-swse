@@ -56,8 +56,8 @@
 
           <!-- Roll & Details -->
           <div class="attack-actions-row">
-            <button type="button" class="attack-roll-btn primary" data-action="roll-weapon-attack" data-weapon-id="{{attack.weaponId}}">Roll Attack</button>
-            <button type="button" class="attack-details-btn secondary" data-action="toggle-attack-details" data-attack-id="{{attack.id}}" title="Show attack and damage breakdown">Details</button>
+            <button type="button" class="attack-roll-btn primary" data-action="roll-weapon-attack" data-weapon-id="{{attack.weaponId}}" aria-label="Roll {{attack.name}} attack">Roll Attack</button>
+            <button type="button" class="attack-details-btn secondary" data-action="toggle-attack-details" data-attack-id="{{attack.id}}" title="Show attack and damage breakdown" aria-label="Show details for {{attack.name}} (modifier breakdown)" aria-expanded="false">Details</button>
           </div>
 
           <!-- Collapsible Breakdown (hidden by default) -->
