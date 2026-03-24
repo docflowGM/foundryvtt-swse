@@ -14,7 +14,8 @@
 /* CHARACTER RECORD HEADER PLATE */
 .character-record-header.svg-framed {
   background-image: url('../../assets/ui/character-record-header-plate.svg');
-  padding: 24px 20px;
+  padding: 20px 16px;
+  min-height: 200px;
 }
 
 /* RECORD FIELD INLINE WRAPPERS */
@@ -41,7 +42,8 @@
   background-repeat: no-repeat;
   display: flex;
   gap: 4px;
-  padding: 12px 8px;
+  padding: 10px 8px;
+  min-height: 95px;
 }
 
 .condition-chevron {
@@ -71,7 +73,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(32px, 1fr));
   gap: 3px;
-  padding: 12px 8px;
+  padding: 10px 8px;
+  min-height: 105px;
 }
 
 .dsp-track-box {
@@ -128,7 +131,7 @@
 .swse-attacks-grid {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .swse-attack-block.svg-row-backed {
@@ -137,7 +140,8 @@
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: 0 0;
-  padding: 12px 10px;
+  padding: 10px 12px;
+  min-height: 100px;
 }
 
 .attack-block-content {
@@ -149,7 +153,7 @@
 .equipment-ledger {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .ledger-row.svg-row-backed {
@@ -161,8 +165,9 @@
   display: grid;
   grid-template-columns: 2fr 1fr 0.5fr 0.75fr 0.75fr;
   gap: 8px;
-  padding: 8px 6px;
+  padding: 8px 8px;
   align-items: center;
+  min-height: 85px;
 }
 
 .ledger-row.svg-row-backed > div {
@@ -174,7 +179,7 @@
 .talents-ledger {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .talent-row.svg-row-backed {
@@ -186,8 +191,9 @@
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 12px;
-  padding: 8px 6px;
+  padding: 6px 8px;
   align-items: center;
+  min-height: 70px;
 }
 
 .talent-row.svg-row-backed .talent-name,
@@ -201,7 +207,7 @@
 .force-powers-ledger {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .power-row.svg-row-backed {
@@ -213,8 +219,9 @@
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 12px;
-  padding: 8px 6px;
+  padding: 6px 8px;
   align-items: center;
+  min-height: 70px;
 }
 
 .power-row.svg-row-backed .power-name,
@@ -234,6 +241,7 @@
   background-size: 100% 100%;
   background-repeat: no-repeat;
   padding: 20px 16px;
+  min-height: 260px;
 }
 
 .relationships-list {
