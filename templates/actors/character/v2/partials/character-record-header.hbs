@@ -5,19 +5,15 @@
   </header>
 
   <div class="record-identity-grid">
-    <!-- Name & Player Row -->
+    <!-- Name & Class/Level Row -->
     <div class="record-row">
       <div class="record-field">
         <label class="field-label">Name</label>
         <input type="text" name="name" value="{{actor.name}}" class="record-input" />
       </div>
       <div class="record-field">
-        <label class="field-label">Class</label>
-        <div class="field-value">{{system.class}}</div>
-      </div>
-      <div class="record-field">
-        <label class="field-label">Level</label>
-        <div class="field-value">{{system.level}}</div>
+        <label class="field-label">Class & Level</label>
+        <div class="field-value">{{classDisplay}}</div>
       </div>
     </div>
 

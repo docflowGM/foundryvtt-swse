@@ -478,6 +478,31 @@ export class SWSEV2CharacterSheet extends
       };
     });
 
+    // Build derived class display string from progression data
+    // Format: "Jedi 3 / Soldier 2" or "Noble 5" for single class
+    // Source: actor.system.progression.classLevels (authoritative progression engine output)
+    let classDisplay = '—';
+    const classLevels = actor.system.progression?.classLevels ?? [];
+    if (classLevels.length > 0) {
+      try {
+        const { PROGRESSION_RULES } = await import(
+          "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js"
+        );
+        const classes = PROGRESSION_RULES.classes || {};
+        classDisplay = classLevels
+          .map(cl => {
+            const className = classes[cl.class]?.name || cl.class || 'Unknown';
+            return `${className} ${cl.level}`;
+          })
+          .join(' / ');
+      } catch (err) {
+        // Fallback: use classId if import fails
+        classDisplay = classLevels
+          .map(cl => `${cl.class} ${cl.level}`)
+          .join(' / ');
+      }
+    }
+
     // Identity + visual customization
     const forceSensitive = system.forceSensitive ?? false;
     const identityGlowColor = forceSensitive ? '#88cfff' : '#666666';
@@ -758,6 +783,7 @@ const forcePoints = [];
       headerDefenses,
       forceSensitive,
       identityGlowColor,
+      classDisplay,
       buildMode,
       actionEconomy,
       // Remediation: Missing context keys
