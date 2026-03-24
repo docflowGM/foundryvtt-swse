@@ -2,17 +2,19 @@
 <section class="hp-condition-panel v3-panel holo-panel {{hp.stateClass}}">
 
   <header class="section-bar">
-    <h3 class="section-header">Health</h3>
+    <h3 class="section-header">Health & Conditions</h3>
     <span class="hp-state-label {{hp.stateClass}}">
       {{#if (eq hp.stateClass "state--dead")}}Dead{{else if (eq hp.stateClass "state--critical")}}Critical{{else if (eq hp.stateClass "state--damaged")}}Damaged{{else if (eq hp.stateClass "state--wounded")}}Wounded{{else}}Healthy{{/if}}
     </span>
   </header>
 
-  <!-- HP BAR with semantic styling -->
-  <div class="hp-bar-wrapper {{hp.stateClass}}">
-    <div class="hp-bar {{hp.stateClass}}">
-      <div class="hp-bar__fill {{hp.stateClass}}" style="width: {{hp.percent}}%;"></div>
-      <span class="hp-bar__label">{{hp.value}} / {{hp.max}}</span>
+  <!-- HP BLOCK -->
+  <div class="hp-section">
+    <div class="hp-bar-wrapper {{hp.stateClass}}">
+      <div class="hp-bar {{hp.stateClass}}">
+        <div class="hp-bar__fill {{hp.stateClass}}" style="width: {{hp.percent}}%;"></div>
+        <span class="hp-bar__label">{{hp.value}} / {{hp.max}}</span>
+      </div>
     </div>
     {{#if bonusHp.value}}
       <div class="bonus-hp-info">
@@ -21,14 +23,21 @@
     {{/if}}
   </div>
 
-  <!-- CONDITION TRACK -->
-  <div class="condition-track">
-
-    {{#each conditionSteps as |step|}}
-      <button type="button" class="condition-chevron {{#if step.active}}active{{/if}}" data-action="set-condition-step" data-step="{{step.step}}" title="Set condition: {{step.label}}"></button>
-    {{/each}}
-
+  <!-- CONDITION TRACK BLOCK -->
+  <div class="condition-section">
+    <div class="condition-track">
+      {{#each conditionSteps as |step|}}
+        <button type="button" class="condition-chevron {{#if step.active}}active{{/if}}"
+                data-action="set-condition-step" data-step="{{step.step}}"
+                title="Set condition: {{step.label}}">
+          <span class="condition-level">{{step.step}}</span>
+        </button>
+      {{/each}}
+    </div>
+    <div class="condition-status-row">
+      <span class="condition-status-label">Condition Track:</span>
+      <span class="condition-status-value">{{system.conditionTrack.current}}</span>
+    </div>
   </div>
-  <div class="condition-track-status">Condition: {{system.conditionTrack.current}}</div>
 
 </section>

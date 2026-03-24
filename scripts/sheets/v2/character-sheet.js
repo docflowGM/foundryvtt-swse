@@ -1501,6 +1501,22 @@ const forcePoints = [];
         }).render(true);
       }, { signal });
     });
+
+    // Toggle attack breakdown details
+    html.querySelectorAll('[data-action="toggle-attack-details"]').forEach(button => {
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        const attackBlock = button.closest('.swse-attack-block');
+        if (!attackBlock) return;
+
+        const breakdown = attackBlock.querySelector('.attack-breakdown');
+        if (!breakdown) return;
+
+        const isHidden = breakdown.style.display === 'none';
+        breakdown.style.display = isHidden ? 'flex' : 'none';
+        button.classList.toggle('active', isHidden);
+      }, { signal });
+    });
   }
 
   /* ============================================================
