@@ -21,6 +21,40 @@ import { computeCenteredPosition } from "/systems/foundryvtt-swse/scripts/utils/
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
+ * Detect if a character is incomplete (missing required chargen data).
+ * This is the canonical routing check for chargen vs level-up.
+ *
+ * @param {Actor} actor - The actor to check
+ * @returns {boolean} - True if character is incomplete and needs chargen
+ * @private
+ */
+function _isChargenIncomplete(actor) {
+  if (!actor || actor.type !== 'character') {
+    return false;
+  }
+
+  const system = actor.system;
+
+  // Brand-new actor — no level assigned yet
+  if ((system.level || 0) === 0) {
+    return true;
+  }
+
+  // Missing or placeholder name
+  if (!actor.name || actor.name.trim() === '' || actor.name === 'New Character') {
+    return true;
+  }
+
+  // No class item yet — chargen was not completed
+  const hasClass = actor.items.some(item => item.type === 'class');
+  if (!hasClass) {
+    return true;
+  }
+
+  return false; // Character is complete
+}
+
+/**
  * Unified entry point for all progression.
  * BLOCKING: Does not return until progression is complete or user cancels.
  *
@@ -29,11 +63,20 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
  * @returns {Promise<void>}
  */
 export async function launchProgression(actor, options = {}) {
-  // TEMP AUDIT: Log entry point
-  console.log('[TEMP AUDIT] launchProgression called with actor:', actor?.name, actor?.type);
+  // DIAGNOSTICS: Log entry point with full context
+  console.log('[PROGRESSION] ═══════════════════════════════════════════');
+  console.log('[PROGRESSION] launchProgression() ENTRY');
+  console.log('[PROGRESSION] actor.name:', actor?.name);
+  console.log('[PROGRESSION] actor.type:', actor?.type);
+  console.log('[PROGRESSION] actor.system.level:', actor?.system?.level);
+  console.log('[PROGRESSION] actor.items.length:', actor?.items?.length);
+  const hasClass = actor?.items?.some(item => item.type === 'class');
+  console.log('[PROGRESSION] hasClass:', hasClass);
+  console.log('[PROGRESSION] ═══════════════════════════════════════════');
 
   if (!actor) {
     ui?.notifications?.error?.('No actor provided to progression launcher.');
+    SWSELogger.error('[Progression Entry] No actor provided');
     return;
   }
 
@@ -76,24 +119,44 @@ export async function launchProgression(actor, options = {}) {
   }
 
   try {
-    // SINGLE-SHELL ARCHITECTURE: Open ChargenShell directly, starting at intro (step 0).
-    // The intro boot sequence renders inside the shell as a real step plugin — no standalone
-    // splash window. This means only one visible app exists for the entire chargen experience.
     if (actor.type === 'character') {
-      console.log('[TEMP AUDIT] Importing ChargenShell...');
-      const { ChargenShell } = await import('./chargen-shell.js');
-      console.log('[TEMP AUDIT] ChargenShell imported successfully:', ChargenShell?.name);
-      console.log('[TEMP AUDIT] Calling ChargenShell.open()...');
-      return await ChargenShell.open(actor, options);
+      // ROUTING LOGIC: Route to ChargenShell (new characters) or LevelupShell (existing characters)
+      const isChargenIncomplete = _isChargenIncomplete(actor);
+
+      console.log('[PROGRESSION] ───────────────────────────────');
+      console.log('[PROGRESSION] ROUTING DECISION');
+      console.log('[PROGRESSION] isChargenIncomplete:', isChargenIncomplete);
+      console.log('[PROGRESSION] ───────────────────────────────');
+
+      if (isChargenIncomplete) {
+        // Brand new or incomplete character → open ChargenShell
+        SWSELogger.log(`[Progression Entry] Character is incomplete (level=${actor.system.level}, hasClass=${actor.items.some(i => i.type === 'class')}) → routing to ChargenShell`);
+        console.log('[PROGRESSION] ROUTING: Opening ChargenShell for incomplete character');
+        const { ChargenShell } = await import('./chargen-shell.js');
+        console.log('[PROGRESSION] ChargenShell imported');
+        const result = await ChargenShell.open(actor, options);
+        console.log('[PROGRESSION] ChargenShell.open() completed, result:', result?.constructor?.name);
+        return result;
+      } else {
+        // Established character → open LevelupShell for level advancement
+        SWSELogger.log(`[Progression Entry] Character is complete (level=${actor.system.level}) → routing to LevelupShell`);
+        console.log('[PROGRESSION] ROUTING: Opening LevelupShell for complete character');
+        const { LevelupShell } = await import('./levelup-shell.js');
+        console.log('[PROGRESSION] LevelupShell imported');
+        const result = await LevelupShell.open(actor, options);
+        console.log('[PROGRESSION] LevelupShell.open() completed, result:', result?.constructor?.name);
+        return result;
+      }
     }
 
     SWSELogger.warn(
-      `[Progression Entry] Unsupported actor type: ${actor.type}. Chargen only supports characters.`
+      `[Progression Entry] Unsupported actor type: ${actor.type}. Progression only supports characters.`
     );
     ui?.notifications?.warn?.('Progression only supports character actors.');
   } catch (err) {
-    console.log('[TEMP AUDIT] launchProgression caught exception:', err);
-    SWSELogger.error('[Progression Entry] ERROR:', err);
+    console.error('[PROGRESSION] ❌ EXCEPTION CAUGHT:', err);
+    console.error('[PROGRESSION] Stack:', err.stack);
+    SWSELogger.error('[Progression Entry] Exception during progression launch:', err);
     ui?.notifications?.error?.(`Progression failed: ${err.message}`);
   }
 }

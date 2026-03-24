@@ -1082,25 +1082,34 @@ const forcePoints = [];
     });
     console.log('[CHARGEN DEBUG] All data-action buttons found:', actionButtonsByType);
 
+    // Progression buttons (Chargen/LevelUp) — Route through unified entry point
     const chargenButtons = html.querySelectorAll('[data-action="cmd-chargen"]');
-    console.log('[TEMP AUDIT] Found chargen buttons in sheet HTML:', chargenButtons.length);
+    console.log('[SHEET] Found Chargen buttons in template:', chargenButtons.length);
     chargenButtons.forEach(button => {
-      console.log('[TEMP AUDIT] Binding chargen button click listener');
       button.addEventListener("click", async ev => {
-        console.log('[TEMP AUDIT] Chargen button clicked via sheet listener');
+        console.log('[SHEET] ✓ Chargen button clicked → calling launchProgression()');
         ev.preventDefault();
-        await launchProgression(this.actor);
+        try {
+          await launchProgression(this.actor);
+        } catch (err) {
+          console.error('[SHEET] ✗ launchProgression failed:', err);
+          SWSELogger.error('[CharacterSheet] Progression launch failed:', err);
+        }
       }, { signal });
     });
 
     const levelupButtons = html.querySelectorAll('[data-action="cmd-levelup"]');
-    console.log('[TEMP AUDIT] Found levelup buttons in sheet HTML:', levelupButtons.length);
+    console.log('[SHEET] Found LevelUp buttons in template:', levelupButtons.length);
     levelupButtons.forEach(button => {
-      console.log('[TEMP AUDIT] Binding levelup button click listener');
       button.addEventListener("click", async ev => {
-        console.log('[TEMP AUDIT] LevelUp button clicked via sheet listener');
+        console.log('[SHEET] ✓ LevelUp button clicked → calling launchProgression()');
         ev.preventDefault();
-        await launchProgression(this.actor);
+        try {
+          await launchProgression(this.actor);
+        } catch (err) {
+          console.error('[SHEET] ✗ launchProgression failed:', err);
+          SWSELogger.error('[CharacterSheet] Progression launch failed:', err);
+        }
       }, { signal });
     });
 
