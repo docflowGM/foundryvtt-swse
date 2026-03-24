@@ -3,27 +3,27 @@
      Reads: system.derived.shield.* (engine-computed)
 --}}
 
-<section class="summary-block sr-block {{#unless actor.system.derived.shield.active}}inactive{{/unless}}">
+<section class="summary-block sr-block {{#unless system.derived.shield.active}}inactive{{/unless}}">
   <header class="summary-header">
     <span class="header-label">Shield Rating</span>
   </header>
 
-  {{#if actor.system.derived.shield.max}}
+  {{#if system.derived.shield.max}}
     <div class="sr-content">
       <div class="sr-bar">
         <div class="sr-fill"
-             style="width: {{percentage actor.system.derived.shield.current actor.system.derived.shield.max}}%;"></div>
+             style="width: {{percentage system.derived.shield.current system.derived.shield.max}}%;"></div>
       </div>
 
       <div class="sr-values">
-        <span class="sr-current">SR {{actor.system.derived.shield.current}}</span>
+        <span class="sr-current">SR {{system.derived.shield.current}}</span>
         <span class="sr-separator">/</span>
-        <span class="sr-max">{{actor.system.derived.shield.max}}</span>
+        <span class="sr-max">{{system.derived.shield.max}}</span>
       </div>
 
-      {{#if actor.system.derived.shield.source}}
+      {{#if system.derived.shield.source}}
         <div class="sr-source">
-          {{actor.system.derived.shield.source}}
+          {{system.derived.shield.source}}
         </div>
       {{/if}}
     </div>
