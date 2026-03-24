@@ -1,0 +1,308 @@
+/* ============================================
+   SWSE CHARACTER SHEET SVG PANEL INTEGRATION
+   Phase 2: SVG-backed panels, frames, and rows
+   ============================================ */
+
+/* PANEL FRAME UTILITIES */
+.svg-panel-frame {
+  position: relative;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+}
+
+/* CHARACTER RECORD HEADER PLATE */
+.character-record-header.svg-framed {
+  background-image: url('../../assets/ui/character-record-header-plate.svg');
+  padding: 24px 20px;
+}
+
+/* RECORD FIELD INLINE WRAPPERS */
+.record-field.svg-wrapped {
+  position: relative;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  padding: 10px 8px;
+}
+
+.record-field.svg-wrapped.size-regular {
+  background-image: url('../../assets/ui/record-field-inline.svg');
+}
+
+.record-field.svg-wrapped.size-small {
+  background-image: url('../../assets/ui/record-field-inline-small.svg');
+}
+
+/* CONDITION TRACK SVG FRAME */
+.condition-track.svg-framed {
+  background-image: url('../../assets/ui/condition-track-box-strip.svg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  display: flex;
+  gap: 4px;
+  padding: 12px 8px;
+}
+
+.condition-chevron {
+  position: relative;
+  z-index: 2;
+  flex: 0 1 auto;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  background: rgba(0, 20, 40, 0.6);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.condition-chevron.active {
+  background: rgba(0, 255, 136, 0.3);
+  border-color: rgba(0, 255, 136, 0.7);
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+}
+
+/* DARK SIDE POINTS TRACKER */
+.dsp-numbered-track.svg-framed {
+  background-image: url('../../assets/ui/dark-side-box-track.svg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(32px, 1fr));
+  gap: 3px;
+  padding: 12px 8px;
+}
+
+.dsp-track-box {
+  position: relative;
+  z-index: 2;
+  min-width: 32px;
+  height: 32px;
+  border: 1px solid rgba(150, 80, 80, 0.4);
+  background: rgba(20, 10, 10, 0.6);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.75rem;
+  color: rgba(255, 100, 100, 0.6);
+}
+
+.dsp-track-box.filled {
+  background: rgba(200, 50, 50, 0.5);
+  border-color: rgba(200, 100, 100, 0.8);
+  box-shadow: 0 0 8px rgba(200, 80, 80, 0.3);
+  color: rgba(255, 150, 150, 0.9);
+}
+
+/* SPECIAL COMBAT NOTES PANEL */
+.special-combat-actions-panel.svg-framed {
+  background-image: url('../../assets/ui/special-combat-notes-panel.svg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  padding: 20px 16px;
+}
+
+.combat-notes-textarea {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  background: rgba(0, 20, 40, 0.5);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  color: #d7f6ff;
+  padding: 10px 8px;
+  border-radius: 4px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+/* ========== REPEATED ROW SYSTEMS ==========
+   CSS-backed row frames with background layers
+   ========================================== */
+
+/* ATTACK LEDGER ROWS */
+.swse-attacks-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.swse-attack-block.svg-row-backed {
+  position: relative;
+  background-image: url('../../assets/ui/attack-ledger-row.svg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  padding: 12px 10px;
+}
+
+.attack-block-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* EQUIPMENT LEDGER ROWS */
+.equipment-ledger {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ledger-row.svg-row-backed {
+  position: relative;
+  background-image: url('../../assets/ui/equipment-ledger-row.svg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  display: grid;
+  grid-template-columns: 2fr 1fr 0.5fr 0.75fr 0.75fr;
+  gap: 8px;
+  padding: 8px 6px;
+  align-items: center;
+}
+
+.ledger-row.svg-row-backed > div {
+  position: relative;
+  z-index: 2;
+}
+
+/* TALENTS KNOWN ROWS */
+.talents-ledger {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.talent-row.svg-row-backed {
+  position: relative;
+  background-image: url('../../assets/ui/compact-ledger-row.svg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  padding: 8px 6px;
+  align-items: center;
+}
+
+.talent-row.svg-row-backed .talent-name,
+.talent-row.svg-row-backed .talent-source {
+  position: relative;
+  z-index: 2;
+  font-size: 0.9rem;
+}
+
+/* FORCE POWERS ROWS */
+.force-powers-ledger {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.power-row.svg-row-backed {
+  position: relative;
+  background-image: url('../../assets/ui/compact-ledger-row.svg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  padding: 8px 6px;
+  align-items: center;
+}
+
+.power-row.svg-row-backed .power-name,
+.power-row.svg-row-backed .power-tags {
+  position: relative;
+  z-index: 2;
+  font-size: 0.9rem;
+}
+
+.power-row.svg-row-backed.discarded {
+  opacity: 0.6;
+}
+
+/* RELATIONSHIPS PANEL FRAME */
+.relationships-panel.svg-framed {
+  background-image: url('../../assets/ui/relationships-notebook-panel.svg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  padding: 20px 16px;
+}
+
+.relationships-list {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.relationship-entry {
+  position: relative;
+  background: rgba(0, 20, 40, 0.3);
+  border: 1px solid rgba(0, 255, 136, 0.15);
+  border-radius: 4px;
+  padding: 10px 8px;
+}
+
+/* DEFENSES PANEL - REUSED HOLO FRAME */
+.defenses-panel.svg-framed {
+  background-image: url('../../assets/ui/core/panels/armor-panel.svg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  padding: 16px 14px;
+}
+
+.defenses-container {
+  position: relative;
+  z-index: 2;
+}
+
+/* ARMOR SUMMARY PANEL - REUSED HOLO FRAME */
+.armor-summary-panel.svg-framed {
+  background-image: url('../../assets/ui/core/panels/armor-panel.svg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  padding: 16px 14px;
+}
+
+.armor-summary {
+  position: relative;
+  z-index: 2;
+}
+
+/* RESOURCE PIP STRIP (optional/deferred) */
+.resource-pip-strip.svg-framed {
+  background-image: url('../../assets/ui/resource-pip-strip.svg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  padding: 12px 8px;
+}
+
+/* GENERAL SVG PANEL ADJUSTMENTS */
+.holo-panel.svg-framed {
+  position: relative;
+  background-attachment: local;
+}
+
+.holo-panel.svg-framed .section-bar {
+  position: relative;
+  z-index: 3;
+}
+
+/* Z-index stacking for nested content */
+.svg-framed > * {
+  position: relative;
+  z-index: 2;
+}
+
+.svg-framed .section-bar {
+  z-index: 3;
+}
