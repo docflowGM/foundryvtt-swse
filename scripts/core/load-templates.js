@@ -37,6 +37,8 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/notes-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/biography-log-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/relationships-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/equipment-ledger-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/armor-summary-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/identity-strip.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/abilities-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/initiative-control.hbs',

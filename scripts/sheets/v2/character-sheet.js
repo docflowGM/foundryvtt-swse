@@ -509,6 +509,43 @@ export class SWSEV2CharacterSheet extends
 
     const inventory = this._buildInventoryModel(actor);
 
+    // Build equipment ledger (all equipment items for record-sheet display)
+    const allEquipment = actor.items
+      .filter(item => ['weapon', 'armor', 'equipment'].includes(item.type))
+      .map(item => ({
+        id: item.id,
+        name: item.name,
+        category: item.type === 'weapon' ? 'Weapon' :
+                  item.type === 'armor' ? 'Armor' : 'Equipment',
+        quantity: item.system?.quantity ?? 1,
+        weight: item.system?.weight ? `${item.system.weight} lbs` : '—',
+        equipped: item.system?.equipped ?? false
+      }))
+      .sort((a, b) => {
+        // Sort: equipped first, then by type, then by name
+        if (a.equipped !== b.equipped) return a.equipped ? -1 : 1;
+        if (a.category !== b.category) return a.category.localeCompare(b.category);
+        return a.name.localeCompare(b.name);
+      });
+
+    // Get equipped armor (if any)
+    const equippedArmorItem = actor.items.find(item =>
+      item.type === 'armor' && item.system?.equipped === true
+    );
+    const equippedArmor = equippedArmorItem ? {
+      id: equippedArmorItem.id,
+      name: equippedArmorItem.name,
+      armorType: equippedArmorItem.system?.armorType,
+      reflexBonus: equippedArmorItem.system?.reflexBonus,
+      fortBonus: equippedArmorItem.system?.fortBonus,
+      maxDexBonus: equippedArmorItem.system?.maxDexBonus,
+      armorCheckPenalty: equippedArmorItem.system?.armorCheckPenalty,
+      speedPenalty: equippedArmorItem.system?.speedPenalty,
+      weight: equippedArmorItem.system?.weight,
+      isPowered: equippedArmorItem.system?.isPowered,
+      upgradeSlots: equippedArmorItem.system?.upgradeSlots
+    } : null;
+
     // Presentation-only normalization (no mutation)
     const biography =
       typeof actor.system.biography === "object"
@@ -807,6 +844,9 @@ const forcePoints = [];
       encumbranceStateCss,
       encumbranceLabel,
       inventorySearch,
+      // Equipment context (record-sheet display)
+      allEquipment,
+      equippedArmor,
       // Campaign context
       relationships,
       // Follower context

@@ -1,0 +1,36 @@
+<section class="equipment-ledger-panel holo-panel">
+
+  <header class="section-bar">
+    <h3 class="section-header">Equipment Ledger</h3>
+  </header>
+
+  {{#if (gt allEquipment.length 0)}}
+    <div class="equipment-ledger">
+      <!-- Ledger Header -->
+      <div class="ledger-header">
+        <div class="col-name">Item</div>
+        <div class="col-type">Type</div>
+        <div class="col-qty">Qty</div>
+        <div class="col-weight">Weight</div>
+      </div>
+
+      <!-- Equipment Rows -->
+      {{#each allEquipment}}
+        <div class="ledger-row {{#if this.equipped}}equipped{{/if}}" data-item-id="{{this.id}}">
+          <div class="col-name">
+            <span class="item-name">{{this.name}}</span>
+            {{#if this.equipped}}<span class="equipped-marker">⚙</span>{{/if}}
+          </div>
+          <div class="col-type">{{this.category}}</div>
+          <div class="col-qty">{{this.quantity}}</div>
+          <div class="col-weight">{{this.weight}}</div>
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="empty-state">
+      <p>No equipment recorded.</p>
+    </div>
+  {{/if}}
+
+</section>

@@ -1687,3 +1687,213 @@ select option:checked {
   padding-top: 12px;
   border-top: 1px solid rgba(0, 255, 136, 0.15);
 }
+
+/* ------------------------------------------------------------------ */
+/* Equipment Ledger Panel (Record Sheet)                               */
+/* ------------------------------------------------------------------ */
+
+.swse-sheet.equipment-ledger-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.swse-sheet.equipment-ledger {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.swse-sheet.ledger-header {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 0.6fr 1fr;
+  gap: 8px;
+  padding: 8px 10px;
+  background: rgba(0, 255, 136, 0.08);
+  border-bottom: 1px solid rgba(0, 255, 136, 0.15);
+  font-weight: 700;
+  font-size: 0.8rem;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.swse-sheet.ledger-row {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 0.6fr 1fr;
+  gap: 8px;
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.1);
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.swse-sheet.ledger-row:last-child {
+  border-bottom: none;
+}
+
+.swse-sheet.ledger-row.equipped {
+  background: rgba(0, 255, 136, 0.05);
+}
+
+.swse-sheet.col-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.swse-sheet.item-name {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.swse-sheet.equipped-marker {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  flex-shrink: 0;
+}
+
+.swse-sheet.col-type,
+.swse-sheet.col-qty,
+.swse-sheet.col-weight {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.swse-sheet.col-qty {
+  text-align: center;
+}
+
+/* ------------------------------------------------------------------ */
+/* Armor Summary Panel (Record Sheet)                                  */
+/* ------------------------------------------------------------------ */
+
+.swse-sheet.armor-summary-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.swse-sheet.armor-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(255, 165, 0, 0.2);
+  border-radius: 4px;
+  background: rgba(255, 165, 0, 0.05);
+}
+
+.swse-sheet.armor-name-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.swse-sheet.armor-name {
+  font-weight: 700;
+  font-size: 1rem;
+  opacity: 0.95;
+}
+
+.swse-sheet.armor-type {
+  font-size: 0.8rem;
+  opacity: 0.75;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.swse-sheet.armor-defenses {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.swse-sheet.defense-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+  border: 1px solid rgba(0, 255, 136, 0.15);
+}
+
+.swse-sheet.defense-label {
+  font-size: 0.75rem;
+  opacity: 0.75;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.swse-sheet.defense-value {
+  font-size: 1rem;
+  font-weight: 700;
+  opacity: 0.95;
+}
+
+.swse-sheet.defense-value.positive {
+  color: #4a9eff;
+}
+
+.swse-sheet.armor-modifiers {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.swse-sheet.modifier-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  padding: 4px 0;
+  opacity: 0.85;
+}
+
+.swse-sheet.modifier-item.penalty {
+  color: #ff9999;
+}
+
+.swse-sheet.mod-label {
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.swse-sheet.mod-value {
+  font-weight: 700;
+}
+
+.swse-sheet.armor-properties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.swse-sheet.property {
+  padding: 2px 6px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+
+.swse-sheet.property.powered {
+  color: #ffcc00;
+  background: rgba(255, 204, 0, 0.1);
+}
+
+.swse-sheet.record-equipment-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid rgba(0, 255, 136, 0.15);
+}
