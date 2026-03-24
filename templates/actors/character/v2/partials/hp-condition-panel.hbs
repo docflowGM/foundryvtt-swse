@@ -23,6 +23,11 @@
     {{/if}}
   </div>
 
+  {{!-- Shield Display (Conditional subpartial) --}}
+  {{#if system.derived.shield.max}}
+    {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/summary/shield-rating.hbs"}}
+  {{/if}}
+
   <!-- CONDITION TRACK BLOCK -->
   <div class="condition-section">
     <div class="condition-track">

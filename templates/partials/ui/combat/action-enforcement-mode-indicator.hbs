@@ -1,0 +1,19 @@
+{{!-- Action Enforcement Mode Indicator
+     Displays enforcement mode for action economy (STRICT/LOOSE/NONE)
+     Pure display component
+     Expects: enforcementMode string ("strict", "loose", or any other)
+--}}
+
+{{#if (eq enforcementMode "strict")}}
+  <div class="swse-enforcement-notice swse-strict">
+    <strong>⚠️ STRICT Mode:</strong> Illegal actions are blocked. (Shift+Click to override)
+  </div>
+{{else if (eq enforcementMode "loose")}}
+  <div class="swse-enforcement-notice swse-loose">
+    <strong>ℹ️ LOOSE Mode:</strong> Actions are allowed with GM warning.
+  </div>
+{{else}}
+  <div class="swse-enforcement-notice swse-none">
+    <strong>✓ NONE Mode:</strong> No enforcement. Actions tracked only.
+  </div>
+{{/if}}
