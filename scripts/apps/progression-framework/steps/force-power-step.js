@@ -503,8 +503,9 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       const characterData = this._buildCharacterDataFromShell(shell);
 
       // Get suggestions from SuggestionService
+      // NOTE: Domain is 'forcepowers' per canonical domain registry (not 'force-powers')
       const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
-        domain: 'force-powers',
+        domain: 'forcepowers',
         available: this._legalPowers,
         pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
         engineOptions: { includeFutureAvailability: true },

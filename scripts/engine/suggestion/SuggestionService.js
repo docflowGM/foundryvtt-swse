@@ -24,10 +24,15 @@ import { ReasonFactory } from "/systems/foundryvtt-swse/scripts/engine/suggestio
 import { ConfidenceScoring } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ConfidenceScoring.js";
 import { SnapshotBuilder } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SnapshotBuilder.js";
 import { getPlannedHeroicLevel, isEpicActor } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import {
+  validateDomain,
+  isSupportedDomain,
+  getSupportedDomainsList,
+  getUnsupportedDomainsList,
+} from "/systems/foundryvtt-swse/scripts/engine/suggestion/domain-registry.js";
 
 import { FeatEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-engine.js";
 import { ForcePowerEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-power-engine.js";
-
 function _hashString(s) {
   let h = 0;
   for (let i = 0; i < s.length; i++) {h = ((h << 5) - h + s.charCodeAt(i)) | 0;}
@@ -148,6 +153,29 @@ export class SuggestionService {
     const actor = await _ensureActorDoc(actorOrData);
     const pendingData = options.pendingData ?? {};
     const focus = options.focus ?? null;
+
+    // DOMAIN VALIDATION (Phase 1)
+    // Distinguish between supported/unsupported domains and log clearly
+    if (options.domain) {
+      const domainCheck = validateDomain(options.domain);
+      if (!domainCheck.isSupported && options.domain !== 'all') {
+        // Log unsupported domains clearly (not as a normal empty-suggestions case)
+        SWSELogger.warn(
+          `[SuggestionService] Unsupported domain requested`,
+          {
+            requested: domainCheck.requested,
+            canonical: domainCheck.canonical,
+            actor: actor?.name ?? 'unknown',
+            context,
+            supportedDomains: getSupportedDomainsList(),
+            allUnsupportedDomains: getUnsupportedDomainsList(),
+          }
+        );
+        // Return empty array for unsupported domain (graceful degradation)
+        // but distinguish this from "supported domain with no results" in logs
+        return [];
+      }
+    }
 
     const plannedHeroicLevel = getPlannedHeroicLevel(actor, pendingData);
     const epicAdvisory = isEpicActor(actor, plannedHeroicLevel);

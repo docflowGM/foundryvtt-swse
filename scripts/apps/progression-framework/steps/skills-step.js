@@ -312,8 +312,9 @@ export class SkillsStep extends ProgressionStepPlugin {
       const characterData = this._buildCharacterDataFromShell(shell);
 
       // Get suggestions from SuggestionService
+      // NOTE: Domain is 'skills_l1' per canonical domain registry (not 'skills')
       const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
-        domain: 'skills',
+        domain: 'skills_l1',
         available: this._allSkills,
         pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
         engineOptions: { includeFutureAvailability: true },
