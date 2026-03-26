@@ -397,4 +397,53 @@ export class ProgressionStepPlugin {
   isSuggestedItem(itemId, suggestedIds = new Set()) {
     return suggestedIds.has(itemId);
   }
+
+  // ---------------------------------------------------------------------------
+  // PHASE 1: Normalized commit helpers
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Commit a normalized selection to the progression session.
+   *
+   * PHASE 1: This is the recommended API for steps to commit selections.
+   * Writes to progressionSession.draftSelections with validation.
+   *
+   * @param {import('../shell/progression-shell.js').ProgressionShell} shell
+   * @param {string} selectionKey - Canonical key (species, class, feats, etc.)
+   * @param {*} normalizedValue - Pre-normalized value matching canonical schema
+   * @returns {boolean} true if successful
+   *
+   * Usage:
+   *   this._commitNormalized(shell, 'species', normalizedSpeciesObject);
+   *   this._commitNormalized(shell, 'feats', normalizedFeatsArray);
+   */
+  _commitNormalized(shell, selectionKey, normalizedValue) {
+    if (!shell?.progressionSession) {
+      console.warn(
+        `[${this.constructor.name}] No progressionSession available for commit`
+      );
+      return false;
+    }
+
+    const success = shell.progressionSession.commitSelection(
+      this.descriptor.stepId,
+      selectionKey,
+      normalizedValue
+    );
+
+    // Also update buildIntent for backward compatibility
+    if (success && shell.buildIntent) {
+      shell.buildIntent.commitSelection(this.descriptor.stepId, selectionKey, normalizedValue);
+    }
+
+    // Also update committedSelections for backward compatibility during migration
+    if (success && shell.committedSelections) {
+      shell.committedSelections.set(selectionKey, {
+        [selectionKey]: normalizedValue,
+        source: this.descriptor.stepId,
+      });
+    }
+
+    return success;
+  }
 }
