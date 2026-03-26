@@ -210,6 +210,15 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     // If all picks are used and this power is selected, allow deselection (count → 0)
     // This is handled via a separate deselect action in the details panel, if needed
 
+    // Update observable build intent (Phase 6 solution)
+    if (shell?.buildIntent && this.descriptor?.stepId) {
+      const powersList = Array.from(this._committedPowerCounts.entries())
+        .filter(([_, count]) => count > 0)
+        .map(([powerId, count]) => ({ id: powerId, count }));
+
+      shell.buildIntent.commitSelection(this.descriptor.stepId, 'forcePowers', powersList);
+    }
+
     // Keep focus on the power for context
     this._focusedPowerId = powerId;
     shell.focusedItem = power;

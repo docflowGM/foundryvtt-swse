@@ -852,6 +852,12 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     };
 
     shell.committedSelections.set(this.descriptor.stepId, selection);
+
+    // Update observable build intent (Phase 6 solution)
+    if (shell?.buildIntent && this.descriptor?.stepId) {
+      shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, selection);
+    }
+
     swseLogger.debug('[DroidBuilderStep.onItemCommitted] Droid build committed', selection);
   }
 

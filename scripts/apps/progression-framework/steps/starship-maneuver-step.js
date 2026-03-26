@@ -126,6 +126,15 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
       this._committedManeuverCounts.set(maneuverId, currentCount + 1);
     }
 
+    // Update observable build intent (Phase 6 solution)
+    if (shell?.buildIntent && this.descriptor?.stepId) {
+      const maneuversList = Array.from(this._committedManeuverCounts.entries())
+        .filter(([_, count]) => count > 0)
+        .map(([maneuverId, count]) => ({ id: maneuverId, count }));
+
+      shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, maneuversList);
+    }
+
     this._focusedManeuverID = maneuverId;
     shell.focusedItem = maneuver;
     shell.render();
