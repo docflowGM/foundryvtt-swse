@@ -17,11 +17,16 @@
 
 import { ProgressionShell } from './shell/progression-shell.js';
 import { createStepDescriptor, StepCategory, StepType } from './steps/step-descriptor.js';
+import { ActiveStepComputer } from './shell/active-step-computer.js';
+import { mapNodesToDescriptors } from './registries/node-descriptor-mapper.js';
+import { DroidBuilderAdapter } from './steps/droid-builder-adapter.js';
+
+// Phase 2: Legacy imports kept for backward compat during transition
+// These are now resolved via NODE_PLUGIN_MAP in node-descriptor-mapper.js
 import { IntroStep } from './steps/intro-step.js';
 import { SkillsStep } from './steps/skills-step.js';
 import { SpeciesStep } from './steps/species-step.js';
 import { DroidBuilderStep } from './steps/droid-builder-step.js';
-import { DroidBuilderAdapter } from './steps/droid-builder-adapter.js';
 import { ClassStep } from './steps/class-step.js';
 import { L1SurveyStep } from './steps/l1-survey-step.js';
 import { AttributeStep } from './steps/attribute-step.js';
@@ -44,24 +49,72 @@ export class ChargenShell extends ProgressionShell {
   }
 
   /**
-   * Canonical chargen step sequence.
-   * Routes droid characters to droid-builder-step instead of species-step.
+   * Derive chargen step sequence from the progression spine.
    *
-   * @returns {import('./steps/step-descriptor.js').StepDescriptor[]}
-   */
-  /**
-   * Canonical chargen step sequence.
-   * Routes droid characters to droid-builder-step instead of species-step.
+   * PHASE 2: Uses ActiveStepComputer to determine which nodes are active
+   * based on mode/subtype/session state, rather than returning a hard-coded list.
    *
-   * @returns {import('./steps/step-descriptor.js').StepDescriptor[]}
+   * This enables:
+   * - Dynamic step lists based on actor state
+   * - Unified algorithm for chargen and level-up
+   * - Conditional steps derived from registry + rules
+   * - Future enhancements like forecast and template overlays
+   *
+   * @returns {Promise<import('./steps/step-descriptor.js').StepDescriptor[]>}
    */
-  _getCanonicalDescriptors() {
-    // Determine if this is a droid character
-    const isDroid = DroidBuilderAdapter.shouldUseDroidBuilder(this.actor?.system || {});
+  async _getCanonicalDescriptors() {
+    try {
+      // Determine character subtype (actor vs droid)
+      const subtype = DroidBuilderAdapter.shouldUseDroidBuilder(this.actor?.system || {})
+        ? 'droid'
+        : 'actor';
 
-    // Build step configs, swapping species/droid-builder based on character type
+      // Compute active nodes for this actor in chargen mode
+      const computer = new ActiveStepComputer();
+      const activeNodeIds = await computer.computeActiveSteps(
+        this.actor,
+        'chargen',
+        this.progressionSession,
+        { subtype }
+      );
+
+      // Convert active node IDs to StepDescriptors with plugins wired
+      const descriptors = mapNodesToDescriptors(activeNodeIds);
+
+      if (descriptors.length === 0) {
+        console.warn('[ChargenShell] No active steps computed for chargen');
+        // Fallback to legacy CHARGEN_CANONICAL_STEPS as safety net
+        return this._getLegacyCanonicalDescriptors(subtype);
+      }
+
+      console.log('[ChargenShell] Computed active steps:', {
+        subtype,
+        count: descriptors.length,
+        steps: descriptors.map(d => d.stepId),
+      });
+
+      return descriptors;
+    } catch (err) {
+      console.error('[ChargenShell] Error computing canonical descriptors:', err);
+      // Fallback to legacy behavior on error
+      return this._getLegacyCanonicalDescriptors(
+        DroidBuilderAdapter.shouldUseDroidBuilder(this.actor?.system || {}) ? 'droid' : 'actor'
+      );
+    }
+  }
+
+  /**
+   * Legacy fallback: return hard-coded chargen steps.
+   * Used if ActiveStepComputer fails or returns empty list.
+   *
+   * @param {string} subtype - 'actor' or 'droid'
+   * @returns {import('./steps/step-descriptor.js').StepDescriptor[]}
+   * @private
+   */
+  _getLegacyCanonicalDescriptors(subtype) {
+    const isDroid = subtype === 'droid';
+
     const stepConfigs = CHARGEN_CANONICAL_STEPS.map(config => {
-      // If this is the species step and we're a droid, use droid-builder instead
       if (config.stepId === 'species' && isDroid) {
         return {
           ...config,
@@ -71,7 +124,6 @@ export class ChargenShell extends ProgressionShell {
           pluginClass: DroidBuilderStep,
         };
       }
-      // If this is the species step and we're NOT a droid, use species-step
       if (config.stepId === 'species' && !isDroid) {
         return {
           ...config,

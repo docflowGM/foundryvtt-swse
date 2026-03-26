@@ -370,7 +370,12 @@ export class ProgressionShell extends SWSEApplicationV2 {
    */
   async _initializeSteps() {
     try {
-      const canonicalDescriptors = this._getCanonicalDescriptors();
+      // PHASE 2: _getCanonicalDescriptors may be async (ActiveStepComputer in chargen/levelup shells)
+      const canonicalDescriptorsOrPromise = this._getCanonicalDescriptors();
+      const canonicalDescriptors = canonicalDescriptorsOrPromise instanceof Promise
+        ? await canonicalDescriptorsOrPromise
+        : canonicalDescriptorsOrPromise;
+
       // PHASE C: Pass shell context so resolver can check committedSelections for deferred droid builds
       const conditionalDescriptors = await this._conditionalResolver.resolveForContext(
         this.actor,
