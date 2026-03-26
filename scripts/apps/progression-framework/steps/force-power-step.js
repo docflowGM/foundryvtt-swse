@@ -17,6 +17,7 @@ import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ForcePowerPicker } from '../../../apps/progression/force-power-picker.js';
 import { ForcePowerEngine } from '../../../engine/progression/engine/force-power-engine.js';
 import { ForceRegistry } from '../../../engine/registries/force-registry.js';
+import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
@@ -450,24 +451,21 @@ export class ForcePowerStep extends ProgressionStepPlugin {
 
   /**
    * Compute which powers have met prerequisites.
-   * Uses AbilityEngine evaluation (if available) or simple presence check.
+   * PHASE 1: Uses AbilityEngine as the sole rules authority for legality.
    */
   async _computeLegalPowers(actor) {
     this._legalPowers = [];
 
     for (const power of this._allPowers) {
-      // TODO (Wave 10): Call AbilityEngine.evaluateAcquisition(actor, power)
-      // For now: assume all powers are legal if actor has force sensitivity
-      const hasForceSensitivity = actor.items.some(i =>
-        i.type === 'feat' && i.name?.toLowerCase().includes('force sensitivity')
-      );
+      // PHASE 1: Use AbilityEngine to evaluate prerequisite legality
+      const assessment = AbilityEngine.evaluateAcquisition(actor, power);
 
-      if (hasForceSensitivity) {
+      if (assessment.legal) {
         this._legalPowers.push(power);
       }
     }
 
-    swseLogger.debug(`[ForcePowerStep] Legal powers: ${this._legalPowers.length}`);
+    swseLogger.debug(`[ForcePowerStep] Legal powers: ${this._legalPowers.length} of ${this._allPowers.length}`);
   }
 
   /**
