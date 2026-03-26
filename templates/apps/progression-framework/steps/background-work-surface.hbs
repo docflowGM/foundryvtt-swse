@@ -51,12 +51,18 @@
                     data-item-id="{{id}}"
                     data-selected="{{#if isCommitted}}true{{else}}false{{/if}}"
                     data-focused="{{#if isFocused}}true{{else}}false{{/if}}"
+                    data-recommended="{{#if isSuggested}}true{{/if}}"
                     type="button"
                     role="option"
                     {{#if isCommitted}}aria-selected="true"{{/if}}>
 
               <div class="swse-option-card__header">
-                <h3 class="swse-option-card__title prog-background-item__name">{{name}}</h3>
+                <h3 class="swse-option-card__title prog-background-item__name">
+                  {{name}}
+                  {{#if badgeLabel}}
+                    <span class="swse-option-card__badge swse-option-card__badge--recommended">{{badgeLabel}}</span>
+                  {{/if}}
+                </h3>
               </div>
 
               {{#if shortDesc}}

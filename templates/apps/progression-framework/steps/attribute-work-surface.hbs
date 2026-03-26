@@ -54,11 +54,17 @@
       <div class="prog-attribute-row
                   {{#if isFocused}}prog-attribute-row--focused{{/if}}"
            data-ability-row="{{id}}"
+           data-recommended="{{#if isSuggested}}true{{/if}}"
            role="button"
            tabindex="0">
 
         {{!-- Ability Name --}}
-        <div class="prog-attribute-row__label">{{label}}</div>
+        <div class="prog-attribute-row__label">
+          {{label}}
+          {{#if badgeLabel}}
+            <span class="swse-option-card__badge swse-option-card__badge--recommended">{{badgeLabel}}</span>
+          {{/if}}
+        </div>
 
         {{!-- Base Score --}}
         <div class="prog-attribute-row__score prog-attribute-row__base">

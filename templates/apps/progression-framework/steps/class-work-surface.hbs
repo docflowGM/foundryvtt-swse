@@ -8,6 +8,7 @@
               data-item-id="{{this.id}}"
               data-selected="{{#if (eq id ../committedClassId)}}true{{else}}false{{/if}}"
               data-focused="{{#if (eq id ../focusedClassId)}}true{{else}}false{{/if}}"
+              data-recommended="{{#if this.isSuggested}}true{{/if}}"
               type="button"
               role="option"
               {{#if (eq id ../committedClassId)}}aria-selected="true"{{/if}}>
@@ -26,6 +27,9 @@
         {{/if}}
 
         <div class="swse-option-card__meta">
+          {{#if this.badgeLabel}}
+            <span class="swse-option-card__badge swse-option-card__badge--recommended">{{this.badgeLabel}}</span>
+          {{/if}}
           {{#if this.mentorName}}
             <span class="swse-option-card__badge"><i class="fas fa-user-circle"></i> {{this.mentorName}}</span>
           {{/if}}

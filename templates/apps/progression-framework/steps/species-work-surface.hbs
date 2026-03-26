@@ -20,6 +20,7 @@
                      {{#if (eq id ../committedSpeciesId)}}prog-species-row--committed{{/if}}"
               data-action="focus-item"
               data-item-id="{{this.id}}"
+              data-recommended="{{#if this.isSuggested}}true{{/if}}"
               type="button"
               role="option"
               {{#if (eq id ../committedSpeciesId)}}aria-selected="true"{{/if}}>
@@ -38,7 +39,12 @@
 
           {{!-- CENTER — name, size, and modifiers —}}
           <div class="prog-species-row__center">
-            <div class="prog-species-row__name">{{this.name}}</div>
+            <div class="prog-species-row__name">
+              {{this.name}}
+              {{#if this.badgeLabel}}
+                <span class="swse-option-card__badge swse-option-card__badge--recommended">{{this.badgeLabel}}</span>
+              {{/if}}
+            </div>
             {{#if this.size}}
               <div class="prog-species-row__stats">
                 <span>Size: {{this.size}}</span>
