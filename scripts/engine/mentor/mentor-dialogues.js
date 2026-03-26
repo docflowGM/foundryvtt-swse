@@ -65,6 +65,7 @@ export function getMentorGuidance(mentor, choiceType) {
     SWSELogger.log(`[MENTOR-DIALOGUES] getMentorGuidance: Getting guidance from "${mentor.name}" for choice type "${choiceType}"`);
 
     const guidanceMap = {
+        'species': mentor.speciesGuidance,
         'class': mentor.classGuidance,
         'talent': mentor.talentGuidance,
         'ability': mentor.abilityGuidance,

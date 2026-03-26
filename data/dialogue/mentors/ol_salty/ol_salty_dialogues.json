@@ -9,7 +9,7 @@
     "voiceStyle": "Boisterous, irreverent, teasing. Speaks in tales, colloquialisms, and pirate flavor.",
     "values": "Wit, self-preservation, boldness, freedom and profit",
     "tooltip": "Ol' Salty reflects your character through a scoundrel's irreverent lens",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/salty.webp",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/salty.png",
 
     "dialogues": {
       "classPaths": {
@@ -91,6 +91,7 @@
     },
 
     "guidance": {
+      "species": "Yer bloodline shapes what ye can do, but not who ye become. Pick what suits yer style and stick with it.",
       "class": "Arr! Pick yer path wisely, matey! The right tricks make the difference between a chest o' credits and a long swim in the void.",
       "background": "Everyone's got a past, matey. Question is — does yours give you leverage, or does it give someone else a knife to your back?",
       "talents": "Every talent's a tool in yer scoundrel's kit. Pick what helps ye swindle, sneak, and survive.",

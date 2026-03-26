@@ -1,10 +1,16 @@
 <div class="prog-species-details">
 
-  {{!-- 1. Mentor guidance — Ol' Salty comment on the species —}}
+  {{!-- 1. Ol' Salty's species-specific quote — from species-dialogue authority —}}
   {{#if olSaltyDialogue}}
     <div class="prog-species-details__salty-dialogue">
       <i class="prog-species-details__salty-icon fas fa-comment-dots"></i>
       <p class="prog-species-details__salty-text">"{{olSaltyDialogue}}"</p>
+    </div>
+  {{else}}
+    {{!-- Fallback: generic species guidance when no species-specific quote exists —}}
+    <div class="prog-species-details__salty-dialogue">
+      <i class="prog-species-details__salty-icon fas fa-comment-dots"></i>
+      <p class="prog-species-details__salty-text">{{defaultSpeciesGuidance}}</p>
     </div>
   {{/if}}
 

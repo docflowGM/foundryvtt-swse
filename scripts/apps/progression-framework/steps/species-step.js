@@ -12,6 +12,7 @@ import { getStepMentorObject, getStepGuidance, handleAskMentor, STEP_TO_CHOICE_T
 // Patch builder lives in the shared progression-framework module — NOT the legacy chargen path.
 import { buildSpeciesAtomicPatch } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shared/species-patch.js';
 import { NearHumanBuilder } from './near-human-builder.js';
+import { getMentorGuidance, getMentorForClass, MENTORS } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
 
 // Maps stepId → mentor guidance choiceType
 const STEP_CHOICE_TYPE = {
@@ -262,6 +263,10 @@ export class SpeciesStep extends ProgressionStepPlugin {
     const species = SpeciesRegistry.getById(focusedItem.id);
     if (!species) return this.renderDetailsPanelEmptyState();
 
+    // Get Ol' Salty's mentor object (Scoundrel class mentor) for guidance fallback
+    const salty = MENTORS?.Scoundrel;
+    const defaultSpeciesGuidance = salty ? getMentorGuidance(salty, 'species') : 'Choose wisely, friend.';
+
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/species-details.hbs',
       data: {
@@ -275,6 +280,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
         source: species.source ?? 'Unknown',
         img: this._resolveSpeciesImg(species),
         olSaltyDialogue: this._getOlSaltyDialogue(species.name) ?? null,
+        defaultSpeciesGuidance,
       },
     };
   }
@@ -488,6 +494,15 @@ export class SpeciesStep extends ProgressionStepPlugin {
   }
 
   getMentorContext(shell) {
+    // Use the focused species to provide contextual mentor guidance
+    if (shell.focusedItem) {
+      const speciesName = shell.focusedItem.name;
+      const speciesDialogue = this._getOlSaltyDialogue(speciesName);
+      if (speciesDialogue) {
+        return speciesDialogue;
+      }
+    }
+    // Fall back to generic species guidance from mentor authority
     return getStepGuidance(shell.actor, 'species') || 'Choose your species carefully — it shapes your abilities and destiny.';
   }
 
@@ -573,17 +588,60 @@ export class SpeciesStep extends ProgressionStepPlugin {
   }
 
   /**
+   * Normalize a species name for reliable lookup in the species-dialogue authority.
+   * Handles potential mismatches like spacing, punctuation, or variant names.
+   *
+   * @param {string} speciesName - The species display name
+   * @returns {string|null} The normalized key to use for dialogue lookup, or null if not found
+   */
+  _normalizeSpeciesName(speciesName) {
+    if (!speciesName || !this._olSaltyDialogues) return null;
+
+    // Try exact match first
+    if (this._olSaltyDialogues[speciesName]) {
+      return speciesName;
+    }
+
+    // Try case-insensitive match
+    const normalized = speciesName.trim();
+    for (const key of Object.keys(this._olSaltyDialogues)) {
+      if (key.toLowerCase() === normalized.toLowerCase()) {
+        return key;
+      }
+    }
+
+    // Try fuzzy match (first word match for hyphenated or complex names)
+    const firstWord = normalized.split(/[\s-]/)[0].toLowerCase();
+    for (const key of Object.keys(this._olSaltyDialogues)) {
+      if (key.toLowerCase().startsWith(firstWord)) {
+        return key;
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * Return an Ol' Salty dialogue line for the given species name.
    * The JSON stores each entry as a string[] — if more than one line exists,
    * one is chosen at random so repeated hovers feel natural.
    * Returns null if no entry exists for this species.
    *
+   * Implements species-name normalization for reliable lookups.
+   *
    * @param {string} speciesName
    * @returns {string|null}
    */
   _getOlSaltyDialogue(speciesName) {
-    const entry = this._olSaltyDialogues?.[speciesName];
+    // Normalize the species name for reliable lookup
+    const normalizedKey = this._normalizeSpeciesName(speciesName);
+    if (!normalizedKey) {
+      return null;
+    }
+
+    const entry = this._olSaltyDialogues[normalizedKey];
     if (!entry) return null;
+
     // Single string (legacy compatibility) or array
     if (typeof entry === 'string') return entry;
     if (Array.isArray(entry) && entry.length > 0) {
