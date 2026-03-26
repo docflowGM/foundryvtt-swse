@@ -218,6 +218,10 @@ export class SuggestionService {
       suggestions = await SuggestionEngineCoordinator.suggestSpecies(options.available ?? [], actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
     } else if (options.domain === 'languages') {
       suggestions = await SuggestionEngineCoordinator.suggestLanguages(options.available ?? [], actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
+    } else if (options.domain === 'force-secrets') {
+      suggestions = await SuggestionEngineCoordinator.suggestForceSecrets(options.available ?? [], actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
+    } else if (options.domain === 'force-techniques') {
+      suggestions = await SuggestionEngineCoordinator.suggestForceTechniques(options.available ?? [], actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
     } else if (options.domain === 'skills_l1') {
       suggestions = await SuggestionEngineCoordinator.suggestLevel1Skills(options.available ?? [], actor, options.pendingData ?? {});
     } else if (options.domain === 'attributes') {

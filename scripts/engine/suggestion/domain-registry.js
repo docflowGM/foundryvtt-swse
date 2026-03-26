@@ -23,6 +23,8 @@ export const SUPPORTED_DOMAINS = Object.freeze({
   ATTRIBUTES: 'attributes',
   SPECIES: 'species',             // Phase 2: SpeciesSuggestionEngine (grounded on class synergy)
   LANGUAGES: 'languages',         // Phase 2: LanguageSuggestionEngine (grounded on species/background)
+  FORCE_SECRETS: 'force-secrets', // Phase 3: ForceSecretSuggestionEngine (grounded on force commitment)
+  FORCE_TECHNIQUES: 'force-techniques', // Phase 3: ForceTechniqueSuggestionEngine (grounded on power synergy)
 });
 
 /**
@@ -32,11 +34,10 @@ export const SUPPORTED_DOMAINS = Object.freeze({
  * These will log warnings when requested and degrade to empty suggestion arrays.
  * This is intentional and correct behavior until real engines are added.
  *
- * Note: SPECIES and LANGUAGES have been moved to SUPPORTED_DOMAINS in Phase 2.
+ * Note: SPECIES and LANGUAGES moved to SUPPORTED_DOMAINS in Phase 2.
+ * Note: FORCE_SECRETS and FORCE_TECHNIQUES moved to SUPPORTED_DOMAINS in Phase 3.
  */
 export const UNSUPPORTED_DOMAINS = Object.freeze({
-  FORCE_SECRETS: 'force-secrets',
-  FORCE_TECHNIQUES: 'force-techniques',
   DROID_SYSTEMS: 'droid-systems',
   STARSHIP_MANEUVERS: 'starship-maneuvers',
 });

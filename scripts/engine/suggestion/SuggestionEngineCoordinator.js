@@ -30,6 +30,8 @@ import { Level1SkillSuggestionEngine } from "/systems/foundryvtt-swse/scripts/en
 import { AttributeIncreaseSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/AttributeIncreaseSuggestionEngine.js";
 import { SpeciesSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/species-suggestion-engine.js";
 import { LanguageSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/language-suggestion-engine.js";
+import { ForceSecretSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-secret-suggestion-engine.js";
+import { ForceTechniqueSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-technique-suggestion-engine.js";
 import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
 import { IdentityEngine } from "/systems/foundryvtt-swse/scripts/engine/prestige/identity-engine.js";
 import { ProgressionAdvisor } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ProgressionAdvisor.js";
@@ -94,6 +96,10 @@ export class SuggestionEngineCoordinator {
           this.suggestSpecies(species, actor, pendingData, options),
         suggestLanguages: (languages, actor, pendingData, options) =>
           this.suggestLanguages(languages, actor, pendingData, options),
+        suggestForceSecrets: (secrets, actor, pendingData, options) =>
+          this.suggestForceSecrets(secrets, actor, pendingData, options),
+        suggestForceTechniques: (techniques, actor, pendingData, options) =>
+          this.suggestForceTechniques(techniques, actor, pendingData, options),
         suggestForceOptions: (options, actor, pendingData, contextOptions) =>
           this.suggestForceOptions(options, actor, pendingData, contextOptions),
         suggestLevel1Skills: (skills, actor, pendingData) =>
@@ -444,6 +450,68 @@ export class SuggestionEngineCoordinator {
         ...l,
         suggestion: {
           confidence: 0.50,
+          reason: 'Available option'
+        }
+      }));
+    }
+  }
+
+  /**
+   * Suggest Force Secrets based on character's force commitment and archetype
+   * @param {Array} secrets - Array of force secret objects
+   * @param {Actor} actor - The character (or temp actor for chargen)
+   * @param {Object} pendingData - Pending character data from chargen
+   * @param {Object} options - Additional options
+   * @returns {Promise<Array>} Secrets with suggestion metadata
+   */
+  static async suggestForceSecrets(secrets, actor, pendingData = {}, options = {}) {
+    try {
+      // Call ForceSecretSuggestionEngine to score and rank secrets
+      const secretsSuggested = await ForceSecretSuggestionEngine.suggestForceSecrets(
+        secrets,
+        actor,
+        options
+      );
+
+      return secretsSuggested;
+    } catch (err) {
+      SWSELogger.error('Force Secret suggestion failed:', err);
+      // Return secrets without suggestions as fallback
+      return secrets.map(s => ({
+        ...s,
+        suggestion: {
+          tier: 0,
+          reason: 'Available option'
+        }
+      }));
+    }
+  }
+
+  /**
+   * Suggest Force Techniques based on character's known powers and archetype
+   * @param {Array} techniques - Array of force technique objects
+   * @param {Actor} actor - The character (or temp actor for chargen)
+   * @param {Object} pendingData - Pending character data from chargen
+   * @param {Object} options - Additional options
+   * @returns {Promise<Array>} Techniques with suggestion metadata
+   */
+  static async suggestForceTechniques(techniques, actor, pendingData = {}, options = {}) {
+    try {
+      // Call ForceTechniqueSuggestionEngine to score and rank techniques
+      const techniquesSuggested = await ForceTechniqueSuggestionEngine.suggestForceOptions(
+        techniques,
+        actor,
+        options
+      );
+
+      return techniquesSuggested;
+    } catch (err) {
+      SWSELogger.error('Force Technique suggestion failed:', err);
+      // Return techniques without suggestions as fallback
+      return techniques.map(t => ({
+        ...t,
+        suggestion: {
+          tier: 0,
           reason: 'Available option'
         }
       }));
