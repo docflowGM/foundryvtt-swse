@@ -138,7 +138,7 @@ export class SkillsStep extends ProgressionStepPlugin {
 
     if (normalizedSkills && shell) {
       // Commit to canonical session (also updates buildIntent for backward compat)
-      this._commitNormalized(shell, 'skills', normalizedSkills);
+      await this._commitNormalized(shell, 'skills', normalizedSkills);
     }
   }
 

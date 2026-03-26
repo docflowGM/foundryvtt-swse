@@ -246,7 +246,7 @@ export class BackgroundStep extends ProgressionStepPlugin {
 
       if (normalizedBackground) {
         // Commit to canonical session (also updates committedSelections for backward compat)
-        this._commitNormalized(shell, 'background', normalizedBackground);
+        await this._commitNormalized(shell, 'background', normalizedBackground);
       }
     }
 

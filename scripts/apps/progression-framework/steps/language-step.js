@@ -387,7 +387,7 @@ export class LanguageStep extends ProgressionStepPlugin {
 
     if (normalizedLanguages && shell) {
       // Commit to canonical session (also updates buildIntent for backward compat)
-      this._commitNormalized(shell, 'languages', normalizedLanguages);
+      await this._commitNormalized(shell, 'languages', normalizedLanguages);
     }
 
     // Also maintain legacy buildIntent for backward compat

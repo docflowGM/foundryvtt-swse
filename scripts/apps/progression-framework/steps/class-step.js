@@ -203,7 +203,8 @@ export class ClassStep extends ProgressionStepPlugin {
     }
 
     // Commit to canonical session (also updates committedSelections for backward compat)
-    this._commitNormalized(shell, 'class', normalizedClass);
+    // PHASE 2: await reconciliation after commit
+    await this._commitNormalized(shell, 'class', normalizedClass);
 
     this._committedClassId = id;
     this._committedClassName = entry.name;

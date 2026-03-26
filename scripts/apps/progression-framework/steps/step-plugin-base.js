@@ -18,6 +18,10 @@
  * - Step discovery               → Progression engine (queried by shell)
  */
 
+import { ProgressionReconciler } from '../shell/progression-reconciler.js';
+import { ActiveStepComputer } from '../shell/active-step-computer.js';
+import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+
 /**
  * Sentinel error thrown by all unimplemented methods.
  */
@@ -417,33 +421,74 @@ export class ProgressionStepPlugin {
    *   this._commitNormalized(shell, 'species', normalizedSpeciesObject);
    *   this._commitNormalized(shell, 'feats', normalizedFeatsArray);
    */
-  _commitNormalized(shell, selectionKey, normalizedValue) {
+  async _commitNormalized(shell, selectionKey, normalizedValue) {
     if (!shell?.progressionSession) {
-      console.warn(
+      swseLogger.warn(
         `[${this.constructor.name}] No progressionSession available for commit`
       );
       return false;
     }
 
-    const success = shell.progressionSession.commitSelection(
-      this.descriptor.stepId,
-      selectionKey,
-      normalizedValue
-    );
+    try {
+      const nodeId = this.descriptor.stepId;
+      const success = shell.progressionSession.commitSelection(
+        nodeId,
+        selectionKey,
+        normalizedValue
+      );
 
-    // Also update buildIntent for backward compatibility
-    if (success && shell.buildIntent) {
-      shell.buildIntent.commitSelection(this.descriptor.stepId, selectionKey, normalizedValue);
+      if (!success) {
+        return false;
+      }
+
+      // Also update buildIntent for backward compatibility
+      if (shell.buildIntent) {
+        shell.buildIntent.commitSelection(nodeId, selectionKey, normalizedValue);
+      }
+
+      // Also update committedSelections for backward compatibility during migration
+      if (shell.committedSelections) {
+        shell.committedSelections.set(selectionKey, {
+          [selectionKey]: normalizedValue,
+          source: nodeId,
+        });
+      }
+
+      // PHASE 2: Trigger post-commit reconciliation
+      // This invalidates/dirtifies affected downstream nodes
+      try {
+        const reconciler = new ProgressionReconciler();
+        const computer = new ActiveStepComputer();
+        const mode = shell.mode || 'chargen';
+        const subtype = shell.actor?.type === 'npc' ? 'npc' : 'actor';
+
+        const reconciliationReport = await reconciler.reconcileAfterCommit(
+          nodeId,
+          shell.actor,
+          shell.progressionSession,
+          {
+            activeStepComputer: computer,
+            currentStepId: shell.steps[shell.currentStepIndex]?.stepId,
+            mode,
+            subtype,
+          }
+        );
+
+        if (reconciliationReport.actionsTaken.length > 0) {
+          swseLogger.log('[ProgressionStepPlugin] Post-commit reconciliation:', reconciliationReport);
+        }
+      } catch (reconcileErr) {
+        swseLogger.error(
+          '[ProgressionStepPlugin] Error during post-commit reconciliation:',
+          reconcileErr
+        );
+        // Don't fail the commit if reconciliation fails
+      }
+
+      return true;
+    } catch (err) {
+      swseLogger.error('[ProgressionStepPlugin] Error during commit:', err);
+      return false;
     }
-
-    // Also update committedSelections for backward compatibility during migration
-    if (success && shell.committedSelections) {
-      shell.committedSelections.set(selectionKey, {
-        [selectionKey]: normalizedValue,
-        source: this.descriptor.stepId,
-      });
-    }
-
-    return success;
   }
 }

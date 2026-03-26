@@ -181,7 +181,7 @@ export class AttributeStep extends ProgressionStepPlugin {
 
     if (normalizedAttributes && shell) {
       // Commit to canonical session (also updates buildIntent for backward compat)
-      this._commitNormalized(shell, 'attributes', normalizedAttributes);
+      await this._commitNormalized(shell, 'attributes', normalizedAttributes);
     }
   }
 
