@@ -34,6 +34,7 @@ import { UtilityBar } from './utility-bar.js';
 import { HydrationDiagnosticsCollector, HydrationValidator, HydrationRecoveryStrategies } from '../hydration-diagnostics.js';
 import { BuildIntent } from './build-intent.js';
 import { GlobalValidator } from '../validation/global-validator.js';
+import { ChargenPersistence } from './chargen-persistence.js';
 
 /**
  * Shell state model (reference — actual state lives on `this`)
@@ -203,6 +204,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this.focusedItem = null;         // item currently in details panel (single-click)
     this.committedSelections = new Map(); // stepId → committed selection(s)
     this.buildIntent = new BuildIntent(this); // Observable build state (Phase 6 solution)
+
+    // Persistence state (Phase 8 solution)
+    this.persistenceEnabled = mode === 'chargen'; // Auto-persist only during chargen, not levelup
+    this.lastCheckpointStepId = null;
 
     // Shell UI state
     this.mentorCollapsed = false;
@@ -869,6 +874,14 @@ export class ProgressionShell extends SWSEApplicationV2 {
         return;
       }
       await currentPlugin.onStepExit(this);
+
+      // Phase 3: Auto-save checkpoint after step exit (chargen only)
+      if (this.persistenceEnabled && currentDescriptor?.stepId) {
+        const saved = await ChargenPersistence.saveCheckpoint(this, currentDescriptor.stepId);
+        if (saved) {
+          this.lastCheckpointStepId = currentDescriptor.stepId;
+        }
+      }
     }
 
     this.currentStepIndex++;
@@ -969,6 +982,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
       if (result.success) {
         swseLogger.log('[ProgressionShell] Finalization successful');
         ui.notifications.info('Character progression complete!');
+
+        // Phase 3: Clear checkpoints after successful finalization
+        await this.clearCheckpoints();
+
         await this.close();
         const sheet = this.actor?.sheet;
         if (sheet) {
@@ -1279,6 +1296,60 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this.mentor.currentDialogue = messages.join('\n');
     this.mentor.mood = result.errors.length > 0 ? 'cautionary' : 'neutral';
     this.render();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Persistence & Checkpoints (Phase 3)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Restore shell state from a saved checkpoint.
+   * Useful for resuming chargen after interrupt.
+   *
+   * @param {Object} checkpoint - Checkpoint data from ChargenPersistence
+   * @returns {boolean} true if restore successful
+   */
+  restoreFromCheckpoint(checkpoint) {
+    if (ChargenPersistence.restoreCheckpoint(this, checkpoint)) {
+      this.lastCheckpointStepId = checkpoint.lastStepId;
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Get the last saved checkpoint for this actor.
+   * Used during initialization to offer resume option.
+   *
+   * @returns {Object|null} Checkpoint data or null
+   */
+  getLastCheckpoint() {
+    return ChargenPersistence.getLastCheckpoint(this.actor);
+  }
+
+  /**
+   * Get summary of last checkpoint (for UI display).
+   * Shows what selections were made before interrupt.
+   *
+   * @returns {Object|null} Summary with buildStatus, selectionsCount, etc.
+   */
+  getCheckpointSummary() {
+    const checkpoint = this.getLastCheckpoint();
+    return checkpoint ? ChargenPersistence.getCheckpointSummary(checkpoint) : null;
+  }
+
+  /**
+   * Clear all saved checkpoints.
+   * Called after successful finalization to prevent resume.
+   *
+   * @returns {Promise<boolean>}
+   */
+  async clearCheckpoints() {
+    const cleared = await ChargenPersistence.clearCheckpoints(this.actor);
+    if (cleared) {
+      this.lastCheckpointStepId = null;
+    }
+    return cleared;
   }
 
   // ---------------------------------------------------------------------------
