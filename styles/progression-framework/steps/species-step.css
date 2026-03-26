@@ -1,5 +1,13 @@
 /* ============================================================================
-   SPECIES STEP — dense horizontal-row databank browser
+   SPECIES STEP — SVG-framed option browser (AUTHORITY VERSION)
+
+   This implementation uses the established SVG option-frame system for all
+   visual states. No CSS borders or gradients simulate frames; SVGs are the source of truth.
+
+   Frame SVG Assets:
+   - swse-angled-option-frame.svg           (default state)
+   - swse-angled-option-frame-hover.svg     (hover/focus preview state)
+   - swse-angled-option-frame-selected.svg  (committed/confirmed selection)
    ============================================================================ */
 
 /* Browse container — fills work-surface */
@@ -9,18 +17,18 @@
   height: 100%;
   width: 100%;
   overflow: hidden;
-  padding: 4px;
-  gap: 2px;
+  padding: 12px;
+  gap: 6px;
 }
 
 /* ============================================================================
-   SPECIES LIST — scrollable vertical stack of rows
+   SPECIES LIST — scrollable vertical stack of SVG-framed rows
    ============================================================================ */
 
 .progression-shell .prog-species-list {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 8px;
   overflow-y: auto;
   overflow-x: hidden;
   flex: 1 1 auto;
@@ -29,80 +37,97 @@
 }
 
 /* ============================================================================
-   SPECIES ROW — compact horizontal entry, full-width
+   SPECIES ROW — SVG-skinned full-width horizontal option frame
    ============================================================================ */
 
 .progression-shell .prog-species-row {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 10px;
-  padding: 7px 10px;
-  min-height: 44px;
+  justify-content: flex-start;
+
+  /* Consistent frame sizing for SVG viewBox (960×220 nominal) */
+  min-height: 64px;
   width: 100%;
+
+  /* SVG background for default state */
+  background-image: url('../../assets/ui/chargen/swse-angled-option-frame.svg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: #040b13;
+
+  /* SVG is the chrome — no CSS borders */
+  border: none;
+
+  /* Inner padding matches SVG safe content zone (x: 104, y: 78, width: 694, height: 64)
+     Outer frame is 960×220, so padding clears the frame border (~40px per side). */
+  padding: 12px 32px;
+
+  /* Text and interaction styling */
   text-align: left;
   font-family: inherit;
   font-size: var(--prog-font-size-xs);
   color: var(--prog-text);
   cursor: pointer;
 
-  border: none;
-  background: transparent;
-
-  /* Row background and border */
-  border-left: 3px solid rgba(50, 100, 150, 0.25);
-  background: linear-gradient(90deg,
-    rgba(8, 22, 38, 0.5) 0%,
-    rgba(8, 22, 38, 0.4) 100%);
-
-  transition: background var(--prog-transition-fast),
-              border-color var(--prog-transition-fast),
-              box-shadow var(--prog-transition-fast),
-              padding-left var(--prog-transition-fast);
+  /* State transition animation — smooth SVG swap + opacity */
+  transition: background-image var(--prog-transition-fast),
+              box-shadow var(--prog-transition-fast);
 }
 
+/* Hover state → reveal the hover-state frame SVG
+   User is previewing; not yet committed. */
 .progression-shell .prog-species-row:hover {
-  background: linear-gradient(90deg,
-    rgba(10, 28, 48, 0.8) 0%,
-    rgba(10, 28, 48, 0.7) 100%);
-  border-left-color: rgba(100, 180, 255, 0.5);
-  padding-left: 12px;
+  background-image: url('../../assets/ui/chargen/swse-angled-option-frame-hover.svg');
+  box-shadow: 0 0 16px rgba(0, 180, 255, 0.15);
 }
 
 .progression-shell .prog-species-row:focus {
   outline: none;
-  border-left-color: var(--prog-accent);
+  background-image: url('../../assets/ui/chargen/swse-angled-option-frame-hover.svg');
 }
 
-/* Focused (single-click selected — previewing) */
+/* Focused state (clicked, details panel shows) → hover SVG frame
+   This indicates the item is being previewed in the details panel,
+   but not yet committed. */
 .progression-shell .prog-species-row--focused {
-  background: linear-gradient(90deg,
-    rgba(0, 120, 200, 0.2) 0%,
-    rgba(0, 120, 200, 0.1) 100%);
-  border-left-color: rgba(100, 210, 255, 0.8);
-  box-shadow: inset 0 0 8px rgba(0, 150, 220, 0.15);
+  background-image: url('../../assets/ui/chargen/swse-angled-option-frame-hover.svg');
+  box-shadow: 0 0 16px rgba(0, 180, 255, 0.15);
 }
 
-/* Committed (confirmed selection) */
+/* Committed state (confirmed selection) → selected SVG frame
+   Only ONE row should have this state at a time.
+   The selected frame SVG visually indicates "this is the chosen species". */
 .progression-shell .prog-species-row--committed {
-  background: linear-gradient(90deg,
-    rgba(0, 180, 80, 0.15) 0%,
-    rgba(0, 180, 80, 0.08) 100%);
-  border-left-color: rgba(50, 220, 120, 0.7);
-  box-shadow: inset 0 0 8px rgba(0, 180, 80, 0.1);
+  background-image: url('../../assets/ui/chargen/swse-angled-option-frame-selected.svg');
+  box-shadow: 0 0 20px rgba(0, 220, 120, 0.2);
 }
 
 /* ============================================================================
-   THUMBNAIL — small portrait or letter badge
+   CONTENT WRAPPER — inner safe zone inside the SVG frame
+   ============================================================================ */
+
+.progression-shell .prog-species-row__content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* ============================================================================
+   THUMBNAIL — small portrait or letter badge on the left
    ============================================================================ */
 
 .progression-shell .prog-species-row__thumb {
-  flex: 0 0 30px;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  border-radius: 4px;
   overflow: hidden;
-  border: 1px solid rgba(80, 180, 255, 0.3);
+  border: 1px solid rgba(80, 180, 255, 0.4);
   background: rgba(6, 18, 30, 0.9);
   display: flex;
   align-items: center;
@@ -117,16 +142,16 @@
 }
 
 .progression-shell .prog-species-row__thumb-badge {
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  color: rgba(100, 200, 255, 0.7);
-  letter-spacing: 0.02em;
+  color: rgba(100, 220, 255, 0.8);
+  letter-spacing: 0.04em;
   line-height: 1;
 }
 
 /* ============================================================================
-   CENTER — name + compact stats + optional tags
+   CENTER — name + compact stats
    ============================================================================ */
 
 .progression-shell .prog-species-row__center {
@@ -134,26 +159,27 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   overflow: hidden;
 }
 
-/* Species name — most prominent text */
+/* Species name — primary label (left side anchor rule guides placement) */
 .progression-shell .prog-species-row__name {
-  font-size: 12px;
-  font-weight: 600;
-  color: rgba(210, 240, 255, 0.95);
-  text-shadow: 0 0 6px rgba(0, 170, 255, 0.3), 0 1px 2px rgba(0, 0, 0, 0.9);
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(220, 245, 255, 1);
+  text-shadow: 0 0 8px rgba(0, 160, 255, 0.35), 0 1px 2px rgba(0, 0, 0, 0.9);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  letter-spacing: 0.3px;
 }
 
-/* Compact stat line — size • +2 DEX, -2 CON • Spd 6 */
+/* Compact stat line — size • +2 DEX, -2 CON */
 .progression-shell .prog-species-row__stats {
   font-size: 10px;
-  color: rgba(120, 180, 220, 0.7);
-  text-shadow: var(--prog-text-shadow);
+  color: rgba(140, 200, 240, 0.8);
+  text-shadow: 0 0 4px rgba(0, 100, 180, 0.25), 0 1px 1px rgba(0, 0, 0, 0.8);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -165,46 +191,28 @@
 .progression-shell .prog-species-row__sep {
   display: inline;
   margin: 0;
-  opacity: 0.4;
-  font-size: 8px;
+  opacity: 0.5;
+  font-size: 9px;
 }
 
-/* Ability modifiers — colored based on sign */
+/* Ability modifiers — semantic positive/negative coloring */
 .progression-shell .prog-species-row__mods {
   display: inline;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 10px;
+  letter-spacing: 0.2px;
 }
 
 .progression-shell .prog-species-row__mods.prog-num--pos {
-  color: var(--prog-positive);
+  color: #4ade80;  /* green for bonuses */
 }
 
 .progression-shell .prog-species-row__mods.prog-num--neg {
-  color: var(--prog-negative);
-}
-
-/* Optional tags — first 3 traits */
-.progression-shell .prog-species-row__tags {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 3px;
-  overflow: hidden;
-}
-
-.progression-shell .prog-species-row__tag {
-  font-size: 8px;
-  padding: 1px 4px;
-  border-radius: 2px;
-  background: rgba(0, 80, 140, 0.25);
-  border: 1px solid rgba(60, 140, 220, 0.2);
-  color: rgba(120, 190, 255, 0.7);
-  white-space: nowrap;
-  flex-shrink: 0;
+  color: #ff6b6b;  /* red for penalties */
 }
 
 /* ============================================================================
-   RIGHT — committed check or source label
+   RIGHT — source label (only visible when not committed; committed state removes it visually)
    ============================================================================ */
 
 .progression-shell .prog-species-row__right {
@@ -213,25 +221,23 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  min-width: 40px;
+  min-width: auto;
+  max-width: 90px;
 }
 
-.progression-shell .prog-species-row__check {
-  color: var(--prog-positive);
-  font-size: 14px;
-  text-shadow: 0 0 6px rgba(34, 197, 94, 0.4);
-}
-
+/* Source badge — right-aligned metadata */
 .progression-shell .prog-species-row__source {
-  font-size: 8px;
-  color: rgba(80, 120, 160, 0.55);
+  font-size: 9px;
+  color: rgba(100, 160, 200, 0.65);
   text-align: right;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 60px;
+  max-width: 90px;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+  text-shadow: 0 0 3px rgba(0, 100, 180, 0.2);
 }
 
 /* ============================================================================
@@ -262,156 +268,189 @@
 }
 
 /* ============================================================================
-   SPECIES DETAILS PANEL (right column — contextual info)
+   SPECIES DETAILS PANEL (right column — full contextual info + confirmation)
    ============================================================================ */
 
 .progression-shell .prog-species-details {
-  padding: var(--prog-space-md);
+  padding: 16px;
   overflow-y: auto;
   height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: var(--prog-space-sm);
-  background: linear-gradient(135deg,
-    rgba(8, 22, 38, 0.6) 0%,
-    rgba(6, 18, 30, 0.5) 100%);
+  gap: 10px;
+
+  /* SVG panel background (already set in progression-shell.css) */
+  background: transparent;  /* inherit from [data-region="details-panel"] */
 }
 
-/* Ol' Salty dialogue block — top of details panel
-   dialogue-box.svg (960×240): speech bubble with chamfered frame, left-down tail.
-   SVG provides the chrome; CSS controls padding/text positioning inside frame. */
+/* Ol' Salty dialogue block — mentor guidance at top of details panel
+   Uses dialogue-box.svg (960×240) as frame asset for authentic chargen voice. */
 .progression-shell .prog-species-details__salty-dialogue {
   display: flex;
   gap: 8px;
   align-items: flex-start;
 
-  /* dialogue-box.svg frame: chamfered rect, cyan border, speech tail at bottom-left */
-  background-image:  url('../../../assets/ui/chargen/dialogue-box.svg');
+  /* dialogue-box.svg: chamfered rect, cyan border, speech tail at bottom-left */
+  background-image:  url('../../assets/ui/chargen/dialogue-box.svg');
   background-size:   100% 100%;
   background-repeat: no-repeat;
   background-color:  transparent;
 
-  /* Remove old CSS border — SVG handles chrome */
   border: none;
   border-radius: 0;
 
-  /* Inset padding clears SVG frame (frame border ~26px each side, 18px top, 40px bottom
-     to clear the speech tail zone which sits at bottom-left of the SVG) */
-  padding: 14px 24px 44px 28px;
-  min-height: 60px;
+  /* Padding clears SVG frame edges and tail zone */
+  padding: 12px 20px 36px 24px;
+  min-height: 56px;
 }
 
 .progression-shell .prog-species-details__salty-icon {
-  color: rgba(100, 200, 255, 0.65);
-  font-size: 13px;
+  color: rgba(100, 220, 255, 0.7);
+  font-size: 14px;
   flex-shrink: 0;
-  margin-top: 1px;
+  margin-top: 2px;
 }
 
 .progression-shell .prog-species-details__salty-text {
   margin: 0;
-  font-size: var(--prog-font-size-xs);
-  line-height: 1.5;
-  color: rgba(160, 220, 255, 0.85);
-  text-shadow: var(--prog-text-shadow);
+  font-size: 11px;
+  line-height: 1.6;
+  color: rgba(170, 230, 255, 0.9);
+  text-shadow: 0 0 4px rgba(0, 100, 180, 0.25), 0 1px 1px rgba(0, 0, 0, 0.8);
   font-style: italic;
 }
 
-/* Portrait — only present when species has art */
+/* Portrait — only renders if species has art; no empty placeholder */
 .progression-shell .prog-species-details__portrait {
   width: 100%;
-  border-radius: var(--prog-radius-sm);
+  border-radius: 4px;
   overflow: hidden;
-  border: 1px solid rgba(80, 200, 255, 0.35);
+  border: 1px solid rgba(80, 200, 255, 0.4);
   box-shadow:
-    0 0 10px rgba(0, 160, 220, 0.15),
-    inset 0 0 8px rgba(0, 0, 0, 0.4);
+    0 0 12px rgba(0, 160, 220, 0.1),
+    inset 0 0 6px rgba(0, 0, 0, 0.5);
 }
 
 .progression-shell .prog-species-details__portrait-img {
   width: 100%;
   height: auto;
-  max-height: 180px;
+  max-height: 160px;
   object-fit: cover;
   display: block;
 }
 
+/* Header with name and source badge */
 .progression-shell .prog-species-details__header {
   display: flex;
   align-items: center;
-  gap: var(--prog-space-sm);
-  border-bottom: 1px solid var(--prog-border);
-  padding-bottom: var(--prog-space-sm);
+  gap: 8px;
+  border-bottom: 1px solid rgba(80, 220, 255, 0.25);
+  padding-bottom: 8px;
 }
 
 .progression-shell .prog-species-details__name {
   margin: 0;
-  font-size: var(--prog-font-size-base);
-  color: var(--prog-text-heading);
-  text-shadow: var(--prog-heading-shadow);
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(220, 245, 255, 1);
+  text-shadow: 0 0 6px rgba(0, 160, 255, 0.3), 0 1px 2px rgba(0, 0, 0, 0.9);
 }
 
+/* Source badge */
+.progression-shell .prog-chip {
+  display: inline-block;
+  font-size: 8px;
+  padding: 2px 6px;
+  background: rgba(0, 80, 140, 0.3);
+  border: 1px solid rgba(60, 180, 255, 0.3);
+  border-radius: 2px;
+  color: rgba(120, 200, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+/* Description text */
 .progression-shell .prog-species-details__desc {
   margin: 0;
-  font-size: var(--prog-font-size-xs);
-  line-height: 1.5;
-  color: var(--prog-text);
-  text-shadow: var(--prog-text-shadow);
+  font-size: 10px;
+  line-height: 1.6;
+  color: rgba(160, 200, 240, 0.9);
+  text-shadow: 0 0 3px rgba(0, 100, 180, 0.2), 0 1px 1px rgba(0, 0, 0, 0.8);
 }
 
+/* Stats block */
 .progression-shell .prog-species-details__stats {
-  font-size: var(--prog-font-size-xs);
+  font-size: 10px;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  color: var(--prog-text-dim);
+  color: rgba(140, 190, 240, 0.85);
 }
 
+/* Ability modifiers grid */
 .progression-shell .prog-species-details__attrs {
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--prog-space-sm) var(--prog-space-md);
-  font-size: var(--prog-font-size-xs);
-  padding: var(--prog-space-sm);
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: var(--prog-radius-sm);
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  font-size: 10px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 3px;
+}
+
+.progression-shell .prog-species-details__attr-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
 }
 
 .progression-shell .prog-species-details__attr-row > span:first-child {
-  text-align: right;
-  color: var(--prog-text-dim);
+  color: rgba(140, 190, 240, 0.8);
+  font-weight: 500;
 }
 
+.progression-shell .prog-species-details__attr-row > span:last-child {
+  font-weight: 700;
+}
+
+/* Special abilities and languages sections */
 .progression-shell .prog-species-details__special,
 .progression-shell .prog-species-details__languages {
-  font-size: var(--prog-font-size-xs);
+  font-size: 10px;
 }
 
 .progression-shell .prog-species-details__special h4,
 .progression-shell .prog-species-details__languages h4 {
-  margin: 0 0 var(--prog-space-xs) 0;
-  color: var(--prog-text-heading);
-  text-shadow: var(--prog-heading-shadow);
+  margin: 0 0 4px 0;
+  color: rgba(200, 235, 255, 0.95);
+  text-shadow: 0 0 4px rgba(0, 150, 220, 0.25), 0 1px 1px rgba(0, 0, 0, 0.8);
   text-transform: uppercase;
-  font-size: var(--prog-font-size-xs);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
 }
 
 .progression-shell .prog-species-details__ability {
-  color: var(--prog-text);
-  text-shadow: var(--prog-text-shadow);
+  color: rgba(160, 210, 255, 0.9);
+  text-shadow: 0 0 2px rgba(0, 100, 180, 0.2);
   margin-bottom: 2px;
+  line-height: 1.4;
 }
 
+/* Action buttons — Confirm button is the primary action here */
 .progression-shell .prog-species-details__actions {
   display: flex;
-  gap: var(--prog-space-sm);
+  flex-direction: column;
+  gap: 6px;
   margin-top: auto;
 }
 
 .progression-shell .prog-species-details__actions .prog-btn {
-  flex: 1;
-  font-size: var(--prog-font-size-xs);
+  width: 100%;
+  font-size: 10px;
+  padding: 8px 12px;
 }
 
 
