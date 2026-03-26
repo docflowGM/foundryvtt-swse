@@ -32,6 +32,9 @@ import { MentorRail } from './mentor-rail.js';
 import { ProgressRail } from './progress-rail.js';
 import { UtilityBar } from './utility-bar.js';
 import { HydrationDiagnosticsCollector, HydrationValidator, HydrationRecoveryStrategies } from '../hydration-diagnostics.js';
+import { BuildIntent } from './build-intent.js';
+import { GlobalValidator } from '../validation/global-validator.js';
+import { ChargenPersistence } from './chargen-persistence.js';
 
 /**
  * Shell state model (reference — actual state lives on `this`)
@@ -200,6 +203,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this.stepData = new Map();       // stepId → step-specific state blob
     this.focusedItem = null;         // item currently in details panel (single-click)
     this.committedSelections = new Map(); // stepId → committed selection(s)
+    this.buildIntent = new BuildIntent(this); // Observable build state (Phase 6 solution)
+
+    // Persistence state (Phase 8 solution)
+    this.persistenceEnabled = mode === 'chargen'; // Auto-persist only during chargen, not levelup
+    this.lastCheckpointStepId = null;
 
     // Shell UI state
     this.mentorCollapsed = false;
@@ -302,7 +310,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
       mentorId: 'ol-salty',
       name: olSalty?.name ?? "Ol' Salty",
       title: olSalty?.title ?? 'Seasoned Spacer',
-      portrait: olSalty?.portrait ?? 'systems/foundryvtt-swse/assets/mentors/salty.webp',
+      portrait: olSalty?.portrait ?? 'systems/foundryvtt-swse/assets/mentors/salty.png',
       currentDialogue: '',
       pendingDialogue: null,
       isAnimating: false,
@@ -336,9 +344,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
   async _initializeSteps() {
     try {
       const canonicalDescriptors = this._getCanonicalDescriptors();
+      // PHASE C: Pass shell context so resolver can check committedSelections for deferred droid builds
       const conditionalDescriptors = await this._conditionalResolver.resolveForContext(
         this.actor,
-        this.mode
+        this.mode,
+        { shell: this }  // Pass shell context for state inspection
       );
 
       // Merge: canonical steps in order, then insert conditional steps at correct positions
@@ -419,6 +429,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
   /**
    * Merge canonical and conditional step sequences.
    * Conditional steps are inserted at their natural positions based on engineKey ordering.
+   * PHASE C: Final droid configuration steps are inserted right before summary.
    *
    * @param {StepDescriptor[]} canonical
    * @param {StepDescriptor[]} conditional
@@ -427,15 +438,28 @@ export class ProgressionShell extends SWSEApplicationV2 {
   _mergeStepSequence(canonical, conditional) {
     if (conditional.length === 0) return [...canonical];
 
-    // Find the insertion point: before 'confirm' step, after feat/talent steps
-    const confirmIndex = canonical.findIndex(d => d.stepId === 'confirm');
-    const insertAt = confirmIndex >= 0 ? confirmIndex : canonical.length;
+    // PHASE C: Separate final-droid-configuration from other conditional steps
+    const finalDroidSteps = conditional.filter(d => d.stepId === 'final-droid-configuration');
+    const otherConditionalSteps = conditional.filter(d => d.stepId !== 'final-droid-configuration');
 
-    return [
-      ...canonical.slice(0, insertAt),
-      ...conditional,
-      ...canonical.slice(insertAt),
+    // Find the insertion point for normal conditional steps: before 'confirm' step
+    const confirmIndex = canonical.findIndex(d => d.stepId === 'confirm');
+    const insertAtNormal = confirmIndex >= 0 ? confirmIndex : canonical.length;
+
+    // Find the insertion point for final-droid-configuration: before 'summary'
+    const summaryIndex = canonical.findIndex(d => d.stepId === 'summary');
+    const insertAtFinal = summaryIndex >= 0 ? summaryIndex : canonical.length;
+
+    // Build the merged sequence
+    const merged = [
+      ...canonical.slice(0, insertAtFinal),
+      ...finalDroidSteps,  // Insert final droid step right before summary
+      ...canonical.slice(insertAtFinal, insertAtNormal),
+      ...otherConditionalSteps,  // Insert other conditional steps before confirm
+      ...canonical.slice(insertAtNormal),
     ];
+
+    return merged;
   }
 
   /**
@@ -496,6 +520,14 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
+
+    // ✓ CRITICAL: Expose shell context to step plugins
+    // This allows steps to access committedSelections, actor, mode, and buildIntent
+    // Required for suggestion engine to see chargen choices
+    context.shell = this;
+    context.actor = this.actor;
+    context.mode = this.mode;
+    context.buildIntent = this.buildIntent;
 
     // ═══ PHASE 8: HYDRATION DIAGNOSTICS ═══
     const diagnostics = new HydrationDiagnosticsCollector({
@@ -858,6 +890,14 @@ export class ProgressionShell extends SWSEApplicationV2 {
         return;
       }
       await currentPlugin.onStepExit(this);
+
+      // Phase 3: Auto-save checkpoint after step exit (chargen only)
+      if (this.persistenceEnabled && currentDescriptor?.stepId) {
+        const saved = await ChargenPersistence.saveCheckpoint(this, currentDescriptor.stepId);
+        if (saved) {
+          this.lastCheckpointStepId = currentDescriptor.stepId;
+        }
+      }
     }
 
     this.currentStepIndex++;
@@ -958,6 +998,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
       if (result.success) {
         swseLogger.log('[ProgressionShell] Finalization successful');
         ui.notifications.info('Character progression complete!');
+
+        // Phase 3: Clear checkpoints after successful finalization
+        await this.clearCheckpoints();
+
         await this.close();
         const sheet = this.actor?.sheet;
         if (sheet) {
@@ -1183,6 +1227,145 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this.talentTreeStage = 'graph';
     this.activeTalentTreeId = treeId;
     this.render();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Global Validation (Phase 2)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Validate the entire build state against global constraints.
+   * Phase 2: Global Validation - Cross-step constraint checking
+   *
+   * @param {Object} options - Validation options
+   *   - strict: boolean - Treat warnings as errors
+   * @returns {Object} Validation result with errors, warnings, conflicts, suggestions
+   */
+  validateBuild(options = {}) {
+    return GlobalValidator.validate(this, {
+      mode: this.mode,
+      ...options,
+    });
+  }
+
+  /**
+   * Check if build is valid for proceeding (has no blocking errors).
+   * @returns {boolean}
+   */
+  isBuildValid() {
+    const result = this.validateBuild();
+    return result.isValid;
+  }
+
+  /**
+   * Get validation report as human-readable text.
+   * Useful for mentor feedback and UI display.
+   *
+   * @returns {string} Formatted validation report
+   */
+  getBuildValidationReport() {
+    const result = this.validateBuild();
+    return GlobalValidator.formatReport(result);
+  }
+
+  /**
+   * Show validation feedback via mentor rail.
+   * Called when validation check is requested or on step navigation.
+   * Shows errors as cautionary, warnings as neutral.
+   */
+  showValidationFeedback() {
+    const result = this.validateBuild();
+
+    if (result.isValid && result.warnings.length === 0 && result.conflicts.length === 0) {
+      this.mentor.currentDialogue = '✓ Your build looks solid. Ready to proceed!';
+      this.mentor.mood = 'encouraging';
+      return;
+    }
+
+    // Build feedback message
+    const messages = [];
+
+    if (result.errors.length > 0) {
+      messages.push('**Issues to fix:**');
+      result.errors.slice(0, 2).forEach(err => messages.push(`  • ${err}`));
+      if (result.errors.length > 2) {
+        messages.push(`  + ${result.errors.length - 2} more issue(s)`);
+      }
+    }
+
+    if (result.warnings.length > 0) {
+      messages.push('\n**Recommendations:**');
+      result.warnings.slice(0, 2).forEach(warn => messages.push(`  • ${warn}`));
+      if (result.warnings.length > 2) {
+        messages.push(`  + ${result.warnings.length - 2} more suggestion(s)`);
+      }
+    }
+
+    if (result.conflicts.length > 0) {
+      messages.push('\n**Build Concerns:**');
+      result.conflicts.slice(0, 2).forEach(conflict => messages.push(`  • ${conflict}`));
+      if (result.conflicts.length > 2) {
+        messages.push(`  + ${result.conflicts.length - 2} more concern(s)`);
+      }
+    }
+
+    this.mentor.currentDialogue = messages.join('\n');
+    this.mentor.mood = result.errors.length > 0 ? 'cautionary' : 'neutral';
+    this.render();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Persistence & Checkpoints (Phase 3)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Restore shell state from a saved checkpoint.
+   * Useful for resuming chargen after interrupt.
+   *
+   * @param {Object} checkpoint - Checkpoint data from ChargenPersistence
+   * @returns {boolean} true if restore successful
+   */
+  restoreFromCheckpoint(checkpoint) {
+    if (ChargenPersistence.restoreCheckpoint(this, checkpoint)) {
+      this.lastCheckpointStepId = checkpoint.lastStepId;
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Get the last saved checkpoint for this actor.
+   * Used during initialization to offer resume option.
+   *
+   * @returns {Object|null} Checkpoint data or null
+   */
+  getLastCheckpoint() {
+    return ChargenPersistence.getLastCheckpoint(this.actor);
+  }
+
+  /**
+   * Get summary of last checkpoint (for UI display).
+   * Shows what selections were made before interrupt.
+   *
+   * @returns {Object|null} Summary with buildStatus, selectionsCount, etc.
+   */
+  getCheckpointSummary() {
+    const checkpoint = this.getLastCheckpoint();
+    return checkpoint ? ChargenPersistence.getCheckpointSummary(checkpoint) : null;
+  }
+
+  /**
+   * Clear all saved checkpoints.
+   * Called after successful finalization to prevent resume.
+   *
+   * @returns {Promise<boolean>}
+   */
+  async clearCheckpoints() {
+    const cleared = await ChargenPersistence.clearCheckpoints(this.actor);
+    if (cleared) {
+      this.lastCheckpointStepId = null;
+    }
+    return cleared;
   }
 
   // ---------------------------------------------------------------------------

@@ -280,6 +280,17 @@ export class ProgressionStepPlugin {
     return 'context-only';
   }
 
+  /**
+   * Get the current global validation state for this build.
+   * Phase 2: Global Validation - use this in steps that need to check build coherence.
+   * @param {import('../shell/progression-shell.js').ProgressionShell} shell
+   * @returns {{ isValid: boolean, errors: string[], warnings: string[], conflicts: string[], suggestions: string[] }}
+   */
+  getGlobalValidation(shell) {
+    if (!shell?.validateBuild) return { isValid: true, errors: [], warnings: [], conflicts: [], suggestions: [] };
+    return shell.validateBuild();
+  }
+
   // ---------------------------------------------------------------------------
   // Post-Render Lifecycle (Wiring fine-grained DOM handlers)
   // ---------------------------------------------------------------------------
@@ -293,5 +304,97 @@ export class ProgressionStepPlugin {
    */
   async afterRender(shell, workSurfaceEl) {
     // Default: no-op
+  }
+
+  // ---------------------------------------------------------------------------
+  // Mode Awareness (Phase 6)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Check if this step is running in a specific mode.
+   * @param {import('../shell/progression-shell.js').ProgressionShell} shell
+   * @param {'chargen' | 'levelup'} mode
+   * @returns {boolean}
+   */
+  isMode(shell, mode) {
+    return shell?.mode === mode;
+  }
+
+  /**
+   * Check if this step is running in chargen mode.
+   * @param {import('../shell/progression-shell.js').ProgressionShell} shell
+   * @returns {boolean}
+   */
+  isChargen(shell) {
+    return this.isMode(shell, 'chargen');
+  }
+
+  /**
+   * Check if this step is running in levelup mode.
+   * @param {import('../shell/progression-framework/shell').ProgressionShell} shell
+   * @returns {boolean}
+   */
+  isLevelup(shell) {
+    return this.isMode(shell, 'levelup');
+  }
+
+  // ---------------------------------------------------------------------------
+  // Suggestion Display (Phase 7)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Format suggestion data for display in UI.
+   * Converts suggestion array to a Set of IDs and metadata object.
+   * Includes confidence information for each suggestion.
+   *
+   * @param {Array} suggestionsArray - Array of suggestion objects from SuggestionService
+   * @returns {{ suggestedIds: Set<string>, hasSuggestions: boolean, suggestions: Array, confidenceMap: Map }}
+   */
+  formatSuggestionsForDisplay(suggestionsArray = []) {
+    const suggestedIds = new Set((suggestionsArray || []).map(s => s.id || s));
+
+    // Build confidence map for display (id → confidence info)
+    const confidenceMap = new Map();
+    (suggestionsArray || []).forEach(s => {
+      const confidence = s.suggestion?.confidence || 0.5;
+      const confidencePercent = Math.round(confidence * 100);
+      confidenceMap.set(s.id || s, {
+        confidence,
+        confidencePercent,
+        confidenceLabel: `${confidencePercent}% match`,
+        confidenceLevel: this._getConfidenceLevel(confidence) // 'high', 'medium', 'low'
+      });
+    });
+
+    return {
+      suggestedIds,
+      hasSuggestions: suggestedIds.size > 0,
+      suggestions: suggestionsArray || [],
+      confidenceMap,
+    };
+  }
+
+  /**
+   * Get confidence level label from percentage.
+   * @private
+   * @param {number} confidence - Confidence value 0.0-1.0
+   * @returns {string} 'high', 'medium', or 'low'
+   */
+  _getConfidenceLevel(confidence) {
+    if (confidence >= 0.7) return 'high';
+    if (confidence >= 0.4) return 'medium';
+    return 'low';
+  }
+
+  /**
+   * Check if an item is suggested.
+   * Useful in formatting methods to add suggestion markers.
+   *
+   * @param {string} itemId - The item ID to check
+   * @param {Set<string>} suggestedIds - Set of suggested item IDs
+   * @returns {boolean}
+   */
+  isSuggestedItem(itemId, suggestedIds = new Set()) {
+    return suggestedIds.has(itemId);
   }
 }

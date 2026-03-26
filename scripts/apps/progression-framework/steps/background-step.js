@@ -5,13 +5,16 @@
  * - single background mode (standard)
  * - multi-background mode (house-rule driven)
  * - category organization (Event, Occupation, Planet)
+ * - Suggested backgrounds from SuggestionService (Phase 10)
  *
  * Integrates with BackgroundRegistry and backgroundSelectionCount house rule.
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { BackgroundRegistry } from '/systems/foundryvtt-swse/scripts/registries/background-registry.js';
-import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
+import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 
 const CATEGORY_LABELS = {
   event: 'Event',
@@ -32,6 +35,7 @@ export class BackgroundStep extends ProgressionStepPlugin {
     // State
     this._allBackgrounds = [];       // All backgrounds from registry
     this._groupedBackgrounds = {};   // Backgrounds grouped by category
+    this._suggestedBackgrounds = []; // Suggested backgrounds from SuggestionService
     this._focusedBackgroundId = null;
     this._committedBackgroundIds = [];  // May contain 1+ based on house rule
     this._searchQuery = '';
@@ -59,6 +63,9 @@ export class BackgroundStep extends ProgressionStepPlugin {
 
     // Group backgrounds by category
     this._groupBackgrounds();
+
+    // Phase 5: Get suggested backgrounds from SuggestionService
+    await this._getSuggestedBackgrounds(shell.actor, shell);
 
     // Enable Ask Mentor
     shell.mentor.askMentorEnabled = true;
@@ -102,9 +109,10 @@ export class BackgroundStep extends ProgressionStepPlugin {
 
   async getStepData(context) {
     const filtered = this._getFilteredBackgrounds();
+    const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedBackgrounds);
     return {
       categories: this._getCategoryChips(),
-      backgroundsByCategory: this._formatCategoryGroups(filtered),
+      backgroundsByCategory: this._formatCategoryGroups(filtered, suggestedIds, confidenceMap),
       activeCategory: this._activeCategory,
       focusedBackgroundId: this._focusedBackgroundId,
       committedBackgroundIds: this._committedBackgroundIds,
@@ -112,6 +120,12 @@ export class BackgroundStep extends ProgressionStepPlugin {
       maxBackgrounds: this._maxBackgrounds,
       selectionCount: this._committedBackgroundIds.length,
       searchQuery: this._searchQuery,
+      hasSuggestions,
+      suggestedBackgroundIds: Array.from(suggestedIds),
+      confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
+        acc[id] = data;
+        return acc;
+      }, {}),
     };
   }
 
@@ -211,12 +225,24 @@ export class BackgroundStep extends ProgressionStepPlugin {
       }
     }
 
+    // Update shell.committedSelections for backward compatibility
     shell.committedSelections.set('background', {
       backgroundIds: [...this._committedBackgroundIds],
       backgrounds: this._committedBackgroundIds
         .map(bgId => this._allBackgrounds.find(b => b.id === bgId))
         .filter(Boolean),
     });
+
+    // Update observable build intent (Phase 6 solution)
+    // This allows other steps, mentors, and validation systems to see the selection
+    if (shell.buildIntent) {
+      shell.buildIntent.commitSelection('background-step', 'background', {
+        backgroundIds: [...this._committedBackgroundIds],
+        backgrounds: this._committedBackgroundIds
+          .map(bgId => this._allBackgrounds.find(b => b.id === bgId))
+          .filter(Boolean),
+      });
+    }
 
     shell.render();
   }
@@ -294,16 +320,37 @@ export class BackgroundStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onAskMentor(shell) {
-    await handleAskMentor(shell.actor, 'background', shell);
+    // If we have suggestions, use the advisory system instead of standard guidance
+    if (this._suggestedBackgrounds && this._suggestedBackgrounds.length > 0) {
+      await handleAskMentorWithSuggestions(shell.actor, 'background', this._suggestedBackgrounds, shell, {
+        domain: 'backgrounds',
+        archetype: 'your background'
+      });
+    } else {
+      // Fallback to standard guidance if no suggestions
+      await handleAskMentor(shell.actor, 'background', shell);
+    }
   }
 
   getMentorContext(shell) {
-    return getStepGuidance(shell.actor, 'background') ||
-      `Your background shapes who you are. ${
+    const customGuidance = getStepGuidance(shell.actor, 'background');
+    if (customGuidance) return customGuidance;
+
+    // Mode-aware default guidance (background is primarily chargen)
+    if (this.isChargen(shell)) {
+      return `Your background shapes who you are. ${
         this._maxBackgrounds > 1
           ? `You may choose up to ${this._maxBackgrounds} backgrounds.`
           : 'Choose the defining moment of your past.'
       }`;
+    }
+
+    // Fallback for any levelup usage
+    return `Your past defines you. ${
+      this._maxBackgrounds > 1
+        ? `You may reflect on up to ${this._maxBackgrounds} formative moments.`
+        : 'Remember the defining moment of your journey.'
+    }`;
   }
 
   getMentorMode() {
@@ -336,6 +383,46 @@ export class BackgroundStep extends ProgressionStepPlugin {
     }
   }
 
+  /**
+   * Phase 5: Get suggested backgrounds from SuggestionService
+   * Recommendations based on species, class, and other selections
+   * @private
+   */
+  async _getSuggestedBackgrounds(actor, shell) {
+    try {
+      // Build characterData from shell's buildIntent/committedSelections
+      const characterData = this._buildCharacterDataFromShell(shell);
+
+      // Get suggestions from SuggestionService
+      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+        domain: 'backgrounds',
+        available: this._allBackgrounds,
+        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
+        engineOptions: { includeFutureAvailability: true },
+        persist: true
+      });
+
+      // Store top suggestions
+      this._suggestedBackgrounds = (suggested || []).slice(0, 3);
+    } catch (err) {
+      console.warn('[BackgroundStep] Suggestion service error:', err);
+      this._suggestedBackgrounds = [];
+    }
+  }
+
+  /**
+   * Extract character data from shell for suggestion engine
+   * Allows suggestions to understand what choices have been made so far
+   * @private
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.buildIntent) {
+      return {};
+    }
+
+    return shell.buildIntent.toCharacterData();
+  }
+
   _getFilteredBackgrounds() {
     let filtered = this._allBackgrounds;
 
@@ -363,7 +450,7 @@ export class BackgroundStep extends ProgressionStepPlugin {
     }));
   }
 
-  _formatCategoryGroups(filtered) {
+  _formatCategoryGroups(filtered, suggestedIds = new Set(), confidenceMap = new Map()) {
     const result = {};
     for (const category of ['event', 'occupation', 'planet']) {
       const backgrounds = (this._groupedBackgrounds[category] || [])
@@ -371,6 +458,8 @@ export class BackgroundStep extends ProgressionStepPlugin {
         .map(bg => {
           const isCommitted = this._committedBackgroundIds.includes(bg.id);
           const isFocused = bg.id === this._focusedBackgroundId;
+          const isSuggested = this.isSuggestedItem(bg.id, suggestedIds);
+          const confidenceData = confidenceMap.get ? confidenceMap.get(bg.id) : confidenceMap[bg.id];
           return {
             id: bg.id,
             name: bg.name,
@@ -381,6 +470,10 @@ export class BackgroundStep extends ProgressionStepPlugin {
             hasMore: (bg.trainedSkills || []).length > 3,
             isFocused,
             isCommitted,
+            isSuggested,
+            badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
+            badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
+            confidenceLevel: confidenceData?.confidenceLevel || null,
           };
         });
 

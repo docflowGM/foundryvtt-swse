@@ -28,6 +28,11 @@ import { BackgroundSuggestionEngine } from "/systems/foundryvtt-swse/scripts/eng
 import { ForceOptionSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ForceOptionSuggestionEngine.js";
 import { Level1SkillSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/Level1SkillSuggestionEngine.js";
 import { AttributeIncreaseSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/AttributeIncreaseSuggestionEngine.js";
+import { SpeciesSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/species-suggestion-engine.js";
+import { LanguageSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/language-suggestion-engine.js";
+import { ForceSecretSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-secret-suggestion-engine.js";
+import { ForceTechniqueSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-technique-suggestion-engine.js";
+import { DroidSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/droid-suggestion-engine.js";  // PHASE D
 import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
 import { IdentityEngine } from "/systems/foundryvtt-swse/scripts/engine/prestige/identity-engine.js";
 import { ProgressionAdvisor } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ProgressionAdvisor.js";
@@ -88,6 +93,14 @@ export class SuggestionEngineCoordinator {
           this.suggestClasses(classes, actor, pendingData, options),
         suggestBackgrounds: (backgrounds, actor, pendingData, options) =>
           this.suggestBackgrounds(backgrounds, actor, pendingData, options),
+        suggestSpecies: (species, actor, pendingData, options) =>
+          this.suggestSpecies(species, actor, pendingData, options),
+        suggestLanguages: (languages, actor, pendingData, options) =>
+          this.suggestLanguages(languages, actor, pendingData, options),
+        suggestForceSecrets: (secrets, actor, pendingData, options) =>
+          this.suggestForceSecrets(secrets, actor, pendingData, options),
+        suggestForceTechniques: (techniques, actor, pendingData, options) =>
+          this.suggestForceTechniques(techniques, actor, pendingData, options),
         suggestForceOptions: (options, actor, pendingData, contextOptions) =>
           this.suggestForceOptions(options, actor, pendingData, contextOptions),
         suggestLevel1Skills: (skills, actor, pendingData) =>
@@ -110,6 +123,8 @@ export class SuggestionEngineCoordinator {
           this.getAbilityIcon(ability),
         getAbilityName: (abbrev) =>
           this.getAbilityName(abbrev),
+        suggestDroidSystems: (systems, actor, pendingData, options) =>
+          this.suggestDroidSystems(systems, actor, pendingData, options),  // PHASE D
         clearBuildIntentCache: (actorId) =>
           this.clearBuildIntentCache(actorId)
       };
@@ -371,6 +386,175 @@ export class SuggestionEngineCoordinator {
           icon: ''
         }
       }));
+    }
+  }
+
+  /**
+   * Suggest species based on character's class, abilities, and build synergy
+   * @param {Array} species - Array of species objects
+   * @param {Actor} actor - The character (or temp actor for chargen)
+   * @param {Object} pendingData - Pending character data from chargen
+   * @param {Object} options - Additional options
+   * @returns {Promise<Array>} Species with suggestion metadata
+   */
+  static async suggestSpecies(species, actor, pendingData = {}, options = {}) {
+    try {
+      // Get or compute BuildIntent for context
+      const buildIntent = options.buildIntent || await this.analyzeBuildIntent(actor, pendingData);
+
+      // Call SpeciesSuggestionEngine with BuildIntent context
+      const speciesSuggested = await SpeciesSuggestionEngine.suggestSpecies(
+        species,
+        actor,
+        pendingData,
+        {
+          ...options,
+          buildIntent
+        }
+      );
+
+      return speciesSuggested;
+    } catch (err) {
+      SWSELogger.error('Species suggestion failed:', err);
+      // Return species without suggestions as fallback
+      return species.map(s => ({
+        ...s,
+        suggestion: {
+          confidence: 0.50,
+          reason: 'Valid option'
+        }
+      }));
+    }
+  }
+
+  /**
+   * Suggest languages based on character's species, background, and class context
+   * @param {Array} languages - Array of language objects
+   * @param {Actor} actor - The character (or temp actor for chargen)
+   * @param {Object} pendingData - Pending character data from chargen
+   * @param {Object} options - Additional options
+   * @returns {Promise<Array>} Languages with suggestion metadata
+   */
+  static async suggestLanguages(languages, actor, pendingData = {}, options = {}) {
+    try {
+      // Call LanguageSuggestionEngine to score and rank languages
+      const languagesSuggested = await LanguageSuggestionEngine.suggestLanguages(
+        languages,
+        actor,
+        pendingData,
+        options
+      );
+
+      return languagesSuggested;
+    } catch (err) {
+      SWSELogger.error('Language suggestion failed:', err);
+      // Return languages without suggestions as fallback
+      return languages.map(l => ({
+        ...l,
+        suggestion: {
+          confidence: 0.50,
+          reason: 'Available option'
+        }
+      }));
+    }
+  }
+
+  /**
+   * Suggest Force Secrets based on character's force commitment and archetype
+   * @param {Array} secrets - Array of force secret objects
+   * @param {Actor} actor - The character (or temp actor for chargen)
+   * @param {Object} pendingData - Pending character data from chargen
+   * @param {Object} options - Additional options
+   * @returns {Promise<Array>} Secrets with suggestion metadata
+   */
+  static async suggestForceSecrets(secrets, actor, pendingData = {}, options = {}) {
+    try {
+      // Call ForceSecretSuggestionEngine to score and rank secrets
+      const secretsSuggested = await ForceSecretSuggestionEngine.suggestForceSecrets(
+        secrets,
+        actor,
+        options
+      );
+
+      return secretsSuggested;
+    } catch (err) {
+      SWSELogger.error('Force Secret suggestion failed:', err);
+      // Return secrets without suggestions as fallback
+      return secrets.map(s => ({
+        ...s,
+        suggestion: {
+          tier: 0,
+          reason: 'Available option'
+        }
+      }));
+    }
+  }
+
+  /**
+   * Suggest Force Techniques based on character's known powers and archetype
+   * @param {Array} techniques - Array of force technique objects
+   * @param {Actor} actor - The character (or temp actor for chargen)
+   * @param {Object} pendingData - Pending character data from chargen
+   * @param {Object} options - Additional options
+   * @returns {Promise<Array>} Techniques with suggestion metadata
+   */
+  static async suggestForceTechniques(techniques, actor, pendingData = {}, options = {}) {
+    try {
+      // Call ForceTechniqueSuggestionEngine to score and rank techniques
+      const techniquesSuggested = await ForceTechniqueSuggestionEngine.suggestForceOptions(
+        techniques,
+        actor,
+        options
+      );
+
+      return techniquesSuggested;
+    } catch (err) {
+      SWSELogger.error('Force Technique suggestion failed:', err);
+      // Return techniques without suggestions as fallback
+      return techniques.map(t => ({
+        ...t,
+        suggestion: {
+          tier: 0,
+          reason: 'Available option'
+        }
+      }));
+    }
+  }
+
+  /**
+   * Suggest droid systems based on character's class, budget, and droid constraints
+   * PHASE D: DroidSuggestionEngine recommendations for provisional and finalized modes
+   *
+   * @param {Object} systems - Droid systems organized by category (locomotion, processor, etc.)
+   * @param {Actor} actor - The character (must be a droid)
+   * @param {Object} pendingData - Pending character data from chargen
+   * @param {Object} options - Engine options: {mode: 'preview'|'final', debug, allowOverflow}
+   * @returns {Promise<Object>} Suggestions organized by system category
+   */
+  static async suggestDroidSystems(systems, actor, pendingData = {}, options = {}) {
+    try {
+      // Validate that this is a droid character
+      if (!actor || !actor.system?.isDroid) {
+        SWSELogger.warn('[Coordinator] suggestDroidSystems called for non-droid character');
+        return {};
+      }
+
+      // Call DroidSuggestionEngine to score and rank systems by category
+      const droidSuggestions = await DroidSuggestionEngine.suggestDroidSystems(
+        systems,
+        actor,
+        pendingData,
+        {
+          ...options,
+          mode: options.mode || 'preview',  // Default to preview mode
+        }
+      );
+
+      return droidSuggestions;
+    } catch (err) {
+      SWSELogger.error('Droid system suggestion failed:', err);
+      // Return empty suggestions object as fallback
+      return {};
     }
   }
 

@@ -10,7 +10,6 @@
     "values": "Survival, experience, adaptability, legacy",
     "tooltip": "Pegar reflects your character through the lens of endless survival and arena mastery",
     "avatar": "systems/foundryvtt-swse/assets/mentors/pegar.webp",
-
     "dialogues": {
       "classPaths": {
         "gladiator": {
@@ -27,7 +26,6 @@
             "10": "You are now a champion—almost as immortal as me. No one is quite as immortal as I am. Trust me."
           }
         },
-
         "gladiator_warrior": {
           "greeting": "Warrior of the arena. You test strength and endurance under fire.",
           "confirmation": "Technique, adaptability, and preparation decide survival."
@@ -54,7 +52,6 @@
         }
       }
     },
-
     "guidance": {
       "class": "Choose what keeps you alive. I’ve seen every style succeed—and fail.",
       "talents": "Combat talents win matches. Some I invented. In different bodies.",
@@ -62,11 +59,16 @@
       "skills": "Be smart and strong. That’s how you live long enough to matter.",
       "multiclass": "Adapting your style is wise. I’ve done it countless times.",
       "hp": "Harder to kill now. Excellent. I still haven’t figured out how to die.",
-      "summary": "Fight well. Survive longer. Ask questions later."
+      "summary": "Fight well. Survive longer. Ask questions later.",
+      "species": "Your species shapes your potential. Choose what suits your path.",
+      "background": "Your past defines you. Use it wisely.",
+      "languages": "Understanding others gives you advantage.",
+      "forcePowers": "Choose powers that strengthen your purpose."
     },
-
     "mentorStory": {
-      "mentorClasses": ["Gladiator"],
+      "mentorClasses": [
+        "Gladiator"
+      ],
       "mentorDSPPercent": 0.5,
       "dspTolerance": 1,
       "dspSensitivity": "none",

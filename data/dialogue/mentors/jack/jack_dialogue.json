@@ -10,7 +10,6 @@
     "values": "Freedom, flexibility, cleverness, momentum",
     "tooltip": "Lucky Jack reflects your character through chaos, intuition, and creative survival",
     "avatar": "systems/foundryvtt-swse/assets/mentors/jack.webp",
-
     "dialogues": {
       "classPaths": {
         "improviser": {
@@ -27,7 +26,6 @@
             "10": "Master improviser! Go forth and keep winging it!"
           }
         },
-
         "improviser_creative": {
           "greeting": "Creative improviser. You see solutions in chaos.",
           "confirmation": "Experiment boldly and turn surprises into advantages."
@@ -58,7 +56,6 @@
         }
       }
     },
-
     "guidance": {
       "class": "Choose what feels right in the moment.",
       "talents": "Versatile options that work anywhere.",
@@ -66,20 +63,36 @@
       "skills": "Learn a bit of everything. You never know.",
       "multiclass": "More tools means better improvisation.",
       "hp": "Risk is part of the process. Toughness helps.",
-      "summary": "Wing it. Fix it. Survive."
+      "summary": "Wing it. Fix it. Survive.",
+      "species": "Your species shapes your potential. Choose what suits your path.",
+      "background": "Your past defines you. Use it wisely.",
+      "languages": "Understanding others gives you advantage.",
+      "forcePowers": "Choose powers that strengthen your purpose."
     },
-
     "mentorStory": {
-      "mentorClasses": ["Improviser", "Scoundrel"],
+      "mentorClasses": [
+        "Improviser",
+        "Scoundrel"
+      ],
       "mentorDSPPercent": 0.5,
       "dspTolerance": 0.5,
       "dspSensitivity": "none",
       "tiers": {
-        "tier1": ["Plans are guesses you make early."],
-        "tier2": ["I trust my feet more than my head."],
-        "tier3": ["Luck is noticing things before they break."],
-        "tier4": ["If I stop moving, things catch up."],
-        "tier5": ["Silence makes me think too hard."]
+        "tier1": [
+          "Plans are guesses you make early."
+        ],
+        "tier2": [
+          "I trust my feet more than my head."
+        ],
+        "tier3": [
+          "Luck is noticing things before they break."
+        ],
+        "tier4": [
+          "If I stop moving, things catch up."
+        ],
+        "tier5": [
+          "Silence makes me think too hard."
+        ]
       },
       "dspBlocked": [
         "Nah, that ruins the vibe.",

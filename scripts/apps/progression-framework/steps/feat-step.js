@@ -24,6 +24,7 @@ import { FeatSlotValidator } from '/systems/foundryvtt-swse/scripts/engine/progr
 import { FeatEngine } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-engine.js';
 import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 
 // Constants
@@ -69,8 +70,8 @@ export class FeatStep extends ProgressionStepPlugin {
     // Get legal feats for this context
     const legalFeats = await this._getLegalFeats(shell.actor);
 
-    // Get suggested feats
-    this._suggestedFeats = await this._getSuggestedFeats(shell.actor, legalFeats);
+    // Get suggested feats (pass shell so suggestion engine sees chargen choices)
+    this._suggestedFeats = await this._getSuggestedFeats(shell.actor, legalFeats, shell);
 
     // Group feats by category
     this._groupFeats(legalFeats);
@@ -196,13 +197,19 @@ export class FeatStep extends ProgressionStepPlugin {
 
   /**
    * Get suggested feats from SuggestionService
+   * CRITICAL: Pass characterData (chargen choices so far) for coherent suggestions
    */
-  async _getSuggestedFeats(actor, availableFeats) {
+  async _getSuggestedFeats(actor, availableFeats, shell) {
     try {
+      // ✓ Build characterData from shell's committedSelections
+      // This ensures suggestion engine understands the build-in-progress
+      const characterData = this._buildCharacterDataFromShell(shell);
+
       // Get suggestions from SuggestionService
       const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
         domain: 'feats',
         available: availableFeats,
+        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
         engineOptions: { includeFutureAvailability: true },
         persist: true
       });
@@ -213,6 +220,27 @@ export class FeatStep extends ProgressionStepPlugin {
       console.warn('[FeatStep] Suggestion service error:', err);
       return [];
     }
+  }
+
+  /**
+   * Extract character data from shell's committed selections
+   * Allows suggestion engine to see what choices have been made so far in chargen
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.committedSelections) {
+      return {};
+    }
+
+    const committed = shell.committedSelections;
+
+    return {
+      classes: committed.get('class') ? [committed.get('class')] : [],
+      species: committed.get('species'),
+      feats: committed.get('feats') || [],
+      talents: committed.get('talents') || [],
+      skills: committed.get('skills') || {},
+      abilityIncreases: committed.get('attributes') || {},
+    };
   }
 
   /**
@@ -456,7 +484,7 @@ export class FeatStep extends ProgressionStepPlugin {
     this._focusedFeatId = item?.id || item;
   }
 
-  async onItemCommitted(item) {
+  async onItemCommitted(item, shell) {
     if (!item) return;
 
     const feat = this._getFeat(item._id || item);
@@ -467,6 +495,16 @@ export class FeatStep extends ProgressionStepPlugin {
       this._selectedFeatId = null;
     } else {
       this._selectedFeatId = feat._id;
+    }
+
+    // Update observable build intent (Phase 6 solution)
+    // Each feat slot (general/class) commits to shell.committedSelections with its own stepId,
+    // and also updates buildIntent for cross-step visibility
+    if (shell?.buildIntent && this.descriptor?.stepId) {
+      const selectedFeatData = this._selectedFeatId
+        ? { featId: this._selectedFeatId, feat, slotType: this._slotType }
+        : null;
+      shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, selectedFeatData);
     }
   }
 
@@ -494,8 +532,17 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   getMentorContext(shell) {
-    return getStepGuidance(shell.actor, 'general-feat') ||
-      'Choose feats that strengthen your abilities and define your playstyle. Some feats are better for your build than others.';
+    const customGuidance = getStepGuidance(shell.actor, 'general-feat');
+    if (customGuidance) return customGuidance;
+
+    // Mode-aware default guidance
+    if (this.isChargen(shell)) {
+      return 'Choose feats that strengthen your abilities and define your playstyle. Some feats are better for your build than others.';
+    } else if (this.isLevelup(shell)) {
+      return 'As you gain experience, you may learn new techniques and abilities. Choose feats that enhance your path.';
+    }
+
+    return 'Select a feat wisely.';
   }
 
   getMentorMode() {

@@ -26,6 +26,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { SWSETranslationEngine } from '../engine/swse-translation-engine.js';
+import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 
 // ========== INTRO STATE MACHINE ==========
 const INTRO_STATE = {
@@ -1112,10 +1113,9 @@ export class IntroStep extends ProgressionStepPlugin {
    * The intro is diegetic — mentor observes but doesn't speak.
    * The translation moment is handled via the existing mentor translation system.
    */
-  getMentorContext() {
-    return this._complete
-      ? 'Welcome, young one. Your datapad awaits your command.'
-      : '';
+  getMentorContext(shell) {
+    return getStepGuidance(shell.actor, 'intro')
+      || 'Make your choice wisely.';
   }
 
   /**

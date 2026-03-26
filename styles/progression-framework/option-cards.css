@@ -184,6 +184,67 @@
   color: rgba(80, 120, 160, 0.7);
 }
 
+/* Confidence-level based styling for suggested items */
+.prog-species-row--suggested {
+  /* Base suggested styling inherited from option-card */
+}
+
+.prog-species-row--suggested-high {
+  /* High confidence: bright green accent */
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.prog-species-row--suggested-medium {
+  /* Medium confidence: muted green */
+  border-color: rgba(34, 197, 94, 0.2);
+  opacity: 0.95;
+}
+
+.prog-species-row--suggested-low {
+  /* Low confidence: subtle hint */
+  border-color: rgba(34, 197, 94, 0.1);
+  opacity: 0.9;
+}
+
+/* Similar confidence-level styling for other card types */
+.prog-class-card--suggested-high,
+.prog-background-item--suggested-high,
+.prog-attribute-row--suggested-high,
+.prog-language-item--suggested-high,
+.prog-power-card--suggested-high,
+.prog-secret-card--suggested-high,
+.prog-technique-card--suggested-high,
+.prog-droid-system--suggested-high,
+.prog-maneuver-card--suggested-high {
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.prog-class-card--suggested-medium,
+.prog-background-item--suggested-medium,
+.prog-attribute-row--suggested-medium,
+.prog-language-item--suggested-medium,
+.prog-power-card--suggested-medium,
+.prog-secret-card--suggested-medium,
+.prog-technique-card--suggested-medium,
+.prog-droid-system--suggested-medium,
+.prog-maneuver-card--suggested-medium {
+  border-color: rgba(34, 197, 94, 0.2);
+  opacity: 0.95;
+}
+
+.prog-class-card--suggested-low,
+.prog-background-item--suggested-low,
+.prog-attribute-row--suggested-low,
+.prog-language-item--suggested-low,
+.prog-power-card--suggested-low,
+.prog-secret-card--suggested-low,
+.prog-technique-card--suggested-low,
+.prog-droid-system--suggested-low,
+.prog-maneuver-card--suggested-low {
+  border-color: rgba(34, 197, 94, 0.1);
+  opacity: 0.9;
+}
+
 .prog-species-card__mods {
   font-size: var(--prog-font-size-xs);
   color: var(--prog-text-dim);

@@ -10,7 +10,6 @@
     "values": "Subtlety, competence, secrecy, survival through intelligence",
     "tooltip": "Skindar reflects your character through the lens of espionage and deniable power",
     "avatar": "systems/foundryvtt-swse/assets/mentors/skindar.webp",
-
     "dialogues": {
       "classPaths": {
         "corporate_agent": {
@@ -27,20 +26,31 @@
             "10": "Master Corporate Agent. Go do your espionage—competently."
           }
         },
-
         "agent_spy": {
           "greeting": "Spy. You operate unseen.",
           "confirmation": "Observe, assess, and act covertly.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
@@ -49,14 +59,26 @@
           "confirmation": "Balance discretion with decisive action.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
@@ -65,14 +87,26 @@
           "confirmation": "Build networks and manage assets.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
@@ -81,14 +115,26 @@
           "confirmation": "Feed truth selectively and maintain cover.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
@@ -97,14 +143,26 @@
           "confirmation": "Turn data into decisions.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
@@ -113,20 +171,31 @@
           "confirmation": "Coordinate assets and maintain control.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         }
       }
     },
-
     "guidance": {
       "class": "Sharpen your cover and never stand out.",
       "talents": "Deception, infiltration, extraction.",
@@ -134,22 +203,43 @@
       "skills": "Tradecraft is survival.",
       "multiclass": "Adaptation keeps you alive.",
       "hp": "Dead agents generate paperwork.",
-      "summary": "If they notice you, you failed."
+      "summary": "If they notice you, you failed.",
+      "species": "Your species shapes your potential. Choose what suits your path.",
+      "background": "Your past defines you. Use it wisely.",
+      "languages": "Understanding others gives you advantage.",
+      "forcePowers": "Choose powers that strengthen your purpose."
     },
-
     "mentorStory": {
-      "mentorClasses": ["CorporateAgent", "Spy", "Noble"],
+      "mentorClasses": [
+        "CorporateAgent",
+        "Spy",
+        "Noble"
+      ],
       "mentorDSPPercent": 0.5,
-      "dspTolerance": 1.0,
+      "dspTolerance": 1,
       "dspSensitivity": "none",
       "tiers": {
-        "tier1": ["I don’t tell stories. I solve problems."],
-        "tier2": ["If you’re doing this right, you forget your own name."],
-        "tier3": ["Every role I’ve played was true."],
-        "tier4": ["People who get noticed don’t last."],
-        "tier5": ["My real life is filed under classified."]
+        "tier1": [
+          "I don’t tell stories. I solve problems."
+        ],
+        "tier2": [
+          "If you’re doing this right, you forget your own name."
+        ],
+        "tier3": [
+          "Every role I’ve played was true."
+        ],
+        "tier4": [
+          "People who get noticed don’t last."
+        ],
+        "tier5": [
+          "My real life is filed under classified."
+        ]
       },
-      "dspBlocked": ["That’s not relevant.", "Wrong question.", "Focus."]
+      "dspBlocked": [
+        "That’s not relevant.",
+        "Wrong question.",
+        "Focus."
+      ]
     }
   }
 }

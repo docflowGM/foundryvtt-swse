@@ -10,7 +10,6 @@
     "values": "Truth, power, decisive action, unwavering conviction",
     "tooltip": "Miedo reflects your character through the lens of absolute power and certainty",
     "avatar": "systems/foundryvtt-swse/assets/mentors/miedo.webp",
-
     "dialogues": {
       "classPaths": {
         "sith_lord": {
@@ -22,111 +21,176 @@
             "5": "You are becoming more than a student. One day you may surpass me. Until then, pain will shape you."
           }
         },
-
         "sith_lord_warrior": {
           "greeting": "Warrior. Strength and conquest define your ascent.",
           "confirmation": "Defeat rivals, master the blade, and assert control.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
-
         "sith_lord_mystic": {
           "greeting": "Mystic. You pursue forbidden knowledge beyond the blade.",
           "confirmation": "Study deeply. Power multiplies through understanding.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
-
         "sith_lord_manipulator": {
           "greeting": "Manipulator. You shape outcomes through others.",
           "confirmation": "Exploit weakness. Orchestrate events.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
-
         "sith_lord_architect": {
           "greeting": "Architect. You build empires and institutions.",
           "confirmation": "Plan meticulously. Legacy is power made permanent.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
-
         "sith_lord_philosopher": {
           "greeting": "Philosopher. You treat power as principle.",
           "confirmation": "Insight refines strength into inevitability.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
-
         "sith_lord_emperor": {
           "greeting": "Emperor. Your will reshapes civilizations.",
           "confirmation": "Demand loyalty. Execute vision.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         }
       }
     },
-
     "guidance": {
       "class": "Seek certainty. Ambiguity is weakness.",
       "talents": "Select what enforces dominance and control.",
@@ -134,11 +198,18 @@
       "skills": "Anticipation is victory achieved early.",
       "multiclass": "Only those who bend tradition shape the future.",
       "hp": "Endurance is proof of worth.",
-      "summary": "Those who hesitate are already defeated."
+      "summary": "Those who hesitate are already defeated.",
+      "species": "Your species shapes your potential. Choose what suits your path.",
+      "background": "Your past defines you. Use it wisely.",
+      "languages": "Understanding others gives you advantage.",
+      "forcePowers": "Choose powers that strengthen your purpose."
     },
-
     "mentorStory": {
-      "mentorClasses": ["SithApprentice", "SithLord", "ForceDisciple"],
+      "mentorClasses": [
+        "SithApprentice",
+        "SithLord",
+        "ForceDisciple"
+      ],
       "mentorDSPPercent": 0.75,
       "dspTolerance": 0.3,
       "dspSensitivity": "inverted",

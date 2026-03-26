@@ -10,7 +10,6 @@
     "values": "Awareness, restraint, spiritual alignment, growth through discipline",
     "tooltip": "Miraj reflects your character through a philosophical and Force-aware lens",
     "avatar": "systems/foundryvtt-swse/assets/mentors/miraj.webp",
-
     "dialogues": {
       "classPaths": {
         "jedi": {
@@ -37,7 +36,6 @@
             "20": "You have become a Jedi in more than name. Carry what you have learned with humility. The future will test it."
           }
         },
-
         "jedi_guardian": {
           "greeting": "Guardian, a martial adept of the Force. You walk the path of decisive action, standing as a shield for those who cannot defend themselves.",
           "confirmation": "Blend offense with defense. Anticipate your enemy's moves, protect the innocent, and let the Force guide every strike."
@@ -67,7 +65,6 @@
           "confirmation": "Observe, anticipate, and intervene subtly. Use wisdom and the Force to maintain balance without unnecessary force."
         }
       },
-
       "prestigePaths": {
         "jedi_knight": {
           "title": "Jedi Knight",
@@ -85,7 +82,6 @@
             "10": "You have completed the first great stage of your journey as a Jedi Knight. Whatever the Force asks of you next, face it with courage and wisdom. May it guide you always."
           }
         },
-
         "jedi_master": {
           "title": "Jedi Master",
           "description": "Your fellow Jedi Master, treating you as an equal and old friend",
@@ -99,7 +95,6 @@
         }
       }
     },
-
     "guidance": {
       "class": "Choose the path that aligns with your understanding of the Force. Let it guide your spirit and purpose.",
       "background": "The Force flows through all moments of your life — even those before you understood it.\n\nYour past does not bind you, but it shapes the path you walk.\n\nA Jedi does not deny their history. They learn from it.",
@@ -110,11 +105,13 @@
       "multiclass": "Diversifying your skills can reveal truths hidden to the narrowly focused. Balance is key.",
       "forcePowers": "The Force offers many gifts to those who learn to listen. Choose powers that reflect your path and strengthen your connection.",
       "hp": "Your resilience grows. The Force protects those who walk in its light and serve the galaxy with dedication.",
-      "summary": "You stand at the threshold of becoming.\n\nRemember: the Force responds to intention, not desire.\n\nWalk forward with clarity."
+      "summary": "You stand at the threshold of becoming.\n\nRemember: the Force responds to intention, not desire.\n\nWalk forward with clarity.",
+      "species": "Your species shapes your potential. Choose what suits your path."
     },
-
     "mentorStory": {
-      "mentorClasses": ["Jedi"],
+      "mentorClasses": [
+        "Jedi"
+      ],
       "mentorDSPPercent": 0.2,
       "dspTolerance": 0.3,
       "dspSensitivity": "loose",

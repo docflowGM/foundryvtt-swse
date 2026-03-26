@@ -10,7 +10,6 @@
     "values": "Survival, efficiency, independence, credibility",
     "tooltip": "Delta reflects your character through lethal subtlety and street-hardened instinct",
     "avatar": "systems/foundryvtt-swse/assets/mentors/delta.webp",
-
     "dialogues": {
       "classPaths": {
         "assassin": {
@@ -27,7 +26,6 @@
             "10": "You’re officially scary. Don’t screw it up."
           }
         },
-
         "infiltrator": {
           "levelGreetings": {
             "1": "You wanna sneak? Try not to embarrass us both.",
@@ -42,7 +40,6 @@
             "10": "Anyone. Anywhere. Try not to believe the hype."
           }
         },
-
         "assassin_sniper": {
           "greeting": "Sniper. One shot, one ghost.",
           "confirmation": "Patience and precision make you untouchable."
@@ -67,7 +64,6 @@
           "greeting": "Legendary Assassin. Fear precedes you.",
           "confirmation": "Become the myth."
         },
-
         "infiltrator_ghost": {
           "greeting": "Slippin’ through where you shouldn’t be.",
           "confirmation": "Do it right, nobody knows."
@@ -94,7 +90,6 @@
         }
       }
     },
-
     "guidance": {
       "class": "Pick the stuff that makes you faster, quieter, deadlier. You wanna sneak past these losers and still be breathin' when the credits hit the floor.",
       "talents": "Go for silent takedowns, smooth escapes, and anything that keeps you from gettin' splattered. Dead men don't talk, but smart ones survive.",
@@ -102,22 +97,43 @@
       "skills": "Stealth, anatomy, infiltration—know where to poke so they never get up. Learn it all, kid. Nar Shaddaa ain't forgiving.",
       "multiclass": "Extra skills? Fine. The more ways you can ruin somebody's day, the less likely it is you end up dead in a gutter.",
       "hp": "Toughness helps, but lemme tell ya—if they see you, it's already too late. Move smart, hit fast, survive.",
-      "summary": "Move smart. Hit fast. Live."
+      "summary": "Move smart. Hit fast. Live.",
+      "species": "Your species shapes your potential. Choose what suits your path.",
+      "background": "Your past defines you. Use it wisely.",
+      "languages": "Understanding others gives you advantage.",
+      "forcePowers": "Choose powers that strengthen your purpose."
     },
-
     "mentorStory": {
-      "mentorClasses": ["Assassin", "Scout", "Gunslinger"],
+      "mentorClasses": [
+        "Assassin",
+        "Scout",
+        "Gunslinger"
+      ],
       "mentorDSPPercent": 0.5,
       "dspTolerance": 0.35,
       "dspSensitivity": "loose",
       "tiers": {
-        "tier1": ["Miss once, you don’t get a second shot."],
-        "tier2": ["I learned to kill quiet."],
-        "tier3": ["One job crossed a line."],
-        "tier4": ["Silence changes how you listen."],
-        "tier5": ["I hate this suit."]
+        "tier1": [
+          "Miss once, you don’t get a second shot."
+        ],
+        "tier2": [
+          "I learned to kill quiet."
+        ],
+        "tier3": [
+          "One job crossed a line."
+        ],
+        "tier4": [
+          "Silence changes how you listen."
+        ],
+        "tier5": [
+          "I hate this suit."
+        ]
       },
-      "dspBlocked": ["Nah. Not yet.", "You ain’t ready.", "Earn it."]
+      "dspBlocked": [
+        "Nah. Not yet.",
+        "You ain’t ready.",
+        "Earn it."
+      ]
     }
   }
 }

@@ -75,6 +75,7 @@ export class ProgressionFinalizer {
   /**
    * Validate that progression is ready to finalize.
    * Throws if not ready.
+   * PHASE A + B: Check for deferred droid builds
    *
    * @param {Object} sessionState
    * @throws {Error} if progression incomplete
@@ -86,8 +87,41 @@ export class ProgressionFinalizer {
     if (!sessionState.actor) {
       throw new Error('No actor in progression session');
     }
+
     const selections = sessionState.committedSelections || new Map();
     const summarySelection = selections.get('summary') || sessionState.stepData?.get?.('summary') || {};
+
+    // PHASE C: Check for deferred/unfinalized droid builds
+    const droidBuild = selections.get('droid-builder');
+    if (droidBuild) {
+      // If droid build was deferred but not yet finalized, block completion
+      if (droidBuild.buildState?.isDeferred && !droidBuild.buildState?.isFinalized) {
+        throw new Error(
+          'Chargen incomplete: droid build is pending. Complete the final droid configuration before finishing.'
+        );
+      }
+
+      // If droid build was marked for finalization but not confirmed, also block
+      if (droidBuild.buildState?.mode === 'finalized' && !droidBuild.buildState?.isFinalized) {
+        throw new Error(
+          'Chargen incomplete: droid build requires confirmation. Please complete the final droid configuration step.'
+        );
+      }
+
+      // PHASE E: Enforce allowDroidOverflow setting
+      // If overflow is not allowed, check that build doesn't exceed budget
+      const allowOverflow = droidBuild.droidCredits?.allowOverflow ?? false;
+      if (!allowOverflow) {
+        const creditsRemaining = droidBuild.droidCredits?.remaining ?? 0;
+        if (creditsRemaining < 0) {
+          throw new Error(
+            `Chargen incomplete: droid build exceeds budget by ${Math.abs(creditsRemaining)} credits. ` +
+            `Remove systems or enable "Allow Droid Budget Overflow" in house rules to proceed.`
+          );
+        }
+      }
+    }
+
     if (sessionState.mode === 'chargen') {
       const hasName = !!(summarySelection.characterName || selections.get('name') || sessionState.actor?.name);
       const hasClass = selections.has('class');

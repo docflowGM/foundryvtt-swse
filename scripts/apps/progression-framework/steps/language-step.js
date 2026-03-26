@@ -18,7 +18,10 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { LanguageRegistry } from '/systems/foundryvtt-swse/scripts/registries/language-registry.js';
 import { LanguageEngine } from '/systems/foundryvtt-swse/scripts/engine/progression/engine/language-engine.js';
-import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
+import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 
 export class LanguageStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -39,6 +42,9 @@ export class LanguageStep extends ProgressionStepPlugin {
       'localTrade': 'Local & Trade',
     };
 
+    // Suggestions
+    this._suggestedLanguages = [];
+
     // Event listener cleanup
     this._renderAbort = null;
   }
@@ -57,6 +63,9 @@ export class LanguageStep extends ProgressionStepPlugin {
 
     // Compute available bonus language picks
     this._bonusLanguagesAvailable = LanguageEngine.calculateBonusLanguagesAvailable(shell.actor);
+
+    // Get suggested languages from SuggestionService
+    await this._getSuggestedLanguages(shell.actor, shell);
 
     // Wire up mentor
     shell.mentor.askMentorEnabled = true;
@@ -250,6 +259,7 @@ export class LanguageStep extends ProgressionStepPlugin {
   async getStepData(context) {
     const available = this._getFilteredAvailableLanguages();
     const remainingPicks = this._bonusLanguagesAvailable - this._selectedBonusLanguages.length;
+    const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedLanguages);
 
     return {
       knownLanguages: this._knownLanguages.map(name => ({
@@ -262,17 +272,31 @@ export class LanguageStep extends ProgressionStepPlugin {
         language: this._getLanguage(name),
       })).filter(item => item.language),
 
-      availableLanguages: available.map(lang => ({
-        id: lang.id,
-        name: lang.name,
-        category: lang.category,
-        canSelect: true,
-      })),
+      availableLanguages: available.map(lang => {
+        const isSuggested = this.isSuggestedItem(lang.id, suggestedIds);
+        const confidenceData = confidenceMap.get ? confidenceMap.get(lang.id) : confidenceMap[lang.id];
+        return {
+          id: lang.id,
+          name: lang.name,
+          category: lang.category,
+          canSelect: true,
+          isSuggested,
+          badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
+          badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
+          confidenceLevel: confidenceData?.confidenceLevel || null,
+        };
+      }),
 
       bonusLanguagesAvailable: this._bonusLanguagesAvailable,
       remainingPicks,
       searchQuery: this._searchQuery,
       hasAvailableLanguages: available.length > 0,
+      hasSuggestions,
+      suggestedLanguageIds: Array.from(suggestedIds),
+      confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
+        acc[id] = data;
+        return acc;
+      }, {}),
     };
   }
 
@@ -332,7 +356,7 @@ export class LanguageStep extends ProgressionStepPlugin {
     this._focusedLanguageId = item?.id || item;
   }
 
-  async onItemCommitted(item) {
+  async onItemCommitted(item, shell) {
     if (!item) return;
 
     const lang = this._getLanguage(item.id || item);
@@ -353,6 +377,18 @@ export class LanguageStep extends ProgressionStepPlugin {
       // Otherwise, select if room available
       this._selectedBonusLanguages.push(lang.name);
     }
+
+    // Update observable build intent (Phase 6 solution)
+    if (shell?.buildIntent && this.descriptor?.stepId) {
+      shell.buildIntent.commitSelection(
+        this.descriptor.stepId,
+        'languages',
+        {
+          knownLanguages: [...this._knownLanguages],
+          bonusLanguages: [...this._selectedBonusLanguages],
+        }
+      );
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -360,12 +396,29 @@ export class LanguageStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onAskMentor(shell) {
-    await handleAskMentor(shell.actor, 'languages', shell);
+    // If we have suggestions, use the advisory system instead of standard guidance
+    if (this._suggestedLanguages && this._suggestedLanguages.length > 0) {
+      await handleAskMentorWithSuggestions(shell.actor, 'languages', this._suggestedLanguages, shell, {
+        domain: 'languages',
+        archetype: 'your linguistic choices'
+      });
+    } else {
+      // Fallback to standard guidance if no suggestions
+      await handleAskMentor(shell.actor, 'languages', shell);
+    }
   }
 
   getMentorContext(shell) {
-    return getStepGuidance(shell.actor, 'languages') ||
-      'Language is more than words — it is connection. Choose wisely which voices you will carry with you.';
+    const customGuidance = getStepGuidance(shell.actor, 'languages');
+    if (customGuidance) return customGuidance;
+
+    // Mode-aware default guidance (languages is primarily chargen)
+    if (this.isChargen(shell)) {
+      return 'Language is more than words — it is connection. Choose wisely which voices you will carry with you.';
+    }
+
+    // Fallback for any levelup usage
+    return 'Expand your voice. Learn new languages that open doors to new understanding.';
   }
 
   getMentorMode() {
@@ -430,5 +483,49 @@ export class LanguageStep extends ProgressionStepPlugin {
       knownLanguagesCount: this._knownLanguages.length,
       selectedLanguagesCount: this._selectedBonusLanguages.length,
     };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Suggestions
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get suggested languages from SuggestionService
+   * Recommendations based on species, background, and other selections
+   * @private
+   */
+  async _getSuggestedLanguages(actor, shell) {
+    try {
+      // Build characterData from shell's buildIntent/committedSelections
+      const characterData = this._buildCharacterDataFromShell(shell);
+
+      // Get suggestions from SuggestionService
+      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+        domain: 'languages',
+        available: this._allLanguages,
+        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
+        engineOptions: { includeFutureAvailability: true },
+        persist: true
+      });
+
+      // Store top suggestions
+      this._suggestedLanguages = (suggested || []).slice(0, 3);
+    } catch (err) {
+      swseLogger.warn('[LanguageStep] Suggestion service error:', err);
+      this._suggestedLanguages = [];
+    }
+  }
+
+  /**
+   * Extract character data from shell for suggestion engine
+   * Allows suggestions to understand what choices have been made so far
+   * @private
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.buildIntent) {
+      return {};
+    }
+
+    return shell.buildIntent.toCharacterData();
   }
 }

@@ -12,7 +12,10 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
-import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
+import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 
 // Ability score constants and calculations
 const ABILITIES = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
@@ -83,6 +86,9 @@ export class AttributeStep extends ProgressionStepPlugin {
     // Method controls
     this._methodChanged = false;
 
+    // Suggestions
+    this._suggestedAllocations = [];
+
     // Event listener cleanup
     this._renderAbort = null;
   }
@@ -100,6 +106,9 @@ export class AttributeStep extends ProgressionStepPlugin {
 
     // Initialize point buy allocations from base scores
     this._initializePointBuy();
+
+    // Get suggested attribute allocations
+    await this._getSuggestedAllocations(shell.actor, shell);
 
     // Enable Ask Mentor
     shell.mentor.askMentorEnabled = true;
@@ -166,7 +175,14 @@ export class AttributeStep extends ProgressionStepPlugin {
   }
 
   async onStepExit(shell) {
-    // Cleanup if needed
+    // Update observable build intent (Phase 6 solution)
+    if (shell?.buildIntent && this.descriptor?.stepId) {
+      shell.buildIntent.commitSelection(
+        this.descriptor.stepId,
+        'attributes',
+        { ...this._baseScores }
+      );
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -174,15 +190,22 @@ export class AttributeStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async getStepData(context) {
+    const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedAllocations);
     return {
       method: this._method,
       methodChanged: this._methodChanged,
-      abilities: this._formatAbilityRows(),
+      abilities: this._formatAbilityRows(suggestedIds, confidenceMap),
       focusedAbility: this._focusedAbility,
       pointBuyPool: this._pointBuyPool,
       pointBuyStatus: this._getPointBuyStatus(),
       speciesModifiers: this._speciesModifiers,
       validationStatus: this.validate(),
+      hasSuggestions,
+      suggestedAbilityIds: Array.from(suggestedIds),
+      confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
+        acc[id] = data;
+        return acc;
+      }, {}),
     };
   }
 
@@ -355,11 +378,30 @@ export class AttributeStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onAskMentor(shell) {
-    await handleAskMentor(shell.actor, 'attribute', shell);
+    // If we have suggestions, use the advisory system instead of standard guidance
+    if (this._suggestedAllocations && this._suggestedAllocations.length > 0) {
+      await handleAskMentorWithSuggestions(shell.actor, 'attribute', this._suggestedAllocations, shell, {
+        domain: 'attributes',
+        archetype: 'your ability scores'
+      });
+    } else {
+      // Fallback to standard guidance if no suggestions
+      await handleAskMentor(shell.actor, 'attribute', shell);
+    }
   }
 
   getMentorContext(shell) {
-    return getStepGuidance(shell.actor, 'attribute') || 'Your attributes shape your capabilities. Strength, speed, intellect — choose wisely for your path.';
+    const customGuidance = getStepGuidance(shell.actor, 'attribute');
+    if (customGuidance) return customGuidance;
+
+    // Mode-aware default guidance
+    if (this.isChargen(shell)) {
+      return 'Your attributes shape your capabilities. Strength, speed, intellect — choose wisely for your path.';
+    } else if (this.isLevelup(shell)) {
+      return 'As you grow stronger, you may sharpen your natural abilities. Allocate your improvement wisely.';
+    }
+
+    return 'Distribute your points with care.';
   }
 
   getMentorMode() {
@@ -370,12 +412,14 @@ export class AttributeStep extends ProgressionStepPlugin {
   // Private Helpers
   // ---------------------------------------------------------------------------
 
-  _formatAbilityRows() {
+  _formatAbilityRows(suggestedIds = new Set(), confidenceMap = new Map()) {
     return ABILITIES.map(ability => {
       const baseScore = this._baseScores[ability];
       const speciesMod = this._speciesModifiers[ability];
       const finalScore = baseScore + speciesMod;
       const modifier = Math.floor((finalScore - 10) / 2);
+      const isSuggested = this.isSuggestedItem(ability, suggestedIds);
+      const confidenceData = confidenceMap.get ? confidenceMap.get(ability) : confidenceMap[ability];
 
       return {
         id: ability,
@@ -389,6 +433,10 @@ export class AttributeStep extends ProgressionStepPlugin {
         modClass: modifier > 0 ? 'prog-num--pos' : modifier < 0 ? 'prog-num--neg' : 'prog-num--zero',
         isFocused: ability === this._focusedAbility,
         canAdjust: this._method === 'point-buy',
+        isSuggested,
+        badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
+        badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
+        confidenceLevel: confidenceData?.confidenceLevel || null,
       };
     });
   }
@@ -403,5 +451,48 @@ export class AttributeStep extends ProgressionStepPlugin {
       cha: 'Force of personality. Persuasion, deception, and social influence.',
     };
     return descriptions[ability] || '';
+  }
+
+  // ---------------------------------------------------------------------------
+  // Suggestions
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get suggested attribute allocations from SuggestionService
+   * Recommendations based on class, background, and other selections
+   * @private
+   */
+  async _getSuggestedAllocations(actor, shell) {
+    try {
+      // Build characterData from shell's buildIntent/committedSelections
+      const characterData = this._buildCharacterDataFromShell(shell);
+
+      // Get suggestions from SuggestionService
+      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+        domain: 'attributes',
+        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
+        engineOptions: { includeFutureAvailability: true },
+        persist: true
+      });
+
+      // Store top suggestions
+      this._suggestedAllocations = (suggested || []).slice(0, 3);
+    } catch (err) {
+      swseLogger.warn('[AttributeStep] Suggestion service error:', err);
+      this._suggestedAllocations = [];
+    }
+  }
+
+  /**
+   * Extract character data from shell for suggestion engine
+   * Allows suggestions to understand what choices have been made so far
+   * @private
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.buildIntent) {
+      return {};
+    }
+
+    return shell.buildIntent.toCharacterData();
   }
 }

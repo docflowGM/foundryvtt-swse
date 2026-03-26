@@ -11,9 +11,10 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ForcePowerEngine } from '../../../engine/progression/engine/force-secret-engine.js';
 import { ForceRegistry } from '../../../engine/registries/force-registry.js';
-import { getMentorGuidance, getMentorForClass, MENTORS } from '../../../engine/mentor/mentor-dialogues.js';
-import { handleAskMentor } from './mentor-step-integration.js';
+import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { swseLogger } from '../../../utils/logger.js';
+import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 
 export class ForceSecretStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -28,6 +29,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
     this._committedSecretCounts = new Map();
 
     this._remainingPicks = 0;
+    this._suggestedSecrets = [];  // Suggested force secrets
     this._renderAbort = null;
     this._utilityUnlisteners = [];
   }
@@ -48,6 +50,9 @@ export class ForceSecretStep extends ProgressionStepPlugin {
 
       await this._computeLegalSecrets(shell.actor);
       this._applyFilters();
+
+      // Get suggested force secrets
+      await this._getSuggestedSecrets(shell.actor, shell);
 
       shell.mentor.askMentorEnabled = true;
 
@@ -105,12 +110,20 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       return { id, name: secret?.name || id, count };
     });
 
+    const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedSecrets);
+
     return {
-      secrets: this._filteredSecrets,
+      secrets: this._filteredSecrets.map(s => this._formatSecretCard(s, suggestedIds, confidenceMap)),
       focusedSecretId: this._focusedSecretId,
       committedCounts: Object.fromEntries(this._committedSecretCounts),
       committedSummary,
       remainingPicks: this._remainingPicks,
+      hasSuggestions,
+      suggestedSecretIds: Array.from(suggestedIds),
+      confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
+        acc[id] = data;
+        return acc;
+      }, {}),
     };
   }
 
@@ -146,6 +159,15 @@ export class ForceSecretStep extends ProgressionStepPlugin {
 
     if (totalSelected < this._remainingPicks) {
       this._committedSecretCounts.set(secretId, currentCount + 1);
+    }
+
+    // Update observable build intent (Phase 6 solution)
+    if (shell?.buildIntent && this.descriptor?.stepId) {
+      const secretsList = Array.from(this._committedSecretCounts.entries())
+        .filter(([_, count]) => count > 0)
+        .map(([secretId, count]) => ({ id: secretId, count }));
+
+      shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, secretsList);
     }
 
     this._focusedSecretId = secretId;
@@ -250,15 +272,21 @@ export class ForceSecretStep extends ProgressionStepPlugin {
   }
 
   getMentorContext(shell) {
-    const mentorObj = this._getMentorObject(shell.actor);
-    if (!mentorObj) return 'Choose wisely among these hidden mysteries.';
-
-    const guidance = getMentorGuidance(mentorObj, 'force_secret');
-    return guidance || 'The path to deeper understanding awaits.';
+    return getStepGuidance(shell.actor, 'force-secrets')
+      || 'The path to deeper understanding awaits.';
   }
 
   async onAskMentor(shell) {
-    await handleAskMentor(shell.actor, 'force-secrets', shell);
+    // If we have suggestions, use the advisory system instead of standard guidance
+    if (this._suggestedSecrets && this._suggestedSecrets.length > 0) {
+      await handleAskMentorWithSuggestions(shell.actor, 'force-secrets', this._suggestedSecrets, shell, {
+        domain: 'force-secrets',
+        archetype: 'your force secret choice'
+      });
+    } else {
+      // Fallback to standard guidance if no suggestions
+      await handleAskMentor(shell.actor, 'force-secrets', shell);
+    }
   }
 
   getMentorMode() {
@@ -290,8 +318,59 @@ export class ForceSecretStep extends ProgressionStepPlugin {
     this._filteredSecrets = filtered;
   }
 
-  _getMentorObject(actor) {
-    const className = actor.system?.class?.primary?.name;
-    return getMentorForClass(className) || MENTORS.Scoundrel || Object.values(MENTORS)[0];
+  // ---------------------------------------------------------------------------
+  // Suggestions
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get suggested force secrets from SuggestionService
+   * Recommendations based on class, force powers, and other selections
+   * @private
+   */
+  async _getSuggestedSecrets(actor, shell) {
+    try {
+      // Build characterData from shell's buildIntent/committedSelections
+      const characterData = this._buildCharacterDataFromShell(shell);
+
+      // Get suggestions from SuggestionService
+      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+        domain: 'force-secrets',
+        available: this._legalSecrets,
+        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
+        engineOptions: { includeFutureAvailability: true },
+        persist: true
+      });
+
+      // Store top suggestions
+      this._suggestedSecrets = (suggested || []).slice(0, 3);
+    } catch (err) {
+      swseLogger.warn('[ForceSecretStep] Suggestion service error:', err);
+      this._suggestedSecrets = [];
+    }
+  }
+
+  /**
+   * Extract character data from shell for suggestion engine
+   * Allows suggestions to understand what choices have been made so far
+   * @private
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.buildIntent) {
+      return {};
+    }
+
+    return shell.buildIntent.toCharacterData();
+  }
+
+  _formatSecretCard(secret, suggestedIds = new Set(), confidenceMap = new Map()) {
+    const isSuggested = this.isSuggestedItem(secret.id, suggestedIds);
+    const confidenceData = confidenceMap.get ? confidenceMap.get(secret.id) : confidenceMap[secret.id];
+    return {
+      ...secret,
+      isSuggested,
+      badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
+      badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
+      confidenceLevel: confidenceData?.confidenceLevel || null,
+    };
   }
 }

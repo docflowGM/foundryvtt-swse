@@ -3,6 +3,7 @@
  *
  * Handles skill selection and training during character generation.
  * Integrates with existing skill registry and training logic.
+ * Includes suggested skill selections from SuggestionService (Phase 10).
  *
  * Data:
  * - trainedSkills: Map<skillKey, {trained: boolean, focus?: boolean, misc?: number}>
@@ -11,8 +12,11 @@
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
+import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SkillRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js';
+import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 
 export class SkillsStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -23,6 +27,7 @@ export class SkillsStep extends ProgressionStepPlugin {
     this._allSkills = [];                 // Full skill list from registry
     this._trainedCount = 0;
     this._allowedCount = 1;               // Updated on enter from character data
+    this._suggestedSkills = [];           // Suggested skills from SuggestionService
 
     // Event listener cleanup
     this._renderAbort = null;
@@ -61,6 +66,9 @@ export class SkillsStep extends ProgressionStepPlugin {
       swseLogger.warn('[SkillsStep] Failed to load skill registry:', err);
       this._allSkills = [];
     }
+
+    // Get suggested skills from SuggestionService
+    await this._getSuggestedSkills(shell.actor, shell);
 
     // Enable Ask Mentor
     shell.mentor.askMentorEnabled = true;
@@ -122,6 +130,22 @@ export class SkillsStep extends ProgressionStepPlugin {
   async onStepExit(shell) {
     // Persist skill selections to shell state
     // This is handled by getStepData()
+
+    // Update observable build intent (Phase 6 solution)
+    if (shell?.buildIntent && this.descriptor?.stepId) {
+      const trainedList = Array.from(this._trainedSkills.entries())
+        .filter(([_, data]) => data.trained)
+        .reduce((acc, [key, data]) => {
+          acc[key] = data.rank || 1;
+          return acc;
+        }, {});
+
+      shell.buildIntent.commitSelection(
+        this.descriptor.stepId,
+        'skills',
+        trainedList
+      );
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -129,11 +153,14 @@ export class SkillsStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async getStepData(context) {
+    const { suggestedIds, hasSuggestions } = this.formatSuggestionsForDisplay(this._suggestedSkills);
     return {
       trainedSkills: Object.fromEntries(this._trainedSkills),
       trainedCount: this._trainedCount,
       allowedCount: this._allowedCount,
-      allSkills: this._allSkills,
+      allSkills: this._allSkills.map(s => this._formatSkillCard(s, suggestedIds)),
+      hasSuggestions,
+      suggestedSkillIds: Array.from(suggestedIds),
     };
   }
 
@@ -251,4 +278,78 @@ export class SkillsStep extends ProgressionStepPlugin {
       data: stepData,
     };
   }
+
+  getMentorContext(shell) {
+    const customGuidance = getStepGuidance(shell.actor, 'skills');
+    if (customGuidance) return customGuidance;
+
+    // Mode-aware default guidance
+    if (this.isChargen(shell)) {
+      return 'Choose skills that reflect your background and training. They will define what you excel at.';
+    } else if (this.isLevelup(shell)) {
+      return 'As you gain experience, you refine your skills. Invest in areas that matter to your journey.';
+    }
+
+    return 'Choose your skills wisely.';
+  }
+
+  getMentorMode() {
+    return 'context-only';
+  }
+
+  // ---------------------------------------------------------------------------
+  // Suggestions
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get suggested skills from SuggestionService
+   * Recommendations based on class, background, and other selections
+   * @private
+   */
+  async _getSuggestedSkills(actor, shell) {
+    try {
+      // Build characterData from shell's buildIntent/committedSelections
+      const characterData = this._buildCharacterDataFromShell(shell);
+
+      // Get suggestions from SuggestionService
+      // NOTE: Domain is 'skills_l1' per canonical domain registry (not 'skills')
+      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+        domain: 'skills_l1',
+        available: this._allSkills,
+        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
+        engineOptions: { includeFutureAvailability: true },
+        persist: true
+      });
+
+      // Store top suggestions
+      this._suggestedSkills = (suggested || []).slice(0, 3);
+    } catch (err) {
+      swseLogger.warn('[SkillsStep] Suggestion service error:', err);
+      this._suggestedSkills = [];
+    }
+  }
+
+  /**
+   * Extract character data from shell for suggestion engine
+   * Allows suggestions to understand what choices have been made so far
+   * @private
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.buildIntent) {
+      return {};
+    }
+
+    return shell.buildIntent.toCharacterData();
+  }
+
+  _formatSkillCard(skill, suggestedIds = new Set()) {
+    const isSuggested = this.isSuggestedItem(skill.id, suggestedIds);
+    return {
+      ...skill,
+      isSuggested,
+      badgeLabel: isSuggested ? 'Recommended' : null,
+      badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
+    };
+  }
+
 }

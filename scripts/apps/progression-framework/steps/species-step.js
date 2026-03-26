@@ -8,10 +8,14 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
-import { getStepMentorObject, getStepGuidance, handleAskMentor, STEP_TO_CHOICE_TYPE } from './mentor-step-integration.js';
+import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions, STEP_TO_CHOICE_TYPE } from './mentor-step-integration.js';
 // Patch builder lives in the shared progression-framework module — NOT the legacy chargen path.
 import { buildSpeciesAtomicPatch } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shared/species-patch.js';
 import { NearHumanBuilder } from './near-human-builder.js';
+import { getMentorGuidance, getMentorForClass, MENTORS } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
+import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 
 // Maps stepId → mentor guidance choiceType
 const STEP_CHOICE_TYPE = {
@@ -53,6 +57,9 @@ export class SpeciesStep extends ProgressionStepPlugin {
 
     // Species image map: lowercased name → resolved file path (built once on step enter)
     this._speciesImgMap = new Map();
+
+    // Suggestions
+    this._suggestedSpecies = [];
   }
 
   // ---------------------------------------------------------------------------
@@ -94,6 +101,9 @@ export class SpeciesStep extends ProgressionStepPlugin {
       console.warn('[SpeciesStep] Failed to fetch ol-salty-species-dialogues.json:', err);
       this._olSaltyDialogues = {};
     }
+
+    // Get suggested species
+    await this._getSuggestedSpecies(shell.actor, shell);
 
     // Initial filter
     this._applyFilters();
@@ -176,12 +186,19 @@ export class SpeciesStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async getStepData(context) {
+    const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedSpecies);
     return {
       mode: this._mode,
-      species: this._filteredSpecies.map(s => this._formatSpeciesCard(s)),
+      species: this._filteredSpecies.map(s => this._formatSpeciesCard(s, suggestedIds, confidenceMap)),
       focusedSpeciesId: context.focusedItem?.id ?? null,
       committedSpeciesId: context.committedSelections?.get('species')?.speciesId ?? null,
       nearHuman: this._nearHumanBuilder.getBuilderData(),
+      hasSuggestions,
+      suggestedSpeciesIds: Array.from(suggestedIds),
+      confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
+        acc[id] = data;
+        return acc;
+      }, {}),
     };
   }
 
@@ -262,6 +279,10 @@ export class SpeciesStep extends ProgressionStepPlugin {
     const species = SpeciesRegistry.getById(focusedItem.id);
     if (!species) return this.renderDetailsPanelEmptyState();
 
+    // Get Ol' Salty's mentor object (Scoundrel class mentor) for guidance fallback
+    const salty = MENTORS?.Scoundrel;
+    const defaultSpeciesGuidance = salty ? getMentorGuidance(salty, 'species') : 'Choose wisely, friend.';
+
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/species-details.hbs',
       data: {
@@ -275,6 +296,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
         source: species.source ?? 'Unknown',
         img: this._resolveSpeciesImg(species),
         olSaltyDialogue: this._getOlSaltyDialogue(species.name) ?? null,
+        defaultSpeciesGuidance,
       },
     };
   }
@@ -341,6 +363,11 @@ export class SpeciesStep extends ProgressionStepPlugin {
       patch,
     });
 
+    // Update observable build intent (Phase 6 solution)
+    if (shell.buildIntent) {
+      shell.buildIntent.commitSelection('species-step', 'species', id);
+    }
+
     this._committedSpeciesId   = id;
     this._committedSpeciesName = entry.name;
     shell.focusedItem = null;
@@ -375,6 +402,11 @@ export class SpeciesStep extends ProgressionStepPlugin {
       speciesName: 'Near-Human',
       nearHumanData: pkg,
     });
+
+    // Update observable build intent (Phase 6 solution)
+    if (shell.buildIntent) {
+      shell.buildIntent.commitSelection('species-step', 'species', 'near-human');
+    }
 
     this._committedSpeciesId = 'near-human';
     this._committedSpeciesName = 'Near-Human';
@@ -484,10 +516,28 @@ export class SpeciesStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onAskMentor(shell) {
-    await handleAskMentor(shell.actor, 'species', shell);
+    // If we have suggestions, use the advisory system instead of standard guidance
+    if (this._suggestedSpecies && this._suggestedSpecies.length > 0) {
+      await handleAskMentorWithSuggestions(shell.actor, 'species', this._suggestedSpecies, shell, {
+        domain: 'species',
+        archetype: 'your species choice'
+      });
+    } else {
+      // Fallback to standard guidance if no suggestions
+      await handleAskMentor(shell.actor, 'species', shell);
+    }
   }
 
   getMentorContext(shell) {
+    // Use the focused species to provide contextual mentor guidance
+    if (shell.focusedItem) {
+      const speciesName = shell.focusedItem.name;
+      const speciesDialogue = this._getOlSaltyDialogue(speciesName);
+      if (speciesDialogue) {
+        return speciesDialogue;
+      }
+    }
+    // Fall back to generic species guidance from mentor authority
     return getStepGuidance(shell.actor, 'species') || 'Choose your species carefully — it shapes your abilities and destiny.';
   }
 
@@ -573,17 +623,60 @@ export class SpeciesStep extends ProgressionStepPlugin {
   }
 
   /**
+   * Normalize a species name for reliable lookup in the species-dialogue authority.
+   * Handles potential mismatches like spacing, punctuation, or variant names.
+   *
+   * @param {string} speciesName - The species display name
+   * @returns {string|null} The normalized key to use for dialogue lookup, or null if not found
+   */
+  _normalizeSpeciesName(speciesName) {
+    if (!speciesName || !this._olSaltyDialogues) return null;
+
+    // Try exact match first
+    if (this._olSaltyDialogues[speciesName]) {
+      return speciesName;
+    }
+
+    // Try case-insensitive match
+    const normalized = speciesName.trim();
+    for (const key of Object.keys(this._olSaltyDialogues)) {
+      if (key.toLowerCase() === normalized.toLowerCase()) {
+        return key;
+      }
+    }
+
+    // Try fuzzy match (first word match for hyphenated or complex names)
+    const firstWord = normalized.split(/[\s-]/)[0].toLowerCase();
+    for (const key of Object.keys(this._olSaltyDialogues)) {
+      if (key.toLowerCase().startsWith(firstWord)) {
+        return key;
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * Return an Ol' Salty dialogue line for the given species name.
    * The JSON stores each entry as a string[] — if more than one line exists,
    * one is chosen at random so repeated hovers feel natural.
    * Returns null if no entry exists for this species.
    *
+   * Implements species-name normalization for reliable lookups.
+   *
    * @param {string} speciesName
    * @returns {string|null}
    */
   _getOlSaltyDialogue(speciesName) {
-    const entry = this._olSaltyDialogues?.[speciesName];
+    // Normalize the species name for reliable lookup
+    const normalizedKey = this._normalizeSpeciesName(speciesName);
+    if (!normalizedKey) {
+      return null;
+    }
+
+    const entry = this._olSaltyDialogues[normalizedKey];
     if (!entry) return null;
+
     // Single string (legacy compatibility) or array
     if (typeof entry === 'string') return entry;
     if (Array.isArray(entry) && entry.length > 0) {
@@ -652,11 +745,13 @@ export class SpeciesStep extends ProgressionStepPlugin {
     return null;
   }
 
-  _formatSpeciesCard(species) {
+  _formatSpeciesCard(species, suggestedIds = new Set(), confidenceMap = new Map()) {
     const abilityRows = this._formatAbilityRows(species.abilityScores);
     const abilityModLine = abilityRows
       .map(row => `${row.signedValue} ${row.shortLabel}`)
       .join(', ');
+    const isSuggested = this.isSuggestedItem(species.id, suggestedIds);
+    const confidenceData = confidenceMap.get ? confidenceMap.get(species.id) : confidenceMap[species.id];
 
     return {
       id: species.id,
@@ -672,6 +767,10 @@ export class SpeciesStep extends ProgressionStepPlugin {
       tags: (species.abilities ?? []).slice(0, 3),
       abilities: species.abilities ?? [],
       languages: species.languages ?? [],
+      isSuggested,
+      badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
+      badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
+      confidenceLevel: confidenceData?.confidenceLevel || null,
     };
   }
 
@@ -685,5 +784,49 @@ export class SpeciesStep extends ProgressionStepPlugin {
       cha: 'Charisma',
     };
     return map[key] ?? key;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Suggestions
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get suggested species from SuggestionService
+   * Recommendations based on class archetype and roleplay preferences
+   * @private
+   */
+  async _getSuggestedSpecies(actor, shell) {
+    try {
+      // Build characterData from shell's buildIntent/committedSelections
+      const characterData = this._buildCharacterDataFromShell(shell);
+
+      // Get suggestions from SuggestionService
+      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+        domain: 'species',
+        available: this._allSpecies,
+        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
+        engineOptions: { includeFutureAvailability: true },
+        persist: true
+      });
+
+      // Store top suggestions
+      this._suggestedSpecies = (suggested || []).slice(0, 3);
+    } catch (err) {
+      swseLogger.warn('[SpeciesStep] Suggestion service error:', err);
+      this._suggestedSpecies = [];
+    }
+  }
+
+  /**
+   * Extract character data from shell for suggestion engine
+   * Allows suggestions to understand what choices have been made so far
+   * @private
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.buildIntent) {
+      return {};
+    }
+
+    return shell.buildIntent.toCharacterData();
   }
 }

@@ -16,11 +16,16 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { DROID_SYSTEMS } from '../../../data/droid-systems.js';
 import { swseLogger } from '../../../utils/logger.js';
+import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
+import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 
 export class DroidBuilderStep extends ProgressionStepPlugin {
   constructor(descriptor) {
     super(descriptor);
     this._droidState = null;
+    this._suggestedSystems = [];  // Suggested droid systems
+    this._buildMode = 'provisional'; // 'deferred' | 'provisional' | 'finalized'
   }
 
   /**
@@ -32,10 +37,14 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     if (!this._droidState) {
       this._droidState = this._initializeDroidState(shell.actor);
     }
+
+    // Get suggested droid systems
+    await this._getSuggestedSystems(shell.actor, shell);
   }
 
   /**
    * Initialize droid builder state from actor or defaults.
+   * PHASE A + B: Extended state model for deferred/provisional/finalized support
    */
   _initializeDroidState(actor) {
     if (!actor) {
@@ -50,6 +59,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
 
     // Get house rule settings
     const baseCredits = game.settings.get('foundryvtt-swse', 'droidConstructionCredits') || 1000;
+    const allowOverflow = game.settings.get('foundryvtt-swse', 'allowDroidOverflow') ?? true;
 
     // Initialize with actor's current droid state, or defaults
     const droidSystems = actor?.system?.droidSystems || {
@@ -66,16 +76,55 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     // Deep copy systems to avoid mutating actor data directly during building
     const systemsCopy = JSON.parse(JSON.stringify(droidSystems));
 
+    // PHASE A + B: Extended state model for budget-aware deferred construction
     return {
       isDroid: true,
       droidDegree: actor?.system?.droidDegree || '1st-degree',
       droidSize: actor?.system?.droidSize || 'medium',
+
+      // Core systems (unchanged structure)
       droidSystems: systemsCopy,
+
+      // PHASE A + B: Budget tracking (use-it-or-lose-it)
       droidCredits: {
         base: baseCredits,
         spent: actor?.system?.droidCredits?.spent || 0,
-        remaining: baseCredits - (actor?.system?.droidCredits?.spent || 0)
-      }
+        remaining: baseCredits - (actor?.system?.droidCredits?.spent || 0),
+        // New: Track whether overflow into general credits is allowed
+        allowOverflow: allowOverflow
+      },
+
+      // PHASE A + B: Free/default systems tracking
+      grantedSystems: {
+        // Heuristic processor is always free in chargen
+        processor: {
+          id: 'heuristic',
+          name: 'Heuristic Processor',
+          cost: 0,
+          weight: 5,
+          isGranted: true
+        },
+        // Track other free grants here as needed
+        freeAppendages: []
+      },
+
+      // PHASE A + B: Build state machine
+      buildState: {
+        mode: 'provisional',  // 'deferred' | 'provisional' | 'finalized'
+        isDeferred: false,    // True if player chose "Do Later"
+        isFinalized: false,   // True if final pass completed
+        completedInitially: false  // True if completed on first pass
+      },
+
+      // PHASE A + B: Player choices tracking
+      playerChoices: {
+        skippedForNow: false,        // Player clicked "Do Later"
+        acceptedWastedBudget: false, // Player acknowledged unspent budget will be lost
+        confirmedFinal: false        // Player confirmed final build at end
+      },
+
+      // PHASE A + B: Suggestion mode hint
+      suggestionMode: 'preview'  // 'preview' (provisional) | 'final' (finalized)
     };
   }
 
@@ -87,8 +136,10 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       return {};
     }
 
-    // Build presentation data for templates
-    const presentation = this._buildDroidPresentation();
+    // PHASE D: Flatten PHASE D suggestions (organized by category) into array for display
+    const suggestionsArray = this._flattenDroidSuggestions(this._suggestedSystems);
+    const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(suggestionsArray);
+    const presentation = this._buildDroidPresentation(suggestedIds, confidenceMap);
     const readiness = this._validateDroidBuild();
 
     return {
@@ -97,13 +148,63 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       readiness,
       buildComplete: readiness.isValid,
       buildIssues: readiness.issues,
+      hasSuggestions,
+      suggestedSystemIds: Array.from(suggestedIds),
+      suggestedSystems: suggestionsArray,  // PHASE D: Include flattened suggestions
+      confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
+        acc[id] = data;
+        return acc;
+      }, {}),
     };
   }
 
   /**
+   * PHASE D: Flatten suggestions from all categories into single array for display.
+   * Suggestions come organized as {locomotion: [], processor: [], appendages: [], accessories: {}}
+   * @private
+   */
+  _flattenDroidSuggestions(suggestedByCategory = {}) {
+    const flattened = [];
+
+    // Add suggestions from each category
+    if (Array.isArray(suggestedByCategory.locomotion)) {
+      flattened.push(...suggestedByCategory.locomotion);
+    }
+    if (Array.isArray(suggestedByCategory.processor)) {
+      flattened.push(...suggestedByCategory.processor);
+    }
+    if (Array.isArray(suggestedByCategory.appendages)) {
+      flattened.push(...suggestedByCategory.appendages);
+    }
+
+    // Add accessories from all sub-categories
+    if (suggestedByCategory.accessories && typeof suggestedByCategory.accessories === 'object') {
+      Object.values(suggestedByCategory.accessories).forEach(category => {
+        if (Array.isArray(category)) {
+          flattened.push(...category);
+        }
+      });
+    }
+
+    return flattened;
+  }
+
+  /**
    * Return selection state — droid builder works as a single configuration step.
+   * PHASE A + B: Support deferred state (allows progression without completing build)
    */
   getSelection() {
+    // If deferred, treat as complete to allow progression
+    if (this._droidState?.buildState?.isDeferred) {
+      return {
+        selected: [this._droidState?.droidSize || ''],
+        count: 1,
+        isComplete: true,  // Allow progression when deferred
+        isDeferred: true,
+      };
+    }
+
+    // Otherwise, validate normally (provisional mode)
     return {
       selected: [this._droidState?.droidSize || ''],
       count: 1,
@@ -113,8 +214,15 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
 
   /**
    * Return blocking issues that prevent advancing.
+   * PHASE A + B: No blocking issues when deferred
    */
   getBlockingIssues() {
+    // If deferred, don't block progression
+    if (this._droidState?.buildState?.isDeferred) {
+      return [];
+    }
+
+    // Otherwise validate normally
     const readiness = this._validateDroidBuild();
     return readiness.isValid ? [] : readiness.issues;
   }
@@ -122,11 +230,25 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
   /**
    * Build presentation-friendly droid data.
    */
-  _buildDroidPresentation() {
+  _buildDroidPresentation(suggestedIds = new Set(), confidenceMap = new Map()) {
     if (!this._droidState) return {};
 
     const sys = this._droidState.droidSystems;
     const credits = this._droidState.droidCredits;
+
+    // Helper to enhance systems with suggestion data
+    const enhanceSystemsWithSuggestions = (systems) => {
+      return systems.map(s => {
+        const isSuggested = this.isSuggestedItem(s.id, suggestedIds);
+        const confidenceData = confidenceMap.get ? confidenceMap.get(s.id) : confidenceMap[s.id];
+        return {
+          ...s,
+          isSuggested,
+          badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
+          confidenceLevel: confidenceData?.confidenceLevel || null,
+        };
+      });
+    };
 
     return {
       title: 'DROID CHASSIS CONFIGURATION',
@@ -156,12 +278,12 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       },
 
       availableSystems: {
-        locomotion: DROID_SYSTEMS.locomotion,
-        processors: DROID_SYSTEMS.processors,
-        appendages: DROID_SYSTEMS.appendages,
-        accessories: DROID_SYSTEMS.accessories,
-        locomotionEnhancements: DROID_SYSTEMS.locomotionEnhancements || [],
-        appendageEnhancements: DROID_SYSTEMS.appendageEnhancements || [],
+        locomotion: enhanceSystemsWithSuggestions(DROID_SYSTEMS.locomotion),
+        processors: enhanceSystemsWithSuggestions(DROID_SYSTEMS.processors),
+        appendages: enhanceSystemsWithSuggestions(DROID_SYSTEMS.appendages),
+        accessories: enhanceSystemsWithSuggestions(DROID_SYSTEMS.accessories),
+        locomotionEnhancements: enhanceSystemsWithSuggestions(DROID_SYSTEMS.locomotionEnhancements || []),
+        appendageEnhancements: enhanceSystemsWithSuggestions(DROID_SYSTEMS.appendageEnhancements || []),
       },
 
       costFactor: this._getCostFactor(),
@@ -170,12 +292,26 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
 
   /**
    * Validate droid build completeness.
+   * PHASE A + B: Deferred builds skip validation (handled by getBlockingIssues)
    */
   _validateDroidBuild() {
     const sys = this._droidState.droidSystems;
     const credits = this._droidState.droidCredits;
+    const isDeferred = this._droidState?.buildState?.isDeferred || false;
     const issues = [];
 
+    // When deferred, show no validation issues in UI
+    // (player will complete build in final pass)
+    if (isDeferred) {
+      return {
+        isValid: false,  // Still "incomplete" for display purposes
+        issues: [],      // But no blocking issues
+        summary: 'Droid build deferred to final pass.',
+        isDeferred: true,
+      };
+    }
+
+    // Normal validation for provisional mode
     // Check required systems
     if (!sys.locomotion) {
       issues.push('Locomotion system required');
@@ -667,10 +803,50 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
   }
 
   /**
+   * PHASE A + B: Mark build as deferred.
+   * Player chooses to complete droid build in final pass instead of now.
+   * PHASE C: Triggers shell reconciliation to inject final-droid-configuration step
+   */
+  async deferBuild(shell) {
+    if (!this._droidState) return false;
+
+    // Mark as deferred
+    this._droidState.buildState.isDeferred = true;
+    this._droidState.buildState.mode = 'deferred';
+    this._droidState.playerChoices.skippedForNow = true;
+
+    // PHASE C: Reconcile conditional steps to inject final-droid-configuration step
+    // This ensures the step is available later in the progression
+    if (shell) {
+      try {
+        await shell.reconcileConditionalSteps();
+        swseLogger.info('[DroidBuilderStep] Droid build deferred and conditional steps reconciled');
+      } catch (err) {
+        swseLogger.warn('[DroidBuilderStep] Error reconciling steps after deferral:', err);
+      }
+    }
+
+    swseLogger.info('[DroidBuilderStep] Droid build deferred to final pass');
+    return true;
+  }
+
+  /**
    * Return footer configuration overrides for droid builder.
+   * PHASE A + B: Show different button text when deferred
    */
   getFooterConfig() {
     const readiness = this._validateDroidBuild();
+    const isDeferred = this._droidState?.buildState?.isDeferred || false;
+
+    if (isDeferred) {
+      return {
+        nextLabel: 'Continue (Build Later)',
+        confirmLabel: 'Skip for Now',
+        isBlocked: false,
+        showDeferOption: false,  // Already deferred
+      };
+    }
+
     return {
       nextLabel: readiness.isValid ? 'Next: Attributes' : 'Complete Build',
       confirmLabel: 'Finalize',
@@ -694,20 +870,30 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    * Return mentor guidance text for this step.
    */
   getMentorContext(shell) {
-    return 'You are now configuring your droid chassis. Select systems for locomotion, processing, appendages, and accessories. Build within your credit budget.';
+    return getStepGuidance(shell.actor, 'droid-builder')
+      || 'Make your choice wisely.';
   }
 
   /**
    * Called when user clicks "Ask Mentor".
    */
   async onAskMentor(shell) {
-    // Could open a guidance modal or speak additional advice
-    ui.notifications.info('Mentor: Select your droid systems within your budget.');
+    // If we have suggestions, use the advisory system instead of standard guidance
+    if (this._suggestedSystems && this._suggestedSystems.length > 0) {
+      await handleAskMentorWithSuggestions(shell.actor, 'droid-builder', this._suggestedSystems, shell, {
+        domain: 'droid-systems',
+        archetype: 'your droid configuration'
+      });
+    } else {
+      // Fallback: show standard guidance
+      await handleAskMentor(shell.actor, 'droid-builder', shell);
+    }
   }
 
   /**
    * Called after the step is rendered in the shell.
    * Wire up event handlers for the work surface.
+   * PHASE A + B: Add "Do Later" button handler for deferred builds
    */
   async afterRender(shell, workSurfaceEl) {
     if (!workSurfaceEl || !this._droidState) {
@@ -715,6 +901,12 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     }
 
     try {
+      // PHASE A + B: "Do Later" button - allows deferring build to final pass
+      const deferButton = workSurfaceEl.querySelector('[data-action="defer-build"]');
+      if (deferButton) {
+        deferButton.addEventListener('click', (e) => this._onDeferBuild(e, shell, workSurfaceEl));
+      }
+
       // Tab switching
       const tabs = workSurfaceEl.querySelectorAll('.prog-droid-builder__tab');
       tabs.forEach(tab => {
@@ -741,6 +933,50 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     } catch (e) {
       swseLogger.error('[DroidBuilderStep.activateWorkSurface]', e);
     }
+  }
+
+  /**
+   * PHASE A + B: Handle "Do Later" button — defer build to final pass.
+   * PHASE C: Commits deferred state before reconciling steps
+   */
+  async _onDeferBuild(event, shell, workSurfaceEl) {
+    event.preventDefault();
+
+    const success = await this.deferBuild(shell);
+
+    if (success) {
+      // PHASE C: Commit the deferred state before reconciling steps
+      // This ensures the final-droid-configuration step can be discovered
+      await this._commitDeferredBuild(shell);
+
+      ui.notifications.info('Droid build deferred. You can complete it in the final pass.');
+      // Note: reconcileConditionalSteps() already triggers render internally
+    } else {
+      ui.notifications.warn('Unable to defer build');
+    }
+  }
+
+  /**
+   * PHASE C: Commit the deferred droid build to shell state.
+   */
+  async _commitDeferredBuild(shell) {
+    const deferredSelection = {
+      isDroid: true,
+      droidDegree: this._droidState.droidDegree,
+      droidSize: this._droidState.droidSize,
+      droidSystems: JSON.parse(JSON.stringify(this._droidState.droidSystems)),
+      droidCredits: JSON.parse(JSON.stringify(this._droidState.droidCredits)),
+      buildState: JSON.parse(JSON.stringify(this._droidState.buildState)),
+    };
+
+    shell.committedSelections.set(this.descriptor.stepId, deferredSelection);
+
+    // Update observable build intent
+    if (shell?.buildIntent && this.descriptor?.stepId) {
+      shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, deferredSelection);
+    }
+
+    swseLogger.debug('[DroidBuilderStep] Deferred droid build committed before reconciliation', deferredSelection);
   }
 
   /**
@@ -838,6 +1074,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
   /**
    * Called when an item is committed (via Choose button or footer).
    * Droid builder commits the entire build, not individual items.
+   * PHASE A + B: Include buildState to track deferred/provisional/finalized status
    */
   async onItemCommitted(itemId, shell) {
     // Store committed droid package in shell's committed selections map
@@ -847,19 +1084,110 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       droidSize: this._droidState.droidSize,
       droidSystems: JSON.parse(JSON.stringify(this._droidState.droidSystems)),
       droidCredits: JSON.parse(JSON.stringify(this._droidState.droidCredits)),
+      // PHASE A + B: Include build state for deferred detection in finalizer
+      buildState: JSON.parse(JSON.stringify(this._droidState.buildState)),
     };
 
     shell.committedSelections.set(this.descriptor.stepId, selection);
+
+    // Update observable build intent (Phase 6 solution)
+    if (shell?.buildIntent && this.descriptor?.stepId) {
+      shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, selection);
+    }
+
     swseLogger.debug('[DroidBuilderStep.onItemCommitted] Droid build committed', selection);
   }
 
   /**
    * Called when step is exited.
+   * PHASE A + B: Don't auto-commit if deferred
    */
   async onStepExit(shell) {
-    // Automatically commit droid build when exiting this step
+    // When deferred, don't commit yet - will be completed in final pass
+    if (this._droidState?.buildState?.isDeferred) {
+      swseLogger.debug('[DroidBuilderStep.onStepExit] Build is deferred, skipping auto-commit');
+      return;
+    }
+
+    // Otherwise, automatically commit droid build when exiting this step
     if (this._validateDroidBuild().isValid && !shell.committedSelections.has(this.descriptor.stepId)) {
       await this.onItemCommitted(null, shell);
     }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Suggestions
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get suggested droid systems from SuggestionService
+   * Recommendations based on droid degree, class, and other selections
+   * @private
+   */
+  async _getSuggestedSystems(actor, shell) {
+    try {
+      // Build characterData from shell's buildIntent/committedSelections
+      const characterData = this._buildCharacterDataFromShell(shell);
+
+      // PHASE D: Build pending droid budget info from current state
+      const pendingDroidBudget = {
+        base: this._droidState?.droidCredits?.base || 1000,
+        spent: this._droidState?.droidCredits?.spent || 0,
+        remaining: this._droidState?.droidCredits?.remaining || 1000,
+        allowOverflow: game.settings.get('foundryvtt-swse', 'allowDroidOverflow') ?? false,
+      };
+
+      const droidDegree = this._droidState?.droidDegree || actor?.system?.droidDegree || '1st-degree';
+      const droidSize = this._droidState?.droidSize || actor?.system?.droidSize || 'medium';
+
+      // Get suggestions from SuggestionService
+      // PHASE D: Pass DROID_SYSTEMS as available systems and include budget info
+      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+        domain: 'droid-systems',
+        available: DROID_SYSTEMS,  // Pass available droid systems
+        pendingData: {
+          ...SuggestionContextBuilder.buildPendingData(actor, characterData),
+          droidDegree,
+          droidSize,
+          droidBudget: pendingDroidBudget,
+        },
+        engineOptions: {
+          includeFutureAvailability: true,
+          mode: 'preview',  // Provisional mode shows preview recommendations
+          allowOverflow: pendingDroidBudget.allowOverflow,
+          debug: false,
+        },
+        persist: false  // Don't persist suggestions yet (they're transient during build)
+      });
+
+      // Store suggestions (organized by category from PHASE D engine)
+      // Format: { locomotion: [], processor: [], appendages: [], accessories: {} }
+      this._suggestedSystems = suggested || {};
+
+      if (Object.keys(this._suggestedSystems).length > 0) {
+        swseLogger.debug('[DroidBuilderStep] Droid suggestions received', {
+          hasLocomotion: !!this._suggestedSystems.locomotion?.length,
+          hasProcessor: !!this._suggestedSystems.processor?.length,
+          hasAppendages: !!this._suggestedSystems.appendages?.length,
+          hasAccessories: !!this._suggestedSystems.accessories,
+        });
+      }
+    } catch (err) {
+      swseLogger.warn('[DroidBuilderStep] Suggestion service error:', err);
+      this._suggestedSystems = {};
+    }
+  }
+
+  /**
+   * Extract character data from shell for suggestion engine
+   * Allows suggestions to understand what choices have been made so far
+   * @private
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.buildIntent) {
+      return {};
+    }
+
+    return shell.buildIntent.toCharacterData();
   }
 }

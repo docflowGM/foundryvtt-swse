@@ -10,7 +10,6 @@
     "values": "Freedom, skill, confidence, living fast",
     "tooltip": "Rajma reflects your character through speed, style, and lethal confidence",
     "avatar": "systems/foundryvtt-swse/assets/mentors/rajma.webp",
-
     "dialogues": {
       "classPaths": {
         "gunslinger": {
@@ -27,7 +26,6 @@
             "10": "Master gunslinger. Fastest draw I’ve trained. Drinks still on the table, by the way."
           }
         },
-
         "gunslinger_quickdraw": {
           "greeting": "Quickdraw. Speed defines you.",
           "confirmation": "Reflex and timing must become instinct."
@@ -54,7 +52,6 @@
         }
       }
     },
-
     "guidance": {
       "class": "Choose what makes you faster and deadlier.",
       "talents": "Quick-draw, accuracy, multi-target dominance.",
@@ -62,11 +59,18 @@
       "skills": "Marksmanship, reflexes, perception.",
       "multiclass": "Other skills won’t help if you lose the draw.",
       "hp": "Even fast guns take hits sometimes.",
-      "summary": "Draw fast. Shoot straight. Live stylishly."
+      "summary": "Draw fast. Shoot straight. Live stylishly.",
+      "species": "Your species shapes your potential. Choose what suits your path.",
+      "background": "Your past defines you. Use it wisely.",
+      "languages": "Understanding others gives you advantage.",
+      "forcePowers": "Choose powers that strengthen your purpose."
     },
-
     "mentorStory": {
-      "mentorClasses": ["Smuggler", "Charlatan", "Scoundrel"],
+      "mentorClasses": [
+        "Smuggler",
+        "Charlatan",
+        "Scoundrel"
+      ],
       "mentorDSPPercent": 0.5,
       "dspTolerance": 0.4,
       "dspSensitivity": "loose",

@@ -5,6 +5,12 @@
  * Mentor has already been swapped on class commit.
  * This step allows the player to answer optional guidance questions.
  *
+ * Phase 4 (Phase 9): Build Analysis Integration
+ * - Runs BuildAnalysisEngine to analyze accumulated selections
+ * - Displays conflict signals and strength signals to player
+ * - Provides mentor feedback on build coherence
+ * - Suggests archetype alignment based on selections
+ *
  * When skipped:
  *   - No survey data is recorded
  *   - Class mentor remains active
@@ -13,6 +19,7 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { BuildAnalysisIntegration } from '../shell/build-analysis-integration.js';
 
 export class L1SurveyStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -26,6 +33,10 @@ export class L1SurveyStep extends ProgressionStepPlugin {
 
     this._isSkipped = false;
 
+    // Phase 4: Build analysis results
+    this._analysisResult = null;  // Result from BuildAnalysisIntegration
+    this._emergentArchetype = null; // Detected archetype if not explicitly set
+
     // Event listener cleanup
     this._renderAbort = null;
   }
@@ -37,6 +48,25 @@ export class L1SurveyStep extends ProgressionStepPlugin {
   async onStepEnter(shell) {
     // Survey is opt-in, so no forced entry
     this._isSkipped = false;
+
+    // Phase 4: Run build analysis to see coherence and conflicts
+    try {
+      this._analysisResult = await BuildAnalysisIntegration.analyzeAndProvideFeedback(shell);
+
+      if (this._analysisResult) {
+        // Display analysis feedback via mentor
+        const feedback = this._analysisResult.feedback;
+        if (feedback) {
+          await shell.mentorRail.speak(feedback, this._getMoodFromAnalysis());
+        }
+
+        // Store emergent archetype for reference
+        this._emergentArchetype = this._analysisResult.emergentArchetype;
+      }
+    } catch (err) {
+      console.error('[L1SurveyStep] Build analysis failed:', err);
+      // Continue anyway - analysis failure shouldn't block progression
+    }
   }
 
   async onDataReady(shell) {
@@ -77,7 +107,14 @@ export class L1SurveyStep extends ProgressionStepPlugin {
   }
 
   async onStepExit(shell) {
-    // No cleanup needed for survey
+    // Phase 4: Save analysis results to buildIntent for persistence
+    if (shell?.buildIntent && this._analysisResult) {
+      shell.buildIntent.commitSelection('l1-survey', 'analysis', {
+        hasConflicts: (this._analysisResult.analysis?.conflictSignals?.length || 0) > 0,
+        hasStrengths: (this._analysisResult.analysis?.strengthSignals?.length || 0) > 0,
+        emergentArchetype: this._emergentArchetype?.bestMatch || null,
+      });
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -85,9 +122,22 @@ export class L1SurveyStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async getStepData(context) {
+    // Phase 4: Include build analysis results for UI display
+    const conflictSummary = this._analysisResult
+      ? BuildAnalysisIntegration.getConflictSummary(this._analysisResult)
+      : null;
+    const strengthSummary = this._analysisResult
+      ? BuildAnalysisIntegration.getStrengthSummary(this._analysisResult)
+      : null;
+
     return {
       surveyAnswers: { ...this._surveyAnswers },
       isSkipped: this._isSkipped,
+      // Phase 4: Analysis results for UI
+      analysisResult: this._analysisResult,
+      conflictSummary,
+      strengthSummary,
+      emergentArchetype: this._emergentArchetype,
     };
   }
 
@@ -213,6 +263,30 @@ export class L1SurveyStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
   // Private Helpers
   // ---------------------------------------------------------------------------
+
+  /**
+   * Determine mentor mood based on build analysis results.
+   * Phase 4: Reflects feedback on coherence and conflicts.
+   * @private
+   */
+  _getMoodFromAnalysis() {
+    if (!this._analysisResult?.analysis) return 'neutral';
+
+    const conflicts = this._analysisResult.analysis.conflictSignals || [];
+    const strengths = this._analysisResult.analysis.strengthSignals || [];
+
+    // Mood based on build coherence
+    if (conflicts.length === 0 && strengths.length > 0) {
+      return 'encouraging'; // Strong coherent build
+    }
+
+    if (conflicts.length > 0) {
+      const critical = conflicts.filter(c => c.severity === 'critical').length;
+      return critical > 0 ? 'cautionary' : 'neutral'; // Warnings for issues
+    }
+
+    return 'neutral';
+  }
 
   _getSurveyHash() {
     // Simple hash to identify answered survey vs skipped

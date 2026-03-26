@@ -2,8 +2,14 @@
   species-work-surface.hbs
   CENTER PANEL — full-width row list for species selection.
 
-  Each species is rendered as a true full-width horizontal row component.
-  Rows are clickable for focus (preview); double-click or button commits selection.
+  Each species is rendered as a true full-width horizontal row component, skinned with
+  the established SVG option frame system for authentic chargen UI consistency.
+  Rows are clickable for focus (preview); Confirm button in details panel commits selection.
+
+  SVG State System:
+  - default     → swse-angled-option-frame.svg
+  - focused     → swse-angled-option-frame-hover.svg (preview state)
+  - committed   → swse-angled-option-frame-selected.svg (confirmed selection)
 --}}
 
 <div class="prog-species-browse">
@@ -11,50 +17,57 @@
     {{#each species}}
       <button class="prog-species-row
                      {{#if (eq id ../focusedSpeciesId)}}prog-species-row--focused{{/if}}
-                     {{#if (eq id ../committedSpeciesId)}}prog-species-row--committed{{/if}}"
+                     {{#if (eq id ../committedSpeciesId)}}prog-species-row--committed{{/if}}
+                     {{#if this.isSuggested}}prog-species-row--suggested prog-species-row--suggested-{{this.confidenceLevel}}{{/if}}"
               data-action="focus-item"
               data-item-id="{{this.id}}"
+              data-recommended="{{#if this.isSuggested}}true{{/if}}"
+              data-confidence-level="{{this.confidenceLevel}}"
               type="button"
               role="option"
               {{#if (eq id ../committedSpeciesId)}}aria-selected="true"{{/if}}>
 
-        {{!-- THUMBNAIL — left side, small portrait or initial badge --}}
-        <div class="prog-species-row__thumb">
-          {{#if this.img}}
-            <img class="prog-species-row__thumb-img" src="{{this.img}}" alt="{{this.name}}" title="{{this.name}}">
-          {{else}}
-            <span class="prog-species-row__thumb-badge">{{this.thumbLabel}}</span>
-          {{/if}}
-        </div>
+        {{!-- SAFE CONTENT ZONE — SVG frame defines the bounds; content stays inside guide --}}
+        <div class="prog-species-row__content">
 
-        {{!-- CENTER — name, size, and modifiers --}}
-        <div class="prog-species-row__center">
-          <div class="prog-species-row__name">{{this.name}}</div>
-          {{#if this.size}}
-            <div class="prog-species-row__stats">
-              <span>Size: {{this.size}}</span>
-              {{#if this.abilityRows.length}}
-                <span class="prog-species-row__sep">•</span>
-                {{#each this.abilityRows}}
-                  <span class="prog-species-row__mods {{this.cssClass}}">{{this.signedValue}} {{this.shortLabel}}</span>
-                  {{#unless @last}}<span class="prog-species-row__sep">,</span>{{/unless}}
-                {{/each}}
+          {{!-- LEFT: THUMBNAIL — small portrait or initial badge --}}
+          <div class="prog-species-row__thumb">
+            {{#if this.img}}
+              <img class="prog-species-row__thumb-img" src="{{this.img}}" alt="{{this.name}}" title="{{this.name}}">
+            {{else}}
+              <span class="prog-species-row__thumb-badge">{{this.thumbLabel}}</span>
+            {{/if}}
+          </div>
+
+          {{!-- CENTER — name, size, and modifiers —}}
+          <div class="prog-species-row__center">
+            <div class="prog-species-row__name">
+              {{this.name}}
+              {{#if this.badgeLabel}}
+                <span class="swse-option-card__badge swse-option-card__badge--recommended">{{this.badgeLabel}}</span>
               {{/if}}
             </div>
-          {{/if}}
-        </div>
+            {{#if this.size}}
+              <div class="prog-species-row__stats">
+                <span>Size: {{this.size}}</span>
+                {{#if this.abilityRows.length}}
+                  <span class="prog-species-row__sep">•</span>
+                  {{#each this.abilityRows}}
+                    <span class="prog-species-row__mods {{this.cssClass}}">{{this.signedValue}} {{this.shortLabel}}</span>
+                    {{#unless @last}}<span class="prog-species-row__sep">,</span>{{/unless}}
+                  {{/each}}
+                {{/if}}
+              </div>
+            {{/if}}
+          </div>
 
-        {{!-- RIGHT — committed check or source badge --}}
-        <div class="prog-species-row__right">
-          {{#if (eq id ../committedSpeciesId)}}
-            <span class="prog-species-row__check" title="Selected">
-              <i class="fas fa-check"></i>
-            </span>
-          {{else}}
+          {{!-- RIGHT — source label (committed state removes this visually) —}}
+          <div class="prog-species-row__right">
             {{#if this.source}}
               <span class="prog-species-row__source" title="{{this.source}}">{{this.source}}</span>
             {{/if}}
-          {{/if}}
+          </div>
+
         </div>
 
       </button>

@@ -10,7 +10,6 @@
     "values": "Curiosity, patience, self-mastery, openness",
     "tooltip": "Vera reflects your character through exploration of the Force beyond Jedi and Sith",
     "avatar": "systems/foundryvtt-swse/assets/mentors/vera.webp",
-
     "dialogues": {
       "classPaths": {
         "force_adept": {
@@ -27,7 +26,6 @@
             "10": "You are a master Adept. Walk freely, beholden only to understanding."
           }
         },
-
         "adept_mystic": {
           "greeting": "Mystic. You seek truths beyond dogma.",
           "confirmation": "Observe and allow the Force to reveal possibilities."
@@ -54,7 +52,6 @@
         }
       }
     },
-
     "guidance": {
       "class": "Choose abilities that deepen understanding rather than force outcomes.",
       "talents": "Select talents that expand perception and attunement.",
@@ -62,11 +59,16 @@
       "skills": "Learn what temples and holocrons cannot teach.",
       "multiclass": "Other disciplines may reveal new facets of the Force.",
       "hp": "Endure patiently. Observation often outlasts action.",
-      "summary": "Walk your path. Let the universe unfold."
+      "summary": "Walk your path. Let the universe unfold.",
+      "species": "Your species shapes your potential. Choose what suits your path.",
+      "background": "Your past defines you. Use it wisely.",
+      "languages": "Understanding others gives you advantage.",
+      "forcePowers": "Choose powers that strengthen your purpose."
     },
-
     "mentorStory": {
-      "mentorClasses": ["ForceAdept"],
+      "mentorClasses": [
+        "ForceAdept"
+      ],
       "mentorDSPPercent": 0.5,
       "dspTolerance": 0.25,
       "dspSensitivity": "strict",

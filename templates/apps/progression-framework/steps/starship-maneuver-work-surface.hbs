@@ -6,13 +6,21 @@
     <div class="prog-starship-maneuver-grid" role="list">
       {{#each maneuvers}}
         <div class="prog-starship-maneuver-card
-                    {{#if (arrayIncludes ../committedCounts @key)}}prog-starship-maneuver-card--selected{{/if}}"
+                    {{#if (arrayIncludes ../committedCounts @key)}}prog-starship-maneuver-card--selected{{/if}}
+                    {{#if this.isSuggested}}prog-maneuver-card--suggested prog-maneuver-card--suggested-{{this.confidenceLevel}}{{/if}}"
              data-action="focus-item"
              data-item-id="{{this.id}}"
+             data-recommended="{{#if this.isSuggested}}true{{/if}}"
+             data-confidence-level="{{this.confidenceLevel}}"
              tabindex="0" role="option">
 
           <div class="prog-starship-maneuver-card__header">
-            <h3 class="prog-starship-maneuver-card__name">{{this.name}}</h3>
+            <h3 class="prog-starship-maneuver-card__name">
+              {{this.name}}
+              {{#if this.badgeLabel}}
+                <span class="swse-option-card__badge swse-option-card__badge--recommended">{{this.badgeLabel}}</span>
+              {{/if}}
+            </h3>
             {{#if (lookup ../committedCounts this.id)}}
               <span class="prog-starship-maneuver-card__count-badge">
                 ×{{lookup ../committedCounts this.id}}

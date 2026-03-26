@@ -10,7 +10,6 @@
     "values": "Duty, sacrifice, trust, steadfastness",
     "tooltip": "Theron reflects your character through absolute defense and selfless resolve",
     "avatar": "systems/foundryvtt-swse/assets/mentors/theron.webp",
-
     "dialogues": {
       "classPaths": {
         "vanguard": {
@@ -27,20 +26,31 @@
             "10": "Master Vanguard. Nothing gets past you. Nothing."
           }
         },
-
         "vanguard_protector": {
           "greeting": "Protector. Every enemy you block is a life saved.",
           "confirmation": "Stand firm. Never let them through.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
@@ -49,14 +59,26 @@
           "confirmation": "Your resolve is the shield.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
@@ -65,14 +87,26 @@
           "confirmation": "Positioning turns defense into dominance.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
@@ -81,14 +115,26 @@
           "confirmation": "Reputation reinforces the line.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
@@ -97,14 +143,26 @@
           "confirmation": "You embody defense itself.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
@@ -113,20 +171,31 @@
           "confirmation": "Nations endure because you stand.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         }
       }
     },
-
     "guidance": {
       "class": "Be tougher. Be steadier. Protect others.",
       "talents": "Defense and protection above all.",
@@ -134,20 +203,35 @@
       "skills": "Tactics, endurance, defensive awareness.",
       "multiclass": "Expand carefully. Protection comes first.",
       "hp": "You absorb what would kill others.",
-      "summary": "Stand firm. Hold the line."
+      "summary": "Stand firm. Hold the line.",
+      "species": "Your species shapes your potential. Choose what suits your path.",
+      "background": "Your past defines you. Use it wisely.",
+      "languages": "Understanding others gives you advantage.",
+      "forcePowers": "Choose powers that strengthen your purpose."
     },
-
     "mentorStory": {
-      "mentorClasses": ["Vanguard"],
+      "mentorClasses": [
+        "Vanguard"
+      ],
       "mentorDSPPercent": 0.2,
       "dspTolerance": 0.3,
       "dspSensitivity": "strict",
       "tiers": {
-        "tier1": ["Standing firm is a choice made every second."],
-        "tier2": ["I learned to plant my feet and let the world break."],
-        "tier3": ["Every shield fails eventually."],
-        "tier4": ["I fear the one time I won’t be enough."],
-        "tier5": ["I pray I never learn what happens then."]
+        "tier1": [
+          "Standing firm is a choice made every second."
+        ],
+        "tier2": [
+          "I learned to plant my feet and let the world break."
+        ],
+        "tier3": [
+          "Every shield fails eventually."
+        ],
+        "tier4": [
+          "I fear the one time I won’t be enough."
+        ],
+        "tier5": [
+          "I pray I never learn what happens then."
+        ]
       },
       "dspBlocked": [
         "That’s not strength.",

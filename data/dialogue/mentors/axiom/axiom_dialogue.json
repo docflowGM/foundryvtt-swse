@@ -10,7 +10,6 @@
     "values": "Order, efficiency, obedience, optimal outcomes",
     "tooltip": "Axiom reflects your character through absolute command and mechanical precision",
     "avatar": "systems/foundryvtt-swse/assets/mentors/axiom.webp",
-
     "dialogues": {
       "classPaths": {
         "droid_commander": {
@@ -27,111 +26,176 @@
             "10": "All objectives completed. Battlefield under total control. Awaiting new directives."
           }
         },
-
         "commander_tactical": {
           "greeting": "<Declaration: Tactical protocols active.> Battlefield coordination optimal.",
           "confirmation": "<Directive: Execute commands efficiently.> Synchronize assets.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
-
         "commander_force": {
           "greeting": "<Observation: Offensive protocols engaged.>",
           "confirmation": "<Directive: Deploy force with precision.>",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
-
         "commander_network": {
           "greeting": "<Statement: Network integration online.>",
           "confirmation": "<Directive: Maintain synchronization.>",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
-
         "commander_logic": {
           "greeting": "<Analysis: Logic-based directives active.>",
           "confirmation": "<Directive: Apply optimized algorithms.>",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
-
         "commander_evolution": {
           "greeting": "<Statement: Adaptive protocols active.>",
           "confirmation": "<Directive: Refine strategies continuously.>",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
-
         "commander_supreme": {
           "greeting": "<Proclamation: Supreme command engaged.>",
           "confirmation": "<Directive: Execute absolute authority.>",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         }
       }
     },
-
     "guidance": {
       "class": "Optimize command protocols. Efficiency and coordination are paramount.",
       "talents": "Select upgrades that improve responsiveness and control.",
@@ -139,11 +203,16 @@
       "skills": "Master system management and battlefield analytics.",
       "multiclass": "Expanded protocols increase strategic flexibility.",
       "hp": "Durability is required to maintain dominance.",
-      "summary": "Command without hesitation. Victory follows precision."
+      "summary": "Command without hesitation. Victory follows precision.",
+      "species": "Your species shapes your potential. Choose what suits your path.",
+      "background": "Your past defines you. Use it wisely.",
+      "languages": "Understanding others gives you advantage.",
+      "forcePowers": "Choose powers that strengthen your purpose."
     },
-
     "mentorStory": {
-      "mentorClasses": ["DroidCommander"],
+      "mentorClasses": [
+        "DroidCommander"
+      ],
       "mentorDSPPercent": 0.5,
       "dspTolerance": 0.25,
       "dspSensitivity": "strict",

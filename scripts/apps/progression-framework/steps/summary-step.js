@@ -18,6 +18,7 @@
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
+import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
 export class SummaryStep extends ProgressionStepPlugin {
@@ -163,11 +164,24 @@ export class SummaryStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async getStepData(context) {
+    // PHASE A + B: Check if droid build is deferred
+    // This will be passed from shell render calls
+    let pendingDroidBuild = false;
+
+    // Try to access shell from context (if provided) or from global state
+    const shell = context?.shell || globalThis.game?.swse?.currentProgressionShell;
+    if (shell?.committedSelections) {
+      const droidBuild = shell.committedSelections.get('droid-builder');
+      pendingDroidBuild = !!(droidBuild?.buildState?.isDeferred);
+    }
+
     return {
       summary: this._summary,
       characterName: this._characterName,  // Final name for actor creation
       startingLevel: this._startingLevel,   // Starting level (1-20)
       isReviewComplete: this._isReviewComplete,
+      // PHASE A + B: Show warning if droid build is pending
+      pendingDroidBuild: pendingDroidBuild,
     };
   }
 
@@ -367,4 +381,14 @@ export class SummaryStep extends ProgressionStepPlugin {
     }
     return null;
   }
+
+  getMentorContext(shell) {
+    return getStepGuidance(shell.actor, 'confirm')
+      || 'Make your choice wisely.';
+  }
+
+  getMentorMode() {
+    return 'context-only';
+  }
+
 }

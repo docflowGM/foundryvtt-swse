@@ -7,9 +7,10 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ForceRegistry } from '../../../engine/registries/force-registry.js';
-import { getMentorGuidance, getMentorForClass, MENTORS } from '../../../engine/mentor/mentor-dialogues.js';
-import { handleAskMentor } from './mentor-step-integration.js';
+import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { swseLogger } from '../../../utils/logger.js';
+import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 
 export class ForceTechniqueStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -21,6 +22,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     this._focusedTechniqueId = null;
     this._committedTechniqueCounts = new Map();
     this._remainingPicks = 0;
+    this._suggestedTechniques = [];  // Suggested force techniques
     this._renderAbort = null;
     this._utilityUnlisteners = [];
   }
@@ -38,6 +40,10 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
 
       await this._computeLegalTechniques(shell.actor);
       this._applyFilters();
+
+      // Get suggested force techniques
+      await this._getSuggestedTechniques(shell.actor, shell);
+
       shell.mentor.askMentorEnabled = true;
 
       swseLogger.debug(`[ForceTechniqueStep] Entered: ${this._allTechniques.length} total`);
@@ -91,12 +97,20 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       return { id, name: technique?.name || id, count };
     });
 
+    const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedTechniques);
+
     return {
-      techniques: this._filteredTechniques,
+      techniques: this._filteredTechniques.map(t => this._formatTechniqueCard(t, suggestedIds, confidenceMap)),
       focusedTechniqueId: this._focusedTechniqueId,
       committedCounts: Object.fromEntries(this._committedTechniqueCounts),
       committedSummary,
       remainingPicks: this._remainingPicks,
+      hasSuggestions,
+      suggestedTechniqueIds: Array.from(suggestedIds),
+      confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
+        acc[id] = data;
+        return acc;
+      }, {}),
     };
   }
 
@@ -130,6 +144,15 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
 
     if (totalSelected < this._remainingPicks) {
       this._committedTechniqueCounts.set(techniqueId, currentCount + 1);
+    }
+
+    // Update observable build intent (Phase 6 solution)
+    if (shell?.buildIntent && this.descriptor?.stepId) {
+      const techniquesList = Array.from(this._committedTechniqueCounts.entries())
+        .filter(([_, count]) => count > 0)
+        .map(([techniqueId, count]) => ({ id: techniqueId, count }));
+
+      shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, techniquesList);
     }
 
     this._focusedTechniqueId = techniqueId;
@@ -227,7 +250,16 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
   }
 
   async onAskMentor(shell) {
-    await handleAskMentor(shell.actor, 'force-techniques', shell);
+    // If we have suggestions, use the advisory system instead of standard guidance
+    if (this._suggestedTechniques && this._suggestedTechniques.length > 0) {
+      await handleAskMentorWithSuggestions(shell.actor, 'force-techniques', this._suggestedTechniques, shell, {
+        domain: 'force-techniques',
+        archetype: 'your force technique choice'
+      });
+    } else {
+      // Fallback to standard guidance if no suggestions
+      await handleAskMentor(shell.actor, 'force-techniques', shell);
+    }
   }
 
   getMentorMode() { return 'context-only'; }
@@ -251,5 +283,61 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
   _getMentorObject(actor) {
     const className = actor.system?.class?.primary?.name;
     return getMentorForClass(className) || MENTORS.Scoundrel || Object.values(MENTORS)[0];
+  }
+
+  // ---------------------------------------------------------------------------
+  // Suggestions
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get suggested force techniques from SuggestionService
+   * Recommendations based on class, feats, and other selections
+   * @private
+   */
+  async _getSuggestedTechniques(actor, shell) {
+    try {
+      // Build characterData from shell's buildIntent/committedSelections
+      const characterData = this._buildCharacterDataFromShell(shell);
+
+      // Get suggestions from SuggestionService
+      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+        domain: 'force-techniques',
+        available: this._legalTechniques,
+        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
+        engineOptions: { includeFutureAvailability: true },
+        persist: true
+      });
+
+      // Store top suggestions
+      this._suggestedTechniques = (suggested || []).slice(0, 3);
+    } catch (err) {
+      swseLogger.warn('[ForceTechniqueStep] Suggestion service error:', err);
+      this._suggestedTechniques = [];
+    }
+  }
+
+  /**
+   * Extract character data from shell for suggestion engine
+   * Allows suggestions to understand what choices have been made so far
+   * @private
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.buildIntent) {
+      return {};
+    }
+
+    return shell.buildIntent.toCharacterData();
+  }
+
+  _formatTechniqueCard(technique, suggestedIds = new Set(), confidenceMap = new Map()) {
+    const isSuggested = this.isSuggestedItem(technique.id, suggestedIds);
+    const confidenceData = confidenceMap.get ? confidenceMap.get(technique.id) : confidenceMap[technique.id];
+    return {
+      ...technique,
+      isSuggested,
+      badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
+      badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
+      confidenceLevel: confidenceData?.confidenceLevel || null,
+    };
   }
 }

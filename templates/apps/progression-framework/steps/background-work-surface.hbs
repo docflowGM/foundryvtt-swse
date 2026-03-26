@@ -46,17 +46,25 @@
           {{#each backgrounds}}
             <button class="swse-option-card prog-background-item
                            {{#if isFocused}}swse-option-card--focused{{/if}}
-                           {{#if isCommitted}}swse-option-card--selected{{/if}}"
+                           {{#if isCommitted}}swse-option-card--selected{{/if}}
+                           {{#if isSuggested}}prog-background-item--suggested prog-background-item--suggested-{{confidenceLevel}}{{/if}}"
                     data-action="focus-item"
                     data-item-id="{{id}}"
                     data-selected="{{#if isCommitted}}true{{else}}false{{/if}}"
                     data-focused="{{#if isFocused}}true{{else}}false{{/if}}"
+                    data-recommended="{{#if isSuggested}}true{{/if}}"
+                    data-confidence-level="{{confidenceLevel}}"
                     type="button"
                     role="option"
                     {{#if isCommitted}}aria-selected="true"{{/if}}>
 
               <div class="swse-option-card__header">
-                <h3 class="swse-option-card__title prog-background-item__name">{{name}}</h3>
+                <h3 class="swse-option-card__title prog-background-item__name">
+                  {{name}}
+                  {{#if badgeLabel}}
+                    <span class="swse-option-card__badge swse-option-card__badge--recommended">{{badgeLabel}}</span>
+                  {{/if}}
+                </h3>
               </div>
 
               {{#if shortDesc}}

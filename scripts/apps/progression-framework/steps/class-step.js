@@ -9,8 +9,11 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ClassesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js';
-import { getStepMentorObject, getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { getMentorGuidance } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
+import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 
 export class ClassStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -29,6 +32,9 @@ export class ClassStep extends ProgressionStepPlugin {
     // Committed selection tracking
     this._committedClassId = null;
     this._committedClassName = null;
+
+    // Suggestions
+    this._suggestedClasses = [];
   }
 
   // ---------------------------------------------------------------------------
@@ -38,6 +44,9 @@ export class ClassStep extends ProgressionStepPlugin {
   async onStepEnter(shell) {
     // Load all classes from registry
     this._allClasses = ClassesRegistry.getAll() || [];
+
+    // Get suggested classes
+    await this._getSuggestedClasses(shell.actor, shell);
 
     // Initial filter
     this._applyFilters();
@@ -91,10 +100,18 @@ export class ClassStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async getStepData(context) {
+    const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedClasses);
     return {
-      classes: this._filteredClasses.map(c => this._formatClassCard(c)),
+      classes: this._filteredClasses.map(c => this._formatClassCard(c, suggestedIds, confidenceMap)),
       focusedClassId: context.focusedItem?.id ?? null,
       committedClassId: context.committedSelections?.get('class')?.classId ?? null,
+      suggestedClassIds: Array.from(suggestedIds),
+      suggestedClasses: this._suggestedClasses,
+      hasSuggestions,
+      confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
+        acc[id] = data;
+        return acc;
+      }, {}),
     };
   }
 
@@ -178,6 +195,11 @@ export class ClassStep extends ProgressionStepPlugin {
       classData,
     });
 
+    // Update observable build intent (Phase 6 solution)
+    if (shell.buildIntent) {
+      shell.buildIntent.commitSelection('class-step', 'class', id);
+    }
+
     this._committedClassId = id;
     this._committedClassName = entry.name;
 
@@ -243,11 +265,30 @@ export class ClassStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onAskMentor(shell) {
-    await handleAskMentor(shell.actor, 'class', shell);
+    // If we have suggestions, use the advisory system instead of standard guidance
+    if (this._suggestedClasses && this._suggestedClasses.length > 0) {
+      await handleAskMentorWithSuggestions(shell.actor, 'class', this._suggestedClasses, shell, {
+        domain: 'classes',
+        archetype: 'your class choice'
+      });
+    } else {
+      // Fallback to standard guidance if no suggestions
+      await handleAskMentor(shell.actor, 'class', shell);
+    }
   }
 
   getMentorContext(shell) {
-    return getStepGuidance(shell.actor, 'class') || 'Choose your class carefully — it defines your role and abilities. Each path leads to a different destiny.';
+    const customGuidance = getStepGuidance(shell.actor, 'class');
+    if (customGuidance) return customGuidance;
+
+    // Mode-aware default guidance
+    if (this.isChargen(shell)) {
+      return 'Choose your class carefully — it defines your role and abilities. Each path leads to a different destiny.';
+    } else if (this.isLevelup(shell)) {
+      return 'As you advance, you may embrace a new calling. Consider what new abilities would serve you well.';
+    }
+
+    return 'Choose your path wisely.';
   }
 
   getMentorMode() {
@@ -299,7 +340,13 @@ export class ClassStep extends ProgressionStepPlugin {
     this._filteredClasses = filtered;
   }
 
-  _formatClassCard(classData) {
+  _formatClassCard(classData, suggestedIds = new Set(), confidenceMap = new Map()) {
+    const isSuggested = suggestedIds.has(classData.id);
+    const confidenceData = confidenceMap.get ? confidenceMap.get(classData.id) : confidenceMap[classData.id];
+    const recommendedLabel = isSuggested
+      ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended')
+      : null;
+
     return {
       id: classData.id,
       name: classData.name,
@@ -309,8 +356,11 @@ export class ClassStep extends ProgressionStepPlugin {
       defenseBonus: classData.defenseBonus ?? '+0',
       description: classData.fantasy ?? classData.description ?? '',
       mentorName: classData.mentorName ?? 'Unknown Guide',
+      isSuggested,
+      confidenceLevel: confidenceData?.confidenceLevel || null,
       metaChips: [
         { label: classData.prestige ? 'Prestige' : 'Base' },
+        isSuggested && { label: recommendedLabel, cssClass: 'prog-meta-chip--suggested' },
         classData.source && { label: classData.source },
       ].filter(Boolean),
       stats: [
@@ -319,5 +369,49 @@ export class ClassStep extends ProgressionStepPlugin {
         { label: 'Def Bonus', value: classData.defenseBonus ?? '+0' },
       ],
     };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Suggestions
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get suggested classes from SuggestionService
+   * Recommendations based on species selection and roleplay preferences
+   * @private
+   */
+  async _getSuggestedClasses(actor, shell) {
+    try {
+      // Build characterData from shell's buildIntent/committedSelections
+      const characterData = this._buildCharacterDataFromShell(shell);
+
+      // Get suggestions from SuggestionService
+      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+        domain: 'classes',
+        available: this._allClasses,
+        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
+        engineOptions: { includeFutureAvailability: true },
+        persist: true
+      });
+
+      // Store top suggestions
+      this._suggestedClasses = (suggested || []).slice(0, 3);
+    } catch (err) {
+      swseLogger.warn('[ClassStep] Suggestion service error:', err);
+      this._suggestedClasses = [];
+    }
+  }
+
+  /**
+   * Extract character data from shell for suggestion engine
+   * Allows suggestions to understand what choices have been made so far
+   * @private
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.buildIntent) {
+      return {};
+    }
+
+    return shell.buildIntent.toCharacterData();
   }
 }

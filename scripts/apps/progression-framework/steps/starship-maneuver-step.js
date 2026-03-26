@@ -8,9 +8,10 @@
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
-import { getMentorGuidance, getMentorForClass, MENTORS } from '../../../engine/mentor/mentor-dialogues.js';
-import { handleAskMentor } from './mentor-step-integration.js';
+import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { swseLogger } from '../../../utils/logger.js';
+import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 
 export class StarshipManeuverStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -28,6 +29,7 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
     this._committedManeuverCounts = new Map();
 
     this._remainingPicks = 0;
+    this._suggestedManeuvers = [];  // Suggested starship maneuvers
 
     // Event listener cleanup
     this._renderAbort = null;
@@ -44,6 +46,10 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
 
       await this._computeLegalManeuvers(shell.actor);
       this._applyFilters();
+
+      // Get suggested starship maneuvers
+      await this._getSuggestedManeuvers(shell.actor, shell);
+
       shell.mentor.askMentorEnabled = true;
 
       swseLogger.debug(`[StarshipManeuverStep] Entered: ${this._allManeuvers.length} maneuvers`);
@@ -85,12 +91,20 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
       return { id, name: maneuver?.name || id, count };
     });
 
+    const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedManeuvers);
+
     return {
-      maneuvers: this._filteredManeuvers,
+      maneuvers: this._filteredManeuvers.map(m => this._formatManeuverCard(m, suggestedIds, confidenceMap)),
       focusedManeuverID: this._focusedManeuverID,
       committedCounts: Object.fromEntries(this._committedManeuverCounts),
       committedSummary,
       remainingPicks: this._remainingPicks,
+      hasSuggestions,
+      suggestedManeuverIds: Array.from(suggestedIds),
+      confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
+        acc[id] = data;
+        return acc;
+      }, {}),
     };
   }
 
@@ -124,6 +138,15 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
 
     if (totalSelected < this._remainingPicks) {
       this._committedManeuverCounts.set(maneuverId, currentCount + 1);
+    }
+
+    // Update observable build intent (Phase 6 solution)
+    if (shell?.buildIntent && this.descriptor?.stepId) {
+      const maneuversList = Array.from(this._committedManeuverCounts.entries())
+        .filter(([_, count]) => count > 0)
+        .map(([maneuverId, count]) => ({ id: maneuverId, count }));
+
+      shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, maneuversList);
     }
 
     this._focusedManeuverID = maneuverId;
@@ -216,12 +239,21 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
   getUtilityBarMode() { return 'rich'; }
 
   getMentorContext(shell) {
-    const mentorObj = this._getMentorObject(shell.actor);
-    return getMentorGuidance(mentorObj, 'starship_maneuver') || 'Choose maneuvers to enhance your piloting prowess.';
+    return getStepGuidance(shell.actor, 'starship-maneuver')
+      || 'Make your choice wisely.';
   }
 
   async onAskMentor(shell) {
-    await handleAskMentor(shell.actor, 'starship-maneuvers', shell);
+    // If we have suggestions, use the advisory system instead of standard guidance
+    if (this._suggestedManeuvers && this._suggestedManeuvers.length > 0) {
+      await handleAskMentorWithSuggestions(shell.actor, 'starship-maneuvers', this._suggestedManeuvers, shell, {
+        domain: 'starship-maneuvers',
+        archetype: 'your starship maneuver choice'
+      });
+    } else {
+      // Fallback to standard guidance if no suggestions
+      await handleAskMentor(shell.actor, 'starship-maneuvers', shell);
+    }
   }
 
   getMentorMode() { return 'context-only'; }
@@ -245,5 +277,61 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
   _getMentorObject(actor) {
     const className = actor.system?.class?.primary?.name;
     return getMentorForClass(className) || MENTORS.Scoundrel || Object.values(MENTORS)[0];
+  }
+
+  // ---------------------------------------------------------------------------
+  // Suggestions
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get suggested starship maneuvers from SuggestionService
+   * Recommendations based on class, feats, and other selections
+   * @private
+   */
+  async _getSuggestedManeuvers(actor, shell) {
+    try {
+      // Build characterData from shell's buildIntent/committedSelections
+      const characterData = this._buildCharacterDataFromShell(shell);
+
+      // Get suggestions from SuggestionService
+      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+        domain: 'starship-maneuvers',
+        available: this._legalManeuvers,
+        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
+        engineOptions: { includeFutureAvailability: true },
+        persist: true
+      });
+
+      // Store top suggestions
+      this._suggestedManeuvers = (suggested || []).slice(0, 3);
+    } catch (err) {
+      swseLogger.warn('[StarshipManeuverStep] Suggestion service error:', err);
+      this._suggestedManeuvers = [];
+    }
+  }
+
+  /**
+   * Extract character data from shell for suggestion engine
+   * Allows suggestions to understand what choices have been made so far
+   * @private
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.buildIntent) {
+      return {};
+    }
+
+    return shell.buildIntent.toCharacterData();
+  }
+
+  _formatManeuverCard(maneuver, suggestedIds = new Set(), confidenceMap = new Map()) {
+    const isSuggested = this.isSuggestedItem(maneuver.id, suggestedIds);
+    const confidenceData = confidenceMap.get ? confidenceMap.get(maneuver.id) : confidenceMap[maneuver.id];
+    return {
+      ...maneuver,
+      isSuggested,
+      badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
+      badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
+      confidenceLevel: confidenceData?.confidenceLevel || null,
+    };
   }
 }

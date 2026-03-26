@@ -10,7 +10,6 @@
     "values": "Freedom, loyalty, profit, control through legend",
     "tooltip": "The Captain reflects your character through command, reputation, and life beyond the law",
     "avatar": "systems/foundryvtt-swse/assets/mentors/tideborn.webp",
-
     "dialogues": {
       "classPaths": {
         "master_privateer": {
@@ -27,7 +26,6 @@
             "10": "Master Privateer. May your sails be full and your cannons thunder."
           }
         },
-
         "privateer_raider": {
           "greeting": "Raider. Strike fast and vanish.",
           "confirmation": "Choose targets wisely and leave nothing behind."
@@ -54,7 +52,6 @@
         }
       }
     },
-
     "guidance": {
       "class": "Be a better captain, raider, and leader.",
       "talents": "Leadership and ship combat define you.",
@@ -62,20 +59,37 @@
       "skills": "Piloting, tactics, persuasion.",
       "multiclass": "Versatility keeps you free.",
       "hp": "A captain who falls doesn’t stay captain.",
-      "summary": "Command the ship. Command the legend."
+      "summary": "Command the ship. Command the legend.",
+      "species": "Your species shapes your potential. Choose what suits your path.",
+      "background": "Your past defines you. Use it wisely.",
+      "languages": "Understanding others gives you advantage.",
+      "forcePowers": "Choose powers that strengthen your purpose."
     },
-
     "mentorStory": {
-      "mentorClasses": ["Officer", "Smuggler", "Outlaw"],
+      "mentorClasses": [
+        "Officer",
+        "Smuggler",
+        "Outlaw"
+      ],
       "mentorDSPPercent": 0.5,
-      "dspTolerance": 1.0,
+      "dspTolerance": 1,
       "dspSensitivity": "none",
       "tiers": {
-        "tier1": ["People talk. I listen."],
-        "tier2": ["The stories about me are useful."],
-        "tier3": ["Names are liabilities."],
-        "tier4": ["I don’t correct lies that keep me alive."],
-        "tier5": ["If you knew who I was, you’d stop listening."]
+        "tier1": [
+          "People talk. I listen."
+        ],
+        "tier2": [
+          "The stories about me are useful."
+        ],
+        "tier3": [
+          "Names are liabilities."
+        ],
+        "tier4": [
+          "I don’t correct lies that keep me alive."
+        ],
+        "tier5": [
+          "If you knew who I was, you’d stop listening."
+        ]
       },
       "dspBlocked": [
         "That’s not important.",
