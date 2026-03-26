@@ -190,15 +190,18 @@ export class AttributeStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async getStepData(context) {
+    const { suggestedIds, hasSuggestions } = this.formatSuggestionsForDisplay(this._suggestedAllocations);
     return {
       method: this._method,
       methodChanged: this._methodChanged,
-      abilities: this._formatAbilityRows(),
+      abilities: this._formatAbilityRows(suggestedIds),
       focusedAbility: this._focusedAbility,
       pointBuyPool: this._pointBuyPool,
       pointBuyStatus: this._getPointBuyStatus(),
       speciesModifiers: this._speciesModifiers,
       validationStatus: this.validate(),
+      hasSuggestions,
+      suggestedAbilityIds: Array.from(suggestedIds),
     };
   }
 
@@ -396,12 +399,13 @@ export class AttributeStep extends ProgressionStepPlugin {
   // Private Helpers
   // ---------------------------------------------------------------------------
 
-  _formatAbilityRows() {
+  _formatAbilityRows(suggestedIds = new Set()) {
     return ABILITIES.map(ability => {
       const baseScore = this._baseScores[ability];
       const speciesMod = this._speciesModifiers[ability];
       const finalScore = baseScore + speciesMod;
       const modifier = Math.floor((finalScore - 10) / 2);
+      const isSuggested = this.isSuggestedItem(ability, suggestedIds);
 
       return {
         id: ability,
@@ -415,6 +419,9 @@ export class AttributeStep extends ProgressionStepPlugin {
         modClass: modifier > 0 ? 'prog-num--pos' : modifier < 0 ? 'prog-num--neg' : 'prog-num--zero',
         isFocused: ability === this._focusedAbility,
         canAdjust: this._method === 'point-buy',
+        isSuggested,
+        badgeLabel: isSuggested ? 'Recommended' : null,
+        badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
       };
     });
   }

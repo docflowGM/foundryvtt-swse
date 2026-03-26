@@ -97,12 +97,16 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       return { id, name: technique?.name || id, count };
     });
 
+    const { suggestedIds, hasSuggestions } = this.formatSuggestionsForDisplay(this._suggestedTechniques);
+
     return {
-      techniques: this._filteredTechniques,
+      techniques: this._filteredTechniques.map(t => this._formatTechniqueCard(t, suggestedIds)),
       focusedTechniqueId: this._focusedTechniqueId,
       committedCounts: Object.fromEntries(this._committedTechniqueCounts),
       committedSummary,
       remainingPicks: this._remainingPicks,
+      hasSuggestions,
+      suggestedTechniqueIds: Array.from(suggestedIds),
     };
   }
 
@@ -310,5 +314,15 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     }
 
     return shell.buildIntent.toCharacterData();
+  }
+
+  _formatTechniqueCard(technique, suggestedIds = new Set()) {
+    const isSuggested = this.isSuggestedItem(technique.id, suggestedIds);
+    return {
+      ...technique,
+      isSuggested,
+      badgeLabel: isSuggested ? 'Recommended' : null,
+      badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
+    };
   }
 }

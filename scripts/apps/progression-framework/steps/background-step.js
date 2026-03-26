@@ -109,9 +109,10 @@ export class BackgroundStep extends ProgressionStepPlugin {
 
   async getStepData(context) {
     const filtered = this._getFilteredBackgrounds();
+    const { suggestedIds, hasSuggestions } = this.formatSuggestionsForDisplay(this._suggestedBackgrounds);
     return {
       categories: this._getCategoryChips(),
-      backgroundsByCategory: this._formatCategoryGroups(filtered),
+      backgroundsByCategory: this._formatCategoryGroups(filtered, suggestedIds),
       activeCategory: this._activeCategory,
       focusedBackgroundId: this._focusedBackgroundId,
       committedBackgroundIds: this._committedBackgroundIds,
@@ -119,6 +120,8 @@ export class BackgroundStep extends ProgressionStepPlugin {
       maxBackgrounds: this._maxBackgrounds,
       selectionCount: this._committedBackgroundIds.length,
       searchQuery: this._searchQuery,
+      hasSuggestions,
+      suggestedBackgroundIds: Array.from(suggestedIds),
     };
   }
 
@@ -434,7 +437,7 @@ export class BackgroundStep extends ProgressionStepPlugin {
     }));
   }
 
-  _formatCategoryGroups(filtered) {
+  _formatCategoryGroups(filtered, suggestedIds = new Set()) {
     const result = {};
     for (const category of ['event', 'occupation', 'planet']) {
       const backgrounds = (this._groupedBackgrounds[category] || [])
@@ -442,6 +445,7 @@ export class BackgroundStep extends ProgressionStepPlugin {
         .map(bg => {
           const isCommitted = this._committedBackgroundIds.includes(bg.id);
           const isFocused = bg.id === this._focusedBackgroundId;
+          const isSuggested = this.isSuggestedItem(bg.id, suggestedIds);
           return {
             id: bg.id,
             name: bg.name,
@@ -452,6 +456,9 @@ export class BackgroundStep extends ProgressionStepPlugin {
             hasMore: (bg.trainedSkills || []).length > 3,
             isFocused,
             isCommitted,
+            isSuggested,
+            badgeLabel: isSuggested ? 'Recommended' : null,
+            badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
           };
         });
 

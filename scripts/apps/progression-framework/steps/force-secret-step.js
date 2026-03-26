@@ -110,12 +110,16 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       return { id, name: secret?.name || id, count };
     });
 
+    const { suggestedIds, hasSuggestions } = this.formatSuggestionsForDisplay(this._suggestedSecrets);
+
     return {
-      secrets: this._filteredSecrets,
+      secrets: this._filteredSecrets.map(s => this._formatSecretCard(s, suggestedIds)),
       focusedSecretId: this._focusedSecretId,
       committedCounts: Object.fromEntries(this._committedSecretCounts),
       committedSummary,
       remainingPicks: this._remainingPicks,
+      hasSuggestions,
+      suggestedSecretIds: Array.from(suggestedIds),
     };
   }
 
@@ -343,5 +347,15 @@ export class ForceSecretStep extends ProgressionStepPlugin {
     }
 
     return shell.buildIntent.toCharacterData();
+  }
+
+  _formatSecretCard(secret, suggestedIds = new Set()) {
+    const isSuggested = this.isSuggestedItem(secret.id, suggestedIds);
+    return {
+      ...secret,
+      isSuggested,
+      badgeLabel: isSuggested ? 'Recommended' : null,
+      badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
+    };
   }
 }

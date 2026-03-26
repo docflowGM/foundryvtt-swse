@@ -153,11 +153,14 @@ export class SkillsStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async getStepData(context) {
+    const { suggestedIds, hasSuggestions } = this.formatSuggestionsForDisplay(this._suggestedSkills);
     return {
       trainedSkills: Object.fromEntries(this._trainedSkills),
       trainedCount: this._trainedCount,
       allowedCount: this._allowedCount,
-      allSkills: this._allSkills,
+      allSkills: this._allSkills.map(s => this._formatSkillCard(s, suggestedIds)),
+      hasSuggestions,
+      suggestedSkillIds: Array.from(suggestedIds),
     };
   }
 
@@ -336,6 +339,16 @@ export class SkillsStep extends ProgressionStepPlugin {
     }
 
     return shell.buildIntent.toCharacterData();
+  }
+
+  _formatSkillCard(skill, suggestedIds = new Set()) {
+    const isSuggested = this.isSuggestedItem(skill.id, suggestedIds);
+    return {
+      ...skill,
+      isSuggested,
+      badgeLabel: isSuggested ? 'Recommended' : null,
+      badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
+    };
   }
 
 }

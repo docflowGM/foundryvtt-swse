@@ -97,6 +97,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     // Build presentation data for templates
     const presentation = this._buildDroidPresentation();
     const readiness = this._validateDroidBuild();
+    const { suggestedIds, hasSuggestions } = this.formatSuggestionsForDisplay(this._suggestedSystems);
 
     return {
       droidState: { ...this._droidState },
@@ -104,6 +105,8 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       readiness,
       buildComplete: readiness.isValid,
       buildIssues: readiness.issues,
+      hasSuggestions,
+      suggestedSystemIds: Array.from(suggestedIds),
     };
   }
 

@@ -91,12 +91,16 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
       return { id, name: maneuver?.name || id, count };
     });
 
+    const { suggestedIds, hasSuggestions } = this.formatSuggestionsForDisplay(this._suggestedManeuvers);
+
     return {
-      maneuvers: this._filteredManeuvers,
+      maneuvers: this._filteredManeuvers.map(m => this._formatManeuverCard(m, suggestedIds)),
       focusedManeuverID: this._focusedManeuverID,
       committedCounts: Object.fromEntries(this._committedManeuverCounts),
       committedSummary,
       remainingPicks: this._remainingPicks,
+      hasSuggestions,
+      suggestedManeuverIds: Array.from(suggestedIds),
     };
   }
 
@@ -304,5 +308,15 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
     }
 
     return shell.buildIntent.toCharacterData();
+  }
+
+  _formatManeuverCard(maneuver, suggestedIds = new Set()) {
+    const isSuggested = this.isSuggestedItem(maneuver.id, suggestedIds);
+    return {
+      ...maneuver,
+      isSuggested,
+      badgeLabel: isSuggested ? 'Recommended' : null,
+      badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
+    };
   }
 }
