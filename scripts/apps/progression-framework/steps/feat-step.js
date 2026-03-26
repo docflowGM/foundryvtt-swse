@@ -484,7 +484,7 @@ export class FeatStep extends ProgressionStepPlugin {
     this._focusedFeatId = item?.id || item;
   }
 
-  async onItemCommitted(item) {
+  async onItemCommitted(item, shell) {
     if (!item) return;
 
     const feat = this._getFeat(item._id || item);
@@ -495,6 +495,16 @@ export class FeatStep extends ProgressionStepPlugin {
       this._selectedFeatId = null;
     } else {
       this._selectedFeatId = feat._id;
+    }
+
+    // Update observable build intent (Phase 6 solution)
+    // Each feat slot (general/class) commits to shell.committedSelections with its own stepId,
+    // and also updates buildIntent for cross-step visibility
+    if (shell?.buildIntent && this.descriptor?.stepId) {
+      const selectedFeatData = this._selectedFeatId
+        ? { featId: this._selectedFeatId, feat, slotType: this._slotType }
+        : null;
+      shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, selectedFeatData);
     }
   }
 

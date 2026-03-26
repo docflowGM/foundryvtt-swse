@@ -178,6 +178,11 @@ export class ClassStep extends ProgressionStepPlugin {
       classData,
     });
 
+    // Update observable build intent (Phase 6 solution)
+    if (shell.buildIntent) {
+      shell.buildIntent.commitSelection('class-step', 'class', id);
+    }
+
     this._committedClassId = id;
     this._committedClassName = entry.name;
 

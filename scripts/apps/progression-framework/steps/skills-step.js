@@ -123,6 +123,22 @@ export class SkillsStep extends ProgressionStepPlugin {
   async onStepExit(shell) {
     // Persist skill selections to shell state
     // This is handled by getStepData()
+
+    // Update observable build intent (Phase 6 solution)
+    if (shell?.buildIntent && this.descriptor?.stepId) {
+      const trainedList = Array.from(this._trainedSkills.entries())
+        .filter(([_, data]) => data.trained)
+        .reduce((acc, [key, data]) => {
+          acc[key] = data.rank || 1;
+          return acc;
+        }, {});
+
+      shell.buildIntent.commitSelection(
+        this.descriptor.stepId,
+        'skills',
+        trainedList
+      );
+    }
   }
 
   // ---------------------------------------------------------------------------

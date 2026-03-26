@@ -211,12 +211,24 @@ export class BackgroundStep extends ProgressionStepPlugin {
       }
     }
 
+    // Update shell.committedSelections for backward compatibility
     shell.committedSelections.set('background', {
       backgroundIds: [...this._committedBackgroundIds],
       backgrounds: this._committedBackgroundIds
         .map(bgId => this._allBackgrounds.find(b => b.id === bgId))
         .filter(Boolean),
     });
+
+    // Update observable build intent (Phase 6 solution)
+    // This allows other steps, mentors, and validation systems to see the selection
+    if (shell.buildIntent) {
+      shell.buildIntent.commitSelection('background-step', 'background', {
+        backgroundIds: [...this._committedBackgroundIds],
+        backgrounds: this._committedBackgroundIds
+          .map(bgId => this._allBackgrounds.find(b => b.id === bgId))
+          .filter(Boolean),
+      });
+    }
 
     shell.render();
   }

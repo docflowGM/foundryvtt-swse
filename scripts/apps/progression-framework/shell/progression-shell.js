@@ -32,6 +32,7 @@ import { MentorRail } from './mentor-rail.js';
 import { ProgressRail } from './progress-rail.js';
 import { UtilityBar } from './utility-bar.js';
 import { HydrationDiagnosticsCollector, HydrationValidator, HydrationRecoveryStrategies } from '../hydration-diagnostics.js';
+import { BuildIntent } from './build-intent.js';
 
 /**
  * Shell state model (reference — actual state lives on `this`)
@@ -200,6 +201,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this.stepData = new Map();       // stepId → step-specific state blob
     this.focusedItem = null;         // item currently in details panel (single-click)
     this.committedSelections = new Map(); // stepId → committed selection(s)
+    this.buildIntent = new BuildIntent(this); // Observable build state (Phase 6 solution)
 
     // Shell UI state
     this.mentorCollapsed = false;
@@ -498,11 +500,12 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const context = await super._prepareContext(options);
 
     // ✓ CRITICAL: Expose shell context to step plugins
-    // This allows steps to access committedSelections, actor, and mode
+    // This allows steps to access committedSelections, actor, mode, and buildIntent
     // Required for suggestion engine to see chargen choices
     context.shell = this;
     context.actor = this.actor;
     context.mode = this.mode;
+    context.buildIntent = this.buildIntent;
 
     // ═══ PHASE 8: HYDRATION DIAGNOSTICS ═══
     const diagnostics = new HydrationDiagnosticsCollector({

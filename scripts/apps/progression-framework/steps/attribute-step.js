@@ -166,7 +166,14 @@ export class AttributeStep extends ProgressionStepPlugin {
   }
 
   async onStepExit(shell) {
-    // Cleanup if needed
+    // Update observable build intent (Phase 6 solution)
+    if (shell?.buildIntent && this.descriptor?.stepId) {
+      shell.buildIntent.commitSelection(
+        this.descriptor.stepId,
+        'attributes',
+        { ...this._baseScores }
+      );
+    }
   }
 
   // ---------------------------------------------------------------------------

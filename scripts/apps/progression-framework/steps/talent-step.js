@@ -467,7 +467,7 @@ export class TalentStep extends ProgressionStepPlugin {
     }
   }
 
-  async onItemCommitted(item) {
+  async onItemCommitted(item, shell) {
     if (!item) return;
 
     if (this._stage === 'browser') {
@@ -480,6 +480,16 @@ export class TalentStep extends ProgressionStepPlugin {
         this._selectedTalentId = null;
       } else {
         this._selectedTalentId = talentId;
+      }
+
+      // Update observable build intent (Phase 6 solution)
+      // Each talent slot (general/class) commits to shell.committedSelections with its own stepId,
+      // and also updates buildIntent for cross-step visibility
+      if (shell?.buildIntent && this.descriptor?.stepId) {
+        const selectedTalentData = this._selectedTalentId
+          ? { talentId: this._selectedTalentId, slotType: this._slotType }
+          : null;
+        shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, selectedTalentData);
       }
     }
   }

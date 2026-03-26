@@ -332,7 +332,7 @@ export class LanguageStep extends ProgressionStepPlugin {
     this._focusedLanguageId = item?.id || item;
   }
 
-  async onItemCommitted(item) {
+  async onItemCommitted(item, shell) {
     if (!item) return;
 
     const lang = this._getLanguage(item.id || item);
@@ -352,6 +352,18 @@ export class LanguageStep extends ProgressionStepPlugin {
     } else if (this._selectedBonusLanguages.length < this._bonusLanguagesAvailable) {
       // Otherwise, select if room available
       this._selectedBonusLanguages.push(lang.name);
+    }
+
+    // Update observable build intent (Phase 6 solution)
+    if (shell?.buildIntent && this.descriptor?.stepId) {
+      shell.buildIntent.commitSelection(
+        this.descriptor.stepId,
+        'languages',
+        {
+          knownLanguages: [...this._knownLanguages],
+          bonusLanguages: [...this._selectedBonusLanguages],
+        }
+      );
     }
   }
 

@@ -347,6 +347,11 @@ export class SpeciesStep extends ProgressionStepPlugin {
       patch,
     });
 
+    // Update observable build intent (Phase 6 solution)
+    if (shell.buildIntent) {
+      shell.buildIntent.commitSelection('species-step', 'species', id);
+    }
+
     this._committedSpeciesId   = id;
     this._committedSpeciesName = entry.name;
     shell.focusedItem = null;
@@ -381,6 +386,11 @@ export class SpeciesStep extends ProgressionStepPlugin {
       speciesName: 'Near-Human',
       nearHumanData: pkg,
     });
+
+    // Update observable build intent (Phase 6 solution)
+    if (shell.buildIntent) {
+      shell.buildIntent.commitSelection('species-step', 'species', 'near-human');
+    }
 
     this._committedSpeciesId = 'near-human';
     this._committedSpeciesName = 'Near-Human';
