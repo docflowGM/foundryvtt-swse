@@ -35,7 +35,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
       'bonus-stat': '',                 // selected stat ('str', 'dex', 'con', 'int', 'wis', 'cha', or '')
       'penalty-stat': '',               // selected stat ('str', 'dex', 'con', 'int', 'wis', 'cha', or '')
     };
-    this._sortBy = 'source';          // 'source' | 'alpha'
+    this._sortBy = 'source';          // 'source' | 'alpha' — source groups Humans/Near-Humans first
 
     // Near-Human builder
     this._nearHumanBuilder = new NearHumanBuilder();
@@ -473,8 +473,8 @@ export class SpeciesStep extends ProgressionStepPlugin {
         defaultValue: '',
       },
       sorts: [
-        { id: 'alpha', label: 'A–Z', isDefault: true },
-        { id: 'source', label: 'Source' },
+        { id: 'source', label: 'Source', isDefault: true },
+        { id: 'alpha', label: 'A–Z' },
       ],
     };
   }
