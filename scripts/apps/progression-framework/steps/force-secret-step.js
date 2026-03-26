@@ -11,7 +11,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ForcePowerEngine } from '../../../engine/progression/engine/force-secret-engine.js';
 import { ForceRegistry } from '../../../engine/registries/force-registry.js';
-import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
@@ -273,7 +273,16 @@ export class ForceSecretStep extends ProgressionStepPlugin {
   }
 
   async onAskMentor(shell) {
-    await handleAskMentor(shell.actor, 'force-secrets', shell);
+    // If we have suggestions, use the advisory system instead of standard guidance
+    if (this._suggestedSecrets && this._suggestedSecrets.length > 0) {
+      await handleAskMentorWithSuggestions(shell.actor, 'force-secrets', this._suggestedSecrets, shell, {
+        domain: 'force-secrets',
+        archetype: 'your force secret choice'
+      });
+    } else {
+      // Fallback to standard guidance if no suggestions
+      await handleAskMentor(shell.actor, 'force-secrets', shell);
+    }
   }
 
   getMentorMode() {

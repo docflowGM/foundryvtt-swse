@@ -16,7 +16,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { DROID_SYSTEMS } from '../../../data/droid-systems.js';
 import { swseLogger } from '../../../utils/logger.js';
-import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 
@@ -712,8 +712,16 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    * Called when user clicks "Ask Mentor".
    */
   async onAskMentor(shell) {
-    // Could open a guidance modal or speak additional advice
-    ui.notifications.info('Mentor: Select your droid systems within your budget.');
+    // If we have suggestions, use the advisory system instead of standard guidance
+    if (this._suggestedSystems && this._suggestedSystems.length > 0) {
+      await handleAskMentorWithSuggestions(shell.actor, 'droid-builder', this._suggestedSystems, shell, {
+        domain: 'droid-systems',
+        archetype: 'your droid configuration'
+      });
+    } else {
+      // Fallback: show standard guidance
+      await handleAskMentor(shell.actor, 'droid-builder', shell);
+    }
   }
 
   /**

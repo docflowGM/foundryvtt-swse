@@ -7,7 +7,7 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ForceRegistry } from '../../../engine/registries/force-registry.js';
-import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
@@ -246,7 +246,16 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
   }
 
   async onAskMentor(shell) {
-    await handleAskMentor(shell.actor, 'force-techniques', shell);
+    // If we have suggestions, use the advisory system instead of standard guidance
+    if (this._suggestedTechniques && this._suggestedTechniques.length > 0) {
+      await handleAskMentorWithSuggestions(shell.actor, 'force-techniques', this._suggestedTechniques, shell, {
+        domain: 'force-techniques',
+        archetype: 'your force technique choice'
+      });
+    } else {
+      // Fallback to standard guidance if no suggestions
+      await handleAskMentor(shell.actor, 'force-techniques', shell);
+    }
   }
 
   getMentorMode() { return 'context-only'; }

@@ -8,7 +8,7 @@
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
-import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
@@ -240,7 +240,16 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
   }
 
   async onAskMentor(shell) {
-    await handleAskMentor(shell.actor, 'starship-maneuvers', shell);
+    // If we have suggestions, use the advisory system instead of standard guidance
+    if (this._suggestedManeuvers && this._suggestedManeuvers.length > 0) {
+      await handleAskMentorWithSuggestions(shell.actor, 'starship-maneuvers', this._suggestedManeuvers, shell, {
+        domain: 'starship-maneuvers',
+        archetype: 'your starship maneuver choice'
+      });
+    } else {
+      // Fallback to standard guidance if no suggestions
+      await handleAskMentor(shell.actor, 'starship-maneuvers', shell);
+    }
   }
 
   getMentorMode() { return 'context-only'; }
