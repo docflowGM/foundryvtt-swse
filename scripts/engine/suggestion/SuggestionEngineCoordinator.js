@@ -28,6 +28,8 @@ import { BackgroundSuggestionEngine } from "/systems/foundryvtt-swse/scripts/eng
 import { ForceOptionSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ForceOptionSuggestionEngine.js";
 import { Level1SkillSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/Level1SkillSuggestionEngine.js";
 import { AttributeIncreaseSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/AttributeIncreaseSuggestionEngine.js";
+import { SpeciesSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/species-suggestion-engine.js";
+import { LanguageSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/language-suggestion-engine.js";
 import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
 import { IdentityEngine } from "/systems/foundryvtt-swse/scripts/engine/prestige/identity-engine.js";
 import { ProgressionAdvisor } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ProgressionAdvisor.js";
@@ -88,6 +90,10 @@ export class SuggestionEngineCoordinator {
           this.suggestClasses(classes, actor, pendingData, options),
         suggestBackgrounds: (backgrounds, actor, pendingData, options) =>
           this.suggestBackgrounds(backgrounds, actor, pendingData, options),
+        suggestSpecies: (species, actor, pendingData, options) =>
+          this.suggestSpecies(species, actor, pendingData, options),
+        suggestLanguages: (languages, actor, pendingData, options) =>
+          this.suggestLanguages(languages, actor, pendingData, options),
         suggestForceOptions: (options, actor, pendingData, contextOptions) =>
           this.suggestForceOptions(options, actor, pendingData, contextOptions),
         suggestLevel1Skills: (skills, actor, pendingData) =>
@@ -369,6 +375,76 @@ export class SuggestionEngineCoordinator {
           tier: 0,
           reason: 'Valid option',
           icon: ''
+        }
+      }));
+    }
+  }
+
+  /**
+   * Suggest species based on character's class, abilities, and build synergy
+   * @param {Array} species - Array of species objects
+   * @param {Actor} actor - The character (or temp actor for chargen)
+   * @param {Object} pendingData - Pending character data from chargen
+   * @param {Object} options - Additional options
+   * @returns {Promise<Array>} Species with suggestion metadata
+   */
+  static async suggestSpecies(species, actor, pendingData = {}, options = {}) {
+    try {
+      // Get or compute BuildIntent for context
+      const buildIntent = options.buildIntent || await this.analyzeBuildIntent(actor, pendingData);
+
+      // Call SpeciesSuggestionEngine with BuildIntent context
+      const speciesSuggested = await SpeciesSuggestionEngine.suggestSpecies(
+        species,
+        actor,
+        pendingData,
+        {
+          ...options,
+          buildIntent
+        }
+      );
+
+      return speciesSuggested;
+    } catch (err) {
+      SWSELogger.error('Species suggestion failed:', err);
+      // Return species without suggestions as fallback
+      return species.map(s => ({
+        ...s,
+        suggestion: {
+          confidence: 0.50,
+          reason: 'Valid option'
+        }
+      }));
+    }
+  }
+
+  /**
+   * Suggest languages based on character's species, background, and class context
+   * @param {Array} languages - Array of language objects
+   * @param {Actor} actor - The character (or temp actor for chargen)
+   * @param {Object} pendingData - Pending character data from chargen
+   * @param {Object} options - Additional options
+   * @returns {Promise<Array>} Languages with suggestion metadata
+   */
+  static async suggestLanguages(languages, actor, pendingData = {}, options = {}) {
+    try {
+      // Call LanguageSuggestionEngine to score and rank languages
+      const languagesSuggested = await LanguageSuggestionEngine.suggestLanguages(
+        languages,
+        actor,
+        pendingData,
+        options
+      );
+
+      return languagesSuggested;
+    } catch (err) {
+      SWSELogger.error('Language suggestion failed:', err);
+      // Return languages without suggestions as fallback
+      return languages.map(l => ({
+        ...l,
+        suggestion: {
+          confidence: 0.50,
+          reason: 'Available option'
         }
       }));
     }

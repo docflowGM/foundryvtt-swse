@@ -21,6 +21,8 @@ export const SUPPORTED_DOMAINS = Object.freeze({
   BACKGROUNDS: 'backgrounds',
   SKILLS_L1: 'skills_l1',        // NOTE: NOT plain 'skills'
   ATTRIBUTES: 'attributes',
+  SPECIES: 'species',             // Phase 2: SpeciesSuggestionEngine (grounded on class synergy)
+  LANGUAGES: 'languages',         // Phase 2: LanguageSuggestionEngine (grounded on species/background)
 });
 
 /**
@@ -29,10 +31,10 @@ export const SUPPORTED_DOMAINS = Object.freeze({
  *
  * These will log warnings when requested and degrade to empty suggestion arrays.
  * This is intentional and correct behavior until real engines are added.
+ *
+ * Note: SPECIES and LANGUAGES have been moved to SUPPORTED_DOMAINS in Phase 2.
  */
 export const UNSUPPORTED_DOMAINS = Object.freeze({
-  SPECIES: 'species',
-  LANGUAGES: 'languages',
   FORCE_SECRETS: 'force-secrets',
   FORCE_TECHNIQUES: 'force-techniques',
   DROID_SYSTEMS: 'droid-systems',

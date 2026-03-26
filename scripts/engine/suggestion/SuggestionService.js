@@ -214,6 +214,10 @@ export class SuggestionService {
       suggestions = await SuggestionEngineCoordinator.suggestForceOptions(available, actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
     } else if (options.domain === 'backgrounds') {
       suggestions = await SuggestionEngineCoordinator.suggestBackgrounds(options.available ?? [], actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
+    } else if (options.domain === 'species') {
+      suggestions = await SuggestionEngineCoordinator.suggestSpecies(options.available ?? [], actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
+    } else if (options.domain === 'languages') {
+      suggestions = await SuggestionEngineCoordinator.suggestLanguages(options.available ?? [], actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
     } else if (options.domain === 'skills_l1') {
       suggestions = await SuggestionEngineCoordinator.suggestLevel1Skills(options.available ?? [], actor, options.pendingData ?? {});
     } else if (options.domain === 'attributes') {
