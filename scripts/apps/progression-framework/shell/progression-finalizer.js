@@ -107,6 +107,19 @@ export class ProgressionFinalizer {
           'Chargen incomplete: droid build requires confirmation. Please complete the final droid configuration step.'
         );
       }
+
+      // PHASE E: Enforce allowDroidOverflow setting
+      // If overflow is not allowed, check that build doesn't exceed budget
+      const allowOverflow = droidBuild.droidCredits?.allowOverflow ?? false;
+      if (!allowOverflow) {
+        const creditsRemaining = droidBuild.droidCredits?.remaining ?? 0;
+        if (creditsRemaining < 0) {
+          throw new Error(
+            `Chargen incomplete: droid build exceeds budget by ${Math.abs(creditsRemaining)} credits. ` +
+            `Remove systems or enable "Allow Droid Budget Overflow" in house rules to proceed.`
+          );
+        }
+      }
     }
 
     if (sessionState.mode === 'chargen') {

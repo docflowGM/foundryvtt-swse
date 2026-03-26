@@ -136,8 +136,9 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       return {};
     }
 
-    // Build presentation data for templates
-    const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedSystems);
+    // PHASE D: Flatten PHASE D suggestions (organized by category) into array for display
+    const suggestionsArray = this._flattenDroidSuggestions(this._suggestedSystems);
+    const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(suggestionsArray);
     const presentation = this._buildDroidPresentation(suggestedIds, confidenceMap);
     const readiness = this._validateDroidBuild();
 
@@ -149,11 +150,43 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       buildIssues: readiness.issues,
       hasSuggestions,
       suggestedSystemIds: Array.from(suggestedIds),
+      suggestedSystems: suggestionsArray,  // PHASE D: Include flattened suggestions
       confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
         acc[id] = data;
         return acc;
       }, {}),
     };
+  }
+
+  /**
+   * PHASE D: Flatten suggestions from all categories into single array for display.
+   * Suggestions come organized as {locomotion: [], processor: [], appendages: [], accessories: {}}
+   * @private
+   */
+  _flattenDroidSuggestions(suggestedByCategory = {}) {
+    const flattened = [];
+
+    // Add suggestions from each category
+    if (Array.isArray(suggestedByCategory.locomotion)) {
+      flattened.push(...suggestedByCategory.locomotion);
+    }
+    if (Array.isArray(suggestedByCategory.processor)) {
+      flattened.push(...suggestedByCategory.processor);
+    }
+    if (Array.isArray(suggestedByCategory.appendages)) {
+      flattened.push(...suggestedByCategory.appendages);
+    }
+
+    // Add accessories from all sub-categories
+    if (suggestedByCategory.accessories && typeof suggestedByCategory.accessories === 'object') {
+      Object.values(suggestedByCategory.accessories).forEach(category => {
+        if (Array.isArray(category)) {
+          flattened.push(...category);
+        }
+      });
+    }
+
+    return flattened;
   }
 
   /**
@@ -1096,19 +1129,52 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       // Build characterData from shell's buildIntent/committedSelections
       const characterData = this._buildCharacterDataFromShell(shell);
 
+      // PHASE D: Build pending droid budget info from current state
+      const pendingDroidBudget = {
+        base: this._droidState?.droidCredits?.base || 1000,
+        spent: this._droidState?.droidCredits?.spent || 0,
+        remaining: this._droidState?.droidCredits?.remaining || 1000,
+        allowOverflow: game.settings.get('foundryvtt-swse', 'allowDroidOverflow') ?? false,
+      };
+
+      const droidDegree = this._droidState?.droidDegree || actor?.system?.droidDegree || '1st-degree';
+      const droidSize = this._droidState?.droidSize || actor?.system?.droidSize || 'medium';
+
       // Get suggestions from SuggestionService
+      // PHASE D: Pass DROID_SYSTEMS as available systems and include budget info
       const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
         domain: 'droid-systems',
-        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
-        engineOptions: { includeFutureAvailability: true },
-        persist: true
+        available: DROID_SYSTEMS,  // Pass available droid systems
+        pendingData: {
+          ...SuggestionContextBuilder.buildPendingData(actor, characterData),
+          droidDegree,
+          droidSize,
+          droidBudget: pendingDroidBudget,
+        },
+        engineOptions: {
+          includeFutureAvailability: true,
+          mode: 'preview',  // Provisional mode shows preview recommendations
+          allowOverflow: pendingDroidBudget.allowOverflow,
+          debug: false,
+        },
+        persist: false  // Don't persist suggestions yet (they're transient during build)
       });
 
-      // Store top suggestions
-      this._suggestedSystems = (suggested || []).slice(0, 3);
+      // Store suggestions (organized by category from PHASE D engine)
+      // Format: { locomotion: [], processor: [], appendages: [], accessories: {} }
+      this._suggestedSystems = suggested || {};
+
+      if (Object.keys(this._suggestedSystems).length > 0) {
+        swseLogger.debug('[DroidBuilderStep] Droid suggestions received', {
+          hasLocomotion: !!this._suggestedSystems.locomotion?.length,
+          hasProcessor: !!this._suggestedSystems.processor?.length,
+          hasAppendages: !!this._suggestedSystems.appendages?.length,
+          hasAccessories: !!this._suggestedSystems.accessories,
+        });
+      }
     } catch (err) {
       swseLogger.warn('[DroidBuilderStep] Suggestion service error:', err);
-      this._suggestedSystems = [];
+      this._suggestedSystems = {};
     }
   }
 

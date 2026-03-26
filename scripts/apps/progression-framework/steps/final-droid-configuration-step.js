@@ -31,18 +31,22 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { DROID_SYSTEMS } from '../../../data/droid-systems.js';
 import { swseLogger } from '../../../utils/logger.js';
-import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
+import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 
 export class FinalDroidConfigurationStep extends ProgressionStepPlugin {
   constructor(descriptor) {
     super(descriptor);
     this._droidState = null;
     this._isConfirmed = false;
+    this._suggestedSystems = {};  // PHASE D: Suggested droid systems for final pass
   }
 
   /**
    * Called when the shell navigates TO this step.
    * Initialize finalized droid state from committedSelections.
+   * PHASE D: Load finalized recommendations.
    */
   async onStepEnter(shell) {
     // Retrieve the deferred droid build from committedSelections
@@ -70,10 +74,14 @@ export class FinalDroidConfigurationStep extends ProgressionStepPlugin {
       creditsRemaining: this._droidState.droidCredits?.remaining,
       isDeferred: this._droidState.buildState?.isDeferred,
     });
+
+    // PHASE D: Get finalized droid system suggestions
+    await this._getSuggestedSystems(shell.actor, shell);
   }
 
   /**
    * Provide step data to templates.
+   * PHASE D: Include finalized droid system suggestions.
    */
   async getStepData(context) {
     if (!this._droidState) {
@@ -83,8 +91,10 @@ export class FinalDroidConfigurationStep extends ProgressionStepPlugin {
       };
     }
 
-    // Build presentation data
-    const presentation = this._buildDroidPresentation();
+    // PHASE D: Flatten PHASE D suggestions (organized by category) into array for display
+    const suggestionsArray = this._flattenDroidSuggestions(this._suggestedSystems);
+    const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(suggestionsArray);
+    const presentation = this._buildDroidPresentation(suggestedIds, confidenceMap);
     const credits = this._droidState.droidCredits;
 
     return {
@@ -99,6 +109,14 @@ export class FinalDroidConfigurationStep extends ProgressionStepPlugin {
       // PHASE C: Show warning about unspent budget
       unspentCredits: credits.remaining,
       willLoseBudget: credits.remaining > 0 && !credits.allowOverflow,
+      // PHASE D: Include finalized suggestions
+      hasSuggestions,
+      suggestedSystemIds: Array.from(suggestedIds),
+      suggestedSystems: suggestionsArray,
+      confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
+        acc[id] = data;
+        return acc;
+      }, {}),
     };
   }
 
@@ -126,11 +144,27 @@ export class FinalDroidConfigurationStep extends ProgressionStepPlugin {
 
   /**
    * Build presentation-friendly droid data (shared with DroidBuilderStep).
+   * PHASE D: Accept suggestion data to highlight recommended systems.
    */
-  _buildDroidPresentation() {
+  _buildDroidPresentation(suggestedIds = new Set(), confidenceMap = new Map()) {
     if (!this._droidState) return {};
 
     const sys = this._droidState.droidSystems;
+
+    // Helper to enhance systems with suggestion data
+    const enhanceSystemsWithSuggestions = (systems) => {
+      return systems.map(s => {
+        const isSuggested = this.isSuggestedItem(s.id, suggestedIds);
+        const confidenceData = confidenceMap.get ? confidenceMap.get(s.id) : confidenceMap[s.id];
+        return {
+          ...s,
+          isSuggested,
+          badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
+          confidenceLevel: confidenceData?.confidenceLevel || null,
+        };
+      });
+    };
+
     return {
       title: 'FINAL DROID CONFIGURATION',
       subtitle: 'Review and confirm your droid before chargen completion.',
@@ -159,12 +193,12 @@ export class FinalDroidConfigurationStep extends ProgressionStepPlugin {
       },
 
       availableSystems: {
-        locomotion: DROID_SYSTEMS.locomotion,
-        processors: DROID_SYSTEMS.processors,
-        appendages: DROID_SYSTEMS.appendages,
-        accessories: DROID_SYSTEMS.accessories,
-        locomotionEnhancements: DROID_SYSTEMS.locomotionEnhancements || [],
-        appendageEnhancements: DROID_SYSTEMS.appendageEnhancements || [],
+        locomotion: enhanceSystemsWithSuggestions(DROID_SYSTEMS.locomotion),
+        processors: enhanceSystemsWithSuggestions(DROID_SYSTEMS.processors),
+        appendages: enhanceSystemsWithSuggestions(DROID_SYSTEMS.appendages),
+        accessories: enhanceSystemsWithSuggestions(DROID_SYSTEMS.accessories),
+        locomotionEnhancements: enhanceSystemsWithSuggestions(DROID_SYSTEMS.locomotionEnhancements || []),
+        appendageEnhancements: enhanceSystemsWithSuggestions(DROID_SYSTEMS.appendageEnhancements || []),
       },
 
       costFactor: this._getCostFactor(),
@@ -331,10 +365,20 @@ export class FinalDroidConfigurationStep extends ProgressionStepPlugin {
 
   /**
    * Called when user clicks "Ask Mentor".
+   * PHASE D: Use finalized recommendations if available.
    */
   async onAskMentor(shell) {
-    // Show standard guidance (no suggestions in finalized mode yet)
-    await handleAskMentor(shell.actor, 'final-droid-configuration', shell);
+    // If we have suggestions, use the advisory system instead of standard guidance
+    if (this._suggestedSystems && Object.keys(this._suggestedSystems).length > 0) {
+      const suggestionsArray = this._flattenDroidSuggestions(this._suggestedSystems);
+      await handleAskMentorWithSuggestions(shell.actor, 'final-droid-configuration', suggestionsArray, shell, {
+        domain: 'droid-systems',
+        archetype: 'your finalized droid configuration'
+      });
+    } else {
+      // Fallback: show standard guidance
+      await handleAskMentor(shell.actor, 'final-droid-configuration', shell);
+    }
   }
 
   /**
@@ -414,5 +458,112 @@ export class FinalDroidConfigurationStep extends ProgressionStepPlugin {
     if (!this._isConfirmed) {
       swseLogger.warn('[FinalDroidConfigurationStep.onStepExit] Step exited without confirmation');
     }
+  }
+
+  // ---------------------------------------------------------------------------
+  // PHASE D: Suggestions (Final Mode)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get suggested droid systems from SuggestionService (final mode).
+   * This is similar to droid-builder-step but uses mode: 'final' for finalized recommendations.
+   * @private
+   */
+  async _getSuggestedSystems(actor, shell) {
+    try {
+      // Build characterData from shell's buildIntent/committedSelections
+      const characterData = this._buildCharacterDataFromShell(shell);
+
+      // Build pending droid budget info from current state
+      const pendingDroidBudget = {
+        base: this._droidState?.droidCredits?.base || 1000,
+        spent: this._droidState?.droidCredits?.spent || 0,
+        remaining: this._droidState?.droidCredits?.remaining || 1000,
+        allowOverflow: game.settings.get('foundryvtt-swse', 'allowDroidOverflow') ?? false,
+      };
+
+      const droidDegree = this._droidState?.droidDegree || actor?.system?.droidDegree || '1st-degree';
+      const droidSize = this._droidState?.droidSize || actor?.system?.droidSize || 'medium';
+
+      // Get suggestions from SuggestionService
+      // PHASE D: Pass DROID_SYSTEMS as available systems and include budget info
+      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+        domain: 'droid-systems',
+        available: DROID_SYSTEMS,  // Pass available droid systems
+        pendingData: {
+          ...SuggestionContextBuilder.buildPendingData(actor, characterData),
+          droidDegree,
+          droidSize,
+          droidBudget: pendingDroidBudget,
+        },
+        engineOptions: {
+          includeFutureAvailability: true,
+          mode: 'final',  // Final mode shows finalized recommendations
+          allowOverflow: pendingDroidBudget.allowOverflow,
+          debug: false,
+        },
+        persist: false  // Don't persist suggestions in final pass (already committed)
+      });
+
+      // Store suggestions (organized by category from PHASE D engine)
+      // Format: { locomotion: [], processor: [], appendages: [], accessories: {} }
+      this._suggestedSystems = suggested || {};
+
+      if (Object.keys(this._suggestedSystems).length > 0) {
+        swseLogger.debug('[FinalDroidConfigurationStep] Final droid suggestions received', {
+          hasLocomotion: !!this._suggestedSystems.locomotion?.length,
+          hasProcessor: !!this._suggestedSystems.processor?.length,
+          hasAppendages: !!this._suggestedSystems.appendages?.length,
+          hasAccessories: !!this._suggestedSystems.accessories,
+        });
+      }
+    } catch (err) {
+      swseLogger.warn('[FinalDroidConfigurationStep] Suggestion service error:', err);
+      this._suggestedSystems = {};
+    }
+  }
+
+  /**
+   * Extract character data from shell for suggestion engine.
+   * Allows suggestions to understand what choices have been made so far.
+   * @private
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.buildIntent) {
+      return {};
+    }
+
+    return shell.buildIntent.toCharacterData();
+  }
+
+  /**
+   * PHASE D: Flatten suggestions from all categories into single array for display.
+   * Suggestions come organized as {locomotion: [], processor: [], appendages: [], accessories: {}}
+   * @private
+   */
+  _flattenDroidSuggestions(suggestedByCategory = {}) {
+    const flattened = [];
+
+    // Add suggestions from each category
+    if (Array.isArray(suggestedByCategory.locomotion)) {
+      flattened.push(...suggestedByCategory.locomotion);
+    }
+    if (Array.isArray(suggestedByCategory.processor)) {
+      flattened.push(...suggestedByCategory.processor);
+    }
+    if (Array.isArray(suggestedByCategory.appendages)) {
+      flattened.push(...suggestedByCategory.appendages);
+    }
+
+    // Add accessories from all sub-categories
+    if (suggestedByCategory.accessories && typeof suggestedByCategory.accessories === 'object') {
+      Object.values(suggestedByCategory.accessories).forEach(category => {
+        if (Array.isArray(category)) {
+          flattened.push(...category);
+        }
+      });
+    }
+
+    return flattened;
   }
 }
