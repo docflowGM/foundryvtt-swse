@@ -110,16 +110,20 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       return { id, name: secret?.name || id, count };
     });
 
-    const { suggestedIds, hasSuggestions } = this.formatSuggestionsForDisplay(this._suggestedSecrets);
+    const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedSecrets);
 
     return {
-      secrets: this._filteredSecrets.map(s => this._formatSecretCard(s, suggestedIds)),
+      secrets: this._filteredSecrets.map(s => this._formatSecretCard(s, suggestedIds, confidenceMap)),
       focusedSecretId: this._focusedSecretId,
       committedCounts: Object.fromEntries(this._committedSecretCounts),
       committedSummary,
       remainingPicks: this._remainingPicks,
       hasSuggestions,
       suggestedSecretIds: Array.from(suggestedIds),
+      confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
+        acc[id] = data;
+        return acc;
+      }, {}),
     };
   }
 
@@ -358,13 +362,15 @@ export class ForceSecretStep extends ProgressionStepPlugin {
     return shell.buildIntent.toCharacterData();
   }
 
-  _formatSecretCard(secret, suggestedIds = new Set()) {
+  _formatSecretCard(secret, suggestedIds = new Set(), confidenceMap = new Map()) {
     const isSuggested = this.isSuggestedItem(secret.id, suggestedIds);
+    const confidenceData = confidenceMap.get ? confidenceMap.get(secret.id) : confidenceMap[secret.id];
     return {
       ...secret,
       isSuggested,
-      badgeLabel: isSuggested ? 'Recommended' : null,
+      badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
       badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
+      confidenceLevel: confidenceData?.confidenceLevel || null,
     };
   }
 }

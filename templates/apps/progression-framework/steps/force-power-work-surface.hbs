@@ -6,10 +6,12 @@
     <div class="prog-force-power-grid" role="list">
       {{#each powers}}
         <div class="prog-force-power-card
-                    {{#if (arrayIncludes ../committedCounts @key)}}prog-force-power-card--selected{{/if}}"
+                    {{#if (arrayIncludes ../committedCounts @key)}}prog-force-power-card--selected{{/if}}
+                    {{#if this.isSuggested}}prog-power-card--suggested prog-power-card--suggested-{{this.confidenceLevel}}{{/if}}"
              data-action="focus-item"
              data-item-id="{{this.id}}"
              data-recommended="{{#if this.isSuggested}}true{{/if}}"
+             data-confidence-level="{{this.confidenceLevel}}"
              tabindex="0" role="option"
              aria-selected="{{#if (arrayIncludes ../committedCounts @key)}}true{{else}}false{{/if}}">
 

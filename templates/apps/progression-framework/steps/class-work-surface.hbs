@@ -3,12 +3,14 @@
     {{#each classes}}
       <button class="swse-option-card prog-class-card
                      {{#if (eq id ../focusedClassId)}}swse-option-card--focused{{/if}}
-                     {{#if (eq id ../committedClassId)}}swse-option-card--selected{{/if}}"
+                     {{#if (eq id ../committedClassId)}}swse-option-card--selected{{/if}}
+                     {{#if this.isSuggested}}prog-class-card--suggested prog-class-card--suggested-{{this.confidenceLevel}}{{/if}}"
               data-action="focus-item"
               data-item-id="{{this.id}}"
               data-selected="{{#if (eq id ../committedClassId)}}true{{else}}false{{/if}}"
               data-focused="{{#if (eq id ../focusedClassId)}}true{{else}}false{{/if}}"
               data-recommended="{{#if this.isSuggested}}true{{/if}}"
+              data-confidence-level="{{this.confidenceLevel}}"
               type="button"
               role="option"
               {{#if (eq id ../committedClassId)}}aria-selected="true"{{/if}}>

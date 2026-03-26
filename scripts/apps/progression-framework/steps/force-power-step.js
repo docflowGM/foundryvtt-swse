@@ -151,16 +151,20 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       return { id, name: power?.name || id, count };
     });
 
-    const { suggestedIds, hasSuggestions } = this.formatSuggestionsForDisplay(this._suggestedPowers);
+    const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedPowers);
 
     return {
-      powers: this._filteredPowers.map(p => this._formatPowerCard(p, suggestedIds)),
+      powers: this._filteredPowers.map(p => this._formatPowerCard(p, suggestedIds, confidenceMap)),
       focusedPowerId: this._focusedPowerId,
       committedCounts: Object.fromEntries(this._committedPowerCounts),  // for template checks
       committedSummary,  // for footer display
       remainingPicks: this._remainingPicks,
       hasSuggestions,
       suggestedPowerIds: Array.from(suggestedIds),
+      confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
+        acc[id] = data;
+        return acc;
+      }, {}),
     };
   }
 
@@ -528,13 +532,15 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     return shell.buildIntent.toCharacterData();
   }
 
-  _formatPowerCard(power, suggestedIds = new Set()) {
+  _formatPowerCard(power, suggestedIds = new Set(), confidenceMap = new Map()) {
     const isSuggested = this.isSuggestedItem(power.id, suggestedIds);
+    const confidenceData = confidenceMap.get ? confidenceMap.get(power.id) : confidenceMap[power.id];
     return {
       ...power,
       isSuggested,
-      badgeLabel: isSuggested ? 'Recommended' : null,
+      badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
       badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
+      confidenceLevel: confidenceData?.confidenceLevel || null,
     };
   }
 }

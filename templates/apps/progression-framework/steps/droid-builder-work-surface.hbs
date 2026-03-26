@@ -82,8 +82,10 @@
       <div class="prog-droid-builder__systems-grid">
         {{#each presentation.availableSystems.locomotion}}
           {{#with ../}}
-            <div class="system-card {{#if (eq ../id presentation.selectedSystems.locomotion.id)}}system-card--selected{{/if}}"
-                 data-recommended="{{#if this.isSuggested}}true{{/if}}">
+            <div class="system-card {{#if (eq ../id presentation.selectedSystems.locomotion.id)}}system-card--selected{{/if}}
+                                 {{#if this.isSuggested}}prog-droid-system--suggested prog-droid-system--suggested-{{this.confidenceLevel}}{{/if}}"
+                 data-recommended="{{#if this.isSuggested}}true{{/if}}"
+                 data-confidence-level="{{this.confidenceLevel}}">
               <h4>
                 {{this.name}}
                 {{#if this.badgeLabel}}

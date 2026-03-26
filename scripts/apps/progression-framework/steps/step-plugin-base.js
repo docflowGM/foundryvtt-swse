@@ -345,17 +345,45 @@ export class ProgressionStepPlugin {
   /**
    * Format suggestion data for display in UI.
    * Converts suggestion array to a Set of IDs and metadata object.
+   * Includes confidence information for each suggestion.
    *
    * @param {Array} suggestionsArray - Array of suggestion objects from SuggestionService
-   * @returns {{ suggestedIds: Set<string>, hasSuggestions: boolean, suggestions: Array }}
+   * @returns {{ suggestedIds: Set<string>, hasSuggestions: boolean, suggestions: Array, confidenceMap: Map }}
    */
   formatSuggestionsForDisplay(suggestionsArray = []) {
     const suggestedIds = new Set((suggestionsArray || []).map(s => s.id || s));
+
+    // Build confidence map for display (id → confidence info)
+    const confidenceMap = new Map();
+    (suggestionsArray || []).forEach(s => {
+      const confidence = s.suggestion?.confidence || 0.5;
+      const confidencePercent = Math.round(confidence * 100);
+      confidenceMap.set(s.id || s, {
+        confidence,
+        confidencePercent,
+        confidenceLabel: `${confidencePercent}% match`,
+        confidenceLevel: this._getConfidenceLevel(confidence) // 'high', 'medium', 'low'
+      });
+    });
+
     return {
       suggestedIds,
       hasSuggestions: suggestedIds.size > 0,
       suggestions: suggestionsArray || [],
+      confidenceMap,
     };
+  }
+
+  /**
+   * Get confidence level label from percentage.
+   * @private
+   * @param {number} confidence - Confidence value 0.0-1.0
+   * @returns {string} 'high', 'medium', or 'low'
+   */
+  _getConfidenceLevel(confidence) {
+    if (confidence >= 0.7) return 'high';
+    if (confidence >= 0.4) return 'medium';
+    return 'low';
   }
 
   /**

@@ -46,12 +46,14 @@
           {{#each backgrounds}}
             <button class="swse-option-card prog-background-item
                            {{#if isFocused}}swse-option-card--focused{{/if}}
-                           {{#if isCommitted}}swse-option-card--selected{{/if}}"
+                           {{#if isCommitted}}swse-option-card--selected{{/if}}
+                           {{#if isSuggested}}prog-background-item--suggested prog-background-item--suggested-{{confidenceLevel}}{{/if}}"
                     data-action="focus-item"
                     data-item-id="{{id}}"
                     data-selected="{{#if isCommitted}}true{{else}}false{{/if}}"
                     data-focused="{{#if isFocused}}true{{else}}false{{/if}}"
                     data-recommended="{{#if isSuggested}}true{{/if}}"
+                    data-confidence-level="{{confidenceLevel}}"
                     type="button"
                     role="option"
                     {{#if isCommitted}}aria-selected="true"{{/if}}>

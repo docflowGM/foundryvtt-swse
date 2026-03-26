@@ -172,12 +172,13 @@ export async function handleAskMentorWithSuggestions(actor, stepId, suggestions,
     );
 
     if (advisory) {
-      // Speak the advisory through mentor rail
+      // Speak the advisory through mentor rail with mood based on confidence
       const advisoryText = `${advisory.observation} ${advisory.impact} ${advisory.guidance}`;
-      await shell.mentorRail.speak(advisoryText, 'encouraging');
+      const mood = advisory.mood || 'encouraging'; // Use confidence-based mood from advisor
+      await shell.mentorRail.speak(advisoryText, mood);
 
       swseLogger.log(
-        `[MentorStepIntegration] Spoke suggestion advisory for ${stepId} (${suggestions.length} suggestions)`
+        `[MentorStepIntegration] Spoke suggestion advisory for ${stepId} (${suggestions.length} suggestions, mood: ${mood})`
       );
     } else {
       // Fallback to standard guidance if no advisory generated

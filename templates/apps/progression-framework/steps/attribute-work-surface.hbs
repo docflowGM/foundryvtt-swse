@@ -52,9 +52,11 @@
   <div class="prog-attribute-rows">
     {{#each abilities}}
       <div class="prog-attribute-row
-                  {{#if isFocused}}prog-attribute-row--focused{{/if}}"
+                  {{#if isFocused}}prog-attribute-row--focused{{/if}}
+                  {{#if isSuggested}}prog-attribute-row--suggested prog-attribute-row--suggested-{{confidenceLevel}}{{/if}}"
            data-ability-row="{{id}}"
            data-recommended="{{#if isSuggested}}true{{/if}}"
+           data-confidence-level="{{confidenceLevel}}"
            role="button"
            tabindex="0">
 

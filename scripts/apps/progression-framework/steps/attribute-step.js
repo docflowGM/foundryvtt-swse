@@ -190,11 +190,11 @@ export class AttributeStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async getStepData(context) {
-    const { suggestedIds, hasSuggestions } = this.formatSuggestionsForDisplay(this._suggestedAllocations);
+    const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedAllocations);
     return {
       method: this._method,
       methodChanged: this._methodChanged,
-      abilities: this._formatAbilityRows(suggestedIds),
+      abilities: this._formatAbilityRows(suggestedIds, confidenceMap),
       focusedAbility: this._focusedAbility,
       pointBuyPool: this._pointBuyPool,
       pointBuyStatus: this._getPointBuyStatus(),
@@ -202,6 +202,10 @@ export class AttributeStep extends ProgressionStepPlugin {
       validationStatus: this.validate(),
       hasSuggestions,
       suggestedAbilityIds: Array.from(suggestedIds),
+      confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
+        acc[id] = data;
+        return acc;
+      }, {}),
     };
   }
 
@@ -408,13 +412,14 @@ export class AttributeStep extends ProgressionStepPlugin {
   // Private Helpers
   // ---------------------------------------------------------------------------
 
-  _formatAbilityRows(suggestedIds = new Set()) {
+  _formatAbilityRows(suggestedIds = new Set(), confidenceMap = new Map()) {
     return ABILITIES.map(ability => {
       const baseScore = this._baseScores[ability];
       const speciesMod = this._speciesModifiers[ability];
       const finalScore = baseScore + speciesMod;
       const modifier = Math.floor((finalScore - 10) / 2);
       const isSuggested = this.isSuggestedItem(ability, suggestedIds);
+      const confidenceData = confidenceMap.get ? confidenceMap.get(ability) : confidenceMap[ability];
 
       return {
         id: ability,
@@ -429,8 +434,9 @@ export class AttributeStep extends ProgressionStepPlugin {
         isFocused: ability === this._focusedAbility,
         canAdjust: this._method === 'point-buy',
         isSuggested,
-        badgeLabel: isSuggested ? 'Recommended' : null,
+        badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
         badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
+        confidenceLevel: confidenceData?.confidenceLevel || null,
       };
     });
   }

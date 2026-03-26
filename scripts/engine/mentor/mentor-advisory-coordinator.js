@@ -342,11 +342,26 @@ export class MentorAdvisoryCoordinator {
         .replace('{related_growth_area}', relatedGrowth)
         .replace('{strength_area}', suggestionName);
 
+      // Map confidence to mentor mood (higher confidence = more enthusiastic)
+      let mentorMood = 'neutral';
+      if (confidence >= 0.8) {
+        mentorMood = 'encouraging'; // High confidence → enthusiastic
+      } else if (confidence >= 0.6) {
+        mentorMood = 'supportive'; // Medium-high confidence → supportive
+      } else if (confidence >= 0.4) {
+        mentorMood = 'thoughtful'; // Medium confidence → thoughtful consideration
+      }
+
+      // Build confidence label for display (1-5 stars or percentage)
+      const confidencePercent = Math.round(confidence * 100);
+      const confidenceLabel = `${confidencePercent}% confidence`;
+
       // Build advisory object
       const advisory = {
         mentor: mentorId,
         type: 'selection_suggestion',
         intensity,
+        mood: mentorMood,
         timestamp: Date.now(),
         observation,
         impact,
@@ -357,7 +372,9 @@ export class MentorAdvisoryCoordinator {
           ...context,
           suggestion: topSuggestion,
           reason: suggestionReason,
-          confidence
+          confidence,
+          confidenceLabel,
+          confidencePercent
         }
       };
 

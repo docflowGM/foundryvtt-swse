@@ -186,15 +186,19 @@ export class SpeciesStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async getStepData(context) {
-    const { suggestedIds, hasSuggestions } = this.formatSuggestionsForDisplay(this._suggestedSpecies);
+    const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedSpecies);
     return {
       mode: this._mode,
-      species: this._filteredSpecies.map(s => this._formatSpeciesCard(s, suggestedIds)),
+      species: this._filteredSpecies.map(s => this._formatSpeciesCard(s, suggestedIds, confidenceMap)),
       focusedSpeciesId: context.focusedItem?.id ?? null,
       committedSpeciesId: context.committedSelections?.get('species')?.speciesId ?? null,
       nearHuman: this._nearHumanBuilder.getBuilderData(),
       hasSuggestions,
       suggestedSpeciesIds: Array.from(suggestedIds),
+      confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
+        acc[id] = data;
+        return acc;
+      }, {}),
     };
   }
 
@@ -741,12 +745,13 @@ export class SpeciesStep extends ProgressionStepPlugin {
     return null;
   }
 
-  _formatSpeciesCard(species, suggestedIds = new Set()) {
+  _formatSpeciesCard(species, suggestedIds = new Set(), confidenceMap = new Map()) {
     const abilityRows = this._formatAbilityRows(species.abilityScores);
     const abilityModLine = abilityRows
       .map(row => `${row.signedValue} ${row.shortLabel}`)
       .join(', ');
     const isSuggested = this.isSuggestedItem(species.id, suggestedIds);
+    const confidenceData = confidenceMap.get ? confidenceMap.get(species.id) : confidenceMap[species.id];
 
     return {
       id: species.id,
@@ -763,8 +768,9 @@ export class SpeciesStep extends ProgressionStepPlugin {
       abilities: species.abilities ?? [],
       languages: species.languages ?? [],
       isSuggested,
-      badgeLabel: isSuggested ? 'Recommended' : null,
+      badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
       badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
+      confidenceLevel: confidenceData?.confidenceLevel || null,
     };
   }
 

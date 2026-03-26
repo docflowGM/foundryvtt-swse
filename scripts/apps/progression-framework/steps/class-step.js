@@ -100,14 +100,18 @@ export class ClassStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async getStepData(context) {
-    const suggestedIds = new Set(this._suggestedClasses.map(s => s.id || s));
+    const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedClasses);
     return {
-      classes: this._filteredClasses.map(c => this._formatClassCard(c, suggestedIds)),
+      classes: this._filteredClasses.map(c => this._formatClassCard(c, suggestedIds, confidenceMap)),
       focusedClassId: context.focusedItem?.id ?? null,
       committedClassId: context.committedSelections?.get('class')?.classId ?? null,
       suggestedClassIds: Array.from(suggestedIds),
       suggestedClasses: this._suggestedClasses,
-      hasSuggestions: this._suggestedClasses.length > 0,
+      hasSuggestions,
+      confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
+        acc[id] = data;
+        return acc;
+      }, {}),
     };
   }
 
@@ -336,8 +340,13 @@ export class ClassStep extends ProgressionStepPlugin {
     this._filteredClasses = filtered;
   }
 
-  _formatClassCard(classData, suggestedIds = new Set()) {
+  _formatClassCard(classData, suggestedIds = new Set(), confidenceMap = new Map()) {
     const isSuggested = suggestedIds.has(classData.id);
+    const confidenceData = confidenceMap.get ? confidenceMap.get(classData.id) : confidenceMap[classData.id];
+    const recommendedLabel = isSuggested
+      ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended')
+      : null;
+
     return {
       id: classData.id,
       name: classData.name,
@@ -348,9 +357,10 @@ export class ClassStep extends ProgressionStepPlugin {
       description: classData.fantasy ?? classData.description ?? '',
       mentorName: classData.mentorName ?? 'Unknown Guide',
       isSuggested,
+      confidenceLevel: confidenceData?.confidenceLevel || null,
       metaChips: [
         { label: classData.prestige ? 'Prestige' : 'Base' },
-        isSuggested && { label: 'Recommended', cssClass: 'prog-meta-chip--suggested' },
+        isSuggested && { label: recommendedLabel, cssClass: 'prog-meta-chip--suggested' },
         classData.source && { label: classData.source },
       ].filter(Boolean),
       stats: [

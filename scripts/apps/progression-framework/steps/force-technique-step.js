@@ -97,16 +97,20 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       return { id, name: technique?.name || id, count };
     });
 
-    const { suggestedIds, hasSuggestions } = this.formatSuggestionsForDisplay(this._suggestedTechniques);
+    const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedTechniques);
 
     return {
-      techniques: this._filteredTechniques.map(t => this._formatTechniqueCard(t, suggestedIds)),
+      techniques: this._filteredTechniques.map(t => this._formatTechniqueCard(t, suggestedIds, confidenceMap)),
       focusedTechniqueId: this._focusedTechniqueId,
       committedCounts: Object.fromEntries(this._committedTechniqueCounts),
       committedSummary,
       remainingPicks: this._remainingPicks,
       hasSuggestions,
       suggestedTechniqueIds: Array.from(suggestedIds),
+      confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
+        acc[id] = data;
+        return acc;
+      }, {}),
     };
   }
 
@@ -325,13 +329,15 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     return shell.buildIntent.toCharacterData();
   }
 
-  _formatTechniqueCard(technique, suggestedIds = new Set()) {
+  _formatTechniqueCard(technique, suggestedIds = new Set(), confidenceMap = new Map()) {
     const isSuggested = this.isSuggestedItem(technique.id, suggestedIds);
+    const confidenceData = confidenceMap.get ? confidenceMap.get(technique.id) : confidenceMap[technique.id];
     return {
       ...technique,
       isSuggested,
-      badgeLabel: isSuggested ? 'Recommended' : null,
+      badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
       badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
+      confidenceLevel: confidenceData?.confidenceLevel || null,
     };
   }
 }

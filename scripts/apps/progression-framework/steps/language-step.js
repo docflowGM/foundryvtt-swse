@@ -259,7 +259,7 @@ export class LanguageStep extends ProgressionStepPlugin {
   async getStepData(context) {
     const available = this._getFilteredAvailableLanguages();
     const remainingPicks = this._bonusLanguagesAvailable - this._selectedBonusLanguages.length;
-    const { suggestedIds, hasSuggestions } = this.formatSuggestionsForDisplay(this._suggestedLanguages);
+    const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedLanguages);
 
     return {
       knownLanguages: this._knownLanguages.map(name => ({
@@ -274,14 +274,16 @@ export class LanguageStep extends ProgressionStepPlugin {
 
       availableLanguages: available.map(lang => {
         const isSuggested = this.isSuggestedItem(lang.id, suggestedIds);
+        const confidenceData = confidenceMap.get ? confidenceMap.get(lang.id) : confidenceMap[lang.id];
         return {
           id: lang.id,
           name: lang.name,
           category: lang.category,
           canSelect: true,
           isSuggested,
-          badgeLabel: isSuggested ? 'Recommended' : null,
+          badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
           badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
+          confidenceLevel: confidenceData?.confidenceLevel || null,
         };
       }),
 
@@ -291,6 +293,10 @@ export class LanguageStep extends ProgressionStepPlugin {
       hasAvailableLanguages: available.length > 0,
       hasSuggestions,
       suggestedLanguageIds: Array.from(suggestedIds),
+      confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
+        acc[id] = data;
+        return acc;
+      }, {}),
     };
   }
 

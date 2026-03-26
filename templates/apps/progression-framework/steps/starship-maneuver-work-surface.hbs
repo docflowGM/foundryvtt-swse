@@ -6,10 +6,12 @@
     <div class="prog-starship-maneuver-grid" role="list">
       {{#each maneuvers}}
         <div class="prog-starship-maneuver-card
-                    {{#if (arrayIncludes ../committedCounts @key)}}prog-starship-maneuver-card--selected{{/if}}"
+                    {{#if (arrayIncludes ../committedCounts @key)}}prog-starship-maneuver-card--selected{{/if}}
+                    {{#if this.isSuggested}}prog-maneuver-card--suggested prog-maneuver-card--suggested-{{this.confidenceLevel}}{{/if}}"
              data-action="focus-item"
              data-item-id="{{this.id}}"
              data-recommended="{{#if this.isSuggested}}true{{/if}}"
+             data-confidence-level="{{this.confidenceLevel}}"
              tabindex="0" role="option">
 
           <div class="prog-starship-maneuver-card__header">

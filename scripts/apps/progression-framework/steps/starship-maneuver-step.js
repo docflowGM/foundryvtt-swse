@@ -91,16 +91,20 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
       return { id, name: maneuver?.name || id, count };
     });
 
-    const { suggestedIds, hasSuggestions } = this.formatSuggestionsForDisplay(this._suggestedManeuvers);
+    const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedManeuvers);
 
     return {
-      maneuvers: this._filteredManeuvers.map(m => this._formatManeuverCard(m, suggestedIds)),
+      maneuvers: this._filteredManeuvers.map(m => this._formatManeuverCard(m, suggestedIds, confidenceMap)),
       focusedManeuverID: this._focusedManeuverID,
       committedCounts: Object.fromEntries(this._committedManeuverCounts),
       committedSummary,
       remainingPicks: this._remainingPicks,
       hasSuggestions,
       suggestedManeuverIds: Array.from(suggestedIds),
+      confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
+        acc[id] = data;
+        return acc;
+      }, {}),
     };
   }
 
@@ -319,13 +323,15 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
     return shell.buildIntent.toCharacterData();
   }
 
-  _formatManeuverCard(maneuver, suggestedIds = new Set()) {
+  _formatManeuverCard(maneuver, suggestedIds = new Set(), confidenceMap = new Map()) {
     const isSuggested = this.isSuggestedItem(maneuver.id, suggestedIds);
+    const confidenceData = confidenceMap.get ? confidenceMap.get(maneuver.id) : confidenceMap[maneuver.id];
     return {
       ...maneuver,
       isSuggested,
-      badgeLabel: isSuggested ? 'Recommended' : null,
+      badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
       badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
+      confidenceLevel: confidenceData?.confidenceLevel || null,
     };
   }
 }

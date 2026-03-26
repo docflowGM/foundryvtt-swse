@@ -17,10 +17,12 @@
     {{#each species}}
       <button class="prog-species-row
                      {{#if (eq id ../focusedSpeciesId)}}prog-species-row--focused{{/if}}
-                     {{#if (eq id ../committedSpeciesId)}}prog-species-row--committed{{/if}}"
+                     {{#if (eq id ../committedSpeciesId)}}prog-species-row--committed{{/if}}
+                     {{#if this.isSuggested}}prog-species-row--suggested prog-species-row--suggested-{{this.confidenceLevel}}{{/if}}"
               data-action="focus-item"
               data-item-id="{{this.id}}"
               data-recommended="{{#if this.isSuggested}}true{{/if}}"
+              data-confidence-level="{{this.confidenceLevel}}"
               type="button"
               role="option"
               {{#if (eq id ../committedSpeciesId)}}aria-selected="true"{{/if}}>

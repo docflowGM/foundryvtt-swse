@@ -5,10 +5,12 @@
     <div class="prog-force-technique-grid" role="list">
       {{#each techniques}}
         <div class="prog-force-technique-card
-                    {{#if (arrayIncludes ../committedCounts @key)}}prog-force-technique-card--selected{{/if}}"
+                    {{#if (arrayIncludes ../committedCounts @key)}}prog-force-technique-card--selected{{/if}}
+                    {{#if this.isSuggested}}prog-technique-card--suggested prog-technique-card--suggested-{{this.confidenceLevel}}{{/if}}"
              data-action="focus-item"
              data-item-id="{{this.id}}"
              data-recommended="{{#if this.isSuggested}}true{{/if}}"
+             data-confidence-level="{{this.confidenceLevel}}"
              tabindex="0" role="option">
 
           <div class="prog-force-technique-card__header">

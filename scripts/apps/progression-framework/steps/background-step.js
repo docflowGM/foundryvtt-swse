@@ -109,10 +109,10 @@ export class BackgroundStep extends ProgressionStepPlugin {
 
   async getStepData(context) {
     const filtered = this._getFilteredBackgrounds();
-    const { suggestedIds, hasSuggestions } = this.formatSuggestionsForDisplay(this._suggestedBackgrounds);
+    const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedBackgrounds);
     return {
       categories: this._getCategoryChips(),
-      backgroundsByCategory: this._formatCategoryGroups(filtered, suggestedIds),
+      backgroundsByCategory: this._formatCategoryGroups(filtered, suggestedIds, confidenceMap),
       activeCategory: this._activeCategory,
       focusedBackgroundId: this._focusedBackgroundId,
       committedBackgroundIds: this._committedBackgroundIds,
@@ -122,6 +122,10 @@ export class BackgroundStep extends ProgressionStepPlugin {
       searchQuery: this._searchQuery,
       hasSuggestions,
       suggestedBackgroundIds: Array.from(suggestedIds),
+      confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
+        acc[id] = data;
+        return acc;
+      }, {}),
     };
   }
 
@@ -446,7 +450,7 @@ export class BackgroundStep extends ProgressionStepPlugin {
     }));
   }
 
-  _formatCategoryGroups(filtered, suggestedIds = new Set()) {
+  _formatCategoryGroups(filtered, suggestedIds = new Set(), confidenceMap = new Map()) {
     const result = {};
     for (const category of ['event', 'occupation', 'planet']) {
       const backgrounds = (this._groupedBackgrounds[category] || [])
@@ -455,6 +459,7 @@ export class BackgroundStep extends ProgressionStepPlugin {
           const isCommitted = this._committedBackgroundIds.includes(bg.id);
           const isFocused = bg.id === this._focusedBackgroundId;
           const isSuggested = this.isSuggestedItem(bg.id, suggestedIds);
+          const confidenceData = confidenceMap.get ? confidenceMap.get(bg.id) : confidenceMap[bg.id];
           return {
             id: bg.id,
             name: bg.name,
@@ -466,8 +471,9 @@ export class BackgroundStep extends ProgressionStepPlugin {
             isFocused,
             isCommitted,
             isSuggested,
-            badgeLabel: isSuggested ? 'Recommended' : null,
+            badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
             badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
+            confidenceLevel: confidenceData?.confidenceLevel || null,
           };
         });
 

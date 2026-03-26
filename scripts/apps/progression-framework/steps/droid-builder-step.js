@@ -95,9 +95,9 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     }
 
     // Build presentation data for templates
-    const presentation = this._buildDroidPresentation();
+    const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedSystems);
+    const presentation = this._buildDroidPresentation(suggestedIds, confidenceMap);
     const readiness = this._validateDroidBuild();
-    const { suggestedIds, hasSuggestions } = this.formatSuggestionsForDisplay(this._suggestedSystems);
 
     return {
       droidState: { ...this._droidState },
@@ -107,6 +107,10 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       buildIssues: readiness.issues,
       hasSuggestions,
       suggestedSystemIds: Array.from(suggestedIds),
+      confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
+        acc[id] = data;
+        return acc;
+      }, {}),
     };
   }
 
@@ -132,11 +136,25 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
   /**
    * Build presentation-friendly droid data.
    */
-  _buildDroidPresentation() {
+  _buildDroidPresentation(suggestedIds = new Set(), confidenceMap = new Map()) {
     if (!this._droidState) return {};
 
     const sys = this._droidState.droidSystems;
     const credits = this._droidState.droidCredits;
+
+    // Helper to enhance systems with suggestion data
+    const enhanceSystemsWithSuggestions = (systems) => {
+      return systems.map(s => {
+        const isSuggested = this.isSuggestedItem(s.id, suggestedIds);
+        const confidenceData = confidenceMap.get ? confidenceMap.get(s.id) : confidenceMap[s.id];
+        return {
+          ...s,
+          isSuggested,
+          badgeLabel: isSuggested ? (confidenceData?.confidenceLabel ? `Recommended (${confidenceData.confidenceLabel})` : 'Recommended') : null,
+          confidenceLevel: confidenceData?.confidenceLevel || null,
+        };
+      });
+    };
 
     return {
       title: 'DROID CHASSIS CONFIGURATION',
@@ -166,12 +184,12 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       },
 
       availableSystems: {
-        locomotion: DROID_SYSTEMS.locomotion,
-        processors: DROID_SYSTEMS.processors,
-        appendages: DROID_SYSTEMS.appendages,
-        accessories: DROID_SYSTEMS.accessories,
-        locomotionEnhancements: DROID_SYSTEMS.locomotionEnhancements || [],
-        appendageEnhancements: DROID_SYSTEMS.appendageEnhancements || [],
+        locomotion: enhanceSystemsWithSuggestions(DROID_SYSTEMS.locomotion),
+        processors: enhanceSystemsWithSuggestions(DROID_SYSTEMS.processors),
+        appendages: enhanceSystemsWithSuggestions(DROID_SYSTEMS.appendages),
+        accessories: enhanceSystemsWithSuggestions(DROID_SYSTEMS.accessories),
+        locomotionEnhancements: enhanceSystemsWithSuggestions(DROID_SYSTEMS.locomotionEnhancements || []),
+        appendageEnhancements: enhanceSystemsWithSuggestions(DROID_SYSTEMS.appendageEnhancements || []),
       },
 
       costFactor: this._getCostFactor(),
