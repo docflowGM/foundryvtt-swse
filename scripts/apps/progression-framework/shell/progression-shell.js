@@ -1235,6 +1235,52 @@ export class ProgressionShell extends SWSEApplicationV2 {
     return GlobalValidator.formatReport(result);
   }
 
+  /**
+   * Show validation feedback via mentor rail.
+   * Called when validation check is requested or on step navigation.
+   * Shows errors as cautionary, warnings as neutral.
+   */
+  showValidationFeedback() {
+    const result = this.validateBuild();
+
+    if (result.isValid && result.warnings.length === 0 && result.conflicts.length === 0) {
+      this.mentor.currentDialogue = '✓ Your build looks solid. Ready to proceed!';
+      this.mentor.mood = 'encouraging';
+      return;
+    }
+
+    // Build feedback message
+    const messages = [];
+
+    if (result.errors.length > 0) {
+      messages.push('**Issues to fix:**');
+      result.errors.slice(0, 2).forEach(err => messages.push(`  • ${err}`));
+      if (result.errors.length > 2) {
+        messages.push(`  + ${result.errors.length - 2} more issue(s)`);
+      }
+    }
+
+    if (result.warnings.length > 0) {
+      messages.push('\n**Recommendations:**');
+      result.warnings.slice(0, 2).forEach(warn => messages.push(`  • ${warn}`));
+      if (result.warnings.length > 2) {
+        messages.push(`  + ${result.warnings.length - 2} more suggestion(s)`);
+      }
+    }
+
+    if (result.conflicts.length > 0) {
+      messages.push('\n**Build Concerns:**');
+      result.conflicts.slice(0, 2).forEach(conflict => messages.push(`  • ${conflict}`));
+      if (result.conflicts.length > 2) {
+        messages.push(`  + ${result.conflicts.length - 2} more concern(s)`);
+      }
+    }
+
+    this.mentor.currentDialogue = messages.join('\n');
+    this.mentor.mood = result.errors.length > 0 ? 'cautionary' : 'neutral';
+    this.render();
+  }
+
   // ---------------------------------------------------------------------------
   // Close / Cleanup
   // ---------------------------------------------------------------------------

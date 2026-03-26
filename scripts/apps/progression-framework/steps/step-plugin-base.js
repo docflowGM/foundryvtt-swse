@@ -280,6 +280,17 @@ export class ProgressionStepPlugin {
     return 'context-only';
   }
 
+  /**
+   * Get the current global validation state for this build.
+   * Phase 2: Global Validation - use this in steps that need to check build coherence.
+   * @param {import('../shell/progression-shell.js').ProgressionShell} shell
+   * @returns {{ isValid: boolean, errors: string[], warnings: string[], conflicts: string[], suggestions: string[] }}
+   */
+  getGlobalValidation(shell) {
+    if (!shell?.validateBuild) return { isValid: true, errors: [], warnings: [], conflicts: [], suggestions: [] };
+    return shell.validateBuild();
+  }
+
   // ---------------------------------------------------------------------------
   // Post-Render Lifecycle (Wiring fine-grained DOM handlers)
   // ---------------------------------------------------------------------------
