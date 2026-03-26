@@ -277,8 +277,17 @@ export class SkillsStep extends ProgressionStepPlugin {
   }
 
   getMentorContext(shell) {
-    return getStepGuidance(shell.actor, 'skills')
-      || 'Make your choice wisely.';
+    const customGuidance = getStepGuidance(shell.actor, 'skills');
+    if (customGuidance) return customGuidance;
+
+    // Mode-aware default guidance
+    if (this.isChargen(shell)) {
+      return 'Choose skills that reflect your background and training. They will define what you excel at.';
+    } else if (this.isLevelup(shell)) {
+      return 'As you gain experience, you refine your skills. Invest in areas that matter to your journey.';
+    }
+
+    return 'Choose your skills wisely.';
   }
 
   getMentorMode() {

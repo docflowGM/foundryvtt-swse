@@ -385,8 +385,16 @@ export class LanguageStep extends ProgressionStepPlugin {
   }
 
   getMentorContext(shell) {
-    return getStepGuidance(shell.actor, 'languages') ||
-      'Language is more than words — it is connection. Choose wisely which voices you will carry with you.';
+    const customGuidance = getStepGuidance(shell.actor, 'languages');
+    if (customGuidance) return customGuidance;
+
+    // Mode-aware default guidance (languages is primarily chargen)
+    if (this.isChargen(shell)) {
+      return 'Language is more than words — it is connection. Choose wisely which voices you will carry with you.';
+    }
+
+    // Fallback for any levelup usage
+    return 'Expand your voice. Learn new languages that open doors to new understanding.';
   }
 
   getMentorMode() {

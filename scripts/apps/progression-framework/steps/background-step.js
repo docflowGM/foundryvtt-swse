@@ -317,12 +317,24 @@ export class BackgroundStep extends ProgressionStepPlugin {
   }
 
   getMentorContext(shell) {
-    return getStepGuidance(shell.actor, 'background') ||
-      `Your background shapes who you are. ${
+    const customGuidance = getStepGuidance(shell.actor, 'background');
+    if (customGuidance) return customGuidance;
+
+    // Mode-aware default guidance (background is primarily chargen)
+    if (this.isChargen(shell)) {
+      return `Your background shapes who you are. ${
         this._maxBackgrounds > 1
           ? `You may choose up to ${this._maxBackgrounds} backgrounds.`
           : 'Choose the defining moment of your past.'
       }`;
+    }
+
+    // Fallback for any levelup usage
+    return `Your past defines you. ${
+      this._maxBackgrounds > 1
+        ? `You may reflect on up to ${this._maxBackgrounds} formative moments.`
+        : 'Remember the defining moment of your journey.'
+    }`;
   }
 
   getMentorMode() {
