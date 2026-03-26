@@ -148,6 +148,21 @@ export class SpeciesStep extends ProgressionStepPlugin {
   async afterRender(shell, workSurfaceEl) {
     if (this._mode === 'near-human-builder') {
       this._nearHumanBuilder.wireDOM(workSurfaceEl, shell);
+      return;
+    }
+
+    // Wire up double-click to commit species directly
+    const cards = workSurfaceEl?.querySelectorAll('.prog-species-card');
+    if (cards) {
+      cards.forEach(card => {
+        card.addEventListener('dblclick', async (e) => {
+          e.preventDefault();
+          const itemId = card.dataset.itemId;
+          if (itemId) {
+            await this.onItemCommitted(itemId, shell);
+          }
+        });
+      });
     }
   }
 
