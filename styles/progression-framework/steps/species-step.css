@@ -9,6 +9,8 @@
   height: 100%;
   width: 100%;
   overflow: hidden;
+  padding: 4px;
+  gap: 2px;
 }
 
 /* ============================================================================
@@ -22,59 +24,72 @@
   overflow-y: auto;
   overflow-x: hidden;
   flex: 1 1 auto;
-  padding: 4px;
   scrollbar-width: thin;
   scrollbar-color: rgba(80, 220, 255, 0.3) rgba(10, 26, 42, 0.5);
 }
 
 /* ============================================================================
-   SPECIES ROW — compact horizontal entry
+   SPECIES ROW — compact horizontal entry, full-width
    ============================================================================ */
 
 .progression-shell .prog-species-row {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 8px;
-  padding: 5px 8px;
-  min-height: 40px;
+  gap: 10px;
+  padding: 7px 10px;
+  min-height: 44px;
   width: 100%;
   text-align: left;
   font-family: inherit;
-  font-size: inherit;
+  font-size: var(--prog-font-size-xs);
   color: var(--prog-text);
   cursor: pointer;
 
-  background: rgba(8, 22, 38, 0.7);
-  border: 1px solid rgba(50, 100, 150, 0.25);
-  border-radius: var(--prog-radius-sm);
+  border: none;
+  background: transparent;
+
+  /* Row background and border */
+  border-left: 3px solid rgba(50, 100, 150, 0.25);
+  background: linear-gradient(90deg,
+    rgba(8, 22, 38, 0.5) 0%,
+    rgba(8, 22, 38, 0.4) 100%);
+
   transition: background var(--prog-transition-fast),
               border-color var(--prog-transition-fast),
-              box-shadow var(--prog-transition-fast);
+              box-shadow var(--prog-transition-fast),
+              padding-left var(--prog-transition-fast);
 }
 
 .progression-shell .prog-species-row:hover {
-  background: rgba(10, 28, 48, 0.9);
-  border-color: rgba(80, 180, 255, 0.45);
+  background: linear-gradient(90deg,
+    rgba(10, 28, 48, 0.8) 0%,
+    rgba(10, 28, 48, 0.7) 100%);
+  border-left-color: rgba(100, 180, 255, 0.5);
+  padding-left: 12px;
 }
 
 .progression-shell .prog-species-row:focus {
   outline: none;
-  border-color: var(--prog-accent);
+  border-left-color: var(--prog-accent);
 }
 
 /* Focused (single-click selected — previewing) */
 .progression-shell .prog-species-row--focused {
-  background: rgba(0, 120, 200, 0.14);
-  border-color: rgba(100, 210, 255, 0.7);
-  box-shadow: 0 0 6px rgba(0, 150, 220, 0.25);
+  background: linear-gradient(90deg,
+    rgba(0, 120, 200, 0.2) 0%,
+    rgba(0, 120, 200, 0.1) 100%);
+  border-left-color: rgba(100, 210, 255, 0.8);
+  box-shadow: inset 0 0 8px rgba(0, 150, 220, 0.15);
 }
 
 /* Committed (confirmed selection) */
 .progression-shell .prog-species-row--committed {
-  background: rgba(0, 180, 80, 0.10);
-  border-color: rgba(50, 220, 120, 0.5);
-  box-shadow: 0 0 6px rgba(0, 180, 80, 0.2);
+  background: linear-gradient(90deg,
+    rgba(0, 180, 80, 0.15) 0%,
+    rgba(0, 180, 80, 0.08) 100%);
+  border-left-color: rgba(50, 220, 120, 0.7);
+  box-shadow: inset 0 0 8px rgba(0, 180, 80, 0.1);
 }
 
 /* ============================================================================
@@ -119,7 +134,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
   overflow: hidden;
 }
 
@@ -137,22 +152,36 @@
 /* Compact stat line — size • +2 DEX, -2 CON • Spd 6 */
 .progression-shell .prog-species-row__stats {
   font-size: 10px;
-  color: rgba(120, 180, 220, 0.75);
+  color: rgba(120, 180, 220, 0.7);
   text-shadow: var(--prog-text-shadow);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: flex;
+  gap: 4px;
+  align-items: center;
 }
 
 .progression-shell .prog-species-row__sep {
-  margin: 0 3px;
-  opacity: 0.5;
+  display: inline;
+  margin: 0;
+  opacity: 0.4;
+  font-size: 8px;
 }
 
-/* Ability modifiers — subtle semantic coloring via CSS filter would be ideal,
-   but for simplicity keep same dim color */
+/* Ability modifiers — colored based on sign */
 .progression-shell .prog-species-row__mods {
-  color: rgba(160, 210, 255, 0.85);
+  display: inline;
+  font-weight: 600;
+  font-size: 10px;
+}
+
+.progression-shell .prog-species-row__mods.prog-num--pos {
+  color: var(--prog-positive);
+}
+
+.progression-shell .prog-species-row__mods.prog-num--neg {
+  color: var(--prog-negative);
 }
 
 /* Optional tags — first 3 traits */
@@ -240,9 +269,13 @@
   padding: var(--prog-space-md);
   overflow-y: auto;
   height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: var(--prog-space-sm);
+  background: linear-gradient(135deg,
+    rgba(8, 22, 38, 0.6) 0%,
+    rgba(6, 18, 30, 0.5) 100%);
 }
 
 /* Ol' Salty dialogue block — top of details panel
