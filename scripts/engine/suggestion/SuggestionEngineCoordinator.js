@@ -32,6 +32,7 @@ import { SpeciesSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine
 import { LanguageSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/language-suggestion-engine.js";
 import { ForceSecretSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-secret-suggestion-engine.js";
 import { ForceTechniqueSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-technique-suggestion-engine.js";
+import { DroidSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/droid-suggestion-engine.js";  // PHASE D
 import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
 import { IdentityEngine } from "/systems/foundryvtt-swse/scripts/engine/prestige/identity-engine.js";
 import { ProgressionAdvisor } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ProgressionAdvisor.js";
@@ -122,6 +123,8 @@ export class SuggestionEngineCoordinator {
           this.getAbilityIcon(ability),
         getAbilityName: (abbrev) =>
           this.getAbilityName(abbrev),
+        suggestDroidSystems: (systems, actor, pendingData, options) =>
+          this.suggestDroidSystems(systems, actor, pendingData, options),  // PHASE D
         clearBuildIntentCache: (actorId) =>
           this.clearBuildIntentCache(actorId)
       };
@@ -515,6 +518,43 @@ export class SuggestionEngineCoordinator {
           reason: 'Available option'
         }
       }));
+    }
+  }
+
+  /**
+   * Suggest droid systems based on character's class, budget, and droid constraints
+   * PHASE D: DroidSuggestionEngine recommendations for provisional and finalized modes
+   *
+   * @param {Object} systems - Droid systems organized by category (locomotion, processor, etc.)
+   * @param {Actor} actor - The character (must be a droid)
+   * @param {Object} pendingData - Pending character data from chargen
+   * @param {Object} options - Engine options: {mode: 'preview'|'final', debug, allowOverflow}
+   * @returns {Promise<Object>} Suggestions organized by system category
+   */
+  static async suggestDroidSystems(systems, actor, pendingData = {}, options = {}) {
+    try {
+      // Validate that this is a droid character
+      if (!actor || !actor.system?.isDroid) {
+        SWSELogger.warn('[Coordinator] suggestDroidSystems called for non-droid character');
+        return {};
+      }
+
+      // Call DroidSuggestionEngine to score and rank systems by category
+      const droidSuggestions = await DroidSuggestionEngine.suggestDroidSystems(
+        systems,
+        actor,
+        pendingData,
+        {
+          ...options,
+          mode: options.mode || 'preview',  // Default to preview mode
+        }
+      );
+
+      return droidSuggestions;
+    } catch (err) {
+      SWSELogger.error('Droid system suggestion failed:', err);
+      // Return empty suggestions object as fallback
+      return {};
     }
   }
 

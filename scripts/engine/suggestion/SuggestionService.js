@@ -226,6 +226,9 @@ export class SuggestionService {
       suggestions = await SuggestionEngineCoordinator.suggestLevel1Skills(options.available ?? [], actor, options.pendingData ?? {});
     } else if (options.domain === 'attributes') {
       suggestions = await SuggestionEngineCoordinator.suggestAttributeIncreases(actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
+    } else if (options.domain === 'droid-systems') {
+      // PHASE D: Droid systems recommendations
+      suggestions = await SuggestionEngineCoordinator.suggestDroidSystems(options.available ?? {}, actor, options.pendingData ?? {}, { ...(options.engineOptions || {}), debug: trace });
     } else {
       // Aggregated default for sheet/mentor: feats + force powers (safe and helpful)
       const featSugs = await this.getSuggestions(actor, context, { ...options, domain: 'feats' });

@@ -25,6 +25,7 @@ export const SUPPORTED_DOMAINS = Object.freeze({
   LANGUAGES: 'languages',         // Phase 2: LanguageSuggestionEngine (grounded on species/background)
   FORCE_SECRETS: 'force-secrets', // Phase 3: ForceSecretSuggestionEngine (grounded on force commitment)
   FORCE_TECHNIQUES: 'force-techniques', // Phase 3: ForceTechniqueSuggestionEngine (grounded on power synergy)
+  DROID_SYSTEMS: 'droid-systems', // PHASE D: DroidSuggestionEngine (grounded on class/budget/degree)
 });
 
 /**
@@ -36,9 +37,9 @@ export const SUPPORTED_DOMAINS = Object.freeze({
  *
  * Note: SPECIES and LANGUAGES moved to SUPPORTED_DOMAINS in Phase 2.
  * Note: FORCE_SECRETS and FORCE_TECHNIQUES moved to SUPPORTED_DOMAINS in Phase 3.
+ * Note: DROID_SYSTEMS moved to SUPPORTED_DOMAINS in Phase D.
  */
 export const UNSUPPORTED_DOMAINS = Object.freeze({
-  DROID_SYSTEMS: 'droid-systems',
   STARSHIP_MANEUVERS: 'starship-maneuvers',
 });
 
