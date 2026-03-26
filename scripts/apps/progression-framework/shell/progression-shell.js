@@ -497,6 +497,13 @@ export class ProgressionShell extends SWSEApplicationV2 {
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
 
+    // ✓ CRITICAL: Expose shell context to step plugins
+    // This allows steps to access committedSelections, actor, and mode
+    // Required for suggestion engine to see chargen choices
+    context.shell = this;
+    context.actor = this.actor;
+    context.mode = this.mode;
+
     // ═══ PHASE 8: HYDRATION DIAGNOSTICS ═══
     const diagnostics = new HydrationDiagnosticsCollector({
       currentStepIndex: this.currentStepIndex,

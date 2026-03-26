@@ -24,6 +24,7 @@ import { FeatSlotValidator } from '/systems/foundryvtt-swse/scripts/engine/progr
 import { FeatEngine } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-engine.js';
 import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 
 // Constants
@@ -69,8 +70,8 @@ export class FeatStep extends ProgressionStepPlugin {
     // Get legal feats for this context
     const legalFeats = await this._getLegalFeats(shell.actor);
 
-    // Get suggested feats
-    this._suggestedFeats = await this._getSuggestedFeats(shell.actor, legalFeats);
+    // Get suggested feats (pass shell so suggestion engine sees chargen choices)
+    this._suggestedFeats = await this._getSuggestedFeats(shell.actor, legalFeats, shell);
 
     // Group feats by category
     this._groupFeats(legalFeats);
@@ -196,13 +197,19 @@ export class FeatStep extends ProgressionStepPlugin {
 
   /**
    * Get suggested feats from SuggestionService
+   * CRITICAL: Pass characterData (chargen choices so far) for coherent suggestions
    */
-  async _getSuggestedFeats(actor, availableFeats) {
+  async _getSuggestedFeats(actor, availableFeats, shell) {
     try {
+      // ✓ Build characterData from shell's committedSelections
+      // This ensures suggestion engine understands the build-in-progress
+      const characterData = this._buildCharacterDataFromShell(shell);
+
       // Get suggestions from SuggestionService
       const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
         domain: 'feats',
         available: availableFeats,
+        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
         engineOptions: { includeFutureAvailability: true },
         persist: true
       });
@@ -213,6 +220,27 @@ export class FeatStep extends ProgressionStepPlugin {
       console.warn('[FeatStep] Suggestion service error:', err);
       return [];
     }
+  }
+
+  /**
+   * Extract character data from shell's committed selections
+   * Allows suggestion engine to see what choices have been made so far in chargen
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.committedSelections) {
+      return {};
+    }
+
+    const committed = shell.committedSelections;
+
+    return {
+      classes: committed.get('class') ? [committed.get('class')] : [],
+      species: committed.get('species'),
+      feats: committed.get('feats') || [],
+      talents: committed.get('talents') || [],
+      skills: committed.get('skills') || {},
+      abilityIncreases: committed.get('attributes') || {},
+    };
   }
 
   /**

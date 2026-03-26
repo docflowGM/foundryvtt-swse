@@ -20,6 +20,7 @@ import { TalentTreeDB } from '/systems/foundryvtt-swse/scripts/data/talent-tree-
 import { TalentRegistry } from '/systems/foundryvtt-swse/scripts/registries/talent-registry.js';
 import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { buildDependencyGraph } from '/systems/foundryvtt-swse/scripts/apps/chargen/chargen-talent-tree-graph.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 
@@ -67,8 +68,8 @@ export class TalentStep extends ProgressionStepPlugin {
     // Filter for trees available in this context (heroic or class-specific)
     const availableTrees = await this._getAvailableTrees(shell.actor);
 
-    // Get suggested trees
-    this._suggestedTrees = await this._getSuggestedTrees(shell.actor, availableTrees);
+    // Get suggested trees (pass shell so suggestion engine sees chargen choices)
+    this._suggestedTrees = await this._getSuggestedTrees(shell.actor, availableTrees, shell);
 
     // Store available trees for display
     this._allTrees = availableTrees;
@@ -213,12 +214,18 @@ export class TalentStep extends ProgressionStepPlugin {
 
   /**
    * Get suggested trees from SuggestionService
+   * CRITICAL: Pass characterData (chargen choices so far) for coherent suggestions
    */
-  async _getSuggestedTrees(actor, availableTrees) {
+  async _getSuggestedTrees(actor, availableTrees, shell) {
     try {
+      // ✓ Build characterData from shell's committedSelections
+      // This ensures suggestion engine understands the build-in-progress
+      const characterData = this._buildCharacterDataFromShell(shell);
+
       const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
         domain: 'talents',
         available: availableTrees,
+        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
         engineOptions: { includeFutureAvailability: true },
         persist: true
       });
@@ -228,6 +235,27 @@ export class TalentStep extends ProgressionStepPlugin {
       console.warn('[TalentStep] Suggestion service error:', err);
       return [];
     }
+  }
+
+  /**
+   * Extract character data from shell's committed selections
+   * Allows suggestion engine to see what choices have been made so far in chargen
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.committedSelections) {
+      return {};
+    }
+
+    const committed = shell.committedSelections;
+
+    return {
+      classes: committed.get('class') ? [committed.get('class')] : [],
+      species: committed.get('species'),
+      feats: committed.get('feats') || [],
+      talents: committed.get('talents') || [],
+      skills: committed.get('skills') || {},
+      abilityIncreases: committed.get('attributes') || {},
+    };
   }
 
   /**
