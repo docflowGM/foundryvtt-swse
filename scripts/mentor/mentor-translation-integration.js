@@ -67,10 +67,15 @@ export class MentorTranslationIntegration {
     }
 
     // Check if translation is enabled
-    const enabled = force || (
-      this.settings.enabled &&
-      game.user?.getFlag?.('swse', 'mentorTranslationEnabled') !== false
-    );
+    let userFlagValue = true; // Default to enabled
+    try {
+      userFlagValue = game.user?.getFlag?.('swse', 'mentorTranslationEnabled') !== false;
+    } catch (err) {
+      // Flag scope may not be available yet, default to enabled
+      console.warn('MentorTranslationIntegration: Could not access user flag, defaulting to enabled', err);
+    }
+
+    const enabled = force || (this.settings.enabled && userFlagValue);
 
     if (!enabled) {
       // Just render plain text

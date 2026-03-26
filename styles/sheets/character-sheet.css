@@ -183,3 +183,91 @@
   height: auto !important;
   overflow-y: auto !important;
 }
+
+/* ============================================================================
+   HP INPUTS (EDITABLE)
+   Make HP current/max values editable inline within the HP bar
+   ============================================================================ */
+
+.swse-character-sheet .hp-bar__label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px;
+}
+
+.swse-character-sheet .hp-current-input,
+.swse-character-sheet .hp-max-input {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  color: #9ed0ff;
+  font-family: "Orbitron", monospace;
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  width: 50px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.swse-character-sheet .hp-current-input:focus,
+.swse-character-sheet .hp-max-input:focus {
+  background: rgba(0, 255, 255, 0.1);
+  border-color: rgba(0, 255, 255, 0.7);
+  outline: none;
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+}
+
+.swse-character-sheet .hp-separator {
+  opacity: 0.7;
+}
+
+/* ============================================================================
+   SKILLS GRID LAYOUT (Fix vertical compression and column widths)
+   ============================================================================ */
+
+.swse-character-sheet .skills-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.swse-character-sheet .skills-grid-header,
+.swse-character-sheet .skills-grid-row {
+  display: grid;
+  grid-template-columns: 30px 1fr 60px 12px 120px 50px 50px 50px 60px;
+  gap: 8px;
+  align-items: center;
+  min-height: 40px;
+}
+
+.swse-character-sheet .skills-grid-header {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+
+.swse-character-sheet .skills-grid-row {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+}
+
+.swse-character-sheet .skills-grid-row:hover {
+  background: rgba(0, 255, 255, 0.05);
+  border-bottom-color: rgba(0, 255, 255, 0.2);
+}
+
+.swse-character-sheet .skill-checkbox {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+}
+
+.swse-character-sheet .skill-checkbox:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

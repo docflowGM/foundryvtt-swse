@@ -22,7 +22,16 @@
   border: 1px solid #1c4b8e;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: auto;
+}
+
+/* Form wrapper — allow internal flex layout and scrolling */
+.swse-app form.swse-character-sheet-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
 }
 
 /* ============================================================================

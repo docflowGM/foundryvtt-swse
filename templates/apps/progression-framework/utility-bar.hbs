@@ -5,13 +5,15 @@
   </span>
   <span class="prog-utility-bar__label">{{currentDescriptor.label}}</span>
 
-  {{! Search input (rich and compact modes) }}
+  {{! Search input (rich and compact modes) — wrapped in field container }}
   {{#if utilityBarConfig.search.enabled}}
-    <input class="prog-input swse-ui-input prog-utility-bar__search"
-           type="search"
-           placeholder="{{utilityBarConfig.search.placeholder}}"
-           data-utility-search
-           autocomplete="off">
+    <div class="prog-field swse-filter-field swse-filter-field--search">
+      <input class="prog-input swse-ui-input"
+             type="search"
+             placeholder="{{utilityBarConfig.search.placeholder}}"
+             data-utility-search
+             autocomplete="off">
+    </div>
   {{/if}}
 
   {{! Filter chips (size buttons) }}
@@ -30,13 +32,15 @@
   {{#if utilityBarConfig.bonusDropdown}}
     <div class="prog-utility-bar__dropdown-group">
       <label class="prog-utility-bar__dropdown-label">{{utilityBarConfig.bonusDropdown.label}}</label>
-      <select class="prog-utility-bar__dropdown swse-ui-input"
-              data-utility-select="{{utilityBarConfig.bonusDropdown.id}}"
-              data-dropdown-type="bonus">
-        {{#each utilityBarConfig.bonusDropdown.options}}
-          <option value="{{this.value}}">{{this.label}}</option>
-        {{/each}}
-      </select>
+      <div class="prog-field swse-filter-field swse-filter-field--select">
+        <select class="prog-input"
+                data-utility-select="{{utilityBarConfig.bonusDropdown.id}}"
+                data-dropdown-type="bonus">
+          {{#each utilityBarConfig.bonusDropdown.options}}
+            <option value="{{this.value}}">{{this.label}}</option>
+          {{/each}}
+        </select>
+      </div>
     </div>
   {{/if}}
 
@@ -44,23 +48,27 @@
   {{#if utilityBarConfig.penaltyDropdown}}
     <div class="prog-utility-bar__dropdown-group">
       <label class="prog-utility-bar__dropdown-label">{{utilityBarConfig.penaltyDropdown.label}}</label>
-      <select class="prog-utility-bar__dropdown"
-              data-utility-select="{{utilityBarConfig.penaltyDropdown.id}}"
-              data-dropdown-type="penalty">
-        {{#each utilityBarConfig.penaltyDropdown.options}}
-          <option value="{{this.value}}">{{this.label}}</option>
-        {{/each}}
-      </select>
+      <div class="prog-field swse-filter-field swse-filter-field--select">
+        <select class="prog-input"
+                data-utility-select="{{utilityBarConfig.penaltyDropdown.id}}"
+                data-dropdown-type="penalty">
+          {{#each utilityBarConfig.penaltyDropdown.options}}
+            <option value="{{this.value}}">{{this.label}}</option>
+          {{/each}}
+        </select>
+      </div>
     </div>
   {{/if}}
 
   {{! Sort dropdown }}
   {{#if utilityBarConfig.sorts}}
-    <select class="prog-utility-bar__sort swse-ui-input" data-utility-sort>
-      {{#each utilityBarConfig.sorts}}
-        <option value="{{this.id}}">{{this.label}}</option>
-      {{/each}}
-    </select>
+    <div class="prog-field swse-filter-field swse-filter-field--select">
+      <select class="prog-input" data-utility-sort>
+        {{#each utilityBarConfig.sorts}}
+          <option value="{{this.id}}">{{this.label}}</option>
+        {{/each}}
+      </select>
+    </div>
   {{/if}}
 
   {{! Custom controls — button, toggle, label only (Wave 2 partial implementation) }}

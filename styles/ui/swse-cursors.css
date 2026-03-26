@@ -25,14 +25,15 @@
 
 :root {
   /* Cursor asset path variables with hotspot offsets */
-  --swse-cursor-default:   url('../../assets/cursor/swse-cursor-default.svg') 6 4, auto;
-  --swse-cursor-hover:     url('../../assets/cursor/swse-cursor-hover.svg') 6 4, auto;
-  --swse-cursor-select:    url('../../assets/cursor/swse-cursor-select.svg') 6 4, auto;
-  --swse-cursor-grab:      url('../../assets/cursor/swse-cursor-grab.svg') 24 18, grab;
-  --swse-cursor-grabbing:  url('../../assets/cursor/swse-cursor-grabbing.svg') 24 18, grabbing;
-  --swse-cursor-precision: url('../../assets/cursor/swse-cursor-precision.svg') 24 24, crosshair;
+  /* Use absolute paths from systems root for proper Foundry resolution */
+  --swse-cursor-default:   url('/systems/foundryvtt-swse/assets/cursor/swse-cursor-default.svg') 6 4, auto;
+  --swse-cursor-hover:     url('/systems/foundryvtt-swse/assets/cursor/swse-cursor-hover.svg') 6 4, auto;
+  --swse-cursor-select:    url('/systems/foundryvtt-swse/assets/cursor/swse-cursor-select.svg') 6 4, auto;
+  --swse-cursor-grab:      url('/systems/foundryvtt-swse/assets/cursor/swse-cursor-grab.svg') 24 18, grab;
+  --swse-cursor-grabbing:  url('/systems/foundryvtt-swse/assets/cursor/swse-cursor-grabbing.svg') 24 18, grabbing;
+  --swse-cursor-precision: url('/systems/foundryvtt-swse/assets/cursor/swse-cursor-precision.svg') 24 24, crosshair;
   --swse-cursor-text:      text;
-  --swse-cursor-forbidden: url('../../assets/cursor/swse-cursor-forbidden.svg') 24 24, not-allowed;
+  --swse-cursor-forbidden: url('/systems/foundryvtt-swse/assets/cursor/swse-cursor-forbidden.svg') 24 24, not-allowed;
 }
 
 /* =============================================================================
@@ -277,8 +278,8 @@ body.game .placeable-object.draggable:active {
 @media (prefers-color-scheme: dark) and (prefers-contrast: more) {
   :root {
     /* Optional: use thicker/larger cursor variants if available */
-    --swse-cursor-default:   url('../../assets/cursor/swse-cursor-default.svg') 6 4, auto;
-    --swse-cursor-hover:     url('../../assets/cursor/swse-cursor-hover.svg') 6 4, auto;
+    --swse-cursor-default:   url('/systems/foundryvtt-swse/assets/cursor/swse-cursor-default.svg') 6 4, auto;
+    --swse-cursor-hover:     url('/systems/foundryvtt-swse/assets/cursor/swse-cursor-hover.svg') 6 4, auto;
   }
 }
 

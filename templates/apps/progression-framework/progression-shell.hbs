@@ -193,29 +193,10 @@
           </button>
         </div>
 
-        {{!-- ── CENTER: Step chips ── --}}
-        <div class="action-footer__steps" role="tablist"
-             aria-label="Character Progression Steps">
+        {{!-- ── CENTER: Status indicators only (no step chips here) ── --}}
+        <div class="action-footer__status">
 
-          {{#each visibleSteps}}
-            <button type="button"
-                    class="swse-step-btn swse-ui-button
-                           {{#if this.isCurrent}}is-current{{/if}}
-                           {{#if this.isComplete}}is-complete{{/if}}
-                           {{#if this.isLocked}}is-locked{{/if}}
-                           {{#if this.isWarning}}is-warning{{/if}}"
-                    data-action="jump-step"
-                    data-step-id="{{this.id}}"
-                    role="tab"
-                    aria-selected="{{#if this.isCurrent}}true{{else}}false{{/if}}"
-                    title="{{this.label}}"
-                    {{#unless this.canNavigate}}disabled{{/unless}}>
-              <span class="swse-step-btn__index">{{this.index}}</span>
-              <span class="swse-step-btn__label">{{this.label}}</span>
-            </button>
-          {{/each}}
-
-          {{!-- Blocking / warning status banner — sits below chips if issues exist --}}
+          {{!-- Blocking / warning status banner --}}
           {{#if footer.blockingIssues.length}}
             <div class="swse-footer__status swse-footer__status--blocking">
               <i class="fas fa-exclamation-circle"></i>
@@ -223,8 +204,7 @@
                 <span>{{this}}</span>
               {{/each}}
             </div>
-          {{/if}}
-          {{#if footer.warnings.length}}
+          {{else if footer.warnings.length}}
             <div class="swse-footer__status swse-footer__status--warning">
               <i class="fas fa-exclamation-triangle"></i>
               {{#each footer.warnings}}

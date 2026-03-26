@@ -13,7 +13,21 @@
     <div class="hp-bar-wrapper {{hp.stateClass}}">
       <div class="hp-bar {{hp.stateClass}}">
         <div class="hp-bar__fill {{hp.stateClass}}" style="width: {{hp.percent}}%;"></div>
-        <span class="hp-bar__label">{{hp.value}} / {{hp.max}}</span>
+        <div class="hp-bar__label">
+          <input type="number"
+                 name="system.hp.value"
+                 value="{{hp.value}}"
+                 class="hp-current-input"
+                 min="0"
+                 placeholder="0" />
+          <span class="hp-separator">/</span>
+          <input type="number"
+                 name="system.hp.max"
+                 value="{{hp.max}}"
+                 class="hp-max-input"
+                 min="1"
+                 placeholder="1" />
+        </div>
       </div>
     </div>
     {{#if bonusHp.value}}

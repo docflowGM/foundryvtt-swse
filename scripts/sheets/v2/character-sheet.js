@@ -158,94 +158,54 @@ export class SWSEV2CharacterSheet extends
   // ---------------------------------------------------------------
 
   async _onRender(context, options) {
-    // CRITICAL: Force position to centered BEFORE super._onRender to prevent Foundry from restoring
-    const _age = Date.now() - this._openedAt;
-    if (_age < 5000) {
-      // During startup window: force centering BEFORE rendering
+    // ═══ FIX: Center on initial render (first time ever or after close/reopen) ═══
+    // PROBLEM: Previous code called setPosition repeatedly during a 5-second window,
+    // creating a fight loop with Foundry's persistent-position system.
+    // SOLUTION: Center only once per open session, then let Foundry manage position normally.
+
+    // Track whether this is the very first render of this app instance
+    const isFirstRenderEver = !this.rendered;
+
+    // Track whether this is the first render after a close/reopen cycle
+    // (allows re-centering if user reopens the sheet)
+    if (!this._hasBeenRendered) {
+      this._hasBeenRendered = true;
+      this._shouldCenterOnRender = true;
+    }
+
+    const shouldCenter = this._shouldCenterOnRender;
+
+    if (shouldCenter) {
+      // On first render: compute centered position and set it before rendering
       const pos = computeCenteredPosition(900, 950);
-      console.log("[SheetPosition] PRE-RENDER: Forcing centered position before super._onRender", pos);
+      console.log("[SheetPosition] FIRST RENDER THIS SESSION: Setting centered position", pos);
       this.position.left = pos.left;
       this.position.top = pos.top;
+      this._shouldCenterOnRender = false; // Only center once per open session
     }
 
     await super._onRender(context, options);
 
-    // ── DIAGNOSTIC: always log so we can confirm _onRender fires ──
+    // ── DIAGNOSTIC: Log that render completed ──
     console.log(
-      "[SheetPosition] _onRender called | age =", _age, "ms",
-      "| element =", !!this.element,
-      "| current left =", this.element?.style?.left ?? this.element?.[0]?.style?.left ?? "?"
+      "[SheetPosition] _onRender complete | shouldCenter =", shouldCenter,
+      "| position.left =", this.position?.left
     );
 
-    // ── CENTERING: time-windowed approach ──────────────────────────
-    // Problem: Foundry V13 persists window positions in user flags and
-    // restores them on each render — including the extra re-renders that
-    // fire during the ~2-3s init window while actor data normalizes.
-    // A one-time flag blocks re-centering on those subsequent renders,
-    // so Foundry's restore wins and the sheet ends up off to the right.
-    //
-    // Fix: stamp the open time and re-center on EVERY _onRender call
-    // for the first 5 seconds.  After that, manual drags are respected.
-    // A debounced 200 ms deferred call (belt-and-suspenders) also applies
-    // both setPosition() AND direct DOM style overrides to defeat any
-    // late Foundry restoration that runs after our synchronous call.
-    if (_age < 5000) {
+    // On first render per session: apply one deferred DOM override to lock position against late Foundry restores
+    if (shouldCenter) {
       const pos = computeCenteredPosition(900, 950);
-
-      console.log("[SheetPosition] centering (age:", _age, "ms) | viewport =", window.innerWidth, window.innerHeight);
-      console.log("[SheetPosition] sidebar =", (ui?.sidebar?.element?.offsetWidth ?? "?"), "px");
-      console.log("[SheetPosition] pos =", pos);
-
-      // Immediate synchronous call
-      this.setPosition(pos);
-
-      // Debounced deferred call — clears any earlier pending timer so only
-      // the LAST render's deferred check fires.  Applies both the V13 API
-      // and raw DOM style to defeat any Foundry position-restore that runs
-      // asynchronously after _onRender returns.
       clearTimeout(this._centerTimer);
-      const capturedPos = pos;
+
       this._centerTimer = setTimeout(() => {
         if (this.rendered) {
-          this.setPosition(capturedPos);
           const el = this.element instanceof HTMLElement ? this.element : this.element?.[0];
           if (el) {
-            // Apply position with specificity to ensure it overrides Foundry's persistence
-            // CRITICAL: MUST set position: absolute AND left/top with !important
-            // Without position: absolute, left/top are treated as relative offsets, not absolute coordinates!
+            // Lock position with !important to prevent Foundry late-restore override
             el.style.setProperty('position', 'absolute', 'important');
-            el.style.setProperty('left', `${capturedPos.left}px`, 'important');
-            el.style.setProperty('top', `${capturedPos.top}px`, 'important');
-
-            // DIAGNOSTIC: log actual rendered position with full details
-            const computedStyle = window.getComputedStyle(el);
-            const actualLeft = computedStyle.getPropertyValue('left');
-            const actualTop = computedStyle.getPropertyValue('top');
-            const actualRight = computedStyle.getPropertyValue('right');
-            const actualBottom = computedStyle.getPropertyValue('bottom');
-            const transform = computedStyle.getPropertyValue('transform');
-            const position = computedStyle.getPropertyValue('position');
-
-            console.log("[SheetPosition] ════ DEFERRED OVERRIDE (200ms) ════");
-            console.log("[SheetPosition] Intended position:", {
-              left: capturedPos.left,
-              top: capturedPos.top
-            });
-            console.log("[SheetPosition] After setProperty with !important:", {
-              inlineStylePosition: el.style.position,
-              inlineStyleLeft: el.style.left,
-              inlineStyleTop: el.style.top,
-              cssText: el.style.cssText
-            });
-            console.log("[SheetPosition] Actual computed values:", {
-              computedLeft: actualLeft,
-              computedTop: actualTop,
-              computedRight: actualRight,
-              computedBottom: actualBottom,
-              position: position,
-              transform: transform,
-              note: 'If computed differs from intended, something is overriding our !important or using different positioning'
-            });
+            el.style.setProperty('left', `${pos.left}px`, 'important');
+            el.style.setProperty('top', `${pos.top}px`, 'important');
+            console.log("[SheetPosition] FIRST RENDER DEFERRED (200ms): Locked position via DOM", pos);
           }
         }
       }, 200);
@@ -256,11 +216,44 @@ export class SWSEV2CharacterSheet extends
     this._renderAbort = new AbortController();
     const { signal } = this._renderAbort;
 
-    const root = this.element?.[0] ?? this.element;
-    if (!root) return;
+    // CRITICAL FIX: In ApplicationV2, this.element may be a control button, not the sheet root
+    // The form wraps all sheet content, so use the form as the activation root instead
+    let root = this.element?.[0] ?? this.element;
 
-    // Do not fatal-assert window-content/body here during P0 stabilization.
-    // If content is visibly present, let the sheet continue to wire itself.
+    console.log('[LIFECYCLE] _onRender this.element resolved to:', {
+      tag: root?.tagName,
+      classes: root?.className
+    });
+
+    // If this.element is not the form, try to find the actual form element
+    if (root && root.tagName !== 'FORM') {
+      console.log('[LIFECYCLE] Root is not a FORM, searching for form parent/in DOM');
+      const formParent = root.closest("form");
+      if (formParent) {
+        console.log('[LIFECYCLE] Found form via closest()');
+        root = formParent;
+      } else {
+        const formInDoc = document.querySelector("form.swse-character-sheet-form");
+        if (formInDoc) {
+          console.log('[LIFECYCLE] Found form via querySelector()');
+          root = formInDoc;
+        }
+      }
+    }
+
+    if (!root) {
+      console.error('[LIFECYCLE] _onRender: No root element found');
+      return;
+    }
+
+    console.log('[LIFECYCLE] _onRender calling activateListeners with root element:', {
+      rootTag: root.tagName,
+      rootClasses: root.className,
+      rootId: root.id,
+      isForm: root.tagName === 'FORM'
+    });
+
+    // Wire listeners to the actual sheet root (now guaranteed to be the form or the sheet content)
     this.activateListeners(root, { signal });
 
     // Wire action economy bindings for combat tab
@@ -274,6 +267,7 @@ export class SWSEV2CharacterSheet extends
     // Cleanup all event listeners on close
     this._renderAbort?.abort();
     // Reset centering state so the next open re-centers cleanly
+    this._shouldCenterOnRender = true; // Enable re-centering on next open
     this._openedAt = null;
     clearTimeout(this._centerTimer);
     return super._onClose(options);
@@ -823,9 +817,6 @@ const forcePoints = [];
       biography,
       derived,
       inventory,
-      equipment: inventory.equipment,
-      armor: inventory.armor,
-      weapons: inventory.weapons,
       hp,
       bonusHp,
       conditionSteps,
@@ -929,20 +920,58 @@ const forcePoints = [];
   _buildInventoryModel(actor) {
     const items = Array.from(actor.items);
 
-    const build = type =>
-      items
-        .filter(i => i.type === type)
-        .map(i => ({
-          id: i.id,
-          name: i.name,
-          img: i.img
-        }));
-
-    return {
-      equipment: build("equipment"),
-      armor: build("armor"),
-      weapons: build("weapon")
+    // Map of item type -> display category
+    const typeToCategory = {
+      weapon: "Weapons",
+      armor: "Armor",
+      shield: "Armor",
+      equipment: "Equipment",
+      consumable: "Consumables",
+      misc: "Miscellaneous",
+      ammo: "Ammunition"
     };
+
+    // Build inventory groups
+    const inventory = new Map();
+
+    // Initialize standard groups
+    ["Weapons", "Armor", "Equipment", "Consumables"].forEach(group => {
+      inventory.set(group, []);
+    });
+
+    // Sort items into groups with full data
+    items.forEach(item => {
+      const category = typeToCategory[item.type] || "Miscellaneous";
+
+      // Ensure category exists in map
+      if (!inventory.has(category)) {
+        inventory.set(category, []);
+      }
+
+      const itemData = {
+        id: item.id,
+        name: item.name,
+        type: item.type,
+        category: item.type,
+        img: item.img,
+        quantity: item.system?.quantity ?? 1,
+        weight: item.system?.weight ?? 0,
+        cost: item.system?.cost ?? 0,
+        equipped: item.system?.equipped ?? false
+      };
+
+      inventory.get(category).push(itemData);
+    });
+
+    // Remove empty groups
+    for (const [key, items] of inventory.entries()) {
+      if (items.length === 0) {
+        inventory.delete(key);
+      }
+    }
+
+    // Convert to object for Handlebars iteration
+    return Object.fromEntries(inventory);
   }
 
   /* ============================================================
@@ -950,6 +979,80 @@ const forcePoints = [];
   ============================================================ */
 
   activateListeners(html, { signal } = {}) {
+    console.log('[LIFECYCLE] activateListeners called with html element:', {
+      htmlTag: html?.tagName,
+      htmlClasses: html?.className,
+      signalExists: !!signal
+    });
+
+    // CRITICAL: Attach form submit listener directly to the form element
+    // After _onRender fix, html should now be the form or contain it
+    // Use html directly if it's a form, or find the form parent
+
+    console.log('[LIFECYCLE] Resolving form from html element');
+    let form = null;
+
+    // If html IS the form, use it directly
+    if (html.tagName === 'FORM') {
+      form = html;
+      console.log('[LIFECYCLE] html IS the form, using directly');
+    } else {
+      // Otherwise try to find form parent
+      console.log('[LIFECYCLE] html is not a form, searching for form parent/ancestor');
+      form = html.closest("form");
+      if (!form) {
+        console.log('[LIFECYCLE] No form parent found, falling back to document query');
+        form = document.querySelector("form.swse-character-sheet-form");
+      }
+    }
+
+    console.log('[LIFECYCLE] Form resolution result:', {
+      found: !!form,
+      formTag: form?.tagName,
+      formClasses: form?.className,
+      isConnected: form?.isConnected
+    });
+
+    if (form) {
+      console.log('[LIFECYCLE] Form found, attaching submit listener');
+      console.log('[LIFECYCLE] Form element details:', {
+        tag: form.tagName,
+        classes: form.className,
+        childCount: form.children.length,
+        isConnected: form.isConnected  // Critical: is it in the DOM?
+      });
+
+      const submitHandler = async (ev) => {
+        console.log('[PERSISTENCE] ─── SUBMIT EVENT FIRED ───');
+        console.log('[PERSISTENCE] Event target:', ev.target.tagName, ev.target.className);
+        console.log('[PERSISTENCE] defaultPrevented BEFORE:', ev.defaultPrevented);
+
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        console.log('[PERSISTENCE] defaultPrevented AFTER:', ev.defaultPrevented);
+        console.log('[PERSISTENCE] Calling _onSubmitForm now');
+
+        // Route to our update handler
+        try {
+          await this._onSubmitForm({ target: form, preventDefault: () => {} });
+          console.log('[PERSISTENCE] _onSubmitForm completed successfully');
+        } catch (err) {
+          console.error('[PERSISTENCE] _onSubmitForm threw error:', err);
+        }
+      };
+
+      form.addEventListener("submit", submitHandler, { signal, capture: false });
+
+      console.log('[LIFECYCLE] Submit listener attached successfully');
+      console.log('[LIFECYCLE] Will listener survive? Checking signal status:', {
+        signalAborted: signal?.aborted ?? 'N/A'
+      });
+    } else {
+      console.error('[LIFECYCLE] ❌ CRITICAL: Could not find form element to attach submit listener');
+      console.error('[LIFECYCLE] This means NO submit interception will happen');
+    }
+
     // DELEGATED: Toggle Abilities Panel - Show/Hide Expanded Views
     // Using delegated listeners from html root for stability across rerenders
     html.addEventListener("click", ev => {
@@ -1074,25 +1177,51 @@ const forcePoints = [];
       const input = ev.target.closest("input[name], textarea[name], select[name]");
       if (!input) return;
 
+      console.log('[PERSISTENCE] ─── CHANGE EVENT FIRED ───');
       ev.preventDefault();
+
+      // DIAGNOSTIC: Log the field change
+      console.log('[PERSISTENCE] Field changed:', {
+        inputName: input.name,
+        inputValue: input.value,
+        inputType: input.type,
+        eventTarget: ev.target.tagName
+      });
+
       // Find the form - look up the DOM tree from the input element
+      console.log('[PERSISTENCE] Attempting to find form via input.closest("form")');
       let form = input.closest("form");
+      console.log('[PERSISTENCE] Result:', { found: !!form, formTag: form?.tagName, formClass: form?.className });
 
       // If not found, try to get it from the application's element
       if (!form && this.element) {
+        console.log('[PERSISTENCE] Fallback 1: this.element.querySelector("form")');
         form = this.element.querySelector("form");
+        console.log('[PERSISTENCE] Result:', { found: !!form, formTag: form?.tagName, formClass: form?.className });
       }
 
       // Last resort: look for the form in the document
       if (!form) {
+        console.log('[PERSISTENCE] Fallback 2: document.querySelector(...)');
         form = document.querySelector(`.swse-character-sheet[data-appid="${this.appId}"] form`) ||
                 document.querySelector(".swse-character-sheet form");
+        console.log('[PERSISTENCE] Result:', { found: !!form, formTag: form?.tagName, formClass: form?.className });
       }
 
       if (form) {
-        await this._onSubmitForm({ target: form, preventDefault: () => {} });
+        console.log('[PERSISTENCE] Form found, calling _onSubmitForm with:', {
+          formTag: form.tagName,
+          formClass: form.className,
+          isConnected: form.isConnected
+        });
+        try {
+          await this._onSubmitForm({ target: form, preventDefault: () => {} });
+          console.log('[PERSISTENCE] _onSubmitForm call completed');
+        } catch (err) {
+          console.error('[PERSISTENCE] _onSubmitForm call threw error:', err);
+        }
       } else {
-        console.warn("Could not find form element to submit");
+        console.error("[PERSISTENCE] ❌ Could not find form element to submit");
       }
     }, { signal, capture: false });
 
@@ -1127,6 +1256,23 @@ const forcePoints = [];
 }
     }, { signal, capture: false });
 
+    // DELEGATED: Roll Skill Check (d20 + skill bonus)
+    html.addEventListener("click", async ev => {
+      const button = ev.target.closest("[data-action='roll-skill']");
+      if (!button) return;
+
+      ev.preventDefault();
+      const skillKey = button.dataset.skill;
+      if (!skillKey) return;
+
+      try {
+        await SWSERoll.rollSkill(this.actor, skillKey);
+      } catch (err) {
+        console.error("Skill roll failed:", err);
+        ui?.notifications?.error?.(`Skill roll failed: ${err.message}`);
+      }
+    }, { signal, capture: false });
+
     // Force Card Flip
     html.querySelectorAll(".force-card").forEach(card => {
       card.addEventListener("click", ev => {
@@ -1143,85 +1289,38 @@ const forcePoints = [];
       }, { signal });
     });
 
-    // Mentor Button
-    html.querySelectorAll('[data-action="open-mentor"]').forEach(button => {
-      button.addEventListener("click", ev => {
-        ev.preventDefault();
-        this._openMentorConversation();
-      }, { signal });
-    });
+    // ========== HEADER COMMAND BUTTONS (Delegated) ==========
+    // These use delegated listeners to survive re-renders
 
-    // Header Command Buttons — UNIFIED PROGRESSION ENTRY
-    // ALL progression routes through launchProgression (single authority)
-    // TEMP AUDIT: Log button binding
-    // DIAGNOSTIC: Check sheet-actions div and what buttons are in it
-    const sheetActionsDiv = html.querySelector('.sheet-actions');
-    if (sheetActionsDiv) {
-      console.log('[CHARGEN DEBUG] sheet-actions div found');
-      console.log('[CHARGEN DEBUG] sheet-actions innerHTML:', sheetActionsDiv.innerHTML.substring(0, 300));
-      const buttonsInActions = sheetActionsDiv.querySelectorAll('button');
-      console.log('[CHARGEN DEBUG] Buttons in sheet-actions:', buttonsInActions.length);
-      buttonsInActions.forEach((btn, idx) => {
-        console.log(`[CHARGEN DEBUG] Button ${idx}:`, {
-          'data-action': btn.getAttribute('data-action'),
-          'text': btn.textContent.trim().substring(0, 20),
-          'class': btn.className
-        });
-      });
-    } else {
-      console.warn('[CHARGEN DEBUG] sheet-actions div NOT FOUND');
-    }
+    // Mentor Button (delegated)
+    html.addEventListener("click", ev => {
+      const button = ev.target.closest('[data-action="open-mentor"]');
+      if (!button) return;
+      ev.preventDefault();
+      this._openMentorConversation();
+    }, { signal, capture: false });
 
-    // DIAGNOSTIC: Check what action buttons exist in the rendered HTML
-    const allActionButtons = html.querySelectorAll('[data-action]');
-    const actionButtonsByType = {};
-    allActionButtons.forEach(btn => {
-      const action = btn.getAttribute('data-action');
-      if (!actionButtonsByType[action]) {
-        actionButtonsByType[action] = 0;
+    // Progression buttons (Chargen/LevelUp) — Route through unified entry point (delegated)
+    html.addEventListener("click", async ev => {
+      const button = ev.target.closest('[data-action="cmd-chargen"], [data-action="cmd-levelup"]');
+      if (!button) return;
+      ev.preventDefault();
+      try {
+        await launchProgression(this.actor);
+      } catch (err) {
+        console.error('[SHEET] ✗ launchProgression failed:', err);
+        SWSELogger.error('[CharacterSheet] Progression launch failed:', err);
       }
-      actionButtonsByType[action]++;
-    });
-    console.log('[CHARGEN DEBUG] All data-action buttons found:', actionButtonsByType);
+    }, { signal, capture: false });
 
-    // Progression buttons (Chargen/LevelUp) — Route through unified entry point
-    const chargenButtons = html.querySelectorAll('[data-action="cmd-chargen"]');
-    console.log('[SHEET] Found Chargen buttons in template:', chargenButtons.length);
-    chargenButtons.forEach(button => {
-      button.addEventListener("click", async ev => {
-        console.log('[SHEET] ✓ Chargen button clicked → calling launchProgression()');
-        ev.preventDefault();
-        try {
-          await launchProgression(this.actor);
-        } catch (err) {
-          console.error('[SHEET] ✗ launchProgression failed:', err);
-          SWSELogger.error('[CharacterSheet] Progression launch failed:', err);
-        }
-      }, { signal });
-    });
-
-    const levelupButtons = html.querySelectorAll('[data-action="cmd-levelup"]');
-    console.log('[SHEET] Found LevelUp buttons in template:', levelupButtons.length);
-    levelupButtons.forEach(button => {
-      button.addEventListener("click", async ev => {
-        console.log('[SHEET] ✓ LevelUp button clicked → calling launchProgression()');
-        ev.preventDefault();
-        try {
-          await launchProgression(this.actor);
-        } catch (err) {
-          console.error('[SHEET] ✗ launchProgression failed:', err);
-          SWSELogger.error('[CharacterSheet] Progression launch failed:', err);
-        }
-      }, { signal });
-    });
-
-    html.querySelectorAll('[data-action="cmd-store"]').forEach(button => {
-      button.addEventListener("click", async ev => {
-        ev.preventDefault();
-        const store = new SWSEStore(this.actor);
-        store.render(true);
-      }, { signal });
-    });
+    // Store button (delegated)
+    html.addEventListener("click", ev => {
+      const button = ev.target.closest('[data-action="cmd-store"]');
+      if (!button) return;
+      ev.preventDefault();
+      const store = new SWSEStore(this.actor);
+      store.render(true);
+    }, { signal, capture: false });
 
     html.querySelectorAll('[data-action="revalidate-build"]').forEach(button => {
       button.addEventListener("click", async ev => {
@@ -1593,6 +1692,42 @@ const forcePoints = [];
         }
       }, { signal });
     });
+
+    // ===== FOCUS CHECKBOX CONTROL =====
+    // Focus checkbox should only be enabled when Trained is checked
+    // Listen for changes to Trained checkboxes and update Focus checkbox state accordingly
+    html.addEventListener("change", (event) => {
+      const trainedCheckbox = event.target.closest('input[name*=".trained"]');
+      if (!trainedCheckbox) return;
+
+      // Find the corresponding skill row
+      const skillRow = trainedCheckbox.closest('[data-skill]');
+      if (!skillRow) return;
+
+      // Find the Focus checkbox in the same row
+      const focusCheckbox = skillRow.querySelector('input[name*=".focused"]');
+      if (!focusCheckbox) return;
+
+      // Enable/disable Focus based on Trained state
+      focusCheckbox.disabled = !trainedCheckbox.checked;
+
+      // If disabling Focus, uncheck it
+      if (focusCheckbox.disabled && focusCheckbox.checked) {
+        focusCheckbox.checked = false;
+        // Trigger change event to save the form
+        focusCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    }, { signal, capture: false });
+
+    // Initialize Focus checkbox states on render
+    html.querySelectorAll('[data-skill]').forEach(skillRow => {
+      const trainedCheckbox = skillRow.querySelector('input[name*=".trained"]');
+      const focusCheckbox = skillRow.querySelector('input[name*=".focused"]');
+
+      if (trainedCheckbox && focusCheckbox) {
+        focusCheckbox.disabled = !trainedCheckbox.checked;
+      }
+    });
   }
 
   /* ============================================================
@@ -1891,28 +2026,29 @@ const forcePoints = [];
       }, { signal });
     });
 
-    // Set Condition Step button
-    html.querySelectorAll('[data-action="set-condition-step"]').forEach(button => {
-      button.addEventListener("click", async (event) => {
-        event.preventDefault();
-        const step = parseInt(button.dataset.step, 10);
-        if (isNaN(step) || step < 0 || step > 5) return;
+    // Set Condition Step button (delegated)
+    html.addEventListener("click", async (event) => {
+      const button = event.target.closest('[data-action="set-condition-step"]');
+      if (!button) return;
 
-        const plan = {
-          update: {
-            "system.conditionTrack.current": step
-          }
-        };
+      event.preventDefault();
+      const step = parseInt(button.dataset.step, 10);
+      if (isNaN(step) || step < 0 || step > 5) return;
 
-        try {
-          await ActorEngine.apply(this.actor, plan);
-          ui?.notifications?.info?.("Condition updated!");
-        } catch (err) {
-          console.error("Condition update failed:", err);
-          ui?.notifications?.error?.(`Condition update failed: ${err.message}`);
+      const plan = {
+        update: {
+          "system.conditionTrack.current": step
         }
-      }, { signal });
-    });
+      };
+
+      try {
+        await ActorEngine.apply(this.actor, plan);
+        ui?.notifications?.info?.("Condition updated!");
+      } catch (err) {
+        console.error("Condition update failed:", err);
+        ui?.notifications?.error?.(`Condition update failed: ${err.message}`);
+      }
+    }, { signal, capture: false });
 
     // Set dark side score button
     html.querySelectorAll('[data-action="set-dark-side-score"]').forEach(button => {
@@ -2163,25 +2299,186 @@ const forcePoints = [];
    * @returns {Promise<void>}
    */
   async _onSubmitForm(event) {
-    event.preventDefault();
+    console.log('[PERSISTENCE] ════════════════════════════════════════');
+    console.log('[PERSISTENCE] _onSubmitForm CALLED');
+    console.log('[PERSISTENCE] Event:', {
+      type: event?.type,
+      target: event?.target?.tagName,
+      targetClass: event?.target?.className
+    });
+
+    try {
+      event.preventDefault();
+      console.log('[PERSISTENCE] Prevented default');
+    } catch (err) {
+      console.warn('[PERSISTENCE] Could not preventDefault:', err);
+    }
 
     // Get the form element
     const form = event.target;
+    console.log('[PERSISTENCE] Form to submit:', {
+      tag: form?.tagName,
+      class: form?.className,
+      isConnected: form?.isConnected,
+      childCount: form?.children?.length
+    });
+
+    // DIAGNOSTIC: Log form data collection
+    console.log('[PERSISTENCE] Collecting FormData from form');
+    let formData;
+    try {
+      formData = new FormData(form);
+      console.log('[PERSISTENCE] FormData created successfully');
+    } catch (err) {
+      console.error('[PERSISTENCE] Failed to create FormData:', err);
+      return;
+    }
 
     // Convert FormData to plain object, then expand nested paths
-    const formData = new FormData(form);
     const formDataObj = Object.fromEntries(formData.entries());
-    const expanded = foundry.utils.expandObject(formDataObj);
+    console.log('[PERSISTENCE] FormData entries count:', Object.keys(formDataObj).length);
+    console.log('[PERSISTENCE] Raw form data (strings):', formDataObj);
 
-    if (!expanded) {return;}
+    // CRITICAL FIX: Convert numeric string values to actual numbers
+    // FormData collects all values as strings, but numeric fields need numbers
+    const coercedData = this._coerceFormData(formDataObj);
+
+    console.log('[PERSISTENCE] Coerced form data (with types):', coercedData);
+
+    const expanded = foundry.utils.expandObject(coercedData);
+
+    console.log('[PERSISTENCE] Expanded form data:', expanded);
+
+    // CRITICAL: Filter out SSOT-protected fields that cannot be updated directly
+    // These fields are enforced by ActorEngine governance and must be recalculated
+    const filtered = this._filterProtectedFields(expanded);
+
+    if (!filtered || Object.keys(filtered).length === 0) {
+      console.warn('[PERSISTENCE] No updatable data after filtering protected fields');
+      return;
+    }
 
     try {
       // Route directly through governance layer
       // This bypasses Foundry's _processSubmitData → actor.update() entirely
-      await ActorEngine.updateActor(this.actor, expanded);
+      console.log('[PERSISTENCE] Calling ActorEngine.updateActor with:', {
+        actorName: this.actor.name,
+        actorId: this.actor.id,
+        expandedKeys: Object.keys(filtered)
+      });
+
+      await ActorEngine.updateActor(this.actor, filtered);
+
+      console.log('[PERSISTENCE] ActorEngine.updateActor completed successfully');
     } catch (err) {
-      console.error('Sheet submission failed:', err);
+      console.error('[PERSISTENCE] Sheet submission failed:', err);
       ui.notifications.error(`Failed to update actor: ${err.message}`);
     }
+  }
+
+  /**
+   * Coerce form data values to appropriate types
+   * FormData collects all values as strings, but numeric fields need conversion
+   *
+   * @param {Object} formDataObj - Raw form data with string values
+   * @returns {Object} Form data with coerced types
+   */
+  _coerceFormData(formDataObj) {
+    console.log('[PERSISTENCE] _coerceFormData called with', Object.keys(formDataObj).length, 'fields');
+    const coerced = {};
+
+    for (const [key, value] of Object.entries(formDataObj)) {
+      // Check if this is a numeric field by looking for patterns
+      // Fields like system.hp.value, system.hp.max, system.xp, etc. should be numbers
+      const isNumericField =
+        key.includes('.value') ||
+        key.includes('.max') ||
+        key.includes('.current') ||
+        key.includes('.modifier') ||
+        key.includes('.bonus') ||
+        key.includes('xp') ||
+        key.includes('credits') ||
+        key.includes('level');
+
+      if (isNumericField && value !== '' && value !== null) {
+        // Try to convert to number
+        const numValue = Number(value);
+        coerced[key] = !isNaN(numValue) ? numValue : value;
+        console.log(`[PERSISTENCE] Coerced ${key}: "${value}" → ${coerced[key]} (numeric)`);
+      } else if (value === 'true') {
+        coerced[key] = true;
+        console.log(`[PERSISTENCE] Coerced ${key}: "${value}" → true (boolean)`);
+      } else if (value === 'false') {
+        coerced[key] = false;
+        console.log(`[PERSISTENCE] Coerced ${key}: "${value}" → false (boolean)`);
+      } else {
+        coerced[key] = value;
+      }
+    }
+
+    console.log('[PERSISTENCE] _coerceFormData returning', Object.keys(coerced).length, 'coerced fields');
+    return coerced;
+  }
+
+  /**
+   * Filter out fields that are protected by SSOT (Single Source of Truth) governance.
+   * These fields cannot be updated directly through ActorEngine.updateActor().
+   *
+   * Protected fields:
+   * - system.derived.* → Only DerivedCalculator may write these
+   * - system.hp.max → Only ActorEngine.recomputeHP() may write this
+   *
+   * Dependencies that affect HP (and trigger recomputeHP via hooks):
+   * - Attributes (CON, STR, DEX, etc.) ✓ NOT protected
+   * - Level ✓ NOT protected
+   * - Class ✓ NOT protected
+   * - HP bonus ✓ NOT protected
+   *
+   * The form should allow editing these dependencies; the governance layer
+   * will automatically trigger HP recomputation via hooks.
+   *
+   * @param {Object} expanded - Expanded form data (nested)
+   * @returns {Object} Filtered data with protected fields removed
+   * @private
+   */
+  _filterProtectedFields(expanded) {
+    const filtered = foundry.utils.duplicate(expanded);
+    const protectedPaths = [];
+
+    const checkObject = (obj, prefix = '') => {
+      if (!obj || typeof obj !== 'object') return;
+      for (const [key, value] of Object.entries(obj)) {
+        const path = prefix ? `${prefix}.${key}` : key;
+
+        // Reject derived field writes (only DerivedCalculator may write)
+        if (path.startsWith('system.derived.')) {
+          console.log(`[PERSISTENCE] Filtering protected field (derived): ${path}`);
+          protectedPaths.push(path);
+          delete obj[key];
+        }
+        // Reject direct system.hp.max writes (only recomputeHP may write)
+        else if (path === 'system.hp.max') {
+          console.log(`[PERSISTENCE] Filtering protected field (HP SSOT): ${path}`);
+          protectedPaths.push(path);
+          delete obj[key];
+        }
+        // Recursively check nested objects
+        else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+          checkObject(value, path);
+        }
+      }
+    };
+
+    checkObject(filtered);
+
+    if (protectedPaths.length > 0) {
+      console.log('[PERSISTENCE] Protected fields filtered:', {
+        count: protectedPaths.length,
+        paths: protectedPaths,
+        note: 'These fields are recalculated via ActorEngine governance; hooks will trigger recomputation'
+      });
+    }
+
+    return filtered;
   }
 }

@@ -339,9 +339,43 @@ export class IntroStep extends ProgressionStepPlugin {
    * @returns {{ template: string, data: Object }}
    */
   renderWorkSurface(stepData) {
+    // Map step data to template context
+    const templateContext = {
+      // OS UI elements
+      systemName: stepData.systemName,
+      currentTime: stepData.currentTime,
+      battery: stepData.battery,
+      signalBars: stepData.signalBars,
+      microlabel: stepData.microlabel,
+
+      // Current step state (for display)
+      currentStepData: {
+        state: stepData.phaseState,
+        label: stepData.phaseLabel,
+        aurabesh: stepData.phaseAurabesh,
+      },
+
+      // Progress tracking
+      progressPercent: stepData.progress,
+      stepNumber: this._getCurrentPhaseIndex() + 1,
+      bootSequenceLength: this._phases.length,
+
+      // Translation
+      translatedText: stepData.translatedText,
+      isTranslating: stepData.isTranslating,
+
+      // Completion state
+      sequenceComplete: stepData.complete,
+
+      // Parallax and effects
+      parallaxX: stepData.parallaxX,
+      parallaxY: stepData.parallaxY,
+      translationCharStates: stepData.translationCharStates,
+    };
+
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/steps/intro-work-surface.hbs',
-      data: stepData,
+      data: templateContext,
     };
   }
 
@@ -960,6 +994,15 @@ export class IntroStep extends ProgressionStepPlugin {
       phaseAurabesh: currentPhase.aurabesh,
       phaseState: phaseState,
     };
+  }
+
+  /**
+   * Get the zero-based index of the current phase
+   * @returns {number} Index of current phase, or -1 if no phase is active
+   */
+  _getCurrentPhaseIndex() {
+    if (!this._phase) return -1;
+    return this._phases.findIndex(p => p.label === this._phase);
   }
 
   /**

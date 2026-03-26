@@ -168,30 +168,19 @@
 }
 
 /* ============================================================================
-   ACTION-FOOTER__STEPS  —  center step-chip rail
+   ACTION-FOOTER__STATUS  —  center status indicators (blocking/warning messages)
+   Replaces the old step-chip rail which now lives in progress-rail region.
    ============================================================================ */
 
-.progression-shell .action-footer__steps {
+.progression-shell .action-footer__status {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 4px;
   overflow: hidden;
-}
-
-/* Chip row — wraps if many steps */
-.progression-shell .action-footer__steps > [role="tab"] {
-  /* Chips are direct tab children; flex-wrap handled at chip level */
-}
-
-/* Chip wrapper flex row — chips sit in a horizontal scrollable row */
-.progression-shell .action-footer__steps {
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 6px;
-  align-items: center;
-  overflow: hidden;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 /* ============================================================================
@@ -212,7 +201,7 @@
 
   /* Default chip SVG — dim blue, circle indicator */
   background-color: transparent;
-  background-image: url('../../../assets/ui/chargen/swse-step-chip-default.svg');
+  background-image: url('/systems/foundryvtt-swse/assets/ui/chargen/swse-step-chip-default.svg');
   background-size: 100% 100%;
   background-repeat: no-repeat;
 
@@ -238,7 +227,7 @@
 
 /* ACTIVE / CURRENT — bright cyan SVG */
 .progression-shell .swse-step-btn.is-current {
-  background-image: url('../../../assets/ui/chargen/swse-step-chip-active.svg');
+  background-image: url('/systems/foundryvtt-swse/assets/ui/chargen/swse-step-chip-active.svg');
   color: rgba(230, 252, 255, 0.98);
   font-weight: 700;
   cursor: default;
@@ -247,21 +236,21 @@
 
 /* COMPLETE — teal/green SVG */
 .progression-shell .swse-step-btn.is-complete:not(.is-current) {
-  background-image: url('../../../assets/ui/chargen/swse-step-chip-complete.svg');
+  background-image: url('/systems/foundryvtt-swse/assets/ui/chargen/swse-step-chip-complete.svg');
   color: rgba(180, 255, 230, 0.88);
   cursor: pointer;
 }
 
 /* LOCKED / FUTURE — grey SVG */
 .progression-shell .swse-step-btn.is-locked {
-  background-image: url('../../../assets/ui/chargen/swse-step-chip-locked.svg');
+  background-image: url('/systems/foundryvtt-swse/assets/ui/chargen/swse-step-chip-locked.svg');
   color: rgba(130, 145, 160, 0.55);
   cursor: not-allowed;
 }
 
 /* WARNING — amber SVG */
 .progression-shell .swse-step-btn.is-warning:not(.is-current) {
-  background-image: url('../../../assets/ui/chargen/swse-step-chip-warning.svg');
+  background-image: url('/systems/foundryvtt-swse/assets/ui/chargen/swse-step-chip-warning.svg');
   color: rgba(255, 225, 130, 0.90);
   cursor: pointer;
 }

@@ -34,7 +34,74 @@
   text-shadow: var(--prog-heading-shadow);
 }
 
-/* Search input */
+/* Utility field wrapper — applies SVG skin to wrapper, not input */
+.progression-shell .prog-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.progression-shell .swse-filter-field {
+  min-height: 32px;
+  padding: 0 12px;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  border: 0;
+  border-radius: 0;
+}
+
+/* Search field variant */
+.progression-shell .swse-filter-field--search {
+  flex: 0 1 200px;
+  min-width: 0;
+  background-image: url('../../../assets/ui/chargen/search-box.svg');
+}
+
+.progression-shell .swse-filter-field--search input {
+  flex: 1 1 auto;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: var(--prog-text);
+  font-size: var(--prog-font-size-xs);
+  padding: 4px 6px;
+  min-width: 0;
+}
+
+.progression-shell .swse-filter-field--search input::placeholder {
+  color: rgba(100, 180, 220, 0.45);
+  font-style: italic;
+}
+
+.progression-shell .swse-filter-field--search input:focus {
+  outline: 0;
+}
+
+/* Select field variant */
+.progression-shell .swse-filter-field--select {
+  flex: 0 1 auto;
+  background-image: url('../../../assets/ui/chargen/dropdown-box.svg');
+}
+
+.progression-shell .swse-filter-field--select select {
+  flex: 1 1 auto;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: var(--prog-text);
+  font-size: var(--prog-font-size-xs);
+  padding: 4px 24px 4px 6px;
+  appearance: none;
+  cursor: pointer;
+}
+
+.progression-shell .swse-filter-field--select select:focus {
+  outline: 0;
+}
+
+/* Search input (old direct approach, kept for backward compatibility) */
 .progression-shell .prog-utility-bar__search {
   flex: 0 1 200px;
   min-width: 0;

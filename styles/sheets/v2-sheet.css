@@ -81,7 +81,15 @@
   min-width: 0;
 }
 
-.swse-sheet.sheet-header { padding: 10px 12px; }
+.swse-sheet.sheet-header {
+  padding: 10px 12px;
+  flex: 0 0 auto;
+}
+
+.swse-sheet.sheet-actions {
+  flex: 0 0 auto;
+}
+
 .swse-sheet.swse-stat { min-width: 64px; text-align: center; }
 .swse-sheet.swse-stat .label { font-size: 0.7rem; opacity: 0.75; }
 .swse-sheet.swse-stat .value { font-size: 1.35rem; font-weight: 800; }

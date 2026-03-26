@@ -5,10 +5,11 @@
   <div class="prog-mentor__portrait-zone swse-ui-frame">
 
     {{! Portrait — SVG Type 1: mentor portrait embedded in mentor-portrait-box.svg frame }}
+    {{! Increased size from 82x96 to 120x120 for better visual presence (+20%) }}
     <svg class="prog-mentor__portrait"
          xmlns="http://www.w3.org/2000/svg"
          viewBox="0 0 240 280"
-         width="82" height="96"
+         width="120" height="120"
          preserveAspectRatio="xMidYMid meet"
          data-mentor-portrait="{{mentor.id}}">
       <defs>
@@ -94,18 +95,18 @@
     </svg>
   </div>{{!-- /portrait-zone --}}
 
-    {{! Name and title (hidden when mentor collapsed) }}
-    <div class="prog-mentor__name">{{mentor.name}}</div>
-    <div class="prog-mentor__title">{{mentor.title}}</div>
-
-  </div>{{!-- /portrait-zone --}}
+  {{! Name and title (hidden when mentor collapsed) }}
+  <div class="prog-mentor__name">{{mentor.name}}</div>
+  <div class="prog-mentor__title">{{mentor.title}}</div>
 
   {{! Dialogue box (hidden when collapsed) — AurebeshTranslator targets [data-mentor-dialogue] }}
   <div class="prog-mentor__dialogue swse-ui-frame" data-mentor-dialogue>
-    <p class="prog-mentor__text{{#unless mentor.currentDialogue}} prog-mentor__text--idle{{/unless}}"
-       data-mentor-text>
-      {{#if mentor.currentDialogue}}{{mentor.currentDialogue}}{{else}}Awaiting your decision…{{/if}}
-    </p>
+    <div class="prog-mentor__dialogue-content">
+      <p class="prog-mentor__text{{#unless mentor.currentDialogue}} prog-mentor__text--idle{{/unless}}"
+         data-mentor-text>
+        {{#if mentor.currentDialogue}}{{mentor.currentDialogue}}{{else}}Awaiting your decision…{{/if}}
+      </p>
+    </div>
   </div>
 
   {{! Ask Mentor button (only when enabled) }}

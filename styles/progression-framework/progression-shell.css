@@ -384,8 +384,8 @@
   display: flex;
   flex-direction: column;
 
-  /* panel-small.svg: chamfered steel side panel with cyan border + corner accents */
-  background-image:  url('../../assets/ui/chargen/panel-small.svg');
+  /* Tall rail panel (dedicated proportions, not stretched) */
+  background-image:  url('../../assets/ui/chargen/panel-large.svg');
   background-size:   100% 100%;
   background-repeat: no-repeat;
   background-color:  #040b13;   /* matches SVG inner fill #040B13 */
@@ -475,8 +475,8 @@
   display: flex;
   flex-direction: column;
 
-  /* panel-small.svg: chamfered steel side panel with corner accents + cyan border */
-  background-image:  url('../../assets/ui/chargen/panel-small.svg');
+  /* Tall rail panel (dedicated proportions, not stretched) */
+  background-image:  url('../../assets/ui/chargen/panel-large.svg');
   background-size:   100% 100%;
   background-repeat: no-repeat;
   background-color:  #040b13;   /* matches SVG inner fill */

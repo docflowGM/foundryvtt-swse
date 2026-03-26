@@ -592,6 +592,61 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // Phase 8: Log hydration diagnostics
     diagnostics.logToConsole();
 
+    // Render parts (mentor rail, progress rail, utility bar) by rendering their templates
+    const partsHtml = {};
+
+    // Render mentor-rail template with mentor and collapse state
+    if (this.mentorRail) {
+      try {
+        partsHtml.mentorRail = await foundry.applications.handlebars.renderTemplate(
+          'systems/foundryvtt-swse/templates/apps/progression-framework/mentor-rail.hbs',
+          {
+            mentor: this.mentor,
+            mentorCollapsed: this.mentorCollapsed,
+          }
+        );
+      } catch (err) {
+        console.error('[ProgressionShell] Failed to render mentor-rail:', err);
+        partsHtml.mentorRail = null;
+      }
+    } else {
+      partsHtml.mentorRail = null;
+    }
+
+    // Render progress-rail template with step progress data
+    if (this.progressRail) {
+      try {
+        partsHtml.progressRail = await foundry.applications.handlebars.renderTemplate(
+          'systems/foundryvtt-swse/templates/apps/progression-framework/progress-rail.hbs',
+          { stepProgress }
+        );
+      } catch (err) {
+        console.error('[ProgressionShell] Failed to render progress-rail:', err);
+        partsHtml.progressRail = null;
+      }
+    } else {
+      partsHtml.progressRail = null;
+    }
+
+    // Render utility-bar template with config and state
+    if (this.utilityBar) {
+      try {
+        partsHtml.utilityBar = await foundry.applications.handlebars.renderTemplate(
+          'systems/foundryvtt-swse/templates/apps/progression-framework/utility-bar.hbs',
+          {
+            currentDescriptor,
+            utilityBarConfig,
+            utilityBarCollapsed: this.utilityBarCollapsed,
+          }
+        );
+      } catch (err) {
+        console.error('[ProgressionShell] Failed to render utility-bar:', err);
+        partsHtml.utilityBar = null;
+      }
+    } else {
+      partsHtml.utilityBar = null;
+    }
+
     return foundry.utils.mergeObject(context, {
       // Shell identity
       mode: this.mode,
@@ -658,6 +713,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
       // Phase 8: Hydration diagnostics
       diagnostics: diagnostics.formatUI(),
       diagnosticsFull: diagnostics.toJSON(),
+
+      // Rendered parts (mentor, progress, utility)
+      parts: partsHtml,
     });
   }
 

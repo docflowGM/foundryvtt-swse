@@ -137,6 +137,7 @@ export class MentorRail {
   /**
    * Called by shell._onRender() after every render.
    * Restores static dialogue text if animation was complete before re-render.
+   * Applies message-length classes for responsive text scaling.
    * @param {HTMLElement} regionEl
    */
   afterRender(regionEl) {
@@ -148,6 +149,19 @@ export class MentorRail {
     // Restore static text if animation was already complete (avoids re-animation)
     if (textEl && currentDialogue && animationState === 'complete') {
       textEl.textContent = currentDialogue;
+    }
+
+    // Apply message-length class for responsive text scaling
+    if (textEl && currentDialogue) {
+      textEl.classList.remove('is-short', 'is-medium', 'is-long');
+      const charCount = currentDialogue.length;
+      if (charCount <= 50) {
+        textEl.classList.add('is-short');
+      } else if (charCount <= 150) {
+        textEl.classList.add('is-medium');
+      } else {
+        textEl.classList.add('is-long');
+      }
     }
 
     // Sync mood data attribute
