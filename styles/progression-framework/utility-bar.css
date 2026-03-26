@@ -43,8 +43,8 @@
 }
 
 .progression-shell .swse-filter-field {
-  min-height: 32px;
-  padding: 0 12px;
+  min-height: 40px;
+  padding: 0 14px;
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-color: transparent;
@@ -65,8 +65,8 @@
   border: 0;
   outline: 0;
   color: var(--prog-text);
-  font-size: var(--prog-font-size-xs);
-  padding: 4px 6px;
+  font-size: var(--prog-font-size-sm);
+  padding: 6px 8px;
   min-width: 0;
 }
 
@@ -91,8 +91,8 @@
   border: 0;
   outline: 0;
   color: var(--prog-text);
-  font-size: var(--prog-font-size-xs);
-  padding: 4px 24px 4px 6px;
+  font-size: var(--prog-font-size-sm);
+  padding: 6px 26px 6px 8px;
   appearance: none;
   cursor: pointer;
 }
@@ -122,9 +122,9 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 2px var(--prog-space-sm);
+  padding: 4px 10px;
   border-radius: var(--prog-radius-pill);
-  font-size: var(--prog-font-size-xs);
+  font-size: var(--prog-font-size-sm);
   font-family: var(--prog-font-body);
   border: 1px solid var(--prog-border);
   color: var(--prog-text-dim);
@@ -149,8 +149,8 @@
   border: 1px solid var(--prog-border);
   border-radius: var(--prog-radius-sm);
   color: var(--prog-text);
-  font-size: var(--prog-font-size-xs);
-  padding: 2px var(--prog-space-sm);
+  font-size: var(--prog-font-size-sm);
+  padding: 4px 8px;
   flex-shrink: 0;
 }
 
@@ -164,7 +164,7 @@
 
 /* Dropdown Group Label */
 .progression-shell .prog-utility-bar__dropdown-label {
-  font-size: var(--prog-font-size-xs);
+  font-size: var(--prog-font-size-sm);
   color: var(--prog-text-dim);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -178,8 +178,8 @@
   border: 1px solid var(--prog-border);
   border-radius: var(--prog-radius-sm);
   color: var(--prog-text);
-  font-size: var(--prog-font-size-xs);
-  padding: 2px var(--prog-space-sm);
+  font-size: var(--prog-font-size-sm);
+  padding: 4px 8px;
   flex-shrink: 0;
   cursor: pointer;
   transition: border-color var(--prog-transition-fast), color var(--prog-transition-fast);

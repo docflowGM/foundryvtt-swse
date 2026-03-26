@@ -179,6 +179,17 @@
   color: var(--prog-negative);
 }
 
+.swse-option-card__badge--source {
+  background: rgba(80, 120, 160, 0.1);
+  color: rgba(80, 120, 160, 0.7);
+}
+
+.prog-species-card__mods {
+  font-size: var(--prog-font-size-xs);
+  color: var(--prog-text-dim);
+  font-family: monospace;
+}
+
 /* =============================================================================
    MIGRATION PATTERNS — Step-specific selectors (inherit from base classes)
    ============================================================================= */
@@ -241,7 +252,14 @@
    GRID LAYOUTS — responsive card grids for option browsing
    ============================================================================= */
 
-.prog-species-grid,
+.prog-species-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  padding: 8px 0;
+  width: 100%;
+}
+
 .prog-class-grid,
 .prog-background-grid {
   display: grid;

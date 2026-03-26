@@ -35,7 +35,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
       'bonus-stat': '',                 // selected stat ('str', 'dex', 'con', 'int', 'wis', 'cha', or '')
       'penalty-stat': '',               // selected stat ('str', 'dex', 'con', 'int', 'wis', 'cha', or '')
     };
-    this._sortBy = 'source';          // 'source' | 'alpha'
+    this._sortBy = 'source';          // 'source' | 'alpha' — source groups Humans/Near-Humans first
 
     // Near-Human builder
     this._nearHumanBuilder = new NearHumanBuilder();
@@ -148,6 +148,21 @@ export class SpeciesStep extends ProgressionStepPlugin {
   async afterRender(shell, workSurfaceEl) {
     if (this._mode === 'near-human-builder') {
       this._nearHumanBuilder.wireDOM(workSurfaceEl, shell);
+      return;
+    }
+
+    // Wire up double-click to commit species directly
+    const cards = workSurfaceEl?.querySelectorAll('.prog-species-card');
+    if (cards) {
+      cards.forEach(card => {
+        card.addEventListener('dblclick', async (e) => {
+          e.preventDefault();
+          const itemId = card.dataset.itemId;
+          if (itemId) {
+            await this.onItemCommitted(itemId, shell);
+          }
+        });
+      });
     }
   }
 
@@ -458,8 +473,8 @@ export class SpeciesStep extends ProgressionStepPlugin {
         defaultValue: '',
       },
       sorts: [
-        { id: 'alpha', label: 'A–Z', isDefault: true },
-        { id: 'source', label: 'Source' },
+        { id: 'source', label: 'Source', isDefault: true },
+        { id: 'alpha', label: 'A–Z' },
       ],
     };
   }

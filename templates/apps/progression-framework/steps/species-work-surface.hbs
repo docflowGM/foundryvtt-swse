@@ -36,11 +36,13 @@
         <div class="swse-option-card__meta">
           {{#if (eq id ../committedSpeciesId)}}
             <span class="swse-option-card__badge"><i class="fas fa-check"></i> Selected</span>
-          {{else if (eq id ../focusedSpeciesId)}}
-            <span class="swse-option-card__badge">Inspecting</span>
-          {{else}}
-            <span class="swse-option-card__badge">{{this.source}}</span>
           {{/if}}
+          {{#if this.abilityModLine}}
+            <span class="prog-species-card__mods">{{this.abilityModLine}}</span>
+          {{/if}}
+          {{#unless (eq id ../committedSpeciesId)}}
+            <span class="swse-option-card__badge swse-option-card__badge--source">{{this.source}}</span>
+          {{/unless}}
         </div>
       </button>
     {{else}}
