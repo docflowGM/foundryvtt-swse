@@ -12,6 +12,7 @@
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
+import { normalizeSkills } from './step-normalizers.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SkillRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js';
@@ -128,23 +129,16 @@ export class SkillsStep extends ProgressionStepPlugin {
   }
 
   async onStepExit(shell) {
-    // Persist skill selections to shell state
-    // This is handled by getStepData()
+    // PHASE 1: Normalize and commit to canonical session
+    const trainedList = Array.from(this._trainedSkills.entries())
+      .filter(([_, data]) => data.trained)
+      .map(([key, _]) => key);  // Just the keys for normalized format
 
-    // Update observable build intent (Phase 6 solution)
-    if (shell?.buildIntent && this.descriptor?.stepId) {
-      const trainedList = Array.from(this._trainedSkills.entries())
-        .filter(([_, data]) => data.trained)
-        .reduce((acc, [key, data]) => {
-          acc[key] = data.rank || 1;
-          return acc;
-        }, {});
+    const normalizedSkills = normalizeSkills(trainedList);
 
-      shell.buildIntent.commitSelection(
-        this.descriptor.stepId,
-        'skills',
-        trainedList
-      );
+    if (normalizedSkills && shell) {
+      // Commit to canonical session (also updates buildIntent for backward compat)
+      this._commitNormalized(shell, 'skills', normalizedSkills);
     }
   }
 

@@ -12,6 +12,7 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
+import { normalizeAttributes } from './step-normalizers.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
@@ -175,13 +176,12 @@ export class AttributeStep extends ProgressionStepPlugin {
   }
 
   async onStepExit(shell) {
-    // Update observable build intent (Phase 6 solution)
-    if (shell?.buildIntent && this.descriptor?.stepId) {
-      shell.buildIntent.commitSelection(
-        this.descriptor.stepId,
-        'attributes',
-        { ...this._baseScores }
-      );
+    // PHASE 1: Normalize and commit to canonical session
+    const normalizedAttributes = normalizeAttributes({ ...this._baseScores });
+
+    if (normalizedAttributes && shell) {
+      // Commit to canonical session (also updates buildIntent for backward compat)
+      this._commitNormalized(shell, 'attributes', normalizedAttributes);
     }
   }
 
