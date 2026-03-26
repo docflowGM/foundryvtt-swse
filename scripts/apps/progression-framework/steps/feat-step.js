@@ -532,8 +532,17 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   getMentorContext(shell) {
-    return getStepGuidance(shell.actor, 'general-feat') ||
-      'Choose feats that strengthen your abilities and define your playstyle. Some feats are better for your build than others.';
+    const customGuidance = getStepGuidance(shell.actor, 'general-feat');
+    if (customGuidance) return customGuidance;
+
+    // Mode-aware default guidance
+    if (this.isChargen(shell)) {
+      return 'Choose feats that strengthen your abilities and define your playstyle. Some feats are better for your build than others.';
+    } else if (this.isLevelup(shell)) {
+      return 'As you gain experience, you may learn new techniques and abilities. Choose feats that enhance your path.';
+    }
+
+    return 'Select a feat wisely.';
   }
 
   getMentorMode() {

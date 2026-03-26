@@ -375,7 +375,17 @@ export class AttributeStep extends ProgressionStepPlugin {
   }
 
   getMentorContext(shell) {
-    return getStepGuidance(shell.actor, 'attribute') || 'Your attributes shape your capabilities. Strength, speed, intellect — choose wisely for your path.';
+    const customGuidance = getStepGuidance(shell.actor, 'attribute');
+    if (customGuidance) return customGuidance;
+
+    // Mode-aware default guidance
+    if (this.isChargen(shell)) {
+      return 'Your attributes shape your capabilities. Strength, speed, intellect — choose wisely for your path.';
+    } else if (this.isLevelup(shell)) {
+      return 'As you grow stronger, you may sharpen your natural abilities. Allocate your improvement wisely.';
+    }
+
+    return 'Distribute your points with care.';
   }
 
   getMentorMode() {

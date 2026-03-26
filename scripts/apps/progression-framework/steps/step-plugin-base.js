@@ -305,4 +305,36 @@ export class ProgressionStepPlugin {
   async afterRender(shell, workSurfaceEl) {
     // Default: no-op
   }
+
+  // ---------------------------------------------------------------------------
+  // Mode Awareness (Phase 6)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Check if this step is running in a specific mode.
+   * @param {import('../shell/progression-shell.js').ProgressionShell} shell
+   * @param {'chargen' | 'levelup'} mode
+   * @returns {boolean}
+   */
+  isMode(shell, mode) {
+    return shell?.mode === mode;
+  }
+
+  /**
+   * Check if this step is running in chargen mode.
+   * @param {import('../shell/progression-shell.js').ProgressionShell} shell
+   * @returns {boolean}
+   */
+  isChargen(shell) {
+    return this.isMode(shell, 'chargen');
+  }
+
+  /**
+   * Check if this step is running in levelup mode.
+   * @param {import('../shell/progression-framework/shell').ProgressionShell} shell
+   * @returns {boolean}
+   */
+  isLevelup(shell) {
+    return this.isMode(shell, 'levelup');
+  }
 }

@@ -261,7 +261,17 @@ export class ClassStep extends ProgressionStepPlugin {
   }
 
   getMentorContext(shell) {
-    return getStepGuidance(shell.actor, 'class') || 'Choose your class carefully — it defines your role and abilities. Each path leads to a different destiny.';
+    const customGuidance = getStepGuidance(shell.actor, 'class');
+    if (customGuidance) return customGuidance;
+
+    // Mode-aware default guidance
+    if (this.isChargen(shell)) {
+      return 'Choose your class carefully — it defines your role and abilities. Each path leads to a different destiny.';
+    } else if (this.isLevelup(shell)) {
+      return 'As you advance, you may embrace a new calling. Consider what new abilities would serve you well.';
+    }
+
+    return 'Choose your path wisely.';
   }
 
   getMentorMode() {

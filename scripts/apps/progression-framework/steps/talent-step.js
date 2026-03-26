@@ -503,8 +503,17 @@ export class TalentStep extends ProgressionStepPlugin {
   }
 
   getMentorContext(shell) {
-    return getStepGuidance(shell.actor, 'general-talent') ||
-      'Talents define your path. Choose a discipline that resonates with your vision for this character.';
+    const customGuidance = getStepGuidance(shell.actor, 'general-talent');
+    if (customGuidance) return customGuidance;
+
+    // Mode-aware default guidance
+    if (this.isChargen(shell)) {
+      return 'Talents define your path. Choose a discipline that resonates with your vision for this character.';
+    } else if (this.isLevelup(shell)) {
+      return 'Your talents grow with experience. Choose a new discipline to specialize further in your abilities.';
+    }
+
+    return 'Select a talent that defines you.';
   }
 
   getMentorMode() {
