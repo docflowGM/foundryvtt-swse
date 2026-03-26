@@ -88,7 +88,10 @@ export class ProgressionFinalizer {
       throw new Error('No actor in progression session');
     }
 
-    const selections = sessionState.committedSelections || new Map();
+    // PHASE 1: Read from progressionSession if available, fall back to committedSelections
+    const selections = sessionState.progressionSession
+      ? this._buildSelectionsFromSession(sessionState.progressionSession)
+      : sessionState.committedSelections || new Map();
     const summarySelection = selections.get('summary') || sessionState.stepData?.get?.('summary') || {};
 
     // PHASE C: Check for deferred/unfinalized droid builds
@@ -141,15 +144,42 @@ export class ProgressionFinalizer {
    * @returns {Object} mutation plan
    */
   static _compileMutationPlan(sessionState, actor, options = {}) {
-    const selections = sessionState.committedSelections || new Map();
+    // PHASE 1: Read from progressionSession if available, fall back to committedSelections
+    const selections = sessionState.progressionSession
+      ? this._buildSelectionsFromSession(sessionState.progressionSession)
+      : sessionState.committedSelections || new Map();
     const stepData = sessionState.stepData || new Map();
-    const summary = selections.get('summary') || stepData.get?.('summary') || {};
-    const attr = selections.get('attribute') || selections.get('attributes') || stepData.get?.('attribute') || {};
-    const species = selections.get('species') || stepData.get?.('species') || null;
-    const clazz = selections.get('class') || stepData.get?.('class') || null;
-    const background = selections.get('background') || stepData.get?.('background') || null;
-    const languages = selections.get('languages') || stepData.get?.('languages') || [];
-    const skills = selections.get('skills') || stepData.get?.('skills') || [];
+
+    // Try progressionSession first, fall back to selections/stepData
+    const summary = sessionState.progressionSession?.draftSelections?.survey ||
+                    selections.get('summary') ||
+                    stepData.get?.('summary') ||
+                    {};
+    const attr = sessionState.progressionSession?.draftSelections?.attributes ||
+                 selections.get('attribute') ||
+                 selections.get('attributes') ||
+                 stepData.get?.('attribute') ||
+                 {};
+    const species = sessionState.progressionSession?.draftSelections?.species ||
+                    selections.get('species') ||
+                    stepData.get?.('species') ||
+                    null;
+    const clazz = sessionState.progressionSession?.draftSelections?.class ||
+                  selections.get('class') ||
+                  stepData.get?.('class') ||
+                  null;
+    const background = sessionState.progressionSession?.draftSelections?.background ||
+                       selections.get('background') ||
+                       stepData.get?.('background') ||
+                       null;
+    const languages = sessionState.progressionSession?.draftSelections?.languages ||
+                      selections.get('languages') ||
+                      stepData.get?.('languages') ||
+                      [];
+    const skills = sessionState.progressionSession?.draftSelections?.skills ||
+                   selections.get('skills') ||
+                   stepData.get?.('skills') ||
+                   [];
 
     const set = {};
     const add = { items: [] };
@@ -360,6 +390,30 @@ export class ProgressionFinalizer {
     }
 
     return grants;
+  }
+
+  /**
+   * PHASE 1: Convert progressionSession.draftSelections to committenSelections-compatible Map.
+   * This is a temporary adapter for backward compatibility during migration.
+   *
+   * @param {ProgressionSession} session
+   * @returns {Map<string, *>} Map with same interface as committedSelections
+   * @private
+   */
+  static _buildSelectionsFromSession(session) {
+    const result = new Map();
+    if (!session || !session.draftSelections) return result;
+
+    const { draftSelections } = session;
+
+    // Copy each canonical selection to the map
+    for (const [key, value] of Object.entries(draftSelections)) {
+      if (value !== null && value !== undefined) {
+        result.set(key, value);
+      }
+    }
+
+    return result;
   }
 
   /**
