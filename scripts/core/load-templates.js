@@ -140,6 +140,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/apps/progression-framework/mentor-rail.hbs',
   'systems/foundryvtt-swse/templates/apps/progression-framework/progress-rail.hbs',
   'systems/foundryvtt-swse/templates/apps/progression-framework/utility-bar.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/diagnostic-banner.hbs',
 
   // Step Work Surfaces
   'systems/foundryvtt-swse/templates/apps/progression-framework/steps/attribute-work-surface.hbs',
