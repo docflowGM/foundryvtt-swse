@@ -91,12 +91,22 @@ export class ProgressionFinalizer {
     const selections = sessionState.committedSelections || new Map();
     const summarySelection = selections.get('summary') || sessionState.stepData?.get?.('summary') || {};
 
-    // PHASE A + B: Check for deferred droid builds
+    // PHASE C: Check for deferred/unfinalized droid builds
     const droidBuild = selections.get('droid-builder');
-    if (droidBuild && droidBuild.buildState?.isDeferred) {
-      throw new Error(
-        'Chargen incomplete: droid build is pending. Complete the final droid configuration before finishing.'
-      );
+    if (droidBuild) {
+      // If droid build was deferred but not yet finalized, block completion
+      if (droidBuild.buildState?.isDeferred && !droidBuild.buildState?.isFinalized) {
+        throw new Error(
+          'Chargen incomplete: droid build is pending. Complete the final droid configuration before finishing.'
+        );
+      }
+
+      // If droid build was marked for finalization but not confirmed, also block
+      if (droidBuild.buildState?.mode === 'finalized' && !droidBuild.buildState?.isFinalized) {
+        throw new Error(
+          'Chargen incomplete: droid build requires confirmation. Please complete the final droid configuration step.'
+        );
+      }
     }
 
     if (sessionState.mode === 'chargen') {

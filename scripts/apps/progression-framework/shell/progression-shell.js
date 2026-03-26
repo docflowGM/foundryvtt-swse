@@ -344,9 +344,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
   async _initializeSteps() {
     try {
       const canonicalDescriptors = this._getCanonicalDescriptors();
+      // PHASE C: Pass shell context so resolver can check committedSelections for deferred droid builds
       const conditionalDescriptors = await this._conditionalResolver.resolveForContext(
         this.actor,
-        this.mode
+        this.mode,
+        { shell: this }  // Pass shell context for state inspection
       );
 
       // Merge: canonical steps in order, then insert conditional steps at correct positions
@@ -427,6 +429,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
   /**
    * Merge canonical and conditional step sequences.
    * Conditional steps are inserted at their natural positions based on engineKey ordering.
+   * PHASE C: Final droid configuration steps are inserted right before summary.
    *
    * @param {StepDescriptor[]} canonical
    * @param {StepDescriptor[]} conditional
@@ -435,15 +438,28 @@ export class ProgressionShell extends SWSEApplicationV2 {
   _mergeStepSequence(canonical, conditional) {
     if (conditional.length === 0) return [...canonical];
 
-    // Find the insertion point: before 'confirm' step, after feat/talent steps
-    const confirmIndex = canonical.findIndex(d => d.stepId === 'confirm');
-    const insertAt = confirmIndex >= 0 ? confirmIndex : canonical.length;
+    // PHASE C: Separate final-droid-configuration from other conditional steps
+    const finalDroidSteps = conditional.filter(d => d.stepId === 'final-droid-configuration');
+    const otherConditionalSteps = conditional.filter(d => d.stepId !== 'final-droid-configuration');
 
-    return [
-      ...canonical.slice(0, insertAt),
-      ...conditional,
-      ...canonical.slice(insertAt),
+    // Find the insertion point for normal conditional steps: before 'confirm' step
+    const confirmIndex = canonical.findIndex(d => d.stepId === 'confirm');
+    const insertAtNormal = confirmIndex >= 0 ? confirmIndex : canonical.length;
+
+    // Find the insertion point for final-droid-configuration: before 'summary'
+    const summaryIndex = canonical.findIndex(d => d.stepId === 'summary');
+    const insertAtFinal = summaryIndex >= 0 ? summaryIndex : canonical.length;
+
+    // Build the merged sequence
+    const merged = [
+      ...canonical.slice(0, insertAtFinal),
+      ...finalDroidSteps,  // Insert final droid step right before summary
+      ...canonical.slice(insertAtFinal, insertAtNormal),
+      ...otherConditionalSteps,  // Insert other conditional steps before confirm
+      ...canonical.slice(insertAtNormal),
     ];
+
+    return merged;
   }
 
   /**

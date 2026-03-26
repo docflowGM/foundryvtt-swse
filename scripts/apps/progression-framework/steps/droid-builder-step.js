@@ -772,14 +772,26 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
   /**
    * PHASE A + B: Mark build as deferred.
    * Player chooses to complete droid build in final pass instead of now.
+   * PHASE C: Triggers shell reconciliation to inject final-droid-configuration step
    */
-  deferBuild() {
+  async deferBuild(shell) {
     if (!this._droidState) return false;
 
     // Mark as deferred
     this._droidState.buildState.isDeferred = true;
     this._droidState.buildState.mode = 'deferred';
     this._droidState.playerChoices.skippedForNow = true;
+
+    // PHASE C: Reconcile conditional steps to inject final-droid-configuration step
+    // This ensures the step is available later in the progression
+    if (shell) {
+      try {
+        await shell.reconcileConditionalSteps();
+        swseLogger.info('[DroidBuilderStep] Droid build deferred and conditional steps reconciled');
+      } catch (err) {
+        swseLogger.warn('[DroidBuilderStep] Error reconciling steps after deferral:', err);
+      }
+    }
 
     swseLogger.info('[DroidBuilderStep] Droid build deferred to final pass');
     return true;
@@ -892,18 +904,46 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
 
   /**
    * PHASE A + B: Handle "Do Later" button — defer build to final pass.
+   * PHASE C: Commits deferred state before reconciling steps
    */
-  _onDeferBuild(event, shell, workSurfaceEl) {
+  async _onDeferBuild(event, shell, workSurfaceEl) {
     event.preventDefault();
 
-    const success = this.deferBuild();
+    const success = await this.deferBuild(shell);
 
     if (success) {
+      // PHASE C: Commit the deferred state before reconciling steps
+      // This ensures the final-droid-configuration step can be discovered
+      await this._commitDeferredBuild(shell);
+
       ui.notifications.info('Droid build deferred. You can complete it in the final pass.');
-      shell.render();
+      // Note: reconcileConditionalSteps() already triggers render internally
     } else {
       ui.notifications.warn('Unable to defer build');
     }
+  }
+
+  /**
+   * PHASE C: Commit the deferred droid build to shell state.
+   */
+  async _commitDeferredBuild(shell) {
+    const deferredSelection = {
+      isDroid: true,
+      droidDegree: this._droidState.droidDegree,
+      droidSize: this._droidState.droidSize,
+      droidSystems: JSON.parse(JSON.stringify(this._droidState.droidSystems)),
+      droidCredits: JSON.parse(JSON.stringify(this._droidState.droidCredits)),
+      buildState: JSON.parse(JSON.stringify(this._droidState.buildState)),
+    };
+
+    shell.committedSelections.set(this.descriptor.stepId, deferredSelection);
+
+    // Update observable build intent
+    if (shell?.buildIntent && this.descriptor?.stepId) {
+      shell.buildIntent.commitSelection(this.descriptor.stepId, this.descriptor.stepId, deferredSelection);
+    }
+
+    swseLogger.debug('[DroidBuilderStep] Deferred droid build committed before reconciliation', deferredSelection);
   }
 
   /**

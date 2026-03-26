@@ -37,6 +37,7 @@ export const ConditionalStepKey = Object.freeze({
   FORCE_SECRETS: 'force-secrets',
   FORCE_TECHNIQUES: 'force-techniques',
   STARSHIP_MANEUVERS: 'starship-maneuvers',
+  FINAL_DROID_CONFIGURATION: 'final-droid-configuration',  // PHASE C
 });
 
 /**
@@ -52,29 +53,54 @@ export class ConditionalStepResolver {
    *
    * @param {Actor} actor - The actor being progressed
    * @param {'chargen' | 'levelup'} mode - Progression mode
+   * @param {Object} context - Optional context (e.g., { shell: ProgressionShell })
    * @returns {Promise<import('../steps/step-descriptor.js').StepDescriptor[]>}
    */
-  async resolveForContext(actor, mode) {
+  async resolveForContext(actor, mode, context = {}) {
     if (mode === 'chargen') {
-      return this._resolveChargenConditionals(actor);
+      return this._resolveChargenConditionals(actor, context);
     }
     if (mode === 'levelup') {
-      return this._resolveLevelupConditionals(actor);
+      return this._resolveLevelupConditionals(actor, context);
     }
     return [];
   }
 
   /**
    * Resolve conditional steps for chargen.
-   * Chargen has no conditional steps in the current engine model.
-   * (Skills and force powers are always available in chargen if the class grants them.)
+   * PHASE C: Checks for deferred droid builds to insert final-droid-configuration step
    *
    * @param {Actor} actor
+   * @param {Object} context - Optional context containing { shell: ProgressionShell }
    * @returns {Promise<import('../steps/step-descriptor.js').StepDescriptor[]>}
    */
-  async _resolveChargenConditionals(actor) {
-    // TODO (Wave 10): Query engine.getActiveConditionalSteps(actor, 'chargen')
-    return [];
+  async _resolveChargenConditionals(actor, context = {}) {
+    const activeSteps = [];
+
+    // PHASE C: Check if droid build is deferred
+    // Only add final-droid-configuration step if:
+    // 1. Character is a droid (system.isDroid)
+    // 2. Droid build was deferred (buildState.isDeferred === true)
+    // 3. Build hasn't been finalized yet (buildState.isFinalized === false)
+
+    try {
+      const shell = context?.shell;
+      const droidBuild = shell?.committedSelections?.get('droid-builder');
+
+      // Check if droid build is deferred and pending finalization
+      if (droidBuild?.buildState?.isDeferred && !droidBuild?.buildState?.isFinalized) {
+        activeSteps.push(
+          await this._buildDescriptorForKey(
+            ConditionalStepKey.FINAL_DROID_CONFIGURATION,
+            'Deferred droid build requires final configuration'
+          )
+        );
+      }
+    } catch (err) {
+      console.warn('[ConditionalStepResolver] Error checking for deferred droid builds:', err);
+    }
+
+    return activeSteps;
   }
 
   /**
@@ -100,32 +126,32 @@ export class ConditionalStepResolver {
 
     // TODO (Wave 10): Replace this entire block with:
     //   const engineSteps = await progressionEngine.getActiveConditionalSteps(actor, 'levelup');
-    //   return engineSteps.map(key => this._buildDescriptorForKey(key, actor));
+    //   return Promise.all(engineSteps.map(key => this._buildDescriptorForKey(key, actor)));
 
     // Interim: check known conditional conditions
     const skillsUnlocked = await this._checkSkillsUnlocked(actor);
     if (skillsUnlocked.active) {
-      activeSteps.push(this._buildDescriptorForKey(ConditionalStepKey.SKILLS, skillsUnlocked.reason));
+      activeSteps.push(await this._buildDescriptorForKey(ConditionalStepKey.SKILLS, skillsUnlocked.reason));
     }
 
     const forcePowersUnlocked = await this._checkForcePowersUnlocked(actor);
     if (forcePowersUnlocked.active) {
-      activeSteps.push(this._buildDescriptorForKey(ConditionalStepKey.FORCE_POWERS, forcePowersUnlocked.reason));
+      activeSteps.push(await this._buildDescriptorForKey(ConditionalStepKey.FORCE_POWERS, forcePowersUnlocked.reason));
     }
 
     const forceSecretsUnlocked = await this._checkForceSecretsUnlocked(actor);
     if (forceSecretsUnlocked.active) {
-      activeSteps.push(this._buildDescriptorForKey(ConditionalStepKey.FORCE_SECRETS, forceSecretsUnlocked.reason));
+      activeSteps.push(await this._buildDescriptorForKey(ConditionalStepKey.FORCE_SECRETS, forceSecretsUnlocked.reason));
     }
 
     const forceTechniquesUnlocked = await this._checkForceTechniquesUnlocked(actor);
     if (forceTechniquesUnlocked.active) {
-      activeSteps.push(this._buildDescriptorForKey(ConditionalStepKey.FORCE_TECHNIQUES, forceTechniquesUnlocked.reason));
+      activeSteps.push(await this._buildDescriptorForKey(ConditionalStepKey.FORCE_TECHNIQUES, forceTechniquesUnlocked.reason));
     }
 
     const starshipUnlocked = await this._checkStarshipManeuversUnlocked(actor);
     if (starshipUnlocked.active) {
-      activeSteps.push(this._buildDescriptorForKey(ConditionalStepKey.STARSHIP_MANEUVERS, starshipUnlocked.reason));
+      activeSteps.push(await this._buildDescriptorForKey(ConditionalStepKey.STARSHIP_MANEUVERS, starshipUnlocked.reason));
     }
 
     return activeSteps;
@@ -134,15 +160,28 @@ export class ConditionalStepResolver {
   /**
    * Build a StepDescriptor for a known conditional step key.
    * Plugin classes are registered lazily to avoid circular imports.
+   * PHASE C: Dynamically loads FinalDroidConfigurationStep
    *
    * @param {string} key - ConditionalStepKey value
    * @param {string} unlockReason - Human-readable reason this step is available
    * @returns {import('../steps/step-descriptor.js').StepDescriptor}
    */
-  _buildDescriptorForKey(key, unlockReason) {
+  async _buildDescriptorForKey(key, unlockReason) {
     const config = CONDITIONAL_STEP_CONFIG[key];
     if (!config) {
       throw new Error(`ConditionalStepResolver: unknown step key "${key}"`);
+    }
+
+    // PHASE C: Lazy-load FinalDroidConfigurationStep to avoid circular imports
+    let pluginClass = config.pluginClass;
+    if (key === ConditionalStepKey.FINAL_DROID_CONFIGURATION && !pluginClass) {
+      try {
+        const module = await import('../steps/final-droid-configuration-step.js');
+        pluginClass = module.FinalDroidConfigurationStep;
+      } catch (err) {
+        console.error('[ConditionalStepResolver] Failed to load FinalDroidConfigurationStep:', err);
+        pluginClass = null;
+      }
     }
 
     return createStepDescriptor({
@@ -155,7 +194,7 @@ export class ConditionalStepResolver {
       isConditional: true,
       unlockReason,
       isHidden: false,
-      pluginClass: config.pluginClass,
+      pluginClass,
       engineKey: key,
     });
   }
@@ -261,5 +300,12 @@ const CONDITIONAL_STEP_CONFIG = {
     type: StepType.SELECTION,
     isSkippable: false,
     pluginClass: null, // Wired in Wave 9: StarshipManeuverStep
+  },
+  [ConditionalStepKey.FINAL_DROID_CONFIGURATION]: {
+    label: 'Final Droid Configuration',
+    icon: 'fa-robot',
+    type: StepType.BUILD,
+    isSkippable: false,
+    pluginClass: null, // PHASE C: FinalDroidConfigurationStep (lazy-loaded to avoid circular)
   },
 };

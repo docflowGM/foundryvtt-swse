@@ -1,0 +1,243 @@
+{{!-- Final Droid Configuration Work Surface — Phase C Final Pass --}}
+{{!-- Read-only review of deferred droid build before chargen completion --}}
+
+<div class="prog-final-droid swse-droid-builder-surface swse-ui-shell">
+  {{!-- HEADER --}}
+  <div class="prog-droid-builder__header">
+    <h2 class="prog-droid-builder__title">{{presentation.title}}</h2>
+    <p class="prog-droid-builder__subtitle">{{presentation.subtitle}}</p>
+  </div>
+
+  {{!-- STATUS BANNER: FINAL PASS --}}
+  <div class="prog-final-droid__status-banner prog-final-droid__status-banner--finalization">
+    <i class="fas fa-robot"></i>
+    <div>
+      <strong>Final Droid Configuration Pass</strong>
+      <p>Review your droid build. Once confirmed, you cannot make changes.</p>
+    </div>
+  </div>
+
+  {{!-- BUDGET WARNING --}}
+  {{#if willLoseBudget}}
+    <div class="prog-final-droid__warning-banner">
+      <i class="fas fa-exclamation-triangle"></i>
+      <div>
+        <strong>⚠️ Unspent Droid Budget</strong>
+        <p>You have {{unspentCredits}} unspent credits from your {{creditsBase}} credit droid construction budget. These credits will be lost and NOT converted to general credits.</p>
+      </div>
+    </div>
+  {{/if}}
+
+  {{!-- BUILD METRICS --}}
+  <div class="prog-droid-builder__metrics">
+    <div class="metric-chip">
+      <span class="metric-label">Systems</span>
+      <span class="metric-value">{{presentation.buildTotals.systemCount}}</span>
+    </div>
+    <div class="metric-chip">
+      <span class="metric-label">Total Cost</span>
+      <span class="metric-value">{{presentation.buildTotals.totalCost}} cr</span>
+    </div>
+    <div class="metric-chip">
+      <span class="metric-label">Total Weight</span>
+      <span class="metric-value">{{presentation.buildTotals.totalWeight}} kg</span>
+    </div>
+    <div class="metric-chip {{#if (lt creditsRemaining 0)}}metric-chip--warning{{/if}}">
+      <span class="metric-label">Dedicated Budget Remaining</span>
+      <span class="metric-value">{{creditsRemaining}} / {{creditsBase}} cr</span>
+    </div>
+  </div>
+
+  {{!-- CHASSIS INFO --}}
+  <div class="prog-droid-builder__chassis-info">
+    <div class="chassis-spec">
+      <strong>Degree:</strong> {{presentation.droidInfo.degree}}
+    </div>
+    <div class="chassis-spec">
+      <strong>Size:</strong> {{presentation.droidInfo.size}}
+    </div>
+  </div>
+
+  {{!-- SELECTED SYSTEMS SUMMARY --}}
+  <div class="prog-final-droid__systems-summary">
+    <h3>Current Build Configuration</h3>
+
+    {{#if presentation.selectedSystems.locomotion}}
+      <div class="system-summary-item">
+        <span class="system-icon"><i class="fas fa-shoe-prints"></i></span>
+        <div class="system-details">
+          <strong>Locomotion:</strong> {{presentation.selectedSystems.locomotion.name}}
+          <span class="system-cost">({{presentation.selectedSystems.locomotion.cost}} cr)</span>
+        </div>
+      </div>
+    {{/if}}
+
+    {{#if presentation.selectedSystems.processor}}
+      <div class="system-summary-item">
+        <span class="system-icon"><i class="fas fa-brain"></i></span>
+        <div class="system-details">
+          <strong>Processor:</strong> {{presentation.selectedSystems.processor.name}}
+          {{#if (eq presentation.selectedSystems.processor.cost 0)}}
+            <span class="free-badge">FREE</span>
+          {{else}}
+            <span class="system-cost">({{presentation.selectedSystems.processor.cost}} cr)</span>
+          {{/if}}
+        </div>
+      </div>
+    {{/if}}
+
+    {{#if presentation.selectedSystems.appendages}}
+      <div class="system-summary-item">
+        <span class="system-icon"><i class="fas fa-hand-paper"></i></span>
+        <div class="system-details">
+          <strong>Appendages:</strong>
+          <ul class="appendage-list">
+            {{#each presentation.selectedSystems.appendages}}
+              <li>{{this.name}} {{#if this.cost}}<span class="system-cost">({{this.cost}} cr)</span>{{else}}<span class="free-badge">FREE</span>{{/if}}</li>
+            {{/each}}
+          </ul>
+        </div>
+      </div>
+    {{/if}}
+
+    {{#if presentation.selectedSystems.accessories}}
+      <div class="system-summary-item">
+        <span class="system-icon"><i class="fas fa-tools"></i></span>
+        <div class="system-details">
+          <strong>Accessories:</strong>
+          <ul class="accessory-list">
+            {{#each presentation.selectedSystems.accessories}}
+              <li>{{this.name}} {{#if this.cost}}<span class="system-cost">({{this.cost}} cr)</span>{{else}}<span class="free-badge">FREE</span>{{/if}}</li>
+            {{/each}}
+          </ul>
+        </div>
+      </div>
+    {{/if}}
+  </div>
+
+  {{!-- CONFIRMATION SECTION --}}
+  <div class="prog-final-droid__confirmation">
+    <p>Once you confirm this build, you cannot make further changes during chargen.</p>
+    <button class="btn btn-primary" data-action="confirm-droid-build">
+      <i class="fas fa-check-circle"></i> Confirm Droid Build
+    </button>
+  </div>
+</div>
+
+<style scoped>
+.prog-final-droid {
+  padding: 1rem;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+}
+
+.prog-final-droid__status-banner {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 4px;
+  background-color: #2a4a3a;
+  border-left: 4px solid #7cb342;
+  color: #fff;
+}
+
+.prog-final-droid__warning-banner {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 4px;
+  background-color: #4a3a2a;
+  border-left: 4px solid #ff9800;
+  color: #fff;
+}
+
+.prog-final-droid__systems-summary {
+  margin: 2rem 0;
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.prog-final-droid__systems-summary h3 {
+  margin: 0 0 1rem 0;
+  color: #fff;
+}
+
+.system-summary-item {
+  display: flex;
+  gap: 1rem;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+}
+
+.system-icon {
+  min-width: 2rem;
+  text-align: center;
+  color: #7cb342;
+}
+
+.system-details {
+  flex: 1;
+  color: #ddd;
+}
+
+.system-cost {
+  color: #ffa500;
+  font-weight: bold;
+}
+
+.free-badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  background-color: #7cb342;
+  color: #fff;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-left: 0.5rem;
+}
+
+.appendage-list,
+.accessory-list {
+  margin: 0.5rem 0 0 1rem;
+  padding-left: 1rem;
+  color: #ddd;
+}
+
+.appendage-list li,
+.accessory-list li {
+  margin: 0.25rem 0;
+}
+
+.prog-final-droid__confirmation {
+  text-align: center;
+  margin: 2rem 0 1rem 0;
+  padding: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.prog-final-droid__confirmation p {
+  color: #ccc;
+  margin-bottom: 1rem;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background-color: #7cb342;
+  color: #fff;
+  font-weight: bold;
+}
+
+.btn-primary:hover {
+  background-color: #8bc34a;
+}
+</style>
