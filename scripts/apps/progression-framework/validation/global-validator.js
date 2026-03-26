@@ -102,17 +102,25 @@ export class GlobalValidator {
 
     if (!background) return; // Nothing to validate
 
-    // TODO: In future, load background compatibility rules from system data
-    // For now, just ensure a background is selected
-    // Example rules to implement:
-    // - Some backgrounds locked by species choice
-    // - Some backgrounds give bonus feats incompatible with class
-    // - Some backgrounds provide class-specific skills
-
-    // Placeholder validation
+    // Validate background structure
     if (background.backgroundIds && background.backgroundIds.length === 0) {
-      result.errors.push('Background selection is empty');
+      result.errors.push('Background selection is empty. Choose at least one background.');
+      return;
     }
+
+    // Practical checks without needing full system data
+    // These will be enhanced when background compatibility rules are available
+    const hasValidBackgroundData = background.backgroundIds || background.backgrounds;
+    if (!hasValidBackgroundData) {
+      result.warnings.push('Background data is incomplete. Ensure background is properly selected.');
+    }
+
+    // TODO: In future, load background compatibility rules from system data
+    // Future rules to implement:
+    // - Some backgrounds locked by species choice (e.g., tribal backgrounds for specific species)
+    // - Some backgrounds give bonus feats incompatible with class
+    // - Some backgrounds provide class-specific skills (e.g., military background + soldier class synergy)
+    // - Background provides trained skills that count toward class allocation
   }
 
   /**
@@ -193,24 +201,26 @@ export class GlobalValidator {
       return;
     }
 
+    const allocatedCount = Object.keys(skills).length;
+
+    // Practical checks without full system integration
+    if (allocatedCount === 0) {
+      result.suggestions.push('Consider selecting skills to develop your character\'s expertise.');
+      return;
+    }
+
+    // Sanity check: don't exceed 10 skills (reasonable upper bound)
+    if (allocatedCount > 10) {
+      result.warnings.push(`Many skills trained (${allocatedCount}). Class limits may apply.`);
+    }
+
     // TODO: Get class skill entitlements from system data
-    // Rules to check:
+    // Future rules to implement:
     // - Total skill points allocated <= class entitlements
     // - Trained skills match class skill list (or cross-class with penalty)
-    // - Skill ranks don't exceed maximum per skill
+    // - Skill ranks don't exceed maximum per skill (typically 5-10)
     // - Background bonus skills are included in count
-
-    const allocatedCount = Object.values(skills).reduce((sum, val) => {
-      return sum + (typeof val === 'number' ? val : 1);
-    }, 0);
-
-    // Placeholder: assume 3 base skill slots per level 1
-    const availableSlots = 3; // TODO: derive from class data
-    if (allocatedCount > availableSlots) {
-      result.errors.push(
-        `Too many skills trained (${allocatedCount}/${availableSlots}). Remove ${allocatedCount - availableSlots} skill(s).`
-      );
-    }
+    // - Cross-class skill training penalties apply
   }
 
   /**
@@ -222,27 +232,44 @@ export class GlobalValidator {
     const species = buildIntent.getSelection('species');
 
     if (Object.keys(attributes).length === 0) {
-      result.warnings.push('Attributes not yet distributed. This is required before finalization.');
+      result.errors.push('Attributes not yet distributed. This is required before finalization.');
       return;
     }
 
+    // Check for all 6 core abilities
+    const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+    const presentAbilities = abilityKeys.filter(key => key in attributes && attributes[key] !== undefined && attributes[key] !== null);
+    const missingAbilities = abilityKeys.filter(key => !(key in attributes) || attributes[key] === undefined || attributes[key] === null);
+
+    if (presentAbilities.length < abilityKeys.length) {
+      result.errors.push(
+        `Attributes incomplete. Missing: ${missingAbilities.join(', ')}`
+      );
+      return;
+    }
+
+    // Validate scores are in reasonable range
+    const invalidScores = [];
+    for (const [key, value] of Object.entries(attributes)) {
+      const score = parseInt(value, 10);
+      if (isNaN(score)) {
+        invalidScores.push(`${key}: non-numeric value`);
+      } else if (score < 3 || score > 20) {
+        invalidScores.push(`${key}: ${score} (typically 3-20)`);
+      }
+    }
+
+    if (invalidScores.length > 0) {
+      result.warnings.push(`Unusual ability scores: ${invalidScores.join(', ')}`);
+    }
+
     // TODO: Validate based on chargen method
-    // Rules to check:
+    // Future rules to implement:
     // - Point buy total equals available points (usually 25-27)
     // - Each ability between 8-15 for point buy
-    // - Standard array scores are correct
+    // - Standard array scores are correct (15, 14, 13, 12, 10, 8)
     // - Species modifiers are applied correctly
-    // - Final scores are within game limits (usually 3-20+)
-
-    // Placeholder: just ensure we have all 6 abilities
-    const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
-    const missingAbilities = abilityKeys.filter(key => !(key in attributes));
-
-    if (missingAbilities.length > 0) {
-      result.warnings.push(
-        `Abilities not fully distributed. Missing: ${missingAbilities.join(', ')}`
-      );
-    }
+    // - Final scores with modifiers are within game limits
   }
 
   /**
@@ -254,19 +281,33 @@ export class GlobalValidator {
     const background = buildIntent.getSelection('background');
     const species = buildIntent.getSelection('species');
 
+    // Languages are optional but suggested
     if (!languages || (typeof languages === 'object' && Object.keys(languages).length === 0)) {
       result.suggestions.push('Consider selecting bonus languages to expand your character\'s background.');
       return;
     }
 
-    // TODO: Validate against bonuses
-    // Rules to check:
-    // - Bonus languages from background are already included
-    // - Species bonus languages are already included
-    // - Selected languages don't exceed available slots
-    // - Exotic languages require appropriate feats
+    // Practical checks without full system integration
+    const languageList = Array.isArray(languages) ? languages : Object.keys(languages);
 
-    // Placeholder validation
+    if (languageList.length > 0) {
+      // Sanity check: don't exceed 10 languages (reasonable upper bound)
+      if (languageList.length > 10) {
+        result.warnings.push(`Many languages known (${languageList.length}). Background/species bonus limits may apply.`);
+      }
+
+      // Suggest at least knowing one bonus language beyond starting language
+      if (languageList.length < 2) {
+        result.suggestions.push('Consider learning at least one additional language to expand roleplay opportunities.');
+      }
+    }
+
+    // TODO: Validate against bonuses when language system is accessible
+    // Future rules to implement:
+    // - Bonus languages from background are already included in allocation
+    // - Species bonus languages are already included
+    // - Selected languages don't exceed available slots for bonus languages
+    // - Exotic/restricted languages require appropriate feats or species
   }
 
   /**
