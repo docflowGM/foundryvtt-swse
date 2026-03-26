@@ -33,6 +33,7 @@ import { ProgressRail } from './progress-rail.js';
 import { UtilityBar } from './utility-bar.js';
 import { HydrationDiagnosticsCollector, HydrationValidator, HydrationRecoveryStrategies } from '../hydration-diagnostics.js';
 import { BuildIntent } from './build-intent.js';
+import { GlobalValidator } from '../validation/global-validator.js';
 
 /**
  * Shell state model (reference — actual state lives on `this`)
@@ -1193,6 +1194,45 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this.talentTreeStage = 'graph';
     this.activeTalentTreeId = treeId;
     this.render();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Global Validation (Phase 2)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Validate the entire build state against global constraints.
+   * Phase 2: Global Validation - Cross-step constraint checking
+   *
+   * @param {Object} options - Validation options
+   *   - strict: boolean - Treat warnings as errors
+   * @returns {Object} Validation result with errors, warnings, conflicts, suggestions
+   */
+  validateBuild(options = {}) {
+    return GlobalValidator.validate(this, {
+      mode: this.mode,
+      ...options,
+    });
+  }
+
+  /**
+   * Check if build is valid for proceeding (has no blocking errors).
+   * @returns {boolean}
+   */
+  isBuildValid() {
+    const result = this.validateBuild();
+    return result.isValid;
+  }
+
+  /**
+   * Get validation report as human-readable text.
+   * Useful for mentor feedback and UI display.
+   *
+   * @returns {string} Formatted validation report
+   */
+  getBuildValidationReport() {
+    const result = this.validateBuild();
+    return GlobalValidator.formatReport(result);
   }
 
   // ---------------------------------------------------------------------------
