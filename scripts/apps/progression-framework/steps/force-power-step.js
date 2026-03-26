@@ -17,8 +17,7 @@ import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ForcePowerPicker } from '../../../apps/progression/force-power-picker.js';
 import { ForcePowerEngine } from '../../../engine/progression/engine/force-power-engine.js';
 import { ForceRegistry } from '../../../engine/registries/force-registry.js';
-import { getMentorGuidance, getMentorForClass, MENTORS } from '../../../engine/mentor/mentor-dialogues.js';
-import { handleAskMentor } from './mentor-step-integration.js';
+import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { swseLogger } from '../../../utils/logger.js';
 
 /**
@@ -343,13 +342,11 @@ export class ForcePowerStep extends ProgressionStepPlugin {
 
   /**
    * Mentor guidance for Force Powers step.
+   * Uses canonical mentor dialogue authority (forcePowers guidance field).
    */
   getMentorContext(shell) {
-    const mentorObj = this._getMentorObject(shell.actor);
-    if (!mentorObj) return 'Choose a Force Power to develop your connection to the Force.';
-
-    const guidance = getMentorGuidance(mentorObj, 'force_power');
-    return guidance || 'The Force awaits your choice, young apprentice.';
+    return getStepGuidance(shell.actor, 'force-powers')
+      || 'The Force awaits your choice, young apprentice.';
   }
 
   /**
@@ -464,9 +461,4 @@ export class ForcePowerStep extends ProgressionStepPlugin {
   /**
    * Get the mentor object for the actor's class.
    * Falls back to Ol' Salty if class unknown.
-   */
-  _getMentorObject(actor) {
-    const className = actor.system?.class?.primary?.name;
-    return getMentorForClass(className) || MENTORS.Scoundrel || Object.values(MENTORS)[0];
-  }
-}
+   */}

@@ -22,7 +22,7 @@ import { EquipmentEngine } from '../../../engine/progression/engine/equipment-en
 import { HPGeneratorEngine } from '../../../engine/HP/HPGeneratorEngine.js';
 import { SettingsHelper } from '../../../utils/settings-helper.js';
 import { AurebeshTranslator } from '../../../ui/dialogue/aurebesh-translator.js';
-import { getMentorGuidance } from '../../../engine/mentor/mentor-dialogues.js';
+import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { swseLogger } from '../../../utils/logger.js';
 
 export class ConfirmStep extends ProgressionStepPlugin {
@@ -358,11 +358,8 @@ export class ConfirmStep extends ProgressionStepPlugin {
   }
 
   getMentorContext(shell) {
-    const mentorGuidance = getMentorGuidance(
-      { id: shell.mentor.mentorId },
-      'summaryGuidance'
-    );
-    return mentorGuidance || 'Your path is clear. Stand ready for deployment.';
+    return getStepGuidance(shell.actor, 'confirm')
+      || 'Your path is clear. Stand ready for deployment.';
   }
 
   async onAskMentor(shell) {

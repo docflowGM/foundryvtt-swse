@@ -16,6 +16,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { DROID_SYSTEMS } from '../../../data/droid-systems.js';
 import { swseLogger } from '../../../utils/logger.js';
+import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 
 export class DroidBuilderStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -694,7 +695,8 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
    * Return mentor guidance text for this step.
    */
   getMentorContext(shell) {
-    return 'You are now configuring your droid chassis. Select systems for locomotion, processing, appendages, and accessories. Build within your credit budget.';
+    return getStepGuidance(shell.actor, 'droid-builder')
+      || 'Make your choice wisely.';
   }
 
   /**

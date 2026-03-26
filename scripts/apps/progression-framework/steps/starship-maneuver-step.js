@@ -8,7 +8,7 @@
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
-import { getMentorGuidance, getMentorForClass, MENTORS } from '../../../engine/mentor/mentor-dialogues.js';
+import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { handleAskMentor } from './mentor-step-integration.js';
 import { swseLogger } from '../../../utils/logger.js';
 
@@ -216,8 +216,8 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
   getUtilityBarMode() { return 'rich'; }
 
   getMentorContext(shell) {
-    const mentorObj = this._getMentorObject(shell.actor);
-    return getMentorGuidance(mentorObj, 'starship_maneuver') || 'Choose maneuvers to enhance your piloting prowess.';
+    return getStepGuidance(shell.actor, 'starship-maneuver')
+      || 'Make your choice wisely.';
   }
 
   async onAskMentor(shell) {

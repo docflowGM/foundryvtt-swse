@@ -18,6 +18,7 @@
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
+import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
 export class SummaryStep extends ProgressionStepPlugin {
@@ -367,4 +368,14 @@ export class SummaryStep extends ProgressionStepPlugin {
     }
     return null;
   }
+
+  getMentorContext(shell) {
+    return getStepGuidance(shell.actor, 'confirm')
+      || 'Make your choice wisely.';
+  }
+
+  getMentorMode() {
+    return 'context-only';
+  }
+
 }

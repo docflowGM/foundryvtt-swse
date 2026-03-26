@@ -11,8 +11,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ForcePowerEngine } from '../../../engine/progression/engine/force-secret-engine.js';
 import { ForceRegistry } from '../../../engine/registries/force-registry.js';
-import { getMentorGuidance, getMentorForClass, MENTORS } from '../../../engine/mentor/mentor-dialogues.js';
-import { handleAskMentor } from './mentor-step-integration.js';
+import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { swseLogger } from '../../../utils/logger.js';
 
 export class ForceSecretStep extends ProgressionStepPlugin {
@@ -250,11 +249,8 @@ export class ForceSecretStep extends ProgressionStepPlugin {
   }
 
   getMentorContext(shell) {
-    const mentorObj = this._getMentorObject(shell.actor);
-    if (!mentorObj) return 'Choose wisely among these hidden mysteries.';
-
-    const guidance = getMentorGuidance(mentorObj, 'force_secret');
-    return guidance || 'The path to deeper understanding awaits.';
+    return getStepGuidance(shell.actor, 'force-secrets')
+      || 'The path to deeper understanding awaits.';
   }
 
   async onAskMentor(shell) {
@@ -288,10 +284,5 @@ export class ForceSecretStep extends ProgressionStepPlugin {
 
     filtered.sort((a, b) => a.name.localeCompare(b.name));
     this._filteredSecrets = filtered;
-  }
-
-  _getMentorObject(actor) {
-    const className = actor.system?.class?.primary?.name;
-    return getMentorForClass(className) || MENTORS.Scoundrel || Object.values(MENTORS)[0];
   }
 }

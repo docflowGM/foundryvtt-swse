@@ -11,6 +11,7 @@
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
+import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SkillRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js';
 
@@ -251,4 +252,14 @@ export class SkillsStep extends ProgressionStepPlugin {
       data: stepData,
     };
   }
+
+  getMentorContext(shell) {
+    return getStepGuidance(shell.actor, 'skills')
+      || 'Make your choice wisely.';
+  }
+
+  getMentorMode() {
+    return 'context-only';
+  }
+
 }
