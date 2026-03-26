@@ -19,7 +19,7 @@ const __dirname = path.dirname(__filename);
 
 const repoRoot = path.resolve(__dirname, '..', '..');
 const inputPath = path.join(repoRoot, 'data', 'mentor-dialogues.json');
-const outputPath = path.join(repoRoot, 'scripts', 'apps', 'mentor-dialogues.data.js');
+const outputPath = path.join(repoRoot, 'scripts', 'engine', 'mentor', 'mentor-dialogues.data.js');
 
 function main() {
   const raw = fs.readFileSync(inputPath, 'utf8');

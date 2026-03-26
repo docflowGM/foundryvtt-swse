@@ -302,7 +302,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
       mentorId: 'ol-salty',
       name: olSalty?.name ?? "Ol' Salty",
       title: olSalty?.title ?? 'Seasoned Spacer',
-      portrait: olSalty?.portrait ?? 'systems/foundryvtt-swse/assets/mentors/salty.webp',
+      portrait: olSalty?.portrait ?? 'systems/foundryvtt-swse/assets/mentors/salty.png',
       currentDialogue: '',
       pendingDialogue: null,
       isAnimating: false,
