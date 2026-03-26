@@ -95,11 +95,15 @@
   },
 
   "guidance": {
+    "species": "Your bloodline is what it is. What matters is what you do with it.",
     "class": "Pick the stuff that makes you faster, quieter, deadlier. You wanna sneak past these losers and still be breathin' when the credits hit the floor.",
+    "background": "Everybody's got baggage. Use it or lose it.",
     "talents": "Go for silent takedowns, smooth escapes, and anything that keeps you from gettin' splattered. Dead men don't talk, but smart ones survive.",
     "abilities": "Dexterity, precision, brains. Strength? Only helps if you ain't gettin' seen. Keep your head down and your eyes open.",
     "skills": "Stealth, anatomy, infiltration—know where to poke so they never get up. Learn it all, kid. Nar Shaddaa ain't forgiving.",
+    "languages": "Understanding the mark is half the job. Language is a lockpick.",
     "multiclass": "Extra skills? Fine. The more ways you can ruin somebody's day, the less likely it is you end up dead in a gutter.",
+    "forcePowers": "If you can use the Force to slip past security unnoticed? I'm not gonna stop you.",
     "hp": "Toughness helps, but lemme tell ya—if they see you, it's already too late. Move smart, hit fast, survive.",
     "summary": "Move smart. Hit fast. Live."
   },

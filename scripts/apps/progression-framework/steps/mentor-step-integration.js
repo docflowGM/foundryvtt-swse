@@ -1,6 +1,36 @@
 /**
  * Mentor Step Integration
  *
+ * ARCHITECTURE: Mentor Dialogue vs Suggestion Authority
+ *
+ * This module maintains a clean separation between two distinct mentor systems:
+ *
+ * 1. MENTOR DIALOGUE AUTHORITY (dialogue JSON files)
+ *    - Source: data/dialogue/mentors/{mentor_id}/{mentor_id}_dialogue*.json
+ *    - Contains: voice, instructions, contextual guidance, character philosophy
+ *    - Used for: step guidance, mentorContext (in-character instructions)
+ *    - Examples:
+ *      * classGuidance - "Choose the path that aligns..."
+ *      * speciesGuidance - "Yer bloodline shapes what ye can do..."
+ *      * talentGuidance - "Every talent is a tool..."
+ *      * levelGreetings - Achievement commentary
+ *
+ * 2. SUGGESTION ENGINE + ADVISORY STUB (engine + advisory JSON)
+ *    - Engine: Logic that analyzes build and produces recommendations
+ *    - Advisory Stub: data/dialogue/mentors/{mentor_id}/{mentor_id}_advisory_stub.json
+ *    - Advisory stub contains: templates to wrap recommendations in mentor voice
+ *    - Used for: "Ask Mentor" recommendations, build analysis feedback
+ *    - Flow: Engine → recommendation → advisory stub template → mentor voice
+ *
+ * CRITICAL RULE: Do not mix these systems.
+ *    ✓ Instructions come from dialogue files
+ *    ✗ Do not hardcode instructions when dialogue authority exists
+ *    ✓ Recommendations come from suggestion engine + advisory stub
+ *    ✗ Do not author recommendations directly in dialogue files
+ *
+ * This allows mentor dialogue to remain consistent voice/character while
+ * letting the suggestion engine be the authoritative recommendation logic.
+ *
  * Common helper for step plugins to integrate with the mentor system.
  * Provides Ask Mentor functionality and guidance context.
  */

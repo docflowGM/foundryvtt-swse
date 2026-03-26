@@ -10,7 +10,6 @@
     "values": "Vigilance, flexibility, hard truths, reading situations accurately",
     "tooltip": "Lead reflects your character through a scout's tactical assessment",
     "avatar": "systems/foundryvtt-swse/assets/mentors/lead.webp",
-
     "dialogues": {
       "classPaths": {
         "scout": {
@@ -37,7 +36,6 @@
             "20": "You've become one of the best scouts I've worked with. Keep your humility and your edge sharp, and you'll stay that way."
           }
         },
-
         "sniper": {
           "greeting": "Sniper. You shape the battlefield from distance, where one well-placed shot can decide the fight.",
           "confirmation": "Choose your vantage points carefully, wait patiently, and fire only when your shot counts. Timing and precision are your allies."
@@ -91,7 +89,6 @@
           "confirmation": "Scout, assess, then strike. You're not just gathering intelligence—you're acting on it. That's the commando way, and Argent Squad values that."
         }
       },
-
       "prestigePaths": {
         "pathfinder": {
           "title": "Pathfinder",
@@ -110,7 +107,6 @@
         }
       }
     },
-
     "guidance": {
       "class": "Choose your focus carefully. The right specialization can make the difference between life and death in the field.",
       "background": "Your past determines how you read danger.\n\nExperience is pattern recognition under stress.\n\nPick the background that taught you when to move — and when to wait.",
@@ -121,11 +117,13 @@
       "multiclass": "Diversifying your experience broadens your tactical options. Just make sure it keeps you alive.",
       "forcePowers": "Not my area—if you're in that territory, make sure whatever you pick helps you survive. That's all I care about.",
       "hp": "Stay durable. You can't provide intelligence if you're out of the fight.",
-      "summary": "You're equipped to move forward.\n\nStay observant. Stay flexible.\n\nThe galaxy rewards those who notice first."
+      "summary": "You're equipped to move forward.\n\nStay observant. Stay flexible.\n\nThe galaxy rewards those who notice first.",
+      "species": "Your species shapes your potential. Choose what suits your path."
     },
-
     "mentorStory": {
-      "mentorClasses": ["Scout"],
+      "mentorClasses": [
+        "Scout"
+      ],
       "mentorDSPPercent": 0.45,
       "dspTolerance": 0.35,
       "dspSensitivity": "loose",

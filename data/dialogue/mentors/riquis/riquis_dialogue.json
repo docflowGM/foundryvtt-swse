@@ -10,7 +10,6 @@
     "values": "Insight, curiosity, reverence for mystery, lived experience",
     "tooltip": "Riquis reflects your character through ancient, liminal understandings of the Force",
     "avatar": "systems/foundryvtt-swse/assets/mentors/riquis.webp",
-
     "dialogues": {
       "classPaths": {
         "force_disciple": {
@@ -22,7 +21,6 @@
             "5": "You stand at the threshold. Step forward, and be reshaped… or unmade."
           }
         },
-
         "disciple_seer": {
           "greeting": "Seer. You glimpse truths hidden to most.",
           "confirmation": "Trust visions, but interpret them with care."
@@ -49,7 +47,6 @@
         }
       }
     },
-
     "guidance": {
       "class": "Choose what draws you deeper into the unseen.",
       "talents": "Sharpen intuition, omens, and inner sight.",
@@ -57,11 +54,16 @@
       "skills": "Study forgotten lore and secret rites.",
       "multiclass": "Other paths reveal new symbols and truths.",
       "hp": "A strong vessel carries heavy revelations.",
-      "summary": "Do not name the Force. Listen to it."
+      "summary": "Do not name the Force. Listen to it.",
+      "species": "Your species shapes your potential. Choose what suits your path.",
+      "background": "Your past defines you. Use it wisely.",
+      "languages": "Understanding others gives you advantage.",
+      "forcePowers": "Choose powers that strengthen your purpose."
     },
-
     "mentorStory": {
-      "mentorClasses": ["ForceDisciple"],
+      "mentorClasses": [
+        "ForceDisciple"
+      ],
       "mentorDSPPercent": 0.5,
       "dspTolerance": 0.25,
       "dspSensitivity": "strict",

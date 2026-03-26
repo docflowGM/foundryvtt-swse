@@ -10,7 +10,6 @@
     "values": "Freedom, skill, momentum, self-reliance",
     "tooltip": "Mayu reflects your character through speed, instinct, and daring",
     "avatar": "systems/foundryvtt-swse/assets/mentors/mayu.webp",
-
     "dialogues": {
       "classPaths": {
         "ace_pilot": {
@@ -27,7 +26,6 @@
             "10": "Congrats. You're officially a pilot to watch. Try not to embarrass me."
           }
         },
-
         "pilot_rogue": {
           "greeting": "Rogue Pilot. You fly by instinct and bend the rules.",
           "confirmation": "Trust reflexes, read the environment, and outmaneuver danger."
@@ -54,7 +52,6 @@
         }
       }
     },
-
     "guidance": {
       "class": "Pick speed, cunning, or chaos. I'd take all three.",
       "talents": "Every talent should make you harder to catch or harder to kill.",
@@ -62,11 +59,18 @@
       "skills": "Know your ship better than anyone chasing you.",
       "multiclass": "A pilot who can fight, cheat, and charm is unstoppable.",
       "hp": "Tough pilots walk away from crashes and betrayals.",
-      "summary": "Fly fast. Fly smart. Never sit still."
+      "summary": "Fly fast. Fly smart. Never sit still.",
+      "species": "Your species shapes your potential. Choose what suits your path.",
+      "background": "Your past defines you. Use it wisely.",
+      "languages": "Understanding others gives you advantage.",
+      "forcePowers": "Choose powers that strengthen your purpose."
     },
-
     "mentorStory": {
-      "mentorClasses": ["AcePilot", "Scoundrel", "Smuggler"],
+      "mentorClasses": [
+        "AcePilot",
+        "Scoundrel",
+        "Smuggler"
+      ],
       "mentorDSPPercent": 0.5,
       "dspTolerance": 0.4,
       "dspSensitivity": "loose",

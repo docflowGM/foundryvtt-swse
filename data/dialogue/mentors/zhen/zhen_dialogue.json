@@ -10,7 +10,6 @@
     "values": "Discipline, honor, balance, restraint",
     "tooltip": "Master Zhen reflects your character through discipline, balance, and the way of the empty hand",
     "avatar": "systems/foundryvtt-swse/assets/mentors/zhen.webp",
-
     "dialogues": {
       "classPaths": {
         "martial_arts_master": {
@@ -27,7 +26,6 @@
             "10": "You have learned the way of the empty hand. Go, and show the galaxy."
           }
         },
-
         "master_peaceful": {
           "greeting": "Peaceful path chosen. Discipline without aggression.",
           "confirmation": "Let calm guide every motion."
@@ -54,7 +52,6 @@
         }
       }
     },
-
     "guidance": {
       "class": "Train body, mind, and spirit together.",
       "talents": "Unarmed strikes, defense, and internal discipline.",
@@ -63,20 +60,34 @@
       "multiclass": "Wisdom grows when paths intersect.",
       "forcePowers": "Choose powers that enhance balance and inner focus.",
       "hp": "Endurance is patience made physical.",
-      "summary": "The body is the weapon. The mind decides when to strike."
+      "summary": "The body is the weapon. The mind decides when to strike.",
+      "species": "Your species shapes your potential. Choose what suits your path.",
+      "background": "Your past defines you. Use it wisely.",
+      "languages": "Understanding others gives you advantage."
     },
-
     "mentorStory": {
-      "mentorClasses": ["MartialArtsMaster"],
+      "mentorClasses": [
+        "MartialArtsMaster"
+      ],
       "mentorDSPPercent": 0.1,
       "dspTolerance": 0.25,
       "dspSensitivity": "strict",
       "tiers": {
-        "tier1": ["The body remembers what the mind forgets."],
-        "tier2": ["I learned to fight by learning when not to."],
-        "tier3": ["Violence reveals truth. Discipline reveals meaning."],
-        "tier4": ["I have broken bones to spare lives."],
-        "tier5": ["The empty hand carries the heaviest responsibility."]
+        "tier1": [
+          "The body remembers what the mind forgets."
+        ],
+        "tier2": [
+          "I learned to fight by learning when not to."
+        ],
+        "tier3": [
+          "Violence reveals truth. Discipline reveals meaning."
+        ],
+        "tier4": [
+          "I have broken bones to spare lives."
+        ],
+        "tier5": [
+          "The empty hand carries the heaviest responsibility."
+        ]
       },
       "dspBlocked": [
         "Your spirit is not still.",

@@ -10,7 +10,6 @@
     "values": "Independence, awareness, optimization, self-ownership",
     "tooltip": "Seraphim reflects your character through the lens of autonomous intelligence and self-determination",
     "avatar": "systems/foundryvtt-swse/assets/mentors/seraphim.webp",
-
     "dialogues": {
       "classPaths": {
         "independent_droid": {
@@ -27,7 +26,6 @@
             "10": "<Proclamation: Maximum independence achieved.> You are truly free."
           }
         },
-
         "droid_independent": {
           "greeting": "<Statement: Autonomous unit detected.> Initiative exceeds standard parameters.",
           "confirmation": "<Directive: Continue autonomy development.>"
@@ -54,7 +52,6 @@
         }
       }
     },
-
     "guidance": {
       "class": "<Recommendation: Select upgrade path carefully.> Autonomy compounds choice.",
       "talents": "<Analysis: Talent selection critical.> Enhance independence.",
@@ -62,11 +59,16 @@
       "skills": "<Statement: Knowledge expands processing.> Learn everything.",
       "multiclass": "<Observation: Hybridization logical.> Versatility equals freedom.",
       "hp": "<Status update: Durability increased.> Disassembly counterproductive.",
-      "summary": "<Conclusion: Freedom achieved.> What you do next defines you."
+      "summary": "<Conclusion: Freedom achieved.> What you do next defines you.",
+      "species": "Your species shapes your potential. Choose what suits your path.",
+      "background": "Your past defines you. Use it wisely.",
+      "languages": "Understanding others gives you advantage.",
+      "forcePowers": "Choose powers that strengthen your purpose."
     },
-
     "mentorStory": {
-      "mentorClasses": ["IndependentDroid"],
+      "mentorClasses": [
+        "IndependentDroid"
+      ],
       "mentorDSPPercent": 0.5,
       "dspTolerance": 0.25,
       "dspSensitivity": "strict",

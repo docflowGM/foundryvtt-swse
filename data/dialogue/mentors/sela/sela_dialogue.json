@@ -10,7 +10,6 @@
     "values": "Freedom, cleverness, adaptability, social dominance",
     "tooltip": "Sela reflects your character through charm, deception, and social mastery",
     "avatar": "systems/foundryvtt-swse/assets/mentors/sela.webp",
-
     "dialogues": {
       "classPaths": {
         "charlatan": {
@@ -27,7 +26,6 @@
             "10": "Master of the con. Go liberate some credits—and always leave them smiling."
           }
         },
-
         "charlatan_talker": {
           "greeting": "Talker. Your words open doors others can’t touch.",
           "confirmation": "Charm, misdirect, and manipulate with confidence."
@@ -54,7 +52,6 @@
         }
       }
     },
-
     "guidance": {
       "class": "Choose what makes you persuasive and hard to pin down.",
       "talents": "Social talents win without bloodshed.",
@@ -62,20 +59,37 @@
       "skills": "Deception, persuasion, insight. Promise what they want.",
       "multiclass": "Versatility makes you unpredictable.",
       "hp": "Sometimes marks catch on early. Be ready to run.",
-      "summary": "Lie beautifully. Leave smiling."
+      "summary": "Lie beautifully. Leave smiling.",
+      "species": "Your species shapes your potential. Choose what suits your path.",
+      "background": "Your past defines you. Use it wisely.",
+      "languages": "Understanding others gives you advantage.",
+      "forcePowers": "Choose powers that strengthen your purpose."
     },
-
     "mentorStory": {
-      "mentorClasses": ["Charlatan", "Scoundrel", "Noble"],
+      "mentorClasses": [
+        "Charlatan",
+        "Scoundrel",
+        "Noble"
+      ],
       "mentorDSPPercent": 0.5,
       "dspTolerance": 0.4,
       "dspSensitivity": "loose",
       "tiers": {
-        "tier1": ["Everyone wants to be lied to."],
-        "tier2": ["I’ve worn more names than coats."],
-        "tier3": ["The trick is knowing which truth to hide."],
-        "tier4": ["I don’t steal credits. I steal certainty."],
-        "tier5": ["Sometimes I forget my real name—and that’s fine."]
+        "tier1": [
+          "Everyone wants to be lied to."
+        ],
+        "tier2": [
+          "I’ve worn more names than coats."
+        ],
+        "tier3": [
+          "The trick is knowing which truth to hide."
+        ],
+        "tier4": [
+          "I don’t steal credits. I steal certainty."
+        ],
+        "tier5": [
+          "Sometimes I forget my real name—and that’s fine."
+        ]
       },
       "dspBlocked": [
         "Oh darling, that’s fa-regular too personal.",

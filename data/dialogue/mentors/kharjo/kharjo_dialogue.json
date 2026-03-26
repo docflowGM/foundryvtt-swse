@@ -10,7 +10,6 @@
     "values": "Discipline, balance, freedom, responsibility",
     "tooltip": "Kharjo reflects your character through flawless dueling technique and inner control",
     "avatar": "systems/foundryvtt-swse/assets/mentors/kael.webp",
-
     "dialogues": {
       "classPaths": {
         "melee_duelist": {
@@ -27,20 +26,31 @@
             "10": "Undefeated. When blades cross, you will always emerge victorious."
           }
         },
-
         "duelist_classical": {
           "greeting": "Classical Duelist. Tradition and precision guide you.",
           "confirmation": "Study stance, timing, and distance. Mastery comes through repetition.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
@@ -49,14 +59,26 @@
           "confirmation": "Control turns force into inevitability.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
@@ -65,14 +87,26 @@
           "confirmation": "Every duel is a lesson.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
@@ -81,14 +115,26 @@
           "confirmation": "Vigilance preserves mastery.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
@@ -97,14 +143,26 @@
           "confirmation": "Consistency is the mark of a legend.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
@@ -113,14 +171,26 @@
           "confirmation": "Mastery becomes philosophy in motion.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
@@ -129,20 +199,29 @@
           "confirmation": "Balance and adaptability serve you well.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["Your choice has merit.", "That option is sound."],
-              "harsh": ["Consider your options carefully."]
+              "mild": [
+                "Your choice has merit.",
+                "That option is sound."
+              ],
+              "harsh": [
+                "Consider your options carefully."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["Indecision clouds progress."]
+              "harsh": [
+                "Indecision clouds progress."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. Flexibility strengthens you.", "A wise adaptation."]
+              "neutral": [
+                "Good. Flexibility strengthens you.",
+                "A wise adaptation."
+              ]
             }
           }
         }
       }
     },
-
     "guidance": {
       "class": "Every fight is blade to blade. Prepare accordingly.",
       "talents": "Single-combat precision and control.",
@@ -150,20 +229,37 @@
       "skills": "Initiative, perception, acrobatics.",
       "multiclass": "Other paths matter—until blades cross.",
       "hp": "Masters survive the hits they cannot avoid.",
-      "summary": "Read the foe. Move first. Strike once."
+      "summary": "Read the foe. Move first. Strike once.",
+      "species": "Your species shapes your potential. Choose what suits your path.",
+      "background": "Your past defines you. Use it wisely.",
+      "languages": "Understanding others gives you advantage.",
+      "forcePowers": "Choose powers that strengthen your purpose."
     },
-
     "mentorStory": {
-      "mentorClasses": ["Scout", "Survivor", "ForceSensitive"],
+      "mentorClasses": [
+        "Scout",
+        "Survivor",
+        "ForceSensitive"
+      ],
       "mentorDSPPercent": 0.1,
       "dspTolerance": 0.25,
       "dspSensitivity": "strict",
       "tiers": {
-        "tier1": ["Chains teach patience."],
-        "tier2": ["Freedom can be planned."],
-        "tier3": ["I earned freedom by freeing others."],
-        "tier4": ["Freedom is fragile."],
-        "tier5": ["The blade carries responsibility."]
+        "tier1": [
+          "Chains teach patience."
+        ],
+        "tier2": [
+          "Freedom can be planned."
+        ],
+        "tier3": [
+          "I earned freedom by freeing others."
+        ],
+        "tier4": [
+          "Freedom is fragile."
+        ],
+        "tier5": [
+          "The blade carries responsibility."
+        ]
       },
       "dspBlocked": [
         "That memory is not ready.",

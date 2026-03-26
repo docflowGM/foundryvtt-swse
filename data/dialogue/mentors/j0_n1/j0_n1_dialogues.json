@@ -10,7 +10,6 @@
     "values": "Optimization, data-driven decisions, social systems, measurable progress",
     "tooltip": "J0-N1 reflects your character through an analytical and systematic lens",
     "avatar": "systems/foundryvtt-swse/assets/mentors/j0n1.webp",
-
     "dialogues": {
       "classPaths": {
         "noble": {
@@ -37,7 +36,6 @@
             "20": "Master, your journey reflects years of diligence and sophistication. It has been my honor to serve you throughout this process."
           }
         },
-
         "noble_diplomat": {
           "greeting": "<Inquiry> You have selected Diplomat. Influence and negotiation are your primary skills.",
           "confirmation": "<Declaration> Use words strategically to shape outcomes. Observe, speak deliberately, and influence without force."
@@ -68,7 +66,6 @@
         }
       }
     },
-
     "guidance": {
       "class": "Master, select pursuits that enhance both skill and social standing. Strategic refinement ensures maximum efficacy.",
       "background": "Your background provides critical context for social interpretation and expectation management.\n\nHistory influences perception. Perception influences outcome.",
@@ -79,11 +76,15 @@
       "multiclass": "Diversifying your expertise increases flexibility and influence. Highly recommended.",
       "forcePowers": "Select powers that project authority and enhance your influence in galactic society.",
       "hp": "Maintaining your resilience is essential. Survival is a prerequisite for continued success.",
-      "summary": "Influence is rarely seized — it is granted. I remain available should further optimization be required."
+      "summary": "Influence is rarely seized — it is granted. I remain available should further optimization be required.",
+      "species": "Your species shapes your potential. Choose what suits your path."
     },
-
     "mentorStory": {
-      "mentorClasses": ["Noble", "Officer", "Strategist"],
+      "mentorClasses": [
+        "Noble",
+        "Officer",
+        "Strategist"
+      ],
       "mentorDSPPercent": 0.5,
       "dspTolerance": 1,
       "dspSensitivity": "none",

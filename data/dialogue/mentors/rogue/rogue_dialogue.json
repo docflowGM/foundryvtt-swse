@@ -10,7 +10,6 @@
     "values": "Freedom, autonomy, adaptability, self-sovereignty",
     "tooltip": "Rogue reflects your character through radical freedom and life beyond the law",
     "avatar": "systems/foundryvtt-swse/assets/mentors/rogue.webp",
-
     "dialogues": {
       "classPaths": {
         "outlaw": {
@@ -27,7 +26,6 @@
             "10": "Legendary outlaw. Untouchable. Stay free. Never get caught."
           }
         },
-
         "outlaw_fugitive": {
           "greeting": "Fugitive. Wanted posters and bounties follow you.",
           "confirmation": "Keep moving. Never settle. Freedom stays ahead."
@@ -54,7 +52,6 @@
         }
       }
     },
-
     "guidance": {
       "class": "Choose what keeps you free and alive.",
       "talents": "Escape, evasion, survival.",
@@ -62,20 +59,35 @@
       "skills": "Stealth, streetwise, survival.",
       "multiclass": "Adapt or get caught.",
       "hp": "They shoot and chase. You endure.",
-      "summary": "Live fast. Stay free."
+      "summary": "Live fast. Stay free.",
+      "species": "Your species shapes your potential. Choose what suits your path.",
+      "background": "Your past defines you. Use it wisely.",
+      "languages": "Understanding others gives you advantage.",
+      "forcePowers": "Choose powers that strengthen your purpose."
     },
-
     "mentorStory": {
-      "mentorClasses": ["Outlaw"],
+      "mentorClasses": [
+        "Outlaw"
+      ],
       "mentorDSPPercent": 0.5,
       "dspTolerance": 0.5,
       "dspSensitivity": "none",
       "tiers": {
-        "tier1": ["Freedom tastes best when stolen."],
-        "tier2": ["I stopped believing in laws."],
-        "tier3": ["Running keeps you alive."],
-        "tier4": ["Sometimes I wonder what I’m running from."],
-        "tier5": ["I don’t know how to stop."]
+        "tier1": [
+          "Freedom tastes best when stolen."
+        ],
+        "tier2": [
+          "I stopped believing in laws."
+        ],
+        "tier3": [
+          "Running keeps you alive."
+        ],
+        "tier4": [
+          "Sometimes I wonder what I’m running from."
+        ],
+        "tier5": [
+          "I don’t know how to stop."
+        ]
       },
       "dspBlocked": [
         "That’s too real.",

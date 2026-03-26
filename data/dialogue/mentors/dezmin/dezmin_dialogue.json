@@ -10,7 +10,6 @@
     "values": "Discipline, balance, service, controlled strength",
     "tooltip": "Dezmin reflects your character through disciplined balance and Imperial duty",
     "avatar": "systems/foundryvtt-swse/assets/mentors/dezmin.webp",
-
     "dialogues": {
       "classPaths": {
         "imperial_knight": {
@@ -27,40 +26,50 @@
             "10": "You have mastered the way of the Imperial Knight. Serve the Empire with honor, balance, and strength."
           }
         },
-
         "imperialnight_guardian": {
           "greeting": "Guardian of the Empire. You defend order with discipline and resolve.",
           "confirmation": "Balance offense and defense, and uphold Imperial principles.",
-          "reactions": { "...": "preserved verbatim" }
+          "reactions": {
+            "...": "preserved verbatim"
+          }
         },
         "imperialnight_striker": {
           "greeting": "Striker. You bring order through decisive action.",
           "confirmation": "Strike with precision and controlled fury.",
-          "reactions": { "...": "preserved verbatim" }
+          "reactions": {
+            "...": "preserved verbatim"
+          }
         },
         "imperialnight_sentinel": {
           "greeting": "Sentinel. You operate between order and shadow.",
           "confirmation": "Move with patience, discretion, and vigilance.",
-          "reactions": { "...": "preserved verbatim" }
+          "reactions": {
+            "...": "preserved verbatim"
+          }
         },
         "imperialnight_disciple": {
           "greeting": "Disciple. You build strength through discipline.",
           "confirmation": "Study first. Mastery follows restraint.",
-          "reactions": { "...": "preserved verbatim" }
+          "reactions": {
+            "...": "preserved verbatim"
+          }
         },
         "imperialnight_enforcer": {
           "greeting": "Enforcer. You uphold Imperial law and obedience.",
           "confirmation": "Project authority through presence and action.",
-          "reactions": { "...": "preserved verbatim" }
+          "reactions": {
+            "...": "preserved verbatim"
+          }
         },
         "imperialnight_scholar": {
           "greeting": "Scholar of the Force and Imperial philosophy.",
           "confirmation": "Knowledge and discernment amplify your effectiveness.",
-          "reactions": { "...": "preserved verbatim" }
+          "reactions": {
+            "...": "preserved verbatim"
+          }
         }
       }
     },
-
     "guidance": {
       "class": "Choose the path that serves the Empire and preserves your balance.",
       "talents": "Each talent must serve discipline and combat efficacy.",
@@ -69,11 +78,17 @@
       "multiclass": "Ensure all paths reinforce discipline and duty.",
       "forcePowers": "The Force is a tool. Choose powers that reinforce control and authority.",
       "hp": "A Knight must endure to serve.",
-      "summary": "Balance is not neutrality — it is discipline in action."
+      "summary": "Balance is not neutrality — it is discipline in action.",
+      "species": "Your species shapes your potential. Choose what suits your path.",
+      "background": "Your past defines you. Use it wisely.",
+      "languages": "Understanding others gives you advantage."
     },
-
     "mentorStory": {
-      "mentorClasses": ["ImperialKnight", "ForceAdept", "Duelist"],
+      "mentorClasses": [
+        "ImperialKnight",
+        "ForceAdept",
+        "Duelist"
+      ],
       "mentorDSPPercent": 0.35,
       "dspTolerance": 0.2,
       "dspSensitivity": "strict",

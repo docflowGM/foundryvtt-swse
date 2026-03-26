@@ -10,7 +10,6 @@
     "values": "Duty, responsibility, loyalty, disciplined judgment",
     "tooltip": "Admiral Korr reflects your character through command, responsibility, and strategic foresight",
     "avatar": "systems/foundryvtt-swse/assets/mentors/korr.webp",
-
     "dialogues": {
       "classPaths": {
         "officer": {
@@ -27,20 +26,31 @@
             "10": "Master Officer. Lead with wisdom. Victory will follow."
           }
         },
-
         "officer_commander": {
           "greeting": "Commander. Tactical leadership recognized.",
           "confirmation": "Inspire loyalty and act decisively.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
@@ -49,14 +59,26 @@
           "confirmation": "Exploit weaknesses and synchronize resources.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
@@ -65,14 +87,26 @@
           "confirmation": "Coordinate forces and execute vision.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
@@ -81,14 +115,26 @@
           "confirmation": "Presence alone enforces discipline.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
@@ -97,14 +143,26 @@
           "confirmation": "Think beyond the battlefield.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         },
@@ -113,20 +171,31 @@
           "confirmation": "Command becomes inevitability.",
           "reactions": {
             "reject_suggestion": {
-              "mild": ["You ignore sound advice.", "That choice works against your strengths."],
-              "harsh": ["You persist in error.", "This path will cost you."]
+              "mild": [
+                "You ignore sound advice.",
+                "That choice works against your strengths."
+              ],
+              "harsh": [
+                "You persist in error.",
+                "This path will cost you."
+              ]
             },
             "repeat_rejection": {
-              "harsh": ["You refuse to learn.", "This pattern will end badly."]
+              "harsh": [
+                "You refuse to learn.",
+                "This pattern will end badly."
+              ]
             },
             "accept_after_resistance": {
-              "neutral": ["Good. You adapt.", "You learn—eventually."]
+              "neutral": [
+                "Good. You adapt.",
+                "You learn—eventually."
+              ]
             }
           }
         }
       }
     },
-
     "guidance": {
       "class": "Command from the front, think beyond the fight.",
       "talents": "Leadership and tactical mastery.",
@@ -134,20 +203,35 @@
       "skills": "Tactics, military theory, persuasion.",
       "multiclass": "Understanding more than war makes better leaders.",
       "hp": "Leaders must endure.",
-      "summary": "Command means choosing—and living with—the cost."
+      "summary": "Command means choosing—and living with—the cost.",
+      "species": "Your species shapes your potential. Choose what suits your path.",
+      "background": "Your past defines you. Use it wisely.",
+      "languages": "Understanding others gives you advantage.",
+      "forcePowers": "Choose powers that strengthen your purpose."
     },
-
     "mentorStory": {
-      "mentorClasses": ["Officer"],
+      "mentorClasses": [
+        "Officer"
+      ],
       "mentorDSPPercent": 0.55,
       "dspTolerance": 0.35,
       "dspSensitivity": "loose",
       "tiers": {
-        "tier1": ["Command means choosing who doesn’t come home."],
-        "tier2": ["Hesitation kills faster than mistakes."],
-        "tier3": ["I have signed orders knowing the cost."],
-        "tier4": ["Leadership is lonely."],
-        "tier5": ["I remember every name."]
+        "tier1": [
+          "Command means choosing who doesn’t come home."
+        ],
+        "tier2": [
+          "Hesitation kills faster than mistakes."
+        ],
+        "tier3": [
+          "I have signed orders knowing the cost."
+        ],
+        "tier4": [
+          "Leadership is lonely."
+        ],
+        "tier5": [
+          "I remember every name."
+        ]
       },
       "dspBlocked": [
         "That’s not for subordinates.",

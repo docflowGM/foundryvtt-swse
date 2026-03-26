@@ -10,7 +10,6 @@
     "values": "Effectiveness, honesty, proven capability, clear roles",
     "tooltip": "Breach reflects your character through a soldier's practical eye",
     "avatar": "systems/foundryvtt-swse/assets/mentors/breach.webp",
-
     "dialogues": {
       "classPaths": {
         "soldier": {
@@ -37,7 +36,6 @@
             "20": "You keep this up, and…well…even I won't pretend I don't respect it."
           }
         },
-
         "rifleman": {
           "greeting": "Rifleman. You control the battlefield from range. Precision and timing define you.",
           "confirmation": "Hold your aim steady, anticipate enemy moves, and make each shot count."
@@ -58,16 +56,56 @@
           "greeting": "Commando. Elite, versatile, and ruthless.",
           "confirmation": "Exploit openings, control engagements, and act decisively."
         },
-
-        "soldier_rifleman": { "greeting": "...", "confirmation": "...", "reactions": { "...": "preserved" } },
-        "soldier_gunner": { "greeting": "...", "confirmation": "...", "reactions": { "...": "preserved" } },
-        "soldier_brawler": { "greeting": "...", "confirmation": "...", "reactions": { "...": "preserved" } },
-        "soldier_tank": { "greeting": "...", "confirmation": "...", "reactions": { "...": "preserved" } },
-        "soldier_specialist": { "greeting": "...", "confirmation": "...", "reactions": { "...": "preserved" } },
-        "soldier_commando": { "greeting": "...", "confirmation": "...", "reactions": { "...": "preserved" } },
-        "soldier_leader": { "greeting": "...", "confirmation": "...", "reactions": { "...": "preserved" } }
+        "soldier_rifleman": {
+          "greeting": "...",
+          "confirmation": "...",
+          "reactions": {
+            "...": "preserved"
+          }
+        },
+        "soldier_gunner": {
+          "greeting": "...",
+          "confirmation": "...",
+          "reactions": {
+            "...": "preserved"
+          }
+        },
+        "soldier_brawler": {
+          "greeting": "...",
+          "confirmation": "...",
+          "reactions": {
+            "...": "preserved"
+          }
+        },
+        "soldier_tank": {
+          "greeting": "...",
+          "confirmation": "...",
+          "reactions": {
+            "...": "preserved"
+          }
+        },
+        "soldier_specialist": {
+          "greeting": "...",
+          "confirmation": "...",
+          "reactions": {
+            "...": "preserved"
+          }
+        },
+        "soldier_commando": {
+          "greeting": "...",
+          "confirmation": "...",
+          "reactions": {
+            "...": "preserved"
+          }
+        },
+        "soldier_leader": {
+          "greeting": "...",
+          "confirmation": "...",
+          "reactions": {
+            "...": "preserved"
+          }
+        }
       },
-
       "prestigePaths": {
         "elite_trooper": {
           "title": "Elite Trooper",
@@ -86,7 +124,6 @@
         }
       }
     },
-
     "guidance": {
       "class": "Pick what feels right in your hands. Same rule as weapons.",
       "background": "Your past forged you. Scars matter. Stories don't.",
@@ -97,11 +134,14 @@
       "multiclass": "Adaptation beats stubbornness.",
       "forcePowers": "Pick something that gives you an edge in combat.",
       "hp": "You're harder to put down now. That's good.",
-      "summary": "If you fall — make it mean something."
+      "summary": "If you fall — make it mean something.",
+      "species": "Your species shapes your potential. Choose what suits your path."
     },
-
     "mentorStory": {
-      "mentorClasses": ["Soldier", "Elite Trooper"],
+      "mentorClasses": [
+        "Soldier",
+        "Elite Trooper"
+      ],
       "mentorDSPPercent": 0.5,
       "dspTolerance": 0.25,
       "dspSensitivity": "strict",

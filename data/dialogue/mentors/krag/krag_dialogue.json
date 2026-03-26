@@ -10,7 +10,6 @@
     "values": "Loyalty, strength, reputation, results",
     "tooltip": "Krag reflects your character through raw presence and uncompromising enforcement",
     "avatar": "systems/foundryvtt-swse/assets/mentors/krag.webp",
-
     "dialogues": {
       "classPaths": {
         "enforcer": {
@@ -29,7 +28,6 @@
         }
       }
     },
-
     "guidance": {
       "class": "Pick what makes you stronger, faster, and scarier.",
       "talents": "Hit harder, intimidate better, survive longer.",
@@ -37,11 +35,16 @@
       "skills": "Intimidation, streetwise, combat tactics.",
       "multiclass": "Sometimes brains solve what fists can’t.",
       "hp": "If you can’t take hits, you won’t last.",
-      "summary": "Walk in. Problem leaves. Simple."
+      "summary": "Walk in. Problem leaves. Simple.",
+      "species": "Your species shapes your potential. Choose what suits your path.",
+      "background": "Your past defines you. Use it wisely.",
+      "languages": "Understanding others gives you advantage.",
+      "forcePowers": "Choose powers that strengthen your purpose."
     },
-
     "mentorStory": {
-      "mentorClasses": ["Enforcer"],
+      "mentorClasses": [
+        "Enforcer"
+      ],
       "mentorDSPPercent": 0.5,
       "dspTolerance": 0.25,
       "dspSensitivity": "strict",

@@ -10,7 +10,6 @@
     "values": "Life, responsibility, restraint, preparedness",
     "tooltip": "Kyber reflects your character through a medic’s pragmatic compassion",
     "avatar": "systems/foundryvtt-swse/assets/mentors/kyber.webp",
-
     "dialogues": {
       "classPaths": {
         "medic": {
@@ -27,7 +26,6 @@
             "10": "Master medic. You heal, you survive, and sometimes you make the bad guys regret showing up. Keep doing exactly that."
           }
         },
-
         "medic_healer": {
           "greeting": "Healer. Your focus is preserving life when others falter.",
           "confirmation": "Prioritize saving lives above all. Stabilize, treat, and protect."
@@ -54,7 +52,6 @@
         }
       }
     },
-
     "guidance": {
       "class": "Pick skills that help you preserve life—and protect yourself while you do it.",
       "talents": "Choose talents that make healing faster, smarter, and survivable.",
@@ -62,11 +59,18 @@
       "skills": "Medical knowledge is your real weapon. The better you know it, the more lives you control.",
       "multiclass": "A medic who can fight a little lives long enough to heal a lot.",
       "hp": "You need to be breathing to save anyone else. Don’t forget that.",
-      "summary": "Save who you can. Live with the rest. Do it again tomorrow."
+      "summary": "Save who you can. Live with the rest. Do it again tomorrow.",
+      "species": "Your species shapes your potential. Choose what suits your path.",
+      "background": "Your past defines you. Use it wisely.",
+      "languages": "Understanding others gives you advantage.",
+      "forcePowers": "Choose powers that strengthen your purpose."
     },
-
     "mentorStory": {
-      "mentorClasses": ["Medic", "Officer", "ForceAdept"],
+      "mentorClasses": [
+        "Medic",
+        "Officer",
+        "ForceAdept"
+      ],
       "mentorDSPPercent": 0.1,
       "dspTolerance": 0.3,
       "dspSensitivity": "loose",
