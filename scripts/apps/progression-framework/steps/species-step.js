@@ -152,12 +152,12 @@ export class SpeciesStep extends ProgressionStepPlugin {
     }
 
     // Wire up double-click to commit species directly
-    const cards = workSurfaceEl?.querySelectorAll('.prog-species-card');
-    if (cards) {
-      cards.forEach(card => {
-        card.addEventListener('dblclick', async (e) => {
+    const rows = workSurfaceEl?.querySelectorAll('.prog-species-row');
+    if (rows) {
+      rows.forEach(row => {
+        row.addEventListener('dblclick', async (e) => {
           e.preventDefault();
-          const itemId = card.dataset.itemId;
+          const itemId = row.dataset.itemId;
           if (itemId) {
             await this.onItemCommitted(itemId, shell);
           }

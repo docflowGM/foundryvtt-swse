@@ -1,49 +1,62 @@
 {{!--
   species-work-surface.hbs
-  CENTER PANEL — angled option-card layout for species selection.
+  CENTER PANEL — full-width row list for species selection.
 
-  Cards are presented in a responsive grid with the new SVG option frames.
-  Right body owns the richer descriptive details.
+  Each species is rendered as a true full-width horizontal row component.
+  Rows are clickable for focus (preview); double-click or button commits selection.
 --}}
 
-<div class="prog-species-browse prog-quickref-stage">
-  <div class="prog-species-grid" role="listbox" aria-label="Species">
+<div class="prog-species-browse">
+  <div class="prog-species-list" role="listbox" aria-label="Species">
     {{#each species}}
-      <button class="swse-option-card prog-species-card
-                     {{#if (eq id ../focusedSpeciesId)}}swse-option-card--focused{{/if}}
-                     {{#if (eq id ../committedSpeciesId)}}swse-option-card--selected{{/if}}"
+      <button class="prog-species-row
+                     {{#if (eq id ../focusedSpeciesId)}}prog-species-row--focused{{/if}}
+                     {{#if (eq id ../committedSpeciesId)}}prog-species-row--committed{{/if}}"
               data-action="focus-item"
               data-item-id="{{this.id}}"
-              data-selected="{{#if (eq id ../committedSpeciesId)}}true{{else}}false{{/if}}"
-              data-focused="{{#if (eq id ../focusedSpeciesId)}}true{{else}}false{{/if}}"
               type="button"
               role="option"
               {{#if (eq id ../committedSpeciesId)}}aria-selected="true"{{/if}}>
 
-        <div class="swse-option-card__header">
-          <h3 class="swse-option-card__title prog-species-card__name">{{this.name}}</h3>
-          <span class="swse-option-card__subtitle">Size: {{this.size}}</span>
+        {{!-- THUMBNAIL — left side, small portrait or initial badge --}}
+        <div class="prog-species-row__thumb">
+          {{#if this.img}}
+            <img class="prog-species-row__thumb-img" src="{{this.img}}" alt="{{this.name}}" title="{{this.name}}">
+          {{else}}
+            <span class="prog-species-row__thumb-badge">{{this.thumbLabel}}</span>
+          {{/if}}
         </div>
 
-        {{#if this.abilityRows.length}}
-          <div class="swse-option-card__body prog-species-card__details">
-            {{#each this.abilityRows}}
-              <span class="prog-species-mod {{this.cssClass}}">{{this.shortLabel}} {{this.signedValue}}</span>
-            {{/each}}
-          </div>
-        {{/if}}
+        {{!-- CENTER — name, size, and modifiers --}}
+        <div class="prog-species-row__center">
+          <div class="prog-species-row__name">{{this.name}}</div>
+          {{#if this.size}}
+            <div class="prog-species-row__stats">
+              <span>Size: {{this.size}}</span>
+              {{#if this.abilityRows.length}}
+                <span class="prog-species-row__sep">•</span>
+                {{#each this.abilityRows}}
+                  <span class="prog-species-row__mods {{this.cssClass}}">{{this.signedValue}} {{this.shortLabel}}</span>
+                  {{#unless @last}}<span class="prog-species-row__sep">,</span>{{/unless}}
+                {{/each}}
+              {{/if}}
+            </div>
+          {{/if}}
+        </div>
 
-        <div class="swse-option-card__meta">
+        {{!-- RIGHT — committed check or source badge --}}
+        <div class="prog-species-row__right">
           {{#if (eq id ../committedSpeciesId)}}
-            <span class="swse-option-card__badge"><i class="fas fa-check"></i> Selected</span>
+            <span class="prog-species-row__check" title="Selected">
+              <i class="fas fa-check"></i>
+            </span>
+          {{else}}
+            {{#if this.source}}
+              <span class="prog-species-row__source" title="{{this.source}}">{{this.source}}</span>
+            {{/if}}
           {{/if}}
-          {{#if this.abilityModLine}}
-            <span class="prog-species-card__mods">{{this.abilityModLine}}</span>
-          {{/if}}
-          {{#unless (eq id ../committedSpeciesId)}}
-            <span class="swse-option-card__badge swse-option-card__badge--source">{{this.source}}</span>
-          {{/unless}}
         </div>
+
       </button>
     {{else}}
       <div class="prog-species-browse__empty">No species match your search or filters.</div>
