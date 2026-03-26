@@ -36,6 +36,8 @@
  */
 
 import { getMentorGuidance, getMentorForClass, MENTORS } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
+import { MentorAdvisoryCoordinator } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-advisory-coordinator.js';
+import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
 /**
  * Maps step choice types to mentor guidance keys.
@@ -125,4 +127,71 @@ export async function handleAskMentor(actor, stepId, shell) {
 export function getStepMentorContext(actor, stepId, fallback = '') {
   const guidance = getStepGuidance(actor, stepId);
   return guidance || fallback || 'Make your choice wisely.';
+}
+
+/**
+ * Phase 8: Handle Ask Mentor with suggestion advisory.
+ * Gets suggestions from a step, formats them as mentor dialogue, and speaks them.
+ *
+ * This is the preferred Ask Mentor handler for steps with suggestions.
+ * Steps call this instead of handleAskMentor when they have _suggestedXXX data.
+ *
+ * Flow: suggestions → MentorAdvisoryCoordinator.generateSuggestionAdvisory()
+ *       → mentor advisory object → mentorRail.speak()
+ *
+ * @param {Actor} actor - The actor being created
+ * @param {string} stepId - The step ID (for context/fallback)
+ * @param {Array} suggestions - Suggestion objects from SuggestionService
+ * @param {import('./shell/progression-shell.js').ProgressionShell} shell - The progression shell
+ * @param {Object} context - Additional context (domain, archetype, relatedGrowth, etc.)
+ * @returns {Promise<void>}
+ */
+export async function handleAskMentorWithSuggestions(actor, stepId, suggestions, shell, context = {}) {
+  try {
+    if (!shell?.mentorRail) return;
+
+    // Get mentor ID from actor/class
+    const mentor = getStepMentorObject(actor);
+    if (!mentor) return;
+
+    // Get mentor ID from the mentor object (handle both name and id)
+    let mentorId = mentor.id || (mentor.name || '').toLowerCase().replace(/\s+/g, '_');
+
+    // Generate suggestion advisory
+    const advisory = await MentorAdvisoryCoordinator.generateSuggestionAdvisory(
+      actor,
+      mentorId,
+      suggestions || [],
+      {
+        stepId,
+        domain: context.domain || stepId,
+        archetype: context.archetype || 'your path',
+        relatedGrowth: context.relatedGrowth || 'further growth',
+        ...context
+      }
+    );
+
+    if (advisory) {
+      // Speak the advisory through mentor rail
+      const advisoryText = `${advisory.observation} ${advisory.impact} ${advisory.guidance}`;
+      await shell.mentorRail.speak(advisoryText, 'encouraging');
+
+      swseLogger.log(
+        `[MentorStepIntegration] Spoke suggestion advisory for ${stepId} (${suggestions.length} suggestions)`
+      );
+    } else {
+      // Fallback to standard guidance if no advisory generated
+      const guidance = getStepGuidance(actor, stepId);
+      if (guidance) {
+        await shell.mentorRail.speak(guidance, 'encouraging');
+      }
+    }
+  } catch (err) {
+    swseLogger.warn('[MentorStepIntegration] Error in handleAskMentorWithSuggestions:', err);
+    // Fallback to standard guidance on error
+    const guidance = getStepGuidance(actor, stepId);
+    if (guidance && shell?.mentorRail) {
+      await shell.mentorRail.speak(guidance, 'encouraging');
+    }
+  }
 }

@@ -12,7 +12,7 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { BackgroundRegistry } from '/systems/foundryvtt-swse/scripts/registries/background-registry.js';
-import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 
@@ -316,7 +316,16 @@ export class BackgroundStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onAskMentor(shell) {
-    await handleAskMentor(shell.actor, 'background', shell);
+    // If we have suggestions, use the advisory system instead of standard guidance
+    if (this._suggestedBackgrounds && this._suggestedBackgrounds.length > 0) {
+      await handleAskMentorWithSuggestions(shell.actor, 'background', this._suggestedBackgrounds, shell, {
+        domain: 'backgrounds',
+        archetype: 'your background'
+      });
+    } else {
+      // Fallback to standard guidance if no suggestions
+      await handleAskMentor(shell.actor, 'background', shell);
+    }
   }
 
   getMentorContext(shell) {

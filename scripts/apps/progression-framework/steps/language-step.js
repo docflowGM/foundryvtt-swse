@@ -18,7 +18,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { LanguageRegistry } from '/systems/foundryvtt-swse/scripts/registries/language-registry.js';
 import { LanguageEngine } from '/systems/foundryvtt-swse/scripts/engine/progression/engine/language-engine.js';
-import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
@@ -390,7 +390,16 @@ export class LanguageStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onAskMentor(shell) {
-    await handleAskMentor(shell.actor, 'languages', shell);
+    // If we have suggestions, use the advisory system instead of standard guidance
+    if (this._suggestedLanguages && this._suggestedLanguages.length > 0) {
+      await handleAskMentorWithSuggestions(shell.actor, 'languages', this._suggestedLanguages, shell, {
+        domain: 'languages',
+        archetype: 'your linguistic choices'
+      });
+    } else {
+      // Fallback to standard guidance if no suggestions
+      await handleAskMentor(shell.actor, 'languages', shell);
+    }
   }
 
   getMentorContext(shell) {

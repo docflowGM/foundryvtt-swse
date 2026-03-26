@@ -257,6 +257,122 @@ export class MentorAdvisoryCoordinator {
       return [];
     }
   }
+
+  /**
+   * Generate selection suggestion advisory — Phase 8 mentor integration
+   * Takes suggestions from SuggestionService and formats them as mentor dialogue.
+   *
+   * Maps suggestion confidence to intensity level (low confidence = very_low intensity, etc.)
+   * Uses strength_reinforcement template to frame suggestions positively.
+   *
+   * @param {Actor} actor - The character
+   * @param {string} mentorId - Mentor ID
+   * @param {Array} suggestions - Suggestion objects from SuggestionService
+   * @param {Object} context - Additional context (domain, stepLabel, etc.)
+   * @returns {Promise<Object>} Advisory object with mentor-voiced suggestion text
+   */
+  static async generateSuggestionAdvisory(actor, mentorId, suggestions, context = {}) {
+    try {
+      if (!actor || !mentorId || !suggestions || suggestions.length === 0) {
+        return null;
+      }
+
+      // Load advisory stub
+      const stub = await this.loadAdvisoryStub(mentorId);
+      if (!stub) {
+        SWSELogger.warn(`[MentorAdvisoryCoordinator] No advisory stub for mentor: ${mentorId}`);
+        return null;
+      }
+
+      // Get the top suggestion
+      const topSuggestion = suggestions[0];
+      if (!topSuggestion) return null;
+
+      // Map suggestion confidence to intensity (0.0-1.0 → very_low to very_high)
+      const confidence = topSuggestion.suggestion?.confidence || 0.5;
+      const intensityMap = {
+        'very_low': 0.1,
+        'low': 0.3,
+        'medium': 0.5,
+        'high': 0.7,
+        'very_high': 0.9
+      };
+
+      let intensity = 'medium';
+      for (const [level, threshold] of Object.entries(intensityMap)) {
+        if (confidence >= threshold) {
+          intensity = level;
+        }
+      }
+
+      // Use strength_reinforcement advisory type (positive framing for suggestions)
+      const advisoryScaffold = stub.advisory_types?.strength_reinforcement?.[intensity];
+      if (!advisoryScaffold) {
+        SWSELogger.warn(
+          `[MentorAdvisoryCoordinator] No strength_reinforcement scaffold for intensity: ${intensity}`
+        );
+        return null;
+      }
+
+      // Load mentor for voice
+      const mentor = await getMentor(mentorId);
+      if (!mentor) {
+        return null;
+      }
+
+      // Build suggestion context for template
+      const suggestionName = topSuggestion.name || topSuggestion.id || 'this choice';
+      const suggestionReason = topSuggestion.suggestion?.reason || 'it suits your path';
+      const relatedGrowth = context.relatedGrowth || 'furthering your abilities';
+
+      // Substitute template variables into scaffold
+      let observation = advisoryScaffold.observation || '';
+      let impact = advisoryScaffold.impact || '';
+      let guidance = advisoryScaffold.guidance || '';
+
+      observation = observation
+        .replace('{strength_area}', suggestionName)
+        .replace('{archetype_or_role}', context.archetype || 'your vision');
+
+      impact = impact
+        .replace('{strength_area}', suggestionName)
+        .replace('{archetype_or_role}', context.archetype || 'your vision');
+
+      guidance = guidance
+        .replace('{related_growth_area}', relatedGrowth)
+        .replace('{strength_area}', suggestionName);
+
+      // Build advisory object
+      const advisory = {
+        mentor: mentorId,
+        type: 'selection_suggestion',
+        intensity,
+        timestamp: Date.now(),
+        observation,
+        impact,
+        guidance,
+        encouragement: advisoryScaffold['Optional Encouragement'] || null,
+        voiceProfile: stub.voice_profile,
+        context: {
+          ...context,
+          suggestion: topSuggestion,
+          reason: suggestionReason,
+          confidence
+        }
+      };
+
+      SWSELogger.log(
+        `[MentorAdvisoryCoordinator] Generated selection suggestion advisory (${intensity}) for ${mentor.name}: ${suggestionName}`
+      );
+
+      return advisory;
+    } catch (err) {
+      SWSELogger.warn(
+        `[MentorAdvisoryCoordinator] Failed to generate suggestion advisory: ${err.message}`
+      );
+      return null;
+    }
+  }
 }
 
 export default MentorAdvisoryCoordinator;

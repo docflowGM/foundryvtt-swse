@@ -9,7 +9,7 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ClassesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js';
-import { getStepMentorObject, getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { getMentorGuidance } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
@@ -261,7 +261,16 @@ export class ClassStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onAskMentor(shell) {
-    await handleAskMentor(shell.actor, 'class', shell);
+    // If we have suggestions, use the advisory system instead of standard guidance
+    if (this._suggestedClasses && this._suggestedClasses.length > 0) {
+      await handleAskMentorWithSuggestions(shell.actor, 'class', this._suggestedClasses, shell, {
+        domain: 'classes',
+        archetype: 'your class choice'
+      });
+    } else {
+      // Fallback to standard guidance if no suggestions
+      await handleAskMentor(shell.actor, 'class', shell);
+    }
   }
 
   getMentorContext(shell) {

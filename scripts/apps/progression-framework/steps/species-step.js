@@ -8,7 +8,7 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
-import { getStepMentorObject, getStepGuidance, handleAskMentor, STEP_TO_CHOICE_TYPE } from './mentor-step-integration.js';
+import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions, STEP_TO_CHOICE_TYPE } from './mentor-step-integration.js';
 // Patch builder lives in the shared progression-framework module — NOT the legacy chargen path.
 import { buildSpeciesAtomicPatch } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shared/species-patch.js';
 import { NearHumanBuilder } from './near-human-builder.js';
@@ -512,7 +512,16 @@ export class SpeciesStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onAskMentor(shell) {
-    await handleAskMentor(shell.actor, 'species', shell);
+    // If we have suggestions, use the advisory system instead of standard guidance
+    if (this._suggestedSpecies && this._suggestedSpecies.length > 0) {
+      await handleAskMentorWithSuggestions(shell.actor, 'species', this._suggestedSpecies, shell, {
+        domain: 'species',
+        archetype: 'your species choice'
+      });
+    } else {
+      // Fallback to standard guidance if no suggestions
+      await handleAskMentor(shell.actor, 'species', shell);
+    }
   }
 
   getMentorContext(shell) {
