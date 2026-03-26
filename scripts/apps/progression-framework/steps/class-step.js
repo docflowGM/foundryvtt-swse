@@ -100,10 +100,14 @@ export class ClassStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async getStepData(context) {
+    const suggestedIds = new Set(this._suggestedClasses.map(s => s.id || s));
     return {
-      classes: this._filteredClasses.map(c => this._formatClassCard(c)),
+      classes: this._filteredClasses.map(c => this._formatClassCard(c, suggestedIds)),
       focusedClassId: context.focusedItem?.id ?? null,
       committedClassId: context.committedSelections?.get('class')?.classId ?? null,
+      suggestedClassIds: Array.from(suggestedIds),
+      suggestedClasses: this._suggestedClasses,
+      hasSuggestions: this._suggestedClasses.length > 0,
     };
   }
 
@@ -323,7 +327,8 @@ export class ClassStep extends ProgressionStepPlugin {
     this._filteredClasses = filtered;
   }
 
-  _formatClassCard(classData) {
+  _formatClassCard(classData, suggestedIds = new Set()) {
+    const isSuggested = suggestedIds.has(classData.id);
     return {
       id: classData.id,
       name: classData.name,
@@ -333,8 +338,10 @@ export class ClassStep extends ProgressionStepPlugin {
       defenseBonus: classData.defenseBonus ?? '+0',
       description: classData.fantasy ?? classData.description ?? '',
       mentorName: classData.mentorName ?? 'Unknown Guide',
+      isSuggested,
       metaChips: [
         { label: classData.prestige ? 'Prestige' : 'Base' },
+        isSuggested && { label: 'Recommended', cssClass: 'prog-meta-chip--suggested' },
         classData.source && { label: classData.source },
       ].filter(Boolean),
       stats: [

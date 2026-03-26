@@ -337,4 +337,36 @@ export class ProgressionStepPlugin {
   isLevelup(shell) {
     return this.isMode(shell, 'levelup');
   }
+
+  // ---------------------------------------------------------------------------
+  // Suggestion Display (Phase 7)
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Format suggestion data for display in UI.
+   * Converts suggestion array to a Set of IDs and metadata object.
+   *
+   * @param {Array} suggestionsArray - Array of suggestion objects from SuggestionService
+   * @returns {{ suggestedIds: Set<string>, hasSuggestions: boolean, suggestions: Array }}
+   */
+  formatSuggestionsForDisplay(suggestionsArray = []) {
+    const suggestedIds = new Set((suggestionsArray || []).map(s => s.id || s));
+    return {
+      suggestedIds,
+      hasSuggestions: suggestedIds.size > 0,
+      suggestions: suggestionsArray || [],
+    };
+  }
+
+  /**
+   * Check if an item is suggested.
+   * Useful in formatting methods to add suggestion markers.
+   *
+   * @param {string} itemId - The item ID to check
+   * @param {Set<string>} suggestedIds - Set of suggested item IDs
+   * @returns {boolean}
+   */
+  isSuggestedItem(itemId, suggestedIds = new Set()) {
+    return suggestedIds.has(itemId);
+  }
 }

@@ -186,12 +186,15 @@ export class SpeciesStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async getStepData(context) {
+    const { suggestedIds, hasSuggestions } = this.formatSuggestionsForDisplay(this._suggestedSpecies);
     return {
       mode: this._mode,
-      species: this._filteredSpecies.map(s => this._formatSpeciesCard(s)),
+      species: this._filteredSpecies.map(s => this._formatSpeciesCard(s, suggestedIds)),
       focusedSpeciesId: context.focusedItem?.id ?? null,
       committedSpeciesId: context.committedSelections?.get('species')?.speciesId ?? null,
       nearHuman: this._nearHumanBuilder.getBuilderData(),
+      hasSuggestions,
+      suggestedSpeciesIds: Array.from(suggestedIds),
     };
   }
 
@@ -729,11 +732,12 @@ export class SpeciesStep extends ProgressionStepPlugin {
     return null;
   }
 
-  _formatSpeciesCard(species) {
+  _formatSpeciesCard(species, suggestedIds = new Set()) {
     const abilityRows = this._formatAbilityRows(species.abilityScores);
     const abilityModLine = abilityRows
       .map(row => `${row.signedValue} ${row.shortLabel}`)
       .join(', ');
+    const isSuggested = this.isSuggestedItem(species.id, suggestedIds);
 
     return {
       id: species.id,
@@ -749,6 +753,9 @@ export class SpeciesStep extends ProgressionStepPlugin {
       tags: (species.abilities ?? []).slice(0, 3),
       abilities: species.abilities ?? [],
       languages: species.languages ?? [],
+      isSuggested,
+      badgeLabel: isSuggested ? 'Recommended' : null,
+      badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
     };
   }
 
