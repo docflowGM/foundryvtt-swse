@@ -9,8 +9,9 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
-import { handleAskMentor } from './mentor-step-integration.js';
 import { swseLogger } from '../../../utils/logger.js';
+import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 
 export class StarshipManeuverStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -28,6 +29,7 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
     this._committedManeuverCounts = new Map();
 
     this._remainingPicks = 0;
+    this._suggestedManeuvers = [];  // Suggested starship maneuvers
 
     // Event listener cleanup
     this._renderAbort = null;
@@ -44,6 +46,10 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
 
       await this._computeLegalManeuvers(shell.actor);
       this._applyFilters();
+
+      // Get suggested starship maneuvers
+      await this._getSuggestedManeuvers(shell.actor, shell);
+
       shell.mentor.askMentorEnabled = true;
 
       swseLogger.debug(`[StarshipManeuverStep] Entered: ${this._allManeuvers.length} maneuvers`);
@@ -254,5 +260,49 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
   _getMentorObject(actor) {
     const className = actor.system?.class?.primary?.name;
     return getMentorForClass(className) || MENTORS.Scoundrel || Object.values(MENTORS)[0];
+  }
+
+  // ---------------------------------------------------------------------------
+  // Suggestions
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get suggested starship maneuvers from SuggestionService
+   * Recommendations based on class, feats, and other selections
+   * @private
+   */
+  async _getSuggestedManeuvers(actor, shell) {
+    try {
+      // Build characterData from shell's buildIntent/committedSelections
+      const characterData = this._buildCharacterDataFromShell(shell);
+
+      // Get suggestions from SuggestionService
+      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+        domain: 'starship-maneuvers',
+        available: this._legalManeuvers,
+        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
+        engineOptions: { includeFutureAvailability: true },
+        persist: true
+      });
+
+      // Store top suggestions
+      this._suggestedManeuvers = (suggested || []).slice(0, 3);
+    } catch (err) {
+      swseLogger.warn('[StarshipManeuverStep] Suggestion service error:', err);
+      this._suggestedManeuvers = [];
+    }
+  }
+
+  /**
+   * Extract character data from shell for suggestion engine
+   * Allows suggestions to understand what choices have been made so far
+   * @private
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.buildIntent) {
+      return {};
+    }
+
+    return shell.buildIntent.toCharacterData();
   }
 }

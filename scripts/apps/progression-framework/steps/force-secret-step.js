@@ -13,6 +13,8 @@ import { ForcePowerEngine } from '../../../engine/progression/engine/force-secre
 import { ForceRegistry } from '../../../engine/registries/force-registry.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { swseLogger } from '../../../utils/logger.js';
+import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 
 export class ForceSecretStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -27,6 +29,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
     this._committedSecretCounts = new Map();
 
     this._remainingPicks = 0;
+    this._suggestedSecrets = [];  // Suggested force secrets
     this._renderAbort = null;
     this._utilityUnlisteners = [];
   }
@@ -47,6 +50,9 @@ export class ForceSecretStep extends ProgressionStepPlugin {
 
       await this._computeLegalSecrets(shell.actor);
       this._applyFilters();
+
+      // Get suggested force secrets
+      await this._getSuggestedSecrets(shell.actor, shell);
 
       shell.mentor.askMentorEnabled = true;
 
@@ -293,5 +299,49 @@ export class ForceSecretStep extends ProgressionStepPlugin {
 
     filtered.sort((a, b) => a.name.localeCompare(b.name));
     this._filteredSecrets = filtered;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Suggestions
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get suggested force secrets from SuggestionService
+   * Recommendations based on class, force powers, and other selections
+   * @private
+   */
+  async _getSuggestedSecrets(actor, shell) {
+    try {
+      // Build characterData from shell's buildIntent/committedSelections
+      const characterData = this._buildCharacterDataFromShell(shell);
+
+      // Get suggestions from SuggestionService
+      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+        domain: 'force-secrets',
+        available: this._legalSecrets,
+        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
+        engineOptions: { includeFutureAvailability: true },
+        persist: true
+      });
+
+      // Store top suggestions
+      this._suggestedSecrets = (suggested || []).slice(0, 3);
+    } catch (err) {
+      swseLogger.warn('[ForceSecretStep] Suggestion service error:', err);
+      this._suggestedSecrets = [];
+    }
+  }
+
+  /**
+   * Extract character data from shell for suggestion engine
+   * Allows suggestions to understand what choices have been made so far
+   * @private
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.buildIntent) {
+      return {};
+    }
+
+    return shell.buildIntent.toCharacterData();
   }
 }

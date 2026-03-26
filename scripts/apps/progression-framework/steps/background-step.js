@@ -5,6 +5,7 @@
  * - single background mode (standard)
  * - multi-background mode (house-rule driven)
  * - category organization (Event, Occupation, Planet)
+ * - Suggested backgrounds from SuggestionService (Phase 10)
  *
  * Integrates with BackgroundRegistry and backgroundSelectionCount house rule.
  */
@@ -12,6 +13,8 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { BackgroundRegistry } from '/systems/foundryvtt-swse/scripts/registries/background-registry.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 
 const CATEGORY_LABELS = {
   event: 'Event',
@@ -32,6 +35,7 @@ export class BackgroundStep extends ProgressionStepPlugin {
     // State
     this._allBackgrounds = [];       // All backgrounds from registry
     this._groupedBackgrounds = {};   // Backgrounds grouped by category
+    this._suggestedBackgrounds = []; // Suggested backgrounds from SuggestionService
     this._focusedBackgroundId = null;
     this._committedBackgroundIds = [];  // May contain 1+ based on house rule
     this._searchQuery = '';
@@ -59,6 +63,9 @@ export class BackgroundStep extends ProgressionStepPlugin {
 
     // Group backgrounds by category
     this._groupBackgrounds();
+
+    // Phase 5: Get suggested backgrounds from SuggestionService
+    await this._getSuggestedBackgrounds(shell.actor, shell);
 
     // Enable Ask Mentor
     shell.mentor.askMentorEnabled = true;
@@ -346,6 +353,46 @@ export class BackgroundStep extends ProgressionStepPlugin {
         (a.name || '').localeCompare(b.name || '')
       );
     }
+  }
+
+  /**
+   * Phase 5: Get suggested backgrounds from SuggestionService
+   * Recommendations based on species, class, and other selections
+   * @private
+   */
+  async _getSuggestedBackgrounds(actor, shell) {
+    try {
+      // Build characterData from shell's buildIntent/committedSelections
+      const characterData = this._buildCharacterDataFromShell(shell);
+
+      // Get suggestions from SuggestionService
+      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+        domain: 'backgrounds',
+        available: this._allBackgrounds,
+        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
+        engineOptions: { includeFutureAvailability: true },
+        persist: true
+      });
+
+      // Store top suggestions
+      this._suggestedBackgrounds = (suggested || []).slice(0, 3);
+    } catch (err) {
+      console.warn('[BackgroundStep] Suggestion service error:', err);
+      this._suggestedBackgrounds = [];
+    }
+  }
+
+  /**
+   * Extract character data from shell for suggestion engine
+   * Allows suggestions to understand what choices have been made so far
+   * @private
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.buildIntent) {
+      return {};
+    }
+
+    return shell.buildIntent.toCharacterData();
   }
 
   _getFilteredBackgrounds() {

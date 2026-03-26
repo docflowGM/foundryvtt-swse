@@ -17,11 +17,14 @@ import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { DROID_SYSTEMS } from '../../../data/droid-systems.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 
 export class DroidBuilderStep extends ProgressionStepPlugin {
   constructor(descriptor) {
     super(descriptor);
     this._droidState = null;
+    this._suggestedSystems = [];  // Suggested droid systems
   }
 
   /**
@@ -33,6 +36,9 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     if (!this._droidState) {
       this._droidState = this._initializeDroidState(shell.actor);
     }
+
+    // Get suggested droid systems
+    await this._getSuggestedSystems(shell.actor, shell);
   }
 
   /**
@@ -869,5 +875,48 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     if (this._validateDroidBuild().isValid && !shell.committedSelections.has(this.descriptor.stepId)) {
       await this.onItemCommitted(null, shell);
     }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Suggestions
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get suggested droid systems from SuggestionService
+   * Recommendations based on droid degree, class, and other selections
+   * @private
+   */
+  async _getSuggestedSystems(actor, shell) {
+    try {
+      // Build characterData from shell's buildIntent/committedSelections
+      const characterData = this._buildCharacterDataFromShell(shell);
+
+      // Get suggestions from SuggestionService
+      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+        domain: 'droid-systems',
+        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
+        engineOptions: { includeFutureAvailability: true },
+        persist: true
+      });
+
+      // Store top suggestions
+      this._suggestedSystems = (suggested || []).slice(0, 3);
+    } catch (err) {
+      swseLogger.warn('[DroidBuilderStep] Suggestion service error:', err);
+      this._suggestedSystems = [];
+    }
+  }
+
+  /**
+   * Extract character data from shell for suggestion engine
+   * Allows suggestions to understand what choices have been made so far
+   * @private
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.buildIntent) {
+      return {};
+    }
+
+    return shell.buildIntent.toCharacterData();
   }
 }

@@ -11,6 +11,9 @@ import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ClassesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js';
 import { getStepMentorObject, getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { getMentorGuidance } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
+import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 
 export class ClassStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -29,6 +32,9 @@ export class ClassStep extends ProgressionStepPlugin {
     // Committed selection tracking
     this._committedClassId = null;
     this._committedClassName = null;
+
+    // Suggestions
+    this._suggestedClasses = [];
   }
 
   // ---------------------------------------------------------------------------
@@ -38,6 +44,9 @@ export class ClassStep extends ProgressionStepPlugin {
   async onStepEnter(shell) {
     // Load all classes from registry
     this._allClasses = ClassesRegistry.getAll() || [];
+
+    // Get suggested classes
+    await this._getSuggestedClasses(shell.actor, shell);
 
     // Initial filter
     this._applyFilters();
@@ -324,5 +333,49 @@ export class ClassStep extends ProgressionStepPlugin {
         { label: 'Def Bonus', value: classData.defenseBonus ?? '+0' },
       ],
     };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Suggestions
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get suggested classes from SuggestionService
+   * Recommendations based on species selection and roleplay preferences
+   * @private
+   */
+  async _getSuggestedClasses(actor, shell) {
+    try {
+      // Build characterData from shell's buildIntent/committedSelections
+      const characterData = this._buildCharacterDataFromShell(shell);
+
+      // Get suggestions from SuggestionService
+      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+        domain: 'classes',
+        available: this._allClasses,
+        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
+        engineOptions: { includeFutureAvailability: true },
+        persist: true
+      });
+
+      // Store top suggestions
+      this._suggestedClasses = (suggested || []).slice(0, 3);
+    } catch (err) {
+      swseLogger.warn('[ClassStep] Suggestion service error:', err);
+      this._suggestedClasses = [];
+    }
+  }
+
+  /**
+   * Extract character data from shell for suggestion engine
+   * Allows suggestions to understand what choices have been made so far
+   * @private
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.buildIntent) {
+      return {};
+    }
+
+    return shell.buildIntent.toCharacterData();
   }
 }

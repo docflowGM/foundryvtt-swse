@@ -19,6 +19,8 @@ import { ForcePowerEngine } from '../../../engine/progression/engine/force-power
 import { ForceRegistry } from '../../../engine/registries/force-registry.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { swseLogger } from '../../../utils/logger.js';
+import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 
 /**
  * Force Power step — both Generic (force-powers) for level-up use.
@@ -42,6 +44,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     this._committedPowerCounts = new Map();  // id -> count (for stacking)
 
     this._remainingPicks = 0;
+    this._suggestedPowers = [];  // Suggested force powers
     this._renderAbort = null;
     this._utilityUnlisteners = [];
   }
@@ -79,6 +82,9 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       // Filter to legal powers (prereqs met, not already selected)
       await this._computeLegalPowers(shell.actor);
       this._applyFilters();
+
+      // Get suggested force powers
+      await this._getSuggestedPowers(shell.actor, shell);
 
       // Enable Ask Mentor
       shell.mentor.askMentorEnabled = true;
@@ -467,7 +473,47 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     this._filteredPowers = filtered;
   }
 
+  // ---------------------------------------------------------------------------
+  // Suggestions
+  // ---------------------------------------------------------------------------
+
   /**
-   * Get the mentor object for the actor's class.
-   * Falls back to Ol' Salty if class unknown.
-   */}
+   * Get suggested force powers from SuggestionService
+   * Recommendations based on class, feats, and other selections
+   * @private
+   */
+  async _getSuggestedPowers(actor, shell) {
+    try {
+      // Build characterData from shell's buildIntent/committedSelections
+      const characterData = this._buildCharacterDataFromShell(shell);
+
+      // Get suggestions from SuggestionService
+      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+        domain: 'force-powers',
+        available: this._legalPowers,
+        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
+        engineOptions: { includeFutureAvailability: true },
+        persist: true
+      });
+
+      // Store top suggestions
+      this._suggestedPowers = (suggested || []).slice(0, 3);
+    } catch (err) {
+      swseLogger.warn('[ForcePowerStep] Suggestion service error:', err);
+      this._suggestedPowers = [];
+    }
+  }
+
+  /**
+   * Extract character data from shell for suggestion engine
+   * Allows suggestions to understand what choices have been made so far
+   * @private
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.buildIntent) {
+      return {};
+    }
+
+    return shell.buildIntent.toCharacterData();
+  }
+}

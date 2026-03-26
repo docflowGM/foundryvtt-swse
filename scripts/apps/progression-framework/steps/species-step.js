@@ -13,6 +13,9 @@ import { getStepMentorObject, getStepGuidance, handleAskMentor, STEP_TO_CHOICE_T
 import { buildSpeciesAtomicPatch } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shared/species-patch.js';
 import { NearHumanBuilder } from './near-human-builder.js';
 import { getMentorGuidance, getMentorForClass, MENTORS } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
+import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 
 // Maps stepId → mentor guidance choiceType
 const STEP_CHOICE_TYPE = {
@@ -54,6 +57,9 @@ export class SpeciesStep extends ProgressionStepPlugin {
 
     // Species image map: lowercased name → resolved file path (built once on step enter)
     this._speciesImgMap = new Map();
+
+    // Suggestions
+    this._suggestedSpecies = [];
   }
 
   // ---------------------------------------------------------------------------
@@ -95,6 +101,9 @@ export class SpeciesStep extends ProgressionStepPlugin {
       console.warn('[SpeciesStep] Failed to fetch ol-salty-species-dialogues.json:', err);
       this._olSaltyDialogues = {};
     }
+
+    // Get suggested species
+    await this._getSuggestedSpecies(shell.actor, shell);
 
     // Initial filter
     this._applyFilters();
@@ -753,5 +762,49 @@ export class SpeciesStep extends ProgressionStepPlugin {
       cha: 'Charisma',
     };
     return map[key] ?? key;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Suggestions
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get suggested species from SuggestionService
+   * Recommendations based on class archetype and roleplay preferences
+   * @private
+   */
+  async _getSuggestedSpecies(actor, shell) {
+    try {
+      // Build characterData from shell's buildIntent/committedSelections
+      const characterData = this._buildCharacterDataFromShell(shell);
+
+      // Get suggestions from SuggestionService
+      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+        domain: 'species',
+        available: this._allSpecies,
+        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
+        engineOptions: { includeFutureAvailability: true },
+        persist: true
+      });
+
+      // Store top suggestions
+      this._suggestedSpecies = (suggested || []).slice(0, 3);
+    } catch (err) {
+      swseLogger.warn('[SpeciesStep] Suggestion service error:', err);
+      this._suggestedSpecies = [];
+    }
+  }
+
+  /**
+   * Extract character data from shell for suggestion engine
+   * Allows suggestions to understand what choices have been made so far
+   * @private
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.buildIntent) {
+      return {};
+    }
+
+    return shell.buildIntent.toCharacterData();
   }
 }

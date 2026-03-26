@@ -8,8 +8,9 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ForceRegistry } from '../../../engine/registries/force-registry.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
-import { handleAskMentor } from './mentor-step-integration.js';
 import { swseLogger } from '../../../utils/logger.js';
+import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 
 export class ForceTechniqueStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -21,6 +22,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     this._focusedTechniqueId = null;
     this._committedTechniqueCounts = new Map();
     this._remainingPicks = 0;
+    this._suggestedTechniques = [];  // Suggested force techniques
     this._renderAbort = null;
     this._utilityUnlisteners = [];
   }
@@ -38,6 +40,10 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
 
       await this._computeLegalTechniques(shell.actor);
       this._applyFilters();
+
+      // Get suggested force techniques
+      await this._getSuggestedTechniques(shell.actor, shell);
+
       shell.mentor.askMentorEnabled = true;
 
       swseLogger.debug(`[ForceTechniqueStep] Entered: ${this._allTechniques.length} total`);
@@ -260,5 +266,49 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
   _getMentorObject(actor) {
     const className = actor.system?.class?.primary?.name;
     return getMentorForClass(className) || MENTORS.Scoundrel || Object.values(MENTORS)[0];
+  }
+
+  // ---------------------------------------------------------------------------
+  // Suggestions
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get suggested force techniques from SuggestionService
+   * Recommendations based on class, feats, and other selections
+   * @private
+   */
+  async _getSuggestedTechniques(actor, shell) {
+    try {
+      // Build characterData from shell's buildIntent/committedSelections
+      const characterData = this._buildCharacterDataFromShell(shell);
+
+      // Get suggestions from SuggestionService
+      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+        domain: 'force-techniques',
+        available: this._legalTechniques,
+        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
+        engineOptions: { includeFutureAvailability: true },
+        persist: true
+      });
+
+      // Store top suggestions
+      this._suggestedTechniques = (suggested || []).slice(0, 3);
+    } catch (err) {
+      swseLogger.warn('[ForceTechniqueStep] Suggestion service error:', err);
+      this._suggestedTechniques = [];
+    }
+  }
+
+  /**
+   * Extract character data from shell for suggestion engine
+   * Allows suggestions to understand what choices have been made so far
+   * @private
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.buildIntent) {
+      return {};
+    }
+
+    return shell.buildIntent.toCharacterData();
   }
 }

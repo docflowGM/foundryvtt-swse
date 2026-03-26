@@ -3,6 +3,7 @@
  *
  * Handles skill selection and training during character generation.
  * Integrates with existing skill registry and training logic.
+ * Includes suggested skill selections from SuggestionService (Phase 10).
  *
  * Data:
  * - trainedSkills: Map<skillKey, {trained: boolean, focus?: boolean, misc?: number}>
@@ -14,6 +15,8 @@ import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SkillRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js';
+import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 
 export class SkillsStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -24,6 +27,7 @@ export class SkillsStep extends ProgressionStepPlugin {
     this._allSkills = [];                 // Full skill list from registry
     this._trainedCount = 0;
     this._allowedCount = 1;               // Updated on enter from character data
+    this._suggestedSkills = [];           // Suggested skills from SuggestionService
 
     // Event listener cleanup
     this._renderAbort = null;
@@ -62,6 +66,9 @@ export class SkillsStep extends ProgressionStepPlugin {
       swseLogger.warn('[SkillsStep] Failed to load skill registry:', err);
       this._allSkills = [];
     }
+
+    // Get suggested skills from SuggestionService
+    await this._getSuggestedSkills(shell.actor, shell);
 
     // Enable Ask Mentor
     shell.mentor.askMentorEnabled = true;
@@ -276,6 +283,50 @@ export class SkillsStep extends ProgressionStepPlugin {
 
   getMentorMode() {
     return 'context-only';
+  }
+
+  // ---------------------------------------------------------------------------
+  // Suggestions
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get suggested skills from SuggestionService
+   * Recommendations based on class, background, and other selections
+   * @private
+   */
+  async _getSuggestedSkills(actor, shell) {
+    try {
+      // Build characterData from shell's buildIntent/committedSelections
+      const characterData = this._buildCharacterDataFromShell(shell);
+
+      // Get suggestions from SuggestionService
+      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+        domain: 'skills',
+        available: this._allSkills,
+        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
+        engineOptions: { includeFutureAvailability: true },
+        persist: true
+      });
+
+      // Store top suggestions
+      this._suggestedSkills = (suggested || []).slice(0, 3);
+    } catch (err) {
+      swseLogger.warn('[SkillsStep] Suggestion service error:', err);
+      this._suggestedSkills = [];
+    }
+  }
+
+  /**
+   * Extract character data from shell for suggestion engine
+   * Allows suggestions to understand what choices have been made so far
+   * @private
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.buildIntent) {
+      return {};
+    }
+
+    return shell.buildIntent.toCharacterData();
   }
 
 }

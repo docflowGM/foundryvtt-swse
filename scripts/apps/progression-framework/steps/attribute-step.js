@@ -13,6 +13,9 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 
 // Ability score constants and calculations
 const ABILITIES = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
@@ -83,6 +86,9 @@ export class AttributeStep extends ProgressionStepPlugin {
     // Method controls
     this._methodChanged = false;
 
+    // Suggestions
+    this._suggestedAllocations = [];
+
     // Event listener cleanup
     this._renderAbort = null;
   }
@@ -100,6 +106,9 @@ export class AttributeStep extends ProgressionStepPlugin {
 
     // Initialize point buy allocations from base scores
     this._initializePointBuy();
+
+    // Get suggested attribute allocations
+    await this._getSuggestedAllocations(shell.actor, shell);
 
     // Enable Ask Mentor
     shell.mentor.askMentorEnabled = true;
@@ -410,5 +419,48 @@ export class AttributeStep extends ProgressionStepPlugin {
       cha: 'Force of personality. Persuasion, deception, and social influence.',
     };
     return descriptions[ability] || '';
+  }
+
+  // ---------------------------------------------------------------------------
+  // Suggestions
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get suggested attribute allocations from SuggestionService
+   * Recommendations based on class, background, and other selections
+   * @private
+   */
+  async _getSuggestedAllocations(actor, shell) {
+    try {
+      // Build characterData from shell's buildIntent/committedSelections
+      const characterData = this._buildCharacterDataFromShell(shell);
+
+      // Get suggestions from SuggestionService
+      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+        domain: 'attributes',
+        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
+        engineOptions: { includeFutureAvailability: true },
+        persist: true
+      });
+
+      // Store top suggestions
+      this._suggestedAllocations = (suggested || []).slice(0, 3);
+    } catch (err) {
+      swseLogger.warn('[AttributeStep] Suggestion service error:', err);
+      this._suggestedAllocations = [];
+    }
+  }
+
+  /**
+   * Extract character data from shell for suggestion engine
+   * Allows suggestions to understand what choices have been made so far
+   * @private
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.buildIntent) {
+      return {};
+    }
+
+    return shell.buildIntent.toCharacterData();
   }
 }

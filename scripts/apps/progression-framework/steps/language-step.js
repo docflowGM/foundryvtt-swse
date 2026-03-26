@@ -19,6 +19,9 @@ import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { LanguageRegistry } from '/systems/foundryvtt-swse/scripts/registries/language-registry.js';
 import { LanguageEngine } from '/systems/foundryvtt-swse/scripts/engine/progression/engine/language-engine.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 
 export class LanguageStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -39,6 +42,9 @@ export class LanguageStep extends ProgressionStepPlugin {
       'localTrade': 'Local & Trade',
     };
 
+    // Suggestions
+    this._suggestedLanguages = [];
+
     // Event listener cleanup
     this._renderAbort = null;
   }
@@ -57,6 +63,9 @@ export class LanguageStep extends ProgressionStepPlugin {
 
     // Compute available bonus language picks
     this._bonusLanguagesAvailable = LanguageEngine.calculateBonusLanguagesAvailable(shell.actor);
+
+    // Get suggested languages from SuggestionService
+    await this._getSuggestedLanguages(shell.actor, shell);
 
     // Wire up mentor
     shell.mentor.askMentorEnabled = true;
@@ -442,5 +451,49 @@ export class LanguageStep extends ProgressionStepPlugin {
       knownLanguagesCount: this._knownLanguages.length,
       selectedLanguagesCount: this._selectedBonusLanguages.length,
     };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Suggestions
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get suggested languages from SuggestionService
+   * Recommendations based on species, background, and other selections
+   * @private
+   */
+  async _getSuggestedLanguages(actor, shell) {
+    try {
+      // Build characterData from shell's buildIntent/committedSelections
+      const characterData = this._buildCharacterDataFromShell(shell);
+
+      // Get suggestions from SuggestionService
+      const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
+        domain: 'languages',
+        available: this._allLanguages,
+        pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
+        engineOptions: { includeFutureAvailability: true },
+        persist: true
+      });
+
+      // Store top suggestions
+      this._suggestedLanguages = (suggested || []).slice(0, 3);
+    } catch (err) {
+      swseLogger.warn('[LanguageStep] Suggestion service error:', err);
+      this._suggestedLanguages = [];
+    }
+  }
+
+  /**
+   * Extract character data from shell for suggestion engine
+   * Allows suggestions to understand what choices have been made so far
+   * @private
+   */
+  _buildCharacterDataFromShell(shell) {
+    if (!shell?.buildIntent) {
+      return {};
+    }
+
+    return shell.buildIntent.toCharacterData();
   }
 }
