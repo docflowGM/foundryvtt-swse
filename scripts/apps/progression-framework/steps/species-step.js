@@ -60,9 +60,21 @@ export class SpeciesStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onStepEnter(shell) {
+    // Guard against uninitialized registry — initialize if needed
+    if (!SpeciesRegistry.isInitialized()) {
+      console.warn('[SpeciesStep] SpeciesRegistry not initialized on step enter; initializing now');
+      await SpeciesRegistry.initialize();
+    }
+
     // Load all species from registry
     this._allSpecies = SpeciesRegistry.getAll();
-    if (!this._allSpecies) this._allSpecies = [];
+    if (!Array.isArray(this._allSpecies)) this._allSpecies = [];
+    console.log('[SpeciesStep] Loaded species count:', this._allSpecies.length);
+
+    // Warn if empty
+    if (this._allSpecies.length === 0) {
+      console.warn('[SpeciesStep] ⚠ Species authority is empty after initialization attempt');
+    }
 
     // Build image map from assets/species/ directory
     await this._buildSpeciesImgMap();
@@ -479,6 +491,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
 
   _applyFilters() {
     let filtered = [...this._allSpecies];
+    console.log('[SpeciesStep] Filter pipeline: start with', filtered.length, 'species');
 
     // Search by name (case-insensitive, with wildcard support)
     if (this._searchQuery) {
@@ -486,35 +499,43 @@ export class SpeciesStep extends ProgressionStepPlugin {
       // Convert wildcard patterns (* → .*) to regex for pattern matching
       const pattern = q.replace(/\*/g, '.*');
       const regex = new RegExp(`^${pattern}$`, 'i');
+      const before = filtered.length;
       filtered = filtered.filter(s => regex.test(s.name));
+      console.log('[SpeciesStep] After search query "' + this._searchQuery + '":', before, '→', filtered.length);
     }
 
     // Size filters (small, medium, large) — combinable toggle buttons
     const sizeFilters = ['small', 'medium', 'large'];
     const activeSizeFilters = sizeFilters.filter(size => this._filters[size]);
     if (activeSizeFilters.length > 0) {
+      const before = filtered.length;
       filtered = filtered.filter(s => {
         const speciesSize = (s.size || 'Medium').toLowerCase();
         return activeSizeFilters.some(size => speciesSize === size.toLowerCase());
       });
+      console.log('[SpeciesStep] After size filter [' + activeSizeFilters.join(', ') + ']:', before, '→', filtered.length);
     }
 
     // Bonus stat filter (dropdown) — filters for specific ability with positive bonus
     if (this._filters['bonus-stat']) {
       const targetAbility = this._filters['bonus-stat'];
+      const before = filtered.length;
       filtered = filtered.filter(s => {
         const abilityScores = s.abilityScores || {};
         return abilityScores[targetAbility] > 0;
       });
+      console.log('[SpeciesStep] After bonus-stat filter (' + targetAbility + '):', before, '→', filtered.length);
     }
 
     // Penalty stat filter (dropdown) — filters for specific ability with negative penalty
     if (this._filters['penalty-stat']) {
       const targetAbility = this._filters['penalty-stat'];
+      const before = filtered.length;
       filtered = filtered.filter(s => {
         const abilityScores = s.abilityScores || {};
         return abilityScores[targetAbility] < 0;
       });
+      console.log('[SpeciesStep] After penalty-stat filter (' + targetAbility + '):', before, '→', filtered.length);
     }
 
     // Sort
@@ -533,6 +554,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
     });
 
     this._filteredSpecies = filtered;
+    console.log('[SpeciesStep] Final result: ' + filtered.length + ' species (sorted by ' + this._sortBy + ')');
   }
 
   /**

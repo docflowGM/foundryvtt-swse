@@ -342,6 +342,11 @@ Hooks.once('ready', async () => {
     runJsonBackedIdsMigration()
   ]);
 
+  // Initialize registry authorities BEFORE progression framework opens
+  const { SpeciesRegistry } = await import('./scripts/engine/registries/species-registry.js');
+  await SpeciesRegistry.initialize();
+  swseLogger.log('SWSE | SpeciesRegistry initialized at boot');
+
   /* ---------- Combat Rules System ---------- */
   // Initialize core and talent rules for combat resolution
   const { initializeCoreRules } = await import('./scripts/engine/rules/modules/core/index.js');
