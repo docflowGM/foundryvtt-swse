@@ -150,6 +150,15 @@ export function registerHouseruleSettings() {
     default: 1000
   });
 
+  register('allowDroidOverflow', {
+    name: 'Allow Droid Budget Overflow',
+    hint: 'PHASE A+B: If enabled, unspent droid construction credits can be used as general credits. If disabled, unspent credits are lost.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   register('allowDroidDestiny', {
     name: 'Allow Droids to Have Destiny',
     hint: 'If enabled, droid characters can have Destiny Points just like organics (normally disabled).',

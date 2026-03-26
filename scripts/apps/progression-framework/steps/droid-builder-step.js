@@ -25,6 +25,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     super(descriptor);
     this._droidState = null;
     this._suggestedSystems = [];  // Suggested droid systems
+    this._buildMode = 'provisional'; // 'deferred' | 'provisional' | 'finalized'
   }
 
   /**
@@ -43,6 +44,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
 
   /**
    * Initialize droid builder state from actor or defaults.
+   * PHASE A + B: Extended state model for deferred/provisional/finalized support
    */
   _initializeDroidState(actor) {
     if (!actor) {
@@ -57,6 +59,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
 
     // Get house rule settings
     const baseCredits = game.settings.get('foundryvtt-swse', 'droidConstructionCredits') || 1000;
+    const allowOverflow = game.settings.get('foundryvtt-swse', 'allowDroidOverflow') ?? true;
 
     // Initialize with actor's current droid state, or defaults
     const droidSystems = actor?.system?.droidSystems || {
@@ -73,16 +76,55 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     // Deep copy systems to avoid mutating actor data directly during building
     const systemsCopy = JSON.parse(JSON.stringify(droidSystems));
 
+    // PHASE A + B: Extended state model for budget-aware deferred construction
     return {
       isDroid: true,
       droidDegree: actor?.system?.droidDegree || '1st-degree',
       droidSize: actor?.system?.droidSize || 'medium',
+
+      // Core systems (unchanged structure)
       droidSystems: systemsCopy,
+
+      // PHASE A + B: Budget tracking (use-it-or-lose-it)
       droidCredits: {
         base: baseCredits,
         spent: actor?.system?.droidCredits?.spent || 0,
-        remaining: baseCredits - (actor?.system?.droidCredits?.spent || 0)
-      }
+        remaining: baseCredits - (actor?.system?.droidCredits?.spent || 0),
+        // New: Track whether overflow into general credits is allowed
+        allowOverflow: allowOverflow
+      },
+
+      // PHASE A + B: Free/default systems tracking
+      grantedSystems: {
+        // Heuristic processor is always free in chargen
+        processor: {
+          id: 'heuristic',
+          name: 'Heuristic Processor',
+          cost: 0,
+          weight: 5,
+          isGranted: true
+        },
+        // Track other free grants here as needed
+        freeAppendages: []
+      },
+
+      // PHASE A + B: Build state machine
+      buildState: {
+        mode: 'provisional',  // 'deferred' | 'provisional' | 'finalized'
+        isDeferred: false,    // True if player chose "Do Later"
+        isFinalized: false,   // True if final pass completed
+        completedInitially: false  // True if completed on first pass
+      },
+
+      // PHASE A + B: Player choices tracking
+      playerChoices: {
+        skippedForNow: false,        // Player clicked "Do Later"
+        acceptedWastedBudget: false, // Player acknowledged unspent budget will be lost
+        confirmedFinal: false        // Player confirmed final build at end
+      },
+
+      // PHASE A + B: Suggestion mode hint
+      suggestionMode: 'preview'  // 'preview' (provisional) | 'final' (finalized)
     };
   }
 
@@ -116,8 +158,20 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
 
   /**
    * Return selection state — droid builder works as a single configuration step.
+   * PHASE A + B: Support deferred state (allows progression without completing build)
    */
   getSelection() {
+    // If deferred, treat as complete to allow progression
+    if (this._droidState?.buildState?.isDeferred) {
+      return {
+        selected: [this._droidState?.droidSize || ''],
+        count: 1,
+        isComplete: true,  // Allow progression when deferred
+        isDeferred: true,
+      };
+    }
+
+    // Otherwise, validate normally (provisional mode)
     return {
       selected: [this._droidState?.droidSize || ''],
       count: 1,
@@ -127,8 +181,15 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
 
   /**
    * Return blocking issues that prevent advancing.
+   * PHASE A + B: No blocking issues when deferred
    */
   getBlockingIssues() {
+    // If deferred, don't block progression
+    if (this._droidState?.buildState?.isDeferred) {
+      return [];
+    }
+
+    // Otherwise validate normally
     const readiness = this._validateDroidBuild();
     return readiness.isValid ? [] : readiness.issues;
   }
@@ -198,12 +259,26 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
 
   /**
    * Validate droid build completeness.
+   * PHASE A + B: Deferred builds skip validation (handled by getBlockingIssues)
    */
   _validateDroidBuild() {
     const sys = this._droidState.droidSystems;
     const credits = this._droidState.droidCredits;
+    const isDeferred = this._droidState?.buildState?.isDeferred || false;
     const issues = [];
 
+    // When deferred, show no validation issues in UI
+    // (player will complete build in final pass)
+    if (isDeferred) {
+      return {
+        isValid: false,  // Still "incomplete" for display purposes
+        issues: [],      // But no blocking issues
+        summary: 'Droid build deferred to final pass.',
+        isDeferred: true,
+      };
+    }
+
+    // Normal validation for provisional mode
     // Check required systems
     if (!sys.locomotion) {
       issues.push('Locomotion system required');
@@ -695,10 +770,38 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
   }
 
   /**
+   * PHASE A + B: Mark build as deferred.
+   * Player chooses to complete droid build in final pass instead of now.
+   */
+  deferBuild() {
+    if (!this._droidState) return false;
+
+    // Mark as deferred
+    this._droidState.buildState.isDeferred = true;
+    this._droidState.buildState.mode = 'deferred';
+    this._droidState.playerChoices.skippedForNow = true;
+
+    swseLogger.info('[DroidBuilderStep] Droid build deferred to final pass');
+    return true;
+  }
+
+  /**
    * Return footer configuration overrides for droid builder.
+   * PHASE A + B: Show different button text when deferred
    */
   getFooterConfig() {
     const readiness = this._validateDroidBuild();
+    const isDeferred = this._droidState?.buildState?.isDeferred || false;
+
+    if (isDeferred) {
+      return {
+        nextLabel: 'Continue (Build Later)',
+        confirmLabel: 'Skip for Now',
+        isBlocked: false,
+        showDeferOption: false,  // Already deferred
+      };
+    }
+
     return {
       nextLabel: readiness.isValid ? 'Next: Attributes' : 'Complete Build',
       confirmLabel: 'Finalize',
@@ -745,6 +848,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
   /**
    * Called after the step is rendered in the shell.
    * Wire up event handlers for the work surface.
+   * PHASE A + B: Add "Do Later" button handler for deferred builds
    */
   async afterRender(shell, workSurfaceEl) {
     if (!workSurfaceEl || !this._droidState) {
@@ -752,6 +856,12 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
     }
 
     try {
+      // PHASE A + B: "Do Later" button - allows deferring build to final pass
+      const deferButton = workSurfaceEl.querySelector('[data-action="defer-build"]');
+      if (deferButton) {
+        deferButton.addEventListener('click', (e) => this._onDeferBuild(e, shell, workSurfaceEl));
+      }
+
       // Tab switching
       const tabs = workSurfaceEl.querySelectorAll('.prog-droid-builder__tab');
       tabs.forEach(tab => {
@@ -777,6 +887,22 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       });
     } catch (e) {
       swseLogger.error('[DroidBuilderStep.activateWorkSurface]', e);
+    }
+  }
+
+  /**
+   * PHASE A + B: Handle "Do Later" button — defer build to final pass.
+   */
+  _onDeferBuild(event, shell, workSurfaceEl) {
+    event.preventDefault();
+
+    const success = this.deferBuild();
+
+    if (success) {
+      ui.notifications.info('Droid build deferred. You can complete it in the final pass.');
+      shell.render();
+    } else {
+      ui.notifications.warn('Unable to defer build');
     }
   }
 
@@ -875,6 +1001,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
   /**
    * Called when an item is committed (via Choose button or footer).
    * Droid builder commits the entire build, not individual items.
+   * PHASE A + B: Include buildState to track deferred/provisional/finalized status
    */
   async onItemCommitted(itemId, shell) {
     // Store committed droid package in shell's committed selections map
@@ -884,6 +1011,8 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
       droidSize: this._droidState.droidSize,
       droidSystems: JSON.parse(JSON.stringify(this._droidState.droidSystems)),
       droidCredits: JSON.parse(JSON.stringify(this._droidState.droidCredits)),
+      // PHASE A + B: Include build state for deferred detection in finalizer
+      buildState: JSON.parse(JSON.stringify(this._droidState.buildState)),
     };
 
     shell.committedSelections.set(this.descriptor.stepId, selection);
@@ -898,9 +1027,16 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
 
   /**
    * Called when step is exited.
+   * PHASE A + B: Don't auto-commit if deferred
    */
   async onStepExit(shell) {
-    // Automatically commit droid build when exiting this step
+    // When deferred, don't commit yet - will be completed in final pass
+    if (this._droidState?.buildState?.isDeferred) {
+      swseLogger.debug('[DroidBuilderStep.onStepExit] Build is deferred, skipping auto-commit');
+      return;
+    }
+
+    // Otherwise, automatically commit droid build when exiting this step
     if (this._validateDroidBuild().isValid && !shell.committedSelections.has(this.descriptor.stepId)) {
       await this.onItemCommitted(null, shell);
     }

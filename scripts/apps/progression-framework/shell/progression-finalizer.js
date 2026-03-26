@@ -75,6 +75,7 @@ export class ProgressionFinalizer {
   /**
    * Validate that progression is ready to finalize.
    * Throws if not ready.
+   * PHASE A + B: Check for deferred droid builds
    *
    * @param {Object} sessionState
    * @throws {Error} if progression incomplete
@@ -86,8 +87,18 @@ export class ProgressionFinalizer {
     if (!sessionState.actor) {
       throw new Error('No actor in progression session');
     }
+
     const selections = sessionState.committedSelections || new Map();
     const summarySelection = selections.get('summary') || sessionState.stepData?.get?.('summary') || {};
+
+    // PHASE A + B: Check for deferred droid builds
+    const droidBuild = selections.get('droid-builder');
+    if (droidBuild && droidBuild.buildState?.isDeferred) {
+      throw new Error(
+        'Chargen incomplete: droid build is pending. Complete the final droid configuration before finishing.'
+      );
+    }
+
     if (sessionState.mode === 'chargen') {
       const hasName = !!(summarySelection.characterName || selections.get('name') || sessionState.actor?.name);
       const hasClass = selections.has('class');
