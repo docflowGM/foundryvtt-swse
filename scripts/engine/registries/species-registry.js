@@ -65,18 +65,19 @@ export class SpeciesRegistry {
    */
   static async initialize() {
     if (this._initialized) {
-      SWSELogger.log('[SpeciesRegistry] Already initialized, skipping');
+      SWSELogger.log('[SpeciesRegistry] Already initialized: ' + this._entries.length + ' species cached');
       return;
     }
 
     try {
       const startTime = performance.now();
+      SWSELogger.log('[SpeciesRegistry] initialize() called, starting load...');
       await this._loadFromCompendium();
       const duration = (performance.now() - startTime).toFixed(2);
 
       this._initialized = true;
       SWSELogger.log(
-        `[SpeciesRegistry] Initialized: ${this._entries.length} species loaded (${duration}ms)`
+        `[SpeciesRegistry] ✓ Initialized: ${this._entries.length} species loaded (${duration}ms)`
       );
     } catch (err) {
       SWSELogger.error('[SpeciesRegistry] Initialization failed:', err);
@@ -92,18 +93,22 @@ export class SpeciesRegistry {
   static async _loadFromCompendium() {
     const systemId = game?.system?.id || 'foundryvtt-swse';
     const packKey = `${systemId}.species`;
+    SWSELogger.log(`[SpeciesRegistry] Using pack key: "${packKey}"`);
 
     const pack = game?.packs?.get(packKey);
     if (!pack) {
-      SWSELogger.warn(
-        `[SpeciesRegistry] Compendium pack "${packKey}" not found. Registry will be empty.`
+      SWSELogger.error(
+        `[SpeciesRegistry] ✗ Compendium pack "${packKey}" NOT FOUND. Registry will be empty.`
       );
       return;
     }
+    SWSELogger.log(`[SpeciesRegistry] ✓ Pack found: "${packKey}"`);
 
     try {
       const docs = await pack.getDocuments();
+      SWSELogger.log(`[SpeciesRegistry] Loaded ${docs.length} raw documents from compendium`);
 
+      let normalized = 0;
       for (const doc of docs) {
         if (!doc || !doc.name) {
           continue;
@@ -111,6 +116,7 @@ export class SpeciesRegistry {
 
         const entry = this._normalizeEntry(doc);
         this._entries.push(entry);
+        normalized++;
 
         // Index by id
         this._byId.set(entry.id, entry);
@@ -126,6 +132,7 @@ export class SpeciesRegistry {
           this._byCategory.get(entry.category).push(entry);
         }
       }
+      SWSELogger.log(`[SpeciesRegistry] Normalized ${normalized} species entries`);
     } catch (err) {
       SWSELogger.error(`[SpeciesRegistry] Failed to load from pack "${packKey}":`, err);
       throw err;
