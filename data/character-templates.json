@@ -1,15 +1,33 @@
 {
+  "version": 2,
   "templates": [
     {
       "id": "jedi_guardian",
       "name": "Guardian",
-      "class": "Jedi",
-      "archetype": "Guardian",
       "description": "A nimble warrior specializing in lightsaber combat, using finesse and defensive techniques to overwhelm opponents.",
       "quote": "Through the Force, I am the shield that guards the innocent.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_guardian.webp",
-      "mentor": "miraj",
-      "background": "Alderaan Origin",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "fec1f8af44fcc35a",
+        "name": "Jedi",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-mirialan",
+        "name": "Mirialan",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "alderaan-origin",
+        "name": "Alderaan Origin",
+        "type": "background"
+      },
       "abilityScores": {
         "str": 10,
         "dex": 16,
@@ -18,55 +36,59 @@
         "wis": 14,
         "cha": 8
       },
-      "species": "Mirialan",
-      "className": "Jedi",
-      "level": 1,
-      "feat": "Weapon Finesse",
-      "talent": "Block",
-      "talentTree": "Jedi Guardian",
       "trainedSkills": [
-        "2b9e43f710664b31",
-        "a6c5e98148aad9a9",
-        "cb5493f65f0bdb62",
-        "43c5941072ec78af"
+        {
+          "id": "2b9e43f710664b31",
+          "name": "2b9e43f710664b31"
+        },
+        {
+          "id": "a6c5e98148aad9a9",
+          "name": "a6c5e98148aad9a9"
+        },
+        {
+          "id": "cb5493f65f0bdb62",
+          "name": "cb5493f65f0bdb62"
+        },
+        {
+          "id": "43c5941072ec78af",
+          "name": "43c5941072ec78af"
+        }
       ],
-      "forcePowers": [
-        "Battle Strike",
-        "Surge"
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-finesse",
+          "name": "Weapon Finesse",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "252b67d6e31c377e",
+          "name": "Weapon Finesse",
+          "type": "feat"
+        }
       ],
-      "startingEquipment": [
-        "Lightsaber",
-        "Medpac",
-        "Comlink, Short-Range",
-        "Glow Rod"
+      "talents": [
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "block",
+          "name": "Block",
+          "type": "talent"
+        },
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "9379daa94a228c04",
+          "name": "Block",
+          "type": "talent"
+        }
       ],
-      "credits": 465,
-      "notes": "Attack +7, Reflex Defense 19, HP 32. Block talent allows negating melee attacks with Use the Force check.",
-      "classRef": {
-        "pack": "foundryvtt-swse.classes",
-        "id": "fec1f8af44fcc35a",
-        "name": "Jedi",
-        "type": "class"
-      },
-      "featRef": {
-        "pack": "foundryvtt-swse.feats",
-        "id": "252b67d6e31c377e",
-        "name": "Weapon Finesse",
-        "type": "feat"
-      },
-      "talentRef": {
-        "pack": "foundryvtt-swse.talents",
-        "id": "9379daa94a228c04",
-        "name": "Block",
-        "type": "talent"
-      },
-      "talentTreeRef": {
+      "talentTreeId": {
         "pack": "foundryvtt-swse.talent_trees",
         "id": "10c843cef8ce2798",
         "name": "Jedi Guardian",
         "type": "talenttree"
       },
-      "forcePowerRefs": [
+      "forcePowers": [
         {
           "pack": "foundryvtt-swse.forcepowers",
           "id": "f177dc6d65f76de9",
@@ -80,14 +102,10 @@
           "type": "forcepower"
         }
       ],
-      "backgroundRef": null,
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-mirialan",
-        "name": "Mirialan",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "languages": [
+        "Basic"
+      ],
+      "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-simple",
           "id": "weapon-lightsaber",
@@ -120,18 +138,44 @@
           "quantity": 1,
           "displayName": "Glow Rod"
         }
-      ]
+      ],
+      "credits": 465,
+      "mentor": "miraj",
+      "archetype": "Guardian",
+      "roleTags": [
+        "force-user",
+        "melee"
+      ],
+      "forceUser": true,
+      "notes": "Attack +7, Reflex Defense 19, HP 32. Block talent allows negating melee attacks with Use the Force check."
     },
     {
       "id": "jedi_consular",
       "name": "Consular",
-      "class": "Jedi",
-      "archetype": "Consular",
       "description": "A Force-focused diplomat who relies on manipulation of the Force and wisdom rather than lightsaber combat.",
       "quote": "The Force flows through all things. Let it guide your path to peace.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_consular.webp",
-      "mentor": "miraj",
-      "background": "Alpheridies Origin",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "fec1f8af44fcc35a",
+        "name": "Jedi",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-miraluka",
+        "name": "Miraluka",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "alpheridies-origin",
+        "name": "Alpheridies Origin",
+        "type": "background"
+      },
       "abilityScores": {
         "str": 8,
         "dex": 12,
@@ -140,56 +184,60 @@
         "wis": 16,
         "cha": 14
       },
-      "species": "Miraluka",
-      "className": "Jedi",
-      "level": 1,
-      "feat": "Skill Focus (Use the Force)",
-      "talent": "Force Focus",
-      "talentTree": "Jedi Consular",
       "trainedSkills": [
-        "2b9e43f710664b31",
-        "43c5941072ec78af",
-        "knowledgeGalacticLore",
-        "cb5493f65f0bdb62"
+        {
+          "id": "2b9e43f710664b31",
+          "name": "2b9e43f710664b31"
+        },
+        {
+          "id": "43c5941072ec78af",
+          "name": "43c5941072ec78af"
+        },
+        {
+          "id": "knowledgeGalacticLore",
+          "name": "knowledgeGalacticLore"
+        },
+        {
+          "id": "cb5493f65f0bdb62",
+          "name": "cb5493f65f0bdb62"
+        }
       ],
-      "forcePowers": [
-        "Move Object",
-        "Mind Trick",
-        "Negate Energy",
-        "Surge"
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "skill-focus-(use-the-force)",
+          "name": "Skill Focus (Use the Force)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "1592aaedf4b6e40a",
+          "name": "Skill Focus",
+          "type": "feat",
+          "displayName": "Skill Focus (Use the Force)"
+        }
       ],
-      "startingEquipment": [
-        "Lightsaber",
-        "Medpac"
+      "talents": [
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "force-focus",
+          "name": "Force Focus",
+          "type": "talent"
+        },
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "af51d4e76675b183",
+          "name": "Force Focus",
+          "type": "talent"
+        }
       ],
-      "credits": 500,
-      "notes": "Use the Force +9, Will Defense 18, 4 Force Powers. Force Sight ability ignores concealment. Force Focus allows regaining spent Force Power.",
-      "classRef": {
-        "pack": "foundryvtt-swse.classes",
-        "id": "fec1f8af44fcc35a",
-        "name": "Jedi",
-        "type": "class"
-      },
-      "featRef": {
-        "pack": "foundryvtt-swse.feats",
-        "id": "1592aaedf4b6e40a",
-        "name": "Skill Focus",
-        "type": "feat",
-        "displayName": "Skill Focus (Use the Force)"
-      },
-      "talentRef": {
-        "pack": "foundryvtt-swse.talents",
-        "id": "af51d4e76675b183",
-        "name": "Force Focus",
-        "type": "talent"
-      },
-      "talentTreeRef": {
+      "talentTreeId": {
         "pack": "foundryvtt-swse.talent_trees",
         "id": "e99cfa9db8493573",
         "name": "Jedi Consular",
         "type": "talenttree"
       },
-      "forcePowerRefs": [
+      "forcePowers": [
         {
           "pack": "foundryvtt-swse.forcepowers",
           "id": "289013a32bd179ad",
@@ -215,14 +263,10 @@
           "type": "forcepower"
         }
       ],
-      "backgroundRef": null,
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-miraluka",
-        "name": "Miraluka",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "languages": [
+        "Basic"
+      ],
+      "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-simple",
           "id": "weapon-lightsaber",
@@ -239,18 +283,43 @@
           "quantity": 1,
           "displayName": "Medpac"
         }
-      ]
+      ],
+      "credits": 500,
+      "mentor": "miraj",
+      "archetype": "Consular",
+      "roleTags": [
+        "force-user"
+      ],
+      "forceUser": true,
+      "notes": "Use the Force +9, Will Defense 18, 4 Force Powers. Force Sight ability ignores concealment. Force Focus allows regaining spent Force Power."
     },
     {
       "id": "jedi_defender",
       "name": "Defender",
-      "class": "Jedi",
-      "archetype": "Jedi Defender",
       "description": "A durable frontline protector who can deflect attacks and shield allies from harm.",
       "quote": "I can't afford to lose this fight! There are people depending on me.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_defender.webp",
-      "mentor": "miraj",
-      "background": "Scarred",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "fec1f8af44fcc35a",
+        "name": "Jedi",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-zabrak",
+        "name": "Zabrak",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "o8ysca1cvyn",
+        "name": "Scarred",
+        "type": "background"
+      },
       "abilityScores": {
         "str": 14,
         "dex": 12,
@@ -259,53 +328,52 @@
         "wis": 12,
         "cha": 8
       },
-      "species": "Zabrak",
-      "className": "Jedi",
-      "level": 1,
-      "feat": "Skill Focus (Use the Force)",
-      "talent": "Deflect",
-      "talentTree": "Jedi Guardian",
       "trainedSkills": [
-        "2b9e43f710664b31",
-        "35df8faa4878f2c5"
+        {
+          "id": "2b9e43f710664b31",
+          "name": "2b9e43f710664b31"
+        },
+        {
+          "id": "35df8faa4878f2c5",
+          "name": "35df8faa4878f2c5"
+        }
       ],
-      "forcePowers": [
-        "Battle Strike",
-        "Negate Energy"
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "skill-focus-(use-the-force)",
+          "name": "Skill Focus (Use the Force)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "1592aaedf4b6e40a",
+          "name": "Skill Focus",
+          "type": "feat",
+          "displayName": "Skill Focus (Use the Force)"
+        }
       ],
-      "startingEquipment": [
-        "Lightsaber",
-        "Medpac",
-        "Comlink, Short-Range"
+      "talents": [
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "deflect",
+          "name": "Deflect",
+          "type": "talent"
+        },
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "72c644f7a09b1186",
+          "name": "Deflect",
+          "type": "talent"
+        }
       ],
-      "credits": 475,
-      "notes": "HP 35, Fort Defense 19, Use the Force +9 for Deflect checks. Zabrak CON bonus makes this an excellent tank. Scarred background grants Favorable Circumstances when Intimidating.",
-      "classRef": {
-        "pack": "foundryvtt-swse.classes",
-        "id": "fec1f8af44fcc35a",
-        "name": "Jedi",
-        "type": "class"
-      },
-      "featRef": {
-        "pack": "foundryvtt-swse.feats",
-        "id": "1592aaedf4b6e40a",
-        "name": "Skill Focus",
-        "type": "feat",
-        "displayName": "Skill Focus (Use the Force)"
-      },
-      "talentRef": {
-        "pack": "foundryvtt-swse.talents",
-        "id": "72c644f7a09b1186",
-        "name": "Deflect",
-        "type": "talent"
-      },
-      "talentTreeRef": {
+      "talentTreeId": {
         "pack": "foundryvtt-swse.talent_trees",
         "id": "10c843cef8ce2798",
         "name": "Jedi Guardian",
         "type": "talenttree"
       },
-      "forcePowerRefs": [
+      "forcePowers": [
         {
           "pack": "foundryvtt-swse.forcepowers",
           "id": "f177dc6d65f76de9",
@@ -319,19 +387,10 @@
           "type": "forcepower"
         }
       ],
-      "backgroundRef": {
-        "pack": "foundryvtt-swse.backgrounds",
-        "id": "o8ysca1cvyn",
-        "name": "Scarred",
-        "type": "background"
-      },
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-zabrak",
-        "name": "Zabrak",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "languages": [
+        "Basic"
+      ],
+      "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-simple",
           "id": "weapon-lightsaber",
@@ -356,18 +415,44 @@
           "quantity": 1,
           "displayName": "Comlink, Short-Range"
         }
-      ]
+      ],
+      "credits": 475,
+      "mentor": "miraj",
+      "archetype": "Jedi Defender",
+      "roleTags": [
+        "force-user",
+        "tank"
+      ],
+      "forceUser": true,
+      "notes": "HP 35, Fort Defense 19, Use the Force +9 for Deflect checks. Zabrak CON bonus makes this an excellent tank. Scarred background grants Favorable Circumstances when Intimidating."
     },
     {
       "id": "jedi_sentinel",
       "name": "Sentinel",
-      "class": "Jedi",
-      "archetype": "Sentinel",
       "description": "An investigative shadow who hunts down dark side corruption with precision and stealth.",
       "quote": "Darkness cannot hide from those who seek the light.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/jedi_sentinel.webp",
-      "mentor": "miraj",
-      "background": "Nar Shaddaa Origin",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "fec1f8af44fcc35a",
+        "name": "Jedi",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-miraluka",
+        "name": "Miraluka",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "nar-shaddaa-origin",
+        "name": "Nar Shaddaa Origin",
+        "type": "background"
+      },
       "abilityScores": {
         "str": 10,
         "dex": 14,
@@ -376,56 +461,59 @@
         "wis": 16,
         "cha": 12
       },
-      "species": "Miraluka",
-      "className": "Jedi",
-      "level": 1,
-      "feat": "Force Training",
-      "talent": "Dark Side Sense",
-      "talentTree": "Jedi Sentinel",
       "trainedSkills": [
-        "2b9e43f710664b31",
-        "43c5941072ec78af",
-        "6d2ac22d9fcf402f",
-        "cb5493f65f0bdb62"
+        {
+          "id": "2b9e43f710664b31",
+          "name": "2b9e43f710664b31"
+        },
+        {
+          "id": "43c5941072ec78af",
+          "name": "43c5941072ec78af"
+        },
+        {
+          "id": "6d2ac22d9fcf402f",
+          "name": "6d2ac22d9fcf402f"
+        },
+        {
+          "id": "cb5493f65f0bdb62",
+          "name": "cb5493f65f0bdb62"
+        }
       ],
-      "forcePowers": [
-        "Force Sense",
-        "Battle Strike",
-        "Mind Trick",
-        "Negate Energy"
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "force-training",
+          "name": "Force Training",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "9b7b869a86f39190",
+          "name": "Force Training",
+          "type": "feat"
+        }
       ],
-      "startingEquipment": [
-        "Lightsaber",
-        "Medpac",
-        "Binder Cuffs"
+      "talents": [
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "dark-side-sense",
+          "name": "Dark Side Sense",
+          "type": "talent"
+        },
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "e885f64758f5e2bd",
+          "name": "Dark Side Sense",
+          "type": "talent"
+        }
       ],
-      "credits": 450,
-      "notes": "Use the Force +9, Will Defense 18. Force Sight ignores concealment. Dark Side Sense allows rerolls to detect dark siders. Nar Shaddaa Origin adds Stealth as class skill for +3 bonus.",
-      "classRef": {
-        "pack": "foundryvtt-swse.classes",
-        "id": "fec1f8af44fcc35a",
-        "name": "Jedi",
-        "type": "class"
-      },
-      "featRef": {
-        "pack": "foundryvtt-swse.feats",
-        "id": "9b7b869a86f39190",
-        "name": "Force Training",
-        "type": "feat"
-      },
-      "talentRef": {
-        "pack": "foundryvtt-swse.talents",
-        "id": "e885f64758f5e2bd",
-        "name": "Dark Side Sense",
-        "type": "talent"
-      },
-      "talentTreeRef": {
+      "talentTreeId": {
         "pack": "foundryvtt-swse.talent_trees",
         "id": "36f18f3e974feb33",
         "name": "Jedi Sentinel",
         "type": "talenttree"
       },
-      "forcePowerRefs": [
+      "forcePowers": [
         {
           "pack": "foundryvtt-swse.forcepowers",
           "id": "c857835de924b420",
@@ -451,14 +539,10 @@
           "type": "forcepower"
         }
       ],
-      "backgroundRef": null,
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-miraluka",
-        "name": "Miraluka",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "languages": [
+        "Basic"
+      ],
+      "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-simple",
           "id": "weapon-lightsaber",
@@ -483,18 +567,43 @@
           "quantity": 1,
           "displayName": "Binder Cuffs"
         }
-      ]
+      ],
+      "credits": 450,
+      "mentor": "miraj",
+      "archetype": "Sentinel",
+      "roleTags": [
+        "force-user"
+      ],
+      "forceUser": true,
+      "notes": "Use the Force +9, Will Defense 18. Force Sight ignores concealment. Dark Side Sense allows rerolls to detect dark siders. Nar Shaddaa Origin adds Stealth as class skill for +3 bonus."
     },
     {
       "id": "noble_diplomat",
       "name": "Diplomat",
-      "class": "Noble",
-      "archetype": "Diplomat",
       "description": "The ultimate social character, capable of talking their way through any situation with charm and persuasion.",
       "quote": "Words can open doors that even the strongest blade cannot.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/noble_diplomat.webp",
-      "mentor": "j0n1",
-      "background": "Alderaan Origin",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "8c58016e587dd2c7",
+        "name": "Noble",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-zeltron",
+        "name": "Zeltron",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "alderaan-origin",
+        "name": "Alderaan Origin",
+        "type": "background"
+      },
       "abilityScores": {
         "str": 8,
         "dex": 12,
@@ -503,63 +612,80 @@
         "wis": 12,
         "cha": 16
       },
-      "species": "Zeltron",
-      "className": "Noble",
-      "level": 1,
-      "feat": "Skill Focus (Persuasion)",
-      "talent": "Inspire Confidence",
-      "talentTree": "Inspiration",
       "trainedSkills": [
-        "b554f3e5a55ad53f",
-        "9410ce2dfb6cefcb",
-        "c9bf381579013b18",
-        "43c5941072ec78af",
-        "knowledgeGalacticLore",
-        "knowledgeSocialSciences",
-        "8f5e21f92d6d976b",
-        "cb5493f65f0bdb62"
+        {
+          "id": "b554f3e5a55ad53f",
+          "name": "b554f3e5a55ad53f"
+        },
+        {
+          "id": "9410ce2dfb6cefcb",
+          "name": "9410ce2dfb6cefcb"
+        },
+        {
+          "id": "c9bf381579013b18",
+          "name": "c9bf381579013b18"
+        },
+        {
+          "id": "43c5941072ec78af",
+          "name": "43c5941072ec78af"
+        },
+        {
+          "id": "knowledgeGalacticLore",
+          "name": "knowledgeGalacticLore"
+        },
+        {
+          "id": "knowledgeSocialSciences",
+          "name": "knowledgeSocialSciences"
+        },
+        {
+          "id": "8f5e21f92d6d976b",
+          "name": "8f5e21f92d6d976b"
+        },
+        {
+          "id": "cb5493f65f0bdb62",
+          "name": "cb5493f65f0bdb62"
+        }
       ],
-      "forcePowers": [],
-      "startingEquipment": [
-        "Sporting Blaster Pistol",
-        "Comlink, Short-Range"
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "skill-focus-(persuasion)",
+          "name": "Skill Focus (Persuasion)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "1592aaedf4b6e40a",
+          "name": "Skill Focus",
+          "type": "feat",
+          "displayName": "Skill Focus (Persuasion)"
+        }
       ],
-      "credits": 1175,
-      "notes": "Persuasion +18 with Zeltron bonuses, Will Defense 16. Inspire Confidence grants +1 morale bonus to all allies.",
-      "classRef": {
-        "pack": "foundryvtt-swse.classes",
-        "id": "8c58016e587dd2c7",
-        "name": "Noble",
-        "type": "class"
-      },
-      "featRef": {
-        "pack": "foundryvtt-swse.feats",
-        "id": "1592aaedf4b6e40a",
-        "name": "Skill Focus",
-        "type": "feat",
-        "displayName": "Skill Focus (Persuasion)"
-      },
-      "talentRef": {
-        "pack": "foundryvtt-swse.talents",
-        "id": "4d8882a28da30454",
-        "name": "Inspire Confidence",
-        "type": "talent"
-      },
-      "talentTreeRef": {
+      "talents": [
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "inspire-confidence",
+          "name": "Inspire Confidence",
+          "type": "talent"
+        },
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "4d8882a28da30454",
+          "name": "Inspire Confidence",
+          "type": "talent"
+        }
+      ],
+      "talentTreeId": {
         "pack": "foundryvtt-swse.talent_trees",
         "id": "72d32ebcbb607314",
         "name": "Inspiration",
         "type": "talenttree"
       },
-      "forcePowerRefs": [],
-      "backgroundRef": null,
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-zeltron",
-        "name": "Zeltron",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "forcePowers": [],
+      "languages": [
+        "Basic"
+      ],
+      "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-pistols",
           "id": "weapon-sporting-blaster-pistol",
@@ -576,18 +702,44 @@
           "quantity": 1,
           "displayName": "Comlink, Short-Range"
         }
-      ]
+      ],
+      "credits": 1175,
+      "mentor": "j0n1",
+      "archetype": "Diplomat",
+      "roleTags": [
+        "diplomat",
+        "support"
+      ],
+      "forceUser": false,
+      "notes": "Persuasion +18 with Zeltron bonuses, Will Defense 16. Inspire Confidence grants +1 morale bonus to all allies."
     },
     {
       "id": "noble_leader",
       "name": "Leader",
-      "class": "Noble",
-      "archetype": "Leader",
       "description": "A tactical commander who coordinates allies and inspires greatness on the battlefield.",
       "quote": "Victory belongs to those who fight together as one!",
       "imagePath": "systems/foundryvtt-swse/assets/templates/noble_leader.webp",
-      "mentor": "j0n1",
-      "background": "Coruscant Origin",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "8c58016e587dd2c7",
+        "name": "Noble",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-human",
+        "name": "Human",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "coruscant-origin",
+        "name": "Coruscant Origin",
+        "type": "background"
+      },
       "abilityScores": {
         "str": 10,
         "dex": 12,
@@ -596,62 +748,75 @@
         "wis": 14,
         "cha": 16
       },
-      "species": "Human",
-      "className": "Noble",
-      "level": 1,
-      "feat": "Improved Defenses",
-      "talent": "Born Leader",
-      "talentTree": "Leadership",
       "trainedSkills": [
-        "b554f3e5a55ad53f",
-        "cb5493f65f0bdb62",
-        "43c5941072ec78af",
-        "knowledgeTactics",
-        "c9bf381579013b18",
-        "9410ce2dfb6cefcb",
-        "633a13c5fa6101d7"
+        {
+          "id": "b554f3e5a55ad53f",
+          "name": "b554f3e5a55ad53f"
+        },
+        {
+          "id": "cb5493f65f0bdb62",
+          "name": "cb5493f65f0bdb62"
+        },
+        {
+          "id": "43c5941072ec78af",
+          "name": "43c5941072ec78af"
+        },
+        {
+          "id": "knowledgeTactics",
+          "name": "knowledgeTactics"
+        },
+        {
+          "id": "c9bf381579013b18",
+          "name": "c9bf381579013b18"
+        },
+        {
+          "id": "9410ce2dfb6cefcb",
+          "name": "9410ce2dfb6cefcb"
+        },
+        {
+          "id": "633a13c5fa6101d7",
+          "name": "633a13c5fa6101d7"
+        }
       ],
-      "forcePowers": [],
-      "startingEquipment": [
-        "Heavy Blaster Pistol",
-        "Comlink, Short-Range",
-        "Medpac"
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "improved-defenses",
+          "name": "Improved Defenses",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "f8e2a30390d870e7",
+          "name": "Improved Defenses",
+          "type": "feat"
+        }
       ],
-      "credits": 625,
-      "notes": "HP 20, Reflex 13, Will 17. Born Leader grants swift action +1 insight bonus to allies' attacks.",
-      "classRef": {
-        "pack": "foundryvtt-swse.classes",
-        "id": "8c58016e587dd2c7",
-        "name": "Noble",
-        "type": "class"
-      },
-      "featRef": {
-        "pack": "foundryvtt-swse.feats",
-        "id": "f8e2a30390d870e7",
-        "name": "Improved Defenses",
-        "type": "feat"
-      },
-      "talentRef": {
-        "pack": "foundryvtt-swse.talents",
-        "id": "6a66ba6e0834dd6f",
-        "name": "Born Leader",
-        "type": "talent"
-      },
-      "talentTreeRef": {
+      "talents": [
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "born-leader",
+          "name": "Born Leader",
+          "type": "talent"
+        },
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "6a66ba6e0834dd6f",
+          "name": "Born Leader",
+          "type": "talent"
+        }
+      ],
+      "talentTreeId": {
         "pack": "foundryvtt-swse.talent_trees",
         "id": "5964237d22681dc0",
         "name": "Leadership",
         "type": "talenttree"
       },
-      "forcePowerRefs": [],
-      "backgroundRef": null,
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-human",
-        "name": "Human",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "forcePowers": [],
+      "languages": [
+        "Basic"
+      ],
+      "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-pistols",
           "id": "weapon-heavy-blaster-pistol",
@@ -676,18 +841,44 @@
           "quantity": 1,
           "displayName": "Medpac"
         }
-      ]
+      ],
+      "credits": 625,
+      "mentor": "j0n1",
+      "archetype": "Leader",
+      "roleTags": [
+        "diplomat",
+        "support"
+      ],
+      "forceUser": false,
+      "notes": "HP 20, Reflex 13, Will 17. Born Leader grants swift action +1 insight bonus to allies' attacks."
     },
     {
       "id": "noble_aristocrat",
       "name": "Aristocrat",
-      "class": "Noble",
-      "archetype": "Aristocrat",
       "description": "A wealthy manipulator with extensive resources, connections, and information networks.",
       "quote": "Information is the galaxy's most valuable currency, and I am very wealthy.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/noble_aristocrat.webp",
-      "mentor": "j0n1",
-      "background": "Fondor Origin",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "8c58016e587dd2c7",
+        "name": "Noble",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-bothan",
+        "name": "Bothan",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "fondor-origin",
+        "name": "Fondor Origin",
+        "type": "background"
+      },
       "abilityScores": {
         "str": 8,
         "dex": 10,
@@ -696,69 +887,88 @@
         "wis": 12,
         "cha": 14
       },
-      "species": "Bothan",
-      "className": "Noble",
-      "level": 1,
-      "feat": "Skill Training",
-      "talent": "Wealth",
-      "talentTree": "Lineage",
       "trainedSkills": [
-        "c9bf381579013b18",
-        "b554f3e5a55ad53f",
-        "9410ce2dfb6cefcb",
-        "8f5e21f92d6d976b",
-        "knowledgeBureaucracy",
-        "knowledgeGalacticLore",
-        "knowledgeSocialSciences",
-        "43c5941072ec78af",
-        "cb5493f65f0bdb62",
-        "745a5686d6f21e8c"
+        {
+          "id": "c9bf381579013b18",
+          "name": "c9bf381579013b18"
+        },
+        {
+          "id": "b554f3e5a55ad53f",
+          "name": "b554f3e5a55ad53f"
+        },
+        {
+          "id": "9410ce2dfb6cefcb",
+          "name": "9410ce2dfb6cefcb"
+        },
+        {
+          "id": "8f5e21f92d6d976b",
+          "name": "8f5e21f92d6d976b"
+        },
+        {
+          "id": "knowledgeBureaucracy",
+          "name": "knowledgeBureaucracy"
+        },
+        {
+          "id": "knowledgeGalacticLore",
+          "name": "knowledgeGalacticLore"
+        },
+        {
+          "id": "knowledgeSocialSciences",
+          "name": "knowledgeSocialSciences"
+        },
+        {
+          "id": "43c5941072ec78af",
+          "name": "43c5941072ec78af"
+        },
+        {
+          "id": "cb5493f65f0bdb62",
+          "name": "cb5493f65f0bdb62"
+        },
+        {
+          "id": "745a5686d6f21e8c",
+          "name": "745a5686d6f21e8c"
+        }
       ],
-      "forcePowers": [],
-      "startingEquipment": [
-        "Heavy Blaster Pistol",
-        "Hold-out Blaster",
-        "Datapad, Standard",
-        "Comlink, Short-Range",
-        "Code Cylinder",
-        "Blank Datacards (10)",
-        "Bioscanner"
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "skill-training",
+          "name": "Skill Training",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "a9f6de36f24ef202",
+          "name": "Skill Training",
+          "type": "feat"
+        }
       ],
-      "credits": 465,
-      "notes": "10 trained skills, 6,500 starting credits with Wealth talent. Bothan bonuses to Gather Information. Fondor Origin adds Mechanics as class skill for +3 bonus.",
-      "classRef": {
-        "pack": "foundryvtt-swse.classes",
-        "id": "8c58016e587dd2c7",
-        "name": "Noble",
-        "type": "class"
-      },
-      "featRef": {
-        "pack": "foundryvtt-swse.feats",
-        "id": "a9f6de36f24ef202",
-        "name": "Skill Training",
-        "type": "feat"
-      },
-      "talentRef": {
-        "pack": "foundryvtt-swse.talents",
-        "id": "37bf53b4b2c0e539",
-        "name": "Wealth",
-        "type": "talent"
-      },
-      "talentTreeRef": {
+      "talents": [
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "wealth",
+          "name": "Wealth",
+          "type": "talent"
+        },
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "37bf53b4b2c0e539",
+          "name": "Wealth",
+          "type": "talent"
+        }
+      ],
+      "talentTreeId": {
         "pack": "foundryvtt-swse.talent_trees",
         "id": "b5bb4154688c66ab",
         "name": "Lineage",
         "type": "talenttree"
       },
-      "forcePowerRefs": [],
-      "backgroundRef": null,
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-bothan",
-        "name": "Bothan",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "forcePowers": [],
+      "languages": [
+        "Bothese",
+        "Basic"
+      ],
+      "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-pistols",
           "id": "weapon-heavy-blaster-pistol",
@@ -815,18 +1025,43 @@
           "quantity": 1,
           "displayName": "Bioscanner"
         }
-      ]
+      ],
+      "credits": 465,
+      "mentor": "j0n1",
+      "archetype": "Aristocrat",
+      "roleTags": [
+        "diplomat"
+      ],
+      "forceUser": false,
+      "notes": "10 trained skills, 6,500 starting credits with Wealth talent. Bothan bonuses to Gather Information. Fondor Origin adds Mechanics as class skill for +3 bonus."
     },
     {
       "id": "noble_duelist",
       "name": "Duelist",
-      "class": "Noble",
-      "archetype": "Duelist",
       "description": "A social character with surprising melee combat effectiveness using grace and finesse.",
       "quote": "Elegance in both word and blade—a true noble's art.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/noble_duelist.webp",
-      "mentor": "j0n1",
-      "background": "Scarred",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "8c58016e587dd2c7",
+        "name": "Noble",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-zeltron",
+        "name": "Zeltron",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "o8ysca1cvyn",
+        "name": "Scarred",
+        "type": "background"
+      },
       "abilityScores": {
         "str": 8,
         "dex": 14,
@@ -835,67 +1070,72 @@
         "wis": 12,
         "cha": 16
       },
-      "species": "Zeltron",
-      "className": "Noble",
-      "level": 1,
-      "feat": "Weapon Focus (Light Melee)",
-      "talent": "Noble Fencing Style",
-      "talentTree": "Fencing",
       "trainedSkills": [
-        "b554f3e5a55ad53f",
-        "9410ce2dfb6cefcb",
-        "cb5493f65f0bdb62",
-        "43c5941072ec78af",
-        "c9bf381579013b18",
-        "knowledge_galactic_lore"
+        {
+          "id": "b554f3e5a55ad53f",
+          "name": "b554f3e5a55ad53f"
+        },
+        {
+          "id": "9410ce2dfb6cefcb",
+          "name": "9410ce2dfb6cefcb"
+        },
+        {
+          "id": "cb5493f65f0bdb62",
+          "name": "cb5493f65f0bdb62"
+        },
+        {
+          "id": "43c5941072ec78af",
+          "name": "43c5941072ec78af"
+        },
+        {
+          "id": "c9bf381579013b18",
+          "name": "c9bf381579013b18"
+        },
+        {
+          "id": "knowledge_galactic_lore",
+          "name": "knowledge_galactic_lore"
+        }
       ],
-      "forcePowers": [],
-      "startingEquipment": [
-        "Vibroblade",
-        "Blaster Pistol",
-        "Comlink, Short-Range"
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-focus-(light-melee)",
+          "name": "Weapon Focus (Light Melee)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "c41814601364b643",
+          "name": "Weapon Focus",
+          "type": "feat",
+          "displayName": "Weapon Focus (Light Melee)"
+        }
       ],
-      "credits": 475,
-      "notes": "Melee attack +5 using CHA, 2d6 damage, HP 19. Noble Fencing Style allows using CHA for light melee attacks. Scarred background grants Favorable Circumstances when Intimidating.",
-      "classRef": {
-        "pack": "foundryvtt-swse.classes",
-        "id": "8c58016e587dd2c7",
-        "name": "Noble",
-        "type": "class"
-      },
-      "featRef": {
-        "pack": "foundryvtt-swse.feats",
-        "id": "c41814601364b643",
-        "name": "Weapon Focus",
-        "type": "feat",
-        "displayName": "Weapon Focus (Light Melee)"
-      },
-      "talentRef": {
-        "pack": "foundryvtt-swse.talents",
-        "id": "00c3231e4a4173fa",
-        "name": "Noble Fencing Style",
-        "type": "talent"
-      },
-      "talentTreeRef": {
+      "talents": [
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "noble-fencing-style",
+          "name": "Noble Fencing Style",
+          "type": "talent"
+        },
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "00c3231e4a4173fa",
+          "name": "Noble Fencing Style",
+          "type": "talent"
+        }
+      ],
+      "talentTreeId": {
         "pack": "foundryvtt-swse.talent_trees",
         "id": "9df067790c87e6bc",
         "name": "Fencing",
         "type": "talenttree"
       },
-      "forcePowerRefs": [],
-      "backgroundRef": {
-        "pack": "foundryvtt-swse.backgrounds",
-        "id": "o8ysca1cvyn",
-        "name": "Scarred",
-        "type": "background"
-      },
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-zeltron",
-        "name": "Zeltron",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "forcePowers": [],
+      "languages": [
+        "Basic"
+      ],
+      "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-simple",
           "id": "weapon-vibroblade",
@@ -920,18 +1160,43 @@
           "quantity": 1,
           "displayName": "Comlink, Short-Range"
         }
-      ]
+      ],
+      "credits": 475,
+      "mentor": "j0n1",
+      "archetype": "Duelist",
+      "roleTags": [
+        "diplomat"
+      ],
+      "forceUser": false,
+      "notes": "Melee attack +5 using CHA, 2d6 damage, HP 19. Noble Fencing Style allows using CHA for light melee attacks. Scarred background grants Favorable Circumstances when Intimidating."
     },
     {
       "id": "scoundrel_pistoleer",
       "name": "Pistoleer",
-      "class": "Scoundrel",
-      "archetype": "Pistoleer",
       "description": "A precision shooter who deals devastating damage with sneak attacks from the shadows.",
       "quote": "They never see it coming. That's the whole point.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_pistoleer.webp",
-      "mentor": "salty",
-      "background": "Corellia Origin",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "21dfe84d159a1b7f",
+        "name": "Scoundrel",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-human",
+        "name": "Human",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "corellia-origin",
+        "name": "Corellia Origin",
+        "type": "background"
+      },
       "abilityScores": {
         "str": 10,
         "dex": 16,
@@ -940,65 +1205,75 @@
         "wis": 12,
         "cha": 8
       },
-      "species": "Human",
-      "className": "Scoundrel",
-      "level": 1,
-      "feat": "Precise Shot",
-      "talent": "Sneak Attack",
-      "talentTree": "Misfortune",
       "trainedSkills": [
-        "6d2ac22d9fcf402f",
-        "43c5941072ec78af",
-        "cb5493f65f0bdb62",
-        "9410ce2dfb6cefcb",
-        "745a5686d6f21e8c",
-        "b8dad0c963f046c6",
-        "a6c5e98148aad9a9"
+        {
+          "id": "6d2ac22d9fcf402f",
+          "name": "6d2ac22d9fcf402f"
+        },
+        {
+          "id": "43c5941072ec78af",
+          "name": "43c5941072ec78af"
+        },
+        {
+          "id": "cb5493f65f0bdb62",
+          "name": "cb5493f65f0bdb62"
+        },
+        {
+          "id": "9410ce2dfb6cefcb",
+          "name": "9410ce2dfb6cefcb"
+        },
+        {
+          "id": "745a5686d6f21e8c",
+          "name": "745a5686d6f21e8c"
+        },
+        {
+          "id": "b8dad0c963f046c6",
+          "name": "b8dad0c963f046c6"
+        },
+        {
+          "id": "a6c5e98148aad9a9",
+          "name": "a6c5e98148aad9a9"
+        }
       ],
-      "forcePowers": [],
-      "startingEquipment": [
-        "Heavy Blaster Pistol",
-        "Blaster Pistol",
-        "Utility Belt (Standard)",
-        "Power Pack",
-        "Comlink, Short-Range",
-        "Medpac"
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "precise-shot",
+          "name": "Precise Shot",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "c180eee7d3bc29b2",
+          "name": "Precise Shot",
+          "type": "feat"
+        }
       ],
-      "credits": -25,
-      "notes": "Attack +4, 3d8+3 damage (4d8+3 vs flat-footed), Reflex Defense 17. Precise Shot removes shooting into melee penalty.",
-      "classRef": {
-        "pack": "foundryvtt-swse.classes",
-        "id": "21dfe84d159a1b7f",
-        "name": "Scoundrel",
-        "type": "class"
-      },
-      "featRef": {
-        "pack": "foundryvtt-swse.feats",
-        "id": "c180eee7d3bc29b2",
-        "name": "Precise Shot",
-        "type": "feat"
-      },
-      "talentRef": {
-        "pack": "foundryvtt-swse.talents",
-        "id": "1505abc8babeeb84",
-        "name": "Sneak Attack",
-        "type": "talent"
-      },
-      "talentTreeRef": {
+      "talents": [
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "sneak-attack",
+          "name": "Sneak Attack",
+          "type": "talent"
+        },
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "1505abc8babeeb84",
+          "name": "Sneak Attack",
+          "type": "talent"
+        }
+      ],
+      "talentTreeId": {
         "pack": "foundryvtt-swse.talent_trees",
         "id": "67b59e020c1660eb",
         "name": "Misfortune",
         "type": "talenttree"
       },
-      "forcePowerRefs": [],
-      "backgroundRef": null,
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-human",
-        "name": "Human",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "forcePowers": [],
+      "languages": [
+        "Basic"
+      ],
+      "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-pistols",
           "id": "weapon-heavy-blaster-pistol",
@@ -1047,18 +1322,43 @@
           "quantity": 1,
           "displayName": "Medpac"
         }
-      ]
+      ],
+      "credits": -25,
+      "mentor": "salty",
+      "archetype": "Pistoleer",
+      "roleTags": [
+        "rogue"
+      ],
+      "forceUser": false,
+      "notes": "Attack +4, 3d8+3 damage (4d8+3 vs flat-footed), Reflex Defense 17. Precise Shot removes shooting into melee penalty."
     },
     {
       "id": "scoundrel_skill_monkey",
       "name": "Skill Monkey",
-      "class": "Scoundrel",
-      "archetype": "Skill Monkey",
       "description": "A versatile specialist covering social, technical, and infiltration roles with expertise.",
       "quote": "Every problem has a solution. You just need the right skills.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_skill_monkey.webp",
-      "mentor": "salty",
-      "background": "Bothawui Origin",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "21dfe84d159a1b7f",
+        "name": "Scoundrel",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-bothan",
+        "name": "Bothan",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "bothawui-origin",
+        "name": "Bothawui Origin",
+        "type": "background"
+      },
       "abilityScores": {
         "str": 8,
         "dex": 14,
@@ -1067,66 +1367,81 @@
         "wis": 12,
         "cha": 14
       },
-      "species": "Bothan",
-      "className": "Scoundrel",
-      "level": 1,
-      "feat": "Skill Focus (Use Computer)",
-      "talent": "Knack",
-      "talentTree": "Fortune",
       "trainedSkills": [
-        "8f5e21f92d6d976b",
-        "745a5686d6f21e8c",
-        "9410ce2dfb6cefcb",
-        "b554f3e5a55ad53f",
-        "6d2ac22d9fcf402f",
-        "c9bf381579013b18",
-        "43c5941072ec78af",
-        "cb5493f65f0bdb62"
+        {
+          "id": "8f5e21f92d6d976b",
+          "name": "8f5e21f92d6d976b"
+        },
+        {
+          "id": "745a5686d6f21e8c",
+          "name": "745a5686d6f21e8c"
+        },
+        {
+          "id": "9410ce2dfb6cefcb",
+          "name": "9410ce2dfb6cefcb"
+        },
+        {
+          "id": "b554f3e5a55ad53f",
+          "name": "b554f3e5a55ad53f"
+        },
+        {
+          "id": "6d2ac22d9fcf402f",
+          "name": "6d2ac22d9fcf402f"
+        },
+        {
+          "id": "c9bf381579013b18",
+          "name": "c9bf381579013b18"
+        },
+        {
+          "id": "43c5941072ec78af",
+          "name": "43c5941072ec78af"
+        },
+        {
+          "id": "cb5493f65f0bdb62",
+          "name": "cb5493f65f0bdb62"
+        }
       ],
-      "forcePowers": [],
-      "startingEquipment": [
-        "Blaster Pistol",
-        "Security Kit",
-        "Comlink, Short-Range",
-        "Power Pack",
-        "Medpac"
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "skill-focus-(use-computer)",
+          "name": "Skill Focus (Use Computer)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "1592aaedf4b6e40a",
+          "name": "Skill Focus",
+          "type": "feat",
+          "displayName": "Skill Focus (Use Computer)"
+        }
       ],
-      "credits": 475,
-      "notes": "Use Computer +10, 8 trained skills. Knack allows rerolling one skill check per day.",
-      "classRef": {
-        "pack": "foundryvtt-swse.classes",
-        "id": "21dfe84d159a1b7f",
-        "name": "Scoundrel",
-        "type": "class"
-      },
-      "featRef": {
-        "pack": "foundryvtt-swse.feats",
-        "id": "1592aaedf4b6e40a",
-        "name": "Skill Focus",
-        "type": "feat",
-        "displayName": "Skill Focus (Use Computer)"
-      },
-      "talentRef": {
-        "pack": "foundryvtt-swse.talents",
-        "id": "ac6baadb9d65ff7f",
-        "name": "Knack",
-        "type": "talent"
-      },
-      "talentTreeRef": {
+      "talents": [
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "knack",
+          "name": "Knack",
+          "type": "talent"
+        },
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "ac6baadb9d65ff7f",
+          "name": "Knack",
+          "type": "talent"
+        }
+      ],
+      "talentTreeId": {
         "pack": "foundryvtt-swse.talent_trees",
         "id": "cee9b9398682b7d0",
         "name": "Fortune",
         "type": "talenttree"
       },
-      "forcePowerRefs": [],
-      "backgroundRef": null,
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-bothan",
-        "name": "Bothan",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "forcePowers": [],
+      "languages": [
+        "Bothese",
+        "Basic"
+      ],
+      "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-pistols",
           "id": "weapon-blaster-pistol",
@@ -1167,18 +1482,43 @@
           "quantity": 1,
           "displayName": "Medpac"
         }
-      ]
+      ],
+      "credits": 475,
+      "mentor": "salty",
+      "archetype": "Skill Monkey",
+      "roleTags": [
+        "rogue"
+      ],
+      "forceUser": false,
+      "notes": "Use Computer +10, 8 trained skills. Knack allows rerolling one skill check per day."
     },
     {
       "id": "scoundrel_knuckledragger",
       "name": "Knuckledragger",
-      "class": "Scoundrel",
-      "archetype": "Knuckledragger",
       "description": "An aggressive street fighter who pushes enemies down the condition track with dirty tactics.",
       "quote": "No such thing as a fair fight when survival's on the line.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_knuckledragger.webp",
-      "mentor": "salty",
-      "background": "Enslaved",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "21dfe84d159a1b7f",
+        "name": "Scoundrel",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-duros",
+        "name": "Duros",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "dp2c58wnn6i",
+        "name": "Enslaved",
+        "type": "background"
+      },
       "abilityScores": {
         "str": 10,
         "dex": 16,
@@ -1187,70 +1527,75 @@
         "wis": 12,
         "cha": 8
       },
-      "species": "Duros",
-      "className": "Scoundrel",
-      "level": 1,
-      "feat": "Weapon Finesse",
-      "talent": "Dastardly Strike",
-      "talentTree": "Misfortune",
       "trainedSkills": [
-        "9410ce2dfb6cefcb",
-        "6d2ac22d9fcf402f",
-        "cb5493f65f0bdb62",
-        "a6c5e98148aad9a9",
-        "43c5941072ec78af",
-        "c9bf381579013b18",
-        "b8dad0c963f046c6"
+        {
+          "id": "9410ce2dfb6cefcb",
+          "name": "9410ce2dfb6cefcb"
+        },
+        {
+          "id": "6d2ac22d9fcf402f",
+          "name": "6d2ac22d9fcf402f"
+        },
+        {
+          "id": "cb5493f65f0bdb62",
+          "name": "cb5493f65f0bdb62"
+        },
+        {
+          "id": "a6c5e98148aad9a9",
+          "name": "a6c5e98148aad9a9"
+        },
+        {
+          "id": "43c5941072ec78af",
+          "name": "43c5941072ec78af"
+        },
+        {
+          "id": "c9bf381579013b18",
+          "name": "c9bf381579013b18"
+        },
+        {
+          "id": "b8dad0c963f046c6",
+          "name": "b8dad0c963f046c6"
+        }
       ],
-      "forcePowers": [],
-      "startingEquipment": [
-        "Heavy Blaster Pistol",
-        "Vibrodagger",
-        "Targeting Scope, Standard",
-        "Power Pack",
-        "Binder Cuffs",
-        "Medpac"
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-finesse",
+          "name": "Weapon Finesse",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "252b67d6e31c377e",
+          "name": "Weapon Finesse",
+          "type": "feat"
+        }
       ],
-      "credits": 600,
-      "notes": "Attack +5 with DEX 18. Dastardly Strike moves targets -1 condition track when denied DEX bonus. Enslaved background grants +2 competence to Grapple checks.",
-      "classRef": {
-        "pack": "foundryvtt-swse.classes",
-        "id": "21dfe84d159a1b7f",
-        "name": "Scoundrel",
-        "type": "class"
-      },
-      "featRef": {
-        "pack": "foundryvtt-swse.feats",
-        "id": "252b67d6e31c377e",
-        "name": "Weapon Finesse",
-        "type": "feat"
-      },
-      "talentRef": {
-        "pack": "foundryvtt-swse.talents",
-        "id": "9e4345faaaa94dd8",
-        "name": "Dastardly Strike",
-        "type": "talent"
-      },
-      "talentTreeRef": {
+      "talents": [
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "dastardly-strike",
+          "name": "Dastardly Strike",
+          "type": "talent"
+        },
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "9e4345faaaa94dd8",
+          "name": "Dastardly Strike",
+          "type": "talent"
+        }
+      ],
+      "talentTreeId": {
         "pack": "foundryvtt-swse.talent_trees",
         "id": "67b59e020c1660eb",
         "name": "Misfortune",
         "type": "talenttree"
       },
-      "forcePowerRefs": [],
-      "backgroundRef": {
-        "pack": "foundryvtt-swse.backgrounds",
-        "id": "dp2c58wnn6i",
-        "name": "Enslaved",
-        "type": "background"
-      },
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-duros",
-        "name": "Duros",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "forcePowers": [],
+      "languages": [
+        "Basic"
+      ],
+      "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-pistols",
           "id": "weapon-heavy-blaster-pistol",
@@ -1299,18 +1644,43 @@
           "quantity": 1,
           "displayName": "Medpac"
         }
-      ]
+      ],
+      "credits": 600,
+      "mentor": "salty",
+      "archetype": "Knuckledragger",
+      "roleTags": [
+        "rogue"
+      ],
+      "forceUser": false,
+      "notes": "Attack +5 with DEX 18. Dastardly Strike moves targets -1 condition track when denied DEX bonus. Enslaved background grants +2 competence to Grapple checks."
     },
     {
       "id": "scoundrel_outlaw",
       "name": "Outlaw",
-      "class": "Scoundrel",
-      "archetype": "Outlaw",
       "description": "A charming rogue who uses luck and Force Points strategically to turn the odds in their favor.",
       "quote": "Luck? I make my own luck, friend.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scout_outlaw.webp",
-      "mentor": "salty",
-      "background": "Ryloth Origin",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "21dfe84d159a1b7f",
+        "name": "Scoundrel",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-twi-lek",
+        "name": "Twi'lek",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "ryloth-origin",
+        "name": "Ryloth Origin",
+        "type": "background"
+      },
       "abilityScores": {
         "str": 8,
         "dex": 14,
@@ -1319,65 +1689,72 @@
         "wis": 10,
         "cha": 16
       },
-      "species": "Twi'lek",
-      "className": "Scoundrel",
-      "level": 1,
-      "feat": "Improved Defenses",
-      "talent": "Fool's Luck",
-      "talentTree": "Fortune",
       "trainedSkills": [
-        "b554f3e5a55ad53f",
-        "9410ce2dfb6cefcb",
-        "c9bf381579013b18",
-        "43c5941072ec78af",
-        "b8dad0c963f046c6",
-        "6d2ac22d9fcf402f"
+        {
+          "id": "b554f3e5a55ad53f",
+          "name": "b554f3e5a55ad53f"
+        },
+        {
+          "id": "9410ce2dfb6cefcb",
+          "name": "9410ce2dfb6cefcb"
+        },
+        {
+          "id": "c9bf381579013b18",
+          "name": "c9bf381579013b18"
+        },
+        {
+          "id": "43c5941072ec78af",
+          "name": "43c5941072ec78af"
+        },
+        {
+          "id": "b8dad0c963f046c6",
+          "name": "b8dad0c963f046c6"
+        },
+        {
+          "id": "6d2ac22d9fcf402f",
+          "name": "6d2ac22d9fcf402f"
+        }
       ],
-      "forcePowers": [],
-      "startingEquipment": [
-        "Blaster Pistol",
-        "Hold-out Blaster",
-        "Blank Datacards (10)",
-        "Comlink, Short-Range",
-        "Datapad, Standard",
-        "Power Pack",
-        "Medpac"
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "improved-defenses",
+          "name": "Improved Defenses",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "f8e2a30390d870e7",
+          "name": "Improved Defenses",
+          "type": "feat"
+        }
       ],
-      "credits": -35,
-      "notes": "Persuasion +9 (+14 with Fool's Luck). Fool's Luck spends Force Point for +1 attack OR +5 skills OR +1 defenses.",
-      "classRef": {
-        "pack": "foundryvtt-swse.classes",
-        "id": "21dfe84d159a1b7f",
-        "name": "Scoundrel",
-        "type": "class"
-      },
-      "featRef": {
-        "pack": "foundryvtt-swse.feats",
-        "id": "f8e2a30390d870e7",
-        "name": "Improved Defenses",
-        "type": "feat"
-      },
-      "talentRef": {
-        "pack": "foundryvtt-swse.talents",
-        "id": "5319a796f2c4ff64",
-        "name": "Fool's Luck",
-        "type": "talent"
-      },
-      "talentTreeRef": {
+      "talents": [
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "fool's-luck",
+          "name": "Fool's Luck",
+          "type": "talent"
+        },
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "5319a796f2c4ff64",
+          "name": "Fool's Luck",
+          "type": "talent"
+        }
+      ],
+      "talentTreeId": {
         "pack": "foundryvtt-swse.talent_trees",
         "id": "cee9b9398682b7d0",
         "name": "Fortune",
         "type": "talenttree"
       },
-      "forcePowerRefs": [],
-      "backgroundRef": null,
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-twi-lek",
-        "name": "Twi'lek",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "forcePowers": [],
+      "languages": [
+        "Ryl",
+        "Basic"
+      ],
+      "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-pistols",
           "id": "weapon-blaster-pistol",
@@ -1434,18 +1811,43 @@
           "quantity": 1,
           "displayName": "Medpac"
         }
-      ]
+      ],
+      "credits": -35,
+      "mentor": "salty",
+      "archetype": "Outlaw",
+      "roleTags": [
+        "rogue"
+      ],
+      "forceUser": false,
+      "notes": "Persuasion +9 (+14 with Fool's Luck). Fool's Luck spends Force Point for +1 attack OR +5 skills OR +1 defenses."
     },
     {
       "id": "scoundrel_brigand",
       "name": "Brigand",
-      "class": "Scoundrel",
-      "archetype": "Brigand",
       "description": "A roguish brigand who combines exceptional piloting skills with tactical combat prowess, striking from unexpected angles with deadly precision.",
       "quote": "The galaxy's wealth flows to those bold enough to take it.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scoundrel_brigand.webp",
-      "mentor": "salty",
-      "background": "Disgraced",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "21dfe84d159a1b7f",
+        "name": "Scoundrel",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-duros",
+        "name": "Duros",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "sryc2ulg2u",
+        "name": "Disgraced",
+        "type": "background"
+      },
       "abilityScores": {
         "str": 8,
         "dex": 18,
@@ -1454,67 +1856,77 @@
         "wis": 12,
         "cha": 14
       },
-      "species": "Duros",
-      "speciesFeat": "Flawless Pilot",
-      "className": "Scoundrel",
-      "level": 1,
-      "feats": [
-        "Point-Blank Shot",
-        "Weapon Proficiency (Pistols)",
-        "Weapon Proficiency (Simple Weapons)"
-      ],
-      "talent": "Opportunistic Strike",
-      "talentTree": "Run and Gun",
       "trainedSkills": [
-        "9410ce2dfb6cefcb",
-        "cb5493f65f0bdb62",
-        "43c5941072ec78af",
-        "b554f3e5a55ad53f",
-        "b8dad0c963f046c6",
-        "6d2ac22d9fcf402f"
+        {
+          "id": "9410ce2dfb6cefcb",
+          "name": "9410ce2dfb6cefcb"
+        },
+        {
+          "id": "cb5493f65f0bdb62",
+          "name": "cb5493f65f0bdb62"
+        },
+        {
+          "id": "43c5941072ec78af",
+          "name": "43c5941072ec78af"
+        },
+        {
+          "id": "b554f3e5a55ad53f",
+          "name": "b554f3e5a55ad53f"
+        },
+        {
+          "id": "b8dad0c963f046c6",
+          "name": "b8dad0c963f046c6"
+        },
+        {
+          "id": "6d2ac22d9fcf402f",
+          "name": "6d2ac22d9fcf402f"
+        }
       ],
-      "forcePowers": [],
-      "startingEquipment": [
-        "Pulse-Wave Pistol",
-        "Power Packs x2",
-        "Clips x2",
-        "Needler"
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "point-blank-shot",
+          "name": "Point-Blank Shot",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-proficiency-(pistols)",
+          "name": "Weapon Proficiency (Pistols)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-proficiency-(simple-weapons)",
+          "name": "Weapon Proficiency (Simple Weapons)",
+          "type": "feat"
+        }
       ],
-      "credits": 0,
-      "notes": "Attack +6 with exceptional Dexterity (18), Reflex Defense 18. Flawless Pilot allows rerolling Pilot checks and taking the better result. Opportunistic Strike enables bonus attacks against enemies that provoke for allies. Starting equipment emphasizes point-blank precision strikes with the Needler as backup poison option.",
-      "classRef": {
-        "pack": "foundryvtt-swse.classes",
-        "id": "21dfe84d159a1b7f",
-        "name": "Scoundrel",
-        "type": "class"
-      },
-      "featRef": null,
-      "talentRef": {
-        "pack": "foundryvtt-swse.talents",
-        "id": "93770927eba5446d",
-        "name": "Opportunistic Strike",
-        "type": "talent"
-      },
-      "talentTreeRef": {
+      "talents": [
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "opportunistic-strike",
+          "name": "Opportunistic Strike",
+          "type": "talent"
+        },
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "93770927eba5446d",
+          "name": "Opportunistic Strike",
+          "type": "talent"
+        }
+      ],
+      "talentTreeId": {
         "pack": "foundryvtt-swse.talent_trees",
         "id": "6367600ed3c0cfae",
         "name": "Run and Gun",
         "type": "talenttree"
       },
-      "forcePowerRefs": [],
-      "backgroundRef": {
-        "pack": "foundryvtt-swse.backgrounds",
-        "id": "sryc2ulg2u",
-        "name": "Disgraced",
-        "type": "background"
-      },
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-duros",
-        "name": "Duros",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "forcePowers": [],
+      "languages": [
+        "Basic"
+      ],
+      "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-pistols",
           "id": "weapon-pulse-wave-pistol",
@@ -1547,18 +1959,43 @@
           "quantity": 1,
           "displayName": "Needler"
         }
-      ]
+      ],
+      "credits": 0,
+      "mentor": "salty",
+      "archetype": "Brigand",
+      "roleTags": [
+        "rogue"
+      ],
+      "forceUser": false,
+      "notes": "Attack +6 with exceptional Dexterity (18), Reflex Defense 18. Flawless Pilot allows rerolling Pilot checks and taking the better result. Opportunistic Strike enables bonus attacks against enemies that provoke for allies. Starting equipment emphasizes point-blank precision strikes with the Needler as backup poison option."
     },
     {
       "id": "scout_sniper",
       "name": "Sniper",
-      "class": "Scout",
-      "archetype": "Sniper",
       "description": "A long-range precision shooter who operates from concealment with deadly accuracy.",
       "quote": "One shot, one kill. That's all it takes.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scout_sniper.webp",
-      "mentor": "lead",
-      "background": "Duro Origin",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "b5bed5d1b5f42958",
+        "name": "Scout",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-duros",
+        "name": "Duros",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "duro-origin",
+        "name": "Duro Origin",
+        "type": "background"
+      },
       "abilityScores": {
         "str": 8,
         "dex": 16,
@@ -1567,64 +2004,81 @@
         "wis": 12,
         "cha": 12
       },
-      "species": "Duros",
-      "speciesFeat": "Flawless Pilot",
-      "className": "Scout",
-      "level": 1,
-      "feats": [
-        "Weapon Proficiency (Rifles)",
-        "Weapon Proficiency (Pistols)",
-        "Weapon Proficiency (Simple Weapons)"
-      ],
-      "talent": "Surveillance",
-      "talentTree": "Reconnaissance",
       "trainedSkills": [
-        "b8dad0c963f046c6",
-        "6d2ac22d9fcf402f",
-        "cb5493f65f0bdb62",
-        "745a5686d6f21e8c",
-        "43c5941072ec78af",
-        "8f5e21f92d6d976b",
-        "knowledgeGalacticLore"
+        {
+          "id": "b8dad0c963f046c6",
+          "name": "b8dad0c963f046c6"
+        },
+        {
+          "id": "6d2ac22d9fcf402f",
+          "name": "6d2ac22d9fcf402f"
+        },
+        {
+          "id": "cb5493f65f0bdb62",
+          "name": "cb5493f65f0bdb62"
+        },
+        {
+          "id": "745a5686d6f21e8c",
+          "name": "745a5686d6f21e8c"
+        },
+        {
+          "id": "43c5941072ec78af",
+          "name": "43c5941072ec78af"
+        },
+        {
+          "id": "8f5e21f92d6d976b",
+          "name": "8f5e21f92d6d976b"
+        },
+        {
+          "id": "knowledgeGalacticLore",
+          "name": "knowledgeGalacticLore"
+        }
       ],
-      "forcePowers": [],
-      "startingEquipment": [
-        "Targeting Blaster Rifle",
-        "Pulse-Wave Pistol",
-        "Power Packs x10",
-        "Hands Free Commlink",
-        "Electrobinoculars"
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-proficiency-(rifles)",
+          "name": "Weapon Proficiency (Rifles)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-proficiency-(pistols)",
+          "name": "Weapon Proficiency (Pistols)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-proficiency-(simple-weapons)",
+          "name": "Weapon Proficiency (Simple Weapons)",
+          "type": "feat"
+        }
       ],
-      "credits": 150,
-      "notes": "Professional pilot with exceptional reflexes and marksmanship. Flawless Pilot allows rerolling Pilot checks and taking the better result. Surveillance talent provides enhanced reconnaissance capabilities. Duro Origin adds Use Computer as class skill for +3 bonus.",
-      "classRef": {
-        "pack": "foundryvtt-swse.classes",
-        "id": "b5bed5d1b5f42958",
-        "name": "Scout",
-        "type": "class"
-      },
-      "featRef": null,
-      "talentRef": {
-        "pack": "foundryvtt-swse.talents",
-        "id": "f23b63464e0aeff7",
-        "name": "Surveillance",
-        "type": "talent"
-      },
-      "talentTreeRef": {
+      "talents": [
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "surveillance",
+          "name": "Surveillance",
+          "type": "talent"
+        },
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "f23b63464e0aeff7",
+          "name": "Surveillance",
+          "type": "talent"
+        }
+      ],
+      "talentTreeId": {
         "pack": "foundryvtt-swse.talent_trees",
         "id": "860fa1a66c837574",
         "name": "Reconnaissance",
         "type": "talenttree"
       },
-      "forcePowerRefs": [],
-      "backgroundRef": null,
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-duros",
-        "name": "Duros",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "forcePowers": [],
+      "languages": [
+        "Basic"
+      ],
+      "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-rifles",
           "id": "weapon-targeting-blaster-rifle",
@@ -1665,18 +2119,44 @@
           "quantity": 1,
           "displayName": "Electrobinoculars"
         }
-      ]
+      ],
+      "credits": 150,
+      "mentor": "lead",
+      "archetype": "Sniper",
+      "roleTags": [
+        "rogue",
+        "ranged"
+      ],
+      "forceUser": false,
+      "notes": "Professional pilot with exceptional reflexes and marksmanship. Flawless Pilot allows rerolling Pilot checks and taking the better result. Surveillance talent provides enhanced reconnaissance capabilities. Duro Origin adds Use Computer as class skill for +3 bonus."
     },
     {
       "id": "scout_engineer",
       "name": "Engineer",
-      "class": "Scout",
-      "archetype": "Engineer",
       "description": "A skilled technician who specializes in maintenance, repair, and engineering solutions in the field.",
       "quote": "Every problem has a technical solution.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scout_engineer.webp",
-      "mentor": "lead",
-      "background": "Fondor Origin",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "b5bed5d1b5f42958",
+        "name": "Scout",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-mon-calamari",
+        "name": "Mon Calamari",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "fondor-origin",
+        "name": "Fondor Origin",
+        "type": "background"
+      },
       "abilityScores": {
         "str": 8,
         "dex": 16,
@@ -1685,63 +2165,86 @@
         "wis": 12,
         "cha": 10
       },
-      "species": "Mon Calamari",
-      "speciesFeat": "Mon Calamari Shipwright",
-      "className": "Scout",
-      "level": 1,
-      "feats": [
-        "Weapon Proficiency (Rifles)",
-        "Weapon Proficiency (Pistols)",
-        "Weapon Proficiency (Simple Weapons)",
-        "Skill Focus (Perception)"
-      ],
-      "talent": "Sizing Up",
-      "talentTree": "Versatility",
       "trainedSkills": [
-        "cb5493f65f0bdb62",
-        "43c5941072ec78af",
-        "745a5686d6f21e8c",
-        "knowledgePhysicalSciences",
-        "knowledgeTechnology",
-        "6d2ac22d9fcf402f",
-        "f77c3576d22552fe",
-        "8f5e21f92d6d976b"
+        {
+          "id": "cb5493f65f0bdb62",
+          "name": "cb5493f65f0bdb62"
+        },
+        {
+          "id": "43c5941072ec78af",
+          "name": "43c5941072ec78af"
+        },
+        {
+          "id": "745a5686d6f21e8c",
+          "name": "745a5686d6f21e8c"
+        },
+        {
+          "id": "knowledgePhysicalSciences",
+          "name": "knowledgePhysicalSciences"
+        },
+        {
+          "id": "knowledgeTechnology",
+          "name": "knowledgeTechnology"
+        },
+        {
+          "id": "6d2ac22d9fcf402f",
+          "name": "6d2ac22d9fcf402f"
+        },
+        {
+          "id": "f77c3576d22552fe",
+          "name": "f77c3576d22552fe"
+        },
+        {
+          "id": "8f5e21f92d6d976b",
+          "name": "8f5e21f92d6d976b"
+        }
       ],
-      "forcePowers": [],
-      "startingEquipment": [
-        "Sonic Rifle with Targeting Scope",
-        "Stun Pistol",
-        "Power Packs x5",
-        "Power Recharger",
-        "Tool Kit",
-        "Hands-Free Commlink",
-        "Camouflage Poncho"
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-proficiency-(rifles)",
+          "name": "Weapon Proficiency (Rifles)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-proficiency-(pistols)",
+          "name": "Weapon Proficiency (Pistols)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-proficiency-(simple-weapons)",
+          "name": "Weapon Proficiency (Simple Weapons)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "skill-focus-(perception)",
+          "name": "Skill Focus (Perception)",
+          "type": "feat"
+        }
       ],
-      "credits": 0,
-      "notes": "Master technician with exceptional perception and intelligence. Mon Calamari Shipwright provides expertise in starship systems. Skill Focus (Perception) reflects Mon Calamari natural observational abilities. Fondor Origin adds Use Computer as class skill for +3 bonus.",
-      "classRef": {
-        "pack": "foundryvtt-swse.classes",
-        "id": "b5bed5d1b5f42958",
-        "name": "Scout",
-        "type": "class"
-      },
-      "featRef": null,
-      "talentRef": null,
-      "talentTreeRef": {
+      "talents": [
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "sizing-up",
+          "name": "Sizing Up",
+          "type": "talent"
+        }
+      ],
+      "talentTreeId": {
         "pack": "foundryvtt-swse.talent_trees",
         "id": "ab2c265c4b2f54f6",
         "name": "Versatility",
         "type": "talenttree"
       },
-      "forcePowerRefs": [],
-      "backgroundRef": null,
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-mon-calamari",
-        "name": "Mon Calamari",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "forcePowers": [],
+      "languages": [
+        "Mon Calamarian",
+        "Basic"
+      ],
+      "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-rifles",
           "id": "weapon-sonic-rifle",
@@ -1806,18 +2309,43 @@
           "quantity": 1,
           "displayName": "Camouflage Poncho"
         }
-      ]
+      ],
+      "credits": 0,
+      "mentor": "lead",
+      "archetype": "Engineer",
+      "roleTags": [
+        "rogue"
+      ],
+      "forceUser": false,
+      "notes": "Master technician with exceptional perception and intelligence. Mon Calamari Shipwright provides expertise in starship systems. Skill Focus (Perception) reflects Mon Calamari natural observational abilities. Fondor Origin adds Use Computer as class skill for +3 bonus."
     },
     {
       "id": "scout_pistoleer",
       "name": "Pistoleer",
-      "class": "Scout",
-      "archetype": "Pistoleer",
       "description": "A skilled rider specializing in hit-and-run tactics from a speeder bike, utilizing dual-weapon mastery.",
       "quote": "Speed and precision - that's all you need.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scout_pistoleer.webp",
-      "mentor": "lead",
-      "background": "Tatooine Origin",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "b5bed5d1b5f42958",
+        "name": "Scout",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-codru-ji",
+        "name": "Codru-Ji",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "tatooine-origin",
+        "name": "Tatooine Origin",
+        "type": "background"
+      },
       "abilityScores": {
         "str": 8,
         "dex": 16,
@@ -1826,59 +2354,77 @@
         "wis": 12,
         "cha": 10
       },
-      "species": "Codru-Ji",
-      "speciesFeat": "Dual Weapon Mastery I",
-      "className": "Scout",
-      "level": 1,
-      "feats": [
-        "Weapon Proficiency (Rifles)",
-        "Weapon Proficiency (Pistols)",
-        "Weapon Proficiency (Simple Weapons)",
-        "Shake It Off"
-      ],
-      "talent": "Mechanized Rider",
-      "talentTree": "Mobile Scout",
       "trainedSkills": [
-        "cb5493f65f0bdb62",
-        "35df8faa4878f2c5",
-        "43c5941072ec78af",
-        "b8dad0c963f046c6",
-        "d0b0f5e45327b476",
-        "6d2ac22d9fcf402f"
+        {
+          "id": "cb5493f65f0bdb62",
+          "name": "cb5493f65f0bdb62"
+        },
+        {
+          "id": "35df8faa4878f2c5",
+          "name": "35df8faa4878f2c5"
+        },
+        {
+          "id": "43c5941072ec78af",
+          "name": "43c5941072ec78af"
+        },
+        {
+          "id": "b8dad0c963f046c6",
+          "name": "b8dad0c963f046c6"
+        },
+        {
+          "id": "d0b0f5e45327b476",
+          "name": "d0b0f5e45327b476"
+        },
+        {
+          "id": "6d2ac22d9fcf402f",
+          "name": "6d2ac22d9fcf402f"
+        }
       ],
-      "forcePowers": [],
-      "startingEquipment": [
-        "FC-20 Speeder Bike (Used)",
-        "Sporting Blaster Rifle",
-        "Pulse-Wave Rifle",
-        "Power Packs x8",
-        "Tool Kit"
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-proficiency-(rifles)",
+          "name": "Weapon Proficiency (Rifles)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-proficiency-(pistols)",
+          "name": "Weapon Proficiency (Pistols)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-proficiency-(simple-weapons)",
+          "name": "Weapon Proficiency (Simple Weapons)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "shake-it-off",
+          "name": "Shake It Off",
+          "type": "feat"
+        }
       ],
-      "credits": 0,
-      "notes": "Elite rider with exceptional dexterity and extra arms. Codru-Ji Dual Weapon Mastery I allows dual-wielding with extra arms advantage. Mechanized Rider talent allows advanced speeder bike maneuvers. Tatooine Origin adds Ride as class skill for +3 bonus.",
-      "classRef": {
-        "pack": "foundryvtt-swse.classes",
-        "id": "b5bed5d1b5f42958",
-        "name": "Scout",
-        "type": "class"
-      },
-      "featRef": null,
-      "talentRef": null,
-      "talentTreeRef": {
+      "talents": [
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "mechanized-rider",
+          "name": "Mechanized Rider",
+          "type": "talent"
+        }
+      ],
+      "talentTreeId": {
         "pack": "foundryvtt-swse.talent_trees",
         "id": "c7a4e66f46044c7a",
         "name": "Mobile Scout",
         "type": "talenttree"
       },
-      "forcePowerRefs": [],
-      "backgroundRef": null,
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-codru-ji",
-        "name": "Codru-Ji",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "forcePowers": [],
+      "languages": [
+        "Basic"
+      ],
+      "equipment": [
         {
           "pack": "foundryvtt-swse.vehicles",
           "id": "b647cb328647970d",
@@ -1919,139 +2465,43 @@
           "quantity": 1,
           "displayName": "Tool Kit"
         }
-      ]
+      ],
+      "credits": 0,
+      "mentor": "lead",
+      "archetype": "Pistoleer",
+      "roleTags": [
+        "rogue"
+      ],
+      "forceUser": false,
+      "notes": "Elite rider with exceptional dexterity and extra arms. Codru-Ji Dual Weapon Mastery I allows dual-wielding with extra arms advantage. Mechanized Rider talent allows advanced speeder bike maneuvers. Tatooine Origin adds Ride as class skill for +3 bonus."
     },
     {
-      "name": "Skirmisher",
-      "class": "Scout",
-      "archetype": "Skirmisher",
-      "description": "A mobile combatant specializing in hit-and-run tactics and battlefield positioning.",
-      "quote": "Speed and precision win battles. Stand still and you're already dead.",
-      "imagePath": "systems/foundryvtt-swse/assets/templates/scout_skirmisher.webp",
-      "mentor": "lead",
-      "background": "Widowed",
-      "abilityScores": {
-        "str": 10,
-        "dex": 16,
-        "con": 14,
-        "int": 12,
-        "wis": 12,
-        "cha": 8
-      },
-      "species": "Human",
-      "className": "Scout",
+      "id": "scout_survivalist",
+      "name": "Survivalist",
+      "description": "A wilderness expert who excels at tracking and surviving the harshest conditions.",
+      "quote": "The wilderness doesn't forgive mistakes. Neither do I.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/scout_survivalist.webp",
+      "subtype": "actor",
       "level": 1,
-      "feat": "Running Attack",
-      "talent": "Long Stride",
-      "talentTree": "Fringer",
-      "trainedSkills": [
-        "cb5493f65f0bdb62",
-        "6d2ac22d9fcf402f",
-        "43c5941072ec78af",
-        "35df8faa4878f2c5",
-        "b8dad0c963f046c6",
-        "a6c5e98148aad9a9"
-      ],
-      "forcePowers": [],
-      "startingEquipment": [
-        "Blaster Carbine",
-        "Heavy Blaster Pistol",
-        "Comlink, Short-Range",
-        "Glow Rod",
-        "Medpac"
-      ],
-      "credits": 90,
-      "notes": "8 squares movement, Running Attack allows moving and shooting. Excellent battlefield mobility.",
-      "classRef": {
+      "supportLevel": "FULL",
+      "classId": {
         "pack": "foundryvtt-swse.classes",
         "id": "b5bed5d1b5f42958",
         "name": "Scout",
         "type": "class"
       },
-      "featRef": {
-        "pack": "foundryvtt-swse.feats",
-        "id": "4d6a68d553fb0449",
-        "name": "Running Attack",
-        "type": "feat"
-      },
-      "talentRef": {
-        "pack": "foundryvtt-swse.talents",
-        "id": "618472c99f355949",
-        "name": "Long Stride",
-        "type": "talent"
-      },
-      "talentTreeRef": {
-        "pack": "foundryvtt-swse.talent_trees",
-        "id": "7c47d36dc1f77d9c",
-        "name": "Fringer",
-        "type": "talenttree"
-      },
-      "forcePowerRefs": [],
-      "backgroundRef": {
-        "pack": "foundryvtt-swse.backgrounds",
-        "id": "i2oly1pbfhb",
-        "name": "Widowed",
-        "type": "background"
-      },
-      "speciesRef": {
+      "speciesId": {
         "pack": "foundryvtt-swse.species",
-        "id": "species-human",
-        "name": "Human",
+        "id": "species-ithorian",
+        "name": "Ithorian",
         "type": "species"
       },
-      "equipmentRefs": [
-        {
-          "pack": "foundryvtt-swse.weapons-rifles",
-          "id": "weapon-blaster-carbine",
-          "name": "Blaster Carbine",
-          "type": "weapon",
-          "quantity": 1,
-          "displayName": "Blaster Carbine"
-        },
-        {
-          "pack": "foundryvtt-swse.weapons-pistols",
-          "id": "weapon-heavy-blaster-pistol",
-          "name": "Heavy Blaster Pistol",
-          "type": "weapon",
-          "quantity": 1,
-          "displayName": "Heavy Blaster Pistol"
-        },
-        {
-          "pack": "foundryvtt-swse.equipment",
-          "id": "comms-comlink-short-range",
-          "name": "Comlink, Short-Range",
-          "type": "equipment",
-          "quantity": 1,
-          "displayName": "Comlink, Short-Range"
-        },
-        {
-          "pack": "foundryvtt-swse.equipment",
-          "id": "detect-glow-rod",
-          "name": "Glow Rod",
-          "type": "equipment",
-          "quantity": 1,
-          "displayName": "Glow Rod"
-        },
-        {
-          "pack": "foundryvtt-swse.equipment",
-          "id": "medical-medpac",
-          "name": "Medpac",
-          "type": "equipment",
-          "quantity": 1,
-          "displayName": "Medpac"
-        }
-      ]
-    },
-    {
-      "id": "scout_survivalist",
-      "name": "Survivalist",
-      "class": "Scout",
-      "archetype": "Survivalist",
-      "description": "A wilderness expert who excels at tracking and surviving the harshest conditions.",
-      "quote": "The wilderness doesn't forgive mistakes. Neither do I.",
-      "imagePath": "systems/foundryvtt-swse/assets/templates/scout_survivalist.webp",
-      "mentor": "lead",
-      "background": "Bankrupt",
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "308eft0e0lz",
+        "name": "Bankrupt",
+        "type": "background"
+      },
       "abilityScores": {
         "str": 12,
         "dex": 14,
@@ -2060,72 +2510,72 @@
         "wis": 14,
         "cha": 8
       },
-      "species": "Ithorian",
-      "className": "Scout",
-      "level": 1,
-      "feat": "Skill Focus (Survival)",
-      "talent": "Evasion",
-      "talentTree": "Survivor",
       "trainedSkills": [
-        "426945d1fc765a5d",
-        "43c5941072ec78af",
-        "35df8faa4878f2c5",
-        "6d2ac22d9fcf402f",
-        "knowledgeLifeSciences",
-        "745a5686d6f21e8c"
+        {
+          "id": "426945d1fc765a5d",
+          "name": "426945d1fc765a5d"
+        },
+        {
+          "id": "43c5941072ec78af",
+          "name": "43c5941072ec78af"
+        },
+        {
+          "id": "35df8faa4878f2c5",
+          "name": "35df8faa4878f2c5"
+        },
+        {
+          "id": "6d2ac22d9fcf402f",
+          "name": "6d2ac22d9fcf402f"
+        },
+        {
+          "id": "knowledgeLifeSciences",
+          "name": "knowledgeLifeSciences"
+        },
+        {
+          "id": "745a5686d6f21e8c",
+          "name": "745a5686d6f21e8c"
+        }
       ],
-      "forcePowers": [],
-      "startingEquipment": [
-        "Blaster Rifle",
-        "Field Kit",
-        "Medpac",
-        "All-Temperature Cloak",
-        "Ration Pack",
-        "Glow Rod",
-        "Comlink, Short-Range",
-        "Vibrodagger"
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "skill-focus-(survival)",
+          "name": "Skill Focus (Survival)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "1592aaedf4b6e40a",
+          "name": "Skill Focus",
+          "type": "feat",
+          "displayName": "Skill Focus (Survival)"
+        }
       ],
-      "credits": -615,
-      "notes": "Survival +12, HP 42, Fort Defense 15. Evasion grants half damage on area attacks (no damage on miss).",
-      "classRef": {
-        "pack": "foundryvtt-swse.classes",
-        "id": "b5bed5d1b5f42958",
-        "name": "Scout",
-        "type": "class"
-      },
-      "featRef": {
-        "pack": "foundryvtt-swse.feats",
-        "id": "1592aaedf4b6e40a",
-        "name": "Skill Focus",
-        "type": "feat",
-        "displayName": "Skill Focus (Survival)"
-      },
-      "talentRef": {
-        "pack": "foundryvtt-swse.talents",
-        "id": "5400bc8cb1200624",
-        "name": "Evasion",
-        "type": "talent"
-      },
-      "talentTreeRef": {
+      "talents": [
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "evasion",
+          "name": "Evasion",
+          "type": "talent"
+        },
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "5400bc8cb1200624",
+          "name": "Evasion",
+          "type": "talent"
+        }
+      ],
+      "talentTreeId": {
         "pack": "foundryvtt-swse.talent_trees",
         "id": "9b06340233eb3cdd",
         "name": "Survivor",
         "type": "talenttree"
       },
-      "forcePowerRefs": [],
-      "backgroundRef": {
-        "pack": "foundryvtt-swse.backgrounds",
-        "id": "308eft0e0lz",
-        "name": "Bankrupt",
-        "type": "background"
-      },
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-ithorian",
-        "name": "Ithorian",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "forcePowers": [],
+      "languages": [
+        "Basic"
+      ],
+      "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-rifles",
           "id": "weapon-blaster-rifle",
@@ -2190,18 +2640,43 @@
           "quantity": 1,
           "displayName": "Vibrodagger"
         }
-      ]
+      ],
+      "credits": -615,
+      "mentor": "lead",
+      "archetype": "Survivalist",
+      "roleTags": [
+        "rogue"
+      ],
+      "forceUser": false,
+      "notes": "Survival +12, HP 42, Fort Defense 15. Evasion grants half damage on area attacks (no damage on miss)."
     },
     {
       "id": "scout_infiltrator",
       "name": "Infiltrator",
-      "class": "Scout",
-      "archetype": "Infiltrator",
       "description": "A stealthy infiltrator specializing in reconnaissance and espionage operations.",
       "quote": "The best battles are the ones your enemy never knew you fought.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/scout_infiltrator.webp",
-      "mentor": "lead",
-      "background": "Bothawui Origin",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "b5bed5d1b5f42958",
+        "name": "Scout",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-bothan",
+        "name": "Bothan",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "bothawui-origin",
+        "name": "Bothawui Origin",
+        "type": "background"
+      },
       "abilityScores": {
         "str": 8,
         "dex": 16,
@@ -2210,66 +2685,77 @@
         "wis": 12,
         "cha": 10
       },
-      "species": "Bothan",
-      "className": "Scout",
-      "level": 1,
-      "feat": "Skill Focus (Stealth)",
-      "talent": "Improved Stealth",
-      "talentTree": "Camouflage",
       "trainedSkills": [
-        "6d2ac22d9fcf402f",
-        "43c5941072ec78af",
-        "745a5686d6f21e8c",
-        "8f5e21f92d6d976b",
-        "9410ce2dfb6cefcb",
-        "cb5493f65f0bdb62",
-        "35df8faa4878f2c5"
+        {
+          "id": "6d2ac22d9fcf402f",
+          "name": "6d2ac22d9fcf402f"
+        },
+        {
+          "id": "43c5941072ec78af",
+          "name": "43c5941072ec78af"
+        },
+        {
+          "id": "745a5686d6f21e8c",
+          "name": "745a5686d6f21e8c"
+        },
+        {
+          "id": "8f5e21f92d6d976b",
+          "name": "8f5e21f92d6d976b"
+        },
+        {
+          "id": "9410ce2dfb6cefcb",
+          "name": "9410ce2dfb6cefcb"
+        },
+        {
+          "id": "cb5493f65f0bdb62",
+          "name": "cb5493f65f0bdb62"
+        },
+        {
+          "id": "35df8faa4878f2c5",
+          "name": "35df8faa4878f2c5"
+        }
       ],
-      "forcePowers": [],
-      "startingEquipment": [
-        "Hold-out Blaster",
-        "Heavy Blaster Pistol",
-        "Thinsuit",
-        "Security Kit",
-        "Comlink, Short-Range",
-        "Medpac"
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "skill-focus-(stealth)",
+          "name": "Skill Focus (Stealth)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "1592aaedf4b6e40a",
+          "name": "Skill Focus",
+          "type": "feat",
+          "displayName": "Skill Focus (Stealth)"
+        }
       ],
-      "credits": -900,
-      "notes": "Stealth +18 at level 1. Improved Stealth reduces movement penalty from -10 to -5. Bothawui Origin adds Deception as class skill for +3 bonus.",
-      "classRef": {
-        "pack": "foundryvtt-swse.classes",
-        "id": "b5bed5d1b5f42958",
-        "name": "Scout",
-        "type": "class"
-      },
-      "featRef": {
-        "pack": "foundryvtt-swse.feats",
-        "id": "1592aaedf4b6e40a",
-        "name": "Skill Focus",
-        "type": "feat",
-        "displayName": "Skill Focus (Stealth)"
-      },
-      "talentRef": {
-        "pack": "foundryvtt-swse.talents",
-        "id": "073115894cad8cf9",
-        "name": "Improved Stealth",
-        "type": "talent"
-      },
-      "talentTreeRef": {
+      "talents": [
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "improved-stealth",
+          "name": "Improved Stealth",
+          "type": "talent"
+        },
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "073115894cad8cf9",
+          "name": "Improved Stealth",
+          "type": "talent"
+        }
+      ],
+      "talentTreeId": {
         "pack": "foundryvtt-swse.talent_trees",
         "id": "3926d582d2077489",
         "name": "Camouflage",
         "type": "talenttree"
       },
-      "forcePowerRefs": [],
-      "backgroundRef": null,
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-bothan",
-        "name": "Bothan",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "forcePowers": [],
+      "languages": [
+        "Bothese",
+        "Basic"
+      ],
+      "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-pistols",
           "id": "weapon-hold-out-blaster",
@@ -2318,18 +2804,43 @@
           "quantity": 1,
           "displayName": "Medpac"
         }
-      ]
+      ],
+      "credits": -900,
+      "mentor": "lead",
+      "archetype": "Infiltrator",
+      "roleTags": [
+        "rogue"
+      ],
+      "forceUser": false,
+      "notes": "Stealth +18 at level 1. Improved Stealth reduces movement penalty from -10 to -5. Bothawui Origin adds Deception as class skill for +3 bonus."
     },
     {
       "id": "soldier_rifleman",
       "name": "Rifleman",
-      "class": "Soldier",
-      "archetype": "Just A Dude",
       "description": "A straightforward soldier carrying a slugthrower rifle and a big pistol. Perfect for new players learning weapon versatility and the practical Bandolier.",
       "quote": "I've got firepower. Let's see what you've got.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_rifleman.webp",
-      "mentor": "breach",
-      "background": "Orphaned",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "f62ca2e639cab614",
+        "name": "Soldier",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-houk",
+        "name": "Houk",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "6ybllwkh0nc",
+        "name": "Orphaned",
+        "type": "background"
+      },
       "abilityScores": {
         "str": 16,
         "dex": 16,
@@ -2338,74 +2849,87 @@
         "wis": 8,
         "cha": 6
       },
-      "species": "Houk",
-      "speciesFeats": [
-        "Natural Armor (+1 to Reflex Defense)",
-        "Physically Intimidating (use STR for Persuasion/Intimidation)"
-      ],
-      "className": "Soldier",
-      "level": 1,
-      "feats": [
-        "Armor Proficiency (Light)",
-        "Armor Proficiency (Medium)",
-        "Weapon Proficiency (Pistols)",
-        "Weapon Proficiency (Rifles)",
-        "Weapon Proficiency (Simple Weapons)",
-        "Extra Second Wind"
-      ],
-      "talent": "Commanding Presence",
-      "talentTree": "Mercenary",
       "trainedSkills": [
-        "cb5493f65f0bdb62",
-        "43c5941072ec78af",
-        "35df8faa4878f2c5",
-        "b554f3e5a55ad53f"
+        {
+          "id": "cb5493f65f0bdb62",
+          "name": "cb5493f65f0bdb62"
+        },
+        {
+          "id": "43c5941072ec78af",
+          "name": "43c5941072ec78af"
+        },
+        {
+          "id": "35df8faa4878f2c5",
+          "name": "35df8faa4878f2c5"
+        },
+        {
+          "id": "b554f3e5a55ad53f",
+          "name": "b554f3e5a55ad53f"
+        }
       ],
-      "forcePowers": [],
-      "startingEquipment": [
-        "Slugthrower Rifle",
-        "Clips x10",
-        "Targeting Scope",
-        "Bandolier",
-        "Model 434 DeathHammer",
-        "Power packs x2",
-        "Snap Baton"
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "armor-proficiency-(light)",
+          "name": "Armor Proficiency (Light)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "armor-proficiency-(medium)",
+          "name": "Armor Proficiency (Medium)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-proficiency-(pistols)",
+          "name": "Weapon Proficiency (Pistols)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-proficiency-(rifles)",
+          "name": "Weapon Proficiency (Rifles)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-proficiency-(simple-weapons)",
+          "name": "Weapon Proficiency (Simple Weapons)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "extra-second-wind",
+          "name": "Extra Second Wind",
+          "type": "feat"
+        }
       ],
-      "credits": -1125,
-      "notes": "Houk physiology provides natural durability. Commanding Presence: Once per encounter (Swift Action), all opponents within 6 squares take -2 penalty to Will Defense (Mind-Affecting Fear effect). Persuasion is a Class Skill for this character. Introduces the Bandolier (retrieve ammo/grenades with move action). When able, swap Slugthrower Rifle for a Heavy Weapon. Starting equipment includes Force Unleashed and Commanding Presence talents.",
-      "classRef": {
-        "pack": "foundryvtt-swse.classes",
-        "id": "f62ca2e639cab614",
-        "name": "Soldier",
-        "type": "class"
-      },
-      "featRef": null,
-      "talentRef": {
-        "pack": "foundryvtt-swse.talents",
-        "id": "438e13c99c7b53a6",
-        "name": "Commanding Presence",
-        "type": "talent"
-      },
-      "talentTreeRef": {
+      "talents": [
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "commanding-presence",
+          "name": "Commanding Presence",
+          "type": "talent"
+        },
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "438e13c99c7b53a6",
+          "name": "Commanding Presence",
+          "type": "talent"
+        }
+      ],
+      "talentTreeId": {
         "pack": "foundryvtt-swse.talent_trees",
         "id": "4007fa87192b5884",
         "name": "Mercenary",
         "type": "talenttree"
       },
-      "forcePowerRefs": [],
-      "backgroundRef": {
-        "pack": "foundryvtt-swse.backgrounds",
-        "id": "6ybllwkh0nc",
-        "name": "Orphaned",
-        "type": "background"
-      },
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-houk",
-        "name": "Houk",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "forcePowers": [],
+      "languages": [
+        "Basic"
+      ],
+      "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-rifles",
           "id": "weapon-slugthrower-rifle",
@@ -2462,18 +2986,43 @@
           "quantity": 1,
           "displayName": "Snap Baton"
         }
-      ]
+      ],
+      "credits": -1125,
+      "mentor": "breach",
+      "archetype": "Just A Dude",
+      "roleTags": [
+        "warrior"
+      ],
+      "forceUser": false,
+      "notes": "Houk physiology provides natural durability. Commanding Presence: Once per encounter (Swift Action), all opponents within 6 squares take -2 penalty to Will Defense (Mind-Affecting Fear effect). Persuasion is a Class Skill for this character. Introduces the Bandolier (retrieve ammo/grenades with move action). When able, swap Slugthrower Rifle for a Heavy Weapon. Starting equipment includes Force Unleashed and Commanding Presence talents."
     },
     {
       "id": "soldier_gunner",
       "name": "Gunner",
-      "class": "Soldier",
-      "archetype": "Gunner",
       "description": "A heavy weapons specialist focusing on area suppression and overwhelming firepower.",
       "quote": "More firepower solves most problems.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_gunner.webp",
-      "mentor": "breach",
-      "background": "Anaxes Origin",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "f62ca2e639cab614",
+        "name": "Soldier",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-human",
+        "name": "Human",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "anaxes-origin",
+        "name": "Anaxes Origin",
+        "type": "background"
+      },
       "abilityScores": {
         "str": 14,
         "dex": 16,
@@ -2482,62 +3031,64 @@
         "wis": 10,
         "cha": 8
       },
-      "species": "Human",
-      "className": "Soldier",
-      "level": 1,
-      "feat": "Weapon Proficiency (Heavy Weapons)",
-      "talent": "Devastating Attack (Heavy Weapons)",
-      "talentTree": "Weapon Specialist",
       "trainedSkills": [
-        "cb5493f65f0bdb62",
-        "43c5941072ec78af",
-        "35df8faa4878f2c5",
-        "745a5686d6f21e8c"
+        {
+          "id": "cb5493f65f0bdb62",
+          "name": "cb5493f65f0bdb62"
+        },
+        {
+          "id": "43c5941072ec78af",
+          "name": "43c5941072ec78af"
+        },
+        {
+          "id": "35df8faa4878f2c5",
+          "name": "35df8faa4878f2c5"
+        },
+        {
+          "id": "745a5686d6f21e8c",
+          "name": "745a5686d6f21e8c"
+        }
       ],
-      "forcePowers": [],
-      "startingEquipment": [
-        "Heavy Blaster Rifle",
-        "Blast Helmet and Vest",
-        "Bandolier",
-        "Comlink, Short-Range",
-        "Medpac"
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-proficiency-(heavy-weapons)",
+          "name": "Weapon Proficiency (Heavy Weapons)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "8329a353aa3899be",
+          "name": "Weapon Proficiency (Heavy Weapons)",
+          "type": "feat"
+        }
       ],
-      "credits": -350,
-      "notes": "3d10 damage with autofire capability. Excels at suppressing multiple enemies.",
-      "classRef": {
-        "pack": "foundryvtt-swse.classes",
-        "id": "f62ca2e639cab614",
-        "name": "Soldier",
-        "type": "class"
-      },
-      "featRef": {
-        "pack": "foundryvtt-swse.feats",
-        "id": "8329a353aa3899be",
-        "name": "Weapon Proficiency (Heavy Weapons)",
-        "type": "feat"
-      },
-      "talentRef": {
-        "pack": "foundryvtt-swse.talents",
-        "id": "383915a7d11e1225",
-        "name": "Devastating Attack",
-        "type": "talent",
-        "displayName": "Devastating Attack (Heavy Weapons)"
-      },
-      "talentTreeRef": {
+      "talents": [
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "devastating-attack-(heavy-weapons)",
+          "name": "Devastating Attack (Heavy Weapons)",
+          "type": "talent"
+        },
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "383915a7d11e1225",
+          "name": "Devastating Attack",
+          "type": "talent",
+          "displayName": "Devastating Attack (Heavy Weapons)"
+        }
+      ],
+      "talentTreeId": {
         "pack": "foundryvtt-swse.talent_trees",
         "id": "2e9265a596cc43f7",
         "name": "Weapon Specialist",
         "type": "talenttree"
       },
-      "forcePowerRefs": [],
-      "backgroundRef": null,
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-human",
-        "name": "Human",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "forcePowers": [],
+      "languages": [
+        "Basic"
+      ],
+      "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-rifles",
           "id": "weapon-heavy-blaster-rifle",
@@ -2578,18 +3129,44 @@
           "quantity": 1,
           "displayName": "Medpac"
         }
-      ]
+      ],
+      "credits": -350,
+      "mentor": "breach",
+      "archetype": "Gunner",
+      "roleTags": [
+        "warrior",
+        "ranged"
+      ],
+      "forceUser": false,
+      "notes": "3d10 damage with autofire capability. Excels at suppressing multiple enemies."
     },
     {
       "id": "soldier_brawler",
       "name": "Brawler",
-      "class": "Soldier",
-      "archetype": "Brawler",
       "description": "A fearsome Mantellian Savrip brawler wielding natural claws and innate ferocity. Solid walls of muscle and primal power, devastating in close combat.",
       "quote": "Feel the wrath of the claws!",
       "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_brawler.webp",
-      "mentor": "breach",
-      "background": "Orphaned",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "f62ca2e639cab614",
+        "name": "Soldier",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "mantellian-savrip",
+        "name": "Mantellian Savrip",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "6ybllwkh0nc",
+        "name": "Orphaned",
+        "type": "background"
+      },
       "abilityScores": {
         "str": 18,
         "dex": 12,
@@ -2598,61 +3175,61 @@
         "wis": 10,
         "cha": 8
       },
-      "species": "Mantellian Savrip",
-      "className": "Soldier",
-      "level": 1,
-      "feat": "Weapon Proficiency (Advanced Melee)",
-      "talent": "Devastating Attack (Advanced Melee)",
-      "talentTree": "Weapon Specialist",
       "trainedSkills": [
-        "cb5493f65f0bdb62",
-        "35df8faa4878f2c5",
-        "43c5941072ec78af"
+        {
+          "id": "cb5493f65f0bdb62",
+          "name": "cb5493f65f0bdb62"
+        },
+        {
+          "id": "35df8faa4878f2c5",
+          "name": "35df8faa4878f2c5"
+        },
+        {
+          "id": "43c5941072ec78af",
+          "name": "43c5941072ec78af"
+        }
       ],
-      "forcePowers": [],
-      "startingEquipment": [
-        "Combat Jumpsuit",
-        "Blast Helmet and Vest",
-        "Comlink, Short-Range",
-        "Medpac"
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-proficiency-(advanced-melee)",
+          "name": "Weapon Proficiency (Advanced Melee)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "ecc2471ac96ec2d4",
+          "name": "Weapon Proficiency",
+          "type": "feat",
+          "displayName": "Weapon Proficiency (Advanced Melee)"
+        }
       ],
-      "credits": -750,
-      "notes": "Natural Weapons (claws) deal 1d6 slashing damage and poison targets on hit. Large size provides +5 damage threshold but -1 reflex penalty. Rage ability grants +2 melee bonus once per day. STR 22 (after +4 racial), CON 20 (after +4 racial). Natural Armor +2 to Reflex Defense. Speed 8 squares. Cannot take Heavy Weapons, Pistol, or Rifle proficiencies.",
-      "classRef": {
-        "pack": "foundryvtt-swse.classes",
-        "id": "f62ca2e639cab614",
-        "name": "Soldier",
-        "type": "class"
-      },
-      "featRef": {
-        "pack": "foundryvtt-swse.feats",
-        "id": "ecc2471ac96ec2d4",
-        "name": "Weapon Proficiency",
-        "type": "feat",
-        "displayName": "Weapon Proficiency (Advanced Melee)"
-      },
-      "talentRef": {
-        "pack": "foundryvtt-swse.talents",
-        "id": "383915a7d11e1225",
-        "name": "Devastating Attack",
-        "type": "talent",
-        "displayName": "Devastating Attack (Advanced Melee)"
-      },
-      "talentTreeRef": {
+      "talents": [
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "devastating-attack-(advanced-melee)",
+          "name": "Devastating Attack (Advanced Melee)",
+          "type": "talent"
+        },
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "383915a7d11e1225",
+          "name": "Devastating Attack",
+          "type": "talent",
+          "displayName": "Devastating Attack (Advanced Melee)"
+        }
+      ],
+      "talentTreeId": {
         "pack": "foundryvtt-swse.talent_trees",
         "id": "2e9265a596cc43f7",
         "name": "Weapon Specialist",
         "type": "talenttree"
       },
-      "forcePowerRefs": [],
-      "backgroundRef": {
-        "pack": "foundryvtt-swse.backgrounds",
-        "id": "6ybllwkh0nc",
-        "name": "Orphaned",
-        "type": "background"
-      },
-      "speciesRef": null,
-      "equipmentRefs": [
+      "forcePowers": [],
+      "languages": [
+        "Basic"
+      ],
+      "equipment": [
         {
           "pack": "foundryvtt-swse.armor-light",
           "id": "armor-combat-jumpsuit",
@@ -2685,18 +3262,43 @@
           "quantity": 1,
           "displayName": "Medpac"
         }
-      ]
+      ],
+      "credits": -750,
+      "mentor": "breach",
+      "archetype": "Brawler",
+      "roleTags": [
+        "warrior"
+      ],
+      "forceUser": false,
+      "notes": "Natural Weapons (claws) deal 1d6 slashing damage and poison targets on hit. Large size provides +5 damage threshold but -1 reflex penalty. Rage ability grants +2 melee bonus once per day. STR 22 (after +4 racial), CON 20 (after +4 racial). Natural Armor +2 to Reflex Defense. Speed 8 squares. Cannot take Heavy Weapons, Pistol, or Rifle proficiencies."
     },
     {
       "id": "soldier_tank",
       "name": "Tank",
-      "class": "Soldier",
-      "archetype": "Tank",
       "description": "An armored defender designed to absorb massive amounts of damage and protect allies.",
       "quote": "Behind me, soldier. I'll handle this.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_tank.webp",
-      "mentor": "breach",
-      "background": "Crippled",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "f62ca2e639cab614",
+        "name": "Soldier",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "gen'dai",
+        "name": "Gen'Dai",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "pk7obuc4ny",
+        "name": "Crippled",
+        "type": "background"
+      },
       "abilityScores": {
         "str": 12,
         "dex": 14,
@@ -2705,61 +3307,60 @@
         "wis": 12,
         "cha": 8
       },
-      "species": "Gen'Dai",
-      "className": "Soldier",
-      "level": 1,
-      "feat": "Armor Proficiency (Heavy)",
-      "talent": "Devastating Attack (Rifles)",
-      "talentTree": "Weapon Specialist",
       "trainedSkills": [
-        "35df8faa4878f2c5",
-        "43c5941072ec78af",
-        "cb5493f65f0bdb62"
+        {
+          "id": "35df8faa4878f2c5",
+          "name": "35df8faa4878f2c5"
+        },
+        {
+          "id": "43c5941072ec78af",
+          "name": "43c5941072ec78af"
+        },
+        {
+          "id": "cb5493f65f0bdb62",
+          "name": "cb5493f65f0bdb62"
+        }
       ],
-      "forcePowers": [],
-      "startingEquipment": [
-        "Blaster Rifle",
-        "Blast Helmet and Vest",
-        "Medpac",
-        "Comlink, Short-Range",
-        "Power Pack"
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "armor-proficiency-(heavy)",
+          "name": "Armor Proficiency (Heavy)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "859d6b9f49118499",
+          "name": "Armor Proficiency (heavy)",
+          "type": "feat"
+        }
       ],
-      "credits": 225,
-      "notes": "HP 40, Reflex 21, Fort 19. Gen'Dai damage threshold is doubled! Crippled background means Damage Threshold ignores Condition Track penalties - perfect synergy for an unkillable tank.",
-      "classRef": {
-        "pack": "foundryvtt-swse.classes",
-        "id": "f62ca2e639cab614",
-        "name": "Soldier",
-        "type": "class"
-      },
-      "featRef": {
-        "pack": "foundryvtt-swse.feats",
-        "id": "859d6b9f49118499",
-        "name": "Armor Proficiency (heavy)",
-        "type": "feat"
-      },
-      "talentRef": {
-        "pack": "foundryvtt-swse.talents",
-        "id": "383915a7d11e1225",
-        "name": "Devastating Attack",
-        "type": "talent",
-        "displayName": "Devastating Attack (Rifles)"
-      },
-      "talentTreeRef": {
+      "talents": [
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "devastating-attack-(rifles)",
+          "name": "Devastating Attack (Rifles)",
+          "type": "talent"
+        },
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "383915a7d11e1225",
+          "name": "Devastating Attack",
+          "type": "talent",
+          "displayName": "Devastating Attack (Rifles)"
+        }
+      ],
+      "talentTreeId": {
         "pack": "foundryvtt-swse.talent_trees",
         "id": "2e9265a596cc43f7",
         "name": "Weapon Specialist",
         "type": "talenttree"
       },
-      "forcePowerRefs": [],
-      "backgroundRef": {
-        "pack": "foundryvtt-swse.backgrounds",
-        "id": "pk7obuc4ny",
-        "name": "Crippled",
-        "type": "background"
-      },
-      "speciesRef": null,
-      "equipmentRefs": [
+      "forcePowers": [],
+      "languages": [
+        "Basic"
+      ],
+      "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-rifles",
           "id": "weapon-blaster-rifle",
@@ -2800,18 +3401,44 @@
           "quantity": 1,
           "displayName": "Power Pack"
         }
-      ]
+      ],
+      "credits": 225,
+      "mentor": "breach",
+      "archetype": "Tank",
+      "roleTags": [
+        "warrior",
+        "tank"
+      ],
+      "forceUser": false,
+      "notes": "HP 40, Reflex 21, Fort 19. Gen'Dai damage threshold is doubled! Crippled background means Damage Threshold ignores Condition Track penalties - perfect synergy for an unkillable tank."
     },
     {
       "id": "soldier_commando",
       "name": "Commando",
-      "class": "Soldier",
-      "archetype": "Commando",
       "description": "A specialized commando operative trained for elite strike missions and team-based combat operations.",
       "quote": "With my squad at my side, we can handle anything.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/soldier_commando.webp",
-      "mentor": "breach",
-      "background": "Sullust Origin",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "f62ca2e639cab614",
+        "name": "Soldier",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-sullustan",
+        "name": "Sullustan",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "sullust-origin",
+        "name": "Sullust Origin",
+        "type": "background"
+      },
       "abilityScores": {
         "str": 12,
         "dex": 16,
@@ -2820,63 +3447,82 @@
         "wis": 10,
         "cha": 8
       },
-      "species": "Sullustan",
-      "className": "Soldier",
-      "level": 1,
-      "feats": [
-        "Armor Proficiency (Light)",
-        "Armor Proficiency (Medium)",
-        "Weapon Proficiency (Pistols)",
-        "Weapon Proficiency (Rifles)",
-        "Weapon Proficiency (Simple Weapons)"
-      ],
-      "talent": "Comrades in Arms",
-      "talentTree": "Trooper",
       "trainedSkills": [
-        "cb5493f65f0bdb62",
-        "43c5941072ec78af",
-        "35df8faa4878f2c5",
-        "6d2ac22d9fcf402f"
+        {
+          "id": "cb5493f65f0bdb62",
+          "name": "cb5493f65f0bdb62"
+        },
+        {
+          "id": "43c5941072ec78af",
+          "name": "43c5941072ec78af"
+        },
+        {
+          "id": "35df8faa4878f2c5",
+          "name": "35df8faa4878f2c5"
+        },
+        {
+          "id": "6d2ac22d9fcf402f",
+          "name": "6d2ac22d9fcf402f"
+        }
       ],
-      "forcePowers": [],
-      "startingEquipment": [
-        "Tracker Utility Vest",
-        "Bryar Rifle with Targeting Scope",
-        "Power Packs x5",
-        "CryoBan Grenade",
-        "Adhesive Grenade x2",
-        "Smoke Grenade"
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "armor-proficiency-(light)",
+          "name": "Armor Proficiency (Light)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "armor-proficiency-(medium)",
+          "name": "Armor Proficiency (Medium)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-proficiency-(pistols)",
+          "name": "Weapon Proficiency (Pistols)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-proficiency-(rifles)",
+          "name": "Weapon Proficiency (Rifles)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-proficiency-(simple-weapons)",
+          "name": "Weapon Proficiency (Simple Weapons)",
+          "type": "feat"
+        }
       ],
-      "credits": 0,
-      "notes": "Elite commando with Sullustan darkvision and heightened awareness. Comrades in Arms grants +1 bonus to all melee and ranged attacks when within 3 squares of an ally. Sullust Origin adds Stealth as class skill for +3 bonus, perfect for elite strike missions.",
-      "classRef": {
-        "pack": "foundryvtt-swse.classes",
-        "id": "f62ca2e639cab614",
-        "name": "Soldier",
-        "type": "class"
-      },
-      "featRef": null,
-      "talentRef": {
-        "pack": "foundryvtt-swse.talents",
-        "id": "d4dcafa34cda98c2",
-        "name": "Comrades in Arms",
-        "type": "talent"
-      },
-      "talentTreeRef": {
+      "talents": [
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "comrades-in-arms",
+          "name": "Comrades in Arms",
+          "type": "talent"
+        },
+        {
+          "pack": "foundryvtt-swse.talents",
+          "id": "d4dcafa34cda98c2",
+          "name": "Comrades in Arms",
+          "type": "talent"
+        }
+      ],
+      "talentTreeId": {
         "pack": "foundryvtt-swse.talent_trees",
         "id": "eff10782c1e56598",
         "name": "Trooper",
         "type": "talenttree"
       },
-      "forcePowerRefs": [],
-      "backgroundRef": null,
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-sullustan",
-        "name": "Sullustan",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "forcePowers": [],
+      "languages": [
+        "Sullustese",
+        "Basic"
+      ],
+      "equipment": [
         {
           "pack": "foundryvtt-swse.armor-light",
           "id": "armor-tracker-utility-vest",
@@ -2933,17 +3579,38 @@
           "quantity": 1,
           "displayName": "Smoke Grenade"
         }
-      ]
+      ],
+      "credits": 0,
+      "mentor": "breach",
+      "archetype": "Commando",
+      "roleTags": [
+        "warrior"
+      ],
+      "forceUser": false,
+      "notes": "Elite commando with Sullustan darkvision and heightened awareness. Comrades in Arms grants +1 bonus to all melee and ranged attacks when within 3 squares of an ally. Sullust Origin adds Stealth as class skill for +3 bonus, perfect for elite strike missions."
     },
     {
       "id": "nonheroic_worker",
       "name": "Worker",
-      "class": "Nonheroic",
-      "archetype": "Worker",
       "description": "A skilled laborer, mechanic, or technician. Workers are the backbone of galactic civilization, maintaining infrastructure and repairing equipment.",
       "quote": "Honest work, honest pay. That's all I need.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/nonheroic_worker.webp",
-      "mentor": null,
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "Nonheroic",
+        "name": "Nonheroic",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-human",
+        "name": "Human",
+        "type": "species"
+      },
+      "backgroundId": null,
       "abilityScores": {
         "str": 12,
         "dex": 10,
@@ -2952,43 +3619,38 @@
         "wis": 11,
         "cha": 8
       },
-      "species": "Human",
-      "className": "Nonheroic",
-      "level": 1,
-      "feat": "Skill Focus (Mechanics)",
-      "talent": null,
-      "talentTree": null,
       "trainedSkills": [
-        "745a5686d6f21e8c",
-        "use_computer"
+        {
+          "id": "745a5686d6f21e8c",
+          "name": "745a5686d6f21e8c"
+        },
+        {
+          "id": "use_computer",
+          "name": "use_computer"
+        }
       ],
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "skill-focus-(mechanics)",
+          "name": "Skill Focus (Mechanics)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "1592aaedf4b6e40a",
+          "name": "Skill Focus",
+          "type": "feat",
+          "displayName": "Skill Focus (Mechanics)"
+        }
+      ],
+      "talents": [],
+      "talentTreeId": null,
       "forcePowers": [],
-      "startingEquipment": [
-        "Tool Kit",
-        "Comlink, Short-Range",
-        "Medpac"
+      "languages": [
+        "Basic"
       ],
-      "credits": 125,
-      "notes": "Mechanics +10, HP ~7 (1d4+1). 3 starting feats: Skill Training (Mechanics), Skill Training (Use Computer), Skill Focus (Mechanics). Workers make excellent technicians and support personnel. Extra 820 credits in equipment for field work.",
-      "classRef": null,
-      "featRef": {
-        "pack": "foundryvtt-swse.feats",
-        "id": "1592aaedf4b6e40a",
-        "name": "Skill Focus",
-        "type": "feat",
-        "displayName": "Skill Focus (Mechanics)"
-      },
-      "talentRef": null,
-      "talentTreeRef": null,
-      "forcePowerRefs": [],
-      "backgroundRef": null,
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-human",
-        "name": "Human",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "equipment": [
         {
           "pack": "foundryvtt-swse.equipment",
           "id": "tool-kit",
@@ -3013,17 +3675,36 @@
           "quantity": 1,
           "displayName": "Medpac"
         }
-      ]
+      ],
+      "credits": 125,
+      "mentor": null,
+      "archetype": "Worker",
+      "roleTags": [],
+      "forceUser": false,
+      "notes": "Mechanics +10, HP ~7 (1d4+1). 3 starting feats: Skill Training (Mechanics), Skill Training (Use Computer), Skill Focus (Mechanics). Workers make excellent technicians and support personnel. Extra 820 credits in equipment for field work."
     },
     {
       "id": "nonheroic_trooper",
       "name": "Trooper",
-      "class": "Nonheroic",
-      "archetype": "Trooper",
       "description": "A baseline soldier, guard, or militia member. Troopers have basic military training but lack the experience and skill of true heroes.",
       "quote": "Following orders. That's what keeps the galaxy running.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/nonheroic_trooper.webp",
-      "mentor": null,
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "Nonheroic",
+        "name": "Nonheroic",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-human",
+        "name": "Human",
+        "type": "species"
+      },
+      "backgroundId": null,
       "abilityScores": {
         "str": 13,
         "dex": 12,
@@ -3032,45 +3713,37 @@
         "wis": 11,
         "cha": 8
       },
-      "species": "Human",
-      "className": "Nonheroic",
-      "level": 1,
-      "feat": "Weapon Proficiency (Rifles)",
-      "talent": null,
-      "talentTree": null,
       "trainedSkills": [
-        "43c5941072ec78af",
-        "cb5493f65f0bdb62"
+        {
+          "id": "43c5941072ec78af",
+          "name": "43c5941072ec78af"
+        },
+        {
+          "id": "cb5493f65f0bdb62",
+          "name": "cb5493f65f0bdb62"
+        }
       ],
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-proficiency-(rifles)",
+          "name": "Weapon Proficiency (Rifles)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "765ff8a34e58acac",
+          "name": "Weapon Proficiency (Rifles)",
+          "type": "feat"
+        }
+      ],
+      "talents": [],
+      "talentTreeId": null,
       "forcePowers": [],
-      "startingEquipment": [
-        "Blaster Rifle",
-        "Blaster Pistol",
-        "Blast Helmet and Vest",
-        "Comlink, Short-Range",
-        "Power Pack",
-        "Medpac"
+      "languages": [
+        "Basic"
       ],
-      "credits": -1850,
-      "notes": "Attack +1, Reflex 11, HP ~7 (1d4+1). 3 starting feats: Armor Proficiency (Light), Weapon Proficiency (Rifles), Weapon Proficiency (Pistols). Standard military trooper. Extra 755 credits in military equipment.",
-      "classRef": null,
-      "featRef": {
-        "pack": "foundryvtt-swse.feats",
-        "id": "765ff8a34e58acac",
-        "name": "Weapon Proficiency (Rifles)",
-        "type": "feat"
-      },
-      "talentRef": null,
-      "talentTreeRef": null,
-      "forcePowerRefs": [],
-      "backgroundRef": null,
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-human",
-        "name": "Human",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-rifles",
           "id": "weapon-blaster-rifle",
@@ -3119,17 +3792,36 @@
           "quantity": 1,
           "displayName": "Medpac"
         }
-      ]
+      ],
+      "credits": -1850,
+      "mentor": null,
+      "archetype": "Trooper",
+      "roleTags": [],
+      "forceUser": false,
+      "notes": "Attack +1, Reflex 11, HP ~7 (1d4+1). 3 starting feats: Armor Proficiency (Light), Weapon Proficiency (Rifles), Weapon Proficiency (Pistols). Standard military trooper. Extra 755 credits in military equipment."
     },
     {
       "id": "nonheroic_criminal",
       "name": "Criminal",
-      "class": "Nonheroic",
-      "archetype": "Criminal",
       "description": "A petty thug, gang member, or street criminal. Criminals live on the edge of society, relying on intimidation and violence.",
       "quote": "Credits or your life. Your choice.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/nonheroic_criminal.webp",
-      "mentor": null,
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "Nonheroic",
+        "name": "Nonheroic",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-human",
+        "name": "Human",
+        "type": "species"
+      },
+      "backgroundId": null,
       "abilityScores": {
         "str": 12,
         "dex": 13,
@@ -3138,42 +3830,37 @@
         "wis": 9,
         "cha": 11
       },
-      "species": "Human",
-      "className": "Nonheroic",
-      "level": 1,
-      "feat": "Weapon Proficiency (Pistols)",
-      "talent": null,
-      "talentTree": null,
       "trainedSkills": [
-        "9410ce2dfb6cefcb",
-        "6d2ac22d9fcf402f"
+        {
+          "id": "9410ce2dfb6cefcb",
+          "name": "9410ce2dfb6cefcb"
+        },
+        {
+          "id": "6d2ac22d9fcf402f",
+          "name": "6d2ac22d9fcf402f"
+        }
       ],
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-proficiency-(pistols)",
+          "name": "Weapon Proficiency (Pistols)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "e5d361d01d1b44e4",
+          "name": "Weapon Proficiency (Pistols)",
+          "type": "feat"
+        }
+      ],
+      "talents": [],
+      "talentTreeId": null,
       "forcePowers": [],
-      "startingEquipment": [
-        "Blaster Pistol",
-        "Vibrodagger",
-        "Comlink, Short-Range"
+      "languages": [
+        "Basic"
       ],
-      "credits": -575,
-      "notes": "Attack +1, Deception +7, HP ~6 (1d4+0). 3 starting feats: Weapon Proficiency (Pistols), Weapon Proficiency (Simple Weapons), Skill Training (Deception). Street criminals and thugs. Extra 750 credits in illicit equipment.",
-      "classRef": null,
-      "featRef": {
-        "pack": "foundryvtt-swse.feats",
-        "id": "e5d361d01d1b44e4",
-        "name": "Weapon Proficiency (Pistols)",
-        "type": "feat"
-      },
-      "talentRef": null,
-      "talentTreeRef": null,
-      "forcePowerRefs": [],
-      "backgroundRef": null,
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-human",
-        "name": "Human",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-pistols",
           "id": "weapon-blaster-pistol",
@@ -3198,17 +3885,36 @@
           "quantity": 1,
           "displayName": "Comlink, Short-Range"
         }
-      ]
+      ],
+      "credits": -575,
+      "mentor": null,
+      "archetype": "Criminal",
+      "roleTags": [],
+      "forceUser": false,
+      "notes": "Attack +1, Deception +7, HP ~6 (1d4+0). 3 starting feats: Weapon Proficiency (Pistols), Weapon Proficiency (Simple Weapons), Skill Training (Deception). Street criminals and thugs. Extra 750 credits in illicit equipment."
     },
     {
       "id": "nonheroic_merchant",
       "name": "Merchant",
-      "class": "Nonheroic",
-      "archetype": "Merchant",
       "description": "A trader, shopkeeper, or business professional. Merchants know the value of everything and have connections throughout the commercial sector.",
       "quote": "Everything has a price, my friend. Let's negotiate.",
       "imagePath": "systems/foundryvtt-swse/assets/templates/nonheroic_merchant.webp",
-      "mentor": null,
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "Nonheroic",
+        "name": "Nonheroic",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-human",
+        "name": "Human",
+        "type": "species"
+      },
+      "backgroundId": null,
       "abilityScores": {
         "str": 8,
         "dex": 10,
@@ -3217,43 +3923,42 @@
         "wis": 12,
         "cha": 13
       },
-      "species": "Human",
-      "className": "Nonheroic",
-      "level": 1,
-      "feat": "Skill Focus (Persuasion)",
-      "talent": null,
-      "talentTree": null,
       "trainedSkills": [
-        "b554f3e5a55ad53f",
-        "c9bf381579013b18",
-        "use_computer"
+        {
+          "id": "b554f3e5a55ad53f",
+          "name": "b554f3e5a55ad53f"
+        },
+        {
+          "id": "c9bf381579013b18",
+          "name": "c9bf381579013b18"
+        },
+        {
+          "id": "use_computer",
+          "name": "use_computer"
+        }
       ],
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "skill-focus-(persuasion)",
+          "name": "Skill Focus (Persuasion)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "1592aaedf4b6e40a",
+          "name": "Skill Focus",
+          "type": "feat",
+          "displayName": "Skill Focus (Persuasion)"
+        }
+      ],
+      "talents": [],
+      "talentTreeId": null,
       "forcePowers": [],
-      "startingEquipment": [
-        "Hold-out Blaster",
-        "Comlink, Short-Range"
+      "languages": [
+        "Basic"
       ],
-      "credits": 725,
-      "notes": "Persuasion +10, Gather Information +7, HP ~6 (1d4+0). 3 starting feats: Skill Training (Persuasion), Skill Training (Gather Information), Skill Focus (Persuasion). Merchants excel at social interactions. Extra 765 credits in business equipment.",
-      "classRef": null,
-      "featRef": {
-        "pack": "foundryvtt-swse.feats",
-        "id": "1592aaedf4b6e40a",
-        "name": "Skill Focus",
-        "type": "feat",
-        "displayName": "Skill Focus (Persuasion)"
-      },
-      "talentRef": null,
-      "talentTreeRef": null,
-      "forcePowerRefs": [],
-      "backgroundRef": null,
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-human",
-        "name": "Human",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-pistols",
           "id": "weapon-hold-out-blaster",
@@ -3270,17 +3975,36 @@
           "quantity": 1,
           "displayName": "Comlink, Short-Range"
         }
-      ]
+      ],
+      "credits": 725,
+      "mentor": null,
+      "archetype": "Merchant",
+      "roleTags": [],
+      "forceUser": false,
+      "notes": "Persuasion +10, Gather Information +7, HP ~6 (1d4+0). 3 starting feats: Skill Training (Persuasion), Skill Training (Gather Information), Skill Focus (Persuasion). Merchants excel at social interactions. Extra 765 credits in business equipment."
     },
     {
       "id": "nonheroic_police",
       "name": "Police Officer",
-      "class": "Nonheroic",
-      "archetype": "Police",
       "description": "A law enforcement officer, security guard, or constable. Police maintain order and enforce laws in civilized systems.",
       "quote": "By the authority of the law, stand down!",
       "imagePath": "systems/foundryvtt-swse/assets/templates/nonheroic_police.webp",
-      "mentor": null,
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "Nonheroic",
+        "name": "Nonheroic",
+        "type": "class"
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-human",
+        "name": "Human",
+        "type": "species"
+      },
+      "backgroundId": null,
       "abilityScores": {
         "str": 12,
         "dex": 11,
@@ -3289,42 +4013,37 @@
         "wis": 12,
         "cha": 10
       },
-      "species": "Human",
-      "className": "Nonheroic",
-      "level": 1,
-      "feat": "Weapon Proficiency (Pistols)",
-      "talent": null,
-      "talentTree": null,
       "trainedSkills": [
-        "43c5941072ec78af",
-        "gather_information"
+        {
+          "id": "43c5941072ec78af",
+          "name": "43c5941072ec78af"
+        },
+        {
+          "id": "gather_information",
+          "name": "gather_information"
+        }
       ],
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-proficiency-(pistols)",
+          "name": "Weapon Proficiency (Pistols)",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "e5d361d01d1b44e4",
+          "name": "Weapon Proficiency (Pistols)",
+          "type": "feat"
+        }
+      ],
+      "talents": [],
+      "talentTreeId": null,
       "forcePowers": [],
-      "startingEquipment": [
-        "Stun Baton",
-        "Blaster Pistol",
-        "Blast Helmet and Vest"
+      "languages": [
+        "Basic"
       ],
-      "credits": -850,
-      "notes": "Perception +8, Reflex 11, HP ~7 (1d4+1). 3 starting feats: Armor Proficiency (Light), Weapon Proficiency (Pistols), Skill Training (Perception). Local law enforcement. Extra 775 credits in law enforcement equipment.",
-      "classRef": null,
-      "featRef": {
-        "pack": "foundryvtt-swse.feats",
-        "id": "e5d361d01d1b44e4",
-        "name": "Weapon Proficiency (Pistols)",
-        "type": "feat"
-      },
-      "talentRef": null,
-      "talentTreeRef": null,
-      "forcePowerRefs": [],
-      "backgroundRef": null,
-      "speciesRef": {
-        "pack": "foundryvtt-swse.species",
-        "id": "species-human",
-        "name": "Human",
-        "type": "species"
-      },
-      "equipmentRefs": [
+      "equipment": [
         {
           "pack": "foundryvtt-swse.weapons-simple",
           "id": "weapon-stun-baton",
@@ -3349,7 +4068,13 @@
           "quantity": 1,
           "displayName": "Blast Helmet and Vest"
         }
-      ]
+      ],
+      "credits": -850,
+      "mentor": null,
+      "archetype": "Police",
+      "roleTags": [],
+      "forceUser": false,
+      "notes": "Perception +8, Reflex 11, HP ~7 (1d4+1). 3 starting feats: Armor Proficiency (Light), Weapon Proficiency (Pistols), Skill Training (Perception). Local law enforcement. Extra 775 credits in law enforcement equipment."
     }
   ]
 }

@@ -12,6 +12,7 @@
 import { TALENT_EFFECTS } from "/systems/foundryvtt-swse/scripts/engine/talent/talents.js";
 import { TalentNormalizerEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/TalentNormalizerEngine.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 function _buildEffectData(actor, talentItem, effectDef, idx) {
   const label = `${talentItem.name} (${idx + 1})`;
@@ -55,7 +56,8 @@ async function _applyTalentEffects(talentItem) {
   const effectsData = def.effects.map((_, idx) => _buildEffectData(actor, talentItem, def, idx));
 
   try {
-    await actor.createEmbeddedDocuments('ActiveEffect', effectsData);
+    // SOVEREIGNTY: Route ActiveEffect creation through ActorEngine
+    await ActorEngine.createActiveEffects(actor, effectsData, { source: 'talent-effects-hook' });
   } catch (e) {
     swseLogger.warn(`Failed to apply talent effects for ${talentItem.name}:`, e);
   }
@@ -72,7 +74,8 @@ async function _removeTalentEffects(talentItem) {
   if (!ids.length) return;
 
   try {
-    await actor.deleteEmbeddedDocuments('ActiveEffect', ids);
+    // SOVEREIGNTY: Route ActiveEffect deletion through ActorEngine
+    await ActorEngine.deleteActiveEffects(actor, ids, { source: 'talent-effects-hook' });
   } catch (e) {
     swseLogger.warn(`Failed to remove talent effects for ${talentItem.name}:`, e);
   }

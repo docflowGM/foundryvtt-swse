@@ -200,7 +200,10 @@ export async function safeActorUpdate(actor, updates, context = 'update') {
   }
 
   try {
-    return await actor.update(updates);
+    // Import ActorEngine dynamically to avoid circular dependencies
+    const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+    // SOVEREIGNTY: Route actor update through ActorEngine
+    return await ActorEngine.updateActor(actor, updates);
   } catch (err) {
     logError('safeActorUpdate', 'Update failed', { actor: actor.name, error: err.message, context }, 'mutation');
     return null;
@@ -221,7 +224,10 @@ export async function safeItemCreate(actor, itemData, context = 'create') {
   }
 
   try {
-    const created = await actor.createEmbeddedDocuments('Item', [itemData]);
+    // Import ActorEngine dynamically to avoid circular dependencies
+    const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+    // SOVEREIGNTY: Route item creation through ActorEngine
+    const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData], { source: 'runtime-safety-wrapper' });
     return created?.[0] ?? null;
   } catch (err) {
     logError('safeItemCreate', 'Creation failed', { actor: actor.name, error: err.message, context }, 'mutation');

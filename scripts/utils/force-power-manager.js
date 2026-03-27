@@ -253,7 +253,10 @@ export class ForcePowerManager {
     }
 
     if (powersToCreate.length > 0) {
-      await actor.createEmbeddedDocuments('Item', powersToCreate);
+      // Import ActorEngine dynamically to avoid circular dependencies
+      const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+      // SOVEREIGNTY: Route item creation through ActorEngine
+      await ActorEngine.createEmbeddedDocuments(actor, 'Item', powersToCreate, { source: 'force-power-grant' });
       ui.notifications.info(`Granted ${powersToCreate.length} Force Power(s) to ${actor.name}`);
     }
   }

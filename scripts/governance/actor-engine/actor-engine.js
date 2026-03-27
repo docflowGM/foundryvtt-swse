@@ -3195,5 +3195,81 @@ export const ActorEngine = {
       });
       throw err;
     }
+  },
+
+  /**
+   * PHASE 8D: Approved wrapper for creating ActiveEffects on actors.
+   * This is the ONLY legal way to create ActiveEffects from runtime systems.
+   * Routes through mutation context enforcement.
+   *
+   * @param {Actor} actor - The actor to create effects on
+   * @param {Array} effectData - Array of ActiveEffect data objects
+   * @param {Object} [options={}] - Additional options
+   * @returns {Promise<Array>} Created ActiveEffect documents
+   */
+  async createActiveEffects(actor, effectData, options = {}) {
+    try {
+      if (!actor) {throw new Error('createActiveEffects() called with no actor');}
+      if (!Array.isArray(effectData)) {throw new Error('createActiveEffects() requires effectData array');}
+
+      SWSELogger.debug(`ActorEngine.createActiveEffects → ${actor.name}`, {
+        count: effectData.length,
+        source: options.source || 'unknown'
+      });
+
+      MutationInterceptor.setContext({
+        operation: 'createActiveEffects',
+        source: options.source || 'ActorEngine',
+        suppressRecalc: options.suppressRecalc ?? false
+      });
+      try {
+        const result = await actor.createEmbeddedDocuments('ActiveEffect', effectData, options);
+        await this.recalcAll(actor);
+        return result;
+      } finally {
+        MutationInterceptor.clearContext();
+      }
+    } catch (err) {
+      SWSELogger.error(`ActorEngine.createActiveEffects failed for ${actor?.name ?? 'unknown actor'}`, err);
+      throw err;
+    }
+  },
+
+  /**
+   * PHASE 8D: Approved wrapper for deleting ActiveEffects from actors.
+   * This is the ONLY legal way to delete ActiveEffects from runtime systems.
+   * Routes through mutation context enforcement.
+   *
+   * @param {Actor} actor - The actor to delete effects from
+   * @param {Array} ids - Array of ActiveEffect IDs to delete
+   * @param {Object} [options={}] - Additional options
+   * @returns {Promise<Array>} Deleted ActiveEffect documents
+   */
+  async deleteActiveEffects(actor, ids, options = {}) {
+    try {
+      if (!actor) {throw new Error('deleteActiveEffects() called with no actor');}
+      if (!Array.isArray(ids)) {throw new Error('deleteActiveEffects() requires ids array');}
+
+      SWSELogger.debug(`ActorEngine.deleteActiveEffects → ${actor.name}`, {
+        count: ids.length,
+        source: options.source || 'unknown'
+      });
+
+      MutationInterceptor.setContext({
+        operation: 'deleteActiveEffects',
+        source: options.source || 'ActorEngine',
+        suppressRecalc: options.suppressRecalc ?? false
+      });
+      try {
+        const result = await actor.deleteEmbeddedDocuments('ActiveEffect', ids, options);
+        await this.recalcAll(actor);
+        return result;
+      } finally {
+        MutationInterceptor.clearContext();
+      }
+    } catch (err) {
+      SWSELogger.error(`ActorEngine.deleteActiveEffects failed for ${actor?.name ?? 'unknown actor'}`, err);
+      throw err;
+    }
   }
 };

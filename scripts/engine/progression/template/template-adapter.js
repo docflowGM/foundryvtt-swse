@@ -113,27 +113,27 @@ export class TemplateAdapter {
    * @private
    */
   static async _populateDraftSelections(session, template) {
-    // Species
-    if (template.species || template.speciesId) {
+    // Species (canonical: speciesId object with pack, id, name)
+    if (template.speciesId) {
       session.draftSelections.species = normalizeSpecies({
-        id: template.speciesId || template.species,
-        name: template.speciesName || template.species,
+        id: template.speciesId.id,
+        name: template.speciesId.name,
       });
     }
 
-    // Class
-    if (template.class || template.classId) {
+    // Class (canonical: classId object with pack, id, name)
+    if (template.classId) {
       session.draftSelections.class = normalizeClass({
-        classId: template.classId || template.class,
-        className: template.className || template.class,
+        classId: template.classId.id,
+        className: template.classId.name,
       });
     }
 
-    // Background
-    if (template.background || template.backgroundId) {
+    // Background (canonical: backgroundId object or null)
+    if (template.backgroundId) {
       session.draftSelections.background = normalizeBackground({
-        backgroundId: template.backgroundId || template.background,
-        backgroundName: template.backgroundName || template.background,
+        backgroundId: template.backgroundId.id,
+        backgroundName: template.backgroundId.name,
       });
     }
 
@@ -156,53 +156,26 @@ export class TemplateAdapter {
       session.draftSelections.skills = normalizeSkills(skillList);
     }
 
-    // Feats
-    if (template.feats || template.featIds || template.providedFeats) {
-      const featList = [
-        ...(template.feats || []),
-        ...(template.featIds || []),
-        ...(template.providedFeats || []),
-      ];
-      session.draftSelections.feats = normalizeFeats(featList);
+    // Feats (canonical: feats array of objects with pack, id, name, type)
+    if (Array.isArray(template.feats) && template.feats.length > 0) {
+      session.draftSelections.feats = normalizeFeats(template.feats);
     }
 
-    // Talents
-    if (template.talents || template.talentIds || template.providedTalents) {
-      const talentList = [
-        ...(template.talents || []),
-        ...(template.talentIds || []),
-        ...(template.providedTalents || []),
-      ];
-      session.draftSelections.talents = normalizeTalents(talentList);
+    // Talents (canonical: talents array of objects with pack, id, name, type)
+    if (Array.isArray(template.talents) && template.talents.length > 0) {
+      session.draftSelections.talents = normalizeTalents(template.talents);
     }
 
-    // Languages
-    if (template.languages || template.languageIds) {
-      const langList = template.languages || template.languageIds || [];
-      session.draftSelections.languages = normalizeLanguages(langList);
+    // Languages (canonical: array of language names or IDs)
+    if (Array.isArray(template.languages) && template.languages.length > 0) {
+      session.draftSelections.languages = normalizeLanguages(template.languages);
     }
 
-    // Force Powers (forcePowers, forcePowerIds)
-    if (template.forcePowers || template.forcePowerIds) {
-      const powerList = template.forcePowers || template.forcePowerIds || [];
-      session.draftSelections.forcePowers = powerList.map((p) =>
-        typeof p === 'string' ? { id: p, name: p } : p
-      );
-    }
-
-    // Force Techniques
-    if (template.forceTechniques || template.forceTechniqueIds) {
-      const techList = template.forceTechniques || template.forceTechniqueIds || [];
-      session.draftSelections.forceTechniques = techList.map((t) =>
-        typeof t === 'string' ? { id: t, name: t } : t
-      );
-    }
-
-    // Force Secrets
-    if (template.forceSecrets || template.forceSecretIds) {
-      const secretList = template.forceSecrets || template.forceSecretIds || [];
-      session.draftSelections.forceSecrets = secretList.map((s) =>
-        typeof s === 'string' ? { id: s, name: s } : s
+    // Force Powers (canonical: array of objects with pack, id, name, type)
+    if (Array.isArray(template.forcePowers) && template.forcePowers.length > 0) {
+      session.draftSelections.forcePowers = template.forcePowers.map((p) =>
+        typeof p === 'string' ? { id: p, name: p } :
+        { id: p.id, name: p.name }
       );
     }
 
@@ -242,46 +215,43 @@ export class TemplateAdapter {
       session.lockedNodes = new Set();
     }
 
-    // Mark template-provided nodes as locked
+    // Mark template-provided nodes as locked (canonical schema uses single-source fields)
     // Player can see them, but they cannot be changed
-    if (template.species || template.speciesId) {
+
+    if (template.speciesId) {
       session.lockedNodes.add('species');
     }
 
-    if (template.class || template.classId) {
+    if (template.classId) {
       session.lockedNodes.add('class');
     }
 
-    if (template.background || template.backgroundId) {
+    if (template.backgroundId) {
       session.lockedNodes.add('background');
     }
 
-    if (template.abilityScores || template.abilities) {
+    if (template.abilityScores && Object.keys(template.abilityScores).length > 0) {
       session.lockedNodes.add('attribute');
     }
 
-    if (template.trainedSkills || template.skills) {
+    if (Array.isArray(template.trainedSkills) && template.trainedSkills.length > 0) {
       session.lockedNodes.add('skills');
     }
 
-    if (template.feats || template.featIds) {
+    if (Array.isArray(template.feats) && template.feats.length > 0) {
       session.lockedNodes.add('feats');
     }
 
-    if (template.talents || template.talentIds) {
+    if (Array.isArray(template.talents) && template.talents.length > 0) {
       session.lockedNodes.add('talents');
     }
 
-    if (template.languages || template.languageIds) {
+    if (Array.isArray(template.languages) && template.languages.length > 0) {
       session.lockedNodes.add('languages');
     }
 
-    if (template.forcePowers || template.forcePowerIds) {
+    if (Array.isArray(template.forcePowers) && template.forcePowers.length > 0) {
       session.lockedNodes.add('force-powers');
-    }
-
-    if (template.forceTechniques || template.forceTechniqueIds) {
-      session.lockedNodes.add('force-techniques');
     }
 
     swseLogger.debug('[TemplateAdapter] Template nodes marked locked', {
@@ -336,9 +306,9 @@ export class TemplateAdapter {
       session.templateSignals.explicit.targetTags.push(template.prestigeTarget);
     }
 
-    // Inferred archetype from class
-    if (template.class || template.className) {
-      const className = template.className || template.class;
+    // Inferred archetype from class (canonical: classId object)
+    if (template.classId?.name) {
+      const className = template.classId.name;
       const inferredArchetype = this._inferArchetypeFromClassName(className);
       if (inferredArchetype) {
         session.templateSignals.inferred.archetypeTags.push(inferredArchetype);

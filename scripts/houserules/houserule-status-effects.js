@@ -269,9 +269,10 @@ export class StatusEffectsMechanics {
       );
 
       if (tempEffects.length > 0) {
-        await actor.deleteEmbeddedDocuments('ActiveEffect',
-          tempEffects.map(e => e.id)
-        );
+        // Import ActorEngine dynamically to avoid circular dependencies
+        const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+        // SOVEREIGNTY: Route ActiveEffect deletion through ActorEngine
+        await ActorEngine.deleteActiveEffects(actor, tempEffects.map(e => e.id), { source: 'rest-effects-cleanup' });
       }
     }
   }

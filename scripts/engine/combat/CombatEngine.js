@@ -613,7 +613,8 @@ export class CombatEngine {
         }
       };
 
-      await actor.createEmbeddedDocuments('ActiveEffect', [effectData]);
+      // SOVEREIGNTY: Route ActiveEffect creation through ActorEngine
+      await ActorEngine.createActiveEffects(actor, [effectData], { source: 'combat-dead-effect' });
     }
   }
 
@@ -643,7 +644,8 @@ export class CombatEngine {
         }
       };
 
-      await actor.createEmbeddedDocuments('ActiveEffect', [effectData]);
+      // SOVEREIGNTY: Route ActiveEffect creation through ActorEngine
+      await ActorEngine.createActiveEffects(actor, [effectData], { source: 'combat-destroyed-effect' });
     }
   }
 
@@ -673,7 +675,8 @@ export class CombatEngine {
         }
       };
 
-      await actor.createEmbeddedDocuments('ActiveEffect', [effectData]);
+      // SOVEREIGNTY: Route ActiveEffect creation through ActorEngine
+      await ActorEngine.createActiveEffects(actor, [effectData], { source: 'combat-unconscious-effect' });
     }
   }
 }

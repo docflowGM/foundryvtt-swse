@@ -21,6 +21,8 @@ import { ActiveStepComputer } from './shell/active-step-computer.js';
 import { mapNodesToDescriptors } from './registries/node-descriptor-mapper.js';
 import { DroidBuilderAdapter } from './steps/droid-builder-adapter.js';
 import { RolloutSettings } from './rollout/rollout-settings.js';
+import { TemplateInitializer } from '/systems/foundryvtt-swse/scripts/engine/progression/template/template-initializer.js';
+import { TemplateTraversalPolicy } from '/systems/foundryvtt-swse/scripts/engine/progression/template/template-traversal-policy.js';
 
 // Phase 2: Legacy imports kept for backward compat during transition
 // These are now resolved via NODE_PLUGIN_MAP in node-descriptor-mapper.js
@@ -56,6 +58,20 @@ export class ChargenShell extends ProgressionShell {
       return null;
     }
 
+    // PHASE 5 STEP 5: Template Selection
+    // Show template selection dialog and, if chosen, seed the session with template data.
+    const templateSession = await TemplateInitializer.initializeForChargen(actor, options);
+    if (templateSession === false) {
+      // User cancelled chargen entirely
+      return null;
+    }
+    // Note: templateSession may be null if user chose freeform; that's OK.
+    // ProgressionShell handles both template-seeded and empty sessions.
+    if (templateSession) {
+      // Pass template session to shell
+      options.initialSession = templateSession;
+    }
+
     // CRITICAL: Use .call(this, ...) to ensure ProgressionShell.open() creates a
     // ChargenShell instance (not a ProgressionShell). This ensures _getCanonicalDescriptors()
     // calls ChargenShell._getCanonicalDescriptors() (which has 13 steps), not the base
@@ -86,12 +102,22 @@ export class ChargenShell extends ProgressionShell {
 
       // Compute active nodes for this actor in chargen mode
       const computer = new ActiveStepComputer();
-      const activeNodeIds = await computer.computeActiveSteps(
+      let activeNodeIds = await computer.computeActiveSteps(
         this.actor,
         'chargen',
         this.progressionSession,
         { subtype }
       );
+
+      // PHASE 5: For template sessions, filter out locked nodes (template-provided choices)
+      // This creates a "bare-minimum-complete" traversal where players only revisit optional choices
+      if (this.progressionSession.isTemplateSession) {
+        activeNodeIds = TemplateTraversalPolicy.filterActiveStepsForTemplate(
+          activeNodeIds,
+          this.progressionSession,
+          { skipLocked: true }
+        );
+      }
 
       // Convert active node IDs to StepDescriptors with plugins wired
       const descriptors = mapNodesToDescriptors(activeNodeIds);

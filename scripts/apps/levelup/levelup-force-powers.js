@@ -155,9 +155,10 @@ export async function removeLightSidePowersForSith(actor) {
 
   if (lightSidePowers.length === 0) {return [];}
 
-  // Remove the light side powers
+  // Remove the light side powers via ActorEngine (SOVEREIGNTY)
   const removedIds = lightSidePowers.map(p => p.id);
-  await actor.deleteEmbeddedDocuments('Item', removedIds);
+  const ActorEngineModule = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+  await ActorEngineModule.ActorEngine.deleteEmbeddedDocuments(actor, 'Item', removedIds);
 
   SWSELogger.log(`SWSE LevelUp | Removed ${removedIds.length} Light Side powers for Sith prestige class:`, lightSidePowers.map(p => p.name));
 

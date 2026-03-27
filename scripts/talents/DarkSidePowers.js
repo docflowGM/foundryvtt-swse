@@ -700,7 +700,8 @@ export class DarkSidePowers {
     if (talisman.itemId) {
       const item = actor.items.get(talisman.itemId);
       if (item) {
-        await actor.deleteEmbeddedDocuments('Item', [talisman.itemId]);
+        // SOVEREIGNTY: Route item deletion through ActorEngine
+        await ActorEngine.deleteEmbeddedDocuments(actor, 'Item', [talisman.itemId]);
       }
     }
 

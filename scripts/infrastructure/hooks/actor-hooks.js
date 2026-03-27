@@ -20,6 +20,7 @@ import { StarshipDomainLifecycle } from "/systems/foundryvtt-swse/scripts/infras
 import { ForceDomainLifecycle } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/force-domain-lifecycle.js";
 import { registerTelekineticProdigyHook } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/telekinetic-prodigy-hook.js";
 import { qs, qsa, setVisible, isVisible, text } from "/systems/foundryvtt-swse/scripts/utils/dom-utils.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * Register all actor-related hooks
@@ -254,8 +255,8 @@ async function handleItemCreate(item, options, userId) {
 
     if (Object.keys(trainedSkills).length === 0) {
         ui.notifications.warn('You must have at least one trained skill to select Skill Focus. Please train a skill first.');
-        // Delete the feat since requirements aren't met
-        await item.delete();
+        // SOVEREIGNTY: Route item deletion through ActorEngine
+        await ActorEngine.deleteEmbeddedDocuments(actor, 'Item', [item.id]);
         return;
     }
 
@@ -325,8 +326,8 @@ async function handleItemCreate(item, options, userId) {
                 icon: '<i class="fas fa-times"></i>',
                 label: 'Cancel',
                 callback: async () => {
-                    // Delete the feat if cancelled
-                    await item.delete();
+                    // SOVEREIGNTY: Route item deletion through ActorEngine
+                    await ActorEngine.deleteEmbeddedDocuments(actor, 'Item', [item.id]);
                     ui.notifications.warn('Skill Focus feat removed. Select a skill to apply the feat.');
                 }
             }
@@ -345,7 +346,8 @@ async function handleItemCreate(item, options, userId) {
             }
 
             if (!hasFocusedSkill) {
-                await item.delete();
+                // SOVEREIGNTY: Route item deletion through ActorEngine
+                await ActorEngine.deleteEmbeddedDocuments(actor, 'Item', [item.id]);
             }
         }
     }, {

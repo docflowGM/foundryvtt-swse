@@ -201,11 +201,20 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const subtype = this._getProgressionSubtype(mode, options);
 
     // Create canonical session — this is the single source of truth for draft state
-    this.progressionSession = new ProgressionSession({
-      actor,
-      mode,
-      subtype,
-    });
+    // If initialSession is provided (e.g., from template seeding), use it; otherwise create fresh
+    if (options.initialSession) {
+      this.progressionSession = options.initialSession;
+      swseLogger.log('[ProgressionShell] Using provided initial session', {
+        isTemplate: this.progressionSession.isTemplateSession,
+        templateId: this.progressionSession.templateId,
+      });
+    } else {
+      this.progressionSession = new ProgressionSession({
+        actor,
+        mode,
+        subtype,
+      });
+    }
 
     // Step state
     this.steps = [];                 // StepDescriptor[] — assembled by _initializeSteps()
