@@ -36,6 +36,7 @@ import { HydrationDiagnosticsCollector, HydrationValidator, HydrationRecoveryStr
 import { BuildIntent } from './build-intent.js';
 import { GlobalValidator } from '../validation/global-validator.js';
 import { ChargenPersistence } from './chargen-persistence.js';
+import { RolloutController } from '../rollout/rollout-controller.js';
 
 /**
  * Shell state model (reference — actual state lives on `this`)
@@ -552,6 +553,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
+
+    // PHASE 4: Apply rollout configuration to shell
+    // This sets feature gates, UI visibility, debug tools, etc. based on world settings
+    RolloutController.configureShell(this);
 
     // ✓ CRITICAL: Expose shell context to step plugins
     // This allows steps to access committedSelections, actor, mode, and buildIntent

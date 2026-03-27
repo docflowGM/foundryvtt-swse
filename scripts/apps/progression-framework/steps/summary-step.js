@@ -197,20 +197,24 @@ export class SummaryStep extends ProgressionStepPlugin {
 
   validate() {
     const errors = [];
-    const warnings = [];
+    const warnings = {
+      blocking: [],    // Cannot proceed without fixing
+      caution: [],     // Should fix but can proceed
+      info: [],        // Informational only
+    };
 
-    // Character name is NOW required on THIS step (moved from NameStep)
+    // PHASE 4: Character name is NOW required on THIS step (moved from NameStep)
     // This enforces "datapad profile registration" before creation
     if (!this._characterName || this._characterName.trim() === '') {
       errors.push('Character name is required (enter or generate a name above)');
     }
 
-    // Validate starting level
+    // PHASE 4: Validate starting level
     if (this._startingLevel < 1 || this._startingLevel > 20) {
       errors.push('Starting level must be between 1 and 20');
     }
 
-    // Validate that all prior steps are complete
+    // PHASE 4: Validate that all prior steps are complete
     if (!this._summary.class) {
       errors.push('Character class must be selected');
     }
@@ -219,16 +223,23 @@ export class SummaryStep extends ProgressionStepPlugin {
       errors.push('Character attributes must be assigned');
     }
 
-    // Feats and talents should be complete based on level
+    // PHASE 4: Feats and talents should be complete based on level
     const requiredFeats = this._calculateRequiredFeats();
     if (this._summary.feats.length < requiredFeats) {
-      warnings.push(`Character should have ${requiredFeats} feat(s), currently has ${this._summary.feats.length}`);
+      warnings.caution.push({
+        level: 'caution',
+        message: `Character should have ${requiredFeats} feat(s), currently has ${this._summary.feats.length}`,
+        actionable: 'Add feats in the Feats step if desired',
+      });
     }
 
     return {
       isValid: errors.length === 0,
       errors,
       warnings,
+      blockingCount: warnings.blocking.length,
+      cautionCount: warnings.caution.length,
+      infoCount: warnings.info.length,
     };
   }
 
