@@ -209,6 +209,7 @@ export class ProgressionReconciler {
   /**
    * Rechecklegality of selections in affected nodes.
    * Uses AbilityEngine to validate that selected items are still legal.
+   * PHASE 3: Recheck via AbilityEngine; warn or purge if now illegal.
    *
    * @param {Array<string>} affectedNodeIds
    * @param {Actor} actor
@@ -232,12 +233,39 @@ export class ProgressionReconciler {
       const selection = draftSelections[node.selectionKey];
       if (!selection) continue;
 
-      // This is a placeholder for Phase 2.
-      // In Phase 3, we'd load the actual items and recheck via AbilityEngine.
-      // For now, just note that a recheck would happen.
-      swseLogger.debug(
-        `[ProgressionReconciler] Would recheck ${node.selectionKey} legality`
-      );
+      // PHASE 3: Evaluate legality of the selection via AbilityEngine
+      try {
+        // Handle array selections (feats, talents, etc.)
+        const isArray = Array.isArray(selection);
+        const itemsToCheck = isArray ? selection : [selection];
+
+        for (const item of itemsToCheck) {
+          if (!item) continue;
+
+          // Use AbilityEngine to check if item is still legal
+          const assessment = AbilityEngine.evaluateAcquisition(actor, item, {});
+
+          if (!assessment.legal) {
+            report.warnings.push(
+              `Selection in ${node.selectionKey} may no longer be legal after this change: ` +
+              `${item.name || item.id} (missing: ${assessment.missingPrereqs.join(', ')})`
+            );
+
+            swseLogger.warn(
+              `[ProgressionReconciler] Selection legality changed for ${node.selectionKey}:`,
+              {
+                item: item.name || item.id,
+                missingPrereqs: assessment.missingPrereqs
+              }
+            );
+          }
+        }
+      } catch (err) {
+        swseLogger.debug(
+          `[ProgressionReconciler] Error rechecking ${node.selectionKey} legality:`,
+          err
+        );
+      }
     }
   }
 

@@ -67,23 +67,23 @@ export class TemplateEngine {
 
       // Step 4: Apply class(es)
       // Handle single class from template
+      // PHASE 2: Removed skipPrerequisites flag; templates now validate like any other progression
       if (tpl.class) {
         await engine.doAction('confirmClass', {
-          classId: tpl.class,
-          skipPrerequisites: true // Templates are pre-validated
+          classId: tpl.class
         });
         swseLogger.log(`TemplateEngine: Applied class "${tpl.class}"`);
       }
 
       // Handle explicit classLevels array (for multi-level templates)
+      // PHASE 2: Removed skipPrerequisites flag; each level now validates independently
       if (Array.isArray(tpl.classLevels) && tpl.classLevels.length > 0) {
         for (const classLevel of tpl.classLevels) {
           // Apply each class level
           const levelsToApply = classLevel.level || 1;
           for (let i = 0; i < levelsToApply; i++) {
             await engine.doAction('confirmClass', {
-              classId: classLevel.class,
-              skipPrerequisites: true
+              classId: classLevel.class
             });
           }
           swseLogger.log(`TemplateEngine: Applied ${levelsToApply} level(s) of "${classLevel.class}"`);

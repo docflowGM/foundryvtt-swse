@@ -36,6 +36,7 @@ import { HydrationDiagnosticsCollector, HydrationValidator, HydrationRecoveryStr
 import { BuildIntent } from './build-intent.js';
 import { GlobalValidator } from '../validation/global-validator.js';
 import { ChargenPersistence } from './chargen-persistence.js';
+import { RolloutController } from '../rollout/rollout-controller.js';
 
 /**
  * Shell state model (reference — actual state lives on `this`)
@@ -553,6 +554,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
 
+    // PHASE 4: Apply rollout configuration to shell
+    // This sets feature gates, UI visibility, debug tools, etc. based on world settings
+    RolloutController.configureShell(this);
+
     // ✓ CRITICAL: Expose shell context to step plugins
     // This allows steps to access committedSelections, actor, mode, and buildIntent
     // Required for suggestion engine to see chargen choices
@@ -1013,11 +1018,29 @@ export class ProgressionShell extends SWSEApplicationV2 {
         selectionsCount: this.committedSelections.size,
       });
 
+      // PHASE 4 STEP 4: Check for blocking issues in current step (usually summary)
+      const currentDescriptor = this.steps[this.currentStepIndex];
+      if (currentDescriptor) {
+        const currentPlugin = this.stepPlugins.get(currentDescriptor.stepId);
+        if (currentPlugin && typeof currentPlugin.validate === 'function') {
+          const validation = currentPlugin.validate();
+          if (validation.errors && validation.errors.length > 0) {
+            // Blocking errors prevent finalization
+            swseLogger.warn('[ProgressionShell] Finalization blocked by validation errors:', validation.errors);
+            ui.notifications.error(`Cannot finish: ${validation.errors[0]}`);
+            this.isProcessing = false;
+            return;
+          }
+        }
+      }
+
       // Prepare session state for finalizer
+      // PHASE 1: Pass canonical progressionSession (required, not optional)
       const sessionState = {
         mode: this.mode,
         actor: this.actor,
-        committedSelections: this.committedSelections,
+        progressionSession: this.progressionSession,  // CANONICAL — required by finalizer
+        committedSelections: this.committedSelections, // Legacy compat (finalizer ignores)
         steps: this.steps,
         stepData: this.stepData,
         mentor: this.mentor,

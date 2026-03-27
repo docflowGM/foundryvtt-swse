@@ -4,6 +4,7 @@ import CharacterGeneratorNarrative from "/systems/foundryvtt-swse/scripts/apps/c
 import CharacterGeneratorImproved from "/systems/foundryvtt-swse/scripts/apps/chargen-improved.js";
 import { TemplateCharacterCreator } from "/systems/foundryvtt-swse/scripts/apps/template-character-creator.js";
 import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { RolloutSettings } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/rollout/rollout-settings.js";
 
 // Single hook to handle both create button interception and header button addition
 Hooks.on('renderActorDirectory', (app, html, data) => {
@@ -38,6 +39,11 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                 const allowPlayersNonheroic = game.settings.get('foundryvtt-swse', 'allowPlayersNonheroic');
                 const canCreateNPC = isGM || allowPlayersNonheroic;
 
+                // PHASE 4 STEP 5: Check rollout mode before offering legacy generators
+                const rolloutMode = RolloutSettings.getRolloutMode();
+                const useUnified = RolloutSettings.shouldUseUnifiedProgressionByDefault();
+                const legacyAvailable = RolloutSettings.shouldSupportLegacyFallback();
+
                 // Build dialog buttons
                 const buttons = {
                     template: {
@@ -46,13 +52,35 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                         callback: () => {
                             TemplateCharacterCreator.create();
                         }
-                    },
-                    generator: {
+                    }
+                };
+
+                // PHASE 4 STEP 5: Offer unified or legacy generator based on rollout mode
+                if (useUnified) {
+                    buttons.unified = {
                         icon: '<i class="fa-solid fa-dice-d20"></i>',
-                        label: 'Custom PC Generator',
+                        label: '✓ Custom PC (Unified)',
                         callback: async () => {
-                            // Create temporary actor for consistent initialization and mentor survey handling
-                            // Ensures L1 mentor survey fires consistently regardless of entry point
+                            // Route to unified ProgressionShell via launchProgression
+                            const { launchProgression } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js');
+                            const ActorClass = CONFIG.Actor.documentClass;
+                            const tempActor = new ActorClass({
+                                name: 'New Character',
+                                type: 'character',
+                                system: { level: 0, swse: { mentorSurveyCompleted: false } }
+                            }, { parent: null });
+                            await launchProgression(tempActor);
+                        }
+                    };
+                }
+
+                // PHASE 4 STEP 5: Offer legacy generator only if legacy fallback is supported
+                if (legacyAvailable && rolloutMode !== 'default') {
+                    buttons.legacy = {
+                        icon: '<i class="fa-solid fa-wrench"></i>',
+                        label: '⚠ Legacy PC Generator',
+                        callback: async () => {
+                            SWSELogger.warn('[chargen-init] Opening legacy generator (fallback mode)');
                             const ActorClass = CONFIG.Actor.documentClass;
                             const tempActor = new ActorClass({
                                 name: 'New Character (Temp)',
@@ -65,15 +93,16 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
 
                             new CharacterGeneratorNarrative(tempActor).render(true);
                         }
-                    }
-                };
+                    };
+                }
 
-                // Add NPC Generator button only if permitted
-                if (canCreateNPC) {
+                // Add NPC Generator button only if permitted and legacy fallback available
+                if (canCreateNPC && legacyAvailable) {
                     buttons.npc = {
                         icon: '<i class="fa-solid fa-users"></i>',
-                        label: 'NPC Generator',
+                        label: '⚠ Legacy NPC Generator',
                         callback: async () => {
+                            SWSELogger.warn('[chargen-init] Opening legacy NPC generator (fallback mode)');
                             // Create temporary NPC actor for consistent initialization
                             const ActorClass = CONFIG.Actor.documentClass;
                             const tempActor = new ActorClass({

@@ -8,7 +8,7 @@
  * only ⭐ badges and explanatory reasons.
  */
 
-import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisite-checker.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { AttributeIncreaseHandler } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/attribute-increase-handler.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
@@ -244,6 +244,7 @@ function _createHypotheticalActor(actor, hypotheticalScores) {
 
 /**
  * Find feats that would be unlocked by new ability scores
+ * PHASE 2: Uses AbilityEngine for legality evaluation, not direct PrerequisiteChecker
  * @private
  */
 async function _findUnlockedFeats(actor, hypotheticalActor) {
@@ -261,13 +262,11 @@ async function _findUnlockedFeats(actor, hypotheticalActor) {
       const alreadyOwned = actor.items.some(i => i._id === feat._id || i.name === feat.name);
       if (alreadyOwned) continue;
 
-      // Check current prerequisite
-      const currentCheck = PrerequisiteChecker.checkFeatPrerequisites(actor, feat);
-      if (currentCheck.met) continue; // Already qualifies
+      // PHASE 2: Check current prerequisite through AbilityEngine authority layer
+      if (AbilityEngine.canAcquire(actor, feat)) continue; // Already qualifies
 
-      // Check hypothetical prerequisite
-      const hypotheticalCheck = PrerequisiteChecker.checkFeatPrerequisites(hypotheticalActor, feat);
-      if (hypotheticalCheck.met) {
+      // PHASE 2: Check hypothetical prerequisite through AbilityEngine authority layer
+      if (AbilityEngine.canAcquire(hypotheticalActor, feat)) {
         unlockedFeats.push(feat.name);
       }
     }

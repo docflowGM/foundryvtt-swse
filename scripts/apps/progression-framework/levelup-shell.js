@@ -18,12 +18,27 @@ import { createStepDescriptor, StepCategory, StepType } from './steps/step-descr
 import { ActiveStepComputer } from './shell/active-step-computer.js';
 import { mapNodesToDescriptors } from './registries/node-descriptor-mapper.js';
 import { ClassStep } from './steps/class-step.js';
+import { RolloutSettings } from './rollout/rollout-settings.js';
 import { AttributeStep } from './steps/attribute-step.js';
 import { GeneralFeatStep, ClassFeatStep } from './steps/feat-step.js';
 import { GeneralTalentStep, ClassTalentStep } from './steps/talent-step.js';
 
 export class LevelupShell extends ProgressionShell {
   static async open(actor, options = {}) {
+    // PHASE 4 STEP 2: Check if unified level-up is allowed in current rollout mode
+    const rolloutMode = RolloutSettings.getRolloutMode();
+    const canUseUnified = RolloutSettings.shouldUseUnifiedProgressionByDefault();
+
+    if (!canUseUnified) {
+      const reason = rolloutMode === 'legacy-fallback'
+        ? 'Legacy fallback mode: unified level-up disabled. Use legacy level-up instead.'
+        : `Unified level-up not available in "${rolloutMode}" mode.`;
+
+      console.warn(`[LevelupShell] ${reason}`);
+      ui.notifications.warn(reason);
+      return null;
+    }
+
     return ProgressionShell.open(actor, 'levelup', options);
   }
 
