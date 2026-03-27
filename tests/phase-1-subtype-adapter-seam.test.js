@@ -540,6 +540,109 @@ describe('Phase 1: Subtype Adapter Seam', () => {
   // TEST 8: Dependent Participant Step Suppression (PHASE 1 CORRECTIVE)
   // ═══════════════════════════════════════════════════════════════════════════
 
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TEST 7B: Beast as Nonheroic Profile (PHASE 2 EXPANSION)
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  describe('TEST 7B: Beast as Nonheroic Profile Variant (PHASE 2 EXPANSION)', () => {
+    it('should detect beast profile from flags.swse.beastData', async () => {
+      const { seedNonheroicSession, NonheroicProfile } = await import(
+        '../scripts/apps/progression-framework/adapters/nonheroic-session-seeder.js'
+      );
+
+      const session = new ProgressionSession({
+        actor: null,
+        mode: 'chargen',
+        subtype: 'nonheroic',
+      });
+
+      // Simulate beast actor with flags.swse.beastData
+      const beastActor = {
+        id: 'beast-1',
+        name: 'Rancor',
+        type: 'npc',
+        flags: {
+          swse: {
+            beastData: {
+              cl: 10,
+              size: 'Huge',
+              reflexDefense: 15,
+              hitPoints: 150,
+            },
+          },
+        },
+        items: [],
+        system: {},
+      };
+
+      await seedNonheroicSession(session, beastActor, 'chargen');
+
+      expect(session.nonheroicContext.profile).toBe(NonheroicProfile.BEAST);
+      expect(session.nonheroicContext.isBeast).toBe(true);
+      expect(session.nonheroicContext.beastData).toBeTruthy();
+    });
+
+    it('should detect standard nonheroic profile when no beast data', async () => {
+      const { seedNonheroicSession, NonheroicProfile } = await import(
+        '../scripts/apps/progression-framework/adapters/nonheroic-session-seeder.js'
+      );
+
+      const session = new ProgressionSession({
+        actor: null,
+        mode: 'chargen',
+        subtype: 'nonheroic',
+      });
+
+      const standardNonheroic = {
+        id: 'npc-1',
+        name: 'Cantina Patron',
+        type: 'npc',
+        flags: { swse: {} },
+        items: [],
+        system: {},
+      };
+
+      await seedNonheroicSession(session, standardNonheroic, 'chargen');
+
+      expect(session.nonheroicContext.profile).toBe(NonheroicProfile.STANDARD);
+      expect(session.nonheroicContext.isBeast).toBe(false);
+    });
+
+    it('should keep beast on nonheroic path (not independent like actor)', () => {
+      const adapter = new NonheroicSubtypeAdapter();
+
+      expect(adapter.kind).toBe(ParticipantKind.INDEPENDENT);
+      expect(adapter.isIndependent).toBe(true);
+      expect(adapter.isDependent).toBe(false);
+      // Beast uses nonheroic adapter (not separate)
+    });
+
+    it('should suppress talent steps for beast like standard nonheroic', async () => {
+      const adapter = new NonheroicSubtypeAdapter();
+      const session = new ProgressionSession({
+        actor: null,
+        mode: 'chargen',
+        subtype: 'nonheroic',
+      });
+
+      // Beast context
+      session.nonheroicContext = {
+        hasNonheroic: true,
+        isBeast: true,
+        profile: 'beast',
+        beastData: { cl: 10 },
+      };
+
+      const candidateSteps = ['species', 'general-talent', 'class-talent', 'skills'];
+      const result = await adapter.contributeActiveSteps(candidateSteps, session, null);
+
+      // Beast should suppress talent just like standard nonheroic
+      expect(result).not.toContain('general-talent');
+      expect(result).not.toContain('class-talent');
+      expect(result).toContain('skills');
+    });
+  });
+
   describe('TEST 8: Dependent Participant Step Suppression (CORRECTED)', () => {
     it('should allow dependent adapter to suppress freeform feat progression', async () => {
       const adapter = new FollowerSubtypeAdapter();
