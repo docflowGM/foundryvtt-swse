@@ -18,6 +18,8 @@
 import { ProgressionSubtypeAdapter, ParticipantKind } from './progression-subtype-adapter.js';
 import { seedNonheroicSession } from './nonheroic-session-seeder.js';
 import { shouldSuppressTalentSteps, describeTalentCadence } from './talent-cadence-helper.js';
+import { seedFollowerSession, validateFollowerEntitlement } from './follower-session-seeder.js';
+import { getFollowerAdvancementContext, advanceFollowerToLevel } from './follower-advancer.js';
 
 // Re-export for convenience
 export { ParticipantKind };
@@ -78,20 +80,13 @@ export class DroidSubtypeAdapter extends ProgressionSubtypeAdapter {
 
 /**
  * Follower subtype adapter.
- * DEPENDENT participant: nonheroic-derived, owner-linked, template-driven.
+ * DEPENDENT participant: nonheroic-derived, owner-linked, template-driven, heroic-level-parity-based.
  *
- * CRITICAL CORRECTIVE NOTE (Phase 1):
- * Follower is NOT an independent progression participant.
- * Followers are:
- * - Explicitly nonheroic
- * - Derived from owner actor state
- * - Entitlement-driven through owner talents
- * - Template-driven (not freeform progression)
- * - Runtime-controlled by owner
- *
- * This adapter is DEPENDENT on a parent/owner context.
- * Phase 1: Structural support only. No follower logic implemented.
- * Phase 3: Full follower creation/template/entitlement logic wired through dependency context.
+ * Phase 3 REAL Implementation:
+ * Followers are explicitly dependent, nonheroic, and tied to owner's heroic level.
+ * The adapter orchestrates follower creation/advancement through the unified spine
+ * by reusing existing FollowerCreator, FollowerManager, and entitlement logic
+ * without duplicating or forking those systems.
  */
 export class FollowerSubtypeAdapter extends ProgressionSubtypeAdapter {
   constructor() {
@@ -104,45 +99,157 @@ export class FollowerSubtypeAdapter extends ProgressionSubtypeAdapter {
   }
 
   async seedSession(session, actor, mode) {
-    // Phase 1: STUB. Follower session seeding deferred to Phase 3.
-    // Phase 3: Seed session with:
-    //   - owner/dependency context from session.dependencyContext
-    //   - follower archetype selection (from owner's granted followers)
-    //   - follower-specific attribute overrides (derived from owner)
-    //   - follower-specific class restrictions (nonheroic base)
-    //   - follower template presets
+    // Phase 3: REAL. Seed follower session from dependency context.
+    // Assumes session.dependencyContext.ownerActorId is set by shell.
+    if (!session.dependencyContext?.ownerActorId) {
+      throw new Error('[FollowerAdapter] seedSession: No owner context in dependency');
+    }
+
+    const owner = game.actors.get(session.dependencyContext.ownerActorId);
+    if (!owner) {
+      throw new Error('[FollowerAdapter] seedSession: Owner actor not found');
+    }
+
+    // Use follower-session-seeder to validate entitlement and seed parity info
+    const slotId = session.dependencyContext.slotId;
+    const existingFollowerId = session.dependencyContext.existingFollowerId;
+
+    const seeded = await seedFollowerSession(session, owner, slotId, existingFollowerId);
+    if (!seeded) {
+      throw new Error('[FollowerAdapter] seedSession: Failed to seed follower session (no entitlement?)');
+    }
   }
 
   async contributeActiveSteps(candidateStepIds, session, actor) {
-    // Phase 1: STUB. Follower step routing deferred to Phase 3.
-    // Phase 3: SUPPRESS normal freeform progression for dependent participant:
-    //   - no normal feat progression (entitlement-gated only)
-    //   - no normal talent progression (entitlement-gated only)
-    //   - no normal skill progression (template-driven only)
-    //   - no species/class selection (template-driven)
-    //   - potentially expose template/archetype/entitlement steps
-    // For now, return candidate steps as-is (though registry won't include follower steps yet).
-    return candidateStepIds;
+    // Phase 3: REAL. Suppress full-character progression steps for dependent follower.
+    // Followers are template-driven, not freeform builders.
+
+    // Suppress all heroic/freeform assumptions
+    const suppressedStepIds = [
+      'class-selection',
+      'class-level-up',
+      'class-feat',
+      'general-feat',
+      'general-talent',
+      'class-talent',
+      'talent-tree-browser',
+      'talent-graph',
+      'species-selection',
+      'ability-score-increase',
+      'force-power',
+      'multiclass'
+    ];
+
+    const filtered = candidateStepIds.filter(stepId => !suppressedStepIds.includes(stepId));
+
+    // Followers get only template/archetype resolution steps (deferred to Phase 3+ if needed)
+    // For now, an empty list means the progression proceeds directly to finalization
+    return filtered;
   }
 
   async contributeEntitlements(entitlements, session, actor) {
-    // Phase 1: STUB. Follower entitlement rules deferred to Phase 3.
-    // Phase 3: Apply follower-specific ability score caps, feat limits, etc.
+    // Phase 3: Follower entitlements are template-derived, not freeform.
+    // Deferred to Phase 3+: Apply template-specific ability caps, feat/skill limits.
+    // For now, pass through.
     return entitlements;
   }
 
   async contributeRestrictions(restrictions, session, actor) {
-    // Phase 1: STUB. Follower exclusion rules deferred to Phase 3.
-    // Phase 3: Enforce follower-specific exclusions:
-    //   - forbidden feats (e.g., leadership-scale feats)
-    //   - forbidden classes (e.g., Jedi, Sith)
-    //   - forbidden force powers
+    // Phase 3: Enforce follower-specific restrictions.
+    // Deferred to Phase 3+: Leadership-scale feats forbidden, some classes forbidden, etc.
+    // For now, pass through.
     return restrictions;
   }
 
+  async contributeProjection(projectedData, session, actor) {
+    // Phase 3: Reflect follower advancement in projection.
+    // Show the follower as it will exist after level advancement to parity.
+    if (!session.dependencyContext) {
+      return projectedData;
+    }
+
+    // Add follower metadata to projection
+    const meta = projectedData.metadata || {};
+    meta.isFollower = true;
+    meta.followerOwnerHeroicLevel = session.dependencyContext.ownerHeroicLevel;
+    meta.followerTargetLevel = session.dependencyContext.targetFollowerLevel;
+    meta.followerTemplate = session.dependencyContext.templateType;
+    meta.isNewFollower = session.dependencyContext.isNewFollower;
+
+    projectedData.metadata = meta;
+    return projectedData;
+  }
+
+  async contributeMutationPlan(mutationPlan, session, actor) {
+    // Phase 3: REAL. Compile follower mutation bundle.
+    // This is the core of Phase 3: followers are created/advanced through the unified apply path.
+
+    if (!session.dependencyContext) {
+      return mutationPlan;
+    }
+
+    const ownerActorId = session.dependencyContext.ownerActorId;
+    const ownerActor = game.actors.get(ownerActorId);
+
+    if (!ownerActor) {
+      return mutationPlan;
+    }
+
+    // If this is a new follower, create it through FollowerCreator
+    // If advancing existing, apply level advancement
+    if (session.dependencyContext.isNewFollower) {
+      // Deferred to Phase 3+: Full follower creation through spine
+      // For now, flag for legacy FollowerCreator to handle
+      mutationPlan.follower = {
+        operation: 'create',
+        ownerActorId,
+        templateType: session.dependencyContext.templateType,
+        targetHeroicLevel: session.dependencyContext.targetFollowerLevel
+      };
+    } else if (session.dependencyContext.existingFollowerId) {
+      // Advancing existing follower to owner's new heroic level
+      const followerActor = game.actors.get(session.dependencyContext.existingFollowerId);
+      if (followerActor) {
+        const levelsToApply = session.dependencyContext.levelsToApply;
+        if (levelsToApply.length > 0) {
+          mutationPlan.follower = {
+            operation: 'advance',
+            followerId: session.dependencyContext.existingFollowerId,
+            templateType: session.dependencyContext.templateType,
+            currentLevel: session.dependencyContext.currentFollowerLevel,
+            targetLevel: session.dependencyContext.targetFollowerLevel,
+            levelsToApply
+          };
+        }
+      }
+    }
+
+    return mutationPlan;
+  }
+
   async validateReadiness(session, actor) {
-    // Phase 1: STUB. Follower readiness checks deferred to Phase 3.
     // Phase 3: Validate follower creation requirements.
+    // Check that owner is entitled to the slot, has required templates, etc.
+    if (!session.dependencyContext) {
+      throw new Error('[FollowerAdapter] validateReadiness: No dependency context');
+    }
+
+    const ownerActorId = session.dependencyContext.ownerActorId;
+    const slotId = session.dependencyContext.slotId;
+
+    if (!ownerActorId || !slotId) {
+      throw new Error('[FollowerAdapter] validateReadiness: Missing owner or slot context');
+    }
+
+    const owner = game.actors.get(ownerActorId);
+    if (!owner) {
+      throw new Error('[FollowerAdapter] validateReadiness: Owner actor not found');
+    }
+
+    // Validate entitlement
+    if (!validateFollowerEntitlement(owner, slotId)) {
+      throw new Error('[FollowerAdapter] validateReadiness: Owner not entitled to this follower slot');
+    }
   }
 }
 

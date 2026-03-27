@@ -2,12 +2,15 @@
  * Follower Creator - Handles creation and management of follower characters
  *
  * Followers have special rules that differ from standard character creation:
- * - HP = 10 + owner level (not class hit die)
+ * - HP = 10 + owner heroic level (not class hit die)
  * - BAB from template progression tables
- * - Defenses = 10 + ability mod + owner level
+ * - Defenses = 10 + ability mod + owner heroic level
+ * - Followers are tied to owner's HEROIC LEVEL specifically (not total level if mixed heroic/nonheroic)
  *
  * This module uses shared progression utilities for item creation (species, feats, skills)
  * but maintains follower-specific stat calculations.
+ *
+ * Phase 3: Integrated as a DEPENDENT participant through the progression spine.
  */
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
@@ -15,6 +18,7 @@ import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { resolveSkillKey } from "/systems/foundryvtt-swse/scripts/utils/skill-resolver.js";
 import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { getHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 
 export class FollowerCreator {
 
@@ -227,8 +231,8 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * @private
      */
     static async _buildFollowerActor(owner, template, followerData, grantingTalent) {
-        const ownerLevel = owner.system.level || 1;
-        const followerLevel = ownerLevel; // Followers are same level as owner
+        const ownerHeroicLevel = getHeroicLevel(owner) || 1;
+        const followerLevel = ownerHeroicLevel; // Followers are same HEROIC level as owner
 
         // Get species data
         const speciesPack = game.packs.get('foundryvtt-swse.species');
@@ -249,13 +253,13 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             abilities[followerData.abilityChoice].base += template.abilityBonus;
         }
 
-        // Calculate defenses (10 + ability mod + owner level) - FOLLOWER SPECIFIC
-        const defenses = await this._calculateFollowerDefenses(abilities, ownerLevel, template);
+        // Calculate defenses (10 + ability mod + owner heroic level) - FOLLOWER SPECIFIC
+        const defenses = await this._calculateFollowerDefenses(abilities, ownerHeroicLevel, template);
 
-        // Calculate HP (10 + owner level) - FOLLOWER SPECIFIC
+        // Calculate HP (10 + owner heroic level) - FOLLOWER SPECIFIC
         const hp = {
-            max: 10 + ownerLevel,
-            value: 10 + ownerLevel
+            max: 10 + ownerHeroicLevel,
+            value: 10 + ownerHeroicLevel
         };
 
         // Get BAB from template - FOLLOWER SPECIFIC
