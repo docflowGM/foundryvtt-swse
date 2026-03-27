@@ -15,6 +15,8 @@
 
 import { ProgressionShell } from './shell/progression-shell.js';
 import { createStepDescriptor, StepCategory, StepType } from './steps/step-descriptor.js';
+import { ActiveStepComputer } from './shell/active-step-computer.js';
+import { mapNodesToDescriptors } from './registries/node-descriptor-mapper.js';
 import { ClassStep } from './steps/class-step.js';
 import { AttributeStep } from './steps/attribute-step.js';
 import { GeneralFeatStep, ClassFeatStep } from './steps/feat-step.js';
@@ -26,13 +28,55 @@ export class LevelupShell extends ProgressionShell {
   }
 
   /**
-   * Canonical level-up step sequence.
-   * Conditional steps (skills, force powers, etc.) are NOT listed here.
-   * ConditionalStepResolver handles those via _initializeSteps() in the base shell.
+   * Derive level-up step sequence from the progression spine.
+   *
+   * PHASE 2: Uses ActiveStepComputer to determine which nodes are active
+   * for level-up progression, rather than returning a hard-coded list.
+   *
+   * @returns {Promise<import('./steps/step-descriptor.js').StepDescriptor[]>}
+   */
+  async _getCanonicalDescriptors() {
+    try {
+      // Level-up only supports non-droid actors
+      const subtype = 'actor';
+
+      // Compute active nodes for level-up mode
+      const computer = new ActiveStepComputer();
+      const activeNodeIds = await computer.computeActiveSteps(
+        this.actor,
+        'levelup',
+        this.progressionSession,
+        { subtype }
+      );
+
+      // Convert active node IDs to StepDescriptors with plugins wired
+      const descriptors = mapNodesToDescriptors(activeNodeIds);
+
+      if (descriptors.length === 0) {
+        console.warn('[LevelupShell] No active steps computed for level-up');
+        // Fallback to legacy step list
+        return this._getLegacyCanonicalDescriptors();
+      }
+
+      console.log('[LevelupShell] Computed active steps:', {
+        count: descriptors.length,
+        steps: descriptors.map(d => d.stepId),
+      });
+
+      return descriptors;
+    } catch (err) {
+      console.error('[LevelupShell] Error computing canonical descriptors:', err);
+      return this._getLegacyCanonicalDescriptors();
+    }
+  }
+
+  /**
+   * Legacy fallback: return hard-coded level-up steps.
    *
    * @returns {import('./steps/step-descriptor.js').StepDescriptor[]}
+   * @private
    */
-  _getCanonicalDescriptors() {
+  _getLegacyCanonicalDescriptors() {
     return LEVELUP_CANONICAL_STEPS.map(config =>
       createStepDescriptor({
         ...config,

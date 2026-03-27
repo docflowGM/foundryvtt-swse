@@ -12,6 +12,7 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { BackgroundRegistry } from '/systems/foundryvtt-swse/scripts/registries/background-registry.js';
+import { normalizeBackground } from './step-normalizers.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
@@ -225,24 +226,38 @@ export class BackgroundStep extends ProgressionStepPlugin {
       }
     }
 
-    // Update shell.committedSelections for backward compatibility
+    // PHASE 1: Normalize and commit to canonical session
+    // For now, commit the first (primary) background to canonical session
+    // Multi-background support can be extended in Phase 2
+    const primaryBackgroundId = this._committedBackgroundIds[0];
+    const primaryBackground = this._allBackgrounds.find(b => b.id === primaryBackgroundId);
+
+    if (primaryBackground) {
+      const normalizedBackground = normalizeBackground({
+        backgroundId: primaryBackground.id,
+        backgroundName: primaryBackground.name,
+        category: primaryBackground.category,
+        skills: primaryBackground.skills,
+        feats: primaryBackground.feats,
+        languages: primaryBackground.languages,
+        traits: primaryBackground.traits,
+        source: primaryBackground.source,
+      });
+
+      if (normalizedBackground) {
+        // Commit to canonical session (also updates committedSelections for backward compat)
+        await this._commitNormalized(shell, 'background', normalizedBackground);
+      }
+    }
+
+    // Also maintain legacy committedSelections for full multi-background support
+    // This is a compatibility bridge until Phase 2 extends canonical support
     shell.committedSelections.set('background', {
       backgroundIds: [...this._committedBackgroundIds],
       backgrounds: this._committedBackgroundIds
         .map(bgId => this._allBackgrounds.find(b => b.id === bgId))
         .filter(Boolean),
     });
-
-    // Update observable build intent (Phase 6 solution)
-    // This allows other steps, mentors, and validation systems to see the selection
-    if (shell.buildIntent) {
-      shell.buildIntent.commitSelection('background-step', 'background', {
-        backgroundIds: [...this._committedBackgroundIds],
-        backgrounds: this._committedBackgroundIds
-          .map(bgId => this._allBackgrounds.find(b => b.id === bgId))
-          .filter(Boolean),
-      });
-    }
 
     shell.render();
   }

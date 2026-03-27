@@ -18,6 +18,11 @@
  * - Step discovery               → Progression engine (queried by shell)
  */
 
+import { ProgressionReconciler } from '../shell/progression-reconciler.js';
+import { ActiveStepComputer } from '../shell/active-step-computer.js';
+import { ProjectionEngine } from '../shell/projection-engine.js';
+import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+
 /**
  * Sentinel error thrown by all unimplemented methods.
  */
@@ -396,5 +401,116 @@ export class ProgressionStepPlugin {
    */
   isSuggestedItem(itemId, suggestedIds = new Set()) {
     return suggestedIds.has(itemId);
+  }
+
+  // ---------------------------------------------------------------------------
+  // PHASE 1: Normalized commit helpers
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Commit a normalized selection to the progression session.
+   *
+   * PHASE 1: This is the recommended API for steps to commit selections.
+   * Writes to progressionSession.draftSelections with validation.
+   *
+   * @param {import('../shell/progression-shell.js').ProgressionShell} shell
+   * @param {string} selectionKey - Canonical key (species, class, feats, etc.)
+   * @param {*} normalizedValue - Pre-normalized value matching canonical schema
+   * @returns {boolean} true if successful
+   *
+   * Usage:
+   *   this._commitNormalized(shell, 'species', normalizedSpeciesObject);
+   *   this._commitNormalized(shell, 'feats', normalizedFeatsArray);
+   */
+  async _commitNormalized(shell, selectionKey, normalizedValue) {
+    if (!shell?.progressionSession) {
+      swseLogger.warn(
+        `[${this.constructor.name}] No progressionSession available for commit`
+      );
+      return false;
+    }
+
+    try {
+      const nodeId = this.descriptor.stepId;
+      const success = shell.progressionSession.commitSelection(
+        nodeId,
+        selectionKey,
+        normalizedValue
+      );
+
+      if (!success) {
+        return false;
+      }
+
+      // Also update buildIntent for backward compatibility
+      if (shell.buildIntent) {
+        shell.buildIntent.commitSelection(nodeId, selectionKey, normalizedValue);
+      }
+
+      // Also update committedSelections for backward compatibility during migration
+      if (shell.committedSelections) {
+        shell.committedSelections.set(selectionKey, {
+          [selectionKey]: normalizedValue,
+          source: nodeId,
+        });
+      }
+
+      // PHASE 2: Trigger post-commit reconciliation
+      // This invalidates/dirtifies affected downstream nodes
+      try {
+        const reconciler = new ProgressionReconciler();
+        const computer = new ActiveStepComputer();
+        const mode = shell.mode || 'chargen';
+        const subtype = shell.actor?.type === 'npc' ? 'npc' : 'actor';
+
+        const reconciliationReport = await reconciler.reconcileAfterCommit(
+          nodeId,
+          shell.actor,
+          shell.progressionSession,
+          {
+            activeStepComputer: computer,
+            currentStepId: shell.steps[shell.currentStepIndex]?.stepId,
+            mode,
+            subtype,
+          }
+        );
+
+        if (reconciliationReport.actionsTaken.length > 0) {
+          swseLogger.log('[ProgressionStepPlugin] Post-commit reconciliation:', reconciliationReport);
+        }
+      } catch (reconcileErr) {
+        swseLogger.error(
+          '[ProgressionStepPlugin] Error during post-commit reconciliation:',
+          reconcileErr
+        );
+        // Don't fail the commit if reconciliation fails
+      }
+
+      // PHASE 3: Build projected character from selections
+      // This derives what the character looks like with current selections applied
+      try {
+        const projection = ProjectionEngine.buildProjection(
+          shell.progressionSession,
+          shell.actor
+        );
+        // Store in session for access by summary and other steps
+        shell.progressionSession.currentProjection = projection;
+        swseLogger.debug('[ProgressionStepPlugin] Projection rebuilt:', {
+          hasIdentity: !!projection?.identity?.species,
+          skillsCount: projection?.skills?.trained?.length || 0,
+        });
+      } catch (projErr) {
+        swseLogger.error(
+          '[ProgressionStepPlugin] Error building projection:',
+          projErr
+        );
+        // Don't fail the commit if projection building fails
+      }
+
+      return true;
+    } catch (err) {
+      swseLogger.error('[ProgressionStepPlugin] Error during commit:', err);
+      return false;
+    }
   }
 }

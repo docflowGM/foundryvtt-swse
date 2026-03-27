@@ -8,6 +8,7 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
+import { normalizeSpecies } from './step-normalizers.js';
 import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions, STEP_TO_CHOICE_TYPE } from './mentor-step-integration.js';
 // Patch builder lives in the shared progression-framework module — NOT the legacy chargen path.
 import { buildSpeciesAtomicPatch } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shared/species-patch.js';
@@ -356,17 +357,21 @@ export class SpeciesStep extends ProgressionStepPlugin {
       patchOps:      patch?.ops ?? [],
     });
 
-    shell.committedSelections.set('species', {
-      speciesId:   id,
+    // PHASE 1: Normalize and commit to canonical session
+    const normalizedSpecies = normalizeSpecies({
+      speciesId: id,
       speciesName: entry.name,
-      speciesData: entry,    // Store entry for downstream reference
+      speciesData: entry,
       patch,
     });
 
-    // Update observable build intent (Phase 6 solution)
-    if (shell.buildIntent) {
-      shell.buildIntent.commitSelection('species-step', 'species', id);
+    if (!normalizedSpecies) {
+      console.warn(`[SpeciesStep] Failed to normalize species data for ${entry.name}`);
+      return;
     }
+
+    // Commit to canonical session (also updates committedSelections for backward compat)
+    await this._commitNormalized(shell, 'species', normalizedSpecies);
 
     this._committedSpeciesId   = id;
     this._committedSpeciesName = entry.name;
@@ -397,16 +402,20 @@ export class SpeciesStep extends ProgressionStepPlugin {
 
     const pkg = this._nearHumanBuilder.buildNearHumanPackage();
 
-    shell.committedSelections.set('species', {
+    // PHASE 1: Normalize and commit to canonical session
+    const normalizedSpecies = normalizeSpecies({
       speciesId: 'near-human',
       speciesName: 'Near-Human',
       nearHumanData: pkg,
     });
 
-    // Update observable build intent (Phase 6 solution)
-    if (shell.buildIntent) {
-      shell.buildIntent.commitSelection('species-step', 'species', 'near-human');
+    if (!normalizedSpecies) {
+      console.warn(`[SpeciesStep] Failed to normalize near-human species data`);
+      return;
     }
+
+    // Commit to canonical session (also updates committedSelections for backward compat)
+    await this._commitNormalized(shell, 'species', normalizedSpecies);
 
     this._committedSpeciesId = 'near-human';
     this._committedSpeciesName = 'Near-Human';

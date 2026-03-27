@@ -7,6 +7,7 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ForceRegistry } from '../../../engine/registries/force-registry.js';
+import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
@@ -267,7 +268,18 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
   // Private
 
   async _computeLegalTechniques(actor) {
-    this._legalTechniques = [...this._allTechniques]; // TODO: filter by prerequisites
+    this._legalTechniques = [];
+
+    // PHASE 1: Use AbilityEngine to evaluate prerequisite legality
+    for (const technique of this._allTechniques) {
+      const assessment = AbilityEngine.evaluateAcquisition(actor, technique);
+
+      if (assessment.legal) {
+        this._legalTechniques.push(technique);
+      }
+    }
+
+    swseLogger.debug(`[ForceTechniqueStep] Legal techniques: ${this._legalTechniques.length} of ${this._allTechniques.length}`);
   }
 
   _applyFilters() {

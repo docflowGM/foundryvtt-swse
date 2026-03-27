@@ -21,83 +21,35 @@
 export class BuildIntent {
   /**
    * Create observable build intent tracker.
+   *
+   * PHASE 1 NOTE: This is now a DEPRECATED co-authority. It will be removed in Phase 2.
+   * For now, it acts as a thin wrapper around progressionSession for backward compatibility.
+   *
    * @param {ProgressionShell} shell - Parent shell for reactive updates
    */
   constructor(shell) {
     this.shell = shell;
 
-    // Core state: tracks accumulated selections
-    this._state = {
-      species: null,
-      class: null,
-      background: null,
-      feats: [],
-      talents: [],
-      skills: {},
-      languages: [],
-      attributes: {},
-      multiclass: null,
-      forcePowers: [],
-      // Extensible for new step types
-    };
-
-    // Watchers: { stepKey: [callback, ...] }
+    // DEPRECATED: No longer maintains independent _state
+    // This class now delegates to progressionSession
+    this._state = null;  // Placeholder
     this._watchers = new Map();
-
-    // Create proxy for reactive updates
-    this._createProxy();
   }
 
   /**
-   * Create a reactive proxy that triggers watchers on changes.
+   * DEPRECATED: No longer creates proxy.
+   * Keeping stub for any code that may reference it.
    * @private
    */
   _createProxy() {
-    // Store original state for proxy handler to access
-    const state = this._state;
-    const watchers = this._watchers;
-    const shell = this.shell;
-
-    // The proxy sits between external code and the state
-    // When someone reads/writes, we can intercept and trigger watchers
-    this.proxy = new Proxy(state, {
-      set: (target, prop, value) => {
-        const oldValue = target[prop];
-
-        // Only trigger watchers if value actually changed
-        if (oldValue === value) return true;
-
-        target[prop] = value;
-
-        // Notify watchers for this property
-        if (watchers.has(prop)) {
-          watchers.get(prop).forEach(callback => {
-            try {
-              callback(value, oldValue, prop);
-            } catch (err) {
-              console.error(`[BuildIntent] Watcher error for ${prop}:`, err);
-            }
-          });
-        }
-
-        // Re-render shell to reflect changes
-        if (shell?.render) {
-          shell.render();
-        }
-
-        return true;
-      },
-
-      get: (target, prop) => {
-        // Return state value for reads
-        return target[prop];
-      },
-    });
+    // No-op in Phase 1 — all operations delegate to progressionSession
   }
 
   /**
    * Commit a selection to build intent.
    * This is the primary API for steps to update shared state.
+   *
+   * PHASE 1: This now delegates to progressionSession.
    *
    * @param {string} stepId - ID of step making the commitment
    * @param {string} selectionKey - Key in buildIntent (e.g., 'class', 'feats')
@@ -114,18 +66,27 @@ export class BuildIntent {
     }
 
     try {
-      // Use proxy to trigger watchers
-      this.proxy[selectionKey] = value;
+      // Delegate to canonical progressionSession
+      const success = this.shell?.progressionSession?.commitSelection(
+        stepId,
+        selectionKey,
+        value
+      );
 
-      // Also update shell.committedSelections for backward compatibility
-      if (this.shell?.committedSelections) {
+      // Also update shell.committedSelections for backward compatibility during migration
+      if (this.shell?.committedSelections && success) {
         this.shell.committedSelections.set(selectionKey, {
           [selectionKey]: value,
           source: stepId,
         });
       }
 
-      return true;
+      // Re-render shell to reflect changes
+      if (success && this.shell?.render) {
+        this.shell.render();
+      }
+
+      return success ?? false;
     } catch (err) {
       console.error(`[BuildIntent] Error committing ${selectionKey}:`, err);
       return false;
@@ -134,23 +95,29 @@ export class BuildIntent {
 
   /**
    * Get a committed selection value.
+   * PHASE 1: Delegates to progressionSession.
+   *
    * @param {string} selectionKey - Key to retrieve (e.g., 'class', 'feats')
    * @returns {*} The committed value, or undefined if not set
    */
   getSelection(selectionKey) {
-    return this._state[selectionKey];
+    return this.shell?.progressionSession?.getSelection(selectionKey);
   }
 
   /**
    * Get all committed selections as a snapshot.
+   * PHASE 1: Delegates to progressionSession.
+   *
    * @returns {Object} Copy of current state
    */
   getAllSelections() {
-    return { ...this._state };
+    return this.shell?.progressionSession?.getAllSelections() || {};
   }
 
   /**
    * Get build intent as character data for suggestion engine.
+   * PHASE 1: Delegates to progressionSession.
+   *
    * This transforms buildIntent into the format expected by SuggestionContextBuilder.
    *
    * @returns {Object} Character data structure for suggestions
@@ -168,22 +135,13 @@ export class BuildIntent {
    * }
    */
   toCharacterData() {
-    return {
-      classes: this._state.class ? [this._state.class] : [],
-      species: this._state.species,
-      feats: this._state.feats || [],
-      talents: this._state.talents || [],
-      skills: this._state.skills || {},
-      abilityIncreases: this._state.attributes || {},
-      background: this._state.background,
-      languages: this._state.languages || [],
-      multiclass: this._state.multiclass,
-      forcePowers: this._state.forcePowers || [],
-    };
+    return this.shell?.progressionSession?.toCharacterData() || {};
   }
 
   /**
    * Register a watcher on a specific selection.
+   * PHASE 1: Delegates to progressionSession.
+   *
    * Callback is invoked when that selection changes.
    *
    * @param {string} selectionKey - Key to watch (e.g., 'class')
@@ -203,51 +161,29 @@ export class BuildIntent {
       return () => {}; // Return no-op unobserve
     }
 
-    if (!this._watchers.has(selectionKey)) {
-      this._watchers.set(selectionKey, []);
+    // Delegate to progressionSession
+    if (this.shell?.progressionSession) {
+      return this.shell.progressionSession.observeSelection(selectionKey, callback);
     }
 
-    const callbacks = this._watchers.get(selectionKey);
-    callbacks.push(callback);
-
-    // Return unobserve function
-    return () => {
-      const idx = callbacks.indexOf(callback);
-      if (idx >= 0) {
-        callbacks.splice(idx, 1);
-      }
-    };
+    return () => {}; // Return no-op if no session
   }
 
   /**
    * Clear all selections (typically on chargen reset).
+   * PHASE 1: Delegates to progressionSession.
    */
   reset() {
-    this._state = {
-      species: null,
-      class: null,
-      background: null,
-      feats: [],
-      talents: [],
-      skills: {},
-      languages: [],
-      attributes: {},
-      multiclass: null,
-      forcePowers: [],
-    };
-    this._createProxy();
+    if (this.shell?.progressionSession) {
+      this.shell.progressionSession.reset();
+    }
   }
 
   /**
    * For debugging: dump current state
+   * PHASE 1: Delegates to progressionSession.
    */
   debug() {
-    return {
-      state: this._state,
-      watchers: Array.from(this._watchers.entries()).map(([key, cbs]) => ({
-        key,
-        watcherCount: cbs.length,
-      })),
-    };
+    return this.shell?.progressionSession?.debug() || {};
   }
 }

@@ -26,6 +26,7 @@ import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { centerApplicationDuringStartup } from '/systems/foundryvtt-swse/scripts/utils/sheet-position.js';
 import { ConditionalStepResolver } from './conditional-step-resolver.js';
 import { ProgressionFinalizer } from './progression-finalizer.js';
+import { ProgressionSession } from './progression-session.js';
 import { StepCategory } from '../steps/step-descriptor.js';
 import { ActionFooter } from './action-footer.js';
 import { MentorRail } from './mentor-rail.js';
@@ -194,16 +195,27 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this._targetStepId = options.currentStep || null;  // Store target step to navigate after init
     this._minStepIndex = null;  // Prevent back-navigation past this index (set when targeting step)
 
+    // ═══ PHASE 1: CANONICAL PROGRESSION SESSION ═══
+    // Determine subtype based on mode and options (can be overridden by subclasses)
+    const subtype = this._getProgressionSubtype(mode, options);
+
+    // Create canonical session — this is the single source of truth for draft state
+    this.progressionSession = new ProgressionSession({
+      actor,
+      mode,
+      subtype,
+    });
+
     // Step state
     this.steps = [];                 // StepDescriptor[] — assembled by _initializeSteps()
     this.stepPlugins = new Map();    // stepId → ProgressionStepPlugin instance
     this.currentStepIndex = 0;
 
     // Selection/focus state
-    this.stepData = new Map();       // stepId → step-specific state blob
+    this.stepData = new Map();       // stepId → step-specific state blob (DEPRECATED: use progressionSession)
     this.focusedItem = null;         // item currently in details panel (single-click)
-    this.committedSelections = new Map(); // stepId → committed selection(s)
-    this.buildIntent = new BuildIntent(this); // Observable build state (Phase 6 solution)
+    this.committedSelections = new Map(); // DEPRECATED: use progressionSession.draftSelections
+    this.buildIntent = new BuildIntent(this); // Observable build state (DEPRECATED: becomes read-only view)
 
     // Persistence state (Phase 8 solution)
     this.persistenceEnabled = mode === 'chargen'; // Auto-persist only during chargen, not levelup
@@ -239,6 +251,21 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // Position centering tracking — initialize EARLY so first render knows this is a new open
     this._openedAt = Date.now();
     this._centerTimer = null;
+  }
+
+  /**
+   * Get the progression subtype for this session.
+   * Subclasses (chargen-shell, levelup-shell, droid-builder, etc.) can override.
+   *
+   * @param {string} mode - chargen, levelup, template
+   * @param {Object} options - Constructor options
+   * @returns {'actor' | 'npc' | 'droid' | 'follower' | 'nonheroic'}
+   * @private
+   */
+  _getProgressionSubtype(mode, options) {
+    // Default implementation: can be overridden by subclasses
+    if (options.subtype) return options.subtype;
+    return 'actor';
   }
 
   // ═══ AUDIT INSTRUMENTATION + RENDER GUARD ═══
@@ -343,7 +370,12 @@ export class ProgressionShell extends SWSEApplicationV2 {
    */
   async _initializeSteps() {
     try {
-      const canonicalDescriptors = this._getCanonicalDescriptors();
+      // PHASE 2: _getCanonicalDescriptors may be async (ActiveStepComputer in chargen/levelup shells)
+      const canonicalDescriptorsOrPromise = this._getCanonicalDescriptors();
+      const canonicalDescriptors = canonicalDescriptorsOrPromise instanceof Promise
+        ? await canonicalDescriptorsOrPromise
+        : canonicalDescriptorsOrPromise;
+
       // PHASE C: Pass shell context so resolver can check committedSelections for deferred droid builds
       const conditionalDescriptors = await this._conditionalResolver.resolveForContext(
         this.actor,

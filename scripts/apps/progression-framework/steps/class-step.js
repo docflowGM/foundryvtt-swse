@@ -9,6 +9,7 @@
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ClassesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js';
+import { normalizeClass } from './step-normalizers.js';
 import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { getMentorGuidance } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
@@ -188,17 +189,22 @@ export class ClassStep extends ProgressionStepPlugin {
       return;
     }
 
-    // Record the committed selection
-    shell.committedSelections.set('class', {
+    // PHASE 1: Normalize and commit to canonical session
+    const normalizedClass = normalizeClass({
       classId: id,
       className: entry.name,
       classData,
+      system: classData.system,
     });
 
-    // Update observable build intent (Phase 6 solution)
-    if (shell.buildIntent) {
-      shell.buildIntent.commitSelection('class-step', 'class', id);
+    if (!normalizedClass) {
+      console.warn(`[ClassStep] Failed to normalize class data for ${entry.name}`);
+      return;
     }
+
+    // Commit to canonical session (also updates committedSelections for backward compat)
+    // PHASE 2: await reconciliation after commit
+    await this._commitNormalized(shell, 'class', normalizedClass);
 
     this._committedClassId = id;
     this._committedClassName = entry.name;

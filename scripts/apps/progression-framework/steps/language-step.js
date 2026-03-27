@@ -18,6 +18,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { LanguageRegistry } from '/systems/foundryvtt-swse/scripts/registries/language-registry.js';
 import { LanguageEngine } from '/systems/foundryvtt-swse/scripts/engine/progression/engine/language-engine.js';
+import { normalizeLanguages } from './step-normalizers.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
@@ -378,7 +379,18 @@ export class LanguageStep extends ProgressionStepPlugin {
       this._selectedBonusLanguages.push(lang.name);
     }
 
-    // Update observable build intent (Phase 6 solution)
+    // PHASE 1: Normalize and commit to canonical session
+    // Normalize selected bonus languages for canonical storage
+    const normalizedLanguages = normalizeLanguages(
+      this._selectedBonusLanguages.map(name => ({ id: name, source: 'selected' }))
+    );
+
+    if (normalizedLanguages && shell) {
+      // Commit to canonical session (also updates buildIntent for backward compat)
+      await this._commitNormalized(shell, 'languages', normalizedLanguages);
+    }
+
+    // Also maintain legacy buildIntent for backward compat
     if (shell?.buildIntent && this.descriptor?.stepId) {
       shell.buildIntent.commitSelection(
         this.descriptor.stepId,

@@ -11,6 +11,7 @@
 import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ForcePowerEngine } from '../../../engine/progression/engine/force-secret-engine.js';
 import { ForceRegistry } from '../../../engine/registries/force-registry.js';
+import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { swseLogger } from '../../../utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
@@ -302,8 +303,17 @@ export class ForceSecretStep extends ProgressionStepPlugin {
 
   async _computeLegalSecrets(actor) {
     this._legalSecrets = [];
-    // TODO (Wave 10+): Use AbilityEngine to validate prerequisites
-    // For now: empty
+
+    // PHASE 1: Use AbilityEngine to evaluate prerequisite legality
+    for (const secret of this._allSecrets) {
+      const assessment = AbilityEngine.evaluateAcquisition(actor, secret);
+
+      if (assessment.legal) {
+        this._legalSecrets.push(secret);
+      }
+    }
+
+    swseLogger.debug(`[ForceSecretStep] Legal secrets: ${this._legalSecrets.length} of ${this._allSecrets.length}`);
   }
 
   _applyFilters() {
