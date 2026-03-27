@@ -2,7 +2,198 @@
 
 **Phase Goal**: Make the unified build system feel complete and deployable by improving player-facing clarity, GM/admin controls, recovery/error handling, review/explanation UX, template and advisory usability, rollout toggles and operational safety, and migration off remaining legacy entry points.
 
-**Status**: In Progress (Step 1 Complete, 14% of Phase 7)
+**Status**: In Progress (Steps 1-2 Complete, 29% of Phase 7)
+
+---
+
+## Step 2: Build Recovery and Interruption Handling ✅
+
+**Completed**: Comprehensive recovery system for dirty nodes, template conflicts, apply failures, and session resume
+
+### Deliverables
+
+#### 1. `recovery-coordinator.js` (300 lines)
+Core recovery planning engine that detects scenarios and creates resolution plans.
+
+**Methods**:
+- `planDirtyNodeRecovery(session)` — Recovery for nodes invalidated by upstream changes
+  - Identifies all dirty nodes
+  - Explains why each became dirty
+  - Routes user to required resolution points
+
+- `planTemplateConflictRecovery(session, validationReport)` — Recovery for template issues
+  - Categorizes conflicts (game rules vs. unresolved)
+  - Distinguishes blocking vs. non-blocking
+  - Provides resolution paths
+
+- `planApplyFailureRecovery(error, session)` — Recovery when confirm/apply fails
+  - Categorizes error (validation, prerequisite, mutation, template)
+  - Preserves session state
+  - Suggests retry or recovery steps
+
+- `planResumeRecovery(actor, savedSession)` — Recovery for interrupted/resumed sessions
+  - Detects stale sessions (>1 hour old)
+  - Checks for incompatible actor state
+  - Warns about level/subtype mismatches
+  - Flags unresolved items
+
+- `createRecoveryGuidance(recoveryPlan)` — Convert plan to user-facing guidance
+  - Title, message, hints, warnings
+  - Action buttons with labels
+  - Next-steps walkthrough
+
+#### 2. `recovery-display.js` (400+ lines)
+UI rendering for recovery guidance.
+
+**Components**:
+- `renderRecoveryModal()` — Blocking recovery modal
+  - Header with issue title
+  - Body with message, details, warnings
+  - Action buttons
+  - Next-steps section
+
+- `renderRecoveryPanel()` — Non-blocking recovery panel
+  - Inline guidance (no modal)
+  - Severity indicator (warning/error/info)
+  - Compact version of modal
+
+- `renderRecoveryNotice()` — Lightweight notice
+  - Single-line alert
+  - No interaction required
+
+**CSS**: ~350 lines
+- Modal styling (backdrop, content, buttons)
+- Panel styling (severity colors, inline layout)
+- Notice styling (minimal alert)
+
+#### 3. `progression-recovery-manager.js` (280 lines)
+Orchestrator that integrates recovery into ProgressionShell.
+
+**Methods**:
+- `checkAndInitiateRecovery(session)` — Detect and start recovery flow
+  - Checks for dirty nodes, template conflicts
+  - Initiates appropriate recovery
+  - Routes to recovery steps
+
+- `checkResumeStrategy(actor, savedSession)` — Handle session resume
+  - Returns: 'resume' | 'start-fresh' | 'proceed'
+  - Shows modal if needed
+  - Validates session compatibility
+
+- `handleApplyFailure(error, session)` — Graceful apply failure handling
+  - Preserves session state
+  - Shows error modal with recovery steps
+  - Suggests retry or alternative paths
+
+- `navigateToRecoveryStep(stepId, options)` — Route user to resolution
+  - Navigates shell to specific step
+  - Tracks recovery reason
+  - Enables analytics
+
+---
+
+## Recovery Flow Walkthrough
+
+### Dirty Node Recovery
+```
+Upstream change invalidates node
+    ↓
+dirty node added to session
+    ↓
+checkAndInitiateRecovery() detects it
+    ↓
+planDirtyNodeRecovery() creates plan
+    ↓
+showDirtyNodePanel() displays guidance
+    ↓
+navigateToRecoveryStep() sends user to node
+    ↓
+User confirms choice
+    ↓
+Dirty flag cleared
+```
+
+### Template Conflict Recovery
+```
+Template validation fails
+    ↓
+session.templateValidationReport marked invalid
+    ↓
+checkAndInitiateRecovery() detects it
+    ↓
+planTemplateConflictRecovery() categorizes issues
+    ↓
+If blocking → showTemplateConflictModal()
+If caution → showTemplateConflictPanel()
+    ↓
+User resolves conflicts or exits template mode
+    ↓
+Template revalidated
+```
+
+### Apply Failure Recovery
+```
+User clicks Confirm
+    ↓
+ProgressionFinalizer.apply() fails
+    ↓
+handleApplyFailure() captures error
+    ↓
+planApplyFailureRecovery() explains issue
+    ↓
+showApplyFailureModal() shows recovery steps
+    ↓
+User chooses: retry, fix, or exit
+    ↓
+Session state preserved for next attempt
+```
+
+### Session Resume Recovery
+```
+User opens shell for actor with saved session
+    ↓
+checkResumeStrategy() evaluates saved session
+    ↓
+If incompatible → showResumeModal() → 'start-fresh'
+If stale/warnings → showResumeModal() → 'resume' or 'start-fresh'
+If clean → return 'resume'
+    ↓
+Shell initializes with appropriate strategy
+```
+
+---
+
+## Design Principles
+
+**State Preservation**
+- Session state never lost due to errors
+- Last error captured for debugging
+- Retry is always possible
+
+**Clear Pathways**
+- Recovery is never just "You messed up"
+- Each issue has a concrete next step
+- User always knows where to go
+
+**Non-Blocking Where Possible**
+- Warnings are panels, not modals
+- Only truly blocking issues use modals
+- User retains control
+
+**Failure Categorization**
+- Validation errors: "Fix these choices"
+- Prerequisite errors: "Go back and review"
+- Mutation errors: "Try again or contact support"
+- Template errors: "Exit template mode or update template"
+
+---
+
+## Not Yet Integrated
+
+- [ ] ProgressionShell integration hooks
+- [ ] ProgressionFinalizer apply failure handling
+- [ ] Session persistence for retry scenarios
+- [ ] Error tracking/analytics
 
 ---
 
@@ -162,21 +353,24 @@ scripts/apps/progression-framework/ux/
 ├── user-explainability.js                        (320 lines)
 ├── explanation-display.js                        (500+ lines)
 ├── progression-shell-explainability-integration.js (280 lines)
-└── step-explainability-mixin.js                  (160 lines)
+├── step-explainability-mixin.js                  (160 lines)
+├── recovery-coordinator.js                       (300 lines)
+├── recovery-display.js                           (400+ lines)
+└── progression-recovery-manager.js               (280 lines)
 
-PHASE-7-PROGRESS.md                               (this file)
+PHASE-7-PROGRESS.md                               (this file, expanded)
 ```
 
-**Total**: ~1,260 lines of explainability code + CSS
+**Total**: ~2,240 lines of explainability + recovery code + CSS
 
 ---
 
 ## Execution Order
 
-Phase 7 has 7 steps. This is Step 1 of 7:
+Phase 7 has 7 steps. Steps 1-2 complete:
 
 1. ✅ **Step 1**: Add explainability for active/skipped/dirty nodes, suggestion rationale, template provenance
-2. **Step 2**: Build recovery flows for invalid template picks, dirty reconciliation states, apply failure, safe resume
+2. ✅ **Step 2**: Build recovery flows for invalid template picks, dirty reconciliation states, apply failure, safe resume
 3. **Step 3**: Add/refine rollout settings and feature controls
 4. **Step 4**: Inventory and close or deprecate remaining legacy build entry points
 5. **Step 5**: Refine summary/review as the clear checkout step
@@ -185,10 +379,20 @@ Phase 7 has 7 steps. This is Step 1 of 7:
 
 ---
 
-## Known Limitations (Phase 7 Step 1)
+## Known Limitations (Phase 7 Steps 1-2)
 
+**Step 1 (Explainability)**:
 - Integration hooks not yet wired into ProgressionShell
 - Step plugins not yet using the mixin
 - SummaryStep integration not yet active
-- Full test coverage pending (manual verification phase)
 - Suggestion rationale requires context from step's suggestion coordinator
+
+**Step 2 (Recovery)**:
+- ProgressionShell integration hooks not yet wired
+- ProgressionFinalizer apply failure hook not yet added
+- Session persistence for retry not yet implemented
+- Error tracking/analytics pending
+
+**General**:
+- Full test coverage pending (manual verification phase)
+- No integration testing across steps yet
