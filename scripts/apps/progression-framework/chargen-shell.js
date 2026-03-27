@@ -59,6 +59,16 @@ export class ChargenShell extends ProgressionShell {
       return 'droid';
     }
 
+    // Phase 2.6: Detect nonheroic subtype from template or class items
+    // Check if session is template-seeded and template is nonheroic
+    if (this.progressionSession?.isTemplateSession && this.progressionSession?.templateId) {
+      // Template will have set subtype in TemplateAdapter.initializeSessionFromTemplate
+      // Check the session's subtype if already set
+      if (this.progressionSession.subtype === 'nonheroic') {
+        return 'nonheroic';
+      }
+    }
+
     // Phase 2: Detect nonheroic subtype based on class items
     // If actor has any nonheroic class item, progression should be nonheroic
     const hasNonheroicClass = this.actor.items?.some(

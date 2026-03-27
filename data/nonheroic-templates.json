@@ -1,0 +1,191 @@
+{
+  "version": 1,
+  "templates": [
+    {
+      "id": "soldier-guard",
+      "name": "Guard",
+      "description": "A trained soldier responsible for protecting installations, personnel, or assets. Guards provide steady, reliable defensive support and tactical awareness.",
+      "quote": "My duty is to protect those who cannot protect themselves.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/nonheroic_guard.webp",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "isNonheroic": true,
+      "participantKind": "INDEPENDENT",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "soldier-nonheroic-id",
+        "name": "Soldier (Nonheroic)",
+        "type": "class",
+        "isNonheroic": true
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-human",
+        "name": "Human",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "military-academy",
+        "name": "Military Academy",
+        "type": "background"
+      },
+      "abilityScores": {
+        "str": 14,
+        "dex": 12,
+        "con": 14,
+        "int": 10,
+        "wis": 12,
+        "cha": 10
+      },
+      "trainedSkills": [
+        "Initiative",
+        "Perception"
+      ],
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "weapon-proficiency-simple",
+          "name": "Simple Weapon Proficiency",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "armor-proficiency-light",
+          "name": "Armor Proficiency (Light)",
+          "type": "feat"
+        }
+      ],
+      "languages": [
+        "Basic"
+      ],
+      "archetype": "Guard",
+      "notes": "Nonheroic template: No talents or Force powers. Feats must come from restricted nonheroic list. Skill training = 1 + Int mod (minimum 1)."
+    },
+    {
+      "id": "scout-pathfinder",
+      "name": "Scout/Pathfinder",
+      "description": "An experienced scout or guide who excels at wilderness survival, tracking, and reconnaissance. Scouts rely on cunning and perception rather than military discipline.",
+      "quote": "The wilds are my home; I am never lost.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/nonheroic_scout.webp",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "isNonheroic": true,
+      "participantKind": "INDEPENDENT",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "scout-nonheroic-id",
+        "name": "Scout (Nonheroic)",
+        "type": "class",
+        "isNonheroic": true
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-human",
+        "name": "Human",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "frontier-settler",
+        "name": "Frontier Settler",
+        "type": "background"
+      },
+      "abilityScores": {
+        "str": 12,
+        "dex": 14,
+        "con": 12,
+        "int": 13,
+        "wis": 14,
+        "cha": 10
+      },
+      "trainedSkills": [
+        "Perception",
+        "Survival"
+      ],
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "simple-weapon-proficiency",
+          "name": "Simple Weapon Proficiency",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "endurance",
+          "name": "Endurance",
+          "type": "feat"
+        }
+      ],
+      "languages": [
+        "Basic"
+      ],
+      "archetype": "Scout",
+      "notes": "Nonheroic template: No talents or Force powers. Focuses on outdoor survival skills."
+    },
+    {
+      "id": "laborer-worker",
+      "name": "Laborer/Worker",
+      "description": "A common laborer, factory worker, or tradesperson. Workers are skilled in practical tasks and basic survival, forming the foundation of civilian society.",
+      "quote": "Honest work is its own reward.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/nonheroic_worker.webp",
+      "subtype": "actor",
+      "level": 1,
+      "supportLevel": "FULL",
+      "isNonheroic": true,
+      "participantKind": "INDEPENDENT",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "laborer-nonheroic-id",
+        "name": "Laborer (Nonheroic)",
+        "type": "class",
+        "isNonheroic": true
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-human",
+        "name": "Human",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "common-worker",
+        "name": "Common Worker",
+        "type": "background"
+      },
+      "abilityScores": {
+        "str": 13,
+        "dex": 10,
+        "con": 14,
+        "int": 10,
+        "wis": 11,
+        "cha": 10
+      },
+      "trainedSkills": [
+        "Endurance",
+        "Athletics"
+      ],
+      "feats": [
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "simple-weapon-proficiency",
+          "name": "Simple Weapon Proficiency",
+          "type": "feat"
+        },
+        {
+          "pack": "foundryvtt-swse.feats",
+          "id": "toughness",
+          "name": "Toughness",
+          "type": "feat"
+        }
+      ],
+      "languages": [
+        "Basic"
+      ],
+      "archetype": "Laborer",
+      "notes": "Nonheroic template: No talents or Force powers. Basic combat training only."
+    }
+  ]
+}

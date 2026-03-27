@@ -59,7 +59,12 @@ export class TemplateAdapter {
       throw new Error('[TemplateAdapter] No actor provided');
     }
 
-    const { mode = 'chargen', subtype = actor.type === 'droid' ? 'droid' : 'actor' } = options;
+    // Phase 2.6: Detect nonheroic templates and route to nonheroic subtype
+    let { mode = 'chargen', subtype = actor.type === 'droid' ? 'droid' : 'actor' } = options;
+
+    if (template.isNonheroic === true) {
+      subtype = 'nonheroic';
+    }
 
     try {
       // Step 1: Create blank session
@@ -78,6 +83,11 @@ export class TemplateAdapter {
 
       // Step 2: Populate draftSelections from template
       await this._populateDraftSelections(session, template);
+
+      // Phase 2.6: Enforce nonheroic constraints if template is nonheroic
+      if (template.isNonheroic === true) {
+        await this._enforceNonheroicConstraints(session, template);
+      }
 
       // Step 3: Mark template-provided nodes as locked/auto-resolved
       this._markTemplateProvidedNodesLocked(session, template);
@@ -341,6 +351,44 @@ export class TemplateAdapter {
     };
 
     return map[className] || null;
+  }
+
+  /**
+   * Enforce nonheroic constraints when seeding from a nonheroic template.
+   * Phase 2.6: Even template-seeded nonheroic characters must obey nonheroic rules.
+   *
+   * @private
+   */
+  static async _enforceNonheroicConstraints(session, template) {
+    swseLogger.log('[TemplateAdapter] Enforcing nonheroic constraints on template seeding', {
+      templateId: template.id,
+    });
+
+    // CONSTRAINT 1: Remove talents if present (nonheroic never have talents)
+    if (session.draftSelections.talents) {
+      delete session.draftSelections.talents;
+      swseLogger.log('[TemplateAdapter] Removed talents from nonheroic template (not allowed)');
+    }
+
+    // CONSTRAINT 2: Remove force powers if present (nonheroic never have Force)
+    if (session.draftSelections.forcePowers) {
+      delete session.draftSelections.forcePowers;
+      swseLogger.log('[TemplateAdapter] Removed Force powers from nonheroic template (not allowed)');
+    }
+
+    // CONSTRAINT 3: Mark that nonheroic rules apply
+    // The NonheroicSubtypeAdapter will enforce skill count and feat restrictions later
+    if (!session.nonheroicContext) {
+      session.nonheroicContext = {
+        hasNonheroic: true,
+        isTemplateSeeded: true,
+        templateId: template.id,
+      };
+    }
+
+    swseLogger.log('[TemplateAdapter] Nonheroic constraints enforced', {
+      constraintsApplied: 'talents removed, force powers removed, nonheroic context set',
+    });
   }
 
   /**
