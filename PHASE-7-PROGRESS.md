@@ -2,7 +2,155 @@
 
 **Phase Goal**: Make the unified build system feel complete and deployable by improving player-facing clarity, GM/admin controls, recovery/error handling, review/explanation UX, template and advisory usability, rollout toggles and operational safety, and migration off remaining legacy entry points.
 
-**Status**: In Progress (Steps 1-2 Complete, 29% of Phase 7)
+**Status**: In Progress (Steps 1-3 Complete, 43% of Phase 7)
+
+---
+
+## Step 3: Add Rollout Controls and Feature Settings ✅
+
+**Completed**: Comprehensive rollout and feature flag system for operational control
+
+### Deliverables
+
+#### 1. `rollout-settings.js` (280 lines)
+Centralized settings registry for all Phase 7 feature flags.
+
+**Settings** (11 total):
+- **Rollout Mode**: internal → gm-opt-in → beta → default → legacy-fallback
+- **Feature Toggles**: templates, advisory, forecast, explainability, template-provenance, support-warnings, debug-tools
+- **Recovery Controls**: session-resume, apply-retry
+- **Legacy Compatibility**: legacy-fallback-enabled, legacy-entry-points-visible
+
+**Methods**:
+- `registerSettings()` — Initialize all game.settings at module load
+- `getRolloutMode()` — Get current rollout mode
+- `isFeatureEnabled(featureName)` — Check if feature is active
+- `shouldUseUnifiedProgressionByDefault()` — Check if unified is primary
+- `shouldSupportLegacyFallback()` — Check if legacy available
+- `getActiveFeatures()` — Get all active features
+- `generateRolloutReport()` — Admin diagnostic report
+
+#### 2. `rollout-controller.js` (290 lines)
+Applies rollout settings to progression shell and entry points.
+
+**Methods**:
+- `determineEntryPoint(actor)` — Route actor to unified vs. legacy
+- `configureShell(shell)` — Apply settings to shell instance
+- `_applyFeatureGates(shell)` — Hide/show major systems (templates, advisory, forecast)
+- `_applyUIVisibility(shell)` — Control explanation and diagnostic UI
+- `_applyRecoveryBehavior(shell)` — Enable/disable recovery features
+- `getSupportWarningForFeature(featurePath)` — Get support level warning
+- `shouldFallbackToLegacy(error)` — Decide if fallback is needed
+- `validateRolloutConfig()` — Consistency check
+
+#### 3. `legacy-entry-point-manager.js` (320 lines)
+Manages migration off legacy build systems.
+
+**Registry** (4 legacy systems tracked):
+- chargen-main (deprecated)
+- levelup-main (deprecated)
+- quick-build (deprecated)
+- direct-actor-mutation (deprecated API)
+
+**Methods**:
+- `isLegacyEntryPointActive(id)` — Check if entry point is available
+- `getDeprecationWarning(id)` — Get UI warning for deprecated entry point
+- `migrateToUnifiedProgression(actor, type)` — Wrap legacy call → unified shell
+- `getLegacyEntryPointStatus()` — Status of all legacy systems
+- `generateDeprecationReport()` — Roadmap documentation
+- `areAllLegacyEntryPointsRetired()` — Phase 7 completion check
+- `getMigrationChecklist()` — User-facing migration guide
+
+---
+
+## Rollout Modes Explained
+
+| Mode | Templates | Advisory | Debug | Legacy | Use Case |
+|------|-----------|----------|-------|--------|----------|
+| **internal** | ✓ | ✓ | ✓ | Hidden | Development/QA only |
+| **gm-opt-in** | ✓ | ✓ | ✗ | Visible | Beta testing, early adopters |
+| **beta** | ✓ | ✓ | ✗ | Visible | Live testing with fallback |
+| **default** | ✓ | ✓ | ✗ | Hidden | Production (unified is primary) |
+| **legacy-fallback** | ✗ | ✗ | ✗ | Primary | Emergency mode (troubleshooting) |
+
+## Feature Gate Examples
+
+**Scenario**: You want to disable templates temporarily for testing.
+
+Old approach (no rollout system):
+- Change code, push, update server
+
+New approach (rollout system):
+1. Open settings
+2. Find "Character Progression: Enable Template Mode"
+3. Uncheck
+4. Changes apply immediately, no restart needed
+
+## Settings Application Flow
+
+```
+Game starts
+    ↓
+RolloutSettings.registerSettings()
+    ↓
+When ProgressionShell created:
+    RolloutController.determineEntryPoint() → unified or legacy
+    RolloutController.configureShell() → apply settings
+    ↓
+    shell._rolloutConfig populated
+    ↓
+Shell.onRender():
+    - Check shell._hideTemplateSelection → don't render template UI
+    - Check shell._hideExplanationBadges → don't render badges
+    - Check shell._showDebugTools → show debug panel
+    ↓
+Step plugins:
+    - Check shell._rolloutConfig.explainabilityEnabled → show/hide explanations
+    - Check shell._rolloutConfig.supportWarningsEnabled → show/hide warnings
+```
+
+## No Split-Brain Architecture
+
+**Critical design principle**: The rollout system gates FEATURES of a single unified engine, not alternate engines.
+
+```
+❌ WRONG (Split-Brain):
+UnifiedProgressionShell
+    ↓
+    LegacyChargenAdapter
+        ↓
+        LegacyChargenCore (alternate engine)
+
+✓ RIGHT (Single Engine):
+ProgressionShell (unified)
+    ↓
+    _hideTemplateSelection = true (if disabled)
+    _hideAdvisory = true (if disabled)
+    ↓
+    Single core path, controlled exposure
+```
+
+This prevents:
+- Duplicate logic
+- Inconsistent state
+- Conflicting authorities
+- Migration complexity
+
+---
+
+## Integration Points (Ready)
+
+- ProgressionShell uses `shell._rolloutConfig`
+- Steps check feature flags before rendering UI
+- Entry point selection uses `RolloutController.determineEntryPoint()`
+- Legacy calls can use `LegacyEntryPointManager.migrateToUnifiedProgression()`
+
+## Not Yet Integrated
+
+- [ ] Wiring into ProgressionShell initialization
+- [ ] Step plugin feature gate checks
+- [ ] GM settings UI integration
+- [ ] Dialog for legacy entry point deprecation warning
 
 ---
 
@@ -358,20 +506,25 @@ scripts/apps/progression-framework/ux/
 ├── recovery-display.js                           (400+ lines)
 └── progression-recovery-manager.js               (280 lines)
 
+scripts/apps/progression-framework/rollout/
+├── rollout-settings.js                           (280 lines)
+├── rollout-controller.js                         (290 lines)
+└── legacy-entry-point-manager.js                 (320 lines)
+
 PHASE-7-PROGRESS.md                               (this file, expanded)
 ```
 
-**Total**: ~2,240 lines of explainability + recovery code + CSS
+**Total**: ~3,220 lines of explainability + recovery + rollout code + CSS
 
 ---
 
 ## Execution Order
 
-Phase 7 has 7 steps. Steps 1-2 complete:
+Phase 7 has 7 steps. Steps 1-3 complete:
 
 1. ✅ **Step 1**: Add explainability for active/skipped/dirty nodes, suggestion rationale, template provenance
 2. ✅ **Step 2**: Build recovery flows for invalid template picks, dirty reconciliation states, apply failure, safe resume
-3. **Step 3**: Add/refine rollout settings and feature controls
+3. ✅ **Step 3**: Add/refine rollout settings and feature controls
 4. **Step 4**: Inventory and close or deprecate remaining legacy build entry points
 5. **Step 5**: Refine summary/review as the clear checkout step
 6. **Step 6**: Improve GM/admin diagnostics and packaged-build usability
