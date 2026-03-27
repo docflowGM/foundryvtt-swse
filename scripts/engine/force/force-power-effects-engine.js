@@ -10,6 +10,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class ForcePowerEffectsEngine {
   /**
@@ -51,8 +52,8 @@ export class ForcePowerEffectsEngine {
         }
       }));
 
-      // Create the effects on the actor
-      const createdEffects = await actor.createEmbeddedDocuments('ActiveEffect', effectsWithProvenance);
+      // Create the effects on the actor via ActorEngine (SOVEREIGNTY)
+      const createdEffects = await ActorEngine.createActiveEffects(actor, effectsWithProvenance, { source: 'force-power-effects' });
 
       SWSELogger.log(`SWSE | Force Power Effects | Applied ${createdEffects.length} effect(s) for ${powerName}`);
       return createdEffects.map(e => e.id);
@@ -936,7 +937,8 @@ export class ForcePowerEffectsEngine {
     }
 
     try {
-      await actor.deleteEmbeddedDocuments('ActiveEffect', ids);
+      // Delete effects via ActorEngine (SOVEREIGNTY)
+      await ActorEngine.deleteActiveEffects(actor, ids, { source: 'force-power-effects' });
       SWSELogger.log(`SWSE | Force Power Effects | Removed ${ids.length} effect(s) for ${powerItem.name}`);
       return ids;
     } catch (err) {

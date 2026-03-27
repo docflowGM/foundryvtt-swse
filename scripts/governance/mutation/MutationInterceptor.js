@@ -98,6 +98,15 @@ export class MutationInterceptor {
   }
 
   /**
+   * Public API: Check if mutation context is currently active (from ActorEngine).
+   * Used by enforcement layers to verify authorization.
+   * @returns {boolean} True if ActorEngine mutation is in progress
+   */
+  static hasContext() {
+    return _currentMutationContext !== null;
+  }
+
+  /**
    * Get a clean stack trace for logging.
    * @private
    * @returns {string}

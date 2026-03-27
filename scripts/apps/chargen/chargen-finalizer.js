@@ -56,9 +56,10 @@ export class ChargenFinalizer {
           TraceMetrics.recordStep(traceId, 'create-actor');
           finalActor = await createActor(actorData, { temporary: false });
         } else {
-          SWSELogger.log('[CHARGEN FINALIZER] Updating existing actor');
+          SWSELogger.log('[CHARGEN FINALIZER] Updating existing actor through ActorEngine');
           TraceMetrics.recordStep(traceId, 'update-actor');
-          await finalActor.update(actorData);
+          // SOVEREIGNTY: Route actor update through ActorEngine
+          await ActorEngine.updateActor(finalActor, actorData);
         }
 
         if (!finalActor) {
