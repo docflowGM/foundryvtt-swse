@@ -19,7 +19,7 @@ import { ProgressionSubtypeAdapter, ParticipantKind } from './progression-subtyp
 import { seedNonheroicSession } from './nonheroic-session-seeder.js';
 import { shouldSuppressTalentSteps, describeTalentCadence } from './talent-cadence-helper.js';
 import { seedFollowerSession, validateFollowerEntitlement } from './follower-session-seeder.js';
-import { getFollowerAdvancementContext, advanceFollowerToLevel } from './follower-advancer.js';
+import { deriveFollowerStats, getFollowerDerivationContext, deriveFollowerStateForApply } from './follower-deriver.js';
 
 // Re-export for convenience
 export { ParticipantKind };
@@ -181,8 +181,14 @@ export class FollowerSubtypeAdapter extends ProgressionSubtypeAdapter {
   }
 
   async contributeMutationPlan(mutationPlan, session, actor) {
-    // Phase 3: REAL. Compile follower mutation bundle.
-    // This is the core of Phase 3: followers are created/advanced through the unified apply path.
+    // Phase 3.5 CORRECTED: Compile follower mutation bundle using derivation model.
+    // RULES CORRECTION: Followers are DERIVED ENTITIES, not level-by-level progressed characters.
+    //
+    // Model: follower state at any moment = f(owner.heroicLevel, species, template, persistent.choices)
+    // Not: incremental level-by-level advancement
+    //
+    // This computes the follower's complete derived state at the owner's heroic level,
+    // then bundles it for creation (new follower) or update (existing follower).
 
     if (!session.dependencyContext) {
       return mutationPlan;
@@ -195,33 +201,50 @@ export class FollowerSubtypeAdapter extends ProgressionSubtypeAdapter {
       return mutationPlan;
     }
 
-    // If this is a new follower, create it through FollowerCreator
-    // If advancing existing, apply level advancement
-    if (session.dependencyContext.isNewFollower) {
-      // Deferred to Phase 3+: Full follower creation through spine
-      // For now, flag for legacy FollowerCreator to handle
-      mutationPlan.follower = {
-        operation: 'create',
-        ownerActorId,
-        templateType: session.dependencyContext.templateType,
-        targetHeroicLevel: session.dependencyContext.targetFollowerLevel
-      };
-    } else if (session.dependencyContext.existingFollowerId) {
-      // Advancing existing follower to owner's new heroic level
-      const followerActor = game.actors.get(session.dependencyContext.existingFollowerId);
-      if (followerActor) {
-        const levelsToApply = session.dependencyContext.levelsToApply;
-        if (levelsToApply.length > 0) {
-          mutationPlan.follower = {
-            operation: 'advance',
-            followerId: session.dependencyContext.existingFollowerId,
-            templateType: session.dependencyContext.templateType,
-            currentLevel: session.dependencyContext.currentFollowerLevel,
-            targetLevel: session.dependencyContext.targetFollowerLevel,
-            levelsToApply
-          };
-        }
+    try {
+      const derivationContext = await getFollowerDerivationContext(
+        session,
+        ownerActor,
+        session.dependencyContext.existingFollowerId ? game.actors.get(session.dependencyContext.existingFollowerId) : null
+      );
+
+      if (!derivationContext) {
+        return mutationPlan;
       }
+
+      // Derive follower state at owner's heroic level
+      // This is the authoritative follower stats object
+      const followerState = await deriveFollowerStateForApply(
+        derivationContext.ownerHeroicLevel,
+        derivationContext.speciesName,
+        derivationContext.templateType,
+        derivationContext.persistentChoices
+      );
+
+      // Compile into mutation bundle
+      mutationPlan.follower = {
+        // Follower creation/update operation
+        operation: derivationContext.existenceState.isNew ? 'create' : 'update',
+
+        // Owner/entitlement linkage
+        ownerActorId,
+        slotId: session.dependencyContext.slotId,
+
+        // Follower identity (persistent)
+        speciesName: derivationContext.speciesName,
+        templateType: derivationContext.templateType,
+        persistentChoices: derivationContext.persistentChoices,
+
+        // Derived state at target level (replace entirely, don't accumulate)
+        followerState,
+
+        // Metadata
+        targetHeroicLevel: derivationContext.ownerHeroicLevel,
+        isNew: derivationContext.existenceState.isNew
+      };
+    } catch (err) {
+      console.error('[FollowerAdapter] Error compiling mutation plan:', err);
+      // Return empty plan on error (will fail in finalization with clear message)
     }
 
     return mutationPlan;
