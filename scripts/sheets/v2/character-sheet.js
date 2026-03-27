@@ -7,7 +7,7 @@ import { MentorChatDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor
 import { DropResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/drop-resolution-engine.js";
 import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
-import { launchProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
+import { launchProgression, launchFollowerProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
 import { MentorNotesApp } from "/systems/foundryvtt-swse/scripts/apps/mentor-notes/mentor-notes-app.js";
 import { CombatExecutor } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-executor.js";
@@ -809,6 +809,9 @@ const forcePoints = [];
       };
     });
 
+    // Phase 3.5: Check if owner has available (unfilled) follower slots for UI visibility
+    const hasAvailableFollowerSlots = followerSlots.some(slot => !slot.createdActorId);
+
     // Calculate total talent count for ledger display
     const totalTalentCount = derived.talents?.groups?.reduce((sum, group) => sum + (group.items?.length || 0), 0) || 0;
 
@@ -868,6 +871,7 @@ const forcePoints = [];
       // Follower context
       followerSlots: enrichedFollowerSlots,
       followerTalentBadges,
+      hasAvailableFollowerSlots,
       ownedActorMap
     };
 
@@ -1320,6 +1324,19 @@ const forcePoints = [];
       ev.preventDefault();
       const store = new SWSEStore(this.actor);
       store.render(true);
+    }, { signal, capture: false });
+
+    // Build Follower button (delegated) — Phase 3.5 follower runtime integration
+    html.addEventListener("click", async ev => {
+      const button = ev.target.closest('[data-action="build-follower"]');
+      if (!button) return;
+      ev.preventDefault();
+      try {
+        await launchFollowerProgression(this.actor);
+      } catch (err) {
+        console.error('[SHEET] ✗ launchFollowerProgression failed:', err);
+        SWSELogger.error('[CharacterSheet] Follower progression launch failed:', err);
+      }
     }, { signal, capture: false });
 
     html.querySelectorAll('[data-action="revalidate-build"]').forEach(button => {

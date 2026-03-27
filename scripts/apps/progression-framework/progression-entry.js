@@ -162,6 +162,93 @@ export async function launchProgression(actor, options = {}) {
 }
 
 /**
+ * Launch follower progression for an owner actor.
+ * Creates a dependent participant follower through the canonical spine.
+ *
+ * @param {Actor} ownerActor - The owner character
+ * @param {Object} options - Options including slotId if needed
+ * @returns {Promise<void>}
+ */
+export async function launchFollowerProgression(ownerActor, options = {}) {
+  SWSELogger.log(`[Follower Progression] Launching follower path for: ${ownerActor.name}`);
+
+  if (!ownerActor) {
+    ui?.notifications?.error?.('No owner provided to follower progression launcher.');
+    SWSELogger.error('[Follower Progression] No owner actor provided');
+    return;
+  }
+
+  if (ownerActor.type !== 'character') {
+    ui?.notifications?.error?.('Followers can only be created for character actors.');
+    SWSELogger.error('[Follower Progression] Non-character owner');
+    return;
+  }
+
+  try {
+    // Import follower helpers
+    const { getAvailableFollowerSlots } = await import(
+      './adapters/follower-session-seeder.js'
+    );
+
+    // Check for available slots
+    const availableSlots = getAvailableFollowerSlots(ownerActor);
+    if (!availableSlots || availableSlots.length === 0) {
+      ui?.notifications?.warn?.(
+        `${ownerActor.name} has no available follower slots. Gain a follower-granting talent first.`
+      );
+      SWSELogger.warn('[Follower Progression] No available slots for owner');
+      return;
+    }
+
+    SWSELogger.log(
+      `[Follower Progression] Found ${availableSlots.length} available follower slots`
+    );
+
+    // Minimize owner sheet
+    if (ownerActor.sheet?.rendered) {
+      try {
+        const pos = computeCenteredPosition(900, 950);
+        ownerActor.sheet.setPosition(pos);
+        SWSELogger.log('[Follower Progression] Owner sheet centered before minimize');
+      } catch (posErr) {
+        SWSELogger.warn('[Follower Progression] Could not center owner sheet:', posErr);
+      }
+      ownerActor.sheet.minimize().catch(() => {});
+      SWSELogger.log('[Follower Progression] Owner sheet minimized');
+    }
+
+    // Set up dependency context for follower progression
+    const dependencyContext = {
+      ownerActorId: ownerActor.id,
+      slotId: options.slotId || availableSlots[0].id,
+      existingFollowerId: options.existingFollowerId || null
+    };
+
+    SWSELogger.log('[Follower Progression] Dependency context prepared', dependencyContext);
+
+    // Open ProgressionShell in 'follower' mode with dependency context
+    const { ProgressionShell } = await import('./shell/progression-shell.js');
+    const result = await ProgressionShell.open(
+      null, // follower actor is null (will be created/advanced)
+      'follower', // mode: 'follower'
+      {
+        ...options,
+        dependencyContext, // Pass dependency context to shell
+        owner: ownerActor // Pass owner reference for convenience
+      }
+    );
+
+    SWSELogger.log('[Follower Progression] Follower progression completed');
+    return result;
+  } catch (err) {
+    console.error('[FOLLOWER-PROGRESSION] ❌ EXCEPTION:', err);
+    console.error('[FOLLOWER-PROGRESSION] Stack:', err.stack);
+    SWSELogger.error('[Follower Progression] Exception during launch:', err);
+    ui?.notifications?.error?.(`Follower progression failed: ${err.message}`);
+  }
+}
+
+/**
  * SWSEProgressionSplashV2 — Pre-shell blocking screen (V2 ApplicationV2)
  *
  * NOT a progression step.
