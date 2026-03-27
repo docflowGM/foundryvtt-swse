@@ -20,6 +20,7 @@ import { createStepDescriptor, StepCategory, StepType } from './steps/step-descr
 import { ActiveStepComputer } from './shell/active-step-computer.js';
 import { mapNodesToDescriptors } from './registries/node-descriptor-mapper.js';
 import { DroidBuilderAdapter } from './steps/droid-builder-adapter.js';
+import { RolloutSettings } from './rollout/rollout-settings.js';
 
 // Phase 2: Legacy imports kept for backward compat during transition
 // These are now resolved via NODE_PLUGIN_MAP in node-descriptor-mapper.js
@@ -40,6 +41,20 @@ export class ChargenShell extends ProgressionShell {
   static async open(actor, options = {}) {
     // TEMP AUDIT: Log shell open call
     console.log('[TEMP AUDIT] ChargenShell.open called for actor:', actor?.name, actor?.type);
+
+    // PHASE 4 STEP 2: Check if unified chargen is allowed in current rollout mode
+    const rolloutMode = RolloutSettings.getRolloutMode();
+    const canUseUnified = RolloutSettings.shouldUseUnifiedProgressionByDefault();
+
+    if (!canUseUnified) {
+      const reason = rolloutMode === 'legacy-fallback'
+        ? 'Legacy fallback mode: unified chargen disabled. Use legacy chargen instead.'
+        : `Unified chargen not available in "${rolloutMode}" mode.`;
+
+      console.warn(`[ChargenShell] ${reason}`);
+      ui.notifications.warn(reason);
+      return null;
+    }
 
     // CRITICAL: Use .call(this, ...) to ensure ProgressionShell.open() creates a
     // ChargenShell instance (not a ProgressionShell). This ensures _getCanonicalDescriptors()

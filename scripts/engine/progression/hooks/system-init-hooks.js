@@ -28,6 +28,9 @@ import { normalizeDocumentTalent, validateTalentTreeAssignment } from "/systems/
 // Mentor System Validation
 import { validateMentorIntegration } from "/systems/foundryvtt-swse/scripts/engine/mentor/validate-mentor-integration.js";
 
+// PHASE 4: Rollout Configuration
+import { RolloutSettings } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/rollout/rollout-settings.js";
+
 export const SystemInitHooks = {
 
     /**
@@ -84,6 +87,10 @@ export const SystemInitHooks = {
                 SWSELogger.warn('[System Init] Mentor integration validation failed:');
                 mentorValidation.errors.forEach(e => SWSELogger.warn(`  - ${e}`));
             }
+
+            // PHASE 4: Register rollout settings (gating, feature flags, exposure modes)
+            await RolloutSettings.registerSettings();
+            SWSELogger.log('Rollout settings registered');
 
             const elapsed = (performance.now() - startTime).toFixed(2);
 

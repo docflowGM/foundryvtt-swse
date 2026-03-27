@@ -1018,6 +1018,22 @@ export class ProgressionShell extends SWSEApplicationV2 {
         selectionsCount: this.committedSelections.size,
       });
 
+      // PHASE 4 STEP 4: Check for blocking issues in current step (usually summary)
+      const currentDescriptor = this.steps[this.currentStepIndex];
+      if (currentDescriptor) {
+        const currentPlugin = this.stepPlugins.get(currentDescriptor.stepId);
+        if (currentPlugin && typeof currentPlugin.validate === 'function') {
+          const validation = currentPlugin.validate();
+          if (validation.errors && validation.errors.length > 0) {
+            // Blocking errors prevent finalization
+            swseLogger.warn('[ProgressionShell] Finalization blocked by validation errors:', validation.errors);
+            ui.notifications.error(`Cannot finish: ${validation.errors[0]}`);
+            this.isProcessing = false;
+            return;
+          }
+        }
+      }
+
       // Prepare session state for finalizer
       // PHASE 1: Pass canonical progressionSession (required, not optional)
       const sessionState = {
