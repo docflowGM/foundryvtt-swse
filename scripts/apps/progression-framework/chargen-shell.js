@@ -52,12 +52,23 @@ export class ChargenShell extends ProgressionShell {
   _getProgressionSubtype(mode, options) {
     if (options.subtype) return options.subtype;
 
+    if (!this.actor) return 'actor';
+
     // Phase 1: Detect droid subtype based on actor system data
-    if (this.actor && DroidBuilderAdapter.shouldUseDroidBuilder(this.actor.system || {})) {
+    if (DroidBuilderAdapter.shouldUseDroidBuilder(this.actor.system || {})) {
       return 'droid';
     }
 
-    // Phase 2+: Detect follower/nonheroic subtypes here
+    // Phase 2: Detect nonheroic subtype based on class items
+    // If actor has any nonheroic class item, progression should be nonheroic
+    const hasNonheroicClass = this.actor.items?.some(
+      item => item.type === 'class' && item.system?.isNonheroic === true
+    );
+    if (hasNonheroicClass) {
+      return 'nonheroic';
+    }
+
+    // Phase 3+: Detect follower subtype here
 
     return 'actor';
   }

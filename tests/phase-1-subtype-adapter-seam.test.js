@@ -446,7 +446,101 @@ describe('Phase 1: Subtype Adapter Seam', () => {
   // TEST 7: Dependent Participants Suppress Normal Progression (CORRECTIVE)
   // ═══════════════════════════════════════════════════════════════════════════
 
-  describe('TEST 7: Dependent Participant Step Suppression (CORRECTED)', () => {
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TEST 7: Nonheroic Participant Behavior (PHASE 2)
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  describe('TEST 7: Nonheroic Participant Behavior (PHASE 2)', () => {
+    it('should suppress talent steps for nonheroic participants', async () => {
+      const adapter = new NonheroicSubtypeAdapter();
+      const session = new ProgressionSession({
+        actor: null,
+        mode: 'chargen',
+        subtype: 'nonheroic',
+      });
+
+      // Seed nonheroic context (simulating an actor with nonheroic class)
+      session.nonheroicContext = {
+        nonheroicClasses: [{ id: 'c1', name: 'Nonheroic', level: 1 }],
+        hasNonheroic: true,
+        totalNonheroicLevel: 1,
+      };
+
+      const candidateSteps = [
+        'species',
+        'class',
+        'general-feat',
+        'general-talent',
+        'class-talent',
+        'skills',
+        'summary',
+      ];
+
+      const result = await adapter.contributeActiveSteps(candidateSteps, session, null);
+
+      // Phase 2: Talent steps should be suppressed
+      expect(result).not.toContain('general-talent');
+      expect(result).not.toContain('class-talent');
+      // Other steps should remain
+      expect(result).toContain('species');
+      expect(result).toContain('class');
+      expect(result).toContain('general-feat');
+      expect(result).toContain('skills');
+      expect(result).toContain('summary');
+    });
+
+    it('should not suppress talent steps for heroic participants', async () => {
+      const adapter = new NonheroicSubtypeAdapter();
+      const session = new ProgressionSession({
+        actor: null,
+        mode: 'chargen',
+        subtype: 'nonheroic',
+      });
+
+      // No nonheroic context = heroic participant
+      session.nonheroicContext = { hasNonheroic: false };
+
+      const candidateSteps = ['species', 'general-talent', 'class-talent', 'skills'];
+
+      const result = await adapter.contributeActiveSteps(candidateSteps, session, null);
+
+      // Phase 2: Talent steps should be present for heroic
+      expect(result).toContain('general-talent');
+      expect(result).toContain('class-talent');
+    });
+
+    it('should provide projection data for nonheroic participants', async () => {
+      const adapter = new NonheroicSubtypeAdapter();
+      const projection = {
+        identity: { class: 'Nonheroic' },
+        attributes: { str: 10 },
+      };
+
+      const result = await adapter.contributeProjection(projection, null, null);
+
+      // Phase 2: No-op, returns projection unchanged
+      expect(result).toBe(projection);
+    });
+
+    it('should provide mutation plan data for nonheroic participants', async () => {
+      const adapter = new NonheroicSubtypeAdapter();
+      const plan = {
+        set: { 'system.class': 'Nonheroic' },
+        add: { items: [] },
+      };
+
+      const result = await adapter.contributeMutationPlan(plan, null, null);
+
+      // Phase 2: No-op, returns plan unchanged (mutations handled by class-item system)
+      expect(result).toBe(plan);
+    });
+  });
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TEST 8: Dependent Participant Step Suppression (PHASE 1 CORRECTIVE)
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  describe('TEST 8: Dependent Participant Step Suppression (CORRECTED)', () => {
     it('should allow dependent adapter to suppress freeform feat progression', async () => {
       const adapter = new FollowerSubtypeAdapter();
       const steps = ['species', 'class', 'general-feat', 'class-feat', 'skills', 'talents'];
