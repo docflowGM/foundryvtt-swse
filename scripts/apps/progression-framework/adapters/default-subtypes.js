@@ -140,6 +140,13 @@ export class FollowerSubtypeAdapter extends ProgressionSubtypeAdapter {
       'multiclass'
     ];
 
+    // Phase 3.5: Skip skills step for Aggressive/Defensive templates
+    // (only Endurance is allowed, so no choice to be made)
+    const templateType = session?.draftSelections?.templateType;
+    if (templateType === 'aggressive' || templateType === 'defensive') {
+      suppressedStepIds.push('follower-skills');
+    }
+
     const filtered = candidateStepIds.filter(stepId => !suppressedStepIds.includes(stepId));
 
     // Followers get only template/archetype resolution steps (deferred to Phase 3+ if needed)

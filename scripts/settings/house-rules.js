@@ -7,6 +7,16 @@ import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-s
 import { ClassRelationshipRegistry } from "/systems/foundryvtt-swse/scripts/data/class-relationship-registry.js";
 
 export function registerHouseRuleSettings() {
+    // Follower Backgrounds House Rule
+    game.settings.register('foundryvtt-swse', 'enableFollowerBackgrounds', {
+        name: 'Enable Follower Backgrounds',
+        hint: 'If enabled, followers can select from available backgrounds during creation. If disabled, the background step is skipped.',
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        default: false
+    });
+
     // Dark Side Prestige Access House Rule
     game.settings.register('foundryvtt-swse', 'enableDarkSideTreeAccess', {
         name: 'Dark Side Prestige Access to Lightsaber Trees',

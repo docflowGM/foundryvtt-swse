@@ -226,9 +226,10 @@ export async function launchFollowerProgression(ownerActor, options = {}) {
 
     SWSELogger.log('[Follower Progression] Dependency context prepared', dependencyContext);
 
-    // Open ProgressionShell in 'follower' mode with dependency context
-    const { ProgressionShell } = await import('./shell/progression-shell.js');
-    const result = await ProgressionShell.open(
+    // Open FollowerShell for follower creation
+    // FollowerShell extends ProgressionShell and handles the 7-step follower creation flow
+    const { FollowerShell } = await import('./follower-shell.js');
+    const result = await FollowerShell.open(
       null, // follower actor is null (will be created/advanced)
       'follower', // mode: 'follower'
       {
