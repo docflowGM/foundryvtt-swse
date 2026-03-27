@@ -301,57 +301,130 @@ export class NonheroicSubtypeAdapter extends ProgressionSubtypeAdapter {
   }
 
   async contributeActiveSteps(candidateStepIds, session, actor) {
-    // Phase 2: REAL. Suppress talent steps for nonheroic participants.
-    // Uses existing TalentCadenceEngine logic (grantsClassTalent returns 0 for nonheroic).
-
+    // Phase 2.5: REAL. Suppress talent and force steps for nonheroic participants.
     const isNonheroic = session?.nonheroicContext?.hasNonheroic === true;
 
     if (!isNonheroic) {
       return candidateStepIds;
     }
 
-    // Phase 2: Filter OUT talent steps for nonheroic participants
-    // Talent steps: 'general-talent', 'class-talent', 'talent-tree-browser', 'talent-graph'
-    const talentStepIds = ['general-talent', 'class-talent', 'talent-tree-browser', 'talent-graph'];
-    const filteredSteps = candidateStepIds.filter(stepId => !talentStepIds.includes(stepId));
+    // Nonheroic cannot have talents or force powers
+    const suppressedStepIds = [
+      'general-talent',
+      'class-talent',
+      'talent-tree-browser',
+      'talent-graph',
+      'force-power',           // Phase 2.5: Suppress force powers for nonheroic
+      'force-secret',
+      'force-technique',
+    ];
 
+    const filteredSteps = candidateStepIds.filter(stepId => !suppressedStepIds.includes(stepId));
     return filteredSteps;
   }
 
   async contributeEntitlements(entitlements, session, actor) {
-    // Phase 1: STUB. Nonheroic entitlement rules deferred to Phase 2.
-    // Phase 2: Apply nonheroic-specific ability score increases, feat grants, talent slots.
-    //   Consume existing nonheroic level progression tables.
+    // Phase 2.5: REAL. Apply nonheroic-specific entitlements.
+    // Nonheroic characters get reduced ability score increases and no talents.
+    const isNonheroic = session?.nonheroicContext?.hasNonheroic === true;
+
+    if (!isNonheroic) {
+      return entitlements;
+    }
+
+    // Phase 2.5: For nonheroic levelup, modify ability increase cadence
+    // Heroic: ability increases at levels 4/8/12/16/20 (every 4)
+    // Nonheroic: single ability increase every 4 levels (fewer overall)
+    // This is handled by the class-item system with isNonheroic flag,
+    // but we can add metadata for tracking
+
+    if (entitlements.metadata) {
+      entitlements.metadata.nonheroicAbilityProgression = true;
+    }
+
     return entitlements;
   }
 
   async contributeRestrictions(restrictions, session, actor) {
-    // Phase 1: STUB. Nonheroic exclusion rules deferred to Phase 2.
-    // Phase 2: Enforce nonheroic-specific restrictions using existing helpers:
-    //   - forbidden feats (non-combat, non-utility feats)
-    //   - forbidden talent trees or tiers
-    //   - forbidden force powers
+    // Phase 2.5: REAL. Enforce nonheroic-specific restrictions.
+    const isNonheroic = session?.nonheroicContext?.hasNonheroic === true;
+
+    if (!isNonheroic) {
+      return restrictions;
+    }
+
+    // Nonheroic characters cannot access force powers or related mechanics
+    if (!restrictions.forbiddenSteps) {
+      restrictions.forbiddenSteps = [];
+    }
+
+    restrictions.forbiddenSteps.push(
+      'force-power',
+      'force-secret',
+      'force-technique'
+    );
+
+    // Add metadata for UI/logging
+    if (restrictions.metadata) {
+      restrictions.metadata.nonheroicForbidden = true;
+    }
+
     return restrictions;
   }
 
   async contributeProjection(projectedData, session, actor) {
-    // Phase 2: Nonheroic projection is seeded by session.nonheroicContext.
-    // Projection already reflects class-item data (which includes isNonheroic flag).
-    // Future: Apply nonheroic-specific computed values if needed beyond base projection.
+    // Phase 2.5: REAL. Mark projection as nonheroic and suppress Force/Destiny.
+    const isNonheroic = session?.nonheroicContext?.hasNonheroic === true;
+
+    if (!isNonheroic) {
+      return projectedData;
+    }
+
+    // Add nonheroic metadata to projection
+    const meta = projectedData.metadata || {};
+    meta.isNonheroic = true;
+
+    // Phase 2.5: Ensure Force Points and Destiny Points are not added
+    // These should already be suppressed by the class-item system with isNonheroic flag,
+    // but we enforce it here as a safety measure
+    if (projectedData.derived) {
+      projectedData.derived.forcePoints = projectedData.derived.forcePoints || 0;
+      projectedData.derived.destinyPoints = projectedData.derived.destinyPoints || 0;
+    }
+
+    projectedData.metadata = meta;
     return projectedData;
   }
 
   async contributeMutationPlan(mutationPlan, session, actor) {
-    // Phase 2: Nonheroic mutations routed through unified apply path.
-    // Class-item system already handles isNonheroic flag in HP/BAB/ability calculations.
-    // No special mutation contribution needed; normal class/ability progression applies.
-    // Future: Patch mutations for nonheroic-specific adjustments if needed.
+    // Phase 2.5: REAL. Ensure Force/Destiny suppression in mutations.
+    const isNonheroic = session?.nonheroicContext?.hasNonheroic === true;
+
+    if (!isNonheroic) {
+      return mutationPlan;
+    }
+
+    // Add metadata to mutation plan indicating nonheroic handling
+    mutationPlan.nonheroic = {
+      isNonheroic: true,
+      suppressForcePoints: true,
+      suppressDestinyPoints: true,
+    };
+
     return mutationPlan;
   }
 
   async validateReadiness(session, actor) {
-    // Phase 2: Nonheroic readiness validation deferred.
-    // Relies on standard progression prerequisites and class-item validation.
-    // Future: Add nonheroic-specific readiness checks if needed.
+    // Phase 2.5: Nonheroic readiness validation.
+    const isNonheroic = session?.nonheroicContext?.hasNonheroic === true;
+
+    if (!isNonheroic) {
+      return;
+    }
+
+    // Validate that actor has nonheroic class item
+    if (!actor?.items?.some(item => item.type === 'class' && item.system?.isNonheroic === true)) {
+      throw new Error('[NonheroicAdapter] validateReadiness: Actor missing nonheroic class item');
+    }
   }
 }

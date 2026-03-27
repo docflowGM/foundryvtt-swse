@@ -41,8 +41,21 @@ export class SkillsStep extends ProgressionStepPlugin {
   async onStepEnter(shell) {
     const character = shell.actor?.system || {};
 
-    // Load allowed skills count from character build
-    this._allowedCount = character.build?.trainedSkillsAllowed || 1;
+    // Phase 2.5: Check if this is nonheroic progression
+    const isNonheroic = shell.progressionSession?.nonheroicContext?.hasNonheroic === true;
+
+    if (isNonheroic) {
+      // Nonheroic characters get 1 + INT mod (minimum 1) skill slots
+      const intMod = character.abilities?.int?.mod || 0;
+      this._allowedCount = Math.max(1, 1 + intMod);
+      swseLogger.log('[SkillsStep] Nonheroic progression - allowed skills:', {
+        intMod,
+        allowedCount: this._allowedCount
+      });
+    } else {
+      // Load allowed skills count from character build
+      this._allowedCount = character.build?.trainedSkillsAllowed || 1;
+    }
 
     // Load existing skill selections if any
     const existingSkills = character.skills || {};
