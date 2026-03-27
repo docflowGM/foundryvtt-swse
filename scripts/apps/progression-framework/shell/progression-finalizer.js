@@ -98,10 +98,11 @@ export class ProgressionFinalizer {
    * @throws {Error} if progression incomplete or canonical session missing
    */
   static _validateReadiness(sessionState) {
-    if (!sessionState.mode || !['chargen', 'levelup'].includes(sessionState.mode)) {
+    if (!sessionState.mode || !['chargen', 'levelup', 'follower'].includes(sessionState.mode)) {
       throw new Error('Invalid progression mode');
     }
-    if (!sessionState.actor) {
+    // Allow null actor for follower mode (actor is created during progression)
+    if (!sessionState.actor && sessionState.mode !== 'follower') {
       throw new Error('No actor in progression session');
     }
 

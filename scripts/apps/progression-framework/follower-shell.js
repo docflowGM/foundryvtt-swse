@@ -252,8 +252,59 @@ export class FollowerShell extends ProgressionShell {
   }
 
   /**
+   * Override finalization gateway for follower-specific handling.
+   * Instead of calling ProgressionFinalizer, we handle follower creation/update directly.
+   *
+   * @returns {Promise<void>}
+   * @private
+   */
+  async _onFinalizeProgression() {
+    if (this.isProcessing) return;
+
+    try {
+      this.isProcessing = true;
+
+      swseLogger.log('[FollowerShell] Follower finalization initiated');
+
+      // Validate current step (usually confirm)
+      const currentDescriptor = this.steps[this.currentStepIndex];
+      if (currentDescriptor) {
+        const currentPlugin = this.stepPlugins.get(currentDescriptor.stepId);
+        if (currentPlugin && typeof currentPlugin.validate === 'function') {
+          const validation = currentPlugin.validate();
+          if (validation && validation.errors && validation.errors.length > 0) {
+            swseLogger.warn('[FollowerShell] Validation failed:', validation.errors);
+            ui.notifications.error(`Cannot finish: ${validation.errors[0]}`);
+            this.isProcessing = false;
+            return;
+          }
+        }
+      }
+
+      // Call parent's commit logic for the current step
+      const currentPlugin = this.stepPlugins.get(currentDescriptor.stepId);
+      if (currentPlugin && typeof currentPlugin.onStepCommit === 'function') {
+        const committed = await currentPlugin.onStepCommit(this);
+        if (!committed) {
+          swseLogger.warn('[FollowerShell] Current step commit failed');
+          this.isProcessing = false;
+          return;
+        }
+      }
+
+      // Now complete the follower progression
+      await this._onProgressionComplete();
+    } catch (error) {
+      swseLogger.error('[FollowerShell._onFinalizeProgression] Unexpected error', error);
+      ui.notifications.error('An unexpected error occurred during finalization.');
+    } finally {
+      this.isProcessing = false;
+    }
+  }
+
+  /**
    * Handle progression completion for follower creation/advancement.
-   * Overrides parent to create/update follower actor instead of applying mutations to existing actor.
+   * Creates/updates the follower actor and links to owner.
    *
    * @param {Object} options
    * @returns {Promise<void>}
