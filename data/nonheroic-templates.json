@@ -186,6 +186,155 @@
       ],
       "archetype": "Laborer",
       "notes": "Nonheroic template: No talents or Force powers. Basic combat training only."
+    },
+    {
+      "id": "beast-wolf",
+      "name": "Wolf",
+      "description": "A wild wolf or wolf-like creature. Beasts are non-sapient or low-intelligence creatures generated through the Creature Generator system. Wolves are pack hunters with keen senses and natural combat instincts.",
+      "quote": "The strength of the pack is the wolf, and the strength of the wolf is the pack.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/beast_wolf.webp",
+      "subtype": "beast",
+      "level": 1,
+      "supportLevel": "FULL",
+      "isNonheroic": true,
+      "isBeast": true,
+      "participantKind": "INDEPENDENT",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "beast-nonheroic-id",
+        "name": "Beast (Nonheroic)",
+        "type": "class",
+        "isNonheroic": true
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-wolf",
+        "name": "Wolf",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "creature-feral",
+        "name": "Feral Creature",
+        "type": "background"
+      },
+      "abilityScores": {
+        "str": 12,
+        "dex": 14,
+        "con": 11,
+        "int": 1,
+        "wis": 13,
+        "cha": 8
+      },
+      "trainedSkills": [
+        "Perception",
+        "Survival"
+      ],
+      "feats": [],
+      "languages": [],
+      "beastData": {
+        "isBeast": true,
+        "size": "Medium",
+        "intelligence": 1,
+        "naturalWeapons": [
+          {
+            "name": "Bite",
+            "damage": "1d6+Str",
+            "critical": 20,
+            "type": "piercing"
+          }
+        ],
+        "naturalArmor": 0,
+        "senses": [
+          "Low-light vision",
+          "Keen scent (DC 15 Perception to avoid being perceived)"
+        ],
+        "specialQualities": [
+          "Pack Tactics (advantage on melee attack rolls if ally is within 5 squares)"
+        ],
+        "profile": "beast",
+        "creatureType": "animal"
+      },
+      "archetype": "Beast",
+      "notes": "Beast template: Intelligence 1-2 constraint enforced. No talents. No starting feats. Skills constrained to Beast list (Acrobatics, Climb, Endurance, Initiative, Jump, Perception, Stealth, Survival, Swim). 1d8+Con HP. No Force/Destiny Points. Multiclass gate at Int 3+."
+    },
+    {
+      "id": "beast-bear",
+      "name": "Bear",
+      "description": "A wild bear or bear-like creature. Beasts are non-sapient or low-intelligence creatures generated through the Creature Generator system. Bears are apex predators with immense strength and natural combat prowess.",
+      "quote": "The forest yields to those with claw and fang.",
+      "imagePath": "systems/foundryvtt-swse/assets/templates/beast_bear.webp",
+      "subtype": "beast",
+      "level": 1,
+      "supportLevel": "FULL",
+      "isNonheroic": true,
+      "isBeast": true,
+      "participantKind": "INDEPENDENT",
+      "classId": {
+        "pack": "foundryvtt-swse.classes",
+        "id": "beast-nonheroic-id",
+        "name": "Beast (Nonheroic)",
+        "type": "class",
+        "isNonheroic": true
+      },
+      "speciesId": {
+        "pack": "foundryvtt-swse.species",
+        "id": "species-bear",
+        "name": "Bear",
+        "type": "species"
+      },
+      "backgroundId": {
+        "pack": "foundryvtt-swse.backgrounds",
+        "id": "creature-feral",
+        "name": "Feral Creature",
+        "type": "background"
+      },
+      "abilityScores": {
+        "str": 16,
+        "dex": 10,
+        "con": 13,
+        "int": 2,
+        "wis": 12,
+        "cha": 8
+      },
+      "trainedSkills": [
+        "Climb",
+        "Survival"
+      ],
+      "feats": [],
+      "languages": [],
+      "beastData": {
+        "isBeast": true,
+        "size": "Large",
+        "intelligence": 2,
+        "naturalWeapons": [
+          {
+            "name": "Claw",
+            "damage": "1d8+Str",
+            "critical": 20,
+            "type": "slashing"
+          },
+          {
+            "name": "Bite",
+            "damage": "1d10+Str",
+            "critical": 20,
+            "type": "piercing"
+          }
+        ],
+        "naturalArmor": 2,
+        "senses": [
+          "Low-light vision",
+          "Keen scent (DC 15 Perception to avoid being perceived)"
+        ],
+        "specialQualities": [
+          "Powerful Build (counts as one size larger for carrying capacity)",
+          "Maul (if Bear hits with both claw attacks, can make bonus bite attack)"
+        ],
+        "profile": "beast",
+        "creatureType": "animal"
+      },
+      "archetype": "Beast",
+      "notes": "Beast template: Intelligence 1-2 constraint enforced. No talents. No starting feats. Skills constrained to Beast list (Acrobatics, Climb, Endurance, Initiative, Jump, Perception, Stealth, Survival, Swim). 1d8+Con HP. No Force/Destiny Points. Multiclass gate at Int 3+."
     }
   ]
 }

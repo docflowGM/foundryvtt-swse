@@ -59,6 +59,14 @@ export class ChargenShell extends ProgressionShell {
       return 'droid';
     }
 
+    // Phase 2.7: Detect Beast profile (takes precedence over nonheroic)
+    const isBeastProfile = this.actor.flags?.swse?.beastData ||
+                          this.progressionSession?.beastContext?.isBeast ||
+                          this.progressionSession?.nonheroicContext?.isBeast === true;
+    if (isBeastProfile) {
+      return 'beast';
+    }
+
     // Phase 2.6: Detect nonheroic subtype from template or class items
     // Check if session is template-seeded and template is nonheroic
     if (this.progressionSession?.isTemplateSession && this.progressionSession?.templateId) {

@@ -26,6 +26,7 @@ import {
   FollowerSubtypeAdapter,
   NonheroicSubtypeAdapter,
 } from './default-subtypes.js';
+import { BeastSubtypeAdapter } from './beast-subtype-adapter.js';
 
 export class ProgressionSubtypeAdapterRegistry {
   static _instance = null;
@@ -55,8 +56,9 @@ export class ProgressionSubtypeAdapterRegistry {
   _initializeDefaultAdapters() {
     this.register(new ActorSubtypeAdapter());
     this.register(new DroidSubtypeAdapter());
-    this.register(new FollowerSubtypeAdapter());
     this.register(new NonheroicSubtypeAdapter());
+    this.register(new BeastSubtypeAdapter());        // Phase 2.7: Beast adapter
+    this.register(new FollowerSubtypeAdapter());
 
     swseLogger.log('[ProgressionSubtypeAdapterRegistry] Default adapters registered', {
       count: this.adapters.length,
