@@ -88,15 +88,28 @@ export class TemplateSelectionDialog extends HandlebarsApplicationMixin(DialogV2
     // Load templates
     this.templates = await TemplateRegistry.getAllTemplates();
 
-    // Group templates by class
+    // Phase 2.6: Separate heroic and nonheroic templates
+    const heroicTemplates = this.templates.filter(t => t.isNonheroic !== true);
+    const nonheroicTemplates = this.templates.filter(t => t.isNonheroic === true);
+
+    // Group heroic templates by class
     this.templatesByClass = {};
-    for (const template of this.templates) {
+    for (const template of heroicTemplates) {
       const className = template.classId?.name || 'Other';
       if (!this.templatesByClass[className]) {
         this.templatesByClass[className] = [];
       }
       this.templatesByClass[className].push(template);
     }
+
+    // Phase 2.6: Store nonheroic templates separately
+    this.nonheroicTemplates = nonheroicTemplates;
+
+    swseLogger.log('[TemplateSelectionDialog] Templates prepared', {
+      heroicCount: heroicTemplates.length,
+      nonheroicCount: nonheroicTemplates.length,
+      totalCount: this.templates.length,
+    });
 
     context.templatesByClass = this.templatesByClass;
     context.selectedTemplate = this.selectedTemplate;

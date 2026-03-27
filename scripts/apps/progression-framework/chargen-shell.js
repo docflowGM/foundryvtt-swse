@@ -40,6 +40,57 @@ import { GeneralTalentStep, ClassTalentStep } from './steps/talent-step.js';
 import { SummaryStep } from './steps/summary-step.js';
 
 export class ChargenShell extends ProgressionShell {
+  /**
+   * Determine progression subtype for chargen.
+   * Phase 1: Check if droid builder should be used; otherwise actor.
+   * Future: Resolve follower/nonheroic subtypes here when integrated.
+   *
+   * @param {string} mode
+   * @param {Object} options
+   * @returns {string}
+   */
+  _getProgressionSubtype(mode, options) {
+    if (options.subtype) return options.subtype;
+
+    if (!this.actor) return 'actor';
+
+    // Phase 1: Detect droid subtype based on actor system data
+    if (DroidBuilderAdapter.shouldUseDroidBuilder(this.actor.system || {})) {
+      return 'droid';
+    }
+
+    // Phase 2.7: Detect Beast profile (takes precedence over nonheroic)
+    const isBeastProfile = this.actor.flags?.swse?.beastData ||
+                          this.progressionSession?.beastContext?.isBeast ||
+                          this.progressionSession?.nonheroicContext?.isBeast === true;
+    if (isBeastProfile) {
+      return 'beast';
+    }
+
+    // Phase 2.6: Detect nonheroic subtype from template or class items
+    // Check if session is template-seeded and template is nonheroic
+    if (this.progressionSession?.isTemplateSession && this.progressionSession?.templateId) {
+      // Template will have set subtype in TemplateAdapter.initializeSessionFromTemplate
+      // Check the session's subtype if already set
+      if (this.progressionSession.subtype === 'nonheroic') {
+        return 'nonheroic';
+      }
+    }
+
+    // Phase 2: Detect nonheroic subtype based on class items
+    // If actor has any nonheroic class item, progression should be nonheroic
+    const hasNonheroicClass = this.actor.items?.some(
+      item => item.type === 'class' && item.system?.isNonheroic === true
+    );
+    if (hasNonheroicClass) {
+      return 'nonheroic';
+    }
+
+    // Phase 3+: Detect follower subtype here
+
+    return 'actor';
+  }
+
   static async open(actor, options = {}) {
     // TEMP AUDIT: Log shell open call
     console.log('[TEMP AUDIT] ChargenShell.open called for actor:', actor?.name, actor?.type);
@@ -95,10 +146,9 @@ export class ChargenShell extends ProgressionShell {
    */
   async _getCanonicalDescriptors() {
     try {
-      // Determine character subtype (actor vs droid)
-      const subtype = DroidBuilderAdapter.shouldUseDroidBuilder(this.actor?.system || {})
-        ? 'droid'
-        : 'actor';
+      // Subtype is already determined in _getProgressionSubtype() and bound to session
+      // Use it from the session's adapter
+      const subtype = this.progressionSession.subtype;
 
       // Compute active nodes for this actor in chargen mode
       const computer = new ActiveStepComputer();
@@ -137,10 +187,8 @@ export class ChargenShell extends ProgressionShell {
       return descriptors;
     } catch (err) {
       console.error('[ChargenShell] Error computing canonical descriptors:', err);
-      // Fallback to legacy behavior on error
-      return this._getLegacyCanonicalDescriptors(
-        DroidBuilderAdapter.shouldUseDroidBuilder(this.actor?.system || {}) ? 'droid' : 'actor'
-      );
+      // Fallback to legacy behavior on error, using subtype from session
+      return this._getLegacyCanonicalDescriptors(this.progressionSession.subtype);
     }
   }
 

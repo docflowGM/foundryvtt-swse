@@ -61,13 +61,21 @@ export class ProjectionEngine {
         mode: progressionSession.mode || 'chargen',
       };
 
+      // Phase 1: Route through adapter seam for subtype-specific projection contribution
+      const adapter = progressionSession.subtypeAdapter;
+      let finalProjection = projection;
+      if (adapter) {
+        finalProjection = await adapter.contributeProjection(projection, progressionSession, actor);
+      }
+
       swseLogger.debug('[ProjectionEngine] Projection built:', {
-        identity: projection.identity,
-        skillsCount: projection.skills.trained?.length || 0,
-        featsCount: projection.abilities.feats?.length || 0,
+        identity: finalProjection.identity,
+        skillsCount: finalProjection.skills?.trained?.length || 0,
+        featsCount: finalProjection.abilities?.feats?.length || 0,
+        adapterContributed: !!adapter,
       });
 
-      return projection;
+      return finalProjection;
     } catch (err) {
       swseLogger.error('[ProjectionEngine] Error building projection:', err);
       return this._buildEmptyProjection();

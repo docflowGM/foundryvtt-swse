@@ -242,6 +242,24 @@ export const PROGRESSION_RULES = {
         reflex: 2,
         will: 1
       }
+    },
+
+    'Beast (Nonheroic)': {
+      name: 'Beast (Nonheroic)',
+      hitDie: 8,
+      skillPoints: 1,
+      baseAttackBonus: 'medium',
+      classSkills: [
+        'Acrobatics', 'Climb', 'Endurance', 'Initiative', 'Jump',
+        'Perception', 'Stealth', 'Survival', 'Swim'
+      ],
+      startingFeats: [],
+      talentTrees: [],
+      defenses: {
+        fortitude: 0,
+        reflex: 1,
+        will: 0
+      }
     }
   },
 

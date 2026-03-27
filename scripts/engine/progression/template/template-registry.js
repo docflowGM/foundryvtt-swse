@@ -136,6 +136,7 @@ export class TemplateRegistry {
     try {
       swseLogger.debug('[TemplateRegistry] Loading templates from JSON');
 
+      // Load heroic templates
       const response = await fetch('systems/foundryvtt-swse/data/character-templates.json');
       if (!response.ok) {
         throw new Error(
@@ -159,7 +160,7 @@ export class TemplateRegistry {
       }
 
       // Filter out templates with missing IDs
-      const validTemplates = data.templates.filter(t => {
+      let validTemplates = data.templates.filter(t => {
         if (!t.id) {
           swseLogger.warn('[TemplateRegistry] Skipping template with no ID');
           return false;
@@ -167,10 +168,36 @@ export class TemplateRegistry {
         return true;
       });
 
+      // Phase 2.6: Load nonheroic templates from separate file
+      try {
+        const nonheroicResponse = await fetch('systems/foundryvtt-swse/data/nonheroic-templates.json');
+        if (nonheroicResponse.ok) {
+          const nonheroicData = await nonheroicResponse.json();
+          if (nonheroicData.templates && Array.isArray(nonheroicData.templates)) {
+            const validNonheroicTemplates = nonheroicData.templates.filter(t => {
+              if (!t.id) {
+                swseLogger.warn('[TemplateRegistry] Skipping nonheroic template with no ID');
+                return false;
+              }
+              return true;
+            });
+            validTemplates = validTemplates.concat(validNonheroicTemplates);
+            swseLogger.log('[TemplateRegistry] Loaded nonheroic templates', {
+              count: validNonheroicTemplates.length
+            });
+          }
+        } else {
+          swseLogger.debug('[TemplateRegistry] No nonheroic templates file found (OK for Phase 2)');
+        }
+      } catch (err) {
+        swseLogger.debug('[TemplateRegistry] Error loading nonheroic templates (non-fatal):', err.message);
+      }
+
       swseLogger.log('[TemplateRegistry] Loaded templates', {
         total: data.templates.length,
+        heroic: data.templates.filter(t => !t.isNonheroic).length,
+        nonheroic: validTemplates.filter(t => t.isNonheroic).length,
         valid: validTemplates.length,
-        skipped: data.templates.length - validTemplates.length,
         version
       });
 

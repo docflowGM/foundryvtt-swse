@@ -43,6 +43,35 @@ export class LevelupShell extends ProgressionShell {
   }
 
   /**
+   * Detect progression subtype for this actor in level-up mode
+   * Routes based on actor properties (Beast, nonheroic, or default actor)
+   *
+   * @private
+   * @returns {string} subtype: 'beast', 'nonheroic', or 'actor'
+   */
+  _getProgressionSubtype() {
+    if (!this.actor) return 'actor';
+
+    // Phase 2.8: Detect Beast profile (highest priority)
+    const isBeastProfile = this.actor.flags?.swse?.beastData ||
+                          this.progressionSession?.beastContext?.isBeast === true;
+    if (isBeastProfile) {
+      return 'beast';
+    }
+
+    // Phase 2.5+: Detect nonheroic subtype
+    const hasNonheroicClass = this.actor.items?.some(
+      item => item.type === 'class' && item.system?.isNonheroic === true
+    );
+    if (hasNonheroicClass) {
+      return 'nonheroic';
+    }
+
+    // Default: actor
+    return 'actor';
+  }
+
+  /**
    * Derive level-up step sequence from the progression spine.
    *
    * PHASE 2: Uses ActiveStepComputer to determine which nodes are active
@@ -52,8 +81,8 @@ export class LevelupShell extends ProgressionShell {
    */
   async _getCanonicalDescriptors() {
     try {
-      // Level-up only supports non-droid actors
-      const subtype = 'actor';
+      // Detect subtype based on actor properties
+      const subtype = this._getProgressionSubtype();
 
       // Compute active nodes for level-up mode
       const computer = new ActiveStepComputer();

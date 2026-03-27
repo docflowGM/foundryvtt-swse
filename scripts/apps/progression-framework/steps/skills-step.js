@@ -18,6 +18,7 @@ import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SkillRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
+import { BeastSubtypeAdapter } from '../adapters/beast-subtype-adapter.js';
 
 export class SkillsStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -26,9 +27,12 @@ export class SkillsStep extends ProgressionStepPlugin {
     // State
     this._trainedSkills = new Map();      // skillKey → {trained, focus, misc}
     this._allSkills = [];                 // Full skill list from registry
+    this._availableSkills = [];           // Filtered list (constrained for Beast)
     this._trainedCount = 0;
     this._allowedCount = 1;               // Updated on enter from character data
     this._suggestedSkills = [];           // Suggested skills from SuggestionService
+    this._isBeast = false;                // Beast constraint flag
+    this._beastSkillList = null;          // Beast skill list if applicable
 
     // Event listener cleanup
     this._renderAbort = null;
@@ -41,8 +45,25 @@ export class SkillsStep extends ProgressionStepPlugin {
   async onStepEnter(shell) {
     const character = shell.actor?.system || {};
 
-    // Load allowed skills count from character build
-    this._allowedCount = character.build?.trainedSkillsAllowed || 1;
+    // Phase 2.7: Check if this is Beast progression
+    this._isBeast = shell.progressionSession?.beastContext?.isBeast === true;
+
+    // Phase 2.5: Check if this is nonheroic progression
+    const isNonheroic = shell.progressionSession?.nonheroicContext?.hasNonheroic === true;
+
+    if (isNonheroic) {
+      // Nonheroic characters get 1 + INT mod (minimum 1) skill slots
+      const intMod = character.abilities?.int?.mod || 0;
+      this._allowedCount = Math.max(1, 1 + intMod);
+      swseLogger.log('[SkillsStep] Nonheroic progression - allowed skills:', {
+        intMod,
+        allowedCount: this._allowedCount,
+        isBeast: this._isBeast
+      });
+    } else {
+      // Load allowed skills count from character build
+      this._allowedCount = character.build?.trainedSkillsAllowed || 1;
+    }
 
     // Load existing skill selections if any
     const existingSkills = character.skills || {};
@@ -66,6 +87,22 @@ export class SkillsStep extends ProgressionStepPlugin {
     } catch (err) {
       swseLogger.warn('[SkillsStep] Failed to load skill registry:', err);
       this._allSkills = [];
+    }
+
+    // Phase 2.7: Filter to Beast skill list if applicable
+    if (this._isBeast) {
+      this._beastSkillList = BeastSubtypeAdapter.getBeastClassSkills();
+      this._availableSkills = this._allSkills.filter(skill => {
+        const skillName = skill.name || skill.label || skill.id || '';
+        return this._beastSkillList.includes(skillName);
+      });
+      swseLogger.log('[SkillsStep] Beast progression - skills constrained to Beast list:', {
+        totalSkills: this._allSkills.length,
+        availableSkills: this._availableSkills.length,
+        beastSkillList: this._beastSkillList
+      });
+    } else {
+      this._availableSkills = this._allSkills;
     }
 
     // Get suggested skills from SuggestionService
@@ -152,9 +189,10 @@ export class SkillsStep extends ProgressionStepPlugin {
       trainedSkills: Object.fromEntries(this._trainedSkills),
       trainedCount: this._trainedCount,
       allowedCount: this._allowedCount,
-      allSkills: this._allSkills.map(s => this._formatSkillCard(s, suggestedIds)),
+      allSkills: this._availableSkills.map(s => this._formatSkillCard(s, suggestedIds)),
       hasSuggestions,
       suggestedSkillIds: Array.from(suggestedIds),
+      isBeast: this._isBeast,
     };
   }
 
@@ -204,6 +242,19 @@ export class SkillsStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   _toggleSkill(skillKey, trained) {
+    // Phase 2.7: For Beast, enforce Beast skill list constraint
+    if (trained && this._isBeast) {
+      const isValidBeastSkill = this._availableSkills.some(skill => {
+        const skillName = skill.name || skill.label || skill.id || '';
+        return skillName === skillKey || skill.id === skillKey;
+      });
+
+      if (!isValidBeastSkill) {
+        ui.notifications.warn(`${skillKey} is not in the Beast skill list. Only Beast skills can be trained.`);
+        return;
+      }
+    }
+
     if (!this._trainedSkills.has(skillKey)) {
       this._trainedSkills.set(skillKey, {});
     }
@@ -224,6 +275,19 @@ export class SkillsStep extends ProgressionStepPlugin {
   }
 
   _trainSkill(skillKey) {
+    // Phase 2.7: For Beast, enforce Beast skill list constraint
+    if (this._isBeast) {
+      const isValidBeastSkill = this._availableSkills.some(skill => {
+        const skillName = skill.name || skill.label || skill.id || '';
+        return skillName === skillKey || skill.id === skillKey;
+      });
+
+      if (!isValidBeastSkill) {
+        ui.notifications.warn(`${skillKey} is not in the Beast skill list. Only Beast skills can be trained.`);
+        return;
+      }
+    }
+
     if (!this._trainedSkills.has(skillKey)) {
       this._trainedSkills.set(skillKey, {});
     }
@@ -276,6 +340,11 @@ export class SkillsStep extends ProgressionStepPlugin {
   getMentorContext(shell) {
     const customGuidance = getStepGuidance(shell.actor, 'skills');
     if (customGuidance) return customGuidance;
+
+    // Phase 2.7: Beast-specific guidance
+    if (this._isBeast) {
+      return 'As a creature, your instincts guide your capabilities. Choose skills from those natural to your kind.';
+    }
 
     // Mode-aware default guidance
     if (this.isChargen(shell)) {

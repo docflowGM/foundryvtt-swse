@@ -23,7 +23,7 @@ export class ClassStep extends ProgressionStepPlugin {
     this._allClasses = [];            // ClassesRegistry entries
     this._filteredClasses = [];       // after search + filter + sort applied
     this._searchQuery = '';
-    this._filters = { type: null };   // type: 'base' | 'prestige' | null
+    this._filters = { type: null, heroicType: null };   // type: 'base' | 'prestige' | null; heroicType: 'heroic' | 'nonheroic' | null
     this._sortBy = 'source';          // 'source' | 'alpha'
 
     // Event listener cleanup
@@ -36,6 +36,9 @@ export class ClassStep extends ProgressionStepPlugin {
 
     // Suggestions
     this._suggestedClasses = [];
+
+    // Phase 2.5: Track if this is a nonheroic progression
+    this._isNonheroicProgression = false;
   }
 
   // ---------------------------------------------------------------------------
@@ -45,6 +48,14 @@ export class ClassStep extends ProgressionStepPlugin {
   async onStepEnter(shell) {
     // Load all classes from registry
     this._allClasses = ClassesRegistry.getAll() || [];
+
+    // Phase 2.5: Detect nonheroic progression context
+    this._isNonheroicProgression = shell.progressionSession?.nonheroicContext?.hasNonheroic === true;
+
+    // If nonheroic progression, auto-filter to nonheroic classes only
+    if (this._isNonheroicProgression) {
+      this._filters.heroicType = 'nonheroic';
+    }
 
     // Get suggested classes
     await this._getSuggestedClasses(shell.actor, shell);
@@ -252,13 +263,21 @@ export class ClassStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   getUtilityBarConfig() {
+    const filters = [
+      { id: 'base', label: 'Base Class', defaultOn: false },
+      { id: 'prestige', label: 'Prestige Class', defaultOn: false },
+    ];
+
+    // Phase 2.5: Show heroic/nonheroic filter only during chargen (not levelup)
+    // Nonheroic progression auto-filters this, so show the filter for awareness
+    if (this._isNonheroicProgression) {
+      filters.push({ id: 'nonheroic', label: 'Nonheroic Only', defaultOn: true });
+    }
+
     return {
       mode: 'rich',
       search: { enabled: true, placeholder: 'Search classes…' },
-      filters: [
-        { id: 'base', label: 'Base Class', defaultOn: false },
-        { id: 'prestige', label: 'Prestige Class', defaultOn: false },
-      ],
+      filters,
       sorts: [
         { id: 'source', label: 'Source' },
         { id: 'alpha', label: 'A–Z' },
@@ -319,11 +338,21 @@ export class ClassStep extends ProgressionStepPlugin {
       filtered = filtered.filter(c => c.name?.toLowerCase().includes(q));
     }
 
-    // Type filter
+    // Type filter (base vs prestige)
     if (this._filters.type) {
       filtered = filtered.filter(c => {
         if (this._filters.type === 'base') return !c.prestige;
         if (this._filters.type === 'prestige') return c.prestige;
+        return true;
+      });
+    }
+
+    // Phase 2.5: Heroic/Nonheroic filter
+    if (this._filters.heroicType) {
+      filtered = filtered.filter(c => {
+        const isNonheroic = c.system?.isNonheroic === true;
+        if (this._filters.heroicType === 'heroic') return !isNonheroic;
+        if (this._filters.heroicType === 'nonheroic') return isNonheroic;
         return true;
       });
     }

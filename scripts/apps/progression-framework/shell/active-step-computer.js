@@ -81,14 +81,25 @@ export class ActiveStepComputer {
         .filter(node => activeNodeIds.includes(node.nodeId))
         .map(node => node.nodeId);
 
+      // Step 4: Route through adapter seam for subtype-specific contribution
+      // Phase 1: Adapter can suppress/modify active steps based on subtype rules
+      const adapter = progressionSession.subtypeAdapter;
+      let finalActive = sortedActive;
+      if (adapter) {
+        // Phase 2.8: Ensure session has mode for adapter logic (e.g., Beast level-up feat filtering)
+        const sessionWithMode = { ...progressionSession, mode };
+        finalActive = await adapter.contributeActiveSteps(sortedActive, sessionWithMode, actor);
+      }
+
       swseLogger.debug('[ActiveStepComputer] Computed active steps', {
         mode,
         subtype,
-        count: sortedActive.length,
-        steps: sortedActive,
+        count: finalActive.length,
+        steps: finalActive,
+        adapterContributed: !!adapter,
       });
 
-      return sortedActive;
+      return finalActive;
     } catch (err) {
       swseLogger.error('[ActiveStepComputer] Error computing active steps:', err);
       return [];

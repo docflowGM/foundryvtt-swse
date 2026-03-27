@@ -186,8 +186,13 @@ export class ProgressionShell extends SWSEApplicationV2 {
   }
 
   constructor(actor, mode = 'chargen', options = {}) {
+    // Handle null actor case (e.g., follower mode where actor is created later)
+    const title = actor?.name
+      ? `Character Progression: ${actor.name}`
+      : (options.title || 'Character Progression');
+
     super({
-      title: `Character Progression: ${actor?.name ?? 'Unknown'}`,
+      title,
       ...options,
     });
 
@@ -1023,7 +1028,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
       swseLogger.log('[ProgressionShell] Finalization initiated', {
         mode: this.mode,
-        actorId: this.actor.id,
+        actorId: this.actor?.id || 'unknown',
         selectionsCount: this.committedSelections.size,
       });
 

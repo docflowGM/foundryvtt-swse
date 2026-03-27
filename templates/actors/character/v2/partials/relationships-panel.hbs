@@ -2,6 +2,11 @@
 
   <header class="section-bar">
     <h3 class="section-header">Relationships & Connections</h3>
+    {{#if hasAvailableFollowerSlots}}
+    <button class="build-follower-btn" data-action="build-follower" title="Create a new follower under your command">
+      <i class="fas fa-user-plus"></i> Build Follower
+    </button>
+    {{/if}}
   </header>
 
   {{#if (gt relationships.length 0)}}

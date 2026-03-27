@@ -2,12 +2,15 @@
  * Follower Creator - Handles creation and management of follower characters
  *
  * Followers have special rules that differ from standard character creation:
- * - HP = 10 + owner level (not class hit die)
+ * - HP = 10 + owner heroic level (not class hit die)
  * - BAB from template progression tables
- * - Defenses = 10 + ability mod + owner level
+ * - Defenses = 10 + ability mod + owner heroic level
+ * - Followers are tied to owner's HEROIC LEVEL specifically (not total level if mixed heroic/nonheroic)
  *
  * This module uses shared progression utilities for item creation (species, feats, skills)
  * but maintains follower-specific stat calculations.
+ *
+ * Phase 3: Integrated as a DEPENDENT participant through the progression spine.
  */
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
@@ -15,6 +18,7 @@ import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { resolveSkillKey } from "/systems/foundryvtt-swse/scripts/utils/skill-resolver.js";
 import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { getHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 
 export class FollowerCreator {
 
@@ -227,8 +231,8 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * @private
      */
     static async _buildFollowerActor(owner, template, followerData, grantingTalent) {
-        const ownerLevel = owner.system.level || 1;
-        const followerLevel = ownerLevel; // Followers are same level as owner
+        const ownerHeroicLevel = getHeroicLevel(owner) || 1;
+        const followerLevel = ownerHeroicLevel; // Followers are same HEROIC level as owner
 
         // Get species data
         const speciesPack = game.packs.get('foundryvtt-swse.species');
@@ -249,13 +253,13 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             abilities[followerData.abilityChoice].base += template.abilityBonus;
         }
 
-        // Calculate defenses (10 + ability mod + owner level) - FOLLOWER SPECIFIC
-        const defenses = await this._calculateFollowerDefenses(abilities, ownerLevel, template);
+        // Calculate defenses (10 + ability mod + owner heroic level) - FOLLOWER SPECIFIC
+        const defenses = await this._calculateFollowerDefenses(abilities, ownerHeroicLevel, template);
 
-        // Calculate HP (10 + owner level) - FOLLOWER SPECIFIC
+        // Calculate HP (10 + owner heroic level) - FOLLOWER SPECIFIC
         const hp = {
-            max: 10 + ownerLevel,
-            value: 10 + ownerLevel
+            max: 10 + ownerHeroicLevel,
+            value: 10 + ownerHeroicLevel
         };
 
         // Get BAB from template - FOLLOWER SPECIFIC
@@ -630,6 +634,152 @@ static async createFollower(owner, templateType, grantingTalent = null) {
 
         if (shouldDelete) {
             await follower.delete();
+        }
+    }
+
+    /**
+     * Create a follower from a mutation bundle (from the progression spine).
+     * Phase 3: Called by FollowerShell after progression completes.
+     *
+     * @param {Actor} owner - The owner actor
+     * @param {Object} followerMutation - Mutation bundle from FollowerSubtypeAdapter
+     * @returns {Promise<Actor|null>} Created follower actor or null on error
+     */
+    static async createFollowerFromMutation(owner, followerMutation) {
+        try {
+            const {
+                speciesName,
+                templateType,
+                persistentChoices,
+                followerState,
+                targetHeroicLevel
+            } = followerMutation;
+
+            // Create actor from derived state
+            const actorData = {
+                name: `${owner.name}'s ${templateType.charAt(0).toUpperCase() + templateType.slice(1)} Follower`,
+                type: 'character',
+                system: {
+                    level: targetHeroicLevel,
+                    race: speciesName,
+                    abilities: followerState.abilities,
+                    hp: followerState.hp,
+                    baseAttackBonus: followerState.bab,
+                    progression: {
+                        followerChoices: persistentChoices,
+                        followerTemplate: templateType,
+                        isFollower: true
+                    }
+                },
+                flags: {
+                    swse: {
+                        follower: {
+                            ownerId: owner.id,
+                            templateType: templateType,
+                            isFollower: true
+                        }
+                    }
+                }
+            };
+
+            // Create the actor
+            const follower = await createActor(actorData);
+            if (!follower) {
+                swseLogger.error('[FollowerCreator] Failed to create follower actor from mutation');
+                return null;
+            }
+
+            // Apply species (if needed)
+            if (speciesName) {
+                try {
+                    const speciesPack = game.packs.get('foundryvtt-swse.species');
+                    if (speciesPack) {
+                        const speciesIndex = await speciesPack.getIndex();
+                        const speciesEntry = speciesIndex.find(s => s.name === speciesName);
+                        if (speciesEntry) {
+                            const speciesDoc = await speciesPack.getDocument(speciesEntry._id);
+                            await ActorEngine.createEmbeddedDocuments(follower, 'Item', [speciesDoc.toObject()]);
+                        }
+                    }
+                } catch (err) {
+                    swseLogger.warn('[FollowerCreator] Could not apply species:', err);
+                    // Non-fatal — continue even if species application fails
+                }
+            }
+
+            // Apply defenses from derived state
+            if (followerState.defenses) {
+                const defenseUpdates = {};
+                for (const [defType, defData] of Object.entries(followerState.defenses)) {
+                    defenseUpdates[`system.defenses.${defType}.total`] = defData.total;
+                }
+                await follower.update(defenseUpdates);
+            }
+
+            // Link to owner
+            await this._linkFollowerToOwner(owner, follower, null);
+
+            swseLogger.log('[FollowerCreator] Follower created from mutation:', {
+                followerId: follower.id,
+                ownerId: owner.id,
+                templateType: templateType,
+                level: targetHeroicLevel
+            });
+
+            return follower;
+        } catch (err) {
+            swseLogger.error('[FollowerCreator] Error creating follower from mutation:', err);
+            return null;
+        }
+    }
+
+    /**
+     * Update an existing follower from a mutation bundle (for level advancement).
+     * Phase 3: Called by FollowerShell after progression completes.
+     *
+     * @param {Actor} follower - The existing follower actor
+     * @param {Object} followerMutation - Mutation bundle from FollowerSubtypeAdapter
+     * @returns {Promise<boolean>} True if successful, false otherwise
+     */
+    static async updateFollowerFromMutation(follower, followerMutation) {
+        try {
+            const {
+                speciesName,
+                templateType,
+                persistentChoices,
+                followerState,
+                targetHeroicLevel
+            } = followerMutation;
+
+            // Update derived state
+            const updateData = {
+                'system.level': targetHeroicLevel,
+                'system.abilities': followerState.abilities,
+                'system.hp': followerState.hp,
+                'system.baseAttackBonus': followerState.bab,
+                'system.progression.followerChoices': persistentChoices,
+                'system.progression.followerTemplate': templateType
+            };
+
+            // Apply defense updates
+            if (followerState.defenses) {
+                for (const [defType, defData] of Object.entries(followerState.defenses)) {
+                    updateData[`system.defenses.${defType}.total`] = defData.total;
+                }
+            }
+
+            await follower.update(updateData);
+
+            swseLogger.log('[FollowerCreator] Follower updated from mutation:', {
+                followerId: follower.id,
+                templateType: templateType,
+                level: targetHeroicLevel
+            });
+
+            return true;
+        } catch (err) {
+            swseLogger.error('[FollowerCreator] Error updating follower from mutation:', err);
+            return false;
         }
     }
 

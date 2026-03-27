@@ -15,6 +15,7 @@
  */
 
 import { swseLogger } from '../../../utils/logger.js';
+import { ProgressionDocumentTargetPolicy } from '../policies/progression-document-target-policy.js';
 
 export class ProgressionFinalizer {
   /**
@@ -38,6 +39,15 @@ export class ProgressionFinalizer {
       // Gate: Is progression actually complete?
       this._validateReadiness(sessionState);
 
+      // Phase 1: Route subtype-specific readiness checks through adapter
+      const adapter = sessionState.progressionSession?.subtypeAdapter;
+      if (adapter) {
+        await adapter.validateReadiness(sessionState.progressionSession, actor);
+      }
+
+      // PHASE 2.X (Document Targeting): Validate actor document type matches progression subtype
+      this._validateDocumentType(actor, sessionState.progressionSession);
+
       // Compile the authoritative mutation plan
       const mutationPlan = this._compileMutationPlan(
         sessionState,
@@ -45,17 +55,28 @@ export class ProgressionFinalizer {
         options
       );
 
+      // Phase 1: Route through adapter seam for subtype-specific mutation plan contribution
+      let finalMutationPlan = mutationPlan;
+      if (adapter) {
+        finalMutationPlan = await adapter.contributeMutationPlan(
+          mutationPlan,
+          sessionState.progressionSession,
+          actor
+        );
+      }
+
       swseLogger.log('[ProgressionFinalizer] Mutation plan compiled', {
-        hasCoreData: !!mutationPlan.coreData,
-        patchCount: Object.keys(mutationPlan.patches || {}).length,
-        itemGrantCount: mutationPlan.itemGrants?.length || 0,
-        hasDroidPackage: !!mutationPlan.droidPackage,
+        hasCoreData: !!finalMutationPlan.coreData,
+        patchCount: Object.keys(finalMutationPlan.patches || {}).length,
+        itemGrantCount: finalMutationPlan.itemGrants?.length || 0,
+        hasDroidPackage: !!finalMutationPlan.droidPackage,
+        adapterContributed: !!adapter,
       });
 
       // Hand to governance layer
       swseLogger.log('[ProgressionFinalizer] Sending mutation plan to ActorEngine');
 
-      const result = await this._applyMutationPlan(actor, mutationPlan);
+      const result = await this._applyMutationPlan(actor, finalMutationPlan);
 
       swseLogger.log('[ProgressionFinalizer] Finalization complete', {
         success: result.success,
@@ -81,10 +102,11 @@ export class ProgressionFinalizer {
    * @throws {Error} if progression incomplete or canonical session missing
    */
   static _validateReadiness(sessionState) {
-    if (!sessionState.mode || !['chargen', 'levelup'].includes(sessionState.mode)) {
+    if (!sessionState.mode || !['chargen', 'levelup', 'follower'].includes(sessionState.mode)) {
       throw new Error('Invalid progression mode');
     }
-    if (!sessionState.actor) {
+    // Allow null actor for follower mode (actor is created during progression)
+    if (!sessionState.actor && sessionState.mode !== 'follower') {
       throw new Error('No actor in progression session');
     }
 
@@ -138,6 +160,46 @@ export class ProgressionFinalizer {
         throw new Error('Chargen incomplete: missing required name, class, or attributes in canonical session');
       }
     }
+  }
+
+  /**
+   * PHASE 2.X (Document Targeting): Validate actor document type matches progression subtype.
+   * Ensures actors are finalized with the correct document/sheet type from the start.
+   *
+   * @param {Actor} actor - Actor being finalized
+   * @param {Object} progressionSession - Canonical progression session
+   * @throws {Error} If actor document type does not match progression subtype
+   * @private
+   */
+  static _validateDocumentType(actor, progressionSession) {
+    if (!actor || !progressionSession) {
+      return; // Skip validation if missing context
+    }
+
+    // Detect progression subtype from session
+    const subtype = progressionSession.subtype || 'actor';
+
+    // Get expected document type from canonical policy
+    const expectedDocType = ProgressionDocumentTargetPolicy.resolveActorDocumentType(subtype);
+
+    // Validate actor is correct type
+    if (actor.type !== expectedDocType) {
+      const msg = (
+        `[ProgressionFinalizer] Document type mismatch: actor "${actor.name}" is type "${actor.type}" ` +
+        `but progression subtype "${subtype}" requires type "${expectedDocType}". ` +
+        `Finalization cannot proceed with incorrect document type. ` +
+        `Actor must be created with the correct type (${expectedDocType}) from the start.`
+      );
+      swseLogger.error('[ProgressionFinalizer._validateDocumentType]', msg);
+      throw new Error(msg);
+    }
+
+    swseLogger.debug('[ProgressionFinalizer._validateDocumentType] Document type validated', {
+      actor: actor.name,
+      type: actor.type,
+      subtype,
+      expectedDocType,
+    });
   }
 
   /**
