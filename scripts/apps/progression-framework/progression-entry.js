@@ -17,20 +17,30 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { computeCenteredPosition } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
+import { ProgressionDocumentTargetPolicy } from "./policies/progression-document-target-policy.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
- * Detect if a character is incomplete (missing required chargen data).
+ * Detect if an actor is incomplete (missing required progression data).
  * This is the canonical routing check for chargen vs level-up.
  *
+ * Supports all progression-eligible actor types:
+ * - character (heroic), droid, npc (nonheroic/beast/follower)
+ *
  * @param {Actor} actor - The actor to check
- * @returns {boolean} - True if character is incomplete and needs chargen
+ * @returns {boolean} - True if actor is incomplete and needs chargen
  * @private
  */
 function _isChargenIncomplete(actor) {
-  if (!actor || actor.type !== 'character') {
+  if (!actor) {
     return false;
+  }
+
+  // Check if this actor type is supported for progression
+  const supportedTypes = ProgressionDocumentTargetPolicy.getSupportedActorTypes();
+  if (!supportedTypes.includes(actor.type)) {
+    return false; // Not a progression-eligible type
   }
 
   const system = actor.system;
@@ -51,7 +61,7 @@ function _isChargenIncomplete(actor) {
     return true;
   }
 
-  return false; // Character is complete
+  return false; // Actor progression is complete
 }
 
 /**
@@ -119,34 +129,43 @@ export async function launchProgression(actor, options = {}) {
   }
 
   try {
-    if (actor.type === 'character') {
-      // ROUTING LOGIC: Route to ChargenShell (new characters) or LevelupShell (existing characters)
-      const isChargenIncomplete = _isChargenIncomplete(actor);
+    // PHASE 2.X (Document Targeting): Check if actor type is supported for progression
+    const supportedTypes = ProgressionDocumentTargetPolicy.getSupportedActorTypes();
+    if (!supportedTypes.includes(actor.type)) {
+      const msg = `Progression does not support actor type "${actor.type}". Supported types: ${supportedTypes.join(', ')}`;
+      ui?.notifications?.error?.(msg);
+      SWSELogger.error('[Progression Entry] ' + msg);
+      return;
+    }
 
-      console.log('[PROGRESSION] ───────────────────────────────');
-      console.log('[PROGRESSION] ROUTING DECISION');
-      console.log('[PROGRESSION] isChargenIncomplete:', isChargenIncomplete);
-      console.log('[PROGRESSION] ───────────────────────────────');
+    // ROUTING LOGIC: Route to ChargenShell (new actors) or LevelupShell (existing actors)
+    // Applies to all progression-eligible types: character (heroic), droid, npc (nonheroic/beast/follower)
+    const isChargenIncomplete = _isChargenIncomplete(actor);
 
-      if (isChargenIncomplete) {
-        // Brand new or incomplete character → open ChargenShell
-        SWSELogger.log(`[Progression Entry] Character is incomplete (level=${actor.system.level}, hasClass=${actor.items.some(i => i.type === 'class')}) → routing to ChargenShell`);
-        console.log('[PROGRESSION] ROUTING: Opening ChargenShell for incomplete character');
-        const { ChargenShell } = await import('./chargen-shell.js');
-        console.log('[PROGRESSION] ChargenShell imported');
-        const result = await ChargenShell.open(actor, options);
-        console.log('[PROGRESSION] ChargenShell.open() completed, result:', result?.constructor?.name);
-        return result;
-      } else {
-        // Established character → open LevelupShell for level advancement
-        SWSELogger.log(`[Progression Entry] Character is complete (level=${actor.system.level}) → routing to LevelupShell`);
-        console.log('[PROGRESSION] ROUTING: Opening LevelupShell for complete character');
-        const { LevelupShell } = await import('./levelup-shell.js');
-        console.log('[PROGRESSION] LevelupShell imported');
-        const result = await LevelupShell.open(actor, options);
-        console.log('[PROGRESSION] LevelupShell.open() completed, result:', result?.constructor?.name);
-        return result;
-      }
+    console.log('[PROGRESSION] ───────────────────────────────');
+    console.log('[PROGRESSION] ROUTING DECISION');
+    console.log('[PROGRESSION] actor.type:', actor.type);
+    console.log('[PROGRESSION] isChargenIncomplete:', isChargenIncomplete);
+    console.log('[PROGRESSION] ───────────────────────────────');
+
+    if (isChargenIncomplete) {
+      // Brand new or incomplete actor → open ChargenShell
+      SWSELogger.log(`[Progression Entry] Actor is incomplete (type=${actor.type}, level=${actor.system.level}, hasClass=${actor.items.some(i => i.type === 'class')}) → routing to ChargenShell`);
+      console.log('[PROGRESSION] ROUTING: Opening ChargenShell for incomplete actor');
+      const { ChargenShell } = await import('./chargen-shell.js');
+      console.log('[PROGRESSION] ChargenShell imported');
+      const result = await ChargenShell.open(actor, options);
+      console.log('[PROGRESSION] ChargenShell.open() completed, result:', result?.constructor?.name);
+      return result;
+    } else {
+      // Established actor → open LevelupShell for level advancement
+      SWSELogger.log(`[Progression Entry] Actor is complete (type=${actor.type}, level=${actor.system.level}) → routing to LevelupShell`);
+      console.log('[PROGRESSION] ROUTING: Opening LevelupShell for complete actor');
+      const { LevelupShell } = await import('./levelup-shell.js');
+      console.log('[PROGRESSION] LevelupShell imported');
+      const result = await LevelupShell.open(actor, options);
+      console.log('[PROGRESSION] LevelupShell.open() completed, result:', result?.constructor?.name);
+      return result;
     }
 
     SWSELogger.warn(
