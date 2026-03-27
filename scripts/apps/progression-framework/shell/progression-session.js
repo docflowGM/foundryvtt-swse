@@ -34,22 +34,30 @@ export class ProgressionSession {
    * @param {'chargen' | 'levelup' | 'template'} options.mode
    * @param {'actor' | 'npc' | 'droid' | 'follower' | 'nonheroic'} options.subtype
    * @param {ProgressionSubtypeAdapter} options.adapter - Optional adapter (resolved if not provided)
+   * @param {Object} options.dependencyContext - For dependent participants (e.g., follower owner/provenance)
    */
   constructor(options = {}) {
-    const { actor, mode = 'chargen', subtype = 'actor', adapter = null } = options;
+    const { actor, mode = 'chargen', subtype = 'actor', adapter = null, dependencyContext = null } = options;
 
     // Immutable mode/type
     this.mode = mode;
     this.subtype = subtype;
 
     // Resolve adapter: either use provided or look up from registry
-    // Phase 1: This seam allows subtype-specific behavior to plug in
+    // Phase 1 CORRECTED: This seam allows subtype-specific behavior to plug in
+    // Including support for dependent participants via dependency context
     const registry = ProgressionSubtypeAdapterRegistry.getInstance();
     this.subtypeAdapter = adapter || registry.resolveAdapter(subtype);
+
+    // Phase 1 CORRECTED: Dependency context for dependent participants (e.g., follower)
+    // Stores owner/provenance/entitlement information
+    this.dependencyContext = dependencyContext || null;
 
     swseLogger.debug('[ProgressionSession] Created with subtype adapter', {
       subtype,
       adapter: this.subtypeAdapter?.constructor?.name,
+      adapterKind: this.subtypeAdapter?.kind,
+      hasDepencyContext: !!this.dependencyContext,
     });
 
     // Actor context (snapshot, not live)

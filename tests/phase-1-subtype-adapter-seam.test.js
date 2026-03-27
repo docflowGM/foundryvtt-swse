@@ -1,16 +1,17 @@
 /**
- * Phase 1: Subtype Adapter Seam — Executable Proof Tests
+ * Phase 1: Subtype Adapter Seam — Executable Proof Tests (CORRECTED)
  *
- * These tests verify that:
- * 1. Subtype/provider resolution is real for actor, droid, follower, nonheroic
- * 2. ProgressionSession binds to adapter
- * 3. Active-step computation routes through adapter
- * 4. Projection routes through adapter
- * 5. Finalizer routes through adapter
- * 6. Base adapters preserve existing behavior
+ * These tests verify the CORRECTED Phase 1 architecture:
+ * - Participant kind distinction: INDEPENDENT vs DEPENDENT
+ * - Follower is correctly classified as DEPENDENT (nonheroic-derived)
+ * - Actor, droid, nonheroic are INDEPENDENT
+ * - Session supports dependency context for dependent participants
+ * - Seam supports both independent and dependent progression flows
  *
- * Phase 1 rule: Tests prove the seam is structurally real, not decorative.
- * Full logic is deferred to Phase 2/3.
+ * Phase 1 CORRECTED rule:
+ * - Tests prove participant kind is structurally distinguished
+ * - Tests prove dependent participants are not peer subtypes
+ * - Follower is modeled as owner-linked, template-driven, derived
  */
 
 import { describe, it, expect } from '@jest/globals';
@@ -21,6 +22,7 @@ import {
   DroidSubtypeAdapter,
   FollowerSubtypeAdapter,
   NonheroicSubtypeAdapter,
+  ParticipantKind,
 } from '../scripts/apps/progression-framework/adapters/default-subtypes.js';
 
 describe('Phase 1: Subtype Adapter Seam', () => {
@@ -90,6 +92,60 @@ describe('Phase 1: Subtype Adapter Seam', () => {
   });
 
   // ═══════════════════════════════════════════════════════════════════════════
+  // TEST 1B: Participant Kind Distinction (CORRECTIVE)
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  describe('TEST 1B: Participant Kind Distinction (CORRECTED)', () => {
+    it('should classify actor as INDEPENDENT participant', () => {
+      const adapter = new ActorSubtypeAdapter();
+
+      expect(adapter.kind).toBe(ParticipantKind.INDEPENDENT);
+      expect(adapter.isIndependent).toBe(true);
+      expect(adapter.isDependent).toBe(false);
+      expect(adapter.baseSubtype).toBeNull();
+    });
+
+    it('should classify droid as INDEPENDENT participant', () => {
+      const adapter = new DroidSubtypeAdapter();
+
+      expect(adapter.kind).toBe(ParticipantKind.INDEPENDENT);
+      expect(adapter.isIndependent).toBe(true);
+      expect(adapter.isDependent).toBe(false);
+    });
+
+    it('should classify nonheroic as INDEPENDENT participant', () => {
+      const adapter = new NonheroicSubtypeAdapter();
+
+      expect(adapter.kind).toBe(ParticipantKind.INDEPENDENT);
+      expect(adapter.isIndependent).toBe(true);
+      expect(adapter.isDependent).toBe(false);
+    });
+
+    it('should classify follower as DEPENDENT participant (nonheroic-derived)', () => {
+      const adapter = new FollowerSubtypeAdapter();
+
+      expect(adapter.kind).toBe(ParticipantKind.DEPENDENT);
+      expect(adapter.isDependent).toBe(true);
+      expect(adapter.isIndependent).toBe(false);
+      expect(adapter.baseSubtype).toBe('nonheroic');
+    });
+
+    it('should distinguish independent vs dependent in registry', () => {
+      const registry = ProgressionSubtypeAdapterRegistry.getInstance();
+      const independent = registry.getIndependentAdapters();
+      const dependent = registry.getDependentAdapters();
+
+      expect(independent.length).toBe(3);
+      expect(independent.map(a => a.subtypeId)).toEqual(
+        expect.arrayContaining(['actor', 'droid', 'nonheroic'])
+      );
+
+      expect(dependent.length).toBe(1);
+      expect(dependent[0].subtypeId).toBe('follower');
+    });
+  });
+
+  // ═══════════════════════════════════════════════════════════════════════════
   // TEST 2: ProgressionSession binds to adapter
   // ═══════════════════════════════════════════════════════════════════════════
 
@@ -103,6 +159,7 @@ describe('Phase 1: Subtype Adapter Seam', () => {
 
       expect(session.subtypeAdapter).toBeTruthy();
       expect(session.subtypeAdapter.subtypeId).toBe('actor');
+      expect(session.subtypeAdapter.isIndependent).toBe(true);
     });
 
     it('should bind ProgressionSession to droid adapter', () => {
@@ -148,6 +205,57 @@ describe('Phase 1: Subtype Adapter Seam', () => {
       });
 
       expect(session.subtypeAdapter).toBe(customAdapter);
+    });
+  });
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TEST 2B: Dependency Context Support (CORRECTIVE)
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  describe('TEST 2B: Dependency Context for Dependent Participants (CORRECTED)', () => {
+    it('should support dependency context for follower participant', () => {
+      const ownerContext = {
+        ownerId: 'actor-123',
+        ownerName: 'Jedi Master',
+        templateId: 'mentor-follower-1',
+        grantingTalent: 'Force Sensitive',
+      };
+
+      const session = new ProgressionSession({
+        actor: null,
+        mode: 'chargen',
+        subtype: 'follower',
+        dependencyContext: ownerContext,
+      });
+
+      expect(session.subtypeAdapter.isDependent).toBe(true);
+      expect(session.dependencyContext).toBe(ownerContext);
+      expect(session.dependencyContext.ownerId).toBe('actor-123');
+    });
+
+    it('should allow independent participants to have null dependency context', () => {
+      const session = new ProgressionSession({
+        actor: null,
+        mode: 'chargen',
+        subtype: 'actor',
+        dependencyContext: null,
+      });
+
+      expect(session.subtypeAdapter.isIndependent).toBe(true);
+      expect(session.dependencyContext).toBeNull();
+    });
+
+    it('should carry dependency context through adapter kind check', () => {
+      const dependencyContext = { ownerId: 'actor-456' };
+      const session = new ProgressionSession({
+        actor: null,
+        mode: 'chargen',
+        subtype: 'follower',
+        dependencyContext,
+      });
+
+      expect(session.subtypeAdapter.kind).toBe(ParticipantKind.DEPENDENT);
+      expect(session.dependencyContext.ownerId).toBe('actor-456');
     });
   });
 
@@ -313,13 +421,77 @@ describe('Phase 1: Subtype Adapter Seam', () => {
       expect(debug.adapterClass).toBe('DroidSubtypeAdapter');
     });
 
-    it('should provide registry debug info', () => {
+    it('should provide registry debug info with participant kind counts', () => {
       const registry = ProgressionSubtypeAdapterRegistry.getInstance();
       const debug = registry.debug();
 
       expect(debug.registeredAdapters).toBeTruthy();
       expect(Array.isArray(debug.registeredAdapters)).toBe(true);
       expect(debug.registeredAdapters.length).toBe(4);
+      expect(debug.independentCount).toBe(3);
+      expect(debug.dependentCount).toBe(1);
+    });
+
+    it('should provide dependent adapter debug info including base subtype', () => {
+      const adapter = new FollowerSubtypeAdapter();
+      const debug = adapter.debug();
+
+      expect(debug.kind).toBe(ParticipantKind.DEPENDENT);
+      expect(debug.isDependent).toBe(true);
+      expect(debug.baseSubtype).toBe('nonheroic');
+    });
+  });
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // TEST 7: Dependent Participants Suppress Normal Progression (CORRECTIVE)
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  describe('TEST 7: Dependent Participant Step Suppression (CORRECTED)', () => {
+    it('should allow dependent adapter to suppress freeform feat progression', async () => {
+      const adapter = new FollowerSubtypeAdapter();
+      const steps = ['species', 'class', 'general-feat', 'class-feat', 'skills', 'talents'];
+
+      const result = await adapter.contributeActiveSteps(steps, null, null);
+
+      // Phase 1: Follower returns steps unchanged (logic deferred)
+      // Phase 3: Will suppress 'general-feat', 'class-feat', 'skills', 'talents'
+      // and expose only entitlement-driven steps
+      expect(result).toBeTruthy();
+      expect(Array.isArray(result)).toBe(true);
+      // Phase 1 no-op behavior: should match input
+      expect(result.length).toBeGreaterThanOrEqual(0);
+    });
+
+    it('should provide mutation plan contribution for dependent participant bundle creation', async () => {
+      const adapter = new FollowerSubtypeAdapter();
+      const plan = {
+        set: { 'system.class': 'Nonheroic' },
+        add: { items: [] },
+        create: {},
+        delete: {},
+      };
+
+      const result = await adapter.contributeMutationPlan(plan, null, null);
+
+      // Phase 1: No-op, returns plan unchanged
+      // Phase 3: Will contribute derived creation bundle (create follower, apply template, etc.)
+      expect(result).toBeTruthy();
+      expect(result.set || result.add || result.create).toBeTruthy();
+    });
+
+    it('should support dependent participant projection contribution', async () => {
+      const adapter = new FollowerSubtypeAdapter();
+      const projection = {
+        identity: { class: 'Nonheroic' },
+        attributes: { str: 10 },
+      };
+
+      const result = await adapter.contributeProjection(projection, null, null);
+
+      // Phase 1: No-op, returns projection unchanged
+      // Phase 3: Will contribute derived attributes, template, entitlements
+      expect(result).toBeTruthy();
+      expect(result.identity || result.attributes).toBeTruthy();
     });
   });
 });

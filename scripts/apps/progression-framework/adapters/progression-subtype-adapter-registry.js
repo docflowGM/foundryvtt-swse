@@ -4,8 +4,11 @@
  * Central registry for subtype-specific behavior providers.
  *
  * The progression spine is generic and subtype-agnostic.
- * Subtype-specific rules (actor, droid, follower, nonheroic) are plugged in
- * through adapters registered here.
+ * Subtype-specific rules are plugged in through adapters registered here.
+ *
+ * Phase 1 CORRECTED: Registry now supports both:
+ * - INDEPENDENT participants: actor, droid, nonheroic (full progression lifecycle)
+ * - DEPENDENT participants: follower (derived from owner, entitlement-driven)
  *
  * Architecture:
  * - One registry, one seam
@@ -119,12 +122,30 @@ export class ProgressionSubtypeAdapterRegistry {
   }
 
   /**
+   * Get all independent participant adapters.
+   * @returns {Array<ProgressionSubtypeAdapter>}
+   */
+  getIndependentAdapters() {
+    return this.adapters.filter(a => a.isIndependent);
+  }
+
+  /**
+   * Get all dependent participant adapters.
+   * @returns {Array<ProgressionSubtypeAdapter>}
+   */
+  getDependentAdapters() {
+    return this.adapters.filter(a => a.isDependent);
+  }
+
+  /**
    * Debug info for all adapters.
    * @returns {Object}
    */
   debug() {
     return {
       registeredAdapters: this.adapters.map(a => a.debug()),
+      independentCount: this.getIndependentAdapters().length,
+      dependentCount: this.getDependentAdapters().length,
     };
   }
 }

@@ -1,25 +1,32 @@
 /**
- * Default Subtype Adapters — Phase 1
+ * Default Subtype Adapters — Phase 1 (CORRECTED)
  *
  * Concrete implementations for:
- * - ActorSubtypeAdapter (generic humanoid actor)
- * - DroidSubtypeAdapter (droid character)
- * - FollowerSubtypeAdapter (placeholder for Phase 3)
- * - NonheroicSubtypeAdapter (placeholder for Phase 2)
+ * - ActorSubtypeAdapter (independent: generic humanoid actor)
+ * - DroidSubtypeAdapter (independent: droid character)
+ * - NonheroicSubtypeAdapter (independent: nonheroic character)
+ * - FollowerSubtypeAdapter (DEPENDENT: derived from owner, nonheroic-based)
+ *
+ * Phase 1 CORRECTION: Follower is now correctly classified as DEPENDENT.
+ * Followers are not independent progression participants.
+ * They are owned/entitlement-driven/template-driven/derived from owner state.
  *
  * Phase 1 rule: Adapters must be structurally real but logic is deferred.
  * Each adapter has clearly marked boundaries for future phases.
  */
 
-import { ProgressionSubtypeAdapter } from './progression-subtype-adapter.js';
+import { ProgressionSubtypeAdapter, ParticipantKind } from './progression-subtype-adapter.js';
+
+// Re-export for convenience
+export { ParticipantKind };
 
 /**
  * Generic actor subtype adapter.
- * Wraps existing actor progression behavior.
+ * INDEPENDENT participant: full progression lifecycle.
  */
 export class ActorSubtypeAdapter extends ProgressionSubtypeAdapter {
   constructor() {
-    super('actor', 'Character (Actor)');
+    super('actor', 'Character (Actor)', ParticipantKind.INDEPENDENT);
   }
 
   async seedSession(session, actor, mode) {
@@ -35,12 +42,13 @@ export class ActorSubtypeAdapter extends ProgressionSubtypeAdapter {
 
 /**
  * Droid subtype adapter.
+ * INDEPENDENT participant: full progression lifecycle.
  * Phase 1: Wraps existing droid progression behavior (DroidBuilderAdapter).
  * Phase 2+: Full nonheroic integration.
  */
 export class DroidSubtypeAdapter extends ProgressionSubtypeAdapter {
   constructor() {
-    super('droid', 'Character (Droid)');
+    super('droid', 'Character (Droid)', ParticipantKind.INDEPENDENT);
   }
 
   async seedSession(session, actor, mode) {
@@ -68,26 +76,49 @@ export class DroidSubtypeAdapter extends ProgressionSubtypeAdapter {
 
 /**
  * Follower subtype adapter.
- * Phase 1: Structural stub only. No follower logic implemented.
- * Phase 3: Full follower creation and progression logic.
+ * DEPENDENT participant: nonheroic-derived, owner-linked, template-driven.
+ *
+ * CRITICAL CORRECTIVE NOTE (Phase 1):
+ * Follower is NOT an independent progression participant.
+ * Followers are:
+ * - Explicitly nonheroic
+ * - Derived from owner actor state
+ * - Entitlement-driven through owner talents
+ * - Template-driven (not freeform progression)
+ * - Runtime-controlled by owner
+ *
+ * This adapter is DEPENDENT on a parent/owner context.
+ * Phase 1: Structural support only. No follower logic implemented.
+ * Phase 3: Full follower creation/template/entitlement logic wired through dependency context.
  */
 export class FollowerSubtypeAdapter extends ProgressionSubtypeAdapter {
   constructor() {
-    super('follower', 'Follower Character');
+    super(
+      'follower',
+      'Follower Character',
+      ParticipantKind.DEPENDENT,
+      { baseSubtype: 'nonheroic' }
+    );
   }
 
   async seedSession(session, actor, mode) {
     // Phase 1: STUB. Follower session seeding deferred to Phase 3.
     // Phase 3: Seed session with:
-    //   - follower archetype selection
-    //   - follower-specific attribute overrides
-    //   - follower-specific class restrictions
+    //   - owner/dependency context from session.dependencyContext
+    //   - follower archetype selection (from owner's granted followers)
+    //   - follower-specific attribute overrides (derived from owner)
+    //   - follower-specific class restrictions (nonheroic base)
     //   - follower template presets
   }
 
   async contributeActiveSteps(candidateStepIds, session, actor) {
     // Phase 1: STUB. Follower step routing deferred to Phase 3.
-    // Phase 3: Filter/route to follower-specific step sequence.
+    // Phase 3: SUPPRESS normal freeform progression for dependent participant:
+    //   - no normal feat progression (entitlement-gated only)
+    //   - no normal talent progression (entitlement-gated only)
+    //   - no normal skill progression (template-driven only)
+    //   - no species/class selection (template-driven)
+    //   - potentially expose template/archetype/entitlement steps
     // For now, return candidate steps as-is (though registry won't include follower steps yet).
     return candidateStepIds;
   }
@@ -115,12 +146,13 @@ export class FollowerSubtypeAdapter extends ProgressionSubtypeAdapter {
 
 /**
  * Nonheroic subtype adapter.
+ * INDEPENDENT participant: full progression lifecycle.
  * Phase 1: Structural stub with placeholder boundaries.
  * Phase 2: Full integration with existing nonheroic progression logic.
  */
 export class NonheroicSubtypeAdapter extends ProgressionSubtypeAdapter {
   constructor() {
-    super('nonheroic', 'Nonheroic Character');
+    super('nonheroic', 'Nonheroic Character', ParticipantKind.INDEPENDENT);
   }
 
   async seedSession(session, actor, mode) {
@@ -156,13 +188,22 @@ export class NonheroicSubtypeAdapter extends ProgressionSubtypeAdapter {
   }
 
   async contributeProjection(projectedData, session, actor) {
-    // Phase 1: STUB. Nonheroic projection deferred to Phase 2.
-    // Phase 2: Contribute nonheroic-specific computed values to projection.
+    // Phase 1: STUB. Follower projection deferred to Phase 3.
+    // Phase 3: Contribute follower-specific projection via dependency context:
+    //   - derived attributes from owner
+    //   - template-driven identity
+    //   - entitlement-gated grants
   }
 
   async contributeMutationPlan(mutationPlan, session, actor) {
-    // Phase 1: STUB. Nonheroic mutation plan deferred to Phase 2.
-    // Phase 2: Contribute nonheroic-specific patches (XP table, BAB, feat usage, etc.).
+    // Phase 1: STUB. Follower mutation plan deferred to Phase 3.
+    // Phase 3: Contribute DEPENDENT participant mutation bundle:
+    //   - CREATE follower actor
+    //   - APPLY template and derived attributes
+    //   - SET follower flags and links
+    //   - LINK to owner for provenance/entitlement
+    //   - NOT ordinary independent class/feat/talent progression
+    // Returned plan will contain derived creation bundle, not standard progression mutations.
   }
 
   async validateReadiness(session, actor) {

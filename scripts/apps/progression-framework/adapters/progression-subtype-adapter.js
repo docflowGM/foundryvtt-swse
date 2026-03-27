@@ -6,24 +6,47 @@
  * The progression spine is generic. Subtype-specific rules (followers, nonheroics, droids)
  * plug in through adapters that implement this interface.
  *
+ * Participant Classification (Phase 1 CORRECTED):
+ * - INDEPENDENT: actor, droid, nonheroic (full progression participants)
+ * - DEPENDENT: follower (derived from owner, not independently progressed)
+ *
  * Architecture Rule: Adapters contribute behavior; they do not replace the spine.
  *
  * Phases:
- * - Phase 1: Structural seam only — basic dispatch and no-op defaults
- * - Phase 2/3: Nonheroic/Follower logic wired through adapters (reusing existing helpers)
+ * - Phase 1: Structural seam with participant classification
+ * - Phase 2: Nonheroic logic wired through independent adapter
+ * - Phase 3: Follower logic wired through dependent adapter (nonheroic-derived)
  */
 
 import { swseLogger } from '../../../utils/logger.js';
+
+/**
+ * Participant kind enum
+ */
+export const ParticipantKind = Object.freeze({
+  /** Full progression participant with independent lifecycle and choices */
+  INDEPENDENT: 'independent',
+
+  /** Derived participant: depends on owner actor, template-driven, entitlement-gated */
+  DEPENDENT: 'dependent',
+});
 
 export class ProgressionSubtypeAdapter {
   /**
    * Constructor.
    * @param {string} subtypeId - e.g., 'actor', 'droid', 'follower', 'nonheroic'
    * @param {string} label - Human-readable label
+   * @param {string} kind - ParticipantKind.INDEPENDENT | ParticipantKind.DEPENDENT
+   * @param {Object} options - Optional metadata
+   * @param {string} options.baseSubtype - If dependent, the base subtype (e.g., 'nonheroic' for follower)
    */
-  constructor(subtypeId, label) {
+  constructor(subtypeId, label, kind = ParticipantKind.INDEPENDENT, options = {}) {
     this.subtypeId = subtypeId;
     this.label = label;
+    this.kind = kind;
+    this.isIndependent = kind === ParticipantKind.INDEPENDENT;
+    this.isDependent = kind === ParticipantKind.DEPENDENT;
+    this.baseSubtype = options.baseSubtype || null; // For dependent participants
   }
 
   /**
@@ -40,6 +63,10 @@ export class ProgressionSubtypeAdapter {
    * Seed the progression session with subtype-specific defaults.
    * Called during session initialization.
    *
+   * For dependent participants (e.g., follower):
+   * - Context may include owner/dependency metadata (via session.dependencyContext)
+   * - Seeding must account for derived/entitlement-driven nature
+   *
    * @param {ProgressionSession} session - The session to seed
    * @param {Actor} actor - The actor context
    * @param {string} mode - 'chargen' | 'levelup' | 'template'
@@ -47,12 +74,17 @@ export class ProgressionSubtypeAdapter {
    */
   async seedSession(session, actor, mode) {
     // Default: no subtype-specific seeding.
-    // Subclasses override for follower/nonheroic setup.
+    // Subclasses override for dependent/nonheroic setup.
   }
 
   /**
    * Contribute or suppress active/owed steps.
    * Called during active-step computation.
+   *
+   * For dependent participants (e.g., follower):
+   * - May suppress normal freeform feat/talent/skill progression
+   * - May expose only entitlement-driven steps
+   * - May suppress class/species/attribute selection
    *
    * @param {Array<string>} candidateStepIds - Steps active before adapter contribution
    * @param {ProgressionSession} session - Current session state
@@ -61,6 +93,7 @@ export class ProgressionSubtypeAdapter {
    */
   async contributeActiveSteps(candidateStepIds, session, actor) {
     // Default: no modification. Steps remain as offered by spine.
+    // Dependent adapters override to suppress inappropriate steps.
     return candidateStepIds;
   }
 
@@ -141,6 +174,10 @@ export class ProgressionSubtypeAdapter {
     return {
       subtypeId: this.subtypeId,
       label: this.label,
+      kind: this.kind,
+      isIndependent: this.isIndependent,
+      isDependent: this.isDependent,
+      baseSubtype: this.baseSubtype,
       adapterClass: this.constructor.name,
     };
   }
