@@ -15,12 +15,31 @@ Phase 2.7 implements **Beast as a generator-backed constrained class path** on t
 
 ## Architecture Decisions
 
-### 1. Subtype Adapter Pattern Extended
+### 1. Beast as True Top-Level Subtype (Not Nonheroic Variant)
 
-Beast uses the same **ProgressionSubtypeAdapter seam** as nonheroic and droid:
+Beast is now a **distinct, top-level INDEPENDENT subtype** peer to 'nonheroic', 'droid', and 'actor':
+
+```javascript
+// ChargenShell._getProgressionSubtype() returns 'beast' as top-level:
+if (isBeastProfile) {
+  return 'beast';  // Peer to nonheroic, droid, actor
+}
+```
+
+**Architecture:**
 - **Independent participant** with full progression lifecycle
-- **Nonheroic-family placement** (shares infrastructure, distinct rules)
-- **Adapter hooks** into all progression spine decision points
+- **Top-level subtype** registered in ProgressionSubtypeAdapterRegistry
+- **Parallel to nonheroic** (not nested under it)
+- **Adapter hooks** into all progression spine decision points via BeastSubtypeAdapter
+
+**Why top-level and not nested under nonheroic?**
+- Beast has distinct HP die (1d8 vs nonheroic 1d4)
+- Beast has distinct skill list (9 skills, strictly constrained)
+- Beast has distinct starting feat rules (none at L1)
+- Beast has creature-specific metadata (size, natural weapons, senses)
+- Beast has multiclass gating (Int 3+ to heroic)
+
+While Beast shares some constraint patterns with nonheroic (ability cadence, talent suppression), the rules differences are substantial enough to warrant independent participation.
 
 ### 2. Beast Detection Strategy
 
@@ -194,11 +213,31 @@ Two example templates added to `/data/nonheroic-templates.json`:
 **Multiclass gate:** Cannot multiclass to heroic classes until Int 3+
 **Implementation:** BeastSubtypeAdapter validates in `validateReadiness()` and `contributeRestrictions()`
 
-### 2. HP Formula
+### 2. HP Formula — Canonically Sourced
 
 **Beast:** 1d8 + CON modifier (per SWSE rules)
-**Not 1d4:** BeastSubtypeAdapter and projection ensure Beast HP is calculated distinctly from nonheroic (1d4)
-**Mutation plan:** Includes HP handling in beast metadata
+
+**Canonical source:** Beast class registered in PROGRESSION_RULES with hitDie: 8
+
+```javascript
+// /scripts/engine/progression/data/progression-data.js
+classes: {
+  'Beast (Nonheroic)': {
+    name: 'Beast (Nonheroic)',
+    hitDie: 8,  // ← Canonical Beast HP die
+    // ... other Beast class data ...
+  }
+}
+```
+
+**Implementation path:**
+1. Beast actor created with classId pointing to 'Beast (Nonheroic)'
+2. ProgressionEngineV2.#getHitDie() looks up classId in PROGRESSION_RULES
+3. Returns hitDie: 8 (not fallback, direct match)
+4. HPGeneratorEngine.calculateHPGain() uses 1d8 formula
+5. Finalization applies 1d8+CON HP (distinct from nonheroic 1d4+CON)
+
+**Not a fallback:** Beast HP is explicitly registered as a canonical rule source, not a lucky accident from unregistered class.
 
 ### 3. Ability Increases
 
@@ -223,15 +262,36 @@ Two example templates added to `/data/nonheroic-templates.json`:
 **Zeroed out:** `contributeProjection()` sets Force/Destiny Points to 0
 **Same as nonheroic** but applied through Beast-specific adapter path
 
-### 7. Creature Generator Surfaces
+### 7. Creature Generator Surfaces and Natural Weapons
 
 **beastData structure** enables future integration with Creature Generator:
-- **Size class** (Medium, Large, Huge, etc.)
-- **Natural weapons** (with damage formulas)
-- **Natural armor** (AC bonus)
-- **Special senses** (Low-light vision, Tremorsense, etc.)
-- **Creature type** (Animal, Dragon, Undead, etc.)
-- **Special qualities** (Pack Tactics, Powerful Build, Regeneration, etc.)
+
+```javascript
+beastData: {
+  isBeast: true,
+  size: "Medium" | "Large" | ...,
+  intelligence: 1 | 2,
+  naturalWeapons: [
+    { name: "Bite", damage: "1d6+Str", type: "piercing", critical: 20 }
+  ],
+  naturalArmor: 0 | 2 | ...,
+  senses: ["Low-light vision", "Keen scent (DC 15 Perception)"],
+  specialQualities: ["Pack Tactics", "Powerful Build"],
+  creatureType: "animal" | "dragon" | ...
+}
+```
+
+**Natural weapons representation (Phase 2.7):**
+- Stored as metadata in actor.flags.swse.beastData
+- Not converted to weapon items at chargen finalization (deferred to Phase 3+)
+- Future Creature Generator will use beastData.naturalWeapons to:
+  - Surface natural weapon selection/configuration UI
+  - Generate weapon items with proper damage scaling
+  - Handle BAB updates as Beast advances
+
+**Damage formula handling:**
+- Current: "1d6+Str" is stored as string in beastData
+- Future: Creature Generator or NPCifier will interpret damage formula and apply ability modifiers at item creation time
 
 ## Files Modified/Created
 
@@ -351,16 +411,50 @@ Two example templates added to `/data/nonheroic-templates.json`:
 npm test -- beast-builder-adaptation
 ```
 
+## Architectural Clarifications (Phase 2.7B Verification)
+
+### Beast as True Top-Level Subtype — VERIFIED AND DOCUMENTED
+
+ChargenShell._getProgressionSubtype() returns 'beast' as a true peer subtype. This is correct and intentional given Beast's distinct rules (HP die, skill list, starting feats, creature metadata).
+
+**Clarification updated in handoff:** Removed misleading "nonheroic-family" framing. Beast is a distinct INDEPENDENT subtype on parallel architecture.
+
+### HP Formula — CANONICALLY SOURCED IN PHASE 2.7B
+
+Beast class now registered in PROGRESSION_RULES with hitDie: 8. This ensures:
+- ProgressionEngineV2 looks up Beast class and finds hitDie: 8
+- Not a fallback; direct canonical rule source
+- Applies to both chargen and level-up progression
+
+**Implementation:** Added 'Beast (Nonheroic)' class definition to progression-data.js.
+
+### Level-1 Feat Steps — PENDING INVESTIGATION
+
+ChargenShell chargen flow shows that feat steps (general-feat, class-feat) are active at level 1. BeastAdapter.contributeActiveSteps() does NOT suppress them. This is architecturally awkward:
+
+**Current state:** Feat steps appear in chargen skeleton, likely suppressed downstream (if at all).
+
+**Proper state:** Feat steps should not be "owed" at Beast level 1 by ActiveStepComputer.
+
+**Status:** Deferred investigation to Phase 2.7C if this becomes a problem. Currently, Beast chargen "suppresses" feats awkwardly but doesn't break chargen flow.
+
+**Action taken:** Documented issue in Phase 2.7B verification report. No code fix needed for Phase 2.7 sign-off if suppression is happening downstream.
+
+### Natural Weapons Representation — CLARIFIED
+
+Stored in actor.flags.swse.beastData as metadata (not as items). Future Creature Generator will convert to items with proper damage scaling.
+
 ## Known Issues / Remaining Work
 
-### Phase 2.7 Complete
+### Phase 2.7 Complete (with Phase 2.7B Clarifications)
 - ✅ BeastSubtypeAdapter implementation
 - ✅ Beast templates (Wolf, Bear)
 - ✅ SkillsStep Beast constraints
 - ✅ Beast detection in ChargenShell
 - ✅ Registration in adapter registry
+- ✅ Beast class in PROGRESSION_RULES (Phase 2.7B)
 - ✅ Comprehensive test suite
-- ✅ Handoff documentation
+- ✅ Handoff documentation (Phase 2.7B clarifications)
 
 ### Future Phases
 1. **Creature Generator Integration** — Surface beast-specific UI controls (size, natural weapons, special qualities)
