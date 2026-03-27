@@ -9,7 +9,7 @@
 
 import { ClassFeatRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/class-feat-registry.js";
 import { getAllowedTalentTrees } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/tree-authority.js";
-import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisite-checker.js";
+import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { TalentCandidateEnricher } from "/systems/foundryvtt-swse/scripts/engine/suggestion/TalentCandidateEnricher.js";
 
@@ -120,15 +120,15 @@ export class CandidatePoolBuilder {
 
   /**
    * Heroic general feat filtering
+   * PHASE 2: Uses AbilityEngine for legality evaluation, not direct PrerequisiteChecker
    * @private
    */
   static async _filterHeroicFeats(actor, allCandidates) {
     const filtered = [];
 
     for (const candidate of allCandidates) {
-      // Check prerequisites
-      const prereqCheck = PrerequisiteChecker.checkFeatPrerequisites(actor, candidate);
-      if (prereqCheck.met) {
+      // PHASE 2: Check legality through AbilityEngine authority layer
+      if (AbilityEngine.canAcquire(actor, candidate)) {
         filtered.push(candidate);
       }
     }
@@ -171,6 +171,7 @@ export class CandidatePoolBuilder {
 
   /**
    * Filter force technique candidates
+   * PHASE 2: Uses AbilityEngine for legality evaluation, not direct PrerequisiteChecker
    * @private
    */
   static async _filterForceTechniqueCandidates(actor, slotContext, allCandidates) {
@@ -179,9 +180,8 @@ export class CandidatePoolBuilder {
     const filtered = [];
 
     for (const candidate of allCandidates) {
-      // Check prerequisites (force techniques may have prerequisites)
-      const prereqCheck = PrerequisiteChecker.checkFeatPrerequisites(actor, candidate);
-      if (prereqCheck.met) {
+      // PHASE 2: Check legality through AbilityEngine authority layer
+      if (AbilityEngine.canAcquire(actor, candidate)) {
         filtered.push(candidate);
       }
     }
