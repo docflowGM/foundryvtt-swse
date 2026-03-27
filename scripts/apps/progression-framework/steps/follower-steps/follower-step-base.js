@@ -180,11 +180,44 @@ export class FollowerStepBase extends ProgressionStepPlugin {
    * @returns {Promise<Object>} {native: string, available: string[]}
    */
   async getFollowerLanguages(ownerActor, speciesName) {
-    // Phase 3: Implement language resolution from species data and owner languages
-    // For now, return placeholder
-    return {
-      native: 'Basic', // Placeholder; should be species default
-      available: [], // Should be owner's languages
-    };
+    try {
+      // Get native language from species
+      let native = 'Basic'; // Fallback
+
+      if (speciesName) {
+        const { SpeciesRegistry } = await import('/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js');
+
+        // Ensure registry is initialized
+        if (!SpeciesRegistry.isInitialized()) {
+          await SpeciesRegistry.initialize();
+        }
+
+        const species = SpeciesRegistry.getByName(speciesName);
+        if (species?.languages && species.languages.length > 0) {
+          // Use first language as native language
+          native = species.languages[0];
+        }
+      }
+
+      // Get owner's languages
+      const ownerLanguages = ownerActor?.system?.languages || [];
+
+      swseLogger.log('[FollowerStepBase] Resolved languages:', {
+        native,
+        ownerLanguages: Array.isArray(ownerLanguages) ? ownerLanguages : [ownerLanguages]
+      });
+
+      return {
+        native,
+        available: Array.isArray(ownerLanguages) ? ownerLanguages : [ownerLanguages]
+      };
+    } catch (err) {
+      swseLogger.error('[FollowerStepBase] Error resolving languages:', err);
+      // Fallback to safe defaults
+      return {
+        native: 'Basic',
+        available: []
+      };
+    }
   }
 }

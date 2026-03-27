@@ -1028,7 +1028,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
       swseLogger.log('[ProgressionShell] Finalization initiated', {
         mode: this.mode,
-        actorId: this.actor.id,
+        actorId: this.actor?.id || 'unknown',
         selectionsCount: this.committedSelections.size,
       });
 
