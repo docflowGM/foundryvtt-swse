@@ -18,6 +18,7 @@
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
+import { ProjectionEngine } from '../shell/projection-engine.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
@@ -266,7 +267,44 @@ export class SummaryStep extends ProgressionStepPlugin {
   _aggregateSummary(shell) {
     const character = shell.actor?.system || {};
 
-    // PHASE 1: Read from progressionSession.draftSelections first, fall back to committedSelections
+    // PHASE 3: Try to use projection first (derived character model)
+    // Fall back to manual aggregation for backward compatibility
+    const projection = shell.progressionSession?.currentProjection ||
+                       ProjectionEngine.buildProjection(shell.progressionSession, shell.actor);
+
+    if (projection) {
+      // Use projection as authoritative source of character state
+      this._summary.name = this._characterName || character.identity?.name || '';
+      this._summary.level = this._startingLevel || shell.targetLevel || 1;
+
+      // Identity from projection
+      this._summary.species = projection.identity?.species || '';
+      this._summary.class = projection.identity?.class || '';
+
+      // Attributes from projection (already normalized to {str, dex, ...})
+      this._summary.attributes = projection.attributes || {};
+
+      // Skills from projection (trained skills array)
+      this._summary.skills = projection.skills?.trained || [];
+
+      // Languages from projection (array of {id, name})
+      this._summary.languages = (projection.languages || [])
+        .map(lang => lang.id || lang.name || lang);
+
+      // Feats from projection (array of {id, name, source})
+      this._summary.feats = (projection.abilities?.feats || [])
+        .map(feat => feat.id || feat.name || feat);
+
+      // Talents from projection (array of {id, name, source})
+      this._summary.talents = (projection.abilities?.talents || [])
+        .map(talent => talent.id || talent.name || talent);
+
+      swseLogger.log('[SummaryStep] Aggregated summary from projection:', this._summary);
+      return;
+    }
+
+    // FALLBACK: Manual aggregation from progressionSession.draftSelections
+    // Used if projection fails or is unavailable
     const session = shell.progressionSession;
     const selections = session?.draftSelections || {};
     const legacySteps = shell.committedSelections || new Map();
@@ -385,7 +423,7 @@ export class SummaryStep extends ProgressionStepPlugin {
     }
     this._summary.talents = allTalents;
 
-    swseLogger.log('[SummaryStep] Aggregated summary from progressionSession:', this._summary);
+    swseLogger.log('[SummaryStep] Aggregated summary from progressionSession (fallback):', this._summary);
   }
 
   _calculateRequiredFeats() {

@@ -20,6 +20,7 @@
 
 import { ProgressionReconciler } from '../shell/progression-reconciler.js';
 import { ActiveStepComputer } from '../shell/active-step-computer.js';
+import { ProjectionEngine } from '../shell/projection-engine.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
 /**
@@ -483,6 +484,27 @@ export class ProgressionStepPlugin {
           reconcileErr
         );
         // Don't fail the commit if reconciliation fails
+      }
+
+      // PHASE 3: Build projected character from selections
+      // This derives what the character looks like with current selections applied
+      try {
+        const projection = ProjectionEngine.buildProjection(
+          shell.progressionSession,
+          shell.actor
+        );
+        // Store in session for access by summary and other steps
+        shell.progressionSession.currentProjection = projection;
+        swseLogger.debug('[ProgressionStepPlugin] Projection rebuilt:', {
+          hasIdentity: !!projection?.identity?.species,
+          skillsCount: projection?.skills?.trained?.length || 0,
+        });
+      } catch (projErr) {
+        swseLogger.error(
+          '[ProgressionStepPlugin] Error building projection:',
+          projErr
+        );
+        // Don't fail the commit if projection building fails
       }
 
       return true;
