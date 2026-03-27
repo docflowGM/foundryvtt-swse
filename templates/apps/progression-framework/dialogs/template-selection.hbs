@@ -1,0 +1,244 @@
+<div class="template-selection-dialog">
+  <div class="dialog-header">
+    <h2>Choose Your Character Template</h2>
+    <p class="subtitle">Select a pre-built character archetype or create from scratch.</p>
+  </div>
+
+  <div class="template-selection-content">
+    {{#each templatesByClass}}
+      <div class="template-class-section">
+        <h3 class="class-name">{{@key}}</h3>
+        <div class="templates-grid">
+          {{#each this}}
+            <div class="template-card" data-template-id="{{this.id}}">
+              <div class="template-card-header">
+                <h4 class="template-name">{{this.name}}</h4>
+                <div class="template-archetype">{{this.archetype}}</div>
+              </div>
+
+              <div class="template-image">
+                {{#if this.imagePath}}
+                  <img src="{{this.imagePath}}" alt="{{this.name}}" />
+                {{else}}
+                  <div class="no-image">No Image</div>
+                {{/if}}
+              </div>
+
+              <div class="template-card-body">
+                <p class="description">{{this.description}}</p>
+                {{#if this.quote}}
+                  <p class="quote">"{{{this.quote}}}"</p>
+                {{/if}}
+              </div>
+
+              <div class="template-stats">
+                <div class="abilities">
+                  <span class="ability" title="Strength">STR {{this.abilityScores.str}}</span>
+                  <span class="ability" title="Dexterity">DEX {{this.abilityScores.dex}}</span>
+                  <span class="ability" title="Constitution">CON {{this.abilityScores.con}}</span>
+                </div>
+                <div class="abilities">
+                  <span class="ability" title="Intelligence">INT {{this.abilityScores.int}}</span>
+                  <span class="ability" title="Wisdom">WIS {{this.abilityScores.wis}}</span>
+                  <span class="ability" title="Charisma">CHA {{this.abilityScores.cha}}</span>
+                </div>
+              </div>
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    {{/each}}
+  </div>
+
+  <div class="dialog-footer">
+    <button type="button" class="freeform-btn" data-button="freeform">
+      <i class="fas fa-pencil-alt"></i>
+      Create from Scratch (Freeform Chargen)
+    </button>
+    <button type="button" class="confirm-btn" data-button="confirm" disabled>
+      <i class="fas fa-check"></i>
+      Confirm Template Selection
+    </button>
+  </div>
+</div>
+
+<style>
+  .template-selection-dialog {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1rem;
+    background: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    font-family: var(--font-primary);
+  }
+
+  .dialog-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .dialog-header h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+  }
+
+  .subtitle {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+  }
+
+  .template-selection-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+  }
+
+  .template-class-section {
+    margin-bottom: 2rem;
+  }
+
+  .class-name {
+    margin: 1rem 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--color-border-primary);
+    font-size: 1.1rem;
+  }
+
+  .templates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+
+  .template-card {
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.25rem;
+    overflow: hidden;
+    background: var(--color-bg-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .template-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    border-color: var(--color-border-highlight);
+  }
+
+  .template-card.selected {
+    border: 2px solid #00c800;
+    box-shadow: 0 0 10px rgba(0, 200, 0, 0.3);
+  }
+
+  .template-card-header {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--color-border-secondary);
+  }
+
+  .template-name {
+    margin: 0 0 0.25rem 0;
+    font-size: 1rem;
+  }
+
+  .template-archetype {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    font-style: italic;
+  }
+
+  .template-image {
+    width: 100%;
+    height: 150px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-tertiary);
+  }
+
+  .template-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .no-image {
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+  }
+
+  .template-card-body {
+    padding: 0.75rem;
+  }
+
+  .description {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .quote {
+    margin: 0;
+    font-size: 0.8rem;
+    font-style: italic;
+    color: var(--color-text-secondary);
+  }
+
+  .template-stats {
+    padding: 0.75rem;
+    border-top: 1px solid var(--color-border-secondary);
+    background: var(--color-bg-tertiary);
+  }
+
+  .abilities {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: space-around;
+    margin-bottom: 0.25rem;
+  }
+
+  .ability {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    background: var(--color-bg-secondary);
+    border-radius: 0.125rem;
+  }
+
+  .dialog-footer {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border-primary);
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  .freeform-btn,
+  .confirm-btn {
+    padding: 0.75rem 1.5rem;
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.25rem;
+    background: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+    cursor: pointer;
+    font-family: var(--font-primary);
+    transition: all 0.2s ease;
+  }
+
+  .freeform-btn:hover {
+    background: var(--color-bg-tertiary);
+  }
+
+  .confirm-btn:hover:not(:disabled) {
+    background: #00c800;
+    color: white;
+    border-color: #00a000;
+  }
+
+  .confirm-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+</style>
