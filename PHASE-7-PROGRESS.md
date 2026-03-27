@@ -2,7 +2,7 @@
 
 **Phase Goal**: Make the unified build system feel complete and deployable by improving player-facing clarity, GM/admin controls, recovery/error handling, review/explanation UX, template and advisory usability, rollout toggles and operational safety, and migration off remaining legacy entry points.
 
-**Status**: In Progress (Steps 1-3 Complete, 43% of Phase 7)
+**Status**: In Progress (Steps 1-5 Complete, 71% of Phase 7)
 
 ---
 
@@ -549,3 +549,71 @@ Phase 7 has 7 steps. Steps 1-3 complete:
 **General**:
 - Full test coverage pending (manual verification phase)
 - No integration testing across steps yet
+
+---
+
+## Step 5: Refine Summary/Review as Checkout ✅
+
+**Completed**: Enhanced summary step with clear, actionable checkout experience
+
+### Deliverable
+
+#### `summary-step-enhancement.js` (550+ lines)
+Transforms summary step from data dump into trustworthy final review.
+
+**Key Methods**:
+- `organizeForCheckout()` — Restructure aggregated summary into sections
+- `_extractKeyDecisions()` — What you're getting (class, species, abilities)
+- `_extractAutoResolvedItems()` — What was determined automatically
+- `_extractIssues()` — Blocking problems
+- `_extractWarnings()` — Cautions (not blocking)
+- `_extractResources()` — Equipment, credits, languages
+- `_extractTemplateContext()` — Template provenance and customizations
+- `_assessReadiness()` — Can user create character now?
+- `renderCheckoutUI()` — Render organized checkout to HTML
+
+**Sections** (in order):
+1. Header: "Review Your Character"
+2. Blockers (if any): What prevents creation
+3. Foundations: Name, species, class, level
+4. Key Decisions: Top choices (abilities, feats, class)
+5. Auto-Determined: What was automatic (skills, modifiers, HP)
+6. Issues: Problems to fix
+7. Warnings: Cautions worth noting
+8. Resources: Money, languages, equipment
+9. Template Context: If using template
+
+**Design**:
+- Scannable layout (sections with headings)
+- Clear labels and values
+- Explanations for "why" (impact, reason)
+- Readiness indicator (blockers → can't create, warnings → proceed with caution)
+- Scrollable (fits on most screens)
+
+---
+
+## Files Updated/Created (Step 5)
+
+```
+scripts/apps/progression-framework/ux/
+└── summary-step-enhancement.js                   (550+ lines)
+
+PHASE-7-PROGRESS.md                               (updated)
+```
+
+**Total**: ~650 lines of summary enhancement code + CSS
+
+---
+
+## Execution Order Status
+
+1. ✅ Step 1: Explainability (4 modules, 1,260 lines)
+2. ✅ Step 2: Recovery (3 modules, 980 lines)
+3. ✅ Step 3: Rollout controls (3 modules, 890 lines)
+4. ✅ Step 4: Legacy path closure (planning, 307 lines)
+5. ✅ Step 5: Summary checkout (1 module, 550 lines)
+6. **Step 6**: GM/admin diagnostics (pending)
+7. **Step 7**: Readiness checklist and docs (pending)
+
+**Phase 7 Progress**: 71% complete (5 of 7 steps done)
+
