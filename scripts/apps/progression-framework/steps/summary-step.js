@@ -169,18 +169,15 @@ export class SummaryStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async getStepData(context) {
-    // PHASE 1: Check if droid build is deferred (from progressionSession or committedSelections)
+    // PHASE 1: Check if droid build is deferred (from canonical session ONLY)
     let pendingDroidBuild = false;
 
     // Try to access shell from context (if provided) or from global state
     const shell = context?.shell || globalThis.game?.swse?.currentProgressionShell;
 
-    // Check progressionSession first (normalized), then committedSelections (legacy)
+    // PHASE 1: Read droid state from canonical session ONLY
     if (shell?.progressionSession?.draftSelections?.droid) {
       const droidBuild = shell.progressionSession.draftSelections.droid;
-      pendingDroidBuild = !!(droidBuild?.buildState?.isDeferred);
-    } else if (shell?.committedSelections) {
-      const droidBuild = shell.committedSelections.get('droid-builder');
       pendingDroidBuild = !!(droidBuild?.buildState?.isDeferred);
     }
 
@@ -267,9 +264,14 @@ export class SummaryStep extends ProgressionStepPlugin {
   _aggregateSummary(shell) {
     const character = shell.actor?.system || {};
 
-    // PHASE 3: Try to use projection first (derived character model)
-    // Fall back to manual aggregation for backward compatibility
-    const projection = shell.progressionSession?.currentProjection ||
+    // PHASE 1: REQUIRE canonical session; NO fallback to committedSelections
+    if (!shell.progressionSession) {
+      throw new Error('SummaryStep requires progressionSession');
+    }
+
+    // Try to use projection first (derived character model)
+    // If projection unavailable, rebuild from canonical session ONLY
+    const projection = shell.progressionSession.currentProjection ||
                        ProjectionEngine.buildProjection(shell.progressionSession, shell.actor);
 
     if (projection) {
@@ -303,127 +305,54 @@ export class SummaryStep extends ProgressionStepPlugin {
       return;
     }
 
-    // FALLBACK: Manual aggregation from progressionSession.draftSelections
-    // Used if projection fails or is unavailable
+    // PHASE 1: Rebuild from canonical session ONLY if projection unavailable
+    // NO fallback to committedSelections
     const session = shell.progressionSession;
-    const selections = session?.draftSelections || {};
-    const legacySteps = shell.committedSelections || new Map();
+    const selections = session.draftSelections || {};
 
-    // Name/Level — NO LONGER comes from a committed NameStep
-    // Will be entered directly on this SummaryStep as "datapad profile registration"
+    // PHASE 1: Read from canonical session ONLY. No committedSelections fallback.
+
+    // Name/Level — entered directly on this SummaryStep as "datapad profile registration"
     this._summary.name = this._characterName || character.identity?.name || '';
     this._summary.level = this._startingLevel || shell.targetLevel || 1;
 
-    // Species: Try progressionSession first (normalized), then committedSelections
+    // Species: from canonical session normalized format
     const speciesNorm = selections.species;
-    const speciesLegacy = legacySteps.get('species');
-    this._summary.species = speciesNorm?.name || speciesNorm?.id ||
-                            speciesLegacy?.speciesName ||
-                            character.species || '';
+    this._summary.species = speciesNorm?.name || speciesNorm?.id || '';
 
-    // Class: Try progressionSession first (normalized), then committedSelections
+    // Class: from canonical session normalized format
     const classNorm = selections.class;
-    const classLegacy = legacySteps.get('class');
-    this._summary.class = classNorm?.name || classNorm?.id ||
-                          classLegacy?.className ||
-                          character.classes?.[0]?.name || '';
+    this._summary.class = classNorm?.name || classNorm?.id || '';
 
-    // Attributes: Try progressionSession first (normalized: {values: {...}}), then committedSelections
+    // Attributes: from canonical session normalized format {values: {...}}
     const attrNorm = selections.attributes;
-    const attrLegacy = legacySteps.get('attribute');
-    if (attrNorm?.values) {
-      // Normalized format: {values: {str, dex, con, int, wis, cha}, increases, metadata}
-      this._summary.attributes = { ...attrNorm.values };
-    } else if (attrLegacy?.abilities) {
-      // Legacy format
-      this._summary.attributes = { ...attrLegacy.abilities };
-    } else {
-      this._summary.attributes = {};
-    }
+    this._summary.attributes = (attrNorm?.values) ? { ...attrNorm.values } : {};
 
-    // Skills: Try progressionSession first (normalized: {trained: [ids], source, metadata}), then committedSelections
+    // Skills: from canonical session normalized format {trained: [ids]}
     const skillsNorm = selections.skills;
-    const skillsLegacy = legacySteps.get('skills');
-    if (skillsNorm?.trained && Array.isArray(skillsNorm.trained)) {
-      // Normalized format: array of skill ids
-      this._summary.skills = skillsNorm.trained;
-    } else if (skillsLegacy?.trainedSkills) {
-      // Legacy format
-      this._summary.skills = Object.entries(skillsLegacy.trainedSkills)
-        .filter(([_, data]) => data.trained)
-        .map(([key, _]) => key);
-    } else {
-      this._summary.skills = [];
-    }
+    this._summary.skills = (skillsNorm?.trained && Array.isArray(skillsNorm.trained))
+      ? skillsNorm.trained
+      : [];
 
-    // Languages: Try progressionSession first (normalized: [{id, source}, ...]), then committedSelections
+    // Languages: from canonical session normalized format [{id, source}, ...]
     const languagesNorm = selections.languages;
-    const languagesLegacy = legacySteps.get('languages');
-    if (Array.isArray(languagesNorm)) {
-      // Normalized format: array of {id, source} objects or strings
-      this._summary.languages = languagesNorm.map(lang => lang.id || lang);
-    } else if (languagesLegacy?.selectedLanguages) {
-      // Legacy format
-      this._summary.languages = Array.isArray(languagesLegacy.selectedLanguages)
-        ? languagesLegacy.selectedLanguages
-        : [languagesLegacy.selectedLanguages];
-    } else {
-      this._summary.languages = [];
-    }
+    this._summary.languages = Array.isArray(languagesNorm)
+      ? languagesNorm.map(lang => lang.id || lang)
+      : [];
 
-    // Feats: Try progressionSession first (normalized: [{id, source}, ...]), then committedSelections
+    // Feats: from canonical session normalized format [{id, source}, ...]
     const featsNorm = selections.feats;
-    const generalFeatLegacy = legacySteps.get('general-feat');
-    const classFeatLegacy = legacySteps.get('class-feat');
-    const allFeats = [];
+    this._summary.feats = Array.isArray(featsNorm)
+      ? featsNorm.map(feat => feat.id || feat)
+      : [];
 
-    if (Array.isArray(featsNorm)) {
-      // Normalized format: array of {id, source} objects or strings
-      allFeats.push(...featsNorm.map(feat => feat.id || feat));
-    } else {
-      // Legacy format: check separate general/class feat commits
-      if (generalFeatLegacy?.selectedFeats) {
-        const generalFeats = Array.isArray(generalFeatLegacy.selectedFeats)
-          ? generalFeatLegacy.selectedFeats
-          : [generalFeatLegacy.selectedFeats];
-        allFeats.push(...generalFeats);
-      }
-      if (classFeatLegacy?.selectedFeats) {
-        const classFeats = Array.isArray(classFeatLegacy.selectedFeats)
-          ? classFeatLegacy.selectedFeats
-          : [classFeatLegacy.selectedFeats];
-        allFeats.push(...classFeats);
-      }
-    }
-    this._summary.feats = allFeats;
-
-    // Talents: Try progressionSession first (normalized: [{id, treeId, source}, ...]), then committedSelections
+    // Talents: from canonical session normalized format [{id, treeId, source}, ...]
     const talentsNorm = selections.talents;
-    const generalTalentLegacy = legacySteps.get('general-talent');
-    const classTalentLegacy = legacySteps.get('class-talent');
-    const allTalents = [];
+    this._summary.talents = Array.isArray(talentsNorm)
+      ? talentsNorm.map(talent => talent.id || talent)
+      : [];
 
-    if (Array.isArray(talentsNorm)) {
-      // Normalized format: array of {id, treeId, source} objects or strings
-      allTalents.push(...talentsNorm.map(talent => talent.id || talent));
-    } else {
-      // Legacy format: check separate general/class talent commits
-      if (generalTalentLegacy?.selectedTalents) {
-        const generalTalents = Array.isArray(generalTalentLegacy.selectedTalents)
-          ? generalTalentLegacy.selectedTalents
-          : [generalTalentLegacy.selectedTalents];
-        allTalents.push(...generalTalents);
-      }
-      if (classTalentLegacy?.selectedTalents) {
-        const classTalents = Array.isArray(classTalentLegacy.selectedTalents)
-          ? classTalentLegacy.selectedTalents
-          : [classTalentLegacy.selectedTalents];
-        allTalents.push(...classTalents);
-      }
-    }
-    this._summary.talents = allTalents;
-
-    swseLogger.log('[SummaryStep] Aggregated summary from progressionSession (fallback):', this._summary);
+    swseLogger.log('[SummaryStep] Aggregated summary from canonical session.draftSelections:', this._summary);
   }
 
   _calculateRequiredFeats() {

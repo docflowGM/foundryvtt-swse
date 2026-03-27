@@ -75,10 +75,10 @@ export class ProgressionFinalizer {
   /**
    * Validate that progression is ready to finalize.
    * Throws if not ready.
-   * PHASE A + B: Check for deferred droid builds
+   * PHASE 1: REQUIRES canonical progressionSession. No fallback to legacy.
    *
    * @param {Object} sessionState
-   * @throws {Error} if progression incomplete
+   * @throws {Error} if progression incomplete or canonical session missing
    */
   static _validateReadiness(sessionState) {
     if (!sessionState.mode || !['chargen', 'levelup'].includes(sessionState.mode)) {
@@ -88,14 +88,20 @@ export class ProgressionFinalizer {
       throw new Error('No actor in progression session');
     }
 
-    // PHASE 1: Read from progressionSession if available, fall back to committedSelections
-    const selections = sessionState.progressionSession
-      ? this._buildSelectionsFromSession(sessionState.progressionSession)
-      : sessionState.committedSelections || new Map();
-    const summarySelection = selections.get('summary') || sessionState.stepData?.get?.('summary') || {};
+    // PHASE 1: REQUIRE canonical progressionSession. Fail loudly if missing.
+    if (!sessionState.progressionSession) {
+      throw new Error(
+        'Finalization requires canonical progressionSession. ' +
+        'Legacy fallback to committedSelections is no longer supported.'
+      );
+    }
 
-    // PHASE C: Check for deferred/unfinalized droid builds
-    const droidBuild = selections.get('droid-builder');
+    const session = sessionState.progressionSession;
+    const selections = session.draftSelections || {};
+    const summarySelection = selections.survey || {};
+
+    // PHASE 1: Check droid build from canonical session only
+    const droidBuild = selections.droid;
     if (droidBuild) {
       // If droid build was deferred but not yet finalized, block completion
       if (droidBuild.buildState?.isDeferred && !droidBuild.buildState?.isFinalized) {
@@ -111,8 +117,7 @@ export class ProgressionFinalizer {
         );
       }
 
-      // PHASE E: Enforce allowDroidOverflow setting
-      // If overflow is not allowed, check that build doesn't exceed budget
+      // PHASE 1: Enforce allowDroidOverflow setting (from canonical session)
       const allowOverflow = droidBuild.droidCredits?.allowOverflow ?? false;
       if (!allowOverflow) {
         const creditsRemaining = droidBuild.droidCredits?.remaining ?? 0;
@@ -126,17 +131,19 @@ export class ProgressionFinalizer {
     }
 
     if (sessionState.mode === 'chargen') {
-      const hasName = !!(summarySelection.characterName || selections.get('name') || sessionState.actor?.name);
-      const hasClass = selections.has('class');
-      const hasAttributes = selections.has('attribute') || selections.has('attributes');
+      const hasName = !!(summarySelection.characterName || sessionState.actor?.name);
+      const hasClass = !!selections.class;
+      const hasAttributes = !!selections.attributes;
       if (!hasName || !hasClass || !hasAttributes) {
-        throw new Error('Chargen incomplete: missing required summary, class, or attribute data');
+        throw new Error('Chargen incomplete: missing required name, class, or attributes in canonical session');
       }
     }
   }
 
   /**
    * Compile all committed progression state into one mutation plan.
+   * PHASE 1: Reads ONLY from canonical progressionSession.draftSelections.
+   * No fallback to legacy committedSelections or stepData.
    *
    * @param {Object} sessionState
    * @param {Actor} actor
@@ -144,42 +151,21 @@ export class ProgressionFinalizer {
    * @returns {Object} mutation plan
    */
   static _compileMutationPlan(sessionState, actor, options = {}) {
-    // PHASE 1: Read from progressionSession if available, fall back to committedSelections
-    const selections = sessionState.progressionSession
-      ? this._buildSelectionsFromSession(sessionState.progressionSession)
-      : sessionState.committedSelections || new Map();
-    const stepData = sessionState.stepData || new Map();
+    // PHASE 1: REQUIRE canonical progressionSession. Fail loudly if missing.
+    if (!sessionState.progressionSession) {
+      throw new Error('compileMutationPlan requires canonical progressionSession');
+    }
 
-    // Try progressionSession first, fall back to selections/stepData
-    const summary = sessionState.progressionSession?.draftSelections?.survey ||
-                    selections.get('summary') ||
-                    stepData.get?.('summary') ||
-                    {};
-    const attr = sessionState.progressionSession?.draftSelections?.attributes ||
-                 selections.get('attribute') ||
-                 selections.get('attributes') ||
-                 stepData.get?.('attribute') ||
-                 {};
-    const species = sessionState.progressionSession?.draftSelections?.species ||
-                    selections.get('species') ||
-                    stepData.get?.('species') ||
-                    null;
-    const clazz = sessionState.progressionSession?.draftSelections?.class ||
-                  selections.get('class') ||
-                  stepData.get?.('class') ||
-                  null;
-    const background = sessionState.progressionSession?.draftSelections?.background ||
-                       selections.get('background') ||
-                       stepData.get?.('background') ||
-                       null;
-    const languages = sessionState.progressionSession?.draftSelections?.languages ||
-                      selections.get('languages') ||
-                      stepData.get?.('languages') ||
-                      [];
-    const skills = sessionState.progressionSession?.draftSelections?.skills ||
-                   selections.get('skills') ||
-                   stepData.get?.('skills') ||
-                   [];
+    const selections = sessionState.progressionSession.draftSelections || {};
+
+    // Read all data from canonical session ONLY. No fallback chains.
+    const summary = selections.survey || {};
+    const attr = selections.attributes || {};
+    const species = selections.species || null;
+    const clazz = selections.class || null;
+    const background = selections.background || null;
+    const languages = selections.languages || [];
+    const skills = selections.skills || [];
 
     const set = {};
     const add = { items: [] };
@@ -235,11 +221,13 @@ export class ProgressionFinalizer {
         img: entry.img || undefined
       });
     };
-    appendItem(selections.get('general-feat') || stepData.get?.('general-feat'), 'feat');
-    appendItem(selections.get('class-feat') || stepData.get?.('class-feat'), 'feat');
-    appendItem(selections.get('general-talent') || stepData.get?.('general-talent'), 'talent');
-    appendItem(selections.get('class-talent') || stepData.get?.('class-talent'), 'talent');
-    appendItem(selections.get('force-powers') || stepData.get?.('force-powers'), 'forcepower');
+    // PHASE 1: Read feats, talents, force powers from canonical session ONLY
+    appendItem(selections.feats, 'feat');
+    appendItem(selections.talents, 'talent');
+    appendItem(selections.forcePowers, 'forcepower');
+    appendItem(selections.forceTechniques, 'forcetechnique');
+    appendItem(selections.forceSecrets, 'forcesecret');
+    appendItem(selections.starshipManeuvers, 'maneuver');
 
     return {
       create: {},

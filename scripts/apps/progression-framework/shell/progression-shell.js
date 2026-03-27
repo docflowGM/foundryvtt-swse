@@ -1014,10 +1014,12 @@ export class ProgressionShell extends SWSEApplicationV2 {
       });
 
       // Prepare session state for finalizer
+      // PHASE 1: Pass canonical progressionSession (required, not optional)
       const sessionState = {
         mode: this.mode,
         actor: this.actor,
-        committedSelections: this.committedSelections,
+        progressionSession: this.progressionSession,  // CANONICAL — required by finalizer
+        committedSelections: this.committedSelections, // Legacy compat (finalizer ignores)
         steps: this.steps,
         stepData: this.stepData,
         mentor: this.mentor,
