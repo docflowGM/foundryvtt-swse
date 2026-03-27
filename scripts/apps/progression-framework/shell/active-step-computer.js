@@ -86,7 +86,9 @@ export class ActiveStepComputer {
       const adapter = progressionSession.subtypeAdapter;
       let finalActive = sortedActive;
       if (adapter) {
-        finalActive = await adapter.contributeActiveSteps(sortedActive, progressionSession, actor);
+        // Phase 2.8: Ensure session has mode for adapter logic (e.g., Beast level-up feat filtering)
+        const sessionWithMode = { ...progressionSession, mode };
+        finalActive = await adapter.contributeActiveSteps(sortedActive, sessionWithMode, actor);
       }
 
       swseLogger.debug('[ActiveStepComputer] Computed active steps', {

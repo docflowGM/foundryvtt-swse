@@ -61,7 +61,7 @@ export class BeastSubtypeAdapter extends ProgressionSubtypeAdapter {
   }
 
   async contributeActiveSteps(candidateStepIds, session, actor) {
-    // Phase 2.7: Beast-specific step filtering
+    // Phase 2.8: Beast-specific step filtering
     const isBeast = session?.beastContext?.isBeast === true;
 
     if (!isBeast) {
@@ -71,7 +71,7 @@ export class BeastSubtypeAdapter extends ProgressionSubtypeAdapter {
     // Beast-specific suppressions:
     // 1. No talents (ever)
     // 2. No force powers
-    // 3. No starting feats (but feat steps will appear when owed normally)
+    // 3. Feat steps: none in chargen, level-gated in level-up (3,6,9,12,15,18)
     const suppressedStepIds = [
       'general-talent',
       'class-talent',
@@ -80,14 +80,33 @@ export class BeastSubtypeAdapter extends ProgressionSubtypeAdapter {
       'force-power',
       'force-secret',
       'force-technique',
-      // Note: Do NOT suppress feat steps - Beast gets normal feat cadence, just not at level 1
     ];
 
-    const filtered = candidateStepIds.filter(stepId => !suppressedStepIds.includes(stepId));
+    let filtered = candidateStepIds.filter(stepId => !suppressedStepIds.includes(stepId));
+
+    // Phase 2.8: For level-up, filter feat steps to only appear at Beast levels 3, 6, 9, 12, 15, 18
+    const isLevelUp = session?.mode === 'levelup';
+    if (isLevelUp) {
+      const beastLevel = actor?.system?.level || 1;
+      const validFeatLevels = [3, 6, 9, 12, 15, 18];
+      const hasValidFeatLevel = validFeatLevels.includes(beastLevel);
+
+      if (!hasValidFeatLevel) {
+        // Filter out feat steps if not at a valid feat level
+        filtered = filtered.filter(stepId => !['general-feat', 'class-feat'].includes(stepId));
+      }
+
+      swseLogger.log('[BeastAdapter] Level-up feat filtering for Beast', {
+        beastLevel,
+        hasValidFeatLevel,
+        includingFeats: hasValidFeatLevel,
+      });
+    }
 
     swseLogger.log('[BeastAdapter] Active steps filtered for Beast', {
       originalCount: candidateStepIds.length,
       filteredCount: filtered.length,
+      isLevelUp,
     });
 
     return filtered;

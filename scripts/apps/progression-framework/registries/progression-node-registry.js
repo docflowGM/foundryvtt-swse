@@ -72,7 +72,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     icon: 'fa-circle-notch',
     category: 'canonical',
     modes: ['chargen'],
-    subtypes: ['actor', 'npc', 'droid', 'follower', 'nonheroic'],
+    subtypes: ['actor', 'npc', 'droid', 'follower', 'nonheroic', 'beast'],
 
     /** Activation policy: always owed in chargen */
     activationPolicy: ActivationPolicy.CANONICAL,
@@ -146,7 +146,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     icon: 'fa-chart-bar',
     category: 'canonical',
     modes: ['chargen', 'levelup'],
-    subtypes: ['actor', 'npc', 'droid', 'follower', 'nonheroic'],
+    subtypes: ['actor', 'npc', 'droid', 'follower', 'nonheroic', 'beast'],
 
     activationPolicy: ActivationPolicy.CANONICAL,
 
@@ -200,7 +200,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     icon: 'fa-shield-alt',
     category: 'canonical',
     modes: ['chargen', 'levelup'],
-    subtypes: ['actor', 'npc', 'follower', 'nonheroic'],
+    subtypes: ['actor', 'npc', 'follower', 'nonheroic', 'beast'],
 
     activationPolicy: ActivationPolicy.CANONICAL,
 
@@ -302,7 +302,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     icon: 'fa-book-open',
     category: 'canonical',
     modes: ['chargen', 'levelup'],
-    subtypes: ['actor', 'npc', 'follower', 'nonheroic'],
+    subtypes: ['actor', 'npc', 'follower', 'nonheroic', 'beast'],
 
     activationPolicy: ActivationPolicy.CANONICAL,
 
@@ -347,7 +347,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     icon: 'fa-star',
     category: 'canonical',
     modes: ['chargen', 'levelup'],
-    subtypes: ['actor', 'npc', 'follower', 'nonheroic'],
+    subtypes: ['actor', 'npc', 'follower', 'nonheroic', 'beast'],
 
     activationPolicy: ActivationPolicy.CANONICAL,
 
@@ -394,7 +394,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     icon: 'fa-star-half-alt',
     category: 'canonical',
     modes: ['chargen', 'levelup'],
-    subtypes: ['actor', 'npc', 'follower', 'nonheroic'],
+    subtypes: ['actor', 'npc', 'follower', 'nonheroic', 'beast'],
 
     activationPolicy: ActivationPolicy.CANONICAL,
     dependsOn: ['class', 'attribute', 'skills', 'general-feat'],
@@ -495,7 +495,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     icon: 'fa-language',
     category: 'canonical',
     modes: ['chargen'],
-    subtypes: ['actor', 'npc', 'follower', 'nonheroic'],
+    subtypes: ['actor', 'npc', 'follower', 'nonheroic', 'beast'],
 
     activationPolicy: ActivationPolicy.CANONICAL,
     dependsOn: ['species', 'background', 'attribute', 'general-feat', 'class-feat'],
@@ -516,7 +516,7 @@ export const PROGRESSION_NODE_REGISTRY = Object.freeze({
     icon: 'fa-list-check',
     category: 'canonical',
     modes: ['chargen'],
-    subtypes: ['actor', 'npc', 'droid', 'follower', 'nonheroic'],
+    subtypes: ['actor', 'npc', 'droid', 'follower', 'nonheroic', 'beast'],
 
     activationPolicy: ActivationPolicy.CANONICAL,
 
