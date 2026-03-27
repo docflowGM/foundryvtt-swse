@@ -266,7 +266,8 @@ async function acceptSale(item, actor, salePrice, isAutomatic) {
     const creditsAfter = normalizeCredits(creditsBefore + salePrice);
 
     // STEP 1: Remove item from actor (if this fails, nothing happens)
-    await item.delete();
+    // SOVEREIGNTY: Route item deletion through ActorEngine
+    await ActorEngine.deleteEmbeddedDocuments(actor, 'Item', [item.id]);
 
     // STEP 2: Add credits (if this fails, item is already gone — we failed atomically)
     await ActorEngine.updateActor(actor, { 'system.credits': creditsAfter });

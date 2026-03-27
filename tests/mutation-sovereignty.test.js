@@ -271,6 +271,71 @@ describe('MUTATION SOVEREIGNTY RESTORATION', () => {
       expect(code.includes('ActorEngine.createActiveEffects')).toBe(true);
       expect(code.includes('ActorEngine.deleteActiveEffects')).toBe(true);
     });
+
+    it('CombatEngine should create effects via ActorEngine', async () => {
+      const code = await fetch('/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js')
+        .then(r => r.text())
+        .catch(() => '');
+
+      // All three effect creation methods should use ActorEngine
+      expect(code.includes('ActorEngine.createActiveEffects')).toBe(true);
+    });
+
+    it('DarkSidePowers should delete items via ActorEngine', async () => {
+      const code = await fetch('/systems/foundryvtt-swse/scripts/talents/DarkSidePowers.js')
+        .then(r => r.text())
+        .catch(() => '');
+
+      expect(code.includes('ActorEngine.deleteEmbeddedDocuments')).toBe(true);
+    });
+
+    it('houserule-status-effects should delete effects via ActorEngine', async () => {
+      const code = await fetch('/systems/foundryvtt-swse/scripts/houserules/houserule-status-effects.js')
+        .then(r => r.text())
+        .catch(() => '');
+
+      expect(code.includes('ActorEngine.deleteActiveEffects')).toBe(true);
+    });
+
+    it('force-power-manager should create items via ActorEngine', async () => {
+      const code = await fetch('/systems/foundryvtt-swse/scripts/utils/force-power-manager.js')
+        .then(r => r.text())
+        .catch(() => '');
+
+      expect(code.includes('ActorEngine.createEmbeddedDocuments')).toBe(true);
+    });
+
+    it('actor-hooks should delete items via ActorEngine', async () => {
+      const code = await fetch('/systems/foundryvtt-swse/scripts/infrastructure/hooks/actor-hooks.js')
+        .then(r => r.text())
+        .catch(() => '');
+
+      expect(code.includes('ActorEngine.deleteEmbeddedDocuments')).toBe(true);
+    });
+
+    it('item-selling-system should delete items via ActorEngine', async () => {
+      const code = await fetch('/systems/foundryvtt-swse/scripts/apps/item-selling-system.js')
+        .then(r => r.text())
+        .catch(() => '');
+
+      expect(code.includes('ActorEngine.deleteEmbeddedDocuments')).toBe(true);
+    });
+
+    it('runtime-safety should create items via ActorEngine', async () => {
+      const code = await fetch('/systems/foundryvtt-swse/scripts/core/runtime-safety.js')
+        .then(r => r.text())
+        .catch(() => '');
+
+      expect(code.includes('ActorEngine.createEmbeddedDocuments')).toBe(true);
+    });
+
+    it('runtime-safety should update actors via ActorEngine', async () => {
+      const code = await fetch('/systems/foundryvtt-swse/scripts/core/runtime-safety.js')
+        .then(r => r.text())
+        .catch(() => '');
+
+      expect(code.includes('ActorEngine.updateActor')).toBe(true);
+    });
   });
 
   // ======================================================================
