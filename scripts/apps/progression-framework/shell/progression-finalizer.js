@@ -38,6 +38,12 @@ export class ProgressionFinalizer {
       // Gate: Is progression actually complete?
       this._validateReadiness(sessionState);
 
+      // Phase 1: Route subtype-specific readiness checks through adapter
+      const adapter = sessionState.progressionSession?.subtypeAdapter;
+      if (adapter) {
+        await adapter.validateReadiness(sessionState.progressionSession, actor);
+      }
+
       // Compile the authoritative mutation plan
       const mutationPlan = this._compileMutationPlan(
         sessionState,
@@ -45,17 +51,28 @@ export class ProgressionFinalizer {
         options
       );
 
+      // Phase 1: Route through adapter seam for subtype-specific mutation plan contribution
+      let finalMutationPlan = mutationPlan;
+      if (adapter) {
+        finalMutationPlan = await adapter.contributeMutationPlan(
+          mutationPlan,
+          sessionState.progressionSession,
+          actor
+        );
+      }
+
       swseLogger.log('[ProgressionFinalizer] Mutation plan compiled', {
-        hasCoreData: !!mutationPlan.coreData,
-        patchCount: Object.keys(mutationPlan.patches || {}).length,
-        itemGrantCount: mutationPlan.itemGrants?.length || 0,
-        hasDroidPackage: !!mutationPlan.droidPackage,
+        hasCoreData: !!finalMutationPlan.coreData,
+        patchCount: Object.keys(finalMutationPlan.patches || {}).length,
+        itemGrantCount: finalMutationPlan.itemGrants?.length || 0,
+        hasDroidPackage: !!finalMutationPlan.droidPackage,
+        adapterContributed: !!adapter,
       });
 
       // Hand to governance layer
       swseLogger.log('[ProgressionFinalizer] Sending mutation plan to ActorEngine');
 
-      const result = await this._applyMutationPlan(actor, mutationPlan);
+      const result = await this._applyMutationPlan(actor, finalMutationPlan);
 
       swseLogger.log('[ProgressionFinalizer] Finalization complete', {
         success: result.success,

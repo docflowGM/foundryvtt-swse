@@ -20,9 +20,11 @@
  * - Normalized schemas enforced per selection key
  * - buildIntent becomes a derived view (not a co-authority)
  * - All mutations flow through commitSelection() for validation
+ * - Subtype-specific behavior plugs in through adapter (Phase 1)
  */
 
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { ProgressionSubtypeAdapterRegistry } from '../adapters/progression-subtype-adapter-registry.js';
 
 export class ProgressionSession {
   /**
@@ -31,13 +33,24 @@ export class ProgressionSession {
    * @param {Actor} options.actor - Actor being progressed
    * @param {'chargen' | 'levelup' | 'template'} options.mode
    * @param {'actor' | 'npc' | 'droid' | 'follower' | 'nonheroic'} options.subtype
+   * @param {ProgressionSubtypeAdapter} options.adapter - Optional adapter (resolved if not provided)
    */
   constructor(options = {}) {
-    const { actor, mode = 'chargen', subtype = 'actor' } = options;
+    const { actor, mode = 'chargen', subtype = 'actor', adapter = null } = options;
 
     // Immutable mode/type
     this.mode = mode;
     this.subtype = subtype;
+
+    // Resolve adapter: either use provided or look up from registry
+    // Phase 1: This seam allows subtype-specific behavior to plug in
+    const registry = ProgressionSubtypeAdapterRegistry.getInstance();
+    this.subtypeAdapter = adapter || registry.resolveAdapter(subtype);
+
+    swseLogger.debug('[ProgressionSession] Created with subtype adapter', {
+      subtype,
+      adapter: this.subtypeAdapter?.constructor?.name,
+    });
 
     // Actor context (snapshot, not live)
     this.actorId = actor?.id || null;

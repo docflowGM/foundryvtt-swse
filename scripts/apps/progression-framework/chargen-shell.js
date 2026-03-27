@@ -40,6 +40,28 @@ import { GeneralTalentStep, ClassTalentStep } from './steps/talent-step.js';
 import { SummaryStep } from './steps/summary-step.js';
 
 export class ChargenShell extends ProgressionShell {
+  /**
+   * Determine progression subtype for chargen.
+   * Phase 1: Check if droid builder should be used; otherwise actor.
+   * Future: Resolve follower/nonheroic subtypes here when integrated.
+   *
+   * @param {string} mode
+   * @param {Object} options
+   * @returns {string}
+   */
+  _getProgressionSubtype(mode, options) {
+    if (options.subtype) return options.subtype;
+
+    // Phase 1: Detect droid subtype based on actor system data
+    if (this.actor && DroidBuilderAdapter.shouldUseDroidBuilder(this.actor.system || {})) {
+      return 'droid';
+    }
+
+    // Phase 2+: Detect follower/nonheroic subtypes here
+
+    return 'actor';
+  }
+
   static async open(actor, options = {}) {
     // TEMP AUDIT: Log shell open call
     console.log('[TEMP AUDIT] ChargenShell.open called for actor:', actor?.name, actor?.type);
@@ -95,10 +117,9 @@ export class ChargenShell extends ProgressionShell {
    */
   async _getCanonicalDescriptors() {
     try {
-      // Determine character subtype (actor vs droid)
-      const subtype = DroidBuilderAdapter.shouldUseDroidBuilder(this.actor?.system || {})
-        ? 'droid'
-        : 'actor';
+      // Subtype is already determined in _getProgressionSubtype() and bound to session
+      // Use it from the session's adapter
+      const subtype = this.progressionSession.subtype;
 
       // Compute active nodes for this actor in chargen mode
       const computer = new ActiveStepComputer();
@@ -137,10 +158,8 @@ export class ChargenShell extends ProgressionShell {
       return descriptors;
     } catch (err) {
       console.error('[ChargenShell] Error computing canonical descriptors:', err);
-      // Fallback to legacy behavior on error
-      return this._getLegacyCanonicalDescriptors(
-        DroidBuilderAdapter.shouldUseDroidBuilder(this.actor?.system || {}) ? 'droid' : 'actor'
-      );
+      // Fallback to legacy behavior on error, using subtype from session
+      return this._getLegacyCanonicalDescriptors(this.progressionSession.subtype);
     }
   }
 
