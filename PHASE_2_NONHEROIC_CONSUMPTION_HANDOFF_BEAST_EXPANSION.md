@@ -10,9 +10,11 @@
 
 ## 1. Beast Source Trace (Reused from Repo)
 
-### A. Beast Content Storage
+Beast content enters the repo through TWO separate import paths, both normalized to the same nonheroic NPC schema.
 
-**Source:** `/packs/beasts.db` (117 Beast entries)
+### A. Legacy Beast Pack (packs/beasts.db)
+
+**Source:** `/packs/beasts.db` (117 pre-imported Beast entries)
 
 **What it is:**
 - JSONL format with rich beast metadata
@@ -28,6 +30,15 @@
   - `abilities` (field values like `strength: 26`)
   - `tags` array with `["mount", "beast"]`
 
+**Normalization:**
+- `/scripts/build/normalize-beasts.py` normalizes these into nonheroic.db structure
+- Converts `flags.swse.beastData` fields → `system` fields:
+  - `beastData.cl` → `system.level`
+  - `beastData.reflexDefense` → `system.defenses.reflex.total`
+  - `beastData.skills` → `system.skills` (parsed into proper keys)
+  - `beastData.size`, `speed`, `bab`, `dt` all migrated to system
+- Beast data remains in `flags.swse.beastData` for lossless reference
+
 **How reused:**
 - Phase 2 detects beasts by checking for `flags.swse.beastData`
 - Session carries `beastData` for reference in projection/finalizer
@@ -35,27 +46,40 @@
 
 ---
 
-### B. Beast Normalization
+### B. Nonheroic Units Import Source (data/nonheroic/nonheroic_units.json)
 
-**Source:** `/scripts/build/normalize-beasts.py`
+**Source:** `/data/nonheroic/nonheroic_units.json` (53 Beast entries with `species_type: "Beast"`)
 
-**What it does:**
-- Reads beasts.db and normalizes beast metadata into standard system schema
-- Converts `flags.swse.beastData` fields → `system` fields:
-  - `beastData.cl` → `system.level`
-  - `beastData.reflexDefense` → `system.defenses.reflex.total`
-  - `beastData.skills` → `system.skills` (parsed into proper keys)
-  - `beastData.size`, `speed`, `bab`, `dt` all migrated to system
-- Creates actor-like structure for beasts while keeping them as `type: "npc"`
+**What it is:**
+- JSON array of nonheroic unit templates
+- 53 entries have `species_type: "Beast"` (e.g., Kiltik, Watch-Beast, Strill, Iriaz, Viper Kinrath)
+- Contains raw nonheroic stat blocks (cl, size, hp, abilities, skills, feats)
+
+**Processing Pipeline:**
+1. `/scripts/build/sanitize-nonheroic-units.js`
+   - Converts raw JSON to sanitized format
+   - Preserves `species_type` as `speciesType` in output
+   - Parses ability scores, skills, feats into system-compatible structure
+
+2. `/scripts/build/import-nonheroic-units-to-compendium.js`
+   - Imports sanitized units as NPC actors into compendium
+   - Converts `speciesType: "Beast"` to biography note (currently not stored as system/flags field)
+   - Creates `type: "npc"` actors with normalized system fields
+
+**Current state (potential gap):**
+- These imported beasts DO NOT currently have `flags.swse.beastData` set
+- They also DO NOT have `system.creatureType = "beast"` set
+- They are indistinguishable from standard nonheroic NPCs at runtime
+- **Mitigation:** Progressive future import enhancement could add these markers; current progression doesn't depend on them
 
 **How reused:**
-- Phase 2 trusts this normalization; doesn't try to re-parse beastData
-- Session projection can use normalized system fields
-- Beast data remains in flags for lossless reference
+- Repo contains pre-normalized beast templates (source authority for beast stat blocks)
+- Demonstrates that Beast is designed as nonheroic NPC shape, not separate type
+- Proof that nonheroic schema is canonical for beast representation
 
 ---
 
-### C. Beast UI Presentation
+### C. Beast UI Presentation (Template)
 
 **Source:** `/templates/actors/npc/v2/npc-sheet.hbs`
 
@@ -67,6 +91,7 @@
 - **NOTE:** `system.creatureType` is NOT actually set by any build script or runtime code
 - This is legacy/future-proofing code that never triggers in live gameplay
 - NOT the canonical runtime marker
+- Template readiness exists; implementation deferred to Phase 3+
 
 ---
 
@@ -270,15 +295,25 @@ it('should suppress talent steps for beast like standard nonheroic', async () =>
 
 ## 8. Remaining Risks / Awkwardness
 
-### No Top-Level Beast Type
+### Two Beast Sources, One With Gap
 
-**What:** Beast is NOT a registered actor type in Foundry
+**What:**
+- Beast pack (packs/beasts.db) is pre-normalized with `flags.swse.beastData` markers ✓
+- Nonheroic units (data/nonheroic/nonheroic_units.json) has 53 Beast entries but they are imported as plain NPCs without markers
 
-**Why:** Beasts are stored as NPC + metadata, not a separate type
+**Why:**
+- Legacy packs.db source was already built with progression markers
+- Nonheroic import pipeline was designed for general NPCs, not beast-aware
 
-**Impact:** Progression doesn't need to create a new beast type. Beasts work as-is.
+**Impact:**
+- Beasts from nonheroic_units.json import cannot be distinguished at runtime (no `flags.swse.beastData`, no `system.creatureType`)
+- Progression will NOT detect these as beasts unless runtime detection is enhanced
 
-**Bluntness:** This is correct design, not a problem. No awkwardness here.
+**Bluntness:** This is a pre-existing gap in the import pipeline, not introduced by Phase 2 progression integration. Phase 2 correctly assumes progression will receive either:
+  - Pre-marked beasts (from packs/beasts.db)
+  - OR standard nonheroic NPCs that are not beasts
+
+**Mitigation (Phase 3+):** Enhance import-nonheroic-units-to-compendium.js to set `flags.swse.beastData` stub for Beast-type entries during import. This would make all beasts uniformly detectable.
 
 ---
 
