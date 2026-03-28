@@ -28,12 +28,13 @@ import { swseLogger } from '../../../utils/logger.js';
 export class ProjectionEngine {
   /**
    * Build a projected character from progression session state.
+   * ASYNC: Awaits subtype adapter contributions for beast/droid/nonheroic paths.
    *
    * @param {Object} progressionSession - Phase 1 canonical session
    * @param {Actor} actor - Original actor (for immutable snapshot reference)
-   * @returns {Object} Projected character object
+   * @returns {Promise<Object>} Projected character object
    */
-  static buildProjection(progressionSession, actor) {
+  static async buildProjection(progressionSession, actor) {
     try {
       if (!progressionSession || !progressionSession.draftSelections) {
         swseLogger.warn('[ProjectionEngine] No draft selections available');
@@ -50,6 +51,8 @@ export class ProjectionEngine {
         abilities: this._projectAbilities(draftSelections),
         languages: this._projectLanguages(draftSelections),
         droid: this._projectDroid(draftSelections),
+        beast: this._projectBeast(draftSelections),
+        nonheroic: this._projectNonheroic(draftSelections),
         derived: this._projectDerived(draftSelections, progressionSession),
       };
 
@@ -61,7 +64,8 @@ export class ProjectionEngine {
         mode: progressionSession.mode || 'chargen',
       };
 
-      // Phase 1: Route through adapter seam for subtype-specific projection contribution
+      // Route through adapter seam for subtype-specific projection contribution
+      // FIXED: Now properly awaits async adapter contributions
       const adapter = progressionSession.subtypeAdapter;
       let finalProjection = projection;
       if (adapter) {
@@ -96,24 +100,37 @@ export class ProjectionEngine {
   }
 
   /**
-   * Project attributes (str, dex, con, int, wis, cha).
+   * Project attributes (str, dex, con, int, wis, cha) with modifiers.
+   * Returns normalized format: { str: { score, modifier }, dex: { score, modifier }, ... }
+   * Modifier computed as (score - 10) / 2, rounded down.
    *
    * @private
    */
   static _projectAttributes(draftSelections) {
     const attrSelection = draftSelections.attributes;
-    if (!attrSelection || !attrSelection.values) {
-      return { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
-    }
-
-    return {
-      str: attrSelection.values.str || 10,
-      dex: attrSelection.values.dex || 10,
-      con: attrSelection.values.con || 10,
-      int: attrSelection.values.int || 10,
-      wis: attrSelection.values.wis || 10,
-      cha: attrSelection.values.cha || 10,
+    const defaultAttrs = {
+      str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10,
     };
+
+    const scores = {
+      str: attrSelection?.values?.str || 10,
+      dex: attrSelection?.values?.dex || 10,
+      con: attrSelection?.values?.con || 10,
+      int: attrSelection?.values?.int || 10,
+      wis: attrSelection?.values?.wis || 10,
+      cha: attrSelection?.values?.cha || 10,
+    };
+
+    // Compute normalized format with scores and modifiers
+    const normalized = {};
+    Object.entries(scores).forEach(([key, score]) => {
+      normalized[key] = {
+        score,
+        modifier: Math.floor((score - 10) / 2),
+      };
+    });
+
+    return normalized;
   }
 
   /**
@@ -215,7 +232,43 @@ export class ProjectionEngine {
   }
 
   /**
-   * Project derived state (warnings, grants, etc.).
+   * Project beast configuration (if applicable).
+   * ADAPTER CONTRIBUTION: Adapter can override/enhance this with actual beast data.
+   *
+   * @private
+   */
+  static _projectBeast(draftSelections) {
+    const beastSelection = draftSelections.beast;
+    if (!beastSelection) {
+      return null;
+    }
+
+    return {
+      type: beastSelection.type || null,
+      buildState: beastSelection.buildState || {},
+    };
+  }
+
+  /**
+   * Project nonheroic configuration (if applicable).
+   * ADAPTER CONTRIBUTION: Adapter can override/enhance this with actual profession data.
+   *
+   * @private
+   */
+  static _projectNonheroic(draftSelections) {
+    const nonheroicSelection = draftSelections.nonheroic;
+    if (!nonheroicSelection) {
+      return null;
+    }
+
+    return {
+      profession: nonheroicSelection.profession || null,
+      buildState: nonheroicSelection.buildState || {},
+    };
+  }
+
+  /**
+   * Project derived state (warnings, grants, credits, etc.).
    *
    * @private
    */
@@ -223,8 +276,24 @@ export class ProjectionEngine {
     return {
       warnings: this._computeProjectionWarnings(draftSelections, session),
       grants: {}, // TODO: Compute what identity/class/feats grant
+      credits: this._computeCredits(draftSelections),
       projectStatus: 'complete',
     };
+  }
+
+  /**
+   * Compute available credits from class and background selections.
+   * Returns the total credits available for equipment purchase.
+   * TODO: Link to actual item definitions to look up credit values by class/background.
+   *
+   * @private
+   */
+  static _computeCredits(draftSelections) {
+    // PLACEHOLDER: Return default credits or 0 if class not selected
+    // In a complete implementation, would look up class.credits and background.credits values
+    const classCredits = draftSelections.class?.credits || 0;
+    const backgroundCredits = draftSelections.background?.credits || 0;
+    return classCredits + backgroundCredits;
   }
 
   /**

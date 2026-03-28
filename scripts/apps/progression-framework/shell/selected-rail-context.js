@@ -26,12 +26,13 @@ import { swseLogger } from '../../../utils/logger.js';
 export class SelectedRailContext {
   /**
    * Build the canonical snapshot context for the selected rail.
+   * ASYNC: Awaits projection build to include subtype adapter contributions.
    *
    * @param {ProgressionShell} shell - The progression shell
    * @param {string} currentStepId - Current step identifier
-   * @returns {Object} Normalized snapshot context
+   * @returns {Promise<Object>} Normalized snapshot context
    */
-  static buildSnapshot(shell, currentStepId) {
+  static async buildSnapshot(shell, currentStepId) {
     try {
       if (!shell || !shell.actor || !shell.progressionSession) {
         return this._buildEmptySnapshot();
@@ -44,7 +45,8 @@ export class SelectedRailContext {
 
       // Build projection (authoritative in-progress state)
       // Always rebuild to ensure freshness after selections change
-      const projection = ProjectionEngine.buildProjection(session, actor);
+      // FIXED: Now properly awaits async projection build
+      const projection = await ProjectionEngine.buildProjection(session, actor);
 
       // Cache for next render
       session.currentProjection = projection;
@@ -354,6 +356,7 @@ export class SelectedRailContext {
 
   /**
    * Build languages section (count and list).
+   * Handles both string and { id, name } object formats from projection.
    * @private
    */
   static _buildLanguagesSection(projection, currentStepId) {
@@ -365,7 +368,8 @@ export class SelectedRailContext {
       id: 'languages',
       label: `Languages (${projection.languages.length})`,
       items: projection.languages.map(lang => ({
-        label: lang,
+        // Extract name from object or use string directly
+        label: typeof lang === 'string' ? lang : (lang.name || lang.id || lang),
         isCurrent: currentStepId === 'languages',
       })),
       isCurrent: currentStepId === 'languages',

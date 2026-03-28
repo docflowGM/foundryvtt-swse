@@ -805,7 +805,8 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     // Summary panel (left column — build snapshot)
     // REFACTOR: Now uses canonical SelectedRailContext instead of per-step renderSummaryPanel
-    const selectedRailContext = SelectedRailContext.buildSnapshot(this, currentDescriptor?.stepId ?? null);
+    // FIXED: Now properly awaits async buildSnapshot to include adapter contributions
+    const selectedRailContext = await SelectedRailContext.buildSnapshot(this, currentDescriptor?.stepId ?? null);
     const summaryPanelHtml = selectedRailContext && selectedRailContext.snapshotSections.length > 0
       ? await foundry.applications.handlebars.renderTemplate(
           'systems/foundryvtt-swse/templates/apps/progression-framework/summary-panel/selected-rail.hbs',
