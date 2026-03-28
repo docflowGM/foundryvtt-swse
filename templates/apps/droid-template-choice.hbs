@@ -1,0 +1,207 @@
+<div class="droid-template-choice-container">
+  <div class="choice-intro">
+    <p class="intro-text">
+      <strong>Configure your droid</strong><br>
+      Choose how you'd like to build your droid character:
+    </p>
+  </div>
+
+  <div class="choices-grid">
+    <!-- Droid Template Option -->
+    <div class="choice-card droid-template-card">
+      <button class="choice-button" data-action="droid-template">
+        <div class="choice-icon">
+          <i class="fas fa-robot"></i>
+        </div>
+        <div class="choice-content">
+          <h3>Droid Template</h3>
+          <p class="choice-description">
+            Choose a droid chassis archetype like astromech, protocol droid, or battle droid. This sets your physical identity and default systems.
+          </p>
+          <div class="choice-note">
+            Applies droid-specific configuration, then continues through droid progression
+          </div>
+        </div>
+      </button>
+    </div>
+
+    <!-- Class Template Option -->
+    <div class="choice-card class-template-card">
+      <button class="choice-button" data-action="class-template">
+        <div class="choice-icon">
+          <i class="fas fa-scroll"></i>
+        </div>
+        <div class="choice-content">
+          <h3>Class Template</h3>
+          <p class="choice-description">
+            Select a class-oriented template like Scout or Noble to prefill class-side decisions while building your droid body.
+          </p>
+          <div class="choice-note">
+            Applies class template preferences, still requires droid parts/systems
+          </div>
+        </div>
+      </button>
+    </div>
+
+    <!-- Custom Droid Option -->
+    <div class="choice-card custom-card">
+      <button class="choice-button" data-action="custom">
+        <div class="choice-icon">
+          <i class="fas fa-wrench"></i>
+        </div>
+        <div class="choice-content">
+          <h3>Build Custom</h3>
+          <p class="choice-description">
+            Build a droid from the ground up with no templates. Complete full droid configuration and choose all aspects yourself.
+          </p>
+          <div class="choice-note">
+            Full droid progression with complete freedom
+          </div>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <div class="choice-footer">
+    <p class="footer-note">
+      <i class="fas fa-info-circle"></i>
+      All droid characters complete progression through the full chargen system.
+    </p>
+  </div>
+</div>
+
+<style>
+.droid-template-choice-container {
+  padding: 2rem;
+  background: linear-gradient(135deg, rgba(50, 50, 50, 0.8) 0%, rgba(40, 40, 40, 0.8) 100%);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.choice-intro {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.intro-text {
+  font-size: 1.1rem;
+  color: #e0e0e0;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.choices-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  flex: 1;
+  align-items: start;
+}
+
+.choice-card {
+  background: rgba(20, 20, 20, 0.9);
+  border: 2px solid rgba(100, 100, 100, 0.5);
+  border-radius: 8px;
+  padding: 1.25rem;
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.choice-card:hover {
+  border-color: #4a90e2;
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+  transform: translateY(-2px);
+}
+
+.droid-template-card:hover {
+  border-color: #6c8fd4;
+}
+
+.class-template-card:hover {
+  border-color: #d4a76c;
+}
+
+.custom-card:hover {
+  border-color: #6c9a6c;
+}
+
+.choice-button {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 0;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.choice-button:hover {
+  transform: scale(1.02);
+}
+
+.choice-icon {
+  font-size: 3rem;
+  color: #8ab4f8;
+  margin-bottom: 0.5rem;
+}
+
+.droid-template-card .choice-icon {
+  color: #6c8fd4;
+}
+
+.class-template-card .choice-icon {
+  color: #d4a76c;
+}
+
+.custom-card .choice-icon {
+  color: #6c9a6c;
+}
+
+.choice-content h3 {
+  margin: 0.5rem 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #e0e0e0;
+}
+
+.choice-description {
+  font-size: 0.95rem;
+  color: #b0b0b0;
+  margin: 0.5rem 0;
+  line-height: 1.5;
+}
+
+.choice-note {
+  font-size: 0.85rem;
+  color: #888;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(100, 100, 100, 0.3);
+  font-style: italic;
+}
+
+.choice-footer {
+  text-align: center;
+  padding: 1rem;
+  background: rgba(74, 144, 226, 0.1);
+  border-radius: 4px;
+  border-left: 3px solid #4a90e2;
+}
+
+.footer-note {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #a0c0e8;
+}
+
+.footer-note i {
+  margin-right: 0.5rem;
+}
+</style>

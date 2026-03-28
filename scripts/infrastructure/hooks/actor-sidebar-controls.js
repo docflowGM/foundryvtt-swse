@@ -14,6 +14,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { launchProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
 import { TemplateCharacterCreator } from "/systems/foundryvtt-swse/scripts/apps/template-character-creator.js";
+import { NPCTemplateImporter } from "/systems/foundryvtt-swse/scripts/apps/npc-template-importer.js";
 import { GMStoreDashboard } from "/systems/foundryvtt-swse/scripts/apps/gm-store-dashboard.js";
 
 function onClickChargen(app) {
@@ -91,6 +92,21 @@ function onClickGMDashboard(app) {
   }
 }
 
+function onClickNPCTemplates(app) {
+  // NPC Template Importer - GMs only
+  if (!(game.user?.isGM ?? false)) {
+    ui?.notifications?.warn?.('Only GMs can import NPC templates.');
+    return;
+  }
+  SWSELogger.log('[Actor Sidebar] Opening NPC Template Importer');
+  try {
+    NPCTemplateImporter.create();
+  } catch (err) {
+    SWSELogger.error('[Actor Sidebar] Error opening NPC template importer:', err);
+    ui?.notifications?.error?.(`Failed to open NPC template importer: ${err.message}`);
+  }
+}
+
 export function registerActorSidebarControls() {
   // Sidebar controls appear on ActorDirectory app
   HooksRegistry.register('getHeaderControlsApplicationV2', (app, controls) => {
@@ -134,6 +150,13 @@ export function registerActorSidebarControls() {
 
     // Templates button (GM only)
     if (game.user?.isGM ?? false) {
+      controls.unshift({
+        action: 'swse-npc-templates',
+        icon: 'fa-solid fa-dragon',
+        label: 'Import NPC',
+        handler: () => onClickNPCTemplates(app)
+      });
+
       controls.unshift({
         action: 'swse-templates',
         icon: 'fa-solid fa-layer-group',
