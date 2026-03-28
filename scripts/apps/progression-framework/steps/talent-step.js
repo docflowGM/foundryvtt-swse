@@ -23,6 +23,7 @@ import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/sugge
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { buildDependencyGraph } from '/systems/foundryvtt-swse/scripts/apps/chargen/chargen-talent-tree-graph.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { canonicallyOrderSelections } from '../utils/selection-ordering.js';
 
 export class TalentStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -318,9 +319,9 @@ export class TalentStep extends ProgressionStepPlugin {
 
   async getStepData(context) {
     if (this._stage === 'browser') {
-      return this._getTreeBrowserData();
+      return this._getTreeBrowserData(context);
     } else if (this._stage === 'graph') {
-      return this._getTreeGraphData();
+      return this._getTreeGraphData(context);
     }
 
     return {};
@@ -329,8 +330,12 @@ export class TalentStep extends ProgressionStepPlugin {
   /**
    * Data for Stage 1: Tree Browser
    */
-  _getTreeBrowserData() {
+  _getTreeBrowserData(context) {
     const filteredTrees = this._filterTreesBySearch(this._allTrees);
+
+    // Get committed talents from session and order them canonically
+    const committedTalents = context?.shell?.progressionSession?.draftSelections?.talents || [];
+    const orderedSelections = canonicallyOrderSelections(committedTalents);
 
     return {
       stage: 'browser',
@@ -349,13 +354,14 @@ export class TalentStep extends ProgressionStepPlugin {
         name: t.name,
       })),
       searchQuery: this._searchQuery,
+      orderedSelections,
     };
   }
 
   /**
    * Data for Stage 2: Tree Graph
    */
-  async _getTreeGraphData() {
+  async _getTreeGraphData(context) {
     const selectedTree = this._getTree(this._selectedTreeId);
     if (!selectedTree || !this._graphData) {
       return { stage: 'graph', error: 'Tree not found' };
@@ -378,12 +384,17 @@ export class TalentStep extends ProgressionStepPlugin {
       };
     }
 
+    // Get committed talents from session and order them canonically
+    const committedTalents = context?.shell?.progressionSession?.draftSelections?.talents || [];
+    const orderedSelections = canonicallyOrderSelections(committedTalents);
+
     return {
       stage: 'graph',
       selectedTreeId: this._selectedTreeId,
       selectedTreeName: selectedTree.name,
       nodeStates,
       graphData: this._graphData,
+      orderedSelections,
     };
   }
 

@@ -27,6 +27,7 @@ import { normalizeFeats } from './step-normalizers.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { canonicallyOrderSelections } from '../utils/selection-ordering.js';
 
 // Constants
 const FEATS_PER_CATEGORY_INITIAL = 5;  // Constrained visible count per category
@@ -420,6 +421,10 @@ export class FeatStep extends ProgressionStepPlugin {
       };
     }
 
+    // Get committed feats from session and order them canonically
+    const committedFeats = context?.shell?.progressionSession?.draftSelections?.feats || [];
+    const orderedSelections = canonicallyOrderSelections(committedFeats);
+
     return {
       groupedFeats: groupedDisplay,
       focusedFeatId: this._focusedFeatId,
@@ -427,6 +432,7 @@ export class FeatStep extends ProgressionStepPlugin {
       searchQuery: this._searchQuery,
       showAll: this._showAll,
       slotType: this._slotType,
+      orderedSelections,
     };
   }
 
