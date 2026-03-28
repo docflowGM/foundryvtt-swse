@@ -6,7 +6,9 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { NPCTemplateDataLoader } from "/systems/foundryvtt-swse/scripts/core/npc-template-data-loader.js";
+import { DroidTemplateDataLoader } from "/systems/foundryvtt-swse/scripts/core/droid-template-data-loader.js";
 import { NPCTemplateImporterEngine } from "/systems/foundryvtt-swse/scripts/engine/import/npc-template-importer-engine.js";
+import { DroidTemplateImporterEngine } from "/systems/foundryvtt-swse/scripts/engine/import/droid-template-importer-engine.js";
 import { GalacticRecordsCategoryRegistry } from "/systems/foundryvtt-swse/scripts/core/galactic-records-category-registry.js";
 import { NPCImportCustomizationWizard } from "/systems/foundryvtt-swse/scripts/apps/npc-import-customization-wizard.js";
 
@@ -111,7 +113,15 @@ export class GalacticRecordsBrowser extends HandlebarsApplicationMixin(Applicati
 
       try {
         const loaderName = category.dataLoader;
-        const templates = await NPCTemplateDataLoader[loaderName]();
+        let templates;
+
+        // Use appropriate loader based on category type
+        if (categoryId === 'droid') {
+          templates = await DroidTemplateDataLoader[loaderName]();
+        } else {
+          templates = await NPCTemplateDataLoader[loaderName]();
+        }
+
         this.templates[categoryId] = templates;
         SWSELogger.log(`[GalacticRecordsBrowser] Loaded ${templates.length} templates for ${categoryId}`);
       } catch (err) {
@@ -186,6 +196,8 @@ export class GalacticRecordsBrowser extends HandlebarsApplicationMixin(Applicati
         actor = await NPCTemplateImporterEngine.importNonheroicTemplate(template, customData);
       } else if (this.selectedCategory === 'beast') {
         actor = await NPCTemplateImporterEngine.importBeastTemplate(template.id, customData);
+      } else if (this.selectedCategory === 'droid') {
+        actor = await DroidTemplateImporterEngine.importDroidTemplate(template.id, customData);
       }
 
       if (actor) {

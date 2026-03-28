@@ -47,13 +47,12 @@ export class GalacticRecordsCategoryRegistry {
       {
         id: 'droid',
         label: 'Droid',
-        description: 'Droid and automaton profiles',
+        description: 'Droid and automaton profiles from the mechanical registry',
         icon: 'fa-robot',
-        supported: false,
-        dataLoader: null,
-        importer: null,
-        unavailableReason: 'Droid import system not yet available. Coming in a future update.',
-        count: 0
+        supported: true,
+        dataLoader: 'loadDroidTemplates',
+        importer: 'importDroidTemplate',
+        count: 388
       }
     ];
   }
