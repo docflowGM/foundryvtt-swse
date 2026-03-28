@@ -40,6 +40,8 @@ import { ChargenPersistence } from './chargen-persistence.js';
 import { SessionStorage } from './session-storage.js';
 import { InvalidationPreview } from './invalidation-preview.js';
 import { RolloutController } from '../rollout/rollout-controller.js';
+import { SelectedRailContext } from './selected-rail-context.js';
+import { ProjectionEngine } from './projection-engine.js';
 
 /**
  * Shell state model (reference — actual state lives on `this`)
@@ -802,9 +804,13 @@ export class ProgressionShell extends SWSEApplicationV2 {
       : null;
 
     // Summary panel (left column — build snapshot)
-    const summaryPanelSpec = currentPlugin?.renderSummaryPanel?.(context) ?? null;
-    const summaryPanelHtml = summaryPanelSpec?.template
-      ? await foundry.applications.handlebars.renderTemplate(summaryPanelSpec.template, summaryPanelSpec.data)
+    // REFACTOR: Now uses canonical SelectedRailContext instead of per-step renderSummaryPanel
+    const selectedRailContext = SelectedRailContext.buildSnapshot(this, currentDescriptor?.stepId ?? null);
+    const summaryPanelHtml = selectedRailContext && selectedRailContext.snapshotSections.length > 0
+      ? await foundry.applications.handlebars.renderTemplate(
+          'systems/foundryvtt-swse/templates/apps/progression-framework/summary-panel/selected-rail.hbs',
+          selectedRailContext
+        )
       : null;
 
     // ── DEBUG: shell region ownership verification ──
@@ -1032,6 +1038,29 @@ export class ProgressionShell extends SWSEApplicationV2 {
           swseLogger.error('ProgressionShell: plugin.afterRender failed', { err })
         );
       }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Projection Lifecycle — rebuild after selection changes
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Rebuild the projection from current progression session state.
+   * Called after selections are committed to ensure selected rail shows up-to-date data.
+   *
+   * @private
+   */
+  _rebuildProjection() {
+    try {
+      if (!this.progressionSession) return;
+
+      const projection = ProjectionEngine.buildProjection(this.progressionSession, this.actor);
+      this.progressionSession.currentProjection = projection;
+
+      swseLogger.debug('[ProgressionShell] Projection rebuilt after selection change');
+    } catch (err) {
+      swseLogger.error('[ProgressionShell] Error rebuilding projection:', err);
     }
   }
 
@@ -1575,6 +1604,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
     if (plugin) {
       await plugin.onItemCommitted(target.dataset.itemId, this);
+      // Rebuild projection after selection committed to update selected rail
+      this._rebuildProjection();
+      // Trigger re-render to show updated selected rail
+      this.render();
     }
   }
 
