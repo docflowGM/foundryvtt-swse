@@ -30,7 +30,7 @@
 
     <div class="defenses-container">
 
-    {{#each headerDefenses as |def|}}
+    {{#each defensePanel.defenses as |def|}}
 
       <div class="defense-row defense-{{def.key}}">
 
@@ -41,7 +41,7 @@
             {{def.label}}
           </div>
 
-          <div class="defense-total" data-defense-breakdown="{{def.key}}" title="Hover for modifier breakdown">
+          <div class="defense-total" data-defense-breakdown="{{def.key}}" title="{{def.label}} defense breakdown">
             {{def.total}}
           </div>
 
@@ -91,7 +91,8 @@
                      name="system.defenses.{{def.key}}.miscMod"
                      value="{{def.miscMod}}"
                      class="misc-input {{def.miscModClass}}"
-                     placeholder="0">
+                     placeholder="0"
+                     {{#unless def.canEdit}}disabled{{/unless}}>
             </div>
 
             <div class="math-equals">=</div>
