@@ -968,6 +968,127 @@ export class ProgressionShell extends SWSEApplicationV2 {
   }
 
   /**
+   * Get the next active step ID after the given step.
+   * Returns null if current step is the last active step.
+   * @param {string} currentStepId - Current step ID
+   * @returns {string|null} Next step ID, or null if at end
+   */
+  getNextActiveStepId(currentStepId) {
+    const currentIdx = this.steps.findIndex(s => s.stepId === currentStepId);
+    if (currentIdx < 0 || currentIdx >= this.steps.length - 1) {
+      return null;
+    }
+    return this.steps[currentIdx + 1]?.stepId ?? null;
+  }
+
+  /**
+   * Get the previous active step ID before the given step.
+   * Returns null if current step is the first active step.
+   * @param {string} currentStepId - Current step ID
+   * @returns {string|null} Previous step ID, or null if at beginning
+   */
+  getPreviousActiveStepId(currentStepId) {
+    const currentIdx = this.steps.findIndex(s => s.stepId === currentStepId);
+    if (currentIdx <= 0) {
+      return null;
+    }
+    return this.steps[currentIdx - 1]?.stepId ?? null;
+  }
+
+  /**
+   * Check if forward navigation is allowed from the given step.
+   * Blocks only on error-level issues, allows warnings/caution.
+   * @param {string} stepId - Step to check
+   * @returns {boolean} true if can navigate forward
+   */
+  canNavigateForward(stepId) {
+    const plugin = this.stepPlugins.get(stepId);
+    if (!plugin) {
+      return false;
+    }
+
+    // Only errors block forward navigation
+    // Warnings/caution allow progress
+    const blockingIssues = plugin.getBlockingIssues?.() ?? [];
+    return blockingIssues.length === 0;
+  }
+
+  /**
+   * Check if backward navigation is allowed from the given step.
+   * Backward navigation is always allowed (no validation blocking).
+   * @param {string} stepId - Step to check
+   * @returns {boolean} true if can navigate backward (always true unless at start)
+   */
+  canNavigateBackward(stepId) {
+    const currentIdx = this.steps.findIndex(s => s.stepId === stepId);
+    // Can always go back unless at the beginning
+    return currentIdx > 0;
+  }
+
+  /**
+   * Get the current step ID.
+   * @returns {string|null} Current step ID, or null if no current step
+   */
+  getCurrentStepId() {
+    return this.steps[this.currentStepIndex]?.stepId ?? null;
+  }
+
+  /**
+   * Get the index of a step by ID.
+   * @param {string} stepId - Step ID
+   * @returns {number} Index, or -1 if not found
+   */
+  getStepIndex(stepId) {
+    return this.steps.findIndex(s => s.stepId === stepId);
+  }
+
+  /**
+   * Repair current step if it's no longer valid.
+   * Called when active steps change (mid-session unlock/lock).
+   * Ensures currentStepIndex always points to a valid active step.
+   * @returns {boolean} true if repair was needed, false if no repair needed
+   * @private
+   */
+  _repairCurrentStep() {
+    const currentStepId = this.getCurrentStepId();
+
+    // If current step still exists, no repair needed
+    if (currentStepId && this.getStepIndex(currentStepId) >= 0) {
+      return false;
+    }
+
+    // Current step is gone — find a valid replacement
+    let newIndex = -1;
+
+    // Try next active step
+    if (this.currentStepIndex < this.steps.length) {
+      newIndex = this.currentStepIndex;
+    }
+    // Try previous active step
+    else if (this.currentStepIndex > 0) {
+      newIndex = this.currentStepIndex - 1;
+    }
+    // Fallback to first active step (should always exist)
+    else if (this.steps.length > 0) {
+      newIndex = 0;
+    }
+
+    if (newIndex >= 0) {
+      swseLogger.warn(
+        `[ProgressionShell] Current step became invalid; repairing to ${this.steps[newIndex]?.stepId}`,
+        { previousStepId: currentStepId, newStepId: this.steps[newIndex]?.stepId }
+      );
+      this.currentStepIndex = newIndex;
+      return true;
+    }
+
+    // No valid step found (should not happen)
+    swseLogger.error('[ProgressionShell] Cannot repair current step — no valid active steps!');
+    this.currentStepIndex = 0;
+    return true;
+  }
+
+  /**
    * Evaluate canonical status for a step.
    * Status is determined by: visited, completion, validation, staleness.
    *
@@ -1458,8 +1579,8 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
   /**
    * Recompute active steps and validate current step is still applicable.
-   * If current step has become non-applicable (due to upstream choices),
-   * auto-move to the next applicable step.
+   * Rebuilds step list and repairs current step if needed.
+   * Also tracks downstream invalidation based on upstream changes.
    * @private
    */
   async _recomputeActiveStepsIfNeeded() {
@@ -1473,22 +1594,43 @@ export class ProgressionShell extends SWSEApplicationV2 {
         { subtype: this.progressionSession.subtype }
       );
 
-      const currentStepId = this.steps[this.currentStepIndex]?.stepId;
-      const isCurrentStepStillActive = newActiveNodeIds.includes(currentStepId);
+      // Rebuild step list from new active nodes
+      const mapNodesToDescriptors = (await import('../registries/node-descriptor-mapper.js')).default;
+      const newDescriptors = mapNodesToDescriptors(newActiveNodeIds);
 
-      if (!isCurrentStepStillActive && currentStepId) {
-        // Current step is no longer applicable — find next applicable step
-        const nextApplicableIndex = this._findNextApplicableStep(this.currentStepIndex + 1);
-        if (nextApplicableIndex >= 0) {
-          swseLogger.log(`[ProgressionShell] Step ${currentStepId} became non-applicable; auto-navigating to next step`, {
-            nextStepId: this.steps[nextApplicableIndex]?.stepId,
-          });
-          this.currentStepIndex = nextApplicableIndex;
-          const nextPlugin = this.stepPlugins.get(this.steps[nextApplicableIndex]?.stepId);
-          if (nextPlugin) {
-            await nextPlugin.onStepEnter(this);
+      // Filter hidden steps
+      const newSteps = newDescriptors.filter(d => !d.isHidden);
+
+      // Update step list
+      const oldStepIds = this.steps.map(s => s.stepId);
+      const newStepIds = newSteps.map(s => s.stepId);
+
+      // Only rebuild if there's an actual change
+      if (JSON.stringify(oldStepIds) !== JSON.stringify(newStepIds)) {
+        // Rebuild plugins for new steps
+        this.steps = newSteps;
+        this.stepPlugins.clear();
+
+        for (const descriptor of this.steps) {
+          if (descriptor.pluginClass) {
+            try {
+              this.stepPlugins.set(descriptor.stepId, new descriptor.pluginClass(descriptor));
+            } catch (err) {
+              swseLogger.error(`[ProgressionShell] Failed to rebuild plugin for ${descriptor.stepId}:`, err);
+            }
           }
         }
+
+        // Repair current step if it's no longer valid
+        this._repairCurrentStep();
+
+        swseLogger.log('[ProgressionShell] Rebuilt step list after recomputation', {
+          oldCount: oldStepIds.length,
+          newCount: newStepIds.length,
+          added: newStepIds.filter(id => !oldStepIds.includes(id)),
+          removed: oldStepIds.filter(id => !newStepIds.includes(id)),
+          currentStepId: this.getCurrentStepId(),
+        });
       }
     } catch (err) {
       swseLogger.warn(`[ProgressionShell] Error recomputing active steps:`, err);
