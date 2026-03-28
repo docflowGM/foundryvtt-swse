@@ -28,6 +28,7 @@ export function computeCharacterDerived(actor, system) {
   system.derived.talents ??= {};
   system.derived.forceTechniques ??= {};
   system.derived.forceSecrets ??= {};
+  system.derived.starshipManeuvers ??= {};
   system.derived.actions ??= {};
   system.derived.encumbrance ??= {};
   system.derived.racialAbilities ??= [];
@@ -72,6 +73,7 @@ export function computeCharacterDerived(actor, system) {
   mirrorTalents(actor, system);
   mirrorForceTechniques(actor, system);
   mirrorForceSecrets(actor, system);
+  mirrorStarshipManeuvers(actor, system);
   mirrorRacialAbilities(system);
   mirrorActions(actor, system);
   mirrorEncumbrance(actor, system);
@@ -298,6 +300,25 @@ function mirrorForceSecrets(actor, system) {
   list.sort((a, b) => a.name.localeCompare(b.name));
   system.derived.forceSecrets.list = list;
   system.derived.forceSecrets.count = list.length;
+}
+
+function mirrorStarshipManeuvers(actor, system) {
+  const maneuvers = (actor?.items ?? []).filter(i => i.type === 'maneuver');
+  const list = [];
+
+  for (const m of maneuvers) {
+    const data = m.system ?? {};
+    const entry = {
+      id: m.id,
+      name: m.name,
+      summary: summarizeText(data.benefit ?? data.description ?? data.normalText ?? '', 160)
+    };
+    list.push(entry);
+  }
+
+  list.sort((a, b) => a.name.localeCompare(b.name));
+  system.derived.starshipManeuvers.list = list;
+  system.derived.starshipManeuvers.count = list.length;
 }
 
 function mirrorActions(actor, system) {
