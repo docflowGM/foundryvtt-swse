@@ -3,13 +3,13 @@
 **Session Date:** March 28, 2026
 **Branch:** `claude/dynamic-step-visibility-lBQ6O`
 **Scope:** Comprehensive UX audit and multi-phase implementation
-**Status:** ✅ 7 of 11 phases implemented
+**Status:** ✅ 9 of 11 phases implemented
 
 ---
 
 ## Executive Summary
 
-This session delivered **7 major UX improvements** to the SWSE progression engine, focusing on clarity, guidance, and player confidence. All improvements are grounded in authoritative progression state (no logic duplication) and maintain consistency across all step types.
+This session delivered **9 major UX improvements** to the SWSE progression engine, focusing on clarity, guidance, confidence, and control. All improvements are grounded in authoritative progression state (no logic duplication) and maintain consistency across all step types.
 
 **Key Achievement:** Players now have clear answers to:
 - Where am I? (Phase 1)
