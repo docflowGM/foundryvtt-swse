@@ -22,7 +22,7 @@
  */
 
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
-import { PrerequisiteChecker } from '/systems/foundryvtt-swse/scripts/engine/prerequisite/prerequisite-checker.js';
+import { PrerequisiteChecker } from '/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js';
 
 export class TemplateValidator {
   /**

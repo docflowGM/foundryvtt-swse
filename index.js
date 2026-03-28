@@ -218,6 +218,9 @@ Hooks.once("setup", () => {
 
   console.log("[SWSE] Registering V2 sheets (v13 compliant)");
 
+  // Ensure all actor documents use the SWSE V2 actor prototype/methods
+  CONFIG.Actor.documentClass = SWSEV2BaseActor;
+
   // Combat SSOT registration: ensure SWSE combat document classes are the
   // live runtime authority for tracker state, initiative, and action economy.
   CONFIG.Combat.documentClass = SWSECombatDocument;

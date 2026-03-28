@@ -79,8 +79,8 @@ export async function launchProgression(actor, options = {}) {
   console.log('[PROGRESSION] actor.name:', actor?.name);
   console.log('[PROGRESSION] actor.type:', actor?.type);
   console.log('[PROGRESSION] actor.system.level:', actor?.system?.level);
-  console.log('[PROGRESSION] actor.items.length:', actor?.items?.length);
-  const hasClass = actor?.items?.some(item => item.type === 'class');
+  console.log('[PROGRESSION] actor.items.size:', actor?.items?.size);
+  const hasClass = Array.from(actor?.items ?? []).some(item => item.type === 'class');
   console.log('[PROGRESSION] hasClass:', hasClass);
   console.log('[PROGRESSION] ═══════════════════════════════════════════');
 

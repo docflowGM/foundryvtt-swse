@@ -65,11 +65,18 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
 
-    context.item = this.item;
-    context.system = this.item.system;
+    const itemData = this.item?.toObject?.() ?? {};
+    context.item = itemData;
+    context.system = foundry.utils.deepClone(itemData.system ?? {});
 
     // Template expects this for the <form class="{{cssClass}} ..."> binding.
     context.cssClass = this.classList?.value || this.constructor.DEFAULT_OPTIONS.classes.join(' ');
+
+    // Optional convenience values for templates without passing live Documents
+    context.itemId = this.item?.id ?? null;
+    context.itemType = itemData.type ?? this.item?.type ?? "";
+    context.itemName = itemData.name ?? this.item?.name ?? "";
+    context.itemImg = itemData.img ?? this.item?.img ?? "";
 
     // Verify context is serializable (no Document refs, circular refs, etc.)
     RenderAssertions.assertContextSerializable(context, "SWSEItemSheet");
