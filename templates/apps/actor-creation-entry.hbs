@@ -1,0 +1,224 @@
+<div class="actor-creation-entry">
+  <div class="entry-header">
+    <h1>Create New Actor Profile</h1>
+    <p class="entry-subtitle">Select your approach to adding a new profile to the galactic database.</p>
+  </div>
+
+  <div class="entry-choices">
+    <!-- Begin New Character -->
+    <div class="entry-choice-card begin-new-character">
+      <div class="choice-icon">
+        <i class="fas fa-dice-d20"></i>
+      </div>
+      <div class="choice-content">
+        <h2>Begin New Character</h2>
+        <p>Build an actor from scratch using the character creation system. Design every detail.</p>
+        <ul class="choice-features">
+          <li>Full customization</li>
+          <li>Step-by-step builder</li>
+          <li>All options available</li>
+        </ul>
+      </div>
+      <button class="choice-button" data-action="new-character">
+        <span>Create New</span>
+        <i class="fas fa-arrow-right"></i>
+      </button>
+    </div>
+
+    <!-- Access Galactic Records -->
+    <div class="entry-choice-card access-galactic-records">
+      <div class="choice-icon">
+        <i class="fas fa-database"></i>
+      </div>
+      <div class="choice-content">
+        <h2>Access Galactic Records</h2>
+        <p>Load a profile from the galactic archives. Create from pre-built templates.</p>
+        <ul class="choice-features">
+          <li>Ready-to-use templates</li>
+          <li>Multiple categories</li>
+          <li>Quick import</li>
+        </ul>
+      </div>
+      <button class="choice-button" data-action="galactic-records">
+        <span>Browse Records</span>
+        <i class="fas fa-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+.actor-creation-entry {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 2rem;
+  background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+  color: #e0e0e0;
+  font-family: var(--font-primary, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif);
+}
+
+.entry-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.entry-header h1 {
+  margin: 0 0 0.75rem 0;
+  color: #fff;
+  font-size: 1.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.entry-subtitle {
+  margin: 0;
+  color: #a0a0a0;
+  font-size: 0.95rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.entry-choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  flex: 1;
+}
+
+.entry-choice-card {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  border: 2px solid #3a3f4a;
+  border-radius: 0.8rem;
+  background: #15192a;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.entry-choice-card:hover {
+  border-color: #5a5f6a;
+  background: #1a1f33;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.entry-choice-card.access-galactic-records:hover {
+  border-color: #ffc107;
+  box-shadow: 0 8px 24px rgba(255, 193, 7, 0.15);
+}
+
+.choice-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #ffc107;
+}
+
+.access-galactic-records .choice-icon {
+  color: #4a90e2;
+}
+
+.choice-content h2 {
+  margin: 0 0 0.75rem 0;
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.choice-content p {
+  margin: 0 0 1.25rem 0;
+  color: #a0a0a0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.choice-features {
+  margin: 1rem 0 1.5rem 0;
+  padding-left: 1.5rem;
+  color: #80a080;
+  font-size: 0.85rem;
+}
+
+.choice-features li {
+  margin-bottom: 0.4rem;
+}
+
+.choice-features li::marker {
+  color: #ffc107;
+  font-weight: bold;
+}
+
+.access-galactic-records .choice-features li::marker {
+  color: #4a90e2;
+}
+
+.choice-button {
+  margin-top: auto;
+  padding: 0.9rem 1.5rem;
+  border: 1px solid #3a3f4a;
+  border-radius: 0.4rem;
+  background: #15192a;
+  color: #e0e0e0;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.begin-new-character .choice-button {
+  background: #3a5f8f;
+  border-color: #4a7fbf;
+  color: #fff;
+}
+
+.begin-new-character .choice-button:hover {
+  background: #4a7fbf;
+  border-color: #5a8fcf;
+  box-shadow: 0 4px 12px rgba(74, 127, 191, 0.3);
+}
+
+.access-galactic-records .choice-button {
+  background: #ffc107;
+  border-color: #ffb300;
+  color: #000;
+}
+
+.access-galactic-records .choice-button:hover {
+  background: #ffb300;
+  border-color: #ff9800;
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .entry-choices {
+    grid-template-columns: 1fr;
+  }
+
+  .entry-header {
+    margin-bottom: 2rem;
+  }
+
+  .entry-header h1 {
+    font-size: 1.4rem;
+  }
+
+  .entry-choice-card {
+    padding: 1.5rem;
+  }
+
+  .choice-icon {
+    font-size: 2.5rem;
+  }
+
+  .choice-content h2 {
+    font-size: 1.1rem;
+  }
+}
+</style>

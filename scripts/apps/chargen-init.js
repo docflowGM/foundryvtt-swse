@@ -3,6 +3,7 @@ import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse
 import CharacterGeneratorNarrative from "/systems/foundryvtt-swse/scripts/apps/chargen-narrative.js";
 import CharacterGeneratorImproved from "/systems/foundryvtt-swse/scripts/apps/chargen-improved.js";
 import { TemplateCharacterCreator } from "/systems/foundryvtt-swse/scripts/apps/template-character-creator.js";
+import { ActorCreationEntryDialog } from "/systems/foundryvtt-swse/scripts/apps/actor-creation-entry-dialog.js";
 import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { RolloutSettings } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/rollout/rollout-settings.js";
 
@@ -34,118 +35,130 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                 event.preventDefault();
                 event.stopPropagation();
 
-                // Check if user can create NPCs (GM or house rule enabled)
-                const isGM = game.user.isGM;
-                const allowPlayersNonheroic = game.settings.get('foundryvtt-swse', 'allowPlayersNonheroic');
-                const canCreateNPC = isGM || allowPlayersNonheroic;
-
-                // PHASE 4 STEP 5: Check rollout mode before offering legacy generators
-                const rolloutMode = RolloutSettings.getRolloutMode();
-                const useUnified = RolloutSettings.shouldUseUnifiedProgressionByDefault();
-                const legacyAvailable = RolloutSettings.shouldSupportLegacyFallback();
-
-                // Build dialog buttons
-                const buttons = {
-                    template: {
-                        icon: '<i class="fa-solid fa-star"></i>',
-                        label: 'PC from Template',
-                        callback: () => {
-                            TemplateCharacterCreator.create();
+                // PHASE 3: Show entry point dialog first
+                // User chooses: "Begin New Character" or "Access Galactic Records"
+                ActorCreationEntryDialog.create({
+                    callback: async (choice) => {
+                        if (choice !== 'new-character') {
+                            // Access Galactic Records handled by dialog
+                            return;
                         }
-                    }
-                };
 
-                // PHASE 4 STEP 5: Offer unified or legacy generator based on rollout mode
-                if (useUnified) {
-                    buttons.unified = {
-                        icon: '<i class="fa-solid fa-dice-d20"></i>',
-                        label: '✓ Custom PC (Unified)',
-                        callback: async () => {
-                            // Route to unified ProgressionShell via launchProgression
-                            const { launchProgression } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js');
-                            const ActorClass = CONFIG.Actor.documentClass;
-                            const tempActor = new ActorClass({
-                                name: 'New Character',
-                                type: 'character',
-                                system: { level: 0, swse: { mentorSurveyCompleted: false } }
-                            }, { parent: null });
-                            await launchProgression(tempActor);
-                        }
-                    };
-                }
+                        // User chose "Begin New Character" - show chargen options
+                        // Check if user can create NPCs (GM or house rule enabled)
+                        const isGM = game.user.isGM;
+                        const allowPlayersNonheroic = game.settings.get('foundryvtt-swse', 'allowPlayersNonheroic');
+                        const canCreateNPC = isGM || allowPlayersNonheroic;
 
-                // PHASE 4 STEP 5: Offer legacy generator only if legacy fallback is supported
-                if (legacyAvailable && rolloutMode !== 'default') {
-                    buttons.legacy = {
-                        icon: '<i class="fa-solid fa-wrench"></i>',
-                        label: '⚠ Legacy PC Generator',
-                        callback: async () => {
-                            SWSELogger.warn('[chargen-init] Opening legacy generator (fallback mode)');
-                            const ActorClass = CONFIG.Actor.documentClass;
-                            const tempActor = new ActorClass({
-                                name: 'New Character (Temp)',
-                                type: 'character',
-                                system: {
-                                    level: 1,
-                                    swse: { mentorSurveyCompleted: false }
+                        // PHASE 4 STEP 5: Check rollout mode before offering legacy generators
+                        const rolloutMode = RolloutSettings.getRolloutMode();
+                        const useUnified = RolloutSettings.shouldUseUnifiedProgressionByDefault();
+                        const legacyAvailable = RolloutSettings.shouldSupportLegacyFallback();
+
+                        // Build dialog buttons
+                        const buttons = {
+                            template: {
+                                icon: '<i class="fa-solid fa-star"></i>',
+                                label: 'PC from Template',
+                                callback: () => {
+                                    TemplateCharacterCreator.create();
                                 }
-                            }, { parent: null });
+                            }
+                        };
 
-                            new CharacterGeneratorNarrative(tempActor).render(true);
-                        }
-                    };
-                }
-
-                // Add NPC Generator button only if permitted and legacy fallback available
-                if (canCreateNPC && legacyAvailable) {
-                    buttons.npc = {
-                        icon: '<i class="fa-solid fa-users"></i>',
-                        label: '⚠ Legacy NPC Generator',
-                        callback: async () => {
-                            SWSELogger.warn('[chargen-init] Opening legacy NPC generator (fallback mode)');
-                            // Create temporary NPC actor for consistent initialization
-                            const ActorClass = CONFIG.Actor.documentClass;
-                            const tempActor = new ActorClass({
-                                name: 'New NPC (Temp)',
-                                type: 'npc',
-                                system: {
-                                    level: 1,
-                                    swse: { mentorSurveyCompleted: false }
+                        // PHASE 4 STEP 5: Offer unified or legacy generator based on rollout mode
+                        if (useUnified) {
+                            buttons.unified = {
+                                icon: '<i class="fa-solid fa-dice-d20"></i>',
+                                label: '✓ Custom PC (Unified)',
+                                callback: async () => {
+                                    // Route to unified ProgressionShell via launchProgression
+                                    const { launchProgression } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js');
+                                    const ActorClass = CONFIG.Actor.documentClass;
+                                    const tempActor = new ActorClass({
+                                        name: 'New Character',
+                                        type: 'character',
+                                        system: { level: 0, swse: { mentorSurveyCompleted: false } }
+                                    }, { parent: null });
+                                    await launchProgression(tempActor);
                                 }
-                            }, { parent: null });
-
-                            new CharacterGeneratorImproved(tempActor, { actorType: 'npc' }).render(true);
+                            };
                         }
-                    };
-                }
 
-                // Always allow manual creation
-                buttons.manual = {
-                    icon: '<i class="fa-solid fa-user"></i>',
-                    label: 'Create Manually',
-                    callback: async () => {
-                        await createActor({
-                            name: 'New Character',
-                            type: 'character',
-                            img: 'systems/foundryvtt-swse/assets/icons/default-character.png'
-                        });
+                        // PHASE 4 STEP 5: Offer legacy generator only if legacy fallback is supported
+                        if (legacyAvailable && rolloutMode !== 'default') {
+                            buttons.legacy = {
+                                icon: '<i class="fa-solid fa-wrench"></i>',
+                                label: '⚠ Legacy PC Generator',
+                                callback: async () => {
+                                    SWSELogger.warn('[chargen-init] Opening legacy generator (fallback mode)');
+                                    const ActorClass = CONFIG.Actor.documentClass;
+                                    const tempActor = new ActorClass({
+                                        name: 'New Character (Temp)',
+                                        type: 'character',
+                                        system: {
+                                            level: 1,
+                                            swse: { mentorSurveyCompleted: false }
+                                        }
+                                    }, { parent: null });
+
+                                    new CharacterGeneratorNarrative(tempActor).render(true);
+                                }
+                            };
+                        }
+
+                        // Add NPC Generator button only if permitted and legacy fallback available
+                        if (canCreateNPC && legacyAvailable) {
+                            buttons.npc = {
+                                icon: '<i class="fa-solid fa-users"></i>',
+                                label: '⚠ Legacy NPC Generator',
+                                callback: async () => {
+                                    SWSELogger.warn('[chargen-init] Opening legacy NPC generator (fallback mode)');
+                                    // Create temporary NPC actor for consistent initialization
+                                    const ActorClass = CONFIG.Actor.documentClass;
+                                    const tempActor = new ActorClass({
+                                        name: 'New NPC (Temp)',
+                                        type: 'npc',
+                                        system: {
+                                            level: 1,
+                                            swse: { mentorSurveyCompleted: false }
+                                        }
+                                    }, { parent: null });
+
+                                    new CharacterGeneratorImproved(tempActor, { actorType: 'npc' }).render(true);
+                                }
+                            };
+                        }
+
+                        // Always allow manual creation
+                        buttons.manual = {
+                            icon: '<i class="fa-solid fa-user"></i>',
+                            label: 'Create Manually',
+                            callback: async () => {
+                                await createActor({
+                                    name: 'New Character',
+                                    type: 'character',
+                                    img: 'systems/foundryvtt-swse/assets/icons/default-character.png'
+                                });
+                            }
+                        };
+
+                        // Show dialog asking if they want to use character generator
+                        new SWSEDialogV2({
+                            title: 'Create New Actor',
+                            content: `
+                                <div style="padding: 1rem;">
+                                    <p style="text-align: center; margin-bottom: 1rem;">Choose what type of actor to create:</p>
+                                    <div style="background: rgba(74, 144, 226, 0.1); padding: 0.75rem; border-radius: 4px; margin-bottom: 1rem; border-left: 3px solid #4a90e2;">
+                                        <strong>New!</strong> Quick character templates available with pre-configured builds for all core classes.
+                                    </div>
+                                </div>
+                            `,
+                            buttons: buttons,
+                            default: 'template'
+                        }).render(true);
                     }
-                };
-
-                // Show dialog asking if they want to use character generator
-                new SWSEDialogV2({
-                    title: 'Create New Actor',
-                    content: `
-                        <div style="padding: 1rem;">
-                            <p style="text-align: center; margin-bottom: 1rem;">Choose what type of actor to create:</p>
-                            <div style="background: rgba(74, 144, 226, 0.1); padding: 0.75rem; border-radius: 4px; margin-bottom: 1rem; border-left: 3px solid #4a90e2;">
-                                <strong>New!</strong> Quick character templates available with pre-configured builds for all core classes.
-                            </div>
-                        </div>
-                    `,
-                    buttons: buttons,
-                    default: 'template'
-                }).render(true);
+                });
             }
         });
     }
