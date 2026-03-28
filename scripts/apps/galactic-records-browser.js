@@ -23,6 +23,10 @@ export class GalacticRecordsBrowser extends HandlebarsApplicationMixin(Applicati
     this.selectedTemplate = null;
     this.templates = {};
     this.isLoading = false;
+
+    // Optional: Pre-select category and set import callback
+    this.preSelectCategory = options.preSelectCategory || null;
+    this.importCallback = options.importCallback || null;
   }
 
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
@@ -85,6 +89,53 @@ export class GalacticRecordsBrowser extends HandlebarsApplicationMixin(Applicati
     const closeBtn = root.querySelector('.close-btn');
     if (closeBtn) {
       closeBtn.addEventListener('click', () => this.close());
+    }
+
+    // Auto-select pre-selected category if provided
+    if (this.preSelectCategory && !this.selectedCategory) {
+      await this._autoSelectCategory(this.preSelectCategory);
+    }
+  }
+
+  /**
+   * Auto-select a category (used for pre-selection)
+   * @private
+   */
+  async _autoSelectCategory(categoryId) {
+    const category = GalacticRecordsCategoryRegistry.getCategory(categoryId);
+    if (!category || !category.supported) {
+      SWSELogger.warn(`[GalacticRecordsBrowser] Cannot auto-select unsupported category: ${categoryId}`);
+      return;
+    }
+
+    this.selectedCategory = categoryId;
+    this.selectedTemplate = null;
+
+    // Load templates if not cached
+    if (!this.templates[categoryId]) {
+      this.isLoading = true;
+      await this.render();
+
+      try {
+        const loaderName = category.dataLoader;
+        let templates;
+
+        // Use appropriate loader based on category type
+        if (categoryId === 'droid') {
+          templates = await DroidTemplateDataLoader[loaderName]();
+        } else {
+          templates = await NPCTemplateDataLoader[loaderName]();
+        }
+
+        this.templates[categoryId] = templates;
+        SWSELogger.log(`[GalacticRecordsBrowser] Auto-loaded ${templates.length} templates for ${categoryId}`);
+      } catch (err) {
+        SWSELogger.error('[GalacticRecordsBrowser] Error auto-loading templates:', err);
+        this.templates[categoryId] = [];
+      } finally {
+        this.isLoading = false;
+        await this.render();
+      }
     }
   }
 
@@ -204,8 +255,14 @@ export class GalacticRecordsBrowser extends HandlebarsApplicationMixin(Applicati
         ui?.notifications?.info?.(`Record "${actor.name}" imported successfully!`);
         SWSELogger.log(`[GalacticRecordsBrowser] Import successful: ${actor.name}`);
 
-        await this.close();
-        actor.sheet.render(true);
+        // If importCallback provided, call it instead of opening sheet
+        if (this.importCallback && typeof this.importCallback === 'function') {
+          await this.close();
+          this.importCallback(actor);
+        } else {
+          await this.close();
+          actor.sheet.render(true);
+        }
       } else {
         ui?.notifications?.error?.('Failed to import record');
       }

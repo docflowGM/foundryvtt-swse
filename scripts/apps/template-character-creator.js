@@ -23,6 +23,9 @@ export class TemplateCharacterCreator extends SWSEFormApplicationV2 {
     super(options);
     this.selectedClass = null;
     this.mentorDialogues = null;
+    this.isDroid = options.isDroid || false; // Flag for droid-specific filtering
+    this.excludeForce = options.excludeForce || false; // Exclude Force/Jedi classes for droids
+    this.creationCallback = options.creationCallback || null; // Callback for droid creation workflow
   }
 
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(SWSEFormApplicationV2.DEFAULT_OPTIONS ?? {}, {
@@ -76,6 +79,13 @@ async _prepareContext(options) {
       { name: 'Scout', icon: 'fa-binoculars', description: 'Explorers, trackers, and wilderness experts' },
       { name: 'Soldier', icon: 'fa-shield-alt', description: 'Warriors, tacticians, and military specialists' }
     ];
+
+    // Filter out Force/Jedi for droids (droids cannot use the Force)
+    if (this.isDroid && this.excludeForce) {
+      context.classes = context.classes.filter(c => c.name !== 'Jedi');
+      context.isDroid = true;
+      context.droidNote = 'Droids are not eligible for Force-wielding classes';
+    }
 
     // Add Nonheroic class only if user is GM or house rule allows it
     const isGM = game.user.isGM;
@@ -323,9 +333,13 @@ async _prepareContext(options) {
 
   /**
    * Static method to show the creator
+   * @param {Object} options - Optional configuration
+   * @param {boolean} options.isDroid - If true, this is for droid creation
+   * @param {boolean} options.excludeForce - If true, filter out Force/Jedi classes
+   * @param {Function} options.creationCallback - Callback when character/template is selected
    */
-  static async create() {
-    const creator = new TemplateCharacterCreator();
+  static async create(options = {}) {
+    const creator = new TemplateCharacterCreator(options);
     creator.render(true);
   }
 

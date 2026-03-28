@@ -4,8 +4,10 @@ import CharacterGeneratorNarrative from "/systems/foundryvtt-swse/scripts/apps/c
 import CharacterGeneratorImproved from "/systems/foundryvtt-swse/scripts/apps/chargen-improved.js";
 import { TemplateCharacterCreator } from "/systems/foundryvtt-swse/scripts/apps/template-character-creator.js";
 import { ActorCreationEntryDialog } from "/systems/foundryvtt-swse/scripts/apps/actor-creation-entry-dialog.js";
+import { DroidTemplateChoiceDialog } from "/systems/foundryvtt-swse/scripts/apps/droid-template-choice-dialog.js";
 import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { RolloutSettings } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/rollout/rollout-settings.js";
+import { launchProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 
 // Single hook to handle both create button interception and header button addition
 Hooks.on('renderActorDirectory', (app, html, data) => {
@@ -130,6 +132,20 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
                             };
                         }
 
+                        // Droid creation
+                        buttons.droid = {
+                            icon: '<i class="fa-solid fa-robot"></i>',
+                            label: 'Create Droid',
+                            callback: async () => {
+                                SWSELogger.log('[chargen-init] Opening droid template choice dialog');
+                                DroidTemplateChoiceDialog.create({
+                                    callback: async (result) => {
+                                        await _handleDroidCreation(result);
+                                    }
+                                });
+                            }
+                        };
+
                         // Always allow manual creation
                         buttons.manual = {
                             icon: '<i class="fa-solid fa-user"></i>',
@@ -212,3 +228,93 @@ Hooks.on('renderActorDirectory', (app, html, data) => {
         }
     }
 });
+
+/**
+ * Handle droid creation from template choice dialog
+ * Routes based on selected template type:
+ * - droid-template: Import droid template, then launch progression
+ * - class-template: Create droid with class template, launch progression
+ * - custom: Create empty droid, launch progression
+ *
+ * Note: All paths ultimately launch progression with droid actor
+ */
+async function _handleDroidCreation(result) {
+  try {
+    if (result.choice === 'droid-template') {
+      // Droid was already imported by GalacticRecordsBrowser
+      // Now launch progression with the imported droid actor
+      const importedDroid = result.actor;
+      if (importedDroid && importedDroid.type === 'droid') {
+        SWSELogger.log('[chargen-init] Launching progression for imported droid:', importedDroid.name);
+        // Set droid flag to mark this as a droid character
+        await importedDroid.update({ 'system.isDroid': true });
+        // Launch progression to continue chargen
+        await launchProgression(importedDroid);
+      } else {
+        ui?.notifications?.error?.('Failed to import droid template');
+      }
+    } else if (result.choice === 'class-template') {
+      // Create a new droid actor, then open template selector for class template
+      const ActorClass = CONFIG.Actor.documentClass;
+      const droidActor = await ActorClass.create({
+        name: 'New Droid',
+        type: 'droid',
+        system: {
+          isDroid: true,
+          level: 0,
+          droidSystems: {
+            degree: '',
+            size: 'Medium',
+            locomotion: { id: '', name: '', cost: 0, speed: 0 },
+            processor: { id: '', name: '', cost: 0, bonus: 0 },
+            armor: { id: '', name: '', cost: 0, bonus: 0 },
+            appendages: [],
+            sensors: [],
+            weapons: [],
+            accessories: [],
+            credits: { total: 2000, spent: 0, remaining: 2000 },
+            stateMode: 'DRAFT'
+          }
+        }
+      });
+
+      SWSELogger.log('[chargen-init] Created droid actor for class template:', droidActor.name);
+
+      // TODO: In future, pass class template context to progression
+      // For now, launch progression which will guide through full chargen
+      await launchProgression(droidActor);
+    } else if (result.choice === 'custom') {
+      // Create a new empty droid actor and launch progression
+      const ActorClass = CONFIG.Actor.documentClass;
+      const droidActor = await ActorClass.create({
+        name: 'New Droid',
+        type: 'droid',
+        system: {
+          isDroid: true,
+          level: 0,
+          droidSystems: {
+            degree: '',
+            size: 'Medium',
+            locomotion: { id: '', name: '', cost: 0, speed: 0 },
+            processor: { id: '', name: '', cost: 0, bonus: 0 },
+            armor: { id: '', name: '', cost: 0, bonus: 0 },
+            appendages: [],
+            sensors: [],
+            weapons: [],
+            accessories: [],
+            credits: { total: 2000, spent: 0, remaining: 2000 },
+            stateMode: 'DRAFT'
+          }
+        }
+      });
+
+      SWSELogger.log('[chargen-init] Created custom droid actor:', droidActor.name);
+
+      // Launch progression for custom build
+      await launchProgression(droidActor);
+    }
+  } catch (err) {
+    SWSELogger.error('[chargen-init] Error handling droid creation:', err);
+    ui?.notifications?.error?.(`Failed to create droid: ${err.message}`);
+  }
+}
