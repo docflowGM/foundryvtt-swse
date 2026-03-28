@@ -38,6 +38,7 @@ import { BuildIntent } from './build-intent.js';
 import { GlobalValidator } from '../validation/global-validator.js';
 import { ChargenPersistence } from './chargen-persistence.js';
 import { SessionStorage } from './session-storage.js';
+import { InvalidationPreview } from './invalidation-preview.js';
 import { RolloutController } from '../rollout/rollout-controller.js';
 
 /**
@@ -1701,6 +1702,96 @@ export class ProgressionShell extends SWSEApplicationV2 {
     await this._recomputeActiveStepsIfNeeded();
 
     this.render();
+  }
+
+  /**
+   * Preview and conditionally commit a selection.
+   * Phase 2: Shows impact preview before committing.
+   *
+   * Step plugins that want to show impact previews should call this instead of commitSelection.
+   * For steps that don't need previews, plugins can continue using commitSelection directly.
+   *
+   * @param {string} stepId - Step making the selection
+   * @param {*} selection - Selection to commit
+   * @param {Object} options - Optional settings
+   * @param {string} options.label - Display label for the selection (e.g., "Human Spy")
+   * @returns {Promise<boolean>} true if committed, false if cancelled
+   */
+  async previewAndCommitSelection(stepId, selection, options = {}) {
+    try {
+      // Compute preview of downstream impact
+      const preview = await InvalidationPreview.computePreview(
+        this.progressionSession,
+        stepId,
+        selection
+      );
+
+      // If preview shows affected steps, show confirmation dialog
+      if (preview.affectedCount > 0) {
+        const confirmed = await this._showPreviewConfirmationDialog(
+          selection,
+          preview,
+          options
+        );
+
+        if (!confirmed) {
+          swseLogger.debug('[ProgressionShell] User cancelled preview confirmation');
+          return false;
+        }
+      }
+
+      // Commit the selection
+      await this.commitSelection(stepId, selection);
+      return true;
+    } catch (err) {
+      swseLogger.error('[ProgressionShell] Error in previewAndCommitSelection:', err);
+      ui?.notifications?.error?.('An error occurred while processing this selection.');
+      return false;
+    }
+  }
+
+  /**
+   * Show preview confirmation dialog.
+   * Phase 2: Pre-commit change preview.
+   *
+   * @param {Object} selection - Selection being committed
+   * @param {Object} preview - Preview data from InvalidationPreview.computePreview
+   * @param {Object} options - Display options
+   * @returns {Promise<boolean>} true if user confirms, false if cancels
+   * @private
+   */
+  async _showPreviewConfirmationDialog(selection, preview, options = {}) {
+    const label = options.label || selection.name || 'this selection';
+
+    return new Promise((resolve) => {
+      const content = InvalidationPreview.formatPreviewForDialog(preview);
+
+      const dialog = new Dialog({
+        title: `Confirm: ${label}`,
+        content: `
+          <div style="margin-bottom: 1.5em;">
+            <p><strong>Making this change will affect:</strong></p>
+            ${content}
+          </div>
+          <p style="margin-top: 1.5em; padding-top: 1.5em; border-top: 1px solid #ccc;">
+            Would you like to proceed?
+          </p>
+        `,
+        buttons: {
+          proceed: {
+            label: 'Confirm',
+            callback: () => resolve(true),
+          },
+          cancel: {
+            label: 'Cancel',
+            callback: () => resolve(false),
+          },
+        },
+        default: 'proceed',
+      });
+
+      dialog.render(true);
+    });
   }
 
   /**
