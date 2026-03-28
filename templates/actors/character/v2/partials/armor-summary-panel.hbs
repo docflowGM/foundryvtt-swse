@@ -17,15 +17,20 @@
   multi-slot armor becomes a real requirement.
 --}}
 
-<section class="armor-summary-panel holo-panel svg-framed svg-panel-frame">
+<section class="swse-panel swse-panel--armor armor-summary-panel holo-panel svg-framed svg-panel-frame">
 
-  <header class="section-bar">
-    <h3 class="section-header">Equipped Armor Summary</h3>
-    <button type="button" class="btn-small" data-action="tab" data-tab="gear" data-group="primary" data-tab-group="primary" title="Open Gear tab to manage armor">Manage →</button>
-  </header>
+  <!-- Frame layer: SVG background -->
+  <div class="swse-panel__frame" aria-hidden="true"></div>
 
-  {{#if equippedArmor}}
-    <div class="armor-summary">
+  <!-- Content layer: normal flow content -->
+  <div class="swse-panel__content">
+    <header class="section-bar">
+      <h3 class="section-header">Equipped Armor Summary</h3>
+      <button type="button" class="btn-small" data-action="tab" data-tab="gear" data-group="primary" data-tab-group="primary" title="Open Gear tab to manage armor">Manage →</button>
+    </header>
+
+    {{#if equippedArmor}}
+      <div class="armor-summary">
       <!-- Armor Name & Type -->
       <div class="armor-name-block">
         <div class="armor-name">{{equippedArmor.name}}</div>
@@ -87,11 +92,12 @@
         </div>
       {{/if}}
     </div>
-  {{else}}
-    <div class="empty-state">
-      <p>No armor equipped.</p>
-      <p class="hint">Equip armor from the <a data-action="tab" data-tab="gear" data-group="primary" data-tab-group="primary" style="cursor:pointer; color:inherit; text-decoration:underline;">Gear tab</a> to see summary here.</p>
-    </div>
-  {{/if}}
+    {{else}}
+      <div class="empty-state">
+        <p>No armor equipped.</p>
+        <p class="hint">Equip armor from the <a data-action="tab" data-tab="gear" data-group="primary" data-tab-group="primary" style="cursor:pointer; color:inherit; text-decoration:underline;">Gear tab</a> to see summary here.</p>
+      </div>
+    {{/if}}
+  </div>
 
 </section>

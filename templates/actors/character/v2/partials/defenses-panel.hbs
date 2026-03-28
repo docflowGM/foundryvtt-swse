@@ -12,18 +12,23 @@
   This is consistent with combat calculations and prevents silent misalignment.
 --}}
 
-<section class="defenses-panel v3-panel holo-panel svg-framed svg-panel-frame">
+<section class="swse-panel swse-panel--defenses defenses-panel v3-panel holo-panel svg-framed svg-panel-frame">
 
-  <header class="section-bar">
-    <h3 class="section-header">Defenses</h3>
-    <button type="button"
-            data-action="toggle-defenses"
-            class="swse-btn defenses-toggle">
-      More
-    </button>
-  </header>
+  <!-- Frame layer: SVG background -->
+  <div class="swse-panel__frame" aria-hidden="true"></div>
 
-  <div class="defenses-container">
+  <!-- Content layer: normal flow content -->
+  <div class="swse-panel__content">
+    <header class="section-bar">
+      <h3 class="section-header">Defenses</h3>
+      <button type="button"
+              data-action="toggle-defenses"
+              class="swse-btn defenses-toggle">
+        More
+      </button>
+    </header>
+
+    <div class="defenses-container">
 
     {{#each headerDefenses as |def|}}
 
@@ -103,6 +108,7 @@
 
     {{/each}}
 
+    </div>
   </div>
 
 </section>

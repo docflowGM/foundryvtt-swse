@@ -1,10 +1,15 @@
-<section class="character-record-header holo-panel svg-framed svg-panel-frame">
+<section class="swse-panel swse-panel--identity character-record-header holo-panel svg-framed svg-panel-frame">
 
-  <header class="section-bar">
-    <h3 class="section-header">Character Identity</h3>
-  </header>
+  <!-- Frame layer: SVG background -->
+  <div class="swse-panel__frame" aria-hidden="true"></div>
 
-  <div class="record-identity-grid">
+  <!-- Content layer: normal flow content -->
+  <div class="swse-panel__content">
+    <header class="section-bar">
+      <h3 class="section-header">Character Identity</h3>
+    </header>
+
+    <div class="record-identity-grid">
     <!-- Name & Class/Level Row -->
     <div class="record-row">
       <div class="record-field svg-wrapped size-regular">
@@ -68,6 +73,7 @@
         <input type="text" name="system.event" value="{{system.event}}" class="record-input" placeholder="—" />
       </div>
     </div>
+  </div>
   </div>
 
 </section>

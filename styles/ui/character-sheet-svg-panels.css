@@ -3,6 +3,71 @@
    Phase 2: SVG-backed panels, frames, and rows
    ============================================ */
 
+/* ============================================================
+   UNIFIED PANEL CONTRACT BASE
+   Every SVG-backed panel inherits this structure and styling.
+   Panels are built from 4 predictable layers:
+   - __frame: decorative SVG background (aria-hidden)
+   - __bg: optional secondary background layer
+   - __content: normal flow content (text, inputs, tables, etc.)
+   - __overlay: absolutely-positioned anchored controls
+   ============================================================ */
+
+.swse-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Frame layer: SVG art and decorative background */
+.swse-panel__frame {
+  position: absolute;
+  inset: 0;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Optional secondary background layer */
+.swse-panel__bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Content layer: normal semantic HTML flow */
+.swse-panel__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+/* Overlay layer: absolutely-positioned anchored controls */
+.swse-panel__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* Make overlay children interactive */
+.swse-panel__overlay > * {
+  pointer-events: auto;
+}
+
+/* Anchored slot/control base */
+.swse-panel__slot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
 /* PANEL FRAME UTILITIES */
 .svg-panel-frame {
   position: relative;
@@ -11,7 +76,20 @@
   background-position: 0 0;
 }
 
-/* CHARACTER RECORD HEADER PLATE */
+/* CHARACTER RECORD HEADER PLATE - UNIFIED CONTRACT */
+.swse-panel--identity {
+  min-height: 200px;
+}
+
+.swse-panel--identity .swse-panel__frame {
+  background-image: url('../../assets/ui/character-record-header-plate.svg');
+}
+
+.swse-panel--identity .swse-panel__content {
+  padding: 20px 16px;
+  gap: 12px;
+}
+
 .character-record-header.svg-framed {
   background-image: url('../../assets/ui/character-record-header-plate.svg');
   padding: 20px 16px;
@@ -35,7 +113,21 @@
   background-image: url('../../assets/ui/record-field-inline-small.svg');
 }
 
-/* HP CONDITION PANEL SVG FRAME */
+/* HP CONDITION PANEL SVG FRAME - UNIFIED CONTRACT */
+.swse-panel--health {
+  min-height: 220px;
+  aspect-ratio: auto;
+}
+
+.swse-panel--health .swse-panel__frame {
+  background-image: url('../../assets/ui/character-record-header-plate.svg');
+}
+
+.swse-panel--health .swse-panel__content {
+  padding: 20px 16px;
+  gap: 12px;
+}
+
 .hp-condition-panel.svg-framed {
   background-image: url('../../assets/ui/character-record-header-plate.svg');
   background-size: 100% 100%;
@@ -44,29 +136,61 @@
   min-height: 220px;
 }
 
-/* CONDITION TRACK SVG FRAME - POSITIONED OVERLAY LAYOUT */
-.condition-track-panel {
+/* CONDITION TRACK SVG FRAME - UNIFIED CONTRACT WITH VARIABLES */
+.swse-panel--condition-track {
   position: relative;
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: 0 0;
-  min-height: 95px;
   aspect-ratio: 720 / 112;
+  width: 100%;
+  min-height: 95px;
   max-height: 120px;
+  /* CSS custom properties for socket anchor points (SVG 720x112 geometry) */
+  --slot-0-x: 7.22%;
+  --slot-0-y: 50%;
+  --slot-1-x: 22.5%;
+  --slot-1-y: 50%;
+  --slot-2-x: 37.78%;
+  --slot-2-y: 50%;
+  --slot-3-x: 53.06%;
+  --slot-3-y: 50%;
+  --slot-4-x: 68.33%;
+  --slot-4-y: 50%;
+  --slot-5-x: 83.61%;
+  --slot-5-y: 50%;
 }
 
-.condition-track-frame {
+.condition-track-panel {
+  position: relative;
+  aspect-ratio: 720 / 112;
+  width: 100%;
+  min-height: 95px;
+  max-height: 120px;
+  --slot-0-x: 7.22%;
+  --slot-0-y: 50%;
+  --slot-1-x: 22.5%;
+  --slot-1-y: 50%;
+  --slot-2-x: 37.78%;
+  --slot-2-y: 50%;
+  --slot-3-x: 53.06%;
+  --slot-3-y: 50%;
+  --slot-4-x: 68.33%;
+  --slot-4-y: 50%;
+  --slot-5-x: 83.61%;
+  --slot-5-y: 50%;
+}
+
+.condition-track-frame,
+.swse-panel--condition-track .swse-panel__frame {
   position: absolute;
   inset: 0;
   background-image: url('../../assets/ui/condition-track-box-strip.svg');
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: 0 0;
-  border-radius: 0;
   pointer-events: none;
 }
 
-.condition-track-overlay {
+.condition-track-overlay,
+.swse-panel--condition-track .swse-panel__overlay {
   position: absolute;
   inset: 0;
 }
@@ -102,13 +226,13 @@
   font-weight: 700;
 }
 
-/* Socket-specific anchor positions (percentage-based, centering at SVG socket locations) */
-.condition-slot-0 { left: 7.22%; top: 50%; }
-.condition-slot-1 { left: 22.5%; top: 50%; }
-.condition-slot-2 { left: 37.78%; top: 50%; }
-.condition-slot-3 { left: 53.06%; top: 50%; }
-.condition-slot-4 { left: 68.33%; top: 50%; }
-.condition-slot-5 { left: 83.61%; top: 50%; }
+/* Socket-specific anchor positions using CSS variables */
+.condition-slot-0 { left: var(--slot-0-x, 7.22%); top: var(--slot-0-y, 50%); }
+.condition-slot-1 { left: var(--slot-1-x, 22.5%); top: var(--slot-1-y, 50%); }
+.condition-slot-2 { left: var(--slot-2-x, 37.78%); top: var(--slot-2-y, 50%); }
+.condition-slot-3 { left: var(--slot-3-x, 53.06%); top: var(--slot-3-y, 50%); }
+.condition-slot-4 { left: var(--slot-4-x, 68.33%); top: var(--slot-4-y, 50%); }
+.condition-slot-5 { left: var(--slot-5-x, 83.61%); top: var(--slot-5-y, 50%); }
 
 /* Legacy class support for existing queries */
 .condition-chevron {
@@ -130,16 +254,48 @@
   box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
 }
 
-/* DARK SIDE POINTS TRACKER */
+/* DARK SIDE PANEL - UNIFIED CONTRACT */
+.swse-panel--dark-side {
+  position: relative;
+}
+
+.swse-panel--dark-side .swse-panel__frame {
+  /* No frame for dark-side root - it's a nested panel structure */
+}
+
+/* DARK SIDE POINTS TRACKER - UNIFIED CONTRACT */
+.swse-panel--dsp-track {
+  position: relative;
+  aspect-ratio: 752 / 80;
+  width: 100%;
+  min-height: 105px;
+  max-height: 120px;
+  /* CSS custom properties for DSP track box positions (grid-based, but could use overlays) */
+}
+
 .dsp-numbered-track.svg-framed {
-  background-image: url('../../assets/ui/dark-side-box-track.svg');
+  position: relative;
   background-size: 100% 100%;
   background-repeat: no-repeat;
+  background-position: 0 0;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(32px, 1fr));
   gap: 3px;
   padding: 10px 8px;
   min-height: 105px;
+}
+
+.swse-panel--dsp-track .swse-panel__frame {
+  background-image: url('../../assets/ui/dark-side-box-track.svg');
+  position: absolute;
+  inset: 0;
+}
+
+.swse-panel--dsp-track .swse-panel__overlay {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(32px, 1fr));
+  gap: 3px;
+  padding: 10px 8px;
 }
 
 .dsp-track-box {
@@ -167,7 +323,20 @@
   color: rgba(255, 150, 150, 0.9);
 }
 
-/* SPECIAL COMBAT NOTES PANEL */
+/* SPECIAL COMBAT ACTIONS PANEL - UNIFIED CONTRACT */
+.swse-panel--combat-actions {
+  position: relative;
+}
+
+.swse-panel--combat-actions .swse-panel__frame {
+  background-image: url('../../assets/ui/special-combat-notes-panel.svg');
+}
+
+.swse-panel--combat-actions .swse-panel__content {
+  padding: 20px 16px;
+  gap: 12px;
+}
+
 .special-combat-actions-panel.svg-framed {
   background-image: url('../../assets/ui/special-combat-notes-panel.svg');
   background-size: 100% 100%;
@@ -300,7 +469,20 @@
   opacity: 0.6;
 }
 
-/* RELATIONSHIPS PANEL FRAME */
+/* RELATIONSHIPS PANEL - UNIFIED CONTRACT */
+.swse-panel--relationships {
+  min-height: 260px;
+}
+
+.swse-panel--relationships .swse-panel__frame {
+  background-image: url('../../assets/ui/relationships-notebook-panel.svg');
+}
+
+.swse-panel--relationships .swse-panel__content {
+  padding: 20px 16px;
+  gap: 12px;
+}
+
 .relationships-panel.svg-framed {
   background-image: url('../../assets/ui/relationships-notebook-panel.svg');
   background-size: 100% 100%;
@@ -325,7 +507,20 @@
   padding: 10px 8px;
 }
 
-/* DEFENSES PANEL - REUSED HOLO FRAME */
+/* DEFENSES PANEL - UNIFIED CONTRACT */
+.swse-panel--defenses {
+  position: relative;
+}
+
+.swse-panel--defenses .swse-panel__frame {
+  background-image: url('../../assets/ui/core/panels/armor-panel.svg');
+}
+
+.swse-panel--defenses .swse-panel__content {
+  padding: 16px 14px;
+  gap: 8px;
+}
+
 .defenses-panel.svg-framed {
   background-image: url('../../assets/ui/core/panels/armor-panel.svg');
   background-size: 100% 100%;
@@ -338,7 +533,20 @@
   z-index: 2;
 }
 
-/* ARMOR SUMMARY PANEL - REUSED HOLO FRAME */
+/* ARMOR SUMMARY PANEL - UNIFIED CONTRACT */
+.swse-panel--armor {
+  position: relative;
+}
+
+.swse-panel--armor .swse-panel__frame {
+  background-image: url('../../assets/ui/core/panels/armor-panel.svg');
+}
+
+.swse-panel--armor .swse-panel__content {
+  padding: 16px 14px;
+  gap: 8px;
+}
+
 .armor-summary-panel.svg-framed {
   background-image: url('../../assets/ui/core/panels/armor-panel.svg');
   background-size: 100% 100%;

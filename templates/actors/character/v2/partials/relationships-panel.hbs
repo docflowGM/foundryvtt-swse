@@ -1,16 +1,21 @@
-<section class="relationships-panel holo-panel svg-framed svg-panel-frame">
+<section class="swse-panel swse-panel--relationships relationships-panel holo-panel svg-framed svg-panel-frame">
 
-  <header class="section-bar">
-    <h3 class="section-header">Relationships & Connections</h3>
-    {{#if hasAvailableFollowerSlots}}
-    <button class="build-follower-btn" data-action="build-follower" title="Create a new follower under your command">
-      <i class="fas fa-user-plus"></i> Build Follower
-    </button>
-    {{/if}}
-  </header>
+  <!-- Frame layer: SVG background -->
+  <div class="swse-panel__frame" aria-hidden="true"></div>
 
-  {{#if (gt relationships.length 0)}}
-    <div class="relationships-list">
+  <!-- Content layer: normal flow content -->
+  <div class="swse-panel__content">
+    <header class="section-bar">
+      <h3 class="section-header">Relationships & Connections</h3>
+      {{#if hasAvailableFollowerSlots}}
+      <button class="build-follower-btn" data-action="build-follower" title="Create a new follower under your command">
+        <i class="fas fa-user-plus"></i> Build Follower
+      </button>
+      {{/if}}
+    </header>
+
+    {{#if (gt relationships.length 0)}}
+      <div class="relationships-list">
       {{#each relationships}}
         <div class="relationship-entry" data-uuid="{{this.uuid}}">
           <div class="relationship-header">
@@ -39,6 +44,7 @@
   <div class="relationships-notes-section">
     <label class="section-subheader">Relationship Notes & Context</label>
     <textarea name="flags.swse.character.relationshipNotes" class="bio-textarea" placeholder="Overall notes about alliances, rivalries, key contact information...">{{flags.swse.character.relationshipNotes}}</textarea>
+    </div>
   </div>
 
 </section>
