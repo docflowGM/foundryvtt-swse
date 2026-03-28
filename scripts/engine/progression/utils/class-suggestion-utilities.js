@@ -12,6 +12,19 @@
 export const BASE_CLASSES = ['Jedi', 'Noble', 'Scoundrel', 'Scout', 'Soldier'];
 
 /**
+ * Class synergy data for suggestion engines
+ * Maps class name to primary ability and other class characteristics
+ */
+export const CLASS_SYNERGY_DATA = {
+  'Jedi': { primaryAbility: 'Wisdom' },
+  'Noble': { primaryAbility: 'Charisma' },
+  'Scoundrel': { primaryAbility: 'Dexterity' },
+  'Scout': { primaryAbility: 'Dexterity' },
+  'Soldier': { primaryAbility: 'Strength' },
+  'Nonheroic': { primaryAbility: 'Strength' }
+};
+
+/**
  * Convert BAB progression string to numeric multiplier
  * @param {string|number} progression - "slow", "medium", "fast" or a number
  * @returns {number} - Per-level BAB multiplier
