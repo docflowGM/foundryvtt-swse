@@ -188,6 +188,23 @@ export class SummaryStep extends ProgressionStepPlugin {
     const orderedFeats = canonicallyOrderSelections(this._summary.featSelections);
     const orderedTalents = canonicallyOrderSelections(this._summary.talentSelections);
 
+    // PHASE 9 UX: Issue summary for control center functionality
+    const validation = this.validate();
+    const issuesSummary = {
+      hasErrors: validation.errors.length > 0,
+      errorCount: validation.errors.length,
+      errors: validation.errors,
+      hasCaution: validation.warnings.caution.length > 0,
+      cautionCount: validation.warnings.caution.length,
+      cautions: validation.warnings.caution,
+      isReadyToFinalize: validation.isValid && this._isReviewComplete && !!this._characterName,
+      finalizationStatus: validation.isValid && this._isReviewComplete && !!this._characterName
+        ? 'Ready to create character'
+        : validation.errors.length > 0
+        ? `${validation.errors.length} error${validation.errors.length === 1 ? '' : 's'} to fix`
+        : `Incomplete (${Object.keys(this._summary.attributes).length ? '' : 'attributes, '}${this._summary.feats.length ? '' : 'feats, '}${this._characterName ? '' : 'name'})`
+    };
+
     return {
       summary: this._summary,
       characterName: this._characterName,  // Final name for actor creation
@@ -198,6 +215,8 @@ export class SummaryStep extends ProgressionStepPlugin {
       // Selection ordering: Canonical order for feat and talent display
       orderedFeats,
       orderedTalents,
+      // PHASE 9 UX: Issue summary and finalization status
+      issuesSummary,
     };
   }
 
