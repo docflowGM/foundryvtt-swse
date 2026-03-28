@@ -1,0 +1,25 @@
+<section class="starship-maneuvers-known-panel holo-panel">
+
+  <header class="section-bar">
+    <h3 class="section-header">Starship Maneuvers ({{derived.starshipManeuvers.count}})</h3>
+  </header>
+
+  {{#if derived.starshipManeuvers.list.length}}
+    <div class="starship-maneuvers-ledger">
+      {{#each derived.starshipManeuvers.list}}
+        <div class="maneuver-row svg-row-backed" data-item-id="{{this.id}}">
+          <div class="maneuver-name">{{this.name}}</div>
+          {{#if this.summary}}
+            <div class="maneuver-summary muted">{{this.summary}}</div>
+          {{/if}}
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="empty-state">
+      <p>No starship maneuvers known.</p>
+      <p class="hint">Take the Starship Tactics feat to learn maneuvers.</p>
+    </div>
+  {{/if}}
+
+</section>
