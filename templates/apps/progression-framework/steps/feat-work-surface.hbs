@@ -118,12 +118,25 @@
   {{#unless groupedFeats}}
   <section class="feat-group empty-state">
     <div class="empty-message">
+      {{!-- PHASE 8 UX: Enhanced empty state with helpful guidance --}}
       <i class="fa-solid fa-hexagon-exclamation"></i>
-      <p>No feats available for selection.</p>
+      <p class="empty-title">No {{#if showAll}}more{{else}}Available{{/if}} Feats</p>
       {{#if showAll}}
-      <p class="small">All available feats have been selected or do not meet prerequisites.</p>
+        <p class="empty-description">You've explored all available feats. Every feat either:</p>
+        <ul class="empty-reasons">
+          <li>Has already been selected by you</li>
+          <li>Does not meet your character's prerequisites</li>
+          <li>Is restricted by your class or species</li>
+        </ul>
+        <p class="empty-hint">Try reviewing your earlier choices if you need different options.</p>
       {{else}}
-      <p class="small">No feats meet your current prerequisites. Try enabling "Show All" to see ineligible feats.</p>
+        <p class="empty-description">No feats meet your current character prerequisites. Your current build:</p>
+        <ul class="empty-reasons">
+          <li>May not have unlocked certain feats yet</li>
+          <li>May require specific abilities or classes</li>
+          <li>May have restrictions based on species or level</li>
+        </ul>
+        <p class="empty-hint"><strong>Tip:</strong> Enable "Show All" to see what prerequisites are blocking each feat. You can review your earlier choices to unlock more options.</p>
       {{/if}}
     </div>
   </section>

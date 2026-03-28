@@ -653,6 +653,75 @@
   padding: 0.4rem 0.2rem 0;
 }
 
+/* ====================================================================
+   PHASE 8 UX: EMPTY STATE GUIDANCE
+   ==================================================================== */
+
+.empty-state {
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.empty-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.empty-message i {
+  font-size: 3rem;
+  color: rgba(100, 150, 200, 0.6);
+}
+
+.empty-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: rgba(200, 220, 255, 0.95);
+  margin: 0;
+}
+
+.empty-description {
+  font-size: 0.9rem;
+  color: rgba(150, 180, 220, 0.85);
+  margin: 0 0 0.75rem 0;
+}
+
+.empty-reasons {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 1rem 0;
+  font-size: 0.85rem;
+  color: rgba(150, 180, 220, 0.8);
+  text-align: left;
+  display: inline-block;
+}
+
+.empty-reasons li {
+  padding: 0.4rem 0.75rem;
+  margin: 0.25rem 0;
+  background: rgba(0, 100, 150, 0.1);
+  border-left: 2px solid rgba(0, 176, 208, 0.3);
+  border-radius: 2px;
+}
+
+.empty-reasons li:before {
+  content: "✓ ";
+  color: rgba(0, 176, 208, 0.7);
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+.empty-hint {
+  font-size: 0.85rem;
+  color: rgba(0, 176, 208, 0.9);
+  background: rgba(0, 176, 208, 0.08);
+  padding: 0.75rem 1rem;
+  border-radius: 2px;
+  border-left: 3px solid rgba(0, 176, 208, 0.4);
+  margin: 0;
+}
+
 @media (max-width: 900px) {
   .feat-item {
     grid-template-columns: minmax(0, 1fr);
