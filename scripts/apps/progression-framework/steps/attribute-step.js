@@ -17,6 +17,7 @@ import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
+import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 
 // Ability score constants and calculations
 const ABILITIES = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
@@ -236,6 +237,9 @@ export class AttributeStep extends ProgressionStepPlugin {
     const finalScore = baseScore + speciesMod;
     const modifier = Math.floor((finalScore - 10) / 2);
 
+    // Normalize detail panel data for canonical display (no fabrication)
+    const normalized = normalizeDetailPanelData({ ability, key: ability }, 'attribute');
+
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/attribute-details.hbs',
       data: {
@@ -250,6 +254,11 @@ export class AttributeStep extends ProgressionStepPlugin {
         modifierFormatted: modifier > 0 ? `+${modifier}` : `${modifier}`,
         modClass: modifier > 0 ? 'prog-num--pos' : modifier < 0 ? 'prog-num--neg' : 'prog-num--zero',
         speciesModClass: speciesMod > 0 ? 'prog-num--pos' : speciesMod < 0 ? 'prog-num--neg' : 'prog-num--zero',
+        // Add normalized fields for enhanced detail rail
+        canonicalDescription: normalized.description,
+        metadataTags: normalized.metadataTags,
+        mentorProse: normalized.mentorProse,
+        hasMentorProse: normalized.fallbacks.hasMentorProse,
       },
     };
   }

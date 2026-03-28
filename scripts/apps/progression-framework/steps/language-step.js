@@ -23,6 +23,7 @@ import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
+import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 
 export class LanguageStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -336,6 +337,9 @@ export class LanguageStep extends ProgressionStepPlugin {
     const canSelect = !isKnown && !isSelected && this._getAvailableLanguages().some(l => l.name === language.name);
     const remainingPicks = this._bonusLanguagesAvailable - this._selectedBonusLanguages.length;
 
+    // Normalize detail panel data for canonical display (no fabrication)
+    const normalized = normalizeDetailPanelData(language, 'language');
+
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/language-details.hbs',
       data: {
@@ -345,6 +349,10 @@ export class LanguageStep extends ProgressionStepPlugin {
         canSelect,
         remainingPicks,
         categoryLabel: this._categoryLabels[language.category] || language.category,
+        // Add normalized fields for enhanced detail rail
+        canonicalDescription: normalized.description,
+        metadataTags: normalized.metadataTags,
+        hasMentorProse: normalized.fallbacks.hasMentorProse,
       },
     };
   }
