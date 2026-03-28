@@ -688,6 +688,11 @@ function mirrorInventory(actor, system) {
   };
 
   for (const item of actor.items) {
+    // Exclude non-gear document types from the inventory ledger entirely.
+    if (!["weapon", "armor", "equipment", "consumable", "misc", "ammo"].includes(item.type)) {
+      continue;
+    }
+
     const entry = {
       id: item.id,
       name: item.name,
@@ -714,7 +719,13 @@ function mirrorInventory(actor, system) {
         groups.consumables.push(entry);
         break;
 
+      case "ammo":
+      case "misc":
+        groups.misc.push(entry);
+        break;
+
       default:
+        // Should never reach here due to the filter at the start
         groups.misc.push(entry);
     }
   }

@@ -31,16 +31,16 @@ export class InventoryEngine {
       );
 
       for (const armorItem of otherArmor) {
-        await ActorEngine.updateActor(actor.id, {
+        await ActorEngine.updateActor(actor, {
           [`items.${armorItem.id}.system.equipped`]: false
-        });
+        }, { source: "InventoryEngine.toggleEquip" });
       }
     }
 
     // Now set the target item
-    await ActorEngine.updateActor(actor.id, {
+    await ActorEngine.updateActor(actor, {
       [`items.${itemId}.system.equipped`]: newValue
-    });
+    }, { source: "InventoryEngine.toggleEquip" });
   }
 
   /**
@@ -58,9 +58,9 @@ export class InventoryEngine {
 
     const current = item.system.quantity ?? 1;
 
-    await ActorEngine.updateActor(actor.id, {
+    await ActorEngine.updateActor(actor, {
       [`items.${itemId}.system.quantity`]: current + 1
-    });
+    }, { source: "InventoryEngine.incrementQuantity" });
   }
 
   /**
@@ -79,15 +79,24 @@ export class InventoryEngine {
     const current = item.system.quantity ?? 1;
 
     if (current <= 1) {
-      // Remove item if no quantity left
-      await ActorEngine.updateActor(actor.id, {
-        [`items.${itemId}`]: null
-      });
+      await this.removeItem(actor, itemId);
     } else {
       // Decrement
-      await ActorEngine.updateActor(actor.id, {
+      await ActorEngine.updateActor(actor, {
         [`items.${itemId}.system.quantity`]: current - 1
-      });
+      }, { source: "InventoryEngine.decrementQuantity" });
     }
+  }
+
+  /**
+   * Remove an embedded item through ActorEngine authority.
+   */
+  static async removeItem(actor, itemId) {
+    const item = actor?.items?.get?.(itemId);
+    if (!actor || !item) return;
+
+    await ActorEngine.deleteEmbeddedDocuments(actor, "Item", [itemId], {
+      source: "InventoryEngine.removeItem"
+    });
   }
 }

@@ -333,7 +333,7 @@ export async function _onSelectFeat(event) {
     const [created] = await ActorEngine.createEmbeddedDocuments(this.actor, 'Item', [{
       name: feat.name,
       type: 'feat',
-      data: feat.system || feat.data
+      system: foundry.utils.deepClone(feat.system || feat.data || {})
     }]);
     if (created) {
       ui.notifications.info(`Added ${feat.name} to character sheet`);
@@ -1161,7 +1161,7 @@ class SkillFocusDialog extends BaseSWSEAppV2 {
         await ActorEngine.createEmbeddedDocuments(this.parentChargen.actor, 'Item', [{
           name: updatedFeat.name,
           type: 'feat',
-          data: updatedFeat.system || updatedFeat.data
+          system: foundry.utils.deepClone(updatedFeat.system || updatedFeat.data || {})
         }]);
         ui.notifications.info(`Added ${updatedFeat.name} to character sheet`);
         this.parentChargen.close();

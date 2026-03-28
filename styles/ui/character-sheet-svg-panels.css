@@ -37,7 +37,7 @@
 
 /* HP CONDITION PANEL SVG FRAME */
 .hp-condition-panel.svg-framed {
-  background-image: url('../../assets/ui/hp-condition-panel.svg');
+  background-image: url('../../assets/ui/character-record-header-plate.svg');
   background-size: 100% 100%;
   background-repeat: no-repeat;
   padding: 20px 16px;
