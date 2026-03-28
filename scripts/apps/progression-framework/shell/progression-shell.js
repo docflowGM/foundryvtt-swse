@@ -37,6 +37,7 @@ import { HydrationDiagnosticsCollector, HydrationValidator, HydrationRecoveryStr
 import { BuildIntent } from './build-intent.js';
 import { GlobalValidator } from '../validation/global-validator.js';
 import { ChargenPersistence } from './chargen-persistence.js';
+import { SessionStorage } from './session-storage.js';
 import { RolloutController } from '../rollout/rollout-controller.js';
 
 /**
@@ -153,6 +154,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const app = new this(actor, mode, options);
     console.log('[TEMP AUDIT] App instance created:', app?.constructor?.name);
 
+    // Phase 1: Attempt session recovery before initializing steps
+    console.log('[TEMP AUDIT] Attempting session recovery...');
+    await app._attemptSessionRecovery();
+    console.log('[TEMP AUDIT] Session recovery complete');
+
     console.log('[TEMP AUDIT] Calling _initializeSteps...');
     await app._initializeSteps();
     console.log('[TEMP AUDIT] Steps initialized, count:', app.steps?.length || 0);
@@ -267,6 +273,118 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // Position centering tracking — initialize EARLY so first render knows this is a new open
     this._openedAt = Date.now();
     this._centerTimer = null;
+
+    // Phase 1: Session persistence
+    this._registerPersistenceHook();
+  }
+
+  /**
+   * Register persistence hook to auto-save session after each commit.
+   * Phase 1: Session persistence and recovery.
+   * @private
+   */
+  _registerPersistenceHook() {
+    this.progressionSession.onPersist(async (session, stepId, selectionKey) => {
+      if (this.actor && this.persistenceEnabled) {
+        await SessionStorage.saveSession(this.actor, session, this.mode);
+      }
+    });
+  }
+
+  /**
+   * Attempt to recover a saved session.
+   * Phase 1: Session persistence and recovery.
+   *
+   * If a saved session exists, offer user the option to restore it.
+   * If they accept: restore selections, repair current step, navigate to last position
+   * If they decline or error: proceed with fresh session
+   *
+   * CRITICAL: Never trust stored indices. After restoring, we still need to:
+   * - Recompute active steps (done in _initializeSteps)
+   * - Repair current step (done after steps are built)
+   *
+   * @returns {Promise<void>}
+   * @private
+   */
+  async _attemptSessionRecovery() {
+    if (!this.actor || !this.persistenceEnabled) {
+      return; // No recovery for levelup mode or missing actor
+    }
+
+    try {
+      const sessionData = SessionStorage.loadSession(this.actor, this.mode);
+      if (!sessionData) {
+        swseLogger.debug('[ProgressionShell] No saved session to recover');
+        return; // No saved session, proceed normally
+      }
+
+      // Found a saved session — offer recovery option
+      const summary = SessionStorage.getSessionSummary(sessionData);
+      const shouldRecover = await this._promptSessionRecovery(summary);
+
+      if (!shouldRecover) {
+        swseLogger.debug('[ProgressionShell] User declined session recovery');
+        return; // User chose not to recover
+      }
+
+      // Restore session into the progression session object
+      const restored = SessionStorage.restoreIntoSession(this.progressionSession, sessionData);
+      if (!restored) {
+        swseLogger.error('[ProgressionShell] Failed to restore session');
+        return;
+      }
+
+      // Set flag to navigate to last step after steps are initialized
+      this._targetStepId = sessionData.currentStepId || null;
+
+      swseLogger.log('[ProgressionShell] Session recovered successfully', {
+        selections: summary.selectionCount,
+        visitedSteps: summary.visitedStepCount,
+        lastStep: summary.lastStepId,
+      });
+    } catch (err) {
+      swseLogger.error('[ProgressionShell] Error attempting session recovery:', err);
+      // Continue with fresh session on error
+    }
+  }
+
+  /**
+   * Prompt user for session recovery consent.
+   * Phase 1: Session persistence and recovery.
+   *
+   * @param {Object} summary - Session summary from SessionStorage.getSessionSummary
+   * @returns {Promise<boolean>} true if user wants to recover
+   * @private
+   */
+  async _promptSessionRecovery(summary) {
+    return new Promise((resolve) => {
+      const dialog = new Dialog({
+        title: 'Resume Progression?',
+        content: `
+          <div style="text-align: center; margin-bottom: 1em;">
+            <p>We found your previous progression session:</p>
+            <p><strong>${summary.preview}</strong></p>
+            <p style="font-size: 0.9em; color: #999;">
+              Saved ${new Date(summary.timestamp).toLocaleString()}
+            </p>
+          </div>
+          <p>Would you like to resume from where you left off, or start fresh?</p>
+        `,
+        buttons: {
+          resume: {
+            label: 'Resume',
+            callback: () => resolve(true),
+          },
+          fresh: {
+            label: 'Start Fresh',
+            callback: () => resolve(false),
+          },
+        },
+        default: 'resume',
+      });
+
+      dialog.render(true);
+    });
   }
 
   /**
@@ -443,9 +561,14 @@ export class ProgressionShell extends SWSEApplicationV2 {
           swseLogger.log(`[ProgressionShell] Navigating to target step: ${this._targetStepId} (index ${targetIndex}). Back-navigation disabled until past this step.`);
         } else {
           swseLogger.warn(`[ProgressionShell] Target step not found: ${this._targetStepId}. Using index 0.`);
+          // Phase 1: Repair current step if target was restored but no longer active
+          this._repairCurrentStep();
         }
         this._targetStepId = null; // Clear after use
       }
+
+      // Phase 1: Repair current step if it's invalid (e.g., after session recovery and rail changes)
+      this._repairCurrentStep();
 
       // Initialize utility bar config for the current step
       const currentPlugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);

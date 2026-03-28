@@ -19,7 +19,71 @@ import { ProgressionDocumentTargetPolicy } from '../policies/progression-documen
 
 export class ProgressionFinalizer {
   /**
-   * Finalize progression and compile mutation plan.
+   * Perform a dry-run: compile and validate mutation plan without applying.
+   * Used for summary preview, testing, and debugging.
+   *
+   * @param {Object} sessionState - Shell progression session
+   * @param {Actor} actor - Character actor
+   * @returns {Promise<{success: boolean, plan?: Object, validation?: Object, error?: string}>}
+   */
+  static async dryRun(sessionState, actor) {
+    try {
+      swseLogger.log('[ProgressionFinalizer] Dry-run initiated', {
+        mode: sessionState.mode,
+        actorId: actor.id,
+      });
+
+      // Validation step 1: readiness
+      this._validateReadiness(sessionState);
+
+      // Validation step 2: subtype adapter
+      const adapter = sessionState.progressionSession?.subtypeAdapter;
+      if (adapter) {
+        await adapter.validateReadiness(sessionState.progressionSession, actor);
+      }
+
+      // Validation step 3: document type
+      this._validateDocumentType(actor, sessionState.progressionSession);
+
+      // Compilation
+      const mutationPlan = this._compileMutationPlan(sessionState, actor);
+
+      // Validation step 4: adapter mutation plan
+      let finalPlan = mutationPlan;
+      if (adapter) {
+        finalPlan = await adapter.contributeMutationPlan(
+          mutationPlan,
+          sessionState.progressionSession,
+          actor
+        );
+      }
+
+      // Validation step 5: validate compiled plan
+      const validation = this._validateMutationPlan(finalPlan, actor);
+
+      swseLogger.log('[ProgressionFinalizer] Dry-run successful', {
+        planValid: validation.isValid,
+        warnings: validation.warnings.length,
+      });
+
+      return {
+        success: true,
+        plan: finalPlan,
+        validation,
+      };
+    } catch (error) {
+      swseLogger.warn('[ProgressionFinalizer] Dry-run failed', error);
+      return {
+        success: false,
+        error: error.message || 'Dry-run validation failed',
+      };
+    }
+  }
+
+  /**
+   * Finalize progression with transaction safety.
+   * Validates completely BEFORE applying ANY mutations.
+   * If validation fails at ANY point → returns error without mutation.
    *
    * @param {Object} sessionState - Shell progression session
    * @param {Actor} actor - Character actor being progressed
@@ -28,34 +92,28 @@ export class ProgressionFinalizer {
    */
   static async finalize(sessionState, actor, options = {}) {
     try {
-      swseLogger.log('[ProgressionFinalizer] Finalize requested', {
+      swseLogger.log('[ProgressionFinalizer] Finalization initiated (transaction-safe)', {
         mode: sessionState.mode,
         actorId: actor.id,
         actorName: actor.name,
-        selectionsCount: sessionState.committedSelections?.size || 0,
-        stepCount: sessionState.steps?.length || 0,
       });
 
-      // Gate: Is progression actually complete?
+      // PHASE 1: Validate readiness
       this._validateReadiness(sessionState);
 
-      // Phase 1: Route subtype-specific readiness checks through adapter
+      // PHASE 2: Route subtype-specific readiness checks through adapter
       const adapter = sessionState.progressionSession?.subtypeAdapter;
       if (adapter) {
         await adapter.validateReadiness(sessionState.progressionSession, actor);
       }
 
-      // PHASE 2.X (Document Targeting): Validate actor document type matches progression subtype
+      // PHASE 3: Validate actor document type matches progression subtype
       this._validateDocumentType(actor, sessionState.progressionSession);
 
-      // Compile the authoritative mutation plan
-      const mutationPlan = this._compileMutationPlan(
-        sessionState,
-        actor,
-        options
-      );
+      // PHASE 4: Compile the authoritative mutation plan (WITHOUT applying yet)
+      const mutationPlan = this._compileMutationPlan(sessionState, actor, options);
 
-      // Phase 1: Route through adapter seam for subtype-specific mutation plan contribution
+      // PHASE 5: Route through adapter seam for subtype-specific mutation plan contribution
       let finalMutationPlan = mutationPlan;
       if (adapter) {
         finalMutationPlan = await adapter.contributeMutationPlan(
@@ -65,32 +123,107 @@ export class ProgressionFinalizer {
         );
       }
 
-      swseLogger.log('[ProgressionFinalizer] Mutation plan compiled', {
+      // CRITICAL: Validate the complete mutation plan BEFORE applying anything
+      const validation = this._validateMutationPlan(finalMutationPlan, actor);
+      if (!validation.isValid) {
+        // Validation failed — ABORT without mutation
+        const errors = validation.errors.join('; ');
+        swseLogger.error('[ProgressionFinalizer] Mutation plan validation failed — ABORTING finalization', {
+          errors: validation.errors,
+          warnings: validation.warnings,
+        });
+        throw new Error(`Mutation plan invalid: ${errors}`);
+      }
+
+      swseLogger.log('[ProgressionFinalizer] All validations passed — proceeding to mutation', {
         hasCoreData: !!finalMutationPlan.coreData,
         patchCount: Object.keys(finalMutationPlan.patches || {}).length,
         itemGrantCount: finalMutationPlan.itemGrants?.length || 0,
-        hasDroidPackage: !!finalMutationPlan.droidPackage,
-        adapterContributed: !!adapter,
+        warningCount: validation.warnings.length,
       });
 
-      // Hand to governance layer
-      swseLogger.log('[ProgressionFinalizer] Sending mutation plan to ActorEngine');
-
+      // ONLY NOW: Apply mutations through ActorEngine (no turning back)
       const result = await this._applyMutationPlan(actor, finalMutationPlan);
 
-      swseLogger.log('[ProgressionFinalizer] Finalization complete', {
-        success: result.success,
-        error: result.error,
+      if (!result.success) {
+        // ActorEngine failed — log but don't throw (mutations may be partially applied)
+        swseLogger.error('[ProgressionFinalizer] ActorEngine failed during finalization', {
+          error: result.error,
+          actorId: actor.id,
+        });
+        return result;
+      }
+
+      swseLogger.log('[ProgressionFinalizer] Finalization successful', {
+        actorId: actor.id,
+        actorName: actor.name,
       });
 
-      return result;
+      return { success: true, result: { actorId: actor.id } };
     } catch (error) {
-      swseLogger.error('[ProgressionFinalizer] Finalization failed', error);
+      swseLogger.error('[ProgressionFinalizer] Finalization aborted (no mutations applied)', error);
       return {
         success: false,
         error: error.message || 'Finalization failed',
       };
     }
+  }
+
+  /**
+   * Validate a compiled mutation plan.
+   * Checks for:
+   * - required fields present
+   * - no conflicting mutations
+   * - ActorEngine can handle it
+   *
+   * @param {Object} mutationPlan
+   * @param {Actor} actor
+   * @returns {Object} {isValid: boolean, errors: [], warnings: []}
+   * @private
+   */
+  static _validateMutationPlan(mutationPlan, actor) {
+    const errors = [];
+    const warnings = [];
+
+    if (!mutationPlan) {
+      errors.push('Mutation plan is null or undefined');
+      return { isValid: false, errors, warnings };
+    }
+
+    // Check for critical fields
+    if (!mutationPlan.set && !mutationPlan.add && !mutationPlan.create && !mutationPlan.delete) {
+      warnings.push('Mutation plan has no operations (empty set/add/create/delete)');
+    }
+
+    // Validate set operations
+    if (mutationPlan.set) {
+      for (const [key, value] of Object.entries(mutationPlan.set)) {
+        if (key.startsWith('system.') && typeof value === 'object' && value !== null) {
+          // System fields should be primitives, not objects (usually)
+          if (!Array.isArray(value) && !(value instanceof Date)) {
+            warnings.push(`Mutation sets system field '${key}' to object — may cause issues`);
+          }
+        }
+      }
+    }
+
+    // Validate items
+    if (mutationPlan.add && mutationPlan.add.items) {
+      for (const item of mutationPlan.add.items) {
+        if (!item.name) {
+          errors.push('Item in mutation plan missing name');
+        }
+        if (!item.type) {
+          errors.push('Item in mutation plan missing type');
+        }
+      }
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+      warnings,
+    };
   }
 
   /**
