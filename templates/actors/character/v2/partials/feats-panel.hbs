@@ -4,14 +4,15 @@
     <h3 class="section-header">Feats</h3>
     <button type="button"
             class="add-feat swse-btn"
-            data-action="add-feat">
+            data-action="add-feat"
+            {{#unless featPanel.canEdit}}disabled{{/unless}}>
       + Add Feat
     </button>
   </header>
 
-  {{#if derived.feats.list.length}}
+  {{#if featPanel.hasEntries}}
     <div class="feat-grid swse-dense-grid">
-      {{#each derived.feats.list as |feat|}}
+      {{#each featPanel.entries as |feat|}}
         <div class="feat-card swse-dense-card swse-ui-panel swse-card-schema swse-card-schema--enumerated swse-card-schema--filled"
              data-item-id="{{feat.id}}"
              data-action="open-ability">
@@ -20,25 +21,27 @@
             <span class="card-title">{{feat.name}}</span>
           </div>
 
-          {{#if feat.summary}}
+          {{#if feat.description}}
             <div class="card-summary swse-card-summary">
-              {{feat.summary}}
+              {{feat.description}}
             </div>
           {{/if}}
 
         </div>
       {{/each}}
-      <button type="button" class="feat-card swse-dense-card swse-ui-panel swse-card-schema swse-card-schema--choice swse-card-schema--placeholder swse-add-card" data-action="add-feat">
-        <span class="swse-card-schema__eyebrow">Choice Slot</span>
-        <span class="swse-card-schema__title">Add Feat</span>
-        <span class="swse-card-schema__body">Create a new feat entry in the same card footprint used by all feat records.</span>
-      </button>
+      {{#if featPanel.canEdit}}
+        <button type="button" class="feat-card swse-dense-card swse-ui-panel swse-card-schema swse-card-schema--choice swse-card-schema--placeholder swse-add-card" data-action="add-feat">
+          <span class="swse-card-schema__eyebrow">Choice Slot</span>
+          <span class="swse-card-schema__title">Add Feat</span>
+          <span class="swse-card-schema__body">Create a new feat entry in the same card footprint used by all feat records.</span>
+        </button>
+      {{/if}}
     </div>
   {{else}}
     <div class="muted empty-state swse-card-schema swse-card-schema--choice swse-card-schema--placeholder">
       <span class="swse-card-schema__eyebrow">Choice Slot</span>
-      <span class="swse-card-schema__title">No feats yet</span>
-      <span class="swse-card-schema__body">Use Add Feat to create the first standardized feat card.</span>
+      <span class="swse-card-schema__title">{{featPanel.emptyMessage}}</span>
+      <span class="swse-card-schema__body">{{#if featPanel.canEdit}}Use Add Feat to create the first standardized feat card.{{else}}No feats have been added yet.{{/if}}</span>
     </div>
   {{/if}}
 

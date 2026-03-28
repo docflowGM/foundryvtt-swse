@@ -222,6 +222,7 @@ export class PanelContextBuilder {
    *
    * Contract: inventoryPanel
    * - entries: [ { id, name, img, type, quantity, weight, equipped, rarity, tags, canEdit, canDelete } ]
+   * - grouped: { category: [ entries ] } (Weapons, Armor, Equipment)
    * - hasEntries: boolean
    * - totalWeight: number
    * - equippedArmor: { name, type, defenses, modifiers } | null
@@ -233,6 +234,33 @@ export class PanelContextBuilder {
     const entries = items
       .filter(item => ['weapon', 'equipment', 'armor'].includes(item.type))
       .map(item => RowTransformers.toInventoryRow(item, this.sheet.isEditable));
+
+    // Group entries by type category for card-based display
+    const typeToCategory = {
+      weapon: 'Weapons',
+      armor: 'Armor',
+      equipment: 'Equipment'
+    };
+
+    const grouped = {};
+    ['Weapons', 'Armor', 'Equipment'].forEach(cat => {
+      grouped[cat] = [];
+    });
+
+    entries.forEach(entry => {
+      const category = typeToCategory[entry.type] || 'Equipment';
+      if (!grouped[category]) {
+        grouped[category] = [];
+      }
+      grouped[category].push(entry);
+    });
+
+    // Remove empty groups for template simplicity
+    for (const category of Object.keys(grouped)) {
+      if (grouped[category].length === 0) {
+        delete grouped[category];
+      }
+    }
 
     // Calculate total weight
     const totalWeight = entries.reduce((sum, item) => {
@@ -251,6 +279,7 @@ export class PanelContextBuilder {
 
     const panel = {
       entries,
+      grouped,
       hasEntries: entries.length > 0,
       totalWeight,
       equippedArmor,

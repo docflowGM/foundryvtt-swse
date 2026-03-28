@@ -20,6 +20,7 @@ import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced
 import { computeCenteredPosition } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
 import { PANEL_REGISTRY } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PANEL_REGISTRY.js";
+import { PostRenderAssertions } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PostRenderAssertions.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -251,6 +252,9 @@ export class SWSEV2CharacterSheet extends
 
     // Monitor for listener accumulation (diagnostic only)
     watchListenerCount(root, "SWSEV2CharacterSheet");
+
+    // Run post-render assertions to verify DOM matches panel context contracts
+    PostRenderAssertions.runAll(root, this._currentContext || {});
   }
 
   async _onClose(options) {
@@ -893,6 +897,9 @@ const forcePoints = [];
 
     // GUARDRAIL 1: Validate context contract to prevent silent template failures
     validateContextContract(finalContext, "SWSEV2CharacterSheet");
+
+    // Store context for post-render assertions
+    this._currentContext = finalContext;
 
     return finalContext;
   }
