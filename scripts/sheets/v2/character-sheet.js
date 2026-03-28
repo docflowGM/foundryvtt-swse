@@ -220,10 +220,11 @@ export class SWSEV2CharacterSheet extends
         console.log('[LIFECYCLE] Found form via closest()');
         root = formParent;
       } else {
-        const formInDoc = document.querySelector("form.swse-character-sheet-form");
-        if (formInDoc) {
-          console.log('[LIFECYCLE] Found form via querySelector()');
-          root = formInDoc;
+        const appRoot = this.element instanceof HTMLElement ? this.element : this.element?.[0];
+        const localForm = appRoot?.closest?.("form") ?? appRoot?.querySelector?.("form.swse-character-sheet-form") ?? null;
+        if (localForm) {
+          console.log('[LIFECYCLE] Found form within this app root');
+          root = localForm;
         }
       }
     }
