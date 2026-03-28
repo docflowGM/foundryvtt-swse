@@ -597,6 +597,24 @@ export class FeatStep extends ProgressionStepPlugin {
     };
   }
 
+  getBlockingIssues() {
+    if (!this._selectedFeatId) {
+      return [`Select a ${this._slotType === 'class' ? 'Class' : 'General'} Feat`];
+    }
+    return [];
+  }
+
+  /**
+   * PHASE 3 UX: Specific, actionable explanation for why Next is blocked
+   */
+  getBlockerExplanation() {
+    if (!this._selectedFeatId) {
+      const slotTypeLabel = this._slotType === 'class' ? 'Class' : 'General';
+      return `Choose a ${slotTypeLabel} Feat to continue`;
+    }
+    return null;
+  }
+
   // ---------------------------------------------------------------------------
   // Utility Bar
   // ---------------------------------------------------------------------------

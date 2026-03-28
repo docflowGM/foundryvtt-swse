@@ -587,6 +587,28 @@ export class TalentStep extends ProgressionStepPlugin {
     };
   }
 
+  getBlockingIssues() {
+    if (!this._selectedTalentId) {
+      return [`Select a ${this._slotType === 'class' ? 'Class' : 'Heroic'} Talent`];
+    }
+    return [];
+  }
+
+  /**
+   * PHASE 3 UX: Specific, actionable explanation for why Next is blocked
+   */
+  getBlockerExplanation() {
+    if (!this._selectedTalentId) {
+      if (this._stage === 'browser') {
+        return 'Choose a talent tree to view available talents';
+      } else {
+        const slotTypeLabel = this._slotType === 'class' ? 'Class' : 'Heroic';
+        return `Select a ${slotTypeLabel} Talent to continue`;
+      }
+    }
+    return null;
+  }
+
   // ---------------------------------------------------------------------------
   // Footer
   // ---------------------------------------------------------------------------

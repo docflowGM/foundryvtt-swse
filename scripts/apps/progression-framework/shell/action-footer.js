@@ -48,6 +48,11 @@ export class ActionFooter {
     const remainingPicks = currentPlugin?.getRemainingPicks() ?? [];
     const footerOverride = currentPlugin?.getFooterConfig() ?? {};
 
+    // PHASE 3 UX: Get specific blocker explanation from plugin
+    const blockerExplanation = blockingIssues.length > 0
+      ? currentPlugin?.getBlockerExplanation?.() ?? null
+      : null;
+
     const canAdvance = blockingIssues.length === 0 && !shell.isProcessing;
 
     // Center items: remaining picks + any blocking issues as chips
@@ -81,6 +86,8 @@ export class ActionFooter {
       },
       blockingIssues,
       warnings,
+      // PHASE 3 UX: Specific explanation when blocked
+      blockerExplanation,
     };
   }
 }

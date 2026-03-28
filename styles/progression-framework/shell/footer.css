@@ -325,6 +325,38 @@
 }
 
 /* ============================================================================
+   PHASE 3 UX: BLOCKER EXPLANATION — Specific actionable message
+   ============================================================================ */
+
+.prog-blocker-explanation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 200ms ease;
+}
+
+.prog-blocker-explanation--primary {
+  background: rgba(0, 150, 200, 0.15);
+  border: 1px solid rgba(0, 176, 208, 0.3);
+  color: rgba(100, 200, 255, 0.95);
+}
+
+.prog-blocker-explanation i {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  color: rgba(0, 180, 255, 0.9);
+}
+
+.prog-blocker-text {
+  flex: 1;
+  letter-spacing: 0.02em;
+}
+
+/* ============================================================================
    RESPONSIVE — collapse chip labels at narrow widths
    ============================================================================ */
 
