@@ -27,6 +27,7 @@ import { centerApplicationDuringStartup } from '/systems/foundryvtt-swse/scripts
 import { ConditionalStepResolver } from './conditional-step-resolver.js';
 import { ProgressionFinalizer } from './progression-finalizer.js';
 import { ProgressionSession } from './progression-session.js';
+import { ActiveStepComputer } from './active-step-computer.js';
 import { StepCategory } from '../steps/step-descriptor.js';
 import { ActionFooter } from './action-footer.js';
 import { MentorRail } from './mentor-rail.js';
@@ -905,6 +906,38 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this.render();
   }
 
+  /**
+   * Find the next applicable step after the given index.
+   * Skips non-applicable steps (those not in the current step list).
+   * @param {number} startIndex - Index to start searching from
+   * @returns {number} Index of next applicable step, or -1 if none
+   * @private
+   */
+  _findNextApplicableStep(startIndex) {
+    for (let i = startIndex; i < this.steps.length; i++) {
+      // All steps in this.steps array are applicable (filtered during initialization)
+      // So any step we find is applicable
+      return i;
+    }
+    return -1;
+  }
+
+  /**
+   * Find the previous applicable step before the given index.
+   * Respects minimum step boundary.
+   * @param {number} startIndex - Index to start searching from
+   * @param {number} minIndex - Minimum allowed index
+   * @returns {number} Index of previous applicable step, or -1 if none
+   * @private
+   */
+  _findPreviousApplicableStep(startIndex, minIndex) {
+    for (let i = startIndex; i >= minIndex; i--) {
+      // All steps in this.steps array are applicable
+      return i;
+    }
+    return -1;
+  }
+
   // ---------------------------------------------------------------------------
   // Navigation Actions
   // ---------------------------------------------------------------------------
@@ -951,7 +984,15 @@ export class ProgressionShell extends SWSEApplicationV2 {
       }
     }
 
-    this.currentStepIndex++;
+    // Auto-skip to next applicable step
+    const nextApplicableIndex = this._findNextApplicableStep(this.currentStepIndex + 1);
+    if (nextApplicableIndex < 0) {
+      // No more applicable steps — proceed to confirmation
+      await this._onConfirmStep(event, target);
+      return;
+    }
+
+    this.currentStepIndex = nextApplicableIndex;
     this.focusedItem = null;
 
     const nextDescriptor = this.steps[this.currentStepIndex];
@@ -965,7 +1006,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
       } catch (err) {
         swseLogger.error(`[ProgressionShell] Error entering step ${nextDescriptor?.stepId}:`, err);
         this.lastError = err.message;
-        this.currentStepIndex--;  // Go back to previous step
+        this.currentStepIndex = nextApplicableIndex > 0 ? nextApplicableIndex - 1 : 0;  // Go back to previous applicable step
         ui?.notifications?.error?.(`Failed to load ${nextDescriptor?.label}. Returning to previous step.`);
         return;
       }
@@ -986,7 +1027,14 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const currentPlugin = this.stepPlugins.get(currentDescriptor?.stepId);
     currentPlugin?.onStepExit(this);
 
-    this.currentStepIndex--;
+    // Auto-skip to previous applicable step
+    const prevApplicableIndex = this._findPreviousApplicableStep(this.currentStepIndex - 1, minIndex);
+    if (prevApplicableIndex < 0) {
+      swseLogger.log(`[ProgressionShell] No applicable previous step found; staying at current step`);
+      return;
+    }
+
+    this.currentStepIndex = prevApplicableIndex;
     this.focusedItem = null;
 
     const prevDescriptor = this.steps[this.currentStepIndex];
@@ -1262,9 +1310,54 @@ export class ProgressionShell extends SWSEApplicationV2 {
    * @param {string} stepId
    * @param {*} selection
    */
-  commitSelection(stepId, selection) {
+  async commitSelection(stepId, selection) {
     this.committedSelections.set(stepId, selection);
+
+    // After commitment, check if downstream steps have become non-applicable
+    // and recompute the active step list if needed
+    await this._recomputeActiveStepsIfNeeded();
+
     this.render();
+  }
+
+  /**
+   * Recompute active steps and validate current step is still applicable.
+   * If current step has become non-applicable (due to upstream choices),
+   * auto-move to the next applicable step.
+   * @private
+   */
+  async _recomputeActiveStepsIfNeeded() {
+    try {
+      // Get fresh list of active steps based on current session state
+      const computer = new ActiveStepComputer();
+      const newActiveNodeIds = await computer.computeActiveSteps(
+        this.actor,
+        this.mode,
+        this.progressionSession,
+        { subtype: this.progressionSession.subtype }
+      );
+
+      const currentStepId = this.steps[this.currentStepIndex]?.stepId;
+      const isCurrentStepStillActive = newActiveNodeIds.includes(currentStepId);
+
+      if (!isCurrentStepStillActive && currentStepId) {
+        // Current step is no longer applicable — find next applicable step
+        const nextApplicableIndex = this._findNextApplicableStep(this.currentStepIndex + 1);
+        if (nextApplicableIndex >= 0) {
+          swseLogger.log(`[ProgressionShell] Step ${currentStepId} became non-applicable; auto-navigating to next step`, {
+            nextStepId: this.steps[nextApplicableIndex]?.stepId,
+          });
+          this.currentStepIndex = nextApplicableIndex;
+          const nextPlugin = this.stepPlugins.get(this.steps[nextApplicableIndex]?.stepId);
+          if (nextPlugin) {
+            await nextPlugin.onStepEnter(this);
+          }
+        }
+      }
+    } catch (err) {
+      swseLogger.warn(`[ProgressionShell] Error recomputing active steps:`, err);
+      // Continue without recomputation on error (fail-safe)
+    }
   }
 
   /**

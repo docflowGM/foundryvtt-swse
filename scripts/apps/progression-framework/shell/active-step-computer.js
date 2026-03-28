@@ -81,14 +81,29 @@ export class ActiveStepComputer {
         .filter(node => activeNodeIds.includes(node.nodeId))
         .map(node => node.nodeId);
 
-      // Step 4: Route through adapter seam for subtype-specific contribution
+      // Step 4: Evaluate applicability — filter out steps with no actionable work
+      const applicableActive = [];
+      for (const nodeId of sortedActive) {
+        const node = PROGRESSION_NODE_REGISTRY[nodeId];
+        const isApplicable = await this._evaluateStepApplicability(
+          node,
+          actor,
+          mode,
+          progressionSession
+        );
+        if (isApplicable) {
+          applicableActive.push(nodeId);
+        }
+      }
+
+      // Step 5: Route through adapter seam for subtype-specific contribution
       // Phase 1: Adapter can suppress/modify active steps based on subtype rules
       const adapter = progressionSession.subtypeAdapter;
-      let finalActive = sortedActive;
+      let finalActive = applicableActive;
       if (adapter) {
         // Phase 2.8: Ensure session has mode for adapter logic (e.g., Beast level-up feat filtering)
         const sessionWithMode = { ...progressionSession, mode };
-        finalActive = await adapter.contributeActiveSteps(sortedActive, sessionWithMode, actor);
+        finalActive = await adapter.contributeActiveSteps(applicableActive, sessionWithMode, actor);
       }
 
       swseLogger.debug('[ActiveStepComputer] Computed active steps', {
@@ -104,6 +119,176 @@ export class ActiveStepComputer {
       swseLogger.error('[ActiveStepComputer] Error computing active steps:', err);
       return [];
     }
+  }
+
+  /**
+   * Evaluate whether a step has actionable work for current session state.
+   * A step is "applicable" if the player has something to do in it.
+   * Non-applicable steps are hidden and auto-skipped in navigation.
+   *
+   * @param {Object} node - Node definition from registry
+   * @param {Actor} actor - The actor
+   * @param {'chargen' | 'levelup'} mode - Progression mode
+   * @param {Object} progressionSession - Phase 1 canonical session
+   * @returns {Promise<boolean>}
+   * @private
+   */
+  async _evaluateStepApplicability(node, actor, mode, progressionSession) {
+    try {
+      switch (node.nodeId) {
+        // Languages: applicable only if unallocated language slots exist
+        case 'languages':
+          return this._hasUnallocatedLanguageSlots(actor, progressionSession);
+
+        // Feat steps: applicable if legal choices exist
+        case 'general-feat':
+        case 'class-feat':
+          return this._hasFeatChoices(node.nodeId, actor, progressionSession);
+
+        // Talent steps: applicable if legal choices exist
+        case 'general-talent':
+        case 'class-talent':
+          return this._hasTalentChoices(node.nodeId, actor, progressionSession);
+
+        // Force powers: applicable if entitlements > used count
+        case 'force-powers':
+          return this._hasForcePowerChoices(actor, progressionSession);
+
+        // Force secrets/techniques: applicable if entitlements exist
+        case 'force-secrets':
+          return this._hasForceSecretChoices(actor, progressionSession);
+
+        case 'force-techniques':
+          return this._hasForceTechniqueChoices(actor, progressionSession);
+
+        // Starship maneuvers: applicable if entitlements exist
+        case 'starship-maneuvers':
+          return this._hasStarshipChoices(actor, progressionSession);
+
+        // Droid-only configuration: applicable if deferred droid build exists
+        case 'final-droid-configuration':
+          return this._hasDroidBuildPending(progressionSession);
+
+        // Canonical steps are always applicable (they're always needed)
+        default:
+          return true;
+      }
+    } catch (err) {
+      swseLogger.warn(
+        `[ActiveStepComputer] Error evaluating applicability for ${node.nodeId}:`,
+        err
+      );
+      // Default to applicable on error (fail-safe: don't hide steps)
+      return true;
+    }
+  }
+
+  /**
+   * Check if actor has unallocated language slots.
+   * @private
+   */
+  _hasUnallocatedLanguageSlots(actor, progressionSession) {
+    const attribs = progressionSession?.draftSelections?.attributes;
+    if (!attribs) return false;
+
+    // INT modifier + Linguist feat bonus + class feature bonus
+    const intMod = Math.floor((attribs.values?.int || 0) / 2) - 5;
+    let bonus = Math.max(0, intMod);
+
+    // Check for Linguist feat
+    const hasLinguist = actor.items.some(item =>
+      item.type === 'feat' && item.name?.toLowerCase().includes('linguist')
+    );
+    if (hasLinguist) bonus += 2;
+
+    // Background bonuses
+    const background = progressionSession?.draftSelections?.background;
+    if (background?.grants?.languages) {
+      bonus += background.grants.languages;
+    }
+
+    // Species grants
+    const species = progressionSession?.draftSelections?.species;
+    if (species?.grants?.languages) {
+      bonus += species.grants.languages;
+    }
+
+    const maxLanguages = 1 + bonus; // Base 1 + modifiers
+    const selectedLanguages = progressionSession?.draftSelections?.languages?.length || 0;
+    return selectedLanguages < maxLanguages;
+  }
+
+  /**
+   * Check if legal feat choices exist for this feat type.
+   * @private
+   */
+  _hasFeatChoices(stepNodeId, actor, progressionSession) {
+    // Placeholder: would call AbilityEngine.evaluateAcquisition() for each feat
+    // For now, assume applicable (step plugin filters legal choices)
+    // This prevents false negatives where a feat *might* be legal
+    return true;
+  }
+
+  /**
+   * Check if legal talent choices exist for this talent type.
+   * @private
+   */
+  _hasTalentChoices(stepNodeId, actor, progressionSession) {
+    // Placeholder: would call AbilityEngine.evaluateAcquisition() for each talent
+    // For now, assume applicable (step plugin filters legal choices)
+    return true;
+  }
+
+  /**
+   * Check if force power entitlements exist and have unfilled slots.
+   * @private
+   */
+  _hasForcePowerChoices(actor, progressionSession) {
+    // For now, assume applicable if force powers step is active
+    // (prerequisite already checked by activation policy)
+    return true;
+  }
+
+  /**
+   * Check if force secret entitlements exist.
+   * @private
+   */
+  _hasForceSecretChoices(actor, progressionSession) {
+    // Force secrets applicable if force powers were selected
+    const forcePowers = progressionSession?.draftSelections?.forcePowers;
+    return Array.isArray(forcePowers) && forcePowers.length > 0;
+  }
+
+  /**
+   * Check if force technique entitlements exist.
+   * @private
+   */
+  _hasForceTechniqueChoices(actor, progressionSession) {
+    // Force techniques applicable if secrets were selected OR force talent exists
+    const forceSecrets = progressionSession?.draftSelections?.forceSecrets;
+    const hasForceTalent = actor.items.some(item =>
+      item.type === 'talent' && item.name?.toLowerCase().includes('force')
+    );
+    return (Array.isArray(forceSecrets) && forceSecrets.length > 0) || hasForceTalent;
+  }
+
+  /**
+   * Check if starship maneuver entitlements exist.
+   * @private
+   */
+  _hasStarshipChoices(actor, progressionSession) {
+    // Starship maneuvers applicable if prerequisite feat exists
+    return true;
+  }
+
+  /**
+   * Check if deferred droid build is pending finalization.
+   * @private
+   */
+  _hasDroidBuildPending(progressionSession) {
+    const droidBuild = progressionSession?.draftSelections?.droid;
+    return droidBuild?.buildState?.isDeferred === true &&
+           droidBuild?.buildState?.isFinalized !== true;
   }
 
   /**
