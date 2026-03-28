@@ -3,6 +3,25 @@
 
 <div class="feat-work-surface prog-quickref-stage">
 
+  {{!-- PHASE 2 UX: Micro-progress indicator --}}
+  {{#if slotProgress}}
+  <div class="prog-micro-progress prog-micro-progress--feats">
+    {{#if slotProgress.isComplete}}
+      <div class="prog-progress-status prog-progress-status--complete">
+        <i class="fas fa-check-circle"></i>
+        <span class="prog-progress-label">{{slotProgress.progressLabel}}</span>
+        <span class="prog-badge prog-badge--complete">Complete</span>
+      </div>
+    {{else}}
+      <div class="prog-progress-status prog-progress-status--incomplete">
+        <i class="fas fa-circle-notch"></i>
+        <span class="prog-progress-label">{{slotProgress.progressLabel}}</span>
+        <span class="prog-progress-remaining">{{slotProgress.remainingLabel}}</span>
+      </div>
+    {{/if}}
+  </div>
+  {{/if}}
+
   {{#if groupedFeats.suggested}}
   <section class="feat-group suggested-group">
     <div class="group-header" data-action="toggle-category" data-category="suggested">

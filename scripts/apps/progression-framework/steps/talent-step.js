@@ -337,6 +337,23 @@ export class TalentStep extends ProgressionStepPlugin {
     const committedTalents = context?.shell?.progressionSession?.draftSelections?.talents || [];
     const orderedSelections = canonicallyOrderSelections(committedTalents);
 
+    // PHASE 2 UX: Micro-progress — show slot progress
+    const selectedCount = committedTalents.length;
+    const requiredCount = 1; // Single talent slot per step
+    const remainingCount = Math.max(0, requiredCount - selectedCount);
+    const isComplete = remainingCount === 0;
+
+    const slotProgress = {
+      selectedCount,
+      requiredCount,
+      remainingCount,
+      isComplete,
+      progressLabel: `${selectedCount} of ${requiredCount} talent${requiredCount === 1 ? '' : 's'}`,
+      remainingLabel: remainingCount > 0
+        ? `${remainingCount} talent${remainingCount === 1 ? '' : 's'} remaining`
+        : 'Complete',
+    };
+
     return {
       stage: 'browser',
       slotType: this._slotType,
@@ -355,6 +372,8 @@ export class TalentStep extends ProgressionStepPlugin {
       })),
       searchQuery: this._searchQuery,
       orderedSelections,
+      // PHASE 2 UX: Slot progress
+      slotProgress,
     };
   }
 
@@ -388,6 +407,23 @@ export class TalentStep extends ProgressionStepPlugin {
     const committedTalents = context?.shell?.progressionSession?.draftSelections?.talents || [];
     const orderedSelections = canonicallyOrderSelections(committedTalents);
 
+    // PHASE 2 UX: Micro-progress — show slot progress
+    const selectedCount = committedTalents.length;
+    const requiredCount = 1; // Single talent slot per step
+    const remainingCount = Math.max(0, requiredCount - selectedCount);
+    const isComplete = remainingCount === 0;
+
+    const slotProgress = {
+      selectedCount,
+      requiredCount,
+      remainingCount,
+      isComplete,
+      progressLabel: `${selectedCount} of ${requiredCount} talent${requiredCount === 1 ? '' : 's'}`,
+      remainingLabel: remainingCount > 0
+        ? `${remainingCount} talent${remainingCount === 1 ? '' : 's'} remaining`
+        : 'Complete',
+    };
+
     return {
       stage: 'graph',
       selectedTreeId: this._selectedTreeId,
@@ -395,6 +431,8 @@ export class TalentStep extends ProgressionStepPlugin {
       nodeStates,
       graphData: this._graphData,
       orderedSelections,
+      // PHASE 2 UX: Slot progress
+      slotProgress,
     };
   }
 

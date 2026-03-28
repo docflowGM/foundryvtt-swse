@@ -425,6 +425,25 @@ export class FeatStep extends ProgressionStepPlugin {
     const committedFeats = context?.shell?.progressionSession?.draftSelections?.feats || [];
     const orderedSelections = canonicallyOrderSelections(committedFeats);
 
+    // PHASE 2 UX: Micro-progress — show slot progress
+    // Note: For a single feat slot, this step shows 0-1 selection
+    // For normalized Feat step (Phase: Normalized Steps), this will show dual subsection progress
+    const selectedCount = committedFeats.length;
+    const requiredCount = 1; // Single feat slot per step
+    const remainingCount = Math.max(0, requiredCount - selectedCount);
+    const isComplete = remainingCount === 0;
+
+    const slotProgress = {
+      selectedCount,
+      requiredCount,
+      remainingCount,
+      isComplete,
+      progressLabel: `${selectedCount} of ${requiredCount} feat${requiredCount === 1 ? '' : 's'}`,
+      remainingLabel: remainingCount > 0
+        ? `${remainingCount} feat${remainingCount === 1 ? '' : 's'} remaining`
+        : 'Complete',
+    };
+
     return {
       groupedFeats: groupedDisplay,
       focusedFeatId: this._focusedFeatId,
@@ -433,6 +452,8 @@ export class FeatStep extends ProgressionStepPlugin {
       showAll: this._showAll,
       slotType: this._slotType,
       orderedSelections,
+      // PHASE 2 UX: Slot progress
+      slotProgress,
     };
   }
 
