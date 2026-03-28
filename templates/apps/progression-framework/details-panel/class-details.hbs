@@ -4,7 +4,10 @@
     <span class="prog-chip">{{type}}</span>
   </div>
 
-  {{#if fantasy}}
+  {{!-- Class Description --}}
+  {{#if canonicalDescription}}
+    <p class="prog-class-details__description">{{canonicalDescription}}</p>
+  {{else if fantasy}}
     <p class="prog-class-details__fantasy">{{fantasy}}</p>
   {{/if}}
 

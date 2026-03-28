@@ -11,12 +11,14 @@
     {{/if}}
   </div>
 
-  {{#if description}}
-    <div class="prog-force-technique-details__section">
-      <h3 class="prog-force-technique-details__section-title">Description</h3>
-      <p class="prog-force-technique-details__description">{{description}}</p>
-    </div>
-  {{/if}}
+  <div class="prog-force-technique-details__section">
+    <h3 class="prog-force-technique-details__section-title">Description</h3>
+    {{#if canonicalDescription}}
+      <p class="prog-force-technique-details__description">{{canonicalDescription}}</p>
+    {{else}}
+      <p class="prog-force-technique-details__description prog-force-technique-details__description--unavailable">No description available.</p>
+    {{/if}}
+  </div>
 
   <div class="prog-force-technique-details__actions">
     {{#if canAddMore}}

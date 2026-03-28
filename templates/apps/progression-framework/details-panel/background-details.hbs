@@ -5,8 +5,10 @@
     <span class="prog-chip">{{category}}</span>
   </div>
 
-  {{#if description}}
-    <p class="prog-background-details__description">{{description}}</p>
+  {{#if canonicalDescription}}
+    <p class="prog-background-details__description">{{canonicalDescription}}</p>
+  {{else}}
+    <p class="prog-background-details__description prog-background-details__description--unavailable">No description available.</p>
   {{/if}}
 
   {{!-- What You Gain --}}

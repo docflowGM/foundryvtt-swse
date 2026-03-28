@@ -17,23 +17,26 @@
   </div>
 
   {{!-- Description --}}
-  {{#if description}}
   <div class="talent-details__section">
     <h3 class="talent-details__section-title">Description</h3>
-    <p class="talent-details__description">{{description}}</p>
+    {{#if canonicalDescription}}
+      <p class="talent-details__description">{{canonicalDescription}}</p>
+    {{else}}
+      <p class="talent-details__description talent-details__description--unavailable">No description available.</p>
+    {{/if}}
   </div>
-  {{/if}}
 
   {{!-- Prerequisites --}}
-  {{#if prerequisites}}
   <div class="talent-details__section">
     <h3 class="talent-details__section-title">Prerequisites</h3>
     <div class="talent-prerequisites">
-      <p class="talent-prerequisites__text">{{prerequisites}}</p>
-      {{!-- TODO: If prerequisites are structured, display as list with met/unmet indicators --}}
+      {{#if prerequisites}}
+        <p class="talent-prerequisites__text">{{prerequisites}}</p>
+      {{else}}
+        <p class="talent-prerequisites__text talent-prerequisites__text--none">None</p>
+      {{/if}}
     </div>
   </div>
-  {{/if}}
 
   {{!-- Selection Controls --}}
   <div class="talent-details__actions">
