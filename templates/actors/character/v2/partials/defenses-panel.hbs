@@ -12,20 +12,25 @@
   This is consistent with combat calculations and prevents silent misalignment.
 --}}
 
-<section class="defenses-panel v3-panel holo-panel svg-framed svg-panel-frame">
+<section class="swse-panel swse-panel--defenses defenses-panel v3-panel holo-panel svg-framed svg-panel-frame">
 
-  <header class="section-bar">
-    <h3 class="section-header">Defenses</h3>
-    <button type="button"
-            data-action="toggle-defenses"
-            class="swse-btn defenses-toggle">
-      More
-    </button>
-  </header>
+  <!-- Frame layer: SVG background -->
+  <div class="swse-panel__frame" aria-hidden="true"></div>
 
-  <div class="defenses-container">
+  <!-- Content layer: normal flow content -->
+  <div class="swse-panel__content">
+    <header class="section-bar">
+      <h3 class="section-header">Defenses</h3>
+      <button type="button"
+              data-action="toggle-defenses"
+              class="swse-btn defenses-toggle">
+        More
+      </button>
+    </header>
 
-    {{#each headerDefenses as |def|}}
+    <div class="defenses-container">
+
+    {{#each defensePanel.defenses as |def|}}
 
       <div class="defense-row defense-{{def.key}}">
 
@@ -36,7 +41,7 @@
             {{def.label}}
           </div>
 
-          <div class="defense-total" data-defense-breakdown="{{def.key}}" title="Hover for modifier breakdown">
+          <div class="defense-total" data-defense-breakdown="{{def.key}}" title="{{def.label}} defense breakdown">
             {{def.total}}
           </div>
 
@@ -86,7 +91,8 @@
                      name="system.defenses.{{def.key}}.miscMod"
                      value="{{def.miscMod}}"
                      class="misc-input {{def.miscModClass}}"
-                     placeholder="0">
+                     placeholder="0"
+                     {{#unless def.canEdit}}disabled{{/unless}}>
             </div>
 
             <div class="math-equals">=</div>
@@ -103,6 +109,7 @@
 
     {{/each}}
 
+    </div>
   </div>
 
 </section>

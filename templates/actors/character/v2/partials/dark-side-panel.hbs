@@ -1,22 +1,27 @@
-<section class="holo-panel swse-ui-panel swse-phase2-core-panel swse-dark-side-panel">
-  <div class="section-bar">
+<section class="swse-panel swse-panel--dark-side holo-panel swse-ui-panel swse-phase2-core-panel swse-dark-side-panel">
+  <header class="section-bar">
     <h3 class="section-header">Dark Side Score</h3>
     <span class="dsp-value-display">{{system.darkSide.value}} / {{darkSideMax}}</span>
-  </div>
+  </header>
 
   <div class="swse-v2-dark-side">
 
-    <!-- Numbered Track Display (Record-Sheet Style) -->
-    <div class="dsp-numbered-track svg-framed">
-      {{#each darkSideSegments as |segment|}}
-        <button type="button"
-                class="dsp-track-box {{#if segment.filled}}filled{{/if}}"
-                data-action="set-dark-side-score"
-                data-index="{{segment.index}}"
-                title="Set Dark Side Points to {{segment.index}}">
-          <span class="dsp-number">{{segment.index}}</span>
-        </button>
-      {{/each}}
+    <!-- Numbered Track Display (Record-Sheet Style with overlay positioning) -->
+    <div class="swse-panel swse-panel--dsp-track dsp-numbered-track svg-framed">
+      <!-- Frame layer: SVG background -->
+      <div class="swse-panel__frame" aria-hidden="true"></div>
+      <!-- Overlay layer: absolutely-positioned track boxes -->
+      <div class="swse-panel__overlay">
+        {{#each darkSideSegments as |segment|}}
+          <button type="button"
+                  class="dsp-track-box {{#if segment.filled}}filled{{/if}}"
+                  data-action="set-dark-side-score"
+                  data-index="{{segment.index}}"
+                  title="Set Dark Side Points to {{segment.index}}">
+            <span class="dsp-number">{{segment.index}}</span>
+          </button>
+        {{/each}}
+      </div>
     </div>
 
     <!-- Interactive Spectrum (Existing Interaction Mode) -->

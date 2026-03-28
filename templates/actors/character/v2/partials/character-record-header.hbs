@@ -1,19 +1,24 @@
-<section class="character-record-header holo-panel svg-framed svg-panel-frame">
+<section class="swse-panel swse-panel--identity character-record-header holo-panel svg-framed svg-panel-frame">
 
-  <header class="section-bar">
-    <h3 class="section-header">Character Identity</h3>
-  </header>
+  <!-- Frame layer: SVG background -->
+  <div class="swse-panel__frame" aria-hidden="true"></div>
 
-  <div class="record-identity-grid">
+  <!-- Content layer: normal flow content -->
+  <div class="swse-panel__content">
+    <header class="section-bar">
+      <h3 class="section-header">Character Identity</h3>
+    </header>
+
+    <div class="record-identity-grid">
     <!-- Name & Class/Level Row -->
     <div class="record-row">
       <div class="record-field svg-wrapped size-regular">
         <label class="field-label">Name</label>
-        <div class="field-value">{{actor.name}}</div>
+        <div class="field-value">{{biographyPanel.identity.name}}</div>
       </div>
       <div class="record-field svg-wrapped size-regular">
         <label class="field-label">Class & Level</label>
-        <div class="field-value">{{classDisplay}}</div>
+        <div class="field-value">{{biographyPanel.identity.class}} {{biographyPanel.identity.level}}</div>
       </div>
     </div>
 
@@ -21,15 +26,15 @@
     <div class="record-row">
       <div class="record-field svg-wrapped size-regular">
         <label class="field-label">Species</label>
-        <div class="field-value">{{system.race}}</div>
+        <div class="field-value">{{biographyPanel.identity.species}}</div>
       </div>
       <div class="record-field svg-wrapped size-regular">
         <label class="field-label">Size</label>
-        <div class="field-value">{{system.size}}</div>
+        <div class="field-value">{{biographyPanel.identity.size}}</div>
       </div>
       <div class="record-field svg-wrapped size-small">
         <label class="field-label">Destiny Points</label>
-        <div class="field-value">{{system.destinyPoints.value}} / {{system.destinyPoints.max}}</div>
+        <div class="field-value">{{biographyPanel.identity.destinyPoints.value}} / {{biographyPanel.identity.destinyPoints.max}}</div>
       </div>
     </div>
 
@@ -37,19 +42,19 @@
     <div class="record-row">
       <div class="record-field svg-wrapped size-small">
         <label class="field-label">Age</label>
-        <input type="text" name="flags.swse.character.age" value="{{flags.swse.character.age}}" class="record-input" placeholder="—" />
+        <input type="text" name="flags.swse.character.age" value="{{biographyPanel.identity.age}}" class="record-input" placeholder="—" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
       </div>
       <div class="record-field svg-wrapped size-small">
         <label class="field-label">Gender</label>
-        <input type="text" name="flags.swse.character.gender" value="{{flags.swse.character.gender}}" class="record-input" placeholder="—" />
+        <input type="text" name="flags.swse.character.gender" value="{{biographyPanel.identity.gender}}" class="record-input" placeholder="—" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
       </div>
       <div class="record-field svg-wrapped size-small">
         <label class="field-label">Height</label>
-        <input type="text" name="flags.swse.character.height" value="{{flags.swse.character.height}}" class="record-input" placeholder="—" />
+        <input type="text" name="flags.swse.character.height" value="{{biographyPanel.identity.height}}" class="record-input" placeholder="—" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
       </div>
       <div class="record-field svg-wrapped size-small">
         <label class="field-label">Weight</label>
-        <input type="text" name="flags.swse.character.weight" value="{{flags.swse.character.weight}}" class="record-input" placeholder="—" />
+        <input type="text" name="flags.swse.character.weight" value="{{biographyPanel.identity.weight}}" class="record-input" placeholder="—" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
       </div>
     </div>
 
@@ -57,17 +62,18 @@
     <div class="record-row">
       <div class="record-field svg-wrapped size-regular">
         <label class="field-label">Homeworld</label>
-        <input type="text" name="system.planetOfOrigin" value="{{system.planetOfOrigin}}" class="record-input" placeholder="—" />
+        <input type="text" name="system.planetOfOrigin" value="{{biographyPanel.identity.homeworld}}" class="record-input" placeholder="—" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
       </div>
       <div class="record-field svg-wrapped size-regular">
         <label class="field-label">Profession</label>
-        <input type="text" name="system.profession" value="{{system.profession}}" class="record-input" placeholder="—" />
+        <input type="text" name="system.profession" value="{{biographyPanel.identity.profession}}" class="record-input" placeholder="—" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
       </div>
       <div class="record-field svg-wrapped size-regular">
         <label class="field-label">Background</label>
-        <input type="text" name="system.event" value="{{system.event}}" class="record-input" placeholder="—" />
+        <input type="text" name="system.event" value="{{biographyPanel.identity.background}}" class="record-input" placeholder="—" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
       </div>
     </div>
+  </div>
   </div>
 
 </section>

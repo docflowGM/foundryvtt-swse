@@ -4,46 +4,49 @@
     <h3 class="section-header">Talents</h3>
     <button type="button"
             class="add-talent swse-btn"
-            data-action="add-talent">
+            data-action="add-talent"
+            {{#unless talentPanel.canEdit}}disabled{{/unless}}>
       + Add Talent
     </button>
   </header>
 
-  {{#if derived.talents.groups.length}}
-    {{#each derived.talents.groups as |group|}}
+  {{#if talentPanel.hasEntries}}
+    {{#each talentPanel.grouped as |groupItems groupName|}}
       <div class="talent-tree-group swse-ui-panel swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
 
         <div class="talent-tree-label swse-card-header">
-          {{group.label}}
-          <span class="talent-tree-count">{{group.count}}</span>
+          {{groupName}}
+          <span class="talent-tree-count">{{groupItems.length}}</span>
         </div>
 
         <div class="talent-card-list swse-dense-grid">
-          {{#each group.items as |talent|}}
+          {{#each groupItems as |talent|}}
             <div class="talent-card swse-dense-card swse-ui-panel swse-card-schema swse-card-schema--enumerated swse-card-schema--filled"
                  data-item-id="{{talent.id}}"
                  data-action="open-ability">
 
               <div class="card-header swse-card-header">
                 <span class="card-title">{{talent.name}}</span>
-                {{#if talent.sourceClass}}
-                  <span class="card-tag">{{talent.sourceClass}}</span>
+                {{#if talent.source}}
+                  <span class="card-tag">{{talent.source}}</span>
                 {{/if}}
               </div>
 
-              {{#if talent.summary}}
+              {{#if talent.description}}
                 <div class="card-summary swse-card-summary">
-                  {{talent.summary}}
+                  {{talent.description}}
                 </div>
               {{/if}}
 
             </div>
           {{/each}}
-          <button type="button" class="talent-card swse-dense-card swse-ui-panel swse-card-schema swse-card-schema--choice swse-card-schema--placeholder swse-add-card" data-action="add-talent">
-            <span class="swse-card-schema__eyebrow">Choice Slot</span>
-            <span class="swse-card-schema__title">Add Talent</span>
-            <span class="swse-card-schema__body">Open a fresh talent card in the same standardized slot family.</span>
-          </button>
+          {{#if talentPanel.canEdit}}
+            <button type="button" class="talent-card swse-dense-card swse-ui-panel swse-card-schema swse-card-schema--choice swse-card-schema--placeholder swse-add-card" data-action="add-talent">
+              <span class="swse-card-schema__eyebrow">Choice Slot</span>
+              <span class="swse-card-schema__title">Add Talent</span>
+              <span class="swse-card-schema__body">Open a fresh talent card in the same standardized slot family.</span>
+            </button>
+          {{/if}}
         </div>
 
       </div>
@@ -51,8 +54,8 @@
   {{else}}
     <div class="muted empty-state swse-ui-empty swse-card-schema swse-card-schema--choice swse-card-schema--placeholder">
       <span class="swse-card-schema__eyebrow">Choice Slot</span>
-      <span class="swse-card-schema__title">No talents yet</span>
-      <span class="swse-card-schema__body">Use Add Talent to create the first talent card.</span>
+      <span class="swse-card-schema__title">{{talentPanel.emptyMessage}}</span>
+      <span class="swse-card-schema__body">{{#if talentPanel.canEdit}}Use Add Talent to create the first talent card.{{else}}No talents have been added yet.{{/if}}</span>
     </div>
   {{/if}}
 

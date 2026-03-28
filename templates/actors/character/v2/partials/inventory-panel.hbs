@@ -1,38 +1,53 @@
 <div class="swse-inventory inventory-card-layout">
 
-  {{#each inventory as |items group|}}
+  {{#if inventoryPanel.hasEntries}}
 
-    {{#if items.length}}
-      <div class="inventory-group">
+    {{#each inventoryPanel.grouped as |items group|}}
 
-        <div class="inventory-group-header">
-          <span class="inventory-group-title">{{group}}</span>
-          <div class="inventory-group-actions">
-            {{#if (eq (lowercase group) "weapons")}}<button type="button" class="inventory-add-btn" data-action="add-item" data-item-type="weapon">Add Weapon</button>{{/if}}
-            {{#if (eq (lowercase group) "armor")}}<button type="button" class="inventory-add-btn" data-action="add-item" data-item-type="armor">Add Armor</button><button type="button" class="inventory-add-btn" data-action="add-item" data-item-type="shield">Add Shield</button>{{/if}}
-            {{#if (eq (lowercase group) "equipment")}}<button type="button" class="inventory-add-btn" data-action="add-item" data-item-type="equipment">Add Gear</button>{{/if}}
-            {{#if (eq (lowercase group) "consumables")}}<button type="button" class="inventory-add-btn" data-action="add-item" data-item-type="equipment">Add Consumable</button>{{/if}}
+      {{#if items.length}}
+        <div class="inventory-group">
+
+          <div class="inventory-group-header">
+            <span class="inventory-group-title">{{group}}</span>
+            <div class="inventory-group-actions">
+              {{#if (eq (lowercase group) "weapons")}}<button type="button" class="inventory-add-btn" data-action="add-item" data-item-type="weapon">Add Weapon</button>{{/if}}
+              {{#if (eq (lowercase group) "armor")}}<button type="button" class="inventory-add-btn" data-action="add-item" data-item-type="armor">Add Armor</button><button type="button" class="inventory-add-btn" data-action="add-item" data-item-type="shield">Add Shield</button>{{/if}}
+              {{#if (eq (lowercase group) "equipment")}}<button type="button" class="inventory-add-btn" data-action="add-item" data-item-type="equipment">Add Gear</button>{{/if}}
+              {{#if (eq (lowercase group) "consumables")}}<button type="button" class="inventory-add-btn" data-action="add-item" data-item-type="equipment">Add Consumable</button>{{/if}}
+            </div>
           </div>
+
+          <div class="inventory-group-body inventory-cards">
+
+            {{#each items}}
+              {{#if (eq type "armor")}}
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-armor-card.hbs" this}}
+              {{else if (eq type "weapon")}}
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-weapon-card.hbs" this}}
+              {{else}}
+                {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-item-card.hbs" this}}
+              {{/if}}
+            {{/each}}
+
+          </div>
+
         </div>
+      {{/if}}
 
-        <div class="inventory-group-body inventory-cards">
+    {{/each}}
 
-          {{#each items}}
-            {{#if (eq type "armor")}}
-              {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-armor-card.hbs" this}}
-            {{else if (eq type "weapon")}}
-              {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-weapon-card.hbs" this}}
-            {{else}}
-              {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-item-card.hbs" this}}
-            {{/if}}
-          {{/each}}
+  {{else}}
 
-        </div>
-
+    <div class="inventory-empty-state">
+      <p>{{inventoryPanel.emptyMessage}}</p>
+      <div class="inventory-empty-actions">
+        <button type="button" class="inventory-add-btn" data-action="add-item" data-item-type="weapon">Add Weapon</button>
+        <button type="button" class="inventory-add-btn" data-action="add-item" data-item-type="armor">Add Armor</button>
+        <button type="button" class="inventory-add-btn" data-action="add-item" data-item-type="equipment">Add Gear</button>
       </div>
-    {{/if}}
+    </div>
 
-  {{/each}}
+  {{/if}}
 
 </div>
 
