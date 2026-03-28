@@ -2081,12 +2081,52 @@ select option:checked {
   padding: 8px 0;
 }
 
-.swse-sheet .condition-track {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
-  align-items: center;
+.swse-sheet .condition-track-panel {
+  position: relative;
+  width: 100%;
+  min-height: 95px;
+  margin: 0;
 }
+
+.swse-sheet .condition-slot {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.2);
+  color: #aaa;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+}
+
+.swse-sheet .condition-slot:hover {
+  border-color: rgba(0, 255, 136, 0.5);
+  background: rgba(0, 255, 136, 0.08);
+  color: #4a9eff;
+}
+
+.swse-sheet .condition-slot.active {
+  background: rgba(0, 255, 136, 0.15);
+  border-color: rgba(0, 255, 136, 0.6);
+  color: #4a9eff;
+  font-weight: 700;
+}
+
+/* Socket anchor positions - percentage-based to scale with SVG frame */
+.swse-sheet .condition-slot-0 { left: 7.22%; top: 50%; }
+.swse-sheet .condition-slot-1 { left: 22.5%; top: 50%; }
+.swse-sheet .condition-slot-2 { left: 37.78%; top: 50%; }
+.swse-sheet .condition-slot-3 { left: 53.06%; top: 50%; }
+.swse-sheet .condition-slot-4 { left: 68.33%; top: 50%; }
+.swse-sheet .condition-slot-5 { left: 83.61%; top: 50%; }
 
 .swse-sheet .condition-chevron {
   position: relative;

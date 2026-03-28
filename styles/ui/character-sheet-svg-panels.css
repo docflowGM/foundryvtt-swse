@@ -44,17 +44,73 @@
   min-height: 220px;
 }
 
-/* CONDITION TRACK SVG FRAME */
-.condition-track.svg-framed {
+/* CONDITION TRACK SVG FRAME - POSITIONED OVERLAY LAYOUT */
+.condition-track-panel {
+  position: relative;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  min-height: 95px;
+  aspect-ratio: 720 / 112;
+  max-height: 120px;
+}
+
+.condition-track-frame {
+  position: absolute;
+  inset: 0;
   background-image: url('../../assets/ui/condition-track-box-strip.svg');
   background-size: 100% 100%;
   background-repeat: no-repeat;
-  display: flex;
-  gap: 4px;
-  padding: 10px 8px;
-  min-height: 95px;
+  background-position: 0 0;
+  border-radius: 0;
+  pointer-events: none;
 }
 
+.condition-track-overlay {
+  position: absolute;
+  inset: 0;
+}
+
+/* Condition slot buttons - positioned absolutely at socket centers */
+.condition-slot {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.2);
+  color: #aaa;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.condition-slot:hover {
+  border-color: rgba(0, 255, 136, 0.5);
+  background: rgba(0, 255, 136, 0.08);
+  color: #4a9eff;
+}
+
+.condition-slot.active {
+  background: rgba(0, 255, 136, 0.15);
+  border-color: rgba(0, 255, 136, 0.6);
+  color: #4a9eff;
+  font-weight: 700;
+}
+
+/* Socket-specific anchor positions (percentage-based, centering at SVG socket locations) */
+.condition-slot-0 { left: 7.22%; top: 50%; }
+.condition-slot-1 { left: 22.5%; top: 50%; }
+.condition-slot-2 { left: 37.78%; top: 50%; }
+.condition-slot-3 { left: 53.06%; top: 50%; }
+.condition-slot-4 { left: 68.33%; top: 50%; }
+.condition-slot-5 { left: 83.61%; top: 50%; }
+
+/* Legacy class support for existing queries */
 .condition-chevron {
   position: relative;
   z-index: 2;

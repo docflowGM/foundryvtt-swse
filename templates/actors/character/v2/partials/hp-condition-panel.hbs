@@ -52,14 +52,20 @@
 
   <!-- CONDITION TRACK BLOCK -->
   <div class="condition-section">
-    <div class="condition-track svg-framed">
-      {{#each conditionSteps as |step|}}
-        <button type="button" class="condition-chevron {{#if step.active}}active{{/if}}"
-                data-action="set-condition-step" data-step="{{step.step}}"
-                title="Set condition: {{step.label}}">
-          <span class="condition-level">{{step.step}}</span>
-        </button>
-      {{/each}}
+    <div class="condition-track-panel">
+      <div class="condition-track-frame" aria-hidden="true"></div>
+      <div class="condition-track-overlay">
+        {{#each conditionSteps as |step|}}
+          <button type="button"
+                  class="condition-slot condition-slot-{{step.step}} {{#if step.active}}active{{/if}}"
+                  data-action="set-condition-step"
+                  data-step="{{step.step}}"
+                  title="Set condition: {{step.label}}"
+                  aria-label="Condition level {{step.step}}: {{step.label}}">
+            <span class="condition-level">{{step.step}}</span>
+          </button>
+        {{/each}}
+      </div>
     </div>
     <div class="condition-status-row">
       <span class="condition-status-label">Condition Track:</span>
