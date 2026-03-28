@@ -159,29 +159,48 @@
    Consolidated from swse-system.css (lines 363-386)
    ============================================================================ */
 
-.swse-character-sheet .window-content {
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto !important;
-  overflow-x: hidden;
-}
-
-.swse-character-sheet .sheet-inner {
+.application.swse-character-sheet > .window-content,
+.application.swse.sheet.actor.character > .window-content {
   display: flex;
   flex-direction: column;
   min-height: 0;
+  overflow: hidden;
 }
 
-.swse-character-sheet .sheet-body {
-  flex: 1;
+.application.swse-character-sheet > .window-content > form.swse-character-sheet-form,
+.application.swse.sheet.actor.character > .window-content > form.swse-character-sheet-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.swse-character-sheet.swse-sheet {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.swse-character-sheet.swse-sheet .sheet-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.swse-character-sheet.swse-sheet .sheet-body > .tab {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
   overflow-y: auto !important;
   overflow-x: hidden;
-  min-height: 0;
-}
-
-.swse-character-sheet .tab {
-  height: auto !important;
-  overflow-y: auto !important;
 }
 
 /* ============================================================================

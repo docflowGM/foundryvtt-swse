@@ -589,6 +589,24 @@
    P0 sheet stabilization
    ========================================================= */
 
+.application.swse-character-sheet > .window-content > form.swse-character-sheet-form,
+.application.swse.sheet.actor.character > .window-content > form.swse-character-sheet-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+}
+
+.swse-sheet .sheet-shell,
+.swse-character-sheet.swse-sheet {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+}
+
 .swse-sheet .sheet-shell {
   display: flex;
   flex-direction: column;

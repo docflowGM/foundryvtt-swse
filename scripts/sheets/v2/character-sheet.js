@@ -83,24 +83,31 @@ function watchListenerCount(element, sheetName, threshold = 50) {
 export class SWSEV2CharacterSheet extends
   HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
 
-  static DEFAULT_OPTIONS = {
-    ...foundry.applications.sheets.ActorSheetV2.DEFAULT_OPTIONS,
-    classes: ["swse", "sheet", "actor", "character", "swse-character-sheet", "swse-sheet", "v2"],
-    // NOTE: In Foundry V13 ApplicationV2, dimensions must live under `position: {}`.
-    // Bare root-level `width`/`height` are silently ignored by the V13 position system.
-    position: {
-      width: 900,
-      height: 950,
-    },
-    resizable: true,
-    tabs: [
-      {
-        navSelector: ".sheet-tabs",
-        contentSelector: ".sheet-content",
-        initial: "overview"
-      }
-    ]
-  };
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions ?? {}, {
+      classes: ["swse", "sheet", "actor", "character", "swse-character-sheet", "swse-sheet", "v2"],
+      position: {
+        width: 900,
+        height: 950
+      },
+      window: {
+        resizable: true,
+        draggable: true,
+        frame: true
+      },
+      form: {
+        closeOnSubmit: false,
+        submitOnChange: false
+      },
+      tabs: [
+        {
+          navSelector: ".sheet-tabs",
+          contentSelector: ".sheet-content",
+          initial: "overview"
+        }
+      ]
+    });
+  }
 
   static PARTS = {
     body: {
@@ -176,12 +183,11 @@ export class SWSEV2CharacterSheet extends
     const shouldCenter = this._shouldCenterOnRender;
 
     if (shouldCenter) {
-      // On first render: compute centered position and set it before rendering
+      // Center once per open session, then let AppV2 own future drag/resize state
       const pos = computeCenteredPosition(900, 950);
       console.log("[SheetPosition] FIRST RENDER THIS SESSION: Setting centered position", pos);
-      this.position.left = pos.left;
-      this.position.top = pos.top;
-      this._shouldCenterOnRender = false; // Only center once per open session
+      this.setPosition({ left: pos.left, top: pos.top, width: 900, height: 950 });
+      this._shouldCenterOnRender = false;
     }
 
     await super._onRender(context, options);
@@ -191,25 +197,6 @@ export class SWSEV2CharacterSheet extends
       "[SheetPosition] _onRender complete | shouldCenter =", shouldCenter,
       "| position.left =", this.position?.left
     );
-
-    // On first render per session: apply one deferred DOM override to lock position against late Foundry restores
-    if (shouldCenter) {
-      const pos = computeCenteredPosition(900, 950);
-      clearTimeout(this._centerTimer);
-
-      this._centerTimer = setTimeout(() => {
-        if (this.rendered) {
-          const el = this.element instanceof HTMLElement ? this.element : this.element?.[0];
-          if (el) {
-            // Lock position with !important to prevent Foundry late-restore override
-            el.style.setProperty('position', 'absolute', 'important');
-            el.style.setProperty('left', `${pos.left}px`, 'important');
-            el.style.setProperty('top', `${pos.top}px`, 'important');
-            console.log("[SheetPosition] FIRST RENDER DEFERRED (200ms): Locked position via DOM", pos);
-          }
-        }
-      }, 200);
-    }
 
     // Abort previous render's listeners to prevent duplicate event handlers
     this._renderAbort?.abort();
@@ -1005,8 +992,9 @@ const forcePoints = [];
       console.log('[LIFECYCLE] html is not a form, searching for form parent/ancestor');
       form = html.closest("form");
       if (!form) {
-        console.log('[LIFECYCLE] No form parent found, falling back to document query');
-        form = document.querySelector("form.swse-character-sheet-form");
+        console.log('[LIFECYCLE] No form parent found, searching only inside this app element');
+        const appRoot = this.element instanceof HTMLElement ? this.element : this.element?.[0];
+        form = appRoot?.querySelector?.("form.swse-character-sheet-form") ?? null;
       }
     }
 
