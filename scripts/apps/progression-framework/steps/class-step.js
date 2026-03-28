@@ -15,6 +15,7 @@ import { getMentorGuidance } from '/systems/foundryvtt-swse/scripts/engine/mento
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
+import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 
 export class ClassStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -153,6 +154,9 @@ export class ClassStep extends ProgressionStepPlugin {
     const classData = this._allClasses.find(c => c.id === focusedItem.id);
     if (!classData) return this.renderDetailsPanelEmptyState();
 
+    // Normalize detail panel data for canonical display (no fabrication)
+    const normalized = normalizeDetailPanelData(classData, 'class');
+
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/class-details.hbs',
       data: {
@@ -166,6 +170,10 @@ export class ClassStep extends ProgressionStepPlugin {
         classSkills: (classData.classSkills ?? []).map(s => ({ name: s })),
         mentorName: classData.mentorName ?? 'Unknown Guide',
         fantasy: classData.fantasy ?? classData.description ?? '',
+        // Add normalized fields for enhanced detail rail
+        canonicalDescription: normalized.description,
+        metadataTags: normalized.metadataTags,
+        hasMentorProse: normalized.fallbacks.hasMentorProse,
       },
     };
   }

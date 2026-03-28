@@ -170,6 +170,18 @@ export class ProgressionStepPlugin {
   }
 
   /**
+   * PHASE 3 UX: Return user-friendly explanation when step is blocked.
+   * Provides specific, actionable reason why Next button is disabled.
+   * Examples: "Select 1 more Talent to continue", "Resolve errors before continuing"
+   * @returns {string|null} Explanation text, or null if no specific explanation
+   */
+  getBlockerExplanation() {
+    // Default: return null (no specific explanation)
+    // Subclasses should override to provide specific, actionable messages
+    return null;
+  }
+
+  /**
    * Return remaining pick counts for the footer center display.
    * Returns an array to support dual talent counts (heroic + class).
    * @returns {Array<{ label: string, count: number, isWarning: boolean }>}

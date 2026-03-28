@@ -12,12 +12,14 @@
     {{/if}}
   </div>
 
-  {{#if description}}
-    <div class="prog-starship-maneuver-details__section">
-      <h3 class="prog-starship-maneuver-details__section-title">Description</h3>
-      <p class="prog-starship-maneuver-details__description">{{description}}</p>
-    </div>
-  {{/if}}
+  <div class="prog-starship-maneuver-details__section">
+    <h3 class="prog-starship-maneuver-details__section-title">Description</h3>
+    {{#if canonicalDescription}}
+      <p class="prog-starship-maneuver-details__description">{{canonicalDescription}}</p>
+    {{else}}
+      <p class="prog-starship-maneuver-details__description prog-starship-maneuver-details__description--unavailable">No description available.</p>
+    {{/if}}
+  </div>
 
   <div class="prog-starship-maneuver-details__actions">
     {{#if canAddMore}}

@@ -27,6 +27,7 @@ import { centerApplicationDuringStartup } from '/systems/foundryvtt-swse/scripts
 import { ConditionalStepResolver } from './conditional-step-resolver.js';
 import { ProgressionFinalizer } from './progression-finalizer.js';
 import { ProgressionSession } from './progression-session.js';
+import { ActiveStepComputer } from './active-step-computer.js';
 import { StepCategory } from '../steps/step-descriptor.js';
 import { ActionFooter } from './action-footer.js';
 import { MentorRail } from './mentor-rail.js';
@@ -36,7 +37,11 @@ import { HydrationDiagnosticsCollector, HydrationValidator, HydrationRecoveryStr
 import { BuildIntent } from './build-intent.js';
 import { GlobalValidator } from '../validation/global-validator.js';
 import { ChargenPersistence } from './chargen-persistence.js';
+import { SessionStorage } from './session-storage.js';
+import { InvalidationPreview } from './invalidation-preview.js';
 import { RolloutController } from '../rollout/rollout-controller.js';
+import { SelectedRailContext } from './selected-rail-context.js';
+import { ProjectionEngine } from './projection-engine.js';
 
 /**
  * Shell state model (reference — actual state lives on `this`)
@@ -152,6 +157,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const app = new this(actor, mode, options);
     console.log('[TEMP AUDIT] App instance created:', app?.constructor?.name);
 
+    // Phase 1: Attempt session recovery before initializing steps
+    console.log('[TEMP AUDIT] Attempting session recovery...');
+    await app._attemptSessionRecovery();
+    console.log('[TEMP AUDIT] Session recovery complete');
+
     console.log('[TEMP AUDIT] Calling _initializeSteps...');
     await app._initializeSteps();
     console.log('[TEMP AUDIT] Steps initialized, count:', app.steps?.length || 0);
@@ -266,6 +276,118 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // Position centering tracking — initialize EARLY so first render knows this is a new open
     this._openedAt = Date.now();
     this._centerTimer = null;
+
+    // Phase 1: Session persistence
+    this._registerPersistenceHook();
+  }
+
+  /**
+   * Register persistence hook to auto-save session after each commit.
+   * Phase 1: Session persistence and recovery.
+   * @private
+   */
+  _registerPersistenceHook() {
+    this.progressionSession.onPersist(async (session, stepId, selectionKey) => {
+      if (this.actor && this.persistenceEnabled) {
+        await SessionStorage.saveSession(this.actor, session, this.mode);
+      }
+    });
+  }
+
+  /**
+   * Attempt to recover a saved session.
+   * Phase 1: Session persistence and recovery.
+   *
+   * If a saved session exists, offer user the option to restore it.
+   * If they accept: restore selections, repair current step, navigate to last position
+   * If they decline or error: proceed with fresh session
+   *
+   * CRITICAL: Never trust stored indices. After restoring, we still need to:
+   * - Recompute active steps (done in _initializeSteps)
+   * - Repair current step (done after steps are built)
+   *
+   * @returns {Promise<void>}
+   * @private
+   */
+  async _attemptSessionRecovery() {
+    if (!this.actor || !this.persistenceEnabled) {
+      return; // No recovery for levelup mode or missing actor
+    }
+
+    try {
+      const sessionData = SessionStorage.loadSession(this.actor, this.mode);
+      if (!sessionData) {
+        swseLogger.debug('[ProgressionShell] No saved session to recover');
+        return; // No saved session, proceed normally
+      }
+
+      // Found a saved session — offer recovery option
+      const summary = SessionStorage.getSessionSummary(sessionData);
+      const shouldRecover = await this._promptSessionRecovery(summary);
+
+      if (!shouldRecover) {
+        swseLogger.debug('[ProgressionShell] User declined session recovery');
+        return; // User chose not to recover
+      }
+
+      // Restore session into the progression session object
+      const restored = SessionStorage.restoreIntoSession(this.progressionSession, sessionData);
+      if (!restored) {
+        swseLogger.error('[ProgressionShell] Failed to restore session');
+        return;
+      }
+
+      // Set flag to navigate to last step after steps are initialized
+      this._targetStepId = sessionData.currentStepId || null;
+
+      swseLogger.log('[ProgressionShell] Session recovered successfully', {
+        selections: summary.selectionCount,
+        visitedSteps: summary.visitedStepCount,
+        lastStep: summary.lastStepId,
+      });
+    } catch (err) {
+      swseLogger.error('[ProgressionShell] Error attempting session recovery:', err);
+      // Continue with fresh session on error
+    }
+  }
+
+  /**
+   * Prompt user for session recovery consent.
+   * Phase 1: Session persistence and recovery.
+   *
+   * @param {Object} summary - Session summary from SessionStorage.getSessionSummary
+   * @returns {Promise<boolean>} true if user wants to recover
+   * @private
+   */
+  async _promptSessionRecovery(summary) {
+    return new Promise((resolve) => {
+      const dialog = new Dialog({
+        title: 'Resume Progression?',
+        content: `
+          <div style="text-align: center; margin-bottom: 1em;">
+            <p>We found your previous progression session:</p>
+            <p><strong>${summary.preview}</strong></p>
+            <p style="font-size: 0.9em; color: #999;">
+              Saved ${new Date(summary.timestamp).toLocaleString()}
+            </p>
+          </div>
+          <p>Would you like to resume from where you left off, or start fresh?</p>
+        `,
+        buttons: {
+          resume: {
+            label: 'Resume',
+            callback: () => resolve(true),
+          },
+          fresh: {
+            label: 'Start Fresh',
+            callback: () => resolve(false),
+          },
+        },
+        default: 'resume',
+      });
+
+      dialog.render(true);
+    });
   }
 
   /**
@@ -330,6 +452,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     try {
       await plugin.onStepEnter(this);
+      // Mark step as visited
+      if (!this.progressionSession.visitedStepIds.includes(descriptor.stepId)) {
+        this.progressionSession.visitedStepIds.push(descriptor.stepId);
+      }
       swseLogger.log(`[ProgressionShell] Initialized first step: ${descriptor.stepId}`);
     } catch (err) {
       swseLogger.error(`[ProgressionShell] Error initializing first step ${descriptor.stepId}:`, err);
@@ -438,9 +564,14 @@ export class ProgressionShell extends SWSEApplicationV2 {
           swseLogger.log(`[ProgressionShell] Navigating to target step: ${this._targetStepId} (index ${targetIndex}). Back-navigation disabled until past this step.`);
         } else {
           swseLogger.warn(`[ProgressionShell] Target step not found: ${this._targetStepId}. Using index 0.`);
+          // Phase 1: Repair current step if target was restored but no longer active
+          this._repairCurrentStep();
         }
         this._targetStepId = null; // Clear after use
       }
+
+      // Phase 1: Repair current step if it's invalid (e.g., after session recovery and rail changes)
+      this._repairCurrentStep();
 
       // Initialize utility bar config for the current step
       const currentPlugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
@@ -612,15 +743,30 @@ export class ProgressionShell extends SWSEApplicationV2 {
       // Recovery: skip plugin, show details panel as null
     }
 
-    // Step progress for progress rail
-    const stepProgress = this.steps.map((descriptor, idx) => ({
-      descriptor,
-      index: idx,
-      isComplete: this.committedSelections.has(descriptor.stepId),
-      isCurrent: idx === this.currentStepIndex,
-      isConditional: descriptor.isConditional,
-      canNavigate: idx < this.currentStepIndex, // Can go back to completed steps
-    }));
+    // Step progress for progress rail — derived from canonical status evaluator
+    const stepProgress = this.steps.map((descriptor, idx) => {
+      const status = this._evaluateStepStatus(descriptor.stepId, idx);
+      return {
+        descriptor,
+        index: idx,
+        // Canonical status (error > caution > complete > in_progress > neutral)
+        status: status.canonical,
+        isComplete: status.canonical === 'complete',
+        isError: status.canonical === 'error',
+        isCaution: status.canonical === 'caution',
+        isInProgress: status.canonical === 'in_progress',
+        isNeutral: status.canonical === 'neutral',
+        // Navigation
+        isCurrent: idx === this.currentStepIndex,
+        isConditional: descriptor.isConditional,
+        canNavigate: idx < this.currentStepIndex, // Can go back to completed steps
+        // Metadata
+        isVisited: status.isVisited,
+        errors: status.errors || [],
+        warnings: status.warnings || [],
+        remainingChoices: status.remainingChoices || [],
+      };
+    });
 
     // Step data from plugin
     const stepData = currentPlugin
@@ -658,9 +804,14 @@ export class ProgressionShell extends SWSEApplicationV2 {
       : null;
 
     // Summary panel (left column — build snapshot)
-    const summaryPanelSpec = currentPlugin?.renderSummaryPanel?.(context) ?? null;
-    const summaryPanelHtml = summaryPanelSpec?.template
-      ? await foundry.applications.handlebars.renderTemplate(summaryPanelSpec.template, summaryPanelSpec.data)
+    // REFACTOR: Now uses canonical SelectedRailContext instead of per-step renderSummaryPanel
+    // FIXED: Now properly awaits async buildSnapshot to include adapter contributions
+    const selectedRailContext = await SelectedRailContext.buildSnapshot(this, currentDescriptor?.stepId ?? null);
+    const summaryPanelHtml = selectedRailContext && selectedRailContext.snapshotSections.length > 0
+      ? await foundry.applications.handlebars.renderTemplate(
+          'systems/foundryvtt-swse/templates/apps/progression-framework/summary-panel/selected-rail.hbs',
+          selectedRailContext
+        )
       : null;
 
     // ── DEBUG: shell region ownership verification ──
@@ -742,6 +893,15 @@ export class ProgressionShell extends SWSEApplicationV2 {
       totalSteps: this.steps.length,
       stepProgress,
 
+      // ─ PHASE 1 UX: Step context (you-are-here clarity)
+      stepContext: {
+        currentStepNumber: this.currentStepIndex + 1,  // 1-indexed for display
+        totalSteps: this.steps.length,
+        isFirstStep: this.currentStepIndex === 0,
+        isLastStep: this.currentStepIndex === this.steps.length - 1,
+        displayText: `Step ${this.currentStepIndex + 1} of ${this.steps.length}`,
+      },
+
       // Region states
       mentor: this.mentor,
       mentorCollapsed: this.mentorCollapsed,
@@ -760,13 +920,18 @@ export class ProgressionShell extends SWSEApplicationV2 {
       // Footer
       footer: footerData,
 
-      // Step chips for footer: visible (non-hidden) steps with state flags
+      // Step chips for footer: visible (non-hidden) steps with canonical status
       visibleSteps: this.steps
         .filter(d => !d.hidden)
         .map((descriptor, chipIdx) => {
           const realIdx    = this.steps.indexOf(descriptor);
           const isCurrent  = realIdx === this.currentStepIndex;
-          const isComplete = this.committedSelections.has(descriptor.stepId);
+          const status     = this._evaluateStepStatus(descriptor.stepId, realIdx);
+          const isComplete = status.canonical === 'complete';
+          const isError    = status.canonical === 'error';
+          const isCaution  = status.canonical === 'caution';
+          const isInProgress = status.canonical === 'in_progress';
+          const isNeutral  = status.canonical === 'neutral';
           const isLocked   = realIdx > this.currentStepIndex && !isComplete;
           const plugin     = this.stepPlugins.get(descriptor.stepId);
           const hasWarning = !isCurrent && (plugin?.getWarnings?.()?.length ?? 0) > 0;
@@ -776,9 +941,14 @@ export class ProgressionShell extends SWSEApplicationV2 {
             label:       descriptor.label,
             isCurrent,
             isComplete,
+            isError,
+            isCaution,
+            isInProgress,
+            isNeutral,
             isLocked,
-            isWarning:   hasWarning,
+            isWarning:   hasWarning || isCaution,
             canNavigate: isCurrent || realIdx < this.currentStepIndex,
+            status:      status.canonical,
           };
         }),
 
@@ -873,6 +1043,29 @@ export class ProgressionShell extends SWSEApplicationV2 {
   }
 
   // ---------------------------------------------------------------------------
+  // Projection Lifecycle — rebuild after selection changes
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Rebuild the projection from current progression session state.
+   * Called after selections are committed to ensure selected rail shows up-to-date data.
+   *
+   * @private
+   */
+  _rebuildProjection() {
+    try {
+      if (!this.progressionSession) return;
+
+      const projection = ProjectionEngine.buildProjection(this.progressionSession, this.actor);
+      this.progressionSession.currentProjection = projection;
+
+      swseLogger.debug('[ProgressionShell] Projection rebuilt after selection change');
+    } catch (err) {
+      swseLogger.error('[ProgressionShell] Error rebuilding projection:', err);
+    }
+  }
+
+  // ---------------------------------------------------------------------------
   // Footer Data — single authority: ActionFooter.build()
   // ---------------------------------------------------------------------------
 
@@ -903,6 +1096,258 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const currentPlugin = this.stepPlugins.get(this.steps[stepIndex]?.stepId);
     if (currentPlugin) this.utilityBar.setConfig(currentPlugin.getUtilityBarConfig());
     this.render();
+  }
+
+  /**
+   * Find the next applicable step after the given index.
+   * Skips non-applicable steps (those not in the current step list).
+   * @param {number} startIndex - Index to start searching from
+   * @returns {number} Index of next applicable step, or -1 if none
+   * @private
+   */
+  _findNextApplicableStep(startIndex) {
+    for (let i = startIndex; i < this.steps.length; i++) {
+      // All steps in this.steps array are applicable (filtered during initialization)
+      // So any step we find is applicable
+      return i;
+    }
+    return -1;
+  }
+
+  /**
+   * Find the previous applicable step before the given index.
+   * Respects minimum step boundary.
+   * @param {number} startIndex - Index to start searching from
+   * @param {number} minIndex - Minimum allowed index
+   * @returns {number} Index of previous applicable step, or -1 if none
+   * @private
+   */
+  _findPreviousApplicableStep(startIndex, minIndex) {
+    for (let i = startIndex; i >= minIndex; i--) {
+      // All steps in this.steps array are applicable
+      return i;
+    }
+    return -1;
+  }
+
+  /**
+   * Get the next active step ID after the given step.
+   * Returns null if current step is the last active step.
+   * @param {string} currentStepId - Current step ID
+   * @returns {string|null} Next step ID, or null if at end
+   */
+  getNextActiveStepId(currentStepId) {
+    const currentIdx = this.steps.findIndex(s => s.stepId === currentStepId);
+    if (currentIdx < 0 || currentIdx >= this.steps.length - 1) {
+      return null;
+    }
+    return this.steps[currentIdx + 1]?.stepId ?? null;
+  }
+
+  /**
+   * Get the previous active step ID before the given step.
+   * Returns null if current step is the first active step.
+   * @param {string} currentStepId - Current step ID
+   * @returns {string|null} Previous step ID, or null if at beginning
+   */
+  getPreviousActiveStepId(currentStepId) {
+    const currentIdx = this.steps.findIndex(s => s.stepId === currentStepId);
+    if (currentIdx <= 0) {
+      return null;
+    }
+    return this.steps[currentIdx - 1]?.stepId ?? null;
+  }
+
+  /**
+   * Check if forward navigation is allowed from the given step.
+   * Blocks only on error-level issues, allows warnings/caution.
+   * @param {string} stepId - Step to check
+   * @returns {boolean} true if can navigate forward
+   */
+  canNavigateForward(stepId) {
+    const plugin = this.stepPlugins.get(stepId);
+    if (!plugin) {
+      return false;
+    }
+
+    // Only errors block forward navigation
+    // Warnings/caution allow progress
+    const blockingIssues = plugin.getBlockingIssues?.() ?? [];
+    return blockingIssues.length === 0;
+  }
+
+  /**
+   * Check if backward navigation is allowed from the given step.
+   * Backward navigation is always allowed (no validation blocking).
+   * @param {string} stepId - Step to check
+   * @returns {boolean} true if can navigate backward (always true unless at start)
+   */
+  canNavigateBackward(stepId) {
+    const currentIdx = this.steps.findIndex(s => s.stepId === stepId);
+    // Can always go back unless at the beginning
+    return currentIdx > 0;
+  }
+
+  /**
+   * Get the current step ID.
+   * @returns {string|null} Current step ID, or null if no current step
+   */
+  getCurrentStepId() {
+    return this.steps[this.currentStepIndex]?.stepId ?? null;
+  }
+
+  /**
+   * Get the index of a step by ID.
+   * @param {string} stepId - Step ID
+   * @returns {number} Index, or -1 if not found
+   */
+  getStepIndex(stepId) {
+    return this.steps.findIndex(s => s.stepId === stepId);
+  }
+
+  /**
+   * Repair current step if it's no longer valid.
+   * Called when active steps change (mid-session unlock/lock).
+   * Ensures currentStepIndex always points to a valid active step.
+   * @returns {boolean} true if repair was needed, false if no repair needed
+   * @private
+   */
+  _repairCurrentStep() {
+    const currentStepId = this.getCurrentStepId();
+
+    // If current step still exists, no repair needed
+    if (currentStepId && this.getStepIndex(currentStepId) >= 0) {
+      return false;
+    }
+
+    // Current step is gone — find a valid replacement
+    let newIndex = -1;
+
+    // Try next active step
+    if (this.currentStepIndex < this.steps.length) {
+      newIndex = this.currentStepIndex;
+    }
+    // Try previous active step
+    else if (this.currentStepIndex > 0) {
+      newIndex = this.currentStepIndex - 1;
+    }
+    // Fallback to first active step (should always exist)
+    else if (this.steps.length > 0) {
+      newIndex = 0;
+    }
+
+    if (newIndex >= 0) {
+      swseLogger.warn(
+        `[ProgressionShell] Current step became invalid; repairing to ${this.steps[newIndex]?.stepId}`,
+        { previousStepId: currentStepId, newStepId: this.steps[newIndex]?.stepId }
+      );
+      this.currentStepIndex = newIndex;
+      return true;
+    }
+
+    // No valid step found (should not happen)
+    swseLogger.error('[ProgressionShell] Cannot repair current step — no valid active steps!');
+    this.currentStepIndex = 0;
+    return true;
+  }
+
+  /**
+   * Evaluate canonical status for a step.
+   * Status is determined by: visited, completion, validation, staleness.
+   *
+   * Canonical states (in precedence order):
+   * - error: has blocking issues
+   * - caution: has warnings or is stale
+   * - complete: visited, no remaining choices, no issues
+   * - in_progress: visited, but still has required choices
+   * - neutral: visible but not yet visited
+   *
+   * @param {string} stepId - Step ID to evaluate
+   * @param {number} stepIndex - Current index of step in this.steps
+   * @returns {Object} Status object with canonical properties
+   * @private
+   */
+  _evaluateStepStatus(stepId, stepIndex) {
+    const descriptor = this.steps[stepIndex];
+    const plugin = this.stepPlugins.get(stepId);
+    const isVisible = stepIndex < this.steps.length;
+    const isVisited = this.progressionSession.visitedStepIds.includes(stepId);
+    const isCurrent = stepIndex === this.currentStepIndex;
+    const hasSelection = this.committedSelections.has(stepId);
+
+    // Only visited steps can have completion/error/caution status
+    if (!isVisible) {
+      return { canonical: 'absent', isVisible: false, isVisited, isCurrent, hasSelection };
+    }
+
+    if (!isVisited) {
+      return { canonical: 'neutral', isVisible, isVisited, isCurrent, hasSelection };
+    }
+
+    // Visited step — evaluate completion + validity
+    const validation = plugin?.validate?.() ?? { isValid: true, errors: [], warnings: [] };
+    const blockingIssues = plugin?.getBlockingIssues?.() ?? [];
+    const warnings = plugin?.getWarnings?.() ?? [];
+    const remainingChoices = plugin?.getRemainingPicks?.() ?? [];
+
+    const hasErrors = blockingIssues.length > 0 || validation.errors?.length > 0;
+    const hasWarnings = warnings.length > 0 || validation.warnings?.length > 0;
+    const isStale = this.progressionSession.invalidatedStepIds.includes(stepId);
+    const hasRequiredChoices = remainingChoices.length > 0;
+
+    // State precedence: error > caution > complete > in_progress > neutral
+    if (hasErrors) {
+      return {
+        canonical: 'error',
+        isVisible,
+        isVisited,
+        isCurrent,
+        hasSelection,
+        errors: blockingIssues.length > 0 ? blockingIssues : validation.errors,
+      };
+    }
+
+    if (hasWarnings || isStale) {
+      return {
+        canonical: 'caution',
+        isVisible,
+        isVisited,
+        isCurrent,
+        hasSelection,
+        warnings: warnings.length > 0 ? warnings : validation.warnings,
+        isStale,
+      };
+    }
+
+    if (isVisited && hasSelection && !hasRequiredChoices && !hasErrors) {
+      return {
+        canonical: 'complete',
+        isVisible,
+        isVisited,
+        isCurrent,
+        hasSelection,
+      };
+    }
+
+    if (isVisited && hasRequiredChoices) {
+      return {
+        canonical: 'in_progress',
+        isVisible,
+        isVisited,
+        isCurrent,
+        hasSelection,
+        remainingChoices,
+      };
+    }
+
+    // Fallback: visited but no data and no required choices (empty optional step)
+    return {
+      canonical: 'complete',
+      isVisible,
+      isVisited,
+      isCurrent,
+      hasSelection,
+    };
   }
 
   // ---------------------------------------------------------------------------
@@ -951,7 +1396,15 @@ export class ProgressionShell extends SWSEApplicationV2 {
       }
     }
 
-    this.currentStepIndex++;
+    // Auto-skip to next applicable step
+    const nextApplicableIndex = this._findNextApplicableStep(this.currentStepIndex + 1);
+    if (nextApplicableIndex < 0) {
+      // No more applicable steps — proceed to confirmation
+      await this._onConfirmStep(event, target);
+      return;
+    }
+
+    this.currentStepIndex = nextApplicableIndex;
     this.focusedItem = null;
 
     const nextDescriptor = this.steps[this.currentStepIndex];
@@ -959,13 +1412,17 @@ export class ProgressionShell extends SWSEApplicationV2 {
     if (nextPlugin) {
       try {
         await nextPlugin.onStepEnter(this);
+        // Mark step as visited
+        if (!this.progressionSession.visitedStepIds.includes(nextDescriptor.stepId)) {
+          this.progressionSession.visitedStepIds.push(nextDescriptor.stepId);
+        }
         this.mentor.currentDialogue = nextPlugin.getMentorContext(this);
         this.mentor.askMentorEnabled = nextPlugin.getMentorMode() !== null;
         this.mentor.mentorMode = nextPlugin.getMentorMode();
       } catch (err) {
         swseLogger.error(`[ProgressionShell] Error entering step ${nextDescriptor?.stepId}:`, err);
         this.lastError = err.message;
-        this.currentStepIndex--;  // Go back to previous step
+        this.currentStepIndex = nextApplicableIndex > 0 ? nextApplicableIndex - 1 : 0;  // Go back to previous applicable step
         ui?.notifications?.error?.(`Failed to load ${nextDescriptor?.label}. Returning to previous step.`);
         return;
       }
@@ -986,13 +1443,24 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const currentPlugin = this.stepPlugins.get(currentDescriptor?.stepId);
     currentPlugin?.onStepExit(this);
 
-    this.currentStepIndex--;
+    // Auto-skip to previous applicable step
+    const prevApplicableIndex = this._findPreviousApplicableStep(this.currentStepIndex - 1, minIndex);
+    if (prevApplicableIndex < 0) {
+      swseLogger.log(`[ProgressionShell] No applicable previous step found; staying at current step`);
+      return;
+    }
+
+    this.currentStepIndex = prevApplicableIndex;
     this.focusedItem = null;
 
     const prevDescriptor = this.steps[this.currentStepIndex];
     const prevPlugin = this.stepPlugins.get(prevDescriptor?.stepId);
     if (prevPlugin) {
       prevPlugin.onStepEnter(this);
+      // Mark step as visited
+      if (!this.progressionSession.visitedStepIds.includes(prevDescriptor.stepId)) {
+        this.progressionSession.visitedStepIds.push(prevDescriptor.stepId);
+      }
       this.mentor.currentDialogue = prevPlugin.getMentorContext(this);
       this.mentor.askMentorEnabled = prevPlugin.getMentorMode() !== null;
       this.mentor.mentorMode = prevPlugin.getMentorMode();
@@ -1137,6 +1605,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
     if (plugin) {
       await plugin.onItemCommitted(target.dataset.itemId, this);
+      // Rebuild projection after selection committed to update selected rail
+      this._rebuildProjection();
+      // Trigger re-render to show updated selected rail
+      this.render();
     }
   }
 
@@ -1262,9 +1734,225 @@ export class ProgressionShell extends SWSEApplicationV2 {
    * @param {string} stepId
    * @param {*} selection
    */
-  commitSelection(stepId, selection) {
+  async commitSelection(stepId, selection) {
     this.committedSelections.set(stepId, selection);
+
+    // Track downstream invalidation from this commit
+    this._trackDownstreamInvalidation(stepId);
+
+    // After commitment, check if downstream steps have become non-applicable
+    // and recompute the active step list if needed
+    await this._recomputeActiveStepsIfNeeded();
+
     this.render();
+  }
+
+  /**
+   * Preview and conditionally commit a selection.
+   * Phase 2: Shows impact preview before committing.
+   *
+   * Step plugins that want to show impact previews should call this instead of commitSelection.
+   * For steps that don't need previews, plugins can continue using commitSelection directly.
+   *
+   * @param {string} stepId - Step making the selection
+   * @param {*} selection - Selection to commit
+   * @param {Object} options - Optional settings
+   * @param {string} options.label - Display label for the selection (e.g., "Human Spy")
+   * @returns {Promise<boolean>} true if committed, false if cancelled
+   */
+  async previewAndCommitSelection(stepId, selection, options = {}) {
+    try {
+      // Compute preview of downstream impact
+      const preview = await InvalidationPreview.computePreview(
+        this.progressionSession,
+        stepId,
+        selection
+      );
+
+      // If preview shows affected steps, show confirmation dialog
+      if (preview.affectedCount > 0) {
+        const confirmed = await this._showPreviewConfirmationDialog(
+          selection,
+          preview,
+          options
+        );
+
+        if (!confirmed) {
+          swseLogger.debug('[ProgressionShell] User cancelled preview confirmation');
+          return false;
+        }
+      }
+
+      // Commit the selection
+      await this.commitSelection(stepId, selection);
+      return true;
+    } catch (err) {
+      swseLogger.error('[ProgressionShell] Error in previewAndCommitSelection:', err);
+      ui?.notifications?.error?.('An error occurred while processing this selection.');
+      return false;
+    }
+  }
+
+  /**
+   * Show preview confirmation dialog.
+   * Phase 2: Pre-commit change preview.
+   *
+   * @param {Object} selection - Selection being committed
+   * @param {Object} preview - Preview data from InvalidationPreview.computePreview
+   * @param {Object} options - Display options
+   * @returns {Promise<boolean>} true if user confirms, false if cancels
+   * @private
+   */
+  async _showPreviewConfirmationDialog(selection, preview, options = {}) {
+    const label = options.label || selection.name || 'this selection';
+
+    return new Promise((resolve) => {
+      const content = InvalidationPreview.formatPreviewForDialog(preview);
+
+      const dialog = new Dialog({
+        title: `Confirm: ${label}`,
+        content: `
+          <div style="margin-bottom: 1.5em;">
+            <p><strong>Making this change will affect:</strong></p>
+            ${content}
+          </div>
+          <p style="margin-top: 1.5em; padding-top: 1.5em; border-top: 1px solid #ccc;">
+            Would you like to proceed?
+          </p>
+        `,
+        buttons: {
+          proceed: {
+            label: 'Confirm',
+            callback: () => resolve(true),
+          },
+          cancel: {
+            label: 'Cancel',
+            callback: () => resolve(false),
+          },
+        },
+        default: 'proceed',
+      });
+
+      dialog.render(true);
+    });
+  }
+
+  /**
+   * Track downstream invalidation when an upstream step changes.
+   * Marks visited downstream steps as stale (caution) when prerequisites change.
+   * @param {string} stepId - Step that was just committed
+   * @private
+   */
+  _trackDownstreamInvalidation(stepId) {
+    try {
+      // Import registry (synchronous)
+      const { PROGRESSION_NODE_REGISTRY } = require('../registries/progression-node-registry.js');
+
+      // Map step ID to node ID from registry
+      const nodeId = Object.keys(PROGRESSION_NODE_REGISTRY).find(
+        nid => PROGRESSION_NODE_REGISTRY[nid]?.stepId === stepId || nid === stepId
+      );
+
+      if (!nodeId) {
+        return; // Step not found in registry, no invalidation to track
+      }
+
+      // Get invalidated nodes from registry
+      const computer = new ActiveStepComputer();
+      const invalidated = computer.getInvalidatedNodes(nodeId);
+
+      // Mark visited downstream steps as stale
+      for (const { nodeId: downstreamNodeId, behavior } of invalidated) {
+        // Find the descriptor for this downstream node
+        const descriptor = this.steps.find(d => d.stepId === downstreamNodeId || d.engineKey === downstreamNodeId);
+        if (!descriptor) continue;
+
+        // Only mark visited steps as stale (unvisited steps stay neutral)
+        const isVisited = this.progressionSession.visitedStepIds.includes(descriptor.stepId);
+        if (isVisited && behavior === 'DIRTY') {
+          if (!this.progressionSession.invalidatedStepIds.includes(descriptor.stepId)) {
+            this.progressionSession.invalidatedStepIds.push(descriptor.stepId);
+            swseLogger.log(`[ProgressionShell] Marked step as stale due to upstream change`, {
+              upstreamStep: stepId,
+              downstreamStep: descriptor.stepId,
+            });
+          }
+        }
+
+        // If behavior is PURGE, also mark to purge from committedSelections
+        if (behavior === 'PURGE') {
+          this.committedSelections.delete(descriptor.stepId);
+          swseLogger.log(`[ProgressionShell] Purged downstream selection due to upstream change`, {
+            upstreamStep: stepId,
+            downstreamStep: descriptor.stepId,
+          });
+        }
+      }
+    } catch (err) {
+      swseLogger.warn(`[ProgressionShell] Error tracking downstream invalidation:`, err);
+      // Continue without tracking on error (fail-safe)
+    }
+  }
+
+  /**
+   * Recompute active steps and validate current step is still applicable.
+   * Rebuilds step list and repairs current step if needed.
+   * Also tracks downstream invalidation based on upstream changes.
+   * @private
+   */
+  async _recomputeActiveStepsIfNeeded() {
+    try {
+      // Get fresh list of active steps based on current session state
+      const computer = new ActiveStepComputer();
+      const newActiveNodeIds = await computer.computeActiveSteps(
+        this.actor,
+        this.mode,
+        this.progressionSession,
+        { subtype: this.progressionSession.subtype }
+      );
+
+      // Rebuild step list from new active nodes
+      const mapNodesToDescriptors = (await import('../registries/node-descriptor-mapper.js')).default;
+      const newDescriptors = mapNodesToDescriptors(newActiveNodeIds);
+
+      // Filter hidden steps
+      const newSteps = newDescriptors.filter(d => !d.isHidden);
+
+      // Update step list
+      const oldStepIds = this.steps.map(s => s.stepId);
+      const newStepIds = newSteps.map(s => s.stepId);
+
+      // Only rebuild if there's an actual change
+      if (JSON.stringify(oldStepIds) !== JSON.stringify(newStepIds)) {
+        // Rebuild plugins for new steps
+        this.steps = newSteps;
+        this.stepPlugins.clear();
+
+        for (const descriptor of this.steps) {
+          if (descriptor.pluginClass) {
+            try {
+              this.stepPlugins.set(descriptor.stepId, new descriptor.pluginClass(descriptor));
+            } catch (err) {
+              swseLogger.error(`[ProgressionShell] Failed to rebuild plugin for ${descriptor.stepId}:`, err);
+            }
+          }
+        }
+
+        // Repair current step if it's no longer valid
+        this._repairCurrentStep();
+
+        swseLogger.log('[ProgressionShell] Rebuilt step list after recomputation', {
+          oldCount: oldStepIds.length,
+          newCount: newStepIds.length,
+          added: newStepIds.filter(id => !oldStepIds.includes(id)),
+          removed: oldStepIds.filter(id => !newStepIds.includes(id)),
+          currentStepId: this.getCurrentStepId(),
+        });
+      }
+    } catch (err) {
+      swseLogger.warn(`[ProgressionShell] Error recomputing active steps:`, err);
+      // Continue without recomputation on error (fail-safe)
+    }
   }
 
   /**

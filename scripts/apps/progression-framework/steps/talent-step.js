@@ -23,6 +23,8 @@ import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/sugge
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { buildDependencyGraph } from '/systems/foundryvtt-swse/scripts/apps/chargen/chargen-talent-tree-graph.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { canonicallyOrderSelections } from '../utils/selection-ordering.js';
+import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 
 export class TalentStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -318,9 +320,9 @@ export class TalentStep extends ProgressionStepPlugin {
 
   async getStepData(context) {
     if (this._stage === 'browser') {
-      return this._getTreeBrowserData();
+      return this._getTreeBrowserData(context);
     } else if (this._stage === 'graph') {
-      return this._getTreeGraphData();
+      return this._getTreeGraphData(context);
     }
 
     return {};
@@ -329,8 +331,29 @@ export class TalentStep extends ProgressionStepPlugin {
   /**
    * Data for Stage 1: Tree Browser
    */
-  _getTreeBrowserData() {
+  _getTreeBrowserData(context) {
     const filteredTrees = this._filterTreesBySearch(this._allTrees);
+
+    // Get committed talents from session and order them canonically
+    const committedTalents = context?.shell?.progressionSession?.draftSelections?.talents || [];
+    const orderedSelections = canonicallyOrderSelections(committedTalents);
+
+    // PHASE 2 UX: Micro-progress — show slot progress
+    const selectedCount = committedTalents.length;
+    const requiredCount = 1; // Single talent slot per step
+    const remainingCount = Math.max(0, requiredCount - selectedCount);
+    const isComplete = remainingCount === 0;
+
+    const slotProgress = {
+      selectedCount,
+      requiredCount,
+      remainingCount,
+      isComplete,
+      progressLabel: `${selectedCount} of ${requiredCount} talent${requiredCount === 1 ? '' : 's'}`,
+      remainingLabel: remainingCount > 0
+        ? `${remainingCount} talent${remainingCount === 1 ? '' : 's'} remaining`
+        : 'Complete',
+    };
 
     return {
       stage: 'browser',
@@ -349,13 +372,16 @@ export class TalentStep extends ProgressionStepPlugin {
         name: t.name,
       })),
       searchQuery: this._searchQuery,
+      orderedSelections,
+      // PHASE 2 UX: Slot progress
+      slotProgress,
     };
   }
 
   /**
    * Data for Stage 2: Tree Graph
    */
-  async _getTreeGraphData() {
+  async _getTreeGraphData(context) {
     const selectedTree = this._getTree(this._selectedTreeId);
     if (!selectedTree || !this._graphData) {
       return { stage: 'graph', error: 'Tree not found' };
@@ -378,12 +404,36 @@ export class TalentStep extends ProgressionStepPlugin {
       };
     }
 
+    // Get committed talents from session and order them canonically
+    const committedTalents = context?.shell?.progressionSession?.draftSelections?.talents || [];
+    const orderedSelections = canonicallyOrderSelections(committedTalents);
+
+    // PHASE 2 UX: Micro-progress — show slot progress
+    const selectedCount = committedTalents.length;
+    const requiredCount = 1; // Single talent slot per step
+    const remainingCount = Math.max(0, requiredCount - selectedCount);
+    const isComplete = remainingCount === 0;
+
+    const slotProgress = {
+      selectedCount,
+      requiredCount,
+      remainingCount,
+      isComplete,
+      progressLabel: `${selectedCount} of ${requiredCount} talent${requiredCount === 1 ? '' : 's'}`,
+      remainingLabel: remainingCount > 0
+        ? `${remainingCount} talent${remainingCount === 1 ? '' : 's'} remaining`
+        : 'Complete',
+    };
+
     return {
       stage: 'graph',
       selectedTreeId: this._selectedTreeId,
       selectedTreeName: selectedTree.name,
       nodeStates,
       graphData: this._graphData,
+      orderedSelections,
+      // PHASE 2 UX: Slot progress
+      slotProgress,
     };
   }
 
@@ -445,6 +495,11 @@ export class TalentStep extends ProgressionStepPlugin {
     const isSelected = talent._id === this._selectedTalentId;
     const selectedTree = this._getTree(this._selectedTreeId);
 
+    // Normalize detail panel data for canonical display (no fabrication)
+    const normalized = normalizeDetailPanelData(talent, 'talent', {
+      treeName: selectedTree?.name || '',
+    });
+
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/talent-details.hbs',
       data: {
@@ -453,6 +508,10 @@ export class TalentStep extends ProgressionStepPlugin {
         isSelected,
         description: talent.system?.description || '',
         prerequisites: talent.system?.prerequisites || talent.system?.prerequisite || '',
+        // Add normalized fields for enhanced detail rail
+        canonicalDescription: normalized.description,
+        metadataTags: normalized.metadataTags,
+        hasMentorProse: normalized.fallbacks.hasMentorProse,
       },
     };
   }
@@ -536,6 +595,28 @@ export class TalentStep extends ProgressionStepPlugin {
       errors: issues,
       warnings: [],
     };
+  }
+
+  getBlockingIssues() {
+    if (!this._selectedTalentId) {
+      return [`Select a ${this._slotType === 'class' ? 'Class' : 'Heroic'} Talent`];
+    }
+    return [];
+  }
+
+  /**
+   * PHASE 3 UX: Specific, actionable explanation for why Next is blocked
+   */
+  getBlockerExplanation() {
+    if (!this._selectedTalentId) {
+      if (this._stage === 'browser') {
+        return 'Choose a talent tree to view available talents';
+      } else {
+        const slotTypeLabel = this._slotType === 'class' ? 'Class' : 'Heroic';
+        return `Select a ${slotTypeLabel} Talent to continue`;
+      }
+    }
+    return null;
   }
 
   // ---------------------------------------------------------------------------

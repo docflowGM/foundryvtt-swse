@@ -16,6 +16,7 @@ import { normalizeBackground } from './step-normalizers.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from './mentor-step-integration.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
+import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 
 const CATEGORY_LABELS = {
   event: 'Event',
@@ -163,6 +164,9 @@ export class BackgroundStep extends ProgressionStepPlugin {
 
     const isCommitted = this._committedBackgroundIds.includes(this._focusedBackgroundId);
 
+    // Normalize detail panel data for canonical display (no fabrication)
+    const normalized = normalizeDetailPanelData(background, 'background');
+
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/background-details.hbs',
       data: {
@@ -181,6 +185,10 @@ export class BackgroundStep extends ProgressionStepPlugin {
           : (this._committedBackgroundIds.length >= this._maxBackgrounds && this._maxBackgrounds > 1)
             ? 'Remove and Add This'
             : 'Choose This Background',
+        // Add normalized fields for enhanced detail rail
+        canonicalDescription: normalized.description,
+        metadataTags: normalized.metadataTags,
+        hasMentorProse: normalized.fallbacks.hasMentorProse,
       },
     };
   }

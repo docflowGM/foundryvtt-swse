@@ -1,0 +1,119 @@
+{{!--
+  selected-rail.hbs
+  LEFT SELECTED RAIL — projection-backed build snapshot panel.
+
+  Rendered from SelectedRailContext normalized snapshot.
+  Shows current in-progress build state for all progression paths.
+
+  Data contract:
+  {
+    actorIdentity: { name, portrait },
+    pathType: 'chargen-actor' | 'chargen-beast' | 'chargen-nonheroic' | 'chargen-droid' | 'chargen-follower' | 'levelup-actor' | ...,
+    currentStepId: string,
+    snapshotSections: [
+      {
+        id: string,
+        label: string,
+        items: [...],
+        isCurrent?: boolean,
+        isCompact?: boolean
+      }
+    ]
+  }
+--}}
+
+<div class="prog-selected-rail {{#if pathType}}prog-selected-rail--{{pathType}}{{/if}}">
+
+  {{!-- ============================================================
+    ACTOR IDENTITY — portrait + name (immutable)
+  ============================================================ --}}
+  <div class="prog-selected-rail__identity">
+
+    <div class="prog-selected-rail__portrait">
+      {{#if actorIdentity.portrait}}
+        <img class="prog-selected-rail__portrait-img" src="{{actorIdentity.portrait}}" alt="{{actorIdentity.name}}">
+      {{else}}
+        <div class="prog-selected-rail__portrait-placeholder">
+          <i class="fas fa-user-astronaut"></i>
+        </div>
+      {{/if}}
+    </div>
+
+    <div class="prog-selected-rail__name">
+      {{#if actorIdentity.name}}
+        {{actorIdentity.name}}
+      {{else}}
+        <span class="prog-selected-rail__empty">Unnamed</span>
+      {{/if}}
+    </div>
+
+  </div>{{!-- /identity --}}
+
+  {{!-- ============================================================
+    BUILD SNAPSHOT SECTIONS — dynamic based on path/step
+  ============================================================ --}}
+  <div class="prog-selected-rail__snapshot">
+
+    {{#each snapshotSections}}
+
+      {{!-- Section container --}}
+      <div class="prog-selected-rail__section {{#if isCurrent}}prog-selected-rail__section--current{{/if}}">
+
+        {{!-- Section header/label --}}
+        <div class="prog-selected-rail__section-header">
+          <span class="prog-selected-rail__section-label">{{label}}</span>
+          {{#if isCurrent}}
+            <span class="prog-selected-rail__section-indicator">
+              <i class="fas fa-chevron-right"></i>
+            </span>
+          {{/if}}
+        </div>
+
+        {{!-- Section content (normal or compact layout) --}}
+        {{#if isCompact}}
+
+          {{!-- COMPACT GRID LAYOUT (for attributes) --}}
+          <div class="prog-selected-rail__section-compact">
+            {{#each items}}
+              <div class="prog-selected-rail__compact-item">
+                <span class="prog-selected-rail__compact-label">{{label}}</span>
+                <span class="prog-selected-rail__compact-value">{{value}}</span>
+                {{#if modifier}}
+                  <span class="prog-selected-rail__compact-modifier {{#if (gt modifier 0)}}prog-num--pos{{else if (lt modifier 0)}}prog-num--neg{{else}}prog-num--zero{{/if}}">
+                    {{#if (gt modifier 0)}}+{{/if}}{{modifier}}
+                  </span>
+                {{/if}}
+              </div>
+            {{/each}}
+          </div>
+
+        {{else}}
+
+          {{!-- NORMAL LIST LAYOUT (for identity, feats, talents, etc.) --}}
+          <div class="prog-selected-rail__section-items">
+            {{#each items}}
+              <div class="prog-selected-rail__item {{#if isCurrent}}prog-selected-rail__item--current{{/if}}">
+                <span class="prog-selected-rail__item-label">{{label}}</span>
+                {{#if value}}
+                  <span class="prog-selected-rail__item-value">{{value}}</span>
+                {{/if}}
+              </div>
+            {{/each}}
+          </div>
+
+        {{/if}}
+
+      </div>{{!-- /section --}}
+
+    {{/each}}
+
+    {{!-- Empty state if no sections --}}
+    {{#unless snapshotSections.length}}
+      <div class="prog-selected-rail__empty-state">
+        <p class="prog-selected-rail__empty-text">Starting build...</p>
+      </div>
+    {{/unless}}
+
+  </div>{{!-- /snapshot --}}
+
+</div>{{!-- /selected-rail --}}

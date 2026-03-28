@@ -17,6 +17,7 @@ import { getMentorGuidance, getMentorForClass, MENTORS } from '/systems/foundryv
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
+import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 
 // Maps stepId → mentor guidance choiceType
 const STEP_CHOICE_TYPE = {
@@ -284,6 +285,11 @@ export class SpeciesStep extends ProgressionStepPlugin {
     const salty = MENTORS?.Scoundrel;
     const defaultSpeciesGuidance = salty ? getMentorGuidance(salty, 'species') : 'Choose wisely, friend.';
 
+    // Normalize detail panel data for canonical display (no fabrication)
+    const normalized = normalizeDetailPanelData(species, 'species', {
+      mentorProseSource: this._olSaltyDialogues,
+    });
+
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/species-details.hbs',
       data: {
@@ -296,8 +302,11 @@ export class SpeciesStep extends ProgressionStepPlugin {
         speed: species.speed ?? '30 ft.',
         source: species.source ?? 'Unknown',
         img: this._resolveSpeciesImg(species),
-        olSaltyDialogue: this._getOlSaltyDialogue(species.name) ?? null,
+        olSaltyDialogue: normalized.mentorProse ?? this._getOlSaltyDialogue(species.name) ?? null,
         defaultSpeciesGuidance,
+        // Add normalized fields for enhanced detail rail
+        canonicalDescription: normalized.description,
+        hasMentorProse: normalized.fallbacks.hasMentorProse,
       },
     };
   }

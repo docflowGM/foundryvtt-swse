@@ -22,6 +22,7 @@ import { getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions } from
 import { swseLogger } from '../../../utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
+import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 
 /**
  * Force Power step — both Generic (force-powers) for level-up use.
@@ -263,6 +264,9 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     const totalSelected = Array.from(this._committedPowerCounts.values()).reduce((sum, c) => sum + c, 0);
     const canAddMore = totalSelected < this._remainingPicks;
 
+    // Normalize detail panel data for canonical display (no fabrication)
+    const normalized = normalizeDetailPanelData(focusedItem, 'force_power');
+
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/force-power-details.hbs',
       data: {
@@ -272,6 +276,10 @@ export class ForcePowerStep extends ProgressionStepPlugin {
         selectedCount: currentCount,
         canAddMore,
         buttonLabel: currentCount > 0 ? 'Add Another Use' : 'Add Power',
+        // Add normalized fields for enhanced detail rail
+        canonicalDescription: normalized.description,
+        metadataTags: normalized.metadataTags,
+        hasMentorProse: normalized.fallbacks.hasMentorProse,
       },
     };
   }

@@ -3,6 +3,25 @@
 
 <div class="feat-work-surface prog-quickref-stage">
 
+  {{!-- PHASE 2 UX: Micro-progress indicator --}}
+  {{#if slotProgress}}
+  <div class="prog-micro-progress prog-micro-progress--feats">
+    {{#if slotProgress.isComplete}}
+      <div class="prog-progress-status prog-progress-status--complete">
+        <i class="fas fa-check-circle"></i>
+        <span class="prog-progress-label">{{slotProgress.progressLabel}}</span>
+        <span class="prog-badge prog-badge--complete">Complete</span>
+      </div>
+    {{else}}
+      <div class="prog-progress-status prog-progress-status--incomplete">
+        <i class="fas fa-circle-notch"></i>
+        <span class="prog-progress-label">{{slotProgress.progressLabel}}</span>
+        <span class="prog-progress-remaining">{{slotProgress.remainingLabel}}</span>
+      </div>
+    {{/if}}
+  </div>
+  {{/if}}
+
   {{#if groupedFeats.suggested}}
   <section class="feat-group suggested-group">
     <div class="group-header" data-action="toggle-category" data-category="suggested">
@@ -55,18 +74,31 @@
     <div class="feat-list category-list">
       {{#each group.feats as |feat idx|}}
       {{#if (or (lt idx group.visibleCount) group.isExpanded)}}
-      <div class="feat-item category-feat {{#if feat.isFocused}}focused{{/if}} {{#if feat.isSelected}}selected{{/if}}"
+      <div class="feat-item category-feat {{#if feat.isFocused}}focused{{/if}} {{#if feat.isSelected}}selected{{/if}} {{#unless feat.isAvailable}}unavailable{{/unless}}"
            data-feat-id="{{feat._id}}"
-           data-action="focus-item">
+           data-action="focus-item"
+           {{#unless feat.isAvailable}}title="{{feat.unavailabilityReason}}"{{/unless}}>
         <div class="feat-item-content">
           <span class="feat-name">{{feat.name}}</span>
-          <span class="feat-prereq-line">{{feat.prerequisiteLine}}</span>
+          {{!-- PHASE 6 UX: Show prerequisite line more prominently --}}
+          {{#if feat.prerequisiteLine}}
+            <span class="feat-prereq-line" title="{{feat.prerequisiteLine}}">
+              <i class="fa-solid fa-link-slash"></i> {{feat.prerequisiteLine}}
+            </span>
+          {{/if}}
+          {{#if feat.unavailabilityReason}}
+            <span class="feat-unavail-reason">{{feat.unavailabilityReason}}</span>
+          {{/if}}
         </div>
         <div class="feat-item-meta">
           {{#if feat.isSuggested}}
           <span class="feat-synergy-badge">synergy</span>
           {{/if}}
-          <span class="feat-state-indicator">{{#if feat.isSelected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{/if}}</span>
+          {{#unless feat.isAvailable}}
+            <span class="feat-unavail-badge"><i class="fa-solid fa-ban"></i> Unavailable</span>
+          {{else}}
+            <span class="feat-state-indicator">{{#if feat.isSelected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{/if}}</span>
+          {{/unless}}
         </div>
       </div>
       {{/if}}
@@ -86,12 +118,25 @@
   {{#unless groupedFeats}}
   <section class="feat-group empty-state">
     <div class="empty-message">
+      {{!-- PHASE 8 UX: Enhanced empty state with helpful guidance --}}
       <i class="fa-solid fa-hexagon-exclamation"></i>
-      <p>No feats available for selection.</p>
+      <p class="empty-title">No {{#if showAll}}more{{else}}Available{{/if}} Feats</p>
       {{#if showAll}}
-      <p class="small">All available feats have been selected or do not meet prerequisites.</p>
+        <p class="empty-description">You've explored all available feats. Every feat either:</p>
+        <ul class="empty-reasons">
+          <li>Has already been selected by you</li>
+          <li>Does not meet your character's prerequisites</li>
+          <li>Is restricted by your class or species</li>
+        </ul>
+        <p class="empty-hint">Try reviewing your earlier choices if you need different options.</p>
       {{else}}
-      <p class="small">No feats meet your current prerequisites. Try enabling "Show All" to see ineligible feats.</p>
+        <p class="empty-description">No feats meet your current character prerequisites. Your current build:</p>
+        <ul class="empty-reasons">
+          <li>May not have unlocked certain feats yet</li>
+          <li>May require specific abilities or classes</li>
+          <li>May have restrictions based on species or level</li>
+        </ul>
+        <p class="empty-hint"><strong>Tip:</strong> Enable "Show All" to see what prerequisites are blocking each feat. You can review your earlier choices to unlock more options.</p>
       {{/if}}
     </div>
   </section>

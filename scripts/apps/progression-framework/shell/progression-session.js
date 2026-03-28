@@ -92,6 +92,7 @@ export class ProgressionSession {
 
     // Progression tracking
     this.activeSteps = [];          // Currently available step ids
+    this.visitedStepIds = [];       // Steps player has entered (visited)
     this.currentStepId = null;       // Currently visible step
     this.completedStepIds = [];      // Steps already finalized
     this.invalidatedStepIds = [];    // Steps marked dirty by upstream changes
@@ -110,6 +111,9 @@ export class ProgressionSession {
     this.createdAt = Date.now();
     this.lastModifiedAt = Date.now();
     this.checkpoints = [];           // Auto-save points
+
+    // Persistence hooks (Phase 1: Session persistence)
+    this._persistenceHooks = [];      // Callbacks called after each commit
 
     // Validation/schema tracking
     this._schema = this._buildSchema();
@@ -143,6 +147,9 @@ export class ProgressionSession {
 
       // Trigger watchers for backward compat
       this._triggerWatchers(selectionKey, value);
+
+      // Trigger persistence hooks (Phase 1: auto-save after commit)
+      this._triggerPersistenceHooks(stepId, selectionKey);
 
       swseLogger.debug(
         `[ProgressionSession] Committed ${selectionKey} from ${stepId}`,
@@ -225,6 +232,7 @@ export class ProgressionSession {
       survey: null,
       droid: null,
     };
+    this.visitedStepIds = [];
     this.completedStepIds = [];
     this.invalidatedStepIds = [];
     this.projectedCharacter = null;
@@ -248,6 +256,27 @@ export class ProgressionSession {
       background: this.draftSelections.background,
       languages: this.draftSelections.languages || [],
       forcePowers: this.draftSelections.forcePowers || [],
+    };
+  }
+
+  /**
+   * Register a persistence hook.
+   * Called after each commit to enable auto-save.
+   *
+   * @param {Function} callback - Called with (session, stepId, selectionKey)
+   * @returns {Function} Unregister function
+   */
+  onPersist(callback) {
+    if (typeof callback !== 'function') {
+      swseLogger.warn('[ProgressionSession] Invalid persistence hook');
+      return () => {};
+    }
+
+    this._persistenceHooks.push(callback);
+
+    return () => {
+      const idx = this._persistenceHooks.indexOf(callback);
+      if (idx >= 0) this._persistenceHooks.splice(idx, 1);
     };
   }
 
@@ -365,6 +394,24 @@ export class ProgressionSession {
           );
         }
       });
+    }
+  }
+
+  /**
+   * Trigger persistence hooks after a commit.
+   * Phase 1: Auto-save session state.
+   * @private
+   */
+  _triggerPersistenceHooks(stepId, selectionKey) {
+    for (const hook of this._persistenceHooks) {
+      try {
+        hook(this, stepId, selectionKey);
+      } catch (err) {
+        swseLogger.error(
+          `[ProgressionSession] Persistence hook error:`,
+          err
+        );
+      }
     }
   }
 

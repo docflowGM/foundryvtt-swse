@@ -27,30 +27,24 @@
   </div>
 
   {{!-- Feat Description --}}
-  {{#if description}}
   <div class="feat-description-section">
     <h3>Description</h3>
-    <p class="feat-description">{{description}}</p>
+    {{#if canonicalDescription}}
+      <p class="feat-description">{{canonicalDescription}}</p>
+    {{else}}
+      <p class="feat-description feat-description--unavailable">No description available.</p>
+    {{/if}}
   </div>
-  {{/if}}
 
-  {{!-- Prerequisites Section --}}
-  {{#if prerequisites}}
+  {{!-- Prerequisites Section (text-only, no validation) --}}
   <div class="feat-prerequisites-section">
     <h3>Prerequisites</h3>
-    <ul class="prerequisites-list">
-      {{#each prerequisites}}
-      <li class="prerequisite-item">
-        <span class="prerequisite-name">{{this}}</span>
-        <span class="prerequisite-status">
-          {{!-- Note: In a full implementation, would check actual status --}}
-          <i class="fa-solid fa-circle-check met-icon"></i> Met
-        </span>
-      </li>
-      {{/each}}
-    </ul>
+    {{#if prerequisites}}
+      <p class="feat-prerequisites">{{prerequisites}}</p>
+    {{else}}
+      <p class="feat-prerequisites feat-prerequisites--none">None</p>
+    {{/if}}
   </div>
-  {{/if}}
 
   {{!-- Selection Controls --}}
   <div class="details-actions">

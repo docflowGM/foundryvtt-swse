@@ -153,6 +153,50 @@
   <div class="prog-panel prog-panel--right">
     <h3 class="prog-panel-title">Final Checklist</h3>
 
+    {{!-- PHASE 9 UX: Finalization Status Summary --}}
+    {{#if issuesSummary}}
+    <div class="prog-finalization-status {{#if issuesSummary.isReadyToFinalize}}ready{{else}}incomplete{{/if}}">
+      <div class="prog-finalization-header">
+        {{#if issuesSummary.isReadyToFinalize}}
+          <i class="fas fa-check-circle"></i>
+          <span class="prog-status-text">Ready to Create Character</span>
+        {{else if issuesSummary.hasErrors}}
+          <i class="fas fa-exclamation-circle"></i>
+          <span class="prog-status-text">{{issuesSummary.errorCount}} Issue{{#unless (eq issuesSummary.errorCount 1)}}s{{/unless}} to Fix</span>
+        {{else}}
+          <i class="fas fa-circle-notch"></i>
+          <span class="prog-status-text">Incomplete</span>
+        {{/if}}
+      </div>
+
+      {{#if issuesSummary.hasErrors}}
+      <div class="prog-status-errors">
+        <div class="prog-status-section-title">Blocking Issues:</div>
+        <ul class="prog-issue-list">
+          {{#each issuesSummary.errors}}
+            <li class="prog-issue-item prog-issue-error">
+              <i class="fas fa-times-circle"></i> {{this}}
+            </li>
+          {{/each}}
+        </ul>
+      </div>
+      {{/if}}
+
+      {{#if issuesSummary.hasCaution}}
+      <div class="prog-status-cautions">
+        <div class="prog-status-section-title">Review Recommended:</div>
+        <ul class="prog-issue-list">
+          {{#each issuesSummary.cautions}}
+            <li class="prog-issue-item prog-issue-caution">
+              <i class="fas fa-exclamation-triangle"></i> {{this.message}}
+            </li>
+          {{/each}}
+        </ul>
+      </div>
+      {{/if}}
+    </div>
+    {{/if}}
+
     <div class="prog-checklist swse-card-schema swse-card-schema--choice swse-card-schema--pending">
       {{!-- Name is now EDITABLE on this step (was on NameStep) --}}
       <div class="prog-checklist-item {{#if characterName}}complete{{/if}}">

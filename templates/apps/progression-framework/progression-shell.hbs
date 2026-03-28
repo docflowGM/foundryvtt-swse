@@ -107,6 +107,16 @@
       ================================================================== --}}
       <div data-region="work-surface">
 
+        {{!-- PHASE 1 UX: Step context indicator --}}
+        {{#if stepContext}}
+        <div class="prog-step-context-banner">
+          <span class="prog-step-counter">{{stepContext.displayText}}</span>
+          {{#if currentDescriptor.label}}
+            <span class="prog-step-label">— {{currentDescriptor.label}}</span>
+          {{/if}}
+        </div>
+        {{/if}}
+
         {{#if workSurfaceHtml}}
           {{{workSurfaceHtml}}}
         {{else}}
@@ -196,8 +206,13 @@
         {{!-- ── CENTER: Status indicators only (no step chips here) ── --}}
         <div class="action-footer__status">
 
-          {{!-- Blocking / warning status banner --}}
-          {{#if footer.blockingIssues.length}}
+          {{!-- PHASE 3 UX: Blocker explanation (specific, actionable message) --}}
+          {{#if (and (not footer.next.enabled) footer.blockerExplanation)}}
+            <div class="prog-blocker-explanation prog-blocker-explanation--primary">
+              <i class="fas fa-lightbulb"></i>
+              <span class="prog-blocker-text">{{footer.blockerExplanation}}</span>
+            </div>
+          {{else if footer.blockingIssues.length}}
             <div class="swse-footer__status swse-footer__status--blocking">
               <i class="fas fa-exclamation-circle"></i>
               {{#each footer.blockingIssues}}

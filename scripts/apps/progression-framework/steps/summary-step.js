@@ -21,6 +21,7 @@ import { ProgressionStepPlugin } from './step-plugin-base.js';
 import { ProjectionEngine } from '../shell/projection-engine.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { canonicallyOrderSelections } from '../utils/selection-ordering.js';
 
 export class SummaryStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -35,7 +36,9 @@ export class SummaryStep extends ProgressionStepPlugin {
       attributes: {},
       skills: [],
       feats: [],
+      featSelections: [],  // Full selection objects for ordering
       talents: [],
+      talentSelections: [],  // Full selection objects for ordering
       languages: [],
       money: { total: 0, sources: [] },
       hpCalculation: { base: 0, modifiers: 0, total: 0 },
@@ -181,6 +184,27 @@ export class SummaryStep extends ProgressionStepPlugin {
       pendingDroidBuild = !!(droidBuild?.buildState?.isDeferred);
     }
 
+    // Order feats and talents canonically (General → Class → Bonus → Subtype)
+    const orderedFeats = canonicallyOrderSelections(this._summary.featSelections);
+    const orderedTalents = canonicallyOrderSelections(this._summary.talentSelections);
+
+    // PHASE 9 UX: Issue summary for control center functionality
+    const validation = this.validate();
+    const issuesSummary = {
+      hasErrors: validation.errors.length > 0,
+      errorCount: validation.errors.length,
+      errors: validation.errors,
+      hasCaution: validation.warnings.caution.length > 0,
+      cautionCount: validation.warnings.caution.length,
+      cautions: validation.warnings.caution,
+      isReadyToFinalize: validation.isValid && this._isReviewComplete && !!this._characterName,
+      finalizationStatus: validation.isValid && this._isReviewComplete && !!this._characterName
+        ? 'Ready to create character'
+        : validation.errors.length > 0
+        ? `${validation.errors.length} error${validation.errors.length === 1 ? '' : 's'} to fix`
+        : `Incomplete (${Object.keys(this._summary.attributes).length ? '' : 'attributes, '}${this._summary.feats.length ? '' : 'feats, '}${this._characterName ? '' : 'name'})`
+    };
+
     return {
       summary: this._summary,
       characterName: this._characterName,  // Final name for actor creation
@@ -188,6 +212,11 @@ export class SummaryStep extends ProgressionStepPlugin {
       isReviewComplete: this._isReviewComplete,
       // PHASE 1: Show warning if droid build is pending
       pendingDroidBuild: pendingDroidBuild,
+      // Selection ordering: Canonical order for feat and talent display
+      orderedFeats,
+      orderedTalents,
+      // PHASE 9 UX: Issue summary and finalization status
+      issuesSummary,
     };
   }
 
@@ -353,12 +382,14 @@ export class SummaryStep extends ProgressionStepPlugin {
 
     // Feats: from canonical session normalized format [{id, source}, ...]
     const featsNorm = selections.feats;
+    this._summary.featSelections = Array.isArray(featsNorm) ? [...featsNorm] : [];
     this._summary.feats = Array.isArray(featsNorm)
       ? featsNorm.map(feat => feat.id || feat)
       : [];
 
     // Talents: from canonical session normalized format [{id, treeId, source}, ...]
     const talentsNorm = selections.talents;
+    this._summary.talentSelections = Array.isArray(talentsNorm) ? [...talentsNorm] : [];
     this._summary.talents = Array.isArray(talentsNorm)
       ? talentsNorm.map(talent => talent.id || talent)
       : [];

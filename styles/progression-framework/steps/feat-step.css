@@ -638,10 +638,88 @@
   font-size: 0.76rem;
   color: rgba(150, 200, 235, 0.78);
   overflow-wrap: anywhere;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.feat-prereq-line i {
+  font-size: 0.65rem;
+  flex-shrink: 0;
+  opacity: 0.7;
 }
 
 .feat-show-more {
   padding: 0.4rem 0.2rem 0;
+}
+
+/* ====================================================================
+   PHASE 8 UX: EMPTY STATE GUIDANCE
+   ==================================================================== */
+
+.empty-state {
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.empty-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.empty-message i {
+  font-size: 3rem;
+  color: rgba(100, 150, 200, 0.6);
+}
+
+.empty-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: rgba(200, 220, 255, 0.95);
+  margin: 0;
+}
+
+.empty-description {
+  font-size: 0.9rem;
+  color: rgba(150, 180, 220, 0.85);
+  margin: 0 0 0.75rem 0;
+}
+
+.empty-reasons {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 1rem 0;
+  font-size: 0.85rem;
+  color: rgba(150, 180, 220, 0.8);
+  text-align: left;
+  display: inline-block;
+}
+
+.empty-reasons li {
+  padding: 0.4rem 0.75rem;
+  margin: 0.25rem 0;
+  background: rgba(0, 100, 150, 0.1);
+  border-left: 2px solid rgba(0, 176, 208, 0.3);
+  border-radius: 2px;
+}
+
+.empty-reasons li:before {
+  content: "✓ ";
+  color: rgba(0, 176, 208, 0.7);
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+.empty-hint {
+  font-size: 0.85rem;
+  color: rgba(0, 176, 208, 0.9);
+  background: rgba(0, 176, 208, 0.08);
+  padding: 0.75rem 1rem;
+  border-radius: 2px;
+  border-left: 3px solid rgba(0, 176, 208, 0.4);
+  margin: 0;
 }
 
 @media (max-width: 900px) {
@@ -651,5 +729,178 @@
 
   .feat-item-meta {
     justify-self: start;
+  }
+}
+
+/* ====================================================================
+   PHASE 6 UX: PREREQUISITE & UNAVAILABILITY EXPLANATIONS
+   ==================================================================== */
+
+.feat-item.unavailable {
+  opacity: 0.65;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.feat-item.unavailable .feat-name {
+  color: rgba(200, 100, 100, 0.9);
+  text-decoration: line-through;
+}
+
+.feat-unavail-reason {
+  font-size: 0.7rem;
+  color: rgba(255, 140, 100, 0.85);
+  font-weight: 500;
+  display: block;
+  margin-top: 0.2rem;
+}
+
+.feat-unavail-badge {
+  font-size: 0.7rem;
+  color: rgba(255, 100, 100, 0.9);
+  background: rgba(255, 100, 100, 0.15);
+  padding: 0.2rem 0.5rem;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  white-space: nowrap;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.feat-unavail-badge i {
+  font-size: 0.8rem;
+}
+
+/* ====================================================================
+   PHASE 2 UX: MICRO-PROGRESS INDICATOR
+   ==================================================================== */
+
+.prog-micro-progress {
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.75rem;
+  border-left: 3px solid;
+  border-radius: 2px;
+  background-color: rgba(0, 100, 150, 0.08);
+}
+
+.prog-micro-progress--feats {
+  border-left-color: rgba(0, 176, 208, 0.5);
+}
+
+.prog-progress-status {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.prog-progress-status i {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.prog-progress-status--complete {
+  color: rgba(34, 197, 94, 0.95);
+}
+
+.prog-progress-status--complete i {
+  color: rgba(34, 197, 94, 1);
+}
+
+.prog-progress-status--incomplete {
+  color: rgba(100, 200, 255, 0.9);
+}
+
+.prog-progress-status--incomplete i {
+  color: rgba(0, 176, 208, 1);
+  animation: spin 2s linear infinite;
+}
+
+.prog-progress-label {
+  font-weight: 500;
+}
+
+.prog-progress-remaining {
+  margin-left: auto;
+  font-size: 0.85rem;
+  color: rgba(200, 220, 255, 0.8);
+}
+
+.prog-badge {
+  margin-left: 0.5rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 2px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.prog-badge--complete {
+  background-color: rgba(34, 197, 94, 0.2);
+  color: rgba(34, 197, 94, 1);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ====================================================================
+   PHASE 7 UX: SELECTION CONFIDENCE FEEDBACK
+   ==================================================================== */
+
+.feat-item.selected {
+  background: rgba(34, 197, 94, 0.06);
+  border-left: 3px solid rgba(34, 197, 94, 0.4);
+  animation: confirm-selection 300ms ease-out;
+}
+
+.feat-item.selected .feat-name {
+  color: rgba(100, 220, 150, 0.95);
+  font-weight: 500;
+}
+
+.feat-state-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  min-height: 24px;
+  flex-shrink: 0;
+}
+
+.selected-icon {
+  color: rgba(34, 197, 94, 1);
+  font-size: 1.2rem;
+  animation: icon-bounce 400ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  text-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+}
+
+@keyframes confirm-selection {
+  from {
+    background: rgba(34, 197, 94, 0.15);
+    transform: translateX(-2px);
+  }
+  to {
+    background: rgba(34, 197, 94, 0.06);
+    transform: translateX(0);
+  }
+}
+
+@keyframes icon-bounce {
+  0% {
+    transform: scale(0) rotate(-45deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+    opacity: 1;
   }
 }

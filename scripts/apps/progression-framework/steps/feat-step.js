@@ -27,6 +27,8 @@ import { normalizeFeats } from './step-normalizers.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
+import { canonicallyOrderSelections } from '../utils/selection-ordering.js';
+import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 
 // Constants
 const FEATS_PER_CATEGORY_INITIAL = 5;  // Constrained visible count per category
@@ -413,12 +415,38 @@ export class FeatStep extends ProgressionStepPlugin {
           isSuggested: this._suggestedFeats.some(s => s._id === feat._id),
           isFocused: feat._id === this._focusedFeatId,
           isSelected: feat._id === this._selectedFeatId,
+          // PHASE 6 UX: Availability status for styling/explanation
+          isAvailable: true, // All feats shown here are available
+          unavailabilityReason: null, // No reason needed for available feats
         })),
         visibleCount: Math.min(featsToShow.length, FEATS_PER_CATEGORY_INITIAL),
         totalCount: featsToShow.length,
         canExpand: featsToShow.length > FEATS_PER_CATEGORY_INITIAL,
       };
     }
+
+    // Get committed feats from session and order them canonically
+    const committedFeats = context?.shell?.progressionSession?.draftSelections?.feats || [];
+    const orderedSelections = canonicallyOrderSelections(committedFeats);
+
+    // PHASE 2 UX: Micro-progress — show slot progress
+    // Note: For a single feat slot, this step shows 0-1 selection
+    // For normalized Feat step (Phase: Normalized Steps), this will show dual subsection progress
+    const selectedCount = committedFeats.length;
+    const requiredCount = 1; // Single feat slot per step
+    const remainingCount = Math.max(0, requiredCount - selectedCount);
+    const isComplete = remainingCount === 0;
+
+    const slotProgress = {
+      selectedCount,
+      requiredCount,
+      remainingCount,
+      isComplete,
+      progressLabel: `${selectedCount} of ${requiredCount} feat${requiredCount === 1 ? '' : 's'}`,
+      remainingLabel: remainingCount > 0
+        ? `${remainingCount} feat${remainingCount === 1 ? '' : 's'} remaining`
+        : 'Complete',
+    };
 
     return {
       groupedFeats: groupedDisplay,
@@ -427,6 +455,9 @@ export class FeatStep extends ProgressionStepPlugin {
       searchQuery: this._searchQuery,
       showAll: this._showAll,
       slotType: this._slotType,
+      orderedSelections,
+      // PHASE 2 UX: Slot progress
+      slotProgress,
     };
   }
 
@@ -463,6 +494,11 @@ export class FeatStep extends ProgressionStepPlugin {
     const isSuggested = this._suggestedFeats.some(s => s._id === feat._id);
     const isSelected = feat._id === this._selectedFeatId;
 
+    // Normalize detail panel data for canonical display (no fabrication)
+    const normalized = normalizeDetailPanelData(feat, 'feat', {
+      metadata: { tags: [] }, // Could augment with feat-metadata.json tags if needed
+    });
+
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/feat-details.hbs',
       data: {
@@ -473,6 +509,10 @@ export class FeatStep extends ProgressionStepPlugin {
         description: this._getFeatDescription(feat),
         prerequisites: this._getFeatPrerequisites(feat),
         isRepeatable: this._isRepeatable(feat.name),
+        // Add normalized fields for enhanced detail rail
+        canonicalDescription: normalized.description,
+        metadataTags: normalized.metadataTags,
+        hasMentorProse: normalized.fallbacks.hasMentorProse,
       },
     };
   }
@@ -568,6 +608,24 @@ export class FeatStep extends ProgressionStepPlugin {
       errors: issues,
       warnings,
     };
+  }
+
+  getBlockingIssues() {
+    if (!this._selectedFeatId) {
+      return [`Select a ${this._slotType === 'class' ? 'Class' : 'General'} Feat`];
+    }
+    return [];
+  }
+
+  /**
+   * PHASE 3 UX: Specific, actionable explanation for why Next is blocked
+   */
+  getBlockerExplanation() {
+    if (!this._selectedFeatId) {
+      const slotTypeLabel = this._slotType === 'class' ? 'Class' : 'General';
+      return `Choose a ${slotTypeLabel} Feat to continue`;
+    }
+    return null;
   }
 
   // ---------------------------------------------------------------------------
