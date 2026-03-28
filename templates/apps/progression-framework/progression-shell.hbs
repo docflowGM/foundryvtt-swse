@@ -107,6 +107,16 @@
       ================================================================== --}}
       <div data-region="work-surface">
 
+        {{!-- PHASE 1 UX: Step context indicator --}}
+        {{#if stepContext}}
+        <div class="prog-step-context-banner">
+          <span class="prog-step-counter">{{stepContext.displayText}}</span>
+          {{#if currentDescriptor.label}}
+            <span class="prog-step-label">— {{currentDescriptor.label}}</span>
+          {{/if}}
+        </div>
+        {{/if}}
+
         {{#if workSurfaceHtml}}
           {{{workSurfaceHtml}}}
         {{else}}

@@ -731,3 +731,35 @@
   overflow-y: auto;
   overflow-x: hidden;
 }
+
+/* =============================================================================
+ * PHASE 1 UX: STEP CONTEXT BANNER — You-are-here clarity
+ *
+ * Displays "Step X of Y — [Step Label]" at the top of work surface.
+ * Gives player immediate, permanent awareness of their position in journey.
+ * ============================================================================= */
+
+.prog-step-context-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: var(--prog-space-md) var(--prog-space-lg);
+  margin-bottom: var(--prog-space-lg);
+  background-color: rgba(0, 180, 255, 0.05);
+  border-left: 3px solid rgba(0, 180, 255, 0.4);
+  border-radius: 2px;
+  font-size: 0.875rem;
+  color: rgba(200, 220, 255, 0.9);
+  font-weight: 500;
+}
+
+.prog-step-context-banner .prog-step-counter {
+  font-weight: 600;
+  color: rgba(100, 200, 255, 1);
+  min-width: 50px;
+}
+
+.prog-step-context-banner .prog-step-label {
+  color: rgba(200, 220, 255, 0.85);
+  font-style: italic;
+}

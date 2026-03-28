@@ -101,3 +101,32 @@
   font-size: 10px;
   flex-shrink: 0;
 }
+
+/* ============================================================================
+   PHASE 5 UX: RAIL CLICK AFFORDANCE ENHANCEMENTS
+   ============================================================================ */
+
+/* Improve visual distinction: clickable vs non-clickable steps */
+.progression-shell .prog-step[data-can-navigate="false"] {
+  cursor: not-allowed;
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+/* Non-clickable future steps: more obvious grayed appearance */
+.progression-shell .prog-step--neutral[data-can-navigate="false"] {
+  color: var(--prog-text-disabled);
+  opacity: 0.5;
+}
+
+/* Enhance hover feedback for clickable steps */
+.progression-shell .prog-step[data-can-navigate="true"]:hover {
+  transform: translateX(2px);
+  background: rgba(0, 180, 255, 0.12);
+}
+
+/* Add aria-disabled attribute for accessibility */
+.progression-shell .prog-step[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

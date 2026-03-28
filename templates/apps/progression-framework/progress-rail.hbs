@@ -13,9 +13,14 @@
           data-step-id="{{this.descriptor.stepId}}"
           data-step-index="{{this.index}}"
           data-step-status="{{this.status}}"
+          data-can-navigate="{{this.canNavigate}}"
           tabindex="{{#if this.canNavigate}}0{{else}}-1{{/if}}"
           role="{{#if this.canNavigate}}button{{else}}listitem{{/if}}"
-          {{#if this.isCurrent}}aria-current="step"{{/if}}>
+          {{#if this.isCurrent}}aria-current="step"{{/if}}
+          {{#unless this.canNavigate}}aria-disabled="true"{{/unless}}
+          {{#if (and (not this.canNavigate) (not this.isCurrent))}}
+            title="Available after {{#if @previous}}{{@previous.descriptor.label}}{{else}}previous step{{/if}}"
+          {{/if}}>
         <span class="prog-step__icon" aria-hidden="true">
           <i class="{{this.descriptor.icon}}"></i>
         </span>

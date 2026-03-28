@@ -886,6 +886,15 @@ export class ProgressionShell extends SWSEApplicationV2 {
       totalSteps: this.steps.length,
       stepProgress,
 
+      // ─ PHASE 1 UX: Step context (you-are-here clarity)
+      stepContext: {
+        currentStepNumber: this.currentStepIndex + 1,  // 1-indexed for display
+        totalSteps: this.steps.length,
+        isFirstStep: this.currentStepIndex === 0,
+        isLastStep: this.currentStepIndex === this.steps.length - 1,
+        displayText: `Step ${this.currentStepIndex + 1} of ${this.steps.length}`,
+      },
+
       // Region states
       mentor: this.mentor,
       mentorCollapsed: this.mentorCollapsed,
