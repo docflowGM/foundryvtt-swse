@@ -331,6 +331,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     try {
       await plugin.onStepEnter(this);
+      // Mark step as visited
+      if (!this.progressionSession.visitedStepIds.includes(descriptor.stepId)) {
+        this.progressionSession.visitedStepIds.push(descriptor.stepId);
+      }
       swseLogger.log(`[ProgressionShell] Initialized first step: ${descriptor.stepId}`);
     } catch (err) {
       swseLogger.error(`[ProgressionShell] Error initializing first step ${descriptor.stepId}:`, err);
@@ -613,15 +617,30 @@ export class ProgressionShell extends SWSEApplicationV2 {
       // Recovery: skip plugin, show details panel as null
     }
 
-    // Step progress for progress rail
-    const stepProgress = this.steps.map((descriptor, idx) => ({
-      descriptor,
-      index: idx,
-      isComplete: this.committedSelections.has(descriptor.stepId),
-      isCurrent: idx === this.currentStepIndex,
-      isConditional: descriptor.isConditional,
-      canNavigate: idx < this.currentStepIndex, // Can go back to completed steps
-    }));
+    // Step progress for progress rail — derived from canonical status evaluator
+    const stepProgress = this.steps.map((descriptor, idx) => {
+      const status = this._evaluateStepStatus(descriptor.stepId, idx);
+      return {
+        descriptor,
+        index: idx,
+        // Canonical status (error > caution > complete > in_progress > neutral)
+        status: status.canonical,
+        isComplete: status.canonical === 'complete',
+        isError: status.canonical === 'error',
+        isCaution: status.canonical === 'caution',
+        isInProgress: status.canonical === 'in_progress',
+        isNeutral: status.canonical === 'neutral',
+        // Navigation
+        isCurrent: idx === this.currentStepIndex,
+        isConditional: descriptor.isConditional,
+        canNavigate: idx < this.currentStepIndex, // Can go back to completed steps
+        // Metadata
+        isVisited: status.isVisited,
+        errors: status.errors || [],
+        warnings: status.warnings || [],
+        remainingChoices: status.remainingChoices || [],
+      };
+    });
 
     // Step data from plugin
     const stepData = currentPlugin
@@ -761,13 +780,18 @@ export class ProgressionShell extends SWSEApplicationV2 {
       // Footer
       footer: footerData,
 
-      // Step chips for footer: visible (non-hidden) steps with state flags
+      // Step chips for footer: visible (non-hidden) steps with canonical status
       visibleSteps: this.steps
         .filter(d => !d.hidden)
         .map((descriptor, chipIdx) => {
           const realIdx    = this.steps.indexOf(descriptor);
           const isCurrent  = realIdx === this.currentStepIndex;
-          const isComplete = this.committedSelections.has(descriptor.stepId);
+          const status     = this._evaluateStepStatus(descriptor.stepId, realIdx);
+          const isComplete = status.canonical === 'complete';
+          const isError    = status.canonical === 'error';
+          const isCaution  = status.canonical === 'caution';
+          const isInProgress = status.canonical === 'in_progress';
+          const isNeutral  = status.canonical === 'neutral';
           const isLocked   = realIdx > this.currentStepIndex && !isComplete;
           const plugin     = this.stepPlugins.get(descriptor.stepId);
           const hasWarning = !isCurrent && (plugin?.getWarnings?.()?.length ?? 0) > 0;
@@ -777,9 +801,14 @@ export class ProgressionShell extends SWSEApplicationV2 {
             label:       descriptor.label,
             isCurrent,
             isComplete,
+            isError,
+            isCaution,
+            isInProgress,
+            isNeutral,
             isLocked,
-            isWarning:   hasWarning,
+            isWarning:   hasWarning || isCaution,
             canNavigate: isCurrent || realIdx < this.currentStepIndex,
+            status:      status.canonical,
           };
         }),
 
@@ -938,6 +967,105 @@ export class ProgressionShell extends SWSEApplicationV2 {
     return -1;
   }
 
+  /**
+   * Evaluate canonical status for a step.
+   * Status is determined by: visited, completion, validation, staleness.
+   *
+   * Canonical states (in precedence order):
+   * - error: has blocking issues
+   * - caution: has warnings or is stale
+   * - complete: visited, no remaining choices, no issues
+   * - in_progress: visited, but still has required choices
+   * - neutral: visible but not yet visited
+   *
+   * @param {string} stepId - Step ID to evaluate
+   * @param {number} stepIndex - Current index of step in this.steps
+   * @returns {Object} Status object with canonical properties
+   * @private
+   */
+  _evaluateStepStatus(stepId, stepIndex) {
+    const descriptor = this.steps[stepIndex];
+    const plugin = this.stepPlugins.get(stepId);
+    const isVisible = stepIndex < this.steps.length;
+    const isVisited = this.progressionSession.visitedStepIds.includes(stepId);
+    const isCurrent = stepIndex === this.currentStepIndex;
+    const hasSelection = this.committedSelections.has(stepId);
+
+    // Only visited steps can have completion/error/caution status
+    if (!isVisible) {
+      return { canonical: 'absent', isVisible: false, isVisited, isCurrent, hasSelection };
+    }
+
+    if (!isVisited) {
+      return { canonical: 'neutral', isVisible, isVisited, isCurrent, hasSelection };
+    }
+
+    // Visited step — evaluate completion + validity
+    const validation = plugin?.validate?.() ?? { isValid: true, errors: [], warnings: [] };
+    const blockingIssues = plugin?.getBlockingIssues?.() ?? [];
+    const warnings = plugin?.getWarnings?.() ?? [];
+    const remainingChoices = plugin?.getRemainingPicks?.() ?? [];
+
+    const hasErrors = blockingIssues.length > 0 || validation.errors?.length > 0;
+    const hasWarnings = warnings.length > 0 || validation.warnings?.length > 0;
+    const isStale = this.progressionSession.invalidatedStepIds.includes(stepId);
+    const hasRequiredChoices = remainingChoices.length > 0;
+
+    // State precedence: error > caution > complete > in_progress > neutral
+    if (hasErrors) {
+      return {
+        canonical: 'error',
+        isVisible,
+        isVisited,
+        isCurrent,
+        hasSelection,
+        errors: blockingIssues.length > 0 ? blockingIssues : validation.errors,
+      };
+    }
+
+    if (hasWarnings || isStale) {
+      return {
+        canonical: 'caution',
+        isVisible,
+        isVisited,
+        isCurrent,
+        hasSelection,
+        warnings: warnings.length > 0 ? warnings : validation.warnings,
+        isStale,
+      };
+    }
+
+    if (isVisited && hasSelection && !hasRequiredChoices && !hasErrors) {
+      return {
+        canonical: 'complete',
+        isVisible,
+        isVisited,
+        isCurrent,
+        hasSelection,
+      };
+    }
+
+    if (isVisited && hasRequiredChoices) {
+      return {
+        canonical: 'in_progress',
+        isVisible,
+        isVisited,
+        isCurrent,
+        hasSelection,
+        remainingChoices,
+      };
+    }
+
+    // Fallback: visited but no data and no required choices (empty optional step)
+    return {
+      canonical: 'complete',
+      isVisible,
+      isVisited,
+      isCurrent,
+      hasSelection,
+    };
+  }
+
   // ---------------------------------------------------------------------------
   // Navigation Actions
   // ---------------------------------------------------------------------------
@@ -1000,6 +1128,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
     if (nextPlugin) {
       try {
         await nextPlugin.onStepEnter(this);
+        // Mark step as visited
+        if (!this.progressionSession.visitedStepIds.includes(nextDescriptor.stepId)) {
+          this.progressionSession.visitedStepIds.push(nextDescriptor.stepId);
+        }
         this.mentor.currentDialogue = nextPlugin.getMentorContext(this);
         this.mentor.askMentorEnabled = nextPlugin.getMentorMode() !== null;
         this.mentor.mentorMode = nextPlugin.getMentorMode();
@@ -1041,6 +1173,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const prevPlugin = this.stepPlugins.get(prevDescriptor?.stepId);
     if (prevPlugin) {
       prevPlugin.onStepEnter(this);
+      // Mark step as visited
+      if (!this.progressionSession.visitedStepIds.includes(prevDescriptor.stepId)) {
+        this.progressionSession.visitedStepIds.push(prevDescriptor.stepId);
+      }
       this.mentor.currentDialogue = prevPlugin.getMentorContext(this);
       this.mentor.askMentorEnabled = prevPlugin.getMentorMode() !== null;
       this.mentor.mentorMode = prevPlugin.getMentorMode();

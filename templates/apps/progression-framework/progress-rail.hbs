@@ -5,9 +5,14 @@
       <li class="prog-step swse-ui-frame
               {{#if this.isCurrent}} prog-step--active{{/if}}
               {{#if this.isComplete}} prog-step--complete{{/if}}
+              {{#if this.isError}} prog-step--error{{/if}}
+              {{#if this.isCaution}} prog-step--caution{{/if}}
+              {{#if this.isInProgress}} prog-step--in-progress{{/if}}
+              {{#if this.isNeutral}} prog-step--neutral{{/if}}
               {{#if this.descriptor.isConditional}} prog-step--conditional{{/if}}"
           data-step-id="{{this.descriptor.stepId}}"
           data-step-index="{{this.index}}"
+          data-step-status="{{this.status}}"
           tabindex="{{#if this.canNavigate}}0{{else}}-1{{/if}}"
           role="{{#if this.canNavigate}}button{{else}}listitem{{/if}}"
           {{#if this.isCurrent}}aria-current="step"{{/if}}>
@@ -17,6 +22,10 @@
         <span class="prog-step__name">{{this.descriptor.label}}</span>
         {{#if this.isComplete}}
           <span class="prog-step__check" aria-hidden="true">✔</span>
+        {{else if this.isError}}
+          <span class="prog-step__error" aria-hidden="true">⚠</span>
+        {{else if this.isCaution}}
+          <span class="prog-step__warning" aria-hidden="true">!</span>
         {{/if}}
       </li>
     {{/each}}

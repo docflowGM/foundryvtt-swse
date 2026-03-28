@@ -92,6 +92,7 @@ export class ProgressionSession {
 
     // Progression tracking
     this.activeSteps = [];          // Currently available step ids
+    this.visitedStepIds = [];       // Steps player has entered (visited)
     this.currentStepId = null;       // Currently visible step
     this.completedStepIds = [];      // Steps already finalized
     this.invalidatedStepIds = [];    // Steps marked dirty by upstream changes
@@ -225,6 +226,7 @@ export class ProgressionSession {
       survey: null,
       droid: null,
     };
+    this.visitedStepIds = [];
     this.completedStepIds = [];
     this.invalidatedStepIds = [];
     this.projectedCharacter = null;
