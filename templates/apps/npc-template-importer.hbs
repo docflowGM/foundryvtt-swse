@@ -104,13 +104,14 @@
     <button class="cancel-btn" type="button">
       <i class="fas fa-times"></i> Cancel
     </button>
-    <button
-      class="import-btn"
-      type="button"
-      {{#unless selectedTemplate}}disabled{{/unless}}
-    >
-      <i class="fas fa-download"></i> Import Template
+    {{#if selectedTemplate}}
+    <button class="import-now-btn" type="button" title="Import immediately with template defaults">
+      <i class="fas fa-bolt"></i> Import Now
     </button>
+    <button class="import-customize-btn" type="button" title="Open customization wizard for name, portrait, and notes">
+      <i class="fas fa-wand-magic-sparkles"></i> Customize & Import
+    </button>
+    {{/if}}
   </div>
 </div>
 
@@ -339,7 +340,8 @@
 }
 
 .cancel-btn,
-.import-btn {
+.import-now-btn,
+.import-customize-btn {
   padding: 0.7rem 1.5rem;
   border: 1px solid #3a3f4a;
   border-radius: 0.3rem;
@@ -351,6 +353,7 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .cancel-btn:hover {
@@ -358,22 +361,28 @@
   border-color: #5a5f6a;
 }
 
-.import-btn {
+.import-now-btn {
+  background: #4a90e2;
+  color: #fff;
+  border-color: #3a7bb8;
+}
+
+.import-now-btn:hover {
+  background: #357abd;
+  border-color: #2a5fa0;
+  box-shadow: 0 0 10px rgba(74, 144, 226, 0.3);
+}
+
+.import-customize-btn {
   background: #ffc107;
   color: #000;
-  border-color: #ffc107;
-  font-weight: bold;
-}
-
-.import-btn:hover:not(:disabled) {
-  background: #ffb300;
   border-color: #ffb300;
-  box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
 }
 
-.import-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.import-customize-btn:hover {
+  background: #ffb300;
+  border-color: #ff9800;
+  box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
 }
 
 /* Scrollbar styling */

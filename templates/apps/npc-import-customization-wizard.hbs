@@ -1,0 +1,432 @@
+<div class="npc-import-wizard">
+  <div class="wizard-header">
+    <h2>Customize NPC Import</h2>
+    <p class="subtitle">Make quick adjustments before finalizing the NPC. Leave blank to use template defaults.</p>
+  </div>
+
+  <div class="wizard-content">
+    <!-- Portrait Section -->
+    <div class="form-group portrait-group">
+      <label for="portrait">Portrait</label>
+      <div class="portrait-container">
+        <div class="portrait-preview">
+          <img src="{{portraitPreview}}" alt="{{template.name}}" />
+        </div>
+        <div class="portrait-controls">
+          <div class="portrait-path">
+            <input
+              type="text"
+              id="portrait"
+              name="portrait"
+              class="form-control"
+              value="{{customData.portrait}}"
+              placeholder="Paste image path or use picker..."
+            />
+          </div>
+          <button type="button" class="portrait-picker-btn" title="Browse for image">
+            <i class="fas fa-folder-open"></i> Browse
+          </button>
+        </div>
+      </div>
+      <p class="form-hint">Supported: webp, png, jpg. Portrait updates dynamically.</p>
+    </div>
+
+    <!-- Name Section -->
+    <div class="form-group">
+      <label for="name">NPC Name</label>
+      <input
+        type="text"
+        id="name"
+        name="name"
+        class="form-control"
+        value="{{customData.name}}"
+        placeholder="Enter NPC name..."
+        required
+      />
+      <p class="form-hint">Required. Used for actor display name and token.</p>
+    </div>
+
+    <!-- Notes Section -->
+    <div class="form-group">
+      <label for="notes">Quick Notes</label>
+      <textarea
+        id="notes"
+        name="notes"
+        class="form-control"
+        rows="3"
+        placeholder="Add quick notes about this NPC (optional)..."
+      >{{customData.notes}}</textarea>
+      <p class="form-hint">Appears in actor biography. Use for quick reminders or roleplay notes.</p>
+    </div>
+
+    <!-- Biography Section -->
+    <div class="form-group">
+      <label for="biography">Biography</label>
+      <textarea
+        id="biography"
+        name="biography"
+        class="form-control"
+        rows="3"
+        placeholder="Enter full biography (optional)..."
+      >{{customData.biography}}</textarea>
+      <p class="form-hint">Full background and lore. Can be expanded after import.</p>
+    </div>
+
+    <!-- Template Info -->
+    <div class="template-info-section">
+      <h3>Template Information</h3>
+      <div class="template-info">
+        <div class="info-row">
+          <span class="label">Source Template:</span>
+          <span class="value">{{template.name}}</span>
+        </div>
+        {{#if template.metadata.species}}
+        <div class="info-row">
+          <span class="label">Species:</span>
+          <span class="value">{{template.metadata.species}}</span>
+        </div>
+        {{/if}}
+        {{#if template.metadata.classLevels}}
+        <div class="info-row">
+          <span class="label">Classes:</span>
+          <span class="value">
+            {{#each template.metadata.classLevels}}
+            <span class="class-badge">{{@key}} {{this}}</span>
+            {{/each}}
+          </span>
+        </div>
+        {{/if}}
+        <p class="info-note">
+          <i class="fas fa-info-circle"></i>
+          You can adjust more details after the actor is created using the full character sheet.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Actions -->
+  <div class="wizard-footer">
+    <button class="cancel-btn" type="button">
+      <i class="fas fa-times"></i> Cancel
+    </button>
+    <button class="confirm-btn" type="button">
+      <i class="fas fa-check"></i> Finalize & Import
+    </button>
+  </div>
+</div>
+
+<style>
+.npc-import-wizard {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1rem;
+  font-family: var(--font-primary, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif);
+  background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+  color: #e0e0e0;
+}
+
+.wizard-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #3a3f4a;
+  padding-bottom: 1rem;
+}
+
+.wizard-header h2 {
+  margin: 0 0 0.5rem 0;
+  color: #fff;
+  font-size: 1.3rem;
+}
+
+.wizard-header .subtitle {
+  margin: 0;
+  color: #a0a0a0;
+  font-size: 0.85rem;
+}
+
+.wizard-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.wizard-content > div {
+  margin-bottom: 1.5rem;
+}
+
+/* Form Groups */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.form-control {
+  padding: 0.7rem;
+  border: 1px solid #3a3f4a;
+  border-radius: 0.3rem;
+  background: #15192a;
+  color: #e0e0e0;
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #ffc107;
+  box-shadow: 0 0 8px rgba(255, 193, 7, 0.2);
+  background: #1a1f33;
+}
+
+.form-control::placeholder {
+  color: #707080;
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 80px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+}
+
+.form-hint {
+  margin: 0.3rem 0 0 0;
+  font-size: 0.75rem;
+  color: #808090;
+  font-style: italic;
+}
+
+/* Portrait Section */
+.portrait-group {
+  background: #15192a;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #3a3f4a;
+}
+
+.portrait-container {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 1rem;
+  align-items: start;
+  margin-top: 0.5rem;
+}
+
+.portrait-preview {
+  width: 150px;
+  height: 150px;
+  border: 2px solid #3a3f4a;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: #0a0e27;
+}
+
+.portrait-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.portrait-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.portrait-path {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.portrait-path input {
+  width: 100%;
+}
+
+.portrait-picker-btn {
+  padding: 0.6rem 1rem;
+  border: 1px solid #3a3f4a;
+  border-radius: 0.3rem;
+  background: #15192a;
+  color: #e0e0e0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.portrait-picker-btn:hover {
+  background: #1a1f33;
+  border-color: #5a5f6a;
+}
+
+/* Template Info */
+.template-info-section {
+  background: #15192a;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #3a3f4a;
+}
+
+.template-info-section h3 {
+  margin: 0 0 0.75rem 0;
+  color: #ffc107;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.template-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.info-row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #2a2f3a;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-row .label {
+  color: #ffc107;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.info-row .value {
+  color: #e0e0e0;
+  font-size: 0.85rem;
+}
+
+.class-badge {
+  display: inline-block;
+  background: #3a3f4a;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.2rem;
+  margin-right: 0.3rem;
+  font-size: 0.75rem;
+}
+
+.info-note {
+  margin: 0.75rem 0 0 0;
+  padding: 0.75rem;
+  border-left: 3px solid #ffc107;
+  background: rgba(255, 193, 7, 0.05);
+  border-radius: 0.2rem;
+  font-size: 0.8rem;
+  color: #a0a0a0;
+}
+
+.info-note i {
+  margin-right: 0.5rem;
+  color: #ffc107;
+}
+
+/* Footer */
+.wizard-footer {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  border-top: 1px solid #3a3f4a;
+  padding-top: 1rem;
+}
+
+.cancel-btn,
+.confirm-btn {
+  padding: 0.7rem 1.5rem;
+  border: 1px solid #3a3f4a;
+  border-radius: 0.3rem;
+  background: #15192a;
+  color: #e0e0e0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.cancel-btn:hover {
+  background: #1a1f33;
+  border-color: #5a5f6a;
+}
+
+.confirm-btn {
+  background: #ffc107;
+  color: #000;
+  border-color: #ffc107;
+}
+
+.confirm-btn:hover {
+  background: #ffb300;
+  border-color: #ffb300;
+  box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+}
+
+/* Scrollbar */
+.wizard-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.wizard-content::-webkit-scrollbar-track {
+  background: #15192a;
+  border-radius: 4px;
+}
+
+.wizard-content::-webkit-scrollbar-thumb {
+  background: #3a3f4a;
+  border-radius: 4px;
+}
+
+.wizard-content::-webkit-scrollbar-thumb:hover {
+  background: #5a5f6a;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .portrait-container {
+    grid-template-columns: 1fr;
+  }
+
+  .portrait-preview {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  .info-row {
+    grid-template-columns: 1fr;
+  }
+
+  .info-row .label {
+    display: inline;
+  }
+
+  .info-row .label::after {
+    content: ': ';
+  }
+}
+</style>

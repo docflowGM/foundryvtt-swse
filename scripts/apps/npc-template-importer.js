@@ -2,11 +2,13 @@
 /**
  * NPC Template Importer Dialog
  * Allows users to browse and import Beast, Nonheroic, and Heroic NPC templates
+ * With optional post-import customization wizard
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { NPCTemplateDataLoader } from "/systems/foundryvtt-swse/scripts/core/npc-template-data-loader.js";
 import { NPCTemplateImporterEngine } from "/systems/foundryvtt-swse/scripts/engine/import/npc-template-importer-engine.js";
+import { NPCImportCustomizationWizard } from "/systems/foundryvtt-swse/scripts/apps/npc-import-customization-wizard.js";
 
 const TEMPLATE_PATH = 'systems/foundryvtt-swse/templates/apps/npc-template-importer.hbs';
 
@@ -70,10 +72,16 @@ export class NPCTemplateImporter extends foundry.applications.api.DialogV2 {
       item.addEventListener('click', (e) => this._onSelectTemplate(e));
     });
 
-    // Import button
-    const importBtn = root.querySelector('.import-btn');
-    if (importBtn) {
-      importBtn.addEventListener('click', () => this._onImport());
+    // Import Now button
+    const importNowBtn = root.querySelector('.import-now-btn');
+    if (importNowBtn) {
+      importNowBtn.addEventListener('click', () => this._onImportNow());
+    }
+
+    // Import and Customize button
+    const importCustomizeBtn = root.querySelector('.import-customize-btn');
+    if (importCustomizeBtn) {
+      importCustomizeBtn.addEventListener('click', () => this._onImportAndCustomize());
     }
 
     // Cancel button
@@ -123,26 +131,53 @@ export class NPCTemplateImporter extends foundry.applications.api.DialogV2 {
   }
 
   /**
-   * Handle import
+   * Handle direct import (no customization)
    */
-  async _onImport() {
+  async _onImportNow() {
+    if (!this.selectedCategory || !this.selectedTemplate) {
+      ui?.notifications?.warn?.('Please select a template to import');
+      return;
+    }
+
+    await this._executeImport(this.selectedTemplate, null);
+  }
+
+  /**
+   * Handle import with customization
+   */
+  async _onImportAndCustomize() {
     if (!this.selectedCategory || !this.selectedTemplate) {
       ui?.notifications?.warn?.('Please select a template to import');
       return;
     }
 
     const template = this.selectedTemplate;
-    SWSELogger.log(`[NPCTemplateImporter] Importing template: ${template.name}`);
+
+    // Open customization wizard
+    NPCImportCustomizationWizard.create(template, async (customData) => {
+      // Execute import with custom data
+      await this._executeImport(template, customData);
+    });
+  }
+
+  /**
+   * Execute the actual import
+   * @param {Object} template - Template to import
+   * @param {Object|null} customData - Optional custom data from wizard (name, portrait, notes, etc.)
+   */
+  async _executeImport(template, customData = null) {
+    const templateName = template.name;
+    SWSELogger.log(`[NPCTemplateImporter] Importing template: ${templateName}`);
 
     try {
       let actor;
 
       if (this.selectedCategory === 'beast') {
-        actor = await NPCTemplateImporterEngine.importBeastTemplate(template.id);
+        actor = await NPCTemplateImporterEngine.importBeastTemplate(template.id, customData);
       } else if (this.selectedCategory === 'nonheroic') {
-        actor = await NPCTemplateImporterEngine.importNonheroicTemplate(template);
+        actor = await NPCTemplateImporterEngine.importNonheroicTemplate(template, customData);
       } else if (this.selectedCategory === 'heroic') {
-        actor = await NPCTemplateImporterEngine.importHeroicTemplate(template);
+        actor = await NPCTemplateImporterEngine.importHeroicTemplate(template, customData);
       }
 
       if (actor) {

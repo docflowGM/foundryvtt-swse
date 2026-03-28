@@ -11,9 +11,10 @@ export class NPCTemplateImporterEngine {
   /**
    * Import a Beast template from the compendium
    * @param {string} actorId - Actor ID in the beasts pack
+   * @param {Object|null} customData - Optional custom data (name, portrait, etc.)
    * @returns {Promise<Object|null>} Created actor document or null on failure
    */
-  static async importBeastTemplate(actorId) {
+  static async importBeastTemplate(actorId, customData = null) {
     try {
       SWSELogger.log(`[NPCTemplateImporterEngine] Importing beast template: ${actorId}`);
 
@@ -30,8 +31,28 @@ export class NPCTemplateImporterEngine {
       // Ensure type is npc
       newActorData.type = 'npc';
 
+      // Apply custom data if provided
+      if (customData) {
+        newActorData.name = customData.name || newActorData.name;
+        newActorData.img = customData.portrait || newActorData.img;
+        if (newActorData.prototypeToken) {
+          newActorData.prototypeToken.img = customData.portrait || newActorData.prototypeToken.img;
+        }
+      }
+
       // Create the actor in the world
       const actor = await Actor.create(newActorData);
+
+      // Apply notes/biography if provided
+      if (customData && (customData.notes || customData.biography)) {
+        const biographyText = [customData.notes, customData.biography]
+          .filter(t => t && t.trim())
+          .join('\n\n');
+        if (biographyText) {
+          await actor.update({ 'system.biography': biographyText });
+        }
+      }
+
       SWSELogger.log(`[NPCTemplateImporterEngine] Beast imported successfully: ${actor.name} (${actor.id})`);
 
       return actor;
@@ -44,9 +65,10 @@ export class NPCTemplateImporterEngine {
   /**
    * Import a Nonheroic NPC template from JSON data
    * @param {Object} template - Template object from loader
+   * @param {Object|null} customData - Optional custom data (name, portrait, etc.)
    * @returns {Promise<Object|null>} Created actor document or null on failure
    */
-  static async importNonheroicTemplate(template) {
+  static async importNonheroicTemplate(template, customData = null) {
     try {
       if (!template.sourceData) {
         throw new Error('Template missing sourceData');
@@ -54,10 +76,12 @@ export class NPCTemplateImporterEngine {
 
       SWSELogger.log(`[NPCTemplateImporterEngine] Importing nonheroic template: ${template.name}`);
 
+      const actorName = customData?.name || template.name;
       const actor = await this._buildActorFromStatblock(
-        template.name,
+        actorName,
         template.sourceData,
-        'nonheroic'
+        'nonheroic',
+        customData
       );
 
       if (actor) {
@@ -74,9 +98,10 @@ export class NPCTemplateImporterEngine {
   /**
    * Import a Heroic NPC template from JSON data
    * @param {Object} template - Template object from loader
+   * @param {Object|null} customData - Optional custom data (name, portrait, etc.)
    * @returns {Promise<Object|null>} Created actor document or null on failure
    */
-  static async importHeroicTemplate(template) {
+  static async importHeroicTemplate(template, customData = null) {
     try {
       if (!template.sourceData) {
         throw new Error('Template missing sourceData');
@@ -84,10 +109,12 @@ export class NPCTemplateImporterEngine {
 
       SWSELogger.log(`[NPCTemplateImporterEngine] Importing heroic template: ${template.name}`);
 
+      const actorName = customData?.name || template.name;
       const actor = await this._buildActorFromStatblock(
-        template.name,
+        actorName,
         template.sourceData,
-        'heroic'
+        'heroic',
+        customData
       );
 
       if (actor) {
@@ -107,17 +134,21 @@ export class NPCTemplateImporterEngine {
    * @param {string} name - Actor name
    * @param {Object} statblock - Statblock data from JSON
    * @param {string} npcType - 'nonheroic' or 'heroic'
+   * @param {Object|null} customData - Optional custom data from wizard
    * @returns {Promise<Object>} Created actor document
    */
-  static async _buildActorFromStatblock(name, statblock, npcType) {
+  static async _buildActorFromStatblock(name, statblock, npcType, customData = null) {
+    // Use custom portrait if provided, otherwise use default
+    const portrait = customData?.portrait || 'systems/foundryvtt-swse/assets/token-default.png';
+
     // Create base actor data
     const actorData = {
       type: 'npc',
       name: name,
-      img: 'systems/foundryvtt-swse/assets/token-default.png',
+      img: portrait,
       prototypeToken: {
         name: name,
-        img: 'systems/foundryvtt-swse/assets/token-default.png'
+        img: portrait
       },
       system: {
         attributes: {
@@ -154,6 +185,16 @@ export class NPCTemplateImporterEngine {
     // Now add items (weapons, feats, talents, etc.)
     if (actor) {
       await this._addItemsToActor(actor, statblock);
+
+      // Apply notes/biography if provided
+      if (customData && (customData.notes || customData.biography)) {
+        const biographyText = [customData.notes, customData.biography]
+          .filter(t => t && t.trim())
+          .join('\n\n');
+        if (biographyText) {
+          await actor.update({ 'system.biography': biographyText });
+        }
+      }
     }
 
     return actor;
