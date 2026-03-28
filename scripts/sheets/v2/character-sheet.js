@@ -18,6 +18,8 @@ import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/comba
 import { SentinelSheetGuardrails } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-sheet-guardrails.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { computeCenteredPosition } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
+import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
+import { PANEL_REGISTRY } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PANEL_REGISTRY.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -803,8 +805,35 @@ const forcePoints = [];
     // Calculate total talent count for ledger display
     const totalTalentCount = derived.talents?.groups?.reduce((sum, group) => sum + (group.items?.length || 0), 0) || 0;
 
+    // ═════════════════════════════════════════════════════════════════
+    // PANEL CONTEXT HYDRATION (Unified panel view models)
+    // ═════════════════════════════════════════════════════════════════
+    //
+    // Instead of partials reaching into giant sheet context, each panel
+    // gets a dedicated, normalized view model. This prevents:
+    // - Templates guessing fallback paths
+    // - Inconsistent data shapes across panels
+    // - Silent hydration failures
+    //
+    const panelBuilder = new PanelContextBuilder(this.document, this);
+    const panelContexts = panelBuilder.buildAllPanels();
+
+    // Log panel contract version for debugging
+    const _sheetContractVersion = 1;
+
     const finalContext = {
       ...context,
+      _sheetContractVersion,
+      _panels: {
+        health: true,
+        defense: true,
+        biography: true,
+        inventory: true,
+        talent: true,
+        feat: true,
+        maneuver: true
+      },
+      // Legacy flat context (kept for backward compatibility, but new code uses panels above)
       biography,
       derived,
       inventory,
@@ -834,7 +863,6 @@ const forcePoints = [];
       classDisplay,
       buildMode,
       actionEconomy,
-      // Remediation: Missing context keys
       xpEnabled,
       xpPercent,
       xpLevelReady,
@@ -846,21 +874,18 @@ const forcePoints = [];
       encumbranceStateCss,
       encumbranceLabel,
       inventorySearch,
-      // Equipment context (record-sheet display)
       allEquipment,
       totalEquipmentWeight,
       equippedArmor,
-      // Combat notes context
       combatNotesText,
-      // Fidelity layer context (Phase 6)
       totalTalentCount,
-      // Campaign context
       relationships,
-      // Follower context
       followerSlots: enrichedFollowerSlots,
       followerTalentBadges,
       hasAvailableFollowerSlots,
-      ownedActorMap
+      ownedActorMap,
+      // Unified panel contexts
+      ...panelContexts
     };
 
     // Verify context is serializable (no Document refs, circular refs, etc.)
