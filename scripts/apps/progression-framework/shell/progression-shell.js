@@ -1570,11 +1570,71 @@ export class ProgressionShell extends SWSEApplicationV2 {
   async commitSelection(stepId, selection) {
     this.committedSelections.set(stepId, selection);
 
+    // Track downstream invalidation from this commit
+    this._trackDownstreamInvalidation(stepId);
+
     // After commitment, check if downstream steps have become non-applicable
     // and recompute the active step list if needed
     await this._recomputeActiveStepsIfNeeded();
 
     this.render();
+  }
+
+  /**
+   * Track downstream invalidation when an upstream step changes.
+   * Marks visited downstream steps as stale (caution) when prerequisites change.
+   * @param {string} stepId - Step that was just committed
+   * @private
+   */
+  _trackDownstreamInvalidation(stepId) {
+    try {
+      // Import registry (synchronous)
+      const { PROGRESSION_NODE_REGISTRY } = require('../registries/progression-node-registry.js');
+
+      // Map step ID to node ID from registry
+      const nodeId = Object.keys(PROGRESSION_NODE_REGISTRY).find(
+        nid => PROGRESSION_NODE_REGISTRY[nid]?.stepId === stepId || nid === stepId
+      );
+
+      if (!nodeId) {
+        return; // Step not found in registry, no invalidation to track
+      }
+
+      // Get invalidated nodes from registry
+      const computer = new ActiveStepComputer();
+      const invalidated = computer.getInvalidatedNodes(nodeId);
+
+      // Mark visited downstream steps as stale
+      for (const { nodeId: downstreamNodeId, behavior } of invalidated) {
+        // Find the descriptor for this downstream node
+        const descriptor = this.steps.find(d => d.stepId === downstreamNodeId || d.engineKey === downstreamNodeId);
+        if (!descriptor) continue;
+
+        // Only mark visited steps as stale (unvisited steps stay neutral)
+        const isVisited = this.progressionSession.visitedStepIds.includes(descriptor.stepId);
+        if (isVisited && behavior === 'DIRTY') {
+          if (!this.progressionSession.invalidatedStepIds.includes(descriptor.stepId)) {
+            this.progressionSession.invalidatedStepIds.push(descriptor.stepId);
+            swseLogger.log(`[ProgressionShell] Marked step as stale due to upstream change`, {
+              upstreamStep: stepId,
+              downstreamStep: descriptor.stepId,
+            });
+          }
+        }
+
+        // If behavior is PURGE, also mark to purge from committedSelections
+        if (behavior === 'PURGE') {
+          this.committedSelections.delete(descriptor.stepId);
+          swseLogger.log(`[ProgressionShell] Purged downstream selection due to upstream change`, {
+            upstreamStep: stepId,
+            downstreamStep: descriptor.stepId,
+          });
+        }
+      }
+    } catch (err) {
+      swseLogger.warn(`[ProgressionShell] Error tracking downstream invalidation:`, err);
+      // Continue without tracking on error (fail-safe)
+    }
   }
 
   /**
