@@ -28,6 +28,7 @@ import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/sugge
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { canonicallyOrderSelections } from '../utils/selection-ordering.js';
+import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 
 // Constants
 const FEATS_PER_CATEGORY_INITIAL = 5;  // Constrained visible count per category
@@ -493,6 +494,11 @@ export class FeatStep extends ProgressionStepPlugin {
     const isSuggested = this._suggestedFeats.some(s => s._id === feat._id);
     const isSelected = feat._id === this._selectedFeatId;
 
+    // Normalize detail panel data for canonical display (no fabrication)
+    const normalized = normalizeDetailPanelData(feat, 'feat', {
+      metadata: { tags: [] }, // Could augment with feat-metadata.json tags if needed
+    });
+
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/feat-details.hbs',
       data: {
@@ -503,6 +509,10 @@ export class FeatStep extends ProgressionStepPlugin {
         description: this._getFeatDescription(feat),
         prerequisites: this._getFeatPrerequisites(feat),
         isRepeatable: this._isRepeatable(feat.name),
+        // Add normalized fields for enhanced detail rail
+        canonicalDescription: normalized.description,
+        metadataTags: normalized.metadataTags,
+        hasMentorProse: normalized.fallbacks.hasMentorProse,
       },
     };
   }

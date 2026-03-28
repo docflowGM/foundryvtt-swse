@@ -24,6 +24,7 @@ import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engin
 import { buildDependencyGraph } from '/systems/foundryvtt-swse/scripts/apps/chargen/chargen-talent-tree-graph.js';
 import { getStepGuidance, handleAskMentor } from './mentor-step-integration.js';
 import { canonicallyOrderSelections } from '../utils/selection-ordering.js';
+import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 
 export class TalentStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -494,6 +495,11 @@ export class TalentStep extends ProgressionStepPlugin {
     const isSelected = talent._id === this._selectedTalentId;
     const selectedTree = this._getTree(this._selectedTreeId);
 
+    // Normalize detail panel data for canonical display (no fabrication)
+    const normalized = normalizeDetailPanelData(talent, 'talent', {
+      treeName: selectedTree?.name || '',
+    });
+
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/talent-details.hbs',
       data: {
@@ -502,6 +508,10 @@ export class TalentStep extends ProgressionStepPlugin {
         isSelected,
         description: talent.system?.description || '',
         prerequisites: talent.system?.prerequisites || talent.system?.prerequisite || '',
+        // Add normalized fields for enhanced detail rail
+        canonicalDescription: normalized.description,
+        metadataTags: normalized.metadataTags,
+        hasMentorProse: normalized.fallbacks.hasMentorProse,
       },
     };
   }
