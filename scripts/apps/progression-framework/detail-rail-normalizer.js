@@ -11,9 +11,53 @@
  * - Mentor Prose: Show ONLY where it actually exists canonically
  *
  * This normalizer is the bridge between step plugins and detail panel templates.
+ * Supports: feats, talents, species, class, background, force powers/techniques/secrets,
+ * languages, skills, starship maneuvers, attributes (11 types total).
  */
 
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { SkillsMechanicsResolver } from './skills-mechanics-resolver.js';
+
+// ============================================================================
+// SKILL SHORT DESCRIPTIONS — Curated descriptions for all skills
+// ============================================================================
+
+let SKILL_SHORT_DESCRIPTIONS = null;
+
+/**
+ * Load skill short descriptions from JSON file (one-time init)
+ */
+async function loadSkillShortDescriptions() {
+  if (SKILL_SHORT_DESCRIPTIONS !== null) {
+    return SKILL_SHORT_DESCRIPTIONS;  // Already loaded
+  }
+
+  try {
+    const response = await fetch('systems/foundryvtt-swse/data/skill-short-descriptions.json');
+    if (response.ok) {
+      SKILL_SHORT_DESCRIPTIONS = await response.json();
+    } else {
+      swseLogger.warn('[DetailRailNormalizer] Could not load skill-short-descriptions.json');
+      SKILL_SHORT_DESCRIPTIONS = {};
+    }
+  } catch (err) {
+    swseLogger.warn('[DetailRailNormalizer] Failed to load skill descriptions:', err);
+    SKILL_SHORT_DESCRIPTIONS = {};
+  }
+
+  return SKILL_SHORT_DESCRIPTIONS;
+}
+
+/**
+ * Get skill short description synchronously (for templates)
+ * Pre-load via loadSkillShortDescriptions() first
+ */
+function getSkillShortDescription(skillKey) {
+  if (!SKILL_SHORT_DESCRIPTIONS) {
+    return null;
+  }
+  return SKILL_SHORT_DESCRIPTIONS[skillKey] || null;
+}
 
 // ============================================================================
 // ATTRIBUTE GUIDANCE — Hardcoded for Attributes (only type with pre-authored prose)
@@ -61,6 +105,14 @@ const ATTRIBUTE_GUIDANCE = {
 // ============================================================================
 // MAIN NORMALIZER
 // ============================================================================
+
+/**
+ * Initialize the normalizer (load skill descriptions once)
+ * Call this once at app startup
+ */
+export async function initializeDetailRailNormalizer() {
+  await loadSkillShortDescriptions();
+}
 
 /**
  * Normalize detail panel data for any item type
@@ -448,7 +500,77 @@ const NORMALIZER_HANDLERS = {
     };
   },
 
+  /**
+   * SKILL — Informational + mechanical reference (not selectable)
+   * Curated short descriptions from skill-short-descriptions.json
+   * Mechanical fields: default attribute, trained-only, armor-check penalty
+   * No prerequisites, tags, or mentor prose (skills are not gated items)
+   */
+  skill: (itemData, context) => {
+    const skillKey = itemData.key || itemData.id || null;
+    const skillName = itemData.name || null;
+
+    // Load curated short description (canonical source)
+    const curatedDesc = getSkillShortDescription(skillKey);
+
+    // Get mechanical fields from resolver (single source of truth)
+    const trainingLabel = SkillsMechanicsResolver.getTrainingRequirementLabel(itemData);
+    const acpLabel = SkillsMechanicsResolver.getArmorCheckPenaltyLabel(skillKey);
+    const otherUsesSummary = SkillsMechanicsResolver.getOtherUsesSummary(context.otherUses);
+
+    // Build metadata tags (consistent, non-scattered logic)
+    const metadataTags = [
+      `Default: ${getAbilityLabel(itemData.ability)}`,
+      trainingLabel,
+      `Armor Check Penalty: ${acpLabel}`,
+      ...(otherUsesSummary ? [`${otherUsesSummary}`] : []),
+    ].filter(Boolean);
+
+    return {
+      description: curatedDesc,  // Curated only; no fallback to long descriptions
+      prerequisites: null,  // Skills have no prerequisites (not gated items)
+      metadataTags,
+      mentorProse: null,  // No mentor prose for skills (informational only)
+      fallbacks: {
+        hasDescription: !!curatedDesc,
+        hasPrerequisites: false,
+        hasMentorProse: false,
+      },
+      sourceNotes: {
+        descriptionSource: curatedDesc ? 'skill-short-descriptions.json' : 'missing (curated)',
+        prerequisiteSource: 'n/a (skills not gated)',
+        metadataSource: 'skill.ability + skills-mechanics-resolver (ACP, trained-only)',
+        mentorThoughtSource: 'n/a (informational reference)',
+      },
+      // SKILL-SPECIFIC FIELDS (not shared with feat/talent model)
+      mechanics: {
+        defaultAbility: itemData.ability,
+        defaultAbilityLabel: getAbilityLabel(itemData.ability),
+        trainedOnly: SkillsMechanicsResolver.isTrainedOnlySkill(itemData),
+        trainedOnlyLabel: trainingLabel,
+        armorCheckPenalty: SkillsMechanicsResolver.isAffectedByArmorCheckPenalty(skillKey),
+        armorCheckPenaltyLabel: acpLabel,
+        otherUses: context.otherUses || null,
+      },
+    };
+  },
+
 };
+
+/**
+ * Get human-readable ability label
+ */
+function getAbilityLabel(ability) {
+  const labels = {
+    str: 'Strength',
+    dex: 'Dexterity',
+    con: 'Constitution',
+    int: 'Intelligence',
+    wis: 'Wisdom',
+    cha: 'Charisma',
+  };
+  return labels[ability?.toLowerCase?.()] || 'Unknown';
+}
 
 // ============================================================================
 // HELPERS

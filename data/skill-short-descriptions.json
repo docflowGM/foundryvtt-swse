@@ -1,0 +1,19 @@
+{
+  "acrobatics": "Dodge, balance, and tumble through dangerous spaces. Dodge incoming attacks and leap across gaps with grace.",
+  "climb": "Scale walls, cliffs, and surfaces using strength and technique. Catch yourself mid-fall if your luck holds.",
+  "deception": "Lie convincingly. Hide the truth, create false impressions, and talk your way out of trouble.",
+  "endurance": "Push your body past its limits. Survive harsh environments, hold your breath, and resist fatigue.",
+  "gatherInfo": "Network, spy, and extract information from others. Learn secrets, track rumors, and uncover hidden knowledge.",
+  "initiative": "React fastest when danger strikes. Determine who acts first in combat and surprise ambushes.",
+  "jump": "Leap across distances and heights. Clear obstacles in a single bound or vault obstacles in combat.",
+  "mechanics": "Repair, sabotage, and understand technology. Fix broken equipment or jury-rig solutions under pressure.",
+  "perception": "Notice details others miss. Spot hidden enemies, track movement, and perceive danger.",
+  "persuasion": "Convince others through charm and reason. Negotiate, inspire, and sway opinions in your favor.",
+  "pilot": "Command vehicles, starships, and aircraft. Maneuver under fire, execute complex aerial tactics, and evade pursuit.",
+  "stealth": "Move silently and hide in shadows. Avoid detection, sneak past guards, and vanish when needed.",
+  "survival": "Navigate wilderness, find food and water, and predict weather. Build shelter and live off the land.",
+  "swim": "Move through water with efficiency. Swim long distances, survive in currents, and dive deep.",
+  "treatInjury": "Heal wounds, diagnose illness, and stabilize the dying. Your medical knowledge can save lives.",
+  "useComputer": "Hack systems, bypass security, and manipulate data. Break into networks or defend digital fortresses.",
+  "useTheForce": "Tap the Force for insight and power. Sense destinies, commune with the Force, and channel its energy."
+}
