@@ -414,6 +414,9 @@ export class FeatStep extends ProgressionStepPlugin {
           isSuggested: this._suggestedFeats.some(s => s._id === feat._id),
           isFocused: feat._id === this._focusedFeatId,
           isSelected: feat._id === this._selectedFeatId,
+          // PHASE 6 UX: Availability status for styling/explanation
+          isAvailable: true, // All feats shown here are available
+          unavailabilityReason: null, // No reason needed for available feats
         })),
         visibleCount: Math.min(featsToShow.length, FEATS_PER_CATEGORY_INITIAL),
         totalCount: featsToShow.length,

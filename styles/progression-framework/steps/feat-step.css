@@ -638,6 +638,15 @@
   font-size: 0.76rem;
   color: rgba(150, 200, 235, 0.78);
   overflow-wrap: anywhere;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.feat-prereq-line i {
+  font-size: 0.65rem;
+  flex-shrink: 0;
+  opacity: 0.7;
 }
 
 .feat-show-more {
@@ -652,6 +661,48 @@
   .feat-item-meta {
     justify-self: start;
   }
+}
+
+/* ====================================================================
+   PHASE 6 UX: PREREQUISITE & UNAVAILABILITY EXPLANATIONS
+   ==================================================================== */
+
+.feat-item.unavailable {
+  opacity: 0.65;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.feat-item.unavailable .feat-name {
+  color: rgba(200, 100, 100, 0.9);
+  text-decoration: line-through;
+}
+
+.feat-unavail-reason {
+  font-size: 0.7rem;
+  color: rgba(255, 140, 100, 0.85);
+  font-weight: 500;
+  display: block;
+  margin-top: 0.2rem;
+}
+
+.feat-unavail-badge {
+  font-size: 0.7rem;
+  color: rgba(255, 100, 100, 0.9);
+  background: rgba(255, 100, 100, 0.15);
+  padding: 0.2rem 0.5rem;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  white-space: nowrap;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.feat-unavail-badge i {
+  font-size: 0.8rem;
 }
 
 /* ====================================================================

@@ -74,18 +74,31 @@
     <div class="feat-list category-list">
       {{#each group.feats as |feat idx|}}
       {{#if (or (lt idx group.visibleCount) group.isExpanded)}}
-      <div class="feat-item category-feat {{#if feat.isFocused}}focused{{/if}} {{#if feat.isSelected}}selected{{/if}}"
+      <div class="feat-item category-feat {{#if feat.isFocused}}focused{{/if}} {{#if feat.isSelected}}selected{{/if}} {{#unless feat.isAvailable}}unavailable{{/unless}}"
            data-feat-id="{{feat._id}}"
-           data-action="focus-item">
+           data-action="focus-item"
+           {{#unless feat.isAvailable}}title="{{feat.unavailabilityReason}}"{{/unless}}>
         <div class="feat-item-content">
           <span class="feat-name">{{feat.name}}</span>
-          <span class="feat-prereq-line">{{feat.prerequisiteLine}}</span>
+          {{!-- PHASE 6 UX: Show prerequisite line more prominently --}}
+          {{#if feat.prerequisiteLine}}
+            <span class="feat-prereq-line" title="{{feat.prerequisiteLine}}">
+              <i class="fa-solid fa-link-slash"></i> {{feat.prerequisiteLine}}
+            </span>
+          {{/if}}
+          {{#if feat.unavailabilityReason}}
+            <span class="feat-unavail-reason">{{feat.unavailabilityReason}}</span>
+          {{/if}}
         </div>
         <div class="feat-item-meta">
           {{#if feat.isSuggested}}
           <span class="feat-synergy-badge">synergy</span>
           {{/if}}
-          <span class="feat-state-indicator">{{#if feat.isSelected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{/if}}</span>
+          {{#unless feat.isAvailable}}
+            <span class="feat-unavail-badge"><i class="fa-solid fa-ban"></i> Unavailable</span>
+          {{else}}
+            <span class="feat-state-indicator">{{#if feat.isSelected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{/if}}</span>
+          {{/unless}}
         </div>
       </div>
       {{/if}}
