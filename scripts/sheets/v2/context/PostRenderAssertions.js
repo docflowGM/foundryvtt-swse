@@ -1,27 +1,29 @@
+import { PANEL_REGISTRY } from './PANEL_REGISTRY.js';
+
 /**
  * PostRenderAssertions
  *
- * Verify that rendered DOM matches panel context contracts.
- * Catches template/context drift after refactors.
+ * Registry-driven post-render DOM validation.
+ * Verifies that rendered DOM matches panel context contracts defined in PANEL_REGISTRY.
  *
- * Runs after every render (not just debug mode) to detect regressions early.
+ * Runs after every render to detect template/context drift.
  * In production: logs warnings only
- * In strict mode (CONFIG.SWSE.strictMode): throws on violations
+ * In strict mode (CONFIG.SWSE.strictMode): throws on critical violations
  *
- * Runs to ensure:
+ * Validates:
  * - Expected root nodes exist
- * - Expected number of rows/slots match data
- * - Critical structures are present
+ * - Expected/optional elements match contractual counts
+ * - Critical panels are fully rendered
  */
 
 export class PostRenderAssertions {
   /**
-   * Log an assertion failure with appropriate severity
+   * Log an assertion violation with appropriate severity
    */
   static _reportViolation(message, critical = false) {
     const isStrict = CONFIG?.SWSE?.strictMode ?? false;
-    const logFn = critical && isStrict ? 'error' : 'warn';
-    console[logFn](`[PostRender] ${message}`);
+    const severity = critical && isStrict ? 'error' : 'warn';
+    console[severity](`[PostRender] ${message}`);
 
     if (critical && isStrict) {
       throw new Error(`[PostRender Contract] ${message}`);
@@ -29,208 +31,89 @@ export class PostRenderAssertions {
   }
 
   /**
-   * Assert health panel DOM matches contract
-   * - Root exists (CRITICAL)
-   * - Exactly 6 condition slots
-   * - HP bar present
+   * Parse range string like "3..3" or "0..99" to {min, max}
    */
-  static assertHealthPanel(html, context) {
-    const root = html?.querySelector?.('.swse-panel--health');
-    if (!root) {
-      this._reportViolation('healthPanel root not found', true);
-      return;
-    }
-
-    const slots = root.querySelectorAll('.condition-slot');
-    if (slots.length !== 6) {
-      this._reportViolation(`healthPanel expected 6 condition slots, got ${slots.length}`);
-    }
-
-    const hpBar = root.querySelector('.hp-bar');
-    if (!hpBar) {
-      this._reportViolation('healthPanel missing hp-bar element');
-    }
-
-    console.log('[PostRender] ✓ healthPanel assertions passed', { slots: slots.length });
+  static _parseRange(rangeStr) {
+    if (typeof rangeStr === 'number') return { min: rangeStr, max: rangeStr };
+    if (!rangeStr || !rangeStr.includes('..')) return null;
+    const [min, max] = rangeStr.split('..').map(Number);
+    return { min, max };
   }
 
   /**
-   * Assert defenses panel DOM matches contract
-   * - Root exists (CRITICAL)
-   * - Exactly 3 defense rows
+   * Validate element count matches range
    */
-  static assertDefensesPanel(html, context) {
-    const root = html?.querySelector?.('.swse-panel--defenses');
-    if (!root) {
-      this._reportViolation('defensePanel root not found', true);
-      return;
-    }
-
-    const rows = root.querySelectorAll('.defense-row');
-    if (rows.length !== 3) {
-      this._reportViolation(`defensePanel expected 3 defense rows, got ${rows.length}`);
-    }
-
-    console.log('[PostRender] ✓ defensePanel assertions passed', { rows: rows.length });
-  }
-
-  /**
-   * Assert biography panel DOM matches contract
-   * - Root exists (CRITICAL)
-   * - Record fields present
-   */
-  static assertBiographyPanel(html, context) {
-    const root = html?.querySelector?.('.swse-panel--identity');
-    if (!root) {
-      this._reportViolation('biographyPanel root not found', true);
-      return;
-    }
-
-    const fields = root.querySelectorAll('.record-field');
-    if (fields.length < 6) {
-      this._reportViolation(`biographyPanel expected at least 6 record fields, got ${fields.length}`);
-    }
-
-    console.log('[PostRender] ✓ biographyPanel assertions passed', { fields: fields.length });
-  }
-
-  /**
-   * Assert inventory panel DOM matches contract
-   * - Root exists (CRITICAL)
-   * - Number of rows matches context entries
-   * - Empty state exists if no entries
-   */
-  static assertInventoryPanel(html, context) {
-    const root = html?.querySelector?.('.inventory-panel');
-    if (!root) {
-      this._reportViolation('inventoryPanel root not found', true);
-      return;
-    }
-
-    const expectedCount = context.inventoryPanel?.entries?.length ?? 0;
-    const renderedRows = root.querySelectorAll('.ledger-row, .inventory-item-card');
-
-    if (expectedCount > 0 && renderedRows.length !== expectedCount) {
-      this._reportViolation(`inventoryPanel expected ${expectedCount} rows, got ${renderedRows.length}`);
-    }
-
-    if (expectedCount === 0) {
-      const emptyState = root.querySelector('.inventory-empty-state, .empty-state');
-      if (!emptyState) {
-        this._reportViolation('inventoryPanel should show empty state when no entries');
+  static _validateCount(actual, expected, label, critical = false) {
+    if (typeof expected === 'number') {
+      if (actual !== expected) {
+        this._reportViolation(
+          `${label}: expected ${expected}, got ${actual}`,
+          critical
+        );
+        return false;
+      }
+    } else if (typeof expected === 'string' && expected.includes('..')) {
+      const range = this._parseRange(expected);
+      if (actual < range.min || actual > range.max) {
+        this._reportViolation(
+          `${label}: expected ${expected}, got ${actual}`,
+          critical
+        );
+        return false;
       }
     }
-
-    console.log('[PostRender] ✓ inventoryPanel assertions passed', { rows: renderedRows.length, expected: expectedCount });
+    return true;
   }
 
   /**
-   * Assert talent panel DOM matches contract
-   * - Root exists (CRITICAL)
-   * - Number of rows matches context entries
+   * Assert a single panel based on registry definition
    */
-  static assertTalentPanel(html, context) {
-    const root = html?.querySelector?.('.talents-panel, .talents-known-panel');
+  static _assertPanel(panelKey, html, context) {
+    const def = PANEL_REGISTRY[panelKey];
+    if (!def || !def.postRenderAssertions) {
+      return; // Panel has no assertions defined
+    }
+
+    const { rootSelector, expectedElements = {}, optionalElements = {}, critical = false } = def.postRenderAssertions;
+
+    // Check root exists
+    const root = html?.querySelector?.(rootSelector);
     if (!root) {
-      this._reportViolation('talentPanel root not found', true);
+      this._reportViolation(`${panelKey} root (${rootSelector}) not found`, critical);
       return;
     }
 
-    const expectedCount = context.talentPanel?.entries?.length ?? 0;
-    const renderedRows = root.querySelectorAll('.talent-row');
-
-    if (expectedCount > 0 && renderedRows.length !== expectedCount) {
-      this._reportViolation(`talentPanel expected ${expectedCount} rows, got ${renderedRows.length}`);
+    // Check expected elements
+    for (const [selector, expectedCount] of Object.entries(expectedElements)) {
+      const actual = root.querySelectorAll(selector).length;
+      this._validateCount(actual, expectedCount, `${panelKey} ${selector}`, critical);
     }
 
-    if (expectedCount === 0) {
-      const emptyState = root.querySelector('.empty-state');
-      if (!emptyState) {
-        this._reportViolation('talentPanel should show empty state when no entries');
-      }
+    // Check optional elements (warn only, never critical)
+    for (const [selector, expectedCount] of Object.entries(optionalElements)) {
+      const actual = root.querySelectorAll(selector).length;
+      this._validateCount(actual, expectedCount, `${panelKey} ${selector} (optional)`, false);
     }
 
-    console.log('[PostRender] ✓ talentPanel assertions passed', { rows: renderedRows.length, expected: expectedCount });
+    console.log(`[PostRender] ✓ ${panelKey} passed`, {
+      root: rootSelector,
+      elements: Object.keys(expectedElements).length
+    });
   }
 
   /**
-   * Assert feat panel DOM matches contract
-   * - Root exists (CRITICAL)
-   * - Number of rows matches context entries
-   */
-  static assertFeatPanel(html, context) {
-    const root = html?.querySelector?.('.feats-panel');
-    if (!root) {
-      this._reportViolation('featPanel root not found', true);
-      return;
-    }
-
-    const expectedCount = context.featPanel?.entries?.length ?? 0;
-    const renderedRows = root.querySelectorAll('.feat-row');
-
-    if (expectedCount > 0 && renderedRows.length !== expectedCount) {
-      this._reportViolation(`featPanel expected ${expectedCount} rows, got ${renderedRows.length}`);
-    }
-
-    if (expectedCount === 0) {
-      const emptyState = root.querySelector('.empty-state');
-      if (!emptyState) {
-        this._reportViolation('featPanel should show empty state when no entries');
-      }
-    }
-
-    console.log('[PostRender] ✓ featPanel assertions passed', { rows: renderedRows.length, expected: expectedCount });
-  }
-
-  /**
-   * Assert maneuver panel DOM matches contract
-   * - Root exists (CRITICAL)
-   * - Number of rows matches context entries
-   */
-  static assertManeuverPanel(html, context) {
-    const root = html?.querySelector?.('.maneuvers-panel, .starship-maneuvers-panel');
-    if (!root) {
-      // Only critical if the panel is meant to be visible
-      const shouldExist = context.maneuverPanel?.entries?.length > 0;
-      this._reportViolation('maneuverPanel root not found', shouldExist);
-      return;
-    }
-
-    const expectedCount = context.maneuverPanel?.entries?.length ?? 0;
-    const renderedRows = root.querySelectorAll('.maneuver-row');
-
-    if (expectedCount > 0 && renderedRows.length !== expectedCount) {
-      this._reportViolation(`maneuverPanel expected ${expectedCount} rows, got ${renderedRows.length}`);
-    }
-
-    if (expectedCount === 0) {
-      const emptyState = root.querySelector('.empty-state');
-      if (!emptyState) {
-        this._reportViolation('maneuverPanel should show empty state when no entries');
-      }
-    }
-
-    console.log('[PostRender] ✓ maneuverPanel assertions passed', { rows: renderedRows.length, expected: expectedCount });
-  }
-
-  /**
-   * Run all assertions after render
-   * Always runs; severity determined by CONFIG.SWSE.strictMode
+   * Run all registry-driven assertions after render
    */
   static runAll(html, context) {
-    console.group('[PostRender] Panel DOM Assertions (always-on validation)');
+    console.group('[PostRender] Registry-Driven Panel DOM Assertions');
     try {
-      this.assertHealthPanel(html, context);
-      this.assertDefensesPanel(html, context);
-      this.assertBiographyPanel(html, context);
-      this.assertInventoryPanel(html, context);
-      this.assertTalentPanel(html, context);
-      this.assertFeatPanel(html, context);
-      this.assertManeuverPanel(html, context);
+      const panelKeys = Object.keys(PANEL_REGISTRY);
+      for (const panelKey of panelKeys) {
+        this._assertPanel(panelKey, html, context);
+      }
       console.log('[PostRender] All assertions completed');
     } catch (err) {
-      console.error('[PostRender] ASSERTION FAILED (strict mode enabled):', err.message);
-      // In strict mode, this will have thrown; in production, continue
+      console.error('[PostRender] ASSERTION FAILED (strict mode):', err.message);
       if (CONFIG?.SWSE?.strictMode) throw err;
     }
     console.groupEnd();
