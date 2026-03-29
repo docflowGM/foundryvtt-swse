@@ -99,6 +99,16 @@ export const ActorEngine = {
       // ========================================
       // PHASE 4: Check prerequisite integrity
       // ========================================
+      // PHASE 3: In strict mode, reject skip flags (S2 hardening)
+      if (actor._skipIntegrityCheck && enforcementLevel === 'strict') {
+        const message = (
+          `[INTEGRITY SKIP REJECTED] Attempted to skip integrity checks in strict mode\n` +
+          `_skipIntegrityCheck is only allowed for legitimate recursion prevention\n` +
+          `In strict mode, all mutations must include integrity validation`
+        );
+        throw new Error(message);
+      }
+
       // Skip if flagged as integrity check (prevent recursion)
       if (!actor._skipIntegrityCheck) {
         if (observabilityEnabled) {
@@ -107,6 +117,11 @@ export const ActorEngine = {
         await this._checkIntegrity(actor);
         if (observabilityEnabled) {
           SWSELogger.debug(`[RECOMPUTE] Integrity checks completed`, { actor: actor.name });
+        }
+      } else {
+        // PHASE 3: In normal mode, still warn about skip flag
+        if (enforcementLevel !== 'silent') {
+          SWSELogger.warn(`[INTEGRITY SKIP] Integrity checks skipped for ${actor.name} due to _skipIntegrityCheck flag`);
         }
       }
 
@@ -132,14 +147,17 @@ export const ActorEngine = {
   },
 
   /**
-   * PHASE 2D: Enforcement check for derived writes
+   * PHASE 3: Strict enforcement check for derived writes
    * Validates that writes to system.derived.* only happen during:
    * - DerivedCalculator (marked with _isDerivedCalcCycle = true)
    * - Designated mutation phases with isDerivedCalculatorCall option
+   *
+   * PHASE 3 HARDENING: In strict mode, throws error. In normal mode, warns only.
+   *
    * @param {Object} changes - Update changes to validate
    * @param {Actor} actor - Actor being updated
    * @param {Object} options - Update options
-   * @throws {Error} If violation detected
+   * @throws {Error} If violation detected in strict mode
    * @private
    */
   _validateDerivedWriteAuthority(changes, actor, options = {}) {
@@ -160,16 +178,25 @@ export const ActorEngine = {
 
     checkObject(changes);
 
-    // Allow writes during DerivedCalculator phase or with explicit option
+    // Enforce derived write authority
     if (derivedPaths.length > 0 &&
         !actor._isDerivedCalcCycle &&
         !options.isDerivedCalculatorCall) {
       const violationList = derivedPaths.slice(0, 5).join(', ');
-      SWSELogger.warn(
+      const enforcementLevel = MutationInterceptor.getEnforcementLevel();
+      const message = (
         `[SSOT VIOLATION] Attempted direct write to derived paths: ${violationList}${derivedPaths.length > 5 ? '...' : ''}\n` +
         `Only DerivedCalculator may write system.derived.*\n` +
         `Caller: ${new Error().stack.split('\n')[2]}`
       );
+
+      if (enforcementLevel === 'strict') {
+        // PHASE 3: Hard enforcement in strict mode
+        throw new Error(message);
+      } else {
+        // PHASE 3: Warning-only in normal/log-only mode
+        SWSELogger.warn(message);
+      }
     }
   },
 
