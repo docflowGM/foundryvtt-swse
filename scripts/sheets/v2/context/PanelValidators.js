@@ -456,8 +456,215 @@ export function validateStarshipManeuversPanel(panelData) {
 }
 
 /**
- * Run validator for a panel by key
+ * ROW_VALIDATORS
+ *
+ * Validate individual row shapes against their contracts.
+ * Used to ensure RowTransformers output conforms to expected shape.
  */
+
+/**
+ * Validate InventoryRow contract
+ */
+export function validateInventoryRow(row, index = null) {
+  const errors = [];
+  const prefix = index !== null ? `[Row ${index}]` : '[Row]';
+
+  if (!row) {
+    errors.push(`${prefix} Row is null/undefined`);
+    return { valid: false, errors };
+  }
+
+  // Required fields
+  if (typeof row.id !== 'string') errors.push(`${prefix} id must be string`);
+  if (typeof row.uuid !== 'string') errors.push(`${prefix} uuid must be string`);
+  if (typeof row.name !== 'string') errors.push(`${prefix} name must be string`);
+  if (typeof row.type !== 'string') errors.push(`${prefix} type must be string`);
+  if (typeof row.quantity !== 'number') errors.push(`${prefix} quantity must be number`);
+  if (typeof row.weight !== 'number') errors.push(`${prefix} weight must be number`);
+
+  return { valid: errors.length === 0, errors };
+}
+
+/**
+ * Validate TalentRow contract
+ */
+export function validateTalentRow(row, index = null) {
+  const errors = [];
+  const prefix = index !== null ? `[Row ${index}]` : '[Row]';
+
+  if (!row) {
+    errors.push(`${prefix} Row is null/undefined`);
+    return { valid: false, errors };
+  }
+
+  if (typeof row.id !== 'string') errors.push(`${prefix} id must be string`);
+  if (typeof row.uuid !== 'string') errors.push(`${prefix} uuid must be string`);
+  if (typeof row.name !== 'string') errors.push(`${prefix} name must be string`);
+  if (typeof row.source !== 'string') errors.push(`${prefix} source must be string`);
+  if (typeof row.tree !== 'string') errors.push(`${prefix} tree must be string`);
+  if (typeof row.group !== 'string') errors.push(`${prefix} group must be string`);
+
+  return { valid: errors.length === 0, errors };
+}
+
+/**
+ * Validate FeatRow contract
+ */
+export function validateFeatRow(row, index = null) {
+  const errors = [];
+  const prefix = index !== null ? `[Row ${index}]` : '[Row]';
+
+  if (!row) {
+    errors.push(`${prefix} Row is null/undefined`);
+    return { valid: false, errors };
+  }
+
+  if (typeof row.id !== 'string') errors.push(`${prefix} id must be string`);
+  if (typeof row.uuid !== 'string') errors.push(`${prefix} uuid must be string`);
+  if (typeof row.name !== 'string') errors.push(`${prefix} name must be string`);
+  if (typeof row.source !== 'string') errors.push(`${prefix} source must be string`);
+  if (typeof row.category !== 'string') errors.push(`${prefix} category must be string`);
+
+  return { valid: errors.length === 0, errors };
+}
+
+/**
+ * Validate ManeuverRow contract
+ */
+export function validateManeuverRow(row, index = null) {
+  const errors = [];
+  const prefix = index !== null ? `[Row ${index}]` : '[Row]';
+
+  if (!row) {
+    errors.push(`${prefix} Row is null/undefined`);
+    return { valid: false, errors };
+  }
+
+  if (typeof row.id !== 'string') errors.push(`${prefix} id must be string`);
+  if (typeof row.uuid !== 'string') errors.push(`${prefix} uuid must be string`);
+  if (typeof row.name !== 'string') errors.push(`${prefix} name must be string`);
+  if (typeof row.source !== 'string') errors.push(`${prefix} source must be string`);
+  if (typeof row.actionType !== 'string') errors.push(`${prefix} actionType must be string`);
+
+  return { valid: errors.length === 0, errors };
+}
+
+/**
+ * Validate StarshipManeuverRow contract
+ */
+export function validateStarshipManeuverRow(row, index = null) {
+  const errors = [];
+  const prefix = index !== null ? `[Row ${index}]` : '[Row]';
+
+  if (!row) {
+    errors.push(`${prefix} Row is null/undefined`);
+    return { valid: false, errors };
+  }
+
+  if (typeof row.id !== 'string') errors.push(`${prefix} id must be string`);
+  if (typeof row.name !== 'string') errors.push(`${prefix} name must be string`);
+  if (typeof row.summary !== 'string') errors.push(`${prefix} summary must be string`);
+
+  return { valid: errors.length === 0, errors };
+}
+
+/**
+ * Validate ForcePowerRow contract
+ */
+export function validateForcePowerRow(row, index = null) {
+  const errors = [];
+  const prefix = index !== null ? `[Row ${index}]` : '[Row]';
+
+  if (!row) {
+    errors.push(`${prefix} Row is null/undefined`);
+    return { valid: false, errors };
+  }
+
+  if (typeof row.id !== 'string') errors.push(`${prefix} id must be string`);
+  if (typeof row.name !== 'string') errors.push(`${prefix} name must be string`);
+
+  return { valid: errors.length === 0, errors };
+}
+
+/**
+ * Validate ArmorSummaryRow contract
+ */
+export function validateArmorSummaryRow(row, index = null) {
+  const errors = [];
+  const prefix = index !== null ? `[Row ${index}]` : '[Row]';
+
+  if (!row) {
+    errors.push(`${prefix} Row is null/undefined`);
+    return { valid: false, errors };
+  }
+
+  if (typeof row.id !== 'string') errors.push(`${prefix} id must be string`);
+  if (typeof row.uuid !== 'string') errors.push(`${prefix} uuid must be string`);
+  if (typeof row.name !== 'string') errors.push(`${prefix} name must be string`);
+  if (typeof row.armorType !== 'string') errors.push(`${prefix} armorType must be string`);
+
+  return { valid: errors.length === 0, errors };
+}
+
+/**
+ * Validate LanguageRow contract (simple string)
+ */
+export function validateLanguageRow(row, index = null) {
+  const errors = [];
+  const prefix = index !== null ? `[Row ${index}]` : '[Row]';
+
+  if (typeof row !== 'string') {
+    errors.push(`${prefix} Language must be a string`);
+  }
+
+  return { valid: errors.length === 0, errors };
+}
+
+/**
+ * Validate RacialAbilityRow contract
+ */
+export function validateRacialAbilityRow(row, index = null) {
+  const errors = [];
+  const prefix = index !== null ? `[Row ${index}]` : '[Row]';
+
+  if (!row) {
+    errors.push(`${prefix} Row is null/undefined`);
+    return { valid: false, errors };
+  }
+
+  if (typeof row.id !== 'string') errors.push(`${prefix} id must be string`);
+  if (typeof row.name !== 'string') errors.push(`${prefix} name must be string`);
+
+  return { valid: errors.length === 0, errors };
+}
+
+/**
+ * Validate row by type
+ */
+export function validateRow(rowType, row, index = null) {
+  const validators = {
+    InventoryRow: validateInventoryRow,
+    TalentRow: validateTalentRow,
+    FeatRow: validateFeatRow,
+    ManeuverRow: validateManeuverRow,
+    StarshipManeuverRow: validateStarshipManeuverRow,
+    ForcePowerRow: validateForcePowerRow,
+    ArmorSummaryRow: validateArmorSummaryRow,
+    LanguageRow: validateLanguageRow,
+    RacialAbilityRow: validateRacialAbilityRow
+  };
+
+  const validator = validators[rowType];
+  if (!validator) {
+    return {
+      valid: false,
+      errors: [`Unknown row type: ${rowType}`]
+    };
+  }
+
+  return validator(row, index);
+}
+
 export function validatePanel(panelKey, panelData) {
   const validators = {
     healthPanel: validateHealthPanel,

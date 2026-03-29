@@ -25,9 +25,185 @@
  * - grouped: optional object {groupKey: [entries]} for grouped displays
  * - canEdit: optional boolean (whether entries can be added/removed/modified)
  *
+ * ROW CONTRACTS (standardized shapes for ledger entries):
+ * Every row type has a documented contract with required and optional fields.
+ * All rows come from RowTransformers, ensuring consistency.
+ * See ROW_CONTRACTS below for the full contract definitions.
+ *
  * When you want to know about a panel, you look here first. Period.
  * No ad-hoc assumptions about panels. Everything documented in the registry.
  */
+
+/**
+ * ROW_CONTRACTS
+ *
+ * SINGLE SOURCE OF TRUTH for all row shapes used in ledger panels.
+ * Every row type has a standardized contract ensuring consistency across the sheet.
+ *
+ * All rows are normalized by RowTransformers before being passed to templates.
+ */
+export const ROW_CONTRACTS = {
+  InventoryRow: {
+    description: 'Item in inventory/gear panel',
+    source: 'RowTransformers.toInventoryRow()',
+    requiredFields: [
+      'id',        // string: item UUID
+      'uuid',      // string: foundry UUID
+      'name',      // string: item name
+      'type',      // string: item type (equipment, weapon, etc.)
+      'quantity',  // number: how many
+      'weight'     // number: total weight
+    ],
+    optionalFields: [
+      'img',       // string: item image path
+      'value',     // number: cost/value
+      'rarity',    // string: common/uncommon/rare/unique
+      'equipped',  // boolean: is equipped
+      'tags',      // array: extracted tags (rare, unique, exotic, restricted)
+      'cssClass'   // string: pre-computed CSS classes for styling
+    ],
+    displayIn: ['inventoryPanel']
+  },
+
+  TalentRow: {
+    description: 'Talent entry in talents panel',
+    source: 'RowTransformers.toTalentRow()',
+    requiredFields: [
+      'id',        // string: talent UUID
+      'uuid',      // string: foundry UUID
+      'name',      // string: talent name
+      'source',    // string: where talent comes from
+      'tree',      // string: talent tree (General, etc.)
+      'group'      // string: grouping key (same as tree, for grouped displays)
+    ],
+    optionalFields: [
+      'img',       // string: talent image
+      'cost',      // number: CP cost
+      'prerequisites', // string: prerequisites
+      'description',   // string: full description
+      'sourceType',    // string: source category
+      'tags',      // array: tags
+      'cssClass'   // string: computed CSS classes
+    ],
+    displayIn: ['talentPanel']
+  },
+
+  FeatRow: {
+    description: 'Feat entry in feats panel',
+    source: 'RowTransformers.toFeatRow()',
+    requiredFields: [
+      'id',        // string: feat UUID
+      'uuid',      // string: foundry UUID
+      'name',      // string: feat name
+      'source',    // string: where feat comes from
+      'category'   // string: feat category (General, Combat, etc.)
+    ],
+    optionalFields: [
+      'img',       // string: feat image
+      'requirements', // string: requirements to take feat
+      'description',  // string: full description
+      'tags',      // array: tags
+      'cssClass'   // string: computed CSS classes
+    ],
+    displayIn: ['featPanel']
+  },
+
+  ManeuverRow: {
+    description: 'Maneuver entry in maneuvers panel',
+    source: 'RowTransformers.toManeuverRow()',
+    requiredFields: [
+      'id',        // string: maneuver UUID
+      'uuid',      // string: foundry UUID
+      'name',      // string: maneuver name
+      'source',    // string: where maneuver comes from
+      'actionType' // string: standard/move/swift/free
+    ],
+    optionalFields: [
+      'img',       // string: maneuver image
+      'difficulty',// string: DC/difficulty rating
+      'description', // string: full description
+      'tags',      // array: tags
+      'cssClass'   // string: computed CSS classes
+    ],
+    displayIn: ['maneuverPanel']
+  },
+
+  StarshipManeuverRow: {
+    description: 'Starship maneuver entry',
+    source: 'derived.starshipManeuvers.list items, normalized by builder',
+    requiredFields: [
+      'id',        // string: maneuver UUID
+      'name',      // string: maneuver name
+      'summary'    // string: one-line description
+    ],
+    optionalFields: [],
+    displayIn: ['starshipManeuversPanel']
+  },
+
+  ForcePowerRow: {
+    description: 'Force power entry in force powers panel',
+    source: 'actor.items filtered by type=force-power',
+    requiredFields: [
+      'id',        // string: power UUID
+      'name'       // string: power name
+    ],
+    optionalFields: [
+      'system.prerequisite', // string: prerequisites
+      'system.summary',      // string: one-line summary
+      'system.discarded'     // boolean: is discarded/removed
+    ],
+    displayIn: ['forcePowersPanel']
+  },
+
+  ArmorSummaryRow: {
+    description: 'Armor summary row in armor display',
+    source: 'RowTransformers.toArmorSummaryRow()',
+    requiredFields: [
+      'id',        // string: armor UUID
+      'uuid',      // string: foundry UUID
+      'name',      // string: armor name
+      'armorType'  // string: Light/Medium/Heavy/etc.
+    ],
+    optionalFields: [
+      'img',       // string: armor image
+      'weight',    // number: armor weight
+      'isPowered', // boolean: powered armor
+      'upgradeSlots', // number: available upgrade slots
+      'reflexBonus',  // number: reflex defense bonus
+      'fortBonus',    // number: fortitude defense bonus
+      'maxDexBonus',  // number: max DEX modifier allowed
+      'armorCheckPenalty', // number: attack/skill penalty
+      'speedPenalty'  // number: speed reduction
+    ],
+    displayIn: ['armor-summary-panel']
+  },
+
+  LanguageRow: {
+    description: 'Language entry in languages panel',
+    source: 'system.languages array (strings)',
+    requiredFields: [
+      'value'      // string: language name
+    ],
+    optionalFields: [],
+    note: 'Simple string array, no UUID/ID structure',
+    displayIn: ['languagesPanel']
+  },
+
+  RacialAbilityRow: {
+    description: 'Racial ability entry',
+    source: 'derived.racialAbilities array',
+    requiredFields: [
+      'id',        // string: ability UUID
+      'name'       // string: ability name
+    ],
+    optionalFields: [
+      'summary',   // string: one-line summary
+      'description' // string: full description
+    ],
+    displayIn: ['racialAbilitiesPanel']
+  }
+};
+
 
 export const PANEL_REGISTRY = {
   healthPanel: {
