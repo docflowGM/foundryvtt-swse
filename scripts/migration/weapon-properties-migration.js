@@ -77,12 +77,22 @@ export class WeaponPropertiesMigration {
       return null;
     }
 
-    // Apply migration to weapon
+    // PHASE 2: Apply migration through ActorEngine if weapon is owned
+    // Unowned items can update directly
     const updates = {};
     updates['system.weaponProperties'] = weaponProperties;
 
     try {
-      await weapon.update(updates);
+      if (weapon.isOwned && weapon.actor) {
+        const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+        await ActorEngine.updateEmbeddedDocuments(weapon.actor, 'Item', [{
+          _id: weapon.id,
+          ...updates
+        }], { isMigration: true });
+      } else {
+        // Unowned items update directly
+        await weapon.update(updates);
+      }
       return weaponProperties;
     } catch (err) {
       throw new Error(`Failed to update weapon: ${err.message}`);

@@ -121,9 +121,14 @@ export class ArmorSystemMigrationV4 {
       updates['system.talentFlags'] = talentMigration;
     }
 
-    // Apply updates
+    // PHASE 2: Apply updates through ActorEngine with migration flag
+    // Migrations are one-time operations, marked with isMigration: true
     if (Object.keys(updates).length > 0) {
-      await actor.update(updates);
+      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+      await ActorEngine.updateActor(actor, updates, {
+        isMigration: true,
+        meta: { origin: 'armor-system-migration-v4' }
+      });
     }
 
     return migrationData;
@@ -155,8 +160,18 @@ export class ArmorSystemMigrationV4 {
       return null; // Not powered, nothing to migrate
     }
 
-    // Apply migration
-    await item.update({ 'system.isPowered': true });
+    // PHASE 2: Apply migration through ActorEngine if item is owned
+    // Unowned items can update directly
+    if (item.isOwned && item.actor) {
+      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+      await ActorEngine.updateEmbeddedDocuments(item.actor, 'Item', [{
+        _id: item.id,
+        'system.isPowered': true
+      }], { isMigration: true });
+    } else {
+      // Unowned items update directly
+      await item.update({ 'system.isPowered': true });
+    }
 
     return {
       wasPowered: false, // Wasn't explicitly flagged

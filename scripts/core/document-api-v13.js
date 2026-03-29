@@ -93,6 +93,9 @@ export async function createItemInActor(actor, itemData, options = {}) {
  * @param {Object} updates
  * @param {Object} options
  */
+/**
+ * PHASE 2: Update actor through ActorEngine for governance
+ */
 export async function updateActor(actor, updates, options = {}) {
   if (!actor || !updates) {
     log.error('updateActor: Invalid arguments');
@@ -105,7 +108,9 @@ export async function updateActor(actor, updates, options = {}) {
   }
 
   try {
-    return await actor.update(updates, options);
+    // PHASE 2: Route through ActorEngine to ensure mutation governance
+    const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+    return await ActorEngine.updateActor(actor, updates, options);
   } catch (err) {
     log.error(`updateActor failed for ${actor.name}:`, err.message);
     return null;
@@ -259,7 +264,8 @@ export async function deleteEffectFromActor(actor, effects, options = {}) {
 }
 
 /**
- * Safe document patch - applies partial updates to nested properties
+ * PHASE 2: Safe document patch - applies partial updates to nested properties
+ * Routes through ActorEngine if document is an owned actor or item
  * This replaces mergeObject patterns for document updates
  */
 export async function patchDocument(document, patch, options = {}) {
@@ -275,6 +281,19 @@ export async function patchDocument(document, patch, options = {}) {
       foundry.utils.setProperty(updates, key, value);
     }
 
+    // PHASE 2: Route actors through ActorEngine, items through their actors if owned
+    if (document instanceof Actor) {
+      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+      return await ActorEngine.updateActor(document, updates, options);
+    } else if (document instanceof Item && document.isOwned && document.actor) {
+      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+      return await ActorEngine.updateEmbeddedDocuments(document.actor, 'Item', [{
+        _id: document.id,
+        ...updates
+      }], options);
+    }
+
+    // For unowned documents, use direct update
     return await document.update(updates, options);
   } catch (err) {
     log.error(`patchDocument failed:`, err.message);
