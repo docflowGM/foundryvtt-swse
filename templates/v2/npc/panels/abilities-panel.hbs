@@ -4,20 +4,53 @@
 <section class="swse-panel swse-panel--abilities abilities-panel">
   <div class="swse-panel__content">
     <div class="abilities-grid">
-      {{#each (array "strength" "dexterity" "constitution" "intelligence" "wisdom" "charisma") as |abilityKey|}}
-        {{#with (lookup abilitiesPanel abilityKey)}}
-          <div class="ability-score">
-            <div class="ability-name">{{this.name}}</div>
-            <div class="ability-score-value">{{this.score}}</div>
-            <div class="ability-modifier">{{#if (gte this.modifier 0)}}+{{/if}}{{this.modifier}}</div>
-          </div>
-        {{/with}}
-      {{/each}}
+      {{#if abilitiesPanel.strength}}
+        <div class="ability-score">
+          <div class="ability-name">{{abilitiesPanel.strength.name}}</div>
+          <div class="ability-score-value">{{abilitiesPanel.strength.score}}</div>
+          <div class="ability-modifier">{{#if (gte abilitiesPanel.strength.modifier 0)}}+{{/if}}{{abilitiesPanel.strength.modifier}}</div>
+        </div>
+      {{/if}}
+
+      {{#if abilitiesPanel.dexterity}}
+        <div class="ability-score">
+          <div class="ability-name">{{abilitiesPanel.dexterity.name}}</div>
+          <div class="ability-score-value">{{abilitiesPanel.dexterity.score}}</div>
+          <div class="ability-modifier">{{#if (gte abilitiesPanel.dexterity.modifier 0)}}+{{/if}}{{abilitiesPanel.dexterity.modifier}}</div>
+        </div>
+      {{/if}}
+
+      {{#if abilitiesPanel.constitution}}
+        <div class="ability-score">
+          <div class="ability-name">{{abilitiesPanel.constitution.name}}</div>
+          <div class="ability-score-value">{{abilitiesPanel.constitution.score}}</div>
+          <div class="ability-modifier">{{#if (gte abilitiesPanel.constitution.modifier 0)}}+{{/if}}{{abilitiesPanel.constitution.modifier}}</div>
+        </div>
+      {{/if}}
+
+      {{#if abilitiesPanel.intelligence}}
+        <div class="ability-score">
+          <div class="ability-name">{{abilitiesPanel.intelligence.name}}</div>
+          <div class="ability-score-value">{{abilitiesPanel.intelligence.score}}</div>
+          <div class="ability-modifier">{{#if (gte abilitiesPanel.intelligence.modifier 0)}}+{{/if}}{{abilitiesPanel.intelligence.modifier}}</div>
+        </div>
+      {{/if}}
+
+      {{#if abilitiesPanel.wisdom}}
+        <div class="ability-score">
+          <div class="ability-name">{{abilitiesPanel.wisdom.name}}</div>
+          <div class="ability-score-value">{{abilitiesPanel.wisdom.score}}</div>
+          <div class="ability-modifier">{{#if (gte abilitiesPanel.wisdom.modifier 0)}}+{{/if}}{{abilitiesPanel.wisdom.modifier}}</div>
+        </div>
+      {{/if}}
+
+      {{#if abilitiesPanel.charisma}}
+        <div class="ability-score">
+          <div class="ability-name">{{abilitiesPanel.charisma.name}}</div>
+          <div class="ability-score-value">{{abilitiesPanel.charisma.score}}</div>
+          <div class="ability-modifier">{{#if (gte abilitiesPanel.charisma.modifier 0)}}+{{/if}}{{abilitiesPanel.charisma.modifier}}</div>
+        </div>
+      {{/if}}
     </div>
   </div>
 </section>
-
-{{!-- Helper to create array --}}
-{{#*inline "array"}}
-  {{this}}
-{{/inline}}

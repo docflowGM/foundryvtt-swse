@@ -5,7 +5,7 @@
   {{#each tabPanels as |panelNames tabName|}}
     <div class="tab{{#if (eq ../currentTab tabName)}} active{{/if}}" data-tab="{{tabName}}">
       {{#each panelNames as |panelName|}}
-        {{!-- Panel rendering happens here based on panel name --}}
+        {{!-- Dynamically include panels based on panel name --}}
         {{#if (eq panelName "portraitPanel")}}
           {{> "systems/foundryvtt-swse/templates/v2/npc/panels/portrait-panel"}}
         {{else if (eq panelName "npcBiographyPanel")}}
@@ -30,8 +30,6 @@
           {{> "systems/foundryvtt-swse/templates/v2/npc/panels/combat-panel"}}
         {{else if (eq panelName "npcCombatNotesPanel")}}
           {{> "systems/foundryvtt-swse/templates/v2/npc/panels/combat-notes-panel"}}
-        {{else}}
-          {{!-- Panel not found --}}
         {{/if}}
       {{/each}}
     </div>
