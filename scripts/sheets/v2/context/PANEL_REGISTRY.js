@@ -35,6 +35,48 @@
  */
 
 /**
+ * SVG_STRUCTURE_CONTRACT
+ *
+ * Universal structure for SVG-backed panels (frame/content/overlay pattern).
+ *
+ * When svgBacked: true in a panel definition:
+ * 1. Frame layer (.swse-panel__frame) - SVG graphics, absolutely positioned under content
+ * 2. Content layer (.swse-panel__content) - normal flow content (headers, text, inputs)
+ * 3. Overlay layer (.swse-panel__overlay) - absolutely positioned interactive elements (buttons, indicators)
+ *
+ * This structure ensures:
+ * - SVG backgrounds don't interfere with text/input layout
+ * - Positioned controls can float over the frame without disrupting content flow
+ * - Semantic DOM structure (frame is aria-hidden, content and overlay are interactive)
+ *
+ * CSS Applied:
+ * .swse-panel { position: relative; }
+ * .swse-panel__frame { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+ * .swse-panel__content { position: relative; z-index: 1; }
+ * .swse-panel__overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; }
+ */
+export const SVG_STRUCTURE_CONTRACT = {
+  frameLayer: {
+    selector: '.swse-panel__frame',
+    purpose: 'SVG background graphics',
+    properties: ['position: absolute', 'z-index: -1', 'aria-hidden: true'],
+    content: 'SVG elements or CSS-drawn graphics'
+  },
+  contentLayer: {
+    selector: '.swse-panel__content',
+    purpose: 'Normal flow content (headers, text, inputs, buttons)',
+    properties: ['position: relative', 'z-index: 1'],
+    content: 'Headers, paragraphs, form inputs, descriptive elements'
+  },
+  overlayLayer: {
+    selector: '.swse-panel__overlay',
+    purpose: 'Absolutely positioned interactive elements',
+    properties: ['position: absolute', 'z-index: 2', 'width: 100%', 'height: 100%'],
+    content: 'Condition slots, track boxes, positioned controls'
+  }
+};
+
+/**
  * ROW_CONTRACTS
  *
  * SINGLE SOURCE OF TRUTH for all row shapes used in ledger panels.
@@ -210,7 +252,7 @@ export const PANEL_REGISTRY = {
     name: 'Health & Conditions',
     type: 'display',  // Shows HP, shield, condition track — not editable as a ledger
     svgBacked: true,
-    structure: 'frame + content + overlay (condition-track)',
+    structure: 'frame + content + overlay (condition-track nested)',
     template: 'systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs',
     builder: 'buildHealthPanel',
     validator: 'validateHealthPanel',
@@ -239,10 +281,20 @@ export const PANEL_REGISTRY = {
       'shield.source',
       'shield.hasShield'
     ],
+    svgStructure: {
+      mainFrame: '.swse-panel__frame',
+      mainContent: '.swse-panel__content',
+      conditionTrackFrame: '.condition-track-frame',
+      conditionTrackOverlay: '.condition-track-overlay'
+    },
     postRenderAssertions: {
       critical: true,  // Health panel is always critical
       rootSelector: '.swse-panel--health',
       expectedElements: {
+        '.swse-panel__frame': 1,        // Main SVG frame
+        '.swse-panel__content': 1,      // Main content layer
+        '.condition-track-frame': 1,    // Condition track SVG frame
+        '.condition-track-overlay': 1,  // Condition track overlay
         '.hp-bar': 1,
         '.condition-slot': 6,
         '.hp-bar-wrapper': 1

@@ -1,50 +1,63 @@
-<section class="swse-panel swse-panel--dark-side holo-panel swse-ui-panel swse-phase2-core-panel swse-dark-side-panel">
-  <header class="section-bar">
-    <h3 class="section-header">Dark Side Score</h3>
-    <span class="dsp-value-display">{{darkSidePanel.value}} / {{darkSidePanel.max}}</span>
-  </header>
+{{!-- Dark Side Points Panel
+     SVG-Backed Control Panel
+     Reads: darkSidePanel.* (from panel context)
+     Structure: frame + content + overlay for positioned track boxes
+--}}
 
-  <div class="swse-v2-dark-side">
+<section class="swse-panel swse-panel--dark-side holo-panel svg-framed svg-panel-frame">
 
-    <!-- Numbered Track Display (Record-Sheet Style with overlay positioning) -->
-    <div class="swse-panel swse-panel--dsp-track dsp-numbered-track svg-framed">
-      <!-- Frame layer: SVG background -->
-      <div class="swse-panel__frame" aria-hidden="true"></div>
-      <!-- Overlay layer: absolutely-positioned track boxes -->
-      <div class="swse-panel__overlay">
+  <!-- Frame layer: SVG background -->
+  <div class="swse-panel__frame" aria-hidden="true"></div>
+
+  <!-- Content layer: normal flow content -->
+  <div class="swse-panel__content">
+    <header class="section-bar">
+      <h3 class="section-header">Dark Side Score</h3>
+      <span class="dsp-value-display">{{darkSidePanel.value}} / {{darkSidePanel.max}}</span>
+    </header>
+
+    <div class="swse-v2-dark-side">
+      <!-- Numbered Track Display (Record-Sheet Style with overlay positioning) -->
+      <div class="swse-panel swse-panel--dsp-track dsp-numbered-track svg-framed">
+        <!-- Frame layer: SVG background for track -->
+        <div class="swse-panel__frame" aria-hidden="true"></div>
+        <!-- Overlay layer: absolutely-positioned track boxes -->
+        <div class="swse-panel__overlay">
+          {{#each darkSidePanel.segments as |segment|}}
+            <button type="button"
+                    class="dsp-track-box {{#if segment.filled}}filled{{/if}}"
+                    data-action="set-dark-side-score"
+                    data-index="{{segment.index}}"
+                    title="Set Dark Side Points to {{segment.index}}">
+              <span class="dsp-number">{{segment.index}}</span>
+            </button>
+          {{/each}}
+        </div>
+      </div>
+
+      <!-- Interactive Spectrum (Alternate Interaction Mode) -->
+      <div class="swse-v2-ds-spectrum" data-action="set-dark-side-score">
         {{#each darkSidePanel.segments as |segment|}}
-          <button type="button"
-                  class="dsp-track-box {{#if segment.filled}}filled{{/if}}"
-                  data-action="set-dark-side-score"
-                  data-index="{{segment.index}}"
-                  title="Set Dark Side Points to {{segment.index}}">
-            <span class="dsp-number">{{segment.index}}</span>
-          </button>
+          <div
+            class="ds-segment {{#if segment.filled}}filled{{/if}}"
+            data-index="{{segment.index}}"
+            style="background-color: {{segment.color}};"
+            title="{{segment.index}} Dark Side Points"
+          ></div>
         {{/each}}
       </div>
-    </div>
 
-    <!-- Interactive Spectrum (Existing Interaction Mode) -->
-    <div class="swse-v2-ds-spectrum" data-action="set-dark-side-score">
-      {{#each darkSideSegments as |segment|}}
-        <div
-          class="ds-segment {{#if segment.filled}}filled{{/if}}"
-          data-index="{{segment.index}}"
-          style="background-color: {{segment.color}};"
-          title="{{segment.index}} Dark Side Points"
-        ></div>
-      {{/each}}
-    </div>
-
-    <div class="swse-v2-ds-legend">
-      <span class="legend-left">
-        <span class="legend-color" style="background-color: #4A90E2;"></span>
-        Light
-      </span>
-      <span class="legend-right">
-        <span class="legend-color" style="background-color: #E74C3C;"></span>
-        Dark
-      </span>
+      <div class="swse-v2-ds-legend">
+        <span class="legend-left">
+          <span class="legend-color" style="background-color: #4A90E2;"></span>
+          Light
+        </span>
+        <span class="legend-right">
+          <span class="legend-color" style="background-color: #E74C3C;"></span>
+          Dark
+        </span>
+      </div>
     </div>
   </div>
+
 </section>
