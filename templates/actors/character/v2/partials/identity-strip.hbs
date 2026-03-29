@@ -3,15 +3,13 @@
      style="--identity-glow: {{identityGlowColor}};">
 
   <div class="identity-main">
-    <h2 class="identity-name">{{actor.name}}</h2>
+    <h2 class="identity-name">{{biographyPanel.identity.name}}</h2>
 
     <div class="identity-meta">
-      <span>Species: {{system.race}}</span>
+      <span>Species: {{biographyPanel.identity.species}}</span>
       {{!-- Character biography fields (only display for characters) --}}
-      {{#if (eq actor.type "character")}}
-        <span>Homeworld: {{system.planetOfOrigin}}</span>
-        <span>Background: {{system.profession}}</span>
-      {{/if}}
+      <span>Homeworld: {{biographyPanel.identity.homeworld}}</span>
+      <span>Background: {{biographyPanel.identity.profession}}</span>
     </div>
   </div>
 

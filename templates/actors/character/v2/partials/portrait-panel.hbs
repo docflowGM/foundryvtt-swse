@@ -5,10 +5,11 @@
   </header>
 
   <div class="portrait-container">
-    <img class="portrait-image" src="{{actor.img}}"
+    <img class="portrait-image" src="{{portraitPanel.img}}"
          data-edit="img"
          title="Click to change portrait"
-         alt="Character portrait" />
+         alt="{{portraitPanel.name}} portrait"
+         {{#unless portraitPanel.canEdit}}style="cursor: default;"{{/unless}} />
   </div>
 
 </section>

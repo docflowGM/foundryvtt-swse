@@ -1,12 +1,17 @@
+{{!-- Starship Maneuvers Panel
+     Pure display — no logic, no mutations
+     Reads: starshipManeuversPanel.* (from panel context)
+--}}
+
 <section class="starship-maneuvers-known-panel holo-panel">
 
   <header class="section-bar">
-    <h3 class="section-header">Starship Maneuvers ({{derived.starshipManeuvers.count}})</h3>
+    <h3 class="section-header">Starship Maneuvers ({{starshipManeuversPanel.totalCount}})</h3>
   </header>
 
-  {{#if derived.starshipManeuvers.list.length}}
+  {{#if starshipManeuversPanel.hasEntries}}
     <div class="starship-maneuvers-ledger">
-      {{#each derived.starshipManeuvers.list}}
+      {{#each starshipManeuversPanel.entries}}
         <div class="maneuver-row svg-row-backed" data-item-id="{{this.id}}">
           <div class="maneuver-name">{{this.name}}</div>
           {{#if this.summary}}

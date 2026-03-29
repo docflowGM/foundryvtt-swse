@@ -1,0 +1,37 @@
+{{!-- templates/v2/npc/panels/biography-panel.hbs --}}
+{{!-- NPC Biography Panel --}}
+
+<section class="swse-panel swse-panel--npc-biography npc-biography-panel">
+  <div class="swse-panel__content">
+    <div class="biography-grid">
+      <div class="biography-field">
+        <label>Name</label>
+        <span>{{npcBiographyPanel.name}}</span>
+      </div>
+      <div class="biography-field">
+        <label>Age</label>
+        <span>{{npcBiographyPanel.age}}</span>
+      </div>
+      <div class="biography-field">
+        <label>Gender</label>
+        <span>{{npcBiographyPanel.gender}}</span>
+      </div>
+      <div class="biography-field">
+        <label>Species</label>
+        <span>{{npcBiographyPanel.species}}</span>
+      </div>
+      {{#if npcBiographyPanel.playerName}}
+        <div class="biography-field">
+          <label>Player</label>
+          <span>{{npcBiographyPanel.playerName}}</span>
+        </div>
+      {{/if}}
+      {{#if npcBiographyPanel.npcRole}}
+        <div class="biography-field">
+          <label>Role</label>
+          <span>{{npcBiographyPanel.npcRole}}</span>
+        </div>
+      {{/if}}
+    </div>
+  </div>
+</section>

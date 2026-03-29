@@ -1,0 +1,16 @@
+{{!-- Languages Panel --}}
+<section class="swse-panel swse-panel--languages languages-panel">
+  <div class="swse-panel__content">
+    {{#if languagesPanel.hasEntries}}
+      <div class="ledger-entries">
+        {{#each languagesPanel.entries as |entry|}}
+          <div class="ledger-row" data-row-id="{{entry.id}}">
+            <div class="language-name">{{entry.name}}</div>
+          </div>
+        {{/each}}
+      </div>
+    {{else}}
+      <p class="empty-state">{{languagesPanel.emptyMessage}}</p>
+    {{/if}}
+  </div>
+</section>

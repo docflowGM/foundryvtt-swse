@@ -1,0 +1,11 @@
+<section class="swse-panel protocols-panel">
+  <div class="swse-panel__content">
+    {{#if protocolsPanel.hasEntries}}
+      {{#each protocolsPanel.entries as |entry|}}
+        <div class="entry" data-row-id="{{entry.id}}">{{entry.name}}</div>
+      {{/each}}
+    {{else}}
+      <p class="empty-state">No protocols</p>
+    {{/if}}
+  </div>
+</section>

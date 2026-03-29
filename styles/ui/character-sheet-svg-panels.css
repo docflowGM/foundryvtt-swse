@@ -78,22 +78,22 @@
 
 /* CHARACTER RECORD HEADER PLATE - UNIFIED CONTRACT */
 .swse-panel--identity {
-  min-height: 200px;
+  min-height: var(--panel-identity-min-height);
 }
 
 .swse-panel--identity .swse-panel__frame {
-  background-image: url('../../assets/ui/character-record-header-plate.svg');
+  background-image: var(--panel-identity-frame-svg);
 }
 
 .swse-panel--identity .swse-panel__content {
-  padding: 20px 16px;
-  gap: 12px;
+  padding: var(--panel-identity-content-padding);
+  gap: var(--panel-identity-content-gap);
 }
 
 .character-record-header.svg-framed {
-  background-image: url('../../assets/ui/character-record-header-plate.svg');
-  padding: 20px 16px;
-  min-height: 200px;
+  background-image: var(--panel-identity-frame-svg);
+  padding: var(--panel-identity-content-padding);
+  min-height: var(--panel-identity-min-height);
 }
 
 /* RECORD FIELD INLINE WRAPPERS */
@@ -115,74 +115,50 @@
 
 /* HP CONDITION PANEL SVG FRAME - UNIFIED CONTRACT */
 .swse-panel--health {
-  min-height: 220px;
+  min-height: var(--panel-health-min-height);
   aspect-ratio: auto;
 }
 
 .swse-panel--health .swse-panel__frame {
-  background-image: url('../../assets/ui/character-record-header-plate.svg');
+  background-image: var(--panel-health-frame-svg);
 }
 
 .swse-panel--health .swse-panel__content {
-  padding: 20px 16px;
-  gap: 12px;
+  padding: var(--panel-health-content-padding);
+  gap: var(--panel-health-content-gap);
 }
 
 .hp-condition-panel.svg-framed {
-  background-image: url('../../assets/ui/character-record-header-plate.svg');
+  background-image: var(--panel-health-frame-svg);
   background-size: 100% 100%;
   background-repeat: no-repeat;
-  padding: 20px 16px;
-  min-height: 220px;
+  padding: var(--panel-health-content-padding);
+  min-height: var(--panel-health-min-height);
 }
 
 /* CONDITION TRACK SVG FRAME - UNIFIED CONTRACT WITH VARIABLES */
 .swse-panel--condition-track {
   position: relative;
-  aspect-ratio: 720 / 112;
+  aspect-ratio: var(--panel-condition-track-aspect);
   width: 100%;
-  min-height: 95px;
-  max-height: 120px;
-  /* CSS custom properties for socket anchor points (SVG 720x112 geometry) */
-  --slot-0-x: 7.22%;
-  --slot-0-y: 50%;
-  --slot-1-x: 22.5%;
-  --slot-1-y: 50%;
-  --slot-2-x: 37.78%;
-  --slot-2-y: 50%;
-  --slot-3-x: 53.06%;
-  --slot-3-y: 50%;
-  --slot-4-x: 68.33%;
-  --slot-4-y: 50%;
-  --slot-5-x: 83.61%;
-  --slot-5-y: 50%;
+  min-height: var(--panel-condition-track-min-height);
+  max-height: var(--panel-condition-track-max-height);
+  /* Socket positions inherited from :root */
 }
 
 .condition-track-panel {
   position: relative;
-  aspect-ratio: 720 / 112;
+  aspect-ratio: var(--panel-condition-track-aspect);
   width: 100%;
-  min-height: 95px;
-  max-height: 120px;
-  --slot-0-x: 7.22%;
-  --slot-0-y: 50%;
-  --slot-1-x: 22.5%;
-  --slot-1-y: 50%;
-  --slot-2-x: 37.78%;
-  --slot-2-y: 50%;
-  --slot-3-x: 53.06%;
-  --slot-3-y: 50%;
-  --slot-4-x: 68.33%;
-  --slot-4-y: 50%;
-  --slot-5-x: 83.61%;
-  --slot-5-y: 50%;
+  min-height: var(--panel-condition-track-min-height);
+  max-height: var(--panel-condition-track-max-height);
 }
 
 .condition-track-frame,
 .swse-panel--condition-track .swse-panel__frame {
   position: absolute;
   inset: 0;
-  background-image: url('../../assets/ui/condition-track-box-strip.svg');
+  background-image: var(--panel-condition-track-frame-svg);
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: 0 0;
@@ -198,11 +174,11 @@
 /* Condition slot buttons - positioned absolutely at socket centers */
 .condition-slot {
   position: absolute;
-  width: 28px;
-  height: 28px;
+  width: var(--condition-slot-size);
+  height: var(--condition-slot-size);
   padding: 0;
   border: 1px solid rgba(0, 255, 136, 0.3);
-  border-radius: 2px;
+  border-radius: var(--condition-slot-border-radius);
   background: rgba(0, 0, 0, 0.2);
   color: #aaa;
   font-size: 0.7rem;
@@ -266,11 +242,10 @@
 /* DARK SIDE POINTS TRACKER - UNIFIED CONTRACT */
 .swse-panel--dsp-track {
   position: relative;
-  aspect-ratio: 752 / 80;
+  aspect-ratio: var(--panel-dsp-track-aspect);
   width: 100%;
-  min-height: 105px;
-  max-height: 120px;
-  /* CSS custom properties for DSP track box positions (grid-based, but could use overlays) */
+  min-height: var(--panel-dsp-track-min-height);
+  max-height: var(--panel-dsp-track-max-height);
 }
 
 .dsp-numbered-track.svg-framed {
@@ -279,33 +254,33 @@
   background-repeat: no-repeat;
   background-position: 0 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(32px, 1fr));
-  gap: 3px;
-  padding: 10px 8px;
-  min-height: 105px;
+  grid-template-columns: var(--panel-dsp-track-grid-cols);
+  gap: var(--panel-dsp-track-gap);
+  padding: var(--panel-dsp-track-padding);
+  min-height: var(--panel-dsp-track-min-height);
 }
 
 .swse-panel--dsp-track .swse-panel__frame {
-  background-image: url('../../assets/ui/dark-side-box-track.svg');
+  background-image: var(--panel-dsp-track-frame-svg);
   position: absolute;
   inset: 0;
 }
 
 .swse-panel--dsp-track .swse-panel__overlay {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(32px, 1fr));
-  gap: 3px;
-  padding: 10px 8px;
+  grid-template-columns: var(--panel-dsp-track-grid-cols);
+  gap: var(--panel-dsp-track-gap);
+  padding: var(--panel-dsp-track-padding);
 }
 
 .dsp-track-box {
   position: relative;
   z-index: 2;
-  min-width: 32px;
-  height: 32px;
+  min-width: var(--dsp-box-min-width);
+  height: var(--dsp-box-height);
   border: 1px solid rgba(150, 80, 80, 0.4);
   background: rgba(20, 10, 10, 0.6);
-  border-radius: 2px;
+  border-radius: var(--dsp-box-border-radius);
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
@@ -329,19 +304,19 @@
 }
 
 .swse-panel--combat-actions .swse-panel__frame {
-  background-image: url('../../assets/ui/special-combat-notes-panel.svg');
+  background-image: var(--panel-combat-actions-frame-svg);
 }
 
 .swse-panel--combat-actions .swse-panel__content {
-  padding: 20px 16px;
-  gap: 12px;
+  padding: var(--panel-combat-actions-content-padding);
+  gap: var(--panel-combat-actions-content-gap);
 }
 
 .special-combat-actions-panel.svg-framed {
-  background-image: url('../../assets/ui/special-combat-notes-panel.svg');
+  background-image: var(--panel-combat-actions-frame-svg);
   background-size: 100% 100%;
   background-repeat: no-repeat;
-  padding: 20px 16px;
+  padding: var(--panel-combat-actions-content-padding);
 }
 
 .combat-notes-textarea {
@@ -365,17 +340,17 @@
 .swse-attacks-grid {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--ledger-attack-gap);
 }
 
 .swse-attack-block.svg-row-backed {
   position: relative;
-  background-image: url('../../assets/ui/attack-ledger-row.svg');
+  background-image: var(--row-attack-frame-svg);
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: 0 0;
-  padding: 10px 12px;
-  min-height: 100px;
+  padding: var(--row-attack-padding);
+  min-height: var(--row-attack-min-height);
 }
 
 .attack-block-content {
@@ -387,21 +362,21 @@
 .equipment-ledger {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--ledger-equipment-gap);
 }
 
 .ledger-row.svg-row-backed {
   position: relative;
-  background-image: url('../../assets/ui/equipment-ledger-row.svg');
+  background-image: var(--row-equipment-frame-svg);
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: 0 0;
   display: grid;
-  grid-template-columns: 2fr 1fr 0.5fr 0.75fr 0.75fr;
-  gap: 8px;
-  padding: 8px 8px;
+  grid-template-columns: var(--row-equipment-grid-cols);
+  gap: var(--row-equipment-gap);
+  padding: var(--row-equipment-padding);
   align-items: center;
-  min-height: 85px;
+  min-height: var(--row-equipment-min-height);
 }
 
 .ledger-row.svg-row-backed > div {
@@ -413,21 +388,21 @@
 .talents-ledger {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: var(--ledger-talent-gap);
 }
 
 .talent-row.svg-row-backed {
   position: relative;
-  background-image: url('../../assets/ui/compact-ledger-row.svg');
+  background-image: var(--row-talent-frame-svg);
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: 0 0;
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 12px;
-  padding: 6px 8px;
+  grid-template-columns: var(--row-talent-grid-cols);
+  gap: var(--row-talent-gap);
+  padding: var(--row-talent-padding);
   align-items: center;
-  min-height: 70px;
+  min-height: var(--row-talent-min-height);
 }
 
 .talent-row.svg-row-backed .talent-name,
@@ -441,21 +416,21 @@
 .force-powers-ledger {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: var(--ledger-power-gap);
 }
 
 .power-row.svg-row-backed {
   position: relative;
-  background-image: url('../../assets/ui/compact-ledger-row.svg');
+  background-image: var(--row-power-frame-svg);
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: 0 0;
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 12px;
-  padding: 6px 8px;
+  grid-template-columns: var(--row-power-grid-cols);
+  gap: var(--row-power-gap);
+  padding: var(--row-power-padding);
   align-items: center;
-  min-height: 70px;
+  min-height: var(--row-power-min-height);
 }
 
 .power-row.svg-row-backed .power-name,
@@ -471,24 +446,24 @@
 
 /* RELATIONSHIPS PANEL - UNIFIED CONTRACT */
 .swse-panel--relationships {
-  min-height: 260px;
+  min-height: var(--panel-relationships-min-height);
 }
 
 .swse-panel--relationships .swse-panel__frame {
-  background-image: url('../../assets/ui/relationships-notebook-panel.svg');
+  background-image: var(--panel-relationships-frame-svg);
 }
 
 .swse-panel--relationships .swse-panel__content {
-  padding: 20px 16px;
-  gap: 12px;
+  padding: var(--panel-relationships-content-padding);
+  gap: var(--panel-relationships-content-gap);
 }
 
 .relationships-panel.svg-framed {
-  background-image: url('../../assets/ui/relationships-notebook-panel.svg');
+  background-image: var(--panel-relationships-frame-svg);
   background-size: 100% 100%;
   background-repeat: no-repeat;
-  padding: 20px 16px;
-  min-height: 260px;
+  padding: var(--panel-relationships-content-padding);
+  min-height: var(--panel-relationships-min-height);
 }
 
 .relationships-list {
@@ -496,7 +471,7 @@
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--panel-relationships-list-gap);
 }
 
 .relationship-entry {
@@ -513,19 +488,19 @@
 }
 
 .swse-panel--defenses .swse-panel__frame {
-  background-image: url('../../assets/ui/core/panels/armor-panel.svg');
+  background-image: var(--panel-defenses-frame-svg);
 }
 
 .swse-panel--defenses .swse-panel__content {
-  padding: 16px 14px;
-  gap: 8px;
+  padding: var(--panel-defenses-content-padding);
+  gap: var(--panel-defenses-content-gap);
 }
 
 .defenses-panel.svg-framed {
-  background-image: url('../../assets/ui/core/panels/armor-panel.svg');
+  background-image: var(--panel-defenses-frame-svg);
   background-size: 100% 100%;
   background-repeat: no-repeat;
-  padding: 16px 14px;
+  padding: var(--panel-defenses-content-padding);
 }
 
 .defenses-container {
@@ -539,19 +514,19 @@
 }
 
 .swse-panel--armor .swse-panel__frame {
-  background-image: url('../../assets/ui/core/panels/armor-panel.svg');
+  background-image: var(--panel-armor-frame-svg);
 }
 
 .swse-panel--armor .swse-panel__content {
-  padding: 16px 14px;
-  gap: 8px;
+  padding: var(--panel-armor-content-padding);
+  gap: var(--panel-armor-content-gap);
 }
 
 .armor-summary-panel.svg-framed {
-  background-image: url('../../assets/ui/core/panels/armor-panel.svg');
+  background-image: var(--panel-armor-frame-svg);
   background-size: 100% 100%;
   background-repeat: no-repeat;
-  padding: 16px 14px;
+  padding: var(--panel-armor-content-padding);
 }
 
 .armor-summary {

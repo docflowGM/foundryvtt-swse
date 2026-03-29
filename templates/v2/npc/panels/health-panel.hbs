@@ -1,0 +1,20 @@
+{{!-- templates/v2/npc/panels/health-panel.hbs --}}
+{{!-- NPC Health Panel --}}
+
+<section class="swse-panel swse-panel--health health-panel">
+  <div class="swse-panel__content">
+    <div class="health-display">
+      <div class="health-bar">
+        <div class="health-fill" style="width: {{healthPanel.healthPercent}}%"></div>
+      </div>
+      <div class="health-text">
+        <span class="current">{{healthPanel.currentHealth}}</span>
+        <span class="separator">/</span>
+        <span class="max">{{healthPanel.maxHealth}}</span>
+      </div>
+    </div>
+    {{#if healthPanel.damageConditionStep}}
+      <div class="condition-step">Condition: Step {{healthPanel.damageConditionStep}}</div>
+    {{/if}}
+  </div>
+</section>

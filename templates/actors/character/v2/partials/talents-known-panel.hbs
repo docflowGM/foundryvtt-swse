@@ -5,7 +5,7 @@
   It is NOT a replacement for talents-panel.hbs; it is a presentation layer for
   quick reference during play.
 
-  Source: derived.talents.groups + each talent's name, sourceClass, summary
+  Reads: talentPanel.* (from panel context)
 --}}
 
 <section class="talents-known-panel holo-panel">
@@ -15,17 +15,17 @@
     <button type="button" class="btn-small" data-action="tab" data-tab="talents" data-group="primary" data-tab-group="primary" title="Open Talents tab to manage talents">Manage →</button>
   </header>
 
-  {{#if (gt totalTalentCount 0)}}
+  {{#if talentPanel.hasEntries}}
     <div class="talents-ledger">
-      {{#each derived.talents.groups as |group|}}
-        {{#if group.items.length}}
+      {{#each (objectEntries talentPanel.grouped) as |groupEntry|}}
+        {{#if groupEntry.1.length}}
           <div class="talent-group">
-            <div class="group-header">{{group.label}}</div>
-            {{#each group.items}}
+            <div class="group-header">{{groupEntry.0}}</div>
+            {{#each groupEntry.1}}
               <div class="talent-row svg-row-backed" data-item-id="{{this.id}}">
                 <div class="talent-name">{{this.name}}</div>
-                {{#if this.sourceClass}}
-                  <div class="talent-source">{{this.sourceClass}}</div>
+                {{#if this.source}}
+                  <div class="talent-source">{{this.source}}</div>
                 {{/if}}
               </div>
             {{/each}}

@@ -1,0 +1,228 @@
+/* ============================================================================
+   SWSE SVG Layout Debug Tooling — Phase 4.4 Implementation
+   Visual aids for developers debugging SVG panel layout and safe areas
+
+   ACTIVATION: Set CONFIG.SWSE.layoutDebug = true to enable
+   FEATURES:
+   - Grid overlay on all SVG-backed panels
+   - Safe area boundary indicators
+   - Content/overlay layer visualization
+   - Positioned element anchor points
+   ============================================================================ */
+
+/* Debug mode flag - set via CONFIG.SWSE.layoutDebug */
+.swse-app.debug-layout {
+  --debug-grid-color: rgba(0, 255, 136, 0.15);
+  --debug-grid-size: 10px;
+  --debug-safe-area-color: rgba(0, 217, 255, 0.2);
+  --debug-content-color: rgba(100, 200, 255, 0.1);
+  --debug-overlay-color: rgba(255, 200, 100, 0.1);
+  --debug-anchor-color: #ff6b6b;
+  --debug-anchor-size: 8px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   GRID OVERLAY — Background grid for alignment and spacing
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app.debug-layout .swse-panel {
+  background-image:
+    /* Vertical lines */
+    linear-gradient(90deg, var(--debug-grid-color) 1px, transparent 1px),
+    /* Horizontal lines */
+    linear-gradient(0deg, var(--debug-grid-color) 1px, transparent 1px),
+    /* Original background */
+    var(--original-bg);
+  background-size: var(--debug-grid-size) var(--debug-grid-size);
+  background-position: 0 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   SAFE AREA INDICATORS — Show padding/content area boundaries
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app.debug-layout .swse-panel__content {
+  box-shadow: inset 0 0 0 2px var(--debug-safe-area-color);
+  outline: 2px dashed var(--debug-safe-area-color);
+  outline-offset: -2px;
+}
+
+.swse-app.debug-layout .swse-panel__content::before {
+  content: 'CONTENT';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  font-size: 8px;
+  color: var(--debug-safe-area-color);
+  font-weight: bold;
+  z-index: 999;
+  pointer-events: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   OVERLAY LAYER VISUALIZATION — Show positioned element container
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app.debug-layout .swse-panel__overlay {
+  box-shadow: inset 0 0 0 2px var(--debug-overlay-color);
+  background-image:
+    linear-gradient(45deg, var(--debug-overlay-color) 25%, transparent 25%, transparent 75%, var(--debug-overlay-color) 75%, var(--debug-overlay-color)),
+    linear-gradient(45deg, var(--debug-overlay-color) 25%, transparent 25%, transparent 75%, var(--debug-overlay-color) 75%, var(--debug-overlay-color));
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+  background-color: transparent;
+}
+
+.swse-app.debug-layout .swse-panel__overlay::before {
+  content: 'OVERLAY';
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 8px;
+  color: var(--debug-overlay-color);
+  font-weight: bold;
+  z-index: 999;
+  pointer-events: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   POSITIONED ELEMENT ANCHORS — Show where overlay children are positioned
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app.debug-layout .swse-panel__overlay > * {
+  outline: 1px solid var(--debug-anchor-color);
+  outline-offset: -1px;
+  box-shadow: inset 0 0 0 1px var(--debug-anchor-color);
+}
+
+.swse-app.debug-layout .swse-panel__overlay > *::before {
+  content: '';
+  position: absolute;
+  width: var(--debug-anchor-size);
+  height: var(--debug-anchor-size);
+  background: var(--debug-anchor-color);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  pointer-events: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   SPECIFIC LAYER DEBUGGING
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* Condition track slot anchors */
+.swse-app.debug-layout .condition-slot {
+  outline: 2px solid var(--debug-anchor-color);
+  outline-offset: -2px;
+}
+
+.swse-app.debug-layout .condition-slot::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--debug-anchor-color);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* DSP track box positioning */
+.swse-app.debug-layout .dsp-track-box {
+  outline: 1px solid rgba(255, 100, 100, 0.5);
+  outline-offset: -1px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   LEDGER ROW DEBUGGING
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app.debug-layout .ledger-row.svg-row-backed,
+.swse-app.debug-layout .talent-row.svg-row-backed,
+.swse-app.debug-layout .power-row.svg-row-backed,
+.swse-app.debug-layout .swse-attack-block.svg-row-backed {
+  box-shadow: inset 0 0 0 1px rgba(0, 255, 136, 0.3);
+  position: relative;
+}
+
+.swse-app.debug-layout .ledger-row.svg-row-backed::after,
+.swse-app.debug-layout .talent-row.svg-row-backed::after,
+.swse-app.debug-layout .power-row.svg-row-backed::after,
+.swse-app.debug-layout .swse-attack-block.svg-row-backed::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(90deg, transparent 1px, rgba(0, 255, 136, 0.1) 1px),
+    linear-gradient(0deg, transparent 1px, rgba(0, 255, 136, 0.1) 1px);
+  background-size: 10px 10px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   DIMENSION LABELS — Show actual size values
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app.debug-layout .condition-slot::after {
+  content: attr(data-step);
+  position: absolute;
+  width: auto;
+  height: auto;
+  background: rgba(0, 0, 0, 0.8);
+  color: var(--debug-anchor-color);
+  font-size: 6px;
+  padding: 1px 2px;
+  border-radius: 2px;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   DEBUG INFORMATION PANEL
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app.debug-layout::after {
+  content: 'Layout Debug Mode Active\A - Green: Content safe area\A - Orange: Overlay positioned elements\A - Red: Anchors\A - Grid: 10px alignment';
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.9);
+  color: #00ff88;
+  padding: 10px 15px;
+  font-size: 10px;
+  font-family: monospace;
+  border: 2px solid #00ff88;
+  white-space: pre;
+  z-index: 10000;
+  pointer-events: none;
+  border-radius: 4px;
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.4);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   FRAME LAYER DEBUG
+   ───────────────────────────────────────────────────────────────────────── */
+
+.swse-app.debug-layout .swse-panel__frame {
+  opacity: 0.5;
+  outline: 2px dotted rgba(0, 217, 255, 0.3);
+}
+
+.swse-app.debug-layout .swse-panel__frame::after {
+  content: 'FRAME';
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 8px;
+  color: rgba(0, 217, 255, 0.6);
+  font-weight: bold;
+  pointer-events: none;
+}

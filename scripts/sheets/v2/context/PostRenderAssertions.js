@@ -1,227 +1,192 @@
+import { PANEL_REGISTRY } from './PANEL_REGISTRY.js';
+
 /**
  * PostRenderAssertions
  *
- * Verify that rendered DOM matches panel context contracts.
- * Catches template/context drift after refactors.
+ * Registry-driven post-render DOM validation.
+ * Verifies that rendered DOM matches panel context contracts defined in PANEL_REGISTRY.
  *
- * Runs after each panel is rendered to ensure:
+ * Runs after every render to detect template/context drift.
+ * In production: logs warnings only
+ * In strict mode (CONFIG.SWSE.strictMode): throws on critical violations
+ *
+ * Validates:
  * - Expected root nodes exist
- * - Expected number of rows/slots match data
- * - Critical structures are present
+ * - Expected/optional elements match contractual counts
+ * - Critical panels are fully rendered
  */
 
 export class PostRenderAssertions {
   /**
-   * Assert health panel DOM matches contract
-   * - Root exists
-   * - Exactly 6 condition slots
-   * - HP bar present
+   * Log an assertion violation with appropriate severity
    */
-  static assertHealthPanel(html, context) {
-    if (!CONFIG?.SWSE?.debug) return;
+  static _reportViolation(message, critical = false) {
+    const isStrict = CONFIG?.SWSE?.strictMode ?? false;
+    const severity = critical && isStrict ? 'error' : 'warn';
+    console[severity](`[PostRender] ${message}`);
 
-    const root = html?.querySelector?.('.swse-panel--health');
-    if (!root) {
-      console.warn('[PostRender] healthPanel root not found');
-      return;
+    if (critical && isStrict) {
+      throw new Error(`[PostRender Contract] ${message}`);
     }
-
-    const slots = root.querySelectorAll('.condition-slot');
-    if (slots.length !== 6) {
-      console.warn(`[PostRender] healthPanel expected 6 condition slots, got ${slots.length}`);
-    }
-
-    const hpBar = root.querySelector('.hp-bar');
-    if (!hpBar) {
-      console.warn('[PostRender] healthPanel missing hp-bar element');
-    }
-
-    console.log('[PostRender] ✓ healthPanel assertions passed', { slots: slots.length });
   }
 
   /**
-   * Assert defenses panel DOM matches contract
-   * - Root exists
-   * - Exactly 3 defense rows
+   * Parse range string like "3..3" or "0..99" to {min, max}
    */
-  static assertDefensesPanel(html, context) {
-    if (!CONFIG?.SWSE?.debug) return;
-
-    const root = html?.querySelector?.('.swse-panel--defenses');
-    if (!root) {
-      console.warn('[PostRender] defensePanel root not found');
-      return;
-    }
-
-    const rows = root.querySelectorAll('.defense-row');
-    if (rows.length !== 3) {
-      console.warn(`[PostRender] defensePanel expected 3 defense rows, got ${rows.length}`);
-    }
-
-    console.log('[PostRender] ✓ defensePanel assertions passed', { rows: rows.length });
+  static _parseRange(rangeStr) {
+    if (typeof rangeStr === 'number') return { min: rangeStr, max: rangeStr };
+    if (!rangeStr || !rangeStr.includes('..')) return null;
+    const [min, max] = rangeStr.split('..').map(Number);
+    return { min, max };
   }
 
   /**
-   * Assert biography panel DOM matches contract
-   * - Root exists
-   * - Record fields present
+   * Validate element count matches range
    */
-  static assertBiographyPanel(html, context) {
-    if (!CONFIG?.SWSE?.debug) return;
-
-    const root = html?.querySelector?.('.swse-panel--identity');
-    if (!root) {
-      console.warn('[PostRender] biographyPanel root not found');
-      return;
+  static _validateCount(actual, expected, label, critical = false) {
+    if (typeof expected === 'number') {
+      if (actual !== expected) {
+        this._reportViolation(
+          `${label}: expected ${expected}, got ${actual}`,
+          critical
+        );
+        return false;
+      }
+    } else if (typeof expected === 'string' && expected.includes('..')) {
+      const range = this._parseRange(expected);
+      if (actual < range.min || actual > range.max) {
+        this._reportViolation(
+          `${label}: expected ${expected}, got ${actual}`,
+          critical
+        );
+        return false;
+      }
     }
-
-    const fields = root.querySelectorAll('.record-field');
-    if (fields.length < 6) {
-      console.warn(`[PostRender] biographyPanel expected at least 6 record fields, got ${fields.length}`);
-    }
-
-    console.log('[PostRender] ✓ biographyPanel assertions passed', { fields: fields.length });
+    return true;
   }
 
   /**
-   * Assert inventory panel DOM matches contract
-   * - Root exists
-   * - Number of rows matches context entries
-   * - Empty state exists if no entries
+   * Validate SVG panel structure (Phase 4.5)
+   * Checks for frame/content/overlay layers and positioned elements
    */
-  static assertInventoryPanel(html, context) {
-    if (!CONFIG?.SWSE?.debug) return;
-
-    const root = html?.querySelector?.('.inventory-panel');
-    if (!root) {
-      console.warn('[PostRender] inventoryPanel root not found');
-      return;
+  static _assertSVGStructure(panelKey, root, def) {
+    if (!def.svgBacked) {
+      return; // Not an SVG-backed panel
     }
 
-    const expectedCount = context.inventoryPanel?.entries?.length ?? 0;
-    const renderedRows = root.querySelectorAll('.ledger-row');
+    const isCritical = def.postRenderAssertions?.critical ?? false;
 
-    if (expectedCount > 0 && renderedRows.length !== expectedCount) {
-      console.warn(`[PostRender] inventoryPanel expected ${expectedCount} rows, got ${renderedRows.length}`);
+    // Check frame layer (required for all SVG panels)
+    const frameLayer = root?.querySelector?.('.swse-panel__frame');
+    if (!frameLayer) {
+      this._reportViolation(
+        `${panelKey}: SVG frame layer (.swse-panel__frame) not found`,
+        isCritical
+      );
     }
 
-    if (expectedCount === 0) {
-      const emptyState = root.querySelector('.empty-state');
-      if (!emptyState) {
-        console.warn('[PostRender] inventoryPanel should show empty state when no entries');
+    // Check content layer (required for panels with normal flow content)
+    if (def.structure?.includes('content')) {
+      const contentLayer = root?.querySelector?.('.swse-panel__content');
+      if (!contentLayer) {
+        this._reportViolation(
+          `${panelKey}: Content layer (.swse-panel__content) missing from structure`,
+          isCritical
+        );
       }
     }
 
-    console.log('[PostRender] ✓ inventoryPanel assertions passed', { rows: renderedRows.length, expected: expectedCount });
-  }
-
-  /**
-   * Assert talent panel DOM matches contract
-   * - Root exists
-   * - Number of rows matches context entries
-   */
-  static assertTalentPanel(html, context) {
-    if (!CONFIG?.SWSE?.debug) return;
-
-    const root = html?.querySelector?.('.talents-panel');
-    if (!root) {
-      console.warn('[PostRender] talentPanel root not found');
-      return;
-    }
-
-    const expectedCount = context.talentPanel?.entries?.length ?? 0;
-    const renderedRows = root.querySelectorAll('.talent-row');
-
-    if (expectedCount > 0 && renderedRows.length !== expectedCount) {
-      console.warn(`[PostRender] talentPanel expected ${expectedCount} rows, got ${renderedRows.length}`);
-    }
-
-    if (expectedCount === 0) {
-      const emptyState = root.querySelector('.empty-state');
-      if (!emptyState) {
-        console.warn('[PostRender] talentPanel should show empty state when no entries');
+    // Check overlay layer (required for panels with positioned elements)
+    if (def.structure?.includes('overlay')) {
+      const overlayLayer = root?.querySelector?.('.swse-panel__overlay');
+      if (!overlayLayer) {
+        this._reportViolation(
+          `${panelKey}: Overlay layer (.swse-panel__overlay) missing from structure`,
+          isCritical
+        );
+      } else {
+        // Validate positioned element count if specified
+        const overlayAssertions = def.postRenderAssertions?.overlayElements;
+        if (overlayAssertions) {
+          for (const [selector, expectedCount] of Object.entries(overlayAssertions)) {
+            const actual = overlayLayer.querySelectorAll(selector).length;
+            this._validateCount(
+              actual,
+              expectedCount,
+              `${panelKey} overlay ${selector}`,
+              false // overlay elements non-critical
+            );
+          }
+        }
       }
     }
 
-    console.log('[PostRender] ✓ talentPanel assertions passed', { rows: renderedRows.length, expected: expectedCount });
+    // Check aspect ratio if specified (Phase 4.3)
+    if (def.structure?.aspectRatio) {
+      const computedStyle = window?.getComputedStyle?.(root);
+      const aspectRatio = computedStyle?.aspectRatio;
+      if (aspectRatio && aspectRatio !== 'auto') {
+        // Log for debugging but don't fail - aspect ratios are hints, not hard requirements
+        console.log(`[PostRender] ${panelKey} aspect ratio: ${aspectRatio}`);
+      }
+    }
   }
 
   /**
-   * Assert feat panel DOM matches contract
-   * - Root exists
-   * - Number of rows matches context entries
+   * Assert a single panel based on registry definition
    */
-  static assertFeatPanel(html, context) {
-    if (!CONFIG?.SWSE?.debug) return;
+  static _assertPanel(panelKey, html, context) {
+    const def = PANEL_REGISTRY[panelKey];
+    if (!def || !def.postRenderAssertions) {
+      return; // Panel has no assertions defined
+    }
 
-    const root = html?.querySelector?.('.feats-panel');
+    const { rootSelector, expectedElements = {}, optionalElements = {}, critical = false } = def.postRenderAssertions;
+
+    // Check root exists
+    const root = html?.querySelector?.(rootSelector);
     if (!root) {
-      console.warn('[PostRender] featPanel root not found');
+      this._reportViolation(`${panelKey} root (${rootSelector}) not found`, critical);
       return;
     }
 
-    const expectedCount = context.featPanel?.entries?.length ?? 0;
-    const renderedRows = root.querySelectorAll('.feat-row');
-
-    if (expectedCount > 0 && renderedRows.length !== expectedCount) {
-      console.warn(`[PostRender] featPanel expected ${expectedCount} rows, got ${renderedRows.length}`);
+    // Check expected elements
+    for (const [selector, expectedCount] of Object.entries(expectedElements)) {
+      const actual = root.querySelectorAll(selector).length;
+      this._validateCount(actual, expectedCount, `${panelKey} ${selector}`, critical);
     }
 
-    if (expectedCount === 0) {
-      const emptyState = root.querySelector('.empty-state');
-      if (!emptyState) {
-        console.warn('[PostRender] featPanel should show empty state when no entries');
-      }
+    // Check optional elements (warn only, never critical)
+    for (const [selector, expectedCount] of Object.entries(optionalElements)) {
+      const actual = root.querySelectorAll(selector).length;
+      this._validateCount(actual, expectedCount, `${panelKey} ${selector} (optional)`, false);
     }
 
-    console.log('[PostRender] ✓ featPanel assertions passed', { rows: renderedRows.length, expected: expectedCount });
+    // Phase 4.5: Validate SVG structure for SVG-backed panels
+    this._assertSVGStructure(panelKey, root, def);
+
+    console.log(`[PostRender] ✓ ${panelKey} passed`, {
+      root: rootSelector,
+      elements: Object.keys(expectedElements).length,
+      svgBacked: def.svgBacked ?? false
+    });
   }
 
   /**
-   * Assert maneuver panel DOM matches contract
-   * - Root exists
-   * - Number of rows matches context entries
-   */
-  static assertManeuverPanel(html, context) {
-    if (!CONFIG?.SWSE?.debug) return;
-
-    const root = html?.querySelector?.('.maneuvers-panel');
-    if (!root) {
-      console.warn('[PostRender] maneuverPanel root not found');
-      return;
-    }
-
-    const expectedCount = context.maneuverPanel?.entries?.length ?? 0;
-    const renderedRows = root.querySelectorAll('.maneuver-row');
-
-    if (expectedCount > 0 && renderedRows.length !== expectedCount) {
-      console.warn(`[PostRender] maneuverPanel expected ${expectedCount} rows, got ${renderedRows.length}`);
-    }
-
-    if (expectedCount === 0) {
-      const emptyState = root.querySelector('.empty-state');
-      if (!emptyState) {
-        console.warn('[PostRender] maneuverPanel should show empty state when no entries');
-      }
-    }
-
-    console.log('[PostRender] ✓ maneuverPanel assertions passed', { rows: renderedRows.length, expected: expectedCount });
-  }
-
-  /**
-   * Run all assertions after render
+   * Run all registry-driven assertions after render
    */
   static runAll(html, context) {
-    if (!CONFIG?.SWSE?.debug) return;
-
-    console.group('[PostRender] Panel DOM Assertions');
-    this.assertHealthPanel(html, context);
-    this.assertDefensesPanel(html, context);
-    this.assertBiographyPanel(html, context);
-    this.assertInventoryPanel(html, context);
-    this.assertTalentPanel(html, context);
-    this.assertFeatPanel(html, context);
-    this.assertManeuverPanel(html, context);
+    console.group('[PostRender] Registry-Driven Panel DOM Assertions');
+    try {
+      const panelKeys = Object.keys(PANEL_REGISTRY);
+      for (const panelKey of panelKeys) {
+        this._assertPanel(panelKey, html, context);
+      }
+      console.log('[PostRender] All assertions completed');
+    } catch (err) {
+      console.error('[PostRender] ASSERTION FAILED (strict mode):', err.message);
+      if (CONFIG?.SWSE?.strictMode) throw err;
+    }
     console.groupEnd();
   }
 }

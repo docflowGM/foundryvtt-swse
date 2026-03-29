@@ -110,7 +110,9 @@ import { Batch2ComprehensiveTest } from './tests/archived/batch-2-comprehensive-
 import { SWSEV2CharacterSheet } from './scripts/sheets/v2/character-sheet.js';
 import { SWSEMinimalTestSheet } from './scripts/sheets/v2/minimal-test-sheet.js';
 import { SWSEV2NpcSheet } from './scripts/sheets/v2/npc-sheet.js';
+import { NPCSheet } from './scripts/sheets/v2/npc/NPCSheet.js'; // Phase 7b: Panelized NPC sheet
 import { SWSEV2DroidSheet } from './scripts/sheets/v2/droid-sheet.js';
+import { DroidSheet } from './scripts/sheets/v2/droid/DroidSheet.js'; // Phase 7c: Panelized Droid sheet
 import { SWSEV2VehicleSheet } from './scripts/sheets/v2/vehicle-sheet.js';
 import { SWSEItemSheet } from './scripts/items/swse-item-sheet.js';
 
@@ -122,6 +124,7 @@ import { SWSEV2SheetDiagnostics } from './scripts/sheets/v2/sheet-diagnostics.js
 // ---- debug system ----
 import { SWSEDebugger } from './scripts/debug/swse-debugger.js';
 import { SentinelReports } from './scripts/debug/sentinel-reports.js';
+import { LayoutDebugManager } from './scripts/debug/layout-debug.js';
 
 // ---- handlebars ----
 import { registerHandlebarsHelpers } from './helpers/handlebars/index.js';
@@ -245,9 +248,21 @@ Hooks.once("setup", () => {
     makeDefault: true
   });
 
+  ActorCollection.registerSheet("foundryvtt-swse", NPCSheet, {
+    types: ["npc"],
+    makeDefault: false,
+    label: "SWSE V2 NPC Sheet (Panelized - Phase 7b)"
+  });
+
   ActorCollection.registerSheet("foundryvtt-swse", SWSEV2DroidSheet, {
     types: ["droid"],
     makeDefault: true
+  });
+
+  ActorCollection.registerSheet("foundryvtt-swse", DroidSheet, {
+    types: ["droid"],
+    makeDefault: false,
+    label: "SWSE V2 Droid Sheet (Panelized - Phase 7c)"
   });
 
   ActorCollection.registerSheet("foundryvtt-swse", SWSEV2VehicleSheet, {

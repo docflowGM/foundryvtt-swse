@@ -1,3 +1,8 @@
+{{!-- Racial Abilities Panel
+     Pure display — no logic, no mutations
+     Reads: racialAbilitiesPanel.* (from panel context)
+--}}
+
 <section class="abilities-section racial-section v3-panel holo-panel">
 
   <header class="section-bar">
@@ -5,9 +10,9 @@
     <div class="muted">Passive</div>
   </header>
 
-  {{#if derived.racialAbilities.length}}
+  {{#if racialAbilitiesPanel.hasEntries}}
     <div class="racial-list">
-      {{#each derived.racialAbilities as |ability|}}
+      {{#each racialAbilitiesPanel.entries as |ability|}}
         <div class="racial-card"
              data-item-id="{{ability.id}}"
              data-action="open-ability">

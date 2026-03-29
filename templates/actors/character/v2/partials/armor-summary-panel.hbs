@@ -29,13 +29,13 @@
       <button type="button" class="btn-small" data-action="tab" data-tab="gear" data-group="primary" data-tab-group="primary" title="Open Gear tab to manage armor">Manage →</button>
     </header>
 
-    {{#if equippedArmor}}
+    {{#if armorSummaryPanel.equippedArmor}}
       <div class="armor-summary">
       <!-- Armor Name & Type -->
       <div class="armor-name-block">
-        <div class="armor-name">{{equippedArmor.name}}</div>
-        {{#if equippedArmor.armorType}}
-          <div class="armor-type">{{equippedArmor.armorType}}</div>
+        <div class="armor-name">{{armorSummaryPanel.equippedArmor.name}}</div>
+        {{#if armorSummaryPanel.equippedArmor.armorType}}
+          <div class="armor-type">{{armorSummaryPanel.equippedArmor.armorType}}</div>
         {{/if}}
       </div>
 
@@ -43,51 +43,51 @@
       <div class="armor-defenses">
         <div class="defense-item">
           <span class="defense-label">Reflex</span>
-          <span class="defense-value {{#if equippedArmor.reflexBonus}}positive{{/if}}">
-            {{#if equippedArmor.reflexBonus}}+{{equippedArmor.reflexBonus}}{{else}}—{{/if}}
+          <span class="defense-value {{#if armorSummaryPanel.equippedArmor.reflexBonus}}positive{{/if}}">
+            {{#if armorSummaryPanel.equippedArmor.reflexBonus}}+{{armorSummaryPanel.equippedArmor.reflexBonus}}{{else}}—{{/if}}
           </span>
         </div>
         <div class="defense-item">
           <span class="defense-label">Fortitude</span>
-          <span class="defense-value {{#if equippedArmor.fortBonus}}positive{{/if}}">
-            {{#if equippedArmor.fortBonus}}+{{equippedArmor.fortBonus}}{{else}}—{{/if}}
+          <span class="defense-value {{#if armorSummaryPanel.equippedArmor.fortBonus}}positive{{/if}}">
+            {{#if armorSummaryPanel.equippedArmor.fortBonus}}+{{armorSummaryPanel.equippedArmor.fortBonus}}{{else}}—{{/if}}
           </span>
         </div>
       </div>
 
       <!-- Penalties & Modifiers -->
       <div class="armor-modifiers">
-        {{#if equippedArmor.maxDexBonus}}
+        {{#if armorSummaryPanel.equippedArmor.maxDexBonus}}
           <div class="modifier-item">
             <span class="mod-label">Max Dex Bonus</span>
-            <span class="mod-value">+{{equippedArmor.maxDexBonus}}</span>
+            <span class="mod-value">+{{armorSummaryPanel.equippedArmor.maxDexBonus}}</span>
           </div>
         {{/if}}
-        {{#if equippedArmor.armorCheckPenalty}}
+        {{#if armorSummaryPanel.equippedArmor.armorCheckPenalty}}
           <div class="modifier-item penalty">
             <span class="mod-label">Armor Check Penalty</span>
-            <span class="mod-value">{{equippedArmor.armorCheckPenalty}}</span>
+            <span class="mod-value">{{armorSummaryPanel.equippedArmor.armorCheckPenalty}}</span>
           </div>
         {{/if}}
-        {{#if equippedArmor.speedPenalty}}
+        {{#if armorSummaryPanel.equippedArmor.speedPenalty}}
           <div class="modifier-item penalty">
             <span class="mod-label">Speed Penalty</span>
-            <span class="mod-value">{{equippedArmor.speedPenalty}}</span>
+            <span class="mod-value">{{armorSummaryPanel.equippedArmor.speedPenalty}}</span>
           </div>
         {{/if}}
       </div>
 
       <!-- Weight & Properties -->
-      {{#if (or equippedArmor.weight equippedArmor.isPowered equippedArmor.upgradeSlots)}}
+      {{#if (or armorSummaryPanel.equippedArmor.weight armorSummaryPanel.equippedArmor.isPowered armorSummaryPanel.equippedArmor.upgradeSlots)}}
         <div class="armor-properties">
-          {{#if equippedArmor.weight}}
-            <span class="property">⚖ {{equippedArmor.weight}} lbs</span>
+          {{#if armorSummaryPanel.equippedArmor.weight}}
+            <span class="property">⚖ {{armorSummaryPanel.equippedArmor.weight}} lbs</span>
           {{/if}}
-          {{#if equippedArmor.isPowered}}
+          {{#if armorSummaryPanel.equippedArmor.isPowered}}
             <span class="property powered">⚡ Powered</span>
           {{/if}}
-          {{#if equippedArmor.upgradeSlots}}
-            <span class="property">🔧 {{equippedArmor.upgradeSlots}} slots</span>
+          {{#if armorSummaryPanel.equippedArmor.upgradeSlots}}
+            <span class="property">🔧 {{armorSummaryPanel.equippedArmor.upgradeSlots}} slots</span>
           {{/if}}
         </div>
       {{/if}}

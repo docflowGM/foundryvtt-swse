@@ -1,19 +1,19 @@
 <section class="force-techniques-panel holo-panel">
 
   <header class="section-bar">
-    <h3 class="section-header">Force Techniques ({{derived.forceTechniques.count}})</h3>
+    <h3 class="section-header">Force Techniques ({{forcePowersPanel.techniques.length}})</h3>
   </header>
 
-  {{#if derived.forceTechniques.list.length}}
+  {{#if forcePowersPanel.hasTechniques}}
     <div class="force-techniques-ledger">
-      {{#each derived.forceTechniques.list}}
+      {{#each forcePowersPanel.techniques}}
         <div class="technique-row svg-row-backed" data-item-id="{{this.id}}">
           <div class="technique-name">{{this.name}}</div>
-          {{#if this.prerequisite}}
-            <div class="technique-prereq muted">Requires: {{this.prerequisite}}</div>
+          {{#if this.system.prerequisite}}
+            <div class="technique-prereq muted">Requires: {{this.system.prerequisite}}</div>
           {{/if}}
-          {{#if this.summary}}
-            <div class="technique-summary muted">{{this.summary}}</div>
+          {{#if this.system.summary}}
+            <div class="technique-summary muted">{{this.system.summary}}</div>
           {{/if}}
         </div>
       {{/each}}

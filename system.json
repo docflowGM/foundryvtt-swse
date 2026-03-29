@@ -30,7 +30,10 @@
     "styles/swse-core.css",
     "styles/swse-holo.css",
     "styles/core/variables.css",
+    "styles/core/svg-geometry.css",
     "styles/sheets/v2-sheet.css",
+    "styles/sheets/v2-npc-specific.css",
+    "styles/sheets/v2-droid-specific.css",
     "styles/apps/chargen/chargen.css",
     "scripts/ui/dialogue/dialogue-effects.css",
     "scripts/ui/action-palette/action-palette.css",
@@ -72,6 +75,7 @@
     "styles/swse-holo-ui.css",
     "styles/ui/character-sheet-svg-panels.css",
     "styles/ui/character-sheet-overflow-contract.css",
+    "styles/debug/svg-layout-debug.css",
     "styles/ui/swse-holo-phase1.css",
     "styles/ui/swse-cursors.css",
     "styles/apps/chargen.css"

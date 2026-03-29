@@ -1,0 +1,37 @@
+{{!-- templates/v2/npc/npc-sheet-body.hbs --}}
+{{!-- NPC Sheet body - renders visible panels based on active tab --}}
+
+<div class="sheet-body">
+  {{#each tabPanels as |panelNames tabName|}}
+    <div class="tab{{#if (eq ../currentTab tabName)}} active{{/if}}" data-tab="{{tabName}}">
+      {{#each panelNames as |panelName|}}
+        {{!-- Dynamically include panels based on panel name --}}
+        {{#if (eq panelName "portraitPanel")}}
+          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/portrait-panel"}}
+        {{else if (eq panelName "npcBiographyPanel")}}
+          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/biography-panel"}}
+        {{else if (eq panelName "healthPanel")}}
+          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/health-panel"}}
+        {{else if (eq panelName "defensePanel")}}
+          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/defense-panel"}}
+        {{else if (eq panelName "abilitiesPanel")}}
+          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/abilities-panel"}}
+        {{else if (eq panelName "skillsPanel")}}
+          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/skills-panel"}}
+        {{else if (eq panelName "inventoryPanel")}}
+          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/inventory-panel"}}
+        {{else if (eq panelName "talentPanel")}}
+          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/talents-panel"}}
+        {{else if (eq panelName "featPanel")}}
+          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/feats-panel"}}
+        {{else if (eq panelName "languagesPanel")}}
+          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/languages-panel"}}
+        {{else if (eq panelName "combatPanel")}}
+          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/combat-panel"}}
+        {{else if (eq panelName "npcCombatNotesPanel")}}
+          {{> "systems/foundryvtt-swse/templates/v2/npc/panels/combat-notes-panel"}}
+        {{/if}}
+      {{/each}}
+    </div>
+  {{/each}}
+</div>
