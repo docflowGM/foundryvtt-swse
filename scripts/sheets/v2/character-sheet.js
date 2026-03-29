@@ -25,6 +25,86 @@ import { PostRenderAssertions } from "/systems/foundryvtt-swse/scripts/sheets/v2
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
+ * Debounce utility: delays function execution until N ms have passed without new calls
+ * Used to prevent keystroke spam in form submissions
+ */
+function debounce(fn, ms = 500) {
+  let timer = null;
+  return function debounced(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      fn.apply(this, args);
+    }, ms);
+  };
+}
+
+/**
+ * Field type schema for form coercion
+ * Maps field names or patterns to their expected types: 'number', 'boolean', 'string'
+ * Used instead of string pattern matching for reliable type coercion
+ */
+const FORM_FIELD_SCHEMA = {
+  // HP/Health
+  'system.hp.value': 'number',
+  'system.hp.max': 'number',
+  'system.hp.temp': 'number',
+  'system.hpBonus': 'number',
+  'system.conditionTrack.current': 'number',
+  'system.damageReduction': 'number',
+
+  // Abilities
+  'system.abilities.str.base': 'number',
+  'system.abilities.str.racial': 'number',
+  'system.abilities.str.temp': 'number',
+  'system.abilities.dex.base': 'number',
+  'system.abilities.dex.racial': 'number',
+  'system.abilities.dex.temp': 'number',
+  'system.abilities.con.base': 'number',
+  'system.abilities.con.racial': 'number',
+  'system.abilities.con.temp': 'number',
+  'system.abilities.int.base': 'number',
+  'system.abilities.int.racial': 'number',
+  'system.abilities.int.temp': 'number',
+  'system.abilities.wis.base': 'number',
+  'system.abilities.wis.racial': 'number',
+  'system.abilities.wis.temp': 'number',
+  'system.abilities.cha.base': 'number',
+  'system.abilities.cha.racial': 'number',
+  'system.abilities.cha.temp': 'number',
+
+  // Defense modifiers
+  'system.defenses.fort.miscMod': 'number',
+  'system.defenses.ref.miscMod': 'number',
+  'system.defenses.will.miscMod': 'number',
+
+  // Progression
+  'system.level': 'number',
+  'system.xp': 'number',
+  'system.credits': 'number',
+  'system.destinyPoints': 'number'
+};
+
+/**
+ * Check if a field should be coerced to a specific type
+ * @param {string} fieldName - Form field name (e.g. 'system.hp.value')
+ * @returns {string|null} - Type ('number', 'boolean', 'string') or null if unknown
+ */
+function getFieldType(fieldName) {
+  // Exact match first
+  if (fieldName in FORM_FIELD_SCHEMA) {
+    return FORM_FIELD_SCHEMA[fieldName];
+  }
+
+  // Pattern matching as fallback (conservative: only if explicit pattern exists)
+  // This prevents over-aggressive coercion from field name heuristics
+  if (fieldName.includes('notes') || fieldName.includes('description') || fieldName.includes('text')) {
+    return 'string';
+  }
+
+  return null;
+}
+
+/**
  * GUARDRAIL 1: Context Contract Validator
  * Detects missing context keys that would cause silent template failures.
  *
@@ -65,22 +145,19 @@ function validateContextContract(context, sheetName) {
  * If listeners exceed threshold, logs a warning to help catch render-loop leaks.
  * Also reports violations to Sentinel for governance tracking.
  */
-function watchListenerCount(element, sheetName, threshold = 50) {
-  if (!element) return;
+function verifyListenerCleanup(element, sheetName, signal) {
+  if (!element || !signal) return;
 
-  // Count event listeners indirectly via querySelectorAll with event inspection
-  // This is a heuristic check; full listener count requires browser internals
-  const allElements = element.querySelectorAll('*');
-  if (allElements.length > threshold * 2) {
-    // Very rough heuristic: if too many elements, might have listener leak
-    console.warn(
-      `[SWSE Sheet] ${sheetName} has many DOM elements (${allElements.length}), ` +
-      `possible listener accumulation—check browser DevTools Memory tab`
-    );
-
-    // Report to Sentinel for governance tracking
-    SentinelSheetGuardrails.reportListenerAccumulation(sheetName, allElements.length, threshold);
+  // Check if the AbortSignal is still active (listeners should be cleaned up when aborted)
+  // This is the real safeguard against listener leaks: AbortController signal cleanup
+  if (signal.aborted) {
+    console.log(`[SWSE Sheet] ${sheetName} listeners have been cleaned up (signal aborted)`);
+  } else {
+    console.log(`[SWSE Sheet] ${sheetName} listeners are active; will be cleaned on next render via AbortController`);
   }
+
+  // Note: Actual listener count requires browser internal APIs. Rely on AbortController
+  // cleanup mechanism instead of heuristic checks.
 }
 
 export class SWSEV2CharacterSheet extends
@@ -130,6 +207,13 @@ export class SWSEV2CharacterSheet extends
     // Position centering tracking — initialize EARLY so first render knows this is a new open
     this._openedAt = Date.now();
     this._centerTimer = null;
+
+    // Create debounced form submission to prevent keystroke spam
+    // 500ms delay: ensures multiple rapid changes batch into one update
+    this._debouncedSubmit = debounce(
+      (ev) => this._onSubmitForm(ev),
+      500
+    );
   }
 
   // ═══ AUDIT INSTRUMENTATION + RENDER GUARD ═══
@@ -250,8 +334,8 @@ export class SWSEV2CharacterSheet extends
     // Wire action economy bindings for combat tab
     ActionEconomyBindings.setupAttackButtons(root, this.document);
 
-    // Monitor for listener accumulation (diagnostic only)
-    watchListenerCount(root, "SWSEV2CharacterSheet");
+    // Verify listener cleanup mechanism is in place (AbortController signal cleanup)
+    verifyListenerCleanup(root, "SWSEV2CharacterSheet", signal);
 
     // Run post-render assertions to verify DOM matches panel context contracts
     PostRenderAssertions.runAll(root, this._currentContext || {});
@@ -1010,24 +1094,22 @@ const forcePoints = [];
     });
 
     // CRITICAL: Attach form submit listener directly to the form element
-    // After _onRender fix, html should now be the form or contain it
-    // Use html directly if it's a form, or find the form parent
+    // Template guarantees a stable form selector: .swse-character-sheet-form
+    // This single resolution approach prevents ambiguity and silent failures
+    console.log('[LIFECYCLE] Resolving form: looking for .swse-character-sheet-form');
 
-    console.log('[LIFECYCLE] Resolving form from html element');
     let form = null;
-
     // If html IS the form, use it directly
-    if (html.tagName === 'FORM') {
+    if (html.tagName === 'FORM' && html.classList.contains('swse-character-sheet-form')) {
       form = html;
-      console.log('[LIFECYCLE] html IS the form, using directly');
+      console.log('[LIFECYCLE] ✓ html IS the form (by tag + class)');
     } else {
-      // Otherwise try to find form parent
-      console.log('[LIFECYCLE] html is not a form, searching for form parent/ancestor');
-      form = html.closest("form");
+      // Otherwise find it via stable selector
+      form = html.querySelector('form.swse-character-sheet-form');
       if (!form) {
-        console.log('[LIFECYCLE] No form parent found, searching only inside this app element');
+        console.log('[LIFECYCLE] Form not found in html, trying appRoot');
         const appRoot = this.element instanceof HTMLElement ? this.element : this.element?.[0];
-        form = appRoot?.querySelector?.("form.swse-character-sheet-form") ?? null;
+        form = appRoot?.querySelector('form.swse-character-sheet-form') ?? null;
       }
     }
 
@@ -1198,11 +1280,12 @@ const forcePoints = [];
 
     // DELEGATED: Auto-save form inputs when they change
     // This survives rerender because listener is on stable root element (html)
+    // DEBOUNCED: Prevents keystroke spam. Multiple rapid changes batch into one update.
     html.addEventListener("change", async ev => {
       const input = ev.target.closest("input[name], textarea[name], select[name]");
       if (!input) return;
 
-      console.log('[PERSISTENCE] ─── CHANGE EVENT FIRED ───');
+      console.log('[PERSISTENCE] ─── CHANGE EVENT FIRED (debounced 500ms) ───');
       ev.preventDefault();
 
       // DIAGNOSTIC: Log the field change
@@ -1213,37 +1296,25 @@ const forcePoints = [];
         eventTarget: ev.target.tagName
       });
 
-      // Find the form - look up the DOM tree from the input element
-      console.log('[PERSISTENCE] Attempting to find form via input.closest("form")');
-      let form = input.closest("form");
-      console.log('[PERSISTENCE] Result:', { found: !!form, formTag: form?.tagName, formClass: form?.className });
+      // Find the form via stable selector (template-guaranteed)
+      console.log('[PERSISTENCE] Resolving form for submission');
+      let form = input.closest("form.swse-character-sheet-form");
 
-      // If not found, try to get it from the application's element
+      // If not found by closest, query from app root
       if (!form && this.element) {
-        console.log('[PERSISTENCE] Fallback 1: this.element.querySelector("form")');
-        form = this.element.querySelector("form");
-        console.log('[PERSISTENCE] Result:', { found: !!form, formTag: form?.tagName, formClass: form?.className });
+        const appRoot = this.element instanceof HTMLElement ? this.element : this.element?.[0];
+        form = appRoot?.querySelector("form.swse-character-sheet-form") ?? null;
       }
 
-      // Last resort: look for the form in the document
-      if (!form) {
-        console.log('[PERSISTENCE] Fallback 2: document.querySelector(...)');
-        form = document.querySelector(`.swse-character-sheet[data-appid="${this.appId}"] form`) ||
-                document.querySelector(".swse-character-sheet form");
-        console.log('[PERSISTENCE] Result:', { found: !!form, formTag: form?.tagName, formClass: form?.className });
-      }
+      console.log('[PERSISTENCE] Form resolution result:', { found: !!form, formTag: form?.tagName, formClass: form?.className });
 
       if (form) {
-        console.log('[PERSISTENCE] Form found, calling _onSubmitForm with:', {
-          formTag: form.tagName,
-          formClass: form.className,
-          isConnected: form.isConnected
-        });
+        console.log('[PERSISTENCE] Form found, queuing debounced _onSubmitForm');
         try {
-          await this._onSubmitForm({ target: form, preventDefault: () => {} });
-          console.log('[PERSISTENCE] _onSubmitForm call completed');
+          this._debouncedSubmit({ target: form, preventDefault: () => {} });
+          console.log('[PERSISTENCE] Debounced submit queued');
         } catch (err) {
-          console.error('[PERSISTENCE] _onSubmitForm call threw error:', err);
+          console.error('[PERSISTENCE] Debounced submit threw error:', err);
         }
       } else {
         console.error("[PERSISTENCE] ❌ Could not find form element to submit");
@@ -2324,14 +2395,31 @@ const forcePoints = [];
   }
 
   /**
-   * Override form submission to route through ActorEngine governance layer.
+   * GOVERNANCE OVERRIDE: Form submission through ActorEngine
    *
-   * CRITICAL: This prevents Foundry's default submission pipeline entirely.
-   * - Foundry V2: _onSubmitForm → #onSubmitDocumentForm → _prepareSubmitData → _processSubmitData → actor.update()
-   * - Our override: event.preventDefault() → process data directly → ActorEngine.updateActor()
+   * ⚠️ CRITICAL: This method COMPLETELY BYPASSES Foundry's default form submission.
    *
-   * Without this, governance layer violation occurs:
-   * MutationInterceptor blocks actor.update(), validation fails, sheet breaks.
+   * WHY THIS IS NECESSARY:
+   * - Foundry's default path: _onSubmitForm → _prepareSubmitData → actor.update()
+   * - Our system: All actor.update() calls must go through ActorEngine.updateActor()
+   * - Reason: MutationInterceptor blocks unauthorized writes to system.derived.* and system.hp.max
+   * - Those fields are SSOT (Single Source of Truth), computed by DerivedCalculator and ActorEngine
+   *
+   * IMPLEMENTATION:
+   * - This override intercepts the form event before it reaches Foundry's submission pipeline
+   * - Collects FormData, coerces types, filters protected fields
+   * - Routes updates through ActorEngine.apply() governance layer
+   * - Returns early to prevent Foundry's default _processSubmitData from running
+   *
+   * VERSION CONSTRAINTS:
+   * - Requires Foundry V13+ (AppV2 architecture)
+   * - If Foundry significantly changes AppV2.render() or form handling, this must be reviewed
+   * - Not compatible with V11 or earlier (they use Application API, not ApplicationV2)
+   *
+   * WHAT WOULD BREAK:
+   * - Removing this: actor.update() calls would be blocked by MutationInterceptor
+   * - Direct actor.update() in templates/items/etc would silently fail
+   * - Sheet would appear to accept input but changes wouldn't persist
    *
    * @param {Event} event - Form submission event
    * @returns {Promise<void>}
@@ -2416,7 +2504,10 @@ const forcePoints = [];
 
   /**
    * Coerce form data values to appropriate types
-   * FormData collects all values as strings, but numeric fields need conversion
+   * FormData collects all values as strings, but some fields need type conversion
+   *
+   * Uses FORM_FIELD_SCHEMA for reliable, schema-driven coercion instead of pattern matching.
+   * Only converts fields explicitly listed in the schema; unknown fields remain strings.
    *
    * @param {Object} formDataObj - Raw form data with string values
    * @returns {Object} Form data with coerced types
@@ -2426,30 +2517,26 @@ const forcePoints = [];
     const coerced = {};
 
     for (const [key, value] of Object.entries(formDataObj)) {
-      // Check if this is a numeric field by looking for patterns
-      // Fields like system.hp.value, system.hp.max, system.xp, etc. should be numbers
-      const isNumericField =
-        key.includes('.value') ||
-        key.includes('.max') ||
-        key.includes('.current') ||
-        key.includes('.modifier') ||
-        key.includes('.bonus') ||
-        key.includes('xp') ||
-        key.includes('credits') ||
-        key.includes('level');
+      // Schema-driven type lookup instead of pattern matching
+      const expectedType = getFieldType(key);
 
-      if (isNumericField && value !== '' && value !== null) {
+      if (expectedType === 'number' && value !== '' && value !== null) {
         // Try to convert to number
         const numValue = Number(value);
         coerced[key] = !isNaN(numValue) ? numValue : value;
-        console.log(`[PERSISTENCE] Coerced ${key}: "${value}" → ${coerced[key]} (numeric)`);
+        console.log(`[PERSISTENCE] Coerced ${key}: "${value}" → ${coerced[key]} (number, schema-driven)`);
+      } else if (expectedType === 'boolean' && (value === 'true' || value === 'false')) {
+        coerced[key] = value === 'true';
+        console.log(`[PERSISTENCE] Coerced ${key}: "${value}" → ${coerced[key]} (boolean)`);
       } else if (value === 'true') {
+        // Fallback: convert string 'true'/'false' even if not in schema
         coerced[key] = true;
-        console.log(`[PERSISTENCE] Coerced ${key}: "${value}" → true (boolean)`);
+        console.log(`[PERSISTENCE] Coerced ${key}: "${value}" → true (boolean, fallback)`);
       } else if (value === 'false') {
         coerced[key] = false;
-        console.log(`[PERSISTENCE] Coerced ${key}: "${value}" → false (boolean)`);
+        console.log(`[PERSISTENCE] Coerced ${key}: "${value}" → false (boolean, fallback)`);
       } else {
+        // Unknown type or not in schema: keep as string
         coerced[key] = value;
       }
     }

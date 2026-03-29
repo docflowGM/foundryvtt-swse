@@ -14,6 +14,7 @@
 
 import { PanelContextValidator } from './PanelContextValidator.js';
 import { RowTransformers } from './RowTransformers.js';
+import { validatePanelContract } from './PANEL_REGISTRY.js';
 
 export class PanelContextBuilder {
   constructor(actor, sheetInstance) {
@@ -127,6 +128,7 @@ export class PanelContextBuilder {
     // Validate contract in dev mode
     if (CONFIG?.SWSE?.debug) {
       PanelContextValidator.validateHealthPanel(panel);
+      validatePanelContract('healthPanel', panel);
     }
 
     return panel;
@@ -166,6 +168,7 @@ export class PanelContextBuilder {
 
     if (CONFIG?.SWSE?.debug) {
       PanelContextValidator.validateDefensePanel(panel);
+      validatePanelContract('defensePanel', panel);
     }
 
     return panel;
@@ -212,6 +215,7 @@ export class PanelContextBuilder {
 
     if (CONFIG?.SWSE?.debug) {
       PanelContextValidator.validateBiographyPanel(panel);
+      validatePanelContract('biographyPanel', panel);
     }
 
     return panel;
@@ -289,6 +293,7 @@ export class PanelContextBuilder {
 
     if (CONFIG?.SWSE?.debug) {
       PanelContextValidator.validateInventoryPanel(panel);
+      validatePanelContract('inventoryPanel', panel);
     }
 
     return panel;
@@ -330,6 +335,7 @@ export class PanelContextBuilder {
 
     if (CONFIG?.SWSE?.debug) {
       PanelContextValidator.validateTalentPanel(panel);
+      validatePanelContract('talentPanel', panel);
     }
 
     return panel;
@@ -355,6 +361,7 @@ export class PanelContextBuilder {
 
     if (CONFIG?.SWSE?.debug) {
       PanelContextValidator.validateFeatPanel(panel);
+      validatePanelContract('featPanel', panel);
     }
 
     return panel;
@@ -380,6 +387,7 @@ export class PanelContextBuilder {
 
     if (CONFIG?.SWSE?.debug) {
       PanelContextValidator.validateManeuverPanel(panel);
+      validatePanelContract('maneuverPanel', panel);
     }
 
     return panel;
