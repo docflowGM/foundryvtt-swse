@@ -147,7 +147,6 @@ export class SentinelSovereigntyEnforcement {
 
     const enforcementMachinery = {
       MutationInterceptor: 'scripts/governance/mutation/MutationInterceptor.js',
-      EmbeddedMutationLayer: 'scripts/governance/mutation/embedded-mutation-layer.js',
       PrerequisiteIntegrityChecker: 'scripts/governance/integrity/prerequisite-integrity-checker.js'
     };
 
