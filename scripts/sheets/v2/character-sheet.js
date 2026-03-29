@@ -21,8 +21,10 @@ import { computeCenteredPosition } from "/systems/foundryvtt-swse/scripts/utils/
 import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
 import { PANEL_REGISTRY } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PANEL_REGISTRY.js";
 import { PostRenderAssertions } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PostRenderAssertions.js";
-import { UIStateManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/UIStateManager.js";
-import { PanelDiagnostics } from "/systems/foundryvtt-swse/scripts/sheets/v2/PanelDiagnostics.js";
+// Phase 7: Shared platform layer imports (reusable across all V2 sheets)
+import { UIStateManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/UIStateManager.js";
+import { PanelDiagnostics } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/PanelDiagnostics.js";
+// Character-specific visibility manager (subclass of shared base)
 import { PanelVisibilityManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/PanelVisibilityManager.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
