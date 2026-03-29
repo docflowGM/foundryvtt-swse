@@ -10,6 +10,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class SWSEVehicleCore {
 
@@ -19,6 +20,12 @@ export class SWSEVehicleCore {
 
   /**
    * Assign a crew member to a vehicle slot.
+   *
+   * ⚠️ GOVERNANCE: Routes through ActorEngine to ensure:
+   * - MutationInterceptor authorization checking
+   * - Proper vehicle recomputation when crew changes
+   * - Integrity validation after crew assignment
+   *
    * @param {Actor} vehicle
    * @param {string} slot
    * @param {Actor} crewActor
@@ -39,7 +46,8 @@ export class SWSEVehicleCore {
     const path = `system.crewPositions.${slot}`;
 
     try {
-      await vehicle.update({
+      // PHASE 5: Route through ActorEngine for governance
+      await ActorEngine.updateActor(vehicle, {
         [path]: {
           name: crewActor.name,
           uuid: crewActor.uuid
@@ -57,6 +65,11 @@ export class SWSEVehicleCore {
 
   /**
    * Remove crew from a vehicle position.
+   *
+   * ⚠️ GOVERNANCE: Routes through ActorEngine to ensure:
+   * - MutationInterceptor authorization checking
+   * - Proper vehicle recomputation when crew changes
+   * - Integrity validation after crew removal
    */
   static async removeCrew(vehicle, slot) {
     const VALID_POSITIONS = ['pilot', 'copilot', 'gunner', 'engineer', 'shields', 'commander'];
@@ -77,7 +90,8 @@ export class SWSEVehicleCore {
     const name = crew?.name ?? 'Unknown Crew';
 
     try {
-      await vehicle.update({
+      // PHASE 5: Route through ActorEngine for governance
+      await ActorEngine.updateActor(vehicle, {
         [`system.crewPositions.${slot}`]: null
       });
 

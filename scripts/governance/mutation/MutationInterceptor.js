@@ -34,6 +34,7 @@
  */
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import GovernanceDiagnostics from "/systems/foundryvtt-swse/scripts/governance/sentinel/governance-diagnostics.js";
 
 /**
  * PHASE 1 ENFORCEMENT LEVEL
@@ -130,6 +131,16 @@ export class MutationInterceptor {
 
     // Wrap Item.prototype.update() for embedded changes
     MutationInterceptor._wrapItemUpdate();
+
+    // PHASE 5: Initialize Sentinel governance diagnostics
+    if (DEV_MODE && defaultLevel === 'strict') {
+      const guardrails = GovernanceDiagnostics.verifyGuardrails();
+      if (guardrails.allActive) {
+        console.log(`[MutationInterceptor] ✅ All governance guardrails verified and active`);
+      } else {
+        console.warn(`[MutationInterceptor] ⚠️  Some governance guardrails not active:`, guardrails);
+      }
+    }
 
     console.log(`[MutationInterceptor] Mutation enforcement initialized (${defaultLevel.toUpperCase()} mode). All mutations are now governed.`);
   }
