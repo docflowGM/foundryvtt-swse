@@ -1,0 +1,133 @@
+/* ============================================================================
+   SWSE SVG Panel Geometry — Phase 4.3 Implementation
+   Explicit CSS custom properties for safe areas, margins, dimensions, and ratios
+
+   This file defines the layout contract for SVG-backed panels. All dimensions,
+   safe areas, and positioning are defined as CSS variables to ensure consistency
+   and prevent layout regressions.
+
+   DESIGN PRINCIPLE: Frame layer contains SVG art at aspect ratio. Content layer
+   uses padding for safe area. Overlay layer positions interactive elements using
+   percentages relative to frame.
+   ============================================================================ */
+
+:root {
+  /* ─────────────────────────────────────────────────────────────────────────
+     PANEL GEOMETRY — Safe Areas
+     Each panel declares: --panel-name-safe-padding, --panel-name-min-height
+     These prevent content from overlapping SVG artwork.
+     ───────────────────────────────────────────────────────────────────────── */
+
+  /* Character Record Header (Identity panel) */
+  --panel-identity-frame-aspect: 1 / auto;
+  --panel-identity-frame-svg: url('../../assets/ui/character-record-header-plate.svg');
+  --panel-identity-min-height: 200px;
+  --panel-identity-content-padding: 20px 16px;
+  --panel-identity-content-gap: 12px;
+
+  /* HP & Condition Panel */
+  --panel-health-min-height: 220px;
+  --panel-health-frame-svg: url('../../assets/ui/character-record-header-plate.svg');
+  --panel-health-content-padding: 20px 16px;
+  --panel-health-content-gap: 12px;
+
+  /* Condition Track (Nested) — Positioned Overlay Track */
+  --panel-condition-track-aspect: 720 / 112;
+  --panel-condition-track-frame-svg: url('../../assets/ui/condition-track-box-strip.svg');
+  --panel-condition-track-min-height: 95px;
+  --panel-condition-track-max-height: 120px;
+  /* Condition slot socket positions (percentages relative to 720px width) */
+  --slot-0-x: 7.22%;
+  --slot-0-y: 50%;
+  --slot-1-x: 22.5%;
+  --slot-1-y: 50%;
+  --slot-2-x: 37.78%;
+  --slot-2-y: 50%;
+  --slot-3-x: 53.06%;
+  --slot-3-y: 50%;
+  --slot-4-x: 68.33%;
+  --slot-4-y: 50%;
+  --slot-5-x: 83.61%;
+  --slot-5-y: 50%;
+  /* Condition slot button dimensions */
+  --condition-slot-size: 28px;
+  --condition-slot-border-radius: 2px;
+
+  /* Dark Side Points Panel */
+  --panel-dark-side-content-gap: 12px;
+
+  /* Dark Side Track (Nested) — Grid-based Track */
+  --panel-dsp-track-aspect: 752 / 80;
+  --panel-dsp-track-frame-svg: url('../../assets/ui/dark-side-box-track.svg');
+  --panel-dsp-track-min-height: 105px;
+  --panel-dsp-track-max-height: 120px;
+  --panel-dsp-track-grid-cols: repeat(auto-fit, minmax(32px, 1fr));
+  --panel-dsp-track-gap: 3px;
+  --panel-dsp-track-padding: 10px 8px;
+  /* DSP track box dimensions */
+  --dsp-box-min-width: 32px;
+  --dsp-box-height: 32px;
+  --dsp-box-border-radius: 2px;
+
+  /* Defenses Panel */
+  --panel-defenses-frame-svg: url('../../assets/ui/core/panels/armor-panel.svg');
+  --panel-defenses-content-padding: 16px 14px;
+  --panel-defenses-content-gap: 8px;
+
+  /* Armor Summary Panel */
+  --panel-armor-frame-svg: url('../../assets/ui/core/panels/armor-panel.svg');
+  --panel-armor-content-padding: 16px 14px;
+  --panel-armor-content-gap: 8px;
+
+  /* Relationships Panel */
+  --panel-relationships-min-height: 260px;
+  --panel-relationships-frame-svg: url('../../assets/ui/relationships-notebook-panel.svg');
+  --panel-relationships-content-padding: 20px 16px;
+  --panel-relationships-content-gap: 12px;
+  --panel-relationships-list-gap: 12px;
+
+  /* Special Combat Actions Panel */
+  --panel-combat-actions-frame-svg: url('../../assets/ui/special-combat-notes-panel.svg');
+  --panel-combat-actions-content-padding: 20px 16px;
+  --panel-combat-actions-content-gap: 12px;
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     LEDGER ROW GEOMETRY — Repeated row systems with SVG backgrounds
+     ───────────────────────────────────────────────────────────────────────── */
+
+  /* Attack Ledger Row */
+  --row-attack-frame-svg: url('../../assets/ui/attack-ledger-row.svg');
+  --row-attack-padding: 10px 12px;
+  --row-attack-min-height: 100px;
+  --row-attack-gap: 0;
+
+  /* Equipment Ledger Row */
+  --row-equipment-frame-svg: url('../../assets/ui/equipment-ledger-row.svg');
+  --row-equipment-grid-cols: 2fr 1fr 0.5fr 0.75fr 0.75fr;
+  --row-equipment-gap: 8px;
+  --row-equipment-padding: 8px 8px;
+  --row-equipment-min-height: 85px;
+
+  /* Talent Row */
+  --row-talent-frame-svg: url('../../assets/ui/compact-ledger-row.svg');
+  --row-talent-grid-cols: 1fr auto;
+  --row-talent-gap: 12px;
+  --row-talent-padding: 6px 8px;
+  --row-talent-min-height: 70px;
+
+  /* Force Power Row */
+  --row-power-frame-svg: url('../../assets/ui/compact-ledger-row.svg');
+  --row-power-grid-cols: 1fr auto;
+  --row-power-gap: 12px;
+  --row-power-padding: 6px 8px;
+  --row-power-min-height: 70px;
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     CONTAINER GAPS — Standard spacing between rows and items
+     ───────────────────────────────────────────────────────────────────────── */
+
+  --ledger-attack-gap: 6px;
+  --ledger-equipment-gap: 4px;
+  --ledger-talent-gap: 3px;
+  --ledger-power-gap: 3px;
+}
