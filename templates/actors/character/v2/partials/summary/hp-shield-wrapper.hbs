@@ -1,14 +1,14 @@
 {{!-- HP + Shield Rating Visual Wrapper
      SR creates a glowing ring around HP
      Pure display — no logic, no mutations
-     Reads: system.hp.value/max, system.derived.shield.current/max
+     Reads: healthPanel.hp.value/max, healthPanel.shield.current/max
 --}}
 
-<div class="hp-shield-wrapper {{#if (eq actor.system.derived.shield.current 0)}}sr-empty{{/if}}"
-     style="--sr-percent: {{percentage actor.system.derived.shield.current actor.system.derived.shield.max}}%;">
+<div class="hp-shield-wrapper {{#if (eq healthPanel.shield.current 0)}}sr-empty{{/if}}"
+     style="--sr-percent: {{percentage healthPanel.shield.current healthPanel.shield.max}}%;">
 
   {{!-- SR Ring Overlay --}}
-  {{#if actor.system.derived.shield.max}}
+  {{#if healthPanel.shield.max}}
     <div class="sr-ring"></div>
   {{/if}}
 
@@ -16,11 +16,11 @@
   <div class="hp-container">
     <div class="hp-bar">
       <div class="hp-fill"
-           style="width: {{percentage actor.system.hp.value actor.system.hp.max}}%;"></div>
+           style="width: {{percentage healthPanel.hp.value healthPanel.hp.max}}%;"></div>
     </div>
 
     <div class="hp-values">
-      {{actor.system.hp.value}} / {{actor.system.hp.max}}
+      {{healthPanel.hp.value}} / {{healthPanel.hp.max}}
     </div>
   </div>
 </div>

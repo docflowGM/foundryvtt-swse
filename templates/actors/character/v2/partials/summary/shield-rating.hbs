@@ -1,29 +1,29 @@
 {{!-- Shield Rating Display Partial
      Pure display — no logic, no mutations
-     Reads: system.derived.shield.* (engine-computed)
+     Reads: healthPanel.shield.* (from panel context)
 --}}
 
-<section class="summary-block sr-block {{#unless system.derived.shield.active}}inactive{{/unless}}">
+<section class="summary-block sr-block {{#unless healthPanel.shield.active}}inactive{{/unless}}">
   <header class="summary-header">
     <span class="header-label">Shield Rating</span>
   </header>
 
-  {{#if system.derived.shield.max}}
+  {{#if healthPanel.shield.max}}
     <div class="sr-content">
       <div class="sr-bar">
         <div class="sr-fill"
-             style="width: {{percentage system.derived.shield.current system.derived.shield.max}}%;"></div>
+             style="width: {{percentage healthPanel.shield.current healthPanel.shield.max}}%;"></div>
       </div>
 
       <div class="sr-values">
-        <span class="sr-current">SR {{system.derived.shield.current}}</span>
+        <span class="sr-current">SR {{healthPanel.shield.current}}</span>
         <span class="sr-separator">/</span>
-        <span class="sr-max">{{system.derived.shield.max}}</span>
+        <span class="sr-max">{{healthPanel.shield.max}}</span>
       </div>
 
-      {{#if system.derived.shield.source}}
+      {{#if healthPanel.shield.source}}
         <div class="sr-source">
-          {{system.derived.shield.source}}
+          {{healthPanel.shield.source}}
         </div>
       {{/if}}
     </div>

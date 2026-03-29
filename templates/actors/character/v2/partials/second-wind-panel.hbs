@@ -10,15 +10,15 @@
     <div class="sw-healing-display">
       <span class="sw-healing-label">Healing</span>
       <span class="sw-healing-value">
-        {{system.secondWind.healing}} HP
+        {{secondWindPanel.healing}} HP
       </span>
     </div>
 
     <!-- Uses Tracker -->
     <div class="sw-uses-tracker">
-      {{#each (range 0 system.secondWind.max) as |i|}}
+      {{#each (range 0 secondWindPanel.max) as |i|}}
         <div class="sw-charge
-          {{#if (lt i ../system.secondWind.uses)}}active{{/if}}">
+          {{#if (lt i ../secondWindPanel.uses)}}active{{/if}}">
         </div>
       {{/each}}
     </div>
@@ -26,11 +26,12 @@
     <!-- Primary Action -->
     <div class="sw-actions">
 
-      {{#if (gt system.secondWind.uses 0)}}
+      {{#if secondWindPanel.hasUses}}
         <button type="button"
                 class="sw-recover-btn"
-                data-action="use-second-wind">
-          Regain {{system.secondWind.healing}} HP
+                data-action="use-second-wind"
+                {{#unless secondWindPanel.canEdit}}disabled{{/unless}}>
+          Regain {{secondWindPanel.healing}} HP
         </button>
       {{else}}
         <button type="button"

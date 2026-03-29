@@ -131,6 +131,88 @@ export const PANEL_REGISTRY = {
         '.maneuver-row': '0..99'  // 0 or more rows
       }
     }
+  },
+
+  secondWindPanel: {
+    name: 'Second Wind',
+    template: 'systems/foundryvtt-swse/templates/actors/character/v2/partials/second-wind-panel.hbs',
+    builder: 'buildSecondWindPanel',
+    requiredKeys: [
+      'healing',
+      'uses',
+      'max',
+      'hasUses',
+      'canEdit'
+    ],
+    postRenderAssertions: {
+      rootSelector: '.swse-second-wind-panel',
+      expectedElements: {
+        '.sw-healing-display': 1,
+        '.sw-uses-tracker': 1,
+        '.sw-recover-btn': 1
+      }
+    }
+  },
+
+  portraitPanel: {
+    name: 'Portrait',
+    template: 'systems/foundryvtt-swse/templates/actors/character/v2/partials/portrait-panel.hbs',
+    builder: 'buildPortraitPanel',
+    requiredKeys: [
+      'img',
+      'name',
+      'canEdit'
+    ],
+    postRenderAssertions: {
+      rootSelector: '.portrait-panel',
+      expectedElements: {
+        '.portrait-image': 1
+      }
+    }
+  },
+
+  darkSidePanel: {
+    name: 'Dark Side Points',
+    template: 'systems/foundryvtt-swse/templates/actors/character/v2/partials/dark-side-panel.hbs',
+    builder: 'buildDarkSidePanel',
+    requiredKeys: [
+      'value',
+      'max',
+      'segments',
+      'canEdit'
+    ],
+    postRenderAssertions: {
+      rootSelector: '.swse-panel--dark-side',
+      expectedElements: {
+        '.dsp-numbered-track': 1,
+        '.dsp-track-box': '1..20'  // 1 to max possible (20)
+      }
+    }
+  },
+
+  forcePowersPanel: {
+    name: 'Force Powers & Techniques',
+    template: 'systems/foundryvtt-swse/templates/actors/character/v2/partials/force-powers-known-panel.hbs',
+    builder: 'buildForcePowersPanel',
+    requiredKeys: [
+      'hand',
+      'discard',
+      'secrets',
+      'techniques',
+      'hasHand',
+      'hasDiscard',
+      'hasSecrets',
+      'hasTechniques',
+      'canEdit'
+    ],
+    postRenderAssertions: {
+      rootSelector: '.force-powers-known-panel',
+      optionalElements: {
+        '.power-row': '0..99',
+        '.secret-row': '0..99',
+        '.technique-row': '0..99'
+      }
+    }
   }
 };
 

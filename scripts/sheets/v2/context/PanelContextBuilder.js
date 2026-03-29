@@ -394,6 +394,143 @@ export class PanelContextBuilder {
   }
 
   /**
+   * Build the second wind panel context
+   *
+   * Contract: secondWindPanel
+   * - healing: number (HP recovered per use)
+   * - uses: number (current uses remaining)
+   * - max: number (maximum uses per rest)
+   * - hasUses: boolean (uses > 0)
+   * - canEdit: boolean
+   */
+  buildSecondWindPanel() {
+    const healing = Number(this.system.secondWind?.healing) || 0;
+    const uses = Number(this.system.secondWind?.uses) || 0;
+    const max = Number(this.system.secondWind?.max) || 1;
+
+    const panel = {
+      healing,
+      uses,
+      max,
+      hasUses: uses > 0,
+      canEdit: this.sheet.isEditable
+    };
+
+    if (CONFIG?.SWSE?.debug) {
+      validatePanelContract('secondWindPanel', panel);
+    }
+
+    return panel;
+  }
+
+  /**
+   * Build the portrait panel context
+   *
+   * Contract: portraitPanel
+   * - img: string (image URL)
+   * - name: string (character name)
+   * - canEdit: boolean
+   */
+  buildPortraitPanel() {
+    const panel = {
+      img: this.actor.img || '',
+      name: this.actor.name || 'Unnamed',
+      canEdit: this.sheet.isEditable
+    };
+
+    if (CONFIG?.SWSE?.debug) {
+      validatePanelContract('portraitPanel', panel);
+    }
+
+    return panel;
+  }
+
+  /**
+   * Build the dark side points panel context
+   *
+   * Contract: darkSidePanel
+   * - value: number (current dark side points)
+   * - max: number (maximum possible)
+   * - segments: [ { index, filled, color } ]
+   * - canEdit: boolean
+   */
+  buildDarkSidePanel() {
+    const dspValue = Number(this.system.darkSide?.value) || 0;
+    const dspMax = Number(this.system.darkSide?.max) || 20;
+
+    // Build segment array (each index is a clickable point)
+    const segments = [];
+    for (let i = 1; i <= dspMax; i++) {
+      segments.push({
+        index: i,
+        filled: i <= dspValue,
+        color: i <= dspValue ? '#E74C3C' : '#4A90E2'
+      });
+    }
+
+    const panel = {
+      value: dspValue,
+      max: dspMax,
+      segments,
+      canEdit: this.sheet.isEditable
+    };
+
+    if (CONFIG?.SWSE?.debug) {
+      validatePanelContract('darkSidePanel', panel);
+    }
+
+    return panel;
+  }
+
+  /**
+   * Build the force powers panel context
+   *
+   * Contract: forcePowersPanel
+   * - hand: Array of available powers
+   * - discard: Array of discarded powers
+   * - secrets: Array of force secrets
+   * - techniques: Array of force techniques
+   * - hasHand: boolean
+   * - hasDiscard: boolean
+   * - hasSecrets: boolean
+   * - hasTechniques: boolean
+   * - canEdit: boolean
+   *
+   * NOTE: This panel is a lightweight wrapper around the existing forceSuite data.
+   * The actual force item objects come directly from the actor's items collection.
+   */
+  buildForcePowersPanel() {
+    // Extract force powers from actor items
+    const forcePowers = (this.actor?.items ?? []).filter(i => i.type === 'force-power');
+
+    // Organize into hand/discard based on system.discarded flag
+    const hand = forcePowers.filter(p => !p.system?.discarded);
+    const discard = forcePowers.filter(p => p.system?.discarded);
+
+    // Extract secrets and techniques from derived (pre-computed by actor engine)
+    const secrets = this.derived.forceSecrets?.list ?? [];
+    const techniques = this.derived.forceTechniques?.list ?? [];
+
+    const panel = {
+      hand,
+      discard,
+      secrets,
+      techniques,
+      hasHand: hand.length > 0,
+      hasDiscard: discard.length > 0,
+      hasSecrets: secrets.length > 0,
+      hasTechniques: techniques.length > 0,
+      canEdit: this.sheet.isEditable
+    };
+
+    if (CONFIG?.SWSE?.debug) {
+      validatePanelContract('forcePowersPanel', panel);
+    }
+
+    return panel;
+  }
+
+  /**
    * Assemble all panel contexts into final context object
    *
    * Returns an object keyed by panel name, where each panel is a dedicated
@@ -407,7 +544,11 @@ export class PanelContextBuilder {
       inventoryPanel: this.buildInventoryPanel(),
       talentPanel: this.buildTalentPanel(),
       featPanel: this.buildFeatPanel(),
-      maneuverPanel: this.buildManeuverPanel()
+      maneuverPanel: this.buildManeuverPanel(),
+      secondWindPanel: this.buildSecondWindPanel(),
+      portraitPanel: this.buildPortraitPanel(),
+      darkSidePanel: this.buildDarkSidePanel(),
+      forcePowersPanel: this.buildForcePowersPanel()
     };
   }
 }

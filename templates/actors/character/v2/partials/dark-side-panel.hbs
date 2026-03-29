@@ -1,7 +1,7 @@
 <section class="swse-panel swse-panel--dark-side holo-panel swse-ui-panel swse-phase2-core-panel swse-dark-side-panel">
   <header class="section-bar">
     <h3 class="section-header">Dark Side Score</h3>
-    <span class="dsp-value-display">{{system.darkSide.value}} / {{darkSideMax}}</span>
+    <span class="dsp-value-display">{{darkSidePanel.value}} / {{darkSidePanel.max}}</span>
   </header>
 
   <div class="swse-v2-dark-side">
@@ -12,7 +12,7 @@
       <div class="swse-panel__frame" aria-hidden="true"></div>
       <!-- Overlay layer: absolutely-positioned track boxes -->
       <div class="swse-panel__overlay">
-        {{#each darkSideSegments as |segment|}}
+        {{#each darkSidePanel.segments as |segment|}}
           <button type="button"
                   class="dsp-track-box {{#if segment.filled}}filled{{/if}}"
                   data-action="set-dark-side-score"

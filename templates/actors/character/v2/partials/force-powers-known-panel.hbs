@@ -20,18 +20,18 @@
     <button type="button" class="btn-small" data-action="tab" data-tab="force" data-group="primary" data-tab-group="primary" title="Open Force tab to manage powers">Manage →</button>
   </header>
 
-  {{#if (or (gt forceSuite.hand.length 0) (gt forceSuite.discard.length 0))}}
+  {{#if (or forcePowersPanel.hasHand forcePowersPanel.hasDiscard)}}
     <div class="force-powers-ledger">
 
-      {{#if forceSuite.hand.length}}
+      {{#if forcePowersPanel.hasHand}}
       <div class="powers-group">
-        <div class="group-header">Available ({{forceSuite.hand.length}})</div>
-        {{#each forceSuite.hand}}
+        <div class="group-header">Available ({{forcePowersPanel.hand.length}})</div>
+        {{#each forcePowersPanel.hand}}
           <div class="power-row svg-row-backed" data-item-id="{{this.id}}">
             <div class="power-name">{{this.name}}</div>
-            {{#if this.tags}}
+            {{#if this.system.tags}}
               <div class="power-tags">
-                {{#each this.tags}}<span class="tag">{{this}}</span>{{/each}}
+                {{#each this.system.tags}}<span class="tag">{{this}}</span>{{/each}}
               </div>
             {{/if}}
           </div>
@@ -39,15 +39,15 @@
       </div>
       {{/if}}
 
-      {{#if forceSuite.discard.length}}
+      {{#if forcePowersPanel.hasDiscard}}
       <div class="powers-group">
-        <div class="group-header">Discarded ({{forceSuite.discard.length}})</div>
-        {{#each forceSuite.discard}}
+        <div class="group-header">Discarded ({{forcePowersPanel.discard.length}})</div>
+        {{#each forcePowersPanel.discard}}
           <div class="power-row discarded svg-row-backed" data-item-id="{{this.id}}">
             <div class="power-name">{{this.name}}</div>
-            {{#if this.tags}}
+            {{#if this.system.tags}}
               <div class="power-tags">
-                {{#each this.tags}}<span class="tag">{{this}}</span>{{/each}}
+                {{#each this.system.tags}}<span class="tag">{{this}}</span>{{/each}}
               </div>
             {{/if}}
           </div>
