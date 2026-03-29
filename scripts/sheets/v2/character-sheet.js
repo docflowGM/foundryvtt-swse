@@ -921,58 +921,21 @@ const forcePoints = [];
         feat: true,
         maneuver: true
       },
-      // Legacy flat context (kept for backward compatibility, but new code uses panels above)
-      biography,
-      derived,
-      inventory,
-      hp,
-      bonusHp,
-      conditionSteps,
-      initiativeTotal,
-      speed,
-      perceptionTotal,
-      bab,
-      grappleBonus,
-      forcePointsValue: fpValue,
-      forcePointsMax: fpMax,
-      destinyPointsValue,
-      destinyPointsMax,
-      combat,
-      forcePoints,
-      forceTags,
-      forceSuite,
-      lowHand: forceSuite.hand.length > 5,
-      darkSideMax: dspMax,
-      darkSideSegments: dspSegments,
-      abilities,
-      headerDefenses,
-      forceSensitive,
-      identityGlowColor,
-      classDisplay,
+      // ═════════════════════════════════════════════════════════════════
+      // PHASE 5: Removed legacy flat context
+      // All data is now provided through panelized contexts above.
+      // The following are essential state/permission flags with no panel equivalent:
+      // ═════════════════════════════════════════════════════════════════
+      isGM,
+      isLevel0,
       buildMode,
       actionEconomy,
-      xpEnabled,
-      xpPercent,
       xpLevelReady,
-      xpData,
-      isLevel0,
-      isGM,
-      fpAvailable,
-      totalWeight,
-      encumbranceStateCss,
-      encumbranceLabel,
-      inventorySearch,
-      allEquipment,
-      totalEquipmentWeight,
-      equippedArmor,
-      combatNotesText,
-      totalTalentCount,
-      relationships,
-      followerSlots: enrichedFollowerSlots,
-      followerTalentBadges,
-      hasAvailableFollowerSlots,
-      ownedActorMap,
-      // Unified panel contexts
+      derived,  // Complex computed stats (defenses, damage, etc.)
+      // ═════════════════════════════════════════════════════════════════
+      // UNIFIED PANEL CONTEXTS (Primary data source)
+      // Panels now own all character data through dedicated view models
+      // ═════════════════════════════════════════════════════════════════
       ...panelContexts
     };
 
