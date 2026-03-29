@@ -1,0 +1,17 @@
+{{!-- Talents Panel --}}
+<section class="swse-panel swse-panel--talents talent-panel">
+  <div class="swse-panel__content">
+    {{#if talentPanel.hasEntries}}
+      <div class="ledger-entries">
+        {{#each talentPanel.entries as |entry|}}
+          <div class="ledger-row" data-row-id="{{entry.id}}">
+            <div class="entry-name">{{entry.name}}</div>
+            {{#if entry.source}}<div class="entry-source">{{entry.source}}</div>{{/if}}
+          </div>
+        {{/each}}
+      </div>
+    {{else}}
+      <p class="empty-state">{{talentPanel.emptyMessage}}</p>
+    {{/if}}
+  </div>
+</section>

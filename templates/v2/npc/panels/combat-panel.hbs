@@ -1,0 +1,21 @@
+{{!-- Combat Panel --}}
+<section class="swse-panel swse-panel--combat combat-panel">
+  <div class="swse-panel__content">
+    <div class="combat-grid">
+      <div class="combat-stat">
+        <label>Initiative</label>
+        <span class="value">{{#if (gte combatPanel.initiative 0)}}+{{/if}}{{combatPanel.initiative}}</span>
+      </div>
+      <div class="combat-stat">
+        <label>AC</label>
+        <span class="value">{{combatPanel.armorClass}}</span>
+      </div>
+      {{#if combatPanel.baseAttack}}
+        <div class="combat-stat">
+          <label>Base Attack</label>
+          <span class="value">{{#if (gte combatPanel.baseAttack 0)}}+{{/if}}{{combatPanel.baseAttack}}</span>
+        </div>
+      {{/if}}
+    </div>
+  </div>
+</section>

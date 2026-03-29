@@ -1,0 +1,23 @@
+{{!-- templates/v2/npc/panels/abilities-panel.hbs --}}
+{{!-- NPC Abilities Panel - Shows ability scores --}}
+
+<section class="swse-panel swse-panel--abilities abilities-panel">
+  <div class="swse-panel__content">
+    <div class="abilities-grid">
+      {{#each (array "strength" "dexterity" "constitution" "intelligence" "wisdom" "charisma") as |abilityKey|}}
+        {{#with (lookup abilitiesPanel abilityKey)}}
+          <div class="ability-score">
+            <div class="ability-name">{{this.name}}</div>
+            <div class="ability-score-value">{{this.score}}</div>
+            <div class="ability-modifier">{{#if (gte this.modifier 0)}}+{{/if}}{{this.modifier}}</div>
+          </div>
+        {{/with}}
+      {{/each}}
+    </div>
+  </div>
+</section>
+
+{{!-- Helper to create array --}}
+{{#*inline "array"}}
+  {{this}}
+{{/inline}}

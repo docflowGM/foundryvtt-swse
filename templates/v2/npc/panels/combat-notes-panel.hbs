@@ -1,0 +1,32 @@
+{{!-- Combat Notes Panel --}}
+<section class="swse-panel swse-panel--combat-notes npc-combat-notes-panel">
+  <div class="swse-panel__content">
+    {{#if npcCombatNotesPanel.tactics}}
+      <div class="tactics-section">
+        <h4>Tactics</h4>
+        <p>{{npcCombatNotesPanel.tactics}}</p>
+      </div>
+    {{/if}}
+
+    {{#if npcCombatNotesPanel.strengths}}
+      <div class="strengths-section">
+        <h4>Strengths</h4>
+        <p>{{npcCombatNotesPanel.strengths}}</p>
+      </div>
+    {{/if}}
+
+    {{#if npcCombatNotesPanel.weaknesses}}
+      <div class="weaknesses-section">
+        <h4>Weaknesses</h4>
+        <p>{{npcCombatNotesPanel.weaknesses}}</p>
+      </div>
+    {{/if}}
+
+    {{#if npcCombatNotesPanel.specialAbilities}}
+      <div class="special-abilities-section">
+        <h4>Special Abilities</h4>
+        <p>{{npcCombatNotesPanel.specialAbilities}}</p>
+      </div>
+    {{/if}}
+  </div>
+</section>

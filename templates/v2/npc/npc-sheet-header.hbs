@@ -1,0 +1,19 @@
+{{!-- templates/v2/npc/npc-sheet-header.hbs --}}
+{{!-- NPC Sheet header with name and basic info --}}
+
+<div class="sheet-header">
+  <div class="header-top">
+    <div class="header-image">
+      <img src="{{actor.img}}" class="actor-image" alt="{{actor.name}}">
+    </div>
+    <div class="header-info">
+      <h1 class="npc-name">{{actor.name}}</h1>
+      {{#if system.npcLevel}}
+        <p class="npc-level">Level {{system.npcLevel}}</p>
+      {{/if}}
+      {{#if system.npcRole}}
+        <p class="npc-role">{{system.npcRole}}</p>
+      {{/if}}
+    </div>
+  </div>
+</div>

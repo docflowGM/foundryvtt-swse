@@ -1,0 +1,17 @@
+{{!-- Feats Panel --}}
+<section class="swse-panel swse-panel--feats feat-panel">
+  <div class="swse-panel__content">
+    {{#if featPanel.hasEntries}}
+      <div class="ledger-entries">
+        {{#each featPanel.entries as |entry|}}
+          <div class="ledger-row" data-row-id="{{entry.id}}">
+            <div class="entry-name">{{entry.name}}</div>
+            {{#if entry.source}}<div class="entry-source">{{entry.source}}</div>{{/if}}
+          </div>
+        {{/each}}
+      </div>
+    {{else}}
+      <p class="empty-state">{{featPanel.emptyMessage}}</p>
+    {{/if}}
+  </div>
+</section>

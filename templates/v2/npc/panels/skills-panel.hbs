@@ -1,0 +1,22 @@
+{{!-- templates/v2/npc/panels/skills-panel.hbs --}}
+{{!-- NPC Skills Panel --}}
+
+<section class="swse-panel swse-panel--skills skills-panel">
+  <div class="swse-panel__content">
+    {{#if skillsPanel.hasEntries}}
+      <div class="ledger-entries">
+        {{#each skillsPanel.entries as |entry|}}
+          <div class="ledger-row skill-row">
+            <div class="skill-name">{{entry.name}}</div>
+            <div class="skill-ability">({{entry.ability}})</div>
+            <div class="skill-bonus">
+              {{#if (gte entry.bonus 0)}}+{{/if}}{{entry.bonus}}
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    {{else}}
+      <p class="empty-state">{{skillsPanel.emptyMessage}}</p>
+    {{/if}}
+  </div>
+</section>

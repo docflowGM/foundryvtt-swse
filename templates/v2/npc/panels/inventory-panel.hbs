@@ -1,0 +1,27 @@
+{{!-- templates/v2/npc/panels/inventory-panel.hbs --}}
+{{!-- NPC Inventory Panel --}}
+
+<section class="swse-panel swse-panel--inventory inventory-panel">
+  <div class="swse-panel__content">
+    {{#if inventoryPanel.hasEntries}}
+      <div class="ledger-entries">
+        {{#each inventoryPanel.entries as |entry|}}
+          <div class="ledger-row" data-row-id="{{entry.id}}">
+            <div class="item-name">{{entry.name}}</div>
+            <div class="item-quantity">×{{entry.quantity}}</div>
+            {{#if entry.weight}}
+              <div class="item-weight">{{entry.weight}} lbs</div>
+            {{/if}}
+          </div>
+        {{/each}}
+      </div>
+      {{#if inventoryPanel.totalWeight}}
+        <div class="inventory-footer">
+          <p class="total-weight">Total Weight: {{inventoryPanel.totalWeight}} lbs</p>
+        </div>
+      {{/if}}
+    {{else}}
+      <p class="empty-state">{{inventoryPanel.emptyMessage}}</p>
+    {{/if}}
+  </div>
+</section>
