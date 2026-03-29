@@ -38,23 +38,96 @@ export const ActorEngine = {
   async recalcAll(actor) {
     if (!actor) throw new Error('recalcAll() called with no actor');
 
+    // PHASE 3: Recomputation observability
+    const recomputeStart = performance.now();
+    const enforcementLevel = MutationInterceptor.getEnforcementLevel();
+    const isDevEnvironment = (
+      window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1'
+    );
+    const observabilityEnabled = (enforcementLevel === 'strict' || isDevEnvironment);
+
     try {
-      // Mark that we're in derived calc cycle (used by ModifierEngine enforcement)
+      if (observabilityEnabled) {
+        SWSELogger.debug(`[RECOMPUTE START] ${actor.name}`, {
+          stage: 'begin',
+          enforceLevel: enforcementLevel,
+          timestamp: new Date().toISOString()
+        });
+      }
+
+      // ========================================
+      // PHASE 1: Mark that we're in derived calc cycle
+      // ========================================
       actor._isDerivedCalcCycle = true;
       try {
+        // ========================================
+        // PHASE 2: Compute base derived values
+        // ========================================
+        if (observabilityEnabled) {
+          SWSELogger.debug(`[RECOMPUTE] DerivedCalculator.computeAll() starting...`, { actor: actor.name });
+        }
         await DerivedCalculator.computeAll(actor);
+        if (observabilityEnabled) {
+          SWSELogger.debug(`[RECOMPUTE] DerivedCalculator.computeAll() completed`, {
+            actor: actor.name,
+            derivedHP: actor.system?.derived?.hp?.total,
+            derivedBAB: actor.system?.derived?.bab,
+            defensesFort: actor.system?.derived?.defenses?.fortitude?.total
+          });
+        }
+
+        // ========================================
+        // PHASE 3: Apply modifier bundle
+        // ========================================
+        if (observabilityEnabled) {
+          SWSELogger.debug(`[RECOMPUTE] ModifierEngine.applyAll() starting...`, { actor: actor.name });
+        }
         await ModifierEngine.applyAll(actor);
+        if (observabilityEnabled) {
+          SWSELogger.debug(`[RECOMPUTE] ModifierEngine.applyAll() completed`, {
+            actor: actor.name,
+            modifierCount: actor.system?.derived?.modifiers?.all?.length || 0,
+            hpAdjustment: actor.system?.derived?.hp?.adjustment,
+            babAdjustment: actor.system?.derived?.babAdjustment
+          });
+        }
       } finally {
         actor._isDerivedCalcCycle = false;
       }
 
-      // PHASE 3: Check prerequisite integrity after mutations
+      // ========================================
+      // PHASE 4: Check prerequisite integrity
+      // ========================================
       // Skip if flagged as integrity check (prevent recursion)
       if (!actor._skipIntegrityCheck) {
+        if (observabilityEnabled) {
+          SWSELogger.debug(`[RECOMPUTE] Integrity checks starting...`, { actor: actor.name });
+        }
         await this._checkIntegrity(actor);
+        if (observabilityEnabled) {
+          SWSELogger.debug(`[RECOMPUTE] Integrity checks completed`, { actor: actor.name });
+        }
+      }
+
+      // ========================================
+      // PHASE 5: Recomputation complete
+      // ========================================
+      const recomputeEnd = performance.now();
+      const duration = (recomputeEnd - recomputeStart).toFixed(2);
+      if (observabilityEnabled) {
+        SWSELogger.debug(`[RECOMPUTE END] ${actor.name} — Pipeline completed`, {
+          stage: 'complete',
+          durationMs: duration,
+          enforceLevel: enforcementLevel,
+          timestamp: new Date().toISOString()
+        });
       }
     } catch (err) {
-      SWSELogger.error('ActorEngine.recalcAll failed:', err);
+      const recomputeEnd = performance.now();
+      const duration = (recomputeEnd - recomputeStart).toFixed(2);
+      SWSELogger.error(`[RECOMPUTE FAILED] ${actor.name} — Pipeline error after ${duration}ms:`, err);
+      throw err; // Re-throw in strict mode
     }
   },
 

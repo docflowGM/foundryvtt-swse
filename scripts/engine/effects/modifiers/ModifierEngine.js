@@ -183,24 +183,55 @@ export class ModifierEngine {
   }
 
   /**
-   * Apply aggregated modifiers to derived data
+   * PHASE 3: Compute modifier bundle (PURE)
    *
-   * Writes to:
-   * - actor.system.skills[key].total = base + modifier
-   * - actor.system.derived.defense.*.total = base + modifier
-   * - actor.system.derived.hp.total = base + modifier
-   * - actor.system.derived.modifiers = breakdown
-   *
-   * GUARDRAIL: Only writes to .total fields, never .base fields
+   * Calculates all modifier-derived values without mutating the actor.
+   * Returns a bundle that can be applied atomically in DerivedCalculator context.
    *
    * @param {Actor} actor
    * @param {Object<string, number>} modifierMap - From aggregateAll()
    * @param {Modifier[]} allModifiers - Full modifier array
+   * @returns {Object} Bundle with computed values:
+   *   {
+   *     skills: { skillKey: { total: number } },
+   *     defenses: { defenseKey: { total: number, adjustment: number } },
+   *     hp: { total: number, adjustment: number },
+   *     bab: number,
+   *     babAdjustment: number,
+   *     initiative: number,
+   *     initiativeAdjustment: number,
+   *     speed: { total: number, adjustment: number } | null,
+   *     modifiers: { all: Modifier[], breakdown: Object }
+   *   }
    */
-  static async applyAll(actor, modifierMap, allModifiers = []) {
-    if (!actor || !modifierMap) return;
+  static computeModifierBundle(actor, modifierMap, allModifiers = []) {
+    if (!actor || !modifierMap) {
+      return {
+        skills: {},
+        defenses: {},
+        hp: { total: 1, adjustment: 0 },
+        bab: 0,
+        babAdjustment: 0,
+        initiative: 0,
+        initiativeAdjustment: 0,
+        speed: null,
+        modifiers: { all: [], breakdown: {} }
+      };
+    }
 
     try {
+      const bundle = {
+        skills: {},
+        defenses: {},
+        hp: {},
+        bab: 0,
+        babAdjustment: 0,
+        initiative: 0,
+        initiativeAdjustment: 0,
+        speed: null,
+        modifiers: {}
+      };
+
       // Build modifier breakdown for storage
       const skillTargets = this._getAllSkillTargets(actor);
       const defenseTargets = ['defense.fortitude', 'defense.reflex', 'defense.will', 'defense.damageThreshold'];
@@ -209,7 +240,7 @@ export class ModifierEngine {
       const modifierBreakdown = ModifierUtils.buildModifierBreakdown(allModifiers, allTargets);
 
       // ========================================
-      // SKILLS
+      // SKILLS (Computed Bundle)
       // ========================================
       const skills = actor.system?.skills;
       if (skills && typeof skills === 'object') {
@@ -220,21 +251,17 @@ export class ModifierEngine {
           const modifier = modifierMap[targetKey] || 0;
           const base = skillData.base || skillData.total || 0;
 
-          // GUARDRAIL: Do NOT mutate base
-          skillData.total = Math.max(0, base + modifier);
+          bundle.skills[skillKey] = {
+            total: Math.max(0, base + modifier)
+          };
         }
       }
 
       // ========================================
-      // DEFENSES
+      // DEFENSES (Computed Bundle)
       // ========================================
       const derived = actor.system?.derived;
       if (derived && typeof derived === 'object') {
-        // Initialize defenses structure if needed
-        if (!derived.defenses || typeof derived.defenses !== 'object') {
-          derived.defenses = {};
-        }
-
         const defensePaths = {
           fort: 'defense.fortitude',
           fortitude: 'defense.fortitude',
@@ -244,71 +271,183 @@ export class ModifierEngine {
         };
 
         for (const [defenseKey, targetKey] of Object.entries(defensePaths)) {
-          const defense = derived.defenses[defenseKey] || {};
+          const defense = derived.defenses?.[defenseKey] || {};
           const modifier = modifierMap[targetKey] || 0;
-
-          // Get base value (from class calculation)
           const base = defense.base || defense.total || 10;
 
-          // GUARDRAIL: Do NOT mutate base
-          defense.total = Math.max(1, base + modifier);
-
-          // Store adjustment for UI display
-          defense.adjustment = modifier;
-
-          derived.defenses[defenseKey] = defense;
+          bundle.defenses[defenseKey] = {
+            total: Math.max(1, base + modifier),
+            adjustment: modifier
+          };
         }
 
         // ========================================
-        // HP
+        // HP (Computed Bundle)
         // ========================================
+        const hpModifier = modifierMap['hp.max'] || 0;
+        const hpBase = derived.hp?.base || 1;
+
+        bundle.hp = {
+          total: Math.max(1, hpBase + hpModifier),
+          adjustment: hpModifier
+        };
+
+        // ========================================
+        // BAB (Computed Bundle)
+        // ========================================
+        const babModifier = modifierMap['bab.total'] || 0;
+        bundle.bab = (derived.bab || 0) + babModifier;
+        bundle.babAdjustment = babModifier;
+
+        // ========================================
+        // INITIATIVE (Computed Bundle)
+        // ========================================
+        const initiativeModifier = modifierMap['initiative.total'] || 0;
+        bundle.initiative = (derived.initiative || 0) + initiativeModifier;
+        bundle.initiativeAdjustment = initiativeModifier;
+
+        // ========================================
+        // SPEED (Computed Bundle)
+        // ========================================
+        if (derived.speed) {
+          const speedModifier = modifierMap['speed.base'] || 0;
+          const baseSpeed = derived.speed.base || 0;
+
+          bundle.speed = {
+            total: Math.max(0, baseSpeed + speedModifier),
+            adjustment: speedModifier
+          };
+        }
+      }
+
+      // ========================================
+      // MODIFIER BREAKDOWN (for UI)
+      // ========================================
+      bundle.modifiers = {
+        all: allModifiers || [],
+        breakdown: modifierBreakdown
+      };
+
+      return bundle;
+    } catch (err) {
+      swseLogger.error(`[ModifierEngine] Error computing modifier bundle for ${actor?.name}:`, err);
+      return {
+        skills: {},
+        defenses: {},
+        hp: { total: 1, adjustment: 0 },
+        bab: 0,
+        babAdjustment: 0,
+        initiative: 0,
+        initiativeAdjustment: 0,
+        speed: null,
+        modifiers: { all: [], breakdown: {} }
+      };
+    }
+  }
+
+  /**
+   * Apply computed modifier bundle to actor (MUTATION POINT)
+   *
+   * PHASE 3: This is the ONLY place ModifierEngine mutates actor state.
+   * Must be called during DerivedCalculator phase with _isDerivedCalcCycle=true.
+   *
+   * @param {Actor} actor
+   * @param {Object} bundle - From computeModifierBundle()
+   */
+  static applyComputedBundle(actor, bundle) {
+    if (!actor || !bundle) return;
+
+    try {
+      // ========================================
+      // APPLY SKILLS
+      // ========================================
+      const skills = actor.system?.skills;
+      if (skills && typeof skills === 'object') {
+        for (const [skillKey, computed] of Object.entries(bundle.skills)) {
+          if (skills[skillKey] && typeof computed.total === 'number') {
+            skills[skillKey].total = computed.total;
+          }
+        }
+      }
+
+      // ========================================
+      // APPLY DEFENSES & OTHER DERIVED
+      // ========================================
+      const derived = actor.system?.derived;
+      if (derived && typeof derived === 'object') {
+        // Defenses
+        if (!derived.defenses || typeof derived.defenses !== 'object') {
+          derived.defenses = {};
+        }
+
+        for (const [defenseKey, computed] of Object.entries(bundle.defenses)) {
+          if (!derived.defenses[defenseKey]) {
+            derived.defenses[defenseKey] = {};
+          }
+          derived.defenses[defenseKey].total = computed.total;
+          derived.defenses[defenseKey].adjustment = computed.adjustment;
+        }
+
+        // HP
         if (!derived.hp || typeof derived.hp !== 'object') {
           derived.hp = {};
         }
+        derived.hp.total = bundle.hp.total;
+        derived.hp.adjustment = bundle.hp.adjustment;
 
-        const hpModifier = modifierMap['hp.max'] || 0;
-        const hpBase = derived.hp.base || 1;
+        // BAB
+        derived.bab = bundle.bab;
+        derived.babAdjustment = bundle.babAdjustment;
 
-        // GUARDRAIL: Do NOT mutate base
-        derived.hp.total = Math.max(1, hpBase + hpModifier);
-        derived.hp.adjustment = hpModifier;
-
-        // ========================================
-        // BAB (Base Attack Bonus)
-        // ========================================
-        const babModifier = modifierMap['bab.total'] || 0;
-        derived.bab = (derived.bab || 0) + babModifier;
-        derived.babAdjustment = babModifier;
-
-        // ========================================
         // INITIATIVE
-        // ========================================
-        const initiativeModifier = modifierMap['initiative.total'] || 0;
-        derived.initiative = (derived.initiative || 0) + initiativeModifier;
-        derived.initiativeAdjustment = initiativeModifier;
+        derived.initiative = bundle.initiative;
+        derived.initiativeAdjustment = bundle.initiativeAdjustment;
 
-        // ========================================
         // SPEED
-        // ========================================
-        const speedModifier = modifierMap['speed.base'] || 0;
-        if (derived.speed) {
-          const baseSpeed = derived.speed.base || 0;
-          derived.speed.total = Math.max(0, baseSpeed + speedModifier);
-          derived.speed.adjustment = speedModifier;
+        if (bundle.speed && derived.speed) {
+          derived.speed.total = bundle.speed.total;
+          derived.speed.adjustment = bundle.speed.adjustment;
         }
 
-        // ========================================
-        // STORE MODIFIER BREAKDOWN (for UI)
-        // ========================================
-        derived.modifiers = {
-          all: allModifiers || [],
-          breakdown: modifierBreakdown
-        };
+        // MODIFIER BREAKDOWN
+        derived.modifiers = bundle.modifiers;
       }
 
-      swseLogger.debug(`[ModifierEngine] Applied modifiers to ${actor.name}`);
+      swseLogger.debug(`[ModifierEngine] Applied modifier bundle to ${actor.name}`);
     } catch (err) {
-      swseLogger.error(`[ModifierEngine] Error applying modifiers to ${actor?.name}:`, err);
+      swseLogger.error(`[ModifierEngine] Error applying modifier bundle to ${actor?.name}:`, err);
+    }
+  }
+
+  /**
+   * (DEPRECATED - Phase 3)
+   * Apply aggregated modifiers to derived data
+   *
+   * PHASE 3: This method is deprecated. Use computeModifierBundle() + applyComputedBundle() instead.
+   * Kept for backward compatibility. Will be removed in Phase 4.
+   *
+   * @param {Actor} actor
+   * @param {Object<string, number>} modifierMap - From aggregateAll()
+   * @param {Modifier[]} allModifiers - Full modifier array
+   */
+  static async applyAll(actor, modifierMap, allModifiers = []) {
+    swseLogger.warn(
+      `[ModifierEngine] applyAll() is deprecated. Use computeModifierBundle() + applyComputedBundle() instead.`,
+      { actor: actor?.name }
+    );
+
+    if (!actor || !modifierMap) return;
+
+    try {
+      // Compute pure bundle
+      const bundle = this.computeModifierBundle(actor, modifierMap, allModifiers);
+
+      // Apply mutations (only during DerivedCalculator phase)
+      this.applyComputedBundle(actor, bundle);
+
+      swseLogger.debug(`[ModifierEngine] Applied modifiers (legacy) to ${actor.name}`);
+    } catch (err) {
+      swseLogger.error(`[ModifierEngine] Error in legacy applyAll for ${actor?.name}:`, err);
     }
   }
 
