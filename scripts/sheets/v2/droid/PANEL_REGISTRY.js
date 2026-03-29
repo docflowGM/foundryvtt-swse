@@ -1,0 +1,155 @@
+/**
+ * scripts/sheets/v2/droid/PANEL_REGISTRY.js
+ * Droid Panel Registry
+ */
+
+export const PANEL_REGISTRY = [
+  {
+    panelName: 'portraitPanel',
+    displayName: 'Portrait',
+    type: 'display',
+    templatePath: 'systems/foundryvtt-swse/templates/v2/droid/panels/portrait-panel.hbs',
+    builderMethod: 'buildPortraitPanel',
+    validatorMethod: 'validatePortraitPanel',
+    requiredKeys: ['imagePath'],
+    optionalKeys: [],
+    rootSelector: '.portrait-panel',
+    svgBacked: false,
+    postRenderAssertions: []
+  },
+  {
+    panelName: 'droidSummaryPanel',
+    displayName: 'Droid Summary',
+    type: 'display',
+    templatePath: 'systems/foundryvtt-swse/templates/v2/droid/panels/droid-summary-panel.hbs',
+    builderMethod: 'buildDroidSummaryPanel',
+    validatorMethod: 'validateDroidSummaryPanel',
+    requiredKeys: ['droidType', 'restrictionLevel', 'maxModificationPoints', 'usedModificationPoints'],
+    optionalKeys: ['droidModel', 'availableModificationPoints'],
+    rootSelector: '.droid-summary-panel',
+    svgBacked: false,
+    postRenderAssertions: []
+  },
+  {
+    panelName: 'abilitiesPanel',
+    displayName: 'Abilities',
+    type: 'display',
+    templatePath: 'systems/foundryvtt-swse/templates/v2/droid/panels/abilities-panel.hbs',
+    builderMethod: 'buildAbilitiesPanel',
+    validatorMethod: 'validateAbilitiesPanel',
+    requiredKeys: ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'],
+    optionalKeys: [],
+    rootSelector: '.abilities-panel',
+    svgBacked: false,
+    postRenderAssertions: []
+  },
+  {
+    panelName: 'defensesPanel',
+    displayName: 'Defenses',
+    type: 'display',
+    templatePath: 'systems/foundryvtt-swse/templates/v2/droid/panels/defenses-panel.hbs',
+    builderMethod: 'buildDefensesPanel',
+    validatorMethod: 'validateDefensesPanel',
+    requiredKeys: ['defense', 'flatFooted'],
+    optionalKeys: ['shields'],
+    rootSelector: '.defenses-panel',
+    svgBacked: false,
+    postRenderAssertions: []
+  },
+  {
+    panelName: 'skillsPanel',
+    displayName: 'Skills',
+    type: 'ledger',
+    templatePath: 'systems/foundryvtt-swse/templates/v2/droid/panels/skills-panel.hbs',
+    builderMethod: 'buildSkillsPanel',
+    validatorMethod: 'validateSkillsPanel',
+    requiredKeys: ['entries', 'hasEntries', 'totalCount'],
+    optionalKeys: [],
+    rootSelector: '.skills-panel',
+    svgBacked: false,
+    rowContract: { name: 'string', bonus: 'number', ability: 'string' },
+    postRenderAssertions: []
+  },
+  {
+    panelName: 'protocolsPanel',
+    displayName: 'Protocols',
+    type: 'ledger',
+    templatePath: 'systems/foundryvtt-swse/templates/v2/droid/panels/protocols-panel.hbs',
+    builderMethod: 'buildProtocolsPanel',
+    validatorMethod: 'validateProtocolsPanel',
+    requiredKeys: ['entries', 'hasEntries', 'totalCount'],
+    optionalKeys: [],
+    rootSelector: '.protocols-panel',
+    svgBacked: false,
+    rowContract: { id: 'string', name: 'string', affectedSkill: 'string', bonus: 'number' },
+    postRenderAssertions: ['rowsHaveDataId']
+  },
+  {
+    panelName: 'customizationsPanel',
+    displayName: 'Customizations',
+    type: 'ledger',
+    templatePath: 'systems/foundryvtt-swse/templates/v2/droid/panels/customizations-panel.hbs',
+    builderMethod: 'buildCustomizationsPanel',
+    validatorMethod: 'validateCustomizationsPanel',
+    requiredKeys: ['entries', 'hasEntries', 'totalCount', 'totalCost'],
+    optionalKeys: ['availablePoints'],
+    rootSelector: '.customizations-panel',
+    svgBacked: false,
+    rowContract: { id: 'string', name: 'string', costPoints: 'number' },
+    postRenderAssertions: ['rowsHaveDataId']
+  },
+  {
+    panelName: 'programmingPanel',
+    displayName: 'Programming',
+    type: 'ledger',
+    templatePath: 'systems/foundryvtt-swse/templates/v2/droid/panels/programming-panel.hbs',
+    builderMethod: 'buildProgrammingPanel',
+    validatorMethod: 'validateProgrammingPanel',
+    requiredKeys: ['entries', 'hasEntries', 'totalCount'],
+    optionalKeys: [],
+    rootSelector: '.programming-panel',
+    svgBacked: false,
+    rowContract: { id: 'string', name: 'string', proficiency: 'string' },
+    postRenderAssertions: ['rowsHaveDataId']
+  },
+  {
+    panelName: 'inventoryPanel',
+    displayName: 'Inventory',
+    type: 'ledger',
+    templatePath: 'systems/foundryvtt-swse/templates/v2/droid/panels/inventory-panel.hbs',
+    builderMethod: 'buildInventoryPanel',
+    validatorMethod: 'validateInventoryPanel',
+    requiredKeys: ['entries', 'hasEntries', 'totalCount'],
+    optionalKeys: ['totalWeight'],
+    rootSelector: '.inventory-panel',
+    svgBacked: false,
+    rowContract: { id: 'string', name: 'string', quantity: 'number', weight: 'number' },
+    postRenderAssertions: ['rowsHaveDataId']
+  },
+  {
+    panelName: 'combatPanel',
+    displayName: 'Combat',
+    type: 'display',
+    templatePath: 'systems/foundryvtt-swse/templates/v2/droid/panels/combat-panel.hbs',
+    builderMethod: 'buildCombatPanel',
+    validatorMethod: 'validateCombatPanel',
+    requiredKeys: ['initiative', 'armorClass'],
+    optionalKeys: ['baseAttack'],
+    rootSelector: '.combat-panel',
+    svgBacked: false,
+    postRenderAssertions: []
+  },
+  {
+    panelName: 'droidNotesPanel',
+    displayName: 'Notes',
+    type: 'display',
+    templatePath: 'systems/foundryvtt-swse/templates/v2/droid/panels/droid-notes-panel.hbs',
+    builderMethod: 'buildDroidNotesPanel',
+    validatorMethod: 'validateDroidNotesPanel',
+    requiredKeys: ['notes'],
+    optionalKeys: ['specialAbilities', 'restrictions'],
+    rootSelector: '.droid-notes-panel',
+    svgBacked: false,
+    postRenderAssertions: []
+  }
+];

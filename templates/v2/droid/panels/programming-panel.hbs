@@ -1,0 +1,11 @@
+<section class="swse-panel programming-panel">
+  <div class="swse-panel__content">
+    {{#if programmingPanel.hasEntries}}
+      {{#each programmingPanel.entries as |entry|}}
+        <div class="entry" data-row-id="{{entry.id}}">{{entry.name}}</div>
+      {{/each}}
+    {{else}}
+      <p class="empty-state">No programming</p>
+    {{/if}}
+  </div>
+</section>

@@ -33,6 +33,7 @@
     "styles/core/svg-geometry.css",
     "styles/sheets/v2-sheet.css",
     "styles/sheets/v2-npc-specific.css",
+    "styles/sheets/v2-droid-specific.css",
     "styles/apps/chargen/chargen.css",
     "scripts/ui/dialogue/dialogue-effects.css",
     "scripts/ui/action-palette/action-palette.css",
