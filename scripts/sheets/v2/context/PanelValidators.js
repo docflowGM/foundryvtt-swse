@@ -665,6 +665,65 @@ export function validateRow(rowType, row, index = null) {
   return validator(row, index);
 }
 
+/**
+ * Validate languagesPanel contract
+ */
+export function validateLanguagesPanel(panelData) {
+  const errors = [];
+
+  if (!panelData) {
+    errors.push('languagesPanel is null/undefined');
+    return { valid: false, errors };
+  }
+
+  // Entries array (simple strings)
+  if (!Array.isArray(panelData.entries)) {
+    errors.push('languagesPanel.entries must be an array');
+  } else {
+    panelData.entries.forEach((lang, idx) => {
+      if (typeof lang !== 'string') errors.push(`entry[${idx}] must be string`);
+    });
+  }
+
+  // Flags
+  if (typeof panelData.hasEntries !== 'boolean') errors.push('hasEntries must be boolean');
+
+  return {
+    valid: errors.length === 0,
+    errors
+  };
+}
+
+/**
+ * Validate racialAbilitiesPanel contract
+ */
+export function validateRacialAbilitiesPanel(panelData) {
+  const errors = [];
+
+  if (!panelData) {
+    errors.push('racialAbilitiesPanel is null/undefined');
+    return { valid: false, errors };
+  }
+
+  // Entries array
+  if (!Array.isArray(panelData.entries)) {
+    errors.push('racialAbilitiesPanel.entries must be an array');
+  } else {
+    panelData.entries.forEach((entry, idx) => {
+      if (typeof entry.id !== 'string') errors.push(`entry[${idx}].id must be string`);
+      if (typeof entry.name !== 'string') errors.push(`entry[${idx}].name must be string`);
+    });
+  }
+
+  // Flags
+  if (typeof panelData.hasEntries !== 'boolean') errors.push('hasEntries must be boolean');
+
+  return {
+    valid: errors.length === 0,
+    errors
+  };
+}
+
 export function validatePanel(panelKey, panelData) {
   const validators = {
     healthPanel: validateHealthPanel,
@@ -678,7 +737,9 @@ export function validatePanel(panelKey, panelData) {
     portraitPanel: validatePortraitPanel,
     darkSidePanel: validateDarkSidePanel,
     forcePowersPanel: validateForcePowersPanel,
-    starshipManeuversPanel: validateStarshipManeuversPanel
+    starshipManeuversPanel: validateStarshipManeuversPanel,
+    languagesPanel: validateLanguagesPanel,
+    racialAbilitiesPanel: validateRacialAbilitiesPanel
   };
 
   const validator = validators[panelKey];

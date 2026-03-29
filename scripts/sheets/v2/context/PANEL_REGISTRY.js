@@ -561,6 +561,58 @@ export const PANEL_REGISTRY = {
         '.maneuver-row': '0..99'
       }
     }
+  },
+
+  languagesPanel: {
+    name: 'Languages',
+    type: 'control',
+    svgBacked: false,
+    structure: 'editable language list (text inputs)',
+    template: 'systems/foundryvtt-swse/templates/actors/character/v2/partials/languages-panel.hbs',
+    builder: 'buildLanguagesPanel',
+    validator: 'validateLanguagesPanel',
+    requiredKeys: [
+      'entries',
+      'hasEntries'
+    ],
+    optionalKeys: [],
+    rowContract: {
+      type: 'LanguageRow',
+      shape: ['value']  // Simple strings
+    },
+    postRenderAssertions: {
+      critical: false,
+      rootSelector: '.swse-languages-panel',
+      optionalElements: {
+        '.language-card': '0..99'
+      }
+    }
+  },
+
+  racialAbilitiesPanel: {
+    name: 'Racial Abilities',
+    type: 'display',
+    svgBacked: false,
+    structure: 'ability cards (name + summary)',
+    template: 'systems/foundryvtt-swse/templates/actors/character/v2/partials/racial-ability-panel.hbs',
+    builder: 'buildRacialAbilitiesPanel',
+    validator: 'validateRacialAbilitiesPanel',
+    requiredKeys: [
+      'entries',
+      'hasEntries'
+    ],
+    optionalKeys: [],
+    rowContract: {
+      type: 'RacialAbilityRow',
+      shape: ['id', 'name', 'summary']
+    },
+    postRenderAssertions: {
+      critical: false,
+      rootSelector: '.racial-section',
+      optionalElements: {
+        '.racial-card': '0..99'
+      }
+    }
   }
 };
 
