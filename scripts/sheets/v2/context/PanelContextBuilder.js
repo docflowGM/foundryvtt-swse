@@ -567,6 +567,42 @@ export class PanelContextBuilder {
   }
 
   /**
+   * Build the languages panel context
+   *
+   * Contract: languagesPanel
+   * - entries: [ languageString ]
+   * - hasEntries: boolean
+   */
+  buildLanguagesPanel() {
+    const languages = this.system.languages || [];
+
+    const panel = {
+      entries: languages,
+      hasEntries: languages.length > 0
+    };
+
+    return panel;
+  }
+
+  /**
+   * Build the racial abilities panel context
+   *
+   * Contract: racialAbilitiesPanel
+   * - entries: [ { name, summary, ... } ]
+   * - hasEntries: boolean
+   */
+  buildRacialAbilitiesPanel() {
+    const racialAbilities = this.derived.racialAbilities || [];
+
+    const panel = {
+      entries: racialAbilities,
+      hasEntries: racialAbilities.length > 0
+    };
+
+    return panel;
+  }
+
+  /**
    * Assemble all panel contexts into final context object
    *
    * Returns an object keyed by panel name, where each panel is a dedicated
@@ -585,7 +621,9 @@ export class PanelContextBuilder {
       portraitPanel: this.buildPortraitPanel(),
       darkSidePanel: this.buildDarkSidePanel(),
       forcePowersPanel: this.buildForcePowersPanel(),
-      starshipManeuversPanel: this.buildStarshipManeuversPanel()
+      starshipManeuversPanel: this.buildStarshipManeuversPanel(),
+      languagesPanel: this.buildLanguagesPanel(),
+      racialAbilitiesPanel: this.buildRacialAbilitiesPanel()
     };
   }
 }
