@@ -17,6 +17,14 @@
  * - row contract type if ledger-style
  * - post-render DOM expectations
  *
+ * LEDGER PANEL CONTRACT (standardized for entries-based panels):
+ * - entries: array of items (InventoryRow, TalentRow, FeatRow, etc.)
+ * - hasEntries: boolean (entries.length > 0)
+ * - totalCount: number (entries.length, for display)
+ * - emptyMessage: string (fallback if no entries)
+ * - grouped: optional object {groupKey: [entries]} for grouped displays
+ * - canEdit: optional boolean (whether entries can be added/removed/modified)
+ *
  * When you want to know about a panel, you look here first. Period.
  * No ad-hoc assumptions about panels. Everything documented in the registry.
  */
@@ -128,9 +136,14 @@ export const PANEL_REGISTRY = {
     requiredKeys: [
       'entries',
       'hasEntries',
-      'totalWeight'
+      'totalWeight',
+      'emptyMessage'
     ],
-    optionalKeys: [],
+    optionalKeys: [
+      'grouped',
+      'equippedArmor',
+      'canEdit'
+    ],
     rowContract: {
       type: 'InventoryRow',
       shape: ['id', 'name', 'quantity', 'weight', 'source']
@@ -148,16 +161,20 @@ export const PANEL_REGISTRY = {
     name: 'Talents',
     type: 'ledger',
     svgBacked: false,
-    structure: 'ledger rows (talent list with counts)',
+    structure: 'ledger rows (talent list with counts, grouped view)',
     template: 'systems/foundryvtt-swse/templates/actors/character/v2/partials/talents-known-panel.hbs',
     builder: 'buildTalentPanel',
     validator: 'validateTalentPanel',
     requiredKeys: [
       'entries',
       'hasEntries',
-      'totalCount'
+      'totalCount',
+      'emptyMessage'
     ],
-    optionalKeys: [],
+    optionalKeys: [
+      'grouped',
+      'canEdit'
+    ],
     rowContract: {
       type: 'TalentRow',
       shape: ['id', 'name', 'source', 'summary']
@@ -182,9 +199,12 @@ export const PANEL_REGISTRY = {
     requiredKeys: [
       'entries',
       'hasEntries',
-      'totalCount'
+      'totalCount',
+      'emptyMessage'
     ],
-    optionalKeys: [],
+    optionalKeys: [
+      'canEdit'
+    ],
     rowContract: {
       type: 'FeatRow',
       shape: ['id', 'name', 'source', 'summary']
@@ -209,9 +229,12 @@ export const PANEL_REGISTRY = {
     requiredKeys: [
       'entries',
       'hasEntries',
-      'totalCount'
+      'totalCount',
+      'emptyMessage'
     ],
-    optionalKeys: [],
+    optionalKeys: [
+      'canEdit'
+    ],
     rowContract: {
       type: 'ManeuverRow',
       shape: ['id', 'name', 'source', 'summary']
@@ -320,6 +343,7 @@ export const PANEL_REGISTRY = {
       'canEdit'
     ],
     optionalKeys: [],
+    note: 'Custom ledger contract: multiple arrays (hand, discard, secrets, techniques) instead of single entries',
     rowContract: {
       type: 'ForcePowerRow',
       shape: ['id', 'name', 'system.prerequisite', 'system.summary']
@@ -346,7 +370,8 @@ export const PANEL_REGISTRY = {
     requiredKeys: [
       'entries',
       'hasEntries',
-      'totalCount'
+      'totalCount',
+      'emptyMessage'
     ],
     optionalKeys: [],
     rowContract: {

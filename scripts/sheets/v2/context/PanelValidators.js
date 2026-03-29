@@ -146,7 +146,7 @@ export function validateBiographyPanel(panelData) {
 }
 
 /**
- * Validate inventoryPanel contract
+ * Validate inventoryPanel contract (standard ledger)
  */
 export function validateInventoryPanel(panelData) {
   const errors = [];
@@ -171,6 +171,7 @@ export function validateInventoryPanel(panelData) {
   // Flags
   if (typeof panelData.hasEntries !== 'boolean') errors.push('hasEntries must be boolean');
   if (typeof panelData.totalWeight !== 'number') errors.push('totalWeight must be number');
+  if (typeof panelData.emptyMessage !== 'string') errors.push('emptyMessage must be string');
 
   return {
     valid: errors.length === 0,
@@ -179,7 +180,7 @@ export function validateInventoryPanel(panelData) {
 }
 
 /**
- * Validate talentPanel contract
+ * Validate talentPanel contract (standard ledger with optional grouping)
  */
 export function validateTalentPanel(panelData) {
   const errors = [];
@@ -207,6 +208,7 @@ export function validateTalentPanel(panelData) {
   // Flags
   if (typeof panelData.hasEntries !== 'boolean') errors.push('hasEntries must be boolean');
   if (typeof panelData.totalCount !== 'number') errors.push('totalCount must be number');
+  if (typeof panelData.emptyMessage !== 'string') errors.push('emptyMessage must be string');
 
   return {
     valid: errors.length === 0,
@@ -215,7 +217,7 @@ export function validateTalentPanel(panelData) {
 }
 
 /**
- * Validate featPanel contract
+ * Validate featPanel contract (standard ledger)
  */
 export function validateFeatPanel(panelData) {
   const errors = [];
@@ -238,6 +240,7 @@ export function validateFeatPanel(panelData) {
   // Flags
   if (typeof panelData.hasEntries !== 'boolean') errors.push('hasEntries must be boolean');
   if (typeof panelData.totalCount !== 'number') errors.push('totalCount must be number');
+  if (typeof panelData.emptyMessage !== 'string') errors.push('emptyMessage must be string');
 
   return {
     valid: errors.length === 0,
@@ -246,7 +249,7 @@ export function validateFeatPanel(panelData) {
 }
 
 /**
- * Validate maneuverPanel contract
+ * Validate maneuverPanel contract (standard ledger)
  */
 export function validateManeuverPanel(panelData) {
   const errors = [];
@@ -269,6 +272,7 @@ export function validateManeuverPanel(panelData) {
   // Flags
   if (typeof panelData.hasEntries !== 'boolean') errors.push('hasEntries must be boolean');
   if (typeof panelData.totalCount !== 'number') errors.push('totalCount must be number');
+  if (typeof panelData.emptyMessage !== 'string') errors.push('emptyMessage must be string');
 
   return {
     valid: errors.length === 0,
@@ -443,6 +447,7 @@ export function validateStarshipManeuversPanel(panelData) {
   // Flags
   if (typeof panelData.hasEntries !== 'boolean') errors.push('hasEntries must be boolean');
   if (typeof panelData.totalCount !== 'number') errors.push('totalCount must be number');
+  if (typeof panelData.emptyMessage !== 'string') errors.push('emptyMessage must be string');
 
   return {
     valid: errors.length === 0,

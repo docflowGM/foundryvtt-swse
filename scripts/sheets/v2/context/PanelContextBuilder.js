@@ -537,10 +537,11 @@ export class PanelContextBuilder {
   /**
    * Build the starship maneuvers panel context
    *
-   * Contract: starshipManeuversPanel
+   * Contract: starshipManeuversPanel (standard ledger)
    * - entries: [ { id, name, summary } ]
    * - hasEntries: boolean
    * - totalCount: number
+   * - emptyMessage: string
    */
   buildStarshipManeuversPanel() {
     // Extract starship maneuvers from derived data
@@ -555,7 +556,8 @@ export class PanelContextBuilder {
     const panel = {
       entries,
       hasEntries: entries.length > 0,
-      totalCount: entries.length
+      totalCount: entries.length,
+      emptyMessage: 'No starship maneuvers known.'
     };
 
     // Validate contract (strict mode throws, dev mode warns)
