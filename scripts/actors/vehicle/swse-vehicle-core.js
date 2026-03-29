@@ -152,11 +152,15 @@ export class SWSEVehicleCore {
         });
       }
 
+      // PHASE 2: Route through ActorEngine
       if (newItems.length > 0) {
-        await vehicle.createEmbeddedDocuments('Item', newItems);
+        const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+        await ActorEngine.createEmbeddedDocuments(vehicle, 'Item', newItems);
+        await ActorEngine.updateActor(vehicle, { 'system.weapons': [] });
+      } else {
+        const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+        await ActorEngine.updateActor(vehicle, { 'system.weapons': [] });
       }
-
-      await vehicle.update({ 'system.weapons': [] });
 
       SWSELogger.log(`SWSE | Weapon migration complete`);
       return true;
@@ -185,7 +189,9 @@ export class SWSEVehicleCore {
       data._id = undefined;
       data.type = 'vehicle-weapon';
 
-      await vehicle.createEmbeddedDocuments('Item', [data]);
+      // PHASE 2: Route through ActorEngine
+      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+      await ActorEngine.createEmbeddedDocuments(vehicle, 'Item', [data]);
       ui.notifications.info(`${weaponItem.name} added to vehicle weapons.`);
       return true;
     } catch (error) {
@@ -210,7 +216,9 @@ export class SWSEVehicleCore {
     }
 
     try {
-      await vehicle.deleteEmbeddedDocuments('Item', [itemId]);
+      // PHASE 2: Route through ActorEngine
+      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+      await ActorEngine.deleteEmbeddedDocuments(vehicle, 'Item', [itemId]);
       ui.notifications.info(`Weapon removed from vehicle.`);
       return true;
     } catch (error) {
