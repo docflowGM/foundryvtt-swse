@@ -66,6 +66,73 @@ export class PostRenderAssertions {
   }
 
   /**
+   * Validate SVG panel structure (Phase 4.5)
+   * Checks for frame/content/overlay layers and positioned elements
+   */
+  static _assertSVGStructure(panelKey, root, def) {
+    if (!def.svgBacked) {
+      return; // Not an SVG-backed panel
+    }
+
+    const isCritical = def.postRenderAssertions?.critical ?? false;
+
+    // Check frame layer (required for all SVG panels)
+    const frameLayer = root?.querySelector?.('.swse-panel__frame');
+    if (!frameLayer) {
+      this._reportViolation(
+        `${panelKey}: SVG frame layer (.swse-panel__frame) not found`,
+        isCritical
+      );
+    }
+
+    // Check content layer (required for panels with normal flow content)
+    if (def.structure?.includes('content')) {
+      const contentLayer = root?.querySelector?.('.swse-panel__content');
+      if (!contentLayer) {
+        this._reportViolation(
+          `${panelKey}: Content layer (.swse-panel__content) missing from structure`,
+          isCritical
+        );
+      }
+    }
+
+    // Check overlay layer (required for panels with positioned elements)
+    if (def.structure?.includes('overlay')) {
+      const overlayLayer = root?.querySelector?.('.swse-panel__overlay');
+      if (!overlayLayer) {
+        this._reportViolation(
+          `${panelKey}: Overlay layer (.swse-panel__overlay) missing from structure`,
+          isCritical
+        );
+      } else {
+        // Validate positioned element count if specified
+        const overlayAssertions = def.postRenderAssertions?.overlayElements;
+        if (overlayAssertions) {
+          for (const [selector, expectedCount] of Object.entries(overlayAssertions)) {
+            const actual = overlayLayer.querySelectorAll(selector).length;
+            this._validateCount(
+              actual,
+              expectedCount,
+              `${panelKey} overlay ${selector}`,
+              false // overlay elements non-critical
+            );
+          }
+        }
+      }
+    }
+
+    // Check aspect ratio if specified (Phase 4.3)
+    if (def.structure?.aspectRatio) {
+      const computedStyle = window?.getComputedStyle?.(root);
+      const aspectRatio = computedStyle?.aspectRatio;
+      if (aspectRatio && aspectRatio !== 'auto') {
+        // Log for debugging but don't fail - aspect ratios are hints, not hard requirements
+        console.log(`[PostRender] ${panelKey} aspect ratio: ${aspectRatio}`);
+      }
+    }
+  }
+
+  /**
    * Assert a single panel based on registry definition
    */
   static _assertPanel(panelKey, html, context) {
@@ -95,9 +162,13 @@ export class PostRenderAssertions {
       this._validateCount(actual, expectedCount, `${panelKey} ${selector} (optional)`, false);
     }
 
+    // Phase 4.5: Validate SVG structure for SVG-backed panels
+    this._assertSVGStructure(panelKey, root, def);
+
     console.log(`[PostRender] ✓ ${panelKey} passed`, {
       root: rootSelector,
-      elements: Object.keys(expectedElements).length
+      elements: Object.keys(expectedElements).length,
+      svgBacked: def.svgBacked ?? false
     });
   }
 
