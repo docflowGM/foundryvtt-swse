@@ -579,92 +579,6 @@ export class SWSEV2CharacterSheet extends
     const forceSensitive = system.forceSensitive ?? false;
     const identityGlowColor = forceSensitive ? '#88cfff' : '#666666';
 
-    const inventory = this._buildInventoryModel(actor);
-
-    // Build equipment ledger (all equipment items for record-sheet display)
-    let totalEquipmentWeightNum = 0;
-    const allEquipment = actor.items
-      .filter(item => ['weapon', 'armor', 'equipment'].includes(item.type))
-      .map(item => {
-        const itemWeight = item.system?.weight ?? 0;
-        const itemQty = item.system?.quantity ?? 1;
-        const itemCost = item.system?.cost ?? 0;
-        totalEquipmentWeightNum += itemWeight * itemQty;
-        return {
-          id: item.id,
-          name: item.name,
-          category: item.type === 'weapon' ? 'Weapon' :
-                    item.type === 'armor' ? 'Armor' : 'Equipment',
-          quantity: itemQty,
-          weight: itemWeight ? `${itemWeight} lbs` : '—',
-          cost: itemCost > 0 ? itemCost.toLocaleString() : '—',
-          equipped: item.system?.equipped ?? false
-        };
-      })
-      .sort((a, b) => {
-        // Sort: equipped first, then by type, then by name
-        if (a.equipped !== b.equipped) return a.equipped ? -1 : 1;
-        if (a.category !== b.category) return a.category.localeCompare(b.category);
-        return a.name.localeCompare(b.name);
-      });
-
-    // Format total equipment weight for display
-    const totalEquipmentWeight = totalEquipmentWeightNum > 0 ? `${totalEquipmentWeightNum} lbs` : '';
-
-    // Get equipped armor (if any)
-    const equippedArmorItem = actor.items.find(item =>
-      item.type === 'armor' && item.system?.equipped === true
-    );
-    const equippedArmor = equippedArmorItem ? {
-      id: equippedArmorItem.id,
-      name: equippedArmorItem.name,
-      armorType: equippedArmorItem.system?.armorType,
-      reflexBonus: equippedArmorItem.system?.reflexBonus,
-      fortBonus: equippedArmorItem.system?.fortBonus,
-      maxDexBonus: equippedArmorItem.system?.maxDexBonus,
-      armorCheckPenalty: equippedArmorItem.system?.armorCheckPenalty,
-      speedPenalty: equippedArmorItem.system?.speedPenalty,
-      weight: equippedArmorItem.system?.weight,
-      isPowered: equippedArmorItem.system?.isPowered,
-      upgradeSlots: equippedArmorItem.system?.upgradeSlots
-    } : null;
-
-    // Get combat notes from flags
-    const combatNotesText = actor.flags?.swse?.sheetNotes?.specialCombatActions || '';
-
-    // Presentation-only normalization (no mutation)
-    const biography =
-      typeof actor.system.biography === "object"
-        ? actor.system.biography
-        : {
-            main: "",
-            contacts: "",
-            reputation: "",
-            faction: "",
-            gmNotes: ""
-          };
-
-    // Compute display objects from system data
-    const hp = {
-      value: system.hp?.value ?? 0,
-      max: system.hp?.max ?? 1,
-      temp: system.hp?.temp ?? 0
-    };
-    hp.percent = Math.round((hp.value / hp.max) * 100);
-
-    // SEMANTIC: Visual state class for HP health
-    if (hp.value <= 0) {
-      hp.stateClass = 'state--dead';
-    } else if (hp.percent <= 25) {
-      hp.stateClass = 'state--critical';
-    } else if (hp.percent <= 50) {
-      hp.stateClass = 'state--damaged';
-    } else if (hp.percent < 100) {
-      hp.stateClass = 'state--wounded';
-    } else {
-      hp.stateClass = 'state--healthy';
-    }
-
     // Bonus HP (derived-only from ModifierEngine)
     const bonusHp = await this._computeBonusHP(actor);
 
@@ -822,15 +736,6 @@ const forcePoints = [];
 
     // Inventory Search Filter (initially empty, populated by user input)
     const inventorySearch = '';
-
-    // Relationships Context
-    const relationships = (actor.system?.relationships ?? []).map(rel => ({
-      uuid: rel.uuid,
-      name: rel.name,
-      type: rel.type,
-      img: rel.img || 'icons/svg/mystery-man.svg',
-      notes: rel.notes || ''
-    }));
 
     // Follower Context (from flags and system)
     const followerSlots = actor.getFlag('foundryvtt-swse', 'followerSlots') || [];
