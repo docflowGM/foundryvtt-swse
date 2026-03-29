@@ -1,13 +1,18 @@
 /**
  * MUTATION SOVEREIGNTY RESTORATION TEST SUITE
  *
+ * PHASE 1: Enforcement Truth Tests
  * Executable proof that:
+ * - MutationInterceptor enforcement works (STRICT mode throws)
+ * - Context is properly set/cleared
+ * - Each mutation surface is governed
+ *
+ * PHASE 2+: Routing Tests
  * - Chargen finalizer routes actor updates through ActorEngine
  * - Progression finalizer has no direct mutation fallback
  * - Level-up force power removal routes through ActorEngine
  * - Talent effects hook routes through ActorEngine
  * - Force power effects route through ActorEngine
- * - MutationInterceptor enforcement actually catches violations
  */
 
 import { describe, it, before, after, expect, vi } from 'vitest';
@@ -63,6 +68,42 @@ describe('MUTATION SOVEREIGNTY RESTORATION', () => {
 
       MutationInterceptor.clearContext();
       expect(MutationInterceptor.hasContext()).toBe(false);
+    });
+
+    // PHASE 1: Strict enforcement tests
+    it('should support enforcement level API', () => {
+      expect(typeof MutationInterceptor.setEnforcementLevel).toBe('function');
+      expect(typeof MutationInterceptor.getEnforcementLevel).toBe('function');
+    });
+
+    it('should accept valid enforcement levels', () => {
+      const validLevels = ['strict', 'normal', 'silent', 'log_only'];
+      for (const level of validLevels) {
+        expect(() => MutationInterceptor.setEnforcementLevel(level)).not.toThrow();
+      }
+    });
+
+    it('should reject invalid enforcement levels', () => {
+      expect(() => MutationInterceptor.setEnforcementLevel('invalid')).toThrow();
+    });
+
+    it('should track enforcement level correctly', () => {
+      MutationInterceptor.setEnforcementLevel('strict');
+      expect(MutationInterceptor.getEnforcementLevel()).toBe('strict');
+
+      MutationInterceptor.setEnforcementLevel('normal');
+      expect(MutationInterceptor.getEnforcementLevel()).toBe('normal');
+
+      MutationInterceptor.setEnforcementLevel('log_only');
+      expect(MutationInterceptor.getEnforcementLevel()).toBe('log_only');
+    });
+
+    it('PHASE 1: should initialize with appropriate default level', () => {
+      // After initialize() is called, enforcement level should be set
+      // Dev environment: 'strict'
+      // Normal environment: 'normal'
+      const level = MutationInterceptor.getEnforcementLevel();
+      expect(['strict', 'normal', 'log_only']).toContain(level);
     });
   });
 
