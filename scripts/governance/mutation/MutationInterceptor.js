@@ -34,18 +34,22 @@
  */
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { MutationIntegrityLayer } from "/systems/foundryvtt-swse/scripts/governance/sentinel/mutation-integrity-layer.js";
 
 /**
  * PHASE 1 ENFORCEMENT LEVEL
+ *
+ * PHASE 4 FIX: Default is now NULL (set by initialize()).
+ * Prevents hardcoded 'log_only' from disabling enforcement.
  *
  * Environment-aware enforcement configuration:
  * - 'strict': Throw on unauthorized mutations (dev/test)
  * - 'normal': Log but continue (default/production)
  * - 'silent': No enforcement (freebuild mode)
  * - 'log_only': Diagnostic mode (allows all, logs all)
+ *
+ * MUST be initialized via MutationInterceptor.initialize() before use.
  */
-let ENFORCEMENT_LEVEL = 'log_only'; // Set at init time based on environment
+let ENFORCEMENT_LEVEL = null; // Set at init time based on environment
 
 const DEV_MODE = true;     // Always log all mutations with stack traces
 
@@ -74,8 +78,17 @@ export class MutationInterceptor {
 
   /**
    * Get current enforcement level.
+   *
+   * PHASE 4: Returns enforced level after initialize().
+   * If called before initialize, returns fallback (normal mode).
    */
   static getEnforcementLevel() {
+    if (ENFORCEMENT_LEVEL === null) {
+      // Fallback if called before initialize
+      // Should only happen in rare edge cases
+      swseLogger.warn('[MutationInterceptor] getEnforcementLevel() called before initialize()');
+      return 'normal'; // Safe fallback (allows mutations, logs them)
+    }
     return ENFORCEMENT_LEVEL;
   }
 
@@ -138,17 +151,12 @@ export class MutationInterceptor {
       );
     }
     _currentMutationContext = context;
-
-    // PHASE 3 AUDITING: Start transaction in Sentinel
-    if (false) MutationIntegrityLayer.startTransaction(context);
   }
 
   /**
    * Clear the current mutation context (when ActorEngine finishes).
    */
   static clearContext() {
-    // PHASE 3 AUDITING: End transaction in Sentinel
-    if (false) MutationIntegrityLayer.endTransaction();
     _currentMutationContext = null;
   }
 
