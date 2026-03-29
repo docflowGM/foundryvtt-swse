@@ -724,6 +724,115 @@ export function validateRacialAbilitiesPanel(panelData) {
   };
 }
 
+/**
+ * Validate armorSummaryPanel contract
+ */
+export function validateArmorSummaryPanel(panelData) {
+  const errors = [];
+
+  if (!panelData) {
+    errors.push('armorSummaryPanel is null/undefined');
+    return { valid: false, errors };
+  }
+
+  // equippedArmor is required but can be null (no armor equipped)
+  if (panelData.equippedArmor !== null && panelData.equippedArmor !== undefined) {
+    if (typeof panelData.equippedArmor !== 'object') {
+      errors.push('equippedArmor must be object or null');
+    }
+  }
+
+  // canEdit
+  if (typeof panelData.canEdit !== 'boolean') errors.push('canEdit must be boolean');
+
+  return {
+    valid: errors.length === 0,
+    errors
+  };
+}
+
+/**
+ * Validate equipmentLedgerPanel contract
+ */
+export function validateEquipmentLedgerPanel(panelData) {
+  const errors = [];
+
+  if (!panelData) {
+    errors.push('equipmentLedgerPanel is null/undefined');
+    return { valid: false, errors };
+  }
+
+  // allEquipment
+  if (!Array.isArray(panelData.allEquipment)) errors.push('allEquipment must be array');
+
+  // totalEquipmentWeight
+  if (typeof panelData.totalEquipmentWeight !== 'string') errors.push('totalEquipmentWeight must be string');
+
+  // canEdit
+  if (typeof panelData.canEdit !== 'boolean') errors.push('canEdit must be boolean');
+
+  return {
+    valid: errors.length === 0,
+    errors
+  };
+}
+
+/**
+ * Validate combatNotesPanel contract
+ */
+export function validateCombatNotesPanel(panelData) {
+  const errors = [];
+
+  if (!panelData) {
+    errors.push('combatNotesPanel is null/undefined');
+    return { valid: false, errors };
+  }
+
+  // combatNotes
+  if (typeof panelData.combatNotes !== 'string') errors.push('combatNotes must be string');
+
+  // canEdit
+  if (typeof panelData.canEdit !== 'boolean') errors.push('canEdit must be boolean');
+
+  return {
+    valid: errors.length === 0,
+    errors
+  };
+}
+
+/**
+ * Validate relationshipsPanel contract
+ */
+export function validateRelationshipsPanel(panelData) {
+  const errors = [];
+
+  if (!panelData) {
+    errors.push('relationshipsPanel is null/undefined');
+    return { valid: false, errors };
+  }
+
+  // relationships
+  if (!Array.isArray(panelData.relationships)) errors.push('relationships must be array');
+
+  // hasAvailableFollowerSlots
+  if (typeof panelData.hasAvailableFollowerSlots !== 'boolean') {
+    errors.push('hasAvailableFollowerSlots must be boolean');
+  }
+
+  // relationshipNotes (optional, but if present must be string)
+  if (panelData.relationshipNotes !== undefined && typeof panelData.relationshipNotes !== 'string') {
+    errors.push('relationshipNotes must be string');
+  }
+
+  // canEdit
+  if (typeof panelData.canEdit !== 'boolean') errors.push('canEdit must be boolean');
+
+  return {
+    valid: errors.length === 0,
+    errors
+  };
+}
+
 export function validatePanel(panelKey, panelData) {
   const validators = {
     healthPanel: validateHealthPanel,
@@ -739,7 +848,11 @@ export function validatePanel(panelKey, panelData) {
     forcePowersPanel: validateForcePowersPanel,
     starshipManeuversPanel: validateStarshipManeuversPanel,
     languagesPanel: validateLanguagesPanel,
-    racialAbilitiesPanel: validateRacialAbilitiesPanel
+    racialAbilitiesPanel: validateRacialAbilitiesPanel,
+    armorSummaryPanel: validateArmorSummaryPanel,
+    equipmentLedgerPanel: validateEquipmentLedgerPanel,
+    combatNotesPanel: validateCombatNotesPanel,
+    relationshipsPanel: validateRelationshipsPanel
   };
 
   const validator = validators[panelKey];

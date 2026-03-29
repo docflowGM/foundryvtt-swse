@@ -16,7 +16,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// 14 panels that should be registered
+// 18 panels that should be registered (14 original + 4 new in Phase 5 extension)
 const EXPECTED_PANELS = [
   'healthPanel',
   'defensePanel',
@@ -31,7 +31,11 @@ const EXPECTED_PANELS = [
   'forcePowersPanel',
   'starshipManeuversPanel',
   'languagesPanel',
-  'racialAbilitiesPanel'
+  'racialAbilitiesPanel',
+  'armorSummaryPanel',
+  'equipmentLedgerPanel',
+  'combatNotesPanel',
+  'relationshipsPanel'
 ];
 
 const REPO_ROOT = path.join(__dirname, '..');
@@ -118,10 +122,10 @@ function main() {
 
   if (issues === 0) {
     console.log('✓ ALL PANELS PROPERLY ALIGNED');
-    console.log('  - All 14 panels have registry entries');
-    console.log('  - All 14 panels have builders');
-    console.log('  - All 14 panels have validators');
-    console.log('\nReady for Phase 5.8+\n');
+    console.log(`  - All ${EXPECTED_PANELS.length} panels have registry entries`);
+    console.log(`  - All ${EXPECTED_PANELS.length} panels have builders`);
+    console.log(`  - All ${EXPECTED_PANELS.length} panels have validators`);
+    console.log('\nReady for Phase 5.10+\n');
     process.exit(0);
   } else {
     console.log(`✗ ${issues} panel(s) have alignment issues`);

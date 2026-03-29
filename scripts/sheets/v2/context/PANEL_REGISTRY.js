@@ -665,6 +665,105 @@ export const PANEL_REGISTRY = {
         '.racial-card': '0..99'
       }
     }
+  },
+
+  armorSummaryPanel: {
+    name: 'Armor Summary',
+    type: 'display',
+    svgBacked: true,
+    structure: 'equipped armor display with bonuses',
+    template: 'systems/foundryvtt-swse/templates/actors/character/v2/partials/armor-summary-panel.hbs',
+    builder: 'buildArmorSummaryPanel',
+    validator: 'validateArmorSummaryPanel',
+    requiredKeys: [
+      'equippedArmor'
+    ],
+    optionalKeys: [
+      'canEdit'
+    ],
+    postRenderAssertions: {
+      critical: false,
+      rootSelector: '.armor-summary-panel',
+      optionalElements: {
+        '.armor-summary': '0..1'
+      }
+    }
+  },
+
+  equipmentLedgerPanel: {
+    name: 'Equipment Ledger',
+    type: 'ledger',
+    svgBacked: false,
+    structure: 'table of all equipment items with weight tracking',
+    template: 'systems/foundryvtt-swse/templates/actors/character/v2/partials/equipment-ledger-panel.hbs',
+    builder: 'buildEquipmentLedgerPanel',
+    validator: 'validateEquipmentLedgerPanel',
+    requiredKeys: [
+      'allEquipment',
+      'totalEquipmentWeight'
+    ],
+    optionalKeys: [
+      'canEdit'
+    ],
+    rowContract: {
+      type: 'EquipmentRow',
+      shape: ['id', 'name', 'category', 'quantity', 'weight', 'cost', 'equipped']
+    },
+    postRenderAssertions: {
+      critical: false,
+      rootSelector: '.equipment-ledger-panel',
+      optionalElements: {
+        '.ledger-row': '0..99'
+      }
+    }
+  },
+
+  combatNotesPanel: {
+    name: 'Combat Notes',
+    type: 'display',
+    svgBacked: true,
+    structure: 'text area for special combat actions and notes',
+    template: 'systems/foundryvtt-swse/templates/actors/character/v2/partials/special-combat-actions-panel.hbs',
+    builder: 'buildCombatNotesPanel',
+    validator: 'validateCombatNotesPanel',
+    requiredKeys: [
+      'combatNotes'
+    ],
+    optionalKeys: [
+      'canEdit'
+    ],
+    postRenderAssertions: {
+      critical: false,
+      rootSelector: '.special-combat-actions-panel',
+      optionalElements: {
+        '.combat-notes-textarea': '1'
+      }
+    }
+  },
+
+  relationshipsPanel: {
+    name: 'Relationships & Connections',
+    type: 'display',
+    svgBacked: true,
+    structure: 'relationship entries with notes',
+    template: 'systems/foundryvtt-swse/templates/actors/character/v2/partials/relationships-panel.hbs',
+    builder: 'buildRelationshipsPanel',
+    validator: 'validateRelationshipsPanel',
+    requiredKeys: [
+      'relationships',
+      'hasAvailableFollowerSlots'
+    ],
+    optionalKeys: [
+      'relationshipNotes',
+      'canEdit'
+    ],
+    postRenderAssertions: {
+      critical: false,
+      rootSelector: '.relationships-panel',
+      optionalElements: {
+        '.relationship-entry': '0..99'
+      }
+    }
   }
 };
 

@@ -603,6 +603,134 @@ export class PanelContextBuilder {
   }
 
   /**
+   * Build the armor summary panel context
+   *
+   * Contract: armorSummaryPanel
+   * - equippedArmor: { name, armorType, reflexBonus, fortBonus, maxDexBonus, armorCheckPenalty, speedPenalty, weight, isPowered, upgradeSlots } | null
+   * - canEdit: boolean
+   */
+  buildArmorSummaryPanel() {
+    const equippedArmorItem = this.actor.items.find(item =>
+      item.type === 'armor' && item.system?.equipped === true
+    );
+
+    const panel = {
+      equippedArmor: equippedArmorItem ? {
+        id: equippedArmorItem.id,
+        name: equippedArmorItem.name,
+        armorType: equippedArmorItem.system?.armorType,
+        reflexBonus: equippedArmorItem.system?.reflexBonus,
+        fortBonus: equippedArmorItem.system?.fortBonus,
+        maxDexBonus: equippedArmorItem.system?.maxDexBonus,
+        armorCheckPenalty: equippedArmorItem.system?.armorCheckPenalty,
+        speedPenalty: equippedArmorItem.system?.speedPenalty,
+        weight: equippedArmorItem.system?.weight,
+        isPowered: equippedArmorItem.system?.isPowered,
+        upgradeSlots: equippedArmorItem.system?.upgradeSlots
+      } : null,
+      canEdit: this.sheet.isEditable
+    };
+
+    this._validatePanelContext('armorSummaryPanel', panel);
+    return panel;
+  }
+
+  /**
+   * Build the equipment ledger panel context
+   *
+   * Contract: equipmentLedgerPanel
+   * - allEquipment: [ { id, name, category, quantity, weight, cost, equipped } ]
+   * - totalEquipmentWeight: string (e.g., "45 lbs")
+   * - canEdit: boolean
+   */
+  buildEquipmentLedgerPanel() {
+    let totalEquipmentWeightNum = 0;
+
+    const allEquipment = this.actor.items
+      .filter(item => ['weapon', 'armor', 'equipment'].includes(item.type))
+      .map(item => {
+        const itemWeight = item.system?.weight ?? 0;
+        const itemQty = item.system?.quantity ?? 1;
+        const itemCost = item.system?.cost ?? 0;
+        totalEquipmentWeightNum += itemWeight * itemQty;
+        return {
+          id: item.id,
+          name: item.name,
+          category: item.type === 'weapon' ? 'Weapon' :
+                    item.type === 'armor' ? 'Armor' : 'Equipment',
+          quantity: itemQty,
+          weight: itemWeight ? `${itemWeight} lbs` : '—',
+          cost: itemCost > 0 ? itemCost.toLocaleString() : '—',
+          equipped: item.system?.equipped ?? false
+        };
+      })
+      .sort((a, b) => {
+        if (a.equipped !== b.equipped) return a.equipped ? -1 : 1;
+        if (a.category !== b.category) return a.category.localeCompare(b.category);
+        return a.name.localeCompare(b.name);
+      });
+
+    const panel = {
+      allEquipment,
+      totalEquipmentWeight: totalEquipmentWeightNum > 0 ? `${totalEquipmentWeightNum} lbs` : '',
+      canEdit: this.sheet.isEditable
+    };
+
+    this._validatePanelContext('equipmentLedgerPanel', panel);
+    return panel;
+  }
+
+  /**
+   * Build the combat notes panel context
+   *
+   * Contract: combatNotesPanel
+   * - combatNotes: string
+   * - canEdit: boolean
+   */
+  buildCombatNotesPanel() {
+    const panel = {
+      combatNotes: this.actor.flags?.swse?.sheetNotes?.specialCombatActions || '',
+      canEdit: this.sheet.isEditable
+    };
+
+    this._validatePanelContext('combatNotesPanel', panel);
+    return panel;
+  }
+
+  /**
+   * Build the relationships panel context
+   *
+   * Contract: relationshipsPanel
+   * - relationships: [ { uuid, img, name, type, notes } ]
+   * - hasAvailableFollowerSlots: boolean
+   * - relationshipNotes: string
+   * - canEdit: boolean
+   */
+  buildRelationshipsPanel() {
+    const relationships = (this.actor.system?.relationships ?? []).map(rel => ({
+      uuid: rel.uuid || '',
+      img: rel.img || '',
+      name: rel.name || '',
+      type: rel.type || '',
+      notes: rel.notes || ''
+    }));
+
+    // Calculate available follower slots (depends on game mechanics)
+    // For now, always show the button (can be customized)
+    const hasAvailableFollowerSlots = true;
+
+    const panel = {
+      relationships,
+      hasAvailableFollowerSlots,
+      relationshipNotes: this.actor.flags?.swse?.character?.relationshipNotes || '',
+      canEdit: this.sheet.isEditable
+    };
+
+    this._validatePanelContext('relationshipsPanel', panel);
+    return panel;
+  }
+
+  /**
    * Assemble all panel contexts into final context object
    *
    * Returns an object keyed by panel name, where each panel is a dedicated
@@ -623,7 +751,11 @@ export class PanelContextBuilder {
       forcePowersPanel: this.buildForcePowersPanel(),
       starshipManeuversPanel: this.buildStarshipManeuversPanel(),
       languagesPanel: this.buildLanguagesPanel(),
-      racialAbilitiesPanel: this.buildRacialAbilitiesPanel()
+      racialAbilitiesPanel: this.buildRacialAbilitiesPanel(),
+      armorSummaryPanel: this.buildArmorSummaryPanel(),
+      equipmentLedgerPanel: this.buildEquipmentLedgerPanel(),
+      combatNotesPanel: this.buildCombatNotesPanel(),
+      relationshipsPanel: this.buildRelationshipsPanel()
     };
   }
 }

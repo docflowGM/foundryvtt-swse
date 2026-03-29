@@ -103,6 +103,48 @@
  */
 
 /**
+ * Armor Summary Panel Context
+ * Displays equipped armor with bonuses and penalties
+ * @typedef {Object} ArmorSummaryPanelContext
+ * @property {Object|null} equippedArmor - Equipped armor object or null if none equipped
+ * @property {string} equippedArmor.id - Armor item ID
+ * @property {string} equippedArmor.name - Armor name
+ * @property {string} equippedArmor.armorType - Type of armor (light, medium, heavy, etc.)
+ * @property {number} equippedArmor.reflexBonus - Reflex defense bonus
+ * @property {number} equippedArmor.fortBonus - Fortitude defense bonus
+ * @property {number} equippedArmor.maxDexBonus - Maximum DEX bonus cap
+ * @property {number} equippedArmor.armorCheckPenalty - Penalty to skill checks
+ * @property {number} equippedArmor.speedPenalty - Movement speed penalty
+ * @property {number} equippedArmor.weight - Armor weight in pounds
+ * @property {boolean} equippedArmor.isPowered - Whether armor is powered
+ * @property {number} equippedArmor.upgradeSlots - Number of upgrade slots
+ * @property {boolean} canEdit - Whether armor summary can be edited
+ */
+
+/**
+ * Combat Notes Panel Context
+ * Displays special combat actions and tactical notes
+ * @typedef {Object} CombatNotesPanelContext
+ * @property {string} combatNotes - Text of combat notes and reminders
+ * @property {boolean} canEdit - Whether notes can be edited
+ */
+
+/**
+ * Relationships Panel Context
+ * Displays relationships and connections to other actors
+ * @typedef {Object} RelationshipsPanelContext
+ * @property {Object[]} relationships - Array of relationship objects
+ * @property {string} relationships[].uuid - UUID of related actor
+ * @property {string} relationships[].img - Portrait image URL of related actor
+ * @property {string} relationships[].name - Name of related actor
+ * @property {string} relationships[].type - Type of relationship (ally, follower, rival, etc.)
+ * @property {string} relationships[].notes - Notes about this relationship
+ * @property {boolean} hasAvailableFollowerSlots - Whether character can add more followers
+ * @property {string} relationshipNotes - General notes about relationships and alliances
+ * @property {boolean} canEdit - Whether relationships can be edited
+ */
+
+/**
  * ═══════════════════════════════════════════════════════════════════════════
  * LEDGER PANELS (Tabular data panels with multiple rows)
  * ═══════════════════════════════════════════════════════════════════════════
@@ -208,6 +250,15 @@
  * @property {RacialAbilityRow[]} entries - Array of racial abilities
  * @property {boolean} hasEntries - Whether character has racial abilities
  * @property {boolean} canEdit - Whether abilities can be modified
+ */
+
+/**
+ * Equipment Ledger Panel Context
+ * Displays all equipment items in tabular format with weight tracking
+ * @typedef {Object} EquipmentLedgerPanelContext
+ * @property {EquipmentRow[]} allEquipment - Array of all equipment items
+ * @property {string} totalEquipmentWeight - Total weight formatted as string (e.g., "45 lbs")
+ * @property {boolean} canEdit - Whether equipment can be edited
  */
 
 /**
@@ -329,6 +380,19 @@
  */
 
 /**
+ * Equipment Row Contract
+ * Single item in equipment ledger
+ * @typedef {Object} EquipmentRow
+ * @property {string} id - Unique item ID
+ * @property {string} name - Item name
+ * @property {string} category - Category (Weapon, Armor, Equipment)
+ * @property {number} quantity - Quantity
+ * @property {string} weight - Weight formatted as string (e.g., "5 lbs")
+ * @property {string} cost - Cost formatted as string
+ * @property {boolean} equipped - Whether item is equipped
+ */
+
+/**
  * Condition Slot Contract
  * Single slot on the condition track
  * @typedef {Object} ConditionSlot
@@ -371,6 +435,10 @@
  * @property {StarshipManeuversPanelContext} starshipManeuversPanel
  * @property {LanguagesPanelContext} languagesPanel
  * @property {RacialAbilitiesPanelContext} racialAbilitiesPanel
+ * @property {ArmorSummaryPanelContext} armorSummaryPanel
+ * @property {EquipmentLedgerPanelContext} equipmentLedgerPanel
+ * @property {CombatNotesPanelContext} combatNotesPanel
+ * @property {RelationshipsPanelContext} relationshipsPanel
  */
 
 /**

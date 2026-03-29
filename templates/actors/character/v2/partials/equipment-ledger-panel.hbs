@@ -5,7 +5,7 @@
     <button type="button" class="btn-small" data-action="tab" data-tab="gear" data-group="primary" data-tab-group="primary" title="Open Gear tab to manage inventory">Edit in Gear →</button>
   </header>
 
-  {{#if (gt allEquipment.length 0)}}
+  {{#if (gt equipmentLedgerPanel.allEquipment.length 0)}}
     <div class="equipment-ledger">
       <!-- Ledger Header -->
       <div class="ledger-header">
@@ -17,7 +17,7 @@
       </div>
 
       <!-- Equipment Rows -->
-      {{#each allEquipment}}
+      {{#each equipmentLedgerPanel.allEquipment}}
         <div class="ledger-row svg-row-backed {{#if this.equipped}}equipped{{/if}}" data-item-id="{{this.id}}">
           <div class="col-name">
             <span class="item-name">{{this.name}}</span>
@@ -30,10 +30,10 @@
         </div>
       {{/each}}
 
-      {{#if totalEquipmentWeight}}
+      {{#if equipmentLedgerPanel.totalEquipmentWeight}}
         <div class="ledger-footer">
           <span class="footer-label">Total Weight</span>
-          <span class="footer-value">{{totalEquipmentWeight}}</span>
+          <span class="footer-value">{{equipmentLedgerPanel.totalEquipmentWeight}}</span>
         </div>
       {{/if}}
     </div>
