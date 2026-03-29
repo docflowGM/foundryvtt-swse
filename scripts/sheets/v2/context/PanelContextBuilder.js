@@ -14,7 +14,7 @@
 
 import { PanelContextValidator } from './PanelContextValidator.js';
 import { RowTransformers } from './RowTransformers.js';
-import { validatePanelContract } from './PANEL_REGISTRY.js';
+import { validatePanel } from './PanelValidators.js';
 
 export class PanelContextBuilder {
   constructor(actor, sheetInstance) {
@@ -22,6 +22,29 @@ export class PanelContextBuilder {
     this.sheet = sheetInstance;
     this.system = actor.system;
     this.derived = actor.system?.derived ?? {};
+  }
+
+  /**
+   * Validate a panel context and enforce contract
+   * In strict mode: throws on validation errors
+   * Otherwise: logs warnings and continues
+   */
+  _validatePanelContext(panelKey, panelData) {
+    const result = validatePanel(panelKey, panelData);
+
+    if (!result.valid) {
+      const isStrict = CONFIG?.SWSE?.strictMode ?? false;
+      const message = `[Panel Contract] ${panelKey} validation failed: ${result.errors.join(', ')}`;
+
+      if (isStrict) {
+        console.error(message, panelData);
+        throw new Error(message);
+      } else {
+        console.warn(message, panelData);
+      }
+    }
+
+    return result;
   }
 
   /**
@@ -125,11 +148,8 @@ export class PanelContextBuilder {
       showDamageReduction: damageReduction > 0
     };
 
-    // Validate contract in dev mode
-    if (CONFIG?.SWSE?.debug) {
-      PanelContextValidator.validateHealthPanel(panel);
-      validatePanelContract('healthPanel', panel);
-    }
+    // Validate contract (strict mode throws, dev mode warns)
+    this._validatePanelContext('healthPanel', panel);
 
     return panel;
   }
@@ -166,10 +186,8 @@ export class PanelContextBuilder {
       canEdit: this.sheet.isEditable
     };
 
-    if (CONFIG?.SWSE?.debug) {
-      PanelContextValidator.validateDefensePanel(panel);
-      validatePanelContract('defensePanel', panel);
-    }
+    // Validate contract (strict mode throws, dev mode warns)
+    this._validatePanelContext('defensePanel', panel);
 
     return panel;
   }
@@ -213,10 +231,8 @@ export class PanelContextBuilder {
       biography
     };
 
-    if (CONFIG?.SWSE?.debug) {
-      PanelContextValidator.validateBiographyPanel(panel);
-      validatePanelContract('biographyPanel', panel);
-    }
+    // Validate contract (strict mode throws, dev mode warns)
+    this._validatePanelContext('biographyPanel', panel);
 
     return panel;
   }
@@ -291,10 +307,8 @@ export class PanelContextBuilder {
       canEdit: this.sheet.isEditable
     };
 
-    if (CONFIG?.SWSE?.debug) {
-      PanelContextValidator.validateInventoryPanel(panel);
-      validatePanelContract('inventoryPanel', panel);
-    }
+    // Validate contract (strict mode throws, dev mode warns)
+    this._validatePanelContext('inventoryPanel', panel);
 
     return panel;
   }
@@ -333,10 +347,8 @@ export class PanelContextBuilder {
       canEdit: this.sheet.isEditable
     };
 
-    if (CONFIG?.SWSE?.debug) {
-      PanelContextValidator.validateTalentPanel(panel);
-      validatePanelContract('talentPanel', panel);
-    }
+    // Validate contract (strict mode throws, dev mode warns)
+    this._validatePanelContext('talentPanel', panel);
 
     return panel;
   }
@@ -359,10 +371,8 @@ export class PanelContextBuilder {
       canEdit: this.sheet.isEditable
     };
 
-    if (CONFIG?.SWSE?.debug) {
-      PanelContextValidator.validateFeatPanel(panel);
-      validatePanelContract('featPanel', panel);
-    }
+    // Validate contract (strict mode throws, dev mode warns)
+    this._validatePanelContext('featPanel', panel);
 
     return panel;
   }
@@ -385,10 +395,8 @@ export class PanelContextBuilder {
       canEdit: this.sheet.isEditable
     };
 
-    if (CONFIG?.SWSE?.debug) {
-      PanelContextValidator.validateManeuverPanel(panel);
-      validatePanelContract('maneuverPanel', panel);
-    }
+    // Validate contract (strict mode throws, dev mode warns)
+    this._validatePanelContext('maneuverPanel', panel);
 
     return panel;
   }
@@ -416,9 +424,8 @@ export class PanelContextBuilder {
       canEdit: this.sheet.isEditable
     };
 
-    if (CONFIG?.SWSE?.debug) {
-      validatePanelContract('secondWindPanel', panel);
-    }
+    // Validate contract (strict mode throws, dev mode warns)
+    this._validatePanelContext('secondWindPanel', panel);
 
     return panel;
   }
@@ -438,9 +445,8 @@ export class PanelContextBuilder {
       canEdit: this.sheet.isEditable
     };
 
-    if (CONFIG?.SWSE?.debug) {
-      validatePanelContract('portraitPanel', panel);
-    }
+    // Validate contract (strict mode throws, dev mode warns)
+    this._validatePanelContext('portraitPanel', panel);
 
     return panel;
   }
@@ -475,9 +481,8 @@ export class PanelContextBuilder {
       canEdit: this.sheet.isEditable
     };
 
-    if (CONFIG?.SWSE?.debug) {
-      validatePanelContract('darkSidePanel', panel);
-    }
+    // Validate contract (strict mode throws, dev mode warns)
+    this._validatePanelContext('darkSidePanel', panel);
 
     return panel;
   }
@@ -523,9 +528,8 @@ export class PanelContextBuilder {
       canEdit: this.sheet.isEditable
     };
 
-    if (CONFIG?.SWSE?.debug) {
-      validatePanelContract('forcePowersPanel', panel);
-    }
+    // Validate contract (strict mode throws, dev mode warns)
+    this._validatePanelContext('forcePowersPanel', panel);
 
     return panel;
   }
