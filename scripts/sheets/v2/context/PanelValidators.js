@@ -199,6 +199,11 @@ export function validateTalentPanel(panelData) {
     });
   }
 
+  // Grouped object (optional but recommended for display)
+  if (panelData.grouped && typeof panelData.grouped !== 'object') {
+    errors.push('talentPanel.grouped must be an object');
+  }
+
   // Flags
   if (typeof panelData.hasEntries !== 'boolean') errors.push('hasEntries must be boolean');
   if (typeof panelData.totalCount !== 'number') errors.push('totalCount must be number');
@@ -415,6 +420,37 @@ export function validateForcePowersPanel(panelData) {
 }
 
 /**
+ * Validate starshipManeuversPanel contract
+ */
+export function validateStarshipManeuversPanel(panelData) {
+  const errors = [];
+
+  if (!panelData) {
+    errors.push('starshipManeuversPanel is null/undefined');
+    return { valid: false, errors };
+  }
+
+  // Entries array
+  if (!Array.isArray(panelData.entries)) {
+    errors.push('starshipManeuversPanel.entries must be an array');
+  } else {
+    panelData.entries.forEach((entry, idx) => {
+      if (typeof entry.id !== 'string') errors.push(`entry[${idx}].id must be string`);
+      if (typeof entry.name !== 'string') errors.push(`entry[${idx}].name must be string`);
+    });
+  }
+
+  // Flags
+  if (typeof panelData.hasEntries !== 'boolean') errors.push('hasEntries must be boolean');
+  if (typeof panelData.totalCount !== 'number') errors.push('totalCount must be number');
+
+  return {
+    valid: errors.length === 0,
+    errors
+  };
+}
+
+/**
  * Run validator for a panel by key
  */
 export function validatePanel(panelKey, panelData) {
@@ -429,7 +465,8 @@ export function validatePanel(panelKey, panelData) {
     secondWindPanel: validateSecondWindPanel,
     portraitPanel: validatePortraitPanel,
     darkSidePanel: validateDarkSidePanel,
-    forcePowersPanel: validateForcePowersPanel
+    forcePowersPanel: validateForcePowersPanel,
+    starshipManeuversPanel: validateStarshipManeuversPanel
   };
 
   const validator = validators[panelKey];

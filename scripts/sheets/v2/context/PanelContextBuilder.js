@@ -535,6 +535,36 @@ export class PanelContextBuilder {
   }
 
   /**
+   * Build the starship maneuvers panel context
+   *
+   * Contract: starshipManeuversPanel
+   * - entries: [ { id, name, summary } ]
+   * - hasEntries: boolean
+   * - totalCount: number
+   */
+  buildStarshipManeuversPanel() {
+    // Extract starship maneuvers from derived data
+    const maneuvers = this.derived.starshipManeuvers?.list ?? [];
+
+    const entries = maneuvers.map(maneuver => ({
+      id: maneuver.id || '',
+      name: maneuver.name || '',
+      summary: maneuver.summary || ''
+    }));
+
+    const panel = {
+      entries,
+      hasEntries: entries.length > 0,
+      totalCount: entries.length
+    };
+
+    // Validate contract (strict mode throws, dev mode warns)
+    this._validatePanelContext('starshipManeuversPanel', panel);
+
+    return panel;
+  }
+
+  /**
    * Assemble all panel contexts into final context object
    *
    * Returns an object keyed by panel name, where each panel is a dedicated
@@ -552,7 +582,8 @@ export class PanelContextBuilder {
       secondWindPanel: this.buildSecondWindPanel(),
       portraitPanel: this.buildPortraitPanel(),
       darkSidePanel: this.buildDarkSidePanel(),
-      forcePowersPanel: this.buildForcePowersPanel()
+      forcePowersPanel: this.buildForcePowersPanel(),
+      starshipManeuversPanel: this.buildStarshipManeuversPanel()
     };
   }
 }

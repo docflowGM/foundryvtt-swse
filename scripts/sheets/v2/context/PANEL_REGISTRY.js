@@ -333,6 +333,33 @@ export const PANEL_REGISTRY = {
         '.technique-row': '0..99'
       }
     }
+  },
+
+  starshipManeuversPanel: {
+    name: 'Starship Maneuvers',
+    type: 'ledger',
+    svgBacked: false,
+    structure: 'ledger rows (starship maneuver list)',
+    template: 'systems/foundryvtt-swse/templates/actors/character/v2/partials/starship-maneuvers-known-panel.hbs',
+    builder: 'buildStarshipManeuversPanel',
+    validator: 'validateStarshipManeuversPanel',
+    requiredKeys: [
+      'entries',
+      'hasEntries',
+      'totalCount'
+    ],
+    optionalKeys: [],
+    rowContract: {
+      type: 'StarshipManeuverRow',
+      shape: ['id', 'name', 'summary']
+    },
+    postRenderAssertions: {
+      critical: false,
+      rootSelector: '.starship-maneuvers-known-panel',
+      optionalElements: {
+        '.maneuver-row': '0..99'
+      }
+    }
   }
 };
 
