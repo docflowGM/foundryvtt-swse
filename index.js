@@ -122,6 +122,7 @@ import { SWSEV2SheetDiagnostics } from './scripts/sheets/v2/sheet-diagnostics.js
 // ---- debug system ----
 import { SWSEDebugger } from './scripts/debug/swse-debugger.js';
 import { SentinelReports } from './scripts/debug/sentinel-reports.js';
+import { LayoutDebugManager } from './scripts/debug/layout-debug.js';
 
 // ---- handlebars ----
 import { registerHandlebarsHelpers } from './helpers/handlebars/index.js';
