@@ -150,9 +150,17 @@ export class SWSEUpgradeApp extends BaseSWSEAppV2 {
 
       await ActorEngine.applyMutationPlan(actor, finalPlan);
 
+      // PHASE 2: Route embedded items through ActorEngine
       if (actor && this.item.isEmbedded) {
-        await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: this.item.id, 'system.installedUpgrades': nextInstalled }]);
+        try {
+          await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: this.item.id, 'system.installedUpgrades': nextInstalled }]);
+        } catch (err) {
+          console.error('[Upgrade App] ActorEngine update failed:', err);
+          ui.notifications.error(`Failed to install upgrade: ${err.message}`);
+          throw err;
+        }
       } else {
+        // Unowned items can update directly
         await this.item.update({ 'system.installedUpgrades': nextInstalled });
       }
 
@@ -182,9 +190,17 @@ export class SWSEUpgradeApp extends BaseSWSEAppV2 {
       ? installed.toSpliced(index, 1)
       : installed.filter((_, i) => i !== index);
 
+    // PHASE 2: Route embedded items through ActorEngine
     if (actor && this.item.isEmbedded) {
-      await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: this.item.id, 'system.installedUpgrades': nextInstalled }]);
+      try {
+        await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: this.item.id, 'system.installedUpgrades': nextInstalled }]);
+      } catch (err) {
+        console.error('[Upgrade App] ActorEngine update failed:', err);
+        ui.notifications.error(`Failed to remove upgrade: ${err.message}`);
+        throw err;
+      }
     } else {
+      // Unowned items can update directly
       await this.item.update({ 'system.installedUpgrades': nextInstalled });
     }
 

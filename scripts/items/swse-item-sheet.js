@@ -137,7 +137,19 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       'system.currentSR': shieldRating
     };
 
-    if (actor?.updateOwnedItem && this.item?.isEmbedded) {await actor.updateOwnedItem(this.item, updates);} else {await this.item.update(updates);}
+    // PHASE 2: Route embedded items through ActorEngine
+    if (this.item?.isEmbedded && actor) {
+      try {
+        await actor.updateOwnedItem(this.item, updates);
+      } catch (err) {
+        console.error('[Item Sheet] Shield activation failed:', err);
+        ui.notifications.error(`Failed to activate ${this.item.name}: ${err.message}`);
+        return;
+      }
+    } else {
+      // Unowned items can update directly
+      await this.item.update(updates);
+    }
 
     ui.notifications.info(
       `${this.item.name} activated! SR: ${shieldRating}, Charges remaining: ${currentCharges - 1}`
@@ -155,7 +167,19 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
 
     const updates = { 'system.activated': false };
 
-    if (actor?.updateOwnedItem && this.item?.isEmbedded) {await actor.updateOwnedItem(this.item, updates);} else {await this.item.update(updates);}
+    // PHASE 2: Route embedded items through ActorEngine
+    if (this.item?.isEmbedded && actor) {
+      try {
+        await actor.updateOwnedItem(this.item, updates);
+      } catch (err) {
+        console.error('[Item Sheet] Shield deactivation failed:', err);
+        ui.notifications.error(`Failed to deactivate ${this.item.name}: ${err.message}`);
+        return;
+      }
+    } else {
+      // Unowned items can update directly
+      await this.item.update(updates);
+    }
     ui.notifications.info(`${this.item.name} deactivated!`);
   }
 
@@ -166,9 +190,17 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     const actor = this.item?.actor;
 
     // Update item flag
-    if (actor?.updateOwnedItem && this.item?.isEmbedded) {
-      await actor.updateOwnedItem(this.item, { 'flags.swse.emitLight': enabled });
+    // PHASE 2: Route embedded items through ActorEngine
+    if (this.item?.isEmbedded && actor) {
+      try {
+        await actor.updateOwnedItem(this.item, { 'flags.swse.emitLight': enabled });
+      } catch (err) {
+        console.error('[Item Sheet] Light toggle failed:', err);
+        ui.notifications.error(`Failed to toggle light: ${err.message}`);
+        return;
+      }
     } else {
+      // Unowned items can update directly
       await this.item.update({ 'flags.swse.emitLight': enabled });
     }
 
@@ -243,11 +275,21 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     }
 
     const actor = this.item?.actor;
-    if (actor?.updateOwnedItem && this.item?.isEmbedded) {
-      await actor.updateOwnedItem(this.item, foundry.utils.flattenObject(data));
-      return;
+    const flatData = foundry.utils.flattenObject(data);
+
+    // PHASE 2: Route embedded items through ActorEngine
+    if (this.item?.isEmbedded && actor) {
+      try {
+        await actor.updateOwnedItem(this.item, flatData);
+        return;
+      } catch (err) {
+        console.error('[Item Sheet] Form submission failed:', err);
+        ui.notifications.error(`Failed to save item: ${err.message}`);
+        return;
+      }
     }
 
-    await this.item.update(foundry.utils.flattenObject(data));
+    // Unowned items can update directly
+    await this.item.update(flatData);
   }
 }

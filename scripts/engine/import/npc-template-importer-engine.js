@@ -40,18 +40,19 @@ export class NPCTemplateImporterEngine {
         }
       }
 
-      // Create the actor in the world
-      const actor = await Actor.create(newActorData);
-
-      // Apply notes/biography if provided
+      // PHASE 2: Include biography in initial actor creation data
+      // This avoids post-creation direct mutations
       if (customData && (customData.notes || customData.biography)) {
         const biographyText = [customData.notes, customData.biography]
           .filter(t => t && t.trim())
           .join('\n\n');
         if (biographyText) {
-          await actor.update({ 'system.biography': biographyText });
+          newActorData.system.biography = biographyText;
         }
       }
+
+      // Create the actor in the world (includes biography in initial data)
+      const actor = await Actor.create(newActorData);
 
       SWSELogger.log(`[NPCTemplateImporterEngine] Beast imported successfully: ${actor.name} (${actor.id})`);
 
@@ -141,6 +142,14 @@ export class NPCTemplateImporterEngine {
     // Use custom portrait if provided, otherwise use default
     const portrait = customData?.portrait || 'systems/foundryvtt-swse/assets/token-default.png';
 
+    // PHASE 2: Compute biography upfront to include in initial actor creation
+    // This avoids post-creation direct mutations
+    let biography = '';
+    if (customData && (customData.notes || customData.biography)) {
+      const parts = [customData.notes, customData.biography].filter(t => t && t.trim());
+      biography = parts.join('\n\n');
+    }
+
     // Create base actor data
     const actorData = {
       type: 'npc',
@@ -166,7 +175,9 @@ export class NPCTemplateImporterEngine {
         // Mark as imported NPC
         npcType: npcType,
         // Store species
-        species: statblock.Species || 'Unknown'
+        species: statblock.Species || 'Unknown',
+        // PHASE 2: Include biography in initial creation to avoid post-creation mutation
+        biography: biography || ''
       },
       items: [],
       flags: {
@@ -179,22 +190,12 @@ export class NPCTemplateImporterEngine {
       }
     };
 
-    // Create the actor
+    // Create the actor (includes biography in initial data)
     const actor = await Actor.create(actorData);
 
     // Now add items (weapons, feats, talents, etc.)
     if (actor) {
       await this._addItemsToActor(actor, statblock);
-
-      // Apply notes/biography if provided
-      if (customData && (customData.notes || customData.biography)) {
-        const biographyText = [customData.notes, customData.biography]
-          .filter(t => t && t.trim())
-          .join('\n\n');
-        if (biographyText) {
-          await actor.update({ 'system.biography': biographyText });
-        }
-      }
     }
 
     return actor;

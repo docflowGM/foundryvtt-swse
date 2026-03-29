@@ -161,12 +161,21 @@ export class SWSEActorBase extends Actor {
   /**
    * Update an owned Item through ActorEngine.
    *
+   * PHASE 2: Removed silent fallback-to-direct-update behavior.
+   * Owned items MUST route through ActorEngine to ensure:
+   * - MutationInterceptor authorization
+   * - Proper recomputation
+   * - Integrity checks
+   *
+   * Unowned items (world items) can update directly.
+   *
    * Pure data operation: no side-effects.
    *
    * @param {Item} item
    * @param {object} changes - Dot-notation changes
    * @param {object} [options={}]
    * @returns {Promise<Item|null>}
+   * @throws {Error} If ActorEngine is unavailable (indicates module loading issue)
    */
   async updateOwnedItem(item, changes, options = {}) {
     if (!item) {return null;}
@@ -176,15 +185,12 @@ export class SWSEActorBase extends Actor {
       return item.update(changes, options);
     }
 
-    try {
-      const ActorEngine = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js").then(m => m.ActorEngine);
-      const update = { _id: item.id, ...changes };
-      const [updated] = await ActorEngine.updateOwnedItems(this, [update], options);
-      return updated ?? null;
-    } catch (err) {
-      // Fallback: update via item directly
-      return item.update(changes, options);
-    }
+    // PHASE 2: No fallback to direct update. ActorEngine is required.
+    // If this fails, the error indicates a module loading problem that must be fixed.
+    const ActorEngine = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js").then(m => m.ActorEngine);
+    const update = { _id: item.id, ...changes };
+    const [updated] = await ActorEngine.updateOwnedItems(this, [update], options);
+    return updated ?? null;
   }
 
   /**

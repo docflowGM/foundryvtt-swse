@@ -104,16 +104,15 @@ export async function repairWorld() {
       }
 
       if (needsUpdate) {
-        // PHASE 11: Route through ActorEngine for governance
-        if (globalThis.SWSE?.ActorEngine?.updateActor) {
-          await globalThis.SWSE.ActorEngine.updateActor(actor, fixes, {
-            meta: { origin: 'world-repair' }
-          });
-        } else {
-          // Fallback if ActorEngine unavailable
-          console.warn(`⚠️  ActorEngine unavailable, using direct update for ${actor.name}`);
-          await actor.update(fixes);
-        }
+        // PHASE 2: Route through ActorEngine for governance
+        // Repair operations MUST go through ActorEngine to ensure:
+        // - MutationInterceptor authorization
+        // - Proper recomputation of derived values
+        // - Integrity checks after repair
+        const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+        await ActorEngine.updateActor(actor, fixes, {
+          meta: { origin: 'world-repair' }
+        });
         report.repairedActors.push(actor.name);
         console.log(`✅ Repaired ${actor.name}`);
       }
