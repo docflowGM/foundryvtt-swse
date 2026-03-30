@@ -385,15 +385,15 @@
       "Tooltip": {
         "HitPoints": {
           "Title": "Hit Points",
-          "Body": "Your current and maximum HP. Reaching 0 means you are unconscious or dying."
+          "Body": "Hit Points measure how long you can stay in the fight. They reflect both actual injury tolerance and combat skill such as dodging, deflecting, and turning solid hits into less serious harm."
         },
         "DamageThreshold": {
           "Title": "Damage Threshold",
-          "Body": "If a single attack deals this much damage or more, you move down the condition track."
+          "Body": "Damage Threshold measures how much damage a single attack must inflict to seriously impair you. Even if you still have Hit Points left, a sufficiently powerful hit can reduce your effectiveness immediately."
         },
         "ForcePoints": {
           "Title": "Force Points",
-          "Body": "Spend to add a bonus die to any d20 roll, activate certain abilities, or avoid death."
+          "Body": "Force Points represent a character's ability to draw on unusual help, whether understood as destiny, luck, or the Force moving through living beings. They are a limited resource used to improve important actions."
         },
         "DestinyPoints": {
           "Title": "Destiny Points",
@@ -413,7 +413,7 @@
         },
         "Initiative": {
           "Title": "Initiative",
-          "Body": "Determines turn order in combat. Based on Dexterity and any bonuses."
+          "Body": "Initiative determines how fast you react when action starts. A higher result usually means acting earlier in the round."
         },
         "ReflexDefense": {
           "Title": "Reflex Defense",
@@ -526,6 +526,110 @@
         "GMPaletteMode": {
           "Title": "GM Mode",
           "Body": "Switches the palette to GM tools: NPC spawning, healing, condition management."
+        },
+        "Strength": {
+          "Title": "Strength",
+          "Body": "Strength reflects how much force a character can apply physically. It is especially important in direct physical action and close-quarters power-based tasks."
+        },
+        "Dexterity": {
+          "Title": "Dexterity",
+          "Body": "Dexterity reflects fine control, reaction speed, and physical precision. It is especially valuable for ranged combat, evasive movement, and vehicle handling."
+        },
+        "Constitution": {
+          "Title": "Constitution",
+          "Body": "Constitution reflects how well a character withstands injury, fatigue, and bodily strain. It is a core survivability stat because it contributes to staying power."
+        },
+        "Intelligence": {
+          "Title": "Intelligence",
+          "Body": "Intelligence reflects how well a character understands systems, solves problems, and develops trained expertise. It is especially useful for characters who rely on broad technical or academic skill."
+        },
+        "Wisdom": {
+          "Title": "Wisdom",
+          "Body": "Wisdom reflects perception, practical insight, and connection to surroundings. It is about awareness and sound judgment more than abstract analysis."
+        },
+        "Charisma": {
+          "Title": "Charisma",
+          "Body": "Charisma reflects leadership, magnetism, confidence, and the ability to move others. It is not just appearance; it is the strength of a character's personal presence."
+        },
+        "Acrobatics": {
+          "Title": "Acrobatics",
+          "Body": "Acrobatics covers balance, tumbling, safe falls, escaping physical holds, and agile movement. Use it when precision body control matters more than raw strength."
+        },
+        "Climb": {
+          "Title": "Climb",
+          "Body": "Climb is used to ascend difficult surfaces such as rock faces, buildings, ladders, and machinery. It measures controlled upward movement through strength and grip."
+        },
+        "Deception": {
+          "Title": "Deception",
+          "Body": "Deception is used to make falsehoods seem believable, create confusion, conceal intent, or present yourself as someone else. It covers bluffing, fast-talking, disguise, and forged evidence."
+        },
+        "Endurance": {
+          "Title": "Endurance",
+          "Body": "Endurance measures stamina and resilience under stress. Use it when a character must keep going through fatigue, hardship, or other physical extremes."
+        },
+        "GatherInformation": {
+          "Title": "Gather Information",
+          "Body": "Gather Information is used to ask around, work social networks, and uncover leads. It helps locate gossip, public talk, quiet secrets, and useful connections."
+        },
+        "Jump": {
+          "Title": "Jump",
+          "Body": "Jump is used for clearing pits, vaulting barriers, and making controlled leaps. It reflects explosive strength and coordinated movement."
+        },
+        "Knowledge": {
+          "Title": "Knowledge",
+          "Body": "Knowledge represents academic, professional, or technical learning. Each field covers a different body of lore, so success depends on the subject being relevant to your training."
+        },
+        "Mechanics": {
+          "Title": "Mechanics",
+          "Body": "Mechanics is used to interact directly with machinery and technical hardware. It covers bypassing security, setting or disarming explosives, and repairing or improving damaged equipment and droids."
+        },
+        "Perception": {
+          "Title": "Perception",
+          "Body": "Perception is used to detect threats, spot concealed creatures or objects, and stay aware of the environment. It reflects alertness and sensory awareness."
+        },
+        "Persuasion": {
+          "Title": "Persuasion",
+          "Body": "Persuasion is used to win cooperation, shape attitudes, and steer social outcomes. It can be subtle and diplomatic or forceful and intimidating."
+        },
+        "Pilot": {
+          "Title": "Pilot",
+          "Body": "Pilot governs advanced vehicle handling. Routine travel may not require a check, but evasive action, stunts, and dangerous control do."
+        },
+        "Ride": {
+          "Title": "Ride",
+          "Body": "Ride is used to handle creatures used as mounts, especially in motion or under stress. It reflects balance, control, and mounted coordination."
+        },
+        "Stealth": {
+          "Title": "Stealth",
+          "Body": "Stealth is used to avoid detection through silence, concealment, and careful movement. It also supports hidden positioning, ambushes, sniping from cover, and sleight of hand."
+        },
+        "Survival": {
+          "Title": "Survival",
+          "Body": "Survival helps characters navigate harsh environments, track signs of danger, forage, hunt, and identify natural hazards. It measures practical fieldcraft."
+        },
+        "Swim": {
+          "Title": "Swim",
+          "Body": "Swim is used to cross water, dive, stay afloat, and maneuver in difficult aquatic conditions. It represents controlled movement in water."
+        },
+        "TreatInjury": {
+          "Title": "Treat Injury",
+          "Body": "Treat Injury covers battlefield aid, medical care, and recovery support. Use it to keep allies alive, improve healing, and respond to harmful conditions."
+        },
+        "UseComputer": {
+          "Title": "Use Computer",
+          "Body": "Use Computer is used to operate secured systems, bypass digital protections, and interact with complex computer-controlled technology. It governs technical access in electronic environments."
+        },
+        "UseTheForce": {
+          "Title": "Use the Force",
+          "Body": "Use the Force represents active connection to the Force in play. It supports unusual perception, recovery, and other force-driven acts, and it normally requires Force Sensitivity to be trained."
+        },
+        "DarkSideScore": {
+          "Title": "Dark Side Score",
+          "Body": "Dark Side Score tracks moral and spiritual corruption through evil acts. A higher score reflects greater influence from the dark side and may carry serious consequences."
+        },
+        "CatchSecondWind": {
+          "Title": "Catch a Second Wind",
+          "Body": "Catch a Second Wind lets a heroic character rally after being seriously hurt. It is only available when reduced to half hit points or less, and it can be used once per day."
         }
       },
       "Callout": {

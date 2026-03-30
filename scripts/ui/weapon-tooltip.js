@@ -1,7 +1,8 @@
 /**
- * Weapon Damage Breakdown Tooltip System
+ * Weapon Breakdown Tooltip System
  *
- * Displays comprehensive modifier breakdown for weapon damage/attack values on hover.
+ * Provides breakdown data generators for weapon attack/damage values.
+ * Integrates with TooltipRegistry as breakdown providers.
  * Shows all sources contributing to final calculations:
  * - Base damage calculation (dice + type)
  * - Attack bonus components (BAB, half level, ability, enhancement, proficiency)
@@ -12,210 +13,128 @@
 
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import WeaponsEngine from "/systems/foundryvtt-swse/scripts/engine/combat/weapons-engine.js";
+import { TooltipRegistry } from "/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-registry.js";
 
 export class WeaponTooltip {
+
   /**
-   * Initialize weapon tooltips on character sheet
-   * @param {Actor} actor - Character actor
-   * @param {HTMLElement} container - Container with weapon elements
+   * Initialize: register weapon breakdown providers with the registry.
+   * Note: Weapon tooltips are currently handled by element-specific data attributes
+   * and are not yet integrated with the registry's semantic lookup.
+   * This is preserved for future expansion.
    */
-  static initTooltips(actor, container) {
-    if (!container) return;
-
-    // Find all weapon card elements
-    const weaponCards = container.querySelectorAll('[data-weapon-id]');
-
-    weaponCards.forEach(card => {
-      const damageElements = card.querySelectorAll('[data-damage-breakdown]');
-      const attackElements = card.querySelectorAll('[data-attack-breakdown]');
-
-      damageElements.forEach(element => {
-        this._setupTooltipListeners(actor, element, 'damage');
-      });
-
-      attackElements.forEach(element => {
-        this._setupTooltipListeners(actor, element, 'attack');
-      });
-    });
+  static registerProviders() {
+    // Future: register semantic weapon providers here
   }
 
   /**
-   * Setup hover/click listeners for tooltip
-   * @private
+   * Get attack bonus breakdown text.
+   * @param {Actor} actor
+   * @param {Item} weapon
+   * @returns {{title: string, body: string}}
    */
-  static _setupTooltipListeners(actor, element, type) {
-    element.addEventListener('mouseenter', () => {
-      this.showTooltip(actor, element, type);
-    });
+  static getAttackBreakdownContent(actor, weapon) {
+    const breakdown = WeaponsEngine.getAttackBonusBreakdown(actor, weapon);
+    const modifiers = this._getModifiersForTarget(actor, 'attack.bonus');
 
-    element.addEventListener('mouseleave', () => {
-      this.hideTooltip(element);
-    });
-
-    // Click to toggle on mobile
-    element.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const tooltip = element.querySelector('.weapon-breakdown-tooltip');
-      if (tooltip?.classList.contains('show')) {
-        this.hideTooltip(element);
-      } else {
-        this.showTooltip(actor, element, type);
-      }
-    });
-  }
-
-  /**
-   * Show weapon breakdown tooltip
-   * @param {Actor} actor - Actor wielding weapon
-   * @param {HTMLElement} element - Trigger element
-   * @param {string} type - 'damage' or 'attack'
-   */
-  static showTooltip(actor, element, type) {
-    if (!actor) return;
-
-    const weaponId = element.dataset.weaponId;
-    if (!weaponId) return;
-
-    const weapon = actor.items.get(weaponId);
-    if (!weapon || weapon.type !== 'weapon') return;
-
-    // Get existing tooltip or create new one
-    let tooltip = element.querySelector('.weapon-breakdown-tooltip');
-    if (!tooltip) {
-      const data = type === 'damage'
-        ? this.getDamageBreakdown(actor, weapon)
-        : this.getAttackBreakdown(actor, weapon);
-
-      tooltip = this.createTooltipElement(data, type);
-      element.appendChild(tooltip);
-    }
-
-    tooltip.classList.add('show');
-    this.positionTooltip(tooltip, element);
-  }
-
-  /**
-   * Hide weapon breakdown tooltip
-   * @param {HTMLElement} element - Trigger element
-   */
-  static hideTooltip(element) {
-    const tooltip = element.querySelector('.weapon-breakdown-tooltip');
-    if (tooltip) {
-      tooltip.classList.remove('show');
-    }
-  }
-
-  /**
-   * Create tooltip HTML element
-   * @private
-   */
-  static createTooltipElement(data, type) {
-    const div = document.createElement('div');
-    div.className = `weapon-breakdown-tooltip ${type}-breakdown show`;
-    div.dataset.breakdown = type;
-    div.innerHTML = this.generateTooltipHTML(data, type);
-    return div;
-  }
-
-  /**
-   * Generate tooltip HTML from breakdown data
-   * @private
-   */
-  static generateTooltipHTML(data, type) {
-    let html = `
-      <div class="tooltip-header">
-        <h4>${data.weaponName} — ${type === 'damage' ? 'Damage' : 'Attack'} Breakdown</h4>
-        <span class="total-value">Total: ${data.total}</span>
-      </div>
-
-      <div class="breakdown-section base-calculation">
-        <h5 class="section-title">Base Components</h5>
-    `;
-
-    // Base components
-    for (const [source, value] of Object.entries(data.components)) {
+    let lines = [];
+    lines.push('Attack Bonus Components:');
+    for (const [source, value] of Object.entries(breakdown.components)) {
       if (value !== 0) {
-        const valueClass = value > 0 ? 'positive' : 'negative';
-        html += `
-          <div class="calc-item">
-            <span class="item-source">${source}</span>
-            <span class="item-value ${valueClass}">${value > 0 ? '+' : ''}${value}</span>
-          </div>
-        `;
+        lines.push(`  ${source}: ${value > 0 ? '+' : ''}${value}`);
       }
     }
+    lines.push(`  Subtotal: ${breakdown.total}`);
 
-    html += `
-        <div class="calc-divider"></div>
-        <div class="calc-item total">
-          <span class="item-source">Subtotal</span>
-          <span class="item-value">${data.subtotal}</span>
-        </div>
-      </div>
-    `;
-
-    // Modifiers section
-    if (data.modifiers && data.modifiers.length > 0) {
-      html += `
-        <div class="breakdown-section modifier-breakdown">
-          <h5 class="section-title">Modifiers (${data.modifiers.length})</h5>
-      `;
-
-      for (const mod of data.modifiers) {
-        const valueClass = mod.value > 0 ? 'positive' : mod.value < 0 ? 'negative' : 'neutral';
-        html += `
-          <div class="modifier-item ${mod.source} ${mod.type}">
-            <span class="modifier-source">${mod.sourceName}</span>
-            <span class="modifier-value ${valueClass}">${mod.value > 0 ? '+' : ''}${mod.value}</span>
-          </div>
-        `;
-      }
-
-      html += `</div>`;
+    if (modifiers.length > 0) {
+      lines.push('');
+      lines.push(`Active Modifiers (${modifiers.length}):`);
+      modifiers.forEach(mod => {
+        lines.push(`  ${mod.sourceName}: ${mod.value > 0 ? '+' : ''}${mod.value}`);
+      });
     }
 
-    // Special properties section
-    if (data.properties && data.properties.length > 0) {
-      html += `
-        <div class="breakdown-section properties">
-          <h5 class="section-title">Properties</h5>
-      `;
+    const total = breakdown.total + (modifiers.reduce((sum, m) => sum + m.value, 0));
+    lines.push('');
+    lines.push(`Final Attack Bonus: ${total}`);
 
-      for (const prop of data.properties) {
-        html += `
-          <div class="property-item">
-            <span class="property-name">${prop.name}</span>
-            <span class="property-effect">${prop.effect}</span>
-          </div>
-        `;
+    return {
+      title: `${weapon.name} — Attack Breakdown`,
+      body: lines.join('\n')
+    };
+  }
+
+  /**
+   * Get damage bonus breakdown text.
+   * @param {Actor} actor
+   * @param {Item} weapon
+   * @returns {{title: string, body: string}}
+   */
+  static getDamageBreakdownContent(actor, weapon) {
+    const breakdown = WeaponsEngine.getDamageBonusBreakdown(actor, weapon);
+    const modifiers = this._getModifiersForTarget(actor, 'damage.melee');
+    const properties = this._getWeaponPropertyEffects(weapon);
+
+    let lines = [];
+    lines.push('Damage Bonus Components:');
+    for (const [source, value] of Object.entries(breakdown.components)) {
+      if (value !== 0) {
+        lines.push(`  ${source}: ${value > 0 ? '+' : ''}${value}`);
       }
+    }
+    lines.push(`  Subtotal: ${breakdown.total}`);
 
-      html += `</div>`;
+    if (modifiers.length > 0) {
+      lines.push('');
+      lines.push(`Active Modifiers (${modifiers.length}):`);
+      modifiers.forEach(mod => {
+        lines.push(`  ${mod.sourceName}: ${mod.value > 0 ? '+' : ''}${mod.value}`);
+      });
     }
 
-    // Final total
-    html += `
-      <div class="breakdown-section final-total">
-        <div class="total-calculation">
-          <span class="label">Final ${type === 'damage' ? 'Damage' : 'Attack'} Bonus:</span>
-          <span class="value">${data.total}</span>
-        </div>
-      </div>
-    `;
+    if (properties.length > 0) {
+      lines.push('');
+      lines.push('Properties:');
+      properties.forEach(prop => {
+        lines.push(`  ${prop.name}: ${prop.effect}`);
+      });
+    }
 
-    return html;
+    const total = breakdown.total + (modifiers.reduce((sum, m) => sum + m.value, 0));
+    lines.push('');
+    lines.push(`Final Damage Bonus: ${total}`);
+
+    return {
+      title: `${weapon.name} — Damage Breakdown`,
+      body: lines.join('\n')
+    };
+  }
+
+  /**
+   * Get attack bonus breakdown
+   * @deprecated Use getAttackBreakdownContent instead
+   */
+  static getAttackBreakdown(actor, weapon) {
+    const breakdown = WeaponsEngine.getAttackBonusBreakdown(actor, weapon);
+    const modifiers = this._getModifiersForTarget(actor, 'attack.bonus');
+
+    return {
+      weaponName: weapon.name,
+      components: breakdown.components,
+      subtotal: breakdown.total,
+      total: breakdown.total + (modifiers.reduce((sum, m) => sum + m.value, 0)),
+      modifiers: modifiers,
+      properties: []
+    };
   }
 
   /**
    * Get damage bonus breakdown
+   * @deprecated Use getDamageBreakdownContent instead
    */
   static getDamageBreakdown(actor, weapon) {
     const breakdown = WeaponsEngine.getDamageBonusBreakdown(actor, weapon);
-
-    // Get modifiers from ModifierEngine
     const modifiers = this._getModifiersForTarget(actor, 'damage.melee');
-
-    // Get weapon properties effects
     const properties = this._getWeaponPropertyEffects(weapon);
 
     return {
@@ -226,25 +145,6 @@ export class WeaponTooltip {
       total: breakdown.total + (modifiers.reduce((sum, m) => sum + m.value, 0)),
       modifiers: modifiers,
       properties: properties
-    };
-  }
-
-  /**
-   * Get attack bonus breakdown
-   */
-  static getAttackBreakdown(actor, weapon) {
-    const breakdown = WeaponsEngine.getAttackBonusBreakdown(actor, weapon);
-
-    // Get modifiers from ModifierEngine
-    const modifiers = this._getModifiersForTarget(actor, 'attack.bonus');
-
-    return {
-      weaponName: weapon.name,
-      components: breakdown.components,
-      subtotal: breakdown.total,
-      total: breakdown.total + (modifiers.reduce((sum, m) => sum + m.value, 0)),
-      modifiers: modifiers,
-      properties: []
     };
   }
 
@@ -312,31 +212,6 @@ export class WeaponTooltip {
     }
 
     return effects;
-  }
-
-  /**
-   * Position tooltip relative to trigger element
-   * @private
-   */
-  static positionTooltip(tooltip, element) {
-    const rect = element.getBoundingClientRect();
-
-    // Default: bottom-left
-    tooltip.style.top = `${rect.height + 4}px`;
-    tooltip.style.left = '0';
-
-    // Adjust if tooltip would go off-screen
-    const tooltipRect = tooltip.getBoundingClientRect();
-
-    if (tooltipRect.right > window.innerWidth) {
-      tooltip.style.right = '0';
-      tooltip.style.left = 'auto';
-    }
-
-    if (tooltipRect.bottom > window.innerHeight) {
-      tooltip.style.top = 'auto';
-      tooltip.style.bottom = `${rect.height + 4}px`;
-    }
   }
 }
 

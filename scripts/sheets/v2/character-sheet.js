@@ -21,6 +21,7 @@ import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animati
 import { ActionEconomyIntegration } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-integration.js";
 import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-bindings.js";
 import { SentinelSheetGuardrails } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-sheet-guardrails.js";
+import { bindV2CharacterSheetTooltips } from "/systems/foundryvtt-swse/scripts/sheets/v2/TooltipIntegration.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import { computeCenteredPosition } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
@@ -359,6 +360,9 @@ export class SWSEV2CharacterSheet extends
 
     // Wire listeners to the actual sheet root (now guaranteed to be the form or the sheet content)
     this.activateListeners(root, { signal });
+
+    // Wire tooltip bindings for micro-tooltips and breakdowns
+    bindV2CharacterSheetTooltips(this.document, root, this._renderAbort);
 
     // Wire action economy bindings for combat tab
     ActionEconomyBindings.setupAttackButtons(root, this.document);

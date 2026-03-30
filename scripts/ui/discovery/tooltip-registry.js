@@ -10,6 +10,8 @@ const TOOLTIP_CLASS = 'swse-discovery-tooltip';
 const SYSTEM_ID = 'foundryvtt-swse';
 
 let _activeTooltip = null;
+let _breakdownProviders = {}; // Keyed by semantic concept (e.g. 'ReflexDefense', 'WeaponAttack')
+let _helpModeActive = false;
 
 /**
  * Registry of all tooltip definitions.
@@ -178,6 +180,41 @@ export const TooltipRegistry = {
    */
   register(id, i18nPrefix) {
     TOOLTIP_DEFS[id] = i18nPrefix;
+  },
+
+  /**
+   * Register a breakdown provider for a semantic concept.
+   * Allows complex tooltips (like defense/weapon breakdowns) to be keyed by stable semantics.
+   * @param {string} key - semantic concept key (e.g. 'ReflexDefense', 'WeaponAttack')
+   * @param {Function} provider - async function(actor, targetElement) => {content: {title, body}}
+   */
+  registerBreakdownProvider(key, provider) {
+    _breakdownProviders[key] = provider;
+  },
+
+  /**
+   * Get a breakdown provider by key.
+   * @param {string} key
+   * @returns {Function|null}
+   */
+  getBreakdownProvider(key) {
+    return _breakdownProviders[key] || null;
+  },
+
+  /**
+   * Toggle help mode (affects which tooltips are visible).
+   * @param {boolean} active
+   */
+  setHelpMode(active) {
+    _helpModeActive = !!active;
+  },
+
+  /**
+   * Check if help mode is active.
+   * @returns {boolean}
+   */
+  isHelpMode() {
+    return _helpModeActive;
   }
 };
 
