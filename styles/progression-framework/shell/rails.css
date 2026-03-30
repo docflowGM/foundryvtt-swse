@@ -8,16 +8,17 @@
      mentor-dialogue-box.svg  → speech dialogue frame (chamfered rect, left-arrow)
    ============================================================================ */
 
-/* ---- Inner flex row — fills [data-region="mentor-rail"] horizontal band ---- */
+/* ---- Inner flex row — fills [data-region="mentor-rail"] horizontal band ----
+   PHASE 5: Optimized layout for compact mentor portrait */
 .progression-shell .prog-mentor-rail {
   display: flex;
   flex-direction: row;       /* HORIZONTAL composition */
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   flex: 1 1 auto;            /* fill full width of [data-region="mentor-rail"] flex container */
   min-width: 0;              /* allow flex shrink below content width */
   height: 100%;              /* resolves correctly now that parent has explicit height: 160px */
-  padding: 8px 20px;
+  padding: 12px 20px;
   position: relative;
 
   /* Holographic field aura — subtle edge glow for device unification */
@@ -27,7 +28,7 @@
 }
 
 /* ============================================================================
-   PORTRAIT ZONE — left column: portrait frame + nameplate below
+   PORTRAIT ZONE — left column: portrait frame (nameplate hidden PHASE 5)
    ============================================================================ */
 
 .progression-shell .prog-mentor__portrait-zone {
@@ -38,15 +39,16 @@
   justify-content: center;
   gap: 3px;
   height: 100%;
-  min-width: 88px;
+  min-width: 64px;
 }
 
 /* Portrait container — Type 1 SVG: frame + portrait image embedded in one SVG scene
-   The SVG owns the entire portrait composition (frame, image, overlays) */
+   The SVG owns the entire portrait composition (frame, image, overlays)
+   PHASE 5: Compact mentor portrait (64×64) for better mobile + desktop balance */
 .progression-shell .prog-mentor__portrait {
   position: relative;
-  width: 82px;
-  height: 96px;
+  width: 64px;
+  height: 64px;
   flex-shrink: 0;
   overflow: visible;          /* allow SVG overlays to extend slightly */
 
@@ -71,11 +73,11 @@
 .progression-shell .prog-mentor__portrait::before {
   content: "";
   position: absolute;
-  top: 13px;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
-  width: 56px;
-  height: 56px;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   pointer-events: none;
   z-index: 2;
@@ -139,23 +141,13 @@
     0 0 16px rgba(192, 132, 252, 0.03);
 }
 
-/* Nameplate — small label below portrait frame, still in portrait-zone column */
+/* Nameplate — PHASE 5: Hide to reduce visual clutter in mentor section */
 .progression-shell .prog-mentor__name {
-  font-size: 8px;
-  text-align: center;
-  font-family: var(--prog-font);
-  text-transform: uppercase;
-  letter-spacing: 0.10em;
-  color: var(--prog-accent);
-  text-shadow: var(--prog-heading-shadow);
-  margin: 0;
-  max-width: 88px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  display: none;
 }
 
-/* Title — hidden in compact horizontal layout; keeps semantic markup */
+/* Title — hidden in compact horizontal layout; keeps semantic markup
+   PHASE 5: Reduce clutter in mentor rail */
 .progression-shell .prog-mentor__title {
   display: none;
 }
@@ -243,17 +235,18 @@
    DIALOGUE TEXT — Holographic transmission reveal effect
    Text appears with cadence-driven reveal animation
    Hardened for proper wrapping, overflow, and readability
+   PHASE 5: Improved typography for mentor dialogue clarity
    ============================================================================ */
 
 .progression-shell .prog-mentor__text {
-  font-size: var(--prog-font-size-sm);
+  font-size: 0.95rem;
   color: var(--prog-text-mentor);
-  line-height: 1.55;
+  line-height: 1.45;
   margin: 0;
   text-shadow: var(--prog-mentor-text-shadow);
   position: relative;
   z-index: 1;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
 
   /* Holographic transmission reveal — characters stream in with cadence */
   animation: mentor-text-reveal 1.4s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
@@ -263,6 +256,7 @@
   word-wrap: break-word;           /* Break long words at container edge */
   overflow-wrap: break-word;       /* Modern standard for word-wrap */
   hyphens: auto;                   /* Smart hyphenation for long words */
+  word-break: break-word;          /* PHASE 5: Ensure clean breaks on tight widths */
 
   /* Transmission glow on initial appearance */
   text-shadow:
@@ -270,7 +264,7 @@
     0 0 4px rgba(72, 219, 255, 0);
 
   /* Widow/orphan prevention — avoid single words on last line */
-  text-align: justify;
+  text-align: left;
   -webkit-user-select: text;
   user-select: text;
 }
@@ -326,6 +320,18 @@
       transparent 2px,
       transparent 4px
     );
+}
+
+/* Quote styling — PHASE 5: Visual hierarchy for mentor dialogue */
+.progression-shell .prog-mentor__text::before {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 1.2em;
+  background: rgba(72, 219, 255, 0.4);
+  margin-right: 0.5em;
+  vertical-align: middle;
+  border-radius: 1px;
 }
 
 /* Idle state — dim and italic when awaiting input */
@@ -586,12 +592,12 @@
 }
 
 .swse-mobile .prog-mentor__portrait-zone {
-  min-width: 50px;
+  min-width: 64px;
 }
 
 .swse-mobile .prog-mentor__portrait {
-  width: 48px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
 }
 
 .swse-mobile .prog-mentor__name {
