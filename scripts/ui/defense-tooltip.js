@@ -86,12 +86,19 @@ export class DefenseTooltip {
       };
     }
 
-    // Map defense keys to glossary definitions
+    // Map defense keys to glossary definitions and glossary keys
     const defenseMap = {
       'reflex': 'Dodge and quick reactions.',
       'fort': 'Physical toughness and constitution.',
       'will': 'Mental fortitude and resolve.',
       'flatfooted': 'Defense when caught by surprise.'
+    };
+
+    const glossaryKeyMap = {
+      'reflex': 'ReflexDefense',
+      'fort': 'FortitudeDefense',
+      'will': 'WillDefense',
+      'flatfooted': 'FlatFooted'
     };
 
     const rows = [];
@@ -161,7 +168,10 @@ export class DefenseTooltip {
       title: `${data.label} Defense`,
       definition: defenseMap[defenseKey] || 'Defense calculation.',
       rows: rows,
-      total: data.totalValue
+      total: data.totalValue,
+      metadata: {
+        concept: glossaryKeyMap[defenseKey]
+      }
     };
   }
 

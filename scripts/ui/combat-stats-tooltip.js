@@ -89,7 +89,10 @@ export class CombatStatsTooltip {
       title: 'Base Attack Bonus',
       definition: 'Your bonus to melee and ranged weapon attacks. Scales with character level.',
       rows,
-      total
+      total,
+      metadata: {
+        concept: 'BaseAttackBonus'
+      }
     };
   }
 
@@ -146,7 +149,10 @@ export class CombatStatsTooltip {
       title: 'Grapple',
       definition: 'Your bonus to unarmed melee attacks and grappling. Derived from BAB and Strength.',
       rows,
-      total
+      total,
+      metadata: {
+        concept: 'Grapple'
+      }
     };
   }
 
@@ -210,7 +216,10 @@ export class CombatStatsTooltip {
       title: 'Initiative',
       definition: 'How quickly you act in combat. Higher Initiative acts first. Based on Dexterity.',
       rows,
-      total
+      total,
+      metadata: {
+        concept: 'Initiative'
+      }
     };
   }
 

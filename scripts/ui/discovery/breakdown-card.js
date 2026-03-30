@@ -10,6 +10,7 @@
  * - Total value emphasized using system highlight styling
  * - Card persists until click-away, close button, or cleanup
  * - No dependency on help mode (works independently)
+ * - Optional reference affordance for deeper learning (Phase 11+)
  *
  * NORMALIZED BREAKDOWN STRUCTURE:
  * {
@@ -25,6 +26,8 @@
  *   metadata: { concept: "ReflexDefense", actor: actor } (optional)
  * }
  */
+
+import { addReferenceAffordanceToCard, injectReferenceAffordanceStyles } from '/systems/foundryvtt-swse/scripts/ui/discovery/reference-affordance.js';
 
 const CLASS_CARD = 'swse-breakdown-card';
 const CLASS_OVERLAY = 'swse-breakdown-overlay';
@@ -205,6 +208,16 @@ function _renderCardContent(card, breakdown) {
   closeBtn.innerHTML = '<i class="fas fa-times"></i>';
   closeBtn.addEventListener('click', () => BreakdownCard.close());
   card.appendChild(closeBtn);
+
+  // Phase 11: Optional reference affordance
+  // Inject styles on first load
+  injectReferenceAffordanceStyles();
+
+  // Add reference link if glossary key available
+  const glossaryKey = breakdown.metadata?.concept;
+  if (glossaryKey) {
+    addReferenceAffordanceToCard(card, glossaryKey);
+  }
 }
 
 /**
