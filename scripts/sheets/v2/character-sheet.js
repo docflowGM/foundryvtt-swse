@@ -1385,6 +1385,9 @@ const forcePoints = [];
 
     // Misc Handlers (languages, rest, DSP)
     this._activateMiscUI(html, { signal });
+
+    // Phase 4: Mobile Interaction Enhancements
+    this._activateMobileActions(html, { signal });
   }
 
   /* ============================================================
@@ -2138,6 +2141,51 @@ const forcePoints = [];
         }
       }, { signal });
     });
+  }
+  /* ============================================================
+     PHASE 4: MOBILE INTERACTION ENHANCEMENTS
+     Right-click replacements + touch feedback
+  ============================================================ */
+
+  _activateMobileActions(html, { signal } = {}) {
+    // Only activate on mobile mode
+    if (!game.swse.ui.mobileMode.enabled) return;
+
+    // Add toggle listener to all .item-actions-toggle buttons
+    html.addEventListener("click", (event) => {
+      const toggleBtn = event.target.closest(".item-actions-toggle");
+      if (!toggleBtn) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      // Find the parent row/card
+      const row = toggleBtn.closest("[data-item-id]") ||
+                  toggleBtn.closest(".item-row") ||
+                  toggleBtn.closest(".skill-row") ||
+                  toggleBtn.closest(".ability-row") ||
+                  toggleBtn.closest("[data-action-container]");
+
+      if (!row) {
+        console.warn("[Mobile] Could not find parent row for actions toggle", toggleBtn);
+        return;
+      }
+
+      // Toggle the show-actions class
+      row.classList.toggle("show-mobile-actions");
+    }, { signal, capture: false });
+
+    // Close actions menu when clicking outside
+    html.addEventListener("click", (event) => {
+      // Only close if NOT clicking inside an actions menu
+      if (event.target.closest(".mobile-actions-menu")) return;
+      if (event.target.closest(".item-actions-toggle")) return;
+
+      // Close all open actions menus
+      html.querySelectorAll(".show-mobile-actions").forEach(row => {
+        row.classList.remove("show-mobile-actions");
+      });
+    }, { signal, capture: false });
   }
 
   /* ============================================================

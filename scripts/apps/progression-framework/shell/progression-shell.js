@@ -1012,6 +1012,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     await super._onRender(context, options);
 
+    // Phase 4: Mobile touch safety handlers
+    this._activateTouchSafety(this.element);
+
     // Wire subsystem after-render hooks
     const html = this.element;
     this.mentorRail.afterRender(html.querySelector('[data-region="mentor-rail"]'));
@@ -1040,6 +1043,33 @@ export class ProgressionShell extends SWSEApplicationV2 {
         );
       }
     }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Phase 4: Mobile Touch Safety
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Activate touch-safe event handlers for mobile mode.
+   * Ensures interactive elements respond predictably to touch events.
+   *
+   * @param {HTMLElement} element - The rendered shell element
+   * @private
+   */
+  _activateTouchSafety(element) {
+    if (!game.swse.ui.mobileMode.enabled) return;
+
+    // Add touch-active class to action buttons while being tapped
+    // Provides visual feedback for touch interactions
+    element.querySelectorAll('[data-action], button, [role="button"]').forEach(el => {
+      el.addEventListener('touchstart', () => {
+        el.classList.add('touch-active');
+      }, { passive: true });
+
+      el.addEventListener('touchend', () => {
+        el.classList.remove('touch-active');
+      }, { passive: true });
+    });
   }
 
   // ---------------------------------------------------------------------------

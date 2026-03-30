@@ -78,7 +78,8 @@
     "styles/debug/svg-layout-debug.css",
     "styles/ui/swse-holo-phase1.css",
     "styles/ui/swse-cursors.css",
-    "styles/apps/chargen.css"
+    "styles/apps/chargen.css",
+    "styles/mobile-interactions.css"
   ],
   "languages": [
     {
