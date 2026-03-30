@@ -22,6 +22,7 @@
 
 import { TooltipGlossary } from '/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-glossary.js';
 import { TooltipRegistry } from '/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-registry.js';
+import { ReferenceService } from '/systems/foundryvtt-swse/scripts/ui/discovery/reference-service.js';
 
 /**
  * Audit tooltip/breakdown hardpoints on the given root element.
@@ -190,7 +191,51 @@ export async function auditTooltipHardpoints(root = document.body) {
   }
 
   // ========================================================================
-  // PHASE 7: Generate summary
+  // PHASE 7: Reference mapping validation
+  // ========================================================================
+
+  const referenceMapping = {
+    total_glossary_entries: glossaryKeys.length,
+    mapped_references: 0,
+    valid_references: 0,
+    missing_references: [],
+    all_mapped: []
+  };
+
+  glossaryKeys.forEach(key => {
+    const entry = TooltipGlossary[key];
+    if (entry && entry.hasReference === true && entry.referenceId) {
+      referenceMapping.all_mapped.push({
+        key,
+        referenceId: entry.referenceId,
+        label: entry.label
+      });
+      referenceMapping.mapped_references++;
+
+      // Check if reference actually exists in Foundry
+      const journalEntry = game?.journal?.get(entry.referenceId);
+      if (journalEntry) {
+        referenceMapping.valid_references++;
+      } else {
+        referenceMapping.missing_references.push({
+          key,
+          referenceId: entry.referenceId,
+          label: entry.label
+        });
+        report.issues.push({
+          severity: 'WARNING',
+          type: 'REFERENCE_MISSING',
+          key,
+          message: `Reference mapped for "${key}" but journal entry "${entry.referenceId}" not found`
+        });
+      }
+    }
+  });
+
+  report.findings.reference_mapping = referenceMapping;
+
+  // ========================================================================
+  // PHASE 8: Generate summary
   // ========================================================================
 
   report.summary = {
@@ -206,7 +251,8 @@ export async function auditTooltipHardpoints(root = document.body) {
     tier1_count: report.findings.tierDistribution.tier1,
     tier2_count: report.findings.tierDistribution.tier2,
     tier3_count: report.findings.tierDistribution.tier3,
-    breakdown_coverage: `${report.findings.breakdown_coverage.with_breakdown}/${report.findings.breakdown_coverage.total} (${report.findings.breakdown_coverage.coverage_pct}%)`
+    breakdown_coverage: `${report.findings.breakdown_coverage.with_breakdown}/${report.findings.breakdown_coverage.total} (${report.findings.breakdown_coverage.coverage_pct}%)`,
+    reference_mapping: `${report.findings.reference_mapping.mapped_references} mapped, ${report.findings.reference_mapping.valid_references} valid`
   };
 
   return report;
@@ -260,6 +306,21 @@ export function printAuditReport(audit) {
     'Unknown': audit.findings.tierDistribution.unknown
   });
   console.groupEnd();
+
+  // Reference mapping
+  if (audit.findings.reference_mapping.mapped_references > 0) {
+    console.group(`📖 Reference Mapping (${audit.findings.reference_mapping.mapped_references} mapped)`);
+    console.log(`✓ Valid: ${audit.findings.reference_mapping.valid_references}`);
+    if (audit.findings.reference_mapping.missing_references.length > 0) {
+      console.warn(`⚠️ Missing: ${audit.findings.reference_mapping.missing_references.length}`);
+      console.table(audit.findings.reference_mapping.missing_references);
+    }
+    if (audit.findings.reference_mapping.all_mapped.length > 0) {
+      console.log('All Mapped References:');
+      console.table(audit.findings.reference_mapping.all_mapped);
+    }
+    console.groupEnd();
+  }
 
   // Issues
   if (audit.issues.length > 0) {
