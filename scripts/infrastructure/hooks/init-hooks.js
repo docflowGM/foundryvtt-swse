@@ -18,6 +18,7 @@ import { registerRerollListeners } from "/systems/foundryvtt-swse/scripts/specie
 import { SWSECombatActionBrowser } from "/systems/foundryvtt-swse/scripts/apps/combat-action-browser.js";
 import { isMobileCandidate } from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-detector.js";
 import { registerMobilePrompt } from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-prompt.js";
+import LightsaberLightSync from "/systems/foundryvtt-swse/scripts/utils/lightsaber-light-sync.js";
 import "/systems/foundryvtt-swse/scripts/ui/mobile-mode-manager.js";
 
 /**
@@ -49,6 +50,10 @@ export function registerInitHooks() {
         // Register mobile prompt (only shows on eligible devices)
         registerMobilePrompt(isMobileCandidate);
         SWSELogger.log('Mobile Mode prompt registered');
+
+        // Initialize lightsaber light synchronization (ties blade color to token light)
+        LightsaberLightSync.registerAutoSyncHooks();
+        SWSELogger.log('Lightsaber Light Sync hooks registered');
 
         // Initialize species reroll system
         registerRerollListeners();

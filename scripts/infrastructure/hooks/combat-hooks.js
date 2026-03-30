@@ -10,11 +10,13 @@ import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progr
  * - combatRound: Round tracking
  * - combatTurn: Turn tracking, condition recovery, automation
  * - deleteCombat: Combat cleanup, species trait reset
+ * - SWSE Roll hooks: FX integration (projectiles, blade effects, etc.)
  */
 
 import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/hooks-registry.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SpeciesRerollHandler } from "/systems/foundryvtt-swse/scripts/species/species-reroll-handler.js";
+import { NativeProjectileService } from "/systems/foundryvtt-swse/scripts/visual/native-projectile-service.js";
 
 /**
  * Register all combat-related hooks
@@ -71,6 +73,11 @@ export function registerCombatHooks() {
         category: 'combat',
         enabled: true // Always enabled - species traits should reset
     });
+
+    // PHASE 6: FX Integration - Wire projectile FX to attack rolls
+    // Triggered after attack rolls to render projectile animations
+    Hooks.on('swse.postRollAttack', handlePostAttackFX);
+    SWSELogger.log('Post-attack FX hook registered');
 }
 
 /**
@@ -171,4 +178,38 @@ async function handleCombatEnd(combat, options, userId) {
 
     // Emit phase-changed hook so scene controls can re-filter
     Hooks.callAll('swse:phase-changed', 'narrative');
+}
+
+/**
+ * Handle post-attack FX
+ * Fires projectile animations for attack rolls when cinematic effects are enabled
+ *
+ * @param {Object} context - The attack roll context
+ * @param {Object} context.weapon - The weapon used for the attack
+ * @param {Actor} context.attacker - The actor performing the attack
+ * @param {Actor} context.target - The target actor
+ * @param {Token} context.attackerToken - Token of attacker
+ * @param {Token} context.targetToken - Token of target
+ * @param {Object} context.outcome - Attack outcome details
+ */
+async function handlePostAttackFX(context) {
+    // Check if cinematic effects are enabled
+    const cinematicEffectsEnabled = game.settings.get('foundryvtt-swse', 'cinematicEffects');
+    if (!cinematicEffectsEnabled) {
+        return;
+    }
+
+    const { weapon, attackerToken, targetToken, outcome } = context;
+
+    // Validate required context
+    if (!weapon || !attackerToken || !targetToken) {
+        return;
+    }
+
+    try {
+        // Fire projectile with weapon and token data
+        await NativeProjectileService.fire(attackerToken, targetToken, weapon, context);
+    } catch (err) {
+        SWSELogger.error('Error firing projectile FX:', err);
+    }
 }
