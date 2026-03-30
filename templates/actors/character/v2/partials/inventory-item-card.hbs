@@ -35,10 +35,34 @@
 
   {{!-- CARD FOOTER: Actions --}}
   <div class="card-footer item-footer">
-    {{#if system.upgradeSlots}}<button type="button" class="btn btn-config" title="Customize Item" data-action="configure" data-item-id="{{id}}">⚙</button>{{/if}}
-    <button type="button" class="btn btn-edit" title="Edit Item" data-action="edit" data-item-id="{{id}}">Edit</button>
-    <button type="button" class="btn btn-sell" title="Sell Item" data-action="sell-item" data-item-id="{{id}}">Sell</button>
-    <button type="button" class="btn btn-delete" title="Remove Item" data-action="delete" data-item-id="{{id}}">Delete</button>
+    <div class="item-actions">
+      {{#if (eq type "weapon")}}
+        <button class="item-action-btn attack-btn" data-action="roll-attack" data-item-id="{{id}}" title="Quick Attack Roll">
+          <span class="icon">{{> "icons/attack-svg"}}</span>
+          <span class="label">Attack</span>
+        </button>
+        <button class="item-action-btn damage-btn" data-action="roll-damage" data-item-id="{{id}}" title="Quick Damage Roll">
+          <span class="icon">{{> "icons/damage-svg"}}</span>
+          <span class="label">Damage</span>
+        </button>
+      {{/if}}
+      {{#if (or (eq type "armor") (eq type "lightsaber") (eq type "blaster") (eq type "weapon") (eq type "gear"))}}
+        <button class="item-action-btn customize-btn" data-action="customize-item" data-item-id="{{id}}" title="Customize Item">
+          <span class="icon">{{> "icons/customize-svg"}}</span>
+          <span class="label">Customize</span>
+        </button>
+      {{/if}}
+      <button class="item-action-btn menu-btn" data-action="open-item-menu" data-item-id="{{id}}" title="More Actions">
+        <span class="icon">{{> "icons/menu-svg"}}</span>
+        <span class="label">More</span>
+      </button>
+    </div>
+    <div class="item-actions-legacy">
+      {{#if system.upgradeSlots}}<button type="button" class="btn btn-config" title="Customize Item" data-action="configure" data-item-id="{{id}}">⚙</button>{{/if}}
+      <button type="button" class="btn btn-edit" title="Edit Item" data-action="edit" data-item-id="{{id}}">Edit</button>
+      <button type="button" class="btn btn-sell" title="Sell Item" data-action="sell-item" data-item-id="{{id}}">Sell</button>
+      <button type="button" class="btn btn-delete" title="Remove Item" data-action="delete" data-item-id="{{id}}">Delete</button>
+    </div>
   </div>
 
 </div>

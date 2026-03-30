@@ -72,13 +72,25 @@
 
   {{!-- CARD FOOTER: Actions --}}
   <div class="card-footer armor-footer">
-    <button type="button" class="btn btn-equip" title="Equip/Unequip" data-action="equip" data-item-id="{{id}}">
-      {{#if equipped}}Unequip{{else}}Equip{{/if}}
-    </button>
-    <button type="button" class="btn btn-config" title="Customize Armor" data-action="configure" data-item-id="{{id}}">⚙</button>
-    <button type="button" class="btn btn-edit" title="Edit Item" data-action="edit" data-item-id="{{id}}">Edit</button>
-    <button type="button" class="btn btn-sell" title="Sell Item" data-action="sell-item" data-item-id="{{id}}">Sell</button>
-    <button type="button" class="btn btn-delete" title="Remove Item" data-action="delete" data-item-id="{{id}}">Delete</button>
+    <div class="item-actions">
+      <button class="item-action-btn customize-btn" data-action="customize-item" data-item-id="{{id}}" title="Customize Armor">
+        <span class="icon">{{> "icons/customize-svg"}}</span>
+        <span class="label">Customize</span>
+      </button>
+      <button class="item-action-btn menu-btn" data-action="open-item-menu" data-item-id="{{id}}" title="More Actions">
+        <span class="icon">{{> "icons/menu-svg"}}</span>
+        <span class="label">More</span>
+      </button>
+    </div>
+    <div class="item-actions-legacy">
+      <button type="button" class="btn btn-equip" title="Equip/Unequip" data-action="equip" data-item-id="{{id}}">
+        {{#if equipped}}Unequip{{else}}Equip{{/if}}
+      </button>
+      <button type="button" class="btn btn-config" title="Customize Armor" data-action="configure" data-item-id="{{id}}">⚙</button>
+      <button type="button" class="btn btn-edit" title="Edit Item" data-action="edit" data-item-id="{{id}}">Edit</button>
+      <button type="button" class="btn btn-sell" title="Sell Item" data-action="sell-item" data-item-id="{{id}}">Sell</button>
+      <button type="button" class="btn btn-delete" title="Remove Item" data-action="delete" data-item-id="{{id}}">Delete</button>
+    </div>
   </div>
 
 </div>

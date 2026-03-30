@@ -7,6 +7,11 @@ import { MentorChatDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor
 import { DropResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/drop-resolution-engine.js";
 import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
+import { LightsaberConstructionApp } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/lightsaber-construction-app.js";
+import { BlasterCustomizationApp } from "/systems/foundryvtt-swse/scripts/apps/blaster/blaster-customization-app.js";
+import { ArmorModificationApp } from "/systems/foundryvtt-swse/scripts/apps/armor/armor-modification-app.js";
+import { MeleeWeaponModificationApp } from "/systems/foundryvtt-swse/scripts/apps/weapons/melee-modification-app.js";
+import { GearModificationApp } from "/systems/foundryvtt-swse/scripts/apps/gear/gear-modification-app.js";
 import { launchProgression, launchFollowerProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
 import { MentorNotesApp } from "/systems/foundryvtt-swse/scripts/apps/mentor-notes/mentor-notes-app.js";
@@ -1949,6 +1954,112 @@ const forcePoints = [];
         } catch (err) {
           console.error("Force activation failed:", err);
           ui?.notifications?.error?.(`Force activation failed: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    // Item action bar: Customize item
+    html.querySelectorAll('[data-action="customize-item"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        if (!itemId) return;
+
+        const item = this.actor.items.get(itemId);
+        if (!item) return;
+
+        // Route to correct customization modal based on item type
+        try {
+          switch (item.type) {
+            case "lightsaber":
+              new LightsaberConstructionApp(this.actor).render(true);
+              break;
+            case "blaster":
+              new BlasterCustomizationApp(this.actor, item).render(true);
+              break;
+            case "armor":
+              new ArmorModificationApp(this.actor, item).render(true);
+              break;
+            case "weapon":
+              new MeleeWeaponModificationApp(this.actor, item).render(true);
+              break;
+            case "gear":
+              new GearModificationApp(this.actor, item).render(true);
+              break;
+            default:
+              ui?.notifications?.warn?.(`No customization available for ${item.type}`);
+          }
+        } catch (err) {
+          console.error("Customization modal failed:", err);
+          ui?.notifications?.error?.("Failed to open customization modal");
+        }
+      }, { signal });
+    });
+
+    // Item action bar: Open overflow menu
+    html.querySelectorAll('[data-action="open-item-menu"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        if (!itemId) return;
+
+        const item = this.actor.items.get(itemId);
+        if (!item) return;
+
+        new Dialog({
+          title: item.name,
+          content: `<p>Select action for ${item.name}:</p>`,
+          buttons: {
+            edit: {
+              label: "Edit",
+              callback: () => item.sheet.render(true)
+            },
+            delete: {
+              label: "Delete",
+              callback: () => item.delete()
+            },
+            close: {
+              label: "Close"
+            }
+          }
+        }).render(true);
+      }, { signal });
+    });
+
+    // Item action bar: Quick attack roll (weapons only)
+    html.querySelectorAll('[data-action="roll-attack"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        if (!itemId) return;
+
+        const item = this.actor.items.get(itemId);
+        if (!item || item.type !== "weapon") return;
+
+        try {
+          await SWSERoll.rollWeaponAttack(this.actor, itemId);
+        } catch (err) {
+          console.error("Attack roll failed:", err);
+          ui?.notifications?.error?.("Attack roll failed");
+        }
+      }, { signal });
+    });
+
+    // Item action bar: Quick damage roll (weapons only)
+    html.querySelectorAll('[data-action="roll-damage"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        if (!itemId) return;
+
+        const item = this.actor.items.get(itemId);
+        if (!item || item.type !== "weapon") return;
+
+        try {
+          await SWSERoll.rollWeaponDamage(this.actor, itemId);
+        } catch (err) {
+          console.error("Damage roll failed:", err);
+          ui?.notifications?.error?.("Damage roll failed");
         }
       }, { signal });
     });
