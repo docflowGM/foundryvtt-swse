@@ -14,7 +14,8 @@
 
     {{#each abilities as |ability|}}
 
-      <div class="ability-row ability-{{ability.key}}">
+      <div class="ability-row ability-{{ability.key}}"
+           data-swse-tooltip="{{#if (eq ability.key 'str')}}Strength{{else if (eq ability.key 'dex')}}Dexterity{{else if (eq ability.key 'con')}}Constitution{{else if (eq ability.key 'int')}}Intelligence{{else if (eq ability.key 'wis')}}Wisdom{{else if (eq ability.key 'cha')}}Charisma{{/if}}">
 
         <!-- COLLAPSED VIEW -->
         <div class="ability-collapsed">

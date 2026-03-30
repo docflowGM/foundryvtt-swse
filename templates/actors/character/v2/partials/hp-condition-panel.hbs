@@ -14,7 +14,7 @@
     </header>
 
     <!-- HP BLOCK -->
-    <div class="hp-section">
+    <div class="hp-section" data-swse-tooltip="HitPoints">
       <div class="hp-bar-wrapper {{healthPanel.hp.stateClass}}">
         <div class="hp-bar {{healthPanel.hp.stateClass}}">
           <div class="hp-bar__fill {{healthPanel.hp.stateClass}}" style="width: {{healthPanel.hp.percent}}%;"></div>
@@ -62,7 +62,7 @@
 
     <!-- CONDITION TRACK BLOCK (with overlay for positioned sockets) -->
     {{#if healthPanel.showConditionTrack}}
-    <div class="condition-section">
+    <div class="condition-section" data-swse-tooltip="ConditionTrack">
       <div class="swse-panel swse-panel--condition-track condition-track-panel">
         <div class="swse-panel__frame condition-track-frame" aria-hidden="true"></div>
         <div class="swse-panel__overlay condition-track-overlay">
