@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 140" role="img" aria-labelledby="title desc">
+  <title id="title">Combat Gloves</title>
+  <desc id="desc">A pair of armored combat gloves.</desc>
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M46 30v32M62 24v38M78 28v34M94 34v28"/>
+<path d="M34 62c0-8 8-10 12-6l18 18c3 3 6 4 10 4h22c10 0 18 8 18 18v14H62L34 82Z"/>
+<path d="M134 34v32M118 24v38M102 28v34M86 34v28"/>
+<path d="M146 62c0-8-8-10-12-6l-18 18c-3 3-6 4-10 4H84c-10 0-18 8-18 18v14h52l28-28Z"/>
+
+  </g>
+</svg>

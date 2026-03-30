@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 160" role="img" aria-labelledby="title desc">
+  <title id="title">Flamethrower</title>
+  <desc id="desc">A flamethrower silhouette with flame burst.</desc>
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M28 74h112l18-12h36l14 10h54l14 10h24l8 8-8 8h-28l-10 10h-62l-8-8h-34l-12 8H78l-8 10H40l8-20H28z"/>
+<path d="M88 84l-12 34h18l12-24"/>
+<circle cx="158" cy="84" r="5"/>
+<path d="M116 62V46h26v16M212 72v24"/>
+<path d="M302 62c14 6 20 16 18 28-10-6-18-6-26 0 2-12 0-20-10-26 8-2 12-8 14-18 6 6 6 12 4 16Z"/>
+
+  </g>
+</svg>

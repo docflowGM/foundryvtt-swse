@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 120" role="img" aria-labelledby="title desc">
+  <title id="title">Rifle</title>
+  <desc id="desc">A standard blaster rifle silhouette.</desc>
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M18 54h120l20-12h42l18 10h72l18 10h28l8 8-8 8h-30l-12 10h-78l-8-8h-40l-18 10H82l-14 12H38l10-22H18z"/>
+<path d="M70 66l-20 34h18l18-24"/>
+<path d="M98 42V30h34v12M154 42h28M210 52v26M230 52v26M250 52v26M276 50h22M24 62h50"/>
+<circle cx="162" cy="60" r="5"/>
+<rect x="126" y="74" width="22" height="10" rx="3"/>
+
+  </g>
+</svg>

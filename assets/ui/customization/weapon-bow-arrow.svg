@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 320" role="img" aria-labelledby="title desc">
+  <title id="title">Bow and Arrow</title>
+  <desc id="desc">A bow with a nocked arrow.</desc>
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M52 28c34 34 34 230 0 264"/>
+<path d="M52 28c74 34 74 230 0 264"/>
+<path d="M52 28v264"/>
+<path d="M152 34 120 160 152 286"/>
+<path d="M146 40h12M140 160h20M146 280h12"/>
+
+  </g>
+</svg>

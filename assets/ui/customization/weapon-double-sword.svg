@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 380" role="img" aria-labelledby="title desc">
+  <title id="title">Double Sword</title>
+  <desc id="desc">A double-ended sword staff with blades on both ends.</desc>
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M60 74v232"/>
+<path d="M60 18 82 74H38Z"/>
+<path d="M60 362 82 306H38Z"/>
+<path d="M48 74h24M48 306h24"/>
+<rect x="48" y="152" width="24" height="76" rx="6"/>
+<path d="M52 178h16M52 202h16"/>
+
+  </g>
+</svg>

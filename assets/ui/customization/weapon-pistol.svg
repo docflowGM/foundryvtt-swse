@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 120" role="img" aria-labelledby="title desc">
+  <title id="title">Pistol</title>
+  <desc id="desc">A standard blaster pistol silhouette.</desc>
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M18 48h92l18-12h22l12 8h28l10 8-8 14h-34l-8 12h-20l-10-8H78l-6 8H22z"/>
+<path d="M54 70l-6 30c-1 4 2 8 6 8h14c3 0 5-2 6-5l6-26"/>
+<path d="M74 78h14"/>
+<path d="M140 46v20M162 44v18M104 36h12M32 56h40M28 66h32"/>
+<circle cx="127" cy="58" r="5"/>
+
+  </g>
+</svg>

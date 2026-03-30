@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 320" role="img" aria-labelledby="title desc">
+  <title id="title">Sword</title>
+  <desc id="desc">A straight sword silhouette with guard and grip.</desc>
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M60 18 82 118 68 232H52L38 118Z"/>
+<path d="M60 34 72 118 64 210H56L48 118Z"/>
+<path d="M38 118H82"/>
+<rect x="34" y="232" width="52" height="12" rx="4"/>
+<rect x="48" y="244" width="24" height="42" rx="6"/>
+<path d="M52 286v18M60 286v24M68 286v18"/>
+
+  </g>
+</svg>

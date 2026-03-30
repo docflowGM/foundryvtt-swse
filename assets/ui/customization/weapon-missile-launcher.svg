@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 150" role="img" aria-labelledby="title desc">
+  <title id="title">Missile Launcher</title>
+  <desc id="desc">A shoulder-fired missile launcher silhouette.</desc>
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M24 60h238l26-20h56l20 20-20 20h-56l-26-20H24z"/>
+<path d="M96 80l-18 40h22l18-28"/>
+<path d="M150 50v20M182 50v20M214 50v20"/>
+<circle cx="278" cy="60" r="10"/>
+<path d="M314 60h30"/>
+<path d="M280 60l18-18M280 60l18 18"/>
+
+  </g>
+</svg>

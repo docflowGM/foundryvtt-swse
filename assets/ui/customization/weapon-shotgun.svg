@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 130" role="img" aria-labelledby="title desc">
+  <title id="title">Shotgun</title>
+  <desc id="desc">A combat shotgun silhouette.</desc>
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M18 58h146l20-10h46l18 8h74l16 8h22l8 8-8 8h-26l-10 10h-80l-8-8h-48l-18 10H92l-16 14H42l12-24H18z"/>
+<path d="M82 70l-22 34h18l18-24"/>
+<path d="M136 48V34h40v14M196 48v16M214 48v16M264 56h18"/>
+<circle cx="182" cy="60" r="5"/>
+
+  </g>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 130" role="img" aria-labelledby="title desc">
+  <title id="title">Heavy Pistol</title>
+  <desc id="desc">A bulky heavy blaster pistol silhouette.</desc>
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M18 50h112l22-14h28l14 10h24l10 10-8 16h-36l-10 14h-26l-10-8H90l-6 10H24z"/>
+<path d="M62 78l-8 34c-1 5 2 8 7 8h18c4 0 6-2 7-6l8-30"/>
+<path d="M152 46v24M176 46v22M112 34h22M36 58h46"/>
+<rect x="110" y="74" width="24" height="12" rx="3"/>
+<circle cx="138" cy="60" r="5"/>
+
+  </g>
+</svg>

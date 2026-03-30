@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 220" role="img" aria-labelledby="title desc">
+  <title id="title">Sling</title>
+  <desc id="desc">A sling with loaded projectile.</desc>
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M36 28c34 28 46 72 54 120"/>
+<path d="M144 28c-34 28-46 72-54 120"/>
+<path d="M76 148h28l-8 24H84z"/>
+<circle cx="90" cy="182" r="12"/>
+
+  </g>
+</svg>

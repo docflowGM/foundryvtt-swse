@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" role="img" aria-labelledby="title desc">
+  <title id="title">Net</title>
+  <desc id="desc">A thrown capture net silhouette.</desc>
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+<rect x="40" y="40" width="140" height="140" rx="8"/>
+<path d="M40 70h140M40 100h140M40 130h140M40 160h140"/>
+<path d="M70 40v140M100 40v140M130 40v140M160 40v140"/>
+<path d="M26 26l14 14M194 26l-14 14M26 194l14-14M194 194l-14-14"/>
+
+  </g>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 260" role="img" aria-labelledby="title desc">
+  <title id="title">Light Armor</title>
+  <desc id="desc">A lighter armor silhouette with streamlined plating.</desc>
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M64 30h92l14 24-8 148H58L50 54z"/>
+<path d="M88 30 110 48 132 30"/>
+<path d="M70 86h80M78 118h64M84 150h52"/>
+<path d="M64 202h92"/>
+
+  </g>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 270" role="img" aria-labelledby="title desc">
+  <title id="title">Medium Armor</title>
+  <desc id="desc">A medium armor silhouette with chest and side plates.</desc>
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M56 24h108l18 30-8 164H46L38 54z"/>
+<path d="M84 24 110 48 136 24"/>
+<path d="M54 90h112M72 90v128M148 90v128"/>
+<path d="M92 106h36v44H92z"/>
+<path d="M84 174h52"/>
+
+  </g>
+</svg>

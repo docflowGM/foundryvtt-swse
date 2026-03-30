@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 320" role="img" aria-labelledby="title desc">
+  <title id="title">Axe</title>
+  <desc id="desc">A broad-headed combat axe.</desc>
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M82 18v260"/>
+<path d="M82 64c46 0 56 54 6 88H82"/>
+<path d="M82 86c-28 0-42 20-42 40s14 34 42 24"/>
+<path d="M82 104c20 0 28 22 4 34H82"/>
+<rect x="58" y="278" width="48" height="14" rx="4"/>
+<rect x="68" y="292" width="28" height="18" rx="5"/>
+
+  </g>
+</svg>

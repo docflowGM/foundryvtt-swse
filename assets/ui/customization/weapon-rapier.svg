@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 340" role="img" aria-labelledby="title desc">
+  <title id="title">Rapier</title>
+  <desc id="desc">A slender rapier with swept hand guard.</desc>
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M70 14 74 236H66Z"/>
+<path d="M70 24 72 220H68Z"/>
+<path d="M34 236H106"/>
+<path d="M70 236c-20 0-28 10-28 24 0 14 12 28 28 28 16 0 28-14 28-28 0-14-8-24-28-24Z"/>
+<rect x="64" y="236" width="12" height="64" rx="5"/>
+<path d="M67 300v20M73 300v20"/>
+
+  </g>
+</svg>

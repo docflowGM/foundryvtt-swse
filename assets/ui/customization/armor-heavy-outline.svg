@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 290" role="img" aria-labelledby="title desc">
+  <title id="title">Heavy Armor</title>
+  <desc id="desc">A heavy armor silhouette with reinforced chest and side plates.</desc>
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M56 20h128l22 36-10 178H44L34 56z"/>
+<path d="M88 20 120 52 152 20"/>
+<path d="M54 92h132M76 92v142M164 92v142"/>
+<path d="M98 108h44v52H98z"/>
+<path d="M86 186h68"/>
+<path d="M60 134h16M164 134h16"/>
+<path d="M60 234h120"/>
+
+  </g>
+</svg>

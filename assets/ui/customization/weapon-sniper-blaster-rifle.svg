@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 130" role="img" aria-labelledby="title desc">
+  <title id="title">Sniper Blaster Rifle</title>
+  <desc id="desc">A scoped sniper blaster rifle silhouette.</desc>
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M18 60h176l18-12h64l18 10h84l16 10h28l8 8-8 8h-30l-12 10h-94l-8-8h-68l-18 10H98l-12 16H48l10-26H18z"/>
+<path d="M96 72l-18 34h18l18-24"/>
+<path d="M174 48V24h62v24M196 24h10M250 48h22M314 58v28"/>
+<circle cx="244" cy="62" r="5"/>
+<rect x="228" y="78" width="28" height="10" rx="3"/>
+
+  </g>
+</svg>

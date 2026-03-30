@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 220" role="img" aria-labelledby="title desc">
+  <title id="title">Heavy Weapon Emplacement</title>
+  <desc id="desc">A mounted heavy weapon emplacement silhouette.</desc>
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M120 92h170l24-14h44l18 12h20l8 8-8 10h-24l-10 12h-54l-12-10H164"/>
+<path d="M164 92v-20h52v20"/>
+<path d="M188 120l-32 54h20l20-34"/>
+<path d="M224 120l28 54h-20l-18-34"/>
+<path d="M204 120v60"/>
+<circle cx="266" cy="92" r="6"/>
+<rect x="184" y="180" width="40" height="14" rx="4"/>
+<path d="M62 92h58"/>
+
+  </g>
+</svg>

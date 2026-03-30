@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 180" role="img" aria-labelledby="title desc">
+  <title id="title">Grenade</title>
+  <desc id="desc">A fragmentation grenade silhouette.</desc>
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+
+<path d="M52 24h36v18H52z"/>
+<path d="M64 16h12v8H64z"/>
+<path d="M50 42h40l12 18v30c0 30-22 56-32 66-10-10-32-36-32-66V60z"/>
+<path d="M50 68h52M50 92h52"/>
+<circle cx="70" cy="112" r="10"/>
+
+  </g>
+</svg>
