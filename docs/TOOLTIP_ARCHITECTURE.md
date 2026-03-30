@@ -868,11 +868,120 @@ Future: Options:
 - Global user preference (client setting)
 - One-time tutorial activation
 
-### Phase 9+: Tier-Based Help Levels
+### Phase 9: Tier-Based Help System (COMPLETE)
 
-- "Basic Help" = Tier 1 only (new players)
-- "Standard Help" = Tier 1 + Tier 2 (normal play)
-- "Advanced Help" = All tiers (experts)
+**Status:** ✅ IMPLEMENTED
+
+The glossary tier model is now real player-facing behavior through a graduated help system with four levels:
+
+#### Help Levels
+
+- **OFF:** No help affordances shown; icon-only tooltips still available for direct inspection
+- **CORE:** Tier1 concepts only (core player knowledge: abilities, skills, defenses, HP, initiative, BAB, grapple)
+- **STANDARD:** Tier1 + Tier2 concepts (situational stats, equipment details, subsystem controls)
+- **ADVANCED:** All tiers including Tier3 (expert mechanics, advanced feats, force powers)
+
+#### Tier-Based Visibility Control
+
+**File:** `scripts/sheets/v2/HelpModeManager.js`
+
+Static utility class managing help levels with three key methods:
+
+- `isTierVisible(tier, helpLevel)` — Returns whether a concept at this tier should show affordances
+  - OFF: nothing visible (no affordances)
+  - CORE: tier1 only
+  - STANDARD: tier1 + tier2
+  - ADVANCED: all tiers
+
+- `getNextLevel(currentLevel)` — Cycles OFF → CORE → STANDARD → ADVANCED → OFF
+
+- `setHelpLevel(actor, helpLevel)` — Persists to `actor.flags['foundryvtt-swse'].helpLevel`
+
+#### Per-Character Persistence
+
+- Help level defaults to CORE for new characters (reasonable middle ground)
+- Persists across sessions via actor flags
+- Each character can have different help preference
+- On sheet initialization, loads persisted level via `HelpModeManager.initializeForActor(actor)`
+
+#### Template Integration
+
+**Character Sheet Changes:**
+
+- Help toggle button in header cycles through levels and displays current level label with tooltip
+- `data-help-tier` attributes on breakdown-capable elements control visibility
+- CSS classes applied to sheet root (`help-level--{off|core|standard|advanced}`) drive affordance styling
+
+**Resources Panel:**
+
+- Initiative, BAB, Grapple have `data-breakdown` and `data-help-tier="tier1"` attributes
+- Visible in CORE and above
+
+**Defenses Panel:**
+
+- Defense totals already have `data-breakdown` attributes
+- Added `data-help-tier="tier1"` for consistency
+
+#### Affordance Styling (CSS)
+
+**File:** `styles/sheets/v2-sheet.css` (Phase 9 additions)
+
+- Tier-based element visibility controlled by help level CSS classes
+- Breakdown affordances show inset glow (`box-shadow: inset 0 0 6px rgba(0, 200, 255, 0.15)`) when appropriate tier is visible
+- Hover/focus enhancement for breakdown elements
+- Reduced motion support for all affordances
+
+#### Breakdown Providers Added (Phase 9)
+
+**File:** `scripts/ui/combat-stats-tooltip.js`
+
+Three new breakdown providers follow normalized row structure:
+
+1. **BaseAttackBonus**
+   - Composition: Base (½ level) + Class bonus + Misc + Modifiers
+   - Semantic classification: neutral base, positive/negative modifiers
+
+2. **Grapple**
+   - Composition: BAB + Strength modifier + Misc + Modifiers
+   - Semantic classification: all rows included
+
+3. **Initiative**
+   - Composition: Dexterity modifier + Misc + Modifiers + Condition track penalty
+   - Semantic classification: positive dex, negative condition penalties
+
+All providers output normalized structure:
+```javascript
+{
+  title: string,
+  definition: string,
+  rows: [{label, value, semantic}...],
+  total: number
+}
+```
+
+#### Help Mode Interaction Model
+
+- **Hover/Focus:** Shows tier-appropriate tooltips (same as before, but filtered by help level)
+- **Click:** Opens pinned breakdown card (always available if breakdown exists, regardless of help level)
+  - Intent to understand is respected; tiers control passive discovery only
+- **Affordance Visibility:** Inset glow indicates breakdown availability when help tier is appropriate
+- **Help Level Change:** Closes any open breakdown card (clean slate)
+
+#### Testing Checklist (Phase 9)
+
+- [ ] Help level OFF: no affordances visible
+- [ ] Help level CORE: tier1 affordances only (Abilities, Skills, Defenses, BAB, Grapple, Initiative)
+- [ ] Help level STANDARD: tier1 + tier2 affordances
+- [ ] Help level ADVANCED: all affordances including tier3
+- [ ] Help level cycles correctly: OFF → CORE → STANDARD → ADVANCED → OFF
+- [ ] Help level persists across sheet close/reopen
+- [ ] Button text shows current level label with tooltip
+- [ ] Hover shows tier-appropriate tooltip
+- [ ] Click opens breakdown card (same behavior across all help levels)
+- [ ] Breakdown card closes on help level change
+- [ ] Breakdown affordance glow visible when appropriate
+- [ ] Reduced motion: no glow, subtle visual indication only
+- [ ] No console errors on help level cycling
 
 ### Phase 10+: Auto-Generation Safeguards
 

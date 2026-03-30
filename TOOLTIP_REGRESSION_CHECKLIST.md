@@ -182,11 +182,80 @@ Use this checklist before committing changes to the tooltip system or whenever m
 
 ---
 
+## Phase 9: Tier-Aware Help System Tests
+
+### Help Level Cycling
+
+- [ ] Click help toggle → Level shows "Help: CORE" with tooltip "Core help. Tier1..."
+- [ ] Click again → Level shows "Help: STANDARD" with tooltip "Standard help. Tier1 + Tier2..."
+- [ ] Click again → Level shows "Help: ADVANCED" with tooltip "Advanced help. All tiers..."
+- [ ] Click again → Level shows "Help: OFF" with tooltip "Help mode off. Only icon tooltips..."
+- [ ] Click again → Back to "Help: CORE" (cycle complete)
+
+### Tier-Based Affordance Visibility
+
+- [ ] In CORE mode: Abilities, Skills, Defenses, BAB, Grapple, Initiative show affordances
+- [ ] In CORE mode: No tier2 or tier3 elements visible
+- [ ] In STANDARD mode: All tier1 + tier2 elements show affordances
+- [ ] In STANDARD mode: No tier3 elements visible
+- [ ] In ADVANCED mode: All elements (tier1 + tier2 + tier3) show affordances
+- [ ] In OFF mode: No affordances visible (still can click for breakdown if desired)
+
+### Breakdown Cards (Phase 8+)
+
+- [ ] Click BAB value → Pinned card opens showing: Base (½ Level) + Class bonus + Misc + Total
+- [ ] Card shows semantic colors: neutral/positive/negative per row
+- [ ] Card can be dismissed: click-away, Escape key, or close button
+- [ ] Click Grapple → Shows: BAB + Strength mod + Misc + Total
+- [ ] Click Initiative → Shows: Dex mod + Misc + Modifiers + Condition penalty + Total
+- [ ] All breakdown cards follow normalized structure (title/definition/rows/total)
+
+### Help Level Persistence
+
+- [ ] Set help level to STANDARD on character A
+- [ ] Close sheet
+- [ ] Reopen sheet → Still shows STANDARD
+- [ ] Switch to character B → Shows default CORE
+- [ ] Back to character A → Still shows STANDARD
+- [ ] Data persists in actor.flags['foundryvtt-swse'].helpLevel
+
+### Affordance Styling
+
+- [ ] Breakdown elements have inset glow in appropriate help levels
+- [ ] Glow is subtle (not bright, fits holo aesthetic)
+- [ ] Hover enhances glow slightly
+- [ ] In reduced-motion mode: glow disabled, subtle focus indicator only
+- [ ] No console errors related to CSS classes
+
+### Interaction Model Refinement
+
+- [ ] Hover shows tooltip → Tooltip respects help tier (e.g., tier2 tooltip doesn't show in CORE)
+- [ ] Click shows breakdown → Always available if breakdown exists (regardless of help level)
+- [ ] Help level change → Closes any open breakdown card
+- [ ] Help level change → Updates affordance visibility immediately
+- [ ] No conflicts between hover tooltip and click card
+
+### New Providers
+
+- [ ] BaseAttackBonus breakdown shows formula: Base + Class + Misc + Modifiers
+- [ ] Grapple breakdown shows formula: BAB + Strength + Misc + Modifiers
+- [ ] Initiative breakdown shows formula: Dex + Misc + Modifiers + Condition
+- [ ] All rows have correct semantic colors (positive/neutral/negative)
+- [ ] All totals are emphasized with system highlight color
+
+### Console Validation (Developer)
+
+- [ ] `SWSEDiscovery.tooltips` exists and has breakdown providers
+- [ ] `await SWSEDiscovery.tooltips.getBreakdown('BaseAttackBonus', actor)` returns structure
+- [ ] `SWSEDiscovery.tooltips.getBreakdown('Grapple', actor)` works correctly
+- [ ] `SWSEDiscovery.tooltips.getBreakdown('Initiative', actor)` includes condition penalties
+- [ ] No undefined or null in provider output
+
 ## Known Limitations
 
 - Tooltips are currently V2 character sheet only (Phase 8+ for other sheets)
-- Pinned breakdown cards not yet implemented (Phase 8)
-- Help mode is per-sheet (not global or persistent, Phase 8+ feature)
+- Damage Threshold breakdown not yet implemented (Phase 9+, pending composition audit)
+- Weapon breakdowns not on character sheet yet (Phase 8+, item sheet focused)
 - Chargen has separate tooltip system (not integrated)
 
 ---
@@ -210,10 +279,13 @@ Use this checklist before committing changes to the tooltip system or whenever m
 - **Glossary is source of truth** — if something's wrong, check glossary first
 - **Localization is centralized** — all text changes go in lang/en.json
 - **Breakdowns are separate** — don't put math in definitions
-- **Tier model is for future** — tiers are documented but not yet used for behavior
+- **Tier model is now behavioral** — tiers control affordance visibility via HelpModeManager
 - **Anti-spam policy is permanent** — don't add tooltips to every UI element
+- **Help levels are per-character** — stored in actor.flags, not global
+- **Breakdown providers are canonical** — all math lives in provider classes, not templates
+- **Affordances sync with tiers** — CSS classes and data attributes keep visual state consistent
 
 ---
 
-**Last Updated:** Phase 7 Refactoring
-**Next Review:** Before Phase 8 (Pinned Breakdowns)
+**Last Updated:** Phase 9 Tier-Aware Help System
+**Next Review:** Phase 9 completion validation + Phase 10 planning (content freeze + item-row rules)
