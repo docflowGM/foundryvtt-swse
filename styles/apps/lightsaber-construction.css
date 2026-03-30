@@ -27,22 +27,20 @@
   background: linear-gradient(135deg, rgba(0, 20, 40, 0.95), rgba(10, 10, 30, 0.95));
 }
 
-/* Blade Cross-Section Preview (SVG) */
-.ls-blade-preview-container {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px 0 12px 0;
-  z-index: 1;
+/* SVG Background Frame */
+.ls-frame {
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
 }
 
-.ls-blade-cross-section {
-  width: 100px;
-  height: 100px;
-  filter: drop-shadow(0 0 12px var(--selected-blade-color));
-  transition: filter 0.2s ease;
-  animation: bladeFlicker 2s infinite ease-in-out;
+.ls-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* Hologram Scanline Overlay */
@@ -125,19 +123,152 @@
   box-shadow: 0 0 20px var(--selected-blade-color), inset 0 0 12px rgba(0, 255, 255, 0.1);
 }
 
-/* Panel Grid */
-.ls-panels-grid {
+/* Interactive Overlay Grid */
+.ls-overlay {
+  position: relative;
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-  margin-bottom: 10px;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  z-index: 1;
 }
 
-@media (min-width: 768px) {
-  .ls-panels-grid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 12px;
+@media (max-width: 1200px) {
+  .ls-overlay {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    padding: 0.8rem;
   }
+}
+
+@media (max-width: 600px) {
+  .ls-overlay {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+}
+
+/* ========== SECTION CONTAINERS ========== */
+
+.ls-crystal-section,
+.ls-blade-section,
+.ls-hilt-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: var(--ls-panel-border);
+  border-color: var(--selected-blade-color);
+  border-radius: 8px;
+  box-shadow: var(--ls-panel-glow), inset 0 0 8px rgba(0, 255, 255, 0.05);
+  transition: all 0.2s ease;
+}
+
+.ls-crystal-section:hover,
+.ls-blade-section:hover,
+.ls-hilt-section:hover {
+  border-color: var(--selected-blade-color);
+  box-shadow: 0 0 20px var(--selected-blade-color), inset 0 0 12px rgba(0, 255, 255, 0.1);
+}
+
+.ls-crystal-section h3,
+.ls-blade-section h3,
+.ls-hilt-section h3 {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--selected-blade-color);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 10px var(--selected-blade-color);
+  transition: all 0.2s ease;
+}
+
+.ls-subsection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ls-subsection h4 {
+  font-size: 11px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0.5rem 0 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Crystal Display SVG */
+.ls-crystal-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  min-height: 120px;
+}
+
+.ls-crystal-svg {
+  width: 100px;
+  height: auto;
+  --crystal-fill: var(--selected-blade-color);
+  filter: drop-shadow(0 0 12px var(--selected-blade-color));
+  transition: filter 0.2s ease;
+}
+
+/* Blade Picker SVG */
+.ls-blade-picker {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  min-height: 140px;
+}
+
+.ls-blade-svg {
+  width: 100%;
+  max-width: 180px;
+  height: auto;
+  --selected-blade-color: var(--selected-blade-color);
+}
+
+/* Hilt Preview SVG */
+.ls-hilt-preview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  min-height: 100px;
+}
+
+.ls-hilt-preview img {
+  width: 80px;
+  height: auto;
+  filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.3));
+  transition: filter 0.2s ease;
+}
+
+.ls-hilt-preview:hover img {
+  filter: drop-shadow(0 0 12px var(--selected-blade-color));
+}
+
+.ls-mod-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
 }
 
 /* ========== OPTIONS DISPLAY ========== */
@@ -217,10 +348,6 @@
 }
 
 /* ========== HOLOGRAPHIC COLOR SELECTOR ========== */
-
-.panel-color {
-  grid-column: 1 / -1;
-}
 
 .color-subtitle {
   font-size: 12px;
@@ -353,11 +480,15 @@
   text-shadow: 0 0 10px var(--selected-blade-color);
 }
 
-/* ========== BUILD BUTTON ========== */
+/* ========== FOOTER & BUILD BUTTON ========== */
 
-.ls-form > .ls-build-button {
-  margin-top: auto;
-  min-height: 44px;
+.ls-footer {
+  position: sticky;
+  bottom: 0;
+  padding: 1rem;
+  background: linear-gradient(to top, var(--swse-bg, rgba(10, 10, 30, 0.98)), transparent);
+  z-index: 10;
+  border-top: 2px solid rgba(0, 255, 255, 0.2);
 }
 
 .ls-build-button {
