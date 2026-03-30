@@ -13,14 +13,16 @@
  *
  * Routes ALL mutations through ModificationIntentBuilder
  * NO direct item.update() calls
+ *
+ * Extends ModificationModalShell for unified layout and lifecycle management
  */
 
-import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { ModificationModalShell } from "/systems/foundryvtt-swse/scripts/apps/base/modification-modal-shell.js";
 import { ModificationIntentBuilder } from "/systems/foundryvtt-swse/scripts/engine/crafting/modification-intent-builder.js";
 import { GEAR_MODS, GEAR_VARIANTS, DEFAULT_GEAR_VARIANT, DEFAULT_GEAR_ACCENT, MAX_GEAR_MODS } from "/systems/foundryvtt-swse/scripts/data/gear-mods.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 
-export class GearModificationApp extends BaseSWSEAppV2 {
+export class GearModificationApp extends ModificationModalShell {
   constructor(actor, item, options = {}) {
     super(options);
     this.actor = actor;
@@ -39,12 +41,7 @@ export class GearModificationApp extends BaseSWSEAppV2 {
       title: "Gear Configuration",
       resizable: true
     },
-    position: { width: 850, height: 650 },
-    form: {
-      handler: GearModificationApp.#onSubmitForm,
-      submitOnChange: false,
-      closeOnSubmit: true
-    }
+    position: { width: 850, height: 650 }
   });
 
   static PARTS = {
@@ -109,12 +106,7 @@ export class GearModificationApp extends BaseSWSEAppV2 {
     };
   }
 
-  _onRender(context, options) {
-    super._onRender(context, options);
-
-    const root = this.element;
-    if (!root) return;
-
+  attachEventListeners(root) {
     // Variant selection (exclusive - single choice)
     root.querySelectorAll(".gear-variant-btn").forEach(btn => {
       const variantId = btn.dataset.variant;
@@ -242,8 +234,4 @@ export class GearModificationApp extends BaseSWSEAppV2 {
     return total;
   }
 
-  static async #onSubmitForm(event, form, formData) {
-    event.preventDefault();
-    // Form submission handled by apply button click
-  }
 }

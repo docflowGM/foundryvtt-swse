@@ -9,14 +9,16 @@
  *
  * CRITICAL: Routes ALL mutations through ModificationIntentBuilder
  * NO direct item.update() calls
+ *
+ * Extends ModificationModalShell for unified layout and lifecycle management
  */
 
-import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { ModificationModalShell } from "/systems/foundryvtt-swse/scripts/apps/base/modification-modal-shell.js";
 import { ModificationIntentBuilder } from "/systems/foundryvtt-swse/scripts/engine/crafting/modification-intent-builder.js";
 import { MELEE_UPGRADES, DEFAULT_MELEE_ACCENT } from "/systems/foundryvtt-swse/scripts/data/melee-upgrades.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 
-export class MeleeWeaponModificationApp extends BaseSWSEAppV2 {
+export class MeleeWeaponModificationApp extends ModificationModalShell {
   constructor(actor, item, options = {}) {
     super(options);
     this.actor = actor;
@@ -34,12 +36,7 @@ export class MeleeWeaponModificationApp extends BaseSWSEAppV2 {
       title: "Weapon Customization",
       resizable: true
     },
-    position: { width: 900, height: 650 },
-    form: {
-      handler: MeleeWeaponModificationApp.#onSubmitForm,
-      submitOnChange: false,
-      closeOnSubmit: true
-    }
+    position: { width: 900, height: 650 }
   });
 
   static PARTS = {
@@ -87,12 +84,7 @@ export class MeleeWeaponModificationApp extends BaseSWSEAppV2 {
     };
   }
 
-  _onRender(context, options) {
-    super._onRender(context, options);
-
-    const root = this.element;
-    if (!root) return;
-
+  attachEventListeners(root) {
     // Upgrade selection (multi-select)
     root.querySelectorAll(".melee-upgrade-card").forEach(card => {
       const upgradeId = card.dataset.upgrade;
@@ -222,8 +214,4 @@ export class MeleeWeaponModificationApp extends BaseSWSEAppV2 {
     return colors[colorName] || "#a0a0a0";
   }
 
-  static async #onSubmitForm(event, form, formData) {
-    event.preventDefault();
-    // Form submission handled by apply button click
-  }
 }

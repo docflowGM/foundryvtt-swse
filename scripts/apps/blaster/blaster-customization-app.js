@@ -8,14 +8,16 @@
  * - Real-time configuration sync
  *
  * Pure UI layer. All mutations routed to BlasterCustomizationEngine.
+ *
+ * Extends ModificationModalShell for unified layout and lifecycle management
  */
 
-import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { ModificationModalShell } from "/systems/foundryvtt-swse/scripts/apps/base/modification-modal-shell.js";
 import { BlasterCustomizationEngine } from "/systems/foundryvtt-swse/scripts/engine/crafting/blaster-customization-engine.js";
 import { BLASTER_BOLT_COLORS } from "/systems/foundryvtt-swse/scripts/data/blaster-config.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 
-export class BlasterCustomizationApp extends BaseSWSEAppV2 {
+export class BlasterCustomizationApp extends ModificationModalShell {
   constructor(actor, item, options = {}) {
     super(options);
     this.actor = actor;
@@ -32,12 +34,7 @@ export class BlasterCustomizationApp extends BaseSWSEAppV2 {
       title: "Blaster Configuration",
       resizable: true
     },
-    position: { width: 900, height: 600 },
-    form: {
-      handler: BlasterCustomizationApp.#onSubmitForm,
-      submitOnChange: false,
-      closeOnSubmit: true
-    }
+    position: { width: 900, height: 600 }
   });
 
   static PARTS = {
@@ -68,12 +65,7 @@ export class BlasterCustomizationApp extends BaseSWSEAppV2 {
     };
   }
 
-  _onRender(context, options) {
-    super._onRender(context, options);
-
-    const root = this.element;
-    if (!root) return;
-
+  attachEventListeners(root) {
     // Set CSS variable for live bolt glow
     root.style.setProperty(
       "--selected-bolt-color",
@@ -157,8 +149,4 @@ export class BlasterCustomizationApp extends BaseSWSEAppV2 {
     }
   }
 
-  static async #onSubmitForm(event, form, formData) {
-    event.preventDefault();
-    // Form submission handled by apply button click
-  }
 }

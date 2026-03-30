@@ -9,14 +9,16 @@
  *
  * CRITICAL: Routes ALL mutations through ModificationIntentBuilder
  * NO direct item.update() calls
+ *
+ * Extends ModificationModalShell for unified layout and lifecycle management
  */
 
-import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { ModificationModalShell } from "/systems/foundryvtt-swse/scripts/apps/base/modification-modal-shell.js";
 import { ModificationIntentBuilder } from "/systems/foundryvtt-swse/scripts/engine/crafting/modification-intent-builder.js";
 import { ARMOR_UPGRADES } from "/systems/foundryvtt-swse/scripts/data/armor-upgrades.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 
-export class ArmorModificationApp extends BaseSWSEAppV2 {
+export class ArmorModificationApp extends ModificationModalShell {
   constructor(actor, item, options = {}) {
     super(options);
     this.actor = actor;
@@ -34,12 +36,7 @@ export class ArmorModificationApp extends BaseSWSEAppV2 {
       title: "Armor Configuration",
       resizable: true
     },
-    position: { width: 900, height: 700 },
-    form: {
-      handler: ArmorModificationApp.#onSubmitForm,
-      submitOnChange: false,
-      closeOnSubmit: true
-    }
+    position: { width: 900, height: 700 }
   });
 
   static PARTS = {
@@ -87,12 +84,7 @@ export class ArmorModificationApp extends BaseSWSEAppV2 {
     };
   }
 
-  _onRender(context, options) {
-    super._onRender(context, options);
-
-    const root = this.element;
-    if (!root) return;
-
+  attachEventListeners(root) {
     // Upgrade selection (multi-select)
     root.querySelectorAll(".armor-upgrade-card").forEach(card => {
       const upgradeId = card.dataset.upgrade;
@@ -194,8 +186,4 @@ export class ArmorModificationApp extends BaseSWSEAppV2 {
     return total;
   }
 
-  static async #onSubmitForm(event, form, formData) {
-    event.preventDefault();
-    // Form submission handled by apply button click
-  }
 }

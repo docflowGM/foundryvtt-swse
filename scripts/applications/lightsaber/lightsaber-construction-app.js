@@ -8,15 +8,17 @@
  * - Construction mechanics integration
  *
  * Pure UI layer. All mutations routed to LightsaberConstructionEngine.
+ *
+ * Extends ModificationModalShell for unified layout and lifecycle management
  */
 
-import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
+import { ModificationModalShell } from "/systems/foundryvtt-swse/scripts/apps/base/modification-modal-shell.js";
 import { LightsaberConstructionEngine } from "/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js";
 import { BLADE_COLOR_MAP, VARIES_COLOR_LIST, DEFAULT_BLADE_COLOR } from "/systems/foundryvtt-swse/scripts/data/blade-colors.js";
 import { MirajAttunementApp } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/miraj-attunement-app.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 
-export class LightsaberConstructionApp extends BaseSWSEAppV2 {
+export class LightsaberConstructionApp extends ModificationModalShell {
   constructor(actor, options = {}) {
     super(options);
     this.actor = actor;
@@ -31,12 +33,7 @@ export class LightsaberConstructionApp extends BaseSWSEAppV2 {
       title: "Lightsaber Construction",
       resizable: true
     },
-    position: { width: 900, height: 700 },
-    form: {
-      handler: LightsaberConstructionApp.#onSubmitForm,
-      submitOnChange: false,
-      closeOnSubmit: true
-    }
+    position: { width: 900, height: 700 }
   });
 
   static PARTS = {
@@ -78,12 +75,7 @@ export class LightsaberConstructionApp extends BaseSWSEAppV2 {
     };
   }
 
-  _onRender(context, options) {
-    super._onRender(context, options);
-
-    const root = this.element;
-    if (!root) return;
-
+  attachEventListeners(root) {
     // Set CSS variable for live blade glow
     root.style.setProperty(
       "--selected-blade-color",
@@ -233,8 +225,4 @@ export class LightsaberConstructionApp extends BaseSWSEAppV2 {
     }
   }
 
-  static async #onSubmitForm(event, form, formData) {
-    event.preventDefault();
-    // Form submission handled by build button click
-  }
 }
