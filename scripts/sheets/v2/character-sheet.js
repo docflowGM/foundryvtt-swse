@@ -21,6 +21,9 @@ import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animati
 import { ActionEconomyIntegration } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-integration.js";
 import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-bindings.js";
 import { SentinelSheetGuardrails } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-sheet-guardrails.js";
+import { bindV2CharacterSheetTooltips } from "/systems/foundryvtt-swse/scripts/sheets/v2/TooltipIntegration.js";
+import { bindV2SheetBreakdowns, closeBreakdown } from "/systems/foundryvtt-swse/scripts/sheets/v2/BreakdownIntegration.js";
+import { HelpModeManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/HelpModeManager.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import { computeCenteredPosition } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
@@ -235,6 +238,10 @@ export class SWSEV2CharacterSheet extends
 
     // Initialize visibility manager for lazy panel building
     this.visibilityManager = new PanelVisibilityManager(this);
+
+    // Phase 9: Tier-aware help system (per-character, persisted)
+    // Initialize from actor flags or default to CORE
+    this._helpLevel = HelpModeManager.initializeForActor(document);
   }
 
   // ═══ AUDIT INSTRUMENTATION + RENDER GUARD ═══
@@ -357,8 +364,23 @@ export class SWSEV2CharacterSheet extends
       isForm: root.tagName === 'FORM'
     });
 
+    // Phase 9: Apply help level CSS class to root for tier-aware affordance visibility
+    HelpModeManager.getLevels().forEach(level => {
+      root.classList.remove(`help-level--${level.toLowerCase()}`);
+    });
+    root.classList.add(`help-level--${this._helpLevel.toLowerCase()}`);
+
     // Wire listeners to the actual sheet root (now guaranteed to be the form or the sheet content)
     this.activateListeners(root, { signal });
+
+    // Wire tooltip bindings for micro-tooltips
+    bindV2CharacterSheetTooltips(this.document, root, this._renderAbort);
+
+    // Wire pinned breakdown card interactions
+    bindV2SheetBreakdowns(this.document, root, this._renderAbort);
+
+    // Close any open breakdown card on rerender (cleanup)
+    closeBreakdown();
 
     // Wire action economy bindings for combat tab
     ActionEconomyBindings.setupAttackButtons(root, this.document);
@@ -905,6 +927,10 @@ const forcePoints = [];
       actionEconomy,
       xpLevelReady,
       derived,  // Complex computed stats (defenses, damage, etc.)
+      // Phase 9: Tier-aware help system context
+      helpLevel: this._helpLevel,
+      helpLevelLabel: HelpModeManager.getHelpLevelLabel(this._helpLevel),
+      helpLevelDescription: HelpModeManager.getHelpLevelDescription(this._helpLevel),
       // ═════════════════════════════════════════════════════════════════
       // UNIFIED PANEL CONTEXTS (Primary data source)
       // Panels now own all character data through dedicated view models
@@ -1095,6 +1121,38 @@ const forcePoints = [];
       console.error('[LIFECYCLE] ❌ CRITICAL: Could not find form element to attach submit listener');
       console.error('[LIFECYCLE] This means NO submit interception will happen');
     }
+
+    // DELEGATED: Help Mode Cycling (OFF → CORE → STANDARD → ADVANCED → OFF)
+    html.addEventListener("click", async ev => {
+      const button = ev.target.closest("[data-action='toggle-help-mode']");
+      if (!button) return;
+
+      ev.preventDefault();
+
+      // Cycle to next help level
+      this._helpLevel = HelpModeManager.getNextLevel(this._helpLevel);
+
+      // Persist to actor flags
+      await HelpModeManager.setHelpLevel(this.document, this._helpLevel);
+
+      // Update button text with current help level label
+      button.textContent = HelpModeManager.getHelpLevelLabel(this._helpLevel);
+      button.setAttribute("title", HelpModeManager.getHelpLevelDescription(this._helpLevel));
+
+      // Update sheet root class for CSS styling
+      // Remove all help-level classes first
+      HelpModeManager.getLevels().forEach(level => {
+        html.classList.remove(`help-level--${level.toLowerCase()}`);
+      });
+      // Add current help level class
+      html.classList.add(`help-level--${this._helpLevel.toLowerCase()}`);
+
+      // Update the TooltipRegistry help mode state (for tier-aware tooltip visibility)
+      const { TooltipRegistry } = await import("/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-registry.js");
+      TooltipRegistry.setHelpMode(HelpModeManager.isActive(this._helpLevel));
+
+      console.log(`[HELP-MODE] Cycled to: ${this._helpLevel}`);
+    }, { signal });
 
     // DELEGATED: Toggle Abilities Panel - Show/Hide Expanded Views
     // Using delegated listeners from html root for stability across rerenders

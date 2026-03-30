@@ -1,0 +1,317 @@
+/* =========================================================================
+   SWSE Breakdown Card Styling
+   =========================================================================
+
+   Pinned number-breakdown analysis cards for complex stats.
+   Calm, holographic, datapad-like presentation with semantic coloring.
+
+   ARCHITECTURAL RULES:
+   - Keep the card itself calm and neutral (no red/amber/green whole-card)
+   - Use semantic colors only on individual row values
+   - Total value uses system highlight styling, not row semantics
+   - Accessible: don't rely on color alone (use signs, labels, alignment)
+   - Keep the visual language consistent with existing holo/SVG frames
+*/
+
+/* ==========================================================================
+   Overlay / Backdrop
+========================================================================== */
+
+.swse-breakdown-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1100; /* Above sheets but below other modals */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   Card Frame / Panel
+========================================================================== */
+
+.swse-breakdown-card {
+  position: fixed;
+  min-width: 320px;
+  max-width: 420px;
+  background: rgba(0, 15, 30, 0.95);
+  border: 1px solid rgba(0, 200, 255, 0.3);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow:
+    0 0 16px rgba(0, 200, 255, 0.2),
+    inset 0 0 8px rgba(0, 200, 255, 0.1);
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #fff;
+  z-index: 1101;
+  animation: holoPanelOpen 0.2s ease;
+
+  /* Prevent text selection on card itself */
+  user-select: none;
+}
+
+@keyframes holoPanelOpen {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .swse-breakdown-card {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   Card Title
+========================================================================== */
+
+.breakdown-card__title {
+  font-size: 15px;
+  font-weight: bold;
+  color: #00ffff;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   Card Definition (One-sentence explanation)
+========================================================================== */
+
+.breakdown-card__definition {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 12px;
+  line-height: 1.4;
+  font-style: italic;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 200, 255, 0.15);
+}
+
+/* ==========================================================================
+   Breakdown Rows Container
+========================================================================== */
+
+.breakdown-card__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 8px 0;
+}
+
+/* Individual Row */
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(0, 200, 255, 0.08);
+}
+
+.breakdown-row:last-child {
+  border-bottom: none;
+}
+
+/* Row Label */
+.breakdown-row__label {
+  color: rgba(255, 255, 255, 0.85);
+  flex: 1;
+  padding-right: 16px;
+}
+
+/* Row Value (Base styling) */
+.breakdown-row__value {
+  font-weight: bold;
+  min-width: 50px;
+  text-align: right;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.5px;
+}
+
+/* ==========================================================================
+   Semantic Row Value Colors
+========================================================================== */
+
+/* POSITIVE: Green for bonuses and beneficial contributions */
+.breakdown-value--positive {
+  color: #00ff00;
+  text-shadow: 0 0 4px rgba(0, 255, 0, 0.3);
+}
+
+/* NEUTRAL: Amber for base values, zeros, and informational rows */
+.breakdown-value--neutral {
+  color: #ffcc00;
+  text-shadow: 0 0 4px rgba(255, 204, 0, 0.2);
+}
+
+/* NEGATIVE: Red for penalties and reductions */
+.breakdown-value--negative {
+  color: #ff3333;
+  text-shadow: 0 0 4px rgba(255, 51, 51, 0.3);
+}
+
+/* ==========================================================================
+   Divider (Before Total)
+========================================================================== */
+
+.breakdown-card__divider {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    rgba(0, 200, 255, 0) 0%,
+    rgba(0, 200, 255, 0.4) 50%,
+    rgba(0, 200, 255, 0) 100%
+  );
+  margin: 12px 0;
+}
+
+/* ==========================================================================
+   Total Value (System Highlight, Not Semantic Color)
+========================================================================== */
+
+.breakdown-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  background: rgba(0, 200, 255, 0.08);
+  border-radius: 4px;
+  padding: 8px 8px;
+  margin-top: 8px;
+}
+
+.breakdown-total__label {
+  font-weight: bold;
+  color: #00ffff;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Total Value: Emphasized using system highlight, not row semantics */
+.breakdown-total__value {
+  font-weight: bold;
+  font-size: 16px;
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+  min-width: 60px;
+  text-align: right;
+  letter-spacing: 1px;
+}
+
+/* ==========================================================================
+   Close Button
+========================================================================== */
+
+.breakdown-card__close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 6px;
+  border-radius: 3px;
+  transition: 0.15s;
+}
+
+.breakdown-card__close:hover {
+  color: #ff3333;
+  background: rgba(255, 51, 51, 0.1);
+}
+
+.breakdown-card__close:focus {
+  outline: 1px solid rgba(0, 200, 255, 0.5);
+}
+
+/* ==========================================================================
+   Accessibility: Do Not Rely on Color Alone
+========================================================================== */
+
+/* Each row has explicit sign (+/−), label, and alignment */
+.breakdown-row__value::before {
+  /* Sign is embedded in the value itself via _formatValue() */
+  /* This ensures accessibility even without color */
+}
+
+/* ==========================================================================
+   Responsive: Ensure card fits on smaller screens
+========================================================================== */
+
+@media (max-width: 480px) {
+  .swse-breakdown-card {
+    min-width: 280px;
+    max-width: 100vw;
+    margin: 0 12px;
+    padding: 12px;
+  }
+
+  .breakdown-card__title {
+    font-size: 14px;
+  }
+
+  .breakdown-card__definition {
+    font-size: 11px;
+  }
+
+  .breakdown-row {
+    font-size: 12px;
+  }
+
+  .breakdown-row__value {
+    min-width: 40px;
+  }
+}
+
+/* ==========================================================================
+   Reduced Motion: Disable animations
+========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .swse-breakdown-card {
+    animation: none;
+  }
+
+  .breakdown-value--positive,
+  .breakdown-value--neutral,
+  .breakdown-value--negative,
+  .breakdown-total__value {
+    text-shadow: none;
+  }
+
+  .breakdown-card__close {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   Utility: Visual States for Debugging/Enhancement
+========================================================================== */
+
+/* Hover state on rows (optional enhancement) */
+.breakdown-row:hover {
+  background: rgba(0, 200, 255, 0.04);
+  border-radius: 3px;
+}
+
+/* ==========================================================================
+   Dark theme support (if future themes are added)
+========================================================================== */
+
+/* Currently the card is designed for SWSE's existing dark holo theme */
+/* No additional dark/light theme switching needed for Phase 8 */

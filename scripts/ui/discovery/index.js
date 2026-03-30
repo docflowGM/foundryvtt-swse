@@ -9,9 +9,13 @@
 
 import { DiscoveryUserState } from "/systems/foundryvtt-swse/scripts/ui/discovery/user-state.js";
 import { TooltipRegistry } from "/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-registry.js";
+import { TooltipGlossary } from "/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-glossary.js";
 import { CalloutManager } from "/systems/foundryvtt-swse/scripts/ui/discovery/callout-manager.js";
 import { FeatureTour } from "/systems/foundryvtt-swse/scripts/ui/discovery/feature-tour.js";
 import { registerDiscoverySettings } from "/systems/foundryvtt-swse/scripts/ui/discovery/discovery-settings.js";
+import { DefenseTooltip } from "/systems/foundryvtt-swse/scripts/ui/defense-tooltip.js";
+import { WeaponTooltip } from "/systems/foundryvtt-swse/scripts/ui/weapon-tooltip.js";
+import { CombatStatsTooltip } from "/systems/foundryvtt-swse/scripts/ui/combat-stats-tooltip.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 
@@ -19,6 +23,11 @@ export function initializeDiscoverySystem() {
   // Register settings & persistence (must happen during 'init')
   registerDiscoverySettings();
   DiscoveryUserState.registerSetting();
+
+  // Register breakdown providers with TooltipRegistry
+  DefenseTooltip.registerProviders();
+  WeaponTooltip.registerProviders();
+  CombatStatsTooltip.registerProviders();
 }
 
 export function onDiscoveryReady() {
@@ -40,6 +49,7 @@ export function onDiscoveryReady() {
   if (game.settings.get(SYSTEM_ID, 'devMode')) {
     console.log('SWSE | Discovery system initialized');
     globalThis.SWSEDiscovery = {
+      glossary: TooltipGlossary,
       tooltips: TooltipRegistry,
       callouts: CalloutManager,
       tour: FeatureTour,
@@ -73,5 +83,6 @@ function _onAppRender(app, html) {
 // Re-export for direct imports
 export { DiscoveryUserState } from "/systems/foundryvtt-swse/scripts/ui/discovery/user-state.js";
 export { TooltipRegistry } from "/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-registry.js";
+export { TooltipGlossary } from "/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-glossary.js";
 export { CalloutManager } from "/systems/foundryvtt-swse/scripts/ui/discovery/callout-manager.js";
 export { FeatureTour } from "/systems/foundryvtt-swse/scripts/ui/discovery/feature-tour.js";

@@ -1,216 +1,224 @@
 /**
  * Defense Breakdown Tooltip System
  *
- * Displays comprehensive modifier breakdown for defense values on hover.
- * Shows all sources contributing to final defense calculation:
- * - Base calculation (10 + abilities + class + misc)
- * - Armor modifiers
- * - Encumbrance penalties
- * - Condition modifiers
- * - Talent bonuses
- * - Special effects (dex loss, etc.)
+ * ARCHITECTURE NOTE: BREAKDOWN PROVIDER ONLY
+ *
+ * This module provides BREAKDOWN DATA for defenses—i.e., "where did this number come from?"
+ *
+ * ✗ Does NOT provide definition content ("what is this?")
+ * ✓ Definitions live in: TooltipGlossary.ReflexDefense, .FortitudeDefense, .WillDefense, .FlatFooted
+ * ✓ Definitions are localized in: lang/en.json SWSE.Discovery.Tooltip.*Defense
+ *
+ * BREAKDOWN RESPONSIBILITY:
+ * - Register breakdown providers with TooltipRegistry.registerBreakdownProvider()
+ * - Generate detailed math breakdowns showing all components:
+ *   * Base calculation (10 + abilities + class + misc)
+ *   * Armor modifiers
+ *   * Encumbrance penalties
+ *   * Condition modifiers
+ *   * Talent bonuses
+ *   * Special effects (dex loss, etc.)
+ *
+ * This separation keeps the system maintainable:
+ * - Short "what is it" in glossary/definitions
+ * - Detailed "how is it calculated" in this provider
+ * - No duplication or conflation of concerns
  */
 
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { TooltipRegistry } from "/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-registry.js";
 
 export class DefenseTooltip {
+
   /**
-   * Initialize defense tooltips on character sheet
-   * @param {Actor} actor - Character actor
-   * @param {HTMLElement} container - Container with defense elements
+   * Initialize: register all defense breakdown providers with the registry.
+   * Call this once during system init.
    */
-  static initTooltips(actor, container) {
-    if (!container) return;
+  static registerProviders() {
+    TooltipRegistry.registerBreakdownProvider('ReflexDefense', (actor) =>
+      this.getBreakdownContent(actor, 'reflex')
+    );
+    TooltipRegistry.registerBreakdownProvider('FortitudeDefense', (actor) =>
+      this.getBreakdownContent(actor, 'fort')
+    );
+    TooltipRegistry.registerBreakdownProvider('WillDefense', (actor) =>
+      this.getBreakdownContent(actor, 'will')
+    );
+    TooltipRegistry.registerBreakdownProvider('FlatFooted', (actor) =>
+      this.getBreakdownContent(actor, 'flatfooted')
+    );
+  }
 
-    // Find all defense value elements
-    const defenseElements = container.querySelectorAll('[data-defense-breakdown]');
+  /**
+   * Get breakdown content (title + body) for a defense.
+   * Used for hover tooltips. For pinned cards, use getBreakdownStructure().
+   * @param {Actor} actor
+   * @param {string} defenseKey - 'reflex', 'fort', 'will', or 'flatfooted'
+   * @returns {{title: string, body: string}}
+   */
+  static getBreakdownContent(actor, defenseKey) {
+    const data = this.getDefenseBreakdown(actor, defenseKey);
+    if (!data) {
+      return { title: 'Defense', body: 'Unable to calculate breakdown.' };
+    }
 
-    defenseElements.forEach(element => {
-      element.addEventListener('mouseenter', () => {
-        this.showTooltip(actor, element);
-      });
+    let body = this.generateBreakdownText(data, defenseKey);
+    return {
+      title: `${data.label} Defense Breakdown`,
+      body: body
+    };
+  }
 
-      element.addEventListener('mouseleave', () => {
-        this.hideTooltip(element);
-      });
+  /**
+   * Get normalized breakdown structure for pinned card rendering.
+   * @param {Actor} actor
+   * @param {string} defenseKey - 'reflex', 'fort', 'will', or 'flatfooted'
+   * @returns {{title: string, definition: string, rows: Array, total: number}}
+   */
+  static getBreakdownStructure(actor, defenseKey) {
+    const data = this.getDefenseBreakdown(actor, defenseKey);
+    if (!data) {
+      return {
+        title: 'Defense',
+        definition: 'Unable to calculate breakdown.',
+        rows: [],
+        total: 0
+      };
+    }
 
-      // Click to toggle tooltip on mobile
-      element.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const tooltip = element.querySelector('.defense-breakdown-tooltip');
-        if (tooltip?.classList.contains('show')) {
-          this.hideTooltip(element);
-        } else {
-          this.showTooltip(actor, element);
-        }
-      });
+    // Map defense keys to glossary definitions and glossary keys
+    const defenseMap = {
+      'reflex': 'Dodge and quick reactions.',
+      'fort': 'Physical toughness and constitution.',
+      'will': 'Mental fortitude and resolve.',
+      'flatfooted': 'Defense when caught by surprise.'
+    };
+
+    const glossaryKeyMap = {
+      'reflex': 'ReflexDefense',
+      'fort': 'FortitudeDefense',
+      'will': 'WillDefense',
+      'flatfooted': 'FlatFooted'
+    };
+
+    const rows = [];
+
+    // Base components (always shown)
+    rows.push({
+      label: 'Base',
+      value: 10,
+      semantic: 'neutral'
     });
-  }
-
-  /**
-   * Show defense breakdown tooltip
-   * @private
-   */
-  static showTooltip(actor, element) {
-    if (!actor) return;
-
-    const defenseKey = element.dataset.defenseBreakdown;
-    if (!defenseKey) return;
-
-    // Get existing tooltip or create new one
-    let tooltip = element.querySelector('.defense-breakdown-tooltip');
-    if (!tooltip) {
-      const data = this.getDefenseBreakdown(actor, defenseKey);
-      tooltip = this.createTooltipElement(data, defenseKey);
-      element.appendChild(tooltip);
-    }
-
-    tooltip.classList.add('show');
-    this.positionTooltip(tooltip, element);
-  }
-
-  /**
-   * Hide defense breakdown tooltip
-   * @private
-   */
-  static hideTooltip(element) {
-    const tooltip = element.querySelector('.defense-breakdown-tooltip');
-    if (tooltip) {
-      tooltip.classList.remove('show');
-    }
-  }
-
-  /**
-   * Create tooltip HTML element with breakdown data
-   * @private
-   */
-  static createTooltipElement(data, defenseKey) {
-    const div = document.createElement('div');
-    div.className = `defense-breakdown-tooltip ${defenseKey}-breakdown show`;
-    div.dataset.defense = defenseKey;
-    div.innerHTML = this.generateTooltipHTML(data, defenseKey);
-    return div;
-  }
-
-  /**
-   * Generate tooltip HTML from breakdown data
-   * @private
-   */
-  static generateTooltipHTML(data, defenseKey) {
-    let html = `
-      <div class="tooltip-header">
-        <h4>${data.label} Defense Breakdown</h4>
-        <span class="total-value">Total: ${data.totalValue}</span>
-      </div>
-
-      <div class="breakdown-section base-calculation">
-        <h5 class="section-title">Base Calculation</h5>
-        <div class="calc-item">
-          <span class="item-source">Base</span>
-          <span class="item-value">10</span>
-        </div>
-    `;
 
     if (data.halfLevel) {
-      html += `
-        <div class="calc-item">
-          <span class="item-source">½ Level</span>
-          <span class="item-value">+${data.halfLevel}</span>
-        </div>
-      `;
+      rows.push({
+        label: '½ Level',
+        value: data.halfLevel,
+        semantic: 'neutral'
+      });
     }
 
     if (data.abilityMod) {
-      html += `
-        <div class="calc-item">
-          <span class="item-source">Ability Mod</span>
-          <span class="item-value">${data.abilityMod > 0 ? '+' : ''}${data.abilityMod}</span>
-        </div>
-      `;
+      rows.push({
+        label: `${this._getAbilityName(defenseKey)} mod`,
+        value: data.abilityMod,
+        semantic: data.abilityMod > 0 ? 'positive' : 'negative'
+      });
     }
 
     if (data.classBonus) {
-      html += `
-        <div class="calc-item">
-          <span class="item-source">Class Bonus</span>
-          <span class="item-value">+${data.classBonus}</span>
-        </div>
-      `;
+      rows.push({
+        label: 'Class bonus',
+        value: data.classBonus,
+        semantic: 'positive'
+      });
     }
 
     if (data.miscMod) {
-      html += `
-        <div class="calc-item">
-          <span class="item-source">Miscellaneous</span>
-          <span class="item-value">${data.miscMod > 0 ? '+' : ''}${data.miscMod}</span>
-        </div>
-      `;
+      rows.push({
+        label: 'Misc',
+        value: data.miscMod,
+        semantic: data.miscMod > 0 ? 'positive' : (data.miscMod < 0 ? 'negative' : 'neutral')
+      });
     }
 
-    html += `
-        <div class="calc-divider"></div>
-        <div class="calc-item total">
-          <span class="item-source">Subtotal</span>
-          <span class="item-value">${data.subtotal}</span>
-        </div>
-      </div>
-    `;
-
-    // Modifiers section
+    // Active modifiers (from derived data)
     if (data.modifiers && data.modifiers.length > 0) {
-      html += `
-        <div class="breakdown-section modifier-breakdown">
-          <h5 class="section-title">Active Modifiers (${data.modifiers.length})</h5>
-      `;
-
       data.modifiers.forEach(mod => {
-        const valueClass = mod.value > 0 ? 'positive' : mod.value < 0 ? 'negative' : 'neutral';
-        html += `
-          <div class="modifier-item ${mod.source} ${mod.type}">
-            <span class="modifier-source" title="${mod.sourceName}">${mod.sourceName}</span>
-            <span class="modifier-value ${valueClass}">${mod.value > 0 ? '+' : ''}${mod.value}</span>
-            ${mod.description ? `<span class="modifier-description">${mod.description}</span>` : ''}
-          </div>
-        `;
+        rows.push({
+          label: mod.sourceName,
+          value: mod.value,
+          semantic: mod.value > 0 ? 'positive' : (mod.value < 0 ? 'negative' : 'neutral')
+        });
       });
-
-      html += `</div>`;
     }
 
-    // Special effects section
+    // Special effects as negative rows
     if (data.specialEffects && data.specialEffects.length > 0) {
-      html += `
-        <div class="breakdown-section special-effects">
-          <h5 class="section-title">Special Effects</h5>
-      `;
-
       data.specialEffects.forEach(effect => {
-        html += `
-          <div class="effect-item ${effect.type}">
-            <span class="effect-name">${effect.name}</span>
-            ${effect.description ? `<span class="effect-description">${effect.description}</span>` : ''}
-          </div>
-        `;
+        rows.push({
+          label: effect.name,
+          value: 0, // Effects don't have direct numeric value; they're informational
+          semantic: 'negative'
+        });
       });
-
-      html += `</div>`;
     }
 
-    // Final total
-    html += `
-      <div class="breakdown-section final-total">
-        <div class="total-calculation">
-          <span class="label">Final Defense Value:</span>
-          <span class="value">${data.totalValue}</span>
-        </div>
-      </div>
-    `;
-
-    return html;
+    return {
+      title: `${data.label} Defense`,
+      definition: defenseMap[defenseKey] || 'Defense calculation.',
+      rows: rows,
+      total: data.totalValue,
+      metadata: {
+        concept: glossaryKeyMap[defenseKey]
+      }
+    };
   }
 
   /**
-   * Get defense breakdown data from actor
+   * Generate human-readable breakdown text.
+   * @private
+   */
+  static generateBreakdownText(data, defenseKey) {
+    let lines = [];
+
+    // Base calculation
+    lines.push('Base Calculation:');
+    lines.push('  Base: 10');
+    if (data.halfLevel) lines.push(`  ½ Level: +${data.halfLevel}`);
+    if (data.abilityMod) lines.push(`  Ability: ${data.abilityMod > 0 ? '+' : ''}${data.abilityMod}`);
+    if (data.classBonus) lines.push(`  Class: +${data.classBonus}`);
+    if (data.miscMod) lines.push(`  Misc: ${data.miscMod > 0 ? '+' : ''}${data.miscMod}`);
+    lines.push(`  Subtotal: ${data.subtotal}`);
+
+    // Modifiers
+    if (data.modifiers && data.modifiers.length > 0) {
+      lines.push('');
+      lines.push(`Active Modifiers (${data.modifiers.length}):`);
+      data.modifiers.forEach(mod => {
+        lines.push(`  ${mod.sourceName}: ${mod.value > 0 ? '+' : ''}${mod.value}`);
+      });
+    }
+
+    // Special effects
+    if (data.specialEffects && data.specialEffects.length > 0) {
+      lines.push('');
+      lines.push('Special Effects:');
+      data.specialEffects.forEach(effect => {
+        lines.push(`  ${effect.name}`);
+        if (effect.description) lines.push(`    ${effect.description}`);
+      });
+    }
+
+    lines.push('');
+    lines.push(`Final Defense: ${data.totalValue}`);
+
+    return lines.join('\n');
+  }
+
+  /**
+   * Get defense breakdown data from actor.
+   * Flat-footed is calculated without Dex bonus.
    * @private
    */
   static getDefenseBreakdown(actor, defenseKey) {
@@ -218,14 +226,15 @@ export class DefenseTooltip {
     const defenseMap = {
       'reflex': { key: 'ref', label: 'Reflex', abilityKey: 'dex' },
       'fort': { key: 'fort', label: 'Fortitude', abilityKey: 'str' },
-      'will': { key: 'will', label: 'Will', abilityKey: 'wis' }
+      'will': { key: 'will', label: 'Will', abilityKey: 'wis' },
+      'flatfooted': { key: 'ref', label: 'Flat-Footed', abilityKey: null } // Uses reflex calculation but no dex
     };
 
     const defenseInfo = defenseMap[defenseKey];
     if (!defenseInfo) return null;
 
     const defense = system.defenses?.[defenseInfo.key] || {};
-    const abilityMod = system.attributes?.[defenseInfo.abilityKey]?.mod || 0;
+    const abilityMod = defenseKey === 'flatfooted' ? 0 : (system.attributes?.[defenseInfo.abilityKey]?.mod || 0);
     const halfLevel = Math.floor((system.level || 1) / 2);
     const classBonus = defense.classBonus || 0;
     const miscMod = defense.miscMod || 0;
@@ -237,8 +246,8 @@ export class DefenseTooltip {
     const modifierTarget = `defense.${defenseInfo.key}`;
     const modifiers = this.getModifiersForTarget(actor, modifierTarget);
 
-    // Get total including modifiers
-    const totalValue = defense.total || subtotal;
+    // Get total including modifiers (but not dex for flatfooted)
+    const totalValue = defenseKey === 'flatfooted' ? subtotal : (defense.total || subtotal);
 
     return {
       label: defenseInfo.label,
@@ -252,6 +261,20 @@ export class DefenseTooltip {
       totalValue,
       specialEffects: this.getSpecialEffects(actor, defenseKey)
     };
+  }
+
+  /**
+   * Helper: Get ability name from defense key.
+   * @private
+   */
+  static _getAbilityName(defenseKey) {
+    const abilityMap = {
+      'reflex': 'Dexterity',
+      'fort': 'Strength',
+      'will': 'Wisdom',
+      'flatfooted': 'None'
+    };
+    return abilityMap[defenseKey] || 'Unknown';
   }
 
   /**
@@ -305,31 +328,6 @@ export class DefenseTooltip {
     }
 
     return effects;
-  }
-
-  /**
-   * Position tooltip relative to trigger element
-   * @private
-   */
-  static positionTooltip(tooltip, element) {
-    const rect = element.getBoundingClientRect();
-
-    // Default: bottom-left
-    tooltip.style.top = `${rect.height + 4}px`;
-    tooltip.style.left = '0';
-
-    // Adjust if tooltip would go off-screen
-    const tooltipRect = tooltip.getBoundingClientRect();
-
-    if (tooltipRect.right > window.innerWidth) {
-      tooltip.style.right = '0';
-      tooltip.style.left = 'auto';
-    }
-
-    if (tooltipRect.bottom > window.innerHeight) {
-      tooltip.style.top = 'auto';
-      tooltip.style.bottom = `${rect.height + 4}px`;
-    }
   }
 }
 

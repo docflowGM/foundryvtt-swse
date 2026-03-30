@@ -41,7 +41,11 @@
             {{def.label}}
           </div>
 
-          <div class="defense-total" data-defense-breakdown="{{def.key}}" title="{{def.label}} defense breakdown">
+          <div class="defense-total"
+               data-breakdown="{{#if (eq def.key 'flatFooted')}}FlatFooted{{else if (eq def.key 'ref')}}ReflexDefense{{else if (eq def.key 'fort')}}FortitudeDefense{{else if (eq def.key 'will')}}WillDefense{{/if}}"
+               data-defense-breakdown="{{def.key}}"
+               data-help-tier="tier1"
+               title="{{def.label}} defense breakdown — click for details">
             {{def.total}}
           </div>
 

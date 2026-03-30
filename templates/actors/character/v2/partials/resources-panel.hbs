@@ -12,7 +12,7 @@
         <input type="number" name="system.speed" value="{{speed}}" min="0" step="1" class="small-input"/>
       </div>
 
-      <div class="resource">
+      <div class="resource" data-swse-tooltip="Initiative" data-breakdown="Initiative" data-help-tier="tier1" title="Initiative — click for breakdown">
         <div class="label">Initiative</div>
         <div class="value-row">
           <span class="value">{{initiativeTotal}}</span>
@@ -35,14 +35,14 @@
         </div>
       </div>
 
-      <div class="resource">
+      <div class="resource" data-swse-tooltip="BaseAttackBonus" data-breakdown="BaseAttackBonus" data-help-tier="tier1" title="Base Attack Bonus — click for breakdown">
         <div class="label">Base Attack</div>
         <div class="value-row">
           <span class="value">{{bab}}</span>
         </div>
       </div>
 
-      <div class="resource">
+      <div class="resource" data-swse-tooltip="Grapple" data-breakdown="Grapple" data-help-tier="tier1" title="Grapple Bonus — click for breakdown">
         <div class="label">Grapple Bonus</div>
         <div class="value-row">
           <span class="value">{{grappleBonus}}</span>
@@ -55,7 +55,7 @@
   <div class="resources-group">
     <div class="resources-group-header">Heroic Resources</div>
     <div class="resources-subgrid">
-      <div class="resource">
+      <div class="resource" data-swse-tooltip="ForcePoints">
         <div class="label">Force Points <span class="resource-subtle">({{forcePointDie}})</span></div>
         <div class="value-row">
           <input type="number" name="system.forcePoints.value" value="{{forcePointsValue}}" min="0" class="tiny-input"/>
@@ -68,7 +68,7 @@
         </div>
       </div>
 
-      <div class="resource">
+      <div class="resource" data-swse-tooltip="DestinyPoints">
         <div class="label">Destiny Points</div>
         <div class="value-row">
           <input type="number" name="system.destinyPoints.value" value="{{destinyPointsValue}}" min="0" class="tiny-input"/>

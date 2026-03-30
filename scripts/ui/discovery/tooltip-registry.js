@@ -1,78 +1,46 @@
 /**
  * Tooltip Registry & Renderer
  *
- * Maps string IDs (data-swse-tooltip) to localization keys.
- * Attaches hover/focus listeners to render positioned tooltips.
+ * Primary: Maps string IDs (data-swse-tooltip) to localization keys via the canonical glossary.
+ * Secondary: Attaches hover/focus listeners to render positioned tooltips.
+ * Tertiary: Manages breakdown providers for complex math tooltips (separated from definitions).
+ *
+ * ARCHITECTURE NOTES:
+ * - The registry is the discovery/binding engine, not the content home.
+ * - All tooltip content metadata lives in tooltip-glossary.js
+ * - Definitions and breakdowns are structurally separate.
+ * - Tiers are used for organization, not yet for behavior control.
+ * - All hardpoints are intentional and curated (no auto-generation).
  */
+
+import { TooltipGlossary } from '/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-glossary.js';
 
 const ATTR = 'data-swse-tooltip';
 const TOOLTIP_CLASS = 'swse-discovery-tooltip';
 const SYSTEM_ID = 'foundryvtt-swse';
 
 let _activeTooltip = null;
+let _breakdownProviders = {}; // Keyed by semantic concept (e.g. 'ReflexDefenseBreakdown', 'WeaponAttackBreakdown')
+let _helpModeActive = false;
+let _hoverTimer = null; // Timer for delayed tooltip appearance
+let _hoveredElement = null; // Track which element is currently hovered
 
 /**
- * Registry of all tooltip definitions.
- * Keys match data-swse-tooltip attribute values.
- * Values are i18n key prefixes; the system appends .Title and .Body.
+ * Build the internal tooltip definitions registry from the canonical glossary.
+ * Keys: semantic keys from the glossary (e.g., 'HitPoints', 'ReflexDefense')
+ * Values: i18n key prefixes (e.g., 'SWSE.Discovery.Tooltip.HitPoints')
+ *
+ * This dynamic build ensures the registry always stays in sync with the glossary.
  */
-const TOOLTIP_DEFS = {
-  // Character Sheet - Core Stats
-  'HitPoints':        'SWSE.Discovery.Tooltip.HitPoints',
-  'DamageThreshold':  'SWSE.Discovery.Tooltip.DamageThreshold',
-  'ForcePoints':      'SWSE.Discovery.Tooltip.ForcePoints',
-  'DestinyPoints':    'SWSE.Discovery.Tooltip.DestinyPoints',
-  'ConditionTrack':   'SWSE.Discovery.Tooltip.ConditionTrack',
-  'BaseAttackBonus':  'SWSE.Discovery.Tooltip.BaseAttackBonus',
-  'Grapple':          'SWSE.Discovery.Tooltip.Grapple',
-  'Initiative':       'SWSE.Discovery.Tooltip.Initiative',
+function buildTooltipDefsFromGlossary() {
+  const defs = {};
+  for (const [key, entry] of Object.entries(TooltipGlossary)) {
+    defs[key] = entry.i18nPrefix;
+  }
+  return defs;
+}
 
-  // Defenses
-  'ReflexDefense':    'SWSE.Discovery.Tooltip.ReflexDefense',
-  'FortitudeDefense': 'SWSE.Discovery.Tooltip.FortitudeDefense',
-  'WillDefense':      'SWSE.Discovery.Tooltip.WillDefense',
-  'FlatFooted':       'SWSE.Discovery.Tooltip.FlatFooted',
-
-  // Ability Scores
-  'AbilityScore':     'SWSE.Discovery.Tooltip.AbilityScore',
-  'AbilityModifier':  'SWSE.Discovery.Tooltip.AbilityModifier',
-
-  // Skills
-  'SkillTrained':     'SWSE.Discovery.Tooltip.SkillTrained',
-  'SkillRoll':        'SWSE.Discovery.Tooltip.SkillRoll',
-
-  // Feats & Talents
-  'PassiveTalent':    'SWSE.Discovery.Tooltip.PassiveTalent',
-  'ActiveTalent':     'SWSE.Discovery.Tooltip.ActiveTalent',
-  'UsageLimit':       'SWSE.Discovery.Tooltip.UsageLimit',
-
-  // Equipment
-  'WeaponAttack':     'SWSE.Discovery.Tooltip.WeaponAttack',
-  'WeaponDamage':     'SWSE.Discovery.Tooltip.WeaponDamage',
-  'ArmorPenalty':      'SWSE.Discovery.Tooltip.ArmorPenalty',
-
-  // Action Palette
-  'ActionPalette':    'SWSE.Discovery.Tooltip.ActionPalette',
-  'PaletteMode':      'SWSE.Discovery.Tooltip.PaletteMode',
-  'ActionDisabled':   'SWSE.Discovery.Tooltip.ActionDisabled',
-
-  // Chargen
-  'ChargenNarrative': 'SWSE.Discovery.Tooltip.ChargenNarrative',
-  'ChargenMentor':    'SWSE.Discovery.Tooltip.ChargenMentor',
-  'ChargenRollMethod':'SWSE.Discovery.Tooltip.ChargenRollMethod',
-  'ChargenSpecies':   'SWSE.Discovery.Tooltip.ChargenSpecies',
-  'ChargenClass':     'SWSE.Discovery.Tooltip.ChargenClass',
-  'ChargenLockin':    'SWSE.Discovery.Tooltip.ChargenLockin',
-
-  // Mentor / Dialogue
-  'MentorDialogue':   'SWSE.Discovery.Tooltip.MentorDialogue',
-  'AurebeshTranslation': 'SWSE.Discovery.Tooltip.AurebeshTranslation',
-
-  // GM Tools
-  'TacticalOverlay':  'SWSE.Discovery.Tooltip.TacticalOverlay',
-  'GMSuggestion':     'SWSE.Discovery.Tooltip.GMSuggestion',
-  'GMPaletteMode':    'SWSE.Discovery.Tooltip.GMPaletteMode'
-};
+const TOOLTIP_DEFS = buildTooltipDefsFromGlossary();
 
 /**
  * Resolve a tooltip definition to localized title + body.
@@ -145,6 +113,23 @@ export const TooltipRegistry = {
   get ids() { return Object.keys(TOOLTIP_DEFS); },
 
   /**
+   * Get the canonical glossary.
+   * Useful for introspection, tier-based filtering, or category browsing.
+   * @returns {Object} - The full TooltipGlossary
+   */
+  get glossary() { return TooltipGlossary; },
+
+  /**
+   * Get a glossary entry by semantic key.
+   * Includes metadata: tier, category, related concepts, etc.
+   * @param {string} key - E.g., 'HitPoints', 'ReflexDefense'
+   * @returns {Object|null} - The full entry object, or null if not found
+   */
+  getEntry(key) {
+    return TooltipGlossary[key] || null;
+  },
+
+  /**
    * Scan a root element for [data-swse-tooltip] and attach listeners.
    * Safe to call multiple times on re-render (idempotent via marker).
    * @param {HTMLElement} root
@@ -162,7 +147,7 @@ export const TooltipRegistry = {
       }
 
       el.addEventListener('mouseenter', _onEnter);
-      el.addEventListener('mouseleave', hideTooltip);
+      el.addEventListener('mouseleave', _onLeave);
       el.addEventListener('focus', _onEnter);
       el.addEventListener('blur', hideTooltip);
     }
@@ -178,13 +163,80 @@ export const TooltipRegistry = {
    */
   register(id, i18nPrefix) {
     TOOLTIP_DEFS[id] = i18nPrefix;
+  },
+
+  /**
+   * Register a breakdown provider for a semantic concept.
+   * Allows complex tooltips (like defense/weapon breakdowns) to be keyed by stable semantics.
+   * @param {string} key - semantic concept key (e.g. 'ReflexDefense', 'WeaponAttack')
+   * @param {Function} provider - async function(actor, targetElement) => {content: {title, body}}
+   */
+  registerBreakdownProvider(key, provider) {
+    _breakdownProviders[key] = provider;
+  },
+
+  /**
+   * Get a breakdown provider by key.
+   * @param {string} key
+   * @returns {Function|null}
+   */
+  getBreakdownProvider(key) {
+    return _breakdownProviders[key] || null;
+  },
+
+  /**
+   * Toggle help mode (affects which tooltips are visible).
+   * @param {boolean} active
+   */
+  setHelpMode(active) {
+    _helpModeActive = !!active;
+  },
+
+  /**
+   * Check if help mode is active.
+   * @returns {boolean}
+   */
+  isHelpMode() {
+    return _helpModeActive;
   }
 };
 
 function _onEnter(ev) {
-  const id = ev.currentTarget.getAttribute(ATTR);
+  // Clear any existing hover timer
+  if (_hoverTimer) {
+    clearTimeout(_hoverTimer);
+    _hoverTimer = null;
+  }
+
+  const el = ev.currentTarget;
+  const id = el.getAttribute(ATTR);
   if (!id) {return;}
-  const content = resolve(id);
-  if (!content) {return;}
-  showTooltip(ev.currentTarget, content);
+
+  // Get the hover delay from CSS variable or default
+  const computedStyle = window.getComputedStyle(el);
+  const delayStr = computedStyle.getPropertyValue('--tooltip-delay').trim();
+  const delay = delayStr ? parseInt(delayStr) : 250;
+
+  _hoveredElement = el;
+
+  // Set timer to show tooltip after delay
+  _hoverTimer = setTimeout(() => {
+    // Check that we're still hovering over the same element
+    if (_hoveredElement === el) {
+      const content = resolve(id);
+      if (content) {
+        showTooltip(el, content);
+      }
+    }
+  }, delay);
+}
+
+function _onLeave(ev) {
+  // Clear the hover timer if user leaves before delay expires
+  if (_hoverTimer) {
+    clearTimeout(_hoverTimer);
+    _hoverTimer = null;
+  }
+  _hoveredElement = null;
+  hideTooltip();
 }

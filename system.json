@@ -78,7 +78,8 @@
     "styles/debug/svg-layout-debug.css",
     "styles/ui/swse-holo-phase1.css",
     "styles/ui/swse-cursors.css",
-    "styles/apps/chargen.css"
+    "styles/apps/chargen.css",
+    "styles/components/breakdown-card.css"
   ],
   "languages": [
     {
@@ -492,6 +493,13 @@
         "TRUSTED": "OBSERVER",
         "GAMEMASTER": "OWNER"
       }
+    },
+    {
+      "name": "datapads-references",
+      "label": "Datapad References",
+      "type": "JournalEntry",
+      "system": "foundryvtt-swse",
+      "path": "packs/datapads-references"
     }
   ],
   "settings": {
