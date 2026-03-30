@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 520" role="img" aria-labelledby="title desc">
+  <title id="title">Shoto lightsaber outline</title>
+  <desc id="desc">A shorter lightsaber outline with compact hilt and short blade. Blade color can be themed with CSS variable --blade-color.</desc>
+  <defs>
+    <filter id="bladeGlow" x="-40%" y="-10%" width="180%" height="120%">
+      <feGaussianBlur stdDeviation="3.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M64 26 L64 290" stroke="var(--blade-color, #9d7cff)" stroke-width="12" filter="url(#bladeGlow)"/>
+    <path d="M64 30 L64 286" stroke="var(--blade-core, #ffffff)" stroke-width="4"/>
+    <g stroke="currentColor" stroke-width="3">
+      <rect x="46" y="290" width="36" height="118" rx="10"/>
+      <path d="M46 286h36"/>
+      <rect x="50" y="308" width="28" height="18" rx="4"/>
+      <rect x="50" y="336" width="28" height="16" rx="4"/>
+      <rect x="50" y="362" width="28" height="14" rx="4"/>
+      <path d="M54 408v20M64 408v24M74 408v20"/>
+      <circle cx="64" cy="386" r="4"/>
+    </g>
+  </g>
+</svg>

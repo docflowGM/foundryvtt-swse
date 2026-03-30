@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 640" role="img" aria-labelledby="title desc">
+  <title id="title">Classic lightsaber outline</title>
+  <desc id="desc">A full vertical lightsaber outline with a long blade and classic straight hilt. Blade color can be themed with CSS variable --blade-color.</desc>
+  <defs>
+    <filter id="bladeGlow" x="-40%" y="-10%" width="180%" height="120%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M64 24 L64 454" stroke="var(--blade-color, #6cf7ff)" stroke-width="12" filter="url(#bladeGlow)"/>
+    <path d="M64 28 L64 448" stroke="var(--blade-core, #ffffff)" stroke-width="4"/>
+    <g stroke="currentColor" stroke-width="3">
+      <rect x="46" y="454" width="36" height="112" rx="10"/>
+      <rect x="50" y="470" width="28" height="18" rx="4"/>
+      <rect x="50" y="498" width="28" height="16" rx="4"/>
+      <rect x="50" y="524" width="28" height="16" rx="4"/>
+      <path d="M54 566v22M64 566v30M74 566v22"/>
+      <path d="M46 454h36"/>
+      <circle cx="64" cy="548" r="4"/>
+      <path d="M46 448h36"/>
+      <path d="M56 438h16v10H56z"/>
+    </g>
+  </g>
+</svg>

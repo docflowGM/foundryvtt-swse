@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 640" role="img" aria-labelledby="title desc">
+  <title id="title">Guarded lightsaber outline</title>
+  <desc id="desc">A full vertical lightsaber outline with crossguard vents and a long main blade. Blade color can be themed with CSS variable --blade-color.</desc>
+  <defs>
+    <filter id="bladeGlow" x="-40%" y="-10%" width="180%" height="120%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M100 26 L100 446" stroke="var(--blade-color, #ffd36c)" stroke-width="12" filter="url(#bladeGlow)"/>
+    <path d="M100 30 L100 440" stroke="var(--blade-core, #ffffff)" stroke-width="4"/>
+    <path d="M70 442 L38 442" stroke="var(--blade-color, #ffd36c)" stroke-width="8" filter="url(#bladeGlow)"/>
+    <path d="M130 442 L162 442" stroke="var(--blade-color, #ffd36c)" stroke-width="8" filter="url(#bladeGlow)"/>
+    <path d="M72 442 L40 442" stroke="var(--blade-core, #ffffff)" stroke-width="2.6"/>
+    <path d="M128 442 L160 442" stroke="var(--blade-core, #ffffff)" stroke-width="2.6"/>
+
+    <g stroke="currentColor" stroke-width="3">
+      <rect x="82" y="446" width="36" height="118" rx="10"/>
+      <path d="M82 442h36"/>
+      <path d="M74 436h52"/>
+      <path d="M74 436v12M126 436v12"/>
+      <rect x="86" y="466" width="28" height="18" rx="4"/>
+      <rect x="86" y="496" width="28" height="18" rx="4"/>
+      <rect x="86" y="526" width="28" height="16" rx="4"/>
+      <path d="M90 564v22M100 564v28M110 564v22"/>
+      <circle cx="100" cy="548" r="4"/>
+    </g>
+  </g>
+</svg>

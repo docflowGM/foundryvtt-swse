@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">Modify Icon</title>
+  <desc id="desc">A holographic-style modification icon with a hex frame, central wrench shape, and circuit accents.</desc>
+  <defs>
+    <linearGradient id="modStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7EF9FF"/>
+      <stop offset="100%" stop-color="#36C8FF"/>
+    </linearGradient>
+    <filter id="modGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="1.4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <g fill="none" stroke="url(#modStroke)" stroke-linecap="round" stroke-linejoin="round" filter="url(#modGlow)">
+    <path d="M20 8h24l12 12v24L44 56H20L8 44V20z" stroke-width="2.5"/>
+    <path d="M24 25c3 3 8 3 11 0l6 6-7 7-6-6c3-3 3-8 0-11l-4-4c3-2 7-2 10 0" stroke-width="3"/>
+    <path d="M14 32h7M43 14v7M50 32h-7M32 50v-7" stroke-width="2"/>
+    <circle cx="32" cy="32" r="21" opacity="0.18" stroke-width="1.4"/>
+  </g>
+</svg>

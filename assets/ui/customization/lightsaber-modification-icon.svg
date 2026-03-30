@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">Lightsaber modification icon</title>
+  <desc id="desc">A lightsaber hilt crossed with an adjustment ring to indicate lightsaber modification.</desc>
+  <defs>
+    <linearGradient id="lsModStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7EF9FF"/>
+      <stop offset="100%" stop-color="#9D7CFF"/>
+    </linearGradient>
+  </defs>
+  <g fill="none" stroke="url(#lsModStroke)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="42" cy="22" r="10"/>
+    <path d="M42 10v4M42 30v4M30 22h4M50 22h4"/>
+    <path d="M18 10v26"/>
+    <path d="M14 36h8"/>
+    <rect x="12" y="36" width="12" height="18" rx="4"/>
+    <path d="M14 42h8M14 47h8"/>
+    <path d="M16 54v6M20 54v6"/>
+    <path d="M24 28l10-4"/>
+  </g>
+</svg>

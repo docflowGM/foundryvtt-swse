@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 240" role="img" aria-labelledby="title desc">
+  <title id="title">Curved lightsaber hilt</title>
+  <desc id="desc">A curved lightsaber hilt outline for selection or preview use.</desc>
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M88 20c14 20 18 42 16 66-2 23-10 46-18 70-7 22-12 42-12 64" />
+    <path d="M60 20c-12 18-16 38-15 61 1 24 8 48 16 73 7 22 11 42 11 66" />
+    <path d="M60 20h28"/>
+    <path d="M68 8h12v12H68z"/>
+    <path d="M63 66c8 2 18 2 26 0"/>
+    <path d="M60 98c8 2 20 2 30-1"/>
+    <path d="M57 130c9 2 21 1 31-2"/>
+    <path d="M54 162c9 2 21 1 30-2"/>
+    <circle cx="74" cy="184" r="4"/>
+    <path d="M65 210v20M74 210v24M83 208v20"/>
+  </g>
+</svg>

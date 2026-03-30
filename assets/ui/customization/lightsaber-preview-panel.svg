@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 240" role="img" aria-labelledby="title desc">
+  <title id="title">Lightsaber preview panel</title>
+  <desc id="desc">A holographic preview panel with a lightsaber silhouette zone and a crystal socket zone for modal use.</desc>
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M18 18h144l18 18h282v186H18z" stroke-width="2.5"/>
+    <path d="M18 54h444M320 18v36" stroke-width="1.8" opacity="0.8"/>
+    <rect x="30" y="72" width="288" height="138" rx="10" stroke-width="1.8" opacity="0.9"/>
+    <rect x="340" y="72" width="108" height="138" rx="10" stroke-width="1.8" opacity="0.9"/>
+    <path d="M174 92v76" stroke="var(--blade-color, #6cf7ff)" stroke-width="10"/>
+    <path d="M174 96v68" stroke="var(--blade-core, #ffffff)" stroke-width="3.5"/>
+    <rect x="162" y="168" width="24" height="26" rx="6" stroke-width="2"/>
+    <path d="M394 98 418 126 410 170 394 192 378 170 370 126z" fill="var(--crystal-fill, rgba(108,247,255,0.35))" stroke-width="2"/>
+    <path d="M52 92h82M52 108h46M52 124h62M52 140h38" stroke-width="1.6" opacity="0.55"/>
+    <path d="M348 92h72M348 108h40M348 124h58M348 140h30" stroke-width="1.6" opacity="0.55"/>
+  </g>
+</svg>

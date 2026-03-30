@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 192" role="img" aria-labelledby="title desc">
+  <title id="title">Kyber crystal outline</title>
+  <desc id="desc">A kyber crystal outline whose inner facets can be filled using CSS variable --crystal-fill.</desc>
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M64 10 94 48 86 128 64 182 42 128 34 48z" fill="none" stroke="currentColor" stroke-width="3"/>
+    <path d="M64 24 82 52 76 118 64 152 52 118 46 52z" fill="var(--crystal-fill, rgba(108,247,255,0.35))" stroke="currentColor" stroke-width="2.2"/>
+    <path d="M64 24v128M46 52h36M52 118h24" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M34 48l30 24 30-24M42 128l22-18 22 18" fill="none" stroke="currentColor" stroke-width="1.8"/>
+  </g>
+</svg>
