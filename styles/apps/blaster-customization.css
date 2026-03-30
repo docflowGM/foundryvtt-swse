@@ -1,0 +1,406 @@
+/**
+ * BLASTER CUSTOMIZATION UI
+ *
+ * Tactical weapon modification experience
+ * - Bolt color selector
+ * - FX type selection
+ * - Live bolt preview (SVG)
+ * - Real-time configuration sync
+ *
+ * Reuses holographic theme from lightsaber modal
+ * Inherits: panels, colors, fonts, spacing patterns
+ */
+
+:root {
+  --selected-bolt-color: #ff3333;
+}
+
+/* ========== ROOT CONTAINER ========== */
+
+.swse-blaster-customization {
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-width: 900px;
+  width: calc(100vw - 20px);
+  background: linear-gradient(135deg, rgba(0, 20, 40, 0.95), rgba(10, 10, 30, 0.95));
+}
+
+/* Bolt Preview (SVG) */
+.blaster-preview-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0 12px 0;
+  z-index: 1;
+}
+
+.blaster-bolt-preview {
+  width: 100px;
+  height: 100px;
+  filter: drop-shadow(0 0 12px var(--selected-bolt-color));
+  transition: filter 0.2s ease;
+  animation: boltPulse 1.5s infinite ease-in-out;
+}
+
+@keyframes boltPulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+/* ========== REUSE HOLOGRAPHIC CLASSES ========== */
+
+.swse-blaster-customization .ls-scanline-overlay {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 3px,
+    rgba(255, 255, 255, 0.02) 4px
+  );
+  pointer-events: none;
+  opacity: 0.4;
+  z-index: 0;
+}
+
+.swse-blaster-customization .ls-form {
+  padding: 12px 16px;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.swse-blaster-customization .ls-header {
+  text-align: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--selected-bolt-color);
+  transition: border-color 0.2s ease;
+}
+
+.swse-blaster-customization .ls-header h1 {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--selected-bolt-color);
+  text-shadow: 0 0 20px var(--selected-bolt-color);
+  margin: 0 0 4px 0;
+  transition: all 0.2s ease;
+}
+
+.swse-blaster-customization .ls-header .subtitle {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+  margin: 0;
+}
+
+.swse-blaster-customization .ls-panels-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+@media (min-width: 768px) {
+  .swse-blaster-customization .ls-panels-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 12px;
+  }
+}
+
+.swse-blaster-customization .ls-panel {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  border-color: var(--selected-bolt-color);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.1), inset 0 0 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.swse-blaster-customization .ls-panel h3 {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--selected-bolt-color);
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 10px var(--selected-bolt-color);
+  transition: all 0.2s ease;
+}
+
+.swse-blaster-customization .ls-panel:hover {
+  border-color: var(--selected-bolt-color);
+  box-shadow: 0 0 20px var(--selected-bolt-color), inset 0 0 12px rgba(0, 255, 255, 0.1);
+}
+
+/* ========== BOLT COLOR SELECTOR ========== */
+
+.panel-color {
+  grid-column: 1 / -1;
+}
+
+.color-subtitle {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: -8px 0 12px 0;
+  font-style: italic;
+}
+
+.blaster-color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  gap: 8px;
+}
+
+@media (min-width: 600px) {
+  .blaster-color-grid {
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 10px;
+  }
+}
+
+@media (min-width: 900px) {
+  .blaster-color-grid {
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 12px;
+  }
+}
+
+.blaster-color-cell {
+  cursor: pointer;
+  text-align: center;
+  padding: 6px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(100, 100, 100, 0.3);
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.blaster-color-cell:hover {
+  transform: translateY(-4px);
+  border-color: var(--blade-color);
+  box-shadow: 0 0 16px var(--blade-color);
+}
+
+.blaster-color-cell .ls-blade-preview {
+  height: 50px;
+  width: 6px;
+  margin: 0 auto 8px auto;
+  background: var(--blade-color);
+  box-shadow:
+    0 0 8px var(--blade-color),
+    0 0 18px var(--blade-color),
+    0 0 30px var(--blade-color);
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  animation: bladeFlicker 2s infinite ease-in-out;
+}
+
+.blaster-color-cell:hover .ls-blade-preview {
+  transform: scaleY(1.1);
+  box-shadow:
+    0 0 12px var(--blade-color),
+    0 0 24px var(--blade-color),
+    0 0 40px var(--blade-color);
+}
+
+.blaster-color-cell .ls-color-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--blade-color);
+  font-weight: 600;
+  text-shadow: 0 0 8px var(--blade-color);
+  transition: all 0.2s ease;
+}
+
+.blaster-color-cell.selected {
+  background: rgba(0, 255, 255, 0.1);
+  border: 2px solid var(--blade-color);
+  box-shadow:
+    0 0 16px var(--blade-color),
+    inset 0 0 8px rgba(0, 255, 255, 0.1);
+}
+
+.blaster-color-cell.selected .ls-blade-preview {
+  transform: scaleY(1.15);
+  box-shadow:
+    0 0 16px var(--blade-color),
+    0 0 32px var(--blade-color),
+    0 0 48px var(--blade-color);
+}
+
+/* ========== FX TYPE SELECTION ========== */
+
+.panel-fx {
+  grid-column: 1 / -1;
+}
+
+.fx-subtitle {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: -8px 0 12px 0;
+  font-style: italic;
+}
+
+.blaster-fx-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.blaster-fx-button {
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.blaster-fx-button:hover {
+  border-color: var(--selected-bolt-color);
+  box-shadow: 0 0 12px var(--selected-bolt-color);
+  transform: translateY(-2px);
+}
+
+.blaster-fx-button.selected {
+  background: rgba(0, 255, 255, 0.1);
+  border: 2px solid var(--selected-bolt-color);
+  box-shadow:
+    0 0 16px var(--selected-bolt-color),
+    inset 0 0 8px rgba(0, 255, 255, 0.1);
+}
+
+.fx-name {
+  font-weight: bold;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--selected-bolt-color);
+  margin-bottom: 4px;
+  text-shadow: 0 0 8px var(--selected-bolt-color);
+}
+
+.fx-description {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.3;
+}
+
+/* ========== SUMMARY ========== */
+
+.panel-summary {
+  background: rgba(0, 255, 255, 0.05);
+  display: flex;
+  justify-content: space-around;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.summary-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: center;
+  flex: 1;
+}
+
+.summary-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.summary-value {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--selected-bolt-color);
+  text-shadow: 0 0 10px var(--selected-bolt-color);
+}
+
+/* ========== APPLY BUTTON ========== */
+
+.ls-form > .blaster-apply-button {
+  margin-top: auto;
+  min-height: 44px;
+}
+
+.blaster-apply-button {
+  width: 100%;
+  padding: 16px 24px;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--selected-bolt-color);
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid var(--selected-bolt-color);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 20px var(--selected-bolt-color);
+  text-shadow: 0 0 8px var(--selected-bolt-color);
+}
+
+.blaster-apply-button:hover:not(:disabled) {
+  background: rgba(255, 51, 51, 0.15);
+  box-shadow:
+    0 0 30px var(--selected-bolt-color),
+    inset 0 0 20px rgba(255, 51, 51, 0.2);
+  transform: scale(1.02);
+}
+
+.blaster-apply-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.blaster-apply-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.button-glow {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 51, 51, 0.3),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes bladeFlicker {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 1; }
+}

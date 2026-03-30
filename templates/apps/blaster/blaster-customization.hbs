@@ -1,0 +1,82 @@
+<div class="swse-blaster-customization">
+  <!-- Hologram Scanline Overlay -->
+  <div class="ls-scanline-overlay"></div>
+
+  <!-- Bolt Preview (SVG) -->
+  <div class="blaster-preview-container">
+    <svg viewBox="0 0 120 120" class="blaster-bolt-preview">
+      <!-- Energy halo -->
+      <circle cx="60" cy="60" r="40" fill="var(--selected-bolt-color)" opacity="0.2" />
+      <!-- Mid glow -->
+      <circle cx="60" cy="60" r="25" fill="var(--selected-bolt-color)" opacity="0.4" />
+      <!-- Core bolt -->
+      <circle cx="60" cy="60" r="14" fill="var(--selected-bolt-color)" opacity="0.95" />
+      <!-- Bolt streak -->
+      <rect x="58" y="30" width="4" height="60" fill="var(--selected-bolt-color)" opacity="0.3" />
+    </svg>
+  </div>
+
+  <form class="ls-form flexcol">
+    <!-- Title Section -->
+    <header class="ls-header">
+      <h1>⚡ {{itemName}}</h1>
+      <p class="subtitle">Tactical weapon configuration</p>
+    </header>
+
+    <!-- Panel Grid -->
+    <div class="ls-panels-grid">
+      <!-- BOLT COLOR SELECTION -->
+      <div class="ls-panel panel-color">
+        <h3>Bolt Color</h3>
+        <p class="color-subtitle">Choose energy frequency</p>
+        <div class="blaster-color-grid">
+          {{#each boltColors}}
+          <div class="blaster-color-cell" data-color="{{this}}"
+               style="--blade-color: {{lookup ../colorMap this}}"
+               {{#if (eq this ../selectedBoltColor)}}data-selected="true"{{/if}}>
+            <div class="ls-blade-preview"></div>
+            <div class="ls-color-label">{{this}}</div>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+
+      <!-- FX TYPE SELECTION -->
+      <div class="ls-panel panel-fx">
+        <h3>⚙️ Effect Profile</h3>
+        <p class="fx-subtitle">Select firing characteristics</p>
+        <div class="blaster-fx-grid">
+          {{#each fxTypes}}
+          <button type="button" class="blaster-fx-button" data-fx="{{this}}"
+                  {{#if (eq this ../selectedFxType)}}data-selected="true"{{/if}}>
+            <div class="fx-name">{{capitalize this}}</div>
+            <div class="fx-description">{{lookup ../fxDescriptions this}}</div>
+          </button>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary Section -->
+    <div class="ls-panel panel-summary">
+      <div class="summary-row">
+        <span class="summary-label">Bolt Color</span>
+        <span class="summary-value" style="color: {{lookup colorMap selectedBoltColor}}">
+          {{selectedBoltColor}}
+        </span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">FX Profile</span>
+        <span class="summary-value">
+          {{capitalize selectedFxType}}
+        </span>
+      </div>
+    </div>
+
+    <!-- Apply Button -->
+    <button type="button" class="blaster-apply-button">
+      <span class="button-glow"></span>
+      Apply Configuration
+    </button>
+  </form>
+</div>
