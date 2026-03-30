@@ -1,14 +1,28 @@
 /**
  * Weapon Breakdown Tooltip System
  *
- * Provides breakdown data generators for weapon attack/damage values.
- * Integrates with TooltipRegistry as breakdown providers.
- * Shows all sources contributing to final calculations:
- * - Base damage calculation (dice + type)
- * - Attack bonus components (BAB, half level, ability, enhancement, proficiency)
- * - Damage bonus components (half level, ability, enhancement, two-handed, talents)
- * - All registered modifiers
- * - Weapon property effects
+ * ARCHITECTURE NOTE: BREAKDOWN PROVIDER ONLY
+ *
+ * This module provides BREAKDOWN DATA for weapons—i.e., "where did this attack bonus/damage come from?"
+ *
+ * ✗ Does NOT provide definition content ("what is this?")
+ * ✓ Definitions live in: TooltipGlossary.WeaponAttack, .WeaponDamage
+ * ✓ Definitions are localized in: lang/en.json SWSE.Discovery.Tooltip.Weapon*
+ *
+ * BREAKDOWN RESPONSIBILITY:
+ * - Provide detailed math breakdowns for weapon calculations
+ * - Show all sources contributing to final calculations:
+ *   * Base attack/damage calculation (dice + type)
+ *   * Attack bonus components (BAB, half level, ability, enhancement, proficiency)
+ *   * Damage bonus components (half level, ability, enhancement, two-handed, talents)
+ *   * All registered modifiers
+ *   * Weapon property effects
+ * - Register with TooltipRegistry.registerBreakdownProvider() for semantic lookup
+ *
+ * DEFERRED INTEGRATION:
+ * - Currently weapon tooltips are item-sheet-specific (Phase 8+)
+ * - Providers ready but not yet wired to character sheet weapon display
+ * - This separation enables future expansion without rework
  */
 
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";

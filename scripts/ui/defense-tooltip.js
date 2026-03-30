@@ -1,15 +1,28 @@
 /**
  * Defense Breakdown Tooltip System
  *
- * Provides breakdown data generators for defense values.
- * Integrates with TooltipRegistry as a breakdown provider.
- * Shows all sources contributing to final defense calculation:
- * - Base calculation (10 + abilities + class + misc)
- * - Armor modifiers
- * - Encumbrance penalties
- * - Condition modifiers
- * - Talent bonuses
- * - Special effects (dex loss, etc.)
+ * ARCHITECTURE NOTE: BREAKDOWN PROVIDER ONLY
+ *
+ * This module provides BREAKDOWN DATA for defenses—i.e., "where did this number come from?"
+ *
+ * ✗ Does NOT provide definition content ("what is this?")
+ * ✓ Definitions live in: TooltipGlossary.ReflexDefense, .FortitudeDefense, .WillDefense, .FlatFooted
+ * ✓ Definitions are localized in: lang/en.json SWSE.Discovery.Tooltip.*Defense
+ *
+ * BREAKDOWN RESPONSIBILITY:
+ * - Register breakdown providers with TooltipRegistry.registerBreakdownProvider()
+ * - Generate detailed math breakdowns showing all components:
+ *   * Base calculation (10 + abilities + class + misc)
+ *   * Armor modifiers
+ *   * Encumbrance penalties
+ *   * Condition modifiers
+ *   * Talent bonuses
+ *   * Special effects (dex loss, etc.)
+ *
+ * This separation keeps the system maintainable:
+ * - Short "what is it" in glossary/definitions
+ * - Detailed "how is it calculated" in this provider
+ * - No duplication or conflation of concerns
  */
 
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";

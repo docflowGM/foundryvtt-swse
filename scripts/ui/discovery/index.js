@@ -9,6 +9,7 @@
 
 import { DiscoveryUserState } from "/systems/foundryvtt-swse/scripts/ui/discovery/user-state.js";
 import { TooltipRegistry } from "/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-registry.js";
+import { TooltipGlossary } from "/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-glossary.js";
 import { CalloutManager } from "/systems/foundryvtt-swse/scripts/ui/discovery/callout-manager.js";
 import { FeatureTour } from "/systems/foundryvtt-swse/scripts/ui/discovery/feature-tour.js";
 import { registerDiscoverySettings } from "/systems/foundryvtt-swse/scripts/ui/discovery/discovery-settings.js";
@@ -46,6 +47,7 @@ export function onDiscoveryReady() {
   if (game.settings.get(SYSTEM_ID, 'devMode')) {
     console.log('SWSE | Discovery system initialized');
     globalThis.SWSEDiscovery = {
+      glossary: TooltipGlossary,
       tooltips: TooltipRegistry,
       callouts: CalloutManager,
       tour: FeatureTour,
@@ -79,5 +81,6 @@ function _onAppRender(app, html) {
 // Re-export for direct imports
 export { DiscoveryUserState } from "/systems/foundryvtt-swse/scripts/ui/discovery/user-state.js";
 export { TooltipRegistry } from "/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-registry.js";
+export { TooltipGlossary } from "/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-glossary.js";
 export { CalloutManager } from "/systems/foundryvtt-swse/scripts/ui/discovery/callout-manager.js";
 export { FeatureTour } from "/systems/foundryvtt-swse/scripts/ui/discovery/feature-tour.js";
