@@ -2,18 +2,9 @@
   <!-- Hologram Scanline Overlay -->
   <div class="ls-scanline-overlay"></div>
 
-  <!-- Blade Cross-Section Preview (SVG) -->
-  <div class="ls-blade-preview-container">
-    <svg viewBox="0 0 120 120" class="ls-blade-cross-section">
-      <!-- Outer glow halo -->
-      <circle cx="60" cy="60" r="45" fill="var(--selected-blade-color)" opacity="0.15" />
-      <!-- Mid glow -->
-      <circle cx="60" cy="60" r="30" fill="var(--selected-blade-color)" opacity="0.3" />
-      <!-- Core blade -->
-      <circle cx="60" cy="60" r="16" fill="var(--selected-blade-color)" opacity="0.9" />
-      <!-- Blade highlight -->
-      <circle cx="55" cy="55" r="6" fill="white" opacity="0.4" />
-    </svg>
+  <!-- SVG Background Frame -->
+  <div class="ls-frame">
+    <img src="systems/foundryvtt-swse/assets/ui/customization/lightsaber-preview-panel.svg" alt="Lightsaber Preview" />
   </div>
 
   <form class="ls-form flexcol">
@@ -23,29 +14,18 @@
       <p class="subtitle">Attune to the Force and construct your lightsaber</p>
     </header>
 
-    <!-- Panel Grid -->
-    <div class="ls-panels-grid">
-      <!-- CHASSIS SELECTION -->
-      <div class="ls-panel panel-chassis">
-        <h3>Chassis</h3>
-        <div class="ls-options">
-          {{#each chassis}}
-          <div class="ls-option-card" data-chassis-id="{{this.id}}"
-               {{#if (eq this.id ../selectedChassis.id)}}data-selected="true"{{/if}}>
-            <div class="option-name">{{this.name}}</div>
-            <div class="option-stats">
-              <span class="stat-badge">DC {{this.baseBuildDc}}</span>
-              <span class="stat-badge">{{this.baseCost}} cr</span>
-            </div>
-          </div>
-          {{/each}}
-        </div>
-      </div>
+    <!-- Interactive Overlay -->
+    <div class="ls-overlay">
 
-      <!-- CRYSTAL SELECTION -->
-      <div class="ls-panel panel-crystal">
+      <!-- CRYSTAL SECTION (PRIMARY) -->
+      <section class="ls-crystal-section ls-panel">
         <h3>Kyber Crystal</h3>
-        <div class="ls-options">
+
+        <div class="ls-crystal-display">
+          <img src="systems/foundryvtt-swse/assets/ui/customization/kyber-crystal-outline.svg" class="ls-crystal-svg" alt="Kyber Crystal" />
+        </div>
+
+        <div class="ls-crystal-options ls-options">
           {{#each crystals}}
           <div class="ls-option-card crystal-option" data-crystal-id="{{this.id}}"
                {{#if (eq this.id ../selectedCrystal.id)}}data-selected="true"{{/if}}>
@@ -58,39 +38,78 @@
           </div>
           {{/each}}
         </div>
-      </div>
+      </section>
 
-      <!-- BLADE COLOR (HOLOGRAPHIC) -->
-      <div class="ls-panel panel-color">
-        <h3>⚡ Blade Resonance</h3>
-        <p class="color-subtitle">Choose the kyber's harmonic frequency</p>
+      <!-- BLADE COLOR SECTION -->
+      <section class="ls-blade-section ls-panel">
+        <h3>Blade Resonance</h3>
+        <p class="color-subtitle">Click the color picker</p>
+
+        <div class="ls-blade-picker">
+          <object
+            type="image/svg+xml"
+            data="systems/foundryvtt-swse/assets/ui/customization/lightsaber-blade-color-picker.svg"
+            class="ls-blade-svg"
+          ></object>
+        </div>
+
         <div class="ls-color-grid">
           {{#each colorOptions}}
           <div class="ls-color-cell" data-color="{{this}}"
-               style="--blade-color: {{lookup ../colorMap this}}">
+               style="--blade-color: {{lookup ../colorMap this}}"
+               {{#if (eq this ../selectedBladeColor)}}data-selected="true"{{/if}}>
             <div class="ls-blade-preview"></div>
             <div class="ls-color-label">{{this}}</div>
           </div>
           {{/each}}
         </div>
-      </div>
+      </section>
 
-      <!-- ACCESSORIES -->
-      <div class="ls-panel panel-accessories">
-        <h3>Enhancements</h3>
-        <div class="ls-options">
-          {{#each accessories}}
-          <div class="ls-option-card accessory-option" data-accessory-id="{{this.id}}">
-            <div class="option-name">{{this.name}}</div>
-            <div class="option-rarity rarity-{{this.rarity}}">{{this.rarity}}</div>
-            <div class="option-stats">
-              <span class="stat-badge">DC {{this.buildDcModifier}}</span>
-              <span class="stat-badge">{{this.cost}} cr</span>
+      <!-- HILT & MODIFICATIONS SECTION -->
+      <section class="ls-hilt-section ls-panel">
+        <h3>Hilt & Modifications</h3>
+
+        <div class="ls-hilt-preview">
+          <img src="systems/foundryvtt-swse/assets/ui/customization/lightsaber-hilt-classic.svg" alt="Hilt Preview" />
+        </div>
+
+        <div class="ls-mod-options">
+          <!-- CHASSIS SELECTION -->
+          <div class="ls-subsection">
+            <h4>Chassis</h4>
+            <div class="ls-options">
+              {{#each chassis}}
+              <div class="ls-option-card" data-chassis-id="{{this.id}}"
+                   {{#if (eq this.id ../selectedChassis.id)}}data-selected="true"{{/if}}>
+                <div class="option-name">{{this.name}}</div>
+                <div class="option-stats">
+                  <span class="stat-badge">DC {{this.baseBuildDc}}</span>
+                  <span class="stat-badge">{{this.baseCost}} cr</span>
+                </div>
+              </div>
+              {{/each}}
             </div>
           </div>
-          {{/each}}
+
+          <!-- ACCESSORIES -->
+          <div class="ls-subsection">
+            <h4>Enhancements</h4>
+            <div class="ls-options">
+              {{#each accessories}}
+              <div class="ls-option-card accessory-option" data-accessory-id="{{this.id}}">
+                <div class="option-name">{{this.name}}</div>
+                <div class="option-rarity rarity-{{this.rarity}}">{{this.rarity}}</div>
+                <div class="option-stats">
+                  <span class="stat-badge">DC {{this.buildDcModifier}}</span>
+                  <span class="stat-badge">{{this.cost}} cr</span>
+                </div>
+              </div>
+              {{/each}}
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
+
     </div>
 
     <!-- Summary Section -->
@@ -116,10 +135,12 @@
     </div>
 
     <!-- Build Button -->
-    <button type="button" class="ls-build-button"
-            {{#unless (and selectedChassis selectedCrystal)}}disabled{{/unless}}>
-      <span class="button-glow"></span>
-      Construct Lightsaber
-    </button>
+    <footer class="ls-footer">
+      <button type="button" class="ls-build-button"
+              {{#unless (and selectedChassis selectedCrystal)}}disabled{{/unless}}>
+        <span class="button-glow"></span>
+        Construct Lightsaber
+      </button>
+    </footer>
   </form>
 </div>

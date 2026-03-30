@@ -160,6 +160,44 @@ export class LightsaberConstructionApp extends ModificationModalShell {
       });
     });
 
+    // SVG Blade Color Picker Interaction
+    const svgObject = root.querySelector(".ls-blade-svg");
+    if (svgObject) {
+      svgObject.addEventListener("load", () => {
+        const svgDoc = svgObject.contentDocument;
+        if (svgDoc) {
+          svgDoc.querySelectorAll("[data-color]").forEach(colorElement => {
+            colorElement.style.cursor = "pointer";
+            colorElement.addEventListener("click", (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+
+              const color = colorElement.dataset.color;
+              if (!color) return;
+
+              // Remove previous color cell selection
+              root.querySelectorAll(".ls-color-cell").forEach(c => c.classList.remove("selected"));
+
+              // Set new selection on matching color cell
+              const targetCell = root.querySelector(`[data-color="${color}"]`);
+              if (targetCell) {
+                targetCell.classList.add("selected");
+              }
+
+              // Update state
+              this.selectedBladeColor = color;
+
+              // Update CSS variable for live blade glow
+              root.style.setProperty(
+                "--selected-blade-color",
+                BLADE_COLOR_MAP[color] || "#00ffff"
+              );
+            });
+          });
+        }
+      });
+    }
+
     // Build button
     const buildBtn = root.querySelector(".ls-build-button");
     buildBtn?.addEventListener("click", (e) => {
