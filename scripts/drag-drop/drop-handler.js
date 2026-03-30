@@ -116,7 +116,8 @@ export class DropHandler {
     }
 
     // Apply updates
-    await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
+    // Note: isDerivedCalculatorCall allows derived field writes for NPC template application
+    await globalThis.SWSE.ActorEngine.updateActor(actor, updates, { isDerivedCalculatorCall: true });
 
     // Create embedded items for feats, talents, etc.
     // Try to find matching items in compendiums first
@@ -374,7 +375,7 @@ export class DropHandler {
       'system.speed': parseInt(chassis.system.speed, 10) || 6
     };
 
-    await globalThis.SWSE.ActorEngine.updateActor(actor, updates);
+    await globalThis.SWSE.ActorEngine.updateActor(actor, updates, { isRecomputeHPCall: true });
 
     ui.notifications.info(`Applied ${chassis.name} droid chassis to ${actor.name}`);
     return true;

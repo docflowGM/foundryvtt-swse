@@ -38,35 +38,126 @@ export const ActorEngine = {
   async recalcAll(actor) {
     if (!actor) throw new Error('recalcAll() called with no actor');
 
+    // PHASE 3: Recomputation observability
+    const recomputeStart = performance.now();
+    const enforcementLevel = MutationInterceptor.getEnforcementLevel();
+    const isDevEnvironment = (
+      window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1'
+    );
+    const observabilityEnabled = (enforcementLevel === 'strict' || isDevEnvironment);
+
     try {
-      // Mark that we're in derived calc cycle (used by ModifierEngine enforcement)
+      if (observabilityEnabled) {
+        SWSELogger.debug(`[RECOMPUTE START] ${actor.name}`, {
+          stage: 'begin',
+          enforceLevel: enforcementLevel,
+          timestamp: new Date().toISOString()
+        });
+      }
+
+      // ========================================
+      // PHASE 1: Mark that we're in derived calc cycle
+      // ========================================
       actor._isDerivedCalcCycle = true;
       try {
+        // ========================================
+        // PHASE 2: Compute base derived values
+        // ========================================
+        if (observabilityEnabled) {
+          SWSELogger.debug(`[RECOMPUTE] DerivedCalculator.computeAll() starting...`, { actor: actor.name });
+        }
         await DerivedCalculator.computeAll(actor);
+        if (observabilityEnabled) {
+          SWSELogger.debug(`[RECOMPUTE] DerivedCalculator.computeAll() completed`, {
+            actor: actor.name,
+            derivedHP: actor.system?.derived?.hp?.total,
+            derivedBAB: actor.system?.derived?.bab,
+            defensesFort: actor.system?.derived?.defenses?.fortitude?.total
+          });
+        }
+
+        // ========================================
+        // PHASE 3: Apply modifier bundle
+        // ========================================
+        if (observabilityEnabled) {
+          SWSELogger.debug(`[RECOMPUTE] ModifierEngine.applyAll() starting...`, { actor: actor.name });
+        }
         await ModifierEngine.applyAll(actor);
+        if (observabilityEnabled) {
+          SWSELogger.debug(`[RECOMPUTE] ModifierEngine.applyAll() completed`, {
+            actor: actor.name,
+            modifierCount: actor.system?.derived?.modifiers?.all?.length || 0,
+            hpAdjustment: actor.system?.derived?.hp?.adjustment,
+            babAdjustment: actor.system?.derived?.babAdjustment
+          });
+        }
       } finally {
         actor._isDerivedCalcCycle = false;
       }
 
-      // PHASE 3: Check prerequisite integrity after mutations
+      // ========================================
+      // PHASE 4: Check prerequisite integrity
+      // ========================================
+      // PHASE 3: In strict mode, reject skip flags (S2 hardening)
+      if (actor._skipIntegrityCheck && enforcementLevel === 'strict') {
+        const message = (
+          `[INTEGRITY SKIP REJECTED] Attempted to skip integrity checks in strict mode\n` +
+          `_skipIntegrityCheck is only allowed for legitimate recursion prevention\n` +
+          `In strict mode, all mutations must include integrity validation`
+        );
+        throw new Error(message);
+      }
+
       // Skip if flagged as integrity check (prevent recursion)
       if (!actor._skipIntegrityCheck) {
+        if (observabilityEnabled) {
+          SWSELogger.debug(`[RECOMPUTE] Integrity checks starting...`, { actor: actor.name });
+        }
         await this._checkIntegrity(actor);
+        if (observabilityEnabled) {
+          SWSELogger.debug(`[RECOMPUTE] Integrity checks completed`, { actor: actor.name });
+        }
+      } else {
+        // PHASE 3: In normal mode, still warn about skip flag
+        if (enforcementLevel !== 'silent') {
+          SWSELogger.warn(`[INTEGRITY SKIP] Integrity checks skipped for ${actor.name} due to _skipIntegrityCheck flag`);
+        }
+      }
+
+      // ========================================
+      // PHASE 5: Recomputation complete
+      // ========================================
+      const recomputeEnd = performance.now();
+      const duration = (recomputeEnd - recomputeStart).toFixed(2);
+      if (observabilityEnabled) {
+        SWSELogger.debug(`[RECOMPUTE END] ${actor.name} — Pipeline completed`, {
+          stage: 'complete',
+          durationMs: duration,
+          enforceLevel: enforcementLevel,
+          timestamp: new Date().toISOString()
+        });
       }
     } catch (err) {
-      SWSELogger.error('ActorEngine.recalcAll failed:', err);
+      const recomputeEnd = performance.now();
+      const duration = (recomputeEnd - recomputeStart).toFixed(2);
+      SWSELogger.error(`[RECOMPUTE FAILED] ${actor.name} — Pipeline error after ${duration}ms:`, err);
+      throw err; // Re-throw in strict mode
     }
   },
 
   /**
-   * PHASE 2D: Enforcement check for derived writes
+   * PHASE 3: Strict enforcement check for derived writes
    * Validates that writes to system.derived.* only happen during:
    * - DerivedCalculator (marked with _isDerivedCalcCycle = true)
    * - Designated mutation phases with isDerivedCalculatorCall option
+   *
+   * PHASE 3 HARDENING: In strict mode, throws error. In normal mode, warns only.
+   *
    * @param {Object} changes - Update changes to validate
    * @param {Actor} actor - Actor being updated
    * @param {Object} options - Update options
-   * @throws {Error} If violation detected
+   * @throws {Error} If violation detected in strict mode
    * @private
    */
   _validateDerivedWriteAuthority(changes, actor, options = {}) {
@@ -87,16 +178,25 @@ export const ActorEngine = {
 
     checkObject(changes);
 
-    // Allow writes during DerivedCalculator phase or with explicit option
+    // Enforce derived write authority
     if (derivedPaths.length > 0 &&
         !actor._isDerivedCalcCycle &&
         !options.isDerivedCalculatorCall) {
       const violationList = derivedPaths.slice(0, 5).join(', ');
-      SWSELogger.warn(
+      const enforcementLevel = MutationInterceptor.getEnforcementLevel();
+      const message = (
         `[SSOT VIOLATION] Attempted direct write to derived paths: ${violationList}${derivedPaths.length > 5 ? '...' : ''}\n` +
         `Only DerivedCalculator may write system.derived.*\n` +
         `Caller: ${new Error().stack.split('\n')[2]}`
       );
+
+      if (enforcementLevel === 'strict') {
+        // PHASE 3: Hard enforcement in strict mode
+        throw new Error(message);
+      } else {
+        // PHASE 3: Warning-only in normal/log-only mode
+        SWSELogger.warn(message);
+      }
     }
   },
 

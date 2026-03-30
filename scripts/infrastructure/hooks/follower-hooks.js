@@ -44,28 +44,36 @@ function _buildSlot(talentItem, cfg) {
   };
 }
 
+/**
+ * PHASE 2: Remove granted items from follower and detach from owner.
+ *
+ * Both mutations now route through ActorEngine to ensure:
+ * - MutationInterceptor authorization
+ * - Proper recomputation and integrity
+ * - No silent fallback bypasses
+ */
 async function _removeGrantedItemsFromFollower(ownerActor, followerActorId, talentItemId) {
   const follower = game.actors.get(followerActorId);
   if (!follower) return;
+
+  // PHASE 2: Import ActorEngine at function start to fail fast
+  const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
 
   const toDelete = follower.items
     .filter(i => i.getFlag?.('swse', 'grantedByTalent')?.talentItemId === talentItemId)
     .map(i => i.id);
 
   if (toDelete.length) {
-    await follower.deleteEmbeddedDocuments('Item', toDelete);
+    // PHASE 2: Route through ActorEngine.deleteEmbeddedDocuments
+    await ActorEngine.deleteEmbeddedDocuments(follower, 'Item', toDelete);
   }
 
-  // PHASE 10: Route through ActorEngine with guard key for owner update
-  // Best-effort detach from owner's ownedActors list.
+  // PHASE 2: Route through ActorEngine with guard key for owner update
+  // Detach from owner's ownedActors list via ActorEngine (ensures recompute)
   const owned = (ownerActor.system.ownedActors || []).filter(o => o.id !== followerActorId);
-  if (globalThis.SWSE?.ActorEngine?.updateActor) {
-    await globalThis.SWSE.ActorEngine.updateActor(ownerActor, { 'system.ownedActors': owned }, {
-      meta: { guardKey: 'follower-cleanup' }
-    });
-  } else {
-    await ownerActor.update({ 'system.ownedActors': owned });
-  }
+  await ActorEngine.updateActor(ownerActor, { 'system.ownedActors': owned }, {
+    meta: { guardKey: 'follower-cleanup' }
+  });
 }
 
 /**

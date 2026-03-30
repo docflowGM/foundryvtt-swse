@@ -161,12 +161,21 @@ export class SWSEActorBase extends Actor {
   /**
    * Update an owned Item through ActorEngine.
    *
+   * PHASE 2: Removed silent fallback-to-direct-update behavior.
+   * Owned items MUST route through ActorEngine to ensure:
+   * - MutationInterceptor authorization
+   * - Proper recomputation
+   * - Integrity checks
+   *
+   * Unowned items (world items) can update directly.
+   *
    * Pure data operation: no side-effects.
    *
    * @param {Item} item
    * @param {object} changes - Dot-notation changes
    * @param {object} [options={}]
    * @returns {Promise<Item|null>}
+   * @throws {Error} If ActorEngine is unavailable (indicates module loading issue)
    */
   async updateOwnedItem(item, changes, options = {}) {
     if (!item) {return null;}
@@ -176,15 +185,12 @@ export class SWSEActorBase extends Actor {
       return item.update(changes, options);
     }
 
-    try {
-      const ActorEngine = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js").then(m => m.ActorEngine);
-      const update = { _id: item.id, ...changes };
-      const [updated] = await ActorEngine.updateOwnedItems(this, [update], options);
-      return updated ?? null;
-    } catch (err) {
-      // Fallback: update via item directly
-      return item.update(changes, options);
-    }
+    // PHASE 2: No fallback to direct update. ActorEngine is required.
+    // If this fails, the error indicates a module loading problem that must be fixed.
+    const ActorEngine = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js").then(m => m.ActorEngine);
+    const update = { _id: item.id, ...changes };
+    const [updated] = await ActorEngine.updateOwnedItems(this, [update], options);
+    return updated ?? null;
   }
 
   /**
@@ -281,13 +287,21 @@ export class SWSEActorBase extends Actor {
    *
    * Headless-safe: returns result object, no notifications or chat posts.
    *
-   * ⚠️ Side-effects (notifications, chat, hooks) are caller's responsibility.
+   * ⚠️ GOVERNANCE: This method MUST route through ActorEngine to ensure:
+   * - MutationInterceptor authorization
+   * - Proper derived value recomputation
+   * - Integrity verification
+   *
+   * No fallback to direct updates: authority path failure must fail clearly.
+   *
+   * Side-effects (notifications, chat, hooks) are caller's responsibility.
    * This method ONLY updates actor data.
    *
    * @param {string} reason - Reason string (for logging/caller feedback only)
    * @param {number} [amount=1] - Points to spend
    * @param {object} [options={}] - Options (currently unused in headless context)
    * @returns {Promise<{success: boolean, code: string, newValue: number, message: string}>}
+   * @throws {Error} If ActorEngine is unavailable (critical module loading failure)
    */
   async spendForcePoint(reason = 'unspecified', amount = 1, options = {}) {
     const fp = this.system?.forcePoints;
@@ -312,13 +326,10 @@ export class SWSEActorBase extends Actor {
 
     const newValue = fp.value - amount;
 
-    try {
-      const ActorEngine = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js").then(m => m.ActorEngine);
-      await ActorEngine.updateActor(this, { 'system.forcePoints.value': newValue });
-    } catch (err) {
-      // Fallback
-      await this.update({ 'system.forcePoints.value': newValue });
-    }
+    // PHASE 5: ActorEngine is REQUIRED. No fallback to direct update.
+    // Failure here indicates a critical module loading issue that must be fixed.
+    const ActorEngine = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js").then(m => m.ActorEngine);
+    await ActorEngine.updateActor(this, { 'system.forcePoints.value': newValue });
 
     return {
       success: true,
@@ -333,8 +344,16 @@ export class SWSEActorBase extends Actor {
    *
    * Headless-safe: no notifications, no side-effects.
    *
+   * ⚠️ GOVERNANCE: This method MUST route through ActorEngine to ensure:
+   * - MutationInterceptor authorization
+   * - Proper derived value recomputation
+   * - Integrity verification
+   *
+   * No fallback to direct updates: authority path failure must fail clearly.
+   *
    * @param {number} [amount=null] - Amount to regain (null = full recovery)
    * @returns {Promise<{success: boolean, newValue: number, regained: number}>}
+   * @throws {Error} If ActorEngine is unavailable (critical module loading failure)
    */
   async regainForcePoints(amount = null) {
     const fp = this.system?.forcePoints;
@@ -350,13 +369,10 @@ export class SWSEActorBase extends Actor {
     const regained = newValue - fp.value;
 
     if (regained > 0) {
-      try {
-        const ActorEngine = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js").then(m => m.ActorEngine);
-        await ActorEngine.updateActor(this, { 'system.forcePoints.value': newValue });
-      } catch (err) {
-        // Fallback
-        await this.update({ 'system.forcePoints.value': newValue });
-      }
+      // PHASE 5: ActorEngine is REQUIRED. No fallback to direct update.
+      // Failure here indicates a critical module loading issue that must be fixed.
+      const ActorEngine = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js").then(m => m.ActorEngine);
+      await ActorEngine.updateActor(this, { 'system.forcePoints.value': newValue });
     }
 
     return {
@@ -371,12 +387,20 @@ export class SWSEActorBase extends Actor {
    *
    * Headless-safe: returns result object, no notifications or chat posts.
    *
-   * ⚠️ Side-effects (notifications, chat, hooks) are caller's responsibility.
+   * ⚠️ GOVERNANCE: This method MUST route through ActorEngine to ensure:
+   * - MutationInterceptor authorization
+   * - Proper derived value recomputation
+   * - Integrity verification
+   *
+   * No fallback to direct updates: authority path failure must fail clearly.
+   *
+   * Side-effects (notifications, chat, hooks) are caller's responsibility.
    * This method ONLY updates actor data and returns result.
    *
    * @param {string} type - Destiny effect type (for logging/caller feedback)
    * @param {object} [options={}] - Additional options (unused in headless context)
    * @returns {Promise<{success: boolean, code: string, newValue: number, message: string}>}
+   * @throws {Error} If ActorEngine is unavailable (critical module loading failure)
    */
   async spendDestinyPoint(type = 'unspecified', options = {}) {
     const dp = this.system?.destinyPoints;
@@ -411,13 +435,10 @@ export class SWSEActorBase extends Actor {
 
     const newValue = dp.value - 1;
 
-    try {
-      const ActorEngine = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js").then(m => m.ActorEngine);
-      await ActorEngine.updateActor(this, { 'system.destinyPoints.value': newValue });
-    } catch (err) {
-      // Fallback
-      await this.update({ 'system.destinyPoints.value': newValue });
-    }
+    // PHASE 5: ActorEngine is REQUIRED. No fallback to direct update.
+    // Failure here indicates a critical module loading issue that must be fixed.
+    const ActorEngine = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js").then(m => m.ActorEngine);
+    await ActorEngine.updateActor(this, { 'system.destinyPoints.value': newValue });
 
     return {
       success: true,

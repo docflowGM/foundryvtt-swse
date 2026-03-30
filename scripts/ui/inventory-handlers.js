@@ -46,7 +46,7 @@ export class InventoryHandlers {
     const equipBtn = card.querySelector('button[data-action="equip"]');
     if (equipBtn) {
       equipBtn.addEventListener('click', async () => {
-        await this._toggleWeaponEquipped(weapon);
+        await this._toggleWeaponEquipped(actor, weapon);
       });
     }
 
@@ -89,7 +89,7 @@ export class InventoryHandlers {
     const equipBtn = card.querySelector('button[data-action="equip"]');
     if (equipBtn) {
       equipBtn.addEventListener('click', async () => {
-        await this._toggleArmorEquipped(armor);
+        await this._toggleArmorEquipped(actor, armor);
       });
     }
 
@@ -112,11 +112,20 @@ export class InventoryHandlers {
 
   /**
    * Toggle weapon equipped status
+   *
+   * ⚠️ GOVERNANCE: Routes through actor's updateOwnedItem to ensure:
+   * - MutationInterceptor authorization checking
+   * - Proper actor recomputation on equipment change
+   * - Integrity validation after equipment state change
+   *
    * @private
+   * @param {Actor} actor - Parent actor
+   * @param {Item} weapon - Weapon to toggle
    */
-  static async _toggleWeaponEquipped(weapon) {
+  static async _toggleWeaponEquipped(actor, weapon) {
     try {
-      await weapon.update({ 'system.equipped': !weapon.system.equipped });
+      // PHASE 5: Route through ActorEngine via updateOwnedItem
+      await actor.updateOwnedItem(weapon, { 'system.equipped': !weapon.system.equipped });
       swseLogger.info(`[InventoryHandlers] Toggled equipped: ${weapon.name}`);
     } catch (err) {
       swseLogger.error(`[InventoryHandlers] Error toggling weapon equipped:`, err);
@@ -126,11 +135,20 @@ export class InventoryHandlers {
 
   /**
    * Toggle armor equipped status
+   *
+   * ⚠️ GOVERNANCE: Routes through actor's updateOwnedItem to ensure:
+   * - MutationInterceptor authorization checking
+   * - Proper actor recomputation on equipment change
+   * - Integrity validation after equipment state change
+   *
    * @private
+   * @param {Actor} actor - Parent actor
+   * @param {Item} armor - Armor to toggle
    */
-  static async _toggleArmorEquipped(armor) {
+  static async _toggleArmorEquipped(actor, armor) {
     try {
-      await armor.update({ 'system.equipped': !armor.system.equipped });
+      // PHASE 5: Route through ActorEngine via updateOwnedItem
+      await actor.updateOwnedItem(armor, { 'system.equipped': !armor.system.equipped });
       swseLogger.info(`[InventoryHandlers] Toggled equipped: ${armor.name}`);
     } catch (err) {
       swseLogger.error(`[InventoryHandlers] Error toggling armor equipped:`, err);

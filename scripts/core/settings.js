@@ -482,5 +482,15 @@ export async function registerSystemSettings() {
     default: 'raw'
   });
 
+  // PHASE 1: Mutation Enforcement Level
+  game.settings.register('foundryvtt-swse', 'dev-strict-enforcement', {
+    name: 'Enable Strict Mutation Enforcement (Dev)',
+    hint: 'When enabled, unauthorized mutations THROW immediately (dev/test environments). Disable to allow legacy code paths during migration.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   SWSELogger.log('SWSE | Settings registered');
 }

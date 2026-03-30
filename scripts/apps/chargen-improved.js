@@ -492,7 +492,7 @@ export default class CharacterGeneratorImproved extends CharacterGenerator {
       'system.level': newLevel,
       'system.hp.max': newHP,
       'system.hp.value': newHP
-    });
+    }, { isRecomputeHPCall: true });
 
     SWSELogger.log(`SWSE CharGen | Level ${newLevel} complete. HP: ${currentHP} -> ${newHP}`);
   }

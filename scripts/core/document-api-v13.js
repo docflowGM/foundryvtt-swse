@@ -46,10 +46,27 @@ export async function createActor(actorData, options = {}) {
 
 /**
  * Create item in actor - v13 safe
- * PHASE 8: Routes through ActorEngine for governance
- * @param {Actor} actor
- * @param {Object|Array} itemData
- * @param {Object} options
+ *
+ * ⚠️ GOVERNANCE (PHASE 5): Routes through ActorEngine for mutation governance.
+ *
+ * This helper ensures:
+ * - MutationInterceptor authorization checking
+ * - Actor recomputation post-creation
+ * - Integrity validation of new items
+ * - Complete observable pipeline
+ *
+ * See: PHASE-5-GOVERNANCE-SURFACE-MAP.md → Approved Wrapper Surface → Item Creation
+ * See: PHASE-5-CONTRIBUTOR-GUARDRAILS.md → Helper/Wrapper Pattern → Item Creation
+ *
+ * @param {Actor} actor - Target actor for item creation
+ * @param {Object|Array} itemData - Item data object or array of items
+ * @param {Object} [options={}] - Creation options (passed to ActorEngine)
+ * @returns {Promise<Item|Item[]|null>} Created item(s) or null on error
+ * @throws {Error} Indirectly (via ActorEngine) if authorization fails in STRICT mode
+ *
+ * @governance ITEM_CREATION
+ * @authority ActorEngine.createEmbeddedDocuments()
+ * @route actor → ActorEngine → MutationInterceptor → recalcAll() → IntegrityChecker
  */
 export async function createItemInActor(actor, itemData, options = {}) {
   if (!actor) {
@@ -88,10 +105,36 @@ export async function createItemInActor(actor, itemData, options = {}) {
 }
 
 /**
- * Update actor - v13 safe
- * @param {Actor} actor
- * @param {Object} updates
- * @param {Object} options
+ * Update actor - v13 safe wrapper
+ *
+ * ⚠️ GOVERNANCE (PHASE 5): Routes through ActorEngine for mutation governance.
+ *
+ * This is the canonical helper for actor field mutations. It ensures:
+ * - MutationInterceptor authorization checking
+ * - 5-stage recomputation pipeline (observable)
+ * - Post-mutation integrity validation
+ * - Complete audit trail via SWSELogger
+ *
+ * See: PHASE-5-GOVERNANCE-SURFACE-MAP.md → Approved Wrapper Surface → Document API
+ * See: PHASE-5-CONTRIBUTOR-GUARDRAILS.md → Helper/Wrapper Pattern → Conditional Routing
+ *
+ * @param {Actor} actor - Actor to update
+ * @param {Object} updates - Changes in dot-notation (e.g., {system: {level: 5}})
+ * @param {Object} [options={}] - Update options (passed to ActorEngine)
+ * @returns {Promise<Actor|null>} Updated actor or null on error
+ * @throws {Error} Indirectly (via ActorEngine) if authorization fails in STRICT mode
+ *
+ * @governance ACTOR_FIELD_MUTATION
+ * @authority ActorEngine.updateActor()
+ * @route updates → ActorEngine.setContext() → actor.update() → recalcAll() → clearContext()
+ *
+ * @example
+ * // Correct usage: via this helper
+ * await updateActor(actor, {system: {level: 5}});
+ *
+ * @example
+ * // Wrong: direct mutation (will be blocked)
+ * await actor.update({system: {level: 5}});  // ❌ Throws in STRICT mode
  */
 export async function updateActor(actor, updates, options = {}) {
   if (!actor || !updates) {
@@ -105,7 +148,9 @@ export async function updateActor(actor, updates, options = {}) {
   }
 
   try {
-    return await actor.update(updates, options);
+    // PHASE 2: Route through ActorEngine to ensure mutation governance
+    const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+    return await ActorEngine.updateActor(actor, updates, options);
   } catch (err) {
     log.error(`updateActor failed for ${actor.name}:`, err.message);
     return null;
@@ -142,10 +187,27 @@ export async function deleteActor(actors, options = {}) {
 
 /**
  * Delete item in actor - v13 safe
- * PHASE 8: Routes through ActorEngine for governance
- * @param {Actor} actor
- * @param {Item|Array} items
- * @param {Object} options
+ *
+ * ⚠️ GOVERNANCE (PHASE 5): Routes through ActorEngine for mutation governance.
+ *
+ * This helper ensures:
+ * - MutationInterceptor authorization checking
+ * - Actor recomputation post-deletion
+ * - Integrity validation after item removal
+ * - Observable pipeline
+ *
+ * See: PHASE-5-GOVERNANCE-SURFACE-MAP.md → Approved Wrapper Surface → Item Deletion
+ * See: PHASE-5-CONTRIBUTOR-GUARDRAILS.md → Helper/Wrapper Pattern
+ *
+ * @param {Actor} actor - Target actor for item deletion
+ * @param {Item|Item[]} items - Item(s) to delete
+ * @param {Object} [options={}] - Deletion options (passed to ActorEngine)
+ * @returns {Promise<Item[]|null>} Deleted item(s) or null on error
+ * @throws {Error} Indirectly (via ActorEngine) if authorization fails in STRICT mode
+ *
+ * @governance ITEM_DELETION
+ * @authority ActorEngine.deleteEmbeddedDocuments()
+ * @route actor → ActorEngine.deleteEmbeddedDocuments() → recalcAll() → IntegrityChecker
  */
 export async function deleteItemInActor(actor, items, options = {}) {
   if (!actor || !items) {
@@ -260,7 +322,46 @@ export async function deleteEffectFromActor(actor, effects, options = {}) {
 
 /**
  * Safe document patch - applies partial updates to nested properties
- * This replaces mergeObject patterns for document updates
+ *
+ * ⚠️ GOVERNANCE (PHASE 5): Intelligent routing based on document type and ownership.
+ *
+ * ROUTING LOGIC (see PHASE-5-GOVERNANCE-SURFACE-MAP.md for complete routing matrix):
+ * - If Actor: route through ActorEngine.updateActor()
+ * - If owned Item: route through ActorEngine.updateEmbeddedDocuments()
+ * - If world Item: direct update (no actor recomputation needed)
+ *
+ * This ensures:
+ * - All mutations to owned documents trigger recomputation
+ * - World items can update without actor overhead
+ * - Governance is transparent and observable
+ *
+ * See: PHASE-5-GOVERNANCE-SURFACE-MAP.md → Approved Wrapper Surface → Conditional Routing
+ * See: PHASE-5-CONTRIBUTOR-GUARDRAILS.md → Helper/Wrapper Pattern → Conditional Routing
+ *
+ * @param {Actor|Item} document - Document to patch
+ * @param {Object} patch - Partial updates in dot-notation (e.g., {'system.hp.value': 10})
+ * @param {Object} [options={}] - Update options (passed through to actor engine or direct)
+ * @returns {Promise<Actor|Item|null>} Updated document or null on error
+ * @throws {Error} Indirectly (via ActorEngine) if authorization fails in STRICT mode
+ *
+ * @governance CONDITIONAL_ROUTING
+ * @authority Conditional: ActorEngine for owned, direct for world
+ * @route
+ *   Actor → ActorEngine.updateActor() → recalcAll()
+ *   Owned Item → ActorEngine.updateEmbeddedDocuments() → recalcAll()
+ *   World Item → direct update() (no recomputation)
+ *
+ * @example
+ * // Actor patch
+ * await patchDocument(actor, {'system.level': 5});
+ *
+ * @example
+ * // Owned item patch
+ * await patchDocument(item, {'system.quantity': 10});  // ← auto-routes through actor
+ *
+ * @example
+ * // World item patch
+ * await patchDocument(worldItem, {'system.description': 'Updated'});  // ← direct update
  */
 export async function patchDocument(document, patch, options = {}) {
   if (!document || !patch) {
@@ -275,6 +376,19 @@ export async function patchDocument(document, patch, options = {}) {
       foundry.utils.setProperty(updates, key, value);
     }
 
+    // PHASE 2: Route actors through ActorEngine, items through their actors if owned
+    if (document instanceof Actor) {
+      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+      return await ActorEngine.updateActor(document, updates, options);
+    } else if (document instanceof Item && document.isOwned && document.actor) {
+      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+      return await ActorEngine.updateEmbeddedDocuments(document.actor, 'Item', [{
+        _id: document.id,
+        ...updates
+      }], options);
+    }
+
+    // For unowned documents, use direct update
     return await document.update(updates, options);
   } catch (err) {
     log.error(`patchDocument failed:`, err.message);

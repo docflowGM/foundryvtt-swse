@@ -40,18 +40,19 @@ export class DroidTemplateImporterEngine {
         }
       }
 
-      // Create the actor in the world
-      const actor = await Actor.create(newActorData);
-
-      // Apply notes/biography if provided
+      // PHASE 2: Include biography in initial actor creation data
+      // This avoids post-creation direct mutations
       if (customData && (customData.notes || customData.biography)) {
         const biographyText = [customData.notes, customData.biography]
           .filter(t => t && t.trim())
           .join('\n\n');
         if (biographyText) {
-          await actor.update({ 'system.biography': biographyText });
+          newActorData.system.biography = biographyText;
         }
       }
+
+      // Create the actor in the world (includes biography in initial data)
+      const actor = await Actor.create(newActorData);
 
       SWSELogger.log(`[DroidTemplateImporterEngine] Droid imported successfully: ${actor.name} (${actor.id})`);
 

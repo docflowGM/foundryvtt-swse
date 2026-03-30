@@ -1,12 +1,19 @@
 /**
  * SWSE World Repair Script
- * PHASE 11: All mutations route through ActorEngine for governance
+ * PHASE 5: One-time utility for structural data repair
  *
  * Run this ONCE from the console to fix structural data issues.
  * After running, delete this file.
  *
+ * ⚠️ GOVERNANCE EXCEPTION:
+ * This is a migration/repair utility that operates outside normal gameplay.
+ * - ActorEngine.updateActor() is used for all actor field repairs (lines 113-115)
+ * - Direct actor.delete() is used only for corrupted non-Actor documents in the actors collection
+ *   (this is a special cleanup case, not standard gameplay mutation)
+ * - This utility is temporary and marked for deletion after use
+ *
  * Usage:
- * await import("/systems/foundryvtt-swse/world-repair.js")
+ * await import("/systems/foundryvtt-swse/scripts/maintenance/world-repair.js").then(m => m.repairWorld())
  */
 
 export async function repairWorld() {
@@ -27,7 +34,14 @@ export async function repairWorld() {
     try {
       if (!(actor instanceof Actor)) {
         console.warn(`❌ Deleting non-Actor: ${actor.name} (${actor.constructor.name})`);
+
+        // ⚠️ EXCEPTION: Direct deletion used here because:
+        // - This is a corrupted document that should not exist
+        // - It's not a valid Actor instance and cannot route through ActorEngine
+        // - This is a one-time data cleanup, not standard gameplay mutation
+        // - ActorEngine.deleteActor() does not exist (would require implementation)
         await actor.delete();
+
         report.deletedActors.push(actor.name);
         continue;
       }
@@ -104,16 +118,15 @@ export async function repairWorld() {
       }
 
       if (needsUpdate) {
-        // PHASE 11: Route through ActorEngine for governance
-        if (globalThis.SWSE?.ActorEngine?.updateActor) {
-          await globalThis.SWSE.ActorEngine.updateActor(actor, fixes, {
-            meta: { origin: 'world-repair' }
-          });
-        } else {
-          // Fallback if ActorEngine unavailable
-          console.warn(`⚠️  ActorEngine unavailable, using direct update for ${actor.name}`);
-          await actor.update(fixes);
-        }
+        // PHASE 2: Route through ActorEngine for governance
+        // Repair operations MUST go through ActorEngine to ensure:
+        // - MutationInterceptor authorization
+        // - Proper recomputation of derived values
+        // - Integrity checks after repair
+        const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+        await ActorEngine.updateActor(actor, fixes, {
+          meta: { origin: 'world-repair' }
+        });
         report.repairedActors.push(actor.name);
         console.log(`✅ Repaired ${actor.name}`);
       }

@@ -239,28 +239,21 @@ export class FollowerManager {
             const followerFlags = follower.flags?.swse?.follower;
             if (!followerFlags) {continue;}
 
-            // Update level
-            await follower.update({
-                'system.level': ownerLevel
-            });
-
-            // Update HP (10 + owner level)
-            await follower.update({
-                'system.hp.max': 10 + ownerLevel,
-                'system.hp.value': Math.min(follower.system.hp.value, 10 + ownerLevel)
-            });
-
-            // Update BAB based on template
+            // Get follower templates for BAB calculation
             const templates = await FollowerCreator.getFollowerTemplates();
             const templateType = followerFlags.templateType;
             const template = templates[templateType];
+            const bab = (template && template.babProgression)
+                ? (template.babProgression[Math.min(ownerLevel - 1, 19)] || 0)
+                : 0;
 
-            if (template && template.babProgression) {
-                const bab = template.babProgression[Math.min(ownerLevel - 1, 19)] || 0;
-                await follower.update({
-                    'system.baseAttackBonus': bab
-                });
-            }
+            // Update all follower stats via ActorEngine
+            await ActorEngine.updateActor(follower, {
+                'system.level': ownerLevel,
+                'system.hp.max': 10 + ownerLevel,
+                'system.hp.value': Math.min(follower.system.hp.value, 10 + ownerLevel),
+                'system.baseAttackBonus': bab
+            }, { isRecomputeHPCall: true });
 
             ui.notifications.info(`Updated ${follower.name} to level ${ownerLevel}!`);
         }

@@ -155,6 +155,12 @@ export class WeaponConfigDialog extends BaseSWSEAppV2 {
 
   /**
    * Save weapon configuration
+   *
+   * ⚠️ GOVERNANCE: Routes through actor's updateOwnedItem to ensure:
+   * - MutationInterceptor authorization checking
+   * - Proper actor recomputation after weapon configuration change
+   * - Integrity validation after configuration applied
+   *
    * @private
    */
   async _saveConfiguration() {
@@ -187,7 +193,12 @@ export class WeaponConfigDialog extends BaseSWSEAppV2 {
         }
       };
 
-      await this.weapon.update(updates);
+      // PHASE 5: Route through ActorEngine via updateOwnedItem
+      const actor = this.weapon.parent;
+      if (!actor) {
+        throw new Error(`Weapon has no parent actor`);
+      }
+      await actor.updateOwnedItem(this.weapon, updates);
 
       swseLogger.info(`[WeaponConfigDialog] Updated weapon: ${this.weapon.name}`);
       ui.notifications.info(`Weapon "${this.weapon.name}" configuration saved`);

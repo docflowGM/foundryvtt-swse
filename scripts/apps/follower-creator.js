@@ -813,12 +813,12 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             const abilities = follower.system.attributes;
             const getMod = (ability) => Math.floor(((abilities[ability]?.base || 10) - 10) / 2);
 
-            await follower.update({
+            await ActorEngine.updateActor(follower, {
                 'system.level': ownerLevel,
                 'system.baseAttackBonus': newBAB,
                 'system.hp.max': newHP,
                 'system.hp.value': Math.min(follower.system.hp.value, newHP)
-            });
+            }, { isRecomputeHPCall: true });
 
             swseLogger.log(`FollowerCreator: Updated follower "${follower.name}" to level ${ownerLevel}`);
         }

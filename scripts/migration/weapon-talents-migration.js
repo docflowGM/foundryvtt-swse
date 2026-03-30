@@ -75,12 +75,17 @@ export class WeaponTalentsMigration {
       return null;
     }
 
-    // Apply migration to actor
+    // PHASE 2: Apply migration through ActorEngine with migration flag
+    // Migrations are one-time operations, marked with isMigration: true
     const updates = {};
     updates['system.weaponTalentFlags'] = talentFlags;
 
     try {
-      await actor.update(updates);
+      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+      await ActorEngine.updateActor(actor, updates, {
+        isMigration: true,
+        meta: { origin: 'weapon-talents-migration' }
+      });
       return talentFlags;
     } catch (err) {
       throw new Error(`Failed to update actor: ${err.message}`);
