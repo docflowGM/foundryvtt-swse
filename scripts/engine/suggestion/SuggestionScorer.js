@@ -23,6 +23,8 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { projectBAB } from "/systems/foundryvtt-swse/scripts/engine/suggestion/prestige-delay-calculator.js";
 import { generateAdvisory } from "/systems/foundryvtt-swse/scripts/engine/suggestion/AdvisoryEngine.js";
 import { ChainRegistry } from "/systems/foundryvtt-swse/scripts/engine/archetype/chain-registry.js";
+import { calculateMentorBias, applyMentorBias } from "/systems/foundryvtt-swse/scripts/mentor/mentor-suggestion-bias.js";
+import { getMentorForClass } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
 
 // ─────────────────────────────────────────────────────────────────
 // DEBUG MODE CONFIGURATION
@@ -171,13 +173,55 @@ export function scoreSuggestion(candidate, actor, buildIntent = {}, options = {}
   // FINAL SCORE COMPOSITION
   // ─────────────────────────────────────────────────────────────────
 
-  const finalScore = Math.min(
+  let finalScore = Math.min(
     1.0,
     (immediateResult.score * 0.60) +
     (shortTermResult.score * 0.25) +
     (identityResult.score * 0.15) +
     conditionalBonus
   );
+
+  // ─────────────────────────────────────────────────────────────────
+  // MENTOR BIAS APPLICATION (Phase 2: Path Preference Integration)
+  // ─────────────────────────────────────────────────────────────────
+  // Apply soft mentor path preference if actor has committed to a path
+  // This is a multiplier (not additive) to preserve score relationships
+
+  try {
+    const primaryClass = actor?.items?.find?.(i => i.type === 'class')?.name;
+    if (primaryClass) {
+      // Get mentor for this class (e.g., "Jedi" mentor for "Jedi" class)
+      // mentorClass is the mentor key in the MENTORS object
+      const mentorData = getMentorForClass(primaryClass);
+      if (mentorData && mentorData.name) {
+        // Use mentor name (e.g., "Miraj") as the ID for mentor memory lookup
+        const mentorId = mentorData.name.toLowerCase();
+        const suggestionType = candidate?.type || 'feat';
+
+        const mentorBias = calculateMentorBias(actor, mentorId, suggestionType);
+
+        // Apply bias multiplier to score (soft preference, not lock)
+        // Only boost if bias is > 1.0 (committed to a path)
+        if (mentorBias.totalBias > 1.0) {
+          const biasedScore = applyMentorBias(finalScore, mentorBias, candidate);
+          // Cap the boosted score at 1.0 to maintain reasonable relationships
+          finalScore = Math.min(1.0, biasedScore);
+
+          if (DEBUG_MODE()) {
+            SWSELogger.log(
+              `[SuggestionScorer] Applied mentor bias to ${candidate.name}: ` +
+              `${finalScore.toFixed(3)} (bias multiplier: ${mentorBias.totalBias.toFixed(2)}x)`
+            );
+          }
+        }
+      }
+    }
+  } catch (err) {
+    // Silently fail mentor bias application — errors here should not break suggestion scoring
+    if (DEBUG_MODE()) {
+      SWSELogger.warn('[SuggestionScorer] Mentor bias calculation failed:', err);
+    }
+  }
 
   // ─────────────────────────────────────────────────────────────────
   // DEBUG INSTRUMENTATION

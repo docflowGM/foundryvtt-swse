@@ -194,6 +194,7 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
     root?.querySelectorAll?.('.topic-button')?.forEach(el => el.addEventListener('click', this._onSelectTopic.bind(this)));
     root?.querySelectorAll?.('.back-to-mentors')?.forEach(el => el.addEventListener('click', this._onBackToMentors.bind(this)));
     root?.querySelectorAll?.('.back-to-topics')?.forEach(el => el.addEventListener('click', this._onBackToTopics.bind(this)));
+    root?.querySelectorAll?.('.path-option')?.forEach(el => el.addEventListener('click', this._onSelectPath.bind(this)));
 
   }
 
@@ -271,6 +272,90 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
   }
 
   /**
+   * Handle path selection from "What paths are open to me?" topic
+   * Saves commitment to mentor memory and shows mentor reaction
+   */
+  async _onSelectPath(event) {
+    event.preventDefault();
+    const pathName = event.currentTarget.dataset.path;
+
+    if (!pathName) {
+      SWSELogger.warn('[Mentor Chat] No path name in event');
+      return;
+    }
+
+    // Import mentor memory functions
+    const { getMentorMemory, setMentorMemory } = await import('/systems/foundryvtt-swse/scripts/engine/mentor/mentor-memory.js');
+    const { setCommittedPath } = await import('/systems/foundryvtt-swse/scripts/engine/mentor/mentor-memory.js');
+
+    try {
+      const mentorId = this.selectedMentor.key.toLowerCase();
+      const memory = getMentorMemory(this.actor, mentorId);
+
+      // Commit to the path
+      const updatedMemory = setCommittedPath(memory, pathName);
+      await setMentorMemory(this.actor, mentorId, updatedMemory);
+
+      SWSELogger.log(`[Mentor Chat] Path selected: ${pathName} for mentor ${this.selectedMentor.mentor.name}`);
+
+      // Show confirmation response from mentor
+      this.currentResponse = {
+        introduction: `Ah, **${pathName}**. A wise choice.`,
+        advice: this._generatePathConfirmation(pathName),
+        pathSelected: pathName
+      };
+
+      await this.render();
+
+    } catch (err) {
+      SWSELogger.error('[Mentor Chat] Error selecting path:', err);
+      ui?.notifications?.error?.(`Failed to record path selection: ${err.message}`);
+    }
+  }
+
+  /**
+   * Generate mentor's reaction to a path selection
+   */
+  _generatePathConfirmation(pathName) {
+    const mentorName = this.selectedMentor.mentor.name;
+
+    // Generic mentor confirmation by path type
+    const confirmations = {
+      // Guardian paths
+      'Guardian': 'This path will demand discipline and endurance. You must be willing to stand between harm and those you protect.',
+      'Defender': 'You choose to be the wall. Remember: a wall that breaks serves no one. Build your strength accordingly.',
+
+      // Striker paths
+      'Striker': 'Offense is a commitment. You will excel at destruction, but you must guard against becoming careless.',
+      'Gunslinger': 'Speed wins fights. But speed without accuracy is just noise. Master both.',
+      'Heavy Weapons': 'Power demands respect. Respect demands control. Do not mistake one for the other.',
+
+      // Controller/Utility paths
+      'Consular': 'The Force speaks in many languages. Listen before you speak.',
+      'Sentinel': 'Balance is harder than specialization. But it is far more valuable.',
+      'Diplomat': 'Words are weapons. Use them wisely.',
+      'Commander': 'Leadership is not about making the right choice. It is about living with the wrong ones.',
+
+      // Scout paths
+      'Tracker': 'Awareness is your first weapon. Everything else follows from it.',
+      'Infiltrator': 'Shadows are not your home—they are your tools. Do not forget the difference.',
+      'Pathfinder': 'You will show others the way. Make sure you know where it leads.',
+
+      // Scoundrel paths
+      'Charmer': 'Persuasion is power. But it is a power that turns on you when you believe your own lies.',
+      'Smuggler': 'Freedom has a price. Make sure you can afford it.',
+
+      // Noble paths
+      'Aristocrat': 'Wealth is influence. Influence is power. And power without wisdom is just cruelty with a crown.',
+
+      // Default
+      'default': 'This path suits you. Walk it with purpose, not pride.'
+    };
+
+    return confirmations[pathName] || confirmations['default'];
+  }
+
+  /**
    * Generate a mentor's response to a selected topic
    * Integrates with the suggestion engine for context-aware advice
    * Uses judgment atoms for semantic reaction selection
@@ -299,7 +384,10 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
         break;
 
       case 'paths_open':
-        canonicalAnalysis = await this._generateArchetypePaths();
+        const pathsData = await this._generateArchetypePaths();
+        // Store paths for UI rendering
+        this.currentResponse.availablePaths = pathsData.paths;
+        canonicalAnalysis = pathsData.introduction;
         break;
 
       case 'doing_well':
@@ -419,40 +507,105 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
 
   /**
    * 2. "What paths are open to me?" — Archetype Exploration
-   * Presents class-specific build archetypes without mechanics
+   * Presents class-specific build archetypes with interactive selection
    */
   async _generateArchetypePaths() {
     const classItems = this.actor.items.filter(i => i.type === 'class');
     const mentorClass = this.selectedMentor.key;
 
-    let paths = `Every path demands sacrifice. What you choose to master determines what you must forsake.\n\n`;
+    let introduction = `Every path demands sacrifice. What you choose to master determines what you must forsake.\n\n`;
+    let pathList = [];
 
     // Generic archetype framing based on mentor
     if (mentorClass === 'Jedi') {
-      paths += `**Guardian** — Protector and warrior. Values defense, endurance, and lightsaber mastery. Sacrifices versatility for resilience.\n\n`;
-      paths += `**Consular** — Diplomat and Force scholar. Values wisdom, persuasion, and Force depth. Sacrifices combat prowess for influence.\n\n`;
-      paths += `**Sentinel** — Balanced warrior-diplomat. Values adaptability and skill diversity. Sacrifices specialization for versatility.`;
+      introduction += `Consider your options carefully:\n\n`;
+      pathList = [
+        {
+          name: 'Guardian',
+          description: 'Protector and warrior. Values defense, endurance, and lightsaber mastery. Sacrifices versatility for resilience.'
+        },
+        {
+          name: 'Consular',
+          description: 'Diplomat and Force scholar. Values wisdom, persuasion, and Force depth. Sacrifices combat prowess for influence.'
+        },
+        {
+          name: 'Sentinel',
+          description: 'Balanced warrior-diplomat. Values adaptability and skill diversity. Sacrifices specialization for versatility.'
+        }
+      ];
     } else if (mentorClass === 'Scout') {
-      paths += `**Tracker** — Hunter and survivalist. Values perception, stealth, and wilderness expertise. Sacrifices social skills for survival.\n\n`;
-      paths += `**Infiltrator** — Urban operative. Values deception, agility, and information gathering. Sacrifices raw combat power for subtlety.\n\n`;
-      paths += `**Pathfinder** — Guide and leader. Values navigation, tactics, and team coordination. Sacrifices personal offense for group effectiveness.`;
+      introduction += `Consider your options carefully:\n\n`;
+      pathList = [
+        {
+          name: 'Tracker',
+          description: 'Hunter and survivalist. Values perception, stealth, and wilderness expertise. Sacrifices social skills for survival.'
+        },
+        {
+          name: 'Infiltrator',
+          description: 'Urban operative. Values deception, agility, and information gathering. Sacrifices raw combat power for subtlety.'
+        },
+        {
+          name: 'Pathfinder',
+          description: 'Guide and leader. Values navigation, tactics, and team coordination. Sacrifices personal offense for group effectiveness.'
+        }
+      ];
     } else if (mentorClass === 'Scoundrel') {
-      paths += `**Charmer** — Negotiator and con artist. Values persuasion, deception, and social manipulation. Sacrifices combat reliability for influence.\n\n`;
-      paths += `**Gunslinger** — Quick-draw specialist. Values initiative, ranged damage, and mobility. Sacrifices defense for offense.\n\n`;
-      paths += `**Smuggler** — Trader and opportunist. Values connections, resources, and escape options. Sacrifices specialization for flexibility.`;
+      introduction += `Consider your options carefully:\n\n`;
+      pathList = [
+        {
+          name: 'Charmer',
+          description: 'Negotiator and con artist. Values persuasion, deception, and social manipulation. Sacrifices combat reliability for influence.'
+        },
+        {
+          name: 'Gunslinger',
+          description: 'Quick-draw specialist. Values initiative, ranged damage, and mobility. Sacrifices defense for offense.'
+        },
+        {
+          name: 'Smuggler',
+          description: 'Trader and opportunist. Values connections, resources, and escape options. Sacrifices specialization for flexibility.'
+        }
+      ];
     } else if (mentorClass === 'Noble') {
-      paths += `**Diplomat** — Peacemaker and negotiator. Values charisma, knowledge, and coalition-building. Sacrifices combat ability for influence.\n\n`;
-      paths += `**Commander** — Tactical leader. Values inspiration, coordination, and battlefield control. Sacrifices personal power for force multiplication.\n\n`;
-      paths += `**Aristocrat** — Wealthy patron. Values resources, connections, and indirect power. Sacrifices direct action for leverage.`;
+      introduction += `Consider your options carefully:\n\n`;
+      pathList = [
+        {
+          name: 'Diplomat',
+          description: 'Peacemaker and negotiator. Values charisma, knowledge, and coalition-building. Sacrifices combat ability for influence.'
+        },
+        {
+          name: 'Commander',
+          description: 'Tactical leader. Values inspiration, coordination, and battlefield control. Sacrifices personal power for force multiplication.'
+        },
+        {
+          name: 'Aristocrat',
+          description: 'Wealthy patron. Values resources, connections, and indirect power. Sacrifices direct action for leverage.'
+        }
+      ];
     } else if (mentorClass === 'Soldier') {
-      paths += `**Heavy Weapons** — Firepower specialist. Values damage output, armor, and suppression. Sacrifices mobility for devastating attacks.\n\n`;
-      paths += `**Commando** — Elite operative. Values versatility, tactics, and special operations. Sacrifices raw power for adaptability.\n\n`;
-      paths += `**Defender** — Frontline protector. Values durability, positioning, and threat control. Sacrifices damage for resilience.`;
+      introduction += `Consider your options carefully:\n\n`;
+      pathList = [
+        {
+          name: 'Heavy Weapons',
+          description: 'Firepower specialist. Values damage output, armor, and suppression. Sacrifices mobility for devastating attacks.'
+        },
+        {
+          name: 'Commando',
+          description: 'Elite operative. Values versatility, tactics, and special operations. Sacrifices raw power for adaptability.'
+        },
+        {
+          name: 'Defender',
+          description: 'Frontline protector. Values durability, positioning, and threat control. Sacrifices damage for resilience.'
+        }
+      ];
     } else {
-      paths += `Multiple archetypes exist within your class. Each emphasizes different attributes, skills, and tactical approaches. None is superior—only different in what they value and what they give up.`;
+      introduction += `Multiple archetypes exist within your class. Each emphasizes different attributes, skills, and tactical approaches. None is superior—only different in what they value and what they give up.`;
+      pathList = [];
     }
 
-    return paths;
+    return {
+      introduction,
+      paths: pathList
+    };
   }
 
   /**
