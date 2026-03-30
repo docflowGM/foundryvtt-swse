@@ -18,6 +18,17 @@ import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/led
  * @property {string} targetId - Item ID being modified
  * @property {Array<{path: string, value: any}>} changes - Delta changes to apply
  * @property {Object} [costContext] - Cost/credit info if applicable
+ * @property {Object} [validation] - Pre-computed validation results
+ * @property {Object} [validation.slots] - Slot validation data
+ * @property {number} [validation.slots.available] - Total available slots
+ * @property {number} [validation.slots.needed] - Slots needed for this intent
+ * @property {number} [validation.slots.currentUsage] - Current slot usage before intent
+ * @property {number} [validation.slots.totalUsage] - Total usage after intent
+ * @property {boolean} [validation.slots.valid] - Whether slots are sufficient
+ * @property {Object} [validation.credits] - Credit validation data
+ * @property {number} [validation.credits.available] - Available credits
+ * @property {number} [validation.credits.needed] - Credits needed
+ * @property {boolean} [validation.credits.valid] - Whether credits are sufficient
  * @property {Object} [metadata] - Optional tracking data (modifiedBy, modifiedAt, etc.)
  */
 
@@ -146,6 +157,16 @@ export class ModificationIntentBuilder {
    */
   static async executeIntent(actor, item, intent) {
     try {
+      // VALIDATION: Check slot constraints if validation metadata present
+      if (intent.validation?.slots) {
+        if (!intent.validation.slots.valid) {
+          return {
+            success: false,
+            reason: `Slot validation failed: need ${intent.validation.slots.needed}, have ${intent.validation.slots.available}`
+          };
+        }
+      }
+
       // Build mutation plan from changes
       const mutationPlan = {
         set: {}
@@ -177,7 +198,27 @@ export class ModificationIntentBuilder {
    */
   static async executeIntentWithCost(actor, item, intent, costAmount) {
     try {
-      // Validate funds
+      // VALIDATION 1: Check slot constraints if validation metadata present
+      if (intent.validation?.slots) {
+        if (!intent.validation.slots.valid) {
+          return {
+            success: false,
+            reason: `Slot validation failed: need ${intent.validation.slots.needed}, have ${intent.validation.slots.available}`
+          };
+        }
+      }
+
+      // VALIDATION 2: Check credit constraints if validation metadata present
+      if (intent.validation?.credits) {
+        if (!intent.validation.credits.valid) {
+          return {
+            success: false,
+            reason: `Credit validation failed: need ${intent.validation.credits.needed}, have ${intent.validation.credits.available}`
+          };
+        }
+      }
+
+      // Validate funds via ledger service (redundant but defensive)
       const hasCredits = LedgerService.validateFunds(actor, costAmount);
       if (!hasCredits) {
         return { success: false, reason: "insufficient_credits" };

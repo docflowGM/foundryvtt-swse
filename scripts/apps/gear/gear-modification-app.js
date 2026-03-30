@@ -7,6 +7,7 @@
  * - Multi-select upgrades with compatibility checking
  * - Accent color customization
  * - Complete modification pipeline integration
+ * - SLOT ENFORCEMENT via UpgradeRulesEngine
  *
  * CRITICAL CONSTRAINT: All options are predefined and structured
  * NO arbitrary editing or free text input allowed
@@ -19,6 +20,7 @@
 
 import { ModificationModalShell } from "/systems/foundryvtt-swse/scripts/apps/base/modification-modal-shell.js";
 import { ModificationIntentBuilder } from "/systems/foundryvtt-swse/scripts/engine/crafting/modification-intent-builder.js";
+import { UpgradeRulesEngine } from "/systems/foundryvtt-swse/scripts/apps/upgrade-rules-engine.js";
 import { GEAR_MODS, GEAR_VARIANTS, DEFAULT_GEAR_VARIANT, DEFAULT_GEAR_ACCENT, MAX_GEAR_MODS } from "/systems/foundryvtt-swse/scripts/data/gear-mods.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 
@@ -72,6 +74,15 @@ export class GearModificationApp extends ModificationModalShell {
     const actorCredits = this.actor.system?.credits || 0;
     const canAfford = actorCredits >= totalCreditCost;
 
+    // Calculate slot usage and validation
+    const totalSlots = this.item.system?.upgradeSlots || MAX_GEAR_MODS;
+    const currentUpgrades = this.item.system?.installedUpgrades || [];
+    const currentSlotUsage = currentUpgrades.reduce((sum, u) => sum + (u.slotsUsed || 1), 0);
+    const newSlotUsage = this.selectedMods.length;
+    const totalSlotUsage = currentSlotUsage + newSlotUsage;
+    const canFitSlots = totalSlotUsage <= totalSlots;
+    const slotsRemaining = Math.max(0, totalSlots - currentSlotUsage);
+
     // Prepare available mods filtered by variant compatibility
     const availableMods = Object.entries(GEAR_MODS)
       .filter(([_, mod]) => mod.compatible.includes(this.variant))
@@ -102,7 +113,16 @@ export class GearModificationApp extends ModificationModalShell {
       canAfford,
       affordabilityClass: canAfford ? "can-afford" : "cannot-afford",
       maxModsReached: this.selectedMods.length >= MAX_GEAR_MODS,
-      modCountRemaining: Math.max(0, MAX_GEAR_MODS - this.selectedMods.length)
+      modCountRemaining: Math.max(0, MAX_GEAR_MODS - this.selectedMods.length),
+      // Slot information
+      totalSlots,
+      currentSlotUsage,
+      newSlotUsage,
+      totalSlotUsage,
+      slotsRemaining,
+      canFitSlots,
+      slotWarning: totalSlotUsage > totalSlots ? `⚠️ Exceeds available slots by ${totalSlotUsage - totalSlots}` : null,
+      slotAtLimit: slotsRemaining === 1
     };
   }
 
@@ -181,7 +201,21 @@ export class GearModificationApp extends ModificationModalShell {
   }
 
   async #applyModifications() {
-    // Validate credits
+    // VALIDATION 1: Check slots before proceeding
+    const totalSlots = this.item.system?.upgradeSlots || MAX_GEAR_MODS;
+    const currentUpgrades = this.item.system?.installedUpgrades || [];
+    const currentSlotUsage = currentUpgrades.reduce((sum, u) => sum + (u.slotsUsed || 1), 0);
+    const newSlotUsage = this.selectedMods.length;
+    const totalSlotUsage = currentSlotUsage + newSlotUsage;
+
+    if (totalSlotUsage > totalSlots) {
+      ui.notifications.warn(
+        `Modification exceeds available slots. Need ${totalSlotUsage}, have ${totalSlots} available.`
+      );
+      return;
+    }
+
+    // VALIDATION 2: Check credits
     const totalCost = this.#calculateTotalCost();
     const actorCredits = this.actor.system?.credits || 0;
 
@@ -204,6 +238,22 @@ export class GearModificationApp extends ModificationModalShell {
         changes,
         totalCost > 0 ? { type: "credits", amount: totalCost } : null
       );
+
+      // Add slot validation metadata to intent
+      intent.validation = {
+        slots: {
+          available: totalSlots,
+          needed: newSlotUsage,
+          currentUsage: currentSlotUsage,
+          totalUsage: totalSlotUsage,
+          valid: totalSlotUsage <= totalSlots
+        },
+        credits: {
+          available: actorCredits,
+          needed: totalCost,
+          valid: actorCredits >= totalCost
+        }
+      };
 
       // Execute with cost validation
       const result = totalCost > 0

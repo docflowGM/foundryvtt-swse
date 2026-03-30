@@ -6,6 +6,7 @@
  * - Accent color customization
  * - Cost preview
  * - Complete modification pipeline integration
+ * - SLOT ENFORCEMENT via UpgradeRulesEngine
  *
  * CRITICAL: Routes ALL mutations through ModificationIntentBuilder
  * NO direct item.update() calls
@@ -15,6 +16,7 @@
 
 import { ModificationModalShell } from "/systems/foundryvtt-swse/scripts/apps/base/modification-modal-shell.js";
 import { ModificationIntentBuilder } from "/systems/foundryvtt-swse/scripts/engine/crafting/modification-intent-builder.js";
+import { UpgradeRulesEngine } from "/systems/foundryvtt-swse/scripts/apps/upgrade-rules-engine.js";
 import { MELEE_UPGRADES, DEFAULT_MELEE_ACCENT } from "/systems/foundryvtt-swse/scripts/data/melee-upgrades.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 
@@ -64,6 +66,15 @@ export class MeleeWeaponModificationApp extends ModificationModalShell {
     const actorCredits = this.actor.system?.credits || 0;
     const canAfford = actorCredits >= totalCreditCost;
 
+    // Calculate slot usage and validation
+    const totalSlots = this.item.system?.upgradeSlots || 2;
+    const currentUpgrades = this.item.system?.installedUpgrades || [];
+    const currentSlotUsage = currentUpgrades.reduce((sum, u) => sum + (u.slotsUsed || 1), 0);
+    const newSlotUsage = this.selectedUpgrades.length;
+    const totalSlotUsage = currentSlotUsage + newSlotUsage;
+    const canFitSlots = totalSlotUsage <= totalSlots;
+    const slotsRemaining = Math.max(0, totalSlots - currentSlotUsage);
+
     return {
       ...context,
       actor: this.actor,
@@ -80,7 +91,16 @@ export class MeleeWeaponModificationApp extends ModificationModalShell {
       totalCreditCost,
       actorCredits,
       canAfford,
-      affordabilityClass: canAfford ? "can-afford" : "cannot-afford"
+      affordabilityClass: canAfford ? "can-afford" : "cannot-afford",
+      // Slot information
+      totalSlots,
+      currentSlotUsage,
+      newSlotUsage,
+      totalSlotUsage,
+      slotsRemaining,
+      canFitSlots,
+      slotWarning: totalSlotUsage > totalSlots ? `⚠️ Exceeds available slots by ${totalSlotUsage - totalSlots}` : null,
+      slotAtLimit: slotsRemaining === 1
     };
   }
 
@@ -148,7 +168,21 @@ export class MeleeWeaponModificationApp extends ModificationModalShell {
   }
 
   async #applyModifications() {
-    // Validate credits
+    // VALIDATION 1: Check slots before proceeding
+    const totalSlots = this.item.system?.upgradeSlots || 2;
+    const currentUpgrades = this.item.system?.installedUpgrades || [];
+    const currentSlotUsage = currentUpgrades.reduce((sum, u) => sum + (u.slotsUsed || 1), 0);
+    const newSlotUsage = this.selectedUpgrades.length;
+    const totalSlotUsage = currentSlotUsage + newSlotUsage;
+
+    if (totalSlotUsage > totalSlots) {
+      ui.notifications.warn(
+        `Modification exceeds available slots. Need ${totalSlotUsage}, have ${totalSlots} available.`
+      );
+      return;
+    }
+
+    // VALIDATION 2: Check credits
     const totalCost = this.#calculateTotalCost();
     const actorCredits = this.actor.system?.credits || 0;
 
@@ -168,6 +202,22 @@ export class MeleeWeaponModificationApp extends ModificationModalShell {
         ],
         { type: "credits", amount: totalCost }
       );
+
+      // Add slot validation metadata to intent
+      intent.validation = {
+        slots: {
+          available: totalSlots,
+          needed: newSlotUsage,
+          currentUsage: currentSlotUsage,
+          totalUsage: totalSlotUsage,
+          valid: totalSlotUsage <= totalSlots
+        },
+        credits: {
+          available: actorCredits,
+          needed: totalCost,
+          valid: actorCredits >= totalCost
+        }
+      };
 
       // Execute with cost validation
       const result = await ModificationIntentBuilder.executeIntentWithCost(
