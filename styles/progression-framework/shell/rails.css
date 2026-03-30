@@ -160,11 +160,13 @@
 
 /* ============================================================================
    DIALOGUE BOX — Enhanced with holographic unification effects
+   PHASE 5.5: Clamp dialogue width for optimal readability (65 characters)
    ============================================================================ */
 
 .progression-shell .prog-mentor__dialogue {
   flex: 1 1 auto;
   min-width: 0;
+  max-width: 65ch;
   height: calc(100% - 12px);
   overflow-y: auto;
 

@@ -243,7 +243,7 @@
   overflow-x: auto;
 }
 
-/* Compact step items in horizontal rail — PHASE 5: Improved spacing and focus */
+/* Compact step items in horizontal rail — PHASE 5 + 5.5: Improved spacing, focus, transition */
 .progression-shell .prog-step {
   flex: 0 1 auto;
   min-width: 0;
@@ -259,7 +259,11 @@
   border: 1px solid rgba(60, 200, 255, 0.3);
   color: rgba(120, 200, 255, 0.8);
   cursor: pointer;
-  transition: all 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* Crisp, responsive transition for scale effect on step activation */
+  transition: transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1),
+              background 200ms ease,
+              border-color 200ms ease,
+              box-shadow 200ms ease;
 }
 
 .progression-shell .prog-step:hover {
@@ -268,7 +272,7 @@
   color: rgba(150, 230, 255, 1);
 }
 
-/* PHASE 5: Enhanced active step visibility with scale transform */
+/* PHASE 5 + 5.5: Enhanced active step visibility with scale transform + crisp transition */
 .progression-shell .prog-step--active {
   background: rgba(0, 150, 220, 0.3);
   border-color: rgba(100, 230, 255, 0.8);
@@ -276,7 +280,6 @@
   font-weight: 600;
   box-shadow: 0 0 8px rgba(0, 150, 220, 0.3);
   transform: scale(1.05);
-  transition: all 200ms ease;
 }
 
 .progression-shell .prog-step--complete {
