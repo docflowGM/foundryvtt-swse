@@ -3272,3 +3272,75 @@ select option:checked {
   pointer-events: auto;
 }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   HELP MODE STYLES
+   Provides visual affordances for tooltip-enabled hardpoints
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Help Mode Toggle Button */
+.swse-sheet .help-mode-toggle {
+  transition: all 120ms ease;
+}
+
+.swse-sheet .help-mode-toggle.active {
+  background: rgba(0, 200, 255, 0.2);
+  border-color: rgba(0, 200, 255, 0.6);
+  color: #00d4ff;
+  box-shadow: 0 0 8px rgba(0, 200, 255, 0.3);
+}
+
+/* Help Mode State */
+.swse-sheet.help-mode-active {
+  /* When help mode is ON, make tooltip hardpoints discoverable */
+}
+
+/* Tooltip affordances in help mode */
+.swse-sheet.help-mode-active [data-swse-tooltip] {
+  /* Subtle visual hint that tooltip is available */
+  cursor: help;
+  /* Use box-shadow for non-obtrusive hover hint */
+  transition: box-shadow 150ms ease;
+}
+
+.swse-sheet.help-mode-active [data-swse-tooltip]:hover,
+.swse-sheet.help-mode-active [data-swse-tooltip]:focus {
+  /* Very subtle glow on hover/focus in help mode */
+  box-shadow: inset 0 0 6px rgba(0, 200, 255, 0.15);
+}
+
+/* Reduce tooltip affordance spam: only mark primary hardpoints */
+/* Avoid marking every row item or repeated element */
+.swse-sheet.help-mode-active [data-swse-tooltip] {
+  position: relative;
+}
+
+/* Micro-tooltip delay: 250-350ms for help-mode hardpoints */
+[data-swse-tooltip] {
+  --tooltip-delay: 250ms;
+}
+
+/* Icon-only controls get longer delay (1000ms) */
+.roll-btn,
+.mini-btn,
+.favorite-btn,
+[data-action="roll-initiative"],
+[data-action="roll-ability"],
+[data-action="roll-skill"],
+[data-action="toggle-favorite"] {
+  --tooltip-delay: 1000ms;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .swse-sheet.help-mode-active [data-swse-tooltip]:hover,
+  .swse-sheet.help-mode-active [data-swse-tooltip]:focus {
+    box-shadow: none;
+  }
+
+  .swse-discovery-tooltip {
+    animation: none;
+    opacity: 1;
+  }
+}
+

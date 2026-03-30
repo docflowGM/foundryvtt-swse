@@ -236,6 +236,9 @@ export class SWSEV2CharacterSheet extends
 
     // Initialize visibility manager for lazy panel building
     this.visibilityManager = new PanelVisibilityManager(this);
+
+    // Help mode toggle state (per-sheet instance, default OFF)
+    this._helpModeActive = false;
   }
 
   // ═══ AUDIT INSTRUMENTATION + RENDER GUARD ═══
@@ -1099,6 +1102,27 @@ const forcePoints = [];
       console.error('[LIFECYCLE] ❌ CRITICAL: Could not find form element to attach submit listener');
       console.error('[LIFECYCLE] This means NO submit interception will happen');
     }
+
+    // DELEGATED: Help Mode Toggle
+    html.addEventListener("click", ev => {
+      const button = ev.target.closest("[data-action='toggle-help-mode']");
+      if (!button) return;
+
+      ev.preventDefault();
+      this._helpModeActive = !this._helpModeActive;
+
+      // Update button state
+      button.classList.toggle("active", this._helpModeActive);
+
+      // Update sheet class for CSS styling
+      html.classList.toggle("help-mode-active", this._helpModeActive);
+
+      // Update the TooltipRegistry help mode state
+      const { TooltipRegistry } = await import("/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-registry.js");
+      TooltipRegistry.setHelpMode(this._helpModeActive);
+
+      console.log(`[HELP-MODE] Toggled to: ${this._helpModeActive}`);
+    }, { signal });
 
     // DELEGATED: Toggle Abilities Panel - Show/Hide Expanded Views
     // Using delegated listeners from html root for stability across rerenders

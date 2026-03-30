@@ -12,6 +12,8 @@ const SYSTEM_ID = 'foundryvtt-swse';
 let _activeTooltip = null;
 let _breakdownProviders = {}; // Keyed by semantic concept (e.g. 'ReflexDefense', 'WeaponAttack')
 let _helpModeActive = false;
+let _hoverTimer = null; // Timer for delayed tooltip appearance
+let _hoveredElement = null; // Track which element is currently hovered
 
 /**
  * Registry of all tooltip definitions.
@@ -164,7 +166,7 @@ export const TooltipRegistry = {
       }
 
       el.addEventListener('mouseenter', _onEnter);
-      el.addEventListener('mouseleave', hideTooltip);
+      el.addEventListener('mouseleave', _onLeave);
       el.addEventListener('focus', _onEnter);
       el.addEventListener('blur', hideTooltip);
     }
@@ -219,9 +221,41 @@ export const TooltipRegistry = {
 };
 
 function _onEnter(ev) {
-  const id = ev.currentTarget.getAttribute(ATTR);
+  // Clear any existing hover timer
+  if (_hoverTimer) {
+    clearTimeout(_hoverTimer);
+    _hoverTimer = null;
+  }
+
+  const el = ev.currentTarget;
+  const id = el.getAttribute(ATTR);
   if (!id) {return;}
-  const content = resolve(id);
-  if (!content) {return;}
-  showTooltip(ev.currentTarget, content);
+
+  // Get the hover delay from CSS variable or default
+  const computedStyle = window.getComputedStyle(el);
+  const delayStr = computedStyle.getPropertyValue('--tooltip-delay').trim();
+  const delay = delayStr ? parseInt(delayStr) : 250;
+
+  _hoveredElement = el;
+
+  // Set timer to show tooltip after delay
+  _hoverTimer = setTimeout(() => {
+    // Check that we're still hovering over the same element
+    if (_hoveredElement === el) {
+      const content = resolve(id);
+      if (content) {
+        showTooltip(el, content);
+      }
+    }
+  }, delay);
+}
+
+function _onLeave(ev) {
+  // Clear the hover timer if user leaves before delay expires
+  if (_hoverTimer) {
+    clearTimeout(_hoverTimer);
+    _hoverTimer = null;
+  }
+  _hoveredElement = null;
+  hideTooltip();
 }
