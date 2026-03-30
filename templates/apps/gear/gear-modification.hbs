@@ -1,0 +1,95 @@
+<div class="swse-gear-modification">
+  <!-- Hologram Scanline Overlay -->
+  <div class="ls-scanline-overlay"></div>
+
+  <!-- Gear Visual Preview -->
+  <div class="gear-preview-container">
+    <div class="gear-visual" style="--accent-color: {{accentColor}}">
+      <div class="gear-icon">📦</div>
+    </div>
+  </div>
+
+  <form class="ls-form flexcol">
+    <!-- Title Section -->
+    <header class="ls-header">
+      <h1>🎒 {{itemName}}</h1>
+      <p class="subtitle">Equipment customization</p>
+    </header>
+
+    <!-- Panel Grid -->
+    <div class="ls-panels-grid">
+      <!-- VARIANT SELECTION -->
+      <div class="ls-panel panel-variants">
+        <h3>Configuration</h3>
+        <p class="variant-subtitle">Select variant type</p>
+        <div class="gear-variant-buttons">
+          {{#each variants}}
+          <button type="button" class="gear-variant-btn {{#if this.selected}}selected{{/if}}"
+                  data-variant="{{this.id}}"
+                  title="{{this.description}}">
+            <span class="variant-name">{{this.name}}</span>
+          </button>
+          {{/each}}
+        </div>
+      </div>
+
+      <!-- MOD SELECTION -->
+      <div class="ls-panel panel-mods">
+        <h3>Modifications</h3>
+        <p class="mod-subtitle">Enhance capabilities ({{modCountRemaining}}/{{../availableMods.length}} slots remaining)</p>
+        <div class="gear-mods-grid">
+          {{#each availableMods}}
+          <div class="gear-mod-card {{#if this.selected}}selected{{/if}} {{#if this.disabled}}disabled{{/if}}"
+               data-mod="{{this.id}}"
+               {{#if this.disabled}}title="Maximum modifications reached"{{/if}}>
+            <div class="mod-name">{{this.name}}</div>
+            <div class="mod-description">{{this.description}}</div>
+            <div class="mod-stats">
+              <span class="mod-effect">{{this.effect}}</span>
+              <span class="mod-cost">{{this.costCredits}}cr</span>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+
+      <!-- ACCENT COLOR -->
+      <div class="ls-panel panel-accent">
+        <h3>Accent Color</h3>
+        <p class="accent-subtitle">Choose accent coloring</p>
+        <div class="accent-color-wrapper">
+          <input type="color" class="gear-accent-input" value="{{accentColor}}" />
+          <span class="accent-preview" style="background-color: {{accentColor}};"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cost Summary -->
+    <div class="ls-panel panel-summary {{affordabilityClass}}">
+      <div class="summary-row">
+        <span class="summary-label">Selected Mods</span>
+        <span class="summary-value">{{selectedMods.length}}/{{../MAX_GEAR_MODS}}</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Total Cost</span>
+        <span class="summary-value">{{totalCreditCost}} credits</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Available</span>
+        <span class="summary-value {{#unless canAfford}}insufficient{{/unless}}">
+          {{actorCredits}} credits
+        </span>
+      </div>
+    </div>
+
+    <!-- Apply Button -->
+    <button type="button" class="gear-apply-button" {{#unless canAfford}}disabled{{/unless}}>
+      <span class="button-glow"></span>
+      {{#if canAfford}}
+        Apply Configuration ({{totalCreditCost}}cr)
+      {{else}}
+        Insufficient Credits
+      {{/if}}
+    </button>
+  </form>
+</div>
