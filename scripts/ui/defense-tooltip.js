@@ -44,12 +44,16 @@ export class DefenseTooltip {
     TooltipRegistry.registerBreakdownProvider('WillDefense', (actor) =>
       this.getBreakdownContent(actor, 'will')
     );
+    TooltipRegistry.registerBreakdownProvider('FlatFooted', (actor) =>
+      this.getBreakdownContent(actor, 'flatfooted')
+    );
   }
 
   /**
    * Get breakdown content (title + body) for a defense.
+   * Used for hover tooltips. For pinned cards, use getBreakdownStructure().
    * @param {Actor} actor
-   * @param {string} defenseKey - 'reflex', 'fort', or 'will'
+   * @param {string} defenseKey - 'reflex', 'fort', 'will', or 'flatfooted'
    * @returns {{title: string, body: string}}
    */
   static getBreakdownContent(actor, defenseKey) {
@@ -62,6 +66,102 @@ export class DefenseTooltip {
     return {
       title: `${data.label} Defense Breakdown`,
       body: body
+    };
+  }
+
+  /**
+   * Get normalized breakdown structure for pinned card rendering.
+   * @param {Actor} actor
+   * @param {string} defenseKey - 'reflex', 'fort', 'will', or 'flatfooted'
+   * @returns {{title: string, definition: string, rows: Array, total: number}}
+   */
+  static getBreakdownStructure(actor, defenseKey) {
+    const data = this.getDefenseBreakdown(actor, defenseKey);
+    if (!data) {
+      return {
+        title: 'Defense',
+        definition: 'Unable to calculate breakdown.',
+        rows: [],
+        total: 0
+      };
+    }
+
+    // Map defense keys to glossary definitions
+    const defenseMap = {
+      'reflex': 'Dodge and quick reactions.',
+      'fort': 'Physical toughness and constitution.',
+      'will': 'Mental fortitude and resolve.',
+      'flatfooted': 'Defense when caught by surprise.'
+    };
+
+    const rows = [];
+
+    // Base components (always shown)
+    rows.push({
+      label: 'Base',
+      value: 10,
+      semantic: 'neutral'
+    });
+
+    if (data.halfLevel) {
+      rows.push({
+        label: '½ Level',
+        value: data.halfLevel,
+        semantic: 'neutral'
+      });
+    }
+
+    if (data.abilityMod) {
+      rows.push({
+        label: `${this._getAbilityName(defenseKey)} mod`,
+        value: data.abilityMod,
+        semantic: data.abilityMod > 0 ? 'positive' : 'negative'
+      });
+    }
+
+    if (data.classBonus) {
+      rows.push({
+        label: 'Class bonus',
+        value: data.classBonus,
+        semantic: 'positive'
+      });
+    }
+
+    if (data.miscMod) {
+      rows.push({
+        label: 'Misc',
+        value: data.miscMod,
+        semantic: data.miscMod > 0 ? 'positive' : (data.miscMod < 0 ? 'negative' : 'neutral')
+      });
+    }
+
+    // Active modifiers (from derived data)
+    if (data.modifiers && data.modifiers.length > 0) {
+      data.modifiers.forEach(mod => {
+        rows.push({
+          label: mod.sourceName,
+          value: mod.value,
+          semantic: mod.value > 0 ? 'positive' : (mod.value < 0 ? 'negative' : 'neutral')
+        });
+      });
+    }
+
+    // Special effects as negative rows
+    if (data.specialEffects && data.specialEffects.length > 0) {
+      data.specialEffects.forEach(effect => {
+        rows.push({
+          label: effect.name,
+          value: 0, // Effects don't have direct numeric value; they're informational
+          semantic: 'negative'
+        });
+      });
+    }
+
+    return {
+      title: `${data.label} Defense`,
+      definition: defenseMap[defenseKey] || 'Defense calculation.',
+      rows: rows,
+      total: data.totalValue
     };
   }
 
@@ -107,7 +207,8 @@ export class DefenseTooltip {
   }
 
   /**
-   * Get defense breakdown data from actor
+   * Get defense breakdown data from actor.
+   * Flat-footed is calculated without Dex bonus.
    * @private
    */
   static getDefenseBreakdown(actor, defenseKey) {
@@ -115,14 +216,15 @@ export class DefenseTooltip {
     const defenseMap = {
       'reflex': { key: 'ref', label: 'Reflex', abilityKey: 'dex' },
       'fort': { key: 'fort', label: 'Fortitude', abilityKey: 'str' },
-      'will': { key: 'will', label: 'Will', abilityKey: 'wis' }
+      'will': { key: 'will', label: 'Will', abilityKey: 'wis' },
+      'flatfooted': { key: 'ref', label: 'Flat-Footed', abilityKey: null } // Uses reflex calculation but no dex
     };
 
     const defenseInfo = defenseMap[defenseKey];
     if (!defenseInfo) return null;
 
     const defense = system.defenses?.[defenseInfo.key] || {};
-    const abilityMod = system.attributes?.[defenseInfo.abilityKey]?.mod || 0;
+    const abilityMod = defenseKey === 'flatfooted' ? 0 : (system.attributes?.[defenseInfo.abilityKey]?.mod || 0);
     const halfLevel = Math.floor((system.level || 1) / 2);
     const classBonus = defense.classBonus || 0;
     const miscMod = defense.miscMod || 0;
@@ -134,8 +236,8 @@ export class DefenseTooltip {
     const modifierTarget = `defense.${defenseInfo.key}`;
     const modifiers = this.getModifiersForTarget(actor, modifierTarget);
 
-    // Get total including modifiers
-    const totalValue = defense.total || subtotal;
+    // Get total including modifiers (but not dex for flatfooted)
+    const totalValue = defenseKey === 'flatfooted' ? subtotal : (defense.total || subtotal);
 
     return {
       label: defenseInfo.label,
@@ -149,6 +251,20 @@ export class DefenseTooltip {
       totalValue,
       specialEffects: this.getSpecialEffects(actor, defenseKey)
     };
+  }
+
+  /**
+   * Helper: Get ability name from defense key.
+   * @private
+   */
+  static _getAbilityName(defenseKey) {
+    const abilityMap = {
+      'reflex': 'Dexterity',
+      'fort': 'Strength',
+      'will': 'Wisdom',
+      'flatfooted': 'None'
+    };
+    return abilityMap[defenseKey] || 'Unknown';
   }
 
   /**
