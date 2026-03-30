@@ -812,3 +812,23 @@
   overflow-y: auto;
   overflow-x: hidden;
 }
+
+/* Scroll performance on iOS */
+.swse-mobile [data-region="work-surface"],
+.swse-mobile [data-region="details-panel"],
+.swse-mobile .scrollable {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Prevent double-tap zoom */
+.swse-mobile {
+  touch-action: manipulation;
+}
+
+.swse-mobile input[type="text"],
+.swse-mobile input[type="number"],
+.swse-mobile textarea,
+.swse-mobile select {
+  touch-action: auto;
+}

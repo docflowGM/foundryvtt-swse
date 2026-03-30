@@ -2175,17 +2175,36 @@ const forcePoints = [];
       row.classList.toggle("show-mobile-actions");
     }, { signal, capture: false });
 
-    // Close actions menu when clicking outside
+    // Close actions menu when clicking outside (sheet-scoped)
     html.addEventListener("click", (event) => {
-      // Only close if NOT clicking inside an actions menu
+      // Only close if NOT clicking inside an actions menu or toggle button
       if (event.target.closest(".mobile-actions-menu")) return;
       if (event.target.closest(".item-actions-toggle")) return;
 
-      // Close all open actions menus
+      // Close all open actions menus in this sheet
       html.querySelectorAll(".show-mobile-actions").forEach(row => {
         row.classList.remove("show-mobile-actions");
       });
     }, { signal, capture: false });
+
+    // Global close handler (prevent stuck-open menus across page)
+    // Use document listener as fallback for clicks outside html element
+    const globalClose = (event) => {
+      // Don't close if clicking on action menu or toggle
+      if (event.target.closest(".mobile-actions-menu")) return;
+      if (event.target.closest(".item-actions-toggle")) return;
+
+      // Close any open mobile actions in the sheet
+      html.querySelectorAll(".show-mobile-actions").forEach(row => {
+        row.classList.remove("show-mobile-actions");
+      });
+    };
+
+    // Add global listener with cleanup on signal abort
+    document.addEventListener("click", globalClose, { capture: false });
+    signal?.addEventListener("abort", () => {
+      document.removeEventListener("click", globalClose, { capture: false });
+    });
   }
 
   /* ============================================================
