@@ -15,6 +15,7 @@ import { FeatureTour } from "/systems/foundryvtt-swse/scripts/ui/discovery/featu
 import { registerDiscoverySettings } from "/systems/foundryvtt-swse/scripts/ui/discovery/discovery-settings.js";
 import { DefenseTooltip } from "/systems/foundryvtt-swse/scripts/ui/defense-tooltip.js";
 import { WeaponTooltip } from "/systems/foundryvtt-swse/scripts/ui/weapon-tooltip.js";
+import { CombatStatsTooltip } from "/systems/foundryvtt-swse/scripts/ui/combat-stats-tooltip.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 
@@ -26,6 +27,7 @@ export function initializeDiscoverySystem() {
   // Register breakdown providers with TooltipRegistry
   DefenseTooltip.registerProviders();
   WeaponTooltip.registerProviders();
+  CombatStatsTooltip.registerProviders();
 }
 
 export function onDiscoveryReady() {

@@ -3344,3 +3344,67 @@ select option:checked {
   }
 }
 
+/* ================================================================== */
+/* Phase 9: Tier-Aware Help System & Breakdown Affordances           */
+/* ================================================================== */
+
+/**
+ * Help Level Classes
+ * Applied to root element to control tier-based affordance visibility
+ * Format: help-level--{off|core|standard|advanced}
+ */
+
+.swse-sheet.help-level--off [data-help-tier] {
+  /* Tier-based affordances hidden in OFF mode */
+  /* Icon-only tooltips still available via data-swse-tooltip */
+  opacity: 0.7;
+}
+
+.swse-sheet.help-level--core [data-help-tier="tier2"],
+.swse-sheet.help-level--core [data-help-tier="tier3"] {
+  /* Hide tier2 and tier3 affordances in CORE mode */
+  display: none;
+}
+
+.swse-sheet.help-level--standard [data-help-tier="tier3"] {
+  /* Hide tier3 affordances in STANDARD mode */
+  display: none;
+}
+
+/**
+ * Breakdown Affordances
+ * Visual indicator that an element has a breakdown available (clickable)
+ */
+
+.swse-sheet [data-breakdown] {
+  cursor: pointer;
+  position: relative;
+  transition: box-shadow 200ms ease;
+}
+
+/* Show affordance glow only when appropriate help tier is visible */
+.swse-sheet.help-level--core [data-breakdown][data-help-tier="tier1"],
+.swse-sheet.help-level--standard [data-breakdown][data-help-tier="tier1"],
+.swse-sheet.help-level--standard [data-breakdown][data-help-tier="tier2"],
+.swse-sheet.help-level--advanced [data-breakdown] {
+  box-shadow: inset 0 0 6px rgba(0, 200, 255, 0.15);
+}
+
+/* Hover/focus enhancement for breakdown elements */
+.swse-sheet [data-breakdown]:hover,
+.swse-sheet [data-breakdown]:focus {
+  box-shadow: inset 0 0 8px rgba(0, 200, 255, 0.25);
+}
+
+/* Reduced motion: disable transition on breakdown elements */
+@media (prefers-reduced-motion: reduce) {
+  .swse-sheet [data-breakdown] {
+    transition: none;
+  }
+
+  .swse-sheet [data-breakdown]:hover,
+  .swse-sheet [data-breakdown]:focus {
+    box-shadow: inset 0 0 4px rgba(0, 200, 255, 0.1);
+  }
+}
+
