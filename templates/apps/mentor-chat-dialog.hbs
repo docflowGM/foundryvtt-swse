@@ -69,6 +69,18 @@
               {{/if}}
             {{/if}}
 
+            <!-- Path Selection Options (only for paths_open topic) -->
+            {{#if currentResponse.availablePaths}}
+              <div class="path-selection-options">
+                <p class="options-label">Does one of these paths call to you?</p>
+                {{#each currentResponse.availablePaths}}
+                  <button class="path-option response-option" data-path="{{this.name}}" type="button">
+                    <i class="fa-solid fa-check"></i> I choose <strong>{{this.name}}</strong>
+                  </button>
+                {{/each}}
+              </div>
+            {{/if}}
+
             <!-- Response Options -->
             <div class="kotor-response-options">
               <button class="back-to-topics response-option" type="button">

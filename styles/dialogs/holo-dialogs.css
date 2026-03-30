@@ -237,6 +237,47 @@
   box-shadow: 0 0 8px rgba(0, 170, 255, 0.3);
 }
 
+/* Path Selection Options (What paths are open to me?) */
+[data-theme=holo] .path-selection-options {
+  margin: 15px 0;
+  padding: 15px;
+  background: rgba(0, 170, 255, 0.05);
+  border-left: 3px solid var(--swse-secondary);
+  border-radius: 4px;
+}
+
+[data-theme=holo] .path-selection-options .options-label {
+  color: var(--swse-text-secondary);
+  font-size: 0.9em;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+
+[data-theme=holo] .path-option {
+  background: var(--swse-bg-light);
+  border: 1px solid var(--swse-border-default);
+  color: var(--swse-text-primary);
+  border-radius: 4px;
+  padding: 10px;
+  margin: 5px 0;
+  transition: all 0.2s ease;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+[data-theme=holo] .path-option:hover {
+  background: linear-gradient(135deg, rgba(0, 170, 255, 0.2) 0%, rgba(0, 217, 255, 0.1) 100%);
+  border-color: var(--swse-border-active);
+  box-shadow: 0 0 10px rgba(0, 170, 255, 0.4);
+  transform: translateX(4px);
+}
+
+[data-theme=holo] .path-option i {
+  margin-right: 8px;
+  color: var(--swse-success);
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    DIALOG-SPECIFIC: Mentor Reflective Dialog
    ═════════════════════════════════════════════════════════════════════════ */

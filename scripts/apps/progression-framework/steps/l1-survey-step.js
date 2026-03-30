@@ -115,6 +115,45 @@ export class L1SurveyStep extends ProgressionStepPlugin {
         emergentArchetype: this._emergentArchetype?.bestMatch || null,
       });
     }
+
+    // PHASE 3: Seed mentor path commitment from emergent archetype analysis
+    // If survey detected a clear archetype match, set it as soft mentor preference
+    if (this._emergentArchetype?.bestMatch) {
+      try {
+        const { getMentorMemory, setMentorMemory, setCommittedPath } =
+          await import('/systems/foundryvtt-swse/scripts/engine/mentor/mentor-memory.js');
+        const { getMentorForClass } =
+          await import('/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js');
+
+        const actor = shell?.actor || shell?.document;
+        if (!actor) return;
+
+        // Get the primary class mentor
+        const primaryClass = actor.items.find(i => i.type === 'class')?.name;
+        if (primaryClass) {
+          const mentorData = getMentorForClass(primaryClass);
+          if (mentorData && mentorData.name) {
+            const mentorId = mentorData.name.toLowerCase();
+
+            // Only set path if one hasn't already been explicitly chosen
+            const memory = getMentorMemory(actor, mentorId);
+            if (!memory.committedPath || memory.commitmentStrength < 0.5) {
+              const archetypeName = this._emergentArchetype.bestMatch;
+              const updatedMemory = setCommittedPath(memory, archetypeName);
+              await setMentorMemory(actor, mentorId, updatedMemory);
+
+              console.log(
+                `[L1SurveyStep] Seeded mentor path: "${archetypeName}" ` +
+                `for mentor "${mentorData.name}" based on build analysis`
+              );
+            }
+          }
+        }
+      } catch (err) {
+        // Silently fail — survey shouldn't block on mentor seeding
+        console.warn('[L1SurveyStep] Failed to seed mentor path commitment:', err);
+      }
+    }
   }
 
   // ---------------------------------------------------------------------------
