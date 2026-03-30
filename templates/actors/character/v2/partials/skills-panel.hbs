@@ -23,7 +23,8 @@
 
     {{#each derived.skills as |skill|}}
 
-      <div class="skills-grid-row swse-row-surface" data-skill="{{skill.key}}">
+      <div class="skills-grid-row swse-row-surface" data-skill="{{skill.key}}"
+           data-swse-tooltip="{{#switch skill.key}}{{#case 'acrobatics'}}Acrobatics{{/case}}{{#case 'climb'}}Climb{{/case}}{{#case 'deception'}}Deception{{/case}}{{#case 'endurance'}}Endurance{{/case}}{{#case 'gatherInformation'}}GatherInformation{{/case}}{{#case 'jump'}}Jump{{/case}}{{#case 'knowledge'}}Knowledge{{/case}}{{#case 'mechanics'}}Mechanics{{/case}}{{#case 'perception'}}Perception{{/case}}{{#case 'persuasion'}}Persuasion{{/case}}{{#case 'pilot'}}Pilot{{/case}}{{#case 'ride'}}Ride{{/case}}{{#case 'stealth'}}Stealth{{/case}}{{#case 'survival'}}Survival{{/case}}{{#case 'swim'}}Swim{{/case}}{{#case 'treatInjury'}}TreatInjury{{/case}}{{#case 'useComputer'}}UseComputer{{/case}}{{#case 'useTheForce'}}UseTheForce{{/case}}{{/switch}}">
 
         <!-- Favorite Star -->
         <div class="col-favorite">
