@@ -20,34 +20,29 @@
 
 .swse-lightsaber-construction {
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-width: 900px;
+  width: calc(100vw - 20px);
   background: linear-gradient(135deg, rgba(0, 20, 40, 0.95), rgba(10, 10, 30, 0.95));
 }
 
-/* Live Blade Projection (Center Screen) */
-.ls-live-blade {
-  position: absolute;
-  top: 8%;
-  left: 50%;
-  transform: translateX(-50%);
-  height: 320px;
-  width: 12px;
-  background: var(--selected-blade-color);
-  box-shadow:
-    0 0 20px var(--selected-blade-color),
-    0 0 60px var(--selected-blade-color),
-    0 0 120px var(--selected-blade-color),
-    inset 0 0 20px rgba(255, 255, 255, 0.3);
-  border-radius: 6px;
-  opacity: 0.25;
-  pointer-events: none;
-  transition: all 0.2s ease;
-  animation: bladeFlicker 2s infinite ease-in-out;
+/* Blade Cross-Section Preview (SVG) */
+.ls-blade-preview-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0 12px 0;
   z-index: 1;
 }
 
-.ls-live-blade.resonating {
-  animation: resonancePulse 0.6s ease-out, bladeFlicker 2s infinite ease-in-out;
+.ls-blade-cross-section {
+  width: 100px;
+  height: 100px;
+  filter: drop-shadow(0 0 12px var(--selected-blade-color));
+  transition: filter 0.2s ease;
+  animation: bladeFlicker 2s infinite ease-in-out;
 }
 
 /* Hologram Scanline Overlay */
@@ -68,31 +63,33 @@
 /* ========== FORM STRUCTURE ========== */
 
 .ls-form {
-  padding: 20px;
+  padding: 12px 16px;
   position: relative;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Header */
 .ls-header {
   text-align: center;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
   border-bottom: 2px solid var(--selected-blade-color);
   transition: border-color 0.2s ease;
 }
 
 .ls-header h1 {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: bold;
   color: var(--selected-blade-color);
   text-shadow: 0 0 20px var(--selected-blade-color);
-  margin: 0 0 8px 0;
+  margin: 0 0 4px 0;
   transition: all 0.2s ease;
 }
 
 .ls-header .subtitle {
-  font-size: 14px;
+  font-size: 12px;
   color: rgba(255, 255, 255, 0.6);
   font-style: italic;
   margin: 0;
@@ -105,18 +102,18 @@
   border: var(--ls-panel-border);
   border-color: var(--selected-blade-color);
   border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
   box-shadow: var(--ls-panel-glow), inset 0 0 8px rgba(0, 255, 255, 0.05);
   transition: all 0.2s ease;
   position: relative;
 }
 
 .ls-panel h3 {
-  font-size: 16px;
+  font-size: 13px;
   font-weight: bold;
   color: var(--selected-blade-color);
-  margin: 0 0 12px 0;
+  margin: 0 0 10px 0;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   text-shadow: 0 0 10px var(--selected-blade-color);
@@ -131,14 +128,15 @@
 /* Panel Grid */
 .ls-panels-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 12px;
-  margin-bottom: 20px;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
-@media (max-width: 1200px) {
+@media (min-width: 768px) {
   .ls-panels-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 12px;
   }
 }
 
@@ -147,7 +145,7 @@
 .ls-options {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   max-height: 240px;
   overflow-y: auto;
 }
@@ -156,9 +154,13 @@
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(0, 255, 255, 0.2);
   border-radius: 6px;
-  padding: 10px;
+  padding: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
+  min-height: 44px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .ls-option-card:hover {
@@ -229,18 +231,38 @@
 
 .ls-color-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  gap: 8px;
+}
+
+@media (min-width: 600px) {
+  .ls-color-grid {
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 10px;
+  }
+}
+
+@media (min-width: 900px) {
+  .ls-color-grid {
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 12px;
+  }
 }
 
 .ls-color-cell {
   cursor: pointer;
   text-align: center;
-  padding: 8px;
+  padding: 6px;
   border-radius: 6px;
   transition: all 0.2s ease;
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(100, 100, 100, 0.3);
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .ls-color-cell:hover {
@@ -305,26 +327,27 @@
   background: rgba(0, 255, 255, 0.05);
   display: flex;
   justify-content: space-around;
-  padding: 16px;
-  margin-bottom: 20px;
+  padding: 12px;
+  margin-bottom: 10px;
 }
 
 .summary-row {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   text-align: center;
+  flex: 1;
 }
 
 .summary-label {
-  font-size: 11px;
+  font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   color: rgba(255, 255, 255, 0.5);
 }
 
 .summary-value {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
   color: var(--selected-blade-color);
   text-shadow: 0 0 10px var(--selected-blade-color);
@@ -332,10 +355,15 @@
 
 /* ========== BUILD BUTTON ========== */
 
+.ls-form > .ls-build-button {
+  margin-top: auto;
+  min-height: 44px;
+}
+
 .ls-build-button {
   width: 100%;
-  padding: 14px 20px;
-  font-size: 16px;
+  padding: 16px 24px;
+  font-size: 14px;
   font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 0.1em;
