@@ -23,6 +23,11 @@ export default {
   coveragePathIgnorePatterns: [
     '/node_modules/',
   ],
+  // Module name mapper for system absolute paths
+  // Maps /systems/foundryvtt-swse/scripts/... to <rootDir>/scripts/...
+  moduleNameMapper: {
+    '^/systems/foundryvtt-swse/(.*)$': '<rootDir>/$1',
+  },
   // Timeout for async tests (governance tests may be slow)
   testTimeout: 10000,
   // Verbose output for governance tests
