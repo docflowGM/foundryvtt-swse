@@ -217,6 +217,7 @@
   padding: 0;     /* EXPLICIT: override shell/progress.css padding */
 }
 
+/* PHASE 5: Reduce clutter — hide secondary rail labels */
 .progression-shell .prog-progress-rail__label {
   flex: 0 0 auto;
   font-size: 11px;
@@ -227,6 +228,7 @@
   white-space: nowrap;
   padding-right: 8px;
   border-right: 1px solid rgba(80, 220, 255, 0.25);
+  display: none;
 }
 
 .progression-shell .prog-progress-rail__list {
@@ -241,7 +243,7 @@
   overflow-x: auto;
 }
 
-/* Compact step items in horizontal rail */
+/* Compact step items in horizontal rail — PHASE 5 + 5.5: Improved spacing, focus, transition */
 .progression-shell .prog-step {
   flex: 0 1 auto;
   min-width: 0;
@@ -249,7 +251,7 @@
   flex-direction: row;
   align-items: center;
   gap: 4px;
-  padding: 4px 8px;
+  padding: 6px 12px;
   font-size: 11px;
   white-space: nowrap;
   border-radius: 4px;
@@ -257,7 +259,11 @@
   border: 1px solid rgba(60, 200, 255, 0.3);
   color: rgba(120, 200, 255, 0.8);
   cursor: pointer;
-  transition: all 200ms ease;
+  /* Crisp, responsive transition for scale effect on step activation */
+  transition: transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1),
+              background 200ms ease,
+              border-color 200ms ease,
+              box-shadow 200ms ease;
 }
 
 .progression-shell .prog-step:hover {
@@ -266,12 +272,14 @@
   color: rgba(150, 230, 255, 1);
 }
 
+/* PHASE 5 + 5.5: Enhanced active step visibility with scale transform + crisp transition */
 .progression-shell .prog-step--active {
   background: rgba(0, 150, 220, 0.3);
   border-color: rgba(100, 230, 255, 0.8);
   color: rgba(200, 240, 255, 1);
   font-weight: 600;
   box-shadow: 0 0 8px rgba(0, 150, 220, 0.3);
+  transform: scale(1.05);
 }
 
 .progression-shell .prog-step--complete {
@@ -762,4 +770,73 @@
 .prog-step-context-banner .prog-step-label {
   color: rgba(200, 220, 255, 0.85);
   font-style: italic;
+}
+
+/* =============================================================================
+ * PHASE 2: MOBILE MODE ADAPTATIONS (.swse-mobile)
+ * Vertical stacking, full-width panels, hidden summary, scrollable regions
+ * ============================================================================= */
+
+/* Prevent horizontal overflow at body level */
+.swse-mobile {
+  overflow-x: hidden;
+}
+
+/* Ensure shell and main column fill width without exceeding viewport */
+.swse-mobile .progression-shell,
+.swse-mobile .prog-main-column {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Content row: stack vertically instead of horizontally */
+.swse-mobile .prog-content-row {
+  flex-direction: column;
+  gap: var(--prog-space-md);
+  padding: var(--prog-space-md);
+}
+
+/* Summary panel: hide on mobile (not critical info) */
+.swse-mobile [data-region="summary-panel"] {
+  display: none !important;
+}
+
+/* Work surface: full width, scrollable */
+.swse-mobile [data-region="work-surface"] {
+  width: 100%;
+  max-width: 100%;
+  min-height: 300px;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Details panel: full width below work surface, scrollable */
+.swse-mobile [data-region="details-panel"] {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Scroll performance on iOS */
+.swse-mobile [data-region="work-surface"],
+.swse-mobile [data-region="details-panel"],
+.swse-mobile .scrollable {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Prevent double-tap zoom */
+.swse-mobile {
+  touch-action: manipulation;
+}
+
+.swse-mobile input[type="text"],
+.swse-mobile input[type="number"],
+.swse-mobile textarea,
+.swse-mobile select {
+  touch-action: auto;
 }

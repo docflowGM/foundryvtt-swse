@@ -1,0 +1,84 @@
+<div class="swse-armor-modification">
+  <!-- Hologram Scanline Overlay -->
+  <div class="ls-scanline-overlay"></div>
+
+  <!-- Armor Visual Preview -->
+  <div class="armor-preview-container">
+    <div class="armor-visual" style="background-color: {{tintColor}}">
+      <div class="armor-indicator">
+        {{itemName}}
+      </div>
+    </div>
+  </div>
+
+  <form class="ls-form flexcol">
+    <!-- Title Section -->
+    <header class="ls-header">
+      <h1>🛡️ {{itemName}}</h1>
+      <p class="subtitle">Configure protective systems</p>
+    </header>
+
+    <!-- Panel Grid -->
+    <div class="ls-panels-grid">
+      <!-- ARMOR UPGRADES -->
+      <div class="ls-panel panel-upgrades">
+        <h3>Available Upgrades</h3>
+        <p class="upgrade-subtitle">Select protection enhancements</p>
+        <div class="armor-upgrades-grid">
+          {{#each allUpgrades}}
+          <div class="armor-upgrade-card {{#if this.selected}}selected{{/if}}"
+               data-upgrade="{{this.id}}"
+               {{#if this.selected}}data-selected="true"{{/if}}>
+            <div class="upgrade-name">{{this.name}}</div>
+            <div class="upgrade-description">{{this.description}}</div>
+            <div class="upgrade-footer">
+              <span class="upgrade-cost">{{this.costCredits}} credits</span>
+              {{#if this.effect}}
+              <span class="upgrade-effect">+{{this.effect}}</span>
+              {{/if}}
+            </div>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+
+      <!-- TINT COLOR (if armor supports it) -->
+      <div class="ls-panel panel-tint">
+        <h3>Color Configuration</h3>
+        <p class="tint-subtitle">Customize appearance</p>
+        <div class="tint-controls">
+          <input type="color" class="armor-tint-input" value="{{tintColor}}" />
+          <div class="tint-preview" style="background-color: {{tintColor}}"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cost Summary -->
+    <div class="ls-panel panel-summary {{affordabilityClass}}">
+      <div class="summary-row">
+        <span class="summary-label">Selected Upgrades</span>
+        <span class="summary-value">{{selectedUpgrades.length}}</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Total Cost</span>
+        <span class="summary-value">{{totalCreditCost}} credits</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Available</span>
+        <span class="summary-value {{#unless canAfford}}insufficient{{/unless}}">
+          {{actorCredits}} credits
+        </span>
+      </div>
+    </div>
+
+    <!-- Apply Button -->
+    <button type="button" class="armor-apply-button" {{#unless canAfford}}disabled{{/unless}}>
+      <span class="button-glow"></span>
+      {{#if canAfford}}
+        Apply Modifications ({{totalCreditCost}}cr)
+      {{else}}
+        Insufficient Credits
+      {{/if}}
+    </button>
+  </form>
+</div>

@@ -26,3 +26,31 @@
     border-width: 2px;
   }
 }
+
+/* =============================================================================
+   MOBILE MODE: INPUT FIELD SIZING
+   Ensure inputs are comfortable to tap and prevent iOS zoom
+   ============================================================================= */
+
+.swse-mobile input,
+.swse-mobile textarea,
+.swse-mobile select {
+  min-height: 40px;
+  padding: 0.5rem;
+  font-size: 16px;
+}
+
+.swse-mobile input[type="checkbox"],
+.swse-mobile input[type="radio"] {
+  min-width: 44px;
+  min-height: 44px;
+  margin: 0;
+  cursor: pointer;
+}
+
+.swse-mobile input:focus,
+.swse-mobile select:focus,
+.swse-mobile textarea:focus {
+  outline: 2px solid rgba(0, 170, 255, 0.7);
+  outline-offset: 2px;
+}

@@ -15,6 +15,7 @@
     <div class="col-trained">Trained</div>
     <div class="col-focus">Focus</div>
     <div class="col-misc">Misc</div>
+    <div class="col-roll">Roll</div>
   </div>
 
   <!-- Skills Grid Body -->
@@ -113,6 +114,18 @@
                  title="Miscellaneous modifier (feats, conditions, etc.)">
         </div>
 
+        <!-- PHASE 6: Mobile Tap-to-Play Roll Button -->
+        <div class="col-roll">
+          <button type="button"
+                  class="skill-roll-btn"
+                  data-action="roll-skill"
+                  data-skill="{{skill.key}}"
+                  aria-label="Roll {{skill.label}}"
+                  title="Roll {{skill.label}}">
+            🎲
+          </button>
+        </div>
+
       </div>
 
       <!-- Extra Skill Uses (Take 10, Take 20, etc.) -->
@@ -172,7 +185,7 @@
 
 .skills-grid-header {
   display: grid;
-  grid-template-columns: 0.5fr 2fr 1fr 0.3fr 1fr 0.8fr 0.8fr 0.8fr 1fr;
+  grid-template-columns: 0.5fr 2fr 1fr 0.3fr 1fr 0.8fr 0.8fr 0.8fr 1fr 0.6fr;
   gap: 8px;
   padding: 8px 0;
   border-bottom: 2px solid rgba(0, 234, 255, 0.3);
@@ -201,7 +214,7 @@
 
 .skills-grid-row {
   display: grid;
-  grid-template-columns: 0.5fr 2fr 1fr 0.3fr 1fr 0.8fr 0.8fr 0.8fr 1fr;
+  grid-template-columns: 0.5fr 2fr 1fr 0.3fr 1fr 0.8fr 0.8fr 0.8fr 1fr 0.6fr;
   gap: 8px;
   align-items: center;
   padding: 6px 8px;
@@ -367,6 +380,72 @@
 
 .skills-grid-body::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 234, 255, 0.5);
+}
+
+/* ========== PHASE 6: MOBILE TAP-TO-PLAY ROLL BUTTON ========== */
+
+.col-roll {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.skill-roll-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: all 0.15s ease;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
+}
+
+.skill-roll-btn:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.skill-roll-btn:active {
+  transform: scale(0.95);
+}
+
+/* Mobile: enhance roll button to be prominent tap target */
+.swse-mobile .skill-roll-btn {
+  opacity: 1;
+  min-width: 44px;
+  min-height: 44px;
+  font-size: 1.4rem;
+  background: rgba(0, 234, 255, 0.1);
+  border: 1px solid rgba(0, 234, 255, 0.3);
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.swse-mobile .skill-roll-btn:active {
+  background: rgba(0, 234, 255, 0.25);
+  box-shadow: 0 0 8px rgba(0, 234, 255, 0.4);
+}
+
+/* ========== PHASE 6 Part 3: ROLLABLE ELEMENTS ========== */
+
+.skill-name-btn.rollable {
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.skill-name-btn.rollable:hover {
+  text-decoration: underline;
+  color: #00f0ff;
+}
+
+.swse-mobile .skill-name-btn.rollable:active {
+  opacity: 0.7;
 }
 
 /* ========== EXTRA SKILL USES ========== */

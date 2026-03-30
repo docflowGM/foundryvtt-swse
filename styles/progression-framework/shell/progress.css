@@ -101,3 +101,34 @@
   font-size: 10px;
   flex-shrink: 0;
 }
+
+/* =============================================================================
+ * MOBILE MODE: PROGRESS RAIL HORIZONTAL SCROLL
+ * Full-width scrollable horizontal step indicators
+ * ============================================================================= */
+
+.swse-mobile [data-region="progress-rail"] {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: var(--prog-space-sm);
+  gap: var(--prog-space-sm);
+}
+
+.swse-mobile .prog-progress-rail {
+  flex-direction: row;
+  gap: var(--prog-space-sm);
+  padding: 0;
+  width: auto;
+  height: 100%;
+  margin: 0;
+}
+
+.swse-mobile .prog-progress-rail__label {
+  display: none;
+}
+
+.swse-mobile .prog-progress-rail__list {
+  flex-direction: row;
+  gap: var(--prog-space-xs);
+}

@@ -7,6 +7,11 @@ import { MentorChatDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor
 import { DropResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/drop-resolution-engine.js";
 import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
+import { LightsaberConstructionApp } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/lightsaber-construction-app.js";
+import { BlasterCustomizationApp } from "/systems/foundryvtt-swse/scripts/apps/blaster/blaster-customization-app.js";
+import { ArmorModificationApp } from "/systems/foundryvtt-swse/scripts/apps/armor/armor-modification-app.js";
+import { MeleeWeaponModificationApp } from "/systems/foundryvtt-swse/scripts/apps/weapons/melee-modification-app.js";
+import { GearModificationApp } from "/systems/foundryvtt-swse/scripts/apps/gear/gear-modification-app.js";
 import { launchProgression, launchFollowerProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
 import { MentorNotesApp } from "/systems/foundryvtt-swse/scripts/apps/mentor-notes/mentor-notes-app.js";
@@ -17,6 +22,7 @@ import { ActionEconomyIntegration } from "/systems/foundryvtt-swse/scripts/ui/co
 import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-bindings.js";
 import { SentinelSheetGuardrails } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-sheet-guardrails.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
+import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import { computeCenteredPosition } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
 import { PANEL_REGISTRY } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PANEL_REGISTRY.js";
@@ -1299,6 +1305,102 @@ const forcePoints = [];
       }
     }, { signal, capture: false });
 
+    // PHASE 6 Part 3: Skill Roll Button (with modifier dialog)
+    html.addEventListener("click", async ev => {
+      const button = ev.target.closest(".skill-roll-btn");
+      if (!button) return;
+
+      ev.preventDefault();
+      const skillKey = button.dataset.skill;
+      if (!skillKey) return;
+
+      try {
+        const skill = this.actor.system.skills?.[skillKey];
+        if (!skill) return;
+
+        const modResult = await showRollModifiersDialog({
+          title: `${skill.label ?? skillKey} Check`,
+          rollType: 'skill'
+        });
+
+        if (modResult === null) return; // Cancelled
+
+        await SWSERoll.rollSkill(this.actor, skillKey, {
+          customModifier: modResult.customModifier || 0,
+          useForcePoint: modResult.useForcePoint || false
+        });
+      } catch (err) {
+        console.error("Skill roll failed:", err);
+        ui?.notifications?.error?.(`Skill roll failed: ${err.message}`);
+      }
+    }, { signal, capture: false });
+
+    // PHASE 6 Part 3: Combat Attack Button (with modifier dialog)
+    html.addEventListener("click", async ev => {
+      const button = ev.target.closest(".attack-btn");
+      if (!button) return;
+
+      ev.preventDefault();
+      const itemId = button.dataset.itemId;
+      if (!itemId) return;
+
+      try {
+        const weapon = this.actor.items.get(itemId);
+        if (!weapon) return;
+
+        const modResult = await showRollModifiersDialog({
+          title: `${weapon.name} Attack`,
+          rollType: 'attack',
+          actor: this.actor,
+          weapon
+        });
+
+        if (modResult === null) return; // Cancelled
+
+        await SWSERoll.rollAttack(this.actor, weapon, {
+          customModifier: modResult.customModifier || 0,
+          cover: modResult.cover || 'none',
+          concealment: modResult.concealment || 'none',
+          useForcePoint: modResult.useForcePoint || false
+        });
+      } catch (err) {
+        console.error("Attack roll failed:", err);
+        ui?.notifications?.error?.(`Attack roll failed: ${err.message}`);
+      }
+    }, { signal, capture: false });
+
+    // PHASE 6 Part 3: Combat Damage Button (with modifier dialog)
+    html.addEventListener("click", async ev => {
+      const button = ev.target.closest(".damage-btn");
+      if (!button) return;
+
+      ev.preventDefault();
+      const itemId = button.dataset.itemId;
+      if (!itemId) return;
+
+      try {
+        const weapon = this.actor.items.get(itemId);
+        if (!weapon) return;
+
+        const modResult = await showRollModifiersDialog({
+          title: `${weapon.name} Damage`,
+          rollType: 'damage',
+          actor: this.actor,
+          weapon
+        });
+
+        if (modResult === null) return; // Cancelled
+
+        await SWSERoll.rollDamage(this.actor, weapon, {
+          customModifier: modResult.customModifier || 0,
+          useForcePoint: modResult.useForcePoint || false
+        });
+      } catch (err) {
+        console.error("Damage roll failed:", err);
+        ui?.notifications?.error?.(`Damage roll failed: ${err.message}`);
+      }
+    }, { signal, capture: false });
+
     // Force Card Flip
     html.querySelectorAll(".force-card").forEach(card => {
       card.addEventListener("click", ev => {
@@ -1385,6 +1487,9 @@ const forcePoints = [];
 
     // Misc Handlers (languages, rest, DSP)
     this._activateMiscUI(html, { signal });
+
+    // Phase 4: Mobile Interaction Enhancements
+    this._activateMobileActions(html, { signal });
   }
 
   /* ============================================================
@@ -1852,6 +1957,112 @@ const forcePoints = [];
         }
       }, { signal });
     });
+
+    // Item action bar: Customize item
+    html.querySelectorAll('[data-action="customize-item"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        if (!itemId) return;
+
+        const item = this.actor.items.get(itemId);
+        if (!item) return;
+
+        // Route to correct customization modal based on item type
+        try {
+          switch (item.type) {
+            case "lightsaber":
+              new LightsaberConstructionApp(this.actor).render(true);
+              break;
+            case "blaster":
+              new BlasterCustomizationApp(this.actor, item).render(true);
+              break;
+            case "armor":
+              new ArmorModificationApp(this.actor, item).render(true);
+              break;
+            case "weapon":
+              new MeleeWeaponModificationApp(this.actor, item).render(true);
+              break;
+            case "gear":
+              new GearModificationApp(this.actor, item).render(true);
+              break;
+            default:
+              ui?.notifications?.warn?.(`No customization available for ${item.type}`);
+          }
+        } catch (err) {
+          console.error("Customization modal failed:", err);
+          ui?.notifications?.error?.("Failed to open customization modal");
+        }
+      }, { signal });
+    });
+
+    // Item action bar: Open overflow menu
+    html.querySelectorAll('[data-action="open-item-menu"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        if (!itemId) return;
+
+        const item = this.actor.items.get(itemId);
+        if (!item) return;
+
+        new Dialog({
+          title: item.name,
+          content: `<p>Select action for ${item.name}:</p>`,
+          buttons: {
+            edit: {
+              label: "Edit",
+              callback: () => item.sheet.render(true)
+            },
+            delete: {
+              label: "Delete",
+              callback: () => item.delete()
+            },
+            close: {
+              label: "Close"
+            }
+          }
+        }).render(true);
+      }, { signal });
+    });
+
+    // Item action bar: Quick attack roll (weapons only)
+    html.querySelectorAll('[data-action="roll-attack"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        if (!itemId) return;
+
+        const item = this.actor.items.get(itemId);
+        if (!item || item.type !== "weapon") return;
+
+        try {
+          await SWSERoll.rollWeaponAttack(this.actor, itemId);
+        } catch (err) {
+          console.error("Attack roll failed:", err);
+          ui?.notifications?.error?.("Attack roll failed");
+        }
+      }, { signal });
+    });
+
+    // Item action bar: Quick damage roll (weapons only)
+    html.querySelectorAll('[data-action="roll-damage"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        if (!itemId) return;
+
+        const item = this.actor.items.get(itemId);
+        if (!item || item.type !== "weapon") return;
+
+        try {
+          await SWSERoll.rollWeaponDamage(this.actor, itemId);
+        } catch (err) {
+          console.error("Damage roll failed:", err);
+          ui?.notifications?.error?.("Damage roll failed");
+        }
+      }, { signal });
+    });
   }
 
   /* ============================================================
@@ -2137,6 +2348,70 @@ const forcePoints = [];
           ui?.notifications?.error?.(`Failed to use extra skill: ${err.message}`);
         }
       }, { signal });
+    });
+  }
+  /* ============================================================
+     PHASE 4: MOBILE INTERACTION ENHANCEMENTS
+     Right-click replacements + touch feedback
+  ============================================================ */
+
+  _activateMobileActions(html, { signal } = {}) {
+    // Only activate on mobile mode
+    if (!game.swse.ui.mobileMode.enabled) return;
+
+    // Add toggle listener to all .item-actions-toggle buttons
+    html.addEventListener("click", (event) => {
+      const toggleBtn = event.target.closest(".item-actions-toggle");
+      if (!toggleBtn) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      // Find the parent row/card
+      const row = toggleBtn.closest("[data-item-id]") ||
+                  toggleBtn.closest(".item-row") ||
+                  toggleBtn.closest(".skill-row") ||
+                  toggleBtn.closest(".ability-row") ||
+                  toggleBtn.closest("[data-action-container]");
+
+      if (!row) {
+        console.warn("[Mobile] Could not find parent row for actions toggle", toggleBtn);
+        return;
+      }
+
+      // Toggle the show-actions class
+      row.classList.toggle("show-mobile-actions");
+    }, { signal, capture: false });
+
+    // Close actions menu when clicking outside (sheet-scoped)
+    html.addEventListener("click", (event) => {
+      // Only close if NOT clicking inside an actions menu or toggle button
+      if (event.target.closest(".mobile-actions-menu")) return;
+      if (event.target.closest(".item-actions-toggle")) return;
+
+      // Close all open actions menus in this sheet
+      html.querySelectorAll(".show-mobile-actions").forEach(row => {
+        row.classList.remove("show-mobile-actions");
+      });
+    }, { signal, capture: false });
+
+    // Global close handler (prevent stuck-open menus across page)
+    // Use document listener as fallback for clicks outside html element
+    const globalClose = (event) => {
+      // Don't close if clicking on action menu or toggle
+      if (event.target.closest(".mobile-actions-menu")) return;
+      if (event.target.closest(".item-actions-toggle")) return;
+
+      // Close any open mobile actions in the sheet
+      html.querySelectorAll(".show-mobile-actions").forEach(row => {
+        row.classList.remove("show-mobile-actions");
+      });
+    };
+
+    // Add global listener with cleanup on signal abort
+    document.addEventListener("click", globalClose, { capture: false });
+    signal?.addEventListener("abort", () => {
+      document.removeEventListener("click", globalClose, { capture: false });
     });
   }
 

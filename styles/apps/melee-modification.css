@@ -1,0 +1,433 @@
+/**
+ * MELEE WEAPON MODIFICATION UI
+ *
+ * Tactical weapon enhancement
+ * - Upgrade selection (multi-select)
+ * - Accent color customization
+ * - Cost preview and validation
+ *
+ * Physical, weighty, mechanical feel
+ */
+
+:root {
+  --melee-accent: #a0a0a0;
+  --melee-border: rgba(160, 160, 160, 0.3);
+}
+
+/* ========== ROOT CONTAINER ========== */
+
+.swse-melee-modification {
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-width: 900px;
+  width: calc(100vw - 20px);
+  background: linear-gradient(135deg, rgba(30, 30, 35, 0.95), rgba(20, 20, 25, 0.95));
+}
+
+/* Weapon Visual Preview */
+.melee-preview-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0 12px 0;
+  z-index: 1;
+}
+
+.melee-weapon-visual {
+  width: 100px;
+  height: 140px;
+  background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
+  border: 2px solid var(--melee-accent);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.8), 0 0 16px rgba(160, 160, 160, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.melee-weapon-visual::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(160, 160, 160, 0.1) 0px,
+    rgba(160, 160, 160, 0.05) 1px,
+    transparent 2px,
+    transparent 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.melee-weapon-visual::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(to bottom, transparent, var(--melee-accent));
+  opacity: 0.6;
+  z-index: 2;
+}
+
+.weapon-indicator {
+  position: relative;
+  z-index: 3;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  padding: 4px 0;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+}
+
+/* ========== REUSE HOLOGRAPHIC CLASSES ========== */
+
+.swse-melee-modification .ls-scanline-overlay {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 3px,
+    rgba(255, 255, 255, 0.02) 4px
+  );
+  pointer-events: none;
+  opacity: 0.4;
+  z-index: 0;
+}
+
+.swse-melee-modification .ls-form {
+  padding: 12px 16px;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.swse-melee-modification .ls-header {
+  text-align: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--melee-accent);
+  transition: border-color 0.2s ease;
+}
+
+.swse-melee-modification .ls-header h1 {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--melee-accent);
+  text-shadow: 0 0 12px rgba(160, 160, 160, 0.3);
+  margin: 0 0 4px 0;
+  transition: all 0.2s ease;
+}
+
+.swse-melee-modification .ls-header .subtitle {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+  margin: 0;
+}
+
+.swse-melee-modification .ls-panels-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+@media (min-width: 768px) {
+  .swse-melee-modification .ls-panels-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+  }
+}
+
+.swse-melee-modification .ls-panel {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--melee-border);
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 10px;
+  box-shadow: 0 0 8px rgba(160, 160, 160, 0.1), inset 0 0 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.swse-melee-modification .ls-panel h3 {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--melee-accent);
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 8px rgba(160, 160, 160, 0.2);
+  transition: all 0.2s ease;
+}
+
+.swse-melee-modification .ls-panel:hover {
+  border-color: rgba(160, 160, 160, 0.4);
+  box-shadow: 0 0 12px rgba(160, 160, 160, 0.15), inset 0 0 12px rgba(0, 0, 0, 0.2);
+}
+
+/* ========== UPGRADES GRID ========== */
+
+.panel-upgrades {
+  grid-column: 1 / -1;
+}
+
+.upgrade-subtitle {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: -8px 0 12px 0;
+  font-style: italic;
+}
+
+.melee-upgrades-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 8px;
+}
+
+@media (min-width: 600px) {
+  .melee-upgrades-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+  }
+}
+
+@media (min-width: 900px) {
+  .melee-upgrades-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+  }
+}
+
+.melee-upgrade-card {
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(160, 160, 160, 0.2);
+  border-radius: 6px;
+  padding: 12px;
+  transition: all 0.2s ease;
+  min-height: 110px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+}
+
+.melee-upgrade-card:hover {
+  border-color: rgba(160, 160, 160, 0.4);
+  background: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 12px rgba(160, 160, 160, 0.1);
+  transform: translateY(-2px);
+}
+
+.melee-upgrade-card.selected {
+  background: rgba(160, 160, 160, 0.12);
+  border: 2px solid rgba(160, 160, 160, 0.5);
+  box-shadow:
+    0 0 16px rgba(160, 160, 160, 0.2),
+    inset 0 0 8px rgba(160, 160, 160, 0.1);
+}
+
+.upgrade-name {
+  font-weight: bold;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 4px;
+}
+
+.upgrade-description {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.3;
+  flex: 1;
+  margin-bottom: 6px;
+}
+
+.upgrade-stats {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-top: 1px solid rgba(160, 160, 160, 0.1);
+  padding-top: 4px;
+}
+
+.upgrade-effect {
+  font-size: 9px;
+  color: rgba(150, 200, 255, 0.8);
+  font-weight: bold;
+}
+
+.upgrade-cost {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(160, 160, 160, 0.7);
+  font-weight: 600;
+}
+
+/* ========== ACCENT COLOR SECTION ========== */
+
+.panel-accent {
+  grid-column: 1 / -1;
+}
+
+.accent-subtitle {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: -8px 0 12px 0;
+  font-style: italic;
+}
+
+.melee-accent-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+
+@media (max-width: 600px) {
+  .melee-accent-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+}
+
+.melee-accent-option {
+  min-height: 44px;
+  border: 2px solid rgba(160, 160, 160, 0.3);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.melee-accent-option:hover {
+  border-color: rgba(160, 160, 160, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 0 12px rgba(160, 160, 160, 0.2);
+}
+
+.melee-accent-option.selected {
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 16px rgba(160, 160, 160, 0.3), inset 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+/* ========== COST SUMMARY ========== */
+
+.panel-summary {
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: space-around;
+  padding: 12px;
+  margin-bottom: 10px;
+  gap: 8px;
+}
+
+.panel-summary.cannot-afford {
+  background: rgba(255, 100, 100, 0.1);
+  border-color: rgba(255, 100, 100, 0.3) !important;
+}
+
+.summary-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: center;
+  flex: 1;
+}
+
+.summary-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.summary-value {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--melee-accent);
+  text-shadow: 0 0 6px rgba(160, 160, 160, 0.2);
+}
+
+.summary-value.insufficient {
+  color: #ff6464;
+}
+
+/* ========== APPLY BUTTON ========== */
+
+.ls-form > .melee-apply-button {
+  margin-top: auto;
+  min-height: 44px;
+}
+
+.melee-apply-button {
+  width: 100%;
+  padding: 16px 24px;
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--melee-accent);
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid var(--melee-accent);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 12px rgba(160, 160, 160, 0.15);
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+}
+
+.melee-apply-button:hover:not(:disabled) {
+  background: rgba(160, 160, 160, 0.1);
+  box-shadow:
+    0 0 20px rgba(160, 160, 160, 0.25),
+    inset 0 0 16px rgba(160, 160, 160, 0.1);
+  transform: scale(1.02);
+}
+
+.melee-apply-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.melee-apply-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.button-glow {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(160, 160, 160, 0.2),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}

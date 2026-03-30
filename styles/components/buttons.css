@@ -14,3 +14,110 @@
   padding: 4px 12px;
   cursor: pointer;
 }
+
+/* =============================================================================
+   MOBILE MODE: TOUCH TARGETS + TAP FEEDBACK
+   ============================================================================= */
+
+.swse-mobile button,
+.swse-mobile [type="button"],
+.swse-mobile [type="submit"],
+.swse-mobile .btn,
+.swse-mobile [role="button"],
+.swse-mobile a[href] {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+}
+
+.swse-mobile button:active,
+.swse-mobile [type="button"]:active,
+.swse-mobile [type="submit"]:active,
+.swse-mobile [role="button"]:active {
+  transform: scale(0.97);
+  opacity: 0.85;
+  transition: none;
+}
+
+.swse-mobile .prog-btn:active {
+  transform: scale(0.97);
+  opacity: 0.85;
+}
+
+.swse-mobile .item-actions-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid rgba(0, 170, 255, 0.2);
+  border-radius: 3px;
+  color: rgba(0, 170, 255, 0.6);
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 150ms ease;
+  flex-shrink: 0;
+}
+
+.swse-mobile .item-actions-toggle:hover {
+  background: rgba(0, 170, 255, 0.1);
+  border-color: rgba(0, 170, 255, 0.5);
+  color: rgba(0, 170, 255, 0.9);
+}
+
+.swse-mobile .item-actions-toggle:active {
+  transform: scale(0.9);
+}
+
+.swse-mobile .mobile-actions-menu {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 4px;
+  background: rgba(5, 10, 18, 0.98);
+  border: 1px solid rgba(0, 170, 255, 0.3);
+  border-radius: 3px;
+  padding: 4px;
+  min-width: 120px;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+.swse-mobile [data-item-id].show-mobile-actions .mobile-actions-menu,
+.swse-mobile .item-row.show-mobile-actions .mobile-actions-menu,
+.swse-mobile .skill-row.show-mobile-actions .mobile-actions-menu,
+.swse-mobile .ability-row.show-mobile-actions .mobile-actions-menu,
+.swse-mobile [data-action-container].show-mobile-actions .mobile-actions-menu {
+  display: flex;
+}
+
+.swse-mobile .mobile-actions-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 6px 8px;
+  background: transparent;
+  border: none;
+  color: rgba(180, 220, 255, 0.9);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 100ms ease;
+  border-radius: 2px;
+}
+
+.swse-mobile .mobile-actions-menu button:hover {
+  background: rgba(0, 170, 255, 0.2);
+  color: rgba(220, 240, 255, 1);
+}
+
+.swse-mobile .mobile-actions-menu button:active {
+  transform: scale(0.95);
+}

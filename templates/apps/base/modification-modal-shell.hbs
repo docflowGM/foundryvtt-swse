@@ -1,0 +1,50 @@
+<div class="swse-modification-modal">
+  <!-- Hologram Scanline Overlay -->
+  <div class="ls-scanline-overlay"></div>
+
+  <!-- Preview Section -->
+  {{#if previewContent}}
+  <div class="modal-preview-section">
+    {{{previewContent}}}
+  </div>
+  {{/if}}
+
+  <form class="ls-form flexcol">
+    <!-- Header Section -->
+    <header class="ls-header modal-header">
+      {{#if headerContent.icon}}
+      <span class="modal-header-icon">{{headerContent.icon}}</span>
+      {{/if}}
+      <h1>{{headerContent.title}}</h1>
+      {{#if headerContent.subtitle}}
+      <p class="subtitle">{{headerContent.subtitle}}</p>
+      {{/if}}
+    </header>
+
+    <!-- Main Content -->
+    <div class="modal-content-wrapper">
+      {{#if mainContent.regions}}
+      <div class="ls-panels-grid">
+        {{{mainContent.content}}}
+      </div>
+      {{else}}
+      <div class="modal-content">
+        {{{mainContent.content}}}
+      </div>
+      {{/if}}
+
+      {{#if sidebarContent}}
+      <aside class="modal-sidebar">
+        {{{sidebarContent}}}
+      </aside>
+      {{/if}}
+    </div>
+
+    <!-- Footer Content (Cost Summary, Button, etc.) -->
+    {{#if footerContent}}
+    <div class="modal-footer">
+      {{{footerContent}}}
+    </div>
+    {{/if}}
+  </form>
+</div>

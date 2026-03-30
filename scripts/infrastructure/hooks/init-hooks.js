@@ -16,6 +16,10 @@ import { registerActorHooks } from "/systems/foundryvtt-swse/scripts/infrastruct
 import { registerUIHooks } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/ui-hooks.js";
 import { registerRerollListeners } from "/systems/foundryvtt-swse/scripts/species/species-reroll-handler.js";
 import { SWSECombatActionBrowser } from "/systems/foundryvtt-swse/scripts/apps/combat-action-browser.js";
+import { isMobileCandidate } from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-detector.js";
+import { registerMobilePrompt } from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-prompt.js";
+import LightsaberLightSync from "/systems/foundryvtt-swse/scripts/utils/lightsaber-light-sync.js";
+import "/systems/foundryvtt-swse/scripts/ui/mobile-mode-manager.js";
 
 /**
  * Register initialization hooks
@@ -39,6 +43,18 @@ export function registerInitHooks() {
      * This registration is valid since ready hasn't fired yet
      */
     Hooks.once('ready', async function() {
+        // Initialize mobile mode system
+        game.swse.ui.mobileMode.init();
+        SWSELogger.log('Mobile Mode initialized');
+
+        // Register mobile prompt (only shows on eligible devices)
+        registerMobilePrompt(isMobileCandidate);
+        SWSELogger.log('Mobile Mode prompt registered');
+
+        // Initialize lightsaber light synchronization (ties blade color to token light)
+        LightsaberLightSync.registerAutoSyncHooks();
+        SWSELogger.log('Lightsaber Light Sync hooks registered');
+
         // Initialize species reroll system
         registerRerollListeners();
         SWSELogger.log('Species Trait Engine initialized');

@@ -1,0 +1,90 @@
+<div class="swse-melee-modification">
+  <!-- Hologram Scanline Overlay -->
+  <div class="ls-scanline-overlay"></div>
+
+  <!-- Weapon Visual Preview -->
+  <div class="melee-preview-container">
+    <div class="melee-weapon-visual" style="--accent-color: {{accentColor}}">
+      <div class="weapon-indicator">{{itemName}}</div>
+    </div>
+  </div>
+
+  <form class="ls-form flexcol">
+    <!-- Title Section -->
+    <header class="ls-header">
+      <h1>⚔️ {{itemName}}</h1>
+      <p class="subtitle">Tactical weapon enhancement</p>
+    </header>
+
+    <!-- Panel Grid -->
+    <div class="ls-panels-grid">
+      <!-- UPGRADES -->
+      <div class="ls-panel panel-upgrades">
+        <h3>Enhancements</h3>
+        <p class="upgrade-subtitle">Improve performance</p>
+        <div class="melee-upgrades-grid">
+          {{#each allUpgrades}}
+          <div class="melee-upgrade-card {{#if this.selected}}selected{{/if}}"
+               data-upgrade="{{this.id}}"
+               {{#if this.selected}}data-selected="true"{{/if}}>
+            <div class="upgrade-name">{{this.name}}</div>
+            <div class="upgrade-description">{{this.description}}</div>
+            <div class="upgrade-stats">
+              <span class="upgrade-effect">{{this.effect}}</span>
+              <span class="upgrade-cost">{{this.costCredits}}cr</span>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+
+      <!-- ACCENT COLOR -->
+      <div class="ls-panel panel-accent">
+        <h3>Accent Color</h3>
+        <p class="accent-subtitle">Choose finial coloring</p>
+        <div class="melee-accent-grid">
+          <button type="button" class="melee-accent-option {{#if (eq accentColor 'steel')}}selected{{/if}}"
+                  data-accent="steel" style="background-color: #a0a0a0;"></button>
+          <button type="button" class="melee-accent-option {{#if (eq accentColor 'gold')}}selected{{/if}}"
+                  data-accent="gold" style="background-color: #d4af37;"></button>
+          <button type="button" class="melee-accent-option {{#if (eq accentColor 'copper')}}selected{{/if}}"
+                  data-accent="copper" style="background-color: #b87333;"></button>
+          <button type="button" class="melee-accent-option {{#if (eq accentColor 'silver')}}selected{{/if}}"
+                  data-accent="silver" style="background-color: #c0c0c0;"></button>
+          <button type="button" class="melee-accent-option {{#if (eq accentColor 'black')}}selected{{/if}}"
+                  data-accent="black" style="background-color: #1a1a1a;"></button>
+          <button type="button" class="melee-accent-option {{#if (eq accentColor 'crimson')}}selected{{/if}}"
+                  data-accent="crimson" style="background-color: #dc143c;"></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cost Summary -->
+    <div class="ls-panel panel-summary {{affordabilityClass}}">
+      <div class="summary-row">
+        <span class="summary-label">Enhancements</span>
+        <span class="summary-value">{{selectedUpgrades.length}}</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Total Cost</span>
+        <span class="summary-value">{{totalCreditCost}} credits</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Available</span>
+        <span class="summary-value {{#unless canAfford}}insufficient{{/unless}}">
+          {{actorCredits}} credits
+        </span>
+      </div>
+    </div>
+
+    <!-- Apply Button -->
+    <button type="button" class="melee-apply-button" {{#unless canAfford}}disabled{{/unless}}>
+      <span class="button-glow"></span>
+      {{#if canAfford}}
+        Apply Enhancements ({{totalCreditCost}}cr)
+      {{else}}
+        Insufficient Credits
+      {{/if}}
+    </button>
+  </form>
+</div>

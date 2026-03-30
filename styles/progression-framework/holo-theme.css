@@ -484,3 +484,29 @@
   color: var(--prog-negative);
   text-shadow: 0 0 4px rgba(239, 68, 68, 0.25), var(--prog-text-shadow);
 }
+
+/* =============================================================================
+ * MOBILE MODE: TOOLTIP HIDING + HOVER ELEMENT FIXES
+ * Tooltips and hover-only elements don't work on touch devices
+ * ============================================================================= */
+
+@media (hover: none) {
+  .tooltip,
+  [data-tooltip],
+  .tooltip-trigger::after,
+  .has-tooltip {
+    display: none !important;
+  }
+
+  .prog-holo [title],
+  .prog-holo .has-tooltip {
+    pointer-events: none;
+  }
+
+  .prog-holo .item-row::after,
+  .prog-holo .skill-row::after,
+  .prog-holo .ability-row::after,
+  .prog-holo [data-item-id]::after {
+    display: none !important;
+  }
+}

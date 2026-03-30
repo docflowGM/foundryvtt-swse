@@ -88,3 +88,22 @@
   background: rgba(239, 68, 68, 0.08);
   box-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
 }
+
+/* =============================================================================
+ * MOBILE MODE: TOUCH-FRIENDLY BUTTON SIZING
+ * Increase button dimensions for finger tapping
+ * ============================================================================= */
+
+.swse-mobile button,
+.swse-mobile .button,
+.swse-mobile [role="button"] {
+  min-width: 44px;
+  min-height: 44px;
+  padding: var(--prog-space-md) var(--prog-space-lg);
+}
+
+.swse-mobile .prog-btn {
+  min-width: 48px;
+  min-height: 44px;
+  padding: var(--prog-space-md) var(--prog-space-lg);
+}
