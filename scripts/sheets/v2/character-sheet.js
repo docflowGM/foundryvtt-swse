@@ -17,6 +17,7 @@ import { ActionEconomyIntegration } from "/systems/foundryvtt-swse/scripts/ui/co
 import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-bindings.js";
 import { SentinelSheetGuardrails } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-sheet-guardrails.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
+import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import { computeCenteredPosition } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
 import { PANEL_REGISTRY } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PANEL_REGISTRY.js";
@@ -1296,6 +1297,102 @@ const forcePoints = [];
       } catch (err) {
         console.error("Skill roll failed:", err);
         ui?.notifications?.error?.(`Skill roll failed: ${err.message}`);
+      }
+    }, { signal, capture: false });
+
+    // PHASE 6 Part 3: Skill Roll Button (with modifier dialog)
+    html.addEventListener("click", async ev => {
+      const button = ev.target.closest(".skill-roll-btn");
+      if (!button) return;
+
+      ev.preventDefault();
+      const skillKey = button.dataset.skill;
+      if (!skillKey) return;
+
+      try {
+        const skill = this.actor.system.skills?.[skillKey];
+        if (!skill) return;
+
+        const modResult = await showRollModifiersDialog({
+          title: `${skill.label ?? skillKey} Check`,
+          rollType: 'skill'
+        });
+
+        if (modResult === null) return; // Cancelled
+
+        await SWSERoll.rollSkill(this.actor, skillKey, {
+          customModifier: modResult.customModifier || 0,
+          useForcePoint: modResult.useForcePoint || false
+        });
+      } catch (err) {
+        console.error("Skill roll failed:", err);
+        ui?.notifications?.error?.(`Skill roll failed: ${err.message}`);
+      }
+    }, { signal, capture: false });
+
+    // PHASE 6 Part 3: Combat Attack Button (with modifier dialog)
+    html.addEventListener("click", async ev => {
+      const button = ev.target.closest(".attack-btn");
+      if (!button) return;
+
+      ev.preventDefault();
+      const itemId = button.dataset.itemId;
+      if (!itemId) return;
+
+      try {
+        const weapon = this.actor.items.get(itemId);
+        if (!weapon) return;
+
+        const modResult = await showRollModifiersDialog({
+          title: `${weapon.name} Attack`,
+          rollType: 'attack',
+          actor: this.actor,
+          weapon
+        });
+
+        if (modResult === null) return; // Cancelled
+
+        await SWSERoll.rollAttack(this.actor, weapon, {
+          customModifier: modResult.customModifier || 0,
+          cover: modResult.cover || 'none',
+          concealment: modResult.concealment || 'none',
+          useForcePoint: modResult.useForcePoint || false
+        });
+      } catch (err) {
+        console.error("Attack roll failed:", err);
+        ui?.notifications?.error?.(`Attack roll failed: ${err.message}`);
+      }
+    }, { signal, capture: false });
+
+    // PHASE 6 Part 3: Combat Damage Button (with modifier dialog)
+    html.addEventListener("click", async ev => {
+      const button = ev.target.closest(".damage-btn");
+      if (!button) return;
+
+      ev.preventDefault();
+      const itemId = button.dataset.itemId;
+      if (!itemId) return;
+
+      try {
+        const weapon = this.actor.items.get(itemId);
+        if (!weapon) return;
+
+        const modResult = await showRollModifiersDialog({
+          title: `${weapon.name} Damage`,
+          rollType: 'damage',
+          actor: this.actor,
+          weapon
+        });
+
+        if (modResult === null) return; // Cancelled
+
+        await SWSERoll.rollDamage(this.actor, weapon, {
+          customModifier: modResult.customModifier || 0,
+          useForcePoint: modResult.useForcePoint || false
+        });
+      } catch (err) {
+        console.error("Damage roll failed:", err);
+        ui?.notifications?.error?.(`Damage roll failed: ${err.message}`);
       }
     }, { signal, capture: false });
 
