@@ -20,6 +20,9 @@ import { MentorStoryResolver } from "/systems/foundryvtt-swse/scripts/engine/men
 import { renderJudgmentAtom } from "/systems/foundryvtt-swse/scripts/mentor/mentor-judgment-renderer.js";
 import { getReasonTexts } from "/systems/foundryvtt-swse/scripts/mentor/mentor-reason-renderer.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
+import { getMentorContext, getArchetypeOptions } from "/systems/foundryvtt-swse/scripts/mentor/mentor-adapter.js";
+import { buildBiasPhrase } from "/systems/foundryvtt-swse/scripts/mentor/mentor-language-mapper.js";
+import { BuildAnalysisEngine } from "/systems/foundryvtt-swse/scripts/engine/analysis/build-analysis-engine.js";
 
 // V2 API base class
 import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
@@ -118,6 +121,8 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
     this.currentTopic = null;
     this.currentResponse = null;
     this.buildIntent = null;
+    this.mentorContext = null; // Cache mentor context
+    this.buildAnalysis = null; // Cache build analysis
   }
 
   get title() {
@@ -467,16 +472,76 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
   }
 
   /**
+   * Get mentor context from engine outputs.
+   * Caches the context to avoid recomputation.
+   * @private
+   */
+  async _getMentorContext() {
+    // Return cached context if available
+    if (this.mentorContext) {
+      return this.mentorContext;
+    }
+
+    // Analyze build intent if not already done
+    if (!this.buildIntent) {
+      this.buildIntent = await SuggestionEngineCoordinator.analyzeBuildIntent(this.actor, {});
+    }
+
+    // Run build analysis to get signals and archetype
+    if (!this.buildAnalysis) {
+      this.buildAnalysis = await BuildAnalysisEngine.analyze(this.actor);
+    }
+
+    // Get mentor memory for commitment state
+    try {
+      const { getMentorMemory } = await import('/systems/foundryvtt-swse/scripts/engine/mentor/mentor-memory.js');
+      const mentorId = this.selectedMentor?.key?.toLowerCase();
+      const mentorMemory = mentorId ? getMentorMemory(this.actor, mentorId) : {};
+
+      // Build mentor context from engine outputs
+      this.mentorContext = getMentorContext({
+        actor: this.actor,
+        buildIntent: this.buildIntent,
+        analysis: this.buildAnalysis,
+        mentorMemory
+      });
+    } catch (err) {
+      SWSELogger.warn('[MentorChat] Error building mentor context:', err);
+      this.mentorContext = getMentorContext({
+        actor: this.actor,
+        buildIntent: this.buildIntent,
+        analysis: this.buildAnalysis
+      });
+    }
+
+    return this.mentorContext;
+  }
+
+  /**
    * 1. "Who am I becoming?" — Identity Reflection
-   * Summarizes how the suggestion engine sees the character
+   * Uses detected archetype from BuildAnalysisEngine output.
+   * Does NOT recompute role inference — uses engine's detected archetype.
    */
   async _generateIdentityReflection() {
     const level = this.actor.system.level;
-    const themes = this.buildIntent.primaryThemes || [];
-    const combatStyle = this.buildIntent.combatStyle || 'mixed';
-    const inferredRole = this.buildIntent.inferredRole || 'adventurer';
+    const mentorContext = await this._getMentorContext();
 
-    let reflection = `At level ${level}, the galaxy sees you as a **${inferredRole}**.\n\n`;
+    if (!mentorContext) {
+      return `At level ${level}, you are still finding your path.`;
+    }
+
+    const primaryArchetype = mentorContext.archetype?.primary;
+    const combatStyle = mentorContext.buildMechanics?.combatStyle || 'mixed';
+    const themes = mentorContext.buildMechanics?.primaryThemes || [];
+
+    let reflection = '';
+
+    if (primaryArchetype) {
+      reflection += `At level ${level}, the galaxy sees you becoming a **${primaryArchetype.name}**.\n\n`;
+      reflection += `${primaryArchetype.description}\n\n`;
+    } else {
+      reflection += `At level ${level}, you are charting your own path.\n\n`;
+    }
 
     if (themes.length > 0) {
       reflection += `Your choices reveal strong themes: **${themes.slice(0, 2).join('** and **')}**. `;
@@ -507,156 +572,71 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
 
   /**
    * 2. "What paths are open to me?" — Archetype Exploration
-   * Presents class-specific build archetypes with interactive selection
+   * Presents class-specific archetypes from class-archetypes.json
+   * Never synthesizes descriptions — always retrieves from data source
    */
   async _generateArchetypePaths() {
     const classItems = this.actor.items.filter(i => i.type === 'class');
-    const mentorClass = this.selectedMentor.key;
+    const className = classItems.map(c => c.name).join(', ') || 'Adventurer';
 
     let introduction = `Every path demands sacrifice. What you choose to master determines what you must forsake.\n\n`;
-    let pathList = [];
 
-    // Generic archetype framing based on mentor
-    if (mentorClass === 'Jedi') {
-      introduction += `Consider your options carefully:\n\n`;
-      pathList = [
-        {
-          name: 'Guardian',
-          description: 'Protector and warrior. Values defense, endurance, and lightsaber mastery. Sacrifices versatility for resilience.'
-        },
-        {
-          name: 'Consular',
-          description: 'Diplomat and Force scholar. Values wisdom, persuasion, and Force depth. Sacrifices combat prowess for influence.'
-        },
-        {
-          name: 'Sentinel',
-          description: 'Balanced warrior-diplomat. Values adaptability and skill diversity. Sacrifices specialization for versatility.'
-        }
-      ];
-    } else if (mentorClass === 'Scout') {
-      introduction += `Consider your options carefully:\n\n`;
-      pathList = [
-        {
-          name: 'Tracker',
-          description: 'Hunter and survivalist. Values perception, stealth, and wilderness expertise. Sacrifices social skills for survival.'
-        },
-        {
-          name: 'Infiltrator',
-          description: 'Urban operative. Values deception, agility, and information gathering. Sacrifices raw combat power for subtlety.'
-        },
-        {
-          name: 'Pathfinder',
-          description: 'Guide and leader. Values navigation, tactics, and team coordination. Sacrifices personal offense for group effectiveness.'
-        }
-      ];
-    } else if (mentorClass === 'Scoundrel') {
-      introduction += `Consider your options carefully:\n\n`;
-      pathList = [
-        {
-          name: 'Charmer',
-          description: 'Negotiator and con artist. Values persuasion, deception, and social manipulation. Sacrifices combat reliability for influence.'
-        },
-        {
-          name: 'Gunslinger',
-          description: 'Quick-draw specialist. Values initiative, ranged damage, and mobility. Sacrifices defense for offense.'
-        },
-        {
-          name: 'Smuggler',
-          description: 'Trader and opportunist. Values connections, resources, and escape options. Sacrifices specialization for flexibility.'
-        }
-      ];
-    } else if (mentorClass === 'Noble') {
-      introduction += `Consider your options carefully:\n\n`;
-      pathList = [
-        {
-          name: 'Diplomat',
-          description: 'Peacemaker and negotiator. Values charisma, knowledge, and coalition-building. Sacrifices combat ability for influence.'
-        },
-        {
-          name: 'Commander',
-          description: 'Tactical leader. Values inspiration, coordination, and battlefield control. Sacrifices personal power for force multiplication.'
-        },
-        {
-          name: 'Aristocrat',
-          description: 'Wealthy patron. Values resources, connections, and indirect power. Sacrifices direct action for leverage.'
-        }
-      ];
-    } else if (mentorClass === 'Soldier') {
-      introduction += `Consider your options carefully:\n\n`;
-      pathList = [
-        {
-          name: 'Heavy Weapons',
-          description: 'Firepower specialist. Values damage output, armor, and suppression. Sacrifices mobility for devastating attacks.'
-        },
-        {
-          name: 'Commando',
-          description: 'Elite operative. Values versatility, tactics, and special operations. Sacrifices raw power for adaptability.'
-        },
-        {
-          name: 'Defender',
-          description: 'Frontline protector. Values durability, positioning, and threat control. Sacrifices damage for resilience.'
-        }
-      ];
-    } else {
-      introduction += `Multiple archetypes exist within your class. Each emphasizes different attributes, skills, and tactical approaches. None is superior—only different in what they value and what they give up.`;
-      pathList = [];
+    // Get actual archetype options from data source
+    const pathList = getArchetypeOptions(className);
+
+    if (pathList.length === 0) {
+      introduction += `I cannot yet see the paths available to you. Your class is still being defined.`;
+      return {
+        introduction,
+        paths: []
+      };
     }
+
+    introduction += `Consider your options carefully:\n\n`;
+
+    // Convert archetype data to display format
+    const paths = pathList.map(archetype => ({
+      name: archetype.name,
+      description: archetype.description || 'An archetype yet to be fully understood.'
+    }));
 
     return {
       introduction,
-      paths: pathList
+      paths
     };
   }
 
   /**
    * 3. "What am I doing well?" — Synergy Analysis
-   * Highlights effective choices and reinforces good decisions
+   * Uses strength signals from BuildAnalysisEngine output.
+   * Does NOT recompute ability alignment — uses engine's analysis.
    */
   async _generateSynergyAnalysis() {
-    const combatStyle = this.buildIntent.combatStyle;
-    const abilities = this.actor.system.abilities;
-    const skills = this.actor.items.filter(i => i.type === 'skill' && i.system.trained);
+    const mentorContext = await this._getMentorContext();
+
+    if (!mentorContext) {
+      return "Your build shows promise, though it's still being defined.";
+    }
 
     let analysis = "Let me identify what's working:\n\n";
 
-    // Analyze ability-to-combat-style alignment
-    if (combatStyle === 'melee') {
-      const str = abilities.str?.mod || 0;
-      const con = abilities.con?.mod || 0;
-      if (str >= 2) {
-        analysis += `✓ Your **Strength** (${str > 0 ? '+' : ''}${str}) supports your melee approach effectively.\n`;
-      }
-      if (con >= 2) {
-        analysis += `✓ Your **Constitution** (${con > 0 ? '+' : ''}${con}) provides the durability a frontline fighter needs.\n`;
-      }
-    } else if (combatStyle === 'ranged') {
-      const dex = abilities.dex?.mod || 0;
-      const wis = abilities.wis?.mod || 0;
-      if (dex >= 2) {
-        analysis += `✓ Your **Dexterity** (${dex > 0 ? '+' : ''}${dex}) enhances both accuracy and defense.\n`;
-      }
-      if (wis >= 2) {
-        analysis += `✓ Your **Wisdom** (${wis > 0 ? '+' : ''}${wis}) sharpens your awareness and perception.\n`;
-      }
-    } else if (combatStyle === 'caster') {
-      const cha = abilities.cha?.mod || 0;
-      const wis = abilities.wis?.mod || 0;
-      if (cha >= 2) {
-        analysis += `✓ Your **Charisma** (${cha > 0 ? '+' : ''}${cha}) amplifies your Force presence.\n`;
-      }
-      if (wis >= 2) {
-        analysis += `✓ Your **Wisdom** (${wis > 0 ? '+' : ''}${wis}) deepens your connection to the Force.\n`;
-      }
+    // Use strength signals from engine analysis (do NOT recompute)
+    const strengthSignals = mentorContext.signals?.strengths || [];
+
+    if (strengthSignals.length === 0) {
+      analysis += "Your build is still taking shape. Focus on developing coherence and synergy.";
+      return analysis;
     }
 
-    // Skill synergies
-    if (skills.length > 0) {
-      analysis += `\n✓ You've invested in **${skills.length} trained skills**, showing commitment to versatility beyond combat.\n`;
-    }
+    // Display top strength signals
+    strengthSignals.slice(0, 3).forEach(signal => {
+      analysis += `✓ ${signal.evidence || signal.id}\n`;
+    });
 
-    // Prestige affinity
-    if (this.buildIntent.prestigeAffinities && this.buildIntent.prestigeAffinities.length > 0) {
-      const topPrestige = this.buildIntent.prestigeAffinities[0];
+    // Prestige affinity from buildIntent (already computed by engine)
+    const affinities = mentorContext.buildMechanics?.prestigeAffinities || [];
+    if (affinities.length > 0) {
+      const topPrestige = affinities[0];
       if (topPrestige.confidence >= 0.6) {
         analysis += `\n✓ Your choices are building a clear path toward **${topPrestige.className}** (${Math.round(topPrestige.confidence * 100)}% alignment).\n`;
       }
@@ -669,54 +649,41 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
 
   /**
    * 4. "What am I doing wrong?" — Gap Analysis
-   * Identifies inefficiencies and risks without being prescriptive
+   * Uses conflict signals from BuildAnalysisEngine output.
+   * Does NOT recompute defensive gaps or over-specialization — uses engine's analysis.
    */
   async _generateGapAnalysis() {
-    const combatStyle = this.buildIntent.combatStyle;
-    const abilities = this.actor.system.abilities;
-    const level = this.actor.system.level;
+    const mentorContext = await this._getMentorContext();
+
+    if (!mentorContext) {
+      return "Your build is still being defined. Focus on finding coherence.";
+    }
 
     let gaps = 'Every build has weaknesses. Let me point out yours:\n\n';
 
-    // Check for defensive gaps
-    const con = abilities.con?.mod || 0;
-    const dex = abilities.dex?.mod || 0;
-    const ref = this.actor.system.defenses?.reflex?.total || 10;
-    const fort = this.actor.system.defenses?.fort?.total || 10;
+    // Use conflict signals from engine analysis (do NOT recompute)
+    const conflictSignals = mentorContext.signals?.conflicts || [];
 
-    if (con < 1 && level >= 5) {
-      gaps += `⚠️ Your **Constitution** is neglected. This makes you fragile in sustained combat.\n`;
+    if (conflictSignals.length === 0) {
+      gaps = 'Your build shows no obvious gaps at this level. Continue as you are, but remain vigilant.';
+      return gaps;
     }
 
-    if (combatStyle === 'melee' && dex < 0) {
-      gaps += `⚠️ Low **Dexterity** leaves you vulnerable to ranged attacks and difficult to position effectively.\n`;
+    // Display conflict signals by severity
+    const critical = conflictSignals.filter(s => s.severity === 'critical');
+    const important = conflictSignals.filter(s => s.severity === 'important');
+    const minor = conflictSignals.filter(s => s.severity === 'minor');
+
+    if (critical.length > 0) {
+      critical.slice(0, 2).forEach(signal => {
+        gaps += `🔴 **Critical:** ${signal.evidence || signal.id}\n`;
+      });
     }
 
-    if (combatStyle === 'ranged' && fort < 15 && level >= 5) {
-      gaps += `⚠️ Weak **Fortitude** defense means poisons, diseases, and environmental hazards will disable you easily.\n`;
-    }
-
-    // Check for over-specialization
-    const highestAbility = Math.max(
-      abilities.str?.mod || 0,
-      abilities.dex?.mod || 0,
-      abilities.con?.mod || 0,
-      abilities.int?.mod || 0,
-      abilities.wis?.mod || 0,
-      abilities.cha?.mod || 0
-    );
-
-    const lowestAbility = Math.min(
-      abilities.str?.mod || 0,
-      abilities.dex?.mod || 0,
-      abilities.con?.mod || 0,
-      abilities.int?.mod || 0,
-      abilities.wis?.mod || 0,
-      abilities.cha?.mod || 0
-    );
-
-    if (highestAbility - lowestAbility > 5) {
-      gaps += `\n⚠️ You're heavily specialized. This makes you excellent in one area but vulnerable to challenges that demand different strengths.\n`;
+    if (important.length > 0) {
+      important.slice(0, 2).forEach(signal => {
+        gaps += `⚠️ ${signal.evidence || signal.id}\n`;
+      });
     }
 
     // DSP drift warning
@@ -724,10 +691,6 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
 
     if (dspSaturation > 0.3 && dspSaturation < 0.7) {
       gaps += `\n⚠️ You're drifting toward the dark side without committing. This instability will cost you when clarity matters most.\n`;
-    }
-
-    if (gaps === 'Every build has weaknesses. Let me point out yours:\n\n') {
-      return 'Your build shows no obvious gaps at this level. Continue as you are, but remain vigilant.';
     }
 
     return gaps;
