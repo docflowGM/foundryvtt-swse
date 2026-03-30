@@ -20,24 +20,6 @@
   box-shadow: 0 0 8px rgba(0,255,255,.25);
 }
 
-/* Skill total tooltip */
-.skill-total[data-tooltip] {
-  position: relative;
-}
-.skill-total[data-tooltip]:hover::after {
-  content: attr(data-tooltip);
-  white-space: pre-line;
-  position: absolute;
-  top: 22px;
-  left: 0;
-  padding: 6px 10px;
-  font-size: 11px;
-  background: rgba(0,25,50,.95);
-  border: 1px solid rgba(0,200,255,.4);
-  border-radius: 4px;
-  z-index: 1000;
-}
-
 /* Favorites */
 .skill-favorite-toggle,
 .skill-action-favorite {
