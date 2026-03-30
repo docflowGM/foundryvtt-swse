@@ -763,3 +763,52 @@
   color: rgba(200, 220, 255, 0.85);
   font-style: italic;
 }
+
+/* =============================================================================
+ * PHASE 2: MOBILE MODE ADAPTATIONS (.swse-mobile)
+ * Vertical stacking, full-width panels, hidden summary, scrollable regions
+ * ============================================================================= */
+
+/* Prevent horizontal overflow at body level */
+.swse-mobile {
+  overflow-x: hidden;
+}
+
+/* Ensure shell and main column fill width without exceeding viewport */
+.swse-mobile .progression-shell,
+.swse-mobile .prog-main-column {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Content row: stack vertically instead of horizontally */
+.swse-mobile .prog-content-row {
+  flex-direction: column;
+  gap: var(--prog-space-md);
+  padding: var(--prog-space-md);
+}
+
+/* Summary panel: hide on mobile (not critical info) */
+.swse-mobile [data-region="summary-panel"] {
+  display: none !important;
+}
+
+/* Work surface: full width, scrollable */
+.swse-mobile [data-region="work-surface"] {
+  width: 100%;
+  max-width: 100%;
+  min-height: 300px;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Details panel: full width below work surface, scrollable */
+.swse-mobile [data-region="details-panel"] {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}

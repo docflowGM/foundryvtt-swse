@@ -560,3 +560,50 @@
 .progression-shell [data-region="mentor-rail"][data-collapsed="true"] .prog-mentor__ask {
   display: none;
 }
+
+/* =============================================================================
+ * MOBILE MODE: MENTOR RAIL COMPRESSION
+ * Convert horizontal band to compact scrollable strip
+ * ============================================================================= */
+
+.swse-mobile [data-region="mentor-rail"] {
+  width: 100%;
+  height: auto;
+  max-height: 60px;
+  min-height: 60px;
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  overflow-y: hidden;
+  gap: var(--prog-space-sm);
+  padding: var(--prog-space-sm);
+}
+
+.swse-mobile .prog-mentor-rail {
+  gap: var(--prog-space-sm);
+  padding: var(--prog-space-sm);
+  height: 100%;
+}
+
+.swse-mobile .prog-mentor__portrait-zone {
+  min-width: 50px;
+}
+
+.swse-mobile .prog-mentor__portrait {
+  width: 48px;
+  height: 56px;
+}
+
+.swse-mobile .prog-mentor__name {
+  font-size: 7px;
+  max-width: 50px;
+}
+
+.swse-mobile .prog-mentor__dialogue {
+  display: none;
+}
+
+.swse-mobile .prog-mentor__ask,
+.swse-mobile .prog-mentor__collapse {
+  display: none;
+}

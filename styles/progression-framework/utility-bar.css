@@ -238,3 +238,28 @@
 .progression-shell [data-region="utility-bar"][data-collapsed="true"] .prog-utility-bar__conditional {
   display: none;
 }
+
+/* =============================================================================
+ * MOBILE MODE: UTILITY BAR SIMPLIFICATION
+ * Wrap controls if needed, reduce padding
+ * ============================================================================= */
+
+.swse-mobile .prog-utility-bar {
+  flex-wrap: wrap;
+  gap: var(--prog-space-sm);
+  padding: 0 var(--prog-space-sm);
+}
+
+.swse-mobile .prog-utility-bar__label {
+  font-size: var(--prog-font-size-xs);
+  flex-basis: 100%;
+}
+
+.swse-mobile .swse-filter-field {
+  min-height: 36px;
+  padding: 0 10px;
+}
+
+.swse-mobile .swse-filter-field--search {
+  flex: 1 1 100px;
+}
