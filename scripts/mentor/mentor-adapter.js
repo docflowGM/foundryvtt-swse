@@ -1,41 +1,45 @@
 /**
  * Mentor Adapter Layer
  *
- * Extracts and packages engine output for mentor consumption.
- * Pure presentation data extraction — NO ANALYSIS COMPUTATION.
+ * Extracts and structures engine outputs for mentor voice consumption.
+ * Pure data extraction and translation — NO ANALYSIS COMPUTATION.
  *
  * Contract:
- * - Input: BuildIntent, BuildAnalysisEngine output, ArchetypeRegistry data
- * - Output: Structured mentor context ready for voice filtering
- * - Never recomputes analysis, gaps, abilities, or roles
- * - Only translates engine truth to presentation layer
+ * - Input: BuildIntent, BuildAnalysisEngine output, archetype data
+ * - Output: Structured context for voice layer composition
+ * - Mapper: Applies mapBiasProfileToLanguage for semantic descriptors
+ * - Voice layer: Uses descriptors to compose dialogue with personality
+ *
+ * Key separation:
+ * - Adapter provides MEANING (semantic fragments)
+ * - Voice layer provides PERSONALITY (how it feels)
  */
 
 // eslint-disable-next-line
 import CLASS_ARCHETYPES from "/systems/foundryvtt-swse/data/class-archetypes.json" with { type: "json" };
-import { getArchetypePaths } from "/systems/foundryvtt-swse/scripts/mentor/mentor-archetype-paths.js";
+import { mapBiasProfileToLanguage, getPathDisposition } from "/systems/foundryvtt-swse/scripts/mentor/mentor-language-mapper.js";
 
 /**
  * Extract mentor context from engine outputs.
  *
  * @param {Object} options
  * @param {Actor} options.actor - The character actor
- * @param {BuildIntent} options.buildIntent - Build intent object with selections
- * @param {Object} options.analysis - BuildAnalysisEngine output with signals and archetype
- * @param {Object} options.mentorMemory - Mentor relationship state (optional)
+ * @param {BuildIntent} options.buildIntent - Build intent with selections
+ * @param {Object} options.analysis - BuildAnalysisEngine output
+ * @param {Object} options.mentorMemory - Mentor memory state (optional)
  *
- * @returns {Object} Mentor context ready for voice filtering
+ * @returns {Object} Mentor context for voice composition
  *   {
  *     actor,
  *     class,
  *     level,
- *     theme,
- *     inferredRole,
- *     archetype: { primary, secondary },
- *     signals: { conflicts: [...], strengths: [...] },
- *     archetypeDescriptions: { primary: {...}, secondary: {...} },
- *     commitmentPath,
- *     buildMechanics: { combatStyle, primaryThemes, prestigeAffinities }
+ *     identity: {
+ *       primary: { name, description, roleDescriptors, mechanicalDescriptors, ... },
+ *       secondary: { name, description, roleDescriptors, mechanicalDescriptors, ... }
+ *     },
+ *     signals: { conflicts, strengths },
+ *     buildMechanics: { combatStyle, primaryThemes, prestigeAffinities },
+ *     commitment: { path, strength, disposition }
  *   }
  */
 export function getMentorContext(options = {}) {
@@ -52,55 +56,58 @@ export function getMentorContext(options = {}) {
     .map(c => c.name)
     .join(', ') || 'Adventurer';
 
-  // Extract primary and secondary archetypes from analysis
-  const primaryArchetype = analysis?.archetype || null;
-  const secondaryArchetype = analysis?.secondaryArchetype || null;
+  // Extract archetype IDs from analysis
+  const primaryId = analysis?.archetype || null;
+  const secondaryId = analysis?.secondaryArchetype || null;
 
-  // Get archetype descriptions from class-archetypes.json
-  const archetypeDescriptions = _getArchetypeDescriptions(
+  // Build identity context with semantic language mapping
+  const identity = _buildIdentityContext(
     className,
-    primaryArchetype,
-    secondaryArchetype
+    primaryId,
+    secondaryId
   );
 
-  // Extract signals from analysis (do NOT recompute)
+  // Extract signals (do NOT recompute)
   const signals = {
     conflicts: analysis?.conflictSignals || [],
     strengths: analysis?.strengthSignals || [],
   };
 
-  // Get build mechanics from buildIntent (already computed by engine)
+  // Get build mechanics from buildIntent (pre-computed by engine)
   const buildMechanics = {
     combatStyle: buildIntent?.combatStyle || 'mixed',
     primaryThemes: buildIntent?.primaryThemes || [],
     prestigeAffinities: buildIntent?.prestigeAffinities || [],
   };
 
-  // Get committed path from mentor memory
-  const committedPath = mentorMemory?.committedPath || null;
-  const commitmentStrength = mentorMemory?.commitmentStrength || 0;
+  // Commitment state
+  const commitment = {
+    path: mentorMemory?.committedPath || null,
+    strength: mentorMemory?.commitmentStrength || 0,
+    disposition: mentorMemory?.committedPath
+      ? getPathDisposition(mentorMemory.committedPath, mentorMemory)
+      : 'neutral'
+  };
 
   return {
     actor,
     class: className,
     level,
-    primaryArchetype,
-    secondaryArchetype,
-    archetype: archetypeDescriptions,
+    identity,
     signals,
     buildMechanics,
-    commitmentPath,
-    commitmentStrength,
+    commitment,
   };
 }
 
 /**
- * Get archetype descriptions from data source.
- * Never synthesizes descriptions — only retrieves.
+ * Build identity context with semantic language mappings.
+ * Uses mapper to translate bias tags → semantic descriptors.
+ * Voice layer uses these fragments to compose personality-driven dialogue.
  *
  * @private
  */
-function _getArchetypeDescriptions(className, primaryId, secondaryId) {
+function _buildIdentityContext(className, primaryId, secondaryId) {
   const classKey = String(className || '').toLowerCase().trim();
   const classBlock = CLASS_ARCHETYPES?.classes?.[classKey];
 
@@ -109,40 +116,72 @@ function _getArchetypeDescriptions(className, primaryId, secondaryId) {
   }
 
   const primary = classBlock.archetypes[primaryId]
-    ? {
-        id: primaryId,
-        name: classBlock.archetypes[primaryId].name,
-        description: classBlock.archetypes[primaryId].notes,
-        roleBias: classBlock.archetypes[primaryId].roleBias || {},
-        mechanicalBias: classBlock.archetypes[primaryId].mechanicalBias || {},
-        attributeBias: classBlock.archetypes[primaryId].attributeBias || {},
-        talents: classBlock.archetypes[primaryId].talents || [],
-        feats: classBlock.archetypes[primaryId].feats || [],
-      }
+    ? _mapArchetypeToIdentity(primaryId, classBlock.archetypes[primaryId])
     : null;
 
   const secondary = classBlock.archetypes[secondaryId]
-    ? {
-        id: secondaryId,
-        name: classBlock.archetypes[secondaryId].name,
-        description: classBlock.archetypes[secondaryId].notes,
-        roleBias: classBlock.archetypes[secondaryId].roleBias || {},
-        mechanicalBias: classBlock.archetypes[secondaryId].mechanicalBias || {},
-        attributeBias: classBlock.archetypes[secondaryId].attributeBias || {},
-        talents: classBlock.archetypes[secondaryId].talents || [],
-        feats: classBlock.archetypes[secondaryId].feats || [],
-      }
+    ? _mapArchetypeToIdentity(secondaryId, classBlock.archetypes[secondaryId])
     : null;
 
   return { primary, secondary };
 }
 
 /**
- * Extract conflict signal details for mentor explanation.
- * Used to populate "what am I doing wrong" dialogue.
+ * Map an archetype to identity context with semantic language.
+ * @private
+ */
+function _mapArchetypeToIdentity(id, archetype) {
+  // Get semantic descriptors from bias profile
+  const language = mapBiasProfileToLanguage({
+    roleBias: archetype.roleBias || {},
+    mechanicalBias: archetype.mechanicalBias || {},
+    attributeBias: archetype.attributeBias || {}
+  });
+
+  return {
+    id,
+    name: archetype.name,
+    description: archetype.notes,
+    status: archetype.status || 'active',
+    // Semantic language for voice layer to compose with
+    roleDescriptors: language.roleDescriptors,
+    mechanicalDescriptors: language.mechanicalDescriptors,
+    attributeDescriptors: language.attributeDescriptors,
+    summaryDescriptors: language.summaryDescriptors,
+    dominantThemes: language.dominantThemes,
+    // Raw data for voice layer if needed
+    roleBias: archetype.roleBias || {},
+    mechanicalBias: archetype.mechanicalBias || {},
+    attributeBias: archetype.attributeBias || {},
+    talents: archetype.talents || [],
+    feats: archetype.feats || []
+  };
+}
+
+/**
+ * Get all archetype options for a class (for path selection).
+ * Pulls directly from data source, maps to identity format.
+ *
+ * @param {string} className
+ * @returns {Array} Array of archetype identity contexts
+ */
+export function getArchetypeOptions(className) {
+  const classKey = String(className || '').toLowerCase().trim();
+  const classBlock = CLASS_ARCHETYPES?.classes?.[classKey];
+
+  if (!classBlock?.archetypes) return [];
+
+  return Object.entries(classBlock.archetypes).map(([key, archetype]) =>
+    _mapArchetypeToIdentity(key, archetype)
+  );
+}
+
+/**
+ * Extract conflict signal details for mentor interpretation.
+ * Mentor voice decides how to frame these.
  *
  * @param {Object} signal - Conflict signal from analysis
- * @returns {Object} Signal with mentor-friendly fields
+ * @returns {Object} Signal with semantic fields
  */
 export function formatConflictSignal(signal) {
   if (!signal) return null;
@@ -157,10 +196,10 @@ export function formatConflictSignal(signal) {
 
 /**
  * Extract strength signal details for mentor affirmation.
- * Used to populate "what am I doing well" dialogue.
+ * Mentor voice decides how to compose these.
  *
  * @param {Object} signal - Strength signal from analysis
- * @returns {Object} Signal with mentor-friendly fields
+ * @returns {Object} Signal with semantic fields
  */
 export function formatStrengthSignal(signal) {
   if (!signal) return null;
@@ -173,27 +212,9 @@ export function formatStrengthSignal(signal) {
   };
 }
 
-/**
- * Get all archetype options for a class (for path selection dialogue).
- * Pulls directly from data source, no synthesis.
- *
- * @param {string} className
- * @returns {Array} Array of {id, name, description, roleBias, mechanicalBias}
- */
-export function getArchetypeOptions(className) {
-  const classKey = String(className || '').toLowerCase().trim();
-  const classBlock = CLASS_ARCHETYPES?.classes?.[classKey];
-
-  if (!classBlock?.archetypes) return [];
-
-  return Object.entries(classBlock.archetypes).map(([key, archetype]) => ({
-    id: key,
-    name: archetype.name,
-    description: archetype.notes,
-    roleBias: archetype.roleBias || {},
-    mechanicalBias: archetype.mechanicalBias || {},
-    attributeBias: archetype.attributeBias || {},
-  }));
-}
-
-export default { getMentorContext, formatConflictSignal, formatStrengthSignal, getArchetypeOptions };
+export default {
+  getMentorContext,
+  getArchetypeOptions,
+  formatConflictSignal,
+  formatStrengthSignal
+};
