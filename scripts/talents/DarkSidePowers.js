@@ -262,9 +262,9 @@ export class DarkSidePowers {
     );
 
     if (remainingDamages.length === 0) {
-      await actor.unsetFlag('foundryvtt-swse', 'wrathDamage');
+      await actor.unsetFlag('foundryvtt-swse', 'wrathDamage');  // @mutation-exception: metadata (temporary combat state)
     } else {
-      await actor.setFlag('foundryvtt-swse', 'wrathDamage', remainingDamages);
+      await actor.setFlag('foundryvtt-swse', 'wrathDamage', remainingDamages);  // @mutation-exception: metadata (temporary combat state)
     }
   }
 
@@ -272,7 +272,7 @@ export class DarkSidePowers {
     for (const combatant of game.combat?.combatants || []) {
       const actor = combatant.actor;
       if (actor?.getFlag('foundryvtt-swse', 'wrathDamage')) {
-        await actor.unsetFlag('foundryvtt-swse', 'wrathDamage');
+        await actor.unsetFlag('foundryvtt-swse', 'wrathDamage');  // @mutation-exception: metadata (temporary combat state)
       }
     }
   }
@@ -1698,7 +1698,7 @@ export class DarkSidePowers {
 
     const activeBonus = actor.getFlag('foundryvtt-swse', 'sithAlchemicalBonus');
     const bonuses = activeBonus ? [activeBonus, bonusFlag] : [bonusFlag];
-    await actor.setFlag('foundryvtt-swse', 'sithAlchemicalBonus', bonuses[0]); // Keep only the latest (one per encounter typically)
+    await actor.setFlag('foundryvtt-swse', 'sithAlchemicalBonus', bonuses[0]); // Keep only the latest (one per encounter typically)  // @mutation-exception: metadata (session ability bonus)
 
     const chatContent = `
       <div class="swse-sith-alchemical-bonus">
@@ -2307,7 +2307,7 @@ export async function activateSithWeaponBonus(actor, weaponItem) {
     expiresAt: game.combat ? null : _addHours(_nowISO(), 1).toISOString()
   };
 
-  await actor.setFlag('foundryvtt-swse', 'sithWeaponDamageBonus', payload);
+  await actor.setFlag('foundryvtt-swse', 'sithWeaponDamageBonus', payload);  // @mutation-exception: metadata (session ability bonus)
 
   await createChatMessage({
     speaker: { actor },

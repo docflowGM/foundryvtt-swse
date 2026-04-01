@@ -95,7 +95,7 @@ export class DestinyEffects {
    * Marked as a flag for GM to apply manually when needed
    */
   static async takeDamageForAlly(actor) {
-    await actor.setFlag('foundryvtt-swse', 'destinyTakeDamageForAlly', true);
+    await actor.setFlag('foundryvtt-swse', 'destinyTakeDamageForAlly', true);  // @mutation-exception: metadata (temporary destiny effect)
 
     createChatMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
@@ -122,7 +122,7 @@ export class DestinyEffects {
     await actor.unsetFlag('foundryvtt-swse', 'destinyAutoCrit');
     await actor.unsetFlag('foundryvtt-swse', 'destinyAutoMiss');
     await actor.unsetFlag('foundryvtt-swse', 'destinyActOutOfTurn');
-    await actor.unsetFlag('foundryvtt-swse', 'destinyTakeDamageForAlly');
+    await actor.unsetFlag('foundryvtt-swse', 'destinyTakeDamageForAlly');  // @mutation-exception: metadata (temporary destiny effect)
   }
 
   /**
