@@ -116,6 +116,7 @@ export const CombatLayer = {
     );
 
     if (!isAuthorized && filePath.includes('scripts/engine/combat')) {
+      // @mutation-exception: Audit pattern definitions (not executing mutations)
       // Forbidden direct mutations
       const mutationPatterns = [
         {

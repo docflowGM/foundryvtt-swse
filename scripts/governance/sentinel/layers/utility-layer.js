@@ -169,6 +169,7 @@ export const UtilityLayer = {
 
     const violations = [];
 
+    // @mutation-exception: Governance audit checking for violation patterns (not executing mutations)
     // Rule 1: Direct actor.update() in utilities
     if (pattern.includes('actor.update(') && !context.isActorEngine) {
       violations.push({

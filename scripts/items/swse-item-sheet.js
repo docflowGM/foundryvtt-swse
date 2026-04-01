@@ -147,7 +147,8 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
         return;
       }
     } else {
-      // Unowned items can update directly
+      // @mutation-exception: Unowned item update
+      // Unowned items (not on an actor) can update directly — UI-only operation
       await this.item.update(updates);
     }
 
@@ -177,7 +178,8 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
         return;
       }
     } else {
-      // Unowned items can update directly
+      // @mutation-exception: Unowned item update
+      // Unowned items (not on an actor) can update directly — UI-only operation
       await this.item.update(updates);
     }
     ui.notifications.info(`${this.item.name} deactivated!`);
@@ -200,7 +202,8 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
         return;
       }
     } else {
-      // Unowned items can update directly
+      // @mutation-exception: Unowned item update
+      // Unowned items (not on an actor) can update directly — UI-only operation
       await this.item.update({ 'flags.swse.emitLight': enabled });
     }
 
@@ -289,7 +292,8 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       }
     }
 
-    // Unowned items can update directly
+    // @mutation-exception: Unowned item update
+    // Unowned items (not on an actor) can update directly — UI-only sheet operation
     await this.item.update(flatData);
   }
 }
