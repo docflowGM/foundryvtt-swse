@@ -932,6 +932,21 @@ const forcePoints = [];
       helpLevelLabel: HelpModeManager.getHelpLevelLabel(this._helpLevel),
       helpLevelDescription: HelpModeManager.getHelpLevelDescription(this._helpLevel),
       // ═════════════════════════════════════════════════════════════════
+      // PHASE 2: MISSING CONTEXT KEYS (REMEDIATION)
+      // ═════════════════════════════════════════════════════════════════
+      xpEnabled,                    // XP system active/disabled flag
+      fpAvailable,                  // Force points available for use
+      abilities,                    // Array of ability objects with modifiers
+      followerSlots,                // Follower slots from actor flags
+      followerTalentBadges,         // Aggregated follower talent badges
+      enrichedFollowerSlots,        // Follower slots enriched with actor data
+      hasAvailableFollowerSlots,    // Whether any slots are unfilled
+      xpData,                       // XP progress data for display
+      // Inventory categorized items (for inventory panel legacy support)
+      equipment: Object.values(actor.items).filter(i => i.type === 'equipment'),
+      armor: Object.values(actor.items).filter(i => i.type === 'armor'),
+      weapons: Object.values(actor.items).filter(i => i.type === 'weapon'),
+      // ═════════════════════════════════════════════════════════════════
       // UNIFIED PANEL CONTEXTS (Primary data source)
       // Panels now own all character data through dedicated view models
       // ═════════════════════════════════════════════════════════════════
