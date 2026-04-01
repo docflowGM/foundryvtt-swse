@@ -174,12 +174,23 @@ export class PostRenderAssertions {
 
   /**
    * Run all registry-driven assertions after render
+   *
+   * @param {HTMLElement} html - Root DOM element
+   * @param {Object} context - Render context
+   * @param {Array<string>} visiblePanels - List of panel keys that should be checked (if null, check all)
    */
-  static runAll(html, context) {
+  static runAll(html, context, visiblePanels = null) {
     console.group('[PostRender] Registry-Driven Panel DOM Assertions');
     try {
-      const panelKeys = Object.keys(PANEL_REGISTRY);
-      for (const panelKey of panelKeys) {
+      // If no visible panels specified, check all registered panels (legacy behavior)
+      const panelsToCheck = visiblePanels ?? Object.keys(PANEL_REGISTRY);
+
+      for (const panelKey of panelsToCheck) {
+        const def = PANEL_REGISTRY[panelKey];
+        if (!def) {
+          console.warn(`[PostRender] Unknown panel: ${panelKey}`);
+          continue;
+        }
         this._assertPanel(panelKey, html, context);
       }
       console.log('[PostRender] All assertions completed');

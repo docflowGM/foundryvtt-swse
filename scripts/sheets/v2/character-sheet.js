@@ -376,6 +376,10 @@ export class SWSEV2CharacterSheet extends
     // Wire tooltip bindings for micro-tooltips
     bindV2CharacterSheetTooltips(this.document, root, this._renderAbort);
 
+    // Run post-render assertions only for visible panels (phase 2 audit: contract verification)
+    const visiblePanels = this.visibilityManager.getPanelsToBuild(this.document);
+    PostRenderAssertions.runAll(root, this._currentContext || {}, visiblePanels);
+
     // Wire pinned breakdown card interactions
     bindV2SheetBreakdowns(this.document, root, this._renderAbort);
 
@@ -387,9 +391,6 @@ export class SWSEV2CharacterSheet extends
 
     // Verify listener cleanup mechanism is in place (AbortController signal cleanup)
     verifyListenerCleanup(root, "SWSEV2CharacterSheet", signal);
-
-    // Run post-render assertions to verify DOM matches panel context contracts
-    PostRenderAssertions.runAll(root, this._currentContext || {});
   }
 
   async _onClose(options) {
