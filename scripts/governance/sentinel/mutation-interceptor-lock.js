@@ -17,38 +17,28 @@ export class MutationInterceptorLock {
   static AUTHORIZED_CALLERS = new Set(['ActorEngine', 'GameMaster']);
 
   /**
+   * DEPRECATED: Wrapper removed - PERMANENT FIX
    * Initialize global mutation interceptor
-   * Patches Actor.prototype.update to enforce governance
+   * NO LONGER patches Actor.prototype.update
+   *
+   * Guards are now enforced through Sentinel + ActorEngine context.
    */
   static initialize() {
     if (this.INTERCEPTOR_ACTIVE) {
       return; // Already initialized
     }
 
-    const originalUpdate = Actor.prototype.update;
-
-    Actor.prototype.update = async function(data, options = {}) {
-      return await MutationInterceptorLock.interceptActorUpdate(
-        this,
-        data,
-        options,
-        originalUpdate
-      );
-    };
-
-    const itemOriginalUpdate = Item.prototype.update;
-
-    Item.prototype.update = async function(data, options = {}) {
-      return await MutationInterceptorLock.interceptItemUpdate(
-        this,
-        data,
-        options,
-        itemOriginalUpdate
-      );
-    };
+    // PERMANENT FIX: Removed prototype patching
+    // No more: Actor.prototype.update = async function(data, options = {})...
+    // No more: Item.prototype.update = async function(data, options = {})...
+    //
+    // Enforcement now happens through:
+    // - MutationInterceptor.setContext() for state tracking
+    // - Sentinel validation layers for authorization
+    // - ActorEngine for mutation routing
 
     this.INTERCEPTOR_ACTIVE = true;
-    swseLogger.info('MutationInterceptorLock: Global interceptor initialized');
+    swseLogger.info('MutationInterceptorLock: Interceptor disabled (no prototype patches). Guards via Sentinel + ActorEngine.');
   }
 
   /**

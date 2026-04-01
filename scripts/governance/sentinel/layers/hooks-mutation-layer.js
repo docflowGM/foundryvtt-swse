@@ -69,99 +69,23 @@ export const HooksMutationLayer = {
   },
 
   /**
+   * DEPRECATED: Prototype wrappers removed - PERMANENT FIX
    * Detect direct mutations inside hooks
+   *
+   * NOTE: Observational logging now handled through hooks, not wrappers.
+   * This preserves hook monitoring without invasive prototype patching.
    */
   instrumentActorMutations() {
     const self = this;
-    const originalUpdate = Actor.prototype.update;
-    const originalCreateEmbedded = Actor.prototype.createEmbeddedDocuments;
-    const originalDeleteEmbedded = Actor.prototype.deleteEmbeddedDocuments;
+    // PERMANENT FIX: Removed all prototype wrappers
+    // No more: Actor.prototype.update = async function(data, options = {})...
+    // No more: Actor.prototype.createEmbeddedDocuments = async function(...)
+    // No more: Actor.prototype.deleteEmbeddedDocuments = async function(...)
+    //
+    // Hook mutation detection now uses hook callbacks instead.
+    // See hooks for 'preUpdateActor', 'preCreateEmbeddedDocuments', etc.
 
-    // Track direct actor.update() calls
-    Actor.prototype.update = async function(data, options = {}) {
-      if (self._hookStack.length > 0) {
-        const currentHook = self._hookStack[self._hookStack.length - 1];
-        const isGuarded = options?.meta?.guardKey;
-
-        // Allow ActorEngine mutations
-        const stack = new Error().stack || '';
-        const isActorEngine = stack.includes('ActorEngine');
-
-        if (!isActorEngine && !isGuarded) {
-          Sentinel.report(
-            'hooks',
-            Sentinel.SEVERITY.WARN,
-            `Direct actor.update() detected inside hook "${currentHook.hook}" without ActorEngine routing`,
-            {
-              actor: this.name,
-              hook: currentHook.hook,
-              isGuarded,
-              stack: stack.split('\n').slice(0, 5).join('\n')
-            }
-          );
-        }
-      }
-
-      return originalUpdate.call(this, data, options);
-    };
-
-    // Track direct createEmbeddedDocuments() calls
-    Actor.prototype.createEmbeddedDocuments = async function(embeddedName, data, options = {}) {
-      if (self._hookStack.length > 0) {
-        const currentHook = self._hookStack[self._hookStack.length - 1];
-        const isGuarded = options?.meta?.guardKey;
-
-        // Allow ActorEngine mutations
-        const stack = new Error().stack || '';
-        const isActorEngine = stack.includes('ActorEngine');
-
-        if (!isActorEngine && !isGuarded) {
-          Sentinel.report(
-            'hooks',
-            Sentinel.SEVERITY.WARN,
-            `Direct createEmbeddedDocuments("${embeddedName}") detected inside hook "${currentHook.hook}" without ActorEngine routing`,
-            {
-              actor: this.name,
-              hook: currentHook.hook,
-              embeddedName,
-              count: (data || []).length
-            }
-          );
-        }
-      }
-
-      return originalCreateEmbedded.call(this, embeddedName, data, options);
-    };
-
-    // Track direct deleteEmbeddedDocuments() calls
-    Actor.prototype.deleteEmbeddedDocuments = async function(embeddedName, ids, options = {}) {
-      if (self._hookStack.length > 0) {
-        const currentHook = self._hookStack[self._hookStack.length - 1];
-        const isGuarded = options?.meta?.guardKey;
-
-        // Allow ActorEngine mutations
-        const stack = new Error().stack || '';
-        const isActorEngine = stack.includes('ActorEngine');
-
-        if (!isActorEngine && !isGuarded) {
-          Sentinel.report(
-            'hooks',
-            Sentinel.SEVERITY.WARN,
-            `Direct deleteEmbeddedDocuments("${embeddedName}") detected inside hook "${currentHook.hook}" without ActorEngine routing`,
-            {
-              actor: this.name,
-              hook: currentHook.hook,
-              embeddedName,
-              count: (ids || []).length
-            }
-          );
-        }
-      }
-
-      return originalDeleteEmbedded.call(this, embeddedName, ids, options);
-    };
-
-    console.log('[Sentinel] Hooks mutation layer: Actor mutations instrumented');
+    console.log('[Sentinel] Hooks mutation layer: Prototype wrappers disabled. Using hook callbacks instead.');
   },
 
   /**
