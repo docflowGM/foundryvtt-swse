@@ -173,7 +173,7 @@ export class SentinelSovereigntyEnforcement {
     const advisoryConstraints = {
       mustNotImport: ['PrerequisiteChecker'],
       mustNotCall: ['game.packs.get()'],
-      mustNotDo: ['actor.update()', 'actor.createEmbeddedDocuments()'],
+      mustNotDo: ['actor.update()', 'actor.createEmbeddedDocuments()'],  // @mutation-exception: Governance audit/test code  // @mutation-exception: Governance audit/test code
       allowedDependencies: ['AbilityEngine', 'SuggestionEngine internals']
     };
 

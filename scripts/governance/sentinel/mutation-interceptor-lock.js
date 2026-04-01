@@ -61,13 +61,13 @@ export class MutationInterceptorLock {
       const canProceed = options.bypassMutationLock || game.user?.isGM;
 
       if (!canProceed) {
-        swseLogger.error('MutationInterceptorLock: Unauthorized actor.update() blocked', {
+        swseLogger.error('MutationInterceptorLock: Unauthorized actor.update() blocked', {  // @mutation-exception: Governance audit/test code
           actor: actor.id,
           caller: this.#getCallerInfo(callStack)
         });
 
         throw new Error(
-          'Unauthorized mutation: actor.update() must route through ActorEngine'
+          'Unauthorized mutation: actor.update() must route through ActorEngine'  // @mutation-exception: Governance audit/test code
         );
       }
     }
