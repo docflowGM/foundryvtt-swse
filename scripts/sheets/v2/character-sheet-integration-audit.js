@@ -226,6 +226,7 @@ export class SWSEV2CharacterSheetAudit {
           });
         }
 
+        // @mutation-exception: Test harness restoring original value for field audit
         // Restore original value
         await actor.update({ [fieldTest.updatePath]: originalValue });
 

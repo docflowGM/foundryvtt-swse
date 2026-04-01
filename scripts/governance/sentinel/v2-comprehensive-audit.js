@@ -165,6 +165,7 @@ export class V2ComprehensiveAudit {
   async _auditMutationSurfaces() {
     console.log('Phase 2: Mutation Surface Audit');
 
+    // @mutation-exception: Audit scanning for violation patterns (not executing mutations)
     const suspiciousPatternsToFind = [
       { pattern: /actor\.update\s*\(/g, message: 'Direct actor.update() call outside ActorEngine' },
       { pattern: /item\.update\s*\(/g, message: 'Direct item.update() call outside ActorEngine' },
@@ -416,6 +417,7 @@ export class V2ComprehensiveAudit {
         });
       }
 
+      // @mutation-exception: Audit checking for violation patterns (not executing mutations)
       // Check for direct mutations
       if (content.includes('actor.update(') || content.includes('ChatMessage.create(')) {
         this.findings.surveys.push({

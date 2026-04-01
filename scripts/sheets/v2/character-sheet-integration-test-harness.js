@@ -152,11 +152,13 @@ export class CharacterSheetIntegrationTestHarness {
       const originalName = this.actor.name;
       const testName_ = `TEST_${Date.now()}`;
 
+      // @mutation-exception: Test harness testing actor.update functionality
       // Use actor.update (proper path, not field input)
       await this.actor.update({ name: testName_ });
       const updated = this.actor.name;
 
       if (updated === testName_) {
+        // @mutation-exception: Test harness restoring original value
         // Restore
         await this.actor.update({ name: originalName });
         this.results.pass.push(testName);

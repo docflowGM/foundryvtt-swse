@@ -74,6 +74,7 @@ const SUSPICIOUS_FLAG_PATTERNS = [
 /**
  * Forbidden mutation patterns
  * These indicate direct calls to Foundry mutation methods
+ * @mutation-exception: Linter configuration containing pattern definitions (not mutations)
  */
 const FORBIDDEN_PATTERNS = [
   {
@@ -497,6 +498,7 @@ function runLint() {
   console.log(`  ⚠️  Suspicious metadata: ${metadataSuspicious.length} (review)`);
   console.log(`  ℹ️  Unknown metadata: ${metadataUnknown.length} (info)`);
 
+  // @mutation-exception: Linter output displaying violation examples (not executing mutations)
   console.log('\n📖 CLASSIFICATION GUIDE\n');
   console.log('❌ AUTHORITATIVE (must fix):');
   console.log('  - actor.update(...)');
