@@ -39,6 +39,8 @@ export class WishlistEngine {
         progress: 0  // 0-1, how many prerequisites are met
       });
 
+      // @mutation-exception: metadata
+      // Store player's wishlist for build suggestions (UI-only state)
       await actor.setFlag('foundryvtt-swse', 'wishlist', wishlist);
       SWSELogger.log(`[WISHLIST] Added "${item.name}" to wishlist`);
       return true;
@@ -64,6 +66,8 @@ export class WishlistEngine {
       if (index === -1) {return false;}
 
       const removed = wishlist[key].splice(index, 1)[0];
+      // @mutation-exception: metadata
+      // Update player's wishlist (UI-only state)
       await actor.setFlag('foundryvtt-swse', 'wishlist', wishlist);
       SWSELogger.log(`[WISHLIST] Removed "${removed.name}" from wishlist`);
       return true;

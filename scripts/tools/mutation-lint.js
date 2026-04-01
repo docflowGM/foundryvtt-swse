@@ -258,10 +258,27 @@ function scanFile(filePath) {
       return;
     }
 
+    // Check previous lines for annotations (they're often a few lines before)
+    let hasAnnotation = false;
+    for (let i = 1; i <= 3 && lineNum - i >= 0; i++) {
+      if (hasMetadataException(lines[lineNum - i])) {
+        hasAnnotation = true;
+        break;
+      }
+    }
+
+    const previousLine = lineNum > 0 ? lines[lineNum - 1] : '';
+    const lineWithContext = previousLine + ' ' + line;
+
     // Check each forbidden pattern
     FORBIDDEN_PATTERNS.forEach(({ pattern, description, severity, classification }) => {
       if (line.includes(pattern)) {
-        const violationType = classifyViolation(line, pattern);
+        // Check for metadata exception on current line OR previous lines
+        if (hasMetadataException(line) || hasAnnotation) {
+          return; // Skip - already annotated
+        }
+
+        const violationType = classifyViolation(lineWithContext, pattern);
 
         // Skip metadata-approved violations (already annotated)
         if (violationType === 'metadata-approved') {

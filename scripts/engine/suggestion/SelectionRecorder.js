@@ -35,6 +35,8 @@ async function _persistHistory(actor) {
       return;
     }
     // Persist to actor flags for durability across reloads
+    // @mutation-exception: metadata
+    // Store selection history for suggestion caching (session state)
     await actor.setFlag(
       'foundryvtt-swse',
       'suggestionEngine.history.recent',
