@@ -210,16 +210,11 @@ export class SWSEDebugger {
       return result;
     };
 
-    // Actor Update Tracking
-    const origActorUpdate = Actor.prototype.update;
-    Actor.prototype.update = async function (data, options) {
-      SWSEDebugger.record("actor:update", {
-        actor: this.name,
-        keys: Object.keys(data || {})
-      });
-
-      return origActorUpdate.apply(this, arguments);
-    };
+    // Actor Update Tracking - DISABLED (PERMANENT FIX)
+    // SWSE removed all prototype patching of Actor.prototype.update
+    // Diagnostic logging now goes through hooks instead
+    // const origActorUpdate = Actor.prototype.update;
+    // Actor.prototype.update = async function (data, options) { ... };
 
     // Settings Access Logging
     const origGet = game.settings.get;
