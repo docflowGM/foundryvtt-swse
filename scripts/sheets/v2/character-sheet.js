@@ -376,6 +376,10 @@ export class SWSEV2CharacterSheet extends
     // Wire tooltip bindings for micro-tooltips
     bindV2CharacterSheetTooltips(this.document, root, this._renderAbort);
 
+    // Run post-render assertions only for visible panels (phase 2 audit: contract verification)
+    const visiblePanels = this.visibilityManager.getPanelsToBuild(this.document);
+    PostRenderAssertions.runAll(root, this._currentContext || {}, visiblePanels);
+
     // Wire pinned breakdown card interactions
     bindV2SheetBreakdowns(this.document, root, this._renderAbort);
 
@@ -387,9 +391,6 @@ export class SWSEV2CharacterSheet extends
 
     // Verify listener cleanup mechanism is in place (AbortController signal cleanup)
     verifyListenerCleanup(root, "SWSEV2CharacterSheet", signal);
-
-    // Run post-render assertions to verify DOM matches panel context contracts
-    PostRenderAssertions.runAll(root, this._currentContext || {});
   }
 
   async _onClose(options) {
@@ -931,6 +932,21 @@ const forcePoints = [];
       helpLevel: this._helpLevel,
       helpLevelLabel: HelpModeManager.getHelpLevelLabel(this._helpLevel),
       helpLevelDescription: HelpModeManager.getHelpLevelDescription(this._helpLevel),
+      // ═════════════════════════════════════════════════════════════════
+      // PHASE 2: MISSING CONTEXT KEYS (REMEDIATION)
+      // ═════════════════════════════════════════════════════════════════
+      xpEnabled,                    // XP system active/disabled flag
+      fpAvailable,                  // Force points available for use
+      abilities,                    // Array of ability objects with modifiers
+      followerSlots,                // Follower slots from actor flags
+      followerTalentBadges,         // Aggregated follower talent badges
+      enrichedFollowerSlots,        // Follower slots enriched with actor data
+      hasAvailableFollowerSlots,    // Whether any slots are unfilled
+      xpData,                       // XP progress data for display
+      // Inventory categorized items (for inventory panel legacy support)
+      equipment: Object.values(actor.items).filter(i => i.type === 'equipment'),
+      armor: Object.values(actor.items).filter(i => i.type === 'armor'),
+      weapons: Object.values(actor.items).filter(i => i.type === 'weapon'),
       // ═════════════════════════════════════════════════════════════════
       // UNIFIED PANEL CONTEXTS (Primary data source)
       // Panels now own all character data through dedicated view models
