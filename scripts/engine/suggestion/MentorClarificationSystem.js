@@ -141,6 +141,8 @@ export async function storePlayerIntent(actor, responseIntent) {
       selectedAt: Date.now(),
       level: actor.system?.level || 1
     };
+    // @mutation-exception: metadata
+    // Store player's stated build intent (UI state for mentor advice filtering)
     await actor.setFlag('foundryvtt-swse', 'playerIntent', flags);
     SWSELogger.log(`[MentorClarificationSystem] Stored intent: ${responseIntent}`);
   } catch (err) {

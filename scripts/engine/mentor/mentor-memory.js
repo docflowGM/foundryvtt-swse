@@ -102,6 +102,8 @@ export async function setMentorMemory(actor, mentorId, memory) {
   const mentorMemories = actor.getFlag('foundryvtt-swse', 'mentorMemories') || {};
   mentorMemories[mentorId] = memory.toJSON();
 
+  // @mutation-exception: metadata
+  // Store mentor dialogue history and relationship state (session-scoped)
   await actor.setFlag('foundryvtt-swse', 'mentorMemories', mentorMemories);
 }
 
@@ -290,6 +292,8 @@ export async function decayAllMentorCommitments(actor, decayRate = 0.15) {
   }
 
   if (updated) {
+    // @mutation-exception: metadata
+    // Update mentor memories with decayed commitment (session state)
     await actor.setFlag('foundryvtt-swse', 'mentorMemories', mentorMemories);
   }
 }
@@ -323,6 +327,8 @@ export async function updateAllMentorMemories(actor) {
   }
 
   if (updated) {
+    // @mutation-exception: metadata
+    // Update mentor memories with inferred role changes (session state)
     await actor.setFlag('foundryvtt-swse', 'mentorMemories', mentorMemories);
   }
 }

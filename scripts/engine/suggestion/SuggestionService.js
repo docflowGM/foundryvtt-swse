@@ -315,6 +315,8 @@ export class SuggestionService {
         ids,
         at: Date.now()
       };
+      // @mutation-exception: metadata
+      // Store suggestion presentation state for UI consistency
       await actor.setFlag('foundryvtt-swse', 'suggestionState', state);
     } catch (err) {
       // Swallow mutation violations and other non-critical errors silently
@@ -348,6 +350,8 @@ export class SuggestionService {
       inputsHash,
       at: Date.now()
     };
+    // @mutation-exception: metadata
+    // Store last mentor advice for consistency (prevents duplicate advice on re-open)
     await actor.setFlag('foundryvtt-swse', 'suggestionState', state);
   }
 
@@ -388,10 +392,14 @@ export class SuggestionService {
     if (step) {
       if (state.lastMentorAdvice?.[step]) {
         delete state.lastMentorAdvice[step];
+        // @mutation-exception: metadata
+        // Clear mentor advice for specific step (UI consistency)
         await actor.setFlag('foundryvtt-swse', 'suggestionState', state);
       }
     } else {
       state.lastMentorAdvice = {};
+      // @mutation-exception: metadata
+      // Clear all mentor advice (UI state reset)
       await actor.setFlag('foundryvtt-swse', 'suggestionState', state);
     }
   }

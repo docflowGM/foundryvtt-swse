@@ -30,17 +30,17 @@ const PROTECTED_PATHS = [
 const FORBIDDEN_PATTERNS = [
   {
     pattern: /\bactor\.update\s*\(/,
-    message: 'Direct actor.update() found — must use ActorEngine.updateActor()',
+    message: 'Direct actor.update() found — must use ActorEngine.updateActor()',  // @mutation-exception: Validation script - example detection
     except: ['ActorEngine']
   },
   {
     pattern: /\bactor\.createEmbeddedDocuments\s*\(/,
-    message: 'Direct actor.createEmbeddedDocuments() found — must use ActorEngine.createEmbeddedDocuments()',
+    message: 'Direct actor.createEmbeddedDocuments() found — must use ActorEngine.createEmbeddedDocuments()',  // @mutation-exception: Validation script - example detection
     except: ['ActorEngine']
   },
   {
     pattern: /\bactor\.deleteEmbeddedDocuments\s*\(/,
-    message: 'Direct actor.deleteEmbeddedDocuments() found — must use ActorEngine method',
+    message: 'Direct actor.deleteEmbeddedDocuments() found — must use ActorEngine method',  // @mutation-exception: Validation script - example detection
     except: ['ActorEngine']
   },
   {

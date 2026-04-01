@@ -316,9 +316,9 @@ export class DarkSideTalentMechanics {
     );
 
     if (remainingDamages.length === 0) {
-      await actor.unsetFlag('foundryvtt-swse', 'wrathDamage');
+      await actor.unsetFlag('foundryvtt-swse', 'wrathDamage');  // @mutation-exception: metadata (temporary combat state)
     } else {
-      await actor.setFlag('foundryvtt-swse', 'wrathDamage', remainingDamages);
+      await actor.setFlag('foundryvtt-swse', 'wrathDamage', remainingDamages);  // @mutation-exception: metadata (temporary combat state)
     }
   }
 
@@ -329,7 +329,7 @@ export class DarkSideTalentMechanics {
     for (const combatant of game.combat?.combatants || []) {
       const actor = combatant.actor;
       if (actor?.getFlag('foundryvtt-swse', 'wrathDamage')) {
-        await actor.unsetFlag('foundryvtt-swse', 'wrathDamage');
+        await actor.unsetFlag('foundryvtt-swse', 'wrathDamage');  // @mutation-exception: metadata (temporary combat state)
       }
     }
   }

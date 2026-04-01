@@ -125,6 +125,8 @@ export function getLevel1Class(actor) {
 export async function setLevel1Class(actor, className) {
     SWSELogger.log(`[MENTOR-DIALOGUES] setLevel1Class: Setting starting class for actor "${actor.name}" to "${className}"`);
     try {
+        // @mutation-exception: metadata
+        // Store starting class for UI mentor selection (not progression engine)
         await actor.setFlag('foundryvtt-swse', 'startingClass', className);
         SWSELogger.log(`[MENTOR-DIALOGUES] setLevel1Class: Successfully set starting class flag`);
     } catch (err) {
@@ -149,6 +151,8 @@ export async function setMentorOverride(actor, mentorKey) {
     SWSELogger.log(`[MENTOR-DIALOGUES] setMentorOverride: Mentor key validated - "${MENTORS[mentorKey].name}"`);
 
     try {
+        // @mutation-exception: metadata
+        // Store manual mentor override (UI state, not progression engine)
         await actor.setFlag('foundryvtt-swse', 'mentorOverride', mentorKey);
         SWSELogger.log(`[MENTOR-DIALOGUES] setMentorOverride: Successfully set mentor override flag`);
 
@@ -201,6 +205,8 @@ export async function clearMentorOverride(actor) {
     SWSELogger.log(`[MENTOR-DIALOGUES] clearMentorOverride: Clearing mentor override for actor "${actor.name}"`);
 
     try {
+        // @mutation-exception: metadata
+        // Clear mentor override to restore automatic selection (UI state)
         await actor.unsetFlag('foundryvtt-swse', 'mentorOverride');
         SWSELogger.log(`[MENTOR-DIALOGUES] clearMentorOverride: Successfully cleared mentor override flag`);
 

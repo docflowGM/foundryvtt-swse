@@ -169,18 +169,19 @@ export const UtilityLayer = {
 
     const violations = [];
 
+    // @mutation-exception: Governance audit checking for violation patterns (not executing mutations)
     // Rule 1: Direct actor.update() in utilities
-    if (pattern.includes('actor.update(') && !context.isActorEngine) {
+    if (pattern.includes('actor.update(') && !context.isActorEngine) {  // @mutation-exception: Audit pattern checking
       violations.push({
         type: 'DIRECT_UPDATE',
         severity: 'ERROR',
-        message: 'Direct actor.update() in utility layer (use ActorEngine.updateActor)',
+        message: 'Direct actor.update() in utility layer (use ActorEngine.updateActor)',  // @mutation-exception: Audit pattern checking
         context
       });
     }
 
     // Rule 2: Direct createEmbeddedDocuments outside ActorEngine
-    if (pattern.includes('actor.createEmbeddedDocuments(') && !context.isActorEngine) {
+    if (pattern.includes('actor.createEmbeddedDocuments(') && !context.isActorEngine) {  // @mutation-exception: Audit pattern checking
       violations.push({
         type: 'EMBEDDED_CREATE_BYPASS',
         severity: 'ERROR',
@@ -190,7 +191,7 @@ export const UtilityLayer = {
     }
 
     // Rule 3: Direct deleteEmbeddedDocuments outside ActorEngine
-    if (pattern.includes('actor.deleteEmbeddedDocuments(') && !context.isActorEngine) {
+    if (pattern.includes('actor.deleteEmbeddedDocuments(') && !context.isActorEngine) {  // @mutation-exception: Audit pattern checking
       violations.push({
         type: 'EMBEDDED_DELETE_BYPASS',
         severity: 'ERROR',
@@ -220,7 +221,7 @@ export const UtilityLayer = {
     }
 
     // Rule 6: Multiple updates in loop
-    if (pattern.includes('for (') && pattern.includes('actor.update(')) {
+    if (pattern.includes('for (') && pattern.includes('actor.update(')) {  // @mutation-exception: Audit pattern checking
       violations.push({
         type: 'LOOP_MUTATION',
         severity: 'ERROR',

@@ -26,6 +26,8 @@ export async function detectArchetypeShift(actor, newArchetypeId, newConfidence 
     const currentLevel = actor.system?.level || 1;
 
     // Store new archetype info
+    // @mutation-exception: metadata
+    // Track archetype shifts for UI change detection
     await actor.setFlag('foundryvtt-swse', 'previousArchetype', {
       id: newArchetypeId,
       confidence: newConfidence,

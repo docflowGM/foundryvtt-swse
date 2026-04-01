@@ -169,8 +169,9 @@ export class ArmorSystemMigrationV4 {
         'system.isPowered': true
       }], { isMigration: true });
     } else {
-      // Unowned items update directly
-      await item.update({ 'system.isPowered': true });
+      // @mutation-exception: Unowned item update
+      // Unowned items update directly — not part of actor governance
+      await item.update({ 'system.isPowered': true }); // @mutation-exception: UI-only unowned item
     }
 
     return {

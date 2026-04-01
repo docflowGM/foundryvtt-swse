@@ -88,7 +88,7 @@ export class Batch1Validation {
         return;
       }
 
-      console.log(`Testing item.update() on owned item: ${item.name}`);
+      console.log(`Testing mutation interception on owned item: ${item.name}`);
 
       // Try direct item update (SHOULD BE CAUGHT)
       let violationDetected = false;
@@ -100,15 +100,16 @@ export class Batch1Validation {
       };
 
       try {
+        // @mutation-exception: Intentional test of mutation interception
         // This should trigger violation detection
-        await item.update({ 'system.quantity': (item.system.quantity || 1) + 1 });
+        await item.update({ 'system.quantity': (item.system.quantity || 1) + 1 });  // @mutation-exception: Test harness - intentional mutation test
 
         // Check if violation was logged
         if (violationDetected) {
-          console.log('✅ Direct item.update() caught (violation detected)');
+          console.log('✅ Mutation interception working (violation detected)');
           this.results.passed++;
         } else {
-          console.error('❌ Direct item.update() NOT caught (silent bypass!)');
+          console.error('❌ Mutation interception NOT working (silent bypass!)');
           this.results.failed++;
           this.results.errors.push('GATE 1 FAILED: Owned item mutations bypass interceptor');
         }

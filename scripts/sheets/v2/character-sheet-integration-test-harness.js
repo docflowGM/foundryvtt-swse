@@ -152,13 +152,15 @@ export class CharacterSheetIntegrationTestHarness {
       const originalName = this.actor.name;
       const testName_ = `TEST_${Date.now()}`;
 
+      // @mutation-exception: Test harness testing actor.update functionality
       // Use actor.update (proper path, not field input)
-      await this.actor.update({ name: testName_ });
+      await this.actor.update({ name: testName_ });  // @mutation-exception: Test harness - widget functionality test
       const updated = this.actor.name;
 
       if (updated === testName_) {
+        // @mutation-exception: Test harness restoring original value
         // Restore
-        await this.actor.update({ name: originalName });
+        await this.actor.update({ name: originalName });  // @mutation-exception: Test harness - widget restoration
         this.results.pass.push(testName);
       } else {
         this.results.fail.push(`${testName}: Value not persisted (got ${updated}, expected ${testName_})`);

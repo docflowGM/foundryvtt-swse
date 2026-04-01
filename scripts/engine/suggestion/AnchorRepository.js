@@ -131,6 +131,8 @@ export class AnchorRepository {
       }
       currentState.anchors[position] = updatedAnchor;
 
+      // @mutation-exception: metadata
+      // Cache anchor points for suggestion resolution (internal engine state)
       await actor.setFlag('foundryvtt-swse', 'suggestionEngine', currentState);
 
       // Also update in-memory state for consistency
@@ -232,6 +234,8 @@ export class AnchorRepository {
         currentState.anchors = actor.system.suggestionEngine.anchors;
       }
 
+      // @mutation-exception: metadata
+      // Record anchor resolution history (internal engine state)
       await actor.setFlag('foundryvtt-swse', 'suggestionEngine', currentState);
 
       SWSELogger.log(`[AnchorRepository] Anchor history recorded`, {

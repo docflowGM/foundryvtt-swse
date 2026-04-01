@@ -518,6 +518,8 @@ export class MentorSystem {
     this.mentorId = mentorMap[firstClass.toLowerCase()] || 'generic';
 
     // Store for future use
+    // @mutation-exception: metadata
+    // Store active mentor selection (UI state)
     await this.actor.setFlag('foundryvtt-swse', 'mentor', this.mentorId);
 
     swseLogger.log(`[MENTOR] Determined mentor: ${this.mentorId}`);

@@ -98,6 +98,7 @@ import { SWSEV2BaseActor } from './scripts/actors/v2/base-actor.js';
 import { SWSEItemBase } from './scripts/items/base/swse-item-base.js';
 import { ActorEngine } from "./scripts/governance/actor-engine/actor-engine.js";
 import { MutationInterceptor } from './scripts/governance/mutation/MutationInterceptor.js';
+import { MutationPathGuard } from './scripts/governance/sentinel/mutation-path-guard.js';
 import { EmbeddedMutationLayer } from './scripts/governance/mutation/embedded-mutation-layer.js';
 import { MutationBoundaryDefense } from './scripts/governance/sentinel/mutation-boundary-defense.js';
 import { Batch1Validation } from './scripts/governance/mutation/batch-1-validation.js';
@@ -308,6 +309,9 @@ Hooks.once('init', async () => {
   /* ---------- PHASE 3: unified sentinel enforcement ---------- */
   initializeSentinelGovernance();
   MutationInterceptor.initialize();
+
+  /* ---------- PERMANENT FIX: Mutation path guard (regression lock) ---------- */
+  MutationPathGuard.initialize();
 
   /* ---------- PHASE 3: Enforcement mode activation ---------- */
   EmbeddedMutationLayer.initialize();

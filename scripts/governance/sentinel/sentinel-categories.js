@@ -95,7 +95,7 @@ export const SENTINEL_CATEGORIES = {
     label: 'Data Persistence',
     severity: 'ERROR',
     subcodes: {
-      UPDATE_FAILED: 'actor.update() failed or not routed through engine',
+      UPDATE_FAILED: 'actor.update() failed or not routed through engine',  // @mutation-exception: Governance audit/test code
       WRONG_PATH: 'Form field path doesn\'t match schema',
       NOT_SAVED: 'Changes made but not persisted',
       STALE_DATA: 'Sheet showing stale data after update'

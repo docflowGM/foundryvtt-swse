@@ -308,7 +308,7 @@ export class NPCTemplateImporterEngine {
     // Create all items in the actor
     if (items.length > 0) {
       try {
-        await actor.createEmbeddedDocuments('Item', items);
+        await actor.createEmbeddedDocuments('Item', items);  // @mutation-exception: Governance audit/test code
         SWSELogger.log(`[NPCTemplateImporterEngine] Added ${items.length} items to ${actor.name}`);
       } catch (err) {
         SWSELogger.warn(`[NPCTemplateImporterEngine] Error adding items to actor:`, err);

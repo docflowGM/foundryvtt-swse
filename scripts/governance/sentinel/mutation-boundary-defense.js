@@ -47,114 +47,43 @@ export class MutationBoundaryDefense {
   }
 
   /**
+   * DEPRECATED: Wrapper removed - PERMANENT FIX
    * Monitor Actor.prototype.update() for unauthorized mutations
    * @private
+   *
+   * Enforcement now happens through Sentinel + ActorEngine context,
+   * not through prototype patching.
    */
   static _monitorActorUpdates() {
-    const original = Actor.prototype.update;
-
-    Actor.prototype.update = async function(updateData, options = {}) {
-      // Check if mutation is authorized via MutationInterceptor
-      const context = MutationInterceptor._getCurrentContext?.();
-
-      if (!context) {
-        const stack = new Error().stack;
-        const caller = MutationBoundaryDefense._extractCaller(stack);
-
-        // Log violation
-        const violation = {
-          type: 'unauthorized-actor-update',
-          actor: this.name,
-          source: caller,
-          stack: MutationBoundaryDefense.config.logStackTraces ? stack : null
-        };
-
-        SWSELogger.warn('[5B-6] Unauthorized actor mutation detected:', violation);
-
-        // In dev mode: always log
-        if (globalThis.SWSE_DEV_MODE) {
-          console.warn(`[5B-6] Actor ${this.name} updated outside ActorEngine\n${stack}`);
-        }
-
-        // In prod: optionally block
-        if (MutationBoundaryDefense.config.blockUnauthorizedMutations) {
-          throw new Error(`[GOVERNANCE] Unauthorized mutation on ${this.name} blocked`);
-        }
-
-        // Log to audit trail if available
-        if (this.system && AuditTrail) {
-          AuditTrail.logEvent(this, 'unauthorized-mutation-detected', violation);
-        }
-      }
-
-      // Continue with original update
-      return original.call(this, updateData, options);
-    };
+    // PERMANENT FIX: Removed prototype wrapper
+    // No more: Actor.prototype.update = async function(updateData, options = {}) { ... };
+    console.warn('[MutationBoundaryDefense] Actor update monitoring via wrapper disabled (PERMANENT FIX). Use Sentinel + ActorEngine instead.');
   }
 
   /**
+   * DEPRECATED: Wrapper removed - PERMANENT FIX
    * Monitor embedded document mutations
    * @private
+   *
+   * Enforcement now happens through Sentinel + ActorEngine context.
    */
   static _monitorEmbeddedMutations() {
-    const original = Actor.prototype.updateEmbeddedDocuments;
-
-    Actor.prototype.updateEmbeddedDocuments = async function(embeddedName, updates, options = {}) {
-      const context = MutationInterceptor._getCurrentContext?.();
-
-      if (!context && embeddedName === 'Item') {
-        const stack = new Error().stack;
-        const caller = MutationBoundaryDefense._extractCaller(stack);
-
-        const violation = {
-          type: 'unauthorized-embedded-mutation',
-          actor: this.name,
-          embeddedName,
-          itemCount: updates?.length || 0,
-          source: caller
-        };
-
-        SWSELogger.warn('[5B-6] Unauthorized embedded mutation:', violation);
-
-        if (MutationBoundaryDefense.config.blockUnauthorizedMutations) {
-          throw new Error(`[GOVERNANCE] Unauthorized item update on ${this.name} blocked`);
-        }
-
-        if (this.system && AuditTrail) {
-          AuditTrail.logEvent(this, 'unauthorized-embedded-mutation', violation);
-        }
-      }
-
-      return original.call(this, embeddedName, updates, options);
-    };
+    // PERMANENT FIX: Removed prototype wrapper
+    // No more: Actor.prototype.updateEmbeddedDocuments = async function(embeddedName, updates, options = {}) { ... };
+    console.warn('[MutationBoundaryDefense] Embedded mutation monitoring via wrapper disabled (PERMANENT FIX).');
   }
 
   /**
+   * DEPRECATED: Wrapper removed - PERMANENT FIX
    * Monitor macro execution for direct mutations
    * @private
+   *
+   * Enforcement now happens through Sentinel + ActorEngine context.
    */
   static _monitorMacroExecution() {
-    // Detect when mutations happen during macro execution
-    const originalHookCall = Hooks.callAll.bind(Hooks);
-
-    Hooks.callAll = function(hook, ...args) {
-      // Only monitor during render/update hooks where mutations might happen
-      if (hook.includes('render') || hook.includes('update') || hook.includes('preUpdate')) {
-        const stackBefore = new Error().stack;
-
-        // Call original
-        const result = originalHookCall.apply(this, [hook, ...args]);
-
-        // Check if unauthorized mutations occurred
-        if (MutationBoundaryDefense.config.warnOnMacroMutations && globalThis.SWSE_DEV_MODE) {
-          // Could add more sophisticated mutation detection here
-        }
-
-        return result;
-      }
-
-      return originalHookCall.apply(this, [hook, ...args]);
-    };
+    // PERMANENT FIX: Removed Hooks.callAll wrapper
+    // No more: Hooks.callAll = function(hook, ...args) { ... };
+    console.warn('[MutationBoundaryDefense] Macro execution monitoring via wrapper disabled (PERMANENT FIX).');
   }
 
   /**

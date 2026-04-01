@@ -3176,6 +3176,88 @@ export const ActorEngine = {
   },
 
   /**
+   * PHASE 3: Remove a flag from an actor.
+   * ONLY legal way to unset actor flags.
+   * Routes through mutation context enforcement.
+   *
+   * @param {Actor} actor - The actor to unset flag on
+   * @param {string} scope - Flag scope (e.g., 'foundryvtt-swse')
+   * @param {string} key - Flag key
+   * @param {object} [options={}] - Additional options
+   * @returns {Promise<Actor>} Updated actor
+   */
+  async unsetActorFlag(actor, scope, key, options = {}) {
+    try {
+      if (!actor) {throw new Error('unsetActorFlag() called with no actor');}
+      if (!scope || typeof scope !== 'string') {throw new Error('unsetActorFlag() requires scope string');}
+      if (!key || typeof key !== 'string') {throw new Error('unsetActorFlag() requires key string');}
+
+      SWSELogger.debug(`ActorEngine.unsetActorFlag → ${actor.name}`, {
+        scope,
+        key,
+        meta: options.meta
+      });
+
+      // ========================================
+      // PHASE 3: Authorize mutation via context
+      // ========================================
+      MutationInterceptor.setContext(`ActorEngine.unsetActorFlag[${scope}.${key}]`);
+      try {
+        // Route through unsetFlag with mutation context active
+        const result = await actor.unsetFlag(scope, key);
+        await this.recalcAll(actor);
+        return result;
+      } finally {
+        MutationInterceptor.clearContext();
+      }
+    } catch (err) {
+      SWSELogger.error(`ActorEngine.unsetActorFlag failed for ${actor?.name ?? 'unknown actor'}`, {
+        error: err,
+        scope,
+        key
+      });
+      throw err;
+    }
+  },
+
+  /**
+   * PHASE 8D: Approved wrapper for updating ActiveEffects on actors.
+   * Routes through mutation context enforcement.
+   *
+   * @param {Actor} actor - The actor owning the effects
+   * @param {Array} updates - Array of effect updates (each must include _id)
+   * @param {Object} [options={}] - Additional options
+   * @returns {Promise<Array>} Updated ActiveEffect documents
+   */
+  async updateActiveEffects(actor, updates, options = {}) {
+    try {
+      if (!actor) {throw new Error('updateActiveEffects() called with no actor');}
+      if (!Array.isArray(updates)) {throw new Error('updateActiveEffects() requires updates array');}
+
+      SWSELogger.debug(`ActorEngine.updateActiveEffects → ${actor.name}`, {
+        count: updates.length,
+        source: options.source || 'unknown'
+      });
+
+      MutationInterceptor.setContext({
+        operation: 'updateActiveEffects',
+        source: options.source || 'ActorEngine',
+        suppressRecalc: options.suppressRecalc ?? false
+      });
+      try {
+        const result = await actor.updateEmbeddedDocuments('ActiveEffect', updates, options);
+        await this.recalcAll(actor);
+        return result;
+      } finally {
+        MutationInterceptor.clearContext();
+      }
+    } catch (err) {
+      SWSELogger.error(`ActorEngine.updateActiveEffects failed for ${actor?.name ?? 'unknown actor'}`, err);
+      throw err;
+    }
+  },
+
+  /**
    * Recompute actor's system.hp.max using SWSE Saga RAW formula.
    * ONLY writer of system.hp.max. Uses PERSISTENT (non-derived) canonical inputs only.
    * Called on: level-up, CON change, class change, species apply, feat change.

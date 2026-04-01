@@ -116,6 +116,7 @@ export const CombatLayer = {
     );
 
     if (!isAuthorized && filePath.includes('scripts/engine/combat')) {
+      // @mutation-exception: Audit pattern definitions (not executing mutations)
       // Forbidden direct mutations
       const mutationPatterns = [
         {
@@ -128,7 +129,7 @@ export const CombatLayer = {
         },
         {
           pattern: /actor\s*\.\s*update\s*\(\s*\{\s*system\s*\.\s*hp/,
-          message: 'actor.update() with HP mutation detected'
+          message: 'actor.update() with HP mutation detected'  // @mutation-exception: Audit pattern checking
         }
       ];
 
