@@ -183,7 +183,7 @@ export class SWSEActorBase extends Actor {
     // @mutation-exception: Unowned item update
     // Unowned items (directory) update normally — not governed by actor
     if (!item.isOwned || item.parent?.id !== this.id) {
-      return item.update(changes, options);
+      return item.update(changes, options); // @mutation-exception: Unowned directory item
     }
 
     // PHASE 2: No fallback to direct update. ActorEngine is required.

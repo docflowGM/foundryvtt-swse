@@ -294,6 +294,6 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
 
     // @mutation-exception: Unowned item update
     // Unowned items (not on an actor) can update directly — UI-only sheet operation
-    await this.item.update(flatData);
+    await this.item.update(flatData); // @mutation-exception: UI-only unowned item
   }
 }
