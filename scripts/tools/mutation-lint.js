@@ -28,6 +28,7 @@ const STRICT_MODE = true; // Block even ambiguous usage
 /**
  * Forbidden mutation patterns
  * These indicate direct calls to Foundry mutation methods
+ * Must be precise to avoid matching ActorEngine.createEmbeddedDocuments() etc
  */
 const FORBIDDEN_PATTERNS = [
   {
@@ -36,18 +37,23 @@ const FORBIDDEN_PATTERNS = [
     severity: 'ERROR'
   },
   {
-    pattern: '.updateEmbeddedDocuments(',
-    description: 'Direct updateEmbeddedDocuments() call',
+    pattern: 'actor.updateEmbeddedDocuments(',
+    description: 'Direct updateEmbeddedDocuments() call on actor',
     severity: 'ERROR'
   },
   {
-    pattern: '.createEmbeddedDocuments(',
-    description: 'Direct createEmbeddedDocuments() call',
+    pattern: 'actor.createEmbeddedDocuments(',
+    description: 'Direct createEmbeddedDocuments() call on actor',
     severity: 'ERROR'
   },
   {
-    pattern: '.deleteEmbeddedDocuments(',
-    description: 'Direct deleteEmbeddedDocuments() call',
+    pattern: 'actor.deleteEmbeddedDocuments(',
+    description: 'Direct deleteEmbeddedDocuments() call on actor',
+    severity: 'ERROR'
+  },
+  {
+    pattern: 'item.update(',
+    description: 'Direct item.update() call for owned items',
     severity: 'ERROR'
   },
   {
