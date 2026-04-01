@@ -78,44 +78,44 @@ const SUSPICIOUS_FLAG_PATTERNS = [
  */
 const FORBIDDEN_PATTERNS = [
   {
-    pattern: 'actor.update(',
-    description: 'Direct actor.update() call',
+    pattern: 'actor.update(',  // @mutation-exception: Linter pattern/output definitions
+    description: 'Direct actor.update() call',  // @mutation-exception: Linter pattern/output definitions
     severity: 'ERROR',
     classification: 'authoritative'
   },
   {
-    pattern: 'actor.updateEmbeddedDocuments(',
+    pattern: 'actor.updateEmbeddedDocuments(',  // @mutation-exception: Linter pattern/output definitions
     description: 'Direct updateEmbeddedDocuments() call on actor',
     severity: 'ERROR',
     classification: 'authoritative'
   },
   {
-    pattern: 'actor.createEmbeddedDocuments(',
+    pattern: 'actor.createEmbeddedDocuments(',  // @mutation-exception: Linter pattern/output definitions
     description: 'Direct createEmbeddedDocuments() call on actor',
     severity: 'ERROR',
     classification: 'authoritative'
   },
   {
-    pattern: 'actor.deleteEmbeddedDocuments(',
+    pattern: 'actor.deleteEmbeddedDocuments(',  // @mutation-exception: Linter pattern/output definitions
     description: 'Direct deleteEmbeddedDocuments() call on actor',
     severity: 'ERROR',
     classification: 'authoritative'
   },
   {
-    pattern: 'item.update(',
-    description: 'Direct item.update() call for owned items',
+    pattern: 'item.update(',  // @mutation-exception: Linter pattern/output definitions
+    description: 'Direct item.update() call for owned items',  // @mutation-exception: Linter pattern/output definitions
     severity: 'ERROR',
     classification: 'authoritative'
   },
   {
-    pattern: 'actor.setFlag(',
-    description: 'Direct actor.setFlag() call (use ActorEngine if data mutation)',
+    pattern: 'actor.setFlag(',  // @mutation-exception: Linter pattern/output definitions
+    description: 'Direct actor.setFlag() call (use ActorEngine if data mutation)',  // @mutation-exception: Linter pattern/output definitions
     severity: STRICT_MODE ? 'ERROR' : 'WARN',
     classification: 'metadata'
   },
   {
-    pattern: 'actor.unsetFlag(',
-    description: 'Direct actor.unsetFlag() call',
+    pattern: 'actor.unsetFlag(',  // @mutation-exception: Linter pattern/output definitions
+    description: 'Direct actor.unsetFlag() call',  // @mutation-exception: Linter pattern/output definitions
     severity: STRICT_MODE ? 'ERROR' : 'WARN',
     classification: 'metadata'
   }
@@ -369,7 +369,7 @@ function formatViolation(file, violation) {
     `\n❌ ${violation.severity}: ${violation.description}`,
     `   File: ${relPath}:${violation.line}`,
     `   Code: ${violation.content}`,
-    `\n   Fix: Use ActorEngine.updateActor() instead of direct actor.update()`,
+    `\n   Fix: Use ActorEngine.updateActor() instead of direct actor.update()`,  // @mutation-exception: Linter pattern/output definitions
     `   Docs: See PERMANENT-FIX-SUMMARY.md`
   ].join('\n');
 }
@@ -501,22 +501,22 @@ function runLint() {
   // @mutation-exception: Linter output displaying violation examples (not executing mutations)
   console.log('\n📖 CLASSIFICATION GUIDE\n');
   console.log('❌ AUTHORITATIVE (must fix):');
-  console.log('  - actor.update(...)');
-  console.log('  - actor.createEmbeddedDocuments(...)');
-  console.log('  - actor.deleteEmbeddedDocuments(...)');
-  console.log('  - actor.updateEmbeddedDocuments(...)');
-  console.log('  - item.update(...)');
+  console.log('  - actor.update(...)');  // @mutation-exception: Linter pattern/output definitions
+  console.log('  - actor.createEmbeddedDocuments(...)');  // @mutation-exception: Linter pattern/output definitions
+  console.log('  - actor.deleteEmbeddedDocuments(...)');  // @mutation-exception: Linter pattern/output definitions
+  console.log('  - actor.updateEmbeddedDocuments(...)');  // @mutation-exception: Linter pattern/output definitions
+  console.log('  - item.update(...)');  // @mutation-exception: Linter pattern/output definitions
   console.log('  → All must route through ActorEngine\n');
 
   console.log('⚠️  METADATA (allowed if annotated):');
-  console.log('  - actor.setFlag(...) / actor.unsetFlag(...)');
+  console.log('  - actor.setFlag(...) / actor.unsetFlag(...)');  // @mutation-exception: Linter pattern/output definitions
   console.log('  → OK if UI-only, session-scoped, or encounter-scoped');
   console.log('  → Add // @mutation-exception: metadata if confirmed UI-only\n');
 
   console.log('📖 REMEDY:\n');
   console.log('For AUTHORITATIVE violations:');
-  console.log('  await actor.update(...) → await ActorEngine.updateActor(...)');
-  console.log('  await actor.createEmbeddedDocuments(...) → await ActorEngine.createEmbeddedDocuments(...)\n');
+  console.log('  await actor.update(...) → await ActorEngine.updateActor(...)');  // @mutation-exception: Linter pattern/output definitions
+  console.log('  await actor.createEmbeddedDocuments(...) → await ActorEngine.createEmbeddedDocuments(...)\n');  // @mutation-exception: Linter pattern/output definitions
 
   console.log('For METADATA violations:');
   console.log('  // @mutation-exception: metadata');

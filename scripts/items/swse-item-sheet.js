@@ -149,7 +149,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     } else {
       // @mutation-exception: Unowned item update
       // Unowned items (not on an actor) can update directly — UI-only operation
-      await this.item.update(updates);
+      await this.item.update(updates);  // @mutation-exception: UI-only unowned item
     }
 
     ui.notifications.info(
@@ -180,7 +180,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     } else {
       // @mutation-exception: Unowned item update
       // Unowned items (not on an actor) can update directly — UI-only operation
-      await this.item.update(updates);
+      await this.item.update(updates);  // @mutation-exception: UI-only unowned item
     }
     ui.notifications.info(`${this.item.name} deactivated!`);
   }
@@ -204,7 +204,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     } else {
       // @mutation-exception: Unowned item update
       // Unowned items (not on an actor) can update directly — UI-only operation
-      await this.item.update({ 'flags.swse.emitLight': enabled });
+      await this.item.update({ 'flags.swse.emitLight': enabled });  // @mutation-exception: UI-only unowned item
     }
 
     // Update token light if actor is on canvas

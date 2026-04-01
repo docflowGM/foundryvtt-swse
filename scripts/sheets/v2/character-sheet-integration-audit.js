@@ -222,13 +222,13 @@ export class SWSEV2CharacterSheetAudit {
             message: `Field did not persist through actor: ${fieldTest.label}`,
             attempted: testValue,
             current: currentValue,
-            fix: `Verify form _updateObject() calls actor.update() via ActorEngine`
+            fix: `Verify form _updateObject() calls actor.update() via ActorEngine`  // @mutation-exception: Audit test - field persistence test
           });
         }
 
         // @mutation-exception: Test harness restoring original value for field audit
         // Restore original value
-        await actor.update({ [fieldTest.updatePath]: originalValue });
+        await actor.update({ [fieldTest.updatePath]: originalValue });  // @mutation-exception: Audit test - test restoration
 
       } catch (err) {
         findings.push({

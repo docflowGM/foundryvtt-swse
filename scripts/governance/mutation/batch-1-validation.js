@@ -102,7 +102,7 @@ export class Batch1Validation {
       try {
         // @mutation-exception: Intentional test of mutation interception
         // This should trigger violation detection
-        await item.update({ 'system.quantity': (item.system.quantity || 1) + 1 });
+        await item.update({ 'system.quantity': (item.system.quantity || 1) + 1 });  // @mutation-exception: Test harness - intentional mutation test
 
         // Check if violation was logged
         if (violationDetected) {

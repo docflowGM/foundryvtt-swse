@@ -155,7 +155,7 @@ class ArchitectureValidator {
    * Violation: Engine calls actor.update()
    */
   async checkActorUpdateCalls() {
-    console.log('Checking for actor.update() calls...');
+    console.log('Checking for actor.update() calls...');  // @mutation-exception: Architecture validation - test code
 
     for (const file of this.engineFiles) {
       const content = fs.readFileSync(file, 'utf-8');
@@ -173,7 +173,7 @@ class ArchitectureValidator {
             file,
             line: i + 1,
             code: 'ACTOR_UPDATE_CALL',
-            message: `Direct actor.update() call: ${line.trim()}. Route through ActorEngine.updateActor() instead.`,
+            message: `Direct actor.update() call: ${line.trim()}. Route through ActorEngine.updateActor() instead.`,  // @mutation-exception: Architecture validation - test code
             severity: 'ERROR'
           });
         }

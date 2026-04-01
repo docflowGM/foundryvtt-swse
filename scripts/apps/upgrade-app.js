@@ -162,7 +162,7 @@ export class SWSEUpgradeApp extends BaseSWSEAppV2 {
       } else {
         // @mutation-exception: Unowned item update
         // Unowned items (not on an actor) can update directly — UI-only operation
-        await this.item.update({ 'system.installedUpgrades': nextInstalled });
+        await this.item.update({ 'system.installedUpgrades': nextInstalled });  // @mutation-exception: UI-only unowned item
       }
 
       ui.notifications.info('Upgrade installed successfully.');
@@ -203,7 +203,7 @@ export class SWSEUpgradeApp extends BaseSWSEAppV2 {
     } else {
       // @mutation-exception: Unowned item update
       // Unowned items (not on an actor) can update directly — UI-only operation
-      await this.item.update({ 'system.installedUpgrades': nextInstalled });
+      await this.item.update({ 'system.installedUpgrades': nextInstalled });  // @mutation-exception: UI-only unowned item
     }
 
     ui.notifications.info('Upgrade removed.');

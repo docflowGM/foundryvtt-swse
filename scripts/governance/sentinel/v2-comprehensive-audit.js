@@ -167,8 +167,8 @@ export class V2ComprehensiveAudit {
 
     // @mutation-exception: Audit scanning for violation patterns (not executing mutations)
     const suspiciousPatternsToFind = [
-      { pattern: /actor\.update\s*\(/g, message: 'Direct actor.update() call outside ActorEngine' },
-      { pattern: /item\.update\s*\(/g, message: 'Direct item.update() call outside ActorEngine' },
+      { pattern: /actor\.update\s*\(/g, message: 'Direct actor.update() call outside ActorEngine' },  // @mutation-exception: Pattern definition
+      { pattern: /item\.update\s*\(/g, message: 'Direct item.update() call outside ActorEngine' },  // @mutation-exception: Pattern definition
       { pattern: /ChatMessage\.create\s*\(/g, message: 'Direct ChatMessage.create() call (use SWSEChat)' },
       { pattern: /ui\.notifications\./g, message: 'Direct ui.notifications call from sheet (use engine)' },
       { pattern: /Hooks\.call\s*\(/g, message: 'Direct Hooks.call() outside ActorEngine' }
@@ -419,7 +419,7 @@ export class V2ComprehensiveAudit {
 
       // @mutation-exception: Audit checking for violation patterns (not executing mutations)
       // Check for direct mutations
-      if (content.includes('actor.update(') || content.includes('ChatMessage.create(')) {
+      if (content.includes('actor.update(') || content.includes('ChatMessage.create(')) {  // @mutation-exception: Audit pattern check
         this.findings.surveys.push({
           severity: 'ERROR',
           file: filePath,
