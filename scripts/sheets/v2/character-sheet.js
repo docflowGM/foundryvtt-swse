@@ -91,11 +91,42 @@ const FORM_FIELD_SCHEMA = {
   'system.defenses.ref.miscMod': 'number',
   'system.defenses.will.miscMod': 'number',
 
-  // Progression
+  // Skills
+  'system.skills.acrobatics.miscMod': 'number',
+  'system.skills.climb.miscMod': 'number',
+  'system.skills.deception.miscMod': 'number',
+  'system.skills.endurance.miscMod': 'number',
+  'system.skills.gatherInformation.miscMod': 'number',
+  'system.skills.initiative.miscMod': 'number',
+  'system.skills.jump.miscMod': 'number',
+  'system.skills.knowledgeBureaucracy.miscMod': 'number',
+  'system.skills.knowledgeGalacticLore.miscMod': 'number',
+  'system.skills.knowledgeLifeSciences.miscMod': 'number',
+  'system.skills.knowledgePhysicalSciences.miscMod': 'number',
+  'system.skills.knowledgeSocialSciences.miscMod': 'number',
+  'system.skills.knowledgeTactics.miscMod': 'number',
+  'system.skills.knowledgeTechnology.miscMod': 'number',
+  'system.skills.mechanics.miscMod': 'number',
+  'system.skills.perception.miscMod': 'number',
+  'system.skills.persuasion.miscMod': 'number',
+  'system.skills.pilot.miscMod': 'number',
+  'system.skills.ride.miscMod': 'number',
+  'system.skills.stealth.miscMod': 'number',
+  'system.skills.survival.miscMod': 'number',
+  'system.skills.swim.miscMod': 'number',
+  'system.skills.treatInjury.miscMod': 'number',
+  'system.skills.useComputer.miscMod': 'number',
+  'system.skills.useTheForce.miscMod': 'number',
+
+  // Progression and Resources
   'system.level': 'number',
   'system.xp': 'number',
   'system.credits': 'number',
-  'system.destinyPoints': 'number'
+  'system.speed': 'number',
+  'system.destinyPoints.value': 'number',
+  'system.destinyPoints.max': 'number',
+  'system.forcePoints.value': 'number',
+  'system.forcePoints.max': 'number'
 };
 
 /**
