@@ -16,7 +16,7 @@
       <span class="dsp-value-display">{{darkSidePanel.value}} / {{darkSidePanel.max}}</span>
     </header>
 
-    <div class="swse-v2-dark-side">
+    <div class="swse-v2-dark-side {{#if darkSidePanel.danger}}dsp-danger{{/if}}">
       <!-- Numbered Track Display (Record-Sheet Style with overlay positioning) -->
       <div class="swse-panel swse-panel--dsp-track dsp-numbered-track svg-framed">
         <!-- Frame layer: SVG background for track -->

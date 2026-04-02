@@ -2565,13 +2565,13 @@ select option:checked {
   height: 24px;
   padding: 0;
   border: 1px solid rgba(0, 255, 136, 0.3);
-  border-radius: 2px;
+  border-radius: 4px;
   background: rgba(0, 0, 0, 0.3);
   color: #aaa;
   font-size: 0.65rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.25s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2579,6 +2579,7 @@ select option:checked {
 }
 
 .swse-sheet .dsp-track-box:hover {
+  transform: scale(1.08);
   border-color: rgba(74, 158, 255, 0.5);
   background: rgba(74, 158, 255, 0.1);
   color: #4a9eff;
@@ -2590,7 +2591,16 @@ select option:checked {
   color: #e74c3c;
   font-weight: 700;
   opacity: 1;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+  box-shadow:
+    0 0 6px rgba(0, 0, 0, 0.6),
+    0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Danger zone styling for high DSP */
+.dsp-danger .dsp-track-box.filled {
+  box-shadow:
+    0 0 8px rgba(255, 0, 0, 0.7),
+    0 0 14px rgba(255, 0, 0, 0.4);
 }
 
 .swse-sheet .dsp-number {
@@ -2601,12 +2611,27 @@ select option:checked {
 /* DSP Spectrum Display (Colored Gradient) */
 .swse-sheet .ds-segment {
   opacity: 0.4;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.swse-sheet .ds-segment:hover {
+  transform: scale(1.08);
 }
 
 .swse-sheet .ds-segment.filled {
   opacity: 1;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+  box-shadow:
+    0 0 6px rgba(0, 0, 0, 0.6),
+    0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Danger zone styling for high DSP in spectrum */
+.dsp-danger .ds-segment.filled {
+  box-shadow:
+    0 0 8px rgba(255, 0, 0, 0.7),
+    0 0 14px rgba(255, 0, 0, 0.4);
 }
 
 /* ------------------------------------------------------------------ */

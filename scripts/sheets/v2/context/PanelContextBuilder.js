@@ -474,10 +474,14 @@ export class PanelContextBuilder {
       });
     }
 
+    // Danger state: when DSP is within 2 of max
+    const isDanger = dspValue >= dspMax - 2;
+
     const panel = {
       value: dspValue,
       max: dspMax,
       segments,
+      danger: isDanger,
       canEdit: this.sheet.isEditable
     };
 
