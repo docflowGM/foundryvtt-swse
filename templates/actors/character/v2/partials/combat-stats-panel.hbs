@@ -1,0 +1,44 @@
+{{!-- Combat Stats Summary Panel
+     Compact display of combat-essential values
+     Sources: Speed (base), Initiative (DEX), Perception (skill), BAB (class)
+--}}
+
+<div class="combat-stats-summary">
+
+  <!-- Speed -->
+  <div class="combat-stat-box stat-speed" title="Base movement speed">
+    <div class="stat-label">Speed</div>
+    <div class="stat-value">{{combatStatsPanel.speed.value}}</div>
+  </div>
+
+  <!-- Initiative -->
+  <div class="combat-stat-box stat-initiative rollable"
+       data-action="roll-skill"
+       data-skill="{{combatStatsPanel.initiative.skillKey}}"
+       title="Roll Initiative (DEX-based)">
+    <div class="stat-label">Initiative</div>
+    <div class="stat-value {{#if (gt combatStatsPanel.initiative.value 0)}}positive{{else if (lt combatStatsPanel.initiative.value 0)}}negative{{else}}zero{{/if}}">
+      {{numberFormat combatStatsPanel.initiative.value decimals=0 sign=true}}
+    </div>
+  </div>
+
+  <!-- Perception -->
+  <div class="combat-stat-box stat-perception rollable"
+       data-action="roll-skill"
+       data-skill="{{combatStatsPanel.perception.skillKey}}"
+       title="Roll Perception (WIS-based skill)">
+    <div class="stat-label">Perception</div>
+    <div class="stat-value {{#if (gt combatStatsPanel.perception.value 0)}}positive{{else if (lt combatStatsPanel.perception.value 0)}}negative{{else}}zero{{/if}}">
+      {{numberFormat combatStatsPanel.perception.value decimals=0 sign=true}}
+    </div>
+  </div>
+
+  <!-- Base Attack Bonus -->
+  <div class="combat-stat-box stat-bab" title="Base Attack Bonus (class-derived)">
+    <div class="stat-label">Base Attack</div>
+    <div class="stat-value {{#if (gt combatStatsPanel.baseAttack.value 0)}}positive{{else if (lt combatStatsPanel.baseAttack.value 0)}}negative{{else}}zero{{/if}}">
+      {{numberFormat combatStatsPanel.baseAttack.value decimals=0 sign=true}}
+    </div>
+  </div>
+
+</div>

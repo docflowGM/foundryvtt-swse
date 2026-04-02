@@ -759,7 +759,62 @@ export class PanelContextBuilder {
   }
 
   /**
-   * Assemble all panel contexts into final context object
+   * Build the combat stats panel context
+   *
+   * Contract: combatStatsPanel
+   * - speed: { value, label }
+   * - initiative: { value, label, skillKey }
+   * - perception: { value, label, skillKey }
+   * - baseAttack: { value, label }
+   * - canEdit: boolean
+   *
+   * Sources:
+   * - Speed: system.speed (base movement speed)
+   * - Initiative: derived.initiative.modifier (DEX-based)
+   * - Perception: derived.skills.perception.total (WIS-based skill)
+   * - BAB: derived.bab (class-based calculation)
+   */
+  buildCombatStatsPanel() {
+    // Get speed (base movement)
+    const speed = Number(this.system.speed?.total ?? this.system.speed ?? 0) || 0;
+
+    // Get initiative from derived data (DEX modifier)
+    const initiativeValue = Number(this.derived.initiative?.modifier ?? 0) || 0;
+
+    // Get perception from skills (if available)
+    const perceptionSkill = this.derived.skills?.perception;
+    const perceptionValue = perceptionSkill ? Number(perceptionSkill.total ?? 0) : 0;
+
+    // Get base attack bonus from derived
+    const bab = Number(this.derived.bab ?? 0) || 0;
+
+    const panel = {
+      speed: {
+        value: speed,
+        label: 'Speed'
+      },
+      initiative: {
+        value: initiativeValue,
+        label: 'Initiative',
+        skillKey: 'initiative'
+      },
+      perception: {
+        value: perceptionValue,
+        label: 'Perception',
+        skillKey: 'perception'
+      },
+      baseAttack: {
+        value: bab,
+        label: 'Base Attack'
+      },
+      canEdit: this.sheet.isEditable
+    };
+
+    // Validate contract (strict mode throws, dev mode warns)
+    this._validatePanelContext('combatStatsPanel', panel);
+
+    return panel;
+  }
    *
    * Returns an object keyed by panel name, where each panel is a dedicated
    * view model that partials read from exclusively.
@@ -767,6 +822,7 @@ export class PanelContextBuilder {
   buildAllPanels() {
     return {
       healthPanel: this.buildHealthPanel(),
+      combatStatsPanel: this.buildCombatStatsPanel(),
       defensePanel: this.buildDefensePanel(),
       biographyPanel: this.buildBiographyPanel(),
       inventoryPanel: this.buildInventoryPanel(),

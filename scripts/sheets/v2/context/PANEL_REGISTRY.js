@@ -302,6 +302,37 @@ export const PANEL_REGISTRY = {
     }
   },
 
+  combatStatsPanel: {
+    name: 'Combat Stats',
+    type: 'display',
+    svgBacked: false,
+    structure: 'compact stat boxes (speed, initiative, perception, bab)',
+    template: 'systems/foundryvtt-swse/templates/actors/character/v2/partials/combat-stats-panel.hbs',
+    builder: 'buildCombatStatsPanel',
+    validator: 'validateCombatStatsPanel',
+    requiredKeys: [
+      'speed.value',
+      'speed.label',
+      'initiative.value',
+      'initiative.label',
+      'initiative.skillKey',
+      'perception.value',
+      'perception.label',
+      'perception.skillKey',
+      'baseAttack.value',
+      'baseAttack.label',
+      'canEdit'
+    ],
+    optionalKeys: [],
+    postRenderAssertions: {
+      critical: false,
+      rootSelector: '.combat-stats-summary',
+      expectedElements: {
+        '.combat-stat-box': '4..4'  // Always exactly 4: speed, initiative, perception, bab
+      }
+    }
+  },
+
   defensePanel: {
     name: 'Defenses',
     type: 'display',

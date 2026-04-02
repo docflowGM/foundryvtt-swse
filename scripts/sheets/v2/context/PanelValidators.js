@@ -803,6 +803,57 @@ export function validateCombatNotesPanel(panelData) {
 /**
  * Validate relationshipsPanel contract
  */
+export function validateCombatStatsPanel(panelData) {
+  const errors = [];
+
+  if (!panelData) {
+    errors.push('combatStatsPanel is null/undefined');
+    return { valid: false, errors };
+  }
+
+  // Speed object
+  if (!panelData.speed || typeof panelData.speed !== 'object') {
+    errors.push('combatStatsPanel.speed must be an object');
+  } else {
+    if (typeof panelData.speed.value !== 'number') errors.push('speed.value must be number');
+    if (typeof panelData.speed.label !== 'string') errors.push('speed.label must be string');
+  }
+
+  // Initiative object
+  if (!panelData.initiative || typeof panelData.initiative !== 'object') {
+    errors.push('combatStatsPanel.initiative must be an object');
+  } else {
+    if (typeof panelData.initiative.value !== 'number') errors.push('initiative.value must be number');
+    if (typeof panelData.initiative.label !== 'string') errors.push('initiative.label must be string');
+    if (typeof panelData.initiative.skillKey !== 'string') errors.push('initiative.skillKey must be string');
+  }
+
+  // Perception object
+  if (!panelData.perception || typeof panelData.perception !== 'object') {
+    errors.push('combatStatsPanel.perception must be an object');
+  } else {
+    if (typeof panelData.perception.value !== 'number') errors.push('perception.value must be number');
+    if (typeof panelData.perception.label !== 'string') errors.push('perception.label must be string');
+    if (typeof panelData.perception.skillKey !== 'string') errors.push('perception.skillKey must be string');
+  }
+
+  // BaseAttack object
+  if (!panelData.baseAttack || typeof panelData.baseAttack !== 'object') {
+    errors.push('combatStatsPanel.baseAttack must be an object');
+  } else {
+    if (typeof panelData.baseAttack.value !== 'number') errors.push('baseAttack.value must be number');
+    if (typeof panelData.baseAttack.label !== 'string') errors.push('baseAttack.label must be string');
+  }
+
+  // canEdit
+  if (typeof panelData.canEdit !== 'boolean') errors.push('canEdit must be boolean');
+
+  return {
+    valid: errors.length === 0,
+    errors
+  };
+}
+
 export function validateRelationshipsPanel(panelData) {
   const errors = [];
 
@@ -836,6 +887,7 @@ export function validateRelationshipsPanel(panelData) {
 export function validatePanel(panelKey, panelData) {
   const validators = {
     healthPanel: validateHealthPanel,
+    combatStatsPanel: validateCombatStatsPanel,
     defensePanel: validateDefensePanel,
     biographyPanel: validateBiographyPanel,
     inventoryPanel: validateInventoryPanel,
