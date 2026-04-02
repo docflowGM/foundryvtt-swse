@@ -42,6 +42,20 @@
             </div>
           </div>
           <div class="header-field">
+            <label>Homeworld:</label>
+            <div class="field-with-button">
+              <input name="system.planetOfOrigin" type="text" value="{{actor.system.planetOfOrigin}}" placeholder="Select Homeworld"/>
+              <button type="button" class="header-select-btn" data-action="cmd-select-homeworld" title="Select Homeworld from progression system">⚙️</button>
+            </div>
+          </div>
+          <div class="header-field">
+            <label>Profession:</label>
+            <div class="field-with-button">
+              <input name="system.profession" type="text" value="{{actor.system.profession}}" placeholder="Select Profession"/>
+              <button type="button" class="header-select-btn" data-action="cmd-select-profession" title="Select Profession from progression system">⚙️</button>
+            </div>
+          </div>
+          <div class="header-field">
             <label>Destiny Points:</label>
             <span class="destiny-display">{{derived.destinyPoints.value}} / {{derived.destinyPoints.max}}</span>
           </div>

@@ -80,16 +80,18 @@
     <div class="record-row">
       <div class="record-field svg-wrapped size-regular">
         <label class="field-label">Homeworld</label>
-        <input type="text" name="system.planetOfOrigin" value="{{biographyPanel.identity.homeworld}}" class="record-input" placeholder="—" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+        <div class="field-with-record-button">
+          <input type="text" name="system.planetOfOrigin" value="{{biographyPanel.identity.homeworld}}" class="record-input" placeholder="—" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+          {{#if biographyPanel.identity.canEdit}}<button type="button" class="record-select-btn" data-action="cmd-select-homeworld" title="Select Homeworld">⚙️</button>{{/if}}
+        </div>
       </div>
       <div class="record-field svg-wrapped size-regular">
         <label class="field-label">Profession</label>
-        <input type="text" name="system.profession" value="{{biographyPanel.identity.profession}}" class="record-input" placeholder="—" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+        <div class="field-with-record-button">
+          <input type="text" name="system.profession" value="{{biographyPanel.identity.profession}}" class="record-input" placeholder="—" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+          {{#if biographyPanel.identity.canEdit}}<button type="button" class="record-select-btn" data-action="cmd-select-profession" title="Select Profession">⚙️</button>{{/if}}
+        </div>
       </div>
-    </div>
-
-    <!-- Background Row -->
-    <div class="record-row">
       <div class="record-field svg-wrapped size-regular">
         <label class="field-label">Background</label>
         <div class="field-with-record-button">
