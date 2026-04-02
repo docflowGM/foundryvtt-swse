@@ -2385,7 +2385,7 @@ const forcePoints = [];
           const value = Math.max(0, Math.min(Number(newValue) || 0, DSPEngine.getMax(this.actor)));
           const plan = {
             update: {
-              "system.darkSidePoints": value
+              "system.darkSide.value": value
             }
           };
 
