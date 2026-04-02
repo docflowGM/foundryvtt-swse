@@ -770,18 +770,19 @@ export class PanelContextBuilder {
    *
    * Sources:
    * - Speed: system.speed (base movement speed)
-   * - Initiative: derived.initiative.modifier (DEX-based)
-   * - Perception: derived.skills.perception.total (WIS-based skill)
+   * - Initiative: derived.skills.initiative.total (skill total)
+   * - Perception: derived.skills.perception.total (skill total)
    * - BAB: derived.bab (class-based calculation)
    */
   buildCombatStatsPanel() {
     // Get speed (base movement)
     const speed = Number(this.system.speed?.total ?? this.system.speed ?? 0) || 0;
 
-    // Get initiative from derived data (DEX modifier)
-    const initiativeValue = Number(this.derived.initiative?.modifier ?? 0) || 0;
+    // Get initiative from skills system (Initiative is a skill)
+    const initiativeSkill = this.derived.skills?.initiative;
+    const initiativeValue = initiativeSkill ? Number(initiativeSkill.total ?? 0) : 0;
 
-    // Get perception from skills (if available)
+    // Get perception from skills system (Perception is a skill)
     const perceptionSkill = this.derived.skills?.perception;
     const perceptionValue = perceptionSkill ? Number(perceptionSkill.total ?? 0) : 0;
 
