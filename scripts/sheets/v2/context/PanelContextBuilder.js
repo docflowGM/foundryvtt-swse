@@ -202,6 +202,7 @@ export class PanelContextBuilder {
   buildBiographyPanel() {
     const identity = {
       name: this.actor.name || 'Unnamed',
+      player: this.system.flags?.swse?.character?.player || '—',
       class: this.system.class || '—',
       level: Number(this.system.level) || 1,
       species: this.system.race || '—',

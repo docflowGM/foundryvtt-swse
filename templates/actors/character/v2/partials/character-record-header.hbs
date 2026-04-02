@@ -10,25 +10,43 @@
     </header>
 
     <div class="record-identity-grid">
-    <!-- Name & Class/Level Row -->
+    <!-- Name & Player Row -->
     <div class="record-row">
       <div class="record-field svg-wrapped size-regular">
         <label class="field-label">Name</label>
-        <div class="field-value">{{biographyPanel.identity.name}}</div>
+        <input type="text" name="name" value="{{biographyPanel.identity.name}}" class="record-input" placeholder="—" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
       </div>
       <div class="record-field svg-wrapped size-regular">
-        <label class="field-label">Class & Level</label>
-        <div class="field-value">{{biographyPanel.identity.class}} {{biographyPanel.identity.level}}</div>
+        <label class="field-label">Player</label>
+        <input type="text" name="flags.swse.character.player" value="{{biographyPanel.identity.player}}" class="record-input" placeholder="—" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
       </div>
     </div>
 
-    <!-- Species & Size Row -->
+    <!-- Class & Species & Level Row -->
     <div class="record-row">
       <div class="record-field svg-wrapped size-regular">
-        <label class="field-label">Species</label>
-        <div class="field-value">{{biographyPanel.identity.species}}</div>
+        <label class="field-label">Class</label>
+        <div class="field-with-record-button">
+          <input type="text" name="system.class" value="{{biographyPanel.identity.class}}" class="record-input" placeholder="—" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+          {{#if biographyPanel.identity.canEdit}}<button type="button" class="record-select-btn" data-action="cmd-select-class" title="Select Class">⚙️</button>{{/if}}
+        </div>
       </div>
       <div class="record-field svg-wrapped size-regular">
+        <label class="field-label">Species</label>
+        <div class="field-with-record-button">
+          <input type="text" name="system.race" value="{{biographyPanel.identity.species}}" class="record-input" placeholder="—" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+          {{#if biographyPanel.identity.canEdit}}<button type="button" class="record-select-btn" data-action="cmd-select-species" title="Select Species">⚙️</button>{{/if}}
+        </div>
+      </div>
+      <div class="record-field svg-wrapped size-small">
+        <label class="field-label">Level</label>
+        <input type="number" name="system.level" value="{{biographyPanel.identity.level}}" class="record-input" min="1" max="20" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+      </div>
+    </div>
+
+    <!-- Size & Destiny Points Row -->
+    <div class="record-row">
+      <div class="record-field svg-wrapped size-small">
         <label class="field-label">Size</label>
         <div class="field-value">{{biographyPanel.identity.size}}</div>
       </div>
@@ -68,9 +86,16 @@
         <label class="field-label">Profession</label>
         <input type="text" name="system.profession" value="{{biographyPanel.identity.profession}}" class="record-input" placeholder="—" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
       </div>
+    </div>
+
+    <!-- Background Row -->
+    <div class="record-row">
       <div class="record-field svg-wrapped size-regular">
         <label class="field-label">Background</label>
-        <input type="text" name="system.event" value="{{biographyPanel.identity.background}}" class="record-input" placeholder="—" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+        <div class="field-with-record-button">
+          <input type="text" name="system.event" value="{{biographyPanel.identity.background}}" class="record-input" placeholder="—" {{#unless biographyPanel.identity.canEdit}}disabled{{/unless}} />
+          {{#if biographyPanel.identity.canEdit}}<button type="button" class="record-select-btn" data-action="cmd-select-background" title="Select Background">⚙️</button>{{/if}}
+        </div>
       </div>
     </div>
   </div>
