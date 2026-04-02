@@ -98,17 +98,22 @@ export class ConditionTrackComponent {
   }
 
   static _stepHTML(step, currentIndex) {
-    const active = currentIndex === step.index ? 'active' : '';
-    const marker = active ? `<div class="ct-marker">▼</div>` : '';
+    const isActive = currentIndex === step.index;
+    const activeClass = isActive ? 'active' : '';
 
     return `
-      <div class="ct-step ${step.css} ${active}"
-           data-ct="set"
-           data-step="${step.index}"
-           title="Set condition to ${escapeHTML(step.label)}">
-        <span class="ct-label">${escapeHTML(step.label)}</span>
-        ${step.penalty ? `<span class="ct-pen">${escapeHTML(step.penalty)}</span>` : ''}
-        ${marker}
+      <div class="ct-step ${step.css}">
+        <div class="ct-content">
+          <span class="ct-label">${escapeHTML(step.label)}</span>
+          ${step.penalty ? `<span class="ct-pen">${escapeHTML(step.penalty)}</span>` : ''}
+        </div>
+        <button class="ct-pill ${activeClass}"
+                data-ct="set"
+                data-step="${step.index}"
+                type="button"
+                title="Set condition to ${escapeHTML(step.label)}"
+                aria-label="Set condition to ${escapeHTML(step.label)}">
+        </button>
       </div>
     `;
   }

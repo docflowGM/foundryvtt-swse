@@ -166,15 +166,38 @@
 
 /* Condition track color scale - Color-coded per condition severity */
 .ct-step {
-  transition: background-color 0.2s ease, transform 0.2s ease, outline 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px 10px 16px;
+  margin: 4px 0;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
   color: inherit;
+}
+
+.ct-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.ct-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.ct-pen {
+  font-size: 0.8rem;
+  opacity: 0.9;
 }
 
 /* Normal - Dark Green */
 .ct-step.normal {
   background: #1f7a1f;
   color: white;
-  font-weight: 600;
 }
 
 /* -1 Penalty - Light Green */
@@ -199,19 +222,38 @@
 .ct-step.ct-10 {
   background: #e63946;
   color: white;
-  font-weight: 600;
 }
 
 /* Helpless - Dark Red */
 .ct-step.ct-helpless {
   background: #6a040f;
   color: white;
-  font-weight: 600;
 }
 
-/* Active state - Apply white outline and scale */
-.ct-step.active {
-  outline: 3px solid white;
-  outline-offset: 2px;
-  transform: scale(1.05);
+/* Angled pill selector button */
+.ct-pill {
+  flex-shrink: 0;
+  width: 16px;
+  height: 32px;
+  padding: 0;
+  border: 2px solid currentColor;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  transform: rotate(28deg);
+  opacity: 0.5;
+}
+
+.ct-pill:hover {
+  opacity: 0.75;
+  transform: rotate(28deg) scale(1.15);
+}
+
+/* Active pill state - brighter and glowing */
+.ct-pill.active {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.35);
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.6));
+  transform: rotate(28deg) scale(1.1);
 }
