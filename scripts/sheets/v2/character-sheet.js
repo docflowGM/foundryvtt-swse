@@ -738,19 +738,19 @@ const forcePoints = [];
     ============================================================ */
 
     // XP System Configuration and Progress
+    // Use derived.xp which is computed by XpEngine.computeXpDerived()
     const xpSystem = CONFIG.SWSE?.system?.xpProgression || 'milestone';
     const xpEnabled = xpSystem !== 'disabled';
-    const xpValue = actor.system.progression?.xp ?? 0;
-    const xpThreshold = actor.system.progression?.xpThreshold ?? 0;
-    const xpPercent = xpThreshold > 0 ? Math.round((xpValue / xpThreshold) * 100) : 0;
+    const xpDerived = derived.xp ?? { total: 0, progressPercent: 0, xpToNext: 0 };
+    const xpPercent = xpDerived.progressPercent ?? 0;
     const xpLevelReady = xpPercent >= 100;
 
     // SEMANTIC: XP data object with visual state
     const xpData = {
       level: actor.system.level ?? 1,
-      total: xpValue,
-      nextLevelAt: xpThreshold,
-      xpToNext: Math.max(0, xpThreshold - xpValue),
+      total: xpDerived.total ?? 0,
+      nextLevelAt: xpDerived.nextLevelAt ?? 0,
+      xpToNext: xpDerived.xpToNext ?? 0,
       stateClass: xpLevelReady ? 'state--ready-levelup' : xpPercent >= 75 ? 'state--nearly-ready' : 'state--in-progress'
     };
 
@@ -1600,9 +1600,10 @@ const forcePoints = [];
     if (!row) return;
 
     const base = Number(row.querySelector('[data-field="base"]')?.value || 0);
-    const misc = Number(row.querySelector('[data-field="misc"]')?.value || 0);
+    const racial = Number(row.querySelector('[data-field="racial"]')?.value || 0);
+    const temp = Number(row.querySelector('[data-field="temp"]')?.value || 0);
 
-    const total = base + misc;
+    const total = base + racial + temp;
     const mod = Math.floor((total - 10) / 2);
 
     const totalEl = row.querySelector(".math-result");
