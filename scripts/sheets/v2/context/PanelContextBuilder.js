@@ -470,7 +470,7 @@ export class PanelContextBuilder {
       segments.push({
         index: i,
         filled: i <= dspValue,
-        color: i <= dspValue ? '#E74C3C' : '#4A90E2'
+        color: this._getDSPColor(i, dspMax)
       });
     }
 
@@ -485,6 +485,30 @@ export class PanelContextBuilder {
     this._validatePanelContext('darkSidePanel', panel);
 
     return panel;
+  }
+
+  /**
+   * Generate DSP color based on gradient from dark green (0) to dark red (max)
+   * Uses HSL for smooth color transition through the spectrum
+   *
+   * @private
+   * @param {number} index - Current segment index (1-based)
+   * @param {number} maxDSP - Maximum DSP value
+   * @returns {string} HSL color string
+   */
+  _getDSPColor(index, maxDSP) {
+    const ratio = index / maxDSP;
+
+    // Hue goes from green (120) to red (0)
+    const hue = 120 - (120 * ratio);
+
+    // Saturation stays high for vibrancy
+    const saturation = 80;
+
+    // Lightness: starts moderate (45%) and darkens toward max
+    const lightness = 45 - (ratio * 20);
+
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   }
 
   /**

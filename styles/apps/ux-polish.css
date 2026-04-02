@@ -164,12 +164,54 @@
   100% { transform: scale(1); opacity: 1; }
 }
 
-/* Condition track color scale */
+/* Condition track color scale - Color-coded per condition severity */
 .ct-step {
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.2s ease, outline 0.2s ease;
+  color: inherit;
 }
 
-.ct-step.normal { background: var(--swse-bg-secondary, #2b2b2b); }
-.ct-step.wounded { background: rgba(255, 200, 0, 0.2); }
-.ct-step.critical { background: rgba(255, 68, 68, 0.2); }
-.ct-step.helpless { background: rgba(255, 68, 68, 0.4); }
+/* Normal - Dark Green */
+.ct-step.normal {
+  background: #1f7a1f;
+  color: white;
+  font-weight: 600;
+}
+
+/* -1 Penalty - Light Green */
+.ct-step.ct-1 {
+  background: #7ed957;
+  color: black;
+}
+
+/* -2 Penalty - Yellow */
+.ct-step.ct-2 {
+  background: #f4e04d;
+  color: black;
+}
+
+/* -5 Penalty - Orange */
+.ct-step.ct-5 {
+  background: #ff9f1c;
+  color: black;
+}
+
+/* -10 Penalty - Red */
+.ct-step.ct-10 {
+  background: #e63946;
+  color: white;
+  font-weight: 600;
+}
+
+/* Helpless - Dark Red */
+.ct-step.ct-helpless {
+  background: #6a040f;
+  color: white;
+  font-weight: 600;
+}
+
+/* Active state - Apply white outline and scale */
+.ct-step.active {
+  outline: 3px solid white;
+  outline-offset: 2px;
+  transform: scale(1.05);
+}

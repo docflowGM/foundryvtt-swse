@@ -2575,6 +2575,7 @@ select option:checked {
   display: flex;
   align-items: center;
   justify-content: center;
+  opacity: 0.4;
 }
 
 .swse-sheet .dsp-track-box:hover {
@@ -2588,11 +2589,24 @@ select option:checked {
   border-color: rgba(231, 76, 60, 0.5);
   color: #e74c3c;
   font-weight: 700;
+  opacity: 1;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
 }
 
 .swse-sheet .dsp-number {
   font-size: 0.7rem;
   font-weight: 700;
+}
+
+/* DSP Spectrum Display (Colored Gradient) */
+.swse-sheet .ds-segment {
+  opacity: 0.4;
+  transition: all 0.2s ease;
+}
+
+.swse-sheet .ds-segment.filled {
+  opacity: 1;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
 }
 
 /* ------------------------------------------------------------------ */
