@@ -636,9 +636,6 @@ export class SWSEV2CharacterSheet extends
     const forceSensitive = system.forceSensitive ?? false;
     const identityGlowColor = forceSensitive ? '#88cfff' : '#666666';
 
-    // Bonus HP (derived-only from ModifierEngine)
-    const bonusHp = await this._computeBonusHP(actor);
-
     // Condition track steps (0-5 numeric → visual array)
     const conditionCurrent = system.conditionTrack?.current ?? 0;
     const conditionLabels = ["Normal", "−1", "−2", "−5", "−10", "Helpless"];
@@ -964,39 +961,6 @@ const forcePoints = [];
     this._currentContext = finalContext;
 
     return finalContext;
-  }
-
-  /* ============================================================
-     BONUS HP COMPUTATION (DERIVED-ONLY)
-  ============================================================ */
-
-  async _computeBonusHP(actor) {
-    try {
-      const { ModifierEngine } = await import("/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js").catch(
-        () => ({ ModifierEngine: null })
-      );
-
-      if (!ModifierEngine) {
-        return { value: 0, label: "" };
-      }
-
-      const bonusMods = await ModifierEngine.collectModifiers(actor, {
-        domain: "bonusHitPoints",
-        context: {}
-      });
-
-      // RAW: Only highest source applies
-      const highestBonus = bonusMods.length
-        ? Math.max(...bonusMods.map(m => m.value))
-        : 0;
-
-      return {
-        value: highestBonus,
-        label: highestBonus > 0 ? `+${highestBonus}` : ""
-      };
-    } catch {
-      return { value: 0, label: "" };
-    }
   }
 
   /* ============================================================
