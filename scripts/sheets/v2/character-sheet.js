@@ -1524,6 +1524,32 @@ const forcePoints = [];
       store.render(true);
     }, { signal, capture: false });
 
+    // Character identity selection buttons (Class, Species, Background, Homeworld, Profession)
+    html.addEventListener("click", async ev => {
+      const button = ev.target.closest('[data-action^="cmd-select-"]');
+      if (!button) return;
+      ev.preventDefault();
+
+      const action = button.dataset.action;
+      const stepMap = {
+        'cmd-select-class': 'class',
+        'cmd-select-species': 'species',
+        'cmd-select-background': 'background',
+        'cmd-select-homeworld': 'background',    // Homeworld is part of background selection
+        'cmd-select-profession': 'background'    // Profession is part of background selection
+      };
+
+      const targetStep = stepMap[action];
+      if (!targetStep) return;
+
+      try {
+        await launchProgression(this.actor, { currentStep: targetStep });
+      } catch (err) {
+        console.error(`[SHEET] ✗ ${action} failed:`, err);
+        SWSELogger.error(`[CharacterSheet] ${action} failed:`, err);
+      }
+    }, { signal, capture: false });
+
     // Build Follower button (delegated) — Phase 3.5 follower runtime integration
     html.addEventListener("click", async ev => {
       const button = ev.target.closest('[data-action="build-follower"]');
