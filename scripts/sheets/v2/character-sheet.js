@@ -2148,43 +2148,11 @@ const forcePoints = [];
       }, { signal });
     });
 
-    // Item action bar: Quick attack roll (weapons only)
-    html.querySelectorAll('[data-action="roll-attack"]').forEach(button => {
-      button.addEventListener("click", async (event) => {
-        event.preventDefault();
-        const itemId = button.dataset.itemId;
-        if (!itemId) return;
-
-        const item = this.actor.items.get(itemId);
-        if (!item || item.type !== "weapon") return;
-
-        try {
-          await SWSERoll.rollWeaponAttack(this.actor, itemId);
-        } catch (err) {
-          console.error("Attack roll failed:", err);
-          ui?.notifications?.error?.("Attack roll failed");
-        }
-      }, { signal });
-    });
-
-    // Item action bar: Quick damage roll (weapons only)
-    html.querySelectorAll('[data-action="roll-damage"]').forEach(button => {
-      button.addEventListener("click", async (event) => {
-        event.preventDefault();
-        const itemId = button.dataset.itemId;
-        if (!itemId) return;
-
-        const item = this.actor.items.get(itemId);
-        if (!item || item.type !== "weapon") return;
-
-        try {
-          await SWSERoll.rollWeaponDamage(this.actor, itemId);
-        } catch (err) {
-          console.error("Damage roll failed:", err);
-          ui?.notifications?.error?.("Damage roll failed");
-        }
-      }, { signal });
-    });
+    // NOTE: Quick attack/damage rolls via [data-action="roll-attack"] and [data-action="roll-damage"]
+    // are now REMOVED (dead code). Use the working class-based handlers instead:
+    // - .attack-btn (uses showRollModifiersDialog + SWSERoll.rollAttack)
+    // - .damage-btn (uses showRollModifiersDialog + SWSERoll.rollDamage)
+    // Both handlers create chat messages correctly via createChatMessage() or SWSEChat.postRoll()
   }
 
   /* ============================================================
