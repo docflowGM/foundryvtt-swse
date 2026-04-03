@@ -137,17 +137,48 @@
     </section>
 
     <!-- COMBAT TAB -->
-    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="combat">
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/initiative-control.hbs"}}
+    <section class="tab flexcol combat-tab-container" data-group="primary" data-tab-group="primary" data-tab="combat">
+
+      <!-- COMBAT TAB: Main Content Area (left/center) -->
+      <div class="combat-main-area flexcol">
+
+        <!-- TOP: Initiative Control -->
+        {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/initiative-control.hbs"}}
+
+        <!-- TOP: Attacks Panel -->
+        {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs"}}
+
+        <!-- CENTER: Combat Actions Panel (main functional area) -->
+        {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/combat-actions-panel.hbs"}}
+
+        <!-- NOTES: Special Combat Actions (compact) -->
+        {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/special-combat-actions-panel.hbs"}}
+      </div>
+
+      <!-- COMBAT TAB: Right Sidebar (action economy tracker + controls) -->
       {{#if actionEconomy}}
-        {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/action-economy-indicator.hbs"
-            actionState=actionEconomy.state
-            actionBreakdown=actionEconomy.breakdown
-            swiftMax=actionEconomy.state.swiftMax}}
+        <div class="combat-sidebar">
+          <!-- Action Economy Tracker -->
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/action-economy-indicator.hbs"
+              actionState=actionEconomy.state
+              actionBreakdown=actionEconomy.breakdown
+              swiftMax=actionEconomy.state.swiftMax}}
+
+          <!-- New Round / Turn Reset Controls -->
+          <div class="combat-turn-controls">
+            <button type="button"
+                    class="swse-btn swse-btn--primary new-round-btn"
+                    data-action="new-round"
+                    title="Reset actions for a new round (or wait for your turn)">
+              ↻ New Round
+            </button>
+            <div class="turn-hint" style="font-size: 0.75rem; opacity: 0.7; margin-top: 6px; text-align: center; padding: 4px 0; border-top: 1px solid rgba(124,232,255,0.2);">
+              Actions auto-reset on your turn
+            </div>
+          </div>
+        </div>
       {{/if}}
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/special-combat-actions-panel.hbs"}}
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs"}}
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs"}}
+
     </section>
 
     <!-- TALENTS TAB -->

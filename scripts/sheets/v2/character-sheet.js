@@ -762,6 +762,50 @@ const forcePoints = [];
       };
     }
 
+    // Combat Actions Context (for combat tab - actions browser)
+    // Load from data/combat-actions.json and organize by action economy
+    let combatActions = { groups: [] };
+    try {
+      const response = await fetch('/systems/foundryvtt-swse/data/combat-actions.json');
+      if (response.ok) {
+        const actionsData = await response.json();
+
+        // Organize by action economy type
+        const grouped = {};
+        const economyOrder = ['full-round', 'standard', 'move', 'swift', 'free', 'reaction'];
+
+        for (const action of actionsData) {
+          if (!action.action?.type) continue;
+          const economy = action.action.type.toLowerCase().replace(/[\s+]/g, '-');
+          if (!grouped[economy]) {
+            grouped[economy] = [];
+          }
+          grouped[economy].push({
+            id: action.name.toLowerCase().replace(/\s+/g, '-'),
+            name: action.name,
+            type: action.action.type,
+            cost: action.action.cost,
+            notes: action.notes,
+            hasRelatedSkills: action.relatedSkills && action.relatedSkills.length > 0
+          });
+        }
+
+        // Build groups in action economy order
+        for (const eco of economyOrder) {
+          if (grouped[eco]) {
+            combatActions.groups.push({
+              economy: eco,
+              count: grouped[eco].length,
+              actions: grouped[eco]
+            });
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('[SWSE] Failed to load combat actions:', err);
+      // Gracefully degrade - will show empty state
+    }
+
     /* ============================================================
        MISSING CONTEXT KEYS (REMEDIATION)
     ============================================================ */
@@ -989,6 +1033,10 @@ const forcePoints = [];
       destinyPointsValue,           // Current destiny points (from system.destinyPoints.value)
       destinyPointsMax,             // Max destiny points (from system.destinyPoints.max)
       forcePoints,                  // Visual array of force point dots
+      // ═════════════════════════════════════════════════════════════════
+      // PHASE 9: Combat Actions Browser (in-tab)
+      // ═════════════════════════════════════════════════════════════════
+      combatActions,                // Organized combat actions by economy type
       // ═════════════════════════════════════════════════════════════════
       // UNIFIED PANEL CONTEXTS (Primary data source)
       // Panels now own all character data through dedicated view models
@@ -1806,6 +1854,86 @@ const forcePoints = [];
   ============================================================ */
 
   _activateCombatUI(html, { signal } = {}) {
+    // ═════════════════════════════════════════════════════════════════
+    // PHASE 9: Combat Actions Panel (In-tab browser)
+    // ═════════════════════════════════════════════════════════════════
+
+    // Filter combat actions by search
+    const combatSearchInput = html.querySelector('.combat-actions-search');
+    if (combatSearchInput) {
+      combatSearchInput.addEventListener('input', (event) => {
+        const filterText = event.target.value.toLowerCase();
+        const actionRows = html.querySelectorAll('.combat-action-row');
+
+        actionRows.forEach(row => {
+          const actionName = row.querySelector('.action-name')?.textContent.toLowerCase() ?? '';
+          const actionNotes = row.querySelector('.action-notes')?.textContent.toLowerCase() ?? '';
+          const matches = actionName.includes(filterText) || actionNotes.includes(filterText);
+          row.style.display = matches ? '' : 'none';
+        });
+      }, { signal });
+    }
+
+    // Sort combat actions
+    const combatSortSelect = html.querySelector('.combat-actions-sort');
+    if (combatSortSelect) {
+      combatSortSelect.addEventListener('change', (event) => {
+        const sortMode = event.target.value;
+        const actionContent = html.querySelector('.combat-actions-content');
+        if (!actionContent) return;
+
+        if (sortMode === 'name') {
+          // Sort by name within each group
+          const groups = actionContent.querySelectorAll('.combat-action-group');
+          groups.forEach(group => {
+            const rows = Array.from(group.querySelectorAll('.combat-action-row'));
+            rows.sort((a, b) => {
+              const nameA = a.querySelector('.action-name')?.textContent ?? '';
+              const nameB = b.querySelector('.action-name')?.textContent ?? '';
+              return nameA.localeCompare(nameB);
+            });
+
+            const list = group.querySelector('.combat-action-list');
+            if (list) {
+              rows.forEach(row => list.appendChild(row));
+            }
+          });
+        }
+        // 'economy' is default, groups are already organized by economy
+      }, { signal });
+    }
+
+    // New Round / Manual Reset Button
+    html.querySelectorAll('[data-action="new-round"]').forEach(button => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+
+        if (!game.combat) {
+          ui?.notifications?.warn?.('No active combat');
+          return;
+        }
+
+        const combatId = game.combat.id;
+        const { ActionEconomyPersistence } = await import('/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-persistence.js');
+
+        try {
+          // Reset action economy for this actor
+          await ActionEconomyPersistence.resetTurnState(this.actor, combatId);
+          ui?.notifications?.info?.(`${this.actor.name} actions reset for new round`);
+
+          // Trigger a re-render to update the action economy indicator
+          this.render(false);
+        } catch (err) {
+          console.error('Failed to reset turn state:', err);
+          ui?.notifications?.error?.('Failed to reset actions');
+        }
+      }, { signal });
+    });
+
+    // ═════════════════════════════════════════════════════════════════
+    // EXISTING COMBAT UI HANDLERS
+    // ═════════════════════════════════════════════════════════════════
+
     // Action click (cards and table rows)
     html.querySelectorAll(".swse-combat-action-card, .action-row").forEach(element => {
       element.addEventListener("click", async (event) => {
