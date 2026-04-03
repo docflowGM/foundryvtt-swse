@@ -154,14 +154,14 @@ form.swse-sheet-ui .sheet-header {
   min-height: 0;
 }
 
-/* Actions: fixed height, no grow */
+/* Actions: fixed height, no grow — Phase 4 compressed */
 form.swse-sheet-ui .sheet-actions {
   flex: 0 0 auto;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 5px;
   align-items: center;
-  padding: 10px 12px;
+  padding: 6px 8px;
 }
 
 form.swse-sheet-ui .sheet-actions > * {
@@ -169,14 +169,14 @@ form.swse-sheet-ui .sheet-actions > * {
   min-width: 0;
 }
 
-/* Tabs nav: fixed height, no grow */
+/* Tabs nav: fixed height, no grow — Phase 4 compressed */
 form.swse-sheet-ui .sheet-tabs {
   flex: 0 0 auto;
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
   align-items: center;
-  padding: 6px;
+  padding: 4px;
 }
 
 /* Body: flex grow to fill */

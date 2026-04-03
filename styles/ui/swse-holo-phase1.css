@@ -32,7 +32,8 @@
 .swse-store-ui .wallet-header::after,.swse-store-ui .category-header::after,.swse-store-ui .subcategory-header::after,.swse-store-ui .cart-header::after,.swse-sheet-ui .section-bar::after,.swse-sheet-ui .section-header::after{content:"";display:block;height:12px;margin-top:6px;background-image:var(--swse-ui-divider-soft);background-repeat:no-repeat;background-position:left center;background-size:min(320px,100%) 100%;opacity:.72;}
 .swse-ui-tabs,.swse-sheet-ui .sheet-tabs,.swse-store-ui .shop-navigation,.swse-store-ui .card-store-controls{position:relative;}
 .swse-ui-tabs::before,.swse-sheet-ui .sheet-tabs::before{content:"";position:absolute;inset:0;background-image:var(--swse-ui-tabs-bar);background-repeat:no-repeat;background-size:100% 100%;opacity:.24;pointer-events:none;}
-.swse-ui-tab,.swse-sheet-ui .sheet-tabs .item{position:relative;border:none;color:var(--swse-ui-cyan);text-transform:uppercase;letter-spacing:.06em;font-weight:700;text-shadow:0 0 10px rgba(124,232,255,.18);padding:10px 14px;margin:4px;min-height:38px;display:inline-flex;align-items:center;justify-content:center;background:transparent;overflow:hidden;}
+/* Phase 4 compressed tab items */
+.swse-ui-tab,.swse-sheet-ui .sheet-tabs .item{position:relative;border:none;color:var(--swse-ui-cyan);text-transform:uppercase;letter-spacing:.06em;font-weight:700;text-shadow:0 0 10px rgba(124,232,255,.18);padding:7px 12px;margin:2px;min-height:32px;display:inline-flex;align-items:center;justify-content:center;background:transparent;overflow:hidden;}
 .swse-ui-tab::before,.swse-sheet-ui .sheet-tabs .item::before{content:"";position:absolute;inset:0;background-image:var(--swse-ui-tab-idle);background-repeat:no-repeat;background-position:center;background-size:100% 100%;opacity:.85;pointer-events:none;}
 .swse-ui-tab:hover::before,.swse-sheet-ui .sheet-tabs .item:hover::before{background-image:var(--swse-ui-tab-hover);opacity:.95;}
 .swse-ui-tab:focus-visible::before,.swse-sheet-ui .sheet-tabs .item:focus-visible::before{outline:2px solid var(--swse-ui-cyan-strong);outline-offset:-2px;opacity:1;}
@@ -53,11 +54,11 @@
 .swse-store-ui .rarity-badge::before,.swse-store-ui .suggestion-badge::before,.swse-sheet-ui .swse-v2-entry .tag::before,.swse-sheet-ui .swse-v2-action-row .tag::before,.swse-sheet-ui .talent-tree-count::before{content:"";position:absolute;inset:0;background-image:var(--swse-ui-badge-hex);background-repeat:no-repeat;background-position:center;background-size:100% 100%;opacity:.25;pointer-events:none;}
 .swse-store-ui .product-item:hover,.swse-store-ui .product-card:hover,.swse-sheet-ui .skills-grid-row:hover,.swse-sheet-ui .swse-v2-action-row:hover,.swse-sheet-ui .talent-card:hover,.swse-sheet-ui .swse-v2-entry:hover{background-image:var(--swse-ui-row-highlight);background-repeat:no-repeat;background-position:center;background-size:100% 100%;}
 .swse-store-ui .product-item[data-selected="true"],.swse-store-ui .product-card.selected,.swse-sheet-ui .sheet-tabs .item.active,.swse-sheet-ui .talent-card.active{background-image:var(--swse-ui-selected-row);background-repeat:no-repeat;background-position:center;background-size:100% 100%;}
-/* Visual styling only — structure is in v2-sheet.css */
-.swse-sheet-ui .sheet-header{margin:0 10px 8px;border:1px solid var(--swse-ui-line);border-radius:14px;background:linear-gradient(180deg, rgba(7,16,30,.88), rgba(4,10,18,.94));box-shadow:var(--swse-ui-glow);}
-.swse-sheet-ui .sheet-actions{margin:0 10px 10px;border:1px solid var(--swse-ui-line);border-radius:12px;background:linear-gradient(180deg, rgba(6,16,30,.9), rgba(3,10,20,.95)),var(--swse-ui-filterbar) center/100% 100% no-repeat;box-shadow:var(--swse-ui-glow);}
-.swse-sheet-ui .sheet-tabs{margin:0 10px 10px;border:1px solid var(--swse-ui-line);border-radius:14px;background:rgba(7,18,30,.76);}
-.swse-sheet-ui .sheet-body{padding:0 10px 10px;}
+/* Visual styling only — structure is in v2-sheet.css — Phase 4 compressed */
+.swse-sheet-ui .sheet-header{margin:0 8px 6px;border:1px solid var(--swse-ui-line);border-radius:14px;background:linear-gradient(180deg, rgba(7,16,30,.88), rgba(4,10,18,.94));box-shadow:var(--swse-ui-glow);}
+.swse-sheet-ui .sheet-actions{margin:0 8px 4px;border:1px solid var(--swse-ui-line);border-radius:12px;background:linear-gradient(180deg, rgba(6,16,30,.9), rgba(3,10,20,.95)),var(--swse-ui-filterbar) center/100% 100% no-repeat;box-shadow:var(--swse-ui-glow);}
+.swse-sheet-ui .sheet-tabs{margin:0 8px 6px;border:1px solid var(--swse-ui-line);border-radius:14px;background:rgba(7,18,30,.76);}
+.swse-sheet-ui .sheet-body{padding:0 8px 8px;}
 .swse-sheet-ui .sheet-body > .tab{}
 .swse-sheet-ui .swse-v2-sheet-grid{gap:14px;}
 /* Header region visual styling */
