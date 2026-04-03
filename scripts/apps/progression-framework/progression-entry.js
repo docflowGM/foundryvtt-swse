@@ -152,11 +152,17 @@ export async function launchProgression(actor, options = {}) {
       // Brand new or incomplete actor → open ChargenShell
       SWSELogger.log(`[Progression Entry] Actor is incomplete (type=${actor.type}, level=${actor.system.level}, hasClass=${actor.items.some(i => i.type === 'class')}) → routing to ChargenShell`);
       console.log('[PROGRESSION] ROUTING: Opening ChargenShell for incomplete actor');
-      const { ChargenShell } = await import('./chargen-shell.js');
-      console.log('[PROGRESSION] ChargenShell imported');
-      const result = await ChargenShell.open(actor, options);
-      console.log('[PROGRESSION] ChargenShell.open() completed, result:', result?.constructor?.name);
-      return result;
+      try {
+        const { ChargenShell } = await import('./chargen-shell.js');
+        console.log('[PROGRESSION] ChargenShell imported successfully');
+        const result = await ChargenShell.open(actor, options);
+        console.log('[PROGRESSION] ChargenShell.open() completed, result:', result?.constructor?.name);
+        return result;
+      } catch (importErr) {
+        console.error('[PROGRESSION] ❌ ChargenShell import failed:', importErr);
+        SWSELogger.error('[Progression Entry] ChargenShell import error:', importErr);
+        throw importErr;
+      }
     } else {
       // Established actor → open LevelupShell for level advancement
       SWSELogger.log(`[Progression Entry] Actor is complete (type=${actor.type}, level=${actor.system.level}) → routing to LevelupShell`);

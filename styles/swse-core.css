@@ -301,10 +301,14 @@
   display: none;
 }
 
-.swse-sheet .tab-content.active,
-.swse-sheet section.tab.active,
-.swse-sheet div.tab.active {
+.swse-sheet .tab-content.active {
   display: block;
+}
+
+/* V2 sheets: tabs are flex containers, not block */
+.swse-sheet.v2 section.tab.active,
+.swse-sheet.v2 div.tab.active {
+  display: flex;
 }
 
 /* =========================

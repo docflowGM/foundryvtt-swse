@@ -43,6 +43,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/abilities-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/initiative-control.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/combat-stats-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/summary/shield-rating.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs',

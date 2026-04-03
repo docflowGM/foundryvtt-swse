@@ -104,18 +104,56 @@
   min-width: 0;
 }
 
-.swse-sheet.sheet-header {
+.swse-sheet .sheet-header {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
   padding: 10px 12px;
   flex: 0 0 auto;
 }
 
-.swse-sheet.sheet-actions {
+.swse-sheet .sheet-actions {
   flex: 0 0 auto;
 }
 
-.swse-sheet.swse-stat { min-width: 64px; text-align: center; }
-.swse-sheet.swse-stat .label { font-size: 0.7rem; opacity: 0.75; }
-.swse-sheet.swse-stat .value { font-size: 1.35rem; font-weight: 800; }
+/* Header left/right layout */
+.swse-sheet .header-left {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.swse-sheet .header-left .profile {
+  flex: 0 0 64px;
+  width: 64px;
+  height: 64px;
+  border-radius: 4px;
+}
+
+.swse-sheet .title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.swse-sheet .header-right {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+
+.swse-stat { min-width: 64px; text-align: center; }
+.swse-stat .label { font-size: 0.7rem; opacity: 0.75; }
+.swse-stat .value { font-size: 1.35rem; font-weight: 800; }
 .swse-sheet .swse-v2-condition-step { padding: 6px 10px; border-radius: 8px; }
 
 
@@ -3556,14 +3594,17 @@ select option:checked {
 
 .swse-sheet .header-name-row {
   display: flex;
-  align-items: flex-end;
-  gap: 20px;
-  margin-bottom: 10px;
+  align-items: center;
+  gap: 12px;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
 .swse-sheet .charname {
-  flex: 1;
+  flex: 0 1 auto;
   margin: 0;
+  min-width: 150px;
 }
 
 .swse-sheet .charname input {
@@ -3599,14 +3640,17 @@ select option:checked {
 .swse-sheet .header-details-row {
   display: flex;
   gap: 16px;
-  margin-bottom: 8px;
   flex-wrap: wrap;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .swse-sheet .header-secondary-row {
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .swse-sheet .header-field {

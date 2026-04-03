@@ -1166,6 +1166,18 @@ const forcePoints = [];
       console.log(`[HELP-MODE] Cycled to: ${this._helpLevel}`);
     }, { signal });
 
+    // DELEGATED: Tab Switching - Update panel visibility manager
+    html.addEventListener("click", ev => {
+      const tabLink = ev.target.closest("[data-action='tab']");
+      if (!tabLink) return;
+
+      const tabName = tabLink.dataset.tab;
+      if (tabName) {
+        console.log(`[TAB SWITCH] Switching to tab: ${tabName}`);
+        this.visibilityManager.setActiveTab(tabName);
+      }
+    }, { signal });
+
     // DELEGATED: Toggle Abilities Panel - Show/Hide Expanded Views
     // Using delegated listeners from html root for stability across rerenders
     html.addEventListener("click", ev => {
@@ -2453,8 +2465,8 @@ const forcePoints = [];
   ============================================================ */
 
   _activateMobileActions(html, { signal } = {}) {
-    // Only activate on mobile mode
-    if (!MobileMode?.enabled) return;
+    // Only activate on mobile mode (safely check if MobileMode exists and is enabled)
+    if (!MobileMode || !MobileMode.enabled) return;
 
     // Add toggle listener to all .item-actions-toggle buttons
     html.addEventListener("click", (event) => {
@@ -2865,45 +2877,19 @@ const forcePoints = [];
    * will automatically trigger HP recomputation via hooks.
    *
    * @param {Object} expanded - Expanded form data (nested)
-   * @returns {Object} Filtered data with protected fields removed
-   * @private
+   * @returns {Object} Filtered data without SSOT-protected fields
    */
-  _filterProtectedFields(expanded) {
-    const filtered = foundry.utils.duplicate(expanded);
-    const protectedPaths = [];
+  _filterSSotProtectedFields(expanded) {
+    const filtered = foundry.utils.deepClone(expanded);
 
-    const checkObject = (obj, prefix = '') => {
-      if (!obj || typeof obj !== 'object') return;
-      for (const [key, value] of Object.entries(obj)) {
-        const path = prefix ? `${prefix}.${key}` : key;
+    // Remove protected derived fields
+    if (filtered.system?.derived) {
+      delete filtered.system.derived;
+    }
 
-        // Reject derived field writes (only DerivedCalculator may write)
-        if (path.startsWith('system.derived.')) {
-          console.log(`[PERSISTENCE] Filtering protected field (derived): ${path}`);
-          protectedPaths.push(path);
-          delete obj[key];
-        }
-        // Reject direct system.hp.max writes (only recomputeHP may write)
-        else if (path === 'system.hp.max') {
-          console.log(`[PERSISTENCE] Filtering protected field (HP SSOT): ${path}`);
-          protectedPaths.push(path);
-          delete obj[key];
-        }
-        // Recursively check nested objects
-        else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-          checkObject(value, path);
-        }
-      }
-    };
-
-    checkObject(filtered);
-
-    if (protectedPaths.length > 0) {
-      console.log('[PERSISTENCE] Protected fields filtered:', {
-        count: protectedPaths.length,
-        paths: protectedPaths,
-        note: 'These fields are recalculated via ActorEngine governance; hooks will trigger recomputation'
-      });
+    // Remove protected hp.max (only hp.value and hp.temp are editable)
+    if (filtered.system?.hp?.max !== undefined) {
+      delete filtered.system.hp.max;
     }
 
     return filtered;

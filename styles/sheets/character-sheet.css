@@ -249,6 +249,8 @@
 .swse-character-sheet .skills-panel {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 0;
   gap: 12px;
 }
 
@@ -270,9 +272,19 @@
   margin-bottom: 8px;
 }
 
+.swse-character-sheet .skills-grid-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  gap: 0;
+}
+
 .swse-character-sheet .skills-grid-row {
   padding: 8px 0;
   border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+  flex-shrink: 0;
 }
 
 .swse-character-sheet .skills-grid-row:hover {

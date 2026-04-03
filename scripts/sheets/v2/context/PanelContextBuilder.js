@@ -768,80 +768,39 @@ export class PanelContextBuilder {
    * - perception: { value, label, skillKey }
    * - baseAttack: { value, label }
    * - canEdit: boolean
-   *
-   * Sources:
-   * - Speed: system.speed (base movement speed)
-   * - Initiative: derived.skills.initiative.total (skill total)
-   * - Perception: derived.skills.perception.total (skill total)
-   * - BAB: derived.bab (class-based calculation)
    */
   buildCombatStatsPanel() {
-    // Get speed (base movement)
-    const speed = Number(this.system.speed?.total ?? this.system.speed ?? 0) || 0;
+    const speed = {
+      value: Number(this.system.speed?.value) || 0,
+      label: `${this.system.speed?.value || 0} ft.`
+    };
 
-    // Get initiative from skills system (Initiative is a skill)
-    const initiativeSkill = this.derived.skills?.initiative;
-    const initiativeValue = initiativeSkill ? Number(initiativeSkill.total ?? 0) : 0;
+    const initiative = {
+      value: Number(this.derived.initiative?.value) || 0,
+      label: `+${this.derived.initiative?.value || 0}`,
+      skillKey: 'initiative'
+    };
 
-    // Get perception from skills system (Perception is a skill)
-    const perceptionSkill = this.derived.skills?.perception;
-    const perceptionValue = perceptionSkill ? Number(perceptionSkill.total ?? 0) : 0;
+    const perception = {
+      value: Number(this.derived.perception?.value) || 0,
+      label: `+${this.derived.perception?.value || 0}`,
+      skillKey: 'perception'
+    };
 
-    // Get base attack bonus from derived
-    const bab = Number(this.derived.bab ?? 0) || 0;
+    const baseAttack = {
+      value: Number(this.derived.baseAttack?.value) || 0,
+      label: `+${this.derived.baseAttack?.value || 0}`
+    };
 
     const panel = {
-      speed: {
-        value: speed,
-        label: 'Speed'
-      },
-      initiative: {
-        value: initiativeValue,
-        label: 'Initiative',
-        skillKey: 'initiative'
-      },
-      perception: {
-        value: perceptionValue,
-        label: 'Perception',
-        skillKey: 'perception'
-      },
-      baseAttack: {
-        value: bab,
-        label: 'Base Attack'
-      },
+      speed,
+      initiative,
+      perception,
+      baseAttack,
       canEdit: this.sheet.isEditable
     };
 
-    // Validate contract (strict mode throws, dev mode warns)
     this._validatePanelContext('combatStatsPanel', panel);
-
     return panel;
   }
-   *
-   * Returns an object keyed by panel name, where each panel is a dedicated
-   * view model that partials read from exclusively.
-   */
-  buildAllPanels() {
-    return {
-      healthPanel: this.buildHealthPanel(),
-      combatStatsPanel: this.buildCombatStatsPanel(),
-      defensePanel: this.buildDefensePanel(),
-      biographyPanel: this.buildBiographyPanel(),
-      inventoryPanel: this.buildInventoryPanel(),
-      talentPanel: this.buildTalentPanel(),
-      featPanel: this.buildFeatPanel(),
-      maneuverPanel: this.buildManeuverPanel(),
-      secondWindPanel: this.buildSecondWindPanel(),
-      portraitPanel: this.buildPortraitPanel(),
-      darkSidePanel: this.buildDarkSidePanel(),
-      forcePowersPanel: this.buildForcePowersPanel(),
-      starshipManeuversPanel: this.buildStarshipManeuversPanel(),
-      languagesPanel: this.buildLanguagesPanel(),
-      racialAbilitiesPanel: this.buildRacialAbilitiesPanel(),
-      armorSummaryPanel: this.buildArmorSummaryPanel(),
-      equipmentLedgerPanel: this.buildEquipmentLedgerPanel(),
-      combatNotesPanel: this.buildCombatNotesPanel(),
-      relationshipsPanel: this.buildRelationshipsPanel()
-    };
-  }
-}
+}

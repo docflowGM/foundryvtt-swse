@@ -14,14 +14,18 @@ export class PanelVisibilityManager extends BasePanelVisibilityManager {
     super(sheetInstance);
 
     // Character-specific: Define which panels appear on which tabs
+    // These must match the tabs defined in character-sheet.hbs
+    // Note: portraitPanel and biographyPanel are always visible (header), but built with overview for efficiency
     this.tabPanels = {
-      primary: ['portraitPanel', 'biographyPanel', 'healthPanel', 'defensePanel'],
-      gear: ['inventoryPanel', 'armorSummaryPanel', 'equipmentLedgerPanel'],
+      overview: ['portraitPanel', 'biographyPanel', 'healthPanel', 'combatStatsPanel', 'secondWindPanel', 'defensePanel'],
+      abilities: ['abilitiesPanel', 'racialAbilitiesPanel'],
+      skills: ['skillsPanel'],
+      combat: ['maneuverPanel', 'darkSidePanel'],
       talents: ['talentPanel', 'featPanel'],
-      combat: ['maneuverPanel', 'secondWindPanel', 'darkSidePanel'],
       force: ['forcePowersPanel'],
-      starship: ['starshipManeuversPanel'],
-      social: ['relationshipsPanel', 'languagesPanel', 'racialAbilitiesPanel'],
+      gear: ['inventoryPanel', 'armorSummaryPanel', 'equipmentLedgerPanel'],
+      biography: ['biographyPanel'],
+      relationships: ['relationshipsPanel', 'languagesPanel'],
       notes: ['combatNotesPanel']
     };
 
@@ -40,8 +44,8 @@ export class PanelVisibilityManager extends BasePanelVisibilityManager {
     // Character-specific: Initialize state after setting mappings
     this._initializePanelState();
 
-    // Set default tab
-    this.currentTab = 'primary';
+    // Set default tab (matches default active tab in character-sheet.hbs)
+    this.currentTab = 'overview';
   }
 
   /**
