@@ -266,10 +266,9 @@ export class CombatExecutor {
         </div>
       `;
 
-      await SWSEChat.createMessage({
+      await SWSEChat.postHTML({
         actor,
-        content,
-        type: "attack"
+        content
       });
     } catch (err) {
       console.error("Chat message generation failed:", err);
@@ -292,10 +291,9 @@ export class CombatExecutor {
         </div>
       `;
 
-      await SWSEChat.createMessage({
+      await SWSEChat.postHTML({
         actor,
-        content,
-        type: "initiative"
+        content
       });
     } catch (err) {
       console.error("Initiative chat message failed:", err);

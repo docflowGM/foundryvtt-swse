@@ -241,15 +241,14 @@ export class ForceExecutor {
       }
 
       // Generate chat message
-      await SWSEChat.createMessage({
+      await SWSEChat.postHTML({
         actor,
         content: `<div class="swse-force-recovery">
           <h3>${actor.name} recovers Force powers</h3>
           <ul>
             ${powersToRecover.map(p => `<li>${p.name}</li>`).join("")}
           </ul>
-        </div>`,
-        type: "recovery"
+        </div>`
       });
 
       return {
@@ -282,10 +281,9 @@ export class ForceExecutor {
         </div>
       `;
 
-      await SWSEChat.createMessage({
+      await SWSEChat.postHTML({
         actor,
-        content,
-        type: "force"
+        content
       });
     } catch (err) {
       console.error("Force message generation failed:", err);
@@ -321,10 +319,9 @@ export class ForceExecutor {
         </div>
       `;
 
-      await SWSEChat.createMessage({
+      await SWSEChat.postHTML({
         actor,
-        content,
-        type: "force-roll"
+        content
       });
     } catch (err) {
       console.error("Force roll message generation failed:", err);
