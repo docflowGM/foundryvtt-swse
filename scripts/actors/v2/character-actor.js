@@ -116,14 +116,22 @@ function mirrorIdentity(actor, system) {
   i.darkSideScore = DSPEngine.getValue(actor);
 
   // Abilities (total + mod) are already prepared by the legacy data model.
-  i.abilities = {};
+  // Phase 6: Build as array for template iteration (skills-panel uses #each derived.identity.abilities)
+  const ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+  const ABILITY_LABELS = { 'str': 'Strength', 'dex': 'Dexterity', 'con': 'Constitution', 'int': 'Intelligence', 'wis': 'Wisdom', 'cha': 'Charisma' };
+
+  i.abilities = [];
   const abilities = system.abilities ?? system.attributes ?? {};
-  for (const key of ['str', 'dex', 'con', 'int', 'wis', 'cha']) {
+  for (const key of ABILITY_KEYS) {
     const a = abilities[key] ?? {};
-    i.abilities[key] = {
-      total: safeNumber(a.total ?? a.value ?? a.base, 10),
-      mod: safeNumber(a.mod, Math.floor((safeNumber(a.total ?? a.value ?? a.base, 10) - 10) / 2))
-    };
+    const total = safeNumber(a.total ?? a.value ?? a.base, 10);
+    const mod = safeNumber(a.mod, Math.floor((total - 10) / 2));
+    i.abilities.push({
+      key,
+      label: ABILITY_LABELS[key],
+      total,
+      mod
+    });
   }
 
   i.name = actor?.name ?? '';
