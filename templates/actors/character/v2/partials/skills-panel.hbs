@@ -38,17 +38,30 @@
           </button>
         </div>
 
-        <!-- Skill Name with Expand/Collapse Affordance -->
+        <!-- Skill Name with Conditional Expand Affordance -->
         <div class="col-skill-name">
-          {{#if skill.extraUses.length}}
-            <button type="button"
-                    class="skill-expand-toggle"
-                    data-action="toggle-skill-expand"
-                    data-skill="{{skill.key}}"
-                    title="Expand to show {{skill.extraUses.length}} skill uses"
-                    aria-expanded="false">
-              ▶
-            </button>
+          {{#if skill.hasExtraUses}}
+            {{#if (gte skill.extraUsesCount 3)}}
+              <!-- Many uses: Show badge count -->
+              <button type="button"
+                      class="skill-expand-toggle skill-expand-toggle--many"
+                      data-action="toggle-skill-expand"
+                      data-skill="{{skill.key}}"
+                      title="{{skill.extraUsesCount}} skill uses available"
+                      aria-expanded="false">
+                <span class="expand-count">{{skill.extraUsesCount}}</span>
+              </button>
+            {{else}}
+              <!-- Few uses: Simple chevron -->
+              <button type="button"
+                      class="skill-expand-toggle"
+                      data-action="toggle-skill-expand"
+                      data-skill="{{skill.key}}"
+                      title="{{skill.extraUsesCount}} skill {{#if (eq skill.extraUsesCount 1)}}use{{else}}uses{{/if}} available"
+                      aria-expanded="false">
+                ▶
+              </button>
+            {{/if}}
           {{/if}}
           <button type="button"
                   class="skill-name-btn rollable"
@@ -140,39 +153,72 @@
 
       </div>
 
-      <!-- PHASE 10: Extra Skill Uses (expandable detail layer) -->
-      {{#if skill.extraUses.length}}
+      <!-- PHASE 10+: Extra Skill Uses (grouped, filtered, status-aware) -->
+      {{#if skill.hasExtraUses}}
       <div class="skill-extra-uses skill-extra-uses--collapsed swse-ui-frame" data-skill="{{skill.key}}">
-        {{#each skill.extraUses as |use|}}
-          <div class="extra-use-row swse-row-surface">
-            <!-- Left: Use metadata -->
-            <div class="extra-use-copy">
-              <span class="extra-use-label">{{use.label}}</span>
-              {{#if use.dc}}
-                <span class="extra-use-dc" title="Difficulty Class">DC {{use.dc}}</span>
-              {{/if}}
-              {{#if use.description}}
-                <span class="extra-use-description">{{use.description}}</span>
-              {{/if}}
-            </div>
-            <!-- Center: Action economy type -->
-            {{#if use.timeLabel}}
-              <span class="extra-use-time {{use.timeClass}}" title="Action economy: {{use.timeLabel}}">
-                {{use.timeLabel}}
-              </span>
-            {{/if}}
-            <!-- Right: Action affordances -->
-            <div class="extra-use-actions">
-              <button type="button"
-                      class="extra-use-btn"
-                      data-action="use-extra-skill"
-                      data-skill="{{../skill.key}}"
-                      data-use="{{use.key}}"
-                      title="Invoke {{use.label}} on {{../skill.label}}">
-                Use
-              </button>
-            </div>
+        <!-- COMPACT FILTER TOGGLE (visible only when expanded) -->
+        <div class="extra-uses-filter-bar skill-extra-uses-hidden">
+          <div class="filter-buttons">
+            <button class="filter-btn filter-btn--active" data-filter="all" title="Show all skill uses">All</button>
+            <button class="filter-btn" data-filter="available" title="Show only usable actions">Available</button>
+            <button class="filter-btn" data-filter="combat" title="Show combat-relevant uses">Combat</button>
           </div>
+        </div>
+
+        <!-- GROUPED DISPLAY -->
+        {{#each skill.extraUsesGrouped as |group groupName|}}
+          {{#if group.length}}
+          <div class="extra-use-group" data-group="{{groupName}}">
+            <div class="group-header">{{groupName}}</div>
+            {{#each group as |use|}}
+              <div class="extra-use-row swse-row-surface {{#if use.isBlocked}}use-blocked{{/if}}" data-use-key="{{use.key}}" data-category="{{use.category}}">
+                <!-- Left: Label & Status -->
+                <div class="extra-use-copy">
+                  <div class="use-label-line">
+                    <span class="extra-use-label">{{use.label}}</span>
+                    {{#if use.isBlocked}}
+                      <span class="use-status use-status--blocked" title="Requires training">🔒</span>
+                    {{else if (and use.requiresTrained use.skillTrained)}}
+                      <span class="use-status use-status--trained" title="Trained use">⭐</span>
+                    {{/if}}
+                  </div>
+                  {{#if use.description}}
+                    <span class="extra-use-description" title="{{use.description}}">{{truncate use.description 60}}</span>
+                  {{/if}}
+                </div>
+
+                <!-- Center: DC & Type -->
+                <div class="extra-use-meta">
+                  {{#if use.dc}}
+                    <span class="extra-use-dc" title="Difficulty Class">{{use.dc}}</span>
+                  {{/if}}
+                  {{#if use.actionTypeLabel.label}}
+                    <span class="action-type-tag {{use.actionType}}" title="{{use.actionTypeLabel.label}} action">
+                      {{use.actionTypeLabel.icon}}
+                    </span>
+                  {{/if}}
+                </div>
+
+                <!-- Right: Economy & Action -->
+                <div class="extra-use-action-right">
+                  {{#if use.timeLabel}}
+                    <span class="extra-use-time {{use.timeClass}}" title="Action economy: {{use.timeLabel}}">
+                      {{use.timeLabel}}
+                    </span>
+                  {{/if}}
+                  <button type="button"
+                          class="extra-use-btn {{#if use.isBlocked}}btn-disabled{{/if}}"
+                          data-action="use-extra-skill"
+                          data-skill="{{../skill.key}}"
+                          data-use="{{use.key}}"
+                          {{#if use.isBlocked}}disabled title="Requires trained skill"{{else}}title="Use {{use.label}}"{{/if}}>
+                    {{use.actionTypeLabel.action}}
+                  </button>
+                </div>
+              </div>
+            {{/each}}
+          </div>
+          {{/if}}
         {{/each}}
       </div>
       {{/if}}
@@ -526,7 +572,7 @@
   box-shadow: 0 0 4px rgba(0, 200, 255, 0.2);
 }
 
-/* ========== PHASE 10: EXPAND/COLLAPSE UI ========== */
+/* ========== PHASE 10+: EXPAND/COLLAPSE UI WITH UX REFINEMENTS ========== */
 
 .skill-expand-toggle {
   background: none;
@@ -552,6 +598,26 @@
 .skill-expand-toggle[aria-expanded="true"] {
   transform: rotate(90deg);
   color: #00f0ff;
+}
+
+/* Many uses: Show count badge */
+.skill-expand-toggle--many {
+  padding: 1px 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 3px;
+  background: rgba(124, 232, 255, 0.15);
+  border: 1px solid rgba(124, 232, 255, 0.3);
+}
+
+.skill-expand-toggle--many:hover {
+  background: rgba(124, 232, 255, 0.25);
+  border-color: rgba(124, 232, 255, 0.5);
+}
+
+.skill-expand-toggle--many .expand-count {
+  display: inline-block;
+  min-width: 12px;
 }
 
 /* Collapsed state: hide extra uses, show chevron */
@@ -628,5 +694,256 @@
   background: rgba(200, 200, 200, 0.15);
   border: 1px solid rgba(200, 200, 200, 0.4);
   color: rgba(240, 250, 255, 0.6);
+}
+
+/* ========== PHASE 10+: GROUPED DISPLAY & STATUS AWARENESS ========== */
+
+.extra-uses-filter-bar {
+  padding: 8px;
+  border-bottom: 1px solid rgba(0, 234, 255, 0.2);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  background: rgba(0, 20, 40, 0.5);
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.filter-btn {
+  padding: 4px 10px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 234, 255, 0.2);
+  background: rgba(0, 234, 255, 0.05);
+  color: rgba(0, 234, 255, 0.7);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.filter-btn:hover {
+  background: rgba(0, 234, 255, 0.15);
+  border-color: rgba(0, 234, 255, 0.4);
+  color: #00f0ff;
+}
+
+.filter-btn--active {
+  background: rgba(0, 234, 255, 0.25);
+  border-color: rgba(0, 234, 255, 0.6);
+  color: #00f0ff;
+}
+
+.skill-extra-uses-hidden {
+  display: none;
+}
+
+/* Group headers for categorized display */
+.extra-use-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.group-header {
+  padding: 0 8px;
+  margin-top: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(0, 234, 255, 0.5);
+  opacity: 0.7;
+}
+
+/* Enhanced extra-use-row with status indicators */
+.extra-use-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  background: rgba(0, 200, 255, 0.05);
+  border: 1px solid rgba(0, 200, 255, 0.15);
+  font-size: 0.9rem;
+  transition: all 0.15s ease;
+}
+
+.extra-use-row:hover {
+  background: rgba(0, 200, 255, 0.1);
+  border-color: rgba(0, 200, 255, 0.25);
+}
+
+/* Blocked state: cannot use due to requirements */
+.extra-use-row.use-blocked {
+  opacity: 0.6;
+  background: rgba(100, 100, 100, 0.05);
+  border-color: rgba(100, 100, 100, 0.15);
+}
+
+.extra-use-row.use-blocked:hover {
+  opacity: 0.8;
+  background: rgba(100, 100, 100, 0.08);
+  border-color: rgba(100, 100, 100, 0.25);
+}
+
+/* Left column: label with status indicator */
+.extra-use-copy {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.use-label-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.extra-use-label {
+  font-weight: 600;
+  color: rgba(0, 200, 255, 0.95);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.extra-use-description {
+  font-size: 0.8rem;
+  opacity: 0.65;
+  font-style: italic;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Status indicators */
+.use-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+.use-status--blocked {
+  color: #ff9999;
+  title: "Requires trained skill";
+}
+
+.use-status--trained {
+  color: #ffc400;
+  title: "Trained only";
+}
+
+/* Center column: DC and action type tag */
+.extra-use-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.extra-use-dc {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 4px;
+  border-radius: 2px;
+  background: rgba(124, 232, 255, 0.15);
+  border: 1px solid rgba(124, 232, 255, 0.3);
+  color: rgba(124, 232, 255, 0.85);
+  white-space: nowrap;
+}
+
+/* Action type tags with visual distinction */
+.action-type-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.action-type-tag.check {
+  background: rgba(76, 175, 255, 0.15);
+  border: 1px solid rgba(76, 175, 255, 0.3);
+  color: #4cafff;
+}
+
+.action-type-tag.opposed {
+  background: rgba(255, 100, 100, 0.15);
+  border: 1px solid rgba(255, 100, 100, 0.3);
+  color: #ff6464;
+}
+
+.action-type-tag.roll {
+  background: rgba(124, 232, 255, 0.15);
+  border: 1px solid rgba(124, 232, 255, 0.3);
+  color: #7ce8ff;
+}
+
+.action-type-tag.use {
+  background: rgba(0, 255, 136, 0.15);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  color: #00ff88;
+}
+
+.action-type-tag.reference {
+  background: rgba(200, 200, 200, 0.15);
+  border: 1px solid rgba(200, 200, 200, 0.3);
+  color: rgba(240, 250, 255, 0.6);
+}
+
+/* Right column: economy badge and action button */
+.extra-use-action-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.extra-use-btn {
+  padding: 4px 10px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 200, 255, 0.3);
+  background: rgba(0, 200, 255, 0.1);
+  color: rgba(0, 200, 255, 0.95);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  min-width: 50px;
+}
+
+.extra-use-btn:hover:not(.btn-disabled) {
+  background: rgba(0, 200, 255, 0.2);
+  border-color: rgba(0, 200, 255, 0.5);
+  color: #00f0ff;
+  box-shadow: 0 0 8px rgba(0, 200, 255, 0.3);
+}
+
+.extra-use-btn:active:not(.btn-disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 0 4px rgba(0, 200, 255, 0.2);
+}
+
+.extra-use-btn.btn-disabled,
+.extra-use-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: rgba(100, 100, 100, 0.08);
+  border-color: rgba(100, 100, 100, 0.15);
+  color: rgba(100, 100, 100, 0.5);
 }
 </style>

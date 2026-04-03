@@ -615,32 +615,64 @@ export class SWSEV2CharacterSheet extends
 
     derived.skills = skillsList;
 
-    // Phase 10: Populate extraUses from ExtraSkillUseRegistry for each skill
-    // This adds expandable skill uses beneath each skill row
+    // Phase 10+: Populate extraUses from ExtraSkillUseRegistry with enhanced UX
+    // Adds expandable skill uses with intelligent grouping, status awareness, and filtering
     try {
       await ExtraSkillUseRegistry.initialize();
       for (const skill of derived.skills) {
         const skillUses = await ExtraSkillUseRegistry.getForSkill(skill.key, { actor });
-        // Normalize each skill use with visual styling info
-        skill.extraUses = skillUses.map(use => ({
-          key: use.key,
-          label: use.label,
-          name: use.name,
-          dc: use.dc,
-          time: use.time,
-          description: use.description,
-          effect: use.effect,
-          trainedOnly: use.trainedOnly,
-          // Color coding by action economy time field
-          timeClass: this._getTimeClass(use.time),
-          timeLabel: this._getTimeLabel(use.time)
-        }));
+
+        // Normalize each skill use with enhanced metadata
+        const normalizedUses = skillUses.map(use => {
+          const timeClass = this._getTimeClass(use.time);
+          const timeLabel = this._getTimeLabel(use.time);
+
+          return {
+            key: use.key,
+            label: use.label,
+            name: use.name,
+            dc: use.dc,
+            time: use.time,
+            description: use.description || use.effect || '',
+            effect: use.effect,
+            trainedOnly: use.trainedOnly,
+            // Action economy styling
+            timeClass,
+            timeLabel,
+            // Action type classification
+            actionType: this._classifyActionType(use),
+            actionTypeLabel: this._getActionTypeLabel(use),
+            // Status awareness
+            requiresTrained: use.trainedOnly,
+            skillTrained: skill.trained,
+            isBlocked: use.trainedOnly && !skill.trained,
+            // Grouping category
+            category: this._categorizeSkillUse(use, skill.key)
+          };
+        });
+
+        // Group uses by category for better scanning
+        const grouped = {};
+        normalizedUses.forEach(use => {
+          const cat = use.category;
+          if (!grouped[cat]) grouped[cat] = [];
+          grouped[cat].push(use);
+        });
+
+        // Store both flat array (for backwards compatibility) and grouped structure
+        skill.extraUses = normalizedUses;
+        skill.extraUsesGrouped = grouped;
+        skill.extraUsesCount = normalizedUses.length;
+        skill.hasExtraUses = normalizedUses.length > 0;
       }
     } catch (err) {
       // Fallback: if registry fails, keep empty extraUses arrays
       console.warn("SWSE | Failed to load extra skill uses for skills panel", err);
       for (const skill of derived.skills) {
         skill.extraUses = [];
+        skill.extraUsesGrouped = {};
+        skill.extraUsesCount = 0;
+        skill.hasExtraUses = false;
       }
     }
 
@@ -2117,7 +2149,7 @@ const forcePoints = [];
       }, { signal });
     });
 
-    // PHASE 10: Expand/collapse skill uses
+    // PHASE 10+: Expand/collapse skill uses with filter support
     html.querySelectorAll('[data-action="toggle-skill-expand"]').forEach(button => {
       button.addEventListener("click", (event) => {
         event.preventDefault();
@@ -2143,12 +2175,54 @@ const forcePoints = [];
           button.setAttribute('aria-expanded', 'false');
           extraUsesSection.classList.remove('skill-extra-uses--expanded');
           extraUsesSection.classList.add('skill-extra-uses--collapsed');
+          // Hide filter bar
+          const filterBar = extraUsesSection.querySelector('.extra-uses-filter-bar');
+          if (filterBar) filterBar.classList.add('skill-extra-uses-hidden');
         } else {
           // Expand
           button.setAttribute('aria-expanded', 'true');
           extraUsesSection.classList.remove('skill-extra-uses--collapsed');
           extraUsesSection.classList.add('skill-extra-uses--expanded');
+          // Show filter bar
+          const filterBar = extraUsesSection.querySelector('.extra-uses-filter-bar');
+          if (filterBar) filterBar.classList.remove('skill-extra-uses-hidden');
         }
+      }, { signal });
+    });
+
+    // PHASE 10+: Filter skill uses by category/availability
+    html.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', (event) => {
+        event.preventDefault();
+        const filterType = btn.dataset.filter;
+        const filterBar = btn.closest('.extra-uses-filter-bar');
+        if (!filterBar) return;
+
+        // Update active button
+        filterBar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('filter-btn--active'));
+        btn.classList.add('filter-btn--active');
+
+        // Find the parent extra-uses section and filter rows
+        const extrasSection = filterBar.closest('.skill-extra-uses');
+        if (!extrasSection) return;
+
+        // Show/hide uses based on filter
+        extrasSection.querySelectorAll('.extra-use-row').forEach(row => {
+          let show = false;
+
+          if (filterType === 'all') {
+            show = true;
+          } else if (filterType === 'available') {
+            // Show only non-blocked uses
+            show = !row.classList.contains('use-blocked');
+          } else if (filterType === 'combat') {
+            // Show only combat-relevant uses
+            const category = row.dataset.category;
+            show = category === 'Combat' || category === 'Special';
+          }
+
+          row.style.display = show ? '' : 'none';
+        });
       }, { signal });
     });
 
@@ -2753,6 +2827,108 @@ const forcePoints = [];
 
     // Return as-is if not matched
     return timeValue;
+  }
+
+  /**
+   * Classify the action type of a skill use for UI clarity
+   * @param {Object} use - The skill use object
+   * @returns {string} Action type: 'check', 'opposed', 'use', 'roll', 'reference', or 'unknown'
+   */
+  _classifyActionType(use) {
+    const label = (use.label || '').toLowerCase();
+    const dc = (use.dc || '').toLowerCase();
+    const effect = (use.effect || '').toLowerCase();
+    const time = (use.time || '').toLowerCase();
+
+    // Opposed checks: explicitly stated as opposed
+    if (dc.includes('opposed')) return 'opposed';
+    if (label.includes('feint') || label.includes('deception')) return 'opposed';
+
+    // Combat actions: combat terminology
+    if (label.includes('attack') || label.includes('feint') || label.includes('dodge') || label.includes('parry')) return 'roll';
+    if (effect.includes('attack') || effect.includes('damage')) return 'roll';
+
+    // Uses/invocations: applying an effect
+    if (label.includes('use') || label.includes('apply') || label.includes('activate')) return 'use';
+    if (effect.includes('gain') || effect.includes('apply')) return 'use';
+
+    // Rolls/checks: skill rolls with DC
+    if (dc && !dc.includes('none') && !dc.includes('n/a')) return 'check';
+    if (effect.includes('check') || effect.includes('roll')) return 'check';
+
+    // Reference/informational: no action needed
+    if (label.includes('reference') || label.includes('information') || label.includes('know')) return 'reference';
+    if (time.includes('none') || time.includes('n/a') || time.includes('instant')) return 'reference';
+
+    return 'check'; // Default to check
+  }
+
+  /**
+   * Get human-readable label for action type
+   * @param {Object} use - The skill use object
+   * @returns {Object} { type: string, label: string, icon: string }
+   */
+  _getActionTypeLabel(use) {
+    const type = this._classifyActionType(use);
+    const map = {
+      'check': { label: 'Check', icon: '🎲', action: 'check' },
+      'opposed': { label: 'Opposed', icon: '⚔', action: 'opposed' },
+      'roll': { label: 'Roll', icon: '🎲', action: 'roll' },
+      'use': { label: 'Use', icon: '✓', action: 'use' },
+      'reference': { label: 'Info', icon: 'ℹ', action: 'reference' },
+      'unknown': { label: 'Action', icon: '→', action: 'unknown' }
+    };
+    return map[type] || map['unknown'];
+  }
+
+  /**
+   * Categorize a skill use for grouped display
+   * Derives display grouping based on metadata signals
+   * @param {Object} use - The skill use object
+   * @param {string} skillKey - The skill key
+   * @returns {string} Category: 'Core', 'Combat', 'Social', 'Utility', or 'Special'
+   */
+  _categorizeSkillUse(use, skillKey) {
+    const label = (use.label || '').toLowerCase();
+    const effect = (use.effect || '').toLowerCase();
+    const time = (use.time || '').toLowerCase();
+
+    // Combat-specific uses
+    const combatSkills = ['gatherInformation', 'deception', 'persuasion', 'endurance', 'acrobatics'];
+    const combatTerms = ['feint', 'dodge', 'parry', 'attack', 'defend', 'distract', 'demoralize', 'intimidate'];
+    if (combatSkills.includes(skillKey) && combatTerms.some(t => label.includes(t) || effect.includes(t))) {
+      return 'Combat';
+    }
+    if (label.includes('feint') || label.includes('dodge') || label.includes('parry')) {
+      return 'Combat';
+    }
+    if (effect.includes('attack') || effect.includes('defend') || effect.includes('flat-footed')) {
+      return 'Combat';
+    }
+
+    // Social uses
+    const socialSkills = ['persuasion', 'deception', 'gatherInformation'];
+    const socialTerms = ['persuade', 'bargain', 'bribe', 'intimidate', 'deception', 'deceptive', 'innuendo', 'haggle'];
+    if (socialSkills.includes(skillKey) && socialTerms.some(t => label.includes(t) || effect.includes(t))) {
+      return 'Social';
+    }
+
+    // Special uses with explicit markers
+    if (label.includes('(trained)') || use.trainedOnly) {
+      return 'Special';
+    }
+    if (label.includes('(feat)') || label.includes('(talent)') || label.includes('(class)')) {
+      return 'Special';
+    }
+
+    // Check if it's a core/fundamental use (no special conditions)
+    // Core uses don't have "trained only", don't require special setup
+    if (!use.trainedOnly && !label.includes('(trained)') && !label.includes('(feat)')) {
+      return 'Core';
+    }
+
+    // Default to utility for everything else
+    return 'Utility';
   }
 
   /* ============================================================
