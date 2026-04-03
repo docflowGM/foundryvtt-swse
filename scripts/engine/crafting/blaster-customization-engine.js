@@ -7,7 +7,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/engine/actor/actor-engine.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export class BlasterCustomizationEngine {
   /**

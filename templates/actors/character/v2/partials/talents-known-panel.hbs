@@ -18,10 +18,10 @@
   {{#if talentPanel.hasEntries}}
     <div class="talents-ledger">
       {{#each (objectEntries talentPanel.grouped) as |groupEntry|}}
-        {{#if groupEntry.1.length}}
+        {{#if groupEntry.value.length}}
           <div class="talent-group">
-            <div class="group-header">{{groupEntry.0}}</div>
-            {{#each groupEntry.1}}
+            <div class="group-header">{{groupEntry.key}}</div>
+            {{#each groupEntry.value}}
               <div class="talent-row svg-row-backed" data-item-id="{{this.id}}">
                 <div class="talent-name">{{this.name}}</div>
                 {{#if this.source}}

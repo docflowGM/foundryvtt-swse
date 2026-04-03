@@ -70,13 +70,25 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     context.system = foundry.utils.deepClone(itemData.system ?? {});
 
     // Template expects this for the <form class="{{cssClass}} ..."> binding.
-    context.cssClass = this.classList?.value || this.constructor.DEFAULT_OPTIONS.classes.join(' ');
+    // Use DEFAULT_OPTIONS.classes array directly (avoid this.constructor refs)
+    const cssClasses = this.constructor.DEFAULT_OPTIONS?.classes ?? [];
+    context.cssClass = Array.isArray(cssClasses) ? cssClasses.join(' ') : '';
 
     // Optional convenience values for templates without passing live Documents
     context.itemId = this.item?.id ?? null;
     context.itemType = itemData.type ?? this.item?.type ?? "";
     context.itemName = itemData.name ?? this.item?.name ?? "";
     context.itemImg = itemData.img ?? this.item?.img ?? "";
+
+    // Remove any non-serializable properties that might be inherited from parent
+    // This ensures AppV2 serialization check passes
+    for (const key of Object.keys(context)) {
+      const value = context[key];
+      // Skip known non-serializable types
+      if (typeof value === 'function' || (value && typeof value === 'object' && value.constructor === Function)) {
+        delete context[key];
+      }
+    }
 
     // Verify context is serializable (no Document refs, circular refs, etc.)
     RenderAssertions.assertContextSerializable(context, "SWSEItemSheet");

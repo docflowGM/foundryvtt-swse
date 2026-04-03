@@ -11,15 +11,29 @@
  * - Providing toggleMode() for UI controls
  */
 
-// Initialize namespace
-game.swse = game.swse || {};
-game.swse.ui = game.swse.ui || {};
+/**
+ * Ensure game.swse namespace exists
+ */
+function ensureNamespace() {
+  if (typeof game === 'undefined') {
+    console.warn('[MobileMode] game object not available yet');
+    return false;
+  }
+  game.swse = game.swse || {};
+  game.swse.ui = game.swse.ui || {};
+  return true;
+}
+
+// Try to initialize namespace immediately
+if (!ensureNamespace()) {
+  console.warn('[MobileMode] Deferring namespace initialization');
+}
 
 /**
  * Mobile Mode Manager
  * Single source of truth for mobile mode state.
  */
-game.swse.ui.mobileMode = {
+const MobileMode = {
   /**
    * Whether mobile mode is currently enabled
    * @type {boolean}
@@ -88,3 +102,12 @@ game.swse.ui.mobileMode = {
     });
   }
 };
+
+/**
+ * Attach to game.swse.ui namespace
+ */
+if (ensureNamespace()) {
+  game.swse.ui.mobileMode = MobileMode;
+}
+
+export default MobileMode;

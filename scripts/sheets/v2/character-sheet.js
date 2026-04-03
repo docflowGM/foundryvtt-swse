@@ -1,5 +1,6 @@
 import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import MobileMode from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-manager.js";
 import { InventoryEngine } from "/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { CombatRollConfigDialog } from "/systems/foundryvtt-swse/scripts/apps/combat/combat-roll-config-dialog.js";
@@ -2453,7 +2454,7 @@ const forcePoints = [];
 
   _activateMobileActions(html, { signal } = {}) {
     // Only activate on mobile mode
-    if (!game.swse.ui.mobileMode.enabled) return;
+    if (!MobileMode?.enabled) return;
 
     // Add toggle listener to all .item-actions-toggle buttons
     html.addEventListener("click", (event) => {

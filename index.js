@@ -99,7 +99,6 @@ import { SWSEItemBase } from './scripts/items/base/swse-item-base.js';
 import { ActorEngine } from "./scripts/governance/actor-engine/actor-engine.js";
 import { MutationInterceptor } from './scripts/governance/mutation/MutationInterceptor.js';
 import { MutationPathGuard } from './scripts/governance/sentinel/mutation-path-guard.js';
-import { EmbeddedMutationLayer } from './scripts/governance/mutation/embedded-mutation-layer.js';
 import { MutationBoundaryDefense } from './scripts/governance/sentinel/mutation-boundary-defense.js';
 import { Batch1Validation } from './scripts/governance/mutation/batch-1-validation.js';
 
@@ -314,7 +313,6 @@ Hooks.once('init', async () => {
   MutationPathGuard.initialize();
 
   /* ---------- PHASE 3: Enforcement mode activation ---------- */
-  EmbeddedMutationLayer.initialize();
   MutationBoundaryDefense.initialize();
 
   swseLogger.log('SWSE | Init complete');

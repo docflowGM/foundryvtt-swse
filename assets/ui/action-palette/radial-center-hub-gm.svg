@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" fill="none">
+<defs>
+  <linearGradient id="panelStroke" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#bff8ff"/>
+    <stop offset="28%" stop-color="#67d5ff"/>
+    <stop offset="68%" stop-color="#2c79cf"/>
+    <stop offset="100%" stop-color="#dbffff"/>
+  </linearGradient>
+  <linearGradient id="panelFill" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#10233c" stop-opacity="0.94"/>
+    <stop offset="55%" stop-color="#0a1730" stop-opacity="0.88"/>
+    <stop offset="100%" stop-color="#06111f" stop-opacity="0.96"/>
+  </linearGradient>
+  <linearGradient id="warmFill" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#3b2810" stop-opacity="0.94"/>
+    <stop offset="55%" stop-color="#211709" stop-opacity="0.88"/>
+    <stop offset="100%" stop-color="#140d05" stop-opacity="0.96"/>
+  </linearGradient>
+  <linearGradient id="redFill" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#3a121b" stop-opacity="0.96"/>
+    <stop offset="55%" stop-color="#240b11" stop-opacity="0.9"/>
+    <stop offset="100%" stop-color="#15070b" stop-opacity="0.98"/>
+  </linearGradient>
+  <linearGradient id="greenFill" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#103428" stop-opacity="0.96"/>
+    <stop offset="55%" stop-color="#0c221a" stop-opacity="0.9"/>
+    <stop offset="100%" stop-color="#08150f" stop-opacity="0.98"/>
+  </linearGradient>
+  <linearGradient id="innerGlow" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#dfffff" stop-opacity="0.40"/>
+    <stop offset="100%" stop-color="#5bc5ff" stop-opacity="0.06"/>
+  </linearGradient>
+  <radialGradient id="glowCore" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#d8ffff" stop-opacity="0.38"/>
+    <stop offset="55%" stop-color="#59c8ff" stop-opacity="0.12"/>
+    <stop offset="100%" stop-color="#10365f" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="warnGlow" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#ffe9ad" stop-opacity="0.30"/>
+    <stop offset="100%" stop-color="#ffb953" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="dangerGlow" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#ffb7cb" stop-opacity="0.30"/>
+    <stop offset="100%" stop-color="#ff709a" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="7" result="blur"/>
+    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="tinyGlow" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="2.3" result="blur"/>
+    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <pattern id="scanlines" width="6" height="6" patternUnits="userSpaceOnUse">
+    <rect width="6" height="6" fill="transparent"/>
+    <rect width="6" height="1" fill="#cbffff" opacity="0.06"/>
+  </pattern>
+</defs>
+
+  <circle cx="128" cy="128" r="116" fill="url(#warnGlow)"/>
+  <circle cx="128" cy="128" r="78" fill="url(#warmFill)" stroke="#ffd778" stroke-width="4" filter="url(#softGlow)"/>
+  <circle cx="128" cy="128" r="62" stroke="url(#innerGlow)" stroke-width="2"/>
+  <circle cx="128" cy="128" r="92" stroke="#92eeff" stroke-opacity="0.28" stroke-width="2" stroke-dasharray="7 12"/>
+  <circle cx="128" cy="128" r="103" stroke="#57c7ff" stroke-opacity="0.4" stroke-width="2" stroke-dasharray="18 14" transform="rotate(16 128 128)"/>
+  <path d="M128 34v18M128 204v18M34 128h18M204 128h18M61 61l13 13M182 182l13 13M195 61l-13 13M74 182l-13 13" stroke="#a8f7ff" stroke-opacity="0.68" stroke-width="3" stroke-linecap="round"/>
+  <path d="M128 74l18 14h24v28l-18 14v28l-24 18-24-18v-28l-18-14V88h24l18-14Z" fill="#d9ffff" fill-opacity="0.14" stroke="#d7ffff" stroke-opacity="0.72" stroke-width="2.5"/><path d="M128 92v72M92 128h72" stroke="#d7ffff" stroke-opacity="0.74" stroke-width="4" stroke-linecap="round"/>
+
+</svg>

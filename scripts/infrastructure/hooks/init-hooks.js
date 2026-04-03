@@ -19,7 +19,7 @@ import { SWSECombatActionBrowser } from "/systems/foundryvtt-swse/scripts/apps/c
 import { isMobileCandidate } from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-detector.js";
 import { registerMobilePrompt } from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-prompt.js";
 import LightsaberLightSync from "/systems/foundryvtt-swse/scripts/utils/lightsaber-light-sync.js";
-import "/systems/foundryvtt-swse/scripts/ui/mobile-mode-manager.js";
+import MobileMode from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-manager.js";
 
 /**
  * Register initialization hooks
@@ -44,8 +44,12 @@ export function registerInitHooks() {
      */
     Hooks.once('ready', async function() {
         // Initialize mobile mode system
-        game.swse.ui.mobileMode.init();
-        SWSELogger.log('Mobile Mode initialized');
+        if (MobileMode?.init) {
+            MobileMode.init();
+            SWSELogger.log('Mobile Mode initialized');
+        } else {
+            SWSELogger.warn('Mobile Mode system not available');
+        }
 
         // Register mobile prompt (only shows on eligible devices)
         registerMobilePrompt(isMobileCandidate);

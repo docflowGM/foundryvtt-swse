@@ -34,5 +34,26 @@ export const utilityHelpers = {
       result += options.fn(this, { data });
     }
     return result;
+  },
+
+  /**
+   * Switch/case statement for Handlebars
+   * Usage: {{#switch value}}{{#case 'option1'}}...{{/case}}{{#case 'option2'}}...{{/case}}{{/switch}}
+   */
+  switch: function(value, options) {
+    this.switch_value = value;
+    const html = options.fn(this);
+    delete this.switch_value;
+    return html;
+  },
+
+  /**
+   * Case statement (used within switch)
+   * Usage: {{#case 'value'}}...{{/case}}
+   */
+  case: function(value, options) {
+    if (this.switch_value === value) {
+      return options.fn(this);
+    }
   }
 };

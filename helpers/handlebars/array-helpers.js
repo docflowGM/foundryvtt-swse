@@ -38,5 +38,24 @@ export const arrayHelpers = {
       const name = String(use?.name ?? use?.label ?? '');
       return !/trained only/i.test(name) && !/\(trained\)/i.test(name);
     });
+  },
+
+  /**
+   * Convert object entries to array format compatible with Handlebars
+   * Usage: {{#each (objectEntries object) as |entry|}}
+   * Access: {{entry.key}} and {{entry.value}}
+   *
+   * Converts {a: 1, b: 2} into [{key: 'a', value: 1}, {key: 'b', value: 2}]
+   * @param {Object} obj - Object to convert
+   * @returns {Array} Array of {key, value} objects
+   */
+  objectEntries: (obj) => {
+    if (!obj || typeof obj !== 'object') {return [];}
+    return Object.entries(obj).map(([key, value]) => ({
+      key,
+      value,
+      0: key,    // Also support array notation for backwards compatibility
+      1: value
+    }));
   }
 };

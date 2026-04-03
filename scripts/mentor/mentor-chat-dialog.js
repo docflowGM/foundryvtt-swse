@@ -21,7 +21,6 @@ import { renderJudgmentAtom } from "/systems/foundryvtt-swse/scripts/mentor/ment
 import { getReasonTexts } from "/systems/foundryvtt-swse/scripts/mentor/mentor-reason-renderer.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { getMentorContext, getArchetypeOptions } from "/systems/foundryvtt-swse/scripts/mentor/mentor-adapter.js";
-import { buildBiasPhrase } from "/systems/foundryvtt-swse/scripts/mentor/mentor-language-mapper.js";
 import { BuildAnalysisEngine } from "/systems/foundryvtt-swse/scripts/engine/analysis/build-analysis-engine.js";
 
 // V2 API base class
