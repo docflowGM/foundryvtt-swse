@@ -115,6 +115,93 @@
 
 .swse-sheet .sheet-actions {
   flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   EXPLICIT FORM-SCOPED STRUCTURAL RULES FOR SWSE-SHEET-UI
+   These match specificity of holo file and establish canonical ownership
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Form root structural contract */
+form.swse-sheet-ui {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+form.swse-sheet-ui > .sheet-shell,
+form.swse-sheet-ui > section.swse-sheet {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Header: fixed height, no grow */
+form.swse-sheet-ui .sheet-header {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 10px 12px;
+  min-height: 0;
+}
+
+/* Actions: fixed height, no grow */
+form.swse-sheet-ui .sheet-actions {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+}
+
+form.swse-sheet-ui .sheet-actions > * {
+  flex: 1 1 150px;
+  min-width: 0;
+}
+
+/* Tabs nav: fixed height, no grow */
+form.swse-sheet-ui .sheet-tabs {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  padding: 6px;
+}
+
+/* Body: flex grow to fill */
+form.swse-sheet-ui .sheet-body,
+form.swse-sheet-ui .sheet-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Active tab: flex grow, main scroll owner */
+form.swse-sheet-ui .sheet-body > .tab {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+/* Inactive tabs: hidden */
+form.swse-sheet-ui .sheet-body > .tab:not(.active) {
+  display: none;
 }
 
 /* Header left/right layout */

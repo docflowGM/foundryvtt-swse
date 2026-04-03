@@ -53,11 +53,12 @@
 .swse-store-ui .rarity-badge::before,.swse-store-ui .suggestion-badge::before,.swse-sheet-ui .swse-v2-entry .tag::before,.swse-sheet-ui .swse-v2-action-row .tag::before,.swse-sheet-ui .talent-tree-count::before{content:"";position:absolute;inset:0;background-image:var(--swse-ui-badge-hex);background-repeat:no-repeat;background-position:center;background-size:100% 100%;opacity:.25;pointer-events:none;}
 .swse-store-ui .product-item:hover,.swse-store-ui .product-card:hover,.swse-sheet-ui .skills-grid-row:hover,.swse-sheet-ui .swse-v2-action-row:hover,.swse-sheet-ui .talent-card:hover,.swse-sheet-ui .swse-v2-entry:hover{background-image:var(--swse-ui-row-highlight);background-repeat:no-repeat;background-position:center;background-size:100% 100%;}
 .swse-store-ui .product-item[data-selected="true"],.swse-store-ui .product-card.selected,.swse-sheet-ui .sheet-tabs .item.active,.swse-sheet-ui .talent-card.active{background-image:var(--swse-ui-selected-row);background-repeat:no-repeat;background-position:center;background-size:100% 100%;}
-.swse-sheet-ui .sheet-header{padding:8px 12px;margin:0 10px 8px;border:1px solid var(--swse-ui-line);border-radius:14px;background:linear-gradient(180deg, rgba(7,16,30,.88), rgba(4,10,18,.94));box-shadow:var(--swse-ui-glow);}
-.swse-sheet-ui .sheet-actions{margin:0 10px 10px;padding:12px!important;border:1px solid var(--swse-ui-line)!important;border-radius:12px;background:linear-gradient(180deg, rgba(6,16,30,.9), rgba(3,10,20,.95)),var(--swse-ui-filterbar) center/100% 100% no-repeat;box-shadow:var(--swse-ui-glow);}
-.swse-sheet-ui .sheet-tabs{margin:0 10px 10px;padding:6px;border:1px solid var(--swse-ui-line);border-radius:14px;background:rgba(7,18,30,.76);gap:4px;flex-wrap:wrap;}
+/* Visual styling only — structure is in v2-sheet.css */
+.swse-sheet-ui .sheet-header{margin:0 10px 8px;border:1px solid var(--swse-ui-line);border-radius:14px;background:linear-gradient(180deg, rgba(7,16,30,.88), rgba(4,10,18,.94));box-shadow:var(--swse-ui-glow);}
+.swse-sheet-ui .sheet-actions{margin:0 10px 10px;border:1px solid var(--swse-ui-line);border-radius:12px;background:linear-gradient(180deg, rgba(6,16,30,.9), rgba(3,10,20,.95)),var(--swse-ui-filterbar) center/100% 100% no-repeat;box-shadow:var(--swse-ui-glow);}
+.swse-sheet-ui .sheet-tabs{margin:0 10px 10px;border:1px solid var(--swse-ui-line);border-radius:14px;background:rgba(7,18,30,.76);}
 .swse-sheet-ui .sheet-body{padding:0 10px 10px;}
-.swse-sheet-ui .sheet-body > .tab{gap:10px;}
+.swse-sheet-ui .sheet-body > .tab{}
 .swse-sheet-ui .swse-v2-sheet-grid{gap:14px;}
 .swse-sheet-ui .header-left .profile{border-radius:14px;border:1px solid var(--swse-ui-line-strong);padding:4px;background:rgba(4,20,34,.8);box-shadow:0 0 22px rgba(124,232,255,.2);}
 .swse-sheet-ui .header-right .swse-stat{position:relative;min-width:82px;padding:10px 12px;border:1px solid rgba(124,232,255,.24);border-radius:10px;background:rgba(6,18,32,.8);}
@@ -351,9 +352,7 @@
   gap: 12px;
 }
 
-.swse-sheet-ui .sheet-header,
-.swse-sheet-ui .sheet-actions,
-.swse-sheet-ui .sheet-tabs,
+/* Padding rules for non-sheet elements only */
 .swse-store-ui .holo-banner,
 .swse-store-ui .credit-wallet,
 .swse-store-ui .shop-navigation,
@@ -367,11 +366,9 @@
   padding: 12px 14px;
 }
 
+/* Visual styling only — header structure delegated to v2-sheet.css */
 .swse-sheet-ui .sheet-header {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 14px;
-  align-items: center;
+  padding: 8px 12px;
 }
 
 .swse-sheet-ui .header-left {
@@ -437,34 +434,7 @@
   color: var(--swse-ui-cyan-strong);
 }
 
-.swse-sheet-ui .sheet-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.swse-sheet-ui .sheet-actions > * {
-  flex: 1 1 150px;
-}
-
-.swse-sheet-ui .sheet-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
-}
-
-.swse-sheet-ui .sheet-body,
-.swse-sheet-ui .sheet-content {
-  min-height: 0;
-  overflow: hidden;
-}
-
-.swse-sheet-ui .sheet-body > .tab {
-  min-height: 0;
-  overflow: auto;
-  padding-right: 2px;
-}
+/* Structural rules delegated to v2-sheet.css */
 
 .swse-sheet-ui .swse-phase2-overview-grid {
   display: grid;
@@ -1251,14 +1221,13 @@
   min-width: 0;
 }
 
-.swse-sheet-ui .sheet-header,
+/* Align/gap rules for non-sheet UI elements only */
 .swse-store-ui .holo-banner,
 .swse-store-ui .credit-wallet {
   align-items: start;
   gap: 14px;
 }
 
-.swse-sheet-ui .sheet-header,
 .swse-sheet-ui .section-header,
 .swse-store-ui .wallet-header,
 .swse-store-ui .category-header,
@@ -1267,7 +1236,11 @@
   padding-bottom: 8px;
 }
 
-.swse-sheet-ui .sheet-actions,
+/* Sheet header visual styling only */
+.swse-sheet-ui .sheet-header {
+  padding-bottom: 8px;
+}
+
 .swse-sheet-ui .swse-control-cluster,
 .swse-store-ui .shop-actions-bar,
 .swse-store-ui .filter-sort-row,
