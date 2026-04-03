@@ -16,7 +16,9 @@
     {{#if showPlaceholder}}
       <div class="action-palette-placeholder">
         <i class="fa-solid fa-circle-info"></i>
-        <p>Select a token to act</p>
+        <h4>No Token Selected</h4>
+        <p>Click on a token to unlock action options</p>
+        <small>Actions depend on current combat phase and token state</small>
       </div>
     {{else}}
       {{!-- Radial menu for players --}}
@@ -65,9 +67,9 @@
                 <i class="fa-solid fa-xmark"></i>
               </button>
             {{else}}
-              <span class="ap-slot-item" style="opacity: 0.5;">
+              <span class="ap-slot-item ap-slot-empty">
                 <i class="fa-solid fa-circle-plus"></i>
-                Drag NPC here
+                <span class="ap-hint">Drag NPC</span>
               </span>
             {{/if}}
           </div>
@@ -91,9 +93,9 @@
                 <i class="fa-solid fa-xmark"></i>
               </button>
             {{else}}
-              <span class="ap-slot-item" style="opacity: 0.5;">
+              <span class="ap-slot-item ap-slot-empty">
                 <i class="fa-solid fa-circle-plus"></i>
-                Drag command here
+                <span class="ap-hint">Drag command</span>
               </span>
             {{/if}}
           </div>

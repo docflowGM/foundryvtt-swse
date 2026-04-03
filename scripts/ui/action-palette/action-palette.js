@@ -341,16 +341,45 @@ export class ActionPaletteApp extends BaseSWSEAppV2 {
    * @private
    */
   _buildCommandDialog(item) {
-    // Placeholder - customize based on command type
-    return `<p>Confirm execution of <strong>${item.label}</strong>?</p>`;
+    const content = `<p>Confirm execution of <strong>${item.label}</strong>?</p>`;
+
+    // Add type-specific options if needed
+    if (item.action === 'heal-group') {
+      return content + `
+        <div class="form-group">
+          <label>Amount (d6s):</label>
+          <input type="number" name="amount" value="1" min="1" max="10" />
+        </div>
+      `;
+    } else if (item.action === 'damage-group') {
+      return content + `
+        <div class="form-group">
+          <label>Damage (d6s):</label>
+          <input type="number" name="amount" value="1" min="1" max="10" />
+        </div>
+      `;
+    }
+
+    return content;
   }
 
   /**
-   * Apply GM command
+   * Apply GM command - execute via hooks
    * @private
    */
   async _applyCommand(item, html) {
-    // Placeholder - implement per command type
+    const amount = (html?.[0] ?? html)?.querySelector('input[name="amount"]')?.value || 0;
+
+    // Execute command via system hooks
+    if (item.action === 'heal-group') {
+      Hooks.callAll('swse:heal-selected-tokens', { amount: parseInt(amount) });
+    } else if (item.action === 'damage-group') {
+      Hooks.callAll('swse:damage-selected-tokens', { amount: parseInt(amount) });
+    } else if (item.action) {
+      // Generic command hook
+      Hooks.callAll(`swse:command-${item.action}`);
+    }
+
     ui.notifications.info(`Executed: ${item.label}`);
   }
 

@@ -1,5 +1,10 @@
 /* styles/sheets/v2-sheet.css */
 
+/* ═══════════════════════════════════════════════════════════════
+   V2 VISUAL EDITABILITY SYSTEM
+   Clearly distinguish editable (input) from derived (read-only) values
+   ═══════════════════════════════════════════════════════════════ */
+
 /* ============================================================
    LAYOUT CONTRACT ENFORCEMENT — FOUNDRY V13 INVARIANTS
    These rules are the safety net for flexcol utility classes.
@@ -1300,6 +1305,68 @@
   font-size: 0.95rem;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   UNIVERSAL EDITABILITY VISUAL SYSTEM
+   All editable inputs: obvious borders and focus states
+   All derived values: dimmed, bold text, no input appearance
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Base input styling across entire sheet */
+.swse-sheet input[type="text"],
+.swse-sheet input[type="number"],
+.swse-sheet input[type="checkbox"],
+.swse-sheet select,
+.swse-sheet textarea {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(100, 200, 255, 0.4);
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.swse-sheet input[type="text"]:hover,
+.swse-sheet input[type="number"]:hover,
+.swse-sheet select:hover,
+.swse-sheet textarea:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(100, 200, 255, 0.7);
+  box-shadow: 0 0 6px rgba(100, 200, 255, 0.2);
+}
+
+.swse-sheet input[type="text"]:focus,
+.swse-sheet input[type="number"]:focus,
+.swse-sheet select:focus,
+.swse-sheet textarea:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(100, 200, 255, 0.9);
+  box-shadow: 0 0 10px rgba(100, 200, 255, 0.4);
+}
+
+/* Checkbox styling */
+.swse-sheet input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: rgba(0, 255, 136, 0.8);
+}
+
+.swse-sheet input[type="checkbox"]:hover {
+  box-shadow: 0 0 6px rgba(0, 255, 136, 0.3);
+}
+
+/* Derived values: bold, dimmed, no input appearance */
+.swse-sheet .number-display,
+.swse-sheet .derived-value {
+  font-weight: 800;
+  opacity: 0.9;
+}
+
+.swse-sheet .derived-value {
+  display: inline-block;
+  padding: 2px 4px;
+  color: #ccc;
+}
+
 .swse-sheet .math-equals {
   font-weight: 700;
   opacity: 0.7;
@@ -1514,6 +1581,42 @@ select option:checked {
   border-color: rgba(0, 255, 136, 0.6);
   background: rgba(0, 0, 0, 0.5);
   box-shadow: 0 0 8px rgba(0, 255, 136, 0.2);
+}
+
+/* Field with selection button (Class, Species, Background) */
+.swse-sheet.field-with-record-button {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.swse-sheet.field-with-record-button .record-input {
+  flex: 1;
+  min-width: 100px;
+}
+
+.swse-sheet.record-select-btn {
+  padding: 4px 8px;
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 3px;
+  background: rgba(0, 255, 136, 0.08);
+  color: rgba(0, 255, 136, 0.8);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.swse-sheet.record-select-btn:hover {
+  background: rgba(0, 255, 136, 0.15);
+  border-color: rgba(0, 255, 136, 0.6);
+  color: rgba(0, 255, 136, 1);
+  box-shadow: 0 0 6px rgba(0, 255, 136, 0.15);
+}
+
+.swse-sheet.record-select-btn:active {
+  background: rgba(0, 255, 136, 0.2);
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Bio/Profile panel */
@@ -2565,19 +2668,21 @@ select option:checked {
   height: 24px;
   padding: 0;
   border: 1px solid rgba(0, 255, 136, 0.3);
-  border-radius: 2px;
+  border-radius: 4px;
   background: rgba(0, 0, 0, 0.3);
   color: #aaa;
   font-size: 0.65rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.25s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  opacity: 0.4;
 }
 
 .swse-sheet .dsp-track-box:hover {
+  transform: scale(1.08);
   border-color: rgba(74, 158, 255, 0.5);
   background: rgba(74, 158, 255, 0.1);
   color: #4a9eff;
@@ -2588,11 +2693,48 @@ select option:checked {
   border-color: rgba(231, 76, 60, 0.5);
   color: #e74c3c;
   font-weight: 700;
+  opacity: 1;
+  box-shadow:
+    0 0 6px rgba(0, 0, 0, 0.6),
+    0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Danger zone styling for high DSP */
+.dsp-danger .dsp-track-box.filled {
+  box-shadow:
+    0 0 8px rgba(255, 0, 0, 0.7),
+    0 0 14px rgba(255, 0, 0, 0.4);
 }
 
 .swse-sheet .dsp-number {
   font-size: 0.7rem;
   font-weight: 700;
+}
+
+/* DSP Spectrum Display (Colored Gradient) */
+.swse-sheet .ds-segment {
+  opacity: 0.4;
+  transition: all 0.25s ease;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.swse-sheet .ds-segment:hover {
+  transform: scale(1.08);
+}
+
+.swse-sheet .ds-segment.filled {
+  opacity: 1;
+  box-shadow:
+    0 0 6px rgba(0, 0, 0, 0.6),
+    0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Danger zone styling for high DSP in spectrum */
+.dsp-danger .ds-segment.filled {
+  box-shadow:
+    0 0 8px rgba(255, 0, 0, 0.7),
+    0 0 14px rgba(255, 0, 0, 0.4);
 }
 
 /* ------------------------------------------------------------------ */
@@ -3406,5 +3548,129 @@ select option:checked {
   .swse-sheet [data-breakdown]:focus {
     box-shadow: inset 0 0 4px rgba(0, 200, 255, 0.1);
   }
+}
+
+/* ================================================================= */
+/* Header Field Styling - Character Identity Fields */
+/* ================================================================= */
+
+.swse-sheet .header-name-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  margin-bottom: 10px;
+}
+
+.swse-sheet .charname {
+  flex: 1;
+  margin: 0;
+}
+
+.swse-sheet .charname input {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.swse-sheet .header-player {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.swse-sheet .header-player label {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  opacity: 0.8;
+  min-width: 60px;
+}
+
+.swse-sheet .header-player input {
+  width: 200px;
+  padding: 6px 8px;
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.2);
+  color: inherit;
+  font-size: 0.9rem;
+}
+
+.swse-sheet .header-details-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.swse-sheet .header-secondary-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.swse-sheet .header-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 0 0 auto;
+}
+
+.swse-sheet .header-field label {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  opacity: 0.75;
+  letter-spacing: 0.05em;
+}
+
+.swse-sheet .header-field input {
+  padding: 6px 8px;
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.2);
+  color: inherit;
+  font-size: 0.9rem;
+  min-width: 140px;
+}
+
+.swse-sheet .header-field input[type="number"] {
+  min-width: 60px;
+  width: 60px;
+}
+
+.swse-sheet .field-with-button {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.swse-sheet .field-with-button input {
+  flex: 1;
+  min-width: 120px;
+}
+
+.swse-sheet .header-select-btn {
+  padding: 6px 8px;
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 3px;
+  background: rgba(0, 255, 136, 0.1);
+  color: rgba(0, 255, 136, 0.8);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.swse-sheet .header-select-btn:hover {
+  background: rgba(0, 255, 136, 0.2);
+  border-color: rgba(0, 255, 136, 0.6);
+  color: rgba(0, 255, 136, 1);
+  box-shadow: 0 0 6px rgba(0, 255, 136, 0.2);
+}
+
+.swse-sheet .destiny-display {
+  font-weight: 700;
+  color: #ffd700;
+  text-shadow: 0 0 4px rgba(255, 215, 0, 0.3);
 }
 

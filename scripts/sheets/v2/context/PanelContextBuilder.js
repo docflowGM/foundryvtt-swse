@@ -202,6 +202,7 @@ export class PanelContextBuilder {
   buildBiographyPanel() {
     const identity = {
       name: this.actor.name || 'Unnamed',
+      player: this.system.flags?.swse?.character?.player || '—',
       class: this.system.class || '—',
       level: Number(this.system.level) || 1,
       species: this.system.race || '—',
@@ -470,14 +471,18 @@ export class PanelContextBuilder {
       segments.push({
         index: i,
         filled: i <= dspValue,
-        color: i <= dspValue ? '#E74C3C' : '#4A90E2'
+        color: this._getDSPColor(i, dspMax)
       });
     }
+
+    // Danger state: when DSP is within 2 of max
+    const isDanger = dspValue >= dspMax - 2;
 
     const panel = {
       value: dspValue,
       max: dspMax,
       segments,
+      danger: isDanger,
       canEdit: this.sheet.isEditable
     };
 
@@ -485,6 +490,30 @@ export class PanelContextBuilder {
     this._validatePanelContext('darkSidePanel', panel);
 
     return panel;
+  }
+
+  /**
+   * Generate DSP color based on gradient from dark green (0) to dark red (max)
+   * Uses HSL for smooth color transition through the spectrum
+   *
+   * @private
+   * @param {number} index - Current segment index (1-based)
+   * @param {number} maxDSP - Maximum DSP value
+   * @returns {string} HSL color string
+   */
+  _getDSPColor(index, maxDSP) {
+    const ratio = index / maxDSP;
+
+    // Hue goes from green (120) to red (0)
+    const hue = 120 - (120 * ratio);
+
+    // Saturation stays high for vibrancy
+    const saturation = 80;
+
+    // Lightness: starts moderate (45%) and darkens toward max
+    const lightness = 45 - (ratio * 20);
+
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   }
 
   /**
@@ -731,7 +760,63 @@ export class PanelContextBuilder {
   }
 
   /**
-   * Assemble all panel contexts into final context object
+   * Build the combat stats panel context
+   *
+   * Contract: combatStatsPanel
+   * - speed: { value, label }
+   * - initiative: { value, label, skillKey }
+   * - perception: { value, label, skillKey }
+   * - baseAttack: { value, label }
+   * - canEdit: boolean
+   *
+   * Sources:
+   * - Speed: system.speed (base movement speed)
+   * - Initiative: derived.skills.initiative.total (skill total)
+   * - Perception: derived.skills.perception.total (skill total)
+   * - BAB: derived.bab (class-based calculation)
+   */
+  buildCombatStatsPanel() {
+    // Get speed (base movement)
+    const speed = Number(this.system.speed?.total ?? this.system.speed ?? 0) || 0;
+
+    // Get initiative from skills system (Initiative is a skill)
+    const initiativeSkill = this.derived.skills?.initiative;
+    const initiativeValue = initiativeSkill ? Number(initiativeSkill.total ?? 0) : 0;
+
+    // Get perception from skills system (Perception is a skill)
+    const perceptionSkill = this.derived.skills?.perception;
+    const perceptionValue = perceptionSkill ? Number(perceptionSkill.total ?? 0) : 0;
+
+    // Get base attack bonus from derived
+    const bab = Number(this.derived.bab ?? 0) || 0;
+
+    const panel = {
+      speed: {
+        value: speed,
+        label: 'Speed'
+      },
+      initiative: {
+        value: initiativeValue,
+        label: 'Initiative',
+        skillKey: 'initiative'
+      },
+      perception: {
+        value: perceptionValue,
+        label: 'Perception',
+        skillKey: 'perception'
+      },
+      baseAttack: {
+        value: bab,
+        label: 'Base Attack'
+      },
+      canEdit: this.sheet.isEditable
+    };
+
+    // Validate contract (strict mode throws, dev mode warns)
+    this._validatePanelContext('combatStatsPanel', panel);
+
+    return panel;
+  }
    *
    * Returns an object keyed by panel name, where each panel is a dedicated
    * view model that partials read from exclusively.
@@ -739,6 +824,7 @@ export class PanelContextBuilder {
   buildAllPanels() {
     return {
       healthPanel: this.buildHealthPanel(),
+      combatStatsPanel: this.buildCombatStatsPanel(),
       defensePanel: this.buildDefensePanel(),
       biographyPanel: this.buildBiographyPanel(),
       inventoryPanel: this.buildInventoryPanel(),

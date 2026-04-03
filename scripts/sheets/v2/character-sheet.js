@@ -91,11 +91,42 @@ const FORM_FIELD_SCHEMA = {
   'system.defenses.ref.miscMod': 'number',
   'system.defenses.will.miscMod': 'number',
 
-  // Progression
+  // Skills
+  'system.skills.acrobatics.miscMod': 'number',
+  'system.skills.climb.miscMod': 'number',
+  'system.skills.deception.miscMod': 'number',
+  'system.skills.endurance.miscMod': 'number',
+  'system.skills.gatherInformation.miscMod': 'number',
+  'system.skills.initiative.miscMod': 'number',
+  'system.skills.jump.miscMod': 'number',
+  'system.skills.knowledgeBureaucracy.miscMod': 'number',
+  'system.skills.knowledgeGalacticLore.miscMod': 'number',
+  'system.skills.knowledgeLifeSciences.miscMod': 'number',
+  'system.skills.knowledgePhysicalSciences.miscMod': 'number',
+  'system.skills.knowledgeSocialSciences.miscMod': 'number',
+  'system.skills.knowledgeTactics.miscMod': 'number',
+  'system.skills.knowledgeTechnology.miscMod': 'number',
+  'system.skills.mechanics.miscMod': 'number',
+  'system.skills.perception.miscMod': 'number',
+  'system.skills.persuasion.miscMod': 'number',
+  'system.skills.pilot.miscMod': 'number',
+  'system.skills.ride.miscMod': 'number',
+  'system.skills.stealth.miscMod': 'number',
+  'system.skills.survival.miscMod': 'number',
+  'system.skills.swim.miscMod': 'number',
+  'system.skills.treatInjury.miscMod': 'number',
+  'system.skills.useComputer.miscMod': 'number',
+  'system.skills.useTheForce.miscMod': 'number',
+
+  // Progression and Resources
   'system.level': 'number',
   'system.xp': 'number',
   'system.credits': 'number',
-  'system.destinyPoints': 'number'
+  'system.speed': 'number',
+  'system.destinyPoints.value': 'number',
+  'system.destinyPoints.max': 'number',
+  'system.forcePoints.value': 'number',
+  'system.forcePoints.max': 'number'
 };
 
 /**
@@ -636,9 +667,6 @@ export class SWSEV2CharacterSheet extends
     const forceSensitive = system.forceSensitive ?? false;
     const identityGlowColor = forceSensitive ? '#88cfff' : '#666666';
 
-    // Bonus HP (derived-only from ModifierEngine)
-    const bonusHp = await this._computeBonusHP(actor);
-
     // Condition track steps (0-5 numeric → visual array)
     const conditionCurrent = system.conditionTrack?.current ?? 0;
     const conditionLabels = ["Normal", "−1", "−2", "−5", "−10", "Helpless"];
@@ -738,19 +766,19 @@ const forcePoints = [];
     ============================================================ */
 
     // XP System Configuration and Progress
+    // Use derived.xp which is computed by XpEngine.computeXpDerived()
     const xpSystem = CONFIG.SWSE?.system?.xpProgression || 'milestone';
     const xpEnabled = xpSystem !== 'disabled';
-    const xpValue = actor.system.progression?.xp ?? 0;
-    const xpThreshold = actor.system.progression?.xpThreshold ?? 0;
-    const xpPercent = xpThreshold > 0 ? Math.round((xpValue / xpThreshold) * 100) : 0;
+    const xpDerived = derived.xp ?? { total: 0, progressPercent: 0, xpToNext: 0 };
+    const xpPercent = xpDerived.progressPercent ?? 0;
     const xpLevelReady = xpPercent >= 100;
 
     // SEMANTIC: XP data object with visual state
     const xpData = {
       level: actor.system.level ?? 1,
-      total: xpValue,
-      nextLevelAt: xpThreshold,
-      xpToNext: Math.max(0, xpThreshold - xpValue),
+      total: xpDerived.total ?? 0,
+      nextLevelAt: xpDerived.nextLevelAt ?? 0,
+      xpToNext: xpDerived.xpToNext ?? 0,
       stateClass: xpLevelReady ? 'state--ready-levelup' : xpPercent >= 75 ? 'state--nearly-ready' : 'state--in-progress'
     };
 
@@ -964,39 +992,6 @@ const forcePoints = [];
     this._currentContext = finalContext;
 
     return finalContext;
-  }
-
-  /* ============================================================
-     BONUS HP COMPUTATION (DERIVED-ONLY)
-  ============================================================ */
-
-  async _computeBonusHP(actor) {
-    try {
-      const { ModifierEngine } = await import("/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js").catch(
-        () => ({ ModifierEngine: null })
-      );
-
-      if (!ModifierEngine) {
-        return { value: 0, label: "" };
-      }
-
-      const bonusMods = await ModifierEngine.collectModifiers(actor, {
-        domain: "bonusHitPoints",
-        context: {}
-      });
-
-      // RAW: Only highest source applies
-      const highestBonus = bonusMods.length
-        ? Math.max(...bonusMods.map(m => m.value))
-        : 0;
-
-      return {
-        value: highestBonus,
-        label: highestBonus > 0 ? `+${highestBonus}` : ""
-      };
-    } catch {
-      return { value: 0, label: "" };
-    }
   }
 
   /* ============================================================
@@ -1524,6 +1519,32 @@ const forcePoints = [];
       store.render(true);
     }, { signal, capture: false });
 
+    // Character identity selection buttons (Class, Species, Background, Homeworld, Profession)
+    html.addEventListener("click", async ev => {
+      const button = ev.target.closest('[data-action^="cmd-select-"]');
+      if (!button) return;
+      ev.preventDefault();
+
+      const action = button.dataset.action;
+      const stepMap = {
+        'cmd-select-class': 'class',
+        'cmd-select-species': 'species',
+        'cmd-select-background': 'background',
+        'cmd-select-homeworld': 'background',    // Homeworld is part of background selection
+        'cmd-select-profession': 'background'    // Profession is part of background selection
+      };
+
+      const targetStep = stepMap[action];
+      if (!targetStep) return;
+
+      try {
+        await launchProgression(this.actor, { currentStep: targetStep });
+      } catch (err) {
+        console.error(`[SHEET] ✗ ${action} failed:`, err);
+        SWSELogger.error(`[CharacterSheet] ${action} failed:`, err);
+      }
+    }, { signal, capture: false });
+
     // Build Follower button (delegated) — Phase 3.5 follower runtime integration
     html.addEventListener("click", async ev => {
       const button = ev.target.closest('[data-action="build-follower"]');
@@ -1574,9 +1595,10 @@ const forcePoints = [];
     if (!row) return;
 
     const base = Number(row.querySelector('[data-field="base"]')?.value || 0);
-    const misc = Number(row.querySelector('[data-field="misc"]')?.value || 0);
+    const racial = Number(row.querySelector('[data-field="racial"]')?.value || 0);
+    const temp = Number(row.querySelector('[data-field="temp"]')?.value || 0);
 
-    const total = base + misc;
+    const total = base + racial + temp;
     const mod = Math.floor((total - 10) / 2);
 
     const totalEl = row.querySelector(".math-result");
@@ -2385,7 +2407,7 @@ const forcePoints = [];
           const value = Math.max(0, Math.min(Number(newValue) || 0, DSPEngine.getMax(this.actor)));
           const plan = {
             update: {
-              "system.darkSidePoints": value
+              "system.darkSide.value": value
             }
           };
 

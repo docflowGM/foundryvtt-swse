@@ -164,12 +164,125 @@
   100% { transform: scale(1); opacity: 1; }
 }
 
-/* Condition track color scale */
+/* Condition track color scale - Color-coded per condition severity */
 .ct-step {
-  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px 10px 16px;
+  margin: 4px 0;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  color: inherit;
+  cursor: default;
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.02),
+    rgba(255, 255, 255, 0.02) 1px,
+    transparent 1px,
+    transparent 3px
+  );
 }
 
-.ct-step.normal { background: var(--swse-bg-secondary, #2b2b2b); }
-.ct-step.wounded { background: rgba(255, 200, 0, 0.2); }
-.ct-step.critical { background: rgba(255, 68, 68, 0.2); }
-.ct-step.helpless { background: rgba(255, 68, 68, 0.4); }
+.ct-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.ct-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.ct-pen {
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+/* Normal - Dark Green */
+.ct-step.normal {
+  background-color: #1f7a1f;
+  color: white;
+}
+
+/* -1 Penalty - Light Green */
+.ct-step.ct-1 {
+  background-color: #7ed957;
+  color: black;
+}
+
+/* -2 Penalty - Yellow */
+.ct-step.ct-2 {
+  background-color: #f4e04d;
+  color: black;
+}
+
+/* -5 Penalty - Orange */
+.ct-step.ct-5 {
+  background-color: #ff9f1c;
+  color: black;
+}
+
+/* -10 Penalty - Red */
+.ct-step.ct-10 {
+  background-color: #e63946;
+  color: white;
+}
+
+/* Helpless - Dark Red */
+.ct-step.ct-helpless {
+  background-color: #6a040f;
+  color: white;
+}
+
+/* Active row state - enhance visibility */
+.ct-step.active {
+  filter: brightness(1.1);
+}
+
+/* Hover effect on row guides user to pill */
+.ct-step:hover .ct-pill {
+  opacity: 0.85;
+  transform: rotate(28deg) scale(1.1);
+}
+
+/* Angled pill selector button with gradient */
+.ct-pill {
+  flex-shrink: 0;
+  width: 16px;
+  height: 32px;
+  padding: 0;
+  border: 2px solid currentColor;
+  border-radius: 10px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.15),
+    rgba(0, 0, 0, 0.25)
+  );
+  cursor: pointer;
+  transition: all 0.2s ease;
+  transform: rotate(28deg);
+  opacity: 0.5;
+}
+
+.ct-pill:hover {
+  opacity: 0.85;
+  transform: rotate(28deg) scale(1.1);
+}
+
+/* Active pill state - enhanced visibility with glow */
+.ct-pill.active {
+  opacity: 1;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.35),
+    rgba(255, 255, 255, 0.15)
+  );
+  box-shadow:
+    0 0 6px rgba(255, 255, 255, 0.6),
+    0 0 10px rgba(255, 255, 255, 0.3);
+  transform: rotate(28deg) scale(1.15);
+}

@@ -15,38 +15,59 @@ let actionPaletteApp = null;
  * - Register event handlers
  */
 export function initializeActionPalette() {
-  // DISABLED: Action palette CSS was globally injecting .action-palette-wrapper with height: 100% and display: flex,
-  // causing containment mutations that affected Foundry's sidebar layout and app rendering.
-  // This created zero-dimension renders and sidebar tab deactivation during boot.
-  // CSS will be removed/rebuilt when action palette is refactored as ApplicationV2.
-  /*
+  // Load CSS with proper scoping (v13 ApplicationV2 handles containment)
   const link = document.createElement('link');
   link.rel = 'stylesheet';
   link.href = 'systems/foundryvtt-swse/scripts/ui/action-palette/action-palette.css';
   document.head.appendChild(link);
-  */
 
   // Create the application
   actionPaletteApp = new ActionPaletteApp();
 
-  // Register ready hook to inject sidebar button
+  // Register ready hook to add scene control button
   Hooks.once('ready', () => {
-    // DISABLED: The _createSidebarButton() method was appending directly to #sidebar-tabs using appendChild(),
-    // which created ChildList mutations during boot that broke Foundry's sidebar tab activation system.
-    // Similar issue to combat-action-browser.js - direct DOM manipulation of sidebar structure breaks
-    // Foundry's internal tab registry, causing ui.sidebar.activeTab to become undefined.
-    // _createSidebarButton();
-
+    _registerSceneControl();
     _loadUserPreferences();
+  });
+}
+
+/**
+ * Register Action Palette as a Foundry v13 scene control button
+ * Uses proper Foundry UI API instead of direct DOM mutation
+ * @private
+ */
+function _registerSceneControl() {
+  // Hook into scene controls rendering
+  Hooks.on('getSceneControlButtons', (controls) => {
+    // Find or create token controls group
+    let tokenControls = controls.find(c => c.name === 'token');
+    if (!tokenControls) {
+      tokenControls = {
+        name: 'token',
+        title: 'Token Controls',
+        icon: 'fas fa-circle-dot',
+        layer: 'TokenLayer',
+        visible: true,
+        tools: []
+      };
+      controls.push(tokenControls);
+    }
+
+    // Add Action Palette as a tool
+    tokenControls.tools.push({
+      name: 'actionPalette',
+      title: 'Action Palette',
+      icon: 'fas fa-circle-dot',
+      visible: true,
+      onClick: () => toggleActionPalette(),
+      button: true
+    });
   });
 }
 
 /**
  * DEPRECATED: This function directly manipulated the sidebar DOM using appendChild(),
  * which broke Foundry's tab activation system during boot.
- *
- * The function should be replaced with a proper sidebar button registration approach
- * that doesn't mutate the sidebar structure directly.
  *
  * @deprecated Use proper Foundry UI registration instead
  * @private
