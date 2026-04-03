@@ -164,11 +164,16 @@ export class PanelContextBuilder {
   buildDefensePanel() {
     const headerDefenses = this.derived.defenses || {};
 
-    const defenses = ['ref', 'fort', 'will'].map(key => {
-      const def = headerDefenses[key] || {};
+    // Map derived.defenses keys (fortitude, reflex, will) to template keys (fort, ref, will)
+    const defenses = [
+      { dataKey: 'reflex', templateKey: 'ref', label: 'Reflex' },
+      { dataKey: 'fortitude', templateKey: 'fort', label: 'Fortitude' },
+      { dataKey: 'will', templateKey: 'will', label: 'Will' }
+    ].map(({ dataKey, templateKey, label }) => {
+      const def = headerDefenses[dataKey] || {};
       return {
-        key,
-        label: { ref: 'Reflex', fort: 'Fortitude', will: 'Will' }[key],
+        key: templateKey,
+        label,
         total: Number(def.total) || 10,
         armorBonus: Number(def.armorBonus) || 0,
         abilityMod: Number(def.abilityMod) || 0,
