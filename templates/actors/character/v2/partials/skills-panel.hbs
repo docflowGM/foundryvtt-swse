@@ -205,12 +205,13 @@
   text-align: left;
 }
 
+/* Phase 5: Removed max-height to let tab expand */
 .skills-grid-body {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  max-height: 600px;
-  overflow-y: auto;
+  /* max-height removed — tab now owns scrolling */
+  overflow-x: hidden;
 }
 
 .skills-grid-row {
