@@ -46,23 +46,25 @@ export function computeCharacterDerived(actor, system) {
   // This function initializes defaults for immediate use, but authority is DerivedCalculator
   // ========================================================================
 
-  // Initialize defaults (will be overwritten by DerivedCalculator async)
-  if (!system.derived.defenses.fortitude) {
-    system.derived.defenses.fortitude = 10;
+  // Initialize defaults as proper objects with .total property (will be overwritten by DerivedCalculator async)
+  // Phase 6: Fixed contract mismatch — defenses must be objects with .total, not bare numbers
+  if (!system.derived.defenses.fortitude || typeof system.derived.defenses.fortitude !== 'object') {
+    system.derived.defenses.fortitude = { base: 10, total: 10, adjustment: 0, stateBonus: 0 };
   }
-  if (!system.derived.defenses.ref) {
-    system.derived.defenses.ref = 10;
+  if (!system.derived.defenses.reflex || typeof system.derived.defenses.reflex !== 'object') {
+    system.derived.defenses.reflex = { base: 10, total: 10, adjustment: 0, stateBonus: 0 };
   }
-  if (!system.derived.defenses.will) {
-    system.derived.defenses.will = 10;
+  if (!system.derived.defenses.will || typeof system.derived.defenses.will !== 'object') {
+    system.derived.defenses.will = { base: 10, total: 10, adjustment: 0, stateBonus: 0 };
   }
-  if (!system.derived.defenses.flatFooted) {
-    system.derived.defenses.flatFooted = 10;
+  if (!system.derived.defenses.flatFooted || typeof system.derived.defenses.flatFooted !== 'object') {
+    system.derived.defenses.flatFooted = { base: 10, total: 10, adjustment: 0, stateBonus: 0 };
   }
 
   // DT initialized but will be overwritten by DerivedCalculator
-  if (!system.derived.damage?.threshold) {
-    system.derived.damage.threshold = system.derived.defenses.fortitude || 10;
+  // Phase 6: Ensure damage.threshold is always a number
+  if (!system.derived.damage?.threshold || typeof system.derived.damage.threshold !== 'number') {
+    system.derived.damage.threshold = 10;
   }
 
   mirrorIdentity(actor, system);
@@ -114,14 +116,22 @@ function mirrorIdentity(actor, system) {
   i.darkSideScore = DSPEngine.getValue(actor);
 
   // Abilities (total + mod) are already prepared by the legacy data model.
-  i.abilities = {};
+  // Phase 6: Build as array for template iteration (skills-panel uses #each derived.identity.abilities)
+  const ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+  const ABILITY_LABELS = { 'str': 'Strength', 'dex': 'Dexterity', 'con': 'Constitution', 'int': 'Intelligence', 'wis': 'Wisdom', 'cha': 'Charisma' };
+
+  i.abilities = [];
   const abilities = system.abilities ?? system.attributes ?? {};
-  for (const key of ['str', 'dex', 'con', 'int', 'wis', 'cha']) {
+  for (const key of ABILITY_KEYS) {
     const a = abilities[key] ?? {};
-    i.abilities[key] = {
-      total: safeNumber(a.total ?? a.value ?? a.base, 10),
-      mod: safeNumber(a.mod, Math.floor((safeNumber(a.total ?? a.value ?? a.base, 10) - 10) / 2))
-    };
+    const total = safeNumber(a.total ?? a.value ?? a.base, 10);
+    const mod = safeNumber(a.mod, Math.floor((total - 10) / 2));
+    i.abilities.push({
+      key,
+      label: ABILITY_LABELS[key],
+      total,
+      mod
+    });
   }
 
   i.name = actor?.name ?? '';

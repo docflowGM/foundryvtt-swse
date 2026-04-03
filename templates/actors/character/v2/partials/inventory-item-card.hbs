@@ -37,11 +37,11 @@
   <div class="card-footer item-footer">
     <div class="item-actions">
       {{#if (eq type "weapon")}}
-        <button class="item-action-btn attack-btn" data-action="roll-attack" data-item-id="{{id}}" title="Quick Attack Roll">
+        <button class="item-action-btn attack-btn" data-item-id="{{id}}" title="Quick Attack Roll">
           <span class="icon">{{> "icons/attack-svg"}}</span>
           <span class="label">Attack</span>
         </button>
-        <button class="item-action-btn damage-btn" data-action="roll-damage" data-item-id="{{id}}" title="Quick Damage Roll">
+        <button class="item-action-btn damage-btn" data-item-id="{{id}}" title="Quick Damage Roll">
           <span class="icon">{{> "icons/damage-svg"}}</span>
           <span class="label">Damage</span>
         </button>

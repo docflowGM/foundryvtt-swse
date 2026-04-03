@@ -36,6 +36,7 @@ import { UIStateManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/share
 import { PanelDiagnostics } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/PanelDiagnostics.js";
 // Character-specific visibility manager (subclass of shared base)
 import { PanelVisibilityManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/PanelVisibilityManager.js";
+import { ExtraSkillUseRegistry } from "/systems/foundryvtt-swse/scripts/utils/extra-skill-use-registry.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -614,6 +615,67 @@ export class SWSEV2CharacterSheet extends
 
     derived.skills = skillsList;
 
+    // Phase 10+: Populate extraUses from ExtraSkillUseRegistry with enhanced UX
+    // Adds expandable skill uses with intelligent grouping, status awareness, and filtering
+    try {
+      await ExtraSkillUseRegistry.initialize();
+      for (const skill of derived.skills) {
+        const skillUses = await ExtraSkillUseRegistry.getForSkill(skill.key, { actor });
+
+        // Normalize each skill use with enhanced metadata
+        const normalizedUses = skillUses.map(use => {
+          const timeClass = this._getTimeClass(use.time);
+          const timeLabel = this._getTimeLabel(use.time);
+
+          return {
+            key: use.key,
+            label: use.label,
+            name: use.name,
+            dc: use.dc,
+            time: use.time,
+            description: use.description || use.effect || '',
+            effect: use.effect,
+            trainedOnly: use.trainedOnly,
+            // Action economy styling
+            timeClass,
+            timeLabel,
+            // Action type classification
+            actionType: this._classifyActionType(use),
+            actionTypeLabel: this._getActionTypeLabel(use),
+            // Status awareness
+            requiresTrained: use.trainedOnly,
+            skillTrained: skill.trained,
+            isBlocked: use.trainedOnly && !skill.trained,
+            // Grouping category
+            category: this._categorizeSkillUse(use, skill.key)
+          };
+        });
+
+        // Group uses by category for better scanning
+        const grouped = {};
+        normalizedUses.forEach(use => {
+          const cat = use.category;
+          if (!grouped[cat]) grouped[cat] = [];
+          grouped[cat].push(use);
+        });
+
+        // Store both flat array (for backwards compatibility) and grouped structure
+        skill.extraUses = normalizedUses;
+        skill.extraUsesGrouped = grouped;
+        skill.extraUsesCount = normalizedUses.length;
+        skill.hasExtraUses = normalizedUses.length > 0;
+      }
+    } catch (err) {
+      // Fallback: if registry fails, keep empty extraUses arrays
+      console.warn("SWSE | Failed to load extra skill uses for skills panel", err);
+      for (const skill of derived.skills) {
+        skill.extraUses = [];
+        skill.extraUsesGrouped = {};
+        skill.extraUsesCount = 0;
+        skill.hasExtraUses = false;
+      }
+    }
+
     // Build headerDefenses array from derived.defenses object
     // Convert {fort: 10, ref: 10, will: 10, flatFooted: 10} → [{key: 'fort', label: 'Fortitude', total: 10, ...}, ...]
     const defenseKeys = [
@@ -760,6 +822,50 @@ const forcePoints = [];
         breakdown,
         enforcementMode
       };
+    }
+
+    // Combat Actions Context (for combat tab - actions browser)
+    // Load from data/combat-actions.json and organize by action economy
+    let combatActions = { groups: [] };
+    try {
+      const response = await fetch('/systems/foundryvtt-swse/data/combat-actions.json');
+      if (response.ok) {
+        const actionsData = await response.json();
+
+        // Organize by action economy type
+        const grouped = {};
+        const economyOrder = ['full-round', 'standard', 'move', 'swift', 'free', 'reaction'];
+
+        for (const action of actionsData) {
+          if (!action.action?.type) continue;
+          const economy = action.action.type.toLowerCase().replace(/[\s+]/g, '-');
+          if (!grouped[economy]) {
+            grouped[economy] = [];
+          }
+          grouped[economy].push({
+            id: action.name.toLowerCase().replace(/\s+/g, '-'),
+            name: action.name,
+            type: action.action.type,
+            cost: action.action.cost,
+            notes: action.notes,
+            hasRelatedSkills: action.relatedSkills && action.relatedSkills.length > 0
+          });
+        }
+
+        // Build groups in action economy order
+        for (const eco of economyOrder) {
+          if (grouped[eco]) {
+            combatActions.groups.push({
+              economy: eco,
+              count: grouped[eco].length,
+              actions: grouped[eco]
+            });
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('[SWSE] Failed to load combat actions:', err);
+      // Gracefully degrade - will show empty state
     }
 
     /* ============================================================
@@ -976,6 +1082,23 @@ const forcePoints = [];
       equipment: Object.values(actor.items).filter(i => i.type === 'equipment'),
       armor: Object.values(actor.items).filter(i => i.type === 'armor'),
       weapons: Object.values(actor.items).filter(i => i.type === 'weapon'),
+      // ═════════════════════════════════════════════════════════════════
+      // PHASE 6: Combat & Resources Display Data
+      // ═════════════════════════════════════════════════════════════════
+      speed,                        // Movement speed (ft./round)
+      initiativeTotal,              // Initiative modifier
+      perceptionTotal,              // Perception skill total
+      bab,                          // Base attack bonus
+      grappleBonus,                 // Grapple bonus (BAB + STR + size modifiers)
+      forcePointsValue: fpValue,    // Current force points (from system.forcePoints.value)
+      forcePointsMax: fpMax,        // Max force points (from system.forcePoints.max)
+      destinyPointsValue,           // Current destiny points (from system.destinyPoints.value)
+      destinyPointsMax,             // Max destiny points (from system.destinyPoints.max)
+      forcePoints,                  // Visual array of force point dots
+      // ═════════════════════════════════════════════════════════════════
+      // PHASE 9: Combat Actions Browser (in-tab)
+      // ═════════════════════════════════════════════════════════════════
+      combatActions,                // Organized combat actions by economy type
       // ═════════════════════════════════════════════════════════════════
       // UNIFIED PANEL CONTEXTS (Primary data source)
       // Panels now own all character data through dedicated view models
@@ -1793,6 +1916,86 @@ const forcePoints = [];
   ============================================================ */
 
   _activateCombatUI(html, { signal } = {}) {
+    // ═════════════════════════════════════════════════════════════════
+    // PHASE 9: Combat Actions Panel (In-tab browser)
+    // ═════════════════════════════════════════════════════════════════
+
+    // Filter combat actions by search
+    const combatSearchInput = html.querySelector('.combat-actions-search');
+    if (combatSearchInput) {
+      combatSearchInput.addEventListener('input', (event) => {
+        const filterText = event.target.value.toLowerCase();
+        const actionRows = html.querySelectorAll('.combat-action-row');
+
+        actionRows.forEach(row => {
+          const actionName = row.querySelector('.action-name')?.textContent.toLowerCase() ?? '';
+          const actionNotes = row.querySelector('.action-notes')?.textContent.toLowerCase() ?? '';
+          const matches = actionName.includes(filterText) || actionNotes.includes(filterText);
+          row.style.display = matches ? '' : 'none';
+        });
+      }, { signal });
+    }
+
+    // Sort combat actions
+    const combatSortSelect = html.querySelector('.combat-actions-sort');
+    if (combatSortSelect) {
+      combatSortSelect.addEventListener('change', (event) => {
+        const sortMode = event.target.value;
+        const actionContent = html.querySelector('.combat-actions-content');
+        if (!actionContent) return;
+
+        if (sortMode === 'name') {
+          // Sort by name within each group
+          const groups = actionContent.querySelectorAll('.combat-action-group');
+          groups.forEach(group => {
+            const rows = Array.from(group.querySelectorAll('.combat-action-row'));
+            rows.sort((a, b) => {
+              const nameA = a.querySelector('.action-name')?.textContent ?? '';
+              const nameB = b.querySelector('.action-name')?.textContent ?? '';
+              return nameA.localeCompare(nameB);
+            });
+
+            const list = group.querySelector('.combat-action-list');
+            if (list) {
+              rows.forEach(row => list.appendChild(row));
+            }
+          });
+        }
+        // 'economy' is default, groups are already organized by economy
+      }, { signal });
+    }
+
+    // New Round / Manual Reset Button
+    html.querySelectorAll('[data-action="new-round"]').forEach(button => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+
+        if (!game.combat) {
+          ui?.notifications?.warn?.('No active combat');
+          return;
+        }
+
+        const combatId = game.combat.id;
+        const { ActionEconomyPersistence } = await import('/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-persistence.js');
+
+        try {
+          // Reset action economy for this actor
+          await ActionEconomyPersistence.resetTurnState(this.actor, combatId);
+          ui?.notifications?.info?.(`${this.actor.name} actions reset for new round`);
+
+          // Trigger a re-render to update the action economy indicator
+          this.render(false);
+        } catch (err) {
+          console.error('Failed to reset turn state:', err);
+          ui?.notifications?.error?.('Failed to reset actions');
+        }
+      }, { signal });
+    });
+
+    // ═════════════════════════════════════════════════════════════════
+    // EXISTING COMBAT UI HANDLERS
+    // ═════════════════════════════════════════════════════════════════
+
     // Action click (cards and table rows)
     html.querySelectorAll(".swse-combat-action-card, .action-row").forEach(element => {
       element.addEventListener("click", async (event) => {
@@ -1943,6 +2146,83 @@ const forcePoints = [];
           console.error("Skill roll failed:", err);
           ui?.notifications?.error?.(`Skill roll failed: ${err.message}`);
         }
+      }, { signal });
+    });
+
+    // PHASE 10+: Expand/collapse skill uses with filter support
+    html.querySelectorAll('[data-action="toggle-skill-expand"]').forEach(button => {
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        const skillKey = button.dataset.skill;
+        if (!skillKey) return;
+
+        // Find the skill row and then the next sibling extra uses section
+        const skillRow = button.closest('.skills-grid-row');
+        if (!skillRow) return;
+
+        // The extra uses section should be the immediate next element or nearby sibling
+        let extraUsesSection = skillRow.nextElementSibling;
+        while (extraUsesSection && !extraUsesSection.classList.contains('skill-extra-uses')) {
+          extraUsesSection = extraUsesSection.nextElementSibling;
+        }
+
+        if (!extraUsesSection || !extraUsesSection.classList.contains('skill-extra-uses')) return;
+
+        const isExpanded = button.getAttribute('aria-expanded') === 'true';
+
+        if (isExpanded) {
+          // Collapse
+          button.setAttribute('aria-expanded', 'false');
+          extraUsesSection.classList.remove('skill-extra-uses--expanded');
+          extraUsesSection.classList.add('skill-extra-uses--collapsed');
+          // Hide filter bar
+          const filterBar = extraUsesSection.querySelector('.extra-uses-filter-bar');
+          if (filterBar) filterBar.classList.add('skill-extra-uses-hidden');
+        } else {
+          // Expand
+          button.setAttribute('aria-expanded', 'true');
+          extraUsesSection.classList.remove('skill-extra-uses--collapsed');
+          extraUsesSection.classList.add('skill-extra-uses--expanded');
+          // Show filter bar
+          const filterBar = extraUsesSection.querySelector('.extra-uses-filter-bar');
+          if (filterBar) filterBar.classList.remove('skill-extra-uses-hidden');
+        }
+      }, { signal });
+    });
+
+    // PHASE 10+: Filter skill uses by category/availability
+    html.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', (event) => {
+        event.preventDefault();
+        const filterType = btn.dataset.filter;
+        const filterBar = btn.closest('.extra-uses-filter-bar');
+        if (!filterBar) return;
+
+        // Update active button
+        filterBar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('filter-btn--active'));
+        btn.classList.add('filter-btn--active');
+
+        // Find the parent extra-uses section and filter rows
+        const extrasSection = filterBar.closest('.skill-extra-uses');
+        if (!extrasSection) return;
+
+        // Show/hide uses based on filter
+        extrasSection.querySelectorAll('.extra-use-row').forEach(row => {
+          let show = false;
+
+          if (filterType === 'all') {
+            show = true;
+          } else if (filterType === 'available') {
+            // Show only non-blocked uses
+            show = !row.classList.contains('use-blocked');
+          } else if (filterType === 'combat') {
+            // Show only combat-relevant uses
+            const category = row.dataset.category;
+            show = category === 'Combat' || category === 'Special';
+          }
+
+          row.style.display = show ? '' : 'none';
+        });
       }, { signal });
     });
 
@@ -2135,43 +2415,11 @@ const forcePoints = [];
       }, { signal });
     });
 
-    // Item action bar: Quick attack roll (weapons only)
-    html.querySelectorAll('[data-action="roll-attack"]').forEach(button => {
-      button.addEventListener("click", async (event) => {
-        event.preventDefault();
-        const itemId = button.dataset.itemId;
-        if (!itemId) return;
-
-        const item = this.actor.items.get(itemId);
-        if (!item || item.type !== "weapon") return;
-
-        try {
-          await SWSERoll.rollWeaponAttack(this.actor, itemId);
-        } catch (err) {
-          console.error("Attack roll failed:", err);
-          ui?.notifications?.error?.("Attack roll failed");
-        }
-      }, { signal });
-    });
-
-    // Item action bar: Quick damage roll (weapons only)
-    html.querySelectorAll('[data-action="roll-damage"]').forEach(button => {
-      button.addEventListener("click", async (event) => {
-        event.preventDefault();
-        const itemId = button.dataset.itemId;
-        if (!itemId) return;
-
-        const item = this.actor.items.get(itemId);
-        if (!item || item.type !== "weapon") return;
-
-        try {
-          await SWSERoll.rollWeaponDamage(this.actor, itemId);
-        } catch (err) {
-          console.error("Damage roll failed:", err);
-          ui?.notifications?.error?.("Damage roll failed");
-        }
-      }, { signal });
-    });
+    // NOTE: Quick attack/damage rolls via [data-action="roll-attack"] and [data-action="roll-damage"]
+    // are now REMOVED (dead code). Use the working class-based handlers instead:
+    // - .attack-btn (uses showRollModifiersDialog + SWSERoll.rollAttack)
+    // - .damage-btn (uses showRollModifiersDialog + SWSERoll.rollDamage)
+    // Both handlers create chat messages correctly via createChatMessage() or SWSEChat.postRoll()
   }
 
   /* ============================================================
@@ -2531,6 +2779,156 @@ const forcePoints = [];
   _openMentorConversation() {
     const actor = this.actor;
     new MentorChatDialog(actor).render(true);
+  }
+
+  /* ============================================================
+     PHASE 10: SKILL USE HELPERS
+  ============================================================ */
+
+  /**
+   * Map action economy time value to CSS class for visual styling
+   * @param {string|null} timeValue - The time field from extra skill use
+   * @returns {string} CSS class name
+   */
+  _getTimeClass(timeValue) {
+    if (!timeValue) return 'time--unknown';
+
+    const normalized = String(timeValue).toLowerCase().trim();
+
+    // Map common action economy designations
+    if (normalized.includes('swift')) return 'time--swift';
+    if (normalized.includes('move')) return 'time--move';
+    if (normalized.includes('standard')) return 'time--standard';
+    if (normalized.includes('full')) return 'time--full';
+    if (normalized.includes('free')) return 'time--free';
+    if (normalized.includes('reaction')) return 'time--reaction';
+    if (normalized.includes('round')) return 'time--full';
+
+    return 'time--unknown';
+  }
+
+  /**
+   * Map action economy time value to human-readable label
+   * @param {string|null} timeValue - The time field from extra skill use
+   * @returns {string} Human-readable label with icon
+   */
+  _getTimeLabel(timeValue) {
+    if (!timeValue) return '—';
+
+    const normalized = String(timeValue).toLowerCase().trim();
+
+    // Map to readable labels with icons
+    if (normalized.includes('swift')) return '⚡ Swift';
+    if (normalized.includes('move')) return '▶ Move';
+    if (normalized.includes('standard')) return '⬤ Standard';
+    if (normalized.includes('full') || normalized.includes('round')) return '⟲ Full Round';
+    if (normalized.includes('free')) return '∞ Free';
+    if (normalized.includes('reaction')) return '↩ Reaction';
+
+    // Return as-is if not matched
+    return timeValue;
+  }
+
+  /**
+   * Classify the action type of a skill use for UI clarity
+   * @param {Object} use - The skill use object
+   * @returns {string} Action type: 'check', 'opposed', 'use', 'roll', 'reference', or 'unknown'
+   */
+  _classifyActionType(use) {
+    const label = (use.label || '').toLowerCase();
+    const dc = (use.dc || '').toLowerCase();
+    const effect = (use.effect || '').toLowerCase();
+    const time = (use.time || '').toLowerCase();
+
+    // Opposed checks: explicitly stated as opposed
+    if (dc.includes('opposed')) return 'opposed';
+    if (label.includes('feint') || label.includes('deception')) return 'opposed';
+
+    // Combat actions: combat terminology
+    if (label.includes('attack') || label.includes('feint') || label.includes('dodge') || label.includes('parry')) return 'roll';
+    if (effect.includes('attack') || effect.includes('damage')) return 'roll';
+
+    // Uses/invocations: applying an effect
+    if (label.includes('use') || label.includes('apply') || label.includes('activate')) return 'use';
+    if (effect.includes('gain') || effect.includes('apply')) return 'use';
+
+    // Rolls/checks: skill rolls with DC
+    if (dc && !dc.includes('none') && !dc.includes('n/a')) return 'check';
+    if (effect.includes('check') || effect.includes('roll')) return 'check';
+
+    // Reference/informational: no action needed
+    if (label.includes('reference') || label.includes('information') || label.includes('know')) return 'reference';
+    if (time.includes('none') || time.includes('n/a') || time.includes('instant')) return 'reference';
+
+    return 'check'; // Default to check
+  }
+
+  /**
+   * Get human-readable label for action type
+   * @param {Object} use - The skill use object
+   * @returns {Object} { type: string, label: string, icon: string }
+   */
+  _getActionTypeLabel(use) {
+    const type = this._classifyActionType(use);
+    const map = {
+      'check': { label: 'Check', icon: '🎲', action: 'check' },
+      'opposed': { label: 'Opposed', icon: '⚔', action: 'opposed' },
+      'roll': { label: 'Roll', icon: '🎲', action: 'roll' },
+      'use': { label: 'Use', icon: '✓', action: 'use' },
+      'reference': { label: 'Info', icon: 'ℹ', action: 'reference' },
+      'unknown': { label: 'Action', icon: '→', action: 'unknown' }
+    };
+    return map[type] || map['unknown'];
+  }
+
+  /**
+   * Categorize a skill use for grouped display
+   * Derives display grouping based on metadata signals
+   * @param {Object} use - The skill use object
+   * @param {string} skillKey - The skill key
+   * @returns {string} Category: 'Core', 'Combat', 'Social', 'Utility', or 'Special'
+   */
+  _categorizeSkillUse(use, skillKey) {
+    const label = (use.label || '').toLowerCase();
+    const effect = (use.effect || '').toLowerCase();
+    const time = (use.time || '').toLowerCase();
+
+    // Combat-specific uses
+    const combatSkills = ['gatherInformation', 'deception', 'persuasion', 'endurance', 'acrobatics'];
+    const combatTerms = ['feint', 'dodge', 'parry', 'attack', 'defend', 'distract', 'demoralize', 'intimidate'];
+    if (combatSkills.includes(skillKey) && combatTerms.some(t => label.includes(t) || effect.includes(t))) {
+      return 'Combat';
+    }
+    if (label.includes('feint') || label.includes('dodge') || label.includes('parry')) {
+      return 'Combat';
+    }
+    if (effect.includes('attack') || effect.includes('defend') || effect.includes('flat-footed')) {
+      return 'Combat';
+    }
+
+    // Social uses
+    const socialSkills = ['persuasion', 'deception', 'gatherInformation'];
+    const socialTerms = ['persuade', 'bargain', 'bribe', 'intimidate', 'deception', 'deceptive', 'innuendo', 'haggle'];
+    if (socialSkills.includes(skillKey) && socialTerms.some(t => label.includes(t) || effect.includes(t))) {
+      return 'Social';
+    }
+
+    // Special uses with explicit markers
+    if (label.includes('(trained)') || use.trainedOnly) {
+      return 'Special';
+    }
+    if (label.includes('(feat)') || label.includes('(talent)') || label.includes('(class)')) {
+      return 'Special';
+    }
+
+    // Check if it's a core/fundamental use (no special conditions)
+    // Core uses don't have "trained only", don't require special setup
+    if (!use.trainedOnly && !label.includes('(trained)') && !label.includes('(feat)')) {
+      return 'Core';
+    }
+
+    // Default to utility for everything else
+    return 'Utility';
   }
 
   /* ============================================================

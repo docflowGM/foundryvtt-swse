@@ -3,66 +3,74 @@
 
   <!-- HEADER -->
   <header class="sheet-header holo-header">
-    <div class="header-left">
+    <!-- LEFT: PORTRAIT ONLY -->
+    <div class="sheet-header-left">
       <img class="profile" src="{{actor.img}}" data-edit="img" title="Click to change portrait" height="64" width="64"/>
-      <div class="title-block">
-        <div class="header-name-row">
+    </div>
+
+    <!-- CENTER: NAME/PLAYER + COMPACT META GRID -->
+    <div class="sheet-header-center">
+      <!-- Top line: Name and Player -->
+      <div class="sheet-header-topline">
+        <div class="header-name-block">
           <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="Name"/></h1>
-          <div class="header-player">
-            <label>Player:</label>
-            <input name="flags.swse.character.player" type="text" value="{{actor.flags.swse.character.player}}" placeholder="Player Name"/>
+        </div>
+        <div class="header-player">
+          <label>Player:</label>
+          <input name="flags.swse.character.player" type="text" value="{{actor.flags.swse.character.player}}" placeholder="Player Name"/>
+        </div>
+      </div>
+
+      <!-- Compact metadata grid: Class / Species / Level / Background / Homeworld / Profession / Destiny -->
+      <div class="sheet-header-meta-grid">
+        <div class="header-field">
+          <label>Class:</label>
+          <div class="field-with-button">
+            <input name="system.class" type="text" value="{{actor.system.class}}" placeholder="Select Class"/>
+            <button type="button" class="header-select-btn" data-action="cmd-select-class" title="Select Class from progression system">⚙️</button>
           </div>
         </div>
-        <div class="header-details-row">
-          <div class="header-field">
-            <label>Class:</label>
-            <div class="field-with-button">
-              <input name="system.class" type="text" value="{{actor.system.class}}" placeholder="Select Class"/>
-              <button type="button" class="header-select-btn" data-action="cmd-select-class" title="Select Class from progression system">⚙️</button>
-            </div>
-          </div>
-          <div class="header-field">
-            <label>Species:</label>
-            <div class="field-with-button">
-              <input name="system.race" type="text" value="{{actor.system.race}}" placeholder="Select Species"/>
-              <button type="button" class="header-select-btn" data-action="cmd-select-species" title="Select Species from progression system">⚙️</button>
-            </div>
-          </div>
-          <div class="header-field">
-            <label>Level:</label>
-            <input name="system.level" type="number" value="{{actor.system.level}}" min="1" max="20" placeholder="1"/>
+        <div class="header-field">
+          <label>Species:</label>
+          <div class="field-with-button">
+            <input name="system.race" type="text" value="{{actor.system.race}}" placeholder="Select Species"/>
+            <button type="button" class="header-select-btn" data-action="cmd-select-species" title="Select Species from progression system">⚙️</button>
           </div>
         </div>
-        <div class="header-secondary-row">
-          <div class="header-field">
-            <label>Background:</label>
-            <div class="field-with-button">
-              <input name="system.event" type="text" value="{{actor.system.event}}" placeholder="Select Background"/>
-              <button type="button" class="header-select-btn" data-action="cmd-select-background" title="Select Background from progression system">⚙️</button>
-            </div>
+        <div class="header-field">
+          <label>Level:</label>
+          <input name="system.level" type="number" value="{{actor.system.level}}" min="1" max="20" placeholder="1"/>
+        </div>
+        <div class="header-field">
+          <label>Background:</label>
+          <div class="field-with-button">
+            <input name="system.event" type="text" value="{{actor.system.event}}" placeholder="Select Background"/>
+            <button type="button" class="header-select-btn" data-action="cmd-select-background" title="Select Background from progression system">⚙️</button>
           </div>
-          <div class="header-field">
-            <label>Homeworld:</label>
-            <div class="field-with-button">
-              <input name="system.planetOfOrigin" type="text" value="{{actor.system.planetOfOrigin}}" placeholder="Select Homeworld"/>
-              <button type="button" class="header-select-btn" data-action="cmd-select-homeworld" title="Select Homeworld from progression system">⚙️</button>
-            </div>
+        </div>
+        <div class="header-field">
+          <label>Homeworld:</label>
+          <div class="field-with-button">
+            <input name="system.planetOfOrigin" type="text" value="{{actor.system.planetOfOrigin}}" placeholder="Select Homeworld"/>
+            <button type="button" class="header-select-btn" data-action="cmd-select-homeworld" title="Select Homeworld from progression system">⚙️</button>
           </div>
-          <div class="header-field">
-            <label>Profession:</label>
-            <div class="field-with-button">
-              <input name="system.profession" type="text" value="{{actor.system.profession}}" placeholder="Select Profession"/>
-              <button type="button" class="header-select-btn" data-action="cmd-select-profession" title="Select Profession from progression system">⚙️</button>
-            </div>
+        </div>
+        <div class="header-field">
+          <label>Profession:</label>
+          <div class="field-with-button">
+            <input name="system.profession" type="text" value="{{actor.system.profession}}" placeholder="Select Profession"/>
+            <button type="button" class="header-select-btn" data-action="cmd-select-profession" title="Select Profession from progression system">⚙️</button>
           </div>
-          <div class="header-field">
-            <label>Destiny Points:</label>
-            <span class="destiny-display">{{derived.destinyPoints.value}} / {{derived.destinyPoints.max}}</span>
-          </div>
+        </div>
+        <div class="header-field">
+          <label>Destiny Points:</label>
+          <span class="destiny-display">{{derived.destinyPoints.value}} / {{derived.destinyPoints.max}}</span>
         </div>
       </div>
     </div>
-    <div class="header-right">
+
+    <!-- RIGHT: DEFENSE STATS -->
+    <div class="sheet-header-right">
       <div class="swse-stat"><div class="label">FORT</div><div class="value">{{derived.defenses.fortitude.total}}</div></div>
       <div class="swse-stat"><div class="label">REF</div><div class="value">{{derived.defenses.reflex.total}}</div></div>
       <div class="swse-stat"><div class="label">WILL</div><div class="value">{{derived.defenses.will.total}}</div></div>
@@ -71,7 +79,7 @@
   </header>
 
   <!-- ACTION BUTTONS -->
-  <div class="sheet-actions" style="padding: 10px; display: flex; gap: 8px; flex-wrap: wrap; border-bottom: 1px solid rgba(0,255,255,0.2);">
+  <div class="sheet-actions">
     {{#if isLevel0}}
       <button type="button" data-action="cmd-chargen" class="header-btn">Chargen</button>
     {{else}}
@@ -129,17 +137,48 @@
     </section>
 
     <!-- COMBAT TAB -->
-    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="combat">
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/initiative-control.hbs"}}
+    <section class="tab flexcol combat-tab-container" data-group="primary" data-tab-group="primary" data-tab="combat">
+
+      <!-- COMBAT TAB: Main Content Area (left/center) -->
+      <div class="combat-main-area flexcol">
+
+        <!-- TOP: Initiative Control -->
+        {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/initiative-control.hbs"}}
+
+        <!-- TOP: Attacks Panel -->
+        {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs"}}
+
+        <!-- CENTER: Combat Actions Panel (main functional area) -->
+        {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/combat-actions-panel.hbs"}}
+
+        <!-- NOTES: Special Combat Actions (compact) -->
+        {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/special-combat-actions-panel.hbs"}}
+      </div>
+
+      <!-- COMBAT TAB: Right Sidebar (action economy tracker + controls) -->
       {{#if actionEconomy}}
-        {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/action-economy-indicator.hbs"
-            actionState=actionEconomy.state
-            actionBreakdown=actionEconomy.breakdown
-            swiftMax=actionEconomy.state.swiftMax}}
+        <div class="combat-sidebar">
+          <!-- Action Economy Tracker -->
+          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/action-economy-indicator.hbs"
+              actionState=actionEconomy.state
+              actionBreakdown=actionEconomy.breakdown
+              swiftMax=actionEconomy.state.swiftMax}}
+
+          <!-- New Round / Turn Reset Controls -->
+          <div class="combat-turn-controls">
+            <button type="button"
+                    class="swse-btn swse-btn--primary new-round-btn"
+                    data-action="new-round"
+                    title="Reset actions for a new round (or wait for your turn)">
+              ↻ New Round
+            </button>
+            <div class="turn-hint" style="font-size: 0.75rem; opacity: 0.7; margin-top: 6px; text-align: center; padding: 4px 0; border-top: 1px solid rgba(124,232,255,0.2);">
+              Actions auto-reset on your turn
+            </div>
+          </div>
+        </div>
       {{/if}}
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/special-combat-actions-panel.hbs"}}
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs"}}
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs"}}
+
     </section>
 
     <!-- TALENTS TAB -->

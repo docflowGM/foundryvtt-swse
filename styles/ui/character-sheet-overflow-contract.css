@@ -1,6 +1,6 @@
 /* ============================================
-   CHARACTER SHEET OVERFLOW CONTRACT
-   SVG-Framed Panel Safety: Width Wrapping & Height Scrolling
+   CHARACTER SHEET EXPANSION FIX
+   Phase 5: Remove inner height caps to let tabs expand naturally
    ============================================ */
 
 /* -----------------------------------
@@ -76,100 +76,95 @@
 }
 
 /* -----------------------------------
-   HEIGHT OVERFLOW RULES
-   Establish scrollable content layers inside frames
+   HEIGHT EXPANSION RULES (Phase 5)
+   Inner panels now expand with the tab; tab owns scrolling
    ----------------------------------- */
 
-/* Relationships panel — scrollable entry list */
+/* Relationships panel — expand naturally, no internal cap */
 .swse-sheet .relationships-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
   min-height: 0;
-  max-height: 400px;
-  overflow-y: auto;
+  /* max-height removed — let tab control scroll */
   overflow-x: hidden;
   position: relative;
   z-index: 2;
 }
 
-/* Equipment ledger — scrollable row container */
+/* Equipment ledger — expand naturally, no internal cap */
 .swse-sheet .equipment-ledger {
   display: flex;
   flex-direction: column;
   gap: 4px;
   min-height: 0;
-  max-height: 500px;
-  overflow-y: auto;
+  /* max-height removed — let tab control scroll */
   overflow-x: hidden;
   position: relative;
   z-index: 2;
 }
 
-/* Talent ledger — scrollable row container */
+/* Talent ledger — expand naturally, no internal cap */
 .swse-sheet .talents-ledger {
   display: flex;
   flex-direction: column;
   gap: 3px;
   min-height: 0;
-  max-height: 400px;
-  overflow-y: auto;
+  /* max-height removed — let tab control scroll */
   overflow-x: hidden;
   position: relative;
   z-index: 2;
 }
 
-/* Force powers ledger — scrollable row container */
+/* Force powers ledger — expand naturally, no internal cap */
 .swse-sheet .force-powers-ledger {
   display: flex;
   flex-direction: column;
   gap: 3px;
   min-height: 0;
-  max-height: 400px;
-  overflow-y: auto;
+  /* max-height removed — let tab control scroll */
   overflow-x: hidden;
   position: relative;
   z-index: 2;
 }
 
-/* Attacks grid — scrollable container */
+/* Attacks grid — expand naturally, no internal cap */
 .swse-sheet .swse-attacks-grid {
   display: flex;
   flex-direction: column;
   gap: 6px;
   min-height: 0;
-  max-height: 600px;
-  overflow-y: auto;
+  /* max-height removed — let tab control scroll */
   overflow-x: hidden;
   position: relative;
   z-index: 2;
 }
 
-/* Combat notes textarea — constrain height within panel frame */
+/* Combat notes textarea — expand within tab, no hard cap */
 .swse-sheet .combat-notes-textarea {
   flex: 1;
-  min-height: 120px;
-  max-height: 300px;
+  min-height: 80px;
+  /* max-height removed — allow tab scroll control */
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
   z-index: 2;
 }
 
-/* Bio profile panel — scrollable content if long narrative */
+/* Bio profile panel — expand naturally within tab */
 .swse-sheet .bio-profile-content {
   min-height: 0;
-  max-height: 350px;
+  /* max-height removed — let tab control scroll */
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
   z-index: 2;
 }
 
-/* Biography log panel — scrollable sections for long narratives */
+/* Biography log panel — expand naturally within tab */
 .swse-sheet .bio-log-sections {
   min-height: 0;
-  max-height: 500px;
+  /* max-height removed — let tab control scroll */
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
@@ -179,17 +174,17 @@
   gap: 12px;
 }
 
-/* Notes panel — scrollable content for freeform notes */
+/* Notes panel — expand naturally within tab */
 .swse-sheet .notes-content {
   min-height: 0;
-  max-height: 350px;
+  /* max-height removed — let tab control scroll */
   overflow-y: auto;
   overflow-x: hidden;
 }
 
 /* -----------------------------------
    LAYER CONTRACT
-   Frame stays stable, content scrolls
+   Frame stays stable, content expands
    ----------------------------------- */
 
 /* Panel root: background/frame layer (SVG or holo treatment) */
@@ -200,7 +195,7 @@
   flex-direction: column;
 }
 
-/* Content container within framed panel gets scroll */
+/* Content container within framed panel grows freely */
 .swse-sheet.holo-panel.svg-framed > :not(.section-bar):not([class*="hint"]) {
   position: relative;
   z-index: 2;
@@ -277,3 +272,4 @@
   scrollbar-color: rgba(0, 200, 255, 0.4) rgba(0, 0, 0, 0.2);
   scrollbar-width: thin;
 }
+

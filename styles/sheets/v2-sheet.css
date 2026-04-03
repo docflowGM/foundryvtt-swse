@@ -115,45 +115,243 @@
 
 .swse-sheet .sheet-actions {
   flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
 }
 
-/* Header left/right layout */
-.swse-sheet .header-left {
+/* ═══════════════════════════════════════════════════════════════
+   EXPLICIT FORM-SCOPED STRUCTURAL RULES FOR SWSE-SHEET-UI
+   These match specificity of holo file and establish canonical ownership
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Form root structural contract */
+form.swse-sheet-ui {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+form.swse-sheet-ui > .sheet-shell,
+form.swse-sheet-ui > section.swse-sheet {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Header: fixed height, no grow */
+form.swse-sheet-ui .sheet-header {
+  flex: 0 0 auto;
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 12px;
-  flex: 1;
+  gap: 16px;
+  padding: 10px 12px;
+  min-height: 0;
+}
+
+/* Actions: fixed height, no grow — Phase 4 compressed */
+form.swse-sheet-ui .sheet-actions {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+  padding: 6px 8px;
+}
+
+form.swse-sheet-ui .sheet-actions > * {
+  flex: 1 1 150px;
   min-width: 0;
 }
 
-.swse-sheet .header-left .profile {
+/* Tabs nav: fixed height, no grow — Phase 4 compressed */
+form.swse-sheet-ui .sheet-tabs {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  padding: 4px;
+}
+
+/* Body: flex grow to fill */
+form.swse-sheet-ui .sheet-body,
+form.swse-sheet-ui .sheet-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Active tab: flex grow, main scroll owner */
+form.swse-sheet-ui .sheet-body > .tab {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+/* Inactive tabs: hidden */
+form.swse-sheet-ui .sheet-body > .tab:not(.active) {
+  display: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PHASE 3: COMPACT HEADER LAYOUT (LEFT / CENTER / RIGHT)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Left column: portrait only */
+.swse-sheet .sheet-header-left {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.swse-sheet .sheet-header-left .profile {
   flex: 0 0 64px;
   width: 64px;
   height: 64px;
   border-radius: 4px;
 }
 
-.swse-sheet .title-block {
+/* Center column: name/player top + compact metadata grid */
+.swse-sheet .sheet-header-center {
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  flex: 1;
   min-width: 0;
 }
 
-.swse-sheet .header-right {
+/* Top line: name + player inline */
+.swse-sheet .sheet-header-topline {
   display: flex;
   flex-direction: row;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
+  gap: 12px;
   align-items: flex-start;
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
-.swse-stat { min-width: 64px; text-align: center; }
-.swse-stat .label { font-size: 0.7rem; opacity: 0.75; }
-.swse-stat .value { font-size: 1.35rem; font-weight: 800; }
+.swse-sheet .header-name-block {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.swse-sheet .header-name-block .charname {
+  margin: 0;
+}
+
+.swse-sheet .header-name-block .charname input {
+  font-size: 1.5rem;
+  font-weight: 900;
+  min-height: 44px;
+  color: #b7f4ff;
+  text-shadow: 0 0 14px rgba(183, 244, 255, 0.25);
+}
+
+.swse-sheet .header-player {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  align-items: center;
+  flex: 0 1 auto;
+}
+
+.swse-sheet .header-player label {
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+.swse-sheet .header-player input {
+  flex: 1 1 150px;
+  min-width: 100px;
+}
+
+/* Compact metadata grid: 2-3 columns */
+.swse-sheet .sheet-header-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+/* Header field: label over input, compact */
+.swse-sheet .header-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.swse-sheet .header-field label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  opacity: 0.95;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  color: rgba(214, 245, 255, 0.92);
+}
+
+.swse-sheet .header-field input,
+.swse-sheet .header-field .field-with-button {
+  font-size: 0.95rem;
+  min-height: 32px;
+  font-weight: 500;
+  color: #e8faff;
+}
+
+.swse-sheet .header-field .field-with-button {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  min-width: 0;
+}
+
+.swse-sheet .header-field input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.swse-sheet .header-select-btn {
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  padding: 2px;
+  font-size: 0.8rem;
+}
+
+.swse-sheet .destiny-display {
+  display: flex;
+  align-items: center;
+  min-height: 32px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #7ce8ff;
+  text-shadow: 0 0 12px rgba(124, 232, 255, 0.2);
+}
+
+/* Right column: defense stats */
+.swse-sheet .sheet-header-right {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+.swse-stat { min-width: 72px; text-align: center; padding: 6px 4px; }
+.swse-stat .label { font-size: 0.8rem; opacity: 1; color: rgba(214, 245, 255, 0.88); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }
+.swse-stat .value { font-size: 1.6rem; font-weight: 900; color: #7ce8ff; text-shadow: 0 0 16px rgba(124, 232, 255, 0.3); }
 .swse-sheet .swse-v2-condition-step { padding: 6px 10px; border-radius: 8px; }
 
 
@@ -208,13 +406,13 @@
   padding: 4px 0;
 }
 
-.swse-sheet .swse-v2-identity-grid .label { opacity: 0.75; }
-.swse-sheet .swse-v2-identity-grid .value { font-weight: 700; }
+.swse-sheet .swse-v2-identity-grid .label { opacity: 0.92; color: rgba(214, 245, 255, 0.88); font-weight: 600; }
+.swse-sheet .swse-v2-identity-grid .value { font-weight: 700; color: #e8faff; }
 
 .swse-sheet .swse-v2-hp-row { display:flex; gap: 12px; flex-wrap: wrap; }
 .swse-sheet .swse-v2-hp-block { min-width: 160px; }
-.swse-sheet .swse-v2-hp-block .label { opacity: 0.75; }
-.swse-sheet .swse-v2-hp-block .value { font-size: 1.1rem; font-weight: 800; }
+.swse-sheet .swse-v2-hp-block .label { opacity: 0.92; color: rgba(214, 245, 255, 0.88); font-weight: 600; }
+.swse-sheet .swse-v2-hp-block .value { font-size: 1.25rem; font-weight: 900; color: #7ce8ff; text-shadow: 0 0 12px rgba(124, 232, 255, 0.2); }
 
 .swse-sheet .swse-v2-defenses-grid {
   display:flex;
@@ -379,14 +577,18 @@
 }
 
 .swse-sheet .swse-v2-resource .label {
-  font-size: 0.75rem;
-  opacity: 0.85;
+  font-size: 0.8rem;
+  opacity: 1;
+  color: rgba(214, 245, 255, 0.88);
+  font-weight: 600;
 }
 
 .swse-sheet .swse-v2-resource .count {
-  font-size: 0.75rem;
-  opacity: 0.85;
+  font-size: 0.85rem;
+  opacity: 1;
+  color: #7ce8ff;
   white-space: nowrap;
+  font-weight: 700;
 }
 
 .swse-sheet.ticks {
@@ -3589,59 +3791,21 @@ select option:checked {
 }
 
 /* ================================================================= */
-/* Header Field Styling - Character Identity Fields */
+/* Header Field Styling - Phase 3 Compact Header */
+/* Note: Old .header-name-row/.header-details-row/.header-secondary-row rules removed
+         These are now handled by new .sheet-header-topline and .sheet-header-meta-grid */
 /* ================================================================= */
 
-.swse-sheet .header-name-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex: 1 1 auto;
-  flex-wrap: wrap;
-  min-width: 0;
-}
-
+/* Kept for backward compat if needed */
 .swse-sheet .charname {
-  flex: 0 1 auto;
   margin: 0;
-  min-width: 150px;
 }
 
 .swse-sheet .charname input {
-  font-size: 1.5rem;
   font-weight: 700;
 }
 
-.swse-sheet .header-player {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 0 0 auto;
-}
-
-.swse-sheet .header-player label {
-  font-weight: 700;
-  text-transform: uppercase;
-  font-size: 0.8rem;
-  opacity: 0.8;
-  min-width: 60px;
-}
-
-.swse-sheet .header-player input {
-  width: 200px;
-  padding: 6px 8px;
-  border: 1px solid rgba(0, 255, 136, 0.3);
-  border-radius: 3px;
-  background: rgba(0, 0, 0, 0.2);
-  color: inherit;
-  font-size: 0.9rem;
-}
-
-.swse-sheet .header-details-row {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  flex: 1 1 auto;
+.swse-sheet .header-field {
   min-width: 0;
 }
 
@@ -3718,3 +3882,153 @@ select option:checked {
   text-shadow: 0 0 4px rgba(255, 215, 0, 0.3);
 }
 
+
+/* ============================================================
+   PHASE 9: COMBAT TAB REDESIGN
+   Two-column layout: main area + right sidebar
+============================================================ */
+
+.swse-sheet .combat-tab-container {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  max-width: 100%;
+}
+
+.swse-sheet .combat-main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.swse-sheet .combat-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 240px;
+  flex-shrink: 0;
+}
+
+/* Action Economy Sidebar Styles */
+.swse-sheet .swse-action-economy-indicator {
+  background: rgba(0, 20, 40, 0.6);
+  border: 1px solid rgba(124, 232, 255, 0.3);
+  border-radius: 4px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.swse-sheet .indicator-label {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #7ce8ff;
+  text-shadow: 0 0 8px rgba(124, 232, 255, 0.3);
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(124, 232, 255, 0.2);
+}
+
+.swse-sheet .action-hierarchy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.swse-sheet .action-node {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+  border-left: 3px solid transparent;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.swse-sheet .action-node.action-state-available {
+  border-left-color: rgba(76, 175, 80, 0.8);
+  background: rgba(76, 175, 80, 0.1);
+  color: rgba(180, 255, 150, 0.9);
+}
+
+.swse-sheet .action-node.action-state-used {
+  border-left-color: rgba(244, 67, 54, 0.8);
+  background: rgba(244, 67, 54, 0.1);
+  color: rgba(255, 150, 150, 0.7);
+}
+
+.swse-sheet .action-node.action-state-degraded {
+  border-left-color: rgba(255, 152, 0, 0.8);
+  background: rgba(255, 152, 0, 0.1);
+  color: rgba(255, 200, 100, 0.8);
+}
+
+.swse-sheet .action-status {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.swse-sheet .hierarchy-arrow {
+  text-align: center;
+  font-size: 0.75rem;
+  color: rgba(124, 232, 255, 0.3);
+  line-height: 0.5;
+  margin: 2px 0;
+}
+
+/* Turn Controls */
+.swse-sheet .combat-turn-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  background: rgba(0, 20, 40, 0.6);
+  border: 1px solid rgba(124, 232, 255, 0.3);
+  border-radius: 4px;
+}
+
+.swse-sheet .new-round-btn {
+  padding: 8px 12px;
+  background: rgba(124, 232, 255, 0.2);
+  border: 1px solid rgba(124, 232, 255, 0.4);
+  color: #b7f4ff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.swse-sheet .new-round-btn:hover {
+  background: rgba(124, 232, 255, 0.35);
+  border-color: rgba(124, 232, 255, 0.6);
+  box-shadow: 0 0 10px rgba(124, 232, 255, 0.25);
+}
+
+.swse-sheet .new-round-btn:active {
+  transform: scale(0.98);
+}
+
+/* Responsive: Stack on smaller screens */
+@media (max-width: 1200px) {
+  .swse-sheet .combat-tab-container {
+    flex-direction: column;
+  }
+
+  .swse-sheet .combat-sidebar {
+    width: 100%;
+    flex-direction: row;
+    gap: 12px;
+  }
+
+  .swse-sheet .swse-action-economy-indicator {
+    flex: 1;
+  }
+
+  .swse-sheet .combat-turn-controls {
+    flex: 0 1 auto;
+  }
+}

@@ -164,11 +164,16 @@ export class PanelContextBuilder {
   buildDefensePanel() {
     const headerDefenses = this.derived.defenses || {};
 
-    const defenses = ['ref', 'fort', 'will'].map(key => {
-      const def = headerDefenses[key] || {};
+    // Map derived.defenses keys (fortitude, reflex, will) to template keys (fort, ref, will)
+    const defenses = [
+      { dataKey: 'reflex', templateKey: 'ref', label: 'Reflex' },
+      { dataKey: 'fortitude', templateKey: 'fort', label: 'Fortitude' },
+      { dataKey: 'will', templateKey: 'will', label: 'Will' }
+    ].map(({ dataKey, templateKey, label }) => {
+      const def = headerDefenses[dataKey] || {};
       return {
-        key,
-        label: { ref: 'Reflex', fort: 'Fortitude', will: 'Will' }[key],
+        key: templateKey,
+        label,
         total: Number(def.total) || 10,
         armorBonus: Number(def.armorBonus) || 0,
         abilityMod: Number(def.abilityMod) || 0,
@@ -775,21 +780,27 @@ export class PanelContextBuilder {
       label: `${this.system.speed?.value || 0} ft.`
     };
 
+    // Initiative: derived.initiative.total (from DerivedCalculator)
+    const initiativeTotal = Number(this.derived.initiative?.total) || 0;
     const initiative = {
-      value: Number(this.derived.initiative?.value) || 0,
-      label: `+${this.derived.initiative?.value || 0}`,
+      value: initiativeTotal,
+      label: `+${initiativeTotal}`,
       skillKey: 'initiative'
     };
 
+    // Perception: derived.skills.perception.total (computed skill)
+    const perceptionTotal = Number(this.derived.skills?.perception?.total) || 0;
     const perception = {
-      value: Number(this.derived.perception?.value) || 0,
-      label: `+${this.derived.perception?.value || 0}`,
+      value: perceptionTotal,
+      label: `+${perceptionTotal}`,
       skillKey: 'perception'
     };
 
+    // Base Attack Bonus: derived.bab (from BABCalculator)
+    const babTotal = Number(this.derived.bab) || 0;
     const baseAttack = {
-      value: Number(this.derived.baseAttack?.value) || 0,
-      label: `+${this.derived.baseAttack?.value || 0}`
+      value: babTotal,
+      label: `+${babTotal}`
     };
 
     const panel = {

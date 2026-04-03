@@ -135,12 +135,15 @@ export class DerivedCalculator {
       };
 
       // Destiny points: CHA modifier + class levels + bonuses
+      // Also mirror user input (value, max) for template display
       const chaMod = (updates['system.derived.attributes']?.cha?.mod) || 0;
       const destinyClassBonus = actor.system.destinyPoints?.classBonus || 0;
       updates['system.derived.destinyPoints'] = {
         charisma: chaMod,
         classBonus: destinyClassBonus,
-        total: chaMod + destinyClassBonus + (actor.system.destinyPoints?.bonus || 0)
+        total: chaMod + destinyClassBonus + (actor.system.destinyPoints?.bonus || 0),
+        value: actor.system.destinyPoints?.value || 0,
+        max: actor.system.destinyPoints?.max || 0
       };
 
       // HP: Mirror-only pattern (Phase 4)
