@@ -780,21 +780,27 @@ export class PanelContextBuilder {
       label: `${this.system.speed?.value || 0} ft.`
     };
 
+    // Initiative: derived.initiative.total (from DerivedCalculator)
+    const initiativeTotal = Number(this.derived.initiative?.total) || 0;
     const initiative = {
-      value: Number(this.derived.initiative?.value) || 0,
-      label: `+${this.derived.initiative?.value || 0}`,
+      value: initiativeTotal,
+      label: `+${initiativeTotal}`,
       skillKey: 'initiative'
     };
 
+    // Perception: derived.skills.perception.total (computed skill)
+    const perceptionTotal = Number(this.derived.skills?.perception?.total) || 0;
     const perception = {
-      value: Number(this.derived.perception?.value) || 0,
-      label: `+${this.derived.perception?.value || 0}`,
+      value: perceptionTotal,
+      label: `+${perceptionTotal}`,
       skillKey: 'perception'
     };
 
+    // Base Attack Bonus: derived.bab (from BABCalculator)
+    const babTotal = Number(this.derived.bab) || 0;
     const baseAttack = {
-      value: Number(this.derived.baseAttack?.value) || 0,
-      label: `+${this.derived.baseAttack?.value || 0}`
+      value: babTotal,
+      label: `+${babTotal}`
     };
 
     const panel = {

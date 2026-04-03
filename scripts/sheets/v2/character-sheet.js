@@ -977,6 +977,19 @@ const forcePoints = [];
       armor: Object.values(actor.items).filter(i => i.type === 'armor'),
       weapons: Object.values(actor.items).filter(i => i.type === 'weapon'),
       // ═════════════════════════════════════════════════════════════════
+      // PHASE 6: Combat & Resources Display Data
+      // ═════════════════════════════════════════════════════════════════
+      speed,                        // Movement speed (ft./round)
+      initiativeTotal,              // Initiative modifier
+      perceptionTotal,              // Perception skill total
+      bab,                          // Base attack bonus
+      grappleBonus,                 // Grapple bonus (BAB + STR + size modifiers)
+      forcePointsValue: fpValue,    // Current force points (from system.forcePoints.value)
+      forcePointsMax: fpMax,        // Max force points (from system.forcePoints.max)
+      destinyPointsValue,           // Current destiny points (from system.destinyPoints.value)
+      destinyPointsMax,             // Max destiny points (from system.destinyPoints.max)
+      forcePoints,                  // Visual array of force point dots
+      // ═════════════════════════════════════════════════════════════════
       // UNIFIED PANEL CONTEXTS (Primary data source)
       // Panels now own all character data through dedicated view models
       // ═════════════════════════════════════════════════════════════════
