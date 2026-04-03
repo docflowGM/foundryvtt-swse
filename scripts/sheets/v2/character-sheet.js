@@ -36,6 +36,7 @@ import { UIStateManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/share
 import { PanelDiagnostics } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/PanelDiagnostics.js";
 // Character-specific visibility manager (subclass of shared base)
 import { PanelVisibilityManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/PanelVisibilityManager.js";
+import { ExtraSkillUseRegistry } from "/systems/foundryvtt-swse/scripts/utils/extra-skill-use-registry.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -613,6 +614,35 @@ export class SWSEV2CharacterSheet extends
     });
 
     derived.skills = skillsList;
+
+    // Phase 10: Populate extraUses from ExtraSkillUseRegistry for each skill
+    // This adds expandable skill uses beneath each skill row
+    try {
+      await ExtraSkillUseRegistry.initialize();
+      for (const skill of derived.skills) {
+        const skillUses = await ExtraSkillUseRegistry.getForSkill(skill.key, { actor });
+        // Normalize each skill use with visual styling info
+        skill.extraUses = skillUses.map(use => ({
+          key: use.key,
+          label: use.label,
+          name: use.name,
+          dc: use.dc,
+          time: use.time,
+          description: use.description,
+          effect: use.effect,
+          trainedOnly: use.trainedOnly,
+          // Color coding by action economy time field
+          timeClass: this._getTimeClass(use.time),
+          timeLabel: this._getTimeLabel(use.time)
+        }));
+      }
+    } catch (err) {
+      // Fallback: if registry fails, keep empty extraUses arrays
+      console.warn("SWSE | Failed to load extra skill uses for skills panel", err);
+      for (const skill of derived.skills) {
+        skill.extraUses = [];
+      }
+    }
 
     // Build headerDefenses array from derived.defenses object
     // Convert {fort: 10, ref: 10, will: 10, flatFooted: 10} → [{key: 'fort', label: 'Fortitude', total: 10, ...}, ...]
@@ -2087,6 +2117,41 @@ const forcePoints = [];
       }, { signal });
     });
 
+    // PHASE 10: Expand/collapse skill uses
+    html.querySelectorAll('[data-action="toggle-skill-expand"]').forEach(button => {
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        const skillKey = button.dataset.skill;
+        if (!skillKey) return;
+
+        // Find the skill row and then the next sibling extra uses section
+        const skillRow = button.closest('.skills-grid-row');
+        if (!skillRow) return;
+
+        // The extra uses section should be the immediate next element or nearby sibling
+        let extraUsesSection = skillRow.nextElementSibling;
+        while (extraUsesSection && !extraUsesSection.classList.contains('skill-extra-uses')) {
+          extraUsesSection = extraUsesSection.nextElementSibling;
+        }
+
+        if (!extraUsesSection || !extraUsesSection.classList.contains('skill-extra-uses')) return;
+
+        const isExpanded = button.getAttribute('aria-expanded') === 'true';
+
+        if (isExpanded) {
+          // Collapse
+          button.setAttribute('aria-expanded', 'false');
+          extraUsesSection.classList.remove('skill-extra-uses--expanded');
+          extraUsesSection.classList.add('skill-extra-uses--collapsed');
+        } else {
+          // Expand
+          button.setAttribute('aria-expanded', 'true');
+          extraUsesSection.classList.remove('skill-extra-uses--collapsed');
+          extraUsesSection.classList.add('skill-extra-uses--expanded');
+        }
+      }, { signal });
+    });
+
     // ===== FOCUS CHECKBOX CONTROL =====
     // Focus checkbox should only be enabled when Trained is checked
     // Listen for changes to Trained checkboxes and update Focus checkbox state accordingly
@@ -2640,6 +2705,54 @@ const forcePoints = [];
   _openMentorConversation() {
     const actor = this.actor;
     new MentorChatDialog(actor).render(true);
+  }
+
+  /* ============================================================
+     PHASE 10: SKILL USE HELPERS
+  ============================================================ */
+
+  /**
+   * Map action economy time value to CSS class for visual styling
+   * @param {string|null} timeValue - The time field from extra skill use
+   * @returns {string} CSS class name
+   */
+  _getTimeClass(timeValue) {
+    if (!timeValue) return 'time--unknown';
+
+    const normalized = String(timeValue).toLowerCase().trim();
+
+    // Map common action economy designations
+    if (normalized.includes('swift')) return 'time--swift';
+    if (normalized.includes('move')) return 'time--move';
+    if (normalized.includes('standard')) return 'time--standard';
+    if (normalized.includes('full')) return 'time--full';
+    if (normalized.includes('free')) return 'time--free';
+    if (normalized.includes('reaction')) return 'time--reaction';
+    if (normalized.includes('round')) return 'time--full';
+
+    return 'time--unknown';
+  }
+
+  /**
+   * Map action economy time value to human-readable label
+   * @param {string|null} timeValue - The time field from extra skill use
+   * @returns {string} Human-readable label with icon
+   */
+  _getTimeLabel(timeValue) {
+    if (!timeValue) return '—';
+
+    const normalized = String(timeValue).toLowerCase().trim();
+
+    // Map to readable labels with icons
+    if (normalized.includes('swift')) return '⚡ Swift';
+    if (normalized.includes('move')) return '▶ Move';
+    if (normalized.includes('standard')) return '⬤ Standard';
+    if (normalized.includes('full') || normalized.includes('round')) return '⟲ Full Round';
+    if (normalized.includes('free')) return '∞ Free';
+    if (normalized.includes('reaction')) return '↩ Reaction';
+
+    // Return as-is if not matched
+    return timeValue;
   }
 
   /* ============================================================

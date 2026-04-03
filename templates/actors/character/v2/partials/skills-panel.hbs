@@ -24,9 +24,10 @@
     {{#each derived.skills as |skill|}}
 
       <div class="skills-grid-row swse-row-surface" data-skill="{{skill.key}}"
+           data-skill-extra-uses="{{skill.extraUses.length}}"
            data-swse-tooltip="{{#switch skill.key}}{{#case 'acrobatics'}}Acrobatics{{/case}}{{#case 'climb'}}Climb{{/case}}{{#case 'deception'}}Deception{{/case}}{{#case 'endurance'}}Endurance{{/case}}{{#case 'gatherInformation'}}GatherInformation{{/case}}{{#case 'jump'}}Jump{{/case}}{{#case 'knowledge'}}Knowledge{{/case}}{{#case 'mechanics'}}Mechanics{{/case}}{{#case 'perception'}}Perception{{/case}}{{#case 'persuasion'}}Persuasion{{/case}}{{#case 'pilot'}}Pilot{{/case}}{{#case 'ride'}}Ride{{/case}}{{#case 'stealth'}}Stealth{{/case}}{{#case 'survival'}}Survival{{/case}}{{#case 'swim'}}Swim{{/case}}{{#case 'treatInjury'}}TreatInjury{{/case}}{{#case 'useComputer'}}UseComputer{{/case}}{{#case 'useTheForce'}}UseTheForce{{/case}}{{/switch}}">
 
-        <!-- Favorite Star -->
+        <!-- Favorite Star (with expand/collapse affordance if extra uses available) -->
         <div class="col-favorite">
           <button type="button"
                   class="favorite-btn {{#if skill.favorite}}favorited{{/if}}"
@@ -37,8 +38,18 @@
           </button>
         </div>
 
-        <!-- Skill Name (clickable to roll) -->
+        <!-- Skill Name with Expand/Collapse Affordance -->
         <div class="col-skill-name">
+          {{#if skill.extraUses.length}}
+            <button type="button"
+                    class="skill-expand-toggle"
+                    data-action="toggle-skill-expand"
+                    data-skill="{{skill.key}}"
+                    title="Expand to show {{skill.extraUses.length}} skill uses"
+                    aria-expanded="false">
+              ▶
+            </button>
+          {{/if}}
           <button type="button"
                   class="skill-name-btn rollable"
                   data-action="roll-skill"
@@ -129,30 +140,35 @@
 
       </div>
 
-      <!-- Extra Skill Uses (Take 10, Take 20, etc.) -->
+      <!-- PHASE 10: Extra Skill Uses (expandable detail layer) -->
       {{#if skill.extraUses.length}}
-      <div class="skill-extra-uses swse-ui-frame">
+      <div class="skill-extra-uses skill-extra-uses--collapsed swse-ui-frame" data-skill="{{skill.key}}">
         {{#each skill.extraUses as |use|}}
           <div class="extra-use-row swse-row-surface">
+            <!-- Left: Use metadata -->
             <div class="extra-use-copy">
               <span class="extra-use-label">{{use.label}}</span>
               {{#if use.dc}}
-                <span class="extra-use-dc">DC {{use.dc}}</span>
+                <span class="extra-use-dc" title="Difficulty Class">DC {{use.dc}}</span>
               {{/if}}
               {{#if use.description}}
                 <span class="extra-use-description">{{use.description}}</span>
               {{/if}}
             </div>
+            <!-- Center: Action economy type -->
+            {{#if use.timeLabel}}
+              <span class="extra-use-time {{use.timeClass}}" title="Action economy: {{use.timeLabel}}">
+                {{use.timeLabel}}
+              </span>
+            {{/if}}
+            <!-- Right: Action affordances -->
             <div class="extra-use-actions">
-              {{#if use.usageCount}}
-                <span class="extra-use-count" title="Times recorded on this actor">{{use.usageCount}}×</span>
-              {{/if}}
               <button type="button"
                       class="extra-use-btn"
                       data-action="use-extra-skill"
                       data-skill="{{../skill.key}}"
                       data-use="{{use.key}}"
-                      title="Use {{use.label}} on {{../skill.label}}">
+                      title="Invoke {{use.label}} on {{../skill.label}}">
                 Use
               </button>
             </div>
@@ -508,5 +524,109 @@
 .extra-use-btn:active {
   transform: translateY(1px);
   box-shadow: 0 0 4px rgba(0, 200, 255, 0.2);
+}
+
+/* ========== PHASE 10: EXPAND/COLLAPSE UI ========== */
+
+.skill-expand-toggle {
+  background: none;
+  border: none;
+  padding: 2px 6px;
+  color: rgba(124, 232, 255, 0.6);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  min-height: 20px;
+  margin-right: 4px;
+}
+
+.skill-expand-toggle:hover {
+  color: rgba(124, 232, 255, 1);
+  transform: scale(1.2);
+}
+
+.skill-expand-toggle[aria-expanded="true"] {
+  transform: rotate(90deg);
+  color: #00f0ff;
+}
+
+/* Collapsed state: hide extra uses, show chevron */
+.skill-extra-uses--collapsed {
+  display: none;
+}
+
+/* Expanded state: show extra uses */
+.skill-extra-uses--expanded {
+  display: flex;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Action economy color coding for time badges */
+.extra-use-time {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+.extra-use-time.time--swift {
+  background: rgba(255, 196, 0, 0.15);
+  border: 1px solid rgba(255, 196, 0, 0.4);
+  color: #ffc400;
+}
+
+.extra-use-time.time--move {
+  background: rgba(76, 175, 255, 0.15);
+  border: 1px solid rgba(76, 175, 255, 0.4);
+  color: #4cafff;
+}
+
+.extra-use-time.time--standard {
+  background: rgba(124, 232, 255, 0.15);
+  border: 1px solid rgba(124, 232, 255, 0.4);
+  color: #7ce8ff;
+}
+
+.extra-use-time.time--full {
+  background: rgba(255, 100, 100, 0.15);
+  border: 1px solid rgba(255, 100, 100, 0.4);
+  color: #ff6464;
+}
+
+.extra-use-time.time--free {
+  background: rgba(0, 255, 136, 0.15);
+  border: 1px solid rgba(0, 255, 136, 0.4);
+  color: #00ff88;
+}
+
+.extra-use-time.time--reaction {
+  background: rgba(200, 124, 255, 0.15);
+  border: 1px solid rgba(200, 124, 255, 0.4);
+  color: #c87cff;
+}
+
+.extra-use-time.time--unknown {
+  background: rgba(200, 200, 200, 0.15);
+  border: 1px solid rgba(200, 200, 200, 0.4);
+  color: rgba(240, 250, 255, 0.6);
 }
 </style>
