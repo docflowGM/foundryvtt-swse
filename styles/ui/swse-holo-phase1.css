@@ -60,7 +60,10 @@
 .swse-sheet-ui .sheet-body{padding:0 10px 10px;}
 .swse-sheet-ui .sheet-body > .tab{}
 .swse-sheet-ui .swse-v2-sheet-grid{gap:14px;}
+/* Header region visual styling */
+.swse-sheet-ui .sheet-header-left .profile,
 .swse-sheet-ui .header-left .profile{border-radius:14px;border:1px solid var(--swse-ui-line-strong);padding:4px;background:rgba(4,20,34,.8);box-shadow:0 0 22px rgba(124,232,255,.2);}
+.swse-sheet-ui .sheet-header-right .swse-stat,
 .swse-sheet-ui .header-right .swse-stat{position:relative;min-width:82px;padding:10px 12px;border:1px solid rgba(124,232,255,.24);border-radius:10px;background:rgba(6,18,32,.8);}
 .swse-sheet-ui .notes-textarea{min-height:320px;}
 .swse-sheet-ui .skills-panel{padding:14px;overflow:visible;}
@@ -82,14 +85,17 @@
 @media (max-width:900px){.swse-sheet-ui .swse-v2-sheet-grid{grid-template-columns:1fr;}.swse-sheet-ui .sheet-tabs .item{flex:1 1 140px;}.swse-store-ui .filter-sort-row{flex-direction:column;align-items:stretch;}}
 
 
-/* Phase 1 completion + Phase 2 shell/core panel pass */
+/* Phase 1 completion + Phase 2 shell/core panel pass + Phase 3 header rewrite */
 .swse-sheet-ui .sheet-body{padding:10px 12px 14px;gap:12px;}
 .swse-sheet-ui .sheet-content,.swse-sheet-ui .tab{gap:12px;}
-.swse-sheet-ui .sheet-header .profile{width:86px;height:86px;border-radius:14px;object-fit:cover;border:1px solid rgba(124,232,255,.35);box-shadow:0 0 24px rgba(124,232,255,.2);background:rgba(4,12,22,.9);padding:4px;}
-.swse-sheet-ui .title-block{display:flex;flex-direction:column;gap:6px;}
+.swse-sheet-ui .sheet-header .profile,
+.swse-sheet-ui .sheet-header-left .profile{width:86px;height:86px;border-radius:14px;object-fit:cover;border:1px solid rgba(124,232,255,.35);box-shadow:0 0 24px rgba(124,232,255,.2);background:rgba(4,12,22,.9);padding:4px;}
+.swse-sheet-ui .sheet-header-center{display:flex;flex-direction:column;gap:6px;}
+.swse-sheet-ui .title-block,
+.swse-sheet-ui .sheet-header-center{display:flex;flex-direction:column;gap:6px;}
 .swse-sheet-ui .charname input{font-size:1.5rem;font-weight:800;letter-spacing:.03em;min-height:50px;}
 .swse-sheet-ui .subline{color:rgba(203,241,255,.72);text-transform:uppercase;letter-spacing:.08em;}
-.swse-sheet-ui .header-right{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;}
+/* .header-right structure now owned by v2-sheet.css */
 .swse-sheet-command-bar{padding:12px;display:flex;gap:10px;flex-wrap:wrap;margin:0 10px 8px;align-items:center;}
 .swse-sheet-command-bar .header-btn{min-width:128px;min-height:42px;padding:10px 16px;}
 .swse-sheet-ui .sheet-tabs{margin:0 10px;padding:10px 8px;border:1px solid var(--swse-ui-line);border-radius:14px;background:linear-gradient(180deg, rgba(8,20,34,.94), rgba(4,12,21,.96));}
@@ -141,7 +147,7 @@
 .swse-store-ui .product-name,.swse-store-ui .card-title{color:var(--swse-ui-cyan-strong);text-transform:uppercase;letter-spacing:.04em;}
 .swse-store-ui .wallet-header span,.swse-store-ui .speaker-name{letter-spacing:.12em;text-transform:uppercase;color:var(--swse-ui-cyan-strong);}
 .swse-store-ui .remaining-credits,.swse-store-ui .price-amount{font-weight:800;text-shadow:0 0 16px rgba(124,232,255,.22);}
-@media (max-width: 900px){.swse-sheet-ui .swse-resources-panel .resources-grid,.swse-sheet-ui .swse-xp-panel .xp-grid-top,.swse-sheet-ui .swse-xp-panel .xp-grid-bottom{grid-template-columns:1fr;}.swse-sheet-ui .header-right{justify-content:flex-start;}.swse-sheet-command-bar .header-btn{min-width:0;flex:1 1 180px;}}
+@media (max-width: 900px){.swse-sheet-ui .swse-resources-panel .resources-grid,.swse-sheet-ui .swse-xp-panel .xp-grid-top,.swse-sheet-ui .swse-xp-panel .xp-grid-bottom{grid-template-columns:1fr;}.swse-sheet-command-bar .header-btn{min-width:0;flex:1 1 180px;}}
 
 /* ===== Phase 2 / Phase 3 dense-region integration ===== */
 .swse-dense-region,.swse-store-products,.swse-v2-actions,.swse-v3-languages-list,.swse-gear-panel,.purchase-history{display:flex;flex-direction:column;gap:14px;}
@@ -371,24 +377,13 @@
   padding: 8px 12px;
 }
 
-.swse-sheet-ui .header-left {
-  display: grid;
-  grid-template-columns: 84px minmax(0, 1fr);
-  gap: 14px;
-  align-items: center;
-  min-width: 0;
-}
-
-.swse-sheet-ui .profile {
-  width: 84px;
-  height: 84px;
-  object-fit: cover;
-  border-radius: 14px;
-}
+/* Header structure is now in v2-sheet.css
+   Keep only visual styling and min-width constraints here */
 
 .swse-sheet-ui .title-block,
 .swse-sheet-ui .charname,
-.swse-sheet-ui .charname input {
+.swse-sheet-ui .charname input,
+.swse-sheet-ui .sheet-header-center {
   min-width: 0;
 }
 
@@ -400,12 +395,6 @@
 
 .swse-sheet-ui .subline {
   line-height: 1.35;
-}
-
-.swse-sheet-ui .header-right {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(72px, 1fr));
-  gap: 10px;
 }
 
 .swse-sheet-ui .swse-stat {
@@ -883,13 +872,8 @@
   .swse-store-ui .cart-item,
   .swse-store-ui .history-item,
   .swse-chargen-shell .swse-body,
-  .swse-sheet-ui .swse-phase2-overview-grid,
-  .swse-sheet-ui .sheet-header {
+  .swse-sheet-ui .swse-phase2-overview-grid {
     grid-template-columns: 1fr;
-  }
-
-  .swse-sheet-ui .header-right {
-    grid-template-columns: repeat(4, minmax(64px, 1fr));
   }
 }
 
@@ -907,13 +891,8 @@
   }
 
   .swse-store-ui .holo-banner,
-  .swse-chargen-shell .swse-header,
-  .swse-sheet-ui .header-left {
+  .swse-chargen-shell .swse-header {
     grid-template-columns: 1fr;
-  }
-
-  .swse-sheet-ui .header-right {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .swse-store-ui .product-item,

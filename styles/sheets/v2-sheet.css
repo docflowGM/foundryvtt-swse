@@ -204,38 +204,142 @@ form.swse-sheet-ui .sheet-body > .tab:not(.active) {
   display: none;
 }
 
-/* Header left/right layout */
-.swse-sheet .header-left {
+/* ═══════════════════════════════════════════════════════════════
+   PHASE 3: COMPACT HEADER LAYOUT (LEFT / CENTER / RIGHT)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Left column: portrait only */
+.swse-sheet .sheet-header-left {
+  flex: 0 0 auto;
   display: flex;
-  flex-direction: row;
   align-items: flex-start;
-  gap: 12px;
-  flex: 1;
-  min-width: 0;
+  justify-content: flex-start;
 }
 
-.swse-sheet .header-left .profile {
+.swse-sheet .sheet-header-left .profile {
   flex: 0 0 64px;
   width: 64px;
   height: 64px;
   border-radius: 4px;
 }
 
-.swse-sheet .title-block {
+/* Center column: name/player top + compact metadata grid */
+.swse-sheet .sheet-header-center {
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  flex: 1;
   min-width: 0;
 }
 
-.swse-sheet .header-right {
+/* Top line: name + player inline */
+.swse-sheet .sheet-header-topline {
   display: flex;
   flex-direction: row;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
+  gap: 12px;
   align-items: flex-start;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.swse-sheet .header-name-block {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.swse-sheet .header-name-block .charname {
+  margin: 0;
+}
+
+.swse-sheet .header-name-block .charname input {
+  font-size: 1.35rem;
+  font-weight: 800;
+  min-height: 40px;
+}
+
+.swse-sheet .header-player {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  align-items: center;
+  flex: 0 1 auto;
+}
+
+.swse-sheet .header-player label {
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+.swse-sheet .header-player input {
+  flex: 1 1 150px;
+  min-width: 100px;
+}
+
+/* Compact metadata grid: 2-3 columns */
+.swse-sheet .sheet-header-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+/* Header field: label over input, compact */
+.swse-sheet .header-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.swse-sheet .header-field label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  opacity: 0.8;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.swse-sheet .header-field input,
+.swse-sheet .header-field .field-with-button {
+  font-size: 0.9rem;
+  min-height: 28px;
+}
+
+.swse-sheet .header-field .field-with-button {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  min-width: 0;
+}
+
+.swse-sheet .header-field input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.swse-sheet .header-select-btn {
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  padding: 2px;
+  font-size: 0.8rem;
+}
+
+.swse-sheet .destiny-display {
+  display: flex;
+  align-items: center;
+  min-height: 28px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* Right column: defense stats */
+.swse-sheet .sheet-header-right {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
 }
 
 .swse-stat { min-width: 64px; text-align: center; }
@@ -3676,59 +3780,21 @@ select option:checked {
 }
 
 /* ================================================================= */
-/* Header Field Styling - Character Identity Fields */
+/* Header Field Styling - Phase 3 Compact Header */
+/* Note: Old .header-name-row/.header-details-row/.header-secondary-row rules removed
+         These are now handled by new .sheet-header-topline and .sheet-header-meta-grid */
 /* ================================================================= */
 
-.swse-sheet .header-name-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex: 1 1 auto;
-  flex-wrap: wrap;
-  min-width: 0;
-}
-
+/* Kept for backward compat if needed */
 .swse-sheet .charname {
-  flex: 0 1 auto;
   margin: 0;
-  min-width: 150px;
 }
 
 .swse-sheet .charname input {
-  font-size: 1.5rem;
   font-weight: 700;
 }
 
-.swse-sheet .header-player {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 0 0 auto;
-}
-
-.swse-sheet .header-player label {
-  font-weight: 700;
-  text-transform: uppercase;
-  font-size: 0.8rem;
-  opacity: 0.8;
-  min-width: 60px;
-}
-
-.swse-sheet .header-player input {
-  width: 200px;
-  padding: 6px 8px;
-  border: 1px solid rgba(0, 255, 136, 0.3);
-  border-radius: 3px;
-  background: rgba(0, 0, 0, 0.2);
-  color: inherit;
-  font-size: 0.9rem;
-}
-
-.swse-sheet .header-details-row {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  flex: 1 1 auto;
+.swse-sheet .header-field {
   min-width: 0;
 }
 
