@@ -1,5 +1,10 @@
 /* styles/sheets/v2-sheet.css */
 
+/* ═══════════════════════════════════════════════════════════════
+   V2 VISUAL EDITABILITY SYSTEM
+   Clearly distinguish editable (input) from derived (read-only) values
+   ═══════════════════════════════════════════════════════════════ */
+
 /* ============================================================
    LAYOUT CONTRACT ENFORCEMENT — FOUNDRY V13 INVARIANTS
    These rules are the safety net for flexcol utility classes.
@@ -1298,6 +1303,68 @@
   color: inherit;
   padding: 2px 4px;
   font-size: 0.95rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   UNIVERSAL EDITABILITY VISUAL SYSTEM
+   All editable inputs: obvious borders and focus states
+   All derived values: dimmed, bold text, no input appearance
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Base input styling across entire sheet */
+.swse-sheet input[type="text"],
+.swse-sheet input[type="number"],
+.swse-sheet input[type="checkbox"],
+.swse-sheet select,
+.swse-sheet textarea {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(100, 200, 255, 0.4);
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.swse-sheet input[type="text"]:hover,
+.swse-sheet input[type="number"]:hover,
+.swse-sheet select:hover,
+.swse-sheet textarea:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(100, 200, 255, 0.7);
+  box-shadow: 0 0 6px rgba(100, 200, 255, 0.2);
+}
+
+.swse-sheet input[type="text"]:focus,
+.swse-sheet input[type="number"]:focus,
+.swse-sheet select:focus,
+.swse-sheet textarea:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(100, 200, 255, 0.9);
+  box-shadow: 0 0 10px rgba(100, 200, 255, 0.4);
+}
+
+/* Checkbox styling */
+.swse-sheet input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: rgba(0, 255, 136, 0.8);
+}
+
+.swse-sheet input[type="checkbox"]:hover {
+  box-shadow: 0 0 6px rgba(0, 255, 136, 0.3);
+}
+
+/* Derived values: bold, dimmed, no input appearance */
+.swse-sheet .number-display,
+.swse-sheet .derived-value {
+  font-weight: 800;
+  opacity: 0.9;
+}
+
+.swse-sheet .derived-value {
+  display: inline-block;
+  padding: 2px 4px;
+  color: #ccc;
 }
 
 .swse-sheet .math-equals {
