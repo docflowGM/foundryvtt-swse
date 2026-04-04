@@ -1,0 +1,7 @@
+Added renderer payload normalization helper
+Inserted safe payload bootstrap before derived chat helpers
+Hardened chat context derivation calls with normalized payload
+Added fallback family/state classes to card shell
+Appended Phase 11 block to holo-init.js
+Appended Phase 11 block to reaction-engine.js
+Appended Phase 11 block to chat-holo-flourishes.css

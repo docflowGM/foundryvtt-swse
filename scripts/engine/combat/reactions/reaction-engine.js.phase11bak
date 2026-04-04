@@ -450,22 +450,3 @@ static async _finalizeReactionEvent(options = {}, result = {}) {
 
   return result;
 }
-
-/* ============================================================
-   PHASE 11: REACTION ENGINE SAFETY FALLBACKS
-============================================================ */
-
-static _swseNormalizeReactionOptions(options = {}) {
-  return {
-    reactionKey: options.reactionKey ?? options.key ?? "",
-    defender: options.defender ?? options.actor ?? null,
-    attacker: options.attacker ?? null,
-    attackContext: options.attackContext ?? {},
-    sourceMessage: options.sourceMessage ?? null,
-    eventId:
-      options.eventId ??
-      options.attackContext?.eventId ??
-      options.attackContext?.attackEventId ??
-      null
-  };
-}

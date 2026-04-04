@@ -43,11 +43,11 @@ export class SWSERollEngine {
 
     return {
       chatSvg: buildChatSvgContext(),
-      chatState: swseDeriveChatStateContext(__swseSafePayload ?? payload ?? context ?? data ?? {}),
-      chatResolution: swseDeriveResolutionState(__swseSafePayload ?? payload ?? context ?? data ?? {}),
-      chatReactions: swseDeriveChatReactions(__swseSafePayload ?? payload ?? context ?? data ?? {}),
-      chatEvent: swseBuildAttackEventContext(__swseSafePayload ?? payload ?? context ?? data ?? {}),
-      chatCard: swseDeriveChatCardContext(__swseSafePayload ?? payload ?? context ?? data ?? {}),
+      chatState: swseDeriveChatStateContext(payload ?? context ?? data ?? {}),
+      chatResolution: swseDeriveResolutionState(payload ?? context ?? data ?? {}),
+      chatReactions: swseDeriveChatReactions(payload ?? context ?? data ?? {}),
+      chatEvent: swseBuildAttackEventContext(payload ?? context ?? data ?? {}),
+      chatCard: swseDeriveChatCardContext(payload ?? context ?? data ?? {}),
       // Roll data
       roll,
       formula: roll.formula,
@@ -132,7 +132,6 @@ export class SWSERollEngine {
    PHASE 3: CHAT STATE CONTEXT HELPERS
 ============================================================ */
 
-const __swseSafePayload = swseNormalizeRendererPayload(typeof payload !== "undefined" ? payload : {});
 function swseDeriveChatStateContext(payload = {}) {
   const type = String(payload.type ?? payload.rollType ?? payload.eventType ?? "roll").toLowerCase();
   const tags = Array.isArray(payload.tags) ? payload.tags : [];
@@ -385,41 +384,4 @@ function swseBuildAttackEventContext(payload = {}) {
     eventState,
     eventVersion: Number(payload.eventVersion ?? 1)
   };
-}
-
-/* ============================================================
-   PHASE 11: CHAT HARDENING FALLBACKS
-============================================================ */
-
-function swseNormalizeRendererPayload(payload = {}) {
-  const normalized = { ...(payload ?? {}) };
-
-  normalized.type = normalized.type ?? normalized.rollType ?? normalized.eventType ?? "roll";
-  normalized.tags = Array.isArray(normalized.tags) ? normalized.tags : [];
-  normalized.reactions = Array.isArray(normalized.reactions)
-    ? normalized.reactions
-    : Array.isArray(normalized.chatReactions)
-    ? normalized.chatReactions
-    : [];
-
-  normalized.total =
-    normalized.total ??
-    normalized.rollTotal ??
-    normalized.resultTotal ??
-    normalized.attackTotal ??
-    normalized.damageTotal ??
-    0;
-
-  normalized.statusLabel =
-    normalized.statusLabel ??
-    normalized.title ??
-    normalized.label ??
-    "Roll Result";
-
-  normalized.statusSubLabel =
-    normalized.statusSubLabel ??
-    normalized.subtitle ??
-    "";
-
-  return normalized;
 }

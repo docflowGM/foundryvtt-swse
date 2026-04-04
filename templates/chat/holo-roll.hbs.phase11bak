@@ -24,7 +24,7 @@
 {{/if}}
 
 <div class="swse-chat-content-layer">
-  <div class="swse-chat-card-shell swse-chat-card-shell--{{#if chatCard.family}}{{chatCard.family}}{{else}}check{{/if}} swse-chat-card-shell--{{#if chatResolution.resolutionState}}{{chatResolution.resolutionState}}{{else}}standard{{/if}} swse-chat-card-event--{{#if chatEvent.eventState}}{{chatEvent.eventState}}{{else}}standard{{/if}}" data-swse-event-id="{{chatEvent.eventId}}" data-swse-event-type="{{chatEvent.eventType}}" data-swse-event-state="{{chatEvent.eventState}}" data-swse-attacker-id="{{chatEvent.attackerId}}" data-swse-defender-id="{{chatEvent.defenderId}}" data-swse-item-id="{{chatEvent.itemId}}">
+  <div class="swse-chat-card-shell swse-chat-card-shell--{{chatCard.family}} swse-chat-card-shell--{{chatResolution.resolutionState}} swse-chat-card-event--{{chatEvent.eventState}}" data-swse-event-id="{{chatEvent.eventId}}" data-swse-event-type="{{chatEvent.eventType}}" data-swse-event-state="{{chatEvent.eventState}}" data-swse-attacker-id="{{chatEvent.attackerId}}" data-swse-defender-id="{{chatEvent.defenderId}}" data-swse-item-id="{{chatEvent.itemId}}">
   <div class="swse-chat-state-shell swse-chat-state-shell--{{chatState.stateClass}}">
     {{#if chatResolution}}
     {{#if (or chatResolution.showProvisionalBadge chatResolution.showFinalBadge)}}
