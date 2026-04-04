@@ -2989,40 +2989,7 @@ const forcePoints = [];
     return await CombatExecutor.executeAttack(this.actor, weapon, options);
   }
 
-
   async _runCanonicalExtraSkillUse(skillKey, useKey, options = {}) {
-    if (!skillKey) return;
-
-    const uses = await ExtraSkillUseRegistry.getForSkill(skillKey, { actor: this.actor });
-    const selectedUse = uses.find(u => u.key === useKey) ?? uses[0] ?? null;
-    if (!selectedUse) {
-      ui?.notifications?.warn?.(`No extra skill uses found for ${skillKey}`);
-      return;
-    }
-
-    const trainedOnly = selectedUse.trainedOnly === true;
-    const trained = this.actor?.system?.skills?.[skillKey]?.trained === true;
-    if (trainedOnly && !trained) {
-      ui?.notifications?.warn?.(`${selectedUse.label ?? selectedUse.name ?? "This use"} requires training.`);
-      return;
-    }
-
-    const payload = {
-      ...options,
-      skillUse: selectedUse,
-      useKey: selectedUse.key ?? useKey,
-      actionType: options?.actionType ?? selectedUse.actionType ?? null,
-      sourceType: options?.sourceType ?? selectedUse.sourceType ?? null,
-      sourceLabel: options?.sourceLabel ?? selectedUse.sourceLabel ?? null
-    };
-
-    if (typeof SkillUseFilter?.rollSkillUseApplication === "function") {
-      return await SkillUseFilter.rollSkillUseApplication(this.actor, skillKey, selectedUse, payload);
-    }
-
-    return await rollSkillCheck(this.actor, skillKey, payload);
-  }
-) {
     if (!skillKey) return;
 
     const uses = await ExtraSkillUseRegistry.getForSkill(skillKey, { actor: this.actor });

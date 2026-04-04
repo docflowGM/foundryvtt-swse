@@ -629,22 +629,9 @@ export class SWSEV2CharacterSheet extends
         const normalizedUses = skillUses.map(use => {
           const timeClass = this._getTimeClass(use.time);
           const timeLabel = this._getTimeLabel(use.time);
-          const actionType = this._classifyActionType(use);
-          const actionTypeLabel = this._getActionTypeLabel(use);
-          const isBlocked = use.trainedOnly && !skill.trained;
-          const blockedReason = isBlocked ? "Requires training" : "";
-          const sourceType =
-            use.sourceType ??
-            use.source ??
-            (use.trainedOnly ? "trained" : "core");
-          const sourceLabel =
-            use.sourceLabel ??
-            use.sourceName ??
-            (use.trainedOnly ? "Trained Use" : "Core Use");
 
           return {
             key: use.key,
-            useKey: use.key,
             label: use.label,
             name: use.name,
             dc: use.dc,
@@ -656,17 +643,12 @@ export class SWSEV2CharacterSheet extends
             timeClass,
             timeLabel,
             // Action type classification
-            actionType,
-            actionTypeLabel,
+            actionType: this._classifyActionType(use),
+            actionTypeLabel: this._getActionTypeLabel(use),
             // Status awareness
             requiresTrained: use.trainedOnly,
             skillTrained: skill.trained,
-            isBlocked,
-            canUseNow: !isBlocked,
-            blockedReason,
-            // Provenance / runtime stability
-            sourceType,
-            sourceLabel,
+            isBlocked: use.trainedOnly && !skill.trained,
             // Grouping category
             category: this._categorizeSkillUse(use, skill.key)
           };
@@ -2702,23 +2684,11 @@ const forcePoints = [];
         event.preventDefault();
         const skillKey = button.dataset.skill;
         const useKey = button.dataset.useKey || button.dataset.key;
-        const blocked = button.dataset.blocked === "true";
-        const actionType = button.dataset.actionType || null;
-        const sourceType = button.dataset.sourceType || null;
-        const sourceLabel = button.dataset.sourceLabel || null;
-
         if (!skillKey) return;
-        if (blocked) {
-          ui?.notifications?.warn?.("This skill use is currently blocked.");
-          return;
-        }
 
         try {
           await this._runCanonicalExtraSkillUse(skillKey, useKey, {
-            source: "skills-tab",
-            actionType,
-            sourceType,
-            sourceLabel
+            source: "skills-tab"
           });
         } catch (err) {
           console.error("Failed to use extra skill:", err);
@@ -2978,51 +2948,10 @@ const forcePoints = [];
 
   async _runCanonicalAttack(weapon, options = {}) {
     if (!weapon) return;
-
-    const allowed = await this._applyActionEconomy("standard", {
-      source: options?.source ?? "attack",
-      weaponId: weapon?.id ?? null,
-      weaponName: weapon?.name ?? null
-    });
-    if (!allowed) return null;
-
     return await CombatExecutor.executeAttack(this.actor, weapon, options);
   }
 
-
   async _runCanonicalExtraSkillUse(skillKey, useKey, options = {}) {
-    if (!skillKey) return;
-
-    const uses = await ExtraSkillUseRegistry.getForSkill(skillKey, { actor: this.actor });
-    const selectedUse = uses.find(u => u.key === useKey) ?? uses[0] ?? null;
-    if (!selectedUse) {
-      ui?.notifications?.warn?.(`No extra skill uses found for ${skillKey}`);
-      return;
-    }
-
-    const trainedOnly = selectedUse.trainedOnly === true;
-    const trained = this.actor?.system?.skills?.[skillKey]?.trained === true;
-    if (trainedOnly && !trained) {
-      ui?.notifications?.warn?.(`${selectedUse.label ?? selectedUse.name ?? "This use"} requires training.`);
-      return;
-    }
-
-    const payload = {
-      ...options,
-      skillUse: selectedUse,
-      useKey: selectedUse.key ?? useKey,
-      actionType: options?.actionType ?? selectedUse.actionType ?? null,
-      sourceType: options?.sourceType ?? selectedUse.sourceType ?? null,
-      sourceLabel: options?.sourceLabel ?? selectedUse.sourceLabel ?? null
-    };
-
-    if (typeof SkillUseFilter?.rollSkillUseApplication === "function") {
-      return await SkillUseFilter.rollSkillUseApplication(this.actor, skillKey, selectedUse, payload);
-    }
-
-    return await rollSkillCheck(this.actor, skillKey, payload);
-  }
-) {
     if (!skillKey) return;
 
     const uses = await ExtraSkillUseRegistry.getForSkill(skillKey, { actor: this.actor });
@@ -3044,14 +2973,6 @@ const forcePoints = [];
 
 
   async _runCanonicalCombatAction(actionId, actionData = {}, options = {}) {
-    const actionType = this._deriveCombatActionEconomyType(actionData);
-    const allowed = await this._applyActionEconomy(actionType, {
-      source: options?.source ?? "combat-action",
-      actionId,
-      actionName: actionData?.name ?? actionId
-    });
-    if (!allowed) return null;
-
     const payload = {
       actor: this.actor,
       actionId,
@@ -3077,126 +2998,6 @@ const forcePoints = [];
 
     ui?.notifications?.warn?.("Combat action could not be executed.");
     return null;
-  }
-
-
-  async _resolveActionEconomyModules() {
-    let Persistence = null;
-    let Engine = null;
-    let Policy = null;
-
-    try {
-      const mod = await import("/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-persistence.js");
-      Persistence = mod.ActionEconomyPersistence ?? null;
-    } catch (err) {
-      console.warn("[PHASE F] Could not load ActionEconomyPersistence:", err);
-    }
-
-    try {
-      const mod = await import("/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine-v2.js");
-      Engine = mod.ActionEngine ?? null;
-    } catch (_errV2) {
-      try {
-        const mod = await import("/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine.js");
-        Engine = mod.ActionEngine ?? null;
-      } catch (err) {
-        console.warn("[PHASE F] Could not load ActionEngine:", err);
-      }
-    }
-
-    try {
-      const mod = await import("/systems/foundryvtt-swse/scripts/engine/combat/action/action-policy-controller.js");
-      Policy = mod.ActionPolicyController ?? null;
-    } catch (_errController) {
-      try {
-        const mod = await import("/systems/foundryvtt-swse/scripts/engine/combat/action/action-policy.js");
-        Policy = mod.ActionPolicyController ?? null;
-      } catch (err) {
-        console.warn("[PHASE F] Could not load ActionPolicyController:", err);
-      }
-    }
-
-    return { Persistence, Engine, Policy };
-  }
-
-  _normalizeActionEconomyType(value) {
-    const raw = String(value ?? "").toLowerCase().trim();
-    if (!raw) return "standard";
-    if (raw.includes("full")) return "full-round";
-    if (raw.includes("swift")) return "swift";
-    if (raw.includes("move")) return "move";
-    if (raw.includes("free")) return "free";
-    if (raw.includes("reaction")) return "reaction";
-    if (raw.includes("standard")) return "standard";
-    return raw;
-  }
-
-  _deriveCombatActionEconomyType(actionData = {}) {
-    return this._normalizeActionEconomyType(
-      actionData?.cost ??
-      actionData?.type ??
-      actionData?.action?.type ??
-      actionData?.actionType ??
-      "standard"
-    );
-  }
-
-  async _applyActionEconomy(actionType, metadata = {}) {
-    if (!game?.combat) return true;
-
-    const combatant = game.combat.combatants?.find?.(c => c.actor?.id === this.actor?.id);
-    if (!combatant) return true;
-
-    const { Persistence, Engine, Policy } = await this._resolveActionEconomyModules();
-    if (!Persistence || !Engine) return true;
-
-    const combatId = game.combat.id;
-    let turnState = Persistence.getTurnState?.(this.actor, combatId) ?? {};
-
-    const payload = {
-      actor: this.actor,
-      combatId,
-      actionType,
-      turnState,
-      metadata
-    };
-
-    try {
-      if (Policy?.wouldPermit && !Policy.wouldPermit(payload)) {
-        Policy.handle?.(payload);
-        return false;
-      }
-
-      const policyResult = await Policy?.handle?.(payload);
-      if (policyResult === false || policyResult?.permitted === false) {
-        return false;
-      }
-    } catch (err) {
-      console.warn("[PHASE F] Action policy check failed, continuing cautiously:", err);
-    }
-
-    if (typeof Engine.consumeAction !== "function") {
-      return true;
-    }
-
-    let nextState = await Engine.consumeAction(turnState, actionType, metadata);
-    if (nextState === false || nextState?.permitted === false) {
-      return false;
-    }
-
-    try {
-      if (typeof Persistence.setTurnState === "function") {
-        await Persistence.setTurnState(this.actor, combatId, nextState);
-      } else if (typeof Persistence.saveTurnState === "function") {
-        await Persistence.saveTurnState(this.actor, combatId, nextState);
-      } else if (typeof Persistence.updateTurnState === "function") {
-        await Persistence.updateTurnState(this.actor, combatId, nextState);
-      }
-    } catch (err) {
-      console.warn("[PHASE F] Failed to persist action economy state:", err);
-    }
-
-    return true;
   }
 
   /* ============================================================

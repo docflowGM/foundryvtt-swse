@@ -240,7 +240,7 @@ export class ActionEconomyBindings {
   static setupAttackButtons(root, actor) {
     if (!root || !actor) return;
 
-    const attackButtons = root.querySelectorAll('[data-action="attack"], [data-action="roll-attack"], [data-action="swse-v2-use-action"]');
+    const attackButtons = root.querySelectorAll('[data-action="attack"]');
 
     attackButtons.forEach((button) => {
       const weaponId = button.dataset.weaponId;

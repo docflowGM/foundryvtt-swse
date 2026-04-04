@@ -211,12 +211,7 @@
                           data-action="execute-extra-skill-use"
                           data-skill="{{../skill.key}}"
                           data-use="{{use.key}}"
-                          data-use-key="{{use.useKey}}"
-                          data-blocked="{{#if use.isBlocked}}true{{else}}false{{/if}}"
-                          data-action-type="{{use.actionType}}"
-                          data-source-type="{{use.sourceType}}"
-                          data-source-label="{{use.sourceLabel}}"
-                          {{#if use.isBlocked}}disabled title="{{use.blockedReason}}"{{else}}title="Use {{use.label}}"{{/if}}>
+                          {{#if use.isBlocked}}disabled title="Requires trained skill"{{else}}title="Use {{use.label}}"{{/if}}>
                     {{use.actionTypeLabel.action}}
                   </button>
                 </div>

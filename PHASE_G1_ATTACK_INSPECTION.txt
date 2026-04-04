@@ -1,0 +1,258 @@
+PHASE G.1 ATTACK CONTRACT INSPECTION
+
+FILE: C:\Users\Owner\Documents\GitHub\foundryvtt-swse\scripts\actors\v2\character-actor.js
+
+================================================================================
+FUNCTION: computeCharacterDerived
+================================================================================
+function computeCharacterDerived(actor, system) {
+  system.derived ??= {};
+  system.derived.defenses ??= {};
+  system.derived.damage ??= {};
+  system.derived.identity ??= {};
+  system.derived.hp ??= {};
+  system.derived.skills ??= {};
+  system.derived.attacks ??= {};
+  system.derived.feats ??= {};
+  system.derived.talents ??= {};
+  system.derived.forceTechniques ??= {};
+  system.derived.forceSecrets ??= {};
+  system.derived.starshipManeuvers ??= {};
+  system.derived.actions ??= {};
+  system.derived.encumbrance ??= {};
+  system.derived.racialAbilities ??= [];
+  system.derived.inventory ??= {
+    weapons: [],
+    armor: [],
+    equipment: [],
+    consumables: [],
+    misc: []
+  };
+
+  // ========================================================================
+  // PHASE 2: Derived values now owned by DerivedCalculator
+  // These values are computed asynchronously and populated into system.derived.*
+  // This function initializes defaults for immediate use, but authority is DerivedCalculator
+  // ========================================================================
+
+  // Initialize defaults as proper objects with .total property (will be overwritten by DerivedCalculator async)
+  // Phase 6: Fixed contract mismatch — defenses must be objects with .total, not bare numbers
+  if (!system.derived.defenses.fortitude || typeof system.derived.defenses.fortitude !== 'object') {
+    system.derived.defenses.fortitude = { base: 10, total: 10, adjustment: 0, stateBonus: 0 };
+  }
+  if (!system.derived.defenses.reflex || typeof system.derived.defenses.reflex !== 'object') {
+    system.derived.defenses.reflex = { base: 10, total: 10, adjustment: 0, stateBonus: 0 };
+  }
+  if (!system.derived.defenses.will || typeof system.derived.defenses.will !== 'object') {
+    system.derived.defenses.will = { base: 10, total: 10, adjustment: 0, stateBonus: 0 };
+  }
+  if (!system.derived.defenses.flatFooted || typeof system.derived.defenses.flatFooted !== 'object') {
+    system.derived.defenses.flatFooted = { base: 10, total: 10, adjustment: 0, stateBonus: 0 };
+  }
+
+  // DT initialized but will be overwritten by DerivedCalculator
+  // Phase 6: Ensure damage.threshold is always a number
+  if (!system.derived.damage?.threshold || typeof system.derived.damage.threshold !== 'number') {
+    system.derived.damage.threshold = 10;
+  }
+
+  mirrorIdentity(actor, system);
+  mirrorHp(system);
+  mirrorSkills(system);
+  mirrorAttacks(actor, system);
+  mirrorFeats(actor, system);
+  mirrorTalents(actor, system);
+  mirrorForceTechniques(actor, system);
+  mirrorForceSecrets(actor, system);
+  mirrorStarshipManeuvers(actor, system);
+  mirrorRacialAbilities(system);
+  mirrorActions(actor, system);
+  mirrorEncumbrance(actor, system);
+  mirrorInventory(actor, system);
+}
+
+================================================================================
+FUNCTION: mirrorAttacks
+================================================================================
+function mirrorAttacks(actor, system) {
+  const weapons = (actor?.items ?? []).filter(i => i.type === 'weapon');
+  const list = [];
+
+  for (const w of weapons) {
+    const equipped = w.system?.equipped === true;
+    if (!equipped) continue;
+    const data = w.system ?? {};
+    const resources = buildResourcesFromItem(w, RESOURCE_TICK_CAP);
+    list.push({
+      id: w.id,
+      name: w.name,
+      damage: data.damage ?? '',
+      range: data.rangeFormatted ?? (typeof data.range === "string" ? data.range : data.range?.value) ?? 'Melee',
+      type: data.weaponType ?? data.category ?? '',
+      notes: data.notes ?? '',
+      actionId: `item:${w.id}:attack`,
+      resources
+    });
+  }
+
+  system.derived.attacks.list = list;
+}
+
+================================================================================
+FUNCTION: mirrorSkills
+================================================================================
+function mirrorSkills(system) {
+  const skills = system.skills ?? {};
+  const list = [];
+
+  for (const [key, s] of Object.entries(skills)) {
+    if (!s) continue;
+    const total = safeNumber(s.total, 0);
+    const trained = s.trained === true;
+    const focused = s.focused === true;
+    const ability = s.selectedAbility ?? s.ability ?? '';
+    list.push({
+      key,
+      label: humanizeSkillKey(key),
+      total,
+      trained,
+      focused,
+      ability
+    });
+  }
+
+  list.sort((a, b) => a.label.localeCompare(b.label));
+  system.derived.skills.list = list;
+}
+
+================================================================================
+FUNCTION: mirrorFeats
+================================================================================
+function mirrorFeats(actor, system) {
+  const feats = (actor?.items ?? []).filter(i => i.type === 'feat');
+  const list = [];
+  const groupsByKey = new Map();
+
+  for (const f of feats) {
+    const data = f.system ?? {};
+    const key = String(data.featType ?? data.type ?? 'general').toLowerCase().trim() || 'general';
+    const entry = {
+      id: f.id,
+      name: f.name,
+      featType: key,
+      featTypeLabel: titleCase(splitCamel(key)),
+      prerequisite: data.prerequisite ?? '',
+      summary: summarizeText(data.benefit ?? data.description ?? data.normalText ?? '', 160)
+    };
+    list.push(entry);
+
+    if (!groupsByKey.has(key)) groupsByKey.set(key, []);
+    groupsByKey.get(key).push(entry);
+  }
+
+  list.sort((a, b) => a.name.localeCompare(b.name));
+
+  const groups = [];
+  for (const [key, items] of Array.from(groupsByKey.entries()).sort((a, b) => a[0].localeCompare(b[0]))) {
+    items.sort((a, b) => a.name.localeCompare(b.name));
+    groups.push({
+      key,
+      label: titleCase(splitCamel(key)),
+      count: items.length,
+      items
+    });
+  }
+
+  system.derived.feats.list = list;
+  system.derived.feats.groups = groups;
+}
+
+================================================================================
+FUNCTION: mirrorTalents
+================================================================================
+function mirrorTalents(actor, system) {
+  const talents = (actor?.items ?? []).filter(i => i.type === 'talent');
+  const list = [];
+  const groupsByKey = new Map();
+
+  for (const t of talents) {
+    const data = t.system ?? {};
+    const keyRaw = data.tree ?? data.talent_tree ?? data.talentTree ?? 'Unsorted';
+    const key = String(keyRaw || 'Unsorted').trim() || 'Unsorted';
+    const entry = {
+      id: t.id,
+      name: t.name,
+      tree: key,
+      sourceClass: data.class ?? data.sourceClass ?? '',
+      prerequisite: data.prerequisites ?? '',
+      summary: summarizeText(data.benefit ?? data.description ?? '', 160)
+    };
+    list.push(entry);
+
+    if (!groupsByKey.has(key)) groupsByKey.set(key, []);
+    groupsByKey.get(key).push(entry);
+  }
+
+  list.sort((a, b) => a.name.localeCompare(b.name));
+
+  const groups = [];
+  for (const [key, items] of Array.from(groupsByKey.entries()).sort((a, b) => a[0].localeCompare(b[0]))) {
+    items.sort((a, b) => a.name.localeCompare(b.name));
+    groups.push({
+      key,
+      label: key,
+      count: items.length,
+      items
+    });
+  }
+
+  system.derived.talents.list = list;
+  system.derived.talents.groups = groups;
+}
+
+================================================================================
+CALL SITES / REFERENCES
+================================================================================
+-- mirrorAttacks( --
+73:   mirrorAttacks(actor, system);
+258: function mirrorAttacks(actor, system) {
+
+-- derived.attacks --
+26:   system.derived.attacks ??= {};
+279:   system.derived.attacks.list = list;
+
+-- attacks.list --
+279:   system.derived.attacks.list = list;
+
+-- attackTotal --
+174:     attack.attackTotal ??
+239:     attackTotal: attackBonus,
+
+-- damageFormula --
+180:   const damageFormula =
+181:     attack.damageFormula ??
+241:     damageFormula,
+242:     damage: damageFormula,
+
+-- critRange --
+187:   const critRange =
+188:     attack.critRange ??
+243:     critRange,
+
+-- critMult --
+193:   const critMult =
+194:     attack.critMult ??
+244:     critMult,
+
+-- weaponProperties --
+213:     : Array.isArray(attack.weaponProperties)
+214:     ? attack.weaponProperties
+217:   const weaponProperties = Array.isArray(attack.weaponProperties)
+218:     ? attack.weaponProperties
+250:     weaponProperties,
+
+-- breakdown --
+222:     attack.breakdown?.attack ??
+224:     attack.breakdown ??
+228:     attack.breakdown?.damage ??
+251:     breakdown: {

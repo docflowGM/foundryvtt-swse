@@ -1,0 +1,443 @@
+PHASE H.1 SKILL USE INSPECTION
+
+SHEET: C:\Users\Owner\Documents\GitHub\foundryvtt-swse\scripts\sheets\v2\character-sheet.js
+TEMPLATE: C:\Users\Owner\Documents\GitHub\foundryvtt-swse\templates\actors\character\v2\partials\skills-panel.hbs
+
+================================================================================
+FUNCTION: _runCanonicalExtraSkillUse
+================================================================================
+
+          await this._runCanonicalExtraSkillUse(skillKey, useKey, {
+            source: "skills-tab",
+            actionType,
+            sourceType,
+            sourceLabel
+          }
+
+================================================================================
+HANDLER AREA: execute-extra-skill-use
+================================================================================
+================================================================================
+NEEDLE: execute-extra-skill-use
+================================================================================
+2694:           }
+2695:         }
+2696:       }, { signal });
+2697:     });
+2698: 
+2699:     // Use extra skill button
+2700:     html.querySelectorAll('[data-action="execute-extra-skill-use"]').forEach(button => {
+2701:       button.addEventListener("click", async (event) => {
+2702:         event.preventDefault();
+2703:         const skillKey = button.dataset.skill;
+2704:         const useKey = button.dataset.useKey || button.dataset.key;
+2705:         const blocked = button.dataset.blocked === "true";
+2706:         const actionType = button.dataset.actionType || null;
+
+================================================================================
+NEEDLE: _runCanonicalExtraSkillUse
+================================================================================
+2711:         if (blocked) {
+2712:           ui?.notifications?.warn?.("This skill use is currently blocked.");
+2713:           return;
+2714:         }
+2715: 
+2716:         try {
+2717:           await this._runCanonicalExtraSkillUse(skillKey, useKey, {
+2718:             source: "skills-tab",
+2719:             actionType,
+2720:             sourceType,
+2721:             sourceLabel
+2722:           });
+2723:         } catch (err) {
+
+2986:     });
+2987:     if (!allowed) return null;
+2988: 
+2989:     return await CombatExecutor.executeAttack(this.actor, weapon, options);
+2990:   }
+2991: 
+2992:   async _runCanonicalExtraSkillUse(skillKey, useKey, options = {}) {
+2993:     if (!skillKey) return;
+2994: 
+2995:     const uses = await ExtraSkillUseRegistry.getForSkill(skillKey, { actor: this.actor });
+2996:     const selectedUse = uses.find(u => u.key === useKey) ?? uses[0] ?? null;
+2997:     if (!selectedUse) {
+2998:       ui?.notifications?.warn?.(`No extra skill uses found for ${skillKey}`);
+
+================================================================================
+NEEDLE: button.dataset.useKey
+================================================================================
+2698: 
+2699:     // Use extra skill button
+2700:     html.querySelectorAll('[data-action="execute-extra-skill-use"]').forEach(button => {
+2701:       button.addEventListener("click", async (event) => {
+2702:         event.preventDefault();
+2703:         const skillKey = button.dataset.skill;
+2704:         const useKey = button.dataset.useKey || button.dataset.key;
+2705:         const blocked = button.dataset.blocked === "true";
+2706:         const actionType = button.dataset.actionType || null;
+2707:         const sourceType = button.dataset.sourceType || null;
+2708:         const sourceLabel = button.dataset.sourceLabel || null;
+2709: 
+2710:         if (!skillKey) return;
+
+================================================================================
+NEEDLE: button.dataset.blocked
+================================================================================
+2699:     // Use extra skill button
+2700:     html.querySelectorAll('[data-action="execute-extra-skill-use"]').forEach(button => {
+2701:       button.addEventListener("click", async (event) => {
+2702:         event.preventDefault();
+2703:         const skillKey = button.dataset.skill;
+2704:         const useKey = button.dataset.useKey || button.dataset.key;
+2705:         const blocked = button.dataset.blocked === "true";
+2706:         const actionType = button.dataset.actionType || null;
+2707:         const sourceType = button.dataset.sourceType || null;
+2708:         const sourceLabel = button.dataset.sourceLabel || null;
+2709: 
+2710:         if (!skillKey) return;
+2711:         if (blocked) {
+
+================================================================================
+NEEDLE: button.dataset.actionType
+================================================================================
+2700:     html.querySelectorAll('[data-action="execute-extra-skill-use"]').forEach(button => {
+2701:       button.addEventListener("click", async (event) => {
+2702:         event.preventDefault();
+2703:         const skillKey = button.dataset.skill;
+2704:         const useKey = button.dataset.useKey || button.dataset.key;
+2705:         const blocked = button.dataset.blocked === "true";
+2706:         const actionType = button.dataset.actionType || null;
+2707:         const sourceType = button.dataset.sourceType || null;
+2708:         const sourceLabel = button.dataset.sourceLabel || null;
+2709: 
+2710:         if (!skillKey) return;
+2711:         if (blocked) {
+2712:           ui?.notifications?.warn?.("This skill use is currently blocked.");
+
+================================================================================
+NEEDLE: button.dataset.sourceType
+================================================================================
+2701:       button.addEventListener("click", async (event) => {
+2702:         event.preventDefault();
+2703:         const skillKey = button.dataset.skill;
+2704:         const useKey = button.dataset.useKey || button.dataset.key;
+2705:         const blocked = button.dataset.blocked === "true";
+2706:         const actionType = button.dataset.actionType || null;
+2707:         const sourceType = button.dataset.sourceType || null;
+2708:         const sourceLabel = button.dataset.sourceLabel || null;
+2709: 
+2710:         if (!skillKey) return;
+2711:         if (blocked) {
+2712:           ui?.notifications?.warn?.("This skill use is currently blocked.");
+2713:           return;
+
+================================================================================
+NEEDLE: button.dataset.sourceLabel
+================================================================================
+2702:         event.preventDefault();
+2703:         const skillKey = button.dataset.skill;
+2704:         const useKey = button.dataset.useKey || button.dataset.key;
+2705:         const blocked = button.dataset.blocked === "true";
+2706:         const actionType = button.dataset.actionType || null;
+2707:         const sourceType = button.dataset.sourceType || null;
+2708:         const sourceLabel = button.dataset.sourceLabel || null;
+2709: 
+2710:         if (!skillKey) return;
+2711:         if (blocked) {
+2712:           ui?.notifications?.warn?.("This skill use is currently blocked.");
+2713:           return;
+2714:         }
+
+================================================================================
+TEMPLATE AREA: skills-panel.hbs
+================================================================================
+================================================================================
+NEEDLE: execute-extra-skill-use
+================================================================================
+205:                     <span class="extra-use-time {{use.timeClass}}" title="Action economy: {{use.timeLabel}}">
+206:                       {{use.timeLabel}}
+207:                     </span>
+208:                   {{/if}}
+209:                   <button type="button"
+210:                           class="extra-use-btn {{#if use.isBlocked}}btn-disabled{{/if}}"
+211:                           data-action="execute-extra-skill-use"
+212:                           data-skill="{{../skill.key}}"
+213:                           data-use="{{use.key}}"
+214:                           {{#if use.isBlocked}}disabled title="Requires trained skill"{{else}}title="Use {{use.label}}"{{/if}}>
+215:                     {{use.actionTypeLabel.action}}
+216:                   </button>
+217:                 </div>
+
+================================================================================
+NEEDLE: data-action=
+================================================================================
+28:            data-swse-tooltip="{{#switch skill.key}}{{#case 'acrobatics'}}Acrobatics{{/case}}{{#case 'climb'}}Climb{{/case}}{{#case 'deception'}}Deception{{/case}}{{#case 'endurance'}}Endurance{{/case}}{{#case 'gatherInformation'}}GatherInformation{{/case}}{{#case 'jump'}}Jump{{/case}}{{#case 'knowledge'}}Knowledge{{/case}}{{#case 'mechanics'}}Mechanics{{/case}}{{#case 'perception'}}Perception{{/case}}{{#case 'persuasion'}}Persuasion{{/case}}{{#case 'pilot'}}Pilot{{/case}}{{#case 'ride'}}Ride{{/case}}{{#case 'stealth'}}Stealth{{/case}}{{#case 'survival'}}Survival{{/case}}{{#case 'swim'}}Swim{{/case}}{{#case 'treatInjury'}}TreatInjury{{/case}}{{#case 'useComputer'}}UseComputer{{/case}}{{#case 'useTheForce'}}UseTheForce{{/case}}{{/switch}}">
+29: 
+30:         <!-- Favorite Star (with expand/collapse affordance if extra uses available) -->
+31:         <div class="col-favorite">
+32:           <button type="button"
+33:                   class="favorite-btn {{#if skill.favorite}}favorited{{/if}}"
+34:                   data-action="toggle-favorite"
+35:                   data-skill="{{skill.key}}"
+36:                   title="Mark as favorite">
+37:             ★
+38:           </button>
+39:         </div>
+40: 
+
+42:         <div class="col-skill-name">
+43:           {{#if skill.hasExtraUses}}
+44:             {{#if (gte skill.extraUsesCount 3)}}
+45:               <!-- Many uses: Show badge count -->
+46:               <button type="button"
+47:                       class="skill-expand-toggle skill-expand-toggle--many"
+48:                       data-action="toggle-skill-expand"
+49:                       data-skill="{{skill.key}}"
+50:                       title="{{skill.extraUsesCount}} skill uses available"
+51:                       aria-expanded="false">
+52:                 <span class="expand-count">{{skill.extraUsesCount}}</span>
+53:               </button>
+54:             {{else}}
+
+52:                 <span class="expand-count">{{skill.extraUsesCount}}</span>
+53:               </button>
+54:             {{else}}
+55:               <!-- Few uses: Simple chevron -->
+56:               <button type="button"
+57:                       class="skill-expand-toggle"
+58:                       data-action="toggle-skill-expand"
+59:                       data-skill="{{skill.key}}"
+60:                       title="{{skill.extraUsesCount}} skill {{#if (eq skill.extraUsesCount 1)}}use{{else}}uses{{/if}} available"
+61:                       aria-expanded="false">
+62:                 ▶
+63:               </button>
+64:             {{/if}}
+
+62:                 ▶
+63:               </button>
+64:             {{/if}}
+65:           {{/if}}
+66:           <button type="button"
+67:                   class="skill-name-btn rollable"
+68:                   data-action="roll-skill"
+69:                   data-skill="{{skill.key}}"
+70:                   title="Click to roll {{skill.label}}">
+71:             {{skill.label}}
+72:           </button>
+73:         </div>
+74: 
+
+73:         </div>
+74: 
+75:         <!-- Skill Bonus (clickable to open roll dialog) -->
+76:         <div class="col-skill-bonus">
+77:           <button type="button"
+78:                   class="skill-bonus-btn number-display {{#if (gt skill.total 0)}}positive{{else if (lt skill.total 0)}}negative{{else}}zero{{/if}}"
+79:                   data-action="roll-skill"
+80:                   data-skill="{{skill.key}}"
+81:                   title="Roll {{skill.label}}">
+82:             {{numberFormat skill.total decimals=0 sign=true}}
+83:           </button>
+84:         </div>
+85: 
+
+140:         </div>
+141: 
+142:         <!-- PHASE 6: Mobile Tap-to-Play Roll Button -->
+143:         <div class="col-roll">
+144:           <button type="button"
+145:                   class="skill-roll-btn"
+146:                   data-action="roll-skill"
+147:                   data-skill="{{skill.key}}"
+148:                   aria-label="Roll {{skill.label}}"
+149:                   title="Roll {{skill.label}}">
+150:             🎲
+151:           </button>
+152:         </div>
+
+205:                     <span class="extra-use-time {{use.timeClass}}" title="Action economy: {{use.timeLabel}}">
+206:                       {{use.timeLabel}}
+207:                     </span>
+208:                   {{/if}}
+209:                   <button type="button"
+210:                           class="extra-use-btn {{#if use.isBlocked}}btn-disabled{{/if}}"
+211:                           data-action="execute-extra-skill-use"
+212:                           data-skill="{{../skill.key}}"
+213:                           data-use="{{use.key}}"
+214:                           {{#if use.isBlocked}}disabled title="Requires trained skill"{{else}}title="Use {{use.label}}"{{/if}}>
+215:                     {{use.actionTypeLabel.action}}
+216:                   </button>
+217:                 </div>
+
+================================================================================
+NEEDLE: data-key=
+================================================================================
+[no matches]
+
+================================================================================
+NEEDLE: data-use-key=
+================================================================================
+168:         <!-- GROUPED DISPLAY -->
+169:         {{#each skill.extraUsesGrouped as |group groupName|}}
+170:           {{#if group.length}}
+171:           <div class="extra-use-group" data-group="{{groupName}}">
+172:             <div class="group-header">{{groupName}}</div>
+173:             {{#each group as |use|}}
+174:               <div class="extra-use-row swse-row-surface {{#if use.isBlocked}}use-blocked{{/if}}" data-use-key="{{use.key}}" data-category="{{use.category}}">
+175:                 <!-- Left: Label & Status -->
+176:                 <div class="extra-use-copy">
+177:                   <div class="use-label-line">
+178:                     <span class="extra-use-label">{{use.label}}</span>
+179:                     {{#if use.isBlocked}}
+180:                       <span class="use-status use-status--blocked" title="Requires training">🔒</span>
+
+================================================================================
+NEEDLE: data-skill=
+================================================================================
+20: 
+21:   <!-- Skills Grid Body -->
+22:   <div class="skills-grid-body">
+23: 
+24:     {{#each derived.skills as |skill|}}
+25: 
+26:       <div class="skills-grid-row swse-row-surface" data-skill="{{skill.key}}"
+27:            data-skill-extra-uses="{{skill.extraUses.length}}"
+28:            data-swse-tooltip="{{#switch skill.key}}{{#case 'acrobatics'}}Acrobatics{{/case}}{{#case 'climb'}}Climb{{/case}}{{#case 'deception'}}Deception{{/case}}{{#case 'endurance'}}Endurance{{/case}}{{#case 'gatherInformation'}}GatherInformation{{/case}}{{#case 'jump'}}Jump{{/case}}{{#case 'knowledge'}}Knowledge{{/case}}{{#case 'mechanics'}}Mechanics{{/case}}{{#case 'perception'}}Perception{{/case}}{{#case 'persuasion'}}Persuasion{{/case}}{{#case 'pilot'}}Pilot{{/case}}{{#case 'ride'}}Ride{{/case}}{{#case 'stealth'}}Stealth{{/case}}{{#case 'survival'}}Survival{{/case}}{{#case 'swim'}}Swim{{/case}}{{#case 'treatInjury'}}TreatInjury{{/case}}{{#case 'useComputer'}}UseComputer{{/case}}{{#case 'useTheForce'}}UseTheForce{{/case}}{{/switch}}">
+29: 
+30:         <!-- Favorite Star (with expand/collapse affordance if extra uses available) -->
+31:         <div class="col-favorite">
+32:           <button type="button"
+
+29: 
+30:         <!-- Favorite Star (with expand/collapse affordance if extra uses available) -->
+31:         <div class="col-favorite">
+32:           <button type="button"
+33:                   class="favorite-btn {{#if skill.favorite}}favorited{{/if}}"
+34:                   data-action="toggle-favorite"
+35:                   data-skill="{{skill.key}}"
+36:                   title="Mark as favorite">
+37:             ★
+38:           </button>
+39:         </div>
+40: 
+41:         <!-- Skill Name with Conditional Expand Affordance -->
+
+43:           {{#if skill.hasExtraUses}}
+44:             {{#if (gte skill.extraUsesCount 3)}}
+45:               <!-- Many uses: Show badge count -->
+46:               <button type="button"
+47:                       class="skill-expand-toggle skill-expand-toggle--many"
+48:                       data-action="toggle-skill-expand"
+49:                       data-skill="{{skill.key}}"
+50:                       title="{{skill.extraUsesCount}} skill uses available"
+51:                       aria-expanded="false">
+52:                 <span class="expand-count">{{skill.extraUsesCount}}</span>
+53:               </button>
+54:             {{else}}
+55:               <!-- Few uses: Simple chevron -->
+
+53:               </button>
+54:             {{else}}
+55:               <!-- Few uses: Simple chevron -->
+56:               <button type="button"
+57:                       class="skill-expand-toggle"
+58:                       data-action="toggle-skill-expand"
+59:                       data-skill="{{skill.key}}"
+60:                       title="{{skill.extraUsesCount}} skill {{#if (eq skill.extraUsesCount 1)}}use{{else}}uses{{/if}} available"
+61:                       aria-expanded="false">
+62:                 ▶
+63:               </button>
+64:             {{/if}}
+65:           {{/if}}
+
+63:               </button>
+64:             {{/if}}
+65:           {{/if}}
+66:           <button type="button"
+67:                   class="skill-name-btn rollable"
+68:                   data-action="roll-skill"
+69:                   data-skill="{{skill.key}}"
+70:                   title="Click to roll {{skill.label}}">
+71:             {{skill.label}}
+72:           </button>
+73:         </div>
+74: 
+75:         <!-- Skill Bonus (clickable to open roll dialog) -->
+
+74: 
+75:         <!-- Skill Bonus (clickable to open roll dialog) -->
+76:         <div class="col-skill-bonus">
+77:           <button type="button"
+78:                   class="skill-bonus-btn number-display {{#if (gt skill.total 0)}}positive{{else if (lt skill.total 0)}}negative{{else}}zero{{/if}}"
+79:                   data-action="roll-skill"
+80:                   data-skill="{{skill.key}}"
+81:                   title="Roll {{skill.label}}">
+82:             {{numberFormat skill.total decimals=0 sign=true}}
+83:           </button>
+84:         </div>
+85: 
+86:         <!-- Equals Operator -->
+
+141: 
+142:         <!-- PHASE 6: Mobile Tap-to-Play Roll Button -->
+143:         <div class="col-roll">
+144:           <button type="button"
+145:                   class="skill-roll-btn"
+146:                   data-action="roll-skill"
+147:                   data-skill="{{skill.key}}"
+148:                   aria-label="Roll {{skill.label}}"
+149:                   title="Roll {{skill.label}}">
+150:             🎲
+151:           </button>
+152:         </div>
+153: 
+
+152:         </div>
+153: 
+154:       </div>
+155: 
+156:       <!-- PHASE 10+: Extra Skill Uses (grouped, filtered, status-aware) -->
+157:       {{#if skill.hasExtraUses}}
+158:       <div class="skill-extra-uses skill-extra-uses--collapsed swse-ui-frame" data-skill="{{skill.key}}">
+159:         <!-- COMPACT FILTER TOGGLE (visible only when expanded) -->
+160:         <div class="extra-uses-filter-bar skill-extra-uses-hidden">
+161:           <div class="filter-buttons">
+162:             <button class="filter-btn filter-btn--active" data-filter="all" title="Show all skill uses">All</button>
+163:             <button class="filter-btn" data-filter="available" title="Show only usable actions">Available</button>
+164:             <button class="filter-btn" data-filter="combat" title="Show combat-relevant uses">Combat</button>
+
+206:                       {{use.timeLabel}}
+207:                     </span>
+208:                   {{/if}}
+209:                   <button type="button"
+210:                           class="extra-use-btn {{#if use.isBlocked}}btn-disabled{{/if}}"
+211:                           data-action="execute-extra-skill-use"
+212:                           data-skill="{{../skill.key}}"
+213:                           data-use="{{use.key}}"
+214:                           {{#if use.isBlocked}}disabled title="Requires trained skill"{{else}}title="Use {{use.label}}"{{/if}}>
+215:                     {{use.actionTypeLabel.action}}
+216:                   </button>
+217:                 </div>
+218:               </div>
+
+================================================================================
+NEEDLE: data-blocked=
+================================================================================
+[no matches]
+
+================================================================================
+NEEDLE: data-action-type=
+================================================================================
+[no matches]
+
+================================================================================
+NEEDLE: data-source-type=
+================================================================================
+[no matches]
+
+================================================================================
+NEEDLE: data-source-label=
+================================================================================
+[no matches]

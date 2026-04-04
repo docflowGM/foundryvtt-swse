@@ -629,22 +629,9 @@ export class SWSEV2CharacterSheet extends
         const normalizedUses = skillUses.map(use => {
           const timeClass = this._getTimeClass(use.time);
           const timeLabel = this._getTimeLabel(use.time);
-          const actionType = this._classifyActionType(use);
-          const actionTypeLabel = this._getActionTypeLabel(use);
-          const isBlocked = use.trainedOnly && !skill.trained;
-          const blockedReason = isBlocked ? "Requires training" : "";
-          const sourceType =
-            use.sourceType ??
-            use.source ??
-            (use.trainedOnly ? "trained" : "core");
-          const sourceLabel =
-            use.sourceLabel ??
-            use.sourceName ??
-            (use.trainedOnly ? "Trained Use" : "Core Use");
 
           return {
             key: use.key,
-            useKey: use.key,
             label: use.label,
             name: use.name,
             dc: use.dc,
@@ -656,17 +643,12 @@ export class SWSEV2CharacterSheet extends
             timeClass,
             timeLabel,
             // Action type classification
-            actionType,
-            actionTypeLabel,
+            actionType: this._classifyActionType(use),
+            actionTypeLabel: this._getActionTypeLabel(use),
             // Status awareness
             requiresTrained: use.trainedOnly,
             skillTrained: skill.trained,
-            isBlocked,
-            canUseNow: !isBlocked,
-            blockedReason,
-            // Provenance / runtime stability
-            sourceType,
-            sourceLabel,
+            isBlocked: use.trainedOnly && !skill.trained,
             // Grouping category
             category: this._categorizeSkillUse(use, skill.key)
           };
@@ -2702,23 +2684,11 @@ const forcePoints = [];
         event.preventDefault();
         const skillKey = button.dataset.skill;
         const useKey = button.dataset.useKey || button.dataset.key;
-        const blocked = button.dataset.blocked === "true";
-        const actionType = button.dataset.actionType || null;
-        const sourceType = button.dataset.sourceType || null;
-        const sourceLabel = button.dataset.sourceLabel || null;
-
         if (!skillKey) return;
-        if (blocked) {
-          ui?.notifications?.warn?.("This skill use is currently blocked.");
-          return;
-        }
 
         try {
           await this._runCanonicalExtraSkillUse(skillKey, useKey, {
-            source: "skills-tab",
-            actionType,
-            sourceType,
-            sourceLabel
+            source: "skills-tab"
           });
         } catch (err) {
           console.error("Failed to use extra skill:", err);
@@ -2989,40 +2959,7 @@ const forcePoints = [];
     return await CombatExecutor.executeAttack(this.actor, weapon, options);
   }
 
-
   async _runCanonicalExtraSkillUse(skillKey, useKey, options = {}) {
-    if (!skillKey) return;
-
-    const uses = await ExtraSkillUseRegistry.getForSkill(skillKey, { actor: this.actor });
-    const selectedUse = uses.find(u => u.key === useKey) ?? uses[0] ?? null;
-    if (!selectedUse) {
-      ui?.notifications?.warn?.(`No extra skill uses found for ${skillKey}`);
-      return;
-    }
-
-    const trainedOnly = selectedUse.trainedOnly === true;
-    const trained = this.actor?.system?.skills?.[skillKey]?.trained === true;
-    if (trainedOnly && !trained) {
-      ui?.notifications?.warn?.(`${selectedUse.label ?? selectedUse.name ?? "This use"} requires training.`);
-      return;
-    }
-
-    const payload = {
-      ...options,
-      skillUse: selectedUse,
-      useKey: selectedUse.key ?? useKey,
-      actionType: options?.actionType ?? selectedUse.actionType ?? null,
-      sourceType: options?.sourceType ?? selectedUse.sourceType ?? null,
-      sourceLabel: options?.sourceLabel ?? selectedUse.sourceLabel ?? null
-    };
-
-    if (typeof SkillUseFilter?.rollSkillUseApplication === "function") {
-      return await SkillUseFilter.rollSkillUseApplication(this.actor, skillKey, selectedUse, payload);
-    }
-
-    return await rollSkillCheck(this.actor, skillKey, payload);
-  }
-) {
     if (!skillKey) return;
 
     const uses = await ExtraSkillUseRegistry.getForSkill(skillKey, { actor: this.actor });

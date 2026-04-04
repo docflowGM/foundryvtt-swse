@@ -168,93 +168,6 @@ function mirrorSkills(system) {
   system.derived.skills.list = list;
 }
 
-
-function normalizeAttackEntry(attack = {}, actor = null) {
-  const attackBonus =
-    attack.attackTotal ??
-    attack.attackBonus ??
-    attack.toHit ??
-    attack.total ??
-    0;
-
-  const damageFormula =
-    attack.damageFormula ??
-    attack.damage ??
-    attack.damageRoll ??
-    attack.formula ??
-    "—";
-
-  const critRange =
-    attack.critRange ??
-    attack.criticalRange ??
-    attack.crit ?? 
-    "20";
-
-  const critMult =
-    attack.critMult ??
-    attack.criticalMultiplier ??
-    attack.multiplier ??
-    "x2";
-
-  const range =
-    attack.range ??
-    attack.rangeText ??
-    attack.increment ??
-    "—";
-
-  const sourceType =
-    attack.sourceType ??
-    attack.originType ??
-    attack.type ??
-    "weapon";
-
-  const tags = Array.isArray(attack.tags)
-    ? attack.tags
-    : Array.isArray(attack.weaponProperties)
-    ? attack.weaponProperties
-    : [];
-
-  const weaponProperties = Array.isArray(attack.weaponProperties)
-    ? attack.weaponProperties
-    : tags;
-
-  const attackBreakdown =
-    attack.breakdown?.attack ??
-    attack.attackBreakdown ??
-    attack.breakdown ??
-    "";
-
-  const damageBreakdown =
-    attack.breakdown?.damage ??
-    attack.damageBreakdown ??
-    "";
-
-  return {
-    id: attack.id ?? attack._id ?? attack.itemId ?? attack.name ?? crypto.randomUUID?.() ?? Math.random().toString(36).slice(2),
-    name: attack.name ?? "Attack",
-    img: attack.img ?? attack.image ?? "",
-    type: attack.type ?? sourceType,
-    sourceType,
-    sourceId: attack.sourceId ?? attack.itemId ?? attack.id ?? null,
-    attackTotal: attackBonus,
-    attackBonus,
-    damageFormula,
-    damage: damageFormula,
-    critRange,
-    critMult,
-    range,
-    ammo: attack.ammo ?? attack.ammunition ?? null,
-    actionType: attack.actionType ?? attack.cost ?? "standard",
-    notes: attack.notes ?? "",
-    tags,
-    weaponProperties,
-    breakdown: {
-      attack: attackBreakdown,
-      damage: damageBreakdown
-    }
-  };
-}
-
 function mirrorAttacks(actor, system) {
   const weapons = (actor?.items ?? []).filter(i => i.type === 'weapon');
   const list = [];
@@ -262,52 +175,18 @@ function mirrorAttacks(actor, system) {
   for (const w of weapons) {
     const equipped = w.system?.equipped === true;
     if (!equipped) continue;
-
     const data = w.system ?? {};
     const resources = buildResourcesFromItem(w, RESOURCE_TICK_CAP);
-
-    const rawAttack = {
+    list.push({
       id: w.id,
-      itemId: w.id,
-      sourceId: w.id,
-      sourceType: 'weapon',
       name: w.name,
-      img: w.img ?? '',
       damage: data.damage ?? '',
-      damageFormula: data.damage ?? '',
       range: data.rangeFormatted ?? (typeof data.range === "string" ? data.range : data.range?.value) ?? 'Melee',
-      type: data.weaponType ?? data.category ?? 'weapon',
+      type: data.weaponType ?? data.category ?? '',
       notes: data.notes ?? '',
       actionId: `item:${w.id}:attack`,
-      resources,
-      critRange: data.critRange ?? data.criticalRange ?? '20',
-      critMult: data.critMult ?? data.criticalMultiplier ?? 'x2',
-      weaponProperties: Array.isArray(data.weaponProperties)
-        ? data.weaponProperties
-        : Array.isArray(data.properties)
-        ? data.properties
-        : [],
-      tags: Array.isArray(data.tags)
-        ? data.tags
-        : Array.isArray(data.weaponProperties)
-        ? data.weaponProperties
-        : Array.isArray(data.properties)
-        ? data.properties
-        : [],
-      attackTotal:
-        data.attackTotal ??
-        data.attackBonus ??
-        data.toHit ??
-        0,
-      breakdown: {
-        attack: data.attackBreakdown ?? '',
-        damage: data.damageBreakdown ?? ''
-      },
-      ammo: data.ammo ?? data.ammunition ?? null,
-      actionType: data.actionType ?? data.cost ?? 'standard'
-    };
-
-    list.push(normalizeAttackEntry(rawAttack, actor));
+      resources
+    });
   }
 
   system.derived.attacks.list = list;

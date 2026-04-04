@@ -262,52 +262,18 @@ function mirrorAttacks(actor, system) {
   for (const w of weapons) {
     const equipped = w.system?.equipped === true;
     if (!equipped) continue;
-
     const data = w.system ?? {};
     const resources = buildResourcesFromItem(w, RESOURCE_TICK_CAP);
-
-    const rawAttack = {
+    list.push({
       id: w.id,
-      itemId: w.id,
-      sourceId: w.id,
-      sourceType: 'weapon',
       name: w.name,
-      img: w.img ?? '',
       damage: data.damage ?? '',
-      damageFormula: data.damage ?? '',
       range: data.rangeFormatted ?? (typeof data.range === "string" ? data.range : data.range?.value) ?? 'Melee',
-      type: data.weaponType ?? data.category ?? 'weapon',
+      type: data.weaponType ?? data.category ?? '',
       notes: data.notes ?? '',
       actionId: `item:${w.id}:attack`,
-      resources,
-      critRange: data.critRange ?? data.criticalRange ?? '20',
-      critMult: data.critMult ?? data.criticalMultiplier ?? 'x2',
-      weaponProperties: Array.isArray(data.weaponProperties)
-        ? data.weaponProperties
-        : Array.isArray(data.properties)
-        ? data.properties
-        : [],
-      tags: Array.isArray(data.tags)
-        ? data.tags
-        : Array.isArray(data.weaponProperties)
-        ? data.weaponProperties
-        : Array.isArray(data.properties)
-        ? data.properties
-        : [],
-      attackTotal:
-        data.attackTotal ??
-        data.attackBonus ??
-        data.toHit ??
-        0,
-      breakdown: {
-        attack: data.attackBreakdown ?? '',
-        damage: data.damageBreakdown ?? ''
-      },
-      ammo: data.ammo ?? data.ammunition ?? null,
-      actionType: data.actionType ?? data.cost ?? 'standard'
-    };
-
-    list.push(normalizeAttackEntry(rawAttack, actor));
+      resources
+    });
   }
 
   system.derived.attacks.list = list;
