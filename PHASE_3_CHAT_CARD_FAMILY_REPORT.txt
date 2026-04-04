@@ -1,0 +1,10 @@
+Appended Phase 3 block to chat-svg-assets.js
+Expanded chat SVG import to include buildChatStateContext
+Added swseDeriveChatStateContext helper to roll renderer
+Added chatState context alongside chatSvg
+Inserted card family shell into holo-roll.hbs
+Inserted chat card header wrapper
+Inserted chat card footer wrapper
+Closed card family shell in holo-roll.hbs
+Upgraded reaction buttons with reaction pill class
+Appended Phase 3 block to chat-holo-flourishes.css

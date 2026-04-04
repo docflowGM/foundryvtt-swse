@@ -1,0 +1,66 @@
+{{!-- FOUNDRY STRUCTURAL COMPLIANCE: Preserve .dice-roll, .dice-result, .dice-total classes --}}
+{{!-- SWSE STYLING: Add .swse-holo-roll and namespaced sub-elements on top --}}
+
+<div class="dice-roll swse-holo-roll" data-category="{{category}}">
+
+  <div class="dice-result">
+
+    {{#if flavor}}
+      <div class="swse-roll-flavor">
+        {{{flavor}}}
+      </div>
+    {{/if}}
+
+    <div class="dice-formula swse-roll-formula">
+      {{formula}}
+    </div>
+
+    <div class="swse-roll-breakdown">
+      {{#each breakdown}}
+        {{#if (eq type "dice")}}
+          <div class="swse-die-group">
+            {{#each results}}
+              <span class="swse-die-result {{#unless active}}inactive{{/unless}}">
+                {{result}}
+              </span>
+            {{/each}}
+            <span class="swse-die-label">d{{faces}}</span>
+          </div>
+        {{/if}}
+
+        {{#if (eq type "operator")}}
+          <span class="swse-operator">
+            {{operator}}
+          </span>
+        {{/if}}
+
+        {{#if (eq type "modifier")}}
+          <span class="swse-modifier {{#if (gte value 0)}}positive{{else}}negative{{/if}}">
+            {{#if (gte value 0)}}+{{/if}}{{value}}
+          </span>
+        {{/if}}
+      {{/each}}
+    </div>
+
+    <h4 class="dice-total swse-roll-total">
+      {{total}}
+    </h4>
+
+    {{#if reactions}}
+      {{#if reactions.length}}
+        <div class="swse-reaction-buttons">
+          {{#each reactions}}
+            <button
+              class="swse-reaction-btn"
+              data-reaction="{{key}}"
+              title="{{description}}">
+              {{label}}
+            </button>
+          {{/each}}
+        </div>
+      {{/if}}
+    {{/if}}
+
+  </div>
+
+</div>

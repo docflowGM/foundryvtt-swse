@@ -78,7 +78,6 @@
     "styles/ui/character-sheet-overflow-contract.css",
     "styles/debug/svg-layout-debug.css",
     "styles/ui/swse-holo-phase1.css",
-    "styles/ui/chat-holo-flourishes.css",
     "styles/ui/swse-cursors.css",
     "styles/apps/chargen.css",
     "styles/components/breakdown-card.css"

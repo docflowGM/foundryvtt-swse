@@ -1,0 +1,7 @@
+Added reaction normalization helpers to swse-roll-engine.js
+Added chatReactions context to roll renderer
+Inserted reaction strip rendering into holo-roll.hbs
+Appended Phase 5/6/7 block to chat-holo-flourishes.css
+Appended Phase 5/6/7 block to holo-init.js
+Appended Phase 5/6/7 block to reaction-engine.js
+Appended Phase 5/6/7 block to reaction-registry.js

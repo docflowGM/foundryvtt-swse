@@ -24,18 +24,8 @@
 {{/if}}
 
 <div class="swse-chat-content-layer">
-  <div class="swse-chat-card-shell swse-chat-card-shell--{{chatCard.family}} swse-chat-card-shell--{{chatResolution.resolutionState}}">
+  <div class="swse-chat-card-shell swse-chat-card-shell--{{chatCard.family}}">
   <div class="swse-chat-state-shell swse-chat-state-shell--{{chatState.stateClass}}">
-    {{#if chatResolution}}
-    {{#if (or chatResolution.showProvisionalBadge chatResolution.showFinalBadge)}}
-    <div class="swse-chat-resolution-strip swse-chat-resolution-strip--{{chatResolution.resolutionState}}">
-      <span class="swse-chat-resolution-label">{{chatResolution.resolutionLabel}}</span>
-      {{#if chatResolution.reactionLabel}}
-      <span class="swse-chat-resolution-sub">{{chatResolution.reactionLabel}}</span>
-      {{/if}}
-    </div>
-    {{/if}}
-    {{/if}}
     {{#if chatState.showStatusRail}}
     <div class="swse-chat-status-rail swse-chat-status-rail--{{chatState.stateClass}}">
       <span class="swse-chat-status-label">{{chatState.statusLabel}}</span>
@@ -106,42 +96,6 @@
     </div>
 
 <div class="swse-chat-card-footer">
-    {{#if chatReactions.length}}
-    <div class="swse-chat-reaction-strip {{#unless chatReactions.length}}swse-chat-reaction-strip--empty{{/unless}}">
-      <span class="swse-chat-reaction-strip-label">Reactions</span>
-      {{#each chatReactions as |reaction|}}
-        {{#if reaction.available}}
-        <button type="button"
-                class="swse-chat-reaction-pill {{reaction.cssClass}}"
-                data-swse-reaction-key="{{reaction.key}}"
-                data-swse-reaction-owner="{{reaction.owner}}"
-                data-swse-message-id="{{../message.id}}"
-                data-swse-attacker-id="{{../attackerId}}"
-                data-swse-defender-id="{{../defenderId}}"
-                title="{{reaction.label}}">
-          <span class="swse-chat-reaction-icon">{{reaction.icon}}</span>
-          <span class="swse-chat-reaction-text">{{reaction.label}}</span>
-        </button>
-        {{else}}
-        <span class="swse-chat-reaction-pill {{reaction.cssClass}}" title="{{reaction.reasonBlocked}}">
-          <span class="swse-chat-reaction-icon">{{reaction.icon}}</span>
-          <span class="swse-chat-reaction-text">{{reaction.label}}</span>
-        </span>
-        {{/if}}
-      {{/each}}
-    </div>
-    {{/if}}
-    {{#if chatResolution.showProvisionalBadge}}
-    <div class="swse-chat-provisional-note">This result is provisional until reactions resolve.</div>
-    {{/if}}
-    {{#if chatResolution.showFinalBadge}}
-    <div class="swse-chat-final-note">This result is finalized.</div>
-    {{/if}}
-    {{#if chatResolution.showReactionStrip}}
-    <div class="swse-chat-reaction-window">
-      <span class="swse-chat-reaction-window-label">{{chatResolution.reactionLabel}}</span>
-    </div>
-    {{/if}}
 {{#if reactions}}
       {{#if reactions.length}}
         <div class="swse-reaction-buttons">

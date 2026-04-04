@@ -1,0 +1,2 @@
+Could not find a known holo-roll wrapper to patch
+Appended state-aware visual treatment CSS to chat-holo-flourishes.css

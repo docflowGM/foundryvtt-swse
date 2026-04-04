@@ -1,0 +1,6 @@
+Created/updated C:\Users\Owner\Documents\GitHub\foundryvtt-swse\scripts\chat\chat-svg-assets.js
+Created/updated C:\Users\Owner\Documents\GitHub\foundryvtt-swse\styles\ui\chat-holo-flourishes.css
+Added chat SVG asset import to swse-roll-engine.js
+Added chatSvg context to roll renderer payload
+No holo-roll.hbs changes were needed
+Added chat-holo-flourishes.css to system.json styles

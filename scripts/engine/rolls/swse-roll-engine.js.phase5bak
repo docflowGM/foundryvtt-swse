@@ -45,7 +45,6 @@ export class SWSERollEngine {
       chatSvg: buildChatSvgContext(),
       chatState: swseDeriveChatStateContext(payload ?? context ?? data ?? {}),
       chatResolution: swseDeriveResolutionState(payload ?? context ?? data ?? {}),
-      chatReactions: swseDeriveChatReactions(payload ?? context ?? data ?? {}),
       chatCard: swseDeriveChatCardContext(payload ?? context ?? data ?? {}),
       // Roll data
       roll,
@@ -256,75 +255,4 @@ function swseDeriveChatCardContext(payload = {}) {
     primaryValue,
     primaryLabel
   };
-}
-
-/* ============================================================
-   PHASE 5/6/7: CHAT REACTION NORMALIZATION + FIRST-WAVE HELPERS
-============================================================ */
-
-function swseNormalizeReactionEntry(entry = {}, payload = {}) {
-  const key = String(entry.key ?? entry.id ?? entry.reactionKey ?? "").trim();
-  const label =
-    entry.label ??
-    entry.name ??
-    (key ? key.replace(/[-_]/g, " ").replace(/\b\w/g, c => c.toUpperCase()) : "Reaction");
-
-  const available = entry.available ?? entry.isAvailable ?? entry.allowed ?? true;
-  const owner =
-    entry.owner ??
-    entry.ownerId ??
-    entry.actorId ??
-    payload.defenderId ??
-    payload.targetId ??
-    null;
-
-  const reasonBlocked =
-    entry.reasonBlocked ??
-    entry.blockedReason ??
-    entry.reason ??
-    "";
-
-  const state =
-    entry.state ??
-    (available ? "available" : "blocked");
-
-  const cssClass =
-    entry.cssClass ??
-    (available ? "swse-chat-reaction-pill--available" : "swse-chat-reaction-pill--blocked");
-
-  const icon =
-    entry.icon ??
-    (
-      key === "block" ? "🛡" :
-      key === "deflect" ? "↗" :
-      key === "redirect-shot" ? "➶" :
-      key === "force-point" ? "✦" :
-      key === "destiny-point" ? "⬢" :
-      "↩"
-    );
-
-  return {
-    key,
-    label,
-    icon,
-    available,
-    owner,
-    reasonBlocked,
-    state,
-    cssClass
-  };
-}
-
-function swseDeriveChatReactions(payload = {}) {
-  const raw =
-    payload.chatReactions ??
-    payload.reactions ??
-    payload.availableReactions ??
-    [];
-
-  if (!Array.isArray(raw)) return [];
-
-  return raw
-    .map(entry => swseNormalizeReactionEntry(entry, payload))
-    .filter(entry => entry.key);
 }

@@ -2951,8 +2951,9 @@ const forcePoints = [];
     return 'Utility';
   }
 
+
   /* ============================================================
-     PHASE C/E/F/H: CANONICAL INVOCATION + ACTION ECONOMY WRAPPERS
+     PHASE C: CANONICAL INVOCATION WRAPPERS
   ============================================================ */
 
   async _runCanonicalInitiative(mode = "roll") {
@@ -2976,7 +2977,7 @@ const forcePoints = [];
   }
 
   async _runCanonicalAttack(weapon, options = {}) {
-    if (!weapon) return null;
+    if (!weapon) return;
 
     const allowed = await this._applyActionEconomy("standard", {
       source: options?.source ?? "attack",
@@ -2988,21 +2989,22 @@ const forcePoints = [];
     return await CombatExecutor.executeAttack(this.actor, weapon, options);
   }
 
+
   async _runCanonicalExtraSkillUse(skillKey, useKey, options = {}) {
-    if (!skillKey) return null;
+    if (!skillKey) return;
 
     const uses = await ExtraSkillUseRegistry.getForSkill(skillKey, { actor: this.actor });
     const selectedUse = uses.find(u => u.key === useKey) ?? uses[0] ?? null;
     if (!selectedUse) {
       ui?.notifications?.warn?.(`No extra skill uses found for ${skillKey}`);
-      return null;
+      return;
     }
 
     const trainedOnly = selectedUse.trainedOnly === true;
     const trained = this.actor?.system?.skills?.[skillKey]?.trained === true;
     if (trainedOnly && !trained) {
       ui?.notifications?.warn?.(`${selectedUse.label ?? selectedUse.name ?? "This use"} requires training.`);
-      return null;
+      return;
     }
 
     const payload = {
@@ -3020,6 +3022,26 @@ const forcePoints = [];
 
     return await rollSkillCheck(this.actor, skillKey, payload);
   }
+) {
+    if (!skillKey) return;
+
+    const uses = await ExtraSkillUseRegistry.getForSkill(skillKey, { actor: this.actor });
+    const selectedUse = uses.find(u => u.key === useKey) ?? uses[0] ?? null;
+    if (!selectedUse) {
+      ui?.notifications?.warn?.(`No extra skill uses found for ${skillKey}`);
+      return;
+    }
+
+    if (typeof SkillUseFilter?.rollSkillUseApplication === "function") {
+      return await SkillUseFilter.rollSkillUseApplication(this.actor, skillKey, selectedUse, options);
+    }
+
+    return await rollSkillCheck(this.actor, skillKey, {
+      ...options,
+      skillUse: selectedUse
+    });
+  }
+
 
   async _runCanonicalCombatAction(actionId, actionData = {}, options = {}) {
     const actionType = this._deriveCombatActionEconomyType(actionData);
@@ -3056,6 +3078,7 @@ const forcePoints = [];
     ui?.notifications?.warn?.("Combat action could not be executed.");
     return null;
   }
+
 
   async _resolveActionEconomyModules() {
     let Persistence = null;
@@ -3156,7 +3179,7 @@ const forcePoints = [];
       return true;
     }
 
-    const nextState = await Engine.consumeAction(turnState, actionType, metadata);
+    let nextState = await Engine.consumeAction(turnState, actionType, metadata);
     if (nextState === false || nextState?.permitted === false) {
       return false;
     }
@@ -3434,7 +3457,7 @@ const forcePoints = [];
 
     // CRITICAL: Filter out SSOT-protected fields that cannot be updated directly
     // These fields are enforced by ActorEngine governance and must be recalculated
-    const filtered = this._filterSSotProtectedFields(expanded);
+    const filtered = this._filterProtectedFields(expanded);
 
     if (!filtered || Object.keys(filtered).length === 0) {
       console.warn('[PERSISTENCE] No updatable data after filtering protected fields');

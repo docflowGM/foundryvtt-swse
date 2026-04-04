@@ -106,31 +106,6 @@
     </div>
 
 <div class="swse-chat-card-footer">
-    {{#if chatReactions.length}}
-    <div class="swse-chat-reaction-strip {{#unless chatReactions.length}}swse-chat-reaction-strip--empty{{/unless}}">
-      <span class="swse-chat-reaction-strip-label">Reactions</span>
-      {{#each chatReactions as |reaction|}}
-        {{#if reaction.available}}
-        <button type="button"
-                class="swse-chat-reaction-pill {{reaction.cssClass}}"
-                data-swse-reaction-key="{{reaction.key}}"
-                data-swse-reaction-owner="{{reaction.owner}}"
-                data-swse-message-id="{{../message.id}}"
-                data-swse-attacker-id="{{../attackerId}}"
-                data-swse-defender-id="{{../defenderId}}"
-                title="{{reaction.label}}">
-          <span class="swse-chat-reaction-icon">{{reaction.icon}}</span>
-          <span class="swse-chat-reaction-text">{{reaction.label}}</span>
-        </button>
-        {{else}}
-        <span class="swse-chat-reaction-pill {{reaction.cssClass}}" title="{{reaction.reasonBlocked}}">
-          <span class="swse-chat-reaction-icon">{{reaction.icon}}</span>
-          <span class="swse-chat-reaction-text">{{reaction.label}}</span>
-        </span>
-        {{/if}}
-      {{/each}}
-    </div>
-    {{/if}}
     {{#if chatResolution.showProvisionalBadge}}
     <div class="swse-chat-provisional-note">This result is provisional until reactions resolve.</div>
     {{/if}}
