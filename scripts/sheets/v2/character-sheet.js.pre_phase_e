@@ -17,7 +17,6 @@ import { launchProgression, launchFollowerProgression } from "/systems/foundryvt
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
 import { MentorNotesApp } from "/systems/foundryvtt-swse/scripts/apps/mentor-notes/mentor-notes-app.js";
 import { CombatExecutor } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-executor.js";
-import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
 import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animation-engine.js";
 import { ActionEconomyIntegration } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-integration.js";
@@ -2003,11 +2002,10 @@ const forcePoints = [];
         if (!key) return;
 
         const combatActions = this.actor.getFlag(game.system.id, "combatActions") ?? {};
-        const data = combatActions[key] ?? {};
-
-        await this._runCanonicalCombatAction(key, data, {
-          source: "combat-action-card"
-        });
+        const data = combatActions[key];
+        if (data) {
+          new CombatRollConfigDialog(this.actor, data).render(true);
+        }
       }, { signal });
     });
 
@@ -2038,12 +2036,13 @@ const forcePoints = [];
         const actionId = button.dataset.actionId;
         if (!actionId) return;
 
+        // Trigger action execution (typically a roll or effect)
         const combatActions = this.actor.getFlag(game.system.id, "combatActions") ?? {};
-        const data = combatActions[actionId] ?? {};
-
-        await this._runCanonicalCombatAction(actionId, data, {
-          source: "combat-action-button"
-        });
+        const data = combatActions[actionId];
+        if (data) {
+          // Open the config dialog to show details before rolling
+          new CombatRollConfigDialog(this.actor, data).render(true);
+        }
       }, { signal });
     });
 
@@ -2969,35 +2968,6 @@ const forcePoints = [];
       ...options,
       skillUse: selectedUse
     });
-  }
-
-
-  async _runCanonicalCombatAction(actionId, actionData = {}, options = {}) {
-    const payload = {
-      actor: this.actor,
-      actionId,
-      ...actionData,
-      ...options
-    };
-
-    try {
-      if (typeof CombatEngine?.executeAction === "function") {
-        return await CombatEngine.executeAction(payload);
-      }
-    } catch (err) {
-      console.warn("[PHASE E] CombatEngine.executeAction failed, falling back to config dialog once:", err);
-    }
-
-    if (actionData && Object.keys(actionData).length > 0) {
-      return new CombatRollConfigDialog(this.actor, {
-        id: actionId,
-        ...actionData,
-        ...options
-      }).render(true);
-    }
-
-    ui?.notifications?.warn?.("Combat action could not be executed.");
-    return null;
   }
 
   /* ============================================================

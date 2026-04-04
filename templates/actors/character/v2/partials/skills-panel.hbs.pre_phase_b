@@ -208,7 +208,7 @@
                   {{/if}}
                   <button type="button"
                           class="extra-use-btn {{#if use.isBlocked}}btn-disabled{{/if}}"
-                          data-action="execute-extra-skill-use"
+                          data-action="use-extra-skill"
                           data-skill="{{../skill.key}}"
                           data-use="{{use.key}}"
                           {{#if use.isBlocked}}disabled title="Requires trained skill"{{else}}title="Use {{use.label}}"{{/if}}>

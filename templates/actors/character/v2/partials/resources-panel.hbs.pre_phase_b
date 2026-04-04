@@ -19,7 +19,7 @@
           <button type="button" class="mini-btn" data-action="roll-initiative" title="Roll initiative">
             <i class="fa-solid fa-dice-d20"></i>
           </button>
-          <button type="button" class="mini-btn" data-action="roll-initiative-take10" title="Take 10 initiative">
+          <button type="button" class="mini-btn" data-action="take10-initiative" title="Take 10 initiative">
             10
           </button>
         </div>
