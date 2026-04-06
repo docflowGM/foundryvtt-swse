@@ -144,7 +144,8 @@ export async function applyActorUpdateAtomic(actor, changes, options = {}) {
       payload: payloadSummary(sanitized)
     });
 
-    // DIAGNOSTIC: Check sanitized payload for illegal values
+    // PHASE 4: Enforce payload plainness at final boundary
+    // No Actor/Item instances, collections, or document-like objects allowed
     const flatPayload = foundry.utils.flattenObject(sanitized);
     const problematicKeys = [];
     for (const [key, value] of Object.entries(flatPayload)) {
@@ -154,13 +155,19 @@ export async function applyActorUpdateAtomic(actor, changes, options = {}) {
       if (Array.isArray(value) && value.some(v => v instanceof Actor || v instanceof Item)) {
         problematicKeys.push(`${key}: array contains document instances`);
       }
-      if (value && typeof value === 'object' && value.collection) {
+      if (value && typeof value === 'object' && !Array.isArray(value) && value !== null && value.collection) {
         problematicKeys.push(`${key}: appears to be collection-like`);
       }
     }
 
     if (problematicKeys.length > 0) {
-      swseLogger.error('applyActorUpdateAtomic: Detected problematic payload values:', problematicKeys);
+      const message = `applyActorUpdateAtomic: Payload boundary violation detected:\n${problematicKeys.join('\n')}`;
+      swseLogger.error(message, { actor: actor.name, actorId: actor.id, keys: problematicKeys });
+
+      // PHASE 4: In strict dev mode, throw to catch boundary violations early
+      if (game.settings?.get('foundryvtt-swse', 'devMode')) {
+        throw new Error(`[PAYLOAD BOUNDARY] ${message}`);
+      }
     }
 
     swseLogger.debug('applyActorUpdateAtomic: Sanitized payload keys:', Object.keys(flatPayload));

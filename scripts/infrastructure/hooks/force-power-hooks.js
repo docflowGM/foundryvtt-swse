@@ -3,10 +3,12 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
  * Force Power Hooks
  * Handles automatic force power grants when feats are added or abilities change
  * PHASE 10: Recursive guards prevent infinite item creation loops
+ * PHASE 2: In-flight mutation guard prevents re-entrant writes
  */
 
 import { ForcePowerManager } from "/systems/foundryvtt-swse/scripts/utils/force-power-manager.js";
 import { ForcePowerEffectsEngine } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-effects-engine.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 export function initializeForcePowerHooks() {
 
@@ -73,6 +75,13 @@ export function initializeForcePowerHooks() {
 
     // PHASE 10: Guard against re-entrant ability checks from force power grants
     if (options?.meta?.guardKey === 'force-power-grant') {return;}
+
+    // PHASE 2: Skip if actor is currently in an in-flight mutation transaction
+    // This prevents re-entrant writes during the original update
+    if (ActorEngine.isActorMutationInFlight(actor.id)) {
+      SWSELogger.debug(`[ForcePowerHooks] Deferring ability check for ${actor.name} — mutation in flight`);
+      return;
+    }
 
     // Check if abilities were updated and we have old values
     if (!changes.system?.abilities || !options.oldAbilities) {return;}

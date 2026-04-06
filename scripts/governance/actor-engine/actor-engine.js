@@ -17,8 +17,15 @@ import { traceLog, actorSummary, payloadSummary, MutationDepth } from "/systems/
  * ActorEngine
  * Centralized actor mutation and recalculation pipeline.
  * Modernized for Foundry VTT v13+, avoids deprecated actor.data access.
+ *
+ * PHASE 2: Per-actor transaction guard prevents same-actor re-entry
+ * during an in-flight actor update. Reactive hooks and other systems
+ * must check _isActorMutationInFlight before writing back to the same actor.
  */
 export const ActorEngine = {
+  // PHASE 2: In-flight mutation guard per actor (actor id → reference count)
+  // Uses reference counting to handle nested updates (preUpdateActor hooks calling updateActor again)
+  _inFlightMutations: new Map(),
   /**
    * Perform any derived-stat recalculation.
    * Runs after every validated update. Non-blocking.
@@ -266,6 +273,45 @@ export const ActorEngine = {
   },
 
   /**
+   * PHASE 2: Mark an actor as mutating (in-flight transaction started)
+   * Uses reference counting to handle nested updates (preUpdateActor → updateActor)
+   * @private
+   * @param {string} actorId
+   */
+  _markActorMutationInFlight(actorId) {
+    const count = this._inFlightMutations.get(actorId) || 0;
+    this._inFlightMutations.set(actorId, count + 1);
+    traceLog('ENGINE', `mutation in-flight guard SET for actor ${actorId} (depth=${count + 1})`, {});
+  },
+
+  /**
+   * PHASE 2: Clear in-flight flag for an actor (transaction complete)
+   * Decrements reference count; only removes flag when count reaches 0
+   * @private
+   * @param {string} actorId
+   */
+  _clearActorMutationInFlight(actorId) {
+    const count = this._inFlightMutations.get(actorId) || 0;
+    if (count <= 1) {
+      this._inFlightMutations.delete(actorId);
+      traceLog('ENGINE', `mutation in-flight guard CLEARED for actor ${actorId}`, {});
+    } else {
+      this._inFlightMutations.set(actorId, count - 1);
+      traceLog('ENGINE', `mutation in-flight guard decremented for actor ${actorId} (depth=${count - 1})`, {});
+    }
+  },
+
+  /**
+   * PHASE 2: Check if an actor is currently in an in-flight mutation
+   * Used by reactive hooks to determine if they should defer/skip same-actor writes
+   * @param {string} actorId
+   * @returns {boolean}
+   */
+  isActorMutationInFlight(actorId) {
+    return (this._inFlightMutations.get(actorId) || 0) > 0;
+  },
+
+  /**
    * Track migration context
    * @private
    */
@@ -393,44 +439,53 @@ export const ActorEngine = {
       }
 
       // ========================================
-      // PHASE 3: Authorize mutation via context
+      // PHASE 2: Mark mutation as in-flight before any reactive code can run
       // ========================================
-      MutationInterceptor.setContext('ActorEngine.updateActor');
+      this._markActorMutationInFlight(actor.id);
       try {
-        // DIAGNOSTIC: Verify actor is still valid before atomic update
-        if (!(actor instanceof Actor)) {
-          throw new Error(`[GUARD] actor is not an Actor instance: ${actor.constructor.name}`);
-        }
-        if (actor !== game.actors?.get?.(actor.id)) {
-          SWSELogger.warn(`[GUARD] actor reference diverged from world actor before atomic update`, {
-            actorId: actor.id,
-            actorName: actor.name
+        // ========================================
+        // PHASE 3: Authorize mutation via context
+        // ========================================
+        MutationInterceptor.setContext('ActorEngine.updateActor');
+        try {
+          // DIAGNOSTIC: Verify actor is still valid before atomic update
+          if (!(actor instanceof Actor)) {
+            throw new Error(`[GUARD] actor is not an Actor instance: ${actor.constructor.name}`);
+          }
+          if (actor !== game.actors?.get?.(actor.id)) {
+            SWSELogger.warn(`[GUARD] actor reference diverged from world actor before atomic update`, {
+              actorId: actor.id,
+              actorName: actor.name
+            });
+          }
+
+          // Perform safe atomic update (now authorized)
+          // Pass metadata through options to Foundry hooks
+          const optsWithMeta = {
+            ...options,
+            meta: meta
+          };
+          // [MUTATION TRACE] ENGINE — handoff to applyActorUpdateAtomic
+          traceLog('ENGINE', `handoff to applyActorUpdateAtomic (traceId=${_traceId})`, {
+            actor:   actorSummary(actor),
+            payload: payloadSummary(updateData)
           });
-        }
+          const result = await applyActorUpdateAtomic(actor, updateData, optsWithMeta);
+          await this.recalcAll(actor);
+          return result;
+        } finally {
+          // Always clear context, even on error
+          MutationInterceptor.clearContext();
 
-        // Perform safe atomic update (now authorized)
-        // Pass metadata through options to Foundry hooks
-        const optsWithMeta = {
-          ...options,
-          meta: meta
-        };
-        // [MUTATION TRACE] ENGINE — handoff to applyActorUpdateAtomic
-        traceLog('ENGINE', `handoff to applyActorUpdateAtomic (traceId=${_traceId})`, {
-          actor:   actorSummary(actor),
-          payload: payloadSummary(updateData)
-        });
-        const result = await applyActorUpdateAtomic(actor, updateData, optsWithMeta);
-        await this.recalcAll(actor);
-        return result;
+          // PHASE 11: Clear migration context if this was a migration
+          if (isMigration && !isMigrationActive) {
+            this._clearMigrationActive(actor.id);
+            SWSELogger.debug(`[MIGRATION] Completed migration for ${actor.name}`);
+          }
+        }
       } finally {
-        // Always clear context, even on error
-        MutationInterceptor.clearContext();
-
-        // PHASE 11: Clear migration context if this was a migration
-        if (isMigration && !isMigrationActive) {
-          this._clearMigrationActive(actor.id);
-          SWSELogger.debug(`[MIGRATION] Completed migration for ${actor.name}`);
-        }
+        // PHASE 2: Always clear in-flight flag, even on error
+        this._clearActorMutationInFlight(actor.id);
       }
 
     } catch (err) {
