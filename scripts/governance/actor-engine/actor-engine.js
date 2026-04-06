@@ -11,6 +11,7 @@ import { PreflightValidator } from "/systems/foundryvtt-swse/scripts/governance/
 import { MissingPrereqsTracker } from "/systems/foundryvtt-swse/scripts/governance/integrity/missing-prereqs-tracker.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+import { traceLog, actorSummary, payloadSummary, MutationDepth } from "/systems/foundryvtt-swse/scripts/utils/mutation-trace.js";
 
 /**
  * ActorEngine
@@ -322,12 +323,22 @@ export const ActorEngine = {
    * This is the ONLY legal path to actor mutations.
    */
   async updateActor(actor, updateData, options = {}) {
+    // [MUTATION TRACE] ENGINE — depth tracking wraps the entire method
+    const _traceId = MutationDepth.enter();
     try {
       if (!actor) {throw new Error('updateActor() called with no actor');}
 
       if (!updateData || typeof updateData !== 'object') {
         throw new Error(`Invalid updateData passed to updateActor for ${actor.name}`);
       }
+
+      // [MUTATION TRACE] ENGINE — ingress boundary
+      traceLog('ENGINE', `updateActor entry (traceId=${_traceId})`, {
+        actor:     actorSummary(actor),
+        payload:   payloadSummary(updateData),
+        guardKey:  options.meta?.guardKey ?? null,
+        nested:    MutationDepth.isNested()
+      });
 
       SWSELogger.debug(`ActorEngine.updateActor → ${actor.name}`, {
         updateData,
@@ -403,6 +414,11 @@ export const ActorEngine = {
           ...options,
           meta: meta
         };
+        // [MUTATION TRACE] ENGINE — handoff to applyActorUpdateAtomic
+        traceLog('ENGINE', `handoff to applyActorUpdateAtomic (traceId=${_traceId})`, {
+          actor:   actorSummary(actor),
+          payload: payloadSummary(updateData)
+        });
         const result = await applyActorUpdateAtomic(actor, updateData, optsWithMeta);
         await this.recalcAll(actor);
         return result;
@@ -418,12 +434,18 @@ export const ActorEngine = {
       }
 
     } catch (err) {
+      // [MUTATION TRACE] ENGINE — error exit
+      traceLog('ENGINE', `updateActor threw (traceId=${_traceId}): ${err?.message}`, {
+        actor: actorSummary(actor)
+      });
       SWSELogger.error(`ActorEngine.updateActor failed for ${actor?.name ?? 'unknown actor'}`, {
         error: err,
         updateData,
         meta: options.meta?.guardKey
       });
       throw err;
+    } finally {
+      MutationDepth.exit();
     }
   },
 

@@ -81,9 +81,25 @@ export class SWSELanguageModule {
   }
   static async onActorUpdate(actor, diff, options) {
     if (!actor || !actor.isOwner) {return;}
-    // PHASE 10: Guard against re-entrant language sync
+    // Guard 1: never re-enter from our own write-back
     if (options?.meta?.guardKey === 'language-sync') {return;}
-    if (!diff || (!diff.items && !diff.system && !diff.system?.abilities)) {return;}
+
+    // Guard 2: narrow trigger — only run when a language-relevant field actually changed.
+    // The previous check (!diff.system) fired on virtually every actor update, triggering
+    // a write-back on every HP change, force-point spend, condition update, etc.
+    if (!diff) { return; }
+    const _flatDiff = foundry.utils.flattenObject(diff);
+    const _isLangRelevant = (
+      diff.items != null ||
+      Object.keys(_flatDiff).some(k =>
+        k.startsWith('system.languages') ||
+        k.startsWith('system.species') ||
+        k.startsWith('system.details') ||
+        k.startsWith('system.attributes.int')
+      )
+    );
+    if (!_isLangRelevant) { return; }
+
     let current = SWSELanguageModule._normalizeLanguages(actor.system.languages || []);
     const hasLinguist = actor.items?.some(i => (i.type || i.system?.type) && (i.name === 'Linguist' || i.slug === 'linguist'));
     if (hasLinguist) {
@@ -103,6 +119,13 @@ export class SWSELanguageModule {
     const speciesBase = SWSELanguageModule._normalizeLanguages(SWSELanguageModule._getSpeciesLanguages(actor));
     current = [...speciesBase, ...current.filter(x => !speciesBase.includes(x))];
     current = SWSELanguageModule._dedupe(current);
+
+    // Guard 3: net-change check — skip the write if nothing actually changed.
+    // Previously the module always wrote back, producing a cascade of language-sync
+    // updates even when language data was identical.
+    const _stored = actor.system?.languages || [];
+    if (JSON.stringify(current) === JSON.stringify(_stored)) { return; }
+
     // PHASE 10: Route through ActorEngine with guard key to prevent infinite loops
     if (globalThis.SWSE?.ActorEngine?.updateActor) {
       await globalThis.SWSE.ActorEngine.updateActor(actor, { 'system.languages': current }, {
