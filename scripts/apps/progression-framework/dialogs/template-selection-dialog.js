@@ -48,6 +48,10 @@ export class TemplateSelectionDialog extends HandlebarsApplicationMixin(DialogV2
   };
 
   constructor(options = {}) {
+    // Ensure buttons are set before calling super() to avoid Foundry validation error
+    if (!options.buttons) {
+      options.buttons = this.constructor.DEFAULT_OPTIONS.buttons;
+    }
     super(options);
     this.selectedTemplate = null;
     this.templates = [];
@@ -70,12 +74,23 @@ export class TemplateSelectionDialog extends HandlebarsApplicationMixin(DialogV2
     }
 
     return new Promise((resolve) => {
-      const dialog = new this({
+      // Foundry v13's DialogV2 requires explicit buttons config
+      // Build complete config object with all required fields
+      const dialogOptions = {
         ...this.DEFAULT_OPTIONS,
-        actor,
-        resolve,
-      });
+        actor: actor,
+        resolve: resolve,
+        // Explicitly ensure buttons are present for Foundry validation
+        buttons: this.DEFAULT_OPTIONS.buttons || {
+          confirm: {
+            icon: 'fas fa-check',
+            label: 'Confirm Selection',
+            callback: () => {}
+          }
+        }
+      };
 
+      const dialog = new this(dialogOptions);
       dialog.render(true);
     });
   }
