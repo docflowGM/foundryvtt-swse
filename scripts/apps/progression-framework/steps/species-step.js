@@ -69,21 +69,43 @@ export class SpeciesStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onStepEnter(shell) {
+    console.log('[SpeciesStep] ═══════════════════════════════════════════════════════════');
+    console.log('[SpeciesStep] STEP ENTER — HYDRATION START');
+
     // Guard against uninitialized registry — initialize if needed
     if (!SpeciesRegistry.isInitialized()) {
-      console.warn('[SpeciesStep] SpeciesRegistry not initialized on step enter; initializing now');
+      console.warn('[SpeciesStep] ⚠ SpeciesRegistry not initialized on step enter; initializing now');
       await SpeciesRegistry.initialize();
+      console.log('[SpeciesStep] ✓ SpeciesRegistry initialized');
     }
 
     // Load all species from registry
     this._allSpecies = SpeciesRegistry.getAll();
     if (!Array.isArray(this._allSpecies)) this._allSpecies = [];
-    console.log('[SpeciesStep] Loaded species count:', this._allSpecies.length);
+
+    console.log('[SpeciesStep] ✓ Loaded species count:', this._allSpecies.length);
+
+    // Log first 3 species structure for debugging
+    if (this._allSpecies.length > 0) {
+      console.log('[SpeciesStep] Sample species (first 3):');
+      this._allSpecies.slice(0, 3).forEach((s, i) => {
+        console.log(`  [${i}]`, {
+          name: s.name,
+          size: s.size,
+          source: s.source,
+          abilityScores: s.abilityScores,
+          abilities: Array.isArray(s.abilities) ? `${s.abilities.length} abilities` : 'none',
+          languages: Array.isArray(s.languages) ? `${s.languages.length} languages` : 'none',
+        });
+      });
+    }
 
     // Warn if empty
     if (this._allSpecies.length === 0) {
-      console.warn('[SpeciesStep] ⚠ Species authority is empty after initialization attempt');
+      console.error('[SpeciesStep] ✗ CRITICAL: Species authority is empty after initialization attempt');
     }
+
+    console.log('[SpeciesStep] ═══════════════════════════════════════════════════════════');
 
     // Build image map from assets/species/ directory
     await this._buildSpeciesImgMap();
@@ -316,20 +338,34 @@ export class SpeciesStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onItemFocused(id, shell) {
+    console.log('[SpeciesStep] onItemFocused called with id:', id);
+
     const entry = SpeciesRegistry.getById(id);
     if (!entry) {
-      console.warn(`[SpeciesStep] onItemFocused: no registry entry for id "${id}" — focus ignored`);
+      console.error(`[SpeciesStep] ✗ onItemFocused: no registry entry for id "${id}" — focus ignored`);
       return;
     }
+
+    console.log('[SpeciesStep] ✓ Species focused:', entry.name);
+    console.log('[SpeciesStep]   Species data:', {
+      name: entry.name,
+      size: entry.size,
+      source: entry.source,
+      abilityScores: entry.abilityScores,
+    });
 
     shell.focusedItem = entry;
 
     // Look up Ol' Salty dialogue for species name
     const dialogue = this._getOlSaltyDialogue(entry.name);
     if (dialogue) {
+      console.log('[SpeciesStep] ✓ Found mentor dialogue for', entry.name);
       await shell.mentorRail.speak(dialogue, 'encouraging');
+    } else {
+      console.log('[SpeciesStep] ⚠ No mentor dialogue found for', entry.name);
     }
 
+    console.log('[SpeciesStep] Triggering shell.render() to update detail panel');
     shell.render();
   }
 
@@ -479,12 +515,19 @@ export class SpeciesStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   getUtilityBarConfig() {
+    // Build dynamic source options from unique sources in all species
+    const uniqueSources = [...new Set(this._allSpecies.map(s => s.source || 'Unknown'))].sort();
+    const sourceOptions = [
+      { value: '', label: '— All Sources —' },
+      ...uniqueSources.map(source => ({ value: source, label: source }))
+    ];
+
     return {
       mode: 'rich',
       search: {
         enabled: true,
-        placeholder: 'Search species… (supports wildcards: *)',
-        supportsWildcards: true,
+        placeholder: 'Search species…',
+        supportsWildcards: false,
       },
       filters: [
         { id: 'size', label: 'Size', type: 'toggle-group', defaultOn: false },
@@ -520,6 +563,13 @@ export class SpeciesStep extends ProgressionStepPlugin {
           { value: 'wis', label: 'Wisdom' },
           { value: 'cha', label: 'Charisma' },
         ],
+        defaultValue: '',
+      },
+      sourceDropdown: {
+        id: 'source',
+        label: 'Source:',
+        type: 'select',
+        options: sourceOptions,
         defaultValue: '',
       },
       sorts: [
@@ -574,17 +624,33 @@ export class SpeciesStep extends ProgressionStepPlugin {
 
   _applyFilters() {
     let filtered = [...this._allSpecies];
-    console.log('[SpeciesStep] Filter pipeline: start with', filtered.length, 'species');
+    console.log('[SpeciesStep] ═══════════════════════════════════════════════════════════');
+    console.log('[SpeciesStep] FILTER PIPELINE START');
+    console.log('[SpeciesStep] Initial species count:', filtered.length);
+    console.log('[SpeciesStep] Search query:', this._searchQuery || '(none)');
+    console.log('[SpeciesStep] Active filters:', JSON.stringify(this._filters));
+    console.log('[SpeciesStep] Sort mode:', this._sortBy);
 
-    // Search by name (case-insensitive, with wildcard support)
+    // Log sample species structure for debugging
+    if (filtered.length > 0) {
+      const sample = filtered[0];
+      console.log('[SpeciesStep] Sample species structure:', {
+        name: sample.name,
+        size: sample.size,
+        abilityScores: sample.abilityScores,
+        source: sample.source,
+        allKeys: Object.keys(sample).slice(0, 15),
+      });
+    }
+
+    // Search by name (case-insensitive, substring match — not exact match)
     if (this._searchQuery) {
       const q = this._searchQuery.toLowerCase();
-      // Convert wildcard patterns (* → .*) to regex for pattern matching
-      const pattern = q.replace(/\*/g, '.*');
-      const regex = new RegExp(`^${pattern}$`, 'i');
       const before = filtered.length;
-      filtered = filtered.filter(s => regex.test(s.name));
-      console.log('[SpeciesStep] After search query "' + this._searchQuery + '":', before, '→', filtered.length);
+      // Change from exact match (^pattern$) to substring match (contains)
+      filtered = filtered.filter(s => s.name.toLowerCase().includes(q));
+      console.log('[SpeciesStep] After search "' + this._searchQuery + '":', before, '→', filtered.length);
+      console.log('[SpeciesStep]   Matching species:', filtered.map(s => s.name).slice(0, 5));
     }
 
     // Size filters (small, medium, large) — combinable toggle buttons
@@ -603,22 +669,59 @@ export class SpeciesStep extends ProgressionStepPlugin {
     if (this._filters['bonus-stat']) {
       const targetAbility = this._filters['bonus-stat'];
       const before = filtered.length;
+      console.log('[SpeciesStep] Bonus filter: looking for ability "' + targetAbility + '"');
+
+      // Debug: inspect ability structure in sample
+      if (filtered.length > 0) {
+        const sample = filtered[0];
+        console.log('[SpeciesStep]   Sample abilityScores:', sample.abilityScores);
+        if (sample.abilityScores) {
+          console.log('[SpeciesStep]   Ability keys:', Object.keys(sample.abilityScores));
+          console.log('[SpeciesStep]   Value for "' + targetAbility + '":', sample.abilityScores[targetAbility]);
+        }
+      }
+
       filtered = filtered.filter(s => {
         const abilityScores = s.abilityScores || {};
-        return abilityScores[targetAbility] > 0;
+        const value = abilityScores[targetAbility];
+        return value && value > 0;  // Check that value exists and is > 0
       });
       console.log('[SpeciesStep] After bonus-stat filter (' + targetAbility + '):', before, '→', filtered.length);
+      if (filtered.length > 0) {
+        console.log('[SpeciesStep]   Matching species:', filtered.map(s => s.name).slice(0, 5));
+      }
     }
 
     // Penalty stat filter (dropdown) — filters for specific ability with negative penalty
     if (this._filters['penalty-stat']) {
       const targetAbility = this._filters['penalty-stat'];
       const before = filtered.length;
+      console.log('[SpeciesStep] Penalty filter: looking for ability "' + targetAbility + '"');
+
       filtered = filtered.filter(s => {
         const abilityScores = s.abilityScores || {};
-        return abilityScores[targetAbility] < 0;
+        const value = abilityScores[targetAbility];
+        return value && value < 0;  // Check that value exists and is < 0
       });
       console.log('[SpeciesStep] After penalty-stat filter (' + targetAbility + '):', before, '→', filtered.length);
+      if (filtered.length > 0) {
+        console.log('[SpeciesStep]   Matching species:', filtered.map(s => s.name).slice(0, 5));
+      }
+    }
+
+    // Source filter (dropdown) — NEW IMPLEMENTATION
+    if (this._filters['source'] && this._filters['source'] !== '') {
+      const targetSource = this._filters['source'];
+      const before = filtered.length;
+      console.log('[SpeciesStep] Source filter: looking for source "' + targetSource + '"');
+
+      filtered = filtered.filter(s => {
+        return (s.source || 'Unknown') === targetSource;
+      });
+      console.log('[SpeciesStep] After source filter (' + targetSource + '):', before, '→', filtered.length);
+      if (filtered.length > 0) {
+        console.log('[SpeciesStep]   Matching species:', filtered.map(s => s.name).slice(0, 5));
+      }
     }
 
     // Sort
@@ -637,7 +740,9 @@ export class SpeciesStep extends ProgressionStepPlugin {
     });
 
     this._filteredSpecies = filtered;
-    console.log('[SpeciesStep] Final result: ' + filtered.length + ' species (sorted by ' + this._sortBy + ')');
+    console.log('[SpeciesStep] ═══════════════════════════════════════════════════════════');
+    console.log('[SpeciesStep] FINAL RESULT: ' + filtered.length + ' species (sorted by ' + this._sortBy + ')');
+    console.log('[SpeciesStep] ═══════════════════════════════════════════════════════════');
   }
 
   /**
