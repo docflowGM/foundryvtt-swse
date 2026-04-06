@@ -320,7 +320,7 @@
     "salty": {
       "name": "Ol' Salty",
       "title": "Space Pirate Captain",
-      "avatar": "systems/foundryvtt-swse/assets/mentors/salty.webp",
+      "avatar": "systems/foundryvtt-swse/assets/mentors/salty.png",
       "dialogues": {
         "pistoleer": {
           "greeting": "Pistoleer, fast hands and sharper instincts. You shoot first and disappear before they know you were there.",
