@@ -507,6 +507,78 @@ Hooks.once('ready', async () => {
           console.error('[MUTATION TRACE] testUpdate — FAILED:', err.message, err);
         }
       }
+    },
+
+    // -----------------------------------------------------------------------
+    // Persistence canary (dev-only smoke test — safe, leaves data unchanged)
+    // -----------------------------------------------------------------------
+    canary: {
+      /**
+       * Run three persistence checks against a world actor.
+       * Restores the original value after each check so no permanent change occurs.
+       *
+       * Checks:
+       *   1. Direct actor.update()  — system.forcePoints.value
+       *   2. Direct actor.update()  — system.hp.value
+       *   3. Engine-mediated        — ActorEngine.updateActor  system.forcePoints.value
+       *
+       * Usage (browser console):
+       *   await SWSE.debug.canary.run()                 // first world actor
+       *   await SWSE.debug.canary.run('ACTOR_ID')       // specific actor
+       *
+       * @param {string} [actorId]
+       * @returns {Promise<{passed:number, failed:number, results:object[]}>}
+       */
+      async run(actorId) {
+        const actor = game.actors?.get?.(actorId) ?? game.actors?.contents?.[0];
+        if (!actor) {
+          console.error('[CANARY] No actor found. Pass an actorId or open a world with actors.');
+          return { passed: 0, failed: 0, results: [] };
+        }
+
+        console.group(`[CANARY] Actor persistence checks — "${actor.name}" (${actor.id})`);
+        const results = [];
+
+        // Helper: run one check, restore original value, report pass/fail
+        async function check(label, fn) {
+          try {
+            await fn();
+            console.log(`  ✅ PASS  ${label}`);
+            results.push({ label, passed: true });
+          } catch (err) {
+            console.error(`  ❌ FAIL  ${label} — ${err.message}`);
+            results.push({ label, passed: false, error: err.message });
+          }
+        }
+
+        // Snapshot values to restore after each check
+        const origFP  = actor.system?.forcePoints?.value ?? 0;
+        const origHP  = actor.system?.hp?.value          ?? 1;
+
+        // Check 1: direct actor.update() on forcePoints
+        // (tests base Foundry collection validation with current documentClass)
+        await check('direct actor.update({ system.forcePoints.value })', async () => {
+          await actor.update({ 'system.forcePoints.value': origFP });
+        });
+
+        // Check 2: direct actor.update() on hp.value
+        await check('direct actor.update({ system.hp.value })', async () => {
+          await actor.update({ 'system.hp.value': origHP });
+        });
+
+        // Check 3: engine-mediated update through ActorEngine.updateActor
+        await check('ActorEngine.updateActor({ system.forcePoints.value })', async () => {
+          await ActorEngine.updateActor(actor, { 'system.forcePoints.value': origFP }, {
+            meta: { guardKey: 'canary' }
+          });
+        });
+
+        const passed = results.filter(r => r.passed).length;
+        const failed = results.filter(r => !r.passed).length;
+        console.log(`[CANARY] Result: ${passed}/3 passed, ${failed}/3 failed`);
+        console.groupEnd();
+        return { passed, failed, results };
+      }
     }
   };
 
