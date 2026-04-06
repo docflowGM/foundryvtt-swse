@@ -1,5 +1,6 @@
 // scripts/utils/actor-utils.js
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { traceLog, actorSummary, payloadSummary, isMutationTraceEnabled } from "/systems/foundryvtt-swse/scripts/utils/mutation-trace.js";
 
 function toIntOrNull(value) {
   if (value === null || value === undefined) {return null;}
@@ -78,6 +79,12 @@ function coerceSpeedIntegers(actor, changes) {
  * });
  */
 export async function applyActorUpdateAtomic(actor, changes, options = {}) {
+  // [MUTATION TRACE] ATOMIC — entry boundary
+  traceLog('ATOMIC', 'applyActorUpdateAtomic entry', {
+    actor: actorSummary(actor),
+    payload: payloadSummary(changes)
+  });
+
   // Validation
   if (!actor) {
     throw new Error('applyActorUpdateAtomic: actor is required');
@@ -131,6 +138,12 @@ export async function applyActorUpdateAtomic(actor, changes, options = {}) {
 
     const sanitized = coerceSpeedIntegers(actor, changes);
 
+    // [MUTATION TRACE] ATOMIC — immediately before actor.update()
+    traceLog('ATOMIC', 'about to call actor.update()', {
+      actor: actorSummary(actor),
+      payload: payloadSummary(sanitized)
+    });
+
     // DIAGNOSTIC: Check sanitized payload for illegal values
     const flatPayload = foundry.utils.flattenObject(sanitized);
     const problematicKeys = [];
@@ -157,6 +170,12 @@ export async function applyActorUpdateAtomic(actor, changes, options = {}) {
 
     return result;
   } catch (err) {
+    // [MUTATION TRACE] ATOMIC — catch block
+    traceLog('ATOMIC', `actor.update() threw: ${err?.message}`, {
+      actor: actorSummary(actor),
+      errorMessage: err?.message
+    });
+
     // CRITICAL: Handle "You may only push instances of Actor to the Actors collection" error
     // This occurs when the actor reference is invalid during update. Attempt recovery.
     if (err?.message?.includes('You may only push instances of Actor') && actor?.id) {
@@ -175,6 +194,12 @@ export async function applyActorUpdateAtomic(actor, changes, options = {}) {
           swseLogger.log('applyActorUpdateAtomic: Recovered stale actor reference, retrying with world actor', {
             actorId: actor.id,
             actorName: actor.name
+          });
+          // [MUTATION TRACE] RECOVERY — about to retry with world actor
+          traceLog('RECOVERY', 'retrying actor.update() with world actor (reference differs)', {
+            originalActor: actorSummary(actor),
+            worldActor:    actorSummary(worldActor),
+            payload:       payloadSummary(changes)
           });
           const sanitized = coerceSpeedIntegers(worldActor, changes);
           const result = await worldActor.update(sanitized, options);

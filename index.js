@@ -471,6 +471,42 @@ Hooks.once('ready', async () => {
       getFullReport: () => SentinelReporter.getReportAsString(),
       printReport: () => SentinelReporter.printReport(),
       saveAsLog: (filename) => SentinelReporter.saveReportToDocuments(filename || 'swse-sentinel-audit-' + Date.now())
+    },
+
+    // -----------------------------------------------------------------------
+    // Mutation trace (TEMPORARY diagnostic — remove once root cause confirmed)
+    // -----------------------------------------------------------------------
+    trace: {
+      /** Enable boundary trace logs for every actor.update() path. */
+      enable()  { globalThis.SWSE_DEBUG_MUTATION_TRACE = true;  console.log('[MUTATION TRACE] enabled — all actor update boundaries will be logged'); },
+      /** Disable mutation trace. */
+      disable() { globalThis.SWSE_DEBUG_MUTATION_TRACE = false; console.log('[MUTATION TRACE] disabled'); },
+      /** Current state. */
+      status()  { return `SWSE_DEBUG_MUTATION_TRACE = ${globalThis.SWSE_DEBUG_MUTATION_TRACE ?? 'unset (OFF)'}`; },
+
+      /**
+       * Fetch a world actor by id and perform one simple actor.update() through
+       * ActorEngine, emitting full trace logs.
+       *
+       * Usage:
+       *   SWSE.debug.trace.enable()
+       *   await SWSE.debug.trace.testUpdate('actorId', { 'system.forcePoints.value': 1 })
+       *
+       * @param {string} actorId
+       * @param {object} [payload]  defaults to { 'system.forcePoints.value': 1 }
+       */
+      async testUpdate(actorId, payload) {
+        const actor = game.actors?.get?.(actorId ?? game.actors?.contents?.[0]?.id);
+        if (!actor) { console.error('[MUTATION TRACE] testUpdate: no actor found for id', actorId); return; }
+        const data = payload ?? { 'system.forcePoints.value': (actor.system?.forcePoints?.value ?? 0) };
+        console.log('[MUTATION TRACE] testUpdate — actor:', actor.name, '| payload:', data);
+        try {
+          await ActorEngine.updateActor(actor, data, { meta: { guardKey: 'trace-test' } });
+          console.log('[MUTATION TRACE] testUpdate — completed without error');
+        } catch (err) {
+          console.error('[MUTATION TRACE] testUpdate — FAILED:', err.message, err);
+        }
+      }
     }
   };
 

@@ -40,6 +40,7 @@ import { PanelDiagnostics } from "/systems/foundryvtt-swse/scripts/sheets/v2/sha
 // Character-specific visibility manager (subclass of shared base)
 import { PanelVisibilityManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/PanelVisibilityManager.js";
 import { ExtraSkillUseRegistry } from "/systems/foundryvtt-swse/scripts/utils/extra-skill-use-registry.js";
+import { traceLog, actorSummary, payloadSummary } from "/systems/foundryvtt-swse/scripts/utils/mutation-trace.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -3736,6 +3737,13 @@ const forcePoints = [];
         actorName: freshActor.name,
         actorId: freshActor.id,
         expandedKeys: Object.keys(filtered)
+      });
+
+      // [MUTATION TRACE] SHEET — handoff boundary to ActorEngine
+      traceLog('SHEET', '_onSubmitForm handoff to ActorEngine.updateActor', {
+        actor:   actorSummary(freshActor),
+        payload: payloadSummary(filtered),
+        sheetActorIsFresh: this.actor === freshActor
       });
 
       await ActorEngine.updateActor(freshActor, filtered);

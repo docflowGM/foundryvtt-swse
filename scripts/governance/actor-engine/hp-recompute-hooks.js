@@ -14,6 +14,7 @@
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { traceLog, actorSummary } from "/systems/foundryvtt-swse/scripts/utils/mutation-trace.js";
 
 export class HPRecomputeHooks {
   static _initialized = false;
@@ -62,8 +63,14 @@ export class HPRecomputeHooks {
       const changed = triggerKeys.some(key => key in flat);
 
       if (changed) {
-        SWSELogger.debug(`[HPRecomputeHooks] Trigger detected for ${actor.name}`, {
-          changedKeys: Object.keys(flat).filter(k => triggerKeys.some(tk => k === tk || k.startsWith(tk)))
+        const changedKeys = Object.keys(flat).filter(k => triggerKeys.some(tk => k === tk || k.startsWith(tk)));
+        SWSELogger.debug(`[HPRecomputeHooks] Trigger detected for ${actor.name}`, { changedKeys });
+
+        // [MUTATION TRACE] HOOK:updateActor — HPRecomputeHooks about to trigger recomputeHP → updateActor
+        traceLog('HOOK:updateActor[HPRecomputeHooks]', 'triggering recomputeHP (writes back to actor via ActorEngine.updateActor)', {
+          actor:        actorSummary(actor),
+          changedKeys,
+          guardKeyUsed: 'hp-recompute'
         });
 
         try {
