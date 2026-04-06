@@ -221,14 +221,6 @@ Hooks.once("setup", () => {
 
   console.log("[SWSE] Registering V2 sheets (v13 compliant)");
 
-  // Ensure all actor documents use the SWSE V2 actor prototype/methods
-  CONFIG.Actor.documentClass = SWSEV2BaseActor;
-
-  // Combat SSOT registration: ensure SWSE combat document classes are the
-  // live runtime authority for tracker state, initiative, and action economy.
-  CONFIG.Combat.documentClass = SWSECombatDocument;
-  CONFIG.Combatant.documentClass = SWSECombatant;
-
   const ActorCollection = foundry.documents.collections.Actors;
   const ItemCollection = foundry.documents.collections.Items;
 
@@ -280,6 +272,15 @@ Hooks.once("setup", () => {
 Hooks.once('init', async () => {
   if (globalThis.__SWSE_INIT__) return;
   globalThis.__SWSE_INIT__ = true;
+
+  // CRITICAL: Document classes MUST be set during init, before world data is
+  // instantiated. Setting these in setup (after world load) causes all existing
+  // actor instances to be plain Actor base-class objects that fail the
+  // collection's instanceof check on update() → "You may only push instances
+  // of Actor to the Actors collection".
+  CONFIG.Actor.documentClass = SWSEV2BaseActor;
+  CONFIG.Combat.documentClass = SWSECombatDocument;
+  CONFIG.Combatant.documentClass = SWSECombatant;
 
   swseLogger.log('SWSE | Init start');
 
