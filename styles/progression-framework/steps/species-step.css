@@ -51,7 +51,7 @@
   width: 100%;
 
   /* SVG background for default state */
-  background-image: url('../../assets/ui/chargen/swse-angled-option-frame.svg');
+  background-image: url('/systems/foundryvtt-swse/assets/ui/chargen/swse-angled-option-frame.svg');
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: center;
@@ -79,20 +79,20 @@
 /* Hover state → reveal the hover-state frame SVG
    User is previewing; not yet committed. */
 .progression-shell .prog-species-row:hover {
-  background-image: url('../../assets/ui/chargen/swse-angled-option-frame-hover.svg');
+  background-image: url('/systems/foundryvtt-swse/assets/ui/chargen/swse-angled-option-frame-hover.svg');
   box-shadow: 0 0 16px rgba(0, 180, 255, 0.15);
 }
 
 .progression-shell .prog-species-row:focus {
   outline: none;
-  background-image: url('../../assets/ui/chargen/swse-angled-option-frame-hover.svg');
+  background-image: url('/systems/foundryvtt-swse/assets/ui/chargen/swse-angled-option-frame-hover.svg');
 }
 
 /* Focused state (clicked, details panel shows) → hover SVG frame
    This indicates the item is being previewed in the details panel,
    but not yet committed. */
 .progression-shell .prog-species-row--focused {
-  background-image: url('../../assets/ui/chargen/swse-angled-option-frame-hover.svg');
+  background-image: url('/systems/foundryvtt-swse/assets/ui/chargen/swse-angled-option-frame-hover.svg');
   box-shadow: 0 0 16px rgba(0, 180, 255, 0.15);
 }
 
@@ -100,7 +100,7 @@
    Only ONE row should have this state at a time.
    The selected frame SVG visually indicates "this is the chosen species". */
 .progression-shell .prog-species-row--committed {
-  background-image: url('../../assets/ui/chargen/swse-angled-option-frame-selected.svg');
+  background-image: url('/systems/foundryvtt-swse/assets/ui/chargen/swse-angled-option-frame-selected.svg');
   box-shadow: 0 0 20px rgba(0, 220, 120, 0.2);
 }
 

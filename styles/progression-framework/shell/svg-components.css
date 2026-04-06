@@ -26,7 +26,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-image:  url('../../../assets/ui/chargen/button-frame-primary.svg');
+  background-image:  url('/systems/foundryvtt-swse/assets/ui/chargen/button-frame-primary.svg');
   background-size:   100% 100%;
   background-repeat: no-repeat;
   background-color:  transparent;
@@ -55,7 +55,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-image:  url('../../../assets/ui/chargen/button-frame-secondary.svg');
+  background-image:  url('/systems/foundryvtt-swse/assets/ui/chargen/button-frame-secondary.svg');
   background-size:   100% 100%;
   background-repeat: no-repeat;
   background-color:  transparent;
@@ -81,7 +81,7 @@
 
 /* Ask Mentor button — secondary frame applied automatically */
 .progression-shell .prog-mentor__ask {
-  background-image:  url('../../../assets/ui/chargen/button-frame-secondary.svg');
+  background-image:  url('/systems/foundryvtt-swse/assets/ui/chargen/button-frame-secondary.svg');
   background-size:   100% 100%;
   background-repeat: no-repeat;
   background-color:  transparent;
@@ -115,7 +115,7 @@
   align-items: center;
 
   /* search-box.svg provides chamfered rect with scan line + cyan border chrome */
-  background-image:  url('../../../assets/ui/chargen/search-box.svg');
+  background-image:  url('/systems/foundryvtt-swse/assets/ui/chargen/search-box.svg');
   background-size:   100% 100%;
   background-repeat: no-repeat;
   background-color:  transparent;
@@ -141,7 +141,7 @@
 
 /* Apply directly to search inputs in the utility bar */
 .progression-shell .prog-utility-bar__search {
-  background-image:  url('../../../assets/ui/chargen/search-box.svg');
+  background-image:  url('/systems/foundryvtt-swse/assets/ui/chargen/search-box.svg');
   background-size:   100% 100%;
   background-repeat: no-repeat;
   background-color:  transparent;
@@ -200,7 +200,7 @@
 
 .progression-shell .prog-svgchrome--dropdown,
 .progression-shell select.prog-svgchrome {
-  background-image:  url('../../../assets/ui/chargen/dropdown-box.svg');
+  background-image:  url('/systems/foundryvtt-swse/assets/ui/chargen/dropdown-box.svg');
   background-size:   100% 100%;
   background-repeat: no-repeat;
   background-color:  transparent;
@@ -221,7 +221,7 @@
 
 /* Sort dropdown in utility bar */
 .progression-shell .prog-utility-bar__sort {
-  background-image:  url('../../../assets/ui/chargen/dropdown-box.svg');
+  background-image:  url('/systems/foundryvtt-swse/assets/ui/chargen/dropdown-box.svg');
   background-size:   100% 100%;
   background-repeat: no-repeat;
   background-color:  transparent;

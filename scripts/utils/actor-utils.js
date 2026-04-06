@@ -44,6 +44,65 @@ function coerceSpeedIntegers(actor, changes) {
 }
 
 /**
+ * Remove undefined values from an actor update payload.
+ *
+ * Foundry's schema validation rejects `undefined` values in any update payload.
+ * This ensures that:
+ * - Top-level fields like `name` are only included if they have defined values
+ * - Nested undefined values are recursively removed
+ * - Legitimate falsy values (0, false, empty string) are preserved
+ *
+ * @param {Object} payload - The actor update payload
+ * @returns {Object} A clone of the payload with all undefined values removed
+ */
+function removeUndefinedValues(payload) {
+  if (!payload || typeof payload !== 'object') {
+    return payload;
+  }
+
+  const clone = foundry.utils.deepClone(payload);
+  const originalFlat = foundry.utils.flattenObject(payload);
+  const undefinedKeys = [];
+
+  // Recursive walk to remove all undefined values
+  const walk = (obj) => {
+    if (!obj || typeof obj !== 'object') return;
+
+    const keysToDelete = [];
+    for (const [key, value] of Object.entries(obj)) {
+      if (value === undefined) {
+        keysToDelete.push(key);
+        undefinedKeys.push(key);
+      } else if (value && typeof value === 'object' && !Array.isArray(value)) {
+        walk(value);
+        // If the object is now empty after recursive cleanup, mark it for deletion
+        if (Object.keys(value).length === 0) {
+          keysToDelete.push(key);
+        }
+      }
+    }
+
+    // Delete marked keys
+    for (const key of keysToDelete) {
+      delete obj[key];
+    }
+  };
+
+  walk(clone);
+
+  // Log if any undefined values were removed (helps debugging)
+  if (undefinedKeys.length > 0) {
+    swseLogger.warn('removeUndefinedValues: Removed undefined keys from payload', {
+      removedKeys: undefinedKeys,
+      payloadSize: Object.keys(originalFlat).length,
+      finalSize: Object.keys(foundry.utils.flattenObject(clone)).length
+    });
+  }
+
+  return clone;
+}
+
+/**
  * Atomic Actor Update Helper
  * Provides safe, validated actor updates that are batched and transactional.
  * Prevents race conditions and ensures data consistency.
@@ -172,8 +231,21 @@ export async function applyActorUpdateAtomic(actor, changes, options = {}) {
 
     swseLogger.debug('applyActorUpdateAtomic: Sanitized payload keys:', Object.keys(flatPayload));
 
+    // CRITICAL BOUNDARY: Remove all undefined values before passing to Foundry
+    // Foundry's schema validation rejects any undefined value in the payload.
+    // This ensures that fields like `name` are only included if they have actual values.
+    const finalPayload = removeUndefinedValues(sanitized);
+
+    if (Object.keys(finalPayload).length === 0) {
+      swseLogger.warn('applyActorUpdateAtomic: Payload reduced to empty after removing undefined values. Skipping update.', {
+        actor: actor.name,
+        actorId: actor.id
+      });
+      return actor; // Return the actor unchanged
+    }
+
     // Perform the update
-    const result = await actor.update(sanitized, options);
+    const result = await actor.update(finalPayload, options);
 
     return result;
   } catch (err) {
@@ -209,7 +281,9 @@ export async function applyActorUpdateAtomic(actor, changes, options = {}) {
             payload:       payloadSummary(changes)
           });
           const sanitized = coerceSpeedIntegers(worldActor, changes);
-          const result = await worldActor.update(sanitized, options);
+          // CRITICAL: Also remove undefined values in recovery path
+          const finalPayload = removeUndefinedValues(sanitized);
+          const result = await worldActor.update(finalPayload, options);
           return result;
         } else if (worldActor && worldActor === actor) {
           // Actor references are the same, so recovery won't help

@@ -1074,9 +1074,10 @@ const forcePoints = [];
     const panelsToBuild = this.visibilityManager.getPanelsToBuild(this.document);
     const panelsToSkip = this.visibilityManager.getPanelsSkipped(this.document);
 
-    // CRITICAL: Always build 'health' panel for header HP bar display
-    if (!panelsToBuild.includes('health')) {
-      panelsToBuild.push('health');
+    // CRITICAL: Always build 'healthPanel' for header HP bar display
+    // Note: Panel name is 'healthPanel' (registered in PANEL_REGISTRY), not 'health'
+    if (!panelsToBuild.includes('healthPanel')) {
+      panelsToBuild.push('healthPanel');
     }
 
     // Build visible panels + cached hidden panels
@@ -3915,9 +3916,16 @@ const forcePoints = [];
       }
     }
 
-    // Remove/filter problematic top-level fields
-    if (filtered.name === '—') {
+    // CRITICAL: Remove top-level fields that should not be in partial updates
+    // Only include `name` if it's actually defined and different from the current value
+    // This prevents payload corruption from undefined or empty name values
+    if (filtered.name === '—' || filtered.name === undefined) {
       delete filtered.name;
+    }
+    // If name is an empty string, only include it if intentional (but it shouldn't be)
+    if (filtered.name === '') {
+      delete filtered.name;
+      console.warn('[PERSISTENCE] Filtered out empty name field - partial updates should omit untouched fields');
     }
 
     // Remove system-protected fields that cause collection errors

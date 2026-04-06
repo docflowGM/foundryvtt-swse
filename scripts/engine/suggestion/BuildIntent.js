@@ -292,7 +292,9 @@ export class BuildIntent {
                 .filter(i => i.type === 'feat')
                 .map(f => f.name)
         );
-        (pendingData.selectedFeats || []).forEach(f => {
+        // FIX: Ensure selectedFeats is an array before calling .forEach()
+        const selectedFeatsArray = Array.isArray(pendingData.selectedFeats) ? pendingData.selectedFeats : [];
+        selectedFeatsArray.forEach(f => {
             ownedFeats.add(f.name || f);
         });
 
@@ -301,7 +303,9 @@ export class BuildIntent {
                 .filter(i => i.type === 'talent')
                 .map(t => t.name)
         );
-        (pendingData.selectedTalents || []).forEach(t => {
+        // FIX: Ensure selectedTalents is an array before calling .forEach()
+        const selectedTalentsArray = Array.isArray(pendingData.selectedTalents) ? pendingData.selectedTalents : [];
+        selectedTalentsArray.forEach(t => {
             ownedTalents.add(t.name || t);
         });
 
@@ -318,7 +322,9 @@ export class BuildIntent {
                 trainedSkills.add(skillKey.toLowerCase());
             }
         }
-        (pendingData.selectedSkills || []).forEach(s => {
+        // FIX: Ensure selectedSkills is an array before calling .forEach()
+        const selectedSkillsArray = Array.isArray(pendingData.selectedSkills) ? pendingData.selectedSkills : [];
+        selectedSkillsArray.forEach(s => {
             trainedSkills.add((s.key || s).toLowerCase());
         });
 
