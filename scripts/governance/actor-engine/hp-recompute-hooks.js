@@ -48,6 +48,17 @@ export class HPRecomputeHooks {
         return;
       }
 
+      // PHASE 3: Skip if actor is currently in an in-flight mutation transaction
+      // This prevents re-entrant writes during the original update
+      if (ActorEngine.isActorMutationInFlight(actor.id)) {
+        traceLog('HOOK:updateActor[HPRecomputeHooks]', 'deferred due to in-flight mutation guard', {
+          actor: actorSummary(actor),
+          reason: 'actor mutation already in flight'
+        });
+        SWSELogger.debug(`[HPRecomputeHooks] Deferring HP recompute for ${actor.name} — mutation in flight`);
+        return;
+      }
+
       // Flatten the update to detect nested changes like system.attributes.con.base
       const flat = foundry.utils.flattenObject(data);
 

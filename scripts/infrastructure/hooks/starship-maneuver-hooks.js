@@ -60,6 +60,13 @@ export function initializeStarshipManeuverHooks() {
     // PHASE 10: Guard against re-entrant ability checks from maneuver grants
     if (options?.meta?.guardKey === 'starship-maneuver-grant') {return;}
 
+    // PHASE 2: Skip if actor is currently in an in-flight mutation transaction
+    // This prevents re-entrant writes during the original update
+    if (ActorEngine.isActorMutationInFlight(actor.id)) {
+      SWSELogger.debug(`[StarshipManeuverHooks] Deferring ability check for ${actor.name} — mutation in flight`);
+      return;
+    }
+
     // Check if abilities were updated and we have old values
     if (!changes.system?.abilities || !options.oldAbilities) {return;}
 

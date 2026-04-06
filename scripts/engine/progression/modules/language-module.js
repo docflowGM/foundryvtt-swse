@@ -2,7 +2,11 @@
  * SWSE Language Progression Module
  * Option A: Classic SWSE rules integrated with the Progression Engine.
  * PHASE 10: All mutations route through ActorEngine with recursive guards.
+ * PHASE 2: In-flight mutation guard prevents re-entrant writes.
  */
+
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+
 export class SWSELanguageModule {
   static NAME = 'swse-language-module';
   static init() {
@@ -83,6 +87,12 @@ export class SWSELanguageModule {
     if (!actor || !actor.isOwner) {return;}
     // Guard 1: never re-enter from our own write-back
     if (options?.meta?.guardKey === 'language-sync') {return;}
+
+    // PHASE 2: Skip if actor is currently in an in-flight mutation transaction
+    // This prevents re-entrant writes during the original update
+    if (ActorEngine.isActorMutationInFlight(actor.id)) {
+      return;
+    }
 
     // Guard 2: narrow trigger — only run when a language-relevant field actually changed.
     // The previous check (!diff.system) fired on virtually every actor update, triggering
