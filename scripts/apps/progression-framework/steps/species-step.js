@@ -302,7 +302,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
         speed: species.speed ?? '30 ft.',
         source: species.source ?? 'Unknown',
         img: this._resolveSpeciesImg(species),
-        olSaltyDialogue: normalized.mentorProse ?? this._getOlSaltyDialogue(species.name) ?? null,
+        mentorProse: normalized.mentorProse ?? this._getOlSaltyDialogue(species.name) ?? null,
         defaultSpeciesGuidance,
         // Add normalized fields for enhanced detail rail
         canonicalDescription: normalized.description,
