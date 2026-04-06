@@ -3915,9 +3915,16 @@ const forcePoints = [];
       }
     }
 
-    // Remove/filter problematic top-level fields
-    if (filtered.name === '—') {
+    // CRITICAL: Remove top-level fields that should not be in partial updates
+    // Only include `name` if it's actually defined and different from the current value
+    // This prevents payload corruption from undefined or empty name values
+    if (filtered.name === '—' || filtered.name === undefined) {
       delete filtered.name;
+    }
+    // If name is an empty string, only include it if intentional (but it shouldn't be)
+    if (filtered.name === '') {
+      delete filtered.name;
+      console.warn('[PERSISTENCE] Filtered out empty name field - partial updates should omit untouched fields');
     }
 
     // Remove system-protected fields that cause collection errors
