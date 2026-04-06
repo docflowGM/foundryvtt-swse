@@ -1323,7 +1323,7 @@
           "displayName": "Medpac"
         }
       ],
-      "credits": -25,
+      "credits": 25,
       "mentor": "salty",
       "archetype": "Pistoleer",
       "roleTags": [
@@ -1812,7 +1812,7 @@
           "displayName": "Medpac"
         }
       ],
-      "credits": -35,
+      "credits": 35,
       "mentor": "salty",
       "archetype": "Outlaw",
       "roleTags": [
@@ -2641,7 +2641,7 @@
           "displayName": "Vibrodagger"
         }
       ],
-      "credits": -615,
+      "credits": 615,
       "mentor": "lead",
       "archetype": "Survivalist",
       "roleTags": [
@@ -2805,7 +2805,7 @@
           "displayName": "Medpac"
         }
       ],
-      "credits": -900,
+      "credits": 900,
       "mentor": "lead",
       "archetype": "Infiltrator",
       "roleTags": [
@@ -2987,7 +2987,7 @@
           "displayName": "Snap Baton"
         }
       ],
-      "credits": -1125,
+      "credits": 1125,
       "mentor": "breach",
       "archetype": "Just A Dude",
       "roleTags": [
@@ -3130,7 +3130,7 @@
           "displayName": "Medpac"
         }
       ],
-      "credits": -350,
+      "credits": 350,
       "mentor": "breach",
       "archetype": "Gunner",
       "roleTags": [
@@ -3263,7 +3263,7 @@
           "displayName": "Medpac"
         }
       ],
-      "credits": -750,
+      "credits": 750,
       "mentor": "breach",
       "archetype": "Brawler",
       "roleTags": [
@@ -3793,7 +3793,7 @@
           "displayName": "Medpac"
         }
       ],
-      "credits": -1850,
+      "credits": 1850,
       "mentor": null,
       "archetype": "Trooper",
       "roleTags": [],
@@ -3886,7 +3886,7 @@
           "displayName": "Comlink, Short-Range"
         }
       ],
-      "credits": -575,
+      "credits": 575,
       "mentor": null,
       "archetype": "Criminal",
       "roleTags": [],
@@ -4069,7 +4069,7 @@
           "displayName": "Blast Helmet and Vest"
         }
       ],
-      "credits": -850,
+      "credits": 850,
       "mentor": null,
       "archetype": "Police",
       "roleTags": [],
