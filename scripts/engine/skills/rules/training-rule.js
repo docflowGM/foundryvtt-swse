@@ -5,7 +5,7 @@
  *
  * Skill definition:
  * - untrained: true = untrained use allowed
- * - untrained: false = requires training
+ * - untrained: false = 
  *
  * Actor skill state:
  * - trained: true = actor has training
@@ -26,10 +26,10 @@ export function trainingRule({ actor, skillKey }, result) {
   const allowedUntrained = skillDef.untrained !== false; // Default to true
   const actorTrained = skill.trained === true;
 
-  // If skill requires training and actor isn't trained
+  // If skill  and actor isn't trained
   if (!allowedUntrained && !actorTrained) {
     result.allowed = false;
-    result.reason = `This skill requires training`;
+    result.reason = `This skill `;
     result.diagnostics.blockedBy = "RequiresTraining";
     result.diagnostics.rulesTriggered.push("trainingRule");
     return result;

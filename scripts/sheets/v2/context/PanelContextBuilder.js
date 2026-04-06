@@ -98,21 +98,36 @@ export class PanelContextBuilder {
     const shieldMax = Number(this.derived.shield?.max) || 0;
     const shieldCurrent = Number(this.derived.shield?.current) || 0;
 
-    // Damage reduction
-    const damageReduction = Number(this.system.damageReduction) || 0;
+    // Damage reduction (must be string or null per contract)
+    const dmgRedNum = Number(this.system.damageReduction);
+    const damageReduction = isNaN(dmgRedNum) || dmgRedNum === 0 ? null : String(dmgRedNum);
 
     // Condition track
     const ctCurrent = Number(this.system.conditionTrack?.current) || 0;
     const ctMax = 6;
 
+    // Condition penalties by level (SWSE rules)
+    const conditionPenalties = {
+      0: { penalty: 0, label: 'Normal' },
+      1: { penalty: -1, label: '-1' },
+      2: { penalty: -2, label: '-2' },
+      3: { penalty: -5, label: '-5' },
+      4: { penalty: -10, label: '-10' },
+      5: { penalty: null, label: 'Helpless' }
+    };
+
+    const currentConditionPenalty = conditionPenalties[ctCurrent] || { penalty: 0, label: 'Normal' };
+
     // Condition steps (normalized slots)
     const conditionSlots = [];
     for (let i = 0; i < ctMax; i++) {
+      const penaltyInfo = conditionPenalties[i] || { penalty: 0, label: 'Unknown' };
       conditionSlots.push({
         step: i,
-        label: `Level ${i}`,
+        label: `${penaltyInfo.label}`,
         active: ctCurrent === i,
-        canEdit: this.sheet.isEditable
+        canEdit: this.sheet.isEditable,
+        penalty: penaltyInfo.penalty
       });
     }
 
@@ -120,6 +135,7 @@ export class PanelContextBuilder {
       hp: {
         value: hpValue,
         max: hpMax,
+        temp: Number(this.system.hp?.temp) || 0,
         percent: hpPercent,
         stateClass,
         canEdit: this.sheet.isEditable
@@ -131,7 +147,7 @@ export class PanelContextBuilder {
       shield: {
         max: shieldMax,
         current: shieldCurrent,
-        rating: shieldMax > 0 ? shieldCurrent : 0,
+        rating: String(shieldMax > 0 ? shieldCurrent : 0),
         hasShield: shieldMax > 0
       },
       damageReduction,
@@ -141,6 +157,7 @@ export class PanelContextBuilder {
         canEdit: this.sheet.isEditable
       },
       conditionSlots,
+      currentConditionPenalty,
       stateLabel,
       stateClass,
       showConditionTrack: true,
@@ -158,29 +175,48 @@ export class PanelContextBuilder {
    * Build the defenses panel context
    *
    * Contract: defensePanel
-   * - defenses: [ { key, label, total, armor, ability, class, misc, canEdit } ]
+   * - defenses: [ { key, label, total, armorBonus, abilityMod, abilityModClass, classDef, miscMod, miscModClass, canEdit } ]
    * - hasDefenses: boolean
+   * - canEdit: boolean
+   *
+   * DATA SOURCE: Reuses existing system.defenses + system.attributes
+   * - Does NOT recompute math (all from stored engine data)
+   * - Transforms shape only for template compatibility
    */
   buildDefensePanel() {
-    const headerDefenses = this.derived.defenses || {};
+    const system = this.system;
+    const defenseKeyMap = [
+      { key: 'fort', label: 'Fortitude', abilityKey: 'str' },
+      { key: 'ref', label: 'Reflex', abilityKey: 'dex' },
+      { key: 'will', label: 'Will', abilityKey: 'wis' }
+    ];
 
-    // Map derived.defenses keys (fortitude, reflex, will) to template keys (fort, ref, will)
-    const defenses = [
-      { dataKey: 'reflex', templateKey: 'ref', label: 'Reflex' },
-      { dataKey: 'fortitude', templateKey: 'fort', label: 'Fortitude' },
-      { dataKey: 'will', templateKey: 'will', label: 'Will' }
-    ].map(({ dataKey, templateKey, label }) => {
-      const def = headerDefenses[dataKey] || {};
+    const defenses = defenseKeyMap.map(({ key, label, abilityKey }) => {
+      const defenseData = system.defenses?.[key] || {};
+
+      // Get ability modifier from system.attributes
+      const abilityMod = system.attributes?.[abilityKey]?.mod ?? 0;
+
+      // Get stored components
+      const armorBonus = Number(defenseData.armorBonus) || 0;
+      const classDef = Number(defenseData.classBonus) || 0;
+      const miscMod = Number(defenseData.miscMod) || 0;
+      const total = Number(defenseData.total) || 10;
+
+      // Derive CSS classes from modifier values
+      const abilityModClass = abilityMod > 0 ? 'mod--positive' : abilityMod < 0 ? 'mod--negative' : 'mod--zero';
+      const miscModClass = miscMod > 0 ? 'mod--positive' : miscMod < 0 ? 'mod--negative' : 'mod--zero';
+
       return {
-        key: templateKey,
+        key,
         label,
-        total: Number(def.total) || 10,
-        armorBonus: Number(def.armorBonus) || 0,
-        abilityMod: Number(def.abilityMod) || 0,
-        abilityModClass: def.abilityMod > 0 ? 'positive' : def.abilityMod < 0 ? 'negative' : 'zero',
-        classDef: Number(def.classDef) || 0,
-        miscMod: Number(def.miscMod) || 0,
-        miscModClass: def.miscMod > 0 ? 'positive' : def.miscMod < 0 ? 'negative' : 'zero',
+        total,
+        armorBonus,
+        abilityMod,
+        abilityModClass,
+        classDef,
+        miscMod,
+        miscModClass,
         canEdit: this.sheet.isEditable
       };
     });
@@ -226,11 +262,8 @@ export class PanelContextBuilder {
       canEdit: this.sheet.isEditable
     };
 
-    const biography = {
-      notes: this.system.notes || '',
-      relationshipNotes: this.system.flags?.swse?.character?.relationshipNotes || '',
-      canEdit: this.sheet.isEditable
-    };
+    // Contract requires biography to be a string
+    const biography = String(this.system.notes || '');
 
     const panel = {
       identity,
@@ -334,6 +367,12 @@ export class PanelContextBuilder {
     // Normalize talent/feat rows
     const entries = items
       .filter(item => item.type === 'talent')
+      // Filter out placeholder talents: those with default "New Talent" name and no description
+      .filter(item => {
+        const isPlaceholder = (item.name === 'New Talent' || item.name === 'NEW TALENT') &&
+                              (!item.system?.description || item.system.description.trim() === '');
+        return !isPlaceholder;
+      })
       .map(item => RowTransformers.toTalentRow(item, this.sheet.isEditable));
 
     // Group by tree if available
@@ -367,6 +406,12 @@ export class PanelContextBuilder {
 
     const entries = items
       .filter(item => item.type === 'feat')
+      // Filter out placeholder feats: those with default "New Feat" name and no description
+      .filter(item => {
+        const isPlaceholder = (item.name === 'New Feat' || item.name === 'NEW FEAT') &&
+                            (!item.system?.description || item.system.description.trim() === '');
+        return !isPlaceholder;
+      })
       .map(item => RowTransformers.toFeatRow(item, this.sheet.isEditable));
 
     const panel = {
@@ -418,9 +463,15 @@ export class PanelContextBuilder {
    * - canEdit: boolean
    */
   buildSecondWindPanel() {
-    const healing = Number(this.system.secondWind?.healing) || 0;
+    let healing = Number(this.system.secondWind?.healing) || 0;
     const uses = Number(this.system.secondWind?.uses) || 0;
     const max = Number(this.system.secondWind?.max) || 1;
+
+    // CRITICAL: If healing is not stored, calculate 25% of max HP (consistent with header)
+    if (healing <= 0) {
+      const maxHp = Number(this.system.hp?.max) || 1;
+      healing = Math.ceil(maxHp * 0.25);
+    }
 
     const panel = {
       healing,
@@ -812,6 +863,80 @@ export class PanelContextBuilder {
     };
 
     this._validatePanelContext('combatStatsPanel', panel);
+    return panel;
+  }
+
+  /**
+   * Build the abilities panel context
+   *
+   * Contract: abilitiesPanel
+   * - abilities: [ { key, label, value, modifier, modifierClass } ]
+   */
+  buildAbilitiesPanel() {
+    const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+    const abilityLabels = {
+      'str': 'Strength',
+      'dex': 'Dexterity',
+      'con': 'Constitution',
+      'int': 'Intelligence',
+      'wis': 'Wisdom',
+      'cha': 'Charisma'
+    };
+
+    const abilities = abilityKeys.map(key => {
+      const abilityData = this.system.abilities?.[key] || {};
+      const value = Number(abilityData.value) || 10;
+      const modifier = Math.floor((value - 10) / 2);
+      const modifierClass = modifier > 0 ? 'positive' : modifier < 0 ? 'negative' : 'zero';
+
+      return {
+        key,
+        label: abilityLabels[key],
+        value,
+        modifier,
+        modifierClass,
+        canEdit: this.sheet.isEditable
+      };
+    });
+
+    const panel = {
+      abilities,
+      canEdit: this.sheet.isEditable
+    };
+
+    this._validatePanelContext('abilitiesPanel', panel);
+    return panel;
+  }
+
+  /**
+   * Build the skills panel context
+   *
+   * Contract: skillsPanel
+   * - skills: [ { key, label, bonus, trained, canEdit } ]
+   */
+  buildSkillsPanel() {
+    const skillKeys = Object.keys(this.derived.skills || {});
+
+    const skills = skillKeys.map(key => {
+      const skillData = this.derived.skills?.[key] || {};
+      const bonus = Number(skillData.total) || 0;
+      const trained = this.system.skills?.[key]?.trained === true;
+
+      return {
+        key,
+        label: skillData.label || key,
+        bonus,
+        trained,
+        canEdit: this.sheet.isEditable
+      };
+    });
+
+    const panel = {
+      skills,
+      canEdit: this.sheet.isEditable
+    };
+
+    this._validatePanelContext('skillsPanel', panel);
     return panel;
   }
 }

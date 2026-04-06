@@ -205,7 +205,7 @@ function calculateSkills(actor) {
       (skill.focused ? 5 : 0) +  // Skill Focus bonus
       (skill.miscMod || 0);      // Miscellaneous modifiers
 
-    // Special case: Use the Force requires training
+    // Special case: Use the Force 
     if (skillKey === 'useTheForce' && !skill.trained) {
       skill.total = 0;  // Untrained use not allowed
     }
@@ -295,7 +295,7 @@ class SWSEActor extends Actor {
         (skill.miscMod || 0) +
         conditionPenalty;
 
-      // Use the Force requires training
+      // Use the Force 
       if (skillKey === 'useTheForce' && !skill.trained) {
         skill.total = 0;
       }
@@ -349,7 +349,7 @@ class SWSEActor extends Actor {
 
     // Check for trained-only skills
     if (skill.trainedOnly && !skill.trained) {
-      ui.notifications.warn(`${skillKey} requires training`);
+      ui.notifications.warn(`${skillKey} `);
       return null;
     }
 

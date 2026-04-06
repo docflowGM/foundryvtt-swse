@@ -99,8 +99,13 @@ export function validateDefensePanel(panelData) {
     errors.push(`defenses must have exactly 3 items (Ref, Fort, Will), got ${panelData.defenses.length}`);
   } else {
     panelData.defenses.forEach((def, idx) => {
-      if (typeof def.name !== 'string') errors.push(`defense[${idx}].name must be string`);
-      if (typeof def.value !== 'number') errors.push(`defense[${idx}].value must be number`);
+      if (typeof def.key !== 'string') errors.push(`defense[${idx}].key must be string`);
+      if (typeof def.label !== 'string') errors.push(`defense[${idx}].label must be string`);
+      if (typeof def.total !== 'number') errors.push(`defense[${idx}].total must be number`);
+      if (typeof def.armorBonus !== 'number') errors.push(`defense[${idx}].armorBonus must be number`);
+      if (typeof def.abilityMod !== 'number') errors.push(`defense[${idx}].abilityMod must be number`);
+      if (typeof def.classDef !== 'number') errors.push(`defense[${idx}].classDef must be number`);
+      if (typeof def.miscMod !== 'number') errors.push(`defense[${idx}].miscMod must be number`);
     });
   }
 
@@ -884,12 +889,78 @@ export function validateRelationshipsPanel(panelData) {
   };
 }
 
+/**
+ * Validate abilitiesPanel contract
+ */
+export function validateAbilitiesPanel(panelData) {
+  const errors = [];
+
+  if (!panelData) {
+    errors.push('abilitiesPanel is null/undefined');
+    return { valid: false, errors };
+  }
+
+  // Abilities array
+  if (!Array.isArray(panelData.abilities)) {
+    errors.push('abilitiesPanel.abilities must be an array');
+  } else {
+    panelData.abilities.forEach((ability, idx) => {
+      if (typeof ability.key !== 'string') errors.push(`ability[${idx}].key must be string`);
+      if (typeof ability.label !== 'string') errors.push(`ability[${idx}].label must be string`);
+      if (typeof ability.value !== 'number') errors.push(`ability[${idx}].value must be number`);
+      if (typeof ability.modifier !== 'number') errors.push(`ability[${idx}].modifier must be number`);
+    });
+  }
+
+  // canEdit
+  if (typeof panelData.canEdit !== 'boolean') errors.push('canEdit must be boolean');
+
+  return {
+    valid: errors.length === 0,
+    errors
+  };
+}
+
+/**
+ * Validate skillsPanel contract
+ */
+export function validateSkillsPanel(panelData) {
+  const errors = [];
+
+  if (!panelData) {
+    errors.push('skillsPanel is null/undefined');
+    return { valid: false, errors };
+  }
+
+  // Skills array
+  if (!Array.isArray(panelData.skills)) {
+    errors.push('skillsPanel.skills must be an array');
+  } else {
+    panelData.skills.forEach((skill, idx) => {
+      if (typeof skill.key !== 'string') errors.push(`skill[${idx}].key must be string`);
+      if (typeof skill.label !== 'string') errors.push(`skill[${idx}].label must be string`);
+      if (typeof skill.bonus !== 'number') errors.push(`skill[${idx}].bonus must be number`);
+      if (typeof skill.trained !== 'boolean') errors.push(`skill[${idx}].trained must be boolean`);
+    });
+  }
+
+  // canEdit
+  if (typeof panelData.canEdit !== 'boolean') errors.push('canEdit must be boolean');
+
+  return {
+    valid: errors.length === 0,
+    errors
+  };
+}
+
 export function validatePanel(panelKey, panelData) {
   const validators = {
     healthPanel: validateHealthPanel,
     combatStatsPanel: validateCombatStatsPanel,
     defensePanel: validateDefensePanel,
     biographyPanel: validateBiographyPanel,
+    abilitiesPanel: validateAbilitiesPanel,
+    skillsPanel: validateSkillsPanel,
     inventoryPanel: validateInventoryPanel,
     talentPanel: validateTalentPanel,
     featPanel: validateFeatPanel,

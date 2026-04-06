@@ -62,6 +62,16 @@ export class HelpModeManager {
       return Promise.resolve();
     }
 
+    // Validate actor is a proper world actor with a parent collection
+    if (!actor.id || actor.collection === null) {
+      console.warn('HelpModeManager.setHelpLevel: actor is synthetic or unowned, skipping persistence', {
+        actorName: actor?.name,
+        actorId: actor?.id,
+        hasCollection: actor?.collection !== null
+      });
+      return Promise.resolve();
+    }
+
     return actor.setFlag('foundryvtt-swse', FLAG_KEY, helpLevel);
   }
 

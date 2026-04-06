@@ -523,26 +523,27 @@ export class SWSEV2CharacterSheet extends
 
     derived.defenses ??= {};
 
-    // SWSE Skills Registry (default definitions if actor.system.skills is empty)
+    // SWSE Skills Registry - CANONICAL: Must match skill keys in derived-calculator.js
+    // These are the exact skill keys computed in derived.skills[skillKey]
     const SWSE_SKILL_DEFINITIONS = {
       acrobatics: { label: 'Acrobatics', ability: 'dex' },
+      animalHandling: { label: 'Animal Handling', ability: 'cha' },
+      athleticism: { label: 'Athleticism', ability: 'str' },
+      awareness: { label: 'Awareness', ability: 'wis' },
       climb: { label: 'Climb', ability: 'str' },
+      concentration: { label: 'Concentration', ability: 'con' },
       deception: { label: 'Deception', ability: 'cha' },
-      endurance: { label: 'Endurance', ability: 'con' },
       gatherInformation: { label: 'Gather Information', ability: 'cha' },
       initiative: { label: 'Initiative', ability: 'dex' },
+      insight: { label: 'Insight', ability: 'wis' },
+      intimidate: { label: 'Intimidate', ability: 'cha' },
       jump: { label: 'Jump', ability: 'str' },
-      knowledgeBureaucracy: { label: 'Knowledge (Bureaucracy)', ability: 'int' },
-      knowledgeGalacticLore: { label: 'Knowledge (Galactic Lore)', ability: 'int' },
-      knowledgeLifeSciences: { label: 'Knowledge (Life Sciences)', ability: 'int' },
-      knowledgePhysicalSciences: { label: 'Knowledge (Physical Sciences)', ability: 'int' },
-      knowledgeSocialSciences: { label: 'Knowledge (Social Sciences)', ability: 'int' },
-      knowledgeTactics: { label: 'Knowledge (Tactics)', ability: 'int' },
-      knowledgeTechnology: { label: 'Knowledge (Technology)', ability: 'int' },
+      knowledge: { label: 'Knowledge', ability: 'int' },
       mechanics: { label: 'Mechanics', ability: 'int' },
+      medicine: { label: 'Medicine', ability: 'wis' },
       perception: { label: 'Perception', ability: 'wis' },
       persuasion: { label: 'Persuasion', ability: 'cha' },
-      pilot: { label: 'Pilot', ability: 'dex' },
+      piloting: { label: 'Piloting', ability: 'dex' },
       ride: { label: 'Ride', ability: 'dex' },
       stealth: { label: 'Stealth', ability: 'dex' },
       survival: { label: 'Survival', ability: 'wis' },
@@ -591,16 +592,20 @@ export class SWSEV2CharacterSheet extends
 
       // Get ability modifier - look it up from the abilities map
       const selectedAbility = abilitiesMap[selectedAbilityKey] ?? {};
-      const abilityMod = selectedAbility.mod ?? 0;
+      const abilityMod = Number.isFinite(selectedAbility.mod) ? selectedAbility.mod : 0;
 
       // Get halfLevel from system (this is just display, not a calculation)
-      const halfLevel = Math.floor((system.level ?? 1) / 2);
+      const halfLevel = Math.max(0, Math.floor((system.level ?? 1) / 2));
+
+      // Ensure all numeric values are safe for template rendering
+      const safeTotal = Number.isFinite(derivedData.total) ? derivedData.total : 0;
+      const safeMiscMod = Number.isFinite(skillData.miscMod) ? skillData.miscMod : 0;
 
       return {
         key,
         label: definition.label,
         // Use derived skill total (already calculated by engine), default to 0 if missing
-        total: derivedData.total ?? 0,
+        total: safeTotal,
         trained: Boolean(skillData.trained),
         focused: Boolean(skillData.focused),
         favorite: Boolean(skillData.favorite),
@@ -611,7 +616,7 @@ export class SWSEV2CharacterSheet extends
         abilityModClass: abilityMod > 0 ? 'mod--positive' : abilityMod < 0 ? 'mod--negative' : 'mod--zero',
         // Display half-level (not calculated, just displayed)
         halfLevel,
-        miscMod: skillData.miscMod ?? 0,
+        miscMod: safeMiscMod,
         extraUses: Array.isArray(skillData.extraUses) ? skillData.extraUses : []
       };
     });
@@ -2951,9 +2956,8 @@ const forcePoints = [];
     return 'Utility';
   }
 
-
   /* ============================================================
-     PHASE C: CANONICAL INVOCATION WRAPPERS
+     PHASE C/E/F/H: CANONICAL INVOCATION + ACTION ECONOMY WRAPPERS
   ============================================================ */
 
   async _runCanonicalInitiative(mode = "roll") {
@@ -2977,7 +2981,7 @@ const forcePoints = [];
   }
 
   async _runCanonicalAttack(weapon, options = {}) {
-    if (!weapon) return;
+    if (!weapon) return null;
 
     const allowed = await this._applyActionEconomy("standard", {
       source: options?.source ?? "attack",
@@ -2989,22 +2993,21 @@ const forcePoints = [];
     return await CombatExecutor.executeAttack(this.actor, weapon, options);
   }
 
-
   async _runCanonicalExtraSkillUse(skillKey, useKey, options = {}) {
-    if (!skillKey) return;
+    if (!skillKey) return null;
 
     const uses = await ExtraSkillUseRegistry.getForSkill(skillKey, { actor: this.actor });
     const selectedUse = uses.find(u => u.key === useKey) ?? uses[0] ?? null;
     if (!selectedUse) {
       ui?.notifications?.warn?.(`No extra skill uses found for ${skillKey}`);
-      return;
+      return null;
     }
 
     const trainedOnly = selectedUse.trainedOnly === true;
     const trained = this.actor?.system?.skills?.[skillKey]?.trained === true;
     if (trainedOnly && !trained) {
       ui?.notifications?.warn?.(`${selectedUse.label ?? selectedUse.name ?? "This use"} requires training.`);
-      return;
+      return null;
     }
 
     const payload = {
@@ -3022,26 +3025,6 @@ const forcePoints = [];
 
     return await rollSkillCheck(this.actor, skillKey, payload);
   }
-) {
-    if (!skillKey) return;
-
-    const uses = await ExtraSkillUseRegistry.getForSkill(skillKey, { actor: this.actor });
-    const selectedUse = uses.find(u => u.key === useKey) ?? uses[0] ?? null;
-    if (!selectedUse) {
-      ui?.notifications?.warn?.(`No extra skill uses found for ${skillKey}`);
-      return;
-    }
-
-    if (typeof SkillUseFilter?.rollSkillUseApplication === "function") {
-      return await SkillUseFilter.rollSkillUseApplication(this.actor, skillKey, selectedUse, options);
-    }
-
-    return await rollSkillCheck(this.actor, skillKey, {
-      ...options,
-      skillUse: selectedUse
-    });
-  }
-
 
   async _runCanonicalCombatAction(actionId, actionData = {}, options = {}) {
     const actionType = this._deriveCombatActionEconomyType(actionData);
@@ -3078,7 +3061,6 @@ const forcePoints = [];
     ui?.notifications?.warn?.("Combat action could not be executed.");
     return null;
   }
-
 
   async _resolveActionEconomyModules() {
     let Persistence = null;
@@ -3179,7 +3161,7 @@ const forcePoints = [];
       return true;
     }
 
-    let nextState = await Engine.consumeAction(turnState, actionType, metadata);
+    const nextState = await Engine.consumeAction(turnState, actionType, metadata);
     if (nextState === false || nextState?.permitted === false) {
       return false;
     }
@@ -3455,9 +3437,12 @@ const forcePoints = [];
 
     console.log('[PERSISTENCE] Expanded form data:', expanded);
 
+    const sanitized = this._sanitizeExpandedFormData(expanded);
+    console.log('[PERSISTENCE] Sanitized form data:', sanitized);
+
     // CRITICAL: Filter out SSOT-protected fields that cannot be updated directly
     // These fields are enforced by ActorEngine governance and must be recalculated
-    const filtered = this._filterProtectedFields(expanded);
+    const filtered = this._filterSSotProtectedFields(sanitized);
 
     if (!filtered || Object.keys(filtered).length === 0) {
       console.warn('[PERSISTENCE] No updatable data after filtering protected fields');
@@ -3525,6 +3510,64 @@ const forcePoints = [];
     return coerced;
   }
 
+
+  /**
+   * Remove placeholder/display-only values and unsafe writeback paths from expanded form data.
+   *
+   * Rules:
+   * - strip literal em dash placeholder values
+   * - strip empty-string pseudo values where appropriate
+   * - strip most flags.* writes except SWSE-owned flags
+   * - recurse and prune empty objects
+   *
+   * @param {Object} expanded
+   * @returns {Object}
+   */
+  _sanitizeExpandedFormData(expanded) {
+    const clone = foundry.utils.deepClone(expanded ?? {});
+
+    const isPlaceholder = (value) => {
+      if (value === '—') return true;
+      if (value === '––') return true;
+      if (value === '— —') return true;
+      return false;
+    };
+
+    const walk = (obj, path = '') => {
+      if (!obj || typeof obj !== 'object') return obj;
+
+      for (const key of Object.keys(obj)) {
+        const nextPath = path ? `${path}.${key}` : key;
+        const value = obj[key];
+
+        if (typeof value === 'string' && isPlaceholder(value)) {
+          delete obj[key];
+          continue;
+        }
+
+        // Strip unsafe flags by default, except explicit SWSE namespace flags.
+        if (path === 'flags') {
+          if (key !== 'swse' && key !== 'foundryvtt-swse') {
+            delete obj[key];
+            continue;
+          }
+        }
+
+        if (value && typeof value === 'object') {
+          walk(value, nextPath);
+          if (Object.keys(value).length === 0) {
+            delete obj[key];
+            continue;
+          }
+        }
+      }
+
+      return obj;
+    };
+
+    return walk(clone);
+  }
+
   /**
    * Filter out fields that are protected by SSOT (Single Source of Truth) governance.
    * These fields cannot be updated directly through ActorEngine.updateActor().
@@ -3546,7 +3589,7 @@ const forcePoints = [];
    * @returns {Object} Filtered data without SSOT-protected fields
    */
   _filterSSotProtectedFields(expanded) {
-    const filtered = foundry.utils.deepClone(expanded);
+    const filtered = foundry.utils.deepClone(expanded ?? {});
 
     // Remove protected derived fields
     if (filtered.system?.derived) {
@@ -3556,6 +3599,21 @@ const forcePoints = [];
     // Remove protected hp.max (only hp.value and hp.temp are editable)
     if (filtered.system?.hp?.max !== undefined) {
       delete filtered.system.hp.max;
+    }
+
+    // Keep only SWSE-owned flags if present
+    if (filtered.flags) {
+      const safeFlags = {};
+      if (filtered.flags.swse) safeFlags.swse = filtered.flags.swse;
+      if (filtered.flags["foundryvtt-swse"]) safeFlags["foundryvtt-swse"] = filtered.flags["foundryvtt-swse"];
+      filtered.flags = safeFlags;
+      if (Object.keys(filtered.flags).length === 0) {
+        delete filtered.flags;
+      }
+    }
+
+    if (filtered.name === '—') {
+      delete filtered.name;
     }
 
     return filtered;

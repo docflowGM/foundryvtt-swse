@@ -198,9 +198,9 @@ export class SkillUseFilter {
       return null;
     }
 
-    // Check if skill requires training
+    // Check if skill 
     if (skillKey === 'useTheForce' && !skill.trained) {
-      ui.notifications.warn('Use the Force requires training (Force Sensitivity feat)');
+      ui.notifications.warn('Use the Force  (Force Sensitivity feat)');
       return null;
     }
 

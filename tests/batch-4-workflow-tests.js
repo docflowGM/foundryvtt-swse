@@ -1,3 +1,4 @@
+import { applyHPMutation } from "../utils/hp-utils.js";
 /**
  * BATCH 4: Workflow Atomicity Tests
  *
@@ -362,7 +363,7 @@ export class BATCH4Tests {
         { type: 'class', name: 'Level_2_Class', system: {} }
       ]);
 
-      await actor.update({ 'system.hp.max': 25 });
+      await applyHPMutation(actor, { 'system.hp.max': 25 });
 
       this._log(testName, 'Level-up completed', { newLevel: 2, newHpMax: 25 });
 

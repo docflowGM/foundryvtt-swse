@@ -19,8 +19,44 @@
            style="width: {{percentage healthPanel.hp.value healthPanel.hp.max}}%;"></div>
     </div>
 
-    <div class="hp-values">
-      {{healthPanel.hp.value}} / {{healthPanel.hp.max}}
+    <div class="hp-values hp-editable">
+
+      {{!-- Current HP Input --}}
+      <div class="hp-input-row hp-current-row">
+        <label class="hp-label">Current HP</label>
+        <input type="number"
+               class="hp-input hp-current"
+               data-path="system.hp.value"
+               value="{{healthPanel.hp.value}}"
+               min="0" />
+      </div>
+
+      {{!-- Temp HP Input --}}
+      <div class="hp-input-row hp-temp-row">
+        <label class="hp-label">Temp HP</label>
+        <input type="number"
+               class="hp-input hp-temp"
+               data-path="system.hp.temp"
+               value="{{healthPanel.hp.temp}}"
+               min="0" />
+      </div>
+
+      {{!-- Max HP Input --}}
+      <div class="hp-input-row hp-max-row">
+        <label class="hp-label">Max HP</label>
+        <input type="number"
+               class="hp-input hp-max"
+               data-path="system.hp.max"
+               value="{{healthPanel.hp.max}}"
+               min="1" />
+      </div>
+
+      {{!-- Display format: "current / max" (read-only display for reference) --}}
+      <div class="hp-summary">
+        {{healthPanel.hp.value}} / {{healthPanel.hp.max}}
+      </div>
+
     </div>
   </div>
+
 </div>

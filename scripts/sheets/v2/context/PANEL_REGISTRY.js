@@ -672,6 +672,52 @@ export const PANEL_REGISTRY = {
     }
   },
 
+  abilitiesPanel: {
+    name: 'Abilities (Character Attributes)',
+    type: 'display',
+    svgBacked: false,
+    structure: 'ability scores and modifiers (STR, DEX, CON, INT, WIS, CHA)',
+    template: 'systems/foundryvtt-swse/templates/actors/character/v2/partials/abilities-panel.hbs',
+    builder: 'buildAbilitiesPanel',
+    validator: 'validateAbilitiesPanel',
+    requiredKeys: [
+      'abilities'
+    ],
+    optionalKeys: [
+      'canEdit'
+    ],
+    postRenderAssertions: {
+      critical: false,
+      rootSelector: '.abilities-panel',
+      expectedElements: {
+        '.ability-row': '6..6'  // Always exactly 6 abilities
+      }
+    }
+  },
+
+  skillsPanel: {
+    name: 'Skills',
+    type: 'display',
+    svgBacked: false,
+    structure: 'skill list with bonuses and training status',
+    template: 'systems/foundryvtt-swse/templates/actors/character/v2/partials/skills-panel.hbs',
+    builder: 'buildSkillsPanel',
+    validator: 'validateSkillsPanel',
+    requiredKeys: [
+      'skills'
+    ],
+    optionalKeys: [
+      'canEdit'
+    ],
+    postRenderAssertions: {
+      critical: false,
+      rootSelector: '.skills-panel',
+      optionalElements: {
+        '.skill-row': '0..99'
+      }
+    }
+  },
+
   racialAbilitiesPanel: {
     name: 'Racial Abilities',
     type: 'display',

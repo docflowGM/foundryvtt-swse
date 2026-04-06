@@ -386,6 +386,17 @@ export const ActorEngine = {
       // ========================================
       MutationInterceptor.setContext('ActorEngine.updateActor');
       try {
+        // DIAGNOSTIC: Verify actor is still valid before atomic update
+        if (!(actor instanceof Actor)) {
+          throw new Error(`[GUARD] actor is not an Actor instance: ${actor.constructor.name}`);
+        }
+        if (actor !== game.actors?.get?.(actor.id)) {
+          SWSELogger.warn(`[GUARD] actor reference diverged from world actor before atomic update`, {
+            actorId: actor.id,
+            actorName: actor.name
+          });
+        }
+
         // Perform safe atomic update (now authorized)
         // Pass metadata through options to Foundry hooks
         const optsWithMeta = {

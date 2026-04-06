@@ -13,30 +13,42 @@
       </span>
     </header>
 
-    <!-- HP BLOCK -->
+    <!-- HP BLOCK - Bar consolidated to header, controls remain here -->
     <div class="hp-section" data-swse-tooltip="HitPoints">
-      <div class="hp-bar-wrapper {{healthPanel.hp.stateClass}}">
-        <div class="hp-bar {{healthPanel.hp.stateClass}}">
-          <div class="hp-bar__fill {{healthPanel.hp.stateClass}}" style="width: {{healthPanel.hp.percent}}%;"></div>
-          <div class="hp-bar__label">
-            <input type="number"
-                   name="system.hp.value"
-                   value="{{healthPanel.hp.value}}"
-                   class="hp-current-input"
-                   min="0"
-                   placeholder="0"
-                   {{#unless healthPanel.hp.canEdit}}disabled{{/unless}} />
-            <span class="hp-separator">/</span>
-            <input type="number"
-                   name="system.hp.max"
-                   value="{{healthPanel.hp.max}}"
-                   class="hp-max-input"
-                   min="1"
-                   placeholder="1"
-                   {{#unless healthPanel.hp.canEdit}}disabled{{/unless}} />
-          </div>
+      <!-- HP Current / Max Inputs -->
+      <div class="hp-input-controls">
+        <div class="hp-input-group">
+          <label>Current HP:</label>
+          <input type="number"
+                 name="system.hp.value"
+                 value="{{healthPanel.hp.value}}"
+                 class="hp-current-input"
+                 min="0"
+                 placeholder="0"
+                 {{#unless healthPanel.hp.canEdit}}disabled{{/unless}} />
+        </div>
+        <div class="hp-input-group">
+          <label>Max HP:</label>
+          <input type="number"
+                 name="system.hp.max"
+                 value="{{healthPanel.hp.max}}"
+                 class="hp-max-input"
+                 min="1"
+                 placeholder="1"
+                 {{#unless healthPanel.hp.canEdit}}disabled{{/unless}} />
+        </div>
+        <div class="hp-input-group">
+          <label>Temporary HP:</label>
+          <input type="number"
+                 name="system.hp.temp"
+                 value="{{healthPanel.hp.temp}}"
+                 class="hp-temp-input"
+                 min="0"
+                 placeholder="0"
+                 {{#unless healthPanel.hp.canEdit}}disabled{{/unless}} />
         </div>
       </div>
+
       {{#if healthPanel.bonusHp.hasBonus}}
         <div class="bonus-hp-info">
           <span class="bonus-hp-label">+{{healthPanel.bonusHp.value}} bonus</span>
@@ -82,6 +94,10 @@
       <div class="condition-status-row">
         <span class="condition-status-label">Condition Track:</span>
         <span class="condition-status-value">{{healthPanel.conditionTrack.current}} / {{healthPanel.conditionTrack.max}}</span>
+      </div>
+      <div class="condition-penalty-row">
+        <span class="condition-penalty-label">Penalty:</span>
+        <span class="condition-penalty-value">{{healthPanel.currentConditionPenalty.label}}</span>
       </div>
     </div>
     {{/if}}

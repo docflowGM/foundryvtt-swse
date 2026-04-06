@@ -425,10 +425,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
   }
 
   setPosition(position) {
-    console.log("[ProgressionShell] setPosition CALLED with:", position);
-    console.log("[ProgressionShell] current position before:", this.position);
+    // console.log("[ProgressionShell] setPosition CALLED with:", position);
+    // console.log("[ProgressionShell] current position before:", this.position);
     const result = super.setPosition(position);
-    console.log("[ProgressionShell] position after setPosition:", this.position);
+    // console.log("[ProgressionShell] position after setPosition:", this.position);
     return result;
   }
 
@@ -1057,7 +1057,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
    * @private
    */
   _activateTouchSafety(element) {
-    if (!game.swse.ui.mobileMode.enabled) return;
+    if (!game?.swse?.ui?.mobileMode?.enabled) return;
 
     // Add touch-active class to action buttons while being tapped
     // Provides visual feedback for touch interactions

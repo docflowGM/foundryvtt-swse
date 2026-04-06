@@ -9,7 +9,7 @@
 
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { getHeroicLevel } from '/systems/foundryvtt-swse/scripts/actors/derived/level-split.js';
-import { FollowerCreator } from '../follower-creator.js';
+import { FollowerCreator } from '../../follower-creator.js';
 
 /**
  * Compute the follower advancement plan (which levels need to be applied)

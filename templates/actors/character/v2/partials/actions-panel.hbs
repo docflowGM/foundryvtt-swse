@@ -4,9 +4,9 @@
     <div class="muted swse-card-schema__eyebrow" style="opacity:0.85; font-size:0.85rem;">Read-only — click an item-linked action to inspect</div>
   </div>
 
-  {{#if derived.actions.groups.length}}
+  {{#if combatActions.groups.length}}
     <div class="swse-v2-actions swse-card-schema-grid">
-      {{#each derived.actions.groups}}
+      {{#each combatActions.groups}}
         <div class="swse-v2-action-group swse-ui-panel swse-card-schema swse-card-schema--enumerated swse-card-schema--filled">
           <div class="swse-v2-action-group-header swse-card-header">
             <span class="label">{{this.label}}</span>

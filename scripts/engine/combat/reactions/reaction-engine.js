@@ -326,146 +326,100 @@ export class ReactionEngine {
       ? actor.system.derived.reactions
       : [];
   }
-}
 
-/* ============================================================
-   PHASE 6/7: COMPATIBILITY SHIMS FOR CHAT-DRIVEN REACTIONS
-============================================================ */
+  /* ============================================================
+     PHASE 6/7: COMPATIBILITY SHIMS FOR CHAT-DRIVEN REACTIONS
+  ============================================================ */
 
-static async resolveReaction(options = {}) {
-  const reactionKey = options.reactionKey ?? options.key ?? "";
-  const defender = options.defender ?? options.actor ?? null;
-  const attacker = options.attacker ?? null;
-  const attackContext = options.attackContext ?? {};
-  const sourceMessage = options.sourceMessage ?? null;
+  static async _resolveReactionInternal(options = {}) {
+    const normalized = this._swseNormalizeReactionOptions(options);
+    const reactionKey = normalized.reactionKey;
+    const defender = normalized.defender;
+    const attacker = normalized.attacker ?? null;
+    const attackContext = normalized.attackContext ?? {};
 
-  if (!reactionKey || !defender) {
-    throw new Error("resolveReaction requires reactionKey and defender");
-  }
+    const entry = ReactionRegistry.getReaction?.(reactionKey) ?? null;
 
-  if (typeof this._resolveReactionInternal === "function") {
-    return await this._resolveReactionInternal({
-      reactionKey,
-      defender,
-      attacker,
-      attackContext,
-      sourceMessage
-    });
-  }
+    if (!entry) {
+      ui?.notifications?.warn?.(`No reaction handler found for ${reactionKey}`);
+      return null;
+    }
 
-  const registry = this.registry ?? game.swse?.reactionRegistry ?? null;
-  const entry =
-    registry?.get?.(reactionKey) ??
-    registry?.[reactionKey] ??
-    null;
+    if (typeof entry.handler === "function") {
+      const result = await entry.handler({
+        reactionKey,
+        defender,
+        attacker,
+        attackContext
+      });
 
-  if (!entry) {
-    ui?.notifications?.warn?.(`No reaction handler found for ${reactionKey}`);
+      return await this._finalizeReactionEvent(normalized, result ?? {});
+    }
+
+    ui?.notifications?.warn?.(`Reaction ${reactionKey} has no executable handler.`);
     return null;
   }
 
-  if (typeof entry.handler === "function") {
-    return await entry.handler({
-      reactionKey,
-      defender,
-      attacker,
-      attackContext,
-      sourceMessage
-    });
-  }
+  /* ============================================================
+     PHASE 8/9/10: EVENT-BOUND REACTION FINALIZATION BRIDGE
+  ============================================================ */
 
-  ui?.notifications?.warn?.(`Reaction ${reactionKey} has no executable handler.`);
-  return null;
-}
-
-static async _resolveReactionInternal(options = {}) {
-  const reactionKey = options.reactionKey;
-  const defender = options.defender;
-  const attacker = options.attacker ?? null;
-  const attackContext = options.attackContext ?? {};
-
-  const registry = this.registry ?? game.swse?.reactionRegistry ?? null;
-  const entry =
-    registry?.get?.(reactionKey) ??
-    registry?.[reactionKey] ??
-    null;
-
-  if (!entry) {
-    ui?.notifications?.warn?.(`No reaction handler found for ${reactionKey}`);
-    return null;
-  }
-
-  if (typeof entry.handler === "function") {
-    return await entry.handler({
-      reactionKey,
-      defender,
-      attacker,
-      attackContext
-    });
-  }
-
-  ui?.notifications?.warn?.(`Reaction ${reactionKey} has no executable handler.`);
-  return null;
-}
-
-/* ============================================================
-   PHASE 8/9/10: EVENT-BOUND REACTION FINALIZATION BRIDGE
-============================================================ */
-
-static async _finalizeReactionEvent(options = {}, result = {}) {
-  const attackContext = options.attackContext ?? {};
-  const eventId =
-    attackContext.eventId ??
-    attackContext.attackEventId ??
-    options.eventId ??
-    null;
-
-  if (!eventId || !globalThis.SWSEChatEventBridge) return result;
-
-  const state =
-    result.eventState ??
-    result.state ??
-    (result.success === true ? "success" :
-     result.success === false ? "failure" :
-     "final");
-
-  const resolutionLabel =
-    result.resolutionLabel ??
-    (state === "success" ? "Reaction Resolved" :
-     state === "failure" ? "Reaction Failed" :
-     "Final Result");
-
-  const reactionResultText =
-    result.reactionResultText ??
-    result.message ??
-    result.summary ??
-    "";
-
-  await globalThis.SWSEChatEventBridge.updateMessageCard(eventId, {
-    eventState: "final",
-    resolutionLabel,
-    reactionLabel: "",
-    reactionResultText: reactionResultText || resolutionLabel
-  });
-
-  return result;
-}
-
-/* ============================================================
-   PHASE 11: REACTION ENGINE SAFETY FALLBACKS
-============================================================ */
-
-static _swseNormalizeReactionOptions(options = {}) {
-  return {
-    reactionKey: options.reactionKey ?? options.key ?? "",
-    defender: options.defender ?? options.actor ?? null,
-    attacker: options.attacker ?? null,
-    attackContext: options.attackContext ?? {},
-    sourceMessage: options.sourceMessage ?? null,
-    eventId:
+  static async _finalizeReactionEvent(options = {}, result = {}) {
+    const attackContext = options.attackContext ?? {};
+    const eventId =
+      attackContext.eventId ??
+      attackContext.attackEventId ??
       options.eventId ??
-      options.attackContext?.eventId ??
-      options.attackContext?.attackEventId ??
-      null
-  };
+      null;
+
+    if (!eventId || !globalThis.SWSEChatEventBridge) return result;
+
+    const state =
+      result.eventState ??
+      result.state ??
+      (result.success === true ? "success" :
+       result.success === false ? "failure" :
+       "final");
+
+    const resolutionLabel =
+      result.resolutionLabel ??
+      (state == "success" ? "Reaction Resolved" :
+       state == "failure" ? "Reaction Failed" :
+       "Final Result");
+
+    const reactionResultText =
+      result.reactionResultText ??
+      result.resultMessage ??
+      result.message ??
+      result.summary ??
+      "";
+
+    await globalThis.SWSEChatEventBridge.updateMessageCard(eventId, {
+      eventState: "final",
+      resolutionLabel,
+      reactionLabel: "",
+      reactionResultText: reactionResultText || resolutionLabel
+    });
+
+    return result;
+  }
+
+  /* ============================================================
+     PHASE 11: REACTION ENGINE SAFETY FALLBACKS
+  ============================================================ */
+
+  static _swseNormalizeReactionOptions(options = {}) {
+    return {
+      reactionKey: options.reactionKey ?? options.key ?? "",
+      defender: options.defender ?? options.actor ?? null,
+      attacker: options.attacker ?? null,
+      attackContext: options.attackContext ?? {},
+      sourceMessage: options.sourceMessage ?? null,
+      eventId:
+        options.eventId ??
+        options.attackContext?.eventId ??
+        options.attackContext?.attackEventId ??
+        null
+    };
+  }
 }

@@ -480,6 +480,23 @@
   margin-right: 6px;
 }
 
+/* Ensure button text sits above SVG frame */
+.prog-intro-continue-btn {
+  position: relative;
+}
+
+.prog-intro-continue-btn span,
+.prog-intro-continue-btn i,
+.prog-intro-continue-btn::before {
+  position: relative;
+  z-index: 2;
+}
+
+/* Enhance text visibility */
+.prog-intro-continue-btn:hover span {
+  text-shadow: 0 0 10px rgba(150, 240, 255, 0.8);
+}
+
 /* ============================================================================
    Animations
    ============================================================================ */

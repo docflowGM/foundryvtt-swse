@@ -1,0 +1,2 @@
+Hardened _classifyActionType against numeric/non-string use.dc values
+Missing: C:\Users\Owner\Documents\GitHub\foundryvtt-swse\scripts\sheets\v2\builders\PanelContextBuilder.js

@@ -3,7 +3,7 @@
  *
  * PHASE 4: Makes hidden but implemented mentor advisory modes discoverable and usable.
  *
- * The system has 33 complete mentor advisory stubs (stored in data/dialogue/mentors/*/advisory_stub.json)
+ * The system has 33 complete mentor advisory stubs (stored in data/dialogue/mentors/{mentorId}/advisory_stub.json)
  * but they are not yet integrated into the mentor system. This coordinator:
  *
  * 1. Loads mentor advisory profiles and scaffolds

@@ -82,11 +82,32 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
 
     // Remove any non-serializable properties that might be inherited from parent
     // This ensures AppV2 serialization check passes
+    const cleanValue = (val, depth = 0) => {
+      if (depth > 10) return val; // Prevent infinite recursion
+      if (typeof val === 'function') return undefined;
+      if (val && typeof val === 'object') {
+        if (val.constructor === Function) return undefined;
+        if (Array.isArray(val)) {
+          return val.map(v => cleanValue(v, depth + 1)).filter(v => v !== undefined);
+        }
+        // Clean nested objects
+        const cleaned = {};
+        for (const [k, v] of Object.entries(val)) {
+          if (typeof v !== 'function' && !(v && typeof v === 'object' && v.constructor === Function)) {
+            cleaned[k] = cleanValue(v, depth + 1);
+          }
+        }
+        return cleaned;
+      }
+      return val;
+    };
+
     for (const key of Object.keys(context)) {
       const value = context[key];
-      // Skip known non-serializable types
       if (typeof value === 'function' || (value && typeof value === 'object' && value.constructor === Function)) {
         delete context[key];
+      } else if (value && typeof value === 'object') {
+        context[key] = cleanValue(value);
       }
     }
 

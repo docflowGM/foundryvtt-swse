@@ -1156,13 +1156,13 @@ export class SWSERoll {
     }
 
     // PHASE 4E: Check skill training requirement
-    // If skill requires training (trainedOnly/untrained=false) and actor is untrained,
+    // If skill  (trainedOnly/untrained=false) and actor is untrained,
     // check if TREAT_SKILL_AS_TRAINED rule applies
     const requiresTraining = !skill.untrained;  // trainedOnly = !untrained
     if (requiresTraining && !skill.trained) {
       const context = new ResolutionContext(actor);
       if (!context.hasRule(RULES.TREAT_SKILL_AS_TRAINED, { skillId: skillKey })) {
-        ui.notifications.warn(`${skillKey} requires training.`);
+        ui.notifications.warn(`${skillKey} .`);
         return null;
       }
     }

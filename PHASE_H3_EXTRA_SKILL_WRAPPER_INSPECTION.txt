@@ -1,2 +1,0 @@
-
-  async _runCanonicalExtraSkillUse(skillKey, useKey, options = {}

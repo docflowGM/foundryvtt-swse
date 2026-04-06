@@ -263,7 +263,7 @@
         "SaveFailed": "Save failed! ({total} vs DC {dc})",
         "DiceRollFailed": "Dice roll failed: {error}",
         "SkillNotFound": "Skill {skill} not found",
-        "UseForceRequiresTraining": "Use the Force requires training!"
+        "UseForceRequiresTraining": "Use the Force !"
       },
       "Items": {
         "NotOwnedByActor": "This item is not owned by an actor.",

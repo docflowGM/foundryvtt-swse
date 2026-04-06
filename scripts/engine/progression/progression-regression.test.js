@@ -14,7 +14,7 @@
 import { FeatSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-slot-validator.js";
 import { FeatSlotSchema } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-slot-schema.js";
 import { TalentCadenceEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/talents/talent-cadence-engine.js";
-import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-service.js";
+import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
 import { MilestoneComputer } from "/systems/foundryvtt-swse/scripts/engine/suggestion/milestone-computer.js";
 
 describe("Progression System — Phase 5 Regression Suite", () => {

@@ -1,2 +1,0 @@
-Inserted state-aware flourish mount block into holo-roll.hbs using generic top/bottom wrapping
-Phase 2 CSS already present

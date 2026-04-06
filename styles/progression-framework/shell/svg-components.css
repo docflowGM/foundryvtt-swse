@@ -316,3 +316,53 @@
   position: relative;
   min-height: 200px;
 }
+
+/* ============================================================================
+   GLOBAL: BUTTON TEXT LAYERING — Ensure text always sits above SVG frames
+   ============================================================================ */
+
+.progression-shell .prog-svgbtn--primary,
+.progression-shell .prog-svgbtn--secondary,
+.progression-shell .prog-mentor__ask,
+.progression-shell button[class*="prog-svgbtn"] {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+/* Force text content above SVG background */
+.progression-shell .prog-svgbtn--primary::before,
+.progression-shell .prog-svgbtn--secondary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Text spans and labels always render on top */
+.progression-shell .prog-svgbtn--primary span,
+.progression-shell .prog-svgbtn--secondary span,
+.progression-shell .prog-mentor__ask span,
+.progression-shell button[class*="prog-svgbtn"] span,
+.progression-shell button[class*="prog-svgbtn"] i,
+.progression-shell .prog-svgbtn--primary i,
+.progression-shell .prog-svgbtn--secondary i {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+  color: inherit;
+}
+
+/* Enhance text visibility on hover */
+.progression-shell .prog-svgbtn--primary:hover span,
+.progression-shell .prog-svgbtn--secondary:hover span,
+.progression-shell .prog-mentor__ask:hover span {
+  text-shadow: 0 0 8px rgba(100, 220, 255, 0.6);
+}

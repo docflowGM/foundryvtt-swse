@@ -87,7 +87,39 @@ export async function applyActorUpdateAtomic(actor, changes, options = {}) {
     throw new Error('applyActorUpdateAtomic: changes must be an object');
   }
 
+  // Ensure actor is a valid Foundry Actor instance
+  if (!actor.id || typeof actor.update !== 'function') {
+    throw new Error(`applyActorUpdateAtomic: actor is not a valid Actor instance (id: ${actor.id}, updateFn: ${typeof actor.update})`);
+  }
+
+  // RECOVERY: If actor appears to be synthetic/corrupted, refetch from world
+  if (actor.collection === null && actor.id) {
+    swseLogger.warn('applyActorUpdateAtomic: actor collection is null, attempting to refetch from world', {
+      actorId: actor.id,
+      actorName: actor.name
+    });
+    const worldActor = game.actors?.get?.(actor.id);
+    if (worldActor && worldActor.collection !== null) {
+      swseLogger.log('applyActorUpdateAtomic: recovered actor from world collection');
+      actor = worldActor;
+    } else {
+      throw new Error(`applyActorUpdateAtomic: actor "${actor.name}" is synthetic/unowned and not recoverable`);
+    }
+  }
+
   try {
+    // DIAGNOSTIC: Verify actor is valid before update
+    const actorDiagnostics = {
+      isActorInstance: actor instanceof Actor,
+      constructorName: actor.constructor.name,
+      actorId: actor.id,
+      isSameAsWorldActor: actor === game.actors?.get?.(actor.id),
+      collectionType: actor.collection ? 'world' : 'null',
+      updatePayloadKeys: Object.keys(changes || {})
+    };
+
+    swseLogger.debug('applyActorUpdateAtomic PRE-UPDATE diagnostics:', actorDiagnostics);
+
     // Log the update for debugging
     if (game.settings?.get('foundryvtt-swse', 'devMode')) {
       swseLogger.debug('Applying atomic actor update:', {
@@ -99,16 +131,84 @@ export async function applyActorUpdateAtomic(actor, changes, options = {}) {
 
     const sanitized = coerceSpeedIntegers(actor, changes);
 
+    // DIAGNOSTIC: Check sanitized payload for illegal values
+    const flatPayload = foundry.utils.flattenObject(sanitized);
+    const problematicKeys = [];
+    for (const [key, value] of Object.entries(flatPayload)) {
+      if (value instanceof Actor || value instanceof Item) {
+        problematicKeys.push(`${key}: contains ${value.constructor.name} instance`);
+      }
+      if (Array.isArray(value) && value.some(v => v instanceof Actor || v instanceof Item)) {
+        problematicKeys.push(`${key}: array contains document instances`);
+      }
+      if (value && typeof value === 'object' && value.collection) {
+        problematicKeys.push(`${key}: appears to be collection-like`);
+      }
+    }
+
+    if (problematicKeys.length > 0) {
+      swseLogger.error('applyActorUpdateAtomic: Detected problematic payload values:', problematicKeys);
+    }
+
+    swseLogger.debug('applyActorUpdateAtomic: Sanitized payload keys:', Object.keys(flatPayload));
+
     // Perform the update
     const result = await actor.update(sanitized, options);
 
     return result;
   } catch (err) {
+    // CRITICAL: Handle "You may only push instances of Actor to the Actors collection" error
+    // This occurs when the actor reference is invalid during update. Attempt recovery.
+    if (err?.message?.includes('You may only push instances of Actor') && actor?.id) {
+      swseLogger.warn('applyActorUpdateAtomic: Actors collection error detected, attempting recovery with world actor', {
+        actorId: actor.id,
+        actorName: actor.name,
+        originalError: err.message,
+        actorCollection: actor.collection ? 'world' : 'null',
+        actorType: actor.type,
+        actorOwnership: actor.ownership
+      });
+
+      try {
+        const worldActor = game.actors?.get?.(actor.id);
+        if (worldActor && worldActor !== actor) {
+          swseLogger.log('applyActorUpdateAtomic: Recovered stale actor reference, retrying with world actor', {
+            actorId: actor.id,
+            actorName: actor.name
+          });
+          const sanitized = coerceSpeedIntegers(worldActor, changes);
+          const result = await worldActor.update(sanitized, options);
+          return result;
+        } else if (worldActor && worldActor === actor) {
+          // Actor references are the same, so recovery won't help
+          // Re-throw with more diagnostic info
+          swseLogger.error('applyActorUpdateAtomic: Actor is same reference as world actor, update() still failed', {
+            actorId: actor.id,
+            actorName: actor.name,
+            actorCollection: actor.collection ? 'world' : 'null'
+          });
+        } else {
+          // Actor not found in world collection
+          swseLogger.error('applyActorUpdateAtomic: Actor not found in world collection for recovery', {
+            actorId: actor.id,
+            actorName: actor.name
+          });
+        }
+      } catch (recoveryErr) {
+        swseLogger.error('applyActorUpdateAtomic: Recovery attempt failed', {
+          actorId: actor.id,
+          actorName: actor.name,
+          recoveryError: recoveryErr.message
+        });
+      }
+    }
+
     swseLogger.error('applyActorUpdateAtomic failed:', {
       actor: actor.name,
       actorId: actor.id,
       changes,
-      error: err
+      error: err,
+      errorMessage: err?.message
     });
     throw err;
   }

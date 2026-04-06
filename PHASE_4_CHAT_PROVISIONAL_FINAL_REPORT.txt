@@ -1,7 +1,0 @@
-Added resolution/card context helpers to swse-roll-engine.js
-Added chatResolution and chatCard context alongside chatState
-Inserted provisional/final resolution strip into holo-roll.hbs
-Extended card shell with resolution state class
-Inserted reaction window label region into footer
-Inserted provisional/final notes into footer
-Appended Phase 4 block to chat-holo-flourishes.css

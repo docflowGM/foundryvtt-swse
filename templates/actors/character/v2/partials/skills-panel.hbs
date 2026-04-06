@@ -8,13 +8,13 @@
   <div class="skills-grid-header swse-grid-header">
     <div class="col-favorite">★</div>
     <div class="col-skill-name">Skill</div>
-    <div class="col-skill-bonus">Bonus</div>
     <div class="col-equals">=</div>
     <div class="col-ability-mod">Ability</div>
     <div class="col-half-level">½ Lvl</div>
     <div class="col-trained">Trained</div>
     <div class="col-focus">Focus</div>
     <div class="col-misc">Misc</div>
+    <div class="col-total">Total</div>
     <div class="col-roll">Roll</div>
   </div>
 
@@ -25,7 +25,7 @@
 
       <div class="skills-grid-row swse-row-surface" data-skill="{{skill.key}}"
            data-skill-extra-uses="{{skill.extraUses.length}}"
-           data-swse-tooltip="{{#switch skill.key}}{{#case 'acrobatics'}}Acrobatics{{/case}}{{#case 'climb'}}Climb{{/case}}{{#case 'deception'}}Deception{{/case}}{{#case 'endurance'}}Endurance{{/case}}{{#case 'gatherInformation'}}GatherInformation{{/case}}{{#case 'jump'}}Jump{{/case}}{{#case 'knowledge'}}Knowledge{{/case}}{{#case 'mechanics'}}Mechanics{{/case}}{{#case 'perception'}}Perception{{/case}}{{#case 'persuasion'}}Persuasion{{/case}}{{#case 'pilot'}}Pilot{{/case}}{{#case 'ride'}}Ride{{/case}}{{#case 'stealth'}}Stealth{{/case}}{{#case 'survival'}}Survival{{/case}}{{#case 'swim'}}Swim{{/case}}{{#case 'treatInjury'}}TreatInjury{{/case}}{{#case 'useComputer'}}UseComputer{{/case}}{{#case 'useTheForce'}}UseTheForce{{/case}}{{/switch}}">
+           data-swse-tooltip="{{skill.label}}">
 
         <!-- Favorite Star (with expand/collapse affordance if extra uses available) -->
         <div class="col-favorite">
@@ -69,17 +69,6 @@
                   data-skill="{{skill.key}}"
                   title="Click to roll {{skill.label}}">
             {{skill.label}}
-          </button>
-        </div>
-
-        <!-- Skill Bonus (clickable to open roll dialog) -->
-        <div class="col-skill-bonus">
-          <button type="button"
-                  class="skill-bonus-btn number-display {{#if (gt skill.total 0)}}positive{{else if (lt skill.total 0)}}negative{{else}}zero{{/if}}"
-                  data-action="roll-skill"
-                  data-skill="{{skill.key}}"
-                  title="Roll {{skill.label}}">
-            {{numberFormat skill.total decimals=0 sign=true}}
           </button>
         </div>
 
@@ -139,6 +128,14 @@
                  title="Miscellaneous modifier (feats, conditions, etc.)">
         </div>
 
+        <!-- Skill Total Display -->
+        <div class="col-total">
+          <span class="number-display {{#if (gt skill.total 0)}}positive{{else if (lt skill.total 0)}}negative{{else}}zero{{/if}}"
+                title="Total skill bonus">
+            {{numberFormat skill.total decimals=0 sign=true}}
+          </span>
+        </div>
+
         <!-- PHASE 6: Mobile Tap-to-Play Roll Button -->
         <div class="col-roll">
           <button type="button"
@@ -177,7 +174,7 @@
                   <div class="use-label-line">
                     <span class="extra-use-label">{{use.label}}</span>
                     {{#if use.isBlocked}}
-                      <span class="use-status use-status--blocked" title="Requires training">🔒</span>
+                      <span class="use-status use-status--blocked" title="">🔒</span>
                     {{else if (and use.requiresTrained use.skillTrained)}}
                       <span class="use-status use-status--trained" title="Trained use">⭐</span>
                     {{/if}}
@@ -253,7 +250,7 @@
 
 .skills-grid-header {
   display: grid;
-  grid-template-columns: 0.5fr 2fr 1fr 0.3fr 1fr 0.8fr 0.8fr 0.8fr 1fr 0.6fr;
+  grid-template-columns: 0.5fr 2fr 0.3fr 1fr 0.8fr 0.8fr 0.8fr 1fr 1fr 0.6fr;
   gap: 8px;
   padding: 8px 0;
   border-bottom: 2px solid rgba(0, 234, 255, 0.3);
@@ -283,7 +280,7 @@
 
 .skills-grid-row {
   display: grid;
-  grid-template-columns: 0.5fr 2fr 1fr 0.3fr 1fr 0.8fr 0.8fr 0.8fr 1fr 0.6fr;
+  grid-template-columns: 0.5fr 2fr 0.3fr 1fr 0.8fr 0.8fr 0.8fr 1fr 1fr 0.6fr;
   gap: 8px;
   align-items: center;
   padding: 6px 8px;

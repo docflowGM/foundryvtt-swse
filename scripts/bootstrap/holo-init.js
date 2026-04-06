@@ -115,7 +115,7 @@ Hooks.on('renderChatMessageHTML', (message, html, data) => {
    PHASE 6: REACTION CHAT BUTTON RESOLUTION BRIDGE
 ============================================================ */
 
-Hooks.on("renderChatMessage", (message, html) => {
+Hooks.on("renderChatMessageHTML", (message, html) => {
   html[0]?.querySelectorAll?.("[data-swse-reaction-key]").forEach(button => {
     if (button.dataset.swseReactionBound === "true") return;
     button.dataset.swseReactionBound = "true";
@@ -295,8 +295,8 @@ Hooks.on("createChatMessage", (message) => {
   }
 });
 
-Hooks.on("renderChatMessage", (message, html) => {
-  const root = html?.[0];
+Hooks.on("renderChatMessageHTML", (message, html) => {
+  const root = html instanceof HTMLElement ? html : html?.[0];
   if (!root) return;
 
   const eventCard = root.querySelector("[data-swse-event-id]");

@@ -64,9 +64,38 @@
         </div>
         <div class="header-field">
           <label>Destiny Points:</label>
-          <span class="destiny-display">{{derived.destinyPoints.value}} / {{derived.destinyPoints.max}}</span>
+          <span class="destiny-display">{{destinyPointsValue}} / {{destinyPointsMax}}</span>
         </div>
       </div>
+
+      <!-- RESOURCE STRIP: Compact HP / FP / DP Display -->
+      <div class="header-resources-strip">
+        <div class="resource-item resource-item--hp">
+          <span class="resource-label">HP</span>
+          <div class="resource-bar {{healthPanel.hp.stateClass}}">
+            <div class="resource-bar__fill {{healthPanel.hp.stateClass}}" style="width: {{healthPanel.hp.percent}}%;"></div>
+            <span class="resource-bar__text">{{healthPanel.hp.value}} / {{healthPanel.hp.max}}</span>
+          </div>
+        </div>
+        <div class="resource-item">
+          <span class="resource-label">FP</span>
+          <span class="resource-value">{{forcePointsValue}} / {{forcePointsMax}}</span>
+        </div>
+        <div class="resource-item">
+          <span class="resource-label">DP</span>
+          <span class="resource-value">{{destinyPointsValue}} / {{destinyPointsMax}}</span>
+        </div>
+      </div>
+
+      <!-- HEADER SECOND WIND: Condensed control -->
+      {{#if headerSecondWind.canUse}}
+      <div class="header-second-wind">
+        <div class="sw-label">Second Wind</div>
+        <div class="sw-uses">{{headerSecondWind.usesRemaining}} use{{#unless (eq headerSecondWind.usesRemaining 1)}}s{{/unless}}</div>
+        <div class="sw-healing">Heals <span class="healing-amount">{{headerSecondWind.healingAmount}} HP</span></div>
+        <button type="button" class="sw-use-btn" data-action="use-second-wind" {{#unless headerSecondWind.canUse}}disabled{{/unless}}>Use</button>
+      </div>
+      {{/if}}
     </div>
 
     <!-- RIGHT: DEFENSE STATS -->
@@ -74,7 +103,7 @@
       <div class="swse-stat"><div class="label">FORT</div><div class="value">{{derived.defenses.fortitude.total}}</div></div>
       <div class="swse-stat"><div class="label">REF</div><div class="value">{{derived.defenses.reflex.total}}</div></div>
       <div class="swse-stat"><div class="label">WILL</div><div class="value">{{derived.defenses.will.total}}</div></div>
-      <div class="swse-stat"><div class="label">DT</div><div class="value">{{derived.damage.threshold}}</div></div>
+      <div class="swse-stat"><div class="label">DT</div><div class="value">{{derived.damageThreshold}}</div></div>
     </div>
   </header>
 
@@ -103,7 +132,6 @@
     <a class="item" data-action="tab" data-tab="gear" data-group="primary" data-tab-group="primary">Gear</a>
     <a class="item" data-action="tab" data-tab="biography" data-group="primary" data-tab-group="primary">Biography</a>
     <a class="item" data-action="tab" data-tab="relationships" data-group="primary" data-tab-group="primary">Relationships</a>
-    <a class="item" data-action="tab" data-tab="notes" data-group="primary" data-tab-group="primary">Notes</a>
   </nav>
 
   <!-- BODY -->
@@ -114,7 +142,6 @@
       <div class="swse-v2-sheet-grid">
         <div class="swse-v2-left flexcol">
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/hp-condition-panel.hbs"}}
-          {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/combat-stats-panel.hbs"}}
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/second-wind-panel.hbs"}}
           {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/defenses-panel.hbs"}}
         </div>
@@ -149,7 +176,7 @@
         {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/attacks-panel.hbs"}}
 
         <!-- CENTER: Combat Actions Panel (main functional area) -->
-        {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/combat-actions-panel.hbs"}}
+        {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/actions-panel.hbs"}}
 
         <!-- NOTES: Special Combat Actions (compact) -->
         {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/special-combat-actions-panel.hbs"}}
@@ -185,9 +212,6 @@
     <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="talents">
       {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/feats-panel.hbs"}}
       {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/talents-panel.hbs"}}
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/talents-known-panel.hbs"}}
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/languages-panel.hbs"}}
-      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/starship-maneuvers-known-panel.hbs"}}
     </section>
 
     <!-- FORCE TAB -->
@@ -204,6 +228,8 @@
     <!-- GEAR TAB -->
     <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="gear">
       {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/inventory-panel.hbs"}}
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/armor-summary-panel.hbs"}}
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/equipment-ledger-panel.hbs"}}
     </section>
 
     <!-- BIOGRAPHY TAB (merged with former Record tab) -->
@@ -221,11 +247,8 @@
       </div>
       <!-- Narrative Biography -->
       {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/biography-log-panel.hbs"}}
-      <!-- Equipment & Armor Summary -->
-      <div class="record-equipment-section flexcol">
-        {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/armor-summary-panel.hbs"}}
-        {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/equipment-ledger-panel.hbs"}}
-      </div>
+      <!-- Languages & Background -->
+      {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/languages-panel.hbs"}}
     </section>
 
     <!-- RELATIONSHIPS TAB -->
@@ -233,17 +256,268 @@
       {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/relationships-panel.hbs"}}
     </section>
 
-    <!-- NOTES TAB -->
-    <section class="tab flexcol" data-group="primary" data-tab-group="primary" data-tab="notes">
-      <div class="holo-panel">
-        <div class="section-bar">
-          <h3 class="section-header">Character Notes</h3>
-        </div>
-        <textarea name="system.notes" class="notes-textarea" placeholder="Add character notes here...">{{actor.system.notes}}</textarea>
-      </div>
-    </section>
-
   </section>
 
+  <!-- MODAL DIALOG FOR FEAT/TALENT SELECTION -->
+  <div id="item-selection-modal" class="item-selection-modal" style="display: none;">
+    <div class="modal-overlay"></div>
+    <div class="modal-dialog">
+      <svg class="modal-frame" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid meet">
+        <!-- Background panel -->
+        <rect x="10" y="10" width="580" height="280" fill="rgba(10, 25, 50, 0.95)" stroke="rgba(0, 255, 136, 0.3)" stroke-width="2" rx="8"/>
+
+        <!-- Title bar accent -->
+        <line x1="10" y1="70" x2="590" y2="70" stroke="rgba(0, 255, 136, 0.2)" stroke-width="1"/>
+
+        <!-- Button frame accents -->
+        <rect x="200" y="220" width="140" height="45" fill="none" stroke="rgba(0, 200, 255, 0.3)" stroke-width="1" rx="4"/>
+        <rect x="360" y="220" width="140" height="45" fill="none" stroke="rgba(0, 200, 255, 0.3)" stroke-width="1" rx="4"/>
+      </svg>
+
+      <div class="modal-content">
+        <h2 id="modal-title" class="modal-title"></h2>
+        <p id="modal-message" class="modal-message"></p>
+
+        <div class="modal-buttons">
+          <button id="modal-btn-yes" class="modal-button modal-button-yes" data-action="modal-yes">
+            Yes, Browse Compendium
+          </button>
+          <button id="modal-btn-no" class="modal-button modal-button-no" data-action="modal-no">
+            No, Create Blank
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </section>
+
+<style>
+/* HEADER SECOND WIND - Enhanced Inviting Style */
+.header-second-wind {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 8px 12px;
+  align-items: center;
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(0, 100, 80, 0.15), rgba(0, 150, 100, 0.1));
+  border: 1px solid rgba(0, 200, 120, 0.3);
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.header-second-wind .sw-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.9;
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.header-second-wind .sw-uses {
+  font-size: 0.7rem;
+  opacity: 0.75;
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.header-second-wind .sw-healing {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.header-second-wind .healing-amount {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #00ff88;
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+  letter-spacing: 0.02em;
+}
+
+.header-second-wind .sw-use-btn {
+  grid-column: 3;
+  grid-row: 1 / 3;
+  padding: 8px 12px;
+  background: rgba(0, 200, 150, 0.2);
+  border: 1px solid rgba(0, 200, 150, 0.5);
+  color: #00ff88;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.header-second-wind .sw-use-btn:hover:not(:disabled) {
+  background: rgba(0, 255, 136, 0.25);
+  border-color: rgba(0, 255, 136, 0.7);
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.3);
+}
+
+.header-second-wind .sw-use-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* TABS - Utility Button Style */
+.sheet-tabs.tabs {
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  flex-wrap: wrap;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  border-top: 1px solid rgba(0, 255, 200, 0.15);
+  border-bottom: 1px solid rgba(0, 255, 200, 0.15);
+}
+
+.sheet-tabs.tabs .item {
+  padding: 8px 14px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(0, 255, 200, 0.25);
+  color: rgba(200, 220, 255, 0.85);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.sheet-tabs.tabs .item:hover:not(.active) {
+  background: rgba(0, 100, 150, 0.2);
+  border-color: rgba(0, 200, 255, 0.4);
+  color: rgba(150, 200, 255, 1);
+}
+
+.sheet-tabs.tabs .item.active {
+  background: rgba(0, 150, 150, 0.3);
+  border-color: rgba(0, 255, 200, 0.6);
+  color: #00ffff;
+  box-shadow: 0 0 8px rgba(0, 255, 200, 0.2);
+}
+
+/* HEADER LAYOUT - Three-column structure */
+.sheet-header {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.sheet-header-left {
+  flex-shrink: 0;
+}
+
+.sheet-header-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.sheet-header-right {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* HEADER RESOURCES STRIP - Layout and spacing */
+.header-resources-strip {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  margin-top: 8px;
+  padding: 0;
+}
+
+.resource-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: stretch;
+}
+
+.resource-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.8;
+}
+
+.resource-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #00ffff;
+  text-align: center;
+}
+
+/* HEADER HP BAR - Consolidated to header */
+.header-resources-strip .resource-item--hp {
+  grid-column: 1;
+}
+
+.resource-bar {
+  position: relative;
+  height: 28px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(100, 255, 200, 0.3);
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.resource-bar__fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(100, 255, 200, 0.4), rgba(100, 255, 200, 0.2));
+  transition: width 0.3s ease;
+  z-index: 0;
+}
+
+.resource-bar__fill.critical {
+  background: linear-gradient(90deg, rgba(255, 80, 80, 0.5), rgba(255, 100, 100, 0.3));
+  border: none;
+}
+
+.resource-bar__fill.wounded {
+  background: linear-gradient(90deg, rgba(255, 150, 80, 0.4), rgba(255, 150, 80, 0.2));
+}
+
+.resource-bar__fill.healthy {
+  background: linear-gradient(90deg, rgba(100, 255, 200, 0.4), rgba(100, 255, 200, 0.2));
+}
+
+.resource-bar__text {
+  position: relative;
+  z-index: 1;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #00ffff;
+  text-shadow: 0 0 4px rgba(0, 255, 200, 0.4);
+  white-space: nowrap;
+}
+</style>
 </form>

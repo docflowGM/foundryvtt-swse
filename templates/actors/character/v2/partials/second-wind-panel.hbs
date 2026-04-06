@@ -51,3 +51,123 @@
 
   </div>
 </section>
+
+<style>
+/* SECOND WIND PANEL - Enhanced Display */
+.swse-second-wind-panel .sw-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px;
+}
+
+/* Healing Display - Large, Green, Centered */
+.swse-second-wind-panel .sw-healing-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(0, 100, 80, 0.15), rgba(0, 150, 100, 0.1));
+  border: 1px solid rgba(0, 200, 120, 0.3);
+  border-radius: 8px;
+}
+
+.swse-second-wind-panel .sw-healing-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.8;
+}
+
+.swse-second-wind-panel .sw-healing-value {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #00ff88;
+  text-shadow: 0 0 12px rgba(0, 255, 136, 0.4);
+  letter-spacing: 0.02em;
+}
+
+/* Uses Tracker - Clear Charge Indicators */
+.swse-second-wind-panel .sw-uses-tracker {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px;
+}
+
+.swse-second-wind-panel .sw-charge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(0, 150, 100, 0.15);
+  border: 2px solid rgba(0, 150, 100, 0.4);
+  transition: all 0.3s ease;
+}
+
+.swse-second-wind-panel .sw-charge.active {
+  background: rgba(0, 255, 136, 0.3);
+  border-color: rgba(0, 255, 136, 0.7);
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
+}
+
+/* Action Buttons */
+.swse-second-wind-panel .sw-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.swse-second-wind-panel .sw-recover-btn {
+  flex: 1;
+  padding: 10px 12px;
+  background: rgba(0, 200, 150, 0.2);
+  border: 1px solid rgba(0, 200, 150, 0.5);
+  color: #00ff88;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.swse-second-wind-panel .sw-recover-btn:hover:not(:disabled) {
+  background: rgba(0, 255, 136, 0.25);
+  border-color: rgba(0, 255, 136, 0.7);
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.3);
+}
+
+.swse-second-wind-panel .sw-recover-btn:disabled,
+.swse-second-wind-panel .sw-recover-btn.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: rgba(100, 100, 100, 0.15);
+  border-color: rgba(100, 100, 100, 0.3);
+  color: rgba(200, 200, 200, 0.6);
+}
+
+.swse-second-wind-panel .sw-rest-btn {
+  padding: 10px 12px;
+  background: rgba(100, 150, 200, 0.1);
+  border: 1px solid rgba(100, 150, 200, 0.3);
+  color: rgba(150, 200, 255, 0.9);
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.swse-second-wind-panel .sw-rest-btn:hover:not(:disabled) {
+  background: rgba(100, 150, 200, 0.2);
+  border-color: rgba(100, 150, 200, 0.6);
+  box-shadow: 0 0 8px rgba(100, 150, 200, 0.2);
+}
+</style>

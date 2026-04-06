@@ -269,13 +269,13 @@ export class StarshipManeuverManager {
         // Check if trained in Use the Force
         const useTheForce = actor.system.skills?.useTheForce;
         if (!useTheForce || !useTheForce.trained) {
-          reasons.push('Requires training in Use the Force');
+          reasons.push(' in Use the Force');
         }
       } else if (prereq === 'pilot-trained') {
         // Check if trained in Pilot
         const pilot = actor.system.skills?.pilot;
         if (!pilot || !pilot.trained) {
-          reasons.push('Requires training in Pilot');
+          reasons.push(' in Pilot');
         }
       }
       // Add more prerequisite types as needed

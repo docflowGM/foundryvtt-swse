@@ -7,7 +7,7 @@
  * CANONICAL: Single entry point for suggestion context assembly across all progression flows.
  */
 
-import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-service.js";
+import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
 
 export class SuggestionContextBuilder {
   /**

@@ -15,7 +15,7 @@
 
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { getHeroicLevel } from '/systems/foundryvtt-swse/scripts/actors/derived/level-split.js';
-import { FollowerCreator } from '../follower-creator.js';
+import { FollowerCreator } from '../../follower-creator.js';
 
 /**
  * Derive follower statistics at a target level from persistent identity.

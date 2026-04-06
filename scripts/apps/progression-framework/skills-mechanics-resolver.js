@@ -56,7 +56,7 @@ export function getArmorCheckPenaltyLabel(skillKey) {
 /**
  * Check if a skill is trained-only
  * @param {Object} skillData - Skill data from registry (has 'trained' field)
- * @returns {boolean} True if this skill requires training
+ * @returns {boolean} True if this skill 
  */
 export function isTrainedOnlySkill(skillData) {
   return skillData?.trained === true;

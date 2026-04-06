@@ -74,6 +74,7 @@ export class TemplateSelectionDialog extends HandlebarsApplicationMixin(DialogV2
 
     return new Promise((resolve) => {
       const dialog = new this({
+        ...this.DEFAULT_OPTIONS,
         actor,
         resolve,
       });

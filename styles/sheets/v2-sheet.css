@@ -340,6 +340,109 @@ form.swse-sheet-ui .sheet-body > .tab:not(.active) {
   text-shadow: 0 0 12px rgba(124, 232, 255, 0.2);
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   HEADER RESOURCE STRIP (HP / FP / DP)
+   ═══════════════════════════════════════════════════════════════ */
+
+.swse-sheet .header-resources-strip {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  padding: 6px 0;
+  border-top: 1px solid rgba(124, 232, 255, 0.15);
+  border-bottom: 1px solid rgba(124, 232, 255, 0.15);
+  margin: 6px 0;
+}
+
+.swse-sheet .header-resources-strip .resource-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  flex: 0 1 auto;
+}
+
+.swse-sheet .header-resources-strip .resource-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(124, 232, 255, 0.8);
+  opacity: 0.9;
+}
+
+.swse-sheet .header-resources-strip .resource-value {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #b7f4ff;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HEADER SECOND WIND (CONDENSED)
+   ═══════════════════════════════════════════════════════════════ */
+
+.swse-sheet .header-second-wind {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  padding: 8px;
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.08), rgba(76, 175, 80, 0.04));
+  border: 1px solid rgba(76, 175, 80, 0.2);
+  border-radius: 4px;
+  margin: 6px 0;
+}
+
+.swse-sheet .header-second-wind .sw-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #7ce8ff;
+}
+
+.swse-sheet .header-second-wind .sw-uses {
+  font-size: 0.8rem;
+  color: rgba(214, 245, 255, 0.8);
+}
+
+.swse-sheet .header-second-wind .sw-healing {
+  font-size: 0.75rem;
+  color: rgba(76, 175, 80, 0.9);
+  margin: 2px 0;
+}
+
+.swse-sheet .header-second-wind .healing-amount {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #4CAF50;
+  text-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+}
+
+.swse-sheet .header-second-wind .sw-use-btn {
+  margin-top: 4px;
+  padding: 4px 12px;
+  background: rgba(76, 175, 80, 0.2);
+  border: 1px solid rgba(76, 175, 80, 0.4);
+  color: #4CAF50;
+  font-weight: 700;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.swse-sheet .header-second-wind .sw-use-btn:hover:not(:disabled) {
+  background: rgba(76, 175, 80, 0.3);
+  border-color: rgba(76, 175, 80, 0.6);
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
+}
+
+.swse-sheet .header-second-wind .sw-use-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Right column: defense stats */
 .swse-sheet .sheet-header-right {
   flex: 0 0 auto;
@@ -1235,6 +1338,51 @@ form.swse-sheet-ui .sheet-body > .tab:not(.active) {
   font-size: 0.85rem;
   color: rgba(0, 255, 136, 0.7);
   opacity: 0.8;
+}
+
+.swse-sheet .hp-display-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  border-radius: 3px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #7ce8ff;
+}
+
+.swse-sheet .hp-display-value,
+.swse-sheet .hp-display-max {
+  min-width: 3ch;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 2px;
+  padding: 4px 6px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #7ce8ff;
+}
+
+.swse-sheet .hp-display-value:focus,
+.swse-sheet .hp-display-max:focus {
+  outline: none;
+  border-color: rgba(0, 255, 136, 0.6);
+  background: rgba(0, 255, 136, 0.08);
+}
+
+.swse-sheet .hp-display-value:disabled,
+.swse-sheet .hp-display-max:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.swse-sheet .hp-display-separator {
+  opacity: 0.6;
+  font-weight: 600;
 }
 
 /* ---- XP BAR: PROGRESS STATES ---- */
@@ -2526,6 +2674,27 @@ select option:checked {
   font-weight: 700;
   color: #fff;
   min-width: 2ch;
+}
+
+.swse-sheet .condition-penalty-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.swse-sheet .condition-penalty-label {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.75;
+}
+
+.swse-sheet .condition-penalty-value {
+  font-weight: 700;
+  color: #fff;
+  min-width: 4ch;
 }
 
 /* ------------------------------------------------------------------ */
@@ -4030,5 +4199,1037 @@ select option:checked {
 
   .swse-sheet .combat-turn-controls {
     flex: 0 1 auto;
+  }
+}
+
+/* ========================================================================== */
+/* PHASE 3: LAYOUT + DENSITY OPTIMIZATION */
+/* ========================================================================== */
+
+/* --- ABILITIES CONTAINER: COMPACT GRID LAYOUT --- */
+.swse-sheet .abilities-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 6px;
+  padding: 8px 0;
+}
+
+.swse-sheet .ability-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 8px;
+  border: 1px solid rgba(0, 255, 136, 0.15);
+  border-radius: 6px;
+  background: rgba(0, 20, 30, 0.2);
+  transition: all 0.2s ease;
+}
+
+.swse-sheet .ability-row:hover {
+  background: rgba(0, 30, 50, 0.3);
+  border-color: rgba(0, 255, 136, 0.25);
+}
+
+.swse-sheet .ability-collapsed {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.swse-sheet .ability-label {
+  font-weight: 700;
+  opacity: 0.85;
+  min-width: 80px;
+  flex: 1;
+}
+
+.swse-sheet .ability-total {
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: #00eaff;
+  min-width: 40px;
+  text-align: center;
+  padding: 2px 6px;
+  background: rgba(0, 234, 255, 0.08);
+  border-radius: 3px;
+}
+
+.swse-sheet .ability-collapsed .ability-mod {
+  min-width: 40px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.swse-sheet .ability-expanded {
+  display: none;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  font-size: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.swse-sheet .ability-expanded.active {
+  display: flex;
+}
+
+.swse-sheet .roll-btn {
+  padding: 4px 6px;
+  font-size: 0.85rem;
+  min-width: 36px;
+}
+
+/* --- BIOGRAPHY TAB: PORTRAIT SIZING --- */
+.swse-sheet .record-sheet-grid {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 12px;
+  padding: 8px;
+}
+
+.swse-sheet .portrait-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 8px 4px;
+}
+
+.swse-sheet .portrait-image {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid rgba(0, 255, 136, 0.3);
+  transition: all 0.2s ease;
+}
+
+.swse-sheet .portrait-image:hover {
+  border-color: rgba(0, 255, 136, 0.6);
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.2);
+}
+
+/* --- BIO-PROFILE-PANEL: 2-COLUMN GRID --- */
+.swse-sheet .bio-profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 0;
+}
+
+.swse-sheet .bio-row {
+  display: contents;
+}
+
+.swse-sheet .bio-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0;
+}
+
+.swse-sheet .bio-textarea {
+  grid-column: 1 / -1;
+  min-height: 80px;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 255, 136, 0.15);
+  border-radius: 4px;
+  color: inherit;
+  font-family: inherit;
+  resize: vertical;
+}
+
+/* --- GEAR TAB: BUTTON LAYERING & READABILITY --- */
+.swse-sheet .inventory-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 2px solid rgba(0, 255, 136, 0.15);
+  position: relative;
+  z-index: 2;
+}
+
+.swse-sheet .inventory-group-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  position: relative;
+  z-index: 3;
+}
+
+.swse-sheet .inventory-add-btn {
+  position: relative;
+  z-index: 3;
+  padding: 4px 8px;
+  background: rgba(0, 100, 120, 0.6);
+  border: 1px solid rgba(0, 255, 136, 0.25);
+  border-radius: 3px;
+  color: #00ff88;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.swse-sheet .inventory-add-btn:hover {
+  background: rgba(0, 140, 160, 0.8);
+  border-color: rgba(0, 255, 136, 0.5);
+  box-shadow: 0 2px 6px rgba(0, 255, 136, 0.15);
+}
+
+.swse-sheet .inventory-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+/* --- GLOBAL PANEL DENSITY --- */
+.swse-sheet .holo-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+}
+
+.swse-sheet .section-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(0, 255, 136, 0.1);
+  flex-shrink: 0;
+}
+
+.swse-sheet .section-header {
+  font-weight: 700;
+  font-size: 0.95rem;
+  opacity: 0.95;
+  margin: 0;
+}
+
+/* Ensure tab sections use consistent flex behavior */
+.swse-sheet .tab {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* --- RESPONSIVE: Adjust grid columns for smaller screens --- */
+@media (max-width: 1024px) {
+  .swse-sheet .abilities-container {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+
+  .swse-sheet .record-sheet-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .swse-sheet .bio-profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .swse-sheet .inventory-cards {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .swse-sheet .abilities-container {
+    grid-template-columns: 1fr;
+  }
+
+  .swse-sheet .record-sheet-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .swse-sheet .portrait-image {
+    width: 150px;
+    height: 150px;
+  }
+
+  .swse-sheet .inventory-group-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .swse-sheet .inventory-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   GLOBAL: REMOVE NESTED BOXES INSIDE SVG FRAMES
+============================================================ */
+
+/* === TABS: Kill boxes around all text in SVG tab frames === */
+.swse-sheet .sheet-tabs .item,
+.swse-sheet .sheet-tabs a,
+.swse-sheet .sheet-tabs button {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+}
+
+.swse-sheet .sheet-tabs .item.active,
+.swse-sheet .sheet-tabs a.active,
+.swse-sheet .sheet-tabs button.active {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.swse-sheet .sheet-tabs .item:focus,
+.swse-sheet .sheet-tabs a:focus,
+.swse-sheet .sheet-tabs button:focus {
+  outline: none !important;
+}
+
+.swse-sheet .sheet-tabs .item::before,
+.swse-sheet .sheet-tabs .item::after,
+.swse-sheet .sheet-tabs a::before,
+.swse-sheet .sheet-tabs a::after,
+.swse-sheet .sheet-tabs button::before,
+.swse-sheet .sheet-tabs button::after {
+  display: none !important;
+}
+
+/* === GLOBAL: Kill nested boxes inside ANY SVG-framed container === */
+.swse-sheet [class*="svg"] button,
+.swse-sheet [class*="frame"] button,
+.swse-sheet [class*="holo"] button,
+.swse-sheet .math-pill button,
+.swse-sheet .condition-slot button,
+.swse-sheet button.icon-btn {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+}
+
+/* === Text elements in SVG containers === */
+.swse-sheet svg ~ span,
+.swse-sheet svg ~ label,
+.swse-sheet svg ~ div {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* === Direct children of SVG-adjacent elements === */
+.swse-sheet .math-pill span,
+.swse-sheet .condition-slot span,
+.swse-sheet [class*="holo"] span,
+.swse-sheet [class*="frame"] span {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  display: inline !important;
+}
+
+/* === Active state for all text in SVG containers === */
+.swse-sheet .sheet-tabs .item.active,
+.swse-sheet .sheet-tabs a.active {
+  color: #d9faff;
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.9);
+}
+
+/* ============================================================
+   MODAL DIALOG STYLES
+============================================================ */
+
+.item-selection-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.item-selection-modal.hidden {
+  display: none !important;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+}
+
+.modal-dialog {
+  position: relative;
+  z-index: 10001;
+  width: 600px;
+  max-width: 90vw;
+  background: rgba(10, 25, 50, 0.95);
+  border: 2px solid rgba(0, 255, 136, 0.3);
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  font-family: 'Courier New', monospace;
+  color: #e0e0e0;
+}
+
+.modal-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.modal-content {
+  position: relative;
+  z-index: 2;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #00ff88;
+  margin: 0 0 15px 0;
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+  letter-spacing: 1px;
+}
+
+.modal-message {
+  font-size: 1rem;
+  color: #d0d0d0;
+  margin: 0 0 30px 0;
+  line-height: 1.6;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.modal-button {
+  flex: 1;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  border: 2px solid rgba(0, 200, 255, 0.5);
+  background: rgba(0, 20, 40, 0.6);
+  color: #00c8ff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.modal-button:hover {
+  background: rgba(0, 50, 80, 0.8);
+  border-color: rgba(0, 255, 136, 0.6);
+  color: #00ff88;
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+}
+
+.modal-button:active {
+  transform: scale(0.98);
+}
+
+.modal-button-yes {
+  border-color: rgba(0, 255, 136, 0.4);
+  color: #00ff88;
+}
+
+.modal-button-yes:hover {
+  background: rgba(0, 80, 40, 0.7);
+  border-color: rgba(0, 255, 136, 0.8);
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+}
+
+.modal-button-no {
+  border-color: rgba(255, 100, 100, 0.4);
+  color: #ff8080;
+}
+
+.modal-button-no:hover {
+  background: rgba(80, 20, 20, 0.7);
+  border-color: rgba(255, 100, 100, 0.8);
+  color: #ffb0b0;
+  box-shadow: 0 0 20px rgba(255, 100, 100, 0.3);
+}
+
+/* ============================================================
+   GLOBAL FRAMED CONTROL NORMALIZATION SYSTEM
+   Unified SVG frame + label alignment for all controls
+============================================================ */
+
+/* ═══════════════════════════════════════════════════════════════
+   BASE FRAMED CONTROL PATTERN
+   Defines reusable centering and alignment for all SVG-backed controls
+═══════════════════════════════════════════════════════════════ */
+
+.swse-framed-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 28px;
+  min-width: 50px;
+  padding: 4px 12px;
+  font-family: 'Courier New', monospace;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.swse-framed-control__label {
+  display: inline;
+  position: relative;
+  z-index: 1;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  color: inherit;
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TAB CONTROLS - Normalize text fit and frame alignment
+═══════════════════════════════════════════════════════════════ */
+
+.swse-sheet .sheet-tabs {
+  display: flex;
+  gap: 6px;
+  flex: 0 0 auto;
+  padding: 8px 12px;
+}
+
+/* Tab items: ensure text fits inside frame without inner box */
+.swse-sheet .sheet-tabs .item,
+.swse-sheet .sheet-tabs a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 32px;
+  padding: 6px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1;
+  white-space: nowrap;
+  /* Kill all nested box styling */
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+}
+
+/* Active tab: add glow instead of inner box */
+.swse-sheet .sheet-tabs .item.active,
+.swse-sheet .sheet-tabs a.active {
+  color: #d9faff;
+  text-shadow: 0 0 12px rgba(0, 255, 200, 0.8);
+}
+
+/* Tab hover state */
+.swse-sheet .sheet-tabs .item:hover,
+.swse-sheet .sheet-tabs a:hover {
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 0 8px rgba(0, 200, 255, 0.4);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BUTTON CONTROLS - Normalize utility buttons and icon buttons
+═══════════════════════════════════════════════════════════════ */
+
+/* Standard utility buttons */
+.swse-sheet button[type="button"],
+.swse-sheet .swse-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 28px;
+  padding: 4px 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  background: transparent !important;
+  border: 1px solid rgba(0, 200, 255, 0.3) !important;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  /* Kill nested boxes */
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.swse-sheet button[type="button"]:hover,
+.swse-sheet .swse-btn:hover {
+  border-color: rgba(0, 255, 136, 0.5) !important;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
+}
+
+.swse-sheet button[type="button"]:active,
+.swse-sheet .swse-btn:active {
+  transform: scale(0.98);
+}
+
+/* Icon buttons */
+.swse-sheet button.icon-btn,
+.swse-sheet .icon-button {
+  min-width: 28px;
+  padding: 4px 6px;
+  font-size: 0.75rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PILL & CHIP CONTROLS - Normalize math-pill, badges, status chips
+═══════════════════════════════════════════════════════════════ */
+
+/* Math pills: ensure content is centered and frame is large enough */
+.swse-sheet .math-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 26px;
+  padding: 4px 8px;
+  gap: 4px;
+  background: rgba(0, 234, 255, 0.05);
+  border: 1px solid rgba(0, 234, 255, 0.2);
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: 'Courier New', monospace;
+}
+
+.swse-sheet .math-pill.compact {
+  min-height: 24px;
+  padding: 3px 6px;
+}
+
+/* Math pill inputs: ensure they don't overflow */
+.swse-sheet .math-pill input {
+  width: 45px;
+  min-width: 40px;
+  height: auto;
+  line-height: 1.2;
+  text-align: center;
+  font-weight: 700;
+  background: transparent;
+  border: none;
+  color: inherit;
+  padding: 2px 4px;
+}
+
+/* Math pill labels: no box styling */
+.swse-sheet .math-pill label {
+  display: inline;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  font-size: 0.75rem;
+  opacity: 0.7;
+  margin: 0;
+  padding: 0;
+}
+
+/* Derived pills: column layout with centered text */
+.swse-sheet .math-pill.derived {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 50px;
+  min-height: 50px;
+  padding: 6px 8px;
+}
+
+.swse-sheet .math-pill.derived label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  opacity: 0.8;
+}
+
+.swse-sheet .math-pill.derived .pill-value {
+  font-weight: 800;
+  font-size: 1rem;
+  color: #00eaff;
+}
+
+/* Status badges and condition chips */
+.swse-sheet .badge,
+.swse-sheet [class*="chip"],
+.swse-sheet [class*="condition-step"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 24px;
+  padding: 4px 8px;
+  background: rgba(0, 234, 255, 0.08);
+  border: 1px solid rgba(0, 234, 255, 0.2);
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  white-space: nowrap;
+  /* Kill nested boxes */
+  outline: none !important;
+  border-radius: 12px;
+}
+
+.swse-sheet .badge:active,
+.swse-sheet [class*="chip"]:active {
+  outline: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CONDITION CONTROLS - Slots and chevrons
+═══════════════════════════════════════════════════════════════ */
+
+/* Condition slots: centered text in frame */
+.swse-sheet .condition-slot,
+.swse-sheet .condition-chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-width: 28px;
+  min-height: 28px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1;
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.2);
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  /* Kill nested boxes */
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.swse-sheet .condition-slot:hover,
+.swse-sheet .condition-chevron:hover {
+  border-color: rgba(0, 255, 136, 0.5);
+  background: rgba(0, 255, 136, 0.08);
+  color: rgba(0, 200, 255, 0.9);
+}
+
+.swse-sheet .condition-slot.active,
+.swse-sheet .condition-chevron.active {
+  border-color: rgba(0, 255, 136, 0.6);
+  background: rgba(0, 255, 136, 0.15);
+  color: rgba(0, 200, 255, 1);
+  font-weight: 700;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PANEL FRAME CONTAINERS - Ensure SVG frames fit content
+═══════════════════════════════════════════════════════════════ */
+
+/* SVG frame layer: sits behind content, not above it */
+.swse-sheet .swse-panel__frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Panel content: proper positioning relative to frame */
+.swse-sheet .swse-panel__content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ACTIVE/HOVER STATE FINAL OVERRIDE
+   Ensures no floating mini-boxes appear on any control
+═══════════════════════════════════════════════════════════════ */
+
+/* Kill any pseudo-elements that might create boxes */
+.swse-sheet .sheet-tabs a::before,
+.swse-sheet .sheet-tabs a::after,
+.swse-sheet .math-pill::before,
+.swse-sheet .math-pill::after,
+.swse-sheet button::before,
+.swse-sheet button::after,
+.swse-sheet .badge::before,
+.swse-sheet .badge::after {
+  display: none !important;
+}
+
+/* Ensure no box-shadow creates floating effects */
+.swse-sheet .sheet-tabs a:focus,
+.swse-sheet .math-pill:focus,
+.swse-sheet button:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SVG LAYER + SLOT ANCHOR NORMALIZATION (Sheet-Wide)
+   Fixes compressed background SVGs and floating foreground SVGs
+═══════════════════════════════════════════════════════════════ */
+
+/* === SLOT-ANCHOR PATTERN ===
+   Establishes consistent positioning for background SVG slots
+   and foreground framed controls
+*/
+
+/* Panels with decorative SVG backgrounds and framed slot content */
+.swse-sheet .v3-panel,
+.swse-sheet .holo-panel,
+.swse-sheet .svg-panel-frame,
+.swse-sheet .swse-ui-panel,
+.swse-sheet .abilities-section,
+.swse-sheet .feats-section,
+.swse-sheet .talents-section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  /* Ensure panel holds its size, not compressed by flex-shrink */
+  flex-shrink: 0;
+  min-height: auto;
+}
+
+/* === BACKGROUND SVG LAYER ===
+   Ensures background SVGs don't compress and sit behind content
+*/
+
+.swse-sheet .swse-panel__frame,
+.swse-sheet .panel__background,
+.swse-sheet [class*="background"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  /* Prevent SVG from being compressed by flex layout */
+  flex-shrink: 0;
+}
+
+/* === FOREGROUND CONTENT LAYER ===
+   Ensures foreground controls sit in proper slot positions
+*/
+
+.swse-sheet .swse-panel__content,
+.swse-sheet .panel__content,
+.swse-sheet [class*="content"] {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  pointer-events: auto;
+}
+
+/* === SECTION HEADER + BUTTON SLOT ===
+   Fixes header button positioning in relation to SVG frame
+*/
+
+.swse-sheet .section-bar,
+.swse-sheet .section-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  /* Ensure header doesn't shrink */
+  flex-shrink: 0;
+}
+
+.swse-sheet .section-bar button,
+.swse-sheet .section-bar .swse-btn,
+.swse-sheet .section-bar [class*="add-"] {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+}
+
+/* === GRID/CARD CONTAINER ===
+   Fixes floating foreground controls in card grids
+*/
+
+.swse-sheet .feat-grid,
+.swse-sheet .talent-card-list,
+.swse-sheet .swse-dense-grid,
+.swse-sheet .ability-grid,
+.swse-sheet [class*="card-grid"] {
+  display: grid;
+  grid-auto-flow: row;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 0;
+  z-index: 1;
+}
+
+/* === CARD/SLOT CONTAINER ===
+   Individual framed controls anchored to proper slot positions
+*/
+
+.swse-sheet .feat-card,
+.swse-sheet .talent-card,
+.swse-sheet .swse-dense-card,
+.swse-sheet .ability-card,
+.swse-sheet .swse-card-schema {
+  position: relative;
+  z-index: 1;
+  /* Ensure cards don't overlap SVG frames */
+  flex-shrink: 0;
+}
+
+/* === EMPTY STATE / CHOICE SLOT ===
+   Placeholder text layers properly
+*/
+
+.swse-sheet .empty-state,
+.swse-sheet .choice-slot,
+.swse-sheet [class*="placeholder"] {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: 20px;
+}
+
+/* === PREVENT Z-INDEX STACKING CONFLICTS ===
+   Ensure SVG layers don't float on top of content
+*/
+
+.swse-sheet svg {
+  position: relative;
+  z-index: 0;
+}
+
+.swse-sheet .swse-ui-panel {
+  position: relative;
+  z-index: 1;
+}
+
+/* === FIX COMPRESSED SVG BEHAVIOR ===
+   Restore SVG size and prevent flex-based squishing
+*/
+
+.swse-sheet [class*="svg"],
+.swse-sheet [class*="frame"],
+.swse-sheet .holo-panel::before,
+.swse-sheet .svg-panel-frame::before {
+  /* SVG containers should not be flex-shrunk */
+  flex-shrink: 0;
+}
+
+/* === FIX FLOATING FOREGROUND BEHAVIOR ===
+   Anchor foreground controls to their intended slots
+*/
+
+.swse-sheet .abilities-section,
+.swse-sheet .feats-section,
+.swse-sheet .talents-section {
+  /* These sections need to be positioning contexts */
+  position: relative;
+}
+
+.swse-sheet .abilities-section .section-bar,
+.swse-sheet .feats-section .section-bar,
+.swse-sheet .talents-section .section-bar {
+  /* Headers anchor buttons properly within section */
+  position: relative;
+  z-index: 2;
+}
+
+/* === TALENT TREE GROUP ===
+   Normalize grouped talent layout
+*/
+
+.swse-sheet .talent-tree-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.swse-sheet .talent-tree-label {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE ADJUSTMENTS
+═══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .swse-sheet .sheet-tabs .item,
+  .swse-sheet .sheet-tabs a {
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    min-height: 28px;
+  }
+
+  .swse-sheet button[type="button"],
+  .swse-sheet .swse-btn {
+    padding: 3px 8px;
+    font-size: 0.75rem;
+  }
+
+  .swse-sheet .math-pill {
+    min-height: 24px;
+    padding: 3px 6px;
   }
 }

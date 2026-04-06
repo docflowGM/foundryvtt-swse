@@ -294,19 +294,19 @@ export class SWSEV2CharacterSheet extends
     // Phase 6: Capture UI state before rerender so it can be restored after
     this.uiStateManager.captureState();
 
-    console.log(`[SWSEV2CharacterSheet] RENDER START (#${this._renderCount}) position:`, this.position);
+    // console.log(`[SWSEV2CharacterSheet] RENDER START (#${this._renderCount}) position:`, this.position);
     const result = await super.render(...args);
-    console.log(`[SWSEV2CharacterSheet] RENDER COMPLETE (#${this._renderCount}) position:`, this.position);
+    // console.log(`[SWSEV2CharacterSheet] RENDER COMPLETE (#${this._renderCount}) position:`, this.position);
 
     this._isRendering = false;
     return result;
   }
 
   setPosition(position) {
-    console.log("[SWSEV2CharacterSheet] setPosition CALLED with:", position);
-    console.log("[SWSEV2CharacterSheet] current position before:", this.position);
+    // console.log("[SWSEV2CharacterSheet] setPosition CALLED with:", position);
+    // console.log("[SWSEV2CharacterSheet] current position before:", this.position);
     const result = super.setPosition(position);
-    console.log("[SWSEV2CharacterSheet] position after setPosition:", this.position);
+    // console.log("[SWSEV2CharacterSheet] position after setPosition:", this.position);
     return result;
   }
 
@@ -339,7 +339,7 @@ export class SWSEV2CharacterSheet extends
     if (shouldCenter) {
       // Center once per open session, then let AppV2 own future drag/resize state
       const pos = computeCenteredPosition(900, 950);
-      console.log("[SheetPosition] FIRST RENDER THIS SESSION: Setting centered position", pos);
+      // console.log("[SheetPosition] FIRST RENDER THIS SESSION: Setting centered position", pos);
       this.setPosition({ left: pos.left, top: pos.top, width: 900, height: 950 });
       this._shouldCenterOnRender = false;
     }
@@ -352,10 +352,10 @@ export class SWSEV2CharacterSheet extends
     this.uiStateManager.restoreState();
 
     // ── DIAGNOSTIC: Log that render completed ──
-    console.log(
-      "[SheetPosition] _onRender complete | shouldCenter =", shouldCenter,
-      "| position.left =", this.position?.left
-    );
+    // console.log(
+    //   "[SheetPosition] _onRender complete | shouldCenter =", shouldCenter,
+    //   "| position.left =", this.position?.left
+    // );
 
     // Abort previous render's listeners to prevent duplicate event handlers
     this._renderAbort?.abort();
@@ -366,23 +366,23 @@ export class SWSEV2CharacterSheet extends
     // The form wraps all sheet content, so use the form as the activation root instead
     let root = this.element?.[0] ?? this.element;
 
-    console.log('[LIFECYCLE] _onRender this.element resolved to:', {
-      tag: root?.tagName,
-      classes: root?.className
-    });
+    // console.log('[LIFECYCLE] _onRender this.element resolved to:', {
+    //   tag: root?.tagName,
+    //   classes: root?.className
+    // });
 
     // If this.element is not the form, try to find the actual form element
     if (root && root.tagName !== 'FORM') {
-      console.log('[LIFECYCLE] Root is not a FORM, searching for form parent/in DOM');
+      // console.log('[LIFECYCLE] Root is not a FORM, searching for form parent/in DOM');
       const formParent = root.closest("form");
       if (formParent) {
-        console.log('[LIFECYCLE] Found form via closest()');
+        // console.log('[LIFECYCLE] Found form via closest()');
         root = formParent;
       } else {
         const appRoot = this.element instanceof HTMLElement ? this.element : this.element?.[0];
         const localForm = appRoot?.closest?.("form") ?? appRoot?.querySelector?.("form.swse-character-sheet-form") ?? null;
         if (localForm) {
-          console.log('[LIFECYCLE] Found form within this app root');
+          // console.log('[LIFECYCLE] Found form within this app root');
           root = localForm;
         }
       }
@@ -393,12 +393,12 @@ export class SWSEV2CharacterSheet extends
       return;
     }
 
-    console.log('[LIFECYCLE] _onRender calling activateListeners with root element:', {
-      rootTag: root.tagName,
-      rootClasses: root.className,
-      rootId: root.id,
-      isForm: root.tagName === 'FORM'
-    });
+    // console.log('[LIFECYCLE] _onRender calling activateListeners with root element:', {
+    //   rootTag: root.tagName,
+    //   rootClasses: root.className,
+    //   rootId: root.id,
+    //   isForm: root.tagName === 'FORM'
+    // });
 
     // Phase 9: Apply help level CSS class to root for tier-aware affordance visibility
     HelpModeManager.getLevels().forEach(level => {
@@ -521,28 +521,52 @@ export class SWSEV2CharacterSheet extends
     derived.encumbrance.mediumLoad ??= 0;
     derived.encumbrance.heavyLoad ??= 0;
 
+    // Ensure defenses object has all required defense keys initialized to defaults
+    // CRITICAL: Use long-form keys (fortitude, reflex, will) matching DerivedCalculator output
+    // The template references {{derived.defenses.fortitude.total}} etc., not short form
     derived.defenses ??= {};
+    const defenseNames = [
+      { key: 'fortitude', label: 'Fortitude' },
+      { key: 'reflex', label: 'Reflex' },
+      { key: 'will', label: 'Will' }
+    ];
+    for (const { key } of defenseNames) {
+      // Initialize as nested object with .total property matching DerivedCalculator structure
+      if (!derived.defenses[key]) {
+        derived.defenses[key] = { total: 10 };
+      } else if (typeof derived.defenses[key] === 'number') {
+        // If it was a number (old format), convert to nested structure
+        const val = derived.defenses[key];
+        derived.defenses[key] = { total: val };
+      }
+    }
+    // Ensure damage threshold has default
+    // CRITICAL: DerivedCalculator stores at derived.damageThreshold (flat), not derived.damage.threshold
+    derived.damageThreshold ??= 10;  // Default to Fortitude value (usually 10)
+    derived.damage ??= {};
+    derived.damage.conditionHelpless ??= false;
 
-    // SWSE Skills Registry (default definitions if actor.system.skills is empty)
+    // SWSE Skills Registry - CANONICAL: Must match skill keys in derived-calculator.js
+    // These are the exact skill keys computed in derived.skills[skillKey]
     const SWSE_SKILL_DEFINITIONS = {
       acrobatics: { label: 'Acrobatics', ability: 'dex' },
+      animalHandling: { label: 'Animal Handling', ability: 'cha' },
+      athleticism: { label: 'Athleticism', ability: 'str' },
+      awareness: { label: 'Awareness', ability: 'wis' },
       climb: { label: 'Climb', ability: 'str' },
+      concentration: { label: 'Concentration', ability: 'con' },
       deception: { label: 'Deception', ability: 'cha' },
-      endurance: { label: 'Endurance', ability: 'con' },
       gatherInformation: { label: 'Gather Information', ability: 'cha' },
       initiative: { label: 'Initiative', ability: 'dex' },
+      insight: { label: 'Insight', ability: 'wis' },
+      intimidate: { label: 'Intimidate', ability: 'cha' },
       jump: { label: 'Jump', ability: 'str' },
-      knowledgeBureaucracy: { label: 'Knowledge (Bureaucracy)', ability: 'int' },
-      knowledgeGalacticLore: { label: 'Knowledge (Galactic Lore)', ability: 'int' },
-      knowledgeLifeSciences: { label: 'Knowledge (Life Sciences)', ability: 'int' },
-      knowledgePhysicalSciences: { label: 'Knowledge (Physical Sciences)', ability: 'int' },
-      knowledgeSocialSciences: { label: 'Knowledge (Social Sciences)', ability: 'int' },
-      knowledgeTactics: { label: 'Knowledge (Tactics)', ability: 'int' },
-      knowledgeTechnology: { label: 'Knowledge (Technology)', ability: 'int' },
+      knowledge: { label: 'Knowledge', ability: 'int' },
       mechanics: { label: 'Mechanics', ability: 'int' },
+      medicine: { label: 'Medicine', ability: 'wis' },
       perception: { label: 'Perception', ability: 'wis' },
       persuasion: { label: 'Persuasion', ability: 'cha' },
-      pilot: { label: 'Pilot', ability: 'dex' },
+      piloting: { label: 'Piloting', ability: 'dex' },
       ride: { label: 'Ride', ability: 'dex' },
       stealth: { label: 'Stealth', ability: 'dex' },
       survival: { label: 'Survival', ability: 'wis' },
@@ -591,16 +615,20 @@ export class SWSEV2CharacterSheet extends
 
       // Get ability modifier - look it up from the abilities map
       const selectedAbility = abilitiesMap[selectedAbilityKey] ?? {};
-      const abilityMod = selectedAbility.mod ?? 0;
+      const abilityMod = Number.isFinite(selectedAbility.mod) ? selectedAbility.mod : 0;
 
       // Get halfLevel from system (this is just display, not a calculation)
-      const halfLevel = Math.floor((system.level ?? 1) / 2);
+      const halfLevel = Math.max(0, Math.floor((system.level ?? 1) / 2));
+
+      // Ensure all numeric values are safe for template rendering
+      const safeTotal = Number.isFinite(derivedData.total) ? derivedData.total : 0;
+      const safeMiscMod = Number.isFinite(skillData.miscMod) ? skillData.miscMod : 0;
 
       return {
         key,
         label: definition.label,
         // Use derived skill total (already calculated by engine), default to 0 if missing
-        total: derivedData.total ?? 0,
+        total: safeTotal,
         trained: Boolean(skillData.trained),
         focused: Boolean(skillData.focused),
         favorite: Boolean(skillData.favorite),
@@ -611,7 +639,7 @@ export class SWSEV2CharacterSheet extends
         abilityModClass: abilityMod > 0 ? 'mod--positive' : abilityMod < 0 ? 'mod--negative' : 'mod--zero',
         // Display half-level (not calculated, just displayed)
         halfLevel,
-        miscMod: skillData.miscMod ?? 0,
+        miscMod: safeMiscMod,
         extraUses: Array.isArray(skillData.extraUses) ? skillData.extraUses : []
       };
     });
@@ -699,13 +727,13 @@ export class SWSEV2CharacterSheet extends
 
     // Build headerDefenses array from derived.defenses object
     // Convert {fort: 10, ref: 10, will: 10, flatFooted: 10} → [{key: 'fort', label: 'Fortitude', total: 10, ...}, ...]
-    const defenseKeys = [
+    const defenseDefs = [
       { key: 'fort', label: 'Fortitude' },
       { key: 'ref', label: 'Reflex' },
       { key: 'will', label: 'Will' },
       { key: 'flatFooted', label: 'Flat-Footed' }
     ];
-    const headerDefenses = defenseKeys.map(def => {
+    const headerDefenses = defenseDefs.map(def => {
       const abilityMod = derived.defenses[`${def.key}AbilityMod`] ?? 0;
       const miscMod = derived.defenses[`${def.key}MiscMod`] ?? 0;
       return {
@@ -845,6 +873,18 @@ const forcePoints = [];
       };
     }
 
+    // Header Second Wind Context (condensed version for header area)
+    const swUses = Number(system.secondWind?.uses) ?? 0;
+    const swMax = Number(system.secondWind?.max) ?? 1;
+    const swHealing = Number(system.secondWind?.healing) ?? 0;
+    const headerSecondWind = {
+      canUse: swUses > 0,
+      usesRemaining: swUses,
+      maxUses: swMax,
+      healingAmount: swHealing > 0 ? swHealing : Math.ceil((system.hp?.max ?? 1) * 0.25),
+      label: `Regain ${swHealing > 0 ? swHealing : Math.ceil((system.hp?.max ?? 1) * 0.25)} HP`
+    };
+
     // Combat Actions Context (for combat tab - actions browser)
     // Load from data/combat-actions.json and organize by action economy
     let combatActions = { groups: [] };
@@ -874,12 +914,19 @@ const forcePoints = [];
         }
 
         // Build groups in action economy order
+        // Match template structure: groups[].label, groups[].count, groups[].subgroups[].label, groups[].subgroups[].items[]
         for (const eco of economyOrder) {
           if (grouped[eco]) {
+            // Template expects: groups > subgroups > items
+            // So wrap actions in a subgroup structure
             combatActions.groups.push({
-              economy: eco,
+              label: eco.charAt(0).toUpperCase() + eco.slice(1).replace('-', ' '),  // "Standard" from "standard"
               count: grouped[eco].length,
-              actions: grouped[eco]
+              subgroups: [{
+                label: eco.charAt(0).toUpperCase() + eco.slice(1).replace('-', ' '),
+                count: grouped[eco].length,
+                items: grouped[eco]
+              }]
             });
           }
         }
@@ -914,13 +961,13 @@ const forcePoints = [];
     const level = actor.system.level ?? 1;
     const isLevel0 = level === 0;
 
-    // DIAGNOSTIC: Log level info
-    console.log('[CHARGEN DEBUG] Character level info:', {
-      'actor.system.level': actor.system.level,
-      'level (after default)': level,
-      'isLevel0': isLevel0,
-      'actor name': actor.name
-    });
+    // DIAGNOSTIC: Log level info (disabled to reduce console spam)
+    // console.log('[CHARGEN DEBUG] Character level info:', {
+    //   'actor.system.level': actor.system.level,
+    //   'level (after default)': level,
+    //   'isLevel0': isLevel0,
+    //   'actor name': actor.name
+    // });
 
     // User Permission (GM status)
     const isGM = game.user.isGM;
@@ -1026,6 +1073,11 @@ const forcePoints = [];
     const panelsToBuild = this.visibilityManager.getPanelsToBuild(this.document);
     const panelsToSkip = this.visibilityManager.getPanelsSkipped(this.document);
 
+    // CRITICAL: Always build 'health' panel for header HP bar display
+    if (!panelsToBuild.includes('health')) {
+      panelsToBuild.push('health');
+    }
+
     // Build visible panels + cached hidden panels
     const panelContexts = {};
     for (const panelName of panelsToBuild) {
@@ -1092,6 +1144,7 @@ const forcePoints = [];
       // PHASE 2: MISSING CONTEXT KEYS (REMEDIATION)
       // ═════════════════════════════════════════════════════════════════
       xpEnabled,                    // XP system active/disabled flag
+      xpPercent,                    // XP progress percentage for bar fill
       fpAvailable,                  // Force points available for use
       abilities,                    // Array of ability objects with modifiers
       followerSlots,                // Follower slots from actor flags
@@ -1116,6 +1169,7 @@ const forcePoints = [];
       destinyPointsValue,           // Current destiny points (from system.destinyPoints.value)
       destinyPointsMax,             // Max destiny points (from system.destinyPoints.max)
       forcePoints,                  // Visual array of force point dots
+      headerSecondWind,             // Header condensed Second Wind control data
       // ═════════════════════════════════════════════════════════════════
       // PHASE 9: Combat Actions Browser (in-tab)
       // ═════════════════════════════════════════════════════════════════
@@ -1205,47 +1259,92 @@ const forcePoints = [];
   ============================================================ */
 
   activateListeners(html, { signal } = {}) {
-    console.log('[LIFECYCLE] activateListeners called with html element:', {
-      htmlTag: html?.tagName,
-      htmlClasses: html?.className,
-      signalExists: !!signal
+
+    // === HP INPUT HANDLING ===
+    html.querySelectorAll('.hp-input').forEach(input => {
+      input.addEventListener('change', async (event) => {
+        const el = event.currentTarget;
+        const path = el.dataset.path;
+        const value = Number(el.value);
+
+        if (!path || Number.isNaN(value)) return;
+
+        try {
+          // Current HP: Clamp between 0 and max
+          if (path === "system.hp.value") {
+            const max = foundry.utils.getProperty(this.actor, "system.hp.max") ?? 0;
+            const clamped = Math.clamped(value, 0, max);
+            await this.actor.update({ [path]: clamped });
+            return;
+          }
+
+          // Temp HP: Clamp ≥ 0 only
+          if (path === "system.hp.temp") {
+            await this.actor.update({ [path]: Math.max(0, value) });
+            return;
+          }
+
+          // Max HP: Use ActorEngine.recomputeHP (governance constraint)
+          // This recalculates from class + level + CON + bonuses
+          if (path === "system.hp.max") {
+            // Clamp current HP if it exceeds new max
+            const current = foundry.utils.getProperty(this.actor, "system.hp.value") ?? 0;
+            const newMax = Math.max(1, value);
+            if (current > newMax) {
+              await this.actor.update({ "system.hp.value": newMax });
+            }
+            // Trigger recomputation (will be overridden by actual class-based calc)
+            await ActorEngine.recomputeHP(this.actor);
+            return;
+          }
+        } catch (err) {
+          console.error('[HP-INPUT] Error updating HP:', err);
+          ui.notifications.error(`Failed to update HP: ${err.message}`);
+        }
+      }, { signal });
     });
+
+    // console.log('[LIFECYCLE] activateListeners called with html element:', {
+    //   htmlTag: html?.tagName,
+    //   htmlClasses: html?.className,
+    //   signalExists: !!signal
+    // });
 
     // CRITICAL: Attach form submit listener directly to the form element
     // Template guarantees a stable form selector: .swse-character-sheet-form
     // This single resolution approach prevents ambiguity and silent failures
-    console.log('[LIFECYCLE] Resolving form: looking for .swse-character-sheet-form');
+    // console.log('[LIFECYCLE] Resolving form: looking for .swse-character-sheet-form');
 
     let form = null;
     // If html IS the form, use it directly
     if (html.tagName === 'FORM' && html.classList.contains('swse-character-sheet-form')) {
       form = html;
-      console.log('[LIFECYCLE] ✓ html IS the form (by tag + class)');
+      // console.log('[LIFECYCLE] ✓ html IS the form (by tag + class)');
     } else {
       // Otherwise find it via stable selector
       form = html.querySelector('form.swse-character-sheet-form');
       if (!form) {
-        console.log('[LIFECYCLE] Form not found in html, trying appRoot');
+        // console.log('[LIFECYCLE] Form not found in html, trying appRoot');
         const appRoot = this.element instanceof HTMLElement ? this.element : this.element?.[0];
         form = appRoot?.querySelector('form.swse-character-sheet-form') ?? null;
       }
     }
 
-    console.log('[LIFECYCLE] Form resolution result:', {
-      found: !!form,
-      formTag: form?.tagName,
-      formClasses: form?.className,
-      isConnected: form?.isConnected
-    });
+    // console.log('[LIFECYCLE] Form resolution result:', {
+    //   found: !!form,
+    //   formTag: form?.tagName,
+    //   formClasses: form?.className,
+    //   isConnected: form?.isConnected
+    // });
 
     if (form) {
-      console.log('[LIFECYCLE] Form found, attaching submit listener');
-      console.log('[LIFECYCLE] Form element details:', {
-        tag: form.tagName,
-        classes: form.className,
-        childCount: form.children.length,
-        isConnected: form.isConnected  // Critical: is it in the DOM?
-      });
+      // console.log('[LIFECYCLE] Form found, attaching submit listener');
+      // console.log('[LIFECYCLE] Form element details:', {
+      //   tag: form.tagName,
+      //   classes: form.className,
+      //   childCount: form.children.length,
+      //   isConnected: form.isConnected  // Critical: is it in the DOM?
+      // });
 
       const submitHandler = async (ev) => {
         console.log('[PERSISTENCE] ─── SUBMIT EVENT FIRED ───');
@@ -1310,16 +1409,39 @@ const forcePoints = [];
       console.log(`[HELP-MODE] Cycled to: ${this._helpLevel}`);
     }, { signal });
 
-    // DELEGATED: Tab Switching - Update panel visibility manager
+    // DELEGATED: Tab Switching - Update panel visibility manager AND DOM
+    // CRITICAL: Must update both internal state AND DOM classes for CSS visibility
     html.addEventListener("click", ev => {
       const tabLink = ev.target.closest("[data-action='tab']");
       if (!tabLink) return;
 
       const tabName = tabLink.dataset.tab;
-      if (tabName) {
-        console.log(`[TAB SWITCH] Switching to tab: ${tabName}`);
-        this.visibilityManager.setActiveTab(tabName);
+      if (!tabName) return;
+
+      console.log(`[TAB SWITCH] Switching to tab: ${tabName}`);
+
+      // 1. Update internal state
+      this.visibilityManager.setActiveTab(tabName);
+
+      // 2. Remove active from all tab links
+      html.querySelectorAll("[data-action='tab']").forEach(el => {
+        el.classList.remove("active");
+      });
+
+      // 3. Add active to clicked tab link
+      tabLink.classList.add("active");
+
+      // 4. Hide all tab panels
+      html.querySelectorAll(".sheet-body > .tab").forEach(panel => {
+        panel.classList.remove("active");
+      });
+
+      // 5. Show the correct panel
+      const targetPanel = html.querySelector(`.sheet-body > .tab[data-tab="${tabName}"]`);
+      if (targetPanel) {
+        targetPanel.classList.add("active");
       }
+
     }, { signal });
 
     // DELEGATED: Toggle Abilities Panel - Show/Hide Expanded Views
@@ -1479,7 +1601,7 @@ const forcePoints = [];
       }
     }, { signal, capture: false });
 
-    // DELEGATED: UI-only preview math for ability pills
+    // DELEGATED: UI-only preview math for ability pills + auto-save on blur
     // Listen on root so rerender doesn't lose listener
     html.addEventListener("input", ev => {
       const input = ev.target.closest(".ability-expanded input");
@@ -1490,6 +1612,19 @@ const forcePoints = [];
         this._previewAbilityRow(row);
       }
     }, { signal, capture: false });
+
+    // DELEGATED: Ensure ability input changes save immediately
+    // Fire change event when blur occurs on ability inputs
+    html.addEventListener("blur", ev => {
+      const input = ev.target.closest(".ability-expanded input");
+      if (!input) return;
+
+      const form = input.closest("form.swse-character-sheet-form");
+      if (form) {
+        console.log('[PERSISTENCE] Ability input blur detected, submitting form');
+        this._debouncedSubmit({ target: form, preventDefault: () => {} });
+      }
+    }, { signal, capture: true });
 
     // DELEGATED: Toggle Skill Favorite
     // Skills content may rerender, so use delegated listener
@@ -1735,6 +1870,9 @@ const forcePoints = [];
 
     // Misc Handlers (languages, rest, DSP)
     this._activateMiscUI(html, { signal });
+
+    // Modal Dialog Handlers (Feat/Talent Selection)
+    this._activateModalUI(html, { signal });
 
     // Phase 4: Mobile Interaction Enhancements
     this._activateMobileActions(html, { signal });
@@ -2455,19 +2593,34 @@ const forcePoints = [];
       }, { signal });
     });
 
+    // === INVENTORY: ADD ITEM BUTTONS (Gear tab) ===
+    html.addEventListener("click", async (event) => {
+      const button = event.target.closest('[data-action="add-item"]');
+      if (!button) return;
+
+      event.preventDefault();
+      const itemType = button.dataset.itemType;
+      if (!itemType) return;
+
+      try {
+        await this.actor.createEmbeddedDocuments("Item", [{
+          name: `New ${itemType.charAt(0).toUpperCase() + itemType.slice(1)}`,
+          type: itemType,
+          system: {}
+        }]);
+
+        ui.notifications.info(`Created new ${itemType}`);
+      } catch (err) {
+        console.error(`[GEAR] Failed to create ${itemType}:`, err);
+        ui.notifications.error(`Failed to create item: ${err.message}`);
+      }
+    });
+
     // Add feat button
     html.querySelectorAll('[data-action="add-feat"]').forEach(button => {
       button.addEventListener("click", async (event) => {
         event.preventDefault();
-        // Open a dialog to select/create a feat
-        // For now, just open the item creation dialog
-        const itemData = {
-          type: "feat",
-          name: "New Feat",
-          system: {}
-        };
-        const doc = await Item.create(itemData, { parent: this.actor });
-        if (doc) doc.sheet.render(true);
+        this._showItemSelectionModal('feat');
       }, { signal });
     });
 
@@ -2486,15 +2639,110 @@ const forcePoints = [];
     html.querySelectorAll('[data-action="add-talent"]').forEach(button => {
       button.addEventListener("click", async (event) => {
         event.preventDefault();
-        // Open a dialog to select a talent
-        // For now, just open the item creation dialog
-        const itemData = {
-          type: "talent",
-          name: "New Talent",
-          system: {}
-        };
-        const doc = await Item.create(itemData, { parent: this.actor });
-        if (doc) doc.sheet.render(true);
+        this._showItemSelectionModal('talent');
+      }, { signal });
+    });
+  }
+
+  /* ============================================================
+     MODAL DIALOG FOR ITEM SELECTION (FEATS/TALENTS)
+  ============================================================ */
+
+  _showItemSelectionModal(itemType) {
+    const modal = document.getElementById('item-selection-modal');
+    const titleEl = document.getElementById('modal-title');
+    const messageEl = document.getElementById('modal-message');
+
+    // Set content based on item type
+    const capitalType = itemType.charAt(0).toUpperCase() + itemType.slice(1);
+    titleEl.textContent = `Add ${capitalType}`;
+    messageEl.textContent = `Would you like to choose a ${itemType} from the compendium?`;
+
+    // Store the current item type for the button handlers
+    this._currentItemType = itemType;
+
+    // Show modal
+    modal.style.display = 'flex';
+
+    // Wire up overlay click to close (if not already done)
+    const overlay = modal.querySelector('.modal-overlay');
+    if (!overlay._clickHandlerAttached) {
+      overlay.addEventListener('click', () => this._hideItemSelectionModal());
+      overlay._clickHandlerAttached = true;
+    }
+  }
+
+  _hideItemSelectionModal() {
+    const modal = document.getElementById('item-selection-modal');
+    modal.style.display = 'none';
+    this._currentItemType = null;
+  }
+
+  async _handleModalYes() {
+    if (!this._currentItemType) return;
+
+    this._hideItemSelectionModal();
+
+    // Get the compendium pack
+    const packName = this._currentItemType === 'feat' ? 'foundryvtt-swse.feats' : 'foundryvtt-swse.talents';
+    const pack = game.packs.get(packName);
+
+    if (!pack) {
+      ui.notifications.error(`${this._currentItemType} compendium not found!`);
+      return;
+    }
+
+    // Open the compendium in a sidebar/window view
+    // In Foundry, you can open a compendium and let the user drag items
+    // This is the standard approach for item selection
+    pack.render(true);
+
+    ui.notifications.info(
+      `Drag a ${this._currentItemType} from the compendium panel onto your sheet or click to add it.`
+    );
+  }
+
+  async _handleModalNo() {
+    if (!this._currentItemType) return;
+
+    this._hideItemSelectionModal();
+
+    // Create a blank item
+    const itemData = {
+      type: this._currentItemType,
+      name: `New ${this._currentItemType.charAt(0).toUpperCase() + this._currentItemType.slice(1)}`,
+      system: {}
+    };
+
+    try {
+      const doc = await Item.create(itemData, { parent: this.actor });
+      if (doc) {
+        doc.sheet.render(true);
+      }
+    } catch (err) {
+      console.error(`Failed to create ${this._currentItemType}:`, err);
+      ui?.notifications?.error?.(`Failed to create ${this._currentItemType}: ${err.message}`);
+    }
+  }
+
+  /* ============================================================
+     MODAL UI WIRING
+  ============================================================ */
+
+  _activateModalUI(html, { signal } = {}) {
+    // Modal Yes button
+    html.querySelectorAll('[data-action="modal-yes"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        await this._handleModalYes();
+      }, { signal });
+    });
+
+    // Modal No button
+    html.querySelectorAll('[data-action="modal-no"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        await this._handleModalNo();
       }, { signal });
     });
   }
@@ -2579,7 +2827,12 @@ const forcePoints = [];
         event.preventDefault();
         const currentHp = this.actor.system?.hp?.value ?? 0;
         const maxHp = this.actor.system?.hp?.max ?? 1;
-        const healing = this.actor.system?.secondWind?.healing ?? 0;
+        // Calculate healing as 25% of max HP if not stored, or use stored value
+        let healing = this.actor.system?.secondWind?.healing ?? 0;
+        if (healing <= 0) {
+          // Default to 25% of max HP (rounded up)
+          healing = Math.ceil(maxHp * 0.25);
+        }
         const newHp = Math.min(currentHp + healing, maxHp);
         const uses = this.actor.system?.secondWind?.uses ?? 0;
 
@@ -2855,10 +3108,10 @@ const forcePoints = [];
    * @returns {string} Action type: 'check', 'opposed', 'use', 'roll', 'reference', or 'unknown'
    */
   _classifyActionType(use) {
-    const label = (use.label || '').toLowerCase();
-    const dc = (use.dc || '').toLowerCase();
-    const effect = (use.effect || '').toLowerCase();
-    const time = (use.time || '').toLowerCase();
+    const label = String(use.label || '').toLowerCase();
+    const dc = String(use.dc || '').toLowerCase();
+    const effect = String(use.effect || '').toLowerCase();
+    const time = String(use.time || '').toLowerCase();
 
     // Opposed checks: explicitly stated as opposed
     if (dc.includes('opposed')) return 'opposed';
@@ -3432,9 +3685,24 @@ const forcePoints = [];
 
     console.log('[PERSISTENCE] Expanded form data:', expanded);
 
+    const sanitized = this._sanitizeExpandedFormData(expanded);
+    console.log('[PERSISTENCE] Sanitized form data:', sanitized);
+
     // CRITICAL: Filter out SSOT-protected fields that cannot be updated directly
     // These fields are enforced by ActorEngine governance and must be recalculated
-    const filtered = this._filterSSotProtectedFields(expanded);
+    const filtered = this._filterSSotProtectedFields(sanitized);
+
+    // DIAGNOSTIC: Compare sanitized vs filtered to identify what's being removed
+    const removedKeys = [];
+    for (const [key, value] of Object.entries(foundry.utils.flattenObject(sanitized))) {
+      const filteredFlat = foundry.utils.flattenObject(filtered);
+      if (!(key in filteredFlat) && value !== undefined) {
+        removedKeys.push(key);
+      }
+    }
+    if (removedKeys.length > 0) {
+      console.log('[PERSISTENCE] Keys removed by filter:', removedKeys);
+    }
 
     if (!filtered || Object.keys(filtered).length === 0) {
       console.warn('[PERSISTENCE] No updatable data after filtering protected fields');
@@ -3442,17 +3710,52 @@ const forcePoints = [];
     }
 
     try {
+      // CRITICAL: Get fresh world actor to prevent stale reference issues
+      // The actor reference in the sheet can become stale; we must fetch the
+      // current instance from the world actors collection before updating
+      const currentActorId = this.actor?.id;
+      if (!currentActorId) {
+        throw new Error('[PERSISTENCE] Cannot get actor ID from sheet context');
+      }
+
+      const freshActor = game.actors?.get?.(currentActorId);
+      if (!freshActor) {
+        throw new Error(`[PERSISTENCE] Actor "${currentActorId}" not found in world actors collection`);
+      }
+
+      console.log('[PERSISTENCE] Actor reference verified:', {
+        sheetActorId: this.actor.id,
+        freshActorId: freshActor.id,
+        isSameReference: this.actor === freshActor,
+        freshActorCollection: freshActor.collection ? 'world' : 'null'
+      });
+
       // Route directly through governance layer
       // This bypasses Foundry's _processSubmitData → actor.update() entirely
       console.log('[PERSISTENCE] Calling ActorEngine.updateActor with:', {
-        actorName: this.actor.name,
-        actorId: this.actor.id,
+        actorName: freshActor.name,
+        actorId: freshActor.id,
         expandedKeys: Object.keys(filtered)
       });
 
-      await ActorEngine.updateActor(this.actor, filtered);
+      await ActorEngine.updateActor(freshActor, filtered);
 
       console.log('[PERSISTENCE] ActorEngine.updateActor completed successfully');
+
+      // CRITICAL: If level was changed, trigger full recalculation of derived data
+      // This ensures halfLevel, defenses, and all derived stats are recalculated
+      if (filtered['system.level'] !== undefined) {
+        console.log('[PERSISTENCE] Level changed detected, triggering full actor recalculation');
+        try {
+          await ActorEngine.recalcAll(freshActor);
+          console.log('[PERSISTENCE] Full actor recalculation completed');
+          // Re-render sheet to show updated derived values
+          await this.render(false);
+          console.log('[PERSISTENCE] Sheet re-rendered with updated derived data');
+        } catch (recalcErr) {
+          console.error('[PERSISTENCE] Recalculation failed:', recalcErr);
+        }
+      }
     } catch (err) {
       console.error('[PERSISTENCE] Sheet submission failed:', err);
       ui.notifications.error(`Failed to update actor: ${err.message}`);
@@ -3502,6 +3805,64 @@ const forcePoints = [];
     return coerced;
   }
 
+
+  /**
+   * Remove placeholder/display-only values and unsafe writeback paths from expanded form data.
+   *
+   * Rules:
+   * - strip literal em dash placeholder values
+   * - strip empty-string pseudo values where appropriate
+   * - strip most flags.* writes except SWSE-owned flags
+   * - recurse and prune empty objects
+   *
+   * @param {Object} expanded
+   * @returns {Object}
+   */
+  _sanitizeExpandedFormData(expanded) {
+    const clone = foundry.utils.deepClone(expanded ?? {});
+
+    const isPlaceholder = (value) => {
+      if (value === '—') return true;
+      if (value === '––') return true;
+      if (value === '— —') return true;
+      return false;
+    };
+
+    const walk = (obj, path = '') => {
+      if (!obj || typeof obj !== 'object') return obj;
+
+      for (const key of Object.keys(obj)) {
+        const nextPath = path ? `${path}.${key}` : key;
+        const value = obj[key];
+
+        if (typeof value === 'string' && isPlaceholder(value)) {
+          delete obj[key];
+          continue;
+        }
+
+        // Strip unsafe flags by default, except explicit SWSE namespace flags.
+        if (path === 'flags') {
+          if (key !== 'swse' && key !== 'foundryvtt-swse') {
+            delete obj[key];
+            continue;
+          }
+        }
+
+        if (value && typeof value === 'object') {
+          walk(value, nextPath);
+          if (Object.keys(value).length === 0) {
+            delete obj[key];
+            continue;
+          }
+        }
+      }
+
+      return obj;
+    };
+
+    return walk(clone);
+  }
+
   /**
    * Filter out fields that are protected by SSOT (Single Source of Truth) governance.
    * These fields cannot be updated directly through ActorEngine.updateActor().
@@ -3523,7 +3884,7 @@ const forcePoints = [];
    * @returns {Object} Filtered data without SSOT-protected fields
    */
   _filterSSotProtectedFields(expanded) {
-    const filtered = foundry.utils.deepClone(expanded);
+    const filtered = foundry.utils.deepClone(expanded ?? {});
 
     // Remove protected derived fields
     if (filtered.system?.derived) {
@@ -3534,6 +3895,32 @@ const forcePoints = [];
     if (filtered.system?.hp?.max !== undefined) {
       delete filtered.system.hp.max;
     }
+
+    // Keep only SWSE-owned flags if present
+    if (filtered.flags) {
+      const safeFlags = {};
+      if (filtered.flags.swse) safeFlags.swse = filtered.flags.swse;
+      if (filtered.flags["foundryvtt-swse"]) safeFlags["foundryvtt-swse"] = filtered.flags["foundryvtt-swse"];
+      filtered.flags = safeFlags;
+      if (Object.keys(filtered.flags).length === 0) {
+        delete filtered.flags;
+      }
+    }
+
+    // Remove/filter problematic top-level fields
+    if (filtered.name === '—') {
+      delete filtered.name;
+    }
+
+    // Remove system-protected fields that cause collection errors
+    delete filtered._id;
+    delete filtered.type;
+    delete filtered.ownership;
+    delete filtered.permission;
+    delete filtered.sort;
+    delete filtered.folder;
+    delete filtered.img;
+    delete filtered._stats;
 
     return filtered;
   }

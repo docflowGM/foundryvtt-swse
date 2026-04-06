@@ -208,9 +208,23 @@ export class SWSEStoreSplashV2 extends HandlebarsApplicationMixin(ApplicationV2)
         <div class="prog-intro-label prog-intro-label--success">TRADE EXCHANGE READY</div>
         <div class="prog-intro-identity-subtext">${this.actor?.name || 'Guest'} • ${Number(this.actor?.system?.credits ?? 0) || 0} credits available</div>
       `;
+      // Trigger fade-in animation
+      requestAnimationFrame(() => {
+        result.classList.add('prog-intro-identity-block--fade-in');
+      });
     }
-    if (finalState) finalState.style.display = 'block';
-    if (footerArea) footerArea.style.display = 'flex';
+    if (finalState) {
+      finalState.style.display = 'block';
+      requestAnimationFrame(() => {
+        finalState.classList.add('prog-intro-identity-block--fade-in');
+      });
+    }
+    if (footerArea) {
+      footerArea.style.display = 'flex';
+      requestAnimationFrame(() => {
+        footerArea.classList.add('prog-intro-footer--fade-in');
+      });
+    }
     if (continueBtn) continueBtn.focus?.();
   }
 

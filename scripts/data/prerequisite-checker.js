@@ -753,7 +753,7 @@ export class PrerequisiteChecker {
                     (pending.selectedSkills || []).some(s => s.key === prereq.skill);
                 return {
                     met: trained,
-                    message: !trained ? `Requires training in ${prereq.skill}` : ''
+                    message: !trained ? ` in ${prereq.skill}` : ''
                 };
             }
             case 'skill_ranks': {
@@ -963,7 +963,7 @@ export class PrerequisiteChecker {
             (pending.selectedSkills || []).some(s => s.key === prereq.skill);
         return {
             met: trained,
-            message: !trained ? `Requires training in ${prereq.skill}` : ''
+            message: !trained ? ` in ${prereq.skill}` : ''
         };
     }
 
@@ -1362,7 +1362,7 @@ export class PrerequisiteChecker {
         const met = isTrained || isPending;
         return {
             met,
-            message: !met ? `Requires training in ${prereq.skillName}` : ''
+            message: !met ? ` in ${prereq.skillName}` : ''
         };
     }
 
