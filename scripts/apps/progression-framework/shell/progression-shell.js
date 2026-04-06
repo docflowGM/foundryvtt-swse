@@ -710,6 +710,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     context.actor = this.actor;
     context.mode = this.mode;
     context.buildIntent = this.buildIntent;
+    context.focusedItem = this.focusedItem;  // ✓ FIX: Pass focusedItem to getStepData so details panel hydrates
 
     // ═══ PHASE 8: HYDRATION DIAGNOSTICS ═══
     const diagnostics = new HydrationDiagnosticsCollector({
