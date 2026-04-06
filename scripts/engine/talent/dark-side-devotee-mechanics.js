@@ -585,11 +585,19 @@ Hooks.on('combatRoundChange', async (combat) => {
 
 /**
  * Hook: Check and remove Crippling Strike when actor heals
+ * PHASE 2: Skip if actor is already in mutation transaction (preUpdateActor runs before in-flight flag is set,
+ * but nested updateActor calls can be deferred to avoid recursion)
  */
 Hooks.on('preUpdateActor', async (actor, update, options, userId) => {
   if (update.system?.hp?.value !== undefined) {
     const crippledInfo = actor.getFlag('foundryvtt-swse', 'isCrippled');
     if (crippledInfo && update.system.hp.value >= crippledInfo.maxHpWhenCrippled) {
+      // PHASE 2: Check if this is part of an existing mutation cascade
+      // If so, defer or skip to prevent re-entrant writes
+      if (ActorEngine.isActorMutationInFlight(actor.id)) {
+        SWSELogger.debug(`[DarkSideDevoteeMechanics] Deferring Crippling Strike removal for ${actor.name} — mutation in flight`);
+        return;
+      }
       await DarkSideDevoteeMechanics.removeCripplingStrike(actor);
     }
   }

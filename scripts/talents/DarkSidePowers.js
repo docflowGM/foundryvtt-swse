@@ -1872,6 +1872,11 @@ Hooks.on('preUpdateActor', async (actor, update, options, userId) => {
   if (update.system?.hp?.value !== undefined) {
     const crippledInfo = actor.getFlag('foundryvtt-swse', 'isCrippled');
     if (crippledInfo && update.system.hp.value >= crippledInfo.maxHpWhenCrippled) {
+      // PHASE 2: Skip if actor is already in mutation transaction
+      if (ActorEngine.isActorMutationInFlight(actor.id)) {
+        SWSELogger.debug(`[DarkSidePowers] Deferring Crippling Strike removal for ${actor.name} — mutation in flight`);
+        return;
+      }
       await DarkSidePowers.removeCripplingStrike(actor);
     }
   }

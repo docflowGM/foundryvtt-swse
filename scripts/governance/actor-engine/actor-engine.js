@@ -23,7 +23,8 @@ import { traceLog, actorSummary, payloadSummary, MutationDepth } from "/systems/
  * must check _isActorMutationInFlight before writing back to the same actor.
  */
 export const ActorEngine = {
-  // PHASE 2: In-flight mutation guard per actor (actor id → true/false)
+  // PHASE 2: In-flight mutation guard per actor (actor id → reference count)
+  // Uses reference counting to handle nested updates (preUpdateActor hooks calling updateActor again)
   _inFlightMutations: new Map(),
   /**
    * Perform any derived-stat recalculation.
@@ -273,22 +274,31 @@ export const ActorEngine = {
 
   /**
    * PHASE 2: Mark an actor as mutating (in-flight transaction started)
+   * Uses reference counting to handle nested updates (preUpdateActor → updateActor)
    * @private
    * @param {string} actorId
    */
   _markActorMutationInFlight(actorId) {
-    this._inFlightMutations.set(actorId, true);
-    traceLog('ENGINE', `mutation in-flight guard SET for actor ${actorId}`, {});
+    const count = this._inFlightMutations.get(actorId) || 0;
+    this._inFlightMutations.set(actorId, count + 1);
+    traceLog('ENGINE', `mutation in-flight guard SET for actor ${actorId} (depth=${count + 1})`, {});
   },
 
   /**
    * PHASE 2: Clear in-flight flag for an actor (transaction complete)
+   * Decrements reference count; only removes flag when count reaches 0
    * @private
    * @param {string} actorId
    */
   _clearActorMutationInFlight(actorId) {
-    this._inFlightMutations.delete(actorId);
-    traceLog('ENGINE', `mutation in-flight guard CLEARED for actor ${actorId}`, {});
+    const count = this._inFlightMutations.get(actorId) || 0;
+    if (count <= 1) {
+      this._inFlightMutations.delete(actorId);
+      traceLog('ENGINE', `mutation in-flight guard CLEARED for actor ${actorId}`, {});
+    } else {
+      this._inFlightMutations.set(actorId, count - 1);
+      traceLog('ENGINE', `mutation in-flight guard decremented for actor ${actorId} (depth=${count - 1})`, {});
+    }
   },
 
   /**
@@ -298,7 +308,7 @@ export const ActorEngine = {
    * @returns {boolean}
    */
   isActorMutationInFlight(actorId) {
-    return this._inFlightMutations.has(actorId);
+    return (this._inFlightMutations.get(actorId) || 0) > 0;
   },
 
   /**
