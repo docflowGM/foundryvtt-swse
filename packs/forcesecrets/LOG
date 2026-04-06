@@ -1,0 +1,8 @@
+2026/04/06-13:03:53.820 67f8 Recovering log #124
+2026/04/06-13:03:53.836 67f8 Delete type=0 #124
+2026/04/06-13:03:53.836 67f8 Delete type=3 #122
+2026/04/06-13:26:21.592 50cc Level-0 table #129: started
+2026/04/06-13:26:21.592 50cc Level-0 table #129: 0 bytes OK
+2026/04/06-13:26:21.594 50cc Delete type=0 #127
+2026/04/06-13:26:21.612 50cc Manual compaction at level-0 from '!items!2d663aa3b9ce2d7d' @ 72057594037927935 : 1 .. '!items!d687b624feb2d351' @ 0 : 0; will stop at (end)
+2026/04/06-13:26:21.612 50cc Manual compaction at level-1 from '!items!2d663aa3b9ce2d7d' @ 72057594037927935 : 1 .. '!items!d687b624feb2d351' @ 0 : 0; will stop at (end)

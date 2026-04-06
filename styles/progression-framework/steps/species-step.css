@@ -37,7 +37,13 @@
 }
 
 /* ============================================================================
-   SPECIES ROW — SVG-skinned full-width horizontal option frame
+   SPECIES ROW — SVG-framed option rows (decorative inner guide removed)
+
+   After surgical cleanup of SVG assets:
+   - Removed inner safe-content guide rectangle (dashed rect)
+   - Removed title notch accent detail (top path)
+   - Preserved outer chevron frame, holo styling, and visual hierarchy
+   - Row text is now fully readable without decorative overlay
    ============================================================================ */
 
 .progression-shell .prog-species-row {
@@ -47,12 +53,12 @@
   align-items: center;
   justify-content: flex-start;
 
-  /* Consistent frame sizing for SVG viewBox (960×220 nominal) */
+  /* Consistent frame sizing */
   min-height: 64px;
   width: 100%;
 
-  /* SVG background for default state */
-  background-image: url('/systems/foundryvtt-swse/assets/ui/chargen/swse-angled-option-frame.svg');
+  /* SVG background for default state (using compact version for 64px rows) */
+  background-image: url('../../../assets/ui/chargen/swse-angled-option-frame-compact.svg');
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: center;
@@ -61,8 +67,7 @@
   /* SVG is the chrome — no CSS borders */
   border: none;
 
-  /* Inner padding matches SVG safe content zone (x: 104, y: 78, width: 694, height: 64)
-     Outer frame is 960×220, so padding clears the frame border (~40px per side). */
+  /* Padding clears the frame border */
   padding: 12px 32px;
 
   /* Text and interaction styling */
@@ -77,41 +82,37 @@
               box-shadow var(--prog-transition-fast);
 }
 
-/* Hover state → reveal the hover-state frame SVG
-   User is previewing; not yet committed. */
+/* Hover state → reveal the compact frame with hover styling */
 .progression-shell .prog-species-row:hover {
-  background-image: url('/systems/foundryvtt-swse/assets/ui/chargen/swse-angled-option-frame-hover.svg');
+  background-image: url('../../../assets/ui/chargen/swse-angled-option-frame-compact.svg');
   box-shadow: 0 0 16px rgba(0, 180, 255, 0.15);
 }
 
 .progression-shell .prog-species-row:focus {
   outline: none;
-  background-image: url('/systems/foundryvtt-swse/assets/ui/chargen/swse-angled-option-frame-hover.svg');
+  background-image: url('../../../assets/ui/chargen/swse-angled-option-frame-compact.svg');
 }
 
-/* Focused state (clicked, details panel shows) → hover SVG frame
-   This indicates the item is being previewed in the details panel,
-   but not yet committed. */
+/* Focused state (clicked, details panel shows) → compact SVG frame */
 .progression-shell .prog-species-row--focused {
-  background-image: url('/systems/foundryvtt-swse/assets/ui/chargen/swse-angled-option-frame-hover.svg');
+  background-image: url('../../../assets/ui/chargen/swse-angled-option-frame-compact.svg');
   box-shadow: 0 0 16px rgba(0, 180, 255, 0.15);
 }
 
-/* Committed state (confirmed selection) → selected SVG frame
-   Only ONE row should have this state at a time.
-   The selected frame SVG visually indicates "this is the chosen species". */
+/* Committed state (confirmed selection) → selected SVG frame */
 .progression-shell .prog-species-row--committed {
-  background-image: url('/systems/foundryvtt-swse/assets/ui/chargen/swse-angled-option-frame-selected.svg');
+  background-image: url('../../../assets/ui/chargen/swse-angled-option-frame-selected.svg');
   box-shadow: 0 0 20px rgba(0, 220, 120, 0.2);
 }
 
 /* ============================================================================
-   CONTENT WRAPPER — inner safe zone inside the SVG frame
+   CONTENT WRAPPER — inner safe zone inside the compact SVG frame
+   z-index: 1 ensures content appears above frame (shared card pattern)
    ============================================================================ */
 
 .progression-shell .prog-species-row__content {
   position: relative;
-  z-index: 1;
+  z-index: 1;  /* Critical: ensures text renders above SVG frame */
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -288,7 +289,8 @@
 }
 
 /* Ol' Salty dialogue block — mentor guidance at top of details panel
-   Uses dialogue-box.svg (960×240) as frame asset for authentic chargen voice. */
+   Uses dialogue-box.svg (960×240) as frame asset for authentic chargen voice.
+   Relative path: ../../assets/ (from styles/progression-framework/steps/) */
 .progression-shell .prog-species-details__salty-dialogue {
   position: relative;
   display: flex;
@@ -296,7 +298,7 @@
   align-items: flex-start;
 
   /* dialogue-box.svg: chamfered rect, cyan border, speech tail at bottom-left */
-  background-image:  url('../../assets/ui/chargen/dialogue-box.svg');
+  background-image:  url('../../../assets/ui/chargen/dialogue-box.svg');
   background-size:   100% 100%;
   background-repeat: no-repeat;
   background-color:  transparent;

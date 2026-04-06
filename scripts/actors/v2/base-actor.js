@@ -133,7 +133,9 @@ export class SWSEV2BaseActor extends SWSEActorBase {
       const modifierMap = await ModifierEngine.aggregateAll(this);
 
       // Apply modifiers to skills, defenses, HP, and other values
-      await ModifierEngine.applyAll(this, modifierMap, allModifiers);
+      // Use new pattern: computeModifierBundle() + applyComputedBundle()
+      const bundle = ModifierEngine.computeModifierBundle(this, modifierMap, allModifiers);
+      ModifierEngine.applyComputedBundle(this, bundle);
     } catch (err) {
       // Log but don't throw - derived computation is non-critical
       console.warn(`Failed to compute derived values for ${this.name}:`, err);

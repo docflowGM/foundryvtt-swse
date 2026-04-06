@@ -221,10 +221,15 @@ export class FollowerShell extends ProgressionShell {
     app.render({ force: true });
     await new Promise(resolve => setTimeout(() => {
       try {
-        app.bringToTop?.();
-        swseLogger.debug('[FollowerShell.open] Shell brought to top after render');
+        // Foundry v13+ uses bringToFront() instead of bringToTop()
+        if (typeof app.bringToFront === 'function') {
+          app.bringToFront();
+        } else if (typeof app.bringToTop === 'function') {
+          app.bringToTop();
+        }
+        swseLogger.debug('[FollowerShell.open] Shell brought to front after render');
       } catch (err) {
-        swseLogger.warn('[FollowerShell.open] Error bringing shell to top:', err.message);
+        swseLogger.warn('[FollowerShell.open] Error bringing shell to front:', err.message);
       }
       resolve();
     }, 0));

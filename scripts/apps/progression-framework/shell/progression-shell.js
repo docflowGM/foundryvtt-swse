@@ -182,12 +182,18 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // Ensures the chargen window is visible and cannot be hidden behind other windows.
     // Uses setTimeout(0) to defer until after Foundry's render cycle completes.
     // This prevents the intro step from receiving unexpected close signals during animation.
+    // Note: Foundry v13+ uses bringToFront() instead of bringToTop()
     await new Promise(resolve => setTimeout(() => {
       try {
-        app.bringToTop?.();
-        swseLogger.debug('[ProgressionShell.open] Shell brought to top after render');
+        // Prefer v13+ method, fall back to legacy method
+        if (typeof app.bringToFront === 'function') {
+          app.bringToFront();
+        } else if (typeof app.bringToTop === 'function') {
+          app.bringToTop();
+        }
+        swseLogger.debug('[ProgressionShell.open] Shell brought to front after render');
       } catch (err) {
-        swseLogger.warn('[ProgressionShell.open] Error bringing shell to top:', err.message);
+        swseLogger.warn('[ProgressionShell.open] Error bringing shell to front:', err.message);
       }
       resolve();
     }, 0));
@@ -803,6 +809,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const detailsPanelHtml = detailsPanelSpec?.template
       ? await foundry.applications.handlebars.renderTemplate(detailsPanelSpec.template, detailsPanelSpec.data)
       : null;
+
+    // Species-specific: Detect details panel hydration failure
+    diagnostics.detectSpeciesDetailsPanelFailure(currentDescriptor?.stepId, this.focusedItem, detailsPanelHtml);
 
     // Summary panel (left column — build snapshot)
     // REFACTOR: Now uses canonical SelectedRailContext instead of per-step renderSummaryPanel
@@ -1626,16 +1635,74 @@ export class ProgressionShell extends SWSEApplicationV2 {
   // ---------------------------------------------------------------------------
 
   async _onFocusItem(event, target) {
-    const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
+    // Find the closest parent with [data-item-id] to handle clicks on child elements
+    // (e.g., clicking on species name, stats, or thumbnail should focus the row)
+    // Defensive: ensure target is a DOM element with closest() method
+    const element = target instanceof Element ? target : event?.target;
+
+    // DIAGNOSTICS: Log click target details
+    const stepId = this.steps[this.currentStepIndex]?.stepId;
+    swseLogger.debug(`[ProgressionShell] _onFocusItem click on step "${stepId}"`, {
+      eventTarget: event?.target?.tagName,
+      eventTargetClass: event?.target?.className?.slice(0, 50),
+      targetParam: target?.tagName ?? typeof target,
+      elementValid: element instanceof Element,
+    });
+
+    if (!element || typeof element.closest !== 'function') {
+      swseLogger.warn('[ProgressionShell] _onFocusItem: target is not a DOM element', {
+        targetType: typeof element,
+        hasClosest: typeof element?.closest,
+      });
+      return;
+    }
+
+    const row = element.closest('[data-item-id]');
+    const itemId = row?.dataset?.itemId;
+
+    // DIAGNOSTICS: Log resolution details
+    swseLogger.debug(`[ProgressionShell] _onFocusItem resolved`, {
+      rowFound: !!row,
+      rowTag: row?.tagName,
+      itemId,
+      dataAttributesPresent: Object.keys(row?.dataset ?? {}).slice(0, 5),
+    });
+
+    if (!itemId) {
+      swseLogger.warn('[ProgressionShell] _onFocusItem: could not find [data-item-id] in target or ancestors', {
+        rowElement: row?.outerHTML?.slice(0, 100),
+        ancestorChain: element?.closest?.('[data-item-id]') ? 'found' : 'not found',
+      });
+      return;
+    }
+
+    const plugin = this.stepPlugins.get(stepId);
     if (plugin) {
-      await plugin.onItemFocused(target.dataset.itemId, this);
+      swseLogger.debug(`[ProgressionShell] _onFocusItem calling plugin.onItemFocused(${itemId})`);
+      await plugin.onItemFocused(itemId, this);
     }
   }
 
   async _onCommitItem(event, target) {
+    // Find the closest parent with [data-item-id] to handle clicks on child elements
+    // Defensive: ensure target is a DOM element with closest() method
+    const element = target instanceof Element ? target : event?.target;
+    if (!element || typeof element.closest !== 'function') {
+      swseLogger.warn('[ProgressionShell] _onCommitItem: target is not a DOM element');
+      return;
+    }
+
+    const row = element.closest('[data-item-id]');
+    const itemId = row?.dataset?.itemId;
+
+    if (!itemId) {
+      swseLogger.warn('[ProgressionShell] _onCommitItem: could not find [data-item-id] in target or ancestors');
+      return;
+    }
+
     const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
     if (plugin) {
-      await plugin.onItemCommitted(target.dataset.itemId, this);
+      await plugin.onItemCommitted(itemId, this);
       // Rebuild projection after selection committed to update selected rail
       this._rebuildProjection();
       // Trigger re-render to show updated selected rail

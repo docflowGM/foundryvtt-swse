@@ -1,0 +1,15 @@
+2026/04/06-13:03:54.227 34f8 Recovering log #156
+2026/04/06-13:03:54.234 34f8 Delete type=0 #156
+2026/04/06-13:03:54.234 34f8 Delete type=3 #154
+2026/04/06-13:26:22.027 50cc Level-0 table #162: started
+2026/04/06-13:26:22.038 50cc Level-0 table #162: 4640 bytes OK
+2026/04/06-13:26:22.040 50cc Delete type=0 #160
+2026/04/06-13:26:22.053 50cc Manual compaction at level-0 from '!items!life-aquata-breather' @ 72057594037927935 : 1 .. '!items!survival-syntherope-45m' @ 0 : 0; will stop at (end)
+2026/04/06-13:26:22.077 50cc Manual compaction at level-1 from '!items!life-aquata-breather' @ 72057594037927935 : 1 .. '!items!survival-syntherope-45m' @ 0 : 0; will stop at '!items!null' @ 562 : 1
+2026/04/06-13:26:22.077 50cc Compacting 1@1 + 1@2 files
+2026/04/06-13:26:22.084 50cc Generated table #163@1: 18 keys, 4463 bytes
+2026/04/06-13:26:22.084 50cc Compacted 1@1 + 1@2 files => 4463 bytes
+2026/04/06-13:26:22.086 50cc compacted to: files[ 0 0 1 0 0 0 0 ]
+2026/04/06-13:26:22.087 50cc Delete type=2 #158
+2026/04/06-13:26:22.087 50cc Delete type=2 #162
+2026/04/06-13:26:22.103 50cc Manual compaction at level-1 from '!items!null' @ 562 : 1 .. '!items!survival-syntherope-45m' @ 0 : 0; will stop at (end)

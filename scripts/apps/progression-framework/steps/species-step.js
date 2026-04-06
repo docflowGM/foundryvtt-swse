@@ -211,9 +211,21 @@ export class SpeciesStep extends ProgressionStepPlugin {
 
   async getStepData(context) {
     const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedSpecies);
+    const cards = this._filteredSpecies.map(s => this._formatSpeciesCard(s, suggestedIds, confidenceMap));
+
+    // DIAGNOSTICS: Check for missing ids in rendered cards
+    const missingIds = cards.filter(c => !c.id).map(c => c.name);
+    if (missingIds.length > 0) {
+      swseLogger.warn('[SpeciesStep] Rendering species cards with missing ids', {
+        count: missingIds.length,
+        sample: missingIds.slice(0, 10),
+        totalCards: cards.length,
+      });
+    }
+
     return {
       mode: this._mode,
-      species: this._filteredSpecies.map(s => this._formatSpeciesCard(s, suggestedIds, confidenceMap)),
+      species: cards,
       focusedSpeciesId: context.focusedItem?.id ?? null,
       committedSpeciesId: context.committedSelections?.get('species')?.speciesId ?? null,
       nearHuman: this._nearHumanBuilder.getBuilderData(),
@@ -297,27 +309,87 @@ export class SpeciesStep extends ProgressionStepPlugin {
   }
 
   renderDetailsPanel(focusedItem) {
-    if (!focusedItem) return this.renderDetailsPanelEmptyState();
+    swseLogger.log('[SpeciesStep] ===== HYDRATION START: renderDetailsPanel() =====');
 
-    // Stable id-based lookup — same identity used by commit path
-    const species = SpeciesRegistry.getById(focusedItem.id);
-    if (!species) return this.renderDetailsPanelEmptyState();
-
-    // Get Ol' Salty's mentor object (Scoundrel class mentor) for guidance fallback
-    const salty = MENTORS?.Scoundrel;
-    const defaultSpeciesGuidance = salty ? getMentorGuidance(salty, 'species') : 'Choose wisely, friend.';
-
-    // Normalize detail panel data for canonical display (no fabrication)
-    const normalized = normalizeDetailPanelData(species, 'species', {
-      mentorProseSource: this._olSaltyDialogues,
+    // Step 1: Validate input
+    swseLogger.log('[SpeciesStep] STEP 1: Validating focusedItem', {
+      focusedItemPresent: !!focusedItem,
+      focusedItemId: focusedItem?.id,
+      focusedItemType: focusedItem?.type,
     });
 
-    return {
-      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/species-details.hbs',
-      data: {
+    if (!focusedItem) {
+      swseLogger.error('[SpeciesStep] FAIL: No focusedItem provided');
+      return this.renderDetailsPanelEmptyState();
+    }
+
+    // Step 2: Registry lookup
+    swseLogger.log('[SpeciesStep] STEP 2: Looking up species in registry', {
+      lookupId: focusedItem.id,
+    });
+
+    const species = SpeciesRegistry.getById(focusedItem.id);
+    if (!species) {
+      swseLogger.error('[SpeciesStep] FAIL: Registry lookup failed', {
+        attemptedId: focusedItem.id,
+        registryEntries: SpeciesRegistry.getAll()?.length ?? 0,
+      });
+      return this.renderDetailsPanelEmptyState();
+    }
+
+    swseLogger.log('[SpeciesStep] STEP 2: ✓ Species found', {
+      id: species.id,
+      name: species.name,
+      hasAbilities: !!species.abilities?.length,
+      abilityCount: species.abilities?.length ?? 0,
+      hasLanguages: !!species.languages?.length,
+      languageCount: species.languages?.length ?? 0,
+    });
+
+    // Step 3: Format ability rows
+    swseLogger.log('[SpeciesStep] STEP 3: Formatting ability rows', {
+      abilityScores: species.abilityScores,
+    });
+
+    const abilityRows = this._formatAbilityRows(species.abilityScores);
+    swseLogger.log('[SpeciesStep] STEP 3: ✓ Ability rows formatted', {
+      rowCount: abilityRows?.length ?? 0,
+      rows: abilityRows,
+    });
+
+    // Step 4: Get mentor data
+    swseLogger.log('[SpeciesStep] STEP 4: Preparing mentor data');
+    const salty = MENTORS?.Scoundrel;
+    const defaultSpeciesGuidance = salty ? getMentorGuidance(salty, 'species') : 'Choose wisely, friend.';
+    swseLogger.log('[SpeciesStep] STEP 4: ✓ Mentor data prepared', {
+      hasSalty: !!salty,
+      guidanceLength: defaultSpeciesGuidance?.length ?? 0,
+    });
+
+    // Step 5: Normalize detail panel data
+    swseLogger.log('[SpeciesStep] STEP 5: Normalizing detail panel data');
+    let normalized;
+    try {
+      normalized = normalizeDetailPanelData(species, 'species', {
+        mentorProseSource: this._olSaltyDialogues,
+      });
+      swseLogger.log('[SpeciesStep] STEP 5: ✓ Data normalized', {
+        hasDescription: !!normalized.description,
+        hasMentorProse: !!normalized.mentorProse,
+        mentorProseLength: normalized.mentorProse?.length ?? 0,
+      });
+    } catch (err) {
+      swseLogger.error('[SpeciesStep] STEP 5: FAIL - normalization error', err);
+      normalized = { description: null, mentorProse: null, fallbacks: {} };
+    }
+
+    // Step 6: Build details data object
+    swseLogger.log('[SpeciesStep] STEP 6: Building details data object');
+    try {
+      const detailsData = {
         species,
         isNearHuman: species.name === 'Near-Human',
-        abilityRows: this._formatAbilityRows(species.abilityScores),
+        abilityRows: abilityRows,
         abilities: (species.abilities ?? []).map(a => ({ name: a })),
         languages: species.languages ?? [],
         size: species.size ?? 'Medium',
@@ -326,11 +398,37 @@ export class SpeciesStep extends ProgressionStepPlugin {
         img: this._resolveSpeciesImg(species),
         mentorProse: normalized.mentorProse ?? this._getOlSaltyDialogue(species.name) ?? null,
         defaultSpeciesGuidance,
-        // Add normalized fields for enhanced detail rail
         canonicalDescription: normalized.description,
         hasMentorProse: normalized.fallbacks.hasMentorProse,
-      },
-    };
+      };
+
+      swseLogger.log('[SpeciesStep] STEP 6: ✓ Details data object built', {
+        dataKeys: Object.keys(detailsData),
+        totalKeys: Object.keys(detailsData).length,
+        hasImg: !!detailsData.img,
+        hasMentorProse: !!detailsData.mentorProse,
+        abilityRowsCount: detailsData.abilityRows?.length ?? 0,
+        abilitiesCount: detailsData.abilities?.length ?? 0,
+        languagesCount: detailsData.languages?.length ?? 0,
+      });
+
+      // Step 7: Return template spec
+      const templateSpec = {
+        template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/species-details.hbs',
+        data: detailsData,
+      };
+
+      swseLogger.log('[SpeciesStep] STEP 7: ✓ Template spec built', {
+        template: templateSpec.template,
+        dataKeysCount: Object.keys(templateSpec.data).length,
+      });
+
+      swseLogger.log('[SpeciesStep] ===== HYDRATION COMPLETE: renderDetailsPanel() SUCCESS =====');
+      return templateSpec;
+    } catch (err) {
+      swseLogger.error('[SpeciesStep] STEP 6: FAIL - details data object error', err);
+      return this.renderDetailsPanelEmptyState();
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -348,11 +446,23 @@ export class SpeciesStep extends ProgressionStepPlugin {
 
     console.log('[SpeciesStep] ✓ Species focused:', entry.name);
     console.log('[SpeciesStep]   Species data:', {
+      id: entry.id,
       name: entry.name,
       size: entry.size,
       source: entry.source,
       abilityScores: entry.abilityScores,
+      abilities: Array.isArray(entry.abilities) ? entry.abilities.length : 0,
+      languages: Array.isArray(entry.languages) ? entry.languages.length : 0,
     });
+
+    // CRITICAL: Verify abilityScores are non-zero (parsing worked)
+    const hasNonZeroAbilities = Object.values(entry.abilityScores || {}).some(v => v !== 0);
+    if (!hasNonZeroAbilities) {
+      swseLogger.warn('[SpeciesStep] ⚠ WARNING: Species has no non-zero ability modifiers', {
+        abilityScores: entry.abilityScores,
+        species: entry.name,
+      });
+    }
 
     shell.focusedItem = entry;
 
@@ -366,6 +476,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
     }
 
     console.log('[SpeciesStep] Triggering shell.render() to update detail panel');
+    console.log('[SpeciesStep] shell.focusedItem is now:', shell.focusedItem);
     shell.render();
   }
 
@@ -643,13 +754,31 @@ export class SpeciesStep extends ProgressionStepPlugin {
       });
     }
 
-    // Search by name (case-insensitive, substring match — not exact match)
+    // Search by name — supports wildcard regex if * is present, otherwise substring match
     if (this._searchQuery) {
-      const q = this._searchQuery.toLowerCase();
       const before = filtered.length;
-      // Change from exact match (^pattern$) to substring match (contains)
-      filtered = filtered.filter(s => s.name.toLowerCase().includes(q));
-      console.log('[SpeciesStep] After search "' + this._searchQuery + '":', before, '→', filtered.length);
+
+      // Wildcard mode: if query contains *, treat as regex pattern
+      if (this._searchQuery.includes('*')) {
+        try {
+          // Convert * to .* for regex matching, escape other special chars
+          const pattern = this._searchQuery
+            .replace(/[.+^${}()|[\]\\]/g, '\\$&')  // Escape regex special chars except *
+            .replace(/\*/g, '.*');                  // * → .*
+          const regex = new RegExp(`^${pattern}$`, 'i');  // Case-insensitive anchored match
+          filtered = filtered.filter(s => regex.test(s.name));
+          console.log('[SpeciesStep] After wildcard search "' + this._searchQuery + '" (regex: ^' + pattern + '$):', before, '→', filtered.length);
+        } catch (err) {
+          console.warn('[SpeciesStep] Wildcard regex error:', err.message);
+          // Fallback: substring search if regex fails
+          filtered = filtered.filter(s => s.name.toLowerCase().includes(this._searchQuery.toLowerCase()));
+        }
+      } else {
+        // Substring mode: case-insensitive contains
+        const q = this._searchQuery.toLowerCase();
+        filtered = filtered.filter(s => s.name.toLowerCase().includes(q));
+        console.log('[SpeciesStep] After substring search "' + this._searchQuery + '":', before, '→', filtered.length);
+      }
       console.log('[SpeciesStep]   Matching species:', filtered.map(s => s.name).slice(0, 5));
     }
 
@@ -869,6 +998,15 @@ export class SpeciesStep extends ProgressionStepPlugin {
   }
 
   _formatSpeciesCard(species, suggestedIds = new Set(), confidenceMap = new Map()) {
+    // DIAGNOSTICS: Check for missing id early
+    if (!species.id) {
+      swseLogger.warn('[SpeciesStep] _formatSpeciesCard received species without id', {
+        name: species.name,
+        source: species.source,
+        hasId: !!species.id,
+      });
+    }
+
     const abilityRows = this._formatAbilityRows(species.abilityScores);
     const abilityModLine = abilityRows
       .map(row => `${row.signedValue} ${row.shortLabel}`)

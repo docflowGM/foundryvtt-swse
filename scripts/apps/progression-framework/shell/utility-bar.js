@@ -80,6 +80,17 @@ export class UtilityBar {
     // Restore search query
     const searchEl = regionEl.querySelector('[data-utility-search]');
     if (searchEl && this._searchQuery) searchEl.value = this._searchQuery;
+
+    // Restore sort dropdown value
+    const sortEl = regionEl.querySelector('[data-utility-sort]');
+    if (sortEl && this._sortValue) sortEl.value = this._sortValue;
+
+    // Restore stat dropdowns (bonus-stat, penalty-stat)
+    regionEl.querySelectorAll('[data-utility-select]').forEach(dropdown => {
+      const id = dropdown.dataset.utilitySelect;
+      const value = this._filterState[id];
+      if (value) dropdown.value = value;
+    });
   }
 
   /**

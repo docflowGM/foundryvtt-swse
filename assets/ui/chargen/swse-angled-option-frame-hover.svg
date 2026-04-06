@@ -89,10 +89,6 @@
   <path d="M60 44H103" stroke="#EDFFFF" stroke-opacity="0.64" stroke-width="2.1" stroke-linecap="round"/>
   <path d="M60 176H103" stroke="#86F4FF" stroke-opacity="0.40" stroke-width="2.1" stroke-linecap="round"/>
 
-  <rect x="104" y="78" width="694" height="64" rx="8" stroke="#BDFBFF" stroke-opacity="0.16" stroke-dasharray="6 8"/>
-
-  <path d="M118 53H212" stroke="#79ECFF" stroke-opacity="0.64" stroke-width="3.2" stroke-linecap="round"/>
-
   <!-- Hover-state prompt accent -->
   <path d="M811 96L826 110L811 124" stroke="#DFFFFF" stroke-opacity="0.78" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

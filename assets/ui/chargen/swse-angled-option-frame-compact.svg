@@ -50,6 +50,4 @@
   <path d="M76 98H834L864 72" stroke="#5FE4FF" stroke-opacity="0.18" stroke-width="1.2" stroke-linecap="round"/>
   <rect x="42" y="42" width="6" height="58" rx="2" fill="#8AF4FF" opacity="0.85"/>
   <path d="M856 25L902 72L856 119" stroke="#D1FFFF" stroke-opacity="0.34" stroke-width="2"/>
-  <rect x="96" y="52" width="650" height="40" rx="6" stroke="#8EEBFF" stroke-opacity="0.10" stroke-dasharray="5 7"/>
-  <path d="M108 33H196" stroke="#68E6FF" stroke-opacity="0.48" stroke-width="2.6" stroke-linecap="round"/>
 </svg>

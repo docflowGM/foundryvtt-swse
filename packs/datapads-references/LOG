@@ -1,0 +1,7 @@
+2026/04/06-13:03:54.530 b64c Recovering log #124
+2026/04/06-13:03:54.536 b64c Delete type=0 #124
+2026/04/06-13:03:54.536 b64c Delete type=3 #122
+2026/04/06-13:26:22.319 50cc Level-0 table #129: started
+2026/04/06-13:26:22.319 50cc Level-0 table #129: 0 bytes OK
+2026/04/06-13:26:22.322 50cc Delete type=0 #127
+2026/04/06-13:26:22.602 50cc Manual compaction at level-0 from 'undefined' @ 72057594037927935 : 1 .. 'undefined' @ 0 : 0; will stop at (end)

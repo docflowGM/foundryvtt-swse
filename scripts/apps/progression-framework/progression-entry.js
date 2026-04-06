@@ -770,7 +770,12 @@ export class SWSEProgressionSplashV2 extends HandlebarsApplicationMixin(Applicat
         SWSELogger.log('[SWSEProgressionSplashV2] ChargenShell opened at intro step');
 
         // WINDOW AUTHORITY: Bring shell to front so it is never behind other windows
-        shell?.bringToTop?.();
+        // Foundry v13+ uses bringToFront() instead of bringToTop()
+        if (typeof shell?.bringToFront === 'function') {
+          shell.bringToFront();
+        } else if (typeof shell?.bringToTop === 'function') {
+          shell.bringToTop();
+        }
 
         // Now close the splash — shell is already open and ready
         // Closing after shell opens ensures visual continuity

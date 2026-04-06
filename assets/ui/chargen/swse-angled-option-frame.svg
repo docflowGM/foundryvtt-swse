@@ -97,10 +97,4 @@
   <!-- Subtle corner details -->
   <path d="M60 44H98" stroke="#D2FFFF" stroke-opacity="0.55" stroke-width="2" stroke-linecap="round"/>
   <path d="M60 176H98" stroke="#7DEEFF" stroke-opacity="0.35" stroke-width="2" stroke-linecap="round"/>
-
-  <!-- Safe content guide, low-opacity and theme-consistent -->
-  <rect x="104" y="78" width="694" height="64" rx="8" stroke="#8EEBFF" stroke-opacity="0.12" stroke-dasharray="6 8"/>
-
-  <!-- Optional title notch detail -->
-  <path d="M118 53H200" stroke="#68E6FF" stroke-opacity="0.5" stroke-width="3" stroke-linecap="round"/>
 </svg>

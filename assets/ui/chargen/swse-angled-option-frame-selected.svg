@@ -90,10 +90,6 @@
   <path d="M60 44H108" stroke="#F4FFFF" stroke-opacity="0.75" stroke-width="2.2" stroke-linecap="round"/>
   <path d="M60 176H108" stroke="#90F5FF" stroke-opacity="0.45" stroke-width="2.2" stroke-linecap="round"/>
 
-  <rect x="104" y="78" width="694" height="64" rx="8" stroke="#D9FFFF" stroke-opacity="0.20" stroke-dasharray="6 8"/>
-
-  <path d="M118 53H222" stroke="#8EF2FF" stroke-opacity="0.75" stroke-width="3.4" stroke-linecap="round"/>
-
   <!-- Selected-state chevrons -->
   <path d="M820 92L838 110L820 128" stroke="#E6FFFF" stroke-opacity="0.92" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
   <path d="M790 92L808 110L790 128" stroke="#8EF2FF" stroke-opacity="0.78" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
