@@ -1074,9 +1074,10 @@ const forcePoints = [];
     const panelsToBuild = this.visibilityManager.getPanelsToBuild(this.document);
     const panelsToSkip = this.visibilityManager.getPanelsSkipped(this.document);
 
-    // CRITICAL: Always build 'health' panel for header HP bar display
-    if (!panelsToBuild.includes('health')) {
-      panelsToBuild.push('health');
+    // CRITICAL: Always build 'healthPanel' for header HP bar display
+    // Note: Panel name is 'healthPanel' (registered in PANEL_REGISTRY), not 'health'
+    if (!panelsToBuild.includes('healthPanel')) {
+      panelsToBuild.push('healthPanel');
     }
 
     // Build visible panels + cached hidden panels

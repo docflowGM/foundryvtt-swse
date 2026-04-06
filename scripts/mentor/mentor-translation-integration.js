@@ -121,7 +121,8 @@ export class MentorTranslationIntegration {
    * @private
    */
   static normalizeMentorKey(mentor) {
-    const key = this.normalizeMentorKey(mentor);
+    // CRITICAL FIX: Normalize mentor string (was calling itself recursively!)
+    const key = (mentor || '').toString().toLowerCase().trim();
 
     // Return the canonical map key if we can match it.
     if (MENTOR_PRESET_MAP[key]) return key;

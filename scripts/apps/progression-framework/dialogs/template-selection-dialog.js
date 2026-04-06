@@ -36,18 +36,9 @@ export class TemplateSelectionDialog extends HandlebarsApplicationMixin(DialogV2
       height: 700,
     },
     template: 'systems/foundryvtt-swse/templates/apps/progression-framework/dialogs/template-selection.hbs',
-    buttons: {
-      freeform: {
-        icon: 'fas fa-pencil-alt',
-        label: 'Create from Scratch',
-        callback: html => null,  // Return null for freeform
-      },
-      cancel: {
-        icon: 'fas fa-ban',
-        label: 'Cancel',
-        callback: html => false,
-      },
-    },
+    // CRITICAL FIX: Do NOT define buttons here since we use custom buttons in the template
+    // The template uses custom [data-button] buttons handled by _onButtonClick
+    // Leaving buttons empty to avoid Foundry DialogV2 validation errors
   };
 
   constructor(options = {}) {
@@ -174,6 +165,29 @@ export class TemplateSelectionDialog extends HandlebarsApplicationMixin(DialogV2
     if (confirmBtn) {
       confirmBtn.disabled = !this.selectedTemplate;
     }
+  }
+
+  /**
+   * Activate event listeners for custom buttons (template uses [data-button] not Foundry buttons).
+   * @param {HTMLElement} html - The dialog HTML element
+   */
+  activateListeners(html) {
+    super.activateListeners(html);
+
+    // Attach click handlers to template card elements
+    html.querySelectorAll('[data-template-id]').forEach(card => {
+      card.addEventListener('click', (event) => {
+        const templateId = card.dataset.templateId;
+        this._onTemplateSelected(templateId);
+      });
+    });
+
+    // Attach click handlers to action buttons
+    html.querySelectorAll('[data-button]').forEach(button => {
+      button.addEventListener('click', (event) => {
+        this._onButtonClick(event);
+      });
+    });
   }
 
   async _onButtonClick(event) {
