@@ -49,7 +49,7 @@ export class ClassesRegistry {
    * This method exists for API consistency with other registries.
    */
   static async initialize() {
-    if (!ClassesDB.initialized) {
+    if (!ClassesDB.isBuilt) {
       SWSELogger.warn('[ClassesRegistry] ClassesDB not initialized yet');
       return false;
     }
@@ -65,7 +65,7 @@ export class ClassesRegistry {
    * @returns {Object[]} Array of class definitions
    */
   static getAll() {
-    return ClassesDB.getAll();
+    return ClassesDB.all();
   }
 
   /**
@@ -91,7 +91,7 @@ export class ClassesRegistry {
     }
 
     // ClassesDB stores by ID, so we need to search by name
-    const all = ClassesDB.getAll();
+    const all = ClassesDB.all();
     return (
       all.find(c => c.name && c.name.toLowerCase() === name.toLowerCase()) ||
       null
@@ -103,7 +103,7 @@ export class ClassesRegistry {
    * @returns {Object[]} Array of base class definitions
    */
   static getBaseClasses() {
-    const all = ClassesDB.getAll();
+    const all = ClassesDB.all();
     return all.filter(c => c.baseClass !== false);
   }
 
@@ -112,7 +112,7 @@ export class ClassesRegistry {
    * @returns {Object[]} Array of prestige class definitions
    */
   static getPrestigeClasses() {
-    const all = ClassesDB.getAll();
+    const all = ClassesDB.all();
     return all.filter(c => c.baseClass === false);
   }
 
@@ -125,7 +125,7 @@ export class ClassesRegistry {
     if (typeof predicate !== 'function') {
       return [];
     }
-    const all = ClassesDB.getAll();
+    const all = ClassesDB.all();
     return all.filter(predicate);
   }
 
@@ -154,7 +154,7 @@ export class ClassesRegistry {
    * @returns {boolean}
    */
   static isInitialized() {
-    return ClassesDB.initialized === true;
+    return ClassesDB.isBuilt === true;
   }
 
   /**

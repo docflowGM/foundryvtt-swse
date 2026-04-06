@@ -180,6 +180,91 @@ export class HydrationDiagnosticsCollector {
   }
 
   /**
+   * Species-specific: Detect details panel hydration failure
+   * Checks if species details panel is blank despite having a focused item
+   */
+  detectSpeciesDetailsPanelFailure(stepId, focusedItem, detailsPanelHtml) {
+    // Only check Species step
+    if (stepId !== 'species') return null;
+
+    // If no focused item, empty state is expected
+    if (!focusedItem) return null;
+
+    // If details panel is blank/empty, that's a failure
+    if (!detailsPanelHtml || typeof detailsPanelHtml !== 'string' || detailsPanelHtml.trim().length === 0) {
+      return this.add(
+        'error',
+        'SPECIES_DETAILS_PANEL_BLANK',
+        `Species details panel is blank despite focused item: ${focusedItem?.name ?? focusedItem?.id}`,
+        'Check SpeciesStep.renderDetailsPanel() returns valid template and data',
+        {
+          stepId: 'species',
+          focusedItemId: focusedItem?.id,
+          focusedItemName: focusedItem?.name,
+          panelHtmlLength: detailsPanelHtml?.length ?? 0,
+          isEmptyState: detailsPanelHtml?.includes?.('prog-details-empty') ?? false,
+        }
+      );
+    }
+
+    // If panel contains empty-state despite focused item, that's also a failure
+    if (detailsPanelHtml.includes('prog-details-empty')) {
+      return this.add(
+        'warning',
+        'SPECIES_DETAILS_RENDERING_EMPTY_STATE',
+        `Species details panel rendered empty state despite having focused item: ${focusedItem?.name ?? focusedItem?.id}`,
+        'Check SpeciesRegistry.getById() returns valid entry and normalizeDetailPanelData() completes successfully',
+        {
+          stepId: 'species',
+          focusedItemId: focusedItem?.id,
+          focusedItemName: focusedItem?.name,
+        }
+      );
+    }
+
+    return null;
+  }
+
+  /**
+   * Species-specific: Detect missing IDs in species list rows
+   * Checks if species cards are rendering without data-item-id attributes
+   */
+  detectSpeciesRowsMissingIds(stepId, workSurfaceHtml) {
+    // Only check Species step
+    if (stepId !== 'species') return null;
+
+    if (!workSurfaceHtml || typeof workSurfaceHtml !== 'string') {
+      return null; // Can't analyze
+    }
+
+    // Check if there are species rows without valid data-item-id
+    const hasSpeciesRows = workSurfaceHtml.includes('data-item-id');
+    const hasMissingIds = workSurfaceHtml.includes('data-item-id=""') ||
+                          (hasSpeciesRows && workSurfaceHtml.match(/data-item-id=""/g) || []).length > 0;
+
+    // Count empty vs valid IDs
+    const emptyIdMatches = (workSurfaceHtml.match(/data-item-id=""/g) || []).length;
+    const totalIdMatches = (workSurfaceHtml.match(/data-item-id/g) || []).length;
+
+    if (hasMissingIds && emptyIdMatches > 0) {
+      return this.add(
+        'error',
+        'SPECIES_ROWS_MISSING_IDS',
+        `Species list has ${emptyIdMatches} rows with empty data-item-id attributes (out of ${totalIdMatches} total)`,
+        'Fix SpeciesRegistry._normalizeEntry() to compute stable IDs. Check species compendium document structure.',
+        {
+          stepId: 'species',
+          emptyIdCount: emptyIdMatches,
+          totalRowCount: totalIdMatches,
+          rowsWithIds: totalIdMatches - emptyIdMatches,
+        }
+      );
+    }
+
+    return null;
+  }
+
+  /**
    * Get all diagnostics of a specific level
    */
   getByLevel(level) {

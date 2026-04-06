@@ -8,7 +8,7 @@
  * ------------------------------ */
 @font-face {
   font-family: "Aurebesh";
-  src: url("../assets/fonts/aurebesh/Aurebesh.otf") format("opentype");
+  src: url("../assets/fonts/Aurabesh/Aurebesh.otf") format("opentype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -19,7 +19,7 @@
  * ------------------------------ */
 @font-face {
   font-family: "Aurebesh";
-  src: url("../assets/fonts/aurebesh/Aurebesh Bold.otf") format("opentype");
+  src: url("../assets/fonts/Aurabesh/Aurebesh Bold.otf") format("opentype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -30,7 +30,7 @@
  * ------------------------------ */
 @font-face {
   font-family: "Aurebesh";
-  src: url("../assets/fonts/aurebesh/Aurebesh Italic.otf") format("opentype");
+  src: url("../assets/fonts/Aurabesh/Aurebesh Italic.otf") format("opentype");
   font-weight: 400;
   font-style: italic;
   font-display: swap;
@@ -41,7 +41,7 @@
  * ------------------------------ */
 @font-face {
   font-family: "Aurebesh";
-  src: url("../assets/fonts/aurebesh/Aurebesh Bold Italic.otf") format("opentype");
+  src: url("../assets/fonts/Aurabesh/Aurebesh Bold Italic.otf") format("opentype");
   font-weight: 700;
   font-style: italic;
   font-display: swap;
@@ -54,7 +54,7 @@
 
 @font-face {
   font-family: "Aurebesh Condensed";
-  src: url("../assets/fonts/aurebesh/Aurebesh Condensed.otf") format("opentype");
+  src: url("../assets/fonts/Aurabesh/Aurebesh Condensed.otf") format("opentype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -62,7 +62,7 @@
 
 @font-face {
   font-family: "Aurebesh Condensed";
-  src: url("../assets/fonts/aurebesh/Aurebesh Condensed Bold.otf") format("opentype");
+  src: url("../assets/fonts/Aurabesh/Aurebesh Condensed Bold.otf") format("opentype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -70,7 +70,7 @@
 
 @font-face {
   font-family: "Aurebesh Condensed";
-  src: url("../assets/fonts/aurebesh/Aurebesh Condensed Italic.otf") format("opentype");
+  src: url("../assets/fonts/Aurabesh/Aurebesh Condensed Italic.otf") format("opentype");
   font-weight: 400;
   font-style: italic;
   font-display: swap;
@@ -78,7 +78,7 @@
 
 @font-face {
   font-family: "Aurebesh Condensed";
-  src: url("../assets/fonts/aurebesh/Aurebesh Condensed Bold Italic.otf") format("opentype");
+  src: url("../assets/fonts/Aurabesh/Aurebesh Condensed Bold Italic.otf") format("opentype");
   font-weight: 700;
   font-style: italic;
   font-display: swap;

@@ -58,6 +58,7 @@ export class SpeciesRegistry {
   static _byId = new Map();                // id -> entry
   static _byName = new Map();              // lowercase name -> entry
   static _byCategory = new Map();          // category -> entry[]
+  static _normalizeCount = 0;              // Counter for diagnostic logging
 
   /**
    * Initialize SpeciesRegistry from compendium
@@ -93,7 +94,7 @@ export class SpeciesRegistry {
   static async _loadFromCompendium() {
     const systemId = game?.system?.id || 'foundryvtt-swse';
     const packKey = `${systemId}.species`;
-    SWSELogger.log(`[SpeciesRegistry] Using pack key: "${packKey}"`);
+    SWSELogger.log(`[SpeciesRegistry] _loadFromCompendium() STARTING. Using pack key: "${packKey}"`);
 
     const pack = game?.packs?.get(packKey);
     if (!pack) {
@@ -106,9 +107,10 @@ export class SpeciesRegistry {
 
     try {
       const docs = await pack.getDocuments();
-      SWSELogger.log(`[SpeciesRegistry] Loaded ${docs.length} raw documents from compendium`);
+      SWSELogger.log(`[SpeciesRegistry] Loaded ${docs.length} raw documents from compendium. Starting normalization...`);
 
       let normalized = 0;
+      let nullIdCount = 0;
       for (const doc of docs) {
         if (!doc || !doc.name) {
           continue;
@@ -117,9 +119,19 @@ export class SpeciesRegistry {
         const entry = this._normalizeEntry(doc);
         this._entries.push(entry);
         normalized++;
+        if (!entry.id) {
+          nullIdCount++;
+        }
 
-        // Index by id
-        this._byId.set(entry.id, entry);
+        // Index by id - only if we have a valid id
+        if (entry.id) {
+          this._byId.set(entry.id, entry);
+        } else {
+          SWSELogger.warn('[SpeciesRegistry] Skipping _byId index for species with missing id', {
+            name: entry.name,
+            uuid: entry.uuid ?? null
+          });
+        }
 
         // Index by name (lowercase for case-insensitive lookup)
         this._byName.set(entry.name.toLowerCase(), entry);
@@ -132,7 +144,7 @@ export class SpeciesRegistry {
           this._byCategory.get(entry.category).push(entry);
         }
       }
-      SWSELogger.log(`[SpeciesRegistry] Normalized ${normalized} species entries`);
+      SWSELogger.log(`[SpeciesRegistry] ✓ Normalized ${normalized} species entries (${nullIdCount} have NULL id)`);
     } catch (err) {
       SWSELogger.error(`[SpeciesRegistry] Failed to load from pack "${packKey}":`, err);
       throw err;
@@ -140,10 +152,12 @@ export class SpeciesRegistry {
   }
 
   /**
-   * Parse ability string (e.g., "STR +2, DEX -1, CON +3") into object
+   * Parse ability string supporting both formats:
+   * - "STR +2, DEX -1, CON +3" (ability name first)
+   * - "+2 Con, -2 Dex" (value first)
    * @private
    * @param {string} abilityString - Ability modifier string
-   * @returns {Object} { str: 2, dex: -1, con: 3, int: 0, wis: 0, cha: 0 }
+   * @returns {Object} { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 }
    */
   static _parseAbilityString(abilityString) {
     const defaults = { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 };
@@ -162,11 +176,12 @@ export class SpeciesRegistry {
     };
 
     try {
-      // Parse format: "STR +2, DEX -1, CON +3"
       const parts = abilityString.split(',');
       for (const part of parts) {
         const trimmed = part.trim();
-        const match = trimmed.match(/^([A-Za-z]+)\s*([+-]?\d+)$/);
+
+        // Try format 1: "STR +2" or "Strength -1" (ability name first)
+        let match = trimmed.match(/^([A-Za-z]+)\s*([+-]?\d+)$/);
         if (match) {
           const abilityName = match[1].toLowerCase();
           const bonus = parseInt(match[2], 10);
@@ -174,6 +189,19 @@ export class SpeciesRegistry {
           if (key) {
             defaults[key] = bonus;
           }
+          continue;
+        }
+
+        // Try format 2: "+2 Con" or "-1 Dex" (value first)
+        match = trimmed.match(/^([+-]?\d+)\s*([A-Za-z]+)$/);
+        if (match) {
+          const bonus = parseInt(match[1], 10);
+          const abilityName = match[2].toLowerCase();
+          const key = abilityMap[abilityName];
+          if (key) {
+            defaults[key] = bonus;
+          }
+          continue;
         }
       }
     } catch (err) {
@@ -190,6 +218,25 @@ export class SpeciesRegistry {
    * @returns {SpeciesRegistryEntry}
    */
   static _normalizeEntry(doc) {
+    // DIAGNOSTICS: Log document structure for first few species to understand ID location
+    this._normalizeCount = (this._normalizeCount ?? 0) + 1;
+    if (this._normalizeCount <= 3) {
+      SWSELogger.log('[SpeciesRegistry._normalizeEntry] DEBUG (count=' + this._normalizeCount + ') - Document structure:', {
+        name: doc.name,
+        docKeys: Object.keys(doc ?? {}).sort(),
+        hasId: !!doc.id,
+        has_Id: !!doc._id,
+        has_uuid: !!doc.uuid,
+        docType: doc.constructor?.name,
+        // Actual values from each potential ID location
+        'doc.id': doc.id,
+        'doc._id': doc._id,
+        'doc._source._id': doc._source?._id,
+        'doc.toObject()._id': doc.toObject?.()._id,
+        'doc.uuid': doc.uuid,
+      });
+    }
+
     const system = doc.system || {};
 
     // Extract and normalize category
@@ -205,8 +252,20 @@ export class SpeciesRegistry {
     }
     tags = tags.map(t => String(t).toLowerCase().trim()).filter(t => t);
 
-    // Parse ability score modifiers
-    const abilityScores = this._parseAbilityString(system.abilities || 'None');
+    // Extract ability score modifiers
+    // Pack data stored in system.abilities (string format like "+2 Wis, -2 Cha")
+    // Fall back to system.abilityMods for alternative data sources
+    const defaults = { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 };
+    const rawAbilityData = system.abilities ?? system.abilityMods ?? null;
+
+    let abilityScores = defaults;
+    if (typeof rawAbilityData === 'string') {
+      // Parse string format: "+2 Con, -2 Dex" or "STR +2, DEX -1"
+      abilityScores = this._parseAbilityString(rawAbilityData);
+    } else if (rawAbilityData && typeof rawAbilityData === 'object') {
+      // Merge object format: { str: 2, con: -2, ... }
+      abilityScores = { ...defaults, ...rawAbilityData };
+    }
 
     // Extract speed (default to 6 if not specified)
     const speed = system.speed ? Number(system.speed) : 6;
@@ -232,9 +291,46 @@ export class SpeciesRegistry {
       .map(l => String(l).trim())
       .filter(l => l);
 
+    // Extract stable ID with comprehensive fallback chain
+    // Handles different compendium document structures in Foundry
+    let stableId =
+      doc.id ??
+      doc._id ??
+      doc._source?._id ??
+      doc.uuid ??
+      doc.toObject?.()._id ??
+      null;
+
+    // If we still don't have an ID, generate one deterministically from the species name
+    // This ensures consistent IDs across sessions for the same species
+    if (!stableId && doc.name) {
+      // Use Foundry's slugify to create a URL-safe ID from the species name
+      const slugified = foundry.utils?.slugify?.(doc.name) ??
+                       doc.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      stableId = slugified;
+      SWSELogger.log('[SpeciesRegistry] Generated deterministic id for "' + doc.name + '": ' + stableId);
+    }
+
+    if (!stableId) {
+      SWSELogger.warn('[SpeciesRegistry] Species normalized without stable id', {
+        name: doc.name,
+        uuid: doc.uuid ?? null,
+        docId: doc.id ?? null,
+        doc_Id: doc._id ?? null,
+        sourceId: doc._source?._id ?? null,
+        pack: doc.pack ?? null,
+        keys: Object.keys(doc ?? {}).slice(0, 20)
+      });
+    }
+
+    // Log result for first few species
+    if (this._normalizeCount <= 3) {
+      SWSELogger.log('[SpeciesRegistry._normalizeEntry] Created entry for "' + doc.name + '" with id=' + (stableId || 'NULL'));
+    }
+
     // Create normalized entry
     return {
-      id: doc._id,
+      id: stableId,
       uuid: doc.uuid || null,
       name: doc.name,
       type: 'species',
