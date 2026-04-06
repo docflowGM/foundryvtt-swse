@@ -61,7 +61,11 @@
         "Basic"
       ],
       "archetype": "Guard",
-      "notes": "Nonheroic template: No talents or Force powers. Feats must come from restricted nonheroic list. Skill training = 1 + Int mod (minimum 1)."
+      "notes": "Nonheroic template: No talents or Force powers. Feats must come from restricted nonheroic list. Skill training = 1 + Int mod (minimum 1).",
+      "talents": [],
+      "forcePowers": [],
+      "equipment": [],
+      "credits": 0
     },
     {
       "id": "scout-pathfinder",
@@ -123,7 +127,11 @@
         "Basic"
       ],
       "archetype": "Scout",
-      "notes": "Nonheroic template: No talents or Force powers. Focuses on outdoor survival skills."
+      "notes": "Nonheroic template: No talents or Force powers. Focuses on outdoor survival skills.",
+      "talents": [],
+      "forcePowers": [],
+      "equipment": [],
+      "credits": 0
     },
     {
       "id": "laborer-worker",
@@ -185,7 +193,11 @@
         "Basic"
       ],
       "archetype": "Laborer",
-      "notes": "Nonheroic template: No talents or Force powers. Basic combat training only."
+      "notes": "Nonheroic template: No talents or Force powers. Basic combat training only.",
+      "talents": [],
+      "forcePowers": [],
+      "equipment": [],
+      "credits": 0
     },
     {
       "id": "beast-wolf",
@@ -256,7 +268,11 @@
         "creatureType": "animal"
       },
       "archetype": "Beast",
-      "notes": "Beast template: Intelligence 1-2 constraint enforced. No talents. No starting feats. Skills constrained to Beast list (Acrobatics, Climb, Endurance, Initiative, Jump, Perception, Stealth, Survival, Swim). 1d8+Con HP. No Force/Destiny Points. Multiclass gate at Int 3+."
+      "notes": "Beast template: Intelligence 1-2 constraint enforced. No talents. No starting feats. Skills constrained to Beast list (Acrobatics, Climb, Endurance, Initiative, Jump, Perception, Stealth, Survival, Swim). 1d8+Con HP. No Force/Destiny Points. Multiclass gate at Int 3+.",
+      "talents": [],
+      "forcePowers": [],
+      "equipment": [],
+      "credits": 0
     },
     {
       "id": "beast-bear",
@@ -334,7 +350,11 @@
         "creatureType": "animal"
       },
       "archetype": "Beast",
-      "notes": "Beast template: Intelligence 1-2 constraint enforced. No talents. No starting feats. Skills constrained to Beast list (Acrobatics, Climb, Endurance, Initiative, Jump, Perception, Stealth, Survival, Swim). 1d8+Con HP. No Force/Destiny Points. Multiclass gate at Int 3+."
+      "notes": "Beast template: Intelligence 1-2 constraint enforced. No talents. No starting feats. Skills constrained to Beast list (Acrobatics, Climb, Endurance, Initiative, Jump, Perception, Stealth, Survival, Swim). 1d8+Con HP. No Force/Destiny Points. Multiclass gate at Int 3+.",
+      "talents": [],
+      "forcePowers": [],
+      "equipment": [],
+      "credits": 0
     }
   ]
 }
