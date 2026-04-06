@@ -36,9 +36,15 @@ export class TemplateSelectionDialog extends HandlebarsApplicationMixin(DialogV2
       height: 700,
     },
     template: 'systems/foundryvtt-swse/templates/apps/progression-framework/dialogs/template-selection.hbs',
-    // CRITICAL FIX: Do NOT define buttons here since we use custom buttons in the template
-    // The template uses custom [data-button] buttons handled by _onButtonClick
-    // Leaving buttons empty to avoid Foundry DialogV2 validation errors
+    buttons: {
+      // Foundry v12 DialogV2 requires at least one button in config
+      // We use custom [data-button] buttons in the template, but need this for validation
+      confirm: {
+        icon: 'fas fa-check',
+        label: 'Confirm Selection',
+        callback: () => {} // Handled by custom _onButtonClick
+      }
+    }
   };
 
   constructor(options = {}) {
