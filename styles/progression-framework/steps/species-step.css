@@ -41,6 +41,7 @@
    ============================================================================ */
 
 .progression-shell .prog-species-row {
+  position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -109,6 +110,8 @@
    ============================================================================ */
 
 .progression-shell .prog-species-row__content {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -287,6 +290,7 @@
 /* Ol' Salty dialogue block — mentor guidance at top of details panel
    Uses dialogue-box.svg (960×240) as frame asset for authentic chargen voice. */
 .progression-shell .prog-species-details__salty-dialogue {
+  position: relative;
   display: flex;
   gap: 8px;
   align-items: flex-start;
@@ -306,6 +310,8 @@
 }
 
 .progression-shell .prog-species-details__salty-icon {
+  position: relative;
+  z-index: 1;
   color: rgba(100, 220, 255, 0.7);
   font-size: 14px;
   flex-shrink: 0;
@@ -313,6 +319,8 @@
 }
 
 .progression-shell .prog-species-details__salty-text {
+  position: relative;
+  z-index: 1;
   margin: 0;
   font-size: 11px;
   line-height: 1.6;
