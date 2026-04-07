@@ -40,68 +40,214 @@ export class UIStateManager {
   }
 
   /**
-   * Save current interactive state from the DOM
-   * Called before rerender
+   * Resolve the actual DOM root for ApplicationV2 sheets.
+   * In this codebase, this.sheet.element is sometimes a control element rather
+   * than the form wrapping the sheet content, so we normalize it here.
+   * @returns {HTMLElement|null}
+   */
+  _getRoot() {
+    let root = this.sheet?.element?.[0] ?? this.sheet?.element ?? null;
+    if (!root) return null;
+
+    if (root.tagName !== "FORM") {
+      const formViaClosest = typeof root.closest === "function" ? root.closest("form") : null;
+      if (formViaClosest) return formViaClosest;
+
+      const formViaQuery = typeof root.querySelector === "function" ? root.querySelector("form") : null;
+      if (formViaQuery) return formViaQuery;
+    }
+
+    return root;
+  }
+
+  /**
+   * Get the logical tab group for a button. Some templates store the group on
+   * the button, others only on the nav/panel layer, so default to "primary".
+   * @param {HTMLElement} tabButton
+   * @returns {string}
+   */
+  _getTabGroup(tabButton) {
+    return tabButton?.dataset?.tabGroup || tabButton?.dataset?.group || "primary";
+  }
+
+  /**
+   * Find all tab buttons for a group.
+   * Supports both explicit per-button grouping and older ungrouped markup.
+   * @param {HTMLElement} root
+   * @param {string} tabGroup
+   * @returns {HTMLElement[]}
+   */
+  _getGroupButtons(root, tabGroup) {
+    if (!root) return [];
+
+    const explicitButtons = Array.from(
+      root.querySelectorAll(
+        `[data-action="tab"][data-tab-group="${tabGroup}"], [data-action="tab"][data-group="${tabGroup}"]`
+      )
+    );
+    if (explicitButtons.length > 0) return explicitButtons;
+
+    return Array.from(root.querySelectorAll('[data-action="tab"]'));
+  }
+
+  /**
+   * Find all tab panels for a group.
+   * @param {HTMLElement} root
+   * @param {string} tabGroup
+   * @returns {HTMLElement[]}
+   */
+  _getGroupPanels(root, tabGroup) {
+    if (!root) return [];
+
+    const explicitPanels = Array.from(
+      root.querySelectorAll(
+        `.tab[data-tab-group="${tabGroup}"], .tab[data-group="${tabGroup}"]`
+      )
+    );
+    if (explicitPanels.length > 0) return explicitPanels;
+
+    return Array.from(root.querySelectorAll('.tab[data-tab]'));
+  }
+
+  /**
+   * Find the content panel for a tab name + group.
+   * @param {HTMLElement} root
+   * @param {string} tabGroup
+   * @param {string} tabName
+   * @returns {HTMLElement|null}
+   */
+  _findPanelForTab(root, tabGroup, tabName) {
+    if (!root || !tabName) return null;
+
+    return (
+      root.querySelector(`.tab[data-tab="${tabName}"][data-tab-group="${tabGroup}"]`) ||
+      root.querySelector(`.tab[data-tab="${tabName}"][data-group="${tabGroup}"]`) ||
+      root.querySelector(`.tab[data-tab="${tabName}"]`)
+    );
+  }
+
+  /**
+   * Find a tab button from stored state.
+   * @param {HTMLElement} root
+   * @param {string} tabGroup
+   * @param {string} tabName
+   * @returns {HTMLElement|null}
+   */
+  _findButtonForTab(root, tabGroup, tabName) {
+    if (!root || !tabName) return null;
+
+    return (
+      root.querySelector(`[data-action="tab"][data-tab="${tabName}"][data-tab-group="${tabGroup}"]`) ||
+      root.querySelector(`[data-action="tab"][data-tab="${tabName}"][data-group="${tabGroup}"]`) ||
+      root.querySelector(`[data-action="tab"][data-tab="${tabName}"]`)
+    );
+  }
+
+  /**
+   * Mark a tab button inactive.
+   * @param {HTMLElement} button
+   */
+  _deactivateButton(button) {
+    button.classList.remove('active');
+    button.setAttribute('aria-selected', 'false');
+  }
+
+  /**
+   * Mark a tab button active.
+   * @param {HTMLElement} button
+   */
+  _activateButton(button) {
+    button.classList.add('active');
+    button.setAttribute('aria-selected', 'true');
+  }
+
+  /**
+   * Hide a tab panel.
+   * @param {HTMLElement} panel
+   */
+  _hidePanel(panel) {
+    panel.classList.remove('active');
+    panel.hidden = true;
+    panel.style.display = 'none';
+  }
+
+  /**
+   * Show a tab panel.
+   * @param {HTMLElement} panel
+   */
+  _showPanel(panel) {
+    panel.classList.add('active');
+    panel.hidden = false;
+    panel.style.removeProperty('display');
+  }
+
+  /**
+   * Save current interactive state from the DOM.
+   * Called before rerender.
    */
   captureState() {
-    // Capture active tabs
-    const tabButtons = this.sheet.element?.querySelectorAll('[data-action="tab"]');
-    if (tabButtons) {
-      for (const button of tabButtons) {
-        const tabGroup = button.dataset.tabGroup;
-        const tabName = button.dataset.tab;
+    const root = this._getRoot();
+    if (!root) return;
 
-        // Check if this button looks active (parent has 'active' class or similar)
-        if (button.classList.contains('active') || button.parentElement?.classList.contains('active')) {
-          this.state.activeTabs[tabGroup] = tabName;
-        }
+    // Capture active tabs
+    const tabButtons = root.querySelectorAll('[data-action="tab"]');
+    for (const button of tabButtons) {
+      const tabName = button.dataset.tab;
+      if (!tabName) continue;
+
+      const tabGroup = this._getTabGroup(button);
+      const isActive =
+        button.classList.contains('active') ||
+        button.parentElement?.classList.contains('active');
+
+      if (isActive) {
+        this.state.activeTabs[tabGroup] = tabName;
       }
     }
 
     // Capture expanded rows
-    const expandableRows = this.sheet.element?.querySelectorAll('[data-expandable="true"]');
-    if (expandableRows) {
-      this.state.expandedRows.clear();
-      for (const row of expandableRows) {
-        if (row.classList.contains('expanded') || row.dataset.expanded === 'true') {
-          const rowId = row.id || row.dataset.itemId;
-          if (rowId) this.state.expandedRows.add(rowId);
-        }
+    const expandableRows = root.querySelectorAll('[data-expandable="true"]');
+    this.state.expandedRows.clear();
+    for (const row of expandableRows) {
+      if (row.classList.contains('expanded') || row.dataset.expanded === 'true') {
+        const rowId = row.id || row.dataset.itemId;
+        if (rowId) this.state.expandedRows.add(rowId);
       }
     }
 
     // Capture focused field
-    const focusedElement = this.sheet.element?.querySelector(':focus');
+    const focusedElement = root.querySelector(':focus');
     if (focusedElement && focusedElement.name) {
       this.state.focusedField = focusedElement.name;
+    } else {
+      this.state.focusedField = null;
     }
 
     // Capture scroll positions for major containers
-    const scrollContainers = this.sheet.element?.querySelectorAll('[data-scroll-container]');
-    if (scrollContainers) {
-      for (const container of scrollContainers) {
-        const containerId = container.id || container.dataset.scrollContainer;
-        if (containerId) {
-          this.state.scrollPositions[containerId] = {
-            top: container.scrollTop,
-            left: container.scrollLeft
-          };
-        }
+    const scrollContainers = root.querySelectorAll('[data-scroll-container]');
+    for (const container of scrollContainers) {
+      const containerId = container.id || container.dataset.scrollContainer;
+      if (containerId) {
+        this.state.scrollPositions[containerId] = {
+          top: container.scrollTop,
+          left: container.scrollLeft
+        };
       }
     }
   }
 
   /**
-   * Restore interactive state to the DOM after rerender
-   * Called after rerender completes
+   * Restore interactive state to the DOM after rerender.
+   * Called after rerender completes.
    */
   restoreState() {
+    const root = this._getRoot();
+    if (!root) return;
+
     // Restore active tabs
     if (Object.keys(this.state.activeTabs).length > 0) {
       for (const [tabGroup, tabName] of Object.entries(this.state.activeTabs)) {
-        const activeButton = this.sheet.element?.querySelector(
-          `[data-action="tab"][data-tab="${tabName}"][data-tab-group="${tabGroup}"]`
-        );
+        const activeButton = this._findButtonForTab(root, tabGroup, tabName);
         if (activeButton) {
           this._activateTab(activeButton);
         }
@@ -110,29 +256,27 @@ export class UIStateManager {
 
     // Restore expanded rows
     if (this.state.expandedRows.size > 0) {
-      const expandableRows = this.sheet.element?.querySelectorAll('[data-expandable="true"]');
-      if (expandableRows) {
-        for (const row of expandableRows) {
-          const rowId = row.id || row.dataset.itemId;
-          if (rowId && this.state.expandedRows.has(rowId)) {
-            row.classList.add('expanded');
-            row.dataset.expanded = 'true';
-          } else {
-            row.classList.remove('expanded');
-            row.dataset.expanded = 'false';
-          }
+      const expandableRows = root.querySelectorAll('[data-expandable="true"]');
+      for (const row of expandableRows) {
+        const rowId = row.id || row.dataset.itemId;
+        if (rowId && this.state.expandedRows.has(rowId)) {
+          row.classList.add('expanded');
+          row.dataset.expanded = 'true';
+        } else {
+          row.classList.remove('expanded');
+          row.dataset.expanded = 'false';
         }
       }
     }
 
-    // Restore focus (be careful not to focus hidden elements)
+    // Restore focus (avoid hidden elements)
     if (this.state.focusedField) {
-      const focusTarget = this.sheet.element?.querySelector(`[name="${this.state.focusedField}"]`);
-      if (focusTarget && focusTarget.offsetParent !== null) { // offsetParent null = hidden
+      const focusTarget = root.querySelector(`[name="${this.state.focusedField}"]`);
+      if (focusTarget && focusTarget.offsetParent !== null) {
         try {
           focusTarget.focus();
-        } catch (e) {
-          // Silently fail if focus cannot be set
+        } catch (_err) {
+          // Silently fail if focus cannot be restored.
         }
       }
     }
@@ -140,7 +284,7 @@ export class UIStateManager {
     // Restore scroll positions
     if (Object.keys(this.state.scrollPositions).length > 0) {
       for (const [containerId, position] of Object.entries(this.state.scrollPositions)) {
-        const container = this.sheet.element?.querySelector(`#${containerId}, [data-scroll-container="${containerId}"]`);
+        const container = root.querySelector(`#${containerId}, [data-scroll-container="${containerId}"]`);
         if (container) {
           container.scrollTop = position.top;
           container.scrollLeft = position.left;
@@ -154,27 +298,31 @@ export class UIStateManager {
    * @param {HTMLElement} tabButton - The tab button that was clicked
    */
   _activateTab(tabButton) {
-    const tabGroup = tabButton.dataset.tabGroup;
+    const root = this._getRoot();
+    if (!root || !tabButton) return;
 
-    // Deactivate all tabs in this group
-    const groupButtons = this.sheet.element?.querySelectorAll(`[data-tab-group="${tabGroup}"]`);
-    if (groupButtons) {
-      for (const btn of groupButtons) {
-        btn.classList.remove('active');
-        const content = this.sheet.element?.querySelector(`[data-tab-content="${btn.dataset.tab}"][data-group="${tabGroup}"]`);
-        if (content) content.style.display = 'none';
-      }
+    const tabName = tabButton.dataset.tab;
+    if (!tabName) return;
+
+    const tabGroup = this._getTabGroup(tabButton);
+    const groupButtons = this._getGroupButtons(root, tabGroup);
+    const groupPanels = this._getGroupPanels(root, tabGroup);
+
+    // Deactivate all buttons and panels in the group.
+    for (const button of groupButtons) {
+      this._deactivateButton(button);
+    }
+    for (const panel of groupPanels) {
+      this._hidePanel(panel);
     }
 
-    // Activate clicked tab
-    tabButton.classList.add('active');
-    const content = this.sheet.element?.querySelector(
-      `[data-tab-content="${tabButton.dataset.tab}"][data-group="${tabGroup}"]`
-    );
-    if (content) content.style.display = 'block';
+    // Activate the requested button and matching panel.
+    this._activateButton(tabButton);
+    const panel = this._findPanelForTab(root, tabGroup, tabName);
+    if (panel) this._showPanel(panel);
 
-    // Remember this tab is active
-    this.state.activeTabs[tabGroup] = tabButton.dataset.tab;
+    // Remember this tab is active.
+    this.state.activeTabs[tabGroup] = tabName;
   }
 
   /**

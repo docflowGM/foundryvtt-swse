@@ -5,7 +5,7 @@
 --}}
 
 <div class="hp-shield-wrapper {{#if (eq healthPanel.shield.current 0)}}sr-empty{{/if}}"
-     style="--sr-percent: {{percentage healthPanel.shield.current healthPanel.shield.max}}%;">
+     style="--sr-percent: {{healthPanel.shield.percent}}%;">
 
   {{!-- SR Ring Overlay --}}
   {{#if healthPanel.shield.max}}

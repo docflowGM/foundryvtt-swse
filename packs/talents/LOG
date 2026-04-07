@@ -1,15 +1,3 @@
-2026/04/06-13:03:53.761 34f8 Recovering log #156
-2026/04/06-13:03:53.768 34f8 Delete type=0 #156
-2026/04/06-13:03:53.768 34f8 Delete type=3 #154
-2026/04/06-13:26:21.530 50cc Level-0 table #162: started
-2026/04/06-13:26:21.534 50cc Level-0 table #162: 7137 bytes OK
-2026/04/06-13:26:21.536 50cc Delete type=0 #160
-2026/04/06-13:26:21.537 50cc Manual compaction at level-0 from '!items!001ae84d5862af55' @ 72057594037927935 : 1 .. '!items.effects!ffe31e578e9abeee.nQkiXbhYGUVgMIDb' @ 0 : 0; will stop at (end)
-2026/04/06-13:26:21.554 50cc Manual compaction at level-1 from '!items!001ae84d5862af55' @ 72057594037927935 : 1 .. '!items.effects!ffe31e578e9abeee.nQkiXbhYGUVgMIDb' @ 0 : 0; will stop at '!items!null' @ 2778 : 1
-2026/04/06-13:26:21.555 50cc Compacting 1@1 + 1@2 files
-2026/04/06-13:26:21.579 50cc Generated table #163@1: 1506 keys, 894319 bytes
-2026/04/06-13:26:21.579 50cc Compacted 1@1 + 1@2 files => 894319 bytes
-2026/04/06-13:26:21.581 50cc compacted to: files[ 0 0 1 0 0 0 0 ]
-2026/04/06-13:26:21.581 50cc Delete type=2 #158
-2026/04/06-13:26:21.582 50cc Delete type=2 #162
-2026/04/06-13:26:21.584 50cc Manual compaction at level-1 from '!items!null' @ 2778 : 1 .. '!items.effects!ffe31e578e9abeee.nQkiXbhYGUVgMIDb' @ 0 : 0; will stop at (end)
+2026/04/07-13:38:39.588 89a0 Recovering log #171
+2026/04/07-13:38:39.593 89a0 Delete type=0 #171
+2026/04/07-13:38:39.593 89a0 Delete type=3 #169

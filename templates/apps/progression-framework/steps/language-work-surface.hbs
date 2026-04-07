@@ -14,7 +14,7 @@
 
     <div class="language-list known-list">
       {{#each knownLanguages}}
-      <div class="language-item known-language swse-card-schema swse-card-schema--enumerated swse-card-schema--filled" data-language-id="{{this.language.id}}" data-action="focus-item">
+      <div class="language-item known-language swse-card-schema swse-card-schema--enumerated swse-card-schema--filled" data-language-id="{{this.language.id}}" data-item-id="{{this.language.id}}" data-action="focus-item">
         <div class="language-item-content">
           <span class="language-name">{{this.name}}</span>
           <span class="language-source-badge">automatic</span>
@@ -65,6 +65,7 @@
       <div class="language-item available-language swse-card-schema swse-card-schema--choice swse-card-schema--pending
                   {{#if this.isSuggested}}prog-language-item--suggested prog-language-item--suggested-{{this.confidenceLevel}}{{/if}}"
            data-language-id="{{this.id}}"
+           data-item-id="{{this.id}}"
            data-action="focus-item"
            data-recommended="{{#if this.isSuggested}}true{{/if}}"
            data-confidence-level="{{this.confidenceLevel}}">

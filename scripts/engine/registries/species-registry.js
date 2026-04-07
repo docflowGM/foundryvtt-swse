@@ -211,6 +211,23 @@ export class SpeciesRegistry {
     return defaults;
   }
 
+
+  static _buildNameFallbackId(name, source = null) {
+    const basis = [name, source]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase()
+      .trim();
+
+    if (!basis) {
+      return null;
+    }
+
+    return basis
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
   /**
    * Normalize a compendium species document into registry entry
    * @private
@@ -291,24 +308,25 @@ export class SpeciesRegistry {
       .map(l => String(l).trim())
       .filter(l => l);
 
-    // Extract stable ID with comprehensive fallback chain
-    // Handles different compendium document structures in Foundry
+    // Extract stable ID with comprehensive fallback chain.
+    // Some Foundry compendium document wrappers expose id on id, some on _id,
+    // and some only on the raw source object.
     let stableId =
-      doc.id ??
-      doc._id ??
-      doc._source?._id ??
-      doc.uuid ??
-      doc.toObject?.()._id ??
+      doc?.id ??
+      doc?._id ??
+      doc?._source?._id ??
+      doc?.toObject?.()?._id ??
+      doc?.uuid ??
       null;
 
-    // If we still don't have an ID, generate one deterministically from the species name
-    // This ensures consistent IDs across sessions for the same species
-    if (!stableId && doc.name) {
-      // Use Foundry's slugify to create a URL-safe ID from the species name
-      const slugified = foundry.utils?.slugify?.(doc.name) ??
-                       doc.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-      stableId = slugified;
-      SWSELogger.log('[SpeciesRegistry] Generated deterministic id for "' + doc.name + '": ' + stableId);
+    if (typeof stableId === 'string') {
+      stableId = stableId.trim() || null;
+    }
+
+    // If the compendium wrapper still does not expose an id, fall back to a
+    // deterministic slug from species name + source so hydration can proceed.
+    if (!stableId) {
+      stableId = this._buildNameFallbackId(doc?.name, system?.source ?? null);
     }
 
     if (!stableId) {
@@ -352,7 +370,14 @@ export class SpeciesRegistry {
    * @returns {SpeciesRegistryEntry[]}
    */
   static getAll() {
-    return [...this._entries];
+    return this._entries.map((entry) => {
+      if (!entry) return entry;
+      if (entry.id) return { ...entry };
+      return {
+        ...entry,
+        id: this._buildNameFallbackId(entry.name, entry.source),
+      };
+    });
   }
 
   /**
@@ -364,7 +389,26 @@ export class SpeciesRegistry {
     if (!id) {
       return null;
     }
-    return this._byId.get(id) || null;
+
+    const requestedId = String(id).trim();
+    if (!requestedId) {
+      return null;
+    }
+
+    const direct = this._byId.get(requestedId) || null;
+    if (direct) {
+      return direct;
+    }
+
+    const normalizedRequestedId = requestedId.toLowerCase();
+    return this._entries.find((entry) => {
+      const entryId = String(entry?.id ?? '').trim().toLowerCase();
+      const fallbackId = this._buildNameFallbackId(entry?.name, entry?.source)?.toLowerCase() ?? null;
+      const entryName = String(entry?.name ?? '').trim().toLowerCase();
+      return normalizedRequestedId === entryId
+        || normalizedRequestedId === fallbackId
+        || normalizedRequestedId === entryName;
+    }) || null;
   }
 
   /**

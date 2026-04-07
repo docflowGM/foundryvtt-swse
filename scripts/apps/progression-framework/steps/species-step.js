@@ -79,8 +79,8 @@ export class SpeciesStep extends ProgressionStepPlugin {
       console.log('[SpeciesStep] ✓ SpeciesRegistry initialized');
     }
 
-    // Load all species from registry
-    this._allSpecies = SpeciesRegistry.getAll();
+    // Load all species from registry and harden identity handoff.
+    this._allSpecies = SpeciesRegistry.getAll().map(species => this._ensureSpeciesIdentity(species));
     if (!Array.isArray(this._allSpecies)) this._allSpecies = [];
 
     console.log('[SpeciesStep] ✓ Loaded species count:', this._allSpecies.length);
@@ -328,7 +328,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
       lookupId: focusedItem.id,
     });
 
-    const species = SpeciesRegistry.getById(focusedItem.id);
+    const species = this._resolveSpeciesEntry(focusedItem);
     if (!species) {
       swseLogger.error('[SpeciesStep] FAIL: Registry lookup failed', {
         attemptedId: focusedItem.id,
@@ -438,7 +438,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
   async onItemFocused(id, shell) {
     console.log('[SpeciesStep] onItemFocused called with id:', id);
 
-    const entry = SpeciesRegistry.getById(id);
+    const entry = this._resolveSpeciesEntry(id);
     if (!entry) {
       console.error(`[SpeciesStep] ✗ onItemFocused: no registry entry for id "${id}" — focus ignored`);
       return;
@@ -483,7 +483,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
   async onItemCommitted(id, shell) {
     // Use stable id-based lookup — avoids name-based fragility and is O(1).
     // SpeciesRegistry.getById is synchronous; no await needed.
-    const entry = SpeciesRegistry.getById(id);
+    const entry = this._resolveSpeciesEntry(id);
     if (!entry) {
       console.warn(`[SpeciesStep] No registry entry found for id: ${id}`);
       return;
@@ -980,6 +980,70 @@ export class SpeciesStep extends ProgressionStepPlugin {
    * Priority: species.img (if set and not a generic placeholder) →
    *           assets/species/{name}.webp|jpg lookup → null
    */
+  _computeSpeciesFallbackId(species) {
+    if (!species) return null;
+
+    const basis = [
+      species.id,
+      species._id,
+      species.uuid,
+      species.name,
+      species.source,
+      species.pack,
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase()
+      .trim();
+
+    if (!basis) {
+      return null;
+    }
+
+    return basis
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  _ensureSpeciesIdentity(species) {
+    if (!species || typeof species !== 'object') {
+      return species;
+    }
+
+    if (species.id) {
+      return species;
+    }
+
+    return {
+      ...species,
+      id: this._computeSpeciesFallbackId(species),
+    };
+  }
+
+  _resolveSpeciesEntry(itemRef) {
+    const requestedId = typeof itemRef === 'string' ? itemRef : itemRef?.id;
+    if (!requestedId) {
+      return null;
+    }
+
+    const direct = SpeciesRegistry.getById(requestedId);
+    if (direct) {
+      return this._ensureSpeciesIdentity(direct);
+    }
+
+    const normalizedRequestedId = String(requestedId).toLowerCase();
+    return (SpeciesRegistry.getAll() || [])
+      .map(species => this._ensureSpeciesIdentity(species))
+      .find(species => {
+        const speciesId = String(species?.id ?? '').toLowerCase();
+        const fallbackId = String(this._computeSpeciesFallbackId(species) ?? '').toLowerCase();
+        const speciesName = String(species?.name ?? '').toLowerCase();
+        return normalizedRequestedId === speciesId
+          || normalizedRequestedId === fallbackId
+          || normalizedRequestedId === speciesName;
+      }) || null;
+  }
+
   _resolveSpeciesImg(species) {
     // Use existing img if it looks like real art (not a default Foundry icon)
     if (species.img
@@ -998,8 +1062,10 @@ export class SpeciesStep extends ProgressionStepPlugin {
   }
 
   _formatSpeciesCard(species, suggestedIds = new Set(), confidenceMap = new Map()) {
+    species = this._ensureSpeciesIdentity(species);
+
     // DIAGNOSTICS: Check for missing id early
-    if (!species.id) {
+    if (!species?.id) {
       swseLogger.warn('[SpeciesStep] _formatSpeciesCard received species without id', {
         name: species.name,
         source: species.source,

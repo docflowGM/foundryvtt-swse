@@ -1,106 +1,90 @@
-
-<section class="swse-panel swse-panel--health hp-condition-panel v3-panel holo-panel svg-framed svg-panel-frame {{healthPanel.stateClass}}">
-
-  <!-- Frame layer: SVG background -->
-  <div class="swse-panel__frame" aria-hidden="true"></div>
-
-  <!-- Content layer: normal flow content -->
+<section class="swse-panel swse-panel--health hp-condition-panel v3-panel holo-panel {{healthPanel.stateClass}}">
   <div class="swse-panel__content">
     <header class="section-bar">
-      <h3 class="section-header">Health & Conditions</h3>
-      <span class="hp-state-label {{healthPanel.stateClass}}">
-        {{healthPanel.stateLabel}}
-      </span>
+      <h3 class="section-header">Health &amp; Conditions</h3>
+      <span class="hp-state-label {{healthPanel.stateClass}}">{{healthPanel.stateLabel}}</span>
     </header>
 
-    <!-- HP BLOCK - Bar consolidated to header, controls remain here -->
-    <div class="hp-section" data-swse-tooltip="HitPoints">
-      <!-- HP Current / Max Inputs -->
-      <div class="hp-input-controls">
-        <div class="hp-input-group">
-          <label>Current HP:</label>
-          <input type="number"
-                 name="system.hp.value"
-                 value="{{healthPanel.hp.value}}"
-                 class="hp-current-input"
-                 min="0"
-                 placeholder="0"
-                 {{#unless healthPanel.hp.canEdit}}disabled{{/unless}} />
-        </div>
-        <div class="hp-input-group">
-          <label>Max HP:</label>
-          <input type="number"
-                 name="system.hp.max"
-                 value="{{healthPanel.hp.max}}"
-                 class="hp-max-input"
-                 min="1"
-                 placeholder="1"
-                 {{#unless healthPanel.hp.canEdit}}disabled{{/unless}} />
-        </div>
-        <div class="hp-input-group">
-          <label>Temporary HP:</label>
-          <input type="number"
-                 name="system.hp.temp"
-                 value="{{healthPanel.hp.temp}}"
-                 class="hp-temp-input"
-                 min="0"
-                 placeholder="0"
-                 {{#unless healthPanel.hp.canEdit}}disabled{{/unless}} />
-        </div>
+    <div class="hp-input-grid" data-swse-tooltip="HitPoints">
+      <div class="hp-input-group">
+        <label>Current HP</label>
+        <input type="number"
+               name="system.hp.value"
+               value="{{healthPanel.hp.value}}"
+               class="hp-current-input"
+               data-resource-number="hp-current"
+               min="0"
+               {{#unless healthPanel.hp.canEdit}}disabled{{/unless}} />
       </div>
 
-      {{#if healthPanel.bonusHp.hasBonus}}
-        <div class="bonus-hp-info">
-          <span class="bonus-hp-label">+{{healthPanel.bonusHp.value}} bonus</span>
-        </div>
-      {{/if}}
+      <div class="hp-input-group">
+        <label>Max HP</label>
+        <input type="number"
+               name="system.hp.max"
+               value="{{healthPanel.hp.max}}"
+               class="hp-max-input"
+               min="1"
+               {{#unless healthPanel.hp.canEdit}}disabled{{/unless}} />
+      </div>
+
+      <div class="hp-input-group">
+        <label>Temporary HP</label>
+        <input type="number"
+               name="system.hp.temp"
+               value="{{healthPanel.hp.temp}}"
+               class="hp-temp-input"
+               data-resource-number="hp-temp"
+               min="0"
+               {{#unless healthPanel.hp.canEdit}}disabled{{/unless}} />
+      </div>
+
+      <div class="hp-input-group hp-input-group--readonly" title="Shield Rating">
+        <label>SR</label>
+        <input type="number"
+               value="{{healthPanel.shield.current}}"
+               class="hp-sr-input"
+               data-resource-number="shield-current"
+               readonly
+               disabled />
+        <div class="hp-input-hint">{{healthPanel.shield.current}} / {{healthPanel.shield.max}}</div>
+      </div>
+
+      <div class="hp-input-group">
+        <label>DR</label>
+        <input type="number"
+               name="system.damageReduction"
+               value="{{healthPanel.damageReductionValue}}"
+               class="hp-dr-input"
+               min="0"
+               {{#unless healthPanel.hp.canEdit}}disabled{{/unless}} />
+      </div>
     </div>
 
-    {{!-- Shield Display --}}
-    {{#if healthPanel.showShield}}
-      <div class="survivability-stat" title="Shield Rating">
-        <div class="stat-label">Shield</div>
-        <div class="stat-value">{{healthPanel.shield.rating}}</div>
+    {{#if healthPanel.bonusHp.hasBonus}}
+      <div class="bonus-hp-info">
+        <span class="bonus-hp-label">Bonus HP: +{{healthPanel.bonusHp.value}}</span>
       </div>
     {{/if}}
 
-    {{!-- Damage Reduction Display --}}
-    {{#if healthPanel.showDamageReduction}}
-      <div class="survivability-stat" title="Damage Reduction reduces incoming damage before other defenses">
-        <div class="stat-label">DR</div>
-        <div class="stat-value">{{healthPanel.damageReduction}}</div>
+    <div class="condition-standard-track" data-swse-tooltip="ConditionTrack">
+      <div class="condition-standard-track__header">
+        <span class="condition-standard-track__title">Condition Track</span>
+        <span class="condition-standard-track__summary">Current: {{healthPanel.currentConditionPenalty.label}}</span>
       </div>
-    {{/if}}
 
-    <!-- CONDITION TRACK BLOCK (with overlay for positioned sockets) -->
-    {{#if healthPanel.showConditionTrack}}
-    <div class="condition-section" data-swse-tooltip="ConditionTrack">
-      <div class="swse-panel swse-panel--condition-track condition-track-panel">
-        <div class="condition-track-frame" aria-hidden="true"></div>
-        <div class="swse-panel__overlay condition-track-overlay">
-          {{#each healthPanel.conditionSlots as |slot|}}
-            <button type="button"
-                    class="condition-slot condition-slot-{{slot.step}} {{#if slot.active}}active{{/if}}"
-                    data-action="set-condition-step"
-                    data-step="{{slot.step}}"
-                    title="Set condition: {{slot.label}}"
-                    aria-label="Condition level {{slot.step}}: {{slot.label}}"
-                    {{#unless slot.canEdit}}disabled{{/unless}}>
-              <span class="condition-level">{{slot.step}}</span>
-            </button>
-          {{/each}}
-        </div>
-      </div>
-      <div class="condition-status-row">
-        <span class="condition-status-label">Condition Track:</span>
-        <span class="condition-status-value">{{healthPanel.conditionTrack.current}} / {{healthPanel.conditionTrack.max}}</span>
-      </div>
-      <div class="condition-penalty-row">
-        <span class="condition-penalty-label">Penalty:</span>
-        <span class="condition-penalty-value">{{healthPanel.currentConditionPenalty.label}}</span>
+      <div class="condition-standard-track__rows">
+        {{#each healthPanel.conditionSlots as |slot|}}
+          <button type="button"
+                  class="condition-track-row {{slot.severityClass}} {{#if slot.active}}active{{/if}}"
+                  data-action="set-condition-step"
+                  data-step="{{slot.step}}"
+                  title="Set condition: {{slot.label}}"
+                  {{#unless slot.canEdit}}disabled{{/unless}}>
+            <span class="condition-track-row__badge">{{slot.label}}</span>
+            <span class="condition-track-row__text">{{slot.description}}</span>
+          </button>
+        {{/each}}
       </div>
     </div>
-    {{/if}}
   </div>
-
 </section>

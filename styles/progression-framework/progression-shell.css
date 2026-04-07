@@ -840,3 +840,15 @@
 .swse-mobile select {
   touch-action: auto;
 }
+
+
+/* PATCH: disable generic holo button overlay on progression selection cards
+   Progression browsing rows render their own SVG/card chrome. The global
+   `.swse-sheet-ui button::before` overlay should not be painted on top of any
+   button that exists only to drive `data-action="focus-item"` selection. */
+.progression-shell button[data-action="focus-item"]::before {
+  content: none !important;
+  background: none !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}

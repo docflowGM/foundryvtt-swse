@@ -1,119 +1,41 @@
-{{!--
-  ARMOR STATE AUDIT (Phase 5)
-  --
-  This panel shows a single "Armor" bonus per defense, derived from equipped armor.
-  NOTE: Multiple armors CAN be equipped (not schema-enforced), but the system treats
-  the FIRST equipped armor as canonical (via ModifierEngine.find()).
-
-  This panel is truthful to system behavior: it shows the armor bonus that actually
-  affects the defense calculation (first equipped by document order).
-
-  If multiple armors are accidentally equipped, only the first one's bonus will display.
-  This is consistent with combat calculations and prevents silent misalignment.
---}}
-
-<section class="swse-panel swse-panel--defenses defenses-panel v3-panel holo-panel svg-framed svg-panel-frame">
-
-  <!-- Frame layer: SVG background -->
-  <div class="swse-panel__frame" aria-hidden="true"></div>
-
-  <!-- Content layer: normal flow content -->
+<section class="swse-panel swse-panel--defenses defenses-panel v3-panel holo-panel defenses-panel--open">
   <div class="swse-panel__content">
     <header class="section-bar">
       <h3 class="section-header">Defenses</h3>
-      <button type="button"
-              data-action="toggle-defenses"
-              class="swse-btn defenses-toggle">
-        More
-      </button>
     </header>
 
-    <div class="defenses-container">
-
-    {{#each defensePanel.defenses as |def|}}
-
-      <div class="defense-row defense-{{def.key}}">
-
-        <!-- COLLAPSED -->
-        <div class="defense-collapsed">
-
-          <div class="defense-label">
-            {{def.label}}
+    <div class="defenses-container defenses-container--cards">
+      {{#each defensePanel.defenses as |def|}}
+        <div class="defense-card defense-{{def.key}}">
+          <div class="defense-card__header">
+            <div class="defense-card__label">{{def.label}}</div>
+            <div class="defense-card__total">{{def.total}}</div>
           </div>
 
-          <div class="defense-total"
-               data-breakdown="{{#if (eq def.key 'flatFooted')}}FlatFooted{{else if (eq def.key 'ref')}}ReflexDefense{{else if (eq def.key 'fort')}}FortitudeDefense{{else if (eq def.key 'will')}}WillDefense{{/if}}"
-               data-defense-breakdown="{{def.key}}"
-               data-help-tier="tier1"
-               title="{{def.label}} defense breakdown — click for details">
-            {{def.total}}
-          </div>
-
-        </div>
-
-        <!-- EXPANDED: Math Breakdown -->
-        <div class="defense-expanded">
-
-          <!-- Math expression in clear row format -->
-          <div class="defense-math-row">
-            <!-- Base (10) -->
-            <div class="math-pill derived base-pill" title="Base defense">
-              <span class="pill-value">10</span>
+          <div class="defense-card__body">
+            <div class="defense-card__formula">
+              <span class="defense-token">10</span>
+              <span class="defense-op">+</span>
+              <span class="defense-token">A {{def.armorBonus}}</span>
+              <span class="defense-op">+</span>
+              <span class="defense-token">Ab {{def.abilityMod}}</span>
+              <span class="defense-op">+</span>
+              <span class="defense-token">C {{def.classDef}}</span>
+              <span class="defense-op">+</span>
+              <span class="defense-token defense-token--editable">M</span>
             </div>
 
-            <div class="math-operator">+</div>
-
-            <!-- Armor Bonus (Derived) -->
-            <div class="math-pill derived" title="From equipped armor">
-              <span class="pill-label">A</span>
-              <span class="pill-value">{{def.armorBonus}}</span>
-            </div>
-
-            <div class="math-operator">+</div>
-
-            <!-- Ability Modifier (Derived) -->
-            <div class="math-pill derived {{def.abilityModClass}}" title="Ability modifier for this defense">
-              <span class="pill-label">Abil</span>
-              <span class="pill-value">{{#if (eq def.abilityMod 0)}}0{{else}}{{#if (gt def.abilityMod 0)}}+{{/if}}{{def.abilityMod}}{{/if}}</span>
-            </div>
-
-            <div class="math-operator">+</div>
-
-            <!-- Class Feature (Derived) -->
-            <div class="math-pill derived" title="Class bonus">
-              <span class="pill-label">C</span>
-              <span class="pill-value">{{def.classDef}}</span>
-            </div>
-
-            <div class="math-operator">+</div>
-
-            <!-- Misc Modifier (Editable) -->
-            <div class="math-pill editable {{def.miscModClass}}" title="Manual adjustments">
-              <span class="pill-label">M</span>
+            <div class="defense-card__misc">
+              <label>Misc Modifier</label>
               <input type="number"
-                     data-field="misc"
                      name="system.defenses.{{def.key}}.miscMod"
                      value="{{def.miscMod}}"
                      class="misc-input {{def.miscModClass}}"
-                     placeholder="0"
-                     {{#unless def.canEdit}}disabled{{/unless}}>
-            </div>
-
-            <div class="math-equals">=</div>
-
-            <!-- Total Result -->
-            <div class="math-result" title="Total {{def.label}} defense">
-              <span class="result-value">{{def.total}}</span>
+                     {{#unless def.canEdit}}disabled{{/unless}} />
             </div>
           </div>
-
         </div>
-
-      </div>
-
-    {{/each}}
-
+      {{/each}}
     </div>
   </div>
-
 </section>

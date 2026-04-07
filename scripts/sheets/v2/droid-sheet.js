@@ -16,6 +16,7 @@ import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or
 import { isXPEnabled } from "/systems/foundryvtt-swse/scripts/engine/progression/xp-engine.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
+import { applyResourceBarAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-bar-animations.js";
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -208,6 +209,7 @@ export class SWSEV2DroidSheet extends
     );
 
     markActiveConditionStep(root, this.actor);
+    applyResourceBarAnimations(this, root);
 
     /* ---------------- TAB HANDLING ---------------- */
 

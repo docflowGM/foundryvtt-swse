@@ -12,6 +12,7 @@ import { DropResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/in
 import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
 import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-bindings.js";
+import { applyResourceBarAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-bar-animations.js";
 
 function markActiveConditionStep(root, actor) {
   if (!(root instanceof HTMLElement)) return;
@@ -141,6 +142,7 @@ export class SWSEV2CombatNpcSheet extends
     ActionEconomyBindings.setupAttackButtons(root, this.document);
 
     markActiveConditionStep(root, this.actor);
+    applyResourceBarAnimations(this, root);
 
     /* ---- CONDITION STEP HANDLING ---- */
 

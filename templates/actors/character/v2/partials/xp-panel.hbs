@@ -1,12 +1,10 @@
 {{#if xpEnabled}}
 <section class="swse-xp-panel v3-panel holo-panel swse-ui-panel swse-phase2-core-panel {{xpData.stateClass}} {{#if xpLevelReady}}xp-level-up{{/if}}">
-
   <header class="section-bar">
     <h3 class="section-header">Experience Points</h3>
   </header>
 
-  <div class="xp-content">
-
+  <div class="xp-content xp-content--numbers-only">
     <div class="xp-grid-top">
       <div class="xp-stat">
         <div class="xp-label">Level</div>
@@ -15,48 +13,38 @@
 
       <div class="xp-stat">
         <div class="xp-label">Total XP</div>
-
         {{#if isGM}}
-          <input type="number"
-                 name="system.xp.total"
-                 value="{{xpData.total}}"
-                 min="0"
-                 class="xp-total-input">
+          <input type="number" name="system.xp.total" value="{{xpData.total}}" min="0" class="xp-total-input">
         {{else}}
           <div class="xp-total-value">{{xpData.total}}</div>
         {{/if}}
-
       </div>
     </div>
 
-    {{#if xpData.nextLevelAt}}
     <div class="xp-grid-bottom">
       <div class="xp-substat">
         <div class="xp-sub-label">Next Level</div>
-        <div class="xp-sub-value">{{xpData.nextLevelAt}}</div>
+        <div class="xp-sub-value">{{#if xpData.nextLevelAt}}{{xpData.nextLevelAt}}{{else}}—{{/if}}</div>
       </div>
 
       <div class="xp-substat">
         <div class="xp-sub-label">XP to Next</div>
-        <div class="xp-sub-value">{{xpData.xpToNext}}</div>
+        <div class="xp-sub-value">{{#if xpData.nextLevelAt}}{{xpData.xpToNext}}{{else}}0{{/if}}</div>
       </div>
     </div>
-    {{/if}}
 
-    <div class="xp-progress-wrapper {{xpData.stateClass}}">
-      {{#if xpData.nextLevelAt}}
-        <div class="xp-progress-text">
-          {{xpData.total}} / {{xpData.nextLevelAt}}
-        </div>
+    <div class="xp-readout-row">
+      <div class="xp-readout-chip">
+        <span class="xp-readout-chip__label">Progress</span>
+        <span class="xp-readout-chip__value">{{xpData.percentRounded}}%</span>
+      </div>
+      {{#if xpLevelReady}}
+      <div class="xp-readout-chip xp-readout-chip--ready">
+        <span class="xp-readout-chip__label">Status</span>
+        <span class="xp-readout-chip__value">Ready to Level Up</span>
+      </div>
       {{/if}}
-
-      <div class="xp-progress-bar {{xpData.stateClass}}">
-        <div class="xp-progress-fill {{xpData.stateClass}}"
-             style="width: {{xpPercent}}%;"></div>
-        <span class="xp-progress-label">{{xpPercent}}%</span>
-      </div>
     </div>
-
   </div>
 </section>
 {{/if}}

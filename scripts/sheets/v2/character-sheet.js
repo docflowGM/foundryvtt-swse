@@ -30,15 +30,18 @@ import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import { computeCenteredPosition } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
+import { XP_LEVEL_THRESHOLDS } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
 import { PANEL_REGISTRY } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PANEL_REGISTRY.js";
 import { PostRenderAssertions } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PostRenderAssertions.js";
 import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { SkillUseFilter } from "/systems/foundryvtt-swse/scripts/utils/skill-use-filter.js";
 // Phase 7: Shared platform layer imports (reusable across all V2 sheets)
 import { UIStateManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/UIStateManager.js";
+import { applyResourceBarAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-bar-animations.js";
 import { PanelDiagnostics } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/PanelDiagnostics.js";
 // Character-specific visibility manager (subclass of shared base)
 import { PanelVisibilityManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/PanelVisibilityManager.js";
+import { applyResourceNumberAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-number-animations.js";
 import { ExtraSkillUseRegistry } from "/systems/foundryvtt-swse/scripts/utils/extra-skill-use-registry.js";
 import { traceLog, actorSummary, payloadSummary } from "/systems/foundryvtt-swse/scripts/utils/mutation-trace.js";
 
@@ -71,6 +74,10 @@ const FORM_FIELD_SCHEMA = {
   'system.hpBonus': 'number',
   'system.conditionTrack.current': 'number',
   'system.damageReduction': 'number',
+  'system.baseAttackBonus': 'number',
+  'system.secondWind.healing': 'number',
+  'system.secondWind.uses': 'number',
+  'system.secondWind.max': 'number',
 
   // Abilities
   'system.abilities.str.base': 'number',
@@ -409,6 +416,8 @@ export class SWSEV2CharacterSheet extends
 
     // Wire listeners to the actual sheet root (now guaranteed to be the form or the sheet content)
     this.activateListeners(root, { signal });
+    applyResourceNumberAnimations(this, root);
+    applyResourceBarAnimations(this, root);
 
     // Wire tooltip bindings for micro-tooltips
     bindV2CharacterSheetTooltips(this.document, root, this._renderAbort);
@@ -874,16 +883,17 @@ const forcePoints = [];
       };
     }
 
-    // Header Second Wind Context (condensed version for header area)
+    // Header Second Wind Context (always visible in header area)
     const swUses = Number(system.secondWind?.uses) ?? 0;
     const swMax = Number(system.secondWind?.max) ?? 1;
-    const swHealing = Number(system.secondWind?.healing) ?? 0;
+    const swBaseHealing = Math.ceil((system.hp?.max ?? 1) * 0.25);
+    const swHealing = Number(system.secondWind?.healing) > 0 ? Number(system.secondWind?.healing) : swBaseHealing;
     const headerSecondWind = {
       canUse: swUses > 0,
       usesRemaining: swUses,
       maxUses: swMax,
-      healingAmount: swHealing > 0 ? swHealing : Math.ceil((system.hp?.max ?? 1) * 0.25),
-      label: `Regain ${swHealing > 0 ? swHealing : Math.ceil((system.hp?.max ?? 1) * 0.25)} HP`
+      healingAmount: swHealing,
+      label: `Regain ${swHealing} HP`
     };
 
     // Combat Actions Context (for combat tab - actions browser)
@@ -942,19 +952,26 @@ const forcePoints = [];
     ============================================================ */
 
     // XP System Configuration and Progress
-    // Use derived.xp which is computed by XpEngine.computeXpDerived()
     const xpSystem = CONFIG.SWSE?.system?.xpProgression || 'milestone';
     const xpEnabled = xpSystem !== 'disabled';
-    const xpDerived = derived.xp ?? { total: 0, progressPercent: 0, xpToNext: 0 };
-    const xpPercent = xpDerived.progressPercent ?? 0;
+    const xpDerived = derived.xp ?? { total: 0, progressPercent: 0, xpToNext: 0, level: actor.system.level ?? 1 };
+    const xpDisplayLevel = Math.max(1, Number(actor.system.level ?? xpDerived.level ?? 1));
+    const xpTotal = Number(xpDerived.total ?? actor.system?.xp?.total ?? 0) || 0;
+    const xpPercent = Math.max(0, Math.min(100, Math.round(Number(xpDerived.progressPercent ?? 0) || 0)));
+    const nextLevelAtDisplay = XP_LEVEL_THRESHOLDS[Math.min(20, xpDisplayLevel + 1)] ?? null;
     const xpLevelReady = xpPercent >= 100;
+    const xpSegments = Array.from({ length: 20 }, (_, index) => ({
+      index,
+      filled: ((index + 1) / 20) * 100 <= xpPercent + 0.0001
+    }));
 
-    // SEMANTIC: XP data object with visual state
     const xpData = {
-      level: actor.system.level ?? 1,
-      total: xpDerived.total ?? 0,
-      nextLevelAt: xpDerived.nextLevelAt ?? 0,
-      xpToNext: xpDerived.xpToNext ?? 0,
+      level: xpDisplayLevel,
+      total: xpTotal,
+      nextLevelAt: nextLevelAtDisplay,
+      xpToNext: nextLevelAtDisplay !== null ? Math.max(0, nextLevelAtDisplay - xpTotal) : 0,
+      percentRounded: xpPercent,
+      segments: xpSegments,
       stateClass: xpLevelReady ? 'state--ready-levelup' : xpPercent >= 75 ? 'state--nearly-ready' : 'state--in-progress'
     };
 
@@ -2804,17 +2821,8 @@ const forcePoints = [];
     html.querySelectorAll('[data-action="rest-second-wind"]').forEach(button => {
       button.addEventListener("click", async (event) => {
         event.preventDefault();
-        // Restore second wind uses
-        const plan = {
-          update: {
-            "system.secondWind": {
-              current: this.actor.system?.secondWind?.max ?? 1
-            }
-          }
-        };
-
         try {
-          await ActorEngine.apply(this.actor, plan);
+          await ActorEngine.resetSecondWind(this.actor);
           ui?.notifications?.info?.("Second Wind restored!");
         } catch (err) {
           console.error("Rest failed:", err);
@@ -2827,27 +2835,13 @@ const forcePoints = [];
     html.querySelectorAll('[data-action="use-second-wind"]').forEach(button => {
       button.addEventListener("click", async (event) => {
         event.preventDefault();
-        const currentHp = this.actor.system?.hp?.value ?? 0;
-        const maxHp = this.actor.system?.hp?.max ?? 1;
-        // Calculate healing as 25% of max HP if not stored, or use stored value
-        let healing = this.actor.system?.secondWind?.healing ?? 0;
-        if (healing <= 0) {
-          // Default to 25% of max HP (rounded up)
-          healing = Math.ceil(maxHp * 0.25);
-        }
-        const newHp = Math.min(currentHp + healing, maxHp);
-        const uses = this.actor.system?.secondWind?.uses ?? 0;
-
-        const plan = {
-          update: {
-            "system.hp.value": newHp,
-            "system.secondWind.uses": Math.max(0, uses - 1)
-          }
-        };
-
         try {
-          await ActorEngine.apply(this.actor, plan);
-          ui?.notifications?.info?.(`Regained ${healing} HP!`);
+          const result = await ActorEngine.applySecondWind(this.actor);
+          if (result?.success === false) {
+            ui?.notifications?.warn?.(result.reason || "No Second Wind uses remaining");
+            return;
+          }
+          ui?.notifications?.info?.(`Regained ${result?.healed ?? 0} HP!`);
         } catch (err) {
           console.error("Second Wind use failed:", err);
           ui?.notifications?.error?.(`Second Wind use failed: ${err.message}`);

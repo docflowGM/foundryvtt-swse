@@ -1,15 +1,3 @@
-2026/04/06-13:03:53.718 34f8 Recovering log #156
-2026/04/06-13:03:53.724 34f8 Delete type=0 #156
-2026/04/06-13:03:53.724 34f8 Delete type=3 #154
-2026/04/06-13:26:21.486 50cc Level-0 table #162: started
-2026/04/06-13:26:21.492 50cc Level-0 table #162: 26705 bytes OK
-2026/04/06-13:26:21.495 50cc Delete type=0 #160
-2026/04/06-13:26:21.537 50cc Manual compaction at level-0 from '!items!null' @ 72057594037927935 : 1 .. '!items!species-zeltron' @ 0 : 0; will stop at (end)
-2026/04/06-13:26:21.537 50cc Manual compaction at level-1 from '!items!null' @ 72057594037927935 : 1 .. '!items!species-zeltron' @ 0 : 0; will stop at '!items!null' @ 3664 : 1
-2026/04/06-13:26:21.537 50cc Compacting 1@1 + 1@2 files
-2026/04/06-13:26:21.542 50cc Generated table #163@1: 112 keys, 20854 bytes
-2026/04/06-13:26:21.542 50cc Compacted 1@1 + 1@2 files => 20854 bytes
-2026/04/06-13:26:21.544 50cc compacted to: files[ 0 0 1 0 0 0 0 ]
-2026/04/06-13:26:21.544 50cc Delete type=2 #158
-2026/04/06-13:26:21.545 50cc Delete type=2 #162
-2026/04/06-13:26:21.584 50cc Manual compaction at level-1 from '!items!null' @ 3664 : 1 .. '!items!species-zeltron' @ 0 : 0; will stop at (end)
+2026/04/07-13:38:39.553 89a0 Recovering log #171
+2026/04/07-13:38:39.560 89a0 Delete type=0 #171
+2026/04/07-13:38:39.560 89a0 Delete type=3 #169

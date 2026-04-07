@@ -796,6 +796,8 @@ export class ProgressionShell extends SWSEApplicationV2 {
       const placeholder = HydrationRecoveryStrategies.generatePlaceholderHTML();
     }
 
+    diagnostics.detectSpeciesRowsMissingIds(currentDescriptor?.stepId, workSurfaceHtml);
+
     // Footer data
     const isLastStep = this.currentStepIndex === this.steps.length - 1;
     const footerData = this._buildFooterData(currentPlugin, isLastStep);
@@ -1634,11 +1636,37 @@ export class ProgressionShell extends SWSEApplicationV2 {
   // Step Plugin Interaction Forwarding
   // ---------------------------------------------------------------------------
 
-  async _onFocusItem(event, target) {
-    // Find the closest parent with [data-item-id] to handle clicks on child elements
-    // (e.g., clicking on species name, stats, or thumbnail should focus the row)
-    // Defensive: ensure target is a DOM element with closest() method
+  _resolveInteractionItemId(target, event = null) {
     const element = target instanceof Element ? target : event?.target;
+    if (!element || typeof element.closest !== 'function') {
+      return { element, row: null, itemId: null, matchedAttribute: null };
+    }
+
+    const row = element.closest('[data-item-id], [data-feat-id], [data-language-id]');
+    if (!row) {
+      return { element, row: null, itemId: null, matchedAttribute: null };
+    }
+
+    const candidates = [
+      ['itemId', 'data-item-id'],
+      ['featId', 'data-feat-id'],
+      ['languageId', 'data-language-id'],
+    ];
+
+    for (const [datasetKey, attributeName] of candidates) {
+      const value = row.dataset?.[datasetKey];
+      if (value) {
+        return { element, row, itemId: value, matchedAttribute: attributeName };
+      }
+    }
+
+    return { element, row, itemId: null, matchedAttribute: null };
+  }
+
+  async _onFocusItem(event, target) {
+    // Resolve the clicked row using the canonical data-item-id contract first,
+    // but also tolerate legacy data-feat-id / data-language-id rows.
+    const { element, row, itemId, matchedAttribute } = this._resolveInteractionItemId(target, event);
 
     // DIAGNOSTICS: Log click target details
     const stepId = this.steps[this.currentStepIndex]?.stepId;
@@ -1657,21 +1685,21 @@ export class ProgressionShell extends SWSEApplicationV2 {
       return;
     }
 
-    const row = element.closest('[data-item-id]');
-    const itemId = row?.dataset?.itemId;
 
     // DIAGNOSTICS: Log resolution details
     swseLogger.debug(`[ProgressionShell] _onFocusItem resolved`, {
       rowFound: !!row,
       rowTag: row?.tagName,
       itemId,
+      matchedAttribute,
       dataAttributesPresent: Object.keys(row?.dataset ?? {}).slice(0, 5),
     });
 
     if (!itemId) {
-      swseLogger.warn('[ProgressionShell] _onFocusItem: could not find [data-item-id] in target or ancestors', {
+      swseLogger.warn('[ProgressionShell] _onFocusItem: could not resolve focus row identity', {
         rowElement: row?.outerHTML?.slice(0, 100),
-        ancestorChain: element?.closest?.('[data-item-id]') ? 'found' : 'not found',
+        matchedAttribute,
+        ancestorChain: element?.closest?.('[data-item-id], [data-feat-id], [data-language-id]') ? 'found' : 'not found',
       });
       return;
     }
@@ -1684,19 +1712,17 @@ export class ProgressionShell extends SWSEApplicationV2 {
   }
 
   async _onCommitItem(event, target) {
-    // Find the closest parent with [data-item-id] to handle clicks on child elements
-    // Defensive: ensure target is a DOM element with closest() method
-    const element = target instanceof Element ? target : event?.target;
+    const { element, row, itemId, matchedAttribute } = this._resolveInteractionItemId(target, event);
     if (!element || typeof element.closest !== 'function') {
       swseLogger.warn('[ProgressionShell] _onCommitItem: target is not a DOM element');
       return;
     }
 
-    const row = element.closest('[data-item-id]');
-    const itemId = row?.dataset?.itemId;
-
     if (!itemId) {
-      swseLogger.warn('[ProgressionShell] _onCommitItem: could not find [data-item-id] in target or ancestors');
+      swseLogger.warn('[ProgressionShell] _onCommitItem: could not resolve commit row identity', {
+        rowElement: row?.outerHTML?.slice(0, 100),
+        matchedAttribute,
+      });
       return;
     }
 

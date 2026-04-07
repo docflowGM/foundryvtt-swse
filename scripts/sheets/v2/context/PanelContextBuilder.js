@@ -66,9 +66,10 @@ export class PanelContextBuilder {
     const hp = this.system.hp || { value: 0, max: 1 };
     const hpValue = Number(hp.value) || 0;
     const hpMax = Number(hp.max) || 1;
-    const hpPercent = Math.floor((hpValue / hpMax) * 100);
+    const hpTemp = Number(hp.temp) || 0;
+    const hpPercent = Math.max(0, Math.min(100, Math.round((hpValue / hpMax) * 100)));
+    const tempPercent = Math.max(0, Math.min(100, Math.round((hpTemp / hpMax) * 100)));
 
-    // Determine HP state class
     let stateClass = 'state--healthy';
     let stateLabel = 'Healthy';
     if (hpValue <= 0) {
@@ -91,54 +92,56 @@ export class PanelContextBuilder {
       }
     }
 
-    // Bonus HP
     const bonusHpValue = Number(this.system.hpBonus) || 0;
+    const shieldCurrent = Number(this.derived.shield?.current ?? this.system.currentSR ?? 0) || 0;
+    const shieldMax = Number(this.derived.shield?.max ?? this.system.shieldRating ?? shieldCurrent) || 0;
+    const shieldPercent = shieldMax > 0 ? Math.max(0, Math.min(100, Math.round((shieldCurrent / shieldMax) * 100))) : 0;
+    const damageReductionValue = Number(this.system.damageReduction ?? 0) || 0;
 
-    // Shield rating
-    const shieldMax = Number(this.derived.shield?.max) || 0;
-    const shieldCurrent = Number(this.derived.shield?.current) || 0;
-
-    // Damage reduction (must be string or null per contract)
-    const dmgRedNum = Number(this.system.damageReduction);
-    const damageReduction = isNaN(dmgRedNum) || dmgRedNum === 0 ? null : String(dmgRedNum);
-
-    // Condition track
     const ctCurrent = Number(this.system.conditionTrack?.current) || 0;
     const ctMax = 6;
 
-    // Condition penalties by level (SWSE rules)
-    const conditionPenalties = {
-      0: { penalty: 0, label: 'Normal' },
-      1: { penalty: -1, label: '-1' },
-      2: { penalty: -2, label: '-2' },
-      3: { penalty: -5, label: '-5' },
-      4: { penalty: -10, label: '-10' },
-      5: { penalty: null, label: 'Helpless' }
-    };
+    const conditionDefinitions = [
+      { step: 0, label: 'Normal', description: 'No penalties.', severityClass: 'severity-normal', penalty: 0 },
+      { step: 1, label: '-1', description: 'To all defenses, attacks, skill, and ability checks.', severityClass: 'severity-low', penalty: -1 },
+      { step: 2, label: '-2', description: 'To all defenses, attacks, skill, and ability checks.', severityClass: 'severity-mid', penalty: -2 },
+      { step: 3, label: '-5', description: 'To all defenses, attacks, skill, and ability checks.', severityClass: 'severity-high', penalty: -5 },
+      { step: 4, label: '-10', description: 'To all defenses, attacks, skill, and ability checks. Move at half speed.', severityClass: 'severity-critical', penalty: -10 },
+      { step: 5, label: 'Helpless', description: 'Unconscious or disabled.', severityClass: 'severity-helpless', penalty: null }
+    ];
 
-    const currentConditionPenalty = conditionPenalties[ctCurrent] || { penalty: 0, label: 'Normal' };
+    const conditionSlots = conditionDefinitions.map(def => ({
+      ...def,
+      active: ctCurrent === def.step,
+      canEdit: this.sheet.isEditable
+    }));
 
-    // Condition steps (normalized slots)
-    const conditionSlots = [];
-    for (let i = 0; i < ctMax; i++) {
-      const penaltyInfo = conditionPenalties[i] || { penalty: 0, label: 'Unknown' };
-      conditionSlots.push({
-        step: i,
-        label: `${penaltyInfo.label}`,
-        active: ctCurrent === i,
-        canEdit: this.sheet.isEditable,
-        penalty: penaltyInfo.penalty
-      });
-    }
+    const filledSegments = Math.max(0, Math.min(20, Math.round((hpValue / hpMax) * 20)));
+    const hpSegments = Array.from({ length: 20 }, (_, index) => {
+      let colorClass = 'seg--green';
+      if (index < 4) colorClass = 'seg--red';
+      else if (index < 8) colorClass = 'seg--orange';
+      else if (index < 12) colorClass = 'seg--yellow';
+      else if (index < 16) colorClass = 'seg--yellowgreen';
+      return {
+        index,
+        filled: index < filledSegments,
+        colorClass
+      };
+    });
+
+    const currentConditionPenalty = conditionDefinitions.find(def => def.step === ctCurrent) ?? conditionDefinitions[0];
 
     const panel = {
       hp: {
         value: hpValue,
         max: hpMax,
-        temp: Number(this.system.hp?.temp) || 0,
+        temp: hpTemp,
         percent: hpPercent,
+        tempPercent,
         stateClass,
-        canEdit: this.sheet.isEditable
+        canEdit: this.sheet.isEditable,
+        segments: hpSegments
       },
       bonusHp: {
         value: bonusHpValue,
@@ -147,10 +150,12 @@ export class PanelContextBuilder {
       shield: {
         max: shieldMax,
         current: shieldCurrent,
-        rating: String(shieldMax > 0 ? shieldCurrent : 0),
-        hasShield: shieldMax > 0
+        rating: String(shieldCurrent),
+        hasShield: shieldMax > 0,
+        percent: shieldPercent
       },
-      damageReduction,
+      damageReduction: damageReductionValue > 0 ? String(damageReductionValue) : null,
+      damageReductionValue,
       conditionTrack: {
         current: ctCurrent,
         max: ctMax,
@@ -161,11 +166,10 @@ export class PanelContextBuilder {
       stateLabel,
       stateClass,
       showConditionTrack: true,
-      showShield: shieldMax > 0,
-      showDamageReduction: damageReduction > 0
+      showShield: true,
+      showDamageReduction: true
     };
 
-    // Validate contract (strict mode throws, dev mode warns)
     this._validatePanelContext('healthPanel', panel);
 
     return panel;
@@ -463,25 +467,23 @@ export class PanelContextBuilder {
    * - canEdit: boolean
    */
   buildSecondWindPanel() {
-    let healing = Number(this.system.secondWind?.healing) || 0;
+    const maxHp = Number(this.system.hp?.max) || 1;
+    const baseHealing = Math.ceil(maxHp * 0.25);
+    const storedHealing = Number(this.system.secondWind?.healing) || 0;
+    const healing = storedHealing > 0 ? storedHealing : baseHealing;
     const uses = Number(this.system.secondWind?.uses) || 0;
     const max = Number(this.system.secondWind?.max) || 1;
 
-    // CRITICAL: If healing is not stored, calculate 25% of max HP (consistent with header)
-    if (healing <= 0) {
-      const maxHp = Number(this.system.hp?.max) || 1;
-      healing = Math.ceil(maxHp * 0.25);
-    }
-
     const panel = {
+      baseHealing,
       healing,
+      totalHealing: healing,
       uses,
       max,
       hasUses: uses > 0,
       canEdit: this.sheet.isEditable
     };
 
-    // Validate contract (strict mode throws, dev mode warns)
     this._validatePanelContext('secondWindPanel', panel);
 
     return panel;
@@ -939,4 +941,4 @@ export class PanelContextBuilder {
     this._validatePanelContext('skillsPanel', panel);
     return panel;
   }
-}
+}

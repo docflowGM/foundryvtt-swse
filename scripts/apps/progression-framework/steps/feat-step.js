@@ -135,7 +135,7 @@ export class FeatStep extends ProgressionStepPlugin {
     featRows.forEach(row => {
       row.addEventListener('click', (e) => {
         e.preventDefault();
-        const featId = row.dataset.featId;
+        const featId = row.dataset.itemId || row.dataset.featId;
         this._focusedFeatId = featId;
         shell.render();
       }, { signal });
@@ -528,7 +528,7 @@ export class FeatStep extends ProgressionStepPlugin {
   async onItemCommitted(item, shell) {
     if (!item) return;
 
-    const feat = this._getFeat(item._id || item);
+    const feat = this._getFeat(item?.id || item?._id || item);
     if (!feat) return;
 
     // Toggle selection
