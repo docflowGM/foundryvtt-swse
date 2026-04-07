@@ -975,6 +975,28 @@ const forcePoints = [];
       stateClass: xpLevelReady ? 'state--ready-levelup' : xpPercent >= 75 ? 'state--nearly-ready' : 'state--in-progress'
     };
 
+    // HEADER SEGMENTS: Compact tactical HP and XP bars
+    const hpCurrentRaw = Number(system.hp?.value ?? 0);
+    const hpMaxRaw = Math.max(1, Number(system.hp?.max ?? 1));
+    const hpRatio = Math.max(0, Math.min(1, hpCurrentRaw / hpMaxRaw));
+    const hpFilledSegments = Math.round(hpRatio * 20);
+    const hpColorClassForIndex = (index) => {
+      if (index < 4) return "seg-red";
+      if (index < 8) return "seg-orange";
+      if (index < 12) return "seg-yellow";
+      if (index < 16) return "seg-yellowgreen";
+      return "seg-green";
+    };
+    const headerHpSegments = Array.from({ length: 20 }, (_, index) => ({
+      filled: index < hpFilledSegments,
+      colorClass: hpColorClassForIndex(index)
+    }));
+
+    const xpFilledSegments = Math.round((xpPercent / 100) * 20);
+    const headerXpSegments = Array.from({ length: 20 }, (_, index) => ({
+      filled: index < xpFilledSegments
+    }));
+
     // Character Level Checks
     const level = actor.system.level ?? 1;
     const isLevel0 = level === 0;
@@ -1171,6 +1193,8 @@ const forcePoints = [];
       enrichedFollowerSlots,        // Follower slots enriched with actor data
       hasAvailableFollowerSlots,    // Whether any slots are unfilled
       xpData,                       // XP progress data for display
+      headerHpSegments,             // 20-step segmented HP bar
+      headerXpSegments,             // 20-step segmented XP bar
       // Inventory categorized items (for inventory panel legacy support)
       equipment: Object.values(actor.items).filter(i => i.type === 'equipment'),
       armor: Object.values(actor.items).filter(i => i.type === 'armor'),
