@@ -17,7 +17,7 @@ export class PanelVisibilityManager extends BasePanelVisibilityManager {
     // These must match the tabs defined in character-sheet.hbs
     // Note: portraitPanel and biographyPanel are always visible (header), but built with overview for efficiency
     this.tabPanels = {
-      overview: ['portraitPanel', 'biographyPanel', 'healthPanel', 'combatStatsPanel', 'secondWindPanel', 'defensePanel'],
+      overview: ['portraitPanel', 'biographyPanel', 'healthPanel', 'defensePanel', 'secondWindPanel', 'resourcesPanel'],
       abilities: ['abilitiesPanel', 'racialAbilitiesPanel'],
       skills: ['skillsPanel'],
       combat: ['maneuverPanel', 'darkSidePanel'],
@@ -63,7 +63,8 @@ export class PanelVisibilityManager extends BasePanelVisibilityManager {
       relationship: ['relationshipsPanel'],
       language: ['languagesPanel'],
       ability: ['racialAbilitiesPanel'],
-      combat: ['darkSidePanel', 'secondWindPanel'],
+      combat: ['darkSidePanel', 'secondWindPanel', 'resourcesPanel'],
+      resources: ['resourcesPanel'],
       health: ['healthPanel'],
       defense: ['defensePanel'],
       biography: ['biographyPanel'],

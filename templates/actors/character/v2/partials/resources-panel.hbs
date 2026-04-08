@@ -8,13 +8,13 @@
     <div class="resources-subgrid resources-subgrid--combat-metrics">
       <div class="resource">
         <div class="label">Speed</div>
-        <input type="number" name="system.speed" value="{{speed}}" min="0" step="1" class="small-input"/>
+        <input type="number" name="system.speed" value="{{resourcesPanel.combatMetrics.speed}}" min="0" step="1" class="small-input"/>
       </div>
 
       <div class="resource" data-swse-tooltip="Initiative" title="Initiative — click for breakdown">
         <div class="label">Initiative</div>
         <div class="value-row">
-          <span class="value">{{initiativeTotal}}</span>
+          <span class="value">{{resourcesPanel.combatMetrics.initiativeTotal}}</span>
           <button type="button" class="mini-btn" data-action="roll-initiative" title="Roll initiative"><i class="fa-solid fa-dice-d20"></i></button>
           <button type="button" class="mini-btn" data-action="roll-initiative-take10" title="Take 10 initiative">10</button>
         </div>
@@ -23,7 +23,7 @@
       <div class="resource">
         <div class="label">Perception</div>
         <div class="value-row">
-          <span class="value">{{perceptionTotal}}</span>
+          <span class="value">{{resourcesPanel.combatMetrics.perceptionTotal}}</span>
           <button type="button" class="mini-btn" data-action="roll-skill" data-skill="perception" title="Roll Perception"><i class="fa-solid fa-dice-d20"></i></button>
         </div>
       </div>
@@ -31,18 +31,18 @@
       <div class="resource">
         <div class="label">Base Attack</div>
         <div class="value-row">
-          <input type="number" name="system.baseAttackBonus" value="{{bab}}" class="tiny-input" />
+          <input type="number" name="system.baseAttackBonus" value="{{resourcesPanel.combatMetrics.bab}}" class="tiny-input" />
         </div>
       </div>
 
       <div class="resource">
         <div class="label">Grapple Bonus</div>
-        <div class="value-row"><span class="value">{{grappleBonus}}</span></div>
+        <div class="value-row"><span class="value">{{resourcesPanel.combatMetrics.grappleBonus}}</span></div>
       </div>
 
       <div class="resource">
         <div class="label">Damage Threshold</div>
-        <div class="value-row"><span class="value">{{derived.damageThreshold}}</span></div>
+        <div class="value-row"><span class="value">{{resourcesPanel.combatMetrics.damageThreshold}}</span></div>
       </div>
     </div>
   </div>
@@ -51,11 +51,11 @@
     <div class="resources-group-header">Heroic Resources</div>
     <div class="resources-subgrid">
       <div class="resource">
-        <div class="label">Force Points <span class="resource-subtle">({{forcePointDie}})</span></div>
+        <div class="label">Force Points <span class="resource-subtle">({{resourcesPanel.resources.forcePointDie}})</span></div>
         <div class="value-row">
-          <input type="number" name="system.forcePoints.value" value="{{forcePointsValue}}" min="0" class="tiny-input"/>
+          <input type="number" name="system.forcePoints.value" value="{{resourcesPanel.resources.forcePointsValue}}" min="0" class="tiny-input"/>
           <span>/</span>
-          <input type="number" name="system.forcePoints.max" value="{{forcePointsMax}}" min="0" class="tiny-input"/>
+          <input type="number" name="system.forcePoints.max" value="{{resourcesPanel.resources.forcePointsMax}}" min="0" class="tiny-input"/>
         </div>
         <div class="value-row">
           <button type="button" class="mini-btn" data-action="spend-force-point" title="Spend 1 Force Point">-1</button>
@@ -66,9 +66,9 @@
       <div class="resource">
         <div class="label">Destiny Points</div>
         <div class="value-row">
-          <input type="number" name="system.destinyPoints.value" value="{{destinyPointsValue}}" min="0" class="tiny-input"/>
+          <input type="number" name="system.destinyPoints.value" value="{{resourcesPanel.resources.destinyPointsValue}}" min="0" class="tiny-input"/>
           <span>/</span>
-          <input type="number" name="system.destinyPoints.max" value="{{destinyPointsMax}}" min="0" class="tiny-input"/>
+          <input type="number" name="system.destinyPoints.max" value="{{resourcesPanel.resources.destinyPointsMax}}" min="0" class="tiny-input"/>
         </div>
       </div>
     </div>

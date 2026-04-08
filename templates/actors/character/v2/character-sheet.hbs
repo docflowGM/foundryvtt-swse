@@ -89,30 +89,36 @@
                     <div class="tactical-resource tactical-resource--sw">
                       <div class="tactical-resource__sw-head">
                         <span class="tactical-resource__label">Second Wind</span>
-                        <span class="tactical-resource__meta">Uses: {{headerSecondWind.usesRemaining}}</span>
+                        <span class="tactical-resource__meta">Uses: {{secondWindPanel.uses}}</span>
                       </div>
                       <div class="tactical-resource__sw-body">
-                        <span class="tactical-resource__meta">Heals {{headerSecondWind.healingAmount}} HP</span>
-                        <button type="button" class="sw-use-btn" data-action="use-second-wind" {{#unless headerSecondWind.canUse}}disabled{{/unless}}>Use</button>
+                        <span class="tactical-resource__meta">Heals {{secondWindPanel.healing}} HP</span>
+                        <button type="button" class="sw-use-btn" data-action="use-second-wind" {{#unless secondWindPanel.hasUses}}disabled{{/unless}}>Use</button>
                       </div>
                     </div>
                   </div>
               </div>
 
-    <!-- RIGHT: DEFENSE READOUT -->
+    <!-- RIGHT: DEFENSE READOUT (uses canonical defensePanel context) -->
     <div class="sheet-header-right sheet-header-right--compact">
-      <div class="header-defense-readout">
-        <span class="header-defense-readout__label">FORT</span>
-        <span class="header-defense-readout__value">{{derived.defenses.fortitude.total}}</span>
-      </div>
-      <div class="header-defense-readout">
-        <span class="header-defense-readout__label">REF</span>
-        <span class="header-defense-readout__value">{{derived.defenses.reflex.total}}</span>
-      </div>
-      <div class="header-defense-readout">
-        <span class="header-defense-readout__label">WILL</span>
-        <span class="header-defense-readout__value">{{derived.defenses.will.total}}</span>
-      </div>
+      {{#each defensePanel.defenses as |def|}}
+        {{#if (eq def.key "fort")}}
+          <div class="header-defense-readout">
+            <span class="header-defense-readout__label">FORT</span>
+            <span class="header-defense-readout__value">{{def.total}}</span>
+          </div>
+        {{else if (eq def.key "ref")}}
+          <div class="header-defense-readout">
+            <span class="header-defense-readout__label">REF</span>
+            <span class="header-defense-readout__value">{{def.total}}</span>
+          </div>
+        {{else if (eq def.key "will")}}
+          <div class="header-defense-readout">
+            <span class="header-defense-readout__label">WILL</span>
+            <span class="header-defense-readout__value">{{def.total}}</span>
+          </div>
+        {{/if}}
+      {{/each}}
       <div class="header-defense-readout">
         <span class="header-defense-readout__label">DT</span>
         <span class="header-defense-readout__value">{{derived.damageThreshold}}</span>

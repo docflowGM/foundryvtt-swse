@@ -532,24 +532,9 @@ export class SWSEV2CharacterSheet extends
     derived.encumbrance.heavyLoad ??= 0;
 
     // Ensure defenses object has all required defense keys initialized to defaults
-    // CRITICAL: Use long-form keys (fortitude, reflex, will) matching DerivedCalculator output
-    // The template references {{derived.defenses.fortitude.total}} etc., not short form
-    derived.defenses ??= {};
-    const defenseNames = [
-      { key: 'fortitude', label: 'Fortitude' },
-      { key: 'reflex', label: 'Reflex' },
-      { key: 'will', label: 'Will' }
-    ];
-    for (const { key } of defenseNames) {
-      // Initialize as nested object with .total property matching DerivedCalculator structure
-      if (!derived.defenses[key]) {
-        derived.defenses[key] = { total: 10 };
-      } else if (typeof derived.defenses[key] === 'number') {
-        // If it was a number (old format), convert to nested structure
-        const val = derived.defenses[key];
-        derived.defenses[key] = { total: val };
-      }
-    }
+    // PHASE 6: Defense contract normalized through defensePanel builder
+    // Header and body both use defensePanel for canonical defense display model
+    // This removes the sheet-local normalization hack and uses engine-owned derived data directly
     // Ensure damage threshold has default
     // CRITICAL: DerivedCalculator stores at derived.damageThreshold (flat), not derived.damage.threshold
     derived.damageThreshold ??= 10;  // Default to Fortitude value (usually 10)
