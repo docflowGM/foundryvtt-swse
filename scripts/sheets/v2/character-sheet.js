@@ -133,7 +133,7 @@ const FORM_FIELD_SCHEMA = {
 
   // Progression and Resources
   'system.level': 'number',
-  'system.xp': 'number',
+  'system.xp.total': 'number',
   'system.credits': 'number',
   'system.speed': 'number',
   'system.destinyPoints.value': 'number',
