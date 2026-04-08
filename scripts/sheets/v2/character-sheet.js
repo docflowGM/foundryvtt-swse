@@ -1465,18 +1465,12 @@ const forcePoints = [];
 
       console.log(`[TAB SWITCH] Switching to tab: ${tabName}`);
 
-      // Keep both sheet-specific and shared state managers aligned.
+      // PHASE 2: UIStateManager is the sole owner of tab activation.
+      // Visibility manager tracks which panels should be built for this tab.
       this.visibilityManager?.setActiveTab?.(tabName);
+      // UIStateManager manages all DOM updates (active classes, panel visibility).
       this.uiStateManager?._activateTab?.(tabLink);
-
-      // Hard fallback: ensure exactly one visible panel exists for the requested tab.
-      const panels = html.querySelectorAll(".sheet-body > .tab");
-      panels.forEach(panel => {
-        const isActive = panel.dataset.tab === tabName;
-        panel.classList.toggle("active", isActive);
-        panel.hidden = !isActive;
-        panel.style.display = isActive ? "flex" : "none";
-      });
+      // Removed hard DOM toggle: UIStateManager._activateTab already handles all necessary DOM changes.
     }, { signal });
 
 
