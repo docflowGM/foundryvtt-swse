@@ -1451,9 +1451,8 @@ const forcePoints = [];
 
       console.log(`[HELP-MODE] Cycled to: ${this._helpLevel}`);
     }, { signal });
-
-    // DELEGATED: Tab Switching - Update panel visibility manager AND DOM
-    // CRITICAL: Must update both internal state AND DOM classes for CSS visibility
+    // DELEGATED: Tab Switching - Route through shared UI state manager
+    // This prevents "blank body" states where DOM classes and remembered state diverge.
     html.addEventListener("click", ev => {
       const tabLink = ev.target.closest("[data-action='tab']");
       if (!tabLink) return;
@@ -1461,31 +1460,25 @@ const forcePoints = [];
       const tabName = tabLink.dataset.tab;
       if (!tabName) return;
 
+      ev.preventDefault();
+      ev.stopPropagation();
+
       console.log(`[TAB SWITCH] Switching to tab: ${tabName}`);
 
-      // 1. Update internal state
-      this.visibilityManager.setActiveTab(tabName);
+      // Keep both sheet-specific and shared state managers aligned.
+      this.visibilityManager?.setActiveTab?.(tabName);
+      this.uiStateManager?._activateTab?.(tabLink);
 
-      // 2. Remove active from all tab links
-      html.querySelectorAll("[data-action='tab']").forEach(el => {
-        el.classList.remove("active");
+      // Hard fallback: ensure exactly one visible panel exists for the requested tab.
+      const panels = html.querySelectorAll(".sheet-body > .tab");
+      panels.forEach(panel => {
+        const isActive = panel.dataset.tab === tabName;
+        panel.classList.toggle("active", isActive);
+        panel.hidden = !isActive;
+        panel.style.display = isActive ? "flex" : "none";
       });
-
-      // 3. Add active to clicked tab link
-      tabLink.classList.add("active");
-
-      // 4. Hide all tab panels
-      html.querySelectorAll(".sheet-body > .tab").forEach(panel => {
-        panel.classList.remove("active");
-      });
-
-      // 5. Show the correct panel
-      const targetPanel = html.querySelector(`.sheet-body > .tab[data-tab="${tabName}"]`);
-      if (targetPanel) {
-        targetPanel.classList.add("active");
-      }
-
     }, { signal });
+
 
     // DELEGATED: Toggle Abilities Panel - Show/Hide Expanded Views
     // Using delegated listeners from html root for stability across rerenders
@@ -1838,6 +1831,19 @@ const forcePoints = [];
       } catch (err) {
         console.error('[SHEET] ✗ launchProgression failed:', err);
         SWSELogger.error('[CharacterSheet] Progression launch failed:', err);
+      }
+    }, { signal, capture: false });
+
+    // Abilities panel: jump directly to the progression attribute step
+    html.addEventListener("click", async ev => {
+      const button = ev.target.closest('[data-action="roll-attributes"]');
+      if (!button) return;
+      ev.preventDefault();
+      try {
+        await launchProgression(this.actor, { currentStep: 'attribute' });
+      } catch (err) {
+        console.error('[SHEET] â roll-attributes failed:', err);
+        SWSELogger.error('[CharacterSheet] roll-attributes failed:', err);
       }
     }, { signal, capture: false });
 
