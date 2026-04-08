@@ -6539,3 +6539,176 @@ form.swse-character-sheet-form.swse-sheet-ui .section-bar__actions {
   gap: 8px;
   flex-wrap: wrap;
 }
+
+/* PHASE 4: FLAT VISUAL BASELINE - Remove decorative styling */
+/* Scope: character sheet only via .swse-character-sheet selector */
+
+/* Header and container backgrounds: solid only, no gradients */
+.swse-character-sheet .sheet-header,
+.swse-character-sheet .header-resources-strip,
+.swse-character-sheet .header-second-wind,
+.swse-character-sheet .header-tactical-strip {
+  background: transparent !important;
+  background-image: none !important;
+}
+
+/* Remove text-shadow from all text elements */
+.swse-character-sheet .healing-amount,
+.swse-character-sheet .resource-bar__text,
+.swse-character-sheet .resource-segment-bar__text {
+  text-shadow: none !important;
+}
+
+/* Remove box-shadow/glow from all interactive elements */
+.swse-character-sheet .sheet-tabs .item,
+.swse-character-sheet .sheet-tabs a,
+.swse-character-sheet .sheet-tabs .item.active,
+.swse-character-sheet .sheet-tabs a.active,
+.swse-character-sheet .sw-use-btn,
+.swse-character-sheet .header-second-wind .sw-use-btn {
+  box-shadow: none !important;
+}
+
+/* Simplify tab styling: solid backgrounds, no glows */
+.swse-character-sheet .sheet-tabs.tabs {
+  background: transparent !important;
+  border: none !important;
+}
+
+.swse-character-sheet .sheet-tabs .item,
+.swse-character-sheet .sheet-tabs a {
+  background: rgba(20, 20, 30, 0.8) !important;
+  border: 1px solid rgba(100, 100, 120, 0.5) !important;
+  box-shadow: none !important;
+}
+
+.swse-character-sheet .sheet-tabs .item.active,
+.swse-character-sheet .sheet-tabs a.active {
+  background: rgba(0, 80, 80, 0.4) !important;
+  border: 1px solid rgba(100, 180, 180, 0.6) !important;
+  box-shadow: none !important;
+}
+
+.swse-character-sheet .sheet-tabs .item:hover:not(.active),
+.swse-character-sheet .sheet-tabs a:hover:not(.active) {
+  background: rgba(30, 30, 50, 0.8) !important;
+  border-color: rgba(120, 120, 140, 0.6) !important;
+}
+
+/* Simplify resource bars: solid fills, no gradients */
+.swse-character-sheet .resource-bar__fill,
+.swse-character-sheet .resource-bar__fill.critical,
+.swse-character-sheet .resource-bar__fill.wounded,
+.swse-character-sheet .resource-bar__fill.healthy {
+  background: rgba(100, 150, 150, 0.4) !important;
+}
+
+.swse-character-sheet .resource-bar__fill.critical {
+  background: rgba(180, 80, 80, 0.5) !important;
+}
+
+.swse-character-sheet .resource-bar__fill.wounded {
+  background: rgba(180, 120, 60, 0.4) !important;
+}
+
+.swse-character-sheet .resource-bar__fill.healthy {
+  background: rgba(80, 150, 120, 0.4) !important;
+}
+
+/* Simplify segment bar fills: solid colors only */
+.swse-character-sheet .resource-segment.is-filled {
+  background: rgba(100, 150, 150, 0.6) !important;
+}
+
+.swse-character-sheet .resource-segment-bar--xp .resource-segment.is-filled {
+  background: rgba(100, 180, 200, 0.7) !important;
+}
+
+/* Simplify button styling: solid backgrounds, no glows */
+.swse-character-sheet .sw-use-btn,
+.swse-character-sheet .header-second-wind .sw-use-btn {
+  background: rgba(40, 80, 80, 0.5) !important;
+  border: 1px solid rgba(100, 150, 150, 0.4) !important;
+  box-shadow: none !important;
+}
+
+.swse-character-sheet .sw-use-btn:hover:not(:disabled),
+.swse-character-sheet .header-second-wind .sw-use-btn:hover:not(:disabled) {
+  background: rgba(50, 100, 100, 0.6) !important;
+  border-color: rgba(120, 180, 180, 0.6) !important;
+  box-shadow: none !important;
+}
+
+/* Remove glow from header second wind section */
+.swse-character-sheet .header-second-wind {
+  background: transparent !important;
+  border: 1px solid rgba(100, 100, 120, 0.3) !important;
+}
+
+/* Simplify borders: use solid colors, remove rgba glows */
+.swse-character-sheet .resource-bar {
+  border: 1px solid rgba(100, 100, 120, 0.3) !important;
+  background: rgba(20, 20, 30, 0.6) !important;
+}
+
+.swse-character-sheet .resource-segment-bar {
+  border: 1px solid rgba(100, 100, 120, 0.3) !important;
+  background: rgba(15, 15, 25, 0.8) !important;
+}
+
+/* Remove decorative pseudo-elements and SVG layers */
+.swse-character-sheet .sheet-tabs::before,
+.swse-character-sheet .sheet-tabs::after,
+.swse-character-sheet .sheet-tabs.tabs::before,
+.swse-character-sheet .sheet-tabs.tabs::after,
+.swse-character-sheet .sheet-tabs svg,
+.swse-character-sheet .sheet-tabs .svg-art-layer,
+.swse-character-sheet .sheet-tabs .svg-panel-frame,
+.swse-character-sheet .sheet-tabs [class*="svg"],
+.swse-character-sheet .modal-frame {
+  display: none !important;
+}
+
+/* Normalize header section backgrounds */
+.swse-character-sheet .sheet-header {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Remove hover/decorative effects from resource items */
+.swse-character-sheet .header-defense-readout {
+  border-bottom: 1px solid rgba(100, 100, 120, 0.2) !important;
+}
+
+/* Ensure panels have consistent, flat appearance */
+.swse-character-sheet .holo-panel {
+  background: transparent !important;
+  border: 1px solid rgba(100, 100, 120, 0.3) !important;
+}
+
+/* Remove animation pulses */
+.swse-character-sheet .resource-segment.is-filled {
+  animation: none !important;
+}
+
+/* Simplify input styling */
+.swse-character-sheet input,
+.swse-character-sheet select,
+.swse-character-sheet textarea {
+  background: rgba(15, 15, 25, 0.8) !important;
+  border: 1px solid rgba(100, 100, 120, 0.3) !important;
+  box-shadow: none !important;
+}
+
+.swse-character-sheet input:focus,
+.swse-character-sheet select:focus,
+.swse-character-sheet textarea:focus {
+  border-color: rgba(120, 150, 180, 0.6) !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Remove inline SVG frame styling */
+.swse-character-sheet .modal-dialog svg {
+  display: none !important;
+}
