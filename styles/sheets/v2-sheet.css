@@ -6352,3 +6352,190 @@ form.swse-sheet-ui .sheet-header {
   }
 }
 
+/* === CHARACTER SHEET STABILIZATION: FLAT MODE + TAB FIXES === */
+
+/*
+  Temporary flat-mode pass for the CHARACTER sheet only.
+  Goal: remove busy SVG frames/backgrounds/buttons while the layout stabilizes.
+  This does NOT touch progression-shell styling.
+*/
+
+form.swse-character-sheet-form.swse-sheet-ui,
+form.swse-character-sheet-form.swse-sheet-ui .swse-character-sheet {
+  --swse-flat-panel-bg: linear-gradient(180deg, rgba(5, 16, 28, 0.96), rgba(4, 11, 20, 0.98));
+  --swse-flat-border: rgba(104, 214, 255, 0.28);
+  --swse-flat-border-strong: rgba(104, 214, 255, 0.42);
+}
+
+/* Kill decorative SVG/pseudo frames */
+form.swse-character-sheet-form.swse-sheet-ui .holo-panel::before,
+form.swse-character-sheet-form.swse-sheet-ui .holo-panel::after,
+form.swse-character-sheet-form.swse-sheet-ui .v3-panel::before,
+form.swse-character-sheet-form.swse-sheet-ui .v3-panel::after,
+form.swse-character-sheet-form.swse-sheet-ui .svg-panel-frame::before,
+form.swse-character-sheet-form.swse-sheet-ui .svg-panel-frame::after,
+form.swse-character-sheet-form.swse-sheet-ui .sheet-tabs .item::before,
+form.swse-character-sheet-form.swse-sheet-ui .sheet-tabs .item::after,
+form.swse-character-sheet-form.swse-sheet-ui .sheet-tabs a::before,
+form.swse-character-sheet-form.swse-sheet-ui .sheet-tabs a::after,
+form.swse-character-sheet-form.swse-sheet-ui .header-btn::before,
+form.swse-character-sheet-form.swse-sheet-ui .header-btn::after,
+form.swse-character-sheet-form.swse-sheet-ui .swse-btn::before,
+form.swse-character-sheet-form.swse-sheet-ui .swse-btn::after,
+form.swse-character-sheet-form.swse-sheet-ui .swse-v2-btn::before,
+form.swse-character-sheet-form.swse-sheet-ui .swse-v2-btn::after,
+form.swse-character-sheet-form.swse-sheet-ui .mini-btn::before,
+form.swse-character-sheet-form.swse-sheet-ui .mini-btn::after,
+form.swse-character-sheet-form.swse-sheet-ui .favorite-btn::before,
+form.swse-character-sheet-form.swse-sheet-ui .favorite-btn::after,
+form.swse-character-sheet-form.swse-sheet-ui .skill-name-btn::before,
+form.swse-character-sheet-form.swse-sheet-ui .skill-name-btn::after,
+form.swse-character-sheet-form.swse-sheet-ui .skill-bonus-btn::before,
+form.swse-character-sheet-form.swse-sheet-ui .skill-bonus-btn::after,
+form.swse-character-sheet-form.swse-sheet-ui .header-select-btn::before,
+form.swse-character-sheet-form.swse-sheet-ui .header-select-btn::after,
+form.swse-character-sheet-form.swse-sheet-ui .swse-panel__frame,
+form.swse-character-sheet-form.swse-sheet-ui .swse-panel__frame::before,
+form.swse-character-sheet-form.swse-sheet-ui .swse-panel__frame::after {
+  content: none !important;
+  display: none !important;
+  background-image: none !important;
+}
+
+/* Flatten panels/cards/major boxes */
+form.swse-character-sheet-form.swse-sheet-ui .holo-panel,
+form.swse-character-sheet-form.swse-sheet-ui .v3-panel,
+form.swse-character-sheet-form.swse-sheet-ui .svg-framed,
+form.swse-character-sheet-form.swse-sheet-ui .svg-panel-frame,
+form.swse-character-sheet-form.swse-sheet-ui .tab-placeholder,
+form.swse-character-sheet-form.swse-sheet-ui .swse-attacks-panel,
+form.swse-character-sheet-form.swse-sheet-ui .skills-panel,
+form.swse-character-sheet-form.swse-sheet-ui .section-bar,
+form.swse-character-sheet-form.swse-sheet-ui .resource,
+form.swse-character-sheet-form.swse-sheet-ui .combat-metric,
+form.swse-character-sheet-form.swse-sheet-ui .tactical-resource,
+form.swse-character-sheet-form.swse-sheet-ui .header-defense-readout,
+form.swse-character-sheet-form.swse-sheet-ui .field-with-button,
+form.swse-character-sheet-form.swse-sheet-ui .ability-row,
+form.swse-character-sheet-form.swse-sheet-ui .defense-row,
+form.swse-character-sheet-form.swse-sheet-ui .condition-track,
+form.swse-character-sheet-form.swse-sheet-ui .condition-entry,
+form.swse-character-sheet-form.swse-sheet-ui .defense-card,
+form.swse-character-sheet-form.swse-sheet-ui .defense-item,
+form.swse-character-sheet-form.swse-sheet-ui .xp-panel,
+form.swse-character-sheet-form.swse-sheet-ui .second-wind-panel,
+form.swse-character-sheet-form.swse-sheet-ui .hp-condition-panel,
+form.swse-character-sheet-form.swse-sheet-ui .resources-panel,
+form.swse-character-sheet-form.swse-sheet-ui .defenses-panel {
+  background: var(--swse-flat-panel-bg) !important;
+  background-image: none !important;
+  border-image: none !important;
+  box-shadow: none !important;
+}
+
+form.swse-character-sheet-form.swse-sheet-ui .holo-panel,
+form.swse-character-sheet-form.swse-sheet-ui .v3-panel,
+form.swse-character-sheet-form.swse-sheet-ui .svg-framed,
+form.swse-character-sheet-form.swse-sheet-ui .svg-panel-frame,
+form.swse-character-sheet-form.swse-sheet-ui .tab-placeholder,
+form.swse-character-sheet-form.swse-sheet-ui .swse-attacks-panel,
+form.swse-character-sheet-form.swse-sheet-ui .skills-panel,
+form.swse-character-sheet-form.swse-sheet-ui .xp-panel,
+form.swse-character-sheet-form.swse-sheet-ui .second-wind-panel,
+form.swse-character-sheet-form.swse-sheet-ui .hp-condition-panel,
+form.swse-character-sheet-form.swse-sheet-ui .resources-panel,
+form.swse-character-sheet-form.swse-sheet-ui .defenses-panel {
+  border: 1px solid var(--swse-flat-border) !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+
+/* Flatten buttons, tab pills, mini controls */
+form.swse-character-sheet-form.swse-sheet-ui .header-btn,
+form.swse-character-sheet-form.swse-sheet-ui .swse-btn,
+form.swse-character-sheet-form.swse-sheet-ui .swse-v2-btn,
+form.swse-character-sheet-form.swse-sheet-ui .mini-btn,
+form.swse-character-sheet-form.swse-sheet-ui .favorite-btn,
+form.swse-character-sheet-form.swse-sheet-ui .skill-name-btn,
+form.swse-character-sheet-form.swse-sheet-ui .skill-bonus-btn,
+form.swse-character-sheet-form.swse-sheet-ui .header-select-btn,
+form.swse-character-sheet-form.swse-sheet-ui .sheet-tabs .item,
+form.swse-character-sheet-form.swse-sheet-ui .sheet-tabs a,
+form.swse-character-sheet-form.swse-sheet-ui .sheet-tabs button,
+form.swse-character-sheet-form.swse-sheet-ui button[type="button"] {
+  background: rgba(8, 18, 32, 0.96) !important;
+  background-image: none !important;
+  border: 1px solid var(--swse-flat-border) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+form.swse-character-sheet-form.swse-sheet-ui .sheet-tabs .item.active,
+form.swse-character-sheet-form.swse-sheet-ui .sheet-tabs a.active,
+form.swse-character-sheet-form.swse-sheet-ui .sheet-tabs button.active,
+form.swse-character-sheet-form.swse-sheet-ui .header-btn:hover,
+form.swse-character-sheet-form.swse-sheet-ui .swse-btn:hover,
+form.swse-character-sheet-form.swse-sheet-ui .swse-v2-btn:hover,
+form.swse-character-sheet-form.swse-sheet-ui .mini-btn:hover,
+form.swse-character-sheet-form.swse-sheet-ui .favorite-btn:hover,
+form.swse-character-sheet-form.swse-sheet-ui .skill-name-btn:hover,
+form.swse-character-sheet-form.swse-sheet-ui .skill-bonus-btn:hover,
+form.swse-character-sheet-form.swse-sheet-ui .header-select-btn:hover {
+  border-color: var(--swse-flat-border-strong) !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Flatten inputs and value boxes */
+form.swse-character-sheet-form.swse-sheet-ui input,
+form.swse-character-sheet-form.swse-sheet-ui select,
+form.swse-character-sheet-form.swse-sheet-ui textarea,
+form.swse-character-sheet-form.swse-sheet-ui .math-pill,
+form.swse-character-sheet-form.swse-sheet-ui .math-result,
+form.swse-character-sheet-form.swse-sheet-ui .resource-segment-bar,
+form.swse-character-sheet-form.swse-sheet-ui .resource-pip-strip,
+form.swse-character-sheet-form.swse-sheet-ui .value-row,
+form.swse-character-sheet-form.swse-sheet-ui .value-box,
+form.swse-character-sheet-form.swse-sheet-ui .header-field,
+form.swse-character-sheet-form.swse-sheet-ui .header-player,
+form.swse-character-sheet-form.swse-sheet-ui .header-name-block {
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+form.swse-character-sheet-form.swse-sheet-ui input,
+form.swse-character-sheet-form.swse-sheet-ui select,
+form.swse-character-sheet-form.swse-sheet-ui textarea,
+form.swse-character-sheet-form.swse-sheet-ui .math-pill,
+form.swse-character-sheet-form.swse-sheet-ui .math-result,
+form.swse-character-sheet-form.swse-sheet-ui .value-box,
+form.swse-character-sheet-form.swse-sheet-ui .resource-segment-bar,
+form.swse-character-sheet-form.swse-sheet-ui .resource-pip-strip {
+  background: rgba(5, 14, 25, 0.96) !important;
+  border: 1px solid rgba(104, 214, 255, 0.22) !important;
+  border-radius: 8px !important;
+}
+
+/* Make sure tabs never disappear after state churn */
+form.swse-character-sheet-form.swse-sheet-ui .sheet-body > .tab {
+  min-height: 0;
+}
+
+form.swse-character-sheet-form.swse-sheet-ui .sheet-body > .tab.active {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+form.swse-character-sheet-form.swse-sheet-ui .sheet-body > .tab:not(.active) {
+  display: none !important;
+}
+
+/* Small utility layout for the new abilities action row */
+form.swse-character-sheet-form.swse-sheet-ui .section-bar__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
