@@ -869,6 +869,65 @@ export class PanelContextBuilder {
   }
 
   /**
+   * Build the resources panel context (Combat Metrics & Resources)
+   *
+   * PHASE 6: Canonical builder for all combat metrics and heroic resources
+   * Consolidates mixed-source context into single display model
+   *
+   * Contract: resourcesPanel
+   * - combatMetrics: { speed, initiative, perception, bab, grappleBonus, damageThreshold }
+   * - resources: { forcePoints, destinyPoints, forcePointDie }
+   */
+  buildResourcesPanel() {
+    const system = this.system;
+    const derived = this.derived;
+
+    // COMBAT METRICS - engine-owned sources
+    const speed = Number(system.speed) || 0;
+    const initiativeTotal = Number(derived.initiative?.total) || 0;
+    const perceptionTotal = Number(derived.skills?.perception?.total) || 0;
+
+    // BAB: system.baseAttackBonus is the authoritative editable field
+    // Fallback to derived.bab only if system value not set
+    const bab = Number(system.baseAttackBonus ?? derived.bab) || 0;
+
+    const grappleBonus = Number(derived.grappleBonus) || 0;
+    const damageThreshold = Number(derived.damageThreshold) || 0;
+
+    // HEROIC RESOURCES - engine-owned sources
+    const forcePointsValue = Number(system.forcePoints?.value) || 0;
+    const forcePointsMax = Number(system.forcePoints?.max) || 0;
+    const destinyPointsValue = Number(system.destinyPoints?.value) || 0;
+    const destinyPointsMax = Number(system.destinyPoints?.max) || 0;
+
+    // Force Point Die configuration (if system has it)
+    const forcePointDie = system.forcePointDie || 'd6';
+
+    const panel = {
+      combatMetrics: {
+        speed,
+        initiativeTotal,
+        perceptionTotal,
+        bab,
+        grappleBonus,
+        damageThreshold,
+        canEdit: this.sheet.isEditable
+      },
+      resources: {
+        forcePointsValue,
+        forcePointsMax,
+        destinyPointsValue,
+        destinyPointsMax,
+        forcePointDie,
+        canEdit: this.sheet.isEditable
+      }
+    };
+
+    this._validatePanelContext('resourcesPanel', panel);
+    return panel;
+  }
+
+  /**
    * Build the abilities panel context
    *
    * Contract: abilitiesPanel

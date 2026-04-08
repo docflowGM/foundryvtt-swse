@@ -291,6 +291,10 @@ export class UIStateManager {
         }
       }
     }
+
+    // PHASE 2: Ensure valid tab state after restoration
+    // This handles cases where the stored tab is now unavailable (e.g., force tab hidden when not force-sensitive)
+    this._ensureValidActiveTab(root);
   }
 
   /**
@@ -323,6 +327,66 @@ export class UIStateManager {
 
     // Remember this tab is active.
     this.state.activeTabs[tabGroup] = tabName;
+  }
+
+  /**
+   * PHASE 2: Ensure exactly one valid tab is active after restoration.
+   * Fallback to overview if restoration failed or invalid state detected.
+   * This handles cases where the stored tab is now unavailable (e.g., force tab hidden when actor not force-sensitive).
+   * @param {HTMLElement} root - Sheet root element
+   * @returns {string|null} - Name of finally-active tab
+   * @private
+   */
+  _ensureValidActiveTab(root) {
+    if (!root) return null;
+
+    // Count active tabs in primary group
+    const activeTabs = root.querySelectorAll('.tab.active[data-group="primary"], .tab.active[data-tab-group="primary"]');
+
+    if (activeTabs.length === 1) {
+      // Exactly one active tab: extract name and verify stored state matches
+      const activeTab = activeTabs[0];
+      const tabName = activeTab.dataset.tab;
+      // Ensure stored state reflects the active tab
+      this.state.activeTabs['primary'] = tabName;
+      console.log(`[TAB INVARIANT] ✓ Exactly one active tab found: ${tabName}`);
+      return tabName;
+    }
+
+    if (activeTabs.length === 0) {
+      // No active tabs: default to overview
+      console.warn(`[TAB INVARIANT] ⚠ No active tab found; defaulting to overview`);
+      const overviewButton = root.querySelector('[data-action="tab"][data-tab="overview"]');
+      if (overviewButton) {
+        this._activateTab(overviewButton);
+        return 'overview';
+      }
+      // If overview doesn't exist, try to activate any available tab as fallback
+      const anyTabButton = root.querySelector('[data-action="tab"]');
+      if (anyTabButton) {
+        this._activateTab(anyTabButton);
+        return anyTabButton.dataset.tab;
+      }
+      return null;
+    }
+
+    if (activeTabs.length > 1) {
+      // Multiple active tabs: this should never happen, but fix it
+      console.warn(`[TAB INVARIANT] ⚠ Multiple active tabs found (${activeTabs.length}); resetting to overview`);
+      const buttons = root.querySelectorAll('[data-action="tab"][data-group="primary"], [data-action="tab"][data-tab-group="primary"]');
+      buttons.forEach(btn => this._deactivateButton(btn));
+      const panels = root.querySelectorAll('.tab[data-group="primary"], .tab[data-tab-group="primary"]');
+      panels.forEach(pnl => this._hidePanel(pnl));
+
+      const overviewButton = root.querySelector('[data-action="tab"][data-tab="overview"]');
+      if (overviewButton) {
+        this._activateTab(overviewButton);
+        return 'overview';
+      }
+      return null;
+    }
+
+    return null;
   }
 
   /**

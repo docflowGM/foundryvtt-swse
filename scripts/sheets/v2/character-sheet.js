@@ -44,6 +44,9 @@ import { PanelVisibilityManager } from "/systems/foundryvtt-swse/scripts/sheets/
 import { applyResourceNumberAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-number-animations.js";
 import { ExtraSkillUseRegistry } from "/systems/foundryvtt-swse/scripts/utils/extra-skill-use-registry.js";
 import { traceLog, actorSummary, payloadSummary } from "/systems/foundryvtt-swse/scripts/utils/mutation-trace.js";
+// Phase 8: Character sheet decomposition - import focused modules
+import { registerListeners } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/listeners.js";
+import { handleFormSubmission } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/form.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -133,7 +136,7 @@ const FORM_FIELD_SCHEMA = {
 
   // Progression and Resources
   'system.level': 'number',
-  'system.xp': 'number',
+  'system.xp.total': 'number',
   'system.credits': 'number',
   'system.speed': 'number',
   'system.destinyPoints.value': 'number',
@@ -532,24 +535,9 @@ export class SWSEV2CharacterSheet extends
     derived.encumbrance.heavyLoad ??= 0;
 
     // Ensure defenses object has all required defense keys initialized to defaults
-    // CRITICAL: Use long-form keys (fortitude, reflex, will) matching DerivedCalculator output
-    // The template references {{derived.defenses.fortitude.total}} etc., not short form
-    derived.defenses ??= {};
-    const defenseNames = [
-      { key: 'fortitude', label: 'Fortitude' },
-      { key: 'reflex', label: 'Reflex' },
-      { key: 'will', label: 'Will' }
-    ];
-    for (const { key } of defenseNames) {
-      // Initialize as nested object with .total property matching DerivedCalculator structure
-      if (!derived.defenses[key]) {
-        derived.defenses[key] = { total: 10 };
-      } else if (typeof derived.defenses[key] === 'number') {
-        // If it was a number (old format), convert to nested structure
-        const val = derived.defenses[key];
-        derived.defenses[key] = { total: val };
-      }
-    }
+    // PHASE 6: Defense contract normalized through defensePanel builder
+    // Header and body both use defensePanel for canonical defense display model
+    // This removes the sheet-local normalization hack and uses engine-owned derived data directly
     // Ensure damage threshold has default
     // CRITICAL: DerivedCalculator stores at derived.damageThreshold (flat), not derived.damage.threshold
     derived.damageThreshold ??= 10;  // Default to Fortitude value (usually 10)
@@ -1302,6 +1290,18 @@ const forcePoints = [];
   ============================================================ */
 
   activateListeners(html, { signal } = {}) {
+    // Phase 8: Delegate listener registration to focused listeners module
+    return registerListeners(this, html, { signal });
+  }
+
+  /**
+   * Internal listener activation - moved from activateListeners by Phase 8 refactoring
+   * Contains all inline listener registration logic for the character sheet
+   * @param {HTMLElement} html - The rendered sheet element
+   * @param {AbortSignal} signal - Abort signal for cleanup
+   * @private
+   */
+  _activateListenersInternal(html, { signal } = {}) {
 
     // === HP INPUT HANDLING ===
     html.querySelectorAll('.hp-input').forEach(input => {
@@ -1465,18 +1465,12 @@ const forcePoints = [];
 
       console.log(`[TAB SWITCH] Switching to tab: ${tabName}`);
 
-      // Keep both sheet-specific and shared state managers aligned.
+      // PHASE 2: UIStateManager is the sole owner of tab activation.
+      // Visibility manager tracks which panels should be built for this tab.
       this.visibilityManager?.setActiveTab?.(tabName);
+      // UIStateManager manages all DOM updates (active classes, panel visibility).
       this.uiStateManager?._activateTab?.(tabLink);
-
-      // Hard fallback: ensure exactly one visible panel exists for the requested tab.
-      const panels = html.querySelectorAll(".sheet-body > .tab");
-      panels.forEach(panel => {
-        const isActive = panel.dataset.tab === tabName;
-        panel.classList.toggle("active", isActive);
-        panel.hidden = !isActive;
-        panel.style.display = isActive ? "flex" : "none";
-      });
+      // Removed hard DOM toggle: UIStateManager._activateTab already handles all necessary DOM changes.
     }, { signal });
 
 
@@ -3661,6 +3655,16 @@ const forcePoints = [];
    * @returns {Promise<void>}
    */
   async _onSubmitForm(event) {
+    // Phase 8: Delegate form submission to focused form module
+    return await handleFormSubmission(this, event);
+  }
+
+  // ============================================================
+  // DEPRECATED: Old form submission helpers (kept for reference)
+  // These are now in character-sheet/form.js
+  // ============================================================
+
+  async _onSubmitForm_OLD(event) {
     console.log('[PERSISTENCE] ════════════════════════════════════════');
     console.log('[PERSISTENCE] _onSubmitForm CALLED');
     console.log('[PERSISTENCE] Event:', {

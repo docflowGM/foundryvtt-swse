@@ -4,12 +4,14 @@
   <header class="section-bar">
     <h3 class="section-header">Abilities</h3>
     <div class="section-bar__actions">
+      {{#if (eq actor.type "character")}}
       <button type="button"
               data-action="roll-attributes"
               class="swse-btn"
               title="Open the progression engine on the attribute step">
         Roll for Attributes
       </button>
+      {{/if}}
       <button type="button"
               data-action="toggle-abilities"
               class="swse-btn">
