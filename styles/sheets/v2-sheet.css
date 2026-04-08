@@ -236,7 +236,7 @@ form.swse-sheet-ui .sheet-body > .tab:not(.active) {
 .swse-sheet .sheet-header-topline {
   display: flex;
   flex-direction: row;
-  gap: 12px;
+  gap: 8px;
   align-items: flex-start;
   flex-wrap: wrap;
   min-width: 0;
@@ -280,8 +280,8 @@ form.swse-sheet-ui .sheet-body > .tab:not(.active) {
 /* Compact metadata grid: 2-3 columns */
 .swse-sheet .sheet-header-meta-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px 8px;
   min-width: 0;
 }
 
@@ -6178,7 +6178,8 @@ form.swse-sheet-ui .sheet-header {
 }
 
 .swse-sheet .sheet-header-meta-grid {
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px 8px;
   align-items: end;
 }
 
@@ -6548,6 +6549,9 @@ form.swse-character-sheet-form.swse-sheet-ui .section-bar__actions {
 .swse-character-sheet .header-resources-strip,
 .swse-character-sheet .header-second-wind,
 .swse-character-sheet .header-tactical-strip {
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px 8px !important;
   background: transparent !important;
   background-image: none !important;
 }

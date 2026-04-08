@@ -21,7 +21,7 @@
         </div>
       </div>
 
-      <!-- Compact metadata grid: Class / Species / Level / Background / Homeworld / Profession / Destiny -->
+      <!-- Compact metadata grid: Class / Species / Level -->
       <div class="sheet-header-meta-grid">
         <div class="header-field">
           <label>Class:</label>
@@ -40,27 +40,6 @@
         <div class="header-field">
           <label>Level:</label>
           <input name="system.level" type="number" value="{{actor.system.level}}" min="1" max="20" placeholder="1"/>
-        </div>
-        <div class="header-field">
-          <label>Background:</label>
-          <div class="field-with-button">
-            <input name="system.event" type="text" value="{{actor.system.event}}" placeholder="Select Background"/>
-            <button type="button" class="header-select-btn" data-action="cmd-select-background" title="Select Background from progression system">⚙️</button>
-          </div>
-        </div>
-        <div class="header-field">
-          <label>Homeworld:</label>
-          <div class="field-with-button">
-            <input name="system.planetOfOrigin" type="text" value="{{actor.system.planetOfOrigin}}" placeholder="Select Homeworld"/>
-            <button type="button" class="header-select-btn" data-action="cmd-select-homeworld" title="Select Homeworld from progression system">⚙️</button>
-          </div>
-        </div>
-        <div class="header-field">
-          <label>Profession:</label>
-          <div class="field-with-button">
-            <input name="system.profession" type="text" value="{{actor.system.profession}}" placeholder="Select Profession"/>
-            <button type="button" class="header-select-btn" data-action="cmd-select-profession" title="Select Profession from progression system">⚙️</button>
-          </div>
         </div>
       </div>
 
