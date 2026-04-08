@@ -44,6 +44,9 @@ import { PanelVisibilityManager } from "/systems/foundryvtt-swse/scripts/sheets/
 import { applyResourceNumberAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-number-animations.js";
 import { ExtraSkillUseRegistry } from "/systems/foundryvtt-swse/scripts/utils/extra-skill-use-registry.js";
 import { traceLog, actorSummary, payloadSummary } from "/systems/foundryvtt-swse/scripts/utils/mutation-trace.js";
+// Phase 8: Character sheet decomposition - import focused modules
+import { registerListeners } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/listeners.js";
+import { handleFormSubmission } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/form.js";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -1287,6 +1290,18 @@ const forcePoints = [];
   ============================================================ */
 
   activateListeners(html, { signal } = {}) {
+    // Phase 8: Delegate listener registration to focused listeners module
+    return registerListeners(this, html, { signal });
+  }
+
+  /**
+   * Internal listener activation - moved from activateListeners by Phase 8 refactoring
+   * Contains all inline listener registration logic for the character sheet
+   * @param {HTMLElement} html - The rendered sheet element
+   * @param {AbortSignal} signal - Abort signal for cleanup
+   * @private
+   */
+  _activateListenersInternal(html, { signal } = {}) {
 
     // === HP INPUT HANDLING ===
     html.querySelectorAll('.hp-input').forEach(input => {
@@ -3640,6 +3655,16 @@ const forcePoints = [];
    * @returns {Promise<void>}
    */
   async _onSubmitForm(event) {
+    // Phase 8: Delegate form submission to focused form module
+    return await handleFormSubmission(this, event);
+  }
+
+  // ============================================================
+  // DEPRECATED: Old form submission helpers (kept for reference)
+  // These are now in character-sheet/form.js
+  // ============================================================
+
+  async _onSubmitForm_OLD(event) {
     console.log('[PERSISTENCE] ════════════════════════════════════════');
     console.log('[PERSISTENCE] _onSubmitForm CALLED');
     console.log('[PERSISTENCE] Event:', {
