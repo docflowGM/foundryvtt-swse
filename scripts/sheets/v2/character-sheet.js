@@ -156,6 +156,22 @@ function getFieldType(fieldName) {
     return FORM_FIELD_SCHEMA[fieldName];
   }
 
+  // Dynamic skill booleans and fields
+  if (/^system\.skills\.[^.]+\.(trained|focused|favorite)$/.test(fieldName)) {
+    return 'boolean';
+  }
+  if (/^system\.skills\.[^.]+\.miscMod$/.test(fieldName)) {
+    return 'number';
+  }
+  if (/^system\.skills\.[^.]+\.selectedAbility$/.test(fieldName)) {
+    return 'string';
+  }
+
+  // Other boolean-backed checkboxes that may not be listed explicitly
+  if (fieldName === 'system.conditionTrack.persistent') {
+    return 'boolean';
+  }
+
   // Pattern matching as fallback (conservative: only if explicit pattern exists)
   // This prevents over-aggressive coercion from field name heuristics
   if (fieldName.includes('notes') || fieldName.includes('description') || fieldName.includes('text')) {
@@ -351,7 +367,9 @@ export class SWSEV2CharacterSheet extends
       // Center once per open session, then let AppV2 own future drag/resize state
       const pos = computeCenteredPosition(900, 950);
       // console.log("[SheetPosition] FIRST RENDER THIS SESSION: Setting centered position", pos);
-      this.setPosition({ left: pos.left, top: pos.top, width: 900, height: 950 });
+      // FIX: Only set position (left, top). Do NOT force width/height to prevent user resizing
+      // The persistent-position system will restore user's saved dimensions, or use defaults
+      this.setPosition({ left: pos.left, top: pos.top });
       this._shouldCenterOnRender = false;
     }
 
@@ -619,13 +637,21 @@ export class SWSEV2CharacterSheet extends
       const halfLevel = Math.max(0, Math.floor((system.level ?? 1) / 2));
 
       // Ensure all numeric values are safe for template rendering
-      const safeTotal = Number.isFinite(derivedData.total) ? derivedData.total : 0;
       const safeMiscMod = Number.isFinite(skillData.miscMod) ? skillData.miscMod : 0;
+
+      // STABILIZATION:
+      // The repo currently has a split between legacy skill schema definitions and the
+      // newer unified derived skill registry. Until that is fully normalized, compute a
+      // safe display total here when derivedData.total is absent or stale.
+      const trainingBonus = skillData.trained ? 5 : 0;
+      const focusBonus = skillData.focused ? 5 : 0;
+      const fallbackTotal = abilityMod + halfLevel + safeMiscMod + trainingBonus + focusBonus;
+      const safeTotal = Number.isFinite(derivedData.total) ? derivedData.total : fallbackTotal;
 
       return {
         key,
         label: definition.label,
-        // Use derived skill total (already calculated by engine), default to 0 if missing
+        // Prefer derived total when present; otherwise use stable fallback display total
         total: safeTotal,
         trained: Boolean(skillData.trained),
         focused: Boolean(skillData.focused),
@@ -793,8 +819,40 @@ export class SWSEV2CharacterSheet extends
     const initiativeTotal = derived?.initiative?.total ?? 0;
 
     // Combat attacks context
+    // Fallback: if derived.attacks.list is empty, build from equipped weapons
+    let attacksList = derived?.attacks?.list ?? [];
+    if (attacksList.length === 0 && actor?.items) {
+      // Build attacks from equipped weapons as fallback
+      const equippedWeapons = actor.items.filter(item =>
+        item.type === 'weapon' && item.system?.equipped === true
+      );
+
+      // Create basic attack data from equipped weapons
+      attacksList = equippedWeapons.map(weapon => ({
+        id: `attack-${weapon.id}`,
+        name: weapon.name,
+        weaponId: weapon.id,
+        weaponName: weapon.name,
+        weaponType: weapon.system?.weaponCategory,
+        attackBonus: weapon.system?.attackBonus ?? 0,
+        attackTotal: (weapon.system?.attackBonus ?? 0) + (actor.system?.baseAttackBonus ?? 0),
+        attackAttribute: weapon.system?.attackAttribute ?? 'str',
+        damageFormula: weapon.system?.damage ?? '1d6',
+        damageBonus: weapon.system?.damageBonus ?? '',
+        critRange: weapon.system?.criticalRange ?? '20',
+        critMult: weapon.system?.criticalMultiplier ?? 'x2',
+        tags: [],
+        weaponProperties: {},
+        breakdown: {
+          attack: [],
+          damage: [],
+          conditional: []
+        }
+      }));
+    }
+
     const combat = {
-      attacks: derived?.attacks?.list ?? []
+      attacks: attacksList
     };
 
     // Force Points visual array (value as dots, with used state)
@@ -2646,11 +2704,25 @@ const forcePoints = [];
       if (!itemType) return;
 
       try {
-        await this.actor.createEmbeddedDocuments("Item", [{
-          name: `New ${itemType.charAt(0).toUpperCase() + itemType.slice(1)}`,
-          type: itemType,
-          system: {}
-        }]);
+        const createData = itemType === "shield"
+          ? {
+              name: "New Shield",
+              type: "armor",
+              system: {
+                armorType: "shield",
+                shieldRating: 0,
+                currentSR: 0,
+                charges: { current: 0, max: 0 },
+                activated: false
+              }
+            }
+          : {
+              name: `New ${itemType.charAt(0).toUpperCase() + itemType.slice(1)}`,
+              type: itemType,
+              system: {}
+            };
+
+        await this.actor.createEmbeddedDocuments("Item", [createData]);
 
         ui.notifications.info(`Created new ${itemType}`);
       } catch (err) {
@@ -3258,7 +3330,7 @@ const forcePoints = [];
     });
     if (!allowed) return null;
 
-    return await CombatExecutor.executeAttack(this.actor, weapon, options);
+    return await SWSERoll.rollAttack(this.actor, weapon, options);
   }
 
   async _runCanonicalExtraSkillUse(skillKey, useKey, options = {}) {
@@ -3702,6 +3774,14 @@ const forcePoints = [];
 
     // Convert FormData to plain object, then expand nested paths
     const formDataObj = Object.fromEntries(formData.entries());
+
+    // CRITICAL: HTML FormData omits unchecked checkboxes and checked boxes default to "on".
+    // For boolean-backed sheet fields (especially trained/focused skill flags), explicitly
+    // serialize checkbox state so the engine receives true/false and derived skill totals
+    // can correctly apply trained (+5) and focused (+5) bonuses.
+    for (const checkbox of form.querySelectorAll('input[type="checkbox"][name]')) {
+      formDataObj[checkbox.name] = checkbox.checked ? 'true' : 'false';
+    }
     console.log('[PERSISTENCE] FormData entries count:', Object.keys(formDataObj).length);
     console.log('[PERSISTENCE] Raw form data (strings):', formDataObj);
 
@@ -3947,13 +4027,16 @@ const forcePoints = [];
     // CRITICAL: Remove top-level fields that should not be in partial updates
     // Only include `name` if it's actually defined and different from the current value
     // This prevents payload corruption from undefined or empty name values
-    if (filtered.name === '—' || filtered.name === undefined) {
+    if (filtered.name === '—' || filtered.name === undefined || filtered.name === null) {
       delete filtered.name;
     }
-    // If name is an empty string, only include it if intentional (but it shouldn't be)
-    if (filtered.name === '') {
+    if (typeof filtered.name === 'string' && filtered.name.trim() === '') {
       delete filtered.name;
       console.warn('[PERSISTENCE] Filtered out empty name field - partial updates should omit untouched fields');
+    }
+    if (filtered.name !== undefined && typeof filtered.name !== 'string') {
+      delete filtered.name;
+      console.warn('[PERSISTENCE] Filtered out non-string name field from partial update payload');
     }
 
     // Remove system-protected fields that cause collection errors
