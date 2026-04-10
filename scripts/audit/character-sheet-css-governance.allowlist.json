@@ -1,0 +1,74 @@
+{
+  "comment": "CSS Governance Allowlist - Temporary Exceptions for Phase 3",
+  "allowlistedFiles": {
+    "styles/sheets/v2-npc-specific.css": {
+      "reason": "NPC sheet variant - defines alternative layout for non-player characters",
+      "violations": ".npc-sheet .sheet-body, .npc-sheet .tab.active",
+      "status": "temporary",
+      "planned_removal": "Phase 4 - migrate to shared layout system"
+    },
+    "styles/sheets/v2-droid-specific.css": {
+      "reason": "Droid sheet variant - defines alternative layout for droid characters",
+      "violations": ".droid-sheet .sheet-body, .droid-sheet .tab.active",
+      "status": "temporary",
+      "planned_removal": "Phase 4 - migrate to shared layout system"
+    },
+    "styles/sheets/vehicle-sheet.css": {
+      "reason": "Vehicle sheet - defines alternative layout for vehicle actor type",
+      "violations": ".swse-sheet.v2 .sheet-body",
+      "status": "temporary",
+      "planned_removal": "Phase 4 - migrate to shared layout system"
+    },
+    "styles/sheets/unified-sheets.css": {
+      "reason": "Unified sheet system - legacy consolidation, planned for replacement",
+      "violations": ".swse-app form.swse-character-sheet-form, .swse-npc-combat-sheet.v2 .sheet-body",
+      "status": "temporary",
+      "planned_removal": "Phase 4 - replace with modular system"
+    },
+    "styles/sheets/item-sheet.css": {
+      "reason": "Item sheet (different document type) - not part of character sheet contract",
+      "violations": ".swse-app .tab.active",
+      "status": "permanent",
+      "comment": "Item sheets use different governance rules"
+    },
+    "styles/sheets/droid-sheet.css": {
+      "reason": "Droid sheet variant (older) - parallel to v2-droid-specific.css",
+      "violations": "various",
+      "status": "temporary",
+      "planned_removal": "Phase 4 - consolidate variants"
+    },
+    "styles/archive/sheets-v3/v3/core/layout.css": {
+      "reason": "Archived V3 experimental sheet system - not in active use",
+      "violations": "various flex and layout properties",
+      "status": "permanent",
+      "comment": "Archive code is intentionally preserved; violations are not blocking"
+    },
+    "styles/apps/swse-templates-consolidated.css": {
+      "reason": "Application UI templates - different governance domain from character sheet",
+      "violations": "various",
+      "status": "permanent",
+      "comment": "App sheets use separate contract rules"
+    },
+    "styles/apps/upgrade-app.css": {
+      "reason": "Character upgrade/creation application - separate app from character sheet",
+      "violations": "form and sheet properties",
+      "status": "permanent",
+      "comment": "App uses own layout contract"
+    },
+    "styles/progression-framework/progression-shell.css": {
+      "reason": "Progression framework shell - separate application framework",
+      "violations": "various",
+      "status": "permanent",
+      "comment": "Not part of character sheet governance"
+    },
+    "styles/layout/sheet-layout.css": {
+      "reason": "Generic Foundry V13 baseline - v2-sheet.css is authoritative override",
+      "violations": ".application.sheet .sheet-body, .application.sheet .tab.active, etc",
+      "status": "permanent",
+      "comment": "Generic baseline rules are safe; character-sheet-specific rules override"
+    }
+  },
+  "normative_authority": "The audit is authoritative for the normal SWSE character sheet only",
+  "note": "Allowlist entries with status=temporary should be reviewed in Phase 4 for consolidation",
+  "last_updated": "2026-04-10"
+}
