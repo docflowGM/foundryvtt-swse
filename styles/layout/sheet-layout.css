@@ -266,7 +266,11 @@
 .swse-app .swse-m-xl { margin: var(--swse-space-xl); }
 
 /* ─────────────────────────────────────────────────────────────────────────
-   FOUNDRY v13 TAB LAYOUT (CANONICAL)
+   FOUNDRY v13 TAB LAYOUT (GENERIC BASELINE ONLY)
+
+   NOTE: For the SWSE normal character sheet, layout authority is in v2-sheet.css.
+   These are Foundry generic defaults; character-sheet-specific rules override here.
+
    This prevents zero-dimension panel collapse.
    CRITICAL: sheet-tabs must be flex: 0 0 auto (no grow)
    CRITICAL: sheet-content must be flex: 1 (grow to fill)

@@ -316,18 +316,29 @@ export class CharacterSheetContractEnforcer {
 
   /**
    * Validate the flex height chain from root to active tab
-   * Each flex container must have min-height: 0 to allow shrinking
+   *
+   * CRITICAL CHAIN (from Phase 2 governance):
+   * .window-content
+   *   → .swse-character-sheet-wrapper (transparent, display: contents)
+   *   → form.swse-character-sheet-form (primary flex column)
+   *   → .sheet-shell (secondary flex column)
+   *   → .sheet-body (tab container, non-scrolling)
+   *   → .tab.active (sole vertical scroll owner)
+   *
+   * Each flex container must have min-height: 0 to allow shrinking.
+   * The wrapper is transparent (display: contents) and is NOT a flex container.
    */
   static validateHeightChain(element) {
     const violations = [];
 
-    // Expected chain: windowContent → form → sheet-shell → sheet-body → tab
+    // Expected chain: windowContent → wrapper → form → sheet-shell → sheet-body → tab
     const chain = [
-      { selector: '.window-content', required: true },
-      { selector: 'form.swse-character-sheet-form', required: true },
-      { selector: '.sheet-shell', required: true },
-      { selector: '.sheet-body', required: true },
-      { selector: '.tab.active', required: true }
+      { selector: '.window-content', required: true, transparent: false },
+      { selector: '.swse-character-sheet-wrapper', required: true, transparent: true },
+      { selector: 'form.swse-character-sheet-form', required: true, transparent: false },
+      { selector: '.sheet-shell', required: true, transparent: false },
+      { selector: '.sheet-body', required: true, transparent: false },
+      { selector: '.tab.active', required: true, transparent: false }
     ];
 
     chain.forEach(link => {
@@ -337,7 +348,7 @@ export class CharacterSheetContractEnforcer {
           violations.push({
             rule: 'FLEX_CHAIN',
             severity: 'HIGH',
-            message: `Missing required flex container: ${link.selector}`,
+            message: `Missing required ${link.transparent ? 'transparent pass-through' : 'flex container'}: ${link.selector}`,
             selector: link.selector
           });
         }
@@ -347,19 +358,31 @@ export class CharacterSheetContractEnforcer {
       const styles = window.getComputedStyle(el);
       const display = styles.display;
 
-      // Check if it's a flex container
-      if (display !== 'flex' && display !== 'grid') {
-        if (link.required && !el.classList.contains('swse-character-sheet-wrapper')) {
+      // Transparent elements (display: contents) bypass flex validation
+      if (link.transparent) {
+        if (display !== 'contents') {
           violations.push({
             rule: 'FLEX_CHAIN',
             severity: 'MEDIUM',
-            message: `${link.selector} is not flex or grid (display: ${display})`,
+            message: `${link.selector} is transparent wrapper but display is ${display} (expected: contents)`,
             selector: link.selector
           });
         }
+        // No further checks for transparent nodes
+        return;
       }
 
-      // Check min-height: 0 (only for flex containers, not grid or contents)
+      // Check if it's a flex container (non-transparent nodes)
+      if (display !== 'flex' && display !== 'grid') {
+        violations.push({
+          rule: 'FLEX_CHAIN',
+          severity: 'MEDIUM',
+          message: `${link.selector} is not flex or grid (display: ${display})`,
+          selector: link.selector
+        });
+      }
+
+      // Check min-height: 0 (only for flex containers, not grid)
       if (display === 'flex' && styles.minHeight !== '0px') {
         violations.push({
           rule: 'FLEX_CHAIN',
@@ -499,6 +522,179 @@ export class CharacterSheetContractEnforcer {
   }
 
   /**
+   * PHASE 3: Capture actual runtime geometry for the critical chain
+   * This validates that the CSS contract actually translates to correct runtime behavior.
+   *
+   * Returns geometry data for:
+   * - .window-content
+   * - .swse-character-sheet-wrapper
+   * - form.swse-character-sheet-form
+   * - .sheet-shell
+   * - .sheet-body
+   * - .tab.active
+   *
+   * For each node, captures:
+   * - offsetHeight, clientHeight, scrollHeight
+   * - computed display, flex, min-height, overflow, overflow-y
+   * - whether the node can/is scrolling
+   */
+  static captureGeometry(element) {
+    const geometry = {
+      timestamp: new Date().toISOString(),
+      frameSize: {
+        width: element?.offsetWidth || 0,
+        height: element?.offsetHeight || 0
+      },
+      chain: {}
+    };
+
+    const chain = [
+      { name: 'windowContent', selector: '.window-content' },
+      { name: 'wrapper', selector: '.swse-character-sheet-wrapper' },
+      { name: 'form', selector: 'form.swse-character-sheet-form' },
+      { name: 'sheetShell', selector: '.sheet-shell' },
+      { name: 'sheetBody', selector: '.sheet-body' },
+      { name: 'activeTab', selector: '.tab.active' }
+    ];
+
+    chain.forEach(link => {
+      const el = element.closest(link.selector) || element.querySelector(link.selector);
+      if (!el) {
+        geometry.chain[link.name] = { found: false, selector: link.selector };
+        return;
+      }
+
+      const styles = window.getComputedStyle(el);
+      geometry.chain[link.name] = {
+        found: true,
+        selector: link.selector,
+        offsetHeight: el.offsetHeight,
+        clientHeight: el.clientHeight,
+        scrollHeight: el.scrollHeight,
+        overflow: styles.overflow,
+        overflowY: styles.overflowY,
+        overflowX: styles.overflowX,
+        display: styles.display,
+        flex: styles.flex,
+        minHeight: styles.minHeight,
+        canScroll: el.scrollHeight > el.clientHeight,
+        isScrolling: el.scrollTop > 0 || (el.scrollHeight - el.clientHeight) > 0,
+        classes: Array.from(el.classList)
+      };
+    });
+
+    return geometry;
+  }
+
+  /**
+   * PHASE 4: Validate actual runtime geometry against contract
+   * P0 repair focus: Detect form content-sizing breakage
+   * Checks that height chain is properly constrained and single scroll owner exists
+   */
+  static validateGeometry(element) {
+    const geometry = this.captureGeometry(element);
+    const violations = [];
+
+    // P0 CHECK: Form height constraint validation
+    const form = element.querySelector('form.swse-character-sheet-form');
+    const windowContent = element.querySelector('.window-content');
+
+    if (form && windowContent) {
+      const formHeight = form.clientHeight;
+      const parentHeight = windowContent.clientHeight;
+      const formStyles = window.getComputedStyle(form);
+
+      // P0: Form should be constrained to parent
+      // If form is 2-3x parent height, content-sizing runaway likely occurred
+      if (parentHeight > 0 && formHeight > parentHeight * 1.5) {
+        violations.push({
+          rule: 'HEIGHT_CHAIN_BROKEN',
+          severity: 'CRITICAL',
+          message: `FORM HEIGHT RUNAWAY: Parent ${parentHeight}px, Form ${formHeight}px. Check flex-basis and height properties.`,
+          selector: 'form.swse-character-sheet-form',
+          geometry: { parentHeight, formHeight, ratio: (formHeight / parentHeight).toFixed(1) }
+        });
+      }
+
+      // Form must not be a scroll owner
+      if (formStyles.overflowY === 'auto' || formStyles.overflowY === 'scroll') {
+        violations.push({
+          rule: 'SCROLL',
+          severity: 'CRITICAL',
+          message: 'Form must NOT be a scroll owner',
+          selector: 'form.swse-character-sheet-form'
+        });
+      }
+    }
+
+    // Validate scroll owner
+    const activeTab = element.querySelector('.tab.active');
+    if (activeTab) {
+      const styles = window.getComputedStyle(activeTab);
+      if (styles.overflowY !== 'auto' && styles.overflowY !== 'scroll') {
+        violations.push({
+          rule: 'SCROLL',
+          severity: 'HIGH',
+          message: 'Active tab is not scrollable (overflow-y is not auto/scroll)',
+          selector: '.tab.active'
+        });
+      }
+
+      // If content exceeds visible height, tab must be able to scroll
+      if (geometry.chain.activeTab && geometry.chain.activeTab.canScroll && styles.overflowY === 'hidden') {
+        violations.push({
+          rule: 'SCROLL',
+          severity: 'CRITICAL',
+          message: 'Active tab content exceeds height but overflow-y is hidden',
+          selector: '.tab.active'
+        });
+      }
+    }
+
+    // Validate sheet-body is NOT a scroll owner
+    const sheetBody = element.querySelector('.sheet-body');
+    if (sheetBody) {
+      const styles = window.getComputedStyle(sheetBody);
+      if (styles.overflowY === 'auto' || styles.overflowY === 'scroll') {
+        violations.push({
+          rule: 'LAYOUT',
+          severity: 'CRITICAL',
+          message: 'Sheet-body must NOT be a scroll owner; only tab.active scrolls',
+          selector: '.sheet-body'
+        });
+      }
+    }
+
+    return {
+      geometry,
+      violations,
+      passed: violations.length === 0
+    };
+  }
+
+  /**
+   * PHASE 4: Quick P0 status check
+   * Returns one-line summary of height chain and scroll owner status
+   */
+  static getP0Status(element) {
+    const result = this.validateGeometry(element);
+    const form = element.querySelector('form.swse-character-sheet-form');
+    const windowContent = element.querySelector('.window-content');
+    const activeTab = element.querySelector('.tab.active');
+
+    if (result.violations.length > 0) {
+      const heightBroken = result.violations.find(v => v.rule === 'HEIGHT_CHAIN_BROKEN');
+      if (heightBroken) {
+        return `❌ HEIGHT CHAIN BROKEN: ${heightBroken.message}`;
+      }
+      return `❌ CONTRACT VIOLATED: ${result.violations[0].message}`;
+    }
+
+    const scrollOwner = activeTab ? '.sheet-body > .tab.active' : 'NONE';
+    return `✅ P0 PASS: Height chain bounded, scroll owner: ${scrollOwner}`;
+  }
+
+  /**
    * Group violations by rule for summary reporting
    */
   static #groupViolationsByRule(violations) {
@@ -530,6 +726,139 @@ export class CharacterSheetContractEnforcer {
    */
   static reset() {
     this.#violationCounts.clear();
+  }
+
+  /**
+   * PHASE 3: Classify and diagnose contract failures
+   * Provides actionable failure categories instead of just reporting violations
+   */
+  static diagnoseFailures(element) {
+    const result = this.validate(element);
+    const geometry = this.captureGeometry(element);
+    const diagnosis = {
+      timestamp: new Date().toISOString(),
+      passed: result.passed,
+      violations: result.violations,
+      categories: {}
+    };
+
+    if (result.passed) {
+      diagnosis.categories.OK = {
+        message: 'All contract rules passed',
+        detail: 'Runtime geometry matches CSS contract expectations'
+      };
+      return diagnosis;
+    }
+
+    // Classify violations into actionable categories
+    const violations = result.violations || [];
+
+    violations.forEach(v => {
+      const category = this.#classifyViolation(v, geometry);
+      if (!diagnosis.categories[category]) {
+        diagnosis.categories[category] = {
+          message: category,
+          violations: []
+        };
+      }
+      diagnosis.categories[category].violations.push({
+        selector: v.selector || v.selectors,
+        message: v.message,
+        severity: v.severity
+      });
+    });
+
+    // Add recommendations for each category
+    Object.keys(diagnosis.categories).forEach(cat => {
+      if (cat === 'OK') return;
+      diagnosis.categories[cat].recommendation = this.#getRecommendation(cat);
+    });
+
+    return diagnosis;
+  }
+
+  /**
+   * Classify a violation into a failure category
+   * Categories: HEIGHT_CHAIN_BROKEN, WRONG_SCROLL_OWNER, MISSING_SHRINKABILITY,
+   *             DISPLAY_CHAIN_INVALID, ILLEGAL_INNER_SCROLLER, WRAPPER_MISMATCH
+   */
+  static #classifyViolation(violation, geometry) {
+    const rule = violation.rule;
+    const selector = violation.selector || '';
+
+    if (rule === 'SCROLL' && selector.includes('scroll owner')) {
+      return 'WRONG_SCROLL_OWNER';
+    }
+    if (rule === 'FLEX_CHAIN') {
+      if (violation.message.includes('min-height')) {
+        return 'MISSING_SHRINKABILITY';
+      }
+      if (violation.message.includes('display')) {
+        return 'DISPLAY_CHAIN_INVALID';
+      }
+      if (violation.message.includes('wrapper') || selector.includes('wrapper')) {
+        return 'WRAPPER_MISMATCH';
+      }
+      if (violation.message.includes('Missing')) {
+        return 'HEIGHT_CHAIN_BROKEN';
+      }
+    }
+    if (rule === 'PANELS') {
+      return 'ILLEGAL_INNER_SCROLLER';
+    }
+    if (rule === 'LAYOUT') {
+      return 'HEIGHT_CHAIN_BROKEN';
+    }
+
+    return 'UNKNOWN_VIOLATION';
+  }
+
+  /**
+   * Get actionable recommendation for a failure category
+   */
+  static #getRecommendation(category) {
+    const recommendations = {
+      HEIGHT_CHAIN_BROKEN: 'The root flex chain is broken. Verify all nodes in the chain exist and are properly connected in the DOM.',
+      WRONG_SCROLL_OWNER: 'Multiple scroll owners found or wrong owner. Only .tab.active should scroll. Check for overflow: auto elsewhere.',
+      MISSING_SHRINKABILITY: 'A flex child is missing min-height: 0, preventing proper shrinking. Add min-height: 0 to the flex container.',
+      DISPLAY_CHAIN_INVALID: 'A flex chain node has wrong display property. Verify v2-sheet.css defines display: flex for all chain nodes.',
+      ILLEGAL_INNER_SCROLLER: 'An inner panel/container has overflow-y: auto. Only .tab.active should scroll; remove overflow-y: auto from inner panels.',
+      WRAPPER_MISMATCH: 'The wrapper element display property is wrong. Wrapper must have display: contents to be transparent in the flex chain.'
+    };
+    return recommendations[category] || 'Check contract rules in v2-sheet.css';
+  }
+
+  /**
+   * Print diagnosis results in readable format
+   */
+  static printDiagnosis(element) {
+    const diagnosis = this.diagnoseFailures(element);
+
+    console.log('\n╔════════════════════════════════════════════════════════════════╗');
+    console.log('║        CHARACTER SHEET CONTRACT FAILURE DIAGNOSIS               ║');
+    console.log('╚════════════════════════════════════════════════════════════════╝\n');
+
+    if (diagnosis.passed) {
+      console.log('✅ CONTRACT PASSED: All rules satisfied\n');
+      return;
+    }
+
+    console.log(`❌ CONTRACT FAILED: ${diagnosis.violations.length} violation(s)\n`);
+
+    Object.entries(diagnosis.categories).forEach(([cat, data]) => {
+      if (cat === 'OK') return;
+      console.log(`📍 ${cat}`);
+      console.log(`   ${data.message}`);
+      if (data.violations && data.violations.length > 0) {
+        data.violations.forEach(v => {
+          console.log(`   - [${v.severity}] ${v.message}`);
+        });
+      }
+      if (data.recommendation) {
+        console.log(`   ➡️  RECOMMENDATION: ${data.recommendation}`);
+      }
+      console.log('');
+    });
   }
 
   /**
