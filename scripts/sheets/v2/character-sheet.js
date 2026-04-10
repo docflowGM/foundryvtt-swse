@@ -1988,6 +1988,20 @@ const forcePoints = [];
 
     // Phase 4: Mobile Interaction Enhancements
     this._activateMobileActions(html, { signal });
+
+    // ═════════════════════════════════════════════════════════════════════════════════
+    // DROP HANDLING — V2 CANONICAL PATH
+    // ═════════════════════════════════════════════════════════════════════════════════
+    // Bind dragover to allow drop events to fire (default browser behavior prevents drops)
+    html.addEventListener("dragover", (e) => {
+      e.preventDefault();
+    }, { signal });
+
+    // Bind drop event to authoritative _onDrop handler
+    // This routes drops through DropResolutionEngine for unified item/actor handling
+    html.addEventListener("drop", (e) => {
+      this._onDrop(e);
+    }, { signal });
   }
 
   /* ============================================================

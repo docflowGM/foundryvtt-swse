@@ -500,6 +500,18 @@ export class SWSEV2DroidSheet extends
 
     DropService.bindDragFeedback(root);
 
+    /* ---- DRAG & DROP HANDLING — V2 CANONICAL PATH ---- */
+    // Bind dragover to allow drop events to fire (default browser behavior prevents drops)
+    root.addEventListener("dragover", (e) => {
+      e.preventDefault();
+    });
+
+    // Bind drop event to authoritative _onDrop handler
+    // This routes drops through DropResolutionEngine for unified item/actor handling
+    root.addEventListener("drop", (e) => {
+      this._onDrop(e);
+    });
+
     RenderAssertions.assertRenderComplete(
       this,
       "SWSEV2DroidSheet"

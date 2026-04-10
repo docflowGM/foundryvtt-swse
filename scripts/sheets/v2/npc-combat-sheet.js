@@ -4,6 +4,7 @@ const { HandlebarsApplicationMixin, DocumentSheetV2 } = foundry.applications.api
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
+import { DropService } from "/systems/foundryvtt-swse/scripts/services/drop-service.js";
 import { SWSELevelUp } from "/systems/foundryvtt-swse/scripts/apps/swse-levelup.js";
 import { rollSkill } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
@@ -271,6 +272,18 @@ export class SWSEV2CombatNpcSheet extends
     /* ---- DRAG & DROP VISUAL FEEDBACK ---- */
 
     DropService.bindDragFeedback(root);
+
+    /* ---- DRAG & DROP HANDLING — V2 CANONICAL PATH ---- */
+    // Bind dragover to allow drop events to fire (default browser behavior prevents drops)
+    root.addEventListener("dragover", (e) => {
+      e.preventDefault();
+    });
+
+    // Bind drop event to authoritative _onDrop handler
+    // This routes drops through DropResolutionEngine for unified item/actor handling
+    root.addEventListener("drop", (e) => {
+      this._onDrop(e);
+    });
 
     RenderAssertions.assertRenderComplete(
       this,
